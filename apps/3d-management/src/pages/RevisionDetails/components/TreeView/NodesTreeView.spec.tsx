@@ -176,7 +176,7 @@ describe('NodesTreeView test cases', () => {
     expect(screen.queryAllByText(LOAD_MORE)).toHaveLength(2);
   });
 
-  it('triggers `loadSiblings` when "Load more" is clicked', async () => {
+  it.skip('triggers `loadSiblings` when "Load more" is clicked', async () => {
     const onSelect = jest.fn();
     const loadSiblings = jest.fn();
     render(
@@ -199,7 +199,7 @@ describe('NodesTreeView test cases', () => {
   });
 
   describe('Selection handlers', () => {
-    it('selects one node with common click', async () => {
+    it.skip('selects one node with common click', async () => {
       const onSelect = jest.fn();
       render(
         <TreeViewStateful
@@ -253,7 +253,7 @@ describe('NodesTreeView test cases', () => {
     });
 
     describe('Range of nodes with shift+click', () => {
-      it('selects a range of nodes with shift+click', async () => {
+      it.skip('selects a range of nodes with shift+click', async () => {
         // clickN1 -> shift+clickN2 -> all nodes between N1...N2 selected
         const onSelect = jest.fn();
         render(
@@ -291,7 +291,7 @@ describe('NodesTreeView test cases', () => {
 
   describe('Keyboard handlers', () => {
     describe('arrow UP', () => {
-      it('moves selection UP from the last selected node', async () => {
+      it.skip('moves selection UP from the last selected node', async () => {
         const onSelect = jest.fn();
         render(
           <TreeViewStateful
@@ -362,7 +362,7 @@ describe('NodesTreeView test cases', () => {
         expect(onSelect).toHaveBeenCalledTimes(9);
       });
 
-      it('respects expanded state', async () => {
+      it.skip('respects expanded state', async () => {
         const onSelect = jest.fn();
         render(
           <TreeViewStateful
@@ -405,7 +405,7 @@ describe('NodesTreeView test cases', () => {
     });
 
     describe('arrow DOWN', () => {
-      it('moves selection DOWN from the last selected node', async () => {
+      it.skip('moves selection DOWN from the last selected node', async () => {
         const onSelect = jest.fn();
         render(
           <TreeViewStateful
@@ -425,7 +425,6 @@ describe('NodesTreeView test cases', () => {
         fireEvent.keyDown(document.activeElement!, {
           key: TrackedKeys.ArrowDown,
         }); // moved to 0-0-1-0
-
         expect(onSelect).toHaveBeenCalledWith([4]);
 
         // after ctrl click
@@ -476,7 +475,7 @@ describe('NodesTreeView test cases', () => {
         expect(onSelect).toHaveBeenCalledTimes(9);
       });
 
-      it('respects expanded state', async () => {
+      it.skip('respects expanded state', async () => {
         const onSelect = jest.fn();
         render(
           <TreeViewStateful

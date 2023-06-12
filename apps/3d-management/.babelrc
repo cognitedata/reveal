@@ -5,7 +5,8 @@
       {
         "runtime": "automatic"
       }
-    ]
+    ],
+    "@babel/preset-env"
   ],
   "plugins": [
     [

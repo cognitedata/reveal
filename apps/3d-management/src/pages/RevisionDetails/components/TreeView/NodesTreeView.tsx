@@ -9,7 +9,7 @@ import {
 import { SelectedNode, TreeIndex } from '@3d-management/store/modules/TreeView';
 import { Tree, TreeProps } from 'antd';
 
-import { INFO_BTN_CLASSNAME, TREE_NODE_CLASSNAME } from './constants';
+import { TREE_NODE_CLASSNAME } from './constants';
 import { useKeyboardHandler } from './hooks/useKeyboardHandler';
 import {
   CustomDataNode,
@@ -17,6 +17,8 @@ import {
   TreeDataNode,
   TreeLoadMoreNode,
 } from './types';
+
+export const INFO_BTN_CLASSNAME = 'cogs-icon';
 
 type ModifiedTreeProps = {
   treeData: Array<TreeDataNode>;

@@ -6,15 +6,6 @@ import '@testing-library/jest-dom/extend-expect';
 import Adapter from '@wojtekmaj/enzyme-adapter-react-17';
 import Enzyme from 'enzyme';
 
-export interface Global {
-  document: Document;
-  window: Window;
-  ImageData: ImageData;
-  XMLHttpRequest?: XMLHttpRequest;
-  navigator: Navigator;
-  innerWidth: number;
-}
-
 jest.mock('@cognite/sdk-provider', () => {
   return {
     useSDK: jest.fn(),
@@ -33,4 +24,4 @@ Enzyme.configure({ adapter: new Adapter() });
 Object.defineProperty(document, 'currentScript', {
   value: document.createElement('script'),
 });
-(document.currentScript as any).src = 'http://localhost/iamdummy.html';
+document.currentScript.src = 'http://localhost/iamdummy.html';
