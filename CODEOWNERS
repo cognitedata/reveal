@@ -23,7 +23,7 @@ libs/data-modeling                @cognitedata/cdf-user-experience
 # Team data-explorer
 apps/data-exploration             @cognitedata/explorers
 apps/flexible-data-explorer       @cognitedata/explorers
-apps/document-search              @cognitedata/matchmakers @cognitedata/discover
+apps/cdf-document-search          @cognitedata/matchmakers @cognitedata/discover
 
 
 libs/data-exploration/            @cognitedata/explorers
