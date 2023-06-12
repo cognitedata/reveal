@@ -20,7 +20,7 @@ export const docTypes = {
   CE15: 'Plant Underground',
   CE16: 'Plot Plan',
   CE17: 'Process Flow Diagram',
-  CE18: 'Report - Ember',
+  CE18: 'Report',
   DS: 'Data sheets',
   FA: 'Project manual, e.g. principal decisions',
   FB: 'Project strategy',
