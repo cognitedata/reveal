@@ -73,7 +73,8 @@ const replaceStyleLoaders = (config, styleScope) => {
             test: CSS_REGEX,
             use: getStyleLoader(),
             sideEffects: true,
-          }, {
+          },
+          {
             test: SASS_REGEX,
             use: [
               ...getStyleLoader().slice(0, 2),

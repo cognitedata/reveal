@@ -1,0 +1,71 @@
+<svg width="101" height="100" viewBox="0 0 101 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    @keyframes cw { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    @keyframes ccw { from { transform: rotate(0deg); } to { transform: rotate(-360deg); } }
+
+    @keyframes leftright { 0% { transform: translate(0, 0) } 50% { transform: translate(20px, 0); } 100% { transform: translate(0, 0); } }
+    @keyframes rightleft { 0% { transform: translate(0, 0) } 50% { transform: translate(-20px, 0); } 100% { transform: translate(0, 0); } }
+
+
+    #outerLine {
+      animation: cw 70s linear infinite;
+      transform-origin: center center;
+    }
+
+    #innerLine {
+      animation: ccw 90s linear infinite;
+      transform-origin: center center;
+    }
+
+    #arrow {
+      animation: cw 15s linear infinite;
+      transform-origin: 70px 70px;
+    }
+
+    #particle1 {
+      animation: leftright 10s ease-in-out infinite;
+      transform-origin: 29px 93px;
+    }
+
+    #particle2 {
+      animation: rightleft 15s ease-in-out infinite;
+      transform-origin: 29px 93px;
+    }
+
+    #particle3 {
+      animation: cw 28s ease-in-out infinite;
+      transform-origin: 53px 35px;
+    }
+
+  </style>
+  <circle cx="50.7437" cy="50" r="41" fill="#F2F4FF"/>
+  <circle id="outerLine" cx="50.7437" cy="50" r="46.8109" transform="rotate(3.35681 50.7437 50)" stroke="#B5B9FB" stroke-dasharray="5 3"/>
+  <circle id="innerLine" cx="51.2437" cy="49.5" r="37" stroke="#ACB1FA" stroke-dasharray="5 3"/>
+
+  <rect x="26.5706" y="21.0056" width="48.3461" height="69.4944" rx="1.5" fill="white" stroke="#DADADA"/>
+  <rect x="32.9046" y="30.5056" width="36" height="1" rx="0.5" fill="#DADADA"/>
+  <rect x="32.9046" y="42.5056" width="36" height="1" rx="0.5" fill="#DADADA"/>
+  <rect x="32.9046" y="55.5056" width="36" height="1" rx="0.5" fill="#DADADA"/>
+  <rect x="32.9046" y="67.5056" width="36" height="1" rx="0.5" fill="#DADADA"/>
+  <rect x="32.9046" y="79.5056" width="36" height="1" rx="0.5" fill="#DADADA"/>
+  <rect x="9.26599" y="53.3183" width="11.2446" height="45.8674" rx="1.5" fill="white" stroke="#DADADA"/>
+  <rect x="27.8441" y="78.6522" width="11.2446" height="20.5337" rx="1.5" fill="white" stroke="#DADADA"/>
+  <rect x="46.4222" y="65.1403" width="11.2446" height="34.045" rx="1.5" fill="white" stroke="#DADADA"/>
+  <line x1="0.743652" y1="99.5" x2="66.1891" y2="99.5" stroke="#DADADA"/>
+
+  <circle id="particle2" cx="45.9221" cy="85.0136" r="3.5" fill="#ACB1FA"/>
+  <circle id="particle3" cx="26.7521" cy="21.3342" r="3.5" fill="#4D6AF2"/>
+
+  <ellipse cx="68.5596" cy="70.8216" rx="24.938" ry="24.8953" fill="url(#paint0_linear)"/>
+  <path id="arrow" fill-rule="evenodd" clip-rule="evenodd" d="M86.8482 86.5614C78.1776 96.5869 63.0213 97.6852 52.9959 89.0145C45.196 82.2687 42.7997 71.5973 46.2033 62.4705L47.8431 67.2819C47.9322 67.5433 48.2163 67.6829 48.4777 67.5939C48.739 67.5048 48.8787 67.2207 48.7896 66.9593L46.651 60.6842C46.5643 60.4299 46.293 60.2908 46.0376 60.3655C45.9411 60.3796 45.8477 60.422 45.7707 60.4933L41.3628 64.5713C41.1601 64.7588 41.1478 65.0751 41.3353 65.2778C41.5228 65.4805 41.8392 65.4928 42.0419 65.3053L45.1548 62.4253C41.7746 71.8644 44.3035 82.8189 52.3417 89.7709C62.7849 98.8028 78.5727 97.6587 87.6046 87.2155C96.6365 76.7723 95.4925 60.9846 85.0493 51.9527C78.3519 46.1603 69.4563 44.5532 61.5543 46.9002L61.7849 47.8751C69.3845 45.5981 77.9501 47.1349 84.3951 52.709C94.4206 61.3797 95.5189 76.5359 86.8482 86.5614Z" fill="#DADADA"/>
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M68.3967 57.7977C68.3967 57.5216 68.1729 57.2977 67.8967 57.2977C67.6206 57.2977 67.3967 57.5216 67.3967 57.7977V76.591C67.3967 76.711 67.439 76.8212 67.5096 76.9074C67.5412 76.9686 67.5861 77.0242 67.6437 77.0697L76.9895 84.4545C77.2062 84.6257 77.5206 84.5889 77.6918 84.3722C77.863 84.1555 77.8262 83.8411 77.6095 83.6699L68.3967 76.3902L68.3967 57.7977Z" fill="#DADADA"/>
+  
+  <circle id="particle1" cx="74.2995" cy="45.9263" r="3.5" fill="#FFBB00"/>
+
+  <defs>
+    <linearGradient id="paint0_linear" x1="57.6278" y1="56.8527" x2="52.8103" y2="51.9205" gradientUnits="userSpaceOnUse">
+      <stop stop-color="white"/>
+      <stop offset="1" stop-color="white" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+</svg>

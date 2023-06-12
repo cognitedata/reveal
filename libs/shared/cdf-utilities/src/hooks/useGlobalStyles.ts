@@ -15,6 +15,7 @@ export default function useGlobalStyles<
 
   useEffect(() => {
     styles.forEach((style) => {
+      console.log(style);
       style.use();
     });
     setHasInjectedStyles(true);

@@ -1,0 +1,35 @@
+import { mockClassifierName } from '../../__mocks__/sdk';
+
+import { ListResponse } from '@cognite/sdk';
+import { DocumentsPipeline } from '@cognite/sdk-playground';
+
+export const fixturePipelines = {
+  list: () => {
+    return {
+      items: [
+        {
+          externalId: 'default',
+          sensitivityMatcher: {
+            matchLists: {
+              contentList: ['smoke test sensitive words'],
+              default_list_EN: [],
+              default_list_NO: [],
+            },
+            fieldMappings: {
+              sourceFile: {
+                content: ['contentList'],
+              },
+            },
+            sensitiveSecurityCategory: 1657873422246012,
+            restrictToSources: ['unstructured-search-smoke-tests-sensitive'],
+            filterPasswords: true,
+          },
+          classifier: {
+            name: mockClassifierName,
+            trainingLabels: [],
+          },
+        },
+      ],
+    } as ListResponse<DocumentsPipeline[]>;
+  },
+};
