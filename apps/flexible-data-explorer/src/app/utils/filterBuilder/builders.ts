@@ -20,9 +20,9 @@ export const builders: Record<
   }),
 
   [Operator.BETWEEN]: (field: string, value: NumericRange | DateRange) => ({
-    and: {
-      [field]: { gte: value[0] },
-      [field]: { lte: value[1] },
+    [field]: {
+      gte: value[0],
+      lte: value[1],
     },
   }),
   [Operator.NOT_BETWEEN]: (field: string, value: NumericRange | DateRange) => ({
