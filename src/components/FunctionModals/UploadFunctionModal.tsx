@@ -489,9 +489,16 @@ export default function UploadFunctionModal({ onCancel }: Props) {
                     <Form.Item label="-">
                       <Button
                         id="btnDeleteSecret"
-                        icon="Delete"
                         onClick={() => removeSecret(index)}
-                      />
+                        style={{ left: 4, position: 'relative' }}
+                      >
+                        <Icon
+                          type="Delete"
+                          size={22}
+                          // @ts-ignore
+                          style={{ left: -6, position: 'relative' }}
+                        />
+                      </Button>
                     </Form.Item>
                   </Col>
                 </Row>
