@@ -4,15 +4,16 @@ import {
   Annotation,
   AnnotationType,
   IdsByType,
-  ToolType,
   UnifiedViewer,
 } from '@cognite/unified-file-viewer';
 import { UnifiedViewerPointerEvent } from '@cognite/unified-file-viewer/dist/core/UnifiedViewerRenderer/UnifiedEventHandler';
 
+import { IndustryCanvasToolType } from '../types';
+
 const useEditOnSelect = (
   unifiedViewerRef: MutableRefObject<UnifiedViewer | null>,
-  tool: ToolType,
-  setTool: (tool: ToolType) => void
+  tool: IndustryCanvasToolType,
+  setTool: (tool: IndustryCanvasToolType) => void
 ) => {
   const [selected, setSelected] = useState<IdsByType>({
     annotationIds: [],
@@ -37,7 +38,7 @@ const useEditOnSelect = (
   }, [selected.annotationIds]);
 
   const onAnnotationMouseDown = useCallback(() => {
-    if (tool !== ToolType.SELECT) {
+    if (tool !== IndustryCanvasToolType.SELECT) {
       return;
     }
     // If the annotation has been selected by any means, and we register a mousedown on it,
@@ -57,14 +58,14 @@ const useEditOnSelect = (
       }
 
       if (annotation.type === AnnotationType.STICKY) {
-        setTool(ToolType.STICKY);
+        setTool(IndustryCanvasToolType.STICKY);
         setTimeout(() => {
           unifiedViewerRef.current?.editAnnotationById(annotation.id);
         }, 0);
       }
 
       if (annotation.type === AnnotationType.TEXT) {
-        setTool(ToolType.TEXT);
+        setTool(IndustryCanvasToolType.TEXT);
         setTimeout(() => {
           unifiedViewerRef.current?.editAnnotationById(annotation.id);
         }, 0);

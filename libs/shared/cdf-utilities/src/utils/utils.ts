@@ -23,9 +23,9 @@ export const getCluster = () => {
   return Array.isArray(cluster) ? cluster[0] : cluster;
 };
 
-export const getEnv = () => {
+export const getEnv = (): string | undefined => {
   const env = getQueryParameter('env');
-  return Array.isArray(env) ? env[0] : env;
+  return Array.isArray(env) ? env[0] || undefined : env;
 };
 
 export const getOrganization = () => {

@@ -19,6 +19,7 @@ export interface FilterBuilderByFieldProps {
   config?: OperatorConfig;
   onBackClick: () => void;
   onChange: (value: ValueByField) => void;
+  isError?: boolean;
 }
 
 export const FilterBuilderByField: React.FC<FilterBuilderByFieldProps> = ({
@@ -28,6 +29,7 @@ export const FilterBuilderByField: React.FC<FilterBuilderByFieldProps> = ({
   config = {},
   onBackClick,
   onChange,
+  isError,
 }) => {
   const [selectedField, setSelectedField] = useState<Field>();
   const [value, setValue] = useState<ValueByField>(initialValue);
@@ -58,7 +60,7 @@ export const FilterBuilderByField: React.FC<FilterBuilderByFieldProps> = ({
         field={selectedField}
         value={value[selectedField.name]}
         operators={config[selectedField.type]}
-        onBackClick={onBackClick}
+        onBackClick={() => setSelectedField(undefined)}
         onApplyClick={handleApplyClick}
       />
     );
@@ -70,6 +72,7 @@ export const FilterBuilderByField: React.FC<FilterBuilderByFieldProps> = ({
       fields={fields}
       onBackClick={onBackClick}
       onSelectField={setSelectedField}
+      isError={isError}
     />
   );
 };

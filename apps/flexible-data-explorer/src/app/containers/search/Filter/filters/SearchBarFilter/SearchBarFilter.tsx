@@ -15,7 +15,7 @@ export const SearchBarFilter: React.FC<SearchBarFilterProps> = ({
   value,
   onChange,
 }) => {
-  const { data = [] } = useTypesDataModelQuery();
+  const { data = [], isError } = useTypesDataModelQuery();
 
   const dataTypes = useMemo(() => {
     return transformDefTypesToFilterOptions(data);
@@ -26,6 +26,7 @@ export const SearchBarFilter: React.FC<SearchBarFilterProps> = ({
       dataTypes={dataTypes}
       value={value}
       onChange={onChange}
+      isError={isError}
     />
   );
 };

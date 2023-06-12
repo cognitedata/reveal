@@ -16,7 +16,6 @@ import {
   ContainerConfig,
   ContainerType,
   IdsByType,
-  ToolType,
   UnifiedViewer,
   UnifiedViewerEventListenerMap,
   UnifiedViewerEventType,
@@ -37,6 +36,9 @@ import {
   SerializedCanvasDocument,
   IndustryCanvasContainerConfig,
   IndustryCanvasState,
+  IndustryCanvasToolType,
+  COMMENT_METADATA_ID,
+  isCommentAnnotation,
   SerializedIndustryCanvasState,
   isIndustryCanvasContainerConfig,
 } from '../types';
@@ -47,6 +49,8 @@ import {
   serializeCanvasState,
 } from '../utils/utils';
 
+import { useCommentSaveMutation } from './use-mutation/useCommentSaveMutation';
+import { useUserProfile } from './use-query/useUserProfile';
 import {
   UseCanvasStateHistoryReturnType,
   useHistory,
@@ -323,9 +327,11 @@ const usePersistence = (
 const useManagedState = ({
   unifiedViewer,
   setTool,
+  tool,
 }: {
   unifiedViewer: UnifiedViewer | null;
-  setTool: Dispatch<SetStateAction<ToolType>>;
+  tool: IndustryCanvasToolType;
+  setTool: Dispatch<SetStateAction<IndustryCanvasToolType>>;
 }): UseManagedStateReturnType => {
   const sdk = useSDK();
   const [interactionState, setInteractionState] = useState<InteractionState>({
@@ -335,6 +341,15 @@ const useManagedState = ({
   const { canvasState, undo, redo, pushState, replaceState } = useHistory();
   usePersistence(canvasState, replaceState);
 
+  const { mutate: saveComment } = useCommentSaveMutation();
+
+  // default profile to empty string to avoid undefined errors, this should never happen
+  const { data: profile = { userIdentifier: '' } } = useUserProfile();
+
+  const { userIdentifier } = profile;
+
+  const { activeCanvas = { externalId: '' } } = useIndustryCanvasContext();
+  const { externalId: activeCanvasExternalId } = activeCanvas;
   const onUpdateRequest: UpdateHandlerFn = useCallback(
     ({ containers: updatedContainers, annotations: updatedAnnotations }) => {
       const validUpdatedContainers = updatedContainers.filter(
@@ -350,21 +365,37 @@ const useManagedState = ({
       pushState(({ container, canvasAnnotations }) => {
         // If there is only one annotation in the update set, select it
         if (updatedAnnotations.length === 1) {
+          // Augment the annotation with the comment metadata if the tool is comment
+          if (tool === IndustryCanvasToolType.COMMENT) {
+            updatedAnnotations[0].isSelectable = false;
+            updatedAnnotations[0].metadata = {
+              ...updatedAnnotations[0].metadata,
+              [COMMENT_METADATA_ID]: true,
+            };
+            saveComment({
+              externalId: updatedAnnotations[0].id,
+              text: '',
+              author: userIdentifier,
+              canvas: { externalId: activeCanvasExternalId },
+            });
+          }
           setInteractionState({
             hoverId: undefined,
             clickedContainerAnnotationId: updatedAnnotations[0].id,
           });
-          setTool(ToolType.SELECT);
+          setTool(IndustryCanvasToolType.SELECT);
 
           unifiedViewer?.once(UnifiedViewerEventType.ON_TOOL_CHANGE, () => {
             // It takes a little bit of time before the annotation is added, hence the timeout.
             // TODO: This is somewhat brittle and hacky. We should find a better way to do this.
-            setTimeout(() => {
-              unifiedViewer?.selectByIds({
-                annotationIds: [updatedAnnotations[0].id],
-                containerIds: [],
-              });
-            }, SHAMEFUL_WAIT_TO_ENSURE_ANNOTATIONS_ARE_RENDERED_MS);
+            if (!isCommentAnnotation(updatedAnnotations[0])) {
+              setTimeout(() => {
+                unifiedViewer?.selectByIds({
+                  annotationIds: [updatedAnnotations[0].id],
+                  containerIds: [],
+                });
+              }, SHAMEFUL_WAIT_TO_ENSURE_ANNOTATIONS_ARE_RENDERED_MS);
+            }
           });
         }
 
@@ -377,7 +408,15 @@ const useManagedState = ({
         };
       });
     },
-    [pushState, setTool, unifiedViewer]
+    [
+      pushState,
+      setTool,
+      unifiedViewer,
+      tool,
+      activeCanvasExternalId,
+      saveComment,
+      userIdentifier,
+    ]
   );
 
   const onDeleteRequest: DeleteHandlerFn = useCallback(

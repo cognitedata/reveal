@@ -54,11 +54,7 @@ export const TimeSeriesNode = ({
           icon="ExternalLink"
           disabled={!resourceId}
           onClick={() =>
-            window.open(
-              createLink(
-                `/explore/timeSeries/${resourceId}${window.location.search}`
-              )
-            )
+            window.open(createLink(`/explore/timeSeries/${resourceId}`))
           }
         />
       </Flex>

@@ -1,7 +1,11 @@
 import * as React from 'react';
 import { useMemo, useState } from 'react';
 
+import isEmpty from 'lodash/isEmpty';
+
 import {
+  EmptyState,
+  ErrorState,
   Menu,
   MenuHeader,
   MenuItem,
@@ -17,6 +21,7 @@ export interface FieldSelectorProps {
   fields: Field[];
   onBackClick: () => void;
   onSelectField: (field: Field) => void;
+  isError?: boolean;
 }
 
 export const FieldSelector: React.FC<FieldSelectorProps> = ({
@@ -24,6 +29,7 @@ export const FieldSelector: React.FC<FieldSelectorProps> = ({
   fields,
   onBackClick,
   onSelectField,
+  isError,
 }) => {
   const [searchInputValue, setSearchInputValue] = useState<string>('');
 
@@ -31,24 +37,36 @@ export const FieldSelector: React.FC<FieldSelectorProps> = ({
     return getFilteredFields(fields, searchInputValue);
   }, [fields, searchInputValue]);
 
+  if (isError) {
+    return (
+      <Menu>
+        <ErrorState />
+      </Menu>
+    );
+  }
+
   return (
     <Menu>
       <MenuHeader title={name} onBackClick={onBackClick} />
 
       <SearchInput value={searchInputValue} onChange={setSearchInputValue} />
 
-      <MenuList>
-        {filteredFields.map((field) => {
-          return (
-            <MenuItem
-              key={field.name}
-              title={field.name}
-              icon={getMenuItemIcon(field.type)}
-              onClick={() => onSelectField(field)}
-            />
-          );
-        })}
-      </MenuList>
+      {isEmpty(filteredFields) ? (
+        <EmptyState />
+      ) : (
+        <MenuList>
+          {filteredFields.map((field) => {
+            return (
+              <MenuItem
+                key={field.name}
+                title={field.name}
+                icon={getMenuItemIcon(field.type)}
+                onClick={() => onSelectField(field)}
+              />
+            );
+          })}
+        </MenuList>
+      )}
     </Menu>
   );
 };

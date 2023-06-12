@@ -191,3 +191,40 @@ export type CanvasDocument = CanvasMetadata & { data: IndustryCanvasState };
 export type SerializedCanvasDocument = Omit<CanvasDocument, 'data'> & {
   data: SerializedIndustryCanvasState;
 };
+
+// TODO: fix the enum typings here
+export enum IndustryCanvasToolType {
+  ELLIPSE = 'ellipse',
+  IMAGE = 'image',
+  STICKY = 'sticky',
+  LINE = 'line',
+  PAN = 'pan',
+  POLYLINE = 'polyline',
+  RECTANGLE = 'rectangle',
+  SELECT = 'select',
+  TEXT = 'text',
+  COMMENT = 'comment',
+}
+
+export const COMMENT_METADATA_ID = '_IS_COMMENT';
+
+export type CommentAnnotation = RectangleAnnotation;
+
+export const isCommentAnnotation = (
+  annotation: Annotation
+): annotation is CommentAnnotation =>
+  annotation.metadata && annotation.metadata[COMMENT_METADATA_ID] === true;
+
+export type Comment = {
+  text: string;
+  author: string;
+  thread?: { externalId: string };
+  canvas?: { externalId: string };
+  x?: number;
+  y?: number;
+  externalId: string;
+  createdTime: Date;
+  lastUpdatedTime: Date;
+  // additive, not from api
+  subComments: Comment[];
+};
