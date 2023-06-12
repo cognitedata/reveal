@@ -1,19 +1,10 @@
-import {
-  Body,
-  Colors,
-  Detail,
-  Flex,
-  Icon,
-  SegmentedControl,
-  Title,
-} from '@cognite/cogs.js';
+import { Body, Colors, Detail, Flex, Icon, Title } from '@cognite/cogs.js';
 import { useTranslation } from 'common';
 import Section from 'components/section';
 import { MQTTJobWithMetrics } from 'hooks/hostedExtractors';
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import {
-  AggregationInterval,
   getMetricAggregationErrorCount,
   getMetricAggregationSuccessCount,
   getMetricAggregations,
@@ -23,16 +14,15 @@ import { BAR_HEIGHT, MessageHistoryChartItem } from './MessageHistoryChartItem';
 type DataHistoryChartProps = {
   className?: string;
   jobs: MQTTJobWithMetrics[];
+  aggregationInterval: 'hourly' | 'daily';
 };
 
 export const DataHistoryChart = ({
   className,
   jobs,
+  aggregationInterval,
 }: DataHistoryChartProps): JSX.Element => {
   const { t } = useTranslation();
-
-  const [aggregationInterval, setAggregationInterval] =
-    useState<AggregationInterval>('hourly');
 
   const aggregations = useMemo(() => {
     const metrics = jobs.flatMap(({ metrics }) => metrics);

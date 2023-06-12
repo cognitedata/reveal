@@ -456,6 +456,8 @@ const getMQTTJobsWithMetrics = async (
 ) => {
   const jobs = await getMQTTJobs(sdk, sourceExternalId);
   const metrics = await getMQTTJobMetrics(sdk, sourceExternalId);
+  console.log('ext', jobs);
+  console.log('extm', metrics);
 
   const jobsWithMetrics: Record<string, MQTTJobWithMetrics> = {};
 

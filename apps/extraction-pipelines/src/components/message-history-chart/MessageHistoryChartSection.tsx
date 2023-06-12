@@ -1,24 +1,10 @@
-import {
-  Body,
-  Colors,
-  Detail,
-  Flex,
-  Icon,
-  SegmentedControl,
-  Title,
-} from '@cognite/cogs.js';
+import { SegmentedControl, Title } from '@cognite/cogs.js';
 import { useTranslation } from 'common';
 import Section from 'components/section';
 import { MQTTJobWithMetrics } from 'hooks/hostedExtractors';
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import {
-  AggregationInterval,
-  getMetricAggregationErrorCount,
-  getMetricAggregationSuccessCount,
-  getMetricAggregations,
-} from 'utils/hostedExtractors';
-import { BAR_HEIGHT, MessageHistoryChartItem } from './MessageHistoryChartItem';
+import { AggregationInterval } from 'utils/hostedExtractors';
 import { MessageHistoryChart } from './MessageHistoryChart';
 import { DataHistoryChart } from './DataHistoryChart';
 
@@ -36,33 +22,7 @@ export const MessageHistoryChartSection = ({
   const [aggregationInterval, setAggregationInterval] =
     useState<AggregationInterval>('hourly');
 
-  const aggregations = useMemo(() => {
-    const metrics = jobs.flatMap(({ metrics }) => metrics);
-
-    return getMetricAggregations(
-      metrics,
-      aggregationInterval,
-      aggregationInterval === 'hourly' ? 72 : 30
-    );
-  }, [jobs, aggregationInterval]);
-
-  const yMax = Math.max(
-    ...aggregations.map(({ data }) => {
-      if (!data) {
-        return 0;
-      }
-
-      const successCount = getMetricAggregationSuccessCount(data);
-      const errorCount = getMetricAggregationErrorCount(data);
-      return successCount + errorCount;
-    })
-  );
-
-  const totalErrorCount = useMemo(() => {
-    return aggregations.reduce((acc, cur) => {
-      return acc + getMetricAggregationErrorCount(cur.data);
-    }, 0);
-  }, [aggregations]);
+  //   console.log(jobs);
 
   return (
     <Section
@@ -87,8 +47,14 @@ export const MessageHistoryChartSection = ({
       title={<Title level={6}>{t('topic-filters-status')}</Title>}
     >
       <Content>
-        <StyledMessageHistoryChart jobs={jobs} />
-        <StyledDataHistoryChart jobs={jobs} />
+        <StyledMessageHistoryChart
+          jobs={jobs}
+          aggregationInterval={aggregationInterval}
+        />
+        <StyledDataHistoryChart
+          jobs={jobs}
+          aggregationInterval={aggregationInterval}
+        />
       </Content>
     </Section>
   );
