@@ -10,7 +10,7 @@ import {
 
 describe('Utils', () => {
   describe('checkUnifiedSignin', () => {
-    global.window = Object.create(window);
+    global.window ??= Object.create(window);
 
     it('Should return false when app is served from fusion domains', () => {
       Object.defineProperty(window, 'location', {
@@ -40,7 +40,7 @@ describe('Utils', () => {
   });
 
   describe('getEnv', () => {
-    global.window = Object.create(window);
+    global.window ??= Object.create(window);
     Object.defineProperty(window, 'location', {
       writable: true,
       value: {
@@ -65,7 +65,7 @@ describe('Utils', () => {
 
   describe('createLink', () => {
     const tenant = 'some-tenant';
-    global.window = Object.create(window);
+    global.window ??= Object.create(window);
 
     it('should include the tenant', () => {
       Object.defineProperty(window, 'location', {
@@ -256,7 +256,7 @@ describe('Utils', () => {
   });
 
   describe('checkUrl', () => {
-    global.window = Object.create(window);
+    global.window ??= Object.create(window);
 
     it('Should correctly recognize env from URL as dev', () => {
       Object.defineProperty(window, 'location', {
@@ -322,7 +322,7 @@ describe('Utils', () => {
   });
 
   describe('checkProject', () => {
-    global.window = Object.create(window);
+    global.window ??= Object.create(window);
 
     it('Should correctly recognize project from URL', () => {
       Object.defineProperty(window, 'location', {
@@ -361,7 +361,7 @@ describe('Utils', () => {
   });
 
   describe('checkOrganization', () => {
-    global.window = Object.create(window);
+    global.window ??= Object.create(window);
 
     it('Should correctly recognize organization from sub domain', () => {
       Object.defineProperty(window, 'location', {
