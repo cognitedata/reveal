@@ -60,7 +60,7 @@ export class TreeIndexToSectorsMap {
    * Check whether or not a sector is completely processed, for a given geometry type
    * @param sectorId The sector id
    * @param type The geometry type
-   * @returs True if completed, false otherwise
+   * @returns True if completed, false otherwise
    */
   isCompleted(sectorId: number, type: RevealGeometryCollectionType): boolean {
     const parsedTypes = this.parsedSectors.get(sectorId);
