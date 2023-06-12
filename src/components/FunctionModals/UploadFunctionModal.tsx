@@ -499,7 +499,13 @@ export default function UploadFunctionModal({ onCancel }: Props) {
               {secrets.length >= 5 ? (
                 <p>You may only have 5 secrets</p>
               ) : (
-                <Button icon="Plus" onClick={addSecret}>
+                <Button onClick={addSecret}>
+                  <Icon
+                    type="Add"
+                    size={22}
+                    // @ts-ignore
+                    style={{ left: -12, position: 'relative' }}
+                  />
                   Add a secret
                 </Button>
               )}
