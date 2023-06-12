@@ -7,13 +7,13 @@ export const paths: { [key: string]: PathData } = {
   landingPage: {
     showOnStepList: false,
     path: () => `/${root}`,
-    staticPath: staticRoot,
+    staticPath: '/',
     title: 'Interactive Engineering Diagrams',
   },
   diagramSelection: {
     showOnStepList: true,
     path: (workflowId?: string | number) => `/${root}/workflow/${workflowId}`,
-    staticPath: `${staticRoot}/workflow/:workflowId`,
+    staticPath: 'workflow/:workflowId',
     title: 'Select engineering diagrams',
     workflowStepName: 'diagramSelection',
   },
@@ -21,7 +21,7 @@ export const paths: { [key: string]: PathData } = {
     showOnStepList: true,
     path: (workflowId?: string | number) =>
       `/${root}/workflow/${workflowId}/selection/files`,
-    staticPath: `${staticRoot}/workflow/:workflowId/selection/files`,
+    staticPath: 'workflow/:workflowId/selection/files',
     title: 'Other engineering diagrams',
     workflowStepName: 'resourceSelectionFiles',
     comboBox: 'Link to...',
@@ -30,7 +30,7 @@ export const paths: { [key: string]: PathData } = {
     showOnStepList: true,
     path: (workflowId?: string | number) =>
       `/${root}/workflow/${workflowId}/selection/assets`,
-    staticPath: `${staticRoot}/workflow/:workflowId/selection/assets`,
+    staticPath: 'workflow/:workflowId/selection/assets',
     title: 'Assets',
     workflowStepName: 'resourceSelectionAssets',
     comboBox: 'Link to...',
@@ -39,7 +39,7 @@ export const paths: { [key: string]: PathData } = {
     showOnStepList: true,
     path: (workflowId?: string | number) =>
       `/${root}/workflow/${workflowId}/config`,
-    staticPath: `${staticRoot}/workflow/:workflowId/config`,
+    staticPath: 'workflow/:workflowId/config',
     title: 'Select model',
     workflowStepName: 'config',
     skippable: true,
@@ -48,7 +48,7 @@ export const paths: { [key: string]: PathData } = {
     showOnStepList: true,
     path: (workflowId?: string | number) =>
       `/${root}/workflow/${workflowId}/review`,
-    staticPath: `${staticRoot}/workflow/:workflowId/review`,
+    staticPath: 'workflow/:workflowId/review',
     title: 'Review results',
     workflowStepName: 'review',
   },
@@ -56,7 +56,7 @@ export const paths: { [key: string]: PathData } = {
     showOnStepList: false,
     path: (workflowId?: string | number, fileId?: string | number) =>
       `/${root}/workflow/${workflowId}/diagram/${fileId}`,
-    staticPath: `${staticRoot}/workflow/:workflowId/diagram/:fileId`,
+    staticPath: 'workflow/:workflowId/diagram/:fileId',
     title: 'Review a file',
     workflowStepName: 'diagramPreview',
   },

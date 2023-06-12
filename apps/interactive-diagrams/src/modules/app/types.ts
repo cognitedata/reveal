@@ -4,9 +4,3 @@ export interface AppState {
   loaded: boolean;
   groups: { [key: string]: string[] };
 }
-
-export type OnResourceSelectedParams = {
-  assetId?: number;
-  fileId?: number;
-  showSidebar?: boolean;
-};

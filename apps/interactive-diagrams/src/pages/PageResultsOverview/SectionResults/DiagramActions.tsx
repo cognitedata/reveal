@@ -1,5 +1,5 @@
 import React from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { Dropdown } from '@interactive-diagrams-app/components/Common';
 import { MenuAll } from '@interactive-diagrams-app/containers';
@@ -21,7 +21,7 @@ import { Button } from '@cognite/cogs.js';
 import { InfoWrapper } from './components';
 
 export default function DiagramActions() {
-  const history = useHistory();
+  const navigate = useNavigate();
   const { workflowId } = useActiveWorkflow();
   const diagramsIds = useWorkflowDiagramsIds(workflowId, true, true);
   const { diagrams } = useWorkflowItems(Number(workflowId), true);
@@ -32,7 +32,7 @@ export default function DiagramActions() {
 
   const onPreviewAllClick = () => {
     if (!noSuccessfulFiles)
-      history.push(
+      navigate(
         getUrlWithQueryParams(diagramPreview.path(workflowId, diagramsIds[0]))
       );
   };

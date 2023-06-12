@@ -1,8 +1,10 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
-import { Link, Flex } from '@interactive-diagrams-app/components/Common';
+import { Flex } from '@interactive-diagrams-app/components/Common';
 import { useCompletedSteps } from '@interactive-diagrams-app/hooks';
 import { WorkflowStep } from '@interactive-diagrams-app/modules/types';
+import { getUrlWithQueryParams } from '@interactive-diagrams-app/utils/config';
 import {
   PNID_METRICS,
   trackUsage,
@@ -14,7 +16,6 @@ import { StyledStep, StepNumber } from './components';
 import { StepCombo } from './StepCombo';
 import { StepLabel } from './StepLabel';
 import { StepsType } from './types';
-
 type StepProps = {
   title: React.ReactNode;
   url: string;
@@ -78,7 +79,7 @@ export default function Step(props: StepProps) {
   return (
     <StyledStep small={!!small} isCurrent={isCurrent} wasVisited={wasVisited}>
       {isClickable ? (
-        <Link to={url} onClick={onLinkClick}>
+        <Link to={getUrlWithQueryParams(url)} onClick={onLinkClick}>
           <StepContents />
         </Link>
       ) : (

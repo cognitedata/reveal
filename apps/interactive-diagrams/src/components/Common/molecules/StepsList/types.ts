@@ -1,7 +1,7 @@
 import { WorkflowStep } from '@interactive-diagrams-app/modules/types';
 
 export type StepsType = {
-  path: string | undefined;
+  path: string;
   title: React.ReactNode;
   workflowStep?: WorkflowStep;
   substeps?: StepsType[];

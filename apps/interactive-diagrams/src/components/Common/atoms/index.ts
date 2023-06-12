@@ -4,7 +4,6 @@ export * from './Loader';
 export * from './SmallTitle';
 export * from './PageTitle';
 export * from './ColumnTitle';
-export * from './Link';
 export * from './Badge';
 export * from './IconButton';
 export * from './Flex';

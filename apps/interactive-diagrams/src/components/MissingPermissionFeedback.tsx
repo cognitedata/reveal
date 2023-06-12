@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, SyntheticEvent } from 'react';
-import { useParams, useHistory } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 import { notification } from 'antd';
 
@@ -13,18 +13,18 @@ type Props = {
 
 export default function MissingPermissionFeedback(props: Props) {
   const { acl, type } = props;
-  const history = useHistory();
+  const navigate = useNavigate();
   const { project } = useParams<{ project: string }>();
   const { flow } = getFlow();
   const { data: hasPermission } = usePermissions(flow, acl, type);
   const { data: groupPermission } = usePermissions(flow, 'groupsAcl', 'WRITE');
 
-  const navigate = useMemo(
+  const nav = useMemo(
     () => (event: SyntheticEvent) => {
       event.preventDefault();
-      history.push(`/${project}/access-management`);
+      navigate(`/${project}/access-management`);
     },
-    [history, project]
+    [navigate, project]
   );
 
   useEffect(() => {
@@ -35,7 +35,7 @@ export default function MissingPermissionFeedback(props: Props) {
         description: (
           <p>
             Go to{' '}
-            <a onClick={navigate} href={`/${project}/access-management`}>
+            <a onClick={nav} href={`/${project}/access-management`}>
               Access Management
             </a>{' '}
             and set up any missing permissions or contact your administrator!
@@ -43,7 +43,7 @@ export default function MissingPermissionFeedback(props: Props) {
         ),
       });
     }
-  }, [navigate, groupPermission, project]);
+  }, [nav, groupPermission, project]);
 
   useEffect(() => {
     if (groupPermission && !hasPermission) {
@@ -52,7 +52,7 @@ export default function MissingPermissionFeedback(props: Props) {
         description: (
           <p>
             Go to{' '}
-            <a onClick={navigate} href={`/${project}/access-management`}>
+            <a onClick={nav} href={`/${project}/access-management`}>
               Access Management
             </a>{' '}
             and set up any missing permissions or contact your administrator!
@@ -60,7 +60,7 @@ export default function MissingPermissionFeedback(props: Props) {
         ),
       });
     }
-  }, [navigate, groupPermission, hasPermission, acl, type, project]);
+  }, [nav, groupPermission, hasPermission, acl, type, project]);
 
   return <></>;
 }

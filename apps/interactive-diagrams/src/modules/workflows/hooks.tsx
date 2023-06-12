@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import {
   useLocalStorage,
@@ -37,7 +37,7 @@ import { useCdfItems, useList } from '@cognite/sdk-react-query-hooks';
  */
 export const useWorkflowCreateNew = () => {
   const dispatch = useDispatch();
-  const history = useHistory();
+  const navigate = useNavigate();
   const [savedSettings] = useLocalStorage<SavedSettings>(LS_KEY_SETTINGS, {
     skip: false,
     modelSelected: 'standard',
@@ -52,7 +52,7 @@ export const useWorkflowCreateNew = () => {
     dispatch(
       createNewWorkflow({ workflowId: newWorkflowId, options, ...(args ?? {}) })
     );
-    history.push(
+    navigate(
       getUrlWithQueryParams(diagramSelection.path(String(newWorkflowId)))
     );
   };

@@ -14,7 +14,6 @@ import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { Wrapper } from './components';
 import Preview from './Preview';
 import SidebarDiagrams from './SidebarDiagrams';
-import SidebarResource from './SidebarResource';
 import TitleBar from './TitleBar';
 
 type Props = {
@@ -73,7 +72,6 @@ export default function PageFileOverview(props: Props) {
         ) : (
           <Loader />
         )}
-        <SidebarResource />
       </Flex>
     </Wrapper>
   );

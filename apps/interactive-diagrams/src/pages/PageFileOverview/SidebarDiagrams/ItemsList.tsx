@@ -1,5 +1,5 @@
 import React from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import styled from 'styled-components';
 
@@ -14,7 +14,7 @@ import FileItem from './FileItem';
 type ItemsListProps = { diagrams?: FileInfo[] };
 
 export default function ItemsList(props: ItemsListProps) {
-  const history = useHistory();
+  const navigate = useNavigate();
   const { workflowId, fileId } = useParams<{
     workflowId: string;
     fileId: string;
@@ -34,7 +34,7 @@ export default function ItemsList(props: ItemsListProps) {
             file={file}
             isSelected={selectedFileId === file.id}
             onClick={() =>
-              history.push(
+              navigate(
                 getUrlWithQueryParams(diagramPreview.path(workflowId, file.id))
               )
             }

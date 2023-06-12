@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { Flex, PageTitle } from '@interactive-diagrams-app/components/Common';
 import NavigationStickyBottomRow from '@interactive-diagrams-app/components/NavigationStickyBottomRow';
@@ -33,7 +33,7 @@ type Props = {
 
 export default function PageResultsOverview(props: Props) {
   const { step } = props;
-  const history = useHistory();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const client = useQueryClient();
   const { workflowId } = useActiveWorkflow(step);
@@ -50,7 +50,7 @@ export default function PageResultsOverview(props: Props) {
   const areDiagramsSelected = Boolean(selectedDiagramsIds?.length);
 
   const onGoBackHomePage = () =>
-    history.push(getUrlWithQueryParams(landingPage.path()));
+    navigate(getUrlWithQueryParams(landingPage.path()));
   const onSelectionClose = () => {
     dispatch(selectInteractiveDiagrams({ workflowId, diagramIds: [] }));
   };
@@ -58,7 +58,7 @@ export default function PageResultsOverview(props: Props) {
   useEffect(() => {
     if (!workflow) {
       message.error('Invalid data selections');
-      history.push(
+      navigate(
         getUrlWithQueryParams(diagramSelection.path(String(workflowId)))
       );
     }

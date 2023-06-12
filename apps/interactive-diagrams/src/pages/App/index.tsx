@@ -1,11 +1,10 @@
-import React, { useEffect, useMemo, useContext, Suspense } from 'react';
+import React, { useEffect, useContext, Suspense } from 'react';
 import {
-  useRouteMatch,
-  useHistory,
+  useNavigate,
   Route,
-  Switch,
-  Redirect,
+  Routes,
   useLocation,
+  useParams,
 } from 'react-router-dom';
 
 import {
@@ -31,7 +30,7 @@ import {
 
 import { ids } from '../../cogs-variables';
 
-const Routes = React.lazy(() => import('@interactive-diagrams-app/routes'));
+const AppRoutes = React.lazy(() => import('@interactive-diagrams-app/routes'));
 
 export default function App() {
   const {
@@ -39,12 +38,10 @@ export default function App() {
     setCdfEnv,
     setProject,
   } = useContext(AppStateContext);
-  const history = useHistory();
-  const { location } = history;
-  const { pathname, search, hash } = useLocation();
-  const {
-    params: { project: projectFromUrl },
-  } = useRouteMatch<{ project: string }>();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { project: projectFromUrl } = useParams<{ project: string }>();
+
   const { username } = useUserId();
 
   const cdfEnvFromUrl = queryString.parse(window.location.search).env as string;
@@ -53,18 +50,19 @@ export default function App() {
   const { data: userInfo } = useUserInformation();
 
   useEffect(() => {
-    setProject(projectFromUrl);
+    if (projectFromUrl) {
+      setProject(projectFromUrl);
+    }
     setCdfEnv(cdfEnvFromUrl);
   }, [projectFromUrl, cdfEnvFromUrl, setCdfEnv, setProject]);
 
   useEffect(() => {
     if (cdfEnvFromContext && !cdfEnvFromUrl) {
-      history.replace({
-        pathname: location.pathname,
-        search: `?env=${cdfEnvFromContext}`,
+      navigate(`${location.pathname}?env=${cdfEnvFromContext}`, {
+        replace: true,
       });
     }
-  }, [cdfEnvFromUrl, cdfEnvFromContext, history, location.pathname]);
+  }, [cdfEnvFromUrl, cdfEnvFromContext, location.pathname, navigate]);
 
   useEffect(() => {
     if (username) {
@@ -86,7 +84,6 @@ export default function App() {
             <DataExplorationProvider
               flow={flow}
               userInfo={userInfo}
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-ignore:next-line
               sdk={sdk}
               styleScopeId={ids.styleScope}
@@ -95,22 +92,10 @@ export default function App() {
                   '/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.min.js',
               }}
             >
-              <Switch>
-                <Redirect
-                  from="/:url*(/+)"
-                  to={{
-                    pathname: pathname.slice(0, -1),
-                    search,
-                    hash,
-                  }}
-                />
-                <Route
-                  key={staticRoot}
-                  path={staticRoot}
-                  component={useMemo(() => Routes, [])}
-                />
-                <Route path="/:project/*" component={() => <NotFound />} />
-              </Switch>
+              <Routes>
+                <Route key={staticRoot} path="/*" element={<AppRoutes />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
             </DataExplorationProvider>
           </ResourceActionsProvider>
         </ResourceSelectionProvider>

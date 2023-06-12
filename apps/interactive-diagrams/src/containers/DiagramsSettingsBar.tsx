@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import styled from 'styled-components';
 
@@ -39,7 +39,7 @@ export const DiagramsSettingsBar = (props: Props) => {
     marginBottom = 64,
     onClose,
   } = props;
-  const history = useHistory();
+  const navigate = useNavigate();
   const { createWorkflow } = useWorkflowCreateNew();
   const [showModal, setShowModal] = useState<boolean>(false);
   const [isApproveDisabled, setIsApproveDisabled] = useState<boolean>(true);
@@ -60,7 +60,7 @@ export const DiagramsSettingsBar = (props: Props) => {
   } = useReviewFiles(selectedDiagramsIds);
 
   const onPreviewSelectedClick = () => {
-    history.push(
+    navigate(
       getUrlWithQueryParams(
         diagramPreview.path(workflowId, selectedDiagramsIds[0])
       )

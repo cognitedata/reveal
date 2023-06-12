@@ -1,5 +1,5 @@
 import React from 'react';
-import { useParams, useHistory } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 import {
   Flex,
@@ -17,7 +17,7 @@ import { Tooltip } from '@cognite/cogs.js';
 type Props = { file: any };
 
 export default function ColumnFileActions({ file }: Props): JSX.Element {
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const { workflowId } = useParams<{ workflowId: string }>();
 
@@ -41,9 +41,7 @@ export default function ColumnFileActions({ file }: Props): JSX.Element {
 
   const onFileViewClick = () => {
     if (file) {
-      history.push(
-        getUrlWithQueryParams(diagramPreview.path(workflowId, file.id))
-      );
+      navigate(getUrlWithQueryParams(diagramPreview.path(workflowId, file.id)));
     } else {
       message.info('Please wait for the process to finish for this diagram.');
     }

@@ -1,9 +1,11 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import { Link, Flex } from '@interactive-diagrams-app/components/Common';
+import { Flex } from '@interactive-diagrams-app/components/Common';
 import { useCurrentStep } from '@interactive-diagrams-app/hooks';
+import { getUrlWithQueryParams } from '@interactive-diagrams-app/utils/config';
 import {
   PNID_METRICS,
   trackUsage,
@@ -33,7 +35,10 @@ export const StepCombo = (props: Props): JSX.Element => {
           onClick={(e) => e.preventDefault()}
           isCurrent={substep.workflowStep === currentStep}
         >
-          <Link to={substep.path} onClick={() => onSubStepClick(substep)}>
+          <Link
+            to={getUrlWithQueryParams(substep.path)}
+            onClick={() => onSubStepClick(substep)}
+          >
             <Flex row style={{ width: '100%', height: '100%' }}>
               {substep.title}
             </Flex>

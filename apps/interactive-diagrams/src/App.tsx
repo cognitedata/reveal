@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Provider } from 'react-redux';
-import { Router, Route, Switch } from 'react-router-dom';
+import { Route, Routes, BrowserRouter } from 'react-router-dom';
 
 import { AppStateProvider } from '@interactive-diagrams-app/context';
 import { setItemInStorage } from '@interactive-diagrams-app/hooks';
@@ -13,7 +13,6 @@ import store, {
 import { LS_KEY_PREFIX } from '@interactive-diagrams-app/stringConstants';
 import { AntStyles, GlobalStyles } from '@interactive-diagrams-app/styles';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { createBrowserHistory } from 'history';
 import debounce from 'lodash/debounce';
 
 import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
@@ -28,7 +27,6 @@ import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 import { SDKProvider } from '@cognite/sdk-provider';
 
 const App = () => {
-  const history = createBrowserHistory();
   const project = getProject();
   const env = getEnv();
   const LS_KEY = `${LS_KEY_PREFIX}_${project}`;
@@ -73,11 +71,14 @@ const App = () => {
               <AppStateProvider>
                 <Provider store={store}>
                   <SubAppWrapper title="Interactive Engineering Diagrams">
-                    <Router history={history}>
-                      <Switch>
-                        <Route path={`/:project/${root}`} component={RootApp} />
-                      </Switch>
-                    </Router>
+                    <BrowserRouter>
+                      <Routes>
+                        <Route
+                          path={`/:project/${root}/*`}
+                          element={<RootApp />}
+                        />
+                      </Routes>
+                    </BrowserRouter>
                   </SubAppWrapper>
                 </Provider>
               </AppStateProvider>

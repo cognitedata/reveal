@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { useActiveWorkflow } from '@interactive-diagrams-app/hooks';
 import {
@@ -16,7 +16,7 @@ import {
 } from '@interactive-diagrams-app/utils/Metrics';
 
 export const useSteps = (step?: WorkflowStep) => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const { workflowId } = useActiveWorkflow();
 
   const routes = routesMap();
@@ -35,8 +35,8 @@ export const useSteps = (step?: WorkflowStep) => {
         stepNext = routes[nextStepIndex + 1];
       }
       if (args)
-        history.push(getUrlWithQueryParams(stepNext.path(workflowId, ...args)));
-      else history.push(getUrlWithQueryParams(stepNext.path(workflowId)));
+        navigate(getUrlWithQueryParams(stepNext.path(workflowId, ...args)));
+      else navigate(getUrlWithQueryParams(stepNext.path(workflowId)));
     }
   };
 
@@ -51,10 +51,10 @@ export const useSteps = (step?: WorkflowStep) => {
     if (prevStepIndex >= 0) {
       const stepPrev = routes[prevStepIndex];
       if (args)
-        history.push(getUrlWithQueryParams(stepPrev.path(workflowId, ...args)));
-      else history.push(getUrlWithQueryParams(stepPrev.path(workflowId)));
+        navigate(getUrlWithQueryParams(stepPrev.path(workflowId, ...args)));
+      else navigate(getUrlWithQueryParams(stepPrev.path(workflowId)));
     } else {
-      history.goBack();
+      navigate(-1);
     }
   };
 
@@ -65,7 +65,7 @@ export const useSteps = (step?: WorkflowStep) => {
 };
 
 export const useGoToStep = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const { workflowId } = useActiveWorkflow();
 
   const routes = routesMap();
@@ -76,7 +76,7 @@ export const useGoToStep = () => {
     });
     const step = routes.find((route) => route.workflowStepName === stepToGo);
     if (!step) return;
-    history.push(getUrlWithQueryParams(step.path(workflowId)));
+    navigate(getUrlWithQueryParams(step.path(workflowId)));
   };
 
   return { goToStep };

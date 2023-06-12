@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import ResourceSelectionContext from '@interactive-diagrams-app/context/ResourceSelectionContext';
 import isMatch from 'lodash/isMatch';
@@ -16,7 +16,7 @@ export const ResourceDetailTabContent = ({
   resource: ResourceItem;
   type: ResourceType;
 }) => {
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const { mode, onSelect, resourcesState } = useContext(
     ResourceSelectionContext
@@ -33,7 +33,7 @@ export const ResourceDetailTabContent = ({
       type={type}
       parentResource={resource}
       onItemClicked={(id: number) => {
-        history.push(createLink(`/explore/${type}/${id}`));
+        navigate(createLink(`/explore/${type}/${id}`));
       }}
       selectionMode={mode}
       onSelect={onSelect}

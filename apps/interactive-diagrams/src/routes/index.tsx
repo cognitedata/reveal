@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch, Route } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 
 import Breadcrumbs from '@interactive-diagrams-app/components/Breadcrumbs';
 import {
@@ -17,7 +17,6 @@ import PageSelection from '@interactive-diagrams-app/pages/PageSelection';
 import { PageTitle } from '@cognite/cdf-utilities';
 
 import {
-  landingPage,
   diagramSelection,
   resourceSelectionAssets,
   resourceSelectionFiles,
@@ -51,26 +50,24 @@ const getBreadcrumbs = () => {
   return [BREADCRUMBS.default];
 };
 
-export default function Routes() {
+export default function AppRoutes() {
   return (
     <>
       <Breadcrumbs breadcrumbs={getBreadcrumbs()} />
       <GroupsRequired>
-        <Switch>
+        <Routes>
           <Route
-            exact
-            path={landingPage.staticPath}
-            render={() => (
+            index
+            element={
               <PageWrapper>
                 <PageTitle title="Interactive Engineering Diagrams" />
                 <LandingPage />
               </PageWrapper>
-            )}
+            }
           />
           <Route
-            exact
             path={diagramSelection.staticPath}
-            render={() => (
+            element={
               <PageWrapper>
                 <PageTitle title="Interactive Engineering Diagrams" />
                 <Flex row style={{ width: '100%' }}>
@@ -84,12 +81,11 @@ export default function Routes() {
                   />
                 </Flex>
               </PageWrapper>
-            )}
+            }
           />
           <Route
-            exact
             path={resourceSelectionAssets.staticPath}
-            render={() => (
+            element={
               <PageWrapper>
                 <PageTitle title="Interactive Engineering Diagrams" />
                 <Flex row style={{ width: '100%' }}>
@@ -101,12 +97,11 @@ export default function Routes() {
                   />
                 </Flex>
               </PageWrapper>
-            )}
+            }
           />
           <Route
-            exact
             path={resourceSelectionFiles.staticPath}
-            render={() => (
+            element={
               <PageWrapper>
                 <PageTitle title="Interactive Engineering Diagrams" />
                 <Flex row style={{ width: '100%' }}>
@@ -119,12 +114,11 @@ export default function Routes() {
                   />
                 </Flex>
               </PageWrapper>
-            )}
+            }
           />
           <Route
-            exact
             path={configPage.staticPath}
-            render={() => (
+            element={
               <PageWrapper>
                 <PageTitle title="Interactive Engineering Diagrams" />
                 <Flex row style={{ width: '100%' }}>
@@ -132,12 +126,11 @@ export default function Routes() {
                   <PageOptions step="config" />
                 </Flex>
               </PageWrapper>
-            )}
+            }
           />
           <Route
-            exact
             path={reviewPage.staticPath}
-            render={() => (
+            element={
               <PageWrapper>
                 <PageTitle title="Interactive Engineering Diagrams" />
                 <Flex row style={{ width: '100%' }}>
@@ -145,19 +138,18 @@ export default function Routes() {
                   <PageResultsOverview step="review" />
                 </Flex>
               </PageWrapper>
-            )}
+            }
           />
           <Route
-            exact
             path={diagramPreview.staticPath}
-            render={() => (
+            element={
               <>
                 <PageTitle title="Interactive Engineering Diagrams" />
                 <PageFileOverview step="diagramPreview" />
               </>
-            )}
+            }
           />
-        </Switch>
+        </Routes>
       </GroupsRequired>
     </>
   );
