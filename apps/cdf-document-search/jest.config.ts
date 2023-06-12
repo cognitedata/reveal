@@ -7,5 +7,8 @@ export default {
     '^.+\\.[tj]sx?$': ['babel-jest', { presets: ['@nrwl/react/babel'] }],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../coverage/apps/document-search',
+  coverageDirectory: '../../coverage/apps/cdf-document-search',
+  setupFilesAfterEnv: ['./src/setupTests.ts'],
+  collectCoverage: true,
+  collectCoverageFrom: ['./src/app/**/*.{ts,tsx}'],
 };

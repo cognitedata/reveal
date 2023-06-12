@@ -1,8 +1,8 @@
 import React from 'react';
 
 import { screen, fireEvent } from '@testing-library/react';
-import { fixtureClassifier } from '../../../../../../cdf-document-search/src/__fixtures__/sdk/classifier';
-import { testRender } from '../../../../../../cdf-document-search/src/utils/test/render';
+import { fixtureClassifier } from '../../../../__fixtures__/sdk/classifier';
+import { testRender } from '../../../../utils/test/render';
 
 import { ActiveModelContainer } from './ActiveModelContainer';
 
