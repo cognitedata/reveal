@@ -23,7 +23,7 @@ export const InstancesPage = () => {
   // }, [isFetched]);
 
   return (
-    <Page.Dashboard loading={isLoading}>
+    <Page.Dashboard customName={data?.name} loading={isLoading}>
       <Page.Widgets>
         <PropertiesWidget id="Properties" data={data} columns={2} />
       </Page.Widgets>

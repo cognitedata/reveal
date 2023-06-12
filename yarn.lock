@@ -22508,7 +22508,7 @@ match-sorter@6.3.0:
     "@babel/runtime" "^7.12.5"
     remove-accents "0.4.2"
 
-match-sorter@6.3.1, match-sorter@^6.3.0:
+match-sorter@6.3.1, match-sorter@^6.3.0, match-sorter@^6.3.1:
   version "6.3.1"
   resolved "https://registry.yarnpkg.com/match-sorter/-/match-sorter-6.3.1.tgz#98cc37fda756093424ddf3cbc62bfe9c75b92bda"
   integrity sha512-mxybbo3pPNuA+ZuCUhm5bwNkXrJTbsk5VWbR5wiwz/GC6LIiegBGn2w3O08UG/jdbYLinw51fSQ5xNU1U3MgBw==
