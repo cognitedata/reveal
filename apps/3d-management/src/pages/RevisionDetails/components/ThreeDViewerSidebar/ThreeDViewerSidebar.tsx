@@ -59,7 +59,7 @@ export default function ThreeDViewerSidebar(props: Props) {
 
   const { mutate: updateRevisionMutation } = useUpdateRevisionMutation();
 
-  const treeViewFeatureFlagIsEnabled =
+  const { isEnabled: treeViewFeatureFlagIsEnabled } =
     useFlag('3DM_tree-view') || !isProduction();
 
   const updateInitialLocation = async (
