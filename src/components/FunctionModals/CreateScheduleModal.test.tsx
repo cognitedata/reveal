@@ -67,9 +67,9 @@ describe('CreateScheduleModal', () => {
         />
       );
       const createButton = wrapper
-        .find('button.cogs-btn')
+        .find('button.cogs-button')
         .filterWhere((b: ReactWrapper) => b.text() === 'Create');
-      expect(createButton.prop('disabled')).toBe(true);
+      expect(createButton.prop('aria-disabled')).toBe(true);
       wrapper.unmount();
     });
 
@@ -92,9 +92,9 @@ describe('CreateScheduleModal', () => {
       });
 
       const createButton = wrapper
-        .find('button.cogs-btn')
+        .find('button.cogs-button')
         .filterWhere((b: ReactWrapper) => b.text() === 'Create');
-      expect(createButton.prop('disabled')).toBe(false);
+      expect(createButton.prop('aria-disabled')).toBe(false);
 
       wrapper.unmount();
     });
