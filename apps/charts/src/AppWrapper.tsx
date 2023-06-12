@@ -13,8 +13,8 @@ import {
 } from '@cognite/cdf-utilities';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 
-import './set-public-path';
 import { RootApp } from './App';
+import './set-public-path';
 
 export const AppWrapper = () => {
   const projectName = 'charts';

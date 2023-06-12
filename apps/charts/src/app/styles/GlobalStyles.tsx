@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 
-import { getContainer } from '@charts-app/utils/getContainer';
 import { ConfigProvider } from 'antd';
 // import antTheme from './antd-theme.less'; // The .less import did not work
 import antTheme from 'antd/dist/antd.css';
@@ -14,8 +13,14 @@ import {
 } from '@cognite/cogs.js';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 
-import styleScope from './styleScope';
+//@ts-ignore
+import styleScope from '../../styleScope';
 
+export const getContainer = () => {
+  const els = document.getElementsByClassName(styleScope.styleScope);
+  const el = els.item(0)! as HTMLElement;
+  return el;
+};
 // This will override the appendTo prop on all Tooltips used from cog
 CogsTooltip.defaultProps = {
   ...CogsTooltip.defaultProps,
