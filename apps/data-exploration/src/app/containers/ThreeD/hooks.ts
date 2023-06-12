@@ -9,7 +9,7 @@ import {
 import _ from 'lodash';
 import keyBy from 'lodash/keyBy';
 import uniqBy from 'lodash/uniqBy';
-import { Vector3 } from 'three';
+import THREE, { Vector3, Color } from 'three';
 
 import {
   CogniteModel,
@@ -17,6 +17,8 @@ import {
   Cognite3DViewer,
   CognitePointCloudModel,
   Image360Collection,
+  Overlay3DTool,
+  OverlayInfo,
   Image360,
 } from '@cognite/reveal';
 import {
@@ -40,7 +42,15 @@ import {
   useEventsSearchResultQuery,
 } from '@data-exploration-lib/domain-layer';
 
-import { IMAGE_360_POSITION_THRESHOLD, prepareSearchString } from './utils';
+import {
+  PointsOfInterestOverlayCollection,
+  PointsOfInterestOverlayCollectionType,
+} from './load-secondary-models/PointsOfInterestLoader';
+import {
+  IMAGE_360_POSITION_THRESHOLD,
+  SECONDARY_MODEL_DISPLAY_LIMIT,
+  prepareSearchString,
+} from './utils';
 
 export type ThreeDModelsResponse = {
   items: Model3D[];
@@ -83,6 +93,108 @@ export const use3DModel = (id: number | undefined) => {
     },
     { enabled: Boolean(id) }
   );
+};
+
+type ListFDMDataModelsResponse = {
+  items: FDMDataModelResponseItem[];
+};
+
+type FDMDataModelResponseItem = {
+  space: string;
+  externalId: string;
+  version: string;
+  name: string;
+};
+
+type APMConfigResponse = {
+  data: {
+    listAPM_Config: {
+      edges: APMConfigEdge[];
+    };
+  };
+};
+
+type APMConfigEdge = {
+  node: APMConfigNode;
+};
+
+export type APMConfigNode = {
+  name: string | null;
+  appDataSpaceId: string;
+  appDataSpaceVersion: string;
+  customerDataSpaceId: string;
+  customerDataSpaceVersion: string;
+};
+
+export type FDMChecklistResponse = {
+  data: {
+    listAPM_Checklist: {
+      items: FDMChecklistItemResponse[];
+      pageInfo: PageInfo;
+    };
+  };
+};
+
+type FDMErrorResponse = {
+  errors: {
+    message: string;
+    error: {
+      message: string;
+      code: number;
+    };
+  }[];
+};
+
+export type FDMChecklistItemResponse = {
+  description: string;
+  title: string;
+  status: string;
+  externalId: string;
+  items: {
+    items: {
+      title: string;
+      observations: {
+        items: {
+          description: string;
+          fileIds: string[];
+          position: {
+            x: number;
+            y: number;
+            z: number;
+          };
+        }[];
+      };
+    }[];
+  };
+};
+
+export type PageInfo = {
+  startCursor: string;
+  endCursor: string;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+};
+
+export type PointsOfInterestCollection = {
+  externalId: string;
+  title?: string;
+  description?: string;
+  status?: string;
+  pointsOfInterest?: PointOfInterest[];
+  applied?: boolean;
+};
+
+export type PointOfInterest = {
+  title: string; // Comes from the ChecklistItem
+  description: string;
+  fileIds: string[];
+  position: ThreeDPosition;
+};
+
+export type ThreeDPosition = {
+  x: number;
+  y: number;
+  z: number;
 };
 
 type RevisionOpts<T> = UseQueryOptions<Revision3DWithIndex[], unknown, T>;
@@ -142,6 +254,179 @@ export const useImage360 = (siteId?: string): Image360SiteData | undefined => {
     siteName: img360.metadata?.site_name ?? 'No site name',
   };
   return image360SiteData;
+};
+
+export const useAPMConfig = () => {
+  const sdk = useSDK();
+  const project = sdk.project;
+  const baseUrl = sdk.getBaseUrl();
+  return useQuery<APMConfigNode | undefined>(['useAPMCOnfig'], async () => {
+    // Find correct version and space for the APM_Config
+    const listDataModelsUrl = `${baseUrl}/api/v1/projects/${project}/models/datamodels`;
+    const listDataModelsResponse = await sdk.get(listDataModelsUrl);
+
+    const dataModelsList =
+      listDataModelsResponse.data as ListFDMDataModelsResponse;
+
+    const filteredDataModelsList = dataModelsList.items.filter(
+      (item) => item.name === 'APM_Config'
+    );
+    if (filteredDataModelsList.length !== 1) {
+      return undefined;
+    }
+
+    const getApmConfigQuery = {
+      data: {
+        query: `query MyQuery {
+          listAPM_Config {
+            edges {
+              node {
+                name
+                appDataSpaceId
+                appDataSpaceVersion
+                customerDataSpaceId
+                customerDataSpaceVersion
+                featureConfiguration
+                fieldConfiguration
+                rootLocationsConfiguration
+              }
+            }
+          }
+        }`,
+      },
+    };
+
+    const space = filteredDataModelsList[0].space;
+    const version = filteredDataModelsList[0].version;
+    const fdmGetAPMConfigEndpoint = `${baseUrl}/api/v1/projects/${project}/userapis/spaces/${space}/datamodels/${space}/versions/${version}/graphql`;
+    const fdmAPMConfigData = await sdk.post(
+      fdmGetAPMConfigEndpoint,
+      getApmConfigQuery
+    );
+
+    const fdmConfigDataResponseAsList =
+      fdmAPMConfigData.data as APMConfigResponse;
+    if (fdmConfigDataResponseAsList.data.listAPM_Config.edges.length !== 1) {
+      return undefined;
+    }
+
+    return fdmConfigDataResponseAsList.data.listAPM_Config.edges[0].node;
+  });
+};
+
+export const useInfiniteChecklistItems = (
+  config?: UseInfiniteQueryOptions<FDMChecklistResponse, CogniteError>,
+  apmConfig?: APMConfigNode | undefined
+) => {
+  const sdk = useSDK();
+  return useInfiniteQuery<FDMChecklistResponse, CogniteError>(
+    ['cdf', 'infinite', '3d', '3d-points-of-interest'],
+    async ({ pageParam }) => {
+      const emptyResponse: FDMChecklistResponse = {
+        data: {
+          listAPM_Checklist: {
+            items: [],
+            pageInfo: {
+              startCursor: '',
+              endCursor: '',
+              hasNextPage: false,
+              hasPreviousPage: false,
+            },
+          },
+        },
+      };
+
+      const project = sdk.project;
+      const baseUrl = sdk.getBaseUrl();
+
+      if (!apmConfig) {
+        return emptyResponse;
+      }
+
+      // Get checklist data
+      const fdmGetChecklistItemsQueryEndpoint = `${baseUrl}/api/v1/projects/${project}/userapis/spaces/${apmConfig.appDataSpaceId}/datamodels/${apmConfig.appDataSpaceId}/versions/${apmConfig.appDataSpaceVersion}/graphql`;
+
+      const numberOfElementsFilter = `first: 10`;
+
+      let cursor = '';
+      if (pageParam !== null && pageParam !== undefined) {
+        cursor = ` after: "${pageParam}"`;
+      }
+      const getChecklistItemsQuery = {
+        data: {
+          query: `query GetChecklistItems {
+            listAPM_Checklist (${numberOfElementsFilter} ${cursor}) {
+              items {
+                description
+                title
+                status
+                externalId
+                items(first: 500) {
+                  items {
+                    title
+                    observations(first: 500) {
+                      items {
+                        description
+                        fileIds
+                        position {
+                          x
+                          y
+                          z
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              pageInfo {
+                startCursor
+                endCursor
+                hasNextPage
+                hasPreviousPage
+              }
+            }
+          }`,
+        },
+      };
+      const fdmFilteredChecklistData = await sdk.post(
+        fdmGetChecklistItemsQueryEndpoint,
+        getChecklistItemsQuery
+      );
+
+      // If the number of items asked for is a multiple of the limit, and the last item is fetched
+      // FDM will return hasNextPage as true, even though there is no more data to fetch
+      // Must thus check if it has returned a FDMChecklistResponse
+      const fdmChecklistResponse =
+        fdmFilteredChecklistData.data as FDMChecklistResponse;
+
+      function isFdmChecklistResponse(
+        response: FDMChecklistResponse
+      ): response is FDMChecklistResponse {
+        return (
+          response.data !== undefined &&
+          response.data.listAPM_Checklist !== undefined &&
+          response.data.listAPM_Checklist.items !== undefined
+        );
+      }
+
+      if (isFdmChecklistResponse(fdmChecklistResponse)) {
+        return fdmChecklistResponse;
+      } else {
+        return emptyResponse;
+      }
+    },
+    {
+      getNextPageParam: (prevPage) => {
+        if (prevPage === undefined || prevPage.data === undefined) {
+          return undefined;
+        }
+        return prevPage.data.listAPM_Checklist.pageInfo.hasNextPage
+          ? prevPage.data.listAPM_Checklist.pageInfo.endCursor
+          : undefined;
+      },
+      ...config,
+    }
+  );
 };
 
 export const useInfiniteAssetMappings = (
@@ -480,6 +765,7 @@ export const fetchAssetDetails = (
 
 export const SECONDARY_MODEL_BASE_QUERY_KEY = 'reveal-secondary-model';
 export const IMAGES_360_BASE_QUERY_KEY = 'reveal-360-images';
+export const POINTS_OF_INTEREST_BASE_QUERY_KEY = 'reveal-pois';
 
 export const getSecondaryModelQueryKey = (
   modelId: number,
@@ -669,3 +955,75 @@ export const getImages360QueryFn =
 
     return applied;
   };
+
+export const getPointsOfInterestQueryKey = (externalId: string) => [
+  POINTS_OF_INTEREST_BASE_QUERY_KEY,
+  externalId,
+];
+
+export const getPointsOfInterestsAppliedStateQueryKey = (
+  externalId: string,
+  applied?: boolean
+) => [...getPointsOfInterestQueryKey(externalId), applied];
+
+export const getPointsOfInterestsQueryFn = (
+  queryClient: QueryClient,
+  overlayTool: Overlay3DTool<PointsOfInterestOverlayCollectionType>,
+  pointsOfInterestCollection: PointsOfInterestCollection,
+  pointsOfInterestOverlayCollection: PointsOfInterestOverlayCollection[]
+) => {
+  return () => {
+    queryClient.invalidateQueries(
+      getPointsOfInterestsAppliedStateQueryKey(
+        pointsOfInterestCollection.externalId,
+        !pointsOfInterestCollection.applied
+      )
+    );
+    const shouldAddPointsOfInterest = pointsOfInterestCollection.applied;
+    if (shouldAddPointsOfInterest) {
+      const labels:
+        | OverlayInfo<PointsOfInterestOverlayCollectionType>[]
+        | undefined = pointsOfInterestCollection.pointsOfInterest?.map(
+        (poi, index) => {
+          const position = new Vector3(
+            poi.position.x,
+            poi.position.y,
+            poi.position.z
+          );
+          return {
+            position,
+            content: {
+              poiCollectionExternalId: pointsOfInterestCollection.externalId,
+              poiIndex: index,
+            },
+          };
+        }
+      );
+      const collection = overlayTool.createOverlayCollection(labels, {
+        defaultOverlayColor: new Color('#4A67FB'),
+      });
+      pointsOfInterestOverlayCollection.push({
+        externalId: pointsOfInterestCollection.externalId,
+        overlays: collection,
+      });
+    } else {
+      const collectionToRemove = pointsOfInterestOverlayCollection.find(
+        (collection) =>
+          collection.externalId === pointsOfInterestCollection.externalId
+      );
+
+      if (
+        collectionToRemove !== null &&
+        collectionToRemove !== undefined &&
+        collectionToRemove.overlays
+      ) {
+        overlayTool.removeOverlayCollection(collectionToRemove.overlays);
+        pointsOfInterestOverlayCollection.splice(
+          pointsOfInterestOverlayCollection.indexOf(collectionToRemove),
+          1
+        );
+      }
+    }
+    return true;
+  };
+};

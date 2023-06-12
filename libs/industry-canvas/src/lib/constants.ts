@@ -1,13 +1,21 @@
+import { TooltipAnchorPosition } from '@cognite/unified-file-viewer';
+
 export const TOAST_POSITION = 'top-left' as const;
+export const ANNOTATION_TOOLTIP_POSITION = TooltipAnchorPosition.BOTTOM_LEFT;
 
 export enum QueryKeys {
   GET_CANVAS = 'canvas.get',
   SAVE_CANVAS = 'canvas.save',
+  SAVE_COMMENT = 'comment.save',
+  DELETE_COMMENT = 'comment.delete',
   CREATE_CANVAS = 'canvas.create',
   ARCHIVE_CANVAS = 'canvas.archive',
   LIST_CANVASES = 'canvas.list',
+  LIST_COMMENTS = 'comments.list',
+  GET_COMMENT = 'comments.get',
   DELETE_CANVAS_ITEMS = 'canvas.delete-items',
   USER_PROFILE = 'user-profile',
+  USERS = 'users',
   USER_PROFILES_BY_IDS = 'user-profiles-by-ids',
   LOCKING = 'canvas.locking',
 }
@@ -41,3 +49,5 @@ export const LINE_STROKE_WIDTH = {
 // TODO: These timeouts can be removed when we implement the appropriate event in UFV: https://cognitedata.atlassian.net/browse/UFV-587
 export const SHAMEFUL_WAIT_TO_ENSURE_ANNOTATIONS_ARE_RENDERED_MS = 100;
 export const SHAMEFUL_WAIT_TO_ENSURE_CONTAINERS_ARE_RENDERED_MS = 100;
+
+export const CommentsFeatureFlagKey = 'UFV_INDUSTRY_CANVAS_COMMENTS';

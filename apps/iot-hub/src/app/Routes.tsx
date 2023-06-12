@@ -2,7 +2,7 @@ import React from 'react';
 import { Outlet, Routes as ReactRoutes, Route } from 'react-router-dom';
 
 import { HomePage } from './pages/HomePage';
-import { IoTPage } from './pages/IoTPage';
+import { IoTPage } from './pages/IoTPage/IoTPage';
 
 const Routes = () => {
   return (

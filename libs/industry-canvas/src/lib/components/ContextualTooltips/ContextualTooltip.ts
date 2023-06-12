@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { Body, Colors, Elevations, Icon, Title } from '@cognite/cogs.js';
+import { Body, Colors, Elevations, Icon, Menu, Title } from '@cognite/cogs.js';
 
 export const Container = styled.div`
   width: 296px;
@@ -19,6 +19,15 @@ export const Header = styled.div`
   align-items: center;
   padding-bottom: 4px;
   justify-content: space-between;
+`;
+
+export const DropdownMenu = styled(Menu)`
+  background: ${Colors['surface--muted--inverted']};
+  color: ${Colors['text-icon--muted--inverted']};
+  .cogs-menu-item,
+  .cogs-menu-item:hover {
+    color: ${Colors['text-icon--muted--inverted']};
+  }
 `;
 
 export const InnerHeaderWrapper = styled.div`

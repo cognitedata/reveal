@@ -32,6 +32,7 @@ import { LabelEventHandler } from '@data-exploration-app/containers/ThreeD/tools
 import {
   useFlagAssetMappingsOverlays,
   useFlagPointCloudSearch,
+  useFlagPointsOfInterestFeature,
 } from '@data-exploration-app/hooks/flags';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
 
@@ -43,6 +44,7 @@ import { AssetPreviewSidebar } from './AssetPreviewSidebar';
 import { ThreeDContext } from './contexts/ThreeDContext';
 import HighQualityToggle from './high-quality-toggle/HighQualityToggle';
 import LoadImages360 from './load-secondary-models/LoadImages360';
+import PointsOfInterestLoader from './load-secondary-models/PointsOfInterestLoader';
 import NodePreview, { ResourceTabType } from './NodePreview';
 import PointSizeSlider from './point-size-slider/PointSizeSlider';
 import Reveal from './Reveal';
@@ -74,6 +76,7 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
   const queryClient = useQueryClient();
   const useOverlays = useFlagAssetMappingsOverlays();
   const pointCloudSearchFeatureFlag = useFlagPointCloudSearch();
+  const usePointsOfInterestFeatureFlag = useFlagPointsOfInterestFeature();
 
   useEffect(() => {
     if (modelId) {
@@ -110,8 +113,10 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
     setViewState,
     images360,
     selectedAssetId,
+    pointsOfInterest,
     setSelectedAssetId,
     overlayTool,
+    secondaryObjectsVisibilityState,
     image360,
   } = useContext(ThreeDContext);
 
@@ -332,6 +337,15 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
                   setImage360Entity={setImage360Entity}
                   viewer={revealViewer}
                 />
+                {usePointsOfInterestFeatureFlag && (
+                  <PointsOfInterestLoader
+                    poiList={pointsOfInterest}
+                    viewer={revealViewer}
+                    secondaryObjectsVisibilityState={
+                      secondaryObjectsVisibilityState
+                    }
+                  />
+                )}
                 <MouseWheelAction
                   isAssetSelected={!!selectedAssetId}
                   viewer={revealViewer}
@@ -400,7 +414,9 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
                       revisionId={revisionId}
                       selectedAssetId={selectedAssetId}
                       setSelectedAssetId={(id) =>
-                        setSelectedAssetAndFitCamera(id, {})
+                        setSelectedAssetAndFitCamera(id, {
+                          imageEntity: image360Entity,
+                        })
                       }
                       viewer={revealViewer}
                       threeDModel={model}

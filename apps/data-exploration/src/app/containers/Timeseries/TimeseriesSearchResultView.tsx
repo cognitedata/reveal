@@ -24,9 +24,11 @@ import {
 } from '@data-exploration-app/hooks/hooks';
 import { useTimeseriesFilters } from '@data-exploration-app/store';
 import { SEARCH_KEY } from '@data-exploration-app/utils/constants';
+import { getSelectedResourceId } from '@data-exploration-lib/core';
 
 import {
   useBreakJourneyPromptToggle,
+  useGetJourney,
   useJourneyLength,
   usePushJourney,
 } from '../../hooks/detailsNavigation';
@@ -38,11 +40,15 @@ export const TimeseriesSearchResultView = () => {
   const [debouncedQuery] = useDebounce(query, 100);
   const isDetailsOverlayEnabled = useFlagOverlayNavigation();
   const [pushJourney] = usePushJourney();
+  const [firstJourney] = useGetJourney();
   const [journeyLength] = useJourneyLength();
   const [, setPromptOpen] = useBreakJourneyPromptToggle();
 
   // Here we need to parse params to find selected timeseries' id.
-  const selectedTimeseriesId = useSelectedResourceId();
+  const selectedTimeseriesId = getSelectedResourceId(
+    'timeSeries',
+    firstJourney
+  );
   const selectedRootAssetId = useSelectedResourceId(true);
 
   const selectedRow = selectedTimeseriesId
@@ -95,7 +101,7 @@ export const TimeseriesSearchResultView = () => {
         />
       </SearchResultWrapper>
 
-      {Boolean(selectedTimeseriesId) && (
+      {!isDetailsOverlayEnabled && Boolean(selectedTimeseriesId) && (
         <SearchResultWrapper>
           <Routes>
             <Route

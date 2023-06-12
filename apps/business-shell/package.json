@@ -1,0 +1,23 @@
+{
+  "name": "@cognite/business-shell",
+  "version": "0.1.0",
+  "scripts": {
+    "start": "../../scripts/start.sh dev business-shell",
+    "build": "../../scripts/build.sh production business-shell",
+    "test": "../../scripts/test.sh business-shell",
+    "lint": "../../scripts/lint.sh business-shell",
+    "lint:fix": "../../scripts/lint.sh --fix business-shell"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

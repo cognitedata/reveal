@@ -78,8 +78,11 @@
       ],
       "@platypus/platypus-core": [
         "libs/data-modeling/platypus-core/src/index.ts"
+      ],
+      "@flexible-data-explorer/*": [
+        "apps/flexible-data-explorer/src/*"
       ]
     }
   },
-  "exclude": ["node_modules", "tmp"]
+  "exclude": ["node_modules", "tmp", "proxy"]
 }

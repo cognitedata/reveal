@@ -20,10 +20,14 @@ import {
 } from '@data-exploration-app/hooks/hooks';
 import { useDocumentFilters } from '@data-exploration-app/store/filter/selectors/documentSelectors';
 import { SEARCH_KEY } from '@data-exploration-app/utils/constants';
-import { EMPTY_OBJECT } from '@data-exploration-lib/core';
+import {
+  EMPTY_OBJECT,
+  getSelectedResourceId,
+} from '@data-exploration-lib/core';
 
 import {
   useBreakJourneyPromptToggle,
+  useGetJourney,
   useJourneyLength,
   usePushJourney,
 } from '../../hooks/detailsNavigation';
@@ -39,11 +43,13 @@ export const FileSearchResultView = () => {
   const [query] = useQueryString(SEARCH_KEY);
   const isDetailsOverlayEnabled = useFlagOverlayNavigation();
   const [pushJourney] = usePushJourney();
+  const [firstJourney] = useGetJourney();
   const [journeyLength] = useJourneyLength();
   const [, setPromptOpen] = useBreakJourneyPromptToggle();
 
   // Here we need to parse params to find selected file's id.
-  const selectedFileId = useSelectedResourceId();
+  const selectedFileId = getSelectedResourceId('file', firstJourney);
+
   const selectedRootAssetId = useSelectedResourceId(true);
 
   const selectedRow = useMemo(() => {
@@ -91,7 +97,7 @@ export const FileSearchResultView = () => {
         />
       </SearchResultWrapper>
 
-      {Boolean(selectedFileId) && (
+      {!isDetailsOverlayEnabled && Boolean(selectedFileId) && (
         <SearchResultWrapper>
           <Routes>
             <Route

@@ -58,7 +58,7 @@ export const FilterBuilderByField: React.FC<FilterBuilderByFieldProps> = ({
         field={selectedField}
         value={value[selectedField.name]}
         operators={config[selectedField.type]}
-        onBackClick={onBackClick}
+        onBackClick={() => setSelectedField(undefined)}
         onApplyClick={handleApplyClick}
       />
     );

@@ -21,7 +21,15 @@ const SubAppWrapper = ({
     <>
       <PageTitle title={title} />
       <StyledWrapper>
-        {breadcrumbItems ? <StyledBreadcrumb items={breadcrumbItems} /> : null}
+        {breadcrumbItems ? (
+          <Breadcrumb
+            items={breadcrumbItems}
+            css={{
+              borderBottom: `1px solid ${Colors['border--muted']}`,
+              padding: ' 14px 42px',
+            }}
+          />
+        ) : null}
         {children}
       </StyledWrapper>
     </>
@@ -37,9 +45,4 @@ const StyledWrapper = styled.div`
   width: 100%;
   overflow: auto;
   background-color: #ffffff;
-`;
-
-const StyledBreadcrumb = styled(Breadcrumb)`
-  border-bottom: 1px solid ${Colors['border--muted']};
-  padding: 14px 42px;
 `;

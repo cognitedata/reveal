@@ -20,9 +20,11 @@ import {
 } from '@data-exploration-app/hooks/hooks';
 import { useSequenceFilters } from '@data-exploration-app/store';
 import { SEARCH_KEY } from '@data-exploration-app/utils/constants';
+import { getSelectedResourceId } from '@data-exploration-lib/core';
 
 import {
   useBreakJourneyPromptToggle,
+  useGetJourney,
   useJourneyLength,
   usePushJourney,
 } from '../../hooks/detailsNavigation';
@@ -35,11 +37,12 @@ export const SequenceSearchResultView = () => {
   const [debouncedQuery] = useDebounce(query, 100);
   const isDetailsOverlayEnabled = useFlagOverlayNavigation();
   const [pushJourney] = usePushJourney();
+  const [firstJourney] = useGetJourney();
   const [journeyLength] = useJourneyLength();
   const [, setPromptOpen] = useBreakJourneyPromptToggle();
 
   // Here we need to parse params to find selected sequence's id.
-  const selectedSequenceId = useSelectedResourceId();
+  const selectedSequenceId = getSelectedResourceId('sequence', firstJourney);
   const selectedRootAssetId = useSelectedResourceId(true);
 
   const selectedRow = selectedSequenceId ? { [selectedSequenceId]: true } : {};
@@ -85,7 +88,7 @@ export const SequenceSearchResultView = () => {
         />
       </SearchResultWrapper>
 
-      {Boolean(selectedSequenceId) && (
+      {!isDetailsOverlayEnabled && Boolean(selectedSequenceId) && (
         <SearchResultWrapper>
           <Routes>
             <Route

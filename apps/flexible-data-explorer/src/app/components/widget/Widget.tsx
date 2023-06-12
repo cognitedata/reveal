@@ -69,7 +69,7 @@ const Container = styled.div<BaseWidgetProps>`
 
     if (props.expanded) {
       return css`
-        align-self: center;
+        align-self: flex-start;
         width: 1024px;
       `;
     }

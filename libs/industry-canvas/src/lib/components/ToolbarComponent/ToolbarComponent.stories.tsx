@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { ComponentStory } from '@storybook/react';
 
-import { ToolType } from '@cognite/unified-file-viewer';
+import { IndustryCanvasToolType } from '../../types';
 
 import ToolbarComponent from './ToolbarComponent';
 
@@ -14,7 +14,9 @@ export default {
 export const ToolbarComponentStory: ComponentStory<
   typeof ToolbarComponent
 > = () => {
-  const [activeTool, setActiveTool] = useState<ToolType>(ToolType.PAN);
+  const [activeTool, setActiveTool] = useState<IndustryCanvasToolType>(
+    IndustryCanvasToolType.PAN
+  );
   return (
     <ToolbarComponent activeTool={activeTool} onToolChange={setActiveTool} />
   );

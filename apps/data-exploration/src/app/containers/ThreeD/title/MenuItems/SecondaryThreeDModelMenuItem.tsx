@@ -57,7 +57,7 @@ export const SecondaryThreeDModelMenuItem = ({
   const menuItemContent = (
     <StyledSecondaryObjectMenuItemContent gap={8}>
       <Checkbox
-        checked={!!options?.applied}
+        checked={Boolean(options?.applied)}
         disabled={!revisions?.length}
         name={`model-${model.id}`}
         onChange={(_, c) => handleClickModelMenuItem(!!c)}
@@ -95,6 +95,7 @@ export const SecondaryThreeDModelMenuItem = ({
         <StyledMenu>
           {revisions?.map(({ createdTime, id, index, published }) => (
             <Menu.Item
+              hideTooltip={true}
               toggled={id === options?.revisionId}
               description={
                 published

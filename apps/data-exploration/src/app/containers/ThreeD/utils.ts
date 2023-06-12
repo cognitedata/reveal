@@ -14,6 +14,7 @@ import {
   CogniteModel,
   Image360Collection,
   Image360Annotation,
+  Image360,
 } from '@cognite/reveal';
 import {
   CogniteClient,
@@ -24,8 +25,8 @@ import {
   AnnotationFilterProps,
   AnnotationModel,
   AnnotationData,
- AnnotationsCogniteAnnotationTypesImagesAssetLink } from '@cognite/sdk';
-
+  AnnotationsCogniteAnnotationTypesImagesAssetLink,
+} from '@cognite/sdk';
 
 import {
   Image360DatasetOptions,
@@ -60,6 +61,7 @@ export type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 
 export type AssetSelectionState = {
   imageAnnotation?: Image360Annotation | undefined;
+  imageEntity?: Image360 | undefined;
 };
 
 export const getAssetQueryKey = (assetId: number) => [
@@ -83,10 +85,10 @@ const getAssetNodeCollectionQueryKey = (
   revisionId: number,
   assetId?: number
 ) => [
-    ...queryKeyBase(modelId, revisionId),
-    'node-asset-collection',
-    { assetId },
-  ];
+  ...queryKeyBase(modelId, revisionId),
+  'node-asset-collection',
+  { assetId },
+];
 
 const getBoundingBoxByNodeIdQueryKey = (
   modelId: number,
@@ -200,6 +202,15 @@ export const fitCameraToAsset = async (
     if (assetSelectionState.imageAnnotation) {
       selectedAnnotation = annotationInfo.find(
         (info) => info.annotation === assetSelectionState.imageAnnotation
+      );
+    }
+
+    if (
+      assetSelectionState !== undefined &&
+      assetSelectionState.imageEntity !== undefined
+    ) {
+      selectedAnnotation = annotationInfo.find(
+        (info) => info.image === assetSelectionState.imageEntity
       );
     }
 
@@ -530,8 +541,9 @@ export function mixColorsToCSS(
   mixedColor.r = color1.r * ratio + color2.r * (1 - ratio);
   mixedColor.g = color1.g * ratio + color2.g * (1 - ratio);
   mixedColor.b = color1.b * ratio + color2.b * (1 - ratio);
-  return `rgb(${mixedColor.r * 255}, ${mixedColor.g * 255}, ${mixedColor.b * 255
-    })`;
+  return `rgb(${mixedColor.r * 255}, ${mixedColor.g * 255}, ${
+    mixedColor.b * 255
+  })`;
 }
 
 export function isCadIntersection(
@@ -566,7 +578,8 @@ export function getMainModelSubtitle(
   if (isImage360) {
     return '360 Image';
   } else {
-    return `Revision ${modelRevision?.index} - ${modelRevision?.published ? 'Published' : 'Unpublished'
-      }`;
+    return `Revision ${modelRevision?.index} - ${
+      modelRevision?.published ? 'Published' : 'Unpublished'
+    }`;
   }
 }
