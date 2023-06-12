@@ -5,6 +5,7 @@ import isUndefined from 'lodash/isUndefined';
 
 import { Chip } from '@cognite/cogs.js';
 
+import { useTranslation } from '../../../../../hooks/useTranslation';
 import { InputControlProps } from '../../types';
 import { NumberInput } from '../NumberInput';
 
@@ -18,6 +19,8 @@ export const NumericRangeInput: React.FC<NumericRangeInputProps> = ({
   value,
   onChange,
 }) => {
+  const { t } = useTranslation();
+
   const [min, setMin] = useState<number | undefined>(value?.[0]);
   const [max, setMax] = useState<number | undefined>(value?.[1]);
 
@@ -35,7 +38,7 @@ export const NumericRangeInput: React.FC<NumericRangeInputProps> = ({
         }}
       />
 
-      <Chip label="AND" tooltipProps={{ disabled: true }} />
+      <Chip label={t('filter_AND', 'AND')} tooltipProps={{ disabled: true }} />
 
       <NumberInput
         placeholder={PLACEHOLDER}

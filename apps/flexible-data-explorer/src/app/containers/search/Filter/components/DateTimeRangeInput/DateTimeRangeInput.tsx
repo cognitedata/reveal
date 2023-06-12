@@ -3,6 +3,8 @@ import { useState } from 'react';
 
 import isUndefined from 'lodash/isUndefined';
 
+import { translationKeys } from '../../../../../common';
+import { useTranslation } from '../../../../../hooks/useTranslation';
 import { InputControlProps } from '../../types';
 import { DateTimeInput } from '../DateTimeInput';
 
@@ -14,6 +16,8 @@ export const DateTimeRangeInput: React.FC<DateTimeRangeInputProps> = ({
   value,
   onChange,
 }) => {
+  const { t } = useTranslation();
+
   const [min, setMin] = useState<Date | undefined>(value?.[0]);
   const [max, setMax] = useState<Date | undefined>(value?.[1]);
 
@@ -30,7 +34,7 @@ export const DateTimeRangeInput: React.FC<DateTimeRangeInputProps> = ({
         }}
       />
 
-      <Chip>AND</Chip>
+      <Chip>{t(translationKeys.filterAND, 'AND')}</Chip>
 
       <DateTimeInput
         value={max}
