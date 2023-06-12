@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { useSDK } from '@cognite/sdk-provider';
+
 import { Toast } from '../../../components/Toast';
 import { createDocumentClassifier, deleteDocumentClassifier } from '../../api';
 import { CLASSIFIER_KEYS } from '../../constants';

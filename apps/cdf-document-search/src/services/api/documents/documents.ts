@@ -4,6 +4,7 @@ import {
   DocumentsSearchRequest,
   DocumentsSearchResponse,
 } from '@cognite/sdk-playground';
+
 import { documentBuilder } from '../../../utils/builder';
 import { parseArrayBufferToBase64 } from '../../../utils/parser';
 import { DOCUMENTS_AGGREGATES } from '../../constants';

@@ -1,4 +1,5 @@
 import { renderHook } from '@testing-library/react-hooks';
+
 import { useLabelName } from '../../../../cdf-document-search/src/hooks/useLabelName';
 import { TestProviderWrapper } from '../../../../cdf-document-search/src/utils/test/render';
 

@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { useSDK } from '@cognite/sdk-provider';
+
 import { useLabelParams } from '../../../hooks/useParams';
 import {
   doDocumentSearch,

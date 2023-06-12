@@ -1,4 +1,5 @@
 import { Table } from '@cognite/cogs.js';
+
 import { TableCell } from '../../../../components/table/TableCell';
 
 export const curateColumns = ({

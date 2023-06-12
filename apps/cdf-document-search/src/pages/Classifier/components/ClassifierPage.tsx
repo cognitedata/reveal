@@ -1,8 +1,10 @@
 import React from 'react';
+
 import { Page } from '../../../components/page';
 import { useBreadcrumb } from '../../../hooks/useBreadcrumb';
 import { useClassifierName } from '../../../hooks/useClassifierName';
 import { ClassifierProps } from '../pages';
+
 import { BottomNavigation } from './navigations/BottomNavigation';
 
 interface Props extends ClassifierProps {

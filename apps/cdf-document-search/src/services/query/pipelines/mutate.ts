@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { Label } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
+
 import { Toast } from '../../../components/Toast';
 import {
   updateDocumentPipelinesActiveClassifier,

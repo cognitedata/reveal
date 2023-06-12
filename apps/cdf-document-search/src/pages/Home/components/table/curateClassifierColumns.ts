@@ -1,4 +1,5 @@
 import { DocumentsClassifier as Classifier } from '@cognite/sdk-playground';
+
 import { TableCell } from '../../../../components/table/TableCell';
 
 export type ClassifierActions = (

@@ -1,9 +1,10 @@
 import React from 'react';
 
-import layers from '../..//utils/zIndex';
 import styled from 'styled-components/macro';
 
 import { Flex } from '@cognite/cogs.js';
+
+import layers from '../..//utils/zIndex';
 
 interface BarProps {
   $visible: boolean;

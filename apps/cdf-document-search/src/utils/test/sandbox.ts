@@ -1,4 +1,5 @@
 import { useChannel } from '@storybook/addons';
+import noop from 'lodash/noop';
 import * as sinon from 'sinon';
 
 /**
@@ -7,7 +8,7 @@ import * as sinon from 'sinon';
  */
 beforeEach(() => {
   useChannel({
-    mockChannel: () => {},
+    mockChannel: noop,
   });
 });
 

@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { screen, fireEvent } from '@testing-library/react';
+
 import { fixtureClassifier } from '../../../../__fixtures__/sdk/classifier';
 import { testRender } from '../../../../utils/test/render';
 

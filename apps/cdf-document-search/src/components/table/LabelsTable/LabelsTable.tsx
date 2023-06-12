@@ -2,6 +2,7 @@ import React from 'react';
 
 import { Table } from '@cognite/cogs.js';
 import { LabelDefinition } from '@cognite/sdk';
+
 import { useClassifierManageTrainingSetsQuery } from '../../../services/query';
 import { useLabelsDeleteMutate } from '../../../services/query/labels/mutate';
 import { useLabelsQuery } from '../../../services/query/labels/query';

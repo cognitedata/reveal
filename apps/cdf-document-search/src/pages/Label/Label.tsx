@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { Body, Button, Flex, Loader } from '@cognite/cogs.js';
+
 import { Page, PageContent, PageHeader } from '../../components/page';
 import TableBulkActions from '../../components/table/BulkAction';
 import { TableWrapper } from '../../components/table/TableWrapper';

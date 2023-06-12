@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { classifierConfig } from '../../configs';
 import { ClassifierState } from '../../machines/classifier/types';
 

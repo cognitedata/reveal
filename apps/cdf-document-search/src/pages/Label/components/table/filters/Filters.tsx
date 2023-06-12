@@ -2,11 +2,11 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import layers from '../../../../../utils/zIndex';
-
 import { Loader } from '@cognite/cogs.js';
+
 import { useDocumentsSearchMutate } from '../../../../../services/query/documents/mutate';
 import { DocumentSearchQuery } from '../../../../../services/types';
+import layers from '../../../../../utils/zIndex';
 
 import { FileTypeFilter } from './actions/FileType';
 import { LabelFilter } from './actions/Label';

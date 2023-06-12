@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 import { Flex, Table, Detail, Icon } from '@cognite/cogs.js';
 import { DocumentsClassifier as Classifier } from '@cognite/sdk-playground';
+
 import { TableWrapper } from '../../../../../../components/table/TableWrapper';
 import { useLabels } from '../../../../../../hooks/useLabels';
 import {

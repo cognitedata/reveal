@@ -2,6 +2,7 @@ import React from 'react';
 
 import { Modal } from '@cognite/cogs.js';
 import { ExternalLabelDefinition } from '@cognite/sdk';
+
 import {
   Labels,
   LabelsTable,

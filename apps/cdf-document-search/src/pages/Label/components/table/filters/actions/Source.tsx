@@ -2,7 +2,6 @@ import React from 'react';
 
 import { Option, Select } from '../../../../../../components/Select';
 import { useAggregatesQuery } from '../../../../../../services/query/aggregates/query';
-
 import { FilterContainer } from '../elements';
 
 interface Props {
@@ -24,6 +23,7 @@ export const SourceFilter: React.FC<Props> = ({ onChange }) => {
         icon="DataSource"
         options={sourceOptions}
         onChange={(options) =>
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           onChange(options?.map((option) => option.value) ?? [])
         }

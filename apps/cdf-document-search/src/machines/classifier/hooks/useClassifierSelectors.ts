@@ -1,4 +1,5 @@
 import { useSelector } from '@xstate/react';
+
 import { classifierConfig } from '../../../configs';
 import { StepProps } from '../../../pages/Classifier/components/widgets/types';
 import { useClassifierContext } from '../contexts/ClassifierContext';

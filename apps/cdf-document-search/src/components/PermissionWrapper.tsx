@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { Loader } from '@cognite/cogs.js';
+
 import { useUserPermissions } from '../hooks/useUserPermissions';
 import { NoAccessPage } from '../pages/NoAccess';
 

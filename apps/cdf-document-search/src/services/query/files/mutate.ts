@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { useSDK } from '@cognite/sdk-provider';
+
 import { Toast } from '../../../components/Toast';
 import { updateFileLabels } from '../../api';
 import { DOCUMENTS_KEYS } from '../../constants';

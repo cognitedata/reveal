@@ -2,6 +2,7 @@ import React from 'react';
 
 import { Button, Loader } from '@cognite/cogs.js';
 import { DocumentsClassifier as Classifier } from '@cognite/sdk-playground';
+
 import { Page, PageContent, PageHeader } from '../../components/page';
 import { TableWrapper } from '../../components/table/TableWrapper';
 import { homeConfig } from '../../configs/global.config';

@@ -1,7 +1,7 @@
-import { mockClassifierName } from '../../__mocks__/sdk';
-
 import { ListResponse } from '@cognite/sdk';
 import { DocumentsPipeline } from '@cognite/sdk-playground';
+
+import { mockClassifierName } from '../../__mocks__/sdk';
 
 export const fixturePipelines = {
   list: () => {

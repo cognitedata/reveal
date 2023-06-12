@@ -1,4 +1,5 @@
 import { Table } from '@cognite/cogs.js';
+
 import { TableCell } from '../../../../../../components/table/TableCell';
 import { Navigation } from '../../../../../../hooks/useNavigation';
 

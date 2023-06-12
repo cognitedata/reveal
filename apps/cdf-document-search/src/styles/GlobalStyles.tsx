@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React from 'react';
 
 import ConfigProvider from 'antd/lib/config-provider';
@@ -6,6 +5,7 @@ import ConfigProvider from 'antd/lib/config-provider';
 import { useGlobalStyles } from '@cognite/cdf-utilities';
 import { Tooltip, Modal } from '@cognite/cogs.js';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
+
 import { getContainer, styleScope } from '../utils/utils';
 
 // This will override the appendTo prop on all Tooltips used from cogs

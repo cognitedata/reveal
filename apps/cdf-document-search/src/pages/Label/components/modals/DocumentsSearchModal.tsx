@@ -1,10 +1,10 @@
 import React from 'react';
 
 import { Loader, ToastContainer, Modal } from '@cognite/cogs.js';
+
 import { TableWrapper } from '../../../../components/table/TableWrapper';
 import { useDocumentsSearchQuery } from '../../../../services/query/documents/query';
 import { useUpdateFileLabelsMutate } from '../../../../services/query/files/mutate';
-
 import { DocumentsTable } from '../table/DocumentsTable';
 
 export const DocumentsSearchModal = React.memo(

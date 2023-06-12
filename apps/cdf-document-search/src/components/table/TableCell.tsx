@@ -19,6 +19,7 @@ import {
   DocumentsClassifier as Classifier,
   Document,
 } from '@cognite/sdk-playground';
+
 import { globalConfig } from '../../configs/global.config';
 import { ChipType } from '../../enums';
 import { Navigation } from '../../hooks/useNavigation';

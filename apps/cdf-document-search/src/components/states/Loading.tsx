@@ -1,7 +1,7 @@
 import React from 'react';
 
-import Search from '../../images/illustrations/search.svg';
 import { loadingState } from '../../configs/global.config';
+import Search from '../../images/illustrations/search.svg';
 
 import {
   Image,

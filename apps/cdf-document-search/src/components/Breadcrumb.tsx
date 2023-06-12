@@ -3,6 +3,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { Body, Icon } from '@cognite/cogs.js';
+
 import { globalConfig } from '../configs/global.config';
 import { useNavigation } from '../hooks/useNavigation';
 

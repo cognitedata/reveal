@@ -1,4 +1,5 @@
 import { CogniteClient, Label, LabelDefinition } from '@cognite/sdk';
+
 import { LabelCount, LabelDescription } from '../types';
 
 export const getLabelCount = async (

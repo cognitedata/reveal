@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 
 import { Body, Icon } from '@cognite/cogs.js';
+
 import {
   useClassifierConfig,
   useClassifierCurrentStep,

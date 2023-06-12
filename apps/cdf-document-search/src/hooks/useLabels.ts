@@ -1,4 +1,5 @@
 import { ExternalLabelDefinition } from '@cognite/sdk';
+
 import { useLabelsQuery } from '../services/query/labels/query';
 
 export const useLabels = (externalIds: string[]) => {

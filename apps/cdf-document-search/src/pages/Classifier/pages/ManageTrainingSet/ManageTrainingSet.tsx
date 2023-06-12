@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 
 import { Button, Flex } from '@cognite/cogs.js';
+
 import { PageHeader } from '../../../../components/page';
 import { useClassifierName } from '../../../../hooks/useClassifierName';
 import { useClassifierActions } from '../../../../machines/classifier/hooks/useClassifierActions';
@@ -8,12 +9,11 @@ import { useClassifierConfig } from '../../../../machines/classifier/hooks/useCl
 import { ClassifierState } from '../../../../machines/classifier/types';
 import { useClassifierManageTrainingSetsQuery } from '../../../../services/query';
 import { CommonClassifierPage } from '../../components/ClassifierPage';
-
 import { ClassifierProps } from '../router';
 
+import { TrainingSetsTable } from './components';
 import { LabelsModal } from './components/modal/LabelsModal';
 import { ManageTrainingSetNavigation } from './components/navigation/ManageTrainSetNavigation';
-import { TrainingSetsTable } from './components';
 
 export const ManageTrainingSets: FC<ClassifierProps> = ({ Widget }) => {
   const { classifierName } = useClassifierName();

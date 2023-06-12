@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { Button, Flex } from '@cognite/cogs.js';
+
 import { PageContent, PageHeader } from '../../../../components/page';
 import { useClassifierName } from '../../../../hooks/useClassifierName';
 import { useNavigation } from '../../../../hooks/useNavigation';
@@ -17,10 +18,9 @@ import {
 import { useClassifierCreateMutate } from '../../../../services/query/classifier/mutate';
 import { isClassifierFinished } from '../../../../utils/classifier';
 import { CommonClassifierPage } from '../../components/ClassifierPage';
-
 import { ClassifierProps } from '../router';
-import TrainClassifierContainer from './components/containers/TrainClassifierContainer';
 
+import TrainClassifierContainer from './components/containers/TrainClassifierContainer';
 import { TrainClassifierInfoBar } from './components/containers/TrainClassifierInfoBar';
 import { TrainClassifierNavigation } from './components/navigation/TrainClassifierNavigation';
 

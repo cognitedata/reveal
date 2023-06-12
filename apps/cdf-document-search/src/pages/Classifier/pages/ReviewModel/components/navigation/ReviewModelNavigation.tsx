@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { Button, Flex } from '@cognite/cogs.js';
+
 import { useNavigation } from '../../../../../../hooks/useNavigation';
 import { useClassifierActions } from '../../../../../../machines/classifier/hooks/useClassifierActions';
 import {

@@ -1,5 +1,6 @@
 import { Table } from '@cognite/cogs.js';
 import { ExternalId } from '@cognite/sdk';
+
 import { TableCell } from '../TableCell';
 
 export const curateColumns = (deleteLabels: (ids: ExternalId[]) => void) => {

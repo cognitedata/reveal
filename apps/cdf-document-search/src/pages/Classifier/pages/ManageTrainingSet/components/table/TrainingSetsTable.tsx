@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { Button, Loader, Table } from '@cognite/cogs.js';
+
 import { PageContent } from '../../../../../../components/page';
 import { Empty } from '../../../../../../components/states/Empty';
 import TableBulkActions from '../../../../../../components/table/BulkAction';

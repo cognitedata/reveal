@@ -1,6 +1,7 @@
 import merge from 'lodash/merge';
 
 import { DocumentsSearchRequest } from '@cognite/sdk-playground';
+
 import { DocumentSearchQuery } from '../services/types';
 
 export const documentBuilder = (

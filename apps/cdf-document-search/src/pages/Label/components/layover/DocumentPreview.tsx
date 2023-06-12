@@ -3,6 +3,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { Body, Button, Drawer, Chip } from '@cognite/cogs.js';
+
 import { PageHeader } from '../../../../components/page';
 import { Loading } from '../../../../components/states/Loading';
 import { documentConfig } from '../../../../configs/global.config';

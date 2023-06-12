@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { useSDK } from '@cognite/sdk-provider';
+
 import { doDocumentSearch } from '../../api';
 import { DOCUMENTS_KEYS } from '../../constants';
 import { DocumentSearchQuery } from '../../types';

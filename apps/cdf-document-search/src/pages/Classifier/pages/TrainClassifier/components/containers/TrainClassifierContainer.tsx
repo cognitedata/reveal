@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 import { Flex, Body, Chip } from '@cognite/cogs.js';
 import { DocumentsClassifier as Classifier } from '@cognite/sdk-playground';
+
 import { PageHeader } from '../../../../../../components/page';
 import { useClassifierActions } from '../../../../../../machines/classifier/hooks/useClassifierActions';
 import { useClassifierManageTrainingSetsQuery } from '../../../../../../services/query';

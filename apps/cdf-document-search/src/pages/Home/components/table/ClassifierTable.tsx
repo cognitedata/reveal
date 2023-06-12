@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 import { Button, Flex, Loader, Table } from '@cognite/cogs.js';
 import { DocumentsClassifier as Classifier } from '@cognite/sdk-playground';
+
 import { Empty } from '../../../../components/states/Empty';
 import { homeConfig } from '../../../../configs/global.config';
 import { useDocumentsClassifiersQuery } from '../../../../services/query';

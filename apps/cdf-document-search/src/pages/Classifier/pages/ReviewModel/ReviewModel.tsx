@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { PageContent, PageHeader } from '../../../../components/page';
 import { useNavigation } from '../../../../hooks/useNavigation';
 import { useClassifierId } from '../../../../machines/classifier/hooks/useClassifierSelectors';
@@ -6,7 +7,6 @@ import { useDocumentsClassifierByIdQuery } from '../../../../services/query';
 import { useDocumentsActiveClassifierPipelineMutate } from '../../../../services/query/pipelines/mutate';
 import { ActiveModelContainer } from '../../../Home/components/container/ActiveModelContainer';
 import { CommonClassifierPage } from '../../components/ClassifierPage';
-
 import { ClassifierProps } from '../router';
 
 import { MatrixTable } from './components';

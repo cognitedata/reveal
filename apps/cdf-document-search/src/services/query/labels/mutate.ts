@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { ExternalId, ExternalLabelDefinition } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
+
 import { Toast } from '../../../components/Toast';
 import { createLabel, deleteLabels } from '../../api';
 import { LABELS_KEYS } from '../../constants';

@@ -1,7 +1,7 @@
 import React from 'react';
+
 import { Select, Option } from '../../../../../../components/Select';
 import { useAggregatesQuery } from '../../../../../../services/query/aggregates/query';
-
 import { FilterContainer } from '../elements';
 
 interface Props {
@@ -26,6 +26,7 @@ export const FileTypeFilter: React.FC<Props> = ({ onChange }) => {
         options={fileTypeOptions}
         onChange={(options) =>
           onChange(
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             options?.map((option: { value: string }) => option.value) ?? []
           )

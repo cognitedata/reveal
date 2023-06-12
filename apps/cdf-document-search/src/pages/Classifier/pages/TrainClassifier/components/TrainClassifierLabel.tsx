@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { Chip } from '@cognite/cogs.js';
+
 import { ChipType } from '../../../../../enums';
 
 const classifierStatusLabels = (

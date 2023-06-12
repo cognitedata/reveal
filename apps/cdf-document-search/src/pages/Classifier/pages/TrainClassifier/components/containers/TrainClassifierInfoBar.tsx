@@ -2,6 +2,7 @@ import React from 'react';
 
 import { Body, Button } from '@cognite/cogs.js';
 import { DocumentsClassifier as Classifier } from '@cognite/sdk-playground';
+
 import { InfoBar } from '../../../../../../components/InfoBar';
 import { trainingConfig } from '../../../../../../configs/global.config';
 import { useNavigation } from '../../../../../../hooks/useNavigation';

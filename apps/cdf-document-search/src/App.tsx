@@ -12,6 +12,7 @@ import {
 } from '@cognite/cdf-utilities';
 import { Loader } from '@cognite/cogs.js';
 import { SDKProvider } from '@cognite/sdk-provider';
+
 import { globalConfig } from './configs/global.config';
 import { MainRouter } from './pages/router';
 import GlobalStyles from './styles';

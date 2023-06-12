@@ -4,6 +4,7 @@ import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 
 import { DocumentsClassifier } from '@cognite/sdk-playground';
 import { useSDK } from '@cognite/sdk-provider';
+
 import { isClassifierTraining } from '../../../utils/classifier';
 import {
   fetchDocumentClassifierById,
@@ -65,7 +66,7 @@ export const useDocumentsClassifierByIdQuery = (id?: number) => {
 
   return useQuery(
     CLASSIFIER_KEYS.classifier(id),
-    () => fetchDocumentClassifierById(sdk, id!),
+    () => fetchDocumentClassifierById(sdk, id as number),
     {
       enabled: Boolean(id),
       refetchInterval,

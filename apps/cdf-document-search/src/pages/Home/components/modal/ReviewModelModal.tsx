@@ -4,8 +4,8 @@ import styled from 'styled-components';
 
 import { Modal } from '@cognite/cogs.js';
 import { DocumentsClassifier as Classifier } from '@cognite/sdk-playground';
-import { MatrixTable } from '../../../Classifier/pages/ReviewModel/components';
 
+import { MatrixTable } from '../../../Classifier/pages/ReviewModel/components';
 import { ActiveModelContainer } from '../container/ActiveModelContainer';
 
 const Container = styled.div`

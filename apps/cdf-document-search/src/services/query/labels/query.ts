@@ -1,8 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
-import { fetchLabels } from '../../api';
-import { LABELS_KEYS } from '../../constants';
 
 import { useSDK } from '@cognite/sdk-provider';
+
+import { fetchLabels } from '../../api';
+import { LABELS_KEYS } from '../../constants';
 
 export const useLabelsQuery = () => {
   const sdk = useSDK();
