@@ -25,7 +25,7 @@ const ShareButton = (): JSX.Element => {
     const viewState = viewer?.getViewState();
     const path = getStateUrl({
       revisionId,
-      viewState,
+      viewState: { camera: viewState?.camera },
       slicingState,
       selectedAssetId,
       assetDetailsExpanded,

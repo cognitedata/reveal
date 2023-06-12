@@ -1,25 +1,28 @@
 import * as React from 'react';
 
+import { translationKeys } from '../../../../../common';
+import { useTranslation } from '../../../../../hooks/useTranslation';
 import { Input } from '../Input';
 
-export const DEFAULT_SEARCH_INPUT_PLACEHOLDER = 'Filter by name...';
-
 export interface SearchInputProps {
-  placeholder?: string;
   value?: string;
   onChange: (value: string) => void;
 }
 
 export const SearchInput: React.FC<SearchInputProps> = ({
-  placeholder = DEFAULT_SEARCH_INPUT_PLACEHOLDER,
   value,
   onChange,
 }) => {
+  const { t } = useTranslation();
+
   return (
     <Input
       type="text"
       variant="noBorder"
-      placeholder={placeholder}
+      placeholder={t(
+        translationKeys.filterSearchInputPlaceholder,
+        'Filter by name...'
+      )}
       value={value}
       onChange={onChange}
     />
