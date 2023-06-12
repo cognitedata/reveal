@@ -14,9 +14,9 @@ export const useSubappType = () => {
     //   return 'DataExploration';
     // }
     if (
-      pathName.startsWith('/notebook/streamlit') &&
+      pathName.startsWith('/streamlit-apps') &&
       // show only on the apps themselves, not the list page
-      !pathName.endsWith('/notebook/streamlit')
+      !pathName.endsWith('/streamlit-apps')
     ) {
       return 'Streamlit';
     }
