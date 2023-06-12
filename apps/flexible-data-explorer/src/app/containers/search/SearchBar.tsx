@@ -29,7 +29,7 @@ export const SearchBar: React.FC<Props> = ({ width, inverted }) => {
 
   const [queryParams] = useSearchQueryParams();
   const [localQuery, setLocalQuery] = useState('');
-  const [filterParams, setFilterParams] = useSearchFilterParams();
+  const [filterParams] = useSearchFilterParams();
   const [isFocused, setFocus] = useState(false);
 
   const closePreview = useCallback(() => {
@@ -56,7 +56,7 @@ export const SearchBar: React.FC<Props> = ({ width, inverted }) => {
               (e.target as any).blur();
 
               closePreview();
-              navigate.toSearchPage(localQuery);
+              navigate.toSearchPage(localQuery, filterParams);
             }
           }}
           onFocus={() => {
@@ -71,7 +71,12 @@ export const SearchBar: React.FC<Props> = ({ width, inverted }) => {
           }}
         />
 
-        <SearchFilters value={filterParams} onChange={setFilterParams} />
+        <SearchFilters
+          value={filterParams}
+          onChange={(newValue) => {
+            navigate.toSearchPage(queryParams, newValue);
+          }}
+        />
       </Content>
 
       {isFocused && <SearchPreview />}

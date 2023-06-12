@@ -7,11 +7,11 @@ import {
   getResourceIdFromExtendedAnnotation,
   isAssetAnnotation,
 } from '@cognite/data-exploration';
-import { TooltipAnchorPosition } from '@cognite/unified-file-viewer';
 
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
 
 import AssetTooltip from '../components/ContextualTooltips/AssetTooltip';
+import { ANNOTATION_TOOLTIP_POSITION } from '../constants';
 import { OnAddContainerReferences } from '../IndustryCanvasPage';
 import { ContainerReferenceType } from '../types';
 
@@ -87,7 +87,7 @@ const useIndustryCanvasAssetTooltips = (
             onViewAsset={onViewAsset}
           />
         ),
-        anchorTo: TooltipAnchorPosition.TOP_LEFT,
+        anchorTo: ANNOTATION_TOOLTIP_POSITION,
         shouldPositionStrictly: true,
       },
     ];

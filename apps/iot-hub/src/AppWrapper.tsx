@@ -13,6 +13,7 @@ import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 import './set-public-path';
 import App from './app/App';
 import { translations } from './app/common/i18n';
+import { IoTProvider } from './app/context/IoTHubContext';
 import GlobalStyles from './GlobalStyles';
 
 export const AppWrapper = () => {
@@ -32,7 +33,9 @@ export const AppWrapper = () => {
       <I18nWrapper translations={translations} defaultNamespace={projectName}>
         <AuthWrapper login={() => loginAndAuthIfNeeded(project, env)}>
           <SubAppWrapper title={projectName}>
-            <App />
+            <IoTProvider>
+              <App />
+            </IoTProvider>
           </SubAppWrapper>
         </AuthWrapper>
       </I18nWrapper>

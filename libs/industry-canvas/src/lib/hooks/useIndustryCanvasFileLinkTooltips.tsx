@@ -11,6 +11,7 @@ import { TooltipAnchorPosition } from '@cognite/unified-file-viewer';
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
 
 import FileTooltip from '../components/ContextualTooltips/FileTooltip/FileTooltip';
+import { ANNOTATION_TOOLTIP_POSITION } from '../constants';
 import { OnAddContainerReferences } from '../IndustryCanvasPage';
 import { TooltipContainer } from '../TooltipContainer';
 import { ContainerReferenceType } from '../types';
@@ -87,7 +88,7 @@ const useIndustryCanvasFileLinkTooltips = ({
             onViewClick={onViewClick}
           />
         ),
-        anchorTo: TooltipAnchorPosition.TOP_RIGHT,
+        anchorTo: ANNOTATION_TOOLTIP_POSITION,
         shouldPositionStrictly: true,
       },
     ];

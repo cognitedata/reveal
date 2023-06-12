@@ -151,7 +151,7 @@ export const DragAreaWrapper = styled.div`
 
 export const ButtonWrapper = styled.div`
   position: absolute;
-  margin-left: -7px;
+  margin-left: -8px;
   background-color: transparent;
   border-radius: 4px;
   z-index: ${zIndex.MAXIMUM};
@@ -161,6 +161,7 @@ export const ButtonWrapper = styled.div`
     padding: 8px 0;
     background-color: var(--cogs-surface--strong);
     border-radius: 4px;
+    border: 1px solid var(--cogs-border--muted);
 
     &:hover {
       cursor: col-resize;
