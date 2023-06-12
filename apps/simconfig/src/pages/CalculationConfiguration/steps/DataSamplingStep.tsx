@@ -63,15 +63,21 @@ export function DataSamplingStep() {
     DATA_SAMPLING_VALUE_THROTTLE
   );
   const minSectionSize = useThrottle(
-    +values.steadyStateDetection.minSectionSize,
+    values.steadyStateDetection.minSectionSize
+      ? +values.steadyStateDetection.minSectionSize
+      : 0,
     SSD_VALUE_THROTTLE
   );
   const slopeThreshold = useThrottle(
-    +values.steadyStateDetection.slopeThreshold,
+    values.steadyStateDetection.slopeThreshold
+      ? +values.steadyStateDetection.slopeThreshold
+      : 0,
     SSD_VALUE_THROTTLE
   );
   const varThreshold = useThrottle(
-    +values.steadyStateDetection.varThreshold,
+    values.steadyStateDetection.varThreshold
+      ? +values.steadyStateDetection.varThreshold
+      : 0,
     SSD_VALUE_THROTTLE
   );
 
@@ -121,7 +127,7 @@ export function DataSamplingStep() {
       : 15;
 
   const steadyStateDetectionTimeseriesState =
-    ssdTimeseriesState.timeseries[values.steadyStateDetection.externalId];
+    ssdTimeseriesState.timeseries[values.steadyStateDetection.externalId ?? ''];
   const steadyStateDetectionChart = useMemo(
     () => (
       <ParentSizeModern>
@@ -159,7 +165,7 @@ export function DataSamplingStep() {
   );
 
   const logicalCheckTimeseriesState =
-    lcTimeseriesState.timeseries[values.logicalCheck.externalId];
+    lcTimeseriesState.timeseries[values.logicalCheck.externalId ?? ''];
   const logicalCheckChart = useMemo(
     () => (
       <ParentSizeModern>
@@ -334,11 +340,13 @@ export function DataSamplingStep() {
               isLoading: lcTimeseriesState.isLoading,
               isEmpty:
                 !lcTimeseriesState.isLoading &&
-                lcTimeseriesState.timeseries[values.logicalCheck.externalId]
-                  ?.datapoints &&
+                lcTimeseriesState.timeseries[
+                  values.logicalCheck.externalId ?? ''
+                ]?.datapoints &&
                 !(
-                  (lcTimeseriesState.timeseries[values.logicalCheck.externalId]
-                    ?.datapoints.length ?? 0) >= 2
+                  (lcTimeseriesState.timeseries[
+                    values.logicalCheck.externalId ?? ''
+                  ]?.datapoints.length ?? 0) >= 2
                 ),
             })}
           >
@@ -414,11 +422,11 @@ export function DataSamplingStep() {
               isEmpty:
                 !ssdTimeseriesState.isLoading &&
                 ssdTimeseriesState.timeseries[
-                  values.steadyStateDetection.externalId
+                  values.steadyStateDetection.externalId ?? ''
                 ]?.datapoints &&
                 !(
                   (ssdTimeseriesState.timeseries[
-                    values.steadyStateDetection.externalId
+                    values.steadyStateDetection.externalId ?? ''
                   ]?.datapoints.length ?? 0) >= 2
                 ),
             })}

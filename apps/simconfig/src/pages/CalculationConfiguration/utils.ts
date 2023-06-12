@@ -44,7 +44,7 @@ export const getScheduleStart = (start: number | string) => {
 };
 
 interface TimeseriesAggregate {
-  externalId: CogniteExternalId;
+  externalId?: CogniteExternalId;
   aggregateType: AggregateType;
 }
 
