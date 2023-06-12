@@ -1,11 +1,20 @@
 {
-  "presets": [
-    [
-      "@nrwl/react/babel",
-      {
-        "runtime": "automatic"
-      }
+    "presets": [
+      "react-app"
+    ],
+    "plugins": [
+      [
+        // Info: this plugin might silently fail if the format of the styled-components string interpolation css is not correct.
+        "@quickbaseoss/babel-plugin-styled-components-css-namespace",
+        { "cssNamespace": "&&&" }
+      ],
+      [
+        "@cognite/babel-plugin-styled-components",
+        {
+          "namespace": "data-catalog",
+          "fileName": false
+        }
+      ]
     ]
-  ],
-  "plugins": [["styled-components", { "pure": true, "ssr": true }]]
-}
+  }
+  
