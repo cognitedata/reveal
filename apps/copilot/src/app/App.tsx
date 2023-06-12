@@ -22,7 +22,6 @@ function App() {
           apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
           appName="copilot"
           projectName={getProject()}
-          remoteAddress={window.location.hostname}
           disableMetrics
         >
           <BrowserRouter>

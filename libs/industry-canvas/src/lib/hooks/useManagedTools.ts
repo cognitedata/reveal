@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 
-import { AnnotationType, ToolType } from '@cognite/unified-file-viewer';
+import { AnnotationType } from '@cognite/unified-file-viewer';
 import { PolylineEndType } from '@cognite/unified-file-viewer/dist/core/annotations/types';
 
 import {
@@ -10,7 +10,7 @@ import {
   TEXT_ANNOTATION_COLOR_MAP,
 } from '../colors';
 import { FONT_SIZE, LINE_STROKE_WIDTH } from '../constants';
-import { CanvasAnnotation } from '../types';
+import { CanvasAnnotation, IndustryCanvasToolType } from '../types';
 import { ExactlyOneKey } from '../utils/ExactlyOneKey';
 import filterNotUndefinedValues from '../utils/filterNotUndefinedValues';
 
@@ -32,6 +32,17 @@ export const SHARED_STICKY_TOOL_OPTIONS = {
   fontSize: '14px',
   color: 'black',
   borderColor: 'rgba(83, 88, 127, 0.24)',
+} as const;
+
+export const SHARED_COMMENT_TOOL_OPTIONS = {
+  width: 15,
+  height: 15,
+  padding: 4,
+  borderRadius: 30,
+  borderWidth: 0,
+  lineHeight: 1.2,
+  fontSize: '14px',
+  color: 'blue',
 } as const;
 
 type ShapeAnnotationStyle = {
@@ -151,31 +162,36 @@ const DEFAULT_STYLE = {
   isWorkspaceAnnotation: true,
 };
 
-type ToolsOptionsByType = Record<ToolType, ToolOptions>;
+type ToolsOptionsByType = Record<IndustryCanvasToolType, ToolOptions>;
 
 const DEFAULT_TOOL_OPTIONS: ToolsOptionsByType = {
-  [ToolType.RECTANGLE]: DEFAULT_STYLE,
-  [ToolType.ELLIPSE]: DEFAULT_STYLE,
-  [ToolType.POLYLINE]: {
+  [IndustryCanvasToolType.RECTANGLE]: DEFAULT_STYLE,
+  [IndustryCanvasToolType.ELLIPSE]: DEFAULT_STYLE,
+  [IndustryCanvasToolType.POLYLINE]: {
     stroke: TEXT_ANNOTATION_COLOR_MAP.BLUE,
     strokeWidth: LINE_STROKE_WIDTH.MEDIUM,
     isWorkspaceAnnotation: true,
   },
-  [ToolType.TEXT]: {
+  [IndustryCanvasToolType.TEXT]: {
     fontSize: FONT_SIZE['18px'],
     fill: TEXT_ANNOTATION_COLOR_MAP.BLACK,
     isWorkspaceAnnotation: true,
   },
-  [ToolType.SELECT]: DEFAULT_STYLE,
-  [ToolType.LINE]: {
+  [IndustryCanvasToolType.SELECT]: DEFAULT_STYLE,
+  [IndustryCanvasToolType.LINE]: {
     ...DEFAULT_STYLE,
     shouldGenerateConnections: true,
   },
-  [ToolType.IMAGE]: {},
-  [ToolType.PAN]: {},
-  [ToolType.STICKY]: {
+  [IndustryCanvasToolType.IMAGE]: {},
+  [IndustryCanvasToolType.PAN]: {},
+  [IndustryCanvasToolType.STICKY]: {
     ...SHARED_STICKY_TOOL_OPTIONS,
     backgroundColor: STICKY_ANNOTATION_COLOR_MAP.YELLOW,
+  },
+  [IndustryCanvasToolType.COMMENT]: {
+    ...DEFAULT_STYLE,
+    fill: 'transparent',
+    stroke: 'transparent',
   },
 };
 
@@ -189,7 +205,7 @@ const useManagedTools = ({
   selectedCanvasAnnotation,
   onUpdateRequest,
 }: {
-  tool: ToolType;
+  tool: IndustryCanvasToolType;
   initialToolsOptionsByType?: ToolsOptionsByType;
   selectedCanvasAnnotation: CanvasAnnotation | undefined;
   onUpdateRequest: UseManagedStateReturnType['onUpdateRequest'];
@@ -253,32 +269,44 @@ const useManagedTools = ({
     );
 
   const toolOptions = useMemo(() => {
-    if (tool === ToolType.SELECT || tool === ToolType.PAN) {
+    if (
+      tool === IndustryCanvasToolType.SELECT ||
+      tool === IndustryCanvasToolType.PAN
+    ) {
       return DEFAULT_TOOL_OPTIONS[tool];
     }
 
-    if (tool === ToolType.RECTANGLE || tool === ToolType.ELLIPSE) {
+    if (
+      tool === IndustryCanvasToolType.RECTANGLE ||
+      tool === IndustryCanvasToolType.ELLIPSE
+    ) {
       return {
         ...toolsOptionsByType[tool],
         ...filterNotUndefinedValues(activeAnnotationStyleByType.shape),
       };
     }
 
-    if (tool === ToolType.TEXT) {
+    if (tool === IndustryCanvasToolType.TEXT) {
       return {
         ...toolsOptionsByType[tool],
         ...filterNotUndefinedValues(activeAnnotationStyleByType.text),
       };
     }
 
-    if (tool === ToolType.LINE) {
+    if (tool === IndustryCanvasToolType.LINE) {
       return {
         ...toolsOptionsByType[tool],
         ...filterNotUndefinedValues(activeAnnotationStyleByType.line),
       };
     }
 
-    if (tool === ToolType.STICKY) {
+    if (tool === IndustryCanvasToolType.STICKY) {
+      return {
+        ...toolsOptionsByType[tool],
+        ...filterNotUndefinedValues(activeAnnotationStyleByType.sticky),
+      };
+    }
+    if (tool === IndustryCanvasToolType.COMMENT) {
       return {
         ...toolsOptionsByType[tool],
         ...filterNotUndefinedValues(activeAnnotationStyleByType.sticky),
