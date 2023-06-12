@@ -1,5 +1,5 @@
 /* eslint-disable @nrwl/nx/enforce-module-boundaries */
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, Navigate } from 'react-router-dom';
 
 import ExplorerRoutes from '@flexible-data-explorer/app/Routes';
 import { IndustryCanvasPage } from '@fusion/industry-canvas';
@@ -30,6 +30,7 @@ export const CoreRoutes = () => {
   }
   return (
     <Routes>
+      <Route path="/" element={<Navigate to="/explore" replace />} />
       <Route path="/explore/*" element={<ExplorerRoutes />} />
       <Route path="/canvas/*" element={<IndustryCanvasPage />} />
       <Route path="/charts/*" element={<div>On its way...</div>} />
