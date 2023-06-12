@@ -22,9 +22,16 @@ import {
   Metadata,
   CogniteInternalId,
   AnnotationsCogniteAnnotationTypesImagesAssetLink,
-  AnnotationData
+  AnnotationData,
+  AnnotationFilterProps
 } from '@cognite/sdk';
-import { Historical360ImageSet, Image360EventDescriptor, Image360Face, Image360FileDescriptor } from '../types';
+import {
+  Historical360ImageSet,
+  Image360AnnotationFilterDelegate,
+  Image360EventDescriptor,
+  Image360Face,
+  Image360FileDescriptor
+} from '../types';
 import { Image360Provider } from '../Image360Provider';
 import { Log } from '@reveal/logger';
 import assert from 'assert';
@@ -77,16 +84,10 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
   public async get360ImageAnnotations(descriptors: Image360FileDescriptor[]): Promise<AnnotationModel[]> {
     const fileIds = descriptors.map(o => ({ id: o.fileId }));
 
-    const annotationsResult = this._client.annotations.list({
-      filter: {
-        annotatedResourceType: 'file',
-        annotatedResourceIds: fileIds
-      }
+    return this.listFileAnnotations({
+      annotatedResourceType: 'file',
+      annotatedResourceIds: fileIds
     });
-
-    const annotationArray = await annotationsResult.autoPagingToArray();
-
-    return annotationArray;
   }
 
   public async getFilesByAssetRef(assetRef: IdEither): Promise<CogniteInternalId[]> {
@@ -336,22 +337,24 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
     }
   }
 
-  public async get360ImageAssets(image360FileDescriptors: Image360FileDescriptor[]): Promise<IdEither[]> {
+  public async get360ImageAssets(
+    image360FileDescriptors: Image360FileDescriptor[],
+    annotationFilter: Image360AnnotationFilterDelegate
+  ): Promise<IdEither[]> {
     const fileIds = image360FileDescriptors.map(desc => desc.fileId);
     const assetListPromises = chunk(fileIds, 1000).map(async idList => {
-      const annotationArray = await this._client.annotations
-        .list({
-          filter: {
-            annotatedResourceIds: idList.map(id => ({ id })),
-            annotatedResourceType: 'file',
-            annotationType: 'images.AssetLink'
-          }
-        })
-        .autoPagingToArray();
-      const assetIds = annotationArray.map(annotation => {
-        assert(isAssetLinkAnnotationData(annotation.data), 'Received annotation that was not an assetLink');
-        return annotation.data.assetRef;
+      const annotationArray = await this.listFileAnnotations({
+        annotatedResourceIds: idList.map(id => ({ id })),
+        annotatedResourceType: 'file',
+        annotationType: 'images.AssetLink'
       });
+
+      const assetIds = annotationArray
+        .filter(annotation => annotationFilter(annotation))
+        .map(annotation => {
+          assert(isAssetLinkAnnotationData(annotation.data), 'Received annotation that was not an assetLink');
+          return annotation.data.assetRef;
+        });
 
       return assetIds;
     });
@@ -359,6 +362,15 @@ export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
     const assetIds = (await Promise.all(assetListPromises)).flat().filter(isIdEither);
 
     return assetIds;
+  }
+
+  private async listFileAnnotations(filter: AnnotationFilterProps): Promise<AnnotationModel[]> {
+    return this._client.annotations
+      .list({
+        limit: 1000,
+        filter
+      })
+      .autoPagingToArray({ limit: Infinity });
   }
 }
 

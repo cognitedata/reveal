@@ -86,7 +86,7 @@ export class IconOctree extends PointOctree<Overlay3DIcon> {
     let level = this.getDepth();
     this.traverseLevelsBottomUp(nodes => {
       nodes.forEach(node => {
-        if (this.hasData(node)) {
+        if (this.hasData(node) && node.data) {
           nodeCenters.set(node, { icon: this.getClosestToAverageIcon(node.data.data), level });
         } else if (this.hasChildren(node)) {
           const icons = node.children!.map(child => nodeCenters.get(child)!.icon);
