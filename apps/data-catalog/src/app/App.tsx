@@ -1,49 +1,88 @@
-import React from 'react';
-import { BrowserRouter as Router } from 'react-router-dom';
-import styled from 'styled-components/macro';
-import { ToastContainer } from '@cognite/cogs.js';
+import GlobalStyles from 'styles/GlobalStyles';
+import { lazy, Suspense, useEffect } from 'react';
+import { I18nWrapper } from '@cognite/cdf-i18n-utils';
+import { createLink, getProject } from '@cognite/cdf-utilities';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { QueryClientProvider } from '@tanstack/react-query';
-import { getProject } from '@cognite/cdf-utilities';
-import { queryClient } from './queryClient';
+import { BrowserRouter, Route, Navigate, Routes } from 'react-router-dom';
+import { Loader, ToastContainer } from '@cognite/cogs.js';
+import { DataSetsContextProvider } from 'context';
+import AccessCheck from 'AccessCheck';
+import { translations } from 'common/i18n';
+import { FlagProvider } from '@cognite/react-feature-flags';
+import { trackUsage } from 'utils';
+import { AuthContainer } from './AuthContainer';
 
-import Routes from './Routes';
+const DataSetsList = lazy(() => import('pages/DataSetsList/DataSetsList'));
+const DataSetDetails = lazy(
+  () => import('pages/DataSetDetails/DataSetDetails')
+);
 
-function App() {
-  const project = getProject();
-  const basename = `${project}/data-catalog`;
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      staleTime: 10 * 60 * 1000, // Pretty long
+    },
+  },
+});
+
+const App = () => {
+  const appName = 'cdf-data-catalog';
+  const projectName = getProject();
+  const flagProviderApiToken = 'v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE';
+
+  useEffect(() => {
+    trackUsage({ e: 'data.sets.navigate' });
+  }, []);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <ReactQueryDevtools initialIsOpen={false} />
-      <ToastContainer />
-      <StyledWrapper>
-        <Router
-          basename={basename}
-          window={window}
-          children={
-            <StyledPage>
-              <Routes />
-            </StyledPage>
-          }
-        />
-      </StyledWrapper>
-    </QueryClientProvider>
+    <I18nWrapper translations={translations} defaultNamespace="data-catalog">
+      <FlagProvider
+        apiToken={flagProviderApiToken}
+        appName={appName}
+        projectName={projectName}
+      >
+        <QueryClientProvider client={queryClient}>
+          <GlobalStyles>
+            <ToastContainer style={{ zIndex: 99999 }} />
+            <AuthContainer>
+              <DataSetsContextProvider>
+                <BrowserRouter>
+                  <Suspense fallback={<Loader />}>
+                    <AccessCheck>
+                      <Routes>
+                        <Route
+                          path="/:tenant/:appPath"
+                          element={<DataSetsList />}
+                        />
+                        <Route
+                          path="/:tenant/:appPath/data-set/:dataSetId"
+                          element={<DataSetDetails />}
+                        />
+                        {/* We used to use the /data-sets route, now we're redirecting */}
+                        {/* to /data-catalog instead, this basically sets up a redirect. */}
+                        <Route
+                          path="/:tenant/data-sets"
+                          element={
+                            <Navigate
+                              replace
+                              to={createLink('/data-catalog')}
+                            />
+                          }
+                        />
+                      </Routes>
+                    </AccessCheck>
+                  </Suspense>
+                </BrowserRouter>
+              </DataSetsContextProvider>
+            </AuthContainer>
+          </GlobalStyles>
+          <ReactQueryDevtools initialIsOpen={false} />
+        </QueryClientProvider>
+      </FlagProvider>
+    </I18nWrapper>
   );
-}
+};
 
 export default App;
-
-const StyledWrapper = styled.div`
-  display: flex;
-  flex-flow: column;
-  height: 100%;
-  overflow: hidden;
-`;
-
-const StyledPage = styled.div`
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  overflow: hidden;
-`;

@@ -1,20 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Button, Flex, Icon, Chip, Checkbox, Table } from '@cognite/cogs.js';
-import { TableNoResults } from '@cognite/cdf-utilities';
-import DataSetEditor from 'pages/DataSetEditor';
 
-import { trackEvent } from '@cognite/cdf-route-tracker';
-import { useHandleFilters } from 'utils/filterUtils';
-import useLocalStorage from 'hooks/useLocalStorage';
-import { usePermissions } from '@cognite/sdk-react-query-hooks';
-import { getFlow } from '@cognite/cdf-sdk-singleton';
-import isArray from 'lodash/isArray';
-import { useTableColumns, DataSetRow, getLabelsList } from './TableColumns';
-import {
-  DataSetWithExtpipes,
-  useDataSetsList,
-  useUpdateDataSetVisibility,
-} from '../../actions/index';
 import { useWithExtpipes } from '../../hooks/useWithExtpipes';
 import { useDataSetMode, useSelectedDataSet } from '../../context/index';
 import { useTranslation } from 'common/i18n';
@@ -24,6 +9,22 @@ import TableFilter, { GovernanceStatus } from 'components/table-filters';
 import { useSearchParamState } from 'hooks/useSearchParamState';
 import { CogsTableCellRenderer, trackUsage } from 'utils';
 import useDiscardChangesToast from 'hooks/useDiscardChangesToast';
+import useLocalStorage from 'hooks/useLocalStorage';
+import isArray from 'lodash/isArray';
+import DataSetEditor from 'pages/DataSetEditor';
+import { useHandleFilters } from 'utils/filterUtils';
+
+import { trackEvent } from '@cognite/cdf-route-tracker';
+import { getFlow } from '@cognite/cdf-sdk-singleton';
+import { TableNoResults } from '@cognite/cdf-utilities';
+import { Button, Flex, Icon, Chip, Checkbox, Table } from '@cognite/cogs.js';
+import { usePermissions } from '@cognite/sdk-react-query-hooks';
+import {
+  DataSetWithExtpipes,
+  useDataSetsList,
+  useUpdateDataSetVisibility,
+} from '../../actions/index';
+import { useTableColumns, DataSetRow, getLabelsList } from './TableColumns';
 
 const DataSetsList = (): JSX.Element => {
   const { t } = useTranslation();
@@ -111,7 +112,7 @@ const DataSetsList = (): JSX.Element => {
 
   const filteredTableData = useMemo(() => {
     let filteredArray = tableData;
-    if (!!labelFilter?.length) {
+    if (labelFilter?.length) {
       filteredArray = filteredArray.filter(({ labels: testLabels }) =>
         testLabels.some((label) => labelFilter.includes(label))
       );
@@ -327,7 +328,7 @@ const DataSetsList = (): JSX.Element => {
               <TableNoResults
                 title={t('data-set-list-no-records')}
                 content={t('data-set-list-search-not-found', {
-                  $: !!searchFilter ? `"${searchFilter}"` : searchFilter,
+                  $: searchFilter ? `"${searchFilter}"` : searchFilter,
                 })}
               />
             ),

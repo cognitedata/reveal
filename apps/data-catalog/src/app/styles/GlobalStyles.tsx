@@ -2,7 +2,7 @@
 import { ReactNode } from 'react';
 
 import { styleScope } from '@data-catalog-app/styles/styleScope';
-import { getContainer } from '@data-catalog-app/utils/shared';
+import { getContainer } from '@data-catalog-app/app/utils/shared';
 import antdStyle from 'antd/dist/antd.css';
 import ConfigProvider from 'antd/lib/config-provider';
 
