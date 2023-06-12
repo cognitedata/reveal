@@ -107,6 +107,7 @@
     "jest-junit": "^13.0.0",
     "json-server": "^0.17.0",
     "jwt-decode": "^3.1.2",
+    "langchain": "^0.0.92",
     "lodash": "^4.17.21",
     "lru-cache": "^6.0.0",
     "mime-types": "^2.1.35",
