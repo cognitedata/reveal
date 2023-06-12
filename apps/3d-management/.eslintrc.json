@@ -5,7 +5,8 @@
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
       "rules": {
-        "@typescript-eslint/no-loss-of-precision": ["warn"]
+        "@typescript-eslint/no-loss-of-precision": ["warn"],
+        "@typescript-eslint/ban-ts-comment": ["warn"]
       }
     },
     {

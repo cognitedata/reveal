@@ -3,8 +3,6 @@ import { mount } from 'enzyme';
 import { MemoryRouter as Router } from 'react-router-dom';
 import { PageHeader } from './PageHeader';
 
-global.window = { location: { pathname: null } };
-
 describe('NewHeader', () => {
   it('Renders without exploding', () => {
     const wrapper = mount(<PageHeader />);
