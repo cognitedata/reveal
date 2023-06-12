@@ -4,10 +4,10 @@ import {
   DocumentsSearchRequest,
   DocumentsSearchResponse,
 } from '@cognite/sdk-playground';
-import { DOCUMENTS_AGGREGATES } from 'apps/cdf-document-search/src/services/constants';
-import { DocumentSearchQuery } from 'apps/cdf-document-search/src/services/types';
-import { documentBuilder } from 'apps/cdf-document-search/src/utils/builder';
-import { parseArrayBufferToBase64 } from 'apps/cdf-document-search/src/utils/parser';
+import { documentBuilder } from '../../../utils/builder';
+import { parseArrayBufferToBase64 } from '../../../utils/parser';
+import { DOCUMENTS_AGGREGATES } from '../../constants';
+import { DocumentSearchQuery } from '../../types';
 
 export const fetchDocumentAggregates = (sdk: CogniteClient) => {
   return sdk

@@ -1,6 +1,7 @@
 import React from 'react';
-import { classifierConfig } from 'apps/cdf-document-search/src/configs';
-import { ClassifierState } from 'apps/cdf-document-search/src/machines/classifier/types';
+import { classifierConfig } from '../../configs';
+import { ClassifierState } from '../../machines/classifier/types';
+
 import { StepWidget } from './components/widgets';
 import { ClassifierRouter } from './pages';
 

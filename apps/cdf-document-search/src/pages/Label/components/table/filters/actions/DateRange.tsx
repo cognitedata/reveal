@@ -1,5 +1,6 @@
-import { DateRange, Range } from '@cognite/cogs.js';
 import React from 'react';
+
+import { DateRange, Range } from '@cognite/cogs.js';
 
 interface Props {}
 

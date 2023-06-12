@@ -1,6 +1,8 @@
-import { Body } from '@cognite/cogs.js';
 import styled from 'styled-components';
+
 import { motion } from 'framer-motion';
+
+import { Body } from '@cognite/cogs.js';
 
 export const StepContainer = styled(motion.div)<{ $isActive: boolean }>`
   background-color: ${(props) =>

@@ -1,13 +1,15 @@
-import { Button, Loader, Table } from '@cognite/cogs.js';
-import TableBulkActions from 'apps/cdf-document-search/src/components/table/BulkAction';
-import { PageContent } from 'apps/cdf-document-search/src/components/page';
-import { Empty } from 'apps/cdf-document-search/src/components/states/Empty';
-import { TableWrapper } from 'apps/cdf-document-search/src/components/table/TableWrapper';
-import { useNavigation } from 'apps/cdf-document-search/src/hooks/useNavigation';
 import React from 'react';
-import { useClassifierManageTrainingSetsQuery } from 'apps/cdf-document-search/src/services/query/classifier/query';
-import { useDocumentsUpdatePipelineMutate } from 'apps/cdf-document-search/src/services/query/pipelines/mutate';
-import { ClassifierTrainingSet } from 'apps/cdf-document-search/src/services/types';
+
+import { Button, Loader, Table } from '@cognite/cogs.js';
+import { PageContent } from '../../../../../../components/page';
+import { Empty } from '../../../../../../components/states/Empty';
+import TableBulkActions from '../../../../../../components/table/BulkAction';
+import { TableWrapper } from '../../../../../../components/table/TableWrapper';
+import { useNavigation } from '../../../../../../hooks/useNavigation';
+import { useClassifierManageTrainingSetsQuery } from '../../../../../../services/query';
+import { useDocumentsUpdatePipelineMutate } from '../../../../../../services/query/pipelines/mutate';
+import { ClassifierTrainingSet } from '../../../../../../services/types';
+
 import { curateColumns } from './curateTrainingSetsColumns';
 
 export const TrainingSetsTable: React.FC = () => {

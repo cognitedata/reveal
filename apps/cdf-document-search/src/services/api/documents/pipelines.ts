@@ -1,9 +1,9 @@
+import { CogniteClient, Label, ListResponse } from '@cognite/sdk';
 import {
   DocumentsClassifier,
   DocumentsPipeline,
   DocumentsPipelineUpdate,
 } from '@cognite/sdk-playground';
-import { CogniteClient, Label, ListResponse } from '@cognite/sdk';
 
 export const createDocumentPipeline = (
   sdk: CogniteClient,

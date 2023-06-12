@@ -1,7 +1,7 @@
-import isUndefined from 'lodash/isUndefined';
-import isString from 'lodash/isString';
-import isNumber from 'lodash/isNumber';
 import isNaN from 'lodash/isNaN';
+import isNumber from 'lodash/isNumber';
+import isString from 'lodash/isString';
+import isUndefined from 'lodash/isUndefined';
 
 export const humanReadableFileSize = (bytes?: number | string) => {
   if (isUndefined(bytes)) {

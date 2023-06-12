@@ -1,6 +1,7 @@
-import { Option, Select } from 'apps/cdf-document-search/src/components/Select';
 import React from 'react';
-import { useAggregatesQuery } from 'apps/cdf-document-search/src/services/query/aggregates/query';
+import { Select, Option } from '../../../../../../components/Select';
+import { useAggregatesQuery } from '../../../../../../services/query/aggregates/query';
+
 import { FilterContainer } from '../elements';
 
 interface Props {
@@ -22,6 +23,7 @@ export const LabelFilter: React.FC<Props> = ({ onChange }) => {
         icon="Tag"
         options={options}
         onChange={(selectedOptions) =>
+          // @ts-ignore
           onChange(selectedOptions?.map((option) => option.value) ?? [])
         }
         isLoading={isLoading}

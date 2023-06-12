@@ -1,7 +1,8 @@
-import { useSDK } from '@cognite/sdk-provider';
 import { useQuery } from '@tanstack/react-query';
-import { PIPELINES_KEYS } from 'apps/cdf-document-search/src/services/constants';
-import { fetchDocumentPipelines } from 'apps/cdf-document-search/src/services/api';
+
+import { useSDK } from '@cognite/sdk-provider';
+import { fetchDocumentPipelines } from '../../api';
+import { PIPELINES_KEYS } from '../../constants';
 
 export const useDocumentsPipelinesQuery = () => {
   const sdk = useSDK();

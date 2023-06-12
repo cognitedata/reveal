@@ -1,24 +1,26 @@
 import React from 'react';
-import {
-  PageHeader,
-  PageContent,
-} from 'apps/cdf-document-search/src/components/page';
+
+import { Button, Flex } from '@cognite/cogs.js';
+import { PageContent, PageHeader } from '../../../../components/page';
+import { useClassifierName } from '../../../../hooks/useClassifierName';
+import { useNavigation } from '../../../../hooks/useNavigation';
+import { useClassifierActions } from '../../../../machines/classifier/hooks/useClassifierActions';
 import {
   useClassifierConfig,
   useClassifierId,
-} from 'apps/cdf-document-search/src/machines/classifier/hooks/useClassifierSelectors';
-import { ClassifierState } from 'apps/cdf-document-search/src/machines/classifier/types';
-import TrainClassifierContainer from 'apps/cdf-document-search/src/pages/Classifier/pages/TrainClassifier/components/containers/TrainClassifierContainer';
-import { Button, Flex } from '@cognite/cogs.js';
-import { useClassifierActions } from 'apps/cdf-document-search/src/machines/classifier/hooks/useClassifierActions';
-import { useClassifierManageTrainingSetsQuery } from 'apps/cdf-document-search/src/services/query';
-import { useClassifierCreateMutate } from 'apps/cdf-document-search/src/services/query/classifier/mutate';
-import { useDocumentsClassifierByIdQuery } from 'apps/cdf-document-search/src/services/query/classifier/query';
-import { useClassifierName } from 'apps/cdf-document-search/src/hooks/useClassifierName';
-import { isClassifierFinished } from 'apps/cdf-document-search/src/utils/classifier';
-import { CommonClassifierPage } from 'apps/cdf-document-search/src/pages/Classifier/components/ClassifierPage';
-import { useNavigation } from 'apps/cdf-document-search/src/hooks/useNavigation';
+} from '../../../../machines/classifier/hooks/useClassifierSelectors';
+import { ClassifierState } from '../../../../machines/classifier/types';
+import {
+  useClassifierManageTrainingSetsQuery,
+  useDocumentsClassifierByIdQuery,
+} from '../../../../services/query';
+import { useClassifierCreateMutate } from '../../../../services/query/classifier/mutate';
+import { isClassifierFinished } from '../../../../utils/classifier';
+import { CommonClassifierPage } from '../../components/ClassifierPage';
+
 import { ClassifierProps } from '../router';
+import TrainClassifierContainer from './components/containers/TrainClassifierContainer';
+
 import { TrainClassifierInfoBar } from './components/containers/TrainClassifierInfoBar';
 import { TrainClassifierNavigation } from './components/navigation/TrainClassifierNavigation';
 

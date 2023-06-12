@@ -1,8 +1,9 @@
-import { useSDK } from '@cognite/sdk-provider';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { doDocumentSearch } from 'apps/cdf-document-search/src/services/api';
-import { DOCUMENTS_KEYS } from 'apps/cdf-document-search/src/services/constants';
-import { DocumentSearchQuery } from 'apps/cdf-document-search/src/services/types';
+
+import { useSDK } from '@cognite/sdk-provider';
+import { doDocumentSearch } from '../../api';
+import { DOCUMENTS_KEYS } from '../../constants';
+import { DocumentSearchQuery } from '../../types';
 
 export const useDocumentsSearchMutate = () => {
   const sdk = useSDK();

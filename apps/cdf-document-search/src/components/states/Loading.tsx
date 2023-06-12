@@ -1,6 +1,8 @@
 import React from 'react';
-import Search from 'apps/cdf-document-search/src/images/illustrations/search.svg';
-import { loadingState } from 'apps/cdf-document-search/src/configs/global.config';
+
+import Search from '../../images/illustrations/search.svg';
+import { loadingState } from '../../configs/global.config';
+
 import {
   Image,
   StatesContainer,

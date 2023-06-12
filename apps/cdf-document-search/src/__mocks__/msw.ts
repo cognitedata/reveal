@@ -1,5 +1,6 @@
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
+
 import { mockClassifiersList } from './resolvers/mockClassifier';
 import { mockLabelsList } from './resolvers/mockLabels';
 import { mockPipelinesList } from './resolvers/mockPipelines';

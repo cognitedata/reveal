@@ -1,6 +1,7 @@
-import { ExternalLabelDefinition } from '@cognite/sdk';
-import { TableCell } from 'apps/cdf-document-search/src/components/table/TableCell';
 import { Column } from 'react-table';
+
+import { ExternalLabelDefinition } from '@cognite/sdk';
+import { TableCell } from '../../../../../../components/table/TableCell';
 
 export const curateColumns = (labels: ExternalLabelDefinition[]) => {
   return labels.reduce(

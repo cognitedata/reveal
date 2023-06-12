@@ -1,23 +1,21 @@
 import React from 'react';
-import { Page } from 'apps/cdf-document-search/src/components/page/Page';
-import {
-  PageContent,
-  PageHeader,
-} from 'apps/cdf-document-search/src/components/page';
-import { homeConfig } from 'apps/cdf-document-search/src/configs/global.config';
+
 import { Button, Loader } from '@cognite/cogs.js';
-import { useDocumentsPipelinesQuery } from 'apps/cdf-document-search/src/services/query/pipelines/query';
-import { useNavigation } from 'apps/cdf-document-search/src/hooks/useNavigation';
 import { DocumentsClassifier as Classifier } from '@cognite/sdk-playground';
-import { useClassifierDeleteMutate } from 'apps/cdf-document-search/src/services/query/classifier/mutate';
-import { useDocumentsActiveClassifierQuery } from 'apps/cdf-document-search/src/services/query/classifier/query';
-import { useDocumentsActiveClassifierPipelineMutate } from 'apps/cdf-document-search/src/services/query/pipelines/mutate';
-import { TableWrapper } from 'apps/cdf-document-search/src/components/table/TableWrapper';
-import ClassifierWidget from './components/widgets/ClassifierWidget';
-import { ClassifierTable } from './components/table/ClassifierTable';
-import { ReviewModelModal } from './components/modal/ReviewModelModal';
+import { Page, PageContent, PageHeader } from '../../components/page';
+import { TableWrapper } from '../../components/table/TableWrapper';
+import { homeConfig } from '../../configs/global.config';
+import { useNavigation } from '../../hooks/useNavigation';
+import { useDocumentsActiveClassifierQuery } from '../../services/query';
+import { useClassifierDeleteMutate } from '../../services/query/classifier/mutate';
+import { useDocumentsActiveClassifierPipelineMutate } from '../../services/query/pipelines/mutate';
+import { useDocumentsPipelinesQuery } from '../../services/query/pipelines/query';
+
 import { ActiveModelContainer } from './components/container/ActiveModelContainer';
+import { ReviewModelModal } from './components/modal/ReviewModelModal';
+import { ClassifierTable } from './components/table/ClassifierTable';
 import { ClassifierActions } from './components/table/curateClassifierColumns';
+import ClassifierWidget from './components/widgets/ClassifierWidget';
 
 const HomePage = () => {
   const { toClassifier } = useNavigation();

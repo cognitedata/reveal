@@ -1,5 +1,5 @@
-import { StepProps } from 'apps/cdf-document-search/src/pages/Classifier/components/widgets/types';
-import { ClassifierState } from 'apps/cdf-document-search/src/machines/classifier/types';
+import { ClassifierState } from '../machines/classifier/types';
+import { StepProps } from '../pages/Classifier/components/widgets/types';
 
 interface ClassifierConfig {
   steps: { [state in Exclude<ClassifierState, 'complete'>]: StepProps };

@@ -1,11 +1,13 @@
+import React from 'react';
+
 import { Table } from '@cognite/cogs.js';
 import { LabelDefinition } from '@cognite/sdk';
-import { Loading } from 'apps/cdf-document-search/src/components/states/Loading';
-import React from 'react';
-import { useClassifierManageTrainingSetsQuery } from 'apps/cdf-document-search/src/services/query';
-import { useLabelsQuery } from 'apps/cdf-document-search/src/services/query/labels/query';
-import { useLabelsDeleteMutate } from 'apps/cdf-document-search/src/services/query/labels/mutate';
-import { sortByName } from 'apps/cdf-document-search/src/utils/sort';
+import { useClassifierManageTrainingSetsQuery } from '../../../services/query';
+import { useLabelsDeleteMutate } from '../../../services/query/labels/mutate';
+import { useLabelsQuery } from '../../../services/query/labels/query';
+import { sortByName } from '../../../utils/sort';
+import { Loading } from '../../states/Loading';
+
 import { curateColumns } from './curateLabelsColumns';
 
 export type Labels = LabelDefinition & { id: number };

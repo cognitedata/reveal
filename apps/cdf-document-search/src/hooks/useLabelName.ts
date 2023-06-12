@@ -1,4 +1,4 @@
-import { useLabelsQuery } from 'apps/cdf-document-search/src/services/query/labels/query';
+import { useLabelsQuery } from '../services/query/labels/query';
 
 export const useLabelName = (externalId: string) => {
   const { data, isLoading } = useLabelsQuery();

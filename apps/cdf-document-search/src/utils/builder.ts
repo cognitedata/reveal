@@ -1,6 +1,7 @@
-import { DocumentsSearchRequest } from '@cognite/sdk-playground';
 import merge from 'lodash/merge';
-import { DocumentSearchQuery } from 'apps/cdf-document-search/src/services/types';
+
+import { DocumentsSearchRequest } from '@cognite/sdk-playground';
+import { DocumentSearchQuery } from '../services/types';
 
 export const documentBuilder = (
   query?: DocumentSearchQuery
@@ -52,7 +53,7 @@ export const documentBuilder = (
       {
         filter: {
           labels: {
-            containsAny: query.labels.map((externalId) => ({
+            containsAny: query.labels.map((externalId: string) => ({
               externalId,
             })),
           },

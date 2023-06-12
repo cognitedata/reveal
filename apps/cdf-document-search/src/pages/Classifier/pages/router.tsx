@@ -1,9 +1,10 @@
-import { useClassifierCurrentState } from 'apps/cdf-document-search/src/machines/classifier/hooks/useClassifierSelectors';
-import { ClassifierState } from 'apps/cdf-document-search/src/machines/classifier/types';
 import React, { FC } from 'react';
-import { ManageTrainingSets } from './ManageTrainingSet/ManageTrainingSet';
-import TrainClassifier from './TrainClassifier/TrainClassifier';
+import { useClassifierCurrentState } from '../../../machines/classifier/hooks/useClassifierSelectors';
+import { ClassifierState } from '../../../machines/classifier/types';
+
+import { ManageTrainingSets } from './ManageTrainingSet';
 import { ReviewModel } from './ReviewModel/ReviewModel';
+import TrainClassifier from './TrainClassifier/TrainClassifier';
 
 export interface ClassifierProps {
   Widget: () => JSX.Element | JSX.Element[];

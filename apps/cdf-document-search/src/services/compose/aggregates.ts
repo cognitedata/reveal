@@ -1,7 +1,7 @@
 import { CogniteClient } from '@cognite/sdk';
-import { fetchDocumentAggregates } from 'apps/cdf-document-search/src/services/api';
-import { DOCUMENTS_AGGREGATES } from 'apps/cdf-document-search/src/services/constants';
-import { Aggregates } from 'apps/cdf-document-search/src/services/types';
+import { fetchDocumentAggregates } from '../api';
+import { DOCUMENTS_AGGREGATES } from '../constants';
+import { Aggregates } from '../types';
 
 export const composeAggregates = async (
   sdk: CogniteClient

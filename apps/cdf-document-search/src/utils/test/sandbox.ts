@@ -1,5 +1,5 @@
-import * as sinon from 'sinon';
 import { useChannel } from '@storybook/addons';
+import * as sinon from 'sinon';
 
 /**
  * Stub out the storybook addon channels. See here for more information:

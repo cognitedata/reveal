@@ -1,10 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+
 import * as Sentry from '@sentry/browser';
-import config from 'apps/cdf-document-search/src/utils/config';
-import './set-public-path';
+import ReactDOMClient from 'react-dom/client';
 import singleSpaReact from 'single-spa-react';
+
+import './set-public-path';
+
 import App from './App';
+import config from './utils/config';
 
 if (process.env.REACT_APP_SENTRY_DSN) {
   Sentry.init({
@@ -18,10 +22,8 @@ if (process.env.REACT_APP_SENTRY_DSN) {
   });
 }
 
-const lifecycles = singleSpaReact({
+export const { bootstrap, mount, unmount } = singleSpaReact({
   React,
-  ReactDOM,
+  ReactDOMClient,
   rootComponent: App,
 });
-
-export const { bootstrap, mount, unmount } = lifecycles;

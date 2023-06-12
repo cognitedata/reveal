@@ -1,5 +1,7 @@
 import React from 'react';
-import Recent from 'apps/cdf-document-search/src/images/illustrations/recent.svg';
+
+import Recent from '../../images/illustrations/recent.svg';
+
 import {
   StatesContainer,
   StatesDescription,

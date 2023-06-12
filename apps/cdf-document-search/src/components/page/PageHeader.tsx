@@ -1,7 +1,9 @@
-import { Body, Button, Detail, Flex, Title } from '@cognite/cogs.js';
-import { useNavigation } from 'apps/cdf-document-search/src/hooks/useNavigation';
 import React from 'react';
+
 import styled from 'styled-components';
+
+import { Body, Button, Detail, Flex, Title } from '@cognite/cogs.js';
+import { useNavigation } from '../../hooks/useNavigation';
 
 const Container = styled.div<{ $marginBottom?: string }>`
   display: flex;

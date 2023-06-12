@@ -1,8 +1,12 @@
+import React from 'react';
+
+import styled from 'styled-components';
+
+import { motion } from 'framer-motion';
+
 import { Body, Button, Flex, Chip, Title } from '@cognite/cogs.js';
 import { DocumentsClassifier as Classifier } from '@cognite/sdk-playground';
-import { motion } from 'framer-motion';
-import React from 'react';
-import styled from 'styled-components';
+
 import { metricsLabels } from './utils';
 
 const Container = styled(motion.div)<{ $fullWidth?: boolean }>`

@@ -1,7 +1,8 @@
-import { useSDK } from '@cognite/sdk-provider';
 import { useQuery } from '@tanstack/react-query';
-import { composeAggregates } from 'apps/cdf-document-search/src/services/compose/aggregates';
-import { AGGREGATES_KEYS } from 'apps/cdf-document-search/src/services/constants';
+
+import { useSDK } from '@cognite/sdk-provider';
+import { composeAggregates } from '../../compose/aggregates';
+import { AGGREGATES_KEYS } from '../../constants';
 
 export const useAggregatesQuery = () => {
   const sdk = useSDK();

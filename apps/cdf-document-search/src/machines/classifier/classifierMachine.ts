@@ -1,4 +1,5 @@
 import { createModel } from 'xstate/lib/model';
+
 import { ClassifierState } from './types';
 
 export interface Model {

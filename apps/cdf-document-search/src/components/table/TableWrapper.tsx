@@ -1,6 +1,8 @@
 import React from 'react';
+
 import styled from 'styled-components';
-import layers from 'apps/cdf-document-search/src/utils/zIndex';
+
+import layers from '../../utils/zIndex';
 
 const Container = styled.div`
   height: 100%;

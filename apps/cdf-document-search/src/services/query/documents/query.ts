@@ -1,14 +1,14 @@
-import { useSDK } from '@cognite/sdk-provider';
 import { useQuery } from '@tanstack/react-query';
+
+import { useSDK } from '@cognite/sdk-provider';
+import { useLabelParams } from '../../../hooks/useParams';
 import {
   doDocumentSearch,
   fetchDocumentById,
   fetchDocumentList,
   previewDocument,
-} from 'apps/cdf-document-search/src/services/api';
-
-import { DOCUMENTS_KEYS } from 'apps/cdf-document-search/src/services/constants';
-import { useLabelParams } from 'apps/cdf-document-search/src/hooks/useParams';
+} from '../../api';
+import { DOCUMENTS_KEYS } from '../../constants';
 
 export const useDocumentsSearchQuery = (enabled = true) => {
   const sdk = useSDK();

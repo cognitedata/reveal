@@ -1,6 +1,6 @@
-import { ExternalId } from '@cognite/sdk';
 import { Table } from '@cognite/cogs.js';
-import { TableCell } from 'apps/cdf-document-search/src/components/table/TableCell';
+import { ExternalId } from '@cognite/sdk';
+import { TableCell } from '../TableCell';
 
 export const curateColumns = (deleteLabels: (ids: ExternalId[]) => void) => {
   return [

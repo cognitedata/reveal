@@ -1,15 +1,14 @@
-import {
-  PageContent,
-  PageHeader,
-} from 'apps/cdf-document-search/src/components/page';
-import { useNavigation } from 'apps/cdf-document-search/src/hooks/useNavigation';
-import { useClassifierId } from 'apps/cdf-document-search/src/machines/classifier/hooks/useClassifierSelectors';
 import React from 'react';
-import { useDocumentsActiveClassifierPipelineMutate } from 'apps/cdf-document-search/src/services/query/pipelines/mutate';
-import { useDocumentsClassifierByIdQuery } from 'apps/cdf-document-search/src/services/query/classifier/query';
-import { CommonClassifierPage } from 'apps/cdf-document-search/src/pages/Classifier/components/ClassifierPage';
-import { ActiveModelContainer } from 'apps/cdf-document-search/src/pages/Home/components/container/ActiveModelContainer';
+import { PageContent, PageHeader } from '../../../../components/page';
+import { useNavigation } from '../../../../hooks/useNavigation';
+import { useClassifierId } from '../../../../machines/classifier/hooks/useClassifierSelectors';
+import { useDocumentsClassifierByIdQuery } from '../../../../services/query';
+import { useDocumentsActiveClassifierPipelineMutate } from '../../../../services/query/pipelines/mutate';
+import { ActiveModelContainer } from '../../../Home/components/container/ActiveModelContainer';
+import { CommonClassifierPage } from '../../components/ClassifierPage';
+
 import { ClassifierProps } from '../router';
+
 import { MatrixTable } from './components';
 import { ReviewModelNavigation } from './components/navigation/ReviewModelNavigation';
 

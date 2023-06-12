@@ -1,10 +1,10 @@
+import { CogniteClient, ListResponse } from '@cognite/sdk';
 import {
   DocumentsClassifierCreate,
   DocumentsClassifier as Classifier,
   DocumentsClassifierListByIds,
   DocumentsClassifierListByIdsRequest,
 } from '@cognite/sdk-playground';
-import { CogniteClient, ListResponse } from '@cognite/sdk';
 
 export const createDocumentClassifier = (
   sdk: CogniteClient,

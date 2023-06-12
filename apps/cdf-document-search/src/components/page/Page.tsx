@@ -1,6 +1,8 @@
-import { Breadcrumb } from 'apps/cdf-document-search/src/components/Breadcrumb';
 import React from 'react';
+
 import styled from 'styled-components';
+
+import { Breadcrumb } from '../Breadcrumb';
 
 const Container = styled.div`
   display: flex;

@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react-hooks';
-import { useLabelName } from 'apps/cdf-document-search/src/hooks/useLabelName';
-import { TestProviderWrapper } from 'apps/cdf-document-search/src/utils/test/render';
+import { useLabelName } from '../../../../cdf-document-search/src/hooks/useLabelName';
+import { TestProviderWrapper } from '../../../../cdf-document-search/src/utils/test/render';
 
 describe('hook:useLabelName', () => {
   it('Finds the label name based on external id', async () => {

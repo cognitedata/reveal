@@ -1,7 +1,9 @@
+import React from 'react';
+
+import styled from 'styled-components';
+
 import { Modal, Input, ToastContainer } from '@cognite/cogs.js';
 import { ExternalLabelDefinition } from '@cognite/sdk';
-import React from 'react';
-import styled from 'styled-components';
 
 const Container = styled.div`
   margin-top: 1rem;

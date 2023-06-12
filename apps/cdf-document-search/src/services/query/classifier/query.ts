@@ -1,18 +1,19 @@
+import React from 'react';
+
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+
 import { DocumentsClassifier } from '@cognite/sdk-playground';
 import { useSDK } from '@cognite/sdk-provider';
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
-import {
-  composeActiveClassifier,
-  composeClassifierTrainingSets,
-} from 'apps/cdf-document-search/src/services/compose';
-import { CLASSIFIER_KEYS } from 'apps/cdf-document-search/src/services/constants';
-
-import React from 'react';
+import { isClassifierTraining } from '../../../utils/classifier';
 import {
   fetchDocumentClassifierById,
   fetchDocumentClassifiers,
-} from 'apps/cdf-document-search/src/services/api';
-import { isClassifierTraining } from 'apps/cdf-document-search/src/utils/classifier';
+} from '../../api';
+import {
+  composeActiveClassifier,
+  composeClassifierTrainingSets,
+} from '../../compose';
+import { CLASSIFIER_KEYS } from '../../constants';
 
 export const useClassifierManageTrainingSetsQuery = (disabled = false) => {
   const sdk = useSDK();

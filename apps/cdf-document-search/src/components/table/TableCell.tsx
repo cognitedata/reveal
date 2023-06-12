@@ -1,4 +1,9 @@
 /* eslint-disable no-nested-ternary */
+import React from 'react';
+import { CellProps } from 'react-table';
+
+import capitalize from 'lodash/capitalize';
+
 import {
   Body,
   Button,
@@ -9,22 +14,16 @@ import {
   Menu,
   Tooltip,
 } from '@cognite/cogs.js';
+import { ExternalId, LabelDefinition } from '@cognite/sdk';
 import {
   DocumentsClassifier as Classifier,
   Document,
 } from '@cognite/sdk-playground';
-import { ExternalId, LabelDefinition } from '@cognite/sdk';
-import { globalConfig } from 'apps/cdf-document-search/src/configs/global.config';
-import { Navigation } from 'apps/cdf-document-search/src/hooks/useNavigation';
-import capitalize from 'lodash/capitalize';
-import { ClassifierActions } from 'apps/cdf-document-search/src/pages/Home/components/table/curateClassifierColumns';
-import React from 'react';
-import { CellProps } from 'react-table';
-import {
-  ClassifierStatus,
-  ClassifierTrainingSet,
-} from 'apps/cdf-document-search/src/services/types';
-import { ChipType } from 'apps/cdf-document-search/src/enums';
+import { globalConfig } from '../../configs/global.config';
+import { ChipType } from '../../enums';
+import { Navigation } from '../../hooks/useNavigation';
+import { ClassifierActions } from '../../pages/Home/components/table/curateClassifierColumns';
+import { ClassifierStatus, ClassifierTrainingSet } from '../../services/types';
 
 // NOTE: This file is getting too big.
 // Move the cell render's that are specific to the columns, closer to the curating columns.

@@ -1,4 +1,4 @@
-import { useDocumentsPipelinesQuery } from 'apps/cdf-document-search/src/services/query/pipelines/query';
+import { useDocumentsPipelinesQuery } from '../services/query/pipelines/query';
 
 export const useClassifierName = () => {
   const { data: pipeline } = useDocumentsPipelinesQuery();

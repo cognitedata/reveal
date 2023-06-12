@@ -1,5 +1,5 @@
 import { Table } from '@cognite/cogs.js';
-import { TableCell } from 'apps/cdf-document-search/src/components/table/TableCell';
+import { TableCell } from '../../../../components/table/TableCell';
 
 export const curateColumns = ({
   toggleDocumentPreview,

@@ -1,4 +1,4 @@
-import { ChipColor } from 'apps/cdf-document-search/src/components/enums';
+import { ChipColor } from '../components/enums';
 
 export const globalConfig = {
   APP_NAME: 'Document Classifiers',

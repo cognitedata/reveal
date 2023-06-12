@@ -1,10 +1,12 @@
-import { ToastContainer } from '@cognite/cogs.js';
-import { PermissionWrapper } from 'apps/cdf-document-search/src/components/PermissionWrapper';
-import { ClassifierContext } from 'apps/cdf-document-search/src/machines/classifier/contexts/ClassifierContext';
-import ClassifierPage from 'apps/cdf-document-search/src/pages/Classifier/Classifier';
-import Home from 'apps/cdf-document-search/src/pages/Home';
 import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+
+import { ToastContainer } from '@cognite/cogs.js';
+import { PermissionWrapper } from '../components/PermissionWrapper';
+import { ClassifierContext } from '../machines/classifier/contexts/ClassifierContext';
+import ClassifierPage from './Classifier/Classifier';
+import Home from './Home';
+
 import LabelPage from './Label/Label';
 
 export const MainRouter = () => {

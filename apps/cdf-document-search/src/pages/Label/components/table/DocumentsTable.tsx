@@ -1,8 +1,11 @@
+import React from 'react';
+
 import { Table } from '@cognite/cogs.js';
 import { Document } from '@cognite/sdk-playground';
-import { Empty } from 'apps/cdf-document-search/src/components/states/Empty';
-import React from 'react';
+import { Empty } from '../../../../components/states/Empty';
+
 import { DocumentPreview } from '../layover/DocumentPreview';
+
 import { curateColumns } from './curateDocumentsColumns';
 import { DocumentsFilters } from './filters';
 

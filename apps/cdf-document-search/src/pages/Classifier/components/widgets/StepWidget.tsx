@@ -1,13 +1,15 @@
+import React, { FC } from 'react';
+
 import { Body, Icon } from '@cognite/cogs.js';
 import {
   useClassifierConfig,
   useClassifierCurrentStep,
   useClassifierDescription,
   useClassifierStatus,
-} from 'apps/cdf-document-search/src/machines/classifier/hooks/useClassifierSelectors';
-import { ClassifierState } from 'apps/cdf-document-search/src/machines/classifier/types';
-import React, { FC } from 'react';
-import TrainClassifierLabel from 'apps/cdf-document-search/src/pages/Classifier/pages/TrainClassifier/components/TrainClassifierLabel';
+} from '../../../../machines/classifier/hooks/useClassifierSelectors';
+import { ClassifierState } from '../../../../machines/classifier/types';
+import TrainClassifierLabel from '../../pages/TrainClassifier/components/TrainClassifierLabel';
+
 import {
   StepBadgeActive,
   StepBadgeComplete,

@@ -1,11 +1,11 @@
+import React from 'react';
+import { useNavigation } from '../../../../../../hooks/useNavigation';
+import { useClassifierActions } from '../../../../../../machines/classifier/hooks/useClassifierActions';
 import {
   ClassifierNavigationProps,
   NavigationBackButton,
   NavigationNextButton,
-} from 'apps/cdf-document-search/src/pages/Classifier/components/navigations/BottomNavigation';
-import React from 'react';
-import { useNavigation } from 'apps/cdf-document-search/src/hooks/useNavigation';
-import { useClassifierActions } from 'apps/cdf-document-search/src/machines/classifier/hooks/useClassifierActions';
+} from '../../../../components/navigations/BottomNavigation';
 
 export const ManageTrainingSetNavigation: React.FC<
   ClassifierNavigationProps

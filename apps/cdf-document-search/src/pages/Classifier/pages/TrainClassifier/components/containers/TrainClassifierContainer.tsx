@@ -1,16 +1,18 @@
 import React from 'react';
+
 import styled from 'styled-components';
-import { PageHeader } from 'apps/cdf-document-search/src/components/page';
+
+import { Flex, Body, Chip } from '@cognite/cogs.js';
+import { DocumentsClassifier as Classifier } from '@cognite/sdk-playground';
+import { PageHeader } from '../../../../../../components/page';
+import { useClassifierActions } from '../../../../../../machines/classifier/hooks/useClassifierActions';
+import { useClassifierManageTrainingSetsQuery } from '../../../../../../services/query';
+import { ClassifierStatus } from '../../../../../../services/types';
 import {
   isClassifierDone,
   isClassifierTraining,
-} from 'apps/cdf-document-search/src/utils/classifier';
-import { DocumentsClassifier as Classifier } from '@cognite/sdk-playground';
-import TrainClassifierLabel from 'apps/cdf-document-search/src/pages/Classifier/pages/TrainClassifier/components/TrainClassifierLabel';
-import { Flex, Body, Chip } from '@cognite/cogs.js';
-import { useClassifierActions } from 'apps/cdf-document-search/src/machines/classifier/hooks/useClassifierActions';
-import { useClassifierManageTrainingSetsQuery } from 'apps/cdf-document-search/src/services/query';
-import { ClassifierStatus } from 'apps/cdf-document-search/src/services/types';
+} from '../../../../../../utils/classifier';
+import TrainClassifierLabel from '../TrainClassifierLabel';
 
 const Container = styled.div<{ $status?: string }>`
   width: 50rem;

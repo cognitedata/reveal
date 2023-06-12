@@ -1,8 +1,10 @@
-import { Body, Icon } from '@cognite/cogs.js';
-import { useNavigation } from 'apps/cdf-document-search/src/hooks/useNavigation';
 import React from 'react';
+
 import styled from 'styled-components';
-import { globalConfig } from 'apps/cdf-document-search/src/configs/global.config';
+
+import { Body, Icon } from '@cognite/cogs.js';
+import { globalConfig } from '../configs/global.config';
+import { useNavigation } from '../hooks/useNavigation';
 
 const BreadcrumbText = styled(Body).attrs({ level: 2 })`
   cursor: pointer;

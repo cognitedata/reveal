@@ -1,5 +1,5 @@
-import { ClassifierState } from 'apps/cdf-document-search/src/machines/classifier/types';
 import { useClassifierContext } from '../contexts/ClassifierContext';
+import { ClassifierState } from '../types';
 
 export const useClassifierActions = () => {
   const { classifierMachine } = useClassifierContext();

@@ -1,5 +1,6 @@
-import { Switch } from '@cognite/cogs.js';
 import React from 'react';
+
+import { Switch } from '@cognite/cogs.js';
 
 interface Props {
   onChange(value: boolean): void;

@@ -1,12 +1,10 @@
-import { useSDK } from '@cognite/sdk-provider';
-import { Toast } from 'apps/cdf-document-search/src/components/Toast';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import {
-  createDocumentClassifier,
-  deleteDocumentClassifier,
-} from 'apps/cdf-document-search/src/services/api';
-import { CLASSIFIER_KEYS } from 'apps/cdf-document-search/src/services/constants';
-import { ApiError } from 'apps/cdf-document-search/src/services/types';
+
+import { useSDK } from '@cognite/sdk-provider';
+import { Toast } from '../../../components/Toast';
+import { createDocumentClassifier, deleteDocumentClassifier } from '../../api';
+import { CLASSIFIER_KEYS } from '../../constants';
+import { ApiError } from '../../types';
 
 export const useClassifierCreateMutate = () => {
   const sdk = useSDK();

@@ -1,10 +1,10 @@
-import { useClassifierActions } from 'apps/cdf-document-search/src/machines/classifier/hooks/useClassifierActions';
+import React from 'react';
+import { useClassifierActions } from '../../../../../../machines/classifier/hooks/useClassifierActions';
 import {
   ClassifierNavigationProps,
   NavigationBackButton,
   NavigationNextButton,
-} from 'apps/cdf-document-search/src/pages/Classifier/components/navigations/BottomNavigation';
-import React from 'react';
+} from '../../../../components/navigations/BottomNavigation';
 
 export const TrainClassifierNavigation: React.FC<ClassifierNavigationProps> = ({
   disabled,

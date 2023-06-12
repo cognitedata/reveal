@@ -1,18 +1,16 @@
-import { Body, Button, Flex, Loader } from '@cognite/cogs.js';
-import TableBulkActions from 'apps/cdf-document-search/src/components/table/BulkAction';
-import {
-  PageHeader,
-  Page,
-  PageContent,
-} from 'apps/cdf-document-search/src/components/page';
-import { TableWrapper } from 'apps/cdf-document-search/src/components/table/TableWrapper';
-import { useLabelName } from 'apps/cdf-document-search/src/hooks/useLabelName';
-import { useLabelParams } from 'apps/cdf-document-search/src/hooks/useParams';
-import { useClassifierName } from 'apps/cdf-document-search/src/hooks/useClassifierName';
 import React from 'react';
-import { useDocumentsQuery } from 'apps/cdf-document-search/src/services/query/documents/query';
-import { useUpdateFileLabelsMutate } from 'apps/cdf-document-search/src/services/query/files/mutate';
-import { useBreadcrumb } from 'apps/cdf-document-search/src/hooks/useBreadcrumb';
+
+import { Body, Button, Flex, Loader } from '@cognite/cogs.js';
+import { Page, PageContent, PageHeader } from '../../components/page';
+import TableBulkActions from '../../components/table/BulkAction';
+import { TableWrapper } from '../../components/table/TableWrapper';
+import { useBreadcrumb } from '../../hooks/useBreadcrumb';
+import { useClassifierName } from '../../hooks/useClassifierName';
+import { useLabelName } from '../../hooks/useLabelName';
+import { useLabelParams } from '../../hooks/useParams';
+import { useDocumentsQuery } from '../../services/query/documents/query';
+import { useUpdateFileLabelsMutate } from '../../services/query/files/mutate';
+
 import { DocumentsSearchModal } from './components/modals/DocumentsSearchModal';
 import { DocumentsTable } from './components/table/DocumentsTable';
 

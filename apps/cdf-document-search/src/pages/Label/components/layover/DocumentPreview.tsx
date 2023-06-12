@@ -1,16 +1,18 @@
-import { Body, Button, Drawer, Chip } from '@cognite/cogs.js';
-import { PageHeader } from 'apps/cdf-document-search/src/components/page';
-import { Loading } from 'apps/cdf-document-search/src/components/states/Loading';
-import { documentConfig } from 'apps/cdf-document-search/src/configs/global.config';
 import React from 'react';
+
+import styled from 'styled-components';
+
+import { Body, Button, Drawer, Chip } from '@cognite/cogs.js';
+import { PageHeader } from '../../../../components/page';
+import { Loading } from '../../../../components/states/Loading';
+import { documentConfig } from '../../../../configs/global.config';
 import {
   useDocumentPreviewQuery,
   useDocumentQuery,
-} from 'apps/cdf-document-search/src/services/query/documents/query';
-import styled from 'styled-components';
-import { base64Image } from 'apps/cdf-document-search/src/utils/document';
-import { humanReadableFileSize } from 'apps/cdf-document-search/src/utils/numbers';
-import { getContainer } from 'apps/cdf-document-search/src/utils/utils';
+} from '../../../../services/query/documents/query';
+import { base64Image } from '../../../../utils/document';
+import { humanReadableFileSize } from '../../../../utils/numbers';
+import { getContainer } from '../../../../utils/utils';
 
 const Image = styled.img`
   width: 100%;
@@ -52,7 +54,7 @@ export const DocumentPreview = React.memo(
     return (
       <Drawer
         visible={visible}
-        getContainer={getContainer}
+        getContainer={getContainer()}
         onCancel={() => toggleVisibility()}
         width="30rem"
         footer={null}

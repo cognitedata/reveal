@@ -1,8 +1,10 @@
-import { Loader, ToastContainer, Modal } from '@cognite/cogs.js';
-import { TableWrapper } from 'apps/cdf-document-search/src/components/table/TableWrapper';
 import React from 'react';
-import { useDocumentsSearchQuery } from 'apps/cdf-document-search/src/services/query/documents/query';
-import { useUpdateFileLabelsMutate } from 'apps/cdf-document-search/src/services/query/files/mutate';
+
+import { Loader, ToastContainer, Modal } from '@cognite/cogs.js';
+import { TableWrapper } from '../../../../components/table/TableWrapper';
+import { useDocumentsSearchQuery } from '../../../../services/query/documents/query';
+import { useUpdateFileLabelsMutate } from '../../../../services/query/files/mutate';
+
 import { DocumentsTable } from '../table/DocumentsTable';
 
 export const DocumentsSearchModal = React.memo(

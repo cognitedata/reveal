@@ -1,6 +1,7 @@
 import queryString from 'query-string';
-import { Metrics } from '@cognite/metrics';
+
 import { getUserInformation } from '@cognite/cdf-sdk-singleton';
+import { Metrics } from '@cognite/metrics';
 
 export const projectName = () =>
   new URL(window.location.href).pathname.split('/')[1];

@@ -1,10 +1,13 @@
 import React from 'react';
-import { render, RenderOptions } from '@testing-library/react';
-import { styleScope } from 'apps/cdf-document-search/src/utils/utils';
-import { SDKProvider } from '@cognite/sdk-provider';
+
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ClassifierContext } from 'apps/cdf-document-search/src/machines/classifier/contexts/ClassifierContext';
+import { render, RenderOptions } from '@testing-library/react';
+
+import { SDKProvider } from '@cognite/sdk-provider';
+
 import { mockSdk } from '../../__mocks__/sdk';
+import { ClassifierContext } from '../../machines/classifier/contexts/ClassifierContext';
+import { styleScope } from '../utils';
 
 const queryClient = new QueryClient();
 export const TestProviderWrapper: React.FC<React.PropsWithChildren> = ({

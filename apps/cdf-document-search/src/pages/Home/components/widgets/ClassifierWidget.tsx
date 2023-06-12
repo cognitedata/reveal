@@ -1,8 +1,10 @@
+import React from 'react';
+
+import styled from 'styled-components';
+
 import { Body, Button, Detail, Title, Tooltip } from '@cognite/cogs.js';
 import { DocumentsPipelineClassifier } from '@cognite/sdk-playground';
-import React from 'react';
-import { useDocumentsPipelinesQuery } from 'apps/cdf-document-search/src/services/query/pipelines/query';
-import styled from 'styled-components';
+import { useDocumentsPipelinesQuery } from '../../../../services/query/pipelines/query';
 
 const Wrapper = styled.div`
   background-color: var(--cogs-greyscale-grey2);

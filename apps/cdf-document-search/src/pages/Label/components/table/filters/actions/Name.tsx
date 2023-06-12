@@ -1,6 +1,8 @@
-import { Input } from '@cognite/cogs.js';
-import debounce from 'lodash/debounce';
 import React from 'react';
+
+import debounce from 'lodash/debounce';
+
+import { Input } from '@cognite/cogs.js';
 
 interface Props {
   onChange(value: string): void;

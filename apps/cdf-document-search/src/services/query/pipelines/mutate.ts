@@ -1,13 +1,14 @@
-import { useSDK } from '@cognite/sdk-provider';
-import { Label } from '@cognite/sdk';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+
+import { Label } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
+import { Toast } from '../../../components/Toast';
 import {
   updateDocumentPipelinesActiveClassifier,
   updateDocumentPipelinesTrainingLabels,
-} from 'apps/cdf-document-search/src/services/api';
-import { CLASSIFIER_KEYS } from 'apps/cdf-document-search/src/services/constants';
-import { Toast } from 'apps/cdf-document-search/src/components/Toast';
-import { ApiError } from 'apps/cdf-document-search/src/services/types';
+} from '../../api';
+import { CLASSIFIER_KEYS } from '../../constants';
+import { ApiError } from '../../types';
 
 export const useDocumentsActiveClassifierPipelineMutate = () => {
   const sdk = useSDK();

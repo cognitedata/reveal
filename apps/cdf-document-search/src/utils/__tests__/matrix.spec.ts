@@ -1,4 +1,5 @@
 import { ExternalLabelDefinition } from '@cognite/sdk';
+
 import { mapConfusionMatrix } from '../matrix';
 
 const label = (externalId: string): ExternalLabelDefinition => {

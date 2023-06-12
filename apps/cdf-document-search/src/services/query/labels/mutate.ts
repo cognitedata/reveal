@@ -1,13 +1,11 @@
-import { useSDK } from '@cognite/sdk-provider';
-import { ExternalId, ExternalLabelDefinition } from '@cognite/sdk';
-import { Toast } from 'apps/cdf-document-search/src/components/Toast';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import {
-  createLabel,
-  deleteLabels,
-} from 'apps/cdf-document-search/src/services/api';
-import { LABELS_KEYS } from 'apps/cdf-document-search/src/services/constants';
-import { FilesApiError } from 'apps/cdf-document-search/src/services/types';
+
+import { ExternalId, ExternalLabelDefinition } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
+import { Toast } from '../../../components/Toast';
+import { createLabel, deleteLabels } from '../../api';
+import { LABELS_KEYS } from '../../constants';
+import { FilesApiError } from '../../types';
 
 export const useLabelsCreateMutate = () => {
   const sdk = useSDK();

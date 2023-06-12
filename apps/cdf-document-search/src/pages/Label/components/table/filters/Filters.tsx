@@ -1,14 +1,18 @@
-import { Loader } from '@cognite/cogs.js';
 import React from 'react';
-import { useDocumentsSearchMutate } from 'apps/cdf-document-search/src/services/query/documents/mutate';
-import { DocumentSearchQuery } from 'apps/cdf-document-search/src/services/types';
+
 import styled from 'styled-components';
-import layers from 'apps/cdf-document-search/src/utils/zIndex';
-import { LabelFilter } from './actions/Label';
+
+import layers from '../../../../../utils/zIndex';
+
+import { Loader } from '@cognite/cogs.js';
+import { useDocumentsSearchMutate } from '../../../../../services/query/documents/mutate';
+import { DocumentSearchQuery } from '../../../../../services/types';
+
 import { FileTypeFilter } from './actions/FileType';
+import { LabelFilter } from './actions/Label';
 import { NameFilter } from './actions/Name';
-import { SourceFilter } from './actions/Source';
 import { ShowLabeledFilesFilter } from './actions/ShowLabeledFiles';
+import { SourceFilter } from './actions/Source';
 
 const Container = styled.div`
   display: flex;

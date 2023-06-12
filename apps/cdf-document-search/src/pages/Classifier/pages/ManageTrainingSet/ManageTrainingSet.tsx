@@ -1,13 +1,16 @@
-import { Button, Flex } from '@cognite/cogs.js';
-import { PageHeader } from 'apps/cdf-document-search/src/components/page';
-import { useClassifierName } from 'apps/cdf-document-search/src/hooks/useClassifierName';
-import { useClassifierConfig } from 'apps/cdf-document-search/src/machines/classifier/hooks/useClassifierSelectors';
-import { ClassifierState } from 'apps/cdf-document-search/src/machines/classifier/types';
 import React, { FC } from 'react';
-import { useClassifierManageTrainingSetsQuery } from 'apps/cdf-document-search/src/services/query';
-import { useClassifierActions } from 'apps/cdf-document-search/src/machines/classifier/hooks/useClassifierActions';
-import { CommonClassifierPage } from 'apps/cdf-document-search/src/pages/Classifier/components/ClassifierPage';
+
+import { Button, Flex } from '@cognite/cogs.js';
+import { PageHeader } from '../../../../components/page';
+import { useClassifierName } from '../../../../hooks/useClassifierName';
+import { useClassifierActions } from '../../../../machines/classifier/hooks/useClassifierActions';
+import { useClassifierConfig } from '../../../../machines/classifier/hooks/useClassifierSelectors';
+import { ClassifierState } from '../../../../machines/classifier/types';
+import { useClassifierManageTrainingSetsQuery } from '../../../../services/query';
+import { CommonClassifierPage } from '../../components/ClassifierPage';
+
 import { ClassifierProps } from '../router';
+
 import { LabelsModal } from './components/modal/LabelsModal';
 import { ManageTrainingSetNavigation } from './components/navigation/ManageTrainSetNavigation';
 import { TrainingSetsTable } from './components/table/TrainingSetsTable';

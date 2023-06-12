@@ -1,6 +1,8 @@
+import React, { createContext, useContext } from 'react';
+
 import { useInterpret } from '@xstate/react';
 import { Interpreter } from 'xstate';
-import React, { createContext, useContext } from 'react';
+
 import { classifierMachine, Model } from '../classifierMachine';
 
 export const ClassifierProvider = createContext<{

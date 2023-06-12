@@ -1,14 +1,13 @@
-import { Body, Button, Flex } from '@cognite/cogs.js';
-import {
-  Page,
-  PageContent,
-  PageHeader,
-} from 'apps/cdf-document-search/src/components/page';
 import React from 'react';
+
 import styled from 'styled-components';
-import Search from 'apps/cdf-document-search/src/images/illustrations/search.svg';
-import { noAccessConfig } from 'apps/cdf-document-search/src/configs/global.config';
-import { useNavigation } from 'apps/cdf-document-search/src/hooks/useNavigation';
+
+import Search from '../images/illustrations/search.svg';
+
+import { Body, Button, Flex } from '@cognite/cogs.js';
+import { Page, PageContent, PageHeader } from '../components/page';
+import { noAccessConfig } from '../configs/global.config';
+import { useNavigation } from '../hooks/useNavigation';
 
 const Container = styled.div`
   background-color: rgb(237, 240, 255);

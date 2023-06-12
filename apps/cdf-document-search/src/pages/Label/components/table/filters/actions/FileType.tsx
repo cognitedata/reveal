@@ -1,6 +1,7 @@
-import { Option, Select } from 'apps/cdf-document-search/src/components/Select';
 import React from 'react';
-import { useAggregatesQuery } from 'apps/cdf-document-search/src/services/query/aggregates/query';
+import { Select, Option } from '../../../../../../components/Select';
+import { useAggregatesQuery } from '../../../../../../services/query/aggregates/query';
+
 import { FilterContainer } from '../elements';
 
 interface Props {
@@ -24,7 +25,10 @@ export const FileTypeFilter: React.FC<Props> = ({ onChange }) => {
         icon="Document"
         options={fileTypeOptions}
         onChange={(options) =>
-          onChange(options?.map((option) => option.value) ?? [])
+          onChange(
+            // @ts-ignore
+            options?.map((option: { value: string }) => option.value) ?? []
+          )
         }
         isLoading={isLoading}
         isMulti

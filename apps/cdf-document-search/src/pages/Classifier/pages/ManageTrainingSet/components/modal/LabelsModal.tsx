@@ -1,16 +1,16 @@
-import { ExternalLabelDefinition } from '@cognite/sdk';
-import { useLabelsCreateMutate } from 'apps/cdf-document-search/src/services/query/labels/mutate';
-
-import { TableWrapper } from 'apps/cdf-document-search/src/components/table/TableWrapper';
 import React from 'react';
-import { useDocumentsUpdatePipelineMutate } from 'apps/cdf-document-search/src/services/query/pipelines/mutate';
 
+import { Modal } from '@cognite/cogs.js';
+import { ExternalLabelDefinition } from '@cognite/sdk';
 import {
   Labels,
   LabelsTable,
-} from 'apps/cdf-document-search/src/components/table/LabelsTable/LabelsTable';
+} from '../../../../../../components/table/LabelsTable/LabelsTable';
+import { TableWrapper } from '../../../../../../components/table/TableWrapper';
+import { useLabelsCreateMutate } from '../../../../../../services/query/labels/mutate';
+import { useDocumentsUpdatePipelineMutate } from '../../../../../../services/query/pipelines/mutate';
+
 import { CreateLabelModal } from './CreateLabelModal';
-import { Modal } from '@cognite/cogs.js';
 
 export const LabelsModal = ({
   visible,

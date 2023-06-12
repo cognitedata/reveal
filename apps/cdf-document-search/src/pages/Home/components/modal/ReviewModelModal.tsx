@@ -1,9 +1,12 @@
-import { DocumentsClassifier as Classifier } from '@cognite/sdk-playground';
-import { MatrixTable } from 'apps/cdf-document-search/src/pages/Classifier/pages/ReviewModel/components';
 import React from 'react';
+
 import styled from 'styled-components';
-import { ActiveModelContainer } from '../container/ActiveModelContainer';
+
 import { Modal } from '@cognite/cogs.js';
+import { DocumentsClassifier as Classifier } from '@cognite/sdk-playground';
+import { MatrixTable } from '../../../Classifier/pages/ReviewModel/components';
+
+import { ActiveModelContainer } from '../container/ActiveModelContainer';
 
 const Container = styled.div`
   margin-top: 1rem;

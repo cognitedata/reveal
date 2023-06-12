@@ -1,12 +1,10 @@
-import { useSDK } from '@cognite/sdk-provider';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { updateFileLabels } from 'apps/cdf-document-search/src/services/api';
-import { DOCUMENTS_KEYS } from 'apps/cdf-document-search/src/services/constants';
-import { Toast } from 'apps/cdf-document-search/src/components/Toast';
-import {
-  FilesApiError,
-  LabelFileUpdate,
-} from 'apps/cdf-document-search/src/services/types';
+
+import { useSDK } from '@cognite/sdk-provider';
+import { Toast } from '../../../components/Toast';
+import { updateFileLabels } from '../../api';
+import { DOCUMENTS_KEYS } from '../../constants';
+import { FilesApiError, LabelFileUpdate } from '../../types';
 
 export const useUpdateFileLabelsMutate = (action: 'add' | 'remove') => {
   const sdk = useSDK();

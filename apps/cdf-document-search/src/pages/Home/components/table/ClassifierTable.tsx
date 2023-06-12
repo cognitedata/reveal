@@ -1,12 +1,15 @@
+import React from 'react';
+
+import styled from 'styled-components';
+
 import { Button, Flex, Loader, Table } from '@cognite/cogs.js';
 import { DocumentsClassifier as Classifier } from '@cognite/sdk-playground';
-import { Empty } from 'apps/cdf-document-search/src/components/states/Empty';
-import { homeConfig } from 'apps/cdf-document-search/src/configs/global.config';
-import React from 'react';
-import { useDocumentsClassifiersQuery } from 'apps/cdf-document-search/src/services/query/classifier/query';
-import { sortByDate } from 'apps/cdf-document-search/src/utils/sort';
+import { Empty } from '../../../../components/states/Empty';
+import { homeConfig } from '../../../../configs/global.config';
+import { useDocumentsClassifiersQuery } from '../../../../services/query';
+import { sortByDate } from '../../../../utils/sort';
+
 import { ClassifierActions, curateColumns } from './curateClassifierColumns';
-import styled from 'styled-components';
 
 interface Props {
   classifierActionsCallback?: ClassifierActions;

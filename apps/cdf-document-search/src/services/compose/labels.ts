@@ -1,8 +1,5 @@
 import { CogniteClient, Label, LabelDefinition } from '@cognite/sdk';
-import {
-  LabelCount,
-  LabelDescription,
-} from 'apps/cdf-document-search/src/services/types';
+import { LabelCount, LabelDescription } from '../types';
 
 export const getLabelCount = async (
   sdk: CogniteClient,
@@ -32,8 +29,8 @@ export const composeLabelsCount = async (
   sdk: CogniteClient,
   trainingLabels?: Label[]
 ): Promise<LabelCount> => {
-  var countByExternalId = new Map();
-  for (var label of trainingLabels ?? []) {
+  let countByExternalId = new Map();
+  for (let label of trainingLabels ?? []) {
     const labelCount = await getLabelCount(sdk, label.externalId);
     countByExternalId.set(label.externalId, labelCount);
   }

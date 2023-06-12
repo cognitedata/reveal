@@ -1,4 +1,5 @@
 import { Label } from '@cognite/sdk';
+
 import { DOCUMENTS_AGGREGATES } from './constants';
 
 export type { DocumentsSearchRequest } from '@cognite/sdk-playground';

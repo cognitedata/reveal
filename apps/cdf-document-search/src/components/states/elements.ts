@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+
 import { Body } from '@cognite/cogs.js';
 
 export const StatesContainer = styled.div`

@@ -1,4 +1,4 @@
-import { useNavigation } from 'apps/cdf-document-search/src/hooks/useNavigation';
+import { useNavigation } from './useNavigation';
 
 export const useBreadcrumb = () => {
   const { toClassifier } = useNavigation();

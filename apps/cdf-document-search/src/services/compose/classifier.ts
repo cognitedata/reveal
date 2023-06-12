@@ -1,11 +1,13 @@
-import { DocumentsClassifier as Classifier } from '@cognite/sdk-playground';
 import { CogniteClient } from '@cognite/sdk';
-import { ClassifierTrainingSet } from 'apps/cdf-document-search/src/services/types';
+import { DocumentsClassifier as Classifier } from '@cognite/sdk-playground';
+
 import {
   fetchDocumentClassifierById,
   fetchDocumentPipelines,
   fetchLabels,
 } from '../api';
+import { ClassifierTrainingSet } from '../types';
+
 import { composeLabelsCount, composeLabelsDescription } from './labels';
 
 /**

@@ -1,5 +1,5 @@
 import { DocumentsClassifier as Classifier } from '@cognite/sdk-playground';
-import { TableCell } from 'apps/cdf-document-search/src/components/table/TableCell';
+import { TableCell } from '../../../../components/table/TableCell';
 
 export const metricsLabels = (classifier?: Classifier) => [
   {

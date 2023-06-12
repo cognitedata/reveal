@@ -1,13 +1,16 @@
+import React from 'react';
+
+import styled from 'styled-components';
+
 import { Flex, Table, Detail, Icon } from '@cognite/cogs.js';
 import { DocumentsClassifier as Classifier } from '@cognite/sdk-playground';
-import { TableWrapper } from 'apps/cdf-document-search/src/components/table/TableWrapper';
-import React from 'react';
-import styled from 'styled-components';
+import { TableWrapper } from '../../../../../../components/table/TableWrapper';
+import { useLabels } from '../../../../../../hooks/useLabels';
 import {
   ConfusionMatrix,
   mapConfusionMatrix,
-} from 'apps/cdf-document-search/src/utils/matrix';
-import { useLabels } from 'apps/cdf-document-search/src/hooks/useLabels';
+} from '../../../../../../utils/matrix';
+
 import { curateColumns } from './curateMatrixColumns';
 
 const Container = styled.div`

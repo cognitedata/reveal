@@ -1,6 +1,8 @@
-import { Option, Select } from 'apps/cdf-document-search/src/components/Select';
 import React from 'react';
-import { useAggregatesQuery } from 'apps/cdf-document-search/src/services/query/aggregates/query';
+
+import { Option, Select } from '../../../../../../components/Select';
+import { useAggregatesQuery } from '../../../../../../services/query/aggregates/query';
+
 import { FilterContainer } from '../elements';
 
 interface Props {
@@ -22,6 +24,7 @@ export const SourceFilter: React.FC<Props> = ({ onChange }) => {
         icon="DataSource"
         options={sourceOptions}
         onChange={(options) =>
+          // @ts-ignore
           onChange(options?.map((option) => option.value) ?? [])
         }
         isLoading={isLoading}
