@@ -8,7 +8,7 @@ const nodeEnv = process.env.NODE_ENV || 'production';
 const useMockEnv =
   nodeEnv === 'mock' ||
   (process.env.NX_TASK_TARGET_PROJECT &&
-    process.env.NX_TASK_TARGET_PROJECT === '<%= projectName %>-e2e');
+    process.env.NX_TASK_TARGET_PROJECT === 'data-catalog-e2e');
 
 // Nx plugins for webpack.
 module.exports = composePlugins(
@@ -18,7 +18,7 @@ module.exports = composePlugins(
   (config) => {
     const nodeEnv = process.env.NODE_ENV || 'production';
     console.log(
-      `Custom webpack config(${nodeEnv}) for <%= projectName %> was loaded...`
+      `Custom webpack config(${nodeEnv}) for data-catalog was loaded...`
     );
 
     if (useMockEnv) {
