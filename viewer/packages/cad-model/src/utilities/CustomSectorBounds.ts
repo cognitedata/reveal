@@ -3,7 +3,7 @@
  */
 
 import * as THREE from 'three';
-import { SectorMetadata, SectorNode } from '@reveal/cad-parsers';
+import { SectorMetadata } from '@reveal/cad-parsers';
 import { CadNode } from '../wrappers/CadNode';
 
 type TransformedNode = {
@@ -18,8 +18,13 @@ export class CustomSectorBounds {
   private readonly _sectorIdToTransformedNodesMap = new Map<number, Set<TransformedNode>>();
   private readonly _originalSectorBounds = new Map<number, THREE.Box3>();
   private readonly _sectorsWithInvalidBounds = new Set<number>();
+  private readonly _allSectorsSortedByDepth: SectorMetadata[];
 
-  constructor(private readonly cadNode: CadNode) {}
+  constructor(private readonly cadNode: CadNode) {
+    // Store all sectors by descending depth, used to iterate over all sectors in a "child before parent"-fashion.
+    this._allSectorsSortedByDepth = this.cadNode.sectorScene.getAllSectors();
+    this._allSectorsSortedByDepth.sort((a, b) => b.depth - a.depth);
+  }
 
   /**
    * Returns whether or not the given node is registered
@@ -126,8 +131,6 @@ export class CustomSectorBounds {
    * is the only time the sector bounds are actually altered.
    */
   recomputeSectorBounds(): void {
-    const sectorsWithCustomBounds = new Set<number>();
-
     this._sectorsWithInvalidBounds.forEach(sectorId => {
       // Compute the bounding boxes for the transformed nodes in this sector
       const boundingBoxes: THREE.Box3[] = [];
@@ -146,17 +149,30 @@ export class CustomSectorBounds {
         }
       });
 
-      if (this.updateSector(sectorId, boundingBoxes)) {
-        sectorsWithCustomBounds.add(sectorId);
-      }
-    });
-
-    // Make sure the bounds of any affected ancestor are inflated to account for the inflated children
-    sectorsWithCustomBounds.forEach(sectorId => {
-      this.inflateAncestorsOf(sectorId, sectorsWithCustomBounds);
+      this.updateSector(sectorId, boundingBoxes);
     });
 
     this._sectorsWithInvalidBounds.clear();
+
+    // Iterate over all sectors by descending depth
+    for (const sector of this._allSectorsSortedByDepth) {
+      const containsTransformedNodes = !!this._sectorIdToTransformedNodesMap.get(sector.id)?.size;
+      const originalBoundingBox = this.getOriginalSectorBounds(sector.id);
+      const minimumBounds = containsTransformedNodes ? sector.subtreeBoundingBox.clone() : originalBoundingBox.clone();
+
+      sector.children.forEach(child => {
+        minimumBounds.expandByPoint(child.subtreeBoundingBox.min);
+        minimumBounds.expandByPoint(child.subtreeBoundingBox.max);
+      });
+
+      if (!minimumBounds.equals(originalBoundingBox)) {
+        this.setCustomSectorBounds(sector.id, minimumBounds);
+        //console.log('Indirect sector', sector.id, 'expanded');
+      } else {
+        this.clearCustomSectorBounds(sector.id);
+        //console.log('Indirect sector', sector.id, 'reset');
+      }
+    }
   }
 
   /**
@@ -165,10 +181,8 @@ export class CustomSectorBounds {
    * @param customBoundingBoxes An array of bounding boxes this sector should contain
    * @returns True if the new sector bounds are different from the original values. False otherwise
    */
-  private updateSector(sectorId: number, customBoundingBoxes: THREE.Box3[]): boolean {
-    const nodeMetadata = this.sectorMetadata(sectorId);
-
-    console.log('updateSector for sector with id', sectorId, 'and path', nodeMetadata.path);
+  private updateSector(sectorId: number, customBoundingBoxes: THREE.Box3[]): void {
+    //console.log('updateSector for sector with id', sectorId);
 
     const originalSectorBounds = this.getOriginalSectorBounds(sectorId);
 
@@ -184,24 +198,24 @@ export class CustomSectorBounds {
       if (!newSectorBounds.equals(originalSectorBounds)) {
         this.setCustomSectorBounds(sectorId, newSectorBounds);
 
-        const minExpandedBy = originalSectorBounds.min.clone().sub(newSectorBounds.min);
-        const maxExpandedBy = newSectorBounds.max.clone().sub(originalSectorBounds.max);
-        console.log('  Sector bounds min expanded by', minExpandedBy, 'and max expanded by', maxExpandedBy);
+        //const minExpandedBy = newSectorBounds.min.clone().sub(originalSectorBounds.min);
+        //const maxExpandedBy = newSectorBounds.max.clone().sub(originalSectorBounds.max);
+        //console.log('  Sector bounds min expanded by', minExpandedBy, 'and max expanded by', maxExpandedBy);
 
-        return true;
+        return;
       }
     }
 
     // Reset sector bounds back to the original bounds
     this.clearCustomSectorBounds(sectorId);
 
-    console.log('  Sector bounds reset');
-
-    return false;
+    //console.log('  Sector bounds reset');
   }
-
+  /*
   private inflateAncestorsOf(sectorId: number, sectorsWithCustomBounds: Set<number>): void {
+    console.log('  inflateAncestorsOf called on sector', sectorId);
     const parentId = this.sectorIdOfParent(this.sectorMetadata(sectorId).path);
+    console.log('    parentId is:', parentId);
     if (parentId !== undefined) {
       const originalParentBounds = this.getOriginalSectorBounds(parentId);
 
@@ -222,8 +236,10 @@ export class CustomSectorBounds {
       // Modify sector bounds
       if (!newParentBounds.equals(originalParentBounds)) {
         this.setCustomSectorBounds(parentId, newParentBounds);
+        console.log('    parent bounds set to:', newParentBounds);
       } else {
         this.clearCustomSectorBounds(parentId);
+        console.log('    parent bounds reset');
       }
 
       // Recursively modify all ancestors
@@ -237,11 +253,14 @@ export class CustomSectorBounds {
       .filter(x => x.length > 0)
       .map(x => Number(x));
 
-    pathElements.pop();
+    pathElements.pop(); // Remove one to get the parent
 
     if (pathElements.length) {
-      // Find parent sector id by traversing children
+      // Start at root sector
       let node = this.cadNode.rootSector as SectorNode;
+      pathElements.shift();
+
+      // And traverse children to reach the desired parent
       for (const childIndex of pathElements) {
         node = node.children[childIndex] as SectorNode;
       }
@@ -250,6 +269,7 @@ export class CustomSectorBounds {
 
     return undefined;
   }
+  */
 
   private getOriginalSectorBounds(sectorId: number): THREE.Box3 {
     let originalSectorBounds = this._originalSectorBounds.get(sectorId);
