@@ -9,4 +9,7 @@ export const translationKeys = {
   filterNumberInputPlaceholder: 'filter_number_input_placeholder',
   filterTextInputPlaceholder: 'filter_text_input_placeholder',
   filterSearchInputPlaceholder: 'filter_search_input_placeholder',
+
+  propertiesWidgetFilterByPlaceholder:
+    'properties_widget_filter_by_placeholder',
 } as const;
