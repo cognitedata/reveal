@@ -1,5 +1,5 @@
 {
-  "name": "@cognite/cdf-charts",
+  "name": "@cognite/cdf-charts-ui",
   "version": "0.1.0",
   "scripts": {
     "start": "../../scripts/start.sh dev charts",
