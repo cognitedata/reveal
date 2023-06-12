@@ -27,12 +27,16 @@ export const TimeseriesPage = () => {
   );
 
   return (
-    <Page.Dashboard loading={isLoading}>
+    <Page.Dashboard
+      customName={data?.name}
+      customDataType="Timeseries"
+      loading={isLoading}
+    >
       <Page.Widgets>
         <TimeseriesWidget
           id="Timeseries"
           timeseriesId={data?.id}
-          rows={2}
+          rows={8}
           columns={2}
         />
         <PropertiesWidget id="Properties" data={data} columns={2} />
