@@ -265,6 +265,15 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
     ]
   );
 
+  const onResourceSelectorCloseWrapper = () => {
+    onResourceSelectorClose();
+    // Put focus back on the canvas element right after a container has been
+    // added, so that the user may immediately perform actions on them. For
+    // example, delete the added container references by using the backspace
+    // key
+    unifiedViewerRef?.stage?.container().focus();
+  };
+
   const onAddResourcePress = async (
     results?: ResourceItem | ResourceItem[]
   ) => {
@@ -272,7 +281,7 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
       return;
     }
 
-    onResourceSelectorClose();
+    onResourceSelectorCloseWrapper();
     if (results && Array.isArray(results)) {
       if (unifiedViewerRef === null) {
         return;
@@ -389,7 +398,7 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
       <ResourceSelector
         onSelect={onAddResourcePress}
         visible={visibleResourceSelector}
-        onClose={onResourceSelectorClose}
+        onClose={onResourceSelectorCloseWrapper}
         visibleResourceTabs={['file', 'timeSeries', 'asset', 'event']}
         selectionMode="multiple"
       />
