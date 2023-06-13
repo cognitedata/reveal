@@ -280,10 +280,10 @@ export const ImportTypesModal: React.FC<ImportTypesModalProps> = (props) => {
         'import_types_modal_subtitle',
         'Generate GraphQL code to import types from another data model. All dependencies will be included.'
       )}
-      onOk={props.onClose}
-      onCancel={handleCopyClick}
-      cancelText="Copy code"
-      okText="Close"
+      onOk={handleCopyClick}
+      onCancel={props.onClose}
+      cancelText="Close"
+      okText="Copy code"
     >
       <Flex direction="row">
         <Flex direction="column">
