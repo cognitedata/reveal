@@ -6,14 +6,14 @@ import isUndefined from 'lodash/isUndefined';
 import { Chip } from '@cognite/cogs.js';
 
 import { useTranslation } from '../../../../../hooks/useTranslation';
-import { InputControlProps } from '../../types';
+import { InputControlProps, NumericRange } from '../../types';
 import { NumberInput } from '../NumberInput';
 
 import { Container } from './elements';
 
 const PLACEHOLDER = '...';
 
-export type NumericRangeInputProps = InputControlProps<'numeric-range'>;
+export type NumericRangeInputProps = InputControlProps<NumericRange>;
 
 export const NumericRangeInput: React.FC<NumericRangeInputProps> = ({
   value,
