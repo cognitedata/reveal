@@ -5,7 +5,7 @@ import { Icon, Colors } from '@cognite/cogs.js';
 export const Loader = () => {
   return (
     <Wrapper>
-      <Icon type="Loading" />
+      <Icon type="Loader" />
     </Wrapper>
   );
 };
@@ -18,7 +18,7 @@ const Wrapper = styled.div`
   align-items: center;
 
   svg {
-    color: ${Colors['greyscale-grey4'].hex()};
+    color: ${Colors['decorative--grayscale--400']};
     width: 56px;
     height: 56px;
   }

@@ -51,7 +51,7 @@ export default function ScheduleInputDataModal({ id, onCancel }: Props) {
       footer={[
         <Button
           key="close"
-          icon="XLarge"
+          icon="CloseLarge"
           onClick={onCancel}
           style={{
             /** Padding needed because of inconsistent icon sizes in cogs * */

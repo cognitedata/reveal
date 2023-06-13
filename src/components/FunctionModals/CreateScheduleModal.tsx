@@ -252,7 +252,7 @@ export default function CreateScheduleModal({
           <Tooltip placement="top" content="Fill out the required fields">
             <Button
               type="primary"
-              icon={isLoading ? 'Loading' : 'Upload'}
+              icon={isLoading ? 'Loader' : 'Upload'}
               disabled={!canBeSubmitted && !isLoading}
               onClick={() => {
                 triggerCreateSchedule({

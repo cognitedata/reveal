@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from '@cognite/cogs.js';
+import { Button, Icon } from '@cognite/cogs.js';
 import { Col, Form, Input, Row } from 'antd';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -134,7 +134,13 @@ export default function Metadata({ metadata, setMetadata }: Props) {
       {metadata.length >= 16 ? (
         <p>You may only have 16 parameters.</p>
       ) : (
-        <Button icon="Plus" onClick={addMetadata}>
+        <Button onClick={addMetadata}>
+          <Icon
+            type="Add"
+            size={22}
+            // @ts-ignore
+            style={{ left: -12, position: 'relative' }}
+          />
           Add metadata
         </Button>
       )}

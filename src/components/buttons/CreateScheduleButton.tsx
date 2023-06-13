@@ -17,6 +17,7 @@ export default function CreateScheduleButton({ id, externalId }: Props) {
         type="primary"
         style={{
           justifyContent: 'center',
+          marginBottom: 8,
         }}
         onClick={e => {
           e.stopPropagation();

@@ -23,7 +23,7 @@ import { Loader } from 'components/Common';
 
 const CollapseDiv = styled.div`
   .ant-collapse-header[aria-expanded='true'] {
-    background-color: ${Colors['midblue-6'].hex()};
+    background-color: ${Colors['decorative--blue--200']};
   }
 `;
 
@@ -134,7 +134,7 @@ function Functions() {
           <UploadFunctionButton />
 
           <Button
-            icon={isFetching || !callsDone ? 'Loading' : 'Refresh'}
+            icon={isFetching || !callsDone ? 'Loader' : 'Refresh'}
             disabled={isFetching}
             onClick={() => refresh()}
             style={{ marginLeft: '8px' }}
@@ -143,11 +143,13 @@ function Functions() {
           </Button>
         </div>
       </Row>
+      <br />
       <Input
         name="filter"
         prefix={
           <Icon
             type="Search"
+            // @ts-ignore
             style={{
               height: '16px',
               width: '16px',

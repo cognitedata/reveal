@@ -4,6 +4,7 @@ import { mount, ReactWrapper } from 'enzyme';
 
 import { Upload, Form } from 'antd';
 import { UploadFile } from 'antd/lib/upload/interface';
+import { logDOM } from '@testing-library/dom';
 import UploadFunctionModal, { stuffForUnitTests } from './UploadFunctionModal';
 
 const mockFile = {
@@ -67,9 +68,9 @@ describe('UploadFunctionModal', () => {
     it('should have disabled submit button by default', () => {
       const wrapper = mount(<UploadFunctionModal onCancel={jest.fn()} />);
       const uploadButton = wrapper
-        .find('button.cogs-btn')
+        .find('button.cogs-button')
         .filterWhere((b: ReactWrapper) => b.text() === 'Upload');
-      expect(uploadButton.prop('disabled')).toBe(true);
+      expect(uploadButton.prop('aria-disabled')).toBe(true);
       wrapper.unmount();
     });
 
@@ -77,7 +78,7 @@ describe('UploadFunctionModal', () => {
       const wrapper = mount(<UploadFunctionModal onCancel={jest.fn()} />);
 
       const addSecretButton = wrapper
-        .find('button.cogs-btn')
+        .find('button.cogs-button')
         .filterWhere((b: ReactWrapper) => b.text() === 'Add a secret');
       addSecretButton.simulate('click');
 
@@ -92,8 +93,9 @@ describe('UploadFunctionModal', () => {
       const wrapper = mount(<UploadFunctionModal onCancel={jest.fn()} />);
 
       const addMetadataButton = wrapper
-        .find('button.cogs-btn')
+        .find('button.cogs-button')
         .filterWhere((b: ReactWrapper) => b.text() === 'Add metadata');
+
       addMetadataButton.simulate('click');
 
       const keyInput = wrapper.find('input[name="meta_key"]');
@@ -107,7 +109,7 @@ describe('UploadFunctionModal', () => {
       const wrapper = mount(<UploadFunctionModal onCancel={jest.fn()} />);
 
       const addSecretButton = wrapper
-        .find('button.cogs-btn')
+        .find('button.cogs-button')
         .filterWhere((b: ReactWrapper) => b.text() === 'Add a secret');
       addSecretButton.simulate('click');
 
@@ -129,7 +131,7 @@ describe('UploadFunctionModal', () => {
       const wrapper = mount(<UploadFunctionModal onCancel={jest.fn()} />);
 
       const addMetadataButton = wrapper
-        .find('button.cogs-btn')
+        .find('button.cogs-button')
         .filterWhere((b: ReactWrapper) => b.text() === 'Add metadata');
       addMetadataButton.simulate('click');
 
@@ -139,6 +141,7 @@ describe('UploadFunctionModal', () => {
       expect(valueInput).toHaveLength(1);
 
       const removeMetadataButton = wrapper.find('button#btnDeleteMeta');
+
       removeMetadataButton.simulate('click');
 
       const removedKeyInput = wrapper.find('input[name="meta_key"]');
