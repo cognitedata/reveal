@@ -3,8 +3,9 @@ import { ResizableBox } from 'react-resizable';
 import { BotUIMessageList, BotUIAction } from '@botui/react';
 import styled from 'styled-components/macro';
 
-import { Button, Flex } from '@cognite/cogs.js';
+import { Button, Flex, Icon } from '@cognite/cogs.js';
 
+import { useFromCache, useSaveToCache } from '../../hooks/useCache';
 import zIndex from '../../utils/zIndex';
 import { actionRenderers } from '../ActionRenderer';
 import { messageRenderers } from '../MessageRenderer';
@@ -18,14 +19,29 @@ export const SmallChatUI = ({
   setIsExpanded: (visible: boolean) => void;
   onClose: () => void;
 }) => {
+  const { data: { width, height } = { width: 320, height: 400 }, isLoading } =
+    useFromCache<{ width: number; height: number }>('SMALL_CHATBOT_DIMENTIONS');
+
+  const { mutate: saveToCache } = useSaveToCache<{
+    width: number;
+    height: number;
+  }>('SMALL_CHATBOT_DIMENTIONS');
+
+  if (isLoading) {
+    return <Icon type="Loader" />;
+  }
+
   return (
     <SmallChatBotWrapper
-      width={320}
-      height={400}
+      width={width}
+      height={height}
       minConstraints={[320, 400]}
       resizeHandles={['nw']}
       onResizeStart={() => setShowOverlay(true)}
-      onResizeStop={() => setShowOverlay(false)}
+      onResizeStop={(_e, data) => {
+        setShowOverlay(false);
+        saveToCache(data.size);
+      }}
       handle={
         <Button
           className="react-resizable-handle react-resizable-handle-nw"

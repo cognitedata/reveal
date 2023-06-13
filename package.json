@@ -111,6 +111,7 @@
     "json-server": "^0.17.0",
     "jwt-decode": "^3.1.2",
     "langchain": "^0.0.92",
+    "localforage": "^1.10.0",
     "lodash": "^4.17.21",
     "lru-cache": "^6.0.0",
     "match-sorter": "^6.3.1",

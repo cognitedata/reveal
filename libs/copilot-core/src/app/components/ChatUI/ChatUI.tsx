@@ -13,6 +13,7 @@ import {
   CopilotMessage,
   CopilotSupportedFeatureType,
 } from '../../../lib/types';
+import { useFromCache, useSaveToCache } from '../../hooks/useCache';
 import zIndex from '../../utils/zIndex';
 
 import { LargeChatUI } from './LargetChatUI';
@@ -27,7 +28,11 @@ export const ChatUI = ({
 }) => {
   const messages = useRef<CopilotMessage[]>([]);
   const [showOverlay, setShowOverlay] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(false);
+  const { data: isExpanded = false, isLoading } =
+    useFromCache<boolean>('CHATBOT_EXPANDED');
+
+  const { mutate: setIsExpanded } = useSaveToCache<boolean>('CHATBOT_EXPANDED');
+
   const [bot, setBot] = useState<BotuiInterface>(createBot());
 
   const addMessageForBot = useCallback(
@@ -81,7 +86,7 @@ export const ChatUI = ({
     }
   }, [bot, feature, addMessageForBot]);
 
-  if (!bot) {
+  if (!bot || isLoading) {
     return <></>;
   }
 
