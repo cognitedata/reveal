@@ -14,8 +14,9 @@ import { useDataModelState } from '@platypus-app/modules/solution/hooks/useDataM
 import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
 
 import { Button, Flex, Chip, Tooltip } from '@cognite/cogs.js';
+import { useFlag } from '@cognite/react-feature-flags';
 
-import { DiscardButton, ReturnButton } from './elements';
+import { DiscardButton, ReturnButton, ImportTypesButton } from './elements';
 
 export interface DataModelHeaderProps {
   dataModelExternalId: string;
@@ -27,6 +28,7 @@ export interface DataModelHeaderProps {
   latestDataModelVersion: DataModelVersion;
   localDraft: DataModelVersion | null | undefined;
   onDiscardClick: () => void;
+  onImportTypesClick: () => void;
   onPublishClick: () => void;
   onDataModelVersionSelect: (schema: DataModelVersion) => void;
   selectedDataModelVersion: DataModelVersion;
@@ -44,6 +46,7 @@ export const DataModelHeader = ({
   onDiscardClick,
   onPublishClick,
   onDataModelVersionSelect,
+  onImportTypesClick,
   selectedDataModelVersion,
   title,
   editorHasError,
@@ -56,6 +59,10 @@ export const DataModelHeader = ({
   });
 
   const { track } = useMixpanel();
+
+  const { isEnabled: isImportTypeEnabled } = useFlag('data-type-import', {
+    fallback: false,
+  });
   const { editorMode, graphQlSchema, isDirty } = useSelector<DataModelState>(
     (state) => state.dataModel
   );
@@ -140,6 +147,17 @@ export const DataModelHeader = ({
                 />
               </Tooltip>
             </Flex>
+          )}
+
+          {isImportTypeEnabled && (
+            <ImportTypesButton
+              type="secondary"
+              data-cy="discard-btn"
+              onClick={() => onImportTypesClick()}
+              style={{ marginRight: '10px' }}
+            >
+              {t('import_types', 'Import types')}
+            </ImportTypesButton>
           )}
 
           <DiscardButton

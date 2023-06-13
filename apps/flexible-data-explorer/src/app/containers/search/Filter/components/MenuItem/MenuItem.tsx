@@ -45,18 +45,20 @@ export const MenuItem: React.FC<MenuItemProps> = ({
       <TextContent width={textContentWidth}>
         <Title>{title}</Title>
 
-        <SubtitleTooltipWrapper ref={subtitleWrapperRef}>
-          <SubtitleTooltip
-            placement="top-start"
-            key={subtitle}
-            content={subtitle}
-            arrow={false}
-            disabled={!isSubtitleOverflow}
-            left={icon && -ICON_WIDTH}
-          >
-            <Subtitle>{subtitle}</Subtitle>
-          </SubtitleTooltip>
-        </SubtitleTooltipWrapper>
+        {subtitle && (
+          <SubtitleTooltipWrapper ref={subtitleWrapperRef}>
+            <SubtitleTooltip
+              placement="top-start"
+              key={subtitle}
+              content={subtitle}
+              arrow={false}
+              disabled={!isSubtitleOverflow}
+              left={icon && -ICON_WIDTH}
+            >
+              <Subtitle>{subtitle}</Subtitle>
+            </SubtitleTooltip>
+          </SubtitleTooltipWrapper>
+        )}
       </TextContent>
 
       <Icon type="ChevronRight" />

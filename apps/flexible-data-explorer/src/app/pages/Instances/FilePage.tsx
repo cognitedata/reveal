@@ -22,9 +22,13 @@ export const FilePage = () => {
   });
 
   return (
-    <Page.Dashboard loading={isLoading}>
+    <Page.Dashboard
+      customName={data?.name}
+      customDataType="File"
+      loading={isLoading}
+    >
       <Page.Widgets>
-        <FileWidget id="File" fileId={data?.id} rows={2} columns={2} />
+        <FileWidget id="Preview" fileId={data?.id} rows={8} columns={2} />
         <PropertiesWidget id="Properties" data={data} columns={2} />
       </Page.Widgets>
     </Page.Dashboard>

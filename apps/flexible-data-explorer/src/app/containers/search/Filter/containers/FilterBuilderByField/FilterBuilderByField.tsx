@@ -1,41 +1,31 @@
 import * as React from 'react';
 import { useState } from 'react';
 
-import {
-  Field,
-  InputType,
-  Operator,
-  OperatorConfig,
-  ValueByField,
-  ValueType,
-} from '../../types';
+import { Field, Operator, ValueByField, ValueType } from '../../types';
+import { CommonFilter } from '../CommonFilter';
 import { FieldSelector } from '../FieldSelector';
-import { FilterByField } from '../FilterByField';
 
 export interface FilterBuilderByFieldProps {
   name: string;
   fields: Field[];
   value?: ValueByField;
-  config?: OperatorConfig;
   onBackClick: () => void;
   onChange: (value: ValueByField) => void;
+  isError?: boolean;
 }
 
 export const FilterBuilderByField: React.FC<FilterBuilderByFieldProps> = ({
   name,
   fields,
   value: initialValue = {},
-  config = {},
   onBackClick,
   onChange,
+  isError,
 }) => {
   const [selectedField, setSelectedField] = useState<Field>();
   const [value, setValue] = useState<ValueByField>(initialValue);
 
-  const handleApplyClick = (
-    operator: Operator,
-    newValue: ValueType<InputType>
-  ) => {
+  const handleApplyClick = (operator: Operator, newValue: ValueType) => {
     if (!selectedField) {
       return;
     }
@@ -54,10 +44,9 @@ export const FilterBuilderByField: React.FC<FilterBuilderByFieldProps> = ({
 
   if (selectedField) {
     return (
-      <FilterByField
+      <CommonFilter
         field={selectedField}
         value={value[selectedField.name]}
-        operators={config[selectedField.type]}
         onBackClick={() => setSelectedField(undefined)}
         onApplyClick={handleApplyClick}
       />
@@ -70,6 +59,7 @@ export const FilterBuilderByField: React.FC<FilterBuilderByFieldProps> = ({
       fields={fields}
       onBackClick={onBackClick}
       onSelectField={setSelectedField}
+      isError={isError}
     />
   );
 };

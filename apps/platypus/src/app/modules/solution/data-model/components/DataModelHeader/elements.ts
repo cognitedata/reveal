@@ -2,6 +2,11 @@ import styled from 'styled-components';
 
 import { Button } from '@cognite/cogs.js';
 
+export const ImportTypesButton = styled(Button)`
+  margin-right: 10px;
+  white-space: nowrap;
+`;
+
 export const DiscardButton = styled(Button)`
   margin-right: 10px;
   white-space: nowrap;

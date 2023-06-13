@@ -81,6 +81,9 @@
       "@data-quality/*": [
         "apps/platypus/src/app/modules/solution/data-quality/*"
       ],
+      "@flexible-data-explorer/*": [
+        "apps/flexible-data-explorer/src/*"
+      ],
       "@fusion/cdf-nx-plugin": [
         "libs/cdf-nx-plugin/src/index.ts"
       ],
@@ -111,9 +114,6 @@
       ],
       "@platypus/platypus-core": [
         "libs/data-modeling/platypus-core/src/index.ts"
-      ],
-      "@flexible-data-explorer/*": [
-        "apps/flexible-data-explorer/src/*"
       ],
       "@data-catalog-app/*": [
         "apps/data-catalog/src/app/*"
