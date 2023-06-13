@@ -7,7 +7,7 @@ import { Input } from '../Input';
 
 export const DEFAULT_TEXT_INPUT_PLACEHOLDER = 'Enter value...';
 
-export type TextInputProps = InputControlProps<'string'>;
+export type TextInputProps = InputControlProps<string>;
 
 export const TextInput: React.FC<TextInputProps> = ({ value, onChange }) => {
   const { t } = useTranslation();
