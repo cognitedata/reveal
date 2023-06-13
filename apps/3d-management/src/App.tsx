@@ -32,7 +32,7 @@ export const App = () => {
   const store = configureStore(history);
   const subAppName = 'cdf-3d-management';
   const project = getProject();
-  const env = getEnv();
+  const env = getEnv() || undefined;
 
   const queryClient = new QueryClient({
     defaultOptions: {

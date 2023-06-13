@@ -3,6 +3,7 @@ import toolbarReducer from '@3d-management/store/modules/toolbar';
 import { applyMiddleware, combineReducers, compose, createStore } from 'redux';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import ReduxThunk from 'redux-thunk';
+import type {} from 'redux-thunk/extend-redux';
 
 import { isProduction } from '@cognite/cdf-utilities';
 

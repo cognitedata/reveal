@@ -9,6 +9,8 @@ module.exports = composePlugins(
   withReact(),
   withSingleSpa({ useMockEnv: false }),
   (config) => {
+    config.resolve.fallback = { path: require.resolve('path-browserify') };
+
     config.module.rules = [
       ...config.module.rules.filter((rule) => !Array.isArray(rule.oneOf)),
       {
@@ -31,5 +33,7 @@ module.exports = composePlugins(
         ],
       },
     ];
+
+    return config;
   }
 );

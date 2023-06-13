@@ -3,6 +3,7 @@ declare module '@cognite/cdf-sdk-singleton' {
   type UserInfo = {
     displayName?: string;
     id: string;
+    email?: string; // Custom modification to the type to fit the code here. This type is very lackluster anyways.
     mail?: string;
     userPrincipalName?: string;
   };
