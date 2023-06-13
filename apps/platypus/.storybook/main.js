@@ -22,6 +22,11 @@ module.exports = {
       config = await rootMain.webpackFinal(config, { configType });
     }
 
+    config.module.rules.push({
+      test: /\.ttf$/,
+      use: ['file-loader'],
+    });
+
     // add your own webpack tweaks if needed
     config.resolve.alias['@cognite/cdf-sdk-singleton'] = require.resolve(
       '../src/environments/mock/cogniteSdkSingleton.ts'

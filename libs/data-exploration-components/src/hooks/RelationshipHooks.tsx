@@ -393,7 +393,7 @@ export const useTaggedAnnotationsByResourceType = (
     isError,
     isLoading,
     isInitialLoading,
-  } = useAnnotations(fileId);
+  } = useAnnotations(fileId, { enabled });
 
   const annotations = useMemo(
     () =>

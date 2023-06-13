@@ -1,21 +1,20 @@
 /* eslint-disable prettier/prettier */
 import { FetchQueryOptions, QueryClient } from '@tanstack/react-query';
+import TWEEN from '@tweenjs/tween.js';
 import * as THREE from 'three';
 
-import sdk from '@cognite/cdf-sdk-singleton';
 import {
   AssetNodeCollection,
-  InvertedNodeCollection,
   CadIntersection,
   CogniteCadModel,
   Cognite3DViewer,
-  DefaultNodeAppearance,
   ViewerState,
   PointCloudIntersection,
   CognitePointCloudModel,
-  AnnotationIdPointCloudObjectCollection,
-  DefaultPointCloudAppearance,
   CogniteModel,
+  Image360Collection,
+  Image360Annotation,
+  Image360,
 } from '@cognite/reveal';
 import {
   CogniteClient,
@@ -25,6 +24,8 @@ import {
   Model3D,
   AnnotationFilterProps,
   AnnotationModel,
+  AnnotationData,
+  AnnotationsCogniteAnnotationTypesImagesAssetLink,
 } from '@cognite/sdk';
 
 import {
@@ -39,7 +40,6 @@ import {
   Image360SiteData,
 } from '@data-exploration-app/containers/ThreeD/hooks';
 import { Revision3DWithIndex } from '@data-exploration-lib/domain-layer';
-
 
 export const THREE_D_VIEWER_STATE_QUERY_PARAMETER_KEY = 'viewerState';
 export const THREE_D_SLICING_STATE_QUERY_PARAMETER_KEY = 'slicingState';
@@ -58,6 +58,11 @@ export const CAMERA_ANIMATION_RADIUS = 3;
 export const SECONDARY_MODEL_DISPLAY_LIMIT = 20;
 
 export type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
+
+export type AssetSelectionState = {
+  imageAnnotation?: Image360Annotation | undefined;
+  imageEntity?: Image360 | undefined;
+};
 
 export const getAssetQueryKey = (assetId: number) => [
   'cdf',
@@ -80,10 +85,10 @@ const getAssetNodeCollectionQueryKey = (
   revisionId: number,
   assetId?: number
 ) => [
-    ...queryKeyBase(modelId, revisionId),
-    'node-asset-collection',
-    { assetId },
-  ];
+  ...queryKeyBase(modelId, revisionId),
+  'node-asset-collection',
+  { assetId },
+];
 
 const getBoundingBoxByNodeIdQueryKey = (
   modelId: number,
@@ -127,7 +132,8 @@ export const fitCameraToAsset = async (
   sdk: CogniteClient,
   queryClient: QueryClient,
   viewer: Cognite3DViewer,
-  threeDModel: CogniteModel,
+  threeDModel: CogniteModel | Image360Collection,
+  assetSelectionState: AssetSelectionState,
   assetId: number
 ) => {
   if (threeDModel instanceof CogniteCadModel) {
@@ -181,9 +187,72 @@ export const fitCameraToAsset = async (
       }
     });
   }
+
+  if (is360ImageCollection(threeDModel)) {
+    const annotationInfo = await threeDModel.findImageAnnotations({
+      assetRef: { id: assetId },
+    });
+
+    if (annotationInfo.length === 0) {
+      return;
+    }
+
+    let selectedAnnotation = undefined;
+
+    if (assetSelectionState.imageAnnotation) {
+      selectedAnnotation = annotationInfo.find(
+        (info) => info.annotation === assetSelectionState.imageAnnotation
+      );
+    }
+
+    if (
+      assetSelectionState !== undefined &&
+      assetSelectionState.imageEntity !== undefined
+    ) {
+      selectedAnnotation = annotationInfo.find(
+        (info) => info.image === assetSelectionState.imageEntity
+      );
+    }
+
+    selectedAnnotation ??= annotationInfo[0];
+
+    await viewer.enter360Image(
+      selectedAnnotation.image,
+      selectedAnnotation.revision
+    );
+
+    const newTarget = selectedAnnotation.annotation.getCenter();
+    const newCamera = viewer.cameraManager.getCamera().clone();
+    newCamera.lookAt(newTarget);
+    const targetRotation = new THREE.Quaternion().setFromEuler(
+      newCamera.rotation
+    );
+
+    const startRotation = viewer.cameraManager
+      .getCameraState()
+      .rotation.clone();
+
+    const tweenState = { way: 0 };
+    const tween = new TWEEN.Tween(tweenState)
+      .to({ way: 1 }, 500)
+      .easing(TWEEN.Easing.Quadratic.InOut)
+      .onUpdate(() => {
+        const currentRotation = new THREE.Quaternion().slerpQuaternions(
+          startRotation,
+          targetRotation,
+          tweenState.way
+        );
+        viewer.cameraManager.setCameraState({
+          rotation: currentRotation,
+        });
+      })
+      .start();
+
+    tween.update(TWEEN.now());
+  }
 };
 
-async function fetchAssetNodeCollection(
+export async function fetchAssetNodeCollection(
   sdk: CogniteClient,
   queryClient: QueryClient,
   model: CogniteCadModel,
@@ -200,144 +269,11 @@ async function fetchAssetNodeCollection(
   );
 }
 
-export const highlightAsset = async (
-  sdk: CogniteClient,
-  threeDModel: CogniteModel,
-  assetId: number,
-  queryClient: QueryClient
-) => {
-  if (threeDModel instanceof CogniteCadModel) {
-    const assetNodes = await fetchAssetNodeCollection(
-      sdk,
-      queryClient,
-      threeDModel,
-      assetId
-    );
-
-    threeDModel.assignStyledNodeCollection(
-      assetNodes,
-      DefaultNodeAppearance.Highlighted
-    );
-  }
-
-  if (threeDModel instanceof CognitePointCloudModel) {
-    const annotation = await getAnnotationByAssetId(sdk, threeDModel, assetId);
-    if (annotation === undefined) {
-      return;
-    }
-    const annotationId = annotation.id;
-
-    const colorBoundingBoxObject = new AnnotationIdPointCloudObjectCollection([
-      annotationId,
-    ]);
-
-    const colorAppearance = { color: new THREE.Color('rgb(77, 106, 242)') };
-    threeDModel.assignStyledObjectCollection(
-      colorBoundingBoxObject,
-      colorAppearance
-    );
-  }
-};
-
-export const ghostAsset = async (
-  sdk: CogniteClient,
-  threeDModel: CogniteModel,
-  assetId: number,
-  queryClient: QueryClient,
-  secondaryModels?: (CogniteCadModel | CognitePointCloudModel)[]
-) => {
-  if (threeDModel instanceof CogniteCadModel) {
-    const assetNodes = await fetchAssetNodeCollection(
-      sdk,
-      queryClient,
-      threeDModel,
-      assetId
-    );
-
-    threeDModel.removeAllStyledNodeCollections();
-    threeDModel.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
-    threeDModel.assignStyledNodeCollection(
-      assetNodes,
-      DefaultNodeAppearance.Default
-    );
-  }
-
-  if (threeDModel instanceof CognitePointCloudModel) {
-    threeDModel.setDefaultPointCloudAppearance({
-      color: new THREE.Color('#111111'),
-    });
-
-    if (assetId !== undefined) {
-      const annotation = await getAnnotationByAssetId(
-        sdk,
-        threeDModel,
-        assetId
-      );
-      if (annotation === undefined) {
-        return;
-      }
-      const annotationId = annotation.id;
-
-      const colorBoundingBoxObject = new AnnotationIdPointCloudObjectCollection(
-        [annotationId]
-      );
-      const colorAppearance = { color: new THREE.Color('rgb(0, 0, 0)') };
-      threeDModel.assignStyledObjectCollection(
-        colorBoundingBoxObject,
-        colorAppearance
-      );
-    }
-  }
-
-  secondaryModels?.forEach((model) => {
-    if (model instanceof CogniteCadModel) {
-      model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
-    } else {
-      model.setDefaultPointCloudAppearance({
-        color: new THREE.Color('#111111'),
-      });
-    }
-  });
-};
-
-export const highlightAssetMappedNodes = async (
-  threeDModel: CogniteModel,
-  queryClient: QueryClient
-) => {
-  if (threeDModel instanceof CogniteCadModel) {
-    const assetNodeCollection = await fetchAssetNodeCollection(
-      sdk,
-      queryClient,
-      threeDModel
-    );
-    const nonMappedNodeCollection = new InvertedNodeCollection(
-      threeDModel,
-      assetNodeCollection
-    );
-
-    threeDModel.setDefaultNodeAppearance(DefaultNodeAppearance.Default);
-    threeDModel.assignStyledNodeCollection(nonMappedNodeCollection, {
-      color: new THREE.Color(30, 30, 30),
-    });
-  }
-
-  if (threeDModel instanceof CognitePointCloudModel) {
-    // TODO: functionality to be added here in a separate PR
-    return;
-  }
-};
-
-export const removeAllStyles = (threeDModel: CogniteModel) => {
-  if (threeDModel instanceof CogniteCadModel) {
-    threeDModel.removeAllStyledNodeCollections();
-    threeDModel.setDefaultNodeAppearance(DefaultNodeAppearance.Default);
-  }
-
-  if (threeDModel instanceof CognitePointCloudModel) {
-    threeDModel.removeAllStyledObjectCollections();
-    threeDModel.setDefaultPointCloudAppearance(DefaultPointCloudAppearance);
-  }
-};
+export function is360ImageCollection(
+  model: CogniteModel | Image360Collection
+): model is Image360Collection {
+  return 'image360Entities' in model && model.image360Entities !== undefined;
+}
 
 export const fetchNodeIdByTreeIndex = (
   sdk: CogniteClient,
@@ -406,6 +342,24 @@ export async function getBoundingBoxesByNodeIds(
 
   return boundingBoxMap;
 }
+
+function isAssetLinkAnnotationData(
+  annotationData: AnnotationData
+): annotationData is AnnotationsCogniteAnnotationTypesImagesAssetLink {
+  const assetLinkData =
+    annotationData as AnnotationsCogniteAnnotationTypesImagesAssetLink;
+  return (
+    assetLinkData.text !== undefined && assetLinkData.textRegion !== undefined
+  );
+}
+
+export const getAssetIdFromImageAnnotation = (annotation: AnnotationModel) => {
+  if (!isAssetLinkAnnotationData(annotation.data)) {
+    return undefined;
+  }
+
+  return annotation.data.assetRef.id;
+};
 
 export const findClosestAsset = async (
   sdk: CogniteClient,
@@ -587,8 +541,9 @@ export function mixColorsToCSS(
   mixedColor.r = color1.r * ratio + color2.r * (1 - ratio);
   mixedColor.g = color1.g * ratio + color2.g * (1 - ratio);
   mixedColor.b = color1.b * ratio + color2.b * (1 - ratio);
-  return `rgb(${mixedColor.r * 255}, ${mixedColor.g * 255}, ${mixedColor.b * 255
-    })`;
+  return `rgb(${mixedColor.r * 255}, ${mixedColor.g * 255}, ${
+    mixedColor.b * 255
+  })`;
 }
 
 export function isCadIntersection(
@@ -623,7 +578,8 @@ export function getMainModelSubtitle(
   if (isImage360) {
     return '360 Image';
   } else {
-    return `Revision ${modelRevision?.index} - ${modelRevision?.published ? 'Published' : 'Unpublished'
-      }`;
+    return `Revision ${modelRevision?.index} - ${
+      modelRevision?.published ? 'Published' : 'Unpublished'
+    }`;
   }
 }

@@ -32,7 +32,7 @@ function App() {
                 <div>
                   There was an error!
                   <Button onClick={() => resetErrorBoundary()}>
-                    Try again
+                    Try again!
                   </Button>
                 </div>
               )}

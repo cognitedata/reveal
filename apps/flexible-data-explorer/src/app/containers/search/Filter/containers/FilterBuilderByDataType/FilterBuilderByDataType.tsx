@@ -15,11 +15,12 @@ export interface FilterBuilderByDataTypeProps {
   value?: ValueByDataType;
   config?: OperatorConfig;
   onChange: (value: ValueByDataType) => void;
+  isError?: boolean;
 }
 
 export const FilterBuilderByDataType: React.FC<
   FilterBuilderByDataTypeProps
-> = ({ dataTypes, value: initialValue = {}, config, onChange }) => {
+> = ({ dataTypes, value: initialValue = {}, config, onChange, isError }) => {
   const [selectedDataType, setSelectedDataType] = useState<DataTypeOption>();
   const [value, setValue] = useState<ValueByDataType>(initialValue);
 
@@ -54,6 +55,7 @@ export const FilterBuilderByDataType: React.FC<
     <DataTypeSelector
       dataTypes={dataTypes}
       onSelectDataType={setSelectedDataType}
+      isError={isError}
     />
   );
 };

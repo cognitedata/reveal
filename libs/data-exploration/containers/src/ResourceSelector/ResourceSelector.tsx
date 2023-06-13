@@ -296,6 +296,7 @@ export const ResourceSelector = ({
                 isSelected={Boolean(
                   selectedRows[previewItem.type][previewItem.id]
                 )}
+                visibleResources={visibleResourceTabs}
               />
             </ResourcePreviewSidebarWrapper>
           )}

@@ -23,7 +23,9 @@ import {
   CognitePointCloudModel,
   Intersection,
   ViewerState,
+  Image360,
   Image360Collection,
+  Image360AnnotationIntersection,
 } from '@cognite/reveal';
 import { useSDK } from '@cognite/sdk-provider';
 
@@ -46,8 +48,12 @@ type Props = {
   image360SiteId?: string;
   nodesSelectable: boolean;
   initialViewerState?: ViewerState;
+  setImage360Entity?: (entity: Image360 | undefined) => void;
   image360Entities?: { siteId: string; images: Image360Collection }[];
-  onViewerClick?: (intersection: Intersection | null) => void;
+  onViewerClick?: (
+    intersection: Intersection | null,
+    image360AnnotationIntersection: Image360AnnotationIntersection | null
+  ) => void;
   children?: (childProps: ChildProps) => JSX.Element;
 };
 
@@ -58,6 +64,7 @@ export function Reveal({
   image360SiteId,
   nodesSelectable,
   initialViewerState,
+  setImage360Entity,
   onViewerClick,
   image360Entities,
 }: Props) {
@@ -66,6 +73,7 @@ export function Reveal({
     setViewer,
     set3DModel,
     setPointCloudModel,
+    setImage360,
     secondaryObjectsVisibilityState,
   } = context;
   const numOfClicks = useRef<number>(0);
@@ -94,7 +102,7 @@ export function Reveal({
       domElement: revealContainerRef.current,
       continuousModelStreaming: true,
       loadingIndicatorStyle: {
-        placement: 'bottomRight',
+        placement: 'topRight',
         opacity: 1,
       },
     });
@@ -141,11 +149,11 @@ export function Reveal({
         lastCameraPositionVec.set(x, y, z);
       }
 
+      let imageCollection: Image360Collection | undefined = undefined;
       if (
         image360SiteId &&
         !image360CollectionSiteId.includes(image360SiteId)
       ) {
-        let imageCollection;
         try {
           imageCollection = await viewer.add360ImageSet(
             'events',
@@ -179,19 +187,24 @@ export function Reveal({
             ),
           });
         }
+
+        imageCollection.on('image360Entered', (image360) => {
+          setImage360Entity?.(image360);
+        });
+        imageCollection.on('image360Exited', () => {
+          setImage360Entity?.(undefined);
+        });
       }
 
       const threeDModel = model instanceof CogniteCadModel ? model : undefined;
       const pointCloudModel =
         model instanceof CognitePointCloudModel ? model : undefined;
-      if (set3DModel) {
-        set3DModel(threeDModel);
-      }
-      if (setPointCloudModel) {
-        setPointCloudModel(pointCloudModel);
-      }
 
-      return { threeDModel, pointCloudModel };
+      set3DModel(threeDModel);
+      setPointCloudModel(pointCloudModel);
+      setImage360(imageCollection);
+
+      return { threeDModel, pointCloudModel, imageCollection };
     },
     {
       enabled: !!viewer,
@@ -229,27 +242,30 @@ export function Reveal({
     }
   }, [error]);
 
-  const { threeDModel } = models ?? {
-    threeDModel: undefined,
-    pointCloudModel: undefined,
-  };
+  const threeDModel = models?.threeDModel;
+  const imageCollection = models?.imageCollection;
 
   useEffect(() => () => viewer?.dispose(), [viewer]);
 
   const _onViewerClick: PointerEventDelegate = useCallback(
     async ({ offsetX, offsetY }) => {
-      if (!threeDModel || !viewer || !nodesSelectable) {
+      if ((!threeDModel && !imageCollection) || !viewer || !nodesSelectable) {
         return;
       }
       numOfClicks.current++;
       if (numOfClicks.current === 1) {
         clickTimer.current = setTimeout(async () => {
+          const image360Intersection =
+            await viewer.get360AnnotationIntersectionFromPixel(
+              offsetX,
+              offsetY
+            );
           const intersection = await viewer.getIntersectionFromPixel(
             offsetX,
             offsetY
           );
           if (onViewerClick) {
-            onViewerClick(intersection);
+            onViewerClick(intersection, image360Intersection);
           }
 
           // In node types package >18, the types for 'clearTimeout' also allows for NodeJS.Timeout.
@@ -264,7 +280,7 @@ export function Reveal({
         numOfClicks.current = 0;
       }
     },
-    [nodesSelectable, onViewerClick, threeDModel, viewer]
+    [nodesSelectable, onViewerClick, threeDModel, viewer, imageCollection]
   );
   const previousClickHandler = usePrevious(_onViewerClick);
 

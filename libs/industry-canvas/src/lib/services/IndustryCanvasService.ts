@@ -5,7 +5,7 @@ import type { CogniteClient } from '@cognite/sdk';
 import { IdsByType } from '@cognite/unified-file-viewer';
 
 import { UserProfile } from '../hooks/use-query/useUserProfile';
-import { CanvasMetadata, SerializedCanvasDocument } from '../types';
+import { Comment, CanvasMetadata, SerializedCanvasDocument } from '../types';
 import { FDMClient, gql } from '../utils/FDMClient';
 
 import {
@@ -30,13 +30,25 @@ type PageInfo = {
   endCursor: string;
 };
 
+// NOTE: We manually omit createdTime from our Canvas type, since it's supplied
+// by FDM and we can't update it manually
+const omitCreatedTimeFromSerializedCanvas = (
+  canvas: SerializedCanvasDocument
+): Omit<SerializedCanvasDocument, 'createdTime'> =>
+  omit(canvas, ['createdTime']);
+
 export class IndustryCanvasService {
   public readonly SPACE_VERSION = 1;
-  public readonly SPACE_EXTERNAL_ID = 'MarvinV4'; // TODO(marvin): fix once data model is verified
-  public readonly DATA_MODEL_EXTERNAL_ID = 'IndustryCanvasV4'; // TODO(marvin): fix once data model is verified
+  public readonly SPACE_EXTERNAL_ID = 'MarvinV5'; // TODO(marvin): fix once data model is verified
+  public readonly DATA_MODEL_EXTERNAL_ID = 'IndustryCanvasV5'; // TODO(marvin): fix once data model is verified
   private readonly LIST_LIMIT = 1000; // The max number of items to retrieve in one list request
 
+  // Comment stuff
+  public readonly COMMENT_INSTANCE_SPACE = 'IndustryCanvasComments';
+  public readonly COMMENT_DATA_MODEL_EXTERNAL_ID = 'IndustryCanvasComments';
+
   private fdmClient: FDMClient;
+  private fdmClientForComments: FDMClient;
   private cogniteClient: CogniteClient;
   private userProfile: UserProfile;
 
@@ -44,6 +56,10 @@ export class IndustryCanvasService {
     this.cogniteClient = client;
     this.fdmClient = new FDMClient(client, {
       spaceExternalId: this.SPACE_EXTERNAL_ID,
+      spaceVersion: this.SPACE_VERSION,
+    });
+    this.fdmClientForComments = new FDMClient(client, {
+      spaceExternalId: this.COMMENT_INSTANCE_SPACE,
       spaceVersion: this.SPACE_VERSION,
     });
     this.userProfile = userProfile;
@@ -65,9 +81,9 @@ export class IndustryCanvasService {
               externalId
               name
               isArchived
-              createdAt
+              createdTime
               createdBy
-              updatedAt
+              updatedTime
               updatedBy
               containerReferences (first: ${this.LIST_LIMIT}) {
                 items {
@@ -133,9 +149,9 @@ export class IndustryCanvasService {
               externalId
               name
               isArchived
-              createdAt
+              createdTime
               createdBy
-              updatedAt
+              updatedTime
               updatedBy
             }
           }
@@ -166,14 +182,14 @@ export class IndustryCanvasService {
             filter: $filter,
             first: ${limit},
             after: ${cursor === undefined ? null : `"${cursor}"`},
-            sort: { createdAt: DESC }
+            sort: { updatedTime: DESC }
           ) {
             items {
               externalId
               name
-              createdAt
+              createdTime
               createdBy
-              updatedAt
+              updatedTime
               updatedBy
             }
             pageInfo {
@@ -209,6 +225,90 @@ export class IndustryCanvasService {
   public async listCanvases(): Promise<SerializedCanvasDocument[]> {
     return this.getPaginatedCanvasData();
   }
+  private async getPaginatedComments(
+    cursor: string | undefined = undefined,
+    paginatedData: Comment[] = [],
+    limit: number = this.LIST_LIMIT
+  ): Promise<Comment[]> {
+    // TODO: Check this. Data is fetching. How is serialisation happening here? We don't want to hydrate the configs.
+    const res = await this.fdmClientForComments.graphQL<{
+      comments: { items: Comment[]; pageInfo: PageInfo };
+    }>(
+      gql`
+        query ListCanvases($filter: _ListCommentFilter) {
+          comments: listComment(
+            filter: $filter,
+            first: ${limit},
+            after: ${cursor === undefined ? null : `"${cursor}"`}
+          ) {
+            items {
+              text
+              author
+              thread {
+                externalId
+              }
+              canvas {
+                externalId
+              }
+              x
+              y
+              externalId
+              createdTime
+              lastUpdatedTime
+            }
+            pageInfo {
+              startCursor
+              hasPreviousPage
+              hasNextPage
+              endCursor
+            }
+          }
+        }
+      `,
+      this.COMMENT_DATA_MODEL_EXTERNAL_ID,
+      {
+        filter: {
+          and: [
+            {
+              canvas: {
+                and: [
+                  {
+                    or: [
+                      { isArchived: { eq: false } },
+                      { isArchived: { isNull: true } },
+                    ],
+                  },
+                ],
+              },
+            },
+          ],
+        },
+      }
+    );
+    const { items, pageInfo } = res.comments;
+
+    paginatedData.push(
+      ...items.map((el) => ({
+        ...el,
+        createdTime: new Date(el.createdTime),
+        lastUpdatedTime: new Date(el.lastUpdatedTime),
+        subComments: [],
+      }))
+    );
+    if (pageInfo.hasNextPage) {
+      return await this.getPaginatedComments(
+        pageInfo.startCursor,
+        paginatedData,
+        limit
+      );
+    }
+
+    return paginatedData;
+  }
+
+  public async listComments(): Promise<Comment[]> {
+    return this.getPaginatedComments();
+  }
 
   public async saveCanvas(
     canvas: SerializedCanvasDocument
@@ -216,18 +316,54 @@ export class IndustryCanvasService {
     const updatedCanvas: SerializedCanvasDocument = {
       ...canvas,
       updatedBy: this.userProfile.userIdentifier,
-      updatedAt: new Date().toISOString(),
+      updatedTime: new Date().toISOString(),
     };
-    await upsertCanvas(this.fdmClient, updatedCanvas);
+    await upsertCanvas(
+      this.fdmClient,
+      omitCreatedTimeFromSerializedCanvas(updatedCanvas)
+    );
     // This will induce an error because timestamps for instance will be incorrect
     return updatedCanvas;
+  }
+  public async saveComment(
+    comment: Omit<Comment, 'lastUpdatedTime' | 'createdTime' | 'subComments'>
+  ): Promise<Comment> {
+    await this.fdmClientForComments.upsertNodes([
+      {
+        modelName: 'Comment',
+        ...comment,
+        ...(comment.thread
+          ? {
+              thread: {
+                externalId: comment.thread.externalId,
+                space: this.COMMENT_INSTANCE_SPACE,
+              },
+            }
+          : null),
+        ...(comment.canvas
+          ? {
+              canvas: {
+                externalId: comment.canvas.externalId,
+                space: this.COMMENT_INSTANCE_SPACE,
+              },
+            }
+          : null),
+      },
+    ]);
+    // This will induce an error because timestamps for instance will be incorrect
+    return {
+      ...comment,
+      createdTime: new Date(),
+      lastUpdatedTime: new Date(),
+      subComments: [],
+    };
   }
 
   public async archiveCanvas(canvas: SerializedCanvasDocument): Promise<void> {
     await this.fdmClient.upsertNodes([
       {
         modelName: ModelNames.CANVAS,
-        ...omit(canvas, ['data']),
+        ...omit(canvas, ['data', 'createdTime']),
         isArchived: true,
       },
     ]);
@@ -236,11 +372,18 @@ export class IndustryCanvasService {
   public async createCanvas(
     canvas: SerializedCanvasDocument
   ): Promise<SerializedCanvasDocument> {
-    return await upsertCanvas(this.fdmClient, canvas);
+    return await upsertCanvas(
+      this.fdmClient,
+      omitCreatedTimeFromSerializedCanvas(canvas)
+    );
   }
 
   public async deleteCanvasById(canvasId: string): Promise<void> {
     await this.fdmClient.deleteNodes(canvasId);
+  }
+
+  public async deleteCommentByIds(commentIds: string[]): Promise<void> {
+    await this.fdmClientForComments.deleteNodes(commentIds);
   }
 
   public async deleteCanvasIdsByType(
@@ -258,8 +401,8 @@ export class IndustryCanvasService {
     return {
       externalId: uuid(),
       name: DEFAULT_CANVAS_NAME,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+      createdTime: new Date().toISOString(),
+      updatedTime: new Date().toISOString(),
       updatedBy: this.userProfile.userIdentifier,
       createdBy: this.userProfile.userIdentifier,
       data: {

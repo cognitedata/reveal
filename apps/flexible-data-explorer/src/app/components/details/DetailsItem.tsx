@@ -2,7 +2,9 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { Body, Flex, Button, Link } from '@cognite/cogs.js';
+import { Body, Flex, Button, Link, Tooltip } from '@cognite/cogs.js';
+
+import { useClipboard } from '../../hooks/useClipboard';
 // import { useClipboard } from '@data-exploration-components/hooks';
 
 type DetailsItemProps = {
@@ -15,20 +17,19 @@ type DetailsItemProps = {
 export const DetailsItem = ({
   name,
   value,
-  copyable = false,
+  copyable = true,
   link,
 }: DetailsItemProps) => {
-  // const clipboardValue =
-  //   copyable && (typeof value === 'string' || typeof value === 'number')
-  //     ? value
-  //     : '';
+  const clipboardValue =
+    copyable && (typeof value === 'string' || typeof value === 'number')
+      ? value
+      : '';
 
-  // // const { hasCopied, onCopy } = useClipboard();
+  const { hasCopied, onCopy } = useClipboard();
 
-  // const handleOnClickCopy = () => {
-  //   // onCopy(clipboardValue.toString());
-  //   // toast.success(COPIED_TEXT);
-  // };
+  const handleOnClickCopy = () => {
+    onCopy(clipboardValue.toString());
+  };
 
   return (
     <Flex>
@@ -36,6 +37,7 @@ export const DetailsItem = ({
         <Body level={2} strong>
           {name}
         </Body>
+
         <Spacer />
 
         {Boolean(value) &&
@@ -55,15 +57,18 @@ export const DetailsItem = ({
           ))}
         {!value && <MutedBody level={2}>-</MutedBody>}
       </DetailsItemContainer>
+
       <ButtonWrapper visible={copyable && Boolean(value)}>
-        <Button
-          type="ghost"
-          size="small"
-          icon="Copy"
-          // disabled={hasCopied}
-          // onClick={handleOnClickCopy}
-          aria-label="Copy"
-        />
+        <Tooltip content={hasCopied ? 'Copied' : 'Copy'}>
+          <Button
+            type="ghost"
+            size="small"
+            icon={hasCopied ? 'Checkmark' : 'Copy'}
+            disabled={hasCopied}
+            onClick={handleOnClickCopy}
+            aria-label="Copy"
+          />
+        </Tooltip>
       </ButtonWrapper>
     </Flex>
   );

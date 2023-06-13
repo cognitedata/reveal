@@ -15,12 +15,12 @@ jobs:
 
       - uses: actions/setup-node@v3
         with:
-          node-version: 16.x
+          node-version: 18.x
           cache: 'yarn'
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install & build 🔧
-        run: yarn --network-timeout 1000000 --frozen-lockfile && npx nx build flexible-data-explorer
+        run: yarn --network-timeout 1000000 --frozen-lockfile && npx nx build business-shell
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_READONLY_TOKEN }}
 

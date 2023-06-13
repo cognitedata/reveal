@@ -128,7 +128,7 @@ const getEdgeExternalId = (
 
 export const upsertCanvas = async (
   client: FDMClient,
-  canvas: SerializedCanvasDocument
+  canvas: Omit<SerializedCanvasDocument, 'createdTime'>
 ): Promise<SerializedCanvasDocument> => {
   const {
     data: { canvasAnnotations, containerReferences },
@@ -147,7 +147,7 @@ export const upsertCanvas = async (
 
   // We first ingest the nodes, and then the edges, since the start/end
   // nodes must exist *before* the edges can be ingested
-  await client.upsertNodes([
+  const upsertedNodes = await client.upsertNodes([
     { ...canvasProps, modelName: ModelNames.CANVAS },
     ...fdmCanvasAnnotations.map((annotation) => ({
       ...annotation,
@@ -173,5 +173,15 @@ export const upsertCanvas = async (
       endNodeExternalId: ref.externalId,
     })),
   ]);
-  return canvas;
+
+  const canvasNodeCreatedTime = upsertedNodes.find(
+    (node) => node.externalId === canvas.externalId
+  )?.createdTime;
+  return {
+    ...canvas,
+    createdTime:
+      canvasNodeCreatedTime === undefined
+        ? new Date().toISOString()
+        : new Date(canvasNodeCreatedTime).toISOString(),
+  };
 };

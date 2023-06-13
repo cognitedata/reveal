@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import { translationKeys } from '../../../../../common';
+import { useTranslation } from '../../../../../hooks/useTranslation';
 import { MenuFooterButton } from '../MenuFooterButton';
 
 export interface ApplyButtonProps {
@@ -8,5 +10,12 @@ export interface ApplyButtonProps {
 }
 
 export const ApplyButton: React.FC<ApplyButtonProps> = (props) => {
-  return <MenuFooterButton {...props} text="Apply" />;
+  const { t } = useTranslation();
+
+  return (
+    <MenuFooterButton
+      {...props}
+      text={t(translationKeys.filterButtonApply, 'Apply')}
+    />
+  );
 };

@@ -20,10 +20,12 @@ import {
 } from '@data-exploration-app/hooks/hooks';
 import { useEventsFilters } from '@data-exploration-app/store';
 import { SEARCH_KEY } from '@data-exploration-app/utils/constants';
+import { getSelectedResourceId } from '@data-exploration-lib/core';
 
 import {
   useBreakJourneyPromptToggle,
   useFlagOverlayNavigation,
+  useGetJourney,
   useJourneyLength,
   usePushJourney,
 } from '../../hooks';
@@ -35,11 +37,13 @@ export const EventSearchResultView = () => {
   const [debouncedQuery] = useDebounce(query, 100);
   const isDetailsOverlayEnabled = useFlagOverlayNavigation();
   const [pushJourney] = usePushJourney();
+  const [firstJourney] = useGetJourney();
   const [journeyLength] = useJourneyLength();
   const [, setPromptOpen] = useBreakJourneyPromptToggle();
 
   // Here we need to parse params to find selected event's id.
-  const selectedEventId = useSelectedResourceId();
+  const selectedEventId = getSelectedResourceId('event', firstJourney);
+  // TODO: This part will be unnecessary as well when we delete `Routes` that is wrapping `EventPreview`s.
   const selectedDirectAssetId = useSelectedResourceId(true);
 
   const selectedRow = selectedEventId ? { [selectedEventId]: true } : {};
@@ -85,7 +89,7 @@ export const EventSearchResultView = () => {
         />
       </SearchResultWrapper>
 
-      {Boolean(selectedEventId) && (
+      {!isDetailsOverlayEnabled && Boolean(selectedEventId) && (
         <SearchResultWrapper>
           <Routes>
             <Route

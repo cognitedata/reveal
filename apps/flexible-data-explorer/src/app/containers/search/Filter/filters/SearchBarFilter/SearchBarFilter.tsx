@@ -7,7 +7,7 @@ import { ValueByDataType } from '../../types';
 import { transformDefTypesToFilterOptions } from './utils';
 
 export interface SearchBarFilterProps {
-  value: ValueByDataType;
+  value?: ValueByDataType;
   onChange: (value: ValueByDataType) => void;
 }
 
@@ -15,7 +15,7 @@ export const SearchBarFilter: React.FC<SearchBarFilterProps> = ({
   value,
   onChange,
 }) => {
-  const { data = [] } = useTypesDataModelQuery();
+  const { data = [], isError } = useTypesDataModelQuery();
 
   const dataTypes = useMemo(() => {
     return transformDefTypesToFilterOptions(data);
@@ -26,6 +26,7 @@ export const SearchBarFilter: React.FC<SearchBarFilterProps> = ({
       dataTypes={dataTypes}
       value={value}
       onChange={onChange}
+      isError={isError}
     />
   );
 };

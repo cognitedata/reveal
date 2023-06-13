@@ -79,3 +79,14 @@ export const getSearchParamsWithJourneyAndSelectedTab = (
     journeyItem
   )}&${SELECTED_TAB_FIELD}=${selectedTab}`;
 };
+
+export const getSelectedResourceId = (
+  selectedResourceType: ResourceType,
+  journeyItem?: JourneyItem
+) => {
+  if (journeyItem && journeyItem.type === selectedResourceType) {
+    return journeyItem.id;
+  }
+
+  return undefined;
+};

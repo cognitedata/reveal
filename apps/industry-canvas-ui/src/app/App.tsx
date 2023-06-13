@@ -1,38 +1,83 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { Route, Routes, BrowserRouter } from 'react-router-dom';
 
-import { QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import styled from 'styled-components/macro';
+import collapseStyle from 'rc-collapse/assets/index.css';
+import datePickerStyle from 'react-datepicker/dist/react-datepicker.css';
 
-// import { getProject } from '@cognite/cdf-utilities';
-import { ToastContainer } from '@cognite/cogs.js';
+import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
+import {
+  SubAppWrapper,
+  AuthWrapper,
+  getProject,
+  getEnv,
+} from '@cognite/cdf-utilities';
+import { Loader, ToastContainer } from '@cognite/cogs.js';
+import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
+import { ErrorBoundary } from '@cognite/react-errors';
+import { FlagProvider } from '@cognite/react-feature-flags';
+import { SDKProvider } from '@cognite/sdk-provider';
 
-import { queryClient } from './queryClient';
-// import Routes from './Routes'; // This import doesn't work @Luis needs to take a look
+import RootApp from './RootApp';
 
-function App() {
-  // const project = getProject();
-  // replace path after checking firebase deployment is working
-  // const basename = `${project}/explore/industryCanvas`;
+export default () => {
+  const env = getEnv();
+  const project = getProject();
+
+  if (!project) {
+    throw new Error('project missing');
+  }
+
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+        staleTime: 10 * 60 * 1000, // Pretty long
+      },
+    },
+  });
+
+  useEffect(() => {
+    cogsStyles.use();
+    collapseStyle.use();
+    datePickerStyle.use();
+    return () => {
+      cogsStyles.unuse();
+      collapseStyle.unuse();
+      datePickerStyle.unuse();
+    };
+  }, []);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <ReactQueryDevtools initialIsOpen={false} />
-      <ToastContainer />
-      <AppWrapper>
-        {/*<Router basename={basename} window={window} children={<Routes />} />*/}
-      </AppWrapper>
-    </QueryClientProvider>
+    <SDKProvider sdk={sdk}>
+      <ErrorBoundary>
+        <QueryClientProvider client={queryClient}>
+          <SubAppWrapper title="Industry Canvas">
+            <AuthWrapper
+              loadingScreen={<Loader darkMode={false} />}
+              login={() => loginAndAuthIfNeeded(project, env)}
+            >
+              <FlagProvider
+                apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
+                appName="industry-canvas"
+                projectName={project}
+                remoteAddress={window.location.hostname}
+                disableMetrics
+                refreshInterval={86400}
+              >
+                <BrowserRouter>
+                  <Routes>
+                    <Route path="/:tenant/*" element={<RootApp />} />
+                  </Routes>
+                </BrowserRouter>
+              </FlagProvider>
+            </AuthWrapper>
+          </SubAppWrapper>
+          <ToastContainer />
+          <ReactQueryDevtools initialIsOpen={false} />
+        </QueryClientProvider>
+      </ErrorBoundary>
+    </SDKProvider>
   );
-}
-
-export default App;
-
-const AppWrapper = styled.div`
-  height: 100%;
-  max-width: 100vw;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-`;
+};

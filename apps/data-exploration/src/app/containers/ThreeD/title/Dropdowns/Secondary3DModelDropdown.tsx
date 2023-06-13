@@ -24,17 +24,17 @@ import {
 
 import { SECONDARY_MODEL_DISPLAY_LIMIT } from '../../utils';
 
-type SecondaryModelDropdownProps = {
+type Secondary3DModelDropdownProps = {
   mainModel?: Model3D;
   secondaryModels: SecondaryModelOptions[];
   setSecondaryModels: Dispatch<SetStateAction<SecondaryModelOptions[]>>;
 };
 
-const SecondaryModelDropdown = ({
+const Secondary3DModelDropdown = ({
   mainModel,
   secondaryModels,
   setSecondaryModels,
-}: SecondaryModelDropdownProps): JSX.Element => {
+}: Secondary3DModelDropdownProps): JSX.Element => {
   const [numOfModelToDisplay, setNumOfModelToDisplay] = useState<number>(
     SECONDARY_MODEL_DISPLAY_LIMIT
   );
@@ -220,4 +220,4 @@ export const StyledInput = styled(Input)`
   width: 100%;
 `;
 
-export default SecondaryModelDropdown;
+export default Secondary3DModelDropdown;
