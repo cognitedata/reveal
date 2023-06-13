@@ -16,7 +16,7 @@ export const useTimeseriesSearchQuery = (
   );
 
   const results = useMemo(() => {
-    return data?.pages.flat() || [];
+    return data?.pages.flatMap((page) => page) || [];
   }, [data]);
 
   return { data: results, ...rest };

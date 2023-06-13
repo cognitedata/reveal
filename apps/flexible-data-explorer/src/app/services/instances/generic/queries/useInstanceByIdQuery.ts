@@ -2,9 +2,9 @@ import { useParams } from 'react-router-dom';
 
 import { useQuery } from '@tanstack/react-query';
 
-import { useFDM } from '../../../providers/FDMProvider';
-import { extractFieldsFromSchema } from '../../extractors';
-import { queryKeys } from '../../queryKeys';
+import { useFDM } from '../../../../providers/FDMProvider';
+import { extractFieldsFromSchema } from '../../../extractors';
+import { queryKeys } from '../../../queryKeys';
 
 export const useInstancesQuery = () => {
   const { dataType, instanceSpace, externalId } = useParams();
