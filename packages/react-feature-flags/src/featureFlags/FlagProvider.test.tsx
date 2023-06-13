@@ -39,20 +39,14 @@ describe('FeatureToggle', () => {
     expect(screen.getByText('enabled')).toBeInTheDocument();
   });
 
-  it('Should have remoteAddress and userId in the context', () => {
+  it('Should have userId in the context', () => {
     render(
-      <FlagProvider
-        remoteAddress="fusion.cognite.com"
-        appName="not used"
-        apiToken="not used"
-        projectName="daitya"
-      >
+      <FlagProvider appName="not used" apiToken="not used" projectName="daitya">
         <ToggledDiv />
       </FlagProvider>
     );
     expect(clientMock.updateContext).toHaveBeenCalledWith({
       userId: 'daitya',
-      remoteAddress: 'fusion.cognite.com',
     });
   });
 

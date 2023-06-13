@@ -30,7 +30,6 @@ const App = () => {
       projectName="my-project"
       appName="unified-demo-app"
       apiToken="<api-token>"
-      remoteAddress={window.location.hostname}
     >
       //... flags will be accessible in all children
     </FlagProvider>
@@ -141,7 +140,6 @@ describe('FeatureToggle', () => {
       appName="not used"
       apiToken="not used"
       projectName="not used"
-      remoteAddress={window.location.hostname}
     >
       <ToggledDiv />
     </FlagProvider>

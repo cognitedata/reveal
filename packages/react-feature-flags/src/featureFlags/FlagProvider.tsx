@@ -11,7 +11,6 @@ type Props = {
   appName: string;
   apiToken: string;
   projectName?: string;
-  remoteAddress?: string;
   proxyUrl?: string;
   refreshInterval?: number;
   children: ReactNode;
@@ -25,7 +24,6 @@ export const FlagProvider = ({
   proxyUrl = DEFAULT_UNLEASH_PROXY_URL,
   refreshInterval /* This is defaulted to 30 sec by the unleash-proxy-client */,
   projectName,
-  remoteAddress,
   disableMetrics,
 }: Props) => {
   const [isClientReady, setIsClientReady] = useState(false);
@@ -49,9 +47,6 @@ export const FlagProvider = ({
          */
         userId: projectName,
       };
-      if (remoteAddress) {
-        context.remoteAddress = remoteAddress;
-      }
       client.current.updateContext(context);
 
       client.current.on('ready', () => {
@@ -64,7 +59,7 @@ export const FlagProvider = ({
     return () => {
       client.current.stop();
     };
-  }, [projectName, remoteAddress]);
+  }, [projectName]);
 
   if (!client.current) return null;
 
