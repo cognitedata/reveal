@@ -4,6 +4,7 @@ import { useTypesDataModelQuery } from '../../../../../services/dataModels/query
 import { FilterBuilderByDataType } from '../../containers';
 import { ValueByDataType } from '../../types';
 
+import { customDataTypeOptions } from './customFilters';
 import { transformDefTypesToFilterOptions } from './utils';
 
 export interface SearchBarFilterProps {
@@ -18,7 +19,10 @@ export const SearchBarFilter: React.FC<SearchBarFilterProps> = ({
   const { data = [], isError } = useTypesDataModelQuery();
 
   const dataTypes = useMemo(() => {
-    return transformDefTypesToFilterOptions(data);
+    return [
+      ...transformDefTypesToFilterOptions(data),
+      ...customDataTypeOptions,
+    ];
   }, [data]);
 
   return (
