@@ -188,7 +188,6 @@ module.exports = {
       const {
         styleScope,
       } = require(`../../apps/${projectName}/src/styleScope`);
-      console.log('config', config);
       config = replaceStyleLoaders(config, styleScope);
 
       config.module.rules.push({
