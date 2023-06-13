@@ -1,10 +1,12 @@
 import { ReactNode } from 'react';
 
-import { Icon, Loader } from '@cognite/cogs.js';
 import styled from 'styled-components';
+
 import { getFlow } from '@cognite/cdf-sdk-singleton';
+import { Icon, Loader } from '@cognite/cogs.js';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
-import { useTranslation } from 'common/i18n';
+
+import { useTranslation } from './common/i18n';
 
 type AccessCheckProps = {
   children: ReactNode;
@@ -14,7 +16,7 @@ const AccessCheck = ({ children }: AccessCheckProps): JSX.Element => {
   const { t } = useTranslation();
   const { flow } = getFlow();
   const { data: hasReadAccess, isFetched } = usePermissions(
-    flow,
+    flow as any,
     'datasetsAcl',
     'READ'
   );

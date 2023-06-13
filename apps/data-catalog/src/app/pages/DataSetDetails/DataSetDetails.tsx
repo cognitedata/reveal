@@ -1,10 +1,20 @@
 import { useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { usePermissions } from '@cognite/sdk-react-query-hooks';
-import { getFlow } from '@cognite/cdf-sdk-singleton';
 
+import styled from 'styled-components';
+
+import { useTranslation } from '@data-catalog-app/common/i18n';
+import AccessControl from '@data-catalog-app/components/AccessControl';
+import ExploreData from '@data-catalog-app/components/Data/ExploreData';
+import DocumentationsTab from '@data-catalog-app/components/DocumentationsTab';
+import { ErrorMessage } from '@data-catalog-app/components/ErrorMessage/ErrorMessage';
+import Lineage from '@data-catalog-app/components/Lineage';
+import DatasetOverview from '@data-catalog-app/components/Overview/DatasetOverview';
+import useDiscardChangesToast from '@data-catalog-app/hooks/useDiscardChangesToast';
 import copy from 'copy-to-clipboard';
 
+import { getFlow } from '@cognite/cdf-sdk-singleton';
+import { createLink, SecondaryTopbar } from '@cognite/cdf-utilities';
 import {
   Flex,
   Icon,
@@ -15,24 +25,7 @@ import {
   Tabs,
   toast,
 } from '@cognite/cogs.js';
-
-import DataSetEditor from 'pages/DataSetEditor';
-import ExploreData from 'components/Data/ExploreData';
-import Lineage from 'components/Lineage';
-import DocumentationsTab from 'components/DocumentationsTab';
-import AccessControl from 'components/AccessControl';
-
-import { ErrorMessage } from 'components/ErrorMessage/ErrorMessage';
-
-import { useTranslation } from 'common/i18n';
-import {
-  DetailsPane,
-  Divider,
-  getGovernedStatus,
-  trackUsage,
-  DATASET_HELP_DOC,
-  LoaderWrapper,
-} from 'utils';
+import { usePermissions } from '@cognite/sdk-react-query-hooks';
 
 import {
   DataSetWithExtpipes,
@@ -40,10 +33,15 @@ import {
   useUpdateDataSetVisibility,
 } from '../../actions/index';
 import { useSelectedDataSet } from '../../context/index';
-import DatasetOverview from 'components/Overview/DatasetOverview';
-import styled from 'styled-components';
-import { createLink, SecondaryTopbar } from '@cognite/cdf-utilities';
-import useDiscardChangesToast from 'hooks/useDiscardChangesToast';
+import {
+  DetailsPane,
+  Divider,
+  getGovernedStatus,
+  trackUsage,
+  DATASET_HELP_DOC,
+  LoaderWrapper,
+} from '../../utils';
+import DataSetEditor from '../DataSetEditor';
 
 const tabTypes = [
   'overview',

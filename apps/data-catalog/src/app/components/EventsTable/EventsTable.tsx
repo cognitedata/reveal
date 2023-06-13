@@ -1,8 +1,9 @@
+import { useTranslation } from '@data-catalog-app/common/i18n';
+import { useResourceTableColumns } from '@data-catalog-app/components/Data/ResourceTableColumns';
+import { ContentView, ExploreViewConfig } from '@data-catalog-app/utils';
+
 import { TableNoResults } from '@cognite/cdf-utilities';
 import { Button, Flex, Icon, Table } from '@cognite/cogs.js';
-import { ContentView, ExploreViewConfig } from 'utils';
-import { useTranslation } from 'common/i18n';
-import { useResourceTableColumns } from 'components/Data/ResourceTableColumns';
 import { CogniteEvent } from '@cognite/sdk/dist/src';
 
 interface EventsPreviewProps {

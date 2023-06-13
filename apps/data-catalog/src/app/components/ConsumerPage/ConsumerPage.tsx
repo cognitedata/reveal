@@ -1,19 +1,27 @@
 import { useState, useEffect } from 'react';
-import { Button, Colors } from '@cognite/cogs.js';
-import { Consumer, DataSet } from 'utils/types';
-import Drawer from 'components/Drawer';
-import { IconWrapper, InputField } from 'utils/styledComponents';
-import dataConsumerIcon from 'assets/DataConsumer.svg';
+
 import styled from 'styled-components';
+
+import dataConsumerIcon from '@data-catalog-app/assets/DataConsumer.svg';
+import { useTranslation } from '@data-catalog-app/common/i18n';
+import Drawer from '@data-catalog-app/components/Drawer';
+import { Col } from '@data-catalog-app/utils';
+import {
+  IconWrapper,
+  InputField,
+} from '@data-catalog-app/utils/styledComponents';
+import { Consumer, DataSet } from '@data-catalog-app/utils/types';
+
+import { Button, Colors } from '@cognite/cogs.js';
+
 import LinksList from '../LinksList';
+
 import {
   removeConsumerLink,
   updateConsumerName,
   updateConsumerContactEmail,
   updateConsumerExternalLink,
 } from './consumerPageUtils';
-import { useTranslation } from 'common/i18n';
-import { Col } from 'utils';
 
 const Label = styled.label`
   margin-top: 0.7rem;

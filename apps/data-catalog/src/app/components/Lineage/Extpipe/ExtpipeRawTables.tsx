@@ -1,20 +1,22 @@
 import { FunctionComponent, PropsWithChildren } from 'react';
-import { Icon, Table } from '@cognite/cogs.js';
+
+import { DataSetWithExtpipes } from '@data-catalog-app/actions';
+import { getRawTableExtpipeLastUpdateTimeKey } from '@data-catalog-app/actions/keys';
+import { useTranslation } from '@data-catalog-app/common/i18n';
+import {
+  combineDataSetAndExtpipesRawTables,
+  updateRawTableWithLastUpdate,
+} from '@data-catalog-app/components/Lineage/Extpipe/rawTablesUtils';
+import { useRawTableColumns } from '@data-catalog-app/components/Lineage/rawTableColumns';
 import {
   LineageSection,
   LineageSubTitle,
   LineageTitle,
-} from 'utils/styledComponents';
-import { useRawTableColumns } from 'components/Lineage/rawTableColumns';
-import { Extpipe, RawTable } from 'utils/types';
-import { DataSetWithExtpipes } from 'actions';
-import {
-  combineDataSetAndExtpipesRawTables,
-  updateRawTableWithLastUpdate,
-} from 'components/Lineage/Extpipe/rawTablesUtils';
-import { useTranslation } from 'common/i18n';
+} from '@data-catalog-app/utils/styledComponents';
+import { Extpipe, RawTable } from '@data-catalog-app/utils/types';
 import { useQuery } from '@tanstack/react-query';
-import { getRawTableExtpipeLastUpdateTimeKey } from 'actions/keys';
+
+import { Icon, Table } from '@cognite/cogs.js';
 
 export interface RawExtpipeWithUpdateTime extends RawTable {
   lastUpdate: string;
@@ -53,7 +55,7 @@ export const ExtpipeRawTables: FunctionComponent<ExtpipeRawTablesProps> = ({
       {isExtpipesFetched && rawList ? (
         <div className="resource-table">
           <Table
-            columns={rawTablesColumnsWithExtpipe()}
+            columns={rawTablesColumnsWithExtpipe() as any}
             dataSource={rawList}
             pageSize={5}
             rowKey={(record: RawExtpipeWithUpdateTime) =>

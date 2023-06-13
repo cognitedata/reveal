@@ -1,9 +1,14 @@
+import { DataSetWithExtpipes } from '@data-catalog-app/actions';
+import { TranslationKeys } from '@data-catalog-app/common/i18n';
+import { RawExtpipeWithUpdateTime } from '@data-catalog-app/components/Lineage/Extpipe/ExtpipeRawTables';
+import {
+  DataSet,
+  Extpipe,
+  RawTableWithExtpipes,
+} from '@data-catalog-app/utils/types';
 import moment from 'moment';
+
 import sdk from '@cognite/cdf-sdk-singleton';
-import { TranslationKeys } from 'common/i18n';
-import { RawExtpipeWithUpdateTime } from 'components/Lineage/Extpipe/ExtpipeRawTables';
-import { DataSet, Extpipe, RawTableWithExtpipes } from 'utils/types';
-import { DataSetWithExtpipes } from 'actions';
 
 export const updateRawTableWithLastUpdate = async (
   value: RawTableWithExtpipes,

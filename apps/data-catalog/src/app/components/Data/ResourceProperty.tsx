@@ -1,6 +1,8 @@
-import { Body } from '@cognite/cogs.js';
-import Link from 'components/Link';
 import { ReactNode } from 'react';
+
+import Link from '@data-catalog-app/components/Link';
+
+import { Body } from '@cognite/cogs.js';
 
 type ResourcePropertyProps = {
   value: ReactNode;

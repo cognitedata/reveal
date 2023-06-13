@@ -9,7 +9,7 @@ export const useWithExtpipes = () => {
   });
   const { flow } = getFlow();
   const { data: hasExtpipesPermission, ...queryProps } = usePermissions(
-    flow,
+    flow as any,
     'extractionPipelinesAcl',
     'READ'
   );

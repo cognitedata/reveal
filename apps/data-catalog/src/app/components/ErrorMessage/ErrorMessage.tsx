@@ -1,7 +1,10 @@
 import { FunctionComponent, PropsWithChildren } from 'react';
-import { Colors, Icon } from '@cognite/cogs.js';
+
 import styled from 'styled-components';
-import { useTranslation } from 'common/i18n';
+
+import { useTranslation } from '@data-catalog-app/common/i18n';
+
+import { Colors, Icon } from '@cognite/cogs.js';
 
 export interface DataSetError {
   status: number;

@@ -1,8 +1,9 @@
+import Link from '@data-catalog-app/components/Link';
+import { getExtractionPipelineUIUrl } from '@data-catalog-app/utils/extpipeUtils';
+import { Extpipe } from '@data-catalog-app/utils/types';
+
 import { createLink } from '@cognite/cdf-utilities';
 import { Body, Flex } from '@cognite/cogs.js';
-import Link from 'components/Link';
-import { getExtractionPipelineUIUrl } from 'utils/extpipeUtils';
-import { Extpipe } from 'utils/types';
 
 type ExtractionPipelineNameProps = Pick<Extpipe, 'id' | 'name'>;
 

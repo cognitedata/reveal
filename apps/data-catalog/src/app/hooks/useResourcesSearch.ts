@@ -1,7 +1,9 @@
-import sdk from '@cognite/cdf-sdk-singleton';
-import { useTranslation } from 'common/i18n';
 import { useQuery } from '@tanstack/react-query';
-import { handleError } from 'utils';
+
+import sdk from '@cognite/cdf-sdk-singleton';
+
+import { useTranslation } from '../common/i18n';
+import { handleError } from '../utils';
 
 type ResourceSearchParams = {
   filter: {

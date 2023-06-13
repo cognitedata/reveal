@@ -1,9 +1,10 @@
+import { useTranslation } from '@data-catalog-app/common/i18n';
+import { useResourceTableColumns } from '@data-catalog-app/components/Data/ResourceTableColumns';
+import { ContentView } from '@data-catalog-app/utils';
+
 import { TableNoResults } from '@cognite/cdf-utilities';
-import { ContentView } from 'utils';
-import { useTranslation } from 'common/i18n';
-import { useResourceTableColumns } from 'components/Data/ResourceTableColumns';
-import { Asset } from '@cognite/sdk';
 import { Icon, Table } from '@cognite/cogs.js';
+import { Asset } from '@cognite/sdk';
 
 interface AssetsTableProps {
   isLoading: boolean;

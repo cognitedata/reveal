@@ -1,6 +1,6 @@
-import { Button, ButtonProps, Menu } from '@cognite/cogs.js';
+import Dropdown from '@data-catalog-app/components/dropdown/Dropdown';
 
-import Dropdown from 'components/dropdown/Dropdown';
+import { Button, ButtonProps, Menu } from '@cognite/cogs.js';
 
 type RowActionsProps = {
   actions: Omit<ButtonProps, 'type'>[];

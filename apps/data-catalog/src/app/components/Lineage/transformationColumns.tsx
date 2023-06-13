@@ -1,13 +1,17 @@
 import { CSSProperties } from 'react';
-import { stringCompare, getStringCdfEnv } from 'utils/shared';
+
+import styled from 'styled-components';
+
+import { useTranslation } from '@data-catalog-app/common/i18n';
+import { CogsTableCellRenderer } from '@data-catalog-app/utils';
+import { stringCompare, getStringCdfEnv } from '@data-catalog-app/utils/shared';
+import moment from 'moment';
+
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import sdk from '@cognite/cdf-sdk-singleton';
-import moment from 'moment';
 import { Button, Icon, Popconfirm } from '@cognite/cogs.js';
-import styled from 'styled-components';
+
 import HiddenTransformation from './HiddenTranformation';
-import { useTranslation } from 'common/i18n';
-import { CogsTableCellRenderer } from 'utils';
 
 export const useTransformationsColumns = () => {
   const { t } = useTranslation();

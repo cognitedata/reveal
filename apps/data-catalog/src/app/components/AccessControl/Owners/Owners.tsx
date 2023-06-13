@@ -1,7 +1,8 @@
-import { Group } from '@cognite/sdk';
-import { getAllSetOwnersFromGroups } from 'utils/shared';
-import { useTranslation } from 'common/i18n';
+import { useTranslation } from '@data-catalog-app/common/i18n';
+import { getAllSetOwnersFromGroups } from '@data-catalog-app/utils/shared';
+
 import { Table } from '@cognite/cogs.js';
+import { Group } from '@cognite/sdk';
 
 interface OwnersProps {
   dataSetId: number;
@@ -38,7 +39,7 @@ const Owners = (props: OwnersProps) => {
     <div className="resource-table">
       <Table
         css={{ marginTop: '20px' }}
-        columns={ownerColumns}
+        columns={ownerColumns as any}
         dataSource={ownersDataSource}
         rowKey={(d) => `${d['groupId']}`}
       />

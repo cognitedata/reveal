@@ -1,15 +1,20 @@
-import CreatableSelect from 'react-select/creatable';
 import { useEffect, useState } from 'react';
-import theme from 'styles/theme';
-import { DataSet, RawTable } from 'utils/types';
-import Drawer from 'components/Drawer';
-import { IconWrapper, FieldLabel } from 'utils/styledComponents';
+
+import getDataInIcon from '@data-catalog-app/assets/getDataInIcon.svg';
+import { useTranslation } from '@data-catalog-app/common/i18n';
+import Drawer from '@data-catalog-app/components/Drawer';
+import { RawSection } from '@data-catalog-app/components/GetDataInPage/raw/RawSection';
+import { OidcCheck } from '@data-catalog-app/components/OidcCheck/OidcCheck';
+import theme from '@data-catalog-app/styles/theme';
+import { Col } from '@data-catalog-app/utils';
+import {
+  IconWrapper,
+  FieldLabel,
+} from '@data-catalog-app/utils/styledComponents';
+import { DataSet, RawTable } from '@data-catalog-app/utils/types';
+import CreatableSelect from 'react-select/creatable';
+
 import { trackEvent } from '@cognite/cdf-route-tracker';
-import getDataInIcon from 'assets/getDataInIcon.svg';
-import { OidcCheck } from 'components/OidcCheck/OidcCheck';
-import { RawSection } from 'components/GetDataInPage/raw/RawSection';
-import { useTranslation } from 'common/i18n';
-import { Col } from 'utils';
 
 interface SelectOption {
   value: string;
@@ -140,8 +145,8 @@ const GetDataInPage = (props: GetDataInProps): JSX.Element => {
               isMulti
               css={{ maxWidth: '600px', background: theme.blandColor }}
               menuPlacement="bottom"
-              value={selectedSources}
-              onChange={(options) => {
+              value={selectedSources as any}
+              onChange={(options: any) => {
                 setSelectedSources([...options]);
                 props.setChangesSaved(false);
               }}
@@ -158,7 +163,7 @@ const GetDataInPage = (props: GetDataInProps): JSX.Element => {
                 css={{ maxWidth: '600px', background: theme.blandColor }}
                 menuPlacement="bottom"
                 value={selectedExtractors}
-                onChange={(options) => {
+                onChange={(options: any) => {
                   setSelectedExtractors([...options]);
                   props.setChangesSaved(false);
                 }}

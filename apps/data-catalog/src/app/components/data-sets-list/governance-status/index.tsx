@@ -1,8 +1,8 @@
-import { Body, Flex, Icon } from '@cognite/cogs.js';
+import { useTranslation } from '@data-catalog-app/common/i18n';
+import { DataSetRow } from '@data-catalog-app/pages/DataSetsList/TableColumns';
+import { getGovernedStatus } from '@data-catalog-app/utils';
 
-import { useTranslation } from 'common/i18n';
-import { DataSetRow } from 'pages/DataSetsList/TableColumns';
-import { getGovernedStatus } from 'utils';
+import { Body, Flex, Icon } from '@cognite/cogs.js';
 
 type GovernanceStatusProps = {
   isGoverned: DataSetRow['quality'];

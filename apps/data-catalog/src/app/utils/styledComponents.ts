@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import theme from 'styles/theme';
 
 import {
   Button,
@@ -9,8 +8,11 @@ import {
   Menu,
 } from '@cognite/cogs.js';
 
-import zIndex from 'utils/zIndex';
+// @ts-ignore
+import theme from '../styles/theme';
+
 import { Card, Row } from './antdStyledComponents';
+import zIndex from './zIndex';
 
 export const InputField = styled(CogsInput)`
   width: 600px;

@@ -1,16 +1,21 @@
-import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
-import moment from 'moment';
-import { TranslationKeys } from 'common/i18n';
-import { updateGroup } from 'utils/updateGroup';
-import queryString from 'query-string';
-import handleError from 'utils/handleError';
 import isArray from 'lodash/isArray';
-import isString from 'lodash/isString';
 import isDate from 'lodash/isDate';
 import isObject from 'lodash/isObject';
-import { APIDataSet, DataSet } from './types';
-import { styleScope } from 'styles/styleScope';
+import isString from 'lodash/isString';
+import moment from 'moment';
+import queryString from 'query-string';
+
+import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
 import { createLink } from '@cognite/cdf-utilities';
+
+import { TranslationKeys } from '../common/i18n';
+
+// @ts-ignore
+import { styleScope } from '../styles/styleScope';
+
+import handleError from './handleError';
+import { APIDataSet, DataSet } from './types';
+import { updateGroup } from './updateGroup';
 
 export const stringifyMetaData = (dataSet: { metadata: {} }) => {
   const newDataset = JSON.parse(JSON.stringify(dataSet));

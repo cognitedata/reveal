@@ -1,7 +1,9 @@
 import { ReactNode } from 'react';
-import { TooltipLink } from 'utils/styledComponents';
+
+import { getContainer } from '@data-catalog-app/utils/shared';
+import { TooltipLink } from '@data-catalog-app/utils/styledComponents';
+
 import { Icon, Tooltip, TooltipProps } from '@cognite/cogs.js';
-import { getContainer } from 'utils/shared';
 
 interface InfoTooltipProps {
   tooltipText: string | ReactNode;

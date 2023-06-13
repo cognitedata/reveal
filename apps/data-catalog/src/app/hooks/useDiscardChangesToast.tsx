@@ -1,6 +1,8 @@
-import { Button, toast } from '@cognite/cogs.js';
-import { useTranslation } from 'common/i18n';
 import styled from 'styled-components';
+
+import { Button, toast } from '@cognite/cogs.js';
+
+import { useTranslation } from '../common/i18n';
 
 export default ({ onDiscardClick }: { onDiscardClick: () => void }) => {
   const { t } = useTranslation();

@@ -1,7 +1,9 @@
-import { Button } from '@cognite/cogs.js';
-import { useTranslation } from 'common/i18n';
 import styled from 'styled-components';
-import theme from 'styles/theme';
+
+import { useTranslation } from '@data-catalog-app/common/i18n';
+import theme from '@data-catalog-app/styles/theme';
+
+import { Button } from '@cognite/cogs.js';
 
 export const ColumnFilterIcon = ({ filtered }: { filtered: boolean }) => {
   const { t } = useTranslation();

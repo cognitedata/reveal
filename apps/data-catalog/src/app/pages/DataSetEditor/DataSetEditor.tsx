@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react';
 
-import Drawer from 'components/Drawer';
+import { useTranslation } from '@data-catalog-app/common/i18n';
+import DataSetCreation from '@data-catalog-app/components/DataSetCreation';
+import Drawer from '@data-catalog-app/components/Drawer';
+import useDebounce from '@data-catalog-app/hooks/useDebounce';
+
+import { toast } from '@cognite/cogs.js';
 import { Group } from '@cognite/sdk';
-import DataSetCreation from 'components/DataSetCreation';
-import useDebounce from 'hooks/useDebounce';
 
 import {
   useCreateDataSetMutation,
@@ -13,8 +16,6 @@ import {
   useUpdateDataSetOwners,
 } from '../../actions/index';
 import { useSelectedDataSet } from '../../context/index';
-import { useTranslation } from 'common/i18n';
-import { toast } from '@cognite/cogs.js';
 
 interface DataSetEditorProps {
   visible: boolean;

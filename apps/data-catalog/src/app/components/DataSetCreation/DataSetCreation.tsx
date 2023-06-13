@@ -1,32 +1,45 @@
 import { useState, useEffect } from 'react';
-import { Icon, Tooltip } from '@cognite/cogs.js';
-import { CogsTableCellRenderer, CreationDataSet, DataSet } from 'utils/types';
-import theme from 'styles/theme';
+
+import dataConsumerIcon from '@data-catalog-app/assets/DataConsumer.svg';
+import documentationIcon from '@data-catalog-app/assets/documentationIcon.svg';
+import getDataInIcon from '@data-catalog-app/assets/getDataInIcon.svg';
+import jetfireIcon from '@data-catalog-app/assets/jetfireIcon.svg';
+import { useTranslation } from '@data-catalog-app/common/i18n';
+import { useUserInformation } from '@data-catalog-app/hooks/useUserInformation';
+import theme from '@data-catalog-app/styles/theme';
+import { Card } from '@data-catalog-app/utils';
+import {
+  NAME_MAX_LENGTH,
+  DESC_MAX_LENGTH,
+} from '@data-catalog-app/utils/constants';
+import {
+  getContainer,
+  isNotNilOrWhitespace,
+} from '@data-catalog-app/utils/shared';
 import {
   CreateButton,
   ChangesSavedWrapper,
   SaveButton,
-} from 'utils/styledComponents';
-import { Group } from '@cognite/sdk';
+} from '@data-catalog-app/utils/styledComponents';
+import {
+  CogsTableCellRenderer,
+  CreationDataSet,
+  DataSet,
+} from '@data-catalog-app/utils/types';
+
 import { trackEvent } from '@cognite/cdf-route-tracker';
-import jetfireIcon from 'assets/jetfireIcon.svg';
-import getDataInIcon from 'assets/getDataInIcon.svg';
-import documentationIcon from 'assets/documentationIcon.svg';
-import dataConsumerIcon from 'assets/DataConsumer.svg';
-import { getContainer, isNotNilOrWhitespace } from 'utils/shared';
+import { Icon, Tooltip } from '@cognite/cogs.js';
 import { useFlag } from '@cognite/react-feature-flags';
-import { useUserInformation } from 'hooks/useUserInformation';
-import { NAME_MAX_LENGTH, DESC_MAX_LENGTH } from 'utils/constants';
-import GetDataInPage from '../GetDataInPage';
-import TransformPage from '../TransformPage';
-import DocumentationPage from '../DocumentationPage';
-import StatusPane from '../StatusPane';
-import DataSetInfoForm from '../DataSetInfoForm';
-import DataSetInfo from '../DataSetInfo';
-import CreationFlowSection from '../CreationFlowSection';
+import { Group } from '@cognite/sdk';
+
 import ConsumerPage from '../ConsumerPage';
-import { useTranslation } from 'common/i18n';
-import { Card } from 'utils';
+import CreationFlowSection from '../CreationFlowSection';
+import DataSetInfo from '../DataSetInfo';
+import DataSetInfoForm from '../DataSetInfoForm';
+import DocumentationPage from '../DocumentationPage';
+import GetDataInPage from '../GetDataInPage';
+import StatusPane from '../StatusPane';
+import TransformPage from '../TransformPage';
 
 interface DataSetCreationProps {
   loading: boolean;
@@ -359,7 +372,7 @@ const DataSetCreation = (props: DataSetCreationProps): JSX.Element => {
         writeProtected,
         metadata: {
           consoleCreatedBy: {
-            username: userData?.displayName ?? userData?.email ?? 'Unknown',
+            username: userData?.displayName ?? userData?.mail ?? 'Unknown',
           },
           consoleMetaDataVersion: 3,
         },

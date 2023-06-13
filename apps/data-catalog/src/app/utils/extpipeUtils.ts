@@ -1,5 +1,6 @@
-import { Extpipe, DataSet } from 'utils/types';
 import sdk from '@cognite/cdf-sdk-singleton';
+
+import { Extpipe, DataSet } from './types';
 
 const EXTRACTION_PIPELINE_PATH: Readonly<string> = 'extpipes';
 

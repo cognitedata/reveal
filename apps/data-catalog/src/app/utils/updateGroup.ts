@@ -1,10 +1,13 @@
-import { Group, ServiceAccount, GroupSpec } from '@cognite/sdk';
 import omit from 'lodash/omit';
+
 import sdk from '@cognite/cdf-sdk-singleton';
-import { TranslationKeys } from 'common/i18n';
-import { isOidcEnv } from 'utils/shared';
-import { UpdateGroupData } from './types';
+import { Group, ServiceAccount, GroupSpec } from '@cognite/sdk';
+
+import { TranslationKeys } from '../common/i18n';
+
 import { retry } from './retry';
+import { isOidcEnv } from './shared';
+import { UpdateGroupData } from './types';
 
 const NUMBER_OF_RETRIES = 6;
 

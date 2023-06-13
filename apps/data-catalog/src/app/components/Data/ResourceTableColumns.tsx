@@ -1,3 +1,12 @@
+import { ReactElement } from 'react';
+
+import { useTranslation } from '@data-catalog-app/common/i18n';
+import { CogsTableCellRenderer, trackUsage } from '@data-catalog-app/utils';
+import moment from 'moment';
+
+import { createLink } from '@cognite/cdf-utilities';
+import { TableColumn } from '@cognite/cogs.js';
+import { useFlag } from '@cognite/react-feature-flags';
 import {
   Asset,
   CogniteEvent,
@@ -5,13 +14,8 @@ import {
   Sequence,
   Timeseries,
 } from '@cognite/sdk';
-import { createLink } from '@cognite/cdf-utilities';
+
 import ResourceProperty from './ResourceProperty';
-import { useTranslation } from 'common/i18n';
-import moment from 'moment';
-import { useFlag } from '@cognite/react-feature-flags';
-import { CogsTableCellRenderer, trackUsage } from 'utils';
-import { TableColumn } from '@cognite/cogs.js';
 
 export function useResourceTableColumns() {
   const { t } = useTranslation();
@@ -31,7 +35,7 @@ export function useResourceTableColumns() {
     }
   };
 
-  const assetColumns: TableColumn<Asset>[] = [
+  const assetColumns = [
     {
       Header: t('name'),
       accessor: 'name',
@@ -97,7 +101,7 @@ export function useResourceTableColumns() {
     },
   ];
 
-  const eventColumns: TableColumn<CogniteEvent>[] = [
+  const eventColumns = [
     {
       Header: t('type'),
       accessor: 'type',
@@ -175,7 +179,7 @@ export function useResourceTableColumns() {
     },
   ];
 
-  const fileColumns: TableColumn<FileInfo>[] = [
+  const fileColumns = [
     {
       Header: t('name'),
       accessor: 'name',
@@ -243,7 +247,7 @@ export function useResourceTableColumns() {
     },
   ];
 
-  const sequenceColumns: TableColumn<Sequence>[] = [
+  const sequenceColumns = [
     {
       Header: t('name'),
       accessor: 'name',
@@ -312,7 +316,7 @@ export function useResourceTableColumns() {
     },
   ];
 
-  const timeseriesColumns: TableColumn<Timeseries>[] = [
+  const timeseriesColumns = [
     {
       Header: t('name'),
       accessor: 'name',

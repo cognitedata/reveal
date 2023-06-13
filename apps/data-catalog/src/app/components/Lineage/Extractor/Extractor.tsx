@@ -1,4 +1,4 @@
-import { useTranslation } from 'common/i18n';
+import { useTranslation } from '@data-catalog-app/common/i18n';
 import { FunctionComponent, PropsWithChildren } from 'react';
 import { NoDataText, NoStyleList } from '../../../utils/styledComponents';
 import { Chip } from '@cognite/cogs.js';

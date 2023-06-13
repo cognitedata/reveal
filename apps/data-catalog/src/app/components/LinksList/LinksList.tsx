@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
+
+import { useTranslation } from '@data-catalog-app/common/i18n';
+import useDebounce from '@data-catalog-app/hooks/useDebounce';
+import { Col, Row } from '@data-catalog-app/utils';
+
 import { Button, Input } from '@cognite/cogs.js';
-import useDebounce from 'hooks/useDebounce';
-import { useTranslation } from 'common/i18n';
-import { Col, Row } from 'utils';
 
 interface UrlInputProps {
   value: { name: string; id: string };

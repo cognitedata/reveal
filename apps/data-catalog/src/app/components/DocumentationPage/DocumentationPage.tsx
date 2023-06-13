@@ -1,22 +1,29 @@
 import { useState, useEffect } from 'react';
-import { Button } from '@cognite/cogs.js';
-import { FileInfo, DataSet, Documentation } from 'utils/types';
-import Drawer from 'components/Drawer';
+
+import { useTranslation } from '@data-catalog-app/common/i18n';
+import documentationIcon from '@data-catalog-app/assets/documentationIcon.svg';
+import Drawer from '@data-catalog-app/components/Drawer';
+import { Col } from '@data-catalog-app/utils';
+import { isNotNilOrWhitespace } from '@data-catalog-app/utils/shared';
 import {
   IconWrapper,
   InputField,
   UnApprovedDot,
   ApprovedDot,
   FieldLabel,
-} from 'utils/styledComponents';
+} from '@data-catalog-app/utils/styledComponents';
+import {
+  FileInfo,
+  DataSet,
+  Documentation,
+} from '@data-catalog-app/utils/types';
+
 import { trackEvent } from '@cognite/cdf-route-tracker';
-import documentationIcon from 'assets/documentationIcon.svg';
-import { isNotNilOrWhitespace } from 'utils/shared';
-import UploadFiles from '../UploadFiles';
-import LinksList from '../LinksList';
+import { Button } from '@cognite/cogs.js';
+
 import InfoTooltip from '../InfoTooltip';
-import { useTranslation } from 'common/i18n';
-import { Col } from 'utils';
+import LinksList from '../LinksList';
+import UploadFiles from '../UploadFiles';
 
 interface DocumentationProps {
   dataSet?: DataSet;

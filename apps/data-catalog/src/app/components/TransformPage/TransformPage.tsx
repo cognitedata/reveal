@@ -1,23 +1,24 @@
-import { Button, Input, Table, toast } from '@cognite/cogs.js';
-
-import sdk from '@cognite/cdf-sdk-singleton';
-import moment from 'moment';
 import { useEffect, useState } from 'react';
-import { JetfireApi } from 'jetfire/JetfireApi';
-import { CogsTableCellRenderer, DataSet } from 'utils/types';
-import { getJetfireUrl, getStringCdfEnv } from 'utils/shared';
-import { useTranslation } from 'common/i18n';
-import Drawer from 'components/Drawer';
+
+import jetfireIcon from '@data-catalog-app/assets/jetfireIcon.svg';
+import { useTranslation } from '@data-catalog-app/common/i18n';
+import Drawer from '@data-catalog-app/components/Drawer';
+import useInterval from '@data-catalog-app/hooks/useInterval';
+import { JetfireApi } from '@data-catalog-app/jetfire/JetfireApi';
+import { Col } from '@data-catalog-app/utils';
+import { getJetfireUrl, getStringCdfEnv } from '@data-catalog-app/utils/shared';
 import {
   InfoSubtitle,
   IconWrapper,
   MiniInfoTitle,
   BlockedInformationWrapper,
-} from 'utils/styledComponents';
+} from '@data-catalog-app/utils/styledComponents';
+import { CogsTableCellRenderer, DataSet } from '@data-catalog-app/utils/types';
+import moment from 'moment';
+
 import { trackEvent } from '@cognite/cdf-route-tracker';
-import jetfireIcon from 'assets/jetfireIcon.svg';
-import useInterval from 'hooks/useInterval';
-import { Col } from 'utils';
+import sdk from '@cognite/cdf-sdk-singleton';
+import { Button, Input, Table, toast } from '@cognite/cogs.js';
 
 const jetfire = new JetfireApi(sdk, sdk.project, getJetfireUrl());
 
@@ -120,7 +121,7 @@ const TransformPage = (props: TransformPageProps): JSX.Element => {
       <div className="resource-table transformations-table">
         <Table
           rowKey={(d) => String(d.id)}
-          columns={transformColumns}
+          columns={transformColumns as any}
           dataSource={transformationsList}
           locale={{
             emptyText: t('transform-no-transformations'),

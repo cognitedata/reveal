@@ -1,21 +1,25 @@
-import GlobalStyles from 'styles/GlobalStyles';
+/* eslint-disable @cognite/no-number-z-index */
 import { lazy, Suspense, useEffect } from 'react';
-import { I18nWrapper } from '@cognite/cdf-i18n-utils';
-import { createLink, getProject } from '@cognite/cdf-utilities';
+import { BrowserRouter, Route, Navigate, Routes } from 'react-router-dom';
+
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { BrowserRouter, Route, Navigate, Routes } from 'react-router-dom';
-import { Loader, ToastContainer } from '@cognite/cogs.js';
-import { DataSetsContextProvider } from 'context';
-import AccessCheck from 'AccessCheck';
-import { translations } from 'common/i18n';
-import { FlagProvider } from '@cognite/react-feature-flags';
-import { trackUsage } from 'utils';
-import { AuthContainer } from './AuthContainer';
 
-const DataSetsList = lazy(() => import('pages/DataSetsList/DataSetsList'));
+import { I18nWrapper } from '@cognite/cdf-i18n-utils';
+import { createLink, getProject } from '@cognite/cdf-utilities';
+import { Loader, ToastContainer } from '@cognite/cogs.js';
+import { FlagProvider } from '@cognite/react-feature-flags';
+
+import AccessCheck from './AccessCheck';
+import { AuthContainer } from './AuthContainer';
+import { translations } from './common/i18n';
+import { DataSetsContextProvider } from './context';
+import GlobalStyles from './styles/GlobalStyles';
+import { trackUsage } from './utils';
+
+const DataSetsList = lazy(() => import('./pages/DataSetsList/DataSetsList'));
 const DataSetDetails = lazy(
-  () => import('pages/DataSetDetails/DataSetDetails')
+  () => import('./pages/DataSetDetails/DataSetDetails')
 );
 
 const queryClient = new QueryClient({

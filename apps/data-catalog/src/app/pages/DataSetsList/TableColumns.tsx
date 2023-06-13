@@ -1,19 +1,26 @@
+/* eslint-disable import/order */
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import styled from 'styled-components';
+
+import isArray from 'lodash/isArray';
+
 import { Body, Flex, Icon, Chip, Tooltip, Colors } from '@cognite/cogs.js';
-import { stringCompare } from 'utils/shared';
-import { getItemFromStorage } from 'utils/localStorage';
+
+import { useTranslation } from '../../common/i18n';
+import DataSetName from '../../components/data-sets-list/data-set-name';
+import ExtractionPipelineName from '../../components/data-sets-list/extraction-pipeline-name';
+import GovernanceStatus from '../../components/data-sets-list/governance-status';
+import { useResourceAggregates } from '../../hooks/useResourceAggregates';
+
+// @ts-ignore
+import { getItemFromStorage } from '../../utils/localStorage';
+import { stringCompare } from '../../utils/shared';
 import {
   CogsTableCellRenderer,
   DataSet,
   DataSetV3,
   Extpipe,
-} from 'utils/types';
-import isArray from 'lodash/isArray';
-import { useTranslation } from 'common/i18n';
-import DataSetName from 'components/data-sets-list/data-set-name';
-import ExtractionPipelineName from 'components/data-sets-list/extraction-pipeline-name';
-import GovernanceStatus from 'components/data-sets-list/governance-status';
-import { useResourceAggregates } from 'hooks/useResourceAggregates';
+} from '../../utils/types';
 
 export type DataSetRow = {
   key: number;
@@ -155,7 +162,7 @@ export const getLabelsList = (dataSets: DataSet[], showArchived: boolean) => {
   }
   dataSetsList.forEach((dataSet) => {
     if (isArray(dataSet.metadata.consoleLabels))
-      dataSet.metadata.consoleLabels.forEach((label) => {
+      dataSet.metadata.consoleLabels.forEach((label: string) => {
         if (!labels.includes(label)) {
           labels.push(label);
         }
@@ -268,7 +275,7 @@ export const useTableColumns = () => {
         return (
           <Flex direction="column">
             {Array.isArray(record.extpipes) &&
-              extpipesToDisplay.map((extpipe) => {
+              extpipesToDisplay.map((extpipe: any) => {
                 return (
                   <>
                     <ExtractionPipelineName
@@ -287,5 +294,6 @@ export const useTableColumns = () => {
       },
     };
   };
+
   return { getTableColumns };
 };

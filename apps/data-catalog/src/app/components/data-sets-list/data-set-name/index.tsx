@@ -1,7 +1,8 @@
+import Link from '@data-catalog-app/components/Link';
+import { createInternalLink } from '@data-catalog-app/utils/shared';
+import { DataSetV3 } from '@data-catalog-app/utils/types';
+
 import { Body, Flex, Icon } from '@cognite/cogs.js';
-import Link from 'components/Link';
-import { createInternalLink } from 'utils/shared';
-import { DataSetV3 } from 'utils/types';
 
 type DataSetNameProps = Pick<
   DataSetV3,

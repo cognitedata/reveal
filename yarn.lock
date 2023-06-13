@@ -2099,7 +2099,7 @@
     query-string "^5.1.1"
     url "^0.11.0"
 
-"@cognite/sdk-core@^4.6.0", "@cognite/sdk-core@^4.8.2":
+"@cognite/sdk-core@^4.6.0", "@cognite/sdk-core@^4.8.2", "@cognite/sdk-core@^4.9.0":
   version "4.9.0"
   resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-4.9.0.tgz#a7ad2c1eaf527ef011526724518331bbe6b0eed2"
   integrity sha512-pBqbT2SbEev87PSaTrVw0rwBGjofVoLMb4Y2B7ufq43p5s2+5OycRJKTK+2kEwL9g5lsArTkoX4M5KZ98x5B3g==
@@ -2116,6 +2116,7 @@
   integrity sha512-virwJdy9NuthuS6UQ75hzIbeAtTp8mbxPFJsVehIm6DBXd0AwTggbG0TQVkPqO9OayImjEVk5HCv+9fXrjXM2Q==
 
 "@cognite/sdk-v5@npm:@cognite/sdk@5.6.2", "@cognite/sdk@5.6.2":
+  name "@cognite/sdk-v5"
   version "5.6.2"
   resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-5.6.2.tgz#122c0d306c02aa39793b80584c17707b775f32f1"
   integrity sha512-AOi+sFiQoCcRFrb3v4s/GuLGyAlVTxFtug3743g8IJwBUyxUoka3D72pkI6wlBp8JFrijwfJ2gfsk6FfmvDr9Q==
@@ -2138,6 +2139,16 @@
   integrity sha512-XlJbaLi/GTwuk9S4AkTdPhkUw+w8j3flcnqrEhtTS1eqI5AGdlKoyJ4TbZtedjeFxtfbPSC5O8uOzxEZQVpvgg==
   dependencies:
     "@cognite/sdk-core" "^4.8.2"
+    "@types/geojson" "^7946.0.8"
+    geojson "^0.5.0"
+    lodash "^4.17.11"
+
+"@cognite/sdk@^8.1.1":
+  version "8.1.1"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-8.1.1.tgz#f371dfe8bac95bdf387428ffa68057333591e5ba"
+  integrity sha512-T0sO0+/rCO0XsSobLcfal/UP32f5wTPsCJk726KpvTJlwLmYgqbOEg4KpeCJ8Tu3gk/lkoL02nKB/IO8rfJMNg==
+  dependencies:
+    "@cognite/sdk-core" "^4.9.0"
     "@types/geojson" "^7946.0.8"
     geojson "^0.5.0"
     lodash "^4.17.11"

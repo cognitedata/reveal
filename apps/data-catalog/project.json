@@ -17,7 +17,8 @@
         "tsConfig": "apps/data-catalog/tsconfig.app.json",
         "assets": [
           "apps/data-catalog/src/favicon.ico",
-          "apps/data-catalog/src/assets"
+          "apps/data-catalog/src/assets",
+          "apps/data-catalog/src/app/assets"
         ],
         "styles": [],
         "scripts": [],
@@ -79,7 +80,8 @@
       },
       "configurations": {
         "development": {
-          "buildTarget": "data-catalog:build:development"
+          "buildTarget": "data-catalog:build:development",
+          "allowedHosts": ".dev.fusion.cogniteapp.com"
         },
         "production": {
           "buildTarget": "data-catalog:build:production",

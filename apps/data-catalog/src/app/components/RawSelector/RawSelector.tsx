@@ -1,17 +1,18 @@
 import { useState } from 'react';
 
-import { Icon, Checkbox, Table, Tooltip, Menu } from '@cognite/cogs.js';
-import { RawDB, RawDBTable } from '@cognite/sdk';
-import { getStringCdfEnv, getContainer } from 'utils/shared';
+import { useTranslation } from '@data-catalog-app/common/i18n';
+import { Col, Row } from '@data-catalog-app/utils';
+import { getStringCdfEnv, getContainer } from '@data-catalog-app/utils/shared';
 import {
   RawCreateButton,
   ListBox,
   SearchField,
   SearchWrapper,
-} from 'utils/styledComponents';
-import { CogsTableCellRenderer, RawTable } from 'utils/types';
-import { useTranslation } from 'common/i18n';
-import { Col, Row } from 'utils';
+} from '@data-catalog-app/utils/styledComponents';
+import { CogsTableCellRenderer, RawTable } from '@data-catalog-app/utils/types';
+
+import { Icon, Checkbox, Table, Tooltip, Menu } from '@cognite/cogs.js';
+import { RawDB, RawDBTable } from '@cognite/sdk';
 
 type DatabaseWithTablesItem = {
   database: RawDB;
@@ -379,7 +380,7 @@ const RawSelector = (props: RawSelectorProps): JSX.Element => {
               <Table
                 css={{ marginBottom: '20px' }}
                 pageSize={4}
-                columns={selectionColumns}
+                columns={selectionColumns as any}
                 dataSource={props.selectedTables}
                 rowKey={(record: RawTable) =>
                   `${record.databaseName}/${record.tableName}`

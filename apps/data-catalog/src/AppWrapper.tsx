@@ -13,7 +13,7 @@ import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 import App from './app/App';
 import { translations } from './app/common/i18n';
 import './set-public-path';
-import GlobalStyles from './styles/GlobalStyles';
+import GlobalStyles from './app/styles/GlobalStyles';
 
 export const AppWrapper = () => {
   const projectName = 'data-catalog';

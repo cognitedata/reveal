@@ -1,11 +1,17 @@
 import { FunctionComponent, PropsWithChildren } from 'react';
+
 import styled from 'styled-components';
-import { Button, Colors, Icon, Link, Table } from '@cognite/cogs.js';
-import { createLink } from '@cognite/cdf-utilities';
-import { usePermissions } from '@cognite/sdk-react-query-hooks';
+
+import { DataSetWithExtpipes } from '@data-catalog-app/actions';
+import { useTranslation } from '@data-catalog-app/common/i18n';
+import InfoTooltip from '@data-catalog-app/components/InfoTooltip';
+
 import { getFlow } from '@cognite/cdf-sdk-singleton';
-import InfoTooltip from 'components/InfoTooltip';
-import { DataSetWithExtpipes } from 'actions';
+import { createLink } from '@cognite/cdf-utilities';
+import { Button, Colors, Icon, Link, Table } from '@cognite/cogs.js';
+import { usePermissions } from '@cognite/sdk-react-query-hooks';
+
+import { getExtractionPipelineUIUrl } from '../../../utils/extpipeUtils';
 import {
   LineageSection,
   LineageSubTitle,
@@ -13,10 +19,9 @@ import {
   NoDataText,
 } from '../../../utils/styledComponents';
 import { Extpipe } from '../../../utils/types';
-import { useExtpipeTableColumns } from './ExtpipeTableColumns';
+
 import { ExtpipeSourceExtractorProps } from './ExtpipeSourceExtractor';
-import { getExtractionPipelineUIUrl } from '../../../utils/extpipeUtils';
-import { useTranslation } from 'common/i18n';
+import { useExtpipeTableColumns } from './ExtpipeTableColumns';
 
 interface ExtpipeTableProps extends ExtpipeSourceExtractorProps {
   dataSetWithExtpipes: DataSetWithExtpipes;
@@ -81,7 +86,7 @@ const ExtpipeTable: FunctionComponent<ExtpipeTableProps> = ({
         <>
           {isExtpipesFetched ? (
             <Table
-              columns={extpipeTableColumns}
+              columns={extpipeTableColumns as any}
               dataSource={extpipes}
               pageSize={5}
               rowKey={(record: Extpipe) => `${record?.id}`}

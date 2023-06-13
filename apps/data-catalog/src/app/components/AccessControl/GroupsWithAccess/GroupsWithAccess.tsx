@@ -1,8 +1,12 @@
-import { Group, SingleCogniteCapability } from '@cognite/sdk';
-import { isCapScopedOnDataSets, isGroupScopedOnDataSets } from 'utils/shared';
-import { useTranslation } from 'common/i18n';
+import { useTranslation } from '@data-catalog-app/common/i18n';
+import { CogsTableCellRenderer } from '@data-catalog-app/utils';
+import {
+  isCapScopedOnDataSets,
+  isGroupScopedOnDataSets,
+} from '@data-catalog-app/utils/shared';
+
 import { Chip, Table } from '@cognite/cogs.js';
-import { CogsTableCellRenderer } from 'utils';
+import { Group, SingleCogniteCapability } from '@cognite/sdk';
 
 interface GroupsWithAccessProps {
   dataSetId: number;
@@ -122,7 +126,7 @@ const GroupsWithAccess = (props: GroupsWithAccessProps) => {
     <div className="resource-table">
       <Table
         css={{ marginTop: '20px' }}
-        columns={resourceColumns}
+        columns={resourceColumns as any}
         dataSource={dataSource}
         rowKey={(d) => `${d['groupId']}`}
       />

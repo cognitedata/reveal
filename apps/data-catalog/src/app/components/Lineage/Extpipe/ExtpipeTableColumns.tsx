@@ -1,9 +1,14 @@
-import moment from 'moment';
-import { Tooltip } from '@cognite/cogs.js';
+import { useTranslation } from '@data-catalog-app/common/i18n';
+import { ExtpipeLink } from '@data-catalog-app/components/Lineage/Extpipe/ExtpipeLink';
+import {
+  CogsTableCellRenderer,
+  Extpipe,
+  SupportedSchedule,
+} from '@data-catalog-app/utils/types';
 import { toString as cronstureToString } from 'cronstrue';
-import { CogsTableCellRenderer, Extpipe, SupportedSchedule } from 'utils/types';
-import { ExtpipeLink } from 'components/Lineage/Extpipe/ExtpipeLink';
-import { useTranslation } from 'common/i18n';
+import moment from 'moment';
+
+import { Tooltip } from '@cognite/cogs.js';
 
 type LastStatuses = Pick<Extpipe, 'lastSuccess' | 'lastFailure'>;
 

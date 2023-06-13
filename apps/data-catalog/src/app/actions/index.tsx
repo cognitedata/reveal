@@ -1,15 +1,26 @@
 import { useEffect, useMemo, useState } from 'react';
-import handleError from 'utils/handleError';
-import omit from 'lodash/omit';
-import { CreationDataSet, DataSet, DataSetV3, Extpipe } from 'utils/types';
-import { DataSetPatch, Group } from '@cognite/sdk';
-import sdk from '@cognite/cdf-sdk-singleton';
+import { useParams } from 'react-router-dom';
+
 import {
   QueryClient,
   useMutation,
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
+import omit from 'lodash/omit';
+
+import sdk from '@cognite/cdf-sdk-singleton';
+// import { createLink } from '@cognite/cdf-utilities';
+import { toast } from '@cognite/cogs.js';
+import { DataSetPatch, Group } from '@cognite/sdk';
+
+import { useTranslation } from '../common/i18n';
+import { StyledPre } from '../utils';
+import {
+  getExtractionPipelineApiUrl,
+  mapDataSetExtpipe,
+} from '../utils/extpipeUtils';
+import handleError from '../utils/handleError';
 import {
   getAllSetOwners,
   parseDataSet,
@@ -17,11 +28,9 @@ import {
   stringifyMetaData,
   updateDataSetOwners,
   wait,
-} from 'utils/shared';
-import {
-  getExtractionPipelineApiUrl,
-  mapDataSetExtpipe,
-} from 'utils/extpipeUtils';
+} from '../utils/shared';
+import { CreationDataSet, DataSet, DataSetV3, Extpipe } from '../utils/types';
+
 import {
   getDataSetOwnersByIdKey,
   getRetrieveByDataSetIdKey,
@@ -31,11 +40,6 @@ import {
   listRawTablesKey,
   getListExtpipesKey,
 } from './keys';
-import { useTranslation } from 'common/i18n';
-import { toast } from '@cognite/cogs.js';
-import { StyledPre } from 'utils';
-import { createLink, useCdfUserHistoryService } from '@cognite/cdf-utilities';
-import { useParams } from 'react-router-dom';
 
 export const invalidateDataSetQueries = (
   client: QueryClient,
@@ -65,8 +69,8 @@ export const onError = (error: any) => {
 /* MUTATIONS */
 export const useCreateDataSetMutation = () => {
   const client = useQueryClient();
-  const { appPath } = useParams<{ appPath?: string }>();
-  const userHistoryService = useCdfUserHistoryService();
+  // const { appPath } = useParams<{ appPath?: string }>();
+  // const userHistoryService = useCdfUserHistoryService();
 
   const {
     mutate: createDataSet,
@@ -79,12 +83,12 @@ export const useCreateDataSetMutation = () => {
       return res[0];
     },
     {
-      onSuccess: (dataset) => {
-        userHistoryService.logNewResourceEdit({
-          application: appPath!,
-          name: dataset.name!,
-          path: createLink(`/${appPath}/data-set/${dataset.id}`),
-        });
+      onSuccess: () => {
+        // userHistoryService.logNewResourceEdit({
+        //   application: appPath!,
+        //   name: dataset.name!,
+        //   path: createLink(`/${appPath}/data-set/${dataset.id}`),
+        // });
         invalidateDataSetQueries(client);
       },
       onError,
@@ -112,8 +116,8 @@ export const useUpdateDataSetOwners = () => {
 export const useUpdateDataSetMutation = () => {
   const { t } = useTranslation();
   const client = useQueryClient();
-  const { appPath } = useParams<{ appPath?: string }>();
-  const userHistoryService = useCdfUserHistoryService();
+  // const { appPath } = useParams<{ appPath?: string }>();
+  // const userHistoryService = useCdfUserHistoryService();
   const { mutate: updateDataSet, ...rest } = useMutation(
     ['update-dataset'],
     async (dataset: DataSet) => {
@@ -125,6 +129,7 @@ export const useUpdateDataSetMutation = () => {
       const updateObj: DataSetPatch['update'] = {};
 
       Object.keys(updatedDataSet).forEach((key) => {
+        // eslint-disable-next-line
         // @ts-ignore
         updateObj[key] = { set: stringifyMetaData(dataset)[key] };
       });
@@ -137,11 +142,11 @@ export const useUpdateDataSetMutation = () => {
     },
     {
       onSuccess: (_, dataset: DataSet) => {
-        userHistoryService.logNewResourceEdit({
-          application: appPath!,
-          name: dataset.name,
-          path: createLink(`/${appPath}/data-set/${dataset.id}`),
-        });
+        // userHistoryService.logNewResourceEdit({
+        //   application: appPath!,
+        //   name: dataset.name,
+        //   path: createLink(`/${appPath}/data-set/${dataset.id}`),
+        // });
         toast.success(
           <span>
             {t('data-set-is-updated', { datasetName: dataset?.name })}
@@ -178,10 +183,12 @@ export const useUpdateDataSetTransformations = () => {
     const newDataSet = { ...dataset };
     if (Array.isArray(newDataSet.metadata.transformations)) {
       newDataSet.metadata.transformations =
-        newDataSet.metadata.transformations.filter((currentTransformation) => {
-          const transformationId = transformation.id ?? transformation.name;
-          return currentTransformation.name !== transformationId;
-        });
+        newDataSet.metadata.transformations.filter(
+          (currentTransformation: any) => {
+            const transformationId = transformation.id ?? transformation.name;
+            return currentTransformation.name !== transformationId;
+          }
+        );
     }
     updateDataSet(newDataSet);
   };
@@ -229,7 +236,7 @@ export const useDataSetExtpipes = (dataSetId?: number) => {
   const { data, ...extpipesQuery } = useExtpipes();
 
   const extpipes = useMemo(() => {
-    if (dataSetId && data) {
+    if (dataSetId && data?.length) {
       return data.filter(({ dataSetId: testId }) => testId === dataSetId);
     }
     return [];

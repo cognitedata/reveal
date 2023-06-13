@@ -1,5 +1,21 @@
 import { useState, useEffect } from 'react';
 
+import styled from 'styled-components';
+
+import { useTranslation } from '@data-catalog-app/common/i18n';
+import AppliedFilters from '@data-catalog-app/components/applied-filters';
+import AssetsTable from '@data-catalog-app/components/AssetsTable';
+import EventsProfile from '@data-catalog-app/components/EventsProfile';
+import EventsTable from '@data-catalog-app/components/EventsTable';
+import FilesTable from '@data-catalog-app/components/FilesTable';
+import SequencesTable from '@data-catalog-app/components/SequencesTable';
+import { StyledItemCount } from '@data-catalog-app/components/table-filters';
+import TimeseriesTable from '@data-catalog-app/components/TimeseriesTable';
+import useDebounce from '@data-catalog-app/hooks/useDebounce';
+import {
+  ResourcesFilters,
+  useResourcesSearch,
+} from '@data-catalog-app/hooks/useResourcesSearch';
 import {
   filesCounter,
   timeSeriesCounter,
@@ -11,23 +27,13 @@ import {
   trackUsage,
   ContentWrapper,
   isEmptyDataset,
-} from 'utils';
-import { useTranslation } from 'common/i18n';
-import EmptyDataState from './EmptyDataState';
-import AssetsTable from 'components/AssetsTable';
-import EventsTable from 'components/EventsTable';
-import FilesTable from 'components/FilesTable';
-import SequencesTable from 'components/SequencesTable';
-import TimeseriesTable from 'components/TimeseriesTable';
-import EventsProfile from 'components/EventsProfile';
-import { Flex, Tabs, Input } from '@cognite/cogs.js';
-import useDebounce from 'hooks/useDebounce';
-import { TableFilter } from '@cognite/cdf-utilities';
-import styled from 'styled-components';
+} from '@data-catalog-app/utils';
 import { useFormik } from 'formik';
-import AppliedFilters from 'components/applied-filters';
-import { StyledItemCount } from 'components/table-filters';
-import { ResourcesFilters, useResourcesSearch } from 'hooks/useResourcesSearch';
+
+import { TableFilter } from '@cognite/cdf-utilities';
+import { Flex, Tabs, Input } from '@cognite/cogs.js';
+
+import EmptyDataState from './EmptyDataState';
 
 interface ExploreDataProps {
   dataSetId: number;
@@ -126,6 +132,7 @@ const ExploreData = ({ dataSetId }: ExploreDataProps) => {
   });
 
   const activeResourceTabChangeHandler = (tabKey: string) => {
+    // eslint-disable-next-line
     //@ts-ignore
     trackUsage({ e: `data.sets.detail.resources.${tabKey}` });
     setActiveResourceTabKey(tabKey as ExploreDataResourceTypes);
@@ -154,7 +161,7 @@ const ExploreData = ({ dataSetId }: ExploreDataProps) => {
     initialValues: {
       externalIdPrefix: '',
     },
-    onSubmit: (values) => setAppliedFilters(values),
+    onSubmit: (values: any) => setAppliedFilters(values),
   });
 
   const onClearFilters = () => {

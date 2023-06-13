@@ -1,10 +1,19 @@
 import { useCallback, useEffect, useState } from 'react';
-import { RawTable } from 'utils/types';
 
-import sdk from '@cognite/cdf-sdk-singleton';
-import { Flex, Icon, Table } from '@cognite/cogs.js';
-import { getJetfireUrl } from 'utils/shared';
-import { JetfireApi } from 'jetfire/JetfireApi';
+import {
+  DataSetWithExtpipes,
+  useUpdateDataSetTransformations,
+} from '@data-catalog-app/actions';
+import { useTranslation } from '@data-catalog-app/common/i18n';
+import ConsumerTable from '@data-catalog-app/components/Lineage/ConsumerTable';
+import { ExtpipeRawTables } from '@data-catalog-app/components/Lineage/Extpipe/ExtpipeRawTables';
+import ExtpipeTable from '@data-catalog-app/components/Lineage/Extpipe/ExtpipeTable';
+import { Extractor } from '@data-catalog-app/components/Lineage/Extractor/Extractor';
+import { Source } from '@data-catalog-app/components/Lineage/Source/Source';
+import { useTransformationsColumns } from '@data-catalog-app/components/Lineage/transformationColumns';
+import { JetfireApi } from '@data-catalog-app/jetfire/JetfireApi';
+import handleError from '@data-catalog-app/utils/handleError';
+import { getJetfireUrl } from '@data-catalog-app/utils/shared';
 import {
   LineageSubTitle,
   LineageTitle,
@@ -13,19 +22,13 @@ import {
   LineageSection,
   ContentWrapper,
   ExpandableParagraph,
-} from 'utils/styledComponents';
-import { trackEvent } from '@cognite/cdf-route-tracker';
-import { useFlag } from '@cognite/react-feature-flags';
-import { ExtpipeRawTables } from 'components/Lineage/Extpipe/ExtpipeRawTables';
+} from '@data-catalog-app/utils/styledComponents';
+import { RawTable } from '@data-catalog-app/utils/types';
 
-import handleError from 'utils/handleError';
-import { useTransformationsColumns } from 'components/Lineage/transformationColumns';
-import ConsumerTable from 'components/Lineage/ConsumerTable';
-import ExtpipeTable from 'components/Lineage/Extpipe/ExtpipeTable';
-import { Source } from 'components/Lineage/Source/Source';
-import { Extractor } from 'components/Lineage/Extractor/Extractor';
-import { DataSetWithExtpipes, useUpdateDataSetTransformations } from 'actions';
-import { useTranslation } from 'common/i18n';
+import { trackEvent } from '@cognite/cdf-route-tracker';
+import sdk from '@cognite/cdf-sdk-singleton';
+import { Flex, Icon, Table } from '@cognite/cogs.js';
+import { useFlag } from '@cognite/react-feature-flags';
 
 const jetfire = new JetfireApi(sdk, sdk.project, getJetfireUrl());
 
@@ -102,12 +105,12 @@ const Lineage = ({ dataSetWithExtpipes, isExtpipesFetched }: LineageProps) => {
       });
       const jetfiretransformations =
         dataSetWithExtpipes?.dataSet?.metadata?.transformations?.filter(
-          (tr) => tr.type === 'jetfire'
+          (tr: any) => tr.type === 'jetfire'
         ) || [];
       const mappedTransformations = jetfiretransformations.map(
-        (transformationItem) => {
+        (transformationItem: any) => {
           const currentTransformation = transformationList.find(
-            (item) => String(item.id) === String(transformationItem.name)
+            (item: any) => String(item.id) === String(transformationItem.name)
           );
           if (currentTransformation) return currentTransformation;
           return {
@@ -216,9 +219,9 @@ const Lineage = ({ dataSetWithExtpipes, isExtpipesFetched }: LineageProps) => {
                   </NoDataText>
                 ) : (
                   <Table
-                    columns={transformationsColumns(
-                      onDeleteTransformationClick
-                    )}
+                    columns={
+                      transformationsColumns(onDeleteTransformationClick) as any
+                    }
                     dataSource={transformationsData}
                     pageSize={5}
                     rowKey={(d: any) => `${d.id}`}

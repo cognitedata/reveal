@@ -1,8 +1,14 @@
 /* eslint-disable no-nested-ternary */
 import { useState } from 'react';
+
 import styled from 'styled-components';
-import BasicInfoCard from 'components/BasicInfoCard';
-import { Title, Flex, Body, Button, Icon, Textarea } from '@cognite/cogs.js';
+
+import { useUpdateDataSetMutation } from '@data-catalog-app/actions';
+import EmptyDatasetIcon from '@data-catalog-app/assets/EmptyDataset.svg';
+import UsersIcon from '@data-catalog-app/assets/Users.svg';
+import { useTranslation } from '@data-catalog-app/common/i18n';
+import BasicInfoCard from '@data-catalog-app/components/BasicInfoCard';
+import { useResourceAggregates } from '@data-catalog-app/hooks/useResourceAggregates';
 import {
   ContentView,
   Divider,
@@ -14,17 +20,14 @@ import {
   Col,
   Row,
   Card,
-} from 'utils';
-import { useTranslation } from 'common/i18n';
-import UsersIcon from 'assets/Users.svg';
-import { useResourceAggregates } from 'hooks/useResourceAggregates';
+} from '@data-catalog-app/utils';
+
 import { createLink } from '@cognite/cdf-utilities';
-import EmptyDatasetIcon from 'assets/EmptyDataset.svg';
-import { useUpdateDataSetMutation } from 'actions';
+import { Title, Flex, Body, Button, Icon, Textarea } from '@cognite/cogs.js';
 
 type DatasetOverviewProps = {
   dataSet: DataSet;
-  loading?: Boolean | undefined;
+  loading?: boolean | undefined;
   onActiveTabChange: (tabKey: string) => void;
 };
 const DatasetOverview = ({

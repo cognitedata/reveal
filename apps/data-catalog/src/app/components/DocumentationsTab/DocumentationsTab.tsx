@@ -1,7 +1,17 @@
 import styled from 'styled-components';
+
+import { useTranslation } from '@data-catalog-app/common/i18n';
+import {
+  Documentation,
+  DataSet,
+  NoDataText,
+  isNotNilOrWhitespace,
+  ContentWrapper,
+  Card,
+} from '@data-catalog-app/utils';
+
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import sdk from '@cognite/cdf-sdk-singleton';
-
 import {
   Body,
   Colors,
@@ -11,16 +21,6 @@ import {
   Icon,
   Title,
 } from '@cognite/cogs.js';
-
-import {
-  Documentation,
-  DataSet,
-  NoDataText,
-  isNotNilOrWhitespace,
-  ContentWrapper,
-  Card,
-} from 'utils';
-import { useTranslation } from 'common/i18n';
 
 interface DocumentationsTabProps {
   dataSet?: DataSet;

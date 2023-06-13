@@ -1,5 +1,16 @@
 import { PropsWithChildren, useEffect, useState } from 'react';
+
 import styled from 'styled-components';
+
+import { useTranslation } from '@data-catalog-app/common/i18n';
+import AppliedFilters from '@data-catalog-app/components/applied-filters';
+import useDebounce from '@data-catalog-app/hooks/useDebounce';
+import {
+  useSearchParamState,
+  useUpdateSearchParamState,
+} from '@data-catalog-app/hooks/useSearchParamState';
+import { trackUsage } from '@data-catalog-app/utils';
+
 import {
   Body,
   Button,
@@ -13,17 +24,9 @@ import {
   Select,
   OptionType,
 } from '@cognite/cogs.js';
-import { useTranslation } from 'common/i18n';
-import {
-  useSearchParamState,
-  useUpdateSearchParamState,
-} from 'hooks/useSearchParamState';
-import useDebounce from 'hooks/useDebounce';
-import AppliedFilters from 'components/applied-filters';
-import { trackUsage } from 'utils';
 
 const GOVERNANCE_STATUSES = ['governed', 'ungoverned', 'not-defined'] as const;
-export type GovernanceStatus = typeof GOVERNANCE_STATUSES[number];
+export type GovernanceStatus = (typeof GOVERNANCE_STATUSES)[number];
 
 type TableFilterProps = {
   filteredCount?: number;
@@ -129,8 +132,8 @@ const TableFilter = ({
       <Flex alignItems="center" gap={8}>
         <StyledInputContainer>
           <Input
-            icon={'Search'}
-            iconPlacement={'left'}
+            icon="Search"
+            iconPlacement="left"
             placeholder={t('search-by-name-description-or-label')}
             onChange={(e) => {
               const searchText = e.target.value;
@@ -247,7 +250,7 @@ const TableFilter = ({
       </Flex>
       <AppliedFilters
         items={[
-          ...(!!labelFilter?.length
+          ...(labelFilter?.length
             ? [
                 {
                   key: 'labels',
@@ -258,7 +261,7 @@ const TableFilter = ({
                 },
               ]
             : []),
-          ...(!!governanceFilter?.length
+          ...(governanceFilter?.length
             ? [
                 {
                   key: 'governance',

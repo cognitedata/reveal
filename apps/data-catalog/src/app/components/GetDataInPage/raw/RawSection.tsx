@@ -5,22 +5,24 @@ import {
   SetStateAction,
   useState,
 } from 'react';
-import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
+
+import { useRawList } from '@data-catalog-app/actions';
+import { useTranslation } from '@data-catalog-app/common/i18n';
+import RawSelector from '@data-catalog-app/components/RawSelector';
+import { Col, Row } from '@data-catalog-app/utils';
 import {
   FieldLabel,
   BlockedInformationWrapper,
   MiniInfoTitle,
-} from 'utils/styledComponents';
-import RawSelector from 'components/RawSelector';
-import { RawTable } from 'utils/types';
-
-import { useRawList } from 'actions';
+} from '@data-catalog-app/utils/styledComponents';
+import { RawTable } from '@data-catalog-app/utils/types';
 import { useQueryClient } from '@tanstack/react-query';
-import { usePermissions } from '@cognite/sdk-react-query-hooks';
-import { listRawDatabasesKey, listRawTablesKey } from '../../../actions/keys';
-import { useTranslation } from 'common/i18n';
+
+import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
 import { Modal, Input, Icon, Chip, Flex, toast } from '@cognite/cogs.js';
-import { Col, Row } from 'utils';
+import { usePermissions } from '@cognite/sdk-react-query-hooks';
+
+import { listRawDatabasesKey, listRawTablesKey } from '../../../actions/keys';
 
 interface RawSectionProps {
   selectedDb: string;

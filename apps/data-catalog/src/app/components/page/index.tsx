@@ -1,9 +1,12 @@
 import { ReactNode } from 'react';
+
 import styled from 'styled-components';
-import { Title, Flex, Link } from '@cognite/cogs.js';
-import { useTranslation } from 'common/i18n';
+
+import { useTranslation } from '@data-catalog-app/common/i18n';
+import { trackUsage } from '@data-catalog-app/utils';
+
 import { createLink } from '@cognite/cdf-utilities';
-import { trackUsage } from 'utils';
+import { Title, Flex, Link } from '@cognite/cogs.js';
 
 export type PageProps = {
   children: ReactNode;

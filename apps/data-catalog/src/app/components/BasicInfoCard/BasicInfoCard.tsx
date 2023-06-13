@@ -1,5 +1,7 @@
-import { Body, Flex, Icon, Chip } from '@cognite/cogs.js';
-import { CopyButton } from '@cognite/cdf-utilities';
+import styled from 'styled-components';
+
+import { useTranslation } from '@data-catalog-app/common/i18n';
+import InfoTooltip from '@data-catalog-app/components/InfoTooltip';
 import {
   BasicInfoPane,
   NoDataText,
@@ -8,13 +10,14 @@ import {
   EDIT_DATASET_DOC,
   EDIT_DATASET_HELP_DOC,
   getGovernedStatus,
-} from 'utils';
-
-import { useTranslation } from 'common/i18n';
+} from '@data-catalog-app/utils';
 import moment from 'moment';
+
+import { CopyButton } from '@cognite/cdf-utilities';
+import { Body, Flex, Icon, Chip } from '@cognite/cogs.js';
+
 import DatasetProperty from './DatasetProperty';
-import styled from 'styled-components';
-import InfoTooltip from 'components/InfoTooltip';
+
 interface BasicInfoCardProps {
   dataSet: DataSet;
 }

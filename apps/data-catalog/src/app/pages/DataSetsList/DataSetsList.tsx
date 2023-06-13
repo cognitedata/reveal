@@ -1,29 +1,33 @@
 import { useMemo, useState } from 'react';
 
-import { useWithExtpipes } from '../../hooks/useWithExtpipes';
-import { useDataSetMode, useSelectedDataSet } from '../../context/index';
-import { useTranslation } from 'common/i18n';
-import Page from 'components/page';
-import RowActions from 'components/data-sets-list/row-actions';
-import TableFilter, { GovernanceStatus } from 'components/table-filters';
-import { useSearchParamState } from 'hooks/useSearchParamState';
-import { CogsTableCellRenderer, trackUsage } from 'utils';
-import useDiscardChangesToast from 'hooks/useDiscardChangesToast';
-import useLocalStorage from 'hooks/useLocalStorage';
+import RowActions from '@data-catalog-app/components/data-sets-list/row-actions';
+import Page from '@data-catalog-app/components/page';
+import TableFilter, {
+  GovernanceStatus,
+} from '@data-catalog-app/components/table-filters';
+import { useHandleFilters } from '@data-catalog-app/utils/filterUtils';
 import isArray from 'lodash/isArray';
-import DataSetEditor from 'pages/DataSetEditor';
-import { useHandleFilters } from 'utils/filterUtils';
 
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { TableNoResults } from '@cognite/cdf-utilities';
 import { Button, Flex, Icon, Chip, Checkbox, Table } from '@cognite/cogs.js';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
+
 import {
   DataSetWithExtpipes,
   useDataSetsList,
   useUpdateDataSetVisibility,
 } from '../../actions/index';
+import { useTranslation } from '../../common/i18n';
+import { useDataSetMode, useSelectedDataSet } from '../../context/index';
+import useDiscardChangesToast from '../../hooks/useDiscardChangesToast';
+import useLocalStorage from '../../hooks/useLocalStorage';
+import { useSearchParamState } from '../../hooks/useSearchParamState';
+import { useWithExtpipes } from '../../hooks/useWithExtpipes';
+import { CogsTableCellRenderer, trackUsage } from '../../utils';
+import DataSetEditor from '../DataSetEditor';
+
 import { useTableColumns, DataSetRow, getLabelsList } from './TableColumns';
 
 const DataSetsList = (): JSX.Element => {
@@ -277,14 +281,16 @@ const DataSetsList = (): JSX.Element => {
 
   return (
     <Page title={t('landing-title')}>
-      <DataSetEditor
-        visible={creationDrawerVisible}
-        onClose={onClose}
-        changesSaved={changesSaved}
-        setChangesSaved={setChangesSaved}
-        sourceSuggestions={getSourcesList()}
-        handleCloseModal={() => handleModalClose()}
-      />
+      {creationDrawerVisible ? (
+        <DataSetEditor
+          visible={creationDrawerVisible}
+          onClose={onClose}
+          changesSaved={changesSaved}
+          setChangesSaved={setChangesSaved}
+          sourceSuggestions={getSourcesList()}
+          handleCloseModal={() => handleModalClose()}
+        />
+      ) : null}
       <Flex
         alignItems="center"
         justifyContent="space-between"
@@ -312,16 +318,18 @@ const DataSetsList = (): JSX.Element => {
       <div className="data-sets-list-table">
         <Table<DataSetRow>
           key="data-sets-table"
-          columns={[
-            ...getTableColumns(
-              dataSetsWithExtpipes.map((x) => x.dataSet),
-              showArchived,
-              withExtpipes,
-              isExtpipesFetched
-            ),
-            ...(showArchived ? [statusColumn] : []),
-            actionsColumn,
-          ]}
+          columns={
+            [
+              ...getTableColumns(
+                dataSetsWithExtpipes.map((x) => x.dataSet),
+                showArchived,
+                withExtpipes,
+                isExtpipesFetched
+              ),
+              ...(showArchived ? [statusColumn] : []),
+              actionsColumn,
+            ] as any
+          }
           dataSource={filteredTableData}
           locale={{
             emptyText: (

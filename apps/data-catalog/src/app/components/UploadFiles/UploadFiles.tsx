@@ -1,19 +1,20 @@
 import { Dispatch, SetStateAction, useState } from 'react';
-import { UploadChangeParam, UploadProps } from 'antd/lib/upload';
-import { Upload } from 'antd';
-import { Button, Icon, Popconfirm, toast } from '@cognite/cogs.js';
-import { trackEvent } from '@cognite/cdf-route-tracker';
-import isString from 'lodash/isString';
-import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
-import { usePermissions } from '@cognite/sdk-react-query-hooks';
 
-import { UploadFile } from 'antd/lib/upload/interface';
-import { ErrorMessageBox } from 'components/ErrorMessage/ErrorMessage';
-import { TranslationKeys } from 'common/i18n';
-import { FileInfo } from 'utils/types';
-import { nameToAclTypeMap } from 'utils/shared';
-import { useTranslation } from 'common/i18n';
 import styled from 'styled-components';
+
+import { TranslationKeys, useTranslation } from '@data-catalog-app/common/i18n';
+import { ErrorMessageBox } from '@data-catalog-app/components/ErrorMessage/ErrorMessage';
+import { nameToAclTypeMap } from '@data-catalog-app/utils/shared';
+import { FileInfo } from '@data-catalog-app/utils/types';
+import { Upload } from 'antd';
+import { UploadChangeParam, UploadProps } from 'antd/lib/upload';
+import { UploadFile } from 'antd/lib/upload/interface';
+import isString from 'lodash/isString';
+
+import { trackEvent } from '@cognite/cdf-route-tracker';
+import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
+import { Button, Icon, Popconfirm, toast } from '@cognite/cogs.js';
+import { usePermissions } from '@cognite/sdk-react-query-hooks';
 
 interface UploadFileProps {
   setFileList: Dispatch<SetStateAction<FileInfo[]>>;

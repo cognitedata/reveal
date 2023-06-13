@@ -1,8 +1,10 @@
 import isString from 'lodash/isString';
-import { DataSetWithExtpipes } from 'actions';
-import { useTranslation } from 'common/i18n';
-import { GovernanceStatus } from 'components/table-filters';
+
 import { toast } from '@cognite/cogs.js';
+
+import { DataSetWithExtpipes } from '../actions';
+import { useTranslation } from '../common/i18n';
+import { GovernanceStatus } from '../components/table-filters';
 
 export const useHandleFilters = () => {
   const { t } = useTranslation();
@@ -54,12 +56,12 @@ export const useHandleFilters = () => {
             (set.dataSet.metadata.consoleLabels &&
               Array.isArray(set.dataSet.metadata.consoleLabels) &&
               set.dataSet.metadata.consoleLabels.some(
-                (label) => isString(label) && label.match(searchRegex)
+                (label: string) => isString(label) && label.match(searchRegex)
               )) ||
             (set.extpipes &&
               Array.isArray(set.extpipes) &&
               set.extpipes.some(
-                (extpipe) =>
+                (extpipe: any) =>
                   extpipe.name?.match(searchRegex) ||
                   extpipe.externalId?.match(searchRegex)
               ))

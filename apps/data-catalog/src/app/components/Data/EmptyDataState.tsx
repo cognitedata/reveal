@@ -1,6 +1,6 @@
-import { useTranslation } from 'common/i18n';
-import EmptyState from 'components/EmptyState';
-import { EXPLORE_DATA_CATALOG } from 'utils';
+import { useTranslation } from '@data-catalog-app/common/i18n';
+import EmptyState from '@data-catalog-app/components/EmptyState';
+import { EXPLORE_DATA_CATALOG } from '@data-catalog-app/utils';
 
 const EmptyDataState = () => {
   const { t } = useTranslation();

@@ -1,5 +1,9 @@
-import { SectionTitle, TitleOrnament } from 'utils/styledComponents';
-import { useTranslation } from 'common/i18n';
+import { useTranslation } from '@data-catalog-app/common/i18n';
+import {
+  SectionTitle,
+  TitleOrnament,
+} from '@data-catalog-app/utils/styledComponents';
+
 import { CopyButton } from '@cognite/cdf-utilities';
 import { Chip, Flex } from '@cognite/cogs.js';
 

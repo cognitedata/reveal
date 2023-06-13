@@ -1,5 +1,7 @@
+import { useTranslation } from '@data-catalog-app/common/i18n';
+
 import { Flex, Icon, Tooltip } from '@cognite/cogs.js';
-import { useTranslation } from 'common/i18n';
+
 import { TransformationDetails } from '../../utils/types';
 
 interface HiddenTransformationProps {

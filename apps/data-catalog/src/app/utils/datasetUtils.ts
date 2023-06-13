@@ -1,5 +1,6 @@
 import { Colors, ChipType } from '@cognite/cogs.js';
-import { TranslationKeys } from 'common/i18n';
+
+import { TranslationKeys } from '../common/i18n';
 
 export const getGovernedStatus = (isGoverned: Boolean | undefined) => {
   let statusColor: string;

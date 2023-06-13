@@ -4,15 +4,19 @@ import {
   useEffect,
   useState,
 } from 'react';
+
+import { useTranslation } from '@data-catalog-app/common/i18n';
+
+import { Table } from '@cognite/cogs.js';
+
 import {
   LineageSubTitle,
   LineageTitle,
   LineageSection,
 } from '../../utils/styledComponents';
-import { useConsumerTableColumns } from './ConsumerTableColumns';
 import { Consumer, DataSet } from '../../utils/types';
-import { useTranslation } from 'common/i18n';
-import { Table } from '@cognite/cogs.js';
+
+import { useConsumerTableColumns } from './ConsumerTableColumns';
 
 interface ConsumerTableProps {
   dataSet?: DataSet;
@@ -40,7 +44,7 @@ const ConsumerTable: FunctionComponent<ConsumerTableProps> = ({
       </LineageTitle>
       <LineageSubTitle>{t('lineage-data-consumers-subtitle')}</LineageSubTitle>
       <Table
-        columns={ConsumerTableColumns}
+        columns={ConsumerTableColumns as any}
         dataSource={consumerList}
         pageSize={5}
         rowKey={(record: Consumer) =>
