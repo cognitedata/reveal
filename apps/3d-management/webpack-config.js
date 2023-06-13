@@ -9,6 +9,11 @@ module.exports = composePlugins(
   withReact(),
   withSingleSpa({ useMockEnv: false }),
   (config) => {
+    const nodeEnv = process.env.NODE_ENV || 'production';
+    console.log(
+      `Custom webpack config(${nodeEnv}) for 3d Management was loaded...`
+    );
+
     config.resolve.fallback = { path: require.resolve('path-browserify') };
 
     config.module.rules = [
@@ -33,6 +38,20 @@ module.exports = composePlugins(
         ],
       },
     ];
+
+    if (nodeEnv === 'development' && config.devServer) {
+      // Temp fix to devserver and hmr
+      config.devServer.allowedHosts = 'all';
+      config.devServer.headers['Access-Control-Allow-Origin'] = '*';
+      config.devServer.https = true;
+      config.devServer.port = 3033;
+
+      config.devServer.static = {
+        watch: {
+          followSymlinks: true,
+        },
+      };
+    }
 
     return config;
   }
