@@ -6,6 +6,7 @@ import { Collapse, Title } from '@cognite/cogs.js';
 
 import {
   EMPTY_OBJECT,
+  ResourceType,
   SelectableItemsProps,
   ViewType,
 } from '@data-exploration-lib/core';
@@ -37,6 +38,7 @@ import {
 } from '../constant';
 import { StyledCollapse } from '../elements';
 import { SelectionType } from '../types';
+import { getResourcesVisibility } from '../utils';
 
 interface Props {
   sequenceId: number;
@@ -44,6 +46,7 @@ interface Props {
   onClose?: () => void;
   selectedRows?: ResourceSelection;
   selectionMode?: SelectionType;
+  visibleResources?: ResourceType[];
 }
 export const SequenceDetails: FC<
   Props & Pick<SelectableItemsProps, 'onSelect'>
@@ -54,6 +57,7 @@ export const SequenceDetails: FC<
   onSelect,
   selectedRows,
   selectionMode,
+  visibleResources = [],
 }) => {
   const {
     isLoading: isParentSequenceLoading,
@@ -63,6 +67,14 @@ export const SequenceDetails: FC<
     filter: { internalId: sequenceId },
   });
   const enableDetailTableSelection = selectionMode === 'multiple';
+
+  const {
+    isAssetVisible,
+    isTimeseriesVisible,
+    isFileVisible,
+    isEventVisible,
+    isSequenceVisible,
+  } = getResourcesVisibility(visibleResources);
 
   const parentSequence = sequence?.[0];
 
@@ -88,7 +100,7 @@ export const SequenceDetails: FC<
     isLoading: isEventsLoading,
     data: events,
   } = useEventsSearchResultQuery({ eventsFilters: filter }, undefined, {
-    enabled: isQueryEnabled,
+    enabled: isQueryEnabled && isEventVisible,
   });
 
   const {
@@ -97,7 +109,7 @@ export const SequenceDetails: FC<
     isLoading: isTimeseriesLoading,
     data: timeseries,
   } = useTimeseriesSearchResultQuery({ filter }, undefined, {
-    enabled: isQueryEnabled,
+    enabled: isQueryEnabled && isTimeseriesVisible,
   });
 
   const {
@@ -109,7 +121,7 @@ export const SequenceDetails: FC<
     {
       filter,
     },
-    { enabled: isQueryEnabled }
+    { enabled: isQueryEnabled && isFileVisible }
   );
 
   const {
@@ -122,7 +134,7 @@ export const SequenceDetails: FC<
       filter,
     },
     undefined,
-    { enabled: isQueryEnabled }
+    { enabled: isQueryEnabled && isSequenceVisible }
   );
 
   return (
@@ -141,83 +153,101 @@ export const SequenceDetails: FC<
             <Title level={5}>{NO_DETAILS_AVAILABLE}</Title>
           )}
         </Collapse.Panel>
-        <Collapse.Panel key="sequence-asset-detail" header={<h4>{ASSETS}</h4>}>
-          <AssetDetailsTable
-            id="asset-resource-sequence-detail-table"
-            data={assets}
-            isDataLoading={isParentSequenceLoading || isAssetsLoading}
-            enableSelection={enableDetailTableSelection}
-            selectedRows={selectedRows?.asset || EMPTY_OBJECT}
-            onRowSelection={(updater, currentAssets) =>
-              onSelect?.(updater, currentAssets, ViewType.Asset)
-            }
-          />
-        </Collapse.Panel>
-        <Collapse.Panel
-          key="sequence-timeseries-detail"
-          header={<h4>{TIME_SERIES}</h4>}
-        >
-          <TimeseriesDetailsTable
-            id="timeseries-resource-sequence-detail-table"
-            data={timeseries}
-            hasNextPage={hasTimeseriesNextPage}
-            fetchMore={hasTimeseriesFetchNextPage}
-            isDataLoading={isParentSequenceLoading || isTimeseriesLoading}
-            enableSelection={enableDetailTableSelection}
-            selectedRows={selectedRows?.timeSeries || EMPTY_OBJECT}
-            onRowSelection={(updater, currentAssets) =>
-              onSelect?.(updater, currentAssets, ViewType.TimeSeries)
-            }
-          />
-        </Collapse.Panel>
-        <Collapse.Panel
-          key="sequence-documents-detail"
-          header={<h4>{FILES}</h4>}
-        >
-          <FileDetailsTable
-            id="documents-resource-sequence-detail-table"
-            data={relatedDocuments}
-            hasNextPage={hasDocumentsNextPage}
-            fetchMore={hasDocumentsFetchNextPage}
-            isDataLoading={isParentSequenceLoading || isDocumentsLoading}
-            enableSelection={enableDetailTableSelection}
-            selectedRows={selectedRows?.file || EMPTY_OBJECT}
-            onRowSelection={(updater, currentAssets) =>
-              onSelect?.(updater, currentAssets, ViewType.File)
-            }
-          />
-        </Collapse.Panel>
-        <Collapse.Panel key="sequence-events-detail" header={<h4>{EVENTS}</h4>}>
-          <EventDetailsTable
-            id="event-resource-sequence-detail-table"
-            data={events}
-            hasNextPage={hasEventNextPage}
-            fetchMore={hasEventFetchNextPage}
-            isDataLoading={isParentSequenceLoading || isEventsLoading}
-            enableSelection={enableDetailTableSelection}
-            selectedRows={selectedRows?.event || EMPTY_OBJECT}
-            onRowSelection={(updater, currentAssets) =>
-              onSelect?.(updater, currentAssets, ViewType.Event)
-            }
-          />
-        </Collapse.Panel>
-        <Collapse.Panel
-          key="sequence-sequence-detail"
-          header={<h4>{SEQUENCES}</h4>}
-        >
-          <SequenceDetailsTable
-            id="sequence-resource-sequence-detail-table"
-            data={sequences}
-            hasNextPage={hasSequencesNextPage}
-            fetchMore={hasSequencesFetchNextPage}
-            isDataLoading={isParentSequenceLoading || isSequencesLoading}
-            enableSelection={enableDetailTableSelection}
-            selectedRows={selectedRows?.sequence || EMPTY_OBJECT}
-            onRowSelection={(updater, currentAssets) =>
-              onSelect?.(updater, currentAssets, ViewType.Sequence)
-            }
-          />
-        </Collapse.Panel>
+
+        {isAssetVisible && (
+          <Collapse.Panel
+            key="sequence-asset-detail"
+            header={<h4>{ASSETS}</h4>}
+          >
+            <AssetDetailsTable
+              id="asset-resource-sequence-detail-table"
+              data={assets}
+              isDataLoading={isParentSequenceLoading || isAssetsLoading}
+              enableSelection={enableDetailTableSelection}
+              selectedRows={selectedRows?.asset || EMPTY_OBJECT}
+              onRowSelection={(updater, currentAssets) =>
+                onSelect?.(updater, currentAssets, ViewType.Asset)
+              }
+            />
+          </Collapse.Panel>
+        )}
+
+        {isTimeseriesVisible && (
+          <Collapse.Panel
+            key="sequence-timeseries-detail"
+            header={<h4>{TIME_SERIES}</h4>}
+          >
+            <TimeseriesDetailsTable
+              id="timeseries-resource-sequence-detail-table"
+              data={timeseries}
+              hasNextPage={hasTimeseriesNextPage}
+              fetchMore={hasTimeseriesFetchNextPage}
+              isDataLoading={isParentSequenceLoading || isTimeseriesLoading}
+              enableSelection={enableDetailTableSelection}
+              selectedRows={selectedRows?.timeSeries || EMPTY_OBJECT}
+              onRowSelection={(updater, currentAssets) =>
+                onSelect?.(updater, currentAssets, ViewType.TimeSeries)
+              }
+            />
+          </Collapse.Panel>
+        )}
+        {isFileVisible && (
+          <Collapse.Panel
+            key="sequence-documents-detail"
+            header={<h4>{FILES}</h4>}
+          >
+            <FileDetailsTable
+              id="documents-resource-sequence-detail-table"
+              data={relatedDocuments}
+              hasNextPage={hasDocumentsNextPage}
+              fetchMore={hasDocumentsFetchNextPage}
+              isDataLoading={isParentSequenceLoading || isDocumentsLoading}
+              enableSelection={enableDetailTableSelection}
+              selectedRows={selectedRows?.file || EMPTY_OBJECT}
+              onRowSelection={(updater, currentAssets) =>
+                onSelect?.(updater, currentAssets, ViewType.File)
+              }
+            />
+          </Collapse.Panel>
+        )}
+        {isEventVisible && (
+          <Collapse.Panel
+            key="sequence-events-detail"
+            header={<h4>{EVENTS}</h4>}
+          >
+            <EventDetailsTable
+              id="event-resource-sequence-detail-table"
+              data={events}
+              hasNextPage={hasEventNextPage}
+              fetchMore={hasEventFetchNextPage}
+              isDataLoading={isParentSequenceLoading || isEventsLoading}
+              enableSelection={enableDetailTableSelection}
+              selectedRows={selectedRows?.event || EMPTY_OBJECT}
+              onRowSelection={(updater, currentAssets) =>
+                onSelect?.(updater, currentAssets, ViewType.Event)
+              }
+            />
+          </Collapse.Panel>
+        )}
+        {isSequenceVisible && (
+          <Collapse.Panel
+            key="sequence-sequence-detail"
+            header={<h4>{SEQUENCES}</h4>}
+          >
+            <SequenceDetailsTable
+              id="sequence-resource-sequence-detail-table"
+              data={sequences}
+              hasNextPage={hasSequencesNextPage}
+              fetchMore={hasSequencesFetchNextPage}
+              isDataLoading={isParentSequenceLoading || isSequencesLoading}
+              enableSelection={enableDetailTableSelection}
+              selectedRows={selectedRows?.sequence || EMPTY_OBJECT}
+              onRowSelection={(updater, currentAssets) =>
+                onSelect?.(updater, currentAssets, ViewType.Sequence)
+              }
+            />
+          </Collapse.Panel>
+        )}
       </StyledCollapse>
     </ResourceDetailsTemplate>
   );
