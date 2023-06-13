@@ -7,7 +7,7 @@
       "executor": "@nrwl/webpack:webpack",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "build",
+        "outputPath": "dist/apps/3d-management",
         "index": "apps/3d-management/src/index.html",
         "main": "apps/3d-management/src/index.tsx",
         "runtimeChunk": false,
