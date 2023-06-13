@@ -38,8 +38,8 @@ export const ThreeDTopbar = ({
     setPointsOfInterest,
   } = useContext(ThreeDContext);
 
-  const config = useAPMConfig();
   const usePointsOfInterestFeatureFlag = useFlagPointsOfInterestFeature();
+  const { data: config } = useAPMConfig();
 
   if (!secondaryObjectsVisibilityState) return <></>;
 
@@ -109,7 +109,7 @@ export const ThreeDTopbar = ({
                 <PointsOfInterestDropdown
                   internalPointsOfInterestCollections={pointsOfInterest}
                   setInternalPointsOfInterestCollections={setPointsOfInterest}
-                  config={config.data}
+                  config={config}
                 />
               }
             >
