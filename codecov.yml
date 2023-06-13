@@ -4,6 +4,7 @@ coverage:
       default: off
       apps:
         flags:
+          - 3d-management
           - data-exploration
           - flexible-data-explorer
           - mock-server

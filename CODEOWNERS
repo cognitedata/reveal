@@ -43,3 +43,6 @@ apps/copilot              @dlcognite @andeplane @miladh @trygveu
 
 # IoT Hub
 apps/iot-hub              @dlcognite @geircognite @muradsater
+
+# 3D / Reveal
+apps/3d-management                @cognitedata/3d-reveal-viewer-team
