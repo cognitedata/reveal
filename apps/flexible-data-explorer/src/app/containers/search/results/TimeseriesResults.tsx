@@ -3,6 +3,7 @@ import isEmpty from 'lodash/isEmpty';
 import { Button } from '@cognite/cogs.js';
 import { TimeseriesChart } from '@cognite/plotting-components';
 
+import { translationKeys } from '../../../common/i18n/translationKeys';
 import { SearchResults } from '../../../components/search/SearchResults';
 import { Table } from '../../../components/table/Table';
 import { useNavigation } from '../../../hooks/useNavigation';
@@ -10,6 +11,7 @@ import {
   useDataTypeFilterParams,
   useSearchQueryParams,
 } from '../../../hooks/useParams';
+import { useTranslation } from '../../../hooks/useTranslation';
 import { useTimeseriesSearchQuery } from '../../../services/instances/timeseries';
 import { buildTimeseriesFilter } from '../../../utils/filterBuilder';
 
@@ -45,6 +47,7 @@ const columns = [
 ];
 
 export const TimeseriesResults = () => {
+  const { t } = useTranslation();
   const navigate = useNavigation();
   const [query] = useSearchQueryParams();
   const [timeseriesFilterParams] = useDataTypeFilterParams('Timeseries');
@@ -80,7 +83,7 @@ export const TimeseriesResults = () => {
           }}
           loading={isFetchingNextPage}
         >
-          Show more
+          {t(translationKeys.showMore, 'Show more')}
         </Button>
       </SearchResults.Footer>
     </SearchResults>
