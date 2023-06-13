@@ -80,11 +80,13 @@
   },
   "namedInputs": {
     "default": ["{projectRoot}/**/*", "sharedGlobals"],
-    "sharedGlobals": ["{workspaceRoot}/babel.config.json"],
+    "sharedGlobals": [
+      "{workspaceRoot}/babel.config.json",
+      "{workspaceRoot}/scripts/run-many.js",
+      "{workspaceRoot}/.github/workflows/nx_ci.yml"
+    ],
     "production": [
       "default",
-      "!{projectRoot}/scripts/run-many.js",
-      "!{projectRoot}/.github/workflows/nx_ci.yml",
       "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
       "!{projectRoot}/tsconfig.spec.json",
       "!{projectRoot}/jest.config.[jt]s",
