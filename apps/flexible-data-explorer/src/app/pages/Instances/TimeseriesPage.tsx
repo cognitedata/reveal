@@ -1,30 +1,14 @@
 import { useParams } from 'react-router-dom';
 
-import { Timeseries } from '@cognite/sdk';
-import { useCdfItem } from '@cognite/sdk-react-query-hooks';
-
 import { Page } from '../../containers/page/Page';
 import { PropertiesWidget } from '../../containers/widgets';
 import { TimeseriesWidget } from '../../containers/widgets/TimeseriesWidget';
-
-const getTimeseriesId = (externalId?: string) => {
-  if (!externalId) {
-    throw new Error('External id is required');
-  }
-
-  return Number(externalId) ? { id: Number(externalId) } : { externalId };
-};
+import { useTimeseriesByIdQuery } from '../../services/instances/timeseries/queries/useTimeseriesByIdQuery';
 
 export const TimeseriesPage = () => {
   const { externalId } = useParams();
 
-  const { data, isLoading } = useCdfItem<Timeseries>(
-    'timeseries',
-    getTimeseriesId(externalId),
-    {
-      enabled: !!externalId,
-    }
-  );
+  const { data, isLoading } = useTimeseriesByIdQuery(externalId);
 
   return (
     <Page.Dashboard

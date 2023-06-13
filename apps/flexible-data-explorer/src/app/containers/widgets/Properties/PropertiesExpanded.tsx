@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 
 import { matchSorter } from 'match-sorter';
 
-import { Input } from '@cognite/cogs.js';
+import { InputExp } from '@cognite/cogs.js';
 
 import { translationKeys } from '../../../common/i18n/translationKeys';
 import { GeneralDetails } from '../../../components/details';
@@ -28,7 +28,7 @@ export const PropertiesExpanded: React.FC<PropertiesProps> = ({ data }) => {
   return (
     <Widget expanded>
       <Widget.Header>
-        <Input
+        <InputExp
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           placeholder={t(
@@ -36,11 +36,7 @@ export const PropertiesExpanded: React.FC<PropertiesProps> = ({ data }) => {
             'Filter by name'
           )}
           icon="Search"
-          clearable={{
-            callback: () => {
-              setInputValue(undefined);
-            },
-          }}
+          clearable
         />
       </Widget.Header>
 
