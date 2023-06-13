@@ -26,5 +26,13 @@ export const queryKeys = {
   instance: (instance: Instance, dataModel?: DataModel) =>
     [...queryKeys.all, 'instance', instance, dataModel] as const,
 
+  searchFiles: (query: string, limit?: number) => [
+    ...queryKeys.all,
+    'files',
+    'search',
+    query,
+    limit,
+  ],
+
   fileContainer: (file?: FileInfo) => [...queryKeys.all, 'file', file] as const,
 };

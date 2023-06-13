@@ -7,7 +7,7 @@ import { Input } from '../Input';
 
 export const DEFAULT_NUMBER_INPUT_PLACEHOLDER = 'Enter value...';
 
-export interface NumberInputProps extends InputControlProps<'number'> {
+export interface NumberInputProps extends InputControlProps<number> {
   placeholder?: string;
 }
 

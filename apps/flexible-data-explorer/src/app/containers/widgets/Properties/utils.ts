@@ -1,6 +1,4 @@
-import { EMPTY_OBJECT } from '@data-exploration-lib/core';
-
-import { toFlatPropertyMap } from '../../../constants/object';
+import { toFlatPropertyMap } from '../../../utils/object';
 
 const normalizePrimitives = (value?: any) => {
   if (value === null || value === undefined) {
@@ -34,7 +32,7 @@ const normalizePrimitives = (value?: any) => {
 export const flattenProperties = (
   properties?: Record<string, unknown>
 ): { key: string; value?: string }[] => {
-  return Object.keys(properties || EMPTY_OBJECT).reduce((acc, key) => {
+  return Object.keys(properties || {}).reduce((acc, key) => {
     const value = properties?.[key];
 
     const flattenedValue = normalizePrimitives(value);

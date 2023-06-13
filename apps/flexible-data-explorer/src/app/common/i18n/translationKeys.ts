@@ -1,4 +1,6 @@
 export const translationKeys = {
+  showMore: 'show_more',
+
   filterButtonApply: 'filter_button_apply',
   filterAND: 'filter_AND',
   filterEmptyStateTitle: 'filter_empty_state_title',

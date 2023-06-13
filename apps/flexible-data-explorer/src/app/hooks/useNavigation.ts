@@ -84,6 +84,17 @@ export const useNavigation = () => {
     [basename, navigate, params, search]
   );
 
+  const toFilePage = useCallback(
+    (externalId: string | number) => {
+      const { space, dataModel, version } = params;
+      navigate({
+        pathname: `${basename}/${dataModel}/${space}/${version}/file/${externalId}`,
+        search,
+      });
+    },
+    [basename, navigate, params, search]
+  );
+
   const toLandingPage = useCallback(() => {
     navigate('/');
   }, [navigate]);
@@ -100,6 +111,8 @@ export const useNavigation = () => {
 
     toInstancePage,
     toTimeseriesPage,
+    toFilePage,
+
     goBack,
   };
 };
