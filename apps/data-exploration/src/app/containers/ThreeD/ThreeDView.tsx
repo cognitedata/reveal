@@ -9,7 +9,6 @@ import React, {
 import styled from 'styled-components';
 
 import { useQueryClient } from '@tanstack/react-query';
-import debounce from 'lodash/debounce';
 
 import { Colors, Flex } from '@cognite/cogs.js';
 import {
@@ -17,7 +16,6 @@ import {
   CognitePointCloudModel,
   Image360,
   Image360AnnotationIntersection,
-  Image360Collection,
   Intersection,
 } from '@cognite/reveal';
 import { Image360HistoricalDetails } from '@cognite/reveal-react-components';
@@ -110,7 +108,6 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
     setTab,
     secondaryModels,
     viewState,
-    setViewState,
     images360,
     selectedAssetId,
     pointsOfInterest,
@@ -128,10 +125,6 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
 
   const [nodesSelectable, setNodesSelectable] = useState<boolean>(true);
 
-  const [imageEntities, setImageEntities] = useState<
-    { siteId: string; images: Image360Collection }[]
-  >([]);
-
   const [image360Entity, setImage360Entity] = useState<Image360 | undefined>(
     undefined
   );
@@ -146,19 +139,6 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
   const handleExpand = useCallback((isExpanded: boolean) => {
     setIs360HistoricalPanelExpanded(isExpanded);
   }, []);
-
-  useEffect(() => {
-    if (viewer && setViewState) {
-      const fn = debounce(() => {
-        const currentState = viewer.getViewState();
-        setViewState({ camera: currentState.camera });
-      }, 250);
-      viewer.on('sceneRendered', fn);
-      return () => viewer.off('sceneRendered', fn);
-    }
-
-    return undefined;
-  }, [setViewState, viewer]);
 
   const setSelectedAssetAndFitCamera = useCallback(
     (
@@ -240,7 +220,7 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
       sdk,
       selectedAssetId,
       setSelectedAssetAndFitCamera,
-      viewer,
+      threeDModel,
     ]
   );
 
@@ -316,7 +296,6 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
             initialViewerState={initialUrlViewState}
             setImage360Entity={setImage360Entity}
             onViewerClick={onViewerClick}
-            image360Entities={imageEntities}
           >
             {({
               pointCloudModel: revealPointCloudModel,
@@ -332,8 +311,6 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
                 />
                 <LoadImages360
                   images360={images360}
-                  imageEntities={imageEntities}
-                  setImageEntities={setImageEntities}
                   setImage360Entity={setImage360Entity}
                   viewer={revealViewer}
                 />

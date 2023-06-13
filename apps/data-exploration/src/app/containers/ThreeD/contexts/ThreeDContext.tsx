@@ -62,7 +62,6 @@ export type SlicingState = {
 
 type ThreeDContext = {
   viewer?: Cognite3DViewer;
-  setViewer: Dispatch<SetStateAction<Cognite3DViewer | undefined>>;
   overlayTool?: SmartOverlayTool;
   setOverlayTool: Dispatch<SetStateAction<SmartOverlayTool | undefined>>;
   threeDModel?: CogniteCadModel;
@@ -112,7 +111,6 @@ export const ThreeDContext = createContext<ThreeDContext>({
   setAssetDetailsExpanded: noop,
   setViewState: noop,
   setSlicingState: noop,
-  setViewer: noop,
   setOverlayTool: noop,
   set3DModel: noop,
   setPointCloudModel: noop,
@@ -240,8 +238,10 @@ export const ThreeDContextProvider = ({
   modelId,
   image360SiteId,
   children,
+  viewer,
 }: {
   modelId?: number;
+  viewer?: Cognite3DViewer;
   image360SiteId?: string;
   children?: React.ReactNode;
 }) => {
@@ -257,7 +257,6 @@ export const ThreeDContextProvider = ({
     images360: initialImages360,
   } = useMemo(() => getInitialState(), []);
 
-  const [viewer, setViewer] = useState<Cognite3DViewer | undefined>();
   const [overlayTool, setOverlayTool] = useState<
     SmartOverlayTool | undefined
   >();
@@ -304,6 +303,8 @@ export const ThreeDContextProvider = ({
       pointsOfInterest: true,
     });
 
+  const [tab, setTab] = useState<ResourceTabType | undefined>();
+
   const {
     isFetching: fetchingDefaultRevision,
     error,
@@ -319,7 +320,6 @@ export const ThreeDContextProvider = ({
       setRevisionId(defaultRevision.id);
     }
   }, [defaultRevision?.id, revisionId]);
-  const [tab, setTab] = useState<ResourceTabType | undefined>();
 
   useEffect(() => {
     window.history.replaceState(
@@ -371,7 +371,6 @@ export const ThreeDContextProvider = ({
     <ThreeDContext.Provider
       value={{
         viewer,
-        setViewer,
         overlayTool,
         setOverlayTool,
         threeDModel,
