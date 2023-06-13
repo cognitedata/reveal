@@ -100,6 +100,7 @@ static final Map<String, String> VERSIONING_STRATEGY = [
   'data-exploration': 'multi-branch',
   'copilot': 'single-branch',
   'iot-hub': 'single-branch',
+  'cdf-document-search': 'single-branch',
 ]
 
 // == End of customization. Everything below here is common. == \\
