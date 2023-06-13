@@ -135,16 +135,6 @@ export type FDMChecklistResponse = {
   };
 };
 
-type FDMErrorResponse = {
-  errors: {
-    message: string;
-    error: {
-      message: string;
-      code: number;
-    };
-  }[];
-};
-
 export type FDMChecklistItemResponse = {
   description: string;
   title: string;
@@ -260,24 +250,24 @@ export const useAPMConfig = () => {
   const sdk = useSDK();
   const project = sdk.project;
   const baseUrl = sdk.getBaseUrl();
-  return useQuery<APMConfigNode | undefined>(['useAPMCOnfig'], async () => {
-    // Find correct version and space for the APM_Config
-    const listDataModelsUrl = `${baseUrl}/api/v1/projects/${project}/models/datamodels`;
-    const listDataModelsResponse = await sdk.get(listDataModelsUrl);
 
-    const dataModelsList =
-      listDataModelsResponse.data as ListFDMDataModelsResponse;
+  return useQuery<APMConfigNode>(
+    ['cdf', '3d', 'FDM', 'APMConfig', project],
+    async () => {
+      // Find correct version and space for the APM_Config
+      const listDataModelsUrl = `${baseUrl}/api/v1/projects/${project}/models/datamodels`;
+      const listDataModelsResponse = await sdk.get(listDataModelsUrl);
 
-    const filteredDataModelsList = dataModelsList.items.filter(
-      (item) => item.name === 'APM_Config'
-    );
-    if (filteredDataModelsList.length !== 1) {
-      return undefined;
-    }
+      const dataModelsList =
+        listDataModelsResponse.data as ListFDMDataModelsResponse;
 
-    const getApmConfigQuery = {
-      data: {
-        query: `query MyQuery {
+      const filteredDataModelsList = dataModelsList.items.filter(
+        (item) => item.name === 'APM_Config'
+      );
+
+      const getApmConfigQuery = {
+        data: {
+          query: `query MyQuery {
           listAPM_Config {
             edges {
               node {
@@ -293,32 +283,40 @@ export const useAPMConfig = () => {
             }
           }
         }`,
-      },
-    };
+        },
+      };
 
-    const space = filteredDataModelsList[0].space;
-    const version = filteredDataModelsList[0].version;
-    const fdmGetAPMConfigEndpoint = `${baseUrl}/api/v1/projects/${project}/userapis/spaces/${space}/datamodels/${space}/versions/${version}/graphql`;
-    const fdmAPMConfigData = await sdk.post(
-      fdmGetAPMConfigEndpoint,
-      getApmConfigQuery
-    );
+      if (filteredDataModelsList.length === 0)
+        throw new Error('No APM data model found');
 
-    const fdmConfigDataResponseAsList =
-      fdmAPMConfigData.data as APMConfigResponse;
-    if (fdmConfigDataResponseAsList.data.listAPM_Config.edges.length !== 1) {
-      return undefined;
-    }
+      const space = filteredDataModelsList[0].space;
+      const version = filteredDataModelsList[0].version;
+      const fdmGetAPMConfigEndpoint = `${baseUrl}/api/v1/projects/${project}/userapis/spaces/${space}/datamodels/${space}/versions/${version}/graphql`;
 
-    return fdmConfigDataResponseAsList.data.listAPM_Config.edges[0].node;
-  });
+      const fdmAPMConfigData = await sdk.post(
+        fdmGetAPMConfigEndpoint,
+        getApmConfigQuery
+      );
+
+      const fdmConfigDataResponseAsList =
+        fdmAPMConfigData.data as APMConfigResponse;
+
+      if (fdmConfigDataResponseAsList.data.listAPM_Config.edges.length === 0) {
+        throw new Error('No correct APM data model found');
+      }
+
+      return fdmConfigDataResponseAsList.data.listAPM_Config.edges[0].node;
+    },
+    { refetchOnWindowFocus: false }
+  );
 };
 
 export const useInfiniteChecklistItems = (
-  config?: UseInfiniteQueryOptions<FDMChecklistResponse, CogniteError>,
-  apmConfig?: APMConfigNode | undefined
+  apmConfig?: APMConfigNode,
+  config?: UseInfiniteQueryOptions<FDMChecklistResponse, CogniteError>
 ) => {
   const sdk = useSDK();
+
   return useInfiniteQuery<FDMChecklistResponse, CogniteError>(
     ['cdf', 'infinite', '3d', '3d-points-of-interest'],
     async ({ pageParam }) => {
@@ -866,22 +864,12 @@ export const getImages360QueryFn =
     viewer: Cognite3DViewer,
     siteId: string,
     applied?: boolean,
-    imageEntities?: { siteId: string; images: Image360Collection }[],
-    setImageEntities?: (
-      value: React.SetStateAction<
-        { siteId: string; images: Image360Collection }[]
-      >
-    ) => void,
     setImage360Entity?: (entity: Image360 | undefined) => void,
     rotationMatrix?: THREE.Matrix4,
     translationMatrix?: THREE.Matrix4
   ) =>
   async () => {
-    if (
-      applied === undefined ||
-      imageEntities === undefined ||
-      setImageEntities === undefined
-    ) {
+    if (applied === undefined) {
       return undefined;
     }
 
@@ -894,7 +882,9 @@ export const getImages360QueryFn =
       )
     );
 
-    const hasAdded = imageEntities.some(({ siteId: tmId }) => siteId === tmId);
+    const imageEntities = viewer.get360ImageCollections();
+
+    const hasAdded = imageEntities.some(({ id: tmId }) => siteId === tmId);
 
     if (applied && !hasAdded) {
       const collectionTransform = translationMatrix?.multiply(rotationMatrix!);
@@ -926,9 +916,6 @@ export const getImages360QueryFn =
         viewer.enter360Image(currentImage360);
       }
 
-      setImageEntities((prevState) =>
-        prevState.concat({ siteId, images: images360Set })
-      );
       images360Set.on('image360Entered', (image360) => {
         setImage360Entity?.(image360);
       });
@@ -937,22 +924,12 @@ export const getImages360QueryFn =
       });
     } else if (!applied && hasAdded) {
       const images360ToRemove = imageEntities.find(
-        ({ siteId: tmId }) => siteId === tmId
+        ({ id: tmId }) => siteId === tmId
       );
       if (images360ToRemove) {
-        await viewer.remove360Images(
-          ...images360ToRemove.images.image360Entities
-        );
-        imageEntities.splice(
-          imageEntities.findIndex(
-            (images360ToRemove) => images360ToRemove.siteId === siteId
-          ),
-          1
-        );
-        setImageEntities(imageEntities);
+        await viewer.remove360Images(...images360ToRemove.image360Entities);
       }
     }
-
     return applied;
   };
 
@@ -968,9 +945,9 @@ export const getPointsOfInterestsAppliedStateQueryKey = (
 
 export const getPointsOfInterestsQueryFn = (
   queryClient: QueryClient,
-  overlayTool: Overlay3DTool<PointsOfInterestOverlayCollectionType>,
   pointsOfInterestCollection: PointsOfInterestCollection,
-  pointsOfInterestOverlayCollection: PointsOfInterestOverlayCollection[]
+  pointsOfInterestOverlayCollection: PointsOfInterestOverlayCollection[],
+  overlayTool?: Overlay3DTool<PointsOfInterestOverlayCollectionType>
 ) => {
   return () => {
     queryClient.invalidateQueries(
@@ -979,6 +956,9 @@ export const getPointsOfInterestsQueryFn = (
         !pointsOfInterestCollection.applied
       )
     );
+
+    if (!overlayTool) return;
+
     const shouldAddPointsOfInterest = pointsOfInterestCollection.applied;
     if (shouldAddPointsOfInterest) {
       const labels:
