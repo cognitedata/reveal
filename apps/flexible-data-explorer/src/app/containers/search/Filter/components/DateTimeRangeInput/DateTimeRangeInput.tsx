@@ -5,12 +5,12 @@ import isUndefined from 'lodash/isUndefined';
 
 import { translationKeys } from '../../../../../common';
 import { useTranslation } from '../../../../../hooks/useTranslation';
-import { InputControlProps } from '../../types';
+import { DateRange, InputControlProps } from '../../types';
 import { DateTimeInput } from '../DateTimeInput';
 
 import { Chip, Container } from './elements';
 
-export type DateTimeRangeInputProps = InputControlProps<'date-range'>;
+export type DateTimeRangeInputProps = InputControlProps<DateRange>;
 
 export const DateTimeRangeInput: React.FC<DateTimeRangeInputProps> = ({
   value,

@@ -1,5 +1,8 @@
-import { Operator } from '../../containers/search/Filter/operators';
-import { DateRange, NumericRange } from '../../containers/search/Filter/types';
+import {
+  DateRange,
+  NumericRange,
+  Operator,
+} from '../../containers/search/Filter/types';
 
 export const builders: Record<
   Operator,

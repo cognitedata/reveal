@@ -35,9 +35,9 @@
         "libs/data-exploration-components/src/index.ts"
       ],
       "@cognite/graph": ["libs/graph/src/index.ts"],
+      "@cognite/iot-hub": ["apps/iot-hub/src/index.ts"],
       "@cognite/login-utils": ["libs/shared/cdf-login-utils/src/index.ts"],
       "@cognite/platypus-cdf-cli/*": ["apps/platypus-cdf-cli/src/*"],
-      "@cognite/iot-hub": ["apps/iot-hub/src/index.ts"],
       "@cognite/plotting-components": [
         "libs/shared/plotting-components/src/index.ts"
       ],
@@ -61,6 +61,7 @@
       "@data-quality/*": [
         "apps/platypus/src/app/modules/solution/data-quality/*"
       ],
+      "@flexible-data-explorer/*": ["apps/flexible-data-explorer/src/*"],
       "@fusion/cdf-nx-plugin": ["libs/cdf-nx-plugin/src/index.ts"],
       "@fusion/contextualization": ["libs/contextualization/src/index.ts"],
       "@fusion/copilot-core": ["libs/copilot-core/src/index.ts"],
@@ -79,9 +80,6 @@
       ],
       "@platypus/platypus-core": [
         "libs/data-modeling/platypus-core/src/index.ts"
-      ],
-      "@flexible-data-explorer/*": [
-        "apps/flexible-data-explorer/src/*"
       ]
     }
   },
