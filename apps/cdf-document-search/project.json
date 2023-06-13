@@ -52,7 +52,13 @@
       "defaultConfiguration": "development",
       "options": {
         "buildTarget": "cdf-document-search:build",
-        "hmr": true
+        "hmr": true,
+        "allowedHosts": "all",
+        "port": 3016,
+        "ssl": true,
+        "headers": {
+          "Access-Control-Allow-Origin": "*"
+        }
       },
       "configurations": {
         "development": {

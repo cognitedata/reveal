@@ -113,20 +113,6 @@ module.exports = composePlugins(
       ],
     });
 
-    if (nodeEnv === 'development' && config.devServer) {
-      // Temp fix to devserver and hmr
-      config.devServer.allowedHosts = 'all';
-      config.devServer.headers['Access-Control-Allow-Origin'] = '*';
-      config.devServer.https = true;
-      config.devServer.port = 3016;
-
-      config.devServer.static = {
-        watch: {
-          followSymlinks: true,
-        },
-      };
-    }
-
     return config;
   }
 );
