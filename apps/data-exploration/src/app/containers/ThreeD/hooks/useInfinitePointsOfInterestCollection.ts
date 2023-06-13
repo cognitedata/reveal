@@ -6,14 +6,15 @@ import {
 } from '../hooks';
 
 export const useInfinitePointsOfInterestCollections = (
-  apmConfig: APMConfigNode | undefined
+  apmConfig?: APMConfigNode
 ) => {
   const {
     data: fdmChecklistResponse,
     hasNextPage,
     fetchNextPage,
     isFetchingNextPage,
-  } = useInfiniteChecklistItems(undefined, apmConfig);
+    isFetching,
+  } = useInfiniteChecklistItems(apmConfig);
 
   const pointsOfInterestCollections: PointsOfInterestCollection[] =
     fdmChecklistResponse?.pages?.flatMap((page): PointsOfInterestCollection[] =>
@@ -47,5 +48,6 @@ export const useInfinitePointsOfInterestCollections = (
     hasNextPage,
     fetchNextPage,
     isFetchingNextPage,
+    isFetching,
   };
 };
