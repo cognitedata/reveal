@@ -585,7 +585,7 @@ export const useRelatedResourceCount = (
     relationshipCount: relationships.length,
     hasMoreRelationships: hasMore,
     assetIdCount,
-    linkedResourceCount: isAssetTab
+    linkedResourceCount: isAssetTab || isFileTab
       ? Math.max((linkedResourceCount?.count ?? 1) - 1, 0)
       : linkedResourceCount?.count,
     annotationCount,
