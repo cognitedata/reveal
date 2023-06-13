@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from 'react';
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
+
+import React from 'react';
 
 import { ConfigProvider } from 'antd';
-// import antTheme from './antd-theme.less'; // The .less import did not work
 import antTheme from 'antd/dist/antd.css';
 import katexCss from 'katex/dist/katex.min.css';
 
+import { useGlobalStyles } from '@cognite/cdf-utilities';
 import {
   Loader,
   Tooltip as CogsTooltip,
@@ -13,8 +16,7 @@ import {
 } from '@cognite/cogs.js';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 
-//@ts-ignore
-import styleScope from '../../styleScope';
+import styleScope from './styleScope';
 
 export const getContainer = () => {
   const els = document.getElementsByClassName(styleScope.styleScope);
@@ -28,14 +30,11 @@ CogsTooltip.defaultProps = {
 };
 
 Modal.defaultProps = {
-  // @ts-ignore
   ...Modal.defaultProps,
   getContainer,
 };
 
-// @ts-ignore
 DateRange.defaultProps = {
-  // @ts-ignore
   ...DateRange.defaultProps,
   getContainer: () => {
     return getContainer();
@@ -43,16 +42,9 @@ DateRange.defaultProps = {
 };
 
 export default function GlobalStyles(props: { children: React.ReactNode }) {
-  const [didLoadStyles, setDidLoadStyles] = useState<boolean>(false);
-  const styles = [cogsStyles, antTheme, katexCss];
+  const isStyleLoaded = useGlobalStyles([cogsStyles, antTheme, katexCss]);
 
-  useEffect(() => {
-    styles.forEach((style) => style?.use && style.use());
-    setDidLoadStyles(true);
-    return () => styles.forEach((style) => style?.unuse && style.unuse());
-  }, []);
-
-  if (!didLoadStyles) {
+  if (!isStyleLoaded) {
     return <Loader />;
   }
 

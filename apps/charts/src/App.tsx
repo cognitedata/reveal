@@ -17,7 +17,7 @@ import {
 import config from '@charts-app/config/config';
 import { useUserInfo } from '@charts-app/hooks/useUserInfo';
 import Routes from '@charts-app/pages/Routes';
-import GlobalStyles from '@charts-app/styles/GlobalStyles';
+import GlobalStyles from 'apps/charts/src/GlobalStyles';
 import { isDevelopment } from '@charts-app/utils/environment';
 import * as Sentry from '@sentry/react';
 import SentryRRWeb from '@sentry/rrweb';
@@ -29,7 +29,6 @@ import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
 import { getProject } from '@cognite/cdf-utilities';
 import { ToastContainer } from '@cognite/cogs.js';
 import { DataExplorationProvider } from '@cognite/data-exploration';
-import { parseEnvFromCluster } from '@cognite/login-utils';
 import { FlagProvider } from '@cognite/react-feature-flags';
 import { SDKProvider } from '@cognite/sdk-provider';
 
