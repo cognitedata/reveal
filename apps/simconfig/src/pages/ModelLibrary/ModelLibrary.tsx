@@ -179,23 +179,29 @@ export function ModelLibrary() {
         )}
       </ModelLibrarySidebar>
       <ModelLibraryContent>
-        <ModelDetails
-          modelLibraryDeleteHandler={deleteHandleOnModelLibrary}
-          modelName={modelName}
-          project={project}
-          refetchModelFiles={refetchModelFiles}
-          simulator={simulator}
-        />
+        {!isModalLibraryEmpty && (
+          <ModelDetails
+            modelLibraryDeleteHandler={deleteHandleOnModelLibrary}
+            modelName={modelName}
+            project={project}
+            refetchModelFiles={refetchModelFiles}
+            simulator={simulator}
+          />
+        )}
         {isModalLibraryEmpty && (
           <NoModelsContainer>
             <Illustrations.Solo type="Simulation" />
             <h5>No simulator models found</h5>
-            <span>Create your first model to get started</span>
-            <Link to={createCdfLink(`/model-library/new-model`)}>
-              <Button icon="Add" type="primary">
-                Create model
-              </Button>
-            </Link>
+            {!(modelNameFilter.length > 0) && (
+              <>
+                <span>Create your first model to get started</span>
+                <Link to={createCdfLink(`/model-library/new-model`)}>
+                  <Button icon="Add" type="primary">
+                    Create model
+                  </Button>
+                </Link>
+              </>
+            )}
           </NoModelsContainer>
         )}
       </ModelLibraryContent>
