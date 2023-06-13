@@ -14,7 +14,7 @@ const mixpanelConfig = {
 const { hostname } = window.location;
 const isPreviewLink = hostname.includes('fusion-pr-preview');
 const configToApply = { ...config };
-if (!configToApply.mixpanelToken && isPreviewLink) {
+if ((!configToApply.mixpanelToken && isPreviewLink) || isDevelopment) {
   configToApply.mixpanelToken = '741a2c6ee88f7a1191cce6515493a541';
 }
 if (configToApply.mixpanelToken) {

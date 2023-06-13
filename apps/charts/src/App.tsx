@@ -25,14 +25,9 @@ import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { RecoilRoot } from 'recoil';
 
-import sdk, { getFlow, loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
-import {
-  AuthWrapper,
-  getCluster,
-  getProject,
-  SubAppWrapper,
-} from '@cognite/cdf-utilities';
-import { Loader, ToastContainer } from '@cognite/cogs.js';
+import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
+import { getProject } from '@cognite/cdf-utilities';
+import { ToastContainer } from '@cognite/cogs.js';
 import { DataExplorationProvider } from '@cognite/data-exploration';
 import { parseEnvFromCluster } from '@cognite/login-utils';
 import { FlagProvider } from '@cognite/react-feature-flags';
@@ -80,8 +75,6 @@ const queryClient = new QueryClient({
   },
 });
 
-const env = parseEnvFromCluster(getCluster());
-const project = getProject();
 const flow = getFlow();
 
 export const RootApp = () => {
@@ -105,29 +98,22 @@ export const RootApp = () => {
                   '/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.min.js',
               }}
             >
-              <SubAppWrapper title="Charts">
-                <Sentry.ErrorBoundary
-                  // Todo(DEGR-2403) Add a better error placeholder
-                  fallback={<p>An error has occurred</p>}
-                  showDialog
-                >
-                  <AuthWrapper
-                    loadingScreen={<Loader />}
-                    login={() => loginAndAuthIfNeeded(project, env)}
-                  >
-                    <RecoilRoot>
-                      <Router>
-                        <ToastContainer style={{ top: '5em' }} />
-                        {/* need root for png screenshot when we download chart  */}
-                        {/* https://github.com/fayeed/use-screenshot/issues/9#issuecomment-1245094413  */}
-                        <div id="root">
-                          <Routes />
-                        </div>
-                      </Router>
-                    </RecoilRoot>
-                  </AuthWrapper>
-                </Sentry.ErrorBoundary>
-              </SubAppWrapper>
+              <Sentry.ErrorBoundary
+                // Todo(DEGR-2403) Add a better error placeholder
+                fallback={<p>An error has occurred</p>}
+                showDialog
+              >
+                <RecoilRoot>
+                  <Router>
+                    <ToastContainer style={{ top: '5em' }} />
+                    {/* need root for png screenshot when we download chart  */}
+                    {/* https://github.com/fayeed/use-screenshot/issues/9#issuecomment-1245094413  */}
+                    <div id="root">
+                      <Routes />
+                    </div>
+                  </Router>
+                </RecoilRoot>
+              </Sentry.ErrorBoundary>
             </DataExplorationProvider>
           </GlobalStyles>
           <ReactQueryDevtools initialIsOpen={false} />
