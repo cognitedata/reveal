@@ -27,8 +27,8 @@ export const ChatUI = ({
 }) => {
   const messages = useRef<CopilotMessage[]>([]);
   const [showOverlay, setShowOverlay] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(true);
-  const [bot, setBot] = useState<BotuiInterface | undefined>();
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [bot, setBot] = useState<BotuiInterface>(createBot());
 
   const addMessageForBot = useCallback(
     async (chatBot: BotuiInterface, result: CopilotBotMessage) => {
@@ -42,12 +42,10 @@ export const ChatUI = ({
   );
 
   useEffect(() => {
-    setTimeout(() => {
-      const newBot = createBot();
-      newBot.wait({ waitTime: 100 }).then(() => {
-        setBot(newBot);
-      });
-    }, 100);
+    const newBot = createBot();
+    newBot.wait({ waitTime: 100 }).then(() => {
+      setBot(newBot);
+    });
   }, []);
 
   useEffect(() => {
@@ -83,7 +81,6 @@ export const ChatUI = ({
     }
   }, [bot, feature, addMessageForBot]);
 
-  console.log(bot);
   if (!bot) {
     return <></>;
   }
