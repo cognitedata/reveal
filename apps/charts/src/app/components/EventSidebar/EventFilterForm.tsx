@@ -17,9 +17,6 @@ import {
   makeDefaultTranslations,
   translationKeys,
 } from '@charts-app/utils/translations';
-import { omit } from 'lodash';
-
-import { Button, Collapse, Icon } from '@cognite/cogs.js';
 import {
   AggregatedEventFilter,
   AggregatedFilter,
@@ -27,7 +24,10 @@ import {
   DataSetFilter,
   MetadataFilter,
   StringFilter,
-} from '@cognite/data-exploration';
+} from '@data-exploration-components/components';
+import { omit } from 'lodash';
+
+import { Button, Collapse, Icon } from '@cognite/cogs.js';
 import { InternalId } from '@cognite/sdk';
 
 import { GhostMetadataFilter } from './elements';

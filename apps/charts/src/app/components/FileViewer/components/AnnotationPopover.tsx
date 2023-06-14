@@ -6,12 +6,12 @@ import {
 } from '@charts-app/hooks/cdf-assets';
 import chartAtom from '@charts-app/models/chart/atom';
 import { trackUsage } from '@charts-app/services/metrics';
+import { TimeseriesChart } from '@data-exploration-components/containers';
 import dayjs from 'dayjs';
 import { useRecoilState } from 'recoil';
 import styled from 'styled-components/macro';
 
 import { Body, Checkbox, Icon, Menu, Overline, Title } from '@cognite/cogs.js';
-import { TimeseriesChart } from '@cognite/data-exploration';
 
 export const AnnotationPopover = ({
   resourceId,

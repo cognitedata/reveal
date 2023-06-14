@@ -7,10 +7,10 @@ import styled from 'styled-components';
 import { useTranslations } from '@charts-app/hooks/translations';
 import { removeIllegalCharacters } from '@charts-app/utils/text';
 import { makeDefaultTranslations } from '@charts-app/utils/translations';
+import { TimeseriesChart } from '@data-exploration-components/containers';
 import dayjs from 'dayjs';
 
 import { Button, Colors, Icon } from '@cognite/cogs.js';
-import { TimeseriesChart } from '@cognite/data-exploration';
 import { Timeseries } from '@cognite/sdk';
 
 const defaultTranslation = makeDefaultTranslations(

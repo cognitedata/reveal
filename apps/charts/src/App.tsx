@@ -18,6 +18,7 @@ import config from '@charts-app/config/config';
 import { useUserInfo } from '@charts-app/hooks/useUserInfo';
 import Routes from '@charts-app/pages/Routes';
 import { isDevelopment } from '@charts-app/utils/environment';
+import { DataExplorationProvider } from '@data-exploration-components/context/DataExplorationContext';
 import * as Sentry from '@sentry/react';
 import SentryRRWeb from '@sentry/rrweb';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
@@ -26,7 +27,6 @@ import { RecoilRoot } from 'recoil';
 import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
 import { getProject } from '@cognite/cdf-utilities';
 import { ToastContainer } from '@cognite/cogs.js';
-import { DataExplorationProvider } from '@cognite/data-exploration';
 import { FlagProvider } from '@cognite/react-feature-flags';
 import { SDKProvider } from '@cognite/sdk-provider';
 

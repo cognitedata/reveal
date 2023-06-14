@@ -30,12 +30,12 @@ import {
 import { calculateDefaultYAxis } from '@charts-app/utils/axis';
 import { createInternalLink } from '@charts-app/utils/link';
 import { makeDefaultTranslations } from '@charts-app/utils/translations';
+import { TimeseriesChart } from '@data-exploration-components/containers';
 import dayjs from 'dayjs';
 import { compact } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 
 import { Modal, Select, Icon, Checkbox, Input } from '@cognite/cogs.js';
-import { TimeseriesChart } from '@cognite/data-exploration';
 import { Timeseries } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 
