@@ -7,7 +7,7 @@
       "executor": "@nrwl/webpack:webpack",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "build",
+        "outputPath": "dist/apps/interactive-diagrams",
         "index": "apps/interactive-diagrams/src/index.html",
         "main": "apps/interactive-diagrams/src/index.tsx",
         "runtimeChunk": false,

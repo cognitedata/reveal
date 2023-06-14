@@ -102,6 +102,7 @@ static final Map<String, String> VERSIONING_STRATEGY = [
   'data-exploration': 'multi-branch',
   'copilot': 'single-branch',
   'iot-hub': 'single-branch',
+  'interactive-diagrams': 'multi-branch',
   'cdf-document-search': 'single-branch',
 ]
 
