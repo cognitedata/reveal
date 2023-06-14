@@ -57,7 +57,7 @@ export const CopilotButton = (): JSX.Element => {
 };
 
 const ButtonWrapper = styled.div`
-  z-index: ${zIndex.MAXIMUM};
+  z-index: ${zIndex.BUTTON};
   position: fixed;
   bottom: 10px;
   width: 50px;
