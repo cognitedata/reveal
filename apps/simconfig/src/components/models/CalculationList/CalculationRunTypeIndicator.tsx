@@ -24,6 +24,11 @@ const indicatorMap: Record<
       <CalculationRunTypeIcon type="Calendar" />
     </Tooltip>
   ),
+  external: () => (
+    <Tooltip content="External">
+      <CalculationRunTypeIcon type="Code" />
+    </Tooltip>
+  ),
   none: () => (
     <Tooltip content="Calculation has not been run yet">
       <CalculationRunTypeIcon className="disabled" type="Error" />

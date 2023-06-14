@@ -1,10 +1,12 @@
 import type { UIEvent } from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { Range } from 'react-date-range';
 import { useMatch, useNavigate, useSearch } from 'react-location';
 import { useSelector } from 'react-redux';
 
 import { formatISO, parseISO, sub } from 'date-fns';
+import capitalize from 'lodash/capitalize';
+import uniq from 'lodash/uniq';
 import styled from 'styled-components/macro';
 
 import type { OptionType } from '@cognite/cogs.js';
@@ -12,12 +14,12 @@ import { AutoComplete, DateRange, Skeleton } from '@cognite/cogs.js';
 import { Illustrations } from '@cognite/cogs.js-v9';
 import {
   useGetCalculationRunListV2Query,
-  useGetModelFileListQuery,
+  useGetModelFileListV2Query,
 } from '@cognite/simconfig-api-sdk/rtk';
 import type {
   CalculationRun,
   CalculationRunMetadata,
-  GetCalculationRunListApiArg,
+  GetCalculationRunListV2ApiArg,
   SimulatorConfigDetails,
 } from '@cognite/simconfig-api-sdk/rtk';
 
@@ -33,12 +35,13 @@ const POLLING_INTERVAL = 2000;
 
 export function CalculationRuns() {
   const [calculationRuns, setCalculationRuns] = useState<CalculationRun[]>([]);
+
   const [shouldPollCalculations, setShouldPollCalculations] =
     useState<boolean>(false);
   const [cursors, setCursors] = useState(['']);
   const project = useSelector(selectProject);
   const nextCursor = cursors[cursors.length - 1];
-  const searchFilters: Partial<GetCalculationRunListApiArg> =
+  const searchFilters: Partial<GetCalculationRunListV2ApiArg> =
     useSearch<AppLocationGenerics>();
   // const history = useHistory();
   const navigate = useNavigate();
@@ -65,7 +68,7 @@ export function CalculationRuns() {
     }
   );
 
-  const { data: modelFileList } = useGetModelFileListQuery({ project });
+  const { data: modelFileList } = useGetModelFileListV2Query({ project });
 
   const simualtorKeys = definitions?.simulatorsConfig?.reduce(
     (prev: Record<string, string>, { key, name }: SimulatorConfigDetails) => {
@@ -142,6 +145,37 @@ export function CalculationRuns() {
     });
   };
 
+  // Change in simualtor should trigger the change in modelFiles
+  const filteredModelFiles = useMemo(() => {
+    if (!searchFilters.simulator) {
+      return modelFileList?.modelFileList ?? [];
+    }
+    return modelFileList?.modelFileList.filter(
+      (model) => model.source === searchFilters.simulator
+    );
+  }, [modelFileList?.modelFileList, searchFilters.simulator]);
+
+  // Find the calculation names from calculationRuns
+  const calculationNames = useMemo(
+    () =>
+      uniq(calculationRuns.map((calculation) => calculation.metadata.calcName)),
+    [calculationRuns]
+  );
+
+  // Find runTypes from calculationRuns
+  const runTypes = useMemo(
+    () =>
+      uniq(calculationRuns.map((calculation) => calculation.metadata.runType)),
+    [calculationRuns]
+  );
+
+  // Find runStatus from calculationRuns
+  const runStatus = useMemo(
+    () =>
+      uniq(calculationRuns.map((calculation) => calculation.metadata.status)),
+    [calculationRuns]
+  );
+
   return (
     <CalculationRunsContainer>
       <CalculationsFilterContainer>
@@ -179,7 +213,7 @@ export function CalculationRuns() {
           options={[
             {
               label: 'Model name',
-              options: modelFileList?.modelFileList.map((model) => ({
+              options: filteredModelFiles?.map((model) => ({
                 value: { key: 'modelName', value: model.name },
                 label: model.name,
               })),
@@ -189,36 +223,49 @@ export function CalculationRuns() {
         />
 
         <Filter
-          currentValue={searchFilters.calculationType}
-          filterKey="calculationType"
-          label="Calculation type"
-          options={generateOptions(
-            'calculationType',
-            'Calculations',
-            definitions?.type.calculation
-          )}
+          currentValue={searchFilters.calculationName}
+          filterKey="calculationName"
+          label="Calculation name"
+          options={[
+            {
+              label: 'Calculation name',
+              options: calculationNames.map((name) => ({
+                value: { key: 'calculationName', value: name },
+                label: name,
+              })),
+            },
+          ]}
           setSearchParams={setSearchParams}
         />
+
         <Filter
           currentValue={searchFilters.calculationRunType}
           filterKey="calculationRunType"
           label="Run type"
-          options={generateOptions(
-            'calculationRunType',
-            'Run type',
-            definitions?.calculation.runType
-          )}
+          options={[
+            {
+              label: 'Run type',
+              options: runTypes.map((runType) => ({
+                value: { key: 'calculationRunType', value: runType },
+                label: capitalize(runType),
+              })),
+            },
+          ]}
           setSearchParams={setSearchParams}
         />
         <Filter
           currentValue={searchFilters.calculationRunStatus}
           filterKey="calculationRunStatus"
           label="Run status"
-          options={generateOptions(
-            'calculationRunStatus',
-            'Status',
-            definitions?.calculation.runStatus
-          )}
+          options={[
+            {
+              label: 'Run status',
+              options: runStatus.map((status) => ({
+                value: { key: 'calculationRunStatus', value: status },
+                label: capitalize(status),
+              })),
+            },
+          ]}
           setSearchParams={setSearchParams}
         />
       </CalculationsFilterContainer>

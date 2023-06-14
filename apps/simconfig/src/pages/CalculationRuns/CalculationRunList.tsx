@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-location';
+import { Link, useMatch } from 'react-location';
 import { useSelector } from 'react-redux';
 
 import {
@@ -21,6 +21,8 @@ import { createCdfLink } from 'utils/createCdfLink';
 
 import { CalculationRunsListContainer } from './styles';
 
+import type { AppLocationGenerics } from 'routes';
+
 interface CalculationRunListProps extends React.HTMLAttributes<HTMLDivElement> {
   calculationRuns: CalculationRun[];
   isFetchingCalculationsRunList: boolean;
@@ -31,6 +33,10 @@ export function CalculationRunList({
   isFetchingCalculationsRunList,
   onScroll,
 }: CalculationRunListProps) {
+  const {
+    data: { definitions },
+  } = useMatch<AppLocationGenerics>();
+
   return (
     <CalculationRunsListContainer onScroll={onScroll}>
       {calculationRuns.map((run) => {
@@ -43,6 +49,13 @@ export function CalculationRunList({
         };
         return (
           <div className="grid-row" key={run.id}>
+            <span className="simulators">
+              {
+                definitions?.simulatorsConfig?.filter(
+                  ({ key }) => key === run.source
+                )?.[0].name
+              }
+            </span>
             <span className="model-name">{run.metadata.modelName}</span>
 
             <span className="model-version">
