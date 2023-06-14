@@ -226,7 +226,7 @@ export const ResourceSelector = ({
                       key={tab}
                       tabKey={ViewType.Event}
                       query={debouncedQuery}
-                      filter={state.event}
+                      filter={{ ...state.common, ...state.event }}
                       label="Events"
                     />
                   );
@@ -236,7 +236,7 @@ export const ResourceSelector = ({
                       key={tab}
                       tabKey={ViewType.File}
                       query={debouncedQuery}
-                      filter={state.document}
+                      filter={{ ...state.common, ...state.document }}
                       label="Files"
                     />
                   );
@@ -246,7 +246,7 @@ export const ResourceSelector = ({
                       key={tab}
                       tabKey={ViewType.TimeSeries}
                       query={debouncedQuery}
-                      filter={state.timeseries}
+                      filter={{ ...state.common, ...state.timeseries }}
                       label="Time Series"
                     />
                   );
@@ -255,7 +255,7 @@ export const ResourceSelector = ({
                     <SequenceTab
                       tabKey={ViewType.Sequence}
                       query={debouncedQuery}
-                      filter={state.sequence}
+                      filter={{ ...state.common, ...state.sequence }}
                       label="Sequence"
                     />
                   );

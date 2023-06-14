@@ -392,5 +392,8 @@
   },
   "bin": {
     "platypus": "./dist/libs/platypus-cli/src/index.js"
+  },
+  "engines": {
+    "node": "^18"
   }
 }
