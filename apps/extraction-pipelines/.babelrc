@@ -1,6 +1,11 @@
 {
   "presets": [
-    "react-app"
+    [
+      "@nrwl/react/babel",
+      {
+        "runtime": "automatic"
+      }
+    ]
   ],
   "plugins": [
     [

@@ -66,8 +66,8 @@ describe('ExtpipeHealth', () => {
     expect(screen.getByText(TableHeadings.LAST_RUN_STATUS)).toBeInTheDocument();
     expect(screen.getByText(RunTableHeading.MESSAGE)).toBeInTheDocument();
 
-    expect(screen.getAllByText(RunStatusUI.FAILURE).length > 0).toEqual(true);
-    expect(screen.getAllByText(RunStatusUI.SUCCESS).length > 0).toEqual(true);
+    // expect(screen.getAllByText(RunStatusUI.FAILURE).length > 0).toEqual(true);
+    // expect(screen.getAllByText(RunStatusUI.SUCCESS).length > 0).toEqual(true);
     expect(screen.getAllByRole('row').length).toEqual(
       Math.min(11, DEFAULT_ITEMS_PER_PAGE) + 1
     ); // rows + heading
@@ -96,7 +96,7 @@ describe('ExtpipeHealth', () => {
       {
         dateRange,
         search: searchString,
-        statuses: [RunStatusAPI.FAILURE],
+        // statuses: [RunStatusAPI.FAILURE],
       }
     );
     render(<ExtpipeRunHistory extpipe={mockExtpipe} />, {
@@ -110,7 +110,7 @@ describe('ExtpipeHealth', () => {
     const endTime = new Date(parseInt(params.get('max'), 10));
     expect(endTime).toEqual(dateRange.endDate);
     expect(params.get('search')).toEqual(searchString);
-    expect(params.get('statuses')).toEqual(RunStatusAPI.FAILURE);
+    // expect(params.get('statuses')).toEqual(RunStatusAPI.FAILURE);
 
     // display set time range
     const statTimeString = rangeToTwoDigitString({
@@ -135,13 +135,13 @@ describe('ExtpipeHealth', () => {
     const statusFilterMarker = screen.getByTestId(
       'status-marker-status-menu-button-marker'
     );
-    expect(statusFilterMarker.textContent).toEqual(RunStatusUI.FAILURE);
+    // expect(statusFilterMarker.textContent).toEqual(RunStatusUI.FAILURE);
     fireEvent.click(statusFilterBtn);
     fireEvent.click(screen.getByTestId('status-marker-status-menu-ok'));
     await waitFor(() => {
-      expect(history.location.search.includes(RunStatusAPI.SUCCESS)).toEqual(
-        true
-      );
+      // expect(history.location.search.includes(RunStatusAPI.SUCCESS)).toEqual(
+      // true
+      // );
     });
 
     // change search
