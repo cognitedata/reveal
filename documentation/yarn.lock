@@ -2142,7 +2142,7 @@ __metadata:
     "@docusaurus/core": 2.4.1
     "@docusaurus/preset-classic": 2.4.1
     "@docusaurus/remark-plugin-npm2yarn": 2.4.1
-    "@types/react": 18.2.9
+    "@types/react": 18.2.10
     "@types/styled-components": 5.1.26
     "@uiw/codemirror-theme-material": 4.21.2
     "@uiw/react-codemirror": 4.21.2
@@ -3756,14 +3756,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:18.2.9":
-  version: 18.2.9
-  resolution: "@types/react@npm:18.2.9"
+"@types/react@npm:18.2.10":
+  version: 18.2.10
+  resolution: "@types/react@npm:18.2.10"
   dependencies:
     "@types/prop-types": "*"
     "@types/scheduler": "*"
     csstype: ^3.0.2
-  checksum: f155256171a2d701eb962a1d3aa2a1c9ee36d9dd4a4aecb911d29e50717aab1a76914aef25242665147c455b9e8d081d1a60275d13ca81075c148ebd6607414a
+  checksum: a7a505b45ca0b2c39284cd12ed0efc27e13012b9c51b12beaec89acc548162736b91666efebcbdb7b1f93b7df1149511c7123799c4074ce553e6133ec758e3fd
   languageName: node
   linkType: hard
 
