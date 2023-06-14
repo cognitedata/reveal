@@ -19,8 +19,10 @@ export const SmallChatUI = ({
   setIsExpanded: (visible: boolean) => void;
   onClose: () => void;
 }) => {
-  const { data: { width, height } = { width: 320, height: 400 }, isLoading } =
+  const { data: dimensions = { width: 320, height: 400 }, isLoading } =
     useFromCache<{ width: number; height: number }>('SMALL_CHATBOT_DIMENTIONS');
+
+  const { width, height } = dimensions;
 
   const { mutate: saveToCache } = useSaveToCache<{
     width: number;
