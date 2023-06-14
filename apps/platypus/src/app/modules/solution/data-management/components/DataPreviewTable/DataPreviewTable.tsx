@@ -424,8 +424,13 @@ export const DataPreviewTable = forwardRef<
           ['JSONObject', ...nonPrimitiveTypes].includes(fieldType.type.name) ||
           fieldType.type.custom;
 
-        // if there's no data or the data is not a type we display in the sidebar
-        if (!currValue || !doesDataRequireSidebar) {
+        // if there's no data, an empty list, or the data is not a type we display in the sidebar
+        // we do not render a sidebar.
+        if (
+          !currValue ||
+          !doesDataRequireSidebar ||
+          (fieldType.type.list && currValue.length === 0)
+        ) {
           setSidebarData(undefined);
           return;
         }
