@@ -191,6 +191,7 @@ const TableFilter = ({
                           {t('label_one')}
                         </Body>
                         <Select<string>
+                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                           // @ts-ignore
                           onChange={handleSelectedLabelChange}
                           options={labelOptions.map((label) => ({

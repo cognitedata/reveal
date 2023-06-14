@@ -17,6 +17,7 @@ const EventsPreview = ({
   dataSetId,
   data = [],
   isLoading,
+  // eslint-disable-next-line
   setExploreView = () => {},
 }: EventsPreviewProps) => {
   const { t } = useTranslation();

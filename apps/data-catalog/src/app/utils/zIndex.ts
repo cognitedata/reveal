@@ -31,7 +31,7 @@ const layers = [
   'MINIMUM',
 ];
 
-type Layer = typeof layers[number];
+type Layer = (typeof layers)[number];
 
 type LayerLookup = { [key in Layer]: number };
 

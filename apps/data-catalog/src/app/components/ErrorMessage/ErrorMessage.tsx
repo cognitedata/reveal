@@ -1,4 +1,4 @@
-import { FunctionComponent, PropsWithChildren } from 'react';
+import { FunctionComponent, PropsWithChildren, ReactNode } from 'react';
 
 import styled from 'styled-components';
 
@@ -16,7 +16,9 @@ interface ErrorMessageProps {
   error?: DataSetError | null;
 }
 
-export const ErrorMessageBox = ({ children }: PropsWithChildren<{}>) => {
+export const ErrorMessageBox = ({
+  children,
+}: PropsWithChildren<{ children?: ReactNode }>) => {
   return (
     <ErrorWrapper className="z-4">
       <StyledIcon type="Warning" />

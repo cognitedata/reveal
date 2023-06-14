@@ -126,6 +126,7 @@ const DataSetDetails = (): JSX.Element => {
   };
 
   const { statusVariant, statusI18nKey } = getGovernedStatus(
+    // eslint-disable-next-line
     dataSet?.metadata?.consoleGoverned!
   );
 
@@ -196,6 +197,7 @@ const DataSetDetails = (): JSX.Element => {
     //   window.open(url, '_blank', 'noopener noreferrer');
     // } else {
     searchParams.set('activeTab', tabKey);
+    // eslint-disable-next-line
     // @ts-ignore
     trackUsage({ e: `data.sets.detail.${tabKey}` });
     setSearchParams(searchParams, { replace: true });
@@ -232,8 +234,8 @@ const DataSetDetails = (): JSX.Element => {
         case 'access-control': {
           return (
             <AccessControl
-              dataSetId={dataSet?.id!}
-              writeProtected={dataSet?.writeProtected!}
+              dataSetId={dataSet?.id}
+              writeProtected={dataSet?.writeProtected}
             />
           );
         }
@@ -255,6 +257,7 @@ const DataSetDetails = (): JSX.Element => {
           // TODO: change this to support a callback function
           // goBackFallback={() => handleGoToDatasets}
           // TODO: make this prop support ReactNode
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           title={
             <Flex alignItems="center" gap={8}>

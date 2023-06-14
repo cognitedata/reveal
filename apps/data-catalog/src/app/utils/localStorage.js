@@ -1,3 +1,4 @@
+/* eslint-disable */
 export const setItemInStorage = (key, data) => {
   try {
     localStorage.setItem(key, JSON.stringify(data));
