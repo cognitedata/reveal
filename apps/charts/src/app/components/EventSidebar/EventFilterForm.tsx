@@ -17,14 +17,12 @@ import {
   makeDefaultTranslations,
   translationKeys,
 } from '@charts-app/utils/translations';
-import {
-  AggregatedEventFilter,
-  AggregatedFilter,
-  ByAssetFilter,
-  DataSetFilter,
-  MetadataFilter,
-  StringFilter,
-} from '@data-exploration-components/components';
+import { AggregatedEventFilter } from '@data-exploration-components/components/Search/Filters/AggregatedEventFilter/AggregatedEventFilter';
+import { AggregatedFilter } from '@data-exploration-components/components/Search/Filters/AggregatedFilter/AggregatedFilter';
+import { ByAssetFilter } from '@data-exploration-components/components/Search/Filters/ByAssetFilter/ByAssetFilter';
+import { DataSetFilter } from '@data-exploration-components/components/Search/Filters/DataSetFilter/DataSetFilter';
+import { MetadataFilter } from '@data-exploration-components/components/Search/Filters/MetadataFilter/MetadataFilter';
+import { StringFilter } from '@data-exploration-components/components/Search/Filters/StringFilter/StringFilter';
 import { omit } from 'lodash';
 
 import { Button, Collapse, Icon } from '@cognite/cogs.js';
