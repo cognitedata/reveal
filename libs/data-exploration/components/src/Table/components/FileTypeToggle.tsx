@@ -11,11 +11,13 @@ const CustomChip = ({
   icon,
   checked,
   onChange,
+  disabled = false,
 }: {
   label: string;
   icon: IconType;
   checked: boolean;
   onChange: (nextState: boolean) => void;
+  disabled?: boolean;
 }) => (
   <ChipContainer>
     <ChipContent>
@@ -24,6 +26,7 @@ const CustomChip = ({
       <Switch
         checked={checked}
         onChange={(_e: any, nextState: boolean) => onChange(nextState)}
+        disabled={disabled}
       />
     </ChipContent>
   </ChipContainer>
@@ -38,28 +41,6 @@ export const FileTypeToggle = (
   return (
     <>
       <CustomChip
-        label="CAD models"
-        icon="Cube"
-        checked={fileTypeVisibility.CADModels}
-        onChange={(nextState: boolean) => {
-          setFileTypeVisibility({
-            ...fileTypeVisibility,
-            [FileTypes.CAD_MODELS]: nextState,
-          });
-        }}
-      />
-      <CustomChip
-        label="Point clouds"
-        icon="PonitCloud"
-        checked={fileTypeVisibility.PointClouds}
-        onChange={(nextState: boolean) => {
-          setFileTypeVisibility({
-            ...fileTypeVisibility,
-            [FileTypes.POINT_CLOUDS]: nextState,
-          });
-        }}
-      />
-      <CustomChip
         label="360 images"
         icon="View360"
         checked={fileTypeVisibility.Images360}
@@ -67,6 +48,17 @@ export const FileTypeToggle = (
           setFileTypeVisibility({
             ...fileTypeVisibility,
             [FileTypes.IMAGES_360]: nextState,
+          });
+        }}
+      />
+      <CustomChip
+        label="3D models"
+        icon="Cube"
+        checked={fileTypeVisibility.Models3D}
+        onChange={(nextState: boolean) => {
+          setFileTypeVisibility({
+            ...fileTypeVisibility,
+            [FileTypes.MODELS_3D]: nextState,
           });
         }}
       />

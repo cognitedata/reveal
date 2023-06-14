@@ -23,7 +23,7 @@
         "scripts": [],
         "isolatedConfig": true,
         "webpackConfig": "apps/flexible-data-explorer/webpack-config.js",
-        "dependsOn": ["^pipeline"]
+        "inputs": ["pipeline"]
       },
       "configurations": {
         "development": {
@@ -98,7 +98,7 @@
     }
   },
   "namedInputs": {
-    "pipeline": ["!{workspaceRoot}/.github/workflows/deploy_fdx.yml"]
+    "pipeline": ["{workspaceRoot}/.github/workflows/deploy_fdx.yml"]
   },
   "tags": []
 }
