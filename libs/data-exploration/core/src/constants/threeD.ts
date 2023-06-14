@@ -1,0 +1,1 @@
+export const DEFAULT_SEARCH_RESULTS_PAGE_SIZE_3D = 50;

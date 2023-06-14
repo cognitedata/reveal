@@ -37,9 +37,11 @@ import {
   fetchAssetDetails,
   fetchAssetMappingsByAssetIdQuery,
   fetchClosestAssetIdQuery,
-  Image360SiteData,
 } from '@data-exploration-app/containers/ThreeD/hooks';
-import { Revision3DWithIndex } from '@data-exploration-lib/domain-layer';
+import {
+  Image360SiteData,
+  Revision3DWithIndex,
+} from '@data-exploration-lib/domain-layer';
 
 export const THREE_D_VIEWER_STATE_QUERY_PARAMETER_KEY = 'viewerState';
 export const THREE_D_SLICING_STATE_QUERY_PARAMETER_KEY = 'slicingState';
