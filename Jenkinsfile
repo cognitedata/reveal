@@ -35,7 +35,7 @@ static final Map<String, String> FIREBASE_APP_SITES = [
 static final Map<String, String> PREVIEW_PACKAGE_NAMES = [
   'platypus': "@cognite/cdf-solutions-ui",
   'data-exploration': "@cognite/cdf-data-exploration",
-  'raw-explorer': "@cognite/raw-explorer",
+  'raw-explorer': "@cognite/cdf-raw-explorer",
   'coding-conventions': "@cognite/cdf-coding-conventions",
   'copilot': "@cognite/cdf-copilot",
   'industry-canvas-ui': "@cognite/cdf-industry-canvas-ui",
