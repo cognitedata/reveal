@@ -30,42 +30,44 @@ export const createToCopilotEventHandler = <
   handler: (data: E['ToCopilot'][T]) => void
 ) => createGenericCopilotEventHandler<E, 'ToCopilot', T>(handler);
 
-export const FromCopilotEvent = <
+export const sendFromCopilotEvent = <
   E extends CopilotEvents,
   T extends keyof E['FromCopilot']
 >(
   eventToWatch: T & string,
   data: E['FromCopilot'][T]
 ) => {
-  return new CustomEvent(`FromCopilot-${eventToWatch}`, { detail: data });
+  return window.dispatchEvent(
+    new CustomEvent(`FromCopilot-${eventToWatch}`, { detail: data })
+  );
 };
 
-export const ToCopilotEvent = <
+export const sendToCopilotEvent = <
   E extends CopilotEvents,
   T extends keyof E['ToCopilot']
 >(
   eventToWatch: T & string,
   data: E['ToCopilot'][T]
 ) => {
-  return new CustomEvent(`ToCopilot-${eventToWatch}`, { detail: data });
+  return window.dispatchEvent(
+    new CustomEvent(`ToCopilot-${eventToWatch}`, { detail: data })
+  );
 };
 
 export const addFromCopilotEventListener = <E extends CopilotEvents>(
   type: keyof E['FromCopilot'],
-  listener: EventListenerOrEventListenerObject,
-  mountTo = window
+  listener: EventListenerOrEventListenerObject
 ) => {
-  mountTo.addEventListener(`FromCopilot-${type as string}`, listener, false);
+  window.addEventListener(`FromCopilot-${type as string}`, listener, false);
   return () =>
-    mountTo.removeEventListener(`FromCopilot-${type as string}`, listener);
+    window.removeEventListener(`FromCopilot-${type as string}`, listener);
 };
 
 export const addToCopilotEventListener = <E extends CopilotEvents>(
   type: keyof E['ToCopilot'],
-  listener: EventListenerOrEventListenerObject,
-  mountTo = window
+  listener: EventListenerOrEventListenerObject
 ) => {
-  mountTo.addEventListener(`ToCopilot-${type as string}`, listener, false);
+  window.addEventListener(`ToCopilot-${type as string}`, listener, false);
   return () =>
-    mountTo.removeEventListener(`ToCopilot-${type as string}`, listener);
+    window.removeEventListener(`ToCopilot-${type as string}`, listener);
 };

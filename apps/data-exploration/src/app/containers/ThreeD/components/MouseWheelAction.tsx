@@ -14,9 +14,11 @@ const MouseWheelAction = ({
   useEffect(() => {
     const cameraManager =
       viewer.cameraManager as unknown as DefaultCameraManager;
-    cameraManager.setCameraControlsOptions({
-      mouseWheelAction: 'zoomToCursor',
-    });
+    if (cameraManager.setCameraControlsOptions !== undefined) {
+      cameraManager.setCameraControlsOptions({
+        mouseWheelAction: 'zoomToCursor',
+      });
+    }
   }, [isAssetSelected, viewer]);
 
   return <></>;

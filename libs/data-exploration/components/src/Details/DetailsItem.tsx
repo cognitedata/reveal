@@ -2,9 +2,11 @@ import React from 'react';
 
 import styled from 'styled-components';
 
+import noop from 'lodash/noop';
+
 import { createLink } from '@cognite/cdf-utilities';
-import { Body, toast, Chip, Flex, Button, Link } from '@cognite/cogs.js';
-import { DataSet } from '@cognite/sdk';
+import { Body, toast, Chip, Flex, Link } from '@cognite/cogs.js';
+import { DataSet, Asset } from '@cognite/sdk';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 
 import {
@@ -12,12 +14,20 @@ import {
   COPIED_TEXT,
   DASH,
   DATA_EXPLORATION_COMPONENT,
+  getSearchParams,
+  getSearchParamsWithJourneyAndSelectedTab,
   ResourceType,
   useClipboard,
   useMetrics,
 } from '@data-exploration-lib/core';
-import { DetailedMapping } from '@data-exploration-lib/domain-layer';
+import {
+  DetailedMapping,
+  useRootAssetQuery,
+} from '@data-exploration-lib/domain-layer';
 
+import { CopyButton } from '../Buttons';
+
+import { RootAssetWrapper } from './elements';
 import {
   ThreeDModelCellDropdown,
   ThreeDModelCellLink,
@@ -75,16 +85,11 @@ export const DetailsItem = ({
           ))}
         {!value && <MutedBody level={2}>{DASH}</MutedBody>}
       </DetailsItemContainer>
-      <ButtonWrapper visible={copyable && Boolean(value)}>
-        <Button
-          type="ghost"
-          size="small"
-          icon={hasCopied ? 'Checkmark' : 'Copy'}
-          disabled={hasCopied}
-          onClick={handleOnClickCopy}
-          aria-label="Copy"
-        />
-      </ButtonWrapper>
+      {copyable && Boolean(value) && (
+        <ButtonWrapper visible={true}>
+          <CopyButton onClick={handleOnClickCopy} hasCopied={hasCopied} />
+        </ButtonWrapper>
+      )}
     </Flex>
   );
 };
@@ -163,10 +168,16 @@ export const AssetsItem = ({
     return <AssetItem id={assetIds[0]} />;
   }
 
+  const searchParams = getSearchParamsWithJourneyAndSelectedTab(
+    {
+      id: linkId,
+      type,
+    },
+    'asset'
+  );
   const assetsLink = createLink(
-    window.location.pathname.includes('/search')
-      ? `/explore/search/${type}/${linkId}/asset`
-      : `/explore/${type}/${linkId}/asset`
+    `/explore/search/${type}`,
+    getSearchParams(searchParams)
   );
   const assetsLinkText = `${assetIds.length} assets`;
   return (
@@ -174,6 +185,41 @@ export const AssetsItem = ({
       name="Linked asset(s)"
       value={assetsLinkText}
       link={assetsLink}
+    />
+  );
+};
+
+export const RootAssetItem = ({
+  assetId,
+  onClick = noop,
+}: {
+  assetId?: number;
+  onClick: (rootAsset: Asset) => void;
+}) => {
+  const { data: rootAsset } = useRootAssetQuery(assetId);
+  const { onCopy, hasCopied } = useClipboard();
+  const rootAssetName = rootAsset?.name || '';
+
+  const handleCopy = () => {
+    onCopy(rootAssetName);
+    toast.success(COPIED_TEXT);
+  };
+
+  const onClickHandler = () => {
+    rootAsset && onClick(rootAsset);
+  };
+
+  return (
+    <DetailsItem
+      name="Root Asset"
+      value={
+        <Flex wrap="wrap" gap={8} justifyContent="flex-end">
+          <RootAssetWrapper onClick={onClickHandler}>
+            {rootAssetName}
+          </RootAssetWrapper>
+          <CopyButton onClick={handleCopy} hasCopied={hasCopied} />
+        </Flex>
+      }
     />
   );
 };

@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
+import styled from 'styled-components';
+
 import { SortingState } from '@tanstack/react-table';
 
 import { Button } from '@cognite/cogs.js';
@@ -52,14 +54,20 @@ export const ListPage = () => {
           }}
         />
 
-        <Button
-          loading={isFetchingNextPage}
-          disabled={!hasNextPage}
-          onClick={() => fetchNextPage()}
-        >
-          Load more
-        </Button>
+        <ButtonContainer>
+          <Button
+            loading={isFetchingNextPage}
+            disabled={!hasNextPage}
+            onClick={() => fetchNextPage()}
+          >
+            Load more
+          </Button>
+        </ButtonContainer>
       </Page.Body>
     </Page>
   );
 };
+
+const ButtonContainer = styled.div`
+  padding: 16px 0;
+`;

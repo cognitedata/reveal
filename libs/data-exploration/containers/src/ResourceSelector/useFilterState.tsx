@@ -11,9 +11,9 @@ const initialState: FilterState = {
   asset: {},
   timeseries: {},
   file: {},
+  document: {},
   sequence: {},
   event: {},
-  document: {},
 };
 
 type Action = {
@@ -56,19 +56,27 @@ function reducer(state: FilterState, action: Action) {
 
 export const useFilterState = (initialFilter: Partial<FilterState> = {}) => {
   const [state, dispatch] = useReducer(reducer, {
-    ...initialFilter,
     ...initialState,
+    ...initialFilter,
   });
 
   const setter = (
     resourceType: FilterResourceType,
     nextValue: FilterState[keyof FilterState]
   ) => {
-    return dispatch({ value: nextValue, type: resourceType as any });
+    // The resource type  key come as 'timeSeries' but the filter state key has it in 'timeseries'
+    return dispatch({
+      value: nextValue,
+      type: resourceType.toLowerCase() as any,
+    });
   };
 
   const resetter = (resourceType: FilterResourceType) => {
-    dispatch({ clear: true, type: resourceType as any, value: {} });
+    dispatch({
+      clear: true,
+      type: resourceType.toLowerCase() as any,
+      value: {},
+    });
   };
   return { state, setter, resetter };
 };

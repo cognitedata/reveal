@@ -10,17 +10,28 @@ import ReactUnifiedViewer, {
   UnifiedViewer,
   ZoomToFitMode,
 } from '@cognite/unified-file-viewer';
+import { UnifiedViewerPointerEvent } from '@cognite/unified-file-viewer/dist/core/UnifiedViewerRenderer/UnifiedEventHandler';
 
 import ToolbarComponent from './components/ToolbarComponent';
 import ZoomControls from './components/ZoomControls';
-import { ZOOM_TO_FIT_MARGIN } from './constants';
+import {
+  STAGE_ALT_CLICK_ZOOM_LEVEL,
+  ZOOM_DURATION_SECONDS,
+  ZOOM_TO_FIT_MARGIN,
+  ZOOM_LEVELS,
+} from './constants';
 import useEditOnSelect from './hooks/useEditOnSelect';
 import useIndustryCanvasTooltips from './hooks/useIndustryCanvasTooltips';
 import { UseManagedStateReturnType } from './hooks/useManagedState';
 import { UseManagedToolsReturnType } from './hooks/useManagedTools';
 import { useTooltipsOptions } from './hooks/useTooltipsOptions';
 import { OnAddContainerReferences } from './IndustryCanvasPage';
-import { CanvasAnnotation, IndustryCanvasContainerConfig } from './types';
+import {
+  CanvasAnnotation,
+  CommentAnnotation,
+  IndustryCanvasContainerConfig,
+  IndustryCanvasToolType,
+} from './types';
 import { getIndustryCanvasConnectionAnnotations } from './utils/getIndustryCanvasConnectionAnnotations';
 import getContainerSummarizationSticky from './utils/getSummarizationSticky';
 import summarizeText from './utils/summarizeText';
@@ -35,8 +46,10 @@ export type IndustryCanvasProps = {
   viewerRef: UnifiedViewer | null;
   selectedContainer: IndustryCanvasContainerConfig | undefined;
   selectedCanvasAnnotation: CanvasAnnotation | undefined;
-  tool: ToolType;
-  setTool: Dispatch<SetStateAction<ToolType>>;
+  commentAnnotations: CommentAnnotation[];
+  tool: IndustryCanvasToolType;
+  setTool: Dispatch<SetStateAction<IndustryCanvasToolType>>;
+  isCanvasLocked: boolean;
 } & Pick<
   UseManagedStateReturnType,
   | 'container'
@@ -79,6 +92,8 @@ export const IndustryCanvas = ({
   onUpdateAnnotationStyleByType,
   shouldShowConnectionAnnotations,
   toolOptions,
+  commentAnnotations,
+  isCanvasLocked,
 }: IndustryCanvasProps) => {
   const sdk = useSDK();
 
@@ -136,23 +151,38 @@ export const IndustryCanvas = ({
     onUpdateAnnotationStyleByType,
     updateContainerById,
     removeContainerById,
+    commentAnnotations,
   });
 
-  const onStageClick = useCallback(() => {
-    // Sometimes the stage click event is fired when the user creates an annotation.
-    // We want the tooltip to stay open in this case.
-    // TODO: Bug tracked by https://cognitedata.atlassian.net/browse/UFV-507
-    if (tool === ToolType.LINE || tool === ToolType.ELLIPSE) {
-      return;
-    }
-    setInteractionState({
-      clickedContainerAnnotationId: undefined,
-      hoverId: undefined,
-    });
-  }, [setInteractionState, tool]);
+  const onStageClick = useCallback(
+    (e: UnifiedViewerPointerEvent) => {
+      // Sometimes the stage click event is fired when the user creates an annotation.
+      // We want the tooltip to stay open in this case.
+      // TODO: Bug tracked by https://cognitedata.atlassian.net/browse/UFV-507
+      if (
+        tool === IndustryCanvasToolType.LINE ||
+        tool === IndustryCanvasToolType.ELLIPSE
+      ) {
+        return;
+      }
+
+      if (e.evt.altKey) {
+        unifiedViewerRef.current?.setScale(STAGE_ALT_CLICK_ZOOM_LEVEL, {
+          duration: ZOOM_DURATION_SECONDS,
+        });
+      }
+
+      setInteractionState({
+        clickedContainerAnnotationId: undefined,
+        hoverId: undefined,
+      });
+    },
+    [setInteractionState, tool]
+  );
 
   const { handleSelect, getAnnotationEditHandlers } = useEditOnSelect(
     unifiedViewerRef,
+    tool,
     setTool
   );
 
@@ -202,6 +232,34 @@ export const IndustryCanvas = ({
     [onRef]
   );
 
+  const zoomIn = useCallback(() => {
+    if (viewerRef === null) {
+      return;
+    }
+
+    const currentScale = viewerRef.getScale();
+    const newScale = ZOOM_LEVELS.find((stepSize) => stepSize > currentScale);
+
+    viewerRef.setScale(newScale ?? currentScale, {
+      duration: ZOOM_DURATION_SECONDS,
+    });
+  }, [viewerRef]);
+
+  const zoomOut = useCallback(() => {
+    if (viewerRef === null) {
+      return;
+    }
+
+    const currentScale = viewerRef.getScale();
+    const newScale = ZOOM_LEVELS.slice()
+      .reverse()
+      .find((stepSize) => stepSize < currentScale);
+
+    viewerRef.setScale(newScale ?? currentScale, {
+      duration: ZOOM_DURATION_SECONDS,
+    });
+  }, [viewerRef]);
+
   return (
     <FullHeightWrapper>
       <ReactUnifiedViewer
@@ -213,7 +271,12 @@ export const IndustryCanvas = ({
         onClick={onStageClick}
         shouldShowZoomControls={false}
         setRef={handleRef}
-        tool={tool}
+        tool={
+          // TODO helperfunction here and clean up
+          tool === IndustryCanvasToolType.COMMENT
+            ? ToolType.RECTANGLE
+            : (tool as unknown as ToolType)
+        }
         onSelect={handleSelect}
         toolOptions={toolOptions}
         onDeleteRequest={onDeleteRequest}
@@ -230,13 +293,17 @@ export const IndustryCanvas = ({
         shouldAllowDragDrop={false} // We are using our own drag and drop handlers
       />
       <ToolbarWrapper>
-        <ToolbarComponent activeTool={tool} onToolChange={setTool} />
+        <ToolbarComponent
+          activeTool={tool}
+          onToolChange={setTool}
+          isCanvasLocked={isCanvasLocked}
+        />
       </ToolbarWrapper>
       <ZoomControlsWrapper>
         <ZoomControls
           currentZoomScale={currentZoomScale}
-          zoomIn={viewerRef?.zoomIn}
-          zoomOut={viewerRef?.zoomOut}
+          zoomIn={zoomIn}
+          zoomOut={zoomOut}
           zoomToFit={() => {
             viewerRef?.zoomToFit(ZoomToFitMode.DEFAULT, {
               relativeMargin: ZOOM_TO_FIT_MARGIN,

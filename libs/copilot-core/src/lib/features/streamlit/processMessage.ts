@@ -4,7 +4,7 @@ import { getChatCompletions } from '@data-exploration-lib/domain-layer';
 
 import { CopilotMessage, ProcessMessageFunc } from '../../types';
 import {
-  FromCopilotEvent,
+  sendFromCopilotEvent,
   createToCopilotEventHandler,
   addToCopilotEventListener,
 } from '../../utils';
@@ -51,11 +51,9 @@ export const processMessageStreamlit: ProcessMessageFunc = async (
         {
           content: 'Use code',
           onClick: () => {
-            window.dispatchEvent(
-              FromCopilotEvent('SEND_CODE', {
-                content: newCode,
-              })
-            );
+            sendFromCopilotEvent('SEND_CODE', {
+              content: newCode,
+            });
           },
         },
       ],
@@ -95,9 +93,7 @@ const generateNewApp = async (query: string) => {
       }
     )
   );
-  window.dispatchEvent(
-    FromCopilotEvent<StreamlitEvents, 'GET_CODE'>('GET_CODE', null)
-  );
+  sendFromCopilotEvent<StreamlitEvents, 'GET_CODE'>('GET_CODE', null);
 
   const response = await getChatCompletions(
     {

@@ -15,6 +15,7 @@ import {
   DATA_EXPLORATION_COMPONENT,
   TIME_SELECT,
   useMetrics,
+  zIndex,
 } from '@data-exploration-lib/core';
 
 const determinePeriod = (value: DateRange | undefined | null) => {
@@ -144,6 +145,13 @@ export const DateFilter = ({
         isMulti={false}
         cogsTheme="grey"
         onChange={handleOnChange}
+        styles={{
+          menuPortal: (base) => ({ ...base, zIndex: zIndex.MAXIMUM }),
+          menu: (provided) => ({
+            ...provided,
+            zIndex: `${zIndex.MAXIMUM} !important`,
+          }),
+        }}
       />
       {(period === 'after' || period === 'before') && (
         <div style={{ marginTop: 8 }}>

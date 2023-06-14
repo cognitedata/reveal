@@ -27,8 +27,8 @@ import {
   useCurrentResourceId,
   useOnPreviewTabChange,
 } from '@data-exploration-app/hooks/hooks';
-import { APPLICATION_ID } from '@data-exploration-app/utils/constants';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
+import { APPLICATION_ID } from '@data-exploration-lib/core';
 
 export type FilePreviewTabType =
   | 'preview'

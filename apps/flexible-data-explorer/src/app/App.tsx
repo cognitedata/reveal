@@ -1,9 +1,13 @@
+import { ErrorBoundary } from 'react-error-boundary';
 import { BrowserRouter as Router } from 'react-router-dom';
 
-import { QueryClientProvider } from '@tanstack/react-query';
+import {
+  QueryErrorResetBoundary,
+  QueryClientProvider,
+} from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
-import { ToastContainer } from '@cognite/cogs.js';
+import { Button, ToastContainer } from '@cognite/cogs.js';
 import { SDKProvider } from '@cognite/sdk-provider';
 
 import { useAuthContext } from './common/auth/AuthProvider';
@@ -20,7 +24,23 @@ function App() {
         <ReactQueryDevtools initialIsOpen={false} />
         <ToastContainer />
         <TopBar />
-        <Router window={window} children={<Routes />} />
+        <QueryErrorResetBoundary>
+          {({ reset }) => (
+            <ErrorBoundary
+              onReset={reset}
+              fallbackRender={({ resetErrorBoundary }) => (
+                <div>
+                  There was an error!
+                  <Button onClick={() => resetErrorBoundary()}>
+                    Try again!
+                  </Button>
+                </div>
+              )}
+            >
+              <Router window={window} children={<Routes />} />
+            </ErrorBoundary>
+          )}
+        </QueryErrorResetBoundary>
       </QueryClientProvider>
     </SDKProvider>
   );

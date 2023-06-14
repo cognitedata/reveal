@@ -1,4 +1,5 @@
 import { Dispatch, SetStateAction, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import styled from 'styled-components';
 
@@ -39,6 +40,7 @@ type CanvasDropdownProps = Pick<
   | 'setCanvasId'
 > & {
   setIsEditingTitle: Dispatch<SetStateAction<boolean>>;
+  isCanvasLocked: boolean;
 };
 
 const CanvasDropdown: React.FC<CanvasDropdownProps> = ({
@@ -51,9 +53,11 @@ const CanvasDropdown: React.FC<CanvasDropdownProps> = ({
   isCreatingCanvas,
   setIsEditingTitle,
   setCanvasId,
+  isCanvasLocked,
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchString, setSearchString] = useState('');
+  const navigate = useNavigate();
   const { filteredCanvases } = useCanvasSearch({
     canvases,
     searchString,
@@ -71,6 +75,9 @@ const CanvasDropdown: React.FC<CanvasDropdownProps> = ({
   };
 
   const onDeleteCanvas = (canvas: SerializedCanvasDocument) => {
+    if (isCanvasLocked) {
+      return;
+    }
     setCanvasToDelete(canvas);
     setIsMenuOpen(false);
   };
@@ -85,8 +92,21 @@ const CanvasDropdown: React.FC<CanvasDropdownProps> = ({
   };
 
   const onRenameCanvasClick = () => {
+    if (isCanvasLocked) {
+      return;
+    }
+
     setIsEditingTitle(true);
     setIsMenuOpen(false);
+  };
+
+  const onCreateCanvasClick = async () => {
+    const { externalId } = await createCanvas({
+      canvasAnnotations: [],
+      container: EMPTY_FLEXIBLE_LAYOUT,
+    });
+
+    navigate(getCanvasLink(externalId));
   };
 
   return (
@@ -124,6 +144,7 @@ const CanvasDropdown: React.FC<CanvasDropdownProps> = ({
                     <CanvasSubmenu
                       canvas={activeCanvas}
                       isActiveCanvas
+                      isCanvasLocked={isCanvasLocked}
                       onRenameCanvasClick={onRenameCanvasClick}
                       onCopyLinkClick={onCopyLinkClick}
                       onDeleteCanvasClick={onDeleteCanvas}
@@ -141,6 +162,7 @@ const CanvasDropdown: React.FC<CanvasDropdownProps> = ({
                       <CanvasSubmenu
                         canvas={canvas}
                         isActiveCanvas={false}
+                        isCanvasLocked={isCanvasLocked}
                         onRenameCanvasClick={onRenameCanvasClick}
                         onCopyLinkClick={onCopyLinkClick}
                         onDeleteCanvasClick={onDeleteCanvas}
@@ -158,12 +180,7 @@ const CanvasDropdown: React.FC<CanvasDropdownProps> = ({
               type="primary"
               icon="Plus"
               loading={isCreatingCanvas || isSavingCanvas || isLoadingCanvas}
-              onClick={() => {
-                createCanvas({
-                  canvasAnnotations: [],
-                  container: EMPTY_FLEXIBLE_LAYOUT,
-                });
-              }}
+              onClick={onCreateCanvasClick}
             >
               Create new canvas
             </CreateCanvasButton>

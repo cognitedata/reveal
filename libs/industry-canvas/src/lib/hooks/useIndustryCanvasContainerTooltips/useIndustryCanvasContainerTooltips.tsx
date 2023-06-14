@@ -4,6 +4,7 @@ import {
   ContainerType,
   getPdfCache,
   TooltipAnchorPosition,
+  TooltipConfig,
 } from '@cognite/unified-file-viewer';
 
 import { IndustryCanvasContainerConfig } from '../../types';
@@ -36,13 +37,13 @@ const useIndustryCanvasContainerTooltips = ({
     text: string,
     isMultiPageDocument: boolean
   ) => void;
-}) => {
+}): TooltipConfig[] => {
   const [numberOfPages, setNumberOfPages] = useState<number | undefined>(
     undefined
   );
   const [isLoadingSummary, setIsLoadingSummary] = useState(false);
 
-  const { isLoading: isOcrDataLoading, data: ocrData } =
+  const { isInitialLoading: isOcrDataLoading, data: ocrData } =
     useContainerOcrData(selectedContainer);
 
   useEffect(() => {
@@ -71,7 +72,7 @@ const useIndustryCanvasContainerTooltips = ({
       return [];
     }
 
-    return [
+    const tooltipConfigs: TooltipConfig[] = [
       {
         targetId: selectedContainer.id,
         content: (
@@ -94,8 +95,10 @@ const useIndustryCanvasContainerTooltips = ({
           />
         ),
         anchorTo: TooltipAnchorPosition.TOP_RIGHT,
+        shouldPositionStrictly: true,
       },
     ];
+    return tooltipConfigs;
   }, [
     containers,
     selectedContainer,

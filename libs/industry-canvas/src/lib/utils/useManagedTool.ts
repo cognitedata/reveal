@@ -1,13 +1,16 @@
 import { useEffect, useState } from 'react';
 
-import { ToolType } from '@cognite/unified-file-viewer';
-
-import { ToolTypeByShortcutKey } from '../components/ToolbarComponent/ToolbarComponent';
+import { IndustryCanvasToolTypeByShortcutKey } from '../components/ToolbarComponent/ToolbarComponent';
+import { IndustryCanvasToolType } from '../types';
 
 import shouldFireToolKeyboardShortcut from './shouldFireToolKeyboardShortcut';
 
-const useManagedTool = (initialToolType: ToolType) => {
-  const [tool, setTool] = useState<ToolType>(initialToolType);
+const useManagedTool = (
+  initialIndustryCanvasToolType: IndustryCanvasToolType
+) => {
+  const [tool, setTool] = useState<IndustryCanvasToolType>(
+    initialIndustryCanvasToolType
+  );
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -15,9 +18,10 @@ const useManagedTool = (initialToolType: ToolType) => {
         return;
       }
 
-      const matchingToolType = ToolTypeByShortcutKey[event.key];
-      if (matchingToolType !== undefined) {
-        setTool(matchingToolType);
+      const matchingIndustryCanvasToolType =
+        IndustryCanvasToolTypeByShortcutKey[event.key];
+      if (matchingIndustryCanvasToolType !== undefined) {
+        setTool(matchingIndustryCanvasToolType);
       }
     };
 

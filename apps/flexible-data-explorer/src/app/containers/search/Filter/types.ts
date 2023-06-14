@@ -1,12 +1,25 @@
-import {
-  Operator,
-  StringOperator,
-  NumberOperator,
-  DateOperator,
-  BooleanOperator,
-} from './operators';
-
-export * from './operators';
+export enum Operator {
+  STARTS_WITH = 'Starts with',
+  NOT_STARTS_WITH = 'Does not start with',
+  CONTAINS = 'Contains',
+  NOT_CONTAINS = 'Does not contain',
+  BETWEEN = 'Is between',
+  NOT_BETWEEN = 'Is not between',
+  GREATER_THAN = 'Is greater than',
+  LESS_THAN = 'Is less than',
+  EQUALS = 'Is equal to',
+  NOT_EQUALS = 'Is not equal to',
+  BEFORE = 'Is before',
+  NOT_BEFORE = 'Is not before',
+  AFTER = 'Is after',
+  NOT_AFTER = 'Is not after',
+  ON = 'Is on',
+  NOT_ON = 'Is not on',
+  IS_TRUE = 'Is true',
+  IS_FALSE = 'Is false',
+  IS_SET = 'Is set',
+  IS_NOT_SET = 'Is not set',
+}
 
 export type NumericRange = [number, number];
 
@@ -22,30 +35,27 @@ export type InputValueTypeMap = {
   'no-input': never;
 };
 
-export type ValueType<K extends keyof InputValueTypeMap> = InputValueTypeMap[K];
+export type InputType =
+  | 'string'
+  | 'number'
+  | 'numeric-range'
+  | 'date'
+  | 'date-range'
+  | 'boolean'
+  | 'no-input';
 
-export type InputType = keyof InputValueTypeMap;
+export type ValueType =
+  | string
+  | number
+  | NumericRange
+  | Date
+  | DateRange
+  | boolean
+  | never;
 
-export interface InputControlProps<T extends InputType> {
-  value?: ValueType<T>;
-  onChange: (value: ValueType<T>) => void;
-}
-
-export type BaseConfig = Record<string, InputType>;
-
-export type ApplyFilterCallback<TConfig extends BaseConfig> = <
-  K extends keyof TConfig
->(
-  operator: K,
-  value: ValueType<TConfig[K]>
-) => void;
-
-export interface BaseFilterProps<T extends Operator> {
-  operators?: T[];
-  value?: FieldValue;
-  name: string;
-  onBackClick: () => void;
-  onApplyClick: (operator: T, value: ValueType<InputType>) => void;
+export interface InputControlProps<T extends ValueType> {
+  value?: T;
+  onChange: (value: T) => void;
 }
 
 export interface DataType {
@@ -53,29 +63,23 @@ export interface DataType {
   description?: string;
 }
 
-export interface Field {
-  name: string;
-  type: FieldType;
-}
-
-export type FieldType = 'string' | 'number' | 'date' | 'boolean';
-
-export interface OperatorConfig {
-  string: StringOperator[];
-  number: NumberOperator[];
-  date: DateOperator[];
-  boolean: BooleanOperator[];
-}
-
 export interface DataTypeOption extends DataType {
   fields: Field[];
 }
 
-export interface FieldValue {
-  operator: Operator;
-  value: ValueType<InputType>;
+export type FieldType = 'string' | 'number' | 'date' | 'boolean';
+
+export interface Field {
+  name: string;
+  type: FieldType;
+  operators?: Operator[];
 }
+
+export type ValueByDataType = Record<string, ValueByField>;
 
 export type ValueByField = Record<string, FieldValue>;
 
-export type ValueByDataType = Record<string, ValueByField>;
+export interface FieldValue {
+  operator: Operator;
+  value: ValueType;
+}

@@ -378,6 +378,7 @@ export const useTaggedAnnotationsByResourceType = (
   isFetching: boolean;
   isError: boolean;
   isLoading: boolean;
+  isInitialLoading: boolean;
 } => {
   const { data: _file = {} } = useCdfItem<{ externalId?: string }>(
     'files',
@@ -391,7 +392,8 @@ export const useTaggedAnnotationsByResourceType = (
     isFetched,
     isError,
     isLoading,
-  } = useAnnotations(fileId);
+    isInitialLoading,
+  } = useAnnotations(fileId, { enabled });
 
   const annotations = useMemo(
     () =>
@@ -428,6 +430,7 @@ export const useTaggedAnnotationsByResourceType = (
     isFetching,
     isError,
     isLoading,
+    isInitialLoading,
   };
 };
 

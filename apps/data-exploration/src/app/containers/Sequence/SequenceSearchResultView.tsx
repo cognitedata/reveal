@@ -20,25 +20,52 @@ import {
 } from '@data-exploration-app/hooks/hooks';
 import { useSequenceFilters } from '@data-exploration-app/store';
 import { SEARCH_KEY } from '@data-exploration-app/utils/constants';
+import { getSelectedResourceId } from '@data-exploration-lib/core';
+
+import {
+  useBreakJourneyPromptToggle,
+  useGetJourney,
+  useJourneyLength,
+  usePushJourney,
+} from '../../hooks/detailsNavigation';
+import { useFlagOverlayNavigation } from '../../hooks/flags';
 
 export const SequenceSearchResultView = () => {
   const [, openPreview] = useCurrentResourceId();
   const [sequenceFilter, setSequenceFilter] = useSequenceFilters();
   const [query] = useQueryString(SEARCH_KEY);
   const [debouncedQuery] = useDebounce(query, 100);
+  const isDetailsOverlayEnabled = useFlagOverlayNavigation();
+  const [pushJourney] = usePushJourney();
+  const [firstJourney] = useGetJourney();
+  const [journeyLength] = useJourneyLength();
+  const [, setPromptOpen] = useBreakJourneyPromptToggle();
 
   // Here we need to parse params to find selected sequence's id.
-  const selectedSequenceId = useSelectedResourceId();
+  const selectedSequenceId = getSelectedResourceId('sequence', firstJourney);
   const selectedRootAssetId = useSelectedResourceId(true);
 
   const selectedRow = selectedSequenceId ? { [selectedSequenceId]: true } : {};
 
   const handleRowClick = <T extends Omit<ResourceItem, 'type'>>(item: T) => {
-    openPreview(item.id);
+    if (isDetailsOverlayEnabled) {
+      if (journeyLength > 1) {
+        // If there is a journey going on (i.e. journey length is more than 1), then show the prompt modal.
+        setPromptOpen(true, { id: item.id, type: 'sequence' });
+      } else {
+        pushJourney({ ...item, type: 'sequence' }, true);
+      }
+    } else {
+      openPreview(item.id);
+    }
   };
 
   const handleRootAssetClick = (rootAsset: Asset, resourceId?: number) => {
-    openPreview(resourceId, false, ResourceTypes.Asset, rootAsset.id);
+    if (isDetailsOverlayEnabled) {
+      pushJourney({ id: rootAsset.id, type: 'asset' });
+    } else {
+      openPreview(resourceId, false, ResourceTypes.Asset, rootAsset.id);
+    }
   };
 
   return (
@@ -61,7 +88,7 @@ export const SequenceSearchResultView = () => {
         />
       </SearchResultWrapper>
 
-      {Boolean(selectedSequenceId) && (
+      {!isDetailsOverlayEnabled && Boolean(selectedSequenceId) && (
         <SearchResultWrapper>
           <Routes>
             <Route

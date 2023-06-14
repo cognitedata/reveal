@@ -416,7 +416,7 @@ export function Table<T extends TableData>({
                         }}
                       />
 
-                      {enableColumnResizing ? (
+                      {enableColumnResizing && header.id !== 'select' ? (
                         <ResizerWrapper
                           {...{
                             onMouseDown: header.getResizeHandler(),

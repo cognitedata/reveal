@@ -127,11 +127,11 @@ export const ResourceSelector = ({
               [resourceType]: mapValues(
                 updater(
                   mapValues(prev[resourceType], function (resourceItem) {
-                    return Boolean(resourceItem.id);
+                    return Boolean(resourceItem?.id);
                   })
                 ),
                 function (_, key) {
-                  return currentData.find((item) => String(item.id) === key);
+                  return currentData.find((item) => String(item?.id) === key);
                 }
               ),
             };
@@ -139,7 +139,7 @@ export const ResourceSelector = ({
           return {
             ...prev,
             [resourceType]: mapValues(updater, function (_, key) {
-              return currentData.find((item) => String(item.id) === key);
+              return currentData.find((item) => String(item?.id) === key);
             }),
           };
         }
@@ -215,6 +215,7 @@ export const ResourceSelector = ({
                     <AssetsTab
                       key={tab}
                       tabKey={ViewType.Asset}
+                      label="Assets"
                       query={debouncedQuery}
                       filter={{ ...state.common, ...state.asset }}
                     />
@@ -225,7 +226,8 @@ export const ResourceSelector = ({
                       key={tab}
                       tabKey={ViewType.Event}
                       query={debouncedQuery}
-                      filter={state.event}
+                      filter={{ ...state.common, ...state.event }}
+                      label="Events"
                     />
                   );
                 if (tab === 'file')
@@ -234,7 +236,8 @@ export const ResourceSelector = ({
                       key={tab}
                       tabKey={ViewType.File}
                       query={debouncedQuery}
-                      filter={state.document}
+                      filter={{ ...state.common, ...state.document }}
+                      label="Files"
                     />
                   );
                 if (tab === 'timeSeries')
@@ -243,7 +246,8 @@ export const ResourceSelector = ({
                       key={tab}
                       tabKey={ViewType.TimeSeries}
                       query={debouncedQuery}
-                      filter={state.timeseries}
+                      filter={{ ...state.common, ...state.timeseries }}
+                      label="Time Series"
                     />
                   );
                 if (tab === 'sequence')
@@ -251,7 +255,8 @@ export const ResourceSelector = ({
                     <SequenceTab
                       tabKey={ViewType.Sequence}
                       query={debouncedQuery}
-                      filter={state.sequence}
+                      filter={{ ...state.common, ...state.sequence }}
+                      label="Sequence"
                     />
                   );
                 return (
@@ -268,7 +273,10 @@ export const ResourceSelector = ({
                 query={debouncedQuery}
                 resourceType={activeKey}
                 onFilterChange={(nextState) => {
-                  setter(activeKey, nextState);
+                  setter(
+                    activeKey === 'file' ? 'document' : activeKey,
+                    nextState
+                  );
                 }}
                 onClick={({ id, externalId }) => {
                   setPreviewItem({ id, externalId, type: activeKey });
@@ -288,6 +296,7 @@ export const ResourceSelector = ({
                 isSelected={Boolean(
                   selectedRows[previewItem.type][previewItem.id]
                 )}
+                visibleResources={visibleResourceTabs}
               />
             </ResourcePreviewSidebarWrapper>
           )}
@@ -304,6 +313,7 @@ export const ResourceSelector = ({
                   onSelect(allSelectedRows as any);
                 if (selectionMode === 'single')
                   onSelect(allSelectedRows[0] as any);
+                setSelectedRows(initialSelectedRows);
               }}
               inverted
               type="secondary"
@@ -365,6 +375,7 @@ const MainContainer = styled(Flex)<{ isFilterFeatureEnabled?: boolean }>`
     isFilterFeatureEnabled ? '0px' : '16px'};
   height: 100%;
   flex: 1;
+  padding-bottom: 50px;
   overflow: auto;
 `;
 

@@ -45,9 +45,11 @@ export const ResourceSelectorTable = ({
     enableSelection: selectionMode === 'multiple',
     id: `${resourceType}-resource-selector`,
     query,
-    filter: { ...filter.common, ...filter[resourceType as keyof FilterState] },
     selectedRows: selectedRows[resourceType],
-
+    filter: {
+      ...filter.common,
+      ...filter[resourceType.toLowerCase() as keyof FilterState],
+    },
     onRowSelection: (
       updater: Updater<RowSelectionState>,
       data: ResourceItem[]
@@ -79,10 +81,6 @@ export const ResourceSelectorTable = ({
     onClick,
     onFilterChange,
   };
-  const documentProps = {
-    ...commonProps,
-    filter: filter.document,
-  };
 
   switch (resourceType) {
     case 'asset':
@@ -91,7 +89,13 @@ export const ResourceSelectorTable = ({
       );
 
     case 'file':
-      return <DocumentSearchResults {...documentProps} />;
+      return (
+        <DocumentSearchResults
+          {...commonProps}
+          hideUploadButton={true}
+          filter={{ ...filter.common, ...filter.document }}
+        />
+      );
     case 'event':
       return <EventSearchResults showCount {...commonProps} />;
     case 'timeSeries':

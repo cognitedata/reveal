@@ -26,17 +26,19 @@ export const PageBody: React.FC<PropsWithChildren<Props>> = ({
 };
 
 const Container = styled.div`
-  background-color: var(--default-bg-color)
-  overflow: auto;
+  height: 100%;
   display: flex;
   justify-content: center;
-  position: relative;
+  /* overflow: auto; */
+  /* position: relative; */
 `;
 
 const Content = styled.div<{ compact?: boolean }>`
   ${(props) => (props.compact ? `max-width: 1024px;` : '')}
   width: 100%;
   height: 100%;
-  overflow: auto;
-  padding-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  /* overflow: auto; */
+  /* padding-bottom: 16px; */
 `;

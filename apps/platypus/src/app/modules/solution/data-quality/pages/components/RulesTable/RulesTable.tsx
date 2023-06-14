@@ -1,30 +1,30 @@
-import { useContext } from 'react';
-
-import { RuleDto, useListAllRules } from '@data-quality/codegen';
+import { RuleDto, useListAllRules } from '@data-quality/api/codegen';
+import { useLoadDataSource } from '@data-quality/hooks';
 import { BasicPlaceholder } from '@platypus-app/components/BasicPlaceholder/BasicPlaceholder';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
 import { Body, Flex, Table, TableColumn, Title } from '@cognite/cogs.js';
 
-import DataQualityContext from '../../../context/DataQualityContext';
-
 import { renderNameColumn, renderSeverityColumn } from './helpers';
 
 export const RulesTable = () => {
   const { t } = useTranslation('RulesTable');
 
-  const { dataQualityState } = useContext(DataQualityContext);
+  const { dataSource } = useLoadDataSource();
 
   const {
     data: rulesData,
     isLoading: rulesLoading,
     error: rulesError,
-  } = useListAllRules({
-    pathParams: {
-      dataSourceId: dataQualityState.dataSourceId,
+  } = useListAllRules(
+    {
+      pathParams: {
+        dataSourceId: dataSource?.externalId,
+      },
     },
-  });
+    { enabled: !!dataSource?.externalId }
+  );
 
   const tableColumns: TableColumn<RuleDto>[] = [
     {
@@ -51,7 +51,7 @@ export const RulesTable = () => {
         <BasicPlaceholder
           type="EmptyStateFolderSad"
           title={t(
-            'data_quality_rules_not_found',
+            'data_quality_not_found_rules',
             "Something went wrong. We couldn't load the rules."
           )}
         >

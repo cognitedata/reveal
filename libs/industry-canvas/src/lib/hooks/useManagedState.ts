@@ -8,12 +8,14 @@ import {
   useState,
 } from 'react';
 
+import { debounce, isEqual } from 'lodash';
+
 import { useSDK } from '@cognite/sdk-provider';
 import {
   Annotation,
   ContainerConfig,
   ContainerType,
-  ToolType,
+  IdsByType,
   UnifiedViewer,
   UnifiedViewerEventListenerMap,
   UnifiedViewerEventType,
@@ -22,7 +24,11 @@ import {
 
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
 
-import { SHAMEFUL_WAIT_TO_ENSURE_ANNOTATIONS_ARE_RENDERED_MS } from '../constants';
+import {
+  SHAMEFUL_WAIT_TO_ENSURE_ANNOTATIONS_ARE_RENDERED_MS,
+  ZOOM_TO_FIT_MARGIN,
+  ZOOM_DURATION_SECONDS,
+} from '../constants';
 import { useIndustryCanvasContext } from '../IndustryCanvasContext';
 import {
   CanvasAnnotation,
@@ -30,13 +36,21 @@ import {
   SerializedCanvasDocument,
   IndustryCanvasContainerConfig,
   IndustryCanvasState,
+  IndustryCanvasToolType,
+  COMMENT_METADATA_ID,
+  isCommentAnnotation,
+  SerializedIndustryCanvasState,
+  isIndustryCanvasContainerConfig,
 } from '../types';
 import addDimensionsIfNotExists from '../utils/addDimensionsIfNotExists';
 import {
   deserializeCanvasDocument,
+  getRemovedIdsByType,
   serializeCanvasState,
 } from '../utils/utils';
 
+import { useCommentSaveMutation } from './use-mutation/useCommentSaveMutation';
+import { useUserProfile } from './use-query/useUserProfile';
 import {
   UseCanvasStateHistoryReturnType,
   useHistory,
@@ -196,19 +210,62 @@ const addNewContainers = (
   };
 };
 
+const SAVE_CANVAS_DEBOUNCE_TIME_MS = 700;
+const debouncedSaveCanvas = debounce(
+  async (
+    activeCanvas: SerializedCanvasDocument,
+    serializedData: SerializedIndustryCanvasState,
+    saveCanvas: (canvas: SerializedCanvasDocument) => Promise<void>,
+    deleteCanvasIdsByType: ({
+      ids,
+      canvasExternalId,
+    }: {
+      ids: IdsByType;
+      canvasExternalId: string;
+    }) => Promise<void>
+  ) => {
+    // Delete the annotations and containers nodes that have been removed from the canvas
+    await deleteCanvasIdsByType({
+      canvasExternalId: activeCanvas.externalId,
+      ids: getRemovedIdsByType(activeCanvas.data, serializedData),
+    });
+    await saveCanvas({
+      ...activeCanvas,
+      data: serializedData,
+    });
+  },
+  SAVE_CANVAS_DEBOUNCE_TIME_MS
+);
+
 const useAutoSaveState = (
   canvasState: IndustryCanvasState,
   hasFinishedInitialLoad: boolean,
   activeCanvas: SerializedCanvasDocument | undefined,
-  saveCanvas: (canvas: SerializedCanvasDocument) => Promise<void>
+  saveCanvas: (canvas: SerializedCanvasDocument) => Promise<void>,
+  deleteCanvasIdsByType: ({
+    ids,
+    canvasExternalId,
+  }: {
+    ids: IdsByType;
+    canvasExternalId: string;
+  }) => Promise<void>
 ) => {
   useEffect(() => {
-    if (hasFinishedInitialLoad && activeCanvas !== undefined) {
-      saveCanvas({
-        ...activeCanvas,
-        data: serializeCanvasState(canvasState),
-      });
+    if (!hasFinishedInitialLoad || activeCanvas === undefined) {
+      return;
     }
+
+    const serializedData = serializeCanvasState(canvasState);
+    if (isEqual(serializedData, activeCanvas.data)) {
+      return;
+    }
+
+    debouncedSaveCanvas(
+      activeCanvas,
+      serializedData,
+      saveCanvas,
+      deleteCanvasIdsByType
+    );
     // activeCanvas will change with every save, so we don't want to include it in the dependency array
     // if included, it will lead to an infinite loop
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -252,7 +309,8 @@ const usePersistence = (
   canvasState: IndustryCanvasState,
   replaceState: (state: IndustryCanvasState) => void
 ) => {
-  const { activeCanvas, saveCanvas } = useIndustryCanvasContext();
+  const { activeCanvas, saveCanvas, deleteCanvasIdsByType } =
+    useIndustryCanvasContext();
   const { hasFinishedInitialLoad } = useAutoLoadState(
     activeCanvas,
     replaceState
@@ -261,16 +319,19 @@ const usePersistence = (
     canvasState,
     hasFinishedInitialLoad,
     activeCanvas,
-    saveCanvas
+    saveCanvas,
+    deleteCanvasIdsByType
   );
 };
 
 const useManagedState = ({
   unifiedViewer,
   setTool,
+  tool,
 }: {
   unifiedViewer: UnifiedViewer | null;
-  setTool: Dispatch<SetStateAction<ToolType>>;
+  tool: IndustryCanvasToolType;
+  setTool: Dispatch<SetStateAction<IndustryCanvasToolType>>;
 }): UseManagedStateReturnType => {
   const sdk = useSDK();
   const [interactionState, setInteractionState] = useState<InteractionState>({
@@ -280,38 +341,82 @@ const useManagedState = ({
   const { canvasState, undo, redo, pushState, replaceState } = useHistory();
   usePersistence(canvasState, replaceState);
 
+  const { mutate: saveComment } = useCommentSaveMutation();
+
+  // default profile to empty string to avoid undefined errors, this should never happen
+  const { data: profile = { userIdentifier: '' } } = useUserProfile();
+
+  const { userIdentifier } = profile;
+
+  const { activeCanvas = { externalId: '' } } = useIndustryCanvasContext();
+  const { externalId: activeCanvasExternalId } = activeCanvas;
   const onUpdateRequest: UpdateHandlerFn = useCallback(
-    ({ containers: updatedContainers, annotations: updatedAnnotations }) =>
+    ({ containers: updatedContainers, annotations: updatedAnnotations }) => {
+      const validUpdatedContainers = updatedContainers.filter(
+        isIndustryCanvasContainerConfig
+      );
+      if (
+        validUpdatedContainers.length === 0 &&
+        updatedAnnotations.length === 0
+      ) {
+        return;
+      }
+
       pushState(({ container, canvasAnnotations }) => {
         // If there is only one annotation in the update set, select it
         if (updatedAnnotations.length === 1) {
+          // Augment the annotation with the comment metadata if the tool is comment
+          if (tool === IndustryCanvasToolType.COMMENT) {
+            updatedAnnotations[0].isSelectable = false;
+            updatedAnnotations[0].metadata = {
+              ...updatedAnnotations[0].metadata,
+              [COMMENT_METADATA_ID]: true,
+            };
+            saveComment({
+              externalId: updatedAnnotations[0].id,
+              text: '',
+              author: userIdentifier,
+              canvas: { externalId: activeCanvasExternalId },
+            });
+          }
           setInteractionState({
             hoverId: undefined,
             clickedContainerAnnotationId: updatedAnnotations[0].id,
           });
-          setTool(ToolType.SELECT);
+          setTool(IndustryCanvasToolType.SELECT);
 
           unifiedViewer?.once(UnifiedViewerEventType.ON_TOOL_CHANGE, () => {
             // It takes a little bit of time before the annotation is added, hence the timeout.
             // TODO: This is somewhat brittle and hacky. We should find a better way to do this.
-            setTimeout(() => {
-              unifiedViewer?.selectByIds({
-                annotationIds: [updatedAnnotations[0].id],
-                containerIds: [],
-              });
-            }, SHAMEFUL_WAIT_TO_ENSURE_ANNOTATIONS_ARE_RENDERED_MS);
+            if (!isCommentAnnotation(updatedAnnotations[0])) {
+              setTimeout(() => {
+                unifiedViewer?.selectByIds({
+                  annotationIds: [updatedAnnotations[0].id],
+                  containerIds: [],
+                });
+              }, SHAMEFUL_WAIT_TO_ENSURE_ANNOTATIONS_ARE_RENDERED_MS);
+            }
           });
         }
 
         return {
-          container: getNextUpdatedContainer(container, updatedContainers),
+          container: getNextUpdatedContainer(container, validUpdatedContainers),
           canvasAnnotations: getNextUpdatedAnnotations(
             canvasAnnotations,
             updatedAnnotations
           ),
         };
-      }),
-    [pushState, setTool, unifiedViewer]
+      });
+    },
+    [
+      pushState,
+      setTool,
+      unifiedViewer,
+      tool,
+      activeCanvasExternalId,
+      saveComment,
+      userIdentifier,
+    ]
   );
 
   const onDeleteRequest: DeleteHandlerFn = useCallback(
@@ -359,9 +464,16 @@ const useManagedState = ({
           hoverId: undefined,
           clickedContainerAnnotationId: undefined,
         });
+
+        if (e.evt.altKey) {
+          unifiedViewer?.zoomToContainerById(containerConfig.id, {
+            relativeMargin: ZOOM_TO_FIT_MARGIN,
+            duration: ZOOM_DURATION_SECONDS,
+          });
+        }
       },
     }),
-    []
+    [unifiedViewer]
   );
 
   const addContainerReferences = useCallback(

@@ -23,6 +23,7 @@ export interface CreateDataModelVersionDTO {
   /** GraphQL schema as string */
   schema: string;
   version?: string;
+  previousVersion?: string;
   bindings?: DataModelStorageBindingsDTO[];
   /**
    * When resource was created
@@ -42,4 +43,5 @@ export interface CreateDataModelVersionDTO {
 
 export interface PublishDataModelVersionDTO extends DataModelVersion {
   bindings?: DataModelStorageBindingsDTO[];
+  previousVersion?: string;
 }

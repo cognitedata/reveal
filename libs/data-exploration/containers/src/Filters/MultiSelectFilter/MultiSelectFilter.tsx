@@ -15,6 +15,7 @@ import isEmpty from 'lodash/isEmpty';
 
 import { OptionType } from '@cognite/cogs.js';
 
+import { zIndex } from '@data-exploration-lib/core';
 import { NIL_FILTER_LABEL } from '@data-exploration-lib/domain-layer';
 
 import { MultiSelectOptionType } from '../types';
@@ -95,6 +96,13 @@ export const MultiSelectFilter = <ValueType,>({
         isClearable
         menuPosition="fixed"
         theme="grey"
+        styles={{
+          menuPortal: (base) => ({ ...base, zIndex: zIndex.MAXIMUM }),
+          menu: (provided) => ({
+            ...provided,
+            zIndex: `${zIndex.MAXIMUM} !important`,
+          }),
+        }}
       />
     </>
   );

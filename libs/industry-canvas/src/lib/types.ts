@@ -136,6 +136,22 @@ type ResourceMetadata = {
 };
 export type IndustryCanvasContainerConfig = ContainerConfig<ResourceMetadata>;
 
+// TODO: We should improve the typing here -- update this together with the TODO above.
+export const isIndustryCanvasContainerConfig = (
+  container: ContainerConfig
+): container is IndustryCanvasContainerConfig => {
+  if (container.type === ContainerType.FLEXIBLE_LAYOUT) {
+    return 'metadata' in container;
+  }
+
+  const metadata = container.metadata;
+  if (container.type === ContainerType.REVEAL) {
+    return metadata !== undefined && 'modelId' in metadata;
+  }
+
+  return metadata !== undefined && 'resourceId' in container.metadata;
+};
+
 export type IndustryCanvasTimeSeriesContainerConfig =
   Metadata<ResourceMetadata> & TimeseriesContainerProps<ResourceMetadata>;
 
@@ -158,21 +174,57 @@ export type SerializedIndustryCanvasState = {
 export type UserIdentifier = string;
 type ISOString = string;
 
-export type CanvasDocument = {
+export type CanvasMetadata = {
   externalId: string;
   name: string;
   isArchived?: boolean;
 
-  createdAt: ISOString;
+  readonly createdTime: ISOString;
   createdBy: UserIdentifier;
 
-  updatedAt: ISOString;
+  updatedTime: ISOString;
   updatedBy: UserIdentifier;
-
-  version: number;
-  data: IndustryCanvasState;
 };
+
+export type CanvasDocument = CanvasMetadata & { data: IndustryCanvasState };
 
 export type SerializedCanvasDocument = Omit<CanvasDocument, 'data'> & {
   data: SerializedIndustryCanvasState;
+};
+
+// TODO: fix the enum typings here
+export enum IndustryCanvasToolType {
+  ELLIPSE = 'ellipse',
+  IMAGE = 'image',
+  STICKY = 'sticky',
+  LINE = 'line',
+  PAN = 'pan',
+  POLYLINE = 'polyline',
+  RECTANGLE = 'rectangle',
+  SELECT = 'select',
+  TEXT = 'text',
+  COMMENT = 'comment',
+}
+
+export const COMMENT_METADATA_ID = '_IS_COMMENT';
+
+export type CommentAnnotation = RectangleAnnotation;
+
+export const isCommentAnnotation = (
+  annotation: Annotation
+): annotation is CommentAnnotation =>
+  annotation.metadata && annotation.metadata[COMMENT_METADATA_ID] === true;
+
+export type Comment = {
+  text: string;
+  author: string;
+  thread?: { externalId: string };
+  canvas?: { externalId: string };
+  x?: number;
+  y?: number;
+  externalId: string;
+  createdTime: Date;
+  lastUpdatedTime: Date;
+  // additive, not from api
+  subComments: Comment[];
 };

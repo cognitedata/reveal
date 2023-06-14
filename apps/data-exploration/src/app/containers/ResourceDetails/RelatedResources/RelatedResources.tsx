@@ -190,6 +190,7 @@ export const RelatedResources = ({
             fileId={parentResource.id}
             resourceType={type}
             onItemClicked={onItemClicked}
+            onParentAssetClick={onParentAssetClick}
             {...props}
           />
         )}

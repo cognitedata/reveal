@@ -1,91 +1,80 @@
-import { useCallback, useMemo } from 'react';
-
-import { Model3D } from '@cognite/sdk';
+import { useMemo } from 'react';
 
 import {
+  DEFAULT_SEARCH_RESULTS_PAGE_SIZE_3D,
   FileTypeVisibility,
   InternalThreeDFilters,
 } from '@data-exploration-lib/core';
 
-import { DEFAULT_SEARCH_RESULTS_PAGE_SIZE } from '../../../constants';
-import { Model3DWithType, ThreeDModelsResponse } from '../types';
+import {
+  DEFAULT_GLOBAL_TABLE_MAX_RESULT_LIMIT,
+  MAX_SEQUENTIAL_REQUEST_LIMIT_3D,
+} from '../../../constants';
+import { TableSortBy } from '../../../types';
 
-import { useInfinite360Images } from './useInfinite360Images';
+import { ApiBufferApi, useApiBuffer } from './useApiBuffer';
+import { useInfinite360ImagesSiteIdAggregateQuery } from './useInfinite360ImagesSiteIdAggregateQuery';
 import { useInfinite3DModelsQuery } from './useInfinite3DModelsQuery';
 
 export const use3DResults = (
   fileTypeVisibility: FileTypeVisibility,
   query?: string | undefined,
   filter?: InternalThreeDFilters,
-  limit: number = DEFAULT_SEARCH_RESULTS_PAGE_SIZE
+  sort?: TableSortBy[],
+  limit: number = DEFAULT_SEARCH_RESULTS_PAGE_SIZE_3D
 ) => {
-  const {
-    data: threeDModelData = { pages: [] as ThreeDModelsResponse[] },
-    fetchNextPage: fetchMore3DModelData,
-    hasNextPage: canFetchMore3DModelData,
-    isFetchingNextPage: isFetchingMore3DModelData,
-  } = useInfinite3DModelsQuery(limit, { enabled: true });
+  const image360Api = useInfinite360ImagesSiteIdAggregateQuery(query, filter, {
+    enabled: fileTypeVisibility.Images360,
+  });
 
-  const {
-    images360Data,
-    hasNextPage: canFetchMoreImage360Data,
-    fetchNextPage: fetchMoreImage360Data,
-    isFetchingNextPage: isFetchingMoreImage360Data,
-  } = useInfinite360Images();
+  const threeDModelApi = useInfinite3DModelsQuery(
+    DEFAULT_GLOBAL_TABLE_MAX_RESULT_LIMIT,
+    { enabled: fileTypeVisibility.Models3D },
+    query
+  );
 
-  const memoizedFilteredModels = useMemo(() => {
-    const models = threeDModelData.pages.reduce(
-      (accl, t) => accl.concat(t.items),
-      [] as Model3D[]
-    );
-
-    const filteredModels = [
-      ...(fileTypeVisibility.Images360
-        ? images360Data.map<Model3DWithType>((img360Data) => {
-            return {
+  const normalizedImage360Api = useMemo(() => {
+    return {
+      ...image360Api,
+      data: image360Api.data && {
+        ...image360Api.data,
+        pages: image360Api.data?.pages.map((page) => {
+          return {
+            ...page,
+            items: page.items.map((eventAggregate) => ({
               type: 'img360',
-              name: img360Data.siteName,
-              siteId: img360Data.siteId,
-            };
-          })
-        : []),
-      // ToDo: add Point Clouds
-      ...(fileTypeVisibility.CADModels ? models : []),
-    ].filter((model) =>
-      model.name.toLowerCase().includes(query?.toLowerCase() || '')
+              name: eventAggregate.values[0],
+              siteId: eventAggregate.values[0],
+            })),
+          };
+        }),
+      },
+    };
+  }, [image360Api]);
+
+  const { data, loadMore, isFetching, canFetchMore, fetchedCount } =
+    useApiBuffer(
+      [
+        {
+          ...(normalizedImage360Api as ApiBufferApi),
+          enabled: fileTypeVisibility.Images360,
+        },
+        { ...threeDModelApi, enabled: fileTypeVisibility.Models3D },
+      ],
+      limit,
+      sort,
+      query,
+      {
+        autoLoad: true,
+        requestLimit: MAX_SEQUENTIAL_REQUEST_LIMIT_3D,
+      }
     );
-    return filteredModels;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [threeDModelData, images360Data, query, fileTypeVisibility]);
-
-  const canFetchMore = useMemo(() => {
-    return canFetchMoreImage360Data || canFetchMore3DModelData;
-  }, [canFetchMoreImage360Data, canFetchMore3DModelData]);
-
-  const isFetching = useMemo(() => {
-    return isFetchingMore3DModelData || isFetchingMoreImage360Data;
-  }, [isFetchingMore3DModelData, isFetchingMoreImage360Data]);
-
-  const fetchMore = useCallback(() => {
-    if (!isFetchingMoreImage360Data && canFetchMoreImage360Data) {
-      fetchMoreImage360Data();
-    }
-    if (!isFetchingMore3DModelData && canFetchMore3DModelData) {
-      fetchMore3DModelData();
-    }
-  }, [
-    fetchMoreImage360Data,
-    fetchMore3DModelData,
-    isFetchingMore3DModelData,
-    isFetchingMoreImage360Data,
-    canFetchMoreImage360Data,
-    canFetchMore3DModelData,
-  ]);
 
   return {
+    count: fetchedCount,
     canFetchMore,
-    fetchMore,
-    items: memoizedFilteredModels,
+    fetchMore: loadMore,
+    models: data,
     isFetching,
   };
 };

@@ -1,3 +1,4 @@
+export * from './Document';
 export * from './Filters';
 export * from './Search';
 export * from './ThreeD';
@@ -7,3 +8,4 @@ export * from './ResourceDetails';
 export * from './Timeseries';
 export * from './Info';
 export * from './DetailsTable';
+export * from './constants';

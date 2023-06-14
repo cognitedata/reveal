@@ -35,7 +35,7 @@ export const BulkActionbar = ({
         <Flex alignItems="center" gap={8}>
           <Dropdown
             content={
-              <Menu style={{ height: 200, overflow: 'auto' }}>
+              <Menu style={{ maxHeight: 300, overflow: 'auto' }}>
                 <Menu.Header>Selected</Menu.Header>
                 {options.map((option) => (
                   <Menu.Item

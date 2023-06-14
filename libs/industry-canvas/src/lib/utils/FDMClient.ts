@@ -1,15 +1,37 @@
 // This file contains a bare-bones version of
 // https://github.com/cognitedata/industry-apps/blob/master/packages/e2e-fdm/src/fdm/fdm-client.ts
 
+import { chunk } from 'lodash';
+
 import type { CogniteClient } from '@cognite/sdk';
 
 export const gql = String.raw;
+
+const UPSERT_CHUNK_SIZE = 1000; // Source: https://developer.cognite.com/api/v1/#tag/Instances/operation/applyNodeAndEdges
+const DELETE_CHUNK_SIZE = 1000; // Source: https://developer.cognite.com/api/v1/#tag/Instances/operation/deleteBulk
+
+type NodeOrEdgeDefinition = {
+  instanceType: 'node' | 'edge';
+  space: string;
+  externalId: string;
+  wasModified: boolean;
+  version: number;
+  createdTime?: number;
+  lastUpdatedTime?: number;
+};
 
 export interface FDMError {
   extensions: { classification: string };
   locations: { column: number; line: number };
   message: string;
 }
+
+export type FDMEdge = {
+  externalId: string;
+  typeExternalId: string;
+  startNodeExternalId: string;
+  endNodeExternalId: string;
+};
 
 /**
  * This class can be used for interactions with CDF
@@ -56,72 +78,149 @@ export class FDMClient {
     dataModelId: string,
     variables?: Record<string, any>
   ): Promise<T> {
-    return this.client
-      .post<{ data: T; errors: FDMError[] }>(
-        this.getGraphQLBaseURL(dataModelId),
-        {
-          data: {
-            query,
-            variables,
-          },
-        }
-      )
-      .then((res) => {
-        if (res.data.errors) {
-          const { errors } = res.data;
-          throw new Error(
-            errors.length > 0
-              ? JSON.stringify(errors.map((error) => error.message))
-              : 'Error connecting to server'
-          );
-        }
-        return res.data.data;
-      });
+    const res = await this.client.post<{ data: T; errors?: FDMError[] }>(
+      this.getGraphQLBaseURL(dataModelId),
+      {
+        data: {
+          query,
+          variables,
+        },
+      }
+    );
+    if (res.data.errors !== undefined) {
+      const { errors } = res.data;
+      throw new Error(
+        errors.length > 0
+          ? JSON.stringify(errors.map((error) => error.message))
+          : 'Error connecting to server'
+      );
+    }
+    return res.data.data;
   }
 
-  public async upsertNodes<T extends { externalId?: string }>(
-    modelName: string,
-    nodes: T[]
-  ) {
-    const data = {
-      items: nodes.map(({ externalId, ...properties }) => ({
+  private async chunkedPostRequest<
+    NodeOrEdgeReference extends { externalId?: string; space: string },
+    ResponseDataType = NodeOrEdgeDefinition
+  >(
+    url: string,
+    items: NodeOrEdgeReference[],
+    chunkSize: number,
+    properties: Record<string, any> = {}
+  ): Promise<ResponseDataType[]> {
+    const chunkedItems = chunk(items, chunkSize);
+    const responseItemsPerChunk = await Promise.all(
+      chunkedItems.map(async (items) => {
+        const response = await this.client.post<{ items: ResponseDataType[] }>(
+          url,
+          {
+            data: { items, ...properties },
+            headers: this.DMS_HEADERS,
+            withCredentials: true,
+          }
+        );
+        return response.data.items;
+      })
+    );
+    return responseItemsPerChunk.flat();
+  }
+
+  public async upsertNodes<
+    T extends { modelName: string; externalId?: string; viewVersion?: string }
+  >(nodes: T[]): Promise<NodeOrEdgeDefinition[]> {
+    if (nodes.length === 0) {
+      return [];
+    }
+    const upsertedNodes = await this.chunkedPostRequest(
+      this.baseUrlDms,
+      nodes.map(({ externalId, modelName, viewVersion, ...properties }) => ({
         instanceType: 'node',
         space: this.SPACE_EXTERNAL_ID,
         externalId,
         sources: [
-          {
-            source: {
-              type: 'container',
-              space: this.SPACE_EXTERNAL_ID,
-              externalId: modelName,
-            },
-            properties,
-          },
+          viewVersion !== undefined
+            ? {
+                source: {
+                  type: 'view',
+                  space: this.SPACE_EXTERNAL_ID,
+                  externalId: modelName,
+                  version: viewVersion,
+                },
+                properties,
+              }
+            : {
+                source: {
+                  type: 'container',
+                  space: this.SPACE_EXTERNAL_ID,
+                  externalId: modelName,
+                },
+                properties,
+              },
         ],
       })),
-    };
-    return this.client.post<{ items: T[] }>(this.baseUrlDms, {
-      data,
-      headers: this.DMS_HEADERS,
-      withCredentials: true,
-    });
+      UPSERT_CHUNK_SIZE
+    );
+    return upsertedNodes;
   }
 
-  public async deleteNodes(externalIds: string[] | string) {
+  public async deleteNodes(
+    externalIds: string[] | string
+  ): Promise<NodeOrEdgeDefinition[]> {
     const externalIdsAsArray = Array.isArray(externalIds)
       ? externalIds
       : [externalIds];
-    const data = {
-      items: externalIdsAsArray.map((externalId) => ({
+    if (externalIdsAsArray.length === 0) {
+      return [];
+    }
+    const deletedNodes = this.chunkedPostRequest(
+      `${this.baseUrlDms}/delete`,
+      externalIdsAsArray.map((externalId) => ({
         instanceType: 'node',
         space: this.SPACE_EXTERNAL_ID,
         externalId,
       })),
-    };
-    return this.client.post(`${this.baseUrlDms}/delete`, {
-      data,
-      headers: this.DMS_HEADERS,
-      withCredentials: true,
-    });
+      DELETE_CHUNK_SIZE
+    );
+    return deletedNodes;
+  }
+
+  public async upsertEdges(edges: FDMEdge[]): Promise<NodeOrEdgeDefinition[]> {
+    if (edges.length === 0) {
+      return [];
+    }
+    const upsertedEdges = this.chunkedPostRequest(
+      this.baseUrlDmsEdges,
+      edges.map(
+        ({
+          externalId,
+          typeExternalId,
+          startNodeExternalId,
+          endNodeExternalId,
+        }) => ({
+          instanceType: 'edge',
+          space: this.SPACE_EXTERNAL_ID,
+          externalId,
+          type: {
+            space: this.SPACE_EXTERNAL_ID,
+            externalId: typeExternalId,
+          },
+          startNode: {
+            space: this.SPACE_EXTERNAL_ID,
+            externalId: startNodeExternalId,
+          },
+          endNode: {
+            space: this.SPACE_EXTERNAL_ID,
+            externalId: endNodeExternalId,
+          },
+        })
+      ),
+      UPSERT_CHUNK_SIZE,
+      {
+        autoCreateStartNodes: false,
+        autoCreateEndNodes: false,
+        skipOnVersionConflict: false,
+        replace: false,
+      }
+    );
+    return upsertedEdges;
   }
 }

@@ -18,8 +18,10 @@ Page.Dashboard = PageDashboard;
 Page.Widgets = PageWidgets;
 
 const PageContainer = styled.div`
+  display: flex;
+  flex-direction: column;
   position: relative;
   overflow: auto;
-  height: 100%;
+  height: calc(100% - var(--top-bar-height));
   background-color: var(--default-bg-color);
 `;

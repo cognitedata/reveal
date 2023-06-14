@@ -31,7 +31,7 @@
               "@data-exploration-components",
               "@data-exploration/components",
               "@data-exploration-lib/domain-layer",
-              "@data-quality/codegen",
+              "@data-quality",
               "@platypus-core",
               "@cognite/platypus-cdf-cli",
               "@cognite/data-exploration"

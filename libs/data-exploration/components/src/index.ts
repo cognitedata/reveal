@@ -20,6 +20,7 @@ export * from './Labels';
 export * from './Loader';
 export * from './Modals';
 export * from './PreviewFilter';
+export * from './ResizableOverlay';
 export * from './ResourceDetails';
 export * from './RootAsset';
 export * from './Select';

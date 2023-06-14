@@ -10,6 +10,7 @@ import {
   DataSetItem,
   DetailsItem,
   LabelsItem,
+  RootAssetItem,
   ThreeDModelItem,
 } from './DetailsItem';
 
@@ -37,6 +38,7 @@ GeneralDetails.AssetsItem = AssetsItem;
 GeneralDetails.AssetItem = AssetItem;
 GeneralDetails.LabelsItem = LabelsItem;
 GeneralDetails.ThreeDModelItem = ThreeDModelItem;
+GeneralDetails.RootAssetItem = RootAssetItem;
 
 const GeneralDetailsCard = styled.div`
   width: 100%;

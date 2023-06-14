@@ -44,7 +44,7 @@ const getSetItems =
               ? newItems
               : encodeURIComponent(newItems),
           },
-          opts
+          { ...opts, skipNull: true, skipEmptyString: true }
         ),
       },
       { replace: !push }
@@ -66,24 +66,6 @@ export function useQueryString(
   return [queryString, getSetItems(key, push, location, navigate)];
 }
 
-const emptyArray = [] as string[];
-export function useQueryStringArray(
-  key: string,
-  push = true
-): [string[], (_: any[]) => void] {
-  const location = useLocation();
-  const navigate = useNavigate();
-
-  const search = qs.parse(location?.search, opts);
-  const rawItems = search[key];
-  if (!rawItems) {
-    return [emptyArray, getSetItems(key, push, location, navigate)];
-  }
-  const items = Array.isArray(rawItems) ? rawItems : [rawItems];
-
-  return [items, getSetItems(key, push, location, navigate)];
-}
-
 export const useCurrentSearchResourceTypeFromLocation = () => {
   const location = useLocation();
   // sample path1: "/dss-dev/explore/search/asset"
@@ -94,7 +76,6 @@ export const useCurrentSearchResourceTypeFromLocation = () => {
 
   const splittedPath = path.split('/');
   if (splittedPath.includes('search') && splittedPath.length >= 5) {
-    // TODO: try to get rid of `ResourceType` type later!
     return splittedPath[4] as ResourceType;
   }
 
@@ -106,7 +87,9 @@ export const useCurrentSearchResourceTypeFromLocation = () => {
   return undefined;
 };
 
-// TODO: try to get rid of `ResourceType` type later!
+// NOTE: We updated navigation flows and url patterns. ...
+// ... https://cognitedata.atlassian.net/wiki/spaces/DEGEXP/pages/3957457213/Data+Explorer+Navigation+revamp+work
+// ... Check and use hooks under `./detailsNavigation` for the most relevant navigation patterns.
 export const useCurrentResourceType = (): [
   ResourceType | undefined,
   (type?: ResourceType, resourceId?: number) => void
@@ -142,6 +125,9 @@ export const useCurrentResourceType = (): [
   return [resourceType, setCurrentResourceType];
 };
 
+// NOTE: We updated navigation flows and url patterns. ...
+// ... https://cognitedata.atlassian.net/wiki/spaces/DEGEXP/pages/3957457213/Data+Explorer+Navigation+revamp+work
+// ... Check and use hooks under `./detailsNavigation` for the most relevant navigation patterns.
 export const useSelectedResourceId = (
   isRootAsset = false
 ): number | undefined => {
@@ -161,6 +147,9 @@ export const useSelectedResourceId = (
   return undefined;
 };
 
+// NOTE: We updated navigation flows and url patterns. ...
+// ... https://cognitedata.atlassian.net/wiki/spaces/DEGEXP/pages/3957457213/Data+Explorer+Navigation+revamp+work
+// ... Check and use hooks under `./detailsNavigation` for the most relevant navigation patterns.
 export const useCurrentResourceId = (): [
   number | undefined,
   (
@@ -228,6 +217,9 @@ export const useUserInformation = () => {
   return useQuery(['user-info'], getUserInformation);
 };
 
+// NOTE: We updated navigation flows and url patterns. ...
+// ... https://cognitedata.atlassian.net/wiki/spaces/DEGEXP/pages/3957457213/Data+Explorer+Navigation+revamp+work
+// ... Check and use hooks under `./detailsNavigation` for the most relevant navigation patterns.
 /**
  * Create the function which helps to persist the search string and create the relative link in the navigation in preview mode
  * @param tabType the type of the tab

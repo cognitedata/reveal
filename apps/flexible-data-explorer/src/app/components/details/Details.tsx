@@ -25,7 +25,6 @@ const GeneralDetailsCard = styled.div`
 `;
 
 const GeneralDetailsContent = styled.div`
-  padding: 12px;
   display: grid;
   grid-gap: 4px;
   /* Adjusting for the 8px grid-gap as well */

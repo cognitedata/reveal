@@ -23,6 +23,8 @@ libs/data-modeling                @cognitedata/cdf-user-experience
 # Team data-explorer
 apps/data-exploration             @cognitedata/explorers
 apps/flexible-data-explorer       @cognitedata/explorers
+apps/cdf-document-search          @cognitedata/matchmakers @cognitedata/discover
+
 
 libs/data-exploration/            @cognitedata/explorers
 libs/data-exploration-components  @cognitedata/explorers
@@ -36,10 +38,10 @@ apps/industry-canvas-ui              @cognitedata/unified-file-viewer
 apps/coding-conventions           @deep-cognite @CimStordal
 
 # Contextualization
-libs/contextualization              @dlcognite @cognitedata/contextualization
+libs/contextualization              @davidlky @cognitedata/contextualization
 
 # Copilot
-apps/copilot              @dlcognite @andeplane @miladh @trygveu
+apps/copilot              @davidlky @andeplane @miladh @trygveu
 
 # IoT Hub
-apps/iot-hub              @dlcognite @geircognite @muradsater
+apps/iot-hub              @davidlky @geircognite @muradsater

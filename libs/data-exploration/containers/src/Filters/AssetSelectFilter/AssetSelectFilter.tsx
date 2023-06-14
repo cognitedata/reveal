@@ -86,7 +86,7 @@ const CommonAssetSelectFilter = (
 
   const {
     data: searchData,
-    isLoading,
+    isInitialLoading: isLoading,
     isError,
   } = useSearch<Asset>(
     'assets',
@@ -96,7 +96,7 @@ const CommonAssetSelectFilter = (
   );
   const {
     data: rootSearchData,
-    isLoading: isRootLoading,
+    isInitialLoading: isRootLoading,
     isError: isRootError,
   } = useSearch<Asset>(
     'assets',
@@ -158,7 +158,6 @@ const CommonAssetSelectFilter = (
 
   const isAssetsError =
     isError || isRootError || isListError || isRootListError;
-
   return (
     <AssetSelectFilter
       {...props}

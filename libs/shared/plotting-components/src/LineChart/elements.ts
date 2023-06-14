@@ -10,4 +10,5 @@ export const LineChartWrapper = styled.div`
   padding: 16px;
   border-radius: 8px;
   cursor: auto;
+  isolation: isolate;
 `;

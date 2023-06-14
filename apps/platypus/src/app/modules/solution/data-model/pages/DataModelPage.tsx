@@ -45,6 +45,7 @@ import { DataModelHeader } from '../components/DataModelHeader';
 import { EditorPanel } from '../components/EditorPanel';
 import { ErrorPlaceholder } from '../components/ErrorBoundary/ErrorPlaceholder';
 import { ErrorsByGroup } from '../components/GraphqlCodeEditor/Model';
+import { ImportTypesModal } from '../components/ImportTypesModal';
 import {
   PublishVersionModal,
   VersionType,
@@ -127,6 +128,7 @@ export const DataModelPage = () => {
   const [saving, setSaving] = useState(false);
   const [updating, setUpdating] = useState(false);
   const [editorHasError, setEditorHasError] = useState(false);
+  const [showImportTypes, setShowImportTypes] = useState(false);
   const [breakingChanges, setBreakingChanges] = useState('');
   const [publishModalVersionType, setPublishModalVersionType] =
     useState<VersionType | null>(null);
@@ -256,6 +258,7 @@ export const DataModelPage = () => {
             externalId: dataModelExternalId,
             schema: graphQlSchema,
             version: newVersion,
+            previousVersion: selectedDataModelVersion?.version,
           },
           'NEW_VERSION'
         );
@@ -379,6 +382,12 @@ export const DataModelPage = () => {
     dataModelTypeDefsBuilder.clear();
     updateGraphQlSchema(latestDataModelVersion.schema);
   };
+
+  const handleImportTypesClick = () => {
+    track('DataModel.ImportTypes');
+    setShowImportTypes(true);
+  };
+
   return (
     <>
       <PageContentLayout>
@@ -393,6 +402,7 @@ export const DataModelPage = () => {
             latestDataModelVersion={latestDataModelVersion}
             localDraft={localDraft}
             onDiscardClick={handleDiscardClick}
+            onImportTypesClick={handleImportTypesClick}
             onPublishClick={handleClickPublish}
             title={t('data_model_title', 'Data model')}
             onDataModelVersionSelect={handleDataModelVersionSelect}
@@ -466,6 +476,10 @@ export const DataModelPage = () => {
           isUpdating={updating}
           isSaving={saving}
         />
+      )}
+
+      {showImportTypes && (
+        <ImportTypesModal onClose={() => setShowImportTypes(false)} />
       )}
     </>
   );

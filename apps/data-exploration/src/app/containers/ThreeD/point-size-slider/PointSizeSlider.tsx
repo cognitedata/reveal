@@ -15,7 +15,7 @@ import {
 import { Cognite3DViewer, CognitePointCloudModel } from '@cognite/reveal';
 
 import { ids } from '../../../../cogs-variables';
-import { ThreeDContext } from '../ThreeDContext';
+import { ThreeDContext } from '../contexts/ThreeDContext';
 import { updateAllPointCloudsPointSize } from '../utils';
 
 type SliderProps = {

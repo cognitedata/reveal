@@ -1,11 +1,19 @@
+import { useMemo, useRef } from 'react';
+
 import styled from 'styled-components';
 
-import { Body } from '@cognite/cogs.js';
+import take from 'lodash/take';
+
+import { Body, Tooltip } from '@cognite/cogs.js';
 
 import { Button } from '../../../components/buttons/Button';
 import { Widget } from '../../../components/widget/Widget';
+import { useIsOverflow } from '../../../hooks/useIsOverflow';
 
 import { PropertiesProps } from './PropertiesWidget';
+import { flattenProperties } from './utils';
+
+const MAX_PROPERTIES = 8;
 
 export const PropertiesCollapsed: React.FC<PropertiesProps> = ({
   id,
@@ -15,25 +23,31 @@ export const PropertiesCollapsed: React.FC<PropertiesProps> = ({
   rows,
   columns,
 }) => {
+  const properties = useMemo(() => flattenProperties(data), [data]);
+
+  const getAdaptiveGridRows = () => {
+    const keys = Object.keys(data || {}).length;
+
+    // Bit of magic values below; 4 is the number of items per row in the grid. If we have less than 4 items, we want
+    // to show rows in the size of 2, otherwise in the size of 3.
+    // TODO: Move the grid numbers to a more central place.
+    return keys <= 4 ? 2 : 3;
+  };
+
   return (
-    <Widget rows={rows} columns={columns} id={id}>
-      <Widget.Header
-        title={`${id}`}
-        subtitle="lorem ipsum ras pareru going to the moutain"
-      >
+    <Widget rows={rows || getAdaptiveGridRows()} columns={columns} id={id}>
+      <Widget.Header title={`${id}`}>
         <Button.Fullscreen onClick={() => onExpandClick?.(id)} />
       </Widget.Header>
 
       <Widget.Body state={state}>
         <Container>
-          {Object.keys(data || {}).map((key) => {
-            const value = data?.[key];
-
+          {take(properties, MAX_PROPERTIES).map(({ key, value }) => {
             return (
-              <Content>
-                <Body level={3}>{key}</Body>
-                <Body strong>{JSON.stringify(value)}</Body>
-              </Content>
+              <PropertiesItem
+                key={`properties-collapsed-${key}`}
+                pair={{ key, value }}
+              />
             );
           })}
         </Container>
@@ -42,7 +56,27 @@ export const PropertiesCollapsed: React.FC<PropertiesProps> = ({
   );
 };
 
+const PropertiesItem = ({ pair }: { pair: Record<string, any> }) => {
+  const ref = useRef<HTMLParagraphElement>(null);
+
+  const isOverflowing = useIsOverflow(ref);
+
+  return (
+    <Content>
+      <Tooltip content={pair.value} disabled={!isOverflowing}>
+        <>
+          <KeyText>{pair.key}</KeyText>
+          <ValueText ref={ref}>{pair.value || '-'}</ValueText>
+        </>
+      </Tooltip>
+    </Content>
+  );
+};
+
 const Content = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   width: 100%;
   overflow: hidden;
   word-break: break-word;
@@ -50,7 +84,23 @@ const Content = styled.div`
 
 const Container = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(max-content, 350px));
-  grid-column-gap: 10px;
-  grid-row-gap: 10px;
+  grid-template-columns: repeat(4, 1fr);
+  grid-column-gap: 24px;
+  grid-row-gap: 24px;
+`;
+
+const KeyText = styled(Body).attrs({ level: 3 })``;
+
+// 'Cogs' does not have the option to pass in 'ref', use 'p' until it's fixed
+const ValueText = styled.p.attrs({ strong: true })`
+  white-space: nowrap;
+  overflow: hidden;
+  display: block;
+  text-overflow: ellipsis;
+  color: var(--cogs-b1-color);
+  font-size: var(--cogs-b1-font-size);
+  letter-spacing: var(--cogs-b1-letter-spacing);
+  line-height: var(--cogs-b1-line-height);
+  font-weight: 500;
+  margin-bottom: 0;
 `;

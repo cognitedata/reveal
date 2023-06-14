@@ -14,17 +14,27 @@ import ResourceSelectionContext from '@data-exploration-app/context/ResourceSele
 import { useNavigateWithHistory } from '@data-exploration-app/hooks/hooks';
 import { isResourceSelected } from '@data-exploration-app/utils/compare';
 
+import { usePushJourney } from '../../hooks/detailsNavigation';
+import { useFlagOverlayNavigation } from '../../hooks/flags';
+
 export const AssetHierarchyTab = ({ asset }: { asset: Asset }) => {
+  const isDetailsOverlayEnabled = useFlagOverlayNavigation();
+  const location = useLocation();
+  const [pushJourney] = usePushJourney();
+
   const navigateWithHistory = useNavigateWithHistory({
     type: ResourceTypes.Asset,
     id: asset.id,
     externalId: asset.externalId,
     title: asset.name,
   });
-  const location = useLocation();
   const { mode, onSelect, resourcesState } = React.useContext(
     ResourceSelectionContext
   );
+
+  const handlePushJourney = (assetId: number) => {
+    pushJourney({ id: assetId, type: 'asset' });
+  };
 
   return (
     <AssetDetailsTreeTable
@@ -32,9 +42,16 @@ export const AssetHierarchyTab = ({ asset }: { asset: Asset }) => {
       rootAssetId={asset.rootId}
       activeIds={[asset.id]}
       onAssetClicked={(newAsset: Asset) => {
-        navigateWithHistory(
-          createLink(`/explore/asset/${newAsset.id}`, qs.parse(location.search))
-        );
+        if (isDetailsOverlayEnabled) {
+          handlePushJourney(newAsset.id);
+        } else {
+          navigateWithHistory(
+            createLink(
+              `/explore/asset/${newAsset.id}`,
+              qs.parse(location.search)
+            )
+          );
+        }
       }}
       selectionMode={mode}
       onSelect={onSelect}

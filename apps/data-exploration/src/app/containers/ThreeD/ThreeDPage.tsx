@@ -1,9 +1,12 @@
-import React from 'react';
+import { useEffect, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
+
+import { Cognite3DViewer } from '@cognite/reveal';
+import { useSDK } from '@cognite/sdk-provider';
 
 import { useSearchParamString } from '@data-exploration-lib/core';
 
-import { ThreeDContextProvider } from './ThreeDContext';
+import { ThreeDContextProvider } from './contexts/ThreeDContext';
 import { ThreeDView } from './ThreeDView';
 
 export const ThreeDPage = () => {
@@ -17,6 +20,27 @@ export const ThreeDPage = () => {
     : undefined;
   const [revisionId] = useSearchParamString('revisionId');
 
+  const sdk = useSDK();
+
+  const viewer = useMemo(
+    () =>
+      new Cognite3DViewer({
+        sdk,
+        continuousModelStreaming: true,
+        loadingIndicatorStyle: {
+          placement: 'topRight',
+          opacity: 1,
+        },
+      }),
+    [sdk]
+  );
+
+  useEffect(() => {
+    return () => {
+      viewer?.dispose();
+    };
+  }, [viewer]);
+
   if ((!threeDIdString || !Number.isFinite(modelId)) && !image360SiteId) {
     return null;
   }
@@ -25,6 +49,7 @@ export const ThreeDPage = () => {
     <ThreeDContextProvider
       key={is360Image ? image360SiteId : `${modelId}.${revisionId}`}
       modelId={modelId}
+      viewer={viewer}
       image360SiteId={image360SiteId}
     >
       <ThreeDView

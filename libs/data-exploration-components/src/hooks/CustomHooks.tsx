@@ -80,6 +80,7 @@ export function useUniqueCdfItems<T>(
   const {
     data: items = [],
     isLoading: isItemLoading,
+    isInitialLoading: isItemInitialLoading,
     isError: itemsWithExternalIdError,
   } = useCdfItems<T & { id: number }>(type, uniqueIds, ignoreUnknownIds, {
     enabled: itemsEnabled,
@@ -88,6 +89,7 @@ export function useUniqueCdfItems<T>(
   const {
     data: itemsWithExternalId = [],
     isLoading: isItemWithExternalIdLoading,
+    isInitialLoading: isItemWithExternalIdInitialLoading,
     isError: itemsError,
   } = useCdfItems<T & { id: number }>(
     type,
@@ -103,6 +105,8 @@ export function useUniqueCdfItems<T>(
     isError: itemsWithExternalIdError || itemsError,
     data: uniqueItems,
     isLoading: isItemWithExternalIdLoading || isItemLoading,
+    isInitialLoading:
+      isItemInitialLoading || isItemWithExternalIdInitialLoading,
   };
 }
 

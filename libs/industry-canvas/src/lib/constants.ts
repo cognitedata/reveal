@@ -1,30 +1,32 @@
+import { TooltipAnchorPosition } from '@cognite/unified-file-viewer';
+
 export const TOAST_POSITION = 'top-left' as const;
+export const ANNOTATION_TOOLTIP_POSITION = TooltipAnchorPosition.BOTTOM_LEFT;
 
 export enum QueryKeys {
   GET_CANVAS = 'canvas.get',
   SAVE_CANVAS = 'canvas.save',
+  SAVE_COMMENT = 'comment.save',
+  DELETE_COMMENT = 'comment.delete',
   CREATE_CANVAS = 'canvas.create',
   ARCHIVE_CANVAS = 'canvas.archive',
   LIST_CANVASES = 'canvas.list',
+  LIST_COMMENTS = 'comments.list',
+  GET_COMMENT = 'comments.get',
+  DELETE_CANVAS_ITEMS = 'canvas.delete-items',
   USER_PROFILE = 'user-profile',
+  USERS = 'users',
   USER_PROFILES_BY_IDS = 'user-profiles-by-ids',
+  LOCKING = 'canvas.locking',
 }
 
 export const SEARCH_QUERY_PARAM_KEY = 'search';
 
-export const PERCENTAGE_VALUES = {
-  '10%': 0.1,
-  '25%': 0.25,
-  '50%': 0.5,
-  '75%': 0.75,
-  '100%': 1.0,
-  '125%': 1.25,
-  '150%': 1.5,
-  '200%': 2.0,
-  '300%': 3.0,
-  '400%': 4.0,
-} as const;
-
+export const STAGE_ALT_CLICK_ZOOM_LEVEL = 0.25;
+export const ZOOM_LEVELS = [
+  0.05, 0.1, 0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 2.0, 3.0, 4.0,
+] as const;
+export const ZOOM_DURATION_SECONDS = 0.1;
 export const ZOOM_TO_FIT_MARGIN = 0.07;
 
 export const FONT_SIZE = {
@@ -47,3 +49,5 @@ export const LINE_STROKE_WIDTH = {
 // TODO: These timeouts can be removed when we implement the appropriate event in UFV: https://cognitedata.atlassian.net/browse/UFV-587
 export const SHAMEFUL_WAIT_TO_ENSURE_ANNOTATIONS_ARE_RENDERED_MS = 100;
 export const SHAMEFUL_WAIT_TO_ENSURE_CONTAINERS_ARE_RENDERED_MS = 100;
+
+export const CommentsFeatureFlagKey = 'UFV_INDUSTRY_CANVAS_COMMENTS';

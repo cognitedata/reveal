@@ -67,6 +67,7 @@ type FilePreviewProps = {
   filesAcl?: boolean;
   annotationsAcl?: boolean;
   setEditMode?: () => void;
+  hideEdit?: boolean;
 };
 
 const RectangleToolProps = {
@@ -98,6 +99,7 @@ export const FilePreview = ({
   filesAcl = false,
   annotationsAcl = false,
   setEditMode = noop,
+  hideEdit = false,
 }: FilePreviewProps) => {
   const trackUsage = useDebouncedMetrics();
   const [unifiedViewerRef, setUnifiedViewerRef] = useState<UnifiedViewer>();
@@ -463,6 +465,7 @@ export const FilePreview = ({
           setEditMode={setEditMode}
           filesAcl={filesAcl}
           annotationsAcl={annotationsAcl}
+          hideEdit={hideEdit}
         />
       </UFVWrapper>
       {showSideBar && showResourcePreviewSidebar && (

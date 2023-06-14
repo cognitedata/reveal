@@ -434,6 +434,7 @@ input GraphQlDmlVersionUpsert {
   space: String!
   externalId: String!
   version: String!
+  previousVersion: String
 
   name: String
   description: String

@@ -1,15 +1,10 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 
-import config from '@platypus-app/config/config';
-import { QueryKeys } from '@platypus-app/utils/queryKeys';
-import { useQuery } from '@tanstack/react-query';
-import mixpanel, { Dict } from 'mixpanel-browser';
+import { Dict } from 'mixpanel-browser';
 
-import { getUserInformation } from '@cognite/cdf-sdk-singleton';
+import { trackEvent } from '@cognite/cdf-route-tracker';
 import { getCluster, getProject } from '@cognite/cdf-utilities';
-
-import { environment } from '../../environments/environment';
 
 // https://cognitedata.atlassian.net/wiki/spaces/CE/pages/3929277073/User+Metrics+-+Mixpanel
 export type TRACKING_TOKENS =
@@ -32,6 +27,8 @@ export type TRACKING_TOKENS =
   | 'DataModel.Transformations.Create'
   | 'DataModel.Transformations.Open'
   | 'DataModel.GraphIQL.Run'
+  | 'DataModel.ImportTypes'
+  | 'DataModel.ImportTypesCopied'
   | 'DataModel.ErrorMessage'
   | 'DataModel.Links.GraphQL'
   | 'DataModel.Links.CLI'
@@ -67,46 +64,16 @@ export type TRACKING_TOKENS =
   | 'ChatGPTSearch.Failed'
   | 'Navigate';
 
-mixpanel.init(config.MIXPANEL_TOKEN);
-
-export const useMixpanel = () => {
-  const { data: user } = useQuery(
-    QueryKeys.AUTHENTICATED_USER,
-    getUserInformation,
-    {
-      staleTime: Infinity,
-      enabled:
-        environment.APP_ENV !== 'development' && environment.APP_ENV !== 'mock',
-      onSuccess: (user) => {
-        if (process.env.NODE_ENV !== 'production') {
-          return;
-        }
-        mixpanel.identify(user?.id);
-        mixpanel.people.set({
-          email: user?.mail || user?.userPrincipalName || user?.displayName,
-          cluster: getCluster(),
-          project: getProject(),
-        });
-      },
-    }
-  );
-  return useMemo(
-    () => ({
-      track: async (eventName: TRACKING_TOKENS, properties?: Dict) => {
-        if (process.env.NODE_ENV !== 'production') {
-          return;
-        }
-        mixpanel.identify(user?.id);
-        mixpanel.track(eventName, {
-          cluster: getCluster(),
-          project: getProject(),
-          ...properties,
-        });
-      },
-    }),
-    [user]
-  );
+const track = async (eventName: TRACKING_TOKENS, properties?: Dict) => {
+  return trackEvent(eventName, {
+    cluster: getCluster(),
+    project: getProject(),
+    ...properties,
+  });
 };
+export const useMixpanel = () => ({
+  track,
+});
 
 export const useMixpanelPathTracking = () => {
   const { track } = useMixpanel();

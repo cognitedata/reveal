@@ -51,3 +51,9 @@ export const FilterInput = styled(Input)`
     background: transparent !important;
   }
 `;
+
+export const RootAssetWrapper = styled.div`
+  color: var(--cogs-text-icon--interactive--default);
+  cursor: pointer;
+  align-self: center;
+`;

@@ -29,15 +29,17 @@ type Props = {
   fileId: number;
   resourceType: ResourceType;
   onItemClicked: (id: number) => void;
+  onParentAssetClick: (assetId: number) => void;
 };
 export function AnnotationTable({
   fileId,
   resourceType,
   onItemClicked,
+  onParentAssetClick,
 }: Props & SelectableItemsProps) {
   const {
     data: taggedAnnotations,
-    isFetched,
+    isInitialLoading: isTaggedAnnotationsInitialLoading,
     isError,
   } = useTaggedAnnotationsByResourceType(fileId, resourceType);
 
@@ -78,7 +80,7 @@ export function AnnotationTable({
   const itemsEnabled = ids && ids.length > 0;
   const {
     data: items = [],
-    isLoading: itemsLoading,
+    isInitialLoading: isUniqueCdfItemsInitialLoading,
     isError: itemsError,
   } = useUniqueCdfItems<any>(convertResourceType(resourceType), ids, true);
 
@@ -86,7 +88,11 @@ export function AnnotationTable({
     return <Alert type="warning" message="Error fetching annotations" />;
   }
 
-  if (!isFetched || (itemsLoading && itemsEnabled)) {
+  if (
+    isTaggedAnnotationsInitialLoading &&
+    isUniqueCdfItemsInitialLoading &&
+    itemsEnabled
+  ) {
     return <Loader />;
   }
 
@@ -107,6 +113,9 @@ export function AnnotationTable({
           id="file-annotation-table"
           data={items}
           onRowClick={onRowClick}
+          onDirectAssetClick={(directAsset) => {
+            onParentAssetClick(directAsset.id);
+          }}
         />
       );
     }

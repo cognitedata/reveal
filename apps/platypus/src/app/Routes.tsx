@@ -14,7 +14,6 @@ import { isFDMv3 } from './flags';
 import { getContainer } from './GlobalStyles';
 import { useFusionQuery } from './hooks/useFusionQuery';
 import { useInjection } from './hooks/useInjection';
-import { useMixpanelPathTracking } from './hooks/useMixpanel';
 import { DataModelsPage } from './modules/data-models/DataModelsPage';
 import { DataModel } from './modules/solution/DataModel';
 import zIndex from './utils/zIndex';
@@ -67,25 +66,18 @@ const Routes = () => {
 
   return (
     <React.Suspense fallback={<Spinner />}>
-      <HOCPathTracking>
-        <ReactRoutes>
-          <Route path="/" element={<Outlet />}>
-            <Route index element={<DataModelsPage />} />
-            <Route path="data-models/*" element={<DataModelSubRoutes />} />
-            <Route
-              path="data-models-previous/*"
-              element={<DataModelSubRoutes />}
-            />
-          </Route>
-        </ReactRoutes>
-      </HOCPathTracking>
+      <ReactRoutes>
+        <Route path="/" element={<Outlet />}>
+          <Route index element={<DataModelsPage />} />
+          <Route path="data-models/*" element={<DataModelSubRoutes />} />
+          <Route
+            path="data-models-previous/*"
+            element={<DataModelSubRoutes />}
+          />
+        </Route>
+      </ReactRoutes>
     </React.Suspense>
   );
 };
 
 export default Routes;
-
-const HOCPathTracking = ({ children }: { children: React.ReactNode }) => {
-  useMixpanelPathTracking();
-  return <>{children}</>;
-};

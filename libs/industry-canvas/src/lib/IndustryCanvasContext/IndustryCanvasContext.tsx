@@ -1,10 +1,12 @@
 import { createContext, useCallback, useContext, useMemo } from 'react';
 
 import { useSDK } from '@cognite/sdk-provider';
+import { IdsByType } from '@cognite/unified-file-viewer';
 
 import { useCanvasArchiveMutation } from '../hooks/use-mutation/useCanvasArchiveMutation';
 import { useCanvasCreateMutation } from '../hooks/use-mutation/useCanvasCreateMutation';
 import { useCanvasSaveMutation } from '../hooks/use-mutation/useCanvasSaveMutation';
+import { useDeleteCanvasIdsByTypeMutation } from '../hooks/use-mutation/useDeleteCanvasIdsByTypeMutation';
 import { useGetCanvasByIdQuery } from '../hooks/use-query/useGetCanvasByIdQuery';
 import { useListCanvases } from '../hooks/use-query/useListCanvases';
 import { useUserProfileContext } from '../hooks/use-query/useUserProfile';
@@ -16,6 +18,7 @@ import {
 } from '../types';
 import { serializeCanvasState } from '../utils/utils';
 
+import useCanvasLocking from './useCanvasLocking';
 import useIndustryCanvasSearchParameters from './useIndustryCanvasSearchParameters';
 
 export type IndustryCanvasContextType = {
@@ -27,6 +30,13 @@ export type IndustryCanvasContextType = {
     canvas: IndustryCanvasState
   ) => Promise<SerializedCanvasDocument>;
   archiveCanvas: (canvas: SerializedCanvasDocument) => Promise<void>;
+  deleteCanvasIdsByType: ({
+    ids,
+    canvasExternalId,
+  }: {
+    ids: IdsByType;
+    canvasExternalId: string;
+  }) => Promise<void>;
   isCreatingCanvas: boolean;
   isSavingCanvas: boolean;
   isLoadingCanvas: boolean;
@@ -34,6 +44,7 @@ export type IndustryCanvasContextType = {
   isArchivingCanvas: boolean;
   initializeWithContainerReferences: ContainerReference[] | undefined;
   setCanvasId: (canvasId: string) => void;
+  isCanvasLocked: boolean;
 };
 
 export const IndustryCanvasContext = createContext<IndustryCanvasContextType>({
@@ -52,12 +63,16 @@ export const IndustryCanvasContext = createContext<IndustryCanvasContextType>({
   setCanvasId: () => {
     throw new Error('setCanvasId called before initialisation');
   },
+  deleteCanvasIdsByType: () => {
+    throw new Error('deleteCanvasIdsByType called before initialisation');
+  },
   isCreatingCanvas: false,
   isSavingCanvas: false,
   isLoadingCanvas: false,
   isListingCanvases: false,
   isArchivingCanvas: false,
   initializeWithContainerReferences: undefined,
+  isCanvasLocked: false,
 });
 
 type IndustryCanvasProviderProps = {
@@ -83,17 +98,29 @@ export const IndustryCanvasProvider: React.FC<IndustryCanvasProviderProps> = ({
     useCanvasCreateMutation(canvasService);
   const { mutateAsync: archiveCanvas, isLoading: isArchivingCanvas } =
     useCanvasArchiveMutation(canvasService);
+  const { mutateAsync: deleteCanvasIdsByType } =
+    useDeleteCanvasIdsByTypeMutation(canvasService);
   const {
     data: canvases,
     isLoading: isListingCanvases,
     refetch: refetchCanvases,
   } = useListCanvases(canvasService);
 
+  const { isCanvasLocked } = useCanvasLocking(
+    canvasId,
+    canvasService,
+    userProfile
+  );
+
   const saveCanvasWrapper = useCallback(
     async (canvasDocument: SerializedCanvasDocument) => {
+      if (isCanvasLocked) {
+        return;
+      }
+
       await saveCanvas(canvasDocument);
     },
-    [saveCanvas]
+    [saveCanvas, isCanvasLocked]
   );
 
   const createCanvasWrapper = useCallback(
@@ -110,6 +137,10 @@ export const IndustryCanvasProvider: React.FC<IndustryCanvasProviderProps> = ({
 
   const archiveCanvasWrapper = useCallback(
     async (canvasToArchive: SerializedCanvasDocument) => {
+      if (isCanvasLocked) {
+        return;
+      }
+
       await archiveCanvas(canvasToArchive);
       if (canvasToArchive.externalId === activeCanvas?.externalId) {
         const nextCanvas = canvases?.find(
@@ -119,7 +150,34 @@ export const IndustryCanvasProvider: React.FC<IndustryCanvasProviderProps> = ({
       }
       await refetchCanvases();
     },
-    [activeCanvas, canvases, archiveCanvas, refetchCanvases, setCanvasId]
+    [
+      activeCanvas,
+      canvases,
+      archiveCanvas,
+      refetchCanvases,
+      setCanvasId,
+      isCanvasLocked,
+    ]
+  );
+
+  const deleteCanvasIdsByTypeWrapper = useCallback(
+    async ({
+      ids,
+      canvasExternalId,
+    }: {
+      ids: IdsByType;
+      canvasExternalId: string;
+    }) => {
+      if (isCanvasLocked) {
+        return;
+      }
+
+      if (ids.annotationIds.length === 0 && ids.containerIds.length === 0) {
+        return;
+      }
+      return deleteCanvasIdsByType({ ids, canvasExternalId });
+    },
+    [deleteCanvasIdsByType, isCanvasLocked]
   );
 
   return (
@@ -138,6 +196,8 @@ export const IndustryCanvasProvider: React.FC<IndustryCanvasProviderProps> = ({
         archiveCanvas: archiveCanvasWrapper,
         initializeWithContainerReferences,
         setCanvasId,
+        deleteCanvasIdsByType: deleteCanvasIdsByTypeWrapper,
+        isCanvasLocked,
       }}
     >
       {children}

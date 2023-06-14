@@ -2,19 +2,22 @@ import { useEffect, useMemo, useState } from 'react';
 
 import {
   IdsByType,
-  ToolType,
   UnifiedViewer,
   UnifiedViewerEventType,
 } from '@cognite/unified-file-viewer';
 
-import { CanvasAnnotation, IndustryCanvasContainerConfig } from '../types';
+import {
+  CanvasAnnotation,
+  IndustryCanvasContainerConfig,
+  IndustryCanvasToolType,
+} from '../types';
 
 import { EMPTY_IDS_BY_TYPE } from './constants';
 import { UseManagedStateReturnType } from './useManagedState';
 
 type UseSelectedAnnotationOrContainerProps = {
   unifiedViewerRef: UnifiedViewer | null;
-  tool: ToolType;
+  tool: IndustryCanvasToolType;
   canvasAnnotations: UseManagedStateReturnType['canvasAnnotations'];
   container: UseManagedStateReturnType['container'];
 };
@@ -42,7 +45,7 @@ export const useSelectedAnnotationOrContainer = ({
 
   const selectedCanvasAnnotation = useMemo(() => {
     // This is to avoid the bug in UFV where the ON_SELECT is not emitted with empty IDs when changing tool
-    if (tool !== ToolType.SELECT) {
+    if (tool !== IndustryCanvasToolType.SELECT) {
       return undefined;
     }
 
@@ -60,7 +63,7 @@ export const useSelectedAnnotationOrContainer = ({
 
   const selectedContainer = useMemo(() => {
     // This is to avoid the bug in UFV where the ON_SELECT is not emitted with empty IDs when changing tool
-    if (tool !== ToolType.SELECT) {
+    if (tool !== IndustryCanvasToolType.SELECT) {
       return undefined;
     }
 

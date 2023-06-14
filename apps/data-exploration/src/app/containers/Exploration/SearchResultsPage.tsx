@@ -36,9 +36,11 @@ import { SequenceSearchResultView } from '@data-exploration-app/containers/Seque
 import { ThreeDSearchResultView } from '@data-exploration-app/containers/ThreeD/ThreeDSearchResultView';
 import { TimeseriesSearchResultView } from '@data-exploration-app/containers/Timeseries/TimeseriesSearchResultView';
 import { useResourceFilter } from '@data-exploration-app/context/ResourceSelectionContext';
+import { ThreeDSearchContextProvider } from '@data-exploration-app/context/ThreeDSearchContext';
 import {
   useFlagDocumentGPT,
   useFlagDocumentLabelsFilter,
+  useFlagOverlayNavigation,
 } from '@data-exploration-app/hooks';
 import { useFlagAdvancedFilters } from '@data-exploration-app/hooks/flags/useFlagAdvancedFilters';
 import {
@@ -66,6 +68,9 @@ import {
 } from '@data-exploration-lib/domain-layer';
 
 import { SearchFiltersV2 } from '../SearchResults/SearchFiltersV2';
+
+import { BreakJourneyPrompt } from './BreakJourneyPrompt';
+import { DetailsOverlay } from './DetailsOverlay';
 
 const getPageTitle = (query: string, resourceType?: ResourceType): string => {
   return `${query}${query ? ' in' : ''} ${
@@ -101,6 +106,8 @@ function SearchPage() {
 
   const isDocumentGPTEnabled = useFlagDocumentGPT();
   const [showGPTInfo, setShowGPTInfo] = useState<boolean>(true);
+
+  const isDetailsOverlayEnabled = useFlagOverlayNavigation();
 
   const filterMap = useMemo(
     () => ({
@@ -259,6 +266,8 @@ function SearchPage() {
           </Wrapper>
         </MainContainer>
       </MainSearchContainer>
+      {isDetailsOverlayEnabled && <DetailsOverlay />}
+      {isDetailsOverlayEnabled && <BreakJourneyPrompt />}
     </RootHeightWrapper>
   );
 }
@@ -284,10 +293,10 @@ export const SearchResultsPage = () => {
   }, [resourceType, query]);
 
   return (
-    <>
+    <ThreeDSearchContextProvider>
       <PageTitle title={getPageTitle(query, resourceType)} />
       <SearchPage />
-    </>
+    </ThreeDSearchContextProvider>
   );
 };
 

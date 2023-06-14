@@ -7,33 +7,25 @@ import {
 } from '@tanstack/react-query';
 import * as THREE from 'three';
 
-import { Cognite3DViewer, Image360Collection } from '@cognite/reveal';
+import { Cognite3DViewer, Image360, Image360Collection } from '@cognite/reveal';
 
+import { Image360DatasetOptions } from '@data-exploration-app/containers/ThreeD/contexts/ThreeDContext';
 import {
   getImages360AppliedStateQueryKey,
   getImages360QueryFn,
   IMAGES_360_BASE_QUERY_KEY,
 } from '@data-exploration-app/containers/ThreeD/hooks';
 import { useRevealError } from '@data-exploration-app/containers/ThreeD/hooks/useRevealError';
-import { Image360DatasetOptions } from '@data-exploration-app/containers/ThreeD/ThreeDContext';
 
 type LoadImages360Props = {
   images360: Image360DatasetOptions[];
-  imageEntities: { siteId: string; images: Image360Collection }[];
-  setImageEntities: (
-    entities: { siteId: string; images: Image360Collection }[]
-  ) => void;
-  is360ImagesMode: boolean;
-  setIs360ImagesMode: (mode: boolean) => void;
+  setImage360Entity: (entity: Image360 | undefined) => void;
   viewer: Cognite3DViewer;
 };
 
 const LoadImages360 = ({
   images360,
-  imageEntities,
-  setImageEntities,
-  is360ImagesMode,
-  setIs360ImagesMode,
+  setImage360Entity,
   viewer,
 }: LoadImages360Props): JSX.Element => {
   const queryClient = useQueryClient();
@@ -66,10 +58,7 @@ const LoadImages360 = ({
           viewer,
           siteId,
           applied,
-          imageEntities,
-          setImageEntities,
-          is360ImagesMode,
-          setIs360ImagesMode,
+          setImage360Entity,
           rotationMatrix,
           translationMatrix
         ),
