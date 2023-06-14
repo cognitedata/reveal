@@ -14,7 +14,9 @@ export const saveToCache = async <T>(key: keyof typeof CACHE_KEY, value: T) => {
 };
 
 export const getFromCache = async <T>(key: keyof typeof CACHE_KEY) => {
-  return (await localForage.getItem(`${prefix}${key}`)) as T;
+  return ((await localForage.getItem(`${prefix}${key}`)) || undefined) as
+    | T
+    | undefined;
 };
 
 export const clear = async () => {
