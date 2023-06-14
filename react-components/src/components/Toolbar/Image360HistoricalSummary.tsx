@@ -3,7 +3,7 @@
  */
 
 import { Detail, Flex } from '@cognite/cogs.js';
-import React from 'react';
+import React, { useRef } from 'react';
 import styled from 'styled-components';
 import { Thumbnail } from '../utils/Thumbnail';
 import { Cognite3DViewer, Image360 } from '@cognite/reveal';
@@ -35,9 +35,12 @@ export const Image360HistoricalSummary = ({
   viewer
 }: Image360HistoricalSummaryProps) => {
 
+  const selectedRevisionRef = useRef<HTMLDivElement>(null);
+
   const onRevisionChanged = (revisionDetails: Image360RevisionDetails, index: number) => {
     if(viewer && revisionDetails.image360Entity) {
-      setActiveRevision(index)
+      selectedRevisionRef.current?.scrollIntoView();
+      setActiveRevision(index);
       const revisions = revisionDetails.image360Entity.getRevisions();
       const revisionIndex = revisionDetails.index!;
       if (revisionIndex >= 0 && revisionIndex < revisions.length) {
@@ -58,6 +61,7 @@ export const Image360HistoricalSummary = ({
           { revisionCollection.map((revisionDetails, index) => (
             <RevisionItem
               key={uniqueId()}
+              ref={selectedRevisionRef}
               onClick={onRevisionChanged.bind(null, revisionDetails, index)}
             >
               <Thumbnail
