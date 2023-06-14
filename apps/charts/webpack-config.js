@@ -15,7 +15,7 @@ const useMockEnv =
 module.exports = composePlugins(
   withNx(),
   withReact(),
-  withSingleSpa({ useMockEnv }),
+  withSingleSpa({ useMockEnv: false }),
   (config) => {
     const nodeEnv = process.env.NODE_ENV || 'production';
     console.log(`Custom webpack config(${nodeEnv}) for charts was loaded...`);
