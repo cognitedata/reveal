@@ -9,6 +9,8 @@ import {
   ResourceType,
 } from '@data-exploration-components/types';
 
+import { Select, Tabs, Tooltip } from '@cognite/cogs.js';
+
 import { ResourceSelectionSidebar } from '..';
 
 export type OpenSelectorProps = {
@@ -31,11 +33,16 @@ export const useResourceSelector = () => {
   const observer = useContext(ResourceSelectorContext);
   return observer;
 };
+/**
+ * @param  appendStyles: keep this false if we append styles in parent components
+ */
 
 export const ResourceSelectorProvider = ({
   children,
+  appendStyles = false,
 }: {
   children: React.ReactNode;
+  appendStyles?: boolean;
 }) => {
   const [resourceTypes, setResourceTypes] = useState<
     ResourceType[] | undefined
@@ -54,6 +61,35 @@ export const ResourceSelectorProvider = ({
   const [onSelect, setOnSelectListener] = useState<
     SelectableItemsProps['onSelect']
   >(() => () => {});
+
+  React.useEffect(() => {
+    if (!appendStyles) return;
+
+    Tooltip.defaultProps = {
+      ...Tooltip.defaultProps,
+      appendTo: () => document.body,
+    };
+
+    // defaultProps does not exist on type
+    // @ts-expect-error
+    Tabs.defaultProps = {
+      // @ts-expect-error
+      ...Tabs.defaultProps,
+      getPopupContainer: () => document.body,
+    };
+
+    // @ts-expect-error
+    Select.defaultProps = {
+      // @ts-expect-error
+      ...Select.defaultProps,
+      menuPortalTarget: document.body,
+    };
+
+    // create a custom portal for drag-drop
+    const dragDropPortal: HTMLElement = document.createElement('div');
+    dragDropPortal.classList.add('drag-drop-portal');
+    document.body.appendChild(dragDropPortal);
+  }, []);
 
   const openResourceSelector = useCallback(
     (
