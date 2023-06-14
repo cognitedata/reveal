@@ -168,7 +168,6 @@
     "stream-browserify": "^3.0.0",
     "styled-components": "5.3.6",
     "systemjs-webpack-interop": "^2.3.7",
-    "three": "^0.149.0",
     "to-regex-range": "^5.0.1",
     "tslib": "^2.3.0",
     "underscore-db": "^0.12.2",
