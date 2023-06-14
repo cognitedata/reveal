@@ -41,7 +41,8 @@ export const Thead = styled.div<{ isStickyHeader?: boolean }>`
   top: 0;
   background: inherit;
   isolation: isolate;
-  z-index: ${zIndex.MINIMUM};
+  z-index: ${({ isStickyHeader }) =>
+    isStickyHeader ? zIndex.DRAWER : zIndex.MINIMUM};
   height: ${defaultRowHeight};
 `;
 
@@ -62,7 +63,7 @@ export const StyledTable = styled.div`
   color: var(--cogs-text-icon--medium);
   position: relative;
   width: 100%;
-  background: white;
+  background-color: white;
   /* To isolate the z-index to the scope of the table */
   isolation: isolate;
   & > div {
@@ -76,12 +77,12 @@ export const StyledTable = styled.div`
       max-width: 100%;
     }
   }
-
   .sticky-column {
     position: sticky;
     top: 0;
     left: 0;
-    background: inherit;
+    background-color: inherit;
+    z-index: ${zIndex.OVERLAY};
   }
 `;
 
@@ -133,33 +134,33 @@ export const Tr = styled.div`
   }
 
   &.selected {
-    background-color: var(--cogs-surface--interactive--toggled-pressed);
+    background-color: var(--cogs-decorative--blue--200);
 
     &:hover {
-      background-color: var(--cogs-surface--interactive--toggled-pressed);
+      background-color: var(--cogs-decorative--blue--200);
     }
 
     &:focus {
-      background-color: var(--cogs-surface--interactive--toggled-pressed);
+      background-color: var(--cogs-decorative--blue--200);
     }
   }
 
   &:hover {
-    background: var(--cogs-surface--interactive--hover);
+    background: var(--cogs-greyscale-grey2);
     cursor: pointer;
   }
 
   &[data-selected='true'] {
-    background: var(--cogs-surface--interactive--toggled-hover);
+    background: var(--cogs-greyscale-grey2);
   }
 
   &:focus {
     outline: none;
-    background: var(--cogs-surface--interactive--hover);
+    background: var(--cogs-greyscale-grey3);
   }
 
   ${Thead} &:hover {
-    background: transparent;
+    background-color: white;
     cursor: unset;
   }
 
@@ -181,6 +182,7 @@ export const MainRowContainer = styled.div`
   width: 100%;
   display: flex;
   align-items: center;
+  background-color: inherit;
 `;
 
 export const MainRowSubContainer = styled.div<{ depth?: number }>`
@@ -189,6 +191,7 @@ export const MainRowSubContainer = styled.div<{ depth?: number }>`
 `;
 
 export const Tbody = styled.div`
+  background-color: inherit;
   ${Tr} {
     &:last-child {
       border: none;
