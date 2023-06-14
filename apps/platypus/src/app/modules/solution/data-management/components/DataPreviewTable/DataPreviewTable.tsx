@@ -417,7 +417,7 @@ export const DataPreviewTable = forwardRef<
           return;
         }
 
-        const nonPrimitiveTypes = ['TimeSeries', 'File'];
+        const nonPrimitiveTypes = ['TimeSeries', 'File', 'Sequence'];
 
         const doesDataRequireSidebar =
           (fieldType.type.list && currValue.length > 0) ||
