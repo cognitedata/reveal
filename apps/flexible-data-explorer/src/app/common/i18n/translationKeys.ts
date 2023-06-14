@@ -1,4 +1,6 @@
 export const translationKeys = {
+  homePageTitle: 'homepage_title',
+
   showMore: 'show_more',
 
   filterButtonApply: 'filter_button_apply',
