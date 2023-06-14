@@ -1,5 +1,6 @@
+// Type has a field with the same name, 'dataModel'. This can create ambiguity.
 export type DataModel = {
-  dataModel?: string;
+  dataModel?: string; // is this 'dataModelName'? or just 'model'?
   space?: string;
   version?: string;
 };
