@@ -162,6 +162,8 @@ export const startConvertFileToSvgJob = {
               Promise.resolve(jobId);
               timer.stop({ success: true, jobId });
             } catch (e) {
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-expect-error
               convertErrorNotification(tryToStringify({ ...e }));
               dispatch(rejectJob({ jobId }));
               Promise.reject();
@@ -184,6 +186,8 @@ export const startConvertFileToSvgJob = {
           3000
         );
       } catch (e) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
         handleError({ ...e });
       }
     }

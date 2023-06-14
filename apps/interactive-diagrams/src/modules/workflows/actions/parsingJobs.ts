@@ -106,6 +106,7 @@ export const startPnidParsingJob = {
         }
         return jobId;
       } catch (e) {
+        // @ts-ignore ignoring for the sake of this migration
         handleError({ ...e });
         dispatch(rejectModel({}));
         throw e;
@@ -167,6 +168,7 @@ export const pollJobResults = {
           );
         }
       } catch (error) {
+        // @ts-ignore ignoring for the sake of this migration
         handleError(error);
       }
     }

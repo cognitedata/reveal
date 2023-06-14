@@ -24,7 +24,9 @@ import {
 import NotFound from '@interactive-diagrams-app/pages/NotFound';
 import { searchCountSelector } from '@interactive-diagrams-app/pages/PageSelection/selectors';
 import { LS_KEY_SETTINGS } from '@interactive-diagrams-app/stringConstants';
+import { ThunkDispatch } from '@reduxjs/toolkit';
 import { message } from 'antd';
+import { AnyAction } from 'redux';
 import { useDebouncedCallback } from 'use-debounce';
 
 import DiagramsSelection from './DiagramsSelection';
@@ -41,7 +43,7 @@ type Props = {
 };
 
 export default function PageSelection(props: Props): JSX.Element {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<ThunkDispatch<any, void, AnyAction>>();
   const { setJobStarted } = useJobStarted();
   const { type, step, required, defaultFilters = DEFAULT_FILTERS } = props;
 
@@ -59,7 +61,7 @@ export default function PageSelection(props: Props): JSX.Element {
   );
 
   const [delayedFilter, setDelayedFilter] = useState<Filter>(filter);
-  const [debouncedSetFilter] = useDebouncedCallback(setDelayedFilter, 200);
+  const debouncedSetFilter = useDebouncedCallback(setDelayedFilter, 200);
   const [savedSettings] = useLocalStorage<SavedSettings>(LS_KEY_SETTINGS, {
     skip: false,
   });

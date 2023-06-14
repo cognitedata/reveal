@@ -19,10 +19,12 @@ import {
   pollJobResults,
 } from '@interactive-diagrams-app/modules/workflows';
 import { RootState } from '@interactive-diagrams-app/store';
+import { ThunkDispatch } from '@reduxjs/toolkit';
+import { AnyAction } from 'redux';
 import { createSelector } from 'reselect';
 
 export const useStartJobs = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<ThunkDispatch<any, void, AnyAction>>();
   const { workflowId } = useActiveWorkflow();
   const jobs = useSelector(getWorkflowJobs);
 

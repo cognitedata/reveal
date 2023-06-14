@@ -13,3 +13,18 @@ window.URL.createObjectURL = noop;
 jest.mock('@cognite/unified-file-viewer', () => ({}));
 jest.mock('@cognite/plotting-components', () => ({}));
 jest.mock('@cognite/data-exploration', () => ({}));
+
+jest.mock('@cognite/unified-file-viewer', () => {
+  return {
+    ToolType: {
+      RECTANGLE: 'rectangle',
+      SELECT: 'select',
+      ELLIPSE: 'ellipse',
+      POLYLINE: 'polyline',
+      LINE: 'line',
+      TEXT: 'text',
+      IMAGE: 'image',
+      PAN: 'pan',
+    },
+  };
+});

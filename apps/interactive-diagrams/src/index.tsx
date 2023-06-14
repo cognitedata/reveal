@@ -1,20 +1,34 @@
 import React from 'react';
 
-import ReactDOMClient from 'react-dom/client'; // import config from '@interactive-diagrams-app/utils/config';
-import './set-public-path';
+import ReactDOMClient from 'react-dom/client';
 import singleSpaReact from 'single-spa-react';
 
 import App from './App';
+import { environment } from './environments/environment';
 
-const lifecycles = singleSpaReact({
-  React,
-  ReactDOMClient,
-  rootComponent: App,
-  errorBoundary() {
-    // eslint-disable-line
-    // Customize the root error boundary for your microfrontend here.
-    return <span>An error occured in your app</span>;
-  },
-});
+// Fusion UI will expect this lifecycle events to be exported
+// when running app on local env as standalone app, we don't need it
+const noop = () => '';
+let lifecycles = {
+  mount: noop,
+  bootstrap: noop,
+  unmount: noop,
+} as any;
 
-export const { bootstrap, mount, unmount } = lifecycles;
+if (environment.APP_ENV === 'mock') {
+  const container = document.getElementById('root');
+  const root = ReactDOMClient.createRoot(container!);
+  root.render(<App />);
+} else {
+  lifecycles = singleSpaReact({
+    React,
+    ReactDOMClient,
+    rootComponent: App,
+    errorBoundary() {
+      // Customize the root error boundary for your micro-frontend here.
+      return <span>An error occurred in your app</span>;
+    },
+  });
+}
+
+export const { mount, bootstrap, unmount } = lifecycles;

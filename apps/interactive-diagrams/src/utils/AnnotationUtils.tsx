@@ -69,11 +69,17 @@ const findSimilarMatches = (
       if (
         resourceType === 'file' &&
         taggedAnnotation.annotation.annotationType === 'diagrams.FileLink' &&
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
         (taggedAnnotation.annotation.data.fileRef.id === resourceId ||
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-expect-error
           taggedAnnotation.annotation.data.fileRef.externalId ===
             resourceExternalId)
       ) {
         return isSimilarBoundingBox(
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-expect-error
           taggedAnnotation.annotation.data.textRegion,
           box,
           threshold
@@ -83,11 +89,17 @@ const findSimilarMatches = (
       if (
         resourceType === 'asset' &&
         taggedAnnotation.annotation.annotationType === 'diagrams.AssetLink' &&
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
         (taggedAnnotation.annotation.data.assetRef.id === resourceId ||
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-expect-error
           taggedAnnotation.annotation.data.assetRef.externalId ===
             resourceExternalId)
       ) {
         return isSimilarBoundingBox(
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-expect-error
           taggedAnnotation.annotation.data.textRegion,
           box,
           threshold
@@ -177,7 +189,8 @@ export const createPendingAnnotationsFromJob = async (
           ) {
             return (
               // We can't refine the types right now
-
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-expect-error
               taggedAnnotation.annotation.data.fileRef.id === resourceId
             );
           }
@@ -187,7 +200,8 @@ export const createPendingAnnotationsFromJob = async (
           ) {
             return (
               // We can't refine the types right now
-
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-expect-error
               taggedAnnotation.annotation.data.assetRef.id === resourceId
             );
           }

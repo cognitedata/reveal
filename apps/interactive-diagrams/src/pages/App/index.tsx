@@ -15,6 +15,7 @@ import {
 import { setItemInStorage, useUserId } from '@interactive-diagrams-app/hooks';
 import { useUserInformation } from '@interactive-diagrams-app/hooks/useUserInformation';
 import NotFound from '@interactive-diagrams-app/pages/NotFound';
+import AppRoutes from '@interactive-diagrams-app/routes';
 import { staticRoot } from '@interactive-diagrams-app/routes/paths';
 import { LS_KEY_METRICS } from '@interactive-diagrams-app/stringConstants';
 import { trackUsage } from '@interactive-diagrams-app/utils/Metrics';
@@ -22,15 +23,13 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import queryString from 'query-string';
 
 import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
+import { Icon } from '@cognite/cogs.js';
 import {
-  Loader,
   FileContextualizationContextProvider,
   DataExplorationProvider,
 } from '@cognite/data-exploration';
 
 import { ids } from '../../cogs-variables';
-
-const AppRoutes = React.lazy(() => import('@interactive-diagrams-app/routes'));
 
 export default function App() {
   const {
@@ -77,13 +76,14 @@ export default function App() {
   }, [location]);
 
   return (
-    <Suspense fallback={<Loader />}>
+    <Suspense fallback={<Icon type="Loader" />}>
       <FileContextualizationContextProvider>
         <ResourceSelectionProvider allowEdit mode="multiple">
           <ResourceActionsProvider>
             <DataExplorationProvider
               flow={flow}
               userInfo={userInfo}
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-ignore:next-line
               sdk={sdk}
               styleScopeId={ids.styleScope}

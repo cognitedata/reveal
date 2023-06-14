@@ -99,7 +99,7 @@ export const AssetDetailsAbstract = ({
                 }}
                 title={
                   <div style={{ display: 'flex' }}>
-                    <Icon type="Document" style={{ marginRight: '4px' }} />
+                    <Icon type="Document" css={{ marginRight: '4px' }} />
                     <span>{file.name}</span>
                   </div>
                 }
@@ -165,7 +165,7 @@ export const AssetDetailsAbstract = ({
                 }}
                 title={
                   <div style={{ display: 'flex' }}>
-                    <Icon type="Timeseries" style={{ marginRight: '4px' }} />
+                    <Icon type="Timeseries" css={{ marginRight: '4px' }} />
                     <span>{ts.name}</span>
                   </div>
                 }
@@ -234,7 +234,7 @@ export const AssetDetailsAbstract = ({
             }}
             title={
               <div style={{ display: 'flex' }}>
-                <Icon type="Document" style={{ marginRight: '4px' }} />
+                <Icon type="Document" css={{ marginRight: '4px' }} />
                 <span>Diagrams</span>
               </div>
             }
@@ -255,7 +255,7 @@ export const AssetDetailsAbstract = ({
             }}
             title={
               <div style={{ display: 'flex' }}>
-                <Icon type="Timeseries" style={{ marginRight: '4px' }} />
+                <Icon type="Timeseries" css={{ marginRight: '4px' }} />
                 <span>Time series</span>
               </div>
             }

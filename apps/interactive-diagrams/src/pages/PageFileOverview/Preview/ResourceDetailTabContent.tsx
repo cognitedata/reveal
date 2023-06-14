@@ -35,6 +35,9 @@ export const ResourceDetailTabContent = ({
       onItemClicked={(id: number) => {
         navigate(createLink(`/explore/${type}/${id}`));
       }}
+      onParentAssetClick={(assetId) => {
+        navigate(createLink(`/explore/asset/${assetId}`));
+      }}
       selectionMode={mode}
       onSelect={onSelect}
       isSelected={isSelected}

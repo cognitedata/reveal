@@ -5,7 +5,6 @@ export * from './SmallTitle';
 export * from './PageTitle';
 export * from './ColumnTitle';
 export * from './Badge';
-export * from './IconButton';
 export * from './Flex';
 export * from './PageWrapper';
 export * from './TitledSection';

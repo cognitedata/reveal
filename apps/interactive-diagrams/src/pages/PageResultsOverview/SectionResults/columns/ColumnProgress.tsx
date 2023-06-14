@@ -26,7 +26,7 @@ export default function ColumnProgress({ file }: Props): JSX.Element {
           >
             <Icon
               type="Help"
-              style={{ verticalAlign: '-0.225em', marginLeft: '4px' }}
+              css={{ verticalAlign: '-0.225em', marginLeft: '4px' }}
             />
           </Tooltip>
         )}

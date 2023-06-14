@@ -8,13 +8,15 @@ import {
   getActiveWorkflowItems,
   useWorkflowTotalCounts,
 } from '@interactive-diagrams-app/modules/workflows';
+import { ThunkDispatch } from '@reduxjs/toolkit';
 import isEqual from 'lodash/isEqual';
+import { AnyAction } from 'redux';
 
 import { useActiveWorkflow } from './useActiveWorkflow';
 
 export const useResourceCount = () => {
   const { resourceCount, setResourceCount } = useContext(AppStateContext);
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<ThunkDispatch<any, void, AnyAction>>();
   const { workflowId } = useActiveWorkflow();
   const { diagrams, resources } = useWorkflowTotalCounts(workflowId);
   const items = useSelector(getActiveWorkflowItems);

@@ -18,8 +18,10 @@ export const linkFileToAssetIds = async (
     const updatedFile = await client.files.update(
       updates.map((update) => ({
         ...(update.id
-          ? { id: update.id! }
-          : { externalId: update.externalId! }),
+          ? // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            { id: update.id! }
+          : // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            { externalId: update.externalId! }),
         update: {
           assetIds: {
             add: Array.from(update.assetIds),
@@ -29,6 +31,8 @@ export const linkFileToAssetIds = async (
     );
     return updatedFile;
   }
+
+  return Promise.resolve();
 };
 
 export default linkFileToAssetIds;

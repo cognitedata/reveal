@@ -2,22 +2,20 @@ import React, { useState } from 'react';
 
 import styled from 'styled-components';
 
+import { Metadata } from '@data-exploration/components';
+import { FileInfo as DataExplorationFileInfo } from '@data-exploration/containers';
 import { ContextFileViewer as CogniteFileViewer } from '@interactive-diagrams-app/components/CogniteFileViewer';
 import {
   PNID_METRICS,
   trackUsage,
 } from '@interactive-diagrams-app/utils/Metrics';
 
-import { Colors, Tabs } from '@cognite/cogs.js';
+import { Tabs } from '@cognite/cogs.js';
 import {
-  FileDetails,
-  Metadata,
   useRelatedResourceCounts,
   ResourceItem,
 } from '@cognite/data-exploration';
 import { FileInfo } from '@cognite/sdk';
-
-import { ContentWrapper } from '../components';
 
 import { ResourceDetailTabContent } from './ResourceDetailTabContent';
 
@@ -40,61 +38,53 @@ export default function Preview(props: Props) {
   const { counts } = useRelatedResourceCounts(resourceDetails);
 
   return (
-    <StyledTabs
-      activeKey={activeTab}
-      onTabClick={(newTab) => {
-        trackUsage(PNID_METRICS.fileViewer.viewTab, { tab: newTab });
-        setActiveTab(newTab as FilePreviewTabType);
-      }}
-      style={{ paddingLeft: '20px' }}
-    >
-      <Tabs.Tab tabKey="preview" label="Preview">
-        <ContentWrapper>
+    <TabsWrapper>
+      <Tabs
+        activeKey={activeTab}
+        onTabClick={(newTab) => {
+          trackUsage(PNID_METRICS.fileViewer.viewTab, { tab: newTab });
+          setActiveTab(newTab as FilePreviewTabType);
+        }}
+        style={{ paddingLeft: '20px' }}
+      >
+        <Tabs.Tab tabKey="preview" label="Preview">
           <CogniteFileViewer fileId={file?.id} editMode={editMode} />
-        </ContentWrapper>
-      </Tabs.Tab>
-      <Tabs.Tab label="Diagram details" tabKey="info">
-        <FileDetails file={file} />
-        <Metadata metadata={file?.metadata} />
-      </Tabs.Tab>
-      <Tabs.Tab
-        tabKey="assets"
-        chipRight={{
-          label: counts?.asset ?? '-',
-          size: 'small',
-        }}
-        label="Assets"
-      >
-        <ResourceDetailTabContent resource={resourceDetails} type="asset" />
-      </Tabs.Tab>
-      <Tabs.Tab
-        tabKey="files"
-        chipRight={{
-          label: counts?.file ?? '-',
-          size: 'small',
-        }}
-        label="Diagrams"
-      >
-        <ResourceDetailTabContent resource={resourceDetails} type="file" />
-      </Tabs.Tab>
-    </StyledTabs>
+        </Tabs.Tab>
+        <Tabs.Tab label="Diagram details" tabKey="info">
+          <DataExplorationFileInfo file={file} />
+          <Metadata metadata={file?.metadata} />
+        </Tabs.Tab>
+        <Tabs.Tab
+          tabKey="assets"
+          chipRight={{
+            label: counts?.asset ?? '-',
+            size: 'small',
+          }}
+          label="Assets"
+        >
+          <ResourceDetailTabContent resource={resourceDetails} type="asset" />
+        </Tabs.Tab>
+        <Tabs.Tab
+          tabKey="files"
+          chipRight={{
+            label: counts?.file ?? '-',
+            size: 'small',
+          }}
+          label="Diagrams"
+        >
+          <ResourceDetailTabContent resource={resourceDetails} type="file" />
+        </Tabs.Tab>
+      </Tabs>
+    </TabsWrapper>
   );
 }
 
-export const StyledTabs = styled(Tabs)`
+const TabsWrapper = styled.div`
+  height: 100%;
   padding-left: 16px;
   padding-right: 16px;
-  flex: 1;
-  height: 100%;
 
-  .rc-tabs-nav-wrap {
-    border-bottom: 1px solid ${Colors['decorative--grayscale--300']};
-    margin-bottom: 16px;
-  }
-  .rc-tabs-content-holder {
-    display: flex;
-    /* We need to consider the height of the tab switcher part at the top which is 48px in height */
-    height: calc(100% - 48px);
-    overflow: auto;
+  .cogs-tabs {
+    height: 100%;
   }
 `;

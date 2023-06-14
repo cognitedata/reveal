@@ -15,12 +15,16 @@ export function createStore(): any {
 
   if ((module as any).hot) {
     // Enable Webpack hot module replacement for reducers
-    (module as any).hot.accept('store/reducer', () => {
-      /* eslint-disable global-require */
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
-      const nextReducer = require('store/reducer').default;
-      store.replaceReducer(nextReducer);
-    });
+    (module as any).hot.accept(
+      '@interactive-diagrams-app/store/reducer',
+      () => {
+        const nextReducer =
+          /* eslint-disable global-require */
+          // eslint-disable-next-line @typescript-eslint/no-var-requires
+          require('@interactive-diagrams-app/store/reducer').default;
+        store.replaceReducer(nextReducer);
+      }
+    );
   }
 
   return store;

@@ -1,15 +1,13 @@
 import React, { useEffect, useContext } from 'react';
 
+import { FilePreview as CogniteFilePreview } from '@data-exploration-components/containers';
 import ResourceSelectionContext from '@interactive-diagrams-app/context/ResourceSelectionContext';
 import { Alert } from 'antd';
 import isMatch from 'lodash/isMatch';
 
 import { getFlow } from '@cognite/cdf-sdk-singleton';
-import {
-  FilePreviewUFV as CogniteFilePreview,
-  ErrorFeedback,
-  Loader,
-} from '@cognite/data-exploration';
+import { Icon } from '@cognite/cogs.js';
+import { ErrorFeedback } from '@cognite/data-exploration';
 import { FileInfo } from '@cognite/sdk';
 import { useCdfItem, usePermissions } from '@cognite/sdk-react-query-hooks';
 
@@ -72,7 +70,7 @@ export const FilePreview = ({
   });
 
   if (!isFetched) {
-    return <Loader />;
+    return <Icon size={40} css={{ margin: '12px auto 0' }} type="Loader" />;
   }
 
   if (isError) {

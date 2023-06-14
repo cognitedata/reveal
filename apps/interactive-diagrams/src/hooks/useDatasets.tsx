@@ -7,9 +7,11 @@ import {
   dataSetCounts,
   datasetsFetched,
 } from '@interactive-diagrams-app/modules/datasets';
+import { ThunkDispatch } from '@reduxjs/toolkit';
+import { AnyAction } from 'redux';
 
 export const useDatasets = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<ThunkDispatch<any, void, AnyAction>>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const dataSetResourceCounts = useSelector(dataSetCounts);

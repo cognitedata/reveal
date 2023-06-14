@@ -15,7 +15,9 @@ import {
   TaggedAnnotation,
 } from '@interactive-diagrams-app/modules/workflows';
 import { RootState } from '@interactive-diagrams-app/store';
+import { ThunkDispatch } from '@reduxjs/toolkit';
 import isEqual from 'lodash/isEqual';
+import { AnyAction } from 'redux';
 import { createSelector } from 'reselect';
 
 import { FileInfo } from '@cognite/sdk';
@@ -33,7 +35,7 @@ type DiagramToConvert = {
 };
 
 export const useConvertToSVG = (fileIds: number[]) => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<ThunkDispatch<any, void, AnyAction>>();
   const { svgPrefix, prefixType } = useContext(AppStateContext);
   const [isConverting, setIsConverting] = useState(false);
   const { diagramsToConvert, nrOfPendingDiagramsToConvert } =
@@ -135,6 +137,8 @@ export const useDiagramsToConvert = (fileIds: number[]) => {
           assetIds,
         };
       });
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore ignoring for the sake of this migration
     if (!isEqual(diagrams, diagramsToConvert)) setDiagramsToConvert(diagrams);
     if (!isEqual(pendingDiagrams, nrOfPendingDiagramsToConvert))
       setNrOfpendingDiagramsToConvert(pendingDiagrams);

@@ -1,13 +1,9 @@
 import React from 'react';
 
-import interactiveDiagramIcon from '../assets/InteractiveIcon.svg';
+import { DocumentIcon } from '@cognite/cogs.js';
 
 const InteractiveIcon = () => {
-  return (
-    <span style={{ maxWidth: '20px', marginRight: '10px' }}>
-      <img src={interactiveDiagramIcon} alt="Interactive diagram icon" />
-    </span>
-  );
+  return <DocumentIcon file="pdf" />;
 };
 
 export default InteractiveIcon;

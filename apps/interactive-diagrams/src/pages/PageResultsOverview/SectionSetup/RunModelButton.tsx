@@ -9,11 +9,13 @@ import {
   useJobStatus,
 } from '@interactive-diagrams-app/hooks';
 import { startPnidParsingWorkflow } from '@interactive-diagrams-app/modules/workflows';
+import { ThunkDispatch } from '@reduxjs/toolkit';
+import { AnyAction } from 'redux';
 
 import { Button, Body, Colors, Icon } from '@cognite/cogs.js';
 
 export default function RunModelButton(): JSX.Element {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<ThunkDispatch<any, void, AnyAction>>();
   const { jobStarted, setJobStarted } = useJobStarted();
 
   const { statusCount } = useParsingJob();

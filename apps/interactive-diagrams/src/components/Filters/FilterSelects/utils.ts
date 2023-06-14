@@ -68,7 +68,7 @@ export const approvalDetails: { [key: string]: ReviewStatus } = {
   unknown: {
     status: 'No tags detected',
     type: 'empty',
-    variant: 'unknown',
+    variant: 'default',
     label: 'No tags detected',
     tooltip: 'No tags were found in the diagram',
   },

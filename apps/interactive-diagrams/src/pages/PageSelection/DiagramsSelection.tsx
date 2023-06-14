@@ -8,6 +8,8 @@ import {
   loadWorkflowDiagrams,
   getActiveWorkflowItems,
 } from '@interactive-diagrams-app/modules/workflows';
+import { ThunkDispatch } from '@reduxjs/toolkit';
+import { AnyAction } from 'redux';
 
 import SelectionBar from './components/SelectionBar';
 import SelectionTable from './components/SelectionTable';
@@ -22,7 +24,7 @@ type SelectionProps = {
 };
 
 export default function DiagramsSelection(props: SelectionProps): JSX.Element {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<ThunkDispatch<any, void, AnyAction>>();
   const [showSelected, setShowSelected] = useState<boolean>(false);
 
   const { workflowId } = useActiveWorkflow();

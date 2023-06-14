@@ -6,8 +6,10 @@ import { Flex } from '@interactive-diagrams-app/components/Common';
 import { useSteps, useActiveWorkflow } from '@interactive-diagrams-app/hooks';
 import { retrieveItemsById as retrieve } from '@interactive-diagrams-app/modules/files';
 import { WorkflowStep } from '@interactive-diagrams-app/modules/workflows';
+import { AnyAction, ThunkDispatch } from '@reduxjs/toolkit';
 
-import { ErrorFeedback, Loader } from '@cognite/data-exploration';
+import { Icon } from '@cognite/cogs.js';
+import { ErrorFeedback } from '@cognite/data-exploration';
 import { FileInfo } from '@cognite/sdk';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 
@@ -21,7 +23,7 @@ type Props = {
 };
 
 export default function PageFileOverview(props: Props) {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<ThunkDispatch<any, void, AnyAction>>();
   const { step } = props;
   const { fileId } = useParams<{ fileId: string }>();
   const { goToPrevStep } = useSteps(step);
@@ -70,7 +72,7 @@ export default function PageFileOverview(props: Props) {
         {showPreview ? (
           <Preview file={fileInfo!} editMode={editMode} />
         ) : (
-          <Loader />
+          <Icon type="Loader" size={40} css={{ margin: '12px auto 0' }} />
         )}
       </Flex>
     </Wrapper>

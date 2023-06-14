@@ -1,6 +1,6 @@
 import { ApiStatusCount } from '@interactive-diagrams-app/modules/types';
 
-import { LabelVariants } from '@cognite/cogs.js';
+import { ChipType } from '@cognite/cogs.js';
 
 export type MimeType = {
   label: 'PDF' | 'JPG' | 'PNG';
@@ -18,7 +18,7 @@ export type StatusType = 'pending' | 'approved' | 'empty';
 export type ReviewStatus = {
   status: string;
   type: StatusType;
-  variant: LabelVariants;
+  variant: keyof typeof ChipType;
   label: string;
   tooltip: string;
 };

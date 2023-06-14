@@ -1,18 +1,14 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
-import {
-  Flex,
-  IconButton,
-  Dropdown,
-} from '@interactive-diagrams-app/components/Common';
+import { Flex, Dropdown } from '@interactive-diagrams-app/components/Common';
 import { MenuSingle } from '@interactive-diagrams-app/containers';
 import { useParsingJob, useJobStatus } from '@interactive-diagrams-app/hooks';
 import { diagramPreview } from '@interactive-diagrams-app/routes/paths';
 import { getUrlWithQueryParams } from '@interactive-diagrams-app/utils/config';
 import { message } from 'antd';
 
-import { Tooltip } from '@cognite/cogs.js';
+import { Button, Tooltip } from '@cognite/cogs.js';
 
 type Props = { file: any };
 
@@ -60,11 +56,10 @@ export default function ColumnFileActions({ file }: Props): JSX.Element {
         content={viewButtonLabel()}
         onShow={onTooltipShow}
       >
-        <IconButton
-          aria-label="Icon-Button"
+        <Button
+          aria-label="View file"
           icon="EyeShow"
           type="ghost"
-          $square
           onClick={onFileViewClick}
           disabled={isButtonDisabled}
           style={{ marginRight: '2px' }}

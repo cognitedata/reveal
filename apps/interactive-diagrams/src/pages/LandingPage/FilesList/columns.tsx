@@ -2,9 +2,9 @@ import React from 'react';
 
 import styled from 'styled-components';
 
+import { FileSmallPreview } from '@data-exploration-components/containers';
 import {
   Flex,
-  IconButton,
   Popover,
   Dropdown,
 } from '@interactive-diagrams-app/components/Common';
@@ -22,7 +22,6 @@ import {
 } from '@interactive-diagrams-app/utils/utils';
 
 import { Button } from '@cognite/cogs.js';
-import { FileSmallPreviewUFV } from '@cognite/data-exploration';
 import { FileInfo } from '@cognite/sdk';
 
 import { FileContextMenu } from './FileContextMenu';
@@ -42,7 +41,7 @@ export const getColumns = (onFileView: (file: FileInfo) => void) =>
       render: (file: FileInfo) => (
         <Flex row align style={{ justifyContent: 'flex-start' }}>
           <Popover
-            content={<FileSmallPreviewUFV fileId={file.id} />}
+            content={<FileSmallPreview fileId={file.id} />}
             onVisibleChange={(visible) =>
               visible && trackUsage(PNID_METRICS.landingPage.previewFile)
             }
@@ -95,11 +94,10 @@ export const getColumns = (onFileView: (file: FileInfo) => void) =>
       render: (file: FileInfo) => {
         return (
           <ActionsButtons row align>
-            <IconButton
-              aria-label="Icon-Button"
+            <Button
+              aria-label="View file"
               icon="EyeShow"
               type="ghost"
-              $square
               onClick={(
                 event: React.MouseEvent<HTMLButtonElement, MouseEvent>
               ) => {

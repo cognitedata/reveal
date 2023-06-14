@@ -8,6 +8,7 @@ static final String[] APPLICATIONS = [
   'coding-conventions',
   'copilot',
   'industry-canvas-ui',
+  'interactive-diagrams',
   'iot-hub',
 ]
 
@@ -20,13 +21,14 @@ static final Map<String, String> NPM_PACKAGES = [
 ]
 
 // This is the Firebase site mapping.
-// See https://github.com/cognitedata/terraform/blob/master/cognitedata-production/gcp_firebase_hosting/sites.tf
+// See https://github.com/cognitedata/terraform/blob/master/cognitedata-production/gcp_fusion_firebase_hosting/sites.tf
 static final Map<String, String> FIREBASE_APP_SITES = [
   'platypus': 'platypus',
   'data-exploration': 'data-exploration',
   'coding-conventions': 'coding-conventions',
   'copilot': 'copilot',
   'industry-canvas-ui': 'industry-canvas-ui',
+  'interactive-diagrams': 'pnid-contextualization',
   'iot-hub': 'iot-hub'
 ]
 
@@ -36,6 +38,7 @@ static final Map<String, String> PREVIEW_PACKAGE_NAMES = [
   'coding-conventions': "@cognite/cdf-coding-conventions",
   'copilot': "@cognite/cdf-copilot",
   'industry-canvas-ui': "@cognite/cdf-industry-canvas-ui",
+  'interactive-diagrams': '@cognite/cdf-context-ui-pnid',
   'iot-hub': "@cognite/cdf-iot-hub"
 ]
 

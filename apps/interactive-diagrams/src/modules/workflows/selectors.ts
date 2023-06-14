@@ -332,7 +332,6 @@ export const workflowAllResourcesSelector = (
       const resourceTypes =
         resources?.map((resource: ResourceSelection) => resource.type) ?? [];
       if (!resourceTypes.includes('files')) resourceTypes.push('files');
-      // eslint-disable-next-line consistent-return
       resourceTypes.forEach((resourceType: ResourceType) => {
         const resource = resources.find(
           (r: ResourceSelection) => r.type === resourceType
@@ -350,6 +349,8 @@ export const workflowAllResourcesSelector = (
           );
         if (endpoint === 'retrieve')
           allResources[resourceType] = retrieveItems(resourcesItems, filter);
+
+        return;
       });
       return allResources;
     }

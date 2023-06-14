@@ -9,12 +9,17 @@ export const isAnAssetOrFileTag = (annotations: CogniteAnnotation[]) => {
     ) ?? []
   );
 };
+
 export const sortFilesByAnnotations = (
   fileA: FileWithAnnotations,
   fileB: FileWithAnnotations
 ) => {
   return (
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
     isAnAssetOrFileTag(fileA?.annotations)?.length -
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
     isAnAssetOrFileTag(fileB?.annotations)?.length
   );
 };

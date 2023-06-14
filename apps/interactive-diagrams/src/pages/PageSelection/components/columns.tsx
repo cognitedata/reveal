@@ -10,10 +10,7 @@ import {
 } from '@interactive-diagrams-app/utils/utils';
 
 import { Icon } from '@cognite/cogs.js';
-import {
-  FileSmallPreviewUFV,
-  AssetSmallPreviewUFV,
-} from '@cognite/data-exploration';
+import { AssetSmallPreview, FileSmallPreview } from '@cognite/data-exploration';
 import { FileInfo, Asset } from '@cognite/sdk';
 
 export const getColumns: any = (resourceType: ResourceType) => {
@@ -24,7 +21,7 @@ export const getColumns: any = (resourceType: ResourceType) => {
     key: 'description',
     dataIndex: 'description',
     sorter: (a: any, b: any) => stringCompare(a?.description, b?.description),
-    render: (description: string) => description ?? '—',
+    render: (description: string) => description ?? '-',
   };
 
   const detectedTagsColumn = {
@@ -38,9 +35,9 @@ export const getColumns: any = (resourceType: ResourceType) => {
       <Popover
         content={
           isAsset ? (
-            <AssetSmallPreviewUFV assetId={(resource as Asset)?.id} />
+            <AssetSmallPreview assetId={(resource as Asset)?.id} />
           ) : (
-            <FileSmallPreviewUFV fileId={(resource as FileInfo)?.id} />
+            <FileSmallPreview fileId={(resource as FileInfo)?.id} />
           )
         }
       >
@@ -49,7 +46,7 @@ export const getColumns: any = (resourceType: ResourceType) => {
         </Flex>
       </Popover>
       <span style={{ marginLeft: '12px', fontWeight: 500 }}>
-        {resource?.name ?? '—'}
+        {resource?.name ?? '-'}
       </span>
     </Flex>
   );
@@ -68,7 +65,7 @@ export const getColumns: any = (resourceType: ResourceType) => {
       dataIndex: 'lastUpdatedTime',
       sorter: (item: any) => dateSorter(item?.lastUpdatedTime),
       render: (lastUpdatedTime: Date) =>
-        lastUpdatedTime ? new Date(lastUpdatedTime).toLocaleDateString() : '—',
+        lastUpdatedTime ? new Date(lastUpdatedTime).toLocaleDateString() : '-',
     },
   ];
 };

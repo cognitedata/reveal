@@ -12,7 +12,6 @@ const Wrapper = styled.div`
   height: 100%;
   width: 100%;
   position: relative;
-  display: flex;
   background-color: ${Colors['decorative--grayscale--200']};
   background-image: radial-gradient(
     ${Colors['decorative--grayscale--400']} 10%,
