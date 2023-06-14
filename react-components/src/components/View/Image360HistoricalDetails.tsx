@@ -11,11 +11,11 @@ import styled from 'styled-components';
 // Using named import to avoid react component creation error when default import is used.
 import { uniqueId } from 'lodash';
 
-export interface Image360HistoricalDetailsProps{
+export interface Image360HistoricalDetailsProps {
   viewer: Cognite3DViewer;
   image360Entity?: Image360;
   onExpand?: (isExpanded: boolean) => void;
-};
+}
 
 export const Image360HistoricalDetails = ({
   viewer,
@@ -36,12 +36,11 @@ export const Image360HistoricalDetails = ({
   const [minWidth, setMinWidth] = useState('100px');
 
   useEffect(() => {
-
     const fetchRevisionCollection = async () => {
       if (image360Entity) {
         const revisions = image360Entity.getRevisions();
         const revisionDates = revisions.map((revision) => revision.date);
-        const imageDatas = await Promise.all(revisions.map( async revision => await revision.getPreviewThumbnailUrl()));
+        const imageDatas = await Promise.all(revisions.map(async (revision) => await revision.getPreviewThumbnailUrl()));
         setImageUrls(imageDatas);
 
         const collection = revisionDates.map((date, index) => {
@@ -50,7 +49,7 @@ export const Image360HistoricalDetails = ({
             imageUrl: imageDatas[index]!,
             index: index,
             image360Entity: image360Entity
-          }
+          };
         });
 
         setRevisionCollection(collection);
@@ -60,12 +59,12 @@ export const Image360HistoricalDetails = ({
 
     fetchRevisionCollection();
 
-    return() => {
-      // Remove image urls
+    return () => {
+      // Remove image URLs
       imageUrls.forEach((url) => {
-          if (url) {
-            URL.revokeObjectURL(url);
-          }
+        if (url) {
+          URL.revokeObjectURL(url);
+        }
       });
       setImageUrls([]);
     };
@@ -79,32 +78,30 @@ export const Image360HistoricalDetails = ({
     }
   }, [revisionDetailsExpanded]);
 
-  return(
-    <DetailsContainer
-      style={{ minWidth }}
-    >
+  return (
+    <DetailsContainer style={{ minWidth }}>
       {viewer && (
         <>
-        <Image360HistoricalPanel
+          <Image360HistoricalPanel
             key={uniqueId()}
             revisionCount={revisionCollection.length}
             revisionDetailsExpanded={revisionDetailsExpanded}
             setRevisionDetailsExpanded={setRevisionDetailsExpanded}
-        />
-        {revisionDetailsExpanded && (
-          <Image360HistoricalSummary
-            key={uniqueId()}
-            viewer={viewer}
-            stationId={image360Entity?.id}
-            stationName={image360Entity?.label}
-            activeRevision={activeRevision}
-            setActiveRevision={setActiveRevision}
-            revisionCollection={revisionCollection}
           />
-        )}
+          {revisionDetailsExpanded && (
+            <Image360HistoricalSummary
+              key={uniqueId()}
+              viewer={viewer}
+              stationId={image360Entity?.id}
+              stationName={image360Entity?.label}
+              activeRevision={activeRevision}
+              setActiveRevision={setActiveRevision}
+              revisionCollection={revisionCollection}
+            />
+          )}
         </>
       )}
-      </DetailsContainer>
+    </DetailsContainer>
   );
 };
 
