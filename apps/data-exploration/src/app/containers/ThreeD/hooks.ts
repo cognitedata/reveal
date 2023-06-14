@@ -37,6 +37,7 @@ import {
 import { useSDK } from '@cognite/sdk-provider';
 
 import {
+  Image360SiteData,
   Revision3DWithIndex,
   use3DRevisionsQuery,
   useEventsSearchResultQuery,
@@ -52,11 +53,6 @@ import {
   prepareSearchString,
 } from './utils';
 
-export type ThreeDModelsResponse = {
-  items: Model3D[];
-  nextCursor?: string;
-};
-
 type MappingResponse = {
   items: AssetMapping3D[];
   nextCursor?: string;
@@ -70,12 +66,6 @@ export interface AugmentedMapping extends Partial<AssetMapping3D> {
 export type AugmentedMappingResponse = {
   items: AugmentedMapping[];
   nextCursor?: string;
-};
-
-export type Image360SiteData = {
-  siteId: string;
-  siteName: string;
-  lastUpdatedTime?: Date;
 };
 
 export const use3DModel = (id: number | undefined) => {

@@ -49,8 +49,11 @@ export const ThreeDGridPreview = ({
   style,
   onClick,
 }: ThreeDGridPreviewProps) => {
-  const { data: revision, isLoading } = useDefault3DModelRevision(modelId);
-  const { data, isFetched } = use3DModelThumbnailQuery(revision?.thumbnailURL);
+  const { data: revision, isInitialLoading: isLoadingDefaultRevision } =
+    useDefault3DModelRevision(modelId);
+  const { data, isInitialLoading } = use3DModelThumbnailQuery(
+    revision?.thumbnailURL
+  );
 
   const [imageUrl, setImage] = useState<string | undefined>(undefined);
 
@@ -73,7 +76,7 @@ export const ThreeDGridPreview = ({
     if (imageUrl) {
       return <img src={imageUrl} alt="thumbnail" />;
     }
-    if (!isFetched) {
+    if (!isInitialLoading) {
       return <Icon type="Loader" />;
     }
 
@@ -86,9 +89,9 @@ export const ThreeDGridPreview = ({
         <Body level={3}>Unable to preview file.</Body>
       </>
     );
-  }, [imageUrl, revision, isFetched]);
+  }, [imageUrl, revision, isInitialLoading]);
 
-  if (isLoading) {
+  if (isLoadingDefaultRevision) {
     return <Loader />;
   }
 
