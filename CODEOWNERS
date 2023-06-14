@@ -45,3 +45,6 @@ apps/copilot              @davidlky @andeplane @miladh @trygveu
 
 # IoT Hub
 apps/iot-hub              @davidlky @geircognite @muradsater
+
+# Entity matching
+apps/entity-matching                @cognitedata/cdf-user-experience
