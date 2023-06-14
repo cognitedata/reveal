@@ -14,7 +14,6 @@
         "vendorChunk": false,
         "commonChunk": false,
         "tsConfig": "apps/interactive-diagrams/tsconfig.app.json",
-        "assets": ["apps/interactive-diagrams/src/assets"],
         "styles": [],
         "scripts": [],
         "webpackConfig": "apps/interactive-diagrams/webpack-config.js"
