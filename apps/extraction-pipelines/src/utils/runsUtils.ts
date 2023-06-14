@@ -1,5 +1,5 @@
 import moment, { Moment } from 'moment';
-import { RunApi } from 'model/Runs';
+import { RunApi } from '@extraction-pipelines/model/Runs';
 
 export const and = <T>(
   predicate1: (value: T) => boolean,

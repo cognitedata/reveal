@@ -1,7 +1,7 @@
 import React, { PropsWithChildren, useContext, useReducer } from 'react';
 import { Range } from '@cognite/cogs.js';
 import moment from 'moment';
-import { RunStatus } from 'model/Runs';
+import { RunStatus } from '@extraction-pipelines/model/Runs';
 
 enum RUN_ACTION_TYPE {
   'UPDATE_DATE_RANGE',

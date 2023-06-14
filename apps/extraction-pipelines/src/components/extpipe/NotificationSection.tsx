@@ -1,9 +1,9 @@
 import React, { FunctionComponent, PropsWithChildren, useState } from 'react';
-import { NotificationDialog } from 'components/extpipe/NotificationDialog';
-import { Extpipe } from 'model/Extpipe';
-import Section from 'components/section';
-import { useTranslation } from 'common';
-import { minutesToUnit } from 'utils/utils';
+import { NotificationDialog } from '@extraction-pipelines/components/extpipe/NotificationDialog';
+import { Extpipe } from '@extraction-pipelines/model/Extpipe';
+import Section from '@extraction-pipelines/components/section';
+import { useTranslation } from '@extraction-pipelines/common';
+import { minutesToUnit } from '@extraction-pipelines/utils/utils';
 import { Button, Flex, Icon } from '@cognite/cogs.js';
 
 type NotificationSectionProps = {

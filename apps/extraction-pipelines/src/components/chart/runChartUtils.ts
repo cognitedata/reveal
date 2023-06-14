@@ -1,7 +1,7 @@
 import moment from 'moment';
-import { DATE_FORMAT } from 'components/TimeDisplay/TimeDisplay';
+import { DATE_FORMAT } from '@extraction-pipelines/components/TimeDisplay/TimeDisplay';
 import { Range } from '@cognite/cogs.js';
-import { RunApi, RunStatus } from 'model/Runs';
+import { RunApi, RunStatus } from '@extraction-pipelines/model/Runs';
 
 export const DATE_HOUR_FORMAT: Readonly<string> = 'YYYY-MM-DD HH';
 export const DATE_HOUR_MIN_FORMAT: Readonly<string> = 'YYYY-MM-DD HH:mm';

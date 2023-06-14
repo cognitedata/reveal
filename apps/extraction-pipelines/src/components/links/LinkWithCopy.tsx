@@ -1,8 +1,8 @@
 import React, { FunctionComponent } from 'react';
-import { StyledLink } from 'components/styled';
+import { StyledLink } from '@extraction-pipelines/components/styled';
 import InteractiveCopy, {
   CopyType,
-} from 'components/InteractiveCopy/InteractiveCopy';
+} from '@extraction-pipelines/components/InteractiveCopy/InteractiveCopy';
 
 interface OwnProps {
   href: string;

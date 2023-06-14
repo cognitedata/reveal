@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { CogniteError, DataSet } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 
-import { getDataSetsList } from 'utils/DataSetAPI';
+import { getDataSetsList } from '@extraction-pipelines/utils/DataSetAPI';
 
 export const useDataSetsList = (limit?: number) => {
   const sdk = useSDK();

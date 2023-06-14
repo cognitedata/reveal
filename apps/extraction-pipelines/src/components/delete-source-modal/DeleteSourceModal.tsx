@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 
 import { Body, Checkbox, Flex, Modal, ModalProps } from '@cognite/cogs.js';
-import { useTranslation } from 'common';
+import { useTranslation } from '@extraction-pipelines/common';
 import {
   MQTTSourceWithJobMetrics,
   useDeleteMQTTSource,
-} from 'hooks/hostedExtractors';
+} from '@extraction-pipelines/hooks/hostedExtractors';
 import { useNavigate } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
 import { notification } from 'antd';

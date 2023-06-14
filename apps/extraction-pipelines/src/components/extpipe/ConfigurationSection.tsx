@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'common';
-import { useCreateConfigRevision, useExtpipeConfig } from 'hooks/config';
-import Section from 'components/section';
+import { useTranslation } from '@extraction-pipelines/common';
+import {
+  useCreateConfigRevision,
+  useExtpipeConfig,
+} from '@extraction-pipelines/hooks/config';
+import Section from '@extraction-pipelines/components/section';
 import ConfigurationEditor from './ConfigurationEditor';
 import CreatedTime from './CreatedTime';
 import { useQueryClient } from '@tanstack/react-query';

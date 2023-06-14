@@ -1,7 +1,7 @@
 // @ts-nocheck
-import { Extpipe } from 'model/Extpipe';
-import { DataSetModel } from 'model/DataSetModel';
-import { RunApi } from 'model/Runs';
+import { Extpipe } from '@extraction-pipelines/model/Extpipe';
+import { DataSetModel } from '@extraction-pipelines/model/DataSetModel';
+import { RunApi } from '@extraction-pipelines/model/Runs';
 import moment from 'moment';
 
 export const mockDataSetResponse = (): DataSetModel[] => [

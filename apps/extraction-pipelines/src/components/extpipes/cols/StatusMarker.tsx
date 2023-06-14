@@ -8,9 +8,9 @@ import {
   Chip,
   ChipProps,
 } from '@cognite/cogs.js';
-import { useTranslation } from 'common';
-import { RunStatus } from 'model/Runs';
-import { useRuns } from 'hooks/useRuns';
+import { useTranslation } from '@extraction-pipelines/common';
+import { RunStatus } from '@extraction-pipelines/model/Runs';
+import { useRuns } from '@extraction-pipelines/hooks/useRuns';
 import RelativeTimeWithTooltip from './RelativeTimeWithTooltip';
 import styled from 'styled-components';
 

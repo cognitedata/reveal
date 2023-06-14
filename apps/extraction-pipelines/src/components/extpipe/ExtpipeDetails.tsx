@@ -1,15 +1,21 @@
 import React, { FunctionComponent, useEffect } from 'react';
 import styled from 'styled-components';
 
-import { PageWrapperColumn, StyledPageContainer } from 'components/styled';
-import { DocumentationSection } from 'components/extpipe/DocumentationSection';
-import { RunScheduleConnection } from 'components/extpipe/RunScheduleConnection';
-import { ExtpipeInformation } from 'components/extpipe/ExtpipeInformation';
+import {
+  PageWrapperColumn,
+  StyledPageContainer,
+} from '@extraction-pipelines/components/styled';
+import { DocumentationSection } from '@extraction-pipelines/components/extpipe/DocumentationSection';
+import { RunScheduleConnection } from '@extraction-pipelines/components/extpipe/RunScheduleConnection';
+import { ExtpipeInformation } from '@extraction-pipelines/components/extpipe/ExtpipeInformation';
 
-import { trackUsage } from 'utils/Metrics';
-import { useTranslation } from 'common';
-import ConfigurationSection from 'components/extpipe/ConfigurationSection';
-import { useSelectedExtpipe, useSelectedExtpipeId } from 'hooks/useExtpipe';
+import { trackUsage } from '@extraction-pipelines/utils/Metrics';
+import { useTranslation } from '@extraction-pipelines/common';
+import ConfigurationSection from '@extraction-pipelines/components/extpipe/ConfigurationSection';
+import {
+  useSelectedExtpipe,
+  useSelectedExtpipeId,
+} from '@extraction-pipelines/hooks/useExtpipe';
 import { ExtpipeHeading } from './ExtpipeHeading';
 import { Loader } from '@cognite/cogs.js';
 

@@ -2,22 +2,25 @@ import React from 'react';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import { QueryClient } from '@tanstack/react-query';
-import { renderRegisterContext } from 'utils/test/render';
-import { EXTPIPE_EXTERNAL_ID_HEADING } from 'utils/constants';
+import { renderRegisterContext } from '@extraction-pipelines/utils/test/render';
+import { EXTPIPE_EXTERNAL_ID_HEADING } from '@extraction-pipelines/utils/constants';
 import {
   CDF_ENV_GREENFIELD,
   ORIGIN_DEV,
   PROJECT_ITERA_INT_GREEN,
-} from 'utils/baseURL';
+} from '@extraction-pipelines/utils/baseURL';
 import 'utils/test/windowLocation';
-import CreateExtpipe from 'pages/create/CreateExtpipe';
+import CreateExtpipe from '@extraction-pipelines/pages/create/CreateExtpipe';
 import {
   EXTERNAL_ID_REQUIRED,
   NAME_REQUIRED,
-} from 'utils/validation/extpipeSchemas';
-import { useRawDBAndTables } from 'hooks/useRawDBAndTables';
-import { databaseListMock, mockDataSetResponse } from 'utils/mockResponse';
-import { CREATE_EXTPIPE_PAGE_PATH } from 'routing/CreateRouteConfig';
+} from '@extraction-pipelines/utils/validation/extpipeSchemas';
+import { useRawDBAndTables } from '@extraction-pipelines/hooks/useRawDBAndTables';
+import {
+  databaseListMock,
+  mockDataSetResponse,
+} from '@extraction-pipelines/utils/mockResponse';
+import { CREATE_EXTPIPE_PAGE_PATH } from '@extraction-pipelines/routing/CreateRouteConfig';
 import sdk from '@cognite/cdf-sdk-singleton';
 
 jest.mock('hooks/useRawDBAndTables', () => {

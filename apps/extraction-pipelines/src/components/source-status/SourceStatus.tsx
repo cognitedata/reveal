@@ -4,17 +4,17 @@ import { Body, Colors, Flex, SegmentedControl, Title } from '@cognite/cogs.js';
 import { useSearchParams } from 'react-router-dom';
 import styled from 'styled-components';
 
-import Section from 'components/section';
-import { useTranslation } from 'common';
+import Section from '@extraction-pipelines/components/section';
+import { useTranslation } from '@extraction-pipelines/common';
 import {
   MQTTSourceWithJobMetrics,
   useMQTTJobLogs,
-} from 'hooks/hostedExtractors';
+} from '@extraction-pipelines/hooks/hostedExtractors';
 import {
   AggregationInterval,
   formatUptime,
   getUptimeAggregations,
-} from 'utils/hostedExtractors';
+} from '@extraction-pipelines/utils/hostedExtractors';
 
 import { SourceStatusItem } from './SourceStatusItem';
 

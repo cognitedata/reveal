@@ -3,15 +3,18 @@ import React from 'react';
 import { useSDK } from '@cognite/sdk-provider';
 import { QueryClient } from '@tanstack/react-query';
 import { act } from '@testing-library/react-hooks';
-import Extpipes from 'pages/Extpipes/Extpipes';
-import { render } from 'utils/test';
-import { getMockResponse, unauthorizedError } from 'utils/mockResponse';
-import { renderWithReQueryCacheSelectedExtpipeContext } from 'utils/test/render';
+import Extpipes from '@extraction-pipelines/pages/Extpipes/Extpipes';
+import { render } from '@extraction-pipelines/utils/test';
+import {
+  getMockResponse,
+  unauthorizedError,
+} from '@extraction-pipelines/utils/mockResponse';
+import { renderWithReQueryCacheSelectedExtpipeContext } from '@extraction-pipelines/utils/test/render';
 import {
   CDF_ENV_GREENFIELD,
   ORIGIN_DEV,
   PROJECT_ITERA_INT_GREEN,
-} from 'utils/baseURL';
+} from '@extraction-pipelines/utils/baseURL';
 
 jest.mock('hooks/useRawDBAndTables', () => {
   return {

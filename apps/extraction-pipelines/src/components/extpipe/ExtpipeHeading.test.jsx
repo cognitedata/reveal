@@ -1,13 +1,19 @@
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
-import { getMockResponse, mockDataSetResponse } from 'utils/mockResponse';
+import {
+  getMockResponse,
+  mockDataSetResponse,
+} from '@extraction-pipelines/utils/mockResponse';
 import render, {
   renderWithReQueryCacheSelectedExtpipeContext,
-} from 'utils/test/render';
+} from '@extraction-pipelines/utils/test/render';
 import { QueryClient } from '@tanstack/react-query';
-import { ORIGIN_DEV, PROJECT_ITERA_INT_GREEN } from 'utils/baseURL';
+import {
+  ORIGIN_DEV,
+  PROJECT_ITERA_INT_GREEN,
+} from '@extraction-pipelines/utils/baseURL';
 import { useSDK } from '@cognite/sdk-provider';
-import { ExtpipeHeading } from 'components/extpipe/ExtpipeHeading';
+import { ExtpipeHeading } from '@extraction-pipelines/components/extpipe/ExtpipeHeading';
 
 describe('ExtpipeHeading', () => {
   const mock = getMockResponse()[0];

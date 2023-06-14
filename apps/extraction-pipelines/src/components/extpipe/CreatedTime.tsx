@@ -1,4 +1,4 @@
-import { StyledTooltip } from 'components/styled';
+import { StyledTooltip } from '@extraction-pipelines/components/styled';
 import React from 'react';
 
 type Props = { prefix?: string; date: Date };

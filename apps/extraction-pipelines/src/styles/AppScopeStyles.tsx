@@ -5,8 +5,8 @@ import {
   Tooltip as CogsTooltip,
   Modal as CogsModal,
 } from '@cognite/cogs.js';
-import { getContainer } from 'utils/utils';
-import { styleScope } from 'styles/styleScope';
+import { getContainer } from '@extraction-pipelines/utils/utils';
+import { styleScope } from '@extraction-pipelines/styles/styleScope';
 import { Select, notification } from 'antd';
 
 Select.defaultProps = {

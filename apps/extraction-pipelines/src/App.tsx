@@ -15,25 +15,25 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 
-import { translations } from 'common/i18n';
+import { translations } from '@extraction-pipelines/common/i18n';
 
 import { ThemeProvider } from 'styled-components';
 import AppScopeStyles from './styles';
-import GlobalStyles from 'styles/GlobalStyles';
-import theme from 'styles/theme';
+import GlobalStyles from '@extraction-pipelines/styles/GlobalStyles';
+import theme from '@extraction-pipelines/styles/theme';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 import collapseStyle from 'rc-collapse/assets/index.css';
-import rootStyles from 'styles/index.css';
-import antdTheme from 'styles/antd-theme.less';
+import rootStyles from '@extraction-pipelines/styles/index.css';
+import antdTheme from '@extraction-pipelines/styles/antd-theme.less';
 
-import { EXTRACTION_PIPELINES } from 'utils/constants';
-import { AppEnvProvider } from 'hooks/useAppEnv';
+import { EXTRACTION_PIPELINES } from '@extraction-pipelines/utils/constants';
+import { AppEnvProvider } from '@extraction-pipelines/hooks/useAppEnv';
 import isObject from 'lodash/isObject';
 
-import CreateExtpipe from 'pages/create/CreateExtpipe';
-import ExtpipePage from 'pages/Extpipe/ExtpipePage';
-import Extpipes from 'pages/Extpipes/Extpipes';
-import { HostedExtractionPipelineDetails } from 'pages/hosted-extraction-pipeline/HostedExtractionPipelineDetails';
+import CreateExtpipe from '@extraction-pipelines/pages/create/CreateExtpipe';
+import ExtpipePage from '@extraction-pipelines/pages/Extpipe/ExtpipePage';
+import Extpipes from '@extraction-pipelines/pages/Extpipes/Extpipes';
+import { HostedExtractionPipelineDetails } from '@extraction-pipelines/pages/hosted-extraction-pipeline/HostedExtractionPipelineDetails';
 
 const queryClient = new QueryClient({
   defaultOptions: {

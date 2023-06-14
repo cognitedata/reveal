@@ -1,7 +1,14 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Extpipe, ExtpipeFieldName, ExtpipeFieldValue } from 'model/Extpipe';
+import {
+  Extpipe,
+  ExtpipeFieldName,
+  ExtpipeFieldValue,
+} from '@extraction-pipelines/model/Extpipe';
 
-import { ExtpipeUpdateSpec, saveUpdate } from 'utils/ExtpipesAPI';
+import {
+  ExtpipeUpdateSpec,
+  saveUpdate,
+} from '@extraction-pipelines/utils/ExtpipesAPI';
 import { FieldValues } from 'react-hook-form';
 import { useSDK } from '@cognite/sdk-provider';
 import { CogniteError } from '@cognite/sdk';

@@ -4,18 +4,21 @@ import { Loader } from '@cognite/cogs.js';
 
 import { Route, Routes } from 'react-router-dom';
 
-import { useSelectedExtpipe } from 'hooks/useExtpipe';
-import { ExtpipeDetails } from 'components/extpipe/ExtpipeDetails';
-import { HEALTH_PATH, RouterParams } from 'routing/RoutingConfig';
-import ExtpipeRunHistory from 'components/extpipe/ExtpipeRunHistory';
+import { useSelectedExtpipe } from '@extraction-pipelines/hooks/useExtpipe';
+import { ExtpipeDetails } from '@extraction-pipelines/components/extpipe/ExtpipeDetails';
+import {
+  HEALTH_PATH,
+  RouterParams,
+} from '@extraction-pipelines/routing/RoutingConfig';
+import ExtpipeRunHistory from '@extraction-pipelines/components/extpipe/ExtpipeRunHistory';
 
-import { RunFilterProvider } from 'hooks/runs/RunsFilterContext';
-import { ExtpipeBreadcrumbs } from 'components/navigation/breadcrumbs/ExtpipeBreadcrumbs';
+import { RunFilterProvider } from '@extraction-pipelines/hooks/runs/RunsFilterContext';
+import { ExtpipeBreadcrumbs } from '@extraction-pipelines/components/navigation/breadcrumbs/ExtpipeBreadcrumbs';
 
-import { ErrorBox } from 'components/error/ErrorBox';
+import { ErrorBox } from '@extraction-pipelines/components/error/ErrorBox';
 
-import { useTranslation } from 'common';
-import ConfigurationRevision from 'components/extpipe/ConfigurationRevision';
+import { useTranslation } from '@extraction-pipelines/common';
+import ConfigurationRevision from '@extraction-pipelines/components/extpipe/ConfigurationRevision';
 
 interface ExtpipePageProps {}
 

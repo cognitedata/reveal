@@ -2,8 +2,11 @@ import React, { ChangeEvent, useState } from 'react';
 import { InputExp, Modal, ModalProps } from '@cognite/cogs.js';
 import { notification } from 'antd';
 
-import { useTranslation } from 'common';
-import { ReadMQTTJob, useUpdateMQTTJob } from 'hooks/hostedExtractors';
+import { useTranslation } from '@extraction-pipelines/common';
+import {
+  ReadMQTTJob,
+  useUpdateMQTTJob,
+} from '@extraction-pipelines/hooks/hostedExtractors';
 
 type EditJobsModalProps = {
   onCancel: () => void;

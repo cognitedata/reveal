@@ -60,6 +60,7 @@
       "@data-quality/*": [
         "apps/platypus/src/app/modules/solution/data-quality/*"
       ],
+      "@extraction-pipelines/*": ["apps/extraction-pipelines/src/*"],
       "@flexible-data-explorer/*": ["apps/flexible-data-explorer/src/*"],
       "@fusion/cdf-nx-plugin": ["libs/cdf-nx-plugin/src/index.ts"],
       "@fusion/contextualization": ["libs/contextualization/src/index.ts"],

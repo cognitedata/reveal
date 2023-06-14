@@ -1,11 +1,11 @@
 import React, { FunctionComponent, PropsWithChildren } from 'react';
 import { A, Colors, Detail, Flex, Input } from '@cognite/cogs.js';
-import { SupportedScheduleStrings } from 'components/extpipes/cols/Schedule';
+import { SupportedScheduleStrings } from '@extraction-pipelines/components/extpipes/cols/Schedule';
 import styled from 'styled-components';
-import { parseCron as parseCronUtil } from 'utils/cronUtils';
-import { CRON_LINK } from 'utils/constants';
-import { ScheduleSelector } from 'components/inputs/ScheduleSelector';
-import { useTranslation } from 'common';
+import { parseCron as parseCronUtil } from '@extraction-pipelines/utils/cronUtils';
+import { CRON_LINK } from '@extraction-pipelines/utils/constants';
+import { ScheduleSelector } from '@extraction-pipelines/components/inputs/ScheduleSelector';
+import { useTranslation } from '@extraction-pipelines/common';
 import Field from '../fields/Field';
 import { FormikErrors } from 'formik';
 import { BasicInformationFormFields } from '../BasicInformationModal';

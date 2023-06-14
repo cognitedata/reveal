@@ -1,17 +1,17 @@
 import React, { useMemo } from 'react';
 
-import { EditModal } from 'components/modals/EditModal';
-import { Extpipe } from 'model/Extpipe';
-import { useTranslation } from 'common';
+import { EditModal } from '@extraction-pipelines/components/modals/EditModal';
+import { Extpipe } from '@extraction-pipelines/model/Extpipe';
+import { useTranslation } from '@extraction-pipelines/common';
 import Field from './fields/Field';
 import { Button, Flex, InputExp, OptionType } from '@cognite/cogs.js';
 import { Select } from 'antd';
 import { FormikErrors, useFormik } from 'formik';
-import { useDataSetsList } from 'hooks/useDataSetsList';
-import { DATASET_LIST_LIMIT } from 'pages/create/DataSetIdInput';
+import { useDataSetsList } from '@extraction-pipelines/hooks/useDataSetsList';
+import { DATASET_LIST_LIMIT } from '@extraction-pipelines/pages/create/DataSetIdInput';
 import { convertScheduleValue, Schedule } from './edit/Schedule';
-import { SupportedScheduleStrings } from 'components/extpipes/cols/Schedule';
-import { useDetailsUpdate } from 'hooks/details/useDetailsUpdate';
+import { SupportedScheduleStrings } from '@extraction-pipelines/components/extpipes/cols/Schedule';
+import { useDetailsUpdate } from '@extraction-pipelines/hooks/details/useDetailsUpdate';
 
 type BasicInformationModalProps = {
   extpipe: Extpipe;

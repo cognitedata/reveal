@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from 'react';
-import { IconFilled } from 'components/styled';
+import { IconFilled } from '@extraction-pipelines/components/styled';
 import styled from 'styled-components';
 import { Colors } from '@cognite/cogs.js';
 

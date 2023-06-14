@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { PageWrapperColumn } from 'components/styled';
-import { useSelectedExtpipe } from 'hooks/useExtpipe';
+import { PageWrapperColumn } from '@extraction-pipelines/components/styled';
+import { useSelectedExtpipe } from '@extraction-pipelines/hooks/useExtpipe';
 
 import ConfigurationEditor from './ConfigurationEditor';
 import { ConfigurationHeading } from './ConfigurationHeading';

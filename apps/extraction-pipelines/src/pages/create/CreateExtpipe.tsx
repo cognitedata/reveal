@@ -1,17 +1,17 @@
 import React, { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { RegisterExtpipeLayout } from 'components/layout/RegisterExtpipeLayout';
+import { RegisterExtpipeLayout } from '@extraction-pipelines/components/layout/RegisterExtpipeLayout';
 import {
   ButtonPlaced,
   CreateFormWrapper,
   InfoIcon,
   PriSecBtnWrapper,
-} from 'components/styled';
+} from '@extraction-pipelines/components/styled';
 import * as yup from 'yup';
 import { FieldValues, FormProvider, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { FullInput } from 'components/inputs/FullInput';
-import { usePostExtpipe } from 'hooks/usePostExtpipe';
+import { FullInput } from '@extraction-pipelines/components/inputs/FullInput';
+import { usePostExtpipe } from '@extraction-pipelines/hooks/usePostExtpipe';
 import styled from 'styled-components';
 import { Button, Colors, Modal } from '@cognite/cogs.js';
 import {
@@ -19,22 +19,22 @@ import {
   descriptionRule,
   externalIdRule,
   nameRule,
-} from 'utils/validation/extpipeSchemas';
+} from '@extraction-pipelines/utils/validation/extpipeSchemas';
 import DataSetIdInput, {
   DATASET_LIST_LIMIT,
-} from 'pages/create/DataSetIdInput';
-import { useDataSetsList } from 'hooks/useDataSetsList';
-import { useUserInformation } from 'hooks/useUserInformation';
-import { ScheduleFormInput } from 'components/extpipe/edit/Schedule';
-import { createExtPipePath } from 'utils/baseURL';
-import { EXT_PIPE_PATH } from 'routing/RoutingConfig';
-import { translateServerErrorMessage } from 'utils/error/TranslateErrorMessages';
-import { ExtpipeRawTable } from 'model/Extpipe';
-import { User } from 'model/User';
-import { createAddExtpipeInfo } from 'utils/extpipeUtils';
-import { trackUsage } from 'utils/Metrics';
+} from '@extraction-pipelines/pages/create/DataSetIdInput';
+import { useDataSetsList } from '@extraction-pipelines/hooks/useDataSetsList';
+import { useUserInformation } from '@extraction-pipelines/hooks/useUserInformation';
+import { ScheduleFormInput } from '@extraction-pipelines/components/extpipe/edit/Schedule';
+import { createExtPipePath } from '@extraction-pipelines/utils/baseURL';
+import { EXT_PIPE_PATH } from '@extraction-pipelines/routing/RoutingConfig';
+import { translateServerErrorMessage } from '@extraction-pipelines/utils/error/TranslateErrorMessages';
+import { ExtpipeRawTable } from '@extraction-pipelines/model/Extpipe';
+import { User } from '@extraction-pipelines/model/User';
+import { createAddExtpipeInfo } from '@extraction-pipelines/utils/extpipeUtils';
+import { trackUsage } from '@extraction-pipelines/utils/Metrics';
 import { createLink } from '@cognite/cdf-utilities';
-import { useTranslation } from 'common';
+import { useTranslation } from '@extraction-pipelines/common';
 export interface AddExtpipeFormInput extends ScheduleFormInput, FieldValues {
   name: string;
   externalId: string;

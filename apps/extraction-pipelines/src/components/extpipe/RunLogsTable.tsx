@@ -9,14 +9,14 @@ import {
 } from 'react-table';
 import styled from 'styled-components';
 import { Pagination } from '@cognite/cogs.js'; // OptionType, Select
-import { DivFlex } from 'components/styled';
+import { DivFlex } from '@extraction-pipelines/components/styled';
 
-import { ExternalLink } from 'components/links/ExternalLink';
-import { useTranslation } from 'common';
-import { useRunFilterContext } from 'hooks/runs/RunsFilterContext';
-import { useAllRuns, useRuns } from 'hooks/useRuns';
-import { useRunLogTableCol } from 'components/extpipe/RunLogsCols';
-import { RunApi } from 'model/Runs';
+import { ExternalLink } from '@extraction-pipelines/components/links/ExternalLink';
+import { useTranslation } from '@extraction-pipelines/common';
+import { useRunFilterContext } from '@extraction-pipelines/hooks/runs/RunsFilterContext';
+import { useAllRuns, useRuns } from '@extraction-pipelines/hooks/useRuns';
+import { useRunLogTableCol } from '@extraction-pipelines/components/extpipe/RunLogsCols';
+import { RunApi } from '@extraction-pipelines/model/Runs';
 
 interface Props {
   externalId: string;

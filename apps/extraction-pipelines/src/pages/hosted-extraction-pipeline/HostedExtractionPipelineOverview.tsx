@@ -2,18 +2,18 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { SummaryBox } from 'components/summary-box/SummaryBox';
-import { useTranslation } from 'common';
-import { TopicFilters } from 'components/topic-filters/TopicFilters';
-import { SourceDetails } from 'components/source-details/SourceDetails';
-import { SourceAuthentication } from 'components/source-authentication/SourceAuthentication';
-import { SourceStatus } from 'components/source-status/SourceStatus';
+import { SummaryBox } from '@extraction-pipelines/components/summary-box/SummaryBox';
+import { useTranslation } from '@extraction-pipelines/common';
+import { TopicFilters } from '@extraction-pipelines/components/topic-filters/TopicFilters';
+import { SourceDetails } from '@extraction-pipelines/components/source-details/SourceDetails';
+import { SourceAuthentication } from '@extraction-pipelines/components/source-authentication/SourceAuthentication';
+import { SourceStatus } from '@extraction-pipelines/components/source-status/SourceStatus';
 import {
   MQTTSourceWithJobMetrics,
   useMQTTJobLogs,
-} from 'hooks/hostedExtractors';
-import { getErrorCountInLast30Days } from 'utils/hostedExtractors';
-import { PAGE_WIDTH } from 'utils/constants';
+} from '@extraction-pipelines/hooks/hostedExtractors';
+import { getErrorCountInLast30Days } from '@extraction-pipelines/utils/hostedExtractors';
+import { PAGE_WIDTH } from '@extraction-pipelines/utils/constants';
 
 type HostedExtractionPipelineOverviewProps = {
   source: MQTTSourceWithJobMetrics;

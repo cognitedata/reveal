@@ -3,7 +3,7 @@ import {
   updateDateRangeAction,
   updateSearchAction,
   updateStatusAction,
-} from 'hooks/runs/RunsFilterContext';
+} from '@extraction-pipelines/hooks/runs/RunsFilterContext';
 
 describe('RunsFilterContext', () => {
   const dateRange = {

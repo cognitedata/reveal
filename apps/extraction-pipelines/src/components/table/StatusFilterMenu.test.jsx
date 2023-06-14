@@ -1,8 +1,8 @@
 import React from 'react';
-import { render } from 'utils/test';
+import { render } from '@extraction-pipelines/utils/test';
 import { fireEvent, screen } from '@testing-library/react';
-import { renderWithRunFilterContext } from 'utils/test/render';
-import { StatusFilterMenu } from 'components/table/StatusFilterMenu';
+import { renderWithRunFilterContext } from '@extraction-pipelines/utils/test/render';
+import { StatusFilterMenu } from '@extraction-pipelines/components/table/StatusFilterMenu';
 
 describe('StatusFilterMenu', () => {
   test('Render default', () => {

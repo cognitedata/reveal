@@ -1,14 +1,14 @@
 import React from 'react';
 import { fireEvent, screen } from '@testing-library/react';
-import { render } from 'utils/test';
+import { render } from '@extraction-pipelines/utils/test';
 import { QueryClient } from '@tanstack/react-query';
-import { trackUsage } from 'utils/Metrics';
-import { renderWithReactQueryCacheProvider } from 'utils/test/render';
+import { trackUsage } from '@extraction-pipelines/utils/Metrics';
+import { renderWithReactQueryCacheProvider } from '@extraction-pipelines/utils/test/render';
 import {
   CDF_ENV_GREENFIELD,
   ORIGIN_DEV,
   PROJECT_ITERA_INT_GREEN,
-} from 'utils/baseURL';
+} from '@extraction-pipelines/utils/baseURL';
 import ExtractorDownloadsLink from './ExtractorDownloadsLink';
 
 describe('ExtractorDownloadsTab', () => {

@@ -1,9 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
-import { CenterFullVH } from 'components/styled';
+import { CenterFullVH } from '@extraction-pipelines/components/styled';
 import { Button, Icon, Title } from '@cognite/cogs.js';
 
-import { useTranslation } from 'common';
+import { useTranslation } from '@extraction-pipelines/common';
 import { CogniteError } from '@cognite/sdk';
 
 interface ErrorFeedbackProps {

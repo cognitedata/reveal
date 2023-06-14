@@ -1,12 +1,12 @@
 import React, { FunctionComponent } from 'react';
-import { DivFlex } from 'components/styled';
+import { DivFlex } from '@extraction-pipelines/components/styled';
 import styled from 'styled-components';
 import { Colors, DateRange, Range } from '@cognite/cogs.js';
-import { createDateWithTime } from 'components/inputs/dateTime/TimeSelectorUtils';
+import { createDateWithTime } from '@extraction-pipelines/components/inputs/dateTime/TimeSelectorUtils';
 import {
   updateDateRangeAction,
   useRunFilterContext,
-} from 'hooks/runs/RunsFilterContext';
+} from '@extraction-pipelines/hooks/runs/RunsFilterContext';
 
 const Wrapper = styled(DivFlex)`
   .extpipes-ui-style-scope {

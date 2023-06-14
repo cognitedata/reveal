@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
-import { useDeletePipeline, useSelectedExtpipe } from 'hooks/useExtpipe';
+import {
+  useDeletePipeline,
+  useSelectedExtpipe,
+} from '@extraction-pipelines/hooks/useExtpipe';
 import {
   Body,
   Button,
@@ -10,12 +13,18 @@ import {
   toast,
 } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { LinkWrapper } from 'components/styled';
-import { LastRunStatusMarker } from 'components/extpipes/cols/StatusMarker';
-import { createExtPipePath, EXTRACTION_PIPELINES_PATH } from 'utils/baseURL';
-import { useTranslation } from 'common';
+import { LinkWrapper } from '@extraction-pipelines/components/styled';
+import { LastRunStatusMarker } from '@extraction-pipelines/components/extpipes/cols/StatusMarker';
+import {
+  createExtPipePath,
+  EXTRACTION_PIPELINES_PATH,
+} from '@extraction-pipelines/utils/baseURL';
+import { useTranslation } from '@extraction-pipelines/common';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { EXT_PIPE_PATH, HEALTH_PATH } from 'routing/RoutingConfig';
+import {
+  EXT_PIPE_PATH,
+  HEALTH_PATH,
+} from '@extraction-pipelines/routing/RoutingConfig';
 import { DeleteDialog } from './DeleteModal';
 import { createLink, SecondaryTopbar } from '@cognite/cdf-utilities';
 

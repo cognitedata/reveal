@@ -6,15 +6,15 @@ import { useFlag } from '@cognite/react-feature-flags';
 import { Navigate, useParams, useSearchParams } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { useTranslation } from 'common';
-import { StyledHeadingContainer } from 'components/extpipe/ExtpipeHeading';
-import { StyledPageContainer } from 'components/styled';
-import { useMQTTSourceWithMetrics } from 'hooks/hostedExtractors';
+import { useTranslation } from '@extraction-pipelines/common';
+import { StyledHeadingContainer } from '@extraction-pipelines/components/extpipe/ExtpipeHeading';
+import { StyledPageContainer } from '@extraction-pipelines/components/styled';
+import { useMQTTSourceWithMetrics } from '@extraction-pipelines/hooks/hostedExtractors';
 
 import { HostedExtractionPipelineInsight } from './HostedExtractionPipelineInsight';
 import { HostedExtractionPipelineOverview } from './HostedExtractionPipelineOverview';
-import { getContainer } from 'utils/utils';
-import DeleteSourceModal from 'components/delete-source-modal/DeleteSourceModal';
+import { getContainer } from '@extraction-pipelines/utils/utils';
+import DeleteSourceModal from '@extraction-pipelines/components/delete-source-modal/DeleteSourceModal';
 
 export const HostedExtractionPipelineDetails = (): JSX.Element => {
   const { t } = useTranslation();

@@ -1,15 +1,21 @@
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import { QueryClient } from '@tanstack/react-query';
-import { renderWithReQueryCacheSelectedExtpipeContext } from 'utils/test/render';
-import { getMockResponse, mockDataSetResponse } from 'utils/mockResponse';
-import { ORIGIN_DEV, PROJECT_ITERA_INT_GREEN } from 'utils/baseURL';
-import { TableHeadings } from 'components/table/ExtpipeTableCol';
-import { DetailFieldNames } from 'model/Extpipe';
-import { ExtpipeDetails } from 'components/extpipe/ExtpipeDetails';
-import { trackUsage } from 'utils/Metrics';
+import { renderWithReQueryCacheSelectedExtpipeContext } from '@extraction-pipelines/utils/test/render';
+import {
+  getMockResponse,
+  mockDataSetResponse,
+} from '@extraction-pipelines/utils/mockResponse';
+import {
+  ORIGIN_DEV,
+  PROJECT_ITERA_INT_GREEN,
+} from '@extraction-pipelines/utils/baseURL';
+import { TableHeadings } from '@extraction-pipelines/components/table/ExtpipeTableCol';
+import { DetailFieldNames } from '@extraction-pipelines/model/Extpipe';
+import { ExtpipeDetails } from '@extraction-pipelines/components/extpipe/ExtpipeDetails';
+import { trackUsage } from '@extraction-pipelines/utils/Metrics';
 import { useSDK } from '@cognite/sdk-provider';
-import { render } from 'utils/test';
+import { render } from '@extraction-pipelines/utils/test';
 
 describe('ExtpipeView', () => {
   const mockExtpipe = getMockResponse()[0];

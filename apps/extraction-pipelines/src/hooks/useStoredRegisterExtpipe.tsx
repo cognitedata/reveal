@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { RegisterExtpipeInfo } from 'model/Extpipe';
+import { RegisterExtpipeInfo } from '@extraction-pipelines/model/Extpipe';
 
 interface ContextProps {
   storedExtpipe: Partial<RegisterExtpipeInfo>;

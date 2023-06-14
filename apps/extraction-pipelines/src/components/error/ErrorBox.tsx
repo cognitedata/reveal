@@ -1,7 +1,7 @@
 import React, { FunctionComponent, PropsWithChildren } from 'react';
 import { Colors, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { StyledTitle2 } from 'components/styled';
+import { StyledTitle2 } from '@extraction-pipelines/components/styled';
 
 export const ErrorBox: FunctionComponent<
   PropsWithChildren<{ heading: string }>

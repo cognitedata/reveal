@@ -1,15 +1,18 @@
-import { getMockResponse } from 'utils/mockResponse';
-import { renderWithReQueryCacheSelectedExtpipeContext } from 'utils/test/render';
+import { getMockResponse } from '@extraction-pipelines/utils/mockResponse';
+import { renderWithReQueryCacheSelectedExtpipeContext } from '@extraction-pipelines/utils/test/render';
 import { QueryClient } from '@tanstack/react-query';
-import { ORIGIN_DEV, PROJECT_ITERA_INT_GREEN } from 'utils/baseURL';
-import { Schedule } from 'components/extpipe/edit/Schedule';
-import { render } from 'utils/test';
-import { TableHeadings } from 'components/table/ExtpipeTableCol';
+import {
+  ORIGIN_DEV,
+  PROJECT_ITERA_INT_GREEN,
+} from '@extraction-pipelines/utils/baseURL';
+import { Schedule } from '@extraction-pipelines/components/extpipe/edit/Schedule';
+import { render } from '@extraction-pipelines/utils/test';
+import { TableHeadings } from '@extraction-pipelines/components/table/ExtpipeTableCol';
 import React from 'react';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
-import { parseCron } from 'utils/cronUtils';
-import { CRON_LABEL } from 'components/inputs/cron/CronInput';
-import { CLOSE } from 'utils/constants';
+import { parseCron } from '@extraction-pipelines/utils/cronUtils';
+import { CRON_LABEL } from '@extraction-pipelines/components/inputs/cron/CronInput';
+import { CLOSE } from '@extraction-pipelines/utils/constants';
 
 describe('Schedule', () => {
   const mock = getMockResponse()[0];

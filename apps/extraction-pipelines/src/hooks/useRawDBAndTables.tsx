@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getRawDBsAndTables } from 'utils/RawDataBaseAPI';
+import { getRawDBsAndTables } from '@extraction-pipelines/utils/RawDataBaseAPI';
 import { CogniteError, RawDB, RawDBTable } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 

@@ -3,7 +3,7 @@ import React from 'react';
 import { Colors } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
-import { UptimeAggregation } from 'utils/hostedExtractors';
+import { UptimeAggregation } from '@extraction-pipelines/utils/hostedExtractors';
 
 import SourceStatusItemTooltip from './SourceStatusItemTooltip';
 

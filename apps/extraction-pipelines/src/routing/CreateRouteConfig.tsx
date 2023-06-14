@@ -1,5 +1,5 @@
-import { CreateExtpipe } from 'pages/create/CreateExtpipe';
-import { EXTRACTION_PIPELINES_PATH } from 'utils/baseURL';
+import { CreateExtpipe } from '@extraction-pipelines/pages/create/CreateExtpipe';
+import { EXTRACTION_PIPELINES_PATH } from '@extraction-pipelines/utils/baseURL';
 
 export const CREATE_EXTPIPE_PAGE_PATH = `/${EXTRACTION_PIPELINES_PATH}/create`;
 export const withTenant = (path: string) => {

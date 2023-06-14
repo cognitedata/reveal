@@ -2,15 +2,15 @@ import React, { useState } from 'react';
 import { Body, Button, Colors, Dropdown, Menu, Status } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
-import { useTranslation } from 'common';
+import { useTranslation } from '@extraction-pipelines/common';
 import {
   MQTTJobWithMetrics,
   useDeleteMQTTJob,
   useUpdateMQTTJob,
-} from 'hooks/hostedExtractors';
+} from '@extraction-pipelines/hooks/hostedExtractors';
 import { notification } from 'antd';
-import { getJobStatusForCogs } from 'utils/hostedExtractors';
-import { EditJobModal } from 'components/edit-job-modal/EditJobModal';
+import { getJobStatusForCogs } from '@extraction-pipelines/utils/hostedExtractors';
+import { EditJobModal } from '@extraction-pipelines/components/edit-job-modal/EditJobModal';
 
 type TopicFilterProps = {
   className?: string;

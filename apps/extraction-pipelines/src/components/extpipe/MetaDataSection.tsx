@@ -1,14 +1,14 @@
 import React, { PropsWithChildren, useState } from 'react';
-import { useSelectedExtpipe } from 'hooks/useExtpipe';
-import { DetailFieldNames } from 'model/Extpipe';
-import { EditModal } from 'components/modals/EditModal';
-import { EditMetaData } from 'components/inputs/metadata/EditMetaData';
-import { Hint } from 'components/styled';
-import { StyledTitle3 } from 'components/styled';
-import Section from 'components/section';
-import { useTranslation } from 'common';
+import { useSelectedExtpipe } from '@extraction-pipelines/hooks/useExtpipe';
+import { DetailFieldNames } from '@extraction-pipelines/model/Extpipe';
+import { EditModal } from '@extraction-pipelines/components/modals/EditModal';
+import { EditMetaData } from '@extraction-pipelines/components/inputs/metadata/EditMetaData';
+import { Hint } from '@extraction-pipelines/components/styled';
+import { StyledTitle3 } from '@extraction-pipelines/components/styled';
+import Section from '@extraction-pipelines/components/section';
+import { useTranslation } from '@extraction-pipelines/common';
 import { Button } from '@cognite/cogs.js';
-import { uppercaseFirstWord } from 'utils/primitivesUtils';
+import { uppercaseFirstWord } from '@extraction-pipelines/utils/primitivesUtils';
 
 interface MetaProps {
   testId?: string;

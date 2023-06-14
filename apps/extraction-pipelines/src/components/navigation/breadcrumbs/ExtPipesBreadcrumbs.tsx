@@ -1,8 +1,8 @@
 import React from 'react';
-import { Breadcrumbs } from 'components/navigation/breadcrumbs/Breadcrumbs';
-import { createExtPipePath } from 'utils/baseURL';
+import { Breadcrumbs } from '@extraction-pipelines/components/navigation/breadcrumbs/Breadcrumbs';
+import { createExtPipePath } from '@extraction-pipelines/utils/baseURL';
 import { createLink } from '@cognite/cdf-utilities';
-import { useTranslation } from 'common';
+import { useTranslation } from '@extraction-pipelines/common';
 
 export const ExtPipesBreadcrumbs = () => {
   const { t } = useTranslation();

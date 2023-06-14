@@ -1,11 +1,11 @@
 import React, { useMemo } from 'react';
 import { Column, HeaderProps } from 'react-table';
-import StatusMarker from 'components/extpipes/cols/StatusMarker';
-import { TimeDisplay } from 'components/TimeDisplay/TimeDisplay';
-import { RunApi } from 'model/Runs';
-import { useTranslation } from 'common';
+import StatusMarker from '@extraction-pipelines/components/extpipes/cols/StatusMarker';
+import { TimeDisplay } from '@extraction-pipelines/components/TimeDisplay/TimeDisplay';
+import { RunApi } from '@extraction-pipelines/model/Runs';
+import { useTranslation } from '@extraction-pipelines/common';
 import { ConfigurationLink } from './ConfigurationLink';
-import SorterIndicator from 'components/table/SorterIndicator';
+import SorterIndicator from '@extraction-pipelines/components/table/SorterIndicator';
 
 export enum RunTableHeading {
   TIMESTAMP = 'Timestamp',

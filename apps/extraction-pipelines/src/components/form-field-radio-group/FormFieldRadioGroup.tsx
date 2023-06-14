@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 import FormFieldWrapper, {
   FormFieldWrapperProps,
-} from 'components/form-field-wrapper/FormFieldWrapper';
+} from '@extraction-pipelines/components/form-field-wrapper/FormFieldWrapper';
 
 type FormFieldRadioGroupProps<V> = Omit<FormFieldWrapperProps, 'children'> & {
   direction?: FlexProps['direction'];

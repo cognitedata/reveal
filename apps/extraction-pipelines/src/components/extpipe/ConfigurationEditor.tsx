@@ -1,5 +1,5 @@
 import React from 'react';
-import { useExtpipeConfig } from 'hooks/config';
+import { useExtpipeConfig } from '@extraction-pipelines/hooks/config';
 import { StreamLanguage } from '@codemirror/language';
 import { yaml } from '@codemirror/legacy-modes/mode/yaml';
 import ConfigurationErrorFeedback from './ConfigurationError';

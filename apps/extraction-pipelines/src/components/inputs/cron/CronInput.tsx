@@ -1,13 +1,13 @@
 import React, { FunctionComponent } from 'react';
 import { useFormContext } from 'react-hook-form';
 import styled from 'styled-components';
-import { parseCron } from 'utils/cronUtils';
-import { Link } from 'components/buttons/Link';
-import { InputController } from 'components/inputs/InputController';
-import { Hint, StyledLabel } from 'components/styled';
-import ValidationError from 'components/form/ValidationError';
-import { CRON_LINK } from 'utils/constants';
-import { useTranslation } from 'common';
+import { parseCron } from '@extraction-pipelines/utils/cronUtils';
+import { Link } from '@extraction-pipelines/components/buttons/Link';
+import { InputController } from '@extraction-pipelines/components/inputs/InputController';
+import { Hint, StyledLabel } from '@extraction-pipelines/components/styled';
+import ValidationError from '@extraction-pipelines/components/form/ValidationError';
+import { CRON_LINK } from '@extraction-pipelines/utils/constants';
+import { useTranslation } from '@extraction-pipelines/common';
 
 interface CronPageProps {}
 

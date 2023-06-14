@@ -6,14 +6,17 @@ import {
   mapUpdateToPartialExtpipe,
   rootUpdate,
   useDetailsUpdate,
-} from 'hooks/details/useDetailsUpdate';
-import { renderWithReactQueryCacheProvider } from 'utils/test/render';
-import { getMockResponse, mockError } from 'utils/mockResponse';
+} from '@extraction-pipelines/hooks/details/useDetailsUpdate';
+import { renderWithReactQueryCacheProvider } from '@extraction-pipelines/utils/test/render';
+import {
+  getMockResponse,
+  mockError,
+} from '@extraction-pipelines/utils/mockResponse';
 import {
   CDF_ENV_GREENFIELD,
   ORIGIN_DEV,
   PROJECT_ITERA_INT_GREEN,
-} from 'utils/baseURL';
+} from '@extraction-pipelines/utils/baseURL';
 
 describe('useDetailsUpdate', () => {
   let client;

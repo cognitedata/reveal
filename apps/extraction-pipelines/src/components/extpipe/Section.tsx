@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import React, { PropsWithChildren } from 'react';
 import { IconType, Icon, Button, Flex, Body } from '@cognite/cogs.js';
-import { useTranslation } from 'common';
+import { useTranslation } from '@extraction-pipelines/common';
 
 const SectionDiv = styled.div`
   background-color: white;

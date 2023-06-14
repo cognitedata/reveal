@@ -1,6 +1,6 @@
 import React from 'react';
 import moment from 'moment';
-import { StyledTooltip } from 'components/styled';
+import { StyledTooltip } from '@extraction-pipelines/components/styled';
 
 export const DATE_FORMAT: Readonly<string> = 'YYYY-MM-DD';
 export const DATE_TIME_FORMAT: Readonly<string> = 'YYYY-MM-DD HH:mm:ss';

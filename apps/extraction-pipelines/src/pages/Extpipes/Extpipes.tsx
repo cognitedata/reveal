@@ -1,20 +1,23 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import { useExtpipes } from 'hooks/useExtpipes';
-import NoExtpipes from 'components/error/NoExtpipes';
+import { useExtpipes } from '@extraction-pipelines/hooks/useExtpipes';
+import NoExtpipes from '@extraction-pipelines/components/error/NoExtpipes';
 import { Button, Flex, Loader, Modal, Tabs, Title } from '@cognite/cogs.js';
-import { ErrorFeedback } from 'components/error/ErrorFeedback';
-import { StyledTooltip, PageWrapperColumn } from 'components/styled';
-import ExtpipesTable from 'components/table/ExtpipesTable';
+import { ErrorFeedback } from '@extraction-pipelines/components/error/ErrorFeedback';
+import {
+  StyledTooltip,
+  PageWrapperColumn,
+} from '@extraction-pipelines/components/styled';
+import ExtpipesTable from '@extraction-pipelines/components/table/ExtpipesTable';
 import styled from 'styled-components';
-import { getContainer } from 'utils/utils';
-import { CreateExtpipe } from 'pages/create/CreateExtpipe';
+import { getContainer } from '@extraction-pipelines/utils/utils';
+import { CreateExtpipe } from '@extraction-pipelines/pages/create/CreateExtpipe';
 
-import { trackUsage } from 'utils/Metrics';
-import { useTranslation } from 'common';
-import ExtpipesTableSearch from 'components/table/ExtpipesTableSearch';
-import HostedExtractionPipelineTable from 'components/table/HostedExtractionPipelineTable';
+import { trackUsage } from '@extraction-pipelines/utils/Metrics';
+import { useTranslation } from '@extraction-pipelines/common';
+import ExtpipesTableSearch from '@extraction-pipelines/components/table/ExtpipesTableSearch';
+import HostedExtractionPipelineTable from '@extraction-pipelines/components/table/HostedExtractionPipelineTable';
 import { useSearchParams } from 'react-router-dom';
-import { CreateSourceModal } from 'components/create-source-modal/CreateSourceModal';
+import { CreateSourceModal } from '@extraction-pipelines/components/create-source-modal/CreateSourceModal';
 import { useFlag } from '@cognite/react-feature-flags';
 
 export const LEARNING_AND_RESOURCES_URL: Readonly<string> =

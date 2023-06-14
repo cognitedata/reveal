@@ -1,8 +1,8 @@
 import React from 'react';
-import { useTranslation } from 'common';
-import { useDataSet } from 'hooks/dataSet';
+import { useTranslation } from '@extraction-pipelines/common';
+import { useDataSet } from '@extraction-pipelines/hooks/dataSet';
 import { Body, Icon, Tooltip } from '@cognite/cogs.js';
-import Link from 'components/links/Link';
+import Link from '@extraction-pipelines/components/links/Link';
 import { createLink } from '@cognite/cdf-utilities';
 
 type Props = {

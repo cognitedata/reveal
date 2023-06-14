@@ -7,9 +7,9 @@ import {
   SegmentedControl,
   Title,
 } from '@cognite/cogs.js';
-import { useTranslation } from 'common';
-import Section from 'components/section';
-import { MQTTJobWithMetrics } from 'hooks/hostedExtractors';
+import { useTranslation } from '@extraction-pipelines/common';
+import Section from '@extraction-pipelines/components/section';
+import { MQTTJobWithMetrics } from '@extraction-pipelines/hooks/hostedExtractors';
 import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
 import {
@@ -17,7 +17,7 @@ import {
   getMetricAggregationErrorCount,
   getMetricAggregationSuccessCount,
   getMetricAggregations,
-} from 'utils/hostedExtractors';
+} from '@extraction-pipelines/utils/hostedExtractors';
 import { BAR_HEIGHT, MessageHistoryChartItem } from './MessageHistoryChartItem';
 
 type MessageHistoryChartProps = {

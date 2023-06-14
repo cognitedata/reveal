@@ -1,5 +1,5 @@
 import { CogniteClient, ListResponse, RawDB, RawDBTable } from '@cognite/sdk';
-import { DatabaseWithTablesItem } from 'hooks/useRawDBAndTables';
+import { DatabaseWithTablesItem } from '@extraction-pipelines/hooks/useRawDBAndTables';
 
 export const getRawDatabaseList = async (
   sdk: CogniteClient,

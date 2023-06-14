@@ -1,4 +1,7 @@
-import { mapStoredToDefault, RawTableOptions } from 'utils/raw/rawUtils';
+import {
+  mapStoredToDefault,
+  RawTableOptions,
+} from '@extraction-pipelines/utils/raw/rawUtils';
 
 describe('rawUtils', () => {
   const cases = [

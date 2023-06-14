@@ -4,7 +4,7 @@ import {
   ReadMQTTJob,
   ReadMQTTJobLog,
   ReadMQTTJobMetric,
-} from 'hooks/hostedExtractors';
+} from '@extraction-pipelines/hooks/hostedExtractors';
 
 const MQTT_JOB_LOG_ERROR_TYPES: ReadMQTTJobLog['type'][] = [
   'error',

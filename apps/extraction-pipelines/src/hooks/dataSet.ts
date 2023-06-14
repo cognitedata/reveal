@@ -4,7 +4,7 @@ import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 
 import { useSDK } from '@cognite/sdk-provider';
 
-import { BASE_QUERY_KEY } from 'utils/constants';
+import { BASE_QUERY_KEY } from '@extraction-pipelines/utils/constants';
 
 export const getDataSetListQueryKey = () => [BASE_QUERY_KEY, 'dataset-list'];
 

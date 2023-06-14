@@ -1,16 +1,19 @@
 import React from 'react';
 import { Cell, CellProps, Column, HeaderProps } from 'react-table';
-import { addIfExist, calculateLatest } from 'utils/extpipeUtils';
-import { Extpipe } from 'model/Extpipe';
-import Name from 'components/extpipes/cols/ExtractionPipelineName';
-import Schedule from 'components/extpipes/cols/Schedule';
-import { DataSet } from 'components/extpipes/cols/DataSet';
-import { LastRunStatusMarker } from 'components/extpipes/cols/StatusMarker';
-import { User } from 'model/User';
-import RelativeTimeWithTooltip from 'components/extpipes/cols/RelativeTimeWithTooltip';
-import SorterIndicator from 'components/table/SorterIndicator';
-import { DataSetModel } from 'model/DataSetModel';
-import { TranslationKeys } from 'common';
+import {
+  addIfExist,
+  calculateLatest,
+} from '@extraction-pipelines/utils/extpipeUtils';
+import { Extpipe } from '@extraction-pipelines/model/Extpipe';
+import Name from '@extraction-pipelines/components/extpipes/cols/ExtractionPipelineName';
+import Schedule from '@extraction-pipelines/components/extpipes/cols/Schedule';
+import { DataSet } from '@extraction-pipelines/components/extpipes/cols/DataSet';
+import { LastRunStatusMarker } from '@extraction-pipelines/components/extpipes/cols/StatusMarker';
+import { User } from '@extraction-pipelines/model/User';
+import RelativeTimeWithTooltip from '@extraction-pipelines/components/extpipes/cols/RelativeTimeWithTooltip';
+import SorterIndicator from '@extraction-pipelines/components/table/SorterIndicator';
+import { DataSetModel } from '@extraction-pipelines/model/DataSetModel';
+import { TranslationKeys } from '@extraction-pipelines/common';
 
 export enum TableHeadings {
   NAME = 'Name',

@@ -3,7 +3,7 @@ import { ColumnInstance } from 'react-table';
 import { IconType, Button } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
-import { trackUsage } from 'utils/Metrics';
+import { trackUsage } from '@extraction-pipelines/utils/Metrics';
 
 const getSortOrder = <T extends object>(
   column: ColumnInstance<T>

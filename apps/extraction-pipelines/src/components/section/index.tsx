@@ -5,7 +5,7 @@ import isString from 'lodash/isString';
 import styled from 'styled-components';
 
 import SectionItem, { SectionItemProps } from './SectionItem';
-import { Box } from 'components/box/Box';
+import { Box } from '@extraction-pipelines/components/box/Box';
 
 type SectionProps = {
   className?: string;

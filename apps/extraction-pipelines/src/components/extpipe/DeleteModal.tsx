@@ -1,7 +1,7 @@
 import { Button, Input } from '@cognite/cogs.js';
-import { useTranslation } from 'common';
-import { EditModal } from 'components/modals/EditModal';
-import { DivFlex } from 'components/styled';
+import { useTranslation } from '@extraction-pipelines/common';
+import { EditModal } from '@extraction-pipelines/components/modals/EditModal';
+import { DivFlex } from '@extraction-pipelines/components/styled';
 import React, { FunctionComponent, useCallback, useState } from 'react';
 
 type Props = {

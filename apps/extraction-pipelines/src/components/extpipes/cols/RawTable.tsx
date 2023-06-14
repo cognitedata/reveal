@@ -1,10 +1,10 @@
 import React, { FunctionComponent } from 'react';
 import styled from 'styled-components';
 import { Colors } from '@cognite/cogs.js';
-import LinkWithCopy from 'components/links/LinkWithCopy';
-import { ExtpipeRawTable } from 'model/Extpipe';
+import LinkWithCopy from '@extraction-pipelines/components/links/LinkWithCopy';
+import { ExtpipeRawTable } from '@extraction-pipelines/model/Extpipe';
 import { createLink } from '@cognite/cdf-utilities';
-import { useTranslation } from 'common';
+import { useTranslation } from '@extraction-pipelines/common';
 interface OwnProps {
   rawTables?: ExtpipeRawTable[];
 }

@@ -6,19 +6,26 @@ import {
   Table,
   TableNoResults,
 } from '@cognite/cdf-utilities';
-import { Extpipe } from 'model/Extpipe';
-import { useAllExtpipes } from 'hooks/useExtpipes';
-import { useTranslation } from 'common';
-import { dateSorter, getContainer, stringSorter } from 'utils/utils';
+import { Extpipe } from '@extraction-pipelines/model/Extpipe';
+import { useAllExtpipes } from '@extraction-pipelines/hooks/useExtpipes';
+import { useTranslation } from '@extraction-pipelines/common';
+import {
+  dateSorter,
+  getContainer,
+  stringSorter,
+} from '@extraction-pipelines/utils/utils';
 
-import { LastRunStatusMarker } from 'components/extpipes/cols/StatusMarker';
-import RelativeTimeWithTooltip from 'components/extpipes/cols/RelativeTimeWithTooltip';
-import { addIfExist, calculateLatest } from 'utils/extpipeUtils';
-import Schedule from 'components/extpipes/cols/Schedule';
-import { DataSet } from 'components/extpipes/cols/DataSet';
-import { User } from 'model/User';
-import ExtractionPipelineName from 'components/extpipes/cols/ExtractionPipelineName';
-import { useDataSetList } from 'hooks/dataSet';
+import { LastRunStatusMarker } from '@extraction-pipelines/components/extpipes/cols/StatusMarker';
+import RelativeTimeWithTooltip from '@extraction-pipelines/components/extpipes/cols/RelativeTimeWithTooltip';
+import {
+  addIfExist,
+  calculateLatest,
+} from '@extraction-pipelines/utils/extpipeUtils';
+import Schedule from '@extraction-pipelines/components/extpipes/cols/Schedule';
+import { DataSet } from '@extraction-pipelines/components/extpipes/cols/DataSet';
+import { User } from '@extraction-pipelines/model/User';
+import ExtractionPipelineName from '@extraction-pipelines/components/extpipes/cols/ExtractionPipelineName';
+import { useDataSetList } from '@extraction-pipelines/hooks/dataSet';
 
 export type ExtractionPipelineListTableRecord = {
   key: number;

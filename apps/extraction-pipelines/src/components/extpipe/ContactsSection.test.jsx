@@ -1,7 +1,7 @@
-import { getMockResponse } from 'utils/mockResponse';
-import render from 'utils/test/render';
+import { getMockResponse } from '@extraction-pipelines/utils/mockResponse';
+import render from '@extraction-pipelines/utils/test/render';
 import React from 'react';
-import { ContactsDialogView } from 'components/extpipe/ContactsDialog';
+import { ContactsDialogView } from '@extraction-pipelines/components/extpipe/ContactsDialog';
 import { fireEvent, screen } from '@testing-library/react';
 
 describe('ContactSection', () => {

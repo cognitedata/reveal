@@ -8,20 +8,20 @@ import {
   TableNoResults,
 } from '@cognite/cdf-utilities';
 
-import { useTranslation } from 'common';
-import RelativeTimeWithTooltip from 'components/extpipes/cols/RelativeTimeWithTooltip';
-import HostedExtractionPipelineExternalId from 'components/extpipes/cols/HostedExtractionPipelineExternalId';
+import { useTranslation } from '@extraction-pipelines/common';
+import RelativeTimeWithTooltip from '@extraction-pipelines/components/extpipes/cols/RelativeTimeWithTooltip';
+import HostedExtractionPipelineExternalId from '@extraction-pipelines/components/extpipes/cols/HostedExtractionPipelineExternalId';
 import {
   MQTTSourceWithJobMetrics,
   useMQTTSourcesWithJobMetrics,
-} from 'hooks/hostedExtractors';
+} from '@extraction-pipelines/hooks/hostedExtractors';
 import {
   dateSorter,
   getContainer,
   numberSorter,
   stringSorter,
-} from 'utils/utils';
-import { SourceOptions } from 'components/source-options-dropdown/SourceOptions';
+} from '@extraction-pipelines/utils/utils';
+import { SourceOptions } from '@extraction-pipelines/components/source-options-dropdown/SourceOptions';
 
 export type HostedExtractionPipelineListTableRecord = {
   key: string;

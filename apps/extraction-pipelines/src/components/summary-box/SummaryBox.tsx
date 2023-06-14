@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Body, Colors, Flex, Icon, IconType, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { Box } from 'components/box/Box';
+import { Box } from '@extraction-pipelines/components/box/Box';
 
 type SummaryBoxProps = {
   className?: string;

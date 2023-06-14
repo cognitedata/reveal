@@ -1,5 +1,5 @@
 import { CogniteClient, IdEither } from '@cognite/sdk';
-import { DataSetModel } from 'model/DataSetModel';
+import { DataSetModel } from '@extraction-pipelines/model/DataSetModel';
 import { mapDataSetResponse } from './dataSetUtils';
 
 export const getDataSets = async (

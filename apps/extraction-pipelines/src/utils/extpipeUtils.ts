@@ -1,11 +1,11 @@
 import moment from 'moment';
-import { User } from 'model/User';
-import { DetailFieldNames } from 'model/Extpipe';
-import { toCamelCase } from 'utils/primitivesUtils';
-import { mapScheduleInputToScheduleValue } from 'utils/cronUtils';
-import { AddExtpipeFormInput } from 'pages/create/CreateExtpipe';
+import { User } from '@extraction-pipelines/model/User';
+import { DetailFieldNames } from '@extraction-pipelines/model/Extpipe';
+import { toCamelCase } from '@extraction-pipelines/utils/primitivesUtils';
+import { mapScheduleInputToScheduleValue } from '@extraction-pipelines/utils/cronUtils';
+import { AddExtpipeFormInput } from '@extraction-pipelines/pages/create/CreateExtpipe';
 import { Range } from '@cognite/cogs.js';
-import { RunStatus } from 'model/Runs';
+import { RunStatus } from '@extraction-pipelines/model/Runs';
 
 export const calculateLatest = (timesStampsInMs: number[]): number => {
   if (timesStampsInMs.length === 0) {

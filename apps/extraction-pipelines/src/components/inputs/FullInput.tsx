@@ -2,10 +2,10 @@ import React, { FunctionComponent, PropsWithChildren, ReactNode } from 'react';
 import {
   InputController,
   InputControllerProps,
-} from 'components/inputs/InputController';
-import { ErrorMessage as Error } from 'components/error/ErrorMessage';
+} from '@extraction-pipelines/components/inputs/InputController';
+import { ErrorMessage as Error } from '@extraction-pipelines/components/error/ErrorMessage';
 import { ErrorMessage } from '@hookform/error-message';
-import { Hint, StyledLabel } from 'components/styled';
+import { Hint, StyledLabel } from '@extraction-pipelines/components/styled';
 
 export interface FullInputProps extends InputControllerProps {
   errors: any;

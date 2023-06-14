@@ -2,10 +2,10 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { JobsTable } from 'components/jobs-table/JobsTable';
-import { MQTTSourceWithJobMetrics } from 'hooks/hostedExtractors';
-import { PAGE_WIDTH } from 'utils/constants';
-import { MessageHistoryChart } from 'components/message-history-chart/MessageHistoryChart';
+import { JobsTable } from '@extraction-pipelines/components/jobs-table/JobsTable';
+import { MQTTSourceWithJobMetrics } from '@extraction-pipelines/hooks/hostedExtractors';
+import { PAGE_WIDTH } from '@extraction-pipelines/utils/constants';
+import { MessageHistoryChart } from '@extraction-pipelines/components/message-history-chart/MessageHistoryChart';
 
 type HostedExtractionPipelineInsightProps = {
   source: MQTTSourceWithJobMetrics;

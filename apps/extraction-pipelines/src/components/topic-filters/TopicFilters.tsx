@@ -3,10 +3,10 @@ import React, { useState } from 'react';
 import { Body, Button, Flex, Icon, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
-import { useTranslation } from 'common';
-import { CreateJobsModal } from 'components/create-jobs-modal/CreateJobsModal';
-import Section from 'components/section';
-import { MQTTSourceWithJobMetrics } from 'hooks/hostedExtractors';
+import { useTranslation } from '@extraction-pipelines/common';
+import { CreateJobsModal } from '@extraction-pipelines/components/create-jobs-modal/CreateJobsModal';
+import Section from '@extraction-pipelines/components/section';
+import { MQTTSourceWithJobMetrics } from '@extraction-pipelines/hooks/hostedExtractors';
 
 import { TopicFilter } from './TopicFilter';
 

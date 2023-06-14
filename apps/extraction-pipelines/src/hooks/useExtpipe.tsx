@@ -5,9 +5,12 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 import { useSDK } from '@cognite/sdk-provider';
-import { deleteExtractionPipeline, getExtpipeById } from 'utils/ExtpipesAPI';
-import { Extpipe } from 'model/Extpipe';
-import { RouterParams } from 'routing/RoutingConfig';
+import {
+  deleteExtractionPipeline,
+  getExtpipeById,
+} from '@extraction-pipelines/utils/ExtpipesAPI';
+import { Extpipe } from '@extraction-pipelines/model/Extpipe';
+import { RouterParams } from '@extraction-pipelines/routing/RoutingConfig';
 import { useParams } from 'react-router-dom';
 import { CogniteError } from '@cognite/sdk';
 

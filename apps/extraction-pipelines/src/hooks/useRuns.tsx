@@ -5,18 +5,21 @@ import {
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
-import { createRun, getFilteredRuns } from 'utils/RunsAPI';
+import {
+  createRun,
+  getFilteredRuns,
+} from '@extraction-pipelines/utils/RunsAPI';
 
 import {
   CreateRunRequest,
   RunApi,
   RunsAPIResponse,
   RunStatus,
-} from 'model/Runs';
+} from '@extraction-pipelines/model/Runs';
 import { Range } from '@cognite/cogs.js';
 import { useEffect } from 'react';
 import { useSDK } from '@cognite/sdk-provider';
-import { DEFAULT_RUN_LIMIT } from 'utils/constants';
+import { DEFAULT_RUN_LIMIT } from '@extraction-pipelines/utils/constants';
 import { CogniteError } from '@cognite/sdk';
 
 export const getRunsKey = (params: CreateRunFilterParam) => [

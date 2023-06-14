@@ -6,13 +6,13 @@ import { Select, notification } from 'antd';
 import { FormikErrors, useFormik } from 'formik';
 import { useNavigate } from 'react-router-dom';
 
-import { useTranslation } from 'common';
+import { useTranslation } from '@extraction-pipelines/common';
 import {
   BaseMQTTSource,
   MQTTSourceType,
   useCreateMQTTSource,
-} from 'hooks/hostedExtractors';
-import FormFieldWrapper from 'components/form-field-wrapper/FormFieldWrapper';
+} from '@extraction-pipelines/hooks/hostedExtractors';
+import FormFieldWrapper from '@extraction-pipelines/components/form-field-wrapper/FormFieldWrapper';
 
 export const MQTT_SOURCE_TYPE_LABEL: Record<MQTTSourceType, string> = {
   mqtt3: 'Version 5',

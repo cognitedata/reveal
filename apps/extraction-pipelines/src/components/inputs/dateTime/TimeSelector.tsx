@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { DivFlex } from 'components/styled';
+import { DivFlex } from '@extraction-pipelines/components/styled';
 import { OptionTypeBase } from 'react-select';
 import { Button, Colors, Input, Range, Select } from '@cognite/cogs.js';
 import {
@@ -9,12 +9,12 @@ import {
   optionTimeField,
   parseTimeString,
   rangeToTwoDigitString,
-} from 'components/inputs/dateTime/TimeSelectorUtils';
+} from '@extraction-pipelines/components/inputs/dateTime/TimeSelectorUtils';
 import {
   updateDateRangeAction,
   useRunFilterContext,
-} from 'hooks/runs/RunsFilterContext';
-import { useTranslation } from 'common';
+} from '@extraction-pipelines/hooks/runs/RunsFilterContext';
+import { useTranslation } from '@extraction-pipelines/common';
 
 interface TimeSelectorProps {}
 

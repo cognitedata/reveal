@@ -1,6 +1,9 @@
 import { useMutation } from '@tanstack/react-query';
-import { Extpipe, RegisterExtpipeInfo } from 'model/Extpipe';
-import { registerExtpipe } from 'utils/ExtpipesAPI';
+import {
+  Extpipe,
+  RegisterExtpipeInfo,
+} from '@extraction-pipelines/model/Extpipe';
+import { registerExtpipe } from '@extraction-pipelines/utils/ExtpipesAPI';
 import { useSDK } from '@cognite/sdk-provider';
 import { CogniteError } from '@cognite/sdk';
 

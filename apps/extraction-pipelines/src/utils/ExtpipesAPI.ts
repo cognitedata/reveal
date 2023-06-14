@@ -6,9 +6,9 @@ import {
   ExtpipeConfigRevision,
   ExtpipeFieldValue,
   RegisterExtpipeInfo,
-} from 'model/Extpipe';
-import { ExtpipeAPIResponse } from 'model/ExtpipeAPIResponse';
-import { get, post, getBaseUrl } from 'utils/baseURL';
+} from '@extraction-pipelines/model/Extpipe';
+import { ExtpipeAPIResponse } from '@extraction-pipelines/model/ExtpipeAPIResponse';
+import { get, post, getBaseUrl } from '@extraction-pipelines/utils/baseURL';
 
 type ExtpipeAPIRequest = {
   limit: number;

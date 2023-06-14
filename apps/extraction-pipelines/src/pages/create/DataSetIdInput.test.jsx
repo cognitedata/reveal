@@ -1,10 +1,10 @@
 import React from 'react';
 import { fireEvent, screen } from '@testing-library/react';
-import { renderWithReactHookForm } from 'utils/test/render';
-import { datasetMockResponse } from 'utils/mockResponse';
-import { TableHeadings } from 'components/table/ExtpipeTableCol';
-import { DATA_SET_ID_HINT } from 'utils/constants';
-import DataSetIdInput from 'pages/create/DataSetIdInput';
+import { renderWithReactHookForm } from '@extraction-pipelines/utils/test/render';
+import { datasetMockResponse } from '@extraction-pipelines/utils/mockResponse';
+import { TableHeadings } from '@extraction-pipelines/components/table/ExtpipeTableCol';
+import { DATA_SET_ID_HINT } from '@extraction-pipelines/utils/constants';
+import DataSetIdInput from '@extraction-pipelines/pages/create/DataSetIdInput';
 
 jest.mock('hooks/useDataSetsList', () => {
   return {

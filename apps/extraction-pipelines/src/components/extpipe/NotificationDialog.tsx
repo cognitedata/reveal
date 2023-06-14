@@ -1,21 +1,24 @@
 import React, { FunctionComponent, useState } from 'react';
-import { EditModal } from 'components/modals/EditModal';
+import { EditModal } from '@extraction-pipelines/components/modals/EditModal';
 import { Button, Input, Select } from '@cognite/cogs.js';
 
-import { DivFlex } from 'components/styled';
-import { IconHeading } from 'components/styled';
+import { DivFlex } from '@extraction-pipelines/components/styled';
+import { IconHeading } from '@extraction-pipelines/components/styled';
 import styled from 'styled-components';
-import { StyledLabel } from 'components/styled';
+import { StyledLabel } from '@extraction-pipelines/components/styled';
 import { OptionTypeBase } from 'react-select';
-import { Extpipe } from 'model/Extpipe';
-import { InfoBox } from 'components/message/InfoBox';
+import { Extpipe } from '@extraction-pipelines/model/Extpipe';
+import { InfoBox } from '@extraction-pipelines/components/message/InfoBox';
 import {
   createUpdateSpec,
   useDetailsUpdate,
-} from 'hooks/details/useDetailsUpdate';
-import { ErrorMessage } from 'components/error/ErrorMessage';
-import { minutesToUnit, timeUnitToMinutesMultiplier } from 'utils/utils';
-import { useTranslation } from 'common';
+} from '@extraction-pipelines/hooks/details/useDetailsUpdate';
+import { ErrorMessage } from '@extraction-pipelines/components/error/ErrorMessage';
+import {
+  minutesToUnit,
+  timeUnitToMinutesMultiplier,
+} from '@extraction-pipelines/utils/utils';
+import { useTranslation } from '@extraction-pipelines/common';
 
 type NotificationDialogProps = {
   isOpen: boolean;

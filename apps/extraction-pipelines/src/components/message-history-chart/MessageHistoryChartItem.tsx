@@ -1,13 +1,13 @@
 import { formatTime } from '@cognite/cdf-utilities';
 import { Colors, Flex, Icon, Tooltip } from '@cognite/cogs.js';
-import { useTranslation } from 'common';
+import { useTranslation } from '@extraction-pipelines/common';
 import React from 'react';
 import styled from 'styled-components';
 import {
   MetricAggregation,
   getMetricAggregationErrorCount,
   getMetricAggregationSuccessCount,
-} from 'utils/hostedExtractors';
+} from '@extraction-pipelines/utils/hostedExtractors';
 
 type MessageHistoryChartItemProps = {
   aggregation: MetricAggregation;

@@ -1,18 +1,18 @@
 import React, { FunctionComponent, useState } from 'react';
 import styled from 'styled-components';
-import { ContactBtnTestIds } from 'utils/constants';
+import { ContactBtnTestIds } from '@extraction-pipelines/utils/constants';
 import { FieldErrors, useForm } from 'react-hook-form';
-import ValidationError from 'components/form/ValidationError';
+import ValidationError from '@extraction-pipelines/components/form/ValidationError';
 import {
   createUpdateSpec,
   useDetailsUpdate,
-} from 'hooks/details/useDetailsUpdate';
-import { useSelectedExtpipe } from 'hooks/useExtpipe';
+} from '@extraction-pipelines/hooks/details/useDetailsUpdate';
+import { useSelectedExtpipe } from '@extraction-pipelines/hooks/useExtpipe';
 import {
   documentationSchema,
   MAX_DOCUMENTATION_LENGTH,
-} from 'utils/validation/extpipeSchemas';
-import MessageDialog from 'components/buttons/MessageDialog';
+} from '@extraction-pipelines/utils/validation/extpipeSchemas';
+import MessageDialog from '@extraction-pipelines/components/buttons/MessageDialog';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {
   bottomSpacing,
@@ -20,13 +20,13 @@ import {
   DivFlex,
   Hint,
   StyledTextArea,
-} from 'components/styled';
-import { MarkdownView } from 'components/markDown/MarkdownView';
+} from '@extraction-pipelines/components/styled';
+import { MarkdownView } from '@extraction-pipelines/components/markDown/MarkdownView';
 import { A, Button, Flex } from '@cognite/cogs.js';
-import Section from 'components/section';
-import { trackUsage } from 'utils/Metrics';
-import { useTranslation } from 'common';
-import { MASTERING_MARKDOWN_LINK } from 'utils/utils';
+import Section from '@extraction-pipelines/components/section';
+import { trackUsage } from '@extraction-pipelines/utils/Metrics';
+import { useTranslation } from '@extraction-pipelines/common';
+import { MASTERING_MARKDOWN_LINK } from '@extraction-pipelines/utils/utils';
 
 export const TEST_ID_BTN_SAVE: Readonly<string> = 'btn-save-';
 interface DocumentationSectionProps {

@@ -3,12 +3,12 @@ import React from 'react';
 import { Flex, InputExp, Modal, ModalProps } from '@cognite/cogs.js';
 import { FormikErrors, useFormik } from 'formik';
 
-import { useTranslation } from 'common';
+import { useTranslation } from '@extraction-pipelines/common';
 import {
   BaseMQTTSource,
   MQTTSourceWithJobMetrics,
   useEditMQTTSource,
-} from 'hooks/hostedExtractors';
+} from '@extraction-pipelines/hooks/hostedExtractors';
 import { notification } from 'antd';
 
 type EditSourceAuthenticationModalProps = {

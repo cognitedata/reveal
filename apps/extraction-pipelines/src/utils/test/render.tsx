@@ -1,17 +1,20 @@
 import React, { FunctionComponent, PropsWithChildren } from 'react';
 import { render, RenderOptions } from '@testing-library/react';
-import { styleScope } from 'utils/utils';
+import { styleScope } from '@extraction-pipelines/utils/utils';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { MemoryRouter as Router } from 'react-router-dom';
 import { useForm, FormProvider } from 'react-hook-form';
-import { AppEnvProvider } from 'hooks/useAppEnv';
-import { Extpipe, RegisterExtpipeInfo } from 'model/Extpipe';
-import { RegisterExtpipeProvider } from 'hooks/useStoredRegisterExtpipe';
-import { EXTRACTION_PIPELINES_PATH } from 'utils/baseURL';
+import { AppEnvProvider } from '@extraction-pipelines/hooks/useAppEnv';
+import {
+  Extpipe,
+  RegisterExtpipeInfo,
+} from '@extraction-pipelines/model/Extpipe';
+import { RegisterExtpipeProvider } from '@extraction-pipelines/hooks/useStoredRegisterExtpipe';
+import { EXTRACTION_PIPELINES_PATH } from '@extraction-pipelines/utils/baseURL';
 import {
   RunFilterProvider,
   RunFilterProviderProps,
-} from 'hooks/runs/RunsFilterContext';
+} from '@extraction-pipelines/hooks/runs/RunsFilterContext';
 
 export default (
   ui: React.ReactElement,

@@ -1,9 +1,9 @@
 import React, { FunctionComponent, ReactNode } from 'react';
 import { Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { LEARNING_AND_RESOURCES_URL } from 'pages/Extpipes/Extpipes';
-import { ExternalLink } from 'components/links/ExternalLink';
-import { useTranslation } from 'common';
+import { LEARNING_AND_RESOURCES_URL } from '@extraction-pipelines/pages/Extpipes/Extpipes';
+import { ExternalLink } from '@extraction-pipelines/components/links/ExternalLink';
+import { useTranslation } from '@extraction-pipelines/common';
 interface OwnProps {
   actionButton: ReactNode;
 }

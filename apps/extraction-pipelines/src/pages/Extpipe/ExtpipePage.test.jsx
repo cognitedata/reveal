@@ -5,25 +5,32 @@ import { useLocation, useParams, useRouteMatch } from 'react-router-dom';
 import {
   EXT_PIPE_TAB_OVERVIEW,
   EXT_PIPE_TAB_RUN_HISTORY,
-} from 'utils/constants';
-import { renderWithReQueryCacheSelectedExtpipeContext } from 'utils/test/render';
-import { ORIGIN_DEV, PROJECT_ITERA_INT_GREEN } from 'utils/baseURL';
-import { render } from 'utils/test';
+} from '@extraction-pipelines/utils/constants';
+import { renderWithReQueryCacheSelectedExtpipeContext } from '@extraction-pipelines/utils/test/render';
+import {
+  ORIGIN_DEV,
+  PROJECT_ITERA_INT_GREEN,
+} from '@extraction-pipelines/utils/baseURL';
+import { render } from '@extraction-pipelines/utils/test';
 import {
   useSelectedExtpipe,
   useSelectedExtpipeId,
   useDeletePipeline,
-} from 'hooks/useExtpipe';
+} from '@extraction-pipelines/hooks/useExtpipe';
 import {
   getMockResponse,
   mockDataRunsResponse,
   mockDataSetResponse,
-} from 'utils/mockResponse';
-import { TableHeadings } from 'components/table/ExtpipeTableCol';
-import { RunTableHeading } from 'components/extpipe/RunLogsCols';
-import { useFilteredRuns, useRuns, useAllRuns } from 'hooks/useRuns';
-import ExtpipePage from 'pages/Extpipe/ExtpipePage';
-import { useDataSetsList } from 'hooks/useDataSetsList';
+} from '@extraction-pipelines/utils/mockResponse';
+import { TableHeadings } from '@extraction-pipelines/components/table/ExtpipeTableCol';
+import { RunTableHeading } from '@extraction-pipelines/components/extpipe/RunLogsCols';
+import {
+  useFilteredRuns,
+  useRuns,
+  useAllRuns,
+} from '@extraction-pipelines/hooks/useRuns';
+import ExtpipePage from '@extraction-pipelines/pages/Extpipe/ExtpipePage';
+import { useDataSetsList } from '@extraction-pipelines/hooks/useDataSetsList';
 
 jest.mock('react-router-dom', () => {
   const r = jest.requireActual('react-router-dom');

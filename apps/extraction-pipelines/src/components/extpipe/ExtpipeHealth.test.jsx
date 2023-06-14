@@ -1,24 +1,27 @@
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { QueryClient } from '@tanstack/react-query';
 import React from 'react';
-import { renderWithReQueryCacheSelectedExtpipeContext } from 'utils/test/render';
-import { ORIGIN_DEV, PROJECT_ITERA_INT_GREEN } from 'utils/baseURL';
-import { render } from 'utils/test';
-import ExtpipeRunHistory from 'components/extpipe/ExtpipeRunHistory';
+import { renderWithReQueryCacheSelectedExtpipeContext } from '@extraction-pipelines/utils/test/render';
+import {
+  ORIGIN_DEV,
+  PROJECT_ITERA_INT_GREEN,
+} from '@extraction-pipelines/utils/baseURL';
+import { render } from '@extraction-pipelines/utils/test';
+import ExtpipeRunHistory from '@extraction-pipelines/components/extpipe/ExtpipeRunHistory';
 import {
   getMockResponse,
   mockDataRunsResponse,
   mockError,
-} from 'utils/mockResponse';
-import { useFilteredRuns } from 'hooks/useRuns';
-import { TableHeadings } from 'components/table/ExtpipeTableCol';
-import { RunTableHeading } from 'components/extpipe/RunLogsCols';
-import { trackUsage } from 'utils/Metrics';
+} from '@extraction-pipelines/utils/mockResponse';
+import { useFilteredRuns } from '@extraction-pipelines/hooks/useRuns';
+import { TableHeadings } from '@extraction-pipelines/components/table/ExtpipeTableCol';
+import { RunTableHeading } from '@extraction-pipelines/components/extpipe/RunLogsCols';
+import { trackUsage } from '@extraction-pipelines/utils/Metrics';
 import moment from 'moment';
-import { mapStatusRow } from 'utils/runsUtils';
-import { rangeToTwoDigitString } from 'components/inputs/dateTime/TimeSelectorUtils';
-import { DAYS_7 } from 'components/table/QuickDateTimeFilters';
-import { DEFAULT_ITEMS_PER_PAGE } from 'utils/constants';
+import { mapStatusRow } from '@extraction-pipelines/utils/runsUtils';
+import { rangeToTwoDigitString } from '@extraction-pipelines/components/inputs/dateTime/TimeSelectorUtils';
+import { DAYS_7 } from '@extraction-pipelines/components/table/QuickDateTimeFilters';
+import { DEFAULT_ITEMS_PER_PAGE } from '@extraction-pipelines/utils/constants';
 
 jest.mock('hooks/useRuns', () => {
   return {

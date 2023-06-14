@@ -1,5 +1,8 @@
 import moment from 'moment';
-import { filterByTimeBetween, isWithinDaysInThePast } from 'utils/runsUtils';
+import {
+  filterByTimeBetween,
+  isWithinDaysInThePast,
+} from '@extraction-pipelines/utils/runsUtils';
 
 describe('runsUtils', () => {
   test('filterByTimeBetween', () => {

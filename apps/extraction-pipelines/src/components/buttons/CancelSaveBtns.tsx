@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { useTranslation } from 'common';
+import { useTranslation } from '@extraction-pipelines/common';
 interface CancelSaveBtnsProps {
   onCancel: () => void;
   onSave: () => void;

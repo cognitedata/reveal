@@ -1,5 +1,5 @@
 import React from 'react';
-import { EXTRACTION_PIPELINES_PATH } from 'utils/baseURL';
+import { EXTRACTION_PIPELINES_PATH } from '@extraction-pipelines/utils/baseURL';
 
 const LazyExtpipes = React.lazy(
   () =>

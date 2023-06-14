@@ -11,8 +11,11 @@ import {
   createExtpipeConfigRevision,
   getExtpipeConfig,
   getExtpipeConfigRevisions,
-} from 'utils/ExtpipesAPI';
-import { ExtpipeConfig, ExtpipeConfigRevision } from 'model/Extpipe';
+} from '@extraction-pipelines/utils/ExtpipesAPI';
+import {
+  ExtpipeConfig,
+  ExtpipeConfigRevision,
+} from '@extraction-pipelines/model/Extpipe';
 import { CogniteError } from '@cognite/sdk';
 
 type ExtPipeConfigRequest = {

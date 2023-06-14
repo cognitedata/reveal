@@ -12,8 +12,8 @@ import { Select, notification } from 'antd';
 import { FormikErrors, useFormik } from 'formik';
 import styled from 'styled-components';
 
-import { useTranslation } from 'common';
-import FormFieldRadioGroup from 'components/form-field-radio-group/FormFieldRadioGroup';
+import { useTranslation } from '@extraction-pipelines/common';
+import FormFieldRadioGroup from '@extraction-pipelines/components/form-field-radio-group/FormFieldRadioGroup';
 import {
   MQTTDestinationType,
   MQTTFormat,
@@ -21,8 +21,8 @@ import {
   useCreateMQTTDestination,
   useCreateMQTTJob,
   useMQTTDestinations,
-} from 'hooks/hostedExtractors';
-import FormFieldWrapper from 'components/form-field-wrapper/FormFieldWrapper';
+} from '@extraction-pipelines/hooks/hostedExtractors';
+import FormFieldWrapper from '@extraction-pipelines/components/form-field-wrapper/FormFieldWrapper';
 
 const MQTT_DESTINATION_TYPE_OPTIONS: {
   label: string;

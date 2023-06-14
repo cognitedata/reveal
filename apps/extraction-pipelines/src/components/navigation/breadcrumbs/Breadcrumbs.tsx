@@ -2,7 +2,7 @@ import React, { FunctionComponent, PropsWithChildren } from 'react';
 import styled from 'styled-components';
 import { Colors } from '@cognite/cogs.js';
 import { NavLink } from 'react-router-dom';
-import { PAGE_MARGIN } from 'components/styled';
+import { PAGE_MARGIN } from '@extraction-pipelines/components/styled';
 
 interface Breadcrumb {
   href?: string;

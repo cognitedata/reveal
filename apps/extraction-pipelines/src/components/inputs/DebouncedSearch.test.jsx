@@ -1,8 +1,8 @@
 import React from 'react';
 import { fireEvent, screen } from '@testing-library/react';
-import { render } from 'utils/test';
-import { DebouncedSearch } from 'components/inputs/DebouncedSearch';
-import { renderWithRunFilterContext } from 'utils/test/render';
+import { render } from '@extraction-pipelines/utils/test';
+import { DebouncedSearch } from '@extraction-pipelines/components/inputs/DebouncedSearch';
+import { renderWithRunFilterContext } from '@extraction-pipelines/utils/test/render';
 
 describe('DebouncedSearch', () => {
   test('Render default', async () => {

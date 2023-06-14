@@ -5,12 +5,12 @@ import {
   DateFormatsRecord,
   mapDataForChart,
   mapRangeToGraphTimeFormat,
-} from 'components/chart/runChartUtils';
+} from '@extraction-pipelines/components/chart/runChartUtils';
 import { Colors } from '@cognite/cogs.js';
 import Plotly from 'plotly.js';
-import { useTranslation } from 'common';
-import { useRunFilterContext } from 'hooks/runs/RunsFilterContext';
-import { useAllRuns } from 'hooks/useRuns';
+import { useTranslation } from '@extraction-pipelines/common';
+import { useRunFilterContext } from '@extraction-pipelines/hooks/runs/RunsFilterContext';
+import { useAllRuns } from '@extraction-pipelines/hooks/useRuns';
 
 interface ChartProps {
   externalId: string;

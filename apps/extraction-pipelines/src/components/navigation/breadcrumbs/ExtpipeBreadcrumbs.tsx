@@ -1,13 +1,13 @@
 import React, { FunctionComponent, PropsWithChildren } from 'react';
-import { Extpipe } from 'model/Extpipe';
-import { useRunFilterContext } from 'hooks/runs/RunsFilterContext';
-import { createSearchParams } from 'utils/extpipeUtils';
-import { createExtPipePath } from 'utils/baseURL';
-import { EXT_PIPE_PATH } from 'routing/RoutingConfig';
-import { Breadcrumbs } from 'components/navigation/breadcrumbs/Breadcrumbs';
+import { Extpipe } from '@extraction-pipelines/model/Extpipe';
+import { useRunFilterContext } from '@extraction-pipelines/hooks/runs/RunsFilterContext';
+import { createSearchParams } from '@extraction-pipelines/utils/extpipeUtils';
+import { createExtPipePath } from '@extraction-pipelines/utils/baseURL';
+import { EXT_PIPE_PATH } from '@extraction-pipelines/routing/RoutingConfig';
+import { Breadcrumbs } from '@extraction-pipelines/components/navigation/breadcrumbs/Breadcrumbs';
 import { createLink } from '@cognite/cdf-utilities';
-import { useTranslation } from 'common';
-import { useDataSets } from 'hooks/useDataSets';
+import { useTranslation } from '@extraction-pipelines/common';
+import { useDataSets } from '@extraction-pipelines/hooks/useDataSets';
 import { useParams } from 'react-router-dom';
 
 interface ExtpipeBreadcrumbsProps {

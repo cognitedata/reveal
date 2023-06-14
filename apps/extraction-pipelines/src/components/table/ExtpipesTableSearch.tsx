@@ -2,7 +2,7 @@ import React from 'react';
 
 import { InputExp } from '@cognite/cogs.js';
 
-import { useTranslation } from 'common';
+import { useTranslation } from '@extraction-pipelines/common';
 
 type ExtpipesTableSearchProps = {
   onChange: (value: string) => void;
