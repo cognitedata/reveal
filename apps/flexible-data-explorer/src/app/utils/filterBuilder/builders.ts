@@ -1,5 +1,8 @@
-import { Operator } from '../../containers/search/Filter/operators';
-import { DateRange, NumericRange } from '../../containers/search/Filter/types';
+import {
+  DateRange,
+  NumericRange,
+  Operator,
+} from '../../containers/search/Filter/types';
 
 export const builders: Record<
   Operator,
@@ -20,9 +23,9 @@ export const builders: Record<
   }),
 
   [Operator.BETWEEN]: (field: string, value: NumericRange | DateRange) => ({
-    and: {
-      [field]: { gte: value[0] },
-      [field]: { lte: value[1] },
+    [field]: {
+      gte: value[0],
+      lte: value[1],
     },
   }),
   [Operator.NOT_BETWEEN]: (field: string, value: NumericRange | DateRange) => ({

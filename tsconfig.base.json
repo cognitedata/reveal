@@ -34,9 +34,9 @@
         "libs/data-exploration-components/src/index.ts"
       ],
       "@cognite/graph": ["libs/graph/src/index.ts"],
+      "@cognite/iot-hub": ["apps/iot-hub/src/index.ts"],
       "@cognite/login-utils": ["libs/shared/cdf-login-utils/src/index.ts"],
       "@cognite/platypus-cdf-cli/*": ["apps/platypus-cdf-cli/src/*"],
-      "@cognite/iot-hub": ["apps/iot-hub/src/index.ts"],
       "@cognite/plotting-components": [
         "libs/shared/plotting-components/src/index.ts"
       ],
@@ -57,15 +57,16 @@
       "@data-exploration/containers": [
         "libs/data-exploration/containers/src/index.ts"
       ],
-      "@data-quality/codegen": [
-        "apps/platypus/src/app/modules/solution/data-quality/api/codegen/index.ts"
+      "@data-quality/*": [
+        "apps/platypus/src/app/modules/solution/data-quality/*"
       ],
-      "@interactive-diagrams-app/*": ["apps/interactive-diagrams/src/*"],
+      "@flexible-data-explorer/*": ["apps/flexible-data-explorer/src/*"],
       "@fusion/cdf-nx-plugin": ["libs/cdf-nx-plugin/src/index.ts"],
       "@fusion/contextualization": ["libs/contextualization/src/index.ts"],
       "@fusion/copilot-core": ["libs/copilot-core/src/index.ts"],
       "@fusion/industry-canvas": ["libs/industry-canvas/src/index.ts"],
       "@fusion/mock-data": ["libs/shared/mock-data/src/index.ts"],
+      "@interactive-diagrams-app/*": ["apps/interactive-diagrams/src/*"],
       "@platypus-app/*": [
         "apps/platypus/src/app/*",
         "apps/platypus/src/environments/environment.ts"
@@ -82,5 +83,5 @@
       ]
     }
   },
-  "exclude": ["node_modules", "tmp"]
+  "exclude": ["node_modules", "tmp", "proxy"]
 }

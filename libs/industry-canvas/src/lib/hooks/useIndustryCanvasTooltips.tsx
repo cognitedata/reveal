@@ -3,9 +3,14 @@ import { useMemo } from 'react';
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
 
 import { OnAddContainerReferences } from '../IndustryCanvasPage';
-import { CanvasAnnotation, IndustryCanvasContainerConfig } from '../types';
+import {
+  CanvasAnnotation,
+  CommentAnnotation,
+  IndustryCanvasContainerConfig,
+} from '../types';
 
 import useCanvasAnnotationTooltips from './useCanvasAnnotationTooltips';
+import useCommentTooltips from './useCommentTooltips';
 import useIndustryCanvasAssetTooltips from './useIndustryCanvasAssetTooltips';
 import useIndustryCanvasContainerTooltips from './useIndustryCanvasContainerTooltips';
 import useIndustryCanvasFileLinkTooltips from './useIndustryCanvasFileLinkTooltips';
@@ -31,6 +36,7 @@ export type UseTooltipsParams = {
   removeContainerById: UseManagedStateReturnType['removeContainerById'];
   onDeleteSelectedCanvasAnnotation: () => void;
   onUpdateAnnotationStyleByType: OnUpdateAnnotationStyleByType;
+  commentAnnotations: CommentAnnotation[];
 };
 
 const useIndustryCanvasTooltips = ({
@@ -47,7 +53,17 @@ const useIndustryCanvasTooltips = ({
   updateContainerById,
   removeContainerById,
   onUpdateAnnotationStyleByType,
+  commentAnnotations,
 }: UseTooltipsParams) => {
+  const containerTooltips = useIndustryCanvasContainerTooltips({
+    selectedContainer,
+    containers,
+    tooltipsOptions,
+    onUpdateTooltipsOptions,
+    onAddSummarizationSticky,
+    updateContainerById,
+    removeContainerById,
+  });
   const assetTooltips = useIndustryCanvasAssetTooltips(
     clickedContainerAnnotation,
     onAddContainerReferences
@@ -62,28 +78,24 @@ const useIndustryCanvasTooltips = ({
     onDeleteSelectedCanvasAnnotation,
     onUpdateAnnotationStyleByType,
   });
-  const containerTooltips = useIndustryCanvasContainerTooltips({
-    selectedContainer,
-    containers,
-    tooltipsOptions,
-    onUpdateTooltipsOptions,
-    onAddSummarizationSticky,
-    updateContainerById,
-    removeContainerById,
+  const commentTooltips = useCommentTooltips({
+    commentAnnotations,
   });
 
   return useMemo(() => {
     return [
+      ...containerTooltips,
       ...assetTooltips,
       ...canvasAnnotationTooltips,
       ...fileLinkTooltips,
-      ...containerTooltips,
+      ...commentTooltips,
     ];
   }, [
     assetTooltips,
     canvasAnnotationTooltips,
     fileLinkTooltips,
     containerTooltips,
+    commentTooltips,
   ]);
 };
 

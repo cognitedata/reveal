@@ -18,7 +18,7 @@ jobs:
 
       - uses: actions/setup-node@v3
         with:
-          node-version: '16'
+          node-version: '18'
           cache: 'yarn'
 
       - name: Set NPMKEY variable
@@ -58,7 +58,7 @@ jobs:
 
       - uses: actions/setup-node@v3
         with:
-          node-version: '16'
+          node-version: '18'
           cache: 'yarn'
 
       - name: Cache node modules
@@ -86,9 +86,9 @@ jobs:
 
       - name: nx run-many:${{ matrix.target }}
         id: build
-        run: node ./scripts/run-many.js ${{ matrix.target }} ${{ matrix.jobIndex }} ${{ env.jobCount }} ${{ env.NX_BASE }} ${{ env.NX_HEAD }} ${{ secrets.CODECOV_TOKEN }}
+        run: node ./scripts/run-many.js ${{ matrix.target }} ${{ matrix.jobIndex }} ${{ env.jobCount }} ${{ env.NX_BASE }} ${{ env.NX_HEAD }} ${{ secrets.CODECOV_TOKEN }} ${{github.base_ref}}
         env:
-          NODE_OPTIONS: "--max_old_space_size=4096"
+          NODE_OPTIONS: '--max_old_space_size=4096'
           PROJECT: ${{ secrets.CLI_E2E_PROJECT }}
           TENANT: ${{ secrets.CLI_E2E_TENANT }}
           CLUSTER: ${{ secrets.CLI_E2E_CLUSTER }}
@@ -125,7 +125,7 @@ jobs:
 
       - uses: actions/setup-node@v3
         with:
-          node-version: '16'
+          node-version: '18'
           cache: 'yarn'
 
       - name: Cache node modules
@@ -180,7 +180,7 @@ jobs:
           DATA_EXPLORER_CLIENT_SECRET: ${{ secrets.DATA_EXPLORER_CLIENT_SECRET }}
           TESTING_BASE_URL: http://localhost:4002
         with:
-          command: node ./scripts/run-many.js ${{ matrix.target }} ${{ matrix.jobIndex }} ${{ env.jobCount }} ${{ env.NX_BASE }} ${{ env.NX_HEAD }} ${{ secrets.CODECOV_TOKEN }}
+          command: node ./scripts/run-many.js ${{ matrix.target }} ${{ matrix.jobIndex }} ${{ env.jobCount }} ${{ env.NX_BASE }} ${{ env.NX_HEAD }} ${{ secrets.CODECOV_TOKEN }} ${{github.base_ref}}
 
       - name: Stop HTTP server
         if: always()

@@ -2,17 +2,13 @@ import React, { useMemo } from 'react';
 
 import styled from 'styled-components';
 
-import { Loader } from '@data-exploration/components';
-import { ResourceItem } from '@data-exploration-components/types';
-
-import { Flex } from '@cognite/cogs.js';
-import { FileInfo } from '@cognite/sdk';
-import { useCdfItem } from '@cognite/sdk-react-query-hooks';
+import { Flex, Loader } from '@cognite/cogs.js';
 import ReactUnifiedViewer, {
   isSupportedFileInfo,
 } from '@cognite/unified-file-viewer';
 
 import { useFileContainerQuery } from '../../../../services/files/queries/useFileContainerQuery';
+import { useFileByIdQuery } from '../../../../services/instances/file/queries/useFileByIdQuery';
 
 type FilePreviewProps = {
   id: string;
@@ -20,7 +16,6 @@ type FilePreviewProps = {
   fileId: number;
   creatable: boolean;
   contextualization: boolean;
-  onItemClicked?: (item: ResourceItem) => void;
   fileIcon?: React.ReactNode;
   showControls?: boolean;
   showDownload?: boolean;
@@ -38,12 +33,7 @@ export const FilePreview = ({
   fileId,
   showControls = true,
 }: FilePreviewProps) => {
-  const { data: file, isFetched: isFileFetched } = useCdfItem<FileInfo>(
-    'files',
-    {
-      id: fileId,
-    }
-  );
+  const { data: file, isFetched: isFileFetched } = useFileByIdQuery(fileId);
 
   const { data: containerData } = useFileContainerQuery(file);
 

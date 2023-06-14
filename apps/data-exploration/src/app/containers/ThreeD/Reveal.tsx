@@ -2,15 +2,11 @@ import React, {
   useCallback,
   useContext,
   useEffect,
-  useMemo,
   useRef,
   useState,
 } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 
-import styled from 'styled-components';
-
-import { useQuery } from '@tanstack/react-query';
 import { Alert } from 'antd';
 import { Vector3 } from 'three';
 
@@ -23,9 +19,10 @@ import {
   CognitePointCloudModel,
   Intersection,
   ViewerState,
+  Image360,
   Image360Collection,
+  Image360AnnotationIntersection,
 } from '@cognite/reveal';
-import { useSDK } from '@cognite/sdk-provider';
 
 import { ThreeDContext } from './contexts/ThreeDContext';
 import { use3DModel } from './hooks';
@@ -46,8 +43,12 @@ type Props = {
   image360SiteId?: string;
   nodesSelectable: boolean;
   initialViewerState?: ViewerState;
+  setImage360Entity?: (entity: Image360 | undefined) => void;
   image360Entities?: { siteId: string; images: Image360Collection }[];
-  onViewerClick?: (intersection: Intersection | null) => void;
+  onViewerClick?: (
+    intersection: Intersection | null,
+    image360AnnotationIntersection: Image360AnnotationIntersection | null
+  ) => void;
   children?: (childProps: ChildProps) => JSX.Element;
 };
 
@@ -58,25 +59,30 @@ export function Reveal({
   image360SiteId,
   nodesSelectable,
   initialViewerState,
+  setImage360Entity,
   onViewerClick,
-  image360Entities,
 }: Props) {
-  const context = useContext(ThreeDContext);
   const {
-    setViewer,
+    setViewState,
+    viewer,
     set3DModel,
     setPointCloudModel,
+    setImage360,
     secondaryObjectsVisibilityState,
-  } = context;
+  } = useContext(ThreeDContext);
+
   const numOfClicks = useRef<number>(0);
   const clickTimer = useRef<NodeJS.Timeout>();
-  const sdk = useSDK();
 
-  const [image360CollectionSiteId, setImage360CollectionSiteId] = useState<
-    string[]
-  >([]);
+  const [models, setModels] = useState<{
+    threeDModel?: CogniteCadModel;
+    pointCloudModel?: CognitePointCloudModel;
+    imageCollection?: Image360Collection;
+  }>();
+  const [modelError, setModelError] = useState<Error>();
 
   const revealContainerRef = useRef<HTMLDivElement>(null);
+  const hasCameraInitialised = useRef<boolean>(false);
 
   const {
     data: apiThreeDModel,
@@ -84,34 +90,41 @@ export function Reveal({
     isError: isModelError,
   } = use3DModel(modelId);
 
-  const viewer = useMemo(() => {
-    if (!revealContainerRef.current) {
+  useEffect(() => {
+    if (!revealContainerRef.current || !viewer) {
       return;
     }
 
-    return new Cognite3DViewer({
-      sdk,
-      domElement: revealContainerRef.current,
-      continuousModelStreaming: true,
-      loadingIndicatorStyle: {
-        placement: 'bottomRight',
-        opacity: 1,
-      },
-    });
-  }, [sdk, revealContainerRef.current]);
+    revealContainerRef.current.appendChild(viewer.domElement);
+  }, [viewer]);
 
   useEffect(() => {
-    setViewer(viewer);
-  }, [setViewer, viewer]);
+    if (!viewer) return;
 
-  const { data: models, error } = useQuery(
-    ['reveal-model', modelId, revisionId, image360SiteId],
-    async () => {
+    let lastUpdatedTime = Date.now();
+
+    const updateCameraState = (position: Vector3, target: Vector3) => {
+      const currentTime = Date.now();
+
+      if (!hasCameraInitialised.current || currentTime - lastUpdatedTime < 250)
+        return;
+
+      setViewState({ camera: { position, target } });
+      lastUpdatedTime = currentTime;
+    };
+
+    viewer.on('cameraChange', updateCameraState);
+
+    return () => viewer.off('cameraChange', updateCameraState);
+  }, [setViewState, viewer]);
+
+  useEffect(() => {
+    const loadModel = async () => {
       if (!viewer) {
         return Promise.reject('Viewer missing');
       }
-      let model;
 
+      let model;
       const lastCameraPositionVec = new Vector3();
       const reusableVec = new Vector3();
 
@@ -127,25 +140,33 @@ export function Reveal({
               'The selected 3D model is not supported and can not be loaded. If the 3D model is very old, try uploading a new revision under Upload 3D models in Fusion.',
           });
         }
-
-        // Load camera from model when camera state is unavailable
-        if (!initialViewerState?.camera) {
-          viewer.loadCameraFromModel(model);
-        }
       }
 
       if (initialViewerState) {
-        const { x, y, z } = initialViewerState.camera!.position;
+        const position = initialViewerState.camera?.position ?? {
+          x: 0,
+          y: 0,
+          z: 0,
+        };
+        const target = initialViewerState.camera?.target ?? {
+          x: 0,
+          y: 0,
+          z: 0,
+        };
 
-        viewer.setViewState(initialViewerState);
-        lastCameraPositionVec.set(x, y, z);
+        viewer.cameraManager.setCameraState({
+          position: new Vector3(position.x, position.y, position.z),
+          target: new Vector3(target.x, target.y, target.z),
+        });
+        lastCameraPositionVec.set(position.x, position.y, position.z);
+      } else {
+        if (model) viewer.loadCameraFromModel(model);
       }
 
-      if (
-        image360SiteId &&
-        !image360CollectionSiteId.includes(image360SiteId)
-      ) {
-        let imageCollection;
+      hasCameraInitialised.current = true;
+
+      let imageCollection: Image360Collection | undefined = undefined;
+      if (image360SiteId) {
         try {
           imageCollection = await viewer.add360ImageSet(
             'events',
@@ -154,8 +175,6 @@ export function Reveal({
             },
             { preMultipliedRotation: false }
           );
-          image360CollectionSiteId.push(image360SiteId);
-          setImage360CollectionSiteId(image360CollectionSiteId);
         } catch {
           return Promise.reject({
             message: 'The selected 360 image set is not supported',
@@ -179,25 +198,70 @@ export function Reveal({
             ),
           });
         }
+
+        imageCollection.on('image360Entered', (image360) => {
+          setImage360Entity?.(image360);
+        });
+        imageCollection.on('image360Exited', () => {
+          setImage360Entity?.(undefined);
+        });
       }
 
       const threeDModel = model instanceof CogniteCadModel ? model : undefined;
       const pointCloudModel =
         model instanceof CognitePointCloudModel ? model : undefined;
-      if (set3DModel) {
-        set3DModel(threeDModel);
-      }
-      if (setPointCloudModel) {
-        setPointCloudModel(pointCloudModel);
-      }
 
-      return { threeDModel, pointCloudModel };
-    },
-    {
-      enabled: !!viewer,
-      cacheTime: 0,
-    }
-  );
+      set3DModel(threeDModel);
+      setPointCloudModel(pointCloudModel);
+      setImage360(imageCollection);
+
+      return { threeDModel, pointCloudModel, imageCollection };
+    };
+
+    const modelsPromise = loadModel();
+
+    modelsPromise.then(setModels, (reason) => setModelError(new Error(reason)));
+
+    return () => {
+      if (!viewer) return;
+
+      modelsPromise.then((results) => {
+        const model3d = results?.threeDModel ?? results?.pointCloudModel;
+
+        if (
+          viewer.models.find(
+            (model) =>
+              model3d?.modelId === model.modelId &&
+              model3d?.revisionId === model.revisionId
+          ) &&
+          model3d
+        ) {
+          viewer.removeModel(model3d);
+        }
+        if (
+          results?.imageCollection &&
+          viewer
+            .get360ImageCollections()
+            .find(
+              (imageCollection) =>
+                imageCollection.id === results.imageCollection?.id
+            )
+        ) {
+          viewer.remove360ImageSet(results.imageCollection);
+        }
+      });
+    };
+  }, [
+    viewer,
+    modelId,
+    revisionId,
+    image360SiteId,
+    initialViewerState,
+    set3DModel,
+    setImage360,
+    setImage360Entity,
+    setPointCloudModel,
+  ]);
 
   useEffect(() => {
     if (!viewer) return;
@@ -212,44 +276,50 @@ export function Reveal({
       }
     });
 
-    image360Entities?.forEach((image360) =>
-      image360.images.setIconsVisibility(
-        secondaryObjectsVisibilityState?.images360 ?? true
-      )
-    );
+    viewer
+      .get360ImageCollections()
+      .forEach((image360) =>
+        image360.setIconsVisibility(
+          secondaryObjectsVisibilityState?.images360 ?? true
+        )
+      );
 
     viewer.requestRedraw();
-  }, [secondaryObjectsVisibilityState, image360Entities, viewer]);
+  }, [secondaryObjectsVisibilityState, viewer]);
 
   useEffect(() => {
-    if (error) {
-      toast.error(<RevealErrorToast error={error as { message?: string }} />, {
-        toastId: 'reveal-model-load-error',
-      });
+    if (modelError) {
+      toast.error(
+        <RevealErrorToast error={modelError as { message?: string }} />,
+        {
+          toastId: 'reveal-model-load-error',
+        }
+      );
     }
-  }, [error]);
+  }, [modelError]);
 
-  const { threeDModel } = models ?? {
-    threeDModel: undefined,
-    pointCloudModel: undefined,
-  };
-
-  useEffect(() => () => viewer?.dispose(), [viewer]);
+  const threeDModel = models?.threeDModel;
+  const imageCollection = models?.imageCollection;
 
   const _onViewerClick: PointerEventDelegate = useCallback(
     async ({ offsetX, offsetY }) => {
-      if (!threeDModel || !viewer || !nodesSelectable) {
+      if ((!threeDModel && !imageCollection) || !viewer || !nodesSelectable) {
         return;
       }
       numOfClicks.current++;
       if (numOfClicks.current === 1) {
         clickTimer.current = setTimeout(async () => {
+          const image360Intersection =
+            await viewer.get360AnnotationIntersectionFromPixel(
+              offsetX,
+              offsetY
+            );
           const intersection = await viewer.getIntersectionFromPixel(
             offsetX,
             offsetY
           );
           if (onViewerClick) {
-            onViewerClick(intersection);
+            onViewerClick(intersection, image360Intersection);
           }
 
           // In node types package >18, the types for 'clearTimeout' also allows for NodeJS.Timeout.
@@ -264,7 +334,7 @@ export function Reveal({
         numOfClicks.current = 0;
       }
     },
-    [nodesSelectable, onViewerClick, threeDModel, viewer]
+    [nodesSelectable, onViewerClick, threeDModel, viewer, imageCollection]
   );
   const previousClickHandler = usePrevious(_onViewerClick);
 
@@ -298,8 +368,7 @@ export function Reveal({
   }
 
   return (
-    <>
-      <RevealContainer id="revealContainer" ref={revealContainerRef} />
+    <div ref={revealContainerRef}>
       {children &&
         viewer &&
         models &&
@@ -308,18 +377,9 @@ export function Reveal({
           threeDModel: models.threeDModel,
           viewer,
         })}
-    </>
+    </div>
   );
 }
-
-// This container has an inline style 'position: relative' given by @cognite/reveal.
-// We can not cancel it, so we had to use that -85px trick here!
-const RevealContainer = styled.div`
-  height: 100%;
-  width: 100%;
-  max-height: 100%;
-  max-width: 100%;
-`;
 
 export default function RevealWithErrorBoundary(props: Props) {
   return (

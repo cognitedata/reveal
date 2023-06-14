@@ -13,7 +13,7 @@ export const FileCollapsed: React.FC<FileWidgetProps> = ({
 }) => {
   return (
     <Widget id={id} rows={rows} columns={columns}>
-      <Widget.Header title="File preview" subtitle={`${fileId}`}>
+      <Widget.Header title="Preview">
         <Button.Fullscreen onClick={() => onExpandClick?.(id)} />
       </Widget.Header>
 

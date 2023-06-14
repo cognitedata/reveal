@@ -44,7 +44,7 @@ export const PivotRangePicker = ({
 }: PivotRangePickerProps) => {
   const options = units.map((key) => ({
     value: key,
-    label: amount > 1 ? `${key}s` : key,
+    label: Number(amount) > 1 ? `${key}s` : key,
   }));
 
   const onChange = (changes: Partial<PivotRange>) => {

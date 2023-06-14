@@ -10,6 +10,7 @@ static final String[] APPLICATIONS = [
   'industry-canvas-ui',
   'interactive-diagrams',
   'iot-hub',
+  'cdf-document-search'
 ]
 
 /*
@@ -29,7 +30,8 @@ static final Map<String, String> FIREBASE_APP_SITES = [
   'copilot': 'copilot',
   'industry-canvas-ui': 'industry-canvas-ui',
   'interactive-diagrams': 'pnid-contextualization',
-  'iot-hub': 'iot-hub'
+  'iot-hub': 'iot-hub',
+  'cdf-document-search': 'document-search'
 ]
 
 static final Map<String, String> PREVIEW_PACKAGE_NAMES = [
@@ -39,7 +41,8 @@ static final Map<String, String> PREVIEW_PACKAGE_NAMES = [
   'copilot': "@cognite/cdf-copilot",
   'industry-canvas-ui': "@cognite/cdf-industry-canvas-ui",
   'interactive-diagrams': '@cognite/cdf-context-ui-pnid',
-  'iot-hub': "@cognite/cdf-iot-hub"
+  'iot-hub': "@cognite/cdf-iot-hub",
+  'cdf-document-search': 'cognite/cdf-document-search-ui'
 ]
 
 // Replace this with your app's ID on https://sentry.io/ -- if you do not have
@@ -99,6 +102,7 @@ static final Map<String, String> VERSIONING_STRATEGY = [
   'data-exploration': 'multi-branch',
   'copilot': 'single-branch',
   'iot-hub': 'single-branch',
+  'cdf-document-search': 'single-branch',
 ]
 
 // == End of customization. Everything below here is common. == \\

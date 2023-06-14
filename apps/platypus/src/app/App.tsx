@@ -5,6 +5,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { ContainerProvider } from 'brandi-react';
 import styled from 'styled-components/macro';
 
+import { getProject, isUsingUnifiedSignin } from '@cognite/cdf-utilities';
 import { ToastContainer } from '@cognite/cogs.js';
 
 import { FeatureFlagProvider } from '../environments/FeatureFlagProvider';
@@ -13,14 +14,13 @@ import NoAccessWrapper from './components/NoAccessPage/NoAccessWrapper';
 import { rootInjector } from './di';
 import { queryClient } from './queryClient';
 import Routes from './Routes';
-import { getTenant, isUsingUnifiedSignin } from './utils/tenant-utils';
 
 // Globally defined global
 // GraphiQL package needs this to be run correctly
 (window as any).global = window;
 
 function App() {
-  const tenant = isUsingUnifiedSignin() ? `/cdf/${getTenant()}` : getTenant();
+  const tenant = isUsingUnifiedSignin() ? `/cdf/${getProject()}` : getProject();
 
   return (
     <FeatureFlagProvider>

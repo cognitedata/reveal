@@ -1,11 +1,12 @@
 import { useCallback, useMemo } from 'react';
-import { createSearchParams, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 
-import { ValueByDataType } from '../containers/search/Filter';
-import { decodeSearchParams, encodeSearchParams } from '../utils/searchParams';
+import { ValueByDataType, ValueByField } from '../containers/search/Filter';
 
 export enum ParamKeys {
   ExpandedId = 'expandedId',
+  SearchQuery = 'searchQuery',
+  Filters = 'filters',
 }
 
 export const useExpandedIdParams = (): [
@@ -38,30 +39,56 @@ export const useExpandedIdParams = (): [
 export const useSearchQueryParams = (): [string, (query?: string) => void] => {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  return [searchParams.get('searchQuery') || '', setSearchParams];
+  const setSearchQueryParams = useCallback(
+    (query?: string) => {
+      setSearchParams((currentParams) => {
+        currentParams.set(ParamKeys.SearchQuery, query ?? '');
+        return currentParams;
+      });
+    },
+    [setSearchParams]
+  );
+
+  return [searchParams.get(ParamKeys.SearchQuery) || '', setSearchQueryParams];
 };
 
 export const useSearchFilterParams = (): [
-  ValueByDataType,
+  ValueByDataType | undefined,
   (query?: ValueByDataType) => void
 ] => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const searchFilterParams = useMemo(() => {
-    return decodeSearchParams(searchParams).filters;
+    const filters = searchParams.get(ParamKeys.Filters);
+
+    if (filters) {
+      return JSON.parse(filters) as ValueByDataType;
+    }
+
+    return undefined;
   }, [searchParams]);
 
   const setSearchFilterParams = useCallback(
     (query?: ValueByDataType) => {
-      setSearchParams((prevState) =>
-        encodeSearchParams({
-          ...prevState,
-          filters: JSON.stringify(query),
-        })
-      );
+      setSearchParams((currentParams) => {
+        currentParams.set(ParamKeys.Filters, JSON.stringify(query));
+        return currentParams;
+      });
     },
     [setSearchParams]
   );
 
   return [searchFilterParams, setSearchFilterParams];
+};
+
+export const useDataTypeFilterParams = (
+  dataType: string
+): [ValueByField | undefined] => {
+  const [filterParams] = useSearchFilterParams();
+
+  const dataTypeParams = useMemo(() => {
+    return filterParams?.[dataType] || {};
+  }, [dataType, filterParams]);
+
+  return [dataTypeParams];
 };

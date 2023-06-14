@@ -4,10 +4,11 @@
   "scripts": {
     "start": "../../scripts/start.sh dev industry-canvas-ui",
     "build": "../../scripts/build.sh production industry-canvas-ui",
-    "test": "../../scripts/test.sh industry-canvas-ui",
     "lint": "../../scripts/lint.sh industry-canvas-ui",
-    "lint:fix": "../../scripts/lint.sh --fix industry-canvas-ui"
+    "lint:fix": "../../scripts/lint.sh industry-canvas-ui --fix"
   },
+  "dependencies": {},
+  "devDependencies": {},
   "browserslist": {
     "production": [
       ">0.2%",

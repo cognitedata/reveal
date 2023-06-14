@@ -1,22 +1,19 @@
 import isUndefined from 'lodash/isUndefined';
 
-import { BaseConfig, FieldValue, ValueType } from '../../../types';
+import { Operator, FieldValue, ValueType } from '../../../types';
 
-export const getInitialValue = <
-  TOperator extends string,
-  TConfig extends BaseConfig
->(
-  operators: TOperator[],
+export const getInitialValue = (
+  operators: Operator[],
   fieldValue?: FieldValue
-): ValueType<TConfig[TOperator]> | undefined => {
+): ValueType | undefined => {
   if (!fieldValue || isUndefined(fieldValue?.value)) {
     return undefined;
   }
 
   const { operator, value } = fieldValue;
 
-  if (operators.includes(operator as TOperator)) {
-    return value as ValueType<TConfig[TOperator]>;
+  if (operators.includes(operator)) {
+    return value;
   }
 
   return undefined;

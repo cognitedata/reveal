@@ -52,6 +52,7 @@ const SecondaryImages360Dropdown = ({
     hasNextPage: canFetchMoreImages360Data,
     fetchNextPage: fetchMoreImages360Data,
     isFetchingNextPage: isFetchingMoreImages360Data,
+    isFetching: isFetchingImages360Data,
   } = useInfinite360Images();
 
   const filteredImages360SiteIds = useMemo(() => {
@@ -125,7 +126,9 @@ const SecondaryImages360Dropdown = ({
   };
 
   return (
-    <MenuWrapper>
+    <MenuWrapper
+      loading={isFetchingImages360Data && images360Data.length === 0}
+    >
       <StyledFooter>
         <StyledInput
           autoFocus
