@@ -82,6 +82,9 @@
       ],
       "@platypus/platypus-core": [
         "libs/data-modeling/platypus-core/src/index.ts"
+      ],
+      "@raw-explorer/*": [
+        "apps/raw-explorer/src/*"
       ]
     }
   },
