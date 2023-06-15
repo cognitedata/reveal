@@ -1,5 +1,8 @@
 <a href="https://cognite.com/">
-    <img src="./cognite_logo.png" alt="Cognite logo" title="Cognite" align="right" height="80" />
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./cognite_logo_dark.png">
+  <img src="./cognite_logo.png" alt="Cognite logo" title="Cognite" align="right" height="80" />
+</picture>
 </a>
 
 # Reveal 3D viewer and libraries

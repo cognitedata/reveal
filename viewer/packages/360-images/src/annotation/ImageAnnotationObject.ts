@@ -30,8 +30,9 @@ import { Image360AnnotationAppearance } from './types';
 
 type FaceType = Image360FileDescriptor['face'];
 
-import SeededRandom from 'random-seed';
 import { VariableWidthLine } from '@reveal/utilities';
+
+const DEFAULT_ANNOTATION_COLOR = new Color(0.8, 0.8, 0.3);
 
 export class ImageAnnotationObject implements Image360Annotation {
   private readonly _annotation: AnnotationModel;
@@ -102,7 +103,7 @@ export class ImageAnnotationObject implements Image360Annotation {
 
   private constructor(annotation: AnnotationModel, face: FaceType, objectData: ImageAnnotationObjectData) {
     this._annotation = annotation;
-    this._meshMaterial = createMaterial(annotation);
+    this._meshMaterial = createMaterial();
     this._mesh = new Mesh(objectData.getGeometry(), this._meshMaterial);
     this._line = createOutline(objectData.getOutlinePoints(), this._meshMaterial.color);
     this._objectGroup = new Group();
@@ -152,8 +153,8 @@ export class ImageAnnotationObject implements Image360Annotation {
   }
 
   private updateMaterials(): void {
-    const color = this._appearance.color ?? this._defaultAppearance.color ?? getDefaultColor(this._annotation);
-    const visibility = this._appearance.visible ?? this._defaultAppearance.visible ?? true;
+    const color = this.getColorReference();
+    const visibility = this.getVisible();
 
     this._meshMaterial.color = color;
     this._meshMaterial.visible = visibility;
@@ -168,9 +169,21 @@ export class ImageAnnotationObject implements Image360Annotation {
     this.updateMaterials();
   }
 
+  private getColorReference(): Color {
+    return this._appearance.color ?? this._defaultAppearance.color ?? DEFAULT_ANNOTATION_COLOR;
+  }
+
+  public getColor(): Color {
+    return this.getColorReference().clone();
+  }
+
   public setColor(color?: Color): void {
     this._appearance.color = color?.clone();
     this.updateMaterials();
+  }
+
+  public getVisible(): boolean {
+    return this._appearance.visible ?? this._defaultAppearance.visible ?? true;
   }
 
   public setVisible(visible?: boolean): void {
@@ -192,32 +205,14 @@ export class ImageAnnotationObject implements Image360Annotation {
   }
 }
 
-function createMaterial(annotation: AnnotationModel): MeshBasicMaterial {
+function createMaterial(): MeshBasicMaterial {
   return new MeshBasicMaterial({
-    color: getDefaultColor(annotation),
+    color: DEFAULT_ANNOTATION_COLOR,
     side: DoubleSide,
     depthTest: false,
     opacity: 0.4,
     transparent: true
   });
-}
-
-function getDefaultColor(annotation: AnnotationModel): Color {
-  const sourceText = getSourceText(annotation.data);
-  const random = SeededRandom.create(sourceText);
-  return new Color(random.floatBetween(0, 1), random.floatBetween(0, 1), random.floatBetween(0, 1))
-    .multiplyScalar(0.7)
-    .addScalar(0.3);
-}
-
-function getSourceText(annotationData: AnnotationData): string | undefined {
-  if (isAnnotationsObjectDetection(annotationData)) {
-    return annotationData.label;
-  } else if (isAnnotationAssetLink(annotationData)) {
-    return annotationData.text;
-  } else {
-    return undefined;
-  }
 }
 
 function isAnnotationsObjectDetection(annotation: AnnotationData): annotation is AnnotationsObjectDetection {

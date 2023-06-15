@@ -11,9 +11,12 @@ import { IdEither } from '@cognite/sdk';
 import { Image360Annotation } from '../annotation/Image360Annotation';
 
 /**
- * Filter for finding annotation related to asset
+ * Filter for finding annotations related to an asset
  */
 export type Image360AnnotationAssetFilter = {
+  /**
+   * Reference to the wanted asset
+   */
   assetRef: IdEither;
 };
 
@@ -39,6 +42,18 @@ export type Image360AnnotationAssetQueryResult = {
  * A wrapper that represents a set of 360 images.
  */
 export interface Image360Collection {
+  /**
+   * The id of the collection.
+   * @returns The id of the collection.
+   */
+  readonly id: string;
+
+  /**
+   * The label of the collection.
+   * @returns The label of the collection.
+   */
+  readonly label: string | undefined;
+
   /**
    * A list containing all the 360 images in this set.
    */
@@ -82,12 +97,22 @@ export interface Image360Collection {
   off(event: 'image360Exited', callback: Image360ExitedDelegate): void;
 
   /**
+   * Get the assigned default style affecting all annotations
+   */
+  getDefaultAnnotationStyle(): Image360AnnotationAppearance;
+
+  /**
    * Assign a default style which affects all annotations
    */
   setDefaultAnnotationStyle(appearance: Image360AnnotationAppearance): void;
 
   /**
-   * Find 360 images associated with a asset with the given assetRef
+   * Find 360 images associated with an asset through CDF annotations
    */
-  findImageAnnotation(filter: Image360AnnotationAssetFilter): Promise<Image360AnnotationAssetQueryResult[]>;
+  findImageAnnotations(filter: Image360AnnotationAssetFilter): Promise<Image360AnnotationAssetQueryResult[]>;
+
+  /**
+   * Get IDs of all CDF assets associated with this 360 image collection through CDF annotations
+   */
+  getAssetIds(): Promise<IdEither[]>;
 }

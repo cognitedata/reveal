@@ -129,11 +129,11 @@ export class IconCollection {
 
           return node.data.data;
         })
-        .filter(icon => frustum.containsPoint(icon.position));
+        .filter(icon => frustum.containsPoint(icon.getPosition()));
 
       this._icons.forEach(icon => (icon.culled = true));
       selectedIcons.forEach(icon => (icon.culled = false));
-      iconSprites.setPoints(selectedIcons.filter(icon => icon.visible).map(icon => icon.position));
+      iconSprites.setPoints(selectedIcons.filter(icon => icon.getVisible()).map(icon => icon.getPosition()));
     };
   }
 
@@ -142,13 +142,18 @@ export class IconCollection {
       const points =
         this._proximityRadius === Infinity
           ? this._icons
-          : octree.findPoints(camera.position, this._proximityRadius).map(pointContainer => {
-              return pointContainer.data;
-            });
+          : octree
+              .findPoints(camera.position, this._proximityRadius)
+              .map(pointContainer => {
+                return pointContainer.data;
+              })
+              .filter((point): point is Overlay3DIcon => point !== null);
 
       const closestPoints = points
         .sort((a, b) => {
-          return a.position.distanceToSquared(camera.position) - b.position.distanceToSquared(camera.position);
+          return (
+            a.getPosition().distanceToSquared(camera.position) - b.getPosition().distanceToSquared(camera.position)
+          );
         })
         .slice(0, this._proximityPointLimit + 1); //Add 1 to account for self.
 
@@ -156,9 +161,9 @@ export class IconCollection {
       closestPoints.forEach(icon => (icon.culled = false));
       iconSprites.setPoints(
         closestPoints
-          .filter(icon => icon.visible)
+          .filter(icon => icon.getVisible())
           .reverse()
-          .map(p => p.position)
+          .map(p => p.getPosition())
       );
     };
   }
@@ -172,13 +177,16 @@ export class IconCollection {
 
     const icons = points.map(
       point =>
-        new Overlay3DIcon({
-          position: point,
-          minPixelSize: IconCollection.MinPixelSize,
-          maxPixelSize: this._maxPixelSize,
-          iconRadius: this._iconRadius,
-          hoverSprite: this._hoverSprite
-        })
+        new Overlay3DIcon(
+          {
+            position: point,
+            minPixelSize: IconCollection.MinPixelSize,
+            maxPixelSize: this._maxPixelSize,
+            iconRadius: this._iconRadius,
+            hoverSprite: this._hoverSprite
+          },
+          {}
+        )
     );
 
     const renderSize = new Vector2();
@@ -191,7 +199,7 @@ export class IconCollection {
 
     icons.forEach(icon =>
       icon.on('selected', () => {
-        this._hoverSprite.position.copy(icon.position);
+        this._hoverSprite.position.copy(icon.getPosition());
         this._hoverSprite.scale.set(icon.adaptiveScale * 2, icon.adaptiveScale * 2, 1);
       })
     );

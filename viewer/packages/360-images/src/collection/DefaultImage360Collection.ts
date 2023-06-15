@@ -4,6 +4,7 @@
 
 import { assertNever, EventTrigger } from '@reveal/utilities';
 import pull from 'lodash/pull';
+import cloneDeep from 'lodash/cloneDeep';
 import {
   Image360AnnotationAssetFilter,
   Image360AnnotationAssetQueryResult,
@@ -24,6 +25,7 @@ import {
 
 import { Image360DataProvider } from '@reveal/data-providers';
 import { Image360RevisionEntity } from '../entity/Image360RevisionEntity';
+import { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilter';
 
 type Image360Events = 'image360Entered' | 'image360Exited';
 
@@ -48,6 +50,7 @@ export class DefaultImage360Collection implements Image360Collection {
   private _defaultStyle: Image360AnnotationAppearance = {};
 
   private readonly _image360DataProvider: Image360DataProvider;
+  private readonly _annotationFilter: Image360AnnotationFilter;
 
   private readonly _events = {
     image360Entered: new EventTrigger<Image360EnteredDelegate>(),
@@ -56,9 +59,14 @@ export class DefaultImage360Collection implements Image360Collection {
   private readonly _icons: IconCollection;
   private _isCollectionVisible: boolean;
   private readonly _collectionId: string;
+  private readonly _collectionLabel: string | undefined;
 
   get id(): string {
     return this._collectionId;
+  }
+
+  get label(): string | undefined {
+    return this._collectionLabel;
   }
 
   get targetRevisionDate(): Date | undefined {
@@ -85,14 +93,18 @@ export class DefaultImage360Collection implements Image360Collection {
 
   constructor(
     collectionId: string,
+    collectionLabel: string | undefined,
     entities: Image360Entity[],
     icons: IconCollection,
+    annotationFilter: Image360AnnotationFilter,
     image360DataProvider: Image360DataProvider
   ) {
     this._collectionId = collectionId;
+    this._collectionLabel = collectionLabel;
     this.image360Entities = entities;
     this._icons = icons;
     this._isCollectionVisible = true;
+    this._annotationFilter = annotationFilter;
     this._image360DataProvider = image360DataProvider;
   }
   /**
@@ -137,7 +149,7 @@ export class DefaultImage360Collection implements Image360Collection {
    */
   public setIconsVisibility(visible: boolean): void {
     this._isCollectionVisible = visible;
-    this.image360Entities.forEach(entity => (entity.icon.visible = visible));
+    this.image360Entities.forEach(entity => entity.icon.setVisible(visible));
   }
 
   /**
@@ -199,8 +211,8 @@ export class DefaultImage360Collection implements Image360Collection {
     this._needsRedraw = false;
   }
 
-  get defaultStyle(): Image360AnnotationAppearance {
-    return this._defaultStyle;
+  getDefaultAnnotationStyle(): Image360AnnotationAppearance {
+    return cloneDeep(this._defaultStyle);
   }
 
   public setDefaultAnnotationStyle(defaultStyle: Image360AnnotationAppearance): void {
@@ -210,7 +222,7 @@ export class DefaultImage360Collection implements Image360Collection {
     );
   }
 
-  public async findImageAnnotation(
+  public async findImageAnnotations(
     filter: Image360AnnotationAssetFilter
   ): Promise<Image360AnnotationAssetQueryResult[]> {
     const imageIds = await this._image360DataProvider.getFilesByAssetRef(filter.assetRef);
@@ -245,6 +257,20 @@ export class DefaultImage360Collection implements Image360Collection {
         return assetLink.assetRef !== undefined && matchesAssetRef(assetLink, filter.assetRef);
       });
     }
+  }
+
+  getAssetIds(): Promise<IdEither[]> {
+    const fileDescriptors = this.image360Entities
+      .map(entity =>
+        entity
+          .getRevisions()
+          .map(revision => revision.getDescriptors().faceDescriptors)
+          .flat()
+      )
+      .flat();
+    return this._image360DataProvider.get360ImageAssets(fileDescriptors, annotation =>
+      this._annotationFilter.filter(annotation)
+    );
   }
 }
 

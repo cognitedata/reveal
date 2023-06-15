@@ -1,37 +1,55 @@
 /*!
  * Copyright 2023 Cognite AS
  */
+
 import { Overlay3D } from './Overlay3D';
 
-export type DefaultMetadataType = {
-  text?: string;
-  [key: string]: string | undefined;
+/**
+ * The default metadata type contained in Overlays
+ */
+export type DefaultOverlay3DContentType = {
+  [key: string]: string;
 };
 
-export type OverlayInfo<MetadataType = DefaultMetadataType> = {
+/**
+ * Data used in creating an overlay.
+ */
+export type OverlayInfo<ContentType = DefaultOverlay3DContentType> = {
+  /**
+   * Position of the overlay
+   */
   position: THREE.Vector3;
-  metadata?: MetadataType;
+  /**
+   * The data contained in this overlay
+   */
+  content: ContentType;
+  /**
+   * The color of this overlay. Will be set by collection if undefined
+   */
   color?: THREE.Color;
 };
 
-export interface OverlayCollection<MetadataType> {
+/**
+ * A set of overlays managed.
+ */
+export interface OverlayCollection<ContentType> {
   /**
    * Get all overlays in the collection.
    * */
-  getOverlays(): Overlay3D<MetadataType>[];
+  getOverlays(): Overlay3D<ContentType>[];
 
   /**
    * Add overlays to the collection.
    * @param overlays Overlays to add to the collection.
    * @returns The added overlays.
    */
-  addOverlays(overlays: OverlayInfo<MetadataType>[]): Overlay3D<MetadataType>[];
+  addOverlays(overlays: OverlayInfo<ContentType>[]): Overlay3D<ContentType>[];
 
   /**
    * Remove overlays from the collection.
    * @param overlays Overlays to remove from the collection.
    */
-  removeOverlays(overlays: Overlay3D<MetadataType>[]): void;
+  removeOverlays(overlays: Overlay3D<ContentType>[]): void;
 
   /**
    * Remove all overlays from the collection.

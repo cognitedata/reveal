@@ -40,6 +40,14 @@
     },
     {
       "matchPackagePrefixes": [
+        "three",
+        "@types/three"
+      ],
+      "matchPaths": ["viewer/package.json", "examples/package.json"],
+      "automerge": false
+    },
+    {
+      "matchPackagePrefixes": [
         ""
       ],
       "addLabels": [

@@ -26,9 +26,9 @@ type Event360TransformationData = {
 
 type Event360Filter = {
   site_id: string;
-  site_name: string;
+  site_name?: string;
   station_id: string;
-  station_name: string;
+  station_name?: string;
 };
 
 export class Cdf360EventProvider implements Image360DescriptorProvider<Metadata> {
@@ -149,12 +149,12 @@ export class Cdf360EventProvider implements Image360DescriptorProvider<Metadata>
 
     function parseTransform(transformationData: Event360TransformationData): Matrix4 {
       const translationComponents = transformationData.translation.split(',').map(parseFloat);
-      const milimetersInMeters = 1000;
+      const millimetersInMeters = 1000;
       const translation = new Vector3(
         translationComponents[0],
         translationComponents[2],
         -translationComponents[1]
-      ).divideScalar(milimetersInMeters);
+      ).divideScalar(millimetersInMeters);
       const rotationAxisComponents = transformationData.rotation_axis.split(',').map(parseFloat);
       const rotationAxis = new Vector3(
         rotationAxisComponents[0],

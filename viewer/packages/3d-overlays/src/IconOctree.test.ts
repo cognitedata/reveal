@@ -16,7 +16,7 @@ describe(IconOctree.name, () => {
 
   test('Icon octree with single points should only contain root', () => {
     const image360IconMock = new Mock<Overlay3DIcon>()
-      .setup(icon => icon.position)
+      .setup(icon => icon.getPosition())
       .returns(new Vector3(0.25, 0.25, 0.25))
       .object();
     const octree = new IconOctree([image360IconMock], unitBounds, 8);
@@ -26,12 +26,12 @@ describe(IconOctree.name, () => {
 
   test('Icon octree with two points and max leaf size one should have depth 1', () => {
     const image360IconMock1 = new Mock<Overlay3DIcon>()
-      .setup(icon => icon.position)
+      .setup(icon => icon.getPosition())
       .returns(new Vector3(0.25, 0.25, 0.25))
       .object();
 
     const image360IconMock2 = new Mock<Overlay3DIcon>()
-      .setup(icon => icon.position)
+      .setup(icon => icon.getPosition())
       .returns(new Vector3(0.75, 0.75, 0.75))
       .object();
 
@@ -42,12 +42,12 @@ describe(IconOctree.name, () => {
 
   test('Icon octree with two points and max leaf size 1 should only have 2 leaf nodes at max depth', () => {
     const image360IconMock1 = new Mock<Overlay3DIcon>()
-      .setup(icon => icon.position)
+      .setup(icon => icon.getPosition())
       .returns(new Vector3(0.25, 0.25, 0.25))
       .object();
 
     const image360IconMock2 = new Mock<Overlay3DIcon>()
-      .setup(icon => icon.position)
+      .setup(icon => icon.getPosition())
       .returns(new Vector3(0.75, 0.75, 0.75))
       .object();
 
@@ -60,30 +60,30 @@ describe(IconOctree.name, () => {
 
   test('Root node should have a center as the closest of its children', () => {
     const image360IconMock1 = new Mock<Overlay3DIcon>()
-      .setup(icon => icon.position)
+      .setup(icon => icon.getPosition())
       .returns(new Vector3(0.25, 0.25, 0.25))
       .object();
 
     const image360IconMock2 = new Mock<Overlay3DIcon>()
-      .setup(icon => icon.position)
+      .setup(icon => icon.getPosition())
       .returns(new Vector3(0.8, 0.8, 0.8))
       .object();
 
     const octree = new IconOctree([image360IconMock1, image360IconMock2], unitBounds, 1);
 
-    expect(JSON.stringify(octree.getNodeIcon(octree.findNodesByLevel(0)[0])!.position)).toBe(
+    expect(JSON.stringify(octree.getNodeIcon(octree.findNodesByLevel(0)[0])!.getPosition())).toBe(
       JSON.stringify(new Vector3(0.25, 0.25, 0.25))
     );
   });
 
   test('getting LODs with threshold 0.05 should return both leaf nodes', () => {
     const image360IconMock1 = new Mock<Overlay3DIcon>()
-      .setup(icon => icon.position)
+      .setup(icon => icon.getPosition())
       .returns(new Vector3(0.25, 0.25, 0.25))
       .object();
 
     const image360IconMock2 = new Mock<Overlay3DIcon>()
-      .setup(icon => icon.position)
+      .setup(icon => icon.getPosition())
       .returns(new Vector3(0.75, 0.75, 0.75))
       .object();
 
@@ -96,7 +96,7 @@ describe(IconOctree.name, () => {
 
     const lods = [...set];
 
-    expect(lods.filter(p => p.data.data.includes(image360IconMock1)).length).toBe(1);
-    expect(lods.filter(p => p.data.data.includes(image360IconMock2)).length).toBe(1);
+    expect(lods.filter(p => p.data?.data.includes(image360IconMock1)).length).toBe(1);
+    expect(lods.filter(p => p.data?.data.includes(image360IconMock2)).length).toBe(1);
   });
 });

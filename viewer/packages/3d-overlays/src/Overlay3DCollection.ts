@@ -7,15 +7,16 @@ import { Overlay3DIcon } from './Overlay3DIcon';
 import { Overlay3D } from './Overlay3D';
 import { OverlayPointsObject } from './OverlayPointsObject';
 import { IconOctree } from './IconOctree';
-import { DefaultMetadataType, OverlayCollection, OverlayInfo } from './OverlayCollection';
+import { DefaultOverlay3DContentType, OverlayCollection, OverlayInfo } from './OverlayCollection';
 
 export type Overlay3DCollectionOptions = {
   overlayTexture?: Texture;
+  overlayTextureMask?: Texture;
   maxPointSize?: number;
   defaultOverlayColor?: Color;
 };
 
-export class Overlay3DCollection<MetadataType = DefaultMetadataType>
+export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
   extends Object3D
   implements OverlayCollection<MetadataType>
 {
@@ -24,7 +25,10 @@ export class Overlay3DCollection<MetadataType = DefaultMetadataType>
   private readonly DefaultMaxPoints = 100000;
   private readonly defaultOverlayColor = new Color('white');
 
-  private readonly _sharedTexture: Texture;
+  private readonly _sharedTextures: {
+    color: Texture;
+    mask: Texture | undefined;
+  };
   private readonly _overlayPoints: OverlayPointsObject;
   private readonly _iconRadius = 0.4;
   private _overlays: Overlay3DIcon<MetadataType>[];
@@ -35,9 +39,16 @@ export class Overlay3DCollection<MetadataType = DefaultMetadataType>
     super();
 
     this.defaultOverlayColor = options?.defaultOverlayColor ?? this.defaultOverlayColor;
-    this._sharedTexture = options?.overlayTexture ?? this.createCircleTexture();
+
+    const defaultOverlayTextures = this.createCircleTextures();
+    this._sharedTextures = {
+      color: options?.overlayTexture ?? defaultOverlayTextures.color,
+      mask: options?.overlayTextureMask ?? (options?.overlayTexture ? undefined : defaultOverlayTextures.mask)
+    };
+
     this._overlayPoints = new OverlayPointsObject(overlayInfos ? overlayInfos.length : this.DefaultMaxPoints, {
-      spriteTexture: this._sharedTexture,
+      spriteTexture: this._sharedTextures.color,
+      maskTexture: this._sharedTextures.mask,
       minPixelSize: this.MinPixelSize,
       maxPixelSize: options?.maxPointSize ?? this.MaxPixelSize,
       radius: this._iconRadius
@@ -74,7 +85,7 @@ export class Overlay3DCollection<MetadataType = DefaultMetadataType>
 
   sortOverlaysRelativeToCamera(camera: THREE.Camera): void {
     this._overlays = this._overlays.sort((a, b) => {
-      return b.position.distanceToSquared(camera.position) - a.position.distanceToSquared(camera.position);
+      return b.getPosition().distanceToSquared(camera.position) - a.getPosition().distanceToSquared(camera.position);
     });
 
     this.updatePointsObject();
@@ -102,10 +113,10 @@ export class Overlay3DCollection<MetadataType = DefaultMetadataType>
   }
 
   private updatePointsObject(): void {
-    const filteredPoints = this._overlays.filter(p => p.visible);
+    const filteredPoints = this._overlays.filter(p => p.getVisible());
 
-    const pointsPositions = filteredPoints.map(p => p.position);
-    const pointsColors = filteredPoints.map(p => p.color ?? this.defaultOverlayColor);
+    const pointsPositions = filteredPoints.map(p => p.getPosition());
+    const pointsColors = filteredPoints.map(p => p.getColor() ?? this.defaultOverlayColor);
 
     this._overlayPoints.setPoints(pointsPositions, pointsColors);
   }
@@ -120,7 +131,7 @@ export class Overlay3DCollection<MetadataType = DefaultMetadataType>
           maxPixelSize: this.MaxPixelSize,
           iconRadius: this._iconRadius
         },
-        overlay?.metadata
+        overlay?.content
       );
 
       icon.on('parametersChange', () => {
@@ -135,37 +146,49 @@ export class Overlay3DCollection<MetadataType = DefaultMetadataType>
     this._overlays.forEach(overlay => overlay.dispose());
 
     this._overlayPoints.dispose();
-    this._sharedTexture.dispose();
+    this._sharedTextures.color.dispose();
+    this._sharedTextures.mask?.dispose();
   }
 
-  private createCircleTexture(): THREE.Texture {
+  private createCircleTextures(): {
+    color: THREE.Texture;
+    mask: THREE.Texture;
+  } {
     const canvas = document.createElement('canvas');
-    const textureSize = 128;
+    const canvas2 = document.createElement('canvas');
+
+    const textureSize = this.MaxPixelSize * 2;
     canvas.width = textureSize;
     canvas.height = textureSize;
-
-    const overlayColor = new Color('white');
+    canvas2.width = textureSize;
+    canvas2.height = textureSize;
 
     const context = canvas.getContext('2d')!;
-    context.beginPath();
-    context.lineWidth = textureSize / 8;
-    context.strokeStyle = '#' + overlayColor.getHexString();
-    context.arc(textureSize / 2, textureSize / 2, textureSize / 2 - context.lineWidth, 0, 2 * Math.PI);
-    context.shadowColor = 'rgba(0, 0, 0, 1)';
-    context.shadowBlur = 10;
-    context.fillStyle = context.strokeStyle;
-    context.stroke();
+    const context2 = canvas2.getContext('2d')!;
 
+    context.clearRect(0, 0, textureSize, textureSize);
     context.beginPath();
-    context.lineWidth = textureSize / 8;
-    context.strokeStyle = '#' + overlayColor.getHexString();
-    context.arc(textureSize / 2, textureSize / 2, textureSize / 2 - context.lineWidth, 0, 2 * Math.PI);
-    context.shadowColor = 'rgba(0, 0, 0, 1)';
-    context.shadowBlur = 0;
-    context.fillStyle = context.strokeStyle;
+    context.lineWidth = textureSize / 12;
+    context.strokeStyle = 'white';
+    context.arc(textureSize / 2, textureSize / 2, textureSize / 2 - (context.lineWidth / 2) * 1.1, 0, 2 * Math.PI);
     context.stroke();
-    context.fill();
+    context.closePath();
 
-    return new CanvasTexture(canvas);
+    const colorTexture = new CanvasTexture(canvas);
+
+    const fillRGB = new Color(1.0, 0, 0);
+
+    context2.clearRect(0, 0, textureSize, textureSize);
+    context2.beginPath();
+    context2.fillStyle = '#' + fillRGB.getHexString();
+    context2.arc(textureSize / 2, textureSize / 2, textureSize / 2 - context.lineWidth, 0, 2 * Math.PI);
+    context2.fill();
+
+    const maskTexture = new CanvasTexture(canvas2);
+
+    return {
+      color: colorTexture,
+      mask: maskTexture
+    };
   }
 }

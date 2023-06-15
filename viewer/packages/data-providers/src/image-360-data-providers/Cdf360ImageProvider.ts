@@ -4,9 +4,26 @@
 
 import zipWith from 'lodash/zipWith';
 
-import { AnnotationModel, CogniteClient, CogniteInternalId, FileLink, IdEither } from '@cognite/sdk';
-import { Historical360ImageSet, Image360DescriptorProvider, Image360Face, Image360FileDescriptor } from '../types';
+import {
+  AnnotationData,
+  AnnotationFilterProps,
+  AnnotationModel,
+  AnnotationsCogniteAnnotationTypesImagesAssetLink,
+  CogniteClient,
+  CogniteInternalId,
+  FileLink,
+  IdEither
+} from '@cognite/sdk';
+import {
+  Historical360ImageSet,
+  Image360AnnotationFilterDelegate,
+  Image360DescriptorProvider,
+  Image360Face,
+  Image360FileDescriptor
+} from '../types';
 import { Image360Provider } from '../Image360Provider';
+import chunk from 'lodash/chunk';
+import assert from 'assert';
 
 export class Cdf360ImageProvider<T> implements Image360Provider<T> {
   private readonly _client: CogniteClient;
@@ -46,6 +63,33 @@ export class Cdf360ImageProvider<T> implements Image360Provider<T> {
     return this.createFaces(image360FaceDescriptors, fullResFileBuffers);
   }
 
+  public async get360ImageAssets(
+    image360FileDescriptors: Image360FileDescriptor[],
+    annotationFilter: Image360AnnotationFilterDelegate
+  ): Promise<IdEither[]> {
+    const fileIds = image360FileDescriptors.map(desc => desc.fileId);
+    const assetListPromises = chunk(fileIds, 1000).map(async idList => {
+      const annotationArray = await this.listFileAnnotations({
+        annotatedResourceIds: idList.map(id => ({ id })),
+        annotatedResourceType: 'file',
+        annotationType: 'images.AssetLink'
+      });
+
+      const assetIds = annotationArray
+        .filter(annotation => annotationFilter(annotation))
+        .map(annotation => {
+          assert(isAssetLinkAnnotationData(annotation.data), 'Received annotation that was not an assetLink');
+          return annotation.data.assetRef;
+        });
+
+      return assetIds;
+    });
+
+    const assetIds = (await Promise.all(assetListPromises)).flat().filter(isIdEither);
+
+    return assetIds;
+  }
+
   public async getFilesByAssetRef(assetRef: IdEither): Promise<CogniteInternalId[]> {
     // TODO: Use SDK properly when support for 'reverselookup' arrives (Håkon, May 11th 2023)
     const url = `${this._client.getBaseUrl()}/api/v1/projects/${this._client.project}/annotations/reverselookup`;
@@ -80,6 +124,15 @@ export class Cdf360ImageProvider<T> implements Image360Provider<T> {
     return image360FaceDescriptors.map(image360FaceDescriptor => {
       return { id: image360FaceDescriptor.fileId };
     });
+  }
+
+  private async listFileAnnotations(filter: AnnotationFilterProps): Promise<AnnotationModel[]> {
+    return this._client.annotations
+      .list({
+        limit: 1000,
+        filter
+      })
+      .autoPagingToArray({ limit: Infinity });
   }
 
   private createFaces(image360FaceDescriptors: Image360FileDescriptor[], fileBuffer: ArrayBuffer[]): Image360Face[] {
@@ -142,4 +195,15 @@ export class Cdf360ImageProvider<T> implements Image360Provider<T> {
     const result = await (await fetch(url, options)).json();
     return result.items;
   }
+}
+
+function isAssetLinkAnnotationData(
+  annotationData: AnnotationData
+): annotationData is AnnotationsCogniteAnnotationTypesImagesAssetLink {
+  const data = annotationData as AnnotationsCogniteAnnotationTypesImagesAssetLink;
+  return data.text !== undefined && data.textRegion !== undefined && data.assetRef !== undefined;
+}
+
+function isIdEither(assetRef: { id?: number; externalId?: string }): assetRef is IdEither {
+  return assetRef.id !== undefined || assetRef.externalId !== undefined;
 }
