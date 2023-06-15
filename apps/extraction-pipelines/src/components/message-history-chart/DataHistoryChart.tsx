@@ -20,15 +20,15 @@ import {
 } from 'utils/hostedExtractors';
 import { BAR_HEIGHT, MessageHistoryChartItem } from './MessageHistoryChartItem';
 
-type MessageHistoryChartProps = {
+type DataHistoryChartProps = {
   className?: string;
   jobs: MQTTJobWithMetrics[];
 };
 
-export const MessageHistoryChart = ({
+export const DataHistoryChart = ({
   className,
   jobs,
-}: MessageHistoryChartProps): JSX.Element => {
+}: DataHistoryChartProps): JSX.Element => {
   const { t } = useTranslation();
 
   const [aggregationInterval, setAggregationInterval] =
@@ -68,7 +68,7 @@ export const MessageHistoryChart = ({
       className={className}
       title={
         <Flex direction="column" gap={2}>
-          <Title level={6}>{t('messages-from-topic-filters')}</Title>
+          <Title level={6}>{t('data-from-topic-filters')}</Title>
           <Flex alignItems="center" gap={4}>
             <Icon
               type={totalErrorCount === 0 ? 'CheckmarkFilled' : 'ErrorFilled'}
@@ -80,7 +80,7 @@ export const MessageHistoryChart = ({
               }}
             />
             <Body level={3} muted>
-              {t('message-transform-error-count', { count: totalErrorCount })}
+              {t('data-missing-values-error-count', { count: totalErrorCount })}
             </Body>
           </Flex>
         </Flex>
