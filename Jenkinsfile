@@ -5,6 +5,7 @@
 static final String[] APPLICATIONS = [
   'platypus',
   'data-exploration',
+  'raw-explorer',
   'coding-conventions',
   'copilot',
   'industry-canvas-ui',
@@ -27,6 +28,7 @@ static final Map<String, String> NPM_PACKAGES = [
 static final Map<String, String> FIREBASE_APP_SITES = [
   'platypus': 'platypus',
   'data-exploration': 'data-exploration',
+  'raw-explorer': 'raw-explorer',
   'coding-conventions': 'coding-conventions',
   'copilot': 'copilot',
   'industry-canvas-ui': 'industry-canvas-ui',
@@ -39,6 +41,7 @@ static final Map<String, String> FIREBASE_APP_SITES = [
 static final Map<String, String> PREVIEW_PACKAGE_NAMES = [
   'platypus': "@cognite/cdf-solutions-ui",
   'data-exploration': "@cognite/cdf-data-exploration",
+  'raw-explorer': "@cognite/cdf-raw-explorer",
   'coding-conventions': "@cognite/cdf-coding-conventions",
   'copilot': "@cognite/cdf-copilot",
   'industry-canvas-ui': "@cognite/cdf-industry-canvas-ui",
@@ -103,6 +106,7 @@ static final Map<String, String> VERSIONING_STRATEGY = [
   'platypus': 'multi-branch',
   'coding-conventions': 'multi-branch',
   'data-exploration': 'multi-branch',
+  'raw-explorer': 'single-branch',
   'transformations': 'single-branch',
   'copilot': 'single-branch',
   'iot-hub': 'single-branch',
