@@ -9,7 +9,7 @@ import {
   ORIGIN_DEV,
   PROJECT_ITERA_INT_GREEN,
 } from '@extraction-pipelines/utils/baseURL';
-import 'utils/test/windowLocation';
+import '@extraction-pipelines/utils/test/windowLocation';
 import CreateExtpipe from '@extraction-pipelines/pages/create/CreateExtpipe';
 import {
   EXTERNAL_ID_REQUIRED,
@@ -23,7 +23,7 @@ import {
 import { CREATE_EXTPIPE_PAGE_PATH } from '@extraction-pipelines/routing/CreateRouteConfig';
 import sdk from '@cognite/cdf-sdk-singleton';
 
-jest.mock('hooks/useRawDBAndTables', () => {
+jest.mock('@extraction-pipelines/hooks/useRawDBAndTables', () => {
   return {
     useRawDBAndTables: jest.fn(),
   };

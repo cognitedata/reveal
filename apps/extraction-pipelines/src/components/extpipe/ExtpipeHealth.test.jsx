@@ -23,12 +23,12 @@ import { rangeToTwoDigitString } from '@extraction-pipelines/components/inputs/d
 import { DAYS_7 } from '@extraction-pipelines/components/table/QuickDateTimeFilters';
 import { DEFAULT_ITEMS_PER_PAGE } from '@extraction-pipelines/utils/constants';
 
-jest.mock('hooks/useRuns', () => {
+jest.mock('@extraction-pipelines/hooks/useRuns', () => {
   return {
     useFilteredRuns: jest.fn(),
   };
 });
-jest.mock('components/chart/RunChart', () => {
+jest.mock('@extraction-pipelines/components/chart/RunChart', () => {
   return {
     RunChart: () => {
       return <div />;

@@ -1,5 +1,5 @@
 import { QueryClient } from '@tanstack/react-query';
-import { act, renderHook } from '@testing-library/react-hooks';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import { useSDK } from '@cognite/sdk-provider';
 import {
   createUpdateSpec,
@@ -43,7 +43,7 @@ describe('useDetailsUpdate', () => {
       post: () => Promise.resolve({ data: { items: [extpipesResponse] } }),
     });
 
-    const { result, waitForNextUpdate } = renderHook(() => useDetailsUpdate(), {
+    const { result } = renderHook(() => useDetailsUpdate(), {
       wrapper,
     });
     const { mutateAsync } = result.current;
@@ -57,9 +57,9 @@ describe('useDetailsUpdate', () => {
     expect(client.getQueryCache().find).toHaveBeenCalledTimes(0);
 
     mutateAsync({ project: PROJECT_ITERA_INT_GREEN, items, id });
-    await waitForNextUpdate();
-
-    return expect(result.current.data.name).toEqual(extpipesResponse.name);
+    return await waitFor(() =>
+      expect(result.current.data.name).toEqual(extpipesResponse.name)
+    );
     expect(client.invalidateQueries).toHaveBeenCalledTimes(1);
   });
 

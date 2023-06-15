@@ -16,7 +16,7 @@ import {
   PROJECT_ITERA_INT_GREEN,
 } from '@extraction-pipelines/utils/baseURL';
 
-jest.mock('hooks/useRawDBAndTables', () => {
+jest.mock('@extraction-pipelines/hooks/useRawDBAndTables', () => {
   return {
     useRawDBAndTables: jest.fn(),
   };

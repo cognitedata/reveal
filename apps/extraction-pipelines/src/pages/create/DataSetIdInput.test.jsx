@@ -3,10 +3,9 @@ import { fireEvent, screen } from '@testing-library/react';
 import { renderWithReactHookForm } from '@extraction-pipelines/utils/test/render';
 import { datasetMockResponse } from '@extraction-pipelines/utils/mockResponse';
 import { TableHeadings } from '@extraction-pipelines/components/table/ExtpipeTableCol';
-import { DATA_SET_ID_HINT } from '@extraction-pipelines/utils/constants';
 import DataSetIdInput from '@extraction-pipelines/pages/create/DataSetIdInput';
 
-jest.mock('hooks/useDataSetsList', () => {
+jest.mock('@extraction-pipelines/hooks/useDataSetsList', () => {
   return {
     useDataSetsList: jest.fn(),
   };

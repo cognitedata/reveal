@@ -1,6 +1,6 @@
 import { useTypedTranslation } from '@cognite/cdf-i18n-utils';
 
-import en from '@extraction-pipelines/common/i18n/translations/en/cdf-integrations-ui.json';
+import en from './translations/en/cdf-integrations-ui.json';
 
 export const translations = {
   en: { 'cdf-integrations-ui': en },

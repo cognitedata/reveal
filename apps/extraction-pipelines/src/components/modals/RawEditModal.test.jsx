@@ -3,7 +3,7 @@ import React from 'react';
 import { RawEditModalView } from '@extraction-pipelines/components/modals/RawEditModal';
 import { render } from '@extraction-pipelines/utils/test';
 
-jest.mock('hooks/useRawDBAndTables', () => {
+jest.mock('@extraction-pipelines/hooks/useRawDBAndTables', () => {
   return {
     useRawDBAndTables: jest.fn(),
   };

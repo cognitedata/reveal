@@ -42,26 +42,26 @@ jest.mock('react-router-dom', () => {
   };
 });
 
-jest.mock('hooks/useExtpipe', () => {
+jest.mock('@extraction-pipelines/hooks/useExtpipe', () => {
   return {
     useSelectedExtpipe: jest.fn(),
     useSelectedExtpipeId: jest.fn(),
     useDeletePipeline: jest.fn(),
   };
 });
-jest.mock('hooks/useRuns', () => {
+jest.mock('@extraction-pipelines/hooks/useRuns', () => {
   return {
     useRuns: jest.fn(),
     useAllRuns: jest.fn(),
     useFilteredRuns: jest.fn(),
   };
 });
-jest.mock('hooks/useDataSetsList', () => {
+jest.mock('@extraction-pipelines/hooks/useDataSetsList', () => {
   return {
     useDataSetsList: jest.fn(),
   };
 });
-jest.mock('components/chart/RunChart', () => {
+jest.mock('@extraction-pipelines/components/chart/RunChart', () => {
   return {
     RunChart: () => {
       return <div />;
