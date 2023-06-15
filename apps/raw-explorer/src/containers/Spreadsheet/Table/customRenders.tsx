@@ -112,7 +112,7 @@ const Box = styled.div`
     min-height: 50px;
   }
   &:hover {
-    background-color: ${Colors['border--interactive--toggled-pressed']};
+    background-color: ${Colors['surface--interactive--hover']};
     border-color: ${Colors['border--interactive--hover']};
     ${StyledIcon} {
       color: ${Colors['border--interactive--hover']};
