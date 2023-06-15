@@ -45,3 +45,6 @@ apps/copilot              @davidlky @andeplane @miladh @trygveu
 
 # IoT Hub
 apps/iot-hub              @davidlky @geircognite @muradsater
+
+# Migrated CDF-UX Subapps
+apps/extraction-pipelines		      @cognitedata/cdf-user-experience
