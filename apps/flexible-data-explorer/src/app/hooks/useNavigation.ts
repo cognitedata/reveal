@@ -1,38 +1,63 @@
 import { useCallback } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import {
+  createSearchParams,
+  useLocation,
+  useNavigate,
+  useParams,
+} from 'react-router-dom';
 
+import { ValueByDataType } from '../containers/search/Filter';
+
+import { useSearchFilterParams, useSearchQueryParams } from './useParams';
+
+// TODO: rename this.
 export const useNavigation = () => {
   const navigate = useNavigate();
-  const { search } = useLocation(); // <-- current location being accessed
+  const { search, pathname } = useLocation(); // <-- current location being accessed
   const params = useParams();
+  const [_, setQueryParams] = useSearchQueryParams();
+  const [__, setFilterParams] = useSearchFilterParams();
+
+  // For migration: if we're located at the route, keep the route
+  // TODO: Better way to use navigate function to do this?
+  const basename = pathname.startsWith('/explore') ? '/explore' : '';
 
   const toSearchPage = useCallback(
-    (query?: string) => {
+    (searchQuery: string = '', filters: ValueByDataType = {}) => {
+      const params = createSearchParams({
+        searchQuery,
+        filters: JSON.stringify(filters),
+      });
+
+      setQueryParams(searchQuery);
+      setFilterParams(filters);
+
       navigate({
         pathname: `search`,
-        search: `?searchQuery=${query}`,
+        search: `?${params.toString()}`,
       });
     },
-    [navigate]
+    [basename, navigate]
   );
 
+  // NOTE: this is gonna be removed, there will be no list pages, only search results.
   const toListPage = useCallback(
-    (dataType: string) => {
+    (space: string, dataModel: string, version: string, dataType: string) => {
       navigate({
-        pathname: `list/${dataType}`,
+        pathname: `${basename}/${dataModel}/${space}/${version}/list/${dataType}`,
         // search: `?searchQuery=${query}`,
       });
     },
-    [navigate]
+    [basename, navigate]
   );
 
   const toHomePage = useCallback(
     (space: string, dataModel: string, version: string) => {
       navigate({
-        pathname: `/${dataModel}/${space}/${version}`,
+        pathname: `${basename}/${dataModel}/${space}/${version}`,
       });
     },
-    [navigate]
+    [basename, navigate]
   );
 
   const toInstancePage = useCallback(
@@ -43,22 +68,33 @@ export const useNavigation = () => {
     ) => {
       const { space, dataModel, version } = params;
       navigate({
-        pathname: `/${dataModel}/${space}/${version}/${dataType}/${instanceSpace}/${externalId}`,
+        pathname: `${basename}/${dataModel}/${space}/${version}/${dataType}/${instanceSpace}/${externalId}`,
         search,
       });
     },
-    [navigate, params, search]
+    [basename, navigate, params, search]
   );
 
   const toTimeseriesPage = useCallback(
     (externalId: string | number) => {
       const { space, dataModel, version } = params;
       navigate({
-        pathname: `/${dataModel}/${space}/${version}/timeseries/${externalId}`,
+        pathname: `${basename}/${dataModel}/${space}/${version}/timeseries/${externalId}`,
         search,
       });
     },
-    [navigate, params, search]
+    [basename, navigate, params, search]
+  );
+
+  const toFilePage = useCallback(
+    (externalId: string | number) => {
+      const { space, dataModel, version } = params;
+      navigate({
+        pathname: `${basename}/${dataModel}/${space}/${version}/file/${externalId}`,
+        search,
+      });
+    },
+    [basename, navigate, params, search]
   );
 
   const toLandingPage = useCallback(() => {
@@ -77,6 +113,8 @@ export const useNavigation = () => {
 
     toInstancePage,
     toTimeseriesPage,
+    toFilePage,
+
     goBack,
   };
 };

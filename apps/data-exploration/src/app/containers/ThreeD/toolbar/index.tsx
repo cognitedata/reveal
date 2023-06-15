@@ -12,6 +12,7 @@ import {
   CogniteCadModel,
   CogniteModel,
   CognitePointCloudModel,
+  Image360Collection,
   MeasurementTool,
 } from '@cognite/reveal';
 import { useSDK } from '@cognite/sdk-provider';
@@ -78,7 +79,7 @@ export const FocusAssetButton = ({
 }: {
   selectedAssetId?: number;
   viewer: Cognite3DViewer;
-  threeDModel?: CogniteCadModel;
+  threeDModel?: CogniteCadModel | Image360Collection;
 }) => {
   const sdk = useSDK();
   const queryClient = useQueryClient();
@@ -98,6 +99,7 @@ export const FocusAssetButton = ({
               queryClient,
               viewer,
               threeDModel,
+              {},
               selectedAssetId
             );
           }

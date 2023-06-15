@@ -1,3 +1,4 @@
 export * from './getInitialOperator';
-export * from './getInitialValue';
+export * from './getInputType';
+export * from './getOperators';
 export * from './isApplyButtonDisabled';

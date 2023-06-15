@@ -11,6 +11,7 @@ const getDatamodelNameTimeAppendix = () => {
     })
     .replace(', ', '_')
     .replace(':', '')
+    .replaceAll('/', '_')
     .replaceAll('-', '_');
 };
 

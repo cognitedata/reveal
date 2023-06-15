@@ -2,7 +2,15 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { Icon, Colors, Body, Button, Tooltip } from '@cognite/cogs.js';
+import {
+  Icon,
+  Colors,
+  Body,
+  Button,
+  Dropdown,
+  Menu,
+  Tooltip,
+} from '@cognite/cogs.js';
 
 import { useAsset } from '../../../hooks/useAsset';
 import * as ContextualTooltip from '../ContextualTooltip';
@@ -10,7 +18,7 @@ import * as ContextualTooltip from '../ContextualTooltip';
 import ThreeDButton from './ThreeDButton';
 import TimeseriesList from './TimeseriesList';
 
-type AssetTooltipProps = {
+export type AssetTooltipProps = {
   id: number;
   onAddThreeD: ({
     modelId,
@@ -63,20 +71,33 @@ const AssetTooltip: React.FC<AssetTooltipProps> = ({
               <Button icon="Add" onClick={onAddAsset} inverted />
             </Tooltip>
           </ContextualTooltip.ButtonWrapper>
-
-          <ContextualTooltip.ButtonWrapper>
-            <ThreeDButton
-              assetId={asset.id}
-              onAddThreeD={onAddThreeD}
-              aria-label="Add 3D Model to Canvas"
+          <Dropdown
+            openOnHover
+            placement="right"
+            content={
+              <ContextualTooltip.DropdownMenu>
+                <ThreeDButton
+                  assetId={asset.id}
+                  onAddThreeD={onAddThreeD}
+                  aria-label="Add 3D Model to Canvas"
+                />
+                <Menu.Item
+                  iconPlacement="left"
+                  icon="ExternalLink"
+                  onClick={onViewAsset}
+                  aria-label="Open asset in Data Explorer"
+                >
+                  Show in Explorer
+                </Menu.Item>
+              </ContextualTooltip.DropdownMenu>
+            }
+          >
+            <Button
+              icon="EllipsisHorizontal"
+              inverted
+              aria-label="Show additional asset actions"
             />
-          </ContextualTooltip.ButtonWrapper>
-
-          <ContextualTooltip.ButtonWrapper>
-            <Tooltip content="Open asset in Data Explorer">
-              <Button icon="ExternalLink" onClick={onViewAsset} inverted />
-            </Tooltip>
-          </ContextualTooltip.ButtonWrapper>
+          </Dropdown>
         </ContextualTooltip.ButtonsContainer>
       </ContextualTooltip.Header>
 

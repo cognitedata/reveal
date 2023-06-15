@@ -1,27 +1,20 @@
 import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import styled from 'styled-components';
-
 import { formatTime } from '@cognite/cdf-utilities';
-import { Body, Colors, Detail, Flex, Menu } from '@cognite/cogs.js';
+import { Menu } from '@cognite/cogs.js';
 import { Model3D } from '@cognite/sdk';
 
 import { ThreeDContext } from '@data-exploration-app/containers/ThreeD/contexts/ThreeDContext';
-import { Image360SiteData } from '@data-exploration-app/containers/ThreeD/hooks';
+import { getStateUrl } from '@data-exploration-app/containers/ThreeD/utils';
 import {
-  getMainModelSubtitle,
-  getMainModelTitle,
-  getStateUrl,
-} from '@data-exploration-app/containers/ThreeD/utils';
-import {
+  Image360SiteData,
   Revision3DWithIndex,
   use3DRevisionsQuery,
 } from '@data-exploration-lib/domain-layer';
 
 export const MainThreeDModelMenuItem = ({
   model,
-  image360SiteData,
   revision,
 }: {
   model?: Model3D;
@@ -38,31 +31,20 @@ export const MainThreeDModelMenuItem = ({
     assetHighlightMode,
   } = useContext(ThreeDContext);
 
-  const { data: revisions = [], isFetched } = use3DRevisionsQuery(model?.id);
+  const { data: revisions = [], isFetching } = use3DRevisionsQuery(model?.id);
 
   const navigate = useNavigate();
 
-  const menuItemContent = (
-    <Flex alignItems="flex-start" direction="column">
-      <Body level={2} strong>
-        {getMainModelTitle(model, image360SiteData)}
-      </Body>
-      <StyledMainThreeDModelDetail>
-        <>{getMainModelSubtitle(!!image360SiteData, revision)}</>
-      </StyledMainThreeDModelDetail>
-    </Flex>
-  );
-
-  if (!isFetched || revisions?.length === 0) {
+  if (!model) {
     return (
-      <Menu.Item css={{}} icon={!isFetched ? 'Loader' : undefined}>
-        {menuItemContent}
-      </Menu.Item>
+      <Menu>
+        <Menu.Header>No revisions available</Menu.Header>
+      </Menu>
     );
   }
 
   return (
-    <Menu>
+    <Menu loading={isFetching}>
       {revisions?.map(({ createdTime, id, index, published }) => (
         <Menu.Item
           toggled={id === revision?.id}
@@ -95,7 +77,3 @@ export const MainThreeDModelMenuItem = ({
     </Menu>
   );
 };
-
-const StyledMainThreeDModelDetail = styled(Detail)`
-  color: ${Colors['text-icon--interactive--disabled']};
-`;

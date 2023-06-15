@@ -15,12 +15,14 @@ import {
   Cognite3DViewer,
   CognitePointCloudModel,
   ViewerState,
+  Image360Collection,
 } from '@cognite/reveal';
 
 import { ResourceTabType } from '@data-exploration-app/containers/ThreeD/NodePreview';
 import { SmartOverlayTool } from '@data-exploration-app/containers/ThreeD/tools/SmartOverlayTool';
 import { useDefault3DModelRevision } from '@data-exploration-lib/domain-layer';
 
+import { PointsOfInterestCollection } from '../hooks';
 import {
   getStateUrl,
   THREE_D_ASSET_DETAILS_EXPANDED_QUERY_PARAMETER_KEY as EXPANDED_KEY,
@@ -60,7 +62,6 @@ export type SlicingState = {
 
 type ThreeDContext = {
   viewer?: Cognite3DViewer;
-  setViewer: Dispatch<SetStateAction<Cognite3DViewer | undefined>>;
   overlayTool?: SmartOverlayTool;
   setOverlayTool: Dispatch<SetStateAction<SmartOverlayTool | undefined>>;
   threeDModel?: CogniteCadModel;
@@ -89,10 +90,14 @@ type ThreeDContext = {
   setSecondaryModels: Dispatch<SetStateAction<SecondaryModelOptions[]>>;
   images360: Image360DatasetOptions[];
   setImages360: Dispatch<SetStateAction<Image360DatasetOptions[]>>;
+  pointsOfInterest: PointsOfInterestCollection[];
+  setPointsOfInterest: Dispatch<SetStateAction<PointsOfInterestCollection[]>>;
   secondaryObjectsVisibilityState?: SecondaryObjectsVisibilityState;
   setSecondaryObjectsVisibilityState: Dispatch<
     SetStateAction<SecondaryObjectsVisibilityState>
   >;
+  image360: Image360Collection | undefined;
+  setImage360: Dispatch<SetStateAction<Image360Collection | undefined>>;
 };
 
 const DETAILS_COLUMN_WIDTH = '@cognite/3d-details-column-width';
@@ -106,7 +111,6 @@ export const ThreeDContext = createContext<ThreeDContext>({
   setAssetDetailsExpanded: noop,
   setViewState: noop,
   setSlicingState: noop,
-  setViewer: noop,
   setOverlayTool: noop,
   set3DModel: noop,
   setPointCloudModel: noop,
@@ -118,7 +122,11 @@ export const ThreeDContext = createContext<ThreeDContext>({
   setAssetHighlightMode: noop,
   images360: [],
   setImages360: noop,
+  pointsOfInterest: [],
+  setPointsOfInterest: noop,
   setSecondaryObjectsVisibilityState: noop,
+  image360: undefined,
+  setImage360: noop,
 });
 ThreeDContext.displayName = 'ThreeDContext';
 
@@ -230,8 +238,10 @@ export const ThreeDContextProvider = ({
   modelId,
   image360SiteId,
   children,
+  viewer,
 }: {
   modelId?: number;
+  viewer?: Cognite3DViewer;
   image360SiteId?: string;
   children?: React.ReactNode;
 }) => {
@@ -247,7 +257,6 @@ export const ThreeDContextProvider = ({
     images360: initialImages360,
   } = useMemo(() => getInitialState(), []);
 
-  const [viewer, setViewer] = useState<Cognite3DViewer | undefined>();
   const [overlayTool, setOverlayTool] = useState<
     SmartOverlayTool | undefined
   >();
@@ -277,6 +286,12 @@ export const ThreeDContextProvider = ({
   >(initialSecondaryModels);
   const [images360, setImages360] =
     useState<Image360DatasetOptions[]>(initialImages360);
+  const [pointsOfInterest, setPointsOfInterest] = useState<
+    PointsOfInterestCollection[]
+  >([]);
+  const [image360, setImage360] = useState<Image360Collection | undefined>(
+    undefined
+  );
   const [assetHighlightMode, setAssetHighlightMode] = useState<boolean>(
     initialAssetHighlightMode
   );
@@ -287,6 +302,8 @@ export const ThreeDContextProvider = ({
       images360: true,
       pointsOfInterest: true,
     });
+
+  const [tab, setTab] = useState<ResourceTabType | undefined>();
 
   const {
     isFetching: fetchingDefaultRevision,
@@ -303,7 +320,6 @@ export const ThreeDContextProvider = ({
       setRevisionId(defaultRevision.id);
     }
   }, [defaultRevision?.id, revisionId]);
-  const [tab, setTab] = useState<ResourceTabType | undefined>();
 
   useEffect(() => {
     window.history.replaceState(
@@ -355,7 +371,6 @@ export const ThreeDContextProvider = ({
     <ThreeDContext.Provider
       value={{
         viewer,
-        setViewer,
         overlayTool,
         setOverlayTool,
         threeDModel,
@@ -382,8 +397,12 @@ export const ThreeDContextProvider = ({
         setAssetHighlightMode,
         images360,
         setImages360,
+        pointsOfInterest,
+        setPointsOfInterest,
         secondaryObjectsVisibilityState,
         setSecondaryObjectsVisibilityState,
+        image360,
+        setImage360,
       }}
     >
       {children}

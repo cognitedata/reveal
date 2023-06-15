@@ -27,6 +27,8 @@ export type TRACKING_TOKENS =
   | 'DataModel.Transformations.Create'
   | 'DataModel.Transformations.Open'
   | 'DataModel.GraphIQL.Run'
+  | 'DataModel.ImportTypes'
+  | 'DataModel.ImportTypesCopied'
   | 'DataModel.ErrorMessage'
   | 'DataModel.Links.GraphQL'
   | 'DataModel.Links.CLI'

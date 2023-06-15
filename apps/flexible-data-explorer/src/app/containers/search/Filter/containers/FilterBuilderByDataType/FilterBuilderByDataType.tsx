@@ -1,25 +1,21 @@
 import * as React from 'react';
 import { useState } from 'react';
 
-import {
-  DataTypeOption,
-  OperatorConfig,
-  ValueByDataType,
-  ValueByField,
-} from '../../types';
+import { EMPTY_OBJECT } from '../../../../../constants/object';
+import { DataTypeOption, ValueByDataType, ValueByField } from '../../types';
 import { DataTypeSelector } from '../DataTypeSelector';
 import { FilterBuilderByField } from '../FilterBuilderByField';
 
 export interface FilterBuilderByDataTypeProps {
   dataTypes: DataTypeOption[];
   value?: ValueByDataType;
-  config?: OperatorConfig;
   onChange: (value: ValueByDataType) => void;
+  isError?: boolean;
 }
 
 export const FilterBuilderByDataType: React.FC<
   FilterBuilderByDataTypeProps
-> = ({ dataTypes, value: initialValue = {}, config, onChange }) => {
+> = ({ dataTypes, value: initialValue = EMPTY_OBJECT, onChange, isError }) => {
   const [selectedDataType, setSelectedDataType] = useState<DataTypeOption>();
   const [value, setValue] = useState<ValueByDataType>(initialValue);
 
@@ -43,7 +39,6 @@ export const FilterBuilderByDataType: React.FC<
         name={selectedDataType.name}
         fields={selectedDataType.fields}
         value={value[selectedDataType.name]}
-        config={config}
         onBackClick={() => setSelectedDataType(undefined)}
         onChange={handleChange}
       />
@@ -54,6 +49,7 @@ export const FilterBuilderByDataType: React.FC<
     <DataTypeSelector
       dataTypes={dataTypes}
       onSelectDataType={setSelectedDataType}
+      isError={isError}
     />
   );
 };

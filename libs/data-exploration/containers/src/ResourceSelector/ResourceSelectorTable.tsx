@@ -92,6 +92,7 @@ export const ResourceSelectorTable = ({
       return (
         <DocumentSearchResults
           {...commonProps}
+          hideUploadButton={true}
           filter={{ ...filter.common, ...filter.document }}
         />
       );

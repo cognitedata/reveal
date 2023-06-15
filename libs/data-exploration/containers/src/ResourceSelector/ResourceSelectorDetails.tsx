@@ -5,7 +5,11 @@ import styled from 'styled-components';
 import { Loader, SearchEmpty } from '@data-exploration/components';
 import noop from 'lodash/noop';
 
-import { ResourceItem, SelectableItemsProps } from '@data-exploration-lib/core';
+import {
+  ResourceItem,
+  ResourceType,
+  SelectableItemsProps,
+} from '@data-exploration-lib/core';
 
 import {
   AssetDetails,
@@ -29,6 +33,7 @@ type Props = {
   hideTitle?: boolean;
   hideContent?: boolean;
   selectedRows?: ResourceSelection;
+  visibleResources?: ResourceType[];
 } & Partial<SelectableItemsProps>;
 
 const Centered = styled.div`
@@ -60,8 +65,14 @@ export const ResourceSelectorDetails = ({
 
   isSelected = false,
   hideContent = false,
+  visibleResources = [],
 }: Props) => {
-  const commonProps = { onSelect, selectedRows, selectionMode };
+  const commonProps = {
+    onSelect,
+    selectedRows,
+    selectionMode,
+    visibleResources,
+  };
   let content: React.ReactNode = placeholder || <Loader />;
   if (item) {
     switch (item.type) {

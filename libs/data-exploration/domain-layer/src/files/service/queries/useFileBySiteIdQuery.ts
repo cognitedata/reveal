@@ -12,10 +12,10 @@ export const useFileBySiteIdQuery = (siteId: string | undefined) => {
   return useQuery<FileInfo | undefined>(
     queryKeys.fileBySiteId(siteId),
     () => {
-      if (!siteId) {
-        return undefined;
+      if (siteId) {
+        return getFileBySiteId(sdk, siteId, 'front');
       }
-      return getFileBySiteId(sdk, siteId, 'front');
+      throw new Error('site id not found!');
     },
     { enabled: !!siteId }
   );

@@ -44,7 +44,7 @@ const CanvasButton: React.FC<CanvasButtonProps> = ({ item }) => {
   return (
     <Tooltip content="Open in Industry Canvas">
       <Link
-        to={createLink(`/explore/industryCanvas`, {
+        to={createLink(`/industrial-canvas`, {
           ...getSearchParams(window.location.search),
           initializeWithContainerReferences,
         })}

@@ -13,3 +13,11 @@ export type Module = {
   reported: boolean;
   status: boolean;
 };
+
+export type ExtractorConfig = {
+  requiredCredentials: string[];
+  defaultCredentials: { [key in string]: string };
+  fixedCredentials: { [key in string]: string };
+  dockerImage: string;
+  defaultConfig: string;
+};

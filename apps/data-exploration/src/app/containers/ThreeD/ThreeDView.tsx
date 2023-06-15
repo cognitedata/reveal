@@ -9,14 +9,13 @@ import React, {
 import styled from 'styled-components';
 
 import { useQueryClient } from '@tanstack/react-query';
-import debounce from 'lodash/debounce';
 
 import { Colors, Flex } from '@cognite/cogs.js';
 import {
   CogniteCadModel,
   CognitePointCloudModel,
   Image360,
-  Image360Collection,
+  Image360AnnotationIntersection,
   Intersection,
 } from '@cognite/reveal';
 import { Image360HistoricalDetails } from '@cognite/reveal-react-components';
@@ -31,6 +30,7 @@ import { LabelEventHandler } from '@data-exploration-app/containers/ThreeD/tools
 import {
   useFlagAssetMappingsOverlays,
   useFlagPointCloudSearch,
+  useFlagPointsOfInterestFeature,
 } from '@data-exploration-app/hooks/flags';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
 
@@ -42,10 +42,12 @@ import { AssetPreviewSidebar } from './AssetPreviewSidebar';
 import { ThreeDContext } from './contexts/ThreeDContext';
 import HighQualityToggle from './high-quality-toggle/HighQualityToggle';
 import LoadImages360 from './load-secondary-models/LoadImages360';
+import PointsOfInterestLoader from './load-secondary-models/PointsOfInterestLoader';
 import NodePreview, { ResourceTabType } from './NodePreview';
 import PointSizeSlider from './point-size-slider/PointSizeSlider';
 import Reveal from './Reveal';
 import { Slicer } from './slicer/Slicer';
+import { StylingState } from './StylingState';
 import { ThreeDTitle } from './title/ThreeDTitle';
 import {
   ExpandButton,
@@ -55,24 +57,24 @@ import {
   ShareButton,
 } from './toolbar';
 import {
+  AssetSelectionState,
   findClosestAsset,
   fitCameraToAsset,
-  ghostAsset,
-  highlightAsset,
-  highlightAssetMappedNodes,
+  getAssetIdFromImageAnnotation,
   isCadIntersection,
-  removeAllStyles,
 } from './utils';
 
 type Props = {
   modelId?: number;
   image360SiteId?: string;
 };
+
 export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
   const sdk = useSDK();
   const queryClient = useQueryClient();
   const useOverlays = useFlagAssetMappingsOverlays();
   const pointCloudSearchFeatureFlag = useFlagPointCloudSearch();
+  const usePointsOfInterestFeatureFlag = useFlagPointsOfInterestFeature();
 
   useEffect(() => {
     if (modelId) {
@@ -106,22 +108,22 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
     setTab,
     secondaryModels,
     viewState,
-    setViewState,
     images360,
     selectedAssetId,
+    pointsOfInterest,
     setSelectedAssetId,
     overlayTool,
+    secondaryObjectsVisibilityState,
+    image360,
   } = useContext(ThreeDContext);
+
+  const model = threeDModel ?? pointCloudModel ?? image360;
 
   // Changes to the view state in the url should not cause any updates
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const initialUrlViewState = useMemo(() => viewState, []);
 
   const [nodesSelectable, setNodesSelectable] = useState<boolean>(true);
-
-  const [imageEntities, setImageEntities] = useState<
-    { siteId: string; images: Image360Collection }[]
-  >([]);
 
   const [image360Entity, setImage360Entity] = useState<Image360 | undefined>(
     undefined
@@ -138,24 +140,54 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
     setIs360HistoricalPanelExpanded(isExpanded);
   }, []);
 
-  useEffect(() => {
-    if (viewer && setViewState) {
-      const fn = debounce(() => {
-        const currentState = viewer.getViewState();
-        setViewState({ camera: currentState.camera });
-      }, 250);
-      viewer.on('sceneRendered', fn);
-      return () => viewer.off('sceneRendered', fn);
-    }
-
-    return undefined;
-  }, [setViewState, viewer]);
+  const setSelectedAssetAndFitCamera = useCallback(
+    (
+      newSelectedAssetId: number | undefined,
+      assetSelectionState: AssetSelectionState
+    ) => {
+      setSelectedAssetId(newSelectedAssetId);
+      if (
+        newSelectedAssetId !== undefined &&
+        viewer !== undefined &&
+        model !== undefined
+      ) {
+        fitCameraToAsset(
+          sdk,
+          queryClient,
+          viewer,
+          model,
+          assetSelectionState,
+          newSelectedAssetId
+        );
+      }
+    },
+    [sdk, queryClient, viewer, model, setSelectedAssetId]
+  );
 
   const onViewerClick = useCallback(
-    (intersection: Intersection | null) => {
+    (
+      intersection: Intersection | null,
+      image360AnnotationIntersection: Image360AnnotationIntersection | null
+    ) => {
       (async () => {
         let closestAssetId: number | undefined;
-        if (intersection && isCadIntersection(intersection) && modelId) {
+        const assetSelectionState: AssetSelectionState = {};
+
+        if (image360AnnotationIntersection) {
+          closestAssetId = getAssetIdFromImageAnnotation(
+            image360AnnotationIntersection.annotation.annotation
+          );
+
+          assetSelectionState.imageAnnotation =
+            image360AnnotationIntersection.annotation;
+        }
+
+        if (
+          !closestAssetId &&
+          intersection &&
+          isCadIntersection(intersection) &&
+          modelId
+        ) {
           closestAssetId = await findClosestAsset(
             sdk,
             queryClient,
@@ -167,18 +199,18 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
         }
 
         if (closestAssetId && closestAssetId !== selectedAssetId) {
-          setSelectedAssetId(closestAssetId);
           trackUsage(EXPLORATION.THREED_ACTION.ASSET_SELECTED, {
             closestAssetId,
             resourceType: '3D',
           });
         } else if (!closestAssetId) {
-          setSelectedAssetId(undefined);
           trackUsage(EXPLORATION.THREED_SELECT.UNCLICKABLE_OBJECT, {
             modelId: threeDModel?.modelId,
             resourceType: '3D',
           });
         }
+
+        setSelectedAssetAndFitCamera(closestAssetId, assetSelectionState);
       })();
     },
     [
@@ -187,7 +219,7 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
       revisionId,
       sdk,
       selectedAssetId,
-      setSelectedAssetId,
+      setSelectedAssetAndFitCamera,
       threeDModel,
     ]
   );
@@ -209,8 +241,9 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
     useOverlays ? assetHighlightMode : false
   );
 
+  const [stylingState, setStylingState] = useState<StylingState | undefined>();
+
   useEffect(() => {
-    const model = threeDModel ?? pointCloudModel;
     if (
       viewer === undefined ||
       model === undefined ||
@@ -218,75 +251,33 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
     ) {
       return;
     }
-
-    const isAlreadyAdded = viewer.models.some(
-      ({ modelId: tmId, revisionId: trId }) =>
-        model.modelId === tmId && model.revisionId === trId
+    setStylingState(
+      new StylingState(model, sdk, viewer, queryClient, overlayTool)
     );
-    if (!isAlreadyAdded) {
-      return;
-    }
-    viewer.models.forEach((modelObject) => {
-      removeAllStyles(modelObject);
-    });
-    if (selectedAssetId) {
-      if (assetDetailsExpanded) {
-        ghostAsset(
-          sdk,
-          model,
-          selectedAssetId,
-          queryClient,
-          loadedSecondaryModels
-        );
-        overlayTool.visible = false;
-      } else {
-        overlayTool.visible = labelsVisibility;
-        if (assetHighlightMode) {
-          highlightAssetMappedNodes(model, queryClient);
-        }
-        highlightAsset(sdk, model, selectedAssetId, queryClient);
-      }
-    } else {
-      if (assetHighlightMode) {
-        highlightAssetMappedNodes(model, queryClient);
-      }
-      overlayTool.visible = labelsVisibility;
-    }
+  }, [sdk, viewer, queryClient, overlayTool, model]);
+
+  useEffect(() => {
+    stylingState?.updateState(
+      selectedAssetId,
+      assetDetailsExpanded,
+      labelsVisibility,
+      assetHighlightMode,
+      loadedSecondaryModels
+    );
   }, [
     assetHighlightMode,
     assetDetailsExpanded,
-    pointCloudModel,
-    modelId,
-    queryClient,
-    revisionId,
-    sdk,
     selectedAssetId,
-    threeDModel,
-    viewer,
-    overlayTool,
     labelsVisibility,
     loadedSecondaryModels,
+    stylingState,
   ]);
-
-  useEffect(() => {
-    const model = threeDModel ?? pointCloudModel;
-    if (
-      viewer === undefined ||
-      model === undefined ||
-      selectedAssetId === undefined
-    ) {
-      return;
-    }
-    fitCameraToAsset(sdk, queryClient, viewer, model, selectedAssetId);
-  }, [queryClient, sdk, selectedAssetId, threeDModel, viewer, pointCloudModel]);
 
   if (!revisionId && !image360SiteId) {
     return null;
   }
   const shouldShowAssetPreviewSidebar =
-    !!selectedAssetId &&
-    (threeDModel || pointCloudModel) &&
-    assetDetailsExpanded;
+    !!selectedAssetId && assetDetailsExpanded;
   return (
     <>
       <ThreeDTitle id={modelId} image360SiteId={image360SiteId} />
@@ -305,7 +296,6 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
             initialViewerState={initialUrlViewState}
             setImage360Entity={setImage360Entity}
             onViewerClick={onViewerClick}
-            image360Entities={imageEntities}
           >
             {({
               pointCloudModel: revealPointCloudModel,
@@ -321,11 +311,18 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
                 />
                 <LoadImages360
                   images360={images360}
-                  imageEntities={imageEntities}
-                  setImageEntities={setImageEntities}
                   setImage360Entity={setImage360Entity}
                   viewer={revealViewer}
                 />
+                {usePointsOfInterestFeatureFlag && (
+                  <PointsOfInterestLoader
+                    poiList={pointsOfInterest}
+                    viewer={revealViewer}
+                    secondaryObjectsVisibilityState={
+                      secondaryObjectsVisibilityState
+                    }
+                  />
+                )}
                 <MouseWheelAction
                   isAssetSelected={!!selectedAssetId}
                   viewer={revealViewer}
@@ -343,7 +340,7 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
                     <FocusAssetButton
                       selectedAssetId={selectedAssetId}
                       viewer={revealViewer}
-                      threeDModel={revealThreeDModel}
+                      threeDModel={revealThreeDModel ?? image360}
                     />
                     <StyledToolBarDivider />
                     <PointSizeSlider
@@ -387,14 +384,19 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
                 </Image360HistoricalPanel>
                 <SidebarContainer gap={15}>
                   {(revealThreeDModel ||
+                    image360 ||
                     (revealPointCloudModel && pointCloudSearchFeatureFlag)) && (
                     <AssetMappingsSidebar
                       modelId={modelId}
                       revisionId={revisionId}
                       selectedAssetId={selectedAssetId}
-                      setSelectedAssetId={setSelectedAssetId}
+                      setSelectedAssetId={(id) =>
+                        setSelectedAssetAndFitCamera(id, {
+                          imageEntity: image360Entity,
+                        })
+                      }
                       viewer={revealViewer}
-                      threeDModel={revealThreeDModel ?? revealPointCloudModel}
+                      threeDModel={model}
                     />
                   )}
                 </SidebarContainer>

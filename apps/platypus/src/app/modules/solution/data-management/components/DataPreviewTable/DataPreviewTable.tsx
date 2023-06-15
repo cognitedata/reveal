@@ -9,6 +9,7 @@ import {
 } from 'react';
 
 import {
+  BultinFieldTypeNames,
   DataModelTypeDefs,
   DataModelTypeDefsType,
   DeleteInstancesDTO,
@@ -416,46 +417,51 @@ export const DataPreviewTable = forwardRef<
           return;
         }
 
-        if ((fieldType.type.list && currValue.length === 0) || !currValue) {
+        const nonPrimitiveTypes = ['TimeSeries', 'File', 'Sequence'];
+
+        const doesDataRequireSidebar =
+          (fieldType.type.list && currValue.length > 0) ||
+          ['JSONObject', ...nonPrimitiveTypes].includes(fieldType.type.name) ||
+          fieldType.type.custom;
+
+        // if there's no data, an empty list, or the data is not a type we display in the sidebar
+        // we do not render a sidebar.
+        if (
+          !currValue ||
+          !doesDataRequireSidebar ||
+          (fieldType.type.list && currValue.length === 0)
+        ) {
           setSidebarData(undefined);
           return;
         }
 
-        if (fieldType.type.list) {
-          setSidebarData({
-            externalId,
-            fieldName: field,
-            instanceSpace,
-            type: 'list',
-          });
-        } else if (fieldType.type.name === 'JSONObject') {
-          setSidebarData({
-            fieldName: field,
-            json: currValue,
-            type: 'json',
-          });
-        } else if (fieldType.type.custom) {
+        const newSidebarData: DataPreviewSidebarData = {
+          fieldName: field,
+          instanceExternalId:
+            fieldType.type.custom ||
+            nonPrimitiveTypes.includes(fieldType.type.name)
+              ? currValue.externalId
+              : externalId,
+          instanceSpace,
+          isList: Boolean(fieldType.type.list),
+          json: fieldType.type.name === 'JSONObject' ? currValue : undefined,
+          listValues: currValue,
+          type: fieldType.type.custom
+            ? 'custom'
+            : (fieldType.type.name as BultinFieldTypeNames),
+        };
+
+        if (fieldType.type.custom) {
           const targetFieldType = dataModelTypeDefs.types.find(
             (type) => type.name === fieldType.type.name
           );
+
           if (targetFieldType) {
-            setSidebarData({
-              externalId: currValue.externalId,
-              fieldName: field,
-              fieldType: targetFieldType,
-              instanceSpace,
-              type: 'custom',
-            });
+            newSidebarData.fieldType = targetFieldType;
           }
-        } else if (fieldType.type.name === 'TimeSeries') {
-          setSidebarData({
-            externalId: currValue.externalId,
-            fieldName: field,
-            type: 'timeseries',
-          });
-        } else {
-          setSidebarData(undefined);
         }
+
+        setSidebarData(newSidebarData);
       },
       [dataModelType, dataModelTypeDefs.types]
     );

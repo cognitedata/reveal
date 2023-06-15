@@ -26,3 +26,7 @@ unified-file-viewer:
 contextualization:
   - libs/contextualization/*
   - libs/contextualization/**/*
+
+cdf-document-search:
+  - apps/cdf-document-search/*
+  - apps/cdf-document-search/**/*

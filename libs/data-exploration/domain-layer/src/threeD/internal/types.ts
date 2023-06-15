@@ -38,3 +38,19 @@ export type InternalEventWithMetadata = Pick<
   InternalEventsData,
   Exclude<keyof InternalEventsData, 'metadata'>
 > & { metadata?: { site_id: string; site_name: string } };
+
+export type Image360SiteData = {
+  siteId: string;
+  siteName: string;
+  lastUpdatedTime?: Date;
+};
+
+export type ModelWithRevisionId = Model3D & {
+  revisionId: number;
+};
+
+export type OutputItem = {
+  format: string;
+  version: number;
+  blobId: number;
+};

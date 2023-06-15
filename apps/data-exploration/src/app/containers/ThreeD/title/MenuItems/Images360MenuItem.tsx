@@ -45,7 +45,7 @@ export const Images360MenuItem = ({
   const menuItemContent = (
     <StyledSecondaryObjectMenuItemContent gap={8}>
       <Checkbox
-        checked={options?.applied ?? false}
+        checked={Boolean(options?.applied)}
         name={`site-${siteId}`}
         onChange={(_, checked) => handleClickModelMenuItem(!!checked)}
       />
@@ -60,5 +60,5 @@ export const Images360MenuItem = ({
     </StyledSecondaryObjectMenuItemContent>
   );
 
-  return <Menu.Item>{menuItemContent}</Menu.Item>;
+  return <Menu.Item hideTooltip={true}>{menuItemContent}</Menu.Item>;
 };

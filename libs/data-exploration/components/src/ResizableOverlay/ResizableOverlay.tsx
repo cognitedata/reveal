@@ -1,10 +1,18 @@
-import React, { DragEvent, useRef, useEffect, useState, useId } from 'react';
+import React, { useRef, useEffect, useState, useId } from 'react';
+import { DraggableCore, DraggableEvent } from 'react-draggable';
 
 import styled from 'styled-components';
 
-import { Button } from '@cognite/cogs.js';
-
 import { zIndex } from '@data-exploration-lib/core';
+
+import handleSvg from './handle';
+
+// Create the CSS content URL from the SVG code
+const cssContentUrl = `url("data:image/svg+xml,${encodeURIComponent(
+  handleSvg
+)}")`;
+
+const SEARCH_FILTER_WIDTH = 302;
 
 type Props = {
   children?: React.ReactNode;
@@ -13,7 +21,6 @@ type Props = {
   showOverlay?: boolean;
 };
 
-// TODO: better names and structure?
 export const ResizableOverlay = ({
   children,
   showFilter = true,
@@ -39,7 +46,7 @@ export const ResizableOverlay = ({
       resizable!.style.width = `${window.innerWidth}px`;
       if (showFilter) {
         // This is safe to do when we are in full-page mode.
-        resizable!.style.marginLeft = `-302px`;
+        resizable!.style.marginLeft = `-${SEARCH_FILTER_WIDTH}px`;
       }
     } else {
       if (initialWidth === 0) {
@@ -51,7 +58,7 @@ export const ResizableOverlay = ({
       }
 
       if (initialPos > 1 && initialPos <= 360 && showFilter) {
-        resizable!.style.marginLeft = `-302px`;
+        resizable!.style.marginLeft = `-${SEARCH_FILTER_WIDTH}px`;
       } else {
         resizable!.style.marginLeft = `0`;
       }
@@ -78,17 +85,16 @@ export const ResizableOverlay = ({
     }
   };
 
-  const handleOnDrag = (e: DragEvent) => {
-    e.dataTransfer.effectAllowed = 'move';
-    if (e.clientX > 1) {
-      const rect = e.currentTarget.getBoundingClientRect();
-      setInitialPos(e.clientX);
+  const handleDrag = (e: DraggableEvent) => {
+    const mouseEvent = e as MouseEvent;
+
+    if (mouseEvent.clientX > 1) {
+      setInitialPos(mouseEvent.clientX);
       if (initialPos) {
-        setInitialWidth(window.innerWidth - initialPos);
+        setInitialWidth(window.innerWidth - mouseEvent.clientX);
 
         const resizable = document.getElementById(resizableId);
-        resizable!.style.width = `${window.innerWidth - initialPos}px`; //?
-        resizable!.style.top = rect.y + 'px'; //?
+        resizable!.style.width = `${window.innerWidth - mouseEvent.clientX}px`;
       }
     }
   };
@@ -102,20 +108,17 @@ export const ResizableOverlay = ({
       showOverlay={showOverlay}
     >
       {!isFullpage && (
-        <DragAreaWrapper>
-          <ButtonWrapper
-            draggable="true"
-            onDragStart={(e: DragEvent) => {
-              e.dataTransfer.effectAllowed = 'move';
-            }}
-            onDrag={handleOnDrag}
-            onDragOver={(e: DragEvent) => {
-              e.preventDefault();
-            }}
-          >
-            <Button type="secondary" icon="DragHandleVertical" />
-          </ButtonWrapper>
-        </DragAreaWrapper>
+        <DraggableCore
+          onStart={(e: DraggableEvent) => {
+            // This helps to prevent weird scroll behavior when dragged to left immediately.
+            e.preventDefault();
+          }}
+          onDrag={handleDrag}
+        >
+          <DragAreaWrapper>
+            <div className="splitter" />
+          </DragAreaWrapper>
+        </DraggableCore>
       )}
 
       <OverlayContentWrapper>
@@ -135,7 +138,6 @@ export const DetailsOverlayWrapper = styled.div<DetailsOverlayWrapperProps>`
   height: 100%;
   width: 60%;
   min-width: 600px;
-  /* background-color: rgba(120, 120, 120, 0.3); */
   background-color: var(--cogs-surface--muted);
   display: ${(props) => (props.showOverlay ? 'flex' : 'none')};
   z-index: ${zIndex.MAXIMUM};
@@ -147,20 +149,51 @@ export const DragAreaWrapper = styled.div`
   background: var(--cogs-border--muted);
   display: flex;
   align-items: center;
+
+  &:hover {
+    cursor: col-resize;
+  }
+
+  > .splitter {
+    flex: 0 0 auto;
+    width: 4px;
+    height: 100%;
+    cursor: col-resize;
+    transition: 0.3s all;
+    position: relative;
+    border-left: solid 1px var(--cogs-border--muted);
+  }
+
+  & > .splitter::before {
+    content: ${cssContentUrl};
+    position: absolute;
+    isolation: isolate;
+    top: 50%;
+    left: -6px;
+    width: 12px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--cogs-surface--strong);
+    color: var(--cogs-border--muted);
+    border: 1px solid var(--cogs-border--muted);
+    border-radius: 4px;
+  }
 `;
 
 export const ButtonWrapper = styled.div`
   position: absolute;
-  margin-left: -7px;
+  margin-left: -8px;
   background-color: transparent;
   border-radius: 4px;
   z-index: ${zIndex.MAXIMUM};
 
   .cogs.cogs-button {
-    /* padding: 10px 2px; */
     padding: 8px 0;
     background-color: var(--cogs-surface--strong);
     border-radius: 4px;
+    border: 1px solid var(--cogs-border--muted);
 
     &:hover {
       cursor: col-resize;
@@ -171,7 +204,6 @@ export const ButtonWrapper = styled.div`
 export const OverlayContentWrapper = styled.div`
   height: 100%;
   width: 100%;
-  /* background-color: rgba(120, 120, 120, 0.3); */
   overflow: auto;
 `;
 
