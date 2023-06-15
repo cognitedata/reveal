@@ -113,5 +113,9 @@ const StyledTabs = styled(AntdTabs)`
   .ant-tabs-nav {
     padding-left: 10px;
   }
+
+  .ant-tabs-tabpane {
+    height: 100%;
+  }
 `;
 export default TableContent;
