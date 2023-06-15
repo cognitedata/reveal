@@ -62,7 +62,8 @@ class LocalStorageHistoryProvider implements CdfUserHistoryStorage {
   }
 
   set usedApplications(arr: CdfApplicationUsage[]) {
-    this.dataCache.usedApplications = arr;
+    // sort by count before saving it to localStorage
+    this.dataCache.usedApplications = arr.sort((a, b) => b.count - a.count);
     this.writeToLocalStorage();
   }
 }
@@ -86,15 +87,14 @@ export class CdfUserHistoryService {
     };
     this.data.usedApplications = [
       application,
-      ...this.data.usedApplications.filter((ele) => ele.name === appPath),
+      ...this.data.usedApplications.filter((ele) => ele.name !== appPath),
     ];
   }
 
   logNewResourceEdit(resource: Omit<CdfResourceUsage, 'timestamp'>) {
     const timestamp = new Date().getTime().toString();
     const resourceList = this.data.editedResources.filter(
-      (ele) =>
-        ele.name !== resource.name || ele.application !== resource.application
+      (ele) => ele.path !== resource.path
     );
     this.data.editedResources = [
       {
@@ -108,8 +108,7 @@ export class CdfUserHistoryService {
   logNewResourceView(resource: Omit<CdfResourceUsage, 'timestamp'>) {
     const timestamp = new Date().getTime().toString();
     const resourceList = this.data.viewedResources.filter(
-      (ele) =>
-        ele.name !== resource.name || ele.application !== resource.application
+      (ele) => ele.path !== resource.path
     );
     this.data.viewedResources = [
       {
@@ -137,5 +136,18 @@ export class CdfUserHistoryService {
 
   isViewedResourcesEmpty() {
     return !this.data.viewedResources.length;
+  }
+
+  // check if user has accessed at least 3 applications more than 10 times
+  // to show them as recently used applications
+  hasEnoughRecentlyUsedApplications() {
+    return (
+      this.data.usedApplications.filter((item) => item.count > 10).length >= 3
+    );
+  }
+
+  getRecentlyUsedApplications() {
+    // return the top 3 most used applications
+    return this.data.usedApplications.slice(0, 3);
   }
 }
