@@ -152,7 +152,7 @@ export const DataModelHeader = ({
           {isImportTypeEnabled && (
             <ImportTypesButton
               type="secondary"
-              data-cy="discard-btn"
+              data-cy="import-types-btn"
               onClick={() => onImportTypesClick()}
               style={{ marginRight: '10px' }}
             >

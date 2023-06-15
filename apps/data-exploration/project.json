@@ -94,5 +94,6 @@
       }
     }
   },
+  "implicitDependencies": ["data-exploration-e2e"],
   "tags": []
 }

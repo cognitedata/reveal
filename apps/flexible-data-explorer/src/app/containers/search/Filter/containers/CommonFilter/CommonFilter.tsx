@@ -1,45 +1,48 @@
+import * as React from 'react';
 import { useMemo, useState } from 'react';
 
 import { ApplyButton, Menu, MenuHeader, Select } from '../../components';
-import { BaseFilterProps, InputType, Operator, ValueType } from '../../types';
+import { Field, FieldValue, Operator, ValueType } from '../../types';
 
 import { CommonFilterInput } from './CommonFilterInput';
 import {
   getInitialOperator,
-  getInitialValue,
+  getInputType,
+  getOperators,
   isApplyButtonDisabled,
 } from './utils';
 
-export interface CommonFilterProps<TOperator extends Operator>
-  extends BaseFilterProps<TOperator> {
-  config: Record<TOperator, InputType>;
+export interface CommonFilterProps {
+  field: Field;
+  value?: FieldValue;
+  onBackClick: () => void;
+  onApplyClick: (operator: Operator, value: ValueType) => void;
 }
 
-export const CommonFilter = <TOperator extends Operator>({
-  config,
+export const CommonFilter: React.FC<CommonFilterProps> = ({
+  field,
   value: fieldValue,
-  name,
   onBackClick,
   onApplyClick,
-}: CommonFilterProps<TOperator>) => {
+}) => {
   const operators = useMemo(() => {
-    return Object.keys(config) as TOperator[];
-  }, [config]);
+    return getOperators(field);
+  }, [field]);
 
-  const [operator, setOperator] = useState<TOperator>(
+  const [operator, setOperator] = useState<Operator>(
     getInitialOperator(operators, fieldValue)
   );
 
-  const [value, setValue] = useState<ValueType<InputType> | undefined>(
-    getInitialValue(operators, fieldValue)
-  );
+  const [value, setValue] = useState<ValueType | undefined>(fieldValue?.value);
 
-  const inputType = config[operator];
+  const inputType = useMemo(() => {
+    return getInputType(field.type, operator);
+  }, [field.type, operator]);
 
-  const handleChangeOperator = (newOperator: TOperator) => {
+  const handleChangeOperator = (newOperator: Operator) => {
     setOperator(newOperator);
 
-    const newInputType = config[newOperator];
+    const newInputType = getInputType(field.type, operator);
     if (inputType !== newInputType) {
       setValue(undefined);
     }
@@ -47,19 +50,15 @@ export const CommonFilter = <TOperator extends Operator>({
 
   return (
     <Menu>
-      <MenuHeader title={name} onBackClick={onBackClick} />
+      <MenuHeader title={field.name} onBackClick={onBackClick} />
 
-      <Select<TOperator>
+      <Select<Operator>
         options={operators}
         value={operator}
         onChange={handleChangeOperator}
       />
 
-      <CommonFilterInput<InputType>
-        type={inputType}
-        value={value}
-        onChange={setValue}
-      />
+      <CommonFilterInput type={inputType} value={value} onChange={setValue} />
 
       <ApplyButton
         disabled={isApplyButtonDisabled(inputType, value)}

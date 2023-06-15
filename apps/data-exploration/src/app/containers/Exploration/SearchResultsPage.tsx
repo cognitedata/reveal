@@ -36,6 +36,7 @@ import { SequenceSearchResultView } from '@data-exploration-app/containers/Seque
 import { ThreeDSearchResultView } from '@data-exploration-app/containers/ThreeD/ThreeDSearchResultView';
 import { TimeseriesSearchResultView } from '@data-exploration-app/containers/Timeseries/TimeseriesSearchResultView';
 import { useResourceFilter } from '@data-exploration-app/context/ResourceSelectionContext';
+import { ThreeDSearchContextProvider } from '@data-exploration-app/context/ThreeDSearchContext';
 import {
   useFlagDocumentGPT,
   useFlagDocumentLabelsFilter,
@@ -292,10 +293,10 @@ export const SearchResultsPage = () => {
   }, [resourceType, query]);
 
   return (
-    <>
+    <ThreeDSearchContextProvider>
       <PageTitle title={getPageTitle(query, resourceType)} />
       <SearchPage />
-    </>
+    </ThreeDSearchContextProvider>
   );
 };
 

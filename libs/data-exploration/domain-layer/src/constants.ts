@@ -19,7 +19,8 @@ export const DEFAULT_SCORE_SORTING = [
     property: ['_score_'],
   },
 ];
-
-export const DEFAULT_SEARCH_RESULTS_PAGE_SIZE = 50;
+export const MAX_SEQUENTIAL_REQUEST_LIMIT_3D = 10;
 
 export const VALID_IMAGE_TYPES = ['png', 'jpg', 'jpeg', 'tiff', 'gif'];
+
+export const POINT_CLOUD_FORMAT = 'ept-pointcloud';

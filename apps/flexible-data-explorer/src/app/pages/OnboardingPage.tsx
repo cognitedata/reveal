@@ -1,33 +1,23 @@
-import { useParams } from 'react-router-dom';
+import { useEffect } from 'react';
 
-import { DataModelSelector } from '../components/selectors/DataModelSelector';
+import { DataModelSelectorModal } from '../containers/modals/DataModelSelectorModal';
+import { useDataModelLocalStorage } from '../hooks/useLocalStorage';
 import { useNavigation } from '../hooks/useNavigation';
-import { useListDataModelsQuery } from '../services/dataModels/query/useListDataModelsQuery';
-import { DataModelListResponse } from '../services/types';
 
 export const OnboardingPage = () => {
-  const { space, dataModel, version } = useParams();
-  const isDataModelSelected = Boolean(space && dataModel && version);
   const navigate = useNavigation();
+  const [selectedDataModel] = useDataModelLocalStorage();
 
-  const { data, isLoading } = useListDataModelsQuery();
+  useEffect(() => {
+    if (selectedDataModel) {
+      navigate.toHomePage(
+        selectedDataModel.space,
+        selectedDataModel.dataModel,
+        selectedDataModel.version
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedDataModel]);
 
-  const handleSelectionClick = (item: DataModelListResponse) => {
-    navigate.toHomePage(item.space, item.externalId, item.version);
-  };
-
-  if (!isDataModelSelected) {
-    // Check local storage for previous selected routes
-    // Do a request to fetch all data models
-
-    return (
-      <DataModelSelector
-        dataModels={data}
-        loading={isLoading}
-        onSelectionClick={handleSelectionClick}
-      />
-    );
-  }
-
-  return null;
+  return <DataModelSelectorModal isVisible />;
 };

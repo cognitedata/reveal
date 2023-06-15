@@ -6,11 +6,6 @@ describe('data-exploration', () => {
         'OVERRIDE_URL'
       )}`
     );
-
-    // There is a bug in Fusion that removes all the other query parameters, so we need to navigate again. (Will fix it later)
-    cy.visit(
-      'http://cog-dss.localhost:8080/dss-dev?env=greenfield&cluster=greenfield.cognitedata.com'
-    );
   });
 
   it('Should open Data Explorer from Home page', () => {

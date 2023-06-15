@@ -1,4 +1,4 @@
-import { FileInfo } from '@cognite/sdk/dist/src';
+import { DocumentFilter, FileInfo } from '@cognite/sdk';
 
 import { DataModel, Instance } from './types';
 
@@ -25,6 +25,15 @@ export const queryKeys = {
 
   instance: (instance: Instance, dataModel?: DataModel) =>
     [...queryKeys.all, 'instance', instance, dataModel] as const,
+
+  searchFiles: (query: string, filter?: DocumentFilter, limit?: number) => [
+    ...queryKeys.all,
+    'files',
+    'search',
+    query,
+    filter,
+    limit,
+  ],
 
   fileContainer: (file?: FileInfo) => [...queryKeys.all, 'file', file] as const,
 };

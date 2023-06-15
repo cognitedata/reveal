@@ -8,3 +8,4 @@ export * from './ResourceDetails';
 export * from './Timeseries';
 export * from './Info';
 export * from './DetailsTable';
+export * from './constants';

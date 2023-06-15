@@ -10,3 +10,9 @@ export type DetailedMapping = BasicMapping & {
   model: Model3D;
   revision: Revision3D;
 };
+
+export type ThreeDRevisionOutput = {
+  format: string;
+  version: number;
+  blobId: number;
+};

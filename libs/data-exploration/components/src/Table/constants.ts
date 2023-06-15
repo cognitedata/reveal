@@ -20,7 +20,6 @@ export const ColumnKeys = [
 export const MAX_COLUMN_SELECTION = 20;
 
 export const DEFAULT_VISIBILITY: FileTypeVisibility = {
-  [FileTypes.CAD_MODELS]: true,
-  [FileTypes.POINT_CLOUDS]: true,
+  [FileTypes.MODELS_3D]: true,
   [FileTypes.IMAGES_360]: true,
 };

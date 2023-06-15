@@ -1,0 +1,11 @@
+{
+  "name": "@cognite/cdf-document-search",
+  "version": "2.4.0",
+  "scripts": {
+    "start": "cd ../../ &&nx run cdf-document-search:serve",
+    "build": ".cd ../../ &&nx run cdf-document-search:build",
+    "test": "cd ../../ &&nx run cdf-document-search:test",
+    "lint": "cd ../../ &&nx run cdf-document-search:lint",
+    "lint:fix": "cd ../../ &&nx run cdf-document-search:lint --fix"
+  }
+}

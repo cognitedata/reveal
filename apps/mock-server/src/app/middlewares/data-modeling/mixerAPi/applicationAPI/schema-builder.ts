@@ -41,6 +41,8 @@ export class SchemaServiceGraphqlApiBuilder {
     scalar TimeSeries
     scalar DataPoint
     scalar DataPointValue
+    scalar File
+    scalar Sequence
 
     scalar Int64
 
