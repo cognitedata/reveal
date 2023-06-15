@@ -3,9 +3,13 @@ import { Button } from '../../../components/buttons/Button';
 import { SearchResults } from '../../../components/search/SearchResults';
 import { Table } from '../../../components/table/Table';
 import { useNavigation } from '../../../hooks/useNavigation';
-import { useSearchQueryParams } from '../../../hooks/useParams';
+import {
+  useDataTypeFilterParams,
+  useSearchQueryParams,
+} from '../../../hooks/useParams';
 import { useTranslation } from '../../../hooks/useTranslation';
 import { useFilesSearchQuery } from '../../../services/instances/file/queries/useFilesSearchQuery';
+import { buildFilesFilter } from '../../../utils/filterBuilder';
 
 import { PAGE_SIZE } from './constants';
 
@@ -19,10 +23,11 @@ export const FileResults: React.FC = () => {
   const { t } = useTranslation();
 
   const [query] = useSearchQueryParams();
+  const [filesFilterParams] = useDataTypeFilterParams('Files');
   const navigate = useNavigation();
 
   const { data, hasNextPage, fetchNextPage, isFetchingNextPage } =
-    useFilesSearchQuery(query, PAGE_SIZE);
+    useFilesSearchQuery(query, buildFilesFilter(filesFilterParams), PAGE_SIZE);
 
   return (
     <SearchResults empty={data.length === 0}>
