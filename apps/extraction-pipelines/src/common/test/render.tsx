@@ -7,7 +7,7 @@ import {
 } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-import { styleScope } from '@extraction-pipelines/styles/styleScope';
+import { styleScope } from '@extraction-pipelines/styleScope';
 
 export const render = (
   ui: React.ReactElement,
