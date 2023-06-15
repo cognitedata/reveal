@@ -1,5 +1,6 @@
 import React from 'react';
-import { useHistory, useRouteMatch } from 'react-router';
+import { useHistory } from 'react-router';
+import { useParams } from 'react-router-dom';
 
 import styled from 'styled-components';
 
@@ -37,9 +38,7 @@ const LegacyLoginFlowWarning = () => {
     hasAnyValidGroup;
 
   const history = useHistory();
-  const match = useRouteMatch<{ tenant: string; path: string }>(
-    '/:tenant/:path'
-  );
+  const params = useParams<{ tenant: string; path: string }>();
 
   const { mutate: disableLegacyLoginFlow } = useMutation(
     () =>
@@ -65,8 +64,8 @@ const LegacyLoginFlowWarning = () => {
           message: t('legacy-login-flow-disable-success'),
         });
         client.invalidateQueries(['auth-configuration']);
-        if (match?.params) {
-          history.push(`/${match.params.tenant}/${match.params.path}/oidc`);
+        if (params) {
+          history.push(`/${params.tenant}/${params.path}/oidc`);
         }
       },
       onError() {

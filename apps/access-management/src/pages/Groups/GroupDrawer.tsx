@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useRouteMatch } from 'react-router';
+import { useParams } from 'react-router-dom';
 
 import styled from 'styled-components';
 
@@ -28,7 +28,7 @@ export default function GroupDrawer({ group, onClose }: Props) {
   const client = useQueryClient();
   const { data: groups = [] } = useGroups(true);
   const [caps, setCaps] = useState(group?.capabilities || []);
-  const tenant = useRouteMatch<{ tenant: string }>('/:tenant')?.params.tenant;
+  const tenant = useParams<{ tenant: string }>().tenant;
 
   const { mutateAsync: updateGroup, isLoading } = useUpdateGroup({
     onMutate() {
