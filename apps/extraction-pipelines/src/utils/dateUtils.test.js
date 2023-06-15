@@ -20,7 +20,6 @@ describe('dateUtils', () => {
   ];
   cases.forEach(({ desc, value, numberOfDays, expected }) => {
     test(`isDateDiffLessThanDays - ${desc}`, () => {
-      // @ts-ignore
       const res = isDateDiffLessThanDays(value, numberOfDays, 'days');
       expect(res).toEqual(expected);
     });

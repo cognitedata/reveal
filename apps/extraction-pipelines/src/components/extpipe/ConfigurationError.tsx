@@ -1,6 +1,9 @@
 import React from 'react';
-import { useTranslation } from '@extraction-pipelines/common';
+
 import styled from 'styled-components';
+
+import { useTranslation } from '@extraction-pipelines/common';
+
 import { Button } from '@cognite/cogs.js';
 import { CogniteError } from '@cognite/sdk';
 

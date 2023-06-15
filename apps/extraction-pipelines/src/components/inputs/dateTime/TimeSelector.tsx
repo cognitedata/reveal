@@ -1,8 +1,9 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import styled from 'styled-components';
-import { DivFlex } from '@extraction-pipelines/components/styled';
 import { OptionTypeBase } from 'react-select';
-import { Button, Colors, Input, Range, Select } from '@cognite/cogs.js';
+
+import styled from 'styled-components';
+
+import { useTranslation } from '@extraction-pipelines/common';
 import {
   createDateFromTimeChange,
   createHalfHourOptions,
@@ -10,17 +11,17 @@ import {
   parseTimeString,
   rangeToTwoDigitString,
 } from '@extraction-pipelines/components/inputs/dateTime/TimeSelectorUtils';
+import { DivFlex } from '@extraction-pipelines/components/styled';
 import {
   updateDateRangeAction,
   useRunFilterContext,
 } from '@extraction-pipelines/hooks/runs/RunsFilterContext';
-import { useTranslation } from '@extraction-pipelines/common';
 
-interface TimeSelectorProps {}
+import { Button, Colors, Input, Range, Select } from '@cognite/cogs.js';
 
 export type Time = { hours: number; min: number };
 
-export const TimeSelector: FunctionComponent<TimeSelectorProps> = () => {
+export const TimeSelector: FunctionComponent = () => {
   const { t } = useTranslation();
   const {
     state: { dateRange },

@@ -1,13 +1,16 @@
 import React, { FunctionComponent, useState } from 'react';
-import { Extpipe } from '@extraction-pipelines/model/Extpipe';
-import { RawEditModal } from '@extraction-pipelines/components/modals/RawEditModal';
-import { TEST_ID_BTN_SAVE } from '@extraction-pipelines/components/extpipe/DocumentationSection';
-import { useSelectedExtpipe } from '@extraction-pipelines/hooks/useExtpipe';
-import { Body, Button, Colors, Flex, Icon } from '@cognite/cogs.js';
+
 import styled from 'styled-components';
-import Section from '@extraction-pipelines/components/section';
-import { createLink } from '@cognite/cdf-utilities';
+
 import { useTranslation } from '@extraction-pipelines/common';
+import { TEST_ID_BTN_SAVE } from '@extraction-pipelines/components/extpipe/DocumentationSection';
+import { RawEditModal } from '@extraction-pipelines/components/modals/RawEditModal';
+import Section from '@extraction-pipelines/components/section';
+import { useSelectedExtpipe } from '@extraction-pipelines/hooks/useExtpipe';
+import { Extpipe } from '@extraction-pipelines/model/Extpipe';
+
+import { createLink } from '@cognite/cdf-utilities';
+import { Body, Button, Colors, Flex, Icon } from '@cognite/cogs.js';
 
 const RawTableWrapper = styled.div`
   display: flex;

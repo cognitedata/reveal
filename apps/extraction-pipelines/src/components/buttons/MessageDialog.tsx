@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Icon, Title } from '@cognite/cogs.js';
+
 import styled from 'styled-components';
+
+import { useTranslation } from '@extraction-pipelines/common';
 import { ErrorIcon } from '@extraction-pipelines/components/icons/ErrorIcon';
 import { StyledTooltip } from '@extraction-pipelines/components/styled';
-import { useTranslation } from '@extraction-pipelines/common';
+
+import { Button, Icon, Title } from '@cognite/cogs.js';
 interface MessageDialogProps {
   visible: boolean;
   title: string;

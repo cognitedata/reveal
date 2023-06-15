@@ -1,5 +1,7 @@
 import React from 'react';
+
 import { Button } from '@cognite/cogs.js';
+
 import {
   ConfirmDialogButton,
   ConfirmDialogButtonProps,

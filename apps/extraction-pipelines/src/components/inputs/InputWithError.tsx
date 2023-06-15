@@ -1,8 +1,11 @@
 import React, { FunctionComponent } from 'react';
 import { DeepMap, FieldError } from 'react-hook-form';
+
 import styled from 'styled-components';
-import { InputWithRefProps, InputWithRef } from './InputWithRef';
+
 import ValidationError from '../form/ValidationError';
+
+import { InputWithRefProps, InputWithRef } from './InputWithRef';
 
 const InputError = styled.div`
   display: grid;

@@ -1,19 +1,13 @@
 import React, { FunctionComponent, useState } from 'react';
-import styled from 'styled-components';
-import { ContactBtnTestIds } from '@extraction-pipelines/utils/constants';
 import { FieldErrors, useForm } from 'react-hook-form';
-import ValidationError from '@extraction-pipelines/components/form/ValidationError';
-import {
-  createUpdateSpec,
-  useDetailsUpdate,
-} from '@extraction-pipelines/hooks/details/useDetailsUpdate';
-import { useSelectedExtpipe } from '@extraction-pipelines/hooks/useExtpipe';
-import {
-  documentationSchema,
-  MAX_DOCUMENTATION_LENGTH,
-} from '@extraction-pipelines/utils/validation/extpipeSchemas';
+
+import styled from 'styled-components';
+
+import { useTranslation } from '@extraction-pipelines/common';
 import MessageDialog from '@extraction-pipelines/components/buttons/MessageDialog';
-import { yupResolver } from '@hookform/resolvers/yup';
+import ValidationError from '@extraction-pipelines/components/form/ValidationError';
+import { MarkdownView } from '@extraction-pipelines/components/markDown/MarkdownView';
+import Section from '@extraction-pipelines/components/section';
 import {
   bottomSpacing,
   CountSpan,
@@ -21,12 +15,21 @@ import {
   Hint,
   StyledTextArea,
 } from '@extraction-pipelines/components/styled';
-import { MarkdownView } from '@extraction-pipelines/components/markDown/MarkdownView';
-import { A, Button, Flex } from '@cognite/cogs.js';
-import Section from '@extraction-pipelines/components/section';
+import {
+  createUpdateSpec,
+  useDetailsUpdate,
+} from '@extraction-pipelines/hooks/details/useDetailsUpdate';
+import { useSelectedExtpipe } from '@extraction-pipelines/hooks/useExtpipe';
+import { ContactBtnTestIds } from '@extraction-pipelines/utils/constants';
 import { trackUsage } from '@extraction-pipelines/utils/Metrics';
-import { useTranslation } from '@extraction-pipelines/common';
 import { MASTERING_MARKDOWN_LINK } from '@extraction-pipelines/utils/utils';
+import {
+  documentationSchema,
+  MAX_DOCUMENTATION_LENGTH,
+} from '@extraction-pipelines/utils/validation/extpipeSchemas';
+import { yupResolver } from '@hookform/resolvers/yup';
+
+import { A, Button, Flex } from '@cognite/cogs.js';
 
 export const TEST_ID_BTN_SAVE: Readonly<string> = 'btn-save-';
 interface DocumentationSectionProps {
@@ -71,12 +74,14 @@ export const DocumentationSection: FunctionComponent<
       await mutate(mutateObj, {
         onError: (error) => {
           trackUsage({ t: 'EditField.Rejected', field: 'documentation' });
-          setError('server', {
-            type: 'server',
-            message: error?.message,
-            //@ts-ignore
-            shouldFocus: true,
-          });
+          setError(
+            'server',
+            {
+              type: 'server',
+              message: error?.message,
+            },
+            { shouldFocus: true }
+          );
         },
         onSuccess: () => {
           trackUsage({ t: 'EditField.Completed', field: 'documentation' });

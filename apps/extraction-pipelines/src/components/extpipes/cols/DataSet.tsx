@@ -1,9 +1,11 @@
 import React from 'react';
+
 import { useTranslation } from '@extraction-pipelines/common';
-import { useDataSet } from '@extraction-pipelines/hooks/dataSet';
-import { Body, Icon, Tooltip } from '@cognite/cogs.js';
 import Link from '@extraction-pipelines/components/links/Link';
+import { useDataSet } from '@extraction-pipelines/hooks/dataSet';
+
 import { createLink } from '@cognite/cdf-utilities';
+import { Body, Icon, Tooltip } from '@cognite/cogs.js';
 
 type Props = {
   dataSetId: number;

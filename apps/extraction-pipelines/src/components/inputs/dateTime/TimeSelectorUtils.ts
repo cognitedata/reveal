@@ -1,6 +1,7 @@
-import moment from 'moment';
-import { Range } from '@cognite/cogs.js';
 import { Time } from '@extraction-pipelines/components/inputs/dateTime/TimeSelector';
+import moment from 'moment';
+
+import { Range } from '@cognite/cogs.js';
 
 export const createHalfHourOptions = () => {
   return Array.from(

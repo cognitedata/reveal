@@ -3,9 +3,9 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { JobsTable } from '@extraction-pipelines/components/jobs-table/JobsTable';
+import { MessageHistoryChart } from '@extraction-pipelines/components/message-history-chart/MessageHistoryChart';
 import { MQTTSourceWithJobMetrics } from '@extraction-pipelines/hooks/hostedExtractors';
 import { PAGE_WIDTH } from '@extraction-pipelines/utils/constants';
-import { MessageHistoryChart } from '@extraction-pipelines/components/message-history-chart/MessageHistoryChart';
 
 type HostedExtractionPipelineInsightProps = {
   source: MQTTSourceWithJobMetrics;

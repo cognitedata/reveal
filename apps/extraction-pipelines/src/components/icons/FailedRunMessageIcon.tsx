@@ -1,10 +1,6 @@
 import React, { FunctionComponent } from 'react';
 
-interface FailedRunMessageIconProps {}
-
-export const FailedRunMessageIcon: FunctionComponent<
-  FailedRunMessageIconProps
-> = () => {
+export const FailedRunMessageIcon: FunctionComponent = () => {
   return (
     <svg
       width="20"

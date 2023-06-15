@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+
 import { Colors } from '@cognite/cogs.js';
 
 export const PaddedGridForm = styled.form`

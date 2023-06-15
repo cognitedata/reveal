@@ -1,4 +1,11 @@
 import React, { FunctionComponent, PropsWithoutRef } from 'react';
+
+import styled from 'styled-components';
+
+import { useTranslation } from '@extraction-pipelines/common';
+import { useRuns } from '@extraction-pipelines/hooks/useRuns';
+import { RunStatus } from '@extraction-pipelines/model/Runs';
+
 import {
   Body,
   Colors,
@@ -8,11 +15,8 @@ import {
   Chip,
   ChipProps,
 } from '@cognite/cogs.js';
-import { useTranslation } from '@extraction-pipelines/common';
-import { RunStatus } from '@extraction-pipelines/model/Runs';
-import { useRuns } from '@extraction-pipelines/hooks/useRuns';
+
 import RelativeTimeWithTooltip from './RelativeTimeWithTooltip';
-import styled from 'styled-components';
 
 interface OwnProps {
   id?: string;

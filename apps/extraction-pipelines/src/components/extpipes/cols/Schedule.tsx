@@ -1,9 +1,11 @@
 import React, { FunctionComponent, PropsWithoutRef } from 'react';
+
 import styled from 'styled-components';
-import { parseCron } from '@extraction-pipelines/utils/cronUtils';
+
+import { TranslationKeys, useTranslation } from '@extraction-pipelines/common';
 import InteractiveCopy from '@extraction-pipelines/components/InteractiveCopy/InteractiveCopy';
 import { StyledTooltip } from '@extraction-pipelines/components/styled';
-import { TranslationKeys, useTranslation } from '@extraction-pipelines/common';
+import { parseCron } from '@extraction-pipelines/utils/cronUtils';
 interface OwnProps {
   id: string;
   schedule?: string;

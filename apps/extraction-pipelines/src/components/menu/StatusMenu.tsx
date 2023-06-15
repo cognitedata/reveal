@@ -1,10 +1,13 @@
-import { StyledDropdown } from '@extraction-pipelines/components/styled';
-import { Button, Chip, Colors, Menu } from '@cognite/cogs.js';
 import React, { PropsWithoutRef } from 'react';
-import StatusMarker from '@extraction-pipelines/components/extpipes/cols/StatusMarker';
+
 import styled from 'styled-components';
+
 import { useTranslation } from '@extraction-pipelines/common';
+import StatusMarker from '@extraction-pipelines/components/extpipes/cols/StatusMarker';
+import { StyledDropdown } from '@extraction-pipelines/components/styled';
 import { RunStatus } from '@extraction-pipelines/model/Runs';
+
+import { Button, Chip, Colors, Menu } from '@cognite/cogs.js';
 export interface StatusMenuProps {
   setSelected: (status?: RunStatus) => void;
   selected?: RunStatus;
@@ -59,7 +62,7 @@ const StatusMenuContent = ({
         aria-selected={selected === 'failure'}
         data-testid="status-menu-item-fail"
       >
-        <StatusMarker status={'failure'} dataTestId="status-menu-fail" />
+        <StatusMarker status="failure" dataTestId="status-menu-fail" />
       </Menu.Item>
       <Menu.Item
         onClick={onClick('success')}
@@ -67,7 +70,7 @@ const StatusMenuContent = ({
         aria-selected={selected === 'success'}
         data-testid="status-menu-item-ok"
       >
-        <StatusMarker status={'success'} dataTestId="status-menu-ok" />
+        <StatusMarker status="success" dataTestId="status-menu-ok" />
       </Menu.Item>
       <Menu.Item
         onClick={onClick()}

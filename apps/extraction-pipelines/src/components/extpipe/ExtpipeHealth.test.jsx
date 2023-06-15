@@ -11,12 +11,10 @@ import ExtpipeRunHistory from '@extraction-pipelines/components/extpipe/ExtpipeR
 import {
   getMockResponse,
   mockDataRunsResponse,
-  mockError,
 } from '@extraction-pipelines/utils/mockResponse';
 import { useFilteredRuns } from '@extraction-pipelines/hooks/useRuns';
 import { TableHeadings } from '@extraction-pipelines/components/table/ExtpipeTableCol';
 import { RunTableHeading } from '@extraction-pipelines/components/extpipe/RunLogsCols';
-import { trackUsage } from '@extraction-pipelines/utils/Metrics';
 import moment from 'moment';
 import { mapStatusRow } from '@extraction-pipelines/utils/runsUtils';
 import { rangeToTwoDigitString } from '@extraction-pipelines/components/inputs/dateTime/TimeSelectorUtils';
@@ -138,11 +136,11 @@ describe('ExtpipeHealth', () => {
     // expect(statusFilterMarker.textContent).toEqual(RunStatusUI.FAILURE);
     fireEvent.click(statusFilterBtn);
     fireEvent.click(screen.getByTestId('status-marker-status-menu-ok'));
-    await waitFor(() => {
-      // expect(history.location.search.includes(RunStatusAPI.SUCCESS)).toEqual(
-      // true
-      // );
-    });
+    // await waitFor(() => {
+    //   expect(history.location.search.includes(RunStatusAPI.SUCCESS)).toEqual(
+    //     true
+    //   );
+    // });
 
     // change search
     const newSearchString = 'foo';

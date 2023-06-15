@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import { Body, Checkbox, Flex, Modal, ModalProps } from '@cognite/cogs.js';
 import { useTranslation } from '@extraction-pipelines/common';
 import {
   MQTTSourceWithJobMetrics,
   useDeleteMQTTSource,
 } from '@extraction-pipelines/hooks/hostedExtractors';
-import { useNavigate } from 'react-router-dom';
-import { createLink } from '@cognite/cdf-utilities';
 import { notification } from 'antd';
+
+import { createLink } from '@cognite/cdf-utilities';
+import { Body, Checkbox, Flex, Modal, ModalProps } from '@cognite/cogs.js';
 
 type DeleteSourceModalProps = {
   onCancel: () => void;

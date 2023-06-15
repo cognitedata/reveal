@@ -1,6 +1,8 @@
-import styled from 'styled-components';
-import { Colors, Icon } from '@cognite/cogs.js';
 import { NavLink } from 'react-router-dom';
+
+import styled from 'styled-components';
+
+import { Colors, Icon } from '@cognite/cogs.js';
 
 export const StyledTitleCard = styled.h2`
   display: flex;

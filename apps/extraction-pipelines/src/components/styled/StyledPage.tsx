@@ -1,5 +1,6 @@
-import { Colors, Flex } from '@cognite/cogs.js';
 import styled from 'styled-components';
+
+import { Colors, Flex } from '@cognite/cogs.js';
 
 export const PAGE_MARGIN = '1.5rem';
 

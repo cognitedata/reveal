@@ -1,6 +1,26 @@
 import React, { Suspense, useEffect } from 'react';
+import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+
+import { ThemeProvider } from 'styled-components';
+
+import { translations } from '@extraction-pipelines/common/i18n';
+import { AppEnvProvider } from '@extraction-pipelines/hooks/useAppEnv';
+import CreateExtpipe from '@extraction-pipelines/pages/create/CreateExtpipe';
+import ExtpipePage from '@extraction-pipelines/pages/Extpipe/ExtpipePage';
+import Extpipes from '@extraction-pipelines/pages/Extpipes/Extpipes';
+import { HostedExtractionPipelineDetails } from '@extraction-pipelines/pages/hosted-extraction-pipeline/HostedExtractionPipelineDetails';
+import antdTheme from '@extraction-pipelines/styles/antd-theme.less';
+import GlobalStyles from '@extraction-pipelines/styles/GlobalStyles';
+import rootStyles from '@extraction-pipelines/styles/index.css';
+import theme from '@extraction-pipelines/styles/theme';
+import { EXTRACTION_PIPELINES } from '@extraction-pipelines/utils/constants';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import isObject from 'lodash/isObject';
+import collapseStyle from 'rc-collapse/assets/index.css';
+
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
-import { FlagProvider } from '@cognite/react-feature-flags';
+import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
 import {
   AuthWrapper,
   getEnv,
@@ -8,32 +28,11 @@ import {
   SubAppWrapper,
 } from '@cognite/cdf-utilities';
 import { Loader, ToastContainer } from '@cognite/cogs.js';
-import { SDKProvider } from '@cognite/sdk-provider';
-import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-
-import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
-
-import { translations } from '@extraction-pipelines/common/i18n';
-
-import { ThemeProvider } from 'styled-components';
-import AppScopeStyles from './styles';
-import GlobalStyles from '@extraction-pipelines/styles/GlobalStyles';
-import theme from '@extraction-pipelines/styles/theme';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
-import collapseStyle from 'rc-collapse/assets/index.css';
-import rootStyles from '@extraction-pipelines/styles/index.css';
-import antdTheme from '@extraction-pipelines/styles/antd-theme.less';
+import { FlagProvider } from '@cognite/react-feature-flags';
+import { SDKProvider } from '@cognite/sdk-provider';
 
-import { EXTRACTION_PIPELINES } from '@extraction-pipelines/utils/constants';
-import { AppEnvProvider } from '@extraction-pipelines/hooks/useAppEnv';
-import isObject from 'lodash/isObject';
-
-import CreateExtpipe from '@extraction-pipelines/pages/create/CreateExtpipe';
-import ExtpipePage from '@extraction-pipelines/pages/Extpipe/ExtpipePage';
-import Extpipes from '@extraction-pipelines/pages/Extpipes/Extpipes';
-import { HostedExtractionPipelineDetails } from '@extraction-pipelines/pages/hosted-extraction-pipeline/HostedExtractionPipelineDetails';
+import AppScopeStyles from './styles';
 
 const queryClient = new QueryClient({
   defaultOptions: {

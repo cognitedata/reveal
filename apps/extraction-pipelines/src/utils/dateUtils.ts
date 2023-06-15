@@ -1,6 +1,7 @@
-import moment from 'moment';
-import { Range } from '@cognite/cogs.js';
 import { QuickFilterType } from '@extraction-pipelines/components/table/QuickDateTimeFilters';
+import moment from 'moment';
+
+import { Range } from '@cognite/cogs.js';
 
 export const isDateDiffLessThanDays = (
   lastUpdatedTime: number,

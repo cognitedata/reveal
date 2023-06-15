@@ -1,4 +1,5 @@
 import React, { FunctionComponent } from 'react';
+
 import { TimeDisplay } from '../../TimeDisplay/TimeDisplay';
 
 interface OwnProps {

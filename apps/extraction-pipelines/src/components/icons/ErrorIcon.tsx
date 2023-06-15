@@ -1,6 +1,8 @@
-import styled from 'styled-components';
-import { Icon } from '@cognite/cogs.js';
 import React from 'react';
+
+import styled from 'styled-components';
+
+import { Icon } from '@cognite/cogs.js';
 
 interface ErrorIconProps {
   width: string;

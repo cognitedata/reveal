@@ -1,6 +1,7 @@
-import { Input } from '@cognite/cogs.js';
 import React, { FC, PropsWithChildren } from 'react';
 import { Control, Controller, UseControllerProps } from 'react-hook-form';
+
+import { Input } from '@cognite/cogs.js';
 
 export interface InputControllerProps
   extends Pick<UseControllerProps, 'name' | 'defaultValue'> {

@@ -1,10 +1,14 @@
 import React, { FunctionComponent } from 'react';
-import { Colors } from '@cognite/cogs.js';
-import styled from 'styled-components';
 import { DeepMap, FieldError } from 'react-hook-form';
+
+import styled from 'styled-components';
+
+import { Colors } from '@cognite/cogs.js';
+
 import ValidationError from '../form/ValidationError';
-import { InputWithRefProps, InputWithRef } from './InputWithRef';
 import { InputWarningIcon } from '../icons/InputWarningIcon';
+
+import { InputWithRefProps, InputWithRef } from './InputWithRef';
 
 export const InputWarningError = styled((props) => (
   <div {...props}>{props.children}</div>

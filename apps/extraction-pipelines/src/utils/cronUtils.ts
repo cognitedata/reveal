@@ -1,6 +1,6 @@
-import { toString as cronstureToString } from 'cronstrue';
-import { SupportedScheduleStrings } from '@extraction-pipelines/components/extpipes/cols/Schedule';
 import { ScheduleFormInput } from '@extraction-pipelines/components/extpipe/edit/Schedule';
+import { SupportedScheduleStrings } from '@extraction-pipelines/components/extpipes/cols/Schedule';
+import { toString as cronstureToString } from 'cronstrue';
 
 export const parseCron = (cron: string) => {
   return cronstureToString(cron);

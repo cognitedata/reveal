@@ -1,11 +1,12 @@
-import moment from 'moment';
-import { User } from '@extraction-pipelines/model/User';
 import { DetailFieldNames } from '@extraction-pipelines/model/Extpipe';
-import { toCamelCase } from '@extraction-pipelines/utils/primitivesUtils';
-import { mapScheduleInputToScheduleValue } from '@extraction-pipelines/utils/cronUtils';
-import { AddExtpipeFormInput } from '@extraction-pipelines/pages/create/CreateExtpipe';
-import { Range } from '@cognite/cogs.js';
 import { RunStatus } from '@extraction-pipelines/model/Runs';
+import { User } from '@extraction-pipelines/model/User';
+import { AddExtpipeFormInput } from '@extraction-pipelines/pages/create/CreateExtpipe';
+import { mapScheduleInputToScheduleValue } from '@extraction-pipelines/utils/cronUtils';
+import { toCamelCase } from '@extraction-pipelines/utils/primitivesUtils';
+import moment from 'moment';
+
+import { Range } from '@cognite/cogs.js';
 
 export const calculateLatest = (timesStampsInMs: number[]): number => {
   if (timesStampsInMs.length === 0) {

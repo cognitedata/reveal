@@ -1,4 +1,21 @@
 import React, { useState } from 'react';
+
+import styled from 'styled-components';
+
+import { useTranslation } from '@extraction-pipelines/common';
+import FormFieldRadioGroup from '@extraction-pipelines/components/form-field-radio-group/FormFieldRadioGroup';
+import FormFieldWrapper from '@extraction-pipelines/components/form-field-wrapper/FormFieldWrapper';
+import {
+  MQTTDestinationType,
+  MQTTFormat,
+  MQTTSourceWithJobMetrics,
+  useCreateMQTTDestination,
+  useCreateMQTTJob,
+  useMQTTDestinations,
+} from '@extraction-pipelines/hooks/hostedExtractors';
+import { Select, notification } from 'antd';
+import { FormikErrors, useFormik } from 'formik';
+
 import {
   Body,
   Button,
@@ -8,21 +25,6 @@ import {
   Modal,
   ModalProps,
 } from '@cognite/cogs.js';
-import { Select, notification } from 'antd';
-import { FormikErrors, useFormik } from 'formik';
-import styled from 'styled-components';
-
-import { useTranslation } from '@extraction-pipelines/common';
-import FormFieldRadioGroup from '@extraction-pipelines/components/form-field-radio-group/FormFieldRadioGroup';
-import {
-  MQTTDestinationType,
-  MQTTFormat,
-  MQTTSourceWithJobMetrics,
-  useCreateMQTTDestination,
-  useCreateMQTTJob,
-  useMQTTDestinations,
-} from '@extraction-pipelines/hooks/hostedExtractors';
-import FormFieldWrapper from '@extraction-pipelines/components/form-field-wrapper/FormFieldWrapper';
 
 const MQTT_DESTINATION_TYPE_OPTIONS: {
   label: string;
@@ -135,56 +137,56 @@ export const CreateJobsModal = ({
         destinationOption: 'use-existing',
         type: 'datapoints',
       },
-      onSubmit: async (values) => {
-        if (!values.topicFilters || values.topicFilters.length === 0) {
+      onSubmit: async (val) => {
+        if (!val.topicFilters || val.topicFilters.length === 0) {
           return;
         }
 
         let destinationExternalId: string | undefined = undefined;
         if (
-          values.destinationOption === 'use-existing' &&
-          values.selectedDestinationExternalId
+          val.destinationOption === 'use-existing' &&
+          val.selectedDestinationExternalId
         ) {
-          destinationExternalId = values.selectedDestinationExternalId;
+          destinationExternalId = val.selectedDestinationExternalId;
         } else if (
-          values.destinationOption === 'client-credentials' &&
-          values.clientId &&
-          values.clientSecret &&
-          values.destinationExternalIdToCreate &&
-          values.type
+          val.destinationOption === 'client-credentials' &&
+          val.clientId &&
+          val.clientSecret &&
+          val.destinationExternalIdToCreate &&
+          val.type
         ) {
           const destination = await createDestination({
             credentials: {
-              clientId: values.clientId,
-              clientSecret: values.clientSecret,
+              clientId: val.clientId,
+              clientSecret: val.clientSecret,
             },
-            externalId: values.destinationExternalIdToCreate,
-            type: values.type,
+            externalId: val.destinationExternalIdToCreate,
+            type: val.type,
           });
           destinationExternalId = destination.externalId;
         } else if (
-          values.destinationOption === 'current-user' &&
-          values.destinationExternalIdToCreate &&
-          values.type
+          val.destinationOption === 'current-user' &&
+          val.destinationExternalIdToCreate &&
+          val.type
         ) {
           const destination = await createDestination({
             credentials: {
               tokenExchange: true,
             },
-            externalId: values.destinationExternalIdToCreate,
-            type: values.type,
+            externalId: val.destinationExternalIdToCreate,
+            type: val.type,
           });
           destinationExternalId = destination.externalId;
         }
 
         if (destinationExternalId) {
           await Promise.all(
-            values.topicFilters.map((topicFilter) => {
+            val.topicFilters.map((topicFilter) => {
               return createJob({
                 destinationId: destinationExternalId!,
-                externalId: `${source.externalId}-${values.selectedDestinationExternalId}-${topicFilter}`,
+                externalId: `${source.externalId}-${val.selectedDestinationExternalId}-${topicFilter}`,
                 format: {
-                  type: values.format ?? 'cognite',
+                  type: val.format ?? 'cognite',
                 },
                 sourceId: source.externalId,
                 topicFilter,

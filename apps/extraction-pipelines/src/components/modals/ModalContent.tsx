@@ -1,4 +1,5 @@
 import React, { PropsWithChildren } from 'react';
+
 import { ModalFooter, ModalFooterProps } from './ModalFooter';
 
 export interface ModalContentProps extends ModalFooterProps {

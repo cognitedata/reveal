@@ -1,5 +1,6 @@
-import { CogniteError } from '@cognite/sdk';
 import { FieldValues } from 'react-hook-form';
+
+import { CogniteError } from '@cognite/sdk';
 
 export const translateServerErrorMessage = <TFieldValues extends FieldValues>(
   data: CogniteError | undefined,

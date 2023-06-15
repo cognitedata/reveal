@@ -1,13 +1,16 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import { Colors, Range } from '@cognite/cogs.js';
-import moment from 'moment';
-import { DivFlex } from '@extraction-pipelines/components/styled';
+
 import styled from 'styled-components';
+
+import { DivFlex } from '@extraction-pipelines/components/styled';
 import {
   updateDateRangeAction,
   useRunFilterContext,
 } from '@extraction-pipelines/hooks/runs/RunsFilterContext';
 import { findSelectedRangeOption } from '@extraction-pipelines/utils/dateUtils';
+import moment from 'moment';
+
+import { Colors, Range } from '@cognite/cogs.js';
 
 export const HOURS_1: Readonly<string> = '1H';
 export const HOURS_24: Readonly<string> = '24H';
@@ -63,14 +66,11 @@ export const quickFilterOptions = (): ReadonlyArray<QuickFilterType> => {
     },
   ];
 };
-interface QuickDateTimeFiltersProps {}
 
 export interface QuickFilterType extends Range {
   label: string;
 }
-export const QuickDateTimeFilters: FunctionComponent<
-  QuickDateTimeFiltersProps
-> = () => {
+export const QuickDateTimeFilters: FunctionComponent = () => {
   const {
     state: { dateRange },
     dispatch,

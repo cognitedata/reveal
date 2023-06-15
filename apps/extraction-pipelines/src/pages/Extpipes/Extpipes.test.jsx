@@ -2,7 +2,6 @@ import { screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import { useSDK } from '@cognite/sdk-provider';
 import { QueryClient } from '@tanstack/react-query';
-import { act } from '@testing-library/react-hooks';
 import Extpipes from '@extraction-pipelines/pages/Extpipes/Extpipes';
 import { render } from '@extraction-pipelines/utils/test';
 import {
@@ -51,19 +50,17 @@ describe('Extpipes', () => {
     const queryCache = new QueryClient({
       defaultOptions: { queries: { retry: false } },
     });
-    await act(async () => {
-      const { wrapper } = renderWithReQueryCacheSelectedExtpipeContext(
-        queryCache,
-        ORIGIN_DEV,
-        PROJECT_ITERA_INT_GREEN,
-        CDF_ENV_GREENFIELD
-      );
-      render(<Extpipes />, { wrapper });
-      const errorMessage = await screen.findByText(
-        /No extraction pipelines have been added yet./i
-      );
-      expect(errorMessage).toBeInTheDocument();
-    });
+    const { wrapper } = renderWithReQueryCacheSelectedExtpipeContext(
+      queryCache,
+      ORIGIN_DEV,
+      PROJECT_ITERA_INT_GREEN,
+      CDF_ENV_GREENFIELD
+    );
+    render(<Extpipes />, { wrapper });
+    const errorMessage = await screen.findByText(
+      /No extraction pipelines have been added yet./i
+    );
+    expect(errorMessage).toBeInTheDocument();
   });
 
   test.skip('Render error on fail', async () => {
@@ -73,18 +70,16 @@ describe('Extpipes', () => {
     const queryCache = new QueryClient({
       defaultOptions: { queries: { retry: false } },
     });
-    await act(async () => {
-      const { wrapper } = renderWithReQueryCacheSelectedExtpipeContext(
-        queryCache,
-        ORIGIN_DEV,
-        PROJECT_ITERA_INT_GREEN,
-        CDF_ENV_GREENFIELD
-      );
-      render(<Extpipes />, { wrapper });
-      const errorMessage = await screen.findByText(
-        unauthorizedError.data.message
-      );
-      expect(errorMessage).toBeInTheDocument();
-    });
+    const { wrapper } = renderWithReQueryCacheSelectedExtpipeContext(
+      queryCache,
+      ORIGIN_DEV,
+      PROJECT_ITERA_INT_GREEN,
+      CDF_ENV_GREENFIELD
+    );
+    render(<Extpipes />, { wrapper });
+    const errorMessage = await screen.findByText(
+      unauthorizedError.data.message
+    );
+    expect(errorMessage).toBeInTheDocument();
   });
 });

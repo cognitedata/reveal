@@ -1,7 +1,8 @@
-import { Colors, Elevations } from '@cognite/cogs.js';
 import React from 'react';
 
 import styled from 'styled-components';
+
+import { Colors, Elevations } from '@cognite/cogs.js';
 
 type BoxProps = {
   children: React.ReactNode;

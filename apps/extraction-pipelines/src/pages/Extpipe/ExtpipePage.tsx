@@ -1,28 +1,22 @@
 import React, { FunctionComponent } from 'react';
-import { useParams } from 'react-router';
-import { Loader } from '@cognite/cogs.js';
+import { useParams, Route, Routes } from 'react-router-dom';
 
-import { Route, Routes } from 'react-router-dom';
-
-import { useSelectedExtpipe } from '@extraction-pipelines/hooks/useExtpipe';
+import { useTranslation } from '@extraction-pipelines/common';
+import { ErrorBox } from '@extraction-pipelines/components/error/ErrorBox';
+import ConfigurationRevision from '@extraction-pipelines/components/extpipe/ConfigurationRevision';
 import { ExtpipeDetails } from '@extraction-pipelines/components/extpipe/ExtpipeDetails';
+import ExtpipeRunHistory from '@extraction-pipelines/components/extpipe/ExtpipeRunHistory';
+import { ExtpipeBreadcrumbs } from '@extraction-pipelines/components/navigation/breadcrumbs/ExtpipeBreadcrumbs';
+import { RunFilterProvider } from '@extraction-pipelines/hooks/runs/RunsFilterContext';
+import { useSelectedExtpipe } from '@extraction-pipelines/hooks/useExtpipe';
 import {
   HEALTH_PATH,
   RouterParams,
 } from '@extraction-pipelines/routing/RoutingConfig';
-import ExtpipeRunHistory from '@extraction-pipelines/components/extpipe/ExtpipeRunHistory';
 
-import { RunFilterProvider } from '@extraction-pipelines/hooks/runs/RunsFilterContext';
-import { ExtpipeBreadcrumbs } from '@extraction-pipelines/components/navigation/breadcrumbs/ExtpipeBreadcrumbs';
+import { Loader } from '@cognite/cogs.js';
 
-import { ErrorBox } from '@extraction-pipelines/components/error/ErrorBox';
-
-import { useTranslation } from '@extraction-pipelines/common';
-import ConfigurationRevision from '@extraction-pipelines/components/extpipe/ConfigurationRevision';
-
-interface ExtpipePageProps {}
-
-const ExtpipePageComponent: FunctionComponent<ExtpipePageProps> = () => {
+const ExtpipePageComponent: FunctionComponent = () => {
   const { t } = useTranslation();
   const { id } = useParams<RouterParams>();
 
@@ -49,10 +43,7 @@ const ExtpipePageComponent: FunctionComponent<ExtpipePageProps> = () => {
         <Routes>
           <Route path="/" element={<ExtpipeDetails />} />
           <Route path={`/${HEALTH_PATH}`} element={<ExtpipeRunHistory />} />
-          <Route
-            path={`/config/:revision`}
-            element={<ConfigurationRevision />}
-          />
+          <Route path="/config/:revision" element={<ConfigurationRevision />} />
         </Routes>
       </div>
     </RunFilterProvider>

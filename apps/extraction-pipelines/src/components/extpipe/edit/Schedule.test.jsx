@@ -11,7 +11,6 @@ import { TableHeadings } from '@extraction-pipelines/components/table/ExtpipeTab
 import React from 'react';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { parseCron } from '@extraction-pipelines/utils/cronUtils';
-import { CRON_LABEL } from '@extraction-pipelines/components/inputs/cron/CronInput';
 import { CLOSE } from '@extraction-pipelines/utils/constants';
 
 describe('Schedule', () => {
@@ -40,13 +39,13 @@ describe('Schedule', () => {
     await waitFor(() => {
       screen.getByText(TableHeadings.SCHEDULE);
     });
-    expect(screen.getByTestId('cron-title')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('cron-title')).not.toBeInTheDocument();
     expect(screen.getByText(parseCron(mock.schedule))).toBeInTheDocument();
     const scheduleSelect = screen.getByText(parseCron(mock.schedule));
     fireEvent.click(scheduleSelect);
     expect(screen.getByTestId('cron-title')).toBeInTheDocument();
     fireEvent.click(screen.getByLabelText(CLOSE));
-    expect(screen.getByTestId('cron-title')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('cron-title')).not.toBeInTheDocument();
   });
 
   test.skip('Show add when no schedule value', async () => {

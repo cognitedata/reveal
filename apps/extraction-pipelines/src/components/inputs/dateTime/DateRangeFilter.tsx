@@ -1,12 +1,15 @@
 import React, { FunctionComponent } from 'react';
-import { DivFlex } from '@extraction-pipelines/components/styled';
+
 import styled from 'styled-components';
-import { Colors, DateRange, Range } from '@cognite/cogs.js';
+
 import { createDateWithTime } from '@extraction-pipelines/components/inputs/dateTime/TimeSelectorUtils';
+import { DivFlex } from '@extraction-pipelines/components/styled';
 import {
   updateDateRangeAction,
   useRunFilterContext,
 } from '@extraction-pipelines/hooks/runs/RunsFilterContext';
+
+import { Colors, DateRange, Range } from '@cognite/cogs.js';
 
 const Wrapper = styled(DivFlex)`
   .extpipes-ui-style-scope {
@@ -18,9 +21,7 @@ const Wrapper = styled(DivFlex)`
     border: 1px solid ${Colors['decorative--grayscale--500']};
   }
 `;
-interface DateRangeFilterProps {}
-
-export const DateRangeFilter: FunctionComponent<DateRangeFilterProps> = () => {
+export const DateRangeFilter: FunctionComponent = () => {
   const {
     state: { dateRange },
     dispatch,

@@ -1,11 +1,12 @@
 import React from 'react';
 
-import { Colors, Flex, FlexProps, Radio } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 import FormFieldWrapper, {
   FormFieldWrapperProps,
 } from '@extraction-pipelines/components/form-field-wrapper/FormFieldWrapper';
+
+import { Colors, Flex, FlexProps, Radio } from '@cognite/cogs.js';
 
 type FormFieldRadioGroupProps<V> = Omit<FormFieldWrapperProps, 'children'> & {
   direction?: FlexProps['direction'];

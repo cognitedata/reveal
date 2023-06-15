@@ -1,5 +1,5 @@
-import moment from 'moment';
 import { styleScope } from '@extraction-pipelines/styleScope';
+import moment from 'moment';
 
 export { styleScope } from '@extraction-pipelines/styleScope';
 

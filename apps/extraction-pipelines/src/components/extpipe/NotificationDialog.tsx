@@ -1,24 +1,28 @@
 import React, { FunctionComponent, useState } from 'react';
-import { EditModal } from '@extraction-pipelines/components/modals/EditModal';
-import { Button, Input, Select } from '@cognite/cogs.js';
-
-import { DivFlex } from '@extraction-pipelines/components/styled';
-import { IconHeading } from '@extraction-pipelines/components/styled';
-import styled from 'styled-components';
-import { StyledLabel } from '@extraction-pipelines/components/styled';
 import { OptionTypeBase } from 'react-select';
-import { Extpipe } from '@extraction-pipelines/model/Extpipe';
+
+import styled from 'styled-components';
+
+import { useTranslation } from '@extraction-pipelines/common';
+import { ErrorMessage } from '@extraction-pipelines/components/error/ErrorMessage';
 import { InfoBox } from '@extraction-pipelines/components/message/InfoBox';
+import { EditModal } from '@extraction-pipelines/components/modals/EditModal';
+import {
+  DivFlex,
+  IconHeading,
+  StyledLabel,
+} from '@extraction-pipelines/components/styled';
 import {
   createUpdateSpec,
   useDetailsUpdate,
 } from '@extraction-pipelines/hooks/details/useDetailsUpdate';
-import { ErrorMessage } from '@extraction-pipelines/components/error/ErrorMessage';
+import { Extpipe } from '@extraction-pipelines/model/Extpipe';
 import {
   minutesToUnit,
   timeUnitToMinutesMultiplier,
 } from '@extraction-pipelines/utils/utils';
-import { useTranslation } from '@extraction-pipelines/common';
+
+import { Button, Input, Select } from '@cognite/cogs.js';
 
 type NotificationDialogProps = {
   isOpen: boolean;

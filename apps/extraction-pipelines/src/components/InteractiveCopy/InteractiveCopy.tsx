@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
-import { Colors, Icon } from '@cognite/cogs.js';
-import { StyledTooltip } from '@extraction-pipelines/components/styled';
 
-import { trackUsage } from '@extraction-pipelines/utils/Metrics';
+import styled from 'styled-components';
+
 import { useTranslation } from '@extraction-pipelines/common';
+import { StyledTooltip } from '@extraction-pipelines/components/styled';
+import { trackUsage } from '@extraction-pipelines/utils/Metrics';
+
+import { Colors, Icon } from '@cognite/cogs.js';
 
 export type CopyType =
   | 'id'

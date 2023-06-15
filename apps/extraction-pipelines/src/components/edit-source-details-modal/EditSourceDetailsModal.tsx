@@ -1,8 +1,5 @@
 import React from 'react';
 
-import { Flex, InputExp, Modal, ModalProps } from '@cognite/cogs.js';
-import { FormikErrors, useFormik } from 'formik';
-
 import { useTranslation } from '@extraction-pipelines/common';
 import {
   BaseMQTTSource,
@@ -10,6 +7,9 @@ import {
   useEditMQTTSource,
 } from '@extraction-pipelines/hooks/hostedExtractors';
 import { notification } from 'antd';
+import { FormikErrors, useFormik } from 'formik';
+
+import { Flex, InputExp, Modal, ModalProps } from '@cognite/cogs.js';
 
 type EditSourceDetailsModalProps = {
   onCancel: () => void;
@@ -64,17 +64,17 @@ export const EditSourceDetailsModal = ({
         host: source.host,
         port: source.port,
       },
-      onSubmit: (values) => {
-        if (values.host && values.port) {
+      onSubmit: (val) => {
+        if (val.host && val.port) {
           editMQTTSource({
             externalId: source.externalId,
             type: source.type,
             update: {
               host: {
-                set: values.host,
+                set: val.host,
               },
               port: {
-                set: values.port,
+                set: val.port,
               },
             },
           });

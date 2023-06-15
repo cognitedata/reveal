@@ -1,8 +1,9 @@
 import React from 'react';
 import { Link as ReactRouterLink, LinkProps } from 'react-router-dom';
 
-import { Colors } from '@cognite/cogs.js';
 import styled from 'styled-components';
+
+import { Colors } from '@cognite/cogs.js';
 
 const Link = (props: LinkProps): JSX.Element => {
   return <StyledLink {...props} />;

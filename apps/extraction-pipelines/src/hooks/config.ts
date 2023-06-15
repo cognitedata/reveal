@@ -1,11 +1,7 @@
 import {
-  useMutation,
-  UseMutationOptions,
-  useQueries,
-  useQuery,
-  UseQueryOptions,
-} from '@tanstack/react-query';
-import { useSDK } from '@cognite/sdk-provider';
+  ExtpipeConfig,
+  ExtpipeConfigRevision,
+} from '@extraction-pipelines/model/Extpipe';
 import {
   CreateConfigRevisionArguments,
   createExtpipeConfigRevision,
@@ -13,10 +9,15 @@ import {
   getExtpipeConfigRevisions,
 } from '@extraction-pipelines/utils/ExtpipesAPI';
 import {
-  ExtpipeConfig,
-  ExtpipeConfigRevision,
-} from '@extraction-pipelines/model/Extpipe';
+  useMutation,
+  UseMutationOptions,
+  useQueries,
+  useQuery,
+  UseQueryOptions,
+} from '@tanstack/react-query';
+
 import { CogniteError } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
 
 type ExtPipeConfigRequest = {
   externalId: string;

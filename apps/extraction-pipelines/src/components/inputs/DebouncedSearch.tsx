@@ -4,13 +4,16 @@ import React, {
   useEffect,
   useState,
 } from 'react';
-import { Input } from '@cognite/cogs.js';
-import { useDebounce } from '@extraction-pipelines/hooks/useDebounce';
+
 import styled from 'styled-components';
+
 import {
   updateSearchAction,
   useRunFilterContext,
 } from '@extraction-pipelines/hooks/runs/RunsFilterContext';
+import { useDebounce } from '@extraction-pipelines/hooks/useDebounce';
+
+import { Input } from '@cognite/cogs.js';
 
 export const SearchWrapper = styled.div`
   display: flex;

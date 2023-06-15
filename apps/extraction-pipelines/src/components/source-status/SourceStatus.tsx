@@ -1,11 +1,10 @@
 import React, { useMemo, useState } from 'react';
-
-import { Body, Colors, Flex, SegmentedControl, Title } from '@cognite/cogs.js';
 import { useSearchParams } from 'react-router-dom';
+
 import styled from 'styled-components';
 
-import Section from '@extraction-pipelines/components/section';
 import { useTranslation } from '@extraction-pipelines/common';
+import Section from '@extraction-pipelines/components/section';
 import {
   MQTTSourceWithJobMetrics,
   useMQTTJobLogs,
@@ -15,6 +14,8 @@ import {
   formatUptime,
   getUptimeAggregations,
 } from '@extraction-pipelines/utils/hostedExtractors';
+
+import { Body, Colors, Flex, SegmentedControl, Title } from '@cognite/cogs.js';
 
 import { SourceStatusItem } from './SourceStatusItem';
 

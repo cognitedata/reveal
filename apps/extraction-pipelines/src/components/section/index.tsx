@@ -1,11 +1,13 @@
 import React from 'react';
 
-import { Colors, Flex, Icon, IconType, Title } from '@cognite/cogs.js';
-import isString from 'lodash/isString';
 import styled from 'styled-components';
 
-import SectionItem, { SectionItemProps } from './SectionItem';
 import { Box } from '@extraction-pipelines/components/box/Box';
+import isString from 'lodash/isString';
+
+import { Colors, Flex, Icon, IconType, Title } from '@cognite/cogs.js';
+
+import SectionItem, { SectionItemProps } from './SectionItem';
 
 type SectionProps = {
   className?: string;

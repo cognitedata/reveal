@@ -87,7 +87,7 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/apps/platypus"],
+      "outputs": ["{workspaceRoot}/coverage/apps/extraction-pipelines"],
       "options": {
         "jestConfig": "apps/extraction-pipelines/jest.config.ts",
         "passWithNoTests": true

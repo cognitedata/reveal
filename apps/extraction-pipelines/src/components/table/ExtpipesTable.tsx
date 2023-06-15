@@ -1,31 +1,32 @@
 import React, { useMemo } from 'react';
-import { Loader } from '@cognite/cogs.js';
-import {
-  ColumnType,
-  SortOrder,
-  Table,
-  TableNoResults,
-} from '@cognite/cdf-utilities';
-import { Extpipe } from '@extraction-pipelines/model/Extpipe';
-import { useAllExtpipes } from '@extraction-pipelines/hooks/useExtpipes';
+
 import { useTranslation } from '@extraction-pipelines/common';
+import { DataSet } from '@extraction-pipelines/components/extpipes/cols/DataSet';
+import ExtractionPipelineName from '@extraction-pipelines/components/extpipes/cols/ExtractionPipelineName';
+import RelativeTimeWithTooltip from '@extraction-pipelines/components/extpipes/cols/RelativeTimeWithTooltip';
+import Schedule from '@extraction-pipelines/components/extpipes/cols/Schedule';
+import { LastRunStatusMarker } from '@extraction-pipelines/components/extpipes/cols/StatusMarker';
+import { useDataSetList } from '@extraction-pipelines/hooks/dataSet';
+import { useAllExtpipes } from '@extraction-pipelines/hooks/useExtpipes';
+import { Extpipe } from '@extraction-pipelines/model/Extpipe';
+import { User } from '@extraction-pipelines/model/User';
+import {
+  addIfExist,
+  calculateLatest,
+} from '@extraction-pipelines/utils/extpipeUtils';
 import {
   dateSorter,
   getContainer,
   stringSorter,
 } from '@extraction-pipelines/utils/utils';
 
-import { LastRunStatusMarker } from '@extraction-pipelines/components/extpipes/cols/StatusMarker';
-import RelativeTimeWithTooltip from '@extraction-pipelines/components/extpipes/cols/RelativeTimeWithTooltip';
 import {
-  addIfExist,
-  calculateLatest,
-} from '@extraction-pipelines/utils/extpipeUtils';
-import Schedule from '@extraction-pipelines/components/extpipes/cols/Schedule';
-import { DataSet } from '@extraction-pipelines/components/extpipes/cols/DataSet';
-import { User } from '@extraction-pipelines/model/User';
-import ExtractionPipelineName from '@extraction-pipelines/components/extpipes/cols/ExtractionPipelineName';
-import { useDataSetList } from '@extraction-pipelines/hooks/dataSet';
+  ColumnType,
+  SortOrder,
+  Table,
+  TableNoResults,
+} from '@cognite/cdf-utilities';
+import { Loader } from '@cognite/cogs.js';
 
 export type ExtractionPipelineListTableRecord = {
   key: number;
@@ -123,7 +124,7 @@ const ExtpipesTable = ({ search }: ExtpipesTableProps): JSX.Element => {
       dataIndex: 'lastConnected',
       key: 'last-seen',
       render: (value: number) => {
-        return !!value ? (
+        return value ? (
           <RelativeTimeWithTooltip id="last-seen" time={value} />
         ) : (
           '-'

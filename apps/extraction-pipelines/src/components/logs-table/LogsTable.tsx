@@ -1,7 +1,5 @@
 import React, { useMemo } from 'react';
 
-import { ColumnType, Table, Timestamp } from '@cognite/cdf-utilities';
-import { Colors } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 import { useTranslation } from '@extraction-pipelines/common';
@@ -12,6 +10,9 @@ import {
 } from '@extraction-pipelines/hooks/hostedExtractors';
 import { PAGINATION_SETTINGS } from '@extraction-pipelines/utils/constants';
 import { getContainer } from '@extraction-pipelines/utils/utils';
+
+import { ColumnType, Table, Timestamp } from '@cognite/cdf-utilities';
+import { Colors } from '@cognite/cogs.js';
 
 type LogsTableRecord = { key: number } & ReadMQTTJobLog;
 

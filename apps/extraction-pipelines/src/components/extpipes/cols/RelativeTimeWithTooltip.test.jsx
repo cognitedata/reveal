@@ -1,3 +1,4 @@
+// eslint-disable-next-line @cognite/rtl-use-custom-render-function
 import { render, screen } from '@testing-library/react';
 import moment from 'moment';
 import React from 'react';

@@ -1,23 +1,25 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import { useExtpipes } from '@extraction-pipelines/hooks/useExtpipes';
-import NoExtpipes from '@extraction-pipelines/components/error/NoExtpipes';
-import { Button, Flex, Loader, Modal, Tabs, Title } from '@cognite/cogs.js';
+import { useSearchParams } from 'react-router-dom';
+
+import styled from 'styled-components';
+
+import { useTranslation } from '@extraction-pipelines/common';
+import { CreateSourceModal } from '@extraction-pipelines/components/create-source-modal/CreateSourceModal';
 import { ErrorFeedback } from '@extraction-pipelines/components/error/ErrorFeedback';
+import NoExtpipes from '@extraction-pipelines/components/error/NoExtpipes';
 import {
   StyledTooltip,
   PageWrapperColumn,
 } from '@extraction-pipelines/components/styled';
 import ExtpipesTable from '@extraction-pipelines/components/table/ExtpipesTable';
-import styled from 'styled-components';
-import { getContainer } from '@extraction-pipelines/utils/utils';
-import { CreateExtpipe } from '@extraction-pipelines/pages/create/CreateExtpipe';
-
-import { trackUsage } from '@extraction-pipelines/utils/Metrics';
-import { useTranslation } from '@extraction-pipelines/common';
 import ExtpipesTableSearch from '@extraction-pipelines/components/table/ExtpipesTableSearch';
 import HostedExtractionPipelineTable from '@extraction-pipelines/components/table/HostedExtractionPipelineTable';
-import { useSearchParams } from 'react-router-dom';
-import { CreateSourceModal } from '@extraction-pipelines/components/create-source-modal/CreateSourceModal';
+import { useExtpipes } from '@extraction-pipelines/hooks/useExtpipes';
+import { CreateExtpipe } from '@extraction-pipelines/pages/create/CreateExtpipe';
+import { trackUsage } from '@extraction-pipelines/utils/Metrics';
+import { getContainer } from '@extraction-pipelines/utils/utils';
+
+import { Button, Flex, Loader, Modal, Tabs, Title } from '@cognite/cogs.js';
 import { useFlag } from '@cognite/react-feature-flags';
 
 export const LEARNING_AND_RESOURCES_URL: Readonly<string> =
@@ -44,11 +46,7 @@ const CreateExtpipeModal = (props: {
   );
 };
 
-interface OwnProps {}
-
-type Props = OwnProps;
-
-const Extpipes: FunctionComponent<Props> = () => {
+const Extpipes: FunctionComponent = () => {
   const { t } = useTranslation();
   useEffect(() => {
     trackUsage({ t: 'Overview' });

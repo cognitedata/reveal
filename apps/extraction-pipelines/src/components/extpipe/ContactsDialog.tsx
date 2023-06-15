@@ -1,21 +1,25 @@
 import React, { FunctionComponent, useState, ChangeEvent } from 'react';
-import { isValidEmail } from '@cognite/cdf-utilities';
-import { useSelectedExtpipe } from '@extraction-pipelines/hooks/useExtpipe';
+
 import styled from 'styled-components';
+
+import { useTranslation } from '@extraction-pipelines/common';
+import { ErrorMessage } from '@extraction-pipelines/components/error/ErrorMessage';
+import { InfoBox } from '@extraction-pipelines/components/message/InfoBox';
 import {
   StyledTableNoRowColor2,
   Grid,
   Hint,
 } from '@extraction-pipelines/components/styled';
-import { User } from '@extraction-pipelines/model/User';
-import { Button, Input, Switch } from '@cognite/cogs.js';
 import {
   createUpdateSpec,
   useDetailsUpdate,
 } from '@extraction-pipelines/hooks/details/useDetailsUpdate';
-import { ErrorMessage } from '@extraction-pipelines/components/error/ErrorMessage';
-import { InfoBox } from '@extraction-pipelines/components/message/InfoBox';
-import { useTranslation } from '@extraction-pipelines/common';
+import { useSelectedExtpipe } from '@extraction-pipelines/hooks/useExtpipe';
+import { User } from '@extraction-pipelines/model/User';
+
+import { isValidEmail } from '@cognite/cdf-utilities';
+import { Button, Input, Switch } from '@cognite/cogs.js';
+
 interface ContactsSectionProps {
   close: () => void;
 }

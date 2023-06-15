@@ -1,13 +1,17 @@
 import React, { FunctionComponent, useState } from 'react';
-import { useSelectedExtpipe } from '@extraction-pipelines/hooks/useExtpipe';
+
+import styled from 'styled-components';
+
+import { useTranslation } from '@extraction-pipelines/common';
 import {
   ContactsDialog,
   isOwnerRole,
 } from '@extraction-pipelines/components/extpipe/ContactsDialog';
-import styled from 'styled-components';
 import Section from '@extraction-pipelines/components/section';
+import { useSelectedExtpipe } from '@extraction-pipelines/hooks/useExtpipe';
+
 import { Button, Flex, Icon, Chip, Modal } from '@cognite/cogs.js';
-import { useTranslation } from '@extraction-pipelines/common';
+
 interface ContactsViewProps {
   canEdit: boolean;
 }

@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 
-import { Body, Button, Flex, Icon, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 import { useTranslation } from '@extraction-pipelines/common';
 import { CreateJobsModal } from '@extraction-pipelines/components/create-jobs-modal/CreateJobsModal';
 import Section from '@extraction-pipelines/components/section';
 import { MQTTSourceWithJobMetrics } from '@extraction-pipelines/hooks/hostedExtractors';
+
+import { Body, Button, Flex, Icon, Title } from '@cognite/cogs.js';
 
 import { TopicFilter } from './TopicFilter';
 

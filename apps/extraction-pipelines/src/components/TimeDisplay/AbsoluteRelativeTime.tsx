@@ -1,4 +1,5 @@
 import React, { FunctionComponent, PropsWithoutRef } from 'react';
+
 import { TimeDisplay, TimeDisplayProps } from './TimeDisplay';
 
 interface AbsoluteRelativeTimeProps

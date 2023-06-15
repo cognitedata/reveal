@@ -1,7 +1,10 @@
 import React, { FunctionComponent, PropsWithChildren } from 'react';
-import gfm from 'remark-gfm';
 import ReactMarkdown from 'react-markdown';
+
 import styled from 'styled-components';
+
+import gfm from 'remark-gfm';
+
 import { Colors } from '@cognite/cogs.js';
 
 const StyledReactMarkdown = styled(ReactMarkdown)`
@@ -66,11 +69,9 @@ const StyledReactMarkdown = styled(ReactMarkdown)`
     }
   }
 `;
-interface MarkdownViewProps {}
-
-export const MarkdownView: FunctionComponent<MarkdownViewProps> = ({
+export const MarkdownView: FunctionComponent<PropsWithChildren> = ({
   children,
-}: PropsWithChildren<MarkdownViewProps>) => {
+}) => {
   const styledComponents = {
     h1: ({ ...props }) => <h1 className="docs-heading" {...props} />,
     table: ({ ...props }) => <table className="cogs-table" {...props} />,

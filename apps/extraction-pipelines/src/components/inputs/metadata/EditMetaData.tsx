@@ -1,18 +1,20 @@
 import React, { useState } from 'react';
-import { useSelectedExtpipe } from '@extraction-pipelines/hooks/useExtpipe';
-import {
-  toCamelCase,
-  uppercaseFirstWord,
-} from '@extraction-pipelines/utils/primitivesUtils';
+
+import { useTranslation } from '@extraction-pipelines/common';
+import { ModalContent } from '@extraction-pipelines/components/modals/ModalContent';
+import { StyledTableNoRowColor2 } from '@extraction-pipelines/components/styled';
 import {
   createUpdateSpec,
   useDetailsUpdate,
 } from '@extraction-pipelines/hooks/details/useDetailsUpdate';
-import { Button, Input } from '@cognite/cogs.js';
+import { useSelectedExtpipe } from '@extraction-pipelines/hooks/useExtpipe';
 import { MetaData } from '@extraction-pipelines/model/MetaData';
-import { ModalContent } from '@extraction-pipelines/components/modals/ModalContent';
-import { StyledTableNoRowColor2 } from '@extraction-pipelines/components/styled';
-import { useTranslation } from '@extraction-pipelines/common';
+import {
+  toCamelCase,
+  uppercaseFirstWord,
+} from '@extraction-pipelines/utils/primitivesUtils';
+
+import { Button, Input } from '@cognite/cogs.js';
 
 type SuperProps = {
   close: () => void;

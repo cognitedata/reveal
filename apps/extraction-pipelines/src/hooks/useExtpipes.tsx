@@ -1,12 +1,13 @@
-import { useInfiniteQuery } from '@tanstack/react-query';
-import { useSDK } from '@cognite/sdk-provider';
-import { getExtpipes } from '@extraction-pipelines/utils/ExtpipesAPI';
+import { useEffect } from 'react';
 
 import { ExtpipeAPIResponse } from '@extraction-pipelines/model/ExtpipeAPIResponse';
-import { useEffect } from 'react';
-import { CogniteError } from '@cognite/sdk';
+import { getExtpipes } from '@extraction-pipelines/utils/ExtpipesAPI';
+import { useInfiniteQuery } from '@tanstack/react-query';
 
-export const useExtpipes = (limit: number = 50) => {
+import { CogniteError } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
+
+export const useExtpipes = (limit = 50) => {
   const sdk = useSDK();
   return useInfiniteQuery<ExtpipeAPIResponse, CogniteError>(
     ['extpipes', { limit }],

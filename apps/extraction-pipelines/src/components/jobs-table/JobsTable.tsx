@@ -1,7 +1,5 @@
 import React, { useMemo, useState } from 'react';
 
-import { ColumnType, Table } from '@cognite/cdf-utilities';
-import { Button, Status } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 import { useTranslation } from '@extraction-pipelines/common';
@@ -11,6 +9,9 @@ import { MQTTJobWithMetrics } from '@extraction-pipelines/hooks/hostedExtractors
 import { PAGINATION_SETTINGS } from '@extraction-pipelines/utils/constants';
 import { getJobStatusForCogs } from '@extraction-pipelines/utils/hostedExtractors';
 import { getContainer } from '@extraction-pipelines/utils/utils';
+
+import { ColumnType, Table } from '@cognite/cdf-utilities';
+import { Button, Status } from '@cognite/cogs.js';
 
 type JobsTableRecord = { key: string } & MQTTJobWithMetrics;
 

@@ -1,19 +1,22 @@
 import React, { useMemo, useState } from 'react';
-import { useSelectedExtpipe } from '@extraction-pipelines/hooks/useExtpipe';
-import RawTablesSection from '@extraction-pipelines/components/inputs/rawSelector/RawTablesSection';
+
+import { useTranslation } from '@extraction-pipelines/common';
 import { ContactsSection } from '@extraction-pipelines/components/extpipe/ContactsSection';
 import { MetaDataSection } from '@extraction-pipelines/components/extpipe/MetaDataSection';
-import Section from '@extraction-pipelines/components/section';
 import { NotificationSection } from '@extraction-pipelines/components/extpipe/NotificationSection';
-import { useTranslation } from '@extraction-pipelines/common';
 import RelativeTimeWithTooltip from '@extraction-pipelines/components/extpipes/cols/RelativeTimeWithTooltip';
-import { Button } from '@cognite/cogs.js';
-import BasicInformationModal from './BasicInformationModal';
 import { getReadableSchedule } from '@extraction-pipelines/components/extpipes/cols/Schedule';
+import RawTablesSection from '@extraction-pipelines/components/inputs/rawSelector/RawTablesSection';
 import Link from '@extraction-pipelines/components/link';
-import { createLink } from '@cognite/cdf-utilities';
+import Section from '@extraction-pipelines/components/section';
 import { useDataSetsList } from '@extraction-pipelines/hooks/useDataSetsList';
+import { useSelectedExtpipe } from '@extraction-pipelines/hooks/useExtpipe';
 import { DATASET_LIST_LIMIT } from '@extraction-pipelines/pages/create/DataSetIdInput';
+
+import { createLink } from '@cognite/cdf-utilities';
+import { Button } from '@cognite/cogs.js';
+
+import BasicInformationModal from './BasicInformationModal';
 
 interface Props {
   canEdit: boolean;

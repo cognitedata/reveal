@@ -1,14 +1,15 @@
 import React from 'react';
 
-import { createLink, SecondaryTopbar } from '@cognite/cdf-utilities';
-import { Colors } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 import { useTranslation } from '@extraction-pipelines/common';
 import { useExtpipeConfig } from '@extraction-pipelines/hooks/config';
+import { EXTRACTION_PIPELINES_PATH } from '@extraction-pipelines/utils/baseURL';
+
+import { createLink, SecondaryTopbar } from '@cognite/cdf-utilities';
+import { Colors } from '@cognite/cogs.js';
 
 import CreatedTime from './CreatedTime';
-import { EXTRACTION_PIPELINES_PATH } from '@extraction-pipelines/utils/baseURL';
 
 type Props = { externalId: string; revision: number };
 

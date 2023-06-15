@@ -1,5 +1,3 @@
-import { CogniteClient } from '@cognite/sdk';
-
 import {
   Extpipe,
   ExtpipeConfig,
@@ -9,6 +7,8 @@ import {
 } from '@extraction-pipelines/model/Extpipe';
 import { ExtpipeAPIResponse } from '@extraction-pipelines/model/ExtpipeAPIResponse';
 import { get, post, getBaseUrl } from '@extraction-pipelines/utils/baseURL';
+
+import { CogniteClient } from '@cognite/sdk';
 
 type ExtpipeAPIRequest = {
   limit: number;

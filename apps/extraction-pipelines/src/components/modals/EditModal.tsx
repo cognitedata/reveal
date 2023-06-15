@@ -1,4 +1,5 @@
 import React, { FunctionComponent, PropsWithChildren } from 'react';
+
 import { Modal } from '@cognite/cogs.js';
 
 interface EditModalProps {

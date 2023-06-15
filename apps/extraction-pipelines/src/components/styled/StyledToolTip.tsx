@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+
 import { Tooltip } from '@cognite/cogs.js';
 
 export const StyledTooltip = styled(Tooltip)`

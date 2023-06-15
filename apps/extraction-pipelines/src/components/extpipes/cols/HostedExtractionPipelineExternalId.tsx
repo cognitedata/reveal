@@ -1,11 +1,11 @@
 import React from 'react';
 
-import { createLink } from '@cognite/cdf-utilities';
-import { Body } from '@cognite/cogs.js';
-
+import Link from '@extraction-pipelines/components/links/Link';
 import { HOSTED_EXTRACTION_PIPELINE_PATH } from '@extraction-pipelines/routing/RoutingConfig';
 import { EXTRACTION_PIPELINES_PATH } from '@extraction-pipelines/utils/baseURL';
-import Link from '@extraction-pipelines/components/links/Link';
+
+import { createLink } from '@cognite/cdf-utilities';
+import { Body } from '@cognite/cogs.js';
 
 type HostedExtractionPipelineExternalIdProps = {
   externalId: string;

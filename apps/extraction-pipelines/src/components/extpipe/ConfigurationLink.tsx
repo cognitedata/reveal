@@ -1,10 +1,12 @@
 import React, { FunctionComponent, PropsWithoutRef } from 'react';
-import { useExtpipeConfig } from '@extraction-pipelines/hooks/config';
-import { createLink } from '@cognite/cdf-utilities';
 import { Link } from 'react-router-dom';
-import { EXTRACTION_PIPELINES_PATH } from '@extraction-pipelines/utils/baseURL';
+
+import { useExtpipeConfig } from '@extraction-pipelines/hooks/config';
 import { useSelectedExtpipe } from '@extraction-pipelines/hooks/useExtpipe';
 import { EXT_PIPE_PATH } from '@extraction-pipelines/routing/RoutingConfig';
+import { EXTRACTION_PIPELINES_PATH } from '@extraction-pipelines/utils/baseURL';
+
+import { createLink } from '@cognite/cdf-utilities';
 import { Colors, Icon } from '@cognite/cogs.js';
 
 type Props = {
@@ -17,8 +19,8 @@ export const ConfigurationLink: FunctionComponent<Props> = ({
   const { data: extpipe } = useSelectedExtpipe();
 
   const { data, isInitialLoading } = useExtpipeConfig(
-    { externalId: extpipe?.externalId!, activeAtTime: createdTime },
-    { enabled: !!extpipe?.externalId }
+    { externalId: extpipe!.externalId, activeAtTime: createdTime },
+    { enabled: !!extpipe!.externalId }
   );
   if (isInitialLoading) {
     return (

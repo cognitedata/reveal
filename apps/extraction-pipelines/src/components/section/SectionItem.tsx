@@ -1,7 +1,8 @@
 import React from 'react';
 
-import { Body, Colors } from '@cognite/cogs.js';
 import styled from 'styled-components';
+
+import { Body, Colors } from '@cognite/cogs.js';
 
 export type SectionItemProps = {
   extraContent?: React.ReactNode;

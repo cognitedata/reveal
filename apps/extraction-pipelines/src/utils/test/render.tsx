@@ -1,20 +1,21 @@
 import React, { FunctionComponent, PropsWithChildren } from 'react';
-import { render, RenderOptions } from '@testing-library/react';
-import { styleScope } from '@extraction-pipelines/utils/utils';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { MemoryRouter as Router } from 'react-router-dom';
 import { useForm, FormProvider } from 'react-hook-form';
-import { AppEnvProvider } from '@extraction-pipelines/hooks/useAppEnv';
-import {
-  Extpipe,
-  RegisterExtpipeInfo,
-} from '@extraction-pipelines/model/Extpipe';
-import { RegisterExtpipeProvider } from '@extraction-pipelines/hooks/useStoredRegisterExtpipe';
-import { EXTRACTION_PIPELINES_PATH } from '@extraction-pipelines/utils/baseURL';
+import { MemoryRouter as Router } from 'react-router-dom';
+
 import {
   RunFilterProvider,
   RunFilterProviderProps,
 } from '@extraction-pipelines/hooks/runs/RunsFilterContext';
+import { AppEnvProvider } from '@extraction-pipelines/hooks/useAppEnv';
+import { RegisterExtpipeProvider } from '@extraction-pipelines/hooks/useStoredRegisterExtpipe';
+import {
+  Extpipe,
+  RegisterExtpipeInfo,
+} from '@extraction-pipelines/model/Extpipe';
+import { EXTRACTION_PIPELINES_PATH } from '@extraction-pipelines/utils/baseURL';
+import { styleScope } from '@extraction-pipelines/utils/utils';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { render, RenderOptions } from '@testing-library/react';
 
 export default (
   ui: React.ReactElement,
@@ -173,7 +174,7 @@ export const renderWithReactHookForm = (
   ui: React.ReactElement,
   { defaultValues = {} } = {}
 ) => {
-  const Wrapper: FunctionComponent = ({ children }: PropsWithChildren<{}>) => {
+  const Wrapper: FunctionComponent = ({ children }: PropsWithChildren) => {
     const methods = useForm({ defaultValues });
     return <FormProvider {...methods}>{children}</FormProvider>;
   };

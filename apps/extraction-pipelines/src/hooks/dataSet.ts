@@ -1,10 +1,9 @@
-import { DataSet } from '@cognite/sdk';
-import sdk from '@cognite/cdf-sdk-singleton';
+import { BASE_QUERY_KEY } from '@extraction-pipelines/utils/constants';
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 
+import sdk from '@cognite/cdf-sdk-singleton';
+import { DataSet } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
-
-import { BASE_QUERY_KEY } from '@extraction-pipelines/utils/constants';
 
 export const getDataSetListQueryKey = () => [BASE_QUERY_KEY, 'dataset-list'];
 

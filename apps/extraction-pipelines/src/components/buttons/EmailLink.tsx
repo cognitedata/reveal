@@ -1,5 +1,7 @@
 import React, { FunctionComponent } from 'react';
+
 import styled from 'styled-components';
+
 import { Colors } from '@cognite/cogs.js';
 interface OwnProps {
   email?: string;

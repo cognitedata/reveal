@@ -1,7 +1,10 @@
-import styled from 'styled-components';
 import React, { PropsWithChildren } from 'react';
-import { IconType, Icon, Button, Flex, Body } from '@cognite/cogs.js';
+
+import styled from 'styled-components';
+
 import { useTranslation } from '@extraction-pipelines/common';
+
+import { IconType, Icon, Button, Flex, Body } from '@cognite/cogs.js';
 
 const SectionDiv = styled.div`
   background-color: white;
@@ -21,7 +24,7 @@ const SectionBody = styled.div<{ $hasPadding?: boolean }>`
   padding: ${({ $hasPadding }) => ($hasPadding ? '1rem 0' : 0)};
   overflow-x: auto;
 `;
-export const SectionWithoutHeader = (props: PropsWithChildren<{}>) => (
+export const SectionWithoutHeader = (props: PropsWithChildren) => (
   <SectionDiv className="z-2">{props.children}</SectionDiv>
 );
 type Props = {

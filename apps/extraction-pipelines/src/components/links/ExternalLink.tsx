@@ -1,6 +1,8 @@
 import React, { PropsWithChildren } from 'react';
-import { Icon } from '@cognite/cogs.js';
+
 import styled from 'styled-components';
+
+import { Icon } from '@cognite/cogs.js';
 
 const LinkIcon = styled((props) => (
   <Icon {...props} size={12}>

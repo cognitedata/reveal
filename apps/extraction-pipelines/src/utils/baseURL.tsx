@@ -1,6 +1,7 @@
-import { CogniteClient } from '@cognite/sdk';
 import { StringifyOptions } from 'query-string';
+
 import { createLink } from '@cognite/cdf-utilities';
+import { CogniteClient } from '@cognite/sdk';
 
 export const EXTRACTION_PIPELINES_PATH: Readonly<string> = 'extpipes';
 export const PROJECT_ITERA_INT_GREEN: Readonly<string> = 'itera-int-green';
@@ -15,7 +16,7 @@ const getBaseUrl = (
 };
 
 const createExtPipePath = (
-  path: string = '',
+  path = '',
   queries?: any,
   opts?: StringifyOptions
 ) => {

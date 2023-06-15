@@ -1,6 +1,3 @@
-import { getProject } from '@cognite/cdf-utilities';
-import { CogniteClient } from '@cognite/sdk';
-import { useSDK } from '@cognite/sdk-provider';
 import {
   QueryClient,
   UseMutationOptions,
@@ -8,6 +5,11 @@ import {
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
+
+import { getProject } from '@cognite/cdf-utilities';
+import { CogniteClient } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
+
 import { CreateSessionVariables, useCreateSession } from './sessions';
 
 type UpdateWithExternalId<T, P extends keyof T> = {

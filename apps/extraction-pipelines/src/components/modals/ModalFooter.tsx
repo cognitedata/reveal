@@ -1,5 +1,6 @@
-import { Button } from '@cognite/cogs.js';
 import React from 'react';
+
+import { Button } from '@cognite/cogs.js';
 
 export interface ModalFooterProps {
   okText?: string;

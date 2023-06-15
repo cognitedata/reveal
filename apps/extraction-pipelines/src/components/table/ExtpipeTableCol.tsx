@@ -1,19 +1,20 @@
 import React from 'react';
-import { Cell, CellProps, Column, HeaderProps } from 'react-table';
+import { CellProps, Column, HeaderProps } from 'react-table';
+
+import { TranslationKeys } from '@extraction-pipelines/common';
+import { DataSet } from '@extraction-pipelines/components/extpipes/cols/DataSet';
+import Name from '@extraction-pipelines/components/extpipes/cols/ExtractionPipelineName';
+import RelativeTimeWithTooltip from '@extraction-pipelines/components/extpipes/cols/RelativeTimeWithTooltip';
+import Schedule from '@extraction-pipelines/components/extpipes/cols/Schedule';
+import { LastRunStatusMarker } from '@extraction-pipelines/components/extpipes/cols/StatusMarker';
+import SorterIndicator from '@extraction-pipelines/components/table/SorterIndicator';
+import { DataSetModel } from '@extraction-pipelines/model/DataSetModel';
+import { Extpipe } from '@extraction-pipelines/model/Extpipe';
+import { User } from '@extraction-pipelines/model/User';
 import {
   addIfExist,
   calculateLatest,
 } from '@extraction-pipelines/utils/extpipeUtils';
-import { Extpipe } from '@extraction-pipelines/model/Extpipe';
-import Name from '@extraction-pipelines/components/extpipes/cols/ExtractionPipelineName';
-import Schedule from '@extraction-pipelines/components/extpipes/cols/Schedule';
-import { DataSet } from '@extraction-pipelines/components/extpipes/cols/DataSet';
-import { LastRunStatusMarker } from '@extraction-pipelines/components/extpipes/cols/StatusMarker';
-import { User } from '@extraction-pipelines/model/User';
-import RelativeTimeWithTooltip from '@extraction-pipelines/components/extpipes/cols/RelativeTimeWithTooltip';
-import SorterIndicator from '@extraction-pipelines/components/table/SorterIndicator';
-import { DataSetModel } from '@extraction-pipelines/model/DataSetModel';
-import { TranslationKeys } from '@extraction-pipelines/common';
 
 export enum TableHeadings {
   NAME = 'Name',
@@ -90,10 +91,9 @@ export const getExtpipeTableColumns = (
           ...addIfExist(lastFailure),
         ]);
       },
-      // @ts-ignore
-      Cell: ({ row }: Cell<Extpipe>) => {
+      Cell: ({ row }: CellProps<Extpipe>) => {
         const { latestRun } = row.values;
-        if (latestRun == null || latestRun === 0) return '–';
+        if (latestRun == null || latestRun === 0) return <>–</>;
         return (
           <RelativeTimeWithTooltip id="latest-run" time={latestRun as number} />
         );
@@ -118,10 +118,9 @@ export const getExtpipeTableColumns = (
           ...addIfExist(lastSeen),
         ]);
       },
-      // @ts-ignore
-      Cell: ({ row }: Cell<Extpipe>) => {
+      Cell: ({ row }: CellProps<Extpipe>) => {
         const { lastConnected } = row.values;
-        if (lastConnected == null || lastConnected === 0) return '–';
+        if (lastConnected == null || lastConnected === 0) return <>–</>;
         return (
           <RelativeTimeWithTooltip
             id="last-seen"
@@ -136,8 +135,7 @@ export const getExtpipeTableColumns = (
       id: 'schedule',
       Header: _t('schedule') || TableHeadings.SCHEDULE,
       accessor: 'schedule',
-      // @ts-ignore
-      Cell: ({ row }: Cell<Extpipe>) => {
+      Cell: ({ row }: CellProps<Extpipe>) => {
         return <Schedule id="schedule" schedule={row.values.schedule} />;
       },
       disableSortBy: true,
@@ -156,8 +154,7 @@ export const getExtpipeTableColumns = (
       accessor: (row: Extpipe) => {
         return row.dataSetId;
       },
-      // @ts-ignore
-      Cell: ({ row }: Cell<Extpipe>) => {
+      Cell: ({ row }: CellProps<Extpipe>) => {
         return <DataSet dataSetId={row.original.dataSetId} />;
       },
       sortType: 'basic',
@@ -177,8 +174,7 @@ export const getExtpipeTableColumns = (
       accessor: (row: Extpipe) => {
         return createSearchStringForContacts(row.contacts);
       },
-      // @ts-ignore
-      Cell: ({ row }: Cell<Extpipe>) => {
+      Cell: ({ row }: CellProps<Extpipe>) => {
         const { contacts } = row.original;
         const noOwner = '–';
         if (contacts == null) return <>{noOwner}</>;

@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from 'react';
+
 import { useTranslation } from '@extraction-pipelines/common';
+import Section from '@extraction-pipelines/components/section';
 import {
   useCreateConfigRevision,
   useExtpipeConfig,
 } from '@extraction-pipelines/hooks/config';
-import Section from '@extraction-pipelines/components/section';
+import { useQueryClient } from '@tanstack/react-query';
+
+import { Body, Button, Flex, Icon, toast } from '@cognite/cogs.js';
+
 import ConfigurationEditor from './ConfigurationEditor';
 import CreatedTime from './CreatedTime';
-import { useQueryClient } from '@tanstack/react-query';
-import { Body, Button, Flex, Icon, toast } from '@cognite/cogs.js';
 
 type Props = {
   externalId: string;

@@ -3,8 +3,7 @@ export interface AclAction {
   action: string;
 }
 
-export const EXTRACTION_PIPELINES_ACL: 'extractionPipelinesAcl' =
-  'extractionPipelinesAcl';
+export const EXTRACTION_PIPELINES_ACL = 'extractionPipelinesAcl';
 
 const aclAction = (
   acl: string,

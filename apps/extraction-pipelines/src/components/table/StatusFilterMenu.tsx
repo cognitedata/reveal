@@ -1,18 +1,14 @@
 import React, { FunctionComponent } from 'react';
+
 import { StatusMenu } from '@extraction-pipelines/components/menu/StatusMenu';
 import {
   updateStatusAction,
   useRunFilterContext,
 } from '@extraction-pipelines/hooks/runs/RunsFilterContext';
-
-import { trackUsage } from '@extraction-pipelines/utils/Metrics';
 import { RunStatus } from '@extraction-pipelines/model/Runs';
+import { trackUsage } from '@extraction-pipelines/utils/Metrics';
 
-interface StatusFilterMenuProps {}
-
-export const StatusFilterMenu: FunctionComponent<
-  StatusFilterMenuProps
-> = () => {
+export const StatusFilterMenu: FunctionComponent = () => {
   const {
     state: { statuses },
     dispatch,

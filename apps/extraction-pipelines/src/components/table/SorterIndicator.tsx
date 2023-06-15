@@ -1,9 +1,11 @@
 import React, { AriaAttributes } from 'react';
 import { ColumnInstance } from 'react-table';
-import { IconType, Button } from '@cognite/cogs.js';
+
 import styled from 'styled-components';
 
 import { trackUsage } from '@extraction-pipelines/utils/Metrics';
+
+import { IconType, Button } from '@cognite/cogs.js';
 
 const getSortOrder = <T extends object>(
   column: ColumnInstance<T>

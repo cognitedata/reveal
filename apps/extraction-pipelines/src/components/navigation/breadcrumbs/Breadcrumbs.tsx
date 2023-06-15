@@ -1,8 +1,11 @@
 import React, { FunctionComponent, PropsWithChildren } from 'react';
-import styled from 'styled-components';
-import { Colors } from '@cognite/cogs.js';
 import { NavLink } from 'react-router-dom';
+
+import styled from 'styled-components';
+
 import { PAGE_MARGIN } from '@extraction-pipelines/components/styled';
+
+import { Colors } from '@cognite/cogs.js';
 
 interface Breadcrumb {
   href?: string;

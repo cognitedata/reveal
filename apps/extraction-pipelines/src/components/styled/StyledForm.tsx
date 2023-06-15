@@ -1,7 +1,10 @@
-import styled from 'styled-components';
 import React from 'react';
-import { Colors, Input } from '@cognite/cogs.js';
+
+import styled from 'styled-components';
+
 import { PaddedGridForm } from '@extraction-pipelines/components/styled';
+
+import { Colors, Input } from '@cognite/cogs.js';
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   inputWidth?: number;
@@ -87,7 +90,7 @@ export const ColumnForm = styled.form`
     props.marginBottom ? '1rem' : '0'};
   label {
     margin-left: 1rem;
-    color: Colors[ 'greyscale-grey10' ];
+    color: Colors[ 'greyscale-grey10'];
   }
   .cogs-input-container {
     width: 100%;

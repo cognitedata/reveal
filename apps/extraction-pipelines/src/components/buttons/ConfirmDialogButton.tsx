@@ -1,6 +1,8 @@
-import { Button, ButtonProps, Popconfirm } from '@cognite/cogs.js';
-import { useTranslation } from '@extraction-pipelines/common';
 import React, { ReactNode } from 'react';
+
+import { useTranslation } from '@extraction-pipelines/common';
+
+import { Button, ButtonProps, Popconfirm } from '@cognite/cogs.js';
 
 export interface ConfirmDialogButtonProps {
   onClick: () => void;

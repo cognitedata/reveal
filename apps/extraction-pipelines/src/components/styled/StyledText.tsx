@@ -1,5 +1,6 @@
-import { Colors } from '@cognite/cogs.js';
 import styled from 'styled-components';
+
+import { Colors } from '@cognite/cogs.js';
 
 export const Code = styled.code`
   padding: 0.1rem 0.2rem;

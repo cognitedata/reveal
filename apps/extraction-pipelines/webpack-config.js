@@ -14,6 +14,7 @@ module.exports = composePlugins(
       `Custom webpack config(${nodeEnv}) for Extraction Pipelines was loaded...`
     );
 
+    config.resolve.mainFields = ['browser', 'module', 'main'];
     config.resolve.fallback = { path: require.resolve('path-browserify') };
 
     if (nodeEnv === 'development' && config.devServer) {

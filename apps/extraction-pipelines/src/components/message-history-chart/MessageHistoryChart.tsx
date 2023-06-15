@@ -1,3 +1,17 @@
+import React, { useMemo, useState } from 'react';
+
+import styled from 'styled-components';
+
+import { useTranslation } from '@extraction-pipelines/common';
+import Section from '@extraction-pipelines/components/section';
+import { MQTTJobWithMetrics } from '@extraction-pipelines/hooks/hostedExtractors';
+import {
+  AggregationInterval,
+  getMetricAggregationErrorCount,
+  getMetricAggregationSuccessCount,
+  getMetricAggregations,
+} from '@extraction-pipelines/utils/hostedExtractors';
+
 import {
   Body,
   Colors,
@@ -7,17 +21,7 @@ import {
   SegmentedControl,
   Title,
 } from '@cognite/cogs.js';
-import { useTranslation } from '@extraction-pipelines/common';
-import Section from '@extraction-pipelines/components/section';
-import { MQTTJobWithMetrics } from '@extraction-pipelines/hooks/hostedExtractors';
-import React, { useMemo, useState } from 'react';
-import styled from 'styled-components';
-import {
-  AggregationInterval,
-  getMetricAggregationErrorCount,
-  getMetricAggregationSuccessCount,
-  getMetricAggregations,
-} from '@extraction-pipelines/utils/hostedExtractors';
+
 import { BAR_HEIGHT, MessageHistoryChartItem } from './MessageHistoryChartItem';
 
 type MessageHistoryChartProps = {
@@ -35,7 +39,7 @@ export const MessageHistoryChart = ({
     useState<AggregationInterval>('hourly');
 
   const aggregations = useMemo(() => {
-    const metrics = jobs.flatMap(({ metrics }) => metrics);
+    const metrics = jobs.flatMap(({ metrics: m }) => m);
 
     return getMetricAggregations(
       metrics,

@@ -1,8 +1,25 @@
 import React, { useState } from 'react';
+import { NavLink, useNavigate } from 'react-router-dom';
+
+import styled from 'styled-components';
+
+import { useTranslation } from '@extraction-pipelines/common';
+import { LastRunStatusMarker } from '@extraction-pipelines/components/extpipes/cols/StatusMarker';
+import { LinkWrapper } from '@extraction-pipelines/components/styled';
 import {
   useDeletePipeline,
   useSelectedExtpipe,
 } from '@extraction-pipelines/hooks/useExtpipe';
+import {
+  EXT_PIPE_PATH,
+  HEALTH_PATH,
+} from '@extraction-pipelines/routing/RoutingConfig';
+import {
+  createExtPipePath,
+  EXTRACTION_PIPELINES_PATH,
+} from '@extraction-pipelines/utils/baseURL';
+
+import { createLink, SecondaryTopbar } from '@cognite/cdf-utilities';
 import {
   Body,
   Button,
@@ -12,21 +29,8 @@ import {
   Menu,
   toast,
 } from '@cognite/cogs.js';
-import styled from 'styled-components';
-import { LinkWrapper } from '@extraction-pipelines/components/styled';
-import { LastRunStatusMarker } from '@extraction-pipelines/components/extpipes/cols/StatusMarker';
-import {
-  createExtPipePath,
-  EXTRACTION_PIPELINES_PATH,
-} from '@extraction-pipelines/utils/baseURL';
-import { useTranslation } from '@extraction-pipelines/common';
-import { NavLink, useNavigate } from 'react-router-dom';
-import {
-  EXT_PIPE_PATH,
-  HEALTH_PATH,
-} from '@extraction-pipelines/routing/RoutingConfig';
+
 import { DeleteDialog } from './DeleteModal';
-import { createLink, SecondaryTopbar } from '@cognite/cdf-utilities';
 
 export const ExtpipeHeading = () => {
   const { t } = useTranslation();

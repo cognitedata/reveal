@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
-import { Body, Button, Colors, Dropdown, Menu, Status } from '@cognite/cogs.js';
+
 import styled from 'styled-components';
 
 import { useTranslation } from '@extraction-pipelines/common';
+import { EditJobModal } from '@extraction-pipelines/components/edit-job-modal/EditJobModal';
 import {
   MQTTJobWithMetrics,
   useDeleteMQTTJob,
   useUpdateMQTTJob,
 } from '@extraction-pipelines/hooks/hostedExtractors';
-import { notification } from 'antd';
 import { getJobStatusForCogs } from '@extraction-pipelines/utils/hostedExtractors';
-import { EditJobModal } from '@extraction-pipelines/components/edit-job-modal/EditJobModal';
+import { notification } from 'antd';
+
+import { Body, Button, Colors, Dropdown, Menu, Status } from '@cognite/cogs.js';
 
 type TopicFilterProps = {
   className?: string;

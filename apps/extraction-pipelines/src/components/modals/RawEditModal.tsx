@@ -4,31 +4,33 @@ import React, {
   useEffect,
   useState,
 } from 'react';
-import { ModalContent } from '@extraction-pipelines/components/modals/ModalContent';
-import { useSelectedExtpipe } from '@extraction-pipelines/hooks/useExtpipe';
-import * as yup from 'yup';
-import { StyledTitle3 } from '@extraction-pipelines/components/styled';
-import {
-  DetailFieldNames,
-  ExtpipeRawTable,
-} from '@extraction-pipelines/model/Extpipe';
-import { selectedRawTablesRule } from '@extraction-pipelines/utils/validation/extpipeSchemas';
 import { useForm } from 'react-hook-form';
-import { mapStoredToDefault } from '@extraction-pipelines/utils/raw/rawUtils';
+
+import styled from 'styled-components';
+
+import { useTranslation } from '@extraction-pipelines/common';
+import { EditModal } from '@extraction-pipelines/components/modals/EditModal';
+import { ModalContent } from '@extraction-pipelines/components/modals/ModalContent';
+import { StyledTitle3 } from '@extraction-pipelines/components/styled';
 import {
   createUpdateSpec,
   useDetailsUpdate,
 } from '@extraction-pipelines/hooks/details/useDetailsUpdate';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { EditModal } from '@extraction-pipelines/components/modals/EditModal';
-import { Button, Select } from '@cognite/cogs.js';
+import { useSelectedExtpipe } from '@extraction-pipelines/hooks/useExtpipe';
 import {
   DatabaseWithTablesItem,
   useRawDBAndTables,
 } from '@extraction-pipelines/hooks/useRawDBAndTables';
-import styled from 'styled-components';
+import {
+  DetailFieldNames,
+  ExtpipeRawTable,
+} from '@extraction-pipelines/model/Extpipe';
+import { mapStoredToDefault } from '@extraction-pipelines/utils/raw/rawUtils';
+import { selectedRawTablesRule } from '@extraction-pipelines/utils/validation/extpipeSchemas';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
 
-import { useTranslation } from '@extraction-pipelines/common';
+import { Button, Select } from '@cognite/cogs.js';
 
 interface RawEditModalProps {
   visible: boolean;
@@ -68,12 +70,12 @@ export const RawEditModal: FunctionComponent<RawEditModalProps> = ({
   const saveChanges = async (values: ExtpipeRawTable[], errMsg: string) => {
     clearErrors('selectedRawTables');
     if (storedExtpipe) {
-      const t = createUpdateSpec({
+      const detailsUpdateContext = createUpdateSpec({
         id: storedExtpipe.id,
         fieldValue: values,
         fieldName: 'rawTables',
       });
-      await mutate(t, {
+      await mutate(detailsUpdateContext, {
         onSuccess: () => {
           close();
         },
@@ -155,7 +157,9 @@ export const RawEditModalView = ({
   };
 
   const onConfirmClicked = () => {
-    const filteredTables = tables.filter((t) => t.dbName.trim().length >= 1);
+    const filteredTables = tables.filter(
+      (table) => table.dbName.trim().length >= 1
+    );
     onSave(filteredTables);
   };
 

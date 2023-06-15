@@ -1,8 +1,5 @@
 import React from 'react';
 
-import { Flex, InputExp, Modal, ModalProps } from '@cognite/cogs.js';
-import { FormikErrors, useFormik } from 'formik';
-
 import { useTranslation } from '@extraction-pipelines/common';
 import {
   BaseMQTTSource,
@@ -10,6 +7,9 @@ import {
   useEditMQTTSource,
 } from '@extraction-pipelines/hooks/hostedExtractors';
 import { notification } from 'antd';
+import { FormikErrors, useFormik } from 'formik';
+
+import { Flex, InputExp, Modal, ModalProps } from '@cognite/cogs.js';
 
 type EditSourceAuthenticationModalProps = {
   onCancel: () => void;
@@ -65,17 +65,17 @@ export const EditSourceAuthenticationModal = ({
       initialValues: {
         username: source.username,
       },
-      onSubmit: (values) => {
-        if (values.username && values.password) {
+      onSubmit: (val) => {
+        if (val.username && val.password) {
           editMQTTSource({
             externalId: source.externalId,
             type: source.type,
             update: {
               username: {
-                set: values.username,
+                set: val.username,
               },
               password: {
-                set: values.password,
+                set: val.password,
               },
             },
           });

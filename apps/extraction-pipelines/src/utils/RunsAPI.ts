@@ -1,10 +1,10 @@
-import { post } from '@extraction-pipelines/utils/baseURL';
 import {
   CreateRunRequest,
   CreateRunsAPIResponse,
   GetRunsRequest,
   RunsAPIResponse,
 } from '@extraction-pipelines/model/Runs';
+import { post } from '@extraction-pipelines/utils/baseURL';
 
 import { CogniteClient } from '@cognite/sdk';
 

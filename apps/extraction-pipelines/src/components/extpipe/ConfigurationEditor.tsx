@@ -1,9 +1,12 @@
 import React from 'react';
-import { useExtpipeConfig } from '@extraction-pipelines/hooks/config';
+
 import { StreamLanguage } from '@codemirror/language';
 import { yaml } from '@codemirror/legacy-modes/mode/yaml';
-import ConfigurationErrorFeedback from './ConfigurationError';
+import { useExtpipeConfig } from '@extraction-pipelines/hooks/config';
+
 import { CodeEditor, CodeSnippet } from '@cognite/cdf-utilities';
+
+import ConfigurationErrorFeedback from './ConfigurationError';
 
 type Props = {
   externalId: string;

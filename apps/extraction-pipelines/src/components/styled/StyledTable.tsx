@@ -1,6 +1,8 @@
-import styled from 'styled-components';
-import { Colors } from '@cognite/cogs.js';
 import React from 'react';
+
+import styled from 'styled-components';
+
+import { Colors } from '@cognite/cogs.js';
 
 export const StyledTable = styled.div`
   .cogs-table {

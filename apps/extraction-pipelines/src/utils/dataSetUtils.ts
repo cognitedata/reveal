@@ -1,10 +1,11 @@
-import { DataSet } from '@cognite/sdk';
-import { Extpipe } from '@extraction-pipelines/model/Extpipe';
 import {
   DataSetMetadata,
   DataSetModel,
 } from '@extraction-pipelines/model/DataSetModel';
+import { Extpipe } from '@extraction-pipelines/model/Extpipe';
+
 import { createLink } from '@cognite/cdf-utilities';
+import { DataSet } from '@cognite/sdk';
 
 export const mapUniqueDataSetIds = (extpipes?: Extpipe[]) => {
   return extpipes

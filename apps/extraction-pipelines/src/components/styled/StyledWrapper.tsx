@@ -1,5 +1,7 @@
-import styled from 'styled-components';
 import React from 'react';
+
+import styled from 'styled-components';
+
 import { DivFlex } from '@extraction-pipelines/components/styled';
 
 export const CenterFullVH = styled.div`

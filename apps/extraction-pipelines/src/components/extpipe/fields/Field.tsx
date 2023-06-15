@@ -1,8 +1,9 @@
 import React from 'react';
 
+import styled from 'styled-components';
+
 import { TOOLTIP_DELAY_IN_MS } from '@cognite/cdf-utilities';
 import { Body, Colors, Flex, Icon, Tooltip } from '@cognite/cogs.js';
-import styled from 'styled-components';
 
 type FieldProps = {
   children: React.ReactNode;

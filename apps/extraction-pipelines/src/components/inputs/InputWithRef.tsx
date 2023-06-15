@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
-import { Ref } from 'react-hook-form/dist/types/fields';
 import { DeepMap, FieldError } from 'react-hook-form';
+
+import { Ref } from 'react-hook-form/dist/types/fields';
 
 export interface InputWithRefProps {
   name: string;

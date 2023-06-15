@@ -1,16 +1,18 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import Plot from 'react-plotly.js';
+
+import { useTranslation } from '@extraction-pipelines/common';
 import {
   DateFormatRecordType,
   DateFormatsRecord,
   mapDataForChart,
   mapRangeToGraphTimeFormat,
 } from '@extraction-pipelines/components/chart/runChartUtils';
-import { Colors } from '@cognite/cogs.js';
-import Plotly from 'plotly.js';
-import { useTranslation } from '@extraction-pipelines/common';
 import { useRunFilterContext } from '@extraction-pipelines/hooks/runs/RunsFilterContext';
 import { useAllRuns } from '@extraction-pipelines/hooks/useRuns';
+import Plotly from 'plotly.js';
+
+import { Colors } from '@cognite/cogs.js';
 
 interface ChartProps {
   externalId: string;
@@ -150,7 +152,6 @@ export const RunChart = ({ externalId }: ChartProps) => {
   ];
 
   return (
-    //@ts-ignore
     <Plot
       data={chartData}
       layout={layout(timeFormat.label)}

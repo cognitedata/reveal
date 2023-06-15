@@ -7,16 +7,18 @@ import {
   useSortBy,
   useTable,
 } from 'react-table';
-import styled from 'styled-components';
-import { Pagination } from '@cognite/cogs.js'; // OptionType, Select
-import { DivFlex } from '@extraction-pipelines/components/styled';
 
-import { ExternalLink } from '@extraction-pipelines/components/links/ExternalLink';
+import styled from 'styled-components';
+
 import { useTranslation } from '@extraction-pipelines/common';
+import { useRunLogTableCol } from '@extraction-pipelines/components/extpipe/RunLogsCols';
+import { ExternalLink } from '@extraction-pipelines/components/links/ExternalLink';
+import { DivFlex } from '@extraction-pipelines/components/styled';
 import { useRunFilterContext } from '@extraction-pipelines/hooks/runs/RunsFilterContext';
 import { useAllRuns, useRuns } from '@extraction-pipelines/hooks/useRuns';
-import { useRunLogTableCol } from '@extraction-pipelines/components/extpipe/RunLogsCols';
 import { RunApi } from '@extraction-pipelines/model/Runs';
+
+import { Pagination } from '@cognite/cogs.js'; // OptionType, Select
 
 interface Props {
   externalId: string;
@@ -131,8 +133,8 @@ export const RunLogsTable = ({ externalId }: Props) => {
         <Pagination
           itemsPerPage={state.pageSize as 25}
           setItemPerPage={(size) => setPageSize(size)}
-          onPageChange={(page) => {
-            gotoPage(page - 1);
+          onPageChange={(pageNo) => {
+            gotoPage(pageNo - 1);
           }}
           totalPages={pageCount}
         />

@@ -1,8 +1,11 @@
-import { components, OptionProps, OptionTypeBase } from 'react-select';
-import { Colors } from '@cognite/cogs.js';
 import React from 'react';
+import { components, OptionProps, OptionTypeBase } from 'react-select';
+
 import styled from 'styled-components';
+
 import { useTranslation } from '@extraction-pipelines/common';
+
+import { Colors } from '@cognite/cogs.js';
 
 export const DataSetSelectOption = ({
   isDisabled,

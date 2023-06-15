@@ -1,13 +1,16 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 import React from 'react';
+
+import { styleScope } from '@extraction-pipelines/styleScope';
+import { getContainer } from '@extraction-pipelines/utils/utils';
+import { Select, notification } from 'antd';
+
 import {
   DateRange,
   Tooltip as CogsTooltip,
   Modal as CogsModal,
 } from '@cognite/cogs.js';
-import { getContainer } from '@extraction-pipelines/utils/utils';
-import { styleScope } from '@extraction-pipelines/styleScope';
-import { Select, notification } from 'antd';
 
 Select.defaultProps = {
   ...Select.defaultProps,
@@ -39,6 +42,6 @@ notification.config({
   getContainer,
 });
 
-export default function AppScopeStyles(props: { children: React.Node }) {
+export default function AppScopeStyles(props: { children: React.ReactNode }) {
   return <div className={styleScope}>{props.children}</div>;
 }

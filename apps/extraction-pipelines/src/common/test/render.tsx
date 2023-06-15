@@ -1,13 +1,14 @@
 import React from 'react';
-import sdk from '@cognite/cdf-sdk-singleton';
-import { SDKProvider } from '@cognite/sdk-provider';
+
+import { styleScope } from '@extraction-pipelines/styleScope';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
   render as testingLibraryRender,
   RenderOptions,
 } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-import { styleScope } from '@extraction-pipelines/styleScope';
+import sdk from '@cognite/cdf-sdk-singleton';
+import { SDKProvider } from '@cognite/sdk-provider';
 
 export const render = (
   ui: React.ReactElement,

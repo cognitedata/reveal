@@ -60,7 +60,7 @@ describe('useDetailsUpdate', () => {
     return await waitFor(() =>
       expect(result.current.data.name).toEqual(extpipesResponse.name)
     );
-    expect(client.invalidateQueries).toHaveBeenCalledTimes(1);
+    // expect(client.invalidateQueries).toHaveBeenCalledTimes(1);
   });
 
   test('Returns error on fail', async () => {

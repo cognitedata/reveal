@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 
-import { Button } from '@cognite/cogs.js';
-
 import { useTranslation } from '@extraction-pipelines/common';
+import { MQTT_SOURCE_TYPE_LABEL } from '@extraction-pipelines/components/create-source-modal/CreateSourceModal';
+import { EditSourceDetailsModal } from '@extraction-pipelines/components/edit-source-details-modal/EditSourceDetailsModal';
 import Section from '@extraction-pipelines/components/section';
 import { MQTTSourceWithJobMetrics } from '@extraction-pipelines/hooks/hostedExtractors';
-import { EditSourceDetailsModal } from '@extraction-pipelines/components/edit-source-details-modal/EditSourceDetailsModal';
-import { MQTT_SOURCE_TYPE_LABEL } from '@extraction-pipelines/components/create-source-modal/CreateSourceModal';
+
+import { Button } from '@cognite/cogs.js';
 
 type SourceDetailsProps = {
   className?: string;

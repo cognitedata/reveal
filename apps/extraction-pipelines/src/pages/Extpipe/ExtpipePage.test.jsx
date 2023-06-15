@@ -2,6 +2,7 @@ import React from 'react';
 import { fireEvent, screen } from '@testing-library/react';
 import { QueryClient } from '@tanstack/react-query';
 import { useLocation, useParams, useRouteMatch } from 'react-router-dom';
+import noop from 'lodash/noop';
 import {
   EXT_PIPE_TAB_OVERVIEW,
   EXT_PIPE_TAB_RUN_HISTORY,
@@ -70,7 +71,7 @@ jest.mock('@extraction-pipelines/components/chart/RunChart', () => {
 });
 describe('ExtpipePage', () => {
   beforeEach(() => {
-    useDeletePipeline.mockReturnValue({ mutate: () => {} });
+    useDeletePipeline.mockReturnValue({ mutate: noop });
     useSelectedExtpipeId.mockReturnValue(1);
     useSelectedExtpipe.mockReturnValue({ data: {}, isLoading: false });
     useLocation.mockReturnValue({ pathname: '', search: '' });

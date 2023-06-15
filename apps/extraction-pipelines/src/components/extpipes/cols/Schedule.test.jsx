@@ -1,5 +1,6 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
+import { render } from '@extraction-pipelines/utils/test';
 import Schedule, { SupportedScheduleStrings } from './Schedule';
 
 describe('<Schedule/>', () => {
@@ -30,8 +31,7 @@ describe('<Schedule/>', () => {
       expected: /Continuous/i,
     },
     {
-      desc:
-        'Render not valid when scheduled is not supported - YouCanNotWriteThis',
+      desc: 'Render not valid when scheduled is not supported - YouCanNotWriteThis',
       value: 'YouCanNotWriteThis',
       expected: /not valid/i,
     },
