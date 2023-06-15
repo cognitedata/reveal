@@ -12,11 +12,6 @@ import { Body, Title, Switch } from '@cognite/cogs.js';
 export default function SkipSettingsPanel() {
   const { skipSettings, setSkipSettings } = useContext(AppStateContext);
 
-  const onSkipSettingsChange = (skip: boolean) => {
-    trackUsage(PNID_METRICS.configPage.skipSettings, { skip });
-    setSkipSettings(skip);
-  };
-
   return (
     <SkipSettings>
       <Title level={5}>Save and skip settings</Title>
@@ -27,7 +22,10 @@ export default function SkipSettingsPanel() {
       <Switch
         name="skipSettingsOption"
         value={skipSettings}
-        onChange={onSkipSettingsChange}
+        onChange={(_e: any, nextState: boolean) => {
+          trackUsage(PNID_METRICS.configPage.skipSettings, { skip: nextState });
+          setSkipSettings(nextState);
+        }}
         style={{ margin: '20px 0 0' }}
       />
     </SkipSettings>

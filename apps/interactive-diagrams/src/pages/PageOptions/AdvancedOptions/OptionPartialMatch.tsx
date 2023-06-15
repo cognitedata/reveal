@@ -16,11 +16,6 @@ export const OptionPartialMatch = ({ workflowId }: { workflowId: number }) => {
     (state: RootState) => state.workflows.items[workflowId].options
   );
 
-  const onPartialMatchesChange = (checked: boolean) => {
-    dispatch(changeOptions({ partialMatch: checked }));
-    setJobStarted(false);
-  };
-
   return (
     <OptionWrapper>
       <Flex row style={{ width: '100%', marginBottom: '12px' }}>
@@ -28,7 +23,10 @@ export const OptionPartialMatch = ({ workflowId }: { workflowId: number }) => {
           label="Allow partial matches"
           name="partialMatchOption"
           value={partialMatch}
-          onChange={onPartialMatchesChange}
+          onChange={(_e: any, nextState: boolean) => {
+            dispatch(changeOptions({ partialMatch: nextState }));
+            setJobStarted(false);
+          }}
         />
       </Flex>
       <Flex row style={{ width: '100%', marginBottom: '12px' }}>
