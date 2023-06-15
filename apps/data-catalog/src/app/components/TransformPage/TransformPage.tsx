@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import jetfireIcon from '@data-catalog-app/assets/jetfireIcon.svg';
+import { jetfireIcon as JetfireIcon } from '@data-catalog-app/assets';
 import { useTranslation } from '@data-catalog-app/common/i18n';
 import Drawer from '@data-catalog-app/components/Drawer';
 import useInterval from '@data-catalog-app/hooks/useInterval';
@@ -288,7 +288,7 @@ const TransformPage = (props: TransformPageProps): JSX.Element => {
           </Col>
           <Col span={6}>
             <IconWrapper>
-              <img src={jetfireIcon} alt={t('add-data')} />
+              <JetfireIcon />
             </IconWrapper>
           </Col>
         </Col>

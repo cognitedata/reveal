@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
 import { useTranslation } from '@data-catalog-app/common/i18n';
-import documentationIcon from '@data-catalog-app/assets/documentationIcon.svg';
+import { documentationIcon as DocumentationIcon } from '@data-catalog-app/assets';
 import Drawer from '@data-catalog-app/components/Drawer';
 import { Col } from '@data-catalog-app/utils';
 import { isNotNilOrWhitespace } from '@data-catalog-app/utils/shared';
@@ -203,7 +203,7 @@ const DocumentationPage = (props: DocumentationProps): JSX.Element => {
           </Col>
           <Col span={6}>
             <IconWrapper>
-              <img src={documentationIcon} alt="Add data" />
+              <DocumentationIcon />
             </IconWrapper>
           </Col>
         </Col>

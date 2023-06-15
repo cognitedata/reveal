@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 
 import styled from 'styled-components';
 
-import dataConsumerIcon from '@data-catalog-app/assets/DataConsumer.svg';
+import { DataConsumer } from '@data-catalog-app/assets';
 import { useTranslation } from '@data-catalog-app/common/i18n';
 import Drawer from '@data-catalog-app/components/Drawer';
 import { Col } from '@data-catalog-app/utils';
@@ -217,11 +217,7 @@ const ConsumerPage = (props: ConsumerProps): JSX.Element => {
                   </LocalCol>
                   <ImgCol span={6}>
                     <IconWrapper>
-                      <img
-                        style={{ width: '7rem' }}
-                        src={dataConsumerIcon}
-                        alt="Document icon"
-                      />
+                      <DataConsumer css={{ width: '7rem' }} />
                     </IconWrapper>
                     <Button
                       type="secondary"

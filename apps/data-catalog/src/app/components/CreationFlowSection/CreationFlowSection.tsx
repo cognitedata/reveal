@@ -55,7 +55,8 @@ const CreationFlowSection = (props: CreationFlowSectionProps): JSX.Element => {
         </Col>
         <Col span={6}>
           <IconWrapper>
-            <img src={props.icon} alt={props.title} />
+            {/* <img src={props.icon} alt={props.title} /> */}
+            <props.icon />
           </IconWrapper>
         </Col>
       </Col>

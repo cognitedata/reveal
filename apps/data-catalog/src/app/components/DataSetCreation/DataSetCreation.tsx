@@ -1,9 +1,13 @@
 import { useState, useEffect } from 'react';
 
-import dataConsumerIcon from '@data-catalog-app/assets/DataConsumer.svg';
-import documentationIcon from '@data-catalog-app/assets/documentationIcon.svg';
-import getDataInIcon from '@data-catalog-app/assets/getDataInIcon.svg';
-import jetfireIcon from '@data-catalog-app/assets/jetfireIcon.svg';
+import {
+  DataConsumer,
+  documentationIcon as DocumentationIcon,
+} from '@data-catalog-app/assets';
+import {
+  getDataInIcon as GetDataInIcon,
+  jetfireIcon as JetfireIcon,
+} from '@data-catalog-app/assets';
 import { useTranslation } from '@data-catalog-app/common/i18n';
 import { useUserInformation } from '@data-catalog-app/hooks/useUserInformation';
 import theme from '@data-catalog-app/styles/theme';
@@ -483,21 +487,21 @@ const DataSetCreation = (props: DataSetCreationProps): JSX.Element => {
           <CreationFlowSection
             title={t('section-creation-flow-title-1')}
             setSelection={() => setSelectedSection('Document data extraction')}
-            icon={getDataInIcon}
+            icon={GetDataInIcon}
             columns={StatusColumns}
             name="GetDataIn"
           />
           <CreationFlowSection
             title={t('section-creation-flow-title-2')}
             setSelection={() => setSelectedSection('Transformations')}
-            icon={jetfireIcon}
+            icon={JetfireIcon}
             columns={StatusColumns}
             name="Transformations"
           />
           <CreationFlowSection
             title={t('section-creation-flow-title-3')}
             setSelection={() => setSelectedSection('Documentation')}
-            icon={documentationIcon}
+            icon={DocumentationIcon}
             columns={StatusColumns}
             name="Documentation"
           />
@@ -505,7 +509,7 @@ const DataSetCreation = (props: DataSetCreationProps): JSX.Element => {
             <CreationFlowSection
               title={t('section-creation-flow-title-4')}
               setSelection={() => setSelectedSection('Consumers')}
-              icon={dataConsumerIcon}
+              icon={DataConsumer}
               columns={StatusColumns}
               name="Consumers"
             />

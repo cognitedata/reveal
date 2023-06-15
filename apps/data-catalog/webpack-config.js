@@ -12,8 +12,16 @@ const useMockEnv =
 
 // Nx plugins for webpack.
 module.exports = composePlugins(
-  withNx(),
-  withReact(),
+  withNx({
+    nx: {
+      svgr: true,
+    },
+  }),
+  withReact({
+    nx: {
+      svgr: true,
+    },
+  }),
   withSingleSpa({ useMockEnv }),
   (config) => {
     const nodeEnv = process.env.NODE_ENV || 'production';

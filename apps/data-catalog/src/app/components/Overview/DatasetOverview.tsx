@@ -4,8 +4,7 @@ import { useState } from 'react';
 import styled from 'styled-components';
 
 import { useUpdateDataSetMutation } from '@data-catalog-app/actions';
-import EmptyDatasetIcon from '@data-catalog-app/assets/EmptyDataset.svg';
-import UsersIcon from '@data-catalog-app/assets/Users.svg';
+import { EmptyDataset, Users as UsersIcon } from '@data-catalog-app/assets';
 import { useTranslation } from '@data-catalog-app/common/i18n';
 import BasicInfoCard from '@data-catalog-app/components/BasicInfoCard';
 import { useResourceAggregates } from '@data-catalog-app/hooks/useResourceAggregates';
@@ -224,10 +223,7 @@ const DatasetOverview = ({
                         direction="column"
                         style={{ margin: '52px auto' }}
                       >
-                        <img
-                          src={EmptyDatasetIcon}
-                          alt={t('dataset-is-empty')}
-                        />
+                        <EmptyDataset />
                         <Title level={4}>{t('dataset-is-empty')}</Title>
                         <Body
                           level={2}
@@ -310,7 +306,7 @@ const DatasetOverview = ({
                   direction="column"
                   style={{ margin: '46px auto' }}
                 >
-                  <img src={UsersIcon} alt="Users" />
+                  <UsersIcon />
                   <Title level={4}>{t('who-has-access')}</Title>
                   <Body
                     level={2}

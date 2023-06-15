@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import getDataInIcon from '@data-catalog-app/assets/getDataInIcon.svg';
+import { getDataInIcon as GetDataInIcon } from '@data-catalog-app/assets';
 import { useTranslation } from '@data-catalog-app/common/i18n';
 import Drawer from '@data-catalog-app/components/Drawer';
 import { RawSection } from '@data-catalog-app/components/GetDataInPage/raw/RawSection';
@@ -176,7 +176,7 @@ const GetDataInPage = (props: GetDataInProps): JSX.Element => {
           </Col>
           <Col span={6}>
             <IconWrapper>
-              <img src={getDataInIcon} alt={t('add-data')} />
+              <GetDataInIcon />
             </IconWrapper>
           </Col>
         </Col>

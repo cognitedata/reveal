@@ -7,7 +7,7 @@ const EmptyDataState = () => {
   return (
     <div style={{ marginTop: '10%' }}>
       <EmptyState
-        type="Data"
+        type="DataSets"
         text={t('this-data-set-contains-no-data')}
         extra={
           <div>
