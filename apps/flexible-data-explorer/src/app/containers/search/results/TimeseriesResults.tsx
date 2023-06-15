@@ -1,14 +1,19 @@
-import { useMemo } from 'react';
+import isEmpty from 'lodash/isEmpty';
 
 import { Button } from '@cognite/cogs.js';
 import { TimeseriesChart } from '@cognite/plotting-components';
-import { Timeseries } from '@cognite/sdk/dist/src';
-import { useInfiniteSearch } from '@cognite/sdk-react-query-hooks';
 
+import { translationKeys } from '../../../common/i18n/translationKeys';
 import { SearchResults } from '../../../components/search/SearchResults';
 import { Table } from '../../../components/table/Table';
 import { useNavigation } from '../../../hooks/useNavigation';
-import { useSearchQueryParams } from '../../../hooks/useParams';
+import {
+  useDataTypeFilterParams,
+  useSearchQueryParams,
+} from '../../../hooks/useParams';
+import { useTranslation } from '../../../hooks/useTranslation';
+import { useTimeseriesSearchQuery } from '../../../services/instances/timeseries';
+import { buildTimeseriesFilter } from '../../../utils/filterBuilder';
 
 import { PAGE_SIZE } from './constants';
 
@@ -42,24 +47,26 @@ const columns = [
 ];
 
 export const TimeseriesResults = () => {
-  const [query] = useSearchQueryParams();
+  const { t } = useTranslation();
   const navigate = useNavigation();
+  const [query] = useSearchQueryParams();
+  const [timeseriesFilterParams] = useDataTypeFilterParams('Timeseries');
 
   const { data, hasNextPage, fetchNextPage, isFetchingNextPage } =
-    useInfiniteSearch<Timeseries>('timeseries', query, PAGE_SIZE);
-
-  const results = useMemo(() => {
-    return data?.pages.flatMap((page) => page) || [];
-  }, [data]);
+    useTimeseriesSearchQuery(
+      query,
+      PAGE_SIZE,
+      buildTimeseriesFilter(timeseriesFilterParams)
+    );
 
   return (
-    <SearchResults empty={results.length === 0}>
+    <SearchResults empty={isEmpty(data)}>
       <SearchResults.Header title="Time series" />
 
       <SearchResults.Body>
         <Table
           id="timeseries"
-          data={results}
+          data={data}
           columns={columns}
           onRowClick={(row) => {
             navigate.toTimeseriesPage(row.externalId || row.id);
@@ -76,7 +83,7 @@ export const TimeseriesResults = () => {
           }}
           loading={isFetchingNextPage}
         >
-          Show more
+          {t(translationKeys.showMore, 'Show more')}
         </Button>
       </SearchResults.Footer>
     </SearchResults>

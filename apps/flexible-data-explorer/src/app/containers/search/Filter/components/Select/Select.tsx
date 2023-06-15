@@ -45,6 +45,7 @@ export const Select = <T extends string>({
     <SelectWrapper>
       <CogsSelect
         disableTyping
+        disabled={options.length < 2}
         theme="grey"
         options={selectOptions}
         value={selectValue}

@@ -22,6 +22,7 @@
     "@cognite/reveal": "4.3.2",
     "@cognite/reveal-react-components": "0.1.1",
     "@cognite/sdk": "^7.19.1",
+    "@cognite/sdk-playground": "^6.0.8",
     "@cognite/sdk-provider": "^2.0.6",
     "@cognite/sidecar": "^0.4.1",
     "@cognite/unified-file-viewer": "^13.5.2",
@@ -55,6 +56,7 @@
     "@types/qrcode-terminal": "^0.12.0",
     "@types/react-highlight": "^0.12.5",
     "@types/react-plotly.js": "^2.6.0",
+    "@types/react-resizable": "^3.0.4",
     "@visx/axis": "^2.14.0",
     "@visx/event": "^2.6.0",
     "@visx/gradient": "^2.10.0",
@@ -66,6 +68,7 @@
     "@visx/threshold": "^2.12.2",
     "@visx/tooltip": "^2.16.0",
     "@wojtekmaj/enzyme-adapter-react-17": "^0.8.0",
+    "@xstate/react": "^1.6.3",
     "ag-grid-community": "^28.1.0",
     "ag-grid-react": "^28.1.0",
     "babel-plugin-polyfill-corejs2": "^0.3.3",
@@ -109,6 +112,7 @@
     "json-server": "^0.17.0",
     "jwt-decode": "^3.1.2",
     "langchain": "^0.0.92",
+    "localforage": "^1.10.0",
     "lodash": "^4.17.21",
     "lru-cache": "^6.0.0",
     "match-sorter": "^6.3.1",
@@ -127,6 +131,7 @@
     "react-copy-to-clipboard": "^5.1.0",
     "react-datepicker": "^3.3.0",
     "react-dom": "18.2.0",
+    "react-draggable": "^4.4.5",
     "react-error-boundary": "^4.0.0",
     "react-highlight": "^0.15.0",
     "react-highlight-words": "^0.18.0",
@@ -136,10 +141,12 @@
     "react-querybuilder": "^6.1.2",
     "react-redux": "8.0.5",
     "react-refresh": "^0.11.0",
+    "react-resizable": "^3.0.5",
     "react-router-dom": "^6.4.3",
     "react-scripts": "5.0.1",
     "react-select": "^4.3.0",
     "react-splitter-layout": "^4.0.0",
+    "react-svg-loader": "^3.0.3",
     "react-virtualized": "^9.22.3",
     "react-virtualized-auto-sizer": "^1.0.7",
     "react-virtualized-tree": "^3.4.1",
@@ -171,6 +178,7 @@
     "uuid": "^8.3.2",
     "web-vitals": "^2.1.1",
     "worker-loader": "^3.0.8",
+    "xstate": "^4.37.2",
     "yargs": "^17.7.1",
     "yargs-parser": "^21.1.1"
   },
@@ -365,5 +373,8 @@
   },
   "bin": {
     "platypus": "./dist/libs/platypus-cli/src/index.js"
+  },
+  "engines": {
+    "node": "^18"
   }
 }

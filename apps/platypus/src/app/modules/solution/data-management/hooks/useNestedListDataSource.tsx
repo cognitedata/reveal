@@ -52,7 +52,6 @@ export const useNestedListDataSource = ({
         const field = params.context.field;
         const isCustomType = params.context.isCustomType;
         const defaultData = params.context.defaultData;
-
         if (isCustomType) {
           return dataManagementHandler
             .getDataById({
@@ -97,11 +96,15 @@ export const useNestedListDataSource = ({
             });
         } else {
           // could be a list of primitives or of JSON objects; if the latter, stringify
-          const listData = (
-            defaultData![field] as string[] | KeyValueMap[]
-          ).map((item) =>
-            typeof item === 'object' ? JSON.stringify(item) : item
-          );
+          const cellData = defaultData![field] as
+            | string[]
+            | KeyValueMap[]
+            | null;
+          const listData = cellData
+            ? cellData.map((item) =>
+                typeof item === 'object' ? JSON.stringify(item) : item
+              )
+            : ([] as string[]);
 
           const results = searchTerm
             ? listData.filter((el: PrimitiveTypes) =>
