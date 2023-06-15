@@ -99,15 +99,15 @@ export const getActionLabel = (capability: string, action: string) => {
 };
 
 export const sleep = (ms: number) => {
-  return new Promise<void>((resolve) => {
-    setTimeout(() => resolve(), ms);
+  return new Promise<string>((resolve) => {
+    setTimeout(() => resolve('sleep'), ms);
   });
 };
 
 export const useSleep = (
   ms: number,
   id: string,
-  options?: UseQueryOptions<void>
+  options?: UseQueryOptions<string>
 ) =>
   useQuery(['sleep', id] as QueryKey, () => sleep(ms), {
     ...options,
