@@ -1,0 +1,26 @@
+{
+  "name": "@cognite/transformations",
+  "version": "2.4.0",
+  "scripts": {
+    "start": "../../scripts/start.sh dev transformations",
+    "build": "../../scripts/build.sh production transformations",
+    "test": "../../scripts/test.sh transformations",
+    "lint": "../../scripts/lint.sh transformations",
+    "lint:fix": "../../scripts/lint.sh transformations --fix",
+    "cypress:dev": "./scripts/cypress-dev.sh"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

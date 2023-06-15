@@ -1,0 +1,98 @@
+{
+  "name": "raw-explorer",
+  "sourceRoot": "apps/raw-explorer/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/raw-explorer",
+        "index": "apps/raw-explorer/src/index.html",
+        "main": "apps/raw-explorer/src/index.tsx",
+        "runtimeChunk": false,
+        "vendorChunk": false,
+        "commonChunk": false,
+        "tsConfig": "apps/raw-explorer/tsconfig.app.json",
+        "assets": [],
+        "styles": [],
+        "scripts": [],
+        "webpackConfig": "apps/raw-explorer/webpack-config.js"
+      },
+      "configurations": {
+        "development": {
+          "optimization": false,
+          "outputHashing": "all",
+          "sourceMap": true,
+          "extractCss": false,
+          "namedChunks": false,
+          "extractLicenses": false,
+          "vendorChunk": false,
+          "runtimeChunk": false,
+          "budgets": []
+        },
+        "preview": {
+          "optimization": false,
+          "outputHashing": "all",
+          "sourceMap": true,
+          "extractCss": true,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "vendorChunk": false,
+          "runtimeChunk": false,
+          "budgets": []
+        },
+        "production": {
+          "optimization": false,
+          "outputHashing": "all",
+          "sourceMap": true,
+          "extractCss": true,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "vendorChunk": false,
+          "budgets": []
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/webpack:dev-server",
+      "options": {
+        "buildTarget": "raw-explorer:build",
+        "hmr": true
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "raw-explorer:build:development",
+          "hmr": true,
+          "liveReload": true
+        },
+
+        "preview": {
+          "buildTarget": "raw-explorer:build:preview",
+          "hmr": false
+        },
+        "production": {
+          "buildTarget": "raw-explorer:build:production",
+          "hmr": false
+        }
+      },
+      "defaultConfiguration": "development"
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/raw-explorer/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/apps/raw-explorer"],
+      "options": {
+        "jestConfig": "apps/raw-explorer/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

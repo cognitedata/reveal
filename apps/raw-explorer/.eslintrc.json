@@ -1,0 +1,26 @@
+{
+  "extends": ["plugin:@nrwl/nx/react", "../../.eslintrc.json"],
+  "ignorePatterns": ["!**/*", "node_modules"],
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+      "rules": {       
+        "@nrwl/nx/enforce-module-boundaries": "off",
+        "@cognite/require-t-function": "warn",
+        "lodash/prefer-noop": "warn",
+        "@typescript-eslint/no-shadow": "warn",
+        "@cognite/no-number-z-index": "warn"
+      }
+    },
+    {
+      "files": ["*.ts", "*.tsx"],
+      "rules": {
+        "no-console": "warn"
+      }
+    },
+    {
+      "files": ["*.js", "*.jsx"],
+      "rules": {}
+    }
+  ]
+}

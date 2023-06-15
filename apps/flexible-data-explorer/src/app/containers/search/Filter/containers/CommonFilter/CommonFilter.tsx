@@ -6,9 +6,9 @@ import { Field, FieldValue, Operator, ValueType } from '../../types';
 
 import { CommonFilterInput } from './CommonFilterInput';
 import {
-  getConfig,
   getInitialOperator,
-  getInitialValue,
+  getInputType,
+  getOperators,
   isApplyButtonDisabled,
 } from './utils';
 
@@ -25,28 +25,24 @@ export const CommonFilter: React.FC<CommonFilterProps> = ({
   onBackClick,
   onApplyClick,
 }) => {
-  const config = useMemo(() => {
-    return getConfig(field);
-  }, [field]);
-
   const operators = useMemo(() => {
-    return Object.keys(config) as Operator[];
-  }, [config]);
+    return getOperators(field);
+  }, [field]);
 
   const [operator, setOperator] = useState<Operator>(
     getInitialOperator(operators, fieldValue)
   );
 
-  const [value, setValue] = useState<ValueType | undefined>(
-    getInitialValue(operators, fieldValue)
-  );
+  const [value, setValue] = useState<ValueType | undefined>(fieldValue?.value);
 
-  const inputType = config[operator] || 'no-input';
+  const inputType = useMemo(() => {
+    return getInputType(field.type, operator);
+  }, [field.type, operator]);
 
   const handleChangeOperator = (newOperator: Operator) => {
     setOperator(newOperator);
 
-    const newInputType = config[newOperator];
+    const newInputType = getInputType(field.type, operator);
     if (inputType !== newInputType) {
       setValue(undefined);
     }

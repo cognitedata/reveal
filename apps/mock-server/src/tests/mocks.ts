@@ -6,6 +6,9 @@ scalar TimeSeries
 scalar DataPoint
 scalar DataPointValue
 
+scalar File
+scalar Sequence
+
 scalar Int64
 
 input _StringCondition {
