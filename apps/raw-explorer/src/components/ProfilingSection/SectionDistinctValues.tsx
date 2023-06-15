@@ -38,8 +38,9 @@ export const SectionDistinctValues = ({
         <Body level={2}>{distinctCount}</Body>
         <Chip
           label={t('profiling-sidebar-distinct-values-value', { percentage })}
+          size="x-small"
           type={variant}
-        ></Chip>
+        />
       </Flex>
     </Section>
   );

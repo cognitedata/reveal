@@ -111,6 +111,7 @@ export default function ProfileRow({ allCount, profile }: Props) {
           >
             <Chip
               label={`${emptyPercent}%`}
+              size="x-small"
               type={getLabelVariant(emptyPercent, 'empty')}
             />
           </NumberOrMissingTd>
@@ -123,6 +124,7 @@ export default function ProfileRow({ allCount, profile }: Props) {
           >
             <Chip
               label={`${distinctPercent}%`}
+              size="x-small"
               type={getLabelVariant(distinctPercent, 'distinct')}
             />
           </NumberOrMissingTd>
