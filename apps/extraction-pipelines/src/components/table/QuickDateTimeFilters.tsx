@@ -35,7 +35,7 @@ const Wrapper = styled(DivFlex)`
     padding: 0.4rem 0.9rem;
   }
   input[type='radio']:checked + label {
-    background-color: ${Colors['decorative--blue--700']};
+    background-color: ${Colors['surface--interactive--toggled-default']};
   }
   input[type='radio']:focus + label {
     box-shadow: 0 0 0 4px ${Colors['decorative--blue--400']};
