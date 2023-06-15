@@ -110,6 +110,12 @@ export const CollapsiblePanelContainer: React.FC<
       ) : (
         <Icon type="Loader" />
       );
+    } else if (data.type === 'File' || data.type === 'Sequence') {
+      // Temporary until we have suitable preview implementations
+      const listData = data.isList
+        ? data.listValues?.map((v) => v.externalId)
+        : [data.instanceExternalId];
+      return <CogDataList data-cy="instance-values" listData={listData} />;
     } else if (data.isList) {
       return (
         <ListPreview
@@ -127,8 +133,6 @@ export const CollapsiblePanelContainer: React.FC<
       );
 
       return <CogDataList data-cy="instance-values" listData={listData} />;
-    } else if (data.type === 'File') {
-      return <p>File</p>;
     } else {
       return (
         <InstancePreview
