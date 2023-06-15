@@ -10,6 +10,7 @@ static final String[] APPLICATIONS = [
   'industry-canvas-ui',
   'interactive-diagrams',
   'iot-hub',
+  'transformations',
   'cdf-document-search'
 ]
 
@@ -31,6 +32,7 @@ static final Map<String, String> FIREBASE_APP_SITES = [
   'industry-canvas-ui': 'industry-canvas-ui',
   'interactive-diagrams': 'pnid-contextualization',
   'iot-hub': 'iot-hub',
+  'transformations': 'transformations',
   'cdf-document-search': 'document-search'
 ]
 
@@ -42,6 +44,7 @@ static final Map<String, String> PREVIEW_PACKAGE_NAMES = [
   'industry-canvas-ui': "@cognite/cdf-industry-canvas-ui",
   'interactive-diagrams': '@cognite/cdf-context-ui-pnid',
   'iot-hub': "@cognite/cdf-iot-hub",
+  'transformations': "@cognite/cdf-transformations-2",
   'cdf-document-search': 'cognite/cdf-document-search-ui'
 ]
 
@@ -100,6 +103,7 @@ static final Map<String, String> VERSIONING_STRATEGY = [
   'platypus': 'multi-branch',
   'coding-conventions': 'multi-branch',
   'data-exploration': 'multi-branch',
+  'transformations': 'single-branch',
   'copilot': 'single-branch',
   'iot-hub': 'single-branch',
   'interactive-diagrams': 'multi-branch',
