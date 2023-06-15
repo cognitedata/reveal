@@ -15,6 +15,8 @@ export const config = {
   builtInTypes: {
     Asset: 'assets',
     TimeSeries: 'timeseries',
+    File: 'file',
+    Sequence: 'sequence',
     SyntheticTimeSeries: 'timeseries',
   },
   whitelistedEndpointEndings: ['/list', '/search', '/byids', '/filter'],
