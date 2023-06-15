@@ -44,6 +44,7 @@ const TableContent = () => {
 
         <TabPane
           key="profiling"
+          disabled={isEmpty}
           tab={<TabProfiling isFetching={isFetching} isEmpty={isEmpty} />}
           style={{ overflow: 'auto' }}
         >
@@ -86,14 +87,14 @@ const Wrapper = styled(Flex)`
 `;
 
 const TopBar = styled(Flex)`
-  height: 64px;
   box-sizing: border-box;
   border-bottom: 1px solid ${Colors['border--interactive--default']};
 `;
 
 const Tab = styled.span<{ $isEmpty?: boolean }>`
-  display: inline-flex;
-  align-content: center;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   line-height: 17px;
   font-weight: 500;
   font-size: 14px;
@@ -112,10 +113,16 @@ const StyledTabs = styled(AntdTabs)`
 
   .ant-tabs-nav {
     padding-left: 10px;
+    margin: 0;
+    height: 52px;
   }
 
   .ant-tabs-tabpane {
     height: 100%;
+  }
+
+  .ant-tabs-nav::before {
+    border: none;
   }
 `;
 export default TableContent;
