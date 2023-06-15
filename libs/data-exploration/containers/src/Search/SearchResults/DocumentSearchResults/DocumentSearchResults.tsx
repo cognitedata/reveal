@@ -43,6 +43,7 @@ export interface DocumentSearchResultsProps
   onFileClicked?: (file: FileInfo) => boolean;
   selectedRow?: Record<string | number, boolean>;
   isDocumentsGPTEnabled?: boolean;
+  hideUploadButton?: boolean;
 }
 
 export const DocumentSearchResults = ({
@@ -55,6 +56,7 @@ export const DocumentSearchResults = ({
   selectedRow,
   onFilterChange,
   onFileClicked,
+  hideUploadButton = false,
   ...rest
 }: DocumentSearchResultsProps &
   Omit<TableProps<InternalDocument>, 'data' | 'columns' | 'id'>) => {
@@ -173,17 +175,21 @@ export const DocumentSearchResults = ({
                 />
               }
             />
-            <UploadButton
-              onClick={() => {
-                setModalVisible(true);
-                trackUsage &&
-                  trackUsage(DATA_EXPLORATION_COMPONENT.CLICK.UPLOAD, {
-                    table: 'file',
-                  });
-              }}
-              disabled={!hasEditPermissions}
-            />
-            <VerticalDivider />
+            {!hideUploadButton && (
+              <>
+                <UploadButton
+                  onClick={() => {
+                    setModalVisible(true);
+                    trackUsage &&
+                      trackUsage(DATA_EXPLORATION_COMPONENT.CLICK.UPLOAD, {
+                        table: 'file',
+                      });
+                  }}
+                  disabled={!hasEditPermissions}
+                />
+                <VerticalDivider />
+              </>
+            )}
           </>
         }
         sorting={sortBy}

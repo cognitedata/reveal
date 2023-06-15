@@ -10,6 +10,7 @@ import { ValueByDataType } from '../containers/search/Filter';
 
 import { useSearchFilterParams, useSearchQueryParams } from './useParams';
 
+// TODO: rename this.
 export const useNavigation = () => {
   const navigate = useNavigate();
   const { search, pathname } = useLocation(); // <-- current location being accessed
@@ -39,10 +40,11 @@ export const useNavigation = () => {
     [basename, navigate]
   );
 
+  // NOTE: this is gonna be removed, there will be no list pages, only search results.
   const toListPage = useCallback(
-    (dataType: string) => {
+    (space: string, dataModel: string, version: string, dataType: string) => {
       navigate({
-        pathname: `${basename}/list/${dataType}`,
+        pathname: `${basename}/${dataModel}/${space}/${version}/list/${dataType}`,
         // search: `?searchQuery=${query}`,
       });
     },

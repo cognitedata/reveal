@@ -10,7 +10,7 @@ import {
 import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { useSDK } from '@cognite/sdk-provider';
 
-import { useUserInformation } from '@data-exploration-app/hooks/hooks';
+import { useUserInformation } from '../hooks/useUserInformation';
 
 import { ICProvider } from './ICProvider';
 

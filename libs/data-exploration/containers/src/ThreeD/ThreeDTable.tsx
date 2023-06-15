@@ -1,9 +1,9 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 
 import styled from 'styled-components';
 
 import { Table, TableProps } from '@data-exploration/components';
-import { ColumnDef, SortingState } from '@tanstack/react-table';
+import { ColumnDef } from '@tanstack/react-table';
 
 import { Icon } from '@cognite/cogs.js';
 
@@ -35,7 +35,6 @@ export const ThreeDTable = ({
     type: model.type,
     siteId: model.siteId,
   }));
-  const [sorting, setSorting] = useState<SortingState>([]);
 
   const columns = useMemo(
     () =>
@@ -120,10 +119,6 @@ export const ThreeDTable = ({
       enableExpanding
       tableHeaders={FilterHeader}
       {...rest}
-      enableSorting
-      sorting={sorting}
-      onSort={setSorting}
-      manualSorting={false}
     />
   );
 };

@@ -1,12 +1,15 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 
 import styled from 'styled-components';
 
-import { Title } from '@cognite/cogs.js';
+import { Body, Icon, Title } from '@cognite/cogs.js';
 
+import { translationKeys } from '../../app/common/i18n/translationKeys';
 import { CategoryCard } from '../components/cards/CategoryCard';
+import { DataModelSelectorModal } from '../containers/modals/DataModelSelectorModal';
 import { Page } from '../containers/page/Page';
 import { SearchBar } from '../containers/search/SearchBar';
+import { useDataModelParams } from '../hooks/useDataModelParams';
 import { useNavigation } from '../hooks/useNavigation';
 import { useTranslation } from '../hooks/useTranslation';
 import { useTypesDataModelQuery } from '../services/dataModels/query/useTypesDataModelQuery';
@@ -17,20 +20,47 @@ export const HomePage = () => {
   const { toListPage } = useNavigation();
 
   const { data, isLoading } = useTypesDataModelQuery();
+  const selectedDataModel = useDataModelParams();
+
+  const [siteSelectionVisible, setSiteSelectionVisible] =
+    useState<boolean>(false);
 
   const handleCategoryClick = useCallback(
     (dataType: string) => {
-      toListPage(dataType);
+      if (selectedDataModel) {
+        toListPage(
+          selectedDataModel.space,
+          selectedDataModel.dataModel,
+          selectedDataModel.version,
+          dataType
+        );
+      }
     },
-    [toListPage]
+    [toListPage, selectedDataModel]
   );
+
+  const getSpaceText = () => {
+    if (selectedDataModel && selectedDataModel.dataModel) {
+      return selectedDataModel.dataModel;
+    } else {
+      return '...';
+    }
+  };
 
   return (
     <Page>
       <SearchContainer>
-        <Title level={3}>
-          {t('homepage_title', 'Explore all your data from')} ...
-        </Title>
+        <TitleContainer>
+          <Title level={3}>
+            {t(translationKeys.homePageTitle, 'Explore all your data from')}{' '}
+          </Title>
+          <StyledBody onClick={() => setSiteSelectionVisible(true)}>
+            {getSpaceText()}
+            {selectedDataModel && selectedDataModel.dataModel && (
+              <Icon type="ChevronDownLarge" />
+            )}
+          </StyledBody>
+        </TitleContainer>
         <SearchBar width="640px" />
       </SearchContainer>
 
@@ -52,9 +82,37 @@ export const HomePage = () => {
           </CategoryContent>
         </CategoriesContainer>
       </Page.Body>
+
+      <DataModelSelectorModal
+        isVisible={siteSelectionVisible}
+        onModalClose={() => setSiteSelectionVisible(false)}
+        isClosable
+      />
     </Page>
   );
 };
+
+const TitleContainer = styled.span`
+  display: flex;
+  align-items: center;
+`;
+
+const StyledBody = styled(Body)`
+  display: flex;
+  align-items: center;
+  font-size: 24px;
+  color: rgba(51, 51, 51, 0.8);
+  margin-left: 8px;
+
+  &:hover {
+    cursor: pointer;
+    color: rgba(51, 51, 51, 0.5);
+  }
+
+  .cogs-icon {
+    margin-left: 8px;
+  }
+`;
 
 const SearchContainer = styled.div`
   display: flex;

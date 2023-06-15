@@ -283,12 +283,20 @@ export const queryKeys = {
     ...queryKeys.threeDModels(),
     ...(input || []),
   ],
-  listThreeDRevisions: (input?: any[]) =>
-    [...queryKeys.threeD(), 'revisions', ...(input || [])] as const,
+  listThreeDRevisions: (modelId?: number) =>
+    [...queryKeys.threeDModels(), modelId, 'revisions'] as const,
+  getThreeDRevisionOutputs: (modelId?: number, revisionId?: number) =>
+    [...queryKeys.listThreeDRevisions(modelId), revisionId, 'outputs'] as const,
+  get3DThumbnail: (url?: string) =>
+    [...queryKeys.threeD(), 'thumbnail', url] as const,
   fileBySiteId: (siteId: string | undefined) =>
     [...queryKeys.files(), 'search', siteId] as const,
   fileIconQuery: (file: FileInfo | undefined) =>
     [...queryKeys.all, '360Image', 'icon', file?.id] as const,
   filesAggregateBySiteId: (siteId: string | undefined) =>
     [...queryKeys.files(), 'aggregate', siteId] as const,
+  siteNameBySiteId: (...input: any[]) => [
+    ...queryKeys.listEvents(),
+    ...(input || []),
+  ],
 } as const;

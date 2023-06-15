@@ -19,20 +19,12 @@ import { useRevealError } from '@data-exploration-app/containers/ThreeD/hooks/us
 
 type LoadImages360Props = {
   images360: Image360DatasetOptions[];
-  imageEntities: { siteId: string; images: Image360Collection }[];
-  setImageEntities: (
-    value: React.SetStateAction<
-      { siteId: string; images: Image360Collection }[]
-    >
-  ) => void;
   setImage360Entity: (entity: Image360 | undefined) => void;
   viewer: Cognite3DViewer;
 };
 
 const LoadImages360 = ({
   images360,
-  imageEntities,
-  setImageEntities,
   setImage360Entity,
   viewer,
 }: LoadImages360Props): JSX.Element => {
@@ -66,8 +58,6 @@ const LoadImages360 = ({
           viewer,
           siteId,
           applied,
-          imageEntities,
-          setImageEntities,
           setImage360Entity,
           rotationMatrix,
           translationMatrix
