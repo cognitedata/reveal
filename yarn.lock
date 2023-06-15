@@ -1789,10 +1789,10 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@codemirror/autocomplete@^6.0.0":
-  version "6.4.0"
-  resolved "https://registry.yarnpkg.com/@codemirror/autocomplete/-/autocomplete-6.4.0.tgz#76ac9a2a411a4cc6e13103014dba5e0fe601da5a"
-  integrity sha512-HLF2PnZAm1s4kGs30EiqKMgD7XsYaQ0XJnMR0rofEWQ5t5D60SfqpDIkIh1ze5tiEbyUWm8+VJ6W1/erVvBMIA==
+"@codemirror/autocomplete@^6.0.0", "@codemirror/autocomplete@^6.8.0":
+  version "6.8.0"
+  resolved "https://registry.yarnpkg.com/@codemirror/autocomplete/-/autocomplete-6.8.0.tgz#20d46587ffe0e8df24f5a503c13ab994c2c73107"
+  integrity sha512-nTimZYnTYaZ5skAt+zlk8BD41GvjpWgtDni2K+BritA7Ed9A0aJWwo1ohTvwUEfHfhIVtcFSLEddVPkegw8C/Q==
   dependencies:
     "@codemirror/language" "^6.0.0"
     "@codemirror/state" "^6.0.0"
@@ -1820,19 +1820,7 @@
     "@lezer/highlight" "^1.0.0"
     "@lezer/lr" "^1.0.0"
 
-"@codemirror/language@^6.0.0":
-  version "6.3.2"
-  resolved "https://registry.yarnpkg.com/@codemirror/language/-/language-6.3.2.tgz#a3d5796d17a2cd3110bac0f5126db67c7e90a0f3"
-  integrity sha512-g42uHhOcEMAXjmozGG+rdom5UsbyfMxQFh7AbkeoaNImddL6Xt4cQDL0+JxmG7+as18rUAvZaqzP/TjsciVIrA==
-  dependencies:
-    "@codemirror/state" "^6.0.0"
-    "@codemirror/view" "^6.0.0"
-    "@lezer/common" "^1.0.0"
-    "@lezer/highlight" "^1.0.0"
-    "@lezer/lr" "^1.0.0"
-    style-mod "^4.0.0"
-
-"@codemirror/language@^6.2.1":
+"@codemirror/language@^6.0.0", "@codemirror/language@^6.2.1":
   version "6.8.0"
   resolved "https://registry.yarnpkg.com/@codemirror/language/-/language-6.8.0.tgz#f2d7eea6b338c25593d800f2293b062d9f9856db"
   integrity sha512-r1paAyWOZkfY0RaYEZj3Kul+MiQTEbDvYqf8gPGaRvNneHXCmfSaAVFjwRUPlgxS8yflMxw2CTu6uCMp8R8A2g==
@@ -9613,6 +9601,15 @@
   version "4.19.5"
   resolved "https://registry.yarnpkg.com/@uiw/codemirror-themes/-/codemirror-themes-4.19.5.tgz#439a20d7792929351632270e1fb4313f6bff32b8"
   integrity sha512-BWCTwQJaGiOc+nYqPLQDjmCtIojaCEKx2aO1bOTyGw0fisKwGw9Csll+bi9ujqA+vk6qYJmXI0P5K7kVs8fbdA==
+  dependencies:
+    "@codemirror/language" "^6.0.0"
+    "@codemirror/state" "^6.0.0"
+    "@codemirror/view" "^6.0.0"
+
+"@uiw/codemirror-themes@^4.21.3":
+  version "4.21.3"
+  resolved "https://registry.yarnpkg.com/@uiw/codemirror-themes/-/codemirror-themes-4.21.3.tgz#8a620eb136fe99537d3985522a48b3812995410e"
+  integrity sha512-gB7jUP1SqAkvwOGt0hTpyw7xHMJkgDu5ODy+1qPHMU27IT425+GXJAHPKLHBuRL2+InnWJPMz9JXVrrJU32lLg==
   dependencies:
     "@codemirror/language" "^6.0.0"
     "@codemirror/state" "^6.0.0"
