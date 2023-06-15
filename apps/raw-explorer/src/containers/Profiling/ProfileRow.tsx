@@ -4,7 +4,6 @@ import styled from 'styled-components';
 
 import { useTranslation } from '@raw-explorer/common/i18n';
 import ColumnIcon from '@raw-explorer/components/ColumnIcon';
-import { CustomIcon } from '@raw-explorer/components/CustomIcon';
 import Tooltip from '@raw-explorer/components/Tooltip/Tooltip';
 import { useActiveTableContext } from '@raw-explorer/contexts';
 import {
@@ -196,7 +195,7 @@ const NumberOrMissingTd = ({
     return (
       <StyledJustifyCenter>
         <Tooltip content={t('profiling-row-tooltip-information-not-available')}>
-          <CustomIcon icon="NotAvailable" style={{ width: 16 }} />
+          <Icon type="Remove" />
         </Tooltip>
       </StyledJustifyCenter>
     );

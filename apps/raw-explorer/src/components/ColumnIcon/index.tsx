@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
 
-import { CustomIcon } from '@raw-explorer/components/CustomIcon';
 import { useActiveTableContext } from '@raw-explorer/contexts';
 import {
   FULL_PROFILE_LIMIT,
@@ -34,11 +33,11 @@ export default function ColumnIcon({ dataKey }: Props) {
     case 'Boolean':
       return <Icon type="Boolean" />;
     case 'Object':
-      return <CustomIcon icon="ObjectIcon" />;
+      return <Icon type="CodeBraces" />;
     case 'Vector':
-      return <CustomIcon icon="ArrayIcon" />;
+      return <Icon type="CodeBrackets" />;
     case 'key':
-      return <CustomIcon icon="KeyIcon" />;
+      return <Icon type="Key" />;
     case 'Loading':
       return <Icon type="Loader" />;
     default:

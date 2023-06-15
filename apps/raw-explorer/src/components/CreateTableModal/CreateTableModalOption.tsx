@@ -2,14 +2,11 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import icons, { IconType } from '@raw-explorer/common/assets/icons';
-import { CustomIcon } from '@raw-explorer/components/CustomIcon';
-
-import { AllIconTypes, Body, Colors, Detail, Icon } from '@cognite/cogs.js';
+import { Body, Colors, Detail, Icon, IconType } from '@cognite/cogs.js';
 
 type CreateTableModalOptionProps = {
   description: string;
-  icon: AllIconTypes | IconType;
+  icon: IconType;
   isDisabled?: boolean;
   isSelected?: boolean;
   onClick?: () => void;
@@ -24,19 +21,13 @@ const CreateTableModalOption = ({
   onClick,
   title,
 }: CreateTableModalOptionProps): JSX.Element => {
-  const customIconKeys = Object.keys(icons);
-
   return (
     <StyledCreateOptionWrapper
       $isSelected={isSelected}
       disabled={isDisabled}
       onClick={onClick}
     >
-      {customIconKeys.includes(icon) ? (
-        <CustomIcon icon={icon as IconType} style={{ height: 40 }} />
-      ) : (
-        <StyledCreateOptionIcon size={40} type={icon as AllIconTypes} />
-      )}
+      <StyledCreateOptionIcon size={40} type={icon} />
       <StyledCreateOptionTitle level={6} strong>
         {title}
       </StyledCreateOptionTitle>
@@ -46,7 +37,7 @@ const CreateTableModalOption = ({
 };
 
 const StyledCreateOptionIcon = styled(Icon)`
-  color: ${Colors['border--interactive--default']};
+  color: ${Colors['text-icon--muted']};
 `;
 
 const StyledCreateOptionWrapper = styled.button<{ $isSelected?: boolean }>`
@@ -62,33 +53,33 @@ const StyledCreateOptionWrapper = styled.button<{ $isSelected?: boolean }>`
   width: 100%;
 
   &:hover {
-    background-color: ${Colors['surface--interactive--hover']};
-    border-color: ${Colors['surface--status-neutral--muted--default']};
+    background-color: ${Colors['surface--interactive--toggled-hover']};
+    border-color: ${Colors['border--interactive--hover']};
 
     ${StyledCreateOptionIcon} {
-      color: ${Colors['surface--status-neutral--muted--default']};
+      color: ${Colors['text-icon--interactive--hover']};
     }
   }
 
   &:active {
-    background-color: ${Colors['surface--interactive--pressed']};
-    border: 2px solid ${Colors['surface--status-neutral--muted--default--alt']};
+    background-color: ${Colors['surface--interactive--toggled-pressed']};
+    border: 2px solid ${Colors['border--interactive--toggled-default']};
     padding: 35px;
 
     ${StyledCreateOptionIcon} {
-      color: ${Colors['surface--status-neutral--muted--default--alt']};
+      color: ${Colors['text-icon--interactive--pressed']};
     }
   }
 
   ${({ $isSelected }) =>
     $isSelected
       ? `
-      background-color: ${Colors['surface--interactive--pressed']};
-      border: 2px solid ${Colors['surface--status-neutral--muted--default--alt']};
+      background-color: ${Colors['surface--interactive--toggled-pressed']};
+      border: 2px solid ${Colors['border--interactive--toggled-default']};
       padding: 35px;
   
       ${StyledCreateOptionIcon} {
-        color: ${Colors['surface--status-neutral--muted--default--alt']};
+        color: ${Colors['text-icon--interactive--pressed']};
       }`
       : ''};
 

@@ -8,7 +8,6 @@ import React, {
 
 import styled from 'styled-components';
 
-import graphics from '@raw-explorer/common/assets/graphics';
 import { useTranslation } from '@raw-explorer/common/i18n';
 import { useTableRows } from '@raw-explorer/hooks/sdk-queries';
 import { DEFAULT_FILTER } from '@raw-explorer/hooks/table-filters';
@@ -55,9 +54,6 @@ export const ActiveTableProvider = ({ children }: ActiveTableProviderProps) => {
     return (
       <StyledRawExplorerNotSelectedWrapper>
         <StyledRawExplorerNotSelectedContent>
-          <StyledRawExplorerNotSelectedArrow
-            src={graphics.EmptyStateArrowGraphic}
-          />
           <StyledRawExplorerNotSelectedTitle level={3}>
             {t('spreadsheet-select-table')}
           </StyledRawExplorerNotSelectedTitle>
@@ -115,11 +111,4 @@ const StyledRawExplorerNotSelectedTitle = styled(Title)`
 const StyledRawExplorerNotSelectedBody = styled(Body)`
   color: ${Colors['text-icon--muted']};
   margin-top: 12px;
-`;
-
-const StyledRawExplorerNotSelectedArrow = styled.img`
-  position: absolute;
-  left: 32px;
-  top: 190px;
-  width: 160px;
 `;

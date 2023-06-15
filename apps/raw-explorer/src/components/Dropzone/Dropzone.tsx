@@ -80,6 +80,7 @@ const StyledDropzone = styled(Upload.Dragger)`
   && {
     background-color: ${Colors['surface--medium']};
     border: none;
+    border-radius: 6px;
     padding: 0px;
 
     .ant-upload-btn {
@@ -97,26 +98,26 @@ const StyledDropzone = styled(Upload.Dragger)`
     }
 
     :hover {
-      background-color: ${Colors['surface--interactive--hover']};
+      background-color: ${Colors['surface--interactive--toggled-hover']};
 
       ${StyledDocumentIcon} {
-        color: ${Colors['border--interactive--hover']};
+        color: ${Colors['text-icon--interactive--hover']};
       }
 
       ${StyledDropzoneContent} {
-        border-color: ${Colors['surface--status-neutral--muted--default']};
+        border-color: ${Colors['border--interactive--hover']};
       }
     }
 
     :active {
-      background-color: ${Colors['surface--interactive--pressed']};
+      background-color: ${Colors['surface--interactive--toggled-pressed']};
 
       ${StyledDocumentIcon} {
-        color: ${Colors['border--interactive--toggled-hover']};
+        color: ${Colors['text-icon--interactive--pressed']};
       }
 
       ${StyledDropzoneContent} {
-        border-color: ${Colors['surface--status-neutral--muted--default--alt']};
+        border-color: ${Colors['border--interactive--toggled-default']};
         border-width: 2px;
         padding: 35px;
       }

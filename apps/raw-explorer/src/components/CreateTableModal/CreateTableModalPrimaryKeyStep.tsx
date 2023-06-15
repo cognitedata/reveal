@@ -44,7 +44,7 @@ const CreateTableModalPrimaryKeyStep = ({
               description={t(
                 'create-table-modal-primary-key-option-description'
               )}
-              icon="KeyIcon"
+              icon="Key"
               isDisabled={!columns}
               isSelected={
                 selectedPrimaryKeyMethod === PrimaryKeyMethod.ChooseColumn
@@ -58,7 +58,7 @@ const CreateTableModalPrimaryKeyStep = ({
               description={t(
                 'create-table-modal-no-primary-key-option-description'
               )}
-              icon="UnknownPrimaryKeyIcon"
+              icon="UserAlert"
               isSelected={
                 selectedPrimaryKeyMethod === PrimaryKeyMethod.AutoGenerate
               }
