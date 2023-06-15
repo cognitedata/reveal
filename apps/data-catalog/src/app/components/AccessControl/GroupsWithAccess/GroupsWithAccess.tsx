@@ -7,6 +7,7 @@ import {
 
 import { Chip, Table } from '@cognite/cogs.js';
 import { Group, SingleCogniteCapability } from '@cognite/sdk';
+import { useMemo } from 'react';
 
 interface GroupsWithAccessProps {
   dataSetId: number;
@@ -77,49 +78,62 @@ const GroupsWithAccess = (props: GroupsWithAccessProps) => {
   const { t } = useTranslation();
   const { dataSetId, groups } = props;
 
-  const resourceColumns = [
-    {
-      Header: t('group'),
-      id: 'group',
-      accessor: 'groupName',
-      disableSortBy: true,
-    },
-    {
-      Header: t('capabilities'),
-      key: 'capabilities',
-      disableSortBy: true,
-      Cell: ({
-        row: { original: record },
-      }: CogsTableCellRenderer<GroupWithResources>) => (
-        <div>
-          {record.capabilities &&
-            record.capabilities.length &&
-            record.capabilities.map((capItem: CapShape) =>
-              capItem.actions.map((action: string) => {
-                const capLabel = `${capItem.resource}:${action.toLowerCase()}`;
-                const key = `${record.groupId}${capLabel}`;
-                return (
-                  <Chip
-                    type="default"
-                    size="x-small"
-                    key={key}
-                    label={capLabel}
-                    css={{ marginRight: '5px' }}
-                  />
-                );
-              })
-            )}
-        </div>
-      ),
-    },
-  ];
-
-  const groupsWithAccess = groups.filter((group) =>
-    isGroupScopedOnDataSets(group as any, dataSetId)
+  const resourceColumns = useMemo(
+    () => [
+      {
+        Header: t('group'),
+        id: 'group',
+        accessor: 'groupName',
+        disableSortBy: true,
+      },
+      {
+        Header: t('capabilities'),
+        key: 'capabilities',
+        disableSortBy: true,
+        Cell: ({
+          row: { original: record },
+        }: CogsTableCellRenderer<GroupWithResources>) => (
+          <div>
+            {record.capabilities &&
+              record.capabilities.length &&
+              record.capabilities.map((capItem: CapShape) =>
+                capItem.actions.map((action: string) => {
+                  const capLabel = `${
+                    capItem.resource
+                  }:${action.toLowerCase()}`;
+                  const key = `${record.groupId}${capLabel}`;
+                  return (
+                    <Chip
+                      type="default"
+                      size="x-small"
+                      key={key}
+                      label={capLabel}
+                      css={{ marginRight: '5px' }}
+                    />
+                  );
+                })
+              )}
+          </div>
+        ),
+      },
+    ],
+    []
   );
 
-  const dataSource = groupsWithAccess.map((group) =>
-    createGroupScopedOnDataSets(group, dataSetId)
+  const groupsWithAccess = useMemo(
+    () =>
+      groups.filter((group) =>
+        isGroupScopedOnDataSets(group as any, dataSetId)
+      ),
+    [groups]
+  );
+
+  const dataSource = useMemo(
+    () =>
+      groupsWithAccess.map((group) =>
+        createGroupScopedOnDataSets(group, dataSetId)
+      ),
+    [groupsWithAccess]
   );
 
   return (

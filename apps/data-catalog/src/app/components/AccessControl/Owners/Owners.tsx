@@ -3,6 +3,7 @@ import { getAllSetOwnersFromGroups } from '@data-catalog-app/utils/shared';
 
 import { Table } from '@cognite/cogs.js';
 import { Group } from '@cognite/sdk';
+import { useMemo } from 'react';
 
 interface OwnersProps {
   dataSetId: number;
@@ -14,26 +15,31 @@ const Owners = (props: OwnersProps) => {
   const { dataSetId, groups } = props;
   const { t } = useTranslation();
 
-  const ownerColumns = [
-    {
-      Header: t('group'),
-      id: 'group',
-      accessor: 'name',
-    },
-    {
-      Header: t('sourceid'),
-      id: 'sourceId',
-      accessor: 'sourceId',
-    },
-  ];
+  const ownerColumns = useMemo(
+    () => [
+      {
+        Header: t('group'),
+        id: 'group',
+        accessor: 'name',
+      },
+      {
+        Header: t('sourceid'),
+        id: 'sourceId',
+        accessor: 'sourceId',
+      },
+    ],
+    []
+  );
 
-  const ownerGroups = getAllSetOwnersFromGroups(dataSetId, groups);
+  const ownersDataSource = useMemo(() => {
+    const ownerGroups = getAllSetOwnersFromGroups(dataSetId, groups);
 
-  const ownersDataSource = ownerGroups.map((ownerGroup: Group) => ({
-    groupId: ownerGroup.id,
-    name: ownerGroup.name,
-    sourceId: ownerGroup?.sourceId,
-  }));
+    return ownerGroups.map((ownerGroup: Group) => ({
+      groupId: ownerGroup.id,
+      name: ownerGroup.name,
+      sourceId: ownerGroup?.sourceId,
+    }));
+  }, [dataSetId, groups]);
 
   return (
     <div className="resource-table">

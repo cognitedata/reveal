@@ -38,6 +38,7 @@ const AccessControl = ({ dataSetId, writeProtected }: AccessControlProps) => {
           <Title level={4}>{t('access-control-owners-of-this-data-set')}</Title>
           <Body level={2}>{t('access-control-p1')}</Body>
           <Owners dataSetId={dataSetId} groups={groups} isOidcEnv={isOidc} />
+          <br />
         </>
       )}
       <Title level={4}>{t('access-control-groups-with-access-scoped')}</Title>

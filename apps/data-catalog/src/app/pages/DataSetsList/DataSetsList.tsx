@@ -216,6 +216,14 @@ const DataSetsList = (): JSX.Element => {
     width: '52px',
   };
 
+  const dataSetsTableColumns = useMemo(() => {
+    return [
+      ...getTableColumns(withExtpipes, isExtpipesFetched),
+      ...(showArchived ? [statusColumn] : []),
+      actionsColumn,
+    ] as any;
+  }, [withExtpipes, showArchived, statusColumn]);
+
   const archiveDataSet = (key: number) => {
     const d = dataSetsWithExtpipes.find((curDs) => curDs.dataSet.id === key);
     if (d) {
@@ -281,16 +289,14 @@ const DataSetsList = (): JSX.Element => {
 
   return (
     <Page title={t('landing-title')}>
-      {creationDrawerVisible ? (
-        <DataSetEditor
-          visible={creationDrawerVisible}
-          onClose={onClose}
-          changesSaved={changesSaved}
-          setChangesSaved={setChangesSaved}
-          sourceSuggestions={getSourcesList()}
-          handleCloseModal={() => handleModalClose()}
-        />
-      ) : null}
+      <DataSetEditor
+        visible={creationDrawerVisible}
+        onClose={onClose}
+        changesSaved={changesSaved}
+        setChangesSaved={setChangesSaved}
+        sourceSuggestions={getSourcesList()}
+        handleCloseModal={() => handleModalClose()}
+      />
       <Flex
         alignItems="center"
         justifyContent="space-between"
@@ -318,18 +324,7 @@ const DataSetsList = (): JSX.Element => {
       <div className="data-sets-list-table">
         <Table<DataSetRow>
           key="data-sets-table"
-          columns={
-            [
-              ...getTableColumns(
-                dataSetsWithExtpipes.map((x) => x.dataSet),
-                showArchived,
-                withExtpipes,
-                isExtpipesFetched
-              ),
-              ...(showArchived ? [statusColumn] : []),
-              actionsColumn,
-            ] as any
-          }
+          columns={dataSetsTableColumns}
           dataSource={filteredTableData}
           locale={{
             emptyText: (

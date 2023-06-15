@@ -2,16 +2,7 @@ import PropTypes from 'prop-types';
 import { Illustrations } from '@cognite/cogs.js';
 
 const propTypes = {
-  type: PropTypes.oneOf([
-    'DataKits',
-    'DataSets',
-    'Favorites',
-    'Recents',
-    'RuleCreating',
-    'RuleMonitoring',
-    'Search',
-    'ThreeDModel',
-  ]),
+  type: PropTypes.string,
   text: PropTypes.string,
   extra: PropTypes.node,
 };

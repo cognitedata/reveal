@@ -176,8 +176,6 @@ export const useTableColumns = () => {
   const { t } = useTranslation();
 
   const getTableColumns = (
-    dataSets: DataSet[],
-    showArchived: boolean,
     isExtpipeFlag: boolean,
     isExtpipesFetched?: boolean
   ) => [
