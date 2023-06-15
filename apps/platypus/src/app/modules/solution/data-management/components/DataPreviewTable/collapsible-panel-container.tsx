@@ -113,7 +113,9 @@ export const CollapsiblePanelContainer: React.FC<
     } else if (data.type === 'File' || data.type === 'Sequence') {
       // Temporary until we have suitable preview implementations
       const listData = data.isList
-        ? data.listValues?.map((v) => v.externalId)
+        ? data.listValues?.map((value) =>
+            value ? value.externalId : '<External-id did not resolve>'
+          )
         : [data.instanceExternalId];
       return <CogDataList data-cy="instance-values" listData={listData} />;
     } else if (data.isList) {
