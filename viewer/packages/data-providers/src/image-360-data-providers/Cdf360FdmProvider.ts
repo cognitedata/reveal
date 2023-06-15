@@ -110,25 +110,16 @@ export class Cdf360FdmProvider implements Image360DescriptorProvider<DM360Collec
     let hasNextPage = true;
     let endCursor: string | undefined = undefined;
 
-    const start = performance.now();
-
-    const requestIds: string[] = [];
-
     while (hasNextPage) {
       const result = await this._sdk.post(graphQlEndpoint, {
         data: { query: get360ImageCollectionsQuery(image360CollectionExternalId, space, endCursor) }
       });
-
-      requestIds.push(result.headers['x-request-id']);
 
       const data = result.data.data as JSONData;
       stations.push(...data.getImage360CollectionById.items[0].stations.items);
       hasNextPage = data.getImage360CollectionById.items[0].stations.pageInfo.hasNextPage;
       endCursor = data.getImage360CollectionById.items[0].stations.pageInfo.endCursor;
     }
-
-    console.log(`Fetched ${stations.length} stations in ${performance.now() - start} ms`);
-    console.log(requestIds);
 
     return stations;
   }
