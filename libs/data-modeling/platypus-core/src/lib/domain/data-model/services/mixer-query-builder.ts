@@ -236,7 +236,11 @@ export class MixerQueryBuilder {
       .includes(field.type.name);
 
     if (isPrimitive) {
-      if (field.type.name === 'TimeSeries') {
+      if (
+        field.type.name === 'TimeSeries' ||
+        field.type.name === 'File' ||
+        field.type.name === 'Sequence'
+      ) {
         return `${field.name} { externalId }`;
       }
       return field.name;
