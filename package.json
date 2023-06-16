@@ -27,7 +27,6 @@
     "@cognite/sdk": "^7.19.1",
     "@cognite/sdk-playground": "^6.0.8",
     "@cognite/sdk-provider": "^2.0.6",
-    "@cognite/sdk-react-query-hooks": "^7.0.0",
     "@cognite/sidecar": "^0.4.1",
     "@cognite/unified-file-viewer": "^13.5.2",
     "@cognite/z-index": "^0.2.3",
