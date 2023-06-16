@@ -108,20 +108,20 @@ const BaseBar = styled.div`
 const SuccessBar = styled(BaseBar)<{ $height?: number }>`
   height: ${({ $height }) => $height}px;
 
-  background-color: ${Colors['decorative--green--200']};
+  background-color: ${Colors['surface--action--strong--default']};
 
   :hover {
-    background-color: ${Colors['decorative--green--300']};
+    background-color: ${Colors['surface--action--strong--hover']};
   }
 `;
 
 const ErrorBar = styled(BaseBar)<{ $height?: number }>`
   height: ${({ $height }) => $height}px;
 
-  background-color: ${Colors['decorative--red--200']};
+  background-color: ${Colors['surface--status-critical--strong--default']};
 
   :hover {
-    background-color: ${Colors['decorative--red--300']};
+    background-color: ${Colors['surface--status-critical--strong--hover']};
   }
 `;
 
