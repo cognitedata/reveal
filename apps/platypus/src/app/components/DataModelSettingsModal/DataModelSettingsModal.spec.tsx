@@ -30,6 +30,17 @@ jest.mock('../DataModelLibrary/DataModelLibrary', () => {
   };
 });
 
+jest.mock('@cognite/cdf-utilities', () => {
+  return {
+    useCdfUserHistoryService: () => ({
+      logNewResourceEdit: jest.fn(),
+      logNewResourceView: jest.fn(),
+    }),
+    getProject: jest.fn().mockReturnValue('mock-project'),
+    getCluster: jest.fn().mockReturnValue('mock-cluster'),
+  };
+});
+
 describe('DataModelSettingsModal', () => {
   beforeEach(() => {
     mockMutate.mockClear();
@@ -48,7 +59,7 @@ describe('DataModelSettingsModal', () => {
       graphQlDml: '',
     };
     const newName = 'New_Name';
-    const newDescription = 'New description';
+    const newDescription = 'Test DataModel';
     const handleRequestClose = jest.fn();
     render(
       <DataModelSettingsModal

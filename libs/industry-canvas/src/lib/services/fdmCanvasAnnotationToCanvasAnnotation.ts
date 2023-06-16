@@ -17,7 +17,7 @@ import { FDMCanvasAnnotation } from './types';
 export const fdmCanvasAnnotationToCanvasAnnotation = (
   fdmContainerRef: FDMCanvasAnnotation
 ): CanvasAnnotation => {
-  const { type, properties, ...commonProps } = fdmContainerRef;
+  const { annotationType, properties, ...commonProps } = fdmContainerRef;
   // Filter out null values from commonProps
   const filteredCommonProps: typeof commonProps = {
     ...pickBy(commonProps, (value) => value !== null),
@@ -25,7 +25,7 @@ export const fdmCanvasAnnotationToCanvasAnnotation = (
     externalId: fdmContainerRef.externalId,
   };
 
-  if (type === AnnotationType.RECTANGLE) {
+  if (annotationType === AnnotationType.RECTANGLE) {
     if (properties.x === undefined || properties.y === undefined) {
       throw new Error('x and y must be defined for rectangle annotations');
     }
@@ -45,7 +45,7 @@ export const fdmCanvasAnnotationToCanvasAnnotation = (
     };
   }
 
-  if (type === AnnotationType.ELLIPSE) {
+  if (annotationType === AnnotationType.ELLIPSE) {
     if (properties.x === undefined || properties.y === undefined) {
       throw new Error('x and y must be defined for ellipse annotations');
     }
@@ -62,7 +62,7 @@ export const fdmCanvasAnnotationToCanvasAnnotation = (
     };
   }
 
-  if (type === AnnotationType.POLYLINE) {
+  if (annotationType === AnnotationType.POLYLINE) {
     return {
       ...filteredCommonProps,
       type: AnnotationType.POLYLINE,
@@ -75,7 +75,7 @@ export const fdmCanvasAnnotationToCanvasAnnotation = (
     };
   }
 
-  if (type === AnnotationType.TEXT) {
+  if (annotationType === AnnotationType.TEXT) {
     if (properties.x === undefined || properties.y === undefined) {
       throw new Error('x and y must be defined for text annotations');
     }
@@ -97,7 +97,7 @@ export const fdmCanvasAnnotationToCanvasAnnotation = (
     };
   }
 
-  if (type === AnnotationType.STICKY) {
+  if (annotationType === AnnotationType.STICKY) {
     if (properties.x === undefined || properties.y === undefined) {
       throw new Error('x and y must be defined for sticky annotations');
     }
@@ -122,13 +122,16 @@ export const fdmCanvasAnnotationToCanvasAnnotation = (
     };
   }
 
-  if (type === AnnotationType.IMAGE) {
+  if (annotationType === AnnotationType.IMAGE) {
     throw new Error('Image annotation types are not supported yet');
   }
 
-  if (type === AnnotationType.LABEL) {
+  if (annotationType === AnnotationType.LABEL) {
     throw new Error('Label annotation types are not supported yet');
   }
 
-  assertNever(type, `Unknown container reference type '${type}' was provided`);
+  assertNever(
+    annotationType,
+    `Unknown container reference type '${annotationType}' was provided`
+  );
 };
