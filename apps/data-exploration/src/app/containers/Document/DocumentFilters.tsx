@@ -1,8 +1,9 @@
 import React from 'react';
 
+import { MetadataFilterV2 } from '@data-exploration/containers';
 import isEmpty from 'lodash/isEmpty';
 
-import { MetadataFilterV2, MultiSelectFilter } from '@cognite/data-exploration';
+import { MultiSelectFilter } from '@cognite/data-exploration';
 
 import { SPECIFIC_INFO_CONTENT } from '@data-exploration-app/containers/constants';
 import { TempMultiSelectFix } from '@data-exploration-app/containers/elements';

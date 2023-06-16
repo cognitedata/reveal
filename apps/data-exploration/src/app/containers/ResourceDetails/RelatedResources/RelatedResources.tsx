@@ -19,7 +19,10 @@ import {
 } from '@cognite/data-exploration';
 
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
-import { useFlagFileCategorization } from '@data-exploration-app/hooks/flags';
+import {
+  useFlagDocumentsApiEnabled,
+  useFlagFileCategorization,
+} from '@data-exploration-app/hooks/flags';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { addPlusSignToCount } from '@data-exploration-app/utils/stringUtils';
 import { RelationshipLabels } from '@data-exploration-lib/core';
@@ -39,6 +42,7 @@ export const RelatedResources = ({
 }: RelationshipTableProps & SelectableItemsProps) => {
   const [selectedType, setSelectedType] = useState<TypeOption>();
   const isGroupingFilesEnabled = useFlagFileCategorization();
+  const isDocumentsApiEnabled = useFlagDocumentsApiEnabled();
 
   const {
     relationshipCount,
@@ -47,7 +51,7 @@ export const RelatedResources = ({
     annotationCount,
     hasMoreRelationships,
     isFetched,
-  } = useRelatedResourceCount(parentResource, type);
+  } = useRelatedResourceCount(parentResource, type, isDocumentsApiEnabled);
 
   const getRelatedResourceType = () => {
     let types: TypeOption[] = [
@@ -170,6 +174,7 @@ export const RelatedResources = ({
           <LinkedResourceTable
             isGroupingFilesEnabled={isGroupingFilesEnabled}
             parentResource={parentResource}
+            isDocumentsApiEnabled={isDocumentsApiEnabled}
             type={type}
             onItemClicked={onItemClicked}
             onParentAssetClick={onParentAssetClick}

@@ -72,8 +72,9 @@ export const useAllFilters = () => {
           return setAssetFilter(nextValue);
         case 'timeSeries':
           return setTimeseriesFilter(nextValue);
-        case 'document':
         case 'file':
+          return setFilesFilter(nextValue);
+        case 'document':
           // Toggle between SAPC here
           // setFileFilter(...)
           return setDocumentFilter(nextValue);
@@ -94,8 +95,12 @@ export const useAllFilters = () => {
         case 'timeSeries':
           return resetTimeseriesFilter();
         case 'document':
-        case 'file':
           return resetDocumentFilter();
+        case 'file': {
+          resetDocumentFilter();
+          resetFileFilter();
+          break;
+        }
         case 'sequence':
           return resetSequenceFilter();
         default:

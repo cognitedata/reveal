@@ -1,12 +1,9 @@
 import * as React from 'react';
 
+import { AggregatedFilterV2 } from '@data-exploration/containers';
 import head from 'lodash/head';
 
-import {
-  AggregatedFilterV2,
-  extractSources,
-  MultiSelectFilter,
-} from '@cognite/data-exploration';
+import { extractSources, MultiSelectFilter } from '@cognite/data-exploration';
 
 import { OptionValue } from '../types';
 

@@ -5,6 +5,8 @@ import styled from 'styled-components';
 import { ResourceDetailsTemplate } from '@data-exploration/components';
 
 import { Collapse, Title } from '@cognite/cogs.js';
+import { FileInfo as FileInfoType } from '@cognite/sdk';
+import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 
 import {
   SelectableItemsProps,
@@ -14,8 +16,8 @@ import {
 } from '@data-exploration-lib/core';
 import {
   useAssetsByIdQuery,
-  useDocumentSearchResultQuery,
   useEventsSearchResultQuery,
+  useFileSearchQuery,
   useSequenceSearchResultQuery,
   useTimeseriesSearchResultQuery,
 } from '@data-exploration-lib/domain-layer';
@@ -51,6 +53,7 @@ interface Props {
   selectedRows?: ResourceSelection;
   selectionMode?: 'single' | 'multiple';
   visibleResources?: ResourceType[];
+  isDocumentsApiEnabled?: boolean;
 }
 export const DocumentDetails: FC<
   Props & Partial<Pick<SelectableItemsProps, 'onSelect'>>
@@ -62,12 +65,15 @@ export const DocumentDetails: FC<
   selectionMode,
   selectedRows,
   visibleResources = [],
+  isDocumentsApiEnabled = true,
 }) => {
   const {
-    isLoading: isParentDocumentLoading,
-    results: document,
+    data: parentDocument,
     isFetched: isParentDocumentFetched,
-  } = useDocumentSearchResultQuery({ filter: { internalId: documentId } });
+    isLoading: isParentDocumentLoading,
+  } = useCdfItem<FileInfoType>('files', {
+    id: documentId,
+  });
 
   const {
     isAssetVisible,
@@ -76,8 +82,6 @@ export const DocumentDetails: FC<
     isSequenceVisible,
     isEventVisible,
   } = getResourcesVisibility(visibleResources);
-
-  const parentDocument = document?.[0];
 
   const assetIds = parentDocument?.assetIds || [];
   const isQueryEnabled = assetIds.length > 0;
@@ -88,15 +92,16 @@ export const DocumentDetails: FC<
     })),
   };
 
-  const { data: assets = [], isLoading: isAssetsLoading } = useAssetsByIdQuery(
-    assetIds.map((id) => ({ id })),
-    { enabled: isParentDocumentFetched && !!assetIds && isQueryEnabled }
-  );
+  const { data: assets = [], isInitialLoading: isAssetsLoading } =
+    useAssetsByIdQuery(
+      assetIds.map((id) => ({ id })),
+      { enabled: isParentDocumentFetched && !!assetIds && isQueryEnabled }
+    );
 
   const {
     hasNextPage: hasEventNextPage,
     fetchNextPage: hasEventFetchNextPage,
-    isLoading: isEventsLoading,
+    isInitialLoading: isEventsLoading,
     data: events,
   } = useEventsSearchResultQuery({ eventsFilters: filter }, undefined, {
     enabled: isQueryEnabled && isEventVisible,
@@ -105,20 +110,25 @@ export const DocumentDetails: FC<
   const {
     hasNextPage: hasTimeseriesNextPage,
     fetchNextPage: hasTimeseriesFetchNextPage,
-    isLoading: isTimeseriesLoading,
+    isInitialLoading: isTimeseriesLoading,
     data: timeseries,
   } = useTimeseriesSearchResultQuery({ filter }, undefined, {
     enabled: isQueryEnabled && isTimeseriesVisible,
   });
 
   const {
+    results: documents = [],
     hasNextPage: hasDocumentsNextPage,
     fetchNextPage: hasDocumentsFetchNextPage,
-    isLoading: isDocumentsLoading,
-    results: documents = [],
-  } = useDocumentSearchResultQuery(
+    isInitialLoading: isDocumentsLoading,
+  } = useFileSearchQuery(
     {
-      filter,
+      filter: {
+        assetSubtreeIds: assetIds.map((value) => ({
+          id: value,
+        })),
+      },
+      limit: 10,
     },
     { enabled: isQueryEnabled && isFileVisible }
   );
@@ -126,7 +136,7 @@ export const DocumentDetails: FC<
   const {
     hasNextPage: hasSequencesNextPage,
     fetchNextPage: hasSequencesFetchNextPage,
-    isLoading: isSequencesLoading,
+    isInitialLoading: isSequencesLoading,
     data: sequences = [],
   } = useSequenceSearchResultQuery(
     {
@@ -156,6 +166,7 @@ export const DocumentDetails: FC<
                 fileId={parentDocument?.id}
                 creatable={false}
                 contextualization={false}
+                isDocumentsApiEnabled={isDocumentsApiEnabled}
               />
             )}
           </PreviewWrapper>
