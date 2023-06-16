@@ -3,7 +3,7 @@
  */
 
 import { Detail, Flex } from '@cognite/cogs.js';
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { Thumbnail } from '../utils/Thumbnail';
 import { Cognite3DViewer, Image360 } from '@cognite/reveal';
@@ -24,6 +24,8 @@ export interface Image360HistoricalSummaryProps{
   revisionCollection: Image360RevisionDetails[];
   activeRevision: number;
   setActiveRevision: (index: number) => void;
+  scrollPosition: number;
+  setScrollPosition: (position: number) => void;
 };
 
 export const Image360HistoricalSummary = ({
@@ -32,19 +34,29 @@ export const Image360HistoricalSummary = ({
   revisionCollection,
   activeRevision,
   setActiveRevision,
-  viewer
+  viewer,
+  scrollPosition,
+  setScrollPosition
 }: Image360HistoricalSummaryProps) => {
+  const gridContainerRef = useRef<HTMLDivElement>(null);
 
-  const selectedRevisionRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (gridContainerRef.current) {
+      gridContainerRef.current.scrollLeft = scrollPosition;
+    }
+  }, []);
 
   const onRevisionChanged = (revisionDetails: Image360RevisionDetails, index: number) => {
     if(viewer && revisionDetails.image360Entity) {
-      selectedRevisionRef.current?.scrollIntoView();
       setActiveRevision(index);
       const revisions = revisionDetails.image360Entity.getRevisions();
       const revisionIndex = revisionDetails.index!;
       if (revisionIndex >= 0 && revisionIndex < revisions.length) {
         viewer.enter360Image(revisionDetails.image360Entity, revisions[revisionIndex]);
+      }
+
+      if (gridContainerRef.current) {
+        setScrollPosition(gridContainerRef.current.scrollLeft);
       }
     }
   };
@@ -56,12 +68,12 @@ export const Image360HistoricalSummary = ({
         <StyledDetail>Station: {stationId}</StyledDetail>
       </StyledFlex>
 
-      <StyledLayoutGridContainer>
+      <StyledLayoutGridContainer
+        ref={gridContainerRef}>
         <StyledLayoutGrid>
           { revisionCollection.map((revisionDetails, index) => (
             <RevisionItem
               key={uniqueId()}
-              ref={selectedRevisionRef}
               onClick={onRevisionChanged.bind(null, revisionDetails, index)}
             >
               <Thumbnail
@@ -123,6 +135,23 @@ const StyledLayoutGridContainer = styled.div`
   width: 70%;
   height: fit-content;
   overflow-x: auto;
+
+  /* Customize scrollbar styles */
+  scrollbar-width: thin;
+  scrollbar-color: #999999 #D9D9D9;
+
+  &::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: #D9D9D9;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #999999;
+    border-radius: 2px;
+  }
 `;
 
 const StyledLayoutGrid = styled.div`

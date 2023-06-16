@@ -31,11 +31,7 @@ export const Thumbnail = ({
     return <Icon type="ImageOff" />;
   }, [imageUrl, isLoading]);
 
-  return <StyledThumbnail
-            isActive={isActive}
-          >
-            {image}
-          </StyledThumbnail>;
+  return <StyledThumbnail isActive={isActive}> {image} </StyledThumbnail>;
 };
 
 const StyledThumbnail = styled.div<{ isActive: boolean }>`
@@ -47,7 +43,7 @@ const StyledThumbnail = styled.div<{ isActive: boolean }>`
   width: 160px;
   min-width: 56px;
   height: 90px;
-  border: 1px solid #D9D9D9;
+  border: 2px solid #D9D9D9;
   border-radius: 12px;
   gap: 6px;
 
