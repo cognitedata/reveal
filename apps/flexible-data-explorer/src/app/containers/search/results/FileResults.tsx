@@ -1,7 +1,8 @@
+import { formatDate } from '@cognite/cogs.js';
+
 import { translationKeys } from '../../../common';
 import { Button } from '../../../components/buttons/Button';
 import { SearchResults } from '../../../components/search/SearchResults';
-import { Table } from '../../../components/table/Table';
 import { useNavigation } from '../../../hooks/useNavigation';
 import {
   useDataTypeFilterParams,
@@ -12,12 +13,6 @@ import { useFilesSearchQuery } from '../../../services/instances/file/queries/us
 import { buildFilesFilter } from '../../../utils/filterBuilder';
 
 import { PAGE_SIZE } from './constants';
-
-const columns = [
-  { header: 'Name', accessorKey: 'item.sourceFile.name' },
-  { header: 'Content', accessorKey: 'item.truncatedContent' },
-  { header: 'Type', accessorKey: 'item.type' },
-];
 
 export const FileResults: React.FC = () => {
   const { t } = useTranslation();
@@ -34,20 +29,33 @@ export const FileResults: React.FC = () => {
       <SearchResults.Header title="Files" />
 
       <SearchResults.Body>
-        <Table
-          id="timeseries"
-          data={data}
-          columns={columns}
-          onRowClick={(row) => {
-            navigate.toFilePage(row.item.externalId || row.item.id);
-          }}
-        />
+        {data.map(({ item }) => (
+          <SearchResults.Item
+            key={item.id}
+            name={item.sourceFile.name}
+            description={item.truncatedContent}
+            // Sprinkle some AI magic to find the most relevant field here.
+            properties={[
+              {
+                key: 'File type',
+                value: item.type,
+              },
+              {
+                key: 'Created Time',
+                value: formatDate(item.createdTime),
+              },
+            ]}
+            onClick={() => {
+              navigate.toFilePage(item.externalId || item.id);
+            }}
+          />
+        ))}
       </SearchResults.Body>
 
       <SearchResults.Footer>
         <Button
           type="ghost"
-          disabled={!hasNextPage}
+          hidden={!hasNextPage}
           onClick={() => {
             fetchNextPage();
           }}

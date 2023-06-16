@@ -37,7 +37,8 @@ const Routes = () => {
             </Container>
           }
         >
-          <Route path="search" element={<SearchPage />} />
+          <Route path="search/:dataType?" element={<SearchPage />} />
+
           <Route path="list/:dataType" element={<ListPage />} />
 
           <Route path="timeseries/:externalId" element={<TimeseriesPage />} />

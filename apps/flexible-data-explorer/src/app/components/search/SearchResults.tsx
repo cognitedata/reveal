@@ -2,9 +2,10 @@ import React, { PropsWithChildren } from 'react';
 
 import styled, { css } from 'styled-components';
 
-import { Chip, Title } from '@cognite/cogs.js';
-
-import { getIcon } from '../../utils/getIcon';
+import { SearchResultsBody } from './components/SearchResultsBody';
+import { SearchResultsFooter } from './components/SearchResultsFooter';
+import { SearchResultsHeader } from './components/SearchResultsHeader';
+import { SearchResultsItem } from './components/SearchResultsItem';
 
 export const SearchResults = ({
   children,
@@ -22,46 +23,10 @@ export const SearchResults = ({
   );
 };
 
-const Header: React.FC<{ title: string; description?: string }> = ({
-  title,
-  description,
-}) => {
-  return (
-    <HeaderContainer>
-      <Chip icon={getIcon(title)} />
-      <span>
-        <Title level={6}>{title}</Title>
-        {description && <Body>{description}</Body>}
-      </span>
-    </HeaderContainer>
-  );
-};
-
-const Body: React.FC<PropsWithChildren<{ empty?: boolean }>> = ({
-  children,
-  empty,
-}) => {
-  if (empty) {
-    return null;
-  }
-
-  return <>{children}</>;
-};
-
-const Footer: React.FC<PropsWithChildren<{ empty?: boolean }>> = ({
-  children,
-  empty,
-}) => {
-  if (empty) {
-    return null;
-  }
-
-  return <FooterContainer>{children}</FooterContainer>;
-};
-
-SearchResults.Header = Header;
-SearchResults.Body = Body;
-SearchResults.Footer = Footer;
+SearchResults.Header = SearchResultsHeader;
+SearchResults.Body = SearchResultsBody;
+SearchResults.Item = SearchResultsItem;
+SearchResults.Footer = SearchResultsFooter;
 
 const Container = styled.div<{ empty?: boolean }>`
   border-radius: 10px;
@@ -70,26 +35,11 @@ const Container = styled.div<{ empty?: boolean }>`
   ${(props) => {
     if (!props.empty) {
       return css`
-        background-color: white;
+        /* background-color: white; */
 
-        box-shadow: 0px 1px 8px rgba(79, 82, 104, 0.06),
-          0px 1px 1px rgba(79, 82, 104, 0.1);
+        /* box-shadow: 0px 1px 8px rgba(79, 82, 104, 0.06),
+          0px 1px 1px rgba(79, 82, 104, 0.1); */
       `;
     }
   }}
-`;
-
-const HeaderContainer = styled.div`
-  display: flex;
-  padding: 16px;
-  gap: 16px;
-  align-items: center;
-`;
-
-const FooterContainer = styled.div`
-  display: flex;
-  padding: 16px;
-  gap: 16px;
-  align-items: center;
-  justify-content: center;
 `;
