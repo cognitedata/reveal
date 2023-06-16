@@ -10,7 +10,6 @@ import {
   Image360DescriptorProvider,
   Image360Descriptor
 } from '../types';
-import { get360ImageCollectionsQuery } from './listCollections';
 import { Euler, Matrix4 } from 'three';
 import assert from 'assert';
 
@@ -107,21 +106,159 @@ export class Cdf360FdmProvider implements Image360DescriptorProvider<DM360Collec
 
     const stations: Image360Station[] = [];
 
-    let hasNextPage = true;
-    let endCursor: string | undefined = undefined;
+    // let hasNextPage = true;
+    // let endCursor: string | undefined = undefined;
 
-    while (hasNextPage) {
-      const result = await this._sdk.post(graphQlEndpoint, {
-        data: { query: get360ImageCollectionsQuery(image360CollectionExternalId, space, endCursor) }
-      });
+    // while (hasNextPage) {
+    //   const result = await this._sdk.post(graphQlEndpoint, {
+    //     data: { query: get360ImageCollectionsQuery(image360CollectionExternalId, space, endCursor) }
+    //   });
 
-      const data = result.data.data as JSONData;
-      stations.push(...data.getImage360CollectionById.items[0].stations.items);
-      hasNextPage = data.getImage360CollectionById.items[0].stations.pageInfo.hasNextPage;
-      endCursor = data.getImage360CollectionById.items[0].stations.pageInfo.endCursor;
-    }
+    //   const data = result.data.data as JSONData;
+    //   stations.push(...data.getImage360CollectionById.items[0].stations.items);
+    //   hasNextPage = data.getImage360CollectionById.items[0].stations.pageInfo.hasNextPage;
+    //   endCursor = data.getImage360CollectionById.items[0].stations.pageInfo.endCursor;
+    // }
+
+    const start = performance.now();
+    await this.fetchImageCollectionFromDMS(image360CollectionExternalId);
+    console.log(`fetchImageCollectionFromDMS took ${performance.now() - start} ms`);
+    throw new Error('Not implemented');
 
     return stations;
+  }
+
+  private async fetchImageCollectionFromDMS(collectionExternalId: string): Promise<void> {
+    const baseUrl = this._sdk.getBaseUrl();
+    const project = this._sdk.project;
+    const listEndpoint = `${baseUrl}/api/v1/projects/${project}/models/instances/list`;
+
+    const results: Promise<any>[] = [];
+    let hasNext = true;
+    let cursor: string | undefined = undefined;
+    while (hasNext) {
+      const data = {
+        filter: {
+          equals: {
+            property: ['edge', 'startNode'],
+            value: { externalId: collectionExternalId, space: 'Image_360' }
+          }
+        },
+        instanceType: 'edge'
+      } as any;
+
+      if (cursor !== undefined) {
+        data.cursor = cursor;
+      }
+
+      const result = await this._sdk.post(listEndpoint, { data });
+      const stationNodes = result.data.items.map((p: any) => p.endNode) as { space: string; externalId: string }[];
+      results.push(this.addResults(stationNodes));
+
+      hasNext = result.data.items.length >= 1000;
+      cursor = result.data.nextCursor;
+    }
+
+    const asd = await Promise.all(results);
+    console.log(asd);
+  }
+  private async addResults(stationNodes: { space: string; externalId: string }[]) {
+    const baseUrl = this._sdk.getBaseUrl();
+    const project = this._sdk.project;
+    const listEndpoint = `${baseUrl}/api/v1/projects/${project}/models/instances/list`;
+
+    const data2 = {
+      filter: {
+        containsAny: {
+          property: ['edge', 'startNode'],
+          values: stationNodes
+        }
+      },
+      instanceType: 'edge'
+    };
+
+    const result2 = await this._sdk.post(listEndpoint, { data: data2 });
+    const revisionNodes = result2.data.items.map((p: any) => p.endNode) as { space: string; externalId: string }[];
+
+    const data3 = {
+      items: revisionNodes.map(p => ({ ...p, instanceType: 'node' })),
+      sources: [
+        {
+          source: {
+            type: 'view',
+            space: 'Image_360',
+            externalId: 'Image360Revision',
+            version: '1'
+          }
+        }
+      ]
+    };
+
+    const byIdsEndpoint = `${baseUrl}/api/v1/projects/${project}/models/instances/byids`;
+
+    const result3 = await this._sdk.post(byIdsEndpoint, { data: data3 });
+
+    const sdk = this._sdk;
+    getPropertyData();
+
+    return result3.data.items;
+
+    async function getPropertyData(): Promise<any> {
+      const cubeIds = result3.data.items.map((p: any) => p.properties.Image_360['Image360Revision/1'].cubeMap);
+      const eulerRotations = result3.data.items.map(
+        (p: any) => p.properties.Image_360['Image360Revision/1'].eulerRotation
+      );
+      const translations = result3.data.items.map((p: any) => p.properties.Image_360['Image360Revision/1'].translation);
+
+      const dataCubeMaps = {
+        items: cubeIds.map((p: any) => ({ ...p, instanceType: 'node' })),
+        sources: [
+          {
+            source: {
+              type: 'view',
+              space: 'Image_360',
+              externalId: 'CubeMap',
+              version: '1'
+            }
+          }
+        ]
+      };
+
+      const dataEulerRotations = {
+        items: eulerRotations.map((p: any) => ({ ...p, instanceType: 'node' })),
+        sources: [
+          {
+            source: {
+              type: 'view',
+              space: 'Image_360',
+              externalId: 'Vec3d',
+              version: '1'
+            }
+          }
+        ]
+      };
+
+      const dataTranslations = {
+        items: translations.map((p: any) => ({ ...p, instanceType: 'node' })),
+        sources: [
+          {
+            source: {
+              type: 'view',
+              space: 'Image_360',
+              externalId: 'Vec3d',
+              version: '1'
+            }
+          }
+        ]
+      };
+
+      const resultCubeMaps = sdk.post(byIdsEndpoint, { data: dataCubeMaps });
+      const resultEulerRotations = sdk.post(byIdsEndpoint, { data: dataEulerRotations });
+      const resultTranslations = sdk.post(byIdsEndpoint, { data: dataTranslations });
+
+      const [a, b, c] = await Promise.all([resultCubeMaps, resultEulerRotations, resultTranslations]);
+      console.log(a);
+    }
   }
 
   private async createHistorical360ImageSet(
