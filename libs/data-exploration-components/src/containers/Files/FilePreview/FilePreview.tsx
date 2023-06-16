@@ -35,6 +35,8 @@ import {
   SearchResult,
 } from '@data-exploration-lib/domain-layer';
 
+import { useIsDocumentsApiEnabled } from '../../../hooks';
+
 import { ActionTools } from './ActionTools';
 import { AnnotationPreviewSidebar } from './AnnotationPreviewSidebar';
 import { MAX_CONTAINER_HEIGHT, MAX_CONTAINER_WIDTH } from './constants';
@@ -125,6 +127,7 @@ export const FilePreview = ({
       id: fileId,
     }
   );
+  const isDocumentsApiEnabled = useIsDocumentsApiEnabled();
 
   const {
     fileUrl,
@@ -181,7 +184,7 @@ export const FilePreview = ({
 
   useEffect(() => {
     (async () => {
-      if (file && isSupportedFileInfo(file)) {
+      if (file && isSupportedFileInfo(file, isDocumentsApiEnabled)) {
         setContainer(
           await getContainerConfigFromFileInfo(sdk as any, file, {
             id: getContainerId(file.id),
@@ -374,7 +377,7 @@ export const FilePreview = ({
 
   const handlePageChange = (pageNumber: number) => setPage(pageNumber);
 
-  if (file !== undefined && !isSupportedFileInfo(file)) {
+  if (file !== undefined && !isSupportedFileInfo(file, isDocumentsApiEnabled)) {
     return (
       <CenteredPlaceholder>
         <h1>No preview for this file type</h1>
@@ -482,6 +485,7 @@ export const FilePreview = ({
             reset={() => unifiedViewerRef?.zoomToFit()}
             selectedAnnotations={selectedAnnotations}
             setSelectedAnnotations={setSelectedAnnotations}
+            isDocumentsApiEnabled={isDocumentsApiEnabled}
           />
         </SidebarWrapper>
       )}

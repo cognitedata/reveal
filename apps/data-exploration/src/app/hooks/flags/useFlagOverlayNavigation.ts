@@ -1,4 +1,4 @@
-import { useFlag } from '@cognite/react-feature-flags';
+// import { useFlag } from '@cognite/react-feature-flags';
 
 /**
  * Flag used for enabling new details overlay with updated navigation.

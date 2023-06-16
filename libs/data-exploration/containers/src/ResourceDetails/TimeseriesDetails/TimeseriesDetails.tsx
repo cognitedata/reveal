@@ -15,8 +15,8 @@ import {
 } from '@data-exploration-lib/core';
 import {
   useAssetsByIdQuery,
-  useDocumentSearchResultQuery,
   useEventsListQuery,
+  useFileSearchQuery,
   useSequenceListQuery,
   useTimeseriesByIdsQuery,
   useTimeseriesListQuery,
@@ -73,7 +73,7 @@ export const TimeseriesDetails: FC<
   const assetIds = timeseries?.assetId ? [timeseries.assetId] : [];
 
   const isQueryEnabled = assetIds.length > 0;
-  const { data: relatedAssets = [], isLoading: isAssetsLoading } =
+  const { data: relatedAssets = [], isInitialLoading: isAssetsLoading } =
     useAssetsByIdQuery(
       assetIds.map((id) => ({ id })),
       { enabled: isTimeseriesFetched && isQueryEnabled }
@@ -81,7 +81,7 @@ export const TimeseriesDetails: FC<
   const {
     hasNextPage: hasEventNextPage,
     fetchNextPage: hasEventFetchNextPage,
-    isLoading: isEventsLoading,
+    isInitialLoading: isEventsLoading,
     data: events,
   } = useEventsListQuery(
     { filter: { assetIds } },
@@ -91,7 +91,7 @@ export const TimeseriesDetails: FC<
   const {
     hasNextPage: hasTimeseriesNextPage,
     fetchNextPage: hasTimeseriesFetchNextPage,
-    isLoading: isTimeseriesLoading,
+    isInitialLoading: isTimeseriesLoading,
     data: relatedTimeseries,
   } = useTimeseriesListQuery(
     { filter: { assetIds } },
@@ -101,15 +101,16 @@ export const TimeseriesDetails: FC<
   const {
     hasNextPage: hasDocumentsNextPage,
     fetchNextPage: hasDocumentsFetchNextPage,
-    isLoading: isDocumentsLoading,
+    isInitialLoading: isDocumentsLoading,
     results: relatedDocuments = [],
-  } = useDocumentSearchResultQuery(
+  } = useFileSearchQuery(
     {
       filter: {
         assetSubtreeIds: assetIds.map((value) => ({
-          value,
+          id: value,
         })),
       },
+      limit: 10,
     },
     { enabled: isQueryEnabled && isFileVisible }
   );
@@ -117,7 +118,7 @@ export const TimeseriesDetails: FC<
   const {
     hasNextPage: hasSequencesNextPage,
     fetchNextPage: hasSequencesFetchNextPage,
-    isLoading: isSequencesLoading,
+    isInitialLoading: isSequencesLoading,
     data: sequences = [],
   } = useSequenceListQuery(
     {

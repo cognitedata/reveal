@@ -5,9 +5,11 @@ import {
   ResourceTableColumns,
   Table,
 } from '@data-exploration/components';
-import { FileGroupingTable } from '@data-exploration/containers';
-import { ResultCount } from '@data-exploration-components/components';
-import { FileViewSwitcher } from '@data-exploration-components/containers/SearchResults/FileSearchResults/FileViewSwitcher';
+import {
+  FileGroupingTable,
+  FileViewSwitcher,
+  ResultCount,
+} from '@data-exploration/containers';
 import {
   useRelatedResourceResults,
   useRelationshipCount,
