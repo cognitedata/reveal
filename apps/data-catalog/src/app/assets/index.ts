@@ -1,3 +1,4 @@
+/* eslint-disable */
 import DataConsumer from '-!@svgr/webpack!./DataConsumer.svg';
 import documentationIcon from '-!@svgr/webpack!./documentationIcon.svg';
 import EmptyDataset from '-!@svgr/webpack!./EmptyDataset.svg';

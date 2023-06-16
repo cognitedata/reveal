@@ -16,7 +16,6 @@
 apps/mock-server                  @cognitedata/cdf-user-experience
 apps/platypus                     @cognitedata/cdf-user-experience
 apps/platypus-cdf-cli             @cognitedata/cdf-user-experience
-apps/platypus-cdf-cli             @cognitedata/cdf-user-experience
 
 libs/data-modeling                @cognitedata/cdf-user-experience
 

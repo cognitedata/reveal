@@ -3,11 +3,10 @@ import { useState, useEffect } from 'react';
 import {
   DataConsumer,
   documentationIcon as DocumentationIcon,
-} from '@data-catalog-app/assets';
-import {
   getDataInIcon as GetDataInIcon,
   jetfireIcon as JetfireIcon,
 } from '@data-catalog-app/assets';
+
 import { useTranslation } from '@data-catalog-app/common/i18n';
 import { useUserInformation } from '@data-catalog-app/hooks/useUserInformation';
 import theme from '@data-catalog-app/styles/theme';
