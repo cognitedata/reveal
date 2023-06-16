@@ -225,29 +225,31 @@ export function ModelDetails({
           )}
           <Divider />
           {!(selectedTab === 'new-version') && (
-            <Link
-              to={createCdfLink(
-                `/model-library/models/${encodeURIComponent(
-                  modelFile.metadata.simulator
-                )}/${encodeURIComponent(
-                  modelFile.metadata.modelName
-                )}/new-version`
-              )}
-            >
-              <Button
-                icon="Add"
-                size="large"
-                type="primary"
-                onClick={() => {
-                  trackUsage(TRACKING_EVENTS.NEW_MODEL_VERSION, {
-                    simulator,
-                    modelName: decodeURI(modelName),
-                  });
-                }}
+            <div>
+              <Link
+                to={createCdfLink(
+                  `/model-library/models/${encodeURIComponent(
+                    modelFile.metadata.simulator
+                  )}/${encodeURIComponent(
+                    modelFile.metadata.modelName
+                  )}/new-version`
+                )}
               >
-                New version
-              </Button>
-            </Link>
+                <Button
+                  icon="Add"
+                  size="large"
+                  type="primary"
+                  onClick={() => {
+                    trackUsage(TRACKING_EVENTS.NEW_MODEL_VERSION, {
+                      simulator,
+                      modelName: decodeURI(modelName),
+                    });
+                  }}
+                >
+                  New version
+                </Button>
+              </Link>
+            </div>
           )}
         </div>
       </div>
