@@ -30,3 +30,7 @@ contextualization:
 cdf-document-search:
   - apps/cdf-document-search/*
   - apps/cdf-document-search/**/*
+
+interactive-diagrams:
+  - apps/interactive-diagrams/*
+  - apps/interactive-diagrams/**/*
