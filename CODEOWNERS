@@ -44,6 +44,8 @@ libs/contextualization              @davidlky @cognitedata/contextualization
 apps/copilot              @davidlky @andeplane @miladh @trygveu
 
 # IoT Hub
+
+apps/raw-explorer @cognitedata/team-hebe
 apps/iot-hub              @davidlky @geircognite @muradsater
 
 # 3D / Reveal

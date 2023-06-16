@@ -153,7 +153,7 @@ const IndustryCanvasHome = () => {
                 accessor: 'name',
               },
               {
-                Header: 'Updated at',
+                Header: 'Last updated',
                 accessor: 'updatedAtDate',
                 Cell: ({ value }: { value: Date }): JSX.Element => (
                   <span>

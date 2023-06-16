@@ -9,6 +9,7 @@ import { getProject, isUsingUnifiedSignin } from '@cognite/cdf-utilities';
 import { ToastContainer } from '@cognite/cogs.js';
 
 import { FeatureFlagProvider } from '../environments/FeatureFlagProvider';
+import { SubAppContainer } from '../environments/fusion/SubAppContainer';
 
 import NoAccessWrapper from './components/NoAccessPage/NoAccessWrapper';
 import { rootInjector } from './di';
@@ -25,23 +26,25 @@ function App() {
   return (
     <FeatureFlagProvider>
       <QueryClientProvider client={queryClient}>
-        <ReactQueryDevtools initialIsOpen={false} />
-        <ContainerProvider container={rootInjector}>
-          <ToastContainer />
-          <StyledWrapper>
-            <NoAccessWrapper>
-              <Router
-                basename={tenant}
-                window={window}
-                children={
-                  <StyledPage>
-                    <Routes />
-                  </StyledPage>
-                }
-              />
-            </NoAccessWrapper>
-          </StyledWrapper>
-        </ContainerProvider>
+        <SubAppContainer>
+          <ReactQueryDevtools initialIsOpen={false} />
+          <ContainerProvider container={rootInjector}>
+            <ToastContainer />
+            <StyledWrapper>
+              <NoAccessWrapper>
+                <Router
+                  basename={tenant}
+                  window={window}
+                  children={
+                    <StyledPage>
+                      <Routes />
+                    </StyledPage>
+                  }
+                />
+              </NoAccessWrapper>
+            </StyledWrapper>
+          </ContainerProvider>
+        </SubAppContainer>
       </QueryClientProvider>
     </FeatureFlagProvider>
   );
@@ -52,7 +55,7 @@ export default App;
 const StyledWrapper = styled.div`
   display: flex;
   flex-flow: column;
-  height: 100%;
+  height: 100vh;
   overflow: hidden;
 `;
 

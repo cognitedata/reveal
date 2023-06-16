@@ -7,3 +7,11 @@ export const getCogniteSDKClient = () => client;
 export const setCogniteSDKClient = (newClient: CogniteClient) => {
   client = newClient;
 };
+
+export const getUserInfo = () => {
+  return Promise<{
+    id: '';
+    mail: '';
+    displayName: '';
+  }>;
+};

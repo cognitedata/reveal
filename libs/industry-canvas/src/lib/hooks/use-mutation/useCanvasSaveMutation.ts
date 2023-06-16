@@ -34,7 +34,7 @@ export const useCanvasSaveMutation = (service: IndustryCanvasService) => {
         // Optimistically update to the new values
         queryClient.setQueryData<SerializedCanvasDocument>(
           [QueryKeys.GET_CANVAS, updatedCanvas.externalId],
-          { ...updatedCanvas, updatedTime: new Date().toISOString() }
+          { ...updatedCanvas, updatedAt: new Date().toISOString() }
         );
         queryClient.setQueriesData<SerializedCanvasDocument[]>(
           [QueryKeys.LIST_CANVASES],
@@ -45,7 +45,7 @@ export const useCanvasSaveMutation = (service: IndustryCanvasService) => {
                     ...updatedCanvas,
                     externalId: updatedCanvas.externalId,
                     name: updatedCanvas.name,
-                    updatedTime: new Date().toISOString(),
+                    updatedAt: new Date().toISOString(),
                   }
                 : canvas
             );
