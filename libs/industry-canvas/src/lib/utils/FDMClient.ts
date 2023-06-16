@@ -223,8 +223,7 @@ export class FDMClient {
         autoCreateStartNodes: false,
         autoCreateEndNodes: false,
         skipOnVersionConflict: false,
-        // TODO(marvin): re-enable when we start using system data models
-        //autoCreateDirectRelations: false,
+        autoCreateDirectRelations: false,
         replace: false,
       }
     );
