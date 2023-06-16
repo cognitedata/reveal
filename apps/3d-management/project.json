@@ -87,7 +87,7 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/apps/platypus"],
+      "outputs": ["{workspaceRoot}/coverage/apps/3d-management"],
       "options": {
         "jestConfig": "apps/3d-management/jest.config.ts",
         "passWithNoTests": true
