@@ -35,7 +35,8 @@
               "@data-quality",
               "@platypus-core",
               "@cognite/platypus-cdf-cli",
-              "@cognite/data-exploration"
+              "@cognite/data-exploration",
+              "@data-catalog-app"
             ],
             "depConstraints": [
               {

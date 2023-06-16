@@ -6,6 +6,7 @@ coverage:
         flags:
           - 3d-management
           - data-exploration
+          - data-catalog
           - flexible-data-explorer
           - mock-server
           - platypus
