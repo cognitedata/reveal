@@ -20,12 +20,14 @@ type Props = {
   visible: boolean;
   onCancel: () => void;
   onSave: () => void;
+  isDocumentsApiEnabled?: boolean;
 };
 
 export const SearchConfig: React.FC<Props> = ({
   visible,
   onCancel,
   onSave,
+  isDocumentsApiEnabled = true,
 }: Props) => {
   const [searchConfig, setSearchConfig] =
     useLocalStorageState<SearchConfigDataType>(
@@ -133,6 +135,7 @@ export const SearchConfig: React.FC<Props> = ({
         <ResourceColumns
           searchConfigData={configData}
           onChange={onChangeHandler}
+          isDocumentsApiEnabled={isDocumentsApiEnabled}
         />
       </Flex>
     </SearchConfigModal>

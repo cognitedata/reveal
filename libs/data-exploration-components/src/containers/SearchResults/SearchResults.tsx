@@ -4,6 +4,7 @@ import {
   AssetSearchResults,
   AssetViewMode,
   EventSearchResults,
+  FileSearchResults,
   SequenceSearchResults,
   TimeseriesSearchResults,
 } from '@data-exploration/containers';
@@ -15,8 +16,6 @@ import {
 } from '@data-exploration-components/types';
 
 import { DateRangeProps } from '@data-exploration-lib/core';
-
-import { FileSearchResults } from './FileSearchResults/FileSearchResults';
 
 export const SearchResults = ({
   allowEdit,

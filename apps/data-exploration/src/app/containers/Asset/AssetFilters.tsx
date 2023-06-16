@@ -1,8 +1,6 @@
-import {
-  LabelFilterV2,
-  MetadataFilterV2,
-  SourceFilter,
-} from '@cognite/data-exploration';
+import { LabelFilterV2, MetadataFilterV2 } from '@data-exploration/containers';
+
+import { SourceFilter } from '@cognite/data-exploration';
 import { useList } from '@cognite/sdk-react-query-hooks';
 
 import { BaseFilterCollapse } from '@data-exploration-app/components/Collapse/BaseFilterCollapse/BaseFilterCollapse';

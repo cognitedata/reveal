@@ -71,7 +71,9 @@ const main = () => {
       );
     } else {
       runCmd(
-        `npx nx run-many --configuration=production --target=${target} --projects=${projectNames} --parallel`
+        `npx nx run-many --configuration=production --target=${target} --projects=${projectNames} --parallel=${
+          target === 'build' ? 2 : 5
+        }`
       );
     }
   }

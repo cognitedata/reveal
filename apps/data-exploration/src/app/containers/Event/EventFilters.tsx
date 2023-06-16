@@ -1,9 +1,9 @@
 import React from 'react';
 
+import { DateFilterV2, MetadataFilterV2 } from '@data-exploration/containers';
+
 import {
   AggregatedEventFilterV2,
-  DateFilterV2,
-  MetadataFilterV2,
   SourceFilter,
 } from '@cognite/data-exploration';
 import { CogniteEvent } from '@cognite/sdk/dist/src';

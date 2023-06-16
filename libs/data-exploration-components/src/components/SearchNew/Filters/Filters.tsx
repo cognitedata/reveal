@@ -2,6 +2,7 @@ import React from 'react';
 
 import styled from 'styled-components';
 
+import { BaseFilterCollapse } from '@data-exploration/components';
 import { FilterSection } from '@data-exploration-components/containers/SearchResults/SearchFiltersNew';
 import {
   ResourceType,
@@ -12,11 +13,9 @@ import {
 import {
   AssetFiltersV2,
   EventFilters,
-  FileFilters,
   SequenceFilters,
   TimeseriesFilters,
 } from '.';
-import { BaseFilterCollapse } from './BaseFilterCollapse/BaseFilterCollapse';
 import { ResetFiltersButton } from './ResetFiltersButton';
 
 export type FilterProps = Required<ResourceFilterProps> &
@@ -36,7 +35,7 @@ export const Filters = ({
   setSequenceFilter,
   eventFilter,
   setEventFilter,
-  fileFilter,
+  // fileFilter,
   setFileFilter,
   ...rest
 }: FilterProps) => {
@@ -67,9 +66,10 @@ export const Filters = ({
           />
         );
       }
-      case 'file': {
-        return <FileFilters filter={fileFilter} setFilter={setFileFilter} />;
-      }
+      // not used anywhere
+      // case 'file': {
+      //   return <OldFileFilters filter={fileFilter} setFilter={setFileFilter} />;
+      // }
       case 'sequence': {
         return (
           <SequenceFilters

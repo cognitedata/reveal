@@ -485,7 +485,8 @@ export const useTaggedAnnotationCount = (
 
 export const useRelatedResourceCount = (
   resource: ResourceItem,
-  tabType: ResourceType
+  tabType: ResourceType,
+  isAdvancedFiltersEnabled = false
 ) => {
   const isAsset = resource.type === 'asset';
   const isFile = resource.type === 'file';
@@ -499,7 +500,10 @@ export const useRelatedResourceCount = (
   } = useAggregate(
     convertResourceType(tabType),
     { assetSubtreeIds: [{ id: resource.id }] },
-    { enabled: isAsset && !isFileTab && !!resource.id, staleTime: 60 * 1000 }
+    {
+      enabled: isAsset && !isAdvancedFiltersEnabled && !!resource.id,
+      staleTime: 60 * 1000,
+    }
   );
 
   const {
@@ -511,7 +515,7 @@ export const useRelatedResourceCount = (
       filters: { assetSubtreeIds: [{ value: resource.id }] },
     },
     undefined,
-    { enabled: isFileTab }
+    { enabled: isFileTab && isAdvancedFiltersEnabled }
   );
 
   const {
@@ -576,7 +580,7 @@ export const useRelatedResourceCount = (
     count += annotationCount;
   }
 
-  if (isFileTab && fileCount) {
+  if (isFileTab && fileCount && isAdvancedFiltersEnabled) {
     count += fileCount;
   }
 

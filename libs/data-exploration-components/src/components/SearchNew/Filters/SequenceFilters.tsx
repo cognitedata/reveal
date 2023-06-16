@@ -1,12 +1,13 @@
 import React from 'react';
 
+import { MetadataFilterV2 } from '@data-exploration/containers';
+
 import { useList } from '@cognite/sdk-react-query-hooks';
 
 import { InternalSequenceFilters } from '@data-exploration-lib/core';
 import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
 
 import { BaseFilterCollapse } from './BaseFilterCollapse/BaseFilterCollapse';
-import { MetadataFilterV2 } from './MetadataFilter/MetadataFilter';
 
 export const SequenceFilters = ({
   filter,

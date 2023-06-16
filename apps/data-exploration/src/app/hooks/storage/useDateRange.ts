@@ -9,6 +9,7 @@ import { getProject } from '@data-exploration-app/utils/URLUtils';
 export const useDateRange = (
   sessionKey = `${getProject()}-${TIMESERIES_TABLE_DATE_RANGE_KEY}`
 ): [[Date, Date], React.Dispatch<React.SetStateAction<[Date, Date]>>] => {
+  console.log(useSessionStorage);
   const [dateRange, setDateRange] = useSessionStorage<[Date, Date]>(
     sessionKey,
     TIME_SELECT['2Y'].getTime()

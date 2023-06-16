@@ -5,7 +5,7 @@ import {
   ResourceTableColumns,
   Table,
 } from '@data-exploration/components';
-import { ResultCount } from '@data-exploration-components/components';
+import { ResultCount } from '@data-exploration/containers';
 import {
   useRelatedResourceResults,
   useRelationshipCount,
