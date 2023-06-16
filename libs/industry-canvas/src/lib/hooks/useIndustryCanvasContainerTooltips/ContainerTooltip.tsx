@@ -1,5 +1,7 @@
 import React, { useCallback, useState } from 'react';
 
+import styled from 'styled-components';
+
 import dayjs from 'dayjs';
 
 import { createLink } from '@cognite/cdf-utilities';
@@ -9,12 +11,13 @@ import { ContainerType } from '@cognite/unified-file-viewer';
 import type { OCRAnnotationPageResult } from '@data-exploration-lib/domain-layer';
 
 import DateRangePrompt from '../../components/DateRangePrompt';
-import { TooltipToolBarContainer } from '../../TooltipContainer';
+import { MetricEvent } from '../../constants';
 import {
   IndustryCanvasContainerConfig,
   isIndustryCanvasTimeSeriesContainer,
 } from '../../types';
 import getDefaultContainerLabel from '../../utils/getDefaultContainerLabel';
+import useMetrics from '../../utils/tracking/useMetrics';
 import {
   OnUpdateTooltipsOptions,
   TooltipsOptions,
@@ -22,6 +25,10 @@ import {
 
 import getContainerText from './getContainerText';
 import LabelToolbar from './LabelToolbar';
+
+const TooltipToolBarContainer = styled.div`
+  margin: 18px 0px;
+`;
 
 const navigateToPath = (path: string, query?: any) => {
   const link = createLink(path, query);
@@ -61,6 +68,7 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
   isLoadingSummary,
   setIsLoadingSummary,
 }) => {
+  const trackUsage = useMetrics();
   const [isInEditLabelMode, setIsInEditLabelMode] = useState(false);
 
   const onSaveLabel = useCallback(
@@ -74,8 +82,12 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
         label: label.trim() || getDefaultContainerLabel(selectedContainer),
       });
       setIsInEditLabelMode(false);
+      trackUsage(MetricEvent.CONTAINER_LABEL_CHANGED, {
+        containerType: selectedContainer.type,
+        labelLength: label.length,
+      });
     },
-    [selectedContainer, onUpdateContainer]
+    [selectedContainer, onUpdateContainer, trackUsage]
   );
 
   const onClose = useCallback(() => {
@@ -119,9 +131,16 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
                   navigateToPath(
                     `/explore/${selectedContainer.metadata.resourceType}/${selectedContainer.metadata.resourceId}`
                   );
+                  trackUsage(
+                    MetricEvent.CONTAINER_OPEN_IN_DATA_EXPLORER_CLICKED,
+                    {
+                      containerType: selectedContainer.type,
+                      resourceType: selectedContainer.metadata.resourceType,
+                    }
+                  );
                 }}
                 type="ghost"
-                aria-label={`Open ${selectedContainer.metadata.resourceType} in Data Explorer`}
+                aria-label="Open in Data Explorer"
               />
             </Tooltip>
           </>
@@ -223,9 +242,15 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
                 tooltipsOptions[ContainerType.TIMESERIES].shouldApplyToAll
               }
               onToggleShouldApplyToAllTimeSeries={() => {
+                const nextShouldApplyToAll =
+                  !tooltipsOptions[ContainerType.TIMESERIES].shouldApplyToAll;
+
                 onUpdateTooltipsOptions(ContainerType.TIMESERIES, {
-                  shouldApplyToAll:
-                    !tooltipsOptions[ContainerType.TIMESERIES].shouldApplyToAll,
+                  shouldApplyToAll: nextShouldApplyToAll,
+                });
+
+                trackUsage(MetricEvent.TIMESERIES_APPLY_TO_ALL_TOGGLED, {
+                  newValue: nextShouldApplyToAll,
                 });
               }}
               onComplete={(dateRange, shouldApplyToAllTimeSeries) => {
@@ -242,6 +267,12 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
                     endDate: dayjs(dateRange.endDate).endOf('day').toDate(),
                   });
                 });
+
+                trackUsage(MetricEvent.TIMESERIES_DATE_RANGE_CHANGED, {
+                  startDate: dateRange.startDate,
+                  endDate: dateRange.endDate,
+                  appliedToAll: shouldApplyToAllTimeSeries,
+                });
               }}
             />
           </>
@@ -257,13 +288,19 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
             <Tooltip content="Open in Charts">
               <Button
                 icon="LineChart"
-                onClick={() =>
+                onClick={() => {
                   navigateToPath('/charts', {
                     timeserieIds: [selectedContainer.metadata.resourceId],
                     startTime: selectedContainer.startDate.getTime(),
                     endTime: selectedContainer.endDate.getTime(),
-                  })
-                }
+                  });
+                  trackUsage(
+                    MetricEvent.CONTAINER_OPEN_IN_DATA_EXPLORER_CLICKED,
+                    {
+                      containerType: selectedContainer.type,
+                    }
+                  );
+                }}
                 type="ghost"
                 aria-label="Open in Charts"
               />
@@ -275,9 +312,15 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
                   navigateToPath(
                     `/explore/timeSeries/${selectedContainer.metadata.resourceId}`
                   );
+                  trackUsage(
+                    MetricEvent.CONTAINER_OPEN_IN_DATA_EXPLORER_CLICKED,
+                    {
+                      containerType: selectedContainer.type,
+                    }
+                  );
                 }}
                 type="ghost"
-                aria-label="Open time series"
+                aria-label="Open in Data Explorer"
               />
             </Tooltip>
           </>
@@ -319,9 +362,15 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
                 icon="ExternalLink"
                 onClick={() => {
                   navigateToPath(`/explore/threeD/${selectedContainer.id}`);
+                  trackUsage(
+                    MetricEvent.CONTAINER_OPEN_IN_DATA_EXPLORER_CLICKED,
+                    {
+                      containerType: selectedContainer.type,
+                    }
+                  );
                 }}
                 type="ghost"
-                aria-label="Open 3D-model"
+                aria-label="Open in Data Explorer"
               />
             </Tooltip>
           </>
@@ -347,6 +396,10 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
     const onSummarizationClick = async () => {
       if (onAddSummarizationSticky) {
         setIsLoadingSummary(true);
+        trackUsage(MetricEvent.DOCUMENT_SUMMARIZE_CLICKED, {
+          ocrTextLength: ocrText.length,
+        });
+
         await onAddSummarizationSticky(
           selectedContainer,
           ocrText,
@@ -416,6 +469,12 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
                 onClick={() => {
                   navigateToPath(
                     `/explore/file/${selectedContainer.metadata.resourceId}`
+                  );
+                  trackUsage(
+                    MetricEvent.CONTAINER_OPEN_IN_DATA_EXPLORER_CLICKED,
+                    {
+                      containerType: selectedContainer.type,
+                    }
                   );
                 }}
                 type="ghost"

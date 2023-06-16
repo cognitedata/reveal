@@ -28,6 +28,7 @@ import {
   SHAMEFUL_WAIT_TO_ENSURE_ANNOTATIONS_ARE_RENDERED_MS,
   ZOOM_TO_FIT_MARGIN,
   ZOOM_DURATION_SECONDS,
+  MetricEvent,
 } from '../constants';
 import { useIndustryCanvasContext } from '../IndustryCanvasContext';
 import {
@@ -43,6 +44,7 @@ import {
   isIndustryCanvasContainerConfig,
 } from '../types';
 import addDimensionsIfNotExists from '../utils/addDimensionsIfNotExists';
+import useMetrics from '../utils/tracking/useMetrics';
 import {
   deserializeCanvasDocument,
   getRemovedIdsByType,
@@ -334,6 +336,7 @@ const useManagedState = ({
   setTool: Dispatch<SetStateAction<IndustryCanvasToolType>>;
 }): UseManagedStateReturnType => {
   const sdk = useSDK();
+  const trackUsage = useMetrics();
   const [interactionState, setInteractionState] = useState<InteractionState>({
     hoverId: undefined,
     clickedContainerAnnotationId: undefined,
@@ -363,39 +366,51 @@ const useManagedState = ({
       }
 
       pushState(({ container, canvasAnnotations }) => {
-        // If there is only one annotation in the update set, select it
-        if (updatedAnnotations.length === 1) {
+        const updatedAnnotation = updatedAnnotations[0];
+        const hasAnnotationBeenCreated =
+          updatedAnnotation !== undefined &&
+          updatedAnnotations.length === 1 &&
+          !canvasAnnotations.some(
+            (canvasAnnotation) => canvasAnnotation.id === updatedAnnotation.id
+          );
+
+        if (hasAnnotationBeenCreated) {
           // Augment the annotation with the comment metadata if the tool is comment
           if (tool === IndustryCanvasToolType.COMMENT) {
-            updatedAnnotations[0].isSelectable = false;
-            updatedAnnotations[0].metadata = {
-              ...updatedAnnotations[0].metadata,
+            updatedAnnotation.isSelectable = false;
+            updatedAnnotation.metadata = {
+              ...updatedAnnotation.metadata,
               [COMMENT_METADATA_ID]: true,
             };
             saveComment({
-              externalId: updatedAnnotations[0].id,
+              externalId: updatedAnnotation.id,
               text: '',
               author: userIdentifier,
               canvas: { externalId: activeCanvasExternalId },
             });
           }
+
           setInteractionState({
             hoverId: undefined,
-            clickedContainerAnnotationId: updatedAnnotations[0].id,
+            clickedContainerAnnotationId: updatedAnnotation.id,
           });
           setTool(IndustryCanvasToolType.SELECT);
 
           unifiedViewer?.once(UnifiedViewerEventType.ON_TOOL_CHANGE, () => {
             // It takes a little bit of time before the annotation is added, hence the timeout.
             // TODO: This is somewhat brittle and hacky. We should find a better way to do this.
-            if (!isCommentAnnotation(updatedAnnotations[0])) {
+            if (!isCommentAnnotation(updatedAnnotation)) {
               setTimeout(() => {
                 unifiedViewer?.selectByIds({
-                  annotationIds: [updatedAnnotations[0].id],
+                  annotationIds: [updatedAnnotation.id],
                   containerIds: [],
                 });
               }, SHAMEFUL_WAIT_TO_ENSURE_ANNOTATIONS_ARE_RENDERED_MS);
             }
+          });
+
+          trackUsage(MetricEvent.ANNOTATION_CREATED, {
+            annotationType: updatedAnnotation.type,
           });
         }
 
@@ -416,6 +431,7 @@ const useManagedState = ({
       activeCanvasExternalId,
       saveComment,
       userIdentifier,
+      trackUsage,
     ]
   );
 
@@ -568,16 +584,24 @@ const useManagedState = ({
     }, [attachContainerClickHandler, canvasState.container]);
 
   const onClickContainerAnnotation = useCallback(
-    (annotation: ExtendedAnnotation) =>
-      setInteractionState((prevInteractionState) => ({
-        clickedContainerId: undefined,
-        hoverId: undefined,
-        clickedContainerAnnotationId:
-          prevInteractionState.clickedContainerAnnotationId === annotation.id
+    (annotation: ExtendedAnnotation) => {
+      setInteractionState((prevInteractionState) => {
+        const wasAlreadyClicked =
+          prevInteractionState.clickedContainerAnnotationId === annotation.id;
+        trackUsage(MetricEvent.CONTAINER_ANNOTATION_CLICKED, {
+          annotatedResourceType: annotation.metadata.annotationType,
+          wasAlreadyClicked,
+        });
+        return {
+          clickedContainerId: undefined,
+          hoverId: undefined,
+          clickedContainerAnnotationId: wasAlreadyClicked
             ? undefined
             : annotation.id,
-      })),
-    [setInteractionState]
+        };
+      });
+    },
+    [setInteractionState, trackUsage]
   );
 
   const onMouseOverContainerAnnotation = useCallback(
