@@ -16,7 +16,6 @@
 apps/mock-server                  @cognitedata/cdf-user-experience
 apps/platypus                     @cognitedata/cdf-user-experience
 apps/platypus-cdf-cli             @cognitedata/cdf-user-experience
-apps/platypus-e2e                 @cognitedata/cdf-user-experience
 
 libs/data-modeling                @cognitedata/cdf-user-experience
 
@@ -50,3 +49,6 @@ apps/iot-hub              @davidlky @geircognite @muradsater
 
 # Interactive Diagrams
 apps/interactive-diagrams @cognitedata/team-hebe
+
+# Data Catalog
+apps/data-catalog                 @cognitedata/cdf-user-experience

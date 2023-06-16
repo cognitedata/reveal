@@ -60,9 +60,7 @@
       "@data-quality/*": [
         "apps/platypus/src/app/modules/solution/data-quality/*"
       ],
-      "@transformations/*": [
-        "apps/transformations/src/*"
-      ],
+      "@transformations/*": ["apps/transformations/src/*"],
       "@flexible-data-explorer/*": ["apps/flexible-data-explorer/src/*"],
       "@fusion/cdf-nx-plugin": ["libs/cdf-nx-plugin/src/index.ts"],
       "@fusion/contextualization": ["libs/contextualization/src/index.ts"],
@@ -84,9 +82,8 @@
       "@platypus/platypus-core": [
         "libs/data-modeling/platypus-core/src/index.ts"
       ],
-      "@raw-explorer/*": [
-        "apps/raw-explorer/src/*"
-      ]
+      "@raw-explorer/*": ["apps/raw-explorer/src/*"],
+      "@data-catalog-app/*": ["apps/data-catalog/src/app/*"]
     }
   },
   "exclude": ["node_modules", "tmp", "proxy"]
