@@ -1,18 +1,20 @@
 import React from 'react';
 
-import { Button, Colors, Icon, Tooltip } from '@cognite/cogs.js';
+import { Button, Chip, Colors, Icon, Tooltip } from '@cognite/cogs.js';
 
 import { useFileInfo } from '../../../hooks/useFileInfo';
 import * as ContextualTooltip from '../ContextualTooltip';
 
 type FileTooltipProps = {
   id: number;
+  isCurrentFile?: boolean;
   onAddFileClick: () => void;
   onViewClick: () => void;
 };
 
 const FileTooltip: React.FC<FileTooltipProps> = ({
   id,
+  isCurrentFile = false,
   onAddFileClick,
   onViewClick,
 }) => {
@@ -54,6 +56,17 @@ const FileTooltip: React.FC<FileTooltipProps> = ({
           </ContextualTooltip.ButtonWrapper>
         </ContextualTooltip.ButtonsContainer>
       </ContextualTooltip.Header>
+      {isCurrentFile && (
+        // Without this div, the Chip will inherit the width of the ContextualTooltip.Container
+        <div>
+          <Chip
+            label="Current file"
+            type="default"
+            size="x-small"
+            prominence="strong"
+          />
+        </div>
+      )}
     </ContextualTooltip.Container>
   );
 };

@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import styled from 'styled-components';
@@ -17,13 +17,14 @@ import {
 
 import { COPIED_TEXT, useClipboard } from '@data-exploration-lib/core';
 
-import { TOAST_POSITION } from '../constants';
+import { MetricEvent, TOAST_POSITION } from '../constants';
 import { EMPTY_FLEXIBLE_LAYOUT } from '../hooks/constants';
 import useCanvasDeletion from '../hooks/useCanvasDeletion';
 import useCanvasSearch from '../hooks/useCanvasSearch';
 import { IndustryCanvasContextType } from '../IndustryCanvasContext';
 import { SerializedCanvasDocument } from '../types';
 import { getCanvasLink } from '../utils/getCanvasLink';
+import useMetrics from '../utils/tracking/useMetrics';
 
 import CanvasDeletionModal from './CanvasDeletionModal';
 import CanvasSubmenu from './CanvasSubmenu';
@@ -55,6 +56,7 @@ const CanvasDropdown: React.FC<CanvasDropdownProps> = ({
   setCanvasId,
   isCanvasLocked,
 }) => {
+  const trackUsage = useMetrics();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchString, setSearchString] = useState('');
   const navigate = useNavigate();
@@ -108,6 +110,12 @@ const CanvasDropdown: React.FC<CanvasDropdownProps> = ({
 
     navigate(getCanvasLink(externalId));
   };
+
+  useEffect(() => {
+    if (isMenuOpen) {
+      trackUsage(MetricEvent.CANVAS_DROPDOWN_OPENED);
+    }
+  }, [isMenuOpen, trackUsage]);
 
   return (
     <>

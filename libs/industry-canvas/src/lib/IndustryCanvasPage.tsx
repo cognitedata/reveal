@@ -42,6 +42,7 @@ import DragOverIndicator from './components/DragOverIndicator';
 import IndustryCanvasFileUploadModal from './components/IndustryCanvasFileUploadModal/IndustryCanvasFileUploadModal';
 import {
   CommentsFeatureFlagKey,
+  MetricEvent,
   SEARCH_QUERY_PARAM_KEY,
   SHAMEFUL_WAIT_TO_ENSURE_CONTAINERS_ARE_RENDERED_MS,
   TOAST_POSITION,
@@ -52,6 +53,7 @@ import useManagedState from './hooks/useManagedState';
 import useManagedTools from './hooks/useManagedTools';
 import { useQueryParameter } from './hooks/useQueryParameter';
 import { useSelectedAnnotationOrContainer } from './hooks/useSelectedAnnotationOrContainer';
+import useTrackCanvasViewed from './hooks/useTrackCanvasViewed';
 import { IndustryCanvas } from './IndustryCanvas';
 import {
   IndustryCanvasProvider,
@@ -70,6 +72,7 @@ import {
 } from './utils/addDimensionsToContainerReference';
 import isSupportedResourceItem from './utils/isSupportedResourceItem';
 import resourceItemToContainerReference from './utils/resourceItemToContainerReference';
+import useMetrics from './utils/tracking/useMetrics';
 import useManagedTool from './utils/useManagedTool';
 import { zoomToFitAroundContainerIds } from './utils/zoomToFitAroundContainerIds';
 
@@ -80,6 +83,7 @@ export type OnAddContainerReferences = (
 const APPLICATION_ID_INDUSTRY_CANVAS = 'industryCanvas';
 
 const IndustryCanvasPageWithoutQueryClientProvider = () => {
+  const trackUsage = useMetrics();
   const navigate = useNavigate();
   const [unifiedViewerRef, setUnifiedViewerRef] =
     useState<UnifiedViewer | null>(null);
@@ -132,6 +136,7 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
     tool,
   });
 
+  useTrackCanvasViewed(activeCanvas);
   const { isEnabled: isCommentsEnabled } = useFlag(CommentsFeatureFlagKey, {
     fallback: false,
   });
@@ -175,6 +180,7 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
 
   const onDownloadPress = () => {
     unifiedViewerRef?.exportWorkspaceToPdf();
+    trackUsage(MetricEvent.DOWNLOAD_AS_PDF_CLICKED);
   };
 
   useEffect(() => {
@@ -321,6 +327,19 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
       onAddContainerReferences(
         supportedResourceItems.map(resourceItemToContainerReference)
       );
+
+      const numberOfResourcesPerType = supportedResourceItems.reduce(
+        (acc, resourceItem) => {
+          const type = resourceItem.type;
+          acc[type] = (acc[type] ?? 0) + 1;
+          return acc;
+        },
+        {} as Record<string, number>
+      );
+      trackUsage(MetricEvent.RESOURCE_SELECTOR_RESOURCES_ADDED, {
+        numberOfResources: supportedResourceItems.length,
+        numberOfResourcesPerType,
+      });
     }
   };
 
@@ -370,9 +389,36 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
     if ((event.ctrlKey || event.metaKey) && event.key === 'z') {
       if (event.shiftKey) {
         redo.fn();
+        trackUsage(MetricEvent.HOTKEYS_USED, {
+          hotkey: 'Ctrl/Cmd + Shift + Z',
+        });
         return;
       }
       undo.fn();
+      trackUsage(MetricEvent.HOTKEYS_USED, {
+        hotkey: 'Ctrl/Cmd + Z',
+      });
+      return;
+    }
+
+    if ((event.ctrlKey || event.metaKey) && event.key === 'f') {
+      trackUsage(MetricEvent.HOTKEYS_USED, {
+        hotkey: 'Ctrl/Cmd + F',
+      });
+      return;
+    }
+
+    if ((event.ctrlKey || event.metaKey) && event.key === 's') {
+      trackUsage(MetricEvent.HOTKEYS_USED, {
+        hotkey: 'Ctrl/Cmd + S',
+      });
+      return;
+    }
+
+    if ((event.ctrlKey || event.metaKey) && event.key === 'a') {
+      trackUsage(MetricEvent.HOTKEYS_USED, {
+        hotkey: 'Ctrl/Cmd + A',
+      });
       return;
     }
 
@@ -471,7 +517,13 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
             />
           </Tooltip>
 
-          <Button onClick={onResourceSelectorOpen} disabled={isCanvasLocked}>
+          <Button
+            onClick={() => {
+              onResourceSelectorOpen();
+              trackUsage(MetricEvent.ADD_DATA_BUTTON_CLICKED);
+            }}
+            disabled={isCanvasLocked}
+          >
             <Icon type="Plus" /> Add data
           </Button>
 
@@ -484,9 +536,12 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
                   toggled={shouldShowConnectionAnnotations}
                   aria-label="Always show connection lines"
                   onChange={() => {
-                    setShouldShowConnectionAnnotations(
-                      !shouldShowConnectionAnnotations
-                    );
+                    const nextValue = !shouldShowConnectionAnnotations;
+                    setShouldShowConnectionAnnotations(nextValue);
+
+                    trackUsage(MetricEvent.SHOW_CONNECTION_LINES_TOGGLED, {
+                      newValue: nextValue,
+                    });
                   }}
                 >
                   Always show

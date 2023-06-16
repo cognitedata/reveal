@@ -140,7 +140,6 @@ export const IndustryCanvas = ({
   const tooltips = useIndustryCanvasTooltips({
     selectedContainer,
     containers: container.children ?? [],
-    containerAnnotations,
     clickedContainerAnnotation,
     selectedCanvasAnnotation,
     tooltipsOptions,
