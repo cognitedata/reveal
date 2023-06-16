@@ -1,12 +1,14 @@
-import { useSDK } from '@cognite/sdk-provider';
-import { CogniteClient, CogniteError, DataSet, InternalId } from '@cognite/sdk';
+import { API } from '@entity-matching-app/types/api';
 import {
   QueryKey,
   UseQueryOptions,
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
-import { API } from 'types/api';
+
+import { CogniteClient, CogniteError, DataSet, InternalId } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
+
 import { fetchAggregate } from './aggregates';
 
 type T = API | 'documents';

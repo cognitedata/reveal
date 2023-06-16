@@ -1,22 +1,32 @@
-import { Flex, Icon, Body, IconType, InputExp, Switch } from '@cognite/cogs.js';
-import { Select } from 'antd';
+import { useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
-import { useTranslation } from 'common';
-import { SOURCE_TABLE_QUERY_KEY } from 'common/constants';
-import { useQuickMatchContext } from 'context/QuickMatchContext';
-import ResourceCount from 'components/resource-count';
-import { useMemo } from 'react';
-import TimeseriesTable from './TimeseriesTable';
-import EventTable from './EventTable';
-import SequenceTable from './SequenceTable';
-import { getAdvancedFilter } from 'utils';
-import { API, RawSource, SourceType, SOURCE_TYPES } from 'types/api';
-import FileInfoTable from './FilesTable';
-import { DataSetSelect } from 'components/data-set-select';
-import ThreeDTable from './Three3Table';
 import styled from 'styled-components';
-import QuickMatchActionBar from 'components/qm-action-bar/QuickMatchActionbar';
+
+import { Select } from 'antd';
+import { useTranslation } from '@entity-matching-app/common';
+import { SOURCE_TABLE_QUERY_KEY } from '@entity-matching-app/common/constants';
+
+import { DataSetSelect } from '@entity-matching-app/components/data-set-select';
+
+import { Flex, Icon, Body, IconType, InputExp, Switch } from '@cognite/cogs.js';
+
+import QuickMatchActionBar from '@entity-matching-app/components/qm-action-bar/QuickMatchActionbar';
+import ResourceCount from '@entity-matching-app/components/resource-count';
+import { useQuickMatchContext } from '@entity-matching-app/context/QuickMatchContext';
+import {
+  API,
+  RawSource,
+  SourceType,
+  SOURCE_TYPES,
+} from '@entity-matching-app/types/api';
+import { getAdvancedFilter } from '@entity-matching-app/utils';
+
+import EventTable from './EventTable';
+import FileInfoTable from './FilesTable';
+import SequenceTable from './SequenceTable';
+import ThreeDTable from './Three3Table';
+import TimeseriesTable from './TimeseriesTable';
 
 const { Option } = Select;
 

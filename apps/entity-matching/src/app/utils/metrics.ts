@@ -33,5 +33,5 @@ export const trackUsage = (
 export const setupMixpanel = () => {
   const mixpanelFusionToken = '5c4d853e7c3b77b1eb4468d5329b278c'; // pragma: allowlist secret
 
-  Metrics.init({ mixpanelFusionToken });
+  Metrics.init({ mixpanelFusionToken } as any);
 };

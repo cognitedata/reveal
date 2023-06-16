@@ -1,3 +1,14 @@
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+
+import { translations } from '@entity-matching-app/common/i18n';
+import Details from '@entity-matching-app/pages/Details';
+import RootList from '@entity-matching-app/pages/Home';
+import Pipeline from '@entity-matching-app/pages/pipeline';
+import QuickMatch from '@entity-matching-app/pages/quick-match';
+import GlobalStyles from '@entity-matching-app/styles/GlobalStyles';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
 import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
 import {
@@ -7,19 +18,9 @@ import {
   SubAppWrapper,
 } from '@cognite/cdf-utilities';
 import { Loader, ToastContainer } from '@cognite/cogs.js';
-import { SDKProvider } from '@cognite/sdk-provider';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-
-import { translations } from 'common/i18n';
-import RootList from 'pages/Home';
-import GlobalStyles from 'styles/GlobalStyles';
 import { FlagProvider } from '@cognite/react-feature-flags';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import Details from 'pages/Details';
-import QuickMatch from 'pages/quick-match';
 import { CogniteError } from '@cognite/sdk/dist/src';
-import Pipeline from 'pages/pipeline';
+import { SDKProvider } from '@cognite/sdk-provider';
 
 const queryClient = new QueryClient({
   defaultOptions: {

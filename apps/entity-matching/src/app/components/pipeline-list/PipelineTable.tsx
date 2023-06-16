@@ -1,4 +1,23 @@
 import { Key, useCallback, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+
+import { useTranslation } from '@entity-matching-app/common';
+import {
+  PAGINATION_SETTINGS,
+  SOURCE_TABLE_QUERY_KEY,
+} from '@entity-matching-app/common/constants';
+import LatestRunCell from '@entity-matching-app/components/latest-run-cell';
+import PipelineActionsMenu from '@entity-matching-app/components/pipeline-actions-menu/PipelineActionsMenu';
+import PipelineName from '@entity-matching-app/components/pipeline-name/PipelineName';
+import {
+  Pipeline,
+  PipelineWithLatestRun,
+  useDeleteEMPipeline,
+  useDuplicateEMPipeline,
+  useEMPipelinesWithLatestRuns,
+} from '@entity-matching-app/hooks/entity-matching-pipelines';
+import { PipelineTableTypes } from '@entity-matching-app/types/types';
+
 import {
   ColumnType,
   notification,
@@ -6,22 +25,6 @@ import {
   Table,
 } from '@cognite/cdf-utilities';
 import { Button, Dropdown, Loader } from '@cognite/cogs.js';
-import PipelineName from 'components/pipeline-name/PipelineName';
-import { useTranslation } from 'common';
-
-import { PipelineTableTypes } from 'types/types';
-import PipelineActionsMenu from 'components/pipeline-actions-menu/PipelineActionsMenu';
-
-import { useSearchParams } from 'react-router-dom';
-import { PAGINATION_SETTINGS, SOURCE_TABLE_QUERY_KEY } from 'common/constants';
-import {
-  Pipeline,
-  PipelineWithLatestRun,
-  useDeleteEMPipeline,
-  useDuplicateEMPipeline,
-  useEMPipelinesWithLatestRuns,
-} from 'hooks/entity-matching-pipelines';
-import LatestRunCell from 'components/latest-run-cell';
 
 type PipelineListTableRecord = { key: string } & PipelineWithLatestRun;
 
@@ -178,7 +181,7 @@ const PipelineTable = (): JSX.Element => {
 
   const pipelinesList = useMemo(
     () =>
-      !!searchParam
+      searchParam
         ? dataSource?.filter((pipeline) =>
             (pipeline.name || pipeline.id.toString()).includes(searchParam)
           )

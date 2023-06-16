@@ -1,5 +1,6 @@
 import { Body, Flex } from '@cognite/cogs.js';
-import { EMPipelineRegexExtractor } from 'hooks/entity-matching-pipelines';
+
+import { EMPipelineRegexExtractor } from '@entity-matching-app/hooks/entity-matching-pipelines';
 
 type ExtractorProps = {
   extractors: EMPipelineRegexExtractor[];

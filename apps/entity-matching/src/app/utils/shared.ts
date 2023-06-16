@@ -1,15 +1,17 @@
-import { createLink } from '@cognite/cdf-utilities';
-import { Metadata } from '@cognite/sdk';
-import { PredictionObject } from 'hooks/entity-matching-predictions';
-
 import {
   Dispatch,
   SetStateAction,
   useDebugValue,
   useState as reactUseState,
 } from 'react';
-import { styleScope } from 'styles/styleScope';
-import { API } from 'types/api';
+
+import { PredictionObject } from '@entity-matching-app/hooks/entity-matching-predictions';
+// @ts-ignore
+import { styleScope } from '../styles/styleScope';
+import { API } from '@entity-matching-app/types/api';
+
+import { createLink } from '@cognite/cdf-utilities';
+import { Metadata } from '@cognite/sdk';
 
 export const getContainer = () => {
   const els = document.getElementsByClassName(styleScope);

@@ -4,7 +4,7 @@ import {
   TypedTransProps,
 } from '@cognite/cdf-i18n-utils';
 
-import en from 'common/i18n/translations/en/entity-matching.json';
+import en from './en/entity-matching.json';
 
 export type TranslationKeys = keyof typeof en;
 

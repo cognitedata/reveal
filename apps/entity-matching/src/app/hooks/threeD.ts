@@ -47,7 +47,7 @@ export function useInfinite3dNodes(
             )
           )
         : Promise.all(
-            range(1, PARTITIONS + 1).map((i) =>
+            range(1, PARTITIONS + 1).map((i: any) =>
               sdk.revisions3D.list3DNodes(modelId, revisionId, {
                 sortByNodeId: true,
                 limit: ITEMS_PER_PAGE,
@@ -57,8 +57,11 @@ export function useInfinite3dNodes(
           ));
 
       return {
-        items: pages.reduce((accl: Node3D[], p) => [...accl, ...p.items], []),
-        cursors: pages.map((p) => p.nextCursor),
+        items: pages.reduce(
+          (accl: Node3D[], p: any) => [...accl, ...p.items],
+          []
+        ),
+        cursors: pages.map((p: any) => p.nextCursor),
       };
     },
 

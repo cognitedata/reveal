@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { Colors, Icon, Title } from '@cognite/cogs.js';
 import { CogniteError } from '@cognite/sdk';
-import { useTranslation } from 'common';
+import { useTranslation } from '@entity-matching-app/common';
 import {
   ErrorInfo,
   InfoWrapper,

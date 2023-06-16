@@ -1,15 +1,21 @@
-import { ColumnType, Table } from '@cognite/cdf-utilities';
-import { Body, Flex, Icon, Title } from '@cognite/cogs.js';
-import { TableRowSelection } from 'antd/lib/table/interface';
-import { useTranslation } from 'common';
-import { PAGINATION_SETTINGS } from 'common/constants';
-import { Container, Graphic } from 'components/InfoBox';
-import ExpandedRule from 'components/pipeline-run-results-table/ExpandedRule';
-import Extractor from 'components/pipeline-run-results-table/Extractor';
-import { ExpandButton } from 'components/pipeline-run-results-table/GroupedResultsTable';
-import { Prediction } from 'hooks/entity-matching-predictions';
-import { AppliedRule } from 'hooks/entity-matching-rules';
 import { Dispatch, SetStateAction, useMemo, useState } from 'react';
+
+import { TableRowSelection } from 'antd/lib/table/interface';
+import { useTranslation } from '@entity-matching-app/common';
+import { PAGINATION_SETTINGS } from '@entity-matching-app/common/constants';
+
+import { Container, Graphic } from '@entity-matching-app/components/InfoBox';
+import ExpandedRule from '@entity-matching-app/components/pipeline-run-results-table/ExpandedRule';
+
+import { ColumnType, Table } from '@cognite/cdf-utilities';
+
+import Extractor from '@entity-matching-app/components/pipeline-run-results-table/Extractor';
+
+import { Body, Flex, Icon, Title } from '@cognite/cogs.js';
+
+import { ExpandButton } from '@entity-matching-app/components/pipeline-run-results-table/GroupedResultsTable';
+import { Prediction } from '@entity-matching-app/hooks/entity-matching-predictions';
+import { AppliedRule } from '@entity-matching-app/hooks/entity-matching-rules';
 
 type Props = {
   predictions: Prediction[];

@@ -1,8 +1,10 @@
-import { Select } from 'antd';
-import { useTranslation } from 'common';
-import { useList } from 'hooks/list';
-import { useSearch } from 'hooks/search';
 import { useMemo, useState } from 'react';
+
+import { Select } from 'antd';
+import { useTranslation } from '@entity-matching-app/common';
+
+import { useList } from '@entity-matching-app/hooks/list';
+import { useSearch } from '@entity-matching-app/hooks/search';
 
 type Props = {
   onChange: (e: number) => void;
@@ -31,7 +33,7 @@ export default function RootAssetSelect({ onChange, selected }: Props) {
   );
 
   const items = useMemo(() => {
-    const items = !!query ? searchItems : listItems;
+    const items = query ? searchItems : listItems;
     return items.map((asset) => ({
       label: `${asset.name || asset.id.toString()}`,
       value: asset.id,
@@ -44,7 +46,7 @@ export default function RootAssetSelect({ onChange, selected }: Props) {
       showSearch
       placeholder={t('resource-type-root-asset')}
       style={{ width: 220 }}
-      loading={!!query ? searchLoading : listLoading}
+      loading={query ? searchLoading : listLoading}
       optionFilterProp="label"
       options={items}
       value={selected}

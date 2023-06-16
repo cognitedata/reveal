@@ -1,3 +1,5 @@
+import { useQuery, UseQueryResult, QueryKey } from '@tanstack/react-query';
+
 import {
   Asset,
   CogniteClient,
@@ -8,10 +10,9 @@ import {
   Sequence,
   Timeseries,
 } from '@cognite/sdk';
-
-import { useQuery, UseQueryResult, QueryKey } from '@tanstack/react-query';
 import { useSDK } from '@cognite/sdk-provider';
-import { API } from 'types/api';
+
+import { API } from '@entity-matching-app/types/api';
 
 type Opts = {
   enabled?: boolean;

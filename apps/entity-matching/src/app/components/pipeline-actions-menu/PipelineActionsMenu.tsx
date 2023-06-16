@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { Menu, Modal, Divider } from '@cognite/cogs.js';
-import { getContainer } from 'utils';
-import { useTranslation } from 'common/i18n';
+import { getContainer } from '@entity-matching-app/utils';
+import { useTranslation } from '@entity-matching-app/common/i18n';
 import {
   PipelineWithLatestRun,
   useRunEMPipeline,
-} from 'hooks/entity-matching-pipelines';
+} from '@entity-matching-app/hooks/entity-matching-pipelines';
 
 type PipelineActionsMenuProps = {
   pipeline: PipelineWithLatestRun;

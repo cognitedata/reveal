@@ -1,22 +1,23 @@
 import { useState } from 'react';
-
-import { Button, Loader } from '@cognite/cogs.js';
-import { CogniteInternalId } from '@cognite/sdk';
 import { useParams } from 'react-router-dom';
 
-import NoAccessPage from 'components/error-pages/NoAccess';
-import UnknownErrorPage from 'components/error-pages/UnknownError';
-import Page from 'components/page';
-import Step from 'components/step';
+import { useTranslation } from '@entity-matching-app/common';
+import NoAccessPage from '@entity-matching-app/components/error-pages/NoAccess';
+import UnknownErrorPage from '@entity-matching-app/components/error-pages/UnknownError';
+import Page from '@entity-matching-app/components/page';
+import PipelineRunResultsTable from '@entity-matching-app/components/pipeline-run-results-table';
+import Step from '@entity-matching-app/components/step';
 import {
   useEMPipeline,
   useEMPipelineRun,
-} from 'hooks/entity-matching-pipelines';
-import { useTranslation } from 'common';
-import PipelineRunResultsTable from 'components/pipeline-run-results-table';
-import { useUpdateAssetIds } from 'hooks/update';
-import { pipelineSourceToAPIType } from '../details/sources';
+} from '@entity-matching-app/hooks/entity-matching-pipelines';
+import { useUpdateAssetIds } from '@entity-matching-app/hooks/update';
+
 import { notification } from '@cognite/cdf-utilities';
+import { Button, Loader } from '@cognite/cogs.js';
+import { CogniteInternalId } from '@cognite/sdk';
+
+import { pipelineSourceToAPIType } from '../details/sources';
 
 type PipelineResultsProps = {};
 

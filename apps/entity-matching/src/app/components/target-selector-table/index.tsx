@@ -1,18 +1,26 @@
-import { Flex } from '@cognite/cogs.js';
-import { useSearchParams } from 'react-router-dom';
-import { TARGET_TABLE_QUERY_KEY } from 'common/constants';
-import AssetTable from 'components/source-selector-table/AssetTable';
-import { useQuickMatchContext } from 'context/QuickMatchContext';
-import { getAdvancedFilter } from 'utils';
 import { useMemo } from 'react';
-import ResourceCount from 'components/resource-count';
-import { DataSetSelect } from 'components/data-set-select';
-import SearchInput from 'components/search-input';
-import { useTranslation } from 'common';
-import RootAssetSelect from 'components/root-asset-select';
-import QuickMatchActionBar from 'components/qm-action-bar/QuickMatchActionbar';
+import { useSearchParams } from 'react-router-dom';
+
 import styled from 'styled-components';
-import { RawTarget } from 'types/api';
+
+import { DataSetSelect } from '@entity-matching-app/components/data-set-select';
+
+import { useTranslation } from '@entity-matching-app/common';
+
+import QuickMatchActionBar from '@entity-matching-app/components/qm-action-bar/QuickMatchActionbar';
+
+import { TARGET_TABLE_QUERY_KEY } from '@entity-matching-app/common/constants';
+
+import ResourceCount from '@entity-matching-app/components/resource-count';
+
+import { Flex } from '@cognite/cogs.js';
+
+import RootAssetSelect from '@entity-matching-app/components/root-asset-select';
+import SearchInput from '@entity-matching-app/components/search-input';
+import AssetTable from '@entity-matching-app/components/source-selector-table/AssetTable';
+import { useQuickMatchContext } from '@entity-matching-app/context/QuickMatchContext';
+import { RawTarget } from '@entity-matching-app/types/api';
+import { getAdvancedFilter } from '@entity-matching-app/utils';
 
 type Props = {};
 
@@ -66,7 +74,7 @@ export default function TargetSelectionTable({}: Props) {
               onChange={(id?: number) => {
                 setTargetFilter({
                   ...targetFilter,
-                  dataSetIds: !!id ? [{ id }] : undefined,
+                  dataSetIds: id ? [{ id }] : undefined,
                 });
               }}
               selected={targetFilter.dataSetIds?.[0]?.id}
@@ -75,7 +83,7 @@ export default function TargetSelectionTable({}: Props) {
               onChange={(id) => {
                 setTargetFilter({
                   ...targetFilter,
-                  assetSubtreeIds: !!id ? [{ id }] : undefined,
+                  assetSubtreeIds: id ? [{ id }] : undefined,
                 });
               }}
             />

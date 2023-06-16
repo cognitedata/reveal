@@ -1,15 +1,21 @@
 import { useMemo } from 'react';
-import { ColumnType, Table } from '@cognite/cdf-utilities';
-import { Body, Flex, Icon } from '@cognite/cogs.js';
+
 import { Alert, Checkbox } from 'antd';
-import { useTranslation } from 'common';
-import { useList } from 'hooks/list';
-import { RawAsset } from 'types/api';
-import { TargetTableProps } from 'types/types';
-import { PAGINATION_SETTINGS } from 'common/constants';
-import { useDataSets } from 'hooks/datasets';
-import QuickMatchDataSet from 'components/quick-match-data-set/QuickMatchDataSet';
 import { TableRowSelection } from 'antd/lib/table/interface';
+import { useTranslation } from '@entity-matching-app/common';
+import { PAGINATION_SETTINGS } from '@entity-matching-app/common/constants';
+
+import QuickMatchDataSet from '@entity-matching-app/components/quick-match-data-set/QuickMatchDataSet';
+import { useDataSets } from '@entity-matching-app/hooks/datasets';
+
+import { ColumnType, Table } from '@cognite/cdf-utilities';
+
+import { useList } from '@entity-matching-app/hooks/list';
+
+import { Body, Flex, Icon } from '@cognite/cogs.js';
+
+import { RawAsset } from '@entity-matching-app/types/api';
+import { TargetTableProps } from '@entity-matching-app/types/types';
 
 type AssetListTableRecord = { key: string } & RawAsset;
 type AssetListTableRecordCT = ColumnType<AssetListTableRecord> & {

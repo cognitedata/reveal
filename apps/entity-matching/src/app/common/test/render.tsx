@@ -1,14 +1,16 @@
 import React from 'react';
 
-import sdk from '@cognite/cdf-sdk-singleton';
-import { SDKProvider } from '@cognite/sdk-provider';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import { styleScope } from '@entity-matching-app/styles/styleScope';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
   render as testingLibraryRender,
   RenderOptions,
 } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-import { styleScope } from 'styles/styleScope';
+import sdk from '@cognite/cdf-sdk-singleton';
+import { SDKProvider } from '@cognite/sdk-provider';
 
 export const render = (
   ui: React.ReactElement,

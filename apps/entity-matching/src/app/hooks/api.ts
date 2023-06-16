@@ -1,4 +1,3 @@
-import { CogniteClient } from '@cognite/sdk';
 import {
   API,
   Filter,
@@ -6,8 +5,10 @@ import {
   RawFileInfo,
   RawSequence,
   RawTimeseries,
-} from 'types/api';
-import { downcaseMetadata } from 'utils';
+} from '@entity-matching-app/types/api';
+import { downcaseMetadata } from '@entity-matching-app/utils';
+
+import { CogniteClient } from '@cognite/sdk';
 
 export type ListParams = {
   cursor?: string;

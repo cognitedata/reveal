@@ -1,13 +1,15 @@
-import { createLink } from '@cognite/cdf-utilities';
-import { Modal, ModalProps } from '@cognite/cogs.js';
-import { FormikErrors, useFormik } from 'formik';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { useTranslation } from 'common';
+import { useTranslation } from '@entity-matching-app/common';
 import PipelineDetailsForm, {
   PipelineDetailsFormValues,
-} from 'components/pipeline-details-form';
-import { useCreatePipeline } from 'hooks/entity-matching-pipelines';
+} from '@entity-matching-app/components/pipeline-details-form';
+import { FormikErrors, useFormik } from 'formik';
+
+import { createLink } from '@cognite/cdf-utilities';
+import { Modal, ModalProps } from '@cognite/cogs.js';
+
+import { useCreatePipeline } from '@entity-matching-app/hooks/entity-matching-pipelines';
 
 type CreatePipelineModalProps = Pick<ModalProps, 'onCancel' | 'visible'> & {};
 
@@ -41,7 +43,7 @@ const CreatePipelineModal = ({
         name: values.name,
         description: values.description,
       }).then(({ id }) => {
-        onCancel?.();
+        onCancel?.('closeClick');
         navigate(createLink(`/${subAppPath}/pipeline/${id}/details/sources`));
       });
     },

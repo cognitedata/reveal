@@ -1,5 +1,9 @@
-import { useSDK } from '@cognite/sdk-provider';
-import { CogniteClient, CogniteError } from '@cognite/sdk';
+import { DEFAULT_MODEL_FEATURE_TYPE } from '@entity-matching-app/common/constants';
+import {
+  EMFeatureType,
+  ModelMapping,
+} from '@entity-matching-app/context/QuickMatchContext';
+import { PipelineSourceType, TargetType } from '@entity-matching-app/types/api';
 import {
   QueryKey,
   useQuery,
@@ -10,10 +14,11 @@ import {
   QueryClient,
   FetchQueryOptions,
 } from '@tanstack/react-query';
-import { PipelineSourceType, TargetType } from 'types/api';
+
 import { toast } from '@cognite/cogs.js';
-import { EMFeatureType, ModelMapping } from 'context/QuickMatchContext';
-import { DEFAULT_MODEL_FEATURE_TYPE } from 'common/constants';
+import { CogniteClient, CogniteError } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
+
 import { RuleMatch } from './entity-matching-rules';
 
 export type Pipeline = {

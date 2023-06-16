@@ -1,15 +1,16 @@
-import { CogniteError } from '@cognite/sdk';
-import { TABLE_ITEMS_PER_PAGE } from 'common/constants';
-
-import { useQuery, UseQueryResult, QueryKey } from '@tanstack/react-query';
-import { useSDK } from '@cognite/sdk-provider';
+import { TABLE_ITEMS_PER_PAGE } from '@entity-matching-app/common/constants';
 import {
   API,
   RawAsset,
   RawCogniteEvent,
   RawFileInfo,
   RawTimeseries,
-} from 'types/api';
+} from '@entity-matching-app/types/api';
+import { useQuery, UseQueryResult, QueryKey } from '@tanstack/react-query';
+
+import { CogniteError } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
+
 import { getSearch, ListParams } from './api';
 
 type UseQParam = Pick<ListParams, 'advancedFilter' | 'filter' | 'limit'>;

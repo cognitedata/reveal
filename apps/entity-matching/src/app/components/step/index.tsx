@@ -1,5 +1,5 @@
 import { Colors, Detail, Flex, Title } from '@cognite/cogs.js';
-import { CENTERED_STEP_WIDTH } from 'common/constants';
+import { CENTERED_STEP_WIDTH } from '@entity-matching-app/common/constants';
 import React from 'react';
 
 import styled from 'styled-components';

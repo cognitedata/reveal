@@ -1,10 +1,12 @@
-import { Timestamp } from '@cognite/cdf-utilities';
-import { Body, Flex } from '@cognite/cogs.js';
 import { Link } from 'react-router-dom';
 
-import { PipelineWithLatestRun } from 'hooks/entity-matching-pipelines';
-import { createInternalLink } from 'utils';
-import QueryStatusIcon from 'components/QueryStatusIcon';
+import QueryStatusIcon from '@entity-matching-app/components/QueryStatusIcon';
+import { createInternalLink } from '@entity-matching-app/utils';
+
+import { Timestamp } from '@cognite/cdf-utilities';
+import { Body, Flex } from '@cognite/cogs.js';
+
+import { PipelineWithLatestRun } from '@entity-matching-app/hooks/entity-matching-pipelines';
 
 type LatestRunCellProps = {
   latestRun?: PipelineWithLatestRun['latestRun'];

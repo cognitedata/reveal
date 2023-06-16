@@ -1,12 +1,13 @@
-import { Body, Button, IconType, Flex, Icon } from '@cognite/cogs.js';
-import { Select } from 'antd';
 import styled from 'styled-components';
 
-import { useTranslation } from 'common';
-import ResourceTypei18n from 'components/resource-type-i18n';
-import { ModelMapping } from 'context/QuickMatchContext';
-import { useAggregateProperties } from 'hooks/aggregates';
-import { SourceType, TargetType } from 'types/api';
+import { useTranslation } from '@entity-matching-app/common';
+import ResourceTypei18n from '@entity-matching-app/components/resource-type-i18n';
+import { ModelMapping } from '@entity-matching-app/context/QuickMatchContext';
+import { useAggregateProperties } from '@entity-matching-app/hooks/aggregates';
+import { SourceType, TargetType } from '@entity-matching-app/types/api';
+import { Select } from 'antd';
+
+import { Body, Button, IconType, Flex, Icon } from '@cognite/cogs.js';
 
 const { Option } = Select;
 

@@ -1,15 +1,21 @@
 import { useMemo } from 'react';
-import { ColumnType, Table } from '@cognite/cdf-utilities';
-import { Icon, Body, Flex } from '@cognite/cogs.js';
+
 import { Alert, Checkbox } from 'antd';
-import { useTranslation } from 'common';
-import { useList } from 'hooks/list';
-import { RawFileInfo } from 'types/api';
-import { SourceTableProps } from 'types/types';
-import { useSearch } from 'hooks/search';
-import { PAGINATION_SETTINGS } from 'common/constants';
-import QuickMatchDataSet from 'components/quick-match-data-set/QuickMatchDataSet';
 import { TableRowSelection } from 'antd/lib/table/interface';
+import { useTranslation } from '@entity-matching-app/common';
+import { PAGINATION_SETTINGS } from '@entity-matching-app/common/constants';
+
+import QuickMatchDataSet from '@entity-matching-app/components/quick-match-data-set/QuickMatchDataSet';
+import { useList } from '@entity-matching-app/hooks/list';
+
+import { ColumnType, Table } from '@cognite/cdf-utilities';
+
+import { useSearch } from '@entity-matching-app/hooks/search';
+
+import { Icon, Body, Flex } from '@cognite/cogs.js';
+
+import { RawFileInfo } from '@entity-matching-app/types/api';
+import { SourceTableProps } from '@entity-matching-app/types/types';
 
 type FileInfoListTableRecord = { key: string } & RawFileInfo;
 type FileInfoListTableRecordCT = ColumnType<FileInfoListTableRecord> & {

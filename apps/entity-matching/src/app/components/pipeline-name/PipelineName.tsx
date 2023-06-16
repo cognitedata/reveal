@@ -1,7 +1,7 @@
 import { Body } from '@cognite/cogs.js';
 import { Link } from 'react-router-dom';
 
-import { createInternalLink } from 'utils';
+import { createInternalLink } from '@entity-matching-app/utils';
 
 type PipelineNameProps = {
   id: number;

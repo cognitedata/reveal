@@ -1,7 +1,9 @@
-import { Icon } from '@cognite/cogs.js';
-import { SecondaryTopbar, createLink } from '@cognite/cdf-utilities';
-import { useEMPipeline } from 'hooks/entity-matching-pipelines';
 import { useParams } from 'react-router-dom';
+
+import { SecondaryTopbar, createLink } from '@cognite/cdf-utilities';
+import { Icon } from '@cognite/cogs.js';
+
+import { useEMPipeline } from '@entity-matching-app/hooks/entity-matching-pipelines';
 
 type Props = { id: number };
 export default function Pipeline({ id }: Props) {

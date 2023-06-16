@@ -1,8 +1,10 @@
 import { Flex } from '@cognite/cogs.js';
+
 import {
   EMPipelineRegexExtractor,
   EMPipelineResource,
-} from 'hooks/entity-matching-pipelines';
+} from '@entity-matching-app/hooks/entity-matching-pipelines';
+
 import { MatchColorsByExtractorIndex } from './ExpandedRule';
 import ResourceCell from './ResourceCell';
 

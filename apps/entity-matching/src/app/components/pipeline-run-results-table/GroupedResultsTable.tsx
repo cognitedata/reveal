@@ -1,21 +1,22 @@
 import { Dispatch, SetStateAction, useMemo, useState } from 'react';
 
-import { ColumnType, Table } from '@cognite/cdf-utilities';
-import { CogniteInternalId } from '@cognite/sdk';
 import styled from 'styled-components';
 
-import { useTranslation } from 'common';
+import { useTranslation } from '@entity-matching-app/common';
+import { PAGINATION_SETTINGS } from '@entity-matching-app/common/constants';
 import {
   EMPipelineGeneratedRule,
   EMPipelineRun,
   Pipeline,
-} from 'hooks/entity-matching-pipelines';
-
-import Extractor from './Extractor';
-import { Icon } from '@cognite/cogs.js';
-import ExpandedRule from './ExpandedRule';
-import { PAGINATION_SETTINGS } from 'common/constants';
+} from '@entity-matching-app/hooks/entity-matching-pipelines';
 import { TableRowSelection } from 'antd/lib/table/interface';
+
+import { ColumnType, Table } from '@cognite/cdf-utilities';
+import { Icon } from '@cognite/cogs.js';
+import { CogniteInternalId } from '@cognite/sdk';
+
+import ExpandedRule from './ExpandedRule';
+import Extractor from './Extractor';
 
 type GroupedResultsTableRecord = EMPipelineGeneratedRule & { key: string };
 

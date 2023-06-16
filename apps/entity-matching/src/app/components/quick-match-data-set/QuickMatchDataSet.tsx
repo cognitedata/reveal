@@ -1,7 +1,9 @@
+import { Link } from 'react-router-dom';
+
 import { createLink } from '@cognite/cdf-utilities';
 import { Icon } from '@cognite/cogs.js';
-import { useDataSet } from 'hooks/dataset';
-import { Link } from 'react-router-dom';
+
+import { useDataSet } from '@entity-matching-app/hooks/dataset';
 
 type QuickMatchDataSetProps = {
   dataSetId: number;

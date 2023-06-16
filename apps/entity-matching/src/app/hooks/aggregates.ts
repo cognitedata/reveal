@@ -1,5 +1,5 @@
-import { useSDK } from '@cognite/sdk-provider';
-import { CogniteClient, CogniteError } from '@cognite/sdk';
+import { PropertyAggregate } from '@entity-matching-app/common/types';
+import { API, Filter } from '@entity-matching-app/types/api';
 import {
   FetchQueryOptions,
   QueryClient,
@@ -7,9 +7,9 @@ import {
   useQuery,
   UseQueryOptions,
 } from '@tanstack/react-query';
-import { PropertyAggregate } from 'common/types';
 
-import { API, Filter } from 'types/api';
+import { CogniteClient, CogniteError } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
 
 type T = API | 'documents';
 

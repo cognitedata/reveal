@@ -1,14 +1,20 @@
 import { useMemo } from 'react';
-import { ColumnType, Table } from '@cognite/cdf-utilities';
-import { Icon, Body, Flex } from '@cognite/cogs.js';
+
 import { Alert, Checkbox } from 'antd';
-import { useTranslation } from 'common';
-import { useList } from 'hooks/list';
-import { RawSequence } from 'types/api';
-import { SourceTableProps } from 'types/types';
-import { PAGINATION_SETTINGS } from 'common/constants';
-import QuickMatchDataSet from 'components/quick-match-data-set/QuickMatchDataSet';
 import { TableRowSelection } from 'antd/lib/table/interface';
+import { useTranslation } from '@entity-matching-app/common';
+import { PAGINATION_SETTINGS } from '@entity-matching-app/common/constants';
+
+import QuickMatchDataSet from '@entity-matching-app/components/quick-match-data-set/QuickMatchDataSet';
+
+import { ColumnType, Table } from '@cognite/cdf-utilities';
+
+import { useList } from '@entity-matching-app/hooks/list';
+
+import { Icon, Body, Flex } from '@cognite/cogs.js';
+
+import { RawSequence } from '@entity-matching-app/types/api';
+import { SourceTableProps } from '@entity-matching-app/types/types';
 
 type SequenceListTableRecord = { key: string } & RawSequence;
 type SequenceListTableRecordCT = ColumnType<SequenceListTableRecord> & {

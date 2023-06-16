@@ -1,24 +1,35 @@
 import { Dispatch, SetStateAction, useMemo, useState } from 'react';
-import { ColumnType, Table } from '@cognite/cdf-utilities';
-import { useTranslation } from 'common';
 
-import { formatPredictionObject } from 'utils';
-import ConfidenceScore from './Confidence';
+import styled from 'styled-components';
+
+import { TableRowSelection } from 'antd/lib/table/interface';
+
+import MatchInfo from '@entity-matching-app/components/MatchInfo';
+
+import { useTranslation } from '@entity-matching-app/common';
+
+import ExpandedMatch from '@entity-matching-app/components/pipeline-run-results-table/ExpandedMatch';
+
+import { PAGINATION_SETTINGS } from '@entity-matching-app/common/constants';
+
+import { ExpandButton } from '@entity-matching-app/components/pipeline-run-results-table/GroupedResultsTable';
+import ResourceCell from '@entity-matching-app/components/pipeline-run-results-table/ResourceCell';
+
+import { ColumnType, Table } from '@cognite/cdf-utilities';
+
+import { EMModel } from '@entity-matching-app/hooks/entity-matching-models';
+
+import { Icon, RangeSlider } from '@cognite/cogs.js';
+
 import {
   Match,
   Prediction,
   PredictionObject,
-} from 'hooks/entity-matching-predictions';
-import { PAGINATION_SETTINGS } from 'common/constants';
-import { TableRowSelection } from 'antd/lib/table/interface';
-import { Icon, RangeSlider } from '@cognite/cogs.js';
-import ResourceCell from 'components/pipeline-run-results-table/ResourceCell';
-import styled from 'styled-components';
-import { EMModel } from 'hooks/entity-matching-models';
-import ExpandedMatch from 'components/pipeline-run-results-table/ExpandedMatch';
-import { ExpandButton } from 'components/pipeline-run-results-table/GroupedResultsTable';
-import MatchInfo from 'components/MatchInfo';
-import { SourceType } from 'types/api';
+} from '@entity-matching-app/hooks/entity-matching-predictions';
+import { SourceType } from '@entity-matching-app/types/api';
+import { formatPredictionObject } from '@entity-matching-app/utils';
+
+import ConfidenceScore from './Confidence';
 
 type Props = {
   sourceType: SourceType;

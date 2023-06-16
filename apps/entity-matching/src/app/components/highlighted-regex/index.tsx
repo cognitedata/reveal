@@ -1,4 +1,4 @@
-import { MatchColorsByGroupIndex } from 'components/pipeline-run-results-table/ExpandedRule';
+import { MatchColorsByGroupIndex } from '@entity-matching-app/components/pipeline-run-results-table/ExpandedRule';
 
 type HighlightedRegexProps = {
   matchColorsByGroupIndex: MatchColorsByGroupIndex;

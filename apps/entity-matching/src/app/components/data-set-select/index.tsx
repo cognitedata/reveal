@@ -1,10 +1,14 @@
-import { Colors, Flex, toast } from '@cognite/cogs.js';
-import { Select } from 'antd';
-import { useTranslation } from 'common';
-import { useDataSets } from 'hooks/datasets';
 import { useEffect, useMemo } from 'react';
+
 import styled from 'styled-components';
-import { API } from 'types/api';
+
+import { Select } from 'antd';
+import { useTranslation } from '@entity-matching-app/common';
+import { API } from '@entity-matching-app/types/api';
+
+import { Colors, Flex, toast } from '@cognite/cogs.js';
+
+import { useDataSets } from '@entity-matching-app/hooks/datasets';
 
 type Props = { api: API; onChange: (e: number) => void; selected?: number };
 

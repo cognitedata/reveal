@@ -1,10 +1,13 @@
+import styled from 'styled-components';
+
+import { useTranslation } from '@entity-matching-app/common/i18n';
+import { SourceType } from '@entity-matching-app/types/api';
+
 import { notification } from '@cognite/cdf-utilities';
 import { Button, Flex } from '@cognite/cogs.js';
-import { useTranslation } from 'common/i18n';
-import { Prediction } from 'hooks/entity-matching-predictions';
-import { useUpdateAssetIds } from 'hooks/update';
-import styled from 'styled-components';
-import { SourceType } from 'types/api';
+
+import { Prediction } from '@entity-matching-app/hooks/entity-matching-predictions';
+import { useUpdateAssetIds } from '@entity-matching-app/hooks/update';
 
 type Props = {
   predictionJobId: number;

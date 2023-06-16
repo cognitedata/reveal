@@ -1,5 +1,16 @@
 import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
 
+import { useTranslation } from '@entity-matching-app/common';
+import {
+  EMPipelineRun,
+  EMPipelineRunMatch,
+  Pipeline,
+} from '@entity-matching-app/hooks/entity-matching-pipelines';
+import { useRetrieve } from '@entity-matching-app/hooks/retrieve';
+import { pipelineSourceToAPIType } from '@entity-matching-app/pages/pipeline/details/sources';
+import { MatchOptionType, MatchType } from '@entity-matching-app/types/types';
+import { Select } from 'antd';
+
 import { Body, Checkbox, Flex } from '@cognite/cogs.js';
 import {
   CogniteEvent,
@@ -8,17 +19,6 @@ import {
   Sequence,
   Timeseries,
 } from '@cognite/sdk';
-import { Select } from 'antd';
-
-import {
-  EMPipelineRun,
-  EMPipelineRunMatch,
-  Pipeline,
-} from 'hooks/entity-matching-pipelines';
-import { useTranslation } from 'common';
-import { useRetrieve } from 'hooks/retrieve';
-import { pipelineSourceToAPIType } from 'pages/pipeline/details/sources';
-import { MatchOptionType, MatchType } from 'types/types';
 
 import BasicResultsTable from './BasicResultsTable';
 import GroupedResultsTable from './GroupedResultsTable';
@@ -74,28 +74,28 @@ const PipelineRunResultsTable = ({
     switch (pipelineSourceToAPIType[pipeline.sources.resource]) {
       case 'timeseries':
         (data as Timeseries[]).forEach((d) => {
-          if (!!d.assetId) {
+          if (d.assetId) {
             set[d.id] = [d.assetId];
           }
         });
         break;
       case 'sequences':
         (data as Sequence[]).forEach((d) => {
-          if (!!d.assetId) {
+          if (d.assetId) {
             set[d.id] = [d.assetId];
           }
         });
         break;
       case 'files':
         (data as FileInfo[]).forEach((d) => {
-          if (!!d.assetIds?.length) {
+          if (d.assetIds?.length) {
             set[d.id] = d.assetIds;
           }
         });
         break;
       case 'events': {
         (data as CogniteEvent[]).forEach((d) => {
-          if (!!d.assetIds?.length) {
+          if (d.assetIds?.length) {
             set[d.id] = d.assetIds;
           }
         });

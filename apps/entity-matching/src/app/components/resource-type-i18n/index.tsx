@@ -1,5 +1,5 @@
-import { useTranslation } from 'common';
-import { SourceType, TargetType } from 'types/api';
+import { useTranslation } from '@entity-matching-app/common';
+import { SourceType, TargetType } from '@entity-matching-app/types/api';
 
 type Props = {
   t: SourceType | TargetType;

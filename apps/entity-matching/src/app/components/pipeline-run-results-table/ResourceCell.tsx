@@ -1,7 +1,10 @@
-import { Body, Colors, Flex } from '@cognite/cogs.js';
-import { useTranslation } from 'common';
-import HighlightedRegex from 'components/highlighted-regex';
 import styled from 'styled-components';
+
+import { useTranslation } from '@entity-matching-app/common';
+import HighlightedRegex from '@entity-matching-app/components/highlighted-regex';
+
+import { Body, Colors, Flex } from '@cognite/cogs.js';
+
 import { MatchColorsByGroupIndex } from './ExpandedRule';
 
 type ResourceCellProps = {

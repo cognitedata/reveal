@@ -1,7 +1,7 @@
 import { Flex, InputExp } from '@cognite/cogs.js';
 import { FormikProps } from 'formik';
 
-import { useTranslation } from 'common';
+import { useTranslation } from '@entity-matching-app/common';
 
 export type PipelineDetailsFormValues = {
   description?: string;

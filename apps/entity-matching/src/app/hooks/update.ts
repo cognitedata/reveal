@@ -1,18 +1,21 @@
 import {
+  useMutation,
+  UseMutationOptions,
+  useQueryClient,
+} from '@tanstack/react-query';
+
+import {
   CogniteError,
   InternalId,
   Timeseries,
   TimeseriesFilter,
 } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
-import {
-  useMutation,
-  UseMutationOptions,
-  useQueryClient,
-} from '@tanstack/react-query';
-import { Selected3dModel } from 'context/QuickMatchContext';
-import { API } from 'types/api';
-import { sessionStorage3dDetailsKey } from 'utils';
+
+import { Selected3dModel } from '@entity-matching-app/context/QuickMatchContext';
+import { API } from '@entity-matching-app/types/api';
+import { sessionStorage3dDetailsKey } from '@entity-matching-app/utils';
+
 import { AssetIdUpdate } from './types';
 
 export type TSParams = {

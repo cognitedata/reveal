@@ -1,13 +1,14 @@
-import { Body as _Body, Button, Flex } from '@cognite/cogs.js';
 import { Route, Routes } from 'react-router-dom';
 
-import { useTranslation } from 'common';
-import Page from 'components/page';
-import { useQuickMatchContext } from 'context/QuickMatchContext';
+import { useTranslation } from '@entity-matching-app/common';
+import Page from '@entity-matching-app/components/page';
+import { useQuickMatchContext } from '@entity-matching-app/context/QuickMatchContext';
 
-import SelectSources from './select-sources';
-import CreateModel from './create-model';
+import { Body as _Body, Button, Flex } from '@cognite/cogs.js';
+
 import ConfigureModel from './configure-model';
+import CreateModel from './create-model';
+import SelectSources from './select-sources';
 import SelectTargets from './select-targets';
 const QuickMatchCreate = (): JSX.Element => {
   const { t } = useTranslation();

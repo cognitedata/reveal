@@ -1,5 +1,3 @@
-import { useSDK } from '@cognite/sdk-provider';
-import { CogniteError, EntityMatchingModel } from '@cognite/sdk';
 import {
   QueryKey,
   useInfiniteQuery,
@@ -8,7 +6,14 @@ import {
   UseQueryOptions,
   useMutation,
 } from '@tanstack/react-query';
-import { ModelMapping, EMFeatureType } from 'context/QuickMatchContext';
+
+import { CogniteError, EntityMatchingModel } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
+
+import {
+  ModelMapping,
+  EMFeatureType,
+} from '@entity-matching-app/context/QuickMatchContext';
 import {
   RawCogniteEvent,
   RawFileInfo,
@@ -16,8 +21,9 @@ import {
   RawTarget,
   RawTimeseries,
   SourceType,
-} from 'types/api';
-import { filterFieldsFromObjects } from 'utils';
+} from '@entity-matching-app/types/api';
+import { filterFieldsFromObjects } from '@entity-matching-app/utils';
+
 import { JobStatus } from './types';
 
 // Type in SDK is not correct

@@ -1,14 +1,30 @@
 import { useEffect, useMemo, useState } from 'react';
-
-import { createLink } from '@cognite/cdf-utilities';
-import { Body, Flex, Infobox } from '@cognite/cogs.js';
 import { useParams, useNavigate, Navigate } from 'react-router-dom';
 
-import { useTranslation } from 'common';
-import QueryStatusIcon from 'components/QueryStatusIcon';
-import { useQuickMatchContext } from 'context/QuickMatchContext';
-
-import { INFINITE_Q_OPTIONS, useInfiniteList } from 'hooks/infiniteList';
+import { useTranslation } from '@entity-matching-app/common';
+import QueryStatusIcon from '@entity-matching-app/components/QueryStatusIcon';
+import Step from '@entity-matching-app/components/step';
+import { useQuickMatchContext } from '@entity-matching-app/context/QuickMatchContext';
+import {
+  useCreateEMModel,
+  useEMModel,
+} from '@entity-matching-app/hooks/entity-matching-models';
+import {
+  useCreateEMPredictionJob,
+  useEMModelPredictResults,
+} from '@entity-matching-app/hooks/entity-matching-predictions';
+import {
+  useApplyRulesJob,
+  useApplyRulesResults,
+  useCreateRulesJob,
+  useRulesResults,
+} from '@entity-matching-app/hooks/entity-matching-rules';
+import {
+  INFINITE_Q_OPTIONS,
+  useInfiniteList,
+} from '@entity-matching-app/hooks/infiniteList';
+import { useInfinite3dNodes } from '@entity-matching-app/hooks/threeD';
+import { IN_PROGRESS_EM_STATES } from '@entity-matching-app/hooks/types';
 import {
   bulkDownloadStatus,
   filterFieldsFromObjects,
@@ -17,21 +33,10 @@ import {
   sessionStorageApplyRulesJobKey,
   sessionStoragePredictJobKey,
   sessionStorageRulesJobKey,
-} from 'utils';
-import { useInfinite3dNodes } from 'hooks/threeD';
-import { useCreateEMModel, useEMModel } from 'hooks/entity-matching-models';
-import {
-  useCreateEMPredictionJob,
-  useEMModelPredictResults,
-} from 'hooks/entity-matching-predictions';
-import {
-  useApplyRulesJob,
-  useApplyRulesResults,
-  useCreateRulesJob,
-  useRulesResults,
-} from 'hooks/entity-matching-rules';
-import { IN_PROGRESS_EM_STATES } from 'hooks/types';
-import Step from 'components/step';
+} from '@entity-matching-app/utils';
+
+import { createLink } from '@cognite/cdf-utilities';
+import { Body, Flex, Infobox } from '@cognite/cogs.js';
 
 const CreateModel = (): JSX.Element => {
   const {
@@ -47,12 +52,12 @@ const CreateModel = (): JSX.Element => {
     rulesJobId?: string;
     applyRulesJobId?: string;
   }>();
-  const modelId = !!modelIdStr ? parseInt(modelIdStr, 10) : undefined;
-  const predictJobId = !!predictJobIdStr
+  const modelId = modelIdStr ? parseInt(modelIdStr, 10) : undefined;
+  const predictJobId = predictJobIdStr
     ? parseInt(predictJobIdStr, 10)
     : undefined;
-  const rulesJobId = !!rulesJobIdStr ? parseInt(rulesJobIdStr, 10) : undefined;
-  const applyRulesJobId = !!applyRulesJobIdStr
+  const rulesJobId = rulesJobIdStr ? parseInt(rulesJobIdStr, 10) : undefined;
+  const applyRulesJobId = applyRulesJobIdStr
     ? parseInt(applyRulesJobIdStr, 10)
     : undefined;
   const { t } = useTranslation();

@@ -1,8 +1,10 @@
-import { Icon } from '@cognite/cogs.js';
-import ResourceCell from 'components/pipeline-run-results-table/ResourceCell';
-import { useRetrieve } from 'hooks/retrieve';
 import _ from 'lodash-es';
-import { API } from 'types/api';
+
+import { Icon } from '@cognite/cogs.js';
+
+import ResourceCell from '@entity-matching-app/components/pipeline-run-results-table/ResourceCell';
+import { useRetrieve } from '@entity-matching-app/hooks/retrieve';
+import { API } from '@entity-matching-app/types/api';
 
 type Props = {
   api: API;

@@ -1,23 +1,24 @@
-import { Body, Flex, Loader, Title } from '@cognite/cogs.js';
-import { useTranslation } from 'common';
-import ApplySelectedMatchesButton from 'components/apply-selected-matches-button/ApplySelectedMatchesButton';
-import EntityMatchingResult from 'components/em-result';
-import NoAccessPage from 'components/error-pages/NoAccess';
-import { Container, Graphic } from 'components/InfoBox';
-import Page from 'components/page';
-import Step from 'components/step';
-import { useEMModel } from 'hooks/entity-matching-models';
-import { useEMModelPredictResults } from 'hooks/entity-matching-predictions';
-import { useApplyRulesResults } from 'hooks/entity-matching-rules';
-
-import { INFINITE_Q_OPTIONS } from 'hooks/infiniteList';
 import { useState } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
-import { SourceType } from 'types/api';
+
+import { useTranslation } from '@entity-matching-app/common';
+import ApplySelectedMatchesButton from '@entity-matching-app/components/apply-selected-matches-button/ApplySelectedMatchesButton';
+import EntityMatchingResult from '@entity-matching-app/components/em-result';
+import NoAccessPage from '@entity-matching-app/components/error-pages/NoAccess';
+import { Container, Graphic } from '@entity-matching-app/components/InfoBox';
+import Page from '@entity-matching-app/components/page';
+import Step from '@entity-matching-app/components/step';
+import { useEMModel } from '@entity-matching-app/hooks/entity-matching-models';
+import { useEMModelPredictResults } from '@entity-matching-app/hooks/entity-matching-predictions';
+import { useApplyRulesResults } from '@entity-matching-app/hooks/entity-matching-rules';
+import { INFINITE_Q_OPTIONS } from '@entity-matching-app/hooks/infiniteList';
+import { SourceType } from '@entity-matching-app/types/api';
 import {
   sessionStorageApplyRulesJobKey,
   sessionStoragePredictJobKey,
-} from 'utils';
+} from '@entity-matching-app/utils';
+
+import { Body, Flex, Loader, Title } from '@cognite/cogs.js';
 
 const QuickMatchResults = (): JSX.Element => {
   const [confirmedPredictions, setConfirmedPredictions] = useState<number[]>(

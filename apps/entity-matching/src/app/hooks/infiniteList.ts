@@ -1,13 +1,4 @@
-import { CogniteError } from '@cognite/sdk';
-import { TABLE_ITEMS_PER_PAGE } from 'common/constants';
-
-import {
-  useInfiniteQuery,
-  UseInfiniteQueryResult,
-  QueryKey,
-} from '@tanstack/react-query';
-import { useSDK } from '@cognite/sdk-provider';
-import { range } from 'lodash-es';
+import { TABLE_ITEMS_PER_PAGE } from '@entity-matching-app/common/constants';
 import {
   API,
   RawAsset,
@@ -15,7 +6,17 @@ import {
   RawFileInfo,
   RawTimeseries,
   RawSequence,
-} from 'types/api';
+} from '@entity-matching-app/types/api';
+import {
+  useInfiniteQuery,
+  UseInfiniteQueryResult,
+  QueryKey,
+} from '@tanstack/react-query';
+import { range } from 'lodash-es';
+
+import { CogniteError } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
+
 import { getList, ListParams } from './api';
 
 type UseQParam = Pick<ListParams, 'advancedFilter' | 'filter' | 'limit'>;
@@ -141,7 +142,7 @@ export function useInfiniteList(
     getUseListKey(api, partitions, { limit, filter, advancedFilter }),
     async ({ pageParam }) => {
       const partitionResults = await Promise.all(
-        range(partitions).map((i) => {
+        range(partitions).map((i: number) => {
           if (Array.isArray(pageParam)) {
             if (!pageParam[i]) {
               return Promise.resolve({ items: [], nextCursor: undefined });
@@ -166,11 +167,11 @@ export function useInfiniteList(
       );
       return {
         items: partitionResults.reduce(
-          (accl: any[], p) => [...accl, ...p.items],
+          (accl: any[], p: any) => [...accl, ...p.items],
           []
         ),
         cursors: partitionResults.reduce(
-          (accl: (string | undefined)[], p) => [...accl, p.nextCursor],
+          (accl: (string | undefined)[], p: any) => [...accl, p.nextCursor],
           []
         ),
       };

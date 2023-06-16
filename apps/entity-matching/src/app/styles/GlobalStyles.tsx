@@ -1,12 +1,14 @@
-import { Loader, Tooltip as CogsTooltip, Modal } from '@cognite/cogs.js';
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-ignore
+import { styleScope } from './styleScope';
+import { getContainer } from '@entity-matching-app/utils';
+import { ConfigProvider, notification } from 'antd';
+
 import { useGlobalStyles } from '@cognite/cdf-utilities';
+import { Loader, Tooltip as CogsTooltip, Modal } from '@cognite/cogs.js';
 import cogsStyles from '@cognite/cogs.js/dist/cogs-without-fonts.css';
 
 import antdTheme from './antd-theme.less';
-
-import { getContainer } from 'utils';
-import { styleScope } from 'styles/styleScope';
-import { ConfigProvider, notification } from 'antd';
 
 // This will override the appendTo prop on all Tooltips used from cogs
 // @ts-ignore

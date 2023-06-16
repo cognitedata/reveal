@@ -1,5 +1,6 @@
-import Pipeline from 'components/pipeline';
 import { useParams } from 'react-router-dom';
+
+import Pipeline from '@entity-matching-app/components/pipeline';
 
 export default function Details() {
   const { id = '-1' } = useParams<{
