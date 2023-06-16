@@ -48,6 +48,10 @@ export const SourceStatus = ({
     return [arr, average];
   }, [aggregationInterval, logs]);
 
+  // console.log(logs);
+  console.log(aggregations);
+  // console.log(source);
+
   const [_, setSearchParams] = useSearchParams();
 
   return (
@@ -84,7 +88,7 @@ export const SourceStatus = ({
       <Content>
         <Flex direction="row-reverse" gap={4}>
           {aggregations.map((aggregation) => (
-            <SourceStatusItem aggregation={aggregation} />
+            <SourceStatusItem aggregation={aggregation} source={source} />
           ))}
         </Flex>
         <DateAxis>

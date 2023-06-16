@@ -6,9 +6,11 @@ import styled from 'styled-components';
 import { UptimeAggregation } from 'utils/hostedExtractors';
 
 import SourceStatusItemTooltip from './SourceStatusItemTooltip';
+import { MQTTSourceWithJobMetrics } from 'hooks/hostedExtractors';
 
 type SourceStatusItemProps = {
   aggregation: UptimeAggregation;
+  source: MQTTSourceWithJobMetrics;
 };
 
 const renderItem = (uptimePercentage: number) => {
@@ -29,10 +31,11 @@ const renderItem = (uptimePercentage: number) => {
 
 export const SourceStatusItem = ({
   aggregation,
+  source,
 }: SourceStatusItemProps): JSX.Element => {
   return (
     <div style={{ flex: 1 }}>
-      <SourceStatusItemTooltip aggregation={aggregation}>
+      <SourceStatusItemTooltip aggregation={aggregation} source={source}>
         {renderItem(aggregation.uptimePercentage)}
       </SourceStatusItemTooltip>
     </div>
