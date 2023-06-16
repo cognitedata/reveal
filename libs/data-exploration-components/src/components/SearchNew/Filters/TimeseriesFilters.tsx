@@ -1,16 +1,18 @@
 import React from 'react';
 
+import {
+  AggregatedFilterV2,
+  MetadataFilterV2,
+} from '@data-exploration/containers';
 import { useAdvancedFiltersEnabled } from '@data-exploration-components/hooks';
 import { getTimeseriesFilterUnit } from '@data-exploration-components/utils';
 
 import { InternalTimeseriesFilters } from '@data-exploration-lib/core';
 import { useTimeseriesList } from '@data-exploration-lib/domain-layer';
 
-import { AggregatedFilterV2 } from './AggregatedFilter/AggregatedFilter';
 import { AggregatedMultiselectFilter } from './AggregatedMultiselectFilter/AggregatedMultiselectFilter';
 import { BaseFilterCollapse } from './BaseFilterCollapse/BaseFilterCollapse';
 import { BooleanFilter } from './BooleanFilter/BooleanFilter';
-import { MetadataFilterV2 } from './MetadataFilter/MetadataFilter';
 
 export const TimeseriesFilters = ({
   filter,

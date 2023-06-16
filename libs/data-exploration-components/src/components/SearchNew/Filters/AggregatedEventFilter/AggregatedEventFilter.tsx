@@ -1,6 +1,10 @@
 import { useMemo } from 'react';
 
 import {
+  FilterFacetTitle,
+  reactSelectCogsStylingProps,
+} from '@data-exploration/containers';
+import {
   MultiSelectFilter,
   Select,
 } from '@data-exploration-components/components';
@@ -16,9 +20,6 @@ import {
   EventProperty,
   useEventsUniqueValuesByProperty,
 } from '@data-exploration-lib/domain-layer';
-
-import { reactSelectCogsStylingProps } from '../elements';
-import { FilterFacetTitle } from '../FilterFacetTitle';
 
 export const AggregatedEventFilterV2 = ({
   field,

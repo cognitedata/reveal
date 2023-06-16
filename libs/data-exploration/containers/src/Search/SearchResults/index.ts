@@ -1,5 +1,6 @@
 export * from './AssetSearchResults';
 export * from './DocumentSearchResults';
+export * from './FileSearchResults';
 export * from './EventSearchResults';
 export * from './SequenceSearchResults';
 export * from './TimeseriesSearchResults';

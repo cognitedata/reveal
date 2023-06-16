@@ -6,7 +6,8 @@ import {
   LabelFilterV2,
   MetadataFilterV2,
   StringFilterV2,
-} from '@cognite/data-exploration';
+} from '@data-exploration/containers';
+
 import { useList } from '@cognite/sdk-react-query-hooks';
 
 import { SPECIFIC_INFO_CONTENT } from '@data-exploration-app/containers/constants';

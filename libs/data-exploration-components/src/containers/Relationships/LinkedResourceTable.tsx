@@ -3,10 +3,10 @@ import React from 'react';
 import {
   AssetLinkedSearchResults,
   EventLinkedSearchResults,
+  FileLinkedSearchResults,
   SequenceLinkedSearchResults,
   TimeseriesLinkedSearchResults,
 } from '@data-exploration/containers';
-import { FileLinkedSearchResults } from '@data-exploration-components/containers/SearchResults/FileSearchResults/FileLinkedSearchResults';
 import {
   ResourceType,
   ResourceItem,
@@ -19,6 +19,7 @@ export const LinkedResourceTable = ({
   parentResource,
   onItemClicked,
   onParentAssetClick,
+  isDocumentsApiEnabled = true,
 }: // ...selectionMode
 {
   type: ResourceType;
@@ -26,6 +27,7 @@ export const LinkedResourceTable = ({
   parentResource: ResourceItem;
   onItemClicked: (id: number) => void;
   onParentAssetClick: (assetId: number) => void;
+  isDocumentsApiEnabled?: boolean;
 } & SelectableItemsProps) => {
   const filter = { assetSubtreeIds: [{ value: parentResource.id }] };
 
@@ -48,6 +50,7 @@ export const LinkedResourceTable = ({
     case 'file':
       return (
         <FileLinkedSearchResults
+          isDocumentsApiEnabled={isDocumentsApiEnabled}
           defaultFilter={filter}
           isGroupingFilesEnabled={isGroupingFilesEnabled}
           onClick={(el) => onItemClicked(el.id)}

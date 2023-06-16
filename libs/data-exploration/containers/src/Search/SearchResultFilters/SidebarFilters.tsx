@@ -6,6 +6,8 @@ import { BaseFilterCollapse } from '@data-exploration/components';
 
 import { FilterProps, ResourceType } from '@data-exploration-lib/core';
 
+import { OldFileFilters as OldFilesFilter } from '../../Temp/';
+
 import { AssetFilters } from './AssetFilters';
 import { CommonFilters } from './CommonFilters';
 import { EventFilters } from './EventFilters';
@@ -16,6 +18,7 @@ import { TimeseriesFilters } from './TimeseriesFilters';
 interface Props extends FilterProps {
   resourceType?: ResourceType;
   enableDocumentLabelsFilter?: boolean;
+  isDocumentsApiEnabled?: boolean;
 }
 
 export const SidebarFilters: React.FC<Props> = ({
@@ -25,6 +28,7 @@ export const SidebarFilters: React.FC<Props> = ({
   filter,
   onResetFilterClick,
   query,
+  isDocumentsApiEnabled = true,
 }) => {
   const renderCustomResourceTypeFilter = () => {
     switch (resourceType) {
@@ -59,24 +63,27 @@ export const SidebarFilters: React.FC<Props> = ({
         );
       }
       case 'file': {
+        if (isDocumentsApiEnabled) {
+          return (
+            <FileFilters
+              query={query}
+              filter={filter}
+              onFilterChange={onFilterChange}
+              onResetFilterClick={onResetFilterClick}
+              enableDocumentLabelsFilter={enableDocumentLabelsFilter}
+            />
+          );
+        }
+
         return (
-          <FileFilters
-            query={query}
-            filter={filter}
-            onFilterChange={onFilterChange}
+          <OldFilesFilter
+            filter={filter.file}
+            setFilter={(newFilter) => onFilterChange('file', newFilter)}
             onResetFilterClick={onResetFilterClick}
-            enableDocumentLabelsFilter={enableDocumentLabelsFilter}
           />
         );
       }
-      //   return (
-      //     <DocumentFilter
-      //       filter={filter}
-      //       onFilterChange={onFilterChange}
-      //       onResetFilterClick={onResetFilterClick}
-      //     />
-      //   );
-      // }
+
       case 'sequence': {
         return (
           <SequenceFilters

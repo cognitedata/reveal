@@ -1,10 +1,10 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
 
 import { SearchConfigButton } from '@data-exploration/components';
 import {
   AssetsTab,
-  DocumentsTab,
+  FilesTab,
   EventsTab,
   SearchConfig,
   SequenceTab,
@@ -17,11 +17,7 @@ import { useDebounce } from 'use-debounce';
 
 import { PageTitle } from '@cognite/cdf-utilities';
 import { Flex, Tabs } from '@cognite/cogs.js';
-import {
-  ResourceTypeTabs,
-  getTitle,
-  ResourceType,
-} from '@cognite/data-exploration';
+import { getTitle, ResourceType } from '@cognite/data-exploration';
 
 import { GPTInfobar } from '@data-exploration-app/components/GPTInfobar';
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
@@ -42,7 +38,6 @@ import {
   useFlagDocumentLabelsFilter,
   useFlagOverlayNavigation,
 } from '@data-exploration-app/hooks';
-import { useFlagAdvancedFilters } from '@data-exploration-app/hooks/flags/useFlagAdvancedFilters';
 import {
   useQueryString,
   useCurrentResourceType,
@@ -67,6 +62,7 @@ import {
   useSequencesMetadataKeys,
 } from '@data-exploration-lib/domain-layer';
 
+import { useFlagDocumentsApiEnabled } from '../../hooks/flags/useFlagDocumentsApiEnabled';
 import { SearchFiltersV2 } from '../SearchResults/SearchFiltersV2';
 
 import { BreakJourneyPrompt } from './BreakJourneyPrompt';
@@ -86,7 +82,6 @@ function SearchPage() {
   useEventsMetadataKeys();
   useSequencesMetadataKeys();
 
-  const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
   const isDocumentsLabelsFilterEnabled = useFlagDocumentLabelsFilter();
 
   const [currentResourceType, setCurrentResourceType] =
@@ -108,17 +103,7 @@ function SearchPage() {
   const [showGPTInfo, setShowGPTInfo] = useState<boolean>(true);
 
   const isDetailsOverlayEnabled = useFlagOverlayNavigation();
-
-  const filterMap = useMemo(
-    () => ({
-      asset: assetFilter,
-      timeSeries: timeseriesFilter,
-      event: eventFilter,
-      file: fileFilter,
-      sequence: sequenceFilter,
-    }),
-    [assetFilter, fileFilter, eventFilter, timeseriesFilter, sequenceFilter]
-  );
+  const isDocumentsApiEnabled = useFlagDocumentsApiEnabled();
 
   const handleFilterToggleClick = React.useCallback(() => {
     setShowFilter((prevState) => {
@@ -134,7 +119,6 @@ function SearchPage() {
     <RootHeightWrapper>
       <SearchFiltersWrapper>
         <SearchFiltersV2
-          enableAdvancedFilters={isAdvancedFiltersEnabled}
           enableDocumentLabelsFilter={isDocumentsLabelsFilterEnabled}
           resourceType={currentResourceType}
           visible={currentResourceType !== 'threeD' && showFilter}
@@ -172,66 +156,48 @@ function SearchPage() {
           onSave={() => {
             setShowSearchConfig(false);
           }}
+          isDocumentsApiEnabled={isDocumentsApiEnabled}
         />
 
         <TabsContainer>
-          {isAdvancedFiltersEnabled ? (
-            <ResourceTypeTabsV2
-              currentResourceType={currentResourceType || ViewType.All}
-              setCurrentResourceType={(tab) => {
-                setCurrentResourceType(
-                  tab === ViewType.All ? undefined : (tab as ResourceType)
-                );
-              }}
-            >
-              <Tabs.Tab tabKey={ViewType.All} label="All resources" />
-              <AssetsTab
-                tabKey={ViewType.Asset}
-                query={debouncedQuery}
-                filter={assetFilter}
-              />
-              <TimeseriesTab
-                tabKey={ViewType.TimeSeries}
-                query={debouncedQuery}
-                filter={timeseriesFilter}
-              />
-
-              <DocumentsTab
-                tabKey={ViewType.File}
-                query={debouncedQuery}
-                filter={documentFilter}
-              />
-              <EventsTab
-                tabKey={ViewType.Event}
-                query={debouncedQuery}
-                filter={eventFilter}
-              />
-              <SequenceTab
-                tabKey={ViewType.Sequence}
-                query={debouncedQuery}
-                filter={sequenceFilter}
-              />
-              <ThreeDTab tabKey={ViewType.ThreeD} query={debouncedQuery} />
-            </ResourceTypeTabsV2>
-          ) : (
-            <ResourceTypeTabs
-              globalFilters={filterMap as any}
-              query={query}
-              currentResourceType={currentResourceType || ViewType.All}
-              setCurrentResourceType={(tab) => {
-                setCurrentResourceType(
-                  tab === ViewType.All ? undefined : (tab as ResourceType)
-                );
-              }}
-              additionalTabs={[
-                <Tabs.Tab
-                  key={ViewType.All}
-                  label="All resources"
-                  tabKey={ViewType.All}
-                />,
-              ]}
+          <ResourceTypeTabsV2
+            currentResourceType={currentResourceType || ViewType.All}
+            setCurrentResourceType={(tab) => {
+              setCurrentResourceType(
+                tab === ViewType.All ? undefined : (tab as ResourceType)
+              );
+            }}
+          >
+            <Tabs.Tab tabKey={ViewType.All} label="All resources" />
+            <AssetsTab
+              tabKey={ViewType.Asset}
+              query={debouncedQuery}
+              filter={assetFilter}
             />
-          )}
+            <TimeseriesTab
+              tabKey={ViewType.TimeSeries}
+              query={debouncedQuery}
+              filter={timeseriesFilter}
+            />
+
+            <FilesTab
+              tabKey={ViewType.File}
+              query={debouncedQuery}
+              filter={isDocumentsApiEnabled ? documentFilter : fileFilter}
+              isDocumentsApiEnabled={isDocumentsApiEnabled}
+            />
+            <EventsTab
+              tabKey={ViewType.Event}
+              query={debouncedQuery}
+              filter={eventFilter}
+            />
+            <SequenceTab
+              tabKey={ViewType.Sequence}
+              query={debouncedQuery}
+              filter={sequenceFilter}
+            />
+            <ThreeDTab tabKey={ViewType.ThreeD} query={debouncedQuery} />
+          </ResourceTypeTabsV2>
         </TabsContainer>
 
         <MainContainer $isFilterFeatureEnabled>
