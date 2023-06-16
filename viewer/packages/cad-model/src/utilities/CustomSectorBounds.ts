@@ -13,12 +13,12 @@ type TransformedNode = {
 };
 
 /**
- * An instance of this class is used dynamically alter the sector bounding boxes when model nodes are given custom transforms.
- * The bounding box of a sector is kept equal to it's original value, unless:
- * - A node with geometry in the sector is transformed such that the original value would not fully contain the node geometry
- * - Descendants of the sector has grown, and are no longer contained within the original bounding box.
- * The set of sectors a tree index has geometry does not need to be known initially. This set of sectors, and the node transform,
- * are set independently.
+ * An instance of this class is used to dynamically alter the sector bounding boxes to adapt to custom node transforms.
+ * The bounding box of a sector is kept equal to its original value, unless:
+ * - A node with geometry in the sector is transformed such that the original bounds would not fully contain the node geometry
+ * - Descendants of the sector have grown, and are no longer contained within the original bounds.
+ * The set of sectors a tree index has geometry in does not need to be known upfront. This set of sectors, and the node transform,
+ * are set independently of each other.
  */
 export class CustomSectorBounds {
   private readonly _treeIndexToTransformedNodeMap = new Map<number, TransformedNode>();

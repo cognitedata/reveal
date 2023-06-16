@@ -224,9 +224,9 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
 
     // Update sector bounds
     for (const treeIndex of treeIndices.toArray()) {
+      const nodeBoundingBox = await this.getBoundingBoxByTreeIndex(treeIndex); // Fetch prior to checking registration status, to avoid race
       if (!this.customSectorBounds.isRegistered(treeIndex)) {
         // Compute the original bounding box in CDF space
-        const nodeBoundingBox = await this.getBoundingBoxByTreeIndex(treeIndex);
         nodeBoundingBox.applyMatrix4(modelToCdfTransform);
 
         // Register node as transformed

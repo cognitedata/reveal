@@ -5,9 +5,9 @@
 import { RevealGeometryCollectionType } from '@reveal/sector-parser';
 
 /**
- * Map between a tree index and the set of sectors it has geometry in. Also contains helper functions keep track of whether or not
- * a given sector has already had all its tree indices added to the map. This means iterating over all tree indices in a sector
- * will only be done when said sector is loaded for the first time.
+ * Map between a tree index and the set of sectors it has geometry in. Also contains helper functions to keep track of whether or not
+ * a given sector has had all its tree indices added to the map. This means iterating over all tree indices in a sector will only be
+ * done on first load.
  */
 export class TreeIndexToSectorsMap {
   public onChange?: (treeIndex: number, newSectorId: number) => void;
@@ -33,7 +33,7 @@ export class TreeIndexToSectorsMap {
   }
 
   /**
-   * Get the set of sectors a given tree index is known to have geometry in
+   * Get the set of sectors a tree index is known to have geometry in
    * @param treeIndex Tree index
    * @returns The set of sectors
    */
