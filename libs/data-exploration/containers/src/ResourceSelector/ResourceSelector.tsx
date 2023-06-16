@@ -26,7 +26,7 @@ import {
 
 import {
   AssetsTab,
-  DocumentsTab,
+  FilesTab,
   EventsTab,
   ResourceTypeTabs,
   SequenceTab,
@@ -68,17 +68,18 @@ export type ResourceSelection = Record<
 >;
 export const ResourceSelector = ({
   visible = false,
-
   visibleResourceTabs = DEFAULT_VISIBLE_RESOURCE_TABS,
   selectionMode = 'single',
   initialFilter = EMPTY_OBJECT,
   onClose,
   onSelect = noop,
+  isDocumentsApiEnabled = true,
 }: {
   visible: boolean;
   onClose: () => void;
   visibleResourceTabs?: ResourceType[];
   initialFilter?: Partial<FilterState>;
+  isDocumentsApiEnabled?: boolean;
 } & Partial<SelectionProps>) => {
   const { state, setter, resetter } = useFilterState(initialFilter);
   const [query, setQuery] = useState<string>('');
@@ -169,6 +170,7 @@ export const ResourceSelector = ({
             <SidebarFilters
               query={query}
               enableDocumentLabelsFilter
+              isDocumentsApiEnabled={isDocumentsApiEnabled}
               filter={state}
               onFilterChange={(resourceType, currentFilter) => {
                 setter(resourceType, currentFilter);
@@ -232,12 +234,17 @@ export const ResourceSelector = ({
                   );
                 if (tab === 'file')
                   return (
-                    <DocumentsTab
+                    <FilesTab
                       key={tab}
                       tabKey={ViewType.File}
                       query={debouncedQuery}
-                      filter={{ ...state.common, ...state.document }}
-                      label="Files"
+                      filter={{
+                        ...state.common,
+                        ...(isDocumentsApiEnabled
+                          ? state.document
+                          : state.file),
+                      }}
+                      isDocumentsApiEnabled={isDocumentsApiEnabled}
                     />
                   );
                 if (tab === 'timeSeries')
@@ -272,11 +279,16 @@ export const ResourceSelector = ({
                 selectionMode={selectionMode}
                 query={debouncedQuery}
                 resourceType={activeKey}
+                isDocumentsApiEnabled={isDocumentsApiEnabled}
                 onFilterChange={(nextState) => {
-                  setter(
-                    activeKey === 'file' ? 'document' : activeKey,
-                    nextState
-                  );
+                  if (isDocumentsApiEnabled) {
+                    setter(
+                      activeKey === 'file' ? 'document' : activeKey,
+                      nextState
+                    );
+                  } else {
+                    setter(activeKey, nextState);
+                  }
                 }}
                 onClick={({ id, externalId }) => {
                   setPreviewItem({ id, externalId, type: activeKey });
@@ -297,6 +309,7 @@ export const ResourceSelector = ({
                   selectedRows[previewItem.type][previewItem.id]
                 )}
                 visibleResources={visibleResourceTabs}
+                isDocumentsApiEnabled={isDocumentsApiEnabled}
               />
             </ResourcePreviewSidebarWrapper>
           )}

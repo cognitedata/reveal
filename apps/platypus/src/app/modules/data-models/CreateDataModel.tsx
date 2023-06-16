@@ -2,10 +2,13 @@ import { useState } from 'react';
 
 import { DataUtils } from '@platypus/platypus-core';
 import { Notification } from '@platypus-app/components/Notification/Notification';
+import { SUB_APP_PATH } from '@platypus-app/constants';
 import { useNavigate } from '@platypus-app/flags/useNavigate';
 import { useDataSets } from '@platypus-app/hooks/useDataSets';
 import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
 import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
+
+import { useCdfUserHistoryService } from '@cognite/cdf-utilities';
 
 import { DataModelDetailModal } from '../../components/DataModelDetailModal/DataModelDetailModal';
 import { useTranslation } from '../../hooks/useTranslation';
@@ -19,6 +22,8 @@ export const CreateDataModel = ({
   onCancel: VoidFunction;
   visible: boolean;
 }) => {
+  const userHistoryService = useCdfUserHistoryService();
+
   const [dataModelName, setDataModelName] = useState('');
   const [space, setSpace] = useState<string | undefined>();
   const [dataModelDescription, setDataModelDescription] = useState('');
@@ -77,6 +82,16 @@ export const CreateDataModel = ({
           }
 
           track('DataModel.Create');
+          const dataModelPath = `/${result.getValue().space}/${
+            result.getValue().id
+          }/${DEFAULT_VERSION_PATH}`;
+          // save create action to user history
+          if (dataModelName.trim())
+            userHistoryService.logNewResourceEdit({
+              application: SUB_APP_PATH,
+              name: dataModelName.trim(),
+              path: dataModelPath,
+            });
 
           Notification({
             type: 'success',
@@ -85,11 +100,7 @@ export const CreateDataModel = ({
               'Data Model successfully created'
             ),
           });
-          navigate(
-            `/${result.getValue().space}/${
-              result.getValue().id
-            }/${DEFAULT_VERSION_PATH}`
-          );
+          navigate(dataModelPath);
         },
       }
     );

@@ -1,0 +1,26 @@
+{
+  "name": "@cognite/cdf-raw-explorer",
+  "version": "2.4.0",
+  "scripts": {
+    "start": "../../scripts/start.sh dev raw-explorer",
+    "build": "../../scripts/build.sh production raw-explorer",
+    "test": "../../scripts/test.sh raw-explorer",
+    "lint": "../../scripts/lint.sh raw-explorer",
+    "lint:fix": "../../scripts/lint.sh raw-explorer --fix",
+    "cypress:dev": "./scripts/cypress-dev.sh"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

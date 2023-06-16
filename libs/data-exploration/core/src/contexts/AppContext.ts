@@ -20,5 +20,6 @@ export type AppContextProps = {
   userInfo: any;
   isAdvancedFiltersEnabled: boolean;
   trackUsage?: (event: string, metadata?: MetricsMetadata) => void;
+  isDocumentsApiEnabled?: boolean;
 };
 export const AppContext = React.createContext<AppContextProps | null>(null);

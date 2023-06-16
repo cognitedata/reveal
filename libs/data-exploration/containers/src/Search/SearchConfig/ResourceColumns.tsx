@@ -18,17 +18,22 @@ type Props = {
     resource: SearchConfigResourceType,
     filterId: FilterIdType
   ) => void;
+  isDocumentsApiEnabled?: boolean;
 };
 
 export const ResourceColumns: React.FC<Props> = ({
   searchConfigData,
   onChange,
+  isDocumentsApiEnabled = true,
 }: Props) => {
   const sizeOfCommonSection = 5;
   return (
     <>
-      {(Object.keys(searchConfigData) as Array<SearchConfigResourceType>).map(
-        (resource) => {
+      {(Object.keys(searchConfigData) as Array<SearchConfigResourceType>)
+        .filter((resourceType) => {
+          return !(resourceType === 'file' && !isDocumentsApiEnabled);
+        })
+        .map((resource) => {
           const resourceFilterIds = Object.keys(
             searchConfigData[resource]
           ) as Array<FilterIdType>;
@@ -62,8 +67,7 @@ export const ResourceColumns: React.FC<Props> = ({
               </CommonWrapper>
             </div>
           );
-        }
-      )}
+        })}
     </>
   );
 };

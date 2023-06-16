@@ -4,10 +4,10 @@ import { Loader } from '@data-exploration/components';
 import {
   AssetTable,
   EventTable,
+  FileTable,
   SequenceTable,
   TimeseriesTable,
 } from '@data-exploration/containers';
-import { FileTable } from '@data-exploration-components/containers';
 import { useUniqueCdfItems } from '@data-exploration-components/hooks';
 import { useTaggedAnnotationsByResourceType } from '@data-exploration-components/hooks/RelationshipHooks';
 import {

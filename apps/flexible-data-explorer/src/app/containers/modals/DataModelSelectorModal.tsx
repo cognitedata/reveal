@@ -21,7 +21,7 @@ export const DataModelSelectorModal = ({
 
   const [, setSelectedDataModel] = useDataModelLocalStorage();
 
-  const { data, isLoading } = useListDataModelsQuery();
+  const { data, isLoading, isError } = useListDataModelsQuery();
 
   const handleSelectionClick = (item: DataModelListResponse) => {
     setSelectedDataModel({
@@ -48,6 +48,7 @@ export const DataModelSelectorModal = ({
       <DataModelSelector
         dataModels={data}
         loading={isLoading}
+        isError={isError}
         onSelectionClick={handleSelectionClick}
       />
     </StyledModal>

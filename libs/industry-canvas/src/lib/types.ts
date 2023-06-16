@@ -182,7 +182,7 @@ export type CanvasMetadata = {
   readonly createdTime: ISOString;
   createdBy: UserIdentifier;
 
-  updatedTime: ISOString;
+  updatedAt: ISOString;
   updatedBy: UserIdentifier;
 };
 

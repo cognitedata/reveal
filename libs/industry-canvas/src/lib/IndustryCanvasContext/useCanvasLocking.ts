@@ -29,7 +29,7 @@ const useCanvasLocking = (
         return false;
       }
 
-      if (msAgo(metadata.updatedTime) > LOCK_TIMEOUT_MS) {
+      if (msAgo(metadata.updatedAt) > LOCK_TIMEOUT_MS) {
         return false;
       }
 

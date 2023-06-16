@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import {
   createSearchParams,
   useLocation,
@@ -20,7 +20,15 @@ export const useNavigation = () => {
 
   // For migration: if we're located at the route, keep the route
   // TODO: Better way to use navigate function to do this?
-  const basename = pathname.startsWith('/explore') ? '/explore' : '';
+  const basename = useMemo(
+    () => (pathname.startsWith('/explore') ? '/explore' : ''),
+    [pathname]
+  );
+
+  const basePath = useMemo(() => {
+    const { space, dataModel, version } = params;
+    return `${basename}/${dataModel}/${space}/${version}`;
+  }, [basename, params]);
 
   const toSearchPage = useCallback(
     (searchQuery: string = '', filters: ValueByDataType = {}) => {
@@ -38,6 +46,18 @@ export const useNavigation = () => {
       });
     },
     [basename, navigate]
+  );
+
+  const redirectSearchPage = useCallback(
+    (dataType?: string) => {
+      navigate({
+        pathname: [`${basePath}/search`, dataType && `/${dataType}`]
+          .filter(Boolean)
+          .join(''),
+        search,
+      });
+    },
+    [basePath, navigate, search]
   );
 
   // NOTE: this is gonna be removed, there will be no list pages, only search results.
@@ -108,6 +128,7 @@ export const useNavigation = () => {
   return {
     toLandingPage,
     toSearchPage,
+    redirectSearchPage,
     toListPage,
     toHomePage,
 

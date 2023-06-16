@@ -34,6 +34,7 @@ type Props = {
   hideContent?: boolean;
   selectedRows?: ResourceSelection;
   visibleResources?: ResourceType[];
+  isDocumentsApiEnabled?: boolean;
 } & Partial<SelectableItemsProps>;
 
 const Centered = styled.div`
@@ -62,10 +63,10 @@ export const ResourceSelectorDetails = ({
   selectedRows,
   selectionMode = 'single',
   onSelect = noop,
-
   isSelected = false,
   hideContent = false,
   visibleResources = [],
+  isDocumentsApiEnabled = true,
 }: Props) => {
   const commonProps = {
     onSelect,
@@ -93,6 +94,7 @@ export const ResourceSelectorDetails = ({
             documentId={item.id}
             isSelected={isSelected}
             onClose={onClose}
+            isDocumentsApiEnabled={isDocumentsApiEnabled}
             {...commonProps}
           />
         );
