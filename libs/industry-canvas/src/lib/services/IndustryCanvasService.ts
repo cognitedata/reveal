@@ -38,14 +38,21 @@ const omitCreatedTimeFromSerializedCanvas = (
   omit(canvas, ['createdTime']);
 
 export class IndustryCanvasService {
-  public readonly SPACE_VERSION = 1;
-  public readonly SPACE_EXTERNAL_ID = 'MarvinV5'; // TODO(marvin): fix once data model is verified
-  public readonly DATA_MODEL_EXTERNAL_ID = 'IndustryCanvasV5'; // TODO(marvin): fix once data model is verified
+  // TODO(marvin): switch over to using 'cdf_industrial_canvas' once the system data models are working
+  public static readonly SYSTEM_SPACE = 'IndustrialCanvasLocalSpaceV1';
+  public static readonly SYSTEM_SPACE_VERSION = 'v1';
+  // TODO(marvin): use different instance space from system space once system data models are working again
+  public static readonly INSTANCE_SPACE = IndustryCanvasService.SYSTEM_SPACE;
+  public static readonly DATA_MODEL_EXTERNAL_ID = 'IndustrialCanvas';
   private readonly LIST_LIMIT = 1000; // The max number of items to retrieve in one list request
 
-  // Comment stuff
-  public readonly COMMENT_INSTANCE_SPACE = 'IndustryCanvasComments';
-  public readonly COMMENT_DATA_MODEL_EXTERNAL_ID = 'IndustryCanvasComments';
+  // Comment stuff. TODO: the comment data model should probably live in the system space for the canvas data model
+  public static readonly COMMENT_SYSTEM_SPACE = 'IndustryCanvasComments';
+  public static readonly COMMENT_INSTANCE_SPACE =
+    IndustryCanvasService.SYSTEM_SPACE;
+  public static readonly COMMENT_INSTANCE_SPACE_VERSION = 'v1';
+  public static readonly COMMENT_DATA_MODEL_EXTERNAL_ID =
+    'IndustryCanvasComments';
 
   private fdmClient: FDMClient;
   private fdmClientForComments: FDMClient;
@@ -55,12 +62,14 @@ export class IndustryCanvasService {
   public constructor(client: CogniteClient, userProfile: UserProfile) {
     this.cogniteClient = client;
     this.fdmClient = new FDMClient(client, {
-      spaceExternalId: this.SPACE_EXTERNAL_ID,
-      spaceVersion: this.SPACE_VERSION,
+      systemSpace: IndustryCanvasService.SYSTEM_SPACE,
+      systemSpaceVersion: IndustryCanvasService.SYSTEM_SPACE_VERSION,
+      instanceSpace: IndustryCanvasService.INSTANCE_SPACE,
     });
     this.fdmClientForComments = new FDMClient(client, {
-      spaceExternalId: this.COMMENT_INSTANCE_SPACE,
-      spaceVersion: this.SPACE_VERSION,
+      systemSpace: IndustryCanvasService.COMMENT_INSTANCE_SPACE,
+      systemSpaceVersion: IndustryCanvasService.COMMENT_INSTANCE_SPACE_VERSION,
+      instanceSpace: IndustryCanvasService.COMMENT_INSTANCE_SPACE,
     });
     this.userProfile = userProfile;
   }
@@ -83,12 +92,12 @@ export class IndustryCanvasService {
               isArchived
               createdTime
               createdBy
-              updatedTime
+              updatedAt
               updatedBy
               containerReferences (first: ${this.LIST_LIMIT}) {
                 items {
                   id
-                  type
+                  containerReferenceType
                   resourceId
                   resourceSubId
                   label
@@ -104,20 +113,19 @@ export class IndustryCanvasService {
               canvasAnnotations (first: ${this.LIST_LIMIT}) {
                 items {
                   id
-                  type
+                  annotationType
                   containerId
                   isSelectable
                   isDraggable
                   isResizable
                   properties
-                  metadata
                 }
               }
             }
           }
         }
       `,
-      this.DATA_MODEL_EXTERNAL_ID,
+      IndustryCanvasService.DATA_MODEL_EXTERNAL_ID,
       { filter: { externalId: { eq: canvasId } } }
     );
     if (res.canvases.items.length === 0) {
@@ -151,13 +159,13 @@ export class IndustryCanvasService {
               isArchived
               createdTime
               createdBy
-              updatedTime
+              updatedAt
               updatedBy
             }
           }
         }
       `,
-      this.DATA_MODEL_EXTERNAL_ID,
+      IndustryCanvasService.DATA_MODEL_EXTERNAL_ID,
       { filter: { externalId: { eq: canvasId } } }
     );
     if (res.canvases.items.length === 0) {
@@ -182,14 +190,14 @@ export class IndustryCanvasService {
             filter: $filter,
             first: ${limit},
             after: ${cursor === undefined ? null : `"${cursor}"`},
-            sort: { updatedTime: DESC }
+            sort: { updatedAt: DESC }
           ) {
             items {
               externalId
               name
               createdTime
               createdBy
-              updatedTime
+              updatedAt
               updatedBy
             }
             pageInfo {
@@ -201,7 +209,7 @@ export class IndustryCanvasService {
           }
         }
       `,
-      this.DATA_MODEL_EXTERNAL_ID,
+      IndustryCanvasService.DATA_MODEL_EXTERNAL_ID,
       {
         filter: {
           or: [{ isArchived: { eq: false } }, { isArchived: { isNull: true } }],
@@ -265,7 +273,7 @@ export class IndustryCanvasService {
           }
         }
       `,
-      this.COMMENT_DATA_MODEL_EXTERNAL_ID,
+      IndustryCanvasService.COMMENT_DATA_MODEL_EXTERNAL_ID,
       {
         filter: {
           and: [
@@ -316,7 +324,7 @@ export class IndustryCanvasService {
     const updatedCanvas: SerializedCanvasDocument = {
       ...canvas,
       updatedBy: this.userProfile.userIdentifier,
-      updatedTime: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     };
     await upsertCanvas(
       this.fdmClient,
@@ -336,7 +344,7 @@ export class IndustryCanvasService {
           ? {
               thread: {
                 externalId: comment.thread.externalId,
-                space: this.COMMENT_INSTANCE_SPACE,
+                space: IndustryCanvasService.COMMENT_INSTANCE_SPACE,
               },
             }
           : null),
@@ -344,7 +352,7 @@ export class IndustryCanvasService {
           ? {
               canvas: {
                 externalId: comment.canvas.externalId,
-                space: this.COMMENT_INSTANCE_SPACE,
+                space: IndustryCanvasService.COMMENT_INSTANCE_SPACE,
               },
             }
           : null),
@@ -402,7 +410,7 @@ export class IndustryCanvasService {
       externalId: uuid(),
       name: DEFAULT_CANVAS_NAME,
       createdTime: new Date().toISOString(),
-      updatedTime: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
       updatedBy: this.userProfile.userIdentifier,
       createdBy: this.userProfile.userIdentifier,
       data: {

@@ -69,7 +69,7 @@ const CanvasSubmenu: React.FC<CanvasSubmenuProps> = ({
         ) : (
           <LastTimeText level={2}>
             Updated{' '}
-            {formatDistanceToNow(new Date(canvas.updatedTime), {
+            {formatDistanceToNow(new Date(canvas.updatedAt), {
               addSuffix: true,
             })}
           </LastTimeText>

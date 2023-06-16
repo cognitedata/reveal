@@ -39,8 +39,10 @@ export type FDMEdge = {
  * and add methods that handle data that is specific to your application.
  */
 export class FDMClient {
-  public readonly SPACE_EXTERNAL_ID: string;
-  public readonly SPACE_VERSION: number;
+  // We assume the that the system space will contain the data model definition
+  public readonly SYSTEM_SPACE: string;
+  public readonly SYSTEM_SPACE_VERSION: string;
+  public readonly INSTANCE_SPACE: string;
   private DMS_HEADERS: Record<string, string>;
   protected BASE_URL: string;
   protected client: CogniteClient;
@@ -48,12 +50,18 @@ export class FDMClient {
   constructor(
     client: CogniteClient,
     {
-      spaceExternalId,
-      spaceVersion,
-    }: { spaceExternalId: string; spaceVersion: number }
+      systemSpace,
+      systemSpaceVersion,
+      instanceSpace,
+    }: {
+      systemSpace: string;
+      systemSpaceVersion: string;
+      instanceSpace: string;
+    }
   ) {
-    this.SPACE_EXTERNAL_ID = spaceExternalId;
-    this.SPACE_VERSION = spaceVersion;
+    this.SYSTEM_SPACE = systemSpace;
+    this.SYSTEM_SPACE_VERSION = systemSpaceVersion;
+    this.INSTANCE_SPACE = instanceSpace;
     this.client = client;
     this.BASE_URL = `${this.client.getBaseUrl()}/api/v1/projects/${
       this.client.project
@@ -65,12 +73,8 @@ export class FDMClient {
     return `${this.BASE_URL}/models/instances`;
   }
 
-  private get baseUrlDmsEdges(): string {
-    return `${this.BASE_URL}/models/instances`;
-  }
-
   private getGraphQLBaseURL(dataModelId: string): string {
-    return `${this.BASE_URL}/userapis/spaces/${this.SPACE_EXTERNAL_ID}/datamodels/${dataModelId}/versions/${this.SPACE_VERSION}/graphql`;
+    return `${this.BASE_URL}/userapis/spaces/${this.SYSTEM_SPACE}/datamodels/${dataModelId}/versions/${this.SYSTEM_SPACE_VERSION}/graphql`;
   }
 
   public async graphQL<T>(
@@ -125,7 +129,11 @@ export class FDMClient {
   }
 
   public async upsertNodes<
-    T extends { modelName: string; externalId?: string; viewVersion?: string }
+    T extends {
+      modelName: string;
+      externalId?: string;
+      viewVersion?: string;
+    }
   >(nodes: T[]): Promise<NodeOrEdgeDefinition[]> {
     if (nodes.length === 0) {
       return [];
@@ -134,14 +142,14 @@ export class FDMClient {
       this.baseUrlDms,
       nodes.map(({ externalId, modelName, viewVersion, ...properties }) => ({
         instanceType: 'node',
-        space: this.SPACE_EXTERNAL_ID,
+        space: this.INSTANCE_SPACE,
         externalId,
         sources: [
           viewVersion !== undefined
             ? {
                 source: {
                   type: 'view',
-                  space: this.SPACE_EXTERNAL_ID,
+                  space: this.SYSTEM_SPACE,
                   externalId: modelName,
                   version: viewVersion,
                 },
@@ -150,7 +158,7 @@ export class FDMClient {
             : {
                 source: {
                   type: 'container',
-                  space: this.SPACE_EXTERNAL_ID,
+                  space: this.SYSTEM_SPACE,
                   externalId: modelName,
                 },
                 properties,
@@ -175,7 +183,7 @@ export class FDMClient {
       `${this.baseUrlDms}/delete`,
       externalIdsAsArray.map((externalId) => ({
         instanceType: 'node',
-        space: this.SPACE_EXTERNAL_ID,
+        space: this.INSTANCE_SPACE,
         externalId,
       })),
       DELETE_CHUNK_SIZE
@@ -188,7 +196,7 @@ export class FDMClient {
       return [];
     }
     const upsertedEdges = this.chunkedPostRequest(
-      this.baseUrlDmsEdges,
+      this.baseUrlDms,
       edges.map(
         ({
           externalId,
@@ -197,18 +205,15 @@ export class FDMClient {
           endNodeExternalId,
         }) => ({
           instanceType: 'edge',
-          space: this.SPACE_EXTERNAL_ID,
+          space: this.INSTANCE_SPACE,
           externalId,
-          type: {
-            space: this.SPACE_EXTERNAL_ID,
-            externalId: typeExternalId,
-          },
+          type: { space: this.SYSTEM_SPACE, externalId: typeExternalId },
           startNode: {
-            space: this.SPACE_EXTERNAL_ID,
+            space: this.INSTANCE_SPACE,
             externalId: startNodeExternalId,
           },
           endNode: {
-            space: this.SPACE_EXTERNAL_ID,
+            space: this.INSTANCE_SPACE,
             externalId: endNodeExternalId,
           },
         })
@@ -218,6 +223,8 @@ export class FDMClient {
         autoCreateStartNodes: false,
         autoCreateEndNodes: false,
         skipOnVersionConflict: false,
+        // TODO(marvin): re-enable when we start using system data models
+        //autoCreateDirectRelations: false,
         replace: false,
       }
     );
