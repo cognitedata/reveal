@@ -1,11 +1,10 @@
 import isEmpty from 'lodash/isEmpty';
 
-import { Button } from '@cognite/cogs.js';
+import { Button, formatDate } from '@cognite/cogs.js';
 import { TimeseriesChart } from '@cognite/plotting-components';
 
 import { translationKeys } from '../../../common/i18n/translationKeys';
 import { SearchResults } from '../../../components/search/SearchResults';
-import { Table } from '../../../components/table/Table';
 import { useNavigation } from '../../../hooks/useNavigation';
 import {
   useDataTypeFilterParams,
@@ -16,35 +15,6 @@ import { useTimeseriesSearchQuery } from '../../../services/instances/timeseries
 import { buildTimeseriesFilter } from '../../../utils/filterBuilder';
 
 import { PAGE_SIZE } from './constants';
-
-const columns = [
-  { header: 'Name', accessorKey: 'name' },
-  {
-    header: 'Preview',
-    accessorKey: 'data',
-    size: 400,
-    cell: ({ row }: any) => {
-      const timeseries = row.original;
-
-      return (
-        <TimeseriesChart
-          timeseriesId={timeseries.id}
-          variant="small"
-          numberOfPoints={100}
-          height={55}
-          dataFetchOptions={{
-            mode: 'aggregate',
-          }}
-          autoRange
-        />
-      );
-    },
-  },
-  { header: 'id', accessorKey: 'externalId' },
-  { header: 'Description', accessorKey: 'description' },
-  { header: 'Type', accessorKey: 'type' },
-  { header: 'Unit', accessorKey: 'unit' },
-];
 
 export const TimeseriesResults = () => {
   const { t } = useTranslation();
@@ -64,20 +34,50 @@ export const TimeseriesResults = () => {
       <SearchResults.Header title="Time series" />
 
       <SearchResults.Body>
-        <Table
-          id="timeseries"
-          data={data}
-          columns={columns}
-          onRowClick={(row) => {
-            navigate.toTimeseriesPage(row.externalId || row.id);
-          }}
-        />
+        {data.map((item) => (
+          <SearchResults.Item
+            key={item.id}
+            name={
+              item.name ||
+              item.externalId ||
+              String(item.id) ||
+              'No description'
+            }
+            description={item.description}
+            properties={[
+              {
+                value: (
+                  <TimeseriesChart
+                    timeseriesId={item.id}
+                    variant="small"
+                    numberOfPoints={100}
+                    height={55}
+                    styles={{
+                      width: 175,
+                    }}
+                    dataFetchOptions={{
+                      mode: 'aggregate',
+                    }}
+                    autoRange
+                  />
+                ),
+              },
+              {
+                key: 'Created Time',
+                value: formatDate(new Date(item.createdTime).getTime()),
+              },
+            ]}
+            onClick={() => {
+              navigate.toTimeseriesPage(item.externalId || item.id);
+            }}
+          />
+        ))}
       </SearchResults.Body>
 
       <SearchResults.Footer>
         <Button
           type="ghost"
-          disabled={!hasNextPage}
+          hidden={!hasNextPage}
           onClick={() => {
             fetchNextPage();
           }}
