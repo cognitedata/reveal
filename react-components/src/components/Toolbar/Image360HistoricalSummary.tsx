@@ -135,6 +135,7 @@ const StyledLayoutGridContainer = styled.div`
   width: 70%;
   height: fit-content;
   overflow-x: auto;
+  padding: 0 0 5px 0;
 
   /* Customize scrollbar styles */
   scrollbar-width: thin;
