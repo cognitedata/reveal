@@ -3,6 +3,7 @@ import { createContext, useCallback, useContext, useMemo } from 'react';
 import { useSDK } from '@cognite/sdk-provider';
 import { IdsByType } from '@cognite/unified-file-viewer';
 
+import { MetricEvent } from '../constants';
 import { useCanvasArchiveMutation } from '../hooks/use-mutation/useCanvasArchiveMutation';
 import { useCanvasCreateMutation } from '../hooks/use-mutation/useCanvasCreateMutation';
 import { useCanvasSaveMutation } from '../hooks/use-mutation/useCanvasSaveMutation';
@@ -16,6 +17,7 @@ import {
   IndustryCanvasState,
   SerializedCanvasDocument,
 } from '../types';
+import useMetrics from '../utils/tracking/useMetrics';
 import { serializeCanvasState } from '../utils/utils';
 
 import useCanvasLocking from './useCanvasLocking';
@@ -82,6 +84,7 @@ export const IndustryCanvasProvider: React.FC<IndustryCanvasProviderProps> = ({
   children,
 }): JSX.Element => {
   const sdk = useSDK();
+  const trackUsage = useMetrics();
   const { userProfile } = useUserProfileContext();
   const canvasService = useMemo(
     () => new IndustryCanvasService(sdk, userProfile),
@@ -130,9 +133,10 @@ export const IndustryCanvasProvider: React.FC<IndustryCanvasProviderProps> = ({
         data: serializeCanvasState(canvas),
       });
       refetchCanvases();
+      trackUsage(MetricEvent.CANVAS_CREATED);
       return newCanvas;
     },
-    [canvasService, createCanvas, refetchCanvases]
+    [canvasService, createCanvas, refetchCanvases, trackUsage]
   );
 
   const archiveCanvasWrapper = useCallback(
@@ -149,6 +153,7 @@ export const IndustryCanvasProvider: React.FC<IndustryCanvasProviderProps> = ({
         setCanvasId(nextCanvas?.externalId, true);
       }
       await refetchCanvases();
+      trackUsage(MetricEvent.CANVAS_ARCHIVED);
     },
     [
       activeCanvas,
@@ -157,6 +162,7 @@ export const IndustryCanvasProvider: React.FC<IndustryCanvasProviderProps> = ({
       refetchCanvases,
       setCanvasId,
       isCanvasLocked,
+      trackUsage,
     ]
   );
 

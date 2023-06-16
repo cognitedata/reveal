@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 import styled from 'styled-components';
 
@@ -8,12 +8,14 @@ import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { AppContext } from '@data-exploration-lib/core';
 
 import { NoAccessPage } from './components/NoAccessPage';
+import { SpaceDoesNotExistPage } from './components/SpaceDoesNotExistPage';
+import { useCreateSpaceMutation } from './hooks/use-mutation/useCreateSpace';
 import {
   UserProfileContext,
   useUserProfile,
 } from './hooks/use-query/useUserProfile';
+import { IndustryCanvasService } from './services/IndustryCanvasService';
 
-// TODO(marvin): Uncomment space auto-creation once system data models are working
 export const UserProfileProvider = ({
   children,
 }: {
@@ -66,7 +68,6 @@ export const UserProfileProvider = ({
     error: userProfileError,
   } = useUserProfile();
 
-  /*
   const [spaceExists, setSpaceExists] = useState(false);
   const { mutateAsync: createSpace, isLoading: isCreatingSpace } =
     useCreateSpaceMutation();
@@ -87,15 +88,14 @@ export const UserProfileProvider = ({
     };
     createSpaceWrapper();
   }, [hasDataModelWriteAcl, spaceExists, setSpaceExists, createSpace]);
-  */
 
   if (
     isLoadingHasDataModelInstancesReadAcl ||
     isLoadingHasDataModelInstancesWriteAcl ||
     isLoadingHasDataModelReadAcl ||
     isLoadingHasDataModelWriteAcl ||
-    isLoadingUserProfile
-    // || isCreatingSpace
+    isLoadingUserProfile ||
+    isCreatingSpace
   ) {
     return (
       <LoaderWrapper>
@@ -119,11 +119,9 @@ export const UserProfileProvider = ({
     return <NoAccessPage />;
   }
 
-  /*
   if (!spaceExists) {
     return <SpaceDoesNotExistPage />;
   }
-  */
 
   return (
     <UserProfileContext.Provider value={{ userProfile }}>

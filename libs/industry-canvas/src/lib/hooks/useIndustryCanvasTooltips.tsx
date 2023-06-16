@@ -21,7 +21,6 @@ import { OnUpdateTooltipsOptions, TooltipsOptions } from './useTooltipsOptions';
 export type UseTooltipsParams = {
   selectedContainer: IndustryCanvasContainerConfig | undefined;
   containers: IndustryCanvasContainerConfig[];
-  containerAnnotations: ExtendedAnnotation[];
   clickedContainerAnnotation: ExtendedAnnotation | undefined;
   selectedCanvasAnnotation: CanvasAnnotation | undefined;
   tooltipsOptions: TooltipsOptions;
@@ -40,7 +39,6 @@ export type UseTooltipsParams = {
 };
 
 const useIndustryCanvasTooltips = ({
-  containerAnnotations,
   containers,
   clickedContainerAnnotation,
   selectedCanvasAnnotation,
@@ -69,8 +67,7 @@ const useIndustryCanvasTooltips = ({
     onAddContainerReferences
   );
   const fileLinkTooltips = useIndustryCanvasFileLinkTooltips({
-    annotations: containerAnnotations,
-    selectedAnnotation: clickedContainerAnnotation,
+    clickedContainerAnnotation,
     onAddContainerReferences,
   });
   const canvasAnnotationTooltips = useCanvasAnnotationTooltips({
