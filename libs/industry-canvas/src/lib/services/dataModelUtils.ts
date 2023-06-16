@@ -157,19 +157,16 @@ export const upsertCanvas = async (
     })),
   ]);
 
-  // TODO(marvin): use the system data model type external ids once system data models are working
   await client.upsertEdges([
     ...fdmCanvasAnnotations.map((annotation) => ({
       externalId: getEdgeExternalId(canvas.externalId, annotation.externalId),
-      //typeExternalId: `references${ModelNames.CANVAS_ANNOTATION}`,
-      typeExternalId: `${ModelNames.CANVAS}.canvasAnnotations`,
+      typeExternalId: `references${ModelNames.CANVAS_ANNOTATION}`,
       startNodeExternalId: canvas.externalId,
       endNodeExternalId: annotation.externalId,
     })),
     ...fdmContainerRefs.map((ref) => ({
       externalId: getEdgeExternalId(canvas.externalId, ref.externalId),
-      // typeExternalId: `references${ModelNames.CONTAINER_REFERENCE}`,
-      typeExternalId: `${ModelNames.CANVAS}.containerReferences`,
+      typeExternalId: `references${ModelNames.CONTAINER_REFERENCE}`,
       startNodeExternalId: canvas.externalId,
       endNodeExternalId: ref.externalId,
     })),
