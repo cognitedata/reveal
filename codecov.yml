@@ -5,6 +5,7 @@ coverage:
       apps:
         flags:
           - data-exploration
+          - data-catalog
           - flexible-data-explorer
           - mock-server
           - platypus

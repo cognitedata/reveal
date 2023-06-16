@@ -5,6 +5,7 @@
 static final String[] APPLICATIONS = [
   'platypus',
   'data-exploration',
+  'data-catalog',
   'raw-explorer',
   'coding-conventions',
   'copilot',
@@ -23,10 +24,11 @@ static final Map<String, String> NPM_PACKAGES = [
 ]
 
 // This is the Firebase site mapping.
-// See https://github.com/cognitedata/terraform/blob/master/cognitedata-production/gcp_firebase_hosting/sites.tf
+// See https://github.com/cognitedata/terraform/blob/master/cognitedata-production/gcp_fusion_firebase_hosting/sites.tf
 static final Map<String, String> FIREBASE_APP_SITES = [
   'platypus': 'platypus',
   'data-exploration': 'data-exploration',
+  'data-catalog': 'data-catalog',
   'raw-explorer': 'raw-explorer',
   'coding-conventions': 'coding-conventions',
   'copilot': 'copilot',
@@ -39,6 +41,7 @@ static final Map<String, String> FIREBASE_APP_SITES = [
 static final Map<String, String> PREVIEW_PACKAGE_NAMES = [
   'platypus': "@cognite/cdf-solutions-ui",
   'data-exploration': "@cognite/cdf-data-exploration",
+  'data-catalog': "@cognite/cdf-data-catalog",
   'raw-explorer': "@cognite/cdf-raw-explorer",
   'coding-conventions': "@cognite/cdf-coding-conventions",
   'copilot': "@cognite/cdf-copilot",
@@ -103,6 +106,7 @@ static final Map<String, String> VERSIONING_STRATEGY = [
   'platypus': 'multi-branch',
   'coding-conventions': 'multi-branch',
   'data-exploration': 'multi-branch',
+  'data-catalog': 'multi-branch',
   'raw-explorer': 'single-branch',
   'transformations': 'single-branch',
   'copilot': 'single-branch',
