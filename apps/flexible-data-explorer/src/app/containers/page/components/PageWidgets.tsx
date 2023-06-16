@@ -63,8 +63,6 @@ const Content = styled.div<{ hasExpandedWidget: boolean }>`
         padding: 16px 0;
         /* The height of the grid items is derived on the bases of the properties widget. Avoid changing the value here. */
         grid-auto-rows: 65px;
-        /* grid-auto-rows: auto; */
-        /* grid-template-rows: auto 300px; */
       `;
     }
   }}

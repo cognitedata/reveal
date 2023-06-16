@@ -81,6 +81,9 @@
       "@data-quality/*": [
         "apps/platypus/src/app/modules/solution/data-quality/*"
       ],
+      "@transformations/*": [
+        "apps/transformations/src/*"
+      ],
       "@flexible-data-explorer/*": [
         "apps/flexible-data-explorer/src/*"
       ],
@@ -114,6 +117,9 @@
       ],
       "@platypus/platypus-core": [
         "libs/data-modeling/platypus-core/src/index.ts"
+      ],
+      "@raw-explorer/*": [
+        "apps/raw-explorer/src/*"
       ],
       "@data-catalog-app/*": [
         "apps/data-catalog/src/app/*"

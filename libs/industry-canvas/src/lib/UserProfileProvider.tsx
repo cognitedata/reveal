@@ -13,6 +13,7 @@ import {
   useUserProfile,
 } from './hooks/use-query/useUserProfile';
 
+// TODO(marvin): Uncomment space auto-creation once system data models are working
 export const UserProfileProvider = ({
   children,
 }: {
@@ -47,16 +48,54 @@ export const UserProfileProvider = ({
     });
 
   const {
+    data: hasDataModelWriteAcl,
+    isLoading: isLoadingHasDataModelWriteAcl,
+  } = usePermissions(
+    context?.flow as any,
+    'dataModelsAcl',
+    'WRITE',
+    undefined,
+    {
+      enabled: !!context?.flow,
+    }
+  );
+
+  const {
     data: userProfile,
     isLoading: isLoadingUserProfile,
     error: userProfileError,
   } = useUserProfile();
 
+  /*
+  const [spaceExists, setSpaceExists] = useState(false);
+  const { mutateAsync: createSpace, isLoading: isCreatingSpace } =
+    useCreateSpaceMutation();
+
+  // Create the instance space for IC, if it doesn't already exist
+  useEffect(() => {
+    if (!hasDataModelWriteAcl || spaceExists) {
+      return;
+    }
+
+    const createSpaceWrapper = async () => {
+      await createSpace({
+        space: IndustryCanvasService.INSTANCE_SPACE,
+        description: 'The Industrial Canvas instance space',
+        name: 'Industrial Canvas instance space',
+      });
+      setSpaceExists(true);
+    };
+    createSpaceWrapper();
+  }, [hasDataModelWriteAcl, spaceExists, setSpaceExists, createSpace]);
+  */
+
   if (
     isLoadingHasDataModelInstancesReadAcl ||
     isLoadingHasDataModelInstancesWriteAcl ||
     isLoadingHasDataModelReadAcl ||
+    isLoadingHasDataModelWriteAcl ||
     isLoadingUserProfile
+    // || isCreatingSpace
   ) {
     return (
       <LoaderWrapper>
@@ -70,6 +109,7 @@ export const UserProfileProvider = ({
     !hasDataModelInstancesReadAcl ||
     !hasDataModelInstancesWriteAcl ||
     !hasDataModelReadAcl ||
+    !hasDataModelWriteAcl ||
     doesNotHaveUserProfileAccess
   ) {
     return <NoAccessPage />;
@@ -78,6 +118,12 @@ export const UserProfileProvider = ({
   if (userProfile === undefined) {
     return <NoAccessPage />;
   }
+
+  /*
+  if (!spaceExists) {
+    return <SpaceDoesNotExistPage />;
+  }
+  */
 
   return (
     <UserProfileContext.Provider value={{ userProfile }}>

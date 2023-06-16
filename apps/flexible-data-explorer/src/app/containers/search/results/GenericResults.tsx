@@ -6,8 +6,8 @@ import take from 'lodash/take';
 
 import { Button } from '@cognite/cogs.js';
 
+import { translationKeys } from '../../../common/i18n/translationKeys';
 import { SearchResults } from '../../../components/search/SearchResults';
-import { Table } from '../../../components/table/Table';
 import { EMPTY_ARRAY } from '../../../constants/object';
 import { useNavigation } from '../../../hooks/useNavigation';
 import { useTranslation } from '../../../hooks/useTranslation';
@@ -16,9 +16,23 @@ import { useSearchDataTypesQuery } from '../../../services/dataTypes/queries/use
 
 import { PAGE_SIZE } from './constants';
 
-export const GenericResults: React.FC = () => {
+export const GenericResults: React.FC<{ selectedDataType?: string }> = ({
+  selectedDataType,
+}) => {
   const { data: hits } = useSearchDataTypesQuery();
   const { data: types } = useTypesDataModelQuery();
+
+  if (selectedDataType) {
+    const type = types?.find((item) => item.name === selectedDataType);
+
+    return (
+      <GenericResultItem
+        dataType={selectedDataType}
+        type={type}
+        values={hits?.[selectedDataType]}
+      />
+    );
+  }
 
   return (
     <>
@@ -56,17 +70,8 @@ const GenericResultItem: React.FC<Props> = ({ dataType, values, type }) => {
     return values?.items || EMPTY_ARRAY;
   }, [values?.items]);
 
-  const columns = useMemo(() => {
-    const fields = type?.fields || [];
-
-    return fields.map((field) => ({
-      header: field.name,
-      accessorKey: field.id,
-    }));
-  }, [type?.fields]);
-
   const data = useMemo(() => {
-    return take<any[]>(normalizedValues, page);
+    return take<any>(normalizedValues, page);
   }, [normalizedValues, page]);
 
   const handleRowClick = useCallback(
@@ -84,12 +89,34 @@ const GenericResultItem: React.FC<Props> = ({ dataType, values, type }) => {
       />
 
       <SearchResults.Body>
-        <Table
-          id={`${dataType}-table`}
-          data={data}
-          columns={columns}
-          onRowClick={handleRowClick}
-        />
+        {data.map((item) => {
+          // TODO: Move this into separate component and refactor the code while doing so!
+          const properties = (type?.fields || []).reduce((acc, field) => {
+            if (
+              field.name === 'externalId' ||
+              field.name === 'name' ||
+              field.name === 'description'
+            ) {
+              return acc;
+            }
+
+            if (item[field.name] === undefined || item[field.name] === null) {
+              return acc;
+            }
+
+            return [...acc, { key: field.name, value: item[field.name] }];
+          }, [] as { key: string; value: string }[]);
+
+          return (
+            <SearchResults.Item
+              key={item.externalId}
+              name={item.name}
+              description={item.description}
+              properties={properties}
+              onClick={() => handleRowClick(item)}
+            />
+          );
+        })}
       </SearchResults.Body>
 
       <SearchResults.Footer>
@@ -98,9 +125,9 @@ const GenericResultItem: React.FC<Props> = ({ dataType, values, type }) => {
           onClick={() => {
             setPage((prevState) => prevState + PAGE_SIZE);
           }}
-          disabled={normalizedValues.length <= page}
+          hidden={normalizedValues.length <= page}
         >
-          {t('show_more', 'Show more...')}
+          {t(translationKeys.showMore, 'Show more...')}
         </Button>
       </SearchResults.Footer>
     </SearchResults>

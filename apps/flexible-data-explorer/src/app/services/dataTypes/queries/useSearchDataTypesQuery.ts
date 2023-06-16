@@ -14,7 +14,7 @@ import { queryKeys } from '../../queryKeys';
 export const useSearchDataTypesQuery = () => {
   const client = useFDM();
 
-  const { data } = useTypesDataModelQuery();
+  const { data: types } = useTypesDataModelQuery();
 
   const [query] = useSearchQueryParams();
   const [filters] = useSearchFilterParams();
@@ -29,13 +29,13 @@ export const useSearchDataTypesQuery = () => {
       const results = await client.searchDataTypes(
         query,
         transformedFilter,
-        data
+        types
       );
 
       return results;
     },
     {
-      enabled: !!data,
+      enabled: types !== undefined,
       // suspense is a broke atm, I will fix the underlying issue later - deep
       suspense: false,
     }

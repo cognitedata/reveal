@@ -14,7 +14,7 @@ export { default as Page } from './Page';
 export { default as PageHeader } from './PageHeader';
 export { default as PageTitle } from './PageTitle';
 export * from './SecondaryTopbar';
-export { default as SubAppWrapper } from './SubAppWrapper';
+export * from './SubAppWrapper';
 export { default as notification } from './Notification';
 export { default as Timestamp } from './Timestamp';
 export { default as GetFeedback } from './GetFeedback';

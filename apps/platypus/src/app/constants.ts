@@ -6,3 +6,5 @@ export const DOCS_LINKS = {
 };
 
 export const NoNameDisplayName = '<no name>';
+
+export const SUB_APP_PATH = 'data-models'; // sub-app name configured in cdf-navigation > sections i.e. fusion sub apps configuration

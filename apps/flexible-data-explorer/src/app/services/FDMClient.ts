@@ -46,6 +46,20 @@ class BaseFDMClient {
     this.headers = headers;
   }
 
+  public isPrimitive(type: string) {
+    return [
+      'String',
+      'Int',
+      'Float',
+      'Float32',
+      // 'JSONObject', <-- ignore for now.
+      'Date',
+      'Float64',
+      'Boolean',
+      'Timestamp',
+    ].includes(type);
+  }
+
   public get getHeaders() {
     if (!this.headers) {
       throw new Error('Missing headers.');
@@ -79,7 +93,7 @@ class BaseFDMClient {
     query: string;
     variables?: Record<string, any>;
   }): Promise<T> {
-    const { dataModel, space, version } = this.headers || {};
+    const { dataModel, space, version } = this.getHeaders;
     const url = `${this.BASE_URL}/userapis/spaces/${space}/datamodels/${dataModel}/versions/${version}/graphql`;
 
     return this.request<T>(url, data);
@@ -236,7 +250,9 @@ export class FDMClient extends BaseFDMClient {
       const dataType = item.name;
 
       const fields = item.fields.reduce((acc, item) => {
-        if (!item.type.custom && item.type.name !== 'timeSeries') {
+        // if (!item.type.custom && item.type.name !== 'timeSeries') {
+
+        if (this.isPrimitive(item.type.name) && !item.type.list) {
           return [...acc, item.name];
         }
 
