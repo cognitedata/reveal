@@ -8,7 +8,7 @@ import {
 import { Loader } from '@cognite/cogs.js';
 import { SDKProvider } from '@cognite/sdk-provider';
 
-// import { useUserInformation } from './hooks/useUserInformation';
+import { useUserInformation } from './hooks/useUserInformation';
 
 type AuthContainerProps = {
   children: React.ReactNode;
@@ -19,12 +19,12 @@ type AuthContainerProps = {
  * Isolated so that we can replace and plug-in in any env
  */
 export const AuthContainer = ({ children }: AuthContainerProps) => {
-  // const { data: userData } = useUserInformation();
+  const { data: userData } = useUserInformation();
   const projectName = getProject();
   const env = getEnv();
 
   return (
-    <SubAppWrapper title="Data Catalog">
+    <SubAppWrapper title="Data Catalog" userId={userData?.id}>
       <AuthWrapper
         loadingScreen={<Loader />}
         login={() => loginAndAuthIfNeeded(projectName, env)}

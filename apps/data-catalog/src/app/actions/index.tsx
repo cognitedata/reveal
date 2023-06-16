@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-// import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import {
   QueryClient,
@@ -10,7 +10,7 @@ import {
 import omit from 'lodash/omit';
 
 import sdk from '@cognite/cdf-sdk-singleton';
-// import { createLink } from '@cognite/cdf-utilities';
+import { createLink, useCdfUserHistoryService } from '@cognite/cdf-utilities';
 import { toast } from '@cognite/cogs.js';
 import { DataSetPatch, Group } from '@cognite/sdk';
 
@@ -69,8 +69,8 @@ export const onError = (error: any) => {
 /* MUTATIONS */
 export const useCreateDataSetMutation = () => {
   const client = useQueryClient();
-  // const { appPath } = useParams<{ appPath?: string }>();
-  // const userHistoryService = useCdfUserHistoryService();
+  const { appPath } = useParams<{ appPath?: string }>();
+  const userHistoryService = useCdfUserHistoryService();
 
   const {
     mutate: createDataSet,
@@ -83,12 +83,12 @@ export const useCreateDataSetMutation = () => {
       return res[0];
     },
     {
-      onSuccess: () => {
-        // userHistoryService.logNewResourceEdit({
-        //   application: appPath!,
-        //   name: dataset.name!,
-        //   path: createLink(`/${appPath}/data-set/${dataset.id}`),
-        // });
+      onSuccess: (dataset) => {
+        userHistoryService.logNewResourceEdit({
+          application: appPath!,
+          name: dataset.name!,
+          path: createLink(`/${appPath}/data-set/${dataset.id}`),
+        });
         invalidateDataSetQueries(client);
       },
       onError,
@@ -116,8 +116,8 @@ export const useUpdateDataSetOwners = () => {
 export const useUpdateDataSetMutation = () => {
   const { t } = useTranslation();
   const client = useQueryClient();
-  // const { appPath } = useParams<{ appPath?: string }>();
-  // const userHistoryService = useCdfUserHistoryService();
+  const { appPath } = useParams<{ appPath?: string }>();
+  const userHistoryService = useCdfUserHistoryService();
   const { mutate: updateDataSet, ...rest } = useMutation(
     ['update-dataset'],
     async (dataset: DataSet) => {
@@ -142,11 +142,11 @@ export const useUpdateDataSetMutation = () => {
     },
     {
       onSuccess: (_, dataset: DataSet) => {
-        // userHistoryService.logNewResourceEdit({
-        //   application: appPath!,
-        //   name: dataset.name,
-        //   path: createLink(`/${appPath}/data-set/${dataset.id}`),
-        // });
+        userHistoryService.logNewResourceEdit({
+          application: appPath!,
+          name: dataset.name,
+          path: createLink(`/${appPath}/data-set/${dataset.id}`),
+        });
         toast.success(
           <span>
             {t('data-set-is-updated', { datasetName: dataset?.name })}
