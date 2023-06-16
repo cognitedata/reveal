@@ -1,4 +1,16 @@
 export const translationKeys = {
+  onboardingPageModalButton: 'onboardingpage_modal_button',
+
+  dataModelSelectorGetStartedHeader: 'get_started_header',
+  dataModelSelectorGetStartedTitle: 'get_started_title',
+  dataModelSelectorGetStartedBody: 'get_started_body',
+  dataModelSelectorGetStartedConfirm: 'get_started_confirm',
+  dataModelSelectorInfoboxDangerTitle: 'datamodelselector_infobox_danger_title',
+  dataModelSelectorInfoboxDangerBody: 'datamodelselector_infobox_danger_body',
+  dataModelSelectorInfoboxNeutralTitle:
+    'datamodelselector_infobox_neutral_title',
+  dataModelSelectorInfoboxNeutralBody: 'datamodelselector_infobox_neutral_body',
+
   homePageTitle: 'homepage_title',
 
   showMore: 'show_more',
@@ -16,4 +28,6 @@ export const translationKeys = {
 
   propertiesWidgetFilterByPlaceholder:
     'properties_widget_filter_by_placeholder',
+
+  openInButton: 'open_in_button',
 } as const;
