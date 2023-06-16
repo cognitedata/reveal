@@ -9,11 +9,6 @@ import {
   getMetricAggregationSuccessCount,
   getMetricAggregations,
 } from 'utils/hostedExtractors';
-import {
-  ReadMQTTJob,
-  ReadMQTTJobLog,
-  useMQTTJobLogs,
-} from 'hooks/hostedExtractors';
 import { BAR_HEIGHT, MessageHistoryChartItem } from './MessageHistoryChartItem';
 
 type MessageHistoryChartProps = {
