@@ -174,6 +174,7 @@ type StatusChangeBucket = {
   startTime: number;
   endTime: number;
   isUp: boolean;
+  logs: ReadMQTTJobLog;
 };
 
 export const getStatusChangeBuckets = (logs?: ReadMQTTJobLog[]) => {
@@ -186,6 +187,7 @@ export const getStatusChangeBuckets = (logs?: ReadMQTTJobLog[]) => {
       startTime: logs[0].createdTime,
       endTime: Number.MAX_SAFE_INTEGER,
       isUp: doesLogHaveSuccessType(logs[0]) || doesLogHavePauseType(logs[0]),
+      logs: logs[0],
     },
   ];
 
@@ -195,6 +197,7 @@ export const getStatusChangeBuckets = (logs?: ReadMQTTJobLog[]) => {
       startTime: log.createdTime,
       endTime: prevItem.createdTime,
       isUp: doesLogHaveSuccessType(log) || doesLogHavePauseType(log),
+      logs: log,
     });
   });
 
@@ -244,12 +247,10 @@ export const getUptimeAggregations = (
   }
 
   const buckets = getStatusChangeBuckets(logs);
-  console.log('buckets', buckets);
   const intervalInMs = getIntervalInMs(interval);
 
   const endOfCurrentInterval = getEndOfCurrentInterval(interval);
   const now = new Date().getTime();
-  const before = now - intervalInMs * intervalCount;
 
   const firstLogTime = buckets[buckets.length - 1].startTime;
 
@@ -288,20 +289,18 @@ export const getUptimeAggregations = (
         return acc;
       }, 0);
 
+      let bucketedLogs: ReadMQTTJobLog[] = [];
+      bucketsForCurrentInterval.forEach((bucket) => {
+        bucketedLogs.push(bucket.logs);
+      });
+
       return {
-        logs: [],
         endTime,
         startTime,
         uptimePercentage:
           (uptime / (endTime - Math.max(startTime, firstLogTime))) * 100,
+        logs: bucketedLogs,
       };
-    });
-
-  logs
-    .filter(({ createdTime }) => createdTime >= before)
-    .forEach((log) => {
-      const daysBefore = Math.floor((now - log.createdTime) / DAY_IN_MS);
-      aggregations[daysBefore].logs.push(log);
     });
 
   return aggregations;

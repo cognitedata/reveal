@@ -26,50 +26,57 @@ const SourceStatusItemTooltip = ({
 }: SourceStatusItemTooltipProps): JSX.Element => {
   const { t } = useTranslation();
 
-  const getContent = (): {
-    showDate: boolean;
-    text: string;
-    textAlign: any;
-    logs?: DailyLogAggregation['logs'];
-    iconType?: IconType;
-    iconColor?: 'critical' | 'neutral';
-  } => {
-    if (aggregation.logs.length === 0) {
-      return {
-        showDate: false,
-        text: t('source-status-no-data'),
-        textAlign: 'center',
-      };
-    } else if (aggregation.logs.every((log) => doesLogHaveSuccessType(log))) {
-      return {
-        showDate: true,
-        text: t('source-status-success'),
-        textAlign: 'center',
-      };
-    } else if (aggregation.logs.some((log) => doesLogHaveErrorType(log))) {
-      return {
-        showDate: true,
-        text: t('source-status-error', {
-          logCount: aggregation.logs.filter((log) => doesLogHaveErrorType(log))
-            .length,
-        }),
-        textAlign: 'left',
-        logs: aggregation.logs.filter((log) => doesLogHaveErrorType(log)),
-        iconType: 'ErrorFilled',
-        iconColor: 'critical',
-      };
-    } else {
-      return {
-        showDate: true,
-        text: t('source-status-other', { logCount: aggregation.logs.length }),
-        textAlign: 'left',
-        logs: aggregation.logs,
-        iconType: 'InfoFilled',
-        iconColor: 'neutral',
-      };
+  const getUptimeIcon = (uptimePercentage: number) => {
+    if (uptimePercentage === 100) {
+      return (
+        <Icon
+          type="CheckmarkFilled"
+          css={{
+            color: Colors[`text-icon--status-success--inverted`],
+          }}
+        />
+      );
     }
+
+    if (uptimePercentage >= 99.5) {
+      return (
+        <Icon
+          type="WarningFilled"
+          css={{
+            color: Colors[`text-icon--status-warning--inverted`],
+          }}
+        />
+      );
+    }
+
+    if (uptimePercentage >= 0 && uptimePercentage < 99.5) {
+      return (
+        <Icon
+          type="ErrorFilled"
+          css={{
+            color: Colors[`text-icon--status-critical--inverted`],
+          }}
+        />
+      );
+    }
+
+    return (
+      <Icon
+        type="InfoFilled"
+        css={{
+          color: Colors[`text-icon--status-neutral--inverted`],
+        }}
+      />
+    );
   };
-  const content = getContent();
+
+  const isPausedEntireTime = aggregation.logs.every((log) => {
+    return log.type === 'stopped';
+  });
+
+  const pausedOnlyLogs = aggregation.logs.filter((log) => {
+    return log.type === 'stopped';
+  });
 
   const getTopicFilter = (log: any) => {
     const sourceJob = source.jobs.find((job) => {
@@ -77,8 +84,6 @@ const SourceStatusItemTooltip = ({
     });
     return sourceJob?.topicFilter;
   };
-  // console.log(aggregation);
-  // console.log(aggregation.log);
 
   return (
     <div css={{ flex: 1 }}>
@@ -87,45 +92,37 @@ const SourceStatusItemTooltip = ({
           <Flex direction="column">
             <span>{formatTime(aggregation.endTime, true)}</span>
             <span>
-              <Flex>
-                {aggregation.uptimePercentage !== -1 && content.iconType && (
-                  <Icon
-                    type={content.iconType}
-                    css={{
-                      color:
-                        Colors[
-                          `text-icon--status-${content.iconColor}--inverted`
-                        ],
-                    }}
-                  />
-                )}
-                {aggregation.uptimePercentage === -1
-                  ? t('source-status-no-data')
-                  : t('uptime-with-percentage', {
-                      percentage: formatUptime(aggregation.uptimePercentage),
-                    })}
+              <Flex css={{ gap: '5px' }}>
+                {aggregation.uptimePercentage !== -1 &&
+                  isPausedEntireTime === false &&
+                  getUptimeIcon(aggregation.uptimePercentage)}
+                {isPausedEntireTime === false &&
+                  (aggregation.uptimePercentage === -1
+                    ? t('source-status-no-data')
+                    : t('uptime-with-percentage', {
+                        percentage: formatUptime(aggregation.uptimePercentage),
+                      }))}
               </Flex>
             </span>
-            {aggregation.logs.filter((log) => {
-              return log.type === 'stopped';
-            }).length > 0 && (
+            {pausedOnlyLogs.length > 0 && (
               <span>
-                <Flex alignItems="center">
-                  {content.iconType && (
-                    <Icon
-                      type={content.iconType}
-                      css={{
-                        color:
-                          Colors[
-                            `text-icon--status-${content.iconColor}--inverted`
-                          ],
-                      }}
-                    />
-                  )}
-                  {content.text}
+                <Flex alignItems="center" css={{ gap: '5px' }}>
+                  <Icon
+                    type="InfoFilled"
+                    css={{
+                      color: Colors[`text-icon--status-neutral--inverted`],
+                    }}
+                  />
+                  {isPausedEntireTime
+                    ? t('source-status-other', {
+                        count: pausedOnlyLogs.length,
+                      })
+                    : t('source-status-earlier-pause', {
+                        count: pausedOnlyLogs.length,
+                      })}
                 </Flex>
-                {content.logs &&
-                  content.logs.map((log) => (
+                {pausedOnlyLogs &&
+                  pausedOnlyLogs.map((log) => (
                     <div key={log.createdTime}>{getTopicFilter(log)}</div>
                   ))}
               </span>
