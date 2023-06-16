@@ -48,10 +48,6 @@ export const SourceStatus = ({
     return [arr, average];
   }, [aggregationInterval, logs]);
 
-  // console.log(logs);
-  console.log(aggregations);
-  // console.log(source);
-
   const [_, setSearchParams] = useSearchParams();
 
   return (

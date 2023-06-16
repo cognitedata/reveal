@@ -1,15 +1,9 @@
 import React from 'react';
 
-import { Flex, Tooltip, Icon, IconType, Colors } from '@cognite/cogs.js';
+import { Flex, Tooltip, Icon, Colors } from '@cognite/cogs.js';
 
 import { useTranslation } from 'common';
-import {
-  UptimeAggregation,
-  formatUptime,
-  DailyLogAggregation,
-  doesLogHaveSuccessType,
-  doesLogHaveErrorType,
-} from 'utils/hostedExtractors';
+import { UptimeAggregation, formatUptime } from 'utils/hostedExtractors';
 import { formatTime } from '@cognite/cdf-utilities';
 import { MQTTSourceWithJobMetrics } from 'hooks/hostedExtractors';
 

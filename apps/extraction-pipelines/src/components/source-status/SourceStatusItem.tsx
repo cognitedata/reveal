@@ -33,10 +33,18 @@ export const SourceStatusItem = ({
   aggregation,
   source,
 }: SourceStatusItemProps): JSX.Element => {
+  const isPausedEntireTime = aggregation.logs.every((log) => {
+    return log.type === 'stopped';
+  });
+
   return (
     <div style={{ flex: 1 }}>
       <SourceStatusItemTooltip aggregation={aggregation} source={source}>
-        {renderItem(aggregation.uptimePercentage)}
+        {isPausedEntireTime ? (
+          <AggregationItemAllPaused />
+        ) : (
+          renderItem(aggregation.uptimePercentage)
+        )}
       </SourceStatusItemTooltip>
     </div>
   );
@@ -94,5 +102,17 @@ const AggregationItemWarning = styled(AggregationItemBase)`
 
   :active {
     background-color: ${Colors['decorative--yellow--700']};
+  }
+`;
+
+const AggregationItemAllPaused = styled(AggregationItemBase)`
+  background-color: ${Colors['surface--status-undefined--strong--default']};
+
+  :hover {
+    background-color: ${Colors['surface--status-undefined--strong--hover']};
+  }
+
+  :active {
+    background-color: ${Colors['surface--status-undefined--strong--pressed']};
   }
 `;
