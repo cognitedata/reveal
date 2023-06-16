@@ -1,5 +1,10 @@
 import React from 'react';
 
+import {
+  AggregatedFilterV2,
+  DateFilterV2,
+  MetadataFilterV2,
+} from '@data-exploration/containers';
 import head from 'lodash/head';
 
 import { useList } from '@cognite/sdk-react-query-hooks';
@@ -8,10 +13,7 @@ import { InternalEventsFilters } from '@data-exploration-lib/core';
 import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
 
 import { AggregatedEventFilterV2 } from './AggregatedEventFilter/AggregatedEventFilter';
-import { AggregatedFilterV2 } from './AggregatedFilter/AggregatedFilter';
 import { BaseFilterCollapse } from './BaseFilterCollapse/BaseFilterCollapse';
-import { DateFilterV2 } from './DateFilter/DateFilter';
-import { MetadataFilterV2 } from './MetadataFilter/MetadataFilter';
 
 export const EventFilters = ({
   filter,

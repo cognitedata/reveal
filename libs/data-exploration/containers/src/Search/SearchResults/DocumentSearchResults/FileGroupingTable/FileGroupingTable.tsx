@@ -43,7 +43,7 @@ export const FileGroupingTable = ({
   data,
   onItemClicked,
 }: FileGroupingTableProps) => {
-  const { results: documents, isLoading } = useDocumentSearchResultQuery(
+  const { results: documents, isInitialLoading } = useDocumentSearchResultQuery(
     {
       filter,
       query,
@@ -63,7 +63,7 @@ export const FileGroupingTable = ({
   });
   const docs: Document[] = convertFilesToDocs(files || data);
 
-  if (isLoading) {
+  if (isInitialLoading) {
     return <EmptyState isLoading title={LOADING_RESULTS} />;
   }
 

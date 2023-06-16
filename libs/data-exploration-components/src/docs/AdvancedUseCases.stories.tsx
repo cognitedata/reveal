@@ -1,13 +1,13 @@
 import React from 'react';
 
-import { AssetTable } from '@data-exploration/containers';
+import { AssetTable, FileTable } from '@data-exploration/containers';
 import { assets } from '@data-exploration-components/stubs/assets';
 import { files } from '@data-exploration-components/stubs/files';
 import { PartialStoryFn } from '@storybook/addons';
 
 import { Button } from '@cognite/cogs.js';
 
-import { FileTable, Splitter } from '..';
+import { Splitter } from '..';
 import { useResourcePreview, ResourcePreviewProvider } from '../context';
 
 import { Wrapper } from './utils';

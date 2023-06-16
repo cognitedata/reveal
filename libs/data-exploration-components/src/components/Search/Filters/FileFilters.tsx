@@ -3,12 +3,14 @@ import React from 'react';
 import { BaseFilterCollapse } from '@data-exploration/components';
 import {
   AggregatedFilterV2,
-  MetadataFilterV2,
-  ByAssetFilterV2,
-  DataSetFilterV2,
   DateFilterV2,
   LabelFilterV2,
+  MetadataFilterV2,
   StringFilterV2,
+} from '@data-exploration/containers';
+import {
+  ByAssetFilterV2,
+  DataSetFilterV2,
 } from '@data-exploration-components/components/SearchNew';
 import { ResourceTypes } from '@data-exploration-components/types';
 

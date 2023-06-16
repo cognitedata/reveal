@@ -6,3 +6,4 @@ export * from './useFlagDocumentGPT';
 export * from './useFlagOverlayNavigation';
 export * from './useFlagPointCloudSearch';
 export * from './useFlagPointsOfInterestFeature';
+export * from './useFlagDocumentsApiEnabled';

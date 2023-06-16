@@ -12,7 +12,10 @@ import { useSDK } from '@cognite/sdk-provider';
 
 import { ResourceActionsProvider } from '@data-exploration-app/context/ResourceActionsContext';
 import { ResourceSelectionProvider } from '@data-exploration-app/context/ResourceSelectionContext';
-import { useFlagAdvancedFilters } from '@data-exploration-app/hooks';
+import {
+  useFlagAdvancedFilters,
+  useFlagDocumentsApiEnabled,
+} from '@data-exploration-app/hooks';
 import { useUserInformation } from '@data-exploration-app/hooks/hooks';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
 
@@ -32,6 +35,7 @@ export default function App() {
   const { flow } = getFlow();
   const { data: userInfo } = useUserInformation();
   const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
+  const isDocumentsApiEnabled = useFlagDocumentsApiEnabled();
 
   return (
     <Suspense fallback={<Spinner />}>
@@ -49,6 +53,7 @@ export default function App() {
               }}
               trackUsage={trackUsage}
               isAdvancedFiltersEnabled={isAdvancedFiltersEnabled}
+              isDocumentsApiEnabled={isDocumentsApiEnabled}
             >
               <Routes>
                 <Route path="/explore/*" element={<Exploration />} />
