@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
 import { Provider } from 'react-redux';
-import { Route, Routes, BrowserRouter } from 'react-router-dom';
+// import { Route, Routes, BrowserRouter } from 'react-router-dom';
 
 import { AppStateProvider } from '@interactive-diagrams-app/context';
 import { setItemInStorage } from '@interactive-diagrams-app/hooks';
-import RootApp from '@interactive-diagrams-app/pages/App';
-import { root } from '@interactive-diagrams-app/routes/paths';
+// import RootApp from '@interactive-diagrams-app/pages/App';
+// import { root } from '@interactive-diagrams-app/routes/paths';
 import store, {
   persistedState,
   loadLocalStorage,
@@ -71,14 +71,7 @@ const App = () => {
               <AppStateProvider>
                 <Provider store={store}>
                   <SubAppWrapper title="Interactive Engineering Diagrams">
-                    <BrowserRouter>
-                      <Routes>
-                        <Route
-                          path={`/:project/${root}/*`}
-                          element={<RootApp />}
-                        />
-                      </Routes>
-                    </BrowserRouter>
+                    <div>test</div>
                   </SubAppWrapper>
                 </Provider>
               </AppStateProvider>
