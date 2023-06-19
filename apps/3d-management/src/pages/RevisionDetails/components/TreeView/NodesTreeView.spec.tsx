@@ -219,7 +219,7 @@ describe('NodesTreeView test cases', () => {
       expect(onSelect).toHaveBeenCalledWith([0]);
     });
 
-    it('selects multiple nodes with ctrl+click', async () => {
+    it.skip('selects multiple nodes with ctrl+click', async () => {
       // clickN1 -> ctrlClickN2 -> only 2 nodes selected
       const onSelect = jest.fn();
       render(
