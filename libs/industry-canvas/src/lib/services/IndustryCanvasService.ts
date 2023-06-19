@@ -75,7 +75,7 @@ export class IndustryCanvasService {
   }
 
   public async getCanvasById(
-    canvasId: string
+    canvasExternalId: string
   ): Promise<SerializedCanvasDocument> {
     const res = await this.fdmClient.graphQL<{
       canvases: {
@@ -84,8 +84,13 @@ export class IndustryCanvasService {
     }>(
       // TODO(DEGR-2457): add support for paginating through containerReferences and canvasAnnotations
       gql`
-        query GetCanvasById($filter: _List${ModelNames.CANVAS}Filter) {
-          canvases: listCanvas(filter: $filter) {
+        query GetCanvasById {
+          canvases: getCanvasById(
+            instance: {
+              space: "${IndustryCanvasService.INSTANCE_SPACE}",
+              externalId: "${canvasExternalId}"
+            }
+          ) {
             items {
               externalId
               name
@@ -125,22 +130,18 @@ export class IndustryCanvasService {
           }
         }
       `,
-      IndustryCanvasService.DATA_MODEL_EXTERNAL_ID,
-      {
-        filter: {
-          and: [
-            { externalId: { eq: canvasId } },
-            {
-              space: {
-                eq: IndustryCanvasService.INSTANCE_SPACE,
-              },
-            },
-          ],
-        },
-      }
+      IndustryCanvasService.DATA_MODEL_EXTERNAL_ID
     );
     if (res.canvases.items.length === 0) {
-      throw new Error(`Couldn't find canvas with id ${canvasId}`);
+      throw new Error(
+        `Couldn't find canvas with external id ${canvasExternalId}`
+      );
+    }
+
+    if (res.canvases.items.length > 1) {
+      throw new Error(
+        `Found multiple canvases with external id '${canvasExternalId}' in the space '${IndustryCanvasService.INSTANCE_SPACE}'. This shouldn't happen.`
+      );
     }
 
     const fdmCanvas = res.canvases.items[0];
