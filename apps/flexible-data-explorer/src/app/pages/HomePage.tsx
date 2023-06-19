@@ -12,6 +12,7 @@ import { SearchBar } from '../containers/search/SearchBar';
 import { useDataModelParams } from '../hooks/useDataModelParams';
 import { useNavigation } from '../hooks/useNavigation';
 import { useTranslation } from '../hooks/useTranslation';
+import { useGetAssetCentricDataExplorerUrl } from '../hooks/useUrl';
 import { useTypesDataModelQuery } from '../services/dataModels/query/useTypesDataModelQuery';
 
 export const HomePage = () => {
@@ -24,6 +25,8 @@ export const HomePage = () => {
 
   const [siteSelectionVisible, setSiteSelectionVisible] =
     useState<boolean>(false);
+
+  const assetCentricDataExplorerUrl = useGetAssetCentricDataExplorerUrl();
 
   const handleCategoryClick = useCallback(
     (dataType: string) => {
@@ -62,6 +65,14 @@ export const HomePage = () => {
           </StyledBody>
         </TitleContainer>
         <SearchBar width="640px" />
+        <FooterContainer
+          href={assetCentricDataExplorerUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <span>Open in Data Explorer</span>
+          <Icon type="ExternalLink" />
+        </FooterContainer>
       </SearchContainer>
 
       <Page.Body loading={isLoading}>
@@ -91,6 +102,27 @@ export const HomePage = () => {
     </Page>
   );
 };
+
+const FooterContainer = styled.a`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+      269.53deg,
+      rgba(109, 135, 191, 0.8) 0.32%,
+      rgba(19, 28, 66, 0.8) 99.67%
+    ),
+    rgba(250, 250, 250, 0.8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+
+  .cogs-icon {
+    margin-left: 7px;
+    color: #6d87bfcc;
+  }
+`;
 
 const TitleContainer = styled.span`
   display: flex;
