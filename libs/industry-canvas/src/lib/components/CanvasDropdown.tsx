@@ -15,7 +15,7 @@ import {
   Tooltip,
 } from '@cognite/cogs.js';
 
-import { COPIED_TEXT, useClipboard } from '@data-exploration-lib/core';
+import { useClipboard } from '@data-exploration-lib/core';
 
 import { translationKeys } from '../common';
 import { MetricEvent, TOAST_POSITION } from '../constants';
@@ -89,10 +89,23 @@ const CanvasDropdown: React.FC<CanvasDropdownProps> = ({
 
   const onCopyLinkClick = (canvas: SerializedCanvasDocument) => {
     onCopy(`${window.location.origin}${getCanvasLink(canvas.externalId)}`);
-    toast.success(COPIED_TEXT, {
-      toastId: `canvas-link-copied-${uuid()}`,
-      position: TOAST_POSITION,
-    });
+    toast.success(
+      <div>
+        <b>
+          {t(translationKeys.CANVAS_LINK_COPIED_TITLE, 'Canvas link copied')}
+        </b>
+        <p>
+          {t(
+            translationKeys.CANVAS_LINK_COPIED_SUB_TITLE,
+            'Canvas link successfully copied to your clipboard'
+          )}
+        </p>
+      </div>,
+      {
+        toastId: `canvas-link-copied-${uuid()}`,
+        position: TOAST_POSITION,
+      }
+    );
     setIsMenuOpen(false);
   };
 

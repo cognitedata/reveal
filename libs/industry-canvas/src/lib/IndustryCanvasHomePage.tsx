@@ -91,10 +91,20 @@ export const IndustryCanvasHomePage = () => {
             `${window.location.origin}${getCanvasLink(row.externalId)}`
           );
           toast.success(
-            t(
-              translationKeys.CANVAS_LINK_COPIED,
-              'Canvas link copied to clipboard.'
-            ),
+            <div>
+              <b>
+                {t(
+                  translationKeys.CANVAS_LINK_COPIED_TITLE,
+                  'Canvas link copied'
+                )}
+              </b>
+              <p>
+                {t(
+                  translationKeys.CANVAS_LINK_COPIED_SUB_TITLE,
+                  'Canvas link successfully copied to your clipboard'
+                )}
+              </p>
+            </div>,
             {
               toastId: `copy-canvas-${row.externalId}`,
               position: TOAST_POSITION,
