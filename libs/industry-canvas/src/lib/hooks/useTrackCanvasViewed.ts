@@ -2,15 +2,14 @@ import { useEffect, useRef } from 'react';
 
 import { MetricEvent } from '../constants';
 import { SerializedCanvasDocument } from '../types';
+import { useUserProfile } from '../UserProfileProvider';
 import useMetrics from '../utils/tracking/useMetrics';
-
-import { useUserProfileContext } from './use-query/useUserProfile';
 
 const useTrackCanvasViewed = (
   activeCanvas: SerializedCanvasDocument | undefined
 ) => {
   const trackUsage = useMetrics();
-  const { userProfile } = useUserProfileContext();
+  const { userProfile } = useUserProfile();
   const hasTrackedRef = useRef(false);
 
   useEffect(() => {

@@ -5,8 +5,7 @@ import { useSDK } from '@cognite/sdk-provider';
 
 import { QueryKeys } from '../../constants';
 import { UserIdentifier } from '../../types';
-
-import { UserProfile } from './useUserProfile';
+import { UserProfile } from '../../UserProfileProvider';
 
 export const getUserProfilesByIds = async (
   client: CogniteClient,

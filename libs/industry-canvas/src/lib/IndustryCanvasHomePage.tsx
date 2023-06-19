@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { formatDistance, format } from 'date-fns';
 import { omit, sortBy } from 'lodash';
 
@@ -19,14 +18,10 @@ import useCanvasesWithUserProfiles, {
 import useCanvasSearch from './hooks/useCanvasSearch';
 import { useQueryParameter } from './hooks/useQueryParameter';
 import useTableState from './hooks/useTableState';
-import {
-  useIndustryCanvasContext,
-  IndustryCanvasProvider,
-} from './IndustryCanvasContext';
-import { UserProfileProvider } from './UserProfileProvider';
+import { useIndustryCanvasContext } from './IndustryCanvasContext';
 import { getCanvasLink } from './utils/getCanvasLink';
 
-const IndustryCanvasHome = () => {
+export const IndustryCanvasHomePage = () => {
   const { canvases, isCreatingCanvas, createCanvas } =
     useIndustryCanvasContext();
   const navigate = useNavigate();
@@ -200,27 +195,6 @@ const IndustryCanvasHome = () => {
         </CanvasListContainer>
       </div>
     </>
-  );
-};
-
-export const IndustryCanvasHomePage = () => {
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-        refetchOnWindowFocus: false,
-        refetchOnReconnect: false,
-      },
-    },
-  });
-  return (
-    <QueryClientProvider client={queryClient}>
-      <UserProfileProvider>
-        <IndustryCanvasProvider>
-          <IndustryCanvasHome />
-        </IndustryCanvasProvider>
-      </UserProfileProvider>
-    </QueryClientProvider>
   );
 };
 
