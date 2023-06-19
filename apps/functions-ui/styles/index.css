@@ -1,0 +1,40 @@
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.ant-layout-header {
+  background: white;
+}
+.ant-layout-content {
+  padding: 30px 80px;
+  margin-top: 54px;
+}
+
+@media (max-width: 768px) {
+  .ant-layout-content {
+    padding: 30px 0px;
+    margin-top: 54px;
+  }
+}
+
+button.ant-btn {
+  display: inline-flex;
+  align-items: center;
+}
+button.ant-btn > span {
+  align-self: center;
+  margin: 0 auto;
+}
+button.ant-btn i.anticon {
+  line-height: unset;
+  display: flex;
+  margin-bottom: 2px;
+}
+
+h1,
+h2,
+h3 {
+  font-weight: bold;
+}
