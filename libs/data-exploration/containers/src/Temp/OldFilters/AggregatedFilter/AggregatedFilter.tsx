@@ -13,7 +13,7 @@ import { NIL_FILTER_VALUE } from '@data-exploration-lib/domain-layer';
 import { reactSelectCogsStylingProps } from '../elements';
 import { FilterFacetTitle } from '../FilterFacetTitle';
 
-export const AggregatedFilterV2 = <T,>({
+export const AggregatedFilterV2 = <T extends object>({
   items,
   value,
   setValue,

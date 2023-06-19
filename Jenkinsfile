@@ -11,6 +11,7 @@ static final String[] APPLICATIONS = [
   'copilot',
   'industry-canvas-ui',
   'iot-hub',
+  '3d-management',
   'transformations',
   'cdf-document-search'
 ]
@@ -34,6 +35,7 @@ static final Map<String, String> FIREBASE_APP_SITES = [
   'copilot': 'copilot',
   'industry-canvas-ui': 'industry-canvas-ui',
   'iot-hub': 'iot-hub',
+  '3d-management': '3d-management',
   'transformations': 'transformations',
   'cdf-document-search': 'document-search'
 ]
@@ -47,6 +49,7 @@ static final Map<String, String> PREVIEW_PACKAGE_NAMES = [
   'copilot': "@cognite/cdf-copilot",
   'industry-canvas-ui': "@cognite/cdf-industry-canvas-ui",
   'iot-hub': "@cognite/cdf-iot-hub",
+  '3d-management': '@cognite/cdf-3d-management',
   'transformations': "@cognite/cdf-transformations-2",
   'cdf-document-search': 'cognite/cdf-document-search-ui'
 ]
@@ -63,8 +66,10 @@ static final Map<String, String> SENTRY_PROJECT_NAMES = [
 static final String[] PREVIEW_STORYBOOK = [
   'platypus',
   'data-exploration-components-old',
-  'shared-plotting-components'
+  'shared-plotting-components',
 ]
+  // '3d-management',
+  // Should be added after monorepo storybook version is upgraded to v7.
 
 // The Sentry DSN is the URL used to report issues into Sentry. This can be
 // found on your Sentry's project page, or by going here:
