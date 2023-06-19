@@ -32,6 +32,7 @@ export const ResourceSelectorTable = ({
   setSelectedRows,
   onFilterChange,
   isDocumentsApiEnabled = true,
+  shouldShowPreviews = true,
   onClick = noop,
 }: {
   resourceType: ResourceType;
@@ -42,10 +43,11 @@ export const ResourceSelectorTable = ({
   selectionMode?: ResourceSelectionMode;
   onClick?: (item: ResourceItems) => void;
   onFilterChange?: (newValue: Record<string, unknown>) => void;
-
+  shouldShowPreviews?: boolean;
   isDocumentsApiEnabled?: boolean;
 }) => {
   const commonProps = {
+    shouldShowPreviews,
     enableSelection: selectionMode === 'multiple',
     id: `${resourceType}-resource-selector`,
     query,

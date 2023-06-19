@@ -77,6 +77,7 @@ export const ResourceSelector = ({
   initialSelectedResource,
   isDocumentsApiEnabled = true,
   addButtonText,
+  shouldShowPreviews = true,
 }: {
   visible: boolean;
   onClose: () => void;
@@ -85,6 +86,7 @@ export const ResourceSelector = ({
   initialSelectedResource?: ResourceItem;
   addButtonText?: string;
   isDocumentsApiEnabled?: boolean;
+  shouldShowPreviews?: boolean;
 } & Partial<SelectionProps>) => {
   const { filterState, updateFilterType, resetFilterType, resetAllFilters } =
     useFilterState(initialFilter);
@@ -300,6 +302,7 @@ export const ResourceSelector = ({
                 query={debouncedQuery}
                 resourceType={activeKey}
                 isDocumentsApiEnabled={isDocumentsApiEnabled}
+                shouldShowPreviews={shouldShowPreviews}
                 onFilterChange={(nextState) => {
                   if (isDocumentsApiEnabled) {
                     updateFilterType(

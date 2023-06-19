@@ -486,6 +486,7 @@ export const IndustryCanvasPage = () => {
         initialFilter={resourceSelectorFilter}
         initialSelectedResource={initialSelectedResource}
         addButtonText="Add to canvas"
+        shouldShowPreviews={false}
       />
       <PageTitle title="Industrial Canvas" />
       <TitleRowWrapper>
