@@ -6,7 +6,14 @@ import styled from 'styled-components';
 import { formatDistance, format } from 'date-fns';
 import { omit, sortBy } from 'lodash';
 
-import { Button, Table, InputExp, toast, Tooltip } from '@cognite/cogs.js';
+import {
+  Button,
+  Table,
+  InputExp,
+  toast,
+  Tooltip,
+  Body,
+} from '@cognite/cogs.js';
 
 import { translationKeys } from './common';
 import CanvasDeletionModal from './components/CanvasDeletionModal';
@@ -21,11 +28,13 @@ import { useQueryParameter } from './hooks/useQueryParameter';
 import useTableState from './hooks/useTableState';
 import { useTranslation } from './hooks/useTranslation';
 import { useIndustryCanvasContext } from './IndustryCanvasContext';
+import { UserProfile, useUserProfile } from './UserProfileProvider';
 import { getCanvasLink } from './utils/getCanvasLink';
 
 export const IndustryCanvasHomePage = () => {
   const { canvases, isCreatingCanvas, createCanvas } =
     useIndustryCanvasContext();
+  const { userProfile } = useUserProfile();
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { canvasesWithUserProfiles } = useCanvasesWithUserProfiles({
@@ -50,6 +59,41 @@ export const IndustryCanvasHomePage = () => {
     isDeletingCanvas,
   } = useCanvasDeletion();
   const { initialTableState, onTableStateChange } = useTableState();
+
+  const getUpdatedByUserString = (
+    currentUserProfile: UserProfile | undefined
+  ) => {
+    if (
+      currentUserProfile === undefined ||
+      currentUserProfile.displayName === undefined
+    ) {
+      return t(translationKeys.BY_UNKNOWN_USER, 'by unknown user');
+    }
+
+    if (userProfile.userIdentifier === currentUserProfile.userIdentifier) {
+      return t(translationKeys.BY_ME, 'by me');
+    }
+
+    return t(translationKeys.BY_USER, {
+      user: currentUserProfile.displayName,
+      defaultValue: 'by {{user}}',
+    });
+  };
+
+  const getCreatedByName = (createdByUserProfile: UserProfile | undefined) => {
+    if (
+      createdByUserProfile === undefined ||
+      createdByUserProfile.displayName === undefined
+    ) {
+      return t(translationKeys.UNKNOWN_USER, 'Unknown user');
+    }
+
+    if (userProfile.userIdentifier === createdByUserProfile.userIdentifier) {
+      return t(translationKeys.ME, 'Me');
+    }
+
+    return createdByUserProfile.displayName;
+  };
 
   const renderNewCanvasButton = () => (
     <div>
@@ -188,13 +232,26 @@ export const IndustryCanvasHomePage = () => {
                   'Updated at'
                 ),
                 accessor: 'updatedAtDate',
-                Cell: ({ value }: { value: Date }): JSX.Element => (
-                  <span>
-                    {formatDistance(value, new Date(), {
+                Cell: ({ row }): JSX.Element => {
+                  const rowData = row.original;
+
+                  const lastUpdatedString = formatDistance(
+                    rowData.updatedAtDate,
+                    new Date(),
+                    {
                       addSuffix: true,
-                    })}
-                  </span>
-                ),
+                    }
+                  );
+
+                  return (
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                      <span>{lastUpdatedString}</span>
+                      <Body level={3} muted>
+                        {getUpdatedByUserString(rowData.updatedByUserProfile)}
+                      </Body>
+                    </div>
+                  );
+                },
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore - sortType is not defined in the Cogs table types, but works just fine. Tracked by: https://cognitedata.atlassian.net/browse/CDS-1530
                 sortType: 'datetime',
@@ -217,8 +274,7 @@ export const IndustryCanvasHomePage = () => {
                   translationKeys.HOMEPAGE_TABLE_CREATED_BY_COLUMN,
                   'Created by'
                 ),
-                accessor: (row) =>
-                  row.createdByUserProfile?.displayName ?? 'Unknown user',
+                accessor: (row) => getCreatedByName(row.createdByUserProfile),
               },
               {
                 id: 'row-options',
