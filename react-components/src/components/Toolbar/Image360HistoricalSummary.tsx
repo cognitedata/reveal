@@ -3,21 +3,21 @@
  */
 
 import { Detail, Flex } from '@cognite/cogs.js';
-import React from 'react';
+import React, { forwardRef, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { Thumbnail } from '../utils/Thumbnail';
 import { Cognite3DViewer, Image360 } from '@cognite/reveal';
 // Using named import to avoid react component creation error when default import is used.
 import { uniqueId } from 'lodash';
 
-export interface Image360RevisionDetails{
+export interface Image360RevisionDetails {
   date?: string;
   imageUrl?: string;
   index: number;
   image360Entity: Image360 | undefined;
 };
 
-export interface Image360HistoricalSummaryProps{
+export interface Image360HistoricalSummaryProps {
   stationId?: string;
   stationName?: string;
   viewer?: Cognite3DViewer;
@@ -26,18 +26,19 @@ export interface Image360HistoricalSummaryProps{
   setActiveRevision: (index: number) => void;
 };
 
-export const Image360HistoricalSummary = ({
+export const Image360HistoricalSummary = forwardRef(({
   stationId,
   stationName,
   revisionCollection,
   activeRevision,
   setActiveRevision,
-  viewer
-}: Image360HistoricalSummaryProps) => {
+  viewer,
+}: Image360HistoricalSummaryProps, ref: React.ForwardedRef<number>) => {
+  const gridContainerRef = useRef<HTMLDivElement>(null);
 
   const onRevisionChanged = (revisionDetails: Image360RevisionDetails, index: number) => {
-    if(viewer && revisionDetails.image360Entity) {
-      setActiveRevision(index)
+    if (viewer && revisionDetails.image360Entity) {
+      setActiveRevision(index);
       const revisions = revisionDetails.image360Entity.getRevisions();
       const revisionIndex = revisionDetails.index!;
       if (revisionIndex >= 0 && revisionIndex < revisions.length) {
@@ -46,16 +47,32 @@ export const Image360HistoricalSummary = ({
     }
   };
 
-  return(
+  function isMutableRefObject<T>(ref: React.ForwardedRef<T>): ref is React.MutableRefObject<T> {
+    return (ref as React.MutableRefObject<T>).current !== undefined;
+  }
+
+  function onScroll(e: React.UIEvent<HTMLDivElement, UIEvent>) {
+    if (isMutableRefObject(ref)) {
+      ref.current = e.currentTarget.scrollLeft;
+    }
+  }
+
+  useEffect(() => {
+    if (gridContainerRef.current && isMutableRefObject(ref)) {
+      gridContainerRef.current.scrollLeft = ref.current!;
+    }
+  }, []);
+
+  return (
     <OverviewContainer>
       <StyledFlex direction='column'>
         <StyledSubFlex>{stationName}</StyledSubFlex>
         <StyledDetail>Station: {stationId}</StyledDetail>
       </StyledFlex>
 
-      <StyledLayoutGridContainer>
+      <StyledLayoutGridContainer onScroll={onScroll} ref={gridContainerRef}>
         <StyledLayoutGrid>
-          { revisionCollection.map((revisionDetails, index) => (
+          {revisionCollection.map((revisionDetails, index) => (
             <RevisionItem
               key={uniqueId()}
               onClick={onRevisionChanged.bind(null, revisionDetails, index)}
@@ -64,8 +81,8 @@ export const Image360HistoricalSummary = ({
                 key={index}
                 isActive={activeRevision === index}
                 imageUrl={revisionDetails.imageUrl}
-                isLoading={false}/>
-              <Detail>{revisionDetails.date}</Detail>
+                isLoading={false} />
+              <Detail style={{ height: '16px' }}>{revisionDetails.date}</Detail>
             </RevisionItem>
           ))
           }
@@ -73,7 +90,7 @@ export const Image360HistoricalSummary = ({
       </StyledLayoutGridContainer>
     </OverviewContainer>
   )
-};
+});
 
 const StyledSubFlex = styled(Flex)`
   align-items: flex-start;
@@ -116,11 +133,27 @@ const StyledDetail = styled(Detail)`
 `;
 
 const StyledLayoutGridContainer = styled.div`
-  position: absolute;
   width: 70%;
-  height: 140px;
-  right: 20px;
+  height: fit-content;
   overflow-x: auto;
+  padding: 0 0 5px 0;
+
+  /* Customize scrollbar styles */
+  scrollbar-width: thin;
+  scrollbar-color: #999999 #D9D9D9;
+
+  &::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: #D9D9D9;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #999999;
+    border-radius: 2px;
+  }
 `;
 
 const StyledLayoutGrid = styled.div`
@@ -130,27 +163,23 @@ const StyledLayoutGrid = styled.div`
   gap: 6px;
   justify-content: flex-end;
   min-width: fit-content;
-
-  &::-webkit-scrollbar {
-    width: 18px;
-  }
 `;
 
 const RevisionItem = styled.div`
-  width: 160px;
-  height: 120px;
-  border-radius: 12px;
   display: flex;
   flex-direction: column;
   align-items: center;
   opacity: 0.8;
-  flex-shrink: 0;
+  gap: 10px;
 `;
 
 const OverviewContainer = styled.div`
-  height: 165px;
   display: flex;
-  flex-direction: column;
+  height: fit-content;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
   padding: 16px 16px 8px 16px;
   background: #FFFFFF;
+  box-shadow: 0px -4px 12px rgba(0, 0, 0, 0.25);
 `;
