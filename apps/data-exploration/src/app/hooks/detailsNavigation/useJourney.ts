@@ -16,7 +16,8 @@ import {
 
 // Get/Set journeys to the url from a Journey object.
 export const useJourney = (): [Journey, (journey: Journey) => void] => {
-  const location = useLocation();
+  const { search, pathname } = useLocation();
+
   const [searchParams, setSearchParams] = useSearchParams();
   const journeyValue = searchParams.get(JOURNEY_FIELD);
 
@@ -69,7 +70,7 @@ export const useJourney = (): [Journey, (journey: Journey) => void] => {
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [location.search]
+    [search, pathname]
   );
 
   return [journey, setJourneySearchParam];
