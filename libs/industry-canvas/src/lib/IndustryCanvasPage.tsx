@@ -89,10 +89,6 @@ export const IndustryCanvasPage = () => {
     useState<boolean>(true);
   const [currentZoomScale, setCurrentZoomScale] = useState<number>(1);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
-  const [
-    hasConsumedInitializeWithContainerReferences,
-    setHasConsumedInitializeWithContainerReferences,
-  ] = useState(false);
   const { tool, setTool } = useManagedTool(IndustryCanvasToolType.SELECT);
   const { queryString } = useQueryParameter({ key: SEARCH_QUERY_PARAM_KEY });
 
@@ -112,6 +108,9 @@ export const IndustryCanvasPage = () => {
     initializeWithContainerReferences,
     setCanvasId,
     isCanvasLocked,
+    createInitialCanvas,
+    hasConsumedInitializeWithContainerReferences,
+    setHasConsumedInitializeWithContainerReferences,
   } = useIndustryCanvasContext();
 
   const {
@@ -372,6 +371,16 @@ export const IndustryCanvasPage = () => {
       return;
     }
 
+    if (
+      activeCanvas?.externalId === undefined &&
+      !isCreatingCanvas &&
+      !hasConsumedInitializeWithContainerReferences &&
+      initializeWithContainerReferences !== undefined
+    ) {
+      createInitialCanvas();
+      return;
+    }
+
     if (activeCanvas?.externalId === undefined) {
       return;
     }
@@ -387,6 +396,7 @@ export const IndustryCanvasPage = () => {
     setHasConsumedInitializeWithContainerReferences(true);
   }, [
     initializeWithContainerReferences,
+    isCreatingCanvas,
     activeCanvas?.externalId,
     unifiedViewerRef,
     hasConsumedInitializeWithContainerReferences,
