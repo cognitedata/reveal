@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 
+import { useQueryClient } from '@tanstack/react-query';
 import { Alert, Table } from 'antd';
 import moment from 'moment';
 
@@ -8,8 +9,9 @@ import ViewResponseButton from '../components/buttons/ViewResponseButton';
 import FunctionCall from '../components/FunctionCall';
 import FunctionCallStatus from '../components/FunctionCallStatus';
 import LoadingIcon from '../components/LoadingIcon';
-import { Call } from '../types';
+import { Call, GetCallsArgs } from '../types';
 import { useCalls } from '../utils/hooks';
+import { allCallsPrefix, callsKey } from '../utils/queryKeys';
 
 const callTableColumns = [
   {
@@ -94,9 +96,28 @@ type Props = {
 };
 
 export default function FunctionCalls({ id, name, scheduleId }: Props) {
-  const { data, isFetched, error } = useCalls({ id, scheduleId });
+  const queryClient = useQueryClient();
+  const { data, isFetched, error } = useCalls(
+    { id, scheduleId },
+    {
+      // refetchInterval: 2000,
+      // cacheTime: 0,
+      // staleTime: 0,
+    }
+  );
+
+  useEffect(() => {
+    setInterval(() => {
+      console.log('Calls invalidation');
+      queryClient.invalidateQueries([allCallsPrefix]);
+    }, 4000);
+  }, []);
 
   const functionCalls = data || [];
+
+  useEffect(() => {
+    console.log('FunctionCalls: ', functionCalls);
+  }, [functionCalls]);
 
   if (error) {
     return (
@@ -111,11 +132,14 @@ export default function FunctionCalls({ id, name, scheduleId }: Props) {
   }
 
   return (
-    <Table
-      rowKey={(call) => call.id.toString()}
-      pagination={{ pageSize: 25, showSizeChanger: false }}
-      dataSource={functionCalls}
-      columns={callTableColumns}
-    />
+    <>
+      {Math.random()}
+      <Table
+        rowKey={(call) => call.id.toString()}
+        pagination={{ pageSize: 25, showSizeChanger: false }}
+        dataSource={functionCalls}
+        columns={callTableColumns}
+      />
+    </>
   );
 }

@@ -1,11 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { mount, ReactWrapper } from 'enzyme';
 
+import { logDOM, render } from '@testing-library/react';
 import { Upload, Form } from 'antd';
 import { UploadFile } from 'antd/lib/upload/interface';
-import { logDOM } from '@testing-library/dom';
+import { mount, ReactWrapper } from 'enzyme';
+
+import TestWrapper from '../../utils/TestWrapper';
+
 import UploadFunctionModal, { stuffForUnitTests } from './UploadFunctionModal';
+
+const wrap = (node: React.ReactNode) =>
+  mount(<TestWrapper>{node}</TestWrapper>);
 
 const mockFile = {
   uid: '123',
@@ -18,20 +24,13 @@ describe('UploadFunctionModal', () => {
   describe('component', () => {
     it('renders without crashing', () => {
       expect(() => {
-        const div = document.createElement('div');
-        ReactDOM.render(
-          <UploadFunctionModal onCancel={jest.fn()} />,
-
-          div
-        );
-        ReactDOM.unmountComponentAtNode(div);
+        wrap(<UploadFunctionModal onCancel={jest.fn()} />);
       }).not.toThrow();
     });
 
     it('should call onCancel when button is clicked', () => {
       const cancelFunc = jest.fn();
-      const wrapper = mount(<UploadFunctionModal onCancel={cancelFunc} />);
-
+      const wrapper = wrap(<UploadFunctionModal onCancel={cancelFunc} />);
       const b = wrapper.find('button.ant-modal-close');
       b.simulate('click');
       expect(cancelFunc).toBeCalledTimes(1);
@@ -43,10 +42,10 @@ describe('UploadFunctionModal', () => {
 
     it('should have input areas for all the necessary information', () => {
       // should have function name, description, apikey, owneremail, file, externalId, secrets and metadata
-      const wrapper = mount(<UploadFunctionModal onCancel={jest.fn()} />);
+      const wrapper = wrap(<UploadFunctionModal onCancel={jest.fn()} />);
       const allFormItems = wrapper.find(Form.Item);
       expect(allFormItems).toHaveLength(11);
-      const allFormItemsLabels = allFormItems.map(i => i.text());
+      const allFormItemsLabels = allFormItems.map((i) => i.text());
       expect(allFormItemsLabels).toContain('Function name');
       expect(allFormItemsLabels).toContain('Description');
       expect(allFormItemsLabels).toContain('Owner');
@@ -60,13 +59,13 @@ describe('UploadFunctionModal', () => {
     });
 
     it('should only allow zip files to be uploaded', () => {
-      const wrapper = mount(<UploadFunctionModal onCancel={jest.fn()} />);
+      const wrapper = wrap(<UploadFunctionModal onCancel={jest.fn()} />);
       expect(wrapper.find(Upload).prop('accept')).toBe('.zip');
       wrapper.unmount();
     });
 
     it('should have disabled submit button by default', () => {
-      const wrapper = mount(<UploadFunctionModal onCancel={jest.fn()} />);
+      const wrapper = wrap(<UploadFunctionModal onCancel={jest.fn()} />);
       const uploadButton = wrapper
         .find('button.cogs-button')
         .filterWhere((b: ReactWrapper) => b.text() === 'Upload');
@@ -75,7 +74,7 @@ describe('UploadFunctionModal', () => {
     });
 
     it('should add a key input field and value input field when Add Secret is clicked', () => {
-      const wrapper = mount(<UploadFunctionModal onCancel={jest.fn()} />);
+      const wrapper = wrap(<UploadFunctionModal onCancel={jest.fn()} />);
 
       const addSecretButton = wrapper
         .find('button.cogs-button')
@@ -90,7 +89,7 @@ describe('UploadFunctionModal', () => {
     });
 
     it('should add a key input field and value input field when Add Metadata is clicked', () => {
-      const wrapper = mount(<UploadFunctionModal onCancel={jest.fn()} />);
+      const wrapper = wrap(<UploadFunctionModal onCancel={jest.fn()} />);
 
       const addMetadataButton = wrapper
         .find('button.cogs-button')
@@ -106,7 +105,7 @@ describe('UploadFunctionModal', () => {
     });
 
     it('should remove a SECRET key input field and value input field when remove button is clicked', () => {
-      const wrapper = mount(<UploadFunctionModal onCancel={jest.fn()} />);
+      const wrapper = wrap(<UploadFunctionModal onCancel={jest.fn()} />);
 
       const addSecretButton = wrapper
         .find('button.cogs-button')
@@ -128,7 +127,7 @@ describe('UploadFunctionModal', () => {
     });
 
     it('should remove a METADATA key input field and value input field when remove button is clicked', () => {
-      const wrapper = mount(<UploadFunctionModal onCancel={jest.fn()} />);
+      const wrapper = wrap(<UploadFunctionModal onCancel={jest.fn()} />);
 
       const addMetadataButton = wrapper
         .find('button.cogs-button')

@@ -1,13 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-
 import { MemoryRouter } from 'react-router';
+
 import { mount } from 'enzyme';
 
-import TestWrapper from 'utils/TestWrapper';
 import sdk from '@cognite/cdf-sdk-singleton';
-import { sleep } from 'helpers';
-import { setConsole } from 'react-query';
+
+import { sleep } from '../../helpers';
+import TestWrapper from '../../utils/TestWrapper';
+
 import FunctionLogsModal from './FunctionLogsModal';
 
 const wrap = (node: React.ReactNode) =>
@@ -90,11 +91,11 @@ describe('FunctionLogsModal', () => {
   });
 
   it('displays text if error is set', async () => {
-    setConsole({
-      log: () => {},
-      warn: () => {},
-      error: () => {},
-    });
+    // setLogger({
+    //   log: () => {},
+    //   warn: () => {},
+    //   error: () => {},
+    // });
 
     jest.spyOn(sdk, 'get').mockRejectedValue('log error');
     const wrapper = wrap(

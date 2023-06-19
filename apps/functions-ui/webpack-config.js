@@ -17,6 +17,8 @@ module.exports = composePlugins(
   withReact(),
   withSingleSpa({ useMockEnv }),
   (config) => {
+
+    
     const nodeEnv = process.env.NODE_ENV || 'production';
     console.log(
       `Custom webpack config(${nodeEnv}) for functions-ui was loaded...`
@@ -30,6 +32,18 @@ module.exports = composePlugins(
         languages: ['python'],
       })
     );
+
+    if (
+      nodeEnv === 'mock' ||
+      nodeEnv === 'development' ||
+      (process.env.NX_TASK_TARGET_PROJECT &&
+        process.env.NX_TASK_TARGET_PROJECT === 'platypus-e2e')
+    ) {
+      // add your own webpack tweaks if needed
+      config.resolve.alias['@cognite/cdf-sdk-singleton'] = require.resolve(
+        './src/mock/cogniteSdkSingleton.ts'
+      );
+    }
 
     if (useMockEnv) {
       return config;

@@ -32,10 +32,13 @@ const getCallsSdk = ({ id, scheduleId }: GetCallsArgs): Promise<Call[]> => {
     .post(`/api/v1/projects/${getProject()}/functions/${id}/calls/list`, {
       data: { filter },
     })
-    .then((response) => response.data?.items);
+    .then((response) => {
+      return response.data?.items
+    });
 };
 
 export const getCalls = async (_: QueryKey, args: GetCallsArgs) => {
+  console.log("GetCalls ")
   return getCallsSdk(args);
 };
 
@@ -60,7 +63,7 @@ export const getCall = (_: QueryKey, { id, callId }: GetCallArgs) => {
   }
   return sdk
     .get(`/api/v1/projects/${getProject()}/functions/${id}/calls/${callId}`)
-    .then((response) => response.data);
+    .then((response) => response.data ?? null);
 };
 
 type GetResponseArgs = {
@@ -78,7 +81,7 @@ export const getResponse = (_: QueryKey, { id, callId }: GetResponseArgs) => {
     .get(
       `/api/v1/projects/${getProject()}/functions/${id}/calls/${callId}/response`
     )
-    .then((response) => response?.data?.response);
+    .then((response) => response?.data?.response ?? null);
 };
 
 export const getLogs = (_: QueryKey, { id, callId }: GetResponseArgs) => {

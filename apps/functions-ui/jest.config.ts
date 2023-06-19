@@ -8,4 +8,7 @@ export default {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory: '../../coverage/apps/functions-ui',
+  collectCoverageFrom: ['./src/**/*.{ts,tsx}'],
+  setupFilesAfterEnv: ['./setupTests.js'],
+
 };

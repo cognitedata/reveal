@@ -71,7 +71,7 @@ export const useFunction = (
     () =>
       sdk
         .get(`/api/v1/projects/${getProject()}/functions/${id}`)
-        .then((r) => r.data),
+        .then((r) => r.data ?? null),
     config
   );
 export const useSchedules = (config?: QueryOptions<Schedule[], unknown>) =>
@@ -114,11 +114,13 @@ export const useCalls = (
   args: GetCallsArgs,
   config?: QueryObserverOptions<Call[], unknown>
 ) =>
-  useQuery<Call[]>(
-    callsKey(args),
-    () => getCalls(callsKey(args), args),
-    config
-  );
+  {
+    return useQuery<Call[]>(
+      callsKey(args),
+      () => getCalls(callsKey(args), args),
+      config
+    );
+  }
 
 export const useMultipleCalls = (
   args: GetCallsArgs[],

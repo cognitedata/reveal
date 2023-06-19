@@ -7,7 +7,7 @@ type CallsArg = {
   scheduleId?: number;
 };
 export function callsKey(args: CallsArg | CallsArg[]): QueryKey {
-  return [allCallsPrefix, args];
+  return [allCallsPrefix, ...Object.values(args)];
 }
 export function callKey(args: GetCallArgs): QueryKey {
   return [callPrefix, args];

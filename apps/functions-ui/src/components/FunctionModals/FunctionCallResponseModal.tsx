@@ -58,7 +58,7 @@ export default function ViewResponseModal({ id, callId, onCancel }: Props) {
 
   return (
     <Modal
-      visible
+      open={true}
       title="Call response"
       footer={[
         <Button

@@ -1,17 +1,45 @@
 /* eslint no-console: 0 */
 /* eslint jest/require-top-level-describe: 0 */
 import { configure } from 'enzyme';
-import Adapter from 'enzyme-adapter-react-16';
+import Adapter from '@wojtekmaj/enzyme-adapter-react-17';
 import 'regenerator-runtime/runtime';
 
 configure({ adapter: new Adapter() });
 
-jest.mock('utils/Metrics');
+// jest.mock('utils/Metrics');
 
 jest.mock('@cognite/cdf-utilities', () => {
   return {
     getProject: () => 'mockProject',
+    createLink: jest.fn(),
+
   };
+});
+
+jest.mock('@cognite/sdk-provider', () => {
+  return {
+    useSDK: jest.fn(),
+  };
+});
+
+jest.mock('@cognite/cdf-sdk-singleton', () => ({
+  getUserInformation: jest.fn().mockResolvedValue({ displayName: 'test-user' }),
+  get: jest.fn(),
+  post: jest.fn(),
+}));
+
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: jest.fn().mockImplementation(query => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: jest.fn(), // Deprecated
+    removeListener: jest.fn(), // Deprecated
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+    dispatchEvent: jest.fn(),
+  })),
 });
 
 let consoleWrittenTo;
@@ -27,15 +55,15 @@ beforeEach(() => {
   originalError = global.console.error;
 
   jest.spyOn(global.console, 'log').mockImplementation((...args) => {
-    consoleWrittenTo = true;
+    //consoleWrittenTo = true;
     originalLog(...args);
   });
   jest.spyOn(global.console, 'warn').mockImplementation((...args) => {
-    consoleWrittenTo = true;
+    //consoleWrittenTo = true;
     originalWarn(...args);
   });
   jest.spyOn(global.console, 'error').mockImplementation((...args) => {
-    consoleWrittenTo = true;
+    //consoleWrittenTo = true;
     originalError(...args);
   });
 });

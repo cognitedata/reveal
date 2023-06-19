@@ -115,7 +115,7 @@ export default function CallFunctionModal({ id, closeModal }: Props) {
   return (
     <Modal
       title="Call function"
-      visible
+      open={true}
       width={900}
       onCancel={handleCancel}
       footer={[
