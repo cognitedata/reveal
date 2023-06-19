@@ -1,12 +1,15 @@
-import styled from 'styled-components';
-import { HeaderContainer } from 'components/HeaderContainer';
-import { Layout } from 'components/Layout';
-import { useTranslation } from 'common';
-import { Breadcrumb } from '@cognite/cdf-utilities';
 import { useParams } from 'react-router-dom';
+
+import styled from 'styled-components';
+
+import { Breadcrumb } from '@cognite/cdf-utilities';
 import { Body, Colors, Flex, Icon, Title } from '@cognite/cogs.js';
-import { getReleaseVersionCore } from 'utils/utils';
-import { ReleaseTag } from 'components/ReleaseTag';
+
+import { useTranslation } from '../../common';
+import { getReleaseVersionCore } from '../../utils/utils';
+import { HeaderContainer } from '../HeaderContainer';
+import { Layout } from '../Layout';
+import { ReleaseTag } from '../ReleaseTag';
 
 type DetailsHeaderProps = {
   imageUrl?: string;

@@ -1,5 +1,6 @@
 import sdk from '@cognite/cdf-sdk-singleton';
-import { ExtractorLibraryCategory } from 'components/category-sidebar/CategorySidebarItem';
+
+import { ExtractorLibraryCategory } from '../components/category-sidebar/CategorySidebarItem';
 
 export type Artifact = {
   name: string;

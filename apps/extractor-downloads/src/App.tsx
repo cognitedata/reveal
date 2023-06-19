@@ -1,6 +1,10 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
+
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
+import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
 import {
   AuthWrapper,
   getEnv,
@@ -10,16 +14,13 @@ import {
 import { Loader } from '@cognite/cogs.js';
 import { FlagProvider } from '@cognite/react-feature-flags';
 import { SDKProvider } from '@cognite/sdk-provider';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
-import { GlobalStyles } from 'styles/GlobalStyles';
-import { translations } from 'common/i18n';
-import { ExtractorDetails } from 'components/ExtractorDetails';
-import { NewExtractor } from 'components/NewExtractor';
-
+import { translations } from './common/i18n';
+import { ExtractorDetails } from './components/ExtractorDetails';
+import { NewExtractor } from './components/NewExtractor';
+import SourceSystemDetails from './components/source-system-details/SourceSystemDetails';
 import ExtractorDownloads from './Home/Extractors';
-import SourceSystemDetails from 'components/source-system-details/SourceSystemDetails';
+import { GlobalStyles } from './styles/GlobalStyles';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -56,15 +57,15 @@ const App = () => {
                   <Router>
                     <Routes>
                       <Route
-                        path={`/:project/:subAppPath/new`}
+                        path="/:project/:subAppPath/new"
                         element={<NewExtractor />}
                       />
                       <Route
-                        path={`/:project/:subAppPath/extractor/:extractorExternalId`}
+                        path="/:project/:subAppPath/extractor/:extractorExternalId"
                         element={<ExtractorDetails />}
                       />
                       <Route
-                        path={`/:project/:subAppPath/source-system/:sourceSystemExternalId`}
+                        path="/:project/:subAppPath/source-system/:sourceSystemExternalId"
                         element={<SourceSystemDetails />}
                       />
                       <Route

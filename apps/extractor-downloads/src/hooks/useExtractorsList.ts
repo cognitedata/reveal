@@ -1,7 +1,8 @@
+import { QueryClient, useQuery, useQueryClient } from '@tanstack/react-query';
+
 import { useFlag } from '@cognite/react-feature-flags';
 import { CogniteClient } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
-import { QueryClient, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import {
   Extractor,
@@ -9,7 +10,7 @@ import {
   ExtractorWithReleases,
   Items,
   Release,
-} from 'service/extractors';
+} from '../service/extractors';
 
 export const getExtractorsListQueryKey = (
   shouldShowUnreleased: boolean,

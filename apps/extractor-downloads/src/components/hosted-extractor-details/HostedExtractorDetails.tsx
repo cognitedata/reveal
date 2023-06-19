@@ -1,8 +1,5 @@
 import { useState } from 'react';
 
-import { useTranslation } from 'common';
-import { DetailsHeader } from 'components/DetailsHeader';
-import { Layout } from 'components/Layout';
 import {
   Button,
   Chip,
@@ -12,18 +9,22 @@ import {
   Title,
   formatDate,
 } from '@cognite/cogs.js';
-import { ContentContainer } from 'components/ContentContainer';
+
+import { useTranslation } from '../../common';
+import { ExtractorWithReleases } from '../../service/extractors';
+import { trackUsage } from '../../utils';
+import { ContentContainer } from '../ContentContainer';
+import { CreateConnectionModal } from '../create-connection-modal/CreateConnectionModal';
+import { DetailsHeader } from '../DetailsHeader';
+import { DocsLinkGrid, DocsLinkGridItem } from '../DocsLinkGrid';
 import {
   StyledDivider,
   StyledLayoutGrid,
   StyledLink,
   StyledTagsContainer,
-} from 'components/ExtractorDetails/ExtractorDetails';
-import Markdown from 'components/markdown';
-import { DocsLinkGrid, DocsLinkGridItem } from 'components/DocsLinkGrid';
-import { trackUsage } from 'utils';
-import { CreateConnectionModal } from 'components/create-connection-modal/CreateConnectionModal';
-import { ExtractorWithReleases } from 'service/extractors';
+} from '../ExtractorDetails/ExtractorDetails';
+import { Layout } from '../Layout';
+import Markdown from '../markdown';
 
 type HostedExtractorDetailsProps = {
   extractor: ExtractorWithReleases;
@@ -102,7 +103,7 @@ export const HostedExtractorDetails = ({
                   <Title level="5">{t('set-up-hosted-extractor')}</Title>
                   <Button
                     key={extractor.externalId}
-                    type={'primary'}
+                    type="primary"
                     onClick={() => {
                       setIsModalOpen(true);
                     }}

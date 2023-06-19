@@ -143,6 +143,7 @@
     "react-highlight-words": "^0.18.0",
     "react-hook-form": "^7.25.0",
     "react-is": "18.2.0",
+    "react-markdown": "^8.0.7",
     "react-plotly.js": "^2.6.0",
     "react-querybuilder": "^6.1.2",
     "react-redux": "8.0.5",

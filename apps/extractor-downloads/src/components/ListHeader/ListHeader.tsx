@@ -1,10 +1,11 @@
-import { Flex, Icon, Title } from '@cognite/cogs.js';
 import { useParams } from 'react-router-dom';
 
-import { useTranslation } from 'common';
-import { Layout } from 'components/Layout';
 import { Breadcrumb } from '@cognite/cdf-utilities';
-import { HeaderContainer } from 'components/HeaderContainer';
+import { Flex, Icon, Title } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../common';
+import { HeaderContainer } from '../HeaderContainer';
+import { Layout } from '../Layout';
 
 const ListHeader = () => {
   const { t } = useTranslation();

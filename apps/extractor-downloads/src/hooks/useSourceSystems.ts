@@ -1,13 +1,16 @@
+import { QueryClient, useQuery, useQueryClient } from '@tanstack/react-query';
+
 import { getProject } from '@cognite/cdf-utilities';
-import { useSDK } from '@cognite/sdk-provider';
+import { useFlag } from '@cognite/react-feature-flags';
 import { CogniteClient } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
+
 import {
   ExtractorLibraryCategory,
   EXTRACTOR_LIBRARY_CATEGORIES,
-} from 'components/category-sidebar/CategorySidebarItem';
-import { QueryClient, useQuery, useQueryClient } from '@tanstack/react-query';
-import { ExtractorBase } from 'service/extractors';
-import { useFlag } from '@cognite/react-feature-flags';
+} from '../components/category-sidebar/CategorySidebarItem';
+import { ExtractorBase } from '../service/extractors';
+
 import { ALLOWED_EXTRACTOR_TYPES } from './useExtractorsList';
 
 export const getSourceSystemsQueryKey = () => ['source-systems', 'list'];

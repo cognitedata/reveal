@@ -1,9 +1,5 @@
 import React from 'react';
-import { styleScope } from 'utils/styleScope';
-import { getContainer } from 'utils/utils';
-import { useGlobalStyles } from '@cognite/cdf-utilities';
-import { Icon, Loader, Modal as CogsModal } from '@cognite/cogs.js';
-import cogsStyles from '@cognite/cogs.js/dist/cogs-without-fonts.css';
+
 import {
   ConfigProvider,
   Modal,
@@ -12,6 +8,13 @@ import {
   Dropdown,
   Spin,
 } from 'antd';
+
+import { useGlobalStyles } from '@cognite/cdf-utilities';
+import { Icon, Loader, Modal as CogsModal } from '@cognite/cogs.js';
+import cogsStyles from '@cognite/cogs.js/dist/cogs-without-fonts.css';
+
+import { styleScope } from '../utils/styleScope';
+import { getContainer } from '../utils/utils';
 
 import antdTheme from './antd-theme.less';
 

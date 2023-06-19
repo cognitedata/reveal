@@ -1,14 +1,17 @@
 import { useParams } from 'react-router-dom';
+
 import styled from 'styled-components';
+
 import { Body, Chip, Flex, Loader, Title } from '@cognite/cogs.js';
-import { DetailsHeader } from 'components/DetailsHeader';
-import { Layout } from 'components/Layout';
-import { ContentContainer } from 'components/ContentContainer';
-import { useSolutionsForSourceSystem } from 'hooks/useSolutions';
-import { useSourceSystem } from 'hooks/useSourceSystems';
-import { useTranslation } from 'common';
-import SolutionForSourceSystem from 'components/solution/SolutionForSourceSystem';
-import Markdown from 'components/markdown';
+
+import { useTranslation } from '../../common';
+import { useSolutionsForSourceSystem } from '../../hooks/useSolutions';
+import { useSourceSystem } from '../../hooks/useSourceSystems';
+import { ContentContainer } from '../ContentContainer';
+import { DetailsHeader } from '../DetailsHeader';
+import { Layout } from '../Layout';
+import Markdown from '../markdown';
+import SolutionForSourceSystem from '../solution/SolutionForSourceSystem';
 
 const SourceSystemDetails = () => {
   const { t } = useTranslation();

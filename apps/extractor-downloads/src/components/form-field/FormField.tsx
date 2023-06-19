@@ -1,7 +1,8 @@
 import React from 'react';
 
-import { Body, Colors, Flex, Icon, Tooltip } from '@cognite/cogs.js';
 import styled from 'styled-components';
+
+import { Body, Colors, Flex, Icon, Tooltip } from '@cognite/cogs.js';
 
 type FormFieldProps = {
   children: React.ReactNode;

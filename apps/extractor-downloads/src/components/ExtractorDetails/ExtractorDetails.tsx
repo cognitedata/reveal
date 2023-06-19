@@ -1,6 +1,10 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
+
 import styled from 'styled-components';
+
+import { Collapse, Modal } from 'antd';
+
 import {
   Body,
   Button,
@@ -12,21 +16,21 @@ import {
   Loader,
   Title,
 } from '@cognite/cogs.js';
-import { Collapse, Modal } from 'antd';
-import { DetailsHeader } from 'components/DetailsHeader';
-import { Layout } from 'components/Layout';
-import { useExtractorsList } from 'hooks/useExtractorsList';
-import { ContentContainer } from 'components/ContentContainer';
-import { useTranslation } from 'common';
-import { Artifact, getDownloadUrl } from 'service/extractors';
-import { DocsLinkGrid, DocsLinkGridItem } from 'components/DocsLinkGrid';
-import { trackUsage } from 'utils';
-import { getReleaseVersionCore } from 'utils/utils';
-import { ReleaseTag } from 'components/ReleaseTag';
-import { useSolutionsForExtractor } from 'hooks/useSolutions';
-import SolutionForExtractor from 'components/solution/SolutionForExtractor';
-import Markdown from 'components/markdown';
-import { HostedExtractorDetails } from 'components/hosted-extractor-details/HostedExtractorDetails';
+
+import { useTranslation } from '../../common';
+import { useExtractorsList } from '../../hooks/useExtractorsList';
+import { useSolutionsForExtractor } from '../../hooks/useSolutions';
+import { Artifact, getDownloadUrl } from '../../service/extractors';
+import { trackUsage } from '../../utils';
+import { getReleaseVersionCore } from '../../utils/utils';
+import { ContentContainer } from '../ContentContainer';
+import { DetailsHeader } from '../DetailsHeader';
+import { DocsLinkGrid, DocsLinkGridItem } from '../DocsLinkGrid';
+import { HostedExtractorDetails } from '../hosted-extractor-details/HostedExtractorDetails';
+import { Layout } from '../Layout';
+import Markdown from '../markdown';
+import { ReleaseTag } from '../ReleaseTag';
+import SolutionForExtractor from '../solution/SolutionForExtractor';
 
 const ExtractorDetails = () => {
   const { t } = useTranslation();

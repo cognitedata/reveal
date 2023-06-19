@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
+import { useParams } from 'react-router-dom';
 
-import { Colors, Elevations, Flex, Icon, Link, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
-import { Solution as SolutionType } from 'hooks/useSolutions';
-import { useTranslation } from 'common';
-import { useSourceSystem } from 'hooks/useSourceSystems';
-import { useExtractor } from 'hooks/useExtractorsList';
+import { useExtractor } from '../../hooks/useExtractorsList';
+import { Solution as SolutionType } from '../../hooks/useSolutions';
+import { useSourceSystem } from '../../hooks/useSourceSystems';
 
-import { useParams } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
-import Markdown from 'components/markdown';
+import { Colors, Elevations, Flex, Icon, Link, Title } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../common';
+import Markdown from '../markdown';
 
 type SolutionForSourceSystemProps = SolutionType & {
   isInitiallyCollapsed?: boolean;

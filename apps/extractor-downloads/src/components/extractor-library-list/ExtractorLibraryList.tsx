@@ -1,14 +1,16 @@
 import { Link, useParams } from 'react-router-dom';
 
-import { Body, Chip, Colors, Elevations, Title } from '@cognite/cogs.js';
-import { createLink } from '@cognite/cdf-utilities';
 import styled from 'styled-components';
+
 import sortBy from 'lodash/sortBy';
 
-import { trackUsage } from 'utils';
-import { ExtractorBase } from 'service/extractors';
-import { ExtractorLibraryCategory } from 'components/category-sidebar/CategorySidebarItem';
-import { useTranslation } from 'common';
+import { createLink } from '@cognite/cdf-utilities';
+import { Body, Chip, Colors, Elevations, Title } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../common';
+import { ExtractorBase } from '../../service/extractors';
+import { trackUsage } from '../../utils';
+import { ExtractorLibraryCategory } from '../category-sidebar/CategorySidebarItem';
 
 export type ExtractorLibraryItem = ExtractorBase & {
   category: ExtractorLibraryCategory;

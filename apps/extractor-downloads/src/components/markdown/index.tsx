@@ -1,8 +1,9 @@
 import React from 'react';
+import ReactMarkdown from 'react-markdown';
+
+import styled from 'styled-components';
 
 import { A } from '@cognite/cogs.js';
-import ReactMarkdown from 'react-markdown';
-import styled from 'styled-components';
 
 type MarkdownProps = {
   content?: string;

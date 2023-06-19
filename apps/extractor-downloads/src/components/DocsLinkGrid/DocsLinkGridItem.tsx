@@ -1,6 +1,8 @@
 import { PropsWithChildren } from 'react';
-import { Button, Colors, Icon, Title } from '@cognite/cogs.js';
+
 import styled from 'styled-components';
+
+import { Button, Colors, Icon, Title } from '@cognite/cogs.js';
 
 export type DocsLinkGridItemProps = {
   href: string;
@@ -9,7 +11,7 @@ export type DocsLinkGridItemProps = {
 
 const DocsLinkGridItem = styled(
   (props: PropsWithChildren<DocsLinkGridItemProps>) => (
-    <a target="_blank" href={props.href}>
+    <a target="_blank" href={props.href} rel="noreferrer">
       <StyledButton {...props}>
         <Title level={6}>{props.children}</Title>
         <Icon type="ExternalLink" />

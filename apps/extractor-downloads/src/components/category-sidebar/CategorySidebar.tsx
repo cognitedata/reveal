@@ -1,14 +1,16 @@
 import React from 'react';
 
-import { Flex, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
-import { useTranslation } from 'common';
-import CategorySidebarItem from './CategorySidebarItem';
-import { useExtractorsList } from 'hooks/useExtractorsList';
-import { ExtractorWithReleases } from 'service/extractors';
-import { SourceSystem, useSourceSystems } from 'hooks/useSourceSystems';
+import { Flex, Title } from '@cognite/cogs.js';
 import { useFlag } from '@cognite/react-feature-flags';
+
+import { useTranslation } from '../../common';
+import { useExtractorsList } from '../../hooks/useExtractorsList';
+import { SourceSystem, useSourceSystems } from '../../hooks/useSourceSystems';
+import { ExtractorWithReleases } from '../../service/extractors';
+
+import CategorySidebarItem from './CategorySidebarItem';
 
 type CategorySidebarProps = {
   extractorsList: ExtractorWithReleases[];

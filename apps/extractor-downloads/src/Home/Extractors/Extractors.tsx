@@ -1,3 +1,10 @@
+import { useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
+
+import styled from 'styled-components';
+
+import debounce from 'lodash/debounce';
+
 import {
   Body,
   Colors,
@@ -7,24 +14,20 @@ import {
   Loader,
   Title,
 } from '@cognite/cogs.js';
-import { useMemo } from 'react';
-import debounce from 'lodash/debounce';
-import styled from 'styled-components';
 
-import { useExtractorsList } from 'hooks/useExtractorsList';
-import { ListHeader } from 'components/ListHeader';
-import { Layout } from 'components/Layout';
-import { CreateExtractor } from 'components/CreateExtractor';
-import { ContentContainer } from 'components/ContentContainer';
-import CategorySidebar from 'components/category-sidebar/CategorySidebar';
-import { MixpanelEvent, trackUsage } from 'utils';
-import { useTranslation } from 'common';
-import { useSearchParams } from 'react-router-dom';
-import SearchHelper from 'components/search-helper/SearchHelper';
-import { useSourceSystems } from 'hooks/useSourceSystems';
-import ExtractorLibraryList from 'components/extractor-library-list/ExtractorLibraryList';
-import { ExtractorLibraryCategory } from 'components/category-sidebar/CategorySidebarItem';
-import { grepContains, prepareSearchString } from 'utils/utils';
+import { useTranslation } from '../../common';
+import CategorySidebar from '../../components/category-sidebar/CategorySidebar';
+import { ExtractorLibraryCategory } from '../../components/category-sidebar/CategorySidebarItem';
+import { ContentContainer } from '../../components/ContentContainer';
+import { CreateExtractor } from '../../components/CreateExtractor';
+import ExtractorLibraryList from '../../components/extractor-library-list/ExtractorLibraryList';
+import { Layout } from '../../components/Layout';
+import { ListHeader } from '../../components/ListHeader';
+import SearchHelper from '../../components/search-helper/SearchHelper';
+import { useExtractorsList } from '../../hooks/useExtractorsList';
+import { useSourceSystems } from '../../hooks/useSourceSystems';
+import { MixpanelEvent, trackUsage } from '../../utils';
+import { grepContains, prepareSearchString } from '../../utils/utils';
 
 const debouncedTrackUsage = debounce((mixpanelEvent: MixpanelEvent) => {
   trackUsage(mixpanelEvent);
@@ -174,7 +177,7 @@ const Extractors = () => {
                 ) : (
                   <CreateExtractor />
                 )}
-                {!!filteredExtractorLibraryItems.length ? (
+                {filteredExtractorLibraryItems.length ? (
                   <ExtractorLibraryList items={filteredExtractorLibraryItems} />
                 ) : (
                   <StyledEmptyContainer>

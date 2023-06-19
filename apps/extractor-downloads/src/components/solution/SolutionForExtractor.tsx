@@ -1,14 +1,15 @@
 import React from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
-import { Icon, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
-import { Solution as SolutionType } from 'hooks/useSolutions';
-import { useSourceSystem } from 'hooks/useSourceSystems';
+import { createLink } from '@cognite/cdf-utilities';
+import { Icon, Title } from '@cognite/cogs.js';
+
+import { Solution as SolutionType } from '../../hooks/useSolutions';
+import { useSourceSystem } from '../../hooks/useSourceSystems';
 
 import { StyledSolutionContainer } from './SolutionForSourceSystem';
-import { useNavigate, useParams } from 'react-router-dom';
-import { createLink } from '@cognite/cdf-utilities';
 
 type SolutionForExtractorProps = SolutionType;
 

@@ -1,9 +1,12 @@
-import { Body, Colors, Flex, Icon, Title, Elevations } from '@cognite/cogs.js';
-import styled from 'styled-components';
 import { useNavigate, useParams } from 'react-router-dom';
+
+import styled from 'styled-components';
+
 import { createLink } from '@cognite/cdf-utilities';
-import { useTranslation } from 'common';
-import { trackUsage } from 'utils';
+import { Body, Colors, Flex, Icon, Title, Elevations } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../common';
+import { trackUsage } from '../../utils';
 
 const CreateExtractor = () => {
   const { t } = useTranslation();

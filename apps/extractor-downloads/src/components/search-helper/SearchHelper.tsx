@@ -1,11 +1,12 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 
-import { createLink } from '@cognite/cdf-utilities';
-import { A, Body, Colors } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
-import { Trans } from 'common';
+import { createLink } from '@cognite/cdf-utilities';
+import { A, Body, Colors } from '@cognite/cogs.js';
+
+import { Trans } from '../../common';
 
 const SearchHelper = (): JSX.Element => {
   const { subAppPath } = useParams<{ subAppPath?: string }>();

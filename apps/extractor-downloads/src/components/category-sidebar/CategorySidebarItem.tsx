@@ -1,10 +1,10 @@
-import React from 'react';
 import { useSearchParams } from 'react-router-dom';
 
-import { Button, Chip } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
-import { CATEGORY_SEARCH_PARAM_KEY } from 'common';
+import { Button, Chip } from '@cognite/cogs.js';
+
+import { CATEGORY_SEARCH_PARAM_KEY } from '../../common';
 
 export const EXTRACTOR_LIBRARY_CATEGORIES = {
   extractor: 'extractor',

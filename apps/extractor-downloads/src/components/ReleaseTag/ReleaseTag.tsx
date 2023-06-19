@@ -1,5 +1,6 @@
 import { Flex, Chip } from '@cognite/cogs.js';
-import { getReleaseState } from 'utils/utils';
+
+import { getReleaseState } from '../../utils/utils';
 
 type ReleaseTagProp = {
   version?: string;

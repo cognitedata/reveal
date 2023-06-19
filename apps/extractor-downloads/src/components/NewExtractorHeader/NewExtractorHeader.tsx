@@ -1,9 +1,11 @@
+import { useParams } from 'react-router-dom';
+
 import { Breadcrumb } from '@cognite/cdf-utilities';
 import { Body, Flex, Title } from '@cognite/cogs.js';
-import { useTranslation } from 'common';
-import { HeaderContainer } from 'components/HeaderContainer';
-import { Layout } from 'components/Layout';
-import { useParams } from 'react-router-dom';
+
+import { useTranslation } from '../../common';
+import { HeaderContainer } from '../HeaderContainer';
+import { Layout } from '../Layout';
 
 const NewExtractorHeader = () => {
   const { t } = useTranslation();

@@ -1,12 +1,13 @@
 import { Flex, Title } from '@cognite/cogs.js';
-import { useTranslation } from 'common';
-import { ContentContainer } from 'components/ContentContainer';
-import { DocsLinkGrid, DocsLinkGridItem } from 'components/DocsLinkGrid';
-import { Layout } from 'components/Layout';
-import { NewExtractorHeader } from 'components/NewExtractorHeader';
 
-import pythonImgPath from 'assets/python.png';
-import dotnetImgPath from 'assets/dotnet.png';
+import dotnetImgPath from '../../assets/dotnet.png';
+import pythonImgPath from '../../assets/python.png';
+import { useTranslation } from '../../common';
+import { trackUsage } from '../../utils';
+import { ContentContainer } from '../ContentContainer';
+import { DocsLinkGrid, DocsLinkGridItem } from '../DocsLinkGrid';
+import { Layout } from '../Layout';
+import { NewExtractorHeader } from '../NewExtractorHeader';
 
 import {
   NET_EXTRACTOR_UTILS_SRC_CODE,
@@ -16,7 +17,6 @@ import {
   PY_EXTRACTOR_UTILS_SRC_CODE,
   PY_SDK,
 } from './links';
-import { trackUsage } from 'utils';
 
 const NewExtractor = () => {
   const { t } = useTranslation();

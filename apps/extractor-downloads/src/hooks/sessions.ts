@@ -1,6 +1,7 @@
+import { useMutation } from '@tanstack/react-query';
+
 import { getProject } from '@cognite/cdf-utilities';
 import { useSDK } from '@cognite/sdk-provider';
-import { useMutation } from '@tanstack/react-query';
 
 type CreateSessionVariables = {
   clientId: string;

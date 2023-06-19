@@ -1,6 +1,6 @@
 declare module '@cognite/cdf-sdk-singleton' {
-  import { CogniteClient } from '@cognite/sdk';
   import { IDPType } from '@cognite/login-utils';
+  import { CogniteClient } from '@cognite/sdk';
 
   export declare function logout(): void;
 
