@@ -1,11 +1,5 @@
 import React, { useState } from 'react';
 
-import Status from '@3d-management/components/Status';
-import Thumbnail from '@3d-management/components/Thumbnail';
-import { ThumbnailPreviewIcon } from '@3d-management/components/ThumbnailPreviewIcon';
-import EmptyState from '@3d-management/pages/AllModels/components/EmptyState';
-import { TableOperations } from '@3d-management/pages/AllModels/components/TableOperations';
-import { getContainer } from '@3d-management/utils';
 import { Table, Popover } from 'antd';
 import { ColumnProps } from 'antd/lib/table';
 import dayjs from 'dayjs';
@@ -13,7 +7,13 @@ import dayjs from 'dayjs';
 import { Button } from '@cognite/cogs.js';
 import { Revision3D } from '@cognite/sdk';
 
+import Status from '../../../../components/Status';
+import Thumbnail from '../../../../components/Thumbnail';
+import { ThumbnailPreviewIcon } from '../../../../components/ThumbnailPreviewIcon';
+import { getContainer } from '../../../../utils';
+import EmptyState from '../EmptyState';
 import { EmptyStateOptions } from '../EmptyState/EmptyState';
+import { TableOperations } from '../TableOperations';
 
 type Props = {
   revisions: Array<Revision3D>;

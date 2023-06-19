@@ -1,13 +1,14 @@
 import { useDispatch, useSelector } from 'react-redux';
 
-import { setSelectedModels } from '@3d-management/store/modules/App';
-import { AppState } from '@3d-management/store/modules/App/types';
-import { fireErrorNotification, QUERY_KEY } from '@3d-management/utils';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import sdk from '@cognite/cdf-sdk-singleton';
 import { Model3D } from '@cognite/sdk';
 import { HttpError, InternalId } from '@cognite/sdk-core/dist/src';
+
+import { setSelectedModels } from '../../store/modules/App';
+import { AppState } from '../../store/modules/App/types';
+import { fireErrorNotification, QUERY_KEY } from '../../utils';
 
 const deleteModel = async ({ id }: InternalId): Promise<void> => {
   await sdk.models3D.delete([{ id }]);

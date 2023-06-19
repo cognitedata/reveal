@@ -1,8 +1,9 @@
-import { fireErrorNotification, QUERY_KEY } from '@3d-management/utils';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import sdk from '@cognite/cdf-sdk-singleton';
 import { HttpError, Model3D } from '@cognite/sdk';
+
+import { fireErrorNotification, QUERY_KEY } from '../../utils';
 
 const fetchModels = (): Promise<Model3D[]> => {
   return sdk.models3D.list().autoPagingToArray({ limit: Infinity });

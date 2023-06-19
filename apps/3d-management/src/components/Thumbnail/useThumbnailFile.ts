@@ -1,8 +1,9 @@
-import { fireErrorNotification } from '@3d-management/utils';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import sdk from '@cognite/cdf-sdk-singleton';
 import { HttpError } from '@cognite/sdk';
+
+import { fireErrorNotification } from '../../utils';
 
 async function fetchFile(fileId: number): Promise<string> {
   const arraybuffers = await sdk.files3D.retrieve(fileId);

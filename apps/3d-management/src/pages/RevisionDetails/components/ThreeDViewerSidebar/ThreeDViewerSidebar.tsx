@@ -3,12 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import styled from 'styled-components';
 
-import { useUpdateRevisionMutation } from '@3d-management/hooks/revisions';
-import { NodePropertyFilterIndicator } from '@3d-management/pages/RevisionDetails/components/ThreeDViewerSidebar/NodePropertyFilterIndicator';
-import { ToolbarTreeView } from '@3d-management/pages/RevisionDetails/components/ToolbarTreeView/ToolbarTreeView';
-import { RootState } from '@3d-management/store';
-import { toggleGhostMode } from '@3d-management/store/modules/toolbar';
-import { DEFAULT_MARGIN_H, DEFAULT_MARGIN_V } from '@3d-management/utils';
 import { Divider } from 'antd';
 import { Resizable } from 're-resizable';
 
@@ -23,9 +17,16 @@ import {
 } from '@cognite/reveal';
 import { Tuple3, RevisionCameraProperties } from '@cognite/sdk';
 
+import { useUpdateRevisionMutation } from '../../../../hooks/revisions';
+import { RootState } from '../../../../store';
+import { toggleGhostMode } from '../../../../store/modules/toolbar';
+import { DEFAULT_MARGIN_H, DEFAULT_MARGIN_V } from '../../../../utils';
+import { ToolbarTreeView } from '../ToolbarTreeView/ToolbarTreeView';
+
 import { ClassPicker } from './ClassPicker';
 import { ColorTypePicker } from './ColorTypePicker';
 import { EditRotation } from './EditRotation';
+import { NodePropertyFilterIndicator } from './NodePropertyFilterIndicator';
 import { ThumbnailUploader } from './ThumbnailUploader';
 
 type RevisionUpdatePayload = {

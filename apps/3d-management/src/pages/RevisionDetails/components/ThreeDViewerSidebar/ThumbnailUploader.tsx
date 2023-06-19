@@ -1,6 +1,5 @@
 import React, { CSSProperties, useState } from 'react';
 
-import { fireErrorNotification } from '@3d-management/utils/notifications';
 import { Modal, message } from 'antd';
 
 import sdk from '@cognite/cdf-sdk-singleton';
@@ -11,6 +10,8 @@ import {
   CognitePointCloudModel,
 } from '@cognite/reveal';
 import { FileUploadResponse, HttpError } from '@cognite/sdk';
+
+import { fireErrorNotification } from '../../../../utils/notifications';
 
 type Props = {
   viewer: Cognite3DViewer;

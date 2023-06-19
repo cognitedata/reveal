@@ -19,7 +19,7 @@ jest.mock('react-router-dom', () => ({
   useNavigate: () => mockedUsedNavigate,
 }));
 
-jest.mock('@3d-management/hooks/files/useFiles', () => ({
+jest.mock('../../../hooks/files/useFiles', () => ({
   useFiles: (fileIds: number[]) => {
     switch (fileIds[0]) {
       case INVALID_FILE_ID:

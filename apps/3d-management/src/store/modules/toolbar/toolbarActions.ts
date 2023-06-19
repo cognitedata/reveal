@@ -1,11 +1,13 @@
-import { RootState } from '@3d-management/store';
+import { Dispatch } from 'redux';
+
+import { RootState } from '../..';
+import { NodePropertyFilterType } from '../../../utils';
+
 import {
   GhostModeUpdated,
   SetNodePropertyFilter,
   SetNodePropertyLoadingState,
-} from '@3d-management/store/modules/toolbar/types';
-import { NodePropertyFilterType } from '@3d-management/utils';
-import { Dispatch } from 'redux';
+} from './types';
 
 export const toggleGhostMode =
   (isEnabled?: boolean) =>

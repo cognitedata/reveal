@@ -1,6 +1,6 @@
 import React, { LazyExoticComponent, ReactNode, Suspense } from 'react';
 
-import Spinner from '@3d-management/components/Spinner';
+import Spinner from './Spinner';
 
 export const FallbackWrapper = <P,>(
   Component:

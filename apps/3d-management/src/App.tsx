@@ -4,10 +4,6 @@ import { BrowserRouter } from 'react-router-dom';
 
 import styled, { ThemeProvider } from 'styled-components';
 
-import configureStore from '@3d-management/store';
-import GlobalStyles from '@3d-management/styles/GlobalStyles';
-import theme from '@3d-management/styles/theme';
-import { APP_TITLE, projectName } from '@3d-management/utils';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { createBrowserHistory } from 'history';
@@ -26,6 +22,10 @@ import { SDKProvider } from '@cognite/sdk-provider';
 
 import ErrorBoundary from './components/ErrorBoundary';
 import { ModelRoutes } from './ModelRoutes';
+import configureStore from './store';
+import GlobalStyles from './styles/GlobalStyles';
+import theme from './styles/theme';
+import { APP_TITLE, projectName } from './utils';
 
 export const App = () => {
   const history = createBrowserHistory();

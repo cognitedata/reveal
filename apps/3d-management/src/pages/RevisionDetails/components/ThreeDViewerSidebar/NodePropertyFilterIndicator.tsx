@@ -1,10 +1,10 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { RootState } from '@3d-management/store';
-import { setNodePropertyFilter } from '@3d-management/store/modules/toolbar';
-
 import { Tooltip, Chip } from '@cognite/cogs.js';
+
+import { RootState } from '../../../../store';
+import { setNodePropertyFilter } from '../../../../store/modules/toolbar';
 
 export function NodePropertyFilterIndicator() {
   const dispatch = useDispatch();

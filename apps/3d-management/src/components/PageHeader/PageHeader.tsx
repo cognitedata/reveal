@@ -3,13 +3,14 @@ import Iframe from 'react-iframe';
 
 import styled from 'styled-components';
 
-import Breadcrumbs from '@3d-management/components/Breadcrumbs';
-import { useMetrics } from '@3d-management/hooks/useMetrics';
-import theme from '@3d-management/styles/theme';
-import { projectName, getContainer } from '@3d-management/utils';
 import { Tooltip } from 'antd';
 
 import { Drawer, Button } from '@cognite/cogs.js';
+
+import { useMetrics } from '../../hooks/useMetrics';
+import theme from '../../styles/theme';
+import { projectName, getContainer } from '../../utils';
+import Breadcrumbs from '../Breadcrumbs';
 
 const Title = styled.h5`
   color: black;

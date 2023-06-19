@@ -2,16 +2,16 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { mapStatusToColor } from '@3d-management/components/Status';
-import { useUserInformation } from '@3d-management/hooks/useUserInformation';
-import { DEFAULT_MARGIN_V } from '@3d-management/utils';
-import { RevisionLog3D } from '@3d-management/utils/sdk/3dApiUtils';
-import { OrganizedRevisionLog } from '@3d-management/utils/types';
 import { Timeline } from 'antd';
 import dayjs from 'dayjs';
 import uniqBy from 'lodash/uniqBy';
 
+import { mapStatusToColor } from '../../../components/Status';
+import { useUserInformation } from '../../../hooks/useUserInformation';
+import { DEFAULT_MARGIN_V } from '../../../utils';
 import { getOrganizedRevisionLogs } from '../../../utils/getOrganizedRevisionLogs';
+import { RevisionLog3D } from '../../../utils/sdk/3dApiUtils';
+import { OrganizedRevisionLog } from '../../../utils/types';
 
 const EXTERNAL_LOG_NAME = {
   'reveal-optimizer': 'Web-Optimizer',

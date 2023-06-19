@@ -1,8 +1,9 @@
-import { getContainer } from '@3d-management/utils';
 import * as Sentry from '@sentry/browser';
 import { notification } from 'antd';
 
 import { HttpError } from '@cognite/sdk';
+
+import { getContainer } from './..';
 
 interface ErrorNotificationProps {
   message?: string;

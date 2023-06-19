@@ -3,17 +3,18 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import styled from 'styled-components';
 
-import { TreeDataNode } from '@3d-management/pages/RevisionDetails/components/TreeView/types';
-import { getNodeByTreeIndex } from '@3d-management/pages/RevisionDetails/components/TreeView/utils/treeFunctions';
-import { RootState } from '@3d-management/store';
-import { setNodePropertyFilter } from '@3d-management/store/modules/toolbar';
-import { getContainer } from '@3d-management/utils';
 import { Modal, Table, Tabs } from 'antd';
 import { ModalProps } from 'antd/lib/modal';
 import { ColumnProps } from 'antd/lib/table';
 import omit from 'lodash/omit';
 
 import { Button, Tooltip } from '@cognite/cogs.js';
+
+import { RootState } from '../../../../store';
+import { setNodePropertyFilter } from '../../../../store/modules/toolbar';
+import { getContainer } from '../../../../utils';
+import { TreeDataNode } from '../TreeView/types';
+import { getNodeByTreeIndex } from '../TreeView/utils/treeFunctions';
 
 type DataSource = {
   key: string;

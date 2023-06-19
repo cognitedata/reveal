@@ -3,16 +3,6 @@ import { connect } from 'react-redux';
 
 import styled from 'styled-components';
 
-import Thumbnail from '@3d-management/components/Thumbnail';
-import { ThumbnailPreviewIcon } from '@3d-management/components/ThumbnailPreviewIcon';
-import EmptyState from '@3d-management/pages/AllModels/components/EmptyState';
-import { TableOperations } from '@3d-management/pages/AllModels/components/TableOperations';
-import {
-  setSelectedModels,
-  setModelTableState,
-} from '@3d-management/store/modules/App';
-import { AppState } from '@3d-management/store/modules/App/types';
-import { DEFAULT_MARGIN_V } from '@3d-management/utils';
 import { Table, Popover, TableProps } from 'antd';
 import { ColumnType } from 'antd/lib/table/interface';
 import dayjs from 'dayjs';
@@ -21,7 +11,17 @@ import { bindActionCreators } from 'redux';
 import { Button, Input } from '@cognite/cogs.js';
 import { Model3D } from '@cognite/sdk';
 
+import Thumbnail from '../../../../components/Thumbnail';
+import { ThumbnailPreviewIcon } from '../../../../components/ThumbnailPreviewIcon';
+import {
+  setSelectedModels,
+  setModelTableState,
+} from '../../../../store/modules/App';
+import { AppState } from '../../../../store/modules/App/types';
+import { DEFAULT_MARGIN_V } from '../../../../utils';
+import EmptyState from '../EmptyState';
 import { EmptyStateOptions } from '../EmptyState/EmptyState';
+import { TableOperations } from '../TableOperations';
 
 const NestedTable = styled(Table)`
   && td:last-child {

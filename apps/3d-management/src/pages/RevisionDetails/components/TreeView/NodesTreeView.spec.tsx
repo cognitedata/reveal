@@ -2,21 +2,18 @@
 import '@testing-library/jest-dom';
 import React from 'react';
 
-import { treeViewFocusContainerId } from '@3d-management/pages/RevisionDetails/components/ToolbarTreeView/treeViewFocusContainerId';
-import { TrackedKeys } from '@3d-management/pages/RevisionDetails/components/TreeView/hooks/useKeyboardHandler';
-import NodesTreeView, {
-  NodesTreeViewProps,
-} from '@3d-management/pages/RevisionDetails/components/TreeView/NodesTreeView';
-import {
-  TreeDataNode,
-  TreeLoadMoreNode,
-} from '@3d-management/pages/RevisionDetails/components/TreeView/types';
-import { node3dToTreeDataNode } from '@3d-management/pages/RevisionDetails/components/TreeView/utils/converters';
-import { convertKeysToSelectedNodes } from '@3d-management/pages/RevisionDetails/components/TreeView/utils/treeViewMultiselectionUtils';
-import { SelectedNode } from '@3d-management/store/modules/TreeView';
 import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import noop from 'lodash/noop';
+
+import { SelectedNode } from '../../../../store/modules/TreeView';
+import { treeViewFocusContainerId } from '../ToolbarTreeView/treeViewFocusContainerId';
+
+import { TrackedKeys } from './hooks/useKeyboardHandler';
+import NodesTreeView, { NodesTreeViewProps } from './NodesTreeView';
+import { TreeDataNode, TreeLoadMoreNode } from './types';
+import { node3dToTreeDataNode } from './utils/converters';
+import { convertKeysToSelectedNodes } from './utils/treeViewMultiselectionUtils';
 
 const LOAD_MORE = 'Load more...';
 type ShortTreeNodeRecord = {

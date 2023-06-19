@@ -4,19 +4,12 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import styled from 'styled-components';
 
-import ErrorBoundary from '@3d-management/components/ErrorBoundary';
-import Spinner from '@3d-management/components/Spinner';
-import { useFilteredNodesHighlights } from '@3d-management/pages/RevisionDetails/components/ToolbarTreeView/hooks/useFilteredNodesHighlights';
-import { useViewerNodeClickListener } from '@3d-management/pages/RevisionDetails/components/ToolbarTreeView/hooks/useViewerNodeClickListener';
-import { treeViewFocusContainerId } from '@3d-management/pages/RevisionDetails/components/ToolbarTreeView/treeViewFocusContainerId';
-import TreeView, {
-  NodesTreeViewRefType,
-} from '@3d-management/pages/RevisionDetails/components/TreeView/NodesTreeView';
-import {
-  TreeDataNode,
-  TreeLoadMoreNode,
-} from '@3d-management/pages/RevisionDetails/components/TreeView/types';
-import { RootState } from '@3d-management/store';
+import { Button, Title } from '@cognite/cogs.js';
+import { CogniteCadModel, Cognite3DViewer } from '@cognite/reveal';
+
+import ErrorBoundary from '../../../../components/ErrorBoundary';
+import Spinner from '../../../../components/Spinner';
+import { RootState } from '../../../../store';
 import {
   checkNodes,
   expandNodes,
@@ -28,15 +21,17 @@ import {
   selectNodes,
   TreeIndex,
   TreeViewState,
-} from '@3d-management/store/modules/TreeView';
-
-import { Button, Title } from '@cognite/cogs.js';
-import { CogniteCadModel, Cognite3DViewer } from '@cognite/reveal';
+} from '../../../../store/modules/TreeView';
+import TreeView, { NodesTreeViewRefType } from '../TreeView/NodesTreeView';
+import { TreeDataNode, TreeLoadMoreNode } from '../TreeView/types';
 
 import { useCheckedNodesVisibility } from './hooks/useCheckedNodesVisibility';
+import { useFilteredNodesHighlights } from './hooks/useFilteredNodesHighlights';
 import { useResizeHandler } from './hooks/useResizeHander';
 import { useSelectedNodesHighlights } from './hooks/useSelectedNodesHighlights';
+import { useViewerNodeClickListener } from './hooks/useViewerNodeClickListener';
 import { NodeInfoModal } from './NodeInfoModal';
+import { treeViewFocusContainerId } from './treeViewFocusContainerId';
 
 const Container = styled.div`
   display: flex;

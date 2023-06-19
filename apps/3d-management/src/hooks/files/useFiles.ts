@@ -1,8 +1,9 @@
-import { fireErrorNotification } from '@3d-management/utils';
 import { useQuery } from '@tanstack/react-query';
 
 import sdk from '@cognite/cdf-sdk-singleton';
 import { FileInfo, HttpError } from '@cognite/sdk';
+
+import { fireErrorNotification } from '../../utils';
 
 const fetchFiles = ({
   fileIds,

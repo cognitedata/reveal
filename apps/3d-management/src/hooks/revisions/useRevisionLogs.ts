@@ -1,15 +1,15 @@
 import { useState } from 'react';
 
-import { fireErrorNotification, QUERY_KEY } from '@3d-management/utils';
-import { RevisionLog3D } from '@3d-management/utils/sdk/3dApiUtils';
-import { RevisionIds } from '@3d-management/utils/types';
 import { useQuery } from '@tanstack/react-query';
 
 import sdk from '@cognite/cdf-sdk-singleton';
 import { HttpError } from '@cognite/sdk';
 
+import { fireErrorNotification, QUERY_KEY } from '../../utils';
 import { getOrganizedRevisionLogs } from '../../utils/getOrganizedRevisionLogs';
 import { getReFetchInterval } from '../../utils/getReFetchInterval';
+import { RevisionLog3D } from '../../utils/sdk/3dApiUtils';
+import { RevisionIds } from '../../utils/types';
 
 const fetchLogs =
   ({ modelId, revisionId }: RevisionIds) =>

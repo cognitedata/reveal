@@ -2,9 +2,11 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import Link from '@3d-management/components/Breadcrumbs/Link';
-import theme from '@3d-management/styles/theme';
 import { Breadcrumb } from 'antd';
+
+import theme from '../../styles/theme';
+
+import Link from './Link';
 
 interface BreadcrumbsProps {
   breadcrumbs: { title: string; path?: string }[];

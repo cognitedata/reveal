@@ -1,10 +1,10 @@
 import React from 'react';
 
-import { NodeWithInfoButton } from '@3d-management/pages/RevisionDetails/components/TreeView/NodeWithInfoButton';
-import { TreeDataNode } from '@3d-management/pages/RevisionDetails/components/TreeView/types';
-import { SelectedNode } from '@3d-management/store/modules/TreeView';
-
 import { Node3D } from '@cognite/sdk';
+
+import { SelectedNode } from '../../../../../store/modules/TreeView';
+import { NodeWithInfoButton } from '../NodeWithInfoButton';
+import { TreeDataNode } from '../types';
 
 export function treeDataNodeToSelectedNode(node: TreeDataNode): SelectedNode {
   return {

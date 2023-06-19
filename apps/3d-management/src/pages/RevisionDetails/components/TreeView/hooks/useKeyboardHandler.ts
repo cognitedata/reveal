@@ -1,22 +1,19 @@
 import React, { useEffect } from 'react';
 
-import { treeViewFocusContainerId } from '@3d-management/pages/RevisionDetails/components/ToolbarTreeView/treeViewFocusContainerId';
-import {
-  NodesTreeViewProps,
-  NodesTreeViewRefType,
-} from '@3d-management/pages/RevisionDetails/components/TreeView/NodesTreeView';
-import { TreeDataNode } from '@3d-management/pages/RevisionDetails/components/TreeView/types';
-import { treeDataNodeToSelectedNode } from '@3d-management/pages/RevisionDetails/components/TreeView/utils/converters';
+import { TreeIndex } from '../../../../../store/modules/TreeView';
+import { treeViewFocusContainerId } from '../../ToolbarTreeView/treeViewFocusContainerId';
+import { NodesTreeViewProps, NodesTreeViewRefType } from '../NodesTreeView';
+import { TreeDataNode } from '../types';
+import { treeDataNodeToSelectedNode } from '../utils/converters';
 import {
   getAncestors,
   getNodeByTreeIndex,
   traverseTree,
-} from '@3d-management/pages/RevisionDetails/components/TreeView/utils/treeFunctions';
+} from '../utils/treeFunctions';
 import {
   calcRangeKeys,
   convertKeysToSelectedNodes,
-} from '@3d-management/pages/RevisionDetails/components/TreeView/utils/treeViewMultiselectionUtils';
-import { TreeIndex } from '@3d-management/store/modules/TreeView';
+} from '../utils/treeViewMultiselectionUtils';
 
 export enum TrackedKeys {
   ' ' = ' ',

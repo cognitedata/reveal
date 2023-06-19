@@ -3,27 +3,25 @@ import { useParams } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import { PageHeader } from '@3d-management/components/PageHeader';
-import PermissioningHintWrapper from '@3d-management/components/PermissioningHintWrapper';
-import Spinner from '@3d-management/components/Spinner';
-import { useCreateModelMutation } from '@3d-management/hooks/models';
-import { useModels } from '@3d-management/hooks/models/useModels';
-import { useCreateRevisionMutation } from '@3d-management/hooks/revisions';
-import { useMetrics } from '@3d-management/hooks/useMetrics';
-import FileUploader from '@3d-management/pages/AllModels/components/FileUploader';
-import ModelRevisions from '@3d-management/pages/AllModels/components/ModelRevisions/ModelRevisions';
-import ModelsTable from '@3d-management/pages/AllModels/components/ModelsTable/ModelsTable';
-import {
-  APP_TITLE,
-  DEFAULT_MARGIN_V,
-  getContainer,
-} from '@3d-management/utils';
 import { Modal, Steps, message } from 'antd';
 
 import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { Button, Flex, Input } from '@cognite/cogs.js';
 import { Model3D } from '@cognite/sdk';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
+
+import { PageHeader } from '../../components/PageHeader';
+import PermissioningHintWrapper from '../../components/PermissioningHintWrapper';
+import Spinner from '../../components/Spinner';
+import { useCreateModelMutation } from '../../hooks/models';
+import { useModels } from '../../hooks/models/useModels';
+import { useCreateRevisionMutation } from '../../hooks/revisions';
+import { useMetrics } from '../../hooks/useMetrics';
+import { APP_TITLE, DEFAULT_MARGIN_V, getContainer } from '../../utils';
+
+import FileUploader from './components/FileUploader';
+import ModelRevisions from './components/ModelRevisions/ModelRevisions';
+import ModelsTable from './components/ModelsTable/ModelsTable';
 
 const { Step } = Steps;
 

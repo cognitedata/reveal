@@ -70,7 +70,7 @@ import uploadStyle from 'antd/es/upload/style/index.less';
 
 import { Modal, message, notification, Spin } from 'antd';
 import { Tooltip, Icon } from '@cognite/cogs.js';
-import { getContainer } from '@3d-management/utils';
+import { getContainer } from '../../utils';
 
 notification.config({ getContainer });
 

@@ -3,27 +3,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import { PageHeader } from '@3d-management/components/PageHeader';
-import PermissioningHintWrapper from '@3d-management/components/PermissioningHintWrapper';
-import Spinner from '@3d-management/components/Spinner';
-import Status from '@3d-management/components/Status';
-import { useModels } from '@3d-management/hooks/models/useModels';
-import {
-  useRevisions,
-  useRevisionLogs,
-  useUpdateRevisionMutation,
-  useDeleteRevisionMutation,
-} from '@3d-management/hooks/revisions';
-import { useMetrics } from '@3d-management/hooks/useMetrics';
-import NotFound from '@3d-management/pages/NotFound';
-import { RevisionLogs } from '@3d-management/pages/RevisionDetails/components/RevisionLogs';
-import ThreeDViewerWrapper from '@3d-management/pages/RevisionDetails/components/ThreeDViewerWrapper';
-import {
-  APP_TITLE,
-  getContainer,
-  DEFAULT_MARGIN_V,
-} from '@3d-management/utils';
-import { createLink } from '@3d-management/utils/cdf-utilities';
 import { Card, message, Modal } from 'antd';
 import dayjs from 'dayjs';
 
@@ -32,8 +11,26 @@ import { Tooltip, Button, Flex, Icon } from '@cognite/cogs.js';
 import { Revision3D } from '@cognite/sdk';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 
+import { PageHeader } from '../../components/PageHeader';
+import PermissioningHintWrapper from '../../components/PermissioningHintWrapper';
+import Spinner from '../../components/Spinner';
+import Status from '../../components/Status';
+import { useModels } from '../../hooks/models/useModels';
+import {
+  useRevisions,
+  useRevisionLogs,
+  useUpdateRevisionMutation,
+  useDeleteRevisionMutation,
+} from '../../hooks/revisions';
+import { useMetrics } from '../../hooks/useMetrics';
+import { APP_TITLE, getContainer, DEFAULT_MARGIN_V } from '../../utils';
+import { createLink } from '../../utils/cdf-utilities';
+import NotFound from '../NotFound';
+
 import { FileLink } from './components/FileLink/FileLink';
+import { RevisionLogs } from './components/RevisionLogs';
 import ThreeDViewerErrorBoundary from './components/ThreeDViewer/ThreeDViewerErrorFallback';
+import ThreeDViewerWrapper from './components/ThreeDViewerWrapper';
 
 export const PUBLISH_STATUS_HINT = `
   Publishing a Revision makes this version of

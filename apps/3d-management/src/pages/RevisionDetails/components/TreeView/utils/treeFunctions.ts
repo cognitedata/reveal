@@ -1,10 +1,8 @@
-import {
-  CustomDataNode,
-  TreeDataNode,
-} from '@3d-management/pages/RevisionDetails/components/TreeView/types';
-import { sortNaturally } from '@3d-management/utils';
-import { ArrayElement } from '@3d-management/utils/types';
 import { DataNode } from 'antd/lib/tree';
+
+import { sortNaturally } from '../../../../../utils';
+import { ArrayElement } from '../../../../../utils/types';
+import { CustomDataNode, TreeDataNode } from '../types';
 
 /*
   what we do here is moving down one level for each item of branch and list

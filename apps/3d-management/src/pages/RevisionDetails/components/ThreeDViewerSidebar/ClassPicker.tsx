@@ -112,7 +112,6 @@ export function ClassPicker(props: Props) {
       <Select.Option key="all" value={ALL_CLASSES}>
         All classes
       </Select.Option>
-
       {Object.keys(keyValueMapping).map((key) => (
         // key is key+value to avoid duplicates after trimming of ReservedOr strings
         <Select.Option

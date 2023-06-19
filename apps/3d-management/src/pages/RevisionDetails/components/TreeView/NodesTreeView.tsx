@@ -2,12 +2,9 @@ import React, { MutableRefObject } from 'react';
 
 import styled from 'styled-components';
 
-import {
-  calcRangeKeys,
-  convertKeysToSelectedNodes,
-} from '@3d-management/pages/RevisionDetails/components/TreeView/utils/treeViewMultiselectionUtils';
-import { SelectedNode, TreeIndex } from '@3d-management/store/modules/TreeView';
 import { Tree, TreeProps } from 'antd';
+
+import { SelectedNode, TreeIndex } from '../../../../store/modules/TreeView';
 
 import { TREE_NODE_CLASSNAME } from './constants';
 import { useKeyboardHandler } from './hooks/useKeyboardHandler';
@@ -17,6 +14,10 @@ import {
   TreeDataNode,
   TreeLoadMoreNode,
 } from './types';
+import {
+  calcRangeKeys,
+  convertKeysToSelectedNodes,
+} from './utils/treeViewMultiselectionUtils';
 
 export const INFO_BTN_CLASSNAME = 'cogs-icon';
 

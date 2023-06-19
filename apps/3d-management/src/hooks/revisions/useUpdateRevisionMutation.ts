@@ -1,8 +1,9 @@
-import { fireErrorNotification, QUERY_KEY } from '@3d-management/utils';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import sdk from '@cognite/cdf-sdk-singleton';
 import { HttpError, Revision3D, UpdateRevision3D } from '@cognite/sdk';
+
+import { fireErrorNotification, QUERY_KEY } from '../../utils';
 
 type UpdateArgs = {
   modelId: number;

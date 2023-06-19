@@ -3,26 +3,27 @@ import { useNavigate } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import PermissioningHintWrapper from '@3d-management/components/PermissioningHintWrapper';
-import Thumbnail from '@3d-management/components/Thumbnail/Thumbnail';
-import {
-  useDeleteModelMutation,
-  useUpdateModelMutation,
-} from '@3d-management/hooks/models';
-import {
-  useCreateRevisionMutation,
-  useRevisions,
-} from '@3d-management/hooks/revisions';
-import { useMetrics } from '@3d-management/hooks/useMetrics';
-import FileUploader from '@3d-management/pages/AllModels/components/FileUploader';
-import { DEFAULT_MARGIN_V, getContainer } from '@3d-management/utils';
-import { createLink } from '@3d-management/utils/cdf-utilities';
 import { message, Card, Modal } from 'antd';
 
 import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { Button, Colors, Flex, Icon, Input } from '@cognite/cogs.js';
 import { Model3D } from '@cognite/sdk';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
+
+import PermissioningHintWrapper from '../../../../components/PermissioningHintWrapper';
+import Thumbnail from '../../../../components/Thumbnail/Thumbnail';
+import {
+  useDeleteModelMutation,
+  useUpdateModelMutation,
+} from '../../../../hooks/models';
+import {
+  useCreateRevisionMutation,
+  useRevisions,
+} from '../../../../hooks/revisions';
+import { useMetrics } from '../../../../hooks/useMetrics';
+import { DEFAULT_MARGIN_V, getContainer } from '../../../../utils';
+import { createLink } from '../../../../utils/cdf-utilities';
+import FileUploader from '../FileUploader';
 
 import { RevisionsTable } from './RevisionsTable';
 
