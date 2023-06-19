@@ -1,7 +1,6 @@
 import React, { useEffect, useContext } from 'react';
 
 import { FilePreview as CogniteFilePreview } from '@data-exploration-components/containers';
-import ResourceSelectionContext from '@interactive-diagrams-app/context/ResourceSelectionContext';
 import { Alert } from 'antd';
 import isMatch from 'lodash/isMatch';
 
@@ -12,6 +11,7 @@ import { FileInfo } from '@cognite/sdk';
 import { useCdfItem, usePermissions } from '@cognite/sdk-react-query-hooks';
 
 import { APPLICATION_ID } from '../constants';
+import { ResourceSelectionContext } from '../context';
 
 import InteractiveIcon from './InteractiveIcon';
 

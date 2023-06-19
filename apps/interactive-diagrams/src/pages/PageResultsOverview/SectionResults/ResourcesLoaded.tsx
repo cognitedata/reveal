@@ -1,13 +1,10 @@
 import React from 'react';
 
-import { Flex } from '@interactive-diagrams-app/components/Common';
-import {
-  useActiveWorkflow,
-  useJobStatus,
-} from '@interactive-diagrams-app/hooks';
-import { useWorkflowAllLoadPercentages } from '@interactive-diagrams-app/modules/workflows';
-
 import { Body, Icon } from '@cognite/cogs.js';
+
+import { Flex } from '../../../components/Common';
+import { useActiveWorkflow, useJobStatus } from '../../../hooks';
+import { useWorkflowAllLoadPercentages } from '../../../modules/workflows';
 
 import { InfoWrapper } from './components';
 

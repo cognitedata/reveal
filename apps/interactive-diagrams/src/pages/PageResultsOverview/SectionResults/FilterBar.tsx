@@ -2,10 +2,9 @@ import React, { useState, useEffect, useCallback } from 'react';
 
 import styled from 'styled-components';
 
-import {
-  Flex,
-  LoadingSkeleton,
-} from '@interactive-diagrams-app/components/Common';
+import { Input } from '@cognite/cogs.js';
+
+import { Flex, LoadingSkeleton } from '../../../components/Common';
 import {
   DataSetSelect,
   LabelSelect,
@@ -13,9 +12,7 @@ import {
   StatusSelect,
   StatusType,
   FilterList,
-} from '@interactive-diagrams-app/components/Filters';
-
-import { Input } from '@cognite/cogs.js';
+} from '../../../components/Filters';
 
 import { SelectionFilter } from './types';
 

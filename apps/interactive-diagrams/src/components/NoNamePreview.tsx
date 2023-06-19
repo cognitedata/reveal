@@ -1,10 +1,6 @@
 import React from 'react';
 
-import {
-  InfoCell,
-  InfoGrid,
-  Popover,
-} from '@interactive-diagrams-app/components/Common';
+import { InfoCell, InfoGrid, Popover } from './Common';
 
 type NoNamePreviewProps = {
   id: number;

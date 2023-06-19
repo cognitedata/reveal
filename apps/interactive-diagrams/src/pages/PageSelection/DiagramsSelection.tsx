@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { Flex, PageTitle } from '@interactive-diagrams-app/components/Common';
-import { useActiveWorkflow } from '@interactive-diagrams-app/hooks';
-import { Filter } from '@interactive-diagrams-app/modules/sdk-builder/types';
+import { ThunkDispatch } from '@reduxjs/toolkit';
+import { AnyAction } from 'redux';
+
+import { Flex, PageTitle } from '../../components/Common';
+import { useActiveWorkflow } from '../../hooks';
+import { Filter } from '../../modules/sdk-builder/types';
 import {
   loadWorkflowDiagrams,
   getActiveWorkflowItems,
-} from '@interactive-diagrams-app/modules/workflows';
-import { ThunkDispatch } from '@reduxjs/toolkit';
-import { AnyAction } from 'redux';
+} from '../../modules/workflows';
 
 import SelectionBar from './components/SelectionBar';
 import SelectionTable from './components/SelectionTable';

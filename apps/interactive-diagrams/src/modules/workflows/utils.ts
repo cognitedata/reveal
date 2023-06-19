@@ -1,38 +1,4 @@
 import {
-  doesLabelExist,
-  INTERACTIVE_LABEL,
-  isFileApproved,
-  isFilePending,
-  PENDING_LABEL,
-} from '@interactive-diagrams-app/hooks';
-import {
-  BoundingBox,
-  FileAnnotationsCount,
-  PnidFailedFileSchema,
-  PnidResponseEntity,
-  PnidsParsingJobSchema,
-  RetrieveResultsResponseItem,
-  RetrieveResultsResponseItems,
-  TaggedAnnotationAnnotation,
-  TaggedEventAnnotation,
-  Vertices,
-  Workflow,
-} from '@interactive-diagrams-app/modules/types';
-import {
-  AnnotationSource,
-  TaggedAnnotation,
-  workflowAllResourcesStatusSelector,
-  workflowDiagramStatusSelector,
-} from '@interactive-diagrams-app/modules/workflows';
-import { RootState } from '@interactive-diagrams-app/store';
-import {
-  createPendingAnnotationsFromJob,
-  listAnnotationsForFileFromAnnotationsApi,
-} from '@interactive-diagrams-app/utils/AnnotationUtils';
-import { translateError } from '@interactive-diagrams-app/utils/handleError';
-import { getUniqueValuesArray } from '@interactive-diagrams-app/utils/utils';
-
-import {
   AnnotationBoundingBox,
   CogniteAnnotation,
   listAnnotationsForFile,
@@ -46,6 +12,40 @@ import {
   FileInfo,
 } from '@cognite/sdk';
 
+import {
+  doesLabelExist,
+  INTERACTIVE_LABEL,
+  isFileApproved,
+  isFilePending,
+  PENDING_LABEL,
+} from '../../hooks';
+import { RootState } from '../../store';
+import {
+  createPendingAnnotationsFromJob,
+  listAnnotationsForFileFromAnnotationsApi,
+} from '../../utils/AnnotationUtils';
+import { translateError } from '../../utils/handleError';
+import { getUniqueValuesArray } from '../../utils/utils';
+import {
+  BoundingBox,
+  FileAnnotationsCount,
+  PnidFailedFileSchema,
+  PnidResponseEntity,
+  PnidsParsingJobSchema,
+  RetrieveResultsResponseItem,
+  RetrieveResultsResponseItems,
+  TaggedAnnotationAnnotation,
+  TaggedEventAnnotation,
+  Vertices,
+  Workflow,
+} from '../types';
+
+import {
+  AnnotationSource,
+  TaggedAnnotation,
+  workflowAllResourcesStatusSelector,
+  workflowDiagramStatusSelector,
+} from './';
 import { loadWorkflowDiagrams, loadWorkflowResources } from './actions';
 import { MatchFields } from './types';
 
@@ -192,8 +192,7 @@ export const createPendingAnnotations = async (
     if (annotation.annotationType === 'diagrams.FileLink') {
       return (
         // @ts-expect-error adding comment to suppress eslint error during migration into monorepo
-        (annotation.data.fileRef.id ||
-          // @ts-expect-error adding comment to suppress eslint error during migration into monorepo
+        (annotation.data.fileRef.id || // @ts-expect-error adding comment to suppress eslint error during migration into monorepo
           annotation.data.fileRef.externalId) &&
         annotation.status === 'suggested'
       );
@@ -202,8 +201,7 @@ export const createPendingAnnotations = async (
     if (annotation.annotationType === 'diagrams.AssetLink') {
       return (
         // @ts-expect-error adding comment to suppress eslint error during migration into monorepo
-        (annotation.data.assetRef.id ||
-          // @ts-expect-error adding comment to suppress eslint error during migration into monorepo
+        (annotation.data.assetRef.id || // @ts-expect-error adding comment to suppress eslint error during migration into monorepo
           annotation.data.assetRef.externalId) &&
         annotation.status === 'suggested'
       );

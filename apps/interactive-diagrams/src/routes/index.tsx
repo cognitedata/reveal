@@ -1,20 +1,16 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 
-import Breadcrumbs from '@interactive-diagrams-app/components/Breadcrumbs';
-import {
-  Flex,
-  PageWrapper,
-  StepsList,
-} from '@interactive-diagrams-app/components/Common';
-import GroupsRequired from '@interactive-diagrams-app/components/GroupsRequired';
-import LandingPage from '@interactive-diagrams-app/pages/LandingPage';
-import PageFileOverview from '@interactive-diagrams-app/pages/PageFileOverview';
-import PageOptions from '@interactive-diagrams-app/pages/PageOptions';
-import PageResultsOverview from '@interactive-diagrams-app/pages/PageResultsOverview';
-import PageSelection from '@interactive-diagrams-app/pages/PageSelection';
-
 import { PageTitle } from '@cognite/cdf-utilities';
+
+import Breadcrumbs from '../components/Breadcrumbs';
+import { Flex, PageWrapper, StepsList } from '../components/Common';
+import GroupsRequired from '../components/GroupsRequired';
+import LandingPage from '../pages/LandingPage';
+import PageFileOverview from '../pages/PageFileOverview';
+import PageOptions from '../pages/PageOptions';
+import PageResultsOverview from '../pages/PageResultsOverview';
+import PageSelection from '../pages/PageSelection';
 
 import {
   diagramSelection,

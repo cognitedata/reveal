@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { SmallTitle } from '@interactive-diagrams-app/components/Common';
+import { SmallTitle } from '../atoms';
 
 type Props = {
   title: string;

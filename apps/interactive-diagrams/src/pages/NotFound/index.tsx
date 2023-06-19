@@ -1,8 +1,8 @@
 import React from 'react';
 
-import { Flex, PageTitle } from '@interactive-diagrams-app/components/Common';
-
 import { Illustrations } from '@cognite/cogs.js';
+
+import { Flex, PageTitle } from '../../components/Common';
 
 export default function PageNotFound() {
   return (

@@ -1,11 +1,11 @@
 import React from 'react';
 
-import { getContainer } from '@interactive-diagrams-app/utils/utils';
 import ConfigProvider from 'antd/lib/config-provider';
 
 import { Tooltip as CogsTooltip, Modal as CogsModal } from '@cognite/cogs.js';
 
 import { ids } from '../cogs-variables';
+import { getContainer } from '../utils/utils';
 
 // import { useGlobalStyles } from '@cognite/cdf-utilities';
 // import cogsStyles from '@cognite/cogs.js/dist/cogs.css';

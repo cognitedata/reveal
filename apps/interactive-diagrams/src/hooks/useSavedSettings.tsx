@@ -1,21 +1,14 @@
 import { useEffect, useContext } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { AppStateContext } from '@interactive-diagrams-app/context';
-import {
-  useActiveWorkflow,
-  useJobStarted,
-} from '@interactive-diagrams-app/hooks';
-import {
-  ModelSelected,
-  WorkflowOptions,
-} from '@interactive-diagrams-app/modules/types';
-import {
-  changeOptions,
-  standardModelOptions,
-} from '@interactive-diagrams-app/modules/workflows';
-import { RootState } from '@interactive-diagrams-app/store';
 import isEqual from 'lodash/isEqual';
+
+import { AppStateContext } from '../context';
+import { ModelSelected, WorkflowOptions } from '../modules/types';
+import { changeOptions, standardModelOptions } from '../modules/workflows';
+import { RootState } from '../store';
+
+import { useActiveWorkflow, useJobStarted } from './';
 
 export type SavedSettings = {
   skip: boolean;

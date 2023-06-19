@@ -1,11 +1,11 @@
 import React, { useContext } from 'react';
 
-import { AppStateContext } from '@interactive-diagrams-app/context';
-import { useJobStatusLabels } from '@interactive-diagrams-app/hooks';
-import { WorkflowStep } from '@interactive-diagrams-app/modules/workflows';
-import { capitalizeFirstLetter } from '@interactive-diagrams-app/utils/utils';
-
 import { Chip } from '@cognite/cogs.js';
+
+import { AppStateContext } from '../../../../context';
+import { useJobStatusLabels } from '../../../../hooks';
+import { WorkflowStep } from '../../../../modules/workflows';
+import { capitalizeFirstLetter } from '../../../../utils/utils';
 
 import { StyledAdditionalText } from './components';
 

@@ -1,11 +1,12 @@
-import { followCursors } from '@interactive-diagrams-app/helpers';
-import { count as countAssets } from '@interactive-diagrams-app/modules/assets';
-import { count as countFiles } from '@interactive-diagrams-app/modules/files';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import zipObject from 'lodash/zipObject';
 
 import sdk from '@cognite/cdf-sdk-singleton';
 import { DataSet, DataSetFilterRequest } from '@cognite/sdk';
+
+import { followCursors } from '../../helpers';
+import { count as countAssets } from '../assets';
+import { count as countFiles } from '../files';
 
 export const listDatasets = createAsyncThunk(
   'datasets/list',

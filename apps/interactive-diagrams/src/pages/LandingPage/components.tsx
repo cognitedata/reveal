@@ -2,9 +2,9 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { Flex, Loader } from '@interactive-diagrams-app/components/Common';
-
 import { Colors } from '@cognite/cogs.js';
+
+import { Flex, Loader } from '../../components/Common';
 
 export const Loading = () => (
   <Flex style={{ height: '50vh' }}>

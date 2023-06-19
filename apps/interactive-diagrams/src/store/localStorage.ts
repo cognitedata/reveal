@@ -1,9 +1,10 @@
+import { Store, AnyAction } from 'redux';
+
 import {
   getLocalStorageContent as selectionLSContent,
   importLocalStorageContent as selectionLSImport,
   LSSelection,
-} from '@interactive-diagrams-app/modules/workflows';
-import { Store, AnyAction } from 'redux';
+} from '../modules/workflows';
 
 import { RootState } from '.';
 

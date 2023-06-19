@@ -3,10 +3,10 @@ import { useParams } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import { useWorkflowItems } from '@interactive-diagrams-app/modules/workflows';
-import { stringContains } from '@interactive-diagrams-app/utils/utils';
-
 import { Colors, Input } from '@cognite/cogs.js';
+
+import { useWorkflowItems } from '../../../modules/workflows';
+import { stringContains } from '../../../utils/utils';
 
 import ItemsList from './ItemsList';
 

@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
 
-import {
-  ReviewStatus,
-  approvalDetails,
-} from '@interactive-diagrams-app/components/Filters';
-import { isFileApproved, isFilePending } from '@interactive-diagrams-app/hooks';
 import { Tooltip } from 'antd';
 
 import { Chip, ChipProps } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
+
+import { isFileApproved, isFilePending } from '../hooks';
+
+import { ReviewStatus, approvalDetails } from './Filters';
 
 type Props = { fileId: number; size?: ChipProps['size'] };
 

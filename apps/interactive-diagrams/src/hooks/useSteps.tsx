@@ -1,19 +1,17 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-import { useActiveWorkflow } from '@interactive-diagrams-app/hooks';
 import {
   moveToStep,
   WorkflowStep,
   getActiveWorkflowSteps,
-} from '@interactive-diagrams-app/modules/workflows';
-import { routesMap } from '@interactive-diagrams-app/routes/routesMap';
-import { RootState } from '@interactive-diagrams-app/store';
-import { getUrlWithQueryParams } from '@interactive-diagrams-app/utils/config';
-import {
-  PNID_METRICS,
-  trackUsage,
-} from '@interactive-diagrams-app/utils/Metrics';
+} from '../modules/workflows';
+import { routesMap } from '../routes/routesMap';
+import { RootState } from '../store';
+import { getUrlWithQueryParams } from '../utils/config';
+import { PNID_METRICS, trackUsage } from '../utils/Metrics';
+
+import { useActiveWorkflow } from './';
 
 export const useSteps = (step?: WorkflowStep) => {
   const navigate = useNavigate();

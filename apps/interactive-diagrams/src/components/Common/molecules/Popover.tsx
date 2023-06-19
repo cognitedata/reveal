@@ -2,9 +2,10 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import Layers from '@interactive-diagrams-app/utils/zindex';
 import { Popover as AntDPopover } from 'antd';
 import { TooltipProps } from 'antd/lib/tooltip';
+
+import Layers from '../../../utils/zindex';
 
 interface PopoverProps {
   children: React.ReactNode;

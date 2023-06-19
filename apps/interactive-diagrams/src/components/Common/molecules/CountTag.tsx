@@ -2,9 +2,9 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { abbreviateNumber } from '@interactive-diagrams-app/utils/utils';
-
 import { Tooltip, Icon, AllIconTypes, Colors } from '@cognite/cogs.js';
+
+import { abbreviateNumber } from '../../../utils/utils';
 
 type CountTagProps = {
   value: number;

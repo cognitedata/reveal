@@ -3,24 +3,18 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import { Flex } from '@interactive-diagrams-app/components/Common';
-import { ModalSaveSVG } from '@interactive-diagrams-app/containers';
-import {
-  useReviewFiles,
-  useConvertToSVG,
-  isFilePending,
-} from '@interactive-diagrams-app/hooks';
-import { useWorkflowCreateNew } from '@interactive-diagrams-app/modules/workflows';
-import { diagramPreview } from '@interactive-diagrams-app/routes/paths';
-import { getUrlWithQueryParams } from '@interactive-diagrams-app/utils/config';
-import {
-  PNID_METRICS,
-  trackUsage,
-} from '@interactive-diagrams-app/utils/Metrics';
-
 import { Button, Colors, Title, Tooltip } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
+
+import { Flex } from '../components/Common';
+import { useReviewFiles, useConvertToSVG, isFilePending } from '../hooks';
+import { useWorkflowCreateNew } from '../modules/workflows';
+import { diagramPreview } from '../routes/paths';
+import { getUrlWithQueryParams } from '../utils/config';
+import { PNID_METRICS, trackUsage } from '../utils/Metrics';
+
+import { ModalSaveSVG } from './';
 
 type Button = 'reject' | 'approve' | 'svgSave' | 'recontextualize' | 'preview';
 type Props = {

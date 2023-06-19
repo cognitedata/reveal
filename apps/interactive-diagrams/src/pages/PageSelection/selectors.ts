@@ -1,13 +1,11 @@
-import {
-  ResourceType,
-  Filter,
-} from '@interactive-diagrams-app/modules/sdk-builder/types';
+import { createSelector } from 'reselect';
+
+import { ResourceType, Filter } from '../../modules/sdk-builder/types';
 import {
   getCountsSelector,
   getItemListSelector,
   getItemsSearchSelector,
-} from '@interactive-diagrams-app/modules/workflows';
-import { createSelector } from 'reselect';
+} from '../../modules/workflows';
 
 export const searchCountSelector = (type: ResourceType, filter: Filter) =>
   createSelector(

@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
 
-import { DropdownMenu } from '@interactive-diagrams-app/components/Common';
-import { ModalSaveSVG } from '@interactive-diagrams-app/containers';
+import { Button } from '@cognite/cogs.js';
+
+import { DropdownMenu } from '../../components/Common';
 import {
   useReviewFiles,
   useActiveWorkflow,
   useConvertToSVG,
-} from '@interactive-diagrams-app/hooks';
-import { useWorkflowDiagramsIds } from '@interactive-diagrams-app/modules/workflows';
+} from '../../hooks';
+import { useWorkflowDiagramsIds } from '../../modules/workflows';
 
-import { Button } from '@cognite/cogs.js';
+import { ModalSaveSVG } from './..';
 
 // Context menu for all contextualized diagrams
 export const MenuAll = ({ canRejectAll }: { canRejectAll: boolean }) => {

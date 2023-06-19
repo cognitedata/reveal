@@ -4,11 +4,6 @@ import styled from 'styled-components';
 
 import { Metadata } from '@data-exploration/components';
 import { FileInfo as DataExplorationFileInfo } from '@data-exploration/containers';
-import { ContextFileViewer as CogniteFileViewer } from '@interactive-diagrams-app/components/CogniteFileViewer';
-import {
-  PNID_METRICS,
-  trackUsage,
-} from '@interactive-diagrams-app/utils/Metrics';
 
 import { Tabs } from '@cognite/cogs.js';
 import {
@@ -16,6 +11,9 @@ import {
   ResourceItem,
 } from '@cognite/data-exploration';
 import { FileInfo } from '@cognite/sdk';
+
+import { ContextFileViewer as CogniteFileViewer } from '../../../components/CogniteFileViewer';
+import { PNID_METRICS, trackUsage } from '../../../utils/Metrics';
 
 import { ResourceDetailTabContent } from './ResourceDetailTabContent';
 

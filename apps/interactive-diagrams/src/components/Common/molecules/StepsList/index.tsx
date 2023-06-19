@@ -2,8 +2,9 @@ import React from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 
 import 'antd/dist/antd.min.css';
-import { WorkflowStep } from '@interactive-diagrams-app/modules/workflows';
-import { PathData, stepsMap } from '@interactive-diagrams-app/routes/routesMap';
+
+import { WorkflowStep } from '../../../..//modules/workflows';
+import { PathData, stepsMap } from '../../../../routes/routesMap';
 
 import { Steps } from './Steps';
 import { StepsType } from './types';

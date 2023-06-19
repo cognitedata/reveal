@@ -3,11 +3,11 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import { diagramPreview } from '@interactive-diagrams-app/routes/paths';
-import { getUrlWithQueryParams } from '@interactive-diagrams-app/utils/config';
-
 import { Body } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
+
+import { diagramPreview } from '../../../routes/paths';
+import { getUrlWithQueryParams } from '../../../utils/config';
 
 import FileItem from './FileItem';
 

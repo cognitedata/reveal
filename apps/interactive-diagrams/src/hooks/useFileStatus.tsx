@@ -1,5 +1,6 @@
-import { useParsingJob } from '@interactive-diagrams-app/hooks';
-import { ApiStatusCount } from '@interactive-diagrams-app/modules/types';
+import { ApiStatusCount } from '../modules/types';
+
+import { useParsingJob } from './';
 
 export const useFileStatus = (file: any) => {
   const d = useParsingJob();

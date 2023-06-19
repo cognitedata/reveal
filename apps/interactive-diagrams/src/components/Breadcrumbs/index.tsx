@@ -2,14 +2,13 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import Link from '@interactive-diagrams-app/components/Breadcrumbs/Link';
-import {
-  trackUsage,
-  PNID_METRICS,
-} from '@interactive-diagrams-app/utils/Metrics';
 import Breadcrumb from 'antd/lib/breadcrumb';
 
 import { Colors } from '@cognite/cogs.js';
+
+import { PNID_METRICS, trackUsage } from '../../utils/Metrics';
+
+import Link from './Link';
 
 interface BreadcrumbsProps {
   breadcrumbs: { title: string; path?: string }[];

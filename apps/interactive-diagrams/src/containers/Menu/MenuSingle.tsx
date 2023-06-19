@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
 
-import { DropdownMenu } from '@interactive-diagrams-app/components/Common';
-import { ModalSaveSVG } from '@interactive-diagrams-app/containers';
+import { Button } from '@cognite/cogs.js';
+import { FileInfo } from '@cognite/sdk';
+import { useCdfItem } from '@cognite/sdk-react-query-hooks';
+
+import { DropdownMenu } from '../../components/Common';
 import {
   useReviewFiles,
   useConvertToSVG,
   isFileApproved,
   useFileStatus,
-} from '@interactive-diagrams-app/hooks';
+} from '../../hooks';
 
-import { Button } from '@cognite/cogs.js';
-import { FileInfo } from '@cognite/sdk';
-import { useCdfItem } from '@cognite/sdk-react-query-hooks';
+import { ModalSaveSVG } from './..';
 
 // Context menu for a single diagram
 export const MenuSingle = ({ file }: { file: FileInfo }) => {

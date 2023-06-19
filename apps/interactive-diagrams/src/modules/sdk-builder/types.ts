@@ -1,11 +1,6 @@
-import {
-  ItemsState,
-  CountState,
-  SearchState,
-  ListState,
-} from '@interactive-diagrams-app/modules/types';
-
 import { Limit } from '@cognite/sdk';
+
+import { ItemsState, CountState, SearchState, ListState } from '../types';
 
 export * from './count/types';
 export * from './search/types';

@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { useMissingPermissions } from '@interactive-diagrams-app/hooks/usePermissions';
-import NoAccess from '@interactive-diagrams-app/pages/NoAccess';
+import { useMissingPermissions } from '../hooks';
+import NoAccessPage from '../pages/NoAccess';
 
 export default function GroupsRequired(props: { children: JSX.Element }) {
   const missingPermissions = useMissingPermissions();
@@ -9,5 +9,5 @@ export default function GroupsRequired(props: { children: JSX.Element }) {
   if (!missingPermissions?.length) {
     return props.children;
   }
-  return <NoAccess missingPermissions={missingPermissions} />;
+  return <NoAccessPage missingPermissions={missingPermissions} />;
 }

@@ -1,17 +1,14 @@
 import React from 'react';
 
-import { Flex, Popover } from '@interactive-diagrams-app/components/Common';
-import DetectedTags from '@interactive-diagrams-app/components/DetectedTags';
-import InteractiveIcon from '@interactive-diagrams-app/components/InteractiveIcon';
-import { ResourceType } from '@interactive-diagrams-app/modules/types';
-import {
-  dateSorter,
-  stringCompare,
-} from '@interactive-diagrams-app/utils/utils';
-
 import { Icon } from '@cognite/cogs.js';
 import { AssetSmallPreview, FileSmallPreview } from '@cognite/data-exploration';
 import { FileInfo, Asset } from '@cognite/sdk';
+
+import { Flex, Popover } from '../../../components/Common';
+import DetectedTags from '../../../components/DetectedTags';
+import InteractiveIcon from '../../../components/InteractiveIcon';
+import { ResourceType } from '../../../modules/types';
+import { dateSorter, stringCompare } from '../../../utils/utils';
 
 export const getColumns: any = (resourceType: ResourceType) => {
   const isAsset = resourceType === 'assets';

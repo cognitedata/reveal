@@ -1,6 +1,5 @@
-import { WorkflowState } from '@interactive-diagrams-app/modules/types';
-
 import { defaultJobs } from '..';
+import { WorkflowState } from '../../types';
 
 type Action = {
   type: string;

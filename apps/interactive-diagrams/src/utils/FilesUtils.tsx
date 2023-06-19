@@ -1,4 +1,4 @@
-import { PnidsParsingJobSchema } from '@interactive-diagrams-app/modules/types';
+import { PnidsParsingJobSchema } from '../modules/types';
 
 export const canDeploySelectedFiles = (
   parsingJob: PnidsParsingJobSchema,

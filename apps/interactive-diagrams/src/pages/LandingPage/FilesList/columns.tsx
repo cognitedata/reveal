@@ -3,26 +3,17 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { FileSmallPreview } from '@data-exploration-components/containers';
-import {
-  Flex,
-  Popover,
-  Dropdown,
-} from '@interactive-diagrams-app/components/Common';
-import DetectedTags from '@interactive-diagrams-app/components/DetectedTags';
-import DiagramReviewStatus from '@interactive-diagrams-app/components/DiagramReviewStatus';
-import InteractiveIcon from '@interactive-diagrams-app/components/InteractiveIcon';
-import { FileWithAnnotations } from '@interactive-diagrams-app/hooks';
-import {
-  trackUsage,
-  PNID_METRICS,
-} from '@interactive-diagrams-app/utils/Metrics';
-import {
-  dateSorter,
-  stringCompare,
-} from '@interactive-diagrams-app/utils/utils';
 
 import { Button } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
+
+import { Flex, Popover, Dropdown } from '../../../components/Common';
+import DetectedTags from '../../../components/DetectedTags';
+import DiagramReviewStatus from '../../../components/DiagramReviewStatus';
+import InteractiveIcon from '../../../components/InteractiveIcon';
+import { FileWithAnnotations } from '../../../hooks';
+import { trackUsage, PNID_METRICS } from '../../../utils/Metrics';
+import { dateSorter, stringCompare } from '../../../utils/utils';
 
 import { FileContextMenu } from './FileContextMenu';
 import { sortFilesByAnnotations } from './utils';

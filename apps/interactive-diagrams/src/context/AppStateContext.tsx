@@ -1,14 +1,8 @@
 import React, { useState } from 'react';
 
-import {
-  useLocalStorage,
-  SavedSettings,
-} from '@interactive-diagrams-app/hooks';
-import {
-  ModelSelected,
-  ResourceCount,
-} from '@interactive-diagrams-app/modules/types';
-import { LS_KEY_SETTINGS } from '@interactive-diagrams-app/stringConstants';
+import { useLocalStorage, SavedSettings } from '../hooks';
+import { ModelSelected, ResourceCount } from '../modules/types';
+import { LS_KEY_SETTINGS } from '../stringConstants';
 
 export type PrefixType = 'custom' | 'original';
 export type AppStateContextType = {

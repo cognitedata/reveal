@@ -1,14 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
+import { ThunkDispatch } from '@reduxjs/toolkit';
+import { AnyAction } from 'redux';
+
 import {
   list as listAllDatasets,
   selectAllDataSets,
   dataSetCounts,
   datasetsFetched,
-} from '@interactive-diagrams-app/modules/datasets';
-import { ThunkDispatch } from '@reduxjs/toolkit';
-import { AnyAction } from 'redux';
+} from '../modules/datasets';
 
 export const useDatasets = () => {
   const dispatch = useDispatch<ThunkDispatch<any, void, AnyAction>>();

@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { useGoToStep } from '@interactive-diagrams-app/hooks';
-import { ResourceType } from '@interactive-diagrams-app/modules/types';
+import { useGoToStep } from '../../../hooks';
+import { ResourceType } from '../../../modules/types';
 
 import ModelInfo from './ModelInfo';
 

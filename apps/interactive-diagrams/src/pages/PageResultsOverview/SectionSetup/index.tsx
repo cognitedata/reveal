@@ -1,6 +1,8 @@
 import React from 'react';
 
-import { Flex } from '@interactive-diagrams-app/components/Common';
+import { Body, Title, Chip } from '@cognite/cogs.js';
+
+import { Flex } from '../../../components/Common';
 import {
   useJobStatus,
   useGoToStep,
@@ -8,10 +10,8 @@ import {
   useResourceCount,
   useJobStatusLabels,
   useJobStarted,
-} from '@interactive-diagrams-app/hooks';
-import { ResourceType } from '@interactive-diagrams-app/modules/types';
-
-import { Body, Title, Chip } from '@cognite/cogs.js';
+} from '../../../hooks';
+import { ResourceType } from '../../../modules/types';
 
 import { DetailsWrapper, SetUpWrapper } from './components';
 import ModelInfo from './ModelInfo';

@@ -1,11 +1,8 @@
-import {
-  ResourceType,
-  ResourceState,
-  Query,
-} from '@interactive-diagrams-app/modules/types';
 import { createSlice, ActionReducerMapBuilder } from '@reduxjs/toolkit';
 
 import { InternalId } from '@cognite/sdk';
+
+import { ResourceType, ResourceState, Query } from '../types';
 
 import buildCount from './count';
 import buildItems from './items';

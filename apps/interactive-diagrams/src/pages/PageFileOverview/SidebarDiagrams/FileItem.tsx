@@ -2,11 +2,11 @@ import React, { useEffect, useRef } from 'react';
 
 import styled from 'styled-components';
 
-import DiagramReviewStatus from '@interactive-diagrams-app/components/DiagramReviewStatus';
-import InteractiveIcon from '@interactive-diagrams-app/components/InteractiveIcon';
-
 import { Body, Colors } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
+
+import DiagramReviewStatus from '../../../components/DiagramReviewStatus';
+import InteractiveIcon from '../../../components/InteractiveIcon';
 
 type FileItemProps = {
   file: FileInfo;

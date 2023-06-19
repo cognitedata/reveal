@@ -1,18 +1,19 @@
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { Flex } from '@interactive-diagrams-app/components/Common';
+import { ThunkDispatch } from '@reduxjs/toolkit';
+import { AnyAction } from 'redux';
+
+import { Button, Body, Colors, Icon } from '@cognite/cogs.js';
+
+import { Flex } from '../../../components/Common';
 import {
   useJobStatusLabels,
   useJobStarted,
   useParsingJob,
   useJobStatus,
-} from '@interactive-diagrams-app/hooks';
-import { startPnidParsingWorkflow } from '@interactive-diagrams-app/modules/workflows';
-import { ThunkDispatch } from '@reduxjs/toolkit';
-import { AnyAction } from 'redux';
-
-import { Button, Body, Colors, Icon } from '@cognite/cogs.js';
+} from '../../../hooks';
+import { startPnidParsingWorkflow } from '../../../modules/workflows';
 
 export default function RunModelButton(): JSX.Element {
   const dispatch = useDispatch<ThunkDispatch<any, void, AnyAction>>();

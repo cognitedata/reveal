@@ -3,7 +3,12 @@ import { useSelector } from 'react-redux';
 
 import styled from 'styled-components';
 
-import { Flex } from '@interactive-diagrams-app/components/Common';
+import { Spin } from 'antd';
+import omit from 'lodash/omit';
+
+import { Button, Colors, Input } from '@cognite/cogs.js';
+
+import { Flex } from '../../../components/Common';
 import {
   DataSetSelect,
   RootAssetSelect,
@@ -11,18 +16,11 @@ import {
   LabelSelect,
   FilterList,
   FilterMenu,
-} from '@interactive-diagrams-app/components/Filters';
-import { useResourceCount } from '@interactive-diagrams-app/hooks';
-import { ResourceType } from '@interactive-diagrams-app/modules/sdk-builder/types';
-import { searchCountSelector } from '@interactive-diagrams-app/pages/PageSelection/selectors';
-import {
-  PNID_METRICS,
-  trackUsage,
-} from '@interactive-diagrams-app/utils/Metrics';
-import { Spin } from 'antd';
-import omit from 'lodash/omit';
-
-import { Button, Colors, Input } from '@cognite/cogs.js';
+} from '../../../components/Filters';
+import { useResourceCount } from '../../../hooks';
+import { ResourceType } from '../../../modules/sdk-builder/types';
+import { PNID_METRICS, trackUsage } from '../../../utils/Metrics';
+import { searchCountSelector } from '../selectors';
 
 type Props = {
   type: ResourceType | 'diagrams';

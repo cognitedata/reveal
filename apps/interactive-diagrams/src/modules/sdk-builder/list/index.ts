@@ -1,11 +1,3 @@
-import { followCursorsGenerator } from '@interactive-diagrams-app/helpers/Helpers';
-import {
-  ResourceState,
-  ResourceType,
-  ApiListResult,
-  ApiResult,
-  Query,
-} from '@interactive-diagrams-app/modules/types';
 import {
   createAsyncThunk,
   createAction,
@@ -15,6 +7,14 @@ import {
 import sdk from '@cognite/cdf-sdk-singleton';
 import { InternalId } from '@cognite/sdk';
 
+import { followCursorsGenerator } from '../../../helpers/Helpers';
+import {
+  ResourceState,
+  ResourceType,
+  ApiListResult,
+  ApiResult,
+  Query,
+} from '../../types';
 import { updateAction as update } from '../reducers';
 
 import { createListSelector } from './selectors';

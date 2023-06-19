@@ -1,4 +1,4 @@
-import { ApiCall } from '@interactive-diagrams-app/modules/types';
+import { ApiCall } from '../../types';
 
 export interface ApiListResult extends ApiCall {
   ids?: number[];

@@ -2,8 +2,6 @@ import React, { useState, useEffect, useMemo } from 'react';
 
 import styled from 'styled-components';
 
-import { Select } from '@interactive-diagrams-app/components/Common';
-
 import {
   RelationshipTable,
   RelationshipTableProps,
@@ -15,6 +13,8 @@ import {
   AnnotationTable,
   useRelatedResourceCount,
 } from '@cognite/data-exploration';
+
+import { Select } from '../../../components/Common';
 
 type TypeOption = {
   label: string;

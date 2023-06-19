@@ -1,4 +1,4 @@
-import { WorkflowStep } from '@interactive-diagrams-app/modules/workflows';
+import { WorkflowStep } from '../modules/workflows';
 
 import { paths } from './paths';
 

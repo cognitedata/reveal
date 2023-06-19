@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-import { Flex } from '@interactive-diagrams-app/components/Common';
 import Chart, { ChartData, ChartConfiguration } from 'chart.js/auto';
 import isEqual from 'lodash/isEqual';
+
+import { Flex } from '../atoms';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore

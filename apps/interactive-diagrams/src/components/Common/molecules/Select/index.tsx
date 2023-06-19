@@ -2,9 +2,6 @@ import React, { useRef } from 'react';
 
 import styled from 'styled-components';
 
-import { Flex } from '@interactive-diagrams-app/components/Common';
-import { FilterPlaceholder } from '@interactive-diagrams-app/components/Filters';
-import Layers from '@interactive-diagrams-app/utils/zindex';
 import { Spin } from 'antd';
 
 import {
@@ -14,6 +11,10 @@ import {
   OptionType,
   Select as CogsSelect,
 } from '@cognite/cogs.js';
+
+import Layers from '../../../../utils/zindex';
+import { FilterPlaceholder } from '../../../Filters';
+import { Flex } from '../../atoms';
 
 import { selectStyles } from './styles';
 import { CustomSelectProps } from './types';

@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 
-import { useJobStatus } from '@interactive-diagrams-app/hooks';
-import { JobStatus } from '@interactive-diagrams-app/modules/types';
-import ResourcesLoaded from '@interactive-diagrams-app/pages/PageResultsOverview/SectionResults/ResourcesLoaded';
-
 import { ChipProps } from '@cognite/cogs.js';
+
+import { JobStatus } from '../modules/types';
+import ResourcesLoaded from '../pages/PageResultsOverview/SectionResults/ResourcesLoaded';
+
+import { useJobStatus } from './';
 
 export const useJobStatusLabels = () => {
   const jobStatus = useJobStatus();

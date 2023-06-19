@@ -1,20 +1,6 @@
 import { useContext, useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { AppStateContext } from '@interactive-diagrams-app/context';
-import { useAnnotationsForFiles } from '@interactive-diagrams-app/hooks';
-import { itemSelector as assetSelector } from '@interactive-diagrams-app/modules/assets';
-import { itemSelector as fileSelector } from '@interactive-diagrams-app/modules/files';
-import { startConvertFileToSvgJob } from '@interactive-diagrams-app/modules/svgConvert';
-import { Vertices } from '@interactive-diagrams-app/modules/types';
-import {
-  boundingBoxToVertices,
-  getTaggedAnnotationBoundingBox,
-  isTaggedAnnotationsApiAnnotation,
-  isTaggedEventAnnotation,
-  TaggedAnnotation,
-} from '@interactive-diagrams-app/modules/workflows';
-import { RootState } from '@interactive-diagrams-app/store';
 import { ThunkDispatch } from '@reduxjs/toolkit';
 import isEqual from 'lodash/isEqual';
 import { AnyAction } from 'redux';
@@ -22,7 +8,22 @@ import { createSelector } from 'reselect';
 
 import { FileInfo } from '@cognite/sdk';
 
+import { AppStateContext } from '../context';
+import { itemSelector as assetSelector } from '../modules/assets';
+import { itemSelector as fileSelector } from '../modules/files';
+import { startConvertFileToSvgJob } from '../modules/svgConvert';
+import { Vertices } from '../modules/types';
+import {
+  boundingBoxToVertices,
+  getTaggedAnnotationBoundingBox,
+  isTaggedAnnotationsApiAnnotation,
+  isTaggedEventAnnotation,
+  TaggedAnnotation,
+} from '../modules/workflows';
+import { RootState } from '../store';
 import getAssetIdsFromTaggedAnnotations from '../utils/getAssetIdsFromTaggedAnnotations';
+
+import { useAnnotationsForFiles } from './';
 
 type DiagramToConvert = {
   fileName: string;

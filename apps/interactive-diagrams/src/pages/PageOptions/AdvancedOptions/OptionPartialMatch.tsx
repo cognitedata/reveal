@@ -1,13 +1,13 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { Flex } from '@interactive-diagrams-app/components/Common';
-import { useJobStarted } from '@interactive-diagrams-app/hooks';
-import { changeOptions } from '@interactive-diagrams-app/modules/workflows';
-import { OptionWrapper } from '@interactive-diagrams-app/pages/PageOptions/components';
-import { RootState } from '@interactive-diagrams-app/store';
-
 import { Body, Switch } from '@cognite/cogs.js';
+
+import { Flex } from '../../../components/Common';
+import { useJobStarted } from '../../../hooks';
+import { changeOptions } from '../../../modules/workflows';
+import { RootState } from '../../../store';
+import { OptionWrapper } from '../components';
 
 export const OptionPartialMatch = ({ workflowId }: { workflowId: number }) => {
   const dispatch = useDispatch();

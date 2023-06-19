@@ -2,18 +2,14 @@ import React, { useState } from 'react';
 
 import styled from 'styled-components';
 
-import {
-  InfoGrid,
-  InfoCell,
-  SmallTitle,
-  ListItem,
-  CountLabel,
-} from '@interactive-diagrams-app/components/Common';
 import { Row } from 'antd';
 
 import { Icon, Button } from '@cognite/cogs.js';
 import { AssetBreadcrumb } from '@cognite/data-exploration';
 import { Asset, FileInfo, Timeseries } from '@cognite/sdk';
+
+import { CountLabel, ListItem, SmallTitle } from '../../atoms';
+import { InfoCell, InfoGrid } from '../../molecules';
 
 interface AssetDetailsProps {
   asset: Asset;

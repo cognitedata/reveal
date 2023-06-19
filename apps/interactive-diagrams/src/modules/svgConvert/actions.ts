@@ -1,23 +1,18 @@
-import GCSUploader from '@interactive-diagrams-app/components/GCSUploader';
-import { callUntilCompleted } from '@interactive-diagrams-app/helpers/Helpers';
-import { Vertices } from '@interactive-diagrams-app/modules/types';
-import {
-  convertErrorNotification,
-  convertSuccessNotification,
-} from '@interactive-diagrams-app/pages/PageResultsOverview/utils';
-import handleError, {
-  tryToStringify,
-} from '@interactive-diagrams-app/utils/handleError';
-import {
-  trackTimedUsage,
-  PNID_METRICS,
-  trackUsage,
-} from '@interactive-diagrams-app/utils/Metrics';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import noop from 'lodash/noop';
 
 import sdk from '@cognite/cdf-sdk-singleton';
 import { FileUploadResponse } from '@cognite/sdk';
+
+import GCSUploader from '../../components/GCSUploader';
+import { callUntilCompleted } from '../../helpers/Helpers';
+import {
+  convertErrorNotification,
+  convertSuccessNotification,
+} from '../../pages/PageResultsOverview/utils';
+import handleError, { tryToStringify } from '../../utils/handleError';
+import { trackTimedUsage, PNID_METRICS, trackUsage } from '../../utils/Metrics';
+import { Vertices } from '../types';
 
 import { createJob, updateJob, rejectJob, finishJob, downloadFile } from '.';
 // ---------------------------

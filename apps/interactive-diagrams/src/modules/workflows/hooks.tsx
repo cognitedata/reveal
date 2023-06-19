@@ -2,12 +2,19 @@ import { useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
+import { Asset, FileInfo, IdEither } from '@cognite/sdk';
+import { useCdfItems, useList } from '@cognite/sdk-react-query-hooks';
+
+import { useLocalStorage, selectParsingJobs, SavedSettings } from '../../hooks';
+import { diagramSelection } from '../../routes/paths';
+import { RootState } from '../../store/reducer';
+import { LS_KEY_SETTINGS } from '../../stringConstants';
 import {
-  useLocalStorage,
-  selectParsingJobs,
-  SavedSettings,
-} from '@interactive-diagrams-app/hooks';
-import { ResourceType } from '@interactive-diagrams-app/modules/sdk-builder/types';
+  NUM_OF_RESOURCES_CHECKED,
+  getUrlWithQueryParams,
+} from '../../utils/config';
+import { ResourceType } from '../sdk-builder/types';
+
 import {
   standardModelOptions,
   createNewWorkflow,
@@ -20,17 +27,7 @@ import {
   workflowDiagramStatusSelector,
   workflowResourceStatusSelector,
   workflowAllResourcesStatusSelector,
-} from '@interactive-diagrams-app/modules/workflows';
-import { diagramSelection } from '@interactive-diagrams-app/routes/paths';
-import { RootState } from '@interactive-diagrams-app/store/reducer';
-import { LS_KEY_SETTINGS } from '@interactive-diagrams-app/stringConstants';
-import {
-  NUM_OF_RESOURCES_CHECKED,
-  getUrlWithQueryParams,
-} from '@interactive-diagrams-app/utils/config';
-
-import { Asset, FileInfo, IdEither } from '@cognite/sdk';
-import { useCdfItems, useList } from '@cognite/sdk-react-query-hooks';
+} from './';
 
 /**
  * Creates a new workflow.

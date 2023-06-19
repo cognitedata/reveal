@@ -1,14 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
-import { useItemsAndFetching } from '@interactive-diagrams-app/hooks';
 import {
   ResourceSelection,
   WorkflowStep,
   ResourceType,
   Filter,
-} from '@interactive-diagrams-app/modules/types';
-import { getActiveWorkflowItems } from '@interactive-diagrams-app/modules/workflows';
+} from '../modules/types';
+import { getActiveWorkflowItems } from '../modules/workflows';
+
+import { useItemsAndFetching } from './';
 
 type AwaitingResourcesToLoad = 'idle' | 'awaiting' | 'done';
 

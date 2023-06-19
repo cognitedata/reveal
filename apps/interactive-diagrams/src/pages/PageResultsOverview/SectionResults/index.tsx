@@ -1,18 +1,11 @@
 import React, { useState, useEffect } from 'react';
 
-import {
-  Flex,
-  TitledSection,
-} from '@interactive-diagrams-app/components/Common';
-import {
-  useActiveWorkflow,
-  useJobStatus,
-  useParsingJob,
-} from '@interactive-diagrams-app/hooks';
-import { JobStatus } from '@interactive-diagrams-app/modules/types';
-import { useWorkflowTotalCounts } from '@interactive-diagrams-app/modules/workflows';
-
 import { Title } from '@cognite/cogs.js';
+
+import { Flex, TitledSection } from '../../../components/Common';
+import { useActiveWorkflow, useJobStatus, useParsingJob } from '../../../hooks';
+import { JobStatus } from '../../../modules/types';
+import { useWorkflowTotalCounts } from '../../../modules/workflows';
 
 import DiagramActions from './DiagramActions';
 import FilterBar from './FilterBar';

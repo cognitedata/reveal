@@ -1,7 +1,7 @@
-import { createStore as createStoreDev } from '@interactive-diagrams-app/store/env/storeDev';
-import { createStore as createStoreProd } from '@interactive-diagrams-app/store/env/storeProd';
 import { Store, AnyAction } from '@reduxjs/toolkit';
 
+import { createStore as createStoreDev } from './env/storeDev';
+import { createStore as createStoreProd } from './env/storeProd';
 import { RootState } from './reducer';
 
 const store: Store<any, AnyAction> =

@@ -1,9 +1,7 @@
-import {
-  ApiCountResult,
-  CountState,
-} from '@interactive-diagrams-app/modules/types';
-import { RootState } from '@interactive-diagrams-app/store';
 import { createSelector } from '@reduxjs/toolkit';
+
+import { RootState } from '../../../store';
+import { ApiCountResult, CountState } from '../../types';
 
 import { defaultCount } from '.';
 

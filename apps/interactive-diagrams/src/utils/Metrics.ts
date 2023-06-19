@@ -1,9 +1,10 @@
-import { getItemFromStorage } from '@interactive-diagrams-app/hooks';
-import { LS_KEY_METRICS } from '@interactive-diagrams-app/stringConstants';
 import includes from 'lodash/includes';
 
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import sdk from '@cognite/cdf-sdk-singleton';
+
+import { getItemFromStorage } from '../hooks';
+import { LS_KEY_METRICS } from '../stringConstants';
 
 export type LSMetrics = {
   username: string;

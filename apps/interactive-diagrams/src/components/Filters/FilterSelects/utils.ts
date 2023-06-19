@@ -1,9 +1,9 @@
+import { Colors } from '@cognite/cogs.js';
+
 import {
   PENDING_LABEL,
   INTERACTIVE_LABEL,
-} from '@interactive-diagrams-app/hooks/useReviewFiles';
-
-import { Colors } from '@cognite/cogs.js';
+} from '../../../hooks/useReviewFiles';
 
 import { MimeType, ReviewStatus, ProgressData } from './types';
 

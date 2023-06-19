@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 
-import { listAnnotationsForFileFromAnnotationsApi } from '@interactive-diagrams-app/utils/AnnotationUtils';
 import uniqBy from 'lodash/uniqBy';
 
 import {
@@ -17,6 +16,7 @@ import {
   getTaggedAnnotationFromEventAnnotation,
   TaggedAnnotation,
 } from '../modules/workflows';
+import { listAnnotationsForFileFromAnnotationsApi } from '../utils/AnnotationUtils';
 
 export type FileWithAnnotations = FileInfo & {
   annotations: TaggedAnnotation[];

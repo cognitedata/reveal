@@ -1,7 +1,5 @@
 import { useEffect, useState } from 'react';
 
-import { useInterval } from '@interactive-diagrams-app/hooks';
-import { listAnnotationsForFileFromAnnotationsApi } from '@interactive-diagrams-app/utils/AnnotationUtils';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import uniqBy from 'lodash/uniqBy';
 
@@ -20,6 +18,9 @@ import {
   isTaggedEventAnnotation,
   TaggedAnnotation,
 } from '../modules/workflows';
+import { listAnnotationsForFileFromAnnotationsApi } from '../utils/AnnotationUtils';
+
+import { useInterval } from './';
 
 const TIMES_TO_REFETCH = 3;
 

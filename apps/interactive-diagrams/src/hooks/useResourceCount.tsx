@@ -1,16 +1,17 @@
 import { useContext, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { AppStateContext } from '@interactive-diagrams-app/context';
-import { ResourceType } from '@interactive-diagrams-app/modules/types';
+import { ThunkDispatch } from '@reduxjs/toolkit';
+import isEqual from 'lodash/isEqual';
+import { AnyAction } from 'redux';
+
+import { AppStateContext } from '../context';
+import { ResourceType } from '../modules/types';
 import {
   getCountAction,
   getActiveWorkflowItems,
   useWorkflowTotalCounts,
-} from '@interactive-diagrams-app/modules/workflows';
-import { ThunkDispatch } from '@reduxjs/toolkit';
-import isEqual from 'lodash/isEqual';
-import { AnyAction } from 'redux';
+} from '../modules/workflows';
 
 import { useActiveWorkflow } from './useActiveWorkflow';
 

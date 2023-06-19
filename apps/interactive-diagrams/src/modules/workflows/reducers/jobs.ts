@@ -1,8 +1,4 @@
-import {
-  WorkflowState,
-  Workflow,
-} from '@interactive-diagrams-app/modules/types';
-
+import { WorkflowState, Workflow } from '../../types';
 import { updateSingleJobStatus } from '../utils';
 
 type Action = {

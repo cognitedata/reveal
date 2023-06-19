@@ -1,16 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import { Flex } from '@interactive-diagrams-app/components/Common';
-import { useCompletedSteps } from '@interactive-diagrams-app/hooks';
-import { WorkflowStep } from '@interactive-diagrams-app/modules/types';
-import { getUrlWithQueryParams } from '@interactive-diagrams-app/utils/config';
-import {
-  PNID_METRICS,
-  trackUsage,
-} from '@interactive-diagrams-app/utils/Metrics';
-
 import { Icon } from '@cognite/cogs.js';
+
+import { getUrlWithQueryParams } from '../../../..//utils/config';
+import { useCompletedSteps } from '../../../../hooks';
+import { WorkflowStep } from '../../../../modules/types';
+import { PNID_METRICS, trackUsage } from '../../../../utils/Metrics';
+import { Flex } from '../../atoms';
 
 import { StyledStep, StepNumber } from './components';
 import { StepCombo } from './StepCombo';

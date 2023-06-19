@@ -1,16 +1,16 @@
-import {
-  ResourceType,
-  ItemsList,
-  ItemsState,
-  ItemsAsyncStatus,
-} from '@interactive-diagrams-app/modules/types';
-import { RootState } from '@interactive-diagrams-app/store';
-import { mapArrayToObj } from '@interactive-diagrams-app/utils/utils';
 import { createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 
 import sdk from '@cognite/cdf-sdk-singleton';
 import { ExternalId, InternalId, CogniteInternalId } from '@cognite/sdk';
 
+import { RootState } from '../../../store';
+import { mapArrayToObj } from '../../../utils/utils';
+import {
+  ResourceType,
+  ItemsList,
+  ItemsState,
+  ItemsAsyncStatus,
+} from '../../types';
 import { updateAction as update } from '../reducers';
 
 import {

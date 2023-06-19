@@ -2,10 +2,10 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { Flex } from '@interactive-diagrams-app/components/Common';
-import { standardModelOptions } from '@interactive-diagrams-app/modules/workflows';
-
 import { Body, Colors, Title } from '@cognite/cogs.js';
+
+import { Flex } from '../../components/Common';
+import { standardModelOptions } from '../../modules/workflows';
 
 const TooltipWrapper = styled(Flex)`
   padding: 8px 10px;

@@ -2,13 +2,10 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { useWorkflowCreateNew } from '@interactive-diagrams-app/modules/workflows';
-import {
-  PNID_METRICS,
-  trackUsage,
-} from '@interactive-diagrams-app/utils/Metrics';
-
 import { Button, Illustrations, Title } from '@cognite/cogs.js';
+
+import { useWorkflowCreateNew } from '../../../modules/workflows';
+import { PNID_METRICS, trackUsage } from '../../../utils/Metrics';
 
 const Wrapper = styled.div`
   width: 100%;

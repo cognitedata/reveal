@@ -2,16 +2,6 @@ import React, { useEffect } from 'react';
 import { Provider } from 'react-redux';
 import { Route, Routes, BrowserRouter } from 'react-router-dom';
 
-import { AppStateProvider } from '@interactive-diagrams-app/context';
-import { setItemInStorage } from '@interactive-diagrams-app/hooks';
-import RootApp from '@interactive-diagrams-app/pages/App';
-import { root } from '@interactive-diagrams-app/routes/paths';
-import store, {
-  persistedState,
-  loadLocalStorage,
-} from '@interactive-diagrams-app/store';
-import { LS_KEY_PREFIX } from '@interactive-diagrams-app/stringConstants';
-import { AntStyles, GlobalStyles } from '@interactive-diagrams-app/styles';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import debounce from 'lodash/debounce';
 
@@ -25,6 +15,14 @@ import {
 import { Loader } from '@cognite/cogs.js';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 import { SDKProvider } from '@cognite/sdk-provider';
+
+import { AppStateProvider } from './context';
+import { setItemInStorage } from './hooks';
+import RootApp from './pages/App';
+import { root } from './routes/paths';
+import store, { loadLocalStorage, persistedState } from './store';
+import { LS_KEY_PREFIX } from './stringConstants';
+import { AntStyles, GlobalStyles } from './styles';
 
 const App = () => {
   const project = getProject();

@@ -1,10 +1,12 @@
 import React from 'react';
 
-import { Flex, CountTag } from '@interactive-diagrams-app/components/Common';
-import { useAnnotationsDetails } from '@interactive-diagrams-app/hooks';
 import Spin from 'antd/lib/spin';
 
 import { Body, Colors } from '@cognite/cogs.js';
+
+import { useAnnotationsDetails } from '../hooks';
+
+import { CountTag, Flex } from './Common';
 
 type DetectedTagsProps = {
   fileId: number;

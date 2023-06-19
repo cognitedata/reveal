@@ -1,6 +1,6 @@
-import { ApiCall, Status } from '@interactive-diagrams-app/modules/types';
-
 import { InternalId } from '@cognite/sdk';
+
+import { ApiCall, Status } from '../../types';
 
 export interface ItemStore<T extends InternalId & { externalId?: string }> {
   items: Map<number, T>;

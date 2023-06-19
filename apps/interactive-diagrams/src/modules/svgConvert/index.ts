@@ -1,5 +1,6 @@
-import { ERRORS } from '@interactive-diagrams-app/stringConstants';
 import { createSlice } from '@reduxjs/toolkit';
+
+import { ERRORS } from '../../stringConstants';
 
 import { startConvertFileToSvgJob } from './actions';
 

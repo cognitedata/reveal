@@ -1,7 +1,3 @@
-import {
-  ResourceType,
-  Filter,
-} from '@interactive-diagrams-app/modules/sdk-builder/types';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -17,6 +13,7 @@ import {
   search as searchFiles,
   count as countFiles,
 } from './files';
+import { ResourceType, Filter } from './sdk-builder/types';
 
 const searchOrListAssets =
   (q: Filter) => async (dispatch: ThunkDispatch<any, void, AnyAction>) => {

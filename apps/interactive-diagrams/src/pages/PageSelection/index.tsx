@@ -1,8 +1,13 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { Flex } from '@interactive-diagrams-app/components/Common';
-import NavigationStickyBottomRow from '@interactive-diagrams-app/components/NavigationStickyBottomRow';
+import { ThunkDispatch } from '@reduxjs/toolkit';
+import { message } from 'antd';
+import { AnyAction } from 'redux';
+import { useDebouncedCallback } from 'use-debounce';
+
+import { Flex } from '../../components/Common';
+import NavigationStickyBottomRow from '../../components/NavigationStickyBottomRow';
 import {
   useLocalStorage,
   usePreviousSelection,
@@ -11,26 +16,22 @@ import {
   useSteps,
   useJobStarted,
   SavedSettings,
-} from '@interactive-diagrams-app/hooks';
-import { doSearch } from '@interactive-diagrams-app/modules/search';
-import { ResourceType, Filter } from '@interactive-diagrams-app/modules/types';
+} from '../../hooks';
+import { doSearch } from '../../modules/search';
+import { ResourceType, Filter } from '../../modules/types';
 import {
   PendingResourceSelection,
   WorkflowStep,
   updateSelection,
   removeSelection,
   getActiveWorkflowItems,
-} from '@interactive-diagrams-app/modules/workflows';
-import NotFound from '@interactive-diagrams-app/pages/NotFound';
-import { searchCountSelector } from '@interactive-diagrams-app/pages/PageSelection/selectors';
-import { LS_KEY_SETTINGS } from '@interactive-diagrams-app/stringConstants';
-import { ThunkDispatch } from '@reduxjs/toolkit';
-import { message } from 'antd';
-import { AnyAction } from 'redux';
-import { useDebouncedCallback } from 'use-debounce';
+} from '../../modules/workflows';
+import { LS_KEY_SETTINGS } from '../../stringConstants';
+import NotFound from '../NotFound';
 
 import DiagramsSelection from './DiagramsSelection';
 import ResourcesSelection from './ResourcesSelection';
+import { searchCountSelector } from './selectors';
 
 const DEFAULT_FILTERS = {} as { [key in ResourceType]?: Filter };
 const EMPTY_FILTER: Filter = { filter: {} };

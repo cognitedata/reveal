@@ -1,6 +1,7 @@
-import { Workflow } from '@interactive-diagrams-app/modules/types';
-import { RootState } from '@interactive-diagrams-app/store';
 import { createSelector } from '@reduxjs/toolkit';
+
+import { Workflow } from '../../modules/types';
+import { RootState } from '../../store';
 
 export const getWorkflowItems = (workflowId: number) =>
   createSelector(

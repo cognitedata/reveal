@@ -1,16 +1,11 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-import { Flex } from '@interactive-diagrams-app/components/Common';
-import {
-  StatusType,
-  approvalDetails,
-} from '@interactive-diagrams-app/components/Filters';
-import { selectAllDataSets } from '@interactive-diagrams-app/modules/datasets';
-
 import { Button } from '@cognite/cogs.js';
 
-import { mimeTypes } from '../FilterSelects';
+import { selectAllDataSets } from '../../../modules/datasets';
+import { Flex } from '../../Common';
+import { StatusType, approvalDetails, mimeTypes } from '../FilterSelects';
 
 import { FilterTag } from './FilterTag';
 

@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react';
 
-import { Flex } from '@interactive-diagrams-app/components/Common';
-import {
-  progressData,
-  ProgressData,
-} from '@interactive-diagrams-app/components/Filters';
-import { ApiStatusCount } from '@interactive-diagrams-app/modules/types';
 import { Tooltip } from 'antd';
 
 import { Body } from '@cognite/cogs.js';
+
+import { Flex } from '../../../components/Common';
+import { progressData, ProgressData } from '../../../components/Filters';
+import { ApiStatusCount } from '../../../modules/types';
 
 import { Square } from './Square';
 

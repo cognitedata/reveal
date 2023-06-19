@@ -1,13 +1,14 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-import { Flex } from '@interactive-diagrams-app/components/Common';
-import { RootState } from '@interactive-diagrams-app/store';
-import { translateError } from '@interactive-diagrams-app/utils/handleError';
 import { Tooltip } from 'antd';
 
 import { createLink } from '@cognite/cdf-utilities';
 import { Button, Icon, Chip } from '@cognite/cogs.js';
+
+import { Flex } from '../../../../components/Common';
+import { RootState } from '../../../../store';
+import { translateError } from '../../../../utils/handleError';
 
 type Props = { fileId: number };
 

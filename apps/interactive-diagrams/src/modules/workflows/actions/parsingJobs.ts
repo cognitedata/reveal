@@ -1,7 +1,17 @@
+import { createAsyncThunk } from '@reduxjs/toolkit';
+
+import sdk from '@cognite/cdf-sdk-singleton';
+import { FileInfo } from '@cognite/sdk';
+
+import handleError from '../../../utils/handleError';
+import { PNID_METRICS, trackUsage } from '../../../utils/Metrics';
+import { StartPnidParsingJobProps, PollJobResultsProps } from '../../types';
 import {
-  StartPnidParsingJobProps,
-  PollJobResultsProps,
-} from '@interactive-diagrams-app/modules/types';
+  mapAssetsToEntities,
+  mapFilesToEntities,
+  handleNewAnnotations,
+} from '../utils';
+
 import {
   workflowDiagramsSelector,
   createJob,
@@ -9,22 +19,7 @@ import {
   finishJob,
   rejectJob,
   rejectModel,
-} from '@interactive-diagrams-app/modules/workflows';
-import handleError from '@interactive-diagrams-app/utils/handleError';
-import {
-  PNID_METRICS,
-  trackUsage,
-} from '@interactive-diagrams-app/utils/Metrics';
-import { createAsyncThunk } from '@reduxjs/toolkit';
-
-import sdk from '@cognite/cdf-sdk-singleton';
-import { FileInfo } from '@cognite/sdk';
-
-import {
-  mapAssetsToEntities,
-  mapFilesToEntities,
-  handleNewAnnotations,
-} from '../utils';
+} from './..';
 
 const pnidApiRootPath = (project: string) =>
   `/api/playground/projects/${project}/context/diagram`;

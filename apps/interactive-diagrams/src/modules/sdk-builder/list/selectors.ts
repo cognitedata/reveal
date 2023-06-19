@@ -1,3 +1,8 @@
+import { createSelector } from '@reduxjs/toolkit';
+
+import { InternalId } from '@cognite/sdk';
+
+import { RootState } from '../../../store';
 import {
   ApiResult,
   Result,
@@ -5,11 +10,7 @@ import {
   Query,
   Status,
   ListState,
-} from '@interactive-diagrams-app/modules/types';
-import { RootState } from '@interactive-diagrams-app/store';
-import { createSelector } from '@reduxjs/toolkit';
-
-import { InternalId } from '@cognite/sdk';
+} from '../../types';
 
 import { defaultListState } from '.';
 

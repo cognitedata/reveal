@@ -1,9 +1,10 @@
-import { reducer as assetsReducer } from '@interactive-diagrams-app/modules/assets';
-import { reducer as datasetsReducer } from '@interactive-diagrams-app/modules/datasets';
-import { reducer as filesReducer } from '@interactive-diagrams-app/modules/files';
-import { reducer as svgConvertReducer } from '@interactive-diagrams-app/modules/svgConvert';
-import { reducer as workflowsReducer } from '@interactive-diagrams-app/modules/workflows';
 import { combineReducers } from '@reduxjs/toolkit';
+
+import { reducer as assetsReducer } from '../modules/assets';
+import { reducer as datasetsReducer } from '../modules/datasets';
+import { reducer as filesReducer } from '../modules/files';
+import { reducer as svgConvertReducer } from '../modules/svgConvert';
+import { reducer as workflowsReducer } from '../modules/workflows';
 
 const createRootReducer = () =>
   combineReducers({

@@ -1,6 +1,6 @@
-import { FileWithAnnotations } from '@interactive-diagrams-app/hooks';
-
 import { CogniteAnnotation } from '@cognite/annotations';
+
+import { FileWithAnnotations } from '../../../hooks';
 
 export const isAnAssetOrFileTag = (annotations: CogniteAnnotation[]) => {
   return (
@@ -17,8 +17,7 @@ export const sortFilesByAnnotations = (
   return (
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
-    isAnAssetOrFileTag(fileA?.annotations)?.length -
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    isAnAssetOrFileTag(fileA?.annotations)?.length - // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     isAnAssetOrFileTag(fileB?.annotations)?.length
   );

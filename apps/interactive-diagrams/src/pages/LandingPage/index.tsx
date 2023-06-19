@@ -1,16 +1,13 @@
 import React, { useState } from 'react';
 
-import { Flex, PageTitle } from '@interactive-diagrams-app/components/Common';
-import { DiagramsSettingsBar } from '@interactive-diagrams-app/containers';
-import { useAnnotatedFiles } from '@interactive-diagrams-app/hooks';
-import { useWorkflowCreateNew } from '@interactive-diagrams-app/modules/workflows';
-import {
-  trackUsage,
-  PNID_METRICS,
-} from '@interactive-diagrams-app/utils/Metrics';
-
 import { Button, Title } from '@cognite/cogs.js';
 import { FileRequestFilter } from '@cognite/sdk';
+
+import { Flex, PageTitle } from '../../components/Common';
+import { DiagramsSettingsBar } from '../../containers';
+import { useAnnotatedFiles } from '../../hooks';
+import { useWorkflowCreateNew } from '../../modules/workflows';
+import { trackUsage, PNID_METRICS } from '../../utils/Metrics';
 
 import { Loading, TitleRow } from './components';
 import FilesList from './FilesList';

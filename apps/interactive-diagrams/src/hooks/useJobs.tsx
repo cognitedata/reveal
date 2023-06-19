@@ -1,27 +1,29 @@
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import {
-  useInterval,
-  useResourceCount,
-  useJobStarted,
-  useActiveWorkflow,
-} from '@interactive-diagrams-app/hooks';
+import { ThunkDispatch } from '@reduxjs/toolkit';
+import { AnyAction } from 'redux';
+import { createSelector } from 'reselect';
+
 import {
   JobStatus,
   ApiStatusCount,
   PnidsParsingJobSchema,
-} from '@interactive-diagrams-app/modules/types';
+} from '../modules/types';
 import {
   getWorkflowJobs,
   setJobStatus,
   loadWorkflowAsync,
   pollJobResults,
-} from '@interactive-diagrams-app/modules/workflows';
-import { RootState } from '@interactive-diagrams-app/store';
-import { ThunkDispatch } from '@reduxjs/toolkit';
-import { AnyAction } from 'redux';
-import { createSelector } from 'reselect';
+} from '../modules/workflows';
+import { RootState } from '../store';
+
+import {
+  useInterval,
+  useResourceCount,
+  useJobStarted,
+  useActiveWorkflow,
+} from './';
 
 export const useStartJobs = () => {
   const dispatch = useDispatch<ThunkDispatch<any, void, AnyAction>>();

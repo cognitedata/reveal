@@ -2,25 +2,19 @@ import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-import { Flex, PageTitle } from '@interactive-diagrams-app/components/Common';
-import NavigationStickyBottomRow from '@interactive-diagrams-app/components/NavigationStickyBottomRow';
-import { DiagramsSettingsBar } from '@interactive-diagrams-app/containers';
-import {
-  useActiveWorkflow,
-  useJobStatus,
-  useStartJobs,
-} from '@interactive-diagrams-app/hooks';
+import { useQueryClient } from '@tanstack/react-query';
+import { message } from 'antd';
+
+import { Flex, PageTitle } from '../../components/Common';
+import NavigationStickyBottomRow from '../../components/NavigationStickyBottomRow';
+import { DiagramsSettingsBar } from '../../containers';
+import { useActiveWorkflow, useJobStatus, useStartJobs } from '../../hooks';
 import {
   selectInteractiveDiagrams,
   WorkflowStep,
-} from '@interactive-diagrams-app/modules/workflows';
-import {
-  landingPage,
-  diagramSelection,
-} from '@interactive-diagrams-app/routes/paths';
-import { getUrlWithQueryParams } from '@interactive-diagrams-app/utils/config';
-import { useQueryClient } from '@tanstack/react-query';
-import { message } from 'antd';
+} from '../../modules/workflows';
+import { landingPage, diagramSelection } from '../../routes/paths';
+import { getUrlWithQueryParams } from '../../utils/config';
 
 import SectionProgress from './SectionProgress';
 import SectionResults from './SectionResults';

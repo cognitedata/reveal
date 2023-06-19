@@ -1,12 +1,10 @@
 import React from 'react';
 
-import {
-  InfoGrid,
-  DetailsItem,
-} from '@interactive-diagrams-app/components/Common';
 import moment from 'moment';
 
 import { FileInfo } from '@cognite/sdk';
+
+import { DetailsItem, InfoGrid } from '../../molecules';
 
 export const FileInfoGrid = ({ file }: { file: FileInfo }) => {
   return (

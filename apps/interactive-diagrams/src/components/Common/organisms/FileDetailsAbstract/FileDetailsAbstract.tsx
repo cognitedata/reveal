@@ -2,17 +2,13 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import {
-  InfoGrid,
-  InfoCell,
-  ListItem,
-  CountLabel,
-  SmallTitle,
-} from '@interactive-diagrams-app/components/Common';
 import { Row } from 'antd';
 
 import { Icon } from '@cognite/cogs.js';
 import { FileInfo, Asset } from '@cognite/sdk';
+
+import { CountLabel, ListItem, SmallTitle } from '../../atoms';
+import { InfoCell, InfoGrid } from '../../molecules';
 
 import { FileInfoGrid } from './FileInfoGrid';
 

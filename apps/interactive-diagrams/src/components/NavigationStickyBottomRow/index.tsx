@@ -2,12 +2,13 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { useSteps } from '@interactive-diagrams-app/hooks';
-import { WorkflowStep } from '@interactive-diagrams-app/modules/workflows';
-import Layers from '@interactive-diagrams-app/utils/zindex';
 import { Tooltip } from 'antd';
 
 import { Button } from '@cognite/cogs.js';
+
+import { useSteps } from '../../hooks';
+import { WorkflowStep } from '../../modules/workflows';
+import Layers from '../../utils/zindex';
 
 import { Justify, NavOptions } from './types';
 

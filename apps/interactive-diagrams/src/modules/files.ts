@@ -1,11 +1,11 @@
-import builder from '@interactive-diagrams-app/modules/sdk-builder';
-
 import {
   FileInfo,
   FileChangeUpdateById,
   FileRequestFilter,
   FilesSearchFilter,
 } from '@cognite/sdk';
+
+import builder from './sdk-builder';
 
 const resourceType = 'files';
 

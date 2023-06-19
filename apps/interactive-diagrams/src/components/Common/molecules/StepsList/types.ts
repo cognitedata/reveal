@@ -1,4 +1,4 @@
-import { WorkflowStep } from '@interactive-diagrams-app/modules/types';
+import { WorkflowStep } from '../../../../modules/types';
 
 export type StepsType = {
   path: string;

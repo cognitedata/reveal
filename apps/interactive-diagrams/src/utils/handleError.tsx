@@ -1,10 +1,12 @@
 import React from 'react';
 
-import { ERRORS } from '@interactive-diagrams-app/stringConstants';
-import { getContainer } from '@interactive-diagrams-app/utils/utils';
 import notification from 'antd/lib/notification';
 import Paragraph from 'antd/lib/typography/Paragraph';
 import isString from 'lodash/isString';
+
+import { ERRORS } from '../stringConstants';
+
+import { getContainer } from './utils';
 
 // To achieve this typing for the props, the error catched should be: handleError({...error})
 interface ErrorNotificationProps {

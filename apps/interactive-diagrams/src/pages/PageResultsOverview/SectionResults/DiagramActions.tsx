@@ -1,22 +1,23 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { Dropdown } from '@interactive-diagrams-app/components/Common';
-import { MenuAll } from '@interactive-diagrams-app/containers';
+import { Tooltip } from 'antd';
+
+import { Button } from '@cognite/cogs.js';
+
+import { Dropdown } from '../../../components/Common';
+import { MenuAll } from '../../../containers';
 import {
   useReviewFiles,
   useActiveWorkflow,
   isFilePending,
-} from '@interactive-diagrams-app/hooks';
+} from '../../../hooks';
 import {
   useWorkflowDiagramsIds,
   useWorkflowItems,
-} from '@interactive-diagrams-app/modules/workflows';
-import { diagramPreview } from '@interactive-diagrams-app/routes/paths';
-import { getUrlWithQueryParams } from '@interactive-diagrams-app/utils/config';
-import { Tooltip } from 'antd';
-
-import { Button } from '@cognite/cogs.js';
+} from '../../../modules/workflows';
+import { diagramPreview } from '../../../routes/paths';
+import { getUrlWithQueryParams } from '../../../utils/config';
 
 import { InfoWrapper } from './components';
 

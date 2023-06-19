@@ -1,7 +1,7 @@
-import { ResourceType } from '@interactive-diagrams-app/modules/types';
-
 import { CogniteAnnotation } from '@cognite/annotations';
 import { AnnotationModel, Asset, FileInfo } from '@cognite/sdk';
+
+import { ResourceType } from '../types';
 
 export type PendingResourceSelection = Omit<ResourceSelection, 'id'>;
 

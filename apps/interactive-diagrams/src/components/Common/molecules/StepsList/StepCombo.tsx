@@ -3,13 +3,10 @@ import { Link } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import { Flex } from '@interactive-diagrams-app/components/Common';
-import { useCurrentStep } from '@interactive-diagrams-app/hooks';
-import { getUrlWithQueryParams } from '@interactive-diagrams-app/utils/config';
-import {
-  PNID_METRICS,
-  trackUsage,
-} from '@interactive-diagrams-app/utils/Metrics';
+import { useCurrentStep } from '../../../../hooks';
+import { getUrlWithQueryParams } from '../../../../utils/config';
+import { PNID_METRICS, trackUsage } from '../../../../utils/Metrics';
+import { Flex } from '../../atoms';
 
 import { StepsType, StyledStepProps } from './types';
 

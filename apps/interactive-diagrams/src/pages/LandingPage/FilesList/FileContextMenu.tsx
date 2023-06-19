@@ -1,15 +1,12 @@
 import React from 'react';
 
-import { DropdownMenu } from '@interactive-diagrams-app/components/Common';
-import { useReviewFiles } from '@interactive-diagrams-app/hooks';
-import { useWorkflowCreateNew } from '@interactive-diagrams-app/modules/workflows';
-import {
-  PNID_METRICS,
-  trackUsage,
-} from '@interactive-diagrams-app/utils/Metrics';
-
 import { Button } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
+
+import { DropdownMenu } from '../../../components/Common';
+import { useReviewFiles } from '../../../hooks';
+import { useWorkflowCreateNew } from '../../../modules/workflows';
+import { PNID_METRICS, trackUsage } from '../../../utils/Metrics';
 
 type Props = {
   file: FileInfo;

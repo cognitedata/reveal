@@ -1,9 +1,5 @@
 import React, { useEffect, useState } from 'react';
 
-import { useUserId } from '@interactive-diagrams-app/hooks/useUserId';
-import { listAnnotationsForFileFromAnnotationsApi } from '@interactive-diagrams-app/utils/AnnotationUtils';
-import handleError from '@interactive-diagrams-app/utils/handleError';
-import { sleep } from '@interactive-diagrams-app/utils/utils';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Modal, notification } from 'antd';
 import chunk from 'lodash/chunk';
@@ -33,9 +29,13 @@ import {
   isTaggedAnnotationsApiAnnotation,
   isTaggedEventAnnotation,
 } from '../modules/workflows';
+import { listAnnotationsForFileFromAnnotationsApi } from '../utils/AnnotationUtils';
+import handleError from '../utils/handleError';
 import linkFileToAssetIds from '../utils/linkFileToAssetIds';
+import { sleep } from '../utils/utils';
 
 import { useAnnotationsForFiles } from './useAnnotationsForFiles';
+import { useUserId } from './useUserId';
 
 export const PENDING_LABEL = {
   externalId: 'Pending interactive engineering diagram',

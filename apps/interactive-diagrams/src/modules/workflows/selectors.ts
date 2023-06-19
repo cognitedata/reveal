@@ -1,15 +1,8 @@
-import { ResourceType } from '@interactive-diagrams-app/modules/sdk-builder/types';
-import {
-  ResourceSelection,
-  ResourceObjectType,
-  Workflow,
-  Filter,
-} from '@interactive-diagrams-app/modules/types';
-import { RootState } from '@interactive-diagrams-app/store';
 import { createSelector } from '@reduxjs/toolkit';
 
 import { InternalId, Asset, FileInfo } from '@cognite/sdk';
 
+import { RootState } from '../../store';
 import {
   countSelector as countAssetSelector,
   listSelector as listAssetSelector,
@@ -20,6 +13,13 @@ import {
   listSelector as listFileSelector,
   searchSelector as searchFileSelector,
 } from '../files';
+import { ResourceType } from '../sdk-builder/types';
+import {
+  ResourceSelection,
+  ResourceObjectType,
+  Workflow,
+  Filter,
+} from '../types';
 
 export const getActiveWorkflowId = createSelector(
   (state: RootState) => state.workflows.active,

@@ -67,7 +67,6 @@
       "@fusion/copilot-core": ["libs/copilot-core/src/index.ts"],
       "@fusion/industry-canvas": ["libs/industry-canvas/src/index.ts"],
       "@fusion/mock-data": ["libs/shared/mock-data/src/index.ts"],
-      "@interactive-diagrams-app/*": ["apps/interactive-diagrams/src/*"],
       "@platypus-app/*": [
         "apps/platypus/src/app/*",
         "apps/platypus/src/environments/environment.ts"

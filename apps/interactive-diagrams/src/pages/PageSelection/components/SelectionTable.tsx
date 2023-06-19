@@ -1,21 +1,19 @@
 import React, { useState, useEffect } from 'react';
 
-import { Table } from '@interactive-diagrams-app/components/Common';
-import {
-  usePrevious,
-  useItemsAndFetching,
-  Item,
-  useSelectedItems,
-} from '@interactive-diagrams-app/hooks';
-import {
-  ResourceType,
-  Filter,
-} from '@interactive-diagrams-app/modules/sdk-builder/types';
 import { Checkbox, message } from 'antd';
 import isEqual from 'lodash/isEqual';
 
 import { Tooltip } from '@cognite/cogs.js';
 import { Asset, FileInfo } from '@cognite/sdk';
+
+import { Table } from '../../../components/Common';
+import {
+  usePrevious,
+  useItemsAndFetching,
+  Item,
+  useSelectedItems,
+} from '../../../hooks';
+import { ResourceType, Filter } from '../../../modules/sdk-builder/types';
 
 import { getColumns } from './columns';
 

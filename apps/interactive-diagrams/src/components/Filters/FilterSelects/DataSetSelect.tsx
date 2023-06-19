@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 
-import { Select } from '@interactive-diagrams-app/components/Common';
-import { useSelectFilter, useDatasets } from '@interactive-diagrams-app/hooks';
-import { ResourceType } from '@interactive-diagrams-app/modules/sdk-builder/types';
-import { stringContains } from '@interactive-diagrams-app/utils/utils';
 import isEqual from 'lodash/isEqual';
 
 import { OptionType } from '@cognite/cogs.js';
 import { DataSet } from '@cognite/sdk';
+
+import { useDatasets, useSelectFilter } from '../../../hooks';
+import { ResourceType } from '../../../modules/sdk-builder/types';
+import { stringContains } from '../../../utils/utils';
+import { Select } from '../../Common';
 
 type Props = {
   resourceType: ResourceType;
