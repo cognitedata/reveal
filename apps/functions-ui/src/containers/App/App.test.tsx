@@ -9,9 +9,10 @@ jest.mock('mixpanel-browser', () => {
 });
 import React from 'react';
 import { MemoryRouter } from 'react-router';
+
 import { shallow } from 'enzyme';
 
-import App from './App';
+import App from './RootApp';
 
 describe('App', () => {
   it('renders with warnings but without crashing', () => {

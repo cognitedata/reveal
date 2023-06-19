@@ -2,7 +2,12 @@ import { useEffect } from 'react';
 
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
 import { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
-import { AuthWrapper, getEnv, getProject } from '@cognite/cdf-utilities';
+import {
+  AuthWrapper,
+  getEnv,
+  getProject,
+  SubAppWrapper,
+} from '@cognite/cdf-utilities';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 
 import './set-public-path';
@@ -27,7 +32,9 @@ export const AppWrapper = () => {
     <GlobalStyles>
       <I18nWrapper translations={translations} defaultNamespace={projectName}>
         <AuthWrapper login={() => loginAndAuthIfNeeded(project, env)}>
-          <App />
+          <SubAppWrapper title="Functions UI">
+            <App />
+          </SubAppWrapper>
         </AuthWrapper>
       </I18nWrapper>
     </GlobalStyles>
