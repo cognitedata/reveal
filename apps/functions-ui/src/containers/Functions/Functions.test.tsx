@@ -87,14 +87,12 @@ describe('Functions', () => {
   });
   it('renders without crashing', () => {
     expect(() => {
-      const div = document.createElement('div');
-      ReactDOM.render(
+      const wrapper = wrap(
         <MemoryRouter>
           <Functions />
-        </MemoryRouter>,
-        div
+        </MemoryRouter>
       );
-      ReactDOM.unmountComponentAtNode(div);
+      wrapper.unmount();
     }).not.toThrow();
   });
 

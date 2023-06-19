@@ -1,10 +1,7 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render } from '@testing-library/react';
 import { mount } from 'enzyme';
-import { createRoot } from 'react-dom/client';
 
 import sdk from '@cognite/cdf-sdk-singleton';
 import { Button } from '@cognite/cogs.js';
@@ -13,15 +10,6 @@ import TestWrapper from '../../utils/TestWrapper';
 
 import CallFunctionModal, { stuffForUnitTests } from './CallFunctionModal';
 
-const client = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: false,
-      staleTime: 60000,
-      cacheTime: 60000,
-    },
-  },
-});
 const wrap = (node: React.ReactNode) =>
   mount(<TestWrapper>{node}</TestWrapper>);
 

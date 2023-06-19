@@ -20,14 +20,12 @@ sdk.post.mockResolvedValue({});
 describe('FunctionLogsModal', () => {
   it('renders without crashing', () => {
     expect(() => {
-      const div = document.createElement('div');
-      ReactDOM.render(
+      const wrapper = wrap(
         <MemoryRouter>
           <FunctionLogsModal onCancel={jest.fn()} id={1} callId={2} />
-        </MemoryRouter>,
-        div
+        </MemoryRouter>
       );
-      ReactDOM.unmountComponentAtNode(div);
+      wrapper.unmount();
     }).not.toThrow();
   });
 
