@@ -1,4 +1,10 @@
-import { createContext, useCallback, useContext, useMemo } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+} from 'react';
 
 import { useSDK } from '@cognite/sdk-provider';
 import { IdsByType } from '@cognite/unified-file-viewer';
@@ -125,6 +131,28 @@ export const IndustryCanvasProvider: React.FC<IndustryCanvasProviderProps> = ({
     },
     [saveCanvas, isCanvasLocked]
   );
+
+  // Initialize the page with a new and empty canvas if the canvasId query
+  // parameter is not provided. This path is primarily used for the
+  // "Open in Canvas" button in DE.
+  useEffect(() => {
+    const createInitialCanvas = async () => {
+      if (canvasId === undefined && !isCreatingCanvas) {
+        const initialCanvas = canvasService.makeEmptyCanvas();
+        const createdCanvas = await createCanvas(initialCanvas);
+        setCanvasId(createdCanvas.externalId);
+        refetchCanvases();
+      }
+    };
+    createInitialCanvas();
+  }, [
+    canvasId,
+    isCreatingCanvas,
+    canvasService,
+    createCanvas,
+    refetchCanvases,
+    setCanvasId,
+  ]);
 
   const createCanvasWrapper = useCallback(
     async (canvas: IndustryCanvasState) => {
