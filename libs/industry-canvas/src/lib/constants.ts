@@ -63,16 +63,19 @@ export const ZOOM_LEVELS = [
 export const ZOOM_DURATION_SECONDS = 0.1;
 export const ZOOM_TO_FIT_MARGIN = 0.07;
 
-export const FONT_SIZE = {
-  '8px': '8px',
-  '10px': '10px',
-  '12px': '12px',
-  '18px': '18px',
-  '24px': '24px',
-  '36px': '36px',
-  '48px': '48px',
-  '72px': '72px',
-} as const;
+export const FONT_SIZES = [
+  '8px',
+  '10px',
+  '12px',
+  '18px',
+  '24px',
+  '36px',
+  '48px',
+  '72px',
+] as const;
+export const DEFAULT_FONT_SIZE = '18px';
+export const MIN_FONT_SIZE = 1;
+export const MAX_FONT_SIZE = 999;
 
 export const LINE_STROKE_WIDTH = {
   SMALL: 2,

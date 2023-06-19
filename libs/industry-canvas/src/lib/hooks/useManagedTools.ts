@@ -9,7 +9,7 @@ import {
   STICKY_ANNOTATION_COLOR_MAP,
   TEXT_ANNOTATION_COLOR_MAP,
 } from '../colors';
-import { FONT_SIZE, LINE_STROKE_WIDTH } from '../constants';
+import { DEFAULT_FONT_SIZE, LINE_STROKE_WIDTH } from '../constants';
 import { CanvasAnnotation, IndustryCanvasToolType } from '../types';
 import { ExactlyOneKey } from '../utils/ExactlyOneKey';
 import filterNotUndefinedValues from '../utils/filterNotUndefinedValues';
@@ -173,7 +173,7 @@ const DEFAULT_TOOL_OPTIONS: ToolsOptionsByType = {
     isWorkspaceAnnotation: true,
   },
   [IndustryCanvasToolType.TEXT]: {
-    fontSize: FONT_SIZE['18px'],
+    fontSize: DEFAULT_FONT_SIZE,
     fill: TEXT_ANNOTATION_COLOR_MAP.BLACK,
     isWorkspaceAnnotation: true,
   },

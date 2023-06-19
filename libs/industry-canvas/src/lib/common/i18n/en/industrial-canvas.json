@@ -41,6 +41,8 @@
   "ANNOTATION_CHANGE_FONT_SIZE": "Change font size",
   "ANNOTATION_CHANGE_LINE_STROKE_WIDTH": "Change stroke width",
   "ANNOTATION_CHANGE_LINE_ENDS": "Change line end types",
+  "SIZE_EDITOR_DECREASE_SIZE": "Decrease size",
+  "SIZE_EDITOR_INCREASE_SIZE": "Increase size",
   "TOOLTIP_ASSET_ADD_TO_CANVAS": "Add asset to canvas",
   "TOOLTIP_THREE_D_MODEL_ADD_TO_CANVAS": "Add 3D model to canvas",
   "TOOLTIP_TIMESERIES_ADD_TO_CANVAS": "Add timeseries",
