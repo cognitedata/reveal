@@ -447,6 +447,7 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
         onClose={onResourceSelectorCloseWrapper}
         visibleResourceTabs={['file', 'timeSeries', 'asset', 'event']}
         selectionMode="multiple"
+        addButtonText="Add to canvas"
       />
       <PageTitle title="Industry Canvas" />
       <TitleRowWrapper>

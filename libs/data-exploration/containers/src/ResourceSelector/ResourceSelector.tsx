@@ -74,11 +74,13 @@ export const ResourceSelector = ({
   onClose,
   onSelect = noop,
   isDocumentsApiEnabled = true,
+  addButtonText,
 }: {
   visible: boolean;
   onClose: () => void;
   visibleResourceTabs?: ResourceType[];
   initialFilter?: Partial<FilterState>;
+  addButtonText?: string;
   isDocumentsApiEnabled?: boolean;
 } & Partial<SelectionProps>) => {
   const { state, setter, resetter } = useFilterState(initialFilter);
@@ -331,7 +333,7 @@ export const ResourceSelector = ({
               inverted
               type="secondary"
             >
-              Add to Canvas
+              {addButtonText ? addButtonText : 'Add'}
             </Button>
             <BulkActionbar.Separator />
             <Button
