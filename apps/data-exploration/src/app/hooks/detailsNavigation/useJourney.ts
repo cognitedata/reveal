@@ -61,9 +61,16 @@ export const useJourney = (): [Journey, (journey: Journey) => void] => {
             ...paramsWithoutSelectedTab
           } = parsedParams;
 
+          const itemSelectedTab = (journey || []).find(
+            (item) => !!item.selectedTab
+          );
+
           const journeyParams = {
             ...paramsWithoutSelectedTab,
             [JOURNEY_FIELD]: stringifiedJourney,
+            [SELECTED_TAB_FIELD]: itemSelectedTab
+              ? itemSelectedTab.selectedTab
+              : undefined,
           };
           return qs.stringify(journeyParams);
         });
