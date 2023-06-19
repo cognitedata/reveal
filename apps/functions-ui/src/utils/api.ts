@@ -38,7 +38,6 @@ const getCallsSdk = ({ id, scheduleId }: GetCallsArgs): Promise<Call[]> => {
 };
 
 export const getCalls = async (_: QueryKey, args: GetCallsArgs) => {
-  console.log("GetCalls ")
   return getCallsSdk(args);
 };
 

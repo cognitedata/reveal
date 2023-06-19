@@ -100,24 +100,13 @@ export default function FunctionCalls({ id, name, scheduleId }: Props) {
   const { data, isFetched, error } = useCalls(
     { id, scheduleId },
     {
-      // refetchInterval: 2000,
-      // cacheTime: 0,
-      // staleTime: 0,
+      refetchInterval: 2000,
+      cacheTime: 0,
+      staleTime: 0,
     }
   );
 
-  useEffect(() => {
-    setInterval(() => {
-      console.log('Calls invalidation');
-      queryClient.invalidateQueries([allCallsPrefix]);
-    }, 4000);
-  }, []);
-
   const functionCalls = data || [];
-
-  useEffect(() => {
-    console.log('FunctionCalls: ', functionCalls);
-  }, [functionCalls]);
 
   if (error) {
     return (
