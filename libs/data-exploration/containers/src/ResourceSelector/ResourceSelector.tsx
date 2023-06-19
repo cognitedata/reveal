@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import styled from 'styled-components';
 
@@ -17,8 +17,8 @@ import { Button, Divider, Flex, Input } from '@cognite/cogs.js';
 
 import {
   EMPTY_OBJECT,
-  FilterState,
   ResourceItem,
+  ResourceSelectorFilter,
   ResourceType,
   useDialog,
   ViewType,
@@ -66,6 +66,7 @@ export type ResourceSelection = Record<
   ResourceType,
   Record<string, ResourceItem>
 >;
+
 export const ResourceSelector = ({
   visible = false,
   visibleResourceTabs = DEFAULT_VISIBLE_RESOURCE_TABS,
@@ -73,25 +74,44 @@ export const ResourceSelector = ({
   initialFilter = EMPTY_OBJECT,
   onClose,
   onSelect = noop,
+  initialSelectedResource,
   isDocumentsApiEnabled = true,
   addButtonText,
 }: {
   visible: boolean;
   onClose: () => void;
   visibleResourceTabs?: ResourceType[];
-  initialFilter?: Partial<FilterState>;
+  initialFilter?: ResourceSelectorFilter;
+  initialSelectedResource?: ResourceItem;
   addButtonText?: string;
   isDocumentsApiEnabled?: boolean;
 } & Partial<SelectionProps>) => {
-  const { state, setter, resetter } = useFilterState(initialFilter);
+  const { filterState, updateFilterType, resetFilterType, resetAllFilters } =
+    useFilterState(initialFilter);
   const [query, setQuery] = useState<string>('');
   const { isOpen: showFilter, toggle: onToggleFilter } = useDialog();
   const [activeKey, setActiveKey] = useState(visibleResourceTabs[0]);
   const [previewItem, setPreviewItem] = useState<ResourceItem>();
-
-  const [debouncedQuery] = useDebounce(query, 100);
   const [selectedRows, setSelectedRows] =
     useState<ResourceSelection>(initialSelectedRows);
+
+  useEffect(() => {
+    if (initialSelectedResource === undefined) {
+      return;
+    }
+
+    setPreviewItem(initialSelectedResource);
+    setActiveKey(initialSelectedResource.type);
+  }, [initialSelectedResource]);
+
+  const onCloseHandler = () => {
+    onClose();
+    setSelectedRows(initialSelectedRows);
+    setActiveKey(visibleResourceTabs[0]);
+    resetAllFilters();
+  };
+
+  const [debouncedQuery] = useDebounce(query, 100);
   const allSelectedRows = useMemo(
     () =>
       Object.entries(selectedRows)
@@ -160,27 +180,19 @@ export const ResourceSelector = ({
 
   return (
     <>
-      <Drawer
-        visible={visible}
-        onClose={() => {
-          onClose();
-          setSelectedRows(initialSelectedRows);
-        }}
-      >
+      <Drawer visible={visible} onClose={onCloseHandler}>
         <SearchFiltersWrapper>
           <FilterWrapper visible={showFilter}>
             <SidebarFilters
               query={query}
               enableDocumentLabelsFilter
               isDocumentsApiEnabled={isDocumentsApiEnabled}
-              filter={state}
+              filter={filterState}
               onFilterChange={(resourceType, currentFilter) => {
-                setter(resourceType, currentFilter);
+                updateFilterType(resourceType, currentFilter);
               }}
               resourceType={activeKey}
-              onResetFilterClick={(type) => {
-                resetter(type);
-              }}
+              onResetFilterClick={resetFilterType}
             />
           </FilterWrapper>
 
@@ -221,7 +233,7 @@ export const ResourceSelector = ({
                       tabKey={ViewType.Asset}
                       label="Assets"
                       query={debouncedQuery}
-                      filter={{ ...state.common, ...state.asset }}
+                      filter={{ ...filterState.common, ...filterState.asset }}
                     />
                   );
                 if (tab === 'event')
@@ -230,7 +242,7 @@ export const ResourceSelector = ({
                       key={tab}
                       tabKey={ViewType.Event}
                       query={debouncedQuery}
-                      filter={{ ...state.common, ...state.event }}
+                      filter={{ ...filterState.common, ...filterState.event }}
                       label="Events"
                     />
                   );
@@ -241,10 +253,10 @@ export const ResourceSelector = ({
                       tabKey={ViewType.File}
                       query={debouncedQuery}
                       filter={{
-                        ...state.common,
+                        ...filterState.common,
                         ...(isDocumentsApiEnabled
-                          ? state.document
-                          : state.file),
+                          ? filterState.document
+                          : filterState.file),
                       }}
                       isDocumentsApiEnabled={isDocumentsApiEnabled}
                     />
@@ -255,7 +267,10 @@ export const ResourceSelector = ({
                       key={tab}
                       tabKey={ViewType.TimeSeries}
                       query={debouncedQuery}
-                      filter={{ ...state.common, ...state.timeseries }}
+                      filter={{
+                        ...filterState.common,
+                        ...filterState.timeSeries,
+                      }}
                       label="Time Series"
                     />
                   );
@@ -264,7 +279,10 @@ export const ResourceSelector = ({
                     <SequenceTab
                       tabKey={ViewType.Sequence}
                       query={debouncedQuery}
-                      filter={{ ...state.common, ...state.sequence }}
+                      filter={{
+                        ...filterState.common,
+                        ...filterState.sequence,
+                      }}
                       label="Sequence"
                     />
                   );
@@ -277,19 +295,19 @@ export const ResourceSelector = ({
               <ResourceSelectorTable
                 selectedRows={selectedRows}
                 setSelectedRows={setSelectedRows}
-                filter={state}
+                filter={filterState}
                 selectionMode={selectionMode}
                 query={debouncedQuery}
                 resourceType={activeKey}
                 isDocumentsApiEnabled={isDocumentsApiEnabled}
                 onFilterChange={(nextState) => {
                   if (isDocumentsApiEnabled) {
-                    setter(
+                    updateFilterType(
                       activeKey === 'file' ? 'document' : activeKey,
                       nextState
                     );
                   } else {
-                    setter(activeKey, nextState);
+                    updateFilterType(activeKey, nextState);
                   }
                 }}
                 onClick={({ id, externalId }) => {

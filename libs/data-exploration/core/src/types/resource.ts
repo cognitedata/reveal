@@ -3,6 +3,8 @@ import { RowSelectionState, Updater } from '@tanstack/react-table';
 import { AllIconTypes } from '@cognite/cogs.js';
 import { SdkResourceType } from '@cognite/sdk-react-query-hooks';
 
+import { FilterState } from './filters';
+
 export enum ResourceTypes {
   Asset = 'asset',
   TimeSeries = 'timeSeries',
@@ -144,3 +146,5 @@ export interface RelationshipLabels {
   relation?: string;
   relatedResourceType?: string;
 }
+
+export type ResourceSelectorFilter = Partial<FilterState>;

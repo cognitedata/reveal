@@ -16,6 +16,7 @@ export enum MetricEvent {
   TIMESERIES_APPLY_TO_ALL_TOGGLED = 'IC.Timeseries.ApplyToAllToggled',
   TIMESERIES_DATE_RANGE_CHANGED = 'IC.Timeseries.DateRangeChanged',
   CONTAINER_OPEN_IN_DATA_EXPLORER_CLICKED = 'IC.Container.OpenInDataExplorerClicked',
+  CONTAINER_OPEN_IN_RESOURCE_SELECTOR_CLICKED = 'IC.Container.OpenInResourceSelectorClicked',
   DOCUMENT_SUMMARIZE_CLICKED = 'IC.Document.SummarizeClicked',
 
   // Annotation

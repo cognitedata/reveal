@@ -33,8 +33,6 @@ import {
   ZoomToFitMode,
 } from '@cognite/unified-file-viewer';
 
-import { useDialog } from '@data-exploration-lib/core';
-
 import { translationKeys } from './common';
 import CanvasDropdown from './components/CanvasDropdown';
 import { CanvasTitle } from './components/CanvasTitle';
@@ -52,6 +50,7 @@ import { useDragAndDrop } from './hooks/useDragAndDrop';
 import useManagedState from './hooks/useManagedState';
 import useManagedTools from './hooks/useManagedTools';
 import { useQueryParameter } from './hooks/useQueryParameter';
+import { useResourceSelectorActions } from './hooks/useResourceSelectorActions';
 import { useSelectedAnnotationOrContainer } from './hooks/useSelectedAnnotationOrContainer';
 import useTrackCanvasViewed from './hooks/useTrackCanvasViewed';
 import { useTranslation } from './hooks/useTranslation';
@@ -151,11 +150,6 @@ export const IndustryCanvasPage = () => {
     }
   }, [isCanvasLocked, setTool, tool]);
 
-  const {
-    isOpen: visibleResourceSelector,
-    open: onResourceSelectorOpen,
-    close: onResourceSelectorClose,
-  } = useDialog();
   const { selectedCanvasAnnotation, selectedContainer } =
     useSelectedAnnotationOrContainer({
       unifiedViewerRef,
@@ -163,6 +157,14 @@ export const IndustryCanvasPage = () => {
       canvasAnnotations,
       container,
     });
+
+  const {
+    onResourceSelectorClose,
+    onResourceSelectorOpen,
+    isResourceSelectorOpen,
+    resourceSelectorFilter,
+    initialSelectedResource,
+  } = useResourceSelectorActions();
 
   const { onUpdateAnnotationStyleByType, toolOptions } = useManagedTools({
     tool,
@@ -477,10 +479,12 @@ export const IndustryCanvasPage = () => {
     <>
       <ResourceSelector
         onSelect={onAddResourcePress}
-        visible={visibleResourceSelector}
+        visible={isResourceSelectorOpen}
         onClose={onResourceSelectorCloseWrapper}
         visibleResourceTabs={['file', 'timeSeries', 'asset', 'event']}
         selectionMode="multiple"
+        initialFilter={resourceSelectorFilter}
+        initialSelectedResource={initialSelectedResource}
         addButtonText="Add to canvas"
       />
       <PageTitle title="Industrial Canvas" />
@@ -564,11 +568,12 @@ export const IndustryCanvasPage = () => {
           </Tooltip>
 
           <Button
+            disabled={isCanvasLocked}
+            aria-label="Add data"
             onClick={() => {
               onResourceSelectorOpen();
               trackUsage(MetricEvent.ADD_DATA_BUTTON_CLICKED);
             }}
-            disabled={isCanvasLocked}
           >
             <Icon type="Plus" />
             {t(translationKeys.CANVAS_ADD_RESOURCE_BUTTON, 'Add data')}
@@ -634,6 +639,7 @@ export const IndustryCanvasPage = () => {
           onUpdateAnnotationStyleByType={onUpdateAnnotationStyleByType}
           toolOptions={toolOptions}
           isCanvasLocked={isCanvasLocked}
+          onResourceSelectorOpen={onResourceSelectorOpen}
           commentAnnotations={commentAnnotations}
         />
         <DragOverIndicator isDragging={isDragging} />
