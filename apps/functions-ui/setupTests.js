@@ -26,6 +26,7 @@ jest.mock('@cognite/cdf-sdk-singleton', () => ({
   getUserInformation: jest.fn().mockResolvedValue({ displayName: 'test-user' }),
   get: jest.fn(),
   post: jest.fn(),
+  getFlow : () => ({ flow: 'COGNITE_AUTH' }),
 }));
 
 Object.defineProperty(window, 'matchMedia', {

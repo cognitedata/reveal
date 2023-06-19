@@ -1,31 +1,32 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+
 import { Form } from 'antd';
 import { mount } from 'enzyme';
+
+import TestWrapper from '../../utils/TestWrapper';
+
 import CreateScheduleModal, { stuffForUnitTests } from './CreateScheduleModal';
 
 const mockFunctionExternalId = 'external id';
 
+const wrap = (node: React.ReactNode) =>
+  mount(<TestWrapper>{node}</TestWrapper>);
 describe('CreateScheduleModal', () => {
   describe('component', () => {
     it('renders without crashing', () => {
       expect(() => {
-        const div = document.createElement('div');
-        ReactDOM.render(
+        wrap(
           <CreateScheduleModal
             onCancel={jest.fn()}
             externalId={mockFunctionExternalId}
-          />,
-
-          div
+          />
         );
-        ReactDOM.unmountComponentAtNode(div);
       }).not.toThrow();
     });
 
     it('should call onCancel when button is clicked', () => {
       const cancelFunc = jest.fn();
-      const wrapper = mount(
+      const wrapper = wrap(
         <CreateScheduleModal
           onCancel={cancelFunc}
           externalId={mockFunctionExternalId}
@@ -43,7 +44,7 @@ describe('CreateScheduleModal', () => {
 
     it('should have input areas for all the necessary information', () => {
       // should have schedule name, description, cronExpression, data
-      const wrapper = mount(
+      const wrapper = wrap(
         <CreateScheduleModal
           onCancel={jest.fn()}
           externalId={mockFunctionExternalId}
@@ -51,7 +52,7 @@ describe('CreateScheduleModal', () => {
       );
       const allFormItems = wrapper.find(Form.Item);
       expect(allFormItems).toHaveLength(4);
-      const allFormItemsLabels = allFormItems.map(i => i.text());
+      const allFormItemsLabels = allFormItems.map((i) => i.text());
       expect(allFormItemsLabels).toContain('Schedule Name');
       expect(allFormItemsLabels).toContain('Description');
       expect(allFormItemsLabels).toContain('Cron Expression');
@@ -60,7 +61,7 @@ describe('CreateScheduleModal', () => {
     });
 
     it('should have disabled create button by default', () => {
-      const wrapper = mount(
+      const wrapper = wrap(
         <CreateScheduleModal
           onCancel={jest.fn()}
           externalId={mockFunctionExternalId}
@@ -78,7 +79,7 @@ describe('CreateScheduleModal', () => {
       const mockScheduleName = 'mockScheduleName';
       const mockCronExpression = '* * * * *';
 
-      const wrapper = mount(
+      const wrapper = wrap(
         <CreateScheduleModal
           onCancel={jest.fn()}
           externalId={mockFunctionExternalId}
