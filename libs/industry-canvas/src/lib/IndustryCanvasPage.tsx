@@ -35,6 +35,7 @@ import {
 
 import { useDialog } from '@data-exploration-lib/core';
 
+import { translationKeys } from './common';
 import CanvasDropdown from './components/CanvasDropdown';
 import { CanvasTitle } from './components/CanvasTitle';
 import DragOverIndicator from './components/DragOverIndicator';
@@ -53,6 +54,7 @@ import useManagedTools from './hooks/useManagedTools';
 import { useQueryParameter } from './hooks/useQueryParameter';
 import { useSelectedAnnotationOrContainer } from './hooks/useSelectedAnnotationOrContainer';
 import useTrackCanvasViewed from './hooks/useTrackCanvasViewed';
+import { useTranslation } from './hooks/useTranslation';
 import { IndustryCanvas } from './IndustryCanvas';
 import { useIndustryCanvasContext } from './IndustryCanvasContext';
 import {
@@ -80,6 +82,7 @@ const APPLICATION_ID_INDUSTRY_CANVAS = 'industryCanvas';
 export const IndustryCanvasPage = () => {
   const trackUsage = useMetrics();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [unifiedViewerRef, setUnifiedViewerRef] =
     useState<UnifiedViewer | null>(null);
   const [shouldShowConnectionAnnotations, setShouldShowConnectionAnnotations] =
@@ -212,8 +215,18 @@ export const IndustryCanvasPage = () => {
       if (containerReferencesToAdd.length !== containerReferences.length) {
         toast.error(
           <div>
-            <h4>Could not add resource(s) to your canvas</h4>
-            <p>Resource(s) already added to the canvas.</p>
+            <h4>
+              {t(
+                translationKeys.CANVAS_ADD_RESOURCE_ERROR_TITLE,
+                'Could not add resource(s) to your canvas'
+              )}
+            </h4>
+            <p>
+              {t(
+                translationKeys.CANVAS_ADD_RESOURCE_ERROR_MESSAGE,
+                'At least one resource needs to be selected.'
+              )}
+            </p>
           </div>,
           {
             toastId: `canvas-file-already-added-${uuid()}`,
@@ -248,7 +261,12 @@ export const IndustryCanvasPage = () => {
 
       toast.success(
         <div>
-          <h4>Resource(s) added to your canvas</h4>
+          <h4>
+            {t(
+              translationKeys.CANVAS_RESOURCES_ADDED,
+              'Resource(s) added to your canvas'
+            )}
+          </h4>
         </div>,
         {
           toastId: `canvas-file-added-${uuid()}`,
@@ -263,6 +281,7 @@ export const IndustryCanvasPage = () => {
       clickedContainerAnnotation,
       container?.children,
       isCanvasLocked,
+      t,
     ]
   );
 
@@ -291,8 +310,18 @@ export const IndustryCanvasPage = () => {
       if (results === undefined || results.length === 0) {
         toast.error(
           <div>
-            <h4>Could not add resource(s) to your canvas</h4>
-            <p>At least one resource needs to be selected.</p>
+            <h4>
+              {t(
+                translationKeys.CANVAS_ADD_RESOURCE_ERROR_TITLE,
+                'Could not add resource(s) to your canvas'
+              )}
+            </h4>
+            <p>
+              {t(
+                translationKeys.CANVAS_ADD_RESOURCE_ERROR_TITLE,
+                'At least one resource needs to be selected.'
+              )}
+            </p>
           </div>,
           {
             toastId: 'industry-canvas-no-selected-resources-to-add-error',
@@ -444,12 +473,15 @@ export const IndustryCanvasPage = () => {
         selectionMode="multiple"
         addButtonText="Add to canvas"
       />
-      <PageTitle title="Industry Canvas" />
+      <PageTitle title="Industrial Canvas" />
       <TitleRowWrapper>
         <PreviewLinkWrapper>
           <Flex alignItems="center">
             <Tooltip
-              content="Go back to Industry Canvas home page"
+              content={t(
+                translationKeys.GO_BACK_HOMEPAGE_BUTTON,
+                'Go back to Industrial Canvas home page'
+              )}
               position="bottom"
             >
               <Button
@@ -486,30 +518,38 @@ export const IndustryCanvasPage = () => {
             <Chip
               type="warning"
               icon="Lock"
-              label="Canvas locked"
+              label={t(translationKeys.CANVAS_LOCKED_CHIP, 'Canvas locked')}
               tooltipProps={{
-                content:
-                  'Canvas is being edited by another user and is therefore not editable',
+                content: t(
+                  translationKeys.CANVAS_LOCKED,
+                  'Canvas is being edited by another user and is therefore not editable'
+                ),
                 position: 'bottom',
               }}
             />
           )}
-          <Tooltip content="Undo" position="bottom">
+          <Tooltip
+            content={t(translationKeys.CANVAS_UNDO, 'Undo')}
+            position="bottom"
+          >
             <Button
               type="ghost"
               icon="Restore"
               onClick={undo.fn}
               disabled={isCanvasLocked || undo.isDisabled}
-              aria-label="Undo"
+              aria-label={t(translationKeys.CANVAS_UNDO, 'Undo')}
             />
           </Tooltip>
-          <Tooltip content="Redo" position="bottom">
+          <Tooltip
+            content={t(translationKeys.CANVAS_REDO, 'Redo')}
+            position="bottom"
+          >
             <Button
               type="ghost"
               icon="Refresh"
               onClick={redo.fn}
               disabled={isCanvasLocked || redo.isDisabled}
-              aria-label="Redo"
+              aria-label={t(translationKeys.CANVAS_REDO, 'Redo')}
             />
           </Tooltip>
 
@@ -520,17 +560,23 @@ export const IndustryCanvasPage = () => {
             }}
             disabled={isCanvasLocked}
           >
-            <Icon type="Plus" /> Add data
+            <Icon type="Plus" />
+            {t(translationKeys.CANVAS_ADD_RESOURCE_BUTTON, 'Add data')}
           </Button>
 
           <Dropdown
             content={
               <Menu>
-                <Menu.Item onClick={onDownloadPress}>Download as PDF</Menu.Item>
+                <Menu.Item onClick={onDownloadPress}>
+                  {t(translationKeys.CANVAS_DOWNLOAD_PDF, 'Download as PDF')}
+                </Menu.Item>
                 <Menu.Item
                   hasSwitch
                   toggled={shouldShowConnectionAnnotations}
-                  aria-label="Always show connection lines"
+                  aria-label={t(
+                    translationKeys.SHOW_CONNECTION_LINES_SWITCH,
+                    'Always show connection lines'
+                  )}
                   onChange={() => {
                     const nextValue = !shouldShowConnectionAnnotations;
                     setShouldShowConnectionAnnotations(nextValue);
@@ -540,9 +586,10 @@ export const IndustryCanvasPage = () => {
                     });
                   }}
                 >
-                  Always show
-                  <br />
-                  connection lines
+                  {t(
+                    translationKeys.SHOW_CONNECTION_LINES_SWITCH,
+                    'Always show connection lines'
+                  )}
                 </Menu.Item>
               </Menu>
             }

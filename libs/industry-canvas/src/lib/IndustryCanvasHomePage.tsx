@@ -8,6 +8,7 @@ import { omit, sortBy } from 'lodash';
 
 import { Button, Table, InputExp, toast, Tooltip } from '@cognite/cogs.js';
 
+import { translationKeys } from './common';
 import CanvasDeletionModal from './components/CanvasDeletionModal';
 import { SEARCH_QUERY_PARAM_KEY, TOAST_POSITION } from './constants';
 import { EMPTY_FLEXIBLE_LAYOUT } from './hooks/constants';
@@ -18,12 +19,14 @@ import useCanvasesWithUserProfiles, {
 import useCanvasSearch from './hooks/useCanvasSearch';
 import { useQueryParameter } from './hooks/useQueryParameter';
 import useTableState from './hooks/useTableState';
+import { useTranslation } from './hooks/useTranslation';
 import { useIndustryCanvasContext } from './IndustryCanvasContext';
 import { getCanvasLink } from './utils/getCanvasLink';
 
 export const IndustryCanvasHomePage = () => {
   const { canvases, isCreatingCanvas, createCanvas } =
     useIndustryCanvasContext();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { canvasesWithUserProfiles } = useCanvasesWithUserProfiles({
     canvases,
@@ -55,7 +58,10 @@ export const IndustryCanvasHomePage = () => {
         iconPlacement="left"
         type="primary"
         loading={isCreatingCanvas}
-        aria-label="Create new canvas"
+        aria-label={t(
+          translationKeys.COMMON_CREATE_CANVAS,
+          'Create new canvas'
+        )}
         onClick={() => {
           createCanvas({
             canvasAnnotations: [],
@@ -63,37 +69,48 @@ export const IndustryCanvasHomePage = () => {
           }).then(({ externalId }) => navigate(getCanvasLink(externalId)));
         }}
       >
-        Create new canvas
+        {t(translationKeys.COMMON_CREATE_CANVAS, 'Create new canvas')}
       </Button>
     </div>
   );
 
   const renderCopyCanvasLinkButton = (row: CanvasDocumentWithUserProfile) => (
-    <Tooltip content="Copy canvas link">
+    <Tooltip
+      content={t(translationKeys.COMMON_CANVAS_LINK_COPY, 'Copy canvas link')}
+    >
       <Button
         type="ghost"
         icon="Link"
-        aria-label="Copy canvas link"
+        aria-label={t(
+          translationKeys.COMMON_CANVAS_LINK_COPY,
+          'Copy canvas link'
+        )}
         onClick={(ev) => {
           ev.stopPropagation();
           navigator.clipboard.writeText(
             `${window.location.origin}${getCanvasLink(row.externalId)}`
           );
-          toast.success(`Canvas link copied to clipboard`, {
-            toastId: `copy-canvas-${row.externalId}`,
-            position: TOAST_POSITION,
-          });
+          toast.success(
+            t(
+              translationKeys.CANVAS_LINK_COPIED,
+              'Canvas link copied to clipboard.'
+            ),
+            {
+              toastId: `copy-canvas-${row.externalId}`,
+              position: TOAST_POSITION,
+            }
+          );
         }}
       />
     </Tooltip>
   );
 
   const renderDeleteCanvasButton = (row: CanvasDocumentWithUserProfile) => (
-    <Tooltip content="Delete canvas">
+    <Tooltip content={t(translationKeys.COMMON_CANVAS_DELETE, 'Delete canvas')}>
       <Button
         type="ghost-destructive"
         icon="Delete"
-        aria-label="Delete canvas"
+        aria-label={t(translationKeys.COMMON_CANVAS_DELETE, 'Delete canvas')}
         onClick={(ev) => {
           ev.stopPropagation();
           setCanvasToDelete(
@@ -119,14 +136,22 @@ export const IndustryCanvasHomePage = () => {
       <div>
         <HomeHeader>
           <div>
-            <h1>Industry Canvas</h1>
-            <span>Search, explore and manage canvases.</span>
+            <h1>Industrial Canvas</h1>
+            <span>
+              {t(
+                translationKeys.HOMEPAGE_IC_DESCRIPTION,
+                'Search, explore and manage canvases.'
+              )}
+            </span>
           </div>
           {renderNewCanvasButton()}
         </HomeHeader>
         <CanvasListContainer>
           <SearchCanvasInput
-            placeholder="Browse canvases"
+            placeholder={t(
+              translationKeys.HOMEPAGE_TABLE_SEARCH_PLACEHOLDER,
+              'Browse canvases'
+            )}
             fullWidth
             value={searchString}
             icon="Search"
@@ -144,11 +169,14 @@ export const IndustryCanvasHomePage = () => {
             }
             columns={[
               {
-                Header: 'Name',
+                Header: t(translationKeys.HOMEPAGE_TABLE_NAME_COLUMN, 'Name'),
                 accessor: 'name',
               },
               {
-                Header: 'Last updated',
+                Header: t(
+                  translationKeys.HOMEPAGE_TABLE_UPDATED_AT_COLUMN,
+                  'Updated at'
+                ),
                 accessor: 'updatedAtDate',
                 Cell: ({ value }: { value: Date }): JSX.Element => (
                   <span>
@@ -162,7 +190,10 @@ export const IndustryCanvasHomePage = () => {
                 sortType: 'datetime',
               },
               {
-                Header: 'Created at',
+                Header: t(
+                  translationKeys.HOMEPAGE_TABLE_CREATED_AT_COLUMN,
+                  'Created at'
+                ),
                 accessor: 'createdAtDate',
                 Cell: ({ value }: { value: Date }): JSX.Element => (
                   <span>{format(value, 'yyyy-MM-dd')}</span>
@@ -172,7 +203,10 @@ export const IndustryCanvasHomePage = () => {
                 sortType: 'datetime',
               },
               {
-                Header: 'Created by',
+                Header: t(
+                  translationKeys.HOMEPAGE_TABLE_CREATED_BY_COLUMN,
+                  'Created by'
+                ),
                 accessor: (row) =>
                   row.createdByUserProfile?.displayName ?? 'Unknown user',
               },

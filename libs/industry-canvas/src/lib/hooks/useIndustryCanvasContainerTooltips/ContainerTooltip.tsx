@@ -10,6 +10,7 @@ import { ContainerType } from '@cognite/unified-file-viewer';
 
 import type { OCRAnnotationPageResult } from '@data-exploration-lib/domain-layer';
 
+import { translationKeys } from '../../common';
 import DateRangePrompt from '../../components/DateRangePrompt';
 import { MetricEvent } from '../../constants';
 import {
@@ -22,6 +23,7 @@ import {
   OnUpdateTooltipsOptions,
   TooltipsOptions,
 } from '../useTooltipsOptions';
+import { useTranslation } from '../useTranslation';
 
 import getContainerText from './getContainerText';
 import LabelToolbar from './LabelToolbar';
@@ -70,6 +72,7 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
 }) => {
   const trackUsage = useMetrics();
   const [isInEditLabelMode, setIsInEditLabelMode] = useState(false);
+  const { t } = useTranslation();
 
   const onSaveLabel = useCallback(
     (label: string) => {
@@ -116,15 +119,25 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
         )}
         <ToolBar direction="horizontal">
           <>
-            <Tooltip content="Change label">
+            <Tooltip
+              content={t(translationKeys.CHANGE_LABEL_TOOLTIP, 'Change label')}
+            >
               <Button
                 icon="String"
                 onClick={() => setIsInEditLabelMode((prevState) => !prevState)}
                 type="ghost"
-                aria-label="Change label"
+                aria-label={t(
+                  translationKeys.CHANGE_LABEL_TOOLTIP,
+                  'Change label'
+                )}
               />
             </Tooltip>
-            <Tooltip content="Open in Data Explorer">
+            <Tooltip
+              content={t(
+                translationKeys.OPEN_IN_DATA_EXPLORER,
+                'Open in Data Explorer'
+              )}
+            >
               <Button
                 icon="ExternalLink"
                 onClick={() => {
@@ -140,11 +153,14 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
                   );
                 }}
                 type="ghost"
-                aria-label="Open in Data Explorer"
+                aria-label={t(
+                  translationKeys.OPEN_IN_DATA_EXPLORER,
+                  'Open in Data Explorer'
+                )}
               />
             </Tooltip>
           </>
-          <Tooltip content="Remove">
+          <Tooltip content={t(translationKeys.REMOVE, 'Remove')}>
             <Button
               icon="Delete"
               onClick={onRemoveContainer}
@@ -169,7 +185,12 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
         )}
         <ToolBar direction="horizontal">
           <>
-            <Tooltip content="Last day">
+            <Tooltip
+              content={t(
+                translationKeys.TIMESERIES_TOOLTIP_LAST_DAY,
+                'Last day'
+              )}
+            >
               <Button
                 type="ghost"
                 size="medium"
@@ -183,13 +204,21 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
                     endDate: dayjs().endOf('day').toDate(),
                   })
                 }
-                aria-label="Last day"
+                aria-label={t(
+                  translationKeys.TIMESERIES_TOOLTIP_LAST_DAY,
+                  'Last day'
+                )}
               >
                 1d
               </Button>
             </Tooltip>
 
-            <Tooltip content="Last month">
+            <Tooltip
+              content={t(
+                translationKeys.TIMESERIES_TOOLTIP_LAST_MONTH,
+                'Last month'
+              )}
+            >
               <Button
                 onClick={() =>
                   onUpdateContainer({
@@ -203,13 +232,21 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
                 }
                 type="ghost"
                 size="medium"
-                aria-label="Last month"
+                aria-label={t(
+                  translationKeys.TIMESERIES_TOOLTIP_LAST_YEAR,
+                  'Last month'
+                )}
               >
                 1m
               </Button>
             </Tooltip>
 
-            <Tooltip content="Last year">
+            <Tooltip
+              content={t(
+                translationKeys.TIMESERIES_TOOLTIP_LAST_YEAR,
+                'Last year'
+              )}
+            >
               <Button
                 onClick={() =>
                   onUpdateContainer({
@@ -223,7 +260,10 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
                 }
                 type="ghost"
                 size="medium"
-                aria-label="Last year"
+                aria-label={t(
+                  translationKeys.TIMESERIES_TOOLTIP_LAST_YEAR,
+                  'Last year'
+                )}
               >
                 1y
               </Button>
@@ -277,15 +317,22 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
             />
           </>
           <>
-            <Tooltip content="Change label">
+            <Tooltip
+              content={t(translationKeys.CHANGE_LABEL_TOOLTIP, 'Change label')}
+            >
               <Button
                 icon="String"
                 onClick={() => setIsInEditLabelMode((prevState) => !prevState)}
                 type="ghost"
-                aria-label="Change label"
+                aria-label={t(
+                  translationKeys.CHANGE_LABEL_TOOLTIP,
+                  'Change label'
+                )}
               />
             </Tooltip>
-            <Tooltip content="Open in Charts">
+            <Tooltip
+              content={t(translationKeys.OPEN_IN_CHARTS, 'Open in Charts')}
+            >
               <Button
                 icon="LineChart"
                 onClick={() => {
@@ -302,10 +349,15 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
                   );
                 }}
                 type="ghost"
-                aria-label="Open in Charts"
+                aria-label={t(translationKeys.OPEN_IN_CHARTS, 'Open in Charts')}
               />
             </Tooltip>
-            <Tooltip content="Open in Data Explorer">
+            <Tooltip
+              content={t(
+                translationKeys.OPEN_IN_DATA_EXPLORER,
+                'Open in Data Explorer'
+              )}
+            >
               <Button
                 icon="ExternalLink"
                 onClick={() => {
@@ -320,16 +372,22 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
                   );
                 }}
                 type="ghost"
-                aria-label="Open in Data Explorer"
+                aria-label={t(
+                  translationKeys.OPEN_IN_DATA_EXPLORER,
+                  'Open in Data Explorer'
+                )}
               />
             </Tooltip>
           </>
-          <Tooltip content="Remove">
+          <Tooltip content={t(translationKeys.REMOVE, 'Remove')}>
             <Button
               icon="Delete"
               onClick={onRemoveContainer}
               type="ghost"
-              aria-label="Remove time series"
+              aria-label={t(
+                translationKeys.REMOVE_TIMESERIES_TOOLTIP,
+                'Remove time series'
+              )}
             />
           </Tooltip>
         </ToolBar>
@@ -349,15 +407,25 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
         )}
         <ToolBar direction="horizontal">
           <>
-            <Tooltip content="Change label">
+            <Tooltip
+              content={t(translationKeys.CHANGE_LABEL_TOOLTIP, 'Change label')}
+            >
               <Button
                 icon="String"
                 onClick={() => setIsInEditLabelMode((prevState) => !prevState)}
                 type="ghost"
-                aria-label="Change label"
+                aria-label={t(
+                  translationKeys.CHANGE_LABEL_TOOLTIP,
+                  'Change label'
+                )}
               />
             </Tooltip>
-            <Tooltip content="Open in Data Explorer">
+            <Tooltip
+              content={t(
+                translationKeys.OPEN_IN_DATA_EXPLORER,
+                'Open in Data Explorer'
+              )}
+            >
               <Button
                 icon="ExternalLink"
                 onClick={() => {
@@ -370,16 +438,24 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
                   );
                 }}
                 type="ghost"
-                aria-label="Open in Data Explorer"
+                aria-label={t(
+                  translationKeys.OPEN_IN_DATA_EXPLORER,
+                  'Open in Data Explorer'
+                )}
               />
             </Tooltip>
           </>
-          <Tooltip content="Remove">
+          <Tooltip
+            content={t(translationKeys.REMOVE_CONTAINER_TOOLTIP, 'Remove')}
+          >
             <Button
               icon="Delete"
               onClick={onRemoveContainer}
               type="ghost"
-              aria-label="Remove 3D-model"
+              aria-label={t(
+                translationKeys.REMOVE_THREE_D_TOOLTIP,
+                'Remove 3D-model'
+              )}
             />
           </Tooltip>
         </ToolBar>
@@ -419,12 +495,17 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
         )}
         <ToolBar direction="horizontal">
           <>
-            <Tooltip content="Change label">
+            <Tooltip
+              content={t(translationKeys.CHANGE_LABEL_TOOLTIP, 'Change label')}
+            >
               <Button
                 icon="String"
                 onClick={() => setIsInEditLabelMode((prevState) => !prevState)}
                 type="ghost"
-                aria-label="Change label"
+                aria-label={t(
+                  translationKeys.CHANGE_LABEL_TOOLTIP,
+                  'Change label'
+                )}
               />
             </Tooltip>
             {selectedContainer.type === ContainerType.DOCUMENT &&
@@ -447,8 +528,18 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
             <Tooltip
               content={
                 ocrText.length === 0
-                  ? `Summarization is unavailable for this ${selectedContainer.type} (Experimental)`
-                  : `Summarize the ${selectedContainer.type} (Experimental)`
+                  ? t(
+                      translationKeys.CONTAINER_TOOLTIP_SUMMARIZATION_UNAVAILABLE,
+                      {
+                        type: selectedContainer.type,
+                        defaultValue:
+                          'Summarization is unavailable for this {{type}} (Experimental)',
+                      }
+                    )
+                  : t(translationKeys.CONTAINER_TOOLTIP_SUMMARIZE, {
+                      type: selectedContainer.type,
+                      defaultValue: 'Summarize the {{type}} (Experimental)',
+                    })
               }
             >
               <Button
@@ -463,7 +554,12 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
               />
             </Tooltip>
 
-            <Tooltip content="Open in Data Explorer">
+            <Tooltip
+              content={t(
+                translationKeys.OPEN_IN_DATA_EXPLORER,
+                'Open in Data Explorer'
+              )}
+            >
               <Button
                 icon="ExternalLink"
                 onClick={() => {
@@ -478,15 +574,21 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
                   );
                 }}
                 type="ghost"
-                aria-label="Open document"
+                aria-label={t(
+                  translationKeys.OPEN_IN_DATA_EXPLORER,
+                  'Open in Data Explorer'
+                )}
               />
             </Tooltip>
           </>
-          <Tooltip content="Remove">
+          <Tooltip content={t(translationKeys.REMOVE, 'Remove')}>
             <Button
               icon="Delete"
               onClick={() => onRemoveContainer()}
-              aria-label="Remove document"
+              aria-label={t(
+                translationKeys.REMOVE_DOCUMENT_TOOLTIP,
+                'Remove document'
+              )}
               type="ghost"
             />
           </Tooltip>

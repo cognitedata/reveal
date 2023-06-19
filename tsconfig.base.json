@@ -100,6 +100,9 @@
       "@fusion/industry-canvas": [
         "libs/industry-canvas/src/index.ts"
       ],
+      "@industry-canvas-ui/*": [
+        "apps/industry-canvas-ui/src/*"
+      ],
       "@fusion/mock-data": [
         "libs/shared/mock-data/src/index.ts"
       ],

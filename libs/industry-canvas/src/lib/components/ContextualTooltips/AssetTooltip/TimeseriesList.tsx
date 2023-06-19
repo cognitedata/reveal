@@ -4,7 +4,9 @@ import styled from 'styled-components';
 
 import { Button, Icon, Body, Colors, Tooltip } from '@cognite/cogs.js';
 
+import { translationKeys } from '../../../common';
 import { useAssetTimeseries } from '../../../hooks/useAssetTimeseries';
+import { useTranslation } from '../../../hooks/useTranslation';
 
 type TimeseriesListProps = {
   assetId: number;
@@ -16,6 +18,7 @@ const TimeseriesList: React.FC<TimeseriesListProps> = ({
   onAddTimeseries,
 }) => {
   const { data: timeseries = [], isLoading } = useAssetTimeseries(assetId);
+  const { t } = useTranslation();
 
   if (isLoading) {
     return <Icon type="Loader" />;
@@ -40,13 +43,21 @@ const TimeseriesList: React.FC<TimeseriesListProps> = ({
               </ChartChip>
               <Name level={3}>{ts.name}</Name>
             </InnerWrapper>
-            <Tooltip content="Add timeseries">
+            <Tooltip
+              content={t(
+                translationKeys.TOOLTIP_TIMESERIES_ADD_TO_CANVAS,
+                'Add timeseries'
+              )}
+            >
               <Button
                 type="ghost"
                 inverted
                 icon="Add"
                 size="medium"
-                aria-label="Add timeseries"
+                aria-label={t(
+                  translationKeys.TOOLTIP_TIMESERIES_ADD_TO_CANVAS,
+                  'Add timeseries'
+                )}
                 onClick={() => onAddTimeseries(ts.id)}
               />
             </Tooltip>

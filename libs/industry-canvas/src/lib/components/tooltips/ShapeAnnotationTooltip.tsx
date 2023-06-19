@@ -6,7 +6,9 @@ import {
   SHAPE_ANNOTATION_FILL_COLOR_MAP,
   SHAPE_ANNOTATION_STROKE_COLOR_MAP,
 } from '../../colors';
+import { translationKeys } from '../../common';
 import { OnUpdateAnnotationStyleByType } from '../../hooks/useManagedTools';
+import { useTranslation } from '../../hooks/useTranslation';
 import { ShapeAnnotation } from '../../types';
 import { FillButton } from '../color-palettes/FillButton';
 import { FillColorPalette } from '../color-palettes/FillColorPalette';
@@ -32,6 +34,7 @@ export const ShapeAnnotationTooltip: React.FC<ShapeAnnotationTooltipProps> = ({
   onDeleteSelectedCanvasAnnotation,
 }) => {
   const [editMode, setEditMode] = useState<EditMode | undefined>(undefined);
+  const { t } = useTranslation();
 
   const isEditingStroke = editMode === EditMode.STROKE;
   const isEditingFill = editMode === EditMode.FILL;
@@ -101,11 +104,11 @@ export const ShapeAnnotationTooltip: React.FC<ShapeAnnotationTooltipProps> = ({
           </Tooltip>
         </>
 
-        <Tooltip content="Remove">
+        <Tooltip content={t(translationKeys.REMOVE, 'Remove')}>
           <Button
             icon="Delete"
             type="ghost"
-            aria-label="Remove annotation"
+            aria-label={t(translationKeys.REMOVE, 'Remove')}
             onClick={onDeleteSelectedCanvasAnnotation}
           />
         </Tooltip>
