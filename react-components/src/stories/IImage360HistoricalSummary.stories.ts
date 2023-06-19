@@ -32,8 +32,8 @@ export const Main: Story = {
     stationName: 'Historical test',
     revisionCollection: mainRevisionCollection,
     viewer: undefined,
-    setActiveRevision(index) {},
-    activeRevision: 0
+    activeRevision: 0,
+    scrollPosition: 0
   }
 };
 
@@ -43,7 +43,7 @@ export const Secondary: Story = {
     stationName: 'Historical test2',
     revisionCollection: secondaryRevisionCollection,
     viewer: undefined,
-    setActiveRevision(index) {},
-    activeRevision: 0
+    activeRevision: 0,
+    scrollPosition: 0
   }
 };

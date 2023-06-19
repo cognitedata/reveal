@@ -2755,6 +2755,7 @@ __metadata:
     "@types/styled-components": 5.1.26
     "@types/three": 0.152.0
     lodash: ^4.17.21
+    moq.ts: ^10.0.6
     prop-types: 15.8.1
     react: 18.2.0
     react-dom: 18.2.0
@@ -10590,6 +10591,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"moq.ts@npm:^10.0.6":
+  version: 10.0.8
+  resolution: "moq.ts@npm:10.0.8"
+  dependencies:
+    tslib: "*"
+  checksum: 47a264649de0bf5cb4a483d10406502c979685ad44e35d44905e98dcc8101dd5e86765cc1cbc64548837566c2a6a9035f78162de4733e0b23ac7532b664c9fb5
+  languageName: node
+  linkType: hard
+
 "mri@npm:^1.2.0":
   version: 1.2.0
   resolution: "mri@npm:1.2.0"
@@ -13333,6 +13343,13 @@ __metadata:
     typescript: "*"
     webpack: ^5.0.0
   checksum: 139ed53bc60717d0ca231cdffbdef7566b9feda11c72fecc697983113f1266ccca2e1cdf191f841a43afa6b87d6afe57a0caf4feecf02f30845aa7ac6f2411a4
+  languageName: node
+  linkType: hard
+
+"tslib@npm:*":
+  version: 2.5.3
+  resolution: "tslib@npm:2.5.3"
+  checksum: 88902b309afaf83259131c1e13da1dceb0ad1682a213143a1346a649143924d78cf3760c448b84d796938fd76127183894f8d85cbb3bf9c4fddbfcc140c0003c
   languageName: node
   linkType: hard
 

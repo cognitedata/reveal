@@ -38,6 +38,7 @@
     "@types/react": "18.2.7",
     "@types/styled-components": "5.1.26",
     "@types/three": "0.152.0",
+    "moq.ts": "^10.0.6",
     "prop-types": "15.8.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",

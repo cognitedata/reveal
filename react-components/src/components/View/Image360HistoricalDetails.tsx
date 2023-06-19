@@ -3,7 +3,7 @@
  */
 
 import { Cognite3DViewer, Image360 } from '@cognite/reveal';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Image360HistoricalPanel } from '../Panel/Image360HistoricalPanel';
 import { Image360HistoricalSummary } from '../Toolbar/Image360HistoricalSummary';
 import { formatDate } from '../utils/FormatDate';
@@ -35,6 +35,7 @@ export const Image360HistoricalDetails = ({
   const [imageUrls, setImageUrls] = useState<(string | undefined)[]>([]);
   const [minWidth, setMinWidth] = useState('100px');
   const [scrollPosition, setScrollPosition] = useState(0);
+  const newScrollPosition = useRef(0);
 
   useEffect(() => {
     const fetchRevisionCollection = async () => {
@@ -92,6 +93,7 @@ export const Image360HistoricalDetails = ({
           />
           {revisionDetailsExpanded && (
             <Image360HistoricalSummary
+              ref={newScrollPosition}
               key={uniqueId()}
               viewer={viewer}
               stationId={image360Entity?.id}
@@ -99,8 +101,6 @@ export const Image360HistoricalDetails = ({
               activeRevision={activeRevision}
               setActiveRevision={setActiveRevision}
               revisionCollection={revisionCollection}
-              scrollPosition={scrollPosition}
-              setScrollPosition={setScrollPosition}
             />
           )}
         </>

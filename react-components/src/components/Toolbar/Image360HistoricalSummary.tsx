@@ -3,75 +3,76 @@
  */
 
 import { Detail, Flex } from '@cognite/cogs.js';
-import React, { useEffect, useRef } from 'react';
+import React, { forwardRef, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { Thumbnail } from '../utils/Thumbnail';
 import { Cognite3DViewer, Image360 } from '@cognite/reveal';
 // Using named import to avoid react component creation error when default import is used.
 import { uniqueId } from 'lodash';
 
-export interface Image360RevisionDetails{
+export interface Image360RevisionDetails {
   date?: string;
   imageUrl?: string;
   index: number;
   image360Entity: Image360 | undefined;
 };
 
-export interface Image360HistoricalSummaryProps{
+export interface Image360HistoricalSummaryProps {
   stationId?: string;
   stationName?: string;
   viewer?: Cognite3DViewer;
   revisionCollection: Image360RevisionDetails[];
   activeRevision: number;
   setActiveRevision: (index: number) => void;
-  scrollPosition: number;
-  setScrollPosition: (position: number) => void;
 };
 
-export const Image360HistoricalSummary = ({
+export const Image360HistoricalSummary = forwardRef(({
   stationId,
   stationName,
   revisionCollection,
   activeRevision,
   setActiveRevision,
   viewer,
-  scrollPosition,
-  setScrollPosition
-}: Image360HistoricalSummaryProps) => {
+}: Image360HistoricalSummaryProps, ref: React.ForwardedRef<number>) => {
   const gridContainerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (gridContainerRef.current) {
-      gridContainerRef.current.scrollLeft = scrollPosition;
-    }
-  }, []);
-
   const onRevisionChanged = (revisionDetails: Image360RevisionDetails, index: number) => {
-    if(viewer && revisionDetails.image360Entity) {
+    if (viewer && revisionDetails.image360Entity) {
       setActiveRevision(index);
       const revisions = revisionDetails.image360Entity.getRevisions();
       const revisionIndex = revisionDetails.index!;
       if (revisionIndex >= 0 && revisionIndex < revisions.length) {
         viewer.enter360Image(revisionDetails.image360Entity, revisions[revisionIndex]);
       }
-
-      if (gridContainerRef.current) {
-        setScrollPosition(gridContainerRef.current.scrollLeft);
-      }
     }
   };
 
-  return(
+  function isMutableRefObject<T>(ref: React.ForwardedRef<T>): ref is React.MutableRefObject<T> {
+    return (ref as React.MutableRefObject<T>).current !== undefined;
+  }
+
+  function onScroll(e: React.UIEvent<HTMLDivElement, UIEvent>) {
+    if (isMutableRefObject(ref)) {
+      ref.current = e.currentTarget.scrollLeft;
+    }
+  }
+
+  useEffect(() => {
+    if (gridContainerRef.current && isMutableRefObject(ref)) {
+      gridContainerRef.current.scrollLeft = ref.current!;
+    }
+  }, []);
+
+  return (
     <OverviewContainer>
       <StyledFlex direction='column'>
         <StyledSubFlex>{stationName}</StyledSubFlex>
         <StyledDetail>Station: {stationId}</StyledDetail>
       </StyledFlex>
 
-      <StyledLayoutGridContainer
-        ref={gridContainerRef}>
+      <StyledLayoutGridContainer onScroll={onScroll} ref={gridContainerRef}>
         <StyledLayoutGrid>
-          { revisionCollection.map((revisionDetails, index) => (
+          {revisionCollection.map((revisionDetails, index) => (
             <RevisionItem
               key={uniqueId()}
               onClick={onRevisionChanged.bind(null, revisionDetails, index)}
@@ -80,8 +81,8 @@ export const Image360HistoricalSummary = ({
                 key={index}
                 isActive={activeRevision === index}
                 imageUrl={revisionDetails.imageUrl}
-                isLoading={false}/>
-              <Detail style={{height:'16px'}}>{revisionDetails.date}</Detail>
+                isLoading={false} />
+              <Detail style={{ height: '16px' }}>{revisionDetails.date}</Detail>
             </RevisionItem>
           ))
           }
@@ -89,7 +90,7 @@ export const Image360HistoricalSummary = ({
       </StyledLayoutGridContainer>
     </OverviewContainer>
   )
-};
+});
 
 const StyledSubFlex = styled(Flex)`
   align-items: flex-start;
