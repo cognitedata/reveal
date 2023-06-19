@@ -1,31 +1,61 @@
 import { useParams } from 'react-router-dom';
 
-import { FileInfo as File } from '@cognite/sdk';
-import { useCdfItem } from '@cognite/sdk-react-query-hooks';
+import { ResourceItem } from '@data-exploration-lib/core';
 
+import { Button } from '../../components/buttons/Button';
+import { Dropdown } from '../../components/dropdown/Dropdown';
+import { Menu } from '../../components/menu/Menu';
 import { Page } from '../../containers/page/Page';
 import { FileWidget, PropertiesWidget } from '../../containers/widgets';
+import { useNavigation } from '../../hooks/useNavigation';
+import { useFileByIdQuery } from '../../services/instances/file/queries/useFileByIdQuery';
 
-const getFileId = (externalId?: string) => {
-  if (!externalId) {
-    throw new Error('External id is required');
-  }
-
-  return Number(externalId) ? { id: Number(externalId) } : { externalId };
+const FileActions = ({
+  loading,
+  onCanvasClick,
+}: {
+  loading?: boolean;
+  onCanvasClick?: () => void;
+}) => {
+  return (
+    <Dropdown
+      placement="bottom-end"
+      content={
+        <Menu>
+          {onCanvasClick && <Menu.OpenInCanvas onClick={onCanvasClick} />}
+        </Menu>
+      }
+      disabled={false}
+    >
+      <Button.OpenIn loading={loading} />
+    </Dropdown>
+  );
 };
 
 export const FilePage = () => {
+  const navigate = useNavigation();
   const { externalId } = useParams();
 
-  const { data, isLoading } = useCdfItem<File>('files', getFileId(externalId), {
-    enabled: !!externalId,
-  });
+  const { data, isLoading } = useFileByIdQuery(externalId);
+
+  const handleNavigateToCanvasClick = () => {
+    if (data && data.id) {
+      const file: ResourceItem = { id: data?.id, type: 'file', externalId };
+      navigate.toCanvas(file);
+    }
+  };
 
   return (
     <Page.Dashboard
       customName={data?.name}
       customDataType="File"
       loading={isLoading}
+      renderActions={() => [
+        <FileActions
+          loading={isLoading}
+          onCanvasClick={handleNavigateToCanvasClick}
+        />,
+      ]}
     >
       <Page.Widgets>
         <FileWidget id="Preview" fileId={data?.id} rows={8} columns={2} />

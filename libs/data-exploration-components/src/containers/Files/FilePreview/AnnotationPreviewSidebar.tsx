@@ -25,6 +25,7 @@ import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import {
   ExtendedAnnotation,
   SIDEBAR_RESIZE_EVENT,
+  sleep,
   useDialog,
 } from '@data-exploration-lib/core';
 import {
@@ -35,7 +36,6 @@ import {
 
 import { Divider, InfoCell } from '../../../components';
 import { ResourceItem, convertResourceType } from '../../../types';
-import { sleep } from '../../../utils';
 
 import { CreateAnnotationForm } from './CreateAnnotationForm/CreateAnnotationForm';
 import FilePreviewSidebar from './FilePreviewSidebar';
@@ -65,6 +65,7 @@ type Props = {
   reset: () => void;
   selectedAnnotations: ExtendedAnnotation[];
   setSelectedAnnotations: (annotations: ExtendedAnnotation[]) => void;
+  isDocumentsApiEnabled?: boolean;
 };
 
 interface AnnotationModalStateProps {
@@ -86,6 +87,7 @@ const AnnotationPreviewSidebar = ({
   reset,
   selectedAnnotations,
   setSelectedAnnotations,
+  isDocumentsApiEnabled = true,
 }: Props) => {
   const client = useQueryClient();
   const { isOpen, open, close: modalClose } = useDialog();
@@ -443,6 +445,7 @@ const AnnotationPreviewSidebar = ({
         <ResourceSelectorDetails
           hideTitle
           closable={false}
+          isDocumentsApiEnabled={isDocumentsApiEnabled}
           item={
             item &&
             type && {
@@ -500,6 +503,7 @@ const AnnotationPreviewSidebar = ({
         <ResourceSelector
           visible={visible}
           selectionMode="single"
+          isDocumentsApiEnabled={isDocumentsApiEnabled}
           onClose={resourceSelectorClose}
           onSelect={onSelectResources}
         />

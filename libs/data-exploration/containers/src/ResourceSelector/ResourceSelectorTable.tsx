@@ -16,6 +16,7 @@ import {
   AssetSearchResults,
   DocumentSearchResults,
   EventSearchResults,
+  FileSearchResults,
   SequenceSearchResults,
   TimeseriesSearchResults,
 } from '../Search';
@@ -30,6 +31,7 @@ export const ResourceSelectorTable = ({
   selectionMode,
   setSelectedRows,
   onFilterChange,
+  isDocumentsApiEnabled = true,
   onClick = noop,
 }: {
   resourceType: ResourceType;
@@ -40,6 +42,8 @@ export const ResourceSelectorTable = ({
   selectionMode?: ResourceSelectionMode;
   onClick?: (item: ResourceItems) => void;
   onFilterChange?: (newValue: Record<string, unknown>) => void;
+
+  isDocumentsApiEnabled?: boolean;
 }) => {
   const commonProps = {
     enableSelection: selectionMode === 'multiple',
@@ -89,9 +93,16 @@ export const ResourceSelectorTable = ({
       );
 
     case 'file':
-      return (
+      return !isDocumentsApiEnabled ? (
+        <FileSearchResults
+          showCount
+          {...commonProps}
+          filter={{ ...filter.common, ...filter.file }}
+        />
+      ) : (
         <DocumentSearchResults
           {...commonProps}
+          hideUploadButton={true}
           filter={{ ...filter.common, ...filter.document }}
         />
       );

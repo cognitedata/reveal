@@ -1,14 +1,18 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 
 import styled from 'styled-components';
 
-import { Title } from '@cognite/cogs.js';
+import { Body, Icon, Title } from '@cognite/cogs.js';
 
+import { translationKeys } from '../../app/common/i18n/translationKeys';
 import { CategoryCard } from '../components/cards/CategoryCard';
+import { DataModelSelectorModal } from '../containers/modals/DataModelSelectorModal';
 import { Page } from '../containers/page/Page';
 import { SearchBar } from '../containers/search/SearchBar';
+import { useDataModelParams } from '../hooks/useDataModelParams';
 import { useNavigation } from '../hooks/useNavigation';
 import { useTranslation } from '../hooks/useTranslation';
+import { useGetAssetCentricDataExplorerUrl } from '../hooks/useUrl';
 import { useTypesDataModelQuery } from '../services/dataModels/query/useTypesDataModelQuery';
 
 export const HomePage = () => {
@@ -17,21 +21,58 @@ export const HomePage = () => {
   const { toListPage } = useNavigation();
 
   const { data, isLoading } = useTypesDataModelQuery();
+  const selectedDataModel = useDataModelParams();
+
+  const [siteSelectionVisible, setSiteSelectionVisible] =
+    useState<boolean>(false);
+
+  const assetCentricDataExplorerUrl = useGetAssetCentricDataExplorerUrl();
 
   const handleCategoryClick = useCallback(
     (dataType: string) => {
-      toListPage(dataType);
+      if (selectedDataModel) {
+        toListPage(
+          selectedDataModel.space,
+          selectedDataModel.dataModel,
+          selectedDataModel.version,
+          dataType
+        );
+      }
     },
-    [toListPage]
+    [toListPage, selectedDataModel]
   );
+
+  const getSpaceText = () => {
+    if (selectedDataModel && selectedDataModel.dataModel) {
+      return selectedDataModel.dataModel;
+    } else {
+      return '...';
+    }
+  };
 
   return (
     <Page>
       <SearchContainer>
-        <Title level={3}>
-          {t('homepage_title', 'Explore all your data from')} ...
-        </Title>
+        <TitleContainer>
+          <Title level={3}>
+            {t(translationKeys.homePageTitle, 'Explore all your data from')}{' '}
+          </Title>
+          <StyledBody onClick={() => setSiteSelectionVisible(true)}>
+            {getSpaceText()}
+            {selectedDataModel && selectedDataModel.dataModel && (
+              <Icon type="ChevronDownLarge" />
+            )}
+          </StyledBody>
+        </TitleContainer>
         <SearchBar width="640px" />
+        <FooterContainer
+          href={assetCentricDataExplorerUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <span>Open in Data Explorer</span>
+          <Icon type="ExternalLink" />
+        </FooterContainer>
       </SearchContainer>
 
       <Page.Body loading={isLoading}>
@@ -52,9 +93,58 @@ export const HomePage = () => {
           </CategoryContent>
         </CategoriesContainer>
       </Page.Body>
+
+      <DataModelSelectorModal
+        isVisible={siteSelectionVisible}
+        onModalClose={() => setSiteSelectionVisible(false)}
+        isClosable
+      />
     </Page>
   );
 };
+
+const FooterContainer = styled.a`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+      269.53deg,
+      rgba(109, 135, 191, 0.8) 0.32%,
+      rgba(19, 28, 66, 0.8) 99.67%
+    ),
+    rgba(250, 250, 250, 0.8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+
+  .cogs-icon {
+    margin-left: 7px;
+    color: #6d87bfcc;
+  }
+`;
+
+const TitleContainer = styled.span`
+  display: flex;
+  align-items: center;
+`;
+
+const StyledBody = styled(Body)`
+  display: flex;
+  align-items: center;
+  font-size: 24px;
+  color: rgba(51, 51, 51, 0.8);
+  margin-left: 8px;
+
+  &:hover {
+    cursor: pointer;
+    color: rgba(51, 51, 51, 0.5);
+  }
+
+  .cogs-icon {
+    margin-left: 8px;
+  }
+`;
 
 const SearchContainer = styled.div`
   display: flex;

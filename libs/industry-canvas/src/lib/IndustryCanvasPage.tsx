@@ -10,7 +10,6 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { ResourceSelector } from '@data-exploration/containers';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { v4 as uuid } from 'uuid';
 
 import { createLink, PageTitle } from '@cognite/cdf-utilities';
@@ -42,6 +41,7 @@ import DragOverIndicator from './components/DragOverIndicator';
 import IndustryCanvasFileUploadModal from './components/IndustryCanvasFileUploadModal/IndustryCanvasFileUploadModal';
 import {
   CommentsFeatureFlagKey,
+  MetricEvent,
   SEARCH_QUERY_PARAM_KEY,
   SHAMEFUL_WAIT_TO_ENSURE_CONTAINERS_ARE_RENDERED_MS,
   TOAST_POSITION,
@@ -52,24 +52,22 @@ import useManagedState from './hooks/useManagedState';
 import useManagedTools from './hooks/useManagedTools';
 import { useQueryParameter } from './hooks/useQueryParameter';
 import { useSelectedAnnotationOrContainer } from './hooks/useSelectedAnnotationOrContainer';
+import useTrackCanvasViewed from './hooks/useTrackCanvasViewed';
 import { IndustryCanvas } from './IndustryCanvas';
-import {
-  IndustryCanvasProvider,
-  useIndustryCanvasContext,
-} from './IndustryCanvasContext';
+import { useIndustryCanvasContext } from './IndustryCanvasContext';
 import {
   ContainerReference,
   ContainerReferenceType,
   IndustryCanvasToolType,
   isCommentAnnotation,
 } from './types';
-import { UserProfileProvider } from './UserProfileProvider';
 import {
   DEFAULT_CONTAINER_MAX_HEIGHT,
   DEFAULT_CONTAINER_MAX_WIDTH,
 } from './utils/addDimensionsToContainerReference';
 import isSupportedResourceItem from './utils/isSupportedResourceItem';
 import resourceItemToContainerReference from './utils/resourceItemToContainerReference';
+import useMetrics from './utils/tracking/useMetrics';
 import useManagedTool from './utils/useManagedTool';
 import { zoomToFitAroundContainerIds } from './utils/zoomToFitAroundContainerIds';
 
@@ -79,7 +77,8 @@ export type OnAddContainerReferences = (
 
 const APPLICATION_ID_INDUSTRY_CANVAS = 'industryCanvas';
 
-const IndustryCanvasPageWithoutQueryClientProvider = () => {
+export const IndustryCanvasPage = () => {
+  const trackUsage = useMetrics();
   const navigate = useNavigate();
   const [unifiedViewerRef, setUnifiedViewerRef] =
     useState<UnifiedViewer | null>(null);
@@ -132,6 +131,7 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
     tool,
   });
 
+  useTrackCanvasViewed(activeCanvas);
   const { isEnabled: isCommentsEnabled } = useFlag(CommentsFeatureFlagKey, {
     fallback: false,
   });
@@ -175,6 +175,7 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
 
   const onDownloadPress = () => {
     unifiedViewerRef?.exportWorkspaceToPdf();
+    trackUsage(MetricEvent.DOWNLOAD_AS_PDF_CLICKED);
   };
 
   useEffect(() => {
@@ -321,6 +322,19 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
       onAddContainerReferences(
         supportedResourceItems.map(resourceItemToContainerReference)
       );
+
+      const numberOfResourcesPerType = supportedResourceItems.reduce(
+        (acc, resourceItem) => {
+          const type = resourceItem.type;
+          acc[type] = (acc[type] ?? 0) + 1;
+          return acc;
+        },
+        {} as Record<string, number>
+      );
+      trackUsage(MetricEvent.RESOURCE_SELECTOR_RESOURCES_ADDED, {
+        numberOfResources: supportedResourceItems.length,
+        numberOfResourcesPerType,
+      });
     }
   };
 
@@ -370,9 +384,36 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
     if ((event.ctrlKey || event.metaKey) && event.key === 'z') {
       if (event.shiftKey) {
         redo.fn();
+        trackUsage(MetricEvent.HOTKEYS_USED, {
+          hotkey: 'Ctrl/Cmd + Shift + Z',
+        });
         return;
       }
       undo.fn();
+      trackUsage(MetricEvent.HOTKEYS_USED, {
+        hotkey: 'Ctrl/Cmd + Z',
+      });
+      return;
+    }
+
+    if ((event.ctrlKey || event.metaKey) && event.key === 'f') {
+      trackUsage(MetricEvent.HOTKEYS_USED, {
+        hotkey: 'Ctrl/Cmd + F',
+      });
+      return;
+    }
+
+    if ((event.ctrlKey || event.metaKey) && event.key === 's') {
+      trackUsage(MetricEvent.HOTKEYS_USED, {
+        hotkey: 'Ctrl/Cmd + S',
+      });
+      return;
+    }
+
+    if ((event.ctrlKey || event.metaKey) && event.key === 'a') {
+      trackUsage(MetricEvent.HOTKEYS_USED, {
+        hotkey: 'Ctrl/Cmd + A',
+      });
       return;
     }
 
@@ -401,6 +442,7 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
         onClose={onResourceSelectorCloseWrapper}
         visibleResourceTabs={['file', 'timeSeries', 'asset', 'event']}
         selectionMode="multiple"
+        addButtonText="Add to canvas"
       />
       <PageTitle title="Industry Canvas" />
       <TitleRowWrapper>
@@ -471,7 +513,13 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
             />
           </Tooltip>
 
-          <Button onClick={onResourceSelectorOpen} disabled={isCanvasLocked}>
+          <Button
+            onClick={() => {
+              onResourceSelectorOpen();
+              trackUsage(MetricEvent.ADD_DATA_BUTTON_CLICKED);
+            }}
+            disabled={isCanvasLocked}
+          >
             <Icon type="Plus" /> Add data
           </Button>
 
@@ -484,9 +532,12 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
                   toggled={shouldShowConnectionAnnotations}
                   aria-label="Always show connection lines"
                   onChange={() => {
-                    setShouldShowConnectionAnnotations(
-                      !shouldShowConnectionAnnotations
-                    );
+                    const nextValue = !shouldShowConnectionAnnotations;
+                    setShouldShowConnectionAnnotations(nextValue);
+
+                    trackUsage(MetricEvent.SHOW_CONNECTION_LINES_TOGGLED, {
+                      newValue: nextValue,
+                    });
                   }}
                 >
                   Always show
@@ -548,27 +599,6 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
         }}
       />
     </>
-  );
-};
-
-export const IndustryCanvasPage = () => {
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-        refetchOnWindowFocus: false,
-        refetchOnReconnect: false,
-      },
-    },
-  });
-  return (
-    <QueryClientProvider client={queryClient}>
-      <UserProfileProvider>
-        <IndustryCanvasProvider>
-          <IndustryCanvasPageWithoutQueryClientProvider />
-        </IndustryCanvasProvider>
-      </UserProfileProvider>
-    </QueryClientProvider>
   );
 };
 

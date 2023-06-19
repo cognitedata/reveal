@@ -58,6 +58,7 @@ const Secondary3DModelDropdown = ({
     fetchNextPage: fetchMore,
     hasNextPage: canFetchMore,
     isFetchingNextPage: isFetchingMore,
+    isFetching: isFetchingModels,
   } = useInfinite3DModelsQuery(DEFAULT_GLOBAL_TABLE_MAX_RESULT_LIMIT);
 
   useEffect(() => {
@@ -137,7 +138,7 @@ const Secondary3DModelDropdown = ({
   };
 
   return (
-    <MenuWrapper>
+    <MenuWrapper loading={isFetchingModels && models.length === 0}>
       <StyledFooter>
         <StyledInput
           autoFocus

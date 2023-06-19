@@ -26,7 +26,7 @@ import {
 
 import {
   AssetsTab,
-  DocumentsTab,
+  FilesTab,
   EventsTab,
   ResourceTypeTabs,
   SequenceTab,
@@ -68,17 +68,20 @@ export type ResourceSelection = Record<
 >;
 export const ResourceSelector = ({
   visible = false,
-
   visibleResourceTabs = DEFAULT_VISIBLE_RESOURCE_TABS,
   selectionMode = 'single',
   initialFilter = EMPTY_OBJECT,
   onClose,
   onSelect = noop,
+  isDocumentsApiEnabled = true,
+  addButtonText,
 }: {
   visible: boolean;
   onClose: () => void;
   visibleResourceTabs?: ResourceType[];
   initialFilter?: Partial<FilterState>;
+  addButtonText?: string;
+  isDocumentsApiEnabled?: boolean;
 } & Partial<SelectionProps>) => {
   const { state, setter, resetter } = useFilterState(initialFilter);
   const [query, setQuery] = useState<string>('');
@@ -169,6 +172,7 @@ export const ResourceSelector = ({
             <SidebarFilters
               query={query}
               enableDocumentLabelsFilter
+              isDocumentsApiEnabled={isDocumentsApiEnabled}
               filter={state}
               onFilterChange={(resourceType, currentFilter) => {
                 setter(resourceType, currentFilter);
@@ -226,18 +230,23 @@ export const ResourceSelector = ({
                       key={tab}
                       tabKey={ViewType.Event}
                       query={debouncedQuery}
-                      filter={state.event}
+                      filter={{ ...state.common, ...state.event }}
                       label="Events"
                     />
                   );
                 if (tab === 'file')
                   return (
-                    <DocumentsTab
+                    <FilesTab
                       key={tab}
                       tabKey={ViewType.File}
                       query={debouncedQuery}
-                      filter={state.document}
-                      label="Files"
+                      filter={{
+                        ...state.common,
+                        ...(isDocumentsApiEnabled
+                          ? state.document
+                          : state.file),
+                      }}
+                      isDocumentsApiEnabled={isDocumentsApiEnabled}
                     />
                   );
                 if (tab === 'timeSeries')
@@ -246,7 +255,7 @@ export const ResourceSelector = ({
                       key={tab}
                       tabKey={ViewType.TimeSeries}
                       query={debouncedQuery}
-                      filter={state.timeseries}
+                      filter={{ ...state.common, ...state.timeseries }}
                       label="Time Series"
                     />
                   );
@@ -255,7 +264,7 @@ export const ResourceSelector = ({
                     <SequenceTab
                       tabKey={ViewType.Sequence}
                       query={debouncedQuery}
-                      filter={state.sequence}
+                      filter={{ ...state.common, ...state.sequence }}
                       label="Sequence"
                     />
                   );
@@ -272,11 +281,16 @@ export const ResourceSelector = ({
                 selectionMode={selectionMode}
                 query={debouncedQuery}
                 resourceType={activeKey}
+                isDocumentsApiEnabled={isDocumentsApiEnabled}
                 onFilterChange={(nextState) => {
-                  setter(
-                    activeKey === 'file' ? 'document' : activeKey,
-                    nextState
-                  );
+                  if (isDocumentsApiEnabled) {
+                    setter(
+                      activeKey === 'file' ? 'document' : activeKey,
+                      nextState
+                    );
+                  } else {
+                    setter(activeKey, nextState);
+                  }
                 }}
                 onClick={({ id, externalId }) => {
                   setPreviewItem({ id, externalId, type: activeKey });
@@ -297,6 +311,7 @@ export const ResourceSelector = ({
                   selectedRows[previewItem.type][previewItem.id]
                 )}
                 visibleResources={visibleResourceTabs}
+                isDocumentsApiEnabled={isDocumentsApiEnabled}
               />
             </ResourcePreviewSidebarWrapper>
           )}
@@ -318,7 +333,7 @@ export const ResourceSelector = ({
               inverted
               type="secondary"
             >
-              Add to Canvas
+              {addButtonText ? addButtonText : 'Add'}
             </Button>
             <BulkActionbar.Separator />
             <Button

@@ -30,7 +30,7 @@ type PointsOfInterestDropdownProps = {
   setInternalPointsOfInterestCollections: Dispatch<
     SetStateAction<PointsOfInterestCollection[]>
   >;
-  config: APMConfigNode | undefined;
+  config?: APMConfigNode;
 };
 
 const PointsOfInterestDropdown = ({
@@ -62,13 +62,14 @@ const PointsOfInterestDropdown = ({
     hasNextPage: canFetchMore,
     fetchNextPage: fetchMore,
     isFetchingNextPage: isFetchingMore,
+    isFetching,
   } = useInfinitePointsOfInterestCollections(config);
 
   const filteredPOIs = useMemo(() => {
     return pointsOfInterestCollections
-      ?.filter(
+      .filter(
         ({ pointsOfInterest }) =>
-          pointsOfInterest && pointsOfInterest?.length > 0
+          pointsOfInterest && pointsOfInterest.length > 0
       )
       .filter(({ title }) =>
         title?.toLowerCase().includes(searchQuery.toLowerCase())
@@ -122,8 +123,13 @@ const PointsOfInterestDropdown = ({
     }
   };
 
+  const isMenuLoading =
+    (isFetching || isFetchingMore || canFetchMore) &&
+    filteredPOIs.length === 0 &&
+    searchQuery === '';
+
   return (
-    <MenuWrapper>
+    <MenuWrapper loading={isMenuLoading}>
       <StyledFooter>
         <StyledInput
           autoFocus
@@ -138,9 +144,9 @@ const PointsOfInterestDropdown = ({
         />
       </StyledFooter>
       <StyledSecondaryObjectListContainer onScroll={handleScroll}>
-        {filteredPOIs?.length ? (
+        {filteredPOIs.length ? (
           <>
-            {filteredPOIs?.slice(0, filteredPOIs.length).map((poi) => (
+            {filteredPOIs.slice(0, filteredPOIs.length).map((poi) => (
               <PointsOfInterestMenuItem
                 key={poi.externalId}
                 externalId={poi.externalId}

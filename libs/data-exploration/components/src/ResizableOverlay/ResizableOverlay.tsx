@@ -179,6 +179,7 @@ export const DragAreaWrapper = styled.div`
     color: var(--cogs-border--muted);
     border: 1px solid var(--cogs-border--muted);
     border-radius: 4px;
+    z-index: ${zIndex.MINIMUM};
   }
 `;
 

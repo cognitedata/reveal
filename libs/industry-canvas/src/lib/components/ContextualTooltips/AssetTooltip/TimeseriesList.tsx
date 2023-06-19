@@ -16,6 +16,7 @@ const TimeseriesList: React.FC<TimeseriesListProps> = ({
   onAddTimeseries,
 }) => {
   const { data: timeseries = [], isLoading } = useAssetTimeseries(assetId);
+
   if (isLoading) {
     return <Icon type="Loader" />;
   }

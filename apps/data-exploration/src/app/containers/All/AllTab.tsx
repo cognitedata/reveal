@@ -35,11 +35,13 @@ import {
 import {
   useFlagOverlayNavigation,
   useFlagAdvancedFilters,
+  useFlagDocumentsApiEnabled,
 } from '../../hooks/flags';
 
 export const AllTab = () => {
   const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
   const isDetailsOverlayEnabled = useFlagOverlayNavigation();
+  const isDocumentsApiEnabled = useFlagDocumentsApiEnabled();
   const [commonFilters] = useCommonFilters();
   const [query] = useQueryString(SEARCH_KEY);
   const [_, setCurrentResourceType] = useCurrentResourceType();
@@ -114,7 +116,7 @@ export const AllTab = () => {
             )
           }
         />
-        {isAdvancedFiltersEnabled ? (
+        {isDocumentsApiEnabled ? (
           <DocumentSummary
             filter={commonFilters}
             query={query}

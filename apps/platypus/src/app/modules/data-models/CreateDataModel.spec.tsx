@@ -53,6 +53,17 @@ jest.mock('./hooks/useDataModelMutation', () => {
   };
 });
 
+jest.mock('@cognite/cdf-utilities', () => {
+  return {
+    useCdfUserHistoryService: () => ({
+      logNewResourceEdit: jest.fn(),
+      logNewResourceView: jest.fn(),
+    }),
+    getProject: jest.fn().mockReturnValue('mock-project'),
+    getCluster: jest.fn().mockReturnValue('mock-cluster'),
+  };
+});
+
 describe('CreateDataModel', () => {
   beforeEach(() => {
     mockMutate.mockClear();

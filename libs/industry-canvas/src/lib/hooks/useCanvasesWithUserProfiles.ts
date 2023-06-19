@@ -1,8 +1,8 @@
 import { uniq } from 'lodash';
 
 import { SerializedCanvasDocument } from '../types';
+import { UserProfile } from '../UserProfileProvider';
 
-import { UserProfile } from './use-query/useUserProfile';
 import { useUserProfilesByIds } from './use-query/useUserProfilesByIds';
 
 const isValidString = (str: string | undefined): str is string =>
@@ -38,7 +38,7 @@ const useCanvasesWithUserProfiles = ({
         (userProfile) => userProfile.userIdentifier === canvas.createdBy
       ),
       createdAtDate: new Date(canvas.createdTime),
-      updatedAtDate: new Date(canvas.updatedTime),
+      updatedAtDate: new Date(canvas.updatedAt),
     })
   );
 

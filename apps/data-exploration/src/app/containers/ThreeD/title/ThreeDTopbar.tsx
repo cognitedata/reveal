@@ -5,11 +5,14 @@ import styled from 'styled-components';
 import { Divider, Flex } from '@cognite/cogs.js';
 import { Model3D } from '@cognite/sdk';
 
+import { useAPMConfig } from '@data-exploration-app/containers/ThreeD/hooks';
 import { useFlagPointsOfInterestFeature } from '@data-exploration-app/hooks/flags';
-import { Revision3DWithIndex } from '@data-exploration-lib/domain-layer';
+import {
+  Revision3DWithIndex,
+  Image360SiteData,
+} from '@data-exploration-lib/domain-layer';
 
 import { ThreeDContext } from '../contexts/ThreeDContext';
-import { Image360SiteData, useAPMConfig } from '../hooks';
 
 import PointsOfInterestDropdown from './Dropdowns/PointsOfInterestDropdown';
 import Secondary3DModelDropdown from './Dropdowns/Secondary3DModelDropdown';
@@ -38,8 +41,8 @@ export const ThreeDTopbar = ({
     setPointsOfInterest,
   } = useContext(ThreeDContext);
 
-  const config = useAPMConfig();
   const usePointsOfInterestFeatureFlag = useFlagPointsOfInterestFeature();
+  const { data: config } = useAPMConfig();
 
   if (!secondaryObjectsVisibilityState) return <></>;
 
@@ -109,7 +112,7 @@ export const ThreeDTopbar = ({
                 <PointsOfInterestDropdown
                   internalPointsOfInterestCollections={pointsOfInterest}
                   setInternalPointsOfInterestCollections={setPointsOfInterest}
-                  config={config.data}
+                  config={config}
                 />
               }
             >

@@ -1,0 +1,43 @@
+{
+  "items": [
+    {
+      "id": "123456789",
+      "name": "EC KPI Data Valhall",
+      "description": "High level production numbers",
+      "extendedDescription": "High level production numbers for energy components.",
+      "qualityAssessment": "Old db-extract.\nLacks metadata.\nNaming of the time series need be changed.\nMost likely running on old DB connections, as EC changed these recently.",
+      "status": "active",
+      "schedule": "Daily at 6am",
+      "resourceType": "Time series",
+      "sourceSystem": "Energy Components",
+      "sourceConnectionDetails": "Username: COGNITE_PROD_VALHALL\nHostname: a21-ex1-scan-prod-ha.pertra.locale\nPort: 1521\nService Name: ECVALH1P\nConnection String: \"DRIVER={NameOfDriver};DBQ=a21-ex1-scan-prod-ha.pertra.locale:1521/ECVALH1P;UID=COGNITE_PROD_VALHALL;PWD=LASTPASS\"",
+      "monitoringDetails": "Details about extraction monitoring or alerting",
+      "targetTables": ["RAW/EC/valhall.ZV_AKERBP_KPI"],
+      "cleanQueries": ["api/0.5/projects/akerbp/timeseries?q=VAL_EC-"],
+      "tool": "DB-Extractor",
+      "toolEnvironment": "Linux server on DMZ (a21-t1-app070)",
+      "toolConfigLink": "https://www.link.link/configfile",
+      "apiKeyUsername": "EC KPI Valhall Extraction",
+      "transformationDetails": "Tailor made pipeline in CDP, to be deprecated",
+      "rootAssets": ["VAL"],
+      "sourceContacts": [
+        {
+          "name": "Jostein Løkken",
+          "email": "jostein.lokken@tieto.com"
+        },
+        {
+          "name": "Magnus Dahl",
+          "email": "magnus.dahl@akerbp.com"
+        }
+      ],
+      "cdpContacts": [
+        {
+          "name": "Johan Løwig Rambech Dahl",
+          "email": "johan.dahl@cognite.com"
+        }
+      ],
+      "documentationLinks": ["wwww.linktodocument.co.uk", "www.relevantdocument.com"],
+      "comments": "Anything else that might be relevant"
+    }
+  ]
+}

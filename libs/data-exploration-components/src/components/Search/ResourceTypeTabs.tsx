@@ -1,4 +1,4 @@
-import { useResultCount } from '@data-exploration-components/components/ResultCount/ResultCount';
+import { useResultCount } from '@data-exploration/containers';
 import { ResourceType } from '@data-exploration-components/types';
 
 import { TabProps, Tabs } from '@cognite/cogs.js';

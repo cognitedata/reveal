@@ -1,14 +1,17 @@
 import React from 'react';
 
 import { BaseFilterCollapse } from '@data-exploration/components';
-import { IsStepFilter, IsStringFilter } from '@data-exploration/containers';
+import {
+  DateFilterV2,
+  IsStepFilter,
+  IsStringFilter,
+  MetadataFilterV2,
+  StringFilterV2,
+} from '@data-exploration/containers';
 import {
   AggregatedMultiselectFilter,
   ByAssetFilterV2,
   DataSetFilterV2,
-  DateFilterV2,
-  MetadataFilterV2,
-  StringFilterV2,
 } from '@data-exploration-components/components/SearchNew';
 import { useAdvancedFiltersEnabled } from '@data-exploration-components/hooks';
 import { getTimeseriesFilterUnit } from '@data-exploration-components/utils';

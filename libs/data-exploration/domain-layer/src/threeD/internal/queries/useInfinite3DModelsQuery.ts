@@ -1,4 +1,7 @@
+import { useCallback } from 'react';
+
 import {
+  InfiniteData,
   useInfiniteQuery,
   UseInfiniteQueryOptions,
 } from '@tanstack/react-query';
@@ -16,19 +19,38 @@ export const useInfinite3DModelsQuery = (
     ThreeDModelsResponse,
     ThreeDModelsResponse,
     string[]
-  >
+  >,
+  query?: string
 ) => {
   const sdk = useSDK();
 
   return useInfiniteQuery(
-    queryKeys.listThreeDModels(limit),
+    queryKeys.listThreeDModels(limit, query),
     async ({ pageParam }) => {
       return sdk.models3D.list({ limit, cursor: pageParam });
     },
     {
       getNextPageParam: (r) => r.nextCursor,
-      ...config,
       keepPreviousData: true,
+      select: useCallback(
+        (data: InfiniteData<ThreeDModelsResponse>) => {
+          return {
+            ...data,
+            pages: data.pages.map((modelArr) => {
+              return {
+                ...modelArr,
+                items: modelArr.items.filter((model) =>
+                  !!query
+                    ? model.name.toLowerCase().includes(query.toLowerCase())
+                    : model
+                ),
+              };
+            }),
+          };
+        },
+        [query]
+      ),
+      ...config,
     }
   );
 };

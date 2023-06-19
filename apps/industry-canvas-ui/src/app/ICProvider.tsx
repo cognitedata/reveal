@@ -38,7 +38,9 @@ export const ICProvider = ({
       >
         <FileContextualizationContextProvider>
           <ResourcePreviewProvider>
-            <ResourceSelectorProvider>{children}</ResourceSelectorProvider>
+            <ResourceSelectorProvider appendStyles={true}>
+              {children}
+            </ResourceSelectorProvider>
           </ResourcePreviewProvider>
         </FileContextualizationContextProvider>
       </AppContextProvider>

@@ -22,7 +22,7 @@ export const NoAccessPage = (): JSX.Element => (
       </p>
       <ul>
         <li style={{ marginBottom: 5, marginTop: 5 }}>
-          <strong>dataModelsAcl:READ</strong> – Access to data models
+          <strong>dataModelsAcl</strong> – Access to data models
         </li>
         <li>
           <strong>dataModelInstancesAcl</strong> – Access to data model

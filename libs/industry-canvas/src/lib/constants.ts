@@ -3,6 +3,39 @@ import { TooltipAnchorPosition } from '@cognite/unified-file-viewer';
 export const TOAST_POSITION = 'top-left' as const;
 export const ANNOTATION_TOOLTIP_POSITION = TooltipAnchorPosition.BOTTOM_LEFT;
 
+export enum MetricEvent {
+  // Canvas management
+  CANVAS_VIEWED = 'IC.Canvas.Viewed',
+  CANVAS_CREATED = 'IC.Canvas.Created',
+  CANVAS_ARCHIVED = 'IC.Canvas.Archived',
+
+  // Container
+  RESOURCE_SELECTOR_RESOURCES_ADDED = 'IC.ResourceSelector.ResourcesAdded',
+  CANVAS_DROPDOWN_OPENED = 'IC.CanvasDropdown.Opened',
+  CONTAINER_LABEL_CHANGED = 'IC.Container.Label.Changed',
+  TIMESERIES_APPLY_TO_ALL_TOGGLED = 'IC.Timeseries.ApplyToAllToggled',
+  TIMESERIES_DATE_RANGE_CHANGED = 'IC.Timeseries.DateRangeChanged',
+  CONTAINER_OPEN_IN_DATA_EXPLORER_CLICKED = 'IC.Container.OpenInDataExplorerClicked',
+  DOCUMENT_SUMMARIZE_CLICKED = 'IC.Document.SummarizeClicked',
+
+  // Annotation
+  ANNOTATION_CREATED = 'IC.Annotation.Created',
+  CONTAINER_ANNOTATION_CLICKED = 'IC.ContainerAnnotation.Clicked',
+
+  // Contextual tooltip
+  ASSET_TOOLTIP_ADD_THREE_D = 'IC.AssetTooltip.AddThreeD',
+  ASSET_TOOLTIP_ADD_TIMESERIES = 'IC.AssetTooltip.AddTimeseries',
+  ASSET_TOOLTIP_ADD_ASSET = 'IC.AssetTooltip.AddAsset',
+  ASSET_TOOLTIP_OPEN_IN_DATA_EXPLORER = 'IC.AssetTooltip.OpenInDataExplorer',
+  FILE_TOOLTIP_ADD_FILE = 'IC.FileTooltip.AddFile',
+
+  // Other
+  HOTKEYS_USED = 'IC.Hotkeys.Used',
+  DOWNLOAD_AS_PDF_CLICKED = 'IC.DownloadAsPdf.Clicked',
+  SHOW_CONNECTION_LINES_TOGGLED = 'IC.ShowConnectionLines.Toggled',
+  ADD_DATA_BUTTON_CLICKED = 'IC.AddDataButton.Clicked',
+}
+
 export enum QueryKeys {
   GET_CANVAS = 'canvas.get',
   SAVE_CANVAS = 'canvas.save',
@@ -18,6 +51,7 @@ export enum QueryKeys {
   USERS = 'users',
   USER_PROFILES_BY_IDS = 'user-profiles-by-ids',
   LOCKING = 'canvas.locking',
+  CREATE_SPACE = 'create-space',
 }
 
 export const SEARCH_QUERY_PARAM_KEY = 'search';

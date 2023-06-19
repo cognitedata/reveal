@@ -22,3 +22,4 @@ export * from './files';
 export * from './getResourceTypeById';
 export * from './store';
 export * from './url';
+export * from './sleep';
