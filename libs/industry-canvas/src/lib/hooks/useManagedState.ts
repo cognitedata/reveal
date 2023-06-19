@@ -43,6 +43,7 @@ import {
   SerializedIndustryCanvasState,
   isIndustryCanvasContainerConfig,
 } from '../types';
+import { useUserProfile } from '../UserProfileProvider';
 import addDimensionsIfNotExists from '../utils/addDimensionsIfNotExists';
 import useMetrics from '../utils/tracking/useMetrics';
 import {
@@ -52,7 +53,6 @@ import {
 } from '../utils/utils';
 
 import { useCommentSaveMutation } from './use-mutation/useCommentSaveMutation';
-import { useUserProfile } from './use-query/useUserProfile';
 import {
   UseCanvasStateHistoryReturnType,
   useHistory,
@@ -346,10 +346,9 @@ const useManagedState = ({
 
   const { mutate: saveComment } = useCommentSaveMutation();
 
-  // default profile to empty string to avoid undefined errors, this should never happen
-  const { data: profile = { userIdentifier: '' } } = useUserProfile();
-
-  const { userIdentifier } = profile;
+  const {
+    userProfile: { userIdentifier },
+  } = useUserProfile();
 
   const { activeCanvas = { externalId: '' } } = useIndustryCanvasContext();
   const { externalId: activeCanvasExternalId } = activeCanvas;

@@ -1,8 +1,10 @@
 # copilot
 
-## Further steps:
+This is the Copilot "wrapper" subapp for Fusion.
 
-https://cognitedata.atlassian.net/wiki/spaces/CE/pages/3682697292/...create+a+new+sub-app#Make-the-app-visible-in-Fusion
+This wrapper largely just provides a mounting point for the [`copilot-core`](../../libs/copilot-core/README.md) which also contains the main code for the UI, business logic and communication between applications.
+
+To have the copilot feature on Fusion, you would also need to have this feature flag enabled for your project (`userId IN [xxx]`) here https://unleash-apps.cognite.ai/projects/default/features/COGNITE_COPILOT.
 
 ## Running application in fusion
 

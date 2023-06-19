@@ -4,8 +4,7 @@ import { CogniteClient, HttpError } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 
 import { QueryKeys } from '../../constants';
-
-import { UserProfile } from './useUserProfile';
+import { UserProfile } from '../../UserProfileProvider';
 
 export const getUsers = async (
   client: CogniteClient

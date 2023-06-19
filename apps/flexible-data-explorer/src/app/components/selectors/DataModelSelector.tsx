@@ -58,6 +58,9 @@ export const DataModelSelector: React.FC<Props> = ({
     DataModelListResponse | undefined
   >();
 
+  const isDataModelsEmpty =
+    !loading && !isError && Boolean(dataModels) && dataModels?.length === 0;
+
   return (
     <Container>
       <Content>
@@ -78,23 +81,20 @@ export const DataModelSelector: React.FC<Props> = ({
               )}
             </Infobox>
           )}
-          {!loading &&
-            !isError &&
-            Boolean(dataModels) &&
-            dataModels?.length === 0 && (
-              <Infobox
-                type="neutral"
-                title={t(
-                  translationKeys.dataModelSelectorInfoboxNeutralTitle,
-                  'Add a Data Model'
-                )}
-              >
-                {t(
-                  translationKeys.dataModelSelectorInfoboxNeutralBody,
-                  'Please add a Data Model first to start exploring.'
-                )}
-              </Infobox>
-            )}
+          {isDataModelsEmpty && (
+            <Infobox
+              type="neutral"
+              title={t(
+                translationKeys.dataModelSelectorInfoboxNeutralTitle,
+                'Add a Data Model'
+              )}
+            >
+              {t(
+                translationKeys.dataModelSelectorInfoboxNeutralBody,
+                'Please add a Data Model first to start exploring.'
+              )}
+            </Infobox>
+          )}
           {dataModels?.map((item) => (
             <Card
               key={`${item.externalId}-${item.space}`}

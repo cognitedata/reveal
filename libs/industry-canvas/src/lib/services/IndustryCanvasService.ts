@@ -4,8 +4,8 @@ import { v4 as uuid } from 'uuid';
 import type { CogniteClient } from '@cognite/sdk';
 import { IdsByType } from '@cognite/unified-file-viewer';
 
-import { UserProfile } from '../hooks/use-query/useUserProfile';
 import { Comment, CanvasMetadata, SerializedCanvasDocument } from '../types';
+import { UserProfile } from '../UserProfileProvider';
 import { FDMClient, gql } from '../utils/FDMClient';
 
 import {

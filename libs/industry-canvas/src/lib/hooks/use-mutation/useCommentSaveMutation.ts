@@ -9,12 +9,12 @@ import { toast } from '@cognite/cogs.js';
 import { QueryKeys, TOAST_POSITION } from '../../constants';
 import { IndustryCanvasService } from '../../services/IndustryCanvasService';
 import { Comment } from '../../types';
-import { useUserProfileContext } from '../use-query/useUserProfile';
+import { useUserProfile } from '../../UserProfileProvider';
 
 export const useCommentSaveMutation = () => {
   const queryClient = useQueryClient();
 
-  const { userProfile } = useUserProfileContext();
+  const { userProfile } = useUserProfile();
   const service = useMemo(
     () => new IndustryCanvasService(sdk, userProfile),
     [userProfile]

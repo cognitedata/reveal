@@ -203,7 +203,7 @@ const CanvasDropdown: React.FC<CanvasDropdownProps> = ({
             type="ghost"
             toggled={isMenuOpen}
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            loading={isListingCanvases || isDeletingCanvas}
+            loading={isListingCanvases || isDeletingCanvas || isLoadingCanvas}
           />
         </Tooltip>
       </Dropdown>

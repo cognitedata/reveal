@@ -10,7 +10,6 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { ResourceSelector } from '@data-exploration/containers';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { v4 as uuid } from 'uuid';
 
 import { createLink, PageTitle } from '@cognite/cdf-utilities';
@@ -55,17 +54,13 @@ import { useQueryParameter } from './hooks/useQueryParameter';
 import { useSelectedAnnotationOrContainer } from './hooks/useSelectedAnnotationOrContainer';
 import useTrackCanvasViewed from './hooks/useTrackCanvasViewed';
 import { IndustryCanvas } from './IndustryCanvas';
-import {
-  IndustryCanvasProvider,
-  useIndustryCanvasContext,
-} from './IndustryCanvasContext';
+import { useIndustryCanvasContext } from './IndustryCanvasContext';
 import {
   ContainerReference,
   ContainerReferenceType,
   IndustryCanvasToolType,
   isCommentAnnotation,
 } from './types';
-import { UserProfileProvider } from './UserProfileProvider';
 import {
   DEFAULT_CONTAINER_MAX_HEIGHT,
   DEFAULT_CONTAINER_MAX_WIDTH,
@@ -82,7 +77,7 @@ export type OnAddContainerReferences = (
 
 const APPLICATION_ID_INDUSTRY_CANVAS = 'industryCanvas';
 
-const IndustryCanvasPageWithoutQueryClientProvider = () => {
+export const IndustryCanvasPage = () => {
   const trackUsage = useMetrics();
   const navigate = useNavigate();
   const [unifiedViewerRef, setUnifiedViewerRef] =
@@ -447,6 +442,7 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
         onClose={onResourceSelectorCloseWrapper}
         visibleResourceTabs={['file', 'timeSeries', 'asset', 'event']}
         selectionMode="multiple"
+        addButtonText="Add to canvas"
       />
       <PageTitle title="Industry Canvas" />
       <TitleRowWrapper>
@@ -603,27 +599,6 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
         }}
       />
     </>
-  );
-};
-
-export const IndustryCanvasPage = () => {
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-        refetchOnWindowFocus: false,
-        refetchOnReconnect: false,
-      },
-    },
-  });
-  return (
-    <QueryClientProvider client={queryClient}>
-      <UserProfileProvider>
-        <IndustryCanvasProvider>
-          <IndustryCanvasPageWithoutQueryClientProvider />
-        </IndustryCanvasProvider>
-      </UserProfileProvider>
-    </QueryClientProvider>
   );
 };
 

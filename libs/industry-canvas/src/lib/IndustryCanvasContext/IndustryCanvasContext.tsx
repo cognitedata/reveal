@@ -1,4 +1,10 @@
-import { createContext, useCallback, useContext, useMemo } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+} from 'react';
 
 import { useSDK } from '@cognite/sdk-provider';
 import { IdsByType } from '@cognite/unified-file-viewer';
@@ -10,13 +16,13 @@ import { useCanvasSaveMutation } from '../hooks/use-mutation/useCanvasSaveMutati
 import { useDeleteCanvasIdsByTypeMutation } from '../hooks/use-mutation/useDeleteCanvasIdsByTypeMutation';
 import { useGetCanvasByIdQuery } from '../hooks/use-query/useGetCanvasByIdQuery';
 import { useListCanvases } from '../hooks/use-query/useListCanvases';
-import { useUserProfileContext } from '../hooks/use-query/useUserProfile';
 import { IndustryCanvasService } from '../services/IndustryCanvasService';
 import {
   ContainerReference,
   IndustryCanvasState,
   SerializedCanvasDocument,
 } from '../types';
+import { useUserProfile } from '../UserProfileProvider';
 import useMetrics from '../utils/tracking/useMetrics';
 import { serializeCanvasState } from '../utils/utils';
 
@@ -85,7 +91,7 @@ export const IndustryCanvasProvider: React.FC<IndustryCanvasProviderProps> = ({
 }): JSX.Element => {
   const sdk = useSDK();
   const trackUsage = useMetrics();
-  const { userProfile } = useUserProfileContext();
+  const { userProfile } = useUserProfile();
   const canvasService = useMemo(
     () => new IndustryCanvasService(sdk, userProfile),
     [sdk, userProfile]
@@ -125,6 +131,28 @@ export const IndustryCanvasProvider: React.FC<IndustryCanvasProviderProps> = ({
     },
     [saveCanvas, isCanvasLocked]
   );
+
+  // Initialize the page with a new and empty canvas if the canvasId query
+  // parameter is not provided. This path is primarily used for the
+  // "Open in Canvas" button in DE.
+  useEffect(() => {
+    const createInitialCanvas = async () => {
+      if (canvasId === undefined && !isCreatingCanvas) {
+        const initialCanvas = canvasService.makeEmptyCanvas();
+        const createdCanvas = await createCanvas(initialCanvas);
+        setCanvasId(createdCanvas.externalId);
+        refetchCanvases();
+      }
+    };
+    createInitialCanvas();
+  }, [
+    canvasId,
+    isCreatingCanvas,
+    canvasService,
+    createCanvas,
+    refetchCanvases,
+    setCanvasId,
+  ]);
 
   const createCanvasWrapper = useCallback(
     async (canvas: IndustryCanvasState) => {
