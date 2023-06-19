@@ -1,5 +1,4 @@
 import { setPublicPath } from 'systemjs-webpack-interop';
-import pkg from '../package.json';
 
 /* This dynamically sets the webpack public path so that code splits work properly. See related:
  * https://github.com/joeldenning/systemjs-webpack-interop#what-is-this
@@ -7,4 +6,4 @@ import pkg from '../package.json';
  * https://single-spa.js.org/docs/faq/#code-splits
  */
 
-setPublicPath(pkg.name);
+setPublicPath('@cognite/cdf-ui-entity-matching');

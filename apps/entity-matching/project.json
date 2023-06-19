@@ -79,7 +79,10 @@
       },
       "configurations": {
         "development": {
-          "buildTarget": "entity-matching:build:development"
+          "buildTarget": "entity-matching:build:development",
+          "hmr": true,
+          "ssl": true,
+          "allowedHosts": ".dev.fusion.cogniteapp.com,apps-staging.cognite.com"
         },
         "production": {
           "buildTarget": "entity-matching:build:production",
