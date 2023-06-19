@@ -53,6 +53,7 @@ export const Image360HistoricalDetails = ({
           };
         });
 
+        newScrollPosition.current = 0;
         setRevisionCollection(collection);
         setActiveRevision(0);
       }
