@@ -49,3 +49,6 @@ apps/iot-hub              @davidlky @geircognite @muradsater
 
 # Data Catalog
 apps/data-catalog                 @cognitedata/cdf-user-experience
+
+# Extractor downloads
+apps/extractor-downloads          @cognitedata/cdf-user-experience
