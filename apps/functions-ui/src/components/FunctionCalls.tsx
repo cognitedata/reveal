@@ -95,9 +95,7 @@ type Props = {
 
 export default function FunctionCalls({ id, name, scheduleId }: Props) {
   const { data, isFetched, error } = useCalls({ id, scheduleId });
-  useEffect(() => {
-    console.log('useCalls has data', data);
-  }, [data]);
+
   const functionCalls = data || [];
 
   if (error) {

@@ -46,6 +46,7 @@ function ModalBody({ response, error, fetched }: BodyProps) {
 
 export default function ScheduleInputDataModal({ id, onCancel }: Props) {
   const { data, isFetched, error } = useRetriveScheduleInputData(id);
+
   return (
     <Modal
       visible

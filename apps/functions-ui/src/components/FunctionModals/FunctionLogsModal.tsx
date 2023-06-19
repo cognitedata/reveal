@@ -1,5 +1,7 @@
 import React, { useState, SyntheticEvent } from 'react';
 
+import styled from 'styled-components';
+
 import { useQueryClient } from '@tanstack/react-query';
 import { Modal, Input, Alert } from 'antd';
 import moment from 'moment';
@@ -128,12 +130,12 @@ export default function ViewLogsModal({ onCancel, id, callId }: Props) {
 
   return (
     <Modal
-      visible
+      open={true}
       title="Logs"
       width={900}
       onCancel={onCancel}
       footer={[
-        <Button
+        <StyledCloseButton
           key="close"
           icon="CloseLarge"
           onClick={onCancel}
@@ -143,7 +145,7 @@ export default function ViewLogsModal({ onCancel, id, callId }: Props) {
           }}
         >
           Close
-        </Button>,
+        </StyledCloseButton>,
         <Button
           key="button"
           type="primary"
@@ -159,3 +161,7 @@ export default function ViewLogsModal({ onCancel, id, callId }: Props) {
     </Modal>
   );
 }
+
+const StyledCloseButton = styled(Button)`
+  margin-right: 10px;
+`;
