@@ -434,13 +434,16 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
 
 const Image360HistoricalPanel = styled.div<{ isExpanded: boolean }>`
   position: absolute;
-  bottom: ${({ isExpanded }) => (isExpanded ? '0px' : '10px')};
+  bottom: ${({ isExpanded }) => (isExpanded ? '0px' : '40px')};
   display: flex;
   flex-direction: column;
   height: fit-content;
   width: fit-content;
   max-width: 100%;
   min-width: fill-available;
+  transition: transform 0.25s ease-in-out;
+  transform: ${({ isExpanded }) =>
+    isExpanded ? 'translateY(0)' : 'translateY(100%)'};
 `;
 
 const NodePreviewContainer = styled.div`
