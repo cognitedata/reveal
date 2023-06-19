@@ -1,4 +1,4 @@
-import { mockDataRuns } from '@extraction-pipelines/utils/mockResponse';
+import { mockDataRuns } from '../../utils/mockResponse';
 import {
   getDatesForXAxis,
   groupRunsByDate,
@@ -8,8 +8,8 @@ import {
   DATE_HOUR_MIN_FORMAT,
   DATE_HOUR_FORMAT,
   mapRangeToGraphTimeFormat,
-} from '@extraction-pipelines/components/chart/runChartUtils';
-import { DATE_FORMAT } from '@extraction-pipelines/components/TimeDisplay/TimeDisplay';
+} from './runChartUtils';
+import { DATE_FORMAT } from '../TimeDisplay/TimeDisplay';
 import moment from 'moment';
 
 describe('Chart utils', () => {

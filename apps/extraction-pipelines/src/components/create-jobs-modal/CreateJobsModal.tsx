@@ -2,17 +2,6 @@ import React, { useState } from 'react';
 
 import styled from 'styled-components';
 
-import { useTranslation } from '@extraction-pipelines/common';
-import FormFieldRadioGroup from '@extraction-pipelines/components/form-field-radio-group/FormFieldRadioGroup';
-import FormFieldWrapper from '@extraction-pipelines/components/form-field-wrapper/FormFieldWrapper';
-import {
-  MQTTDestinationType,
-  MQTTFormat,
-  MQTTSourceWithJobMetrics,
-  useCreateMQTTDestination,
-  useCreateMQTTJob,
-  useMQTTDestinations,
-} from '@extraction-pipelines/hooks/hostedExtractors';
 import { Select, notification } from 'antd';
 import { FormikErrors, useFormik } from 'formik';
 
@@ -25,6 +14,18 @@ import {
   Modal,
   ModalProps,
 } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../common';
+import {
+  MQTTDestinationType,
+  MQTTFormat,
+  MQTTSourceWithJobMetrics,
+  useCreateMQTTDestination,
+  useCreateMQTTJob,
+  useMQTTDestinations,
+} from '../../hooks/hostedExtractors';
+import FormFieldRadioGroup from '../form-field-radio-group/FormFieldRadioGroup';
+import FormFieldWrapper from '../form-field-wrapper/FormFieldWrapper';
 
 const MQTT_DESTINATION_TYPE_OPTIONS: {
   label: string;

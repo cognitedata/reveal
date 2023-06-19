@@ -2,10 +2,10 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { useTranslation } from '@extraction-pipelines/common';
-
 import { Button } from '@cognite/cogs.js';
 import { CogniteError } from '@cognite/sdk';
+
+import { useTranslation } from '../../common';
 
 type Props = {
   error?: CogniteError | null;

@@ -2,9 +2,9 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { PaddedGridForm } from '@extraction-pipelines/components/styled';
-
 import { Colors, Input } from '@cognite/cogs.js';
+
+import { PaddedGridForm } from './';
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   inputWidth?: number;

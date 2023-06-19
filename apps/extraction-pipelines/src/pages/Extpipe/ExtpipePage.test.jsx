@@ -6,32 +6,25 @@ import noop from 'lodash/noop';
 import {
   EXT_PIPE_TAB_OVERVIEW,
   EXT_PIPE_TAB_RUN_HISTORY,
-} from '@extraction-pipelines/utils/constants';
-import { renderWithReQueryCacheSelectedExtpipeContext } from '@extraction-pipelines/utils/test/render';
-import {
-  ORIGIN_DEV,
-  PROJECT_ITERA_INT_GREEN,
-} from '@extraction-pipelines/utils/baseURL';
-import { render } from '@extraction-pipelines/utils/test';
+} from '../../utils/constants';
+import { renderWithReQueryCacheSelectedExtpipeContext } from '../../utils/test/render';
+import { ORIGIN_DEV, PROJECT_ITERA_INT_GREEN } from '../../utils/baseURL';
+import { render } from '../../utils/test';
 import {
   useSelectedExtpipe,
   useSelectedExtpipeId,
   useDeletePipeline,
-} from '@extraction-pipelines/hooks/useExtpipe';
+} from '../../hooks/useExtpipe';
 import {
   getMockResponse,
   mockDataRunsResponse,
   mockDataSetResponse,
-} from '@extraction-pipelines/utils/mockResponse';
-import { TableHeadings } from '@extraction-pipelines/components/table/ExtpipeTableCol';
-import { RunTableHeading } from '@extraction-pipelines/components/extpipe/RunLogsCols';
-import {
-  useFilteredRuns,
-  useRuns,
-  useAllRuns,
-} from '@extraction-pipelines/hooks/useRuns';
-import ExtpipePage from '@extraction-pipelines/pages/Extpipe/ExtpipePage';
-import { useDataSetsList } from '@extraction-pipelines/hooks/useDataSetsList';
+} from '../../utils/mockResponse';
+import { TableHeadings } from '../../components/table/ExtpipeTableCol';
+import { RunTableHeading } from '../../components/extpipe/RunLogsCols';
+import { useFilteredRuns, useRuns, useAllRuns } from '../../hooks/useRuns';
+import ExtpipePage from './ExtpipePage';
+import { useDataSetsList } from '../../hooks/useDataSetsList';
 
 jest.mock('react-router-dom', () => {
   const r = jest.requireActual('react-router-dom');
@@ -43,26 +36,26 @@ jest.mock('react-router-dom', () => {
   };
 });
 
-jest.mock('@extraction-pipelines/hooks/useExtpipe', () => {
+jest.mock('../../hooks/useExtpipe', () => {
   return {
     useSelectedExtpipe: jest.fn(),
     useSelectedExtpipeId: jest.fn(),
     useDeletePipeline: jest.fn(),
   };
 });
-jest.mock('@extraction-pipelines/hooks/useRuns', () => {
+jest.mock('../../hooks/useRuns', () => {
   return {
     useRuns: jest.fn(),
     useAllRuns: jest.fn(),
     useFilteredRuns: jest.fn(),
   };
 });
-jest.mock('@extraction-pipelines/hooks/useDataSetsList', () => {
+jest.mock('../../hooks/useDataSetsList', () => {
   return {
     useDataSetsList: jest.fn(),
   };
 });
-jest.mock('@extraction-pipelines/components/chart/RunChart', () => {
+jest.mock('../../components/chart/RunChart', () => {
   return {
     RunChart: () => {
       return <div />;

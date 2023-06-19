@@ -10,15 +10,16 @@ import {
 
 import styled from 'styled-components';
 
-import { useTranslation } from '@extraction-pipelines/common';
-import { useRunLogTableCol } from '@extraction-pipelines/components/extpipe/RunLogsCols';
-import { ExternalLink } from '@extraction-pipelines/components/links/ExternalLink';
-import { DivFlex } from '@extraction-pipelines/components/styled';
-import { useRunFilterContext } from '@extraction-pipelines/hooks/runs/RunsFilterContext';
-import { useAllRuns, useRuns } from '@extraction-pipelines/hooks/useRuns';
-import { RunApi } from '@extraction-pipelines/model/Runs';
-
 import { Pagination } from '@cognite/cogs.js'; // OptionType, Select
+
+import { useTranslation } from '../../common';
+import { useRunFilterContext } from '../../hooks/runs/RunsFilterContext';
+import { useAllRuns, useRuns } from '../../hooks/useRuns';
+import { RunApi } from '../../model/Runs';
+import { ExternalLink } from '../links/ExternalLink';
+import { DivFlex } from '../styled';
+
+import { useRunLogTableCol } from './RunLogsCols';
 
 interface Props {
   externalId: string;

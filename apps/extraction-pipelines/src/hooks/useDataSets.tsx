@@ -1,9 +1,10 @@
-import { DataSetModel } from '@extraction-pipelines/model/DataSetModel';
-import { getDataSets } from '@extraction-pipelines/utils/DataSetAPI';
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 
 import { CogniteError, DataSet, IdEither } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
+
+import { DataSetModel } from '../model/DataSetModel';
+import { getDataSets } from '../utils/DataSetAPI';
 
 export const useDataSets = (dataSetIds: IdEither[]) => {
   const sdk = useSDK();

@@ -3,9 +3,9 @@ import { NavLink } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import { PAGE_MARGIN } from '@extraction-pipelines/components/styled';
-
 import { Colors } from '@cognite/cogs.js';
+
+import { PAGE_MARGIN } from '../../styled';
 
 interface Breadcrumb {
   href?: string;

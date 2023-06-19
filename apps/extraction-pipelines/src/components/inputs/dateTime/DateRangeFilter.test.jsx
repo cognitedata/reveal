@@ -1,10 +1,10 @@
 import React from 'react';
 import { fireEvent, screen } from '@testing-library/react';
-import { render } from '@extraction-pipelines/utils/test';
-import { DateRangeFilter } from '@extraction-pipelines/components/inputs/dateTime/DateRangeFilter';
+import { render } from '../../../utils/test';
+import { DateRangeFilter } from './DateRangeFilter';
 import moment from 'moment';
-import { DATE_FORMAT } from '@extraction-pipelines/components/TimeDisplay/TimeDisplay';
-import { renderWithRunFilterContext } from '@extraction-pipelines/utils/test/render';
+import { DATE_FORMAT } from '../../TimeDisplay/TimeDisplay';
+import { renderWithRunFilterContext } from '../../../utils/test/render';
 
 describe('DateRangeFilter', () => {
   const start = moment().subtract(1, 'week');

@@ -1,11 +1,11 @@
 import React, { useMemo } from 'react';
 import { Column, HeaderProps } from 'react-table';
 
-import { useTranslation } from '@extraction-pipelines/common';
-import StatusMarker from '@extraction-pipelines/components/extpipes/cols/StatusMarker';
-import SorterIndicator from '@extraction-pipelines/components/table/SorterIndicator';
-import { TimeDisplay } from '@extraction-pipelines/components/TimeDisplay/TimeDisplay';
-import { RunApi } from '@extraction-pipelines/model/Runs';
+import { useTranslation } from '../../common';
+import { RunApi } from '../../model/Runs';
+import StatusMarker from '../extpipes/cols/StatusMarker';
+import SorterIndicator from '../table/SorterIndicator';
+import { TimeDisplay } from '../TimeDisplay/TimeDisplay';
 
 import { ConfigurationLink } from './ConfigurationLink';
 

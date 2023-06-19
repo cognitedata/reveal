@@ -8,29 +8,28 @@ import { useForm } from 'react-hook-form';
 
 import styled from 'styled-components';
 
-import { useTranslation } from '@extraction-pipelines/common';
-import { EditModal } from '@extraction-pipelines/components/modals/EditModal';
-import { ModalContent } from '@extraction-pipelines/components/modals/ModalContent';
-import { StyledTitle3 } from '@extraction-pipelines/components/styled';
-import {
-  createUpdateSpec,
-  useDetailsUpdate,
-} from '@extraction-pipelines/hooks/details/useDetailsUpdate';
-import { useSelectedExtpipe } from '@extraction-pipelines/hooks/useExtpipe';
-import {
-  DatabaseWithTablesItem,
-  useRawDBAndTables,
-} from '@extraction-pipelines/hooks/useRawDBAndTables';
-import {
-  DetailFieldNames,
-  ExtpipeRawTable,
-} from '@extraction-pipelines/model/Extpipe';
-import { mapStoredToDefault } from '@extraction-pipelines/utils/raw/rawUtils';
-import { selectedRawTablesRule } from '@extraction-pipelines/utils/validation/extpipeSchemas';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
 import { Button, Select } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../common';
+import {
+  createUpdateSpec,
+  useDetailsUpdate,
+} from '../../hooks/details/useDetailsUpdate';
+import { useSelectedExtpipe } from '../../hooks/useExtpipe';
+import {
+  DatabaseWithTablesItem,
+  useRawDBAndTables,
+} from '../../hooks/useRawDBAndTables';
+import { DetailFieldNames, ExtpipeRawTable } from '../../model/Extpipe';
+import { mapStoredToDefault } from '../../utils/raw/rawUtils';
+import { selectedRawTablesRule } from '../../utils/validation/extpipeSchemas';
+import { StyledTitle3 } from '../styled';
+
+import { EditModal } from './EditModal';
+import { ModalContent } from './ModalContent';
 
 interface RawEditModalProps {
   visible: boolean;

@@ -1,18 +1,19 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useTranslation } from '@extraction-pipelines/common';
-import FormFieldWrapper from '@extraction-pipelines/components/form-field-wrapper/FormFieldWrapper';
-import {
-  BaseMQTTSource,
-  MQTTSourceType,
-  useCreateMQTTSource,
-} from '@extraction-pipelines/hooks/hostedExtractors';
 import { Select, notification } from 'antd';
 import { FormikErrors, useFormik } from 'formik';
 
 import { createLink } from '@cognite/cdf-utilities';
 import { Flex, InputExp, Modal, ModalProps } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../common';
+import {
+  BaseMQTTSource,
+  MQTTSourceType,
+  useCreateMQTTSource,
+} from '../../hooks/hostedExtractors';
+import FormFieldWrapper from '../form-field-wrapper/FormFieldWrapper';
 
 export const MQTT_SOURCE_TYPE_LABEL: Record<MQTTSourceType, string> = {
   mqtt3: 'Version 5',

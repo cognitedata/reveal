@@ -2,7 +2,7 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { DivFlex } from '@extraction-pipelines/components/styled';
+import { DivFlex } from './';
 
 export const CenterFullVH = styled.div`
   position: fixed;

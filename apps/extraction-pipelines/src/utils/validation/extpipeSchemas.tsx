@@ -1,9 +1,8 @@
-import { SupportedScheduleStrings } from '@extraction-pipelines/components/extpipes/cols/Schedule';
-import {
-  CRON_REQUIRED,
-  cronValidator,
-} from '@extraction-pipelines/utils/validation/cronValidation';
 import * as yup from 'yup';
+
+import { SupportedScheduleStrings } from '../../components/extpipes/cols/Schedule';
+
+import { CRON_REQUIRED, cronValidator } from './cronValidation';
 
 export const NAME_REQUIRED: Readonly<string> = `Extraction pipeline name is required`;
 export const MAX_DOCUMENTATION_LENGTH: Readonly<number> = 10000;

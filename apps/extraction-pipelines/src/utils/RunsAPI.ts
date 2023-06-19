@@ -1,12 +1,13 @@
+import { CogniteClient } from '@cognite/sdk';
+
 import {
   CreateRunRequest,
   CreateRunsAPIResponse,
   GetRunsRequest,
   RunsAPIResponse,
-} from '@extraction-pipelines/model/Runs';
-import { post } from '@extraction-pipelines/utils/baseURL';
+} from '../model/Runs';
 
-import { CogniteClient } from '@cognite/sdk';
+import { post } from './baseURL';
 
 export const getFilteredRuns = async (
   sdk: CogniteClient,

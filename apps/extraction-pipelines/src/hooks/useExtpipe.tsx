@@ -1,11 +1,5 @@
 import { useParams } from 'react-router-dom';
 
-import { Extpipe } from '@extraction-pipelines/model/Extpipe';
-import { RouterParams } from '@extraction-pipelines/routing/RoutingConfig';
-import {
-  deleteExtractionPipeline,
-  getExtpipeById,
-} from '@extraction-pipelines/utils/ExtpipesAPI';
 import {
   useMutation,
   UseMutationOptions,
@@ -15,6 +9,10 @@ import {
 
 import { CogniteError } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
+
+import { Extpipe } from '../model/Extpipe';
+import { RouterParams } from '../routing/RoutingConfig';
+import { deleteExtractionPipeline, getExtpipeById } from '../utils/ExtpipesAPI';
 
 export const useSelectedExtpipeId = () => {
   return parseInt(useParams<RouterParams>().id ?? '', 10);

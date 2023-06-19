@@ -1,11 +1,11 @@
-import render from '@extraction-pipelines/utils/test/render';
+import render from '../../../utils/test/render';
 import React from 'react';
 import {
   fireEvent,
   screen,
   waitForElementToBeRemoved,
 } from '@testing-library/react';
-import { EditMetaDataView } from '@extraction-pipelines/components/inputs/metadata/EditMetaData';
+import { EditMetaDataView } from './EditMetaData';
 
 function fillKeyValue(key, value) {
   fireEvent.change(screen.getAllByDisplayValue('')[0], {

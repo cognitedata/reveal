@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 
-import { useTranslation } from '@extraction-pipelines/common';
-import DeleteSourceModal from '@extraction-pipelines/components/delete-source-modal/DeleteSourceModal';
-import { EditSourceDetailsModal } from '@extraction-pipelines/components/edit-source-details-modal/EditSourceDetailsModal';
-import { MQTTSourceWithJobMetrics } from '@extraction-pipelines/hooks/hostedExtractors';
-
 import { Button, Dropdown, Menu } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../common';
+import { MQTTSourceWithJobMetrics } from '../../hooks/hostedExtractors';
+import DeleteSourceModal from '../delete-source-modal/DeleteSourceModal';
+import { EditSourceDetailsModal } from '../edit-source-details-modal/EditSourceDetailsModal';
 
 type SourceOptionProps = {
   source: MQTTSourceWithJobMetrics;

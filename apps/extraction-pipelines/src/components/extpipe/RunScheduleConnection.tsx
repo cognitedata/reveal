@@ -1,8 +1,17 @@
 import React, { useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 
-import { useTranslation } from '@extraction-pipelines/common';
-import Schedule from '@extraction-pipelines/components/extpipes/cols/Schedule';
+import moment from 'moment';
+
+import { Icon, Chip } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../common';
+import { useSelectedExtpipe } from '../../hooks/useExtpipe';
+import { useAllRuns } from '../../hooks/useRuns';
+import { RunApi } from '../../model/Runs';
+import { HEALTH_PATH } from '../../routing/RoutingConfig';
+import { addIfExist, calculateLatest } from '../../utils/extpipeUtils';
+import Schedule from '../extpipes/cols/Schedule';
 import {
   CardInWrapper,
   CardNavLink,
@@ -10,19 +19,8 @@ import {
   CardValue,
   CardWrapper,
   StyledTitleCard,
-} from '@extraction-pipelines/components/styled';
-import { TimeDisplay } from '@extraction-pipelines/components/TimeDisplay/TimeDisplay';
-import { useSelectedExtpipe } from '@extraction-pipelines/hooks/useExtpipe';
-import { useAllRuns } from '@extraction-pipelines/hooks/useRuns';
-import { RunApi } from '@extraction-pipelines/model/Runs';
-import { HEALTH_PATH } from '@extraction-pipelines/routing/RoutingConfig';
-import {
-  addIfExist,
-  calculateLatest,
-} from '@extraction-pipelines/utils/extpipeUtils';
-import moment from 'moment';
-
-import { Icon, Chip } from '@cognite/cogs.js';
+} from '../styled';
+import { TimeDisplay } from '../TimeDisplay/TimeDisplay';
 
 export const RunScheduleConnection = ({
   externalId,

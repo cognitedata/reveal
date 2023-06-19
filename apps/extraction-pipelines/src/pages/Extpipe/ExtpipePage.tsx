@@ -1,20 +1,17 @@
 import React, { FunctionComponent } from 'react';
 import { useParams, Route, Routes } from 'react-router-dom';
 
-import { useTranslation } from '@extraction-pipelines/common';
-import { ErrorBox } from '@extraction-pipelines/components/error/ErrorBox';
-import ConfigurationRevision from '@extraction-pipelines/components/extpipe/ConfigurationRevision';
-import { ExtpipeDetails } from '@extraction-pipelines/components/extpipe/ExtpipeDetails';
-import ExtpipeRunHistory from '@extraction-pipelines/components/extpipe/ExtpipeRunHistory';
-import { ExtpipeBreadcrumbs } from '@extraction-pipelines/components/navigation/breadcrumbs/ExtpipeBreadcrumbs';
-import { RunFilterProvider } from '@extraction-pipelines/hooks/runs/RunsFilterContext';
-import { useSelectedExtpipe } from '@extraction-pipelines/hooks/useExtpipe';
-import {
-  HEALTH_PATH,
-  RouterParams,
-} from '@extraction-pipelines/routing/RoutingConfig';
-
 import { Loader } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../common';
+import { ErrorBox } from '../../components/error/ErrorBox';
+import ConfigurationRevision from '../../components/extpipe/ConfigurationRevision';
+import { ExtpipeDetails } from '../../components/extpipe/ExtpipeDetails';
+import ExtpipeRunHistory from '../../components/extpipe/ExtpipeRunHistory';
+import { ExtpipeBreadcrumbs } from '../../components/navigation/breadcrumbs/ExtpipeBreadcrumbs';
+import { RunFilterProvider } from '../../hooks/runs/RunsFilterContext';
+import { useSelectedExtpipe } from '../../hooks/useExtpipe';
+import { HEALTH_PATH, RouterParams } from '../../routing/RoutingConfig';
 
 const ExtpipePageComponent: FunctionComponent = () => {
   const { t } = useTranslation();

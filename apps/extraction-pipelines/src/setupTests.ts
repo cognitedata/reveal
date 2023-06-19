@@ -28,7 +28,7 @@ jest.mock('@cognite/sdk-provider', () => {
     useSDK: jest.fn(),
   };
 });
-jest.mock('@extraction-pipelines/utils/Metrics', () => {
+jest.mock('./utils/Metrics', () => {
   return {
     trackUsage: jest.fn(),
   };

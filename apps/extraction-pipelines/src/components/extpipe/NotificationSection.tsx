@@ -1,12 +1,13 @@
 import React, { FunctionComponent, PropsWithChildren, useState } from 'react';
 
-import { useTranslation } from '@extraction-pipelines/common';
-import { NotificationDialog } from '@extraction-pipelines/components/extpipe/NotificationDialog';
-import Section from '@extraction-pipelines/components/section';
-import { Extpipe } from '@extraction-pipelines/model/Extpipe';
-import { minutesToUnit } from '@extraction-pipelines/utils/utils';
-
 import { Button, Flex, Icon } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../common';
+import { Extpipe } from '../../model/Extpipe';
+import { minutesToUnit } from '../../utils/utils';
+import Section from '../section';
+
+import { NotificationDialog } from './NotificationDialog';
 
 type NotificationSectionProps = {
   canEdit: boolean;

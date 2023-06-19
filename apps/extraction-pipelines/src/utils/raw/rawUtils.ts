@@ -1,4 +1,4 @@
-import { ExtpipeRawTable } from '@extraction-pipelines/model/Extpipe';
+import { ExtpipeRawTable } from '../../model/Extpipe';
 
 export enum RawTableOptions {
   YES = 'Yes',

@@ -2,9 +2,9 @@ import React, { PropsWithChildren } from 'react';
 
 import styled from 'styled-components';
 
-import { DivFlex } from '@extraction-pipelines/components/styled';
-
 import { Icon, IconType, Title } from '@cognite/cogs.js';
+
+import { DivFlex } from './';
 
 export const PageTitle = styled((props) => (
   <HeadingWithUnderline {...props} level={1}>

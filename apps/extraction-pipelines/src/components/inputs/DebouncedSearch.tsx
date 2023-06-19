@@ -7,13 +7,13 @@ import React, {
 
 import styled from 'styled-components';
 
+import { Input } from '@cognite/cogs.js';
+
 import {
   updateSearchAction,
   useRunFilterContext,
-} from '@extraction-pipelines/hooks/runs/RunsFilterContext';
-import { useDebounce } from '@extraction-pipelines/hooks/useDebounce';
-
-import { Input } from '@cognite/cogs.js';
+} from '../../hooks/runs/RunsFilterContext';
+import { useDebounce } from '../../hooks/useDebounce';
 
 export const SearchWrapper = styled.div`
   display: flex;

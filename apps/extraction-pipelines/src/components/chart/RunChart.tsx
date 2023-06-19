@@ -1,18 +1,20 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import Plot from 'react-plotly.js';
 
-import { useTranslation } from '@extraction-pipelines/common';
+import Plotly from 'plotly.js';
+
+import { Colors } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../common';
+import { useRunFilterContext } from '../../hooks/runs/RunsFilterContext';
+import { useAllRuns } from '../../hooks/useRuns';
+
 import {
   DateFormatRecordType,
   DateFormatsRecord,
   mapDataForChart,
   mapRangeToGraphTimeFormat,
-} from '@extraction-pipelines/components/chart/runChartUtils';
-import { useRunFilterContext } from '@extraction-pipelines/hooks/runs/RunsFilterContext';
-import { useAllRuns } from '@extraction-pipelines/hooks/useRuns';
-import Plotly from 'plotly.js';
-
-import { Colors } from '@cognite/cogs.js';
+} from './runChartUtils';
 
 interface ChartProps {
   externalId: string;

@@ -1,18 +1,16 @@
 import { FieldValues } from 'react-hook-form';
 
-import {
-  Extpipe,
-  ExtpipeFieldName,
-  ExtpipeFieldValue,
-} from '@extraction-pipelines/model/Extpipe';
-import {
-  ExtpipeUpdateSpec,
-  saveUpdate,
-} from '@extraction-pipelines/utils/ExtpipesAPI';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { CogniteError } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
+
+import {
+  Extpipe,
+  ExtpipeFieldName,
+  ExtpipeFieldValue,
+} from '../../model/Extpipe';
+import { ExtpipeUpdateSpec, saveUpdate } from '../../utils/ExtpipesAPI';
 
 export type UpdateSpec = {
   id: number;

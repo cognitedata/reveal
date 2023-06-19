@@ -3,22 +3,6 @@ import { NavLink, useNavigate } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import { useTranslation } from '@extraction-pipelines/common';
-import { LastRunStatusMarker } from '@extraction-pipelines/components/extpipes/cols/StatusMarker';
-import { LinkWrapper } from '@extraction-pipelines/components/styled';
-import {
-  useDeletePipeline,
-  useSelectedExtpipe,
-} from '@extraction-pipelines/hooks/useExtpipe';
-import {
-  EXT_PIPE_PATH,
-  HEALTH_PATH,
-} from '@extraction-pipelines/routing/RoutingConfig';
-import {
-  createExtPipePath,
-  EXTRACTION_PIPELINES_PATH,
-} from '@extraction-pipelines/utils/baseURL';
-
 import { createLink, SecondaryTopbar } from '@cognite/cdf-utilities';
 import {
   Body,
@@ -29,6 +13,16 @@ import {
   Menu,
   toast,
 } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../common';
+import { useDeletePipeline, useSelectedExtpipe } from '../../hooks/useExtpipe';
+import { EXT_PIPE_PATH, HEALTH_PATH } from '../../routing/RoutingConfig';
+import {
+  createExtPipePath,
+  EXTRACTION_PIPELINES_PATH,
+} from '../../utils/baseURL';
+import { LastRunStatusMarker } from '../extpipes/cols/StatusMarker';
+import { LinkWrapper } from '../styled';
 
 import { DeleteDialog } from './DeleteModal';
 

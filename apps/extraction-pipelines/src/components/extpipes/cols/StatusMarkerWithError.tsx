@@ -1,10 +1,10 @@
 import React, { FunctionComponent, PropsWithoutRef } from 'react';
 
-import { useTranslation } from '@extraction-pipelines/common';
-import { StyledTooltip } from '@extraction-pipelines/components/styled';
-import { RunStatus } from '@extraction-pipelines/model/Runs';
-
 import { Chip } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../../common';
+import { RunStatus } from '../../../model/Runs';
+import { StyledTooltip } from '../../styled';
 
 interface OwnProps {
   id?: string;

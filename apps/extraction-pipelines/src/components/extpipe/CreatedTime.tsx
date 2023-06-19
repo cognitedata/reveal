@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { StyledTooltip } from '@extraction-pipelines/components/styled';
+import { StyledTooltip } from '../styled';
 
 type Props = { prefix?: string; date: Date };
 export default function CreatedTime({ prefix, date }: Props) {

@@ -1,8 +1,9 @@
 import React, { HTMLAttributes } from 'react';
 import { FieldErrors, FieldName, FieldValues } from 'react-hook-form';
 
-import { ErrorSpan } from '@extraction-pipelines/components/styled';
 import { ErrorMessage } from '@hookform/error-message';
+
+import { ErrorSpan } from '../styled';
 
 export interface ValidationErrorProps<T extends FieldValues>
   extends HTMLAttributes<HTMLSpanElement> {

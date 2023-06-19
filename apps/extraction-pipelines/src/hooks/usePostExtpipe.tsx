@@ -1,12 +1,10 @@
-import {
-  Extpipe,
-  RegisterExtpipeInfo,
-} from '@extraction-pipelines/model/Extpipe';
-import { registerExtpipe } from '@extraction-pipelines/utils/ExtpipesAPI';
 import { useMutation } from '@tanstack/react-query';
 
 import { CogniteError } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
+
+import { Extpipe, RegisterExtpipeInfo } from '../model/Extpipe';
+import { registerExtpipe } from '../utils/ExtpipesAPI';
 
 interface Props {
   extpipeInfo: Partial<RegisterExtpipeInfo>;

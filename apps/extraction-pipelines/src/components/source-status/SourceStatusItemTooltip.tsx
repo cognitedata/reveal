@@ -1,13 +1,10 @@
 import React from 'react';
 
-import { useTranslation } from '@extraction-pipelines/common';
-import {
-  UptimeAggregation,
-  formatUptime,
-} from '@extraction-pipelines/utils/hostedExtractors';
-
 import { formatTime } from '@cognite/cdf-utilities';
 import { Flex, Tooltip } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../common';
+import { UptimeAggregation, formatUptime } from '../../utils/hostedExtractors';
 
 type SourceStatusItemTooltipProps = {
   children: React.ReactNode;

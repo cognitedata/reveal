@@ -1,10 +1,11 @@
 import React from 'react';
 import { FilterValue, Row, useAsyncDebounce } from 'react-table';
 
-import { useTranslation } from '@extraction-pipelines/common';
-import { trackUsage } from '@extraction-pipelines/utils/Metrics';
-
 import { Icon, Input } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../common';
+import { trackUsage } from '../../utils/Metrics';
+
 interface GlobalSearchProps<D extends object> {
   preGlobalFilteredRows: Array<Row<D>>;
   globalFilter: any;

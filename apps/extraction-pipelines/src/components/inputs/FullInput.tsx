@@ -1,12 +1,11 @@
 import React, { FunctionComponent, PropsWithChildren, ReactNode } from 'react';
 
-import { ErrorMessage as Error } from '@extraction-pipelines/components/error/ErrorMessage';
-import {
-  InputController,
-  InputControllerProps,
-} from '@extraction-pipelines/components/inputs/InputController';
-import { Hint, StyledLabel } from '@extraction-pipelines/components/styled';
 import { ErrorMessage } from '@hookform/error-message';
+
+import { ErrorMessage as Error } from '../error/ErrorMessage';
+import { Hint, StyledLabel } from '../styled';
+
+import { InputController, InputControllerProps } from './InputController';
 
 export interface FullInputProps extends InputControllerProps {
   errors: any;

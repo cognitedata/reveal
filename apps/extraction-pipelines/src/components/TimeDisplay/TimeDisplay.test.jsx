@@ -1,6 +1,6 @@
 import moment from 'moment';
 import { screen } from '@testing-library/react';
-import { render } from '@extraction-pipelines/utils/test';
+import { render } from '../../utils/test';
 import React from 'react';
 import { TimeDisplay } from './TimeDisplay';
 

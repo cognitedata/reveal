@@ -1,5 +1,5 @@
-import { MetaData } from '@extraction-pipelines/model/MetaData';
-import { User } from '@extraction-pipelines/model/User';
+import { MetaData } from './MetaData';
+import { User } from './User';
 
 export interface ExtpipeRawTable {
   dbName: string;

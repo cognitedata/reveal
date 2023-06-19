@@ -2,9 +2,10 @@ import React from 'react';
 
 import { StreamLanguage } from '@codemirror/language';
 import { yaml } from '@codemirror/legacy-modes/mode/yaml';
-import { useExtpipeConfig } from '@extraction-pipelines/hooks/config';
 
 import { CodeEditor, CodeSnippet } from '@cognite/cdf-utilities';
+
+import { useExtpipeConfig } from '../../hooks/config';
 
 import ConfigurationErrorFeedback from './ConfigurationError';
 

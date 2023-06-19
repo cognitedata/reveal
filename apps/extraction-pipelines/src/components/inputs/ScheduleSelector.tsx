@@ -1,9 +1,10 @@
 import React, { FunctionComponent, PropsWithChildren } from 'react';
 
-import { TranslationKeys, useTranslation } from '@extraction-pipelines/common';
-import { SupportedScheduleStrings } from '@extraction-pipelines/components/extpipes/cols/Schedule';
-import { Extpipe } from '@extraction-pipelines/model/Extpipe';
 import { Select } from 'antd';
+
+import { TranslationKeys, useTranslation } from '../../common';
+import { Extpipe } from '../../model/Extpipe';
+import { SupportedScheduleStrings } from '../extpipes/cols/Schedule';
 
 type ScheduleValue = Pick<Extpipe, 'schedule'>;
 

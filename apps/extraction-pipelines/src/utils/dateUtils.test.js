@@ -5,7 +5,7 @@ import {
   HOURS_1,
   HOURS_24,
   quickFilterOptions,
-} from '@extraction-pipelines/components/table/QuickDateTimeFilters';
+} from '../components/table/QuickDateTimeFilters';
 import { findSelectedRangeOption, isDateDiffLessThanDays } from './dateUtils';
 
 describe('dateUtils', () => {

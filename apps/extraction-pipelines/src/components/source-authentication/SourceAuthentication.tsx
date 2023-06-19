@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 
-import { useTranslation } from '@extraction-pipelines/common';
-import { EditSourceAuthenticationModal } from '@extraction-pipelines/components/edit-source-authentication-modal/EditSourceAuthenticationModal';
-import Section from '@extraction-pipelines/components/section';
-import { MQTTSourceWithJobMetrics } from '@extraction-pipelines/hooks/hostedExtractors';
-
 import { Button } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../common';
+import { MQTTSourceWithJobMetrics } from '../../hooks/hostedExtractors';
+import { EditSourceAuthenticationModal } from '../edit-source-authentication-modal/EditSourceAuthenticationModal';
+import Section from '../section';
 
 type SourceAuthenticationProps = {
   className?: string;

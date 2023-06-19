@@ -1,13 +1,13 @@
 import React from 'react';
 
-import { useTranslation } from '@extraction-pipelines/common';
-import { ErrorBox } from '@extraction-pipelines/components/error/ErrorBox';
-import { ErrorFeedback as ErrorFeedback_ } from '@extraction-pipelines/components/error/ErrorFeedback';
-import { PageWrapperColumn } from '@extraction-pipelines/components/styled/StyledPage';
-import { useRunFilterContext } from '@extraction-pipelines/hooks/runs/RunsFilterContext';
-import { useRuns } from '@extraction-pipelines/hooks/useRuns';
-import { DEFAULT_ITEMS_PER_PAGE } from '@extraction-pipelines/utils/constants';
-import { isForbidden } from '@extraction-pipelines/utils/utils';
+import { useTranslation } from '../../common';
+import { useRunFilterContext } from '../../hooks/runs/RunsFilterContext';
+import { useRuns } from '../../hooks/useRuns';
+import { DEFAULT_ITEMS_PER_PAGE } from '../../utils/constants';
+import { isForbidden } from '../../utils/utils';
+import { ErrorBox } from '../error/ErrorBox';
+import { ErrorFeedback as ErrorFeedback_ } from '../error/ErrorFeedback';
+import { PageWrapperColumn } from '../styled/StyledPage';
 
 type ErrorMessageProps = {
   externalId: string;

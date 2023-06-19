@@ -2,11 +2,12 @@ import React, { FunctionComponent, ReactNode } from 'react';
 
 import styled from 'styled-components';
 
-import { useTranslation } from '@extraction-pipelines/common';
-import { ExternalLink } from '@extraction-pipelines/components/links/ExternalLink';
-import { LEARNING_AND_RESOURCES_URL } from '@extraction-pipelines/pages/Extpipes/Extpipes';
-
 import { Title } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../common';
+import { LEARNING_AND_RESOURCES_URL } from '../../pages/Extpipes/Extpipes';
+import { ExternalLink } from '../links/ExternalLink';
+
 interface OwnProps {
   actionButton: ReactNode;
 }

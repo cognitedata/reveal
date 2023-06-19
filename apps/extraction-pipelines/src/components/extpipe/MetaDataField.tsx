@@ -1,10 +1,7 @@
 import React from 'react';
 
-import { DivFlex, StyledLabel } from '@extraction-pipelines/components/styled';
-import {
-  isUrl,
-  uppercaseFirstWord,
-} from '@extraction-pipelines/utils/primitivesUtils';
+import { isUrl, uppercaseFirstWord } from '../../utils/primitivesUtils';
+import { DivFlex, StyledLabel } from '../styled';
 
 interface MetaFieldProps {
   fieldKey: string;

@@ -1,20 +1,5 @@
 import React, { useMemo } from 'react';
 
-import { useTranslation } from '@extraction-pipelines/common';
-import HostedExtractionPipelineExternalId from '@extraction-pipelines/components/extpipes/cols/HostedExtractionPipelineExternalId';
-import RelativeTimeWithTooltip from '@extraction-pipelines/components/extpipes/cols/RelativeTimeWithTooltip';
-import { SourceOptions } from '@extraction-pipelines/components/source-options-dropdown/SourceOptions';
-import {
-  MQTTSourceWithJobMetrics,
-  useMQTTSourcesWithJobMetrics,
-} from '@extraction-pipelines/hooks/hostedExtractors';
-import {
-  dateSorter,
-  getContainer,
-  numberSorter,
-  stringSorter,
-} from '@extraction-pipelines/utils/utils';
-
 import {
   ColumnType,
   SortOrder,
@@ -22,6 +7,21 @@ import {
   TableNoResults,
 } from '@cognite/cdf-utilities';
 import { Loader } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../common';
+import {
+  MQTTSourceWithJobMetrics,
+  useMQTTSourcesWithJobMetrics,
+} from '../../hooks/hostedExtractors';
+import {
+  dateSorter,
+  getContainer,
+  numberSorter,
+  stringSorter,
+} from '../../utils/utils';
+import HostedExtractionPipelineExternalId from '../extpipes/cols/HostedExtractionPipelineExternalId';
+import RelativeTimeWithTooltip from '../extpipes/cols/RelativeTimeWithTooltip';
+import { SourceOptions } from '../source-options-dropdown/SourceOptions';
 
 export type HostedExtractionPipelineListTableRecord = {
   key: string;

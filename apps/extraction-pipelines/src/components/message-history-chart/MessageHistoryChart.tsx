@@ -2,16 +2,6 @@ import React, { useMemo, useState } from 'react';
 
 import styled from 'styled-components';
 
-import { useTranslation } from '@extraction-pipelines/common';
-import Section from '@extraction-pipelines/components/section';
-import { MQTTJobWithMetrics } from '@extraction-pipelines/hooks/hostedExtractors';
-import {
-  AggregationInterval,
-  getMetricAggregationErrorCount,
-  getMetricAggregationSuccessCount,
-  getMetricAggregations,
-} from '@extraction-pipelines/utils/hostedExtractors';
-
 import {
   Body,
   Colors,
@@ -21,6 +11,16 @@ import {
   SegmentedControl,
   Title,
 } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../common';
+import { MQTTJobWithMetrics } from '../../hooks/hostedExtractors';
+import {
+  AggregationInterval,
+  getMetricAggregationErrorCount,
+  getMetricAggregationSuccessCount,
+  getMetricAggregations,
+} from '../../utils/hostedExtractors';
+import Section from '../section';
 
 import { BAR_HEIGHT, MessageHistoryChartItem } from './MessageHistoryChartItem';
 

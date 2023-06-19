@@ -1,6 +1,6 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
-import { getMockResponse } from '@extraction-pipelines/utils/mockResponse';
+import { getMockResponse } from '../../../utils/mockResponse';
 import RawTable from './RawTable';
 import { render } from '../../../utils/test';
 

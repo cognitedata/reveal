@@ -1,7 +1,7 @@
 import React from 'react';
 import { fireEvent, screen } from '@testing-library/react';
-import { render } from '@extraction-pipelines/utils/test';
-import { StatusMenu } from '@extraction-pipelines/components/menu/StatusMenu';
+import { render } from '../../utils/test';
+import { StatusMenu } from './StatusMenu';
 
 describe('StatusMenu', () => {
   test.skip('Renders', () => {

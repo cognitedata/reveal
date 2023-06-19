@@ -1,14 +1,14 @@
 import React from 'react';
 import { fireEvent, screen } from '@testing-library/react';
-import { render } from '@extraction-pipelines/utils/test';
-import { renderWithRunFilterContext } from '@extraction-pipelines/utils/test/render';
+import { render } from '../../utils/test';
+import { renderWithRunFilterContext } from '../../utils/test/render';
 import {
   DAYS_30,
   DAYS_7,
   HOURS_1,
   HOURS_24,
   QuickDateTimeFilters,
-} from '@extraction-pipelines/components/table/QuickDateTimeFilters';
+} from './QuickDateTimeFilters';
 import moment from 'moment';
 
 describe('QuickDateTimeFilters', () => {

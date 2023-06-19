@@ -1,11 +1,11 @@
+import { StatusProps } from '@cognite/cogs.js';
+
 import {
   MQTTJobWithMetrics,
   ReadMQTTJob,
   ReadMQTTJobLog,
   ReadMQTTJobMetric,
-} from '@extraction-pipelines/hooks/hostedExtractors';
-
-import { StatusProps } from '@cognite/cogs.js';
+} from '../hooks/hostedExtractors';
 
 const MQTT_JOB_LOG_ERROR_TYPES: ReadMQTTJobLog['type'][] = [
   'error',

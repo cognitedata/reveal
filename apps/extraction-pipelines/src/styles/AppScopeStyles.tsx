@@ -2,8 +2,6 @@
 // @ts-nocheck
 import React from 'react';
 
-import { styleScope } from '@extraction-pipelines/styleScope';
-import { getContainer } from '@extraction-pipelines/utils/utils';
 import { Select, notification } from 'antd';
 
 import {
@@ -11,6 +9,9 @@ import {
   Tooltip as CogsTooltip,
   Modal as CogsModal,
 } from '@cognite/cogs.js';
+
+import { styleScope } from '../styleScope';
+import { getContainer } from '../utils/utils';
 
 Select.defaultProps = {
   ...Select.defaultProps,

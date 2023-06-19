@@ -1,25 +1,5 @@
 import React, { useMemo } from 'react';
 
-import { useTranslation } from '@extraction-pipelines/common';
-import { DataSet } from '@extraction-pipelines/components/extpipes/cols/DataSet';
-import ExtractionPipelineName from '@extraction-pipelines/components/extpipes/cols/ExtractionPipelineName';
-import RelativeTimeWithTooltip from '@extraction-pipelines/components/extpipes/cols/RelativeTimeWithTooltip';
-import Schedule from '@extraction-pipelines/components/extpipes/cols/Schedule';
-import { LastRunStatusMarker } from '@extraction-pipelines/components/extpipes/cols/StatusMarker';
-import { useDataSetList } from '@extraction-pipelines/hooks/dataSet';
-import { useAllExtpipes } from '@extraction-pipelines/hooks/useExtpipes';
-import { Extpipe } from '@extraction-pipelines/model/Extpipe';
-import { User } from '@extraction-pipelines/model/User';
-import {
-  addIfExist,
-  calculateLatest,
-} from '@extraction-pipelines/utils/extpipeUtils';
-import {
-  dateSorter,
-  getContainer,
-  stringSorter,
-} from '@extraction-pipelines/utils/utils';
-
 import {
   ColumnType,
   SortOrder,
@@ -27,6 +7,19 @@ import {
   TableNoResults,
 } from '@cognite/cdf-utilities';
 import { Loader } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../common';
+import { useDataSetList } from '../../hooks/dataSet';
+import { useAllExtpipes } from '../../hooks/useExtpipes';
+import { Extpipe } from '../../model/Extpipe';
+import { User } from '../../model/User';
+import { addIfExist, calculateLatest } from '../../utils/extpipeUtils';
+import { dateSorter, getContainer, stringSorter } from '../../utils/utils';
+import { DataSet } from '../extpipes/cols/DataSet';
+import ExtractionPipelineName from '../extpipes/cols/ExtractionPipelineName';
+import RelativeTimeWithTooltip from '../extpipes/cols/RelativeTimeWithTooltip';
+import Schedule from '../extpipes/cols/Schedule';
+import { LastRunStatusMarker } from '../extpipes/cols/StatusMarker';
 
 export type ExtractionPipelineListTableRecord = {
   key: number;

@@ -3,33 +3,34 @@ import { FieldErrors, useForm } from 'react-hook-form';
 
 import styled from 'styled-components';
 
-import { useTranslation } from '@extraction-pipelines/common';
-import MessageDialog from '@extraction-pipelines/components/buttons/MessageDialog';
-import ValidationError from '@extraction-pipelines/components/form/ValidationError';
-import { MarkdownView } from '@extraction-pipelines/components/markDown/MarkdownView';
-import Section from '@extraction-pipelines/components/section';
+import { yupResolver } from '@hookform/resolvers/yup';
+
+import { A, Button, Flex } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../common';
+import {
+  createUpdateSpec,
+  useDetailsUpdate,
+} from '../../hooks/details/useDetailsUpdate';
+import { useSelectedExtpipe } from '../../hooks/useExtpipe';
+import { ContactBtnTestIds } from '../../utils/constants';
+import { trackUsage } from '../../utils/Metrics';
+import { MASTERING_MARKDOWN_LINK } from '../../utils/utils';
+import {
+  documentationSchema,
+  MAX_DOCUMENTATION_LENGTH,
+} from '../../utils/validation/extpipeSchemas';
+import MessageDialog from '../buttons/MessageDialog';
+import ValidationError from '../form/ValidationError';
+import { MarkdownView } from '../markDown/MarkdownView';
+import Section from '../section';
 import {
   bottomSpacing,
   CountSpan,
   DivFlex,
   Hint,
   StyledTextArea,
-} from '@extraction-pipelines/components/styled';
-import {
-  createUpdateSpec,
-  useDetailsUpdate,
-} from '@extraction-pipelines/hooks/details/useDetailsUpdate';
-import { useSelectedExtpipe } from '@extraction-pipelines/hooks/useExtpipe';
-import { ContactBtnTestIds } from '@extraction-pipelines/utils/constants';
-import { trackUsage } from '@extraction-pipelines/utils/Metrics';
-import { MASTERING_MARKDOWN_LINK } from '@extraction-pipelines/utils/utils';
-import {
-  documentationSchema,
-  MAX_DOCUMENTATION_LENGTH,
-} from '@extraction-pipelines/utils/validation/extpipeSchemas';
-import { yupResolver } from '@hookform/resolvers/yup';
-
-import { A, Button, Flex } from '@cognite/cogs.js';
+} from '../styled';
 
 export const TEST_ID_BTN_SAVE: Readonly<string> = 'btn-save-';
 interface DocumentationSectionProps {

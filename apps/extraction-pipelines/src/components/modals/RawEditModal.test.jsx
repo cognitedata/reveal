@@ -1,9 +1,9 @@
 import { fireEvent, screen } from '@testing-library/react';
 import React from 'react';
-import { RawEditModalView } from '@extraction-pipelines/components/modals/RawEditModal';
-import { render } from '@extraction-pipelines/utils/test';
+import { RawEditModalView } from './RawEditModal';
+import { render } from '../../utils/test';
 
-jest.mock('@extraction-pipelines/hooks/useRawDBAndTables', () => {
+jest.mock('../../hooks/useRawDBAndTables', () => {
   return {
     useRawDBAndTables: jest.fn(),
   };

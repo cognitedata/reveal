@@ -3,26 +3,19 @@ import { OptionTypeBase } from 'react-select';
 
 import styled from 'styled-components';
 
-import { useTranslation } from '@extraction-pipelines/common';
-import { ErrorMessage } from '@extraction-pipelines/components/error/ErrorMessage';
-import { InfoBox } from '@extraction-pipelines/components/message/InfoBox';
-import { EditModal } from '@extraction-pipelines/components/modals/EditModal';
-import {
-  DivFlex,
-  IconHeading,
-  StyledLabel,
-} from '@extraction-pipelines/components/styled';
+import { Button, Input, Select } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../common';
 import {
   createUpdateSpec,
   useDetailsUpdate,
-} from '@extraction-pipelines/hooks/details/useDetailsUpdate';
-import { Extpipe } from '@extraction-pipelines/model/Extpipe';
-import {
-  minutesToUnit,
-  timeUnitToMinutesMultiplier,
-} from '@extraction-pipelines/utils/utils';
-
-import { Button, Input, Select } from '@cognite/cogs.js';
+} from '../../hooks/details/useDetailsUpdate';
+import { Extpipe } from '../../model/Extpipe';
+import { minutesToUnit, timeUnitToMinutesMultiplier } from '../../utils/utils';
+import { ErrorMessage } from '../error/ErrorMessage';
+import { InfoBox } from '../message/InfoBox';
+import { EditModal } from '../modals/EditModal';
+import { DivFlex, IconHeading, StyledLabel } from '../styled';
 
 type NotificationDialogProps = {
   isOpen: boolean;

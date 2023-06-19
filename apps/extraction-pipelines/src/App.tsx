@@ -3,17 +3,6 @@ import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 
 import { ThemeProvider } from 'styled-components';
 
-import { translations } from '@extraction-pipelines/common/i18n';
-import { AppEnvProvider } from '@extraction-pipelines/hooks/useAppEnv';
-import CreateExtpipe from '@extraction-pipelines/pages/create/CreateExtpipe';
-import ExtpipePage from '@extraction-pipelines/pages/Extpipe/ExtpipePage';
-import Extpipes from '@extraction-pipelines/pages/Extpipes/Extpipes';
-import { HostedExtractionPipelineDetails } from '@extraction-pipelines/pages/hosted-extraction-pipeline/HostedExtractionPipelineDetails';
-import antdTheme from '@extraction-pipelines/styles/antd-theme.less';
-import GlobalStyles from '@extraction-pipelines/styles/GlobalStyles';
-import rootStyles from '@extraction-pipelines/styles/index.css';
-import theme from '@extraction-pipelines/styles/theme';
-import { EXTRACTION_PIPELINES } from '@extraction-pipelines/utils/constants';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import isObject from 'lodash/isObject';
@@ -32,7 +21,18 @@ import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 import { FlagProvider } from '@cognite/react-feature-flags';
 import { SDKProvider } from '@cognite/sdk-provider';
 
+import { translations } from './common/i18n';
+import { AppEnvProvider } from './hooks/useAppEnv';
+import CreateExtpipe from './pages/create/CreateExtpipe';
+import ExtpipePage from './pages/Extpipe/ExtpipePage';
+import Extpipes from './pages/Extpipes/Extpipes';
+import { HostedExtractionPipelineDetails } from './pages/hosted-extraction-pipeline/HostedExtractionPipelineDetails';
 import AppScopeStyles from './styles';
+import antdTheme from './styles/antd-theme.less';
+import GlobalStyles from './styles/GlobalStyles';
+import rootStyles from './styles/index.css';
+import theme from './styles/theme';
+import { EXTRACTION_PIPELINES } from './utils/constants';
 
 const queryClient = new QueryClient({
   defaultOptions: {

@@ -1,11 +1,11 @@
 import React from 'react';
 
-import Link from '@extraction-pipelines/components/links/Link';
-import { EXT_PIPE_PATH } from '@extraction-pipelines/routing/RoutingConfig';
-import { EXTRACTION_PIPELINES_PATH } from '@extraction-pipelines/utils/baseURL';
-
 import { createLink } from '@cognite/cdf-utilities';
 import { Body } from '@cognite/cogs.js';
+
+import { EXT_PIPE_PATH } from '../../../routing/RoutingConfig';
+import { EXTRACTION_PIPELINES_PATH } from '../../../utils/baseURL';
+import Link from '../../links/Link';
 
 type ExtractionPipelineNameProps = {
   id: number;

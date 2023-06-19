@@ -1,4 +1,4 @@
-import { SupportedScheduleStrings } from '@extraction-pipelines/components/extpipes/cols/Schedule';
+import { SupportedScheduleStrings } from '../components/extpipes/cols/Schedule';
 import {
   mapModelToInput,
   mapScheduleInputToScheduleValue,

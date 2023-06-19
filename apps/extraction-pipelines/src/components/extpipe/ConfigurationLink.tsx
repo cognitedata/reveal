@@ -1,13 +1,13 @@
 import React, { FunctionComponent, PropsWithoutRef } from 'react';
 import { Link } from 'react-router-dom';
 
-import { useExtpipeConfig } from '@extraction-pipelines/hooks/config';
-import { useSelectedExtpipe } from '@extraction-pipelines/hooks/useExtpipe';
-import { EXT_PIPE_PATH } from '@extraction-pipelines/routing/RoutingConfig';
-import { EXTRACTION_PIPELINES_PATH } from '@extraction-pipelines/utils/baseURL';
-
 import { createLink } from '@cognite/cdf-utilities';
 import { Colors, Icon } from '@cognite/cogs.js';
+
+import { useExtpipeConfig } from '../../hooks/config';
+import { useSelectedExtpipe } from '../../hooks/useExtpipe';
+import { EXT_PIPE_PATH } from '../../routing/RoutingConfig';
+import { EXTRACTION_PIPELINES_PATH } from '../../utils/baseURL';
 
 type Props = {
   createdTime: number;

@@ -1,6 +1,6 @@
-import { DataSetModel } from '@extraction-pipelines/model/DataSetModel';
-
 import { CogniteClient, IdEither } from '@cognite/sdk';
+
+import { DataSetModel } from '../model/DataSetModel';
 
 import { mapDataSetResponse } from './dataSetUtils';
 

@@ -2,9 +2,9 @@ import React, { FunctionComponent } from 'react';
 
 import styled from 'styled-components';
 
-import { IconFilled } from '@extraction-pipelines/components/styled';
-
 import { Colors } from '@cognite/cogs.js';
+
+import { IconFilled } from '../styled';
 
 interface InfoBoxProps {
   children: React.ReactNode;

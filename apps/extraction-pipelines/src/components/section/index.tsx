@@ -2,10 +2,11 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { Box } from '@extraction-pipelines/components/box/Box';
 import isString from 'lodash/isString';
 
 import { Colors, Flex, Icon, IconType, Title } from '@cognite/cogs.js';
+
+import { Box } from '../box/Box';
 
 import SectionItem, { SectionItemProps } from './SectionItem';
 

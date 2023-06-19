@@ -1,7 +1,7 @@
 import React from 'react';
 import { fireEvent, screen } from '@testing-library/react';
-import { renderWithReactHookForm } from '@extraction-pipelines/utils/test/render';
-import { parseCron } from '@extraction-pipelines/utils/cronUtils';
+import { renderWithReactHookForm } from '../../../utils/test/render';
+import { parseCron } from '../../../utils/cronUtils';
 import CronInput from './CronInput';
 
 describe('CronInput', () => {

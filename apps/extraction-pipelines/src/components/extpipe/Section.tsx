@@ -2,9 +2,9 @@ import React, { PropsWithChildren } from 'react';
 
 import styled from 'styled-components';
 
-import { useTranslation } from '@extraction-pipelines/common';
-
 import { IconType, Icon, Button, Flex, Body } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../common';
 
 const SectionDiv = styled.div`
   background-color: white;

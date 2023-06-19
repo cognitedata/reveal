@@ -1,12 +1,12 @@
 import React, { FunctionComponent } from 'react';
 
-import { StatusMenu } from '@extraction-pipelines/components/menu/StatusMenu';
 import {
   updateStatusAction,
   useRunFilterContext,
-} from '@extraction-pipelines/hooks/runs/RunsFilterContext';
-import { RunStatus } from '@extraction-pipelines/model/Runs';
-import { trackUsage } from '@extraction-pipelines/utils/Metrics';
+} from '../../hooks/runs/RunsFilterContext';
+import { RunStatus } from '../../model/Runs';
+import { trackUsage } from '../../utils/Metrics';
+import { StatusMenu } from '../menu/StatusMenu';
 
 export const StatusFilterMenu: FunctionComponent = () => {
   const {

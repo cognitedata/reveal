@@ -1,7 +1,8 @@
-import { styleScope } from '@extraction-pipelines/styleScope';
 import moment from 'moment';
 
-export { styleScope } from '@extraction-pipelines/styleScope';
+import { styleScope } from '../styleScope';
+
+export { styleScope } from '../styleScope';
 
 // Use this getContainer for all antd components such as: dropdown, tooltip, popover, modals etc
 export const getContainer = () => {

@@ -1,10 +1,10 @@
 import React, { FunctionComponent, useCallback, useState } from 'react';
 
-import { useTranslation } from '@extraction-pipelines/common';
-import { EditModal } from '@extraction-pipelines/components/modals/EditModal';
-import { DivFlex } from '@extraction-pipelines/components/styled';
-
 import { Button, Input } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../common';
+import { EditModal } from '../modals/EditModal';
+import { DivFlex } from '../styled';
 
 type Props = {
   isOpen: boolean;

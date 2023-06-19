@@ -2,12 +2,13 @@ import React, { PropsWithoutRef } from 'react';
 
 import styled from 'styled-components';
 
-import { useTranslation } from '@extraction-pipelines/common';
-import StatusMarker from '@extraction-pipelines/components/extpipes/cols/StatusMarker';
-import { StyledDropdown } from '@extraction-pipelines/components/styled';
-import { RunStatus } from '@extraction-pipelines/model/Runs';
-
 import { Button, Chip, Colors, Menu } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../common';
+import { RunStatus } from '../../model/Runs';
+import StatusMarker from '../extpipes/cols/StatusMarker';
+import { StyledDropdown } from '../styled';
+
 export interface StatusMenuProps {
   setSelected: (status?: RunStatus) => void;
   selected?: RunStatus;

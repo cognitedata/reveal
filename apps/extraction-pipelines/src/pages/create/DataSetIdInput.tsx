@@ -3,16 +3,18 @@ import { useFormContext } from 'react-hook-form';
 
 import styled from 'styled-components';
 
-import { useTranslation } from '@extraction-pipelines/common';
-import ValidationError from '@extraction-pipelines/components/form/ValidationError';
-import { DataSetSelectOption } from '@extraction-pipelines/components/inputs/dataset/DataSetSelectOption';
-import { InputController } from '@extraction-pipelines/components/inputs/InputController';
-import { Hint } from '@extraction-pipelines/components/styled';
-import { TableHeadings } from '@extraction-pipelines/components/table/ExtpipeTableCol';
 import { MutationStatus } from '@tanstack/react-query';
 
 import { AutoComplete, Colors, Loader } from '@cognite/cogs.js';
 import { DataSet } from '@cognite/sdk';
+
+import { useTranslation } from '../../common';
+import ValidationError from '../../components/form/ValidationError';
+import { DataSetSelectOption } from '../../components/inputs/dataset/DataSetSelectOption';
+import { InputController } from '../../components/inputs/InputController';
+import { Hint } from '../../components/styled';
+import { TableHeadings } from '../../components/table/ExtpipeTableCol';
+
 interface DataSetIdPageProps {
   data?: DataSet[];
   renderLabel?: (labelText: string, inputId: string) => React.ReactNode;

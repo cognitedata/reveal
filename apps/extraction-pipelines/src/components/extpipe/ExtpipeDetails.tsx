@@ -2,24 +2,21 @@ import React, { FunctionComponent, useEffect } from 'react';
 
 import styled from 'styled-components';
 
-import { useTranslation } from '@extraction-pipelines/common';
-import ConfigurationSection from '@extraction-pipelines/components/extpipe/ConfigurationSection';
-import { DocumentationSection } from '@extraction-pipelines/components/extpipe/DocumentationSection';
-import { ExtpipeInformation } from '@extraction-pipelines/components/extpipe/ExtpipeInformation';
-import { RunScheduleConnection } from '@extraction-pipelines/components/extpipe/RunScheduleConnection';
-import {
-  PageWrapperColumn,
-  StyledPageContainer,
-} from '@extraction-pipelines/components/styled';
+import { Loader } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../common';
 import {
   useSelectedExtpipe,
   useSelectedExtpipeId,
-} from '@extraction-pipelines/hooks/useExtpipe';
-import { trackUsage } from '@extraction-pipelines/utils/Metrics';
+} from '../../hooks/useExtpipe';
+import { trackUsage } from '../../utils/Metrics';
+import { PageWrapperColumn, StyledPageContainer } from '../styled';
 
-import { Loader } from '@cognite/cogs.js';
-
+import ConfigurationSection from './ConfigurationSection';
+import { DocumentationSection } from './DocumentationSection';
 import { ExtpipeHeading } from './ExtpipeHeading';
+import { ExtpipeInformation } from './ExtpipeInformation';
+import { RunScheduleConnection } from './RunScheduleConnection';
 
 export const ExtpipeDetails: FunctionComponent = () => {
   const { t } = useTranslation();

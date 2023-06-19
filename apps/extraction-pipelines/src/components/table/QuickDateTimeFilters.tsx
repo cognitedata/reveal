@@ -2,15 +2,16 @@ import React, { FunctionComponent, useEffect, useState } from 'react';
 
 import styled from 'styled-components';
 
-import { DivFlex } from '@extraction-pipelines/components/styled';
-import {
-  updateDateRangeAction,
-  useRunFilterContext,
-} from '@extraction-pipelines/hooks/runs/RunsFilterContext';
-import { findSelectedRangeOption } from '@extraction-pipelines/utils/dateUtils';
 import moment from 'moment';
 
 import { Colors, Range } from '@cognite/cogs.js';
+
+import {
+  updateDateRangeAction,
+  useRunFilterContext,
+} from '../../hooks/runs/RunsFilterContext';
+import { findSelectedRangeOption } from '../../utils/dateUtils';
+import { DivFlex } from '../styled';
 
 export const HOURS_1: Readonly<string> = '1H';
 export const HOURS_24: Readonly<string> = '24H';

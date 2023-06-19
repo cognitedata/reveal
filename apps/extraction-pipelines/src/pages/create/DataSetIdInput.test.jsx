@@ -1,11 +1,11 @@
 import React from 'react';
 import { fireEvent, screen } from '@testing-library/react';
-import { renderWithReactHookForm } from '@extraction-pipelines/utils/test/render';
-import { datasetMockResponse } from '@extraction-pipelines/utils/mockResponse';
-import { TableHeadings } from '@extraction-pipelines/components/table/ExtpipeTableCol';
-import DataSetIdInput from '@extraction-pipelines/pages/create/DataSetIdInput';
+import { renderWithReactHookForm } from '../../utils/test/render';
+import { datasetMockResponse } from '../../utils/mockResponse';
+import { TableHeadings } from '../../components/table/ExtpipeTableCol';
+import DataSetIdInput from './DataSetIdInput';
 
-jest.mock('@extraction-pipelines/hooks/useDataSetsList', () => {
+jest.mock('../../hooks/useDataSetsList', () => {
   return {
     useDataSetsList: jest.fn(),
   };

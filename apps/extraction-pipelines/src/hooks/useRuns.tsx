@@ -1,17 +1,6 @@
 import { useEffect } from 'react';
 
 import {
-  CreateRunRequest,
-  RunApi,
-  RunsAPIResponse,
-  RunStatus,
-} from '@extraction-pipelines/model/Runs';
-import { DEFAULT_RUN_LIMIT } from '@extraction-pipelines/utils/constants';
-import {
-  createRun,
-  getFilteredRuns,
-} from '@extraction-pipelines/utils/RunsAPI';
-import {
   useInfiniteQuery,
   UseInfiniteQueryResult,
   useMutation,
@@ -22,6 +11,15 @@ import omit from 'lodash/omit';
 import { Range } from '@cognite/cogs.js';
 import { CogniteError } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
+
+import {
+  CreateRunRequest,
+  RunApi,
+  RunsAPIResponse,
+  RunStatus,
+} from '../model/Runs';
+import { DEFAULT_RUN_LIMIT } from '../utils/constants';
+import { createRun, getFilteredRuns } from '../utils/RunsAPI';
 
 export const getRunsKey = (params: CreateRunFilterParam) => [
   'runs',

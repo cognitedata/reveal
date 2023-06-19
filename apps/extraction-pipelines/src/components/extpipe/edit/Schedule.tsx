@@ -2,15 +2,15 @@ import React, { FunctionComponent, PropsWithChildren } from 'react';
 
 import styled from 'styled-components';
 
-import { useTranslation } from '@extraction-pipelines/common';
-import { SupportedScheduleStrings } from '@extraction-pipelines/components/extpipes/cols/Schedule';
-import { ScheduleSelector } from '@extraction-pipelines/components/inputs/ScheduleSelector';
-import { CRON_LINK } from '@extraction-pipelines/utils/constants';
-import { parseCron as parseCronUtil } from '@extraction-pipelines/utils/cronUtils';
 import { FormikErrors } from 'formik';
 
 import { A, Colors, Detail, Flex, Input } from '@cognite/cogs.js';
 
+import { useTranslation } from '../../../common';
+import { CRON_LINK } from '../../../utils/constants';
+import { parseCron as parseCronUtil } from '../../../utils/cronUtils';
+import { SupportedScheduleStrings } from '../../extpipes/cols/Schedule';
+import { ScheduleSelector } from '../../inputs/ScheduleSelector';
 import { BasicInformationFormFields } from '../BasicInformationModal';
 import Field from '../fields/Field';
 

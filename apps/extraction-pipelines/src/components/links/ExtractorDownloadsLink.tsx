@@ -1,9 +1,10 @@
 import React, { FunctionComponent } from 'react';
 
-import { ExternalLink } from '@extraction-pipelines/components/links/ExternalLink';
-import { trackUsage } from '@extraction-pipelines/utils/Metrics';
-
 import { createLink } from '@cognite/cdf-utilities';
+
+import { trackUsage } from '../../utils/Metrics';
+
+import { ExternalLink } from './ExternalLink';
 
 interface LinkBase {
   linkText: string;

@@ -2,16 +2,16 @@ import React, { useMemo, useState } from 'react';
 
 import styled from 'styled-components';
 
-import { useTranslation } from '@extraction-pipelines/common';
-import { Box } from '@extraction-pipelines/components/box/Box';
-import { LogsTable } from '@extraction-pipelines/components/logs-table/LogsTable';
-import { MQTTJobWithMetrics } from '@extraction-pipelines/hooks/hostedExtractors';
-import { PAGINATION_SETTINGS } from '@extraction-pipelines/utils/constants';
-import { getJobStatusForCogs } from '@extraction-pipelines/utils/hostedExtractors';
-import { getContainer } from '@extraction-pipelines/utils/utils';
-
 import { ColumnType, Table } from '@cognite/cdf-utilities';
 import { Button, Status } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../common';
+import { MQTTJobWithMetrics } from '../../hooks/hostedExtractors';
+import { PAGINATION_SETTINGS } from '../../utils/constants';
+import { getJobStatusForCogs } from '../../utils/hostedExtractors';
+import { getContainer } from '../../utils/utils';
+import { Box } from '../box/Box';
+import { LogsTable } from '../logs-table/LogsTable';
 
 type JobsTableRecord = { key: string } & MQTTJobWithMetrics;
 

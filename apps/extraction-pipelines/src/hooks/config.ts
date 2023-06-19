@@ -1,14 +1,4 @@
 import {
-  ExtpipeConfig,
-  ExtpipeConfigRevision,
-} from '@extraction-pipelines/model/Extpipe';
-import {
-  CreateConfigRevisionArguments,
-  createExtpipeConfigRevision,
-  getExtpipeConfig,
-  getExtpipeConfigRevisions,
-} from '@extraction-pipelines/utils/ExtpipesAPI';
-import {
   useMutation,
   UseMutationOptions,
   useQueries,
@@ -18,6 +8,14 @@ import {
 
 import { CogniteError } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
+
+import { ExtpipeConfig, ExtpipeConfigRevision } from '../model/Extpipe';
+import {
+  CreateConfigRevisionArguments,
+  createExtpipeConfigRevision,
+  getExtpipeConfig,
+  getExtpipeConfigRevisions,
+} from '../utils/ExtpipesAPI';
 
 type ExtPipeConfigRequest = {
   externalId: string;

@@ -1,14 +1,15 @@
+import { CogniteClient } from '@cognite/sdk';
+
 import {
   Extpipe,
   ExtpipeConfig,
   ExtpipeConfigRevision,
   ExtpipeFieldValue,
   RegisterExtpipeInfo,
-} from '@extraction-pipelines/model/Extpipe';
-import { ExtpipeAPIResponse } from '@extraction-pipelines/model/ExtpipeAPIResponse';
-import { get, post, getBaseUrl } from '@extraction-pipelines/utils/baseURL';
+} from '../model/Extpipe';
+import { ExtpipeAPIResponse } from '../model/ExtpipeAPIResponse';
 
-import { CogniteClient } from '@cognite/sdk';
+import { get, post, getBaseUrl } from './baseURL';
 
 type ExtpipeAPIRequest = {
   limit: number;

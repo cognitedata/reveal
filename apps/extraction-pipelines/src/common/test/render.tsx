@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { styleScope } from '@extraction-pipelines/styleScope';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
   render as testingLibraryRender,
@@ -9,6 +8,8 @@ import {
 
 import sdk from '@cognite/cdf-sdk-singleton';
 import { SDKProvider } from '@cognite/sdk-provider';
+
+import { styleScope } from '../../styleScope';
 
 export const render = (
   ui: React.ReactElement,

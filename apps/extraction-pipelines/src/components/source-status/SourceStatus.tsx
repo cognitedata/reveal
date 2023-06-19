@@ -3,19 +3,19 @@ import { useSearchParams } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import { useTranslation } from '@extraction-pipelines/common';
-import Section from '@extraction-pipelines/components/section';
+import { Body, Colors, Flex, SegmentedControl, Title } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../common';
 import {
   MQTTSourceWithJobMetrics,
   useMQTTJobLogs,
-} from '@extraction-pipelines/hooks/hostedExtractors';
+} from '../../hooks/hostedExtractors';
 import {
   AggregationInterval,
   formatUptime,
   getUptimeAggregations,
-} from '@extraction-pipelines/utils/hostedExtractors';
-
-import { Body, Colors, Flex, SegmentedControl, Title } from '@cognite/cogs.js';
+} from '../../utils/hostedExtractors';
+import Section from '../section';
 
 import { SourceStatusItem } from './SourceStatusItem';
 

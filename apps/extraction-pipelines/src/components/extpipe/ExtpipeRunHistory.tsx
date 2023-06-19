@@ -2,29 +2,26 @@ import React, { useEffect } from 'react';
 
 import styled from 'styled-components';
 
-import { useTranslation } from '@extraction-pipelines/common';
-import { RunChart } from '@extraction-pipelines/components/chart/RunChart';
-import { RunLogsTable } from '@extraction-pipelines/components/extpipe/RunLogsTable';
-import { SectionWithoutHeader } from '@extraction-pipelines/components/extpipe/Section';
-import { DateRangeFilter } from '@extraction-pipelines/components/inputs/dateTime/DateRangeFilter';
-import { TimeSelector } from '@extraction-pipelines/components/inputs/dateTime/TimeSelector';
-import { DebouncedSearch } from '@extraction-pipelines/components/inputs/DebouncedSearch';
-import {
-  PageWrapperColumn,
-  StyledPageContainer,
-} from '@extraction-pipelines/components/styled';
-import { QuickDateTimeFilters } from '@extraction-pipelines/components/table/QuickDateTimeFilters';
-import { StatusFilterMenu } from '@extraction-pipelines/components/table/StatusFilterMenu';
+import { Colors, Loader } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../common';
 import {
   useSelectedExtpipe,
   useSelectedExtpipeId,
-} from '@extraction-pipelines/hooks/useExtpipe';
-import { trackUsage } from '@extraction-pipelines/utils/Metrics';
-
-import { Colors, Loader } from '@cognite/cogs.js';
+} from '../../hooks/useExtpipe';
+import { trackUsage } from '../../utils/Metrics';
+import { RunChart } from '../chart/RunChart';
+import { DateRangeFilter } from '../inputs/dateTime/DateRangeFilter';
+import { TimeSelector } from '../inputs/dateTime/TimeSelector';
+import { DebouncedSearch } from '../inputs/DebouncedSearch';
+import { PageWrapperColumn, StyledPageContainer } from '../styled';
+import { QuickDateTimeFilters } from '../table/QuickDateTimeFilters';
+import { StatusFilterMenu } from '../table/StatusFilterMenu';
 
 import ErrorFeedback from './ErrorFeedback';
 import { ExtpipeHeading } from './ExtpipeHeading';
+import { RunLogsTable } from './RunLogsTable';
+import { SectionWithoutHeader } from './Section';
 
 export interface RangeType {
   startDate: Date;

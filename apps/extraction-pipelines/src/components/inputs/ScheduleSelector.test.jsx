@@ -1,7 +1,7 @@
-import { ScheduleSelector } from '@extraction-pipelines/components/inputs/ScheduleSelector';
-import { SupportedScheduleStrings } from '@extraction-pipelines/components/extpipes/cols/Schedule';
+import { ScheduleSelector } from './ScheduleSelector';
+import { SupportedScheduleStrings } from '../extpipes/cols/Schedule';
 import React from 'react';
-import { render } from '@extraction-pipelines/utils/test';
+import { render } from '../../utils/test';
 import { fireEvent, screen } from '@testing-library/react';
 
 describe('ScheduleSelector', () => {

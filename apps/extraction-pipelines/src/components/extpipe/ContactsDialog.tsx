@@ -2,23 +2,19 @@ import React, { FunctionComponent, useState, ChangeEvent } from 'react';
 
 import styled from 'styled-components';
 
-import { useTranslation } from '@extraction-pipelines/common';
-import { ErrorMessage } from '@extraction-pipelines/components/error/ErrorMessage';
-import { InfoBox } from '@extraction-pipelines/components/message/InfoBox';
-import {
-  StyledTableNoRowColor2,
-  Grid,
-  Hint,
-} from '@extraction-pipelines/components/styled';
+import { isValidEmail } from '@cognite/cdf-utilities';
+import { Button, Input, Switch } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../common';
 import {
   createUpdateSpec,
   useDetailsUpdate,
-} from '@extraction-pipelines/hooks/details/useDetailsUpdate';
-import { useSelectedExtpipe } from '@extraction-pipelines/hooks/useExtpipe';
-import { User } from '@extraction-pipelines/model/User';
-
-import { isValidEmail } from '@cognite/cdf-utilities';
-import { Button, Input, Switch } from '@cognite/cogs.js';
+} from '../../hooks/details/useDetailsUpdate';
+import { useSelectedExtpipe } from '../../hooks/useExtpipe';
+import { User } from '../../model/User';
+import { ErrorMessage } from '../error/ErrorMessage';
+import { InfoBox } from '../message/InfoBox';
+import { StyledTableNoRowColor2, Grid, Hint } from '../styled';
 
 interface ContactsSectionProps {
   close: () => void;

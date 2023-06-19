@@ -1,6 +1,6 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
-import { render } from '@extraction-pipelines/utils/test';
+import { render } from '../../../utils/test';
 import Schedule, { SupportedScheduleStrings } from './Schedule';
 
 describe('<Schedule/>', () => {

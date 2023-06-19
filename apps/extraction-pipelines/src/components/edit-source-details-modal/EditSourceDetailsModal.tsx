@@ -1,15 +1,16 @@
 import React from 'react';
 
-import { useTranslation } from '@extraction-pipelines/common';
-import {
-  BaseMQTTSource,
-  MQTTSourceWithJobMetrics,
-  useEditMQTTSource,
-} from '@extraction-pipelines/hooks/hostedExtractors';
 import { notification } from 'antd';
 import { FormikErrors, useFormik } from 'formik';
 
 import { Flex, InputExp, Modal, ModalProps } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../common';
+import {
+  BaseMQTTSource,
+  MQTTSourceWithJobMetrics,
+  useEditMQTTSource,
+} from '../../hooks/hostedExtractors';
 
 type EditSourceDetailsModalProps = {
   onCancel: () => void;

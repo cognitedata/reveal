@@ -5,7 +5,7 @@ import {
   optionTimeField,
   parseTimeString,
   rangeToTwoDigitString,
-} from '@extraction-pipelines/components/inputs/dateTime/TimeSelectorUtils';
+} from './TimeSelectorUtils';
 
 describe('TimeSelectorUtils', () => {
   test('createHalfHourOptions', () => {

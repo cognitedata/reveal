@@ -1,8 +1,8 @@
 import React from 'react';
-import { TimeSelector } from '@extraction-pipelines/components/inputs/dateTime/TimeSelector';
-import { render } from '@extraction-pipelines/utils/test';
+import { TimeSelector } from './TimeSelector';
+import { render } from '../../../utils/test';
 import { fireEvent, screen } from '@testing-library/react';
-import { renderWithRunFilterContext } from '@extraction-pipelines/utils/test/render';
+import { renderWithRunFilterContext } from '../../../utils/test/render';
 
 describe('TimeSelector', () => {
   test('Render default', () => {

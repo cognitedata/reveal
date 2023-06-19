@@ -2,11 +2,11 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { useTranslation } from '@extraction-pipelines/common';
-import { CenterFullVH } from '@extraction-pipelines/components/styled';
-
 import { Button, Icon, Title } from '@cognite/cogs.js';
 import { CogniteError } from '@cognite/sdk';
+
+import { useTranslation } from '../../common';
+import { CenterFullVH } from '../styled';
 
 interface ErrorFeedbackProps {
   error?: CogniteError;

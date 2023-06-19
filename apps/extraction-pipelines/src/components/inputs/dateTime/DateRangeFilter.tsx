@@ -2,14 +2,15 @@ import React, { FunctionComponent } from 'react';
 
 import styled from 'styled-components';
 
-import { createDateWithTime } from '@extraction-pipelines/components/inputs/dateTime/TimeSelectorUtils';
-import { DivFlex } from '@extraction-pipelines/components/styled';
+import { Colors, DateRange, Range } from '@cognite/cogs.js';
+
 import {
   updateDateRangeAction,
   useRunFilterContext,
-} from '@extraction-pipelines/hooks/runs/RunsFilterContext';
+} from '../../../hooks/runs/RunsFilterContext';
+import { DivFlex } from '../../styled';
 
-import { Colors, DateRange, Range } from '@cognite/cogs.js';
+import { createDateWithTime } from './TimeSelectorUtils';
 
 const Wrapper = styled(DivFlex)`
   .extpipes-ui-style-scope {

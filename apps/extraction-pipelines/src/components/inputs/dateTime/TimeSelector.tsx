@@ -3,21 +3,22 @@ import { OptionTypeBase } from 'react-select';
 
 import styled from 'styled-components';
 
-import { useTranslation } from '@extraction-pipelines/common';
+import { Button, Colors, Input, Range, Select } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../../common';
+import {
+  updateDateRangeAction,
+  useRunFilterContext,
+} from '../../../hooks/runs/RunsFilterContext';
+import { DivFlex } from '../../styled';
+
 import {
   createDateFromTimeChange,
   createHalfHourOptions,
   optionTimeField,
   parseTimeString,
   rangeToTwoDigitString,
-} from '@extraction-pipelines/components/inputs/dateTime/TimeSelectorUtils';
-import { DivFlex } from '@extraction-pipelines/components/styled';
-import {
-  updateDateRangeAction,
-  useRunFilterContext,
-} from '@extraction-pipelines/hooks/runs/RunsFilterContext';
-
-import { Button, Colors, Input, Range, Select } from '@cognite/cogs.js';
+} from './TimeSelectorUtils';
 
 export type Time = { hours: number; min: number };
 
