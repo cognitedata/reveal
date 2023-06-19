@@ -38,13 +38,4 @@ function App() {
 
 export default App;
 
-const StyledWrapper = styled.div`
-  display: flex;
-  flex-flow: column;
-  height: 100%;
-  width: 100%;
-  overflow: hidden;
-  position: fixed;
-  top: var(--cdf-ui-navigation-height);
-  overflow-y: scroll;
-`;
+const StyledWrapper = styled.div``;

@@ -18,6 +18,7 @@ const scheduleTableColumns = [
   {
     title: 'Schedule Info',
     key: 'scheduleInfo',
+    width: '30%',
     render: (s: Schedule) => {
       return (
         <List.Item style={{ verticalAlign: 'middle' }}>

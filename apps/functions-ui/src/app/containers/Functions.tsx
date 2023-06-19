@@ -125,7 +125,7 @@ function Functions() {
         <h1 style={{ display: 'inline-block' }}>Functions</h1>
         <div
           style={{
-            float: 'right',
+            marginLeft: 'auto',
             marginTop: '8px',
             display: 'inline-flex',
           }}

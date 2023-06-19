@@ -96,5 +96,8 @@ export default function RootApp() {
 }
 
 const StyledRootApp = styled.div`
-  padding: 1em;
+  padding: 20px;
+  @media (min-width: 992px) {
+    padding: 20px 50px;
+  }
 `;

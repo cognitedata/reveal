@@ -1,17 +1,19 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { MemoryRouter } from 'react-router';
-import { CogFunction, Call } from 'types/Types';
 
 import { cleanup, render, screen, fireEvent } from '@testing-library/react';
 
-import { sleep } from 'helpers';
-import TestWrapper from 'utils/TestWrapper';
 import sdk from '@cognite/cdf-sdk-singleton';
+import { CogniteClient } from '@cognite/sdk/dist/src';
+
+import { sleep } from '../../helpers';
+import { CogFunction, Call } from '../../types/Types';
+import TestWrapper from '../../utils/TestWrapper';
 
 import Functions from './Functions';
 
-const mockFunction = ({
+const mockFunction = {
   name: 'testFunc',
   id: 1,
   createdTime: new Date(),
@@ -19,14 +21,14 @@ const mockFunction = ({
   description: 'some description',
   status: 'Ready',
   externalId: 'externalid',
-} as unknown) as CogFunction;
-const mockCall = ({
+} as unknown as CogFunction;
+const mockCall = {
   id: 100,
   startTime: new Date(),
   endTime: new Date(),
   status: 'Completed',
-} as unknown) as Call;
-const mockFunction2 = ({
+} as unknown as Call;
+const mockFunction2 = {
   fileId: 1,
   name: 'secondFunc',
   id: 2,
@@ -34,7 +36,7 @@ const mockFunction2 = ({
   owner: 'somebody@cognite.com',
   description: 'some description',
   status: 'Ready',
-} as unknown) as CogFunction;
+} as unknown as CogFunction;
 
 jest.mock('@cognite/cdf-sdk-singleton', () => ({
   __esModule: true,
@@ -65,7 +67,7 @@ jest.mock('@cognite/cdf-utilities', () => ({
 const wrap = (node: React.ReactNode) =>
   render(<TestWrapper>{node}</TestWrapper>);
 
-const loadMock = sdkToMock => {
+const loadMock = (sdkToMock: any) => {
   jest.spyOn(sdkToMock, 'get').mockImplementation((url: string) => {
     if (url.includes('/status')) {
       return Promise.resolve({
@@ -125,18 +127,16 @@ describe('Functions', () => {
     // 'should update functions shown if search field is filled'
     expect(await screen.findAllByText('testFunc')).toHaveLength(1);
 
-    const functionsDisplayed = container.getElementsByClassName(
-      'ant-collapse-item'
-    );
+    const functionsDisplayed =
+      container.getElementsByClassName('ant-collapse-item');
 
     expect(functionsDisplayed.length).toBe(2);
     const search = screen.getByPlaceholderText(
       'Search by name, external id, or owner'
     );
     fireEvent.change(search, { target: { value: 'second' } });
-    const functionsDisplayedAfterSearch = container.getElementsByClassName(
-      'ant-collapse-item'
-    );
+    const functionsDisplayedAfterSearch =
+      container.getElementsByClassName('ant-collapse-item');
 
     expect(functionsDisplayedAfterSearch).toHaveLength(1);
 
@@ -144,17 +144,15 @@ describe('Functions', () => {
 
     // 'search field is case insensitive'
 
-    const functionsDisplayed1 = container.getElementsByClassName(
-      'ant-collapse-item'
-    );
+    const functionsDisplayed1 =
+      container.getElementsByClassName('ant-collapse-item');
     expect(functionsDisplayed1.length).toBe(2);
     const search1 = screen.getByPlaceholderText(
       'Search by name, external id, or owner'
     );
     fireEvent.change(search1, { target: { value: 'SECOND' } });
-    const functionsDisplayedAfterSearch1 = container.getElementsByClassName(
-      'ant-collapse-item'
-    );
+    const functionsDisplayedAfterSearch1 =
+      container.getElementsByClassName('ant-collapse-item');
 
     expect(functionsDisplayedAfterSearch1).toHaveLength(1);
   });
