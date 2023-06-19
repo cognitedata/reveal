@@ -1,5 +1,7 @@
 # @cognite/copilot-core
 
+**For now, this is deployed to the `cdf-copilot-core` npm package. We will deploy @cognite org name soon once we have a proper v0.1**
+
 This is the core logic part of copilot, where both the UI and business logic lives. Most apps (ones in fusion) will not need to import the UI part, simply just need to update the business logic.
 
 We will go over how the business logic works first, and UI second.
