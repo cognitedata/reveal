@@ -1,6 +1,5 @@
 {
   "name": "charts",
-  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/charts/src",
   "projectType": "application",
   "targets": {
@@ -9,24 +8,29 @@
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
-        "compiler": "babel",
         "outputPath": "dist/apps/charts",
         "index": "apps/charts/src/index.html",
-        "baseHref": "/",
         "main": "apps/charts/src/main.tsx",
         "tsConfig": "apps/charts/tsconfig.app.json",
         "assets": ["apps/charts/src/favicon.ico", "apps/charts/src/assets"],
         "styles": [],
         "scripts": [],
-        "isolatedConfig": true,
+        "runtimeChunk": false,
+        "vendorChunk": false,
+        "commonChunk": false,
         "webpackConfig": "apps/charts/webpack-config.js"
       },
       "configurations": {
         "development": {
-          "extractLicenses": false,
           "optimization": false,
+          "outputHashing": "all",
           "sourceMap": true,
-          "vendorChunk": false
+          "extractCss": false,
+          "namedChunks": false,
+          "extractLicenses": false,
+          "vendorChunk": false,
+          "runtimeChunk": false,
+          "budgets": []
         },
         "production": {
           "fileReplacements": [
