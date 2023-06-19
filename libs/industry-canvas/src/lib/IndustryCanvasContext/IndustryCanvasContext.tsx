@@ -16,13 +16,13 @@ import { useCanvasSaveMutation } from '../hooks/use-mutation/useCanvasSaveMutati
 import { useDeleteCanvasIdsByTypeMutation } from '../hooks/use-mutation/useDeleteCanvasIdsByTypeMutation';
 import { useGetCanvasByIdQuery } from '../hooks/use-query/useGetCanvasByIdQuery';
 import { useListCanvases } from '../hooks/use-query/useListCanvases';
-import { useUserProfileContext } from '../hooks/use-query/useUserProfile';
 import { IndustryCanvasService } from '../services/IndustryCanvasService';
 import {
   ContainerReference,
   IndustryCanvasState,
   SerializedCanvasDocument,
 } from '../types';
+import { useUserProfile } from '../UserProfileProvider';
 import useMetrics from '../utils/tracking/useMetrics';
 import { serializeCanvasState } from '../utils/utils';
 
@@ -91,7 +91,7 @@ export const IndustryCanvasProvider: React.FC<IndustryCanvasProviderProps> = ({
 }): JSX.Element => {
   const sdk = useSDK();
   const trackUsage = useMetrics();
-  const { userProfile } = useUserProfileContext();
+  const { userProfile } = useUserProfile();
   const canvasService = useMemo(
     () => new IndustryCanvasService(sdk, userProfile),
     [sdk, userProfile]
