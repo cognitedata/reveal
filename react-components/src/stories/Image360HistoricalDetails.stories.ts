@@ -16,31 +16,45 @@ const revisionMocks = [
   new Mock<Image360Revision>()
     .setup(p => p.getPreviewThumbnailUrl())
     .returns(Promise.resolve(undefined))
+    .setup(p => p.date)
+    .returns(undefined)
     .object(),
   new Mock<Image360Revision>()
     .setup(p => p.getPreviewThumbnailUrl())
     .returns(Promise.resolve(undefined))
+    .setup(p => p.date)
+    .returns(new Date('2024.01.13 13:23'))
     .object(),
   new Mock<Image360Revision>()
     .setup(p => p.getPreviewThumbnailUrl())
     .returns(Promise.resolve(undefined))
+    .setup(p => p.date)
+    .returns(new Date('2025.01.14 13:23'))
     .object(),
   new Mock<Image360Revision>()
     .setup(p => p.getPreviewThumbnailUrl())
     .returns(Promise.resolve(undefined))
+    .setup(p => p.date)
+    .returns(new Date('2026.01.15 15:23'))
     .object(),
   new Mock<Image360Revision>()
     .setup(p => p.getPreviewThumbnailUrl())
     .returns(Promise.resolve(undefined))
+    .setup(p => p.date)
+    .returns(new Date('2024.01.16 23:23'))
     .object(),
-]
+];
 
 const viewerMock = new Mock<Cognite3DViewer>()
   .setup(p => p.enter360Image(It.IsAny()))
   .returns(Promise.resolve());
 const image360Mock = new Mock<Image360>()
   .setup(p => p.getRevisions())
-  .returns(revisionMocks);
+  .returns(revisionMocks)
+  .setup(p => p.id)
+  .returns('Station-Id')
+  .setup(p => p.label)
+  .returns('Station Name');
 
 export const Main: Story = {
   args: {

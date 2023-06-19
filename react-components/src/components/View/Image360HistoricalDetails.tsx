@@ -34,7 +34,6 @@ export const Image360HistoricalDetails = ({
   >([]);
   const [imageUrls, setImageUrls] = useState<(string | undefined)[]>([]);
   const [minWidth, setMinWidth] = useState('100px');
-  const [scrollPosition, setScrollPosition] = useState(0);
   const newScrollPosition = useRef(0);
 
   useEffect(() => {
@@ -56,7 +55,6 @@ export const Image360HistoricalDetails = ({
 
         setRevisionCollection(collection);
         setActiveRevision(0);
-        setScrollPosition(0);
       }
     };
 
