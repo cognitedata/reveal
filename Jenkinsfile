@@ -67,8 +67,9 @@ static final String[] PREVIEW_STORYBOOK = [
   'platypus',
   'data-exploration-components-old',
   'shared-plotting-components',
-  // '3d-management',
 ]
+  // '3d-management',
+  // Should be added after monorepo storybook version is upgraded to v7.
 
 // The Sentry DSN is the URL used to report issues into Sentry. This can be
 // found on your Sentry's project page, or by going here:
