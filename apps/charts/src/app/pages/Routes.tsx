@@ -42,14 +42,19 @@ const RouteWithFirebase = ({
     useFirebaseInit(true);
   const project = getProject();
   const cluster = getCluster();
-  const env = parseEnvFromCluster(cluster);
+  const env = parseEnvFromCluster(cluster as string);
   const { options } = getFlow(project, env);
   const { data: user } = useUserInfo();
   const Component = element;
 
   React.useEffect(() => {
     // options.directory tells if it is AAD tenant
-    identifyUserForMetrics(user, project, cluster, options?.directory);
+    identifyUserForMetrics(
+      user,
+      project,
+      cluster as string,
+      options?.directory
+    );
   }, [project, cluster, user]);
 
   if (!firebaseDone) {

@@ -27,7 +27,7 @@ export const useCluster = () => {
 
 export const useAppsApiBaseUrl = (sdkClientBaseUrl: string): string => {
   const cluster = getCluster();
-  const clusterEnv = parseEnvFromCluster(cluster);
+  const clusterEnv = parseEnvFromCluster(cluster as string);
   const env =
     clusterEnv === '' ? parseEnvFromCluster(sdkClientBaseUrl) : clusterEnv;
   const stagingPart = isProduction ? '' : 'staging';

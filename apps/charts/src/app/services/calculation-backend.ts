@@ -65,7 +65,7 @@ async function getConfig(sdk: CogniteClient): Promise<Configuration> {
   return new Configuration({
     ...(backendServiceBaseUrlFromQuery
       ? { basePath: backendServiceBaseUrlFromQuery }
-      : { basePath: getBackendServiceBaseUrl(cluster) }),
+      : { basePath: getBackendServiceBaseUrl(cluster as string) }),
     accessToken: Authorization.replace(/Bearer /, ''),
   });
 }
