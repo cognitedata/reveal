@@ -1,13 +1,16 @@
 import React, { useState, useEffect, SyntheticEvent } from 'react';
+
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Modal, Input, Form, Alert } from 'antd';
+
 import { Button } from '@cognite/cogs.js';
-import { useMutation, useQueryCache } from 'react-query';
-import { createFunctionCall, isOIDCFlow } from 'utils/api';
-import FunctionCallStatus from 'components/FunctionCallStatus';
-import FunctionCallResponse from 'components/FunctionCallResponse';
-import ErrorFeedback from 'components/Common/atoms/ErrorFeedback';
-import { callsKey, sortFunctionKey } from 'utils/queryKeys';
-import { useCall, useFunction } from 'utils/hooks';
+
+import ErrorFeedback from '../../components/Common/atoms/ErrorFeedback';
+import FunctionCallResponse from '../../components/FunctionCallResponse';
+import FunctionCallStatus from '../../components/FunctionCallStatus';
+import { createFunctionCall, isOIDCFlow } from '../../utils/api';
+import { useCall, useFunction } from '../../utils/hooks';
+import { callsKey, sortFunctionKey } from '../../utils/queryKeys';
 
 const canParseInputData = (inputData: string) => {
   if (inputData === '') {
@@ -30,7 +33,7 @@ type Props = {
 };
 
 export default function CallFunctionModal({ id, closeModal }: Props) {
-  const queryCache = useQueryCache();
+  const queryClient = useQueryClient();
   const [updateInterval, setUpdateInteval] = useState<number | false>(1000);
   const [inputData, setInputData] = useState('');
   // The statefull `callId` could be replaced with wrapping the
@@ -38,13 +41,16 @@ export default function CallFunctionModal({ id, closeModal }: Props) {
   // not be possible to start a new call when one is already running.
   const [callId, setCallId] = useState<number | undefined>();
 
-  const [
-    createCall,
-    { data, isSuccess: callCreated, isLoading, error },
-  ] = useMutation(createFunctionCall, {
+  const {
+    mutate: createCall,
+    data,
+    isSuccess: callCreated,
+    isLoading,
+    error,
+  } = useMutation(createFunctionCall, {
     onSuccess() {
-      queryCache.invalidateQueries(callsKey({ id }));
-      queryCache.invalidateQueries(sortFunctionKey);
+      queryClient.invalidateQueries(callsKey({ id }));
+      queryClient.invalidateQueries([sortFunctionKey]);
     },
   });
 
@@ -150,18 +156,20 @@ export default function CallFunctionModal({ id, closeModal }: Props) {
           <FunctionCallStatus id={id} callId={callId} />
         </Form.Item>
         <Form.Item label="Call response">
-          {error && (
-            <Alert
-              type="error"
-              message="Error"
-              description={
-                <>
-                  <p>An error occured when calling the function.</p>
-                  <ErrorFeedback error={error} />
-                </>
-              }
-            />
-          )}
+          <>
+            {error && (
+              <Alert
+                type="error"
+                message="Error"
+                description={
+                  <>
+                    <p>An error occured when calling the function.</p>
+                    <ErrorFeedback error={error} />
+                  </>
+                }
+              />
+            )}
+          </>
           <FunctionCallResponse id={id} callId={data?.id} />
         </Form.Item>
       </Form>

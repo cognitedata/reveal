@@ -1,14 +1,15 @@
-import React from 'react';
-import moment from 'moment';
-import { Alert, Table } from 'antd';
-import { Call } from 'types';
+import React, { useEffect } from 'react';
 
-import ViewLogsButton from 'components/buttons/ViewLogsButton';
-import ViewResponseButton from 'components/buttons/ViewResponseButton';
-import LoadingIcon from 'components/LoadingIcon';
-import FunctionCallStatus from 'components/FunctionCallStatus';
-import FunctionCall from 'components/FunctionCall';
-import { useCalls } from 'utils/hooks';
+import { Alert, Table } from 'antd';
+import moment from 'moment';
+
+import ViewLogsButton from '../components/buttons/ViewLogsButton';
+import ViewResponseButton from '../components/buttons/ViewResponseButton';
+import FunctionCall from '../components/FunctionCall';
+import FunctionCallStatus from '../components/FunctionCallStatus';
+import LoadingIcon from '../components/LoadingIcon';
+import { Call } from '../types';
+import { useCalls } from '../utils/hooks';
 
 const callTableColumns = [
   {
@@ -19,7 +20,7 @@ const callTableColumns = [
         <FunctionCall
           id={call.functionId}
           callId={call.id}
-          renderCall={c => {
+          renderCall={(c) => {
             const startTime = moment.utc(c.startTime);
             const timeSince = moment(startTime).fromNow();
             return <>{timeSince}</>;
@@ -36,7 +37,7 @@ const callTableColumns = [
         <FunctionCall
           id={call.functionId}
           callId={call.id}
-          renderCall={c => {
+          renderCall={(c) => {
             // If the function isn't finished yet, show current duration with end time being now
             const endTime = moment.utc(c.endTime) || moment.utc(new Date());
             const startTime = moment.utc(c.startTime);
@@ -94,6 +95,9 @@ type Props = {
 
 export default function FunctionCalls({ id, name, scheduleId }: Props) {
   const { data, isFetched, error } = useCalls({ id, scheduleId });
+  useEffect(() => {
+    console.log('useCalls has data', data);
+  }, [data]);
   const functionCalls = data || [];
 
   if (error) {
@@ -110,8 +114,8 @@ export default function FunctionCalls({ id, name, scheduleId }: Props) {
 
   return (
     <Table
-      rowKey={call => call.id.toString()}
-      pagination={{ pageSize: 25 }}
+      rowKey={(call) => call.id.toString()}
+      pagination={{ pageSize: 25, showSizeChanger: false }}
       dataSource={functionCalls}
       columns={callTableColumns}
     />

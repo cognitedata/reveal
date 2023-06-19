@@ -1,5 +1,6 @@
-import { QueryKey } from 'react-query';
-import { GetCallArgs } from 'types';
+import { QueryKey } from '@tanstack/react-query';
+
+import { GetCallArgs, GetCallsArgs } from '../types';
 
 type CallsArg = {
   id: number;
@@ -11,7 +12,7 @@ export function callsKey(args: CallsArg | CallsArg[]): QueryKey {
 export function callKey(args: GetCallArgs): QueryKey {
   return [callPrefix, args];
 }
-export function logsKey(args: GetCallArgs): QueryKey {
+export function logsKey(args: GetCallsArgs): QueryKey {
   return ['/function/logs', args];
 }
 export function responseKey(args: GetCallArgs): QueryKey {

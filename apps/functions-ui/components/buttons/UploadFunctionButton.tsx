@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
+
 import { Button } from '@cognite/cogs.js';
 
-import UploadFunctionModal from 'components/FunctionModals/UploadFunctionModal';
+import UploadFunctionModal from '../../components/FunctionModals/UploadFunctionModal';
 
 export default function UploadFunctionButton() {
   const [showModal, setShowModal] = useState(false);
@@ -13,7 +14,7 @@ export default function UploadFunctionButton() {
         style={{
           justifyContent: 'center',
         }}
-        onClick={e => {
+        onClick={(e) => {
           e.stopPropagation();
           setShowModal(true);
         }}

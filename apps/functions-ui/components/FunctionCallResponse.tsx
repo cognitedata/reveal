@@ -1,5 +1,7 @@
 import React from 'react';
-import { useResponse } from 'utils/hooks';
+
+import { useResponse } from '../utils/hooks';
+
 import FunctionCall from './FunctionCall';
 
 const loading = <> No results available yet</>;
@@ -36,7 +38,7 @@ export default function FunctionCallReponse({ id, callId }: Props) {
       id={id}
       callId={callId}
       renderLoading={() => loading}
-      renderCall={response => {
+      renderCall={(response) => {
         switch (response?.status) {
           case 'Running': {
             return loading;

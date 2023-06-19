@@ -1,16 +1,19 @@
 import React from 'react';
+
 import styled from 'styled-components';
 
-import { Icon } from '@cognite/cogs.js';
 import { Tag, Row, Col } from 'antd';
-import { Call } from 'types';
 import moment from 'moment';
-import DeleteFunctionButton from 'components/buttons/DeleteFunctionButton';
-import CallFunctionButton from 'components/buttons/CallFunctionButton';
-import FunctionCallStatus from 'components/FunctionCallStatus';
-import LastFunctionCall from 'components/LastFunctionCall';
-import FunctionScheduleIndicator from 'components/FunctionScheduleIndicator';
-import FunctionStatus from 'components/FunctionStatus';
+
+import { Icon } from '@cognite/cogs.js';
+
+import CallFunctionButton from '../../components/buttons/CallFunctionButton';
+import DeleteFunctionButton from '../../components/buttons/DeleteFunctionButton';
+import FunctionCallStatus from '../../components/FunctionCallStatus';
+import FunctionScheduleIndicator from '../../components/FunctionScheduleIndicator';
+import FunctionStatus from '../../components/FunctionStatus';
+import LastFunctionCall from '../../components/LastFunctionCall';
+import { Call } from '../../types';
 
 type Props = {
   id: number;
@@ -26,7 +29,7 @@ const Center = styled('div')`
 
 export default function FunctionPanelHeader({ id, name }: Props) {
   return (
-    <Row type="flex" justify="space-between" align="middle">
+    <Row justify="space-between" align="middle">
       <Col span={14}>
         {name}
         <FunctionScheduleIndicator id={id} />

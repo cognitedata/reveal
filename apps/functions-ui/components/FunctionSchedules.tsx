@@ -1,16 +1,17 @@
 import React from 'react';
-import moment from 'moment';
-import cronstrue from 'cronstrue';
+
 import { Table, Alert, List } from 'antd';
+import cronstrue from 'cronstrue';
+import moment from 'moment';
 
-import { Schedule } from 'types';
+import CreateScheduleButton from '../components/buttons/CreateScheduleButton';
+import DeleteScheduleButton from '../components/buttons/DeleteScheduleButton';
+import ViewInputDataButton from '../components/buttons/ViewInputDataButton';
+import LoadingIcon from '../components/LoadingIcon';
+import { Schedule } from '../types';
+import { isOIDCFlow } from '../utils/api';
+import { useSchedules } from '../utils/hooks';
 
-import DeleteScheduleButton from 'components/buttons/DeleteScheduleButton';
-import CreateScheduleButton from 'components/buttons/CreateScheduleButton';
-import ViewInputDataButton from 'components/buttons/ViewInputDataButton';
-import LoadingIcon from 'components/LoadingIcon';
-import { useSchedules } from 'utils/hooks';
-import { isOIDCFlow } from 'utils/api';
 import FunctionCalls from './FunctionCalls';
 
 const scheduleTableColumns = [
@@ -71,7 +72,7 @@ export default function FunctionSchedules({ externalId, id }: Props) {
   const { data, isFetched, error } = useSchedules();
   const schedules =
     data
-      ?.filter(s => {
+      ?.filter((s) => {
         return (
           (s.functionExternalId && s.functionExternalId === externalId) ||
           (s.functionId && s.functionId === id)
@@ -105,8 +106,8 @@ export default function FunctionSchedules({ externalId, id }: Props) {
         <CreateScheduleButton externalId={externalId} id={id} />
       ) : null}
       <Table
-        rowKey={s => s.id.toString()}
-        pagination={{ pageSize: 25 }}
+        rowKey={(s) => s.id.toString()}
+        pagination={{ pageSize: 25, showSizeChanger: false }}
         dataSource={schedules}
         columns={scheduleTableColumns}
         expandedRowRender={(s: Schedule) => {

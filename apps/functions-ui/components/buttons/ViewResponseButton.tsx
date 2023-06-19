@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
+
 import { Button } from '@cognite/cogs.js';
 
-import FunctionCallResponseModal from 'components/FunctionModals/FunctionCallResponseModal';
+import FunctionCallResponseModal from '../../components/FunctionModals/FunctionCallResponseModal';
 
 type Props = {
   id: number;
@@ -17,7 +18,7 @@ export default function ViewResponseButton({ id, callId }: Props) {
         style={{
           justifyContent: 'center',
         }}
-        onClick={e => {
+        onClick={(e) => {
           e.stopPropagation();
           setShowModal(true);
         }}

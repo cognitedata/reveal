@@ -1,5 +1,6 @@
-import { Secret } from 'components/FunctionModals/UploadFunctionModal';
 import { UploadFile } from 'antd/lib/upload/interface';
+
+import { Secret } from '../components/FunctionModals/UploadFunctionModal';
 
 export const getAllSecretKeys = (secrets: Secret[]) => {
   const keys = [] as string[];
@@ -45,7 +46,7 @@ export const checkSecretKey = (key: string, allKeys: string[]) => {
       message: 'Only lowercase letters, digits, & dashes allowed',
     };
   }
-  if (allKeys.filter(k => k === key).length > 1) {
+  if (allKeys.filter((k) => k === key).length > 1) {
     return {
       error: true,
       message: 'Keys must be unique',
@@ -70,7 +71,7 @@ export const checkMetadataKey = (key: string, allKeys: string[]) => {
       message: 'Max 32 characters',
     };
   }
-  if (allKeys.filter(k => k === key).length > 1) {
+  if (allKeys.filter((k) => k === key).length > 1) {
     return {
       error: true,
       message: 'Metadata key must be unique',

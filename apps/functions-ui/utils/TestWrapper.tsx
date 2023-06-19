@@ -1,14 +1,11 @@
 import React from 'react';
-import { QueryCache, ReactQueryCacheProvider, setConsole } from 'react-query';
 import { MemoryRouter } from 'react-router';
 
-export default function TestWrapper({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const queryCache = new QueryCache({
-    defaultConfig: {
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+export default function TestWrapper({ children }: { children: any }) {
+  const client = new QueryClient({
+    defaultOptions: {
       queries: {
         retry: false,
         staleTime: 60000,
@@ -16,15 +13,10 @@ export default function TestWrapper({
       },
     },
   });
-  setConsole({
-    log: () => {},
-    warn: () => {},
-    error: () => {},
-  });
 
   return (
-    <ReactQueryCacheProvider queryCache={queryCache}>
+    <QueryClientProvider client={client}>
       <MemoryRouter>{children}</MemoryRouter>
-    </ReactQueryCacheProvider>
+    </QueryClientProvider>
   );
 }

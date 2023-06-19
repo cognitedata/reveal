@@ -1,7 +1,9 @@
 import React from 'react';
+
 import { Tag } from 'antd';
-import LoadingIcon from 'components/LoadingIcon';
-import { useFunction } from 'utils/hooks';
+
+import LoadingIcon from '../components/LoadingIcon';
+import { useFunction } from '../utils/hooks';
 
 type Props = {
   id: number;

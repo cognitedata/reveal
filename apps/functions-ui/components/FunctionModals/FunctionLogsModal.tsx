@@ -1,13 +1,17 @@
 import React, { useState, SyntheticEvent } from 'react';
+
+import { useQueryClient } from '@tanstack/react-query';
 import { Modal, Input, Alert } from 'antd';
-import { Icon, Button } from '@cognite/cogs.js';
 import moment from 'moment';
-import { Call, Log } from 'types';
-import Highlighter from 'react-highlight-words';
-import { useQueryCache } from 'react-query';
-import { logsKey, callKey } from 'utils/queryKeys';
-import ErrorFeedback from 'components/Common/atoms/ErrorFeedback';
-import { useCall, useLogs } from 'utils/hooks';
+
+import { Icon, Button } from '@cognite/cogs.js';
+
+import ErrorFeedback from '../../components/Common/atoms/ErrorFeedback';
+// import Highlighter from 'react-highlight-words';
+import { Call, Log } from '../../types';
+import { useCall, useLogs } from '../../utils/hooks';
+import { logsKey, callKey } from '../../utils/queryKeys';
+
 import NoLogs from './icons/emptyLogs';
 
 type Props = {
@@ -60,7 +64,7 @@ function ModalBody({ logs, call, errors, fetched }: BodyProps) {
         name="filter"
         prefix={<Icon type="Search" />}
         value={logsSearch}
-        onChange={evt => setLogsSearch(evt.target.value)}
+        onChange={(evt) => setLogsSearch(evt.target.value)}
         style={{ marginBottom: '16px' }}
       />
       <p>
@@ -72,12 +76,13 @@ function ModalBody({ logs, call, errors, fetched }: BodyProps) {
       <p key={`${call?.id}-logs`}>
         {logs?.map((log: Log, index) => (
           <React.Fragment key={index}>
-            <Highlighter
+            {log.message}
+            {/* <Highlighter
               highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
               searchWords={[logsSearch]}
               autoEscape
               textToHighlight={log.message}
-            />
+            /> */}
             <br />
           </React.Fragment>
         ))}
@@ -95,7 +100,7 @@ function ModalBody({ logs, call, errors, fetched }: BodyProps) {
 }
 
 export default function ViewLogsModal({ onCancel, id, callId }: Props) {
-  const queryCache = useQueryCache();
+  const client = useQueryClient();
   const {
     data: logs,
     isFetching: logsFetching,
@@ -117,8 +122,8 @@ export default function ViewLogsModal({ onCancel, id, callId }: Props) {
 
   const update = (e: SyntheticEvent) => {
     e.preventDefault();
-    queryCache.invalidateQueries(callKey({ id, callId }));
-    queryCache.invalidateQueries(logsKey({ id, callId }));
+    client.invalidateQueries(callKey({ id, callId }));
+    client.invalidateQueries(logsKey({ id, scheduleId: callId }));
   };
 
   return (

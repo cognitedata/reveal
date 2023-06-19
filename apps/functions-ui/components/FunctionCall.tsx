@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
-import { CallResponse } from 'types';
-import { useCall } from 'utils/hooks';
+import { CallResponse } from '../types';
+import { useCall } from '../utils/hooks';
 
 interface Props {
   id: number;

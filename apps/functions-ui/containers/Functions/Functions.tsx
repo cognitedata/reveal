@@ -1,25 +1,25 @@
 import React, { useState } from 'react';
-import { Row, Collapse, Input, Pagination, Select, Alert } from 'antd';
-import { Colors, Button, Icon } from '@cognite/cogs.js';
 
 import styled from 'styled-components';
 
+import { Row, Collapse, Input, Pagination, Select, Alert } from 'antd';
+
 import { PageTitle } from '@cognite/cdf-utilities';
-import { CogFunction } from 'types';
+import { Colors, Button, Icon } from '@cognite/cogs.js';
 
-import { recentlyCreated, sortLastCall } from 'utils/sorting';
-import FunctionPanelHeader from 'containers/Functions/FunctionPanelHeader';
-import FunctionPanelContent from 'containers/Functions/FunctionPanelContent';
-import UploadFunctionButton from 'components/buttons/UploadFunctionButton';
-
+import UploadFunctionButton from '../../components/buttons/UploadFunctionButton';
+import { Loader } from '../../components/Common';
+import FunctionPanelContent from '../../containers/Functions/FunctionPanelContent';
+import FunctionPanelHeader from '../../containers/Functions/FunctionPanelHeader';
+import { CogFunction } from '../../types';
 import {
   useActivateFunction,
   useCheckActivateFunction,
   useFunctions,
   useMultipleCalls,
   useRefreshApp,
-} from 'utils/hooks';
-import { Loader } from 'components/Common';
+} from '../../utils/hooks';
+import { recentlyCreated, sortLastCall } from '../../utils/sorting';
 
 const CollapseDiv = styled.div`
   .ant-collapse-header[aria-expanded='true'] {
@@ -40,29 +40,30 @@ function Functions() {
     isError,
     error: activationError,
   } = useCheckActivateFunction();
-  const [mutate] = useActivateFunction();
+  const { mutate } = useActivateFunction();
 
   const refresh = useRefreshApp();
   const [currentPage, setCurrentPage] = useState(1);
 
   const [functionFilter, setFunctionFilter] = useState('');
   type SortFunctions = 'recentlyCreated' | 'recentlyCalled';
-  const [sortFunctionCriteria, setSortFunctionCriteria] = useState<
-    SortFunctions
-  >('recentlyCalled');
+  const [sortFunctionCriteria, setSortFunctionCriteria] =
+    useState<SortFunctions>('recentlyCalled');
 
   const {
     data: functions,
     isFetching,
     isFetched: functionsDone,
-  } = useFunctions({ enabled: !isError && activation?.status === 'activated' });
+  } = useFunctions({
+    enabled: !isError && activation?.status === 'activated',
+  });
 
   const functionIds = functions
     ?.sort(({ id: id1 }, { id: id2 }) => id1 - id2)
     .map(({ id }) => ({ id }));
 
   const { data: calls, isFetched: callsDone } = useMultipleCalls(functionIds!, {
-    enabled: functionsDone && functionIds,
+    enabled: Boolean(functionsDone && functionIds),
   });
 
   const { Panel } = Collapse;
@@ -149,6 +150,7 @@ function Functions() {
         prefix={
           <Icon
             type="Search"
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             style={{
               height: '16px',
@@ -158,7 +160,7 @@ function Functions() {
         }
         placeholder="Search by name, external id, or owner"
         value={functionFilter}
-        onChange={evt => setFunctionFilter(evt.target.value)}
+        onChange={(evt) => setFunctionFilter(evt.target.value)}
         allowClear
       />
       <b>Sort by: </b>
@@ -203,8 +205,9 @@ function Functions() {
             current={currentPage}
             total={filteredFunctions?.length}
             defaultPageSize={FUNCTIONS_PER_PAGE}
-            onChange={page => setCurrentPage(page)}
+            onChange={(page) => setCurrentPage(page)}
             style={{ float: 'right', marginTop: '8px' }}
+            showSizeChanger={false}
           />
         </CollapseDiv>
       </div>

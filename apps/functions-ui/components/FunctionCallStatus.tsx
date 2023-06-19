@@ -1,7 +1,10 @@
 import React from 'react';
+
 import { Tag } from 'antd';
-import { CallResponse } from 'types';
-import LoadingIcon from 'components/LoadingIcon';
+
+import LoadingIcon from '../components/LoadingIcon';
+import { CallResponse } from '../types';
+
 import FunctionCall from './FunctionCall';
 
 type Props = {
@@ -32,7 +35,7 @@ export default function FunctionCallStatus({ id, callId }: Props) {
       id={id}
       callId={callId}
       renderLoading={() => <LoadingIcon />}
-      renderCall={response => <InnerFunctionCallStatus response={response} />}
+      renderCall={(response) => <InnerFunctionCallStatus response={response} />}
     />
   );
 }

@@ -1,10 +1,11 @@
 import React from 'react';
+
 import { Tabs } from 'antd';
 
-import FunctionDetails from 'components/FunctionDetails';
-import FunctionCalls from 'components/FunctionCalls';
-import FunctionSchedules from 'components/FunctionSchedules';
-import FunctionErrors from 'components/FunctionErrors';
+import FunctionCalls from '../../components/FunctionCalls';
+import FunctionDetails from '../../components/FunctionDetails';
+import FunctionErrors from '../../components/FunctionErrors';
+import FunctionSchedules from '../../components/FunctionSchedules';
 
 type Props = {
   id: number;

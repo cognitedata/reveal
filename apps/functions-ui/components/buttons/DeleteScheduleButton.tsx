@@ -1,23 +1,30 @@
 import React, { useEffect } from 'react';
-import { Button } from '@cognite/cogs.js';
+
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Modal, notification } from 'antd';
-import { useMutation, useQueryCache } from 'react-query';
-import { deleteSchedule } from 'utils/api';
+import _ from 'lodash';
+
+import { Button } from '@cognite/cogs.js';
+
+import { deleteSchedule } from '../../utils/api';
+import { allSchedulesKey } from '../../utils/queryKeys';
 
 type Props = {
   id: number;
 };
 
 export default function DeleteScheduleButton({ id }: Props) {
-  const queryCache = useQueryCache();
-  const [doDelete, { isLoading, isSuccess, isError }] = useMutation(
-    deleteSchedule,
-    {
-      onSuccess() {
-        queryCache.invalidateQueries('/functions/schedules');
-      },
-    }
-  );
+  const client = useQueryClient();
+  const {
+    mutate: doDelete,
+    isLoading,
+    isSuccess,
+    isError,
+  } = useMutation(deleteSchedule, {
+    onSuccess() {
+      client.invalidateQueries([allSchedulesKey]);
+    },
+  });
 
   useEffect(() => {
     if (isSuccess) {
@@ -40,7 +47,7 @@ export default function DeleteScheduleButton({ id }: Props) {
   return (
     <Button
       icon={isLoading ? 'Loader' : 'Delete'}
-      onClick={e => {
+      onClick={(e) => {
         e.stopPropagation();
         Modal.confirm({
           title: 'Are you sure?',
@@ -48,7 +55,7 @@ export default function DeleteScheduleButton({ id }: Props) {
           onOk: () => {
             doDelete(id);
           },
-          onCancel: () => {},
+          onCancel: _.noop,
           okText: 'Delete',
         });
       }}

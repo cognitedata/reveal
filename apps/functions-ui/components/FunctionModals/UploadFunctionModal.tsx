@@ -1,8 +1,10 @@
-/* eslint-disable prettier/prettier */
 /* eslint-disable react/no-array-index-key */
 
 import React, { useState } from 'react';
+
 import styled from 'styled-components';
+
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   Modal,
   Form,
@@ -14,12 +16,18 @@ import {
   Col,
   notification,
 } from 'antd';
-import { Button, Icon, Dropdown, Tooltip, Menu } from '@cognite/cogs.js';
 import { UploadChangeParam } from 'antd/lib/upload';
 import { UploadFile } from 'antd/lib/upload/interface';
-import Link from 'components/Link';
-import { useMutation, useQueryCache } from 'react-query';
-import { uploadFunction } from 'utils/api';
+
+import { Button, Icon, Dropdown, Tooltip, Menu } from '@cognite/cogs.js';
+
+import ErrorFeedback from '../../components/Common/atoms/ErrorFeedback';
+import FunctionMetadata, {
+  MetaType,
+} from '../../components/FunctionModals/FunctionMetadata';
+import Link from '../../components/Link';
+import { CogFunctionLimit, Runtime } from '../../types';
+import { uploadFunction } from '../../utils/api';
 import {
   checkSecretKey,
   getAllSecretKeys,
@@ -31,14 +39,9 @@ import {
   checkSecrets,
   checkFile,
   checkFloat,
-} from 'utils/formValidations';
-import ErrorFeedback from 'components/Common/atoms/ErrorFeedback';
-import { allFunctionsKey } from 'utils/queryKeys';
-import { CogFunctionLimit, Runtime } from 'types';
-import FunctionMetadata, {
-  MetaType,
-} from 'components/FunctionModals/FunctionMetadata';
-import { useLimits } from 'utils/hooks';
+} from '../../utils/formValidations';
+import { useLimits } from '../../utils/hooks';
+import { allFunctionsKey } from '../../utils/queryKeys';
 
 export interface Secret {
   key: string;
@@ -83,22 +86,23 @@ const limitDefaults: CogFunctionLimit = {
 };
 
 export default function UploadFunctionModal({ onCancel }: Props) {
-  const queryCache = useQueryCache();
+  const client = useQueryClient();
   const { data: limits = limitDefaults } = useLimits();
-
-  const [doUploadFunction, { isLoading, isError, error }] = useMutation(
-    uploadFunction,
-    {
-      onSuccess(id) {
-        notification.success({
-          message: 'Function created',
-          description: `Fuction ${id} was successfully created`,
-        });
-        queryCache.invalidateQueries(allFunctionsKey);
-        onCancel();
-      },
-    }
-  );
+  const {
+    mutate: doUploadFunction,
+    isLoading,
+    isError,
+    error,
+  } = useMutation(uploadFunction, {
+    onSuccess(id) {
+      notification.success({
+        message: 'Function created',
+        description: `Fuction ${id} was successfully created`,
+      });
+      client.invalidateQueries([allFunctionsKey]);
+      onCancel();
+    },
+  });
 
   const disableForm = isLoading;
 
@@ -119,7 +123,7 @@ export default function UploadFunctionModal({ onCancel }: Props) {
   const [dataSetId, setDataSetId] = useState<undefined | number>(undefined);
 
   const addSecret = () => {
-    setSecrets(prevSecrets => [
+    setSecrets((prevSecrets) => [
       ...prevSecrets,
       { key: '', value: '', keyTouched: false, valueTouched: false } as Secret,
     ]);
@@ -213,8 +217,8 @@ export default function UploadFunctionModal({ onCancel }: Props) {
 
   return (
     <Modal
+      open
       title="Upload Function"
-      visible
       width="975px"
       style={{ top: 20 }}
       onCancel={onCancel}
@@ -296,7 +300,10 @@ export default function UploadFunctionModal({ onCancel }: Props) {
                 name="datasetId"
                 style={{ width: '100%' }}
                 value={dataSetId}
-                onChange={value => setDataSetId(value)}
+                onChange={(value) => {
+                  // eslint-disable-next-line no-unused-expressions
+                  value && setDataSetId(value);
+                }}
               />
             </Form.Item>
           </Col>
@@ -419,7 +426,7 @@ export default function UploadFunctionModal({ onCancel }: Props) {
               <Dropdown
                 content={
                   <Menu>
-                    {runtimes.map(rt => (
+                    {runtimes.map((rt) => (
                       <Menu.Item key={rt.value} onClick={() => setRuntime(rt)}>
                         {rt.label}
                       </Menu.Item>
@@ -434,7 +441,7 @@ export default function UploadFunctionModal({ onCancel }: Props) {
             </Form.Item>
             <Form.Item label="Secrets">
               {secrets.map((s: Secret, index) => (
-                <Row type="flex" key={`secret-${index}`}>
+                <Row key={`secret-${index}`}>
                   <Col span={10}>
                     <Form.Item
                       label="Key"
@@ -495,6 +502,7 @@ export default function UploadFunctionModal({ onCancel }: Props) {
                         <Icon
                           type="Delete"
                           size={22}
+                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                           // @ts-ignore
                           style={{ left: -6, position: 'relative' }}
                         />
@@ -510,6 +518,7 @@ export default function UploadFunctionModal({ onCancel }: Props) {
                   <Icon
                     type="Add"
                     size={22}
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                     // @ts-ignore
                     style={{ left: -12, position: 'relative' }}
                   />

@@ -1,7 +1,8 @@
 import React from 'react';
-import { Icon } from 'antd';
-import { Tooltip } from '@cognite/cogs.js';
-import { useSchedules } from 'utils/hooks';
+
+import { Tooltip, Icon } from '@cognite/cogs.js';
+
+import { useSchedules } from '../utils/hooks';
 
 type Props = {
   id?: number;
@@ -9,14 +10,15 @@ type Props = {
 export default function FunctionScheduleIndicator({ id }: Props) {
   const { data: scheduleResponse } = useSchedules();
 
-  const schedules = scheduleResponse?.filter(s => s.functionId === id) || [];
+  const schedules = scheduleResponse?.filter((s) => s.functionId === id) || [];
 
   if (schedules.length > 0) {
     return (
       <Tooltip placement="top" content={`Has ${schedules.length} schedules`}>
         <Icon
-          type="clock-circle"
-          theme="twoTone"
+          type="Clock"
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
           style={{ marginLeft: '8px', verticalAlign: 'text-top' }}
         />
       </Tooltip>

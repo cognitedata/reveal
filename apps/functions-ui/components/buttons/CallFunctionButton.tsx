@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
+
 import { Button, Tooltip } from '@cognite/cogs.js';
 
-import CallFunctionModal from 'components/FunctionModals/CallFunctionModal';
-import { useFunction } from 'utils/hooks';
+import CallFunctionModal from '../../components/FunctionModals/CallFunctionModal';
+import { useFunction } from '../../utils/hooks';
 
 type Props = {
   id: number;
@@ -22,7 +23,7 @@ export default function CallFunctionButton({ id }: Props) {
             justifyContent: 'center',
           }}
           disabled={fn?.status !== 'Ready'}
-          onClick={e => {
+          onClick={(e) => {
             e.stopPropagation();
             setShowModal(true);
           }}

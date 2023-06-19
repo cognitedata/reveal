@@ -1,5 +1,6 @@
 import React from 'react';
-import { isProduction } from 'utils/environment';
+
+import { isProduction } from '../utils/environment';
 
 type Props = {
   children: React.ReactNode;

@@ -1,9 +1,16 @@
 import React, { useState, useEffect } from 'react';
+
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Modal, Form, Input, Alert, notification } from 'antd';
-import { Button, Tooltip } from '@cognite/cogs.js';
 import { isValidCron } from 'cron-validator';
-import { useMutation, useQueryCache } from 'react-query';
-import { createSchedule as createScheduleApi, isOIDCFlow } from 'utils/api';
+
+import { Button, Tooltip } from '@cognite/cogs.js';
+
+import {
+  createSchedule as createScheduleApi,
+  isOIDCFlow,
+} from '../../utils/api';
+import { allSchedulesKey } from '../../utils/queryKeys';
 
 const isValidData = (data: string) => {
   if (data === '') {
@@ -41,7 +48,7 @@ export default function CreateScheduleModal({
   externalId,
   onCancel,
 }: Props) {
-  const queryCache = useQueryCache();
+  const queryCache = useQueryClient();
 
   const [scheduleName, setScheduleName] = useState({
     value: '',
@@ -79,12 +86,15 @@ export default function CreateScheduleModal({
     setData(evt.target.value);
   };
 
-  const [
-    triggerCreateSchedule,
-    { isLoading, isSuccess, isError, error },
-  ] = useMutation(createScheduleApi, {
+  const {
+    mutate: triggerCreateSchedule,
+    isLoading,
+    isSuccess,
+    isError,
+    error,
+  } = useMutation(createScheduleApi, {
     onSuccess() {
-      queryCache.invalidateQueries('/functions/schedules');
+      queryCache.invalidateQueries([allSchedulesKey]);
       onCancel();
     },
   });

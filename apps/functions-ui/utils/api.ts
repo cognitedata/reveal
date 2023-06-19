@@ -1,5 +1,13 @@
+import { QueryKey } from '@tanstack/react-query';
+import { UploadFile } from 'antd/lib/upload/interface';
+import _ from 'lodash';
+
 import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
-import { QueryKey } from 'react-query';
+import { getProject } from '@cognite/cdf-utilities';
+import UploadGCS from '@cognite/gcs-browser-upload';
+import { FileUploadResponse } from '@cognite/sdk';
+
+import { sleep } from '../helpers';
 import {
   CogFunctionUpload,
   CogFunction,
@@ -8,12 +16,8 @@ import {
   GetCallsArgs,
   Call,
   CreateScheduleApiParams,
-} from 'types';
-import { FileUploadResponse } from '@cognite/sdk';
-import { UploadFile } from 'antd/lib/upload/interface';
-import UploadGCS from '@cognite/gcs-browser-upload';
-import { getProject } from '@cognite/cdf-utilities';
-import { sleep } from 'helpers';
+} from '../types';
+
 import { newestCall } from './sorting';
 
 // Using react-query#useQuery calls the function with a QueryKey as the first
@@ -28,7 +32,7 @@ const getCallsSdk = ({ id, scheduleId }: GetCallsArgs): Promise<Call[]> => {
     .post(`/api/v1/projects/${getProject()}/functions/${id}/calls/list`, {
       data: { filter },
     })
-    .then(response => response.data?.items);
+    .then((response) => response.data?.items);
 };
 
 export const getCalls = async (_: QueryKey, args: GetCallsArgs) => {
@@ -36,7 +40,7 @@ export const getCalls = async (_: QueryKey, args: GetCallsArgs) => {
 };
 
 export const getLatestCalls = async (_: QueryKey, args: GetCallsArgs[]) => {
-  const requests = args.map(a => getCallsSdk(a));
+  const requests = args.map((a) => getCallsSdk(a));
   const results = await Promise.all(requests);
   return args.reduce(
     (accl, { id }, index) => ({
@@ -56,7 +60,7 @@ export const getCall = (_: QueryKey, { id, callId }: GetCallArgs) => {
   }
   return sdk
     .get(`/api/v1/projects/${getProject()}/functions/${id}/calls/${callId}`)
-    .then(response => response.data);
+    .then((response) => response.data);
 };
 
 type GetResponseArgs = {
@@ -74,7 +78,7 @@ export const getResponse = (_: QueryKey, { id, callId }: GetResponseArgs) => {
     .get(
       `/api/v1/projects/${getProject()}/functions/${id}/calls/${callId}/response`
     )
-    .then(response => response?.data?.response);
+    .then((response) => response?.data?.response);
 };
 
 export const getLogs = (_: QueryKey, { id, callId }: GetResponseArgs) => {
@@ -88,7 +92,7 @@ export const getLogs = (_: QueryKey, { id, callId }: GetResponseArgs) => {
     .get(
       `/api/v1/projects/${getProject()}/functions/${id}/calls/${callId}/logs`
     )
-    .then(response => response?.data?.items);
+    .then((response) => response?.data?.items);
 };
 
 export const createFunctionCall = async ({
@@ -109,7 +113,7 @@ export const createFunctionCall = async ({
     .post(`/api/v1/projects/${getProject()}/functions/${id}/call`, {
       data: { data: data || {}, nonce },
     })
-    .then(response => response?.data);
+    .then((response) => response?.data);
 };
 
 export const createSchedule = async ({
@@ -122,7 +126,7 @@ export const createSchedule = async ({
     .post(`/api/v1/projects/${getProject()}/functions/schedules`, {
       data: { items: [{ ...schedule, nonce }] },
     })
-    .then(response => response?.data);
+    .then((response) => response?.data);
 };
 
 // Get the input data for scheduling item
@@ -131,7 +135,7 @@ export const getScheduleData = (scheduleId: number) => {
     .get(
       `/api/v1/projects/${getProject()}/functions/schedules/${scheduleId}/input_data`
     )
-    .then(response => response.data?.data);
+    .then((response) => response.data?.data);
 };
 
 export const deleteSchedule = (id: number) =>
@@ -139,7 +143,7 @@ export const deleteSchedule = (id: number) =>
     .post(`/api/v1/projects/${getProject()}/functions/schedules/delete`, {
       data: { items: [{ id }] },
     })
-    .then(response => response?.data);
+    .then((response) => response?.data);
 
 const createFunction = (
   cogfunction: CogFunctionUpload
@@ -148,7 +152,7 @@ const createFunction = (
     .post(`/api/v1/projects/${getProject()}/functions`, {
       data: { items: [cogfunction] },
     })
-    .then(response => response?.data);
+    .then((response) => response?.data);
 };
 export const deleteFunction = async ({
   id,
@@ -164,7 +168,7 @@ export const deleteFunction = async ({
     .post(`/api/v1/projects/${getProject()}/functions/delete`, {
       data: { items: [{ id }] },
     })
-    .then(response => response?.data);
+    .then((response) => response?.data);
   if (fileId) {
     await sdk.files.delete([{ id: fileId }]);
   }
@@ -174,14 +178,14 @@ export const deleteFunction = async ({
 const GCSUploader = (
   file: Blob | UploadFile,
   uploadUrl: string,
-  callback: (info: any) => void = () => {}
+  callback: (info: any) => void = _.noop
 ) => {
   // This is what is recommended from google when uploading files.
   // https://github.com/QubitProducts/gcs-browser-upload
   const chunkMultiple = Math.min(
     Math.max(
       2, // 0.5MB min chunks
-      Math.ceil((file.size / 20) * 262144) // will divide into 20 segments
+      Math.ceil(((file.size || 1) / 20) * 262144) // will divide into 20 segments
     ),
     200 // 50 MB max
   );
@@ -215,13 +219,13 @@ const uploadFile = async (file: UploadFile, dataSetId: number | undefined) => {
 
   await currentUpload.start();
 
-  let fileInfo = await sdk.files.retrieve([{ id }]).then(r => r[0]);
+  let fileInfo = await sdk.files.retrieve([{ id }]).then((r) => r[0]);
   let retries = 0;
   while (!fileInfo.uploaded && retries <= 10) {
     retries += 1;
     /* eslint-disable no-await-in-loop */
     await sleep(retries * 1000);
-    fileInfo = await sdk.files.retrieve([{ id }]).then(r => r[0]);
+    fileInfo = await sdk.files.retrieve([{ id }]).then((r) => r[0]);
   }
 
   if (!fileInfo.uploaded) {
@@ -260,7 +264,7 @@ export const createSession = (clientCredentials?: {
         items: [clientCredentials || { tokenExchange: true }],
       },
     })
-    .then(response => response?.data.items[0]);
+    .then((response) => response?.data.items[0]);
 };
 
 export const isOIDCFlow = () => {

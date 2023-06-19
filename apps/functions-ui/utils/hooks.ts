@@ -1,4 +1,16 @@
-import { useQuery, QueryConfig, useQueryCache, useMutation } from 'react-query';
+import {
+  useQuery,
+  useMutation,
+  QueryOptions,
+  useQueryClient,
+  QueryObserverOptions,
+} from '@tanstack/react-query';
+import camelCase from 'lodash/camelCase';
+import mapKeys from 'lodash/mapKeys';
+
+import sdk, { getUserInformation } from '@cognite/cdf-sdk-singleton';
+import { getProject } from '@cognite/cdf-utilities';
+
 import {
   CogFunction,
   GetCallsArgs,
@@ -8,11 +20,16 @@ import {
   Log,
   Schedule,
   CogFunctionLimit,
-} from 'types';
-import sdk, { getUserInformation } from '@cognite/cdf-sdk-singleton';
-import { getProject } from '@cognite/cdf-utilities';
-import camelCase from 'lodash/camelCase';
-import mapKeys from 'lodash/mapKeys';
+} from '../types';
+
+import {
+  getCalls,
+  getCall,
+  getResponse,
+  getLogs,
+  getLatestCalls,
+  getScheduleData,
+} from './api';
 import {
   allFunctionsKey,
   allSchedulesKey,
@@ -24,29 +41,21 @@ import {
   sortFunctionKey,
   limitsKey,
 } from './queryKeys';
-import {
-  getCalls,
-  getCall,
-  getResponse,
-  getLogs,
-  getLatestCalls,
-  getScheduleData,
-} from './api';
 
-export const useFunctions = (config?: QueryConfig<CogFunction[], unknown>) => {
-  const cache = useQueryCache();
+export const useFunctions = (
+  config?: QueryObserverOptions<CogFunction[], unknown>
+) => {
+  const cache = useQueryClient();
   return useQuery<CogFunction[]>(
     [allFunctionsKey],
     () =>
       sdk
         .get(`/api/v1/projects/${getProject()}/functions`)
-        .then(r => r.data?.items),
+        .then((r) => r.data?.items),
     {
-      onSuccess: functions => {
-        functions.forEach(fn => {
-          cache.setQueryData(functionKey({ id: fn.id }), fn, {
-            initialStale: false,
-          });
+      onSuccess: (functions) => {
+        functions.forEach((fn) => {
+          cache.setQueryData(functionKey({ id: fn.id }), fn);
         });
       },
       ...config,
@@ -55,17 +64,17 @@ export const useFunctions = (config?: QueryConfig<CogFunction[], unknown>) => {
 };
 export const useFunction = (
   id: number,
-  config?: QueryConfig<CogFunction, unknown>
+  config?: QueryOptions<CogFunction, unknown>
 ) =>
   useQuery<CogFunction>(
     functionKey({ id }),
     () =>
       sdk
         .get(`/api/v1/projects/${getProject()}/functions/${id}`)
-        .then(r => r.data),
+        .then((r) => r.data),
     config
   );
-export const useSchedules = (config?: QueryConfig<Schedule[], unknown>) =>
+export const useSchedules = (config?: QueryOptions<Schedule[], unknown>) =>
   useQuery<Schedule[]>(
     [allSchedulesKey],
     () =>
@@ -73,14 +82,14 @@ export const useSchedules = (config?: QueryConfig<Schedule[], unknown>) =>
         .get(`/api/v1/projects/${getProject()}/functions/schedules`, {
           params: { limit: 1000 },
         })
-        .then(r => r.data?.items),
+        .then((r) => r.data?.items),
     config
   );
 
 type ObjectType = Record<string, any>;
 export const useRetriveScheduleInputData = (
   scheduleId: number,
-  config?: QueryConfig<ObjectType, unknown>
+  config?: QueryOptions<ObjectType, unknown>
 ) => {
   return useQuery<ObjectType>(
     [allSchedulesKey, scheduleId],
@@ -88,7 +97,7 @@ export const useRetriveScheduleInputData = (
     config
   );
 };
-export const useLimits = (config?: QueryConfig<CogFunctionLimit, unknown>) =>
+export const useLimits = (config?: QueryOptions<CogFunctionLimit, unknown>) =>
   useQuery<CogFunctionLimit>(
     [limitsKey],
     () =>
@@ -97,39 +106,49 @@ export const useLimits = (config?: QueryConfig<CogFunctionLimit, unknown>) =>
           params: { vendor: true },
         })
         .then(
-          r => mapKeys(r.data, (_, key) => camelCase(key)) as CogFunctionLimit
+          (r) => mapKeys(r.data, (_, key) => camelCase(key)) as CogFunctionLimit
         ),
     config
   );
 export const useCalls = (
   args: GetCallsArgs,
-  config?: QueryConfig<Call[], unknown>
-) => useQuery<Call[]>(callsKey(args), getCalls, config);
+  config?: QueryObserverOptions<Call[], unknown>
+) =>
+  useQuery<Call[]>(
+    callsKey(args),
+    () => getCalls(callsKey(args), args),
+    config
+  );
 
 export const useMultipleCalls = (
   args: GetCallsArgs[],
-  config?: QueryConfig<{ [id: number]: Call | undefined }, unknown>
+  config?: QueryObserverOptions<{ [id: number]: Call | undefined }, unknown>
 ) =>
   useQuery<{ [id: number]: Call | undefined }>(
     [sortFunctionKey, args],
-    getLatestCalls,
+    () => getLatestCalls([sortFunctionKey, args], args),
     config
   );
 
 export const useCall = (
   args: GetCallArgs,
-  config?: QueryConfig<Call, unknown>
-) => useQuery<Call>(callKey(args), getCall, config);
+  config?: QueryObserverOptions<Call, unknown>
+) => useQuery<Call>(callKey(args), () => getCall(callKey(args), args), config);
 
 export const useResponse = (
   args: GetCallArgs,
-  config?: QueryConfig<CallResponse, unknown>
-) => useQuery<CallResponse>(responseKey(args), getResponse, config);
+  config?: QueryOptions<CallResponse, unknown>
+) =>
+  useQuery<CallResponse>(
+    responseKey(args),
+    () => getResponse(responseKey(args), args),
+    config
+  );
 
 export const useLogs = (
   args: GetCallArgs,
-  config?: QueryConfig<Log[], unknown>
-) => useQuery<Log[]>(logsKey(args), getLogs, config);
+  config?: QueryOptions<Log[], unknown>
+) => useQuery<Log[]>(logsKey(args), () => getLogs(logsKey(args), args), config);
 
 type AssetType = 'files';
 type Method = 'retrieve' | 'filter';
@@ -140,14 +159,14 @@ export const useSDK = <T>(assetType: AssetType, method: Method, data: any) =>
   );
 
 export const useRefreshApp = () => {
-  const cache = useQueryCache();
+  const client = useQueryClient();
   return () => {
-    cache.invalidateQueries();
+    client.invalidateQueries();
   };
 };
 
 export const useUserInformation = () => {
-  return useQuery('user-info', getUserInformation);
+  return useQuery(['user-info'], getUserInformation);
 };
 
 type ActivationResponse = {
@@ -158,7 +177,7 @@ type ActivationError = {
 };
 
 export const useCheckActivateFunction = (
-  config?: QueryConfig<ActivationResponse, ActivationError>
+  config?: QueryOptions<ActivationResponse, ActivationError>
 ) => {
   const project = getProject();
   return useQuery<ActivationResponse, ActivationError>(
@@ -166,25 +185,25 @@ export const useCheckActivateFunction = (
     () =>
       sdk
         .get(`api/v1/projects/${project}/functions/status`)
-        .then(res => res.data),
+        .then((res) => res.data),
     config
   );
 };
 
 export const useActivateFunction = (
-  config?: QueryConfig<ActivationResponse, ActivationError>
+  config?: QueryOptions<ActivationResponse, ActivationError>
 ) => {
-  const cache = useQueryCache();
+  const client = useQueryClient();
   const project = getProject();
   return useMutation<ActivationResponse, ActivationError>(
     () =>
       sdk
         .post(`/api/v1/projects/${project}/functions/status`)
-        .then(res => res.data),
+        .then((res) => res.data),
     {
       ...config,
-      onSuccess: data => {
-        cache.setQueryData(['activation', project], data);
+      onSuccess: (data) => {
+        client.setQueryData(['activation', project], data);
       },
     }
   );

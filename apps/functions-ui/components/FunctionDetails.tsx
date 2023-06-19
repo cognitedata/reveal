@@ -1,9 +1,12 @@
 import React from 'react';
-import moment from 'moment';
-import { Descriptions, Alert, Typography } from 'antd';
-import LoadingIcon from 'components/LoadingIcon';
-import { useFunction } from 'utils/hooks';
+
 import styled from 'styled-components';
+
+import { Descriptions, Alert, Typography } from 'antd';
+import moment from 'moment';
+
+import LoadingIcon from '../components/LoadingIcon';
+import { useFunction } from '../utils/hooks';
 
 const { Item } = Descriptions;
 const { Text } = Typography;

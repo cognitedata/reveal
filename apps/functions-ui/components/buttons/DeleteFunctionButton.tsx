@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
+
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { notification } from 'antd';
-import { useMutation, useQueryCache } from 'react-query';
 
 import { Button } from '@cognite/cogs.js';
-import { deleteFunction } from 'utils/api';
-import DeleteFunctionModal from 'components/FunctionModals/DeleteFunctionModal';
 
-import { allFunctionsKey } from 'utils/queryKeys';
-import { useFunction } from 'utils/hooks';
+import DeleteFunctionModal from '../../components/FunctionModals/DeleteFunctionModal';
+import { deleteFunction } from '../../utils/api';
+import { useFunction } from '../../utils/hooks';
+import { allFunctionsKey } from '../../utils/queryKeys';
 
 type Props = {
   id: number;
@@ -16,18 +17,20 @@ type Props = {
 const NOTIFICATION_KEY = `delete-notifications`;
 
 export default function DeleteFunctionButton({ id }: Props) {
-  const queryCache = useQueryCache();
+  const client = useQueryClient();
   const [showModal, setShowModal] = useState(false);
 
   const { data } = useFunction(id);
   const name = data?.name;
 
-  const [
-    deleteFn,
-    { isLoading: isDeleting, isSuccess: isDeleted, isError },
-  ] = useMutation(deleteFunction, {
+  const {
+    mutate: deleteFn,
+    isLoading: isDeleting,
+    isSuccess: isDeleted,
+    isError,
+  } = useMutation(deleteFunction, {
     onSuccess() {
-      queryCache.invalidateQueries(allFunctionsKey);
+      client.invalidateQueries([allFunctionsKey]);
     },
   });
 
@@ -83,7 +86,7 @@ export default function DeleteFunctionButton({ id }: Props) {
           marginLeft: '8px',
           justifyContent: 'center',
         }}
-        onClick={e => {
+        onClick={(e) => {
           e.stopPropagation();
           setShowModal(true);
         }}

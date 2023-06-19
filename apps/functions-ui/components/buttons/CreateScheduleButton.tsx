@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
+
 import { Button } from '@cognite/cogs.js';
 
-import CreateScheduleModal from 'components/FunctionModals/CreateScheduleModal';
+import CreateScheduleModal from '../../components/FunctionModals/CreateScheduleModal';
 
 type Props = {
   id: number;
@@ -19,7 +20,7 @@ export default function CreateScheduleButton({ id, externalId }: Props) {
           justifyContent: 'center',
           marginBottom: 8,
         }}
-        onClick={e => {
+        onClick={(e) => {
           e.stopPropagation();
           setShowModal(true);
         }}

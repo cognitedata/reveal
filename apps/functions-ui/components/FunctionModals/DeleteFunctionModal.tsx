@@ -2,9 +2,12 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 
 import React, { useState } from 'react';
+
 import { Modal, Form, Checkbox, Alert } from 'antd';
+
 import { FileInfo } from '@cognite/sdk';
-import { useSDK, useFunction } from 'utils/hooks';
+
+import { useSDK, useFunction } from '../../utils/hooks';
 
 type Props = {
   id: number;
@@ -27,7 +30,7 @@ export default function DeleteFunctionModal({ id, onCancel, onDelete }: Props) {
   const file = files && files[0];
 
   return (
-    <div onClick={e => e.stopPropagation()}>
+    <div onClick={(e) => e.stopPropagation()}>
       <Modal
         title="Are you sure?"
         visible

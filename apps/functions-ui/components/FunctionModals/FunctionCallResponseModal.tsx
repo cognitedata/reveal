@@ -1,9 +1,12 @@
 import React from 'react';
+
 import { Modal, Alert } from 'antd';
+
 import { Icon, Button } from '@cognite/cogs.js';
-import { CallResponse } from 'types/Types';
-import ErrorFeedback from 'components/Common/atoms/ErrorFeedback';
-import { useResponse } from 'utils/hooks';
+
+import ErrorFeedback from '../../components/Common/atoms/ErrorFeedback';
+import { CallResponse } from '../../types/Types';
+import { useResponse } from '../../utils/hooks';
 
 type Props = {
   onCancel: () => void;
@@ -44,7 +47,11 @@ function ModalBody({ response, error, fetched }: BodyProps) {
 }
 
 export default function ViewResponseModal({ id, callId, onCancel }: Props) {
-  const { data: response, error, isFetched } = useResponse({
+  const {
+    data: response,
+    error,
+    isFetched,
+  } = useResponse({
     id,
     callId,
   });

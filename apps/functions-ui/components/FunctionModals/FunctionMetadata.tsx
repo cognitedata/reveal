@@ -1,13 +1,15 @@
 import React from 'react';
-import { Button, Icon } from '@cognite/cogs.js';
+
 import { Col, Form, Input, Row } from 'antd';
 import { v4 as uuidv4 } from 'uuid';
+
+import { Button, Icon } from '@cognite/cogs.js';
 
 import {
   checkMetadataKey,
   checkMetadataValue,
   getAllSecretKeys,
-} from 'utils/formValidations';
+} from '../../utils/formValidations';
 
 /**
  * Function Metadata
@@ -45,13 +47,14 @@ export default function Metadata({ metadata, setMetadata }: Props) {
   };
 
   const removeMetadata = (id: MetadataId) => {
-    const filtered = metadata.filter(meta => meta.id !== id);
+    const filtered = metadata.filter((meta) => meta.id !== id);
     setMetadata(filtered);
   };
 
   const handleMetadataChange = (evt: {
     target: { name: string; value: string; dataset: any };
   }) => {
+    // eslint-disable-next-line no-unsafe-optional-chaining
     const { idx } = evt.target?.dataset;
     const changeField = evt.target?.name;
     const updatedSecrets = [...metadata];
@@ -69,7 +72,7 @@ export default function Metadata({ metadata, setMetadata }: Props) {
     <Form.Item label="Metadata">
       {metadata.length > 0 &&
         metadata.map((meta: MetaType, index: number) => (
-          <Row type="flex" key={meta.id}>
+          <Row key={meta.id}>
             <Col span={10}>
               <Form.Item
                 label="Property"
@@ -92,7 +95,7 @@ export default function Metadata({ metadata, setMetadata }: Props) {
                   name="meta_key"
                   data-idx={index}
                   allowClear
-                  onChange={evt => handleMetadataChange(evt)}
+                  onChange={(evt) => handleMetadataChange(evt)}
                 />
               </Form.Item>
             </Col>
@@ -116,7 +119,7 @@ export default function Metadata({ metadata, setMetadata }: Props) {
                   name="meta_value"
                   data-idx={index}
                   allowClear
-                  onChange={evt => handleMetadataChange(evt)}
+                  onChange={(evt) => handleMetadataChange(evt)}
                 />
               </Form.Item>
             </Col>
@@ -138,6 +141,7 @@ export default function Metadata({ metadata, setMetadata }: Props) {
           <Icon
             type="Add"
             size={22}
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             style={{ left: -12, position: 'relative' }}
           />
