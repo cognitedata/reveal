@@ -6,11 +6,19 @@ import {
   useParams,
 } from 'react-router-dom';
 
-import { ValueByDataType } from '../containers/search/Filter';
+import { resourceItemToContainerReference } from '@fusion/industry-canvas';
+import queryString from 'query-string';
+
+import { createLink } from '@cognite/cdf-utilities';
+
+// TODO: move these in fdx?
+import { ResourceItem, ResourceType } from '@data-exploration-lib/core';
+
+import { DateRange, ValueByDataType } from '../containers/search/Filter';
 
 import { useSearchFilterParams, useSearchQueryParams } from './useParams';
 
-// TODO: rename this.
+// TODO: rename this could help, react-router also has a 'useNavigation'.
 export const useNavigation = () => {
   const navigate = useNavigate();
   const { search, pathname } = useLocation(); // <-- current location being accessed
@@ -121,6 +129,35 @@ export const useNavigation = () => {
     navigate('/');
   }, [navigate]);
 
+  const toCharts = useCallback(
+    (timeseriesId: number, dateRange: DateRange) => {
+      const queryObj = {
+        timeseriesIds: timeseriesId,
+        startTime: dateRange[0].getTime(),
+        endTime: dateRange[1].getTime(),
+      };
+      const query = queryString.stringify(queryObj);
+
+      navigate(`/charts?${query}`);
+    },
+    [navigate]
+  );
+
+  const toCanvas = useCallback(
+    (item: ResourceItem) => {
+      const initializeWithContainerReferences = btoa(
+        JSON.stringify([resourceItemToContainerReference(item)])
+      );
+
+      const query = queryString.stringify({
+        initializeWithContainerReferences,
+      });
+
+      navigate(`/canvas?${query}`);
+    },
+    [navigate]
+  );
+
   const goBack = useCallback(() => {
     navigate('..');
   }, [navigate]);
@@ -135,6 +172,9 @@ export const useNavigation = () => {
     toInstancePage,
     toTimeseriesPage,
     toFilePage,
+
+    toCharts,
+    toCanvas,
 
     goBack,
   };
