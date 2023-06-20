@@ -52,3 +52,6 @@ apps/3d-management                @cognitedata/3d-reveal-viewer-team
 
 # Data Catalog
 apps/data-catalog                 @cognitedata/cdf-user-experience
+
+# Extractor downloads
+apps/extractor-downloads          @cognitedata/cdf-user-experience
