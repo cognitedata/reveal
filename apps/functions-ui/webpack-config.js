@@ -31,17 +31,17 @@ module.exports = composePlugins(
       })
     );
 
-    if (
-      nodeEnv === 'mock' ||
-      nodeEnv === 'development' ||
-      (process.env.NX_TASK_TARGET_PROJECT &&
-        process.env.NX_TASK_TARGET_PROJECT === 'platypus-e2e')
-    ) {
-      // add your own webpack tweaks if needed
-      config.resolve.alias['@cognite/cdf-sdk-singleton'] = require.resolve(
-        './src/mock/cogniteSdkSingleton.ts'
-      );
-    }
+    // if (
+    //   nodeEnv === 'mock' ||
+    //   nodeEnv === 'development' ||
+    //   (process.env.NX_TASK_TARGET_PROJECT &&
+    //     process.env.NX_TASK_TARGET_PROJECT === 'platypus-e2e')
+    // ) {
+    //   // add your own webpack tweaks if needed
+    //   config.resolve.alias['@cognite/cdf-sdk-singleton'] = require.resolve(
+    //     './src/mock/cogniteSdkSingleton.ts'
+    //   );
+    // }
 
     if (useMockEnv) {
       return config;
