@@ -10,7 +10,7 @@ on:
 
 jobs:
   install-dependencies:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3
         with:
@@ -43,7 +43,7 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: yarn install --frozen-lockfile
   distributed-task:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     needs: install-dependencies
     strategy:
       fail-fast: false
@@ -102,7 +102,7 @@ jobs:
           name: build
           path: dist/*
   e2e:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     needs: distributed-task
     services:
       fusion-app-test:
@@ -191,7 +191,7 @@ jobs:
     name: CI Passed
     needs: [distributed-task, e2e]
     if: ${{ always() }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Check all job status
         # see https://docs.github.com/en/actions/reference/context-and-expression-syntax-for-github-actions#needs-context
