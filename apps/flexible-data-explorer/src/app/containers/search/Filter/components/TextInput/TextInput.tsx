@@ -1,24 +1,25 @@
 import * as React from 'react';
 
+import { translationKeys } from '../../../../../common';
+import { useTranslation } from '../../../../../hooks/useTranslation';
 import { InputControlProps } from '../../types';
 import { Input } from '../Input';
 
 export const DEFAULT_TEXT_INPUT_PLACEHOLDER = 'Enter value...';
 
-export interface TextInputProps extends InputControlProps<'string'> {
-  placeholder?: string;
-}
+export type TextInputProps = InputControlProps<string>;
 
-export const TextInput: React.FC<TextInputProps> = ({
-  placeholder = DEFAULT_TEXT_INPUT_PLACEHOLDER,
-  value,
-  onChange,
-}) => {
+export const TextInput: React.FC<TextInputProps> = ({ value, onChange }) => {
+  const { t } = useTranslation();
+
   return (
     <Input
       type="text"
       variant="default"
-      placeholder={placeholder}
+      placeholder={t(
+        translationKeys.filterTextInputPlaceholder,
+        'Enter value...'
+      )}
       value={value}
       onChange={onChange}
     />

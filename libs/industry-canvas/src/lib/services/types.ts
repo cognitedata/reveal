@@ -1,4 +1,10 @@
-import { CanvasAnnotation, ContainerReference } from '../types';
+import { AnnotationType } from '@cognite/unified-file-viewer';
+
+import {
+  CanvasAnnotation,
+  ContainerReference,
+  ContainerReferenceType,
+} from '../types';
 
 // The type utilities below are stolen from https://stackoverflow.com/a/75113990
 
@@ -31,7 +37,6 @@ export type PickAll<
 
 type CommonFDMCanvasAnnotationProps =
   | 'id'
-  | 'type'
   | 'containerId'
   | 'isSelectable'
   | 'isDraggable'
@@ -42,12 +47,12 @@ export type FDMCanvasAnnotation = Pick<
   CommonFDMCanvasAnnotationProps
 > & {
   externalId: string;
+  annotationType: AnnotationType;
   properties: Omit<PickAll<CanvasAnnotation>, CommonFDMCanvasAnnotationProps>;
 };
 
 type CommonFDMContainerReferenceProps =
   | 'id'
-  | 'type'
   | 'label'
   | 'width'
   | 'height'
@@ -60,6 +65,7 @@ export type FDMContainerReference = Pick<
   CommonFDMContainerReferenceProps
 > & {
   externalId: string;
+  containerReferenceType: ContainerReferenceType;
   resourceId: number;
   resourceSubId?: number | null;
   properties: Omit<

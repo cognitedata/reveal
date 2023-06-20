@@ -4,10 +4,6 @@ import { Routes, Route } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { ResourceSelectorProvider } from '@data-exploration-components/context';
-import {
-  IndustryCanvasPage,
-  IndustryCanvasHomePage,
-} from '@fusion/industry-canvas';
 
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 import { routes } from '@data-exploration-app/containers/App';
@@ -43,14 +39,6 @@ export const Explorer = () => {
           />
 
           <Route path={routes.canvas.path} element={<CanvasPage />} />
-          <Route
-            path={routes.industryCanvasDetail.path}
-            element={<IndustryCanvasPage />}
-          />
-          <Route
-            path={routes.industryCanvasHome.path}
-            element={<IndustryCanvasHomePage />}
-          />
 
           {/* We do not have separate ResourcePage's anymore for the full page resource details. */}
           {/* So we are redirecting any old routes to the new routes with 'journey' search param. */}

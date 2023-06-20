@@ -5,6 +5,7 @@ import {
   SummaryCardWrapper,
   Table,
 } from '@data-exploration/components';
+import { FileNamePreview } from '@data-exploration/containers';
 import { SummaryHeader } from '@data-exploration-components/components/SummaryHeader/SummaryHeader';
 import { getSummaryCardItems } from '@data-exploration-components/components/SummaryHeader/utils';
 import { useResourceResults } from '@data-exploration-components/containers';
@@ -18,8 +19,6 @@ import {
   InternalFilesFilters,
 } from '@data-exploration-lib/core';
 import { useDocumentsMetadataKeys } from '@data-exploration-lib/domain-layer';
-
-import { FileNamePreview } from '../FileTable/FileNamePreview';
 
 export const FileSummary = ({
   query = '',

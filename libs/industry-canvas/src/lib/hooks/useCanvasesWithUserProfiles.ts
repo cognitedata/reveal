@@ -1,8 +1,8 @@
 import { uniq } from 'lodash';
 
 import { SerializedCanvasDocument } from '../types';
+import { UserProfile } from '../UserProfileProvider';
 
-import { UserProfile } from './use-query/useUserProfile';
 import { useUserProfilesByIds } from './use-query/useUserProfilesByIds';
 
 const isValidString = (str: string | undefined): str is string =>
@@ -14,6 +14,7 @@ type UseCanvasesWithUserProfilesProps = {
 
 export type CanvasDocumentWithUserProfile = SerializedCanvasDocument & {
   createdByUserProfile: UserProfile | undefined;
+  updatedByUserProfile: UserProfile | undefined;
   createdAtDate: Date;
   updatedAtDate: Date;
 };
@@ -27,7 +28,9 @@ const useCanvasesWithUserProfiles = ({
 }: UseCanvasesWithUserProfilesProps) => {
   const { userProfiles } = useUserProfilesByIds({
     userIdentifiers: uniq(
-      canvases.map((canvas) => canvas.createdBy).filter(isValidString)
+      canvases
+        .flatMap((canvas) => [canvas.createdBy, canvas.updatedBy])
+        .filter(isValidString)
     ),
   });
 
@@ -37,8 +40,11 @@ const useCanvasesWithUserProfiles = ({
       createdByUserProfile: userProfiles.find(
         (userProfile) => userProfile.userIdentifier === canvas.createdBy
       ),
+      updatedByUserProfile: userProfiles.find(
+        (userProfile) => userProfile.userIdentifier === canvas.updatedBy
+      ),
       createdAtDate: new Date(canvas.createdTime),
-      updatedAtDate: new Date(canvas.updatedTime),
+      updatedAtDate: new Date(canvas.updatedAt),
     })
   );
 

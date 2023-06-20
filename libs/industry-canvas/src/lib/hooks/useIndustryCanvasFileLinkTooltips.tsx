@@ -6,58 +6,35 @@ import {
   getResourceIdFromExtendedAnnotation,
   getResourceTypeFromExtendedAnnotation,
 } from '@cognite/data-exploration';
-import { TooltipAnchorPosition } from '@cognite/unified-file-viewer';
 
-import { ExtendedAnnotation } from '@data-exploration-lib/core';
+import { ExtendedAnnotation, useMetrics } from '@data-exploration-lib/core';
 
 import FileTooltip from '../components/ContextualTooltips/FileTooltip/FileTooltip';
+import { ANNOTATION_TOOLTIP_POSITION, MetricEvent } from '../constants';
 import { OnAddContainerReferences } from '../IndustryCanvasPage';
-import { TooltipContainer } from '../TooltipContainer';
 import { ContainerReferenceType } from '../types';
 
 type UseFileLinkTooltipsParams = {
-  annotations: ExtendedAnnotation[];
-  selectedAnnotation: ExtendedAnnotation | undefined;
+  clickedContainerAnnotation: ExtendedAnnotation | undefined;
   onAddContainerReferences: OnAddContainerReferences;
 };
 
 const useIndustryCanvasFileLinkTooltips = ({
-  annotations,
-  selectedAnnotation,
+  clickedContainerAnnotation: annotation,
   onAddContainerReferences,
 }: UseFileLinkTooltipsParams) => {
+  const trackUsage = useMetrics();
+
   return useMemo(() => {
-    if (selectedAnnotation === undefined) {
+    if (annotation === undefined) {
       return [];
     }
 
-    if (annotations.length === 0) {
+    if (getResourceTypeFromExtendedAnnotation(annotation) !== 'file') {
       return [];
     }
 
-    if (getResourceTypeFromExtendedAnnotation(selectedAnnotation) !== 'file') {
-      return [];
-    }
-
-    // Filter out self-referential file links, that's not a case for the multi-file viewer
-    if (
-      getResourceIdFromExtendedAnnotation(selectedAnnotation) ===
-      getFileIdFromExtendedAnnotation(selectedAnnotation)
-    ) {
-      return [
-        {
-          targetId: String(selectedAnnotation.id),
-          content: (
-            <TooltipContainer>
-              This annotation links to the current file.
-            </TooltipContainer>
-          ),
-          anchorTo: TooltipAnchorPosition.TOP_CENTER,
-        },
-      ];
-    }
-
-    const resourceId = getResourceIdFromExtendedAnnotation(selectedAnnotation);
+    const resourceId = getResourceIdFromExtendedAnnotation(annotation);
 
     if (resourceId === undefined) {
       return [];
@@ -71,27 +48,33 @@ const useIndustryCanvasFileLinkTooltips = ({
           page: 1,
         },
       ]);
+      trackUsage(MetricEvent.FILE_TOOLTIP_ADD_FILE);
     };
 
     const onViewClick = () => {
       window.open(createLink(`/explore/files/${resourceId}`), '_blank');
     };
 
+    const isSelfReferential =
+      getResourceIdFromExtendedAnnotation(annotation) ===
+      getFileIdFromExtendedAnnotation(annotation);
+
     return [
       {
-        targetId: String(selectedAnnotation.id),
+        targetId: String(annotation.id),
         content: (
           <FileTooltip
             id={resourceId}
+            isCurrentFile={isSelfReferential}
             onAddFileClick={onAddFileClick}
             onViewClick={onViewClick}
           />
         ),
-        anchorTo: TooltipAnchorPosition.TOP_RIGHT,
+        anchorTo: ANNOTATION_TOOLTIP_POSITION,
         shouldPositionStrictly: true,
       },
     ];
-  }, [annotations, selectedAnnotation, onAddContainerReferences]);
+  }, [annotation, onAddContainerReferences, trackUsage]);
 };
 
 export default useIndustryCanvasFileLinkTooltips;

@@ -5,27 +5,37 @@ import styled from 'styled-components';
 import { invert } from 'lodash';
 
 import { Button, ToolBar, Tooltip } from '@cognite/cogs.js';
-import { ToolType } from '@cognite/unified-file-viewer';
+import { useFlag } from '@cognite/react-feature-flags';
 
+import { translationKeys } from '../../common';
+import { CommentsFeatureFlagKey } from '../../constants';
+import { useTranslation } from '../../hooks/useTranslation';
+import { IndustryCanvasToolType } from '../../types';
 import { StickyButton } from '../StickyButton';
 
 import ToolTooltip from './ToolTooltip';
 
 export type ToolbarComponentProps = {
-  activeTool: ToolType;
-  onToolChange: (tool: ToolType) => void;
+  activeTool: IndustryCanvasToolType;
+  onToolChange: (tool: IndustryCanvasToolType) => void;
   isCanvasLocked: boolean;
 };
 
-export const ToolTypeByShortcutKey: Record<string, ToolType> = {
-  v: ToolType.SELECT,
-  l: ToolType.LINE,
-  t: ToolType.TEXT,
-  r: ToolType.RECTANGLE,
-  o: ToolType.ELLIPSE,
-  n: ToolType.STICKY,
+export const IndustryCanvasToolTypeByShortcutKey: Record<
+  string,
+  IndustryCanvasToolType
+> = {
+  v: IndustryCanvasToolType.SELECT,
+  l: IndustryCanvasToolType.LINE,
+  t: IndustryCanvasToolType.TEXT,
+  r: IndustryCanvasToolType.RECTANGLE,
+  o: IndustryCanvasToolType.ELLIPSE,
+  n: IndustryCanvasToolType.STICKY,
+  c: IndustryCanvasToolType.COMMENT,
 };
-export const ShortcutKeysByToolType = invert(ToolTypeByShortcutKey);
+export const ShortcutKeysByIndustryCanvasToolType = invert(
+  IndustryCanvasToolTypeByShortcutKey
+);
 
 const ToolbarComponent: React.FC<ToolbarComponentProps> = ({
   activeTool,
@@ -33,12 +43,12 @@ const ToolbarComponent: React.FC<ToolbarComponentProps> = ({
   isCanvasLocked,
 }) => {
   const [isShapeToolActive, setIsShapeToolActive] = useState(false);
+  const { t } = useTranslation();
 
-  const [activeShapeTool, setActiveShapeTool] = useState<ToolType>(
-    ToolType.RECTANGLE
-  );
+  const [activeShapeTool, setActiveShapeTool] =
+    useState<IndustryCanvasToolType>(IndustryCanvasToolType.RECTANGLE);
 
-  const onShapeToolChange = (shapeTool: ToolType) => {
+  const onShapeToolChange = (shapeTool: IndustryCanvasToolType) => {
     setActiveShapeTool(shapeTool);
     onToolChange(shapeTool);
   };
@@ -49,20 +59,28 @@ const ToolbarComponent: React.FC<ToolbarComponentProps> = ({
 
   useEffect(() => {
     setIsShapeToolActive(
-      activeTool === ToolType.RECTANGLE || activeTool === ToolType.ELLIPSE
+      activeTool === IndustryCanvasToolType.RECTANGLE ||
+        activeTool === IndustryCanvasToolType.ELLIPSE
     );
   }, [activeTool]);
+
+  const { isEnabled: isCommentsEnabled } = useFlag(CommentsFeatureFlagKey, {
+    fallback: false,
+  });
 
   if (isCanvasLocked) {
     return (
       <ToolBar direction="vertical">
-        <Tooltip content="Grab" position="right">
+        <Tooltip
+          content={t(translationKeys.TOOLBAR_GRAB_BUTTON, 'Grab')}
+          position="right"
+        >
           <Button
             icon="Grab"
             type="ghost"
-            toggled={activeTool === ToolType.PAN}
-            aria-label="Grab"
-            onClick={() => onToolChange(ToolType.PAN)}
+            toggled={activeTool === IndustryCanvasToolType.PAN}
+            aria-label={t(translationKeys.TOOLBAR_GRAB_BUTTON, 'Grab')}
+            onClick={() => onToolChange(IndustryCanvasToolType.PAN)}
           />
         </Tooltip>
       </ToolBar>
@@ -78,34 +96,55 @@ const ToolbarComponent: React.FC<ToolbarComponentProps> = ({
               <Tooltip
                 content={
                   <ToolTooltip
-                    label="Rectangle"
-                    keys={[ShortcutKeysByToolType[ToolType.RECTANGLE]]}
+                    label={t(
+                      translationKeys.TOOLBAR_RECTANGLE_BUTTON,
+                      'Rectangle'
+                    )}
+                    keys={[
+                      ShortcutKeysByIndustryCanvasToolType[
+                        IndustryCanvasToolType.RECTANGLE
+                      ],
+                    ]}
                   />
                 }
               >
                 <Button
                   icon="Square"
                   type="ghost"
-                  toggled={activeTool === ToolType.RECTANGLE}
-                  aria-label="Rectangle"
-                  onClick={() => onShapeToolChange(ToolType.RECTANGLE)}
+                  toggled={activeTool === IndustryCanvasToolType.RECTANGLE}
+                  aria-label={t(
+                    translationKeys.TOOLBAR_RECTANGLE_BUTTON,
+                    'Rectangle'
+                  )}
+                  onClick={() =>
+                    onShapeToolChange(IndustryCanvasToolType.RECTANGLE)
+                  }
                 />
               </Tooltip>
 
               <Tooltip
                 content={
                   <ToolTooltip
-                    label="Ellipse"
-                    keys={[ShortcutKeysByToolType[ToolType.ELLIPSE]]}
+                    label={t(translationKeys.TOOLBAR_ELLIPSE_BUTTON, 'Ellipse')}
+                    keys={[
+                      ShortcutKeysByIndustryCanvasToolType[
+                        IndustryCanvasToolType.ELLIPSE
+                      ],
+                    ]}
                   />
                 }
               >
                 <Button
                   icon="Circle"
                   type="ghost"
-                  toggled={activeTool === ToolType.ELLIPSE}
-                  aria-label="Ellipse"
-                  onClick={() => onShapeToolChange(ToolType.ELLIPSE)}
+                  toggled={activeTool === IndustryCanvasToolType.ELLIPSE}
+                  aria-label={t(
+                    translationKeys.TOOLBAR_ELLIPSE_BUTTON,
+                    'Ellipse'
+                  )}
+                  onClick={() =>
+                    onShapeToolChange(IndustryCanvasToolType.ELLIPSE)
+                  }
                 />
               </Tooltip>
             </>
@@ -117,8 +156,12 @@ const ToolbarComponent: React.FC<ToolbarComponentProps> = ({
           <Tooltip
             content={
               <ToolTooltip
-                label="Select"
-                keys={[ShortcutKeysByToolType[ToolType.SELECT]]}
+                label={t(translationKeys.TOOLBAR_SELECT_BUTTON, 'Select')}
+                keys={[
+                  ShortcutKeysByIndustryCanvasToolType[
+                    IndustryCanvasToolType.SELECT
+                  ],
+                ]}
               />
             }
             position="right"
@@ -126,27 +169,34 @@ const ToolbarComponent: React.FC<ToolbarComponentProps> = ({
             <Button
               icon="Cursor"
               type="ghost"
-              toggled={activeTool === ToolType.SELECT}
-              aria-label="Select"
-              onClick={() => onToolChange(ToolType.SELECT)}
+              toggled={activeTool === IndustryCanvasToolType.SELECT}
+              aria-label={t(translationKeys.TOOLBAR_SELECT_BUTTON, 'Select')}
+              onClick={() => onToolChange(IndustryCanvasToolType.SELECT)}
             />
           </Tooltip>
 
-          <Tooltip content="Grab" position="right">
+          <Tooltip
+            content={t(translationKeys.TOOLBAR_GRAB_BUTTON, 'Grab')}
+            position="right"
+          >
             <Button
               icon="Grab"
               type="ghost"
-              toggled={activeTool === ToolType.PAN}
-              aria-label="Grab"
-              onClick={() => onToolChange(ToolType.PAN)}
+              toggled={activeTool === IndustryCanvasToolType.PAN}
+              aria-label={t(translationKeys.TOOLBAR_GRAB_BUTTON, 'Grab')}
+              onClick={() => onToolChange(IndustryCanvasToolType.PAN)}
             />
           </Tooltip>
 
           <Tooltip
             content={
               <ToolTooltip
-                label="Text"
-                keys={[ShortcutKeysByToolType[ToolType.TEXT]]}
+                label={t(translationKeys.TOOLBAR_TEXT_BUTTON, 'Text')}
+                keys={[
+                  ShortcutKeysByIndustryCanvasToolType[
+                    IndustryCanvasToolType.TEXT
+                  ],
+                ]}
               />
             }
             position="right"
@@ -154,34 +204,47 @@ const ToolbarComponent: React.FC<ToolbarComponentProps> = ({
             <Button
               icon="Text"
               type="ghost"
-              toggled={activeTool === ToolType.TEXT}
-              aria-label="Text"
-              onClick={() => onToolChange(ToolType.TEXT)}
+              toggled={activeTool === IndustryCanvasToolType.TEXT}
+              aria-label={t(translationKeys.TOOLBAR_TEXT_BUTTON, 'Text')}
+              onClick={() => onToolChange(IndustryCanvasToolType.TEXT)}
             />
           </Tooltip>
 
           <Tooltip
             content={
               <ToolTooltip
-                label="Sticky note"
-                keys={[ShortcutKeysByToolType[ToolType.STICKY]]}
+                label={t(
+                  translationKeys.TOOLBAR_STICKY_NOTE_BUTTON,
+                  'Sticky note'
+                )}
+                keys={[
+                  ShortcutKeysByIndustryCanvasToolType[
+                    IndustryCanvasToolType.STICKY
+                  ],
+                ]}
               />
             }
             position="right"
           >
             <StickyButton
-              toggled={activeTool === ToolType.STICKY}
-              aria-label="Sticky note"
-              onClick={() => onToolChange(ToolType.STICKY)}
+              toggled={activeTool === IndustryCanvasToolType.STICKY}
+              aria-label={t(
+                translationKeys.TOOLBAR_STICKY_NOTE_BUTTON,
+                'Sticky note'
+              )}
+              onClick={() => onToolChange(IndustryCanvasToolType.STICKY)}
             />
           </Tooltip>
 
-          <Tooltip content="Shape" position="right">
+          <Tooltip
+            content={t(translationKeys.TOOLBAR_SHAPE_BUTTON, 'Shape')}
+            position="right"
+          >
             <Button
               icon="Shapes"
               type="ghost"
               toggled={isShapeToolActive}
-              aria-label="Shape"
+              aria-label={t(translationKeys.TOOLBAR_SHAPE_BUTTON, 'Shape')}
               onClick={onShapeToolClick}
             />
           </Tooltip>
@@ -189,8 +252,12 @@ const ToolbarComponent: React.FC<ToolbarComponentProps> = ({
           <Tooltip
             content={
               <ToolTooltip
-                label="Line"
-                keys={[ShortcutKeysByToolType[ToolType.LINE]]}
+                label={t(translationKeys.TOOLBAR_LINE_BUTTON, 'Line')}
+                keys={[
+                  ShortcutKeysByIndustryCanvasToolType[
+                    IndustryCanvasToolType.LINE
+                  ],
+                ]}
               />
             }
             position="right"
@@ -198,11 +265,37 @@ const ToolbarComponent: React.FC<ToolbarComponentProps> = ({
             <Button
               icon="VectorLine"
               type="ghost"
-              toggled={activeTool === ToolType.LINE}
-              aria-label="Line"
-              onClick={() => onToolChange(ToolType.LINE)}
+              toggled={activeTool === IndustryCanvasToolType.LINE}
+              aria-label={t(translationKeys.TOOLBAR_LINE_BUTTON, 'Line')}
+              onClick={() => onToolChange(IndustryCanvasToolType.LINE)}
             />
           </Tooltip>
+          {isCommentsEnabled && (
+            <Tooltip
+              content={
+                <ToolTooltip
+                  label={t(translationKeys.TOOLBAR_COMMENT_BUTTON, 'Comment')}
+                  keys={[
+                    ShortcutKeysByIndustryCanvasToolType[
+                      IndustryCanvasToolType.LINE
+                    ],
+                  ]}
+                />
+              }
+              position="right"
+            >
+              <Button
+                icon="Comment"
+                type="ghost"
+                toggled={activeTool === IndustryCanvasToolType.COMMENT}
+                aria-label={t(
+                  translationKeys.TOOLBAR_COMMENT_BUTTON,
+                  'Comment'
+                )}
+                onClick={() => onToolChange(IndustryCanvasToolType.COMMENT)}
+              />
+            </Tooltip>
+          )}
         </>
       </ToolBar>
     </>

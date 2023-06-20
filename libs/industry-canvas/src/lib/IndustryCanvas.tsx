@@ -24,9 +24,15 @@ import useEditOnSelect from './hooks/useEditOnSelect';
 import useIndustryCanvasTooltips from './hooks/useIndustryCanvasTooltips';
 import { UseManagedStateReturnType } from './hooks/useManagedState';
 import { UseManagedToolsReturnType } from './hooks/useManagedTools';
+import { UseResourceSelectorActionsReturnType } from './hooks/useResourceSelectorActions';
 import { useTooltipsOptions } from './hooks/useTooltipsOptions';
 import { OnAddContainerReferences } from './IndustryCanvasPage';
-import { CanvasAnnotation, IndustryCanvasContainerConfig } from './types';
+import {
+  CanvasAnnotation,
+  CommentAnnotation,
+  IndustryCanvasContainerConfig,
+  IndustryCanvasToolType,
+} from './types';
 import { getIndustryCanvasConnectionAnnotations } from './utils/getIndustryCanvasConnectionAnnotations';
 import getContainerSummarizationSticky from './utils/getSummarizationSticky';
 import summarizeText from './utils/summarizeText';
@@ -41,9 +47,11 @@ export type IndustryCanvasProps = {
   viewerRef: UnifiedViewer | null;
   selectedContainer: IndustryCanvasContainerConfig | undefined;
   selectedCanvasAnnotation: CanvasAnnotation | undefined;
-  tool: ToolType;
-  setTool: Dispatch<SetStateAction<ToolType>>;
+  commentAnnotations: CommentAnnotation[];
+  tool: IndustryCanvasToolType;
+  setTool: Dispatch<SetStateAction<IndustryCanvasToolType>>;
   isCanvasLocked: boolean;
+  onResourceSelectorOpen: UseResourceSelectorActionsReturnType['onResourceSelectorOpen'];
 } & Pick<
   UseManagedStateReturnType,
   | 'container'
@@ -86,7 +94,9 @@ export const IndustryCanvas = ({
   onUpdateAnnotationStyleByType,
   shouldShowConnectionAnnotations,
   toolOptions,
+  commentAnnotations,
   isCanvasLocked,
+  onResourceSelectorOpen,
 }: IndustryCanvasProps) => {
   const sdk = useSDK();
 
@@ -133,7 +143,6 @@ export const IndustryCanvas = ({
   const tooltips = useIndustryCanvasTooltips({
     selectedContainer,
     containers: container.children ?? [],
-    containerAnnotations,
     clickedContainerAnnotation,
     selectedCanvasAnnotation,
     tooltipsOptions,
@@ -144,6 +153,8 @@ export const IndustryCanvas = ({
     onUpdateAnnotationStyleByType,
     updateContainerById,
     removeContainerById,
+    onResourceSelectorOpen,
+    commentAnnotations,
   });
 
   const onStageClick = useCallback(
@@ -151,7 +162,10 @@ export const IndustryCanvas = ({
       // Sometimes the stage click event is fired when the user creates an annotation.
       // We want the tooltip to stay open in this case.
       // TODO: Bug tracked by https://cognitedata.atlassian.net/browse/UFV-507
-      if (tool === ToolType.LINE || tool === ToolType.ELLIPSE) {
+      if (
+        tool === IndustryCanvasToolType.LINE ||
+        tool === IndustryCanvasToolType.ELLIPSE
+      ) {
         return;
       }
 
@@ -260,7 +274,12 @@ export const IndustryCanvas = ({
         onClick={onStageClick}
         shouldShowZoomControls={false}
         setRef={handleRef}
-        tool={tool}
+        tool={
+          // TODO helperfunction here and clean up
+          tool === IndustryCanvasToolType.COMMENT
+            ? ToolType.RECTANGLE
+            : (tool as unknown as ToolType)
+        }
         onSelect={handleSelect}
         toolOptions={toolOptions}
         onDeleteRequest={onDeleteRequest}

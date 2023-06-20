@@ -1,7 +1,11 @@
 import { useMemo } from 'react';
 import { Routes, Route } from 'react-router-dom';
 
-import { DocumentSearchResults } from '@data-exploration/containers';
+import {
+  DocumentSearchResults,
+  FileSearchResults,
+} from '@data-exploration/containers';
+import { useDebounce } from 'use-debounce';
 
 import { ResourceItem, ResourceTypes } from '@cognite/data-exploration';
 import { Asset } from '@cognite/sdk';
@@ -13,11 +17,14 @@ import {
   SearchResultWrapper,
 } from '@data-exploration-app/containers/elements';
 import { FilePreview } from '@data-exploration-app/containers/File/FilePreview';
+import { useResourceEditable } from '@data-exploration-app/context/ResourceSelectionContext';
+import { useFlagDocumentsApiEnabled } from '@data-exploration-app/hooks';
 import {
   useCurrentResourceId,
   useQueryString,
   useSelectedResourceId,
 } from '@data-exploration-app/hooks/hooks';
+import { useFileFilters } from '@data-exploration-app/store';
 import { useDocumentFilters } from '@data-exploration-app/store/filter/selectors/documentSelectors';
 import { SEARCH_KEY } from '@data-exploration-app/utils/constants';
 import {
@@ -26,26 +33,28 @@ import {
 } from '@data-exploration-lib/core';
 
 import {
-  useBreakJourneyPromptToggle,
   useGetJourney,
   useJourneyLength,
   usePushJourney,
-} from '../../hooks/detailsNavigation';
-import {
   useFlagOverlayNavigation,
   useFlagDocumentGPT,
-} from '../../hooks/flags';
+  useBreakJourneyPromptState,
+} from '../../hooks';
 
 export const FileSearchResultView = () => {
+  const isDocumentsApiEnabled = useFlagDocumentsApiEnabled();
   const isDocumentsGPTEnabled = useFlagDocumentGPT();
   const [, openPreview] = useCurrentResourceId();
+  const [fileFilter, setFileFilter] = useFileFilters();
   const [documentFilter, setDocumentFilter] = useDocumentFilters();
   const [query] = useQueryString(SEARCH_KEY);
   const isDetailsOverlayEnabled = useFlagOverlayNavigation();
   const [pushJourney] = usePushJourney();
   const [firstJourney] = useGetJourney();
   const [journeyLength] = useJourneyLength();
-  const [, setPromptOpen] = useBreakJourneyPromptToggle();
+  const [, setPromptOpen] = useBreakJourneyPromptState();
+  const [debouncedQuery] = useDebounce(query, 100);
+  const editable = useResourceEditable();
 
   // Here we need to parse params to find selected file's id.
   const selectedFileId = getSelectedResourceId('file', firstJourney);
@@ -84,17 +93,33 @@ export const FileSearchResultView = () => {
       primaryIndex={0}
     >
       <SearchResultWrapper>
-        <DocumentSearchResults
-          isDocumentsGPTEnabled={isDocumentsGPTEnabled}
-          query={query}
-          selectedRow={selectedRow}
-          filter={documentFilter}
-          onClick={handleRowClick}
-          onRootAssetClick={handleParentAssetClick}
-          onFilterChange={(newValue: Record<string, unknown>) =>
-            setDocumentFilter(newValue)
-          }
-        />
+        {!isDocumentsApiEnabled ? (
+          <FileSearchResults
+            showCount
+            selectedRow={selectedRow}
+            filter={fileFilter}
+            allowEdit={editable} // ??
+            onClick={handleRowClick}
+            onDirectAssetClick={handleParentAssetClick}
+            onFilterChange={(newValue: Record<string, unknown>) =>
+              setFileFilter(newValue)
+            }
+            query={debouncedQuery}
+          />
+        ) : (
+          <DocumentSearchResults
+            enableAdvancedFilters={isDocumentsApiEnabled}
+            isDocumentsGPTEnabled={isDocumentsGPTEnabled}
+            query={query}
+            selectedRow={selectedRow}
+            filter={documentFilter}
+            onClick={handleRowClick}
+            onRootAssetClick={handleParentAssetClick}
+            onFilterChange={(newValue: Record<string, unknown>) =>
+              setDocumentFilter(newValue)
+            }
+          />
+        )}
       </SearchResultWrapper>
 
       {!isDetailsOverlayEnabled && Boolean(selectedFileId) && (

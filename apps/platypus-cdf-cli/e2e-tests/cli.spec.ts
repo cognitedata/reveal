@@ -11,6 +11,7 @@ const getDatamodelNameTimeAppendix = () => {
     })
     .replace(', ', '_')
     .replace(':', '')
+    .replaceAll('/', '_')
     .replaceAll('-', '_');
 };
 
@@ -47,7 +48,7 @@ describe('platpus-cli', () => {
 
       output = await platypusCli.dataModelsList();
       expect(output).toContain(dataModelExternalId);
-    });
+    }, 15000);
   });
 
   afterAll(async () => {

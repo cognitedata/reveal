@@ -1,0 +1,23 @@
+{
+  "name": "@cognite/cdf-data-catalog",
+  "version": "0.1.0",
+  "scripts": {
+    "start": "../../scripts/start.sh dev data-catalog",
+    "build": "../../scripts/build.sh production data-catalog",
+    "test": "../../scripts/test.sh data-catalog",
+    "lint": "../../scripts/lint.sh data-catalog",
+    "lint:fix": "../../scripts/lint.sh --fix data-catalog"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

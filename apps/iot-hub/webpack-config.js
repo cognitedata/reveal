@@ -14,6 +14,12 @@ module.exports = composePlugins(
   withSingleSpa({ useMockEnv }),
   (config) => {
     const nodeEnv = process.env.NODE_ENV || 'production';
+
+    config.resolve.fallback = {
+      crypto: require.resolve('crypto-browserify'),
+      stream: require.resolve('stream-browserify'),
+    };
+
     console.log(`Custom webpack config(${nodeEnv}) for iot-hub was loaded...`);
 
     if (useMockEnv) {

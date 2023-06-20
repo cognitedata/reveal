@@ -1,4 +1,5 @@
 import isArray from 'lodash/isArray';
+import isUndefined from 'lodash/isUndefined';
 
 import { FieldValue } from '../../../types';
 
@@ -16,6 +17,10 @@ export const getChipLabel = ({
   const { operator, value } = fieldValue;
 
   const prefix = `${dataType} ${field} ${operator.toLowerCase()}`;
+
+  if (isUndefined(value)) {
+    return prefix;
+  }
 
   if (isArray(value)) {
     return `${prefix} ${value.join(' and ')}`;

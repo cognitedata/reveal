@@ -7,7 +7,7 @@ import { InputControlProps } from '../../types';
 import { InputWrapper } from './elements';
 import { getDateTimeInputValue } from './utils';
 
-export type DateTimeInputProps = InputControlProps<'date'>;
+export type DateTimeInputProps = InputControlProps<Date>;
 
 export const DateTimeInput: React.FC<DateTimeInputProps> = ({
   value,

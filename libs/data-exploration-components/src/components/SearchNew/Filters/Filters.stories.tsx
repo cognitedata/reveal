@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 
 import styled from 'styled-components';
 
+import { OldFileFilters } from '@data-exploration/containers';
+import noop from 'lodash/noop';
+
 import {
   EventFilter,
   AssetFilterProps,
@@ -13,7 +16,6 @@ import {
 import {
   AssetFiltersV2,
   TimeseriesFilters,
-  FileFilters,
   SequenceFilters,
   EventFilters,
 } from '.';
@@ -36,7 +38,13 @@ export const Timeseries = () => {
 };
 export const File = () => {
   const [filter, setFilter] = useState<FileFilterProps>({});
-  return <FileFilters filter={filter as any} setFilter={setFilter as any} />;
+  return (
+    <OldFileFilters
+      filter={filter as any}
+      setFilter={setFilter as any}
+      onResetFilterClick={noop}
+    />
+  );
 };
 export const Sequence = () => {
   const [filter, setFilter] = useState<Required<SequenceFilter>['filter']>({});

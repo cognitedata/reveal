@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 
 import {
   ErrorType,
@@ -22,6 +22,7 @@ import {
   Size,
 } from '@platypus-app/components/PageToolbar/PageToolbar';
 import { SchemaVisualizer } from '@platypus-app/components/SchemaVisualizer/SchemaVisualizer';
+import { SUB_APP_PATH } from '@platypus-app/constants';
 import { TOKENS } from '@platypus-app/di';
 import { useNavigate } from '@platypus-app/flags/useNavigate';
 import { useDataModelVersions } from '@platypus-app/hooks/useDataModelActions';
@@ -38,6 +39,7 @@ import { getKeyForDataModel } from '@platypus-app/utils/local-storage-utils';
 import { QueryKeys } from '@platypus-app/utils/queryKeys';
 import { useQueryClient } from '@tanstack/react-query';
 
+import { useCdfUserHistoryService } from '@cognite/cdf-utilities';
 import { Flex } from '@cognite/cogs.js';
 
 import { useDataModelState } from '../../hooks/useDataModelState';
@@ -45,6 +47,7 @@ import { DataModelHeader } from '../components/DataModelHeader';
 import { EditorPanel } from '../components/EditorPanel';
 import { ErrorPlaceholder } from '../components/ErrorBoundary/ErrorPlaceholder';
 import { ErrorsByGroup } from '../components/GraphqlCodeEditor/Model';
+import { ImportTypesModal } from '../components/ImportTypesModal';
 import {
   PublishVersionModal,
   VersionType,
@@ -85,6 +88,9 @@ const formatDmlError = (error: PlatypusDmlError) => {
 };
 
 export const DataModelPage = () => {
+  const { pathname: dataModelPathname } = useLocation();
+  const userHistoryService = useCdfUserHistoryService();
+
   const navigate = useNavigate();
   const { dataModelExternalId, space, version } = useParams() as {
     dataModelExternalId: string;
@@ -127,6 +133,7 @@ export const DataModelPage = () => {
   const [saving, setSaving] = useState(false);
   const [updating, setUpdating] = useState(false);
   const [editorHasError, setEditorHasError] = useState(false);
+  const [showImportTypes, setShowImportTypes] = useState(false);
   const [breakingChanges, setBreakingChanges] = useState('');
   const [publishModalVersionType, setPublishModalVersionType] =
     useState<VersionType | null>(null);
@@ -165,6 +172,16 @@ export const DataModelPage = () => {
     switchDataModelVersion(localDraft || selectedDataModelVersion);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    // save data-model view action to user history
+    if (dataModelExternalId.trim())
+      userHistoryService.logNewResourceView({
+        application: SUB_APP_PATH,
+        name: dataModelExternalId.trim(),
+        path: dataModelPathname,
+      });
+  }, [userHistoryService, dataModelExternalId, dataModelPathname]);
 
   const handleClickPublish = async () => {
     setUpdating(true);
@@ -312,6 +329,7 @@ export const DataModelPage = () => {
         removeLocalDraft(draftVersion);
         dataModelPublished();
 
+        const publishedVersionPath = `/${space}/${dataModelExternalId}/${DEFAULT_VERSION_PATH}`;
         if (publishNewVersion) {
           // add new version to react-query cache and then refetch
           queryClient.setQueryData<DataModelVersion[]>(
@@ -320,9 +338,8 @@ export const DataModelPage = () => {
               return [...oldDataModelVersions, result.getValue()];
             }
           );
-
           refetchDataModelVersions();
-          navigate(`/${space}/${dataModelExternalId}/${DEFAULT_VERSION_PATH}`, {
+          navigate(publishedVersionPath, {
             replace: true,
           });
         } else {
@@ -339,6 +356,14 @@ export const DataModelPage = () => {
           );
           refetchDataModelVersions();
         }
+
+        // save data-model publish(edit) action to user history
+        if (dataModelExternalId.trim())
+          userHistoryService.logNewResourceEdit({
+            application: SUB_APP_PATH,
+            name: dataModelExternalId.trim(), // how to get data-model name here?
+            path: publishedVersionPath,
+          });
 
         Notification({
           type: 'success',
@@ -380,6 +405,12 @@ export const DataModelPage = () => {
     dataModelTypeDefsBuilder.clear();
     updateGraphQlSchema(latestDataModelVersion.schema);
   };
+
+  const handleImportTypesClick = () => {
+    track('DataModel.ImportTypes');
+    setShowImportTypes(true);
+  };
+
   return (
     <>
       <PageContentLayout>
@@ -394,6 +425,7 @@ export const DataModelPage = () => {
             latestDataModelVersion={latestDataModelVersion}
             localDraft={localDraft}
             onDiscardClick={handleDiscardClick}
+            onImportTypesClick={handleImportTypesClick}
             onPublishClick={handleClickPublish}
             title={t('data_model_title', 'Data model')}
             onDataModelVersionSelect={handleDataModelVersionSelect}
@@ -467,6 +499,10 @@ export const DataModelPage = () => {
           isUpdating={updating}
           isSaving={saving}
         />
+      )}
+
+      {showImportTypes && (
+        <ImportTypesModal onClose={() => setShowImportTypes(false)} />
       )}
     </>
   );

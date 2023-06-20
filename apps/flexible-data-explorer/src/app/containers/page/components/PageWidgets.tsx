@@ -15,8 +15,8 @@ export const PageWidgets: React.FC<PropsWithChildren> = ({ children }) => {
   );
 
   return (
-    <Content hasExpandedWidget={!!expandedId}>
-      <Container hasExpandedWidget={!!expandedId}>
+    <Container hasExpandedWidget={!!expandedId}>
+      <Content hasExpandedWidget={!!expandedId}>
         {React.Children.map(children, (child) => {
           if (React.isValidElement(child)) {
             const id = child.props.id;
@@ -39,14 +39,13 @@ export const PageWidgets: React.FC<PropsWithChildren> = ({ children }) => {
 
           return <>{child}</>;
         })}
-      </Container>
-    </Content>
+      </Content>
+    </Container>
   );
 };
 
-const Container = styled.div<{ hasExpandedWidget: boolean }>`
+const Content = styled.div<{ hasExpandedWidget: boolean }>`
   gap: 20px;
-  padding: 16px 0;
 
   ${({ hasExpandedWidget }) => {
     if (hasExpandedWidget) {
@@ -60,15 +59,16 @@ const Container = styled.div<{ hasExpandedWidget: boolean }>`
         width: 1024px;
         max-width: 1024px;
         display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        grid-auto-rows: minmax(310px, auto);
-        grid-template-rows: 310px;
+        grid-template-columns: repeat(2, 1fr);
+        padding: 16px 0;
+        /* The height of the grid items is derived on the bases of the properties widget. Avoid changing the value here. */
+        grid-auto-rows: 65px;
       `;
     }
   }}
 `;
 
-const Content = styled.div<{ hasExpandedWidget: boolean }>`
+const Container = styled.div<{ hasExpandedWidget: boolean }>`
   display: flex;
   justify-content: center;
 

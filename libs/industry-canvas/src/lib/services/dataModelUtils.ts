@@ -47,18 +47,16 @@ const getFDMCanvasAnnotations = (
       isSelectable,
       isDraggable,
       isResizable,
-      metadata,
       ...props
     } = annotation;
     return {
       externalId: getAnnotationOrContainerExternalId(id, canvasExternalId),
       id,
-      type,
+      annotationType: type,
       containerId,
       isSelectable,
       isDraggable,
       isResizable,
-      metadata,
       properties: props as FDMCanvasAnnotation['properties'],
     };
   });
@@ -103,7 +101,7 @@ const getFDMContainerReferences = (
     return {
       externalId: getAnnotationOrContainerExternalId(id, canvasExternalId),
       id,
-      type,
+      containerReferenceType: type,
       label,
       x,
       y,
@@ -162,13 +160,13 @@ export const upsertCanvas = async (
   await client.upsertEdges([
     ...fdmCanvasAnnotations.map((annotation) => ({
       externalId: getEdgeExternalId(canvas.externalId, annotation.externalId),
-      typeExternalId: `${ModelNames.CANVAS}.canvasAnnotations`,
+      typeExternalId: `references${ModelNames.CANVAS_ANNOTATION}`,
       startNodeExternalId: canvas.externalId,
       endNodeExternalId: annotation.externalId,
     })),
     ...fdmContainerRefs.map((ref) => ({
       externalId: getEdgeExternalId(canvas.externalId, ref.externalId),
-      typeExternalId: `${ModelNames.CANVAS}.containerReferences`,
+      typeExternalId: `references${ModelNames.CONTAINER_REFERENCE}`,
       startNodeExternalId: canvas.externalId,
       endNodeExternalId: ref.externalId,
     })),

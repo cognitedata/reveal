@@ -41,8 +41,7 @@ export const Preview = ({ dataModelExternalId, space }: PreviewProps) => {
   const queryClient = useQueryClient();
   const dataPreviewTableRef = useRef<DataPreviewTableRef>(null);
   const { version } = useParams() as { version: string };
-  const [, setSearchParams] = useSearchParams();
-  const newQueryParameters: URLSearchParams = new URLSearchParams();
+  const [_, setSearchParams] = useSearchParams();
 
   const { dataModelVersion: selectedDataModelVersion } =
     useSelectedDataModelVersion(version, dataModelExternalId, space);
@@ -152,8 +151,10 @@ export const Preview = ({ dataModelExternalId, space }: PreviewProps) => {
             })}
             selectedTypeName={selectedType?.name}
             onClick={(item) => {
-              newQueryParameters.set('type', item.name);
-              setSearchParams(newQueryParameters);
+              setSearchParams((params) => {
+                params.set('type', item.name);
+                return params;
+              });
 
               setSelectedType(
                 dataModelExternalId,

@@ -1,35 +1,30 @@
-import { Model3D } from '@cognite/sdk';
+import { DEFAULT_VISIBILITY } from '@data-exploration/components';
+import useLocalStorageState from 'use-local-storage-state';
 
-import {
-  ThreeDModelsResponse,
-  useInfinite3DModelsQuery,
-} from '@data-exploration-lib/domain-layer';
+import { FileTypeVisibility } from '@data-exploration-lib/core';
+import { use3DResults } from '@data-exploration-lib/domain-layer';
+
+import { THREED_TABLE_ID } from '../constants';
 
 import { CounterTab } from './elements';
 import { getChipRightPropsForResourceCounter } from './getChipRightPropsForResourceCounter';
 import { ResourceTabProps } from './types';
 
 export const ThreeDTab = ({ query, ...rest }: ResourceTabProps) => {
-  const {
-    data: modelData = { pages: [] as ThreeDModelsResponse[] },
-    isLoading,
-  } = useInfinite3DModelsQuery(undefined, {
-    enabled: true,
-  });
-
-  const models = modelData.pages.reduce(
-    (accl, t) => accl.concat(t.items),
-    [] as Model3D[]
+  const [fileTypeVisibility] = useLocalStorageState<FileTypeVisibility>(
+    `${THREED_TABLE_ID}-file-types`,
+    {
+      defaultValue: DEFAULT_VISIBILITY,
+    }
   );
 
-  const filteredModels = models.filter((model) =>
-    model.name.toLowerCase().includes(query?.toLowerCase() || '')
+  const { count, isFetching } = use3DResults(
+    fileTypeVisibility,
+    query,
+    rest.filter
   );
 
-  const chipRightProps = getChipRightPropsForResourceCounter(
-    filteredModels.length,
-    isLoading
-  );
+  const chipRightProps = getChipRightPropsForResourceCounter(count, isFetching);
 
   return <CounterTab label="3D" {...chipRightProps} {...rest} />;
 };

@@ -5,11 +5,7 @@ import sdk, {
   createSdkClient,
   loginAndAuthIfNeeded,
 } from '@cognite/cdf-sdk-singleton';
-import {
-  AuthWrapper,
-  SubAppWrapper,
-  isUsingUnifiedSignin,
-} from '@cognite/cdf-utilities';
+import { AuthWrapper, isUsingUnifiedSignin } from '@cognite/cdf-utilities';
 import { Loader } from '@cognite/cogs.js';
 
 export interface AuthProxyProviderProps {
@@ -63,7 +59,7 @@ export const AuthProxyProvider = ({ children }: AuthProxyProviderProps) => {
 
   return (
     <AuthWrapper loadingScreen={<Loader />} login={loginAndAuthIfNeeded}>
-      <SubAppWrapper title="Data Models">{children}</SubAppWrapper>
+      {children}
     </AuthWrapper>
   );
 };
@@ -82,7 +78,7 @@ export const AuthContainer = ({ children }: FusionAuthContainerProps) => {
 
   return (
     <AuthWrapper loadingScreen={<Loader />} login={loginAndAuthIfNeeded}>
-      <SubAppWrapper title="Data Models">{children}</SubAppWrapper>
+      {children}
     </AuthWrapper>
   );
 };

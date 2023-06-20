@@ -16,7 +16,6 @@ import {
   ContainerConfig,
   ContainerType,
   IdsByType,
-  ToolType,
   UnifiedViewer,
   UnifiedViewerEventListenerMap,
   UnifiedViewerEventType,
@@ -29,6 +28,7 @@ import {
   SHAMEFUL_WAIT_TO_ENSURE_ANNOTATIONS_ARE_RENDERED_MS,
   ZOOM_TO_FIT_MARGIN,
   ZOOM_DURATION_SECONDS,
+  MetricEvent,
 } from '../constants';
 import { useIndustryCanvasContext } from '../IndustryCanvasContext';
 import {
@@ -37,16 +37,22 @@ import {
   SerializedCanvasDocument,
   IndustryCanvasContainerConfig,
   IndustryCanvasState,
+  IndustryCanvasToolType,
+  COMMENT_METADATA_ID,
+  isCommentAnnotation,
   SerializedIndustryCanvasState,
   isIndustryCanvasContainerConfig,
 } from '../types';
+import { useUserProfile } from '../UserProfileProvider';
 import addDimensionsIfNotExists from '../utils/addDimensionsIfNotExists';
+import useMetrics from '../utils/tracking/useMetrics';
 import {
   deserializeCanvasDocument,
   getRemovedIdsByType,
   serializeCanvasState,
 } from '../utils/utils';
 
+import { useCommentSaveMutation } from './use-mutation/useCommentSaveMutation';
 import {
   UseCanvasStateHistoryReturnType,
   useHistory,
@@ -323,11 +329,14 @@ const usePersistence = (
 const useManagedState = ({
   unifiedViewer,
   setTool,
+  tool,
 }: {
   unifiedViewer: UnifiedViewer | null;
-  setTool: Dispatch<SetStateAction<ToolType>>;
+  tool: IndustryCanvasToolType;
+  setTool: Dispatch<SetStateAction<IndustryCanvasToolType>>;
 }): UseManagedStateReturnType => {
   const sdk = useSDK();
+  const trackUsage = useMetrics();
   const [interactionState, setInteractionState] = useState<InteractionState>({
     hoverId: undefined,
     clickedContainerAnnotationId: undefined,
@@ -335,6 +344,14 @@ const useManagedState = ({
   const { canvasState, undo, redo, pushState, replaceState } = useHistory();
   usePersistence(canvasState, replaceState);
 
+  const { mutate: saveComment } = useCommentSaveMutation();
+
+  const {
+    userProfile: { userIdentifier },
+  } = useUserProfile();
+
+  const { activeCanvas = { externalId: '' } } = useIndustryCanvasContext();
+  const { externalId: activeCanvasExternalId } = activeCanvas;
   const onUpdateRequest: UpdateHandlerFn = useCallback(
     ({ containers: updatedContainers, annotations: updatedAnnotations }) => {
       const validUpdatedContainers = updatedContainers.filter(
@@ -348,23 +365,51 @@ const useManagedState = ({
       }
 
       pushState(({ container, canvasAnnotations }) => {
-        // If there is only one annotation in the update set, select it
-        if (updatedAnnotations.length === 1) {
+        const updatedAnnotation = updatedAnnotations[0];
+        const hasAnnotationBeenCreated =
+          updatedAnnotation !== undefined &&
+          updatedAnnotations.length === 1 &&
+          !canvasAnnotations.some(
+            (canvasAnnotation) => canvasAnnotation.id === updatedAnnotation.id
+          );
+
+        if (hasAnnotationBeenCreated) {
+          // Augment the annotation with the comment metadata if the tool is comment
+          if (tool === IndustryCanvasToolType.COMMENT) {
+            updatedAnnotation.isSelectable = false;
+            updatedAnnotation.metadata = {
+              ...updatedAnnotation.metadata,
+              [COMMENT_METADATA_ID]: true,
+            };
+            saveComment({
+              externalId: updatedAnnotation.id,
+              text: '',
+              author: userIdentifier,
+              canvas: { externalId: activeCanvasExternalId },
+            });
+          }
+
           setInteractionState({
             hoverId: undefined,
-            clickedContainerAnnotationId: updatedAnnotations[0].id,
+            clickedContainerAnnotationId: updatedAnnotation.id,
           });
-          setTool(ToolType.SELECT);
+          setTool(IndustryCanvasToolType.SELECT);
 
           unifiedViewer?.once(UnifiedViewerEventType.ON_TOOL_CHANGE, () => {
             // It takes a little bit of time before the annotation is added, hence the timeout.
             // TODO: This is somewhat brittle and hacky. We should find a better way to do this.
-            setTimeout(() => {
-              unifiedViewer?.selectByIds({
-                annotationIds: [updatedAnnotations[0].id],
-                containerIds: [],
-              });
-            }, SHAMEFUL_WAIT_TO_ENSURE_ANNOTATIONS_ARE_RENDERED_MS);
+            if (!isCommentAnnotation(updatedAnnotation)) {
+              setTimeout(() => {
+                unifiedViewer?.selectByIds({
+                  annotationIds: [updatedAnnotation.id],
+                  containerIds: [],
+                });
+              }, SHAMEFUL_WAIT_TO_ENSURE_ANNOTATIONS_ARE_RENDERED_MS);
+            }
+          });
+
+          trackUsage(MetricEvent.ANNOTATION_CREATED, {
+            annotationType: updatedAnnotation.type,
           });
         }
 
@@ -377,7 +422,16 @@ const useManagedState = ({
         };
       });
     },
-    [pushState, setTool, unifiedViewer]
+    [
+      pushState,
+      setTool,
+      unifiedViewer,
+      tool,
+      activeCanvasExternalId,
+      saveComment,
+      userIdentifier,
+      trackUsage,
+    ]
   );
 
   const onDeleteRequest: DeleteHandlerFn = useCallback(
@@ -529,16 +583,24 @@ const useManagedState = ({
     }, [attachContainerClickHandler, canvasState.container]);
 
   const onClickContainerAnnotation = useCallback(
-    (annotation: ExtendedAnnotation) =>
-      setInteractionState((prevInteractionState) => ({
-        clickedContainerId: undefined,
-        hoverId: undefined,
-        clickedContainerAnnotationId:
-          prevInteractionState.clickedContainerAnnotationId === annotation.id
+    (annotation: ExtendedAnnotation) => {
+      setInteractionState((prevInteractionState) => {
+        const wasAlreadyClicked =
+          prevInteractionState.clickedContainerAnnotationId === annotation.id;
+        trackUsage(MetricEvent.CONTAINER_ANNOTATION_CLICKED, {
+          annotatedResourceType: annotation.metadata.annotationType,
+          wasAlreadyClicked,
+        });
+        return {
+          clickedContainerId: undefined,
+          hoverId: undefined,
+          clickedContainerAnnotationId: wasAlreadyClicked
             ? undefined
             : annotation.id,
-      })),
-    [setInteractionState]
+        };
+      });
+    },
+    [setInteractionState, trackUsage]
   );
 
   const onMouseOverContainerAnnotation = useCallback(

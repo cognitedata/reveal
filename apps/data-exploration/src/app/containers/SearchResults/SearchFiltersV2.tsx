@@ -8,6 +8,7 @@ import { ResourceType } from '@cognite/data-exploration';
 import { useQueryString } from '@data-exploration-app/hooks/hooks';
 import { SEARCH_KEY } from '@data-exploration-app/utils/constants';
 
+import { useFlagDocumentsApiEnabled } from '../../hooks';
 import { useAllFilters } from '../../store/filter/selectors/allSelectors';
 
 // import { useFilterState } from 'providers';
@@ -32,7 +33,6 @@ interface Props {
   resourceType?: ResourceType;
   visible?: boolean;
   allowHide?: boolean;
-  enableAdvancedFilters?: boolean;
   enableDocumentLabelsFilter?: boolean;
 }
 
@@ -50,6 +50,7 @@ export const SearchFiltersV2: React.FC<Props> = ({
   const { state, setter, resetter } = useAllFilters();
   const [query] = useQueryString(SEARCH_KEY);
   const [debouncedQuery] = useDebounce(query, 100);
+  const isDocumentsApiEnabled = useFlagDocumentsApiEnabled();
 
   return (
     <div
@@ -66,6 +67,7 @@ export const SearchFiltersV2: React.FC<Props> = ({
       {visible && (
         <SidebarFilters
           enableDocumentLabelsFilter={enableDocumentLabelsFilter}
+          isDocumentsApiEnabled={isDocumentsApiEnabled}
           resourceType={resourceType}
           onFilterChange={(type, nextFilter) => {
             setter(type, nextFilter);

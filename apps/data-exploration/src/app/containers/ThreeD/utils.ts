@@ -14,6 +14,7 @@ import {
   CogniteModel,
   Image360Collection,
   Image360Annotation,
+  Image360,
 } from '@cognite/reveal';
 import {
   CogniteClient,
@@ -24,8 +25,8 @@ import {
   AnnotationFilterProps,
   AnnotationModel,
   AnnotationData,
- AnnotationsCogniteAnnotationTypesImagesAssetLink } from '@cognite/sdk';
-
+  AnnotationsCogniteAnnotationTypesImagesAssetLink,
+} from '@cognite/sdk';
 
 import {
   Image360DatasetOptions,
@@ -36,9 +37,11 @@ import {
   fetchAssetDetails,
   fetchAssetMappingsByAssetIdQuery,
   fetchClosestAssetIdQuery,
-  Image360SiteData,
 } from '@data-exploration-app/containers/ThreeD/hooks';
-import { Revision3DWithIndex } from '@data-exploration-lib/domain-layer';
+import {
+  Image360SiteData,
+  Revision3DWithIndex,
+} from '@data-exploration-lib/domain-layer';
 
 export const THREE_D_VIEWER_STATE_QUERY_PARAMETER_KEY = 'viewerState';
 export const THREE_D_SLICING_STATE_QUERY_PARAMETER_KEY = 'slicingState';
@@ -60,6 +63,7 @@ export type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 
 export type AssetSelectionState = {
   imageAnnotation?: Image360Annotation | undefined;
+  imageEntity?: Image360 | undefined;
 };
 
 export const getAssetQueryKey = (assetId: number) => [
@@ -200,6 +204,15 @@ export const fitCameraToAsset = async (
     if (assetSelectionState.imageAnnotation) {
       selectedAnnotation = annotationInfo.find(
         (info) => info.annotation === assetSelectionState.imageAnnotation
+      );
+    }
+
+    if (
+      assetSelectionState !== undefined &&
+      assetSelectionState.imageEntity !== undefined
+    ) {
+      selectedAnnotation = annotationInfo.find(
+        (info) => info.image === assetSelectionState.imageEntity
       );
     }
 

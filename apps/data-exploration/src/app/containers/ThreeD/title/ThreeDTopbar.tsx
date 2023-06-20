@@ -5,11 +5,16 @@ import styled from 'styled-components';
 import { Divider, Flex } from '@cognite/cogs.js';
 import { Model3D } from '@cognite/sdk';
 
-import { Revision3DWithIndex } from '@data-exploration-lib/domain-layer';
+import { useAPMConfig } from '@data-exploration-app/containers/ThreeD/hooks';
+import { useFlagPointsOfInterestFeature } from '@data-exploration-app/hooks/flags';
+import {
+  Revision3DWithIndex,
+  Image360SiteData,
+} from '@data-exploration-lib/domain-layer';
 
 import { ThreeDContext } from '../contexts/ThreeDContext';
-import { Image360SiteData } from '../hooks';
 
+import PointsOfInterestDropdown from './Dropdowns/PointsOfInterestDropdown';
 import Secondary3DModelDropdown from './Dropdowns/Secondary3DModelDropdown';
 import SecondaryImages360Dropdown from './Dropdowns/SecondaryImages360Dropdown';
 import { ModelTypeButton } from './ModelTypeButton';
@@ -32,7 +37,12 @@ export const ThreeDTopbar = ({
     setImages360,
     setSecondaryObjectsVisibilityState,
     secondaryObjectsVisibilityState,
+    pointsOfInterest,
+    setPointsOfInterest,
   } = useContext(ThreeDContext);
+
+  const usePointsOfInterestFeatureFlag = useFlagPointsOfInterestFeature();
+  const { data: config } = useAPMConfig();
 
   if (!secondaryObjectsVisibilityState) return <></>;
 
@@ -89,6 +99,26 @@ export const ThreeDTopbar = ({
           >
             360 images
           </ModelTypeButton>
+          {usePointsOfInterestFeatureFlag && (
+            <ModelTypeButton
+              onVisibilityChange={(v) =>
+                setSecondaryObjectsVisibilityState({
+                  ...secondaryObjectsVisibilityState,
+                  pointsOfInterest: v,
+                })
+              }
+              icon="Waypoint"
+              dropdownContent={
+                <PointsOfInterestDropdown
+                  internalPointsOfInterestCollections={pointsOfInterest}
+                  setInternalPointsOfInterestCollections={setPointsOfInterest}
+                  config={config}
+                />
+              }
+            >
+              Points of interest
+            </ModelTypeButton>
+          )}
         </Flex>
       </Flex>
     </>

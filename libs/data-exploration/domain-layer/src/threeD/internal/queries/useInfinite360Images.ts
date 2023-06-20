@@ -16,11 +16,13 @@ export const useInfinite360Images = () => {
     hasNextPage,
     fetchNextPage,
     isFetchingNextPage,
+    isFetching,
   }: {
     data: InternalEventsData[];
     hasNextPage?: boolean;
     fetchNextPage: () => void;
     isFetchingNextPage: boolean;
+    isFetching: boolean;
   } = useEventsSearchResultQuery(
     {
       eventsFilters: {
@@ -70,5 +72,6 @@ export const useInfinite360Images = () => {
     hasNextPage,
     fetchNextPage,
     isFetchingNextPage,
+    isFetching,
   };
 };

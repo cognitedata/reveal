@@ -1,6 +1,7 @@
 import React from 'react';
 
-import { MetadataFilterV2 } from '@cognite/data-exploration';
+import { MetadataFilterV2 } from '@data-exploration/containers';
+
 import { useList } from '@cognite/sdk-react-query-hooks';
 
 import { SPECIFIC_INFO_CONTENT } from '@data-exploration-app/containers/constants';

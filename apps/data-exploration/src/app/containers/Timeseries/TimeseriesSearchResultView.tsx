@@ -27,11 +27,11 @@ import { SEARCH_KEY } from '@data-exploration-app/utils/constants';
 import { getSelectedResourceId } from '@data-exploration-lib/core';
 
 import {
-  useBreakJourneyPromptToggle,
   useGetJourney,
   useJourneyLength,
   usePushJourney,
-} from '../../hooks/detailsNavigation';
+  useBreakJourneyPromptState,
+} from '../../hooks';
 
 export const TimeseriesSearchResultView = () => {
   const [, openPreview] = useCurrentResourceId();
@@ -42,7 +42,7 @@ export const TimeseriesSearchResultView = () => {
   const [pushJourney] = usePushJourney();
   const [firstJourney] = useGetJourney();
   const [journeyLength] = useJourneyLength();
-  const [, setPromptOpen] = useBreakJourneyPromptToggle();
+  const [, setPromptOpen] = useBreakJourneyPromptState();
 
   // Here we need to parse params to find selected timeseries' id.
   const selectedTimeseriesId = getSelectedResourceId(

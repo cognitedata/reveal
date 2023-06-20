@@ -4,6 +4,8 @@ import { formatDistanceToNow } from 'date-fns';
 
 import { Body, Colors, Menu } from '@cognite/cogs.js';
 
+import { translationKeys } from '../common';
+import { useTranslation } from '../hooks/useTranslation';
 import { SerializedCanvasDocument } from '../types';
 
 type CanvasSubmenuProps = {
@@ -25,6 +27,7 @@ const CanvasSubmenu: React.FC<CanvasSubmenuProps> = ({
   onDeleteCanvasClick,
   onCanvasItemClick,
 }) => {
+  const { t } = useTranslation();
   return (
     <Menu.Submenu
       key={`submenu-${canvas.externalId}`}
@@ -35,7 +38,7 @@ const CanvasSubmenu: React.FC<CanvasSubmenuProps> = ({
             iconPlacement="left"
             onClick={() => onCopyLinkClick(canvas)}
           >
-            Copy link
+            {t(translationKeys.COMMON_CANVAS_LINK_COPY, 'Copy link')}
           </Menu.Item>
           {isActiveCanvas && (
             <Menu.Item
@@ -44,7 +47,7 @@ const CanvasSubmenu: React.FC<CanvasSubmenuProps> = ({
               iconPlacement="left"
               onClick={onRenameCanvasClick}
             >
-              Rename
+              {t(translationKeys.COMMON_CANVAS_RENAME, 'Rename')}
             </Menu.Item>
           )}
           <Menu.Item
@@ -57,7 +60,7 @@ const CanvasSubmenu: React.FC<CanvasSubmenuProps> = ({
             iconPlacement="left"
             onClick={() => onDeleteCanvasClick(canvas)}
           >
-            Delete canvas
+            {t(translationKeys.COMMON_CANVAS_DELETE, 'Delete canvas')}
           </Menu.Item>
         </StyledMenu>
       }
@@ -65,11 +68,14 @@ const CanvasSubmenu: React.FC<CanvasSubmenuProps> = ({
       <div onClick={() => onCanvasItemClick(canvas)}>{canvas.name}</div>
       <LastTimeText onClick={() => onCanvasItemClick(canvas)} level={2}>
         {isActiveCanvas === true ? (
-          'Currently viewing'
+          t(
+            translationKeys.CANVAS_DROPDOWN_CURRENTLY_VIEWING,
+            'Currently viewing'
+          )
         ) : (
           <LastTimeText level={2}>
             Updated{' '}
-            {formatDistanceToNow(new Date(canvas.updatedTime), {
+            {formatDistanceToNow(new Date(canvas.updatedAt), {
               addSuffix: true,
             })}
           </LastTimeText>

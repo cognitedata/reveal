@@ -2,15 +2,25 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { Icon, Colors, Body, Button, Tooltip } from '@cognite/cogs.js';
+import {
+  Icon,
+  Colors,
+  Body,
+  Button,
+  Dropdown,
+  Menu,
+  Tooltip,
+} from '@cognite/cogs.js';
 
+import { translationKeys } from '../../../common';
 import { useAsset } from '../../../hooks/useAsset';
+import { useTranslation } from '../../../hooks/useTranslation';
 import * as ContextualTooltip from '../ContextualTooltip';
 
 import ThreeDButton from './ThreeDButton';
 import TimeseriesList from './TimeseriesList';
 
-type AssetTooltipProps = {
+export type AssetTooltipProps = {
   id: number;
   onAddThreeD: ({
     modelId,
@@ -34,6 +44,7 @@ const AssetTooltip: React.FC<AssetTooltipProps> = ({
   onAddTimeseries,
 }) => {
   const { data: asset, isLoading } = useAsset(id);
+  const { t } = useTranslation();
 
   if (isLoading) {
     return <Icon type="Loader" />;
@@ -59,24 +70,54 @@ const AssetTooltip: React.FC<AssetTooltipProps> = ({
 
         <ContextualTooltip.ButtonsContainer>
           <ContextualTooltip.ButtonWrapper>
-            <Tooltip content="Add asset to canvas">
+            <Tooltip
+              content={t(
+                translationKeys.TOOLTIP_ASSET_ADD_TO_CANVAS,
+                'Add asset to canvas'
+              )}
+            >
               <Button icon="Add" onClick={onAddAsset} inverted />
             </Tooltip>
           </ContextualTooltip.ButtonWrapper>
-
-          <ContextualTooltip.ButtonWrapper>
-            <ThreeDButton
-              assetId={asset.id}
-              onAddThreeD={onAddThreeD}
-              aria-label="Add 3D Model to Canvas"
+          <Dropdown
+            openOnHover
+            placement="right"
+            content={
+              <ContextualTooltip.DropdownMenu>
+                <ThreeDButton
+                  assetId={asset.id}
+                  onAddThreeD={onAddThreeD}
+                  aria-label={t(
+                    translationKeys.TOOLTIP_THREE_D_MODEL_ADD_TO_CANVAS,
+                    'Add 3D model to canvas'
+                  )}
+                />
+                <Menu.Item
+                  iconPlacement="left"
+                  icon="ExternalLink"
+                  onClick={onViewAsset}
+                  aria-label={t(
+                    translationKeys.OPEN_IN_DATA_EXPLORER,
+                    'Open in Data Explorer'
+                  )}
+                >
+                  {t(
+                    translationKeys.OPEN_IN_DATA_EXPLORER,
+                    'Open in Data Explorer'
+                  )}
+                </Menu.Item>
+              </ContextualTooltip.DropdownMenu>
+            }
+          >
+            <Button
+              icon="EllipsisHorizontal"
+              inverted
+              aria-label={t(
+                translationKeys.TOOLTIP_ASSET_SHOW_MORE_ACTIONS,
+                'Show additional asset actions'
+              )}
             />
-          </ContextualTooltip.ButtonWrapper>
-
-          <ContextualTooltip.ButtonWrapper>
-            <Tooltip content="Open asset in Data Explorer">
-              <Button icon="ExternalLink" onClick={onViewAsset} inverted />
-            </Tooltip>
-          </ContextualTooltip.ButtonWrapper>
+          </Dropdown>
         </ContextualTooltip.ButtonsContainer>
       </ContextualTooltip.Header>
 
