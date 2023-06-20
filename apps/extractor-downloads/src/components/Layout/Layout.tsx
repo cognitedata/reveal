@@ -2,7 +2,7 @@ import { PropsWithChildren } from 'react';
 
 import styled from 'styled-components';
 
-const Layout = ({ children }: PropsWithChildren<{}>) => {
+const Layout = ({ children }: PropsWithChildren) => {
   return <StyledContainer>{children}</StyledContainer>;
 };
 

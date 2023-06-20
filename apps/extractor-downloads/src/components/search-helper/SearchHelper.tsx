@@ -14,6 +14,7 @@ const SearchHelper = (): JSX.Element => {
   return (
     <StyledContainer>
       <Body level={2}>
+        {/* eslint-disable-next-line @cognite/require-t-function */}
         <Trans
           i18nKey="search-helper"
           components={{

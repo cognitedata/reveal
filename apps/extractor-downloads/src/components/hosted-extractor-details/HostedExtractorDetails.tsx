@@ -1,14 +1,6 @@
 import { useState } from 'react';
 
-import {
-  Button,
-  Chip,
-  Flex,
-  Icon,
-  Loader,
-  Title,
-  formatDate,
-} from '@cognite/cogs.js';
+import { Button, Chip, Flex, Icon, Title, formatDate } from '@cognite/cogs.js';
 
 import { useTranslation } from '../../common';
 import { ExtractorWithReleases } from '../../service/extractors';
@@ -48,10 +40,6 @@ export const HostedExtractorDetails = ({
 
   const genericLinks =
     extractor?.links?.filter((link) => link?.type === 'generic') ?? [];
-
-  if (status === 'loading') {
-    return <Loader />;
-  }
 
   if (!extractor) {
     // TODO: add not found page

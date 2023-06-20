@@ -99,6 +99,7 @@ export const CreateConnectionModal = ({
       initialValues: {
         type: MQTT_SOURCE_TYPE_OPTIONS[0].value,
       },
+      // eslint-disable-next-line @typescript-eslint/no-shadow
       onSubmit: (values) => {
         if (
           values.externalId &&

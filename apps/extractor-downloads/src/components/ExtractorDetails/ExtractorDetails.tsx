@@ -41,6 +41,7 @@ const ExtractorDetails = () => {
   const { data, status } = useExtractorsList();
 
   const extractor = data?.find(
+    // eslint-disable-next-line @typescript-eslint/no-shadow
     (extractor) => extractor.externalId === extractorExternalId
   );
 

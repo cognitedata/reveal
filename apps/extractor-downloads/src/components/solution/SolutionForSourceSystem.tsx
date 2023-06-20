@@ -3,14 +3,13 @@ import { useParams } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import { useExtractor } from '../../hooks/useExtractorsList';
-import { Solution as SolutionType } from '../../hooks/useSolutions';
-import { useSourceSystem } from '../../hooks/useSourceSystems';
-
 import { createLink } from '@cognite/cdf-utilities';
 import { Colors, Elevations, Flex, Icon, Link, Title } from '@cognite/cogs.js';
 
 import { useTranslation } from '../../common';
+import { useExtractor } from '../../hooks/useExtractorsList';
+import { Solution as SolutionType } from '../../hooks/useSolutions';
+import { useSourceSystem } from '../../hooks/useSourceSystems';
 import Markdown from '../markdown';
 
 type SolutionForSourceSystemProps = SolutionType & {
