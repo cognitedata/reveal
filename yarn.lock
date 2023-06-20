@@ -508,7 +508,7 @@
     "@babel/traverse" "^7.22.5"
     "@babel/types" "^7.22.5"
 
-"@babel/helpers@^7.12.13", "@babel/helpers@^7.12.5", "@babel/helpers@^7.21.5":
+"@babel/helpers@^7.12.13", "@babel/helpers@^7.12.5", "@babel/helpers@^7.21.5", "@babel/helpers@^7.22.5":
   version "7.22.5"
   resolved "https://registry.yarnpkg.com/@babel/helpers/-/helpers-7.22.5.tgz#74bb4373eb390d1ceed74a15ef97767e63120820"
   integrity sha512-pSXRmfE1vzcUIDFQcSGA5Mr+GxBV9oiRKDuDxXvWQQBCh8HoIjs/2DlDB7H8smac1IVrB9/xdXj2N3Wol9Cr+Q==
