@@ -8,7 +8,7 @@ import { useDataSets } from '@platypus-app/hooks/useDataSets';
 import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
 import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
 
-import { useCdfUserHistoryService } from '@cognite/cdf-utilities';
+import { createLink, useCdfUserHistoryService } from '@cognite/cdf-utilities';
 
 import { DataModelDetailModal } from '../../components/DataModelDetailModal/DataModelDetailModal';
 import { useTranslation } from '../../hooks/useTranslation';
@@ -90,7 +90,7 @@ export const CreateDataModel = ({
             userHistoryService.logNewResourceEdit({
               application: SUB_APP_PATH,
               name: dataModelName.trim(),
-              path: dataModelPath,
+              path: createLink(dataModelPath),
             });
 
           Notification({

@@ -1,5 +1,5 @@
 import React, { useEffect, useContext, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 
 import styled from 'styled-components';
 
@@ -7,6 +7,7 @@ import { Loader, Metadata } from '@data-exploration/components';
 import { FileInfo } from '@data-exploration/containers';
 
 import { getFlow } from '@cognite/cdf-sdk-singleton';
+import { useCdfUserHistoryService } from '@cognite/cdf-utilities';
 import { Tabs, Infobar } from '@cognite/cogs.js';
 import {
   FilePreview as CogniteFilePreview,
@@ -27,7 +28,11 @@ import {
   useResourceDetailSelectedTab,
 } from '@data-exploration-app/hooks';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
-import { APPLICATION_ID } from '@data-exploration-lib/core';
+import {
+  APPLICATION_ID,
+  SUB_APP_PATH,
+  createInternalLink,
+} from '@data-exploration-lib/core';
 
 // FilePreviewTabType;
 // - preview
@@ -67,6 +72,9 @@ export const FileDetail = ({
     resourceType: ResourceType;
   }>();
 
+  const { pathname, search: searchParams } = useLocation();
+  const userHistoryService = useCdfUserHistoryService();
+
   const [selectedTab, setSelectedTab] = useResourceDetailSelectedTab();
   const [endJourney] = useEndJourney();
   const activeTab = selectedTab || 'preview';
@@ -105,6 +113,13 @@ export const FileDetail = ({
 
   useEffect(() => {
     if (fileInfo !== undefined) {
+      // save File preview as view resource in user history
+      if (fileInfo?.name)
+        userHistoryService.logNewResourceView({
+          application: SUB_APP_PATH,
+          name: fileInfo?.name,
+          path: createInternalLink(pathname, searchParams),
+        });
       trackUsage('Exploration.Preview.File.MimeType', {
         mimeType: fileInfo.mimeType,
       });
