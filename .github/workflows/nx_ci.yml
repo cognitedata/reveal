@@ -74,7 +74,7 @@ jobs:
 
       - name: Build interactive diagrams
         id: build-interactive-diagrams
-        run: nx run interactive-diagrams:build:production
+        run: npx nx run interactive-diagrams:build:production
         env:
           NODE_OPTIONS: '--max_old_space_size=8192'
   distributed-task:
