@@ -51,7 +51,7 @@
     "react-vtree": "3.0.0-beta.3",
     "react-window": "^1.8.6",
     "reactcss": "^1.2.3",
-    "recharts": "^2.3.2",
+    "recharts": "^2.7.1",
     "redux": "^4.1.2",
     "redux-thunk": "^2.4.2",
     "reselect": "^4.0.0",
