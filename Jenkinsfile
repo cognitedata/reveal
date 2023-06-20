@@ -50,7 +50,7 @@ static final Map<String, String> PREVIEW_PACKAGE_NAMES = [
   'copilot': "@cognite/cdf-copilot",
   'industry-canvas-ui': "@cognite/cdf-industry-canvas-ui",
   'iot-hub': "@cognite/cdf-iot-hub",
-  'functions-ui': "@cognite/cdf-functions-ui"
+  'functions-ui': "@cognite/cdf-functions-ui",
   '3d-management': '@cognite/cdf-3d-management',
   'transformations': "@cognite/cdf-transformations-2",
   'cdf-document-search': 'cognite/cdf-document-search-ui'
