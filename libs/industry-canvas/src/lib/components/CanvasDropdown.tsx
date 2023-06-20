@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import styled from 'styled-components';
@@ -15,15 +15,18 @@ import {
   Tooltip,
 } from '@cognite/cogs.js';
 
-import { COPIED_TEXT, useClipboard } from '@data-exploration-lib/core';
+import { useClipboard } from '@data-exploration-lib/core';
 
-import { TOAST_POSITION } from '../constants';
+import { translationKeys } from '../common';
+import { MetricEvent, TOAST_POSITION } from '../constants';
 import { EMPTY_FLEXIBLE_LAYOUT } from '../hooks/constants';
 import useCanvasDeletion from '../hooks/useCanvasDeletion';
 import useCanvasSearch from '../hooks/useCanvasSearch';
+import { useTranslation } from '../hooks/useTranslation';
 import { IndustryCanvasContextType } from '../IndustryCanvasContext';
 import { SerializedCanvasDocument } from '../types';
 import { getCanvasLink } from '../utils/getCanvasLink';
+import useMetrics from '../utils/tracking/useMetrics';
 
 import CanvasDeletionModal from './CanvasDeletionModal';
 import CanvasSubmenu from './CanvasSubmenu';
@@ -55,8 +58,10 @@ const CanvasDropdown: React.FC<CanvasDropdownProps> = ({
   setCanvasId,
   isCanvasLocked,
 }) => {
+  const trackUsage = useMetrics();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchString, setSearchString] = useState('');
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { filteredCanvases } = useCanvasSearch({
     canvases,
@@ -84,10 +89,23 @@ const CanvasDropdown: React.FC<CanvasDropdownProps> = ({
 
   const onCopyLinkClick = (canvas: SerializedCanvasDocument) => {
     onCopy(`${window.location.origin}${getCanvasLink(canvas.externalId)}`);
-    toast.success(COPIED_TEXT, {
-      toastId: `canvas-link-copied-${uuid()}`,
-      position: TOAST_POSITION,
-    });
+    toast.success(
+      <div>
+        <b>
+          {t(translationKeys.CANVAS_LINK_COPIED_TITLE, 'Canvas link copied')}
+        </b>
+        <p>
+          {t(
+            translationKeys.CANVAS_LINK_COPIED_SUB_TITLE,
+            'Canvas link successfully copied to your clipboard'
+          )}
+        </p>
+      </div>,
+      {
+        toastId: `canvas-link-copied-${uuid()}`,
+        position: TOAST_POSITION,
+      }
+    );
     setIsMenuOpen(false);
   };
 
@@ -108,6 +126,12 @@ const CanvasDropdown: React.FC<CanvasDropdownProps> = ({
 
     navigate(getCanvasLink(externalId));
   };
+
+  useEffect(() => {
+    if (isMenuOpen) {
+      trackUsage(MetricEvent.CANVAS_DROPDOWN_OPENED);
+    }
+  }, [isMenuOpen, trackUsage]);
 
   return (
     <>
@@ -130,12 +154,17 @@ const CanvasDropdown: React.FC<CanvasDropdownProps> = ({
               onChange={(e) => setSearchString(e.target.value)}
               value={searchString}
               variant="solid"
-              placeholder="Search"
+              placeholder={t(
+                translationKeys.EMPTY_CANVAS_PLACEHOLDER,
+                'Search'
+              )}
             />
             {canvases.length === 0 ? (
               <EmptyCanvasesPlaceholder arias-label="create-canvas-description">
-                Please create your first canvas to persist your changes in
-                Industry Canvas
+                {t(
+                  translationKeys.EMPTY_CANVAS_PLACEHOLDER,
+                  'Please create your first canvas to persist your changes in Industrial Canvas'
+                )}
               </EmptyCanvasesPlaceholder>
             ) : (
               <>
@@ -153,7 +182,12 @@ const CanvasDropdown: React.FC<CanvasDropdownProps> = ({
                     <Divider />
                   </>
                 )}
-                <MenuItemsWrapper label="Public canvases">
+                <MenuItemsWrapper
+                  label={t(
+                    translationKeys.PUBLIC_CANVASES_LIST_DROPDOWN,
+                    'Public canvases'
+                  )}
+                >
                   {filteredCanvases
                     .filter(
                       (canvas) => canvas.externalId !== activeCanvas?.externalId
@@ -175,27 +209,39 @@ const CanvasDropdown: React.FC<CanvasDropdownProps> = ({
 
             <Divider />
             <CreateCanvasButton
-              aria-label="CreateCanvasButton"
+              aria-label={t(
+                translationKeys.COMMON_CREATE_CANVAS,
+                'Create new canvas.'
+              )}
               size="medium"
               type="primary"
               icon="Plus"
               loading={isCreatingCanvas || isSavingCanvas || isLoadingCanvas}
               onClick={onCreateCanvasClick}
             >
-              Create new canvas
+              {t(translationKeys.COMMON_CREATE_CANVAS, 'Create new canvas.')}
             </CreateCanvasButton>
           </StyledMenu>
         }
       >
-        <Tooltip content="Show canvases" position="bottom">
+        <Tooltip
+          content={t(
+            translationKeys.TOOLTIP_SHOW_CANVAS_DROPDOWN,
+            'Show canvases'
+          )}
+          position="bottom"
+        >
           <NavigationButton
-            aria-label="CanvasDropdownButton"
+            aria-label={t(
+              translationKeys.TOOLTIP_SHOW_CANVAS_DROPDOWN,
+              'Show canvases'
+            )}
             key="CanvasDropdownButton"
             icon="ChevronDown"
             type="ghost"
             toggled={isMenuOpen}
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            loading={isListingCanvases || isDeletingCanvas}
+            loading={isListingCanvases || isDeletingCanvas || isLoadingCanvas}
           />
         </Tooltip>
       </Dropdown>

@@ -51,7 +51,7 @@ export const TopBar: FC<Props> = () => {
                   {
                     name: 'Charts',
                     onClick: () => {
-                      navigate('/canvas');
+                      navigate('/charts');
                     },
                   },
                 ]

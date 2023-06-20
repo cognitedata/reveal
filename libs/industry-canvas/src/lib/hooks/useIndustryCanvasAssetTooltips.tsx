@@ -11,14 +11,17 @@ import {
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
 
 import AssetTooltip from '../components/ContextualTooltips/AssetTooltip';
-import { ANNOTATION_TOOLTIP_POSITION } from '../constants';
+import { ANNOTATION_TOOLTIP_POSITION, MetricEvent } from '../constants';
 import { OnAddContainerReferences } from '../IndustryCanvasPage';
 import { ContainerReferenceType } from '../types';
+import useMetrics from '../utils/tracking/useMetrics';
 
 const useIndustryCanvasAssetTooltips = (
   selectedAnnotation: ExtendedAnnotation | undefined,
   onAddContainerReferences: OnAddContainerReferences
 ) => {
+  const trackUsage = useMetrics();
+
   return useMemo(() => {
     if (selectedAnnotation === undefined) {
       return [];
@@ -46,6 +49,7 @@ const useIndustryCanvasAssetTooltips = (
           initialAssetId,
         },
       ]);
+      trackUsage(MetricEvent.ASSET_TOOLTIP_ADD_THREE_D);
     };
 
     const onAddTimeseries = (timeseriesId: number) => {
@@ -60,6 +64,7 @@ const useIndustryCanvasAssetTooltips = (
           endDate: dayjs(new Date()).endOf('day').toISOString(),
         },
       ]);
+      trackUsage(MetricEvent.ASSET_TOOLTIP_ADD_TIMESERIES);
     };
 
     const onAddAsset = (): void => {
@@ -69,10 +74,12 @@ const useIndustryCanvasAssetTooltips = (
           resourceId: resourceId,
         },
       ]);
+      trackUsage(MetricEvent.ASSET_TOOLTIP_ADD_ASSET);
     };
 
     const onViewAsset = (): void => {
       window.open(createLink(`/explore/asset/${resourceId}`), '_blank');
+      trackUsage(MetricEvent.ASSET_TOOLTIP_OPEN_IN_DATA_EXPLORER);
     };
 
     return [
@@ -91,7 +98,7 @@ const useIndustryCanvasAssetTooltips = (
         shouldPositionStrictly: true,
       },
     ];
-  }, [selectedAnnotation, onAddContainerReferences]);
+  }, [selectedAnnotation, onAddContainerReferences, trackUsage]);
 };
 
 export default useIndustryCanvasAssetTooltips;

@@ -33,12 +33,12 @@ import {
 } from '@data-exploration-lib/core';
 
 import {
-  useBreakJourneyPromptToggle,
   useGetJourney,
   useJourneyLength,
   usePushJourney,
   useFlagOverlayNavigation,
   useFlagDocumentGPT,
+  useBreakJourneyPromptState,
 } from '../../hooks';
 
 export const FileSearchResultView = () => {
@@ -52,7 +52,7 @@ export const FileSearchResultView = () => {
   const [pushJourney] = usePushJourney();
   const [firstJourney] = useGetJourney();
   const [journeyLength] = useJourneyLength();
-  const [, setPromptOpen] = useBreakJourneyPromptToggle();
+  const [, setPromptOpen] = useBreakJourneyPromptState();
   const [debouncedQuery] = useDebounce(query, 100);
   const editable = useResourceEditable();
 

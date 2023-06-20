@@ -1,4 +1,4 @@
-import { useValidateDataSource } from '@data-quality/api/codegen';
+import { useDataSourceValidation } from '@data-quality/api/codegen';
 import { useLoadDataSource } from '@data-quality/hooks';
 import { Notification } from '@platypus-app/components/Notification/Notification';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
@@ -12,7 +12,7 @@ export const useStartValidation = (): {
 
   const { dataSource } = useLoadDataSource();
 
-  const { isLoading, mutate: validateDataSource } = useValidateDataSource();
+  const { isLoading, mutate: validateDataSource } = useDataSourceValidation();
 
   const onSuccess = () => {
     Notification({

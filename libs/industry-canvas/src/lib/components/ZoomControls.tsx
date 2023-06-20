@@ -2,7 +2,9 @@ import styled from 'styled-components';
 
 import { Button, Dropdown, Menu, ToolBar, Tooltip } from '@cognite/cogs.js';
 
+import { translationKeys } from '../common';
 import { ZOOM_LEVELS } from '../constants';
+import { useTranslation } from '../hooks/useTranslation';
 import convertToPercentage from '../utils/convertToPercentage';
 
 export type ZoomControlsProps = {
@@ -19,65 +21,73 @@ const ZoomControls: React.FC<ZoomControlsProps> = ({
   zoomOut,
   zoomToFit,
   setZoomScale,
-}) => (
-  <ToolBar direction="horizontal">
-    <>
-      <Tooltip content="Zoom out">
-        <Button
-          aria-label="ZoomOut"
-          type="ghost"
-          icon="ZoomOut"
-          size="small"
-          onClick={zoomOut}
-        />
-      </Tooltip>
-      <Dropdown
-        placement="top-start"
-        content={
-          <Menu>
-            {ZOOM_LEVELS.map((zoomValue) => (
-              <Menu.Item
-                key={`item-percentage-key-${zoomValue}`}
-                onClick={() => {
-                  if (setZoomScale !== undefined) {
-                    setZoomScale(zoomValue);
-                  }
-                }}
-              >
-                {`${Math.round(zoomValue * 100)}%`}
-              </Menu.Item>
-            ))}
-          </Menu>
-        }
-      >
-        <PercentageButton
-          aria-label="CurrentZoomScale"
-          type="ghost"
-          size="small"
+}) => {
+  const { t } = useTranslation();
+  return (
+    <ToolBar direction="horizontal">
+      <>
+        <Tooltip content={t(translationKeys.ZOOM_OUT_CONTROL, 'Zoom out')}>
+          <Button
+            aria-label={t(translationKeys.ZOOM_OUT_CONTROL, 'Zoom out')}
+            type="ghost"
+            icon="ZoomOut"
+            size="small"
+            onClick={zoomOut}
+          />
+        </Tooltip>
+        <Dropdown
+          placement="top-start"
+          content={
+            <Menu>
+              {ZOOM_LEVELS.map((zoomValue) => (
+                <Menu.Item
+                  key={`item-percentage-key-${zoomValue}`}
+                  onClick={() => {
+                    if (setZoomScale !== undefined) {
+                      setZoomScale(zoomValue);
+                    }
+                  }}
+                >
+                  {`${Math.round(zoomValue * 100)}%`}
+                </Menu.Item>
+              ))}
+            </Menu>
+          }
         >
-          {convertToPercentage(currentZoomScale)}%
-        </PercentageButton>
-      </Dropdown>
-      <Tooltip content="Zoom in">
+          <PercentageButton
+            aria-label="CurrentZoomScale"
+            type="ghost"
+            size="small"
+          >
+            {convertToPercentage(currentZoomScale)}%
+          </PercentageButton>
+        </Dropdown>
+        <Tooltip content={t(translationKeys.ZOOM_IN_CONTROL, 'Zoom in')}>
+          <Button
+            aria-label={t(translationKeys.ZOOM_IN_CONTROL, 'Zoom in')}
+            type="ghost"
+            icon="ZoomIn"
+            size="small"
+            onClick={zoomIn}
+          />
+        </Tooltip>
+      </>
+      <Tooltip
+        content={t(translationKeys.ZOOM_FIT_CONTENT, 'Fit contents in view')}
+      >
         <Button
-          aria-label="ZoomIn"
+          aria-label={t(
+            translationKeys.ZOOM_FIT_CONTENT,
+            'Fit contents in view'
+          )}
           type="ghost"
-          icon="ZoomIn"
-          size="small"
-          onClick={zoomIn}
+          icon="Expand"
+          onClick={zoomToFit}
         />
       </Tooltip>
-    </>
-    <Tooltip content="Fit contents in view">
-      <Button
-        aria-label="Fit contents in view"
-        type="ghost"
-        icon="Expand"
-        onClick={zoomToFit}
-      />
-    </Tooltip>
-  </ToolBar>
-);
+    </ToolBar>
+  );
+};
 
 const PercentageButton = styled(Button)`
   width: 50px;
