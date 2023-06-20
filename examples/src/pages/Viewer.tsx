@@ -436,7 +436,7 @@ export function Viewer() {
       const collection = await viewer.add360ImageSet('datamodels', {
         dataModelExternalId: 'Image360DM',
         space: 'Image_360',
-        image360CollectionExternalId: 'c_RC_2',
+        image360CollectionExternalId: 'Hibernia_RS2',
       });
 
       console.log(collection.image360Entities.length);

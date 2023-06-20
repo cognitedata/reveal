@@ -13,29 +13,12 @@ import {
 import { Euler, Matrix4 } from 'three';
 import assert from 'assert';
 import { DmsSDK, DmsUniqueIdentifier, EdgeItem, Item, Source } from './DmsSdk';
+import omit from 'lodash/omit';
 
 export type DM360CollectionIdentifier = {
   space: string;
   dataModelExternalId: string;
   image360CollectionExternalId: string;
-};
-
-type JSONData = {
-  getImage360CollectionById: {
-    items: Image360Collection[];
-  };
-};
-
-type Image360Collection = {
-  externalId: string;
-  label: string;
-  stations: {
-    items: Image360Station[];
-    pageInfo: {
-      hasNextPage: boolean;
-      endCursor: string;
-    };
-  };
 };
 
 type Image360Station = {
@@ -50,29 +33,9 @@ type Image360Revision = {
   externalId: string;
   label: string;
   timeTaken: number | null;
-  translation: {
-    x: number;
-    y: number;
-    z: number;
-  };
-  eulerRotation: {
-    x: number;
-    y: number;
-    z: number;
-  };
-  cubeMap: {
-    back: FileMetadata;
-    bottom: FileMetadata;
-    front: FileMetadata;
-    left: FileMetadata;
-    right: FileMetadata;
-    top: FileMetadata;
-  };
-};
-
-type FileMetadata = {
-  id: number;
-  mimeType: 'image/jpeg' | 'image/png';
+  translation: Vec3d;
+  eulerRotation: Vec3d;
+  cubeMap: CubeMap;
 };
 
 type Image360RevisionResult = {
@@ -98,11 +61,9 @@ type Vec3d = {
 };
 
 export class Cdf360FdmProvider implements Image360DescriptorProvider<DM360CollectionIdentifier> {
-  private readonly _sdk: CogniteClient;
   private readonly _dmsSDK: DmsSDK;
 
   constructor(sdk: CogniteClient) {
-    this._sdk = sdk;
     this._dmsSDK = new DmsSDK(sdk);
   }
   public async get360ImageDescriptors(
@@ -110,21 +71,18 @@ export class Cdf360FdmProvider implements Image360DescriptorProvider<DM360Collec
     _: boolean
   ): Promise<Historical360ImageSet[]> {
     const start = performance.now();
-    await this.fetchImageCollection(metadataFilter);
-    console.log(`Fetch took ${performance.now() - start} ms.`);
-
-    throw new Error('Method not implemented.');
-
-    return [];
+    const cols = await this.fetchImageCollection(metadataFilter);
+    console.log(`Fetched ${cols.length} collections in ${performance.now() - start} ms`);
+    return cols;
   }
 
-  private async fetchImageCollection(metadataFilter: DM360CollectionIdentifier): Promise<Image360Station[]> {
+  private async fetchImageCollection(metadataFilter: DM360CollectionIdentifier): Promise<Historical360ImageSet[]> {
     const { space, image360CollectionExternalId } = metadataFilter;
 
     const image360CollectionSource: Source = { externalId: 'Image360Collection', space, type: 'view', version: '1' };
     const image360CollectionItem: Item = { externalId: image360CollectionExternalId, instanceType: 'node', space };
 
-    const image360CollectionResult = this._dmsSDK.getInstancesByExternalIds(
+    const image360CollectionResult = this._dmsSDK.getInstancesByExternalIds<{ label: string }>(
       [image360CollectionItem],
       image360CollectionSource
     );
@@ -135,18 +93,46 @@ export class Cdf360FdmProvider implements Image360DescriptorProvider<DM360Collec
       image360StationsResult
     ]);
 
-    return [];
+    const collectionId = image360Collection[0].externalId;
+    const collectionLabel = image360Collection[0].label;
+
+    return Promise.all(
+      image360Stations.map(station => {
+        return this.createHistorical360ImageSet(station, collectionId, collectionLabel);
+      })
+    );
   }
 
-  private async fetchImageStations(collectionExternalId: string, space: string): Promise<any> {
-    const stationSource: Source = { externalId: 'Image360Station', space, type: 'view', version: '1' };
+  private async fetchImageStations(collectionExternalId: string, space: string): Promise<Image360Station[]> {
     const filter = {
       equals: {
         property: ['edge', 'startNode'],
         value: { externalId: collectionExternalId, space }
       }
     };
-    const collectionToStationEdgeItems = await this._dmsSDK.filterInstances(filter, 'edge');
+
+    let hasNext = true;
+    let nextSetCursor: string | undefined = undefined;
+
+    const stations: Promise<Image360Station[]>[] = [];
+    while (hasNext) {
+      const { edges: collectionToStationEdgeItems, nextCursor } = await this._dmsSDK.filterInstances(
+        filter,
+        'edge',
+        undefined,
+        nextSetCursor
+      );
+      stations.push(this.fetchStationData(collectionToStationEdgeItems, space));
+
+      nextSetCursor = nextCursor;
+      hasNext = nextCursor !== undefined && collectionToStationEdgeItems.length === 1000;
+    }
+    return (await Promise.all(stations)).flatMap(p => p);
+  }
+
+  private async fetchStationData(collectionToStationEdgeItems: EdgeItem[], space: string): Promise<Image360Station[]> {
+    const stationSource: Source = { externalId: 'Image360Station', space, type: 'view', version: '1' };
+
     const image360RevisionResult = this.fetchImageRevisions(collectionToStationEdgeItems, space);
     const fetchStationItems: Item[] = collectionToStationEdgeItems.map(edgeItem => {
       return {
@@ -159,10 +145,25 @@ export class Cdf360FdmProvider implements Image360DescriptorProvider<DM360Collec
       stationSource
     );
 
-    await Promise.all([image360RevisionResult, stationItemsResult]);
+    const [stationIdToRevisionMap, stationsResult] = await Promise.all([image360RevisionResult, stationItemsResult]);
+
+    return stationsResult.map(stationItem => {
+      const stationId = stationItem.externalId;
+      const image360Revisions = stationIdToRevisionMap.get(stationId);
+      assert(image360Revisions !== undefined);
+      return {
+        ...stationItem,
+        revisions: {
+          items: image360Revisions
+        }
+      };
+    });
   }
 
-  private async fetchImageRevisions(collectionToStationEdgeItems: EdgeItem[], space: string): Promise<any> {
+  private async fetchImageRevisions(
+    collectionToStationEdgeItems: EdgeItem[],
+    space: string
+  ): Promise<Map<string, Image360Revision[]>> {
     const revisionSource: Source = { externalId: 'Image360Revision', space, type: 'view', version: '1' };
     const filter = {
       containsAny: {
@@ -170,22 +171,53 @@ export class Cdf360FdmProvider implements Image360DescriptorProvider<DM360Collec
         values: collectionToStationEdgeItems.map(edgeItem => edgeItem.endNode)
       }
     };
-    const stationToRevisionEdgeItems = await this._dmsSDK.filterInstances(filter, 'edge');
+    const { edges: stationToRevisionEdgeItems } = await this._dmsSDK.filterInstances(filter, 'edge');
     const fetchRevisionItems: Item[] = stationToRevisionEdgeItems.map(edgeItem => {
       return {
         instanceType: 'node',
         ...edgeItem.endNode
       };
     });
-    const revisionItemsResult = this._dmsSDK.getInstancesByExternalIds<Image360RevisionResult>(
+
+    const revisionToStationMap = new Map<string, string>();
+    stationToRevisionEdgeItems.forEach(edgeItem => {
+      revisionToStationMap.set(edgeItem.endNode.externalId, edgeItem.startNode.externalId);
+    });
+
+    const image360RevisionsResult = await this._dmsSDK.getInstancesByExternalIds<Image360RevisionResult>(
       fetchRevisionItems,
       revisionSource
     );
 
-    const image360Revisions = await revisionItemsResult;
-    await this.fetchRevisionImageData(image360Revisions, space);
+    const [cubeMaps, rotations, translations] = await this.fetchRevisionImageData(image360RevisionsResult, space);
+
+    const stationIdToRevisionMap = new Map<string, Image360Revision[]>();
+
+    image360RevisionsResult.forEach((revisionResult, index) => {
+      const stationId = revisionToStationMap.get(revisionResult.externalId);
+      if (!stationId) {
+        throw new Error('Station id not found');
+      }
+
+      const revisions = stationIdToRevisionMap.get(stationId) ?? [];
+      const revision: Image360Revision = {
+        externalId: revisionResult.externalId,
+        label: revisionResult.label,
+        cubeMap: omit(cubeMaps[index], 'externalId'),
+        eulerRotation: rotations[index],
+        timeTaken: null,
+        translation: translations[index]
+      };
+      revisions.push(revision);
+      stationIdToRevisionMap.set(stationId, revisions);
+    });
+
+    return stationIdToRevisionMap;
   }
-  public async fetchRevisionImageData(image360Revisions: Image360RevisionResult[], space: string): Promise<any> {
+  public async fetchRevisionImageData(
+    image360Revisions: Image360RevisionResult[],
+    space: string
+  ): Promise<[CubeMap[], Vec3d[], Vec3d[]]> {
     const cubeMapSource: Source = { externalId: 'CubeMap', space, type: 'view', version: '1' };
     const vec3dSource: Source = { externalId: 'Vec3d', space, type: 'view', version: '1' };
 
@@ -198,19 +230,14 @@ export class Cdf360FdmProvider implements Image360DescriptorProvider<DM360Collec
     });
 
     const translationItems: Item[] = image360Revisions.map(revision => {
-      return { instanceType: 'node', ...revision.eulerRotation };
+      return { instanceType: 'node', ...revision.translation };
     });
 
     const cubeMapResult = this._dmsSDK.getInstancesByExternalIds<CubeMap>(cubeMapItems, cubeMapSource);
     const eulerRotationResult = this._dmsSDK.getInstancesByExternalIds<Vec3d>(eulerRotationItems, vec3dSource);
     const translationResult = this._dmsSDK.getInstancesByExternalIds<Vec3d>(translationItems, vec3dSource);
 
-    const [cubeMaps, rotation, translation] = await Promise.all([
-      cubeMapResult,
-      eulerRotationResult,
-      translationResult
-    ]);
-    console.log(cubeMaps);
+    return Promise.all([cubeMapResult, eulerRotationResult, translationResult]);
   }
 
   private async createHistorical360ImageSet(
@@ -257,9 +284,9 @@ export class Cdf360FdmProvider implements Image360DescriptorProvider<DM360Collec
 
   private async getRevisionDescriptor(revision: Image360Revision): Promise<Image360Descriptor> {
     const faceDescriptors: Image360FileDescriptor[] = Object.entries(revision.cubeMap).map(
-      ([faceKey, fileMetadata]) => {
+      ([faceKey, fileExternalId]) => {
         const face = faceKey as Image360FileDescriptor['face'];
-        return { face, fileId: fileMetadata.id, mimeType: fileMetadata.mimeType };
+        return { face, fileId: { externalId: fileExternalId }, mimeType: 'image/jpeg' };
       }
     );
 

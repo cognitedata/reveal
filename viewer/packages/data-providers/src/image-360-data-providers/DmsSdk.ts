@@ -40,10 +40,12 @@ export class DmsSDK {
     this._sdk = sdk;
   }
 
-  public async getInstancesByExternalIds<T>(items: Item[], source: Source): Promise<T[]> {
+  public async getInstancesByExternalIds<T>(items: Item[], source: Source): Promise<(T & { externalId: string })[]> {
     const result = await this._sdk.post(this._byIdsEndpoint, { data: { items, sources: [{ source }] } });
     if (result.status === 200) {
-      return result.data.items.map((item: any) => item.properties[source.space][`${source.externalId}/1`] as T);
+      return result.data.items.map((item: any) => {
+        return { ...item.properties[source.space][`${source.externalId}/1`], externalId: item.externalId };
+      });
     }
     throw new Error(`Failed to fetch instances. Status: ${result.status}`);
   }
@@ -53,7 +55,7 @@ export class DmsSDK {
     instanceType: InstanceType,
     source?: Source,
     cursor?: string
-  ): Promise<EdgeItem[]> {
+  ): Promise<{ edges: EdgeItem[]; nextCursor?: string }> {
     const data: any = { filter, instanceType };
     if (source) {
       data.sources = [{ source }];
@@ -64,7 +66,7 @@ export class DmsSDK {
 
     const result = await this._sdk.post(this._listEndpoint, { data });
     if (result.status === 200) {
-      return result.data.items as EdgeItem[];
+      return { edges: result.data.items as EdgeItem[], nextCursor: result.data.nextCursor };
     }
     throw new Error(`Failed to fetch instances. Status: ${result.status}`);
   }

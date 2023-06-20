@@ -128,7 +128,7 @@ export class Cdf360EventProvider implements Image360DescriptorProvider<Metadata>
                 return {
                   face: imageInfo.metadata!.face,
                   mimeType: imageInfo.mimeType!,
-                  fileId: imageInfo.id
+                  fileId: { id: imageInfo.id }
                 } as Image360FileDescriptor;
               })
             };

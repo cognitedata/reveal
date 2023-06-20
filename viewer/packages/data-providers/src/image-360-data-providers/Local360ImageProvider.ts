@@ -63,7 +63,7 @@ export class Local360ImageProvider implements Image360Provider<unknown> {
           {
             timestamp: undefined,
             faceDescriptors: localDescriptor.faces.map(p => {
-              return { face: p.face, fileId: p.id, mimeType: 'image/png' } as Image360FileDescriptor;
+              return { face: p.face, fileId: { id: p.id }, mimeType: 'image/png' } as Image360FileDescriptor;
             })
           }
         ]

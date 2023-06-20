@@ -244,7 +244,9 @@ export class DefaultImage360Collection implements Image360Collection {
     }
 
     async function getRevisionAnnotationsForAsset(revision: Image360RevisionEntity): Promise<Image360Annotation[]> {
-      const relevantDescriptors = revision.getDescriptors().faceDescriptors.filter(desc => imageIdSet.has(desc.fileId));
+      const relevantDescriptors = revision
+        .getDescriptors()
+        .faceDescriptors.filter(desc => imageIdSet.has((desc.fileId as any).id));
 
       if (relevantDescriptors.length === 0) {
         return [];

@@ -71,7 +71,7 @@ export type Image360Texture = {
 };
 
 export type Image360FileDescriptor = {
-  fileId: number;
+  fileId: IdEither;
   face: 'front' | 'back' | 'left' | 'right' | 'top' | 'bottom';
   mimeType: 'image/jpeg' | 'image/png';
 };

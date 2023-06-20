@@ -41,7 +41,7 @@ export class Cdf360ImageProvider<T> implements Image360Provider<T> {
   }
 
   public async get360ImageAnnotations(descriptors: Image360FileDescriptor[]): Promise<AnnotationModel[]> {
-    const fileIds = descriptors.map(o => ({ id: o.fileId }));
+    const fileIds = descriptors.map(o => o.fileId);
 
     const annotationsResult = this._client.annotations.list({
       filter: {
@@ -70,7 +70,7 @@ export class Cdf360ImageProvider<T> implements Image360Provider<T> {
     const fileIds = image360FileDescriptors.map(desc => desc.fileId);
     const assetListPromises = chunk(fileIds, 1000).map(async idList => {
       const annotationArray = await this.listFileAnnotations({
-        annotatedResourceIds: idList.map(id => ({ id })),
+        annotatedResourceIds: idList,
         annotatedResourceType: 'file',
         annotationType: 'images.AssetLink'
       });
@@ -122,7 +122,7 @@ export class Cdf360ImageProvider<T> implements Image360Provider<T> {
 
   private getFileIds(image360FaceDescriptors: Image360FileDescriptor[]) {
     return image360FaceDescriptors.map(image360FaceDescriptor => {
-      return { id: image360FaceDescriptor.fileId };
+      return image360FaceDescriptor.fileId;
     });
   }
 
@@ -145,7 +145,7 @@ export class Cdf360ImageProvider<T> implements Image360Provider<T> {
     });
   }
 
-  private async getFileBuffers(fileIds: { id: number }[], abortSignal?: AbortSignal) {
+  private async getFileBuffers(fileIds: IdEither[], abortSignal?: AbortSignal) {
     const fileLinks = await this.getDownloadUrls(fileIds, abortSignal);
     return Promise.all(
       fileLinks
@@ -154,8 +154,8 @@ export class Cdf360ImageProvider<T> implements Image360Provider<T> {
     );
   }
 
-  public async getIconBuffers(fileIds: { id: number }[], abortSignal?: AbortSignal): Promise<ArrayBuffer[]> {
-    const url = `${this._client.getBaseUrl()}/api/v1/projects/${this._client.project}/files/icon?id=`;
+  public async getIconBuffers(fileIds: IdEither[], abortSignal?: AbortSignal): Promise<ArrayBuffer[]> {
+    const url = `${this._client.getBaseUrl()}/api/v1/projects/${this._client.project}/files/icon?`;
     const headers = {
       ...this._client.getDefaultRequestHeaders(),
       Accept: '*/*'
@@ -168,14 +168,14 @@ export class Cdf360ImageProvider<T> implements Image360Provider<T> {
     };
 
     return Promise.all(
-      fileIds.map(fileId => fetch(url + fileId.id, options)).map(async response => (await response).arrayBuffer())
+      fileIds
+        .map(fileId => `${Object.keys(fileId)[0]}=${Object.values(fileId)[0]}`)
+        .map(fileIdQueryParam => fetch(`${url}${fileIdQueryParam}`, options))
+        .map(async response => (await response).arrayBuffer())
     );
   }
 
-  private async getDownloadUrls(
-    fileIds: { id: number }[],
-    abortSignal?: AbortSignal
-  ): Promise<(FileLink & IdEither)[]> {
+  private async getDownloadUrls(fileIds: IdEither[], abortSignal?: AbortSignal): Promise<(FileLink & IdEither)[]> {
     const url = `${this._client.getBaseUrl()}/api/v1/projects/${this._client.project}/files/downloadlink`;
     const headers: HeadersInit = {
       ...this._client.getDefaultRequestHeaders(),
