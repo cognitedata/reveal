@@ -12,6 +12,8 @@ export const translationKeys = {
   dataModelSelectorInfoboxNeutralBody: 'datamodelselector_infobox_neutral_body',
 
   homePageTitle: 'homepage_title',
+  recentlyViewedTitle: 'recently_viewed_title',
+  openIn: 'open_in',
 
   showMore: 'show_more',
 
@@ -28,6 +30,4 @@ export const translationKeys = {
 
   propertiesWidgetFilterByPlaceholder:
     'properties_widget_filter_by_placeholder',
-
-  openInButton: 'open_in_button',
 } as const;
