@@ -10,7 +10,7 @@
     "@babel/helper-environment-visitor": "^7.16.5",
     "@botui/react": "^1.1.5",
     "@cognite/annotations": "^1.1.0",
-    "@cognite/auth-react": "^0.0.17-beta",
+    "@cognite/auth-react": "^0.0.22-beta",
     "@cognite/cdf-i18n-utils": "^0.6.3",
     "@cognite/cdf-ui-cli": "^1.1.1",
     "@cognite/cogs.js": "^9.16.8",
