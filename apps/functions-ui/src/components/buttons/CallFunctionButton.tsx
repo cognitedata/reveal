@@ -21,6 +21,7 @@ export default function CallFunctionButton({ id }: Props) {
           size="small"
           style={{
             justifyContent: 'center',
+            rotate: '90deg',
           }}
           disabled={fn?.status !== 'Ready'}
           onClick={(e) => {
