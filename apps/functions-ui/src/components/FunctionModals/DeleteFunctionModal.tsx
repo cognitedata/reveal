@@ -33,7 +33,7 @@ export default function DeleteFunctionModal({ id, onCancel, onDelete }: Props) {
     <div onClick={(e) => e.stopPropagation()}>
       <Modal
         title="Are you sure?"
-        visible
+        open={true}
         okText="Delete"
         onOk={() => {
           onDelete(id, deleteFile ? fileId : undefined);

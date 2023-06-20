@@ -4,7 +4,6 @@ import { render } from '@testing-library/react';
 import { mount } from 'enzyme';
 
 import sdk from '@cognite/cdf-sdk-singleton';
-import { Button } from '@cognite/cogs.js';
 
 import TestWrapper from '../../utils/TestWrapper';
 
@@ -36,14 +35,16 @@ describe('CallFunctionModal', () => {
 
       const input = wrapper.find('textarea.ant-input');
       input.simulate('change', { target: { value: '{1}' } });
-      const callButton = wrapper.find(Button).at(1);
+      const callButton = wrapper.find('.cogs-button').at(2);
+      expect(callButton.text()).toBe('Call');
       expect(callButton.prop('disabled')).toBeTruthy();
     });
 
     it('should not disable call buttons if input is valid', () => {
       const wrapper = wrap(<CallFunctionModal id={1} />);
       // empty input
-      const callButton = wrapper.find(Button).at(1);
+      const callButton = wrapper.find('.cogs-button').at(2);
+      expect(callButton.text()).toBe('Call');
       expect(callButton.prop('disabled')).toBeFalsy();
 
       // real input

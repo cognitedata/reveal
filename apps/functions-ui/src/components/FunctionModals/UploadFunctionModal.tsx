@@ -217,7 +217,7 @@ export default function UploadFunctionModal({ onCancel }: Props) {
 
   return (
     <Modal
-      open
+      open={true}
       title="Upload Function"
       width="975px"
       style={{ top: 20 }}

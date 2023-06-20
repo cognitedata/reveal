@@ -129,7 +129,7 @@ export default function CreateScheduleModal({
   return (
     <Modal
       title="Create Schedule"
-      visible
+      open={true}
       footer={null}
       width="550px"
       onCancel={onCancel}
