@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { formatDistance, format } from 'date-fns';
-import { omit, sortBy } from 'lodash';
+import { sortBy } from 'lodash';
 
 import {
   Button,
@@ -29,6 +29,7 @@ import useTableState from './hooks/useTableState';
 import { useTranslation } from './hooks/useTranslation';
 import { useIndustryCanvasContext } from './IndustryCanvasContext';
 import { UserProfile, useUserProfile } from './UserProfileProvider';
+import convertCanvasWithUserProfileToSerializedCanvasDocument from './utils/convertCanvasWithUserProfileToSerializedCanvasDocument';
 import { getCanvasLink } from './utils/getCanvasLink';
 
 export const IndustryCanvasHomePage = () => {
@@ -168,11 +169,7 @@ export const IndustryCanvasHomePage = () => {
         onClick={(ev) => {
           ev.stopPropagation();
           setCanvasToDelete(
-            omit(row, [
-              'createdByUserProfile',
-              'createdAtDate',
-              'updatedAtDate',
-            ])
+            convertCanvasWithUserProfileToSerializedCanvasDocument(row)
           );
         }}
       />
