@@ -32,6 +32,7 @@ import { Operation } from '@cognite/calculation-backend';
 import { initializeParameterValues } from 'components/NodeEditor/V2/utils';
 import compareVersions from 'compare-versions';
 import { AxisUpdate } from 'components/PlotlyChart/utils';
+import { CalculationDeepCloneAndReplaceIds } from 'utils/calculations';
 import { removeItem, addItem } from './helpers';
 
 function updateCollItem<T extends ChartSource>(
@@ -159,8 +160,10 @@ export function removeSource(chart: Chart, sourceId: string): Chart {
 export function duplicateWorkflow(chart: Chart, wfId: string): Chart {
   const wf = chart.workflowCollection?.find((w) => w.id === wfId);
   if (wf) {
+    const clonedWf = CalculationDeepCloneAndReplaceIds(wf);
+
     const newWf = {
-      ...wf,
+      ...clonedWf,
       id: uuidv4(),
       name: `${wf.name} Copy`,
       color: getEntryColor(chart.id, wf.id),
