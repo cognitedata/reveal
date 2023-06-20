@@ -11,7 +11,7 @@ static final String[] APPLICATIONS = [
   'copilot',
   'industry-canvas-ui',
   'iot-hub',
-  'functions-ui'
+  'functions-ui',
   '3d-management',
   'transformations',
   'cdf-document-search'
