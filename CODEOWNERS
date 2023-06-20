@@ -43,3 +43,6 @@ apps/copilot              @dlcognite @andeplane @miladh @trygveu
 
 # IoT Hub
 apps/iot-hub              @dlcognite @geircognite @muradsater
+
+# Functions UI
+apps/iot-hub              @abdullah-cognite @shubhsk88 
