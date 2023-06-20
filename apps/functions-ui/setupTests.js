@@ -1,5 +1,4 @@
 /* eslint no-console: 0 */
-/* eslint jest/require-top-level-describe: 0 */
 import { configure } from 'enzyme';
 import Adapter from '@wojtekmaj/enzyme-adapter-react-17';
 import 'regenerator-runtime/runtime';
@@ -12,7 +11,6 @@ jest.mock('@cognite/cdf-utilities', () => {
   return {
     getProject: () => 'mockProject',
     createLink: jest.fn(),
-
   };
 });
 
@@ -26,12 +24,12 @@ jest.mock('@cognite/cdf-sdk-singleton', () => ({
   getUserInformation: jest.fn().mockResolvedValue({ displayName: 'test-user' }),
   get: jest.fn(),
   post: jest.fn(),
-  getFlow : () => ({ flow: 'COGNITE_AUTH' }),
+  getFlow: () => ({ flow: 'COGNITE_AUTH' }),
 }));
 
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: jest.fn().mockImplementation(query => ({
+  value: jest.fn().mockImplementation((query) => ({
     matches: false,
     media: query,
     onchange: null,

@@ -1,6 +1,8 @@
 import React from 'react';
-import { Icon, Colors } from '@cognite/cogs.js';
+
 import styled from 'styled-components';
+
+import { Icon, Colors } from '@cognite/cogs.js';
 
 const MutedIcon = styled(Icon)`
   color: ${Colors['decorative--grayscale--500']};

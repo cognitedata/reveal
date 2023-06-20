@@ -1,0 +1,24 @@
+{
+    "extends": ["plugin:@nrwl/nx/react", "../../.eslintrc.json"],
+    "ignorePatterns": ["!**/*"],
+    "overrides": [
+      {
+        "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+        "rules": {}
+      },
+      {
+        "files": ["*.ts", "*.tsx"],
+        "rules": {
+          "@nrwl/nx/enforce-module-boundaries": [
+            "error",
+            { "allow": ["cronstrue", "cron-validator"] }
+          ]
+        }
+      },
+      {
+        "files": ["*.js", "*.jsx"],
+        "rules": {}
+      }
+    ]
+  }
+  

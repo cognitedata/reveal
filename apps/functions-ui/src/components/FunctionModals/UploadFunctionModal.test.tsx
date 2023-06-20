@@ -1,7 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 
-import { logDOM, render } from '@testing-library/react';
 import { Upload, Form } from 'antd';
 import { UploadFile } from 'antd/lib/upload/interface';
 import { mount, ReactWrapper } from 'enzyme';

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+
 import { Button } from '@cognite/cogs.js';
 
 import ScheduleInputDataModal from '../FunctionModals/ScheduleInputDataModal';
@@ -16,7 +17,7 @@ export default function ViewInputDataButton({ id }: Props) {
         style={{
           justifyContent: 'center',
         }}
-        onClick={e => {
+        onClick={(e) => {
           e.stopPropagation();
           setShowModal(true);
         }}

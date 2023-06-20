@@ -17,8 +17,6 @@ module.exports = composePlugins(
   withReact(),
   withSingleSpa({ useMockEnv }),
   (config) => {
-
-    
     const nodeEnv = process.env.NODE_ENV || 'production';
     console.log(
       `Custom webpack config(${nodeEnv}) for functions-ui was loaded...`

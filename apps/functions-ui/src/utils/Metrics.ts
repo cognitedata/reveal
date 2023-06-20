@@ -1,4 +1,6 @@
+import _ from 'lodash';
 import * as mixpanelConfig from 'mixpanel-browser';
+
 import { getProject } from '@cognite/cdf-utilities';
 
 const MIXPANEL_TOKEN = '504cfc7feaad55b838d866aff8f91a58';
@@ -22,7 +24,7 @@ export const trackUsage = (
   }
 
   const pathWithoutTenant = pathname.substring(pathname.indexOf('/', 1));
-  if (host.indexOf('localhost') === -1) {
+  if (!_.includes(['localhost'], host)) {
     mixpanel.track(event, {
       ...metadata,
       project: getProject(),

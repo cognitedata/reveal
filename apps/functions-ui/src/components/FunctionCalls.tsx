@@ -1,6 +1,5 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 
-import { useQueryClient } from '@tanstack/react-query';
 import { Alert, Table } from 'antd';
 import moment from 'moment';
 
@@ -9,9 +8,8 @@ import ViewResponseButton from '../components/buttons/ViewResponseButton';
 import FunctionCall from '../components/FunctionCall';
 import FunctionCallStatus from '../components/FunctionCallStatus';
 import LoadingIcon from '../components/LoadingIcon';
-import { Call, GetCallsArgs } from '../types';
+import { Call } from '../types';
 import { useCalls } from '../utils/hooks';
-import { allCallsPrefix, callsKey } from '../utils/queryKeys';
 
 const callTableColumns = [
   {
@@ -96,7 +94,6 @@ type Props = {
 };
 
 export default function FunctionCalls({ id, name, scheduleId }: Props) {
-  const queryClient = useQueryClient();
   const { data, isFetched, error } = useCalls(
     { id, scheduleId },
     {

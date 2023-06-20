@@ -86,7 +86,7 @@ export const useSchedules = (config?: QueryOptions<Schedule[], unknown>) =>
     config
   );
 
-type ObjectType = Record<string, any>;
+type ObjectType = Record<string, unknown>;
 export const useRetriveScheduleInputData = (
   scheduleId: number,
   config?: QueryOptions<ObjectType, unknown>
@@ -113,14 +113,13 @@ export const useLimits = (config?: QueryOptions<CogFunctionLimit, unknown>) =>
 export const useCalls = (
   args: GetCallsArgs,
   config?: QueryObserverOptions<Call[], unknown>
-) =>
-  {
-    return useQuery<Call[]>(
-      callsKey(args),
-      () => getCalls(callsKey(args), args),
-      config
-    );
-  }
+) => {
+  return useQuery<Call[]>(
+    callsKey(args),
+    () => getCalls(callsKey(args), args),
+    config
+  );
+};
 
 export const useMultipleCalls = (
   args: GetCallsArgs[],

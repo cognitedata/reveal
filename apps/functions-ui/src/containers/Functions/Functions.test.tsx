@@ -1,11 +1,11 @@
+/* eslint-disable testing-library/no-node-access */
+/* eslint-disable testing-library/no-container */
 import React from 'react';
-import ReactDOM from 'react-dom';
 import { MemoryRouter } from 'react-router';
 
 import { cleanup, render, screen, fireEvent } from '@testing-library/react';
 
 import sdk from '@cognite/cdf-sdk-singleton';
-import { CogniteClient } from '@cognite/sdk/dist/src';
 
 import { sleep } from '../../helpers';
 import { CogFunction, Call } from '../../types/Types';
@@ -68,7 +68,7 @@ const wrap = (node: React.ReactNode) =>
   render(<TestWrapper>{node}</TestWrapper>);
 
 const loadMock = (sdkToMock: any) => {
-  jest.spyOn(sdkToMock, 'get').mockImplementation((url: string) => {
+  jest.spyOn(sdkToMock, 'get').mockImplementation((url: any) => {
     if (url.includes('/status')) {
       return Promise.resolve({
         data: { status: 'activated' },
@@ -87,12 +87,12 @@ describe('Functions', () => {
   });
   it('renders without crashing', () => {
     expect(() => {
-      const wrapper = wrap(
+      const view = wrap(
         <MemoryRouter>
           <Functions />
         </MemoryRouter>
       );
-      wrapper.unmount();
+      view.unmount();
     }).not.toThrow();
   });
 
@@ -101,7 +101,7 @@ describe('Functions', () => {
     // sdk.get = jest.fn();
     loadMock(sdk);
 
-    const { unmount, container } = wrap(<Functions />);
+    const { container } = wrap(<Functions />);
 
     await sleep(100);
 

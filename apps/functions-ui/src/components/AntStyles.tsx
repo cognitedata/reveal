@@ -1,9 +1,8 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck
-import { ids } from 'cogs-variables';
 import React, { useEffect } from 'react';
-import { ConfigProvider, Modal, Tooltip, notification } from 'antd';
-import { Tooltip as CogsTooltip } from '@cognite/cogs.js';
 
+import { ConfigProvider, Modal, Tooltip, notification } from 'antd';
 import affixStyle from 'antd/es/affix/style/index.less';
 import alertStyle from 'antd/es/alert/style/index.less';
 // import anchorStyle from 'antd/es/anchor/style/index.less';
@@ -33,6 +32,7 @@ import iconStyle from 'antd/es/icon/style/index.less';
 import inputStyle from 'antd/es/input/style/index.less';
 // import inputNumberStyle from 'antd/es/input-number/style/index.less';
 // import layoutStyle from 'antd/es/layout/style/index.less';
+import inputNumberStyle from 'antd/es/input-number/style/index.less';
 import listStyle from 'antd/es/list/style/index.less';
 // import localeStyle from 'antd/es/locale/style/index.less';
 // import localeProviderStyle from 'antd/es/locale-provider/style/index.less';
@@ -69,7 +69,9 @@ import tooltipStyle from 'antd/es/tooltip/style/index.less';
 // import treeSelectStyle from 'antd/es/tree-select/style/index.less';
 import typographyStyle from 'antd/es/typography/style/index.less';
 import uploadStyle from 'antd/es/upload/style/index.less';
-import inputNumberStyle from 'antd/es/input-number/style/index.less';
+import { ids } from 'cogs-variables';
+
+import { Tooltip as CogsTooltip } from '@cognite/cogs.js';
 // import versionStyle from 'antd/es/version/style/index.less';
 
 const styles = [
@@ -132,8 +134,8 @@ notification.config({
 
 export default function AntStyles(props: { children: React.Node }) {
   useEffect(() => {
-    styles.forEach(style => style.use());
-    return () => styles.forEach(style => style.unuse());
+    styles.forEach((style) => style.use());
+    return () => styles.forEach((style) => style.unuse());
   }, []);
 
   return (

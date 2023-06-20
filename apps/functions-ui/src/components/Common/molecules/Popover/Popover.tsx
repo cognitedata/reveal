@@ -45,6 +45,7 @@ export const Popover = (props: PopoverProps) => {
         trigger={trigger}
         style={{ display: 'inline-block' }}
         overlayClassName="popover__no-padding popover__no-arrow"
+        // eslint-disable-next-line @cognite/no-number-z-index
         overlayStyle={{ zIndex: 1100 }}
         content={
           <div style={{ background: '#fff', maxWidth: '400px' }}>{content}</div>

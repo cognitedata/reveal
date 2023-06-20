@@ -33,8 +33,8 @@ export interface CogFunctionUpload {
   apiKey?: string;
   memory?: number;
   cpu?: number;
-  secrets?: {};
-  metadata?: {};
+  secrets?: unknown;
+  metadata?: unknown;
   externalId?: string;
   runtime?: Runtime;
 }
@@ -102,7 +102,7 @@ export interface CreateSchedule {
   functionExternalId?: string;
   functionId?: number;
   cronExpression: string;
-  data?: {};
+  data?: unknown;
 }
 
 export interface CreateScheduleApiParams {

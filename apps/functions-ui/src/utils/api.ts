@@ -33,7 +33,7 @@ const getCallsSdk = ({ id, scheduleId }: GetCallsArgs): Promise<Call[]> => {
       data: { filter },
     })
     .then((response) => {
-      return response.data?.items
+      return response.data?.items;
     });
 };
 

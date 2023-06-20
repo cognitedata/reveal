@@ -49,7 +49,7 @@ export default function ScheduleInputDataModal({ id, onCancel }: Props) {
 
   return (
     <Modal
-      visible
+      open={true}
       title="Input data"
       footer={[
         <Button
