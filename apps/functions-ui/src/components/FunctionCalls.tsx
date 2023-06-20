@@ -119,7 +119,6 @@ export default function FunctionCalls({ id, name, scheduleId }: Props) {
 
   return (
     <>
-      {Math.random()}
       <Table
         rowKey={(call) => call.id.toString()}
         pagination={{ pageSize: 25, showSizeChanger: false }}
