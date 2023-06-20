@@ -1,5 +1,6 @@
-import { Button, Flex, IconType } from '@cognite/cogs.js';
 import styled from 'styled-components';
+
+import { Button, Flex, IconType } from '@cognite/cogs.js';
 
 export type VerticalTab<K extends string = string> = {
   key: K;
