@@ -92,7 +92,7 @@
     "@types/single-spa-react": "^3.0.1",
     "@types/styled-components": "^5.1.26",
     "@types/webpack-env": "^1.18.0",
-    "@typescript-eslint/eslint-plugin": "^5.50.0",
+    "@typescript-eslint/eslint-plugin": "^5.60.0",
     "@typescript-eslint/parser": "^5.50.0",
     "babel-eslint": "^10.1.0",
     "commander": "^10.0.0",
