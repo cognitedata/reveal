@@ -12,6 +12,7 @@ static final String[] APPLICATIONS = [
   'iot-hub',
   'transformations',
   'cdf-document-search'
+  'charts'
 ]
 
 /*
@@ -34,6 +35,7 @@ static final Map<String, String> FIREBASE_APP_SITES = [
   'iot-hub': 'iot-hub',
   'transformations': 'transformations',
   'cdf-document-search': 'document-search'
+  'charts': 'charts'
 ]
 
 static final Map<String, String> PREVIEW_PACKAGE_NAMES = [
@@ -46,6 +48,7 @@ static final Map<String, String> PREVIEW_PACKAGE_NAMES = [
   'iot-hub': "@cognite/cdf-iot-hub",
   'transformations': "@cognite/cdf-transformations-2",
   'cdf-document-search': 'cognite/cdf-document-search-ui'
+  'charts': '@cognite/cdf-charts-ui'
 ]
 
 // Replace this with your app's ID on https://sentry.io/ -- if you do not have
@@ -54,6 +57,7 @@ static final Map<String, String> SENTRY_PROJECT_NAMES = [
   'platypus': "platypus",
   'data-exploration': "data-explorer",
   'coding-conventions': "coding-conventions"
+  'charts': 'cognite-charts'
 ]
 
 // Add apps/libs name to the list where you want the storybook preview to build.
@@ -108,6 +112,7 @@ static final Map<String, String> VERSIONING_STRATEGY = [
   'copilot': 'single-branch',
   'iot-hub': 'single-branch',
   'cdf-document-search': 'single-branch',
+  'charts': 'single-branch'
 ]
 
 // == End of customization. Everything below here is common. == \\
