@@ -2,7 +2,9 @@ import React from 'react';
 
 import { Button, Chip, Colors, Icon, Tooltip } from '@cognite/cogs.js';
 
+import { translationKeys } from '../../../common';
 import { useFileInfo } from '../../../hooks/useFileInfo';
+import { useTranslation } from '../../../hooks/useTranslation';
 import * as ContextualTooltip from '../ContextualTooltip';
 
 type FileTooltipProps = {
@@ -19,6 +21,7 @@ const FileTooltip: React.FC<FileTooltipProps> = ({
   onViewClick,
 }) => {
   const { data: fileInfo, isLoading } = useFileInfo(id);
+  const { t } = useTranslation();
 
   if (isLoading) {
     return <Icon type="Loader" />;
@@ -44,13 +47,23 @@ const FileTooltip: React.FC<FileTooltipProps> = ({
 
         <ContextualTooltip.ButtonsContainer>
           <ContextualTooltip.ButtonWrapper>
-            <Tooltip content="Add file to canvas">
+            <Tooltip
+              content={t(
+                translationKeys.TOOLTIP_FILE_ADD_TO_CANVAS,
+                'Add file to canvas'
+              )}
+            >
               <Button icon="Add" onClick={onAddFileClick} inverted />
             </Tooltip>
           </ContextualTooltip.ButtonWrapper>
 
           <ContextualTooltip.ButtonWrapper>
-            <Tooltip content="Open file in Data Explorer">
+            <Tooltip
+              content={t(
+                translationKeys.OPEN_IN_DATA_EXPLORER,
+                'Open in Data Explorer'
+              )}
+            >
               <Button icon="ExternalLink" onClick={onViewClick} inverted />
             </Tooltip>
           </ContextualTooltip.ButtonWrapper>

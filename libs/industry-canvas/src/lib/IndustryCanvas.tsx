@@ -24,6 +24,7 @@ import useEditOnSelect from './hooks/useEditOnSelect';
 import useIndustryCanvasTooltips from './hooks/useIndustryCanvasTooltips';
 import { UseManagedStateReturnType } from './hooks/useManagedState';
 import { UseManagedToolsReturnType } from './hooks/useManagedTools';
+import { UseResourceSelectorActionsReturnType } from './hooks/useResourceSelectorActions';
 import { useTooltipsOptions } from './hooks/useTooltipsOptions';
 import { OnAddContainerReferences } from './IndustryCanvasPage';
 import {
@@ -50,6 +51,7 @@ export type IndustryCanvasProps = {
   tool: IndustryCanvasToolType;
   setTool: Dispatch<SetStateAction<IndustryCanvasToolType>>;
   isCanvasLocked: boolean;
+  onResourceSelectorOpen: UseResourceSelectorActionsReturnType['onResourceSelectorOpen'];
 } & Pick<
   UseManagedStateReturnType,
   | 'container'
@@ -94,6 +96,7 @@ export const IndustryCanvas = ({
   toolOptions,
   commentAnnotations,
   isCanvasLocked,
+  onResourceSelectorOpen,
 }: IndustryCanvasProps) => {
   const sdk = useSDK();
 
@@ -150,6 +153,7 @@ export const IndustryCanvas = ({
     onUpdateAnnotationStyleByType,
     updateContainerById,
     removeContainerById,
+    onResourceSelectorOpen,
     commentAnnotations,
   });
 

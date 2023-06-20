@@ -32,6 +32,7 @@ export type DocumentTableProps = Omit<
   onRootAssetClick?: (rootAsset: Asset, resourceId?: number) => void;
   gptColumnName?: string;
   isDocumentsGPTEnabled?: boolean;
+  shouldShowPreviews?: boolean;
 };
 
 const visibleColumns = [
@@ -45,7 +46,7 @@ const visibleColumns = [
 ];
 
 export const DocumentsTable = (props: DocumentTableProps) => {
-  const { query, onRootAssetClick } = props;
+  const { query, shouldShowPreviews = true, onRootAssetClick } = props;
   const { metadataColumns, setMetadataKeyQuery } =
     useDocumentsMetadataColumns();
 
@@ -59,9 +60,14 @@ export const DocumentsTable = (props: DocumentTableProps) => {
             const fileNamePreviewProps = {
               fileName: row.original.name || '',
               file: row.original,
+              shouldShowPreviews,
             };
             return (
-              <DocumentNamePreview {...fileNamePreviewProps} query={query} />
+              <DocumentNamePreview
+                {...fileNamePreviewProps}
+                shouldShowPreviews={shouldShowPreviews}
+                query={query}
+              />
             );
           },
         },

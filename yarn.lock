@@ -2983,10 +2983,10 @@
     tippy.js "6.3.7"
     ts-dedent "2.2.0"
 
-"@cognite/cogs.js@^9.16.4":
-  version "9.16.4"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-9.16.4.tgz#8cc4392322b11af2d7ec7c87b91cea875d719573"
-  integrity sha512-gibds7GwsL7HbeKGgcQPTB1HZfQ0ur5gdzn5dbyCrp9QaWXJjqidhMErwgHuC1go5R1jBHSiBkRsoITx2FUoFQ==
+"@cognite/cogs.js@^9.16.8":
+  version "9.16.8"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-9.16.8.tgz#a7ce19e512f57968f536e1f5657baac1e189b930"
+  integrity sha512-K0xD0Kf/F1NW9+6em11TgIxAvuXNXaWk0UlfeLg9wfECONpe5ReYgwtuZIcHVQzuGxG4Ck55QWVyc3zFsWTneQ==
   dependencies:
     "@emotion/react" "11.10.6"
     "@emotion/styled" "11.10.6"
@@ -3229,10 +3229,10 @@
     "@types/history" "4.7.9"
     rrweb "1.0.6"
 
-"@cognite/reveal-react-components@0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@cognite/reveal-react-components/-/reveal-react-components-0.1.1.tgz#bc02dd8efd805cec77a705828075ff22ad742773"
-  integrity sha512-9ysD9tOc9texkUQJ5kT4SNFs1hS9c4v3yiXzH3+r5FYHBZJoHD13Es36TfqMoi2fIMOHG7mKmbOUQWPt1bAByw==
+"@cognite/reveal-react-components@0.1.2":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@cognite/reveal-react-components/-/reveal-react-components-0.1.2.tgz#fbd9568d298b9779d0e0c9e975a9fbc469e1180f"
+  integrity sha512-oyAQBDs+o5jPno48Cy3/cJNwfxv5fjfmateTD6iZAoLVtjcRUIBPJF3l8SfZIJBUAgBRvmqjH+rVipJTlwGOkg==
   dependencies:
     lodash "^4.17.21"
     style-loader "^3.3.3"

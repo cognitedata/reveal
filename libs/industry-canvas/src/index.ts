@@ -2,6 +2,7 @@ export { default as resourceItemToContainerReference } from './lib/utils/resourc
 export { default as isSupportedResourceItem } from './lib/utils/isSupportedResourceItem';
 export * from './lib/IndustryCanvasPage';
 export * from './lib/IndustryCanvasHomePage';
+export * from './lib/common';
 
 export { IndustryCanvasProvider } from './lib/IndustryCanvasContext';
 export { UserProfileProvider } from './lib/UserProfileProvider';
