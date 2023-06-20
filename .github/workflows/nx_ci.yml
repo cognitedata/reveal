@@ -55,12 +55,7 @@ jobs:
           node-version: '18'
           cache: 'yarn'
 
-      - name: Changeset
-        id: changeset
-        uses: './scripts/github-actions/nx-get-affected/'
-
       - name: Build interactive diagrams
-        if: steps.changeset.outputs.interactive-diagrams == 'true'
         id: build-interactive-diagrams
         run: nx run interactive-diagrams:build:production
         env:
