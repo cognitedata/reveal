@@ -2,7 +2,7 @@ import React from 'react';
 
 import { noop } from 'lodash';
 
-import { Menu } from '@cognite/cogs.js';
+import { Button, Tooltip } from '@cognite/cogs.js';
 
 import { useDetailedMappingsByAssetIdQuery } from '@data-exploration-lib/domain-layer';
 
@@ -31,11 +31,7 @@ const ThreeDButton: React.FC<ThreeDButtonProps> = ({
     useDetailedMappingsByAssetIdQuery(assetId);
 
   if (isInitialLoading) {
-    return (
-      <Menu.Item icon="Loader" onClick={noop} iconPlacement="left">
-        Loading
-      </Menu.Item>
-    );
+    return <Button icon="Loader" onClick={noop} inverted />;
   }
 
   if (mappings === undefined || mappings.length === 0) {
@@ -52,12 +48,14 @@ const ThreeDButton: React.FC<ThreeDButtonProps> = ({
   };
 
   return (
-    <Menu.Item icon="Cube" onClick={onClick} iconPlacement="left">
-      {t(
+    <Tooltip
+      content={t(
         translationKeys.TOOLTIP_THREE_D_MODEL_ADD_TO_CANVAS,
         'Add 3D model to canvas'
       )}
-    </Menu.Item>
+    >
+      <Button icon="Cube" onClick={onClick} inverted />
+    </Tooltip>
   );
 };
 
