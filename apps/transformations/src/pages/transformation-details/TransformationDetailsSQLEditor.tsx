@@ -42,15 +42,11 @@ type TransformationDetailsSQLEditorProps = {
 const TransformationDetailsSQLEditor = ({
   transformation,
 }: TransformationDetailsSQLEditorProps) => {
-  const {
-    addTab,
-    setActiveInspectSectionKey,
-    localSqlQuery,
-    setLocalSqlQuery,
-  } = useTransformationContext();
+  const { addTab, setActiveInspectSectionKey } = useTransformationContext();
   const { data: rawSchema } = useTablesGroupedByDatabases();
   const { data: sequences } = useSequences();
   const { mutate, reset } = useUpdateTransformation();
+  const [sqlStatement, setSqlStatement] = useState(transformation.query);
 
   const [selectionRangeSummaries, setSelectionRangeSummaries] = useState<
     SelectionRangeSummary[]
@@ -71,7 +67,7 @@ const TransformationDetailsSQLEditor = ({
 
   const handleChange = useCallback(
     (newValue: string) => {
-      setLocalSqlQuery(newValue);
+      setSqlStatement(newValue);
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
@@ -83,7 +79,7 @@ const TransformationDetailsSQLEditor = ({
         });
       }, 500);
     },
-    [mutate, reset, transformation.id, setLocalSqlQuery]
+    [mutate, reset, transformation.id]
   );
 
   const handleUpdate = useCallback((viewUpdate: ViewUpdate) => {
@@ -96,9 +92,9 @@ const TransformationDetailsSQLEditor = ({
 
   const formatSql = useCallback(() => {
     trackEvent(getTrackEvent('event-tr-details-query-format-click'));
-    const formatted = format(localSqlQuery, SQL_FORMATTER_OPTIONS);
-    setLocalSqlQuery(formatted);
-  }, [localSqlQuery, setLocalSqlQuery]);
+    const formatted = format(sqlStatement, SQL_FORMATTER_OPTIONS);
+    setSqlStatement(formatted);
+  }, [sqlStatement, setSqlStatement]);
 
   const extensions = useMemo(() => {
     const schemas: SparkSQLTableSchema = {
@@ -118,13 +114,18 @@ const TransformationDetailsSQLEditor = ({
       key: `preview-${now.getTime()}`,
       title: getQueryPreviewTabTitle(now),
       type: 'preview',
-      query: localSqlQuery,
+      query: transformation.query,
       limit: 1000,
       sourceLimit: 1000,
       transformationId: transformation.id,
     });
     setActiveInspectSectionKey('preview');
-  }, [addTab, setActiveInspectSectionKey, localSqlQuery, transformation.id]);
+  }, [
+    addTab,
+    setActiveInspectSectionKey,
+    transformation.query,
+    transformation.id,
+  ]);
 
   return (
     <StyledContainer>
@@ -136,7 +137,7 @@ const TransformationDetailsSQLEditor = ({
         onUpdate={handleUpdate}
         onRun={handleRunPreview}
         theme={theme}
-        value={localSqlQuery}
+        value={sqlStatement}
       />
       <StatusBar
         formatSql={formatSql}
