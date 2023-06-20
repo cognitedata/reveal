@@ -1,6 +1,5 @@
+import sdk from '@cognite/cdf-sdk-singleton';
 import { getCluster, getProject } from '@cognite/cdf-utilities';
-
-import { getCogniteSDKClient } from '../../../../../../environments/cogniteSdk';
 
 import { DataQualityContext } from './dataQualityContext';
 
@@ -44,14 +43,13 @@ export async function dataQualityFetch<
   TQueryParams,
   TPathParams
 >): Promise<TData> {
-  const cdfClient = getCogniteSDKClient();
   const cluster = getCluster();
   const tenant = getProject();
 
   const baseUrl = `https://${cluster}`;
 
   try {
-    const tokenCDF = await cdfClient.authenticate();
+    const tokenCDF = await sdk.authenticate();
 
     const requestHeaders: HeadersInit = {
       Authorization: `Bearer ${tokenCDF}`,

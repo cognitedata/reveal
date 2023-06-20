@@ -23,11 +23,11 @@ import { SEARCH_KEY } from '@data-exploration-app/utils/constants';
 import { getSelectedResourceId } from '@data-exploration-lib/core';
 
 import {
-  useBreakJourneyPromptToggle,
   useFlagOverlayNavigation,
   useGetJourney,
   useJourneyLength,
   usePushJourney,
+  useBreakJourneyPromptState,
 } from '../../hooks';
 
 export const EventSearchResultView = () => {
@@ -39,7 +39,7 @@ export const EventSearchResultView = () => {
   const [pushJourney] = usePushJourney();
   const [firstJourney] = useGetJourney();
   const [journeyLength] = useJourneyLength();
-  const [, setPromptOpen] = useBreakJourneyPromptToggle();
+  const [, setPromptOpen] = useBreakJourneyPromptState();
 
   // Here we need to parse params to find selected event's id.
   const selectedEventId = getSelectedResourceId('event', firstJourney);

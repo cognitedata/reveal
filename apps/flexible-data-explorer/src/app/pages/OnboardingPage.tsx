@@ -34,7 +34,7 @@ export const OnboardingPage = () => {
   return (
     <Page>
       <Page.Body>
-        <ButtonContainer>
+        <Container>
           <Button
             type="secondary"
             onClick={() => setSiteSelectionVisible(true)}
@@ -44,7 +44,7 @@ export const OnboardingPage = () => {
               'Please select a Data Model to explore'
             )}
           </Button>
-        </ButtonContainer>
+        </Container>
       </Page.Body>
 
       <DataModelSelectorModal
@@ -56,7 +56,7 @@ export const OnboardingPage = () => {
   );
 };
 
-const ButtonContainer = styled.div`
+const Container = styled.div`
   height: 100%;
   width: 100%;
   display: flex;

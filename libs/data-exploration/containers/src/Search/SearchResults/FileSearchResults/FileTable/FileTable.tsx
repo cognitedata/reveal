@@ -26,6 +26,7 @@ export type FileTableProps = Omit<
     query?: string;
     visibleColumns?: string[];
     onDirectAssetClick?: (rootAsset: Asset, resourceId?: number) => void;
+    shouldShowPreviews?: boolean;
   };
 
 const defaultVisibleColumns = ['name', 'mimeType', 'uploadedTime'];
@@ -34,6 +35,7 @@ export const FileTable = (props: FileTableProps) => {
     query,
     visibleColumns = defaultVisibleColumns,
     onDirectAssetClick,
+    shouldShowPreviews = true,
   } = props;
   const { data: metadataKeys } = useDocumentsMetadataKeys();
 
@@ -59,6 +61,7 @@ export const FileTable = (props: FileTableProps) => {
               fileName,
               file: row.original,
               query,
+              shouldShowPreviews,
             };
             return <FileNamePreview {...fileNamePreviewProps} />;
           },

@@ -70,8 +70,6 @@ export type TransformationContextT = {
   isQueryValid: boolean;
   isScheduleConfirmationModalOpen: boolean;
   _setIsScheduleConfirmationModalOpen: Dispatch<SetStateAction<boolean>>;
-  localSqlQuery: string;
-  setLocalSqlQuery: Dispatch<SetStateAction<string>>;
 };
 
 export type PreviewRun = {
@@ -134,8 +132,6 @@ export const TransformationContext =
     lastPreview: undefined,
     isScheduleConfirmationModalOpen: false,
     isQueryValid: false,
-    localSqlQuery: '',
-    setLocalSqlQuery: () => {},
     // Should probably not be used directly, setIsScheduleModalOpen will update it if necessary
     _setIsScheduleConfirmationModalOpen: () => {},
     _setIsScheduleModalOpen: () => {},
@@ -153,8 +149,6 @@ const TransformationContextProvider = ({ children, transformation }: Props) => {
   const [activeSidePanelKey, setActiveSidePanelKey] = useState<
     TransformationSideMenuItem | undefined
   >();
-
-  const [localSqlQuery, setLocalSqlQuery] = useState(transformation.query);
 
   function selectInitalSelectedInspectSection() {
     const mappingEnabled = isMappingMode(transformation?.query);
@@ -336,8 +330,6 @@ const TransformationContextProvider = ({ children, transformation }: Props) => {
           isScheduleConfirmationModalOpen,
           _setIsScheduleConfirmationModalOpen:
             setIsScheduleConfirmationModalOpen,
-          localSqlQuery,
-          setLocalSqlQuery,
         }}
       >
         {children}

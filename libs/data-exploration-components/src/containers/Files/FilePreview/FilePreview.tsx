@@ -29,6 +29,7 @@ import {
   ANNOTATION_SOURCE_KEY,
   AnnotationSource,
   ExtendedAnnotation,
+  useDebouncedMetrics,
 } from '@data-exploration-lib/core';
 import {
   useSearchResults,
@@ -47,11 +48,7 @@ import { useNumPages } from './hooks/useNumPages';
 import usePrevious from './hooks/usePrevious';
 import { useSearchBarState } from './hooks/useSearchBarState';
 import { Pagination } from './Pagination';
-import {
-  getContainerId,
-  getSearchResultAnnotationStyle,
-  useDebouncedMetrics,
-} from './utils';
+import { getContainerId, getSearchResultAnnotationStyle } from './utils';
 
 type FilePreviewProps = {
   id: string;

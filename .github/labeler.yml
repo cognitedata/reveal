@@ -27,6 +27,10 @@ contextualization:
   - libs/contextualization/*
   - libs/contextualization/**/*
 
+3d-management:
+  - apps/3d-management/*
+  - apps/3d-management/**/*
+
 cdf-document-search:
   - apps/cdf-document-search/*
   - apps/cdf-document-search/**/*

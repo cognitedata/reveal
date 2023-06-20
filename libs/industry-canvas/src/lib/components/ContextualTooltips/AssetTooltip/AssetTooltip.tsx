@@ -12,7 +12,9 @@ import {
   Tooltip,
 } from '@cognite/cogs.js';
 
+import { translationKeys } from '../../../common';
 import { useAsset } from '../../../hooks/useAsset';
+import { useTranslation } from '../../../hooks/useTranslation';
 import * as ContextualTooltip from '../ContextualTooltip';
 
 import ThreeDButton from './ThreeDButton';
@@ -42,6 +44,7 @@ const AssetTooltip: React.FC<AssetTooltipProps> = ({
   onAddTimeseries,
 }) => {
   const { data: asset, isLoading } = useAsset(id);
+  const { t } = useTranslation();
 
   if (isLoading) {
     return <Icon type="Loader" />;
@@ -67,7 +70,12 @@ const AssetTooltip: React.FC<AssetTooltipProps> = ({
 
         <ContextualTooltip.ButtonsContainer>
           <ContextualTooltip.ButtonWrapper>
-            <Tooltip content="Add asset to canvas">
+            <Tooltip
+              content={t(
+                translationKeys.TOOLTIP_ASSET_ADD_TO_CANVAS,
+                'Add asset to canvas'
+              )}
+            >
               <Button icon="Add" onClick={onAddAsset} inverted />
             </Tooltip>
           </ContextualTooltip.ButtonWrapper>
@@ -79,15 +87,24 @@ const AssetTooltip: React.FC<AssetTooltipProps> = ({
                 <ThreeDButton
                   assetId={asset.id}
                   onAddThreeD={onAddThreeD}
-                  aria-label="Add 3D Model to Canvas"
+                  aria-label={t(
+                    translationKeys.TOOLTIP_THREE_D_MODEL_ADD_TO_CANVAS,
+                    'Add 3D model to canvas'
+                  )}
                 />
                 <Menu.Item
                   iconPlacement="left"
                   icon="ExternalLink"
                   onClick={onViewAsset}
-                  aria-label="Open asset in Data Explorer"
+                  aria-label={t(
+                    translationKeys.OPEN_IN_DATA_EXPLORER,
+                    'Open in Data Explorer'
+                  )}
                 >
-                  Show in Explorer
+                  {t(
+                    translationKeys.OPEN_IN_DATA_EXPLORER,
+                    'Open in Data Explorer'
+                  )}
                 </Menu.Item>
               </ContextualTooltip.DropdownMenu>
             }
@@ -95,7 +112,10 @@ const AssetTooltip: React.FC<AssetTooltipProps> = ({
             <Button
               icon="EllipsisHorizontal"
               inverted
-              aria-label="Show additional asset actions"
+              aria-label={t(
+                translationKeys.TOOLTIP_ASSET_SHOW_MORE_ACTIONS,
+                'Show additional asset actions'
+              )}
             />
           </Dropdown>
         </ContextualTooltip.ButtonsContainer>

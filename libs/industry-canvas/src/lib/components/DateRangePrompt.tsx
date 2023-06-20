@@ -4,6 +4,9 @@ import styled from 'styled-components';
 
 import { Checkbox, DateRange } from '@cognite/cogs.js';
 
+import { translationKeys } from '../common';
+import { useTranslation } from '../hooks/useTranslation';
+
 const StyledCheckbox = styled(Checkbox)`
   margin-bottom: 8px;
 `;
@@ -32,6 +35,7 @@ const DateRangePrompt: React.FC<DateRangePromptProps> = ({
   onToggleShouldApplyToAllTimeSeries,
   onComplete,
 }) => {
+  const { t } = useTranslation();
   const [dateRange, setDateRange] = useState<Range>(initialRange);
   return (
     <>
@@ -46,7 +50,10 @@ const DateRangePrompt: React.FC<DateRangePromptProps> = ({
         }}
         appendComponent={() => (
           <StyledCheckbox
-            label="Apply to all time series in canvas"
+            label={t(
+              translationKeys.APPLY_TO_ALL_TIME_SERIES_IN_CANVAS,
+              'Apply to all time series in canvas'
+            )}
             checked={shouldApplyToAllTimeSeries}
             onChange={onToggleShouldApplyToAllTimeSeries}
           />

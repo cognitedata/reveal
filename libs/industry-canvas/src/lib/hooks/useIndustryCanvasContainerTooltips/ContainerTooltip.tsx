@@ -1,5 +1,7 @@
 import React, { useCallback, useState } from 'react';
 
+import styled from 'styled-components';
+
 import dayjs from 'dayjs';
 
 import { createLink } from '@cognite/cdf-utilities';
@@ -8,20 +10,29 @@ import { ContainerType } from '@cognite/unified-file-viewer';
 
 import type { OCRAnnotationPageResult } from '@data-exploration-lib/domain-layer';
 
+import { translationKeys } from '../../common';
 import DateRangePrompt from '../../components/DateRangePrompt';
-import { TooltipToolBarContainer } from '../../TooltipContainer';
+import { MetricEvent } from '../../constants';
 import {
   IndustryCanvasContainerConfig,
   isIndustryCanvasTimeSeriesContainer,
 } from '../../types';
+import assertNever from '../../utils/assertNever';
 import getDefaultContainerLabel from '../../utils/getDefaultContainerLabel';
+import useMetrics from '../../utils/tracking/useMetrics';
+import { UseResourceSelectorActionsReturnType } from '../useResourceSelectorActions';
 import {
   OnUpdateTooltipsOptions,
   TooltipsOptions,
 } from '../useTooltipsOptions';
+import { useTranslation } from '../useTranslation';
 
 import getContainerText from './getContainerText';
 import LabelToolbar from './LabelToolbar';
+
+const TooltipToolBarContainer = styled.div`
+  margin: 18px 0px;
+`;
 
 const navigateToPath = (path: string, query?: any) => {
   const link = createLink(path, query);
@@ -45,6 +56,7 @@ type ContainerTooltipProps = {
   ocrData: OCRAnnotationPageResult[] | undefined;
   isLoadingSummary: boolean;
   setIsLoadingSummary: (isLoading: boolean) => void;
+  onResourceSelectorOpen: UseResourceSelectorActionsReturnType['onResourceSelectorOpen'];
 };
 
 const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
@@ -60,8 +72,12 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
   ocrData,
   isLoadingSummary,
   setIsLoadingSummary,
+  onResourceSelectorOpen,
 }) => {
+  const trackUsage = useMetrics();
   const [isInEditLabelMode, setIsInEditLabelMode] = useState(false);
+  const { resourceType, resourceId } = selectedContainer.metadata;
+  const { t } = useTranslation();
 
   const onSaveLabel = useCallback(
     (label: string) => {
@@ -74,9 +90,97 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
         label: label.trim() || getDefaultContainerLabel(selectedContainer),
       });
       setIsInEditLabelMode(false);
+      trackUsage(MetricEvent.CONTAINER_LABEL_CHANGED, {
+        containerType: selectedContainer.type,
+        labelLength: label.length,
+      });
     },
-    [selectedContainer, onUpdateContainer]
+    [selectedContainer, onUpdateContainer, trackUsage]
   );
+
+  const resourceSelectorOpenHandler = useCallback(
+    (container: IndustryCanvasContainerConfig) => {
+      if (container.type === ContainerType.REVEAL) {
+        // Reveal containers are not supported in the resource selector yet.
+        return null;
+      }
+
+      // TODO: This should never happen, but our types are not strict enough.
+      if (resourceType === undefined || resourceId === undefined) {
+        return;
+      }
+      if (container.type === ContainerType.TABLE) {
+        onResourceSelectorOpen({
+          initialSelectedResourceItem: {
+            type: resourceType,
+            id: resourceId,
+          },
+          initialFilter: {
+            common: {
+              internalId: resourceId,
+            },
+          },
+        });
+        return;
+      }
+
+      if (container.type === ContainerType.TIMESERIES) {
+        onResourceSelectorOpen({
+          initialSelectedResourceItem: {
+            type: resourceType,
+            id: resourceId,
+          },
+          initialFilter: {
+            common: {
+              internalId: resourceId,
+            },
+          },
+        });
+        return;
+      }
+
+      if (
+        container.type === ContainerType.DOCUMENT ||
+        container.type === ContainerType.IMAGE ||
+        container.type === ContainerType.TEXT
+      ) {
+        onResourceSelectorOpen({
+          initialSelectedResourceItem: {
+            type: resourceType,
+            id: resourceId,
+          },
+          initialFilter: {
+            common: {
+              internalId: resourceId,
+            },
+          },
+        });
+        return;
+      }
+
+      if (
+        container.type === ContainerType.ROW ||
+        container.type === ContainerType.COLUMN ||
+        container.type === ContainerType.FLEXIBLE_LAYOUT
+      ) {
+        throw new Error(
+          'Open in resource selector not implemented for container type: ' +
+            container.type
+        );
+      }
+
+      assertNever(container);
+    },
+    [onResourceSelectorOpen, resourceId, resourceType]
+  );
+
+  const onOpenInResourceSelectorClick = useCallback(() => {
+    resourceSelectorOpenHandler(selectedContainer);
+    trackUsage(MetricEvent.CONTAINER_OPEN_IN_RESOURCE_SELECTOR_CLICKED, {
+      containerType: selectedContainer.type,
+      resourceType: selectedContainer.metadata.resourceType,
+    });
+  }, [resourceSelectorOpenHandler, selectedContainer, trackUsage]);
 
   const onClose = useCallback(() => {
     setIsInEditLabelMode(false);
@@ -104,28 +208,64 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
         )}
         <ToolBar direction="horizontal">
           <>
-            <Tooltip content="Change label">
+            <Tooltip
+              content={t(translationKeys.CHANGE_LABEL_TOOLTIP, 'Change label')}
+            >
               <Button
                 icon="String"
                 onClick={() => setIsInEditLabelMode((prevState) => !prevState)}
                 type="ghost"
-                aria-label="Change label"
+                aria-label={t(
+                  translationKeys.CHANGE_LABEL_TOOLTIP,
+                  'Change label'
+                )}
               />
             </Tooltip>
-            <Tooltip content="Open in Data Explorer">
+            <Tooltip
+              content={t(
+                translationKeys.OPEN_IN_RESOURCE_SELECTOR,
+                'Open in Resource Selector'
+              )}
+            >
+              <Button
+                icon="ListSearch"
+                onClick={onOpenInResourceSelectorClick}
+                type="ghost"
+                aria-label={t(
+                  translationKeys.OPEN_IN_RESOURCE_SELECTOR,
+                  'Open in Resource Selector'
+                )}
+              />
+            </Tooltip>
+            <Tooltip
+              content={t(
+                translationKeys.OPEN_IN_DATA_EXPLORER,
+                'Open in Data Explorer'
+              )}
+            >
               <Button
                 icon="ExternalLink"
                 onClick={() => {
                   navigateToPath(
                     `/explore/${selectedContainer.metadata.resourceType}/${selectedContainer.metadata.resourceId}`
                   );
+                  trackUsage(
+                    MetricEvent.CONTAINER_OPEN_IN_DATA_EXPLORER_CLICKED,
+                    {
+                      containerType: selectedContainer.type,
+                      resourceType: selectedContainer.metadata.resourceType,
+                    }
+                  );
                 }}
                 type="ghost"
-                aria-label={`Open ${selectedContainer.metadata.resourceType} in Data Explorer`}
+                aria-label={t(
+                  translationKeys.OPEN_IN_DATA_EXPLORER,
+                  'Open in Data Explorer'
+                )}
               />
             </Tooltip>
           </>
-          <Tooltip content="Remove">
+          <Tooltip content={t(translationKeys.REMOVE, 'Remove')}>
             <Button
               icon="Delete"
               onClick={onRemoveContainer}
@@ -150,7 +290,12 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
         )}
         <ToolBar direction="horizontal">
           <>
-            <Tooltip content="Last day">
+            <Tooltip
+              content={t(
+                translationKeys.TIMESERIES_TOOLTIP_LAST_DAY,
+                'Last day'
+              )}
+            >
               <Button
                 type="ghost"
                 size="medium"
@@ -164,13 +309,21 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
                     endDate: dayjs().endOf('day').toDate(),
                   })
                 }
-                aria-label="Last day"
+                aria-label={t(
+                  translationKeys.TIMESERIES_TOOLTIP_LAST_DAY,
+                  'Last day'
+                )}
               >
                 1d
               </Button>
             </Tooltip>
 
-            <Tooltip content="Last month">
+            <Tooltip
+              content={t(
+                translationKeys.TIMESERIES_TOOLTIP_LAST_MONTH,
+                'Last month'
+              )}
+            >
               <Button
                 onClick={() =>
                   onUpdateContainer({
@@ -184,13 +337,21 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
                 }
                 type="ghost"
                 size="medium"
-                aria-label="Last month"
+                aria-label={t(
+                  translationKeys.TIMESERIES_TOOLTIP_LAST_YEAR,
+                  'Last month'
+                )}
               >
                 1m
               </Button>
             </Tooltip>
 
-            <Tooltip content="Last year">
+            <Tooltip
+              content={t(
+                translationKeys.TIMESERIES_TOOLTIP_LAST_YEAR,
+                'Last year'
+              )}
+            >
               <Button
                 onClick={() =>
                   onUpdateContainer({
@@ -204,7 +365,10 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
                 }
                 type="ghost"
                 size="medium"
-                aria-label="Last year"
+                aria-label={t(
+                  translationKeys.TIMESERIES_TOOLTIP_LAST_YEAR,
+                  'Last year'
+                )}
               >
                 1y
               </Button>
@@ -223,9 +387,15 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
                 tooltipsOptions[ContainerType.TIMESERIES].shouldApplyToAll
               }
               onToggleShouldApplyToAllTimeSeries={() => {
+                const nextShouldApplyToAll =
+                  !tooltipsOptions[ContainerType.TIMESERIES].shouldApplyToAll;
+
                 onUpdateTooltipsOptions(ContainerType.TIMESERIES, {
-                  shouldApplyToAll:
-                    !tooltipsOptions[ContainerType.TIMESERIES].shouldApplyToAll,
+                  shouldApplyToAll: nextShouldApplyToAll,
+                });
+
+                trackUsage(MetricEvent.TIMESERIES_APPLY_TO_ALL_TOGGLED, {
+                  newValue: nextShouldApplyToAll,
                 });
               }}
               onComplete={(dateRange, shouldApplyToAllTimeSeries) => {
@@ -242,51 +412,103 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
                     endDate: dayjs(dateRange.endDate).endOf('day').toDate(),
                   });
                 });
+
+                trackUsage(MetricEvent.TIMESERIES_DATE_RANGE_CHANGED, {
+                  startDate: dateRange.startDate,
+                  endDate: dateRange.endDate,
+                  appliedToAll: shouldApplyToAllTimeSeries,
+                });
               }}
             />
           </>
           <>
-            <Tooltip content="Change label">
+            <Tooltip
+              content={t(translationKeys.CHANGE_LABEL_TOOLTIP, 'Change label')}
+            >
               <Button
                 icon="String"
                 onClick={() => setIsInEditLabelMode((prevState) => !prevState)}
                 type="ghost"
-                aria-label="Change label"
+                aria-label={t(
+                  translationKeys.CHANGE_LABEL_TOOLTIP,
+                  'Change label'
+                )}
               />
             </Tooltip>
-            <Tooltip content="Open in Charts">
+            <Tooltip
+              content={t(translationKeys.OPEN_IN_CHARTS, 'Open in Charts')}
+            >
               <Button
                 icon="LineChart"
-                onClick={() =>
+                onClick={() => {
                   navigateToPath('/charts', {
                     timeserieIds: [selectedContainer.metadata.resourceId],
                     startTime: selectedContainer.startDate.getTime(),
                     endTime: selectedContainer.endDate.getTime(),
-                  })
-                }
+                  });
+                  trackUsage(
+                    MetricEvent.CONTAINER_OPEN_IN_DATA_EXPLORER_CLICKED,
+                    {
+                      containerType: selectedContainer.type,
+                    }
+                  );
+                }}
                 type="ghost"
-                aria-label="Open in Charts"
+                aria-label={t(translationKeys.OPEN_IN_CHARTS, 'Open in Charts')}
               />
             </Tooltip>
-            <Tooltip content="Open in Data Explorer">
+            <Tooltip
+              content={t(
+                translationKeys.OPEN_IN_RESOURCE_SELECTOR,
+                'Open in Resource Selector'
+              )}
+            >
+              <Button
+                icon="ListSearch"
+                onClick={onOpenInResourceSelectorClick}
+                type="ghost"
+                aria-label={t(
+                  translationKeys.OPEN_IN_RESOURCE_SELECTOR,
+                  'Open in Resource Selector'
+                )}
+              />
+            </Tooltip>
+            <Tooltip
+              content={t(
+                translationKeys.OPEN_IN_DATA_EXPLORER,
+                'Open in Data Explorer'
+              )}
+            >
               <Button
                 icon="ExternalLink"
                 onClick={() => {
                   navigateToPath(
                     `/explore/timeSeries/${selectedContainer.metadata.resourceId}`
                   );
+                  trackUsage(
+                    MetricEvent.CONTAINER_OPEN_IN_DATA_EXPLORER_CLICKED,
+                    {
+                      containerType: selectedContainer.type,
+                    }
+                  );
                 }}
                 type="ghost"
-                aria-label="Open time series"
+                aria-label={t(
+                  translationKeys.OPEN_IN_DATA_EXPLORER,
+                  'Open in Data Explorer'
+                )}
               />
             </Tooltip>
           </>
-          <Tooltip content="Remove">
+          <Tooltip content={t(translationKeys.REMOVE, 'Remove')}>
             <Button
               icon="Delete"
               onClick={onRemoveContainer}
               type="ghost"
-              aria-label="Remove time series"
+              aria-label={t(
+                translationKeys.REMOVE_TIMESERIES_TOOLTIP,
+                'Remove time series'
+              )}
             />
           </Tooltip>
         </ToolBar>
@@ -306,31 +528,55 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
         )}
         <ToolBar direction="horizontal">
           <>
-            <Tooltip content="Change label">
+            <Tooltip
+              content={t(translationKeys.CHANGE_LABEL_TOOLTIP, 'Change label')}
+            >
               <Button
                 icon="String"
                 onClick={() => setIsInEditLabelMode((prevState) => !prevState)}
                 type="ghost"
-                aria-label="Change label"
+                aria-label={t(
+                  translationKeys.CHANGE_LABEL_TOOLTIP,
+                  'Change label'
+                )}
               />
             </Tooltip>
-            <Tooltip content="Open in Data Explorer">
+            <Tooltip
+              content={t(
+                translationKeys.OPEN_IN_DATA_EXPLORER,
+                'Open in Data Explorer'
+              )}
+            >
               <Button
                 icon="ExternalLink"
                 onClick={() => {
                   navigateToPath(`/explore/threeD/${selectedContainer.id}`);
+                  trackUsage(
+                    MetricEvent.CONTAINER_OPEN_IN_DATA_EXPLORER_CLICKED,
+                    {
+                      containerType: selectedContainer.type,
+                    }
+                  );
                 }}
                 type="ghost"
-                aria-label="Open 3D-model"
+                aria-label={t(
+                  translationKeys.OPEN_IN_DATA_EXPLORER,
+                  'Open in Data Explorer'
+                )}
               />
             </Tooltip>
           </>
-          <Tooltip content="Remove">
+          <Tooltip
+            content={t(translationKeys.REMOVE_CONTAINER_TOOLTIP, 'Remove')}
+          >
             <Button
               icon="Delete"
               onClick={onRemoveContainer}
               type="ghost"
-              aria-label="Remove 3D-model"
+              aria-label={t(
+                translationKeys.REMOVE_THREE_D_TOOLTIP,
+                'Remove 3D-model'
+              )}
             />
           </Tooltip>
         </ToolBar>
@@ -347,6 +593,10 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
     const onSummarizationClick = async () => {
       if (onAddSummarizationSticky) {
         setIsLoadingSummary(true);
+        trackUsage(MetricEvent.DOCUMENT_SUMMARIZE_CLICKED, {
+          ocrTextLength: ocrText.length,
+        });
+
         await onAddSummarizationSticky(
           selectedContainer,
           ocrText,
@@ -366,12 +616,17 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
         )}
         <ToolBar direction="horizontal">
           <>
-            <Tooltip content="Change label">
+            <Tooltip
+              content={t(translationKeys.CHANGE_LABEL_TOOLTIP, 'Change label')}
+            >
               <Button
                 icon="String"
                 onClick={() => setIsInEditLabelMode((prevState) => !prevState)}
                 type="ghost"
-                aria-label="Change label"
+                aria-label={t(
+                  translationKeys.CHANGE_LABEL_TOOLTIP,
+                  'Change label'
+                )}
               />
             </Tooltip>
             {selectedContainer.type === ContainerType.DOCUMENT &&
@@ -394,8 +649,18 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
             <Tooltip
               content={
                 ocrText.length === 0
-                  ? `Summarization is unavailable for this ${selectedContainer.type} (Experimental)`
-                  : `Summarize the ${selectedContainer.type} (Experimental)`
+                  ? t(
+                      translationKeys.CONTAINER_TOOLTIP_SUMMARIZATION_UNAVAILABLE,
+                      {
+                        type: selectedContainer.type,
+                        defaultValue:
+                          'Summarization is unavailable for this {{type}} (Experimental)',
+                      }
+                    )
+                  : t(translationKeys.CONTAINER_TOOLTIP_SUMMARIZE, {
+                      type: selectedContainer.type,
+                      defaultValue: 'Summarize the {{type}} (Experimental)',
+                    })
               }
             >
               <Button
@@ -410,24 +675,57 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
               />
             </Tooltip>
 
-            <Tooltip content="Open in Data Explorer">
+            <Tooltip
+              content={t(
+                translationKeys.OPEN_IN_RESOURCE_SELECTOR,
+                'Open in Resource Selector'
+              )}
+            >
+              <Button
+                icon="ListSearch"
+                onClick={onOpenInResourceSelectorClick}
+                type="ghost"
+                aria-label={t(
+                  translationKeys.OPEN_IN_RESOURCE_SELECTOR,
+                  'Open in Resource Selector'
+                )}
+              />
+            </Tooltip>
+            <Tooltip
+              content={t(
+                translationKeys.OPEN_IN_DATA_EXPLORER,
+                'Open in Data Explorer'
+              )}
+            >
               <Button
                 icon="ExternalLink"
                 onClick={() => {
                   navigateToPath(
                     `/explore/file/${selectedContainer.metadata.resourceId}`
                   );
+                  trackUsage(
+                    MetricEvent.CONTAINER_OPEN_IN_DATA_EXPLORER_CLICKED,
+                    {
+                      containerType: selectedContainer.type,
+                    }
+                  );
                 }}
                 type="ghost"
-                aria-label="Open document"
+                aria-label={t(
+                  translationKeys.OPEN_IN_DATA_EXPLORER,
+                  'Open in Data Explorer'
+                )}
               />
             </Tooltip>
           </>
-          <Tooltip content="Remove">
+          <Tooltip content={t(translationKeys.REMOVE, 'Remove')}>
             <Button
               icon="Delete"
-              onClick={() => onRemoveContainer()}
-              aria-label="Remove document"
+              onClick={onRemoveContainer}
+              aria-label={t(
+                translationKeys.REMOVE_DOCUMENT_TOOLTIP,
+                'Remove document'
+              )}
               type="ghost"
             />
           </Tooltip>

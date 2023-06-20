@@ -4,8 +4,8 @@ import { v4 as uuid } from 'uuid';
 import type { CogniteClient } from '@cognite/sdk';
 import { IdsByType } from '@cognite/unified-file-viewer';
 
-import { UserProfile } from '../hooks/use-query/useUserProfile';
 import { Comment, CanvasMetadata, SerializedCanvasDocument } from '../types';
+import { UserProfile } from '../UserProfileProvider';
 import { FDMClient, gql } from '../utils/FDMClient';
 
 import {
@@ -38,11 +38,11 @@ const omitCreatedTimeFromSerializedCanvas = (
   omit(canvas, ['createdTime']);
 
 export class IndustryCanvasService {
-  // TODO(marvin): switch over to using 'cdf_industrial_canvas' once the system data models are working
-  public static readonly SYSTEM_SPACE = 'IndustrialCanvasLocalSpaceV1';
+  public static readonly SYSTEM_SPACE = 'cdf_industrial_canvas';
+  // Note: To simplify the code, we assume that the data models and
+  // the views in the system space always have the same version.
   public static readonly SYSTEM_SPACE_VERSION = 'v1';
-  // TODO(marvin): use different instance space from system space once system data models are working again
-  public static readonly INSTANCE_SPACE = IndustryCanvasService.SYSTEM_SPACE;
+  public static readonly INSTANCE_SPACE = 'IndustrialCanvasInstanceSpace';
   public static readonly DATA_MODEL_EXTERNAL_ID = 'IndustrialCanvas';
   private readonly LIST_LIMIT = 1000; // The max number of items to retrieve in one list request
 
@@ -75,7 +75,7 @@ export class IndustryCanvasService {
   }
 
   public async getCanvasById(
-    canvasId: string
+    canvasExternalId: string
   ): Promise<SerializedCanvasDocument> {
     const res = await this.fdmClient.graphQL<{
       canvases: {
@@ -84,8 +84,13 @@ export class IndustryCanvasService {
     }>(
       // TODO(DEGR-2457): add support for paginating through containerReferences and canvasAnnotations
       gql`
-        query GetCanvasById($filter: _List${ModelNames.CANVAS}Filter) {
-          canvases: listCanvas(filter: $filter) {
+        query GetCanvasById {
+          canvases: getCanvasById(
+            instance: {
+              space: "${IndustryCanvasService.INSTANCE_SPACE}",
+              externalId: "${canvasExternalId}"
+            }
+          ) {
             items {
               externalId
               name
@@ -125,11 +130,18 @@ export class IndustryCanvasService {
           }
         }
       `,
-      IndustryCanvasService.DATA_MODEL_EXTERNAL_ID,
-      { filter: { externalId: { eq: canvasId } } }
+      IndustryCanvasService.DATA_MODEL_EXTERNAL_ID
     );
     if (res.canvases.items.length === 0) {
-      throw new Error(`Couldn't find canvas with id ${canvasId}`);
+      throw new Error(
+        `Couldn't find canvas with external id ${canvasExternalId}`
+      );
+    }
+
+    if (res.canvases.items.length > 1) {
+      throw new Error(
+        `Found multiple canvases with external id '${canvasExternalId}' in the space '${IndustryCanvasService.INSTANCE_SPACE}'. This shouldn't happen.`
+      );
     }
 
     const fdmCanvas = res.canvases.items[0];
@@ -166,7 +178,18 @@ export class IndustryCanvasService {
         }
       `,
       IndustryCanvasService.DATA_MODEL_EXTERNAL_ID,
-      { filter: { externalId: { eq: canvasId } } }
+      {
+        filter: {
+          and: [
+            { externalId: { eq: canvasId } },
+            {
+              space: {
+                eq: IndustryCanvasService.INSTANCE_SPACE,
+              },
+            },
+          ],
+        },
+      }
     );
     if (res.canvases.items.length === 0) {
       throw new Error(`Couldn't find canvas with id ${canvasId}`);
@@ -212,7 +235,19 @@ export class IndustryCanvasService {
       IndustryCanvasService.DATA_MODEL_EXTERNAL_ID,
       {
         filter: {
-          or: [{ isArchived: { eq: false } }, { isArchived: { isNull: true } }],
+          and: [
+            {
+              or: [
+                { isArchived: { eq: false } },
+                { isArchived: { isNull: true } },
+              ],
+            },
+            {
+              space: {
+                eq: IndustryCanvasService.INSTANCE_SPACE,
+              },
+            },
+          ],
         },
       }
     );
@@ -287,6 +322,11 @@ export class IndustryCanvasService {
                     ],
                   },
                 ],
+              },
+            },
+            {
+              space: {
+                eq: IndustryCanvasService.INSTANCE_SPACE,
               },
             },
           ],
