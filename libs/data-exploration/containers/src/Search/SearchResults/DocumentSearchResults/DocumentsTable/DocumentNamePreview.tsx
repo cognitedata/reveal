@@ -26,10 +26,12 @@ export const DocumentNamePreview = ({
   fileName,
   file,
   query,
+  shouldShowPreviews = true,
 }: {
   fileName: string;
   file: InternalDocument;
   query: string | undefined;
+  shouldShowPreviews?: boolean;
 }) => {
   const isPreviewable = isFilePreviewable(file);
   const name = fileName || '';
@@ -44,7 +46,7 @@ export const DocumentNamePreview = ({
     );
   }, [file.mimeType]);
 
-  if (isPreviewable) {
+  if (shouldShowPreviews && isPreviewable) {
     return (
       <Flex gap={4} alignItems="center">
         <Popover

@@ -1,19 +1,21 @@
-import { useReducer } from 'react';
+import { useCallback, useEffect, useReducer } from 'react';
 
 import {
   FilterResourceType,
   FilterState,
+  ResourceSelectorFilter,
   getCategoryValues,
 } from '@data-exploration-lib/core';
 
-const initialState: FilterState = {
+const EMPTY_FILTER_STATE: FilterState = {
   common: {},
   asset: {},
-  timeseries: {},
+  timeSeries: {},
   file: {},
   document: {},
   sequence: {},
   event: {},
+  threeD: {},
 };
 
 type Action = {
@@ -36,17 +38,21 @@ function updateFilters<T>(
   };
 }
 
-function clearFilter(currentFilter: FilterState, key: keyof FilterState) {
+function clearFilter(
+  currentFilter: FilterState,
+  key: keyof FilterState,
+  value?: FilterState[keyof FilterState]
+) {
   return {
     ...currentFilter,
-    [key]: {},
+    [key]: value ?? {},
   };
 }
 
 function reducer(state: FilterState, action: Action) {
   const { value: nextValue, type, clear } = action;
 
-  if (clear) return clearFilter(state, type);
+  if (clear) return clearFilter(state, type, nextValue);
 
   const { common, specific } = getCategoryValues(nextValue);
 
@@ -54,29 +60,66 @@ function reducer(state: FilterState, action: Action) {
   else return updateFilters(state, type, specific);
 }
 
-export const useFilterState = (initialFilter: Partial<FilterState> = {}) => {
-  const [state, dispatch] = useReducer(reducer, {
-    ...initialState,
-    ...initialFilter,
+export type UseFilterReturnType = {
+  filterState: FilterState;
+  updateFilterType: (
+    resourceType: keyof FilterState,
+    value: FilterState[keyof FilterState]
+  ) => void;
+  resetFilterType: (
+    resourceType: keyof FilterState,
+    value?: FilterState[keyof FilterState]
+  ) => void;
+  resetAllFilters: () => void;
+};
+
+export const useFilterState = (
+  initialFilter: ResourceSelectorFilter
+): UseFilterReturnType => {
+  const [filterState, dispatch] = useReducer(reducer, {
+    ...EMPTY_FILTER_STATE,
   });
 
-  const setter = (
-    resourceType: FilterResourceType,
-    nextValue: FilterState[keyof FilterState]
-  ) => {
-    // The resource type  key come as 'timeSeries' but the filter state key has it in 'timeseries'
-    return dispatch({
-      value: nextValue,
-      type: resourceType.toLowerCase() as any,
-    });
-  };
+  const updateFilterType: UseFilterReturnType['updateFilterType'] = useCallback(
+    (resourceType, nextValue) => {
+      return dispatch({
+        value: nextValue,
+        type: resourceType,
+      });
+    },
+    [dispatch]
+  );
 
-  const resetter = (resourceType: FilterResourceType) => {
-    dispatch({
-      clear: true,
-      type: resourceType.toLowerCase() as any,
-      value: {},
+  // Update the filter state when the initial filter changes
+  useEffect(() => {
+    Object.entries(initialFilter).forEach(([key, value]) => {
+      updateFilterType(key as keyof FilterState, value);
     });
-  };
-  return { state, setter, resetter };
+  }, [initialFilter, updateFilterType]);
+
+  const resetFilterType = useCallback(
+    (
+      resourceType: FilterResourceType,
+      value?: FilterState[keyof FilterState]
+    ) => {
+      dispatch({
+        clear: true,
+        type: resourceType,
+        value: value || {},
+      });
+    },
+    [dispatch]
+  );
+
+  const resetAllFilters = useCallback(() => {
+    Object.keys(EMPTY_FILTER_STATE).forEach((key) => {
+      dispatch({
+        clear: true,
+        type: key as keyof FilterState,
+        value: {},
+      });
+    });
+  }, [dispatch]);
+
+  return { filterState, updateFilterType, resetFilterType, resetAllFilters };
 };

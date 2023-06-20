@@ -68,6 +68,8 @@ class LocalStorageHistoryProvider implements CdfUserHistoryStorage {
   }
 }
 
+export const MINIMUM_USAGE_COUNT_FOR_RECENT_APPS = 5;
+
 export class CdfUserHistoryService {
   constructor(user: CdfHistoryUser) {
     this.data = new LocalStorageHistoryProvider(user);
@@ -138,12 +140,21 @@ export class CdfUserHistoryService {
     return !this.data.viewedResources.length;
   }
 
-  // check if user has accessed at least 3 applications more than 10 times
+  // check if user has used or navigated to at least 3 applications 5 or more times
   // to show them as recently used applications
   hasEnoughRecentlyUsedApplications() {
     return (
-      this.data.usedApplications.filter((item) => item.count > 10).length >= 3
+      this.data.usedApplications.filter(
+        (item) => item.count >= MINIMUM_USAGE_COUNT_FOR_RECENT_APPS
+      ).length >= 3
     );
+  }
+
+  // check if user has used or navigated to at least 3 applications
+  // to show them as recently used applications
+  // this is an extra utility function to test the UI, will eventually remove it or hasEnoughRecentlyUsedApplications
+  hasRecentlyUsedApplications() {
+    return this.data.usedApplications.length >= 3;
   }
 
   getRecentlyUsedApplications() {

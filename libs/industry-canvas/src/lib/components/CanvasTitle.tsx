@@ -10,6 +10,8 @@ import styled from 'styled-components';
 
 import { Button, Input, Title, Tooltip } from '@cognite/cogs.js';
 
+import { translationKeys } from '../common';
+import { useTranslation } from '../hooks/useTranslation';
 import { IndustryCanvasContextType } from '../IndustryCanvasContext';
 import { DEFAULT_CANVAS_NAME } from '../services/IndustryCanvasService';
 
@@ -31,6 +33,7 @@ export const CanvasTitle: React.FC<CanvasTitleProps> = ({
 }) => {
   const [inputRef, setInputRef] = useState<HTMLInputElement | null>(null);
   const [name, setName] = useState(activeCanvas?.name ?? DEFAULT_CANVAS_NAME);
+  const { t } = useTranslation();
 
   useEffect(() => {
     setName(activeCanvas?.name ?? '');
@@ -116,14 +119,17 @@ export const CanvasTitle: React.FC<CanvasTitleProps> = ({
           ref={(ref) => setInputRef(ref)}
         />
       ) : (
-        <Tooltip content="Rename" placement="bottom">
+        <Tooltip
+          content={t(translationKeys.COMMON_CANVAS_RENAME, 'Rename')}
+          placement="bottom"
+        >
           <span>{name}</span>
         </Tooltip>
       )}
       {activeCanvas !== undefined && isEditingTitle && (
         <Button
           icon="Checkmark"
-          aria-label="edit-canvas-name"
+          aria-label={t(translationKeys.COMMON_CANVAS_RENAME, 'Rename')}
           onClick={onEditCanvasName}
           disabled={activeCanvas === undefined}
           size="small"

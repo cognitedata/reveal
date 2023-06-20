@@ -42,7 +42,7 @@ export const useAllFilters = () => {
   const setCommonFilter = useSetRecoilState(globalAllFilters('common'));
   const setAssetFilter = useSetRecoilState(globalAllFilters('asset'));
   const setEventFilter = useSetRecoilState(globalAllFilters('event'));
-  const setTimeseriesFilter = useSetRecoilState(globalAllFilters('timeseries'));
+  const setTimeseriesFilter = useSetRecoilState(globalAllFilters('timeSeries'));
   const setSequenceFilter = useSetRecoilState(globalAllFilters('sequence'));
   const setDocumentFilter = useSetRecoilState(globalAllFilters('document'));
   const setFilesFilter = useSetRecoilState(globalAllFilters('file'));
@@ -51,7 +51,7 @@ export const useAllFilters = () => {
   const resetAssetFilter = useResetRecoilState(globalAllFilters('asset'));
   const resetEventFilter = useResetRecoilState(globalAllFilters('event'));
   const resetTimeseriesFilter = useResetRecoilState(
-    globalAllFilters('timeseries')
+    globalAllFilters('timeSeries')
   );
   const resetSequenceFilter = useResetRecoilState(globalAllFilters('sequence'));
   const resetDocumentFilter = useResetRecoilState(globalAllFilters('document'));

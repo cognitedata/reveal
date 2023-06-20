@@ -13,14 +13,12 @@ export const usePushJourney = (): [
   const [journey, setJourney] = useJourney();
   const pushJourney = useCallback(
     (item: JourneyItem, createNewJourney = false) => {
-      // console.log('pushJourney; item: ', item);
       // If there isn't any journey before, initiate one...
       // ...or if `createNewJourney` flag is 'true' then initiate a new journey.
       if (journey === undefined || createNewJourney) {
         setJourney([item]);
       } else {
-        journey.push(item);
-        setJourney(journey);
+        setJourney([...journey, item]);
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -1,11 +1,7 @@
-import { useCallback } from 'react';
-
-import debounce from 'lodash/debounce';
-
 import { Colors } from '@cognite/cogs.js';
 import { AnnotationType } from '@cognite/unified-file-viewer';
 
-import { ExtendedAnnotation, useMetrics } from '@data-exploration-lib/core';
+import { ExtendedAnnotation } from '@data-exploration-lib/core';
 
 import { getResourceTypeFromExtendedAnnotation } from './migration/utils';
 
@@ -114,12 +110,4 @@ export const getSearchResultAnnotationStyle = (isHighlighted: boolean) => {
     fill: getRGBA(SEARCH_RESULT_COLOR, 0.4),
     strokeWidth: 1,
   };
-};
-
-const DEFAULT_TRACK_USAGE_DEBOUNCE_MS = 300;
-export const useDebouncedMetrics = (
-  debounceMs = DEFAULT_TRACK_USAGE_DEBOUNCE_MS
-) => {
-  const trackUsage = useMetrics();
-  return useCallback(debounce(trackUsage, debounceMs), [trackUsage]);
 };

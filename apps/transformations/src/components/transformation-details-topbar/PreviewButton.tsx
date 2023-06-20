@@ -22,8 +22,7 @@ type PreviewButtonProps = {
 
 const PreviewButton = ({ transformation }: PreviewButtonProps): JSX.Element => {
   const { t } = useTranslation();
-  const { addTab, localSqlQuery, setActiveInspectSectionKey } =
-    useTransformationContext();
+  const { addTab, setActiveInspectSectionKey } = useTransformationContext();
 
   const [dropdownVisible, setDropdownVisible] = useState(false);
 
@@ -64,7 +63,7 @@ const PreviewButton = ({ transformation }: PreviewButtonProps): JSX.Element => {
                       'event-tr-details-query-preview-limit-click'
                     ).replace('{{limit}}', `${value}`)
                   );
-                  handleRunPreview(localSqlQuery, value);
+                  handleRunPreview(transformation.query, value);
                   setDropdownVisible(!dropdownVisible);
                 }}
               >

@@ -47,6 +47,11 @@ export type IndustryCanvasContextType = {
   initializeWithContainerReferences: ContainerReference[] | undefined;
   setCanvasId: (canvasId: string) => void;
   isCanvasLocked: boolean;
+  createInitialCanvas: () => Promise<void>;
+  hasConsumedInitializeWithContainerReferences: boolean;
+  setHasConsumedInitializeWithContainerReferences: (
+    nextHasConsumed: boolean
+  ) => void;
 };
 
 export const IndustryCanvasContext = createContext<IndustryCanvasContextType>({
@@ -75,6 +80,15 @@ export const IndustryCanvasContext = createContext<IndustryCanvasContextType>({
   isArchivingCanvas: false,
   initializeWithContainerReferences: undefined,
   isCanvasLocked: false,
+  createInitialCanvas: () => {
+    throw new Error('createInitialCanvas called before initialisation');
+  },
+  hasConsumedInitializeWithContainerReferences: false,
+  setHasConsumedInitializeWithContainerReferences: () => {
+    throw new Error(
+      'setHasConsumedInitializeWithContainerReferences called before initialisation'
+    );
+  },
 });
 
 type IndustryCanvasProviderProps = {
@@ -90,8 +104,14 @@ export const IndustryCanvasProvider: React.FC<IndustryCanvasProviderProps> = ({
     () => new IndustryCanvasService(sdk, userProfile),
     [sdk, userProfile]
   );
-  const { canvasId, setCanvasId, initializeWithContainerReferences } =
-    useIndustryCanvasSearchParameters();
+
+  const {
+    canvasId,
+    setCanvasId,
+    initializeWithContainerReferences,
+    hasConsumedInitializeWithContainerReferences,
+    setHasConsumedInitializeWithContainerReferences,
+  } = useIndustryCanvasSearchParameters();
 
   const { data: activeCanvas, isLoading: isLoadingCanvas } =
     useGetCanvasByIdQuery(canvasService, canvasId);
@@ -126,27 +146,21 @@ export const IndustryCanvasProvider: React.FC<IndustryCanvasProviderProps> = ({
     [saveCanvas, isCanvasLocked]
   );
 
-  // Initialize the page with a new and empty canvas if the canvasId query
-  // parameter is not provided. This path is primarily used for the
-  // "Open in Canvas" button in DE.
-  // useEffect(() => {
-  //   // const createInitialCanvas = async () => {
-  //   //   if (canvasId === undefined && !isCreatingCanvas) {
-  //   //     const initialCanvas = canvasService.makeEmptyCanvas();
-  //   //     const createdCanvas = await createCanvas(initialCanvas);
-  //   //     setCanvasId(createdCanvas.externalId);
-  //   //     refetchCanvases();
-  //   //   }
-  //   // };
-  //   // createInitialCanvas();
-  // }, [
-  //   canvasId,
-  //   isCreatingCanvas,
-  //   canvasService,
-  //   createCanvas,
-  //   refetchCanvases,
-  //   setCanvasId,
-  // ]);
+  const createInitialCanvas = useCallback(async () => {
+    if (canvasId === undefined && !isCreatingCanvas) {
+      const initialCanvas = canvasService.makeEmptyCanvas();
+      const createdCanvas = await createCanvas(initialCanvas);
+      setCanvasId(createdCanvas.externalId);
+      refetchCanvases();
+    }
+  }, [
+    canvasId,
+    isCreatingCanvas,
+    canvasService,
+    createCanvas,
+    refetchCanvases,
+    setCanvasId,
+  ]);
 
   const createCanvasWrapper = useCallback(
     async (canvas: IndustryCanvasState) => {
@@ -222,10 +236,13 @@ export const IndustryCanvasProvider: React.FC<IndustryCanvasProviderProps> = ({
         createCanvas: createCanvasWrapper,
         saveCanvas: saveCanvasWrapper,
         archiveCanvas: archiveCanvasWrapper,
-        initializeWithContainerReferences,
         setCanvasId,
         deleteCanvasIdsByType: deleteCanvasIdsByTypeWrapper,
         isCanvasLocked,
+        createInitialCanvas,
+        initializeWithContainerReferences,
+        hasConsumedInitializeWithContainerReferences,
+        setHasConsumedInitializeWithContainerReferences,
       }}
     >
       {children}
