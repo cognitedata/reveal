@@ -501,6 +501,7 @@ const AnnotationPreviewSidebar = ({
           onClose={() => setSelectedAnnotations([])}
         />
         <ResourceSelector
+          visibleResourceTabs={['asset', 'file']}
           visible={visible}
           selectionMode="single"
           isDocumentsApiEnabled={isDocumentsApiEnabled}

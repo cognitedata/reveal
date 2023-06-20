@@ -24,7 +24,7 @@ import { BaseFilterCollapse } from '../../components/Collapse/BaseFilterCollapse
 export const TimeseriesFilters = ({ ...rest }) => {
   const [timeseriesFilter, setTimeseriesFilter] = useTimeseriesFilters();
   const resetTimeseriesFilters = useResetTimeseriesFilters();
-  const isFiltersEmpty = useFilterEmptyState('timeseries');
+  const isFiltersEmpty = useFilterEmptyState('timeSeries');
   const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
 
   const { data: metadataKeys = [] } = useTimeseriesMetadataKeysAggregateQuery();
