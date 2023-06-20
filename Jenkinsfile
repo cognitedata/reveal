@@ -38,7 +38,9 @@ static final Map<String, String> FIREBASE_APP_SITES = [
   'iot-hub': 'iot-hub',
   '3d-management': '3d-management',
   'transformations': 'transformations',
-  'cdf-document-search': 'document-search'
+  'cdf-document-search': 'document-search',
+  'functions-ui': 'functions-ui'
+  
 ]
 
 static final Map<String, String> PREVIEW_PACKAGE_NAMES = [
