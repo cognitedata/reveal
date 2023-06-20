@@ -127,6 +127,9 @@
       ],
       "@data-catalog-app/*": [
         "apps/data-catalog/src/app/*"
+      ],
+      "@functions-ui/*": [
+        "apps/functions-ui/src/*"
       ]
     }
   },
