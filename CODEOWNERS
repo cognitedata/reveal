@@ -16,7 +16,6 @@
 apps/mock-server                  @cognitedata/cdf-user-experience
 apps/platypus                     @cognitedata/cdf-user-experience
 apps/platypus-cdf-cli             @cognitedata/cdf-user-experience
-apps/platypus-e2e                 @cognitedata/cdf-user-experience
 
 libs/data-modeling                @cognitedata/cdf-user-experience
 
@@ -47,3 +46,12 @@ apps/copilot              @davidlky @andeplane @miladh @trygveu
 
 apps/raw-explorer @cognitedata/team-hebe
 apps/iot-hub              @davidlky @geircognite @muradsater
+
+# 3D / Reveal
+apps/3d-management                @cognitedata/3d-reveal-viewer-team
+
+# Data Catalog
+apps/data-catalog                 @cognitedata/cdf-user-experience
+
+# Extractor downloads
+apps/extractor-downloads          @cognitedata/cdf-user-experience

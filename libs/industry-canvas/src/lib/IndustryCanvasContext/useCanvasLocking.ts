@@ -2,8 +2,8 @@ import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 
 import { QueryKeys } from '../constants';
-import { UserProfile } from '../hooks/use-query/useUserProfile';
 import { IndustryCanvasService } from '../services/IndustryCanvasService';
+import { UserProfile } from '../UserProfileProvider';
 
 const LOCK_TIMEOUT_MS = 120 * 1000;
 const REFETCH_INTERVAL_MS = 30 * 1000;
@@ -29,7 +29,7 @@ const useCanvasLocking = (
         return false;
       }
 
-      if (msAgo(metadata.updatedTime) > LOCK_TIMEOUT_MS) {
+      if (msAgo(metadata.updatedAt) > LOCK_TIMEOUT_MS) {
         return false;
       }
 

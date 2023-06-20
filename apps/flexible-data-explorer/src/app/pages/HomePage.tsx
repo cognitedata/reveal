@@ -1,43 +1,25 @@
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 
 import styled from 'styled-components';
 
 import { Body, Icon, Title } from '@cognite/cogs.js';
 
 import { translationKeys } from '../../app/common/i18n/translationKeys';
-import { CategoryCard } from '../components/cards/CategoryCard';
+import { RecentlyViewedList } from '../containers/lists/recentlyViewed/RecentlyViewedList';
 import { DataModelSelectorModal } from '../containers/modals/DataModelSelectorModal';
 import { Page } from '../containers/page/Page';
+import { DataExplorerLink } from '../containers/search/DataExplorerLink';
 import { SearchBar } from '../containers/search/SearchBar';
 import { useDataModelParams } from '../hooks/useDataModelParams';
-import { useNavigation } from '../hooks/useNavigation';
 import { useTranslation } from '../hooks/useTranslation';
-import { useTypesDataModelQuery } from '../services/dataModels/query/useTypesDataModelQuery';
 
 export const HomePage = () => {
   const { t } = useTranslation();
 
-  const { toListPage } = useNavigation();
-
-  const { data, isLoading } = useTypesDataModelQuery();
   const selectedDataModel = useDataModelParams();
 
   const [siteSelectionVisible, setSiteSelectionVisible] =
     useState<boolean>(false);
-
-  const handleCategoryClick = useCallback(
-    (dataType: string) => {
-      if (selectedDataModel) {
-        toListPage(
-          selectedDataModel.space,
-          selectedDataModel.dataModel,
-          selectedDataModel.version,
-          dataType
-        );
-      }
-    },
-    [toListPage, selectedDataModel]
-  );
 
   const getSpaceText = () => {
     if (selectedDataModel && selectedDataModel.dataModel) {
@@ -62,25 +44,19 @@ export const HomePage = () => {
           </StyledBody>
         </TitleContainer>
         <SearchBar width="640px" />
+        <DataExplorerLink />
       </SearchContainer>
 
-      <Page.Body loading={isLoading}>
-        <CategoriesContainer>
-          <Title level={4}>
-            {t('categories_title', 'Categories')} {data?.length}
-          </Title>
+      <Page.Body>
+        <RecentlyViewedContainer>
+          <TitleContent>
+            <Title level={6}>
+              {t(translationKeys.recentlyViewedTitle, 'Recent')}
+            </Title>
+          </TitleContent>
 
-          <CategoryContent>
-            {data?.map((item) => (
-              <CategoryCard
-                key={item.name}
-                type={item.name}
-                description={item.description}
-                onClick={handleCategoryClick}
-              />
-            ))}
-          </CategoryContent>
-        </CategoriesContainer>
+          <RecentlyViewedList />
+        </RecentlyViewedContainer>
       </Page.Body>
 
       <DataModelSelectorModal
@@ -144,16 +120,15 @@ const SearchContainer = styled.div`
   border-bottom: 1px solid rgba(83, 88, 127, 0.16);
 `;
 
-const CategoriesContainer = styled.div`
+const RecentlyViewedContainer = styled.div`
   height: 10%;
   padding-top: 24px;
+  width: 774px;
+  max-width: 774px;
+  align-self: center;
 `;
 
-const CategoryContent = styled.div`
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-column-gap: 10px;
-  grid-row-gap: 10px;
-
-  padding: 16px 0;
+const TitleContent = styled.div`
+  padding-left: 16px;
+  padding-bottom: 16px;
 `;

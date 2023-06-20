@@ -3,12 +3,19 @@ import { useNavigate } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { formatDistance, format } from 'date-fns';
-import { omit, sortBy } from 'lodash';
+import { sortBy } from 'lodash';
 
-import { Button, Table, InputExp, toast, Tooltip } from '@cognite/cogs.js';
+import {
+  Button,
+  Table,
+  InputExp,
+  toast,
+  Tooltip,
+  Body,
+} from '@cognite/cogs.js';
 
+import { translationKeys } from './common';
 import CanvasDeletionModal from './components/CanvasDeletionModal';
 import { SEARCH_QUERY_PARAM_KEY, TOAST_POSITION } from './constants';
 import { EMPTY_FLEXIBLE_LAYOUT } from './hooks/constants';
@@ -19,16 +26,17 @@ import useCanvasesWithUserProfiles, {
 import useCanvasSearch from './hooks/useCanvasSearch';
 import { useQueryParameter } from './hooks/useQueryParameter';
 import useTableState from './hooks/useTableState';
-import {
-  useIndustryCanvasContext,
-  IndustryCanvasProvider,
-} from './IndustryCanvasContext';
-import { UserProfileProvider } from './UserProfileProvider';
+import { useTranslation } from './hooks/useTranslation';
+import { useIndustryCanvasContext } from './IndustryCanvasContext';
+import { UserProfile, useUserProfile } from './UserProfileProvider';
+import convertCanvasWithUserProfileToSerializedCanvasDocument from './utils/convertCanvasWithUserProfileToSerializedCanvasDocument';
 import { getCanvasLink } from './utils/getCanvasLink';
 
-const IndustryCanvasHome = () => {
+export const IndustryCanvasHomePage = () => {
   const { canvases, isCreatingCanvas, createCanvas } =
     useIndustryCanvasContext();
+  const { userProfile } = useUserProfile();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { canvasesWithUserProfiles } = useCanvasesWithUserProfiles({
     canvases,
@@ -53,6 +61,41 @@ const IndustryCanvasHome = () => {
   } = useCanvasDeletion();
   const { initialTableState, onTableStateChange } = useTableState();
 
+  const getUpdatedByUserString = (
+    currentUserProfile: UserProfile | undefined
+  ) => {
+    if (
+      currentUserProfile === undefined ||
+      currentUserProfile.displayName === undefined
+    ) {
+      return t(translationKeys.BY_UNKNOWN_USER, 'by unknown user');
+    }
+
+    if (userProfile.userIdentifier === currentUserProfile.userIdentifier) {
+      return t(translationKeys.BY_ME, 'by me');
+    }
+
+    return t(translationKeys.BY_USER, {
+      user: currentUserProfile.displayName,
+      defaultValue: 'by {{user}}',
+    });
+  };
+
+  const getCreatedByName = (createdByUserProfile: UserProfile | undefined) => {
+    if (
+      createdByUserProfile === undefined ||
+      createdByUserProfile.displayName === undefined
+    ) {
+      return t(translationKeys.UNKNOWN_USER, 'Unknown user');
+    }
+
+    if (userProfile.userIdentifier === createdByUserProfile.userIdentifier) {
+      return t(translationKeys.ME, 'Me');
+    }
+
+    return createdByUserProfile.displayName;
+  };
+
   const renderNewCanvasButton = () => (
     <div>
       <Button
@@ -60,7 +103,10 @@ const IndustryCanvasHome = () => {
         iconPlacement="left"
         type="primary"
         loading={isCreatingCanvas}
-        aria-label="Create new canvas"
+        aria-label={t(
+          translationKeys.COMMON_CREATE_CANVAS,
+          'Create new canvas'
+        )}
         onClick={() => {
           createCanvas({
             canvasAnnotations: [],
@@ -68,45 +114,62 @@ const IndustryCanvasHome = () => {
           }).then(({ externalId }) => navigate(getCanvasLink(externalId)));
         }}
       >
-        Create new canvas
+        {t(translationKeys.COMMON_CREATE_CANVAS, 'Create new canvas')}
       </Button>
     </div>
   );
 
   const renderCopyCanvasLinkButton = (row: CanvasDocumentWithUserProfile) => (
-    <Tooltip content="Copy canvas link">
+    <Tooltip
+      content={t(translationKeys.COMMON_CANVAS_LINK_COPY, 'Copy canvas link')}
+    >
       <Button
         type="ghost"
         icon="Link"
-        aria-label="Copy canvas link"
+        aria-label={t(
+          translationKeys.COMMON_CANVAS_LINK_COPY,
+          'Copy canvas link'
+        )}
         onClick={(ev) => {
           ev.stopPropagation();
           navigator.clipboard.writeText(
             `${window.location.origin}${getCanvasLink(row.externalId)}`
           );
-          toast.success(`Canvas link copied to clipboard`, {
-            toastId: `copy-canvas-${row.externalId}`,
-            position: TOAST_POSITION,
-          });
+          toast.success(
+            <div>
+              <b>
+                {t(
+                  translationKeys.CANVAS_LINK_COPIED_TITLE,
+                  'Canvas link copied'
+                )}
+              </b>
+              <p>
+                {t(
+                  translationKeys.CANVAS_LINK_COPIED_SUB_TITLE,
+                  'Canvas link successfully copied to your clipboard'
+                )}
+              </p>
+            </div>,
+            {
+              toastId: `copy-canvas-${row.externalId}`,
+              position: TOAST_POSITION,
+            }
+          );
         }}
       />
     </Tooltip>
   );
 
   const renderDeleteCanvasButton = (row: CanvasDocumentWithUserProfile) => (
-    <Tooltip content="Delete canvas">
+    <Tooltip content={t(translationKeys.COMMON_CANVAS_DELETE, 'Delete canvas')}>
       <Button
         type="ghost-destructive"
         icon="Delete"
-        aria-label="Delete canvas"
+        aria-label={t(translationKeys.COMMON_CANVAS_DELETE, 'Delete canvas')}
         onClick={(ev) => {
           ev.stopPropagation();
           setCanvasToDelete(
-            omit(row, [
-              'createdByUserProfile',
-              'createdAtDate',
-              'updatedAtDate',
-            ])
+            convertCanvasWithUserProfileToSerializedCanvasDocument(row)
           );
         }}
       />
@@ -124,14 +187,22 @@ const IndustryCanvasHome = () => {
       <div>
         <HomeHeader>
           <div>
-            <h1>Industry Canvas</h1>
-            <span>Search, explore and manage canvases.</span>
+            <h1>Industrial Canvas</h1>
+            <span>
+              {t(
+                translationKeys.HOMEPAGE_IC_DESCRIPTION,
+                'Search, explore and manage canvases.'
+              )}
+            </span>
           </div>
           {renderNewCanvasButton()}
         </HomeHeader>
         <CanvasListContainer>
           <SearchCanvasInput
-            placeholder="Browse canvases"
+            placeholder={t(
+              translationKeys.HOMEPAGE_TABLE_SEARCH_PLACEHOLDER,
+              'Browse canvases'
+            )}
             fullWidth
             value={searchString}
             icon="Search"
@@ -149,25 +220,44 @@ const IndustryCanvasHome = () => {
             }
             columns={[
               {
-                Header: 'Name',
+                Header: t(translationKeys.HOMEPAGE_TABLE_NAME_COLUMN, 'Name'),
                 accessor: 'name',
               },
               {
-                Header: 'Updated at',
-                accessor: 'updatedAtDate',
-                Cell: ({ value }: { value: Date }): JSX.Element => (
-                  <span>
-                    {formatDistance(value, new Date(), {
-                      addSuffix: true,
-                    })}
-                  </span>
+                Header: t(
+                  translationKeys.HOMEPAGE_TABLE_UPDATED_AT_COLUMN,
+                  'Updated at'
                 ),
+                accessor: 'updatedAtDate',
+                Cell: ({ row }): JSX.Element => {
+                  const rowData = row.original;
+
+                  const lastUpdatedString = formatDistance(
+                    rowData.updatedAtDate,
+                    new Date(),
+                    {
+                      addSuffix: true,
+                    }
+                  );
+
+                  return (
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                      <span>{lastUpdatedString}</span>
+                      <Body level={3} muted>
+                        {getUpdatedByUserString(rowData.updatedByUserProfile)}
+                      </Body>
+                    </div>
+                  );
+                },
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore - sortType is not defined in the Cogs table types, but works just fine. Tracked by: https://cognitedata.atlassian.net/browse/CDS-1530
                 sortType: 'datetime',
               },
               {
-                Header: 'Created at',
+                Header: t(
+                  translationKeys.HOMEPAGE_TABLE_CREATED_AT_COLUMN,
+                  'Created at'
+                ),
                 accessor: 'createdAtDate',
                 Cell: ({ value }: { value: Date }): JSX.Element => (
                   <span>{format(value, 'yyyy-MM-dd')}</span>
@@ -177,9 +267,11 @@ const IndustryCanvasHome = () => {
                 sortType: 'datetime',
               },
               {
-                Header: 'Created by',
-                accessor: (row) =>
-                  row.createdByUserProfile?.displayName ?? 'Unknown user',
+                Header: t(
+                  translationKeys.HOMEPAGE_TABLE_CREATED_BY_COLUMN,
+                  'Created by'
+                ),
+                accessor: (row) => getCreatedByName(row.createdByUserProfile),
               },
               {
                 id: 'row-options',
@@ -200,27 +292,6 @@ const IndustryCanvasHome = () => {
         </CanvasListContainer>
       </div>
     </>
-  );
-};
-
-export const IndustryCanvasHomePage = () => {
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-        refetchOnWindowFocus: false,
-        refetchOnReconnect: false,
-      },
-    },
-  });
-  return (
-    <QueryClientProvider client={queryClient}>
-      <UserProfileProvider>
-        <IndustryCanvasProvider>
-          <IndustryCanvasHome />
-        </IndustryCanvasProvider>
-      </UserProfileProvider>
-    </QueryClientProvider>
   );
 };
 

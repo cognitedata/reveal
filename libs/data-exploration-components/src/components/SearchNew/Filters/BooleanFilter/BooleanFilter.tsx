@@ -1,13 +1,13 @@
 import React from 'react';
 
+import { FilterFacetTitle } from '@data-exploration/containers';
+
 import { SegmentedControl } from '@cognite/cogs.js';
 
 import {
   DATA_EXPLORATION_COMPONENT,
   useMetrics,
 } from '@data-exploration-lib/core';
-
-import { FilterFacetTitle } from '../FilterFacetTitle';
 
 export const BooleanFilter = ({
   title,

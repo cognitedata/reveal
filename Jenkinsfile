@@ -5,14 +5,17 @@
 static final String[] APPLICATIONS = [
   'platypus',
   'data-exploration',
+  'data-catalog',
   'raw-explorer',
   'coding-conventions',
   'copilot',
   'industry-canvas-ui',
   'iot-hub',
+  '3d-management',
   'transformations',
-  'cdf-document-search'
-  'charts'
+  'cdf-document-search',
+  'extractor-downloads',
+  'charts',
 ]
 
 /*
@@ -24,30 +27,36 @@ static final Map<String, String> NPM_PACKAGES = [
 ]
 
 // This is the Firebase site mapping.
-// See https://github.com/cognitedata/terraform/blob/master/cognitedata-production/gcp_firebase_hosting/sites.tf
+// See https://github.com/cognitedata/terraform/blob/master/cognitedata-production/gcp_fusion_firebase_hosting/sites.tf
 static final Map<String, String> FIREBASE_APP_SITES = [
   'platypus': 'platypus',
   'data-exploration': 'data-exploration',
+  'data-catalog': 'data-catalog',
   'raw-explorer': 'raw-explorer',
   'coding-conventions': 'coding-conventions',
   'copilot': 'copilot',
   'industry-canvas-ui': 'industry-canvas-ui',
   'iot-hub': 'iot-hub',
+  '3d-management': '3d-management',
   'transformations': 'transformations',
-  'cdf-document-search': 'document-search'
-  'charts': 'charts'
+  'cdf-document-search': 'document-search',
+  'extractor-downloads': 'extractor-downloads',
+  'charts': 'charts',
 ]
 
 static final Map<String, String> PREVIEW_PACKAGE_NAMES = [
   'platypus': "@cognite/cdf-solutions-ui",
   'data-exploration': "@cognite/cdf-data-exploration",
+  'data-catalog': "@cognite/cdf-data-catalog",
   'raw-explorer': "@cognite/cdf-raw-explorer",
   'coding-conventions': "@cognite/cdf-coding-conventions",
   'copilot': "@cognite/cdf-copilot",
   'industry-canvas-ui': "@cognite/cdf-industry-canvas-ui",
   'iot-hub': "@cognite/cdf-iot-hub",
+  '3d-management': '@cognite/cdf-3d-management',
   'transformations': "@cognite/cdf-transformations-2",
-  'cdf-document-search': 'cognite/cdf-document-search-ui'
+  'cdf-document-search': 'cognite/cdf-document-search-ui',
+  'extractor-downloads': '@cognite/cdf-extractor-downloads',
   'charts': '@cognite/cdf-charts-ui'
 ]
 
@@ -56,7 +65,7 @@ static final Map<String, String> PREVIEW_PACKAGE_NAMES = [
 static final Map<String, String> SENTRY_PROJECT_NAMES = [
   'platypus': "platypus",
   'data-exploration': "data-explorer",
-  'coding-conventions': "coding-conventions"
+  'coding-conventions': "coding-conventions",
   'charts': 'cognite-charts'
 ]
 
@@ -64,8 +73,10 @@ static final Map<String, String> SENTRY_PROJECT_NAMES = [
 static final String[] PREVIEW_STORYBOOK = [
   'platypus',
   'data-exploration-components-old',
-  'shared-plotting-components'
+  'shared-plotting-components',
 ]
+  // '3d-management',
+  // Should be added after monorepo storybook version is upgraded to v7.
 
 // The Sentry DSN is the URL used to report issues into Sentry. This can be
 // found on your Sentry's project page, or by going here:
@@ -107,13 +118,20 @@ static final Map<String, String> VERSIONING_STRATEGY = [
   'platypus': 'multi-branch',
   'coding-conventions': 'multi-branch',
   'data-exploration': 'multi-branch',
+  'data-catalog': 'multi-branch',
   'raw-explorer': 'single-branch',
   'transformations': 'single-branch',
   'copilot': 'single-branch',
   'iot-hub': 'single-branch',
   'cdf-document-search': 'single-branch',
+  'extractor-downloads': 'single-branch',
   'charts': 'single-branch'
 ]
+
+// The config of which apps have i18n strings that need to be synced to and pulled from locize.io
+static final String[] I18N_APPLICATIONS = [
+  'platypus'
+ ]
 
 // == End of customization. Everything below here is common. == \\
 
@@ -461,12 +479,12 @@ pods {
                 )
               }
 
-              if(project == "platypus"){
+              if(I18N_APPLICATIONS.contains(project)){
                 stageWithNotify('Save missing keys to locize') {
-                  sh("yarn i18n-push")
+                  sh("yarn i18n-push ${project}")
                 }
                 stageWithNotify('Remove deleted keys from locize') {
-                  sh("yarn i18n-remove-deleted")
+                  sh("yarn i18n-remove-deleted ${project}")
                 }
               }
             }

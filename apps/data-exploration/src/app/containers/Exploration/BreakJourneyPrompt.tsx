@@ -4,15 +4,17 @@ import { BreakJourneyModal } from '@data-exploration/components';
 
 import { Button } from '@cognite/cogs.js';
 
+import { usePushJourney } from '@data-exploration-app/hooks';
 import {
-  useBreakJourneyPromptToggle,
-  usePushJourney,
-} from '@data-exploration-app/hooks';
-import { getSearchParamsWithJourney } from '@data-exploration-lib/core';
+  getSearchParamsWithJourney,
+  getSearchParamsWithJourneyAndSelectedTab,
+} from '@data-exploration-lib/core';
+
+import { useBreakJourneyPromptState } from '../../hooks/detailsNavigation/useBreakJourneyPromptState';
 
 export const BreakJourneyPrompt: React.FC<unknown> = () => {
   const [pushJourney] = usePushJourney();
-  const [promptItem, setPromptOpen] = useBreakJourneyPromptToggle();
+  const [{ isOpen, journey }, setPromptOpen] = useBreakJourneyPromptState();
 
   const handlePromptToggle = (isPromptOpen: boolean) => {
     setPromptOpen(isPromptOpen);
@@ -20,7 +22,7 @@ export const BreakJourneyPrompt: React.FC<unknown> = () => {
 
   return (
     <BreakJourneyModal
-      visible={Boolean(promptItem)}
+      visible={isOpen}
       hideFooter
       onCancel={() => {
         handlePromptToggle(false);
@@ -46,8 +48,8 @@ export const BreakJourneyPrompt: React.FC<unknown> = () => {
           <Button
             type="secondary"
             onClick={() => {
-              if (promptItem) {
-                pushJourney(promptItem, true);
+              if (journey) {
+                pushJourney(journey, true);
               }
               handlePromptToggle(false);
             }}
@@ -58,10 +60,15 @@ export const BreakJourneyPrompt: React.FC<unknown> = () => {
             icon="ArrowUpRight"
             type="primary"
             onClick={() => {
-              if (promptItem) {
+              if (journey) {
                 const origin = window.location.origin;
                 const pathname = window.location.pathname;
-                const searchParams = getSearchParamsWithJourney(promptItem);
+                const searchParams = journey.selectedTab
+                  ? getSearchParamsWithJourneyAndSelectedTab(
+                      journey,
+                      journey.selectedTab
+                    )
+                  : getSearchParamsWithJourney(journey);
                 const url = `${origin}${pathname}${searchParams}`;
                 window.open(url, '_blank');
               }

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 
 import {
   ErrorType,
@@ -22,6 +22,7 @@ import {
   Size,
 } from '@platypus-app/components/PageToolbar/PageToolbar';
 import { SchemaVisualizer } from '@platypus-app/components/SchemaVisualizer/SchemaVisualizer';
+import { SUB_APP_PATH } from '@platypus-app/constants';
 import { TOKENS } from '@platypus-app/di';
 import { useNavigate } from '@platypus-app/flags/useNavigate';
 import { useDataModelVersions } from '@platypus-app/hooks/useDataModelActions';
@@ -38,6 +39,7 @@ import { getKeyForDataModel } from '@platypus-app/utils/local-storage-utils';
 import { QueryKeys } from '@platypus-app/utils/queryKeys';
 import { useQueryClient } from '@tanstack/react-query';
 
+import { createLink, useCdfUserHistoryService } from '@cognite/cdf-utilities';
 import { Flex } from '@cognite/cogs.js';
 
 import { useDataModelState } from '../../hooks/useDataModelState';
@@ -86,6 +88,9 @@ const formatDmlError = (error: PlatypusDmlError) => {
 };
 
 export const DataModelPage = () => {
+  const { pathname: dataModelPathname } = useLocation();
+  const userHistoryService = useCdfUserHistoryService();
+
   const navigate = useNavigate();
   const { dataModelExternalId, space, version } = useParams() as {
     dataModelExternalId: string;
@@ -167,6 +172,16 @@ export const DataModelPage = () => {
     switchDataModelVersion(localDraft || selectedDataModelVersion);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    // save data-model view action to user history
+    if (dataModelExternalId.trim())
+      userHistoryService.logNewResourceView({
+        application: SUB_APP_PATH,
+        name: dataModelExternalId.trim(),
+        path: createLink(dataModelPathname),
+      });
+  }, [userHistoryService, dataModelExternalId, dataModelPathname]);
 
   const handleClickPublish = async () => {
     setUpdating(true);
@@ -314,6 +329,7 @@ export const DataModelPage = () => {
         removeLocalDraft(draftVersion);
         dataModelPublished();
 
+        const publishedVersionPath = `/${space}/${dataModelExternalId}/${DEFAULT_VERSION_PATH}`;
         if (publishNewVersion) {
           // add new version to react-query cache and then refetch
           queryClient.setQueryData<DataModelVersion[]>(
@@ -322,9 +338,8 @@ export const DataModelPage = () => {
               return [...oldDataModelVersions, result.getValue()];
             }
           );
-
           refetchDataModelVersions();
-          navigate(`/${space}/${dataModelExternalId}/${DEFAULT_VERSION_PATH}`, {
+          navigate(publishedVersionPath, {
             replace: true,
           });
         } else {
@@ -341,6 +356,14 @@ export const DataModelPage = () => {
           );
           refetchDataModelVersions();
         }
+
+        // save data-model publish(edit) action to user history
+        if (dataModelExternalId.trim())
+          userHistoryService.logNewResourceEdit({
+            application: SUB_APP_PATH,
+            name: dataModelExternalId.trim(), // how to get data-model name here?
+            path: createLink(publishedVersionPath),
+          });
 
         Notification({
           type: 'success',

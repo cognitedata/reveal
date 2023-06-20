@@ -64,3 +64,20 @@ export const FileTooltipShortStory: ComponentStory<typeof FileTooltip> = () => {
     </QueryClientProvider>
   );
 };
+
+export const FileTooltipShortCurrentFileStory: ComponentStory<
+  typeof FileTooltip
+> = () => {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <SDKProvider sdk={mockSdk}>
+        <FileTooltip
+          id={222}
+          isCurrentFile
+          onAddFileClick={() => console.log('onAddFileClick')}
+          onViewClick={() => console.log('onViewClick')}
+        />
+      </SDKProvider>
+    </QueryClientProvider>
+  );
+};

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useParams } from 'react-router-dom';
 
 import { useTranslation } from '@transformations/common';
 import CredentialsMissingModal from '@transformations/components/credentials-missing-modal/CredentialsMissingModal';
@@ -9,12 +10,14 @@ import { useTokenExchangeSupport } from '@transformations/hooks/sessions';
 import { useTransformationContext } from '@transformations/pages/transformation-details/TransformationContext';
 import { TransformationRead } from '@transformations/types';
 import {
+  createInternalLink,
   getContainer,
   getTrackEvent,
   hasCredentials,
 } from '@transformations/utils';
 
 import { trackEvent } from '@cognite/cdf-route-tracker';
+import { useCdfUserHistoryService } from '@cognite/cdf-utilities';
 import { Button, Chip, Dropdown, Flex, Icon, Menu } from '@cognite/cogs.js';
 
 type TransformationDetailsTopbarActionButtonsProps = {
@@ -29,6 +32,12 @@ const TransformationDetailsTopbarActionButtons = ({
   transformation,
 }: TransformationDetailsTopbarActionButtonsProps): JSX.Element => {
   const { t } = useTranslation();
+
+  const { subAppPath } = useParams<{
+    subAppPath: string;
+  }>();
+  const userHistoryService = useCdfUserHistoryService();
+
   const { isQueryValid, setIsScheduleModalOpen } = useTransformationContext();
 
   const [isCredentialsModalOpen, setIsCredentialsModalOpen] = useState(false);
@@ -165,6 +174,12 @@ const TransformationDetailsTopbarActionButtons = ({
             personalCredentials:
               !!runConfirmationModalState.personalCredentials,
           });
+          if (subAppPath && transformation?.name)
+            userHistoryService.logNewResourceEdit({
+              application: subAppPath,
+              name: transformation.name,
+              path: createInternalLink(`${transformation.id}`),
+            });
           setRunConfirmationModalState({ open: false });
         }}
         open={runConfirmationModalState.open}

@@ -31,11 +31,11 @@ import { getSearchParams } from '@data-exploration-app/utils/URLUtils';
 import { getSelectedResourceId } from '@data-exploration-lib/core';
 
 import {
-  useBreakJourneyPromptToggle,
   useFlagOverlayNavigation,
   useGetJourney,
   useJourneyLength,
   usePushJourney,
+  useBreakJourneyPromptState,
 } from '../../hooks';
 
 export const AssetSearchResultView = () => {
@@ -50,7 +50,7 @@ export const AssetSearchResultView = () => {
   const [pushJourney] = usePushJourney();
   const [firstJourney] = useGetJourney();
   const [journeyLength] = useJourneyLength();
-  const [, setPromptOpen] = useBreakJourneyPromptToggle();
+  const [, setPromptOpen] = useBreakJourneyPromptState();
 
   // Here we need to parse params to find selected asset's id.
   const selectedAssetId = getSelectedResourceId('asset', firstJourney);
@@ -79,9 +79,16 @@ export const AssetSearchResultView = () => {
       if (isDetailsOverlayEnabled) {
         if (journeyLength > 1) {
           // If there is a journey going on (i.e. journey length is more than 1), then show the prompt modal.
-          setPromptOpen(true, { id: item.parentId, type: 'asset' });
+          setPromptOpen(true, {
+            id: item.parentId,
+            type: 'asset',
+            selectedTab: 'children',
+          });
         } else {
-          pushJourney({ id: item.parentId, type: 'asset' }, true);
+          pushJourney(
+            { id: item.parentId, type: 'asset', selectedTab: 'children' },
+            true
+          );
         }
       } else {
         const search = getSearchParams(location.search);

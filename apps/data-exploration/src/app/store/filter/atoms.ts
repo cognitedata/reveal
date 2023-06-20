@@ -1,4 +1,3 @@
-import { AssetViewMode } from '@data-exploration/containers';
 import { custom } from '@recoiljs/refine';
 import { atom, useRecoilState, useRecoilValue } from 'recoil';
 import { syncEffect } from 'recoil-sync';
@@ -10,7 +9,7 @@ import { GlobalFilter, GlobalFilterKeys } from './types';
 
 const defaultFilterState = {
   asset: {},
-  timeseries: {},
+  timeSeries: {},
   sequence: {},
   file: {},
   document: {},
@@ -46,7 +45,7 @@ export const filterSidebar = atom({
 });
 export const useFilterSidebarState = () => useRecoilState(filterSidebar);
 
-export const assetView = atom<AssetViewMode>({
+export const assetView = atom<'list' | 'tree'>({
   key: 'AssetView',
   default: 'tree',
 });

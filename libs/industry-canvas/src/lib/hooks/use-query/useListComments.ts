@@ -7,11 +7,10 @@ import sdk from '@cognite/cdf-sdk-singleton';
 import { QueryKeys } from '../../constants';
 import { IndustryCanvasService } from '../../services/IndustryCanvasService';
 import { Comment } from '../../types';
-
-import { useUserProfileContext } from './useUserProfile';
+import { useUserProfile } from '../../UserProfileProvider';
 
 export const useListComments = () => {
-  const { userProfile } = useUserProfileContext();
+  const { userProfile } = useUserProfile();
   const queryClient = useQueryClient();
   const canvasService = useMemo(
     () => new IndustryCanvasService(sdk, userProfile),

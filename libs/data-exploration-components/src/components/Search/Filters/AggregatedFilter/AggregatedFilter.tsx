@@ -4,7 +4,7 @@ import { Select } from '@data-exploration-components/components';
 
 import { Body } from '@cognite/cogs.js';
 
-export const AggregatedFilter = <T,>({
+export const AggregatedFilter = <T extends object>({
   items,
   value,
   setValue,

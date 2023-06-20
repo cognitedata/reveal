@@ -1,4 +1,3 @@
-import { sleep } from '@data-exploration-components/utils';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { notification } from 'antd';
 
@@ -9,6 +8,8 @@ import {
 } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
+
+import { sleep } from '@data-exploration-lib/core';
 
 export const isFileApproved = (file: FileInfo) =>
   file.labels?.find(

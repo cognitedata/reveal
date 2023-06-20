@@ -1,11 +1,11 @@
 import React from 'react';
 
+import { DateFilterV2, StringFilterV2 } from '@data-exploration/containers';
+
 import {
   ResourceType,
   DataSetFilterV2,
   ByAssetFilterV2,
-  DateFilterV2,
-  StringFilterV2,
   NumberFilter,
 } from '@cognite/data-exploration';
 

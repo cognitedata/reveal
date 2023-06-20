@@ -6,16 +6,19 @@ import {
   Body,
   Button,
   Chip,
+  Infobox,
   Overline,
   Skeleton,
   Title,
 } from '@cognite/cogs.js';
 
+import { translationKeys } from '../../common/i18n/translationKeys';
 import { useTranslation } from '../../hooks/useTranslation';
 import { DataModelListResponse } from '../../services/types';
 
 interface Props {
   loading?: boolean;
+  isError?: boolean;
   dataModels?: DataModelListResponse[];
   onSelectionClick?: (dataModel: DataModelListResponse) => void;
 }
@@ -24,16 +27,18 @@ const Sidebar = React.memo(() => {
   const { t } = useTranslation();
   return (
     <InfoContent>
-      <Overline level={3}>{t('get_started_header', 'Get started')}</Overline>
+      <Overline level={3}>
+        {t(translationKeys.dataModelSelectorGetStartedHeader, 'Get started')}
+      </Overline>
       <Title level={4}>
         {t(
-          'get_started_title',
+          translationKeys.dataModelSelectorGetStartedTitle,
           'Get started working with your data right now by selecting a Data Model'
         )}
       </Title>
       <Body level={3}>
         {t(
-          'get_started_body',
+          translationKeys.dataModelSelectorGetStartedBody,
           'Cognite Data Fusion has a large range of possibilities, we recommend starting testing one of the following.'
         )}
       </Body>
@@ -43,6 +48,7 @@ const Sidebar = React.memo(() => {
 
 export const DataModelSelector: React.FC<Props> = ({
   loading,
+  isError,
   dataModels,
   onSelectionClick,
 }) => {
@@ -52,12 +58,43 @@ export const DataModelSelector: React.FC<Props> = ({
     DataModelListResponse | undefined
   >();
 
+  const isDataModelsEmpty =
+    !loading && !isError && Boolean(dataModels) && dataModels?.length === 0;
+
   return (
     <Container>
       <Content>
         <Sidebar />
         <ListContent>
           {loading && <Skeleton.List lines={7} />}
+          {isError && (
+            <Infobox
+              type="danger"
+              title={t(
+                translationKeys.dataModelSelectorInfoboxDangerTitle,
+                'Error'
+              )}
+            >
+              {t(
+                translationKeys.dataModelSelectorInfoboxDangerBody,
+                'There were some struggles to fetch data models.'
+              )}
+            </Infobox>
+          )}
+          {isDataModelsEmpty && (
+            <Infobox
+              type="neutral"
+              title={t(
+                translationKeys.dataModelSelectorInfoboxNeutralTitle,
+                'Add a Data Model'
+              )}
+            >
+              {t(
+                translationKeys.dataModelSelectorInfoboxNeutralBody,
+                'Please add a Data Model first to start exploring.'
+              )}
+            </Infobox>
+          )}
           {dataModels?.map((item) => (
             <Card
               key={`${item.externalId}-${item.space}`}
@@ -84,7 +121,7 @@ export const DataModelSelector: React.FC<Props> = ({
           disabled={!selectedDataModel}
           onClick={() => onSelectionClick?.(selectedDataModel!)}
         >
-          {t('get_started_confirm', 'Confirm')}
+          {t(translationKeys.dataModelSelectorGetStartedConfirm, 'Confirm')}
         </Button>
       </ActionContainer>
     </Container>

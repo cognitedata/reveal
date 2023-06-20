@@ -9,6 +9,7 @@ import {
 
 import { IndustryCanvasContainerConfig } from '../../types';
 import { UseManagedStateReturnType } from '../useManagedState';
+import { UseResourceSelectorActionsReturnType } from '../useResourceSelectorActions';
 import {
   OnUpdateTooltipsOptions,
   TooltipsOptions,
@@ -17,15 +18,7 @@ import {
 import ContainerTooltip from './ContainerTooltip';
 import useContainerOcrData from './useContainerOcrData';
 
-const useIndustryCanvasContainerTooltips = ({
-  selectedContainer,
-  containers,
-  tooltipsOptions,
-  onUpdateTooltipsOptions,
-  updateContainerById,
-  removeContainerById,
-  onAddSummarizationSticky,
-}: {
+type UseIndustryCanvasContainerTooltipsProps = {
   selectedContainer: IndustryCanvasContainerConfig | undefined;
   containers: IndustryCanvasContainerConfig[];
   tooltipsOptions: TooltipsOptions;
@@ -37,7 +30,19 @@ const useIndustryCanvasContainerTooltips = ({
     text: string,
     isMultiPageDocument: boolean
   ) => void;
-}): TooltipConfig[] => {
+  onResourceSelectorOpen: UseResourceSelectorActionsReturnType['onResourceSelectorOpen'];
+};
+
+const useIndustryCanvasContainerTooltips = ({
+  selectedContainer,
+  containers,
+  tooltipsOptions,
+  onUpdateTooltipsOptions,
+  updateContainerById,
+  removeContainerById,
+  onAddSummarizationSticky,
+  onResourceSelectorOpen,
+}: UseIndustryCanvasContainerTooltipsProps): TooltipConfig[] => {
   const [numberOfPages, setNumberOfPages] = useState<number | undefined>(
     undefined
   );
@@ -92,6 +97,7 @@ const useIndustryCanvasContainerTooltips = ({
             setIsLoadingSummary={setIsLoadingSummary}
             isOcrDataLoading={isOcrDataLoading}
             ocrData={ocrData}
+            onResourceSelectorOpen={onResourceSelectorOpen}
           />
         ),
         anchorTo: TooltipAnchorPosition.TOP_RIGHT,
@@ -111,6 +117,7 @@ const useIndustryCanvasContainerTooltips = ({
     ocrData,
     tooltipsOptions,
     onUpdateTooltipsOptions,
+    onResourceSelectorOpen,
   ]);
 };
 

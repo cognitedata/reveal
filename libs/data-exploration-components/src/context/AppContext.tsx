@@ -9,6 +9,7 @@ export const AppContextProvider = ({
   userInfo,
   isAdvancedFiltersEnabled,
   trackUsage,
+  isDocumentsApiEnabled,
 }: AppContextProps & { children: any }) => {
   return (
     <AppContext.Provider
@@ -18,6 +19,7 @@ export const AppContextProvider = ({
         userInfo,
         isAdvancedFiltersEnabled,
         trackUsage,
+        isDocumentsApiEnabled,
       }}
     >
       {children}

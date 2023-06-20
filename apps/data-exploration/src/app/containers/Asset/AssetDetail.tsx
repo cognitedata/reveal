@@ -1,8 +1,10 @@
 import React, { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 import { Loader, Metadata } from '@data-exploration/components';
 import { AssetInfo } from '@data-exploration/containers';
 
+import { useCdfUserHistoryService } from '@cognite/cdf-utilities';
 import { Tabs } from '@cognite/cogs.js';
 import { ErrorFeedback, ResourceTypes } from '@cognite/data-exploration';
 import { Asset, CogniteError } from '@cognite/sdk';
@@ -18,6 +20,7 @@ import {
   useResourceDetailSelectedTab,
 } from '@data-exploration-app/hooks';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
+import { SUB_APP_PATH, createInternalLink } from '@data-exploration-lib/core';
 
 import { AssetHierarchyTab } from './AssetHierarchyTab';
 
@@ -45,6 +48,9 @@ export const AssetDetail = ({
 
   const activeTab = selectedTab ?? 'details';
 
+  const { pathname, search: searchParams } = useLocation();
+  const userHistoryService = useCdfUserHistoryService();
+
   const handlePreviewClose = () => {
     endJourney();
   };
@@ -63,7 +69,7 @@ export const AssetDetail = ({
 
   const {
     data: asset,
-    isFetched,
+    isFetched: isAssetFetched,
     error,
   } = useCdfItem<Asset>(
     'assets',
@@ -73,7 +79,19 @@ export const AssetDetail = ({
     }
   );
 
-  if (!isFetched) {
+  useEffect(() => {
+    if (isAssetFetched && asset) {
+      // save Asset preview as view resource in user history
+      if (asset?.name)
+        userHistoryService.logNewResourceView({
+          application: SUB_APP_PATH,
+          name: asset?.name,
+          path: createInternalLink(pathname, searchParams),
+        });
+    }
+  }, [isAssetFetched, asset]);
+
+  if (!isAssetFetched) {
     return <Loader />;
   }
 
