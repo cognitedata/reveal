@@ -38,6 +38,7 @@ jest.mock('@cognite/cdf-utilities', () => {
     }),
     getProject: jest.fn().mockReturnValue('mock-project'),
     getCluster: jest.fn().mockReturnValue('mock-cluster'),
+    createLink: jest.fn().mockReturnValue('mock-link'),
   };
 });
 

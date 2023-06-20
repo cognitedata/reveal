@@ -9,17 +9,13 @@ import GlobalStyles from '@transformations/styles/GlobalStyles';
 import { MAX_NETWORK_RETRIES } from '@transformations/utils';
 
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
-import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
-import {
-  AuthWrapper,
-  getEnv,
-  getProject,
-  SubAppWrapper,
-} from '@cognite/cdf-utilities';
-import { Loader } from '@cognite/cogs.js';
+import sdk from '@cognite/cdf-sdk-singleton';
+import { getProject } from '@cognite/cdf-utilities';
 import { FlagProvider } from '@cognite/react-feature-flags';
 import { CogniteError } from '@cognite/sdk';
 import { SDKProvider } from '@cognite/sdk-provider';
+
+import { AuthContainer } from './components/auth-container/AuthContainer';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -47,40 +43,34 @@ const queryClient = new QueryClient({
     },
   },
 });
-const env = getEnv();
-const project = getProject();
 
 const App = () => {
+  const project = getProject();
   return (
     <I18nWrapper translations={translations} defaultNamespace="transformations">
       <FlagProvider
         apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
         appName="transformations"
-        projectName={getProject()}
+        projectName={project}
       >
         <SDKProvider sdk={sdk}>
           <QueryClientProvider client={queryClient}>
             <GlobalStyles>
-              <SubAppWrapper title="Transform data">
-                <AuthWrapper
-                  loadingScreen={<Loader />}
-                  login={() => loginAndAuthIfNeeded(project, env)}
-                >
-                  <Router>
-                    <Routes>
-                      <Route
-                        path="/:projectName/:subAppPath/:transformationId"
-                        element={<TransformationDetails />}
-                      />
+              <AuthContainer>
+                <Router>
+                  <Routes>
+                    <Route
+                      path="/:projectName/:subAppPath/:transformationId"
+                      element={<TransformationDetails />}
+                    />
 
-                      <Route
-                        path="/:projectName/:subAppPath"
-                        element={<TransformationList />}
-                      />
-                    </Routes>
-                  </Router>
-                </AuthWrapper>
-              </SubAppWrapper>
+                    <Route
+                      path="/:projectName/:subAppPath"
+                      element={<TransformationList />}
+                    />
+                  </Routes>
+                </Router>
+              </AuthContainer>
             </GlobalStyles>
             <ReactQueryDevtools initialIsOpen={false} />
           </QueryClientProvider>

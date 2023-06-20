@@ -25,6 +25,9 @@ describe('Data model page - Schema visualizer', () => {
     }
     cy.setCodeEditorText(gqlSchema);
 
+    // wait until visualizer loads with new types
+    cy.get('div[title="Type1"]').should('be.visible');
+
     cy.getBySel('schema-visualizer-toggle-btn').should('be.visible').click();
     cy.getBySel('schema-visualizer-err-ctr').should('be.visible');
 

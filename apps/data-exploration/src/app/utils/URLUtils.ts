@@ -1,6 +1,8 @@
 // TODO(CDFUX-0): copies from @cognite/cdf-utilities!
 import queryString from 'query-string';
 
+import { createLink } from '@cognite/cdf-utilities';
+
 export const getProject = () =>
   new URL(window.location.href).pathname.split('/')[1];
 
@@ -32,6 +34,17 @@ export const getEnvironment = () => {
 
 export const removeProjectFromPath = (path: string) => {
   return `/${path.split('/').slice(2).join('/')}`;
+};
+
+export const getSubAppPath = () => {
+  const mountPoint = window.location.pathname.split('/')[2];
+  return `/${mountPoint}`;
+};
+
+export const createInternalLink = (path: string, searchParams?: string) => {
+  if (!searchParams) return createLink(path);
+
+  return createLink(path, getSearchParams(searchParams));
 };
 
 // Parsed object is not stringified back correctly when `opts` is given as `arrayFormat: 'comma'`,
