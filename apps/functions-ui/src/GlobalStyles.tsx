@@ -30,8 +30,8 @@ import formStyle from 'antd/es/form/style/index.less';
 import gridStyle from 'antd/es/grid/style/index.less';
 import iconStyle from 'antd/es/icon/style/index.less';
 // import imageStyle from 'antd/es/image/style/index.less';
-// impor inputNumberStyle from 'antd/es/input-number/style/index.less';
 import inputStyle from 'antd/es/input/style/index.less';
+import inputNumberStyle from 'antd/es/input-number/style/index.less';
 // import layoutStyle from 'antd/es/layout/style/index.less';
 import listStyle from 'antd/es/list/style/index.less';
 // import localeProviderStyle from 'antd/es/locale-provider/style/index.less';
@@ -124,6 +124,7 @@ const styles = [
   typographyStyle,
   uploadStyle,
   tagStyle,
+  inputNumberStyle,
 ];
 
 export const getContainer = () => {
