@@ -38,3 +38,6 @@ cdf-document-search:
 functions-ui:
   - apps/functions-ui/*
   - apps/functions-ui/**/*
+
+design-system:
+  - libs/shared/user-profile-components/**/*

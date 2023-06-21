@@ -54,4 +54,9 @@ apps/3d-management                @cognitedata/3d-reveal-viewer-team
 apps/data-catalog                 @cognitedata/cdf-user-experience
 
 # Functions UI
-apps/iot-hub              @abdullah-cognite @shubhsk88 
+apps/functions-ui             @abdullah-cognite @shubhsk88 
+
+# Extractor downloads
+apps/extractor-downloads          @cognitedata/cdf-user-experience
+
+libs/shared/user-profile-components   @cognitedata/cogs-team

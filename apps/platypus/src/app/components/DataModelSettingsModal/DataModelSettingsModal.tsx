@@ -5,7 +5,7 @@ import { DataModel } from '@platypus/platypus-core';
 import { SUB_APP_PATH } from '@platypus-app/constants';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
-import { useCdfUserHistoryService } from '@cognite/cdf-utilities';
+import { createLink, useCdfUserHistoryService } from '@cognite/cdf-utilities';
 
 import { useDataModelMutation } from '../../modules/data-models/hooks/useDataModelMutation';
 import { DataModelDetailModal } from '../DataModelDetailModal/DataModelDetailModal';
@@ -47,7 +47,7 @@ export const DataModelSettingsModal = ({
             userHistoryService.logNewResourceView({
               application: SUB_APP_PATH,
               name: externalId,
-              path: dataModelPathname,
+              path: createLink(dataModelPathname),
             });
           onRequestClose();
         },

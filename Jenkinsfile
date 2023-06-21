@@ -14,7 +14,8 @@ static final String[] APPLICATIONS = [
   'functions-ui',
   '3d-management',
   'transformations',
-  'cdf-document-search'
+  'cdf-document-search',
+  'extractor-downloads',
 ]
 
 /*
@@ -22,7 +23,8 @@ static final String[] APPLICATIONS = [
   the version in the package.json file of your package.
 */
 static final Map<String, String> NPM_PACKAGES = [
-  'shared-plotting-components': "dist/libs/shared/plotting-components"
+  'shared-plotting-components': "dist/libs/shared/plotting-components",
+  'shared-user-profile-components': "dist/libs/shared/user-profile-components"
 ]
 
 // This is the Firebase site mapping.
@@ -39,8 +41,8 @@ static final Map<String, String> FIREBASE_APP_SITES = [
   '3d-management': '3d-management',
   'transformations': 'transformations',
   'cdf-document-search': 'document-search',
-  'functions-ui': 'functions-ui'
-  
+  'functions-ui': 'functions-ui',
+  'extractor-downloads': 'extractor-downloads',
 ]
 
 static final Map<String, String> PREVIEW_PACKAGE_NAMES = [
@@ -55,7 +57,8 @@ static final Map<String, String> PREVIEW_PACKAGE_NAMES = [
   'functions-ui': "@cognite/cdf-functions-ui",
   '3d-management': '@cognite/cdf-3d-management',
   'transformations': "@cognite/cdf-transformations-2",
-  'cdf-document-search': 'cognite/cdf-document-search-ui'
+  'cdf-document-search': 'cognite/cdf-document-search-ui',
+  'extractor-downloads': '@cognite/cdf-extractor-downloads',
 ]
 
 // Replace this with your app's ID on https://sentry.io/ -- if you do not have
@@ -121,7 +124,13 @@ static final Map<String, String> VERSIONING_STRATEGY = [
   'copilot': 'single-branch',
   'iot-hub': 'single-branch',
   'cdf-document-search': 'single-branch',
+  'extractor-downloads': 'single-branch',
 ]
+
+// The config of which apps have i18n strings that need to be synced to and pulled from locize.io
+static final String[] I18N_APPLICATIONS = [
+  'platypus'
+ ]
 
 // == End of customization. Everything below here is common. == \\
 
@@ -469,12 +478,12 @@ pods {
                 )
               }
 
-              if(project == "platypus"){
+              if(I18N_APPLICATIONS.contains(project)){
                 stageWithNotify('Save missing keys to locize') {
-                  sh("yarn i18n-push")
+                  sh("yarn i18n-push ${project}")
                 }
                 stageWithNotify('Remove deleted keys from locize') {
-                  sh("yarn i18n-remove-deleted")
+                  sh("yarn i18n-remove-deleted ${project}")
                 }
               }
             }

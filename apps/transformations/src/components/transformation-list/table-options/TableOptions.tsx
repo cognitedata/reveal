@@ -1,3 +1,5 @@
+import { useParams } from 'react-router-dom';
+
 import styled from 'styled-components';
 
 import { useTranslation } from '@transformations/common';
@@ -8,10 +10,11 @@ import {
   useUpdateSchedule,
 } from '@transformations/hooks';
 import { TransformationListTableRecord } from '@transformations/pages/transformation-list/TransformationListTable';
-import { getTrackEvent } from '@transformations/utils';
+import { createInternalLink, getTrackEvent } from '@transformations/utils';
 import { notification } from 'antd';
 
 import { trackEvent } from '@cognite/cdf-route-tracker';
+import { useCdfUserHistoryService } from '@cognite/cdf-utilities';
 import { Button, Colors, Menu } from '@cognite/cogs.js';
 
 type TableOptionsProps = {
@@ -24,7 +27,15 @@ const TableOptions = ({
   onDelete,
 }: TableOptionsProps): JSX.Element => {
   const { t } = useTranslation();
-  const { id: transformationId, hasCredentials, schedule } = transformation;
+  const {
+    id: transformationId,
+    hasCredentials,
+    schedule,
+    name: transformationName,
+  } = transformation;
+
+  const { subAppPath } = useParams<{ subAppPath?: string }>();
+  const userHistoryService = useCdfUserHistoryService();
 
   const { mutate: runTransformation, isLoading: isStartingTransformationJob } =
     useRunTransformation();
@@ -41,6 +52,14 @@ const TableOptions = ({
   const handlePauseSchedule = (): void => {
     if (schedule?.id) {
       trackEvent(getTrackEvent('event-tr-list-more-action-pause-click'));
+
+      if (subAppPath && transformationName)
+        userHistoryService.logNewResourceEdit({
+          application: subAppPath,
+          name: transformationName,
+          path: createInternalLink(`${transformationId}`),
+        });
+
       updateSchedule({
         schedules: [
           {

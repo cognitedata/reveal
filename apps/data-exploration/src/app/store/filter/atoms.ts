@@ -9,7 +9,7 @@ import { GlobalFilter, GlobalFilterKeys } from './types';
 
 const defaultFilterState = {
   asset: {},
-  timeseries: {},
+  timeSeries: {},
   sequence: {},
   file: {},
   document: {},

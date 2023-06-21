@@ -10,7 +10,7 @@ import {
 
 export type Filters = {
   asset: InternalAssetFilters;
-  timeseries: InternalTimeseriesFilters;
+  timeSeries: InternalTimeseriesFilters;
   sequence: InternalSequenceFilters;
   file: InternalFilesFilters;
   event: InternalEventsFilters;
@@ -24,7 +24,7 @@ export type GlobalFilter = {
   filters: {
     common: InternalCommonFilters;
     asset: Omit<Filters['asset'], CommonFacetsKeys>;
-    timeseries: Omit<Filters['timeseries'], CommonFacetsKeys>;
+    timeSeries: Omit<Filters['timeSeries'], CommonFacetsKeys>;
     sequence: Omit<Filters['sequence'], CommonFacetsKeys>;
     file: Omit<Filters['file'], CommonFacetsKeys>;
     document: Omit<Filters['document'], CommonFacetsKeys>;
