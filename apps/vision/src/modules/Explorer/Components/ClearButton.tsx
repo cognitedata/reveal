@@ -1,6 +1,8 @@
 import React from 'react';
-import { Button } from '@cognite/cogs.js';
+
 import styled from 'styled-components';
+
+import { Button } from '@cognite/cogs.js';
 
 export const ClearButton = ({
   disableClear,

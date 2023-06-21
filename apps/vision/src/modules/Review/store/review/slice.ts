@@ -1,12 +1,12 @@
 import { createSlice, isAnyOf, PayloadAction } from '@reduxjs/toolkit';
+import { AnnotationSettingsOption } from '@vision/modules/Review/store/review/enums';
+import { ReviewState } from '@vision/modules/Review/store/review/types';
 import {
   clearFileState,
   deselectAllSelectionsReviewPage,
-} from 'src/store/commonActions';
-import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
-import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
-import { ReviewState } from 'src/modules/Review/store/review/types';
-import { AnnotationSettingsOption } from 'src/modules/Review/store/review/enums';
+} from '@vision/store/commonActions';
+import { DeleteAnnotations } from '@vision/store/thunks/Annotation/DeleteAnnotations';
+import { DeleteFilesById } from '@vision/store/thunks/Files/DeleteFilesById';
 
 export const initialState: ReviewState = {
   fileIds: [],

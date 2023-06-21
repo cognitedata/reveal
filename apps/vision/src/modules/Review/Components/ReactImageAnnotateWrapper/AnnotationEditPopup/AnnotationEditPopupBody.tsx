@@ -1,3 +1,10 @@
+import React from 'react';
+
+import styled from 'styled-components';
+
+import { VisionAutoComplete } from '@vision/modules/Common/Components/VisionAutoComplete/VisionAutoComplete';
+import { PopupUIElementContainer } from '@vision/modules/Review/Components/ReactImageAnnotateWrapper/TitleContainer';
+
 import {
   Body,
   Col,
@@ -7,10 +14,6 @@ import {
   Title,
   Button,
 } from '@cognite/cogs.js';
-import { PopupUIElementContainer } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/TitleContainer';
-import React from 'react';
-import styled from 'styled-components';
-import { VisionAutoComplete } from 'src/modules/Common/Components/VisionAutoComplete/VisionAutoComplete';
 
 export type BodyContainerMode = 'point' | 'shape';
 
@@ -33,8 +36,7 @@ export const AnnotationEditPopupBody = ({
 }) => {
   const renderEmptyAnnotationMessage = () => {
     return (
-      <Row
-        cols={10}
+      <div
         style={{
           background: '#6E85FC0F',
           borderRadius: '8px',
@@ -42,20 +44,27 @@ export const AnnotationEditPopupBody = ({
           padding: '5px',
         }}
       >
-        <StyledCol span={1}>
-          <Icon type="InfoFilled" style={{ color: '#4A67FB' }} />
-        </StyledCol>
+        <Row cols={10}>
+          <StyledCol span={1}>
+            <div style={{ color: '#4A67FB' }}>
+              <Icon type="InfoFilled" />
+            </div>
+          </StyledCol>
 
-        <StyledCol span={9}>
-          <Title level={5}>No existing annotations</Title>
-          <Body level={2} style={{ paddingBottom: '15px', paddingTop: '8px' }}>
-            Create a pre-defined list of annotations in Annotation Settings
-          </Body>
-          <Button type="tertiary" onClick={() => onOpenAnnotationSettings()}>
-            Create annotations
-          </Button>
-        </StyledCol>
-      </Row>
+          <StyledCol span={9}>
+            <Title level={5}>No existing annotations</Title>
+            <Body
+              level={2}
+              style={{ paddingBottom: '15px', paddingTop: '8px' }}
+            >
+              Create a pre-defined list of annotations in Annotation Settings
+            </Body>
+            <Button type="tertiary" onClick={() => onOpenAnnotationSettings()}>
+              Create annotations
+            </Button>
+          </StyledCol>
+        </Row>
+      </div>
     );
   };
 

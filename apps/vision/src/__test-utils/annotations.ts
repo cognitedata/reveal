@@ -1,15 +1,16 @@
-import { Point, Status } from 'src/api/annotation/types';
+import { Point, Status } from '@vision/api/annotation/types';
 import {
   KeypointCollectionState,
   KeypointState,
-} from 'src/modules/Review/store/annotatorWrapper/type';
+} from '@vision/modules/Review/store/annotatorWrapper/type';
 import {
   PredefinedKeypoint,
   PredefinedKeypointCollection,
   PredefinedShape,
   ReviewKeypoint,
   TempKeypointCollection,
-} from 'src/modules/Review/types';
+} from '@vision/modules/Review/types';
+
 import { getDummyImageKeypointCollectionAnnotation } from './getDummyAnnotations';
 
 export const getDummyKeypoint = (confidence?: number, point?: Point) => {

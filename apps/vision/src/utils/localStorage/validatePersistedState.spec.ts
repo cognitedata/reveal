@@ -1,6 +1,6 @@
-import { MOCK_PROJECT_NAME } from 'src/__mocks__/MockedCogniteClient';
-import { validatePersistedState } from 'src/utils/localStorage/validatePersistedState';
-import { APP_STATE_VERSION } from 'src/utils/localStorage/LocalStorage';
+import { MOCK_PROJECT_NAME } from '@vision/__mocks__/MockedCogniteClient';
+import { APP_STATE_VERSION } from '@vision/utils/localStorage/LocalStorage';
+import { validatePersistedState } from '@vision/utils/localStorage/validatePersistedState';
 
 describe('Test Validate Persisted State', () => {
   test('valid project name and app version', () => {

@@ -1,5 +1,6 @@
-import { Loader } from '@cognite/cogs.js';
 import React, { ComponentType, lazy, Suspense, useMemo } from 'react';
+
+import { Loader } from '@cognite/cogs.js';
 
 export function LazyWrapper(props: {
   importFn: () => Promise<{ default: ComponentType<any> }>;

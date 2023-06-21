@@ -1,4 +1,5 @@
-import { CDFStatusModes } from 'src/modules/Common/Components/CDFStatus/CDFStatus';
+import { CDFStatusModes } from '@vision/modules/Common/Components/CDFStatus/CDFStatus';
+
 import { CommonState } from './types';
 
 // TODO: not in use, remove?

@@ -1,10 +1,13 @@
 import React from 'react';
-import { Button, SegmentedControl, Title } from '@cognite/cogs.js';
+
 import styled from 'styled-components';
-import { BulkActionMenu } from 'src/modules/Common/Components/BulkActionMenu/BulkActionMenu';
-import { LoadingBar } from 'src/modules/Common/Components/LoadingBar/LoadingBar';
-import { ExplorationSearchBar } from 'src/modules/Explorer/Components/ExplorationSearchBar';
-import { ExplorerToolbarContainerProps } from 'src/modules/Explorer/Containers/ExplorerToolbarContainer';
+
+import { BulkActionMenu } from '@vision/modules/Common/Components/BulkActionMenu/BulkActionMenu';
+import { LoadingBar } from '@vision/modules/Common/Components/LoadingBar/LoadingBar';
+import { ExplorationSearchBar } from '@vision/modules/Explorer/Components/ExplorationSearchBar';
+import { ExplorerToolbarContainerProps } from '@vision/modules/Explorer/Containers/ExplorerToolbarContainer';
+
+import { Button, SegmentedControl, Title } from '@cognite/cogs.js';
 import { useFlag } from '@cognite/react-feature-flags';
 
 type ExplorerToolbarProps = ExplorerToolbarContainerProps & {

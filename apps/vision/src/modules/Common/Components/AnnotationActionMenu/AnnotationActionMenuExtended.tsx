@@ -1,5 +1,6 @@
-import { Button, Dropdown, Icon, Menu, Popconfirm } from '@cognite/cogs.js';
 import React from 'react';
+
+import { Button, Dropdown, Icon, Menu, Popconfirm } from '@cognite/cogs.js';
 
 interface AnnotationActionMenuExtendedProps {
   showPolygon?: boolean;
@@ -26,10 +27,9 @@ export const AnnotationActionMenuExtended = ({
     >
       {handleVisibility ? (
         <Menu.Item onClick={handleVisibility} disabled={disableShowPolygon}>
-          <Icon
-            type={showPolygon ? 'EyeShow' : 'EyeHide'}
-            style={{ marginRight: '17px' }}
-          />
+          <div style={{ marginRight: '17px' }}>
+            <Icon type={showPolygon ? 'EyeShow' : 'EyeHide'} />
+          </div>
           Show/hide
         </Menu.Item>
       ) : (
@@ -46,7 +46,9 @@ export const AnnotationActionMenuExtended = ({
         }
       >
         <Menu.Item>
-          <Icon type="Delete" style={{ marginRight: '17px' }} />
+          <div style={{ marginRight: '17px' }}>
+            <Icon type="Delete" />
+          </div>
           {deleteMenuText || 'Delete annotation'}
         </Menu.Item>
       </Popconfirm>

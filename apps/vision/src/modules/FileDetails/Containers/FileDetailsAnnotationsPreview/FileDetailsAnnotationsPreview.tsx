@@ -1,13 +1,16 @@
 import React, { useMemo } from 'react';
-import { Button } from '@cognite/cogs.js';
-import { VisionFileDetails } from 'src/modules/FileDetails/Components/FileMetadata/Types';
-import styled from 'styled-components';
 import { useSelector } from 'react-redux';
-import { RootState } from 'src/store/rootReducer';
-import { isProcessingFile } from 'src/modules/Process/store/utils';
-import { makeSelectJobStatusForFile } from 'src/modules/Process/store/selectors';
-import { Thumbnail } from 'src/modules/Common/Components/Thumbnail/Thumbnail';
-import { AnnotationDetailPanel } from 'src/modules/Review/Containers/AnnotationDetailPanel/AnnotationDetailPanel';
+
+import styled from 'styled-components';
+
+import { Thumbnail } from '@vision/modules/Common/Components/Thumbnail/Thumbnail';
+import { VisionFileDetails } from '@vision/modules/FileDetails/Components/FileMetadata/Types';
+import { makeSelectJobStatusForFile } from '@vision/modules/Process/store/selectors';
+import { isProcessingFile } from '@vision/modules/Process/store/utils';
+import { AnnotationDetailPanel } from '@vision/modules/Review/Containers/AnnotationDetailPanel/AnnotationDetailPanel';
+import { RootState } from '@vision/store/rootReducer';
+
+import { Button } from '@cognite/cogs.js';
 
 export const FileDetailsAnnotationsPreview = ({
   fileInfo,

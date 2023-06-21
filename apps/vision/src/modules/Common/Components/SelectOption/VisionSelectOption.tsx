@@ -1,8 +1,11 @@
-import { components, OptionProps } from 'react-select';
-import { Icon, Menu, OptionType } from '@cognite/cogs.js';
-import { VisionOptionType } from 'src/modules/Review/types';
 import React from 'react';
+import { components, OptionProps } from 'react-select';
+
 import styled from 'styled-components';
+
+import { VisionOptionType } from '@vision/modules/Review/types';
+
+import { Icon, Menu, OptionType } from '@cognite/cogs.js';
 
 export const VisionSelectOption = (
   props: OptionProps<OptionType<VisionOptionType<string>>>
@@ -11,15 +14,12 @@ export const VisionSelectOption = (
     <>
       <components.Option {...props}>
         <CustomOptionContainer>
-          <IconContainer>
-            {props.data?.icon && (
-              <Icon
-                type={props.data?.icon}
-                style={{
-                  color: props.data?.color,
-                }}
-              />
-            )}
+          <IconContainer
+            style={{
+              color: props.data?.color,
+            }}
+          >
+            {props.data?.icon && <Icon type={props.data?.icon} />}
           </IconContainer>
           <CustomOptionLabel>{props.children}</CustomOptionLabel>
         </CustomOptionContainer>

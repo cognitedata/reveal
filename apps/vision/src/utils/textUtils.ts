@@ -1,4 +1,4 @@
-import { SENSITIVE_ANNOTATION_LABELS } from 'src/constants/annotationSettingsConstants';
+import { SENSITIVE_ANNOTATION_LABELS } from '@vision/constants/annotationSettingsConstants';
 
 export const isSensitiveAnnotationLabel = (label?: string) => {
   return label

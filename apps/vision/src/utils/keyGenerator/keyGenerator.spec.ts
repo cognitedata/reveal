@@ -1,4 +1,4 @@
-import { keyGenerator } from 'src/utils/keyGenerator/keyGenerator';
+import { keyGenerator } from '@vision/utils/keyGenerator/keyGenerator';
 
 describe('Test keyGenerator fn', () => {
   describe('without prefix', () => {

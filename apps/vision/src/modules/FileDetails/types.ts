@@ -1,5 +1,6 @@
+import { MetadataItem } from '@vision/modules/FileDetails/Components/FileMetadata/Types';
+
 import { Label } from '@cognite/sdk';
-import { MetadataItem } from 'src/modules/FileDetails/Components/FileMetadata/Types';
 
 export type FileInfoValueState = string | Label[] | number[] | null;
 

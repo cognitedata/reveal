@@ -1,6 +1,8 @@
 import React from 'react';
+
+import { getContainer } from '@vision/utils';
 import { Modal } from 'antd';
-import { getContainer } from 'src/utils';
+
 import {
   ModalFileUploader,
   ModalFileUploaderProps,

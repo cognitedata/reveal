@@ -1,18 +1,22 @@
 import React, { useMemo, useState } from 'react';
-import { Button, Title, Body, Tooltip } from '@cognite/cogs.js';
-import { VisionFile } from 'src/modules/Common/store/files/types';
-import styled from 'styled-components';
-import { AutoMLModelType } from 'src/api/vision/autoML/types';
-import { useHistory } from 'react-router-dom';
-import { getLink, workflowRoutes } from 'src/utils/workflowRoutes';
-import { AutoMLAPI } from 'src/api/vision/autoML/AutoMLAPI';
 import { useSelector } from 'react-redux';
-import { RootState } from 'src/store/rootReducer';
-import { makeSelectAnnotationsForFileIds } from 'src/modules/Common/store/annotation/selectors';
-import { ModelTrainingSettings } from './ModelTrainingSettings';
-import { ModelTrainingFileTable } from './ModelTrainingFileTable';
+import { useNavigate } from 'react-router-dom';
+
+import styled from 'styled-components';
+
+import { AutoMLAPI } from '@vision/api/vision/autoML/AutoMLAPI';
+import { AutoMLModelType } from '@vision/api/vision/autoML/types';
+import { Graphic, GraphicOptions } from '@vision/assets/Graphics/Graphic';
+import { makeSelectAnnotationsForFileIds } from '@vision/modules/Common/store/annotation/selectors';
+import { VisionFile } from '@vision/modules/Common/store/files/types';
+import { RootState } from '@vision/store/rootReducer';
+import { getLink, workflowRoutes } from '@vision/utils/workflowRoutes';
+
+import { Button, Title, Body, Tooltip } from '@cognite/cogs.js';
+
 import { validateDataset } from './datasetValidators';
-import { Graphic, GraphicOptions } from 'src/assets/Graphics/Graphic';
+import { ModelTrainingFileTable } from './ModelTrainingFileTable';
+import { ModelTrainingSettings } from './ModelTrainingSettings';
 
 export type ModelTrainingModalContentProps = {
   selectedFiles: VisionFile[];
@@ -30,7 +34,7 @@ export const ModelTrainingModalContent = ({
   const [startAutoMLJobCalled, setStartAutoMLJobCalled] =
     useState<boolean>(false);
 
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const selectAnnotationsForFileIds = useMemo(
     makeSelectAnnotationsForFileIds,
@@ -75,7 +79,7 @@ export const ModelTrainingModalContent = ({
   };
 
   const handleGoToModelOverview = () => {
-    history.push(getLink(workflowRoutes.models));
+    navigate(getLink(workflowRoutes.models));
     onCancel();
   };
 

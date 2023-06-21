@@ -1,4 +1,4 @@
-import { Point } from 'src/api/annotation/types';
+import { Point } from '@vision/api/annotation/types';
 
 export function vertexIsNormalized(vertex: Point) {
   return vertex.x >= 0 && vertex.x <= 1 && vertex.y >= 0 && vertex.y <= 1;

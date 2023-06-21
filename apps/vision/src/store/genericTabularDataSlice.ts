@@ -5,8 +5,8 @@ import {
   SliceCaseReducers,
   ValidateSliceCaseReducers,
 } from '@reduxjs/toolkit';
-import { PageSize } from 'src/modules/Common/Components/FileTable/types';
-import { ViewMode } from 'src/modules/Common/types';
+import { PageSize } from '@vision/modules/Common/Components/FileTable/types';
+import { ViewMode } from '@vision/modules/Common/types';
 
 export interface GenericTabularState {
   focusedFileId: number | null;

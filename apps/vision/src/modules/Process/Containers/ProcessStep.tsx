@@ -1,26 +1,30 @@
 import React, { useEffect } from 'react';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { FileToolbar } from 'src/modules/Process/Containers/FileToolbar';
-import { Title } from '@cognite/cogs.js';
+import { useDispatch, useSelector } from 'react-redux';
+
 import styled from 'styled-components';
-import { pushMetric } from 'src/utils/pushMetric';
-import { ProcessResults } from 'src/modules/Process/Containers/ProcessResults';
-import { ViewMode } from 'src/modules/Common/types';
+
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+// import { CustomPrompt } from '@vision/modules/Common/Components/CustomPrompt/CustomPrompt';
+import { ViewMode } from '@vision/modules/Common/types';
+import { ExploreModalContainer } from '@vision/modules/Process/Containers/ExploreModalContainer';
+import { FileToolbar } from '@vision/modules/Process/Containers/FileToolbar';
+import { ProcessBulkEditModalContainer } from '@vision/modules/Process/Containers/ProcessBulkEditModalContainer';
+import { ProcessFileDownloadModalContainer } from '@vision/modules/Process/Containers/ProcessFileDownloadModalContainer';
+import { ProcessFileUploadModalContainer } from '@vision/modules/Process/Containers/ProcessFileUploadModalContainer';
+import { ProcessFooter } from '@vision/modules/Process/Containers/ProcessFooter';
+import { ProcessResults } from '@vision/modules/Process/Containers/ProcessResults';
+import { ProcessToolBar } from '@vision/modules/Process/Containers/ProcessToolBar/ProcessToolBar';
 import {
   hideFileMetadata,
   setCurrentView,
   setFocusedFileId,
-} from 'src/modules/Process/store/slice';
-import { useDispatch, useSelector } from 'react-redux';
-import { ProcessToolBar } from 'src/modules/Process/Containers/ProcessToolBar/ProcessToolBar';
-import { ProcessFooter } from 'src/modules/Process/Containers/ProcessFooter';
-import { RootState } from 'src/store/rootReducer';
-import { ProcessFileUploadModalContainer } from 'src/modules/Process/Containers/ProcessFileUploadModalContainer';
-import { ProcessFileDownloadModalContainer } from 'src/modules/Process/Containers/ProcessFileDownloadModalContainer';
-import { ProcessBulkEditModalContainer } from 'src/modules/Process/Containers/ProcessBulkEditModalContainer';
-import { ExploreModalContainer } from 'src/modules/Process/Containers/ExploreModalContainer';
-import { CustomPrompt } from 'src/modules/Common/Components/CustomPrompt/CustomPrompt';
-import { PopulateProcessFiles } from 'src/store/thunks/Process/PopulateProcessFiles';
+} from '@vision/modules/Process/store/slice';
+import { AppDispatch } from '@vision/store';
+import { RootState } from '@vision/store/rootReducer';
+import { PopulateProcessFiles } from '@vision/store/thunks/Process/PopulateProcessFiles';
+import { pushMetric } from '@vision/utils/pushMetric';
+
+import { Title } from '@cognite/cogs.js';
 
 const ResultsContainer = styled.div`
   flex: 1;
@@ -34,7 +38,7 @@ const TitleContainer = styled.div`
 const queryClient = new QueryClient();
 
 export default function ProcessStep() {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const processFileIds = useSelector(
     (state: RootState) => state.processSlice.fileIds
@@ -57,7 +61,7 @@ export default function ProcessStep() {
   };
   return (
     <>
-      <CustomPrompt when={!!processFileIds.length} onOK={clearProcessData} />
+      {/* <CustomPrompt when={!!processFileIds.length} onOK={clearProcessData} /> */}
       <Deselect />
       <ProcessFileUploadModalContainer />
       <ProcessFileDownloadModalContainer />
@@ -82,7 +86,7 @@ export default function ProcessStep() {
 }
 
 const Deselect = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const focusedFileId = useSelector(
     ({ processSlice }: RootState) => processSlice.focusedFileId
   );

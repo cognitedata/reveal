@@ -1,12 +1,14 @@
-import { FileDownloaderModal } from 'src/modules/Common/Components/FileDownloaderModal/FileDownloaderModal';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setFileDownloadModalVisibility } from 'src/modules/Common/store/common/slice';
-import { RootState } from 'src/store/rootReducer';
-import { selectProcessSelectedFileIdsInSortedOrder } from 'src/modules/Process/store/selectors';
+
+import { FileDownloaderModal } from '@vision/modules/Common/Components/FileDownloaderModal/FileDownloaderModal';
+import { setFileDownloadModalVisibility } from '@vision/modules/Common/store/common/slice';
+import { selectProcessSelectedFileIdsInSortedOrder } from '@vision/modules/Process/store/selectors';
+import { AppDispatch } from '@vision/store';
+import { RootState } from '@vision/store/rootReducer';
 
 export const ProcessFileDownloadModalContainer = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const showFileDownloadModal = useSelector(
     ({ commonReducer }: RootState) => commonReducer.showFileDownloadModal

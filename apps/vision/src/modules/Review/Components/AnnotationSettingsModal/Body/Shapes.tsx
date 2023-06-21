@@ -1,19 +1,23 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Input } from 'antd';
-import { ColorsPersonDetection } from 'src/constants/Colors';
-import { ColorPicker } from 'src/modules/Common/Components/ColorPicker/ColorPicker';
+
+import styled from 'styled-components';
+
+import { NO_EMPTY_LABELS_MESSAGE } from '@vision/constants/annotationSettingsConstants';
+import { ColorsPersonDetection } from '@vision/constants/Colors';
+import { ColorPicker } from '@vision/modules/Common/Components/ColorPicker/ColorPicker';
 import {
   getRandomColor,
   validNewShapes,
-} from 'src/modules/Review/Components/AnnotationSettingsModal/AnnotationSettingsUtils';
-import { isSensitiveAnnotationLabel } from 'src/utils/textUtils';
-import styled from 'styled-components';
+} from '@vision/modules/Review/Components/AnnotationSettingsModal/AnnotationSettingsUtils';
+import { renderEmptyAnnotationMessage } from '@vision/modules/Review/Components/AnnotationSettingsModal/Body/EmptyAnnotationInfo';
+import { PredefinedShape } from '@vision/modules/Review/types';
+import { isSensitiveAnnotationLabel } from '@vision/utils/textUtils';
+import { ToastUtils } from '@vision/utils/ToastUtils';
+import { Input } from 'antd';
+import isEmpty from 'lodash/isEmpty';
+
 import { Body, Button, Tooltip } from '@cognite/cogs.js';
-import { NO_EMPTY_LABELS_MESSAGE } from 'src/constants/annotationSettingsConstants';
-import { renderEmptyAnnotationMessage } from 'src/modules/Review/Components/AnnotationSettingsModal/Body/EmptyAnnotationInfo';
-import isEmpty from 'lodash-es/isEmpty';
-import { PredefinedShape } from 'src/modules/Review/types';
-import { ToastUtils } from 'src/utils/ToastUtils';
+
 import { Header } from './Header';
 
 const handleClick = (evt: any) => {

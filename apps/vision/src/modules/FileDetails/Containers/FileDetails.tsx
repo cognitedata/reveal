@@ -1,20 +1,25 @@
 import React from 'react';
-import { Button, Icon, Tabs, Title } from '@cognite/cogs.js';
-import { FileDetailsContainer } from 'src/modules/FileDetails/Components/FileMetadata/FileDetailsContainer';
-import { MetadataTableToolBar } from 'src/modules/FileDetails/Components/FileMetadata/MetadataTableToolBar';
-import { MetaDataTable } from 'src/modules/FileDetails/Components/FileMetadata/MetadataTable';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from 'src/store/rootReducer';
-import isEqual from 'lodash-es/isEqual';
-import { VisionFileDetails } from 'src/modules/FileDetails/Components/FileMetadata/Types';
-import { updateFileInfoField } from 'src/store/thunks/Files/updateFileInfoField';
+
 import styled from 'styled-components';
+
+import { FileDetailsContainer } from '@vision/modules/FileDetails/Components/FileMetadata/FileDetailsContainer';
+import { MetaDataTable } from '@vision/modules/FileDetails/Components/FileMetadata/MetadataTable';
+import { MetadataTableToolBar } from '@vision/modules/FileDetails/Components/FileMetadata/MetadataTableToolBar';
+import { VisionFileDetails } from '@vision/modules/FileDetails/Components/FileMetadata/Types';
 import {
   metadataEditMode,
   selectUpdatedFileDetails,
   selectUpdatedFileMeta,
-} from 'src/modules/FileDetails/selectors';
-import { fileInfoEdit } from 'src/modules/FileDetails/slice';
+} from '@vision/modules/FileDetails/selectors';
+import { fileInfoEdit } from '@vision/modules/FileDetails/slice';
+import { AppDispatch } from '@vision/store';
+import { RootState } from '@vision/store/rootReducer';
+import { updateFileInfoField } from '@vision/store/thunks/Files/updateFileInfoField';
+import isEqual from 'lodash/isEqual';
+
+import { Button, Icon, Tabs, Title } from '@cognite/cogs.js';
+
 import { FileDetailsAnnotationsPreview } from './FileDetailsAnnotationsPreview/FileDetailsAnnotationsPreview';
 
 export const FileDetails = ({
@@ -26,7 +31,7 @@ export const FileDetails = ({
   onClose: () => void;
   onReview: () => void;
 }) => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const fileDetails = useSelector((state: RootState) =>
     selectUpdatedFileDetails(state, fileId)

@@ -2,8 +2,8 @@ import {
   VisionJob,
   VisionDetectionModelType,
   DetectionModelParams,
-} from 'src/api/vision/detectionModels/types';
-import { GenericTabularState } from 'src/store/genericTabularDataSlice';
+} from '@vision/api/vision/detectionModels/types';
+import { GenericTabularState } from '@vision/store/genericTabularDataSlice';
 
 export type JobState = VisionJob & {
   fileIds: number[];

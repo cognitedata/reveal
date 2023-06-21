@@ -1,21 +1,25 @@
-import { Button, Detail, Icon, Tooltip, Row, Title } from '@cognite/cogs.js';
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+
+import styled from 'styled-components';
+
+import { AutoMLAPI } from '@vision/api/vision/autoML/AutoMLAPI';
+import { AutoMLModelCore } from '@vision/api/vision/autoML/types';
 import {
   DetectionModelParams,
   ParamsCustomModel,
-} from 'src/api/vision/detectionModels/types';
-import { setUnsavedDetectionModelSettings } from 'src/modules/Process/store/slice';
-import { RootState } from 'src/store/rootReducer';
-import { ColorsObjectDetection } from 'src/constants/Colors';
-import CustomModelIllustration from 'src/assets/visualDescriptions/CustomModelIllustration.svg';
-
-import { AutoMLModelSelectFilter } from 'src/modules/Process/Components/AutoMLModelSelectFilter';
-import { AutoMLModelCore } from 'src/api/vision/autoML/types';
-import { getLink, workflowRoutes } from 'src/utils/workflowRoutes';
-import { AutoMLAPI } from 'src/api/vision/autoML/AutoMLAPI';
-import styled from 'styled-components';
+} from '@vision/api/vision/detectionModels/types';
+import CustomModelIllustration from '@vision/assets/visualDescriptions/CustomModelIllustration';
+import { ColorsObjectDetection } from '@vision/constants/Colors';
+import { AutoMLModelSelectFilter } from '@vision/modules/Process/Components/AutoMLModelSelectFilter';
+import { setUnsavedDetectionModelSettings } from '@vision/modules/Process/store/slice';
+import { AppDispatch } from '@vision/store';
+import { RootState } from '@vision/store/rootReducer';
+import { getLink, workflowRoutes } from '@vision/utils/workflowRoutes';
 import { InputNumber } from 'antd';
+
+import { Button, Detail, Icon, Tooltip, Row, Title } from '@cognite/cogs.js';
+
 import {
   ColorBox,
   NameContainer,
@@ -69,7 +73,7 @@ export const badge = ({
 
 const Content = (modelIndex: number, customModels?: AutoMLModelCore[]) => {
   const [verifyingModel, setVerifyingModel] = useState<boolean>();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const params: ParamsCustomModel = useSelector(
     ({ processSlice }: RootState) => {
       if (modelIndex < processSlice.availableDetectionModels.length) {
@@ -157,11 +161,9 @@ const Content = (modelIndex: number, customModels?: AutoMLModelCore[]) => {
                       wrapped
                       content="Select which model to perform prediction with"
                     >
-                      <Icon
-                        type="HelpFilled"
-                        aria-label="HelperIcon"
-                        style={{ marginLeft: '11px' }}
-                      />
+                      <div style={{ marginLeft: '11px' }}>
+                        <Icon type="HelpFilled" aria-label="HelperIcon" />
+                      </div>
                     </Tooltip>
                   </td>
                   <th>
@@ -180,11 +182,12 @@ const Content = (modelIndex: number, customModels?: AutoMLModelCore[]) => {
                       </SelectContainer>
                       {showLoadingMessage && (
                         <ModelSelectContainer>
-                          <Icon
-                            type={iconType}
-                            style={{ marginRight: '5px' }}
-                            aria-label="modelVerificationIcon"
-                          />
+                          <div style={{ marginRight: '5px' }}>
+                            <Icon
+                              type={iconType}
+                              aria-label="modelVerificationIcon"
+                            />
+                          </div>
                           {loadingMessage}
                         </ModelSelectContainer>
                       )}
@@ -198,7 +201,9 @@ const Content = (modelIndex: number, customModels?: AutoMLModelCore[]) => {
                       wrapped
                       content="Threshold for minimum confidence the model has on a detected object"
                     >
-                      <Icon type="HelpFilled" style={{ marginLeft: '11px' }} />
+                      <div style={{ marginLeft: '11px' }}>
+                        <Icon type="HelpFilled" />
+                      </div>
                     </Tooltip>
                   </td>
                   <th>
@@ -250,10 +255,7 @@ const Content = (modelIndex: number, customModels?: AutoMLModelCore[]) => {
               {badge({ modelName: 'Custom model' })}
               {description()}
             </NameContainer>
-            <img
-              src={CustomModelIllustration}
-              alt="ObjectDetectionIllustration"
-            />
+            <CustomModelIllustration />
           </div>
         </StyledCol>
       </Row>

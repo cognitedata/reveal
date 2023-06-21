@@ -1,8 +1,8 @@
-import { BulkEditUnsavedState } from 'src/modules/Common/store/common/types';
-import { VisionFile } from 'src/modules/Common/store/files/types';
-import { BulkEditTableDataType } from 'src/modules/Common/Components/BulkEdit/BulkEditTable/BulkEditTable';
-import { getOriginalValue } from 'src/modules/Common/Components/BulkEdit/utils/getOriginalValue';
-import { getUpdatedValue } from 'src/modules/Common/Components/BulkEdit/utils/getUpdatedValue';
+import { BulkEditTableDataType } from '@vision/modules/Common/Components/BulkEdit/BulkEditTable/BulkEditTable';
+import { getOriginalValue } from '@vision/modules/Common/Components/BulkEdit/utils/getOriginalValue';
+import { getUpdatedValue } from '@vision/modules/Common/Components/BulkEdit/utils/getUpdatedValue';
+import { BulkEditUnsavedState } from '@vision/modules/Common/store/common/types';
+import { VisionFile } from '@vision/modules/Common/store/files/types';
 
 export const getDataForDirectory = ({
   selectedFiles,

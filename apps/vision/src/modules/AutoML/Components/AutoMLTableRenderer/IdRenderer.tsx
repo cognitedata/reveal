@@ -1,6 +1,7 @@
 import React from 'react';
-import { CopyableText } from 'src/modules/FileDetails/Components/FileMetadata/CopyableText';
-import { AutoMLTableDataType } from 'src/modules/AutoML/Components/AutoMLModelList';
+
+import { AutoMLTableDataType } from '@vision/modules/AutoML/Components/AutoMLModelList';
+import { CopyableText } from '@vision/modules/FileDetails/Components/FileMetadata/CopyableText';
 
 export const IdRenderer = ({
   rowData: { jobId },

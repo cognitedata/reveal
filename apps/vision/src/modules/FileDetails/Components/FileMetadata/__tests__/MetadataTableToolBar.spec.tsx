@@ -1,12 +1,10 @@
 import React from 'react';
 
 import { fireEvent, screen, waitFor } from '@testing-library/react';
-
-import { testRenderer } from 'src/__test-utils/renderer';
-
-import { MetadataTableToolBar } from 'src/modules/FileDetails/Components/FileMetadata/MetadataTableToolBar';
-import { getMockedStore } from 'src/__test-utils/store.utils';
-import { MetadataItem } from 'src/modules/FileDetails/Components/FileMetadata/Types';
+import { testRenderer } from '@vision/__test-utils/renderer';
+import { getMockedStore } from '@vision/__test-utils/store.utils';
+import { MetadataTableToolBar } from '@vision/modules/FileDetails/Components/FileMetadata/MetadataTableToolBar';
+import { MetadataItem } from '@vision/modules/FileDetails/Components/FileMetadata/Types';
 
 describe('MetadataTableToolBar', () => {
   const TestComponent = (props: any) => {

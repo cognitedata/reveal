@@ -1,5 +1,6 @@
-import { Input } from 'antd';
 import React, { useEffect, useState } from 'react';
+
+import { Input } from 'antd';
 import { useDebounce } from 'use-debounce';
 
 export const ExplorationSearchBar = (props: {

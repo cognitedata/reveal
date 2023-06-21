@@ -1,17 +1,22 @@
 import React, { useMemo, useState } from 'react';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import { useSelector } from 'react-redux';
-import { RootState } from 'src/store/rootReducer';
-import { Title } from '@cognite/cogs.js';
+
 import styled from 'styled-components';
-import FileUploadedIcon from 'src/assets/FileUploadedIcon.svg';
-import FileBland from 'src/assets/FileBland.svg';
-import FileWithExifIcon from 'src/assets/FileWithExifIcon.svg';
-import FileWithAnnotations from 'src/assets/FileWithAnnotations.svg';
-import FileUnresolvedPerson from 'src/assets/FileUnresolvedPerson.svg';
-import FileWasReviewed from 'src/assets/FileWasReviewed.svg';
-import { selectProcessSummary } from 'src/modules/Process/store/selectors';
-import { calculateSummaryStats } from 'src/modules/Process/utils';
+
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import {
+  FileBland,
+  FileUnresolvedPerson,
+  FileUploadedIcon,
+  FileWasReviewed,
+  FileWithAnnotations,
+  FileWithExifIcon,
+} from '@vision/assets';
+import { selectProcessSummary } from '@vision/modules/Process/store/selectors';
+import { calculateSummaryStats } from '@vision/modules/Process/utils';
+import { RootState } from '@vision/store/rootReducer';
+
+import { Title } from '@cognite/cogs.js';
 
 const queryClient = new QueryClient();
 
@@ -103,7 +108,6 @@ export default function SummaryContent() {
                   <RenderFileIcons
                     length={stats[statView].value}
                     icon={FileUploadedIcon}
-                    iconAlt="FileIcon"
                     keyString={statView}
                   />
                 </StatsCarouselRight>
@@ -114,14 +118,12 @@ export default function SummaryContent() {
                   <RenderFileIcons
                     length={stats[statView].value}
                     icon={FileWithExifIcon}
-                    iconAlt="FileWithGeolocation"
                     keyString={statView}
                   />
                   {stats[statView].value < stats.totalFiles.value && (
                     <RenderFileIcons
                       length={stats.totalFiles.value - stats[statView].value}
                       icon={FileBland}
-                      iconAlt="FileBland"
                       keyString="fileWithoutGeolocation"
                     />
                   )}
@@ -133,14 +135,12 @@ export default function SummaryContent() {
                   <RenderFileIcons
                     length={stats[statView].value}
                     icon={FileWasReviewed}
-                    iconAlt="FileWasReviewed"
                     keyString={statView}
                   />
                   {stats[statView].value < stats.totalFiles.value && (
                     <RenderFileIcons
                       length={stats.totalFiles.value - stats[statView].value}
                       icon={FileBland}
-                      iconAlt="FileBland"
                       keyString="notUserReviewedFiles"
                     />
                   )}
@@ -153,14 +153,12 @@ export default function SummaryContent() {
                     <RenderFileIcons
                       length={stats[statView].value}
                       icon={FileWithAnnotations}
-                      iconAlt="FileWithAnnotations"
                       keyString={statView}
                     />
                     {stats[statView].value < stats.totalFiles.value && (
                       <RenderFileIcons
                         length={stats.totalFiles.value - stats[statView].value}
                         icon={FileBland}
-                        iconAlt="FileBland"
                         keyString="filesWithoutModelDetections"
                       />
                     )}
@@ -190,14 +188,12 @@ export default function SummaryContent() {
                   <RenderFileIcons
                     length={stats[statView].value}
                     icon={FileUnresolvedPerson}
-                    iconAlt="FileUnresolvedPerson"
                     keyString={statView}
                   />
                   {stats[statView].value < stats.totalFiles.value && (
                     <RenderFileIcons
                       length={stats.totalFiles.value - stats[statView].value}
                       icon={FileBland}
-                      iconAlt="FileBland"
                       keyString="notPersonCases"
                     />
                   )}
@@ -213,20 +209,18 @@ export default function SummaryContent() {
 
 export const RenderFileIcons = ({
   length,
-  icon,
-  iconAlt,
+  icon: Icon,
   keyString,
 }: {
   length: number;
   icon: string;
-  iconAlt: string;
   keyString: string;
 }) => {
   return (
     <>
       {Array.from({ length }, (_, i: number) => (
         <FileIconContainer key={`${keyString}_${i}`}>
-          <img src={icon} alt={iconAlt} />
+          <Icon />
         </FileIconContainer>
       ))}
     </>

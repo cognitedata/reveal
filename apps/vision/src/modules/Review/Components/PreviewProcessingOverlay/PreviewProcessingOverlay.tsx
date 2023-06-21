@@ -1,7 +1,10 @@
 import React from 'react';
-import { Body, Detail } from '@cognite/cogs.js';
-import { Spin } from 'antd';
+
 import styled from 'styled-components';
+
+import { Spin } from 'antd';
+
+import { Body, Detail } from '@cognite/cogs.js';
 
 export const PreviewProcessingOverlay = () => (
   <OverlayContainer>

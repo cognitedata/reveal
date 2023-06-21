@@ -1,20 +1,31 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
-import { EnsureNonEmptyResource } from '@cognite/data-exploration';
-import { FileFilterProps, FileInfo } from '@cognite/sdk';
-import { FileGridPreview } from 'src/modules/Common/Components/FileGridPreview/FileGridPreview';
-import { FileTableExplorer } from 'src/modules/Common/Components/FileTable/FileTableExplorer';
-import { MapView } from 'src/modules/Common/Components/MapView/MapView';
-import { ResultTableLoader } from 'src/modules/Explorer/Containers/ResultTableLoader';
+import { useDispatch, useSelector } from 'react-redux';
+
 import styled from 'styled-components';
+
+import { VisionMode } from '@vision/constants/enums/VisionEnums';
+import { FileGridPreview } from '@vision/modules/Common/Components/FileGridPreview/FileGridPreview';
+import { FileTableExplorer } from '@vision/modules/Common/Components/FileTable/FileTableExplorer';
+import {
+  PageSize,
+  PaginatedTableProps,
+} from '@vision/modules/Common/Components/FileTable/types';
+import { PageBasedGridView } from '@vision/modules/Common/Components/GridView/PageBasedGridView';
+import { MapView } from '@vision/modules/Common/Components/MapView/MapView';
+import { PaginationWrapper } from '@vision/modules/Common/Components/SorterPaginationWrapper/PaginationWrapper';
 import {
   ResultData,
   SelectFilter,
   TableDataItem,
   ViewMode,
-} from 'src/modules/Common/types';
-import { PageBasedGridView } from 'src/modules/Common/Components/GridView/PageBasedGridView';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from 'src/store/rootReducer';
+} from '@vision/modules/Common/types';
+import { SortKeys } from '@vision/modules/Common/Utils/SortUtils';
+import { ResultTableLoader } from '@vision/modules/Explorer/Containers/ResultTableLoader';
+import {
+  useIsSelectedInExplorer,
+  useExplorerFilesSelected,
+} from '@vision/modules/Explorer/store/hooks';
+import { selectExplorerAllFilesSelected } from '@vision/modules/Explorer/store/selectors';
 import {
   setReverse,
   setSortKey,
@@ -28,19 +39,12 @@ import {
   setExploreModalPageSize,
   setExploreModalReverse,
   setExploreModalSortKey,
-} from 'src/modules/Explorer/store/slice';
-import { selectExplorerAllFilesSelected } from 'src/modules/Explorer/store/selectors';
-import {
-  useIsSelectedInExplorer,
-  useExplorerFilesSelected,
-} from 'src/modules/Explorer/store/hooks';
-import { VisionMode } from 'src/constants/enums/VisionEnums';
-import { PaginationWrapper } from 'src/modules/Common/Components/SorterPaginationWrapper/PaginationWrapper';
-import {
-  PageSize,
-  PaginatedTableProps,
-} from 'src/modules/Common/Components/FileTable/types';
-import { SortKeys } from 'src/modules/Common/Utils/SortUtils';
+} from '@vision/modules/Explorer/store/slice';
+import { AppDispatch } from '@vision/store';
+import { RootState } from '@vision/store/rootReducer';
+import noop from 'lodash/noop';
+
+import { FileFilterProps } from '@cognite/sdk';
 
 export const ExplorerSearchResults = ({
   reFetchProp,
@@ -61,7 +65,7 @@ export const ExplorerSearchResults = ({
   onItemRightClick?: (event: MouseEvent, item: TableDataItem) => void;
   onItemSelect: (item: TableDataItem, selected: boolean) => void;
 }) => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const allFilesSelected = useSelector((state: RootState) =>
     selectExplorerAllFilesSelected(state.explorerReducer)
@@ -175,87 +179,86 @@ export const ExplorerSearchResults = ({
 
   return (
     <ResultContainer>
-      <EnsureNonEmptyResource
-        api="file"
+      <ResultTableLoader
         css={{ height: '100%', width: '100%' }}
+        type="file"
+        filter={filter}
+        query={query}
+        reFetchProp={reFetchProp}
       >
-        <ResultTableLoader<FileInfo>
-          css={{ height: '100%', width: '100%' }}
-          type="file"
-          filter={filter}
-          query={query}
-          reFetchProp={reFetchProp}
-        >
-          {(resultProps: { data: ResultData[]; totalCount: number }) => {
-            return (
-              <PaginationWrapper
-                data={resultProps.data}
-                totalCount={resultProps.totalCount}
-                pagination={currentView !== 'map'}
-                sortPaginateControls={sortPaginateControls}
-                isLoading={otherProps.isLoading}
-              >
-                {(paginationProps) => {
-                  const renderView = (
-                    props: {
-                      data: ResultData[];
-                      totalCount: number;
-                    } & PaginatedTableProps<TableDataItem>
-                  ) => {
-                    if (currentView === 'grid') {
-                      return (
-                        <PageBasedGridView
-                          {...otherProps}
-                          {...props}
-                          renderCell={renderCell}
-                        />
-                      );
-                    }
-                    if (currentView === 'map') {
-                      return (
-                        <MapView
-                          {...otherProps}
-                          {...props}
-                          selectedIds={selectedIds}
-                          allRowsSelected={allFilesSelected}
-                          onSelectAllRows={handleSelectAllFiles}
-                          mapTableTabKey={mapTableTabKey}
-                          onSelectPage={handleSetSelectedFiles}
-                          pageSize={sortPaginateState.pageSize}
-                          setPageSize={sortPaginateControls.setPageSize}
-                        />
-                      );
-                    }
-
+        {(data, totalCount) => {
+          return (
+            <PaginationWrapper
+              data={data}
+              totalCount={totalCount}
+              pagination={currentView !== 'map'}
+              sortPaginateControls={sortPaginateControls}
+              isLoading={otherProps.isLoading}
+            >
+              {(paginationProps) => {
+                const renderView = (
+                  props: {
+                    data: ResultData[];
+                    totalCount: number;
+                  } & PaginatedTableProps<TableDataItem>
+                ) => {
+                  if (currentView === 'grid') {
                     return (
-                      <FileTableExplorer
-                        modalView={currentView === 'modal'}
+                      <PageBasedGridView
+                        {...otherProps}
+                        {...props}
+                        onItemClicked={otherProps.onItemClick}
+                        renderCell={renderCell}
+                        onSelect={noop}
+                        isSelected={() => false}
+                        selectionMode="single"
+                      />
+                    );
+                  }
+                  if (currentView === 'map') {
+                    return (
+                      <MapView
                         {...otherProps}
                         {...props}
                         selectedIds={selectedIds}
                         allRowsSelected={allFilesSelected}
                         onSelectAllRows={handleSelectAllFiles}
+                        mapTableTabKey={mapTableTabKey}
                         onSelectPage={handleSetSelectedFiles}
-                        rowKey="rowKey"
-                        defaultTimestampKey={defaultTimestampKey}
+                        pageSize={sortPaginateState.pageSize}
+                        setPageSize={sortPaginateControls.setPageSize}
                       />
                     );
-                  };
+                  }
 
                   return (
-                    <>
-                      {renderView({
-                        ...paginationProps,
-                        totalCount: resultProps.totalCount,
-                      })}
-                    </>
+                    <FileTableExplorer
+                      modalView={currentView === 'modal'}
+                      {...otherProps}
+                      {...props}
+                      selectedIds={selectedIds}
+                      allRowsSelected={allFilesSelected}
+                      onSelectAllRows={handleSelectAllFiles}
+                      onSelectPage={handleSetSelectedFiles}
+                      rowKey="rowKey"
+                      defaultTimestampKey={defaultTimestampKey}
+                    />
                   );
-                }}
-              </PaginationWrapper>
-            );
-          }}
-        </ResultTableLoader>
-      </EnsureNonEmptyResource>
+                };
+
+                return (
+                  <>
+                    {renderView({
+                      ...paginationProps,
+                      totalCount: totalCount,
+                    })}
+                  </>
+                );
+              }}
+            </PaginationWrapper>
+          );
+        }}
+      </ResultTableLoader>
     </ResultContainer>
   );
 };

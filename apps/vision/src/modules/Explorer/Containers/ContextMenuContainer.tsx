@@ -1,14 +1,15 @@
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { FileInfo } from '@cognite/sdk';
-import { ContextMenuPosition } from 'src/modules/Common/Components/ContextMenu/types';
-import { TableDataItem } from 'src/modules/Common/types/index';
-import { isProcessingFile } from 'src/modules/Process/store/utils';
-import { RootState } from 'src/store/rootReducer';
-import { selectUpdatedFileDetails } from 'src/modules/FileDetails/selectors';
 
-import { makeSelectJobStatusForFile } from 'src/modules/Process/store/selectors';
-import { ContextMenu } from 'src/modules/Common/Components/ContextMenu/ContextMenu';
+import { ContextMenu } from '@vision/modules/Common/Components/ContextMenu/ContextMenu';
+import { ContextMenuPosition } from '@vision/modules/Common/Components/ContextMenu/types';
+import { TableDataItem } from '@vision/modules/Common/types/index';
+import { selectUpdatedFileDetails } from '@vision/modules/FileDetails/selectors';
+import { makeSelectJobStatusForFile } from '@vision/modules/Process/store/selectors';
+import { isProcessingFile } from '@vision/modules/Process/store/utils';
+import { RootState } from '@vision/store/rootReducer';
+
+import { FileInfo } from '@cognite/sdk';
 
 export const ContextMenuContainer = ({
   rowData,

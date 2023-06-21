@@ -1,7 +1,10 @@
-import { Button, Icon, toast } from '@cognite/cogs.js';
-import { notification } from 'antd';
 import React from 'react';
+
 import styled from 'styled-components';
+
+import { notification } from 'antd';
+
+import { Button, Icon, toast } from '@cognite/cogs.js';
 
 const WarnIconContainer = styled.div`
   color: var(--cogs-warning);
@@ -40,7 +43,7 @@ export class ToastUtils {
   ) {
     const key = `open${Date.now()}`;
 
-    const toastContent = (props: { closeToast: () => void }) => {
+    const toastContent = (props: { closeToast?: () => void }) => {
       const btn = (
         <Button
           type="destructive"
@@ -58,8 +61,8 @@ export class ToastUtils {
 
       return (
         <WarningToastContainer>
-          <WarnIconContainer>
-            <Icon type="Warning" style={{ width: 25 }} />
+          <WarnIconContainer style={{ width: 25 }}>
+            <Icon type="Warning" />
           </WarnIconContainer>
           <div>
             <h3>{title}</h3>

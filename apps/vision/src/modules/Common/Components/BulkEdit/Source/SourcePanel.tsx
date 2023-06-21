@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
+
 import styled from 'styled-components';
-import { Body, Button } from '@cognite/cogs.js';
-import { EditPanelProps } from 'src/modules/Common/Components/BulkEdit/bulkEditOptions';
+
+import { EditPanelProps } from '@vision/modules/Common/Components/BulkEdit/bulkEditOptions';
 import { Input } from 'antd';
+
+import { Body, Button } from '@cognite/cogs.js';
 
 export const SourcePanel = ({
   bulkEditUnsaved,

@@ -1,24 +1,25 @@
 import React, { useState } from 'react';
-import { QueryClient, QueryClientProvider } from 'react-query';
-
-import { Select, Body, Button, Detail } from '@cognite/cogs.js';
+import { useSelector } from 'react-redux';
 
 import styled from 'styled-components';
 
-import { RootState } from 'src/store/rootReducer';
-import { useSelector } from 'react-redux';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { AutoMLModelCore } from '@vision/api/vision/autoML/types';
 import {
   ParamsCustomModel,
   VisionDetectionModelType,
-} from 'src/api/vision/detectionModels/types';
-import { AutoMLModelCore } from 'src/api/vision/autoML/types';
-import { BUILT_IN_MODEL_COUNT } from 'src/modules/Process/store/slice';
-import * as tagDetectionModelDetails from './ModelDetails/TagDetectionModelDetails';
-import * as objectDetectionModelDetails from './ModelDetails/ObjectDetectionModelDetails';
-import * as peopleDetectionModelDetails from './ModelDetails/PeopleDetectionModelDetails';
-import * as ocrModelDetails from './ModelDetails/OcrModelDetails';
+} from '@vision/api/vision/detectionModels/types';
+import { BUILT_IN_MODEL_COUNT } from '@vision/modules/Process/store/slice';
+import { RootState } from '@vision/store/rootReducer';
+
+import { Select, Body, Button, Detail } from '@cognite/cogs.js';
+
 import * as customModelDetails from './ModelDetails/customModelDetails';
 import * as gaugeReaderDetails from './ModelDetails/gaugeReaderDetails';
+import * as objectDetectionModelDetails from './ModelDetails/ObjectDetectionModelDetails';
+import * as ocrModelDetails from './ModelDetails/OcrModelDetails';
+import * as peopleDetectionModelDetails from './ModelDetails/PeopleDetectionModelDetails';
+import * as tagDetectionModelDetails from './ModelDetails/TagDetectionModelDetails';
 
 const queryClient = new QueryClient();
 

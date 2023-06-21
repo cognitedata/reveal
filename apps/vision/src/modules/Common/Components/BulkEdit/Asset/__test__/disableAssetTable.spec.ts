@@ -1,5 +1,5 @@
-import { BulkEditUnsavedState } from 'src/modules/Common/store/common/types';
-import { disableAssetTable } from 'src/modules/Common/Components/BulkEdit/Asset/disableAssetTable';
+import { disableAssetTable } from '@vision/modules/Common/Components/BulkEdit/Asset/disableAssetTable';
+import { BulkEditUnsavedState } from '@vision/modules/Common/store/common/types';
 
 describe('test disableAssetTable fn', () => {
   test('if assetIds undefined', () => {

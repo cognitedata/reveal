@@ -1,13 +1,17 @@
 import { createAsyncThunk, unwrapResult } from '@reduxjs/toolkit';
-import { VisionAsset, VisionFile } from 'src/modules/Common/store/files/types';
-import { ThunkConfig } from 'src/store/rootReducer';
-import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
-import { fetchAssets } from 'src/store/thunks/fetchAssets';
-import { UpdateFiles } from 'src/store/thunks/Files/UpdateFiles';
-import { ToastUtils } from 'src/utils/ToastUtils';
-import { Status } from 'src/api/annotation/types';
+import { Status } from '@vision/api/annotation/types';
+import {
+  VisionAsset,
+  VisionFile,
+} from '@vision/modules/Common/store/files/types';
+import { isImageAssetLinkData } from '@vision/modules/Common/types/typeGuards';
+import { ThunkConfig } from '@vision/store/rootReducer';
+import { UpdateAnnotations } from '@vision/store/thunks/Annotation/UpdateAnnotations';
+import { fetchAssets } from '@vision/store/thunks/fetchAssets';
+import { UpdateFiles } from '@vision/store/thunks/Files/UpdateFiles';
+import { ToastUtils } from '@vision/utils/ToastUtils';
+
 import { InternalId } from '@cognite/sdk';
-import { isImageAssetLinkData } from 'src/modules/Common/types/typeGuards';
 
 /**
  * ## Example

@@ -1,9 +1,12 @@
 import React from 'react';
-import { Modal } from 'antd';
-import { getContainer } from 'src/utils';
+
 import styled from 'styled-components';
-import { PredefinedVisionAnnotations } from 'src/modules/Review/types';
-import { AnnotationSettingsOption } from 'src/modules/Review/store/review/enums';
+
+import { AnnotationSettingsOption } from '@vision/modules/Review/store/review/enums';
+import { PredefinedVisionAnnotations } from '@vision/modules/Review/types';
+import { getContainer } from '@vision/utils';
+import { Modal } from 'antd';
+
 import { AnnotationSettingsModalContent } from './AnnotationSettingsModalContent';
 
 export type AnnotationSettingsModalProps = {

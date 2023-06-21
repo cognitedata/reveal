@@ -1,4 +1,15 @@
 import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+
+import styled from 'styled-components';
+
+import { ParamsGaugeReader } from '@vision/api/vision/detectionModels/types';
+import GaugeReaderIllustration from '@vision/assets/visualDescriptions/GaugeReaderIllustration';
+import { ColorsObjectDetection } from '@vision/constants/Colors';
+import { setUnsavedDetectionModelSettings } from '@vision/modules/Process/store/slice';
+import { AppDispatch } from '@vision/store';
+import { RootState } from '@vision/store/rootReducer';
+
 import {
   Button,
   Detail,
@@ -8,12 +19,7 @@ import {
   Select,
   Title,
 } from '@cognite/cogs.js';
-import { useDispatch, useSelector } from 'react-redux';
-import { ParamsGaugeReader } from 'src/api/vision/detectionModels/types';
-import { setUnsavedDetectionModelSettings } from 'src/modules/Process/store/slice';
-import { RootState } from 'src/store/rootReducer';
-import { ColorsObjectDetection } from 'src/constants/Colors';
-import GaugeReaderIllustration from 'src/assets/visualDescriptions/GaugeReaderIllustration.svg';
+
 import {
   ColorBox,
   NameContainer,
@@ -21,7 +27,6 @@ import {
   StyledCol,
   TableContainer,
 } from './modelDetailsStyles';
-import styled from 'styled-components';
 
 export const description = () => {
   return (
@@ -46,7 +51,7 @@ export const badge = (modelName: string, hideText = false) => {
 };
 
 export const Content = (modelIndex: number) => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const params: ParamsGaugeReader = useSelector(
     ({ processSlice }: RootState) =>
       processSlice.availableDetectionModels[modelIndex]
@@ -95,7 +100,9 @@ export const Content = (modelIndex: number) => {
                   <td>
                     <Detail>Gauge type</Detail>
                     <Tooltip wrapped content="The gauge type to detect">
-                      <Icon type="HelpFilled" style={{ marginLeft: '11px' }} />
+                      <div style={{ marginLeft: '11px' }}>
+                        <Icon type="HelpFilled" />
+                      </div>
                     </Tooltip>
                   </td>
                   <th>
@@ -133,7 +140,7 @@ export const Content = (modelIndex: number) => {
               {badge('Gauge Reader')}
               {description()}
             </NameContainer>
-            <img src={GaugeReaderIllustration} alt="illustration" />
+            <GaugeReaderIllustration />
           </div>
         </StyledCol>
       </Row>

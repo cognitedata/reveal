@@ -1,7 +1,8 @@
-import { GenericTabularState } from 'src/store/genericTabularDataSlice';
-import { VisionFileFilterProps } from 'src/modules/FilterSidePanel/types';
+import { PageSize } from '@vision/modules/Common/Components/FileTable/types';
+import { VisionFileFilterProps } from '@vision/modules/FilterSidePanel/types';
+import { GenericTabularState } from '@vision/store/genericTabularDataSlice';
+
 import { FileInfo } from '@cognite/sdk';
-import { PageSize } from 'src/modules/Common/Components/FileTable/types';
 
 export type ExplorerFileState = Omit<
   FileInfo,

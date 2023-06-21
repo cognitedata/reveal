@@ -1,9 +1,12 @@
 import React from 'react';
-import { Title } from '@cognite/cogs.js';
-import { CogsFileInfo } from 'src/modules/Common/Components/FileUploader/FilePicker/types';
+
 import styled from 'styled-components';
-import { FileListItem } from 'src/modules/Common/Components/FileUploader/FilePicker/FileListItem';
-import SpiderImg from 'src/modules/Common/Components/FileUploader/FilePicker/img/Spider.svg';
+
+import { FileListItem } from '@vision/modules/Common/Components/FileUploader/FilePicker/FileListItem';
+import SpiderImg from '@vision/modules/Common/Components/FileUploader/FilePicker/img/Spider.svg';
+import { CogsFileInfo } from '@vision/modules/Common/Components/FileUploader/FilePicker/types';
+
+import { Title } from '@cognite/cogs.js';
 
 type ModalFileListProps = {
   files: CogsFileInfo[];

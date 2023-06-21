@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { selectExplorerAllFiles } from 'src/modules/Explorer/store/selectors';
-import { RootState } from 'src/store/rootReducer';
+
+import { selectExplorerAllFiles } from '@vision/modules/Explorer/store/selectors';
+import { RootState } from '@vision/store/rootReducer';
 
 export const DirectoryPrefixesProvider = ({
   children,

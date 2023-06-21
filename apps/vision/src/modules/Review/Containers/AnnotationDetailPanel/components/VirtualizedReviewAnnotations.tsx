@@ -1,18 +1,20 @@
 import React, { useCallback, useEffect, useRef } from 'react';
-import styled from 'styled-components';
+import AutoSizer from 'react-virtualized-auto-sizer';
 import {
   FixedSizeTree as Tree,
   TreeWalkerValue,
   TreeWalker,
   FixedSizeNodePublicState,
 } from 'react-vtree';
-import AutoSizer from 'react-virtualized-auto-sizer';
-import { NodeComponentProps } from 'react-vtree/dist/es/Tree';
+
+import styled from 'styled-components';
+
 import {
   NodeMeta,
   TreeData,
   TreeNode,
-} from 'src/modules/Review/Containers/AnnotationDetailPanel/types';
+} from '@vision/modules/Review/Containers/AnnotationDetailPanel/types';
+import { NodeComponentProps } from 'react-vtree/dist/es/Tree';
 
 // This helper function constructs the object that will be sent back at the step
 // [2] during the treeWalker function work. Except for the mandatory `data`
@@ -102,21 +104,17 @@ export const VirtualizedReviewAnnotations = <T,>({
     };
     return (
       <div style={{ cursor: 'pointer', ...style }} onClick={handleClick}>
-        {React.createElement(
-          component,
-          {
-            id,
-            name,
-            isOpen,
-            setOpen,
-            isLeaf,
-            nestingLevel,
-            childItems: children,
-            additionalData,
-            showEditOptions,
-          },
-          style
-        )}
+        {React.createElement(component, {
+          id,
+          name,
+          isOpen,
+          setOpen,
+          isLeaf,
+          nestingLevel,
+          childItems: children,
+          additionalData,
+          showEditOptions,
+        })}
       </div>
     );
   };

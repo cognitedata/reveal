@@ -1,12 +1,13 @@
 import React from 'react';
-
 import { Props, OptionTypeBase } from 'react-select';
-import { Select, Tooltip } from '@cognite/cogs.js';
-import { AutoMLModelCore } from 'src/api/vision/autoML/types';
+
+import { AutoMLModelCore } from '@vision/api/vision/autoML/types';
+
+import { Select, SelectProps, Tooltip } from '@cognite/cogs.js';
 
 type ModelOption = { id: number; value: number; name: string };
 
-export type ModelSelectProps = Props<OptionTypeBase> & {
+export type ModelSelectProps = Omit<SelectProps<AutoMLModelCore>, 'options'> & {
   onJobSelected: (jobId?: number, name?: string) => void;
   models?: AutoMLModelCore[];
   selectedModelId?: number;

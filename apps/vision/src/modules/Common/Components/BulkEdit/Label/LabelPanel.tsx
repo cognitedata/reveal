@@ -1,7 +1,10 @@
 import React from 'react';
-import { Body } from '@cognite/cogs.js';
-import { EditPanelProps } from 'src/modules/Common/Components/BulkEdit/bulkEditOptions';
+
 import styled from 'styled-components';
+
+import { EditPanelProps } from '@vision/modules/Common/Components/BulkEdit/bulkEditOptions';
+
+import { Body } from '@cognite/cogs.js';
 import { LabelFilter } from '@cognite/data-exploration';
 
 export const LabelPanel = ({

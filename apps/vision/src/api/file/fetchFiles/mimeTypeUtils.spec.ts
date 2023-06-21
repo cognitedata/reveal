@@ -1,9 +1,9 @@
 import {
   getAllValidMimeTypes,
   getValidMimeTypesByMediaType,
-} from 'src/api/file/fetchFiles/mimeTypeUtils';
-import { VALID_MIME_TYPES } from 'src/constants/validMimeTypes';
-import { MediaTypeOption } from 'src/modules/FilterSidePanel/types';
+} from '@vision/api/file/fetchFiles/mimeTypeUtils';
+import { VALID_MIME_TYPES } from '@vision/constants/validMimeTypes';
+import { MediaTypeOption } from '@vision/modules/FilterSidePanel/types';
 
 const allMimeTypes = VALID_MIME_TYPES.map((mimeType) => mimeType.type);
 

@@ -1,16 +1,16 @@
-import { CustomModelDataProvider } from 'src/api/vision/detectionModels/customModel/CustomModelDataProvider';
-import { GaugeReaderDataProvider } from 'src/api/vision/detectionModels/gaugeReader/GaugeReaderDetectionDataProvider';
-import { MockDataProvider } from 'src/api/vision/detectionModels/MockDataProvider';
-import { ObjectDetectionDataProvider } from 'src/api/vision/detectionModels/objectDetection/ObjectDetectionDataProvider';
-import { OCRDetectionDataProvider } from 'src/api/vision/detectionModels/ocr/OCRDetectionDataProvider';
-import { PeopleDetectionDataProvider } from 'src/api/vision/detectionModels/peopleDetection/PeopleDetectionDataProvider';
-import { TagDetectionDataProvider } from 'src/api/vision/detectionModels/tagDetection/TagDetectionDataProvider';
+import { CustomModelDataProvider } from '@vision/api/vision/detectionModels/customModel/CustomModelDataProvider';
+import { GaugeReaderDataProvider } from '@vision/api/vision/detectionModels/gaugeReader/GaugeReaderDetectionDataProvider';
+import { MockDataProvider } from '@vision/api/vision/detectionModels/MockDataProvider';
+import { ObjectDetectionDataProvider } from '@vision/api/vision/detectionModels/objectDetection/ObjectDetectionDataProvider';
+import { OCRDetectionDataProvider } from '@vision/api/vision/detectionModels/ocr/OCRDetectionDataProvider';
+import { PeopleDetectionDataProvider } from '@vision/api/vision/detectionModels/peopleDetection/PeopleDetectionDataProvider';
+import { TagDetectionDataProvider } from '@vision/api/vision/detectionModels/tagDetection/TagDetectionDataProvider';
 import {
   DetectionModelDataProvider,
   DetectionModelParams,
   VisionDetectionModelType,
   VisionJob,
-} from 'src/api/vision/detectionModels/types';
+} from '@vision/api/vision/detectionModels/types';
 
 export function getDetectionModelDataProvider(
   modelType: VisionDetectionModelType

@@ -1,27 +1,32 @@
 import React, { useEffect, useState } from 'react';
-import { Divider } from '@cognite/data-exploration';
 import { useDispatch } from 'react-redux';
-import { useHistory } from 'react-router-dom';
-import { StatusToolBar } from 'src/modules/Process/Containers/StatusToolBar';
+import { useNavigate } from 'react-router-dom';
+
 import styled from 'styled-components';
-import { AutoMLAPI } from 'src/api/vision/autoML/AutoMLAPI';
+
+import { AutoMLAPI } from '@vision/api/vision/autoML/AutoMLAPI';
 import {
   AutoMLExportFormat,
   AutoMLModelCore,
   AutoMLTrainingJob,
-} from 'src/api/vision/autoML/types';
-import { getLink, workflowRoutes } from 'src/utils/workflowRoutes';
-import { PopulateCustomModel } from 'src/store/thunks/Process/PopulateCustomModel';
-import { AutoMLModelPage } from './AutoMLPage/AutoMLModelPage';
+} from '@vision/api/vision/autoML/types';
+import { StatusToolBar } from '@vision/modules/Process/Containers/StatusToolBar';
+import { AppDispatch } from '@vision/store';
+import { PopulateCustomModel } from '@vision/store/thunks/Process/PopulateCustomModel';
+import { getLink, workflowRoutes } from '@vision/utils/workflowRoutes';
+
+import { Divider } from '@cognite/data-exploration';
+
 import { AutoMLModelList } from './AutoMLModelList';
+import { AutoMLModelPage } from './AutoMLPage/AutoMLModelPage';
 import { AutoMLPredictionDocModal } from './AutoMLPredictionDocModal';
 
 const getModelTypeExtension = (exportFormat: AutoMLExportFormat) => {
   return exportFormat === AutoMLExportFormat.tflite ? exportFormat : 'pb';
 };
 const AutoML = () => {
-  const dispatch = useDispatch();
-  const history = useHistory();
+  const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
 
   const [modelList, setModelList] = useState<AutoMLModelCore[] | undefined>();
   const [jobs, setJobs] = useState<AutoMLTrainingJob[]>([]);
@@ -85,7 +90,7 @@ const AutoML = () => {
   const handleOnContextualize = (model: AutoMLTrainingJob | undefined) => {
     if (model) {
       dispatch(PopulateCustomModel(model));
-      history.push(getLink(workflowRoutes.process));
+      navigate(getLink(workflowRoutes.process));
     }
   };
 

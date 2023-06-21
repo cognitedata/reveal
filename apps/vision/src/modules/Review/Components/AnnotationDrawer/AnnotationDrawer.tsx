@@ -1,7 +1,10 @@
-import { Button, Title } from '@cognite/cogs.js';
 import React from 'react';
+
 import styled from 'styled-components';
+
 import { Drawer } from 'antd';
+
+import { Button, Title } from '@cognite/cogs.js';
 import { Divider } from '@cognite/data-exploration';
 
 export const AnnotationDrawer = (props: {

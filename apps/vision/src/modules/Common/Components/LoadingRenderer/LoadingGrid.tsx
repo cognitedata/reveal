@@ -1,8 +1,10 @@
 import React from 'react';
+
 import styled from 'styled-components';
-import { GradientAnimateGridCell } from 'src/modules/Common/Components/LoadingRenderer/GradientAnimateGridCell';
-import { DEFAULT_PAGE_SIZE } from 'src/constants/PaginationConsts';
-import { generateKeysArray } from 'src/utils/generateKeysArray';
+
+import { DEFAULT_PAGE_SIZE } from '@vision/constants/PaginationConsts';
+import { GradientAnimateGridCell } from '@vision/modules/Common/Components/LoadingRenderer/GradientAnimateGridCell';
+import { generateKeysArray } from '@vision/utils/generateKeysArray';
 
 export const LoadingGrid = () => {
   const itemKeys = generateKeysArray(DEFAULT_PAGE_SIZE);

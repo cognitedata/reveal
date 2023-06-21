@@ -1,4 +1,4 @@
-import { getDateDiff } from 'src/utils/DateUtils';
+import { getDateDiff } from '@vision/utils/DateUtils';
 
 describe('getDateDiff', () => {
   test('durations < 24h', () => {

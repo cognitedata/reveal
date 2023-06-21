@@ -1,12 +1,12 @@
 import React from 'react';
 
 import { screen } from '@testing-library/react';
-import { testRenderer } from 'src/__test-utils/renderer';
-import { AutoMLModelPage } from 'src/modules/AutoML/Components/AutoMLPage/AutoMLModelPage';
-import { mockCogniteAutoMLModel } from 'src/__test-utils/fixtures/automlModels';
-import { AutoMLTrainingJob } from 'src/api/vision/autoML/types';
+import { mockCogniteAutoMLModel } from '@vision/__test-utils/fixtures/automlModels';
+import { testRenderer } from '@vision/__test-utils/renderer';
+import { AutoMLTrainingJob } from '@vision/api/vision/autoML/types';
+import { AutoMLModelPage } from '@vision/modules/AutoML/Components/AutoMLPage/AutoMLModelPage';
 
-jest.mock('src/hooks/useUserCapabilities', () => ({
+jest.mock('@vision/hooks/useUserCapabilities', () => ({
   useUserCapabilities: () => {
     return { data: true, isFetched: true };
   },

@@ -1,17 +1,21 @@
 import React, { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { ActionMenu } from 'src/modules/Common/Components/ActionMenu/ActionMenu';
-import { ReviewButton } from 'src/modules/Common/Components/ReviewButton/ReviewButton';
-import { selectAllSelectedIds } from 'src/modules/Common/store/files/selectors';
-import { RootState } from 'src/store/rootReducer';
-import { CellRenderer, TableDataItem } from 'src/modules/Common/types';
-import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
+
 import styled from 'styled-components';
-import { isProcessingFile } from 'src/modules/Process/store/utils';
-import { makeSelectJobStatusForFile } from 'src/modules/Process/store/selectors';
-import { selectUpdatedFileDetails } from 'src/modules/FileDetails/selectors';
-import { VisionMode } from 'src/constants/enums/VisionEnums';
-import { selectExplorerSelectedIds } from 'src/modules/Explorer/store/selectors';
+
+import { VisionMode } from '@vision/constants/enums/VisionEnums';
+import { ActionMenu } from '@vision/modules/Common/Components/ActionMenu/ActionMenu';
+import { ReviewButton } from '@vision/modules/Common/Components/ReviewButton/ReviewButton';
+import { selectAllSelectedIds } from '@vision/modules/Common/store/files/selectors';
+import { CellRenderer, TableDataItem } from '@vision/modules/Common/types';
+import { selectExplorerSelectedIds } from '@vision/modules/Explorer/store/selectors';
+import { selectUpdatedFileDetails } from '@vision/modules/FileDetails/selectors';
+import { makeSelectJobStatusForFile } from '@vision/modules/Process/store/selectors';
+import { isProcessingFile } from '@vision/modules/Process/store/utils';
+import { AppDispatch } from '@vision/store';
+import { RootState } from '@vision/store/rootReducer';
+import { DeleteFilesById } from '@vision/store/thunks/Files/DeleteFilesById';
+
 import { FileInfo } from '@cognite/sdk';
 
 export function ActionRenderer(
@@ -19,7 +23,7 @@ export function ActionRenderer(
   mode: VisionMode,
   actionDisabled: boolean
 ) {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { menuActions, rowKey, ...fileInfo } = rowData;
 

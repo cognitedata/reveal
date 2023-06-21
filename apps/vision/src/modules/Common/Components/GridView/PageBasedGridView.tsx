@@ -1,8 +1,10 @@
 import React, { useCallback, useMemo } from 'react';
-import { FileGridTableProps } from 'src/modules/Common/Components/FileTable/types';
-import { LoadingGrid } from 'src/modules/Common/Components/LoadingRenderer/LoadingGrid';
-import { NoData } from 'src/modules/Common/Components/NoData/NoData';
-import { TableDataItem } from 'src/modules/Common/types';
+
+import { FileGridTableProps } from '@vision/modules/Common/Components/FileTable/types';
+import { LoadingGrid } from '@vision/modules/Common/Components/LoadingRenderer/LoadingGrid';
+import { NoData } from '@vision/modules/Common/Components/NoData/NoData';
+import { TableDataItem } from '@vision/modules/Common/types';
+
 import { GridView } from './GridView';
 
 export const PageBasedGridView = (props: FileGridTableProps<TableDataItem>) => {

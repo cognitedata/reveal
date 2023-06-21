@@ -8,18 +8,18 @@ import {
   ImageKeypointCollection,
   ImageObjectDetectionBoundingBox,
   Status,
-} from 'src/api/annotation/types';
-import { isLegacyJobResultItem } from 'src/api/vision/detectionModels/detectionUtils';
+} from '@vision/api/annotation/types';
+import { isLegacyJobResultItem } from '@vision/api/vision/detectionModels/detectionUtils';
 import {
   UnsavedVisionAnnotation,
   VisionAnnotationDataType,
-} from 'src/modules/Common/types';
+} from '@vision/modules/Common/types';
 import {
   isImageAssetLinkData,
   isImageExtractedTextData,
   isImageKeypointCollectionData,
   isImageObjectDetectionData,
-} from 'src/modules/Common/types/typeGuards';
+} from '@vision/modules/Common/types/typeGuards';
 
 import {
   GaugeReaderJobAnnotation,

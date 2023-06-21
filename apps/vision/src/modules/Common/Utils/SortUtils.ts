@@ -1,4 +1,4 @@
-import { TableDataItem } from 'src/modules/Common/types';
+import { TableDataItem } from '@vision/modules/Common/types';
 
 type ValueType = Omit<TableDataItem, 'menuActions' | 'rowKey'> & {
   annotationCount: number;

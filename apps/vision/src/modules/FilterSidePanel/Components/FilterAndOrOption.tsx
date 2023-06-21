@@ -1,7 +1,10 @@
-import { Radio } from 'antd';
-import { Detail } from '@cognite/cogs.js';
 import React from 'react';
+
 import styled from 'styled-components';
+
+import { Radio } from 'antd';
+
+import { Detail } from '@cognite/cogs.js';
 
 export const FilterAndOrOption = ({
   option,

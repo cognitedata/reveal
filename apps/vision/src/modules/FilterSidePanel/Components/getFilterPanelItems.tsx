@@ -1,17 +1,19 @@
 import React from 'react';
-import { DirectoryPrefixesProvider } from 'src/modules/FilterSidePanel/Containers/DirectoryPrefixesProvider';
-import { VisionFileFilterProps } from 'src/modules/FilterSidePanel/types';
-import { AssetSelectFilter } from './Filters/AssetSelectFilter';
-import { DateFilter } from './Filters/DateFilter';
-import { DataSetSelectFilter } from './Filters/DataSetSelectFilter';
-import { SelectLabelsFilter } from './Filters/SelectLabelsFilter';
-import { MetadataSelectFilter } from './Filters/MetadataSelectFilter';
-import { ExternalIdFilter } from './Filters/ExternalIDFilter';
-import { DirectoryPrefixFilter } from './Filters/DirectoryPrefixFilter';
+
+import { DirectoryPrefixesProvider } from '@vision/modules/FilterSidePanel/Containers/DirectoryPrefixesProvider';
+import { VisionFileFilterProps } from '@vision/modules/FilterSidePanel/types';
+
 import { AnnotationFilter } from './Filters/AnnotationFilter';
-import { TimeFilter } from './Filters/TimeFilter';
+import { AssetSelectFilter } from './Filters/AssetSelectFilter';
+import { DataSetSelectFilter } from './Filters/DataSetSelectFilter';
+import { DateFilter } from './Filters/DateFilter';
+import { DirectoryPrefixFilter } from './Filters/DirectoryPrefixFilter';
+import { ExternalIdFilter } from './Filters/ExternalIDFilter';
 import { MediaTypeFilter } from './Filters/MediaTypeFilter';
+import { MetadataSelectFilter } from './Filters/MetadataSelectFilter';
+import { SelectLabelsFilter } from './Filters/SelectLabelsFilter';
 import { SourceFilter } from './Filters/SourceFilter';
+import { TimeFilter } from './Filters/TimeFilter';
 
 export type FilterPanelConfigItem = {
   key: string;

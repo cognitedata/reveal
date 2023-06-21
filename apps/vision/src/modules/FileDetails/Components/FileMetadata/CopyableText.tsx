@@ -1,5 +1,7 @@
 import React, { ReactText, useState } from 'react';
+
 import styled from 'styled-components';
+
 import { Button, Colors, Icon } from '@cognite/cogs.js';
 
 const CopiedIconContainer = styled.div`

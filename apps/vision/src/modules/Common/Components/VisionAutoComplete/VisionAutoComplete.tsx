@@ -1,11 +1,14 @@
-import { AutoComplete, Button, OptionType } from '@cognite/cogs.js';
 import React from 'react';
 import { OptionProps } from 'react-select';
-import { VisionSelectOption } from 'src/modules/Common/Components/SelectOption/VisionSelectOption';
-import { VisionOptionType } from 'src/modules/Review/types';
-import useColorForLabel from 'src/store/hooks/useColorForLabel';
-import { getIcon } from 'src/utils/iconUtils';
+
 import styled from 'styled-components';
+
+import { VisionSelectOption } from '@vision/modules/Common/Components/SelectOption/VisionSelectOption';
+import { VisionOptionType } from '@vision/modules/Review/types';
+import useColorForLabel from '@vision/store/hooks/useColorForLabel';
+import { getIcon } from '@vision/utils/iconUtils';
+
+import { AutoComplete, Button, OptionType } from '@cognite/cogs.js';
 
 const CUSTOM_FOOTER_HEIGHT = 44;
 const DEFAULT_MENU_HEIGHT = 160;

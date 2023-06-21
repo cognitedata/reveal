@@ -1,23 +1,13 @@
 import React, { ReactElement, useEffect, useMemo, useState } from 'react';
-import {
-  SelectableItemsProps,
-  TableStateProps,
-  SearchResultLoaderProps,
-  RelatedResourcesLoaderProps,
-  TableProps,
-} from '@cognite/data-exploration';
-import {
-  FileInfo,
-  Asset,
-  CogniteEvent,
-  Timeseries,
-  Sequence,
-} from '@cognite/sdk';
-import { useHistory } from 'react-router-dom';
-import { FileActions } from 'src/modules/Common/types';
-import { EXPLORER_FILE_FETCH_LIMIT } from 'src/constants/ExplorerConstants';
-import { totalFileCount } from 'src/api/file/aggregate';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+
+import { TableProps } from '@data-exploration/components';
+import { totalFileCount } from '@vision/api/file/aggregate';
+import { fetchFiles } from '@vision/api/file/fetchFiles/fetchFiles';
+import { EXPLORER_FILE_FETCH_LIMIT } from '@vision/constants/ExplorerConstants';
+import { FileActions } from '@vision/modules/Common/types';
+import { selectExplorerSortedFiles } from '@vision/modules/Explorer/store/selectors';
 import {
   setExplorerFiles,
   setIsLoading,
@@ -25,30 +15,45 @@ import {
   setLoadingAnnotations,
   setFocusedFileId,
   showFileMetadata,
-} from 'src/modules/Explorer/store/slice';
-import { selectExplorerSortedFiles } from 'src/modules/Explorer/store/selectors';
-import { RootState } from 'src/store/rootReducer';
-import { FetchFilesById } from 'src/store/thunks/Files/FetchFilesById';
-import { PopulateReviewFiles } from 'src/store/thunks/Review/PopulateReviewFiles';
-import { getParamLink, workflowRoutes } from 'src/utils/workflowRoutes';
-import { fetchFiles } from 'src/api/file/fetchFiles/fetchFiles';
-import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
-import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
+} from '@vision/modules/Explorer/store/slice';
+import { AppDispatch } from '@vision/store';
+import { RootState } from '@vision/store/rootReducer';
+import { RetrieveAnnotations } from '@vision/store/thunks/Annotation/RetrieveAnnotations';
+import { DeleteFilesById } from '@vision/store/thunks/Files/DeleteFilesById';
+import { FetchFilesById } from '@vision/store/thunks/Files/FetchFilesById';
+import { PopulateReviewFiles } from '@vision/store/thunks/Review/PopulateReviewFiles';
+import { getParamLink, workflowRoutes } from '@vision/utils/workflowRoutes';
 
-type Resource = FileInfo | Asset | CogniteEvent | Sequence | Timeseries;
+import {
+  SelectableItemsProps,
+  TableStateProps,
+} from '@cognite/data-exploration';
+import {
+  FileInfo,
+  Asset,
+  CogniteEvent,
+  Timeseries,
+  Sequence,
+  FileFilterProps,
+} from '@cognite/sdk';
 
-export const ResultTableLoader = <T extends Resource>({
+export const ResultTableLoader = ({
   children,
   ...props
 }: {
   reFetchProp?: boolean;
-  children: (tableProps: TableProps<T>) => ReactElement;
-} & Partial<SearchResultLoaderProps> &
-  Partial<RelatedResourcesLoaderProps> &
-  Partial<SelectableItemsProps> &
+  children: (
+    tableProps: (FileInfo & { menuActions: any; rowKey: string })[],
+    totalCount: number
+  ) => ReactElement;
+} & {
+  filter: FileFilterProps;
+  query: string;
+  type: string;
+} & Partial<SelectableItemsProps> &
   TableStateProps) => {
-  const history = useHistory();
-  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
   const [totalCount, setTotalCount] = useState<number>(0);
 
   const explorerFiles = useSelector((rootState: RootState) =>
@@ -64,21 +69,20 @@ export const ResultTableLoader = <T extends Resource>({
       },
       onReviewClick: (fileInfo: FileInfo) => {
         dispatch(PopulateReviewFiles([fileInfo.id]));
-        history.push(
-          getParamLink(workflowRoutes.review, ':fileId', String(fileInfo.id)),
-          { from: 'explorer' }
+        navigate(
+          getParamLink(workflowRoutes.review, ':fileId', String(fileInfo.id))
         );
       },
       onFileDelete: (id: number) => {
         dispatch(DeleteFilesById({ fileIds: [id] }));
       },
     }),
-    [dispatch, history]
+    [dispatch, navigate]
   );
 
   const tableData = useMemo(
     () =>
-      explorerFiles.map((file) => ({
+      (explorerFiles as FileInfo[]).map((file: FileInfo) => ({
         ...file,
         menuActions,
         mimeType: file.mimeType || '',
@@ -118,5 +122,5 @@ export const ResultTableLoader = <T extends Resource>({
     })();
   }, [props.query, props.filter, props.reFetchProp]);
 
-  return <>{children({ data: tableData, totalCount })}</>;
+  return <>{children(tableData, totalCount)}</>;
 };

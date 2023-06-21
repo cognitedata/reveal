@@ -1,4 +1,11 @@
-import { SortKeys } from 'src/modules/Common/Utils/SortUtils';
+import { mockFileList } from '@vision/__test-utils/fixtures/files';
+import {
+  getDummyImageObjectDetectionBoundingBoxAnnotation,
+  getDummyImageObjectDetectionPolygonAnnotation,
+  getDummyImageObjectDetectionPolylineAnnotation,
+} from '@vision/__test-utils/getDummyAnnotations';
+import { AnnotationState } from '@vision/modules/Common/store/annotation/types';
+import { SortKeys } from '@vision/modules/Common/Utils/SortUtils';
 import {
   selectExplorerSelectedIds,
   selectExploreFileCount,
@@ -8,17 +15,10 @@ import {
   selectExplorerSortedFiles,
   selectExplorerSelectedFileIdsInSortedOrder,
   selectExplorerAllSelectedFilesInSortedOrder,
-} from 'src/modules/Explorer/store/selectors';
-import { ExplorerState } from 'src/modules/Explorer/types';
-import { RootState } from 'src/store/rootReducer';
-import { VisionFilesToFileState } from 'src/store/util/StateUtils';
-import { mockFileList } from 'src/__test-utils/fixtures/files';
-import { AnnotationState } from 'src/modules/Common/store/annotation/types';
-import {
-  getDummyImageObjectDetectionBoundingBoxAnnotation,
-  getDummyImageObjectDetectionPolygonAnnotation,
-  getDummyImageObjectDetectionPolylineAnnotation,
-} from 'src/__test-utils/getDummyAnnotations';
+} from '@vision/modules/Explorer/store/selectors';
+import { ExplorerState } from '@vision/modules/Explorer/types';
+import { RootState } from '@vision/store/rootReducer';
+import { VisionFilesToFileState } from '@vision/store/util/StateUtils';
 
 describe('Test file explorer selectors', () => {
   const mockState: ExplorerState = {

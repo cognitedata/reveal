@@ -1,10 +1,13 @@
-import { Radio } from '@cognite/cogs.js';
 import React from 'react';
+
+import styled from 'styled-components';
+
 import {
   MediaTypeOption,
   VisionFilterItemProps,
-} from 'src/modules/FilterSidePanel/types';
-import styled from 'styled-components';
+} from '@vision/modules/FilterSidePanel/types';
+
+import { Radio } from '@cognite/cogs.js';
 
 export const MediaTypeFilter = ({
   filter,
@@ -41,14 +44,13 @@ export const MediaTypeFilter = ({
   }) => {
     return (
       <Radio
+        name="media-type"
         value={option}
         label={option}
         checked={getCheckedState(option, value)}
         onChange={handleChange}
         key={option}
-      >
-        {option}
-      </Radio>
+      />
     );
   };
 

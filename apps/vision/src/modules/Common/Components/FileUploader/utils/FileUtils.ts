@@ -2,6 +2,7 @@
  * Taken from data-exploration because of FileUploader
  */
 import mime from 'mime-types';
+
 import { FileInfo } from '@cognite/sdk';
 
 export const getMIMEType = (fileURI: string) =>

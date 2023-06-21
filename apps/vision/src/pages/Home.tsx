@@ -1,27 +1,20 @@
 import React from 'react';
-import { Loader } from '@cognite/cogs.js';
-import { PageTitle } from '@cognite/cdf-utilities';
-import { workflowRoutes } from 'src/utils/workflowRoutes';
+import { Navigate } from 'react-router-dom';
+
 import styled from 'styled-components';
-import { Redirect, RouteComponentProps, Switch } from 'react-router-dom';
 
-const Home = ({ location }: RouteComponentProps) => {
-  // const user = useUserContext();
+import { getLink, workflowRoutes } from '@vision/utils/workflowRoutes';
 
+import { PageTitle } from '@cognite/cdf-utilities';
+import { Loader } from '@cognite/cogs.js';
+
+const Home = () => {
   return (
     <>
       <PageTitle title="Vision" />
       <Loader />
       <Container>
-        <Switch>
-          <Redirect
-            to={{
-              key: workflowRoutes.explore,
-              pathname: workflowRoutes.explore,
-              search: location.search,
-            }}
-          />
-        </Switch>
+        <Navigate to={getLink(workflowRoutes.explore)} replace />
       </Container>
     </>
   );

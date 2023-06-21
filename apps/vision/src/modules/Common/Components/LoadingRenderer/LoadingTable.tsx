@@ -1,13 +1,16 @@
 import React from 'react';
+
 import styled from 'styled-components';
+
+import { DEFAULT_PAGE_SIZE } from '@vision/constants/PaginationConsts';
+import { GradientAnimateRow } from '@vision/modules/Common/Components/LoadingRenderer/GradientAnimateRow';
 import {
   SelectableTableColumnShape,
   TableDataItem,
-} from 'src/modules/Common/types';
-import { GradientAnimateRow } from 'src/modules/Common/Components/LoadingRenderer/GradientAnimateRow';
+} from '@vision/modules/Common/types';
+import { generateKeysArray } from '@vision/utils/generateKeysArray';
+
 import { Checkbox } from '@cognite/cogs.js';
-import { DEFAULT_PAGE_SIZE } from 'src/constants/PaginationConsts';
-import { generateKeysArray } from 'src/utils/generateKeysArray';
 
 export const LoadingTable = ({
   columns,

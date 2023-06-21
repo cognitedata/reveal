@@ -1,18 +1,21 @@
-import { isVideo } from 'src/modules/Common/Components/FileUploader/utils/FileUtils';
-import { CellRenderer } from 'src/modules/Common/types';
-import { useSelector } from 'react-redux';
-import { RootState } from 'src/store/rootReducer';
-import { Tooltip } from '@cognite/cogs.js';
 import React, { useMemo } from 'react';
+import { useSelector } from 'react-redux';
+
 import styled from 'styled-components';
-import ImageIcon from 'src/assets/ImageIcon.svg';
-import ImageWithExifIcon from 'src/assets/ImageWithExifIcon.svg';
-import VideoIcon from 'src/assets/VideoIcon.svg';
-import VideoWithExifIcon from 'src/assets/VideoWithExifIcon.svg';
-import ImageWithAnnotationsIcon from 'src/assets/ImageWithAnnotationsIcon.svg';
-import ImageWithAnnotationsAndExifIcon from 'src/assets/ImageWithAnnotationsAndExifIcon.svg';
+
+import ImageIcon from '@vision/assets/ImageIcon';
+import ImageWithAnnotationsAndExifIcon from '@vision/assets/ImageWithAnnotationsAndExifIcon';
+import ImageWithAnnotationsIcon from '@vision/assets/ImageWithAnnotationsIcon';
+import ImageWithExifIcon from '@vision/assets/ImageWithExifIcon';
+import VideoIcon from '@vision/assets/VideoIcon';
+import VideoWithExifIcon from '@vision/assets/VideoWithExifIcon';
+import { isVideo } from '@vision/modules/Common/Components/FileUploader/utils/FileUtils';
+import { makeSelectFileAnnotations } from '@vision/modules/Common/store/annotation/selectors';
+import { CellRenderer } from '@vision/modules/Common/types';
+import { RootState } from '@vision/store/rootReducer';
+
+import { Tooltip } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
-import { makeSelectFileAnnotations } from 'src/modules/Common/store/annotation/selectors';
 
 export const FileNameText = styled.div`
   text-overflow: ellipsis;
@@ -56,34 +59,31 @@ export function NameRenderer({
       icon = geoLocation ? (
         <Tooltip content="Geolocated">
           <ExifIcon>
-            <img
-              src={ImageWithAnnotationsAndExifIcon}
-              alt="ImageWithAnnotationsAndExifIcon"
-            />
+            <ImageWithAnnotationsAndExifIcon />
           </ExifIcon>
         </Tooltip>
       ) : (
-        <img src={ImageWithAnnotationsIcon} alt="ImageWithAnnotationsIcon" />
+        <ImageWithAnnotationsIcon />
       );
     } else if (isVideoFile) {
       icon = geoLocation ? (
         <Tooltip content="Geolocated">
           <ExifIcon>
-            <img src={VideoWithExifIcon} alt="VideoWithExifIcon" />
+            <VideoWithExifIcon />
           </ExifIcon>
         </Tooltip>
       ) : (
-        <img src={VideoIcon} alt="VideoIcon" />
+        <VideoIcon />
       );
     } else {
       icon = geoLocation ? (
         <Tooltip content="Geolocated">
           <ExifIcon>
-            <img src={ImageWithExifIcon} alt="ImageWithExifIcon" />
+            <ImageWithExifIcon />
           </ExifIcon>
         </Tooltip>
       ) : (
-        <img src={ImageIcon} alt="ImageIcon" />
+        <ImageIcon />
       );
     }
 

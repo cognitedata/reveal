@@ -1,15 +1,19 @@
 import React, { useMemo } from 'react';
-import { CellRenderer } from 'src/modules/Common/types';
 import { useSelector } from 'react-redux';
-import { RootState } from 'src/store/rootReducer';
+
 import styled from 'styled-components';
-import { DEFAULT_THRESHOLDS } from 'src/modules/Common/Components/BulkEdit/Annotation/AnnotationStatusPanel';
-import { Body } from '@cognite/cogs.js';
-import { makeSelectAnnotationsForFileIds } from 'src/modules/Common/store/annotation/selectors';
+
+import { DEFAULT_THRESHOLDS } from '@vision/modules/Common/Components/BulkEdit/Annotation/AnnotationStatusPanel';
+import { makeSelectAnnotationsForFileIds } from '@vision/modules/Common/store/annotation/selectors';
+import { CellRenderer } from '@vision/modules/Common/types';
 import {
   filterAnnotationIdsByAnnotationStatus,
   filterAnnotationIdsByConfidence,
-} from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
+} from '@vision/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
+import { RootState } from '@vision/store/rootReducer';
+
+import { Body } from '@cognite/cogs.js';
+
 import { createTag } from './AnnotationStatusRenderer';
 
 export function FilteredAnnotationStatusRenderer({

@@ -1,15 +1,15 @@
+import { RegionShape } from '@vision/api/annotation/types';
+import {
+  Vertex,
+  VisionJobAnnotation,
+} from '@vision/api/vision/detectionModels/types';
 import {
   validBoundingBox,
   validImageAssetLink,
   vertexIsNormalized,
   uniqueVertices,
   validKeypointCollection,
-} from 'src/api/vision/detectionModels/typeValidators';
-import {
-  Vertex,
-  VisionJobAnnotation,
-} from 'src/api/vision/detectionModels/types';
-import { RegionShape } from 'src/api/annotation/types';
+} from '@vision/api/vision/detectionModels/typeValidators';
 
 describe('vertexIsNormalized', () => {
   test('Invalid vertex', () => {

@@ -1,5 +1,3 @@
-import { Annotator, AnnotatorTool } from '@cognite/react-image-annotate';
-import { AnnotationChangeById, FileInfo, InternalId } from '@cognite/sdk';
 import React, {
   Dispatch,
   ReactText,
@@ -10,26 +8,29 @@ import React, {
   useState,
 } from 'react';
 import { useDispatch } from 'react-redux';
-import { retrieveDownloadUrl } from 'src/api/file/fileDownloadUrl';
+
+import styled from 'styled-components';
+
+import { retrieveDownloadUrl } from '@vision/api/file/fileDownloadUrl';
 import {
   UnsavedVisionAnnotation,
   VisionAnnotationDataType,
-} from 'src/modules/Common/types';
-import { AnnotationEditPopup } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/AnnotationEditPopup/AnnotationEditPopup';
+} from '@vision/modules/Common/types';
+import { AnnotationEditPopup } from '@vision/modules/Review/Components/ReactImageAnnotateWrapper/AnnotationEditPopup/AnnotationEditPopup';
 import {
   convertAnnotatorPointRegionToAnnotationChangeProperties,
   convertAnnotatorRegionToAnnotationChangeProperties,
   convertRegionToUnsavedVisionAnnotation,
   convertTempKeypointCollectionToRegions,
   convertVisionReviewAnnotationsToRegions,
-} from 'src/modules/Review/Components/ReactImageAnnotateWrapper/converters';
+} from '@vision/modules/Review/Components/ReactImageAnnotateWrapper/converters';
 import {
   AnnotatorRegion,
   AnnotatorRegionLabelProps,
   isAnnotatorPointRegion,
-} from 'src/modules/Review/Components/ReactImageAnnotateWrapper/types';
-import { cropBoxRegionAtEdges } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/utils/cropBoxRegionAtEdges';
-import { useIsCurrentKeypointCollectionComplete } from 'src/modules/Review/store/annotatorWrapper/hooks';
+} from '@vision/modules/Review/Components/ReactImageAnnotateWrapper/types';
+import { cropBoxRegionAtEdges } from '@vision/modules/Review/Components/ReactImageAnnotateWrapper/utils/cropBoxRegionAtEdges';
+import { useIsCurrentKeypointCollectionComplete } from '@vision/modules/Review/store/annotatorWrapper/hooks';
 import {
   clearTemporaryRegion,
   createTempKeypointCollection,
@@ -39,20 +40,23 @@ import {
   onUpdateRegion,
   setLastShape,
   setSelectedTool,
-} from 'src/modules/Review/store/annotatorWrapper/slice';
-import { convertTempKeypointCollectionToUnsavedVisionImageKeypointCollection } from 'src/modules/Review/store/review/utils';
-import { selectAnnotation } from 'src/modules/Review/store/review/slice';
+} from '@vision/modules/Review/store/annotatorWrapper/slice';
+import { selectAnnotation } from '@vision/modules/Review/store/review/slice';
+import { convertTempKeypointCollectionToUnsavedVisionImageKeypointCollection } from '@vision/modules/Review/store/review/utils';
 import {
   PredefinedKeypointCollection,
   PredefinedShape,
   PredefinedVisionAnnotations,
   TempKeypointCollection,
   VisionReviewAnnotation,
-} from 'src/modules/Review/types';
-import { AppDispatch } from 'src/store';
-import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
-import { getIcon } from 'src/utils/iconUtils';
-import styled from 'styled-components';
+} from '@vision/modules/Review/types';
+import { AppDispatch } from '@vision/store';
+import { deselectAllSelectionsReviewPage } from '@vision/store/commonActions';
+import { getIcon } from '@vision/utils/iconUtils';
+
+import { Annotator, AnnotatorTool } from '@cognite/react-image-annotate';
+import { AnnotationChangeById, FileInfo, InternalId } from '@cognite/sdk';
+
 import { tools } from './Tools';
 
 type ReactImageAnnotateWrapperProps = {
@@ -77,7 +81,11 @@ type ReactImageAnnotateWrapperProps = {
   ) => void;
   onUpdateAnnotation: (changes: AnnotationChangeById) => void;
   onDeleteAnnotation: (annotationId: InternalId) => void;
-  openAnnotationSettings: (type: string, text?: string, color?: string) => void;
+  openAnnotationSettings: (
+    type?: string,
+    text?: string,
+    color?: string
+  ) => void;
 };
 
 export const ReactImageAnnotateWrapper = ({
@@ -97,7 +105,7 @@ export const ReactImageAnnotateWrapper = ({
   onDeleteAnnotation,
   openAnnotationSettings,
 }: ReactImageAnnotateWrapperProps) => {
-  const dispatch: AppDispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch<AppDispatch>();
   const currentKeypointCollectionIsComplete =
     useIsCurrentKeypointCollectionComplete(fileInfo.id);
 

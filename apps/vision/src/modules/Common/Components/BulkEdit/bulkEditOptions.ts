@@ -1,33 +1,29 @@
 import { ColumnShape, Column } from 'react-base-table';
-import { BulkEditUnsavedState } from 'src/modules/Common/store/common/types';
-import { VisionFile } from 'src/modules/Common/store/files/types';
-import { BulkEditTableDataType } from 'src/modules/Common/Components/BulkEdit/BulkEditTable/BulkEditTable';
-import { BulkEditOptions } from 'src/modules/Common/Components/BulkEdit/enums';
 
+import { AnnotationPanel } from '@vision/modules/Common/Components/BulkEdit/Annotation/AnnotationPanel';
+import { AssetPanel } from '@vision/modules/Common/Components/BulkEdit/Asset/AssetPanel';
+import { disableAssetTable } from '@vision/modules/Common/Components/BulkEdit/Asset/disableAssetTable';
+import { getDataForAssets } from '@vision/modules/Common/Components/BulkEdit/Asset/getDataForAssets';
+import { BulkEditTableDataType } from '@vision/modules/Common/Components/BulkEdit/BulkEditTable/BulkEditTable';
+import { DirectoryPanel } from '@vision/modules/Common/Components/BulkEdit/Directory/DirectoryPanel';
+import { getDataForDirectory } from '@vision/modules/Common/Components/BulkEdit/Directory/getDataForDirectory';
+import { BulkEditOptions } from '@vision/modules/Common/Components/BulkEdit/enums';
 // Metadata
-import { getDataForMetadata } from 'src/modules/Common/Components/BulkEdit/Metadata/getDataForMetadata';
-import { MetadataPanel } from 'src/modules/Common/Components/BulkEdit/Metadata/MetadataPanel';
-
+import { getDataForLabel } from '@vision/modules/Common/Components/BulkEdit/Label/getDataForLabel';
+import { LabelPanel } from '@vision/modules/Common/Components/BulkEdit/Label/LabelPanel';
+import { getDataForMetadata } from '@vision/modules/Common/Components/BulkEdit/Metadata/getDataForMetadata';
+import { MetadataPanel } from '@vision/modules/Common/Components/BulkEdit/Metadata/MetadataPanel';
 // Label
-import { getDataForLabel } from 'src/modules/Common/Components/BulkEdit/Label/getDataForLabel';
-import { LabelPanel } from 'src/modules/Common/Components/BulkEdit/Label/LabelPanel';
-
 // Asset
-import { AssetPanel } from 'src/modules/Common/Components/BulkEdit/Asset/AssetPanel';
-import { getDataForAssets } from 'src/modules/Common/Components/BulkEdit/Asset/getDataForAssets';
-import { disableAssetTable } from 'src/modules/Common/Components/BulkEdit/Asset/disableAssetTable';
-
 // Source
-import { SourcePanel } from 'src/modules/Common/Components/BulkEdit/Source/SourcePanel';
-import { getDataForSource } from 'src/modules/Common/Components/BulkEdit/Source/getDataForSource';
-
+import { getDataForSource } from '@vision/modules/Common/Components/BulkEdit/Source/getDataForSource';
+import { SourcePanel } from '@vision/modules/Common/Components/BulkEdit/Source/SourcePanel';
+import { BulkEditUnsavedState } from '@vision/modules/Common/store/common/types';
+import { VisionFile } from '@vision/modules/Common/store/files/types';
 // Directory
-import { getDataForDirectory } from 'src/modules/Common/Components/BulkEdit/Directory/getDataForDirectory';
-import { DirectoryPanel } from 'src/modules/Common/Components/BulkEdit/Directory/DirectoryPanel';
-
 // Annotation
-import { AnnotationPanel } from 'src/modules/Common/Components/BulkEdit/Annotation/AnnotationPanel';
-import { AnnotationFilterType } from 'src/modules/FilterSidePanel/types';
+import { AnnotationFilterType } from '@vision/modules/FilterSidePanel/types';
+
 import { AnnotationStatusPanel } from './Annotation/AnnotationStatusPanel';
 import {
   getDataForAnnotationFilteredByState,

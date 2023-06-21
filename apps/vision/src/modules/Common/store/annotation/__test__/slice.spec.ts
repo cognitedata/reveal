@@ -1,21 +1,22 @@
+import { getDummyImageObjectDetectionBoundingBoxAnnotation } from '@vision/__test-utils/getDummyAnnotations';
 import reducer, {
   initialState,
-} from 'src/modules/Common/store/annotation/slice';
-import { AnnotationState } from 'src/modules/Common/store/annotation/types';
-import { clearAnnotationState } from 'src/store/commonActions';
-import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
-import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
-import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
-import { getDummyImageObjectDetectionBoundingBoxAnnotation } from 'src/__test-utils/getDummyAnnotations';
+} from '@vision/modules/Common/store/annotation/slice';
+import { AnnotationState } from '@vision/modules/Common/store/annotation/types';
+import { clearAnnotationState } from '@vision/store/commonActions';
+import { DeleteAnnotations } from '@vision/store/thunks/Annotation/DeleteAnnotations';
+import { RetrieveAnnotations } from '@vision/store/thunks/Annotation/RetrieveAnnotations';
+import { UpdateAnnotations } from '@vision/store/thunks/Annotation/UpdateAnnotations';
+import { DeleteFilesById } from '@vision/store/thunks/Files/DeleteFilesById';
+import { VisionJobUpdate } from '@vision/store/thunks/Process/VisionJobUpdate';
+
 import { InternalId } from '@cognite/sdk';
-import { VisionJobUpdate } from 'src/store/thunks/Process/VisionJobUpdate';
-import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
 
 jest.mock(
-  'src/modules/Review/Components/AnnotationSettingsModal/AnnotationSettingsUtils',
+  '@vision/modules/Review/Components/AnnotationSettingsModal/AnnotationSettingsUtils',
   () => ({
     ...jest.requireActual(
-      'src/modules/Review/Components/AnnotationSettingsModal/AnnotationSettingsUtils'
+      '@vision/modules/Review/Components/AnnotationSettingsModal/AnnotationSettingsUtils'
     ),
     getRandomColor: () => {
       return '#0f0';

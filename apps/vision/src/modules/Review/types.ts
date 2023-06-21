@@ -1,17 +1,19 @@
-import { OptionType } from '@cognite/cogs.js';
 import { ReactText } from 'react';
-import { tools } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/Tools';
-import {
-  UnsavedVisionAnnotation,
-  VisionAnnotation,
-  VisionAnnotationDataType,
-} from 'src/modules/Common/types';
+
 import {
   ImageKeypointCollection,
   Keypoint,
   Label,
   Status,
-} from 'src/api/annotation/types';
+} from '@vision/api/annotation/types';
+import {
+  UnsavedVisionAnnotation,
+  VisionAnnotation,
+  VisionAnnotationDataType,
+} from '@vision/modules/Common/types';
+import { tools } from '@vision/modules/Review/Components/ReactImageAnnotateWrapper/Tools';
+
+import { OptionType } from '@cognite/cogs.js';
 
 export type PredefinedShape = {
   shapeName: string;

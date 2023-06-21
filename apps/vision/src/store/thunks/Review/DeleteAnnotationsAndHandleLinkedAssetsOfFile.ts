@@ -1,12 +1,13 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { ThunkConfig } from 'src/store/rootReducer';
-import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
-import { ToastUtils } from 'src/utils/ToastUtils';
-import { filterAssetIdsLinkedToGivenFile } from 'src/api/utils/filterAssetIdsLinkedToGivenFile';
-import { removeAssetIdsFromFile } from 'src/store/util/removeAssetIdsFromFile';
+import { Status } from '@vision/api/annotation/types';
+import { filterAssetIdsLinkedToGivenFile } from '@vision/api/utils/filterAssetIdsLinkedToGivenFile';
+import { isImageAssetLinkData } from '@vision/modules/Common/types/typeGuards';
+import { ThunkConfig } from '@vision/store/rootReducer';
+import { DeleteAnnotations } from '@vision/store/thunks/Annotation/DeleteAnnotations';
+import { removeAssetIdsFromFile } from '@vision/store/util/removeAssetIdsFromFile';
+import { ToastUtils } from '@vision/utils/ToastUtils';
+
 import { InternalId } from '@cognite/sdk';
-import { Status } from 'src/api/annotation/types';
-import { isImageAssetLinkData } from 'src/modules/Common/types/typeGuards';
 
 /**
  * Deletes annotations, if assetRef annotations are also available remove asset links from files with user consent

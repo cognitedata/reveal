@@ -1,8 +1,10 @@
 import React from 'react';
+
+import { getContainer } from '@vision/utils';
 import { Modal } from 'antd';
-import { getContainer } from 'src/utils';
-import { FileDownloaderModalProps } from './types';
+
 import { FileDownloaderModalContent } from './FileDownloaderModalContent';
+import { FileDownloaderModalProps } from './types';
 
 export const FileDownloaderModal = (props: FileDownloaderModalProps) => {
   return (

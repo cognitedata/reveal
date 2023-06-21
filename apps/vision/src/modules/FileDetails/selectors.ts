@@ -1,15 +1,15 @@
 import { createSelector } from '@reduxjs/toolkit';
-import {
-  FileDetailsState,
-  FileInfoValueState,
-} from 'src/modules/FileDetails/types';
+import { selectFileById } from '@vision/modules/Common/store/files/selectors';
 import {
   MetadataItem,
   VisionFileDetails,
-} from 'src/modules/FileDetails/Components/FileMetadata/Types';
-import { generateKeyValueArray } from 'src/utils/FormatUtils';
-import { selectFileById } from 'src/modules/Common/store/files/selectors';
-import { RootState } from 'src/store/rootReducer';
+} from '@vision/modules/FileDetails/Components/FileMetadata/Types';
+import {
+  FileDetailsState,
+  FileInfoValueState,
+} from '@vision/modules/FileDetails/types';
+import { RootState } from '@vision/store/rootReducer';
+import { generateKeyValueArray } from '@vision/utils/FormatUtils';
 
 export const metadataEditMode = (state: FileDetailsState): boolean =>
   state.metadataEdit;

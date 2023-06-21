@@ -1,6 +1,8 @@
 import React from 'react';
-import { AutoMLTrainingJob } from 'src/api/vision/autoML/types';
+
 import styled from 'styled-components';
+
+import { AutoMLTrainingJob } from '@vision/api/vision/autoML/types';
 import {
   XAxis,
   YAxis,
@@ -11,6 +13,7 @@ import {
   Tooltip,
   Legend,
 } from 'recharts';
+
 import { Body } from '@cognite/cogs.js';
 
 const dataKeyLabelMap = new Map<string, string>([

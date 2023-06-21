@@ -1,23 +1,26 @@
-import { fileMetaDataEdit } from 'src/modules/FileDetails/slice';
-import styled from 'styled-components';
-import { Title } from '@cognite/cogs.js';
 import React, { ChangeEvent, ReactText, useEffect } from 'react';
-import { TableWrapper } from 'src/modules/Common/Components/FileTable/FileTableWrapper';
 import ReactBaseTable, {
   BaseTableProps,
   Column,
   ColumnShape,
 } from 'react-base-table';
-import store from 'src/store';
+
+import styled from 'styled-components';
+
+import ExifIcon from '@vision/assets/exifIcon';
+import { TableWrapper } from '@vision/modules/Common/Components/FileTable/FileTableWrapper';
+import { ExifIcon as ExifIconWrapper } from '@vision/modules/Common/Containers/FileTableRenderers/NameRenderer';
+import { TableDataItem } from '@vision/modules/Common/types';
 import {
   MetadataItem,
   VisionFileDetails,
-} from 'src/modules/FileDetails/Components/FileMetadata/Types';
-import exifIcon from 'src/assets/exifIcon.svg';
-import { TableDataItem } from 'src/modules/Common/types';
-import { ExifIcon } from 'src/modules/Common/Containers/FileTableRenderers/NameRenderer';
-import { keyGenerator } from 'src/utils/keyGenerator/keyGenerator';
+} from '@vision/modules/FileDetails/Components/FileMetadata/Types';
+import { fileMetaDataEdit } from '@vision/modules/FileDetails/slice';
+import store from '@vision/store';
+import { keyGenerator } from '@vision/utils/keyGenerator/keyGenerator';
 import { Input } from 'antd';
+
+import { Title } from '@cognite/cogs.js';
 
 type TableProps = Omit<Omit<BaseTableProps<TableDataItem>, 'width'>, 'height'>;
 
@@ -131,9 +134,9 @@ export const MetaDataTable = (props: MetadataTableProps) => {
         <Left>
           <Title level={6}>{props.title}</Title>
           {props.details?.geoLocation && (
-            <ExifIcon>
-              <img src={exifIcon} alt="exifIcon" />
-            </ExifIcon>
+            <ExifIconWrapper>
+              <ExifIcon />
+            </ExifIconWrapper>
           )}
         </Left>
         <Right>{props.toolBar}</Right>

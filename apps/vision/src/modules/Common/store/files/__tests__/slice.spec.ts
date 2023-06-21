@@ -1,15 +1,15 @@
+import { mockFileList } from '@vision/__test-utils/fixtures/files';
 import reducer, {
   addFiles,
   clearState,
   initialState,
   setFileSelectState,
-} from 'src/modules/Common/store/files/slice';
-import { mockFileList } from 'src/__test-utils/fixtures/files';
+} from '@vision/modules/Common/store/files/slice';
+import { DeleteFilesById } from '@vision/store/thunks/Files/DeleteFilesById';
 import {
   createFileState,
   VisionFilesToFileState,
-} from 'src/store/util/StateUtils';
-import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
+} from '@vision/store/util/StateUtils';
 
 describe('Test files reducer', () => {
   test('should return the initial state', () => {

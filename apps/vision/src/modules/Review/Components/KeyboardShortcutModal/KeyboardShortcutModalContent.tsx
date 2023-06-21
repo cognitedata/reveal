@@ -1,6 +1,8 @@
-import { Body, Detail, Icon, Title } from '@cognite/cogs.js';
 import React from 'react';
+
 import styled from 'styled-components';
+
+import { Body, Detail, Icon, Title } from '@cognite/cogs.js';
 
 export const KeyboardShortcutModalContent = () => {
   return (

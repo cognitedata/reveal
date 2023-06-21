@@ -1,7 +1,8 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import { ThunkConfig } from '@vision/store/rootReducer';
+import { DeleteAnnotationsForDeletedFiles } from '@vision/store/thunks/Annotation/DeleteAnnotationsForDeletedFiles';
+
 import sdk from '@cognite/cdf-sdk-singleton';
-import { ThunkConfig } from 'src/store/rootReducer';
-import { DeleteAnnotationsForDeletedFiles } from 'src/store/thunks/Annotation/DeleteAnnotationsForDeletedFiles';
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 const SLEEP_DELAY_MS = 1600;

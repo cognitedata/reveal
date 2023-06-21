@@ -1,4 +1,28 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { useDispatch } from 'react-redux';
+
+import styled from 'styled-components';
+
+import { AnnotationEditPopupBody } from '@vision/modules/Review/Components/ReactImageAnnotateWrapper/AnnotationEditPopup/AnnotationEditPopupBody';
+import {
+  AnnotatorPointRegion,
+  AnnotatorRegion,
+  AnnotatorRegionLabelProps,
+  AnnotatorRegionType,
+  isAnnotatorPointRegion,
+} from '@vision/modules/Review/Components/ReactImageAnnotateWrapper/types';
+import { clearTemporaryRegion } from '@vision/modules/Review/store/annotatorWrapper/slice';
+import { AnnotationSettingsOption } from '@vision/modules/Review/store/review/enums';
+import {
+  PredefinedKeypoint,
+  PredefinedKeypointCollection,
+  PredefinedShape,
+  PredefinedVisionAnnotations,
+  VisionOptionType,
+} from '@vision/modules/Review/types';
+import { AppDispatch } from '@vision/store';
+import { deselectAllSelectionsReviewPage } from '@vision/store/commonActions';
+
 import {
   Title,
   Button,
@@ -7,26 +31,6 @@ import {
   Row,
   Col,
 } from '@cognite/cogs.js';
-import { clearTemporaryRegion } from 'src/modules/Review/store/annotatorWrapper/slice';
-import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
-import styled from 'styled-components';
-import { useDispatch } from 'react-redux';
-import {
-  PredefinedKeypoint,
-  PredefinedKeypointCollection,
-  PredefinedShape,
-  PredefinedVisionAnnotations,
-  VisionOptionType,
-} from 'src/modules/Review/types';
-import { AnnotationEditPopupBody } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/AnnotationEditPopup/AnnotationEditPopupBody';
-import {
-  AnnotatorPointRegion,
-  AnnotatorRegion,
-  AnnotatorRegionLabelProps,
-  AnnotatorRegionType,
-  isAnnotatorPointRegion,
-} from 'src/modules/Review/Components/ReactImageAnnotateWrapper/types';
-import { AnnotationSettingsOption } from 'src/modules/Review/store/review/enums';
 
 export const AnnotationEditPopup = ({
   region,
@@ -60,7 +64,7 @@ export const AnnotationEditPopup = ({
   popupReference: any;
   predefinedAnnotations: PredefinedVisionAnnotations;
 }) => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const title = useMemo(() => {
     switch (region.type) {
@@ -253,42 +257,42 @@ export const AnnotationEditPopup = ({
     return (
       <Container ref={popupReference}>
         <OptionContainer>
-          <Row
-            cols={6}
-            style={{ display: 'flex', justifyContent: 'space-between' }}
-          >
-            <Col span={3}>
-              <Title level={4} style={{ paddingBottom: '4px' }}>
-                {title}
-              </Title>
-            </Col>
-            <Col span={3}>
-              <Button
-                size="small"
-                variant="default"
-                type="link"
-                icon="Settings"
-                iconPlacement="right"
-                style={{ textTransform: 'capitalize' }}
-                onClick={() => handleAnnotationSettingsOpen()}
-              >
-                Annotation Settings
-              </Button>
-            </Col>
-          </Row>
-          <Row cols={5} style={{ paddingTop: '10px', paddingBottom: '10px' }}>
-            <AnnotationEditPopupBody
-              isKeypointMode={isKeypoint}
-              isSavedAnnotation={alreadyCreated}
-              labelOption={labelValue}
-              keypointLabel={keypointLabel}
-              onSelectLabel={(val) => {
-                handleSelect(val);
-              }}
-              labelOptions={isKeypoint ? collectionOptions : shapeOptions}
-              onOpenAnnotationSettings={handleAnnotationSettingsOpen}
-            />
-          </Row>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Row cols={6}>
+              <Col span={3}>
+                <Title level={4} style={{ paddingBottom: '4px' }}>
+                  {title}
+                </Title>
+              </Col>
+              <Col span={3}>
+                <Button
+                  size="small"
+                  type="ghost"
+                  icon="Settings"
+                  iconPlacement="right"
+                  style={{ textTransform: 'capitalize' }}
+                  onClick={() => handleAnnotationSettingsOpen()}
+                >
+                  Annotation Settings
+                </Button>
+              </Col>
+            </Row>
+          </div>
+          <div style={{ paddingTop: '10px', paddingBottom: '10px' }}>
+            <Row cols={5}>
+              <AnnotationEditPopupBody
+                isKeypointMode={isKeypoint}
+                isSavedAnnotation={alreadyCreated}
+                labelOption={labelValue}
+                keypointLabel={keypointLabel}
+                onSelectLabel={(val) => {
+                  handleSelect(val);
+                }}
+                labelOptions={isKeypoint ? collectionOptions : shapeOptions}
+                onOpenAnnotationSettings={handleAnnotationSettingsOpen}
+              />
+            </Row>
+          </div>
           {showFooter && (
             <FooterContainer>
               <Popconfirm

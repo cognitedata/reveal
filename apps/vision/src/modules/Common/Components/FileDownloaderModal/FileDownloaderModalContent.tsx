@@ -1,18 +1,26 @@
 import React, { useMemo, useState } from 'react';
+import { useSelector } from 'react-redux';
+
+import styled from 'styled-components';
+
+import { Status } from '@vision/api/annotation/types';
+import { renameDuplicates } from '@vision/modules/Common/Components/FileUploader/utils/FileUtils';
+import { STATUS } from '@vision/modules/Common/Components/FileUploaderModal/enums';
+import { makeSelectAnnotationsForFileIds } from '@vision/modules/Common/store/annotation/selectors';
+import { RootState } from '@vision/store/rootReducer';
+import { ToastUtils } from '@vision/utils/ToastUtils';
+import { saveAs } from 'file-saver';
+import JSZip from 'jszip';
 import moment from 'moment';
-import { FileLink, IdEither } from '@cognite/sdk';
+
 import sdk from '@cognite/cdf-sdk-singleton';
 import { Title, Body, Radio, Select } from '@cognite/cogs.js';
-import { saveAs } from 'file-saver';
-import { STATUS } from 'src/modules/Common/Components/FileUploaderModal/enums';
-import styled from 'styled-components';
-import JSZip from 'jszip';
-import { useSelector } from 'react-redux';
-import { RootState } from 'src/store/rootReducer';
-import { ToastUtils } from 'src/utils/ToastUtils';
-import { renameDuplicates } from 'src/modules/Common/Components/FileUploader/utils/FileUtils';
-import { makeSelectAnnotationsForFileIds } from 'src/modules/Common/store/annotation/selectors';
-import { Status } from 'src/api/annotation/types';
+import { FileLink, IdEither } from '@cognite/sdk';
+
+import {
+  convertAnnotationsToAutoML,
+  convertAnnotationsToCOCO,
+} from './annotationConverters';
 import { getDownloadControls } from './DownloadControlButtons';
 import {
   AnnotationChoice,
@@ -20,10 +28,6 @@ import {
   DownloadChoice,
   FileDownloaderModalProps,
 } from './types';
-import {
-  convertAnnotationsToAutoML,
-  convertAnnotationsToCOCO,
-} from './annotationConverters';
 
 export const FileDownloaderModalContent = ({
   fileIds,
@@ -151,7 +155,7 @@ export const FileDownloaderModalContent = ({
         try {
           // eslint-disable-next-line no-await-in-loop
           await getBlobs(batch, batchId);
-        } catch (error) {
+        } catch (error: any) {
           ToastUtils.onFailure(`Failed to download files ${error?.message}`);
           console.error(`Failed to download files ${error?.message}`);
           setDownloadStatus(STATUS.READY_TO_START);
@@ -176,7 +180,7 @@ export const FileDownloaderModalContent = ({
       setDownloadedMessage('0%');
 
       return 'success';
-    } catch (error) {
+    } catch (error: any) {
       ToastUtils.onFailure(`Failed to download files ${error?.message}`);
       console.error(`Failed to download files ${error?.message}`);
       return undefined;
@@ -247,6 +251,7 @@ export const FileDownloaderModalContent = ({
     return (
       <RadioContainer>
         <Radio
+          name="VerifiedAndUnreviewed"
           value={AnnotationChoice.VerifiedAndUnreviewed}
           label={AnnotationChoice.VerifiedAndUnreviewed}
           checked={
@@ -259,6 +264,7 @@ export const FileDownloaderModalContent = ({
           ) => handleAnnotationRadioButton(next as string)}
         />
         <Radio
+          name="OnlyRejected"
           value={AnnotationChoice.OnlyRejected}
           label={AnnotationChoice.OnlyRejected}
           checked={currentAnnotationChoice === AnnotationChoice.OnlyRejected}
@@ -269,6 +275,7 @@ export const FileDownloaderModalContent = ({
           ) => handleAnnotationRadioButton(next as string)}
         />
         <Radio
+          name="All"
           value={AnnotationChoice.All}
           label={AnnotationChoice.All}
           checked={currentAnnotationChoice === AnnotationChoice.All}

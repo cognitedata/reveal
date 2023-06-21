@@ -1,15 +1,15 @@
-import { FileDetailsState } from 'src/modules/FileDetails/types';
+import { mockFileList } from '@vision/__test-utils/fixtures/files';
+import { FileState } from '@vision/modules/Common/store/files/types';
 import {
   metadataEditMode,
   editedFileDetails,
   editedFileMeta,
   selectUpdatedFileDetails,
   selectUpdatedFileMeta,
-} from 'src/modules/FileDetails/selectors';
-import { FileState } from 'src/modules/Common/store/files/types';
-import { createFileState } from 'src/store/util/StateUtils';
-import { mockFileList } from 'src/__test-utils/fixtures/files';
-import { RootState } from 'src/store/rootReducer';
+} from '@vision/modules/FileDetails/selectors';
+import { FileDetailsState } from '@vision/modules/FileDetails/types';
+import { RootState } from '@vision/store/rootReducer';
+import { createFileState } from '@vision/store/util/StateUtils';
 
 describe('Test file details selectors', () => {
   const mockState: FileDetailsState = {

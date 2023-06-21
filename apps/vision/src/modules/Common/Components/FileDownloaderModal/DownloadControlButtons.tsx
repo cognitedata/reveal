@@ -1,6 +1,8 @@
 import React from 'react';
+
+import { STATUS } from '@vision/modules/Common/Components/FileUploaderModal/enums';
+
 import { Button } from '@cognite/cogs.js';
-import { STATUS } from 'src/modules/Common/Components/FileUploaderModal/enums';
 
 export const getDownloadControls = (
   downloadStatus: STATUS,

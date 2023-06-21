@@ -1,9 +1,12 @@
-import { Body, Icon } from '@cognite/cogs.js';
 import React from 'react';
-import styled from 'styled-components';
 import { useSelector } from 'react-redux';
-import { RootState } from 'src/store/rootReducer';
+
+import styled from 'styled-components';
+
+import { RootState } from '@vision/store/rootReducer';
 import { format } from 'date-fns';
+
+import { Body, Icon } from '@cognite/cogs.js';
 
 export type CDFStatusModes = 'saving' | 'saved' | 'error' | 'timestamp';
 
@@ -40,8 +43,8 @@ export const CDFStatus = () => {
         </Status>
       )}
       {mode === 'timestamp' && time && (
-        <Status>
-          <Icon style={{ marginTop: '6px' }} type="Upload" />
+        <Status style={{ marginTop: '6px' }}>
+          <Icon type="Upload" />
           <Text level={3}>
             {`Last Saved  ${format(dateTime, 'HH:mm')} to CDF`}
           </Text>

@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { Body, Detail, Select } from '@cognite/cogs.js';
-import { unwrapResult } from '@reduxjs/toolkit';
 import { useDispatch } from 'react-redux';
-import { AppDispatch } from 'src/store';
-import { PopulateAnnotationTemplates } from 'src/store/thunks/Annotation/PopulateAnnotationTemplates';
+
 import styled from 'styled-components';
-import { Radio, RadioChangeEvent } from 'antd';
-import { ClearButton } from 'src/modules/Explorer/Components/ClearButton';
+
+import { unwrapResult } from '@reduxjs/toolkit';
+import { ClearButton } from '@vision/modules/Explorer/Components/ClearButton';
 import {
   AnnotationFilterType,
   VisionFilterItemProps,
-} from 'src/modules/FilterSidePanel/types';
+} from '@vision/modules/FilterSidePanel/types';
+import { AppDispatch } from '@vision/store';
+import { PopulateAnnotationTemplates } from '@vision/store/thunks/Annotation/PopulateAnnotationTemplates';
+import { Radio, RadioChangeEvent } from 'antd';
+
+import { Body, Detail, Select } from '@cognite/cogs.js';
 
 const annotationStateOptions: { [key: string]: string } = {
   approved: 'True (verified annotations)',
@@ -23,7 +26,7 @@ export const AnnotationFilter = ({
   setFilter,
 }: VisionFilterItemProps) => {
   const { annotation } = filter;
-  const dispatch: AppDispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch<AppDispatch>();
 
   const [annotationLabels, setAnnotationLabels] = useState<
     { value: string; label: string }[]

@@ -1,24 +1,26 @@
-import { FileUploadModal } from 'src/modules/Common/Components/FileUploaderModal/FileUploaderModal';
+import React, { useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+
+import { FileUploadModal } from '@vision/modules/Common/Components/FileUploaderModal/FileUploaderModal';
 import {
   addExplorerUploadedFileId,
   clearExplorerUploadedFileIds,
   setExplorerFileUploadModalVisibility,
-} from 'src/modules/Explorer/store/slice';
-import React, { useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from 'src/store/rootReducer';
-import { useHistory } from 'react-router-dom';
-import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
-import { PopulateProcessFiles } from 'src/store/thunks/Process/PopulateProcessFiles';
-import { getLink, workflowRoutes } from 'src/utils/workflowRoutes';
+} from '@vision/modules/Explorer/store/slice';
+import { AppDispatch } from '@vision/store';
+import { RootState } from '@vision/store/rootReducer';
+import { DeleteFilesById } from '@vision/store/thunks/Files/DeleteFilesById';
+import { PopulateProcessFiles } from '@vision/store/thunks/Process/PopulateProcessFiles';
+import { getLink, workflowRoutes } from '@vision/utils/workflowRoutes';
 
 export const ExplorerFileUploadModalContainer = ({
   refetch,
 }: {
   refetch: () => void;
 }) => {
-  const dispatch = useDispatch();
-  const history = useHistory();
+  const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
 
   const showFileUploadModal = useSelector(
     ({ explorerReducer }: RootState) => explorerReducer.showFileUploadModal
@@ -47,12 +49,12 @@ export const ExplorerFileUploadModalContainer = ({
     (processAfter: boolean) => {
       if (processAfter) {
         dispatch(PopulateProcessFiles(uploadedFileIds));
-        history.push(getLink(workflowRoutes.process));
+        navigate(getLink(workflowRoutes.process));
       }
       onCancel();
       refetch();
     },
-    [history, uploadedFileIds, onCancel, refetch]
+    [navigate, uploadedFileIds, onCancel, refetch]
   );
 
   return (

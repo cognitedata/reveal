@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { CogniteClient, FileInfo } from '@cognite/sdk';
+import ReactPlayer from 'react-player';
+
+import styled from 'styled-components';
+
 import sdk from '@cognite/cdf-sdk-singleton';
 import { Icon } from '@cognite/cogs.js';
-import styled from 'styled-components';
-import ReactPlayer from 'react-player';
+import { CogniteClient, FileInfo } from '@cognite/sdk';
 
 const LoaderContainer = styled.div`
   width: 100%;
@@ -81,7 +83,7 @@ export const VideoPreview: React.FC<FilePreviewProps> = ({
       onReady={() => {
         isLoading(false);
       }}
-      onError={(_error) => {
+      onError={(_error: any) => {
         onError({
           message: 'Cannot play video',
           description:

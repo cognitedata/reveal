@@ -1,10 +1,12 @@
 import React from 'react';
-import { Body, Title } from '@cognite/cogs.js';
 
 import styled from 'styled-components';
-import { getContainer } from 'src/utils';
+
+import { getContainer } from '@vision/utils';
 import { Modal } from 'antd';
+
 import sdk from '@cognite/cdf-sdk-singleton';
+import { Body, Title } from '@cognite/cogs.js';
 
 export const AutoMLPredictionDocModal = (props: {
   selectedModelId?: number | undefined;

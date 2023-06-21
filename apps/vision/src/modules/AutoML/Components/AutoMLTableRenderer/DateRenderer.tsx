@@ -1,8 +1,11 @@
 import React from 'react';
-import { AutoMLTableDataType } from 'src/modules/AutoML/Components/AutoMLModelList';
-import { Icon } from '@cognite/cogs.js';
+
 import styled from 'styled-components';
-import { dateformat } from 'src/utils/DateUtils';
+
+import { AutoMLTableDataType } from '@vision/modules/AutoML/Components/AutoMLModelList';
+import { dateformat } from '@vision/utils/DateUtils';
+
+import { Icon } from '@cognite/cogs.js';
 
 export const DateRenderer = ({
   rowData: { createdTime },

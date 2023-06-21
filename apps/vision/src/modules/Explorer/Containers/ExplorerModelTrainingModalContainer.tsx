@@ -1,13 +1,15 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from 'src/store/rootReducer';
-import { selectExplorerAllSelectedFilesInSortedOrder } from 'src/modules/Explorer/store/selectors';
-import { VisionFile } from 'src/modules/Common/store/files/types';
-import { setModelTrainingModalVisibility } from 'src/modules/Common/store/common/slice';
-import { ModelTrainingModal } from 'src/modules/Common/Components/ModelTrainingModal/ModelTrainingModal';
+
+import { ModelTrainingModal } from '@vision/modules/Common/Components/ModelTrainingModal/ModelTrainingModal';
+import { setModelTrainingModalVisibility } from '@vision/modules/Common/store/common/slice';
+import { VisionFile } from '@vision/modules/Common/store/files/types';
+import { selectExplorerAllSelectedFilesInSortedOrder } from '@vision/modules/Explorer/store/selectors';
+import { AppDispatch } from '@vision/store';
+import { RootState } from '@vision/store/rootReducer';
 
 export const ExplorerModelTrainingModalContainer = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const showModelTrainingModal = useSelector(
     ({ commonReducer }: RootState) => commonReducer.showModelTrainingModal

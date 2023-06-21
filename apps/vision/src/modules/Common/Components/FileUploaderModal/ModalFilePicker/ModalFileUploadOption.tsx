@@ -1,15 +1,20 @@
 import React from 'react';
-import styled from 'styled-components';
-import { Body, Checkbox, Detail, Icon, Tooltip } from '@cognite/cogs.js';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from 'src/store/rootReducer';
+
+import styled from 'styled-components';
+
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { DataSetSelect } from '@vision/modules/Common/Components/DataSetSelect/DataSetSelect';
 import {
   setDataSetIds,
   setExtractExif,
-} from 'src/modules/Common/store/files/slice';
+} from '@vision/modules/Common/store/files/slice';
+import { AppDispatch } from '@vision/store';
+import { RootState } from '@vision/store/rootReducer';
+
+import { Body, Checkbox, Detail, Icon, Tooltip } from '@cognite/cogs.js';
+
 import 'antd/dist/antd.css';
-import { DataSetSelect } from 'src/modules/Common/Components/DataSetSelect/DataSetSelect';
 
 export interface ModalFileUploadOptionProps {
   isDisabled?: boolean;
@@ -19,7 +24,7 @@ export function ModalFileUploadOption({
   isDisabled,
 }: ModalFileUploadOptionProps) {
   const queryClient = new QueryClient();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const { dataSetIds } = useSelector((state: RootState) => state.fileReducer); // remove these state dependencies
   const { extractExif } = useSelector((state: RootState) => state.fileReducer);

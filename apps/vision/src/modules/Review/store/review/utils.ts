@@ -1,14 +1,14 @@
-import isFinite from 'lodash-es/isFinite';
-import { UnsavedVisionAnnotation } from 'src/modules/Common/types';
 import {
   CDFAnnotationTypeEnum,
   ImageKeypointCollection,
   Status,
-} from 'src/api/annotation/types';
+} from '@vision/api/annotation/types';
+import { UnsavedVisionAnnotation } from '@vision/modules/Common/types';
 import {
   TempKeypointCollection,
   VisionReviewAnnotation,
-} from 'src/modules/Review/types';
+} from '@vision/modules/Review/types';
+import isFinite from 'lodash/isFinite';
 
 /**
  * Returns UnsavedVisionImageKeypointCollection with confidence set to 1 for annotation itself and each keypoint,

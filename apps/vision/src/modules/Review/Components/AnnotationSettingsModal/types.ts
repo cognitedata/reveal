@@ -1,4 +1,4 @@
-import { PredefinedKeypointCollection } from 'src/modules/Review/types';
+import { PredefinedKeypointCollection } from '@vision/modules/Review/types';
 
 export type NewKeypoints = Pick<
   PredefinedKeypointCollection,

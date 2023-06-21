@@ -1,15 +1,17 @@
 import React from 'react';
-import mime from 'mime-types';
 import { Column, ColumnShape } from 'react-base-table';
-import { ResultData, TableDataItem } from 'src/modules/Common/types';
-import { StringRenderer } from 'src/modules/Common/Containers/FileTableRenderers/StringRenderer';
-import { SelectableTable } from 'src/modules/Common/Components/SelectableTable/SelectableTable';
-import { NameRenderer } from 'src/modules/Common/Containers/FileTableRenderers/NameRenderer';
-import { StatusRenderer } from 'src/modules/Common/Containers/FileTableRenderers/StatusRenderer';
-import { AnnotationRenderer } from 'src/modules/Common/Containers/FileTableRenderers/AnnotationRenderer';
-import { ActionRendererProcess } from 'src/modules/Common/Containers/FileTableRenderers/ActionRenderer';
-import { LoadingTable } from 'src/modules/Common/Components/LoadingRenderer/LoadingTable';
-import { NoData } from 'src/modules/Common/Components/NoData/NoData';
+
+import { LoadingTable } from '@vision/modules/Common/Components/LoadingRenderer/LoadingTable';
+import { NoData } from '@vision/modules/Common/Components/NoData/NoData';
+import { SelectableTable } from '@vision/modules/Common/Components/SelectableTable/SelectableTable';
+import { ActionRendererProcess } from '@vision/modules/Common/Containers/FileTableRenderers/ActionRenderer';
+import { AnnotationRenderer } from '@vision/modules/Common/Containers/FileTableRenderers/AnnotationRenderer';
+import { NameRenderer } from '@vision/modules/Common/Containers/FileTableRenderers/NameRenderer';
+import { StatusRenderer } from '@vision/modules/Common/Containers/FileTableRenderers/StatusRenderer';
+import { StringRenderer } from '@vision/modules/Common/Containers/FileTableRenderers/StringRenderer';
+import { ResultData, TableDataItem } from '@vision/modules/Common/types';
+import mime from 'mime-types';
+
 import { FileListTableProps } from './types';
 
 const rendererMap = {

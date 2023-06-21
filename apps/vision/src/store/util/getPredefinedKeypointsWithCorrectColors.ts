@@ -1,4 +1,4 @@
-import { PredefinedKeypoint } from 'src/modules/Review/types';
+import { PredefinedKeypoint } from '@vision/modules/Review/types';
 
 /**
  * This populates predefined keypoints with correct colors

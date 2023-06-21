@@ -1,10 +1,19 @@
-import isEmpty from 'lodash-es/isEmpty';
-import isFinite from 'lodash-es/isFinite';
+import {
+  CDFAnnotationTypeEnum,
+  ImageAssetLink,
+  ImageExtractedText,
+  ImageKeypointCollection,
+  ImageObjectDetection,
+  ImageObjectDetectionBoundingBox,
+  ImageObjectDetectionPolygon,
+  ImageObjectDetectionPolyline,
+  Status,
+} from '@vision/api/annotation/types';
 import {
   UnsavedVisionAnnotation,
   VisionAnnotation,
   VisionAnnotationDataType,
-} from 'src/modules/Common/types';
+} from '@vision/modules/Common/types';
 import {
   isImageAssetLinkData,
   isImageClassificationData,
@@ -14,8 +23,8 @@ import {
   isImageObjectDetectionData,
   isImageObjectDetectionPolygonData,
   isImageObjectDetectionPolylineData,
-} from 'src/modules/Common/types/typeGuards';
-import { getAnnotationLabelOrText } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
+} from '@vision/modules/Common/types/typeGuards';
+import { getAnnotationLabelOrText } from '@vision/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
 import {
   AnnotatorBaseRegion,
   AnnotatorBoxRegion,
@@ -28,25 +37,17 @@ import {
   isAnnotatorLineRegion,
   isAnnotatorPointRegion,
   isAnnotatorPolygonRegion,
-} from 'src/modules/Review/Components/ReactImageAnnotateWrapper/types';
-import {
-  CDFAnnotationTypeEnum,
-  ImageAssetLink,
-  ImageExtractedText,
-  ImageKeypointCollection,
-  ImageObjectDetection,
-  ImageObjectDetectionBoundingBox,
-  ImageObjectDetectionPolygon,
-  ImageObjectDetectionPolyline,
-  Status,
-} from 'src/api/annotation/types';
+} from '@vision/modules/Review/Components/ReactImageAnnotateWrapper/types';
+import { convertTempKeypointCollectionToVisionReviewImageKeypointCollection } from '@vision/modules/Review/store/review/utils';
 import {
   ReviewKeypoint,
   TempKeypointCollection,
   TurnKeypointType,
   VisionReviewAnnotation,
-} from 'src/modules/Review/types';
-import { convertTempKeypointCollectionToVisionReviewImageKeypointCollection } from 'src/modules/Review/store/review/utils';
+} from '@vision/modules/Review/types';
+import isEmpty from 'lodash/isEmpty';
+import isFinite from 'lodash/isFinite';
+
 import { AnnotationChangeById } from '@cognite/sdk';
 
 /**

@@ -1,6 +1,8 @@
-import styled from 'styled-components';
-import { Icon } from '@cognite/cogs.js';
 import React from 'react';
+
+import styled from 'styled-components';
+
+import { Icon } from '@cognite/cogs.js';
 
 /**
  * Annimated Expand/Collapse icon component
@@ -9,14 +11,13 @@ import React from 'react';
  */
 export const ExpandIconComponent = ({ isActive }: { isActive: boolean }) => {
   return (
-    <IconContainer>
-      <Icon
-        type="ChevronDownSmall"
-        style={{
-          transition: 'transform .2s',
-          transform: `rotate(${isActive ? 0 : -180}deg)`,
-        }}
-      />
+    <IconContainer
+      style={{
+        transition: 'transform .2s',
+        transform: `rotate(${isActive ? 0 : -180}deg)`,
+      }}
+    >
+      <Icon type="ChevronDownSmall" />
     </IconContainer>
   );
 };

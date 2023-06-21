@@ -1,29 +1,30 @@
 /* eslint-disable array-callback-return */
 import React, { useState } from 'react';
-import { Select, Button } from '@cognite/cogs.js';
+import { useSelector } from 'react-redux';
 import { Props as SelectProps } from 'react-select';
+
+import styled from 'styled-components';
+
 import {
   ParamsCustomModel,
   VisionDetectionModelType,
-} from 'src/api/vision/detectionModels/types';
-
-import * as tagDetectionModelDetails from 'src/modules/Process/Containers/ModelDetails/TagDetectionModelDetails';
-import * as objectDetectionModelDetails from 'src/modules/Process/Containers/ModelDetails/ObjectDetectionModelDetails';
-import * as peopleDetectionModelDetails from 'src/modules/Process/Containers/ModelDetails/PeopleDetectionModelDetails';
-import * as ocrModelDetails from 'src/modules/Process/Containers/ModelDetails/OcrModelDetails';
-import * as customModelDetails from 'src/modules/Process/Containers/ModelDetails/customModelDetails';
-import * as gaugeReaderDetails from 'src/modules/Process/Containers/ModelDetails/gaugeReaderDetails';
-
+} from '@vision/api/vision/detectionModels/types';
 import {
   ColorsOCR,
   ColorsObjectDetection,
   ColorsTagDetection,
   ColorsPersonDetection,
-} from 'src/constants/Colors';
-import styled from 'styled-components';
-import { useSelector } from 'react-redux';
-import { RootState } from 'src/store/rootReducer';
-import { BUILT_IN_MODEL_COUNT } from 'src/modules/Process/store/slice';
+} from '@vision/constants/Colors';
+import * as customModelDetails from '@vision/modules/Process/Containers/ModelDetails/customModelDetails';
+import * as gaugeReaderDetails from '@vision/modules/Process/Containers/ModelDetails/gaugeReaderDetails';
+import * as objectDetectionModelDetails from '@vision/modules/Process/Containers/ModelDetails/ObjectDetectionModelDetails';
+import * as ocrModelDetails from '@vision/modules/Process/Containers/ModelDetails/OcrModelDetails';
+import * as peopleDetectionModelDetails from '@vision/modules/Process/Containers/ModelDetails/PeopleDetectionModelDetails';
+import * as tagDetectionModelDetails from '@vision/modules/Process/Containers/ModelDetails/TagDetectionModelDetails';
+import { BUILT_IN_MODEL_COUNT } from '@vision/modules/Process/store/slice';
+import { RootState } from '@vision/store/rootReducer';
+
+import { Select, Button } from '@cognite/cogs.js';
 
 type SelectOption = {
   label: any;

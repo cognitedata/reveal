@@ -2,6 +2,7 @@
  * Completely taken from data-exploration since basic table has no styles
  */
 import styled, { css } from 'styled-components';
+
 import { Colors } from '@cognite/cogs.js';
 
 // todo: remove hardcoded BaseTable class prefixes since they can change on classPrefix of BaseTable

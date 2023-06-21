@@ -1,8 +1,13 @@
-import { DateRange, FileInfo } from '@cognite/sdk';
+import { mockFileInfo } from '@vision/__test-utils/data/mockFileInfo';
+import { timeFormat } from '@vision/modules/FilterSidePanel/Components/Filters/TimeFilter';
+import {
+  DateActions,
+  DateOptions,
+} from '@vision/modules/FilterSidePanel/types';
 import moment from 'moment';
-import { mockFileInfo } from 'src/__test-utils/data/mockFileInfo';
-import { timeFormat } from 'src/modules/FilterSidePanel/Components/Filters/TimeFilter';
-import { DateActions, DateOptions } from 'src/modules/FilterSidePanel/types';
+
+import { DateRange, FileInfo } from '@cognite/sdk';
+
 import {
   calculateTotalSeconds,
   filterByTime,

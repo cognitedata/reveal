@@ -1,10 +1,13 @@
 import React from 'react';
-import { Body, Button, Icon, Tooltip } from '@cognite/cogs.js';
+
 import {
   AnnotationsBadgeCounts,
   AnnotationsBadgeStatuses,
   AnnotationStatuses,
-} from 'src/modules/Common/types';
+} from '@vision/modules/Common/types';
+
+import { Body, Button, Icon, Tooltip } from '@cognite/cogs.js';
+
 import { showBadge } from './utils';
 
 const setBadge = (count: number, statuses?: AnnotationStatuses) => {

@@ -1,13 +1,14 @@
-import { FileInfo } from '@cognite/sdk';
-import sdk from '@cognite/cdf-sdk-singleton';
+import { fileFilterByAnnotation } from '@vision/api/annotation/fileFilterByAnnotation';
+import { totalFileCount } from '@vision/api/file/aggregate';
+import { filterByTime } from '@vision/api/file/fetchFiles/filterByTimeUtils';
+import { getValidMimeTypesByMediaType } from '@vision/api/file/fetchFiles/mimeTypeUtils';
+import { getValidFilters } from '@vision/api/utils/getValidFilters';
+import { VisionFileFilterProps } from '@vision/modules/FilterSidePanel/types';
 import { lastValueFrom, of, Subject } from 'rxjs';
 import { expand, finalize, takeUntil, takeWhile, tap } from 'rxjs/operators';
-import { VisionFileFilterProps } from 'src/modules/FilterSidePanel/types';
-import { totalFileCount } from 'src/api/file/aggregate';
-import { fileFilterByAnnotation } from 'src/api/annotation/fileFilterByAnnotation';
-import { filterByTime } from 'src/api/file/fetchFiles/filterByTimeUtils';
-import { getValidMimeTypesByMediaType } from 'src/api/file/fetchFiles/mimeTypeUtils';
-import { getValidFilters } from 'src/api/utils/getValidFilters';
+
+import sdk from '@cognite/cdf-sdk-singleton';
+import { FileInfo } from '@cognite/sdk';
 
 const requestCancelSubject: Subject<boolean> = new Subject<boolean>();
 export const cancelFetch = () => {

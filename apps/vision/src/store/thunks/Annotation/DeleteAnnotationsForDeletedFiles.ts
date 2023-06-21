@@ -1,9 +1,10 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { ThunkConfig } from 'src/store/rootReducer';
-import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
-import { AnnotationFilterRequest, InternalId } from '@cognite/sdk';
-import { ANNOTATED_RESOURCE_TYPE } from 'src/constants/annotationMetadata';
+import { ANNOTATED_RESOURCE_TYPE } from '@vision/constants/annotationMetadata';
+import { ThunkConfig } from '@vision/store/rootReducer';
+import { DeleteAnnotations } from '@vision/store/thunks/Annotation/DeleteAnnotations';
+
 import sdk from '@cognite/cdf-sdk-singleton';
+import { AnnotationFilterRequest, InternalId } from '@cognite/sdk';
 
 const BATCH_SIZE = 10;
 

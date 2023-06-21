@@ -1,19 +1,23 @@
 import React, { useMemo } from 'react';
-import { Button, Tooltip } from '@cognite/cogs.js';
-import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
-import exifIcon from 'src/assets/exifIcon.svg';
-import { RootState } from 'src/store/rootReducer';
-import { selectUpdatedFileDetails } from 'src/modules/FileDetails/selectors';
-import { isProcessingFile } from 'src/modules/Process/store/utils';
-import { makeSelectJobStatusForFile } from 'src/modules/Process/store/selectors';
-import { TableDataItem } from 'src/modules/Common/types';
+
+import styled from 'styled-components';
+
+import ExifIcon from '@vision/assets/exifIcon';
+import { ActionMenu } from '@vision/modules/Common/Components/ActionMenu/ActionMenu';
+import { AnnotationsBadgePopover } from '@vision/modules/Common/Components/AnnotationsBadge/AnnotationBadgePopover';
+import { Thumbnail } from '@vision/modules/Common/Components/Thumbnail/Thumbnail';
+import { makeSelectTotalAnnotationCountForFileIds } from '@vision/modules/Common/store/annotation/selectors';
+import { TableDataItem } from '@vision/modules/Common/types';
+import { selectUpdatedFileDetails } from '@vision/modules/FileDetails/selectors';
+import { makeSelectJobStatusForFile } from '@vision/modules/Process/store/selectors';
+import { isProcessingFile } from '@vision/modules/Process/store/utils';
+import { AppDispatch } from '@vision/store';
+import { RootState } from '@vision/store/rootReducer';
+import { DeleteFilesById } from '@vision/store/thunks/Files/DeleteFilesById';
+
+import { Button, Tooltip } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
-import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
-import { makeSelectTotalAnnotationCountForFileIds } from 'src/modules/Common/store/annotation/selectors';
-import { ActionMenu } from 'src/modules/Common/Components/ActionMenu/ActionMenu';
-import { Thumbnail } from 'src/modules/Common/Components/Thumbnail/Thumbnail';
-import { AnnotationsBadgePopover } from 'src/modules/Common/Components/AnnotationsBadge/AnnotationBadgePopover';
 
 export const MapPopup = ({
   item,
@@ -26,7 +30,7 @@ export const MapPopup = ({
   actionDisabled: boolean;
   onClose: () => void;
 }) => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { menuActions, rowKey, ...fileInfo } = item;
 
@@ -79,9 +83,7 @@ export const MapPopup = ({
                     <div className="name">{item.name}</div>
                     {fileDetails?.geoLocation && (
                       <Tooltip content="Geolocated">
-                        <div className="exif">
-                          <img src={exifIcon} alt="exifIcon" />
-                        </div>
+                        <StyledExifIcon />
                       </Tooltip>
                     )}
                   </div>
@@ -177,10 +179,6 @@ const MapPopupContainer = styled.div`
         overflow: hidden;
         max-width: 150px;
       }
-      .exif > img {
-        width: 11px;
-        padding-bottom: 15px;
-      }
     }
 
     .close {
@@ -226,4 +224,9 @@ const MapPopupContainer = styled.div`
       }
     }
   }
+`;
+
+const StyledExifIcon = styled(ExifIcon)`
+  width: 11px;
+  padding-bottom: 15px;
 `;

@@ -5,7 +5,13 @@ import {
   getDummyImageObjectDetectionBoundingBoxAnnotation,
   getDummyImageObjectDetectionPolygonAnnotation,
   getDummyImageObjectDetectionPolylineAnnotation,
-} from 'src/__test-utils/getDummyAnnotations';
+} from '@vision/__test-utils/getDummyAnnotations';
+import { Status } from '@vision/api/annotation/types';
+import {
+  AnnotationsBadgeCounts,
+  VisionAnnotation,
+  VisionAnnotationDataType,
+} from '@vision/modules/Common/types';
 import {
   filterAnnotations,
   filterAnnotationIdsByAnnotationStatus,
@@ -14,13 +20,7 @@ import {
   getAnnotationsBadgeCounts,
   generateKeypointId,
   calculateBadgeCountsDifferences,
-} from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
-import {
-  AnnotationsBadgeCounts,
-  VisionAnnotation,
-  VisionAnnotationDataType,
-} from 'src/modules/Common/types';
-import { Status } from 'src/api/annotation/types';
+} from '@vision/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
 
 const ANN_WITH_PUMP_LABEL_OR_TEXT_COUNT = 6;
 const ANN_WITH_SUGGESTED_PUMP_COUNT = 5;

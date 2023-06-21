@@ -1,18 +1,20 @@
 import React from 'react';
-import mime from 'mime-types';
 import { Column, ColumnShape } from 'react-base-table';
-import { ResultData, TableDataItem } from 'src/modules/Common/types';
-import { StringRenderer } from 'src/modules/Common/Containers/FileTableRenderers/StringRenderer';
-import { SelectableTable } from 'src/modules/Common/Components/SelectableTable/SelectableTable';
-import { NameRenderer } from 'src/modules/Common/Containers/FileTableRenderers/NameRenderer';
-import { ActionRendererExplorer } from 'src/modules/Common/Containers/FileTableRenderers/ActionRenderer';
-import { AnnotationRenderer } from 'src/modules/Common/Containers/FileTableRenderers/AnnotationRenderer';
-import { DateRenderer } from 'src/modules/Common/Containers/FileTableRenderers/DateRenderer';
 import { useSelector } from 'react-redux';
-import { RootState } from 'src/store/rootReducer';
-import { LoadingTable } from 'src/modules/Common/Components/LoadingRenderer/LoadingTable';
-import { NoData } from 'src/modules/Common/Components/NoData/NoData';
-import { SortKeys } from 'src/modules/Common/Utils/SortUtils';
+
+import { LoadingTable } from '@vision/modules/Common/Components/LoadingRenderer/LoadingTable';
+import { NoData } from '@vision/modules/Common/Components/NoData/NoData';
+import { SelectableTable } from '@vision/modules/Common/Components/SelectableTable/SelectableTable';
+import { ActionRendererExplorer } from '@vision/modules/Common/Containers/FileTableRenderers/ActionRenderer';
+import { AnnotationRenderer } from '@vision/modules/Common/Containers/FileTableRenderers/AnnotationRenderer';
+import { DateRenderer } from '@vision/modules/Common/Containers/FileTableRenderers/DateRenderer';
+import { NameRenderer } from '@vision/modules/Common/Containers/FileTableRenderers/NameRenderer';
+import { StringRenderer } from '@vision/modules/Common/Containers/FileTableRenderers/StringRenderer';
+import { ResultData, TableDataItem } from '@vision/modules/Common/types';
+import { SortKeys } from '@vision/modules/Common/Utils/SortUtils';
+import { RootState } from '@vision/store/rootReducer';
+import mime from 'mime-types';
+
 import { FileListTableProps } from './types';
 
 const getTimestampDataKey = (

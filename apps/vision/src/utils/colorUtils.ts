@@ -1,13 +1,13 @@
-import { LegacyAnnotation } from 'src/api/annotation/legacy/legacyTypes';
-import { CDFAnnotationTypeEnum } from 'src/api/annotation/types';
+import { LegacyAnnotation } from '@vision/api/annotation/legacy/legacyTypes';
+import { CDFAnnotationTypeEnum } from '@vision/api/annotation/types';
 import {
   ColorsObjectDetection,
   ColorsOCR,
   ColorsPersonDetection,
   ColorsTagDetection,
-} from 'src/constants/Colors';
-import { getRandomColor } from 'src/modules/Review/Components/AnnotationSettingsModal/AnnotationSettingsUtils';
-import { isSensitiveAnnotationLabel } from 'src/utils/textUtils';
+} from '@vision/constants/Colors';
+import { getRandomColor } from '@vision/modules/Review/Components/AnnotationSettingsModal/AnnotationSettingsUtils';
+import { isSensitiveAnnotationLabel } from '@vision/utils/textUtils';
 
 export const getAnnotationColorFromColorKey = (
   annotationColorMap: Record<string, string>,

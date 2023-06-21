@@ -1,30 +1,34 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Collapse } from 'antd';
+import { useDispatch, useSelector } from 'react-redux';
+
+import styled from 'styled-components';
+
 import { CaretRightOutlined } from '@ant-design/icons';
-import { ClearButton } from 'src/modules/Explorer/Components/ClearButton';
-import { selectExploreFileCount } from 'src/modules/Explorer/store/selectors';
+import { totalFileCount } from '@vision/api/file/aggregate';
+import { cancelFetch } from '@vision/api/file/fetchFiles/fetchFiles';
+import { ClearButton } from '@vision/modules/Explorer/Components/ClearButton';
+import { selectExploreFileCount } from '@vision/modules/Explorer/store/selectors';
 import {
   setExplorerFilter,
   toggleExplorerFilterView,
-} from 'src/modules/Explorer/store/slice';
-import styled from 'styled-components';
-import { Body, Button, Title, Tooltip } from '@cognite/cogs.js';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from 'src/store/rootReducer';
-import { FileFilterProps } from '@cognite/sdk';
-import { totalFileCount } from 'src/api/file/aggregate';
-import { cancelFetch } from 'src/api/file/fetchFiles/fetchFiles';
+} from '@vision/modules/Explorer/store/slice';
+import { FilterItemHeader } from '@vision/modules/FilterSidePanel/Components/FilterItemHeader';
 import {
   FilterPanelConfigItem,
   getFilterPanelItems,
-} from 'src/modules/FilterSidePanel/Components/getFilterPanelItems';
-import { FilterItemHeader } from 'src/modules/FilterSidePanel/Components/FilterItemHeader';
+} from '@vision/modules/FilterSidePanel/Components/getFilterPanelItems';
+import { AppDispatch } from '@vision/store';
+import { RootState } from '@vision/store/rootReducer';
+import { Collapse } from 'antd';
+
+import { Body, Button, Title, Tooltip } from '@cognite/cogs.js';
+import { FileFilterProps } from '@cognite/sdk';
 
 const { Panel } = Collapse;
 
 export const FilterSidePanel = () => {
   const [totalCount, setTotalCount] = useState<number>(0);
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const filter = useSelector(
     ({ explorerReducer }: RootState) => explorerReducer.filter
   );

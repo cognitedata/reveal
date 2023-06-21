@@ -1,7 +1,7 @@
 import {
   CogsFile,
   WebkitFile,
-} from 'src/modules/Common/Components/FileUploader/FilePicker/types';
+} from '@vision/modules/Common/Components/FileUploader/FilePicker/types';
 
 export * from './attrAccept';
 

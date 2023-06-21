@@ -1,24 +1,28 @@
 import React from 'react';
-import { Modal } from 'antd';
-import { Button } from '@cognite/cogs.js';
-import { PopulateProcessFiles } from 'src/store/thunks/Process/PopulateProcessFiles';
-import styled from 'styled-components';
-import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from 'src/store/rootReducer';
+import { useNavigate } from 'react-router-dom';
+
+import styled from 'styled-components';
+
 import {
   selectIsPollingComplete,
   selectIsProcessingStarted,
   selectAllProcessFiles,
-} from 'src/modules/Process/store/selectors';
-import { setSummaryModalVisibility } from 'src/modules/Process/store/slice';
+} from '@vision/modules/Process/store/selectors';
+import { setSummaryModalVisibility } from '@vision/modules/Process/store/slice';
+import { AppDispatch } from '@vision/store';
+import { RootState } from '@vision/store/rootReducer';
+import { PopulateProcessFiles } from '@vision/store/thunks/Process/PopulateProcessFiles';
+import { Modal } from 'antd';
+
 import { createLink } from '@cognite/cdf-utilities';
-import { AppDispatch } from 'src/store';
+import { Button } from '@cognite/cogs.js';
+
 import { SummaryModal } from './SummaryModal/SummaryModal';
 
 export const ProcessFooter = () => {
-  const history = useHistory();
-  const dispatch: AppDispatch = useDispatch();
+  const navigate = useNavigate();
+  const dispatch: AppDispatch = useDispatch<AppDispatch>();
   const isPollingFinished = useSelector((state: RootState) => {
     return selectIsPollingComplete(state.processSlice);
   });
@@ -34,7 +38,7 @@ export const ProcessFooter = () => {
   const clearOnFinishProcessing = async () => {
     dispatch(setSummaryModalVisibility(false));
     await dispatch(PopulateProcessFiles([])); // wait until state clears unless warning will be shown
-    history.push(createLink('/vision/explore'));
+    navigate(createLink('/vision/explore'));
   };
 
   const handleShowSummaryModal = () => {

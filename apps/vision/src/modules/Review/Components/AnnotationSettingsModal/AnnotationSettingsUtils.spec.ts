@@ -1,11 +1,11 @@
-import { HEX_COLOR_CODE_REGEX } from 'src/constants/Colors';
+import { HEX_COLOR_CODE_REGEX } from '@vision/constants/Colors';
 import {
   getRandomColor,
   validNewKeypoint,
   validNewShapes,
-} from 'src/modules/Review/Components/AnnotationSettingsModal/AnnotationSettingsUtils';
-import { NewKeypoints } from 'src/modules/Review/Components/AnnotationSettingsModal/types';
-import { PredefinedShape } from 'src/modules/Review/types';
+} from '@vision/modules/Review/Components/AnnotationSettingsModal/AnnotationSettingsUtils';
+import { NewKeypoints } from '@vision/modules/Review/Components/AnnotationSettingsModal/types';
+import { PredefinedShape } from '@vision/modules/Review/types';
 
 describe('Test getRandomColor', () => {
   it('should return a valid color when called', () => {

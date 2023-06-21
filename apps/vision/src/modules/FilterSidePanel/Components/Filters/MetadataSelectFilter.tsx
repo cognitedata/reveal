@@ -1,13 +1,19 @@
 import React, { useEffect } from 'react';
+
+import { VisionFilterItemProps } from '@vision/modules/FilterSidePanel/types';
+
 import { MetadataFilter } from '@cognite/data-exploration';
+import { FileInfo } from '@cognite/sdk';
 import { useList } from '@cognite/sdk-react-query-hooks';
-import { VisionFilterItemProps } from 'src/modules/FilterSidePanel/types';
 
 export const MetadataSelectFilter = ({
   filter,
   setFilter,
 }: VisionFilterItemProps) => {
-  const { data: items = [] } = useList('files', { filter, limit: 1000 });
+  const { data: items = [] } = useList<FileInfo>('files', {
+    filter,
+    limit: 1000,
+  });
 
   // set redux state to undefined when clear metadata using build in clear button(s)
   useEffect(() => {

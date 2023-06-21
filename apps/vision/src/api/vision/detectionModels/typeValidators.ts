@@ -1,5 +1,6 @@
-import isFinite from 'lodash-es/isFinite';
-import { RegionShape } from 'src/api/annotation/types';
+import { RegionShape } from '@vision/api/annotation/types';
+import isFinite from 'lodash/isFinite';
+
 import {
   GaugeReaderJobAnnotation,
   TagDetectionJobAnnotation,

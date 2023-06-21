@@ -4,17 +4,18 @@ import {
   isRejected,
   PayloadAction,
 } from '@reduxjs/toolkit';
-import { CDFStatusModes } from 'src/modules/Common/Components/CDFStatus/CDFStatus';
-import { SaveAnnotationTemplates } from 'src/store/thunks/Annotation/SaveAnnotationTemplates';
-import { UpdateFiles } from 'src/store/thunks/Files/UpdateFiles';
-import { ToastUtils } from 'src/utils/ToastUtils';
-import { PollJobs } from 'src/store/thunks/Process/PollJobs';
-import { CreateVisionJob } from 'src/store/thunks/Process/CreateVisionJob';
-import { SaveAnnotations } from 'src/store/thunks/Annotation/SaveAnnotations';
-import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
-import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
-import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
-import { extractErrorMessage } from 'src/utils/extractErrorMessage';
+import { CDFStatusModes } from '@vision/modules/Common/Components/CDFStatus/CDFStatus';
+import { DeleteAnnotations } from '@vision/store/thunks/Annotation/DeleteAnnotations';
+import { RetrieveAnnotations } from '@vision/store/thunks/Annotation/RetrieveAnnotations';
+import { SaveAnnotations } from '@vision/store/thunks/Annotation/SaveAnnotations';
+import { SaveAnnotationTemplates } from '@vision/store/thunks/Annotation/SaveAnnotationTemplates';
+import { UpdateAnnotations } from '@vision/store/thunks/Annotation/UpdateAnnotations';
+import { UpdateFiles } from '@vision/store/thunks/Files/UpdateFiles';
+import { CreateVisionJob } from '@vision/store/thunks/Process/CreateVisionJob';
+import { PollJobs } from '@vision/store/thunks/Process/PollJobs';
+import { extractErrorMessage } from '@vision/utils/extractErrorMessage';
+import { ToastUtils } from '@vision/utils/ToastUtils';
+
 import { BulkEditUnsavedState, CommonState } from './types';
 
 export const initialState: CommonState = {

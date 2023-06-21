@@ -1,13 +1,16 @@
-import { makeSelectTotalAnnotationCountForFileIds } from 'src/modules/Common/store/annotation/selectors';
-import { CellRenderer } from 'src/modules/Common/types';
-import { useSelector } from 'react-redux';
-import { RootState } from 'src/store/rootReducer';
-import { Tooltip } from '@cognite/cogs.js';
-import exifIcon from 'src/assets/exifIcon.svg';
 import React, { useMemo } from 'react';
+import { useSelector } from 'react-redux';
+
 import styled from 'styled-components';
-import { makeSelectJobStatusForFile } from 'src/modules/Process/store/selectors';
-import { AnnotationsBadgePopover } from 'src/modules/Common/Components/AnnotationsBadge/AnnotationBadgePopover';
+
+import ExifIcon from '@vision/assets/exifIcon';
+import { AnnotationsBadgePopover } from '@vision/modules/Common/Components/AnnotationsBadge/AnnotationBadgePopover';
+import { makeSelectTotalAnnotationCountForFileIds } from '@vision/modules/Common/store/annotation/selectors';
+import { CellRenderer } from '@vision/modules/Common/types';
+import { makeSelectJobStatusForFile } from '@vision/modules/Process/store/selectors';
+import { RootState } from '@vision/store/rootReducer';
+
+import { Tooltip } from '@cognite/cogs.js';
 
 export function NameAndAnnotationRenderer({
   rowData: { name, id, geoLocation },
@@ -31,9 +34,7 @@ export function NameAndAnnotationRenderer({
         <Filename>{name}</Filename>
         {geoLocation && (
           <Tooltip content="Geolocated">
-            <ExifIcon>
-              <img src={exifIcon} alt="exifIcon" />
-            </ExifIcon>
+            <StyledExifIcon />
           </Tooltip>
         )}
       </FileRow>
@@ -70,7 +71,7 @@ const Filename = styled.div`
   display: inline-block;
 `;
 
-export const ExifIcon = styled.div`
+export const StyledExifIcon = styled(ExifIcon)`
   display: flex;
   padding-bottom: 15px;
   padding-right: 0;

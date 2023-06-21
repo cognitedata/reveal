@@ -1,15 +1,25 @@
-import { Detail, Icon, SegmentedControl, Tooltip } from '@cognite/cogs.js';
-import { AnnotationActionMenuExtended } from 'src/modules/Common/Components/AnnotationActionMenu/AnnotationActionMenuExtended';
 import React from 'react';
-import useColorForLabel from 'src/store/hooks/useColorForLabel';
-import styled from 'styled-components';
-import { AnnotationTableRowProps } from 'src/modules/Review/types';
-import { pushMetric } from 'src/utils/pushMetric';
-import { createLink } from '@cognite/cdf-utilities';
 import { Link } from 'react-router-dom';
-import { getAnnotationLabelOrText } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
-import { Status } from 'src/api/annotation/types';
-import { isImageAssetLinkData } from 'src/modules/Common/types/typeGuards';
+
+import styled from 'styled-components';
+
+import { Status } from '@vision/api/annotation/types';
+import { AnnotationActionMenuExtended } from '@vision/modules/Common/Components/AnnotationActionMenu/AnnotationActionMenuExtended';
+import { isImageAssetLinkData } from '@vision/modules/Common/types/typeGuards';
+import { getAnnotationLabelOrText } from '@vision/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
+import { AnnotationTableRowProps } from '@vision/modules/Review/types';
+import useColorForLabel from '@vision/store/hooks/useColorForLabel';
+import { pushMetric } from '@vision/utils/pushMetric';
+
+import { createLink } from '@cognite/cdf-utilities';
+import {
+  Button,
+  Detail,
+  Icon,
+  SegmentedControl,
+  Tooltip,
+} from '@cognite/cogs.js';
+
 import { AnnotationTableRowAttribute } from './AnnotationTableRowAttribute';
 
 export const AnnotationTableRow = ({
@@ -54,21 +64,20 @@ export const AnnotationTableRow = ({
             `/explore/asset/${reviewAnnotation.annotation.assetRef.id}`
           )}
           target="_blank"
-          style={{ display: 'flex', alignItems: 'center' }}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            color: annotationColor,
+          }}
         >
-          <Icon
-            type="ExternalLink"
-            style={{
-              color: annotationColor,
-            }}
-          />
+          <Icon type="ExternalLink" />
         </Link>
       )}
-      <ShowHideIconContainer>
+      <ShowHideIconContainer style={{ color: '#595959' }}>
         {!reviewAnnotation.show ? (
-          <Icon
-            type="EyeHide"
-            style={{ color: '#595959' }}
+          <Button
+            type="ghost"
+            icon="EyeHide"
             onClick={() => {
               onVisibilityChange(reviewAnnotation.annotation.id);
             }}

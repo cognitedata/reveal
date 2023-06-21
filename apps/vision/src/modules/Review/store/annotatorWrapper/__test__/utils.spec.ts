@@ -1,10 +1,10 @@
-import { getDummyRegionOriginatedInAnnotator } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/__test-utils/region';
+import { getDummyRegionOriginatedInAnnotator } from '@vision/modules/Review/Components/ReactImageAnnotateWrapper/__test-utils/region';
 import {
   AnnotatorNewRegion,
   AnnotatorPointRegion,
   AnnotatorRegionType,
-} from 'src/modules/Review/Components/ReactImageAnnotateWrapper/types';
-import { getKeypointForAnnotatorPointRegion } from 'src/modules/Review/store/annotatorWrapper/utils';
+} from '@vision/modules/Review/Components/ReactImageAnnotateWrapper/types';
+import { getKeypointForAnnotatorPointRegion } from '@vision/modules/Review/store/annotatorWrapper/utils';
 
 describe('Test getKeypointForAnnotatorPointRegion function', () => {
   const tempRegionWithoutLabel = {

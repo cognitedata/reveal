@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React from 'react';
-import { Tag } from 'antd';
+
 import {
   getTagForOriginal,
   separateNewAssets,
   getTagForNew,
   getTagForUpdated,
-} from 'src/modules/Common/Components/BulkEdit/Asset/getDataForAssets';
-import { AssetIds } from 'src/modules/Common/store/common/types';
+} from '@vision/modules/Common/Components/BulkEdit/Asset/getDataForAssets';
+import { AssetIds } from '@vision/modules/Common/store/common/types';
+import { Tag } from 'antd';
 
 const assetsDetails: Record<number, { name: string }> = {
   1: { name: 'First Test Asset' },

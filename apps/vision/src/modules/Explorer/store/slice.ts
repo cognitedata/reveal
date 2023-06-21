@@ -1,25 +1,29 @@
 import { createAction, isAnyOf, PayloadAction } from '@reduxjs/toolkit';
-import { ExplorerFileState, ExplorerState } from 'src/modules/Explorer/types';
-import { SelectFilter } from 'src/modules/Common/types';
-import { FileInfo } from '@cognite/sdk';
-import { clearExplorerFileState } from 'src/store/commonActions';
-import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
-import { UpdateFiles } from 'src/store/thunks/Files/UpdateFiles';
-import { createFileState } from 'src/store/util/StateUtils';
-import { makeReducerSelectAllFilesWithFilter } from 'src/store/commonReducers';
-import { DEFAULT_PAGE_SIZE } from 'src/constants/PaginationConsts';
-import { VisionFileFilterProps } from 'src/modules/FilterSidePanel/types';
-import { SortKeys } from 'src/modules/Common/Utils/SortUtils';
-import isEqual from 'lodash-es/isEqual';
-import { createGenericTabularDataSlice } from 'src/store/genericTabularDataSlice';
+import { DEFAULT_PAGE_SIZE } from '@vision/constants/PaginationConsts';
+import { PageSize } from '@vision/modules/Common/Components/FileTable/types';
+import { SelectFilter } from '@vision/modules/Common/types';
+import { SortKeys } from '@vision/modules/Common/Utils/SortUtils';
 import {
   deleteFileById,
   updateFileState,
   resetFileState,
   resetSortPagination,
-} from 'src/modules/Explorer/store/utils';
-import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
-import { PageSize } from 'src/modules/Common/Components/FileTable/types';
+} from '@vision/modules/Explorer/store/utils';
+import {
+  ExplorerFileState,
+  ExplorerState,
+} from '@vision/modules/Explorer/types';
+import { VisionFileFilterProps } from '@vision/modules/FilterSidePanel/types';
+import { clearExplorerFileState } from '@vision/store/commonActions';
+import { makeReducerSelectAllFilesWithFilter } from '@vision/store/commonReducers';
+import { createGenericTabularDataSlice } from '@vision/store/genericTabularDataSlice';
+import { RetrieveAnnotations } from '@vision/store/thunks/Annotation/RetrieveAnnotations';
+import { DeleteFilesById } from '@vision/store/thunks/Files/DeleteFilesById';
+import { UpdateFiles } from '@vision/store/thunks/Files/UpdateFiles';
+import { createFileState } from '@vision/store/util/StateUtils';
+import isEqual from 'lodash/isEqual';
+
+import { FileInfo } from '@cognite/sdk';
 
 const initialState: ExplorerState = {
   focusedFileId: null,

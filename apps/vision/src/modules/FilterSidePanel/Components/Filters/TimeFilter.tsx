@@ -1,10 +1,13 @@
 import React from 'react';
-import { Button, Title } from '@cognite/cogs.js';
-import { TimePicker } from 'antd';
+
 import styled from 'styled-components';
+
+import { VisionFilterItemProps } from '@vision/modules/FilterSidePanel/types';
+import { TimePicker } from 'antd';
 import moment from 'moment';
+
+import { Button, Title } from '@cognite/cogs.js';
 import { DateRange } from '@cognite/sdk';
-import { VisionFilterItemProps } from 'src/modules/FilterSidePanel/types';
 
 export const timeFormat = 'hh:mm A';
 

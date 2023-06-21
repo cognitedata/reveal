@@ -6,7 +6,7 @@ import {
   ImageKeypointCollection,
   ImageObjectDetection,
   Status,
-} from 'src/api/annotation/types';
+} from '@vision/api/annotation/types';
 
 /**
  * Annotation types used within vision sub app

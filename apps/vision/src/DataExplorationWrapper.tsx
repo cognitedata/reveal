@@ -1,8 +1,10 @@
 import React from 'react';
+
 import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
-import { useUserInformation } from './hooks/useUserInformation';
-import { ids } from './cogs-variables';
 import { DataExplorationProvider } from '@cognite/data-exploration';
+
+import { ids } from './cogs-variables';
+import { useUserInformation } from './hooks/useUserInformation';
 
 export const DataExplorationWrapper = ({ children }: { children: any }) => {
   const { flow } = getFlow();

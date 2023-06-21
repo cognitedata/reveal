@@ -1,18 +1,20 @@
-import { FileUploadModal } from 'src/modules/Common/Components/FileUploaderModal/FileUploaderModal';
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from 'src/store/rootReducer';
+
+import { FileUploadModal } from '@vision/modules/Common/Components/FileUploaderModal/FileUploaderModal';
+import { selectAllProcessFiles } from '@vision/modules/Process/store/selectors';
 import {
   addProcessUploadedFileId,
   clearUploadedFiles,
   setProcessFileIds,
   setProcessViewFileUploadModalVisibility,
-} from 'src/modules/Process/store/slice';
-import { selectAllProcessFiles } from 'src/modules/Process/store/selectors';
-import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
+} from '@vision/modules/Process/store/slice';
+import { AppDispatch } from '@vision/store';
+import { RootState } from '@vision/store/rootReducer';
+import { DeleteFilesById } from '@vision/store/thunks/Files/DeleteFilesById';
 
 export const ProcessFileUploadModalContainer = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const processFiles = useSelector((state: RootState) =>
     selectAllProcessFiles(state)

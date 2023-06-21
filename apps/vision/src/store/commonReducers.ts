@@ -1,6 +1,7 @@
 import { PayloadAction } from '@reduxjs/toolkit';
+import { SelectFilter } from '@vision/modules/Common/types';
+
 import { FileGeoLocation } from '@cognite/sdk';
-import { SelectFilter } from 'src/modules/Common/types';
 
 type FileState = {
   id: number;

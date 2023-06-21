@@ -1,11 +1,15 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Body, Select } from '@cognite/cogs.js';
-import { EditPanelProps } from 'src/modules/Common/Components/BulkEdit/bulkEditOptions';
-import styled from 'styled-components';
 import { useSelector } from 'react-redux';
-import { RootState } from 'src/store/rootReducer';
-import { makeSelectAnnotationsForFileIds } from 'src/modules/Common/store/annotation/selectors';
-import { filterAnnotations } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
+
+import styled from 'styled-components';
+
+import { EditPanelProps } from '@vision/modules/Common/Components/BulkEdit/bulkEditOptions';
+import { makeSelectAnnotationsForFileIds } from '@vision/modules/Common/store/annotation/selectors';
+import { filterAnnotations } from '@vision/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
+import { RootState } from '@vision/store/rootReducer';
+
+import { Body, Select } from '@cognite/cogs.js';
+
 import {
   annotationEditOptions,
   AnnotationEditOptionType,

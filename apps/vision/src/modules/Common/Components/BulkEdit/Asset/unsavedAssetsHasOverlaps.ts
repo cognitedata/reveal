@@ -1,4 +1,4 @@
-import { BulkEditUnsavedState } from 'src/modules/Common/store/common/types';
+import { BulkEditUnsavedState } from '@vision/modules/Common/store/common/types';
 
 export const unsavedAssetsHasOverlaps = ({
   bulkEditUnsaved,

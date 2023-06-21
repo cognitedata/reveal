@@ -1,4 +1,5 @@
-import { JobStatus } from 'src/api/vision/detectionModels/types';
+import { JobStatus } from '@vision/api/vision/detectionModels/types';
+
 import { getFileJobsResultingStatus } from './getFileJobsResultingStatus';
 
 // FileTable data just needs to show ONE status. If there are multiple jobs,

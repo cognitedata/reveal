@@ -1,7 +1,10 @@
 import React from 'react';
-import { Detail } from '@cognite/cogs.js';
-import { Spin } from 'antd';
+
 import styled from 'styled-components';
+
+import { Spin } from 'antd';
+
+import { Detail } from '@cognite/cogs.js';
 
 export const ThumbnailProcessingOverlay = () => (
   <OverlayContainer>

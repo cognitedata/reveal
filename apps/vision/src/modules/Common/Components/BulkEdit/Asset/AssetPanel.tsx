@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
-import { Body, Select } from '@cognite/cogs.js';
-import { EditPanelProps } from 'src/modules/Common/Components/BulkEdit/bulkEditOptions';
+
 import styled from 'styled-components';
-import { AssetSelect } from '@cognite/data-exploration';
-import { BulkEditUnsavedState } from 'src/modules/Common/store/common/types';
+
+import { unsavedAssetsHasOverlaps } from '@vision/modules/Common/Components/BulkEdit/Asset/unsavedAssetsHasOverlaps';
+import { EditPanelProps } from '@vision/modules/Common/Components/BulkEdit/bulkEditOptions';
+import { BulkEditUnsavedState } from '@vision/modules/Common/store/common/types';
 import { Alert } from 'antd';
-import { unsavedAssetsHasOverlaps } from 'src/modules/Common/Components/BulkEdit/Asset/unsavedAssetsHasOverlaps';
+
+import { Body, Select } from '@cognite/cogs.js';
+import { AssetSelect } from '@cognite/data-exploration';
 
 enum TaskOptions {
   add = 'add',
@@ -39,6 +42,7 @@ const AssetEditPanel = ({
           <Body level={2}>Add asset</Body>
           <AssetSelectContainer>
             <AssetSelect
+              title="Asset ids"
               isMulti
               selectedAssetIds={bulkEditUnsaved.assetIds?.addedAssetIds}
               onAssetSelected={(selectedItems) => {
@@ -46,7 +50,7 @@ const AssetEditPanel = ({
                   ...bulkEditUnsaved,
                   assetIds: {
                     ...bulkEditUnsaved.assetIds,
-                    addedAssetIds: selectedItems,
+                    addedAssetIds: selectedItems?.map((x) => x.value),
                   },
                 });
               }}
@@ -68,6 +72,7 @@ const AssetEditPanel = ({
           <Body level={2}>Find asset</Body>
           <AssetSelectContainer>
             <AssetSelect
+              title="Asset ids"
               isMulti
               selectedAssetIds={bulkEditUnsaved.assetIds?.removedAssetIds}
               onAssetSelected={(selectedItems) => {
@@ -75,7 +80,7 @@ const AssetEditPanel = ({
                   ...bulkEditUnsaved,
                   assetIds: {
                     ...bulkEditUnsaved.assetIds,
-                    removedAssetIds: selectedItems,
+                    removedAssetIds: selectedItems?.map((x) => x.value),
                   },
                 });
               }}

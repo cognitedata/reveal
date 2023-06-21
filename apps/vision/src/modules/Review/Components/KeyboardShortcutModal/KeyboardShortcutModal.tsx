@@ -1,6 +1,8 @@
-import { Modal } from 'antd';
 import React from 'react';
-import { getContainer } from 'src/utils';
+
+import { getContainer } from '@vision/utils';
+import { Modal } from 'antd';
+
 import { KeyboardShortcutModalContent } from './KeyboardShortcutModalContent';
 
 export type KeyboardShortcutModalProps = {

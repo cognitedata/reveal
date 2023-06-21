@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { Tooltip, TooltipProps } from '@cognite/cogs.js';
 
 interface PopoverProps {

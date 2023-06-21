@@ -1,6 +1,7 @@
-import { useQuery } from 'react-query';
-import { AnnotationFilterRequest, InternalId } from '@cognite/sdk';
+import { useQuery } from '@tanstack/react-query';
+
 import sdk from '@cognite/cdf-sdk-singleton';
+import { AnnotationFilterRequest, InternalId } from '@cognite/sdk';
 
 /**
  * ## Example

@@ -1,5 +1,15 @@
 /* eslint-disable no-nested-ternary */
 import React, { useState } from 'react';
+
+import styled from 'styled-components';
+
+import {
+  AutoMLExportFormat,
+  AutoMLTrainingJob,
+} from '@vision/api/vision/autoML/types';
+import { useUserCapabilities } from '@vision/hooks/useUserCapabilities';
+import { AutoMLModelNameBadge } from '@vision/modules/AutoML/Components/AutoMLModelNameBadge';
+
 import {
   Button,
   Detail,
@@ -9,15 +19,9 @@ import {
   Popconfirm,
   Title,
 } from '@cognite/cogs.js';
-import styled from 'styled-components';
-import {
-  AutoMLExportFormat,
-  AutoMLTrainingJob,
-} from 'src/api/vision/autoML/types';
-import { AutoMLModelNameBadge } from 'src/modules/AutoML/Components/AutoMLModelNameBadge';
-import { useUserCapabilities } from 'src/hooks/useUserCapabilities';
-import { AutoMLMetricsOverview } from './AutoMLMetricsOverview';
+
 import { AutoMLCharts } from './AutoMLCharts';
+import { AutoMLMetricsOverview } from './AutoMLMetricsOverview';
 
 export const AutoMLModelPage = (props: {
   isLoadingJob: boolean;
@@ -76,7 +80,9 @@ export const AutoMLModelPage = (props: {
         }}
       >
         <>
-          <Icon type="Scan" style={{ marginRight: 17 }} />
+          <div style={{ marginRight: 17 }}>
+            <Icon type="Scan" />
+          </div>
           <Detail strong style={{ color: 'inherit' }}>
             Quick test
           </Detail>
@@ -84,7 +90,9 @@ export const AutoMLModelPage = (props: {
       </Menu.Item>
       <Menu.Submenu content={modelDownloadContent()}>
         <>
-          <Icon type="Download" style={{ marginRight: 17 }} />
+          <div style={{ marginRight: 17 }}>
+            <Icon type="Download" />
+          </div>
           <Detail strong style={{ color: 'inherit' }}>
             Download model
           </Detail>
@@ -96,7 +104,9 @@ export const AutoMLModelPage = (props: {
           setHideDropDown(true);
         }}
       >
-        <Icon type="World" style={{ marginRight: 17 }} />
+        <div style={{ marginRight: 17 }}>
+          <Icon type="World" />
+        </div>
         <Detail strong style={{ color: 'inherit' }}>
           Prediction URL
         </Detail>
@@ -134,7 +144,7 @@ export const AutoMLModelPage = (props: {
                 content="Are you sure you want to permanently delete this model?"
               >
                 <Button
-                  type="ghost-danger"
+                  type="ghost-destructive"
                   icon="Delete"
                   disabled={deleteDisabled}
                   loading={!isFetched}

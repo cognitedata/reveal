@@ -1,19 +1,22 @@
 import React from 'react';
+
+import styled from 'styled-components';
+
 import {
   annotationTypeIconMap,
   annotationTypeStyleMap,
-} from 'src/constants/annotationDetailPanel';
-import styled from 'styled-components';
-import { Icon, IconType } from '@cognite/cogs.js';
+} from '@vision/constants/annotationDetailPanel';
+import {
+  ExpandIconComponent,
+  KeyboardShortCutSelectable,
+} from '@vision/modules/Review/Containers/AnnotationDetailPanel/components/common';
 import {
   AnnotationDetailPanelAnnotationType,
   AnnotationDetailPanelRowDataBase,
   VirtualizedTreeRowProps,
-} from 'src/modules/Review/Containers/AnnotationDetailPanel/types';
-import {
-  ExpandIconComponent,
-  KeyboardShortCutSelectable,
-} from 'src/modules/Review/Containers/AnnotationDetailPanel/components/common';
+} from '@vision/modules/Review/Containers/AnnotationDetailPanel/types';
+
+import { Icon, IconType } from '@cognite/cogs.js';
 
 /**
  * Annotation detail row component for main annotation category group headers
@@ -43,14 +46,12 @@ export const ReviewVisionAnnotationTypeRow = ({
         <ExpandIconComponent isActive={isOpen} />
         <IconContainer
           background={annotationTypeStyleMap[annotationType].backgroundColor}
+          style={{
+            color: annotationTypeStyleMap[annotationType].color,
+            flex: '0 0 16px',
+          }}
         >
-          <Icon
-            style={{
-              color: annotationTypeStyleMap[annotationType].color,
-              flex: '0 0 16px',
-            }}
-            type={annotationTypeIconMap[annotationType] as IconType}
-          />
+          <Icon type={annotationTypeIconMap[annotationType] as IconType} />
         </IconContainer>
         <span>
           {name} ({childItems.length})

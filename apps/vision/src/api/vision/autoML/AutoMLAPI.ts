@@ -1,6 +1,7 @@
+import { FileIdEither } from '@vision/api/vision/detectionModels/types';
+import { ToastUtils } from '@vision/utils/ToastUtils';
+
 import sdk from '@cognite/cdf-sdk-singleton';
-import { FileIdEither } from 'src/api/vision/detectionModels/types';
-import { ToastUtils } from 'src/utils/ToastUtils';
 
 import {
   AutoMLDownload,

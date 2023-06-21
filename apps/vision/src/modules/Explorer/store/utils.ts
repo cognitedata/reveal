@@ -1,5 +1,8 @@
-import { VisionFile } from 'src/modules/Common/store/files/types';
-import { ExplorerFileState, ExplorerState } from 'src/modules/Explorer/types';
+import { VisionFile } from '@vision/modules/Common/store/files/types';
+import {
+  ExplorerFileState,
+  ExplorerState,
+} from '@vision/modules/Explorer/types';
 
 /* eslint-disable no-param-reassign */
 export const deleteFileById = (state: ExplorerState, id: number) => {

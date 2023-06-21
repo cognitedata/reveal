@@ -1,15 +1,18 @@
 /* eslint-disable no-nested-ternary */
-import { Body, Icon, Tooltip, Slider, Title } from '@cognite/cogs.js';
 import React, { useState } from 'react';
+
+import styled from 'styled-components';
+
 import {
   AutoMLMetrics,
   AutoMLModelType,
   AutoMLTrainingJob,
-} from 'src/api/vision/autoML/types';
-import { dateformat, getDateDiff } from 'src/utils/DateUtils';
-import styled from 'styled-components';
-import { AutoMLStatusBadge } from 'src/modules/AutoML/Components/AutoMLStatusBadge';
+} from '@vision/api/vision/autoML/types';
+import { AutoMLStatusBadge } from '@vision/modules/AutoML/Components/AutoMLStatusBadge';
+import { dateformat, getDateDiff } from '@vision/utils/DateUtils';
 import { InputNumber } from 'antd';
+
+import { Body, Icon, Tooltip, Slider, Title } from '@cognite/cogs.js';
 
 export const getPrecisionAndRecall = (
   threshold: number,
@@ -51,8 +54,8 @@ export const AutoMLMetricsOverview = (props: { model?: AutoMLTrainingJob }) => {
     return `${Math.round(100 * value * 10) / 10} %`;
   };
 
-  const onThresholdChange = (value: number) => {
-    setCurrentThreshold(value);
+  const onThresholdChange = (value: number | null) => {
+    setCurrentThreshold(value || 0);
   };
 
   const { precision, recall } = getPrecisionAndRecall(
@@ -66,13 +69,13 @@ export const AutoMLMetricsOverview = (props: { model?: AutoMLTrainingJob }) => {
         {model?.status === 'Completed' ? (
           <>
             <Title level={6}>Performance</Title>
-            <Body strong level={2}>
+            <Body strong level={2} style={{ marginLeft: '11px' }}>
               Score threshold
               <Tooltip
                 wrapped
                 content="The confidence threshold returns predictions as positive if their confidence score is the selected value or higher. A higher confidence threshold increases precision but lowers recall, and vice versa."
               >
-                <Icon type="HelpFilled" style={{ marginLeft: '11px' }} />
+                <Icon type="HelpFilled" />
               </Tooltip>
             </Body>
             <ModelDataContainer
@@ -112,7 +115,9 @@ export const AutoMLMetricsOverview = (props: { model?: AutoMLTrainingJob }) => {
                   wrapped
                   content="The percentage of predictions that were correct (positive)."
                 >
-                  <Icon type="HelpFilled" style={{ marginLeft: '11px' }} />
+                  <div style={{ marginLeft: '11px' }}>
+                    <Icon type="HelpFilled" />
+                  </div>
                 </Tooltip>
               </Body>
               <Body strong level={2}>
@@ -126,7 +131,9 @@ export const AutoMLMetricsOverview = (props: { model?: AutoMLTrainingJob }) => {
                   wrapped
                   content="The percentage of all ground truth items that were successfully predicted by the model."
                 >
-                  <Icon type="HelpFilled" style={{ marginLeft: '11px' }} />
+                  <div style={{ marginLeft: '11px' }}>
+                    <Icon type="HelpFilled" />
+                  </div>
                 </Tooltip>
               </Body>
 

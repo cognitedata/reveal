@@ -1,5 +1,5 @@
-import { unsavedAssetsHasOverlaps } from 'src/modules/Common/Components/BulkEdit/Asset/unsavedAssetsHasOverlaps';
-import { BulkEditUnsavedState } from 'src/modules/Common/store/common/types';
+import { unsavedAssetsHasOverlaps } from '@vision/modules/Common/Components/BulkEdit/Asset/unsavedAssetsHasOverlaps';
+import { BulkEditUnsavedState } from '@vision/modules/Common/store/common/types';
 
 describe('test disableAssetTable fn', () => {
   test('if assetIds undefined', () => {

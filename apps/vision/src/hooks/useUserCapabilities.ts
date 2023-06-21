@@ -1,7 +1,7 @@
-import cloneDeep from 'lodash-es/cloneDeep';
-import isEmpty from 'lodash-es/isEmpty';
+import { AccessPermission } from '@vision/utils/types';
+import cloneDeep from 'lodash/cloneDeep';
+import isEmpty from 'lodash/isEmpty';
 
-import { AccessPermission } from 'src/utils/types';
 import { useGroups } from './useGroups';
 
 export const useUserCapabilities = (acls: Array<AccessPermission>) => {

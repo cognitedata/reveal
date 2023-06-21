@@ -1,10 +1,9 @@
 import React from 'react';
-import styled from 'styled-components';
-import { withRouter } from 'react-router-dom';
+import styled from 'styled-components/macro';
 import { Button } from '@cognite/cogs.js';
 import { createLink } from '@cognite/cdf-utilities';
-import { projectName } from 'src/utils';
-import worker13 from 'src/assets/worker13.svg';
+import { projectName } from '@vision/utils';
+import worker13 from '@vision/assets/worker13.svg';
 
 const Background = styled.div`
   background: white;
@@ -49,16 +48,16 @@ const BackButtonWorker = styled(Button)`
 
 const goBackOnClick = (props) => {
   if (projectName) {
-    props.history.push(createLink(`/home`));
+    props.navigate(createLink(`/home`));
   } else {
-    props.history.push('/');
+    props.navigate('/');
   }
 };
 
 const WorkerPage = (routerFunction) => (
   <Background>
     <Worker />
-    <TitleTextWorker>Nothing to see here....</TitleTextWorker>
+    <TitleTextWorker>Nothing to see here&hellip;.</TitleTextWorker>
     <TextParagraphWorker>
       The page you are trying to read does not exist. Please check your URL, or
       go back to the previous page.
@@ -76,4 +75,4 @@ const NotFound = (props) => {
   return <WorkerPage props={props} />;
 };
 
-export default withRouter(NotFound);
+export default NotFound;

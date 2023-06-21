@@ -1,34 +1,34 @@
 import React, { useEffect } from 'react';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { Provider as ReduxProvider } from 'react-redux';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+
+import { ThemeProvider } from 'styled-components';
+
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import store from '@vision/store';
+import AntStyles from '@vision/styles/AntStyles';
+import GlobalStyles from '@vision/styles/global-styles';
+import theme from '@vision/styles/theme';
+import datePickerStyle from 'react-datepicker/dist/react-datepicker.css';
+
+import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
 import {
   AuthWrapper,
   SubAppWrapper,
   getProject,
   getEnv,
 } from '@cognite/cdf-utilities';
-import { Routes } from 'src/Routes';
-import { createBrowserHistory } from 'history';
-import { Router } from 'react-router-dom';
-import GlobalStyles from 'src/styles/global-styles';
-import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
-import AntStyles from 'src/styles/AntStyles';
-import theme from 'src/styles/theme';
 import { Loader } from '@cognite/cogs.js';
-import { ThemeProvider } from 'styled-components';
-import { SDKProvider } from '@cognite/sdk-provider';
-import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
-import { Provider as ReduxProvider } from 'react-redux';
-import store from 'src/store';
-import datePickerStyle from 'react-datepicker/dist/react-datepicker.css';
+import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 import { FlagProvider } from '@cognite/react-feature-flags';
-import rootStyles from './styles/index.css';
+import { SDKProvider } from '@cognite/sdk-provider';
+
 import { DataExplorationWrapper } from './DataExplorationWrapper';
+import { AppRoutes } from './Routes';
+import rootStyles from './styles/index.css';
 
 const App = () => {
   const subAppName = 'cdf-vision-subapp';
-  const history = createBrowserHistory({
-    forceRefresh: false,
-  });
   useEffect(() => {
     cogsStyles.use();
     rootStyles.use();
@@ -70,9 +70,11 @@ const App = () => {
                 <ReduxProvider store={store}>
                   <DataExplorationWrapper>
                     <SubAppWrapper title="Cognite Vision">
-                      <Router history={history}>
-                        <Routes />
-                      </Router>
+                      <BrowserRouter>
+                        <Routes>
+                          <Route path="/*" element={<AppRoutes />} />
+                        </Routes>
+                      </BrowserRouter>
                     </SubAppWrapper>
                   </DataExplorationWrapper>
                 </ReduxProvider>

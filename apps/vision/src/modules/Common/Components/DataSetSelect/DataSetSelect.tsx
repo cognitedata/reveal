@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useMemo } from 'react';
+
 import { Select, Popover, Spin } from 'antd';
+
+import { getFlow } from '@cognite/cdf-sdk-singleton';
+import { createLink } from '@cognite/cdf-utilities';
+import { Body, A } from '@cognite/cogs.js';
 import { DataSet } from '@cognite/sdk';
 import {
   useInfiniteList,
   usePermissions,
 } from '@cognite/sdk-react-query-hooks';
-import { Body, A } from '@cognite/cogs.js';
-import { createLink } from '@cognite/cdf-utilities';
-import { getFlow } from '@cognite/cdf-sdk-singleton';
 
 export type DataSetSelectProps = {
   onSelectionChange: (ids: number[]) => void;
@@ -39,8 +41,9 @@ export const DataSetSelect = ({
   const [datasetSearchResults, setDatasetSearchResults] = useState<DataSet[]>(
     []
   );
-  const flow = getFlow();
+  const { flow } = getFlow();
   const { data: canReadDataSets } = usePermissions(
+    // @ts-ignore
     flow!,
     'datasetsAcl',
     'READ',

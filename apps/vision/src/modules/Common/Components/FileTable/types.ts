@@ -1,6 +1,13 @@
-import { RANGE_OPTIONS } from '@cognite/cogs.js/dist/esm/Components/Pagination/types';
 import { BaseTableProps } from 'react-base-table';
-import { SelectFilter, TableDataItem } from 'src/modules/Common/types';
+
+import { SelectFilter, TableDataItem } from '@vision/modules/Common/types';
+
+import { RANGE_OPTIONS } from '@cognite/cogs.js/dist/esm/Components/Pagination/types';
+
+import {
+  ResourceItem,
+  ResourceSelectionMode,
+} from '@data-exploration-lib/core';
 
 export type PaginatedTableProps<T> = {
   data: T[];
@@ -34,12 +41,15 @@ export type FileListTableProps<T> = FileTableProps<T> &
 
 export type GridViewProps<T> = {
   data: T[];
-  onItemClick: (item: T) => void;
+  onItemClicked: (item: T) => void;
   renderCell: (cellProps: any) => JSX.Element;
   tableFooter?: JSX.Element | null;
   isLoading: boolean;
   overlayRenderer: () => JSX.Element;
   emptyRenderer: () => JSX.Element;
+  onSelect: () => void;
+  selectionMode: ResourceSelectionMode;
+  isSelected: (item: ResourceItem) => boolean;
 };
 
 export type PageSize = (typeof RANGE_OPTIONS)[number];

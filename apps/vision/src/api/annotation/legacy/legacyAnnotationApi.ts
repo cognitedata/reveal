@@ -1,5 +1,6 @@
 import sdk from '@cognite/cdf-sdk-singleton';
 import { HttpResponse, ItemsResponse } from '@cognite/sdk';
+
 import {
   LegacyAnnotation,
   LegacyAnnotationCreateRequest,

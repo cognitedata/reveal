@@ -1,3 +1,20 @@
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+
+import styled from 'styled-components';
+
+import {
+  DetectionModelParams,
+  ParamsTagDetection,
+} from '@vision/api/vision/detectionModels/types';
+import TagdetectionIllustration from '@vision/assets/visualDescriptions/TagdetectionIllustration';
+import { ColorsTagDetection } from '@vision/constants/Colors';
+import { setUnsavedDetectionModelSettings } from '@vision/modules/Process/store/slice';
+import { AssetSelector } from '@vision/modules/Review/Components/AssetSelector/AssetSelector';
+import { AppDispatch } from '@vision/store';
+import { RootState } from '@vision/store/rootReducer';
+import { InputNumber } from 'antd';
+
 import {
   Button,
   Detail,
@@ -7,18 +24,6 @@ import {
   SegmentedControl,
   Title,
 } from '@cognite/cogs.js';
-import { InputNumber } from 'antd';
-import React from 'react';
-import { setUnsavedDetectionModelSettings } from 'src/modules/Process/store/slice';
-import { AssetSelector } from 'src/modules/Review/Components/AssetSelector/AssetSelector';
-import { useDispatch, useSelector } from 'react-redux';
-import {
-  DetectionModelParams,
-  ParamsTagDetection,
-} from 'src/api/vision/detectionModels/types';
-import { RootState } from 'src/store/rootReducer';
-import { ColorsTagDetection } from 'src/constants/Colors';
-import TagdetectionIllustration from 'src/assets/visualDescriptions/TagdetectionIllustration.svg';
 
 import {
   ColorBox,
@@ -27,7 +32,6 @@ import {
   StyledCol,
   TableContainer,
 } from './modelDetailsStyles';
-import styled from 'styled-components';
 
 export const description = () => {
   return (
@@ -52,7 +56,7 @@ export const badge = (modelName: string, hideText = false) => {
 };
 
 const Content = (modelIndex: number) => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const modelName = useSelector(
     ({ processSlice }: RootState) =>
@@ -126,7 +130,9 @@ const Content = (modelIndex: number) => {
                       wrapped
                       content="Threshold for minimum confidence the model has on a detected object"
                     >
-                      <Icon type="HelpFilled" style={{ marginLeft: '11px' }} />
+                      <div style={{ marginLeft: '11px' }}>
+                        <Icon type="HelpFilled" />
+                      </div>
                     </Tooltip>
                   </td>
                   <th>
@@ -165,7 +171,9 @@ const Content = (modelIndex: number) => {
                       wrapped
                       content="Allow partial (fuzzy) matching of detected external IDs in the file. Will only match when it is possible to do so unambiguously."
                     >
-                      <Icon type="HelpFilled" style={{ marginLeft: '11px' }} />
+                      <div style={{ marginLeft: '11px' }}>
+                        <Icon type="HelpFilled" />
+                      </div>
                     </Tooltip>
                   </td>
                   <th>
@@ -191,7 +199,9 @@ const Content = (modelIndex: number) => {
                       content="Search for external ID of assets that are in a subtree rooted at one of the assetSubtreeIds (including the roots given).
                     "
                     >
-                      <Icon type="HelpFilled" style={{ marginLeft: '11px' }} />
+                      <div style={{ marginLeft: '11px' }}>
+                        <Icon type="HelpFilled" />
+                      </div>
                     </Tooltip>
                   </td>
                   <th>
@@ -227,10 +237,7 @@ const Content = (modelIndex: number) => {
               {badge(modelName)}
               {description()}
             </NameContainer>
-            <img
-              src={TagdetectionIllustration}
-              alt="TagdetectionIllustration"
-            />
+            <TagdetectionIllustration />
           </div>
         </StyledCol>
       </Row>

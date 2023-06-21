@@ -1,6 +1,8 @@
-import { Body } from '@cognite/cogs.js';
 import React from 'react';
+
 import styled from 'styled-components';
+
+import { Body } from '@cognite/cogs.js';
 
 export const Footer = (props: { fetchedCount: number; totalCount: number }) => {
   const { fetchedCount, totalCount } = props;

@@ -2,7 +2,7 @@ import { createAction } from '@reduxjs/toolkit';
 import {
   VisionJob,
   VisionDetectionModelType,
-} from 'src/api/vision/detectionModels/types';
+} from '@vision/api/vision/detectionModels/types';
 
 export const fileProcessUpdate = createAction<{
   fileIds: number[];

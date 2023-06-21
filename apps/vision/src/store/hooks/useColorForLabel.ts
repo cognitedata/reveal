@@ -1,7 +1,8 @@
 import { useSelector } from 'react-redux';
-import { CDFAnnotationTypeEnum } from 'src/api/annotation/types';
-import { RootState } from 'src/store/rootReducer';
-import { getAnnotationColor } from 'src/utils/colorUtils';
+
+import { CDFAnnotationTypeEnum } from '@vision/api/annotation/types';
+import { RootState } from '@vision/store/rootReducer';
+import { getAnnotationColor } from '@vision/utils/colorUtils';
 
 const useColorForLabel = (
   text: string,

@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { CDFAnnotationTypeEnum } from 'src/api/annotation/types';
+import { CDFAnnotationTypeEnum } from '@vision/api/annotation/types';
 
 type AnnotationCategoryState = {
   [index in CDFAnnotationTypeEnum]?: { selected: boolean };

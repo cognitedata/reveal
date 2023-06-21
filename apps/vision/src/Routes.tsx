@@ -1,13 +1,17 @@
 import React from 'react';
+import { Route, Routes, useLocation } from 'react-router-dom';
+
+import { LazyWrapper } from '@vision/modules/Common/Components/LazyWrapper';
+import NoAccessPage from '@vision/pages/NoAccessPage';
+import NotFound from '@vision/pages/NotFound';
+
 import { Loader } from '@cognite/cogs.js';
-import { Route, Switch, useLocation } from 'react-router-dom';
-import NotFound from 'src/pages/NotFound';
-import { LazyWrapper } from 'src/modules/Common/Components/LazyWrapper';
-import NoAccessPage from 'src/pages/NoAccessPage';
+
 import { useUserCapabilities } from './hooks/useUserCapabilities';
 
 const RouteWrapper: React.FC<{
   capabilities: { acl: string; actions: string[] }[];
+  children: JSX.Element;
 }> = ({ capabilities, children }): JSX.Element => {
   const { data: hasCapabilities, isFetched } =
     useUserCapabilities(capabilities);
@@ -28,9 +32,8 @@ const RouteWrapper: React.FC<{
 
 const routes = [
   {
-    exact: true,
     path: '/:tenant/vision',
-    importFn: () => import('src/pages/Home'),
+    importFn: () => import('@vision/pages/Home'),
     capabilities: [
       {
         acl: 'filesAcl',
@@ -43,9 +46,8 @@ const routes = [
     ],
   },
   {
-    exact: true,
     path: '/:tenant/vision/workflow/review/:fileId',
-    importFn: () => import('src/modules/Review/Containers/Review'),
+    importFn: () => import('@vision/modules/Review/Containers/Review'),
     capabilities: [
       {
         acl: 'filesAcl',
@@ -58,9 +60,8 @@ const routes = [
     ],
   },
   {
-    exact: false,
-    path: '/:tenant/vision/workflow/:step',
-    importFn: () => import('src/pages/Process'),
+    path: '/:tenant/vision/workflow/*',
+    importFn: () => import('@vision/pages/Process'),
     capabilities: [
       {
         acl: 'filesAcl',
@@ -77,9 +78,8 @@ const routes = [
     ],
   },
   {
-    exact: true,
     path: '/:tenant/vision/explore',
-    importFn: () => import('src/modules/Explorer/Containers/Explorer'),
+    importFn: () => import('@vision/modules/Explorer/Containers/Explorer'),
     capabilities: [
       {
         acl: 'filesAcl',
@@ -92,9 +92,8 @@ const routes = [
     ],
   },
   {
-    exact: true,
     path: '/:tenant/vision/models',
-    importFn: () => import('src/modules/AutoML/Components/AutoML'),
+    importFn: () => import('@vision/modules/AutoML/Components/AutoML'),
     capabilities: [
       {
         acl: 'groupsAcl',
@@ -108,18 +107,22 @@ const routes = [
   },
 ];
 
-export function Routes() {
+export function AppRoutes() {
   return (
-    <Switch>
+    <Routes>
       {routes.map((r) => (
-        <Route key={r.path} exact={r.exact} path={r.path}>
-          <RouteWrapper capabilities={r.capabilities}>
-            <LazyWrapper importFn={r.importFn} />
-          </RouteWrapper>
-        </Route>
+        <Route
+          key={r.path}
+          path={r.path}
+          element={
+            <RouteWrapper capabilities={r.capabilities}>
+              <LazyWrapper importFn={r.importFn} />
+            </RouteWrapper>
+          }
+        />
       ))}
 
-      <Route component={NotFound} />
-    </Switch>
+      <Route element={<NotFound />} />
+    </Routes>
   );
 }

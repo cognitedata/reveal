@@ -1,54 +1,58 @@
 import React, { ReactText, useCallback, useMemo } from 'react';
+import { batch, useDispatch, useSelector } from 'react-redux';
+
+import styled from 'styled-components';
+
+import {
+  CDFAnnotationTypeEnum,
+  ImageKeypointCollection,
+  Status,
+} from '@vision/api/annotation/types';
 import {
   annotationCategoryTitle,
   annotationObjectsName,
   annotationRowComponent,
   annotationTypeFromCategoryTitle,
-} from 'src/constants/annotationDetailPanel';
-import {
-  selectAnnotation,
-  toggleAnnotationVisibility,
-} from 'src/modules/Review/store/review/slice';
-import { selectVisionReviewAnnotationsForFile } from 'src/modules/Review/store/review/selectors';
-import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
-import styled from 'styled-components';
-import { RootState } from 'src/store/rootReducer';
-import { batch, useDispatch, useSelector } from 'react-redux';
-import { FileInfo } from '@cognite/sdk';
-import { generateNodeTree } from 'src/modules/Review/Containers/AnnotationDetailPanel/utils/generateNodeTree';
-import { VisionReviewAnnotation } from 'src/modules/Review/types';
-import { VirtualizedReviewAnnotations } from 'src/modules/Review/Containers/AnnotationDetailPanel/components';
-import { AnnotationDetailPanelHotKeys } from 'src/modules/Review/Containers/AnnotationDetailPanel/AnnotationDetailPanelHotKeys';
-import { selectAnnotationCategory } from 'src/modules/Review/Containers/AnnotationDetailPanel/store/slice';
-import {
-  CDFAnnotationTypeEnum,
-  ImageKeypointCollection,
-  Status,
-} from 'src/api/annotation/types';
-import { VisionAnnotationDataType } from 'src/modules/Common/types';
+} from '@vision/constants/annotationDetailPanel';
+import { VisionAnnotationDataType } from '@vision/modules/Common/types';
 import {
   isImageAssetLinkData,
   isImageClassificationData,
   isImageExtractedTextData,
   isImageKeypointCollectionData,
   isImageObjectDetectionData,
-} from 'src/modules/Common/types/typeGuards';
-import { convertTempKeypointCollectionToVisionReviewImageKeypointCollection } from 'src/modules/Review/store/review/utils';
-import { AnnotationStatusChange } from 'src/store/thunks/Annotation/AnnotationStatusChange';
-import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from 'src/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
+} from '@vision/modules/Common/types/typeGuards';
+import { AnnotationDetailPanelHotKeys } from '@vision/modules/Review/Containers/AnnotationDetailPanel/AnnotationDetailPanelHotKeys';
+import { VirtualizedReviewAnnotations } from '@vision/modules/Review/Containers/AnnotationDetailPanel/components';
+import { selectAnnotationCategory } from '@vision/modules/Review/Containers/AnnotationDetailPanel/store/slice';
+import {
+  AnnotationDetailPanelAnnotationType,
+  AnnotationDetailPanelRowDataBase,
+} from '@vision/modules/Review/Containers/AnnotationDetailPanel/types';
+import { generateNodeTree } from '@vision/modules/Review/Containers/AnnotationDetailPanel/utils/generateNodeTree';
+import { selectTempKeypointCollection } from '@vision/modules/Review/store/annotatorWrapper/selectors';
 import {
   deleteTempKeypointCollection,
   keypointSelectStatusChange,
   selectCollection,
   setCollectionStatus,
   toggleCollectionVisibility,
-} from 'src/modules/Review/store/annotatorWrapper/slice';
+} from '@vision/modules/Review/store/annotatorWrapper/slice';
+import { selectVisionReviewAnnotationsForFile } from '@vision/modules/Review/store/review/selectors';
 import {
-  AnnotationDetailPanelAnnotationType,
-  AnnotationDetailPanelRowDataBase,
-} from 'src/modules/Review/Containers/AnnotationDetailPanel/types';
-import { selectTempKeypointCollection } from 'src/modules/Review/store/annotatorWrapper/selectors';
+  selectAnnotation,
+  toggleAnnotationVisibility,
+} from '@vision/modules/Review/store/review/slice';
+import { convertTempKeypointCollectionToVisionReviewImageKeypointCollection } from '@vision/modules/Review/store/review/utils';
+import { VisionReviewAnnotation } from '@vision/modules/Review/types';
+import { AppDispatch } from '@vision/store';
+import { deselectAllSelectionsReviewPage } from '@vision/store/commonActions';
+import { RootState } from '@vision/store/rootReducer';
+import { AnnotationStatusChange } from '@vision/store/thunks/Annotation/AnnotationStatusChange';
+import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from '@vision/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
+
 import { Detail, Icon, Tooltip } from '@cognite/cogs.js';
+import { FileInfo } from '@cognite/sdk';
 
 export const AnnotationDetailPanel = ({
   file,
@@ -57,7 +61,7 @@ export const AnnotationDetailPanel = ({
   file: FileInfo;
   showEditOptions: boolean;
 }) => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const annotationCategoryState = useSelector(
     (state: RootState) =>
       state.annotationDetailPanelReducer.annotationCategories

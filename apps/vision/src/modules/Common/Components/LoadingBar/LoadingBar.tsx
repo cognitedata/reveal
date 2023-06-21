@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
+
 import styled from 'styled-components';
-import { Body, Button } from '@cognite/cogs.js';
-import { Spin } from 'antd';
+
 import LoadingOutlined from '@ant-design/icons/lib/icons/LoadingOutlined';
-import { cancelFetch } from 'src/api/file/fetchFiles/fetchFiles';
+import { cancelFetch } from '@vision/api/file/fetchFiles/fetchFiles';
+import { Spin } from 'antd';
+
+import { Body, Button } from '@cognite/cogs.js';
 
 const antIcon = <LoadingOutlined style={{ fontSize: 14 }} spin />;
 

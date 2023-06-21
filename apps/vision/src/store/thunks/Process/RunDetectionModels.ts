@@ -1,9 +1,9 @@
 // for requested files, create annotation jobs with requested detectionModels and setup polling on these jobs
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
-import { ThunkConfig } from 'src/store/rootReducer';
-import { CreateVisionJob } from 'src/store/thunks/Process/CreateVisionJob';
-import { splitListIntoChunks } from 'src/utils/generalUtils';
+import { VisionDetectionModelType } from '@vision/api/vision/detectionModels/types';
+import { ThunkConfig } from '@vision/store/rootReducer';
+import { CreateVisionJob } from '@vision/store/thunks/Process/CreateVisionJob';
+import { splitListIntoChunks } from '@vision/utils/generalUtils';
 
 export const RunDetectionModels = createAsyncThunk<
   void,

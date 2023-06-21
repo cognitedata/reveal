@@ -1,4 +1,4 @@
-import noop from 'lodash-es/noop';
+import noop from 'lodash/noop';
 
 type Options<T> = {
   /* check data to see if there is no calls needed */
@@ -43,7 +43,7 @@ export async function fetchUntilComplete<Data>(
         pollingInterval
       );
     }
-  } catch (e) {
+  } catch (e: any) {
     onError(e);
   }
 }

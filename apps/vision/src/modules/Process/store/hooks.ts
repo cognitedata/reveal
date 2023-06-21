@@ -1,6 +1,7 @@
 import { useSelector } from 'react-redux';
-import { selectAllSelectedIds } from 'src/modules/Common/store/files/selectors';
-import { RootState } from 'src/store/rootReducer';
+
+import { selectAllSelectedIds } from '@vision/modules/Common/store/files/selectors';
+import { RootState } from '@vision/store/rootReducer';
 
 export const useIsSelectedInProcess = (id: number) => {
   const selectedIds = useSelector(({ fileReducer }: RootState) =>

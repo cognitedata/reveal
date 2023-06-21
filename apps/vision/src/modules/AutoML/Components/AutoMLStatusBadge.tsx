@@ -1,9 +1,12 @@
 /* eslint-disable no-nested-ternary */
 import React from 'react';
-import { Body, Icon, Tooltip } from '@cognite/cogs.js';
-import { JobStatus } from 'src/api/vision/detectionModels/types';
+
 import styled from 'styled-components';
-import { StatusColors } from 'src/constants/Colors';
+
+import { JobStatus } from '@vision/api/vision/detectionModels/types';
+import { StatusColors } from '@vision/constants/Colors';
+
+import { Body, Icon, Tooltip } from '@cognite/cogs.js';
 
 export const AutoMLStatusBadge = (props: {
   status: JobStatus;
@@ -34,7 +37,12 @@ export const AutoMLStatusBadge = (props: {
         ) : (
           <div>{props.status || 'Queued'}</div>
         )}
-        {showTooltip && <Icon type="Info" style={{ marginLeft: '6px' }} />}
+        {showTooltip && (
+          <div style={{ marginLeft: '6px' }}>
+            {' '}
+            <Icon type="Info" />
+          </div>
+        )}
       </Container>
     </Tooltip>
   );

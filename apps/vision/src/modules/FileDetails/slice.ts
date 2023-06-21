@@ -1,11 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { MetadataItem } from 'src/modules/FileDetails/Components/FileMetadata/Types';
-import { updateFileInfoField } from 'src/store/thunks/Files/updateFileInfoField';
+import { MetadataItem } from '@vision/modules/FileDetails/Components/FileMetadata/Types';
 import {
   FileDetailsState,
   FileInfoValueState,
-} from 'src/modules/FileDetails/types';
-import { resetEditHistoryState } from 'src/modules/FileDetails/utils';
+} from '@vision/modules/FileDetails/types';
+import { resetEditHistoryState } from '@vision/modules/FileDetails/utils';
+import { updateFileInfoField } from '@vision/store/thunks/Files/updateFileInfoField';
 
 export const initialState: FileDetailsState = {
   metadataEdit: false,

@@ -1,7 +1,8 @@
 import React from 'react';
-import { attrAccept, convertFileToCogsFile } from './utils';
-import { CogsFile, CogsFileInfo } from './types';
+
 import { FilePickerContext } from './FilePickerContext';
+import { CogsFile, CogsFileInfo } from './types';
+import { attrAccept, convertFileToCogsFile } from './utils';
 
 export type FileAndDirectoryInputProps = {
   files: Array<CogsFile | CogsFileInfo>;

@@ -1,41 +1,41 @@
-import isFinite from 'lodash-es/isFinite';
 import { createSlice, isAnyOf, PayloadAction } from '@reduxjs/toolkit';
-import { tools } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/Tools';
-import { PredefinedKeypoint, Tool } from 'src/modules/Review/types';
-import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
-import { PopulateAnnotationTemplates } from 'src/store/thunks/Annotation/PopulateAnnotationTemplates';
-import { SaveAnnotationTemplates } from 'src/store/thunks/Annotation/SaveAnnotationTemplates';
+import {
+  ImageKeypointCollection,
+  Keypoint,
+  Status,
+} from '@vision/api/annotation/types';
+import {
+  VisionAnnotation,
+  VisionAnnotationDataType,
+} from '@vision/modules/Common/types';
+import { isImageKeypointCollectionData } from '@vision/modules/Common/types/typeGuards';
+import {
+  createUniqueNumericId,
+  generateKeypointId,
+} from '@vision/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
+import { tools } from '@vision/modules/Review/Components/ReactImageAnnotateWrapper/Tools';
+import {
+  AnnotatorNewRegion,
+  AnnotatorPointRegion,
+  isAnnotatorPointRegion,
+} from '@vision/modules/Review/Components/ReactImageAnnotateWrapper/types';
+import { AnnotatorWrapperState } from '@vision/modules/Review/store/annotatorWrapper/type';
 import {
   deleteCollection,
   getKeypointForAnnotatorPointRegion,
   populateTempKeypointCollection,
   updateLastCollectionName,
   updateLastShape,
-} from 'src/modules/Review/store/annotatorWrapper/utils';
-import {
-  VisionAnnotation,
-  VisionAnnotationDataType,
-} from 'src/modules/Common/types';
-import {
-  ImageKeypointCollection,
-  Keypoint,
-  Status,
-} from 'src/api/annotation/types';
-import { isImageKeypointCollectionData } from 'src/modules/Common/types/typeGuards';
-import { AnnotatorWrapperState } from 'src/modules/Review/store/annotatorWrapper/type';
-import {
-  AnnotatorNewRegion,
-  AnnotatorPointRegion,
-  isAnnotatorPointRegion,
-} from 'src/modules/Review/Components/ReactImageAnnotateWrapper/types';
-import {
-  createUniqueNumericId,
-  generateKeypointId,
-} from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
-import { VisionJobUpdate } from 'src/store/thunks/Process/VisionJobUpdate';
-import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
-import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
-import { SaveAnnotations } from 'src/store/thunks/Annotation/SaveAnnotations';
+} from '@vision/modules/Review/store/annotatorWrapper/utils';
+import { PredefinedKeypoint, Tool } from '@vision/modules/Review/types';
+import { deselectAllSelectionsReviewPage } from '@vision/store/commonActions';
+import { PopulateAnnotationTemplates } from '@vision/store/thunks/Annotation/PopulateAnnotationTemplates';
+import { RetrieveAnnotations } from '@vision/store/thunks/Annotation/RetrieveAnnotations';
+import { SaveAnnotations } from '@vision/store/thunks/Annotation/SaveAnnotations';
+import { SaveAnnotationTemplates } from '@vision/store/thunks/Annotation/SaveAnnotationTemplates';
+import { UpdateAnnotations } from '@vision/store/thunks/Annotation/UpdateAnnotations';
+import { VisionJobUpdate } from '@vision/store/thunks/Process/VisionJobUpdate';
+import isFinite from 'lodash/isFinite';
 
 export const initialState: AnnotatorWrapperState = {
   predefinedAnnotations: {

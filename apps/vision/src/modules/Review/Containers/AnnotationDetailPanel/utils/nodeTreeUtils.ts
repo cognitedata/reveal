@@ -1,21 +1,21 @@
 import {
+  CDFAnnotationTypeEnum,
+  ImageKeypointCollection,
+} from '@vision/api/annotation/types';
+import { VisionAnnotationDataType } from '@vision/modules/Common/types';
+import {
   AnnotationDetailPanelAnnotationType,
   AnnotationDetailPanelRowData,
   AnnotationDetailPanelRowDataBase,
   TreeNode,
-} from 'src/modules/Review/Containers/AnnotationDetailPanel/types';
-import isNumber from 'lodash-es/isNumber';
-import isInteger from 'lodash-es/isInteger';
-import isFinite from 'lodash-es/isFinite';
+} from '@vision/modules/Review/Containers/AnnotationDetailPanel/types';
 import {
   ReviewKeypoint,
   VisionReviewAnnotation,
-} from 'src/modules/Review/types';
-import { VisionAnnotationDataType } from 'src/modules/Common/types';
-import {
-  CDFAnnotationTypeEnum,
-  ImageKeypointCollection,
-} from 'src/api/annotation/types';
+} from '@vision/modules/Review/types';
+import isFinite from 'lodash/isFinite';
+import isInteger from 'lodash/isInteger';
+import isNumber from 'lodash/isNumber';
 
 export const isAnnotationTypeRowData = (
   data: AnnotationDetailPanelRowData

@@ -1,20 +1,24 @@
 import React, { useRef } from 'react';
-import { updateFileInfoField } from 'src/store/thunks/Files/updateFileInfoField';
-import styled from 'styled-components';
-import { MetaDataTable } from 'src/modules/FileDetails/Components/FileMetadata/MetadataTable';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from 'src/store/rootReducer';
-import isEqual from 'lodash-es/isEqual';
-import { FileDetailsContainer } from 'src/modules/FileDetails/Components/FileMetadata/FileDetailsContainer';
-import { MetadataTableToolBar } from 'src/modules/FileDetails/Components/FileMetadata/MetadataTableToolBar';
-import { FileInfo } from '@cognite/sdk';
-import { VisionFileDetailKey } from 'src/modules/FileDetails/Components/FileMetadata/Types';
+
+import styled from 'styled-components';
+
+import { FileDetailsContainer } from '@vision/modules/FileDetails/Components/FileMetadata/FileDetailsContainer';
+import { MetaDataTable } from '@vision/modules/FileDetails/Components/FileMetadata/MetadataTable';
+import { MetadataTableToolBar } from '@vision/modules/FileDetails/Components/FileMetadata/MetadataTableToolBar';
+import { VisionFileDetailKey } from '@vision/modules/FileDetails/Components/FileMetadata/Types';
 import {
   metadataEditMode,
   selectUpdatedFileDetails,
   selectUpdatedFileMeta,
-} from 'src/modules/FileDetails/selectors';
-import { fileInfoEdit } from 'src/modules/FileDetails/slice';
+} from '@vision/modules/FileDetails/selectors';
+import { fileInfoEdit } from '@vision/modules/FileDetails/slice';
+import { AppDispatch } from '@vision/store';
+import { RootState } from '@vision/store/rootReducer';
+import { updateFileInfoField } from '@vision/store/thunks/Files/updateFileInfoField';
+import isEqual from 'lodash/isEqual';
+
+import { FileInfo } from '@cognite/sdk';
 
 const Container = styled.div`
   width: 100%;
@@ -37,7 +41,7 @@ export const FileDetailsReview: React.FC<FileDetailCompProps> = ({
   fileObj,
 }: FileDetailCompProps) => {
   const detailContainer = useRef<HTMLDivElement | null>(null);
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const fileDetails = useSelector((state: RootState) =>
     selectUpdatedFileDetails(state, fileObj.id)

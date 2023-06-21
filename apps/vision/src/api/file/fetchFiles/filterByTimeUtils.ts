@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { DateRange, FileInfo } from '@cognite/sdk';
 import {
   DateActions,
   VisionFileFilterProps,
-} from 'src/modules/FilterSidePanel/types';
+} from '@vision/modules/FilterSidePanel/types';
+
+import { DateRange, FileInfo } from '@cognite/sdk';
 
 export const calculateTotalSeconds = (time?: Date) =>
   time

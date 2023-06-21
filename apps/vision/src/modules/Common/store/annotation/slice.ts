@@ -1,22 +1,22 @@
 import { createSlice, isAnyOf } from '@reduxjs/toolkit';
-import { AnnotationState } from 'src/modules/Common/store/annotation/types';
-import { clearAnnotationState } from 'src/store/commonActions';
-import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
+import { AnnotationState } from '@vision/modules/Common/store/annotation/types';
 import {
   clearAnnotationStates,
   repopulateAnnotationState,
-} from 'src/modules/Common/store/annotation/util';
-import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
+} from '@vision/modules/Common/store/annotation/util';
 import {
   VisionAnnotation,
   VisionAnnotationDataType,
-} from 'src/modules/Common/types/annotation';
-import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
-import { VisionJobUpdate } from 'src/store/thunks/Process/VisionJobUpdate';
-import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
-import { SaveAnnotations } from 'src/store/thunks/Annotation/SaveAnnotations';
-import { PopulateAnnotationTemplates } from 'src/store/thunks/Annotation/PopulateAnnotationTemplates';
-import { SaveAnnotationTemplates } from 'src/store/thunks/Annotation/SaveAnnotationTemplates';
+} from '@vision/modules/Common/types/annotation';
+import { clearAnnotationState } from '@vision/store/commonActions';
+import { DeleteAnnotations } from '@vision/store/thunks/Annotation/DeleteAnnotations';
+import { PopulateAnnotationTemplates } from '@vision/store/thunks/Annotation/PopulateAnnotationTemplates';
+import { RetrieveAnnotations } from '@vision/store/thunks/Annotation/RetrieveAnnotations';
+import { SaveAnnotations } from '@vision/store/thunks/Annotation/SaveAnnotations';
+import { SaveAnnotationTemplates } from '@vision/store/thunks/Annotation/SaveAnnotationTemplates';
+import { UpdateAnnotations } from '@vision/store/thunks/Annotation/UpdateAnnotations';
+import { DeleteFilesById } from '@vision/store/thunks/Files/DeleteFilesById';
+import { VisionJobUpdate } from '@vision/store/thunks/Process/VisionJobUpdate';
 
 export const initialState: AnnotationState = {
   files: {

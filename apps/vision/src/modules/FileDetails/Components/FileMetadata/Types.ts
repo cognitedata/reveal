@@ -1,5 +1,6 @@
-import { FileInfo } from '@cognite/sdk';
 import { ReactText } from 'react';
+
+import { FileInfo } from '@cognite/sdk';
 
 // ToDo: remove { directory?: string } once FileInfo have been properly updated with directory field
 export type VisionFileDetails = Omit<FileInfo, 'metadata'> & {

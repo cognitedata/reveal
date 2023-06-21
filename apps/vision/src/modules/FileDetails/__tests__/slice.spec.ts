@@ -5,9 +5,9 @@ import reducer, {
   toggleMetaDataTableEditMode,
   fileMetaDataAddRow,
   resetEditHistory,
-} from 'src/modules/FileDetails/slice';
-import { FileDetailsState } from 'src/modules/FileDetails/types';
-import { updateFileInfoField } from 'src/store/thunks/Files/updateFileInfoField';
+} from '@vision/modules/FileDetails/slice';
+import { FileDetailsState } from '@vision/modules/FileDetails/types';
+import { updateFileInfoField } from '@vision/store/thunks/Files/updateFileInfoField';
 
 describe('Test file details reducers', () => {
   const mockState: FileDetailsState = {

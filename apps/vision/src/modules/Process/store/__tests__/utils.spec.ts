@@ -1,14 +1,14 @@
+import { JobStatus } from '@vision/api/vision/detectionModels/types';
 import {
   AnnotationsBadgeStatuses,
   AnnotationStatuses,
-} from 'src/modules/Common/types';
+} from '@vision/modules/Common/types';
 import {
   hasJobsFailedForFile,
   isProcessingFile,
-} from 'src/modules/Process/store/utils';
-import { JobStatus } from 'src/api/vision/detectionModels/types';
-import { ProcessSummary } from 'src/modules/Process/types';
-import { calculateSummaryStats } from 'src/modules/Process/utils';
+} from '@vision/modules/Process/store/utils';
+import { ProcessSummary } from '@vision/modules/Process/types';
+import { calculateSummaryStats } from '@vision/modules/Process/utils';
 
 describe('Test file process utils', () => {
   describe('Test util isProcessingFile', () => {

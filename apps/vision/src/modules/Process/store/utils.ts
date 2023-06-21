@@ -1,18 +1,17 @@
 /* eslint-disable  no-param-reassign */
 
-import isEqual from 'lodash-es/isEqual';
 import {
   VisionJob,
   VisionJobCompleted,
   VisionJobRunning,
   VisionDetectionModelType,
   VisionJobFailed,
-} from 'src/api/vision/detectionModels/types';
-
+} from '@vision/api/vision/detectionModels/types';
 import {
   AnnotationsBadgeStatuses,
   AnnotationStatuses,
-} from 'src/modules/Common/types';
+} from '@vision/modules/Common/types';
+import isEqual from 'lodash/isEqual';
 
 import { ProcessState, JobState } from './types';
 

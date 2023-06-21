@@ -1,17 +1,20 @@
 import React, { useMemo, useState } from 'react';
+import { ColumnShape } from 'react-base-table';
+
+import styled from 'styled-components';
+
 import {
   FileMapTableProps,
   PageSize,
-} from 'src/modules/Common/Components/FileTable/types';
-import { SelectableTable } from 'src/modules/Common/Components/SelectableTable/SelectableTable';
-import { ResultData, TableDataItem } from 'src/modules/Common/types';
-import styled from 'styled-components';
-import { ColumnShape } from 'react-base-table';
-import { NameAndAnnotationRenderer } from 'src/modules/Common/Containers/FileTableRenderers/NameAndAnnotation';
+} from '@vision/modules/Common/Components/FileTable/types';
+import { LoadingTable } from '@vision/modules/Common/Components/LoadingRenderer/LoadingTable';
+import { NoData } from '@vision/modules/Common/Components/NoData/NoData';
+import { SelectableTable } from '@vision/modules/Common/Components/SelectableTable/SelectableTable';
+import { PaginationWrapper } from '@vision/modules/Common/Components/SorterPaginationWrapper/PaginationWrapper';
+import { NameAndAnnotationRenderer } from '@vision/modules/Common/Containers/FileTableRenderers/NameAndAnnotation';
+import { ResultData, TableDataItem } from '@vision/modules/Common/types';
+
 import { Tabs } from '@cognite/cogs.js';
-import { LoadingTable } from 'src/modules/Common/Components/LoadingRenderer/LoadingTable';
-import { NoData } from 'src/modules/Common/Components/NoData/NoData';
-import { PaginationWrapper } from 'src/modules/Common/Components/SorterPaginationWrapper/PaginationWrapper';
 
 type MapTableProps = FileMapTableProps<TableDataItem> & {
   setMapActive: (active: boolean) => void;

@@ -1,5 +1,6 @@
-import styled from 'styled-components';
 import React, { ReactText } from 'react';
+
+import styled from 'styled-components';
 
 export const KeyboardShortCutSelectable = ({
   children,

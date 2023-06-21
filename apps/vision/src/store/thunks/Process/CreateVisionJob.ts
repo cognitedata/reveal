@@ -4,11 +4,11 @@ import {
   DetectionModelParams,
   VisionDetectionModelType,
   ParamsCustomModel,
-} from 'src/api/vision/detectionModels/types';
-import { ThunkConfig } from 'src/store/rootReducer';
-import { postVisionJob } from 'src/api/vision/detectionModels/visionJob';
-import { PollJobs } from 'src/store/thunks/Process/PollJobs';
-import { ProcessState } from 'src/modules/Process/store/types';
+} from '@vision/api/vision/detectionModels/types';
+import { postVisionJob } from '@vision/api/vision/detectionModels/visionJob';
+import { ProcessState } from '@vision/modules/Process/store/types';
+import { ThunkConfig } from '@vision/store/rootReducer';
+import { PollJobs } from '@vision/store/thunks/Process/PollJobs';
 
 export const CreateVisionJob = createAsyncThunk<
   VisionJob,

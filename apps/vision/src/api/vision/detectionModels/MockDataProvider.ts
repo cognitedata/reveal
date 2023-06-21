@@ -1,11 +1,11 @@
+import { singleton } from '@keenondrums/singleton';
+import { getFakeQueuedJob } from '@vision/api/vision/detectionModels/detectionUtils';
 import {
   VisionJobCompleted,
   VisionJobQueued,
   DetectionModelDataProvider,
   VisionDetectionModelType,
-} from 'src/api/vision/detectionModels/types';
-import { singleton } from '@keenondrums/singleton';
-import { getFakeQueuedJob } from 'src/api/vision/detectionModels/detectionUtils';
+} from '@vision/api/vision/detectionModels/types';
 
 @singleton
 export class MockDataProvider implements DetectionModelDataProvider {

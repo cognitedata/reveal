@@ -1,13 +1,17 @@
 import React, { useMemo } from 'react';
-import * as CONST from 'src/constants/PaginationConsts';
-import { TableDataItem } from 'src/modules/Common/types';
+
 import styled from 'styled-components';
+
+import * as CONST from '@vision/constants/PaginationConsts';
 import {
   SortPaginateControls,
   PaginatedTableProps,
   PageSize,
-} from 'src/modules/Common/Components/FileTable/types';
+} from '@vision/modules/Common/Components/FileTable/types';
+import { TableDataItem } from '@vision/modules/Common/types';
+
 import { Pagination } from '@cognite/cogs.js';
+
 import { Footer } from './Footer';
 
 const getPage = (

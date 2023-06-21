@@ -1,4 +1,5 @@
-import { filterAssetIdsLinkedToGivenFile } from 'src/api/utils/filterAssetIdsLinkedToGivenFile';
+import { filterAssetIdsLinkedToGivenFile } from '@vision/api/utils/filterAssetIdsLinkedToGivenFile';
+
 import sdk from '@cognite/cdf-sdk-singleton';
 
 jest.mock('@cognite/cdf-sdk-singleton');

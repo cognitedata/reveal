@@ -1,4 +1,4 @@
-import { getUpdatedValue } from 'src/store/thunks/Files/updateBulk';
+import { getUpdatedValue } from '@vision/store/thunks/Files/updateBulk';
 
 describe('Test getUpdatedValue', () => {
   test('If unsavedValue empty expected value should not change', () => {

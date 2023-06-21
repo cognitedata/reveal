@@ -1,8 +1,10 @@
 import React from 'react';
-import { GridTable } from '@cognite/data-exploration';
-import { TableDataItem } from 'src/modules/Common/types';
+
 import styled from 'styled-components';
-import { GridViewProps } from 'src/modules/Common/Components/FileTable/types';
+
+import { GridTable } from '@data-exploration-components/components';
+import { GridViewProps } from '@vision/modules/Common/Components/FileTable/types';
+import { TableDataItem } from '@vision/modules/Common/types';
 
 /**
  * Grid table Wrapper

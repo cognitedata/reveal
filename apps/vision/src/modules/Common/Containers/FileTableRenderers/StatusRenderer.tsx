@@ -1,12 +1,13 @@
+import React, { useMemo } from 'react';
+import { useSelector } from 'react-redux';
+
+import { TimeDisplay } from '@data-exploration/components';
 import {
   AnnotationsBadgeStatuses,
   CellRenderer,
-} from 'src/modules/Common/types';
-import React, { useMemo } from 'react';
-import { makeSelectJobStatusForFile } from 'src/modules/Process/store/selectors';
-import { useSelector } from 'react-redux';
-import { RootState } from 'src/store/rootReducer';
-import { TimeDisplay } from '@cognite/data-exploration';
+} from '@vision/modules/Common/types';
+import { makeSelectJobStatusForFile } from '@vision/modules/Process/store/selectors';
+import { RootState } from '@vision/store/rootReducer';
 
 export function StatusRenderer({ rowData: { id } }: CellRenderer) {
   const getAnnotationStatuses = useMemo(makeSelectJobStatusForFile, []);

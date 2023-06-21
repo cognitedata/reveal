@@ -1,19 +1,20 @@
-import { BulkEditModal } from 'src/modules/Common/Components/BulkEdit/BulkEditModal';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from 'src/store/rootReducer';
-import { selectExplorerAllSelectedFilesInSortedOrder } from 'src/modules/Explorer/store/selectors';
-import { VisionFile } from 'src/modules/Common/store/files/types';
+
+import { BulkEditModal } from '@vision/modules/Common/Components/BulkEdit/BulkEditModal';
 import {
   setBulkEditModalVisibility,
   setBulkEditUnsaved,
-} from 'src/modules/Common/store/common/slice';
-
-import { BulkEditUnsavedState } from 'src/modules/Common/store/common/types';
-import { updateBulk } from 'src/store/thunks/Files/updateBulk';
+} from '@vision/modules/Common/store/common/slice';
+import { BulkEditUnsavedState } from '@vision/modules/Common/store/common/types';
+import { VisionFile } from '@vision/modules/Common/store/files/types';
+import { selectExplorerAllSelectedFilesInSortedOrder } from '@vision/modules/Explorer/store/selectors';
+import { AppDispatch } from '@vision/store';
+import { RootState } from '@vision/store/rootReducer';
+import { updateBulk } from '@vision/store/thunks/Files/updateBulk';
 
 export const ExplorerBulkEditModalContainer = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const showBulkEditModal = useSelector(
     ({ commonReducer }: RootState) => commonReducer.showBulkEditModal

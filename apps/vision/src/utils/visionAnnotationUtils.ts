@@ -1,9 +1,9 @@
-import { CDFAnnotationTypeEnum } from 'src/api/annotation/types';
+import { CDFAnnotationTypeEnum } from '@vision/api/annotation/types';
 import {
   ColorsObjectDetection,
   ColorsOCR,
   ColorsTagDetection,
-} from 'src/constants/Colors';
+} from '@vision/constants/Colors';
 
 export const AnnotationTypeIconMap: { [key: string]: string } = {
   [CDFAnnotationTypeEnum.ImagesTextRegion]: 'String',

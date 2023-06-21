@@ -1,10 +1,11 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { FileChangeUpdate } from '@cognite/sdk';
+import { VisionFile } from '@vision/modules/Common/store/files/types';
+import { ThunkConfig } from '@vision/store/rootReducer';
+import { RetrieveAnnotations } from '@vision/store/thunks/Annotation/RetrieveAnnotations';
+import { createFileState } from '@vision/store/util/StateUtils';
+
 import sdk from '@cognite/cdf-sdk-singleton';
-import { VisionFile } from 'src/modules/Common/store/files/types';
-import { ThunkConfig } from 'src/store/rootReducer';
-import { createFileState } from 'src/store/util/StateUtils';
-import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
+import { FileChangeUpdate } from '@cognite/sdk';
 
 export const UpdateFiles = createAsyncThunk<
   VisionFile[],

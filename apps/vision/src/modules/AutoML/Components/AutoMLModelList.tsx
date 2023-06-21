@@ -1,19 +1,23 @@
 /* eslint-disable no-nested-ternary */
 import React from 'react';
-import { Title, Icon, Body } from '@cognite/cogs.js';
+import ReactBaseTable, { Column, ColumnShape } from 'react-base-table';
+
 import styled from 'styled-components';
+
 import {
   AutoMLModelCore,
   AutoMLTrainingJob,
-} from 'src/api/vision/autoML/types';
-import { TableWrapper } from 'src/modules/Common/Components/FileTable/FileTableWrapper';
-import { StringRenderer } from 'src/modules/Common/Containers/FileTableRenderers/StringRenderer';
-import { StringHeaderRenderer } from 'src/modules/Common/Containers/FileTableRenderers/StringHeaderRenderer';
-import ReactBaseTable, { Column, ColumnShape } from 'react-base-table';
-import { NameRenderer } from './AutoMLTableRenderer/NameRenderer';
-import { IdRenderer } from './AutoMLTableRenderer/IdRenderer';
-import { StatusRenderer } from './AutoMLTableRenderer/StatusRenderer';
+} from '@vision/api/vision/autoML/types';
+import { TableWrapper } from '@vision/modules/Common/Components/FileTable/FileTableWrapper';
+import { StringHeaderRenderer } from '@vision/modules/Common/Containers/FileTableRenderers/StringHeaderRenderer';
+import { StringRenderer } from '@vision/modules/Common/Containers/FileTableRenderers/StringRenderer';
+
+import { Title, Icon, Body } from '@cognite/cogs.js';
+
 import { DateRenderer } from './AutoMLTableRenderer/DateRenderer';
+import { IdRenderer } from './AutoMLTableRenderer/IdRenderer';
+import { NameRenderer } from './AutoMLTableRenderer/NameRenderer';
+import { StatusRenderer } from './AutoMLTableRenderer/StatusRenderer';
 
 export type AutoMLTableDataType = AutoMLModelCore &
   Partial<Omit<AutoMLTrainingJob, 'name' | 'jobId' | 'modelType'>>;

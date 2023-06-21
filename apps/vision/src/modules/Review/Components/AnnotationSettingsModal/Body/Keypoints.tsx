@@ -1,25 +1,29 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Collapse, Input } from 'antd';
-import { ColorsPersonDetection } from 'src/constants/Colors';
-import { ColorPicker } from 'src/modules/Common/Components/ColorPicker/ColorPicker';
+
+import styled from 'styled-components';
+
+import { CaretRightOutlined } from '@ant-design/icons';
+import { NO_EMPTY_LABELS_MESSAGE } from '@vision/constants/annotationSettingsConstants';
+import { ColorsPersonDetection } from '@vision/constants/Colors';
+import { ColorPicker } from '@vision/modules/Common/Components/ColorPicker/ColorPicker';
 import {
   getRandomColor,
   validNewKeypoint,
-} from 'src/modules/Review/Components/AnnotationSettingsModal/AnnotationSettingsUtils';
+} from '@vision/modules/Review/Components/AnnotationSettingsModal/AnnotationSettingsUtils';
+import { NewKeypoints } from '@vision/modules/Review/Components/AnnotationSettingsModal/types';
 import {
   PredefinedKeypoint,
   PredefinedKeypointCollection,
-} from 'src/modules/Review/types';
-import { isSensitiveAnnotationLabel } from 'src/utils/textUtils';
-import styled from 'styled-components';
-import { CaretRightOutlined } from '@ant-design/icons';
+} from '@vision/modules/Review/types';
+import { isSensitiveAnnotationLabel } from '@vision/utils/textUtils';
+import { ToastUtils } from '@vision/utils/ToastUtils';
+import { Collapse, Input } from 'antd';
+import isEmpty from 'lodash/isEmpty';
+
 import { Body, Button, Detail, Tooltip } from '@cognite/cogs.js';
-import { NO_EMPTY_LABELS_MESSAGE } from 'src/constants/annotationSettingsConstants';
-import isEmpty from 'lodash-es/isEmpty';
-import { NewKeypoints } from 'src/modules/Review/Components/AnnotationSettingsModal/types';
-import { ToastUtils } from 'src/utils/ToastUtils';
-import { Header } from './Header';
+
 import { renderEmptyAnnotationMessage } from './EmptyAnnotationInfo';
+import { Header } from './Header';
 
 const { Panel } = Collapse;
 

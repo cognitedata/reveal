@@ -1,5 +1,6 @@
+import { useQuery } from '@tanstack/react-query';
+
 import { useSDK } from '@cognite/sdk-provider';
-import { useQuery } from 'react-query';
 
 export const useGroups = (all = false) => {
   const sdk = useSDK();

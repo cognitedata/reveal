@@ -1,8 +1,9 @@
 import React from 'react';
-import times from 'lodash-es/times';
+
+import { sizes } from '@vision/modules/Common/Components/Skeleton/layout';
+import Text from '@vision/modules/Common/Components/Skeleton/layouts/Text';
+import times from 'lodash/times';
 import styled from 'styled-components/macro';
-import Text from 'src/modules/Common/Components/Skeleton/layouts/Text';
-import { sizes } from 'src/modules/Common/Components/Skeleton/layout';
 
 interface Props {
   lines?: number;

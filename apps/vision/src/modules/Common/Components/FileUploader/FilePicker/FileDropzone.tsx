@@ -1,5 +1,7 @@
 import React from 'react';
-import { WebkitFile } from 'src/modules/Common/Components/FileUploader/FilePicker/types';
+
+import { WebkitFile } from '@vision/modules/Common/Components/FileUploader/FilePicker/types';
+
 import { useFilePickerContext } from './FilePickerContext';
 
 export const fileDropzoneTitle = 'Drop files or folders here';
@@ -22,7 +24,7 @@ export function FileDropzone(props: FilesDropzoneProps) {
     try {
       const files = await getAllFiles(event.dataTransfer.items);
       onChange(files);
-    } catch (error) {
+    } catch (error: any) {
       onError(error);
     }
   };
@@ -81,6 +83,7 @@ async function getAllFiles(
   // Use BFS to traverse entire directory/file structure
   const queue: Array<InternalDataTransferItem> = [];
   for (let i = 0; i < dataTransferItemList.length; i++) {
+    // @ts-ignore
     queue.push(dataTransferItemList[i].webkitGetAsEntry());
   }
 
@@ -108,6 +111,7 @@ async function getAllFiles(
     }
   }
   /* eslint-enable no-await-in-loop */
+  // @ts-ignore
   return Array.from(fileEntries.values());
 }
 

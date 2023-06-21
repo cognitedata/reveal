@@ -1,8 +1,9 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import { VisionFile } from '@vision/modules/Common/store/files/types';
+import { ThunkConfig } from '@vision/store/rootReducer';
+import { createFileState } from '@vision/store/util/StateUtils';
+
 import sdk from '@cognite/cdf-sdk-singleton';
-import { VisionFile } from 'src/modules/Common/store/files/types';
-import { ThunkConfig } from 'src/store/rootReducer';
-import { createFileState } from 'src/store/util/StateUtils';
 
 export const FetchFilesById = createAsyncThunk<
   VisionFile[],

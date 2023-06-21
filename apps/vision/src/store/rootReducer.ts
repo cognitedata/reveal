@@ -1,14 +1,14 @@
 import { combineReducers } from '@reduxjs/toolkit';
 import './commonActions';
-import fileReducer from 'src/modules/Common/store/files/slice';
-import commonReducer from 'src/modules/Common/store/common/slice';
-import annotationReducer from 'src/modules/Common/store/annotation/slice';
-import annotatorWrapperReducer from 'src/modules/Review/store/annotatorWrapper/slice';
-import fileDetailsSlice from 'src/modules/FileDetails/slice';
-import explorerReducer from 'src/modules/Explorer/store/slice';
-import processSlice from 'src/modules/Process/store/slice';
-import reviewSlice from 'src/modules/Review/store/review/slice';
-import annotationDetailPanelReducer from 'src/modules/Review/Containers/AnnotationDetailPanel/store/slice';
+import annotationReducer from '@vision/modules/Common/store/annotation/slice';
+import commonReducer from '@vision/modules/Common/store/common/slice';
+import fileReducer from '@vision/modules/Common/store/files/slice';
+import explorerReducer from '@vision/modules/Explorer/store/slice';
+import fileDetailsSlice from '@vision/modules/FileDetails/slice';
+import processSlice from '@vision/modules/Process/store/slice';
+import annotationDetailPanelReducer from '@vision/modules/Review/Containers/AnnotationDetailPanel/store/slice';
+import annotatorWrapperReducer from '@vision/modules/Review/store/annotatorWrapper/slice';
+import reviewSlice from '@vision/modules/Review/store/review/slice';
 
 const rootReducer = combineReducers({
   fileReducer,

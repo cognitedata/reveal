@@ -1,14 +1,15 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { ThunkConfig } from 'src/store/rootReducer';
+import { convertCDFAnnotationToVisionAnnotations } from '@vision/api/annotation/converters';
+import { ANNOTATION_FETCH_BULK_SIZE } from '@vision/constants/FetchConstants';
 import {
   VisionAnnotation,
   VisionAnnotationDataType,
-} from 'src/modules/Common/types';
-import { splitListIntoChunks } from 'src/utils/generalUtils';
-import { ANNOTATION_FETCH_BULK_SIZE } from 'src/constants/FetchConstants';
+} from '@vision/modules/Common/types';
+import { ThunkConfig } from '@vision/store/rootReducer';
+import { splitListIntoChunks } from '@vision/utils/generalUtils';
 import { from, lastValueFrom } from 'rxjs';
 import { map, mergeMap, reduce } from 'rxjs/operators';
-import { convertCDFAnnotationToVisionAnnotations } from 'src/api/annotation/converters';
+
 import sdk from '@cognite/cdf-sdk-singleton';
 
 export const RetrieveAnnotations = createAsyncThunk<

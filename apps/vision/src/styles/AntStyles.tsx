@@ -1,6 +1,8 @@
 // @ts-nocheck : issue with antd less imports
-import { ids } from 'src/cogs-variables';
 import React, { useEffect } from 'react';
+
+import { ids } from '@vision/cogs-variables';
+import { getContainer } from '@vision/utils';
 import {
   ConfigProvider,
   Modal,
@@ -11,10 +13,8 @@ import {
   Dropdown,
   Spin,
 } from 'antd';
-import { Icon, Tooltip as CogsTooltip } from '@cognite/cogs.js';
-
-// import affixStyle from 'antd/es/affix/style/index.less';
 import alertStyle from 'antd/es/alert/style/index.less';
+// import affixStyle from 'antd/es/affix/style/index.less';
 // import anchorStyle from 'antd/es/anchor/style/index.less';
 // import autoCompleteStyle from 'antd/es/auto-complete/style/index.less';
 // import avatarStyle from 'antd/es/avatar/style/index.less';
@@ -30,7 +30,6 @@ import breadcrumbStyle from 'antd/es/breadcrumb/style/index.less';
 import collapseStyle from 'antd/es/collapse/style/index.less';
 // import commentStyle from 'antd/es/comment/style/index.less';
 import configProviderStyle from 'antd/es/config-provider/style/index.less';
-import coreStyle from 'antd/es/style/core/index.less';
 import datePickerStyle from 'antd/es/date-picker/style/index.less';
 // import descriptionsStyle from 'antd/es/descriptions/style/index.less';
 // import dividerStyle from 'antd/es/divider/style/index.less';
@@ -41,8 +40,8 @@ import dropdownStyle from 'antd/es/dropdown/style/index.less';
 import gridStyle from 'antd/es/grid/style/index.less';
 // import iconStyle from 'antd/es/icon/style/index.less';
 // import imageStyle from 'antd/es/image/style/index.less';
-import inputNumberStyle from 'antd/es/input-number/style/index.less';
 import inputStyle from 'antd/es/input/style/index.less';
+import inputNumberStyle from 'antd/es/input-number/style/index.less';
 // import layoutStyle from 'antd/es/layout/style/index.less';
 // import listStyle from 'antd/es/list/style/index.less';
 // import localeProviderStyle from 'antd/es/locale-provider/style/index.less';
@@ -67,6 +66,7 @@ import sliderStyle from 'antd/es/slider/style/index.less';
 import spinStyle from 'antd/es/spin/style/index.less';
 // import statisticStyle from 'antd/es/statistic/style/index.less';
 import stepsStyle from 'antd/es/steps/style/index.less';
+import coreStyle from 'antd/es/style/core/index.less';
 // import switchStyle from 'antd/es/switch/style/index.less';
 // import tableStyle from 'antd/es/table/style/index.less';
 import tabsStyle from 'antd/es/tabs/style/index.less';
@@ -79,8 +79,9 @@ import tooltipStyle from 'antd/es/tooltip/style/index.less';
 // import treeSelectStyle from 'antd/es/tree-select/style/index.less';
 // import treeStyle from 'antd/es/tree/style/index.less';
 import typographyStyle from 'antd/es/typography/style/index.less';
+
+import { Icon, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 // import uploadStyle from 'antd/es/upload/style/index.less';
-import { getContainer } from 'src/utils';
 
 const styles = [
   // affixStyle,

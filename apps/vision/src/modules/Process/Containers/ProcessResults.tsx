@@ -1,17 +1,47 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+
+import styled from 'styled-components';
+
+import { VisionMode } from '@vision/constants/enums/VisionEnums';
+import { FileGridPreview } from '@vision/modules/Common/Components/FileGridPreview/FileGridPreview';
+import { FileTable } from '@vision/modules/Common/Components/FileTable/FileTable';
+import {
+  PageSize,
+  PaginatedTableProps,
+} from '@vision/modules/Common/Components/FileTable/types';
+import { PageBasedGridView } from '@vision/modules/Common/Components/GridView/PageBasedGridView';
+import { MapView } from '@vision/modules/Common/Components/MapView/MapView';
+import { PaginationWrapper } from '@vision/modules/Common/Components/SorterPaginationWrapper/PaginationWrapper';
+import { useContextMenu } from '@vision/modules/Common/hooks/useContextMenu';
+import { selectAllFilesSelected } from '@vision/modules/Common/store/files/selectors';
 import {
   setFileSelectState,
   setSelectedFiles,
   setSelectedAllFiles,
-} from 'src/modules/Common/store/files/slice';
-import { selectAllFilesSelected } from 'src/modules/Common/store/files/selectors';
+} from '@vision/modules/Common/store/files/slice';
 import {
   FileActions,
   ResultData,
   SelectFilter,
   TableDataItem,
   ViewMode,
-} from 'src/modules/Common/types';
+} from '@vision/modules/Common/types';
+import { ContextMenuContainer } from '@vision/modules/Explorer/Containers/ContextMenuContainer';
+import {
+  cancelFileDetailsEdit,
+  resetEditHistory,
+} from '@vision/modules/FileDetails/slice';
+import {
+  useIsSelectedInProcess,
+  useProcessFilesSelected,
+} from '@vision/modules/Process/store/hooks';
+import {
+  selectProcessSortedFiles,
+  selectUnfinishedJobs,
+  selectProcessSelectedFileIdsInSortedOrder,
+} from '@vision/modules/Process/store/selectors';
 import {
   setMapTableTabKey,
   setFocusedFileId,
@@ -20,44 +50,19 @@ import {
   setReverse,
   setCurrentPage,
   setPageSize,
-} from 'src/modules/Process/store/slice';
-import {
-  selectProcessSortedFiles,
-  selectUnfinishedJobs,
-  selectProcessSelectedFileIdsInSortedOrder,
-} from 'src/modules/Process/store/selectors';
-import {
-  useIsSelectedInProcess,
-  useProcessFilesSelected,
-} from 'src/modules/Process/store/hooks';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from 'src/store/rootReducer';
-import { MapView } from 'src/modules/Common/Components/MapView/MapView';
-import {
-  cancelFileDetailsEdit,
-  resetEditHistory,
-} from 'src/modules/FileDetails/slice';
-import { FileTable } from 'src/modules/Common/Components/FileTable/FileTable';
-import { FileGridPreview } from 'src/modules/Common/Components/FileGridPreview/FileGridPreview';
-import { useHistory } from 'react-router-dom';
-import { FetchFilesById } from 'src/store/thunks/Files/FetchFilesById';
-import { PopulateReviewFiles } from 'src/store/thunks/Review/PopulateReviewFiles';
-import { getParamLink, workflowRoutes } from 'src/utils/workflowRoutes';
-import styled from 'styled-components';
+} from '@vision/modules/Process/store/slice';
+import { AppDispatch } from '@vision/store';
+import { RootState } from '@vision/store/rootReducer';
+import { RetrieveAnnotations } from '@vision/store/thunks/Annotation/RetrieveAnnotations';
+import { DeleteFilesById } from '@vision/store/thunks/Files/DeleteFilesById';
+import { FetchFilesById } from '@vision/store/thunks/Files/FetchFilesById';
+import { PollJobs } from '@vision/store/thunks/Process/PollJobs';
+import { PopulateReviewFiles } from '@vision/store/thunks/Review/PopulateReviewFiles';
+import { getParamLink, workflowRoutes } from '@vision/utils/workflowRoutes';
+import noop from 'lodash/noop';
+
 import { Detail } from '@cognite/cogs.js';
-import { PageBasedGridView } from 'src/modules/Common/Components/GridView/PageBasedGridView';
-import { VisionMode } from 'src/constants/enums/VisionEnums';
 import { FileInfo } from '@cognite/sdk';
-import { PaginationWrapper } from 'src/modules/Common/Components/SorterPaginationWrapper/PaginationWrapper';
-import {
-  PageSize,
-  PaginatedTableProps,
-} from 'src/modules/Common/Components/FileTable/types';
-import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
-import { PollJobs } from 'src/store/thunks/Process/PollJobs';
-import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
-import { ContextMenuContainer } from 'src/modules/Explorer/Containers/ContextMenuContainer';
-import { useContextMenu } from 'src/modules/Common/hooks/useContextMenu';
 
 export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
   const {
@@ -69,8 +74,8 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
     setShowContextMenu,
   } = useContextMenu();
 
-  const dispatch = useDispatch();
-  const history = useHistory();
+  const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
   const focusedFileId = useSelector(
     ({ processSlice }: RootState) => processSlice.focusedFileId
   );
@@ -122,9 +127,8 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
       },
       onReviewClick: (fileInfo: FileInfo) => {
         dispatch(PopulateReviewFiles(processFileIds));
-        history.push(
-          getParamLink(workflowRoutes.review, ':fileId', String(fileInfo.id)),
-          { from: 'process' }
+        navigate(
+          getParamLink(workflowRoutes.review, ':fileId', String(fileInfo.id))
         );
       },
       onFileDelete: (id: number) => {
@@ -283,9 +287,12 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
                 <PageBasedGridView
                   data={data}
                   {...otherProps}
-                  onItemClick={handleItemClick}
+                  onItemClicked={handleItemClick}
                   isLoading={isLoading}
                   renderCell={renderCell}
+                  onSelect={noop}
+                  isSelected={() => false}
+                  selectionMode="single"
                 />
               );
             }

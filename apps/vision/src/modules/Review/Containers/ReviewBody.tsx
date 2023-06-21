@@ -1,30 +1,35 @@
-import { FileInfo } from '@cognite/sdk';
-import { Tabs, Title } from '@cognite/cogs.js';
-import { Spin, notification } from 'antd';
 import React, { ReactText, useCallback, useEffect, useState } from 'react';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
-import { FileDetailsReview } from 'src/modules/FileDetails/Containers/FileDetailsReview/FileDetailsReview';
-import { ThumbnailCarousel } from 'src/modules/Review/Components/ThumbnailCarousel/ThumbnailCarousel';
-import { ImagePreview } from 'src/modules/Review/Containers/ImagePreview';
-import { setScrollToId } from 'src/modules/Review/store/review/slice';
-import { selectAllReviewFiles } from 'src/modules/Review/store/review/selectors';
-import { RootState } from 'src/store/rootReducer';
-import { getParamLink, workflowRoutes } from 'src/utils/workflowRoutes';
+import { useNavigate } from 'react-router-dom';
+
 import styled from 'styled-components';
-import { VideoPreview } from 'src/modules/Review/Components/VideoPreview/VideoPreview';
-import { isVideo } from 'src/modules/Common/Components/FileUploader/utils/FileUtils';
-import { FileProcessStatusWrapper } from 'src/modules/Review/Containers/FileProcessStatusWrapper';
-import { PreviewProcessingOverlay } from 'src/modules/Review/Components/PreviewProcessingOverlay/PreviewProcessingOverlay';
+
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { isVideo } from '@vision/modules/Common/Components/FileUploader/utils/FileUtils';
+import { FileDetailsReview } from '@vision/modules/FileDetails/Containers/FileDetailsReview/FileDetailsReview';
+import { PreviewProcessingOverlay } from '@vision/modules/Review/Components/PreviewProcessingOverlay/PreviewProcessingOverlay';
+import { ThumbnailCarousel } from '@vision/modules/Review/Components/ThumbnailCarousel/ThumbnailCarousel';
+import { VideoPreview } from '@vision/modules/Review/Components/VideoPreview/VideoPreview';
+import { FileProcessStatusWrapper } from '@vision/modules/Review/Containers/FileProcessStatusWrapper';
+import { ImagePreview } from '@vision/modules/Review/Containers/ImagePreview';
+import { selectAllReviewFiles } from '@vision/modules/Review/store/review/selectors';
+import { setScrollToId } from '@vision/modules/Review/store/review/slice';
+import { AppDispatch } from '@vision/store';
+import { RootState } from '@vision/store/rootReducer';
+import { getParamLink, workflowRoutes } from '@vision/utils/workflowRoutes';
+import { Spin, notification } from 'antd';
+
+import { Tabs, Title } from '@cognite/cogs.js';
+import { FileInfo } from '@cognite/sdk';
+
 import { AnnotationDetailPanel } from './AnnotationDetailPanel/AnnotationDetailPanel';
 
 const queryClient = new QueryClient();
 
 const ReviewBody = (props: { file: FileInfo; prev: string | undefined }) => {
-  const { file, prev } = props;
-  const history = useHistory();
-  const dispatch = useDispatch();
+  const { file } = props;
+  const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
   const [inFocus, setInFocus] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [currentTab, tabChange] = useState('1');
@@ -59,10 +64,9 @@ const ReviewBody = (props: { file: FileInfo; prev: string | undefined }) => {
       setLoading(true);
 
       // Go to this file
-      history.replace(
-        getParamLink(workflowRoutes.review, ':fileId', String(fileId)),
-        { from: prev }
-      );
+      navigate(getParamLink(workflowRoutes.review, ':fileId', String(fileId)), {
+        replace: true,
+      });
     }
   };
 

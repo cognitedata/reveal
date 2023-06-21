@@ -1,16 +1,16 @@
 import React from 'react';
-import { screen } from '@testing-library/react';
-import { getDummyKeypointState } from 'src/__test-utils/annotations';
 
-import { testRenderer } from 'src/__test-utils/renderer';
-import { useIsCurrentKeypointCollectionComplete } from 'src/modules/Review/store/annotatorWrapper/hooks';
-import { PredefinedKeypoint } from 'src/modules/Review/types';
-import { getMockedStore } from 'src/__test-utils/store.utils';
-import { initialState as annotatorWrapperInitialState } from 'src/modules/Review/store/annotatorWrapper/slice';
-import { initialState as annotatorAnnotationInitialState } from 'src/modules/Common/store/annotation/slice';
-import { Status } from 'src/api/annotation/types';
-import { AnnotationState } from 'src/modules/Common/store/annotation/types';
-import { AnnotatorWrapperState } from 'src/modules/Review/store/annotatorWrapper/type';
+import { screen } from '@testing-library/react';
+import { getDummyKeypointState } from '@vision/__test-utils/annotations';
+import { testRenderer } from '@vision/__test-utils/renderer';
+import { getMockedStore } from '@vision/__test-utils/store.utils';
+import { Status } from '@vision/api/annotation/types';
+import { initialState as annotatorAnnotationInitialState } from '@vision/modules/Common/store/annotation/slice';
+import { AnnotationState } from '@vision/modules/Common/store/annotation/types';
+import { useIsCurrentKeypointCollectionComplete } from '@vision/modules/Review/store/annotatorWrapper/hooks';
+import { initialState as annotatorWrapperInitialState } from '@vision/modules/Review/store/annotatorWrapper/slice';
+import { AnnotatorWrapperState } from '@vision/modules/Review/store/annotatorWrapper/type';
+import { PredefinedKeypoint } from '@vision/modules/Review/types';
 
 const COMPLETED_ID = 'completed';
 const NOT_COMPLETED_ID = 'notCompleted';

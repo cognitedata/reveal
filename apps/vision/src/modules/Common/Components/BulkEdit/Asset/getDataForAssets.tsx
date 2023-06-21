@@ -1,12 +1,13 @@
 import React from 'react';
-import { Tag } from 'antd';
-import { BulkEditTableDataType } from 'src/modules/Common/Components/BulkEdit/BulkEditTable/BulkEditTable';
+
+import { BulkEditTableDataType } from '@vision/modules/Common/Components/BulkEdit/BulkEditTable/BulkEditTable';
+import { CellContainer } from '@vision/modules/Common/Components/BulkEdit/utils/CellContainer';
 import {
   AssetIds,
   BulkEditUnsavedState,
-} from 'src/modules/Common/store/common/types';
-import { VisionFile } from 'src/modules/Common/store/files/types';
-import { CellContainer } from 'src/modules/Common/Components/BulkEdit/utils/CellContainer';
+} from '@vision/modules/Common/store/common/types';
+import { VisionFile } from '@vision/modules/Common/store/files/types';
+import { Tag } from 'antd';
 
 export const getTagForOriginal = ({
   assetId,

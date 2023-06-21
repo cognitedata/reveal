@@ -1,9 +1,13 @@
-import { FileInfo } from '@cognite/sdk';
-import { Body, DocumentIcon, Button, Icon } from '@cognite/cogs.js';
-import { Loader, useFileIcon } from '@cognite/data-exploration';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { isFilePreviewable } from 'src/modules/Common/Components/FileUploader/utils/FileUtils';
+
 import styled from 'styled-components';
+
+import { isFilePreviewable } from '@vision/modules/Common/Components/FileUploader/utils/FileUtils';
+
+import { Body, DocumentIcon, Button, Icon } from '@cognite/cogs.js';
+import { useFileIcon } from '@cognite/data-exploration';
+import { FileInfo } from '@cognite/sdk';
+
 import { ThumbnailProcessingOverlay } from './ThumbnailProcessingOverlay';
 
 export const Thumbnail = ({
@@ -52,7 +56,9 @@ export const Thumbnail = ({
           style={{ padding: '4px 60px;' }}
         >
           View file
-          <Icon type="ArrowRight" style={{ marginLeft: '8px' }} />
+          <div style={{ marginLeft: '8px' }}>
+            <Icon type="ArrowRight" />
+          </div>
         </ViewFileButton>
       </OverlayContainer>
     );
@@ -89,7 +95,7 @@ export const Thumbnail = ({
         );
       }
       if (!isError) {
-        return <Loader />;
+        return <Icon type="Loader" />;
       }
     }
     return (

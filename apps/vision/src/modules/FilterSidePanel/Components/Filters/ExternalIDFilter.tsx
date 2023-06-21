@@ -1,6 +1,8 @@
 import React from 'react';
+
+import { VisionFilterItemProps } from '@vision/modules/FilterSidePanel/types';
+
 import { StringFilter } from '@cognite/data-exploration';
-import { VisionFilterItemProps } from 'src/modules/FilterSidePanel/types';
 
 export const ExternalIdFilter = ({
   filter,

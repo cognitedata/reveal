@@ -1,8 +1,12 @@
-import debounce from 'lodash-es/debounce';
 import React, { useEffect, useMemo, useState } from 'react';
+
+import styled from 'styled-components';
+
+import { Thumbnail } from '@vision/modules/Common/Components/Thumbnail/Thumbnail';
+import { FileProcessStatusWrapper } from '@vision/modules/Review/Containers/FileProcessStatusWrapper';
+import { getIdFromUrl } from '@vision/utils/tenancy';
+import debounce from 'lodash/debounce';
 // Import Swiper React components
-import { Swiper, SwiperSlide } from 'swiper/react';
-// import Swiper core and required modules
 import SwiperCore, {
   Pagination,
   Mousewheel,
@@ -10,14 +14,14 @@ import SwiperCore, {
   Navigation,
   Keyboard,
 } from 'swiper/core';
-import styled from 'styled-components';
-import { getIdFromUrl } from 'src/utils/tenancy';
-import { Thumbnail } from 'src/modules/Common/Components/Thumbnail/Thumbnail';
+import { Swiper, SwiperSlide } from 'swiper/react';
+// import Swiper core and required modules
+import swiperStyles from 'swiper/swiper-bundle.css';
+
 import { Button, Icon } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
+
 // Import Swiper styles
-import swiperStyles from 'swiper/swiper-bundle.css';
-import { FileProcessStatusWrapper } from 'src/modules/Review/Containers/FileProcessStatusWrapper';
 
 SwiperCore.use([Navigation, Mousewheel, Pagination, Virtual, Keyboard]);
 

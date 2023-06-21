@@ -1,7 +1,8 @@
 import { createSelector } from '@reduxjs/toolkit';
-import isEqual from 'lodash-es/isEqual';
+import { createFileInfo } from '@vision/store/util/StateUtils';
+import isEqual from 'lodash/isEqual';
 import { createSelectorCreator, defaultMemoize } from 'reselect';
-import { createFileInfo } from 'src/store/util/StateUtils';
+
 import { FileState } from './types';
 
 export const selectAllSelectedIds = (state: FileState): number[] =>
@@ -9,7 +10,7 @@ export const selectAllSelectedIds = (state: FileState): number[] =>
 
 export const selectAllFiles = createSelector(
   (state: FileState) => state.files.allIds,
-  (state) => state.files.byId,
+  (state: FileState) => state.files.byId,
   (allIds, allFiles) => {
     return allIds.map((id) => createFileInfo(allFiles[id]));
   }

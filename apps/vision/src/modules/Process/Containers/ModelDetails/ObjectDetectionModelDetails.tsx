@@ -1,15 +1,19 @@
-import { Button, Detail, Icon, Tooltip, Row, Title } from '@cognite/cogs.js';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+
 import {
   DetectionModelParams,
   ParamsObjectDetection,
-} from 'src/api/vision/detectionModels/types';
-import { setUnsavedDetectionModelSettings } from 'src/modules/Process/store/slice';
-import { RootState } from 'src/store/rootReducer';
-import { ColorsObjectDetection } from 'src/constants/Colors';
-import ObjectDetectionIllustration from 'src/assets/visualDescriptions/ObjectDetectionIllustration.svg';
+} from '@vision/api/vision/detectionModels/types';
+import ObjectDetectionIllustration from '@vision/assets/visualDescriptions/ObjectDetectionIllustration';
+import { ColorsObjectDetection } from '@vision/constants/Colors';
+import { setUnsavedDetectionModelSettings } from '@vision/modules/Process/store/slice';
+import { AppDispatch } from '@vision/store';
+import { RootState } from '@vision/store/rootReducer';
 import { InputNumber } from 'antd';
+
+import { Button, Detail, Icon, Tooltip, Row, Title } from '@cognite/cogs.js';
+
 import {
   ColorBox,
   NameContainer,
@@ -37,7 +41,7 @@ export const badge = (modelName: string, hideText = false) => {
 };
 
 const Content = (modelIndex: number) => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const modelName = useSelector(
     ({ processSlice }: RootState) =>
@@ -86,7 +90,9 @@ const Content = (modelIndex: number) => {
                       wrapped
                       content="Threshold for minimum confidence the model has on a detected object"
                     >
-                      <Icon type="HelpFilled" style={{ marginLeft: '11px' }} />
+                      <div style={{ marginLeft: '11px' }}>
+                        <Icon type="HelpFilled" />
+                      </div>
                     </Tooltip>
                   </td>
                   <th>
@@ -138,10 +144,7 @@ const Content = (modelIndex: number) => {
               {badge(modelName)}
               {description()}
             </NameContainer>
-            <img
-              src={ObjectDetectionIllustration}
-              alt="ObjectDetectionIllustration"
-            />
+            <ObjectDetectionIllustration />
           </div>
         </StyledCol>
       </Row>

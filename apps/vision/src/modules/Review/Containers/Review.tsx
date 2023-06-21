@@ -1,25 +1,29 @@
-import { notification } from 'antd';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { PageTitle } from '@cognite/cdf-utilities';
-import { selectFileById } from 'src/modules/Common/store/files/selectors';
-import { RootState } from 'src/store/rootReducer';
-import { PopulateAnnotationTemplates } from 'src/store/thunks/Annotation/PopulateAnnotationTemplates';
-import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
-import { FetchFilesById } from 'src/store/thunks/Files/FetchFilesById';
-import { PopulateReviewFiles } from 'src/store/thunks/Review/PopulateReviewFiles';
-import styled from 'styled-components';
-import { Button, Icon, Popconfirm, ToastContainer } from '@cognite/cogs.js';
-import { useHistory, useLocation, useParams } from 'react-router-dom';
 import { batch, useDispatch, useSelector } from 'react-redux';
-import { resetPreview } from 'src/modules/Review/store/review/slice';
-import ReviewBody from 'src/modules/Review/Containers/ReviewBody';
-import { resetEditHistory } from 'src/modules/FileDetails/slice';
-import { StatusToolBar } from 'src/modules/Process/Containers/StatusToolBar';
-import { pushMetric } from 'src/utils/pushMetric';
-import { getParamLink, workflowRoutes } from 'src/utils/workflowRoutes';
-import { CustomPrompt } from 'src/modules/Common/Components/CustomPrompt/CustomPrompt';
-import { PopulateProcessFiles } from 'src/store/thunks/Process/PopulateProcessFiles';
-import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+
+import styled from 'styled-components';
+
+// import { CustomPrompt } from '@vision/modules/Common/Components/CustomPrompt/CustomPrompt';
+import { selectFileById } from '@vision/modules/Common/store/files/selectors';
+import { resetEditHistory } from '@vision/modules/FileDetails/slice';
+import { StatusToolBar } from '@vision/modules/Process/Containers/StatusToolBar';
+import ReviewBody from '@vision/modules/Review/Containers/ReviewBody';
+import { resetPreview } from '@vision/modules/Review/store/review/slice';
+import { AppDispatch } from '@vision/store';
+import { RootState } from '@vision/store/rootReducer';
+import { PopulateAnnotationTemplates } from '@vision/store/thunks/Annotation/PopulateAnnotationTemplates';
+import { RetrieveAnnotations } from '@vision/store/thunks/Annotation/RetrieveAnnotations';
+import { DeleteFilesById } from '@vision/store/thunks/Files/DeleteFilesById';
+import { FetchFilesById } from '@vision/store/thunks/Files/FetchFilesById';
+import { PopulateProcessFiles } from '@vision/store/thunks/Process/PopulateProcessFiles';
+import { PopulateReviewFiles } from '@vision/store/thunks/Review/PopulateReviewFiles';
+import { pushMetric } from '@vision/utils/pushMetric';
+import { getParamLink, workflowRoutes } from '@vision/utils/workflowRoutes';
+import { notification } from 'antd';
+
+import { PageTitle } from '@cognite/cdf-utilities';
+import { Button, Icon, Popconfirm, ToastContainer } from '@cognite/cogs.js';
 
 const DeleteButton = (props: {
   onConfirm: () => void;
@@ -46,13 +50,13 @@ const DeleteButton = (props: {
 const Review = () => {
   const [isDeleteInProgress, setIsDeleteInProgress] = useState<boolean>(false);
 
-  const history = useHistory();
-  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
   const { fileId } = useParams<{ fileId: string }>();
   const { state } = useLocation();
 
   const file = useSelector(({ fileReducer }: RootState) =>
-    selectFileById(fileReducer, +fileId)
+    selectFileById(fileReducer, +fileId!)
   );
 
   const reviewFileIds = useSelector(
@@ -63,8 +67,8 @@ const Review = () => {
   const showBackButton = !!previousPage || false;
 
   const onBackButtonClick = useCallback(() => {
-    history.goBack();
-  }, [history]);
+    navigate(-1);
+  }, [navigate]);
 
   // Wraps around the dispatch call so that we can await for the deletion to finish.
   const deleteFileById = async () => {
@@ -87,20 +91,20 @@ const Review = () => {
       const nextIndex =
         currentIndex - 1 < 0 ? currentIndex + 1 : currentIndex - 1;
 
-      history.replace(
+      navigate(
         getParamLink(
           workflowRoutes.review,
           ':fileId',
           String(reviewFileIds[nextIndex])
         ),
-        { from: previousPage }
+        { replace: true }
       );
       await deleteFileById();
     }
   }, [
     reviewFileIds,
     onBackButtonClick,
-    history,
+    navigate,
     previousPage,
     file,
     setIsDeleteInProgress,
@@ -119,7 +123,7 @@ const Review = () => {
     }
 
     if (file) {
-      dispatch(RetrieveAnnotations({ fileIds: [+fileId], clearCache: true }));
+      dispatch(RetrieveAnnotations({ fileIds: [+fileId!], clearCache: true }));
     }
     // reset notifications
     notification.destroy();
@@ -193,7 +197,7 @@ const Review = () => {
 
   return (
     <>
-      <CustomPrompt when={previousPage === 'process'} onOK={clearProcessData} />
+      {/* <CustomPrompt when={previousPage === 'process'} onOK={clearProcessData} /> */}
       {renderView}
     </>
   );

@@ -1,18 +1,20 @@
 import React from 'react';
+
 import styled from 'styled-components';
-import {
-  AnnotationDetailPanelRowDataBase,
-  VirtualizedTreeRowProps,
-} from 'src/modules/Review/Containers/AnnotationDetailPanel/types';
+
+import { CDFAnnotationTypeEnum } from '@vision/api/annotation/types';
+import { VisionAnnotationDataType } from '@vision/modules/Common/types/annotation';
 import {
   AnnotationTableRow,
   ExpandIconComponent,
   KeyboardShortCutSelectable,
   SidePanelRow,
-} from 'src/modules/Review/Containers/AnnotationDetailPanel/components/common';
-import { VisionReviewAnnotation } from 'src/modules/Review/types';
-import { VisionAnnotationDataType } from 'src/modules/Common/types/annotation';
-import { CDFAnnotationTypeEnum } from 'src/api/annotation/types';
+} from '@vision/modules/Review/Containers/AnnotationDetailPanel/components/common';
+import {
+  AnnotationDetailPanelRowDataBase,
+  VirtualizedTreeRowProps,
+} from '@vision/modules/Review/Containers/AnnotationDetailPanel/types';
+import { VisionReviewAnnotation } from '@vision/modules/Review/types';
 
 export const ReviewVisionAnnotationRow = ({
   additionalData,

@@ -1,15 +1,17 @@
-import { VerticalContainer } from 'src/modules/Common/Components/VerticalContainer';
-import { LazyWrapper } from 'src/modules/Common/Components/LazyWrapper';
-import { ProcessFileDetailsContainer } from 'src/modules/Process/Containers/ProcesseFileDetailsContainer/ProcesseFileDetailsContainer';
 import React, { useMemo } from 'react';
-import { Redirect, Route, Switch, useLocation } from 'react-router-dom';
-import { workflowRoutes } from 'src/utils/workflowRoutes';
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
+
 import styled from 'styled-components';
-import { StatusToolBar } from 'src/modules/Process/Containers/StatusToolBar';
+
+import { LazyWrapper } from '@vision/modules/Common/Components/LazyWrapper';
+import { VerticalContainer } from '@vision/modules/Common/Components/VerticalContainer';
+import { ProcessFileDetailsContainer } from '@vision/modules/Process/Containers/ProcesseFileDetailsContainer/ProcesseFileDetailsContainer';
+import { StatusToolBar } from '@vision/modules/Process/Containers/StatusToolBar';
+import { workflowRoutes } from '@vision/utils/workflowRoutes';
 
 const ProcessStep = () => {
   const compRoute = useMemo(
-    () => () => import('src/modules/Process/Containers/ProcessStep'),
+    () => () => import('@vision/modules/Process/Containers/ProcessStep'),
     []
   );
 
@@ -23,22 +25,21 @@ export default function Process() {
       <StatusToolBar current="Contextualize Imagery Data" previous="explorer" />
       <MainContent>
         <MainContainer>
-          <Switch>
-            <Redirect
-              from={workflowRoutes.upload}
-              to={{
-                key: workflowRoutes.process,
-                pathname: workflowRoutes.process,
-                search,
-              }}
-            />
+          <Routes>
             <Route
-              key={workflowRoutes.process}
-              path={workflowRoutes.process}
-              exact
-              component={ProcessStep}
+              path={workflowRoutes.upload}
+              element={
+                <Navigate
+                  to={{
+                    pathname: 'process',
+                    search,
+                  }}
+                  replace
+                />
+              }
             />
-          </Switch>
+            <Route path="process" element={<ProcessStep />} />
+          </Routes>
         </MainContainer>
         <ProcessFileDetailsContainer />
       </MainContent>

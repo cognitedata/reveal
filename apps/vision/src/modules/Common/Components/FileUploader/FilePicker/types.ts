@@ -10,7 +10,7 @@ export type CogsUploadFileStatus =
   | 'error';
 
 export interface WebkitFile extends File {
-  webkitRelativePath?: string;
+  webkitRelativePath: string;
 }
 
 export type CogsFile = WebkitFile & CogsFileInfo;

@@ -1,8 +1,8 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { ExplorerState } from 'src/modules/Explorer/types';
-import { createFileInfo } from 'src/store/util/StateUtils';
-import { GenericSort, SortKeys } from 'src/modules/Common/Utils/SortUtils';
-import { RootState } from 'src/store/rootReducer';
+import { GenericSort, SortKeys } from '@vision/modules/Common/Utils/SortUtils';
+import { ExplorerState } from '@vision/modules/Explorer/types';
+import { RootState } from '@vision/store/rootReducer';
+import { createFileInfo } from '@vision/store/util/StateUtils';
 
 export const selectExplorerSelectedIds = (state: ExplorerState): number[] =>
   state.files.selectedIds;
@@ -12,7 +12,7 @@ export const selectExploreFileCount = (state: ExplorerState): number =>
 
 export const selectExplorerAllFiles = createSelector(
   (state: ExplorerState) => state.files.allIds,
-  (state) => state.files.byId,
+  (state: ExplorerState) => state.files.byId,
   (allIds, allFiles) => {
     return allIds.map((id) => createFileInfo(allFiles[id]));
   }
@@ -56,7 +56,7 @@ export const selectExplorerSelectedFileIdsInSortedOrder = createSelector(
     selectExplorerSelectedIds(rootState.explorerReducer),
   (sortedFiles, selectedIds) => {
     const indexMap = new Map<number, number>(
-      sortedFiles.map((item, index) => [item.id, index])
+      sortedFiles.map((item: any, index) => [item.id, index])
     );
 
     const sortedIds = GenericSort(

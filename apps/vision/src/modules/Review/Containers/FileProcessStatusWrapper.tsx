@@ -1,8 +1,9 @@
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { makeSelectJobStatusForFile } from 'src/modules/Process/store/selectors';
-import { isProcessingFile } from 'src/modules/Process/store/utils';
-import { RootState } from 'src/store/rootReducer';
+
+import { makeSelectJobStatusForFile } from '@vision/modules/Process/store/selectors';
+import { isProcessingFile } from '@vision/modules/Process/store/utils';
+import { RootState } from '@vision/store/rootReducer';
 
 export const FileProcessStatusWrapper = ({
   fileId,

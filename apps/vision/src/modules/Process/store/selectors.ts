@@ -1,27 +1,28 @@
-import isEqual from 'lodash-es/isEqual';
-import { FileInfo } from '@cognite/sdk';
+import { Status } from '@vision/api/annotation/types';
+import { VisionDetectionModelType } from '@vision/api/vision/detectionModels/types';
+import {
+  annotatedFilesById,
+  annotationsById,
+} from '@vision/modules/Common/store/annotation/selectors';
+import { selectAllSelectedIds } from '@vision/modules/Common/store/files/selectors';
+import { AnnotationsBadgeStatuses } from '@vision/modules/Common/types';
+import { isImageObjectDetectionData } from '@vision/modules/Common/types/typeGuards';
+import {
+  getAnnotationLabelOrText,
+  getAnnotationsBadgeCounts,
+} from '@vision/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
+import { GenericSort, SortKeys } from '@vision/modules/Common/Utils/SortUtils';
+import { RootState } from '@vision/store/rootReducer';
+import { createFileInfo } from '@vision/store/util/StateUtils';
+import isEqual from 'lodash/isEqual';
 import {
   createSelector,
   createSelectorCreator,
   defaultMemoize,
 } from 'reselect';
 
-import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
-import { selectAllSelectedIds } from 'src/modules/Common/store/files/selectors';
-import { AnnotationsBadgeStatuses } from 'src/modules/Common/types';
-import { GenericSort, SortKeys } from 'src/modules/Common/Utils/SortUtils';
-import { RootState } from 'src/store/rootReducer';
-import { createFileInfo } from 'src/store/util/StateUtils';
-import {
-  annotatedFilesById,
-  annotationsById,
-} from 'src/modules/Common/store/annotation/selectors';
-import { Status } from 'src/api/annotation/types';
-import { isImageObjectDetectionData } from 'src/modules/Common/types/typeGuards';
-import {
-  getAnnotationLabelOrText,
-  getAnnotationsBadgeCounts,
-} from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
+import { FileInfo } from '@cognite/sdk';
+
 import { ProcessState, JobState } from './types';
 
 export const selectAllFilesDict = (

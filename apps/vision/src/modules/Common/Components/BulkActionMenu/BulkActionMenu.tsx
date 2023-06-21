@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+
+import { pushMetric } from '@vision/utils/pushMetric';
+
 import {
   Chip,
   Button,
@@ -9,7 +12,6 @@ import {
   Popconfirm,
   Tooltip,
 } from '@cognite/cogs.js';
-import { pushMetric } from 'src/utils/pushMetric';
 import { useFlag } from '@cognite/react-feature-flags';
 
 export const BulkActionMenu = ({
@@ -72,9 +74,6 @@ export const BulkActionMenu = ({
 
   const MenuContent = (
     <Menu
-      style={{
-        color: 'black' /* typpy styles make color to be white here ... */,
-      }}
       onClick={() => {
         pushMetric('Vision.BulkAction');
       }}
@@ -85,17 +84,20 @@ export const BulkActionMenu = ({
             onBulkEdit();
             handleCancelOtherEdits();
           }}
+          icon="Document"
+          iconPlacement="left"
         >
-          <>
-            <Icon type="Document" style={{ marginRight: 17 }} />
-            <Detail strong>Bulk Edit Data {count}</Detail>
-          </>
+          Bulk Edit Data {count}
         </Menu.Item>
       )}
       {onReview && (
-        <Menu.Item onClick={onReview} disabled={!count}>
-          <Icon type="Edit" style={{ marginRight: 17 }} />
-          <Detail strong>Review {count}</Detail>
+        <Menu.Item
+          onClick={onReview}
+          disabled={!count}
+          icon="Edit"
+          iconPlacement="left"
+        >
+          Review {count}
         </Menu.Item>
       )}
       {onDownload && (
@@ -104,11 +106,10 @@ export const BulkActionMenu = ({
           disabled={
             processingFiles !== undefined ? !count || processingFiles : !count
           }
+          icon="Download"
+          iconPlacement="left"
         >
-          <Icon type="Download" style={{ marginRight: 17 }} />
-          <Detail strong style={{ color: 'inherit' }}>
-            Download {count}
-          </Detail>
+          Download {count}
         </Menu.Item>
       )}
       {onDelete && (
@@ -125,38 +126,41 @@ export const BulkActionMenu = ({
             disabled={
               processingFiles !== undefined ? !count || processingFiles : !count
             }
+            icon="Delete"
+            iconPlacement="left"
           >
-            <Icon type="Delete" style={{ marginRight: 17 }} />
-            <Detail strong style={{ color: 'inherit' }}>
-              Delete {count}
-            </Detail>
+            Delete {count}
           </Menu.Item>
         </Popconfirm>
       )}
       {visionMLEnabled && onContextualise && (
-        <Menu.Item onClick={onContextualise} disabled={!count || !inLimit}>
+        <Menu.Item
+          onClick={onContextualise}
+          disabled={!count || !inLimit}
+          icon="Scan"
+          iconPlacement="left"
+        >
           <Tooltip
             content={
               <span data-testid="text-content">{exceededLimitMessage}</span>
             }
             disabled={!!inLimit}
           >
-            <div style={{ display: 'flex' }}>
-              <Icon type="Scan" style={{ marginRight: 17 }} />
-              <Detail strong style={{ color: 'inherit' }}>
-                Contextualize {count}
-                {showAlphaBadge}
-              </Detail>
+            <div style={{ display: 'flex', marginRight: 17 }}>
+              Contextualize {count}
+              {showAlphaBadge}
             </div>
           </Tooltip>
         </Menu.Item>
       )}
       {visionAutoMLEnabled && onTrainModel && (
-        <Menu.Item onClick={onTrainModel} disabled={!count}>
-          <Icon type="Network" style={{ marginRight: 17 }} />
-          <Detail strong>
-            Train Model {count} {showAlphaBadge}
-          </Detail>
+        <Menu.Item
+          onClick={onTrainModel}
+          disabled={!count}
+          icon="Network"
+          iconPlacement="left"
+        >
+          Train Model {count} {showAlphaBadge}
         </Menu.Item>
       )}
     </Menu>

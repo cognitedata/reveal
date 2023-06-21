@@ -1,32 +1,33 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
-import { cancelFetch } from 'src/api/file/fetchFiles/fetchFiles';
-import { MAX_SELECT_COUNT } from 'src/constants/ExplorerConstants';
+import { useNavigate } from 'react-router-dom';
+
+import { cancelFetch } from '@vision/api/file/fetchFiles/fetchFiles';
+import { MAX_SELECT_COUNT } from '@vision/constants/ExplorerConstants';
 import {
   setModelTrainingModalVisibility,
   setBulkEditModalVisibility,
   setFileDownloadModalVisibility,
-} from 'src/modules/Common/store/common/slice';
-import { ViewMode } from 'src/modules/Common/types';
-import { RootState } from 'src/store/rootReducer';
-import { PopulateProcessFiles } from 'src/store/thunks/Process/PopulateProcessFiles';
+} from '@vision/modules/Common/store/common/slice';
+import { ViewMode } from '@vision/modules/Common/types';
+import { ExplorerToolbar } from '@vision/modules/Explorer/Components/ExplorerToolbar';
+import { selectExplorerSelectedFileIdsInSortedOrder } from '@vision/modules/Explorer/store/selectors';
 import {
   setCurrentView,
   setExplorerFileUploadModalVisibility,
   setExplorerQueryString,
-} from 'src/modules/Explorer/store/slice';
-import { selectExplorerSelectedFileIdsInSortedOrder } from 'src/modules/Explorer/store/selectors';
+} from '@vision/modules/Explorer/store/slice';
+import { cancelFileDetailsEdit } from '@vision/modules/FileDetails/slice';
+import { AppDispatch } from '@vision/store';
+import { RootState } from '@vision/store/rootReducer';
+import { DeleteFilesById } from '@vision/store/thunks/Files/DeleteFilesById';
+import { PopulateProcessFiles } from '@vision/store/thunks/Process/PopulateProcessFiles';
+import { PopulateReviewFiles } from '@vision/store/thunks/Review/PopulateReviewFiles';
 import {
   getLink,
   getParamLink,
   workflowRoutes,
-} from 'src/utils/workflowRoutes';
-import { PopulateReviewFiles } from 'src/store/thunks/Review/PopulateReviewFiles';
-import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
-import { ExplorerToolbar } from 'src/modules/Explorer/Components/ExplorerToolbar';
-import { AppDispatch } from 'src/store';
-import { cancelFileDetailsEdit } from 'src/modules/FileDetails/slice';
+} from '@vision/utils/workflowRoutes';
 
 export type ExplorerToolbarContainerProps = {
   query?: string;
@@ -39,8 +40,8 @@ export type ExplorerToolbarContainerProps = {
 export const ExplorerToolbarContainer = (
   props: ExplorerToolbarContainerProps
 ) => {
-  const dispatch: AppDispatch = useDispatch();
-  const history = useHistory();
+  const dispatch: AppDispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
 
   const percentageScanned = useSelector(
     ({ explorerReducer }: RootState) => explorerReducer.percentageScanned
@@ -69,26 +70,21 @@ export const ExplorerToolbarContainer = (
   const onContextualise = async () => {
     try {
       await dispatch(PopulateProcessFiles(selectedFileIds)).unwrap();
-      history.push(getLink(workflowRoutes.process));
+      navigate(getLink(workflowRoutes.process));
     } catch (error) {
       console.error(error);
     }
   };
   const onReview = async () => {
     dispatch(PopulateReviewFiles(selectedFileIds));
-    history.push(
+    navigate(
       // selecting first item in review
-      getParamLink(
-        workflowRoutes.review,
-        ':fileId',
-        String(selectedFileIds[0])
-      ),
-      { from: 'explorer' }
+      getParamLink(workflowRoutes.review, ':fileId', String(selectedFileIds[0]))
     );
   };
 
   const onAutoMLModelPage = () => {
-    history.push(getLink(workflowRoutes.models), { from: 'explorer' });
+    navigate(getLink(workflowRoutes.models));
   };
   const onDelete = (setIsDeletingState: (val: boolean) => void) => {
     dispatch(

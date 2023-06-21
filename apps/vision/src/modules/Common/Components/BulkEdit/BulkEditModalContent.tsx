@@ -1,5 +1,25 @@
 import React, { useEffect, useMemo, useState } from 'react';
+
+import styled from 'styled-components';
+
+import { retrieveAsset } from '@vision/api/assets/retrieveAsset';
+import {
+  bulkEditOptions,
+  BulkEditOptionType,
+  EditPanelState,
+} from '@vision/modules/Common/Components/BulkEdit/bulkEditOptions';
+import { BulkEditTable } from '@vision/modules/Common/Components/BulkEdit/BulkEditTable/BulkEditTable';
+import { BulkEditOptions } from '@vision/modules/Common/Components/BulkEdit/enums';
+import { AnnotationRenderer } from '@vision/modules/Common/Containers/FileTableRenderers/AnnotationRenderer';
+import { AnnotationStatusRenderer } from '@vision/modules/Common/Containers/FileTableRenderers/AnnotationStatusRenderer';
+import { FilteredAnnotationsRenderer } from '@vision/modules/Common/Containers/FileTableRenderers/FilteredAnnotationsRenderer';
+import { FilteredAnnotationStatusRenderer } from '@vision/modules/Common/Containers/FileTableRenderers/FilteredAnnotationStatusRenderer';
+import { NameRenderer } from '@vision/modules/Common/Containers/FileTableRenderers/NameRenderer';
+import { StringRenderer } from '@vision/modules/Common/Containers/FileTableRenderers/StringRenderer';
+import { BulkEditUnsavedState } from '@vision/modules/Common/store/common/types';
+import { VisionFile } from '@vision/modules/Common/store/files/types';
 import { notification } from 'antd';
+
 import {
   Body,
   Button,
@@ -8,23 +28,7 @@ import {
   Title,
   Tooltip,
 } from '@cognite/cogs.js';
-import { BulkEditUnsavedState } from 'src/modules/Common/store/common/types';
-import { VisionFile } from 'src/modules/Common/store/files/types';
-import styled from 'styled-components';
-import { retrieveAsset } from 'src/api/assets/retrieveAsset';
-import { NameRenderer } from 'src/modules/Common/Containers/FileTableRenderers/NameRenderer';
-import { AnnotationRenderer } from 'src/modules/Common/Containers/FileTableRenderers/AnnotationRenderer';
-import { AnnotationStatusRenderer } from 'src/modules/Common/Containers/FileTableRenderers/AnnotationStatusRenderer';
-import { FilteredAnnotationsRenderer } from 'src/modules/Common/Containers/FileTableRenderers/FilteredAnnotationsRenderer';
-import { FilteredAnnotationStatusRenderer } from 'src/modules/Common/Containers/FileTableRenderers/FilteredAnnotationStatusRenderer';
-import { StringRenderer } from 'src/modules/Common/Containers/FileTableRenderers/StringRenderer';
-import { BulkEditTable } from 'src/modules/Common/Components/BulkEdit/BulkEditTable/BulkEditTable';
-import {
-  bulkEditOptions,
-  BulkEditOptionType,
-  EditPanelState,
-} from 'src/modules/Common/Components/BulkEdit/bulkEditOptions';
-import { BulkEditOptions } from 'src/modules/Common/Components/BulkEdit/enums';
+
 import { DEFAULT_THRESHOLDS } from './Annotation/AnnotationStatusPanel';
 
 export type BulkEditModalContentProps = {

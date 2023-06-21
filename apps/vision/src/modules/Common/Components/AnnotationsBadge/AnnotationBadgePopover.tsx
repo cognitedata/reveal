@@ -1,15 +1,16 @@
 import React from 'react';
-import { AnnotationsBadge } from 'src/modules/Common/Components/AnnotationsBadge/AnnotationsBadge';
-import {
-  hasJobsFailedForFile,
-  isProcessingFile,
-} from 'src/modules/Process/store/utils';
-import { Popover } from 'src/modules/Common/Components/Popover';
-import { AnnotationsBadgePopoverContent } from 'src/modules/Common/Components/AnnotationsBadge/AnnotationsBadgePopoverContent';
+
+import { AnnotationsBadge } from '@vision/modules/Common/Components/AnnotationsBadge/AnnotationsBadge';
+import { AnnotationsBadgePopoverContent } from '@vision/modules/Common/Components/AnnotationsBadge/AnnotationsBadgePopoverContent';
+import { Popover } from '@vision/modules/Common/Components/Popover';
 import {
   AnnotationsBadgeCounts,
   AnnotationsBadgeStatuses,
-} from 'src/modules/Common/types';
+} from '@vision/modules/Common/types';
+import {
+  hasJobsFailedForFile,
+  isProcessingFile,
+} from '@vision/modules/Process/store/utils';
 
 export const AnnotationsBadgePopover = (
   annotationCounts: AnnotationsBadgeCounts,

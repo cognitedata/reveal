@@ -1,28 +1,30 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, message } from 'antd';
-import UploadGCS from '@cognite/gcs-browser-upload';
-import { FileUploadResponse, FileInfo, FileGeoLocation } from '@cognite/sdk';
-import { Title } from '@cognite/cogs.js';
-import { Checkbox } from '@cognite/cogs.js';
-import { useSDK } from '@cognite/sdk-provider';
-import { sleep } from 'src/modules/Common/Components/FileUploader/utils';
-import { getMIMEType } from 'src/modules/Common/Components/FileUploader/utils/FileUtils';
-import { getHumanReadableFileSize } from 'src/modules/Common/Components/FileUploader/utils/getHumanReadableFileSize';
+import { useSelector } from 'react-redux';
+
+import styled from 'styled-components';
+
+import { MAX_CID_FILE_COUNT } from '@vision/constants/CIDConstants';
+import * as UPLODER_CONST from '@vision/constants/UploderConstants';
 import {
   CogsFile,
   CogsFileInfo,
-} from 'src/modules/Common/Components/FileUploader/FilePicker/types';
+} from '@vision/modules/Common/Components/FileUploader/FilePicker/types';
+import { sleep } from '@vision/modules/Common/Components/FileUploader/utils';
+import { getMIMEType } from '@vision/modules/Common/Components/FileUploader/utils/FileUtils';
+import { getHumanReadableFileSize } from '@vision/modules/Common/Components/FileUploader/utils/getHumanReadableFileSize';
+import { STATUS } from '@vision/modules/Common/Components/FileUploaderModal/enums';
+import { ModalFilePicker } from '@vision/modules/Common/Components/FileUploaderModal/ModalFilePicker/ModalFilePicker';
+import { getUploadControls } from '@vision/modules/Common/Components/FileUploaderModal/ModalFileUploader/UploadControlButtons';
+import { RootState } from '@vision/store/rootReducer';
+import { pushMetric } from '@vision/utils/pushMetric';
+import { Modal, message } from 'antd';
 import exifr from 'exifr';
-import { useSelector } from 'react-redux';
-import { STATUS } from 'src/modules/Common/Components/FileUploaderModal/enums';
-import { ModalFilePicker } from 'src/modules/Common/Components/FileUploaderModal/ModalFilePicker/ModalFilePicker';
-import { getUploadControls } from 'src/modules/Common/Components/FileUploaderModal/ModalFileUploader/UploadControlButtons';
-import { RootState } from 'src/store/rootReducer';
-import styled from 'styled-components';
-import * as UPLODER_CONST from 'src/constants/UploderConstants';
-import { MAX_CID_FILE_COUNT } from 'src/constants/CIDConstants';
-import { pushMetric } from 'src/utils/pushMetric';
+
+import { Checkbox, Title } from '@cognite/cogs.js';
+import UploadGCS from '@cognite/gcs-browser-upload';
 import { useFlag } from '@cognite/react-feature-flags';
+import { FileUploadResponse, FileInfo, FileGeoLocation } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
 
 type GCSUploaderOptions = {
   file: Blob;
@@ -180,7 +182,7 @@ export const ModalFileUploader = ({
   const { dataSetIds, extractExif } = useSelector(
     (state: RootState) => state.fileReducer
   );
-  const [fileList, setFileList] = useState<Array<CogsFileInfo | CogsFile>>([]);
+  const [fileList, setFileList] = useState<(CogsFileInfo | CogsFile)[]>([]);
   const [uploadStatus, setUploadStatus] = useState(STATUS.NO_FILES);
   const [processAfter, setProcessAfter] = useState<boolean>(false);
   const [cursor, setCursor] = useState<number>(-1);
@@ -226,7 +228,7 @@ export const ModalFileUploader = ({
 
     try {
       beforeUploadStart(fileList);
-    } catch (e) {
+    } catch (e: any) {
       onUploadFailure(`Unable to start upload.${e ? ` ${e.message}` : ''}`);
       return;
     }
@@ -341,6 +343,7 @@ export const ModalFileUploader = ({
 
       // Add exif data async to the file if selected, after the file is uploaded
       if (extractExif) {
+        // @ts-ignore
         parseExif(file).then((data) => {
           if (data.exifTags || data.geoLocation) {
             sdk.files.update([
@@ -404,7 +407,7 @@ export const ModalFileUploader = ({
       onUploadSuccess(fileInfo.id);
       // eslint-disable-next-line no-param-reassign
       file.status = 'done';
-    } catch (e) {
+    } catch (e: any) {
       if (e.status === 401) {
         // eslint-disable-next-line no-alert
         alert('Authorization is expired. The page will be reloaded');

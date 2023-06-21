@@ -1,6 +1,7 @@
 import styled, { keyframes } from 'styled-components/macro';
-import { RectangleProps, CircleProps } from './types';
+
 import { Looped } from './transition';
+import { RectangleProps, CircleProps } from './types';
 
 const gradientSize = '640px';
 

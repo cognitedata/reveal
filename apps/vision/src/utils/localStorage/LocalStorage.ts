@@ -1,16 +1,17 @@
-import { ExplorerState } from 'src/modules/Explorer/types';
-import { explorerReducerInitialState } from 'src/modules/Explorer/store/slice';
+import { explorerReducerInitialState } from '@vision/modules/Explorer/store/slice';
+import { ExplorerState } from '@vision/modules/Explorer/types';
 import {
   processReducerInitialState,
   ProcessReducerState,
-} from 'src/modules/Process/store/slice';
-import { initialState as annotatorWrapperInitialState } from 'src/modules/Review/store/annotatorWrapper/slice';
-import { AnnotatorWrapperState } from 'src/modules/Review/store/annotatorWrapper/type';
-import { initialState as reviewReducerInitialState } from 'src/modules/Review/store/review/slice';
-import { RootState } from 'src/store/rootReducer';
+} from '@vision/modules/Process/store/slice';
+import { initialState as annotatorWrapperInitialState } from '@vision/modules/Review/store/annotatorWrapper/slice';
+import { AnnotatorWrapperState } from '@vision/modules/Review/store/annotatorWrapper/type';
+import { initialState as reviewReducerInitialState } from '@vision/modules/Review/store/review/slice';
+import { ReviewState } from '@vision/modules/Review/store/review/types';
+import { RootState } from '@vision/store/rootReducer';
+import { validatePersistedState } from '@vision/utils/localStorage/validatePersistedState';
+
 import sdk from '@cognite/cdf-sdk-singleton';
-import { validatePersistedState } from 'src/utils/localStorage/validatePersistedState';
-import { ReviewState } from 'src/modules/Review/store/review/types';
 
 const VISION_STATE_NAME = 'visionState';
 const OLD_VISION_STATE_NAME = 'state';

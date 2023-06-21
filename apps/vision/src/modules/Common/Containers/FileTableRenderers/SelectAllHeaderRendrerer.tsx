@@ -1,7 +1,9 @@
-import { SelectableTableCellRenderer } from 'src/modules/Common/types';
 import React from 'react';
+
+import { SelectableTableCellRenderer } from '@vision/modules/Common/types';
+import { keyGenerator } from '@vision/utils/keyGenerator/keyGenerator';
+
 import { Button, Checkbox, Dropdown, Menu } from '@cognite/cogs.js';
-import { keyGenerator } from 'src/utils/keyGenerator/keyGenerator';
 
 export function SelectAllHeaderRenderer({
   column,

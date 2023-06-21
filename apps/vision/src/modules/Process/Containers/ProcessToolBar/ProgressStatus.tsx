@@ -1,26 +1,29 @@
 /* eslint-disable no-nested-ternary */
-import { Body, Button, Col, Icon, Micro, Row, Title } from '@cognite/cogs.js';
-import { Progress } from 'antd';
 import React, { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 
-import { AnnotationsBadge } from 'src/modules/Common/Components/AnnotationsBadge/AnnotationsBadge';
-import { makeSelectTotalAnnotationCountForFileIds } from 'src/modules/Common/store/annotation/selectors';
-import { AnnotationsBadgeStatuses } from 'src/modules/Common/types';
+import styled from 'styled-components';
+
+import { VisionDetectionModelType } from '@vision/api/vision/detectionModels/types';
+import { AnnotationsBadge } from '@vision/modules/Common/Components/AnnotationsBadge/AnnotationsBadge';
+import { makeSelectTotalAnnotationCountForFileIds } from '@vision/modules/Common/store/annotation/selectors';
+import { AnnotationsBadgeStatuses } from '@vision/modules/Common/types';
 import {
   selectAllJobs,
   selectAllJobsForAllFilesDict,
   selectIsPollingComplete,
   selectIsProcessingStarted,
   selectPageCount,
-} from 'src/modules/Process/store/selectors';
-import { setSummaryModalVisibility } from 'src/modules/Process/store/slice';
-import { RootState } from 'src/store/rootReducer';
-import styled from 'styled-components';
+} from '@vision/modules/Process/store/selectors';
+import { setSummaryModalVisibility } from '@vision/modules/Process/store/slice';
+import { AppDispatch } from '@vision/store';
+import { RootState } from '@vision/store/rootReducer';
+import { Progress } from 'antd';
+
+import { Body, Button, Col, Icon, Micro, Row, Title } from '@cognite/cogs.js';
 
 export default function ProgressStatus() {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const processFileIds = useSelector(
     (state: RootState) => state.processSlice.fileIds
@@ -144,8 +147,9 @@ export default function ProgressStatus() {
           <Micro style={{ paddingRight: '10px' }}>
             {fileCount}/{fileCount} files{' '}
           </Micro>
-
-          <Icon type="CheckmarkFilled" style={{ color: '#31C25A' }} />
+          <div style={{ color: '#31C25A' }}>
+            <Icon type="CheckmarkFilled" />
+          </div>
         </SuccessContainer>
       );
     }
@@ -154,8 +158,8 @@ export default function ProgressStatus() {
 
   return (
     <>
-      <Container>
-        <Row cols={4} style={{ paddingBottom: '25px' }}>
+      <Container style={{ paddingBottom: '25px' }}>
+        <Row cols={4}>
           <Col span={1}>
             <Title level="6">
               {isPollingFinished ? 'Files processed' : 'Processing files'}
@@ -168,7 +172,7 @@ export default function ProgressStatus() {
           </Col>
           <Col span={1}>
             <StyledButton
-              type="link"
+              type="ghost"
               disabled={disableSummary}
               onClick={handleOnSummaryClick}
             >

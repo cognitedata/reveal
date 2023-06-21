@@ -1,13 +1,15 @@
-import reducer, { initialState } from 'src/modules/Common/store/common/slice';
-import { SaveAnnotationTemplates } from 'src/store/thunks/Annotation/SaveAnnotationTemplates';
-import { UpdateFiles } from 'src/store/thunks/Files/UpdateFiles';
-import { SaveAnnotations } from 'src/store/thunks/Annotation/SaveAnnotations';
-import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
-import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
-import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
 import { SerializedError } from '@reduxjs/toolkit';
+import reducer, {
+  initialState,
+} from '@vision/modules/Common/store/common/slice';
+import { DeleteAnnotations } from '@vision/store/thunks/Annotation/DeleteAnnotations';
+import { RetrieveAnnotations } from '@vision/store/thunks/Annotation/RetrieveAnnotations';
+import { SaveAnnotations } from '@vision/store/thunks/Annotation/SaveAnnotations';
+import { SaveAnnotationTemplates } from '@vision/store/thunks/Annotation/SaveAnnotationTemplates';
+import { UpdateAnnotations } from '@vision/store/thunks/Annotation/UpdateAnnotations';
+import { UpdateFiles } from '@vision/store/thunks/Files/UpdateFiles';
 
-jest.mock('src/utils/extractErrorMessage.ts', () => ({
+jest.mock('@vision/utils/extractErrorMessage', () => ({
   extractErrorMessage: (rawMessage: SerializedError) => rawMessage,
 }));
 

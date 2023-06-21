@@ -1,4 +1,4 @@
-import { AnnotatorRegion } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/types';
+import { AnnotatorRegion } from '@vision/modules/Review/Components/ReactImageAnnotateWrapper/types';
 
 export const cropEdge = (
   start: number,

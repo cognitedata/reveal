@@ -1,5 +1,6 @@
+import { ids } from '@vision/cogs-variables';
+
 import { getProject } from '@cognite/cdf-utilities';
-import { ids } from 'src/cogs-variables';
 
 export * from './fetchUntilComplete';
 

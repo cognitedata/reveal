@@ -1,28 +1,26 @@
-import { ReviewState } from 'src/modules/Review/store/review/types';
-
-import { initialState as filesInitialState } from 'src/modules/Common/store/files/slice';
-import { initialState as reviewInitialState } from 'src/modules/Review/store/review/slice';
-import { initialState as annotationInitialState } from 'src/modules/Common/store/annotation/slice';
-import { initialState as annotatorWrapperInitialState } from 'src/modules/Review/store/annotatorWrapper/slice';
-
-import { AnnotationSettingsOption } from 'src/modules/Review/store/review/enums';
+import { mockFileList } from '@vision/__test-utils/fixtures/files';
+import {
+  getDummyImageObjectDetectionBoundingBoxAnnotation,
+  getDummyImageKeypointCollectionAnnotation,
+} from '@vision/__test-utils/getDummyAnnotations';
+import { CDFAnnotationTypeEnum, Status } from '@vision/api/annotation/types';
+import { initialState as annotationInitialState } from '@vision/modules/Common/store/annotation/slice';
+import { AnnotationState } from '@vision/modules/Common/store/annotation/types';
+import { initialState as filesInitialState } from '@vision/modules/Common/store/files/slice';
+import { FileState } from '@vision/modules/Common/store/files/types';
+import { initialState as annotatorWrapperInitialState } from '@vision/modules/Review/store/annotatorWrapper/slice';
+import { AnnotatorWrapperState } from '@vision/modules/Review/store/annotatorWrapper/type';
+import { AnnotationSettingsOption } from '@vision/modules/Review/store/review/enums';
 import {
   selectAllReviewFiles,
   selectAnnotationSettingsState,
   selectVisionReviewAnnotationsForFile,
   selectNonRejectedVisionReviewAnnotationsForFile,
-} from 'src/modules/Review/store/review/selectors';
-import { FileState } from 'src/modules/Common/store/files/types';
-import { createFileState } from 'src/store/util/StateUtils';
-import { mockFileList } from 'src/__test-utils/fixtures/files';
-import { RootState } from 'src/store/rootReducer';
-import { AnnotationState } from 'src/modules/Common/store/annotation/types';
-import { AnnotatorWrapperState } from 'src/modules/Review/store/annotatorWrapper/type';
-import {
-  getDummyImageObjectDetectionBoundingBoxAnnotation,
-  getDummyImageKeypointCollectionAnnotation,
-} from 'src/__test-utils/getDummyAnnotations';
-import { CDFAnnotationTypeEnum, Status } from 'src/api/annotation/types';
+} from '@vision/modules/Review/store/review/selectors';
+import { initialState as reviewInitialState } from '@vision/modules/Review/store/review/slice';
+import { ReviewState } from '@vision/modules/Review/store/review/types';
+import { RootState } from '@vision/store/rootReducer';
+import { createFileState } from '@vision/store/util/StateUtils';
 
 const mockFilesState: FileState = {
   files: {

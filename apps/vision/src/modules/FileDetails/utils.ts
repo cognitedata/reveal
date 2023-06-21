@@ -1,4 +1,4 @@
-import { FileDetailsState } from 'src/modules/FileDetails/types';
+import { FileDetailsState } from '@vision/modules/FileDetails/types';
 
 export const resetEditHistoryState = (state: FileDetailsState) => {
   /* eslint-disable no-param-reassign */

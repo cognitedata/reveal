@@ -1,12 +1,15 @@
 import React, { useMemo } from 'react';
-import { CellRenderer } from 'src/modules/Common/types';
 import { useSelector } from 'react-redux';
-import { RootState } from 'src/store/rootReducer';
-import { Tag } from 'antd';
+
 import styled from 'styled-components';
+
+import { makeSelectAnnotationsForFileIds } from '@vision/modules/Common/store/annotation/selectors';
+import { CellRenderer } from '@vision/modules/Common/types';
+import { filterAnnotationIdsByAnnotationStatus } from '@vision/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
+import { RootState } from '@vision/store/rootReducer';
+import { Tag } from 'antd';
+
 import { Body } from '@cognite/cogs.js';
-import { makeSelectAnnotationsForFileIds } from 'src/modules/Common/store/annotation/selectors';
-import { filterAnnotationIdsByAnnotationStatus } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
 
 export const createTag = (status: string, count: number, color: string) => {
   return (

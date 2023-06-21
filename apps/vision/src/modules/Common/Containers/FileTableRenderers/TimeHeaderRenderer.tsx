@@ -1,9 +1,11 @@
 import React from 'react';
-import { SelectableTableCellRendererProps } from 'src/modules/Common/types';
-import { Button, Dropdown, Icon, Menu } from '@cognite/cogs.js';
-import { SortKeys } from 'src/modules/Common/Utils/SortUtils';
 import { useSelector } from 'react-redux';
-import { RootState } from 'src/store/rootReducer';
+
+import { SelectableTableCellRendererProps } from '@vision/modules/Common/types';
+import { SortKeys } from '@vision/modules/Common/Utils/SortUtils';
+import { RootState } from '@vision/store/rootReducer';
+
+import { Button, Dropdown, Icon, Menu } from '@cognite/cogs.js';
 
 export function TimeHeaderRenderer({
   column,
@@ -35,11 +37,17 @@ export function TimeHeaderRenderer({
     switch (reverse) {
       case true:
         Arrow = (
-          <Icon type="ArrowDown" size={9} style={{ marginLeft: '5px' }} />
+          <div style={{ marginLeft: '5px' }}>
+            <Icon type="ArrowDown" size={9} />
+          </div>
         );
         break;
       case false:
-        Arrow = <Icon type="ArrowUp" size={9} style={{ marginLeft: '5px' }} />;
+        Arrow = (
+          <div style={{ marginLeft: '5px' }}>
+            <Icon type="ArrowUp" size={9} />
+          </div>
+        );
         break;
       default:
         Arrow = null;

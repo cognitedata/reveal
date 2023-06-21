@@ -1,10 +1,13 @@
 import React from 'react';
-import { CogsFileInfo } from 'src/modules/Common/Components/FileUploader/FilePicker/types';
-import { getHumanReadableFileSize } from 'src/modules/Common/Components/FileUploader/utils/getHumanReadableFileSize';
+
 import styled from 'styled-components';
-import { AllIconTypes, Detail, Icon } from '@cognite/cogs.js';
+
+import { MimeTypes } from '@vision/constants/validMimeTypes';
+import { CogsFileInfo } from '@vision/modules/Common/Components/FileUploader/FilePicker/types';
+import { getHumanReadableFileSize } from '@vision/modules/Common/Components/FileUploader/utils/getHumanReadableFileSize';
 import { Progress } from 'antd';
-import { MimeTypes } from 'src/constants/validMimeTypes';
+
+import { AllIconTypes, Button, Detail, Icon } from '@cognite/cogs.js';
 
 type FileListItemProps = {
   file: CogsFileInfo;
@@ -32,18 +35,25 @@ export function FileListItem({ file, onRemove }: FileListItemProps) {
   return (
     <FileListItemContainer>
       <div className="nameAndIcon">
-        <Icon
-          type={getIcon(file.type)}
+        <div
           style={{
             marginRight: '16px',
           }}
-        />
+        >
+          <Icon type={getIcon(file.type)} />
+        </div>
         <DetailStyled strong>{file.name}</DetailStyled>
       </div>
       <div className="sizeAndStatus">
         <FileStatusColumn file={file} />
         {file.status !== 'done' && (
-          <IconRemove type="Close" onClick={() => onRemove(file)} />
+          <Button
+            css={{ marginLeft: '8px' }}
+            icon="Close"
+            onClick={() => onRemove(file)}
+            aria-label="remove file"
+            type="ghost"
+          />
         )}
       </div>
     </FileListItemContainer>
@@ -59,10 +69,9 @@ function FileStatusColumn({ file }: FileStatusColumnProps) {
         <DetailStyled strong>
           {getHumanReadableFileSize(file.size, 0)}
         </DetailStyled>
-        <Icon
-          type="Checkmark"
-          style={{ color: '#31C25A', marginLeft: '17.45px' }}
-        />
+        <div style={{ color: '#31C25A', marginLeft: '17.45px' }}>
+          <Icon type="Checkmark" />
+        </div>
       </>
     );
   }
@@ -120,23 +129,4 @@ const DetailStyled = styled(Detail)`
   white-space: nowrap;
   max-width: 200px;
   overflow: hidden;
-`;
-
-const IconRemove = styled(Icon)`
-  &:hover {
-    cursor: pointer;
-    color: black;
-  }
-  margin-left: 21px;
-  min-width: 16px;
-  position: relative;
-  /* click area extend */
-  &:after {
-    content: ' ';
-    position: absolute;
-    top: -3px;
-    right: -3px;
-    bottom: -3px;
-    left: -3px;
-  }
 `;

@@ -1,6 +1,7 @@
+import { Files } from '@vision/modules/Common/store/files/types';
+import { createFileState } from '@vision/store/util/StateUtils';
+
 import { FileInfo } from '@cognite/sdk';
-import { Files } from 'src/modules/Common/store/files/types';
-import { createFileState } from 'src/store/util/StateUtils';
 
 export const convertToVisionFileState = (fileInfo: FileInfo[]): Files => {
   const files: Files = {

@@ -1,8 +1,39 @@
-import { RootState } from 'src/store/rootReducer';
-import { ProcessState } from 'src/modules/Process/store/types';
-import { initialState as annotationReducerInitialState } from 'src/modules/Common/store/annotation/slice';
-import { initialState as processSliceInitialState } from 'src/modules/Process/store/slice';
-import { initialState as fileSliceInitialState } from 'src/modules/Common/store/files/slice';
+import {
+  INVALID_FILE_ID,
+  mockFileIds,
+  mockFileIdsSortedByMimeTypeAscending,
+  mockFileIdsSortedByMimeTypeDescending,
+  mockFileIdsSortedByNameAscending,
+  mockFileIdsSortedByNameDescending,
+  mockFileInfo,
+} from '@vision/__test-utils/data/mockFileInfo';
+import {
+  completedJob,
+  failedJob,
+  filesWithJobs,
+  jobIds,
+  jobState,
+} from '@vision/__test-utils/data/mockJobInfo';
+import { convertToVisionFileState } from '@vision/__test-utils/files';
+import { mockFileList } from '@vision/__test-utils/fixtures/files';
+import {
+  getDummyImageAssetLinkAnnotation,
+  getDummyImageExtractedTextAnnotation,
+  getDummyImageObjectDetectionBoundingBoxAnnotation,
+} from '@vision/__test-utils/getDummyAnnotations';
+import { Status } from '@vision/api/annotation/types';
+import { DEFAULT_PAGE_SIZE } from '@vision/constants/PaginationConsts';
+import { initialState as annotationReducerInitialState } from '@vision/modules/Common/store/annotation/slice';
+import { AnnotationState } from '@vision/modules/Common/store/annotation/types';
+import { initialState as fileSliceInitialState } from '@vision/modules/Common/store/files/slice';
+import {
+  FileState,
+  VisionFile,
+} from '@vision/modules/Common/store/files/types';
+import {
+  VisionAnnotation,
+  VisionAnnotationDataType,
+} from '@vision/modules/Common/types';
 import {
   makeSelectJobStatusForFile,
   selectAllFilesDict,
@@ -19,39 +50,11 @@ import {
   selectProcessSortedFiles,
   selectProcessSummary,
   selectUnfinishedJobs,
-} from 'src/modules/Process/store/selectors';
-import { convertToVisionFileState } from 'src/__test-utils/files';
-import {
-  INVALID_FILE_ID,
-  mockFileIds,
-  mockFileIdsSortedByMimeTypeAscending,
-  mockFileIdsSortedByMimeTypeDescending,
-  mockFileIdsSortedByNameAscending,
-  mockFileIdsSortedByNameDescending,
-  mockFileInfo,
-} from 'src/__test-utils/data/mockFileInfo';
-import { FileState, VisionFile } from 'src/modules/Common/store/files/types';
-import { DEFAULT_PAGE_SIZE } from 'src/constants/PaginationConsts';
-import {
-  completedJob,
-  failedJob,
-  filesWithJobs,
-  jobIds,
-  jobState,
-} from 'src/__test-utils/data/mockJobInfo';
-import { VisionFilesToFileState } from 'src/store/util/StateUtils';
-import { mockFileList } from 'src/__test-utils/fixtures/files';
-import { AnnotationState } from 'src/modules/Common/store/annotation/types';
-import {
-  VisionAnnotation,
-  VisionAnnotationDataType,
-} from 'src/modules/Common/types';
-import {
-  getDummyImageAssetLinkAnnotation,
-  getDummyImageExtractedTextAnnotation,
-  getDummyImageObjectDetectionBoundingBoxAnnotation,
-} from 'src/__test-utils/getDummyAnnotations';
-import { Status } from 'src/api/annotation/types';
+} from '@vision/modules/Process/store/selectors';
+import { initialState as processSliceInitialState } from '@vision/modules/Process/store/slice';
+import { ProcessState } from '@vision/modules/Process/store/types';
+import { RootState } from '@vision/store/rootReducer';
+import { VisionFilesToFileState } from '@vision/store/util/StateUtils';
 
 // Process State
 const mockProcessState: ProcessState = {

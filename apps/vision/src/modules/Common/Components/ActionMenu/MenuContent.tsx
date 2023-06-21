@@ -1,9 +1,12 @@
 import React from 'react';
-import { Icon, Menu, Popconfirm, Tooltip } from '@cognite/cogs.js';
-import exifIcon from 'src/assets/exifIcon.svg';
-import { ExifIcon } from 'src/modules/Common/Containers/FileTableRenderers/NameRenderer';
-import { SKIP_MENU_CLOSE_ID } from 'src/constants/ContextMenuConstants';
+
 import styled from 'styled-components';
+
+import ExifIconSVG from '@vision/assets/exifIcon';
+import { SKIP_MENU_CLOSE_ID } from '@vision/constants/ContextMenuConstants';
+import { ExifIcon } from '@vision/modules/Common/Containers/FileTableRenderers/NameRenderer';
+
+import { Icon, Menu, Popconfirm, Tooltip } from '@cognite/cogs.js';
 
 export interface ActionMenuProps {
   showExifIcon?: boolean;
@@ -32,12 +35,14 @@ export const MenuContent = ({
   >
     <Menu.Item onClick={handleFileDetails}>
       <MenuContainer>
-        <Icon type="Document" style={{ marginRight: '17px' }} />
+        <div style={{ marginRight: '17px' }}>
+          <Icon type="Document" />
+        </div>
         File details
         {showExifIcon && (
           <Tooltip content="Geolocated">
             <ExifIcon>
-              <img src={exifIcon} alt="exifIcon" />
+              <ExifIconSVG />
             </ExifIcon>
           </Tooltip>
         )}
@@ -46,7 +51,9 @@ export const MenuContent = ({
 
     {handleReview && (
       <Menu.Item onClick={handleReview} disabled={reviewDisabled}>
-        <Icon type="Edit" style={{ marginRight: '17px' }} />
+        <div style={{ marginRight: '17px' }}>
+          <Icon type="Edit" />
+        </div>
         Review file
       </Menu.Item>
     )}
@@ -57,7 +64,9 @@ export const MenuContent = ({
       content="Are you sure you want to permanently delete this file?"
     >
       <Menu.Item id={SKIP_MENU_CLOSE_ID} disabled={reviewDisabled}>
-        <Icon type="Delete" style={{ marginRight: '17px' }} />
+        <div style={{ marginRight: '17px' }}>
+          <Icon type="Delete" />
+        </div>
         Delete
       </Menu.Item>
     </Popconfirm>

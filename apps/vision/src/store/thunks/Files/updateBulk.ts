@@ -1,11 +1,13 @@
-import { Label } from '@cognite/sdk';
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { BulkEditUnsavedState } from 'src/modules/Common/store/common/types';
-import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
-import { VisionFile } from 'src/modules/Common/store/files/types';
-import { ThunkConfig } from 'src/store/rootReducer';
-import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
-import { Status } from 'src/api/annotation/types';
+import { Status } from '@vision/api/annotation/types';
+import { BulkEditUnsavedState } from '@vision/modules/Common/store/common/types';
+import { VisionFile } from '@vision/modules/Common/store/files/types';
+import { ThunkConfig } from '@vision/store/rootReducer';
+import { DeleteAnnotations } from '@vision/store/thunks/Annotation/DeleteAnnotations';
+import { UpdateAnnotations } from '@vision/store/thunks/Annotation/UpdateAnnotations';
+
+import { Label } from '@cognite/sdk';
+
 import { UpdateFiles } from './UpdateFiles';
 
 export const getUpdatedValue = ({

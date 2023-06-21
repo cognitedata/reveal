@@ -1,8 +1,19 @@
-import { ModelConfiguration } from 'src/modules/Process/Containers/ModelConfiguration';
-import { RunDetectionModels } from 'src/store/thunks/Process/RunDetectionModels';
-import styled from 'styled-components';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from 'src/store/rootReducer';
+
+import styled from 'styled-components';
+
+import { AutoMLAPI } from '@vision/api/vision/autoML/AutoMLAPI';
+import { AutoMLModelCore } from '@vision/api/vision/autoML/types';
+import { VisionDetectionModelType } from '@vision/api/vision/detectionModels/types';
+import { isVideo } from '@vision/modules/Common/Components/FileUploader/utils/FileUtils';
+import { DetectionModelSelect } from '@vision/modules/Process/Components/DetectionModelSelect';
+import { ModelConfiguration } from '@vision/modules/Process/Containers/ModelConfiguration';
+import {
+  selectAllProcessFiles,
+  selectIsPollingComplete,
+  selectIsProcessingStarted,
+} from '@vision/modules/Process/store/selectors';
 import {
   setDetectionModelParameters,
   setProcessViewFileUploadModalVisibility,
@@ -10,23 +21,16 @@ import {
   setSelectFromExploreModalVisibility,
   resetDetectionModelParameters,
   addToAvailableDetectionModels,
-} from 'src/modules/Process/store/slice';
-import {
-  selectAllProcessFiles,
-  selectIsPollingComplete,
-  selectIsProcessingStarted,
-} from 'src/modules/Process/store/selectors';
+} from '@vision/modules/Process/store/slice';
+import { AppDispatch } from '@vision/store';
+import { RootState } from '@vision/store/rootReducer';
+import { RunDetectionModels } from '@vision/store/thunks/Process/RunDetectionModels';
+import { getContainer } from '@vision/utils';
 import { message, notification } from 'antd';
-import React, { useState, useEffect } from 'react';
+
 import { Button, Title, Modal } from '@cognite/cogs.js';
-import { DetectionModelSelect } from 'src/modules/Process/Components/DetectionModelSelect';
-import { isVideo } from 'src/modules/Common/Components/FileUploader/utils/FileUtils';
-import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
-import { getContainer } from 'src/utils';
-import { AppDispatch } from 'src/store';
-import { AutoMLAPI } from 'src/api/vision/autoML/AutoMLAPI';
-import { AutoMLModelCore } from 'src/api/vision/autoML/types';
 import { useFlag } from '@cognite/react-feature-flags';
+
 import ProgressStatus from './ProgressStatus';
 
 export const ProcessToolBar = () => {
@@ -38,7 +42,7 @@ export const ProcessToolBar = () => {
   if (!visionAutoMLEnabled)
     disabledModelTypes.push(VisionDetectionModelType.CustomModel);
 
-  const dispatch: AppDispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch<AppDispatch>();
 
   const processFiles = useSelector((state: RootState) =>
     selectAllProcessFiles(state)

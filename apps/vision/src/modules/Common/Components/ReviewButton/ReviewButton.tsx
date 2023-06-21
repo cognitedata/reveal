@@ -1,6 +1,8 @@
-import { Button } from '@cognite/cogs.js';
 import React from 'react';
+
 import styled from 'styled-components';
+
+import { Button } from '@cognite/cogs.js';
 
 // using noBackground flag to disable background when button disabled
 interface ReviewButtonProps {

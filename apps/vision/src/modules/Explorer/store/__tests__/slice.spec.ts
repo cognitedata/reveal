@@ -1,3 +1,4 @@
+import { mockFileList } from '@vision/__test-utils/fixtures/files';
 import reducer, {
   addExplorerUploadedFileId,
   explorerReducerInitialState,
@@ -15,14 +16,13 @@ import reducer, {
   setPercentageScanned,
   setSelectedAllExplorerFiles,
   toggleExplorerFilterView,
-} from 'src/modules/Explorer/store/slice';
-import { ExplorerState } from 'src/modules/Explorer/types';
-import { clearExplorerFileState } from 'src/store/commonActions';
-import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
-import { UpdateFiles } from 'src/store/thunks/Files/UpdateFiles';
-import { VisionFilesToFileState } from 'src/store/util/StateUtils';
-import { mockFileList } from 'src/__test-utils/fixtures/files';
-import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
+} from '@vision/modules/Explorer/store/slice';
+import { ExplorerState } from '@vision/modules/Explorer/types';
+import { clearExplorerFileState } from '@vision/store/commonActions';
+import { RetrieveAnnotations } from '@vision/store/thunks/Annotation/RetrieveAnnotations';
+import { DeleteFilesById } from '@vision/store/thunks/Files/DeleteFilesById';
+import { UpdateFiles } from '@vision/store/thunks/Files/UpdateFiles';
+import { VisionFilesToFileState } from '@vision/store/util/StateUtils';
 
 describe('Test explorer reducers', () => {
   test('should return the initial state for undefined state', () => {

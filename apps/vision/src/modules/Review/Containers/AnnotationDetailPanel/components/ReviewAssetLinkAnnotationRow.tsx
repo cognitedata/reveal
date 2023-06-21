@@ -1,16 +1,19 @@
 import React, { useState } from 'react';
+
 import styled from 'styled-components';
-import {
-  AnnotationDetailPanelRowDataBase,
-  VirtualizedTreeRowProps,
-} from 'src/modules/Review/Containers/AnnotationDetailPanel/types';
+
+import { VisionAnnotationDataType } from '@vision/modules/Common/types/annotation';
 import {
   AnnotationTableRow,
   KeyboardShortCutSelectable,
   SidePanelRow,
-} from 'src/modules/Review/Containers/AnnotationDetailPanel/components/common';
-import { VisionReviewAnnotation } from 'src/modules/Review/types';
-import { VisionAnnotationDataType } from 'src/modules/Common/types/annotation';
+} from '@vision/modules/Review/Containers/AnnotationDetailPanel/components/common';
+import {
+  AnnotationDetailPanelRowDataBase,
+  VirtualizedTreeRowProps,
+} from '@vision/modules/Review/Containers/AnnotationDetailPanel/types';
+import { VisionReviewAnnotation } from '@vision/modules/Review/types';
+
 import { AssetLinkWarning } from './AssetLinkWarning';
 
 /**

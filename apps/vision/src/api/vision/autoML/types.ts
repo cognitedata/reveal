@@ -1,4 +1,7 @@
-import { FileIdEither, JobStatus } from 'src/api/vision/detectionModels/types';
+import {
+  FileIdEither,
+  JobStatus,
+} from '@vision/api/vision/detectionModels/types';
 
 export type AutoMLModelType = 'classification' | 'objectdetection';
 export enum AutoMLExportFormat {

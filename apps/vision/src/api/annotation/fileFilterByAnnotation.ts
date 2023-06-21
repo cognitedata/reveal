@@ -1,12 +1,14 @@
-import { AnnotationFilterType } from 'src/modules/FilterSidePanel/types';
+import { ANNOTATION_FETCH_BULK_SIZE } from '@vision/constants/FetchConstants';
+import { AnnotationFilterType } from '@vision/modules/FilterSidePanel/types';
+import { splitListIntoChunks } from '@vision/utils/generalUtils';
+
+import sdk from '@cognite/cdf-sdk-singleton';
 import {
   AnnotationFilterRequest,
   AnnotationStatus,
   FileInfo,
 } from '@cognite/sdk';
-import { ANNOTATION_FETCH_BULK_SIZE } from 'src/constants/FetchConstants';
-import { splitListIntoChunks } from 'src/utils/generalUtils';
-import sdk from '@cognite/cdf-sdk-singleton';
+
 import { convertCDFAnnotationToVisionAnnotations } from './converters';
 const getAnnotations = async (
   annotationLabelOrText?: string,

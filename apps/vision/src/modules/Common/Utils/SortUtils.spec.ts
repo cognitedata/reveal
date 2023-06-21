@@ -1,7 +1,10 @@
-import { GenericSort } from 'src/modules/Common/Utils/SortUtils';
-import { mockFileIds, mockFileInfo } from 'src/__test-utils/data/mockFileInfo';
-import { getIdsFromFileInfo } from 'src/__test-utils/getIdsFromFileInfo';
-import { shuffle } from 'src/__test-utils/shuffle';
+import {
+  mockFileIds,
+  mockFileInfo,
+} from '@vision/__test-utils/data/mockFileInfo';
+import { getIdsFromFileInfo } from '@vision/__test-utils/getIdsFromFileInfo';
+import { shuffle } from '@vision/__test-utils/shuffle';
+import { GenericSort } from '@vision/modules/Common/Utils/SortUtils';
 
 const unsortedMockFileInfo = shuffle(mockFileInfo);
 

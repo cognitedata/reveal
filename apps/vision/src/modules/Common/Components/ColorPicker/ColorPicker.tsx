@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { SketchPicker } from 'react-color';
+
 import styled from 'styled-components';
 
 export const ColorPicker = ({

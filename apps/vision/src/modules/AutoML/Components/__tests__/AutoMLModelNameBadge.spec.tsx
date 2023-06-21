@@ -1,10 +1,8 @@
 import React from 'react';
 
 import { screen } from '@testing-library/react';
-
-import { testRenderer } from 'src/__test-utils/renderer';
-
-import { AutoMLModelNameBadge } from 'src/modules/AutoML/Components/AutoMLModelNameBadge';
+import { testRenderer } from '@vision/__test-utils/renderer';
+import { AutoMLModelNameBadge } from '@vision/modules/AutoML/Components/AutoMLModelNameBadge';
 
 describe('AutoMLModelNameBadge', () => {
   const TestComponent = (props: any) => {

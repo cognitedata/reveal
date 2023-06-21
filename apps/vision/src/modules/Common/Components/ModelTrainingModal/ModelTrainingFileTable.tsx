@@ -1,11 +1,13 @@
 import React from 'react';
-import { TableWrapper } from 'src/modules/Common/Components/FileTable/FileTableWrapper';
-import styled from 'styled-components';
 import ReactBaseTable, { Column } from 'react-base-table';
-import { StringHeaderRenderer } from 'src/modules/Common/Containers/FileTableRenderers/StringHeaderRenderer';
-import { NameRenderer } from 'src/modules/Common/Containers/FileTableRenderers/NameRenderer';
-import { AnnotationRenderer } from 'src/modules/Common/Containers/FileTableRenderers/AnnotationRenderer';
-import { VisionFile } from 'src/modules/Common/store/files/types';
+
+import styled from 'styled-components';
+
+import { TableWrapper } from '@vision/modules/Common/Components/FileTable/FileTableWrapper';
+import { AnnotationRenderer } from '@vision/modules/Common/Containers/FileTableRenderers/AnnotationRenderer';
+import { NameRenderer } from '@vision/modules/Common/Containers/FileTableRenderers/NameRenderer';
+import { StringHeaderRenderer } from '@vision/modules/Common/Containers/FileTableRenderers/StringHeaderRenderer';
+import { VisionFile } from '@vision/modules/Common/store/files/types';
 
 export type ModelTrainingFileTableDataType = {
   file: VisionFile[];

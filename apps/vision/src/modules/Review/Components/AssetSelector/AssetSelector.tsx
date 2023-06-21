@@ -1,7 +1,11 @@
-import { AssetSelect } from '@cognite/data-exploration';
-import styled from 'styled-components';
-import { Body } from '@cognite/cogs.js';
 import React from 'react';
+
+import styled from 'styled-components';
+
+import { OptionValue } from '@data-exploration-components/components/SearchNew/Filters/types';
+
+import { Body } from '@cognite/cogs.js';
+import { AssetSelect } from '@cognite/data-exploration';
 
 export const AssetSelector = (props: {
   assets: number[] | undefined;
@@ -17,9 +21,10 @@ export const AssetSelector = (props: {
       <AssetSelectWrapper>
         <AssetSelect
           isMulti
+          title="Asset select"
           selectedAssetIds={props.assets}
-          onAssetSelected={(assetIds: number[] | undefined) => {
-            props.onSelectAssets(assetIds);
+          onAssetSelected={(assetIds: OptionValue<number>[] | undefined) => {
+            props.onSelectAssets(assetIds?.map((ids) => ids.value));
           }}
           maxMenuHeight={props.maxMenuHeight}
         />

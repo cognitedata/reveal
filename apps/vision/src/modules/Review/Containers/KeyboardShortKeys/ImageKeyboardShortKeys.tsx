@@ -1,12 +1,14 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
-import { tools } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/Tools';
 import { useHotkeys } from 'react-hotkeys-hook';
-import { HotKeys } from 'src/constants/HotKeys';
-import { setSelectedTool } from 'src/modules/Review/store/annotatorWrapper/slice';
+import { useDispatch } from 'react-redux';
+
+import { HotKeys } from '@vision/constants/HotKeys';
+import { tools } from '@vision/modules/Review/Components/ReactImageAnnotateWrapper/Tools';
+import { setSelectedTool } from '@vision/modules/Review/store/annotatorWrapper/slice';
+import { AppDispatch } from '@vision/store';
 
 export const ImageKeyboardShortKeys = ({ children }: { children: any }) => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   useHotkeys(
     HotKeys.select_tool,

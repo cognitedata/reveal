@@ -1,7 +1,9 @@
-import { FileInfo } from '@cognite/sdk';
 import { ColumnShape } from 'react-base-table';
-import { JobStatus } from 'src/api/vision/detectionModels/types';
-import { AnnotationFilterType } from 'src/modules/FilterSidePanel/types';
+
+import { JobStatus } from '@vision/api/vision/detectionModels/types';
+import { AnnotationFilterType } from '@vision/modules/FilterSidePanel/types';
+
+import { FileInfo } from '@cognite/sdk';
 
 export type AnnotationStatuses = {
   status: JobStatus;

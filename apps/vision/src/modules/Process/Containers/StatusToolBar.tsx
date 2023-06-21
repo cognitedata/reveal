@@ -1,10 +1,13 @@
 import React, { ReactElement } from 'react';
-import { getLink, workflowRoutes } from 'src/utils/workflowRoutes';
+import { useNavigate } from 'react-router-dom';
+
 import styled from 'styled-components';
-import { CDFStatus } from 'src/modules/Common/Components/CDFStatus/CDFStatus';
-import { Body } from '@cognite/cogs.js';
+
+import { CDFStatus } from '@vision/modules/Common/Components/CDFStatus/CDFStatus';
+import { getLink, workflowRoutes } from '@vision/utils/workflowRoutes';
 import { Breadcrumb } from 'antd';
-import { useHistory } from 'react-router-dom';
+
+import { Body } from '@cognite/cogs.js';
 
 export const StatusToolBar = (props: {
   current: string;
@@ -27,26 +30,24 @@ export const StatusToolBar = (props: {
 };
 
 const CustomBreadCrumb = (props: any) => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const { current, previous } = props;
   return (
     <Text style={{ fontSize: '14px' }} level={3}>
       <Breadcrumb separator="/">
-        <Breadcrumb.Item
-          onClick={() => history.push(getLink(workflowRoutes.home))}
-        >
+        <Breadcrumb.Item onClick={() => navigate(getLink(workflowRoutes.home))}>
           <span style={{ cursor: 'pointer' }}>CDF</span>
         </Breadcrumb.Item>
 
         {previous === 'process' && (
-          <Breadcrumb.Item onClick={() => history.goBack()}>
+          <Breadcrumb.Item onClick={() => navigate(-1)}>
             <span style={{ cursor: 'pointer' }}>
               Contextualize Imagery Data
             </span>
           </Breadcrumb.Item>
         )}
         {previous === 'explorer' && current === 'Review' && (
-          <Breadcrumb.Item onClick={() => history.goBack()}>
+          <Breadcrumb.Item onClick={() => navigate(-1)}>
             <span style={{ cursor: 'pointer' }}>
               Image and video management
             </span>

@@ -1,11 +1,13 @@
 // todo: unused component
 import React, { useMemo } from 'react';
-import { Button, Icon, Title } from '@cognite/cogs.js';
+
 import {
   CogsFile,
   CogsFileInfo,
-} from 'src/modules/Common/Components/FileUploader/FilePicker/types';
-import { STATUS } from 'src/modules/Common/Components/FileUploaderModal/enums';
+} from '@vision/modules/Common/Components/FileUploader/FilePicker/types';
+import { STATUS } from '@vision/modules/Common/Components/FileUploaderModal/enums';
+
+import { Button, Icon, Title } from '@cognite/cogs.js';
 
 const GetUploadControls = (
   uploadStatus: STATUS,
@@ -88,11 +90,7 @@ const GetUploadControls = (
       );
       CancelButton = (
         <Title level={5} style={{ color: '#31C25A' }}>
-          <Icon
-            type="Checkmark"
-            style={{ marginRight: '8.7px' }}
-            onMouseOver={() => {}}
-          />
+          <Icon css={{ marginRight: '8.7px' }} type="Checkmark" />
           Files uploaded
         </Title>
       );

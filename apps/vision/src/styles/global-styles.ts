@@ -1,5 +1,7 @@
 import { createGlobalStyle } from 'styled-components';
-import { ids } from 'src/cogs-variables';
+
+import { ids } from '@vision/cogs-variables';
+
 import theme from './theme';
 
 const GlobalStyle = createGlobalStyle<{ theme: typeof theme }>`

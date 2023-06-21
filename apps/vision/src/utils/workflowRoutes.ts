@@ -17,7 +17,7 @@ export const workflowRoutes: Record<WorkflowStepKey, string> = {
   home: '/:tenant',
 };
 
-// use for programmatic route updates with history.push
+// use for programmatic route updates with react-router navigate
 export function getLink(route: string) {
   return createLink(route.slice('/:tenant'.length));
 }

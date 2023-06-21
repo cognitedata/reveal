@@ -1,10 +1,13 @@
 import React, { useCallback } from 'react';
-import { Body, Button, Title } from '@cognite/cogs.js';
-import { AccessPermission } from 'src/utils/types';
+import { useNavigate } from 'react-router-dom';
+
 import styled from 'styled-components';
-import * as NavLinks from 'src/constants/NavLinks';
-import { useHistory } from 'react-router-dom';
-import { Graphic, GraphicOptions } from 'src/assets/Graphics/Graphic';
+
+import { Graphic, GraphicOptions } from '@vision/assets/Graphics/Graphic';
+import * as NavLinks from '@vision/constants/NavLinks';
+import { AccessPermission } from '@vision/utils/types';
+
+import { Body, Button, Title } from '@cognite/cogs.js';
 
 type Props = {
   capabilities: Array<AccessPermission>;
@@ -39,10 +42,10 @@ export default function NoAccessPage({
   capabilities,
   requestedPathName,
 }: Props) {
-  const history = useHistory();
+  const navigate = useNavigate();
   const onBackButtonClick = useCallback(() => {
-    history.push('/vision');
-  }, [history]);
+    navigate('/vision');
+  }, [navigate]);
   return (
     <>
       <HomeButton>

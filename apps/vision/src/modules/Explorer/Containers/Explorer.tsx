@@ -1,37 +1,42 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { VerticalContainer } from 'src/modules/Common/Components/VerticalContainer';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+
+import styled from 'styled-components';
+
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { VerticalContainer } from '@vision/modules/Common/Components/VerticalContainer';
+import { useContextMenu } from '@vision/modules/Common/hooks/useContextMenu';
+import { TableDataItem } from '@vision/modules/Common/types';
+import { ContextMenuContainer } from '@vision/modules/Explorer/Containers/ContextMenuContainer';
+import { ExplorerBulkEditModalContainer } from '@vision/modules/Explorer/Containers/ExplorerBulkEditModalContainer';
+import { ExplorerFileDownloadModalContainer } from '@vision/modules/Explorer/Containers/ExplorerFileDownloadModalContainer';
+import { ExplorerFileUploadModalContainer } from '@vision/modules/Explorer/Containers/ExplorerFileUploadModalContainer';
+import { ExplorerSearchResults } from '@vision/modules/Explorer/Containers/ExplorerSearchResults';
+import { ExplorerToolbarContainer } from '@vision/modules/Explorer/Containers/ExplorerToolbarContainer';
+import { selectExplorerSelectedFileIdsInSortedOrder } from '@vision/modules/Explorer/store/selectors';
 import {
   hideFileMetadata,
   setExplorerFileSelectState,
   setFocusedFileId,
   showFileMetadata,
   toggleExplorerFilterView,
-} from 'src/modules/Explorer/store/slice';
-import { selectExplorerSelectedFileIdsInSortedOrder } from 'src/modules/Explorer/store/selectors';
-import { ClearExplorerStateOnTransition } from 'src/store/thunks/Explorer/ClearExplorerStateOnTransition';
-import { FetchFilesById } from 'src/store/thunks/Files/FetchFilesById';
-import { PopulateReviewFiles } from 'src/store/thunks/Review/PopulateReviewFiles';
-import { getParamLink, workflowRoutes } from 'src/utils/workflowRoutes';
-import styled from 'styled-components';
+} from '@vision/modules/Explorer/store/slice';
+import { FileDetails } from '@vision/modules/FileDetails/Containers/FileDetails';
+import { cancelFileDetailsEdit } from '@vision/modules/FileDetails/slice';
+import FilterToggleButton from '@vision/modules/FilterSidePanel/Components/FilterToggleButton';
+import { FilterSidePanel } from '@vision/modules/FilterSidePanel/Containers/FilterSidePanel';
+import { StatusToolBar } from '@vision/modules/Process/Containers/StatusToolBar';
+import { AppDispatch } from '@vision/store';
+import { RootState } from '@vision/store/rootReducer';
+import { ClearExplorerStateOnTransition } from '@vision/store/thunks/Explorer/ClearExplorerStateOnTransition';
+import { FetchFilesById } from '@vision/store/thunks/Files/FetchFilesById';
+import { PopulateReviewFiles } from '@vision/store/thunks/Review/PopulateReviewFiles';
+import { pushMetric } from '@vision/utils/pushMetric';
+import { getParamLink, workflowRoutes } from '@vision/utils/workflowRoutes';
+
 import { Colors } from '@cognite/cogs.js';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from 'src/store/rootReducer';
-import { ExplorerSearchResults } from 'src/modules/Explorer/Containers/ExplorerSearchResults';
-import { FileDetails } from 'src/modules/FileDetails/Containers/FileDetails';
-import { TableDataItem } from 'src/modules/Common/types';
-import { StatusToolBar } from 'src/modules/Process/Containers/StatusToolBar';
-import { useHistory } from 'react-router-dom';
-import { pushMetric } from 'src/utils/pushMetric';
-import { ExplorerFileUploadModalContainer } from 'src/modules/Explorer/Containers/ExplorerFileUploadModalContainer';
-import { ExplorerFileDownloadModalContainer } from 'src/modules/Explorer/Containers/ExplorerFileDownloadModalContainer';
-import { ExplorerBulkEditModalContainer } from 'src/modules/Explorer/Containers/ExplorerBulkEditModalContainer';
-import { FilterSidePanel } from 'src/modules/FilterSidePanel/Containers/FilterSidePanel';
-import FilterToggleButton from 'src/modules/FilterSidePanel/Components/FilterToggleButton';
-import { ExplorerToolbarContainer } from 'src/modules/Explorer/Containers/ExplorerToolbarContainer';
-import { cancelFileDetailsEdit } from 'src/modules/FileDetails/slice';
-import { ContextMenuContainer } from 'src/modules/Explorer/Containers/ContextMenuContainer';
-import { useContextMenu } from 'src/modules/Common/hooks/useContextMenu';
+
 import { ExplorerModelTrainingModalContainer } from './ExplorerModelTrainingModalContainer';
 
 const Explorer = () => {
@@ -44,8 +49,8 @@ const Explorer = () => {
     setShowContextMenu,
   } = useContextMenu();
 
-  const history = useHistory();
-  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
 
   const queryClient = new QueryClient();
 
@@ -128,9 +133,8 @@ const Explorer = () => {
   const onFileDetailReview = useCallback(() => {
     if (focusedFileId) {
       dispatch(PopulateReviewFiles([focusedFileId]));
-      history.push(
-        getParamLink(workflowRoutes.review, ':fileId', String(focusedFileId)),
-        { from: 'explorer' }
+      navigate(
+        getParamLink(workflowRoutes.review, ':fileId', String(focusedFileId))
       );
     }
   }, [focusedFileId]);
@@ -276,7 +280,7 @@ const DeselectContainer = styled.div`
 `;
 
 const Deselect = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const focusedFileId = useSelector(
     ({ explorerReducer }: RootState) => explorerReducer.focusedFileId
   );

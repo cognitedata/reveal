@@ -1,25 +1,27 @@
 import React from 'react';
-import { ExploreModal } from 'src/modules/Common/Components/ExploreModal/ExploreModal';
-import {
-  setProcessFileIds,
-  setSelectFromExploreModalVisibility,
-} from 'src/modules/Process/store/slice';
-import { selectAllProcessFiles } from 'src/modules/Process/store/selectors';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { ExploreModal } from '@vision/modules/Common/Components/ExploreModal/ExploreModal';
+import { TableDataItem } from '@vision/modules/Common/types';
+import { selectExplorerSelectedFileIdsInSortedOrder } from '@vision/modules/Explorer/store/selectors';
 import {
   setExplorerFileSelectState,
   setExplorerModalFocusedFileId,
   setExplorerModalQueryString,
-} from 'src/modules/Explorer/store/slice';
-import { selectExplorerSelectedFileIdsInSortedOrder } from 'src/modules/Explorer/store/selectors';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from 'src/store/rootReducer';
-import { TableDataItem } from 'src/modules/Common/types';
+} from '@vision/modules/Explorer/store/slice';
+import { selectAllProcessFiles } from '@vision/modules/Process/store/selectors';
+import {
+  setProcessFileIds,
+  setSelectFromExploreModalVisibility,
+} from '@vision/modules/Process/store/slice';
+import { AppDispatch } from '@vision/store';
+import { RootState } from '@vision/store/rootReducer';
+import { ClearExplorerStateOnTransition } from '@vision/store/thunks/Explorer/ClearExplorerStateOnTransition';
+
 import { FileFilterProps } from '@cognite/sdk';
-import { AppDispatch } from 'src/store';
-import { ClearExplorerStateOnTransition } from 'src/store/thunks/Explorer/ClearExplorerStateOnTransition';
 
 export const ExploreModalContainer = () => {
-  const dispatch: AppDispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch<AppDispatch>();
 
   const processFiles = useSelector((state: RootState) =>
     selectAllProcessFiles(state)

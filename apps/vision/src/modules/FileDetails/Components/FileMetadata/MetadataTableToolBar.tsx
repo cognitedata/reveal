@@ -1,12 +1,16 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
+
+import styled from 'styled-components';
+
+import { MetadataItem } from '@vision/modules/FileDetails/Components/FileMetadata/Types';
 import {
   fileMetaDataAddRow,
   toggleMetaDataTableEditMode,
-} from 'src/modules/FileDetails/slice';
-import styled from 'styled-components';
+} from '@vision/modules/FileDetails/slice';
+import { AppDispatch } from '@vision/store';
+
 import { Button } from '@cognite/cogs.js';
-import { MetadataItem } from 'src/modules/FileDetails/Components/FileMetadata/Types';
-import { useDispatch } from 'react-redux';
 
 export const MetadataTableToolBar = ({
   editMode,
@@ -19,7 +23,7 @@ export const MetadataTableToolBar = ({
   onAddRow?: () => void;
   onEditModeChange: (mode: boolean) => void;
 }) => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const handleEditModeChange = () => {
     dispatch(toggleMetaDataTableEditMode(metadata));

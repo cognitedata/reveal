@@ -5,13 +5,17 @@ import React, {
   useEffect,
   useRef,
 } from 'react';
+import { useHotkeys } from 'react-hotkeys-hook';
 import { batch, useDispatch } from 'react-redux';
-import { annotationTypeFromCategoryTitle } from 'src/constants/annotationDetailPanel';
-import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
+
+import { CDFAnnotationTypeEnum, Status } from '@vision/api/annotation/types';
+import { annotationTypeFromCategoryTitle } from '@vision/constants/annotationDetailPanel';
+import { HotKeys } from '@vision/constants/HotKeys';
+import { selectAnnotationCategory } from '@vision/modules/Review/Containers/AnnotationDetailPanel/store/slice';
 import {
-  selectAnnotation,
-  setScrollToId,
-} from 'src/modules/Review/store/review/slice';
+  AnnotationDetailPanelRowData,
+  TreeNode,
+} from '@vision/modules/Review/Containers/AnnotationDetailPanel/types';
 import {
   getActiveNode,
   getActiveNodeIndexFromArray,
@@ -22,23 +26,22 @@ import {
   isVisionReviewImageKeypointRowData,
   selectNextOrFirstIndexArr,
   selectPrevOrFirstIndexArr,
-} from 'src/modules/Review/Containers/AnnotationDetailPanel/utils/nodeTreeUtils';
-import {
-  AnnotationDetailPanelRowData,
-  TreeNode,
-} from 'src/modules/Review/Containers/AnnotationDetailPanel/types';
-import { useHotkeys } from 'react-hotkeys-hook';
-import { selectAnnotationCategory } from 'src/modules/Review/Containers/AnnotationDetailPanel/store/slice';
-import { HotKeys } from 'src/constants/HotKeys';
-import { Modal } from 'antd';
-import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from 'src/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
-import { FileInfo } from '@cognite/sdk';
-import { AnnotationStatusChange } from 'src/store/thunks/Annotation/AnnotationStatusChange';
-import { CDFAnnotationTypeEnum, Status } from 'src/api/annotation/types';
+} from '@vision/modules/Review/Containers/AnnotationDetailPanel/utils/nodeTreeUtils';
 import {
   keypointSelectStatusChange,
   selectCollection,
-} from 'src/modules/Review/store/annotatorWrapper/slice';
+} from '@vision/modules/Review/store/annotatorWrapper/slice';
+import {
+  selectAnnotation,
+  setScrollToId,
+} from '@vision/modules/Review/store/review/slice';
+import { AppDispatch } from '@vision/store';
+import { deselectAllSelectionsReviewPage } from '@vision/store/commonActions';
+import { AnnotationStatusChange } from '@vision/store/thunks/Annotation/AnnotationStatusChange';
+import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from '@vision/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
+import { Modal } from 'antd';
+
+import { FileInfo } from '@cognite/sdk';
 
 export const AnnotationDetailPanelHotKeys = ({
   scrollId,
@@ -51,7 +54,7 @@ export const AnnotationDetailPanelHotKeys = ({
   scrollId: ReactText;
   file: FileInfo;
 }) => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const modalRef = useRef<{ destroy: () => void } | null>(null);
 
   useEffect(() => {

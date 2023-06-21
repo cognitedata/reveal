@@ -1,4 +1,4 @@
-import { Status } from 'src/api/annotation/types';
+import { Status } from '@vision/api/annotation/types';
 
 export type AnnotationEditOptionType = {
   value: string;

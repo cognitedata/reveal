@@ -1,13 +1,10 @@
 import React from 'react';
 
 import { screen } from '@testing-library/react';
-
-import { testRenderer } from 'src/__test-utils/renderer';
-
-import { AutoMLModelList } from 'src/modules/AutoML/Components/AutoMLModelList';
-
-import { mockCogniteAutoMLModelList } from 'src/__test-utils/fixtures/automlModels';
-import { AutoMLModelCore } from 'src/api/vision/autoML/types';
+import { mockCogniteAutoMLModelList } from '@vision/__test-utils/fixtures/automlModels';
+import { testRenderer } from '@vision/__test-utils/renderer';
+import { AutoMLModelCore } from '@vision/api/vision/autoML/types';
+import { AutoMLModelList } from '@vision/modules/AutoML/Components/AutoMLModelList';
 
 describe('AutoMLModelList', () => {
   const TestComponent = (props: any) => {

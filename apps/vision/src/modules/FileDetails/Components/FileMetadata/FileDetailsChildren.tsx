@@ -1,16 +1,16 @@
-import styled from 'styled-components';
-import { Body, Icon } from '@cognite/cogs.js';
 import React, { ReactText } from 'react';
-import { CopyableText } from 'src/modules/FileDetails/Components/FileMetadata/CopyableText';
-import {
-  DataSetItem,
-  LabelFilter,
-  ByAssetFilter,
-} from '@cognite/data-exploration';
-import { Label } from '@cognite/sdk';
-import useIsFieldSavePending from 'src/store/hooks/useIsFieldSavePending';
-import { VisionFileDetailKey } from 'src/modules/FileDetails/Components/FileMetadata/Types';
+
+import styled from 'styled-components';
+
+import { GeneralDetails } from '@data-exploration/components';
+import { CopyableText } from '@vision/modules/FileDetails/Components/FileMetadata/CopyableText';
+import { VisionFileDetailKey } from '@vision/modules/FileDetails/Components/FileMetadata/Types';
+import useIsFieldSavePending from '@vision/store/hooks/useIsFieldSavePending';
 import { Input } from 'antd';
+
+import { Body, Icon } from '@cognite/cogs.js';
+import { LabelFilter, ByAssetFilter } from '@cognite/data-exploration';
+import { Label } from '@cognite/sdk';
 
 const FieldViewContainer = styled.div`
   margin-bottom: 14px;
@@ -42,8 +42,8 @@ const NOT_SET_PLACEHOLDER = 'None Set';
 const Loader = (props: { loading: boolean }) => {
   if (props.loading) {
     return (
-      <FlexContainer className="loader-container">
-        {props.loading && <Icon type="Loader" style={{ color: '#4a67fb' }} />}
+      <FlexContainer className="loader-container" style={{ color: '#4a67fb' }}>
+        {props.loading && <Icon type="Loader" />}
       </FlexContainer>
     );
   }
@@ -148,7 +148,7 @@ export const AssetContainerView = (props: {
 export const DataSetFieldView = (props: { fileId: number }) => {
   return (
     <DataSetFieldContainer>
-      <DataSetItem id={props.fileId} type="file" />
+      <GeneralDetails.DataSetItem id={props.fileId} type="file" />
     </DataSetFieldContainer>
   );
 };

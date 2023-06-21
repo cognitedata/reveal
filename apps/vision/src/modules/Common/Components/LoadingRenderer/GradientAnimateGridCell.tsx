@@ -1,6 +1,8 @@
 import React from 'react';
+
 import styled from 'styled-components';
-import Text from 'src/modules/Common/Components/Skeleton/layouts/Text';
+
+import Text from '@vision/modules/Common/Components/Skeleton/layouts/Text';
 
 export const GradientAnimateGridCell = () => (
   <PreviewCell>

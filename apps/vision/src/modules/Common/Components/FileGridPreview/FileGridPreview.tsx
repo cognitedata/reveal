@@ -1,20 +1,23 @@
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
-import { Tooltip } from '@cognite/cogs.js';
-import { ActionMenu } from 'src/modules/Common/Components/ActionMenu/ActionMenu';
-import { ReviewButton } from 'src/modules/Common/Components/ReviewButton/ReviewButton';
-import { SelectionCheckbox } from 'src/modules/Common/Components/SelectionCheckbox/SelectionCheckbox';
-import { Thumbnail } from 'src/modules/Common/Components/Thumbnail/Thumbnail';
-import styled from 'styled-components';
 import { useSelector } from 'react-redux';
-import exifIcon from 'src/assets/exifIcon.svg';
-import { RootState } from 'src/store/rootReducer';
-import { isProcessingFile } from 'src/modules/Process/store/utils';
-import { makeSelectJobStatusForFile } from 'src/modules/Process/store/selectors';
-import { TableDataItem } from 'src/modules/Common/types';
+
+import styled from 'styled-components';
+
+import ExifIcon from '@vision/assets/exifIcon';
+import { VisionMode } from '@vision/constants/enums/VisionEnums';
+import { ActionMenu } from '@vision/modules/Common/Components/ActionMenu/ActionMenu';
+import { AnnotationsBadgePopover } from '@vision/modules/Common/Components/AnnotationsBadge/AnnotationBadgePopover';
+import { ReviewButton } from '@vision/modules/Common/Components/ReviewButton/ReviewButton';
+import { SelectionCheckbox } from '@vision/modules/Common/Components/SelectionCheckbox/SelectionCheckbox';
+import { Thumbnail } from '@vision/modules/Common/Components/Thumbnail/Thumbnail';
+import { makeSelectTotalAnnotationCountForFileIds } from '@vision/modules/Common/store/annotation/selectors';
+import { TableDataItem } from '@vision/modules/Common/types';
+import { makeSelectJobStatusForFile } from '@vision/modules/Process/store/selectors';
+import { isProcessingFile } from '@vision/modules/Process/store/utils';
+import { RootState } from '@vision/store/rootReducer';
+
+import { Tooltip } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
-import { VisionMode } from 'src/constants/enums/VisionEnums';
-import { makeSelectTotalAnnotationCountForFileIds } from 'src/modules/Common/store/annotation/selectors';
-import { AnnotationsBadgePopover } from 'src/modules/Common/Components/AnnotationsBadge/AnnotationBadgePopover';
 
 export const FileGridPreview = ({
   item,
@@ -123,7 +126,7 @@ export const FileGridPreview = ({
             {item?.geoLocation && (
               <Tooltip content="Geolocated">
                 <div className="exif">
-                  <img src={exifIcon} alt="exifIcon" />
+                  <ExifIcon />
                 </div>
               </Tooltip>
             )}

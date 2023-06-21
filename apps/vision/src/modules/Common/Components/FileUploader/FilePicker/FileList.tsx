@@ -1,10 +1,14 @@
 import React from 'react';
-import { Title } from '@cognite/cogs.js';
+
 import styled from 'styled-components';
-import { margin } from 'src/cogs-variables';
-import { FileListItem } from 'src/modules/Common/Components/FileUploader/FilePicker/FileListItem';
-import { CogsFileInfo } from './types';
+
+import { margin } from '@vision/cogs-variables';
+import { FileListItem } from '@vision/modules/Common/Components/FileUploader/FilePicker/FileListItem';
+
+import { Title } from '@cognite/cogs.js';
+
 import SpiderImg from './img/Spider.svg';
+import { CogsFileInfo } from './types';
 
 type FileListProps = {
   files: CogsFileInfo[];

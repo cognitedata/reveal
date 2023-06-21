@@ -5,12 +5,15 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { FileMapTableProps } from 'src/modules/Common/Components/FileTable/types';
-import { MapFileTable } from 'src/modules/Common/Components/MapFileTable/MapFileTable';
-import styled from 'styled-components';
 import ReactMapboxGl, { Layer, Feature, Popup } from 'react-mapbox-gl';
+
+import styled from 'styled-components';
+
+import { FileMapTableProps } from '@vision/modules/Common/Components/FileTable/types';
+import { MapFileTable } from '@vision/modules/Common/Components/MapFileTable/MapFileTable';
+import { ResultData, TableDataItem } from '@vision/modules/Common/types';
 import * as MapboxGL from 'mapbox-gl';
-import { ResultData, TableDataItem } from 'src/modules/Common/types';
+
 import { MAPBOX_TOKEN, MAPBOX_MAP_ID } from './constants';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { MapPopup } from './MapPopup';
@@ -195,6 +198,7 @@ export const MapView = (props: FileMapTableProps<TableDataItem>) => {
             </Layer>
           ) : undefined}
           {selectedFileIsInTable && popupState === 'open' ? (
+            // @ts-ignore wrong types from package
             <Popup
               key={selectedFile!.id}
               coordinates={features[selectedFile!.id.toString()]}

@@ -1,15 +1,16 @@
-import mime from 'mime-types';
-import { VisionFile } from 'src/modules/Common/store/files/types';
+import path from 'path';
+
 import {
   MAX_AUTOML_ANNOTATIONS_TYPE,
   MIN_AUTOML_FILES_PER_ANNOTATIONS_TYPE,
-} from 'src/api/vision/autoML/constants';
+} from '@vision/api/vision/autoML/constants';
+import { VisionFile } from '@vision/modules/Common/store/files/types';
 import {
   VisionAnnotation,
   VisionAnnotationDataType,
-} from 'src/modules/Common/types';
-import { getAnnotationLabelOrText } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
-import path from 'path';
+} from '@vision/modules/Common/types';
+import { getAnnotationLabelOrText } from '@vision/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
+import mime from 'mime-types';
 
 export interface DatasetValidationType {
   valid: boolean;

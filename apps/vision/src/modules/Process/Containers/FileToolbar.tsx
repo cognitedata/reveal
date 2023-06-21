@@ -1,20 +1,24 @@
 import React from 'react';
-import { SegmentedControl } from '@cognite/cogs.js';
+import { useDispatch, useSelector } from 'react-redux';
+
+import styled from 'styled-components';
+
+import { BulkActionMenu } from '@vision/modules/Common/Components/BulkActionMenu/BulkActionMenu';
 import {
   setBulkEditModalVisibility,
   setFileDownloadModalVisibility,
-} from 'src/modules/Common/store/common/slice';
-import { selectAllSelectedIds } from 'src/modules/Common/store/files/selectors';
-import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
-import styled from 'styled-components';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from 'src/store/rootReducer';
-import { BulkActionMenu } from 'src/modules/Common/Components/BulkActionMenu/BulkActionMenu';
+} from '@vision/modules/Common/store/common/slice';
+import { selectAllSelectedIds } from '@vision/modules/Common/store/files/selectors';
+import { cancelFileDetailsEdit } from '@vision/modules/FileDetails/slice';
 import {
   selectAllProcessFiles,
   selectIsPollingComplete,
-} from 'src/modules/Process/store/selectors';
-import { cancelFileDetailsEdit } from 'src/modules/FileDetails/slice';
+} from '@vision/modules/Process/store/selectors';
+import { AppDispatch } from '@vision/store';
+import { RootState } from '@vision/store/rootReducer';
+import { DeleteFilesById } from '@vision/store/thunks/Files/DeleteFilesById';
+
+import { SegmentedControl } from '@cognite/cogs.js';
 
 export const FileToolbar = ({
   onViewChange,
@@ -23,7 +27,7 @@ export const FileToolbar = ({
   onViewChange?: (view: string) => void;
   currentView?: string;
 }) => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const selectedFileIds = useSelector((state: RootState) =>
     selectAllSelectedIds(state.fileReducer)

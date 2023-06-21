@@ -1,24 +1,27 @@
 import React from 'react';
-import { Modal } from 'antd';
-import { Button } from '@cognite/cogs.js';
-import { PopulateProcessFiles } from 'src/store/thunks/Process/PopulateProcessFiles';
-import styled from 'styled-components';
-import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+
+import styled from 'styled-components';
+
+import SummaryContent from '@vision/modules/Process/Containers/SummaryModal/SummaryContent';
 import {
   setProcessViewFileUploadModalVisibility,
   setSummaryModalVisibility,
-} from 'src/modules/Process/store/slice';
-import { pushMetric } from 'src/utils/pushMetric';
+} from '@vision/modules/Process/store/slice';
+import { AppDispatch } from '@vision/store';
+import { RootState } from '@vision/store/rootReducer';
+import { PopulateProcessFiles } from '@vision/store/thunks/Process/PopulateProcessFiles';
+import { getContainer } from '@vision/utils';
+import { pushMetric } from '@vision/utils/pushMetric';
+import { Modal } from 'antd';
+
 import { createLink } from '@cognite/cdf-utilities';
-import { getContainer } from 'src/utils';
-import SummaryContent from 'src/modules/Process/Containers/SummaryModal/SummaryContent';
-import { AppDispatch } from 'src/store';
-import { RootState } from 'src/store/rootReducer';
+import { Button } from '@cognite/cogs.js';
 
 export const SummaryModal = () => {
-  const history = useHistory();
-  const dispatch: AppDispatch = useDispatch();
+  const navigate = useNavigate();
+  const dispatch: AppDispatch = useDispatch<AppDispatch>();
 
   const showSummaryModal = useSelector(
     ({ processSlice }: RootState) => processSlice.showSummaryModal
@@ -36,7 +39,7 @@ export const SummaryModal = () => {
   const onNextClicked = async () => {
     await clearOnFinishProcessing();
     pushMetric('Vision.Session.Finished');
-    history.push(createLink('/vision/explore'));
+    navigate(createLink('/vision/explore'));
   };
 
   const onUploadMoreClicked = () => {

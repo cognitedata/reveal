@@ -1,7 +1,8 @@
+import { getValidMimeTypesByMediaType } from '@vision/api/file/fetchFiles/mimeTypeUtils';
+import { getValidFilters } from '@vision/api/utils/getValidFilters';
+import { VisionFileFilterProps } from '@vision/modules/FilterSidePanel/types';
+
 import sdk from '@cognite/cdf-sdk-singleton';
-import { VisionFileFilterProps } from 'src/modules/FilterSidePanel/types';
-import { getValidMimeTypesByMediaType } from 'src/api/file/fetchFiles/mimeTypeUtils';
-import { getValidFilters } from 'src/api/utils/getValidFilters';
 
 export const totalFileCount = async (visionFilter: VisionFileFilterProps) => {
   const fileCounts: number[] = [];

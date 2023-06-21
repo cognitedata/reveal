@@ -1,14 +1,16 @@
-import { VisionAsset } from 'src/modules/Common/store/files/types';
-import { fetchAssets } from 'src/store/thunks/fetchAssets';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { AppDispatch } from 'src/store';
-import { FileInfo } from '@cognite/sdk';
+
 import { unwrapResult } from '@reduxjs/toolkit';
-import { VisionReviewAnnotation } from 'src/modules/Review/types';
-import { VisionAnnotationDataType } from 'src/modules/Common/types';
-import { ImageAssetLink, Status } from 'src/api/annotation/types';
-import { isImageAssetLinkData } from 'src/modules/Common/types/typeGuards';
+import { ImageAssetLink, Status } from '@vision/api/annotation/types';
+import { VisionAsset } from '@vision/modules/Common/store/files/types';
+import { VisionAnnotationDataType } from '@vision/modules/Common/types';
+import { isImageAssetLinkData } from '@vision/modules/Common/types/typeGuards';
+import { VisionReviewAnnotation } from '@vision/modules/Review/types';
+import { AppDispatch } from '@vision/store';
+import { fetchAssets } from '@vision/store/thunks/fetchAssets';
+
+import { FileInfo } from '@cognite/sdk';
 
 export enum AssetWarnTypes {
   NoWarning,
@@ -27,7 +29,7 @@ const useAssetLinkWarning = (
     AssetWarnTypes.NoWarning
   );
   const [asset, setAsset] = useState<VisionAsset | null>(null);
-  const dispatch: AppDispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch<AppDispatch>();
   const approvedAnnotationNotLinkedToFileTimer = useRef<any>(null);
   const rejectedAnnotationLinkedToFileTimer = useRef<any>(null);
 

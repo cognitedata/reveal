@@ -1,7 +1,10 @@
 import React from 'react';
-import { Checkbox } from '@cognite/cogs.js';
-import { TableDataItem } from 'src/modules/Common/types';
+
 import styled from 'styled-components';
+
+import { TableDataItem } from '@vision/modules/Common/types';
+
+import { Checkbox } from '@cognite/cogs.js';
 
 const handleClick = (evt: any) => {
   // dummy handler to stop event propagation

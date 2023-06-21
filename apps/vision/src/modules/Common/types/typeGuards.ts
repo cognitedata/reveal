@@ -1,4 +1,3 @@
-import { VisionAnnotationDataType } from 'src/modules/Common/types/annotation';
 import {
   CDFAnnotationTypeEnum,
   ImageAssetLink,
@@ -9,7 +8,8 @@ import {
   ImageObjectDetectionBoundingBox,
   ImageObjectDetectionPolygon,
   ImageObjectDetectionPolyline,
-} from 'src/api/annotation/types';
+} from '@vision/api/annotation/types';
+import { VisionAnnotationDataType } from '@vision/modules/Common/types/annotation';
 
 // VisionAnnotationDataType typeGuards
 

@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { SegmentedControl, Title } from '@cognite/cogs.js';
-import { DatePicker } from 'antd';
+
 import styled from 'styled-components';
-import moment from 'moment';
-import { DateRange } from '@cognite/sdk';
+
 import {
   DateActions,
   DateFilterType,
   DateOptions,
   VisionFileFilterProps,
   VisionFilterItemProps,
-} from 'src/modules/FilterSidePanel/types';
+} from '@vision/modules/FilterSidePanel/types';
+import { DatePicker } from 'antd';
+import moment from 'moment';
+
+import { SegmentedControl, Title } from '@cognite/cogs.js';
+import { DateRange } from '@cognite/sdk';
 
 export const dateFormat = 'DD.MM.YYYY';
 
@@ -73,7 +76,7 @@ export const DateFilter = ({ filter, setFilter }: VisionFilterItemProps) => {
     filter.dateFilter?.dateOption || DateOptions.before
   );
 
-  const handleActionChange = (key: string) => {
+  const handleActionChange = (key: string | number) => {
     setAction(key as DateActions);
     const range =
       filter.createdTime || filter.uploadedTime || filter.sourceCreatedTime;
@@ -81,7 +84,7 @@ export const DateFilter = ({ filter, setFilter }: VisionFilterItemProps) => {
       setDateFilter(range, key as DateActions);
     }
   };
-  const handleDateOptionChange = (key: string) => {
+  const handleDateOptionChange = (key: string | number) => {
     setDateOption(key as DateOptions);
     const oldRange =
       filter.createdTime || filter.uploadedTime || filter.sourceCreatedTime;

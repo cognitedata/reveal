@@ -1,15 +1,15 @@
-import isFinite from 'lodash-es/isFinite';
 import { createSelector } from '@reduxjs/toolkit';
-import { getRandomColor } from 'src/modules/Review/Components/AnnotationSettingsModal/AnnotationSettingsUtils';
-import { AnnotatorRegion } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/types';
-import { AnnotatorWrapperState } from 'src/modules/Review/store/annotatorWrapper/type';
-import { RootState } from 'src/store/rootReducer';
+import { getRandomColor } from '@vision/modules/Review/Components/AnnotationSettingsModal/AnnotationSettingsUtils';
+import { AnnotatorRegion } from '@vision/modules/Review/Components/ReactImageAnnotateWrapper/types';
+import { AnnotatorWrapperState } from '@vision/modules/Review/store/annotatorWrapper/type';
 import {
   PredefinedKeypointCollection,
   ReviewKeypoint,
   TempKeypointCollection,
-} from 'src/modules/Review/types';
-import { getAnnotationColorFromColorKey } from 'src/utils/colorUtils';
+} from '@vision/modules/Review/types';
+import { RootState } from '@vision/store/rootReducer';
+import { getAnnotationColorFromColorKey } from '@vision/utils/colorUtils';
+import isFinite from 'lodash/isFinite';
 
 /**
  * Selects next predefined shape based on last shape annotation created

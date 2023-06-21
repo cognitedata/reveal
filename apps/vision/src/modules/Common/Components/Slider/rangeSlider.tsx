@@ -1,7 +1,9 @@
 import React from 'react';
+
+import styled from 'styled-components';
+
 import { Slider } from 'antd';
 import { SliderMarks } from 'antd/lib/slider';
-import styled from 'styled-components';
 
 const createLinearGradient = (
   values: [number, number],

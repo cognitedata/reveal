@@ -1,5 +1,5 @@
-import { predefinedAnnotations } from 'src/__test-utils/fixtures/predefinedAnnotations';
-import { getPredefinedKeypointsWithColor } from 'src/store/util/getPredefinedKeypointsWithCorrectColors';
+import { predefinedAnnotations } from '@vision/__test-utils/fixtures/predefinedAnnotations';
+import { getPredefinedKeypointsWithColor } from '@vision/store/util/getPredefinedKeypointsWithCorrectColors';
 
 describe('getPredefinedKeypointsWithColor', () => {
   const shapeAnnotation = predefinedAnnotations.find(

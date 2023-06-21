@@ -1,20 +1,20 @@
 /* eslint-disable no-param-reassign */
 import { isAnyOf, PayloadAction } from '@reduxjs/toolkit';
+import { getFakeQueuedJob } from '@vision/api/vision/detectionModels/detectionUtils';
 import {
   DetectionModelParams,
   VisionDetectionModelType,
-} from 'src/api/vision/detectionModels/types';
+} from '@vision/api/vision/detectionModels/types';
+import { DEFAULT_PAGE_SIZE } from '@vision/constants/PaginationConsts';
+import { ProcessState } from '@vision/modules/Process/store/types';
 import {
   removeJobFromFiles,
   addJobToState,
-} from 'src/modules/Process/store/utils';
-import { clearFileState, fileProcessUpdate } from 'src/store/commonActions';
-import { DEFAULT_PAGE_SIZE } from 'src/constants/PaginationConsts';
-import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
-import { CreateVisionJob } from 'src/store/thunks/Process/CreateVisionJob';
-import { createGenericTabularDataSlice } from 'src/store/genericTabularDataSlice';
-import { getFakeQueuedJob } from 'src/api/vision/detectionModels/detectionUtils';
-import { ProcessState } from 'src/modules/Process/store/types';
+} from '@vision/modules/Process/store/utils';
+import { clearFileState, fileProcessUpdate } from '@vision/store/commonActions';
+import { createGenericTabularDataSlice } from '@vision/store/genericTabularDataSlice';
+import { DeleteFilesById } from '@vision/store/thunks/Files/DeleteFilesById';
+import { CreateVisionJob } from '@vision/store/thunks/Process/CreateVisionJob';
 
 export const BUILT_IN_MODEL_COUNT = 5; // ocr, tagdetection, objectdetection, people detection, gaugereader
 
