@@ -53,10 +53,10 @@ apps/vision              @cognitedata/cdf-user-experience
 # 3D / Reveal
 apps/3d-management                @cognitedata/3d-reveal-viewer-team
 
-# Data Catalog
+# Migrated CDF-UX Subapps
 apps/data-catalog                 @cognitedata/cdf-user-experience
-
-# Extractor downloads
+apps/extraction-pipelines		  @cognitedata/cdf-user-experience
 apps/extractor-downloads          @cognitedata/cdf-user-experience
+
 
 libs/shared/user-profile-components   @cognitedata/cogs-team
