@@ -18,6 +18,7 @@ custom_edit_url: null
 - [HtmlOverlayTool](../classes/cognite_reveal_tools.HtmlOverlayTool.md)
 - [Keyframe](../classes/cognite_reveal_tools.Keyframe.md)
 - [MeasurementTool](../classes/cognite_reveal_tools.MeasurementTool.md)
+- [SmartOverlayTool](../classes/cognite_reveal_tools.SmartOverlayTool.md)
 - [TimelineTool](../classes/cognite_reveal_tools.TimelineTool.md)
 
 ## Type Aliases
@@ -37,7 +38,7 @@ Absolute position in pixels.
 
 #### Defined in
 
-[packages/tools/src/AxisView/types.ts:47](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/tools/src/AxisView/types.ts#L47)
+[packages/tools/src/AxisView/types.ts:48](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/tools/src/AxisView/types.ts#L48)
 
 ___
 
@@ -59,7 +60,7 @@ Configuration of the compass.
 
 #### Defined in
 
-[packages/tools/src/AxisView/types.ts:79](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/tools/src/AxisView/types.ts#L79)
+[packages/tools/src/AxisView/types.ts:80](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/tools/src/AxisView/types.ts#L80)
 
 ___
 
@@ -87,7 +88,7 @@ Configuration of [AxisViewTool](../classes/cognite_reveal_tools.AxisViewTool.md)
 
 #### Defined in
 
-[packages/tools/src/AxisView/types.ts:10](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/tools/src/AxisView/types.ts#L10)
+[packages/tools/src/AxisView/types.ts:11](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/tools/src/AxisView/types.ts#L11)
 
 ___
 
@@ -110,7 +111,7 @@ Configuration of each face of the orientation box.
 
 #### Defined in
 
-[packages/tools/src/AxisView/types.ts:64](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/tools/src/AxisView/types.ts#L64)
+[packages/tools/src/AxisView/types.ts:65](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/tools/src/AxisView/types.ts#L65)
 
 ___
 
@@ -136,7 +137,7 @@ Custom callback for users to change measurement label content.
 
 #### Defined in
 
-[packages/tools/src/Measurement/types.ts:8](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/tools/src/Measurement/types.ts#L8)
+[packages/tools/src/Measurement/types.ts:8](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/tools/src/Measurement/types.ts#L8)
 
 ___
 
@@ -163,7 +164,7 @@ Callback that is triggered when a set of overlays are clustered together in
 
 #### Defined in
 
-[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:32](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L32)
+[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:32](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L32)
 
 ___
 
@@ -182,7 +183,7 @@ Options for an overlay added using [add](../classes/cognite_reveal_tools.HtmlOve
 
 #### Defined in
 
-[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:42](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L42)
+[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:42](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L42)
 
 ___
 
@@ -213,7 +214,7 @@ in [HtmlOverlayTool](../classes/cognite_reveal_tools.HtmlOverlayTool.md).
 
 #### Defined in
 
-[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:20](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L20)
+[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:20](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L20)
 
 ___
 
@@ -232,7 +233,7 @@ Controls how close overlay elements are clustered together.
 
 #### Defined in
 
-[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:57](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L57)
+[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:57](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L57)
 
 ___
 
@@ -250,7 +251,7 @@ Options for the visualization of overlays
 
 #### Defined in
 
-[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:82](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L82)
+[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:82](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L82)
 
 ___
 
@@ -269,7 +270,7 @@ ___
 
 #### Defined in
 
-[packages/tools/src/Measurement/MeasurementManager.ts:11](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/tools/src/Measurement/MeasurementManager.ts#L11)
+[packages/tools/src/Measurement/MeasurementManager.ts:11](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/tools/src/Measurement/MeasurementManager.ts#L11)
 
 ___
 
@@ -299,7 +300,7 @@ Delegate for measurement added events.
 
 #### Defined in
 
-[packages/tools/src/Measurement/types.ts:13](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/tools/src/Measurement/types.ts#L13)
+[packages/tools/src/Measurement/types.ts:13](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/tools/src/Measurement/types.ts#L13)
 
 ___
 
@@ -319,7 +320,7 @@ Delegate for measurement ended events.
 
 #### Defined in
 
-[packages/tools/src/Measurement/types.ts:28](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/tools/src/Measurement/types.ts#L28)
+[packages/tools/src/Measurement/types.ts:28](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/tools/src/Measurement/types.ts#L28)
 
 ___
 
@@ -339,7 +340,7 @@ Measurement tool option with user custom callback, line width & color.
 
 #### Defined in
 
-[packages/tools/src/Measurement/types.ts:33](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/tools/src/Measurement/types.ts#L33)
+[packages/tools/src/Measurement/types.ts:33](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/tools/src/Measurement/types.ts#L33)
 
 ___
 
@@ -359,7 +360,52 @@ Delegate for measurement started events.
 
 #### Defined in
 
-[packages/tools/src/Measurement/types.ts:23](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/tools/src/Measurement/types.ts#L23)
+[packages/tools/src/Measurement/types.ts:23](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/tools/src/Measurement/types.ts#L23)
+
+___
+
+### OverlayEventHandler
+
+Ƭ **OverlayEventHandler**<`MetadataType`\>: (`event`: { `htmlOverlay`: `HTMLElement` ; `mousePosition`: { `clientX`: `number` ; `clientY`: `number`  } ; `targetOverlay`: [`Overlay3D`](../interfaces/cognite_reveal.Overlay3D.md)<`MetadataType`\>  }) => `void`
+
+#### Type parameters
+
+| Name |
+| :------ |
+| `MetadataType` |
+
+#### Type declaration
+
+▸ (`event`): `void`
+
+##### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `event` | `Object` |
+| `event.htmlOverlay` | `HTMLElement` |
+| `event.mousePosition` | `Object` |
+| `event.mousePosition.clientX` | `number` |
+| `event.mousePosition.clientY` | `number` |
+| `event.targetOverlay` | [`Overlay3D`](../interfaces/cognite_reveal.Overlay3D.md)<`MetadataType`\> |
+
+##### Returns
+
+`void`
+
+#### Defined in
+
+[packages/tools/src/SmartOverlay/SmartOverlayTool.ts:19](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/tools/src/SmartOverlay/SmartOverlayTool.ts#L19)
+
+___
+
+### OverlayToolEvent
+
+Ƭ **OverlayToolEvent**: ``"hover"`` \| ``"click"`` \| ``"disposed"``
+
+#### Defined in
+
+[packages/tools/src/SmartOverlay/SmartOverlayTool.ts:17](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/tools/src/SmartOverlay/SmartOverlayTool.ts#L17)
 
 ___
 
@@ -379,7 +425,24 @@ and a given padding.
 
 #### Defined in
 
-[packages/tools/src/AxisView/types.ts:56](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/tools/src/AxisView/types.ts#L56)
+[packages/tools/src/AxisView/types.ts:57](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/tools/src/AxisView/types.ts#L57)
+
+___
+
+### SmartOverlayToolParameters
+
+Ƭ **SmartOverlayToolParameters**: `Object`
+
+#### Type declaration
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `defaultOverlayColor` | `THREE.Color` | Sets default overlay color for newly added labels. |
+| `maxPointSize?` | `number` | Max point markers size in pixels. Different platforms has limitations for this value. On Android and MacOS in Chrome maximum is 64. Windows in Chrome and MacOS Safari desktops can support up to 500. Default is 64. |
+
+#### Defined in
+
+[packages/tools/src/SmartOverlay/SmartOverlayTool.ts:25](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/tools/src/SmartOverlay/SmartOverlayTool.ts#L25)
 
 ___
 
@@ -409,4 +472,4 @@ Delegate for Timeline Date update
 
 #### Defined in
 
-[packages/tools/src/Timeline/types.ts:8](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/tools/src/Timeline/types.ts#L8)
+[packages/tools/src/Timeline/types.ts:8](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/tools/src/Timeline/types.ts#L8)

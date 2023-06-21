@@ -35,7 +35,7 @@ whether the collection is still loading data in the background i.e. not yet read
 
 #### Defined in
 
-[packages/pointcloud-styling/src/PointCloudObjectCollection.ts:23](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/pointcloud-styling/src/PointCloudObjectCollection.ts#L23)
+[packages/pointcloud-styling/src/PointCloudObjectCollection.ts:23](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/pointcloud-styling/src/PointCloudObjectCollection.ts#L23)
 
 ## Methods
 
@@ -51,7 +51,7 @@ annotation IDs of the annotations for the objects represented by this PointCloud
 
 #### Defined in
 
-[packages/pointcloud-styling/src/PointCloudObjectCollection.ts:18](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/pointcloud-styling/src/PointCloudObjectCollection.ts#L18)
+[packages/pointcloud-styling/src/PointCloudObjectCollection.ts:18](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/pointcloud-styling/src/PointCloudObjectCollection.ts#L18)
 
 ___
 
@@ -72,7 +72,7 @@ ___
 
 #### Defined in
 
-[packages/pointcloud-styling/src/PointCloudObjectCollection.ts:30](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/pointcloud-styling/src/PointCloudObjectCollection.ts#L30)
+[packages/pointcloud-styling/src/PointCloudObjectCollection.ts:30](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/pointcloud-styling/src/PointCloudObjectCollection.ts#L30)
 
 ___
 
@@ -93,4 +93,4 @@ ___
 
 #### Defined in
 
-[packages/pointcloud-styling/src/PointCloudObjectCollection.ts:25](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/pointcloud-styling/src/PointCloudObjectCollection.ts#L25)
+[packages/pointcloud-styling/src/PointCloudObjectCollection.ts:25](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/pointcloud-styling/src/PointCloudObjectCollection.ts#L25)
