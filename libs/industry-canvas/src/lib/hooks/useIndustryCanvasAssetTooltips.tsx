@@ -16,9 +16,12 @@ import { OnAddContainerReferences } from '../IndustryCanvasPage';
 import { ContainerReferenceType } from '../types';
 import useMetrics from '../utils/tracking/useMetrics';
 
+import { UseResourceSelectorActionsReturnType } from './useResourceSelectorActions';
+
 const useIndustryCanvasAssetTooltips = (
   selectedAnnotation: ExtendedAnnotation | undefined,
-  onAddContainerReferences: OnAddContainerReferences
+  onAddContainerReferences: OnAddContainerReferences,
+  onResourceSelectorOpen: UseResourceSelectorActionsReturnType['onResourceSelectorOpen']
 ) => {
   const trackUsage = useMetrics();
 
@@ -82,6 +85,24 @@ const useIndustryCanvasAssetTooltips = (
       trackUsage(MetricEvent.ASSET_TOOLTIP_OPEN_IN_DATA_EXPLORER);
     };
 
+    const onOpenInResourceSelector = (): void => {
+      trackUsage(MetricEvent.ASSET_TOOLTIP_OPEN_IN_RESOURCE_SELECTOR, {
+        containerType: 'file',
+        resourceType: 'asset',
+      });
+      onResourceSelectorOpen({
+        initialSelectedResourceItem: {
+          type: 'asset',
+          id: resourceId,
+        },
+        initialFilter: {
+          common: {
+            internalId: resourceId,
+          },
+        },
+      });
+    };
+
     return [
       {
         targetId: String(selectedAnnotation?.id),
@@ -92,13 +113,19 @@ const useIndustryCanvasAssetTooltips = (
             onAddTimeseries={onAddTimeseries}
             onAddAsset={onAddAsset}
             onViewAsset={onViewAsset}
+            onOpenInResourceSelector={onOpenInResourceSelector}
           />
         ),
         anchorTo: ANNOTATION_TOOLTIP_POSITION,
         shouldPositionStrictly: true,
       },
     ];
-  }, [selectedAnnotation, onAddContainerReferences, trackUsage]);
+  }, [
+    selectedAnnotation,
+    onAddContainerReferences,
+    trackUsage,
+    onResourceSelectorOpen,
+  ]);
 };
 
 export default useIndustryCanvasAssetTooltips;

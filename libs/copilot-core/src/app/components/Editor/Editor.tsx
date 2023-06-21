@@ -18,7 +18,7 @@ export const Editor = ({ code, prevCode, language }: EditorProps) => {
   >();
 
   const [_monacoRef, setMonacoRef] = useState<typeof monaco | undefined>();
-  const handleEditorDitMount = useCallback<OnMount>((newEditor, newMonaco) => {
+  const handleEditorDiDMount = useCallback<OnMount>((newEditor, newMonaco) => {
     setEditorRef(newEditor);
     setMonacoRef(newMonaco);
   }, []);
@@ -28,7 +28,6 @@ export const Editor = ({ code, prevCode, language }: EditorProps) => {
       style={{
         flex: 1,
         position: 'relative',
-        height: '500px',
       }}
       direction="column"
     >
@@ -49,7 +48,7 @@ export const Editor = ({ code, prevCode, language }: EditorProps) => {
           options={{
             readOnly: true,
           }}
-          onMount={handleEditorDitMount}
+          onMount={handleEditorDiDMount}
           theme="light"
           language={language}
           defaultLanguage={language}

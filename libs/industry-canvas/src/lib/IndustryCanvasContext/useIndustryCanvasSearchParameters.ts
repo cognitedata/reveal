@@ -1,4 +1,4 @@
-import { useCallback, useRef } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 
 import { ContainerReference } from '../types';
@@ -48,6 +48,10 @@ const useIndustryCanvasSearchParameters = () => {
   const initializeWithContainerReferences = useRef<
     ContainerReference[] | undefined
   >(getInitializeWithContainerReferencesFromSearchParams(searchParams)).current;
+  const [
+    hasConsumedInitializeWithContainerReferences,
+    setHasConsumedInitializeWithContainerReferences,
+  ] = useState(false);
   const navigate = useNavigate();
 
   const setCanvasId = useCallback(
@@ -65,6 +69,8 @@ const useIndustryCanvasSearchParameters = () => {
     canvasId: getCanvasIdFromSearchParams(searchParams),
     setCanvasId,
     initializeWithContainerReferences,
+    hasConsumedInitializeWithContainerReferences,
+    setHasConsumedInitializeWithContainerReferences,
   };
 };
 

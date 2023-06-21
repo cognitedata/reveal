@@ -4,17 +4,17 @@ import { globalFilterAtom } from '../atoms';
 import { GlobalFilter } from '../types';
 import { defaultFilterSetter } from '../utils';
 
-const globalTimeseriesFilters = selector<GlobalFilter['filters']['timeseries']>(
+const globalTimeseriesFilters = selector<GlobalFilter['filters']['timeSeries']>(
   {
     key: 'GlobalTimeseriesFilters',
     get: ({ get }) => {
       const {
-        filters: { timeseries, common },
+        filters: { timeSeries, common },
       } = get(globalFilterAtom);
 
-      return { ...common, ...timeseries };
+      return { ...common, ...timeSeries };
     },
-    set: defaultFilterSetter('timeseries'),
+    set: defaultFilterSetter('timeSeries'),
   }
 );
 export const useTimeseriesFilters = () =>

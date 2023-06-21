@@ -1,3 +1,6 @@
+import { useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+
 import styled from 'styled-components';
 
 import {
@@ -19,10 +22,12 @@ import { useTransformationContext } from '@transformations/pages/transformation-
 import { TransformationRead } from '@transformations/types';
 import {
   DETAILS_BANNER_HEIGHT,
+  createInternalLink,
   shouldDisableUpdatesOnTransformation,
 } from '@transformations/utils';
 import { Allotment } from 'allotment';
 
+import { useCdfUserHistoryService } from '@cognite/cdf-utilities';
 import { Colors } from '@cognite/cogs.js';
 
 type TransformationDetailsContentProps = {
@@ -33,6 +38,9 @@ const TransformationDetailsContent = ({
   transformation,
 }: TransformationDetailsContentProps): JSX.Element => {
   const { t } = useTranslation();
+
+  const { subAppPath } = useParams<{ subAppPath?: string }>();
+  const userHistoryService = useCdfUserHistoryService();
 
   const { pageDirection, pageLayout, setPageLayout } =
     useTransformationContext();
@@ -60,6 +68,15 @@ const TransformationDetailsContent = ({
   const handleExpandSection = (): void => {
     setPageLayout('both');
   };
+
+  useEffect(() => {
+    if (subAppPath && transformation?.id && transformation?.name)
+      userHistoryService.logNewResourceView({
+        application: subAppPath,
+        name: transformation.name,
+        path: createInternalLink(transformation.id),
+      });
+  }, [subAppPath, transformation, userHistoryService]);
 
   return (
     <StyledContainer>

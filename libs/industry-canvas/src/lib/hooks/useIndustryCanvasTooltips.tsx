@@ -16,6 +16,7 @@ import useIndustryCanvasContainerTooltips from './useIndustryCanvasContainerTool
 import useIndustryCanvasFileLinkTooltips from './useIndustryCanvasFileLinkTooltips';
 import { UseManagedStateReturnType } from './useManagedState';
 import { OnUpdateAnnotationStyleByType } from './useManagedTools';
+import { UseResourceSelectorActionsReturnType } from './useResourceSelectorActions';
 import { OnUpdateTooltipsOptions, TooltipsOptions } from './useTooltipsOptions';
 
 export type UseTooltipsParams = {
@@ -35,6 +36,7 @@ export type UseTooltipsParams = {
   removeContainerById: UseManagedStateReturnType['removeContainerById'];
   onDeleteSelectedCanvasAnnotation: () => void;
   onUpdateAnnotationStyleByType: OnUpdateAnnotationStyleByType;
+  onResourceSelectorOpen: UseResourceSelectorActionsReturnType['onResourceSelectorOpen'];
   commentAnnotations: CommentAnnotation[];
 };
 
@@ -51,20 +53,13 @@ const useIndustryCanvasTooltips = ({
   updateContainerById,
   removeContainerById,
   onUpdateAnnotationStyleByType,
+  onResourceSelectorOpen,
   commentAnnotations,
 }: UseTooltipsParams) => {
-  const containerTooltips = useIndustryCanvasContainerTooltips({
-    selectedContainer,
-    containers,
-    tooltipsOptions,
-    onUpdateTooltipsOptions,
-    onAddSummarizationSticky,
-    updateContainerById,
-    removeContainerById,
-  });
   const assetTooltips = useIndustryCanvasAssetTooltips(
     clickedContainerAnnotation,
-    onAddContainerReferences
+    onAddContainerReferences,
+    onResourceSelectorOpen
   );
   const fileLinkTooltips = useIndustryCanvasFileLinkTooltips({
     clickedContainerAnnotation,
@@ -74,6 +69,16 @@ const useIndustryCanvasTooltips = ({
     selectedCanvasAnnotation,
     onDeleteSelectedCanvasAnnotation,
     onUpdateAnnotationStyleByType,
+  });
+  const containerTooltips = useIndustryCanvasContainerTooltips({
+    selectedContainer,
+    containers,
+    tooltipsOptions,
+    onUpdateTooltipsOptions,
+    onAddSummarizationSticky,
+    updateContainerById,
+    removeContainerById,
+    onResourceSelectorOpen,
   });
   const commentTooltips = useCommentTooltips({
     commentAnnotations,

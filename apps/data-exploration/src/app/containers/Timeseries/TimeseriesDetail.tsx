@@ -1,10 +1,12 @@
 import React, { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 import styled from 'styled-components';
 
 import { Loader, Metadata } from '@data-exploration/components';
 import { TimeseriesInfo } from '@data-exploration/containers';
 
+import { useCdfUserHistoryService } from '@cognite/cdf-utilities';
 import { Tabs } from '@cognite/cogs.js';
 import { ErrorFeedback } from '@cognite/data-exploration';
 import { TimeseriesChart } from '@cognite/plotting-components';
@@ -21,6 +23,7 @@ import {
   useResourceDetailSelectedTab,
 } from '@data-exploration-app/hooks';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
+import { SUB_APP_PATH, createInternalLink } from '@data-exploration-lib/core';
 
 // TimeseriesPreviewTabType;
 // - details
@@ -44,6 +47,9 @@ export const TimeseriesDetail = ({
 
   const [dateRange, setDateRange] = usePreviewDateRange();
 
+  const { pathname, search: searchParams } = useLocation();
+  const userHistoryService = useCdfUserHistoryService();
+
   const handlePreviewClose = () => {
     endJourney();
   };
@@ -58,14 +64,26 @@ export const TimeseriesDetail = ({
 
   const {
     data: timeseries,
-    isFetched,
+    isFetched: isTimeseriesFetched,
     error,
   } = useCdfItem<Timeseries>('timeseries', { id: timeseriesId });
+
+  useEffect(() => {
+    if (isTimeseriesFetched && timeseries) {
+      // save Timeseries preview as view resource in user history
+      if (timeseries?.name)
+        userHistoryService.logNewResourceView({
+          application: SUB_APP_PATH,
+          name: timeseries?.name,
+          path: createInternalLink(pathname, searchParams),
+        });
+    }
+  }, [isTimeseriesFetched, timeseries]);
 
   if (!timeseriesId || !Number.isFinite(timeseriesId)) {
     return <>Invalid time series id {timeseriesId}</>;
   }
-  if (!isFetched) {
+  if (!isTimeseriesFetched) {
     return <Loader />;
   }
 
