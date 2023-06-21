@@ -76,6 +76,7 @@ export const VisionAutoComplete = ({
             </>
           );
         },
+        // @ts-expect-error ignoring errors for the migration
         Option: (props: OptionProps<OptionType<VisionOptionType<string>>>) => {
           return <VisionSelectOption {...props} />;
         },

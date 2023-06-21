@@ -8,6 +8,7 @@ import { VisionOptionType } from '@vision/modules/Review/types';
 import { Icon, Menu, OptionType } from '@cognite/cogs.js';
 
 export const VisionSelectOption = (
+  // @ts-expect-error ignoring errors for the migration
   props: OptionProps<OptionType<VisionOptionType<string>>>
 ) => {
   return (
