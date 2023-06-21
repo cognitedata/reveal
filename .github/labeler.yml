@@ -35,5 +35,9 @@ cdf-document-search:
   - apps/cdf-document-search/*
   - apps/cdf-document-search/**/*
 
+extraction-pipelines:
+  - apps/extraction-pipelines/*
+  - apps/extraction-pipelines/**/*
+
 design-system:
   - libs/shared/user-profile-components/**/*
