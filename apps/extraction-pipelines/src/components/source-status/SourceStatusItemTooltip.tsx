@@ -76,7 +76,7 @@ const SourceStatusItemTooltip = ({
     return doesLogHavePauseType(log);
   });
 
-  const getTopicFilter = (log: any) => {
+  const getTopicFilter = (log: ReadMQTTJobLog) => {
     const sourceJob = source.jobs.find((job) => {
       return job.externalId === log.jobExternalId;
     });
