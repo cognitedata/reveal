@@ -3,11 +3,10 @@
 
 import React, { useState } from 'react';
 
+import { useSDK, useFunction } from '@functions-ui/utils/hooks';
 import { Modal, Form, Checkbox, Alert } from 'antd';
 
 import { FileInfo } from '@cognite/sdk';
-
-import { useSDK, useFunction } from '../../utils/hooks';
 
 type Props = {
   id: number;

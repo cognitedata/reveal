@@ -2,24 +2,23 @@ import React, { useState } from 'react';
 
 import styled from 'styled-components';
 
-import { Row, Collapse, Input, Pagination, Select, Alert } from 'antd';
-
-import { PageTitle } from '@cognite/cdf-utilities';
-import { Colors, Button, Icon } from '@cognite/cogs.js';
-
-import UploadFunctionButton from '../../components/buttons/UploadFunctionButton';
-import { Loader } from '../../components/Common';
-import FunctionPanelContent from '../../containers/Functions/FunctionPanelContent';
-import FunctionPanelHeader from '../../containers/Functions/FunctionPanelHeader';
-import { CogFunction } from '../../types';
+import UploadFunctionButton from '@functions-ui/components/buttons/UploadFunctionButton';
+import { Loader } from '@functions-ui/components/Common';
+import FunctionPanelContent from '@functions-ui/containers/Functions/FunctionPanelContent';
+import FunctionPanelHeader from '@functions-ui/containers/Functions/FunctionPanelHeader';
+import { CogFunction } from '@functions-ui/types';
 import {
   useActivateFunction,
   useCheckActivateFunction,
   useFunctions,
   useMultipleCalls,
   useRefreshApp,
-} from '../../utils/hooks';
-import { sortLastCall, recentlyCreated } from '../../utils/sorting';
+} from '@functions-ui/utils/hooks';
+import { sortLastCall, recentlyCreated } from '@functions-ui/utils/sorting';
+import { Row, Collapse, Input, Pagination, Select, Alert } from 'antd';
+
+import { PageTitle } from '@cognite/cdf-utilities';
+import { Colors, Button, Icon } from '@cognite/cogs.js';
 
 const CollapseDiv = styled.div`
   .ant-collapse-header[aria-expanded='true'] {

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 
-import { Button } from '@cognite/cogs.js';
+import UploadFunctionModal from '@functions-ui/components/FunctionModals/UploadFunctionModal';
 
-import UploadFunctionModal from '../../components/FunctionModals/UploadFunctionModal';
+import { Button } from '@cognite/cogs.js';
 
 export default function UploadFunctionButton() {
   const [showModal, setShowModal] = useState(false);

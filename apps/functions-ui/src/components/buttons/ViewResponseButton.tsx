@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 
-import { Button } from '@cognite/cogs.js';
+import FunctionCallResponseModal from '@functions-ui/components/FunctionModals/FunctionCallResponseModal';
 
-import FunctionCallResponseModal from '../../components/FunctionModals/FunctionCallResponseModal';
+import { Button } from '@cognite/cogs.js';
 
 type Props = {
   id: number;

@@ -1,9 +1,8 @@
 import React from 'react';
 
+import TestWrapper from '@functions-ui/utils/TestWrapper';
 import { Form } from 'antd';
 import { mount } from 'enzyme';
-
-import TestWrapper from '../../utils/TestWrapper';
 
 import CreateScheduleModal, { stuffForUnitTests } from './CreateScheduleModal';
 

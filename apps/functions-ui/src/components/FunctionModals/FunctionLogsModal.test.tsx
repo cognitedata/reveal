@@ -1,12 +1,11 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router';
 
+import { sleep } from '@functions-ui/helpers';
+import TestWrapper from '@functions-ui/utils/TestWrapper';
 import { mount } from 'enzyme';
 
 import sdk from '@cognite/cdf-sdk-singleton';
-
-import { sleep } from '../../helpers';
-import TestWrapper from '../../utils/TestWrapper';
 
 import FunctionLogsModal from './FunctionLogsModal';
 

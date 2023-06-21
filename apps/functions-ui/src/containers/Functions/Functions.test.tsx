@@ -3,13 +3,12 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router';
 
+import { sleep } from '@functions-ui/helpers';
+import { CogFunction, Call } from '@functions-ui/types/Types';
+import TestWrapper from '@functions-ui/utils/TestWrapper';
 import { cleanup, render, screen, fireEvent } from '@testing-library/react';
 
 import sdk from '@cognite/cdf-sdk-singleton';
-
-import { sleep } from '../../helpers';
-import { CogFunction, Call } from '../../types/Types';
-import TestWrapper from '../../utils/TestWrapper';
 
 import Functions from './Functions';
 

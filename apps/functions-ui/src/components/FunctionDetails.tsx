@@ -2,11 +2,10 @@ import React from 'react';
 
 import styled from 'styled-components';
 
+import LoadingIcon from '@functions-ui/components/LoadingIcon';
+import { useFunction } from '@functions-ui/utils/hooks';
 import { Descriptions, Alert, Typography } from 'antd';
 import moment from 'moment';
-
-import LoadingIcon from '../components/LoadingIcon';
-import { useFunction } from '../utils/hooks';
 
 const { Item } = Descriptions;
 const { Text } = Typography;

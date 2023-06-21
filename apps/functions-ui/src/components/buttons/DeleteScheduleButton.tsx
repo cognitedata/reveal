@@ -1,13 +1,12 @@
 import React, { useEffect } from 'react';
 
+import { deleteSchedule } from '@functions-ui/utils/api';
+import { allSchedulesKey } from '@functions-ui/utils/queryKeys';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Modal, notification } from 'antd';
 import _ from 'lodash';
 
 import { Button } from '@cognite/cogs.js';
-
-import { deleteSchedule } from '../../utils/api';
-import { allSchedulesKey } from '../../utils/queryKeys';
 
 type Props = {
   id: number;

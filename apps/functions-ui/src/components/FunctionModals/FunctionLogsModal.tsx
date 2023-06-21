@@ -1,18 +1,17 @@
 import React, { useState, SyntheticEvent } from 'react';
+import Highlighter from 'react-highlight-words';
 
 import styled from 'styled-components';
 
+import ErrorFeedback from '@functions-ui/components/Common/atoms/ErrorFeedback';
+import { Call, Log } from '@functions-ui/types';
+import { useCall, useLogs } from '@functions-ui/utils/hooks';
+import { logsKey, callKey } from '@functions-ui/utils/queryKeys';
 import { useQueryClient } from '@tanstack/react-query';
 import { Modal, Input, Alert } from 'antd';
 import moment from 'moment';
 
 import { Icon, Button } from '@cognite/cogs.js';
-
-import ErrorFeedback from '../../components/Common/atoms/ErrorFeedback';
-// import Highlighter from 'react-highlight-words';
-import { Call, Log } from '../../types';
-import { useCall, useLogs } from '../../utils/hooks';
-import { logsKey, callKey } from '../../utils/queryKeys';
 
 import NoLogs from './icons/emptyLogs';
 
@@ -79,12 +78,12 @@ function ModalBody({ logs, call, errors, fetched }: BodyProps) {
         {logs?.map((log: Log, index) => (
           <React.Fragment key={index}>
             {log.message}
-            {/* <Highlighter
+            <Highlighter
               highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
               searchWords={[logsSearch]}
               autoEscape
               textToHighlight={log.message}
-            /> */}
+            />
             <br />
           </React.Fragment>
         ))}

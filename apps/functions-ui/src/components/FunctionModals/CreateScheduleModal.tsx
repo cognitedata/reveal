@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from 'react';
 
+import {
+  createSchedule as createScheduleApi,
+  isOIDCFlow,
+} from '@functions-ui/utils/api';
+import { allSchedulesKey } from '@functions-ui/utils/queryKeys';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Modal, Form, Input, Alert, notification } from 'antd';
 import { isValidCron } from 'cron-validator';
 
 import { Button, Tooltip } from '@cognite/cogs.js';
-
-import {
-  createSchedule as createScheduleApi,
-  isOIDCFlow,
-} from '../../utils/api';
-import { allSchedulesKey } from '../../utils/queryKeys';
 
 const isValidData = (data: string) => {
   if (data === '') {

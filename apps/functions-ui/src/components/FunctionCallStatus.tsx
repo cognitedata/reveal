@@ -1,9 +1,8 @@
 import React from 'react';
 
+import LoadingIcon from '@functions-ui/components/LoadingIcon';
+import { CallResponse } from '@functions-ui/types';
 import { Tag } from 'antd';
-
-import LoadingIcon from '../components/LoadingIcon';
-import { CallResponse } from '../types';
 
 import FunctionCall from './FunctionCall';
 

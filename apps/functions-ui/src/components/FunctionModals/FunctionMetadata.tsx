@@ -1,15 +1,14 @@
 import React from 'react';
 
-import { Col, Form, Input, Row } from 'antd';
-import { v4 as uuidv4 } from 'uuid';
-
-import { Button, Icon } from '@cognite/cogs.js';
-
 import {
   checkMetadataKey,
   checkMetadataValue,
   getAllSecretKeys,
-} from '../../utils/formValidations';
+} from '@functions-ui/utils/formValidations';
+import { Col, Form, Input, Row } from 'antd';
+import { v4 as uuidv4 } from 'uuid';
+
+import { Button, Icon } from '@cognite/cogs.js';
 
 /**
  * Function Metadata

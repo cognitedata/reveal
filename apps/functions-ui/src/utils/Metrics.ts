@@ -1,71 +1,55 @@
-import _ from 'lodash';
-import * as mixpanelConfig from 'mixpanel-browser';
+import queryString from 'query-string';
 
-import { getProject } from '@cognite/cdf-utilities';
+import { Metrics } from '@cognite/metrics';
+
+export const projectName = () =>
+  new URL(window.location.href).pathname.split('/')[1];
+
+export const getCdfEnvFromUrl = () =>
+  queryString.parse(window.location.search).env as string | undefined;
+
+export const checkUrl = (env: string) => window.location.hostname.includes(env);
+export const isDevelopment = () => checkUrl('dev') || checkUrl('localhost');
+export const isStaging = () => checkUrl('staging') || checkUrl('pr');
+export const isProduction = () => !(isStaging() || isDevelopment());
+
+export const getEnvironment = () => {
+  if (isDevelopment()) return 'development';
+  if (isStaging()) return 'staging';
+  return 'production';
+};
 
 const MIXPANEL_TOKEN = '504cfc7feaad55b838d866aff8f91a58';
 
-const mixpanel = mixpanelConfig.init(
-  MIXPANEL_TOKEN,
-  { persistence: 'localStorage' },
-  'datastudio'
-);
+export const setupMixpanel = () => {
+  const mixpanelFusionToken = MIXPANEL_TOKEN; // pragma: allowlist secret
+  const mixpanelFusionDevToken = MIXPANEL_TOKEN; // pragma: allowlist secret
 
-export type Props = { [key: string]: string | number | boolean | Props | null };
+  const mixpanelToken = isDevelopment()
+    ? mixpanelFusionDevToken
+    : mixpanelFusionToken;
 
-export const trackUsage = (
-  event: string,
-  metadata?: { [key: string]: any }
-) => {
-  const { host } = window?.location;
-  const { pathname } = window?.location;
-  if (!host || !pathname) {
-    return;
-  }
+  Metrics.init({
+    mixpanelToken,
+    debug: isDevelopment(),
+  });
 
-  const pathWithoutTenant = pathname.substring(pathname.indexOf('/', 1));
-  if (!_.includes(['localhost'], host)) {
-    mixpanel.track(event, {
-      ...metadata,
-      project: getProject(),
-      version: 1,
-      appVersion: process.env.REACT_APP_VERSION,
-      location: window.location.pathname,
-      pathname: pathWithoutTenant,
-    });
+  // We opt out of tracking if we are on development
+  if (isDevelopment()) {
+    Metrics.optOut();
+  } else {
+    Metrics.optIn();
   }
 };
 
-export class Timer {
-  private timerEvent: string;
+export const handleUserIdentification = (email: string) => {
+  Metrics.identify(email || 'not-identified-yet');
+  Metrics.people({
+    email,
+    name: email,
+  });
+};
 
-  private startProps: Props = {};
-
-  private finished = false;
-
-  constructor(event: string, startProps: Props = {}) {
-    this.timerEvent = event;
-    this.startProps = startProps;
-
-    try {
-      mixpanel.time_event(event);
-      // eslint-disable-next-line no-empty
-    } catch (e) {}
-  }
-
-  stop(props: Props = {}) {
-    if (this.finished) {
-      return;
-    }
-    try {
-      const combined = { ...this.startProps, ...props };
-      trackUsage(this.timerEvent, combined);
-      this.finished = true;
-      // eslint-disable-next-line no-empty
-    } catch (e) {}
-  }
-}
-
-export function trackTimedUsage(event: string, props?: Props): Timer {
-  return new Timer(event, props);
-}
+export default {
+  env: getEnvironment(),
+};

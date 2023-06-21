@@ -1,4 +1,14 @@
 import {
+  CogFunction,
+  GetCallsArgs,
+  Call,
+  GetCallArgs,
+  CallResponse,
+  Log,
+  Schedule,
+  CogFunctionLimit,
+} from '@functions-ui/types';
+import {
   useQuery,
   useMutation,
   QueryOptions,
@@ -10,17 +20,6 @@ import mapKeys from 'lodash/mapKeys';
 
 import sdk, { getUserInformation } from '@cognite/cdf-sdk-singleton';
 import { getProject } from '@cognite/cdf-utilities';
-
-import {
-  CogFunction,
-  GetCallsArgs,
-  Call,
-  GetCallArgs,
-  CallResponse,
-  Log,
-  Schedule,
-  CogFunctionLimit,
-} from '../types';
 
 import {
   getCalls,

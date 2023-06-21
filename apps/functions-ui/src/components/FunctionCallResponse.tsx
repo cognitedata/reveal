@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { useResponse } from '../utils/hooks';
+import { useResponse } from '@functions-ui/utils/hooks';
 
 import FunctionCall from './FunctionCall';
 

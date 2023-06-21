@@ -2,18 +2,17 @@ import React from 'react';
 
 import styled from 'styled-components';
 
+import CallFunctionButton from '@functions-ui/components/buttons/CallFunctionButton';
+import DeleteFunctionButton from '@functions-ui/components/buttons/DeleteFunctionButton';
+import FunctionCallStatus from '@functions-ui/components/FunctionCallStatus';
+import FunctionScheduleIndicator from '@functions-ui/components/FunctionScheduleIndicator';
+import FunctionStatus from '@functions-ui/components/FunctionStatus';
+import LastFunctionCall from '@functions-ui/components/LastFunctionCall';
+import { Call } from '@functions-ui/types';
 import { Tag, Row, Col } from 'antd';
 import moment from 'moment';
 
 import { Icon } from '@cognite/cogs.js';
-
-import CallFunctionButton from '../../components/buttons/CallFunctionButton';
-import DeleteFunctionButton from '../../components/buttons/DeleteFunctionButton';
-import FunctionCallStatus from '../../components/FunctionCallStatus';
-import FunctionScheduleIndicator from '../../components/FunctionScheduleIndicator';
-import FunctionStatus from '../../components/FunctionStatus';
-import LastFunctionCall from '../../components/LastFunctionCall';
-import { Call } from '../../types';
 
 type Props = {
   id: number;

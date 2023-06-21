@@ -1,13 +1,4 @@
-import { QueryKey } from '@tanstack/react-query';
-import { UploadFile } from 'antd/lib/upload/interface';
-import _ from 'lodash';
-
-import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
-import { getProject } from '@cognite/cdf-utilities';
-import UploadGCS from '@cognite/gcs-browser-upload';
-import { FileUploadResponse } from '@cognite/sdk';
-
-import { sleep } from '../helpers';
+import { sleep } from '@functions-ui/helpers';
 import {
   CogFunctionUpload,
   CogFunction,
@@ -16,7 +7,15 @@ import {
   GetCallsArgs,
   Call,
   CreateScheduleApiParams,
-} from '../types';
+} from '@functions-ui/types';
+import { QueryKey } from '@tanstack/react-query';
+import { UploadFile } from 'antd/lib/upload/interface';
+import _ from 'lodash';
+
+import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
+import { getProject } from '@cognite/cdf-utilities';
+import UploadGCS from '@cognite/gcs-browser-upload';
+import { FileUploadResponse } from '@cognite/sdk';
 
 import { newestCall } from './sorting';
 

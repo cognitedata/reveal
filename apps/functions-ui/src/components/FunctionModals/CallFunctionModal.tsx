@@ -1,16 +1,15 @@
 import React, { useState, useEffect, SyntheticEvent } from 'react';
 
+import ErrorFeedback from '@functions-ui/components/Common/atoms/ErrorFeedback';
+import FunctionCallResponse from '@functions-ui/components/FunctionCallResponse';
+import FunctionCallStatus from '@functions-ui/components/FunctionCallStatus';
+import { createFunctionCall, isOIDCFlow } from '@functions-ui/utils/api';
+import { useCall, useFunction } from '@functions-ui/utils/hooks';
+import { callsKey, sortFunctionKey } from '@functions-ui/utils/queryKeys';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Modal, Input, Form, Alert } from 'antd';
 
 import { Button } from '@cognite/cogs.js';
-
-import ErrorFeedback from '../../components/Common/atoms/ErrorFeedback';
-import FunctionCallResponse from '../../components/FunctionCallResponse';
-import FunctionCallStatus from '../../components/FunctionCallStatus';
-import { createFunctionCall, isOIDCFlow } from '../../utils/api';
-import { useCall, useFunction } from '../../utils/hooks';
-import { callsKey, sortFunctionKey } from '../../utils/queryKeys';
 
 const canParseInputData = (inputData: string) => {
   if (inputData === '') {

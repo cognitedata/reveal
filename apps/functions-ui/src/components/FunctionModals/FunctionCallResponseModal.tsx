@@ -1,12 +1,11 @@
 import React from 'react';
 
+import ErrorFeedback from '@functions-ui/components/Common/atoms/ErrorFeedback';
+import { CallResponse } from '@functions-ui/types/Types';
+import { useResponse } from '@functions-ui/utils/hooks';
 import { Modal, Alert } from 'antd';
 
 import { Icon, Button } from '@cognite/cogs.js';
-
-import ErrorFeedback from '../../components/Common/atoms/ErrorFeedback';
-import { CallResponse } from '../../types/Types';
-import { useResponse } from '../../utils/hooks';
 
 type Props = {
   onCancel: () => void;

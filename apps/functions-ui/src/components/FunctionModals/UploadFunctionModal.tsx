@@ -4,6 +4,27 @@ import React, { useState } from 'react';
 
 import styled from 'styled-components';
 
+import ErrorFeedback from '@functions-ui/components/Common/atoms/ErrorFeedback';
+import FunctionMetadata, {
+  MetaType,
+} from '@functions-ui/components/FunctionModals/FunctionMetadata';
+import Link from '@functions-ui/components/Link';
+import { CogFunctionLimit, Runtime } from '@functions-ui/types';
+import { uploadFunction } from '@functions-ui/utils/api';
+import {
+  checkSecretKey,
+  getAllSecretKeys,
+  checkSecretValue,
+  checkFunctionName,
+  checkOwner,
+  checkDescription,
+  checkExternalId,
+  checkSecrets,
+  checkFile,
+  checkFloat,
+} from '@functions-ui/utils/formValidations';
+import { useLimits } from '@functions-ui/utils/hooks';
+import { allFunctionsKey } from '@functions-ui/utils/queryKeys';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   Modal,
@@ -20,28 +41,6 @@ import { UploadChangeParam } from 'antd/lib/upload';
 import { UploadFile } from 'antd/lib/upload/interface';
 
 import { Button, Icon, Dropdown, Tooltip, Menu } from '@cognite/cogs.js';
-
-import ErrorFeedback from '../../components/Common/atoms/ErrorFeedback';
-import FunctionMetadata, {
-  MetaType,
-} from '../../components/FunctionModals/FunctionMetadata';
-import Link from '../../components/Link';
-import { CogFunctionLimit, Runtime } from '../../types';
-import { uploadFunction } from '../../utils/api';
-import {
-  checkSecretKey,
-  getAllSecretKeys,
-  checkSecretValue,
-  checkFunctionName,
-  checkOwner,
-  checkDescription,
-  checkExternalId,
-  checkSecrets,
-  checkFile,
-  checkFloat,
-} from '../../utils/formValidations';
-import { useLimits } from '../../utils/hooks';
-import { allFunctionsKey } from '../../utils/queryKeys';
 
 export interface Secret {
   key: string;

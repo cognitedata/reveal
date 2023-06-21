@@ -1,6 +1,5 @@
+import { Secret } from '@functions-ui/components/FunctionModals/UploadFunctionModal';
 import { UploadFile } from 'antd/lib/upload/interface';
-
-import { Secret } from '../components/FunctionModals/UploadFunctionModal';
 
 export const getAllSecretKeys = (secrets: Secret[]) => {
   const keys = [] as string[];

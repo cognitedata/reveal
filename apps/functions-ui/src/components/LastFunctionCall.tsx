@@ -1,5 +1,5 @@
-import { Call } from '../types';
-import { useCalls } from '../utils/hooks';
+import { Call } from '@functions-ui/types';
+import { useCalls } from '@functions-ui/utils/hooks';
 
 type Props = {
   id: number;

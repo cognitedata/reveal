@@ -1,10 +1,10 @@
 import React from 'react';
 import '@cognite/cogs.js/dist/cogs.css';
 
-import { I18nWrapper } from '@cognite/cdf-i18n-utils';
+import App from '@functions-ui/app/App';
+import { translations } from '@functions-ui/app/common';
 
-import App from '../../app/App';
-import { translations } from '../../app/common';
+import { I18nWrapper } from '@cognite/cdf-i18n-utils';
 
 import { AuthContainerMock } from './AuthContainerMock';
 

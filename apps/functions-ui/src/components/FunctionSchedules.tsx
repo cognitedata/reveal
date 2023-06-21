@@ -1,16 +1,15 @@
 import React from 'react';
 
+import CreateScheduleButton from '@functions-ui/components/buttons/CreateScheduleButton';
+import DeleteScheduleButton from '@functions-ui/components/buttons/DeleteScheduleButton';
+import ViewInputDataButton from '@functions-ui/components/buttons/ViewInputDataButton';
+import LoadingIcon from '@functions-ui/components/LoadingIcon';
+import { Schedule } from '@functions-ui/types';
+import { isOIDCFlow } from '@functions-ui/utils/api';
+import { useSchedules } from '@functions-ui/utils/hooks';
 import { Table, Alert, List } from 'antd';
 import cronstrue from 'cronstrue';
 import moment from 'moment';
-
-import CreateScheduleButton from '../components/buttons/CreateScheduleButton';
-import DeleteScheduleButton from '../components/buttons/DeleteScheduleButton';
-import ViewInputDataButton from '../components/buttons/ViewInputDataButton';
-import LoadingIcon from '../components/LoadingIcon';
-import { Schedule } from '../types';
-import { isOIDCFlow } from '../utils/api';
-import { useSchedules } from '../utils/hooks';
 
 import FunctionCalls from './FunctionCalls';
 

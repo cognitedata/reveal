@@ -1,4 +1,4 @@
-import { CogFunction, Call } from '../types';
+import { CogFunction, Call } from '@functions-ui/types';
 
 export const recentlyCreated = (a: CogFunction, b: CogFunction) => {
   return b.createdTime - a.createdTime;

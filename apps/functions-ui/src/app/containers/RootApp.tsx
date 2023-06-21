@@ -3,13 +3,11 @@ import { useLocation, useNavigate, Route, Routes } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import * as mixpanelConfig from 'mixpanel-browser';
+import { Loader } from '@functions-ui/components/Common';
+import ErrorBoundary from '@functions-ui/components/ErrorBoundary';
+import { useUserInformation } from '@functions-ui/utils/hooks';
+import { handleUserIdentification } from '@functions-ui/utils/Metrics';
 import queryString from 'query-string';
-
-import { Loader } from '../../components/Common';
-import ErrorBoundary from '../../components/ErrorBoundary';
-import { useUserInformation } from '../utils/hooks';
 
 import Functions from './Functions';
 
@@ -48,14 +46,7 @@ export default function RootApp() {
 
   useEffect(() => {
     if (username) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const company = username.split('@').pop();
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      //mixpanelConfig.datastudio.add_group('company', company);
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      //mixpanelConfig.datastudio.identify(username);
+      handleUserIdentification(username);
     }
   }, [username]);
 

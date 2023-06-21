@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
 
+import DeleteFunctionModal from '@functions-ui/components/FunctionModals/DeleteFunctionModal';
+import { deleteFunction } from '@functions-ui/utils/api';
+import { useFunction } from '@functions-ui/utils/hooks';
+import { allFunctionsKey } from '@functions-ui/utils/queryKeys';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { notification } from 'antd';
 
 import { Button } from '@cognite/cogs.js';
-
-import DeleteFunctionModal from '../../components/FunctionModals/DeleteFunctionModal';
-import { deleteFunction } from '../../utils/api';
-import { useFunction } from '../../utils/hooks';
-import { allFunctionsKey } from '../../utils/queryKeys';
 
 type Props = {
   id: number;

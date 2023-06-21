@@ -1,8 +1,8 @@
 import React from 'react';
 
-import { Tooltip, Icon } from '@cognite/cogs.js';
+import { useSchedules } from '@functions-ui/utils/hooks';
 
-import { useSchedules } from '../utils/hooks';
+import { Tooltip, Icon } from '@cognite/cogs.js';
 
 type Props = {
   id?: number;

@@ -1,4 +1,33 @@
 import {
+  CogFunction,
+  GetCallsArgs,
+  Call,
+  GetCallArgs,
+  CallResponse,
+  Log,
+  Schedule,
+  CogFunctionLimit,
+} from '@functions-ui/types';
+import {
+  getCalls,
+  getCall,
+  getResponse,
+  getLogs,
+  getLatestCalls,
+  getScheduleData,
+} from '@functions-ui/utils/api';
+import {
+  allFunctionsKey,
+  allSchedulesKey,
+  callKey,
+  callsKey,
+  functionKey,
+  logsKey,
+  responseKey,
+  limitsKey,
+  sortFunctionKey,
+} from '@functions-ui/utils/queryKeys';
+import {
   useQuery,
   useMutation,
   useQueryClient,
@@ -10,36 +39,6 @@ import mapKeys from 'lodash/mapKeys';
 
 import sdk, { getUserInformation } from '@cognite/cdf-sdk-singleton';
 import { getProject } from '@cognite/cdf-utilities';
-
-import {
-  CogFunction,
-  GetCallsArgs,
-  Call,
-  GetCallArgs,
-  CallResponse,
-  Log,
-  Schedule,
-  CogFunctionLimit,
-} from '../../types';
-import {
-  getCalls,
-  getCall,
-  getResponse,
-  getLogs,
-  getLatestCalls,
-  getScheduleData,
-} from '../../utils/api';
-import {
-  allFunctionsKey,
-  allSchedulesKey,
-  callKey,
-  callsKey,
-  functionKey,
-  logsKey,
-  responseKey,
-  limitsKey,
-  sortFunctionKey,
-} from '../../utils/queryKeys';
 
 export const useFunctions = (
   config?: UseQueryOptions<CogFunction[], unknown>

@@ -1,15 +1,14 @@
 import React from 'react';
 
+import ViewLogsButton from '@functions-ui/components/buttons/ViewLogsButton';
+import ViewResponseButton from '@functions-ui/components/buttons/ViewResponseButton';
+import FunctionCall from '@functions-ui/components/FunctionCall';
+import FunctionCallStatus from '@functions-ui/components/FunctionCallStatus';
+import LoadingIcon from '@functions-ui/components/LoadingIcon';
+import { Call } from '@functions-ui/types';
+import { useCalls } from '@functions-ui/utils/hooks';
 import { Alert, Table } from 'antd';
 import moment from 'moment';
-
-import ViewLogsButton from '../components/buttons/ViewLogsButton';
-import ViewResponseButton from '../components/buttons/ViewResponseButton';
-import FunctionCall from '../components/FunctionCall';
-import FunctionCallStatus from '../components/FunctionCallStatus';
-import LoadingIcon from '../components/LoadingIcon';
-import { Call } from '../types';
-import { useCalls } from '../utils/hooks';
 
 const callTableColumns = [
   {

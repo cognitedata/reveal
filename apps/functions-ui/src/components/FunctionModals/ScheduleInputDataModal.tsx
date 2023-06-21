@@ -1,11 +1,10 @@
 import React from 'react';
 
+import { useRetriveScheduleInputData } from '@functions-ui/../src/utils/hooks';
+import ErrorFeedback from '@functions-ui/components/Common/atoms/ErrorFeedback';
 import { Modal, Alert } from 'antd';
 
 import { Icon, Button } from '@cognite/cogs.js';
-
-import { useRetriveScheduleInputData } from '../../../src/utils/hooks';
-import ErrorFeedback from '../../components/Common/atoms/ErrorFeedback';
 
 type Props = {
   onCancel: () => void;

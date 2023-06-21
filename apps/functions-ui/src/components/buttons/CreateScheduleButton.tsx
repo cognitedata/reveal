@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 
-import { Button } from '@cognite/cogs.js';
+import CreateScheduleModal from '@functions-ui/components/FunctionModals/CreateScheduleModal';
 
-import CreateScheduleModal from '../../components/FunctionModals/CreateScheduleModal';
+import { Button } from '@cognite/cogs.js';
 
 type Props = {
   id: number;

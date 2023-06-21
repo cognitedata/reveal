@@ -1,11 +1,10 @@
 import React from 'react';
 
+import TestWrapper from '@functions-ui/utils/TestWrapper';
 import { render } from '@testing-library/react';
 import { mount } from 'enzyme';
 
 import sdk from '@cognite/cdf-sdk-singleton';
-
-import TestWrapper from '../../utils/TestWrapper';
 
 import CallFunctionModal, { stuffForUnitTests } from './CallFunctionModal';
 
