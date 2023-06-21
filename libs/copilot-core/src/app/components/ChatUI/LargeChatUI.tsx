@@ -10,20 +10,29 @@ import { messageRenderers } from '../MessageRenderer';
 export const LargeChatUI = ({
   setIsExpanded,
   onClose,
+  onReset,
 }: {
   setIsExpanded: (visible: boolean) => void;
   onClose: () => void;
+  onReset: () => void;
 }) => {
   return (
     <LargeChatWrapper>
       <Flex className="header" gap={6} alignItems="center">
         <div style={{ flex: 1 }} />
         <Button
+          icon="ClearAll"
+          aria-label="clear"
+          onClick={() => onReset()}
+          inverted
+        />
+        <Button
           icon="ScaleDown"
+          aria-label="collapse"
           onClick={() => setIsExpanded(false)}
           inverted
         />
-        <Button icon="Close" onClick={onClose} inverted />
+        <Button icon="Close" onClick={onClose} inverted aria-label="close" />
       </Flex>
       <>
         <BotUIAction renderer={actionRenderers} />
