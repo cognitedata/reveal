@@ -16,3 +16,6 @@ export enum ViewType {
   Sequence = 'sequence',
   ThreeD = 'threeD',
 }
+
+// sub-app name configured in cdf-hu > cdf-navigation > sections - app.linkTo i.e. fusion sub apps configuration
+export const SUB_APP_PATH = 'explore';

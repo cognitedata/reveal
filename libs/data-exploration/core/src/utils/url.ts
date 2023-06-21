@@ -5,6 +5,8 @@ import { useSearchParams } from 'react-router-dom';
 import isUrl from 'is-url';
 import queryString from 'query-string';
 
+import { createLink } from '@cognite/cdf-utilities';
+
 type UseSearchParamOpts<T> = {
   replace?: boolean;
   deserialize: (val: string | null) => T | null;
@@ -68,4 +70,12 @@ export const getSearchParams = (
   opts?: queryString.StringifyOptions
 ) => {
   return queryString.parse(searchParams, opts);
+};
+
+// create internal link that included sub-app path, cluster, env, project
+// this is used to create resource links set in user history items
+export const createInternalLink = (path: string, searchParams?: string) => {
+  if (!searchParams) return createLink(path);
+
+  return createLink(path, getSearchParams(searchParams));
 };

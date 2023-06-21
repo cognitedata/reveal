@@ -1,3 +1,5 @@
+import { useParams } from 'react-router-dom';
+
 import {
   QueryClient,
   useInfiniteQuery,
@@ -35,11 +37,15 @@ import {
   isViewCentric,
   isDataModelCentric,
 } from '@transformations/types';
-import { FIVE_MINUTES, getTransformationsApiUrl } from '@transformations/utils';
+import {
+  createInternalLink,
+  FIVE_MINUTES,
+  getTransformationsApiUrl,
+} from '@transformations/utils';
 import { notification } from 'antd';
 import { v4 as uuidv4 } from 'uuid';
 
-import { Timestamp } from '@cognite/cdf-utilities';
+import { Timestamp, useCdfUserHistoryService } from '@cognite/cdf-utilities';
 import { CogniteClient, CogniteError } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 
@@ -203,6 +209,11 @@ export const useCreateTransformation = (
   const queryClient = useQueryClient();
   const sdk = useSDK();
 
+  const { subAppPath } = useParams<{
+    subAppPath: string;
+  }>();
+  const userHistoryService = useCdfUserHistoryService();
+
   return useMutation<
     TransformationRead,
     TransformationCreateError,
@@ -264,7 +275,13 @@ export const useCreateTransformation = (
     },
     {
       ...options,
-      onSuccess: () => {
+      onSuccess: (transformation) => {
+        if (subAppPath && transformation?.name && transformation?.id)
+          userHistoryService.logNewResourceEdit({
+            application: subAppPath,
+            name: transformation.name,
+            path: createInternalLink(`${transformation.id}`),
+          });
         queryClient.invalidateQueries(getTransformationListQueryKey());
       },
     }
@@ -538,6 +555,9 @@ export const useUpdateTransformation = (
   const queryClient = useQueryClient();
   const sdk = useSDK();
 
+  const { subAppPath } = useParams<{ subAppPath?: string }>();
+  const userHistoryService = useCdfUserHistoryService();
+
   return useMutation<TransformationRead, CogniteError, Update>(
     getTransformationMutationKey(),
     async ({ id, update, ignoreMappingErrors, updateMapping }) => {
@@ -614,6 +634,12 @@ export const useUpdateTransformation = (
         options?.onError?.(e, variables, context);
       },
       onSuccess: (item, variables, context) => {
+        if (subAppPath && item?.name && item?.id)
+          userHistoryService.logNewResourceEdit({
+            application: subAppPath,
+            name: item.name,
+            path: createInternalLink(`${item.id}`),
+          });
         queryClient.invalidateQueries(getTransformationListQueryKey());
         if (item) {
           // This is a bit of a belt-and-suspenders approach, the refetched transformation _should_

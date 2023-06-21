@@ -12,7 +12,8 @@ import { useFormik } from 'formik';
 
 import { Flex, Modal, ModalProps } from '@cognite/cogs.js';
 
-type TargetModalProps = Pick<ModalProps, 'onCancel' | 'visible'> & {
+type TargetModalProps = Pick<ModalProps, 'visible'> & {
+  onCancel: () => void;
   transformation: TransformationRead;
 };
 
@@ -31,7 +32,7 @@ const TargetModal = ({
           key: 'target-update',
         });
         if (onCancel) {
-          onCancel('cancelClick');
+          onCancel?.();
         }
       },
     });
@@ -66,9 +67,7 @@ const TargetModal = ({
           },
           updateMapping: true,
         }).then(() => {
-          if (onCancel) {
-            onCancel('cancelClick');
-          }
+          onCancel?.();
         });
       }
     },
