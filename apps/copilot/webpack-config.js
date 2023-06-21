@@ -24,8 +24,7 @@ module.exports = composePlugins(
 
     config.plugins.push(
       new MonacoWebpackPlugin({
-        publicPath: '/',
-        languages: ['python'],
+        languages: ['python', 'json', 'graphql'],
       })
     );
 

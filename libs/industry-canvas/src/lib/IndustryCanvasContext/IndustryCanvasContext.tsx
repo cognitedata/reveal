@@ -1,9 +1,10 @@
 import { createContext, useCallback, useContext, useMemo } from 'react';
 
+import { useFlag } from '@cognite/react-feature-flags';
 import { useSDK } from '@cognite/sdk-provider';
 import { IdsByType } from '@cognite/unified-file-viewer';
 
-import { MetricEvent } from '../constants';
+import { CommentsFeatureFlagKey, MetricEvent } from '../constants';
 import { useCanvasArchiveMutation } from '../hooks/use-mutation/useCanvasArchiveMutation';
 import { useCanvasCreateMutation } from '../hooks/use-mutation/useCanvasCreateMutation';
 import { useCanvasSaveMutation } from '../hooks/use-mutation/useCanvasSaveMutation';
@@ -52,6 +53,7 @@ export type IndustryCanvasContextType = {
   setHasConsumedInitializeWithContainerReferences: (
     nextHasConsumed: boolean
   ) => void;
+  isCommentsEnabled: boolean;
 };
 
 export const IndustryCanvasContext = createContext<IndustryCanvasContextType>({
@@ -89,6 +91,7 @@ export const IndustryCanvasContext = createContext<IndustryCanvasContextType>({
       'setHasConsumedInitializeWithContainerReferences called before initialisation'
     );
   },
+  isCommentsEnabled: false,
 });
 
 type IndustryCanvasProviderProps = {
@@ -104,6 +107,10 @@ export const IndustryCanvasProvider: React.FC<IndustryCanvasProviderProps> = ({
     () => new IndustryCanvasService(sdk, userProfile),
     [sdk, userProfile]
   );
+
+  const { isEnabled: isCommentsEnabled } = useFlag(CommentsFeatureFlagKey, {
+    fallback: false,
+  });
 
   const {
     canvasId,
@@ -243,6 +250,7 @@ export const IndustryCanvasProvider: React.FC<IndustryCanvasProviderProps> = ({
         initializeWithContainerReferences,
         hasConsumedInitializeWithContainerReferences,
         setHasConsumedInitializeWithContainerReferences,
+        isCommentsEnabled,
       }}
     >
       {children}

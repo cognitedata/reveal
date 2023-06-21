@@ -11,7 +11,7 @@ import {
   ChatGeneration,
 } from 'langchain/schema';
 
-import sdk from '@cognite/cdf-sdk-singleton';
+import { CogniteClient } from '@cognite/sdk';
 
 import {
   CreateChatCompletionRequest,
@@ -58,12 +58,17 @@ export class CogniteChatGPT
   temperature = 0;
   model = 'gpt-3.5-turbo';
   maxTokens = 2024;
+  sdk: CogniteClient;
 
-  constructor(fields?: Partial<CogniteChatGPTInput> & BaseChatModelParams) {
+  constructor(
+    sdk: CogniteClient,
+    fields?: Partial<CogniteChatGPTInput> & BaseChatModelParams
+  ) {
     super(fields ?? {});
     this.model = fields?.model ?? this.model;
     this.temperature = fields?.temperature ?? this.temperature;
     this.maxTokens = fields?.maxTokens ?? this.maxTokens;
+    this.sdk = sdk;
   }
 
   /**
@@ -98,8 +103,8 @@ export class CogniteChatGPT
   /** @ignore */
   async _generate(
     messages: BaseChatMessage[],
-    options?: this['ParsedCallOptions'],
-    runManager?: CallbackManagerForLLMRun
+    _options?: this['ParsedCallOptions'],
+    _runManager?: CallbackManagerForLLMRun
   ): Promise<ChatResult> {
     const params = this.invocationParams();
 
@@ -133,8 +138,8 @@ export class CogniteChatGPT
 
   /** @ignore */
   async completionWithRetry(request: CreateChatCompletionRequest) {
-    const url = `/api/v1/projects/${sdk.project}/context/gpt/chat/completions`;
-    const res = await sdk.post(url, {
+    const url = `/api/v1/projects/${this.sdk.project}/context/gpt/chat/completions`;
+    const res = await this.sdk.post(url, {
       data: request,
       withCredentials: true,
     });

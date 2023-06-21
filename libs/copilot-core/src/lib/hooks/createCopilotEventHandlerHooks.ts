@@ -1,44 +1,31 @@
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 
 import { CopilotEvents } from '../types';
 import {
-  createFromCopilotEventHandler,
   addFromCopilotEventListener,
-  createToCopilotEventHandler,
   addToCopilotEventListener,
 } from '../utils';
 
-export const createCopilotEventHandlerHooks = <E extends CopilotEvents>() => ({
-  useFromCopilotEventHandler: <T extends keyof E['FromCopilot']>(
-    eventToWatch: T,
-    handler: (data: E['FromCopilot'][T]) => void
-  ) => {
-    const listener = useCallback(
-      (ev: Event) => createFromCopilotEventHandler<E, T>(handler)(ev),
-      [handler]
-    );
-    return useEffect(() => {
-      const removeListener = addFromCopilotEventListener<E>(
-        eventToWatch,
-        listener
-      );
-      return () => removeListener();
-    }, [eventToWatch, listener]);
-  },
-  useToCopilotEventHandler: <T extends keyof E['ToCopilot']>(
-    eventToWatch: T,
-    handler: (data: E['ToCopilot'][T]) => void
-  ) => {
-    const listener = useCallback(
-      (ev: Event) => createToCopilotEventHandler<E, T>(handler)(ev),
-      [handler]
-    );
-    return useEffect(() => {
-      const removeListener = addToCopilotEventListener<E>(
-        eventToWatch,
-        listener
-      );
-      return () => removeListener();
-    }, [eventToWatch, listener]);
-  },
-});
+export const useFromCopilotEventHandler = <
+  T extends keyof CopilotEvents['FromCopilot']
+>(
+  eventToWatch: T,
+  handler: (data: CopilotEvents['FromCopilot'][T]) => void
+) => {
+  return useEffect(() => {
+    const removeListener = addFromCopilotEventListener(eventToWatch, handler);
+    return () => removeListener();
+  }, [eventToWatch, handler]);
+};
+
+export const useToCopilotEventHandler = <
+  T extends keyof CopilotEvents['ToCopilot']
+>(
+  eventToWatch: T,
+  handler: (data: CopilotEvents['ToCopilot'][T]) => void
+) => {
+  return useEffect(() => {
+    const removeListener = addToCopilotEventListener(eventToWatch, handler);
+    return () => removeListener();
+  }, [eventToWatch, handler]);
+};

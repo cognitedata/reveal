@@ -1,0 +1,98 @@
+{
+  "name": "access-management",
+  "sourceRoot": "apps/access-management/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/access-management",
+        "index": "apps/access-management/src/index.html",
+        "main": "apps/access-management/src/index.tsx",
+        "runtimeChunk": false,
+        "vendorChunk": false,
+        "commonChunk": false,
+        "tsConfig": "apps/access-management/tsconfig.app.json",
+        "assets": [],
+        "styles": [],
+        "scripts": [],
+        "webpackConfig": "apps/access-management/webpack-config.js"
+      },
+      "configurations": {
+        "development": {
+          "optimization": false,
+          "outputHashing": "all",
+          "sourceMap": true,
+          "extractCss": false,
+          "namedChunks": false,
+          "extractLicenses": false,
+          "vendorChunk": false,
+          "runtimeChunk": false,
+          "budgets": []
+        },
+        "preview": {
+          "optimization": false,
+          "outputHashing": "all",
+          "sourceMap": true,
+          "extractCss": true,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "vendorChunk": false,
+          "runtimeChunk": false,
+          "budgets": []
+        },
+        "production": {
+          "optimization": false,
+          "outputHashing": "all",
+          "sourceMap": true,
+          "extractCss": true,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "vendorChunk": false,
+          "budgets": []
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/webpack:dev-server",
+      "options": {
+        "buildTarget": "access-management:build",
+        "hmr": true
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "access-management:build:development",
+          "hmr": true,
+          "liveReload": true
+        },
+
+        "preview": {
+          "buildTarget": "access-management:build:preview",
+          "hmr": false
+        },
+        "production": {
+          "buildTarget": "access-management:build:production",
+          "hmr": false
+        }
+      },
+      "defaultConfiguration": "development"
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/access-management/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/apps/access-management"],
+      "options": {
+        "jestConfig": "apps/access-management/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

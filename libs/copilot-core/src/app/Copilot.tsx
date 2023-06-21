@@ -5,6 +5,8 @@ import styled from 'styled-components/macro';
 
 import { ToastContainer } from '@cognite/cogs.js';
 import { FlagProvider } from '@cognite/react-feature-flags';
+import { CogniteClient } from '@cognite/sdk';
+import { SDKProvider } from '@cognite/sdk-provider';
 
 import { CopilotSupportedFeatureType } from '../lib/types';
 
@@ -12,11 +14,11 @@ import { ChatUI } from './components/ChatUI';
 import { COPILOT_TOGGLE, CopilotButton } from './components/CopilotButton';
 
 export const Copilot = ({
-  project,
   feature,
+  sdk,
 }: {
-  project: string;
   feature?: CopilotSupportedFeatureType;
+  sdk: CogniteClient;
 }) => {
   const [isVisible, setIsVisible] = useState(false);
   useEffect(() => {
@@ -35,32 +37,34 @@ export const Copilot = ({
   }, []);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <ToastContainer />
-      <StyledWrapper>
-        <FlagProvider
-          apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
-          appName="copilot"
-          projectName={project}
-          remoteAddress={window.location.hostname}
-          disableMetrics
-        >
-          {feature && isVisible && (
-            <ChatUI
-              feature={feature}
-              onClose={() => {
-                window.dispatchEvent(
-                  new CustomEvent(COPILOT_TOGGLE, {
-                    detail: { active: false },
-                  })
-                );
-              }}
-            />
-          )}
-          {feature && <CopilotButton />}
-        </FlagProvider>
-      </StyledWrapper>
-    </QueryClientProvider>
+    <SDKProvider sdk={sdk}>
+      <QueryClientProvider client={queryClient}>
+        <ToastContainer />
+        <StyledWrapper id="copilot-wrapper">
+          <FlagProvider
+            apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
+            appName="copilot"
+            projectName={sdk.project}
+            remoteAddress={window.location.hostname}
+            disableMetrics
+          >
+            {isVisible && (
+              <ChatUI
+                feature={feature}
+                onClose={() => {
+                  window.dispatchEvent(
+                    new CustomEvent(COPILOT_TOGGLE, {
+                      detail: { active: false },
+                    })
+                  );
+                }}
+              />
+            )}
+            <CopilotButton />
+          </FlagProvider>
+        </StyledWrapper>
+      </QueryClientProvider>
+    </SDKProvider>
   );
 };
 
@@ -69,6 +73,10 @@ const StyledWrapper = styled.div`
   flex-flow: column;
   height: 100%;
   overflow: hidden;
+
+  .cogs-modal__content {
+    height: 100%;
+  }
 `;
 
 const queryClient = new QueryClient({
