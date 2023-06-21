@@ -803,7 +803,7 @@ __metadata:
     eslint: 8.42.0
     eslint-config-prettier: 8.8.0
     eslint-plugin-header: 3.1.1
-    eslint-plugin-jsdoc: 44.2.7
+    eslint-plugin-jsdoc: 46.2.6
     eslint-plugin-lodash: 7.4.0
     eslint-plugin-prettier: 4.2.1
     eslint-plugin-unused-imports: 2.0.0
@@ -3682,6 +3682,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"builtin-modules@npm:^3.3.0":
+  version: 3.3.0
+  resolution: "builtin-modules@npm:3.3.0"
+  checksum: db021755d7ed8be048f25668fe2117620861ef6703ea2c65ed2779c9e3636d5c3b82325bd912244293959ff3ae303afa3471f6a15bf5060c103e4cc3a839749d
+  languageName: node
+  linkType: hard
+
 "bytes@npm:3.0.0":
   version: 3.0.0
   resolution: "bytes@npm:3.0.0"
@@ -5045,9 +5052,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-jsdoc@npm:44.2.7":
-  version: 44.2.7
-  resolution: "eslint-plugin-jsdoc@npm:44.2.7"
+"eslint-plugin-jsdoc@npm:46.2.6":
+  version: 46.2.6
+  resolution: "eslint-plugin-jsdoc@npm:46.2.6"
   dependencies:
     "@es-joy/jsdoccomment": ~0.39.4
     are-docs-informative: ^0.0.2
@@ -5055,11 +5062,12 @@ __metadata:
     debug: ^4.3.4
     escape-string-regexp: ^4.0.0
     esquery: ^1.5.0
+    is-builtin-module: ^3.2.1
     semver: ^7.5.1
     spdx-expression-parse: ^3.0.1
   peerDependencies:
     eslint: ^7.0.0 || ^8.0.0
-  checksum: f00f262d5b52d44a7a1ae9e4c72fce49382bf50a8695f02c767cfa6fe8885ee0fb258b2706d68ae28236bea3c7bac323740f15f36f7004f2f726027b19daaa4d
+  checksum: e082c3e88843521e121cdcad1999407a9c586bd55549b40b72865af8af853b06b7e883f80875930615796be71d79cf9d9a73d0e910b2fb67e9934f05400a34b8
   languageName: node
   linkType: hard
 
@@ -6839,6 +6847,15 @@ __metadata:
   version: 2.0.5
   resolution: "is-buffer@npm:2.0.5"
   checksum: 764c9ad8b523a9f5a32af29bdf772b08eb48c04d2ad0a7240916ac2688c983bf5f8504bf25b35e66240edeb9d9085461f9b5dae1f3d2861c6b06a65fe983de42
+  languageName: node
+  linkType: hard
+
+"is-builtin-module@npm:^3.2.1":
+  version: 3.2.1
+  resolution: "is-builtin-module@npm:3.2.1"
+  dependencies:
+    builtin-modules: ^3.3.0
+  checksum: e8f0ffc19a98240bda9c7ada84d846486365af88d14616e737d280d378695c8c448a621dcafc8332dbf0fcd0a17b0763b845400709963fa9151ddffece90ae88
   languageName: node
   linkType: hard
 
