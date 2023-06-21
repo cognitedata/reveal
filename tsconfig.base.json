@@ -9,45 +9,71 @@
     "importHelpers": true,
     "target": "es2015",
     "module": "esnext",
-    "lib": ["es2017", "dom", "dom.iterable", "esnext"],
+    "lib": [
+      "es2017",
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "baseUrl": ".",
     "paths": {
+      "@3d-management/*": ["apps/3d-management/src/*"],
+      "@access-management/*": ["apps/access-management/src/*"],
       "@cognite/cdf-route-tracker": [
         "libs/shared/cdf-route-tracker/src/index.ts"
       ],
       "@cognite/cdf-sdk-singleton": [
         "libs/shared/cdf-sdk-singleton/src/index.ts"
       ],
-      "@cognite/cdf-utilities": ["libs/shared/cdf-utilities/src/index.ts"],
+      "@cognite/cdf-utilities": [
+        "libs/shared/cdf-utilities/src/index.ts"
+      ],
       "@cognite/cog-data-grid": [
         "libs/data-modeling/cog-data-grid/src/index.ts"
       ],
       "@cognite/cog-data-grid-root/*": [
         "libs/data-modeling/cog-data-grid/src/*"
       ],
-      "@cognite/copilot/*": ["apps/copilot/src/*"],
+      "@cognite/copilot/*": [
+        "apps/copilot/src/*"
+      ],
       "@cognite/data-exploration": [
         "libs/data-exploration-components/src/index.ts"
       ],
-      "@cognite/graph": ["libs/graph/src/index.ts"],
-      "@cognite/login-utils": ["libs/shared/cdf-login-utils/src/index.ts"],
-      "@cognite/platypus-cdf-cli/*": ["apps/platypus-cdf-cli/src/*"],
-      "@cognite/iot-hub": ["apps/iot-hub/src/index.ts"],
+      "@cognite/graph": [
+        "libs/graph/src/index.ts"
+      ],
+      "@cognite/iot-hub": [
+        "apps/iot-hub/src/index.ts"
+      ],
+      "@cognite/login-utils": [
+        "libs/shared/cdf-login-utils/src/index.ts"
+      ],
+      "@cognite/platypus-cdf-cli/*": [
+        "apps/platypus-cdf-cli/src/*"
+      ],
       "@cognite/plotting-components": [
         "libs/shared/plotting-components/src/index.ts"
+      ],
+      "@cognite/user-profile-components": [
+        "libs/shared/user-profile-components/src/index.ts"
       ],
       "@cognite/sdk-react-query-hooks": [
         "libs/shared/cdf-sdk-react-query-hooks/src/index.ts"
       ],
-      "@data-exploration-app/*": ["apps/data-exploration/src/app/*"],
+      "@data-exploration-app/*": [
+        "apps/data-exploration/src/app/*"
+      ],
       "@data-exploration-components/*": [
         "libs/data-exploration-components/src/*"
       ],
-      "@data-exploration-lib/core": ["libs/data-exploration/core/src/index.ts"],
+      "@data-exploration-lib/core": [
+        "libs/data-exploration/core/src/index.ts"
+      ],
       "@data-exploration-lib/domain-layer": [
         "libs/data-exploration/domain-layer/src/index.ts"
       ],
@@ -60,16 +86,37 @@
       "@data-quality/*": [
         "apps/platypus/src/app/modules/solution/data-quality/*"
       ],
-      "@fusion/cdf-nx-plugin": ["libs/cdf-nx-plugin/src/index.ts"],
-      "@fusion/contextualization": ["libs/contextualization/src/index.ts"],
-      "@fusion/copilot-core": ["libs/copilot-core/src/index.ts"],
-      "@fusion/industry-canvas": ["libs/industry-canvas/src/index.ts"],
-      "@fusion/mock-data": ["libs/shared/mock-data/src/index.ts"],
+      "@transformations/*": [
+        "apps/transformations/src/*"
+      ],
+      "@flexible-data-explorer/*": [
+        "apps/flexible-data-explorer/src/*"
+      ],
+      "@fusion/cdf-nx-plugin": [
+        "libs/cdf-nx-plugin/src/index.ts"
+      ],
+      "@fusion/contextualization": [
+        "libs/contextualization/src/index.ts"
+      ],
+      "@fusion/copilot-core": [
+        "libs/copilot-core/src/index.ts"
+      ],
+      "@fusion/industry-canvas": [
+        "libs/industry-canvas/src/index.ts"
+      ],
+      "@industry-canvas-ui/*": [
+        "apps/industry-canvas-ui/src/*"
+      ],
+      "@fusion/mock-data": [
+        "libs/shared/mock-data/src/index.ts"
+      ],
       "@platypus-app/*": [
         "apps/platypus/src/app/*",
         "apps/platypus/src/environments/environment.ts"
       ],
-      "@platypus-core/*": ["libs/data-modeling/platypus-core/src/lib/*"],
+      "@platypus-core/*": [
+        "libs/data-modeling/platypus-core/src/lib/*"
+      ],
       "@platypus/@cognite/fdm-client": [
         "libs/@cognite/fdm-client/src/index.ts"
       ],
@@ -79,10 +126,17 @@
       "@platypus/platypus-core": [
         "libs/data-modeling/platypus-core/src/index.ts"
       ],
-      "@flexible-data-explorer/*": [
-        "apps/flexible-data-explorer/src/*"
+      "@raw-explorer/*": [
+        "apps/raw-explorer/src/*"
+      ],
+      "@data-catalog-app/*": [
+        "apps/data-catalog/src/app/*"
       ]
     }
   },
-  "exclude": ["node_modules", "tmp", "proxy"]
+  "exclude": [
+    "node_modules",
+    "tmp",
+    "proxy"
+  ]
 }

@@ -1,4 +1,3 @@
-import { getActionsForStreamlit } from './features/streamlit/getActions';
 import { CopilotSupportedFeatureType, GetActionsFunc } from './types';
 
 export const getActions = async (
@@ -7,7 +6,19 @@ export const getActions = async (
 ) => {
   switch (feature) {
     case 'Streamlit':
-      return getActionsForStreamlit(...params);
+      return [
+        {
+          type: 'GENERATE_APP',
+          name: 'Generate App',
+          content: 'Generate App',
+          onClick: async () => {
+            params[2]({
+              content: 'I want to generate a new Streamlit app',
+              type: 'text',
+            });
+          },
+        },
+      ];
     default: {
       return [];
     }

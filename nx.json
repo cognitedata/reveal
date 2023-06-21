@@ -13,9 +13,9 @@
       "runner": "nx/tasks-runners/default",
       "options": {
         "cacheableOperations": [
-          "nxbuild",
-          "nxlint",
-          "nxtest",
+          "build",
+          "lint",
+          "test",
           "e2e",
           "build-storybook"
         ],
@@ -80,7 +80,11 @@
   },
   "namedInputs": {
     "default": ["{projectRoot}/**/*", "sharedGlobals"],
-    "sharedGlobals": ["{workspaceRoot}/babel.config.json"],
+    "sharedGlobals": [
+      "{workspaceRoot}/babel.config.json",
+      "{workspaceRoot}/scripts/run-many.js",
+      "{workspaceRoot}/.github/workflows/nx_ci.yml"
+    ],
     "production": [
       "default",
       "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",

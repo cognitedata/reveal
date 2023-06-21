@@ -1,6 +1,7 @@
 import { ReactElement, useEffect, useState } from 'react';
 
 import {
+  BultinFieldTypeNames,
   DataModelTypeDefs,
   DataModelTypeDefsType,
   DataModelVersion,
@@ -11,6 +12,7 @@ import { createLink } from '@cognite/cdf-utilities';
 import { CogDataList } from '@cognite/cog-data-grid';
 import { Button, CollapsablePanel, Icon } from '@cognite/cogs.js';
 import { TimeseriesChart } from '@cognite/plotting-components';
+import { Timeseries } from '@cognite/sdk/dist/src';
 import { SDKProvider } from '@cognite/sdk-provider';
 
 import { getCogniteSDKClient } from '../../../../../../environments/cogniteSdk';
@@ -21,30 +23,16 @@ import { InstancePreview } from './InstancePreview/InstancePreview';
 import { ListPreview } from './ListPreview/ListPreview';
 import { SidePanel } from './SidePanel';
 
-export type DataPreviewSidebarData =
-  | {
-      type: 'custom';
-      externalId: string;
-      fieldName: string;
-      fieldType: DataModelTypeDefsType;
-      instanceSpace: string;
-    }
-  | {
-      type: 'list';
-      externalId: string;
-      fieldName: string;
-      instanceSpace: string;
-    }
-  | {
-      type: 'json';
-      fieldName: string;
-      json: KeyValueMap;
-    }
-  | {
-      type: 'timeseries';
-      fieldName: string;
-      externalId: string;
-    };
+export type DataPreviewSidebarData = {
+  fieldName: string;
+  fieldType?: DataModelTypeDefsType;
+  instanceExternalId: string;
+  instanceSpace: string;
+  isList: boolean;
+  json?: KeyValueMap;
+  listValues?: { externalId: string }[];
+  type: BultinFieldTypeNames | 'custom';
+};
 
 export type CollapsiblePanelContainerProps = {
   children: ReactElement;
@@ -65,25 +53,75 @@ export const CollapsiblePanelContainer: React.FC<
   dataModelVersion,
   dataModelType,
 }) => {
-  const [resourceId, setResourceId] = useState<number | undefined>();
+  const [timeSeriesIds, setTimeSeriesIds] = useState<
+    Timeseries[] | undefined
+  >();
+
   useEffect(() => {
-    if (!data || data.type !== 'timeseries') {
-      setResourceId(undefined);
+    // if no data or not timeseries
+    if (!data || data.type !== 'TimeSeries') {
+      setTimeSeriesIds(undefined);
       return;
     }
+
+    const externalIds = data.isList
+      ? data.listValues!
+      : [{ externalId: data.instanceExternalId }];
+
     getCogniteSDKClient()
-      .timeseries.retrieve([{ externalId: data.externalId }])
-      .then(([{ id }]) => setResourceId(id));
+      .timeseries.retrieve(externalIds)
+      .then((timeseries) => setTimeSeriesIds(timeseries));
   }, [data]);
+
   const getSidebarContent = () => {
     if (!data) {
       return null;
     }
 
-    if (data.type === 'list') {
+    if (data.type === 'TimeSeries') {
+      return timeSeriesIds ? (
+        timeSeriesIds.map((ts) => (
+          <SDKProvider sdk={getCogniteSDKClient()}>
+            <p>{ts.externalId}</p>
+            <TimeseriesChart
+              timeseriesId={ts.id}
+              variant="small"
+              height={200}
+              dateRange={[
+                new Date(
+                  `${
+                    new Date().getFullYear() - 1
+                  }-${new Date().getMonth()}-${new Date().getDay()}`
+                ),
+                new Date(),
+              ]}
+            />
+            <a
+              href={createLink(
+                `/explore/timeSeries/${ts.id}${window.location.search}`
+              )}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <Button style={{ marginTop: 12 }}>Open in data explorer</Button>
+            </a>
+          </SDKProvider>
+        ))
+      ) : (
+        <Icon type="Loader" />
+      );
+    } else if (data.type === 'File' || data.type === 'Sequence') {
+      // Temporary until we have suitable preview implementations
+      const listData = data.isList
+        ? data.listValues?.map((value) =>
+            value ? value.externalId : '<External-id did not resolve>'
+          )
+        : [data.instanceExternalId];
+      return <CogDataList data-cy="instance-values" listData={listData} />;
+    } else if (data.isList) {
       return (
         <ListPreview
-          externalId={data.externalId}
+          externalId={data.instanceExternalId}
           field={data.fieldName}
           dataModelType={dataModelType}
           dataModelTypeDefs={dataModelTypeDefs}
@@ -91,46 +129,17 @@ export const CollapsiblePanelContainer: React.FC<
           instanceSpace={data.instanceSpace}
         />
       );
-    } else if (data.type === 'json') {
-      const listData = Object.keys(data.json).map(
-        (key) => `${key}: ${data.json[key]}`
+    } else if (data.type === 'JSONObject') {
+      const listData = Object.keys(data.json!).map(
+        (key) => `${key}: ${data.json![key]}`
       );
 
       return <CogDataList data-cy="instance-values" listData={listData} />;
-    } else if (data.type === 'timeseries') {
-      return resourceId ? (
-        <SDKProvider sdk={getCogniteSDKClient()}>
-          <TimeseriesChart
-            timeseriesId={resourceId}
-            variant="small"
-            height={200}
-            dateRange={[
-              new Date(
-                `${
-                  new Date().getFullYear() - 1
-                }-${new Date().getMonth()}-${new Date().getDay()}`
-              ),
-              new Date(),
-            ]}
-          />
-          <a
-            href={createLink(
-              `/explore/timeSeries/${resourceId}${window.location.search}`
-            )}
-            target="_blank"
-            rel="noreferrer"
-          >
-            <Button style={{ marginTop: 12 }}>Open in data explorer</Button>
-          </a>
-        </SDKProvider>
-      ) : (
-        <Icon type="Loader" />
-      );
     } else {
       return (
         <InstancePreview
-          externalId={data.externalId}
-          dataModelType={data.fieldType}
+          externalId={data.instanceExternalId}
+          dataModelType={data.fieldType!}
           dataModelExternalId={dataModelVersion.externalId}
           dataModelSpace={dataModelVersion.space}
           instanceSpace={data.instanceSpace}

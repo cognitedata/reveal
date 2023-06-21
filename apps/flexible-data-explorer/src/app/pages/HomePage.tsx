@@ -1,60 +1,94 @@
-import { useCallback } from 'react';
+import { useState } from 'react';
 
 import styled from 'styled-components';
 
-import { Title } from '@cognite/cogs.js';
+import { Body, Icon, Title } from '@cognite/cogs.js';
 
-import { CategoryCard } from '../components/cards/CategoryCard';
+import { translationKeys } from '../../app/common/i18n/translationKeys';
+import { RecentlyViewedList } from '../containers/lists/recentlyViewed/RecentlyViewedList';
+import { DataModelSelectorModal } from '../containers/modals/DataModelSelectorModal';
 import { Page } from '../containers/page/Page';
+import { DataExplorerLink } from '../containers/search/DataExplorerLink';
 import { SearchBar } from '../containers/search/SearchBar';
-import { useNavigation } from '../hooks/useNavigation';
+import { useDataModelParams } from '../hooks/useDataModelParams';
 import { useTranslation } from '../hooks/useTranslation';
-import { useTypesDataModelQuery } from '../services/dataModels/query/useTypesDataModelQuery';
 
 export const HomePage = () => {
   const { t } = useTranslation();
 
-  const { toListPage } = useNavigation();
+  const selectedDataModel = useDataModelParams();
 
-  const { data, isLoading } = useTypesDataModelQuery();
+  const [siteSelectionVisible, setSiteSelectionVisible] =
+    useState<boolean>(false);
 
-  const handleCategoryClick = useCallback(
-    (dataType: string) => {
-      toListPage(dataType);
-    },
-    [toListPage]
-  );
+  const getSpaceText = () => {
+    if (selectedDataModel && selectedDataModel.dataModel) {
+      return selectedDataModel.dataModel;
+    } else {
+      return '...';
+    }
+  };
 
   return (
     <Page>
       <SearchContainer>
-        <Title level={3}>
-          {t('homepage_title', 'Explore all your data from')} ...
-        </Title>
+        <TitleContainer>
+          <Title level={3}>
+            {t(translationKeys.homePageTitle, 'Explore all your data from')}{' '}
+          </Title>
+          <StyledBody onClick={() => setSiteSelectionVisible(true)}>
+            {getSpaceText()}
+            {selectedDataModel && selectedDataModel.dataModel && (
+              <Icon type="ChevronDownLarge" />
+            )}
+          </StyledBody>
+        </TitleContainer>
         <SearchBar width="640px" />
+        <DataExplorerLink />
       </SearchContainer>
 
-      <Page.Body loading={isLoading}>
-        <CategoriesContainer>
-          <Title level={4}>
-            {t('categories_title', 'Categories')} {data?.length}
-          </Title>
+      <Page.Body>
+        <RecentlyViewedContainer>
+          <TitleContent>
+            <Title level={6}>
+              {t(translationKeys.recentlyViewedTitle, 'Recent')}
+            </Title>
+          </TitleContent>
 
-          <CategoryContent>
-            {data?.map((item) => (
-              <CategoryCard
-                key={item.name}
-                type={item.name}
-                description={item.description}
-                onClick={handleCategoryClick}
-              />
-            ))}
-          </CategoryContent>
-        </CategoriesContainer>
+          <RecentlyViewedList />
+        </RecentlyViewedContainer>
       </Page.Body>
+
+      <DataModelSelectorModal
+        isVisible={siteSelectionVisible}
+        onModalClose={() => setSiteSelectionVisible(false)}
+        isClosable
+      />
     </Page>
   );
 };
+
+const TitleContainer = styled.span`
+  display: flex;
+  align-items: center;
+`;
+
+const StyledBody = styled(Body)`
+  display: flex;
+  align-items: center;
+  font-size: 24px;
+  color: rgba(51, 51, 51, 0.8);
+  margin-left: 8px;
+
+  &:hover {
+    cursor: pointer;
+    color: rgba(51, 51, 51, 0.5);
+  }
+
+  .cogs-icon {
+    margin-left: 8px;
+  }
+`;
 
 const SearchContainer = styled.div`
   display: flex;
@@ -86,16 +120,15 @@ const SearchContainer = styled.div`
   border-bottom: 1px solid rgba(83, 88, 127, 0.16);
 `;
 
-const CategoriesContainer = styled.div`
+const RecentlyViewedContainer = styled.div`
   height: 10%;
   padding-top: 24px;
+  width: 774px;
+  max-width: 774px;
+  align-self: center;
 `;
 
-const CategoryContent = styled.div`
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-column-gap: 10px;
-  grid-row-gap: 10px;
-
-  padding: 16px 0;
+const TitleContent = styled.div`
+  padding-left: 16px;
+  padding-bottom: 16px;
 `;

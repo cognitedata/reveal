@@ -9,6 +9,7 @@ import {
   Model3DWithType,
   use360ImageThumbnail,
   useFilesAggregateBySiteId,
+  useImage360SiteNameQuery,
 } from '@data-exploration-lib/domain-layer';
 
 import { ThreeDThumbnail } from './ThreeDThumbnail';
@@ -16,10 +17,17 @@ import { ThreeDThumbnail } from './ThreeDThumbnail';
 export const Image360Display = ({ model }: { model: Model3DWithType }) => {
   const [imageUrl, setImage] = useState<string | undefined>(undefined);
 
-  const { data: image360Data, isFetched: isFetchedThumbnail } =
+  const { data: image360Data, isInitialLoading: isLoadingThumbnail } =
     use360ImageThumbnail(model.siteId);
-  const { data: image360FileCount, isFetched: isFetchedFileCount } =
-    useFilesAggregateBySiteId(model.siteId, 'front');
+  const {
+    data: image360FileCount,
+    isInitialLoading: isLoadingImage360FileCount,
+  } = useFilesAggregateBySiteId(model.siteId, 'front');
+
+  const {
+    data: image360SiteName,
+    isInitialLoading: isLoadingImage360SiteName,
+  } = useImage360SiteNameQuery(model.siteId);
 
   const setImageBlob = useCallback((imageData: ArrayBuffer | undefined) => {
     if (!imageData) {
@@ -44,10 +52,14 @@ export const Image360Display = ({ model }: { model: Model3DWithType }) => {
 
   return (
     <Flex direction="row" gap={8} style={{ alignItems: 'center' }}>
-      <ThreeDThumbnail imageUrl={imageUrl} isLoading={!isFetchedThumbnail} />
+      <ThreeDThumbnail imageUrl={imageUrl} isLoading={isLoadingThumbnail} />
       <Flex direction="column">
-        <HighlightCell text={model?.name} />
-        {!isFetchedFileCount ? (
+        {isLoadingImage360SiteName ? (
+          <Icon type="Loader" />
+        ) : (
+          <HighlightCell text={image360SiteName} />
+        )}
+        {isLoadingImage360FileCount ? (
           <Icon type="Loader" />
         ) : (
           <Detail>

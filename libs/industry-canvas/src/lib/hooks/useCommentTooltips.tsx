@@ -7,8 +7,6 @@ import { TooltipAnchorPosition } from '@cognite/unified-file-viewer';
 import { CommentTooltip } from '../components/tooltips/CommentTooltip';
 import { CommentAnnotation } from '../types';
 
-import { useListComments } from './use-query/useListComments';
-
 export type UseCommentTooltipsParams = {
   commentAnnotations: CommentAnnotation[];
 };
@@ -16,7 +14,6 @@ export type UseCommentTooltipsParams = {
 const useCommentTooltips = ({
   commentAnnotations,
 }: UseCommentTooltipsParams) => {
-  const { isLoading } = useListComments();
   return useMemo(() => {
     if (commentAnnotations === undefined) {
       return [];
@@ -32,7 +29,7 @@ const useCommentTooltips = ({
       anchorTo: TooltipAnchorPosition.TOP_RIGHT,
       shouldPositionStrictly: true,
     }));
-  }, [commentAnnotations, isLoading]);
+  }, [commentAnnotations]);
 };
 
 const BottomMarginStyle = styled.div`

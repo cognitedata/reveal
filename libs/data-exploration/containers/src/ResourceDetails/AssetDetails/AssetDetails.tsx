@@ -12,11 +12,11 @@ import {
 } from '@data-exploration-lib/core';
 import {
   useAssetsByIdQuery,
-  useDocumentSearchResultQuery,
   useEventsSearchResultQuery,
   useTimeseriesSearchResultQuery,
   useAssetsSearchResultQuery,
   useSequenceSearchResultQuery,
+  useFileSearchQuery,
 } from '@data-exploration-lib/domain-layer';
 
 import {
@@ -77,23 +77,27 @@ export const AssetDetails: FC<
   } = getResourcesVisibility(visibleResources);
 
   const filter = { assetSubtreeIds: [{ value: assetId }] };
+
   const {
     results: relatedFiles = [],
     hasNextPage: fileHasNextPage,
     fetchNextPage: fileFetchNextPage,
-    isLoading: isFileLoading,
-  } = useDocumentSearchResultQuery(
+    isInitialLoading: isFileLoading,
+  } = useFileSearchQuery(
     {
-      filter,
+      filter: {
+        assetSubtreeIds: [{ id: assetId }],
+      },
       limit: 10,
     },
     { enabled: isFileVisible }
   );
+
   const {
     data: relatedTimeseries = [],
     hasNextPage: timeseriesHasNextPage,
     fetchNextPage: timeseriesFetchNextPage,
-    isLoading: isTimeseriesLoading,
+    isInitialLoading: isTimeseriesLoading,
   } = useTimeseriesSearchResultQuery(
     {
       filter,
@@ -107,7 +111,7 @@ export const AssetDetails: FC<
     data: relatedEvents = [],
     hasNextPage: eventHasNextPage,
     fetchNextPage: eventFetchNextPage,
-    isLoading: isEventLoading,
+    isInitialLoading: isEventLoading,
   } = useEventsSearchResultQuery(
     {
       eventsFilters: filter,
@@ -121,7 +125,7 @@ export const AssetDetails: FC<
     data: relatedAssets = [],
     hasNextPage: assetsHasNextPage,
     fetchNextPage: assetsFetchNextPage,
-    isLoading: isAssetsLoading,
+    isInitialLoading: isAssetsLoading,
   } = useAssetsSearchResultQuery(
     {
       assetFilter: filter,
@@ -133,7 +137,7 @@ export const AssetDetails: FC<
   const {
     hasNextPage: hasSequencesNextPage,
     fetchNextPage: hasSequencesFetchNextPage,
-    isLoading: isSequencesLoading,
+    isInitialLoading: isSequencesLoading,
     data: sequences = [],
   } = useSequenceSearchResultQuery(
     {

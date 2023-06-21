@@ -1,11 +1,10 @@
 import React from 'react';
 
+import { DateFilterV2, StringFilterV2 } from '@data-exploration/containers';
 import { ResourceType } from '@data-exploration-components/types';
 
 import { BaseFilterCollapse } from '../BaseFilterCollapse/BaseFilterCollapse';
-import { DateFilterV2 } from '../DateFilter/DateFilter';
 // import { MetadataFilter } from '../MetadataFilter/MetadataFilter';
-import { StringFilterV2 } from '../StringFilter/StringFilter';
 import { CommonFilterFacets } from '../types';
 
 interface Props {

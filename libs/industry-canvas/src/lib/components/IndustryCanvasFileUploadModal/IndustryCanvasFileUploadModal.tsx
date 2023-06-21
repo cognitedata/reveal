@@ -16,7 +16,9 @@ import { useSDK } from '@cognite/sdk-provider';
 import { useInfiniteList } from '@cognite/sdk-react-query-hooks';
 import { isSupportedFileInfo } from '@cognite/unified-file-viewer';
 
+import { translationKeys } from '../../common';
 import { TOAST_POSITION } from '../../constants';
+import { useTranslation } from '../../hooks/useTranslation';
 import convertFileToArrayBuffer from '../../utils/convertFileToArrayBuffer';
 import parseExif, { ExifTags } from '../../utils/parseExif';
 
@@ -52,6 +54,7 @@ const IndustryCanvasFileUploadModal: React.FC<
   const [modalState, setModalState] = useState<FileUploadModalState>(
     FileUploadModalState.IDLE
   );
+  const { t } = useTranslation();
   const [fileName, setFileName] = useState('');
   const [dataSetOptions, setDataSetOptions] = useState<DataSetOption[]>([]);
   const [selectedDataSet, setSelectedDataSet] = useState<
@@ -190,7 +193,7 @@ const IndustryCanvasFileUploadModal: React.FC<
   return (
     <Modal
       visible={true}
-      title="Upload to CDF"
+      title={t(translationKeys.MODAL_TITLE_FILE_UPLOAD, 'Upload to CDF')}
       onCancel={onCancel}
       onOk={handleOk}
       icon={
@@ -207,7 +210,7 @@ const IndustryCanvasFileUploadModal: React.FC<
         )}
 
         <StyledInputExp
-          label="File name"
+          label={t(translationKeys.INPUT_FILENAME_FILE_UPLOAD, 'File name')}
           value={fileName}
           onChange={(e) => setFileName(e.target.value)}
           fullWidth
@@ -215,7 +218,10 @@ const IndustryCanvasFileUploadModal: React.FC<
 
         <StyledSelect
           inputId="select-dataset"
-          label="Select dataset"
+          label={t(
+            translationKeys.SELECT_DATASET_FILE_UPLOAD,
+            'Select dataset'
+          )}
           options={dataSetOptions}
           value={selectedDataSet}
           // Only setting this to true to avoid a bug in the Select component. Currently, it is not possible to
@@ -228,7 +234,10 @@ const IndustryCanvasFileUploadModal: React.FC<
 
         {shouldShowExifToggle && (
           <StyledCheckbox
-            label="Extract EXIF-data from file"
+            label={t(
+              translationKeys.CHECKBOX_EXIF_FILE_UPLOAD,
+              'Extract EXIF-data from file'
+            )}
             checked={shouldExtractEXIFData}
             onChange={(e) => setShouldExtractEXIFData(e.target.checked)}
           />

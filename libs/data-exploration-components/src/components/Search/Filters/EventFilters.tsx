@@ -2,13 +2,15 @@ import React from 'react';
 
 import { BaseFilterCollapse } from '@data-exploration/components';
 import {
+  DateFilterV2,
+  MetadataFilterV2,
+  StringFilterV2,
+} from '@data-exploration/containers';
+import {
   AggregatedEventFilterV2,
   ByAssetFilterV2,
   DataSetFilterV2,
-  DateFilterV2,
-  MetadataFilterV2,
   SourceFilter,
-  StringFilterV2,
 } from '@data-exploration-components/components/SearchNew';
 
 import { useList } from '@cognite/sdk-react-query-hooks';

@@ -14,11 +14,12 @@ export type FilterResourceType = ResourceType | 'document' | 'common';
 export interface FilterState {
   common: InternalCommonFilters;
   asset: InternalAssetFilters;
-  timeseries: InternalTimeseriesFilters;
+  timeSeries: InternalTimeseriesFilters;
   sequence: InternalSequenceFilters;
   file: InternalFilesFilters;
   event: InternalEventsFilters;
   document: InternalDocumentFilter;
+  threeD: InternalThreeDFilters;
 }
 
 export interface FilterProps {

@@ -8,6 +8,7 @@ export interface ApiVersion {
   api?: Api;
 }
 export interface Api {
+  id?: number | string;
   externalId: string;
   name: string;
   description?: string;

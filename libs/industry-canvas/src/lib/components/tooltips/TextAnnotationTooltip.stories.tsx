@@ -3,7 +3,7 @@ import { ComponentStory } from '@storybook/react';
 import { AnnotationType } from '@cognite/unified-file-viewer';
 
 import { TEXT_ANNOTATION_COLOR_MAP } from '../../colors';
-import { FONT_SIZE } from '../../constants';
+import { DEFAULT_FONT_SIZE } from '../../constants';
 
 import { TextAnnotationTooltip } from './TextAnnotationTooltip';
 
@@ -23,7 +23,7 @@ export const TextAnnotationTooltipStory: ComponentStory<
         x: 0,
         y: 0,
         style: {
-          fontSize: FONT_SIZE['12px'],
+          fontSize: DEFAULT_FONT_SIZE,
           fill: TEXT_ANNOTATION_COLOR_MAP.BLACK,
         },
         text: 'Hello World',

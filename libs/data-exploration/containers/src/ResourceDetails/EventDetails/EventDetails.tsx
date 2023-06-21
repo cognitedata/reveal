@@ -11,9 +11,9 @@ import {
 } from '@data-exploration-lib/core';
 import {
   useAssetsByIdQuery,
-  useDocumentSearchResultQuery,
   useEventsByIdsQuery,
   useEventsSearchResultQuery,
+  useFileSearchQuery,
   useSequenceSearchResultQuery,
   useTimeseriesSearchResultQuery,
 } from '@data-exploration-lib/domain-layer';
@@ -83,15 +83,16 @@ export const EventDetails: FC<
     })),
   };
 
-  const { data: assets = [], isLoading: isAssetsLoading } = useAssetsByIdQuery(
-    assetIds.map((id) => ({ id })),
-    { enabled: isEventFetched && !!assetIds && assetIds.length > 0 }
-  );
+  const { data: assets = [], isInitialLoading: isAssetsLoading } =
+    useAssetsByIdQuery(
+      assetIds.map((id) => ({ id })),
+      { enabled: isEventFetched && !!assetIds && assetIds.length > 0 }
+    );
 
   const {
     hasNextPage: hasEventNextPage,
     fetchNextPage: hasEventFetchNextPage,
-    isLoading: isEventsLoading,
+    isInitialLoading: isEventsLoading,
     data: events,
   } = useEventsSearchResultQuery({ eventsFilters: filter }, undefined, {
     enabled: isQueryEnabled && isEventVisible,
@@ -100,7 +101,7 @@ export const EventDetails: FC<
   const {
     hasNextPage: hasTimeseriesNextPage,
     fetchNextPage: hasTimeseriesFetchNextPage,
-    isLoading: isTimeseriesLoading,
+    isInitialLoading: isTimeseriesLoading,
     data: timeseries,
   } = useTimeseriesSearchResultQuery({ filter }, undefined, {
     enabled: isQueryEnabled && isTimeseriesVisible,
@@ -109,11 +110,16 @@ export const EventDetails: FC<
   const {
     hasNextPage: hasDocumentsNextPage,
     fetchNextPage: hasDocumentsFetchNextPage,
-    isLoading: isDocumentsLoading,
+    isInitialLoading: isDocumentsLoading,
     results: relatedDocuments = [],
-  } = useDocumentSearchResultQuery(
+  } = useFileSearchQuery(
     {
-      filter,
+      filter: {
+        assetSubtreeIds: assetIds.map((value) => ({
+          id: value,
+        })),
+      },
+      limit: 10,
     },
     { enabled: isQueryEnabled && isFileVisible }
   );
@@ -121,7 +127,7 @@ export const EventDetails: FC<
   const {
     hasNextPage: hasSequencesNextPage,
     fetchNextPage: hasSequencesFetchNextPage,
-    isLoading: isSequencesLoading,
+    isInitialLoading: isSequencesLoading,
     data: sequences = [],
   } = useSequenceSearchResultQuery(
     {

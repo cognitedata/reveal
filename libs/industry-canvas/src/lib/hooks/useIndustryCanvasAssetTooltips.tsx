@@ -11,14 +11,20 @@ import {
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
 
 import AssetTooltip from '../components/ContextualTooltips/AssetTooltip';
-import { ANNOTATION_TOOLTIP_POSITION } from '../constants';
+import { ANNOTATION_TOOLTIP_POSITION, MetricEvent } from '../constants';
 import { OnAddContainerReferences } from '../IndustryCanvasPage';
 import { ContainerReferenceType } from '../types';
+import useMetrics from '../utils/tracking/useMetrics';
+
+import { UseResourceSelectorActionsReturnType } from './useResourceSelectorActions';
 
 const useIndustryCanvasAssetTooltips = (
   selectedAnnotation: ExtendedAnnotation | undefined,
-  onAddContainerReferences: OnAddContainerReferences
+  onAddContainerReferences: OnAddContainerReferences,
+  onResourceSelectorOpen: UseResourceSelectorActionsReturnType['onResourceSelectorOpen']
 ) => {
+  const trackUsage = useMetrics();
+
   return useMemo(() => {
     if (selectedAnnotation === undefined) {
       return [];
@@ -46,6 +52,7 @@ const useIndustryCanvasAssetTooltips = (
           initialAssetId,
         },
       ]);
+      trackUsage(MetricEvent.ASSET_TOOLTIP_ADD_THREE_D);
     };
 
     const onAddTimeseries = (timeseriesId: number) => {
@@ -60,6 +67,7 @@ const useIndustryCanvasAssetTooltips = (
           endDate: dayjs(new Date()).endOf('day').toISOString(),
         },
       ]);
+      trackUsage(MetricEvent.ASSET_TOOLTIP_ADD_TIMESERIES);
     };
 
     const onAddAsset = (): void => {
@@ -69,10 +77,30 @@ const useIndustryCanvasAssetTooltips = (
           resourceId: resourceId,
         },
       ]);
+      trackUsage(MetricEvent.ASSET_TOOLTIP_ADD_ASSET);
     };
 
     const onViewAsset = (): void => {
       window.open(createLink(`/explore/asset/${resourceId}`), '_blank');
+      trackUsage(MetricEvent.ASSET_TOOLTIP_OPEN_IN_DATA_EXPLORER);
+    };
+
+    const onOpenInResourceSelector = (): void => {
+      trackUsage(MetricEvent.ASSET_TOOLTIP_OPEN_IN_RESOURCE_SELECTOR, {
+        containerType: 'file',
+        resourceType: 'asset',
+      });
+      onResourceSelectorOpen({
+        initialSelectedResourceItem: {
+          type: 'asset',
+          id: resourceId,
+        },
+        initialFilter: {
+          common: {
+            internalId: resourceId,
+          },
+        },
+      });
     };
 
     return [
@@ -85,13 +113,19 @@ const useIndustryCanvasAssetTooltips = (
             onAddTimeseries={onAddTimeseries}
             onAddAsset={onAddAsset}
             onViewAsset={onViewAsset}
+            onOpenInResourceSelector={onOpenInResourceSelector}
           />
         ),
         anchorTo: ANNOTATION_TOOLTIP_POSITION,
         shouldPositionStrictly: true,
       },
     ];
-  }, [selectedAnnotation, onAddContainerReferences]);
+  }, [
+    selectedAnnotation,
+    onAddContainerReferences,
+    trackUsage,
+    onResourceSelectorOpen,
+  ]);
 };
 
 export default useIndustryCanvasAssetTooltips;

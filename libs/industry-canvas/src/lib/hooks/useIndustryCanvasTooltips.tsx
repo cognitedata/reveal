@@ -16,12 +16,12 @@ import useIndustryCanvasContainerTooltips from './useIndustryCanvasContainerTool
 import useIndustryCanvasFileLinkTooltips from './useIndustryCanvasFileLinkTooltips';
 import { UseManagedStateReturnType } from './useManagedState';
 import { OnUpdateAnnotationStyleByType } from './useManagedTools';
+import { UseResourceSelectorActionsReturnType } from './useResourceSelectorActions';
 import { OnUpdateTooltipsOptions, TooltipsOptions } from './useTooltipsOptions';
 
 export type UseTooltipsParams = {
   selectedContainer: IndustryCanvasContainerConfig | undefined;
   containers: IndustryCanvasContainerConfig[];
-  containerAnnotations: ExtendedAnnotation[];
   clickedContainerAnnotation: ExtendedAnnotation | undefined;
   selectedCanvasAnnotation: CanvasAnnotation | undefined;
   tooltipsOptions: TooltipsOptions;
@@ -36,11 +36,11 @@ export type UseTooltipsParams = {
   removeContainerById: UseManagedStateReturnType['removeContainerById'];
   onDeleteSelectedCanvasAnnotation: () => void;
   onUpdateAnnotationStyleByType: OnUpdateAnnotationStyleByType;
+  onResourceSelectorOpen: UseResourceSelectorActionsReturnType['onResourceSelectorOpen'];
   commentAnnotations: CommentAnnotation[];
 };
 
 const useIndustryCanvasTooltips = ({
-  containerAnnotations,
   containers,
   clickedContainerAnnotation,
   selectedCanvasAnnotation,
@@ -53,8 +53,23 @@ const useIndustryCanvasTooltips = ({
   updateContainerById,
   removeContainerById,
   onUpdateAnnotationStyleByType,
+  onResourceSelectorOpen,
   commentAnnotations,
 }: UseTooltipsParams) => {
+  const assetTooltips = useIndustryCanvasAssetTooltips(
+    clickedContainerAnnotation,
+    onAddContainerReferences,
+    onResourceSelectorOpen
+  );
+  const fileLinkTooltips = useIndustryCanvasFileLinkTooltips({
+    clickedContainerAnnotation,
+    onAddContainerReferences,
+  });
+  const canvasAnnotationTooltips = useCanvasAnnotationTooltips({
+    selectedCanvasAnnotation,
+    onDeleteSelectedCanvasAnnotation,
+    onUpdateAnnotationStyleByType,
+  });
   const containerTooltips = useIndustryCanvasContainerTooltips({
     selectedContainer,
     containers,
@@ -63,20 +78,7 @@ const useIndustryCanvasTooltips = ({
     onAddSummarizationSticky,
     updateContainerById,
     removeContainerById,
-  });
-  const assetTooltips = useIndustryCanvasAssetTooltips(
-    clickedContainerAnnotation,
-    onAddContainerReferences
-  );
-  const fileLinkTooltips = useIndustryCanvasFileLinkTooltips({
-    annotations: containerAnnotations,
-    selectedAnnotation: clickedContainerAnnotation,
-    onAddContainerReferences,
-  });
-  const canvasAnnotationTooltips = useCanvasAnnotationTooltips({
-    selectedCanvasAnnotation,
-    onDeleteSelectedCanvasAnnotation,
-    onUpdateAnnotationStyleByType,
+    onResourceSelectorOpen,
   });
   const commentTooltips = useCommentTooltips({
     commentAnnotations,

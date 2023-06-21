@@ -5,7 +5,7 @@ import * as Sentry from '@sentry/browser';
 import ReactDOMClient from 'react-dom/client';
 import singleSpaReact from 'single-spa-react';
 
-import { getEnvironment } from '@data-exploration-app/utils/environment';
+import { getEnvironment } from '@cognite/cdf-utilities';
 
 import App from './app/App';
 import { environment } from './environment';

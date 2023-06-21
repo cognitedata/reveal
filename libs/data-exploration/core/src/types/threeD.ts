@@ -1,6 +1,5 @@
 export enum FileTypes {
-  CAD_MODELS = 'CADModels',
-  POINT_CLOUDS = 'PointClouds',
+  MODELS_3D = 'Models3D',
   IMAGES_360 = 'Images360',
 }
 

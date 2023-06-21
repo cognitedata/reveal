@@ -104,6 +104,8 @@ describe('Data model services utils', () => {
         Date: 'date',
         Boolean: 'boolean',
         TimeSeries: 'text',
+        File: 'text',
+        Sequence: 'text',
       });
     });
   });
