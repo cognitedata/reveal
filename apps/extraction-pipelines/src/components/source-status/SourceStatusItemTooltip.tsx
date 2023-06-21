@@ -9,7 +9,10 @@ import {
   doesLogHavePauseType,
 } from 'utils/hostedExtractors';
 import { formatTime } from '@cognite/cdf-utilities';
-import { MQTTSourceWithJobMetrics } from 'hooks/hostedExtractors';
+import {
+  MQTTSourceWithJobMetrics,
+  ReadMQTTJobLog,
+} from 'hooks/hostedExtractors';
 
 type SourceStatusItemTooltipProps = {
   children: React.ReactNode;

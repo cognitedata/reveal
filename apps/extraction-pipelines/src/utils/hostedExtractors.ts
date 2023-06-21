@@ -186,7 +186,7 @@ type StatusChangeBucket = {
   startTime: number;
   endTime: number;
   isUp: boolean;
-  logs: ReadMQTTJobLog;
+  log: ReadMQTTJobLog;
 };
 
 export const getStatusChangeBuckets = (logs?: ReadMQTTJobLog[]) => {
@@ -199,7 +199,7 @@ export const getStatusChangeBuckets = (logs?: ReadMQTTJobLog[]) => {
       startTime: logs[0].createdTime,
       endTime: Number.MAX_SAFE_INTEGER,
       isUp: doesLogHaveSuccessType(logs[0]) || doesLogHavePauseType(logs[0]),
-      logs: logs[0],
+      log: logs[0],
     },
   ];
 
@@ -209,7 +209,7 @@ export const getStatusChangeBuckets = (logs?: ReadMQTTJobLog[]) => {
       startTime: log.createdTime,
       endTime: prevItem.createdTime,
       isUp: doesLogHaveSuccessType(log) || doesLogHavePauseType(log),
-      logs: log,
+      log: log,
     });
   });
 
@@ -303,7 +303,7 @@ export const getUptimeAggregations = (
 
       let bucketedLogs: ReadMQTTJobLog[] = [];
       bucketsForCurrentInterval.forEach((bucket) => {
-        bucketedLogs.push(bucket.logs);
+        bucketedLogs.push(bucket.log);
       });
 
       return {
