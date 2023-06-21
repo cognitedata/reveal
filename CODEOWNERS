@@ -47,6 +47,9 @@ apps/copilot              @davidlky @andeplane @miladh @trygveu
 apps/raw-explorer @cognitedata/team-hebe
 apps/iot-hub              @davidlky @geircognite @muradsater
 
+# Vision
+apps/vision              @cognitedata/cdf-user-experience
+
 # 3D / Reveal
 apps/3d-management                @cognitedata/3d-reveal-viewer-team
 

@@ -86,6 +86,9 @@
       "@data-quality/*": [
         "apps/platypus/src/app/modules/solution/data-quality/*"
       ],
+      "@vision/*": [
+        "apps/vision/src/*"
+      ],
       "@transformations/*": [
         "apps/transformations/src/*"
       ],
