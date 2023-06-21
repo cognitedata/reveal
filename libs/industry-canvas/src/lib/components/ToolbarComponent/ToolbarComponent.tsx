@@ -5,11 +5,10 @@ import styled from 'styled-components';
 import { invert } from 'lodash';
 
 import { Button, ToolBar, Tooltip } from '@cognite/cogs.js';
-import { useFlag } from '@cognite/react-feature-flags';
 
 import { translationKeys } from '../../common';
-import { CommentsFeatureFlagKey } from '../../constants';
 import { useTranslation } from '../../hooks/useTranslation';
+import { useIndustryCanvasContext } from '../../IndustryCanvasContext';
 import { IndustryCanvasToolType } from '../../types';
 import { StickyButton } from '../StickyButton';
 
@@ -45,6 +44,8 @@ const ToolbarComponent: React.FC<ToolbarComponentProps> = ({
   const [isShapeToolActive, setIsShapeToolActive] = useState(false);
   const { t } = useTranslation();
 
+  const { isCommentsEnabled } = useIndustryCanvasContext();
+
   const [activeShapeTool, setActiveShapeTool] =
     useState<IndustryCanvasToolType>(IndustryCanvasToolType.RECTANGLE);
 
@@ -63,10 +64,6 @@ const ToolbarComponent: React.FC<ToolbarComponentProps> = ({
         activeTool === IndustryCanvasToolType.ELLIPSE
     );
   }, [activeTool]);
-
-  const { isEnabled: isCommentsEnabled } = useFlag(CommentsFeatureFlagKey, {
-    fallback: false,
-  });
 
   if (isCanvasLocked) {
     return (
@@ -277,7 +274,7 @@ const ToolbarComponent: React.FC<ToolbarComponentProps> = ({
                   label={t(translationKeys.TOOLBAR_COMMENT_BUTTON, 'Comment')}
                   keys={[
                     ShortcutKeysByIndustryCanvasToolType[
-                      IndustryCanvasToolType.LINE
+                      IndustryCanvasToolType.COMMENT
                     ],
                   ]}
                 />
