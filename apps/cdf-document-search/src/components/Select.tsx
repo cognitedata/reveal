@@ -14,7 +14,7 @@ interface Props<OptionType extends Option<any>, IsMulti extends boolean> {
   icon?: IconType;
   isLoading?: boolean;
   isMulti?: IsMulti;
-  onChange(value: ValueType<OptionType>[]): void;
+  onChange(value: ValueType<OptionType, IsMulti>[]): void;
 }
 
 export const Select = <
