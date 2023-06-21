@@ -199,7 +199,7 @@ def getAffectedLibs(boolean isMaster = false){
 
   print "[AFFECTED:NX] Affected libraries: ${affected}";
 
-  return affected.split(",");
+  return affected.replaceAll('[\r\n]+', '').split(', ');
 }
 
 

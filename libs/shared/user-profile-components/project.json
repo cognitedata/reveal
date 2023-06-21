@@ -9,7 +9,7 @@
       "executor": "nx:run-commands",
       "dependsOn": ["build"],
       "options": {
-        "outputPath": "dist/libs/shared/cdf-utilities",
+        "outputPath": "dist/libs/shared/user-profile-components",
         "commands": ["./scripts/npm.sh"]
       }
     },
