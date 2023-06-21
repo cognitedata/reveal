@@ -14,16 +14,19 @@ export const SmallChatUI = ({
   setIsExpanded,
   setShowOverlay,
   onClose,
+  onReset,
 }: {
   setShowOverlay: (visible: boolean) => void;
   setIsExpanded: (visible: boolean) => void;
   onClose: () => void;
+  onReset: () => void;
 }) => {
-  const { data: { width, height } = { width: 320, height: 400 }, isLoading } =
-    useFromCache<{
-      width: number;
-      height: number;
-    }>('SMALL_CHATBOT_DIMENTIONS');
+  const { data: dimensions, isLoading } = useFromCache<{
+    width: number;
+    height: number;
+  }>('SMALL_CHATBOT_DIMENTIONS');
+
+  const { width, height } = dimensions || { width: 320, height: 400 };
 
   const { mutate: saveToCache } = useSaveToCache<{
     width: number;
@@ -50,11 +53,13 @@ export const SmallChatUI = ({
           className="react-resizable-handle react-resizable-handle-nw"
           icon="Expand"
           type="secondary"
+          aria-label="expand"
         />
       }
     >
       <Button
         icon="ScaleUp"
+        aria-label="full screen"
         onClick={() => setIsExpanded(true)}
         className="react-resizable-handle react-resizable-handle-nw"
         style={{
@@ -63,9 +68,25 @@ export const SmallChatUI = ({
           cursor: 'pointer',
         }}
       />
+      <Button
+        icon="ClearAll"
+        aria-label="reset"
+        onClick={() => onReset()}
+        className="react-resizable-handle react-resizable-handle-nw"
+        style={{
+          left: 98,
+          transform: 'translate(-50%, -50%)',
+          cursor: 'pointer',
+        }}
+      />
       <Flex className="header" gap={6} alignItems="center">
         <div style={{ flex: 1 }} />
-        <Button icon="Close" type="ghost" onClick={onClose} />
+        <Button
+          icon="Close"
+          type="ghost"
+          onClick={onClose}
+          aria-label="close"
+        />
       </Flex>
       <Flex
         direction="column"

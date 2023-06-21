@@ -34,6 +34,7 @@ export type AssetTooltipProps = {
   onAddTimeseries: (timeseriesId: number) => void;
   onAddAsset: () => void;
   onViewAsset: () => void;
+  onOpenInResourceSelector: () => void;
 };
 
 const AssetTooltip: React.FC<AssetTooltipProps> = ({
@@ -42,6 +43,7 @@ const AssetTooltip: React.FC<AssetTooltipProps> = ({
   onViewAsset,
   onAddThreeD,
   onAddTimeseries,
+  onOpenInResourceSelector,
 }) => {
   const { data: asset, isLoading } = useAsset(id);
   const { t } = useTranslation();
@@ -79,19 +81,21 @@ const AssetTooltip: React.FC<AssetTooltipProps> = ({
               <Button icon="Add" onClick={onAddAsset} inverted />
             </Tooltip>
           </ContextualTooltip.ButtonWrapper>
+          <ContextualTooltip.ButtonWrapper>
+            <ThreeDButton
+              assetId={asset.id}
+              onAddThreeD={onAddThreeD}
+              aria-label={t(
+                translationKeys.TOOLTIP_THREE_D_MODEL_ADD_TO_CANVAS,
+                'Add 3D model to canvas'
+              )}
+            />
+          </ContextualTooltip.ButtonWrapper>
           <Dropdown
             openOnHover
             placement="right"
             content={
               <ContextualTooltip.DropdownMenu>
-                <ThreeDButton
-                  assetId={asset.id}
-                  onAddThreeD={onAddThreeD}
-                  aria-label={t(
-                    translationKeys.TOOLTIP_THREE_D_MODEL_ADD_TO_CANVAS,
-                    'Add 3D model to canvas'
-                  )}
-                />
                 <Menu.Item
                   iconPlacement="left"
                   icon="ExternalLink"
@@ -104,6 +108,20 @@ const AssetTooltip: React.FC<AssetTooltipProps> = ({
                   {t(
                     translationKeys.OPEN_IN_DATA_EXPLORER,
                     'Open in Data Explorer'
+                  )}
+                </Menu.Item>
+                <Menu.Item
+                  iconPlacement="left"
+                  icon="ListSearch"
+                  onClick={onOpenInResourceSelector}
+                  aria-label={t(
+                    translationKeys.OPEN_IN_RESOURCE_SELECTOR,
+                    'Open in Resource Selector'
+                  )}
+                >
+                  {t(
+                    translationKeys.OPEN_IN_RESOURCE_SELECTOR,
+                    'Open in Resource Selector'
                   )}
                 </Menu.Item>
               </ContextualTooltip.DropdownMenu>

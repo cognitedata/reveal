@@ -34,3 +34,6 @@ contextualization:
 cdf-document-search:
   - apps/cdf-document-search/*
   - apps/cdf-document-search/**/*
+
+design-system:
+  - libs/shared/user-profile-components/**/*

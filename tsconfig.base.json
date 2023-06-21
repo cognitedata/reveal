@@ -27,6 +27,9 @@
       "@3d-management/*": [
         "apps/3d-management/src/*"
       ],
+      "@access-management/*": [
+        "apps/access-management/src/*"
+      ],
       "@cognite/cdf-route-tracker": [
         "libs/shared/cdf-route-tracker/src/index.ts"
       ],
@@ -62,6 +65,9 @@
       ],
       "@cognite/plotting-components": [
         "libs/shared/plotting-components/src/index.ts"
+      ],
+      "@cognite/user-profile-components": [
+        "libs/shared/user-profile-components/src/index.ts"
       ],
       "@cognite/sdk-react-query-hooks": [
         "libs/shared/cdf-sdk-react-query-hooks/src/index.ts"
