@@ -3,7 +3,11 @@ import React from 'react';
 import { Flex, Tooltip, Icon, Colors } from '@cognite/cogs.js';
 
 import { useTranslation } from 'common';
-import { UptimeAggregation, formatUptime } from 'utils/hostedExtractors';
+import {
+  UptimeAggregation,
+  formatUptime,
+  doesLogHavePauseType,
+} from 'utils/hostedExtractors';
 import { formatTime } from '@cognite/cdf-utilities';
 import { MQTTSourceWithJobMetrics } from 'hooks/hostedExtractors';
 
@@ -65,11 +69,11 @@ const SourceStatusItemTooltip = ({
   };
 
   const isPausedEntireTime = aggregation.logs.every((log) => {
-    return log.type === 'stopped';
+    return doesLogHavePauseType(log);
   });
 
   const pausedOnlyLogs = aggregation.logs.filter((log) => {
-    return log.type === 'stopped';
+    return doesLogHavePauseType(log);
   });
 
   const getTopicFilter = (log: any) => {

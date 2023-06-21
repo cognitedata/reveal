@@ -3,7 +3,10 @@ import React from 'react';
 import { Colors } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
-import { UptimeAggregation } from 'utils/hostedExtractors';
+import {
+  UptimeAggregation,
+  doesLogHavePauseType,
+} from 'utils/hostedExtractors';
 
 import SourceStatusItemTooltip from './SourceStatusItemTooltip';
 import { MQTTSourceWithJobMetrics } from 'hooks/hostedExtractors';
@@ -34,7 +37,7 @@ export const SourceStatusItem = ({
   source,
 }: SourceStatusItemProps): JSX.Element => {
   const isPausedEntireTime = aggregation.logs.every((log) => {
-    return log.type === 'stopped';
+    return doesLogHavePauseType(log);
   });
 
   return (
