@@ -1,6 +1,8 @@
 import styled from 'styled-components';
 
 import { ProductLogo } from '@cognite/cogs.js';
+import { useTranslation } from '../../hooks';
+import { translationKeys } from '../../common';
 
 const AppSelectorWrapper = styled.div`
   display: grid;
@@ -34,6 +36,7 @@ const AppSelectorItem = styled.div`
 const LogoWrapper = styled.div``;
 
 export const AppSelector = () => {
+  const { t } = useTranslation();
   const navigate = (url: string) => () => {
     window.open(url, '_blank');
   };
@@ -45,8 +48,8 @@ export const AppSelector = () => {
           <ProductLogo type="InField" />
         </LogoWrapper>
         <div>
-          <h3>InField</h3>
-          <p>Create and execute field operations</p>
+          <h3>{t(translationKeys.APP_INFIELD_TITLE, 'Infield')}</h3>
+          <p>{t(translationKeys.APP_INFIELD_SUBTITLE, 'Create and execute field operations')}</p>
         </div>
       </AppSelectorItem>
       <AppSelectorItem onClick={navigate('/maintain')}>
@@ -54,6 +57,8 @@ export const AppSelector = () => {
           <ProductLogo type="Maintain" />
         </LogoWrapper>
         <div>
+          <h3>{t(translationKeys.APP_MAINTAIN_TITLE, 'Infield')}</h3>
+          <p>{t(translationKeys.APP_MAINTAIN_SUBTITLE, 'Create and execute field operations')}</p>
           <h3>Maintain</h3>
           <p>Plan and optimise asset maintenance</p>
         </div>

@@ -12,8 +12,8 @@ import { Button, ToastContainer } from '@cognite/cogs.js';
 import { FlagProvider } from '@cognite/react-feature-flags';
 import { SDKProvider } from '@cognite/sdk-provider';
 
-import { useAuthContext } from '../common/auth/AuthProvider';
-import { TopBar } from '../common/topbar/top-bar';
+import { useAuthContext } from './common/auth/AuthProvider';
+import { TopBar } from './components/topbar/top-bar';
 
 import { queryClient } from './queryClient';
 import { CoreRoutes } from './Routes';
@@ -52,7 +52,6 @@ function App() {
                 >
                   <Router window={window}>
                     <TopBar />
-
                     <CoreRoutes />
                   </Router>
                 </AppContextProvider>

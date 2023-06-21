@@ -10,9 +10,10 @@ import {
 } from '@cognite/cogs.js';
 import { useFlag } from '@cognite/react-feature-flags';
 
-import { useAuthContext } from '../auth/AuthProvider';
+import { useAuthContext } from '../../common/auth/AuthProvider';
 
 import { AppSelector } from './AppSelector';
+import { useTranslation } from '../../hooks/useTranslation';
 
 type Props = {
   tenant?: string;
@@ -21,6 +22,7 @@ type Props = {
 };
 
 export const TopBar: FC<Props> = () => {
+  const {t}  = useTranslation();
   const navigate = useNavigate();
   const { authState, logout } = useAuthContext();
   const { isEnabled } = useFlag('CDF_BUSINESS_isEnabled', {
