@@ -10,10 +10,11 @@ import {
 } from '@cognite/cogs.js';
 import { useFlag } from '@cognite/react-feature-flags';
 
+import { translationKeys } from '../../common';
 import { useAuthContext } from '../../common/auth/AuthProvider';
+import { useTranslation } from '../../hooks/useTranslation';
 
 import { AppSelector } from './AppSelector';
-import { useTranslation } from '../../hooks/useTranslation';
 
 type Props = {
   tenant?: string;
@@ -22,7 +23,7 @@ type Props = {
 };
 
 export const TopBar: FC<Props> = () => {
-  const {t}  = useTranslation();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { authState, logout } = useAuthContext();
   const { isEnabled } = useFlag('CDF_BUSINESS_isEnabled', {
@@ -33,25 +34,24 @@ export const TopBar: FC<Props> = () => {
     <CogsTopBar>
       <CogsTopBar.Left>
         <CogsTopBar.Logo title="Cognite" />
-
         <CogsTopBar.Navigation
           links={
             isEnabled
               ? [
                   {
-                    name: 'Explore',
+                    name: t(translationKeys.LABEL_EXPLORE, 'Explore'),
                     onClick: () => {
                       navigate('/explore');
                     },
                   },
                   {
-                    name: 'Canvas',
+                    name: t(translationKeys.LABEL_CANVAS, 'Canvas'),
                     onClick: () => {
                       navigate('/canvas');
                     },
                   },
                   {
-                    name: 'Charts',
+                    name: t(translationKeys.LABEL_CHARTS, 'Charts'),
                     onClick: () => {
                       navigate('/charts');
                     },
@@ -64,7 +64,7 @@ export const TopBar: FC<Props> = () => {
           <Tabs size="xlarge" activeKey="never">
             <></>
             <Tabs.Tab label="Apps" dropdown={true} style={{ marginLeft: 12 }}>
-              Apps
+              {t(translationKeys.LABEL_APPS)}
             </Tabs.Tab>
           </Tabs>
         </Dropdown>
@@ -82,7 +82,9 @@ export const TopBar: FC<Props> = () => {
               component: <Avatar text={authState.user.name} tooltip={false} />,
               menu: (
                 <Menu>
-                  <Menu.Item onClick={logout}>Logout</Menu.Item>
+                  <Menu.Item onClick={logout}>
+                    {t(translationKeys.LABEL_APPS, 'Apps')}
+                  </Menu.Item>
                 </Menu>
               ),
             },

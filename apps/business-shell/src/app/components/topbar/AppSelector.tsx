@@ -1,8 +1,9 @@
 import styled from 'styled-components';
 
 import { ProductLogo } from '@cognite/cogs.js';
-import { useTranslation } from '../../hooks';
+
 import { translationKeys } from '../../common';
+import { useTranslation } from '../../hooks';
 
 const AppSelectorWrapper = styled.div`
   display: grid;
@@ -49,7 +50,12 @@ export const AppSelector = () => {
         </LogoWrapper>
         <div>
           <h3>{t(translationKeys.APP_INFIELD_TITLE, 'Infield')}</h3>
-          <p>{t(translationKeys.APP_INFIELD_SUBTITLE, 'Create and execute field operations')}</p>
+          <p>
+            {t(
+              translationKeys.APP_INFIELD_SUBTITLE,
+              'Create and execute field operations'
+            )}
+          </p>
         </div>
       </AppSelectorItem>
       <AppSelectorItem onClick={navigate('/maintain')}>
@@ -57,10 +63,13 @@ export const AppSelector = () => {
           <ProductLogo type="Maintain" />
         </LogoWrapper>
         <div>
-          <h3>{t(translationKeys.APP_MAINTAIN_TITLE, 'Infield')}</h3>
-          <p>{t(translationKeys.APP_MAINTAIN_SUBTITLE, 'Create and execute field operations')}</p>
-          <h3>Maintain</h3>
-          <p>Plan and optimise asset maintenance</p>
+          <h3>{t(translationKeys.APP_MAINTAIN_TITLE, 'Maintain')}</h3>
+          <p>
+            {t(
+              translationKeys.APP_MAINTAIN_SUBTITLE,
+              'Plan and optimise asset maintenance'
+            )}
+          </p>
         </div>
       </AppSelectorItem>
       <AppSelectorItem onClick={navigate('/inrobot')}>
@@ -68,8 +77,13 @@ export const AppSelector = () => {
           <ProductLogo type="Remote" />
         </LogoWrapper>
         <div>
-          <h3>InRobot</h3>
-          <p>Configure and operate robots at your asset</p>
+          <h3>{t(translationKeys.APP_INROBOT_TITLE, 'InRobot')}</h3>
+          <p>
+            {t(
+              translationKeys.APP_INROBOT_SUBTITLE,
+              'Configure and operate robots at your asset'
+            )}
+          </p>
         </div>
       </AppSelectorItem>
       <AppSelectorItem onClick={navigate('https://fusion.cognite.com')}>
@@ -77,8 +91,13 @@ export const AppSelector = () => {
           <ProductLogo type="CDF" />
         </LogoWrapper>
         <div>
-          <h3>DataOps</h3>
-          <p>Data management platform</p>
+          <h3>{t(translationKeys.APP_DATA_OPS_TITLE, 'DataOps')}</h3>
+          <p>
+            {t(
+              translationKeys.APP_DATA_OPS_SUBTITLE,
+              'Data management platform'
+            )}
+          </p>
         </div>
       </AppSelectorItem>
     </AppSelectorWrapper>
