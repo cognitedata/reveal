@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { Image360HistoricalDetails } from '../components/View';
+import { Image360HistoricalDetails } from '..';
 import { It, Mock } from 'moq.ts';
 import { Cognite3DViewer, Image360, Image360Revision } from '@cognite/reveal';
 
