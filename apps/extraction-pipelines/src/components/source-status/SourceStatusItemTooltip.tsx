@@ -93,7 +93,7 @@ const SourceStatusItemTooltip = ({
           <Flex direction="column">
             <span>{formatTime(aggregation.endTime, true)}</span>
             <span>
-              <Flex css={{ gap: '5px' }}>
+              <Flex gap={5}>
                 {aggregation.uptimePercentage !== -1 &&
                   isPausedEntireTime === false &&
                   getUptimeIcon(aggregation.uptimePercentage)}
