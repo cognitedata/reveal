@@ -7,18 +7,30 @@ import {
 } from 'hooks/hostedExtractors';
 
 const MQTT_JOB_LOG_ERROR_TYPES: ReadMQTTJobLog['type'][] = [
-  'error',
+  'error', // TODO: remove
   'startup_error',
+  'connection_error',
+  'transform_error',
+  'destination_error',
 ];
-const MQTT_JOB_LOG_SUCCESS_TYPES: ReadMQTTJobLog['type'][] = ['ok'];
+const MQTT_JOB_LOG_SUCCESS_TYPES: ReadMQTTJobLog['type'][] = [
+  'ok',
+  'connected',
+];
 
 const MQTT_JOB_LOG_PAUSE_TYPES: ReadMQTTJobLog['type'][] = ['stopped'];
 
 const MQTT_JOB_STATUS_ERROR_TYPES: ReadMQTTJob['status'][] = [
-  'error',
+  'error', // TODO: remove
   'startup_error',
+  'connection_error',
+  'transform_error',
+  'destination_error',
 ];
-const MQTT_JOB_STATUS_SUCCESS_TYPES: ReadMQTTJob['status'][] = ['running'];
+const MQTT_JOB_STATUS_SUCCESS_TYPES: ReadMQTTJob['status'][] = [
+  'running',
+  'connected',
+];
 const MQTT_JOB_STATUS_NEUTRAL_TYPES: ReadMQTTJob['status'][] = [
   'shutting_down',
   'waiting',
