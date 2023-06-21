@@ -29,7 +29,7 @@ export const DataHistoryChart = ({
     return getMetricAggregations(
       metrics,
       aggregationInterval,
-      aggregationInterval === 'hourly' ? 72 : 30
+      aggregationInterval === 'hourly' ? 24 : 30
     );
   }, [jobs, aggregationInterval]);
 

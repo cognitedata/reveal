@@ -72,6 +72,7 @@ const StyledMessageHistoryChart = styled(MessageHistoryChart)`
   grid-row: first / end;
   margin-bottom: 0;
   display: flex;
+  box-shadow: none;
 `;
 
 const StyledDataHistoryChart = styled(DataHistoryChart)`
@@ -79,4 +80,5 @@ const StyledDataHistoryChart = styled(DataHistoryChart)`
   grid-row: first / end;
   margin-bottom: 0;
   display: flex;
+  box-shadow: none;
 `;
