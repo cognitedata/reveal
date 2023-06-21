@@ -19,7 +19,7 @@ import { TopBar } from './components/topbar/top-bar';
 import { queryClient } from './queryClient';
 import { CoreRoutes } from './Routes';
 
-const LOCIZE_PROJECT_NAME = 'business-shell';
+const LOCIZE_NAME_SPACE = 'business-shell';
 
 function App() {
   const { client } = useAuthContext();
@@ -27,7 +27,7 @@ function App() {
   return (
     <I18nWrapper
       translations={translations}
-      defaultNamespace={LOCIZE_PROJECT_NAME}
+      defaultNamespace={LOCIZE_NAME_SPACE}
     >
       <SDKProvider sdk={client}>
         <QueryClientProvider client={queryClient}>

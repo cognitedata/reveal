@@ -2,8 +2,7 @@ import styled from 'styled-components';
 
 import { ProductLogo } from '@cognite/cogs.js';
 
-import { translationKeys } from '../../common';
-import { useTranslation } from '../../hooks';
+import { useTranslation } from '../../common';
 
 const AppSelectorWrapper = styled.div`
   display: grid;
@@ -49,13 +48,8 @@ export const AppSelector = () => {
           <ProductLogo type="InField" />
         </LogoWrapper>
         <div>
-          <h3>{t(translationKeys.APP_INFIELD_TITLE, 'Infield')}</h3>
-          <p>
-            {t(
-              translationKeys.APP_INFIELD_SUBTITLE,
-              'Create and execute field operations'
-            )}
-          </p>
+          <h3>{t('INFIELD_APP_TITLE')}</h3>
+          <p>{t('INFIELD_APP_SUBTITLE')}</p>
         </div>
       </AppSelectorItem>
       <AppSelectorItem onClick={navigate('/maintain')}>
@@ -63,13 +57,8 @@ export const AppSelector = () => {
           <ProductLogo type="Maintain" />
         </LogoWrapper>
         <div>
-          <h3>{t(translationKeys.APP_MAINTAIN_TITLE, 'Maintain')}</h3>
-          <p>
-            {t(
-              translationKeys.APP_MAINTAIN_SUBTITLE,
-              'Plan and optimise asset maintenance'
-            )}
-          </p>
+          <h3>{t('MAINTAIN_APP_TITLE')}</h3>
+          <p>{t('MAINTAIN_APP_SUBTITLE')}</p>
         </div>
       </AppSelectorItem>
       <AppSelectorItem onClick={navigate('/inrobot')}>
@@ -77,13 +66,8 @@ export const AppSelector = () => {
           <ProductLogo type="Remote" />
         </LogoWrapper>
         <div>
-          <h3>{t(translationKeys.APP_INROBOT_TITLE, 'InRobot')}</h3>
-          <p>
-            {t(
-              translationKeys.APP_INROBOT_SUBTITLE,
-              'Configure and operate robots at your asset'
-            )}
-          </p>
+          <h3>{t('INROBOT_APP_TITLE')}</h3>
+          <p>{t('INROBOT_APP_SUBTITLE')}</p>
         </div>
       </AppSelectorItem>
       <AppSelectorItem onClick={navigate('https://fusion.cognite.com')}>
@@ -91,13 +75,8 @@ export const AppSelector = () => {
           <ProductLogo type="CDF" />
         </LogoWrapper>
         <div>
-          <h3>{t(translationKeys.APP_DATA_OPS_TITLE, 'DataOps')}</h3>
-          <p>
-            {t(
-              translationKeys.APP_DATA_OPS_SUBTITLE,
-              'Data management platform'
-            )}
-          </p>
+          <h3>{t('DATA_OPS_APP_TITLE')}</h3>
+          <p>{t('DATA_OPS_APP_SUBTITLE')}</p>
         </div>
       </AppSelectorItem>
     </AppSelectorWrapper>

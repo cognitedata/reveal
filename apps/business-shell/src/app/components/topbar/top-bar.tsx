@@ -10,9 +10,8 @@ import {
 } from '@cognite/cogs.js';
 import { useFlag } from '@cognite/react-feature-flags';
 
-import { translationKeys } from '../../common';
+import { useTranslation } from '../../common';
 import { useAuthContext } from '../../common/auth/AuthProvider';
-import { useTranslation } from '../../hooks/useTranslation';
 
 import { AppSelector } from './AppSelector';
 
@@ -39,19 +38,19 @@ export const TopBar: FC<Props> = () => {
             isEnabled
               ? [
                   {
-                    name: t(translationKeys.LABEL_EXPLORE, 'Explore'),
+                    name: t('LABEL_EXPLORE'),
                     onClick: () => {
                       navigate('/explore');
                     },
                   },
                   {
-                    name: t(translationKeys.LABEL_CANVAS, 'Canvas'),
+                    name: t('LABEL_CANVAS'),
                     onClick: () => {
                       navigate('/canvas');
                     },
                   },
                   {
-                    name: t(translationKeys.LABEL_CHARTS, 'Charts'),
+                    name: t('LABEL_CHARTS'),
                     onClick: () => {
                       navigate('/charts');
                     },
@@ -64,7 +63,7 @@ export const TopBar: FC<Props> = () => {
           <Tabs size="xlarge" activeKey="never">
             <></>
             <Tabs.Tab label="Apps" dropdown={true} style={{ marginLeft: 12 }}>
-              {t(translationKeys.LABEL_APPS)}
+              {t('LABEL_APPS')}
             </Tabs.Tab>
           </Tabs>
         </Dropdown>
@@ -82,9 +81,7 @@ export const TopBar: FC<Props> = () => {
               component: <Avatar text={authState.user.name} tooltip={false} />,
               menu: (
                 <Menu>
-                  <Menu.Item onClick={logout}>
-                    {t(translationKeys.LABEL_APPS, 'Apps')}
-                  </Menu.Item>
+                  <Menu.Item onClick={logout}>{t('LABEL_APPS')}</Menu.Item>
                 </Menu>
               ),
             },
