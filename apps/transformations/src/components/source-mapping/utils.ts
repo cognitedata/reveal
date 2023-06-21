@@ -112,9 +112,10 @@ ${from};`;
 const fdmFromStatement = (mapping: TransformationMapping) => {
   const level1 = mapping.sourceLevel1?.split('.');
   const space = level1?.[0];
+  const dataModelExternalId = level1?.[1];
   const dataModelVersion = level1?.[2];
 
-  return `cdf_nodes("${space}", "${mapping.sourceLevel2}", "${dataModelVersion}")`;
+  return `cdf_data_models("${space}", "${dataModelExternalId}", "${dataModelVersion}", "${mapping.sourceLevel2}")`;
 };
 
 export const parseTransformationMapping = (
