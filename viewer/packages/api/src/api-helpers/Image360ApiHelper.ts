@@ -38,7 +38,6 @@ export class Image360ApiHelper {
   private _transitionInProgress: boolean = false;
   private readonly _raycaster = new THREE.Raycaster();
   private _needsRedraw: boolean = false;
-  private readonly _imageCollections: Image360Collection[] = [];
 
   private readonly _interactionState: {
     currentImage360Hovered?: Image360Entity;
@@ -158,14 +157,12 @@ export class Image360ApiHelper {
       preMultipliedRotation
     );
 
-    this._imageCollections.push(imageCollection);
-
     this._needsRedraw = true;
     return imageCollection;
   }
 
   public getImageCollections(): Image360Collection[] {
-    return [...this._imageCollections];
+    return [...this._image360Facade.collections];
   }
 
   public async remove360Images(entities: Image360[]): Promise<void> {
@@ -188,9 +185,8 @@ export class Image360ApiHelper {
       this.exit360Image();
     }
 
-    pull(this._imageCollections, collection);
+    this._image360Facade.removeSet(collection as DefaultImage360Collection);
 
-    (collection as DefaultImage360Collection).dispose();
     this._needsRedraw = true;
   }
 

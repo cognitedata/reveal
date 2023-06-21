@@ -60,6 +60,11 @@ export class Image360Facade<T> {
     return image360Collection;
   }
 
+  public removeSet(collection: DefaultImage360Collection): void {
+    pull(this._image360Collections, collection);
+    collection.dispose();
+  }
+
   public async delete(entity: Image360Entity): Promise<void> {
     await this._image360Cache.purge(entity);
     const collection = this.getCollectionContainingEntity(entity);
