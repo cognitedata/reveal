@@ -24,7 +24,7 @@ static final String[] APPLICATIONS = [
 */
 static final Map<String, String> NPM_PACKAGES = [
   'shared-plotting-components': "dist/libs/shared/plotting-components",
-  'shared-user-profile-components': "dist/libs/shared/user-profile-components"
+  'user-profile-components': "dist/libs/shared/user-profile-components"
 ]
 
 // This is the Firebase site mapping.
