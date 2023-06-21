@@ -30,7 +30,6 @@ import {
 import { CameraManager, ProxyCameraManager, StationaryCameraManager } from '@reveal/camera-manager';
 import { MetricsLogger } from '@reveal/metrics';
 import debounce from 'lodash/debounce';
-import pull from 'lodash/pull';
 
 export class Image360ApiHelper {
   private readonly _image360Facade: Image360Facade<Metadata>;
