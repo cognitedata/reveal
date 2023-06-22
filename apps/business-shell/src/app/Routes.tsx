@@ -7,6 +7,8 @@ import { IndustryCanvasPage } from '@fusion/industry-canvas';
 import { Flex } from '@cognite/cogs.js';
 import { useFlag } from '@cognite/react-feature-flags';
 
+import { UserProfilePage } from '../pages/UserProfilePage/UserProfilePage';
+
 import { AppSelector } from './components/topbar/AppSelector';
 
 export const CoreRoutes = () => {
@@ -34,6 +36,7 @@ export const CoreRoutes = () => {
       <Route path="/explore/*" element={<ExplorerRoutes />} />
       <Route path="/canvas/*" element={<IndustryCanvasPage />} />
       <Route path="/charts/*" element={<div>On its way...</div>} />
+      <Route path="/profile/*" element={<UserProfilePage />} />
     </Routes>
   );
 };
