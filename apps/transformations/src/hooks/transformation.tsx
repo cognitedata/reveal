@@ -49,7 +49,7 @@ import { Timestamp, useCdfUserHistoryService } from '@cognite/cdf-utilities';
 import { CogniteClient, CogniteError } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 
-import { fetchModel } from './fdm';
+import { getModel } from './fdm';
 import { Session, useCreateSession, useRevokeSession } from './sessions';
 
 export const getTransformationListQueryKey = () => [
@@ -679,7 +679,7 @@ const getSchema = async (
         extraParams.isConnectionDefinition = 'true';
         extraParams.instanceType = 'edges';
       } else {
-        const model = await fetchModel(
+        const model = await getModel(
           sdk,
           destination.dataModel.externalId,
           destination.dataModel.space,
