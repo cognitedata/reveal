@@ -2,6 +2,8 @@ import styled from 'styled-components';
 
 import { ProductLogo } from '@cognite/cogs.js';
 
+import { useTranslation } from '../../common';
+
 const AppSelectorWrapper = styled.div`
   display: grid;
   grid-template-rows: 1fr;
@@ -34,6 +36,7 @@ const AppSelectorItem = styled.div`
 const LogoWrapper = styled.div``;
 
 export const AppSelector = () => {
+  const { t } = useTranslation();
   const navigate = (url: string) => () => {
     window.open(url, '_blank');
   };
@@ -45,8 +48,8 @@ export const AppSelector = () => {
           <ProductLogo type="InField" />
         </LogoWrapper>
         <div>
-          <h3>InField</h3>
-          <p>Create and execute field operations</p>
+          <h3>{t('INFIELD_APP_TITLE')}</h3>
+          <p>{t('INFIELD_APP_SUBTITLE')}</p>
         </div>
       </AppSelectorItem>
       <AppSelectorItem onClick={navigate('/maintain')}>
@@ -54,8 +57,8 @@ export const AppSelector = () => {
           <ProductLogo type="Maintain" />
         </LogoWrapper>
         <div>
-          <h3>Maintain</h3>
-          <p>Plan and optimise asset maintenance</p>
+          <h3>{t('MAINTAIN_APP_TITLE')}</h3>
+          <p>{t('MAINTAIN_APP_SUBTITLE')}</p>
         </div>
       </AppSelectorItem>
       <AppSelectorItem onClick={navigate('/inrobot')}>
@@ -63,8 +66,8 @@ export const AppSelector = () => {
           <ProductLogo type="Remote" />
         </LogoWrapper>
         <div>
-          <h3>InRobot</h3>
-          <p>Configure and operate robots at your asset</p>
+          <h3>{t('INROBOT_APP_TITLE')}</h3>
+          <p>{t('INROBOT_APP_SUBTITLE')}</p>
         </div>
       </AppSelectorItem>
       <AppSelectorItem onClick={navigate('https://fusion.cognite.com')}>
@@ -72,8 +75,8 @@ export const AppSelector = () => {
           <ProductLogo type="CDF" />
         </LogoWrapper>
         <div>
-          <h3>DataOps</h3>
-          <p>Data management platform</p>
+          <h3>{t('DATA_OPS_APP_TITLE')}</h3>
+          <p>{t('DATA_OPS_APP_SUBTITLE')}</p>
         </div>
       </AppSelectorItem>
     </AppSelectorWrapper>
