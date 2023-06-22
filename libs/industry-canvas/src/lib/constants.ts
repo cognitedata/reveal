@@ -84,6 +84,9 @@ export const LINE_STROKE_WIDTH = {
   MEDIUM: 6,
   LARGE: 10,
 };
+export const MIN_STROKE_WIDTH = 1;
+export const MAX_STROKE_WIDTH = 50;
+export const LINE_DASH_ARRAY = [10, 10];
 
 // TODO: These timeouts can be removed when we implement the appropriate event in UFV: https://cognitedata.atlassian.net/browse/UFV-587
 export const SHAMEFUL_WAIT_TO_ENSURE_ANNOTATIONS_ARE_RENDERED_MS = 100;

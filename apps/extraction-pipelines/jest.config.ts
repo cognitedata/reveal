@@ -1,0 +1,20 @@
+// List esm only packages that're used in tests
+const esmPackages = ['react-markdown'].join('|');
+
+export default {
+  displayName: 'extraction-pipelines',
+  preset: '../../jest.preset.js',
+  transform: {
+    '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': '@nrwl/react/plugins/jest',
+    '^.+\\.[tj]sx?$': ['babel-jest', { presets: ['@nrwl/react/babel'] }],
+  },
+  transformIgnorePatterns: [`../../node_modules/(?!${esmPackages})`],
+  moduleNameMapper: {
+    '\\.(css|less)$': 'identity-obj-proxy',
+  },
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
+  coverageDirectory: '../../coverage/apps/extraction-pipelines',
+  setupFilesAfterEnv: ['./src/setupTests.ts'],
+  collectCoverage: true,
+  collectCoverageFrom: ['./src/app/**/*.{ts,tsx}'],
+};
