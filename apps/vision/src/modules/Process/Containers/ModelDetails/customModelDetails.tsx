@@ -161,9 +161,11 @@ const Content = (modelIndex: number, customModels?: AutoMLModelCore[]) => {
                       wrapped
                       content="Select which model to perform prediction with"
                     >
-                      <div style={{ marginLeft: '11px' }}>
-                        <Icon type="HelpFilled" aria-label="HelperIcon" />
-                      </div>
+                      <Icon
+                        css={{ marginLeft: '11px' }}
+                        type="HelpFilled"
+                        aria-label="HelperIcon"
+                      />
                     </Tooltip>
                   </td>
                   <th>
@@ -201,9 +203,7 @@ const Content = (modelIndex: number, customModels?: AutoMLModelCore[]) => {
                       wrapped
                       content="Threshold for minimum confidence the model has on a detected object"
                     >
-                      <div style={{ marginLeft: '11px' }}>
-                        <Icon type="HelpFilled" />
-                      </div>
+                      <Icon css={{ marginLeft: '11px' }} type="HelpFilled" />
                     </Tooltip>
                   </td>
                   <th>
