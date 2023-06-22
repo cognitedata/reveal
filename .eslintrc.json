@@ -42,7 +42,8 @@
               "@platypus-core",
               "@cognite/platypus-cdf-cli",
               "@cognite/data-exploration",
-              "@entity-matching-app"
+              "@entity-matching-app",
+              "@data-catalog-app"
             ],
             "depConstraints": [
               {

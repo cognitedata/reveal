@@ -3,16 +3,18 @@ import { useMemo, useState } from 'react';
 
 import { ApplyButton, Menu, MenuHeader, Select } from '../../components';
 import { Field, FieldValue, Operator, ValueType } from '../../types';
+import { isNoInputOperator } from '../../utils';
 
 import { CommonFilterInput } from './CommonFilterInput';
 import {
-  getConfig,
   getInitialOperator,
-  getInitialValue,
+  getInputType,
+  getOperators,
   isApplyButtonDisabled,
 } from './utils';
 
 export interface CommonFilterProps {
+  dataType: string;
   field: Field;
   value?: FieldValue;
   onBackClick: () => void;
@@ -20,54 +22,70 @@ export interface CommonFilterProps {
 }
 
 export const CommonFilter: React.FC<CommonFilterProps> = ({
+  dataType,
   field,
   value: fieldValue,
   onBackClick,
   onApplyClick,
 }) => {
-  const config = useMemo(() => {
-    return getConfig(field);
-  }, [field]);
-
   const operators = useMemo(() => {
-    return Object.keys(config) as Operator[];
-  }, [config]);
+    return getOperators(field);
+  }, [field]);
 
   const [operator, setOperator] = useState<Operator>(
     getInitialOperator(operators, fieldValue)
   );
 
-  const [value, setValue] = useState<ValueType | undefined>(
-    getInitialValue(operators, fieldValue)
-  );
+  const [value, setValue] = useState<ValueType | undefined>(fieldValue?.value);
 
-  const inputType = config[operator] || 'no-input';
+  const inputType = useMemo(() => {
+    return getInputType(field.type, operator);
+  }, [field.type, operator]);
+
+  const applyButtonDisabled = isApplyButtonDisabled(inputType, value);
 
   const handleChangeOperator = (newOperator: Operator) => {
     setOperator(newOperator);
 
-    const newInputType = config[newOperator];
-    if (inputType !== newInputType) {
+    const newInputType = getInputType(field.type, operator);
+    if (inputType !== newInputType || isNoInputOperator(newOperator)) {
       setValue(undefined);
     }
   };
 
+  const handleApplyClick = () => {
+    onApplyClick(operator, value!);
+  };
+
+  const handleEnterPress = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (!applyButtonDisabled && (e.key === 'Enter' || e.keyCode === 13)) {
+      (e.target as any).blur();
+      handleApplyClick();
+    }
+  };
+
   return (
-    <Menu>
-      <MenuHeader title={field.name} onBackClick={onBackClick} />
+    <div onKeyUp={handleEnterPress}>
+      <Menu>
+        <MenuHeader
+          title={field.name}
+          subtitle={dataType}
+          onBackClick={onBackClick}
+        />
 
-      <Select<Operator>
-        options={operators}
-        value={operator}
-        onChange={handleChangeOperator}
-      />
+        <Select<Operator>
+          options={operators}
+          value={operator}
+          onChange={handleChangeOperator}
+        />
 
-      <CommonFilterInput type={inputType} value={value} onChange={setValue} />
+        <CommonFilterInput type={inputType} value={value} onChange={setValue} />
 
-      <ApplyButton
-        disabled={isApplyButtonDisabled(inputType, value)}
-        onClick={() => onApplyClick(operator, value!)}
-      />
-    </Menu>
+        <ApplyButton
+          disabled={applyButtonDisabled}
+          onClick={handleApplyClick}
+        />
+      </Menu>
+    </div>
   );
 };

@@ -1,1 +1,1 @@
-export * from './DataQualityOverview';
+export * from './DataQualityOverview/DataQualityOverview';

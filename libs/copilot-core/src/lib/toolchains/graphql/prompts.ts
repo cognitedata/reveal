@@ -11,8 +11,8 @@ For each type, there is a query:
 - "search<Type>" to search for elements
 - "get<Type>ById" to retrieve a specific element.
 
-For the given {prompt}, suggest GraphQL types that are most likely relevant for the prompt. \
-The suggested types must only be from {types}. Ensure the response can be parsed as JSON. \
+For the given {input}, suggest GraphQL types that are most likely relevant for the prompt. \
+The suggested types must only be from types. Ensure the response can be parsed as JSON. \
 No text, description or anything else. Format your response as follows: 
 
 {{
@@ -27,7 +27,7 @@ You have the following GraphQL types:
 {relevantTypes}
 
 
-Your task is to generate a valid GraphQl query given a user {prompt} that follows the schemas rules and examples described below: 
+Your task is to generate a valid GraphQl query given a user {input} that follows the schemas rules and examples described below: 
 
 
 Rules:

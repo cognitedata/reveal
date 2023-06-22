@@ -28,18 +28,18 @@ import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { getSearchParams } from '@data-exploration-app/utils/URLUtils';
 
 import {
-  useBreakJourneyPromptToggle,
   useJourneyLength,
   usePushJourney,
-} from '../../hooks/detailsNavigation';
-import {
   useFlagOverlayNavigation,
   useFlagAdvancedFilters,
-} from '../../hooks/flags';
+  useFlagDocumentsApiEnabled,
+  useBreakJourneyPromptState,
+} from '../../hooks';
 
 export const AllTab = () => {
   const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
   const isDetailsOverlayEnabled = useFlagOverlayNavigation();
+  const isDocumentsApiEnabled = useFlagDocumentsApiEnabled();
   const [commonFilters] = useCommonFilters();
   const [query] = useQueryString(SEARCH_KEY);
   const [_, setCurrentResourceType] = useCurrentResourceType();
@@ -49,7 +49,7 @@ export const AllTab = () => {
   const search = getSearchParams(location.search);
   const [pushJourney] = usePushJourney();
   const [journeyLength] = useJourneyLength();
-  const [, setPromptOpen] = useBreakJourneyPromptToggle();
+  const [, setPromptOpen] = useBreakJourneyPromptState();
 
   const handleAllResultsClick = (type: ResourceType) => {
     trackUsage(EXPLORATION.CLICK.ALL_RESULTS, { resourceType: type });
@@ -114,7 +114,7 @@ export const AllTab = () => {
             )
           }
         />
-        {isAdvancedFiltersEnabled ? (
+        {isDocumentsApiEnabled ? (
           <DocumentSummary
             filter={commonFilters}
             query={query}

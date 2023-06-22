@@ -2,7 +2,21 @@ import styled from 'styled-components';
 
 import { Icon } from '@cognite/cogs.js';
 
-export const NoAccessPage = (): JSX.Element => (
+import { IndustryCanvasService } from '../services/IndustryCanvasService';
+
+type NoAccessPageProps = {
+  hasDataModelReadAcl?: boolean;
+  hasDataModelInstancesReadAcl?: boolean;
+  hasDataModelInstancesWrite?: boolean;
+  isUserProfileApiActivated?: boolean;
+};
+
+export const NoAccessPage: React.FC<NoAccessPageProps> = ({
+  hasDataModelInstancesReadAcl,
+  hasDataModelInstancesWrite,
+  hasDataModelReadAcl,
+  isUserProfileApiActivated,
+}) => (
   <NoAccessContent>
     <Warning>
       <Icon type="WarningFilled" />
@@ -17,19 +31,78 @@ export const NoAccessPage = (): JSX.Element => (
     <AccessInfo className="z-4">
       <p>
         To use Industry Canvas, <strong>User Profiles</strong> must be activated
-        for your project, and you will need read and write capabilities for the
-        following Access Control Lists (ACLs):
+        for your project, and you will need capabilities the Access Control
+        Lists (ACLs) listed below. Please ask your IT admin to help you with
+        this.
       </p>
       <ul>
         <li style={{ marginBottom: 5, marginTop: 5 }}>
-          <strong>dataModelsAcl:READ</strong> – Access to data models
+          <strong>datamodels:read</strong> – Access to read data models.
+          <ul>
+            <li>
+              Required scopes:{' '}
+              <samp>
+                [{IndustryCanvasService.INSTANCE_SPACE},{' '}
+                {IndustryCanvasService.SYSTEM_SPACE}]
+              </samp>
+            </li>
+          </ul>
         </li>
         <li>
-          <strong>dataModelInstancesAcl</strong> – Access to data model
-          instances
+          <strong>datamodelinstances:read</strong> – Access to read data model
+          instances.
+          <ul>
+            <li>
+              Required scopes:{' '}
+              <samp>
+                [{IndustryCanvasService.INSTANCE_SPACE},{' '}
+                {IndustryCanvasService.SYSTEM_SPACE}]
+              </samp>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <strong>datamodelinstances:write</strong> – Access to write data model
+          instances.
+          <ul>
+            <li>
+              Required scopes:{' '}
+              <samp>
+                [{IndustryCanvasService.INSTANCE_SPACE},{' '}
+                {IndustryCanvasService.SYSTEM_SPACE}]
+              </samp>
+            </li>
+          </ul>
         </li>
       </ul>
     </AccessInfo>
+
+    <Instructions>
+      The following capabilities and features are missing and need to be
+      activated:
+      <ul>
+        {isUserProfileApiActivated === false && (
+          <li>
+            <strong>User Profiles API</strong> is not enabled.
+          </li>
+        )}
+        {hasDataModelReadAcl === false && (
+          <li>
+            <strong>datamodels:read</strong>
+          </li>
+        )}
+        {hasDataModelInstancesReadAcl === false && (
+          <li>
+            <strong>datamodelinstances:read</strong>
+          </li>
+        )}
+        {hasDataModelInstancesWrite === false && (
+          <li>
+            <strong>datamodelinstances:write</strong>
+          </li>
+        )}
+      </ul>
+    </Instructions>
   </NoAccessContent>
 );
 

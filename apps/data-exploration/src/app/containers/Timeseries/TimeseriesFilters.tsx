@@ -1,8 +1,9 @@
 import React from 'react';
 
+import { MetadataFilterV2 } from '@data-exploration/containers';
 import { AggregatedTimeseriesFilterV2 } from '@data-exploration-components/components/SearchNew';
 
-import { BooleanFilter, MetadataFilterV2 } from '@cognite/data-exploration';
+import { BooleanFilter } from '@cognite/data-exploration';
 
 import { SPECIFIC_INFO_CONTENT } from '@data-exploration-app/containers/constants';
 import { TempMultiSelectFix } from '@data-exploration-app/containers/elements';
@@ -23,7 +24,7 @@ import { BaseFilterCollapse } from '../../components/Collapse/BaseFilterCollapse
 export const TimeseriesFilters = ({ ...rest }) => {
   const [timeseriesFilter, setTimeseriesFilter] = useTimeseriesFilters();
   const resetTimeseriesFilters = useResetTimeseriesFilters();
-  const isFiltersEmpty = useFilterEmptyState('timeseries');
+  const isFiltersEmpty = useFilterEmptyState('timeSeries');
   const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
 
   const { data: metadataKeys = [] } = useTimeseriesMetadataKeysAggregateQuery();

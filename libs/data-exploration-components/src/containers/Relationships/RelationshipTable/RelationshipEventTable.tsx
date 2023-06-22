@@ -5,8 +5,10 @@ import {
   ResourceTableColumns,
   Table,
 } from '@data-exploration/components';
-import { EventWithRelationshipLabels } from '@data-exploration/containers';
-import { ResultCount } from '@data-exploration-components/components/ResultCount/ResultCount';
+import {
+  EventWithRelationshipLabels,
+  ResultCount,
+} from '@data-exploration/containers';
 import {
   useRelatedResourceResults,
   useRelationshipCount,

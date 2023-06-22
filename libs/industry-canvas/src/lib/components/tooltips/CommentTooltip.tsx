@@ -30,12 +30,9 @@ import {
 import { useCommentDeleteMutation } from '../../hooks/use-mutation/useCommentDeleteMutation';
 import { useCommentSaveMutation } from '../../hooks/use-mutation/useCommentSaveMutation';
 import { useGetCommentByIdQuery } from '../../hooks/use-query/useGetCommentByIdQuery';
-import {
-  useUserProfile,
-  UserProfile,
-} from '../../hooks/use-query/useUserProfile';
 import { useUsers } from '../../hooks/use-query/useUsers';
 import { Comment, CommentAnnotation } from '../../types';
+import { UserProfile, useUserProfile } from '../../UserProfileProvider';
 // match alphanumeric and "." and break on spaces since an "@" character
 const UserTagRegex = /(@\w+(?:\.\w+)+)+(?!\w)/g;
 
@@ -295,9 +292,9 @@ export const CommentTooltipCore: React.FC<{
 export const CommentTooltip: React.FC<{ comment: CommentAnnotation }> = ({
   comment: { id: commentExternalId },
 }) => {
-  const { data: profile = { userIdentifier: undefined } } = useUserProfile();
-
-  const { userIdentifier } = profile;
+  const {
+    userProfile: { userIdentifier },
+  } = useUserProfile();
 
   const { data: comment } = useGetCommentByIdQuery(commentExternalId);
 
@@ -307,8 +304,6 @@ export const CommentTooltip: React.FC<{ comment: CommentAnnotation }> = ({
   const { data: users = [] } = useUsers();
 
   // if someone else's draft ignore!
-
-  console.log(comment);
   if (
     comment === undefined ||
     (comment.subComments.length === 0 && comment.author !== userIdentifier)

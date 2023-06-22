@@ -8,8 +8,13 @@ import { FDMContainerReference } from './types';
 export const fdmContainerReferenceToContainerReference = (
   fdmContainerRef: FDMContainerReference
 ): ContainerReference => {
-  const { type, resourceId, resourceSubId, properties, ...commonProps } =
-    fdmContainerRef;
+  const {
+    containerReferenceType,
+    resourceId,
+    resourceSubId,
+    properties,
+    ...commonProps
+  } = fdmContainerRef;
   // Filter out null values from commonProps
   const filteredCommonProps = pickBy(commonProps, (val) => val !== null);
 
@@ -17,7 +22,7 @@ export const fdmContainerReferenceToContainerReference = (
     throw new Error('resourceId cannot be undefined');
   }
 
-  if (type === ContainerReferenceType.FILE) {
+  if (containerReferenceType === ContainerReferenceType.FILE) {
     return {
       ...filteredCommonProps,
       type: ContainerReferenceType.FILE,
@@ -26,7 +31,7 @@ export const fdmContainerReferenceToContainerReference = (
     };
   }
 
-  if (type === ContainerReferenceType.TIMESERIES) {
+  if (containerReferenceType === ContainerReferenceType.TIMESERIES) {
     return {
       ...filteredCommonProps,
       type: ContainerReferenceType.TIMESERIES,
@@ -36,7 +41,7 @@ export const fdmContainerReferenceToContainerReference = (
     };
   }
 
-  if (type === ContainerReferenceType.THREE_D) {
+  if (containerReferenceType === ContainerReferenceType.THREE_D) {
     if (resourceSubId === undefined || resourceSubId === null) {
       throw new Error(
         'resourceSubId cannot be undefined for threeD containers'
@@ -53,11 +58,14 @@ export const fdmContainerReferenceToContainerReference = (
   }
 
   if (
-    type === ContainerReferenceType.EVENT ||
-    type === ContainerReferenceType.ASSET
+    containerReferenceType === ContainerReferenceType.EVENT ||
+    containerReferenceType === ContainerReferenceType.ASSET
   ) {
-    return { ...filteredCommonProps, type, resourceId };
+    return { ...filteredCommonProps, type: containerReferenceType, resourceId };
   }
 
-  assertNever(type, `Unknown container reference type '${type}' was provided`);
+  assertNever(
+    containerReferenceType,
+    `Unknown container reference type '${containerReferenceType}' was provided`
+  );
 };

@@ -346,14 +346,14 @@ paths:
         "400":
           $ref: "#/components/responses/ErrorResponse"
 
-  "/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/validate":
+  "/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/validation/run":
     post:
       tags:
       - Validation
       summary: Start a validation job for a data source.
       description: >-
         A validation job will be started on the current data source and all its rules.
-      operationId: validateDataSource
+      operationId: dataSourceValidation
       parameters:
       - $ref: "#/components/parameters/project"
       - $ref: "#/components/parameters/dataSourceId"

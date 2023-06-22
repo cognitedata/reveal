@@ -2,9 +2,12 @@ import React from 'react';
 
 import { noop } from 'lodash';
 
-import { Menu } from '@cognite/cogs.js';
+import { Button, Tooltip } from '@cognite/cogs.js';
 
 import { useDetailedMappingsByAssetIdQuery } from '@data-exploration-lib/domain-layer';
+
+import { translationKeys } from '../../../common';
+import { useTranslation } from '../../../hooks/useTranslation';
 
 type ThreeDButtonProps = {
   assetId: number;
@@ -23,15 +26,12 @@ const ThreeDButton: React.FC<ThreeDButtonProps> = ({
   assetId,
   onAddThreeD,
 }) => {
+  const { t } = useTranslation();
   const { data: mappings, isInitialLoading } =
     useDetailedMappingsByAssetIdQuery(assetId);
 
   if (isInitialLoading) {
-    return (
-      <Menu.Item icon="Loader" onClick={noop} iconPlacement="left">
-        Loading
-      </Menu.Item>
-    );
+    return <Button icon="Loader" onClick={noop} inverted />;
   }
 
   if (mappings === undefined || mappings.length === 0) {
@@ -48,9 +48,14 @@ const ThreeDButton: React.FC<ThreeDButtonProps> = ({
   };
 
   return (
-    <Menu.Item icon="Cube" onClick={onClick} iconPlacement="left">
-      Show in 3D
-    </Menu.Item>
+    <Tooltip
+      content={t(
+        translationKeys.TOOLTIP_THREE_D_MODEL_ADD_TO_CANVAS,
+        'Add 3D model to canvas'
+      )}
+    >
+      <Button icon="Cube" onClick={onClick} inverted />
+    </Tooltip>
   );
 };
 

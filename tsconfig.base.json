@@ -21,6 +21,12 @@
     "noFallthroughCasesInSwitch": true,
     "baseUrl": ".",
     "paths": {
+      "@3d-management/*": [
+        "apps/3d-management/src/*"
+      ],
+      "@access-management/*": [
+        "apps/access-management/src/*"
+      ],
       "@cognite/cdf-route-tracker": [
         "libs/shared/cdf-route-tracker/src/index.ts"
       ],
@@ -57,6 +63,9 @@
       "@cognite/plotting-components": [
         "libs/shared/plotting-components/src/index.ts"
       ],
+      "@cognite/user-profile-components": [
+        "libs/shared/user-profile-components/src/index.ts"
+      ],
       "@cognite/sdk-react-query-hooks": [
         "libs/shared/cdf-sdk-react-query-hooks/src/index.ts"
       ],
@@ -81,6 +90,12 @@
       "@data-quality/*": [
         "apps/platypus/src/app/modules/solution/data-quality/*"
       ],
+      "@extraction-pipelines/*": [
+        "apps/extraction-pipelines/src/*"
+      ],
+      "@transformations/*": [
+        "apps/transformations/src/*"
+      ],
       "@flexible-data-explorer/*": [
         "apps/flexible-data-explorer/src/*"
       ],
@@ -95,6 +110,9 @@
       ],
       "@fusion/industry-canvas": [
         "libs/industry-canvas/src/index.ts"
+      ],
+      "@industry-canvas-ui/*": [
+        "apps/industry-canvas-ui/src/*"
       ],
       "@fusion/mock-data": [
         "libs/shared/mock-data/src/index.ts"
@@ -118,6 +136,12 @@
       "@entity-matching-app/*": [
         "apps/entity-matching/src/app/*",
       ],
+      "@raw-explorer/*": [
+        "apps/raw-explorer/src/*"
+      ],
+      "@data-catalog-app/*": [
+        "apps/data-catalog/src/app/*"
+      ]
     }
   },
   "exclude": [

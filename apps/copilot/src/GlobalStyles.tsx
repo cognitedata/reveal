@@ -5,6 +5,7 @@ import React from 'react';
 import botui from '@botui/react/default-theme';
 import highlight from 'highlight.js/styles/dracula.css';
 import monacoStyles from 'monaco-editor/dev/vs/editor/editor.main.css';
+import reactResizableStyles from 'react-resizable/css/styles.css';
 
 import { useGlobalStyles } from '@cognite/cdf-utilities';
 import {
@@ -46,6 +47,7 @@ export default function GlobalStyles(props: { children: React.ReactNode }) {
     botui,
     highlight,
     monacoStyles,
+    reactResizableStyles,
   ]);
 
   if (!isStyleLoaded) {

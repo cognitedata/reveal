@@ -1,8 +1,10 @@
 import React, { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 import { Loader, Metadata } from '@data-exploration/components';
 import { SequenceInfo } from '@data-exploration/containers';
 
+import { useCdfUserHistoryService } from '@cognite/cdf-utilities';
 import { Tabs } from '@cognite/cogs.js';
 import {
   SequencePreview as SequenceTabPreview,
@@ -20,6 +22,7 @@ import {
   useResourceDetailSelectedTab,
 } from '@data-exploration-app/hooks';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
+import { SUB_APP_PATH, createInternalLink } from '@data-exploration-lib/core';
 
 // SequencePreviewType;
 // - details
@@ -42,6 +45,9 @@ export const SequenceDetail = ({
 
   const activeTab = selectedTab || 'preview';
 
+  const { pathname, search: searchParams } = useLocation();
+  const userHistoryService = useCdfUserHistoryService();
+
   const handlePreviewClose = () => {
     endJourney();
   };
@@ -56,11 +62,23 @@ export const SequenceDetail = ({
 
   const {
     data: sequence,
-    isFetched,
+    isFetched: isSequenceFetched,
     error,
   } = useCdfItem<Sequence>('sequences', { id: sequenceId });
 
-  if (!isFetched) {
+  useEffect(() => {
+    if (isSequenceFetched && sequence) {
+      // save Sequence preview as view resource in user history
+      if (sequence?.name)
+        userHistoryService.logNewResourceView({
+          application: SUB_APP_PATH,
+          name: sequence?.name,
+          path: createInternalLink(pathname, searchParams),
+        });
+    }
+  }, [isSequenceFetched, sequence]);
+
+  if (!isSequenceFetched) {
     return <Loader />;
   }
 

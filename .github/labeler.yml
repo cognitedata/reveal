@@ -27,6 +27,21 @@ contextualization:
   - libs/contextualization/*
   - libs/contextualization/**/*
 
+3d-management:
+  - apps/3d-management/*
+  - apps/3d-management/**/*
+
 cdf-document-search:
   - apps/cdf-document-search/*
   - apps/cdf-document-search/**/*
+
+interactive-diagrams:
+  - apps/interactive-diagrams/*
+  - apps/interactive-diagrams/**/*
+
+extraction-pipelines:
+  - apps/extraction-pipelines/*
+  - apps/extraction-pipelines/**/*
+
+design-system:
+  - libs/shared/user-profile-components/**/*

@@ -5,11 +5,18 @@
 static final String[] APPLICATIONS = [
   'platypus',
   'data-exploration',
+  'data-catalog',
+  'raw-explorer',
   'coding-conventions',
   'copilot',
   'industry-canvas-ui',
+  'interactive-diagrams',
   'iot-hub',
-  'cdf-document-search'
+  '3d-management',
+  'transformations',
+  'cdf-document-search',
+  'extraction-pipelines',
+  'extractor-downloads',
 ]
 
 /*
@@ -17,29 +24,44 @@ static final String[] APPLICATIONS = [
   the version in the package.json file of your package.
 */
 static final Map<String, String> NPM_PACKAGES = [
-  'shared-plotting-components': "dist/libs/shared/plotting-components"
+  'shared-plotting-components': "dist/libs/shared/plotting-components",
+  'user-profile-components': "dist/libs/shared/user-profile-components"
 ]
 
 // This is the Firebase site mapping.
-// See https://github.com/cognitedata/terraform/blob/master/cognitedata-production/gcp_firebase_hosting/sites.tf
+// See https://github.com/cognitedata/terraform/blob/master/cognitedata-production/gcp_fusion_firebase_hosting/sites.tf
 static final Map<String, String> FIREBASE_APP_SITES = [
   'platypus': 'platypus',
   'data-exploration': 'data-exploration',
+  'data-catalog': 'data-catalog',
+  'raw-explorer': 'raw-explorer',
   'coding-conventions': 'coding-conventions',
   'copilot': 'copilot',
   'industry-canvas-ui': 'industry-canvas-ui',
+  'interactive-diagrams': 'pnid-contextualization',
   'iot-hub': 'iot-hub',
-  'cdf-document-search': 'document-search'
+  '3d-management': '3d-management',
+  'transformations': 'transformations',
+  'cdf-document-search': 'document-search',
+  'extraction-pipelines': 'extraction-pipelines',
+  'extractor-downloads': 'extractor-downloads',
 ]
 
 static final Map<String, String> PREVIEW_PACKAGE_NAMES = [
   'platypus': "@cognite/cdf-solutions-ui",
   'data-exploration': "@cognite/cdf-data-exploration",
+  'data-catalog': "@cognite/cdf-data-catalog",
+  'raw-explorer': "@cognite/cdf-raw-explorer",
   'coding-conventions': "@cognite/cdf-coding-conventions",
   'copilot': "@cognite/cdf-copilot",
   'industry-canvas-ui': "@cognite/cdf-industry-canvas-ui",
+  'interactive-diagrams': '@cognite/cdf-context-ui-pnid',
   'iot-hub': "@cognite/cdf-iot-hub",
-  'cdf-document-search': 'cognite/cdf-document-search-ui'
+  '3d-management': '@cognite/cdf-3d-management',
+  'transformations': "@cognite/cdf-transformations-2",
+  'cdf-document-search': '@cognite/cdf-document-search-ui',
+  'extraction-pipelines': '@cognite/cdf-integrations-ui',
+  'extractor-downloads': '@cognite/cdf-extractor-downloads',
 ]
 
 // Replace this with your app's ID on https://sentry.io/ -- if you do not have
@@ -54,8 +76,10 @@ static final Map<String, String> SENTRY_PROJECT_NAMES = [
 static final String[] PREVIEW_STORYBOOK = [
   'platypus',
   'data-exploration-components-old',
-  'shared-plotting-components'
+  'shared-plotting-components',
 ]
+  // '3d-management',
+  // Should be added after monorepo storybook version is upgraded to v7.
 
 // The Sentry DSN is the URL used to report issues into Sentry. This can be
 // found on your Sentry's project page, or by going here:
@@ -97,9 +121,21 @@ static final Map<String, String> VERSIONING_STRATEGY = [
   'platypus': 'multi-branch',
   'coding-conventions': 'multi-branch',
   'data-exploration': 'multi-branch',
+  'data-catalog': 'multi-branch',
+  'raw-explorer': 'single-branch',
+  '3d-management': 'single-branch',
+  'transformations': 'single-branch',
   'copilot': 'single-branch',
   'iot-hub': 'single-branch',
+  'interactive-diagrams': 'multi-branch',
   'cdf-document-search': 'single-branch',
+  'extraction-pipelines': 'single-branch',
+  'extractor-downloads': 'single-branch',
+]
+
+// The config of which apps have i18n strings that need to be synced to and pulled from locize.io
+static final String[] I18N_APPLICATIONS = [
+  'platypus'
 ]
 
 // == End of customization. Everything below here is common. == \\
@@ -172,7 +208,7 @@ def getAffectedLibs(boolean isMaster = false){
 
   print "[AFFECTED:NX] Affected libraries: ${affected}";
 
-  return affected.split(",");
+  return affected.replaceAll('[\r\n]+', '').split(', ');
 }
 
 
@@ -448,12 +484,12 @@ pods {
                 )
               }
 
-              if(project == "platypus"){
+              if(I18N_APPLICATIONS.contains(project)){
                 stageWithNotify('Save missing keys to locize') {
-                  sh("yarn i18n-push")
+                  sh("yarn i18n-push ${project}")
                 }
                 stageWithNotify('Remove deleted keys from locize') {
-                  sh("yarn i18n-remove-deleted")
+                  sh("yarn i18n-remove-deleted ${project}")
                 }
               }
             }

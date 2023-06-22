@@ -1,63 +1,71 @@
-import { useContext } from 'react';
+import { createContext, useContext } from 'react';
 
 import styled from 'styled-components';
 
-import { Colors, Icon } from '@cognite/cogs.js';
-import { usePermissions } from '@cognite/sdk-react-query-hooks';
+import { useQuery } from '@tanstack/react-query';
 
-import { AppContext } from '@data-exploration-lib/core';
+import { Colors, Icon } from '@cognite/cogs.js';
+import { CogniteClient, HttpError } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
 
 import { NoAccessPage } from './components/NoAccessPage';
-import {
-  UserProfileContext,
-  useUserProfile,
-} from './hooks/use-query/useUserProfile';
+import { QueryKeys } from './constants';
+
+export type UserProfile = {
+  userIdentifier: string;
+  lastUpdatedTime: number;
+  givenName?: string;
+  surname?: string;
+  email?: string;
+  displayName?: string;
+  jobTitle?: string;
+};
+
+const getUserProfile = async (client: CogniteClient): Promise<UserProfile> => {
+  const response = await client.get<UserProfile>(
+    `/api/v1/projects/${client.project}/profiles/me`
+  );
+  return response.data;
+};
+
+const useUserProfileQuery = () => {
+  const sdk = useSDK();
+  return useQuery<UserProfile, HttpError>(
+    [QueryKeys.USER_PROFILE],
+    async () => await getUserProfile(sdk),
+    {
+      retry: (failureCount: number, error: HttpError): boolean => {
+        // Retry iff we do *not* get a 403. That is if, and only if,
+        // we do have access to the Profiles API
+        return error.status !== 403;
+      },
+    }
+  );
+};
+
+type UserProfileContextType = {
+  userProfile: UserProfile;
+};
+
+const UserProfileContext = createContext<UserProfileContextType>({
+  userProfile: {
+    userIdentifier: '',
+    lastUpdatedTime: Date.now(),
+  },
+});
 
 export const UserProfileProvider = ({
   children,
 }: {
   children: JSX.Element;
 }) => {
-  const context = useContext(AppContext);
-  const {
-    data: hasDataModelInstancesReadAcl,
-    isLoading: isLoadingHasDataModelInstancesReadAcl,
-  } = usePermissions(
-    context?.flow as any,
-    'dataModelInstancesAcl',
-    'READ',
-    undefined,
-    { enabled: !!context?.flow }
-  );
-
-  const {
-    data: hasDataModelInstancesWriteAcl,
-    isLoading: isLoadingHasDataModelInstancesWriteAcl,
-  } = usePermissions(
-    context?.flow as any,
-    'dataModelInstancesAcl',
-    'WRITE',
-    undefined,
-    { enabled: !!context?.flow }
-  );
-
-  const { data: hasDataModelReadAcl, isLoading: isLoadingHasDataModelReadAcl } =
-    usePermissions(context?.flow as any, 'dataModelsAcl', 'READ', undefined, {
-      enabled: !!context?.flow,
-    });
-
   const {
     data: userProfile,
     isLoading: isLoadingUserProfile,
     error: userProfileError,
-  } = useUserProfile();
+  } = useUserProfileQuery();
 
-  if (
-    isLoadingHasDataModelInstancesReadAcl ||
-    isLoadingHasDataModelInstancesWriteAcl ||
-    isLoadingHasDataModelReadAcl ||
-    isLoadingUserProfile
-  ) {
+  if (isLoadingUserProfile) {
     return (
       <LoaderWrapper>
         <Icon type="Loader" />
@@ -65,18 +73,14 @@ export const UserProfileProvider = ({
     );
   }
 
-  const doesNotHaveUserProfileAccess = userProfileError?.status === 403;
-  if (
-    !hasDataModelInstancesReadAcl ||
-    !hasDataModelInstancesWriteAcl ||
-    !hasDataModelReadAcl ||
-    doesNotHaveUserProfileAccess
-  ) {
+  if (userProfileError?.status === 403) {
     return <NoAccessPage />;
   }
 
   if (userProfile === undefined) {
-    return <NoAccessPage />;
+    return (
+      <NoAccessPage isUserProfileApiActivated={userProfile !== undefined} />
+    );
   }
 
   return (
@@ -85,6 +89,9 @@ export const UserProfileProvider = ({
     </UserProfileContext.Provider>
   );
 };
+
+export const useUserProfile = (): UserProfileContextType =>
+  useContext(UserProfileContext);
 
 const LoaderWrapper = styled.div`
   height: 100%;

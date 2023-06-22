@@ -3,8 +3,8 @@ import { AuthProvider } from '@cognite/auth-react';
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
 
 import App from './app/App';
-import { translations } from './common';
-import { AuthProvider as InternalAuthProvider } from './common/auth/AuthProvider';
+import { translations } from './app/common';
+import { AuthProvider as InternalAuthProvider } from './app/common/auth/AuthProvider';
 import GlobalStyles from './GlobalStyles';
 import GlobalStyle from './utils/globalStyles';
 

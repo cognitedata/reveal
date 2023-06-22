@@ -1,3 +1,8 @@
+import {
+  AggregatedFilterV2,
+  LabelFilterV2,
+  MetadataFilterV2,
+} from '@data-exploration/containers';
 import head from 'lodash/head';
 
 import { useList } from '@cognite/sdk-react-query-hooks';
@@ -9,10 +14,7 @@ import {
   transformNewFilterToOldFilter,
 } from '@data-exploration-lib/domain-layer';
 
-import { AggregatedFilterV2 } from './AggregatedFilter/AggregatedFilter';
 import { BaseFilterCollapse } from './BaseFilterCollapse/BaseFilterCollapse';
-import { LabelFilterV2 } from './LabelFilter/LabelFilter';
-import { MetadataFilterV2 } from './MetadataFilter/MetadataFilter';
 
 // TODO(CDFUX-000) allow customization of ordering of filters via props
 export const AssetFiltersV2 = ({

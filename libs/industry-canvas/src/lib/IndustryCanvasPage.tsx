@@ -10,7 +10,6 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { ResourceSelector } from '@data-exploration/containers';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { v4 as uuid } from 'uuid';
 
 import { createLink, PageTitle } from '@cognite/cdf-utilities';
@@ -26,7 +25,6 @@ import {
   Chip,
 } from '@cognite/cogs.js';
 import { isNotUndefined, ResourceItem } from '@cognite/data-exploration';
-import { useFlag } from '@cognite/react-feature-flags';
 import { useSDK } from '@cognite/sdk-provider';
 import {
   UnifiedViewer,
@@ -34,14 +32,13 @@ import {
   ZoomToFitMode,
 } from '@cognite/unified-file-viewer';
 
-import { useDialog } from '@data-exploration-lib/core';
-
+import { translationKeys } from './common';
 import CanvasDropdown from './components/CanvasDropdown';
 import { CanvasTitle } from './components/CanvasTitle';
 import DragOverIndicator from './components/DragOverIndicator';
 import IndustryCanvasFileUploadModal from './components/IndustryCanvasFileUploadModal/IndustryCanvasFileUploadModal';
 import {
-  CommentsFeatureFlagKey,
+  MetricEvent,
   SEARCH_QUERY_PARAM_KEY,
   SHAMEFUL_WAIT_TO_ENSURE_CONTAINERS_ARE_RENDERED_MS,
   TOAST_POSITION,
@@ -51,25 +48,25 @@ import { useDragAndDrop } from './hooks/useDragAndDrop';
 import useManagedState from './hooks/useManagedState';
 import useManagedTools from './hooks/useManagedTools';
 import { useQueryParameter } from './hooks/useQueryParameter';
+import { useResourceSelectorActions } from './hooks/useResourceSelectorActions';
 import { useSelectedAnnotationOrContainer } from './hooks/useSelectedAnnotationOrContainer';
+import useTrackCanvasViewed from './hooks/useTrackCanvasViewed';
+import { useTranslation } from './hooks/useTranslation';
 import { IndustryCanvas } from './IndustryCanvas';
-import {
-  IndustryCanvasProvider,
-  useIndustryCanvasContext,
-} from './IndustryCanvasContext';
+import { useIndustryCanvasContext } from './IndustryCanvasContext';
 import {
   ContainerReference,
   ContainerReferenceType,
   IndustryCanvasToolType,
   isCommentAnnotation,
 } from './types';
-import { UserProfileProvider } from './UserProfileProvider';
 import {
   DEFAULT_CONTAINER_MAX_HEIGHT,
   DEFAULT_CONTAINER_MAX_WIDTH,
 } from './utils/addDimensionsToContainerReference';
 import isSupportedResourceItem from './utils/isSupportedResourceItem';
 import resourceItemToContainerReference from './utils/resourceItemToContainerReference';
+import useMetrics from './utils/tracking/useMetrics';
 import useManagedTool from './utils/useManagedTool';
 import { zoomToFitAroundContainerIds } from './utils/zoomToFitAroundContainerIds';
 
@@ -79,18 +76,16 @@ export type OnAddContainerReferences = (
 
 const APPLICATION_ID_INDUSTRY_CANVAS = 'industryCanvas';
 
-const IndustryCanvasPageWithoutQueryClientProvider = () => {
+export const IndustryCanvasPage = () => {
+  const trackUsage = useMetrics();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [unifiedViewerRef, setUnifiedViewerRef] =
     useState<UnifiedViewer | null>(null);
   const [shouldShowConnectionAnnotations, setShouldShowConnectionAnnotations] =
     useState<boolean>(true);
   const [currentZoomScale, setCurrentZoomScale] = useState<number>(1);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
-  const [
-    hasConsumedInitializeWithContainerReferences,
-    setHasConsumedInitializeWithContainerReferences,
-  ] = useState(false);
   const { tool, setTool } = useManagedTool(IndustryCanvasToolType.SELECT);
   const { queryString } = useQueryParameter({ key: SEARCH_QUERY_PARAM_KEY });
 
@@ -110,6 +105,10 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
     initializeWithContainerReferences,
     setCanvasId,
     isCanvasLocked,
+    createInitialCanvas,
+    hasConsumedInitializeWithContainerReferences,
+    setHasConsumedInitializeWithContainerReferences,
+    isCommentsEnabled,
   } = useIndustryCanvasContext();
 
   const {
@@ -132,9 +131,7 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
     tool,
   });
 
-  const { isEnabled: isCommentsEnabled } = useFlag(CommentsFeatureFlagKey, {
-    fallback: false,
-  });
+  useTrackCanvasViewed(activeCanvas);
 
   // if comments is not enabled then return empty, hiding all comments for that project (even if canvas had comments before)
   const commentAnnotations = useMemo(
@@ -149,11 +146,6 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
     }
   }, [isCanvasLocked, setTool, tool]);
 
-  const {
-    isOpen: visibleResourceSelector,
-    open: onResourceSelectorOpen,
-    close: onResourceSelectorClose,
-  } = useDialog();
   const { selectedCanvasAnnotation, selectedContainer } =
     useSelectedAnnotationOrContainer({
       unifiedViewerRef,
@@ -161,6 +153,14 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
       canvasAnnotations,
       container,
     });
+
+  const {
+    onResourceSelectorClose,
+    onResourceSelectorOpen,
+    isResourceSelectorOpen,
+    resourceSelectorFilter,
+    initialSelectedResource,
+  } = useResourceSelectorActions();
 
   const { onUpdateAnnotationStyleByType, toolOptions } = useManagedTools({
     tool,
@@ -175,6 +175,7 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
 
   const onDownloadPress = () => {
     unifiedViewerRef?.exportWorkspaceToPdf();
+    trackUsage(MetricEvent.DOWNLOAD_AS_PDF_CLICKED);
   };
 
   useEffect(() => {
@@ -211,8 +212,18 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
       if (containerReferencesToAdd.length !== containerReferences.length) {
         toast.error(
           <div>
-            <h4>Could not add resource(s) to your canvas</h4>
-            <p>Resource(s) already added to the canvas.</p>
+            <h4>
+              {t(
+                translationKeys.CANVAS_ADD_RESOURCE_ERROR_TITLE,
+                'Could not add resource(s) to your canvas'
+              )}
+            </h4>
+            <p>
+              {t(
+                translationKeys.CANVAS_ADD_RESOURCE_ERROR_MESSAGE,
+                'At least one resource needs to be selected.'
+              )}
+            </p>
           </div>,
           {
             toastId: `canvas-file-already-added-${uuid()}`,
@@ -247,7 +258,12 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
 
       toast.success(
         <div>
-          <h4>Resource(s) added to your canvas</h4>
+          <h4>
+            {t(
+              translationKeys.CANVAS_RESOURCES_ADDED,
+              'Resource(s) added to your canvas'
+            )}
+          </h4>
         </div>,
         {
           toastId: `canvas-file-added-${uuid()}`,
@@ -262,6 +278,7 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
       clickedContainerAnnotation,
       container?.children,
       isCanvasLocked,
+      t,
     ]
   );
 
@@ -290,8 +307,18 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
       if (results === undefined || results.length === 0) {
         toast.error(
           <div>
-            <h4>Could not add resource(s) to your canvas</h4>
-            <p>At least one resource needs to be selected.</p>
+            <h4>
+              {t(
+                translationKeys.CANVAS_ADD_RESOURCE_ERROR_TITLE,
+                'Could not add resource(s) to your canvas'
+              )}
+            </h4>
+            <p>
+              {t(
+                translationKeys.CANVAS_ADD_RESOURCE_ERROR_TITLE,
+                'At least one resource needs to be selected.'
+              )}
+            </p>
           </div>,
           {
             toastId: 'industry-canvas-no-selected-resources-to-add-error',
@@ -321,11 +348,34 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
       onAddContainerReferences(
         supportedResourceItems.map(resourceItemToContainerReference)
       );
+
+      const numberOfResourcesPerType = supportedResourceItems.reduce(
+        (acc, resourceItem) => {
+          const type = resourceItem.type;
+          acc[type] = (acc[type] ?? 0) + 1;
+          return acc;
+        },
+        {} as Record<string, number>
+      );
+      trackUsage(MetricEvent.RESOURCE_SELECTOR_RESOURCES_ADDED, {
+        numberOfResources: supportedResourceItems.length,
+        numberOfResourcesPerType,
+      });
     }
   };
 
   useEffect(() => {
     if (unifiedViewerRef === null) {
+      return;
+    }
+
+    if (
+      activeCanvas?.externalId === undefined &&
+      !isCreatingCanvas &&
+      !hasConsumedInitializeWithContainerReferences &&
+      initializeWithContainerReferences !== undefined
+    ) {
+      createInitialCanvas();
       return;
     }
 
@@ -344,10 +394,13 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
     setHasConsumedInitializeWithContainerReferences(true);
   }, [
     initializeWithContainerReferences,
+    isCreatingCanvas,
     activeCanvas?.externalId,
     unifiedViewerRef,
     hasConsumedInitializeWithContainerReferences,
     onAddContainerReferences,
+    createInitialCanvas,
+    setHasConsumedInitializeWithContainerReferences,
   ]);
 
   useEffect(() => {
@@ -370,9 +423,36 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
     if ((event.ctrlKey || event.metaKey) && event.key === 'z') {
       if (event.shiftKey) {
         redo.fn();
+        trackUsage(MetricEvent.HOTKEYS_USED, {
+          hotkey: 'Ctrl/Cmd + Shift + Z',
+        });
         return;
       }
       undo.fn();
+      trackUsage(MetricEvent.HOTKEYS_USED, {
+        hotkey: 'Ctrl/Cmd + Z',
+      });
+      return;
+    }
+
+    if ((event.ctrlKey || event.metaKey) && event.key === 'f') {
+      trackUsage(MetricEvent.HOTKEYS_USED, {
+        hotkey: 'Ctrl/Cmd + F',
+      });
+      return;
+    }
+
+    if ((event.ctrlKey || event.metaKey) && event.key === 's') {
+      trackUsage(MetricEvent.HOTKEYS_USED, {
+        hotkey: 'Ctrl/Cmd + S',
+      });
+      return;
+    }
+
+    if ((event.ctrlKey || event.metaKey) && event.key === 'a') {
+      trackUsage(MetricEvent.HOTKEYS_USED, {
+        hotkey: 'Ctrl/Cmd + A',
+      });
       return;
     }
 
@@ -397,17 +477,24 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
     <>
       <ResourceSelector
         onSelect={onAddResourcePress}
-        visible={visibleResourceSelector}
+        visible={isResourceSelectorOpen}
         onClose={onResourceSelectorCloseWrapper}
         visibleResourceTabs={['file', 'timeSeries', 'asset', 'event']}
         selectionMode="multiple"
+        initialFilter={resourceSelectorFilter}
+        initialSelectedResource={initialSelectedResource}
+        addButtonText="Add to canvas"
+        shouldShowPreviews={false}
       />
-      <PageTitle title="Industry Canvas" />
+      <PageTitle title="Industrial Canvas" />
       <TitleRowWrapper>
         <PreviewLinkWrapper>
           <Flex alignItems="center">
             <Tooltip
-              content="Go back to Industry Canvas home page"
+              content={t(
+                translationKeys.GO_BACK_HOMEPAGE_BUTTON,
+                'Go back to Industrial Canvas home page'
+              )}
               position="bottom"
             >
               <Button
@@ -444,54 +531,79 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
             <Chip
               type="warning"
               icon="Lock"
-              label="Canvas locked"
+              label={t(translationKeys.CANVAS_LOCKED_CHIP, 'Canvas locked')}
               tooltipProps={{
-                content:
-                  'Canvas is being edited by another user and is therefore not editable',
+                content: t(
+                  translationKeys.CANVAS_LOCKED,
+                  'Canvas is being edited by another user and is therefore not editable'
+                ),
                 position: 'bottom',
               }}
             />
           )}
-          <Tooltip content="Undo" position="bottom">
+          <Tooltip
+            content={t(translationKeys.CANVAS_UNDO, 'Undo')}
+            position="bottom"
+          >
             <Button
               type="ghost"
               icon="Restore"
               onClick={undo.fn}
               disabled={isCanvasLocked || undo.isDisabled}
-              aria-label="Undo"
+              aria-label={t(translationKeys.CANVAS_UNDO, 'Undo')}
             />
           </Tooltip>
-          <Tooltip content="Redo" position="bottom">
+          <Tooltip
+            content={t(translationKeys.CANVAS_REDO, 'Redo')}
+            position="bottom"
+          >
             <Button
               type="ghost"
               icon="Refresh"
               onClick={redo.fn}
               disabled={isCanvasLocked || redo.isDisabled}
-              aria-label="Redo"
+              aria-label={t(translationKeys.CANVAS_REDO, 'Redo')}
             />
           </Tooltip>
 
-          <Button onClick={onResourceSelectorOpen} disabled={isCanvasLocked}>
-            <Icon type="Plus" /> Add data
+          <Button
+            disabled={isCanvasLocked}
+            aria-label="Add data"
+            onClick={() => {
+              onResourceSelectorOpen();
+              trackUsage(MetricEvent.ADD_DATA_BUTTON_CLICKED);
+            }}
+          >
+            <Icon type="Plus" />
+            {t(translationKeys.CANVAS_ADD_RESOURCE_BUTTON, 'Add data')}
           </Button>
 
           <Dropdown
             content={
               <Menu>
-                <Menu.Item onClick={onDownloadPress}>Download as PDF</Menu.Item>
+                <Menu.Item onClick={onDownloadPress}>
+                  {t(translationKeys.CANVAS_DOWNLOAD_PDF, 'Download as PDF')}
+                </Menu.Item>
                 <Menu.Item
                   hasSwitch
                   toggled={shouldShowConnectionAnnotations}
-                  aria-label="Always show connection lines"
+                  aria-label={t(
+                    translationKeys.SHOW_CONNECTION_LINES_SWITCH,
+                    'Always show connection lines'
+                  )}
                   onChange={() => {
-                    setShouldShowConnectionAnnotations(
-                      !shouldShowConnectionAnnotations
-                    );
+                    const nextValue = !shouldShowConnectionAnnotations;
+                    setShouldShowConnectionAnnotations(nextValue);
+
+                    trackUsage(MetricEvent.SHOW_CONNECTION_LINES_TOGGLED, {
+                      newValue: nextValue,
+                    });
                   }}
                 >
-                  Always show
-                  <br />
-                  connection lines
+                  {t(
+                    translationKeys.SHOW_CONNECTION_LINES_SWITCH,
+                    'Always show connection lines'
+                  )}
                 </Menu.Item>
               </Menu>
             }
@@ -526,6 +638,7 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
           onUpdateAnnotationStyleByType={onUpdateAnnotationStyleByType}
           toolOptions={toolOptions}
           isCanvasLocked={isCanvasLocked}
+          onResourceSelectorOpen={onResourceSelectorOpen}
           commentAnnotations={commentAnnotations}
         />
         <DragOverIndicator isDragging={isDragging} />
@@ -548,27 +661,6 @@ const IndustryCanvasPageWithoutQueryClientProvider = () => {
         }}
       />
     </>
-  );
-};
-
-export const IndustryCanvasPage = () => {
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-        refetchOnWindowFocus: false,
-        refetchOnReconnect: false,
-      },
-    },
-  });
-  return (
-    <QueryClientProvider client={queryClient}>
-      <UserProfileProvider>
-        <IndustryCanvasProvider>
-          <IndustryCanvasPageWithoutQueryClientProvider />
-        </IndustryCanvasProvider>
-      </UserProfileProvider>
-    </QueryClientProvider>
   );
 };
 

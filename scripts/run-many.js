@@ -32,7 +32,7 @@ const getReleaseProject = (branchName) => {
 
 const affectedProjects = parseNxTargetString(
   execSync(
-    `npx nx print-affected --target=${target} --base=${baseSha} --head=${headSha}`
+    `npx nx print-affected --target=${target} --base=${baseSha} --head=${headSha} --exclude=[interactive-diagrams]`
   ).toString('utf-8')
 ).filter(({ project }) => {
   return isReleaseBranch(baseBranch)
@@ -67,11 +67,13 @@ const main = () => {
       });
     } else if (target === 'e2e') {
       runCmd(
-        `yarn nx run-many --configuration=production --target=${target} --projects=${projectNames} --parallel --exclude="platypus*" --exclude="cdf-nx-plugin-e2e"  --env.DATA_EXPLORER_CLIENT_ID=${process.env.DATA_EXPLORER_CLIENT_ID} --env.DATA_EXPLORER_CLIENT_SECRET=${process.env.DATA_EXPLORER_CLIENT_SECRET}`
+        `yarn nx run-many --configuration=production --target=${target} --projects=${projectNames} --verbose=true --parallel --exclude="platypus*" --exclude="cdf-nx-plugin-e2e"  --env.DATA_EXPLORER_CLIENT_ID=${process.env.DATA_EXPLORER_CLIENT_ID} --env.DATA_EXPLORER_CLIENT_SECRET=${process.env.DATA_EXPLORER_CLIENT_SECRET}`
       );
     } else {
       runCmd(
-        `npx nx run-many --configuration=production --target=${target} --projects=${projectNames} --parallel`
+        `npx nx run-many --configuration=production --target=${target} --projects=${projectNames} --verbose=true --parallel=${
+          target === 'build' ? 2 : 5
+        } --exclude="interactive-diagrams"`
       );
     }
   }

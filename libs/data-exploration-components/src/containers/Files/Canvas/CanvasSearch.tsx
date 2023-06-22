@@ -6,9 +6,11 @@ import { PagedFileReference } from '@data-exploration-components/containers/File
 import debounce from 'lodash/debounce';
 
 import { Button, Icon, Input, Menu } from '@cognite/cogs.js';
-import { FileInfo } from '@cognite/sdk/dist/src/index';
+import { FileInfo } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 import { isSupportedFileInfo } from '@cognite/unified-file-viewer';
+
+import { useIsDocumentsApiEnabled } from '../../../hooks';
 
 type CanvasSearchProps = {
   onItemClick: (file: PagedFileReference) => void;
@@ -24,6 +26,7 @@ const CanvasSearch: React.FC<CanvasSearchProps> = ({ onItemClick }) => {
   const [value, setValue] = useState('');
   const [files, setFiles] = useState<FileInfo[]>([]);
   const [isExpanded, setIsExpanded] = useState(false);
+  const isDocumentsApiEnabled = useIsDocumentsApiEnabled();
 
   // like above but using debounce
   const debouncedSearchFiles = useCallback(
@@ -31,7 +34,11 @@ const CanvasSearch: React.FC<CanvasSearchProps> = ({ onItemClick }) => {
       const results = await sdk.files.search({ search: { name: searchValue } });
 
       // TODO: Filtering in a hacky way to not fire 10 different requests
-      setFiles(results.filter(isSupportedFileInfo));
+      setFiles(
+        results.filter((file) =>
+          isSupportedFileInfo(file, isDocumentsApiEnabled)
+        )
+      );
     }, SEARCH_DEBOUNCE_MS),
     [sdk]
   );

@@ -10,6 +10,7 @@ interface Props {
   /** Specify the data type (used for timeseries and files for now). Will be removed when those are in FDM */
   customDataType?: string;
   customName?: string;
+  renderActions?: () => [JSX.Element, ...JSX.Element[]];
 }
 
 export const PageDashboard: React.FC<PropsWithChildren<Props>> = ({
@@ -17,6 +18,7 @@ export const PageDashboard: React.FC<PropsWithChildren<Props>> = ({
   loading,
   customDataType,
   customName,
+  renderActions,
 }) => {
   const { dataType, externalId } = useParams();
 
@@ -40,10 +42,9 @@ export const PageDashboard: React.FC<PropsWithChildren<Props>> = ({
         {hasExpandedWidget ? (
           <Button.ButtonEsc onCloseClick={handleCloseClick} />
         ) : (
-          <>
-            <Button.OpenIn />
-            {/* <Button.Favorite /> */}
-          </>
+          renderActions?.().map((Action, index) => {
+            return <div key={`actions-${index}`}>{Action}</div>;
+          })
         )}
       </Page.Header>
 

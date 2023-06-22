@@ -1,7 +1,11 @@
 import { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 
 import { DataModel } from '@platypus/platypus-core';
+import { SUB_APP_PATH } from '@platypus-app/constants';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
+
+import { createLink, useCdfUserHistoryService } from '@cognite/cdf-utilities';
 
 import { useDataModelMutation } from '../../modules/data-models/hooks/useDataModelMutation';
 import { DataModelDetailModal } from '../DataModelDetailModal/DataModelDetailModal';
@@ -12,25 +16,40 @@ export type DataModelSettingsModalProps = {
   visible: boolean;
 };
 
-export const DataModelSettingsModal = (props: DataModelSettingsModalProps) => {
+export const DataModelSettingsModal = ({
+  dataModel,
+  onRequestClose,
+  visible,
+}: DataModelSettingsModalProps) => {
+  const { name, description, id: externalId, space, version } = dataModel;
+  const { pathname: dataModelPathname } = useLocation();
+  const userHistoryService = useCdfUserHistoryService();
+
   const { update } = useDataModelMutation();
   const { t } = useTranslation('DataModelSettingsModal');
 
-  const [name, setName] = useState(props.dataModel.name);
-  const [description, setDescription] = useState(props.dataModel.description);
+  const [dataModelName, setName] = useState(name);
+  const [dataModelDescription, setDescription] = useState(description);
 
   const handleSubmit = () => {
     update.mutate(
       {
-        description: description,
-        externalId: props.dataModel.id,
-        name: name || '',
-        space: props.dataModel.space,
-        version: props.dataModel.version,
+        description,
+        externalId,
+        name: dataModelName,
+        space,
+        version,
       },
       {
         onSuccess: () => {
-          props.onRequestClose();
+          // save data-model edit action to user history
+          if (externalId)
+            userHistoryService.logNewResourceView({
+              application: SUB_APP_PATH,
+              name: externalId,
+              path: createLink(dataModelPathname),
+            });
+          onRequestClose();
         },
       }
     );
@@ -38,20 +57,20 @@ export const DataModelSettingsModal = (props: DataModelSettingsModalProps) => {
 
   return (
     <DataModelDetailModal
-      visible={props.visible}
+      visible={visible}
       dataSets={[]}
-      description={description || ''}
-      externalId={props.dataModel.id}
+      description={dataModelDescription || ''}
+      externalId={externalId}
       isExternalIdLocked
       isLoading={update.isLoading}
       isSpaceDisabled
-      name={name || ''}
+      name={dataModelName || ''}
       okButtonName={t('data_model_settings_modal_ok_button', 'Update')}
-      onCancel={props.onRequestClose}
+      onCancel={onRequestClose}
       onDescriptionChange={(value) => setDescription(value)}
       onNameChange={(value) => setName(value)}
       onSubmit={handleSubmit}
-      space={props.dataModel.space}
+      space={space}
       title={t('data_model_settings_modal_title', 'Settings')}
     />
   );

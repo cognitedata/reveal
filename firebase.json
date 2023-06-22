@@ -3,11 +3,7 @@
     {
       "site": "cognite-flexible-data-explorer-staging",
       "public": "./dist/apps/business-shell",
-      "ignore": [
-        "firebase.json",
-        "**/.*",
-        "**/node_modules/**"
-      ],
+      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
       "rewrites": [
         {
           "source": "/**",
@@ -29,11 +25,7 @@
     {
       "site": "cognite-flexible-data-explorer-production",
       "public": "./dist/apps/business-shell",
-      "ignore": [
-        "firebase.json",
-        "**/.*",
-        "**/node_modules/**"
-      ],
+      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
       "rewrites": [
         {
           "source": "**",
