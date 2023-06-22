@@ -6,6 +6,7 @@ export * from './lib/common';
 
 export { IndustryCanvasProvider } from './lib/IndustryCanvasContext';
 export { UserProfileProvider } from './lib/UserProfileProvider';
+export { SpaceProvider } from './lib/SpaceProvider';
 
 export { default as TrackingContextProvider } from './lib/utils/tracking/TrackingContextProvider';
 export { default as TrackingContext } from './lib/utils/tracking/TrackingContext';
