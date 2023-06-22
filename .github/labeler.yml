@@ -38,3 +38,10 @@ cdf-document-search:
 interactive-diagrams:
   - apps/interactive-diagrams/*
   - apps/interactive-diagrams/**/*
+
+extraction-pipelines:
+  - apps/extraction-pipelines/*
+  - apps/extraction-pipelines/**/*
+
+design-system:
+  - libs/shared/user-profile-components/**/*

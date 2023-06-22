@@ -1,26 +1,28 @@
-import { processMessageStreamlit } from './features/streamlit/processMessage';
+import { ConversationChain, MultiPromptChain } from 'langchain/chains';
+
 import { CopilotSupportedFeatureType, ProcessMessageFunc } from './types';
 
 export const processMessage = async (
   feature: CopilotSupportedFeatureType | undefined,
+  chain: ConversationChain | MultiPromptChain,
   ...params: Parameters<ProcessMessageFunc>
 ) => {
+  //  when the user indicates an intention to do something, we have these tools available for the user.
+  // based on their intent, make your best judgement on what tool is best suited for them and ask the user
+
   switch (feature) {
-    case 'Streamlit':
-      return processMessageStreamlit(...params);
     default: {
-      const sendMessage = params[2];
-      sendMessage({
-        type: 'text',
-        content:
-          'Hello from Cogpilot! Currently we do not support features on this page yet.',
-      });
-      sendMessage({
-        type: 'text',
-        content:
-          'If you would like to see AI assistance here, please give a request on Cognite Hub and we will get right back to you!',
-      });
-      return false;
+      const sendMessage = params[3];
+      const message = params[1];
+      if (message) {
+        await chain.run(message);
+      } else {
+        sendMessage({
+          type: 'text',
+          content: 'Hello from CogPilot! How can I assist you today?',
+        });
+      }
+      return true;
     }
   }
 };

@@ -48,8 +48,7 @@ export class IndustryCanvasService {
 
   // Comment stuff. TODO: the comment data model should probably live in the system space for the canvas data model
   public static readonly COMMENT_SYSTEM_SPACE = 'IndustryCanvasComments';
-  public static readonly COMMENT_INSTANCE_SPACE =
-    IndustryCanvasService.SYSTEM_SPACE;
+  public static readonly COMMENT_INSTANCE_SPACE = 'IndustryCanvasComments';
   public static readonly COMMENT_INSTANCE_SPACE_VERSION = 'v1';
   public static readonly COMMENT_DATA_MODEL_EXTERNAL_ID =
     'IndustryCanvasComments';
@@ -67,7 +66,7 @@ export class IndustryCanvasService {
       instanceSpace: IndustryCanvasService.INSTANCE_SPACE,
     });
     this.fdmClientForComments = new FDMClient(client, {
-      systemSpace: IndustryCanvasService.COMMENT_INSTANCE_SPACE,
+      systemSpace: IndustryCanvasService.COMMENT_SYSTEM_SPACE,
       systemSpaceVersion: IndustryCanvasService.COMMENT_INSTANCE_SPACE_VERSION,
       instanceSpace: IndustryCanvasService.COMMENT_INSTANCE_SPACE,
     });
