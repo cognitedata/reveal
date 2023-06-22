@@ -1,3 +1,4 @@
 export const localStorageKeys = {
-  dataModel: 'selected-data-model',
+  dataModel: (project: string) => `selected-data-model-${project}`,
+  recentlyVisited: () => 'recently-visited',
 } as const;

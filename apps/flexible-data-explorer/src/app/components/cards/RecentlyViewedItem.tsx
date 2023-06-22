@@ -9,23 +9,24 @@ interface Props {
   name?: string;
   description?: string;
   externalId?: string;
+  onClick?: () => void;
 }
 
 export const RecentlyViewedItem: React.FC<Props> = React.memo(
-  ({ type, name, description, externalId }) => {
+  ({ type, name, description, externalId, onClick }) => {
     return (
-      <Container>
+      <Container role="button" onClick={onClick}>
         <Content>
           <InfoContent>
             <Chip icon="History" type="neutral" size="small" />
             <InfoTextContent>
-              <Title level={6}>{name || externalId}</Title>
               <Detail muted>{type}</Detail>
+              <Title level={6}>{name || externalId}</Title>
             </InfoTextContent>
           </InfoContent>
           <DescriptionContent>
             <StyledBody level={6} muted>
-              {description || externalId}
+              {description || '-'}
             </StyledBody>
           </DescriptionContent>
         </Content>
@@ -38,14 +39,27 @@ const Container = styled.div`
   display: flex;
   width: 100%;
   height: 100%;
-  border-radius: 8px;
+  /* border-radius: 8px; */
+  background-color: #fff;
+  /* margin-bottom: 4px; */
+  cursor: pointer;
+
+  &:hover {
+    background: linear-gradient(
+        0deg,
+        rgba(59, 130, 246, 0.1),
+        rgba(59, 130, 246, 0.1)
+      ),
+      rgba(255, 255, 255, 0.8);
+  }
 `;
 
 const Content = styled.div`
   display: flex;
   width: 100%;
   height: 100%;
-  padding: 10px 16px;
+  padding: 16px;
+  gap: 8px;
 `;
 
 const InfoContent = styled.div`

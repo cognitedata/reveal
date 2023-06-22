@@ -15,6 +15,7 @@ import {
 import { translationKeys } from '../../common/i18n/translationKeys';
 import { useTranslation } from '../../hooks/useTranslation';
 import { DataModelListResponse } from '../../services/types';
+import { EmptyState } from '../EmptyState';
 
 interface Props {
   loading?: boolean;
@@ -82,18 +83,17 @@ export const DataModelSelector: React.FC<Props> = ({
             </Infobox>
           )}
           {isDataModelsEmpty && (
-            <Infobox
-              type="neutral"
+            <EmptyState
               title={t(
                 translationKeys.dataModelSelectorInfoboxNeutralTitle,
-                'Add a Data Model'
+                'No Data Models found'
               )}
-            >
-              {t(
-                translationKeys.dataModelSelectorInfoboxNeutralBody,
-                'Please add a Data Model first to start exploring.'
-              )}
-            </Infobox>
+              body={
+                (t(translationKeys.dataModelSelectorInfoboxNeutralBody),
+                'Reach out to your IT support for further assistance')
+              }
+              centerVertically
+            />
           )}
           {dataModels?.map((item) => (
             <Card
