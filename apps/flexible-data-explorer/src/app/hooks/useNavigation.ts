@@ -11,6 +11,7 @@ import { DateRange, ValueByDataType } from '../containers/search/Filter';
 import { createSearchParams } from '../utils/router';
 
 import { useSearchFilterParams, useSearchQueryParams } from './useParams';
+import { useGetChartsUrl, useGetCanvasUrl } from './useUrl';
 
 // TODO: rename this could help, react-router also has a 'useNavigation'.
 export const useNavigation = () => {
@@ -19,6 +20,8 @@ export const useNavigation = () => {
   const params = useParams();
   const [_, setQueryParams] = useSearchQueryParams();
   const [__, setFilterParams] = useSearchFilterParams();
+  const chartsUrl = useGetChartsUrl();
+  const canvasUrl = useGetCanvasUrl();
 
   // For migration: if we're located at the route, keep the route
   // TODO: Better way to use navigate function to do this?
@@ -123,34 +126,28 @@ export const useNavigation = () => {
     navigate('/');
   }, [navigate]);
 
-  const toCharts = useCallback(
-    (timeseriesId: number, dateRange: DateRange) => {
-      const queryObj = {
-        timeseriesIds: timeseriesId,
-        startTime: dateRange[0].getTime(),
-        endTime: dateRange[1].getTime(),
-      };
-      const query = queryString.stringify(queryObj);
+  const toCharts = (timeseriesId: number, dateRange: DateRange) => {
+    const queryObj = {
+      timeserieIds: timeseriesId,
+      startTime: dateRange[0].getTime(),
+      endTime: dateRange[1].getTime(),
+    };
+    const query = queryString.stringify(queryObj);
 
-      navigate(`/charts?${query}`);
-    },
-    [navigate]
-  );
+    window.open(`${chartsUrl}&${query}`, '_blank');
+  };
 
-  const toCanvas = useCallback(
-    (item: ResourceItem) => {
-      const initializeWithContainerReferences = btoa(
-        JSON.stringify([resourceItemToContainerReference(item)])
-      );
+  const toCanvas = (item: ResourceItem) => {
+    const initializeWithContainerReferences = btoa(
+      JSON.stringify([resourceItemToContainerReference(item)])
+    );
 
-      const query = queryString.stringify({
-        initializeWithContainerReferences,
-      });
+    const query = queryString.stringify({
+      initializeWithContainerReferences,
+    });
 
-      navigate(`/canvas?${query}`);
-    },
-    [navigate]
-  );
+    window.open(`${canvasUrl}&${query}`, '_blank');
+  };
 
   const goBack = useCallback(() => {
     navigate('..');
