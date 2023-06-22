@@ -1,57 +1,90 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 
 import styled from 'styled-components';
 
 import { RecentlyViewedItem } from '../../../components/cards/RecentlyViewedItem';
-import { getRecentlyViewed } from '../../../fixtures';
-import { useDataModelParams } from '../../../hooks/useDataModelParams';
+import { EmptyState } from '../../../components/EmptyState';
 import { useNavigation } from '../../../hooks/useNavigation';
+import {
+  RecentlyViewed,
+  useRecentlyVisited,
+} from '../../../hooks/useRecentlyVisited';
 
-export const RecentlyViewedList = () => {
+interface Props {
+  onSelectionClick?: () => void;
+  hideShadow?: boolean;
+}
+
+export const RecentlyViewedList: React.FC<Props> = ({
+  onSelectionClick,
+  hideShadow,
+}) => {
   const { toInstancePage } = useNavigation();
+  const [recentlyViewed] = useRecentlyVisited();
 
-  const selectedDataModel = useDataModelParams();
-
-  const recentData = getRecentlyViewed();
-
-  const handleItemClick = useCallback(
-    (item: any) => {
-      if (selectedDataModel) {
-        toInstancePage(
-          item.instance.dataType,
-          item.instance.space,
-          item.instance.externalId
-        );
+  const handleItemClick = (item: RecentlyViewed) => {
+    toInstancePage(
+      item.instance.dataType,
+      item.instance.space,
+      item.instance.externalId,
+      {
+        dataModel: item.dataModel.externalId,
+        space: item.dataModel.space,
+        version: item.dataModel.version,
       }
-    },
-    [toInstancePage, selectedDataModel]
-  );
+    );
+
+    onSelectionClick?.();
+  };
+
+  if (recentlyViewed.length === 0) {
+    return (
+      <EmptyState
+        title="No recent views"
+        body="Once you start using Cognite Data Fusion, you can see your recent activities here"
+      />
+    );
+  }
 
   return (
-    <>
-      {recentData.map((item) => {
+    <Container hideShadow={hideShadow}>
+      {recentlyViewed.map((item, index) => {
         return (
-          <RecentlyViewedContent onClick={() => handleItemClick(item)}>
-            <RecentlyViewedItem
-              type={item.instance.dataType}
-              name={item.name}
-              description={item.description}
-              externalId={item.instance.externalId}
-            />
-          </RecentlyViewedContent>
+          <RecentlyViewedItem
+            key={index}
+            onClick={() => handleItemClick(item)}
+            type={item.instance.dataType}
+            name={item.name}
+            description={item.description}
+            externalId={item.instance.externalId}
+          />
         );
       })}
-    </>
+    </Container>
   );
 };
 
-const RecentlyViewedContent = styled.div`
-  padding: 6px 0;
-  border-radius: 8px;
-  border: 1px solid #ebeef7;
-  margin-bottom: 4px;
+const Container = styled.div<{ hideShadow?: boolean }>`
+  border-radius: 10px;
+  padding: 8px 0;
+  background: white;
 
-  &:hover {
-    cursor: pointer;
+  ${({ hideShadow }) => {
+    if (hideShadow) {
+      return;
+    }
+
+    return `
+      box-shadow: 0px 1px 8px rgba(79, 82, 104, 0.06),
+        0px 1px 1px rgba(79, 82, 104, 0.1);
+    `;
+  }}
+
+  & > * {
+    border-bottom: 1px solid #ebeef7;
+
+    &:last-child {
+      border-bottom: none;
+    }
   }
 `;

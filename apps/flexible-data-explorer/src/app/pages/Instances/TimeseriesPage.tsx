@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import dayjs from 'dayjs';
@@ -13,6 +13,7 @@ import { DateRange } from '../../containers/search/Filter/types';
 import { PropertiesWidget } from '../../containers/widgets';
 import { TimeseriesWidget } from '../../containers/widgets/TimeseriesWidget';
 import { useNavigation } from '../../hooks/useNavigation';
+import { useRecentlyVisited } from '../../hooks/useRecentlyVisited';
 import { useTimeseriesByIdQuery } from '../../services/instances/timeseries/queries/useTimeseriesByIdQuery';
 
 const TimeseriesActions = ({
@@ -43,8 +44,9 @@ const TimeseriesActions = ({
 export const TimeseriesPage = () => {
   const navigate = useNavigation();
   const { externalId } = useParams();
+  const [, setRecentlyVisited] = useRecentlyVisited();
 
-  const { data, isLoading } = useTimeseriesByIdQuery(externalId);
+  const { data, isLoading, isFetched } = useTimeseriesByIdQuery(externalId);
 
   const [dateRange, setDateRange] = useState<DateRange | undefined>([
     dayjs().subtract(2, 'years').startOf('seconds').toDate(),
@@ -71,6 +73,17 @@ export const TimeseriesPage = () => {
       navigate.toCharts(data.id, dateRange);
     }
   };
+
+  useEffect(() => {
+    return () => {
+      if (isFetched && externalId) {
+        setRecentlyVisited(data?.name, data?.description, {
+          externalId,
+          dataType: 'Timeseries',
+        });
+      }
+    };
+  }, [isFetched]);
 
   return (
     <Page.Dashboard

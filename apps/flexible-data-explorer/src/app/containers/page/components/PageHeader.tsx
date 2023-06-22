@@ -89,6 +89,7 @@ const Content = styled.div`
   display: flex;
   align-items: center;
   gap: 16px;
+  padding: 0 8px;
 `;
 
 const Wrapper = styled.span`

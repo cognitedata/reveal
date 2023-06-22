@@ -1,6 +1,6 @@
 import isEmpty from 'lodash/isEmpty';
 
-import { Button, formatDate } from '@cognite/cogs.js';
+import { Button, formatDate, Skeleton } from '@cognite/cogs.js';
 import { TimeseriesChart } from '@cognite/plotting-components';
 
 import { translationKeys } from '../../../common/i18n/translationKeys';
@@ -22,12 +22,16 @@ export const TimeseriesResults = () => {
   const [query] = useSearchQueryParams();
   const [timeseriesFilterParams] = useDataTypeFilterParams('Timeseries');
 
-  const { data, hasNextPage, fetchNextPage, isFetchingNextPage } =
+  const { data, hasNextPage, fetchNextPage, isFetchingNextPage, isLoading } =
     useTimeseriesSearchQuery(
       query,
       PAGE_SIZE,
       buildTimeseriesFilter(timeseriesFilterParams)
     );
+
+  if (isLoading) {
+    return <Skeleton.List lines={3} />;
+  }
 
   return (
     <SearchResults empty={isEmpty(data)}>

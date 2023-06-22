@@ -4,7 +4,7 @@ import { DataModelTypeDefsType } from '@platypus/platypus-core';
 import isEmpty from 'lodash/isEmpty';
 import take from 'lodash/take';
 
-import { Button } from '@cognite/cogs.js';
+import { Button, Skeleton } from '@cognite/cogs.js';
 
 import { translationKeys } from '../../../common/i18n/translationKeys';
 import { SearchResults } from '../../../components/search/SearchResults';
@@ -19,8 +19,12 @@ import { PAGE_SIZE } from './constants';
 export const GenericResults: React.FC<{ selectedDataType?: string }> = ({
   selectedDataType,
 }) => {
-  const { data: hits } = useSearchDataTypesQuery();
+  const { data: hits, isLoading } = useSearchDataTypesQuery();
   const { data: types } = useTypesDataModelQuery();
+
+  if (isLoading) {
+    return <Skeleton.List lines={3} />;
+  }
 
   if (selectedDataType) {
     const type = types?.find((item) => item.name === selectedDataType);
@@ -121,10 +125,10 @@ const GenericResultItem: React.FC<Props> = ({ dataType, values, type }) => {
 
       <SearchResults.Footer>
         <Button
-          type="ghost"
           onClick={() => {
             setPage((prevState) => prevState + PAGE_SIZE);
           }}
+          type="secondary"
           hidden={normalizedValues.length <= page}
         >
           {t(translationKeys.showMore, 'Show more...')}
