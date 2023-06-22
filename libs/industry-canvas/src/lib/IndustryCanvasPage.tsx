@@ -567,6 +567,7 @@ export const IndustryCanvasPage = () => {
           </Tooltip>
 
           <Button
+            type="primary"
             disabled={isCanvasLocked}
             aria-label="Add data"
             onClick={() => {
