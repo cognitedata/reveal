@@ -11,7 +11,7 @@
         "rules": {
           "@nrwl/nx/enforce-module-boundaries": [
             "error",
-            { "allow": ["cronstrue", "cron-validator"] }
+            { "allow": ["cronstrue", "cron-validator", "@functions-ui"] }
           ]
         }
       },
