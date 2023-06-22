@@ -13,6 +13,7 @@ import { setSummaryModalVisibility } from '@vision/modules/Process/store/slice';
 import { AppDispatch } from '@vision/store';
 import { RootState } from '@vision/store/rootReducer';
 import { PopulateProcessFiles } from '@vision/store/thunks/Process/PopulateProcessFiles';
+import { zIndex } from '@vision/utils/zIndex';
 import { Modal } from 'antd';
 
 import { createLink } from '@cognite/cdf-utilities';
@@ -94,4 +95,5 @@ const FooterContainer = styled.div`
   align-items: center;
   height: 50px;
   padding: 0 20px;
+  z-index: ${zIndex.DEFAULT};
 `;

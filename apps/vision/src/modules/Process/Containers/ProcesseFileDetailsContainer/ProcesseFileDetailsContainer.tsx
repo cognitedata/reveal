@@ -10,6 +10,7 @@ import { hideFileMetadata } from '@vision/modules/Process/store/slice';
 import { AppDispatch } from '@vision/store';
 import { RootState } from '@vision/store/rootReducer';
 import { getParamLink, workflowRoutes } from '@vision/utils/workflowRoutes';
+import { zIndex } from '@vision/utils/zIndex';
 
 export const ProcessFileDetailsContainer = () => {
   const queryClient = new QueryClient();
@@ -53,5 +54,5 @@ const Container = styled.div`
   box-sizing: content-box;
   flex-shrink: 0;
   height: 100%;
-  z-index: 1;
+  z-index: ${zIndex.SIDE_PANEL};
 `;

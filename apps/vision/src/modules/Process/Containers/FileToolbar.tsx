@@ -17,6 +17,7 @@ import {
 import { AppDispatch } from '@vision/store';
 import { RootState } from '@vision/store/rootReducer';
 import { DeleteFilesById } from '@vision/store/thunks/Files/DeleteFilesById';
+import { zIndex } from '@vision/utils/zIndex';
 
 import { SegmentedControl } from '@cognite/cogs.js';
 
@@ -66,7 +67,7 @@ export const FileToolbar = ({
     <>
       <Container>
         {!!processFilesLength && ( // Only show buttons if there are files available
-          <ButtonContainer style={{ zIndex: 1 }}>
+          <ButtonContainer>
             <BulkActionMenu
               selectedCount={selectedFileIds.length}
               maxSelectCount={processFilesLength}
@@ -114,4 +115,5 @@ const Container = styled.div`
 const ButtonContainer = styled.div`
   display: flex;
   gap: 8px;
+  z-index: ${zIndex.DEFAULT};
 `;

@@ -23,12 +23,14 @@ import { AppDispatch } from '@vision/store';
 import { RootState } from '@vision/store/rootReducer';
 import { PopulateProcessFiles } from '@vision/store/thunks/Process/PopulateProcessFiles';
 import { pushMetric } from '@vision/utils/pushMetric';
+import { zIndex } from '@vision/utils/zIndex';
 
 import { Title } from '@cognite/cogs.js';
 
 const ResultsContainer = styled.div`
   flex: 1;
   overflow: hidden;
+  z-index: ${zIndex.DEFAULT};
 `;
 
 const TitleContainer = styled.div`
@@ -103,9 +105,6 @@ const Deselect = () => {
 
 const DeselectContainer = styled.div`
   position: fixed;
-  z-index: 0;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
+  z-index: ${zIndex.DESELECT_CONTAINER};
+  inset: 97px 0 0 0;
 `;

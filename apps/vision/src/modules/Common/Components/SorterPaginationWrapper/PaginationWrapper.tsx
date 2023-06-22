@@ -9,6 +9,7 @@ import {
   PageSize,
 } from '@vision/modules/Common/Components/FileTable/types';
 import { TableDataItem } from '@vision/modules/Common/types';
+import { zIndex } from '@vision/utils/zIndex';
 
 import { Pagination } from '@cognite/cogs.js';
 
@@ -144,4 +145,5 @@ const TableContainer = styled.div`
 const PaginationContainer = styled.div`
   height: inherit;
   padding: 10px;
+  z-index: ${zIndex.DEFAULT};
 `;

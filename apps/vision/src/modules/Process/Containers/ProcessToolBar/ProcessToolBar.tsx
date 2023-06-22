@@ -26,6 +26,7 @@ import { AppDispatch } from '@vision/store';
 import { RootState } from '@vision/store/rootReducer';
 import { RunDetectionModels } from '@vision/store/thunks/Process/RunDetectionModels';
 import { getContainer } from '@vision/utils';
+import { zIndex } from '@vision/utils/zIndex';
 import { message, notification } from 'antd';
 
 import { Button, Title, Modal } from '@cognite/cogs.js';
@@ -275,7 +276,7 @@ const ProcessToolBarElement = styled.div<ToolBarElemProps>`
 const ToolContainer = styled.div`
   display: flex;
   width: fit-content;
-  z-index: 1;
+  z-index: ${zIndex.TOOLBAR};
 `;
 
 const ElementTitle = styled.div`
