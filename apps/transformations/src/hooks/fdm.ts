@@ -151,7 +151,7 @@ export const useModels = (
   return query;
 };
 
-export const fetchModel = (
+export const getModel = (
   sdk: CogniteClient,
   externalId: string,
   space: string,
@@ -173,12 +173,12 @@ export const useModel = (
   const sdk = useSDK();
   return useQuery(
     dataModelCacheKey(externalId, space, version),
-    () => fetchModel(sdk, externalId, space, version),
+    () => getModel(sdk, externalId, space, version),
     options
   );
 };
 
-export const getModel = (
+export const fetchModel = (
   sdk: CogniteClient,
   client: QueryClient,
   externalId: string,
@@ -186,7 +186,7 @@ export const getModel = (
   version: string
 ) => {
   return client.fetchQuery(dataModelCacheKey(externalId, space, version), () =>
-    fetchModel(sdk, externalId, space, version)
+    getModel(sdk, externalId, space, version)
   );
 };
 

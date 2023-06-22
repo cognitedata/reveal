@@ -1,0 +1,45 @@
+{
+  "name": "@cognite/cdf-context-ui-pnid",
+  "version": "3.1.0",
+  "scripts": {
+    "start": "../../scripts/start.sh dev interactive-diagrams",
+    "build": "../../scripts/build.sh production interactive-diagrams",
+    "test": "../../scripts/test.sh interactive-diagrams",
+    "lint": "../../scripts/lint.sh interactive-diagrams",
+    "lint:fix": "../../scripts/lint.sh interactive-diagrams --fix",
+    "cypress:dev": "./scripts/cypress-dev.sh"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "jest": {
+    "transformIgnorePatterns": [
+      "node_modules/(?!react-dnd-html5-backend)/"
+    ],
+    "moduleNameMapper": {
+      "^d3-(.*)$": "d3-$1/dist/d3-$1"
+    },
+    "testPathIgnorePatterns": [
+      "<rootDir>/src/pages",
+      "<rootDir>/src/components"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "resolutions": {
+    "styled-components": "^5.3.6",
+    "three": "0.136.0",
+    "@types/three": "0.136.0",
+    "@cognite/data-exploration/react-dnd": "^15.1.2",
+    "@cognite/data-exploration/react-dnd-html5-backend": "^15.1.2"
+  }
+}

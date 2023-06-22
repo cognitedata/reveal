@@ -7,7 +7,7 @@ import { IndustryCanvasPage } from '@fusion/industry-canvas';
 import { Flex } from '@cognite/cogs.js';
 import { useFlag } from '@cognite/react-feature-flags';
 
-import { AppSelector } from '../common/topbar/AppSelector';
+import { AppSelector } from './components/topbar/AppSelector';
 
 export const CoreRoutes = () => {
   const { isEnabled } = useFlag('CDF_BUSINESS_isEnabled', {
