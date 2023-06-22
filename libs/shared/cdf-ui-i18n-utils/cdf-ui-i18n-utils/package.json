@@ -1,0 +1,16 @@
+{
+  "name": "@cognite/cdf-i18n-utils",
+  "version": "0.7.3",
+  "license": "UNLICENSED",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "bin",
+    "dist",
+    "package.json"
+  ],
+  "bin": {
+    "cdf-i18n-utils-cli": "bin/cdf-i18n-utils-cli.js"
+  },
+  "dependencies": {}
+}
