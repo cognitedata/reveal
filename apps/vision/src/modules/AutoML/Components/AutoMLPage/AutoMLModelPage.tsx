@@ -68,48 +68,29 @@ export const AutoMLModelPage = (props: {
   };
 
   const MenuContent = (
-    <Menu
-      style={{
-        color: 'black' /* typpy styles make color to be white here ... */,
-      }}
-    >
+    <Menu>
       <Menu.Item
         onClick={() => {
           props.handleOnContextualize(props.model);
           setHideDropDown(true);
         }}
+        icon="Scan"
+        iconPlacement="left"
       >
-        <>
-          <div style={{ marginRight: 17 }}>
-            <Icon type="Scan" />
-          </div>
-          <Detail strong style={{ color: 'inherit' }}>
-            Quick test
-          </Detail>
-        </>
+        Quick test
       </Menu.Item>
       <Menu.Submenu content={modelDownloadContent()}>
-        <>
-          <div style={{ marginRight: 17 }}>
-            <Icon type="Download" />
-          </div>
-          <Detail strong style={{ color: 'inherit' }}>
-            Download model
-          </Detail>
-        </>
+        Download model
       </Menu.Submenu>
       <Menu.Item
         onClick={() => {
           props.handleOnGetPredictionURL();
           setHideDropDown(true);
         }}
+        icon="World"
+        iconPlacement="left"
       >
-        <div style={{ marginRight: 17 }}>
-          <Icon type="World" />
-        </div>
-        <Detail strong style={{ color: 'inherit' }}>
-          Prediction URL
-        </Detail>
+        Prediction URL
       </Menu.Item>
     </Menu>
   );

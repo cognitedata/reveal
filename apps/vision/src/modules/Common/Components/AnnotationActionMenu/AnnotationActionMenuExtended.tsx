@@ -26,10 +26,12 @@ export const AnnotationActionMenuExtended = ({
       }}
     >
       {handleVisibility ? (
-        <Menu.Item onClick={handleVisibility} disabled={disableShowPolygon}>
-          <div style={{ marginRight: '17px' }}>
-            <Icon type={showPolygon ? 'EyeShow' : 'EyeHide'} />
-          </div>
+        <Menu.Item
+          onClick={handleVisibility}
+          disabled={disableShowPolygon}
+          icon={showPolygon ? 'EyeShow' : 'EyeHide'}
+          iconPlacement="left"
+        >
           Show/hide
         </Menu.Item>
       ) : (
@@ -45,10 +47,7 @@ export const AnnotationActionMenuExtended = ({
           'Are you sure you want to permanently\ndelete this annotation?'
         }
       >
-        <Menu.Item>
-          <div style={{ marginRight: '17px' }}>
-            <Icon type="Delete" />
-          </div>
+        <Menu.Item icon="Delete" iconPlacement="left">
           {deleteMenuText || 'Delete annotation'}
         </Menu.Item>
       </Popconfirm>

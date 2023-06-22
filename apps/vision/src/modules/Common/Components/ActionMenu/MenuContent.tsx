@@ -33,11 +33,8 @@ export const MenuContent = ({
     }}
     onClick={handleClick}
   >
-    <Menu.Item onClick={handleFileDetails}>
+    <Menu.Item onClick={handleFileDetails} icon="Document" iconPlacement="left">
       <MenuContainer>
-        <div style={{ marginRight: '17px' }}>
-          <Icon type="Document" />
-        </div>
         File details
         {showExifIcon && (
           <Tooltip content="Geolocated">
@@ -50,10 +47,12 @@ export const MenuContent = ({
     </Menu.Item>
 
     {handleReview && (
-      <Menu.Item onClick={handleReview} disabled={reviewDisabled}>
-        <div style={{ marginRight: '17px' }}>
-          <Icon type="Edit" />
-        </div>
+      <Menu.Item
+        onClick={handleReview}
+        disabled={reviewDisabled}
+        icon="Edit"
+        iconPlacement="left"
+      >
         Review file
       </Menu.Item>
     )}
@@ -63,10 +62,12 @@ export const MenuContent = ({
       onConfirm={handleFileDelete}
       content="Are you sure you want to permanently delete this file?"
     >
-      <Menu.Item id={SKIP_MENU_CLOSE_ID} disabled={reviewDisabled}>
-        <div style={{ marginRight: '17px' }}>
-          <Icon type="Delete" />
-        </div>
+      <Menu.Item
+        id={SKIP_MENU_CLOSE_ID}
+        disabled={reviewDisabled}
+        icon="Delete"
+        iconPlacement="left"
+      >
         Delete
       </Menu.Item>
     </Popconfirm>
