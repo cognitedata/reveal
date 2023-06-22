@@ -63,3 +63,6 @@ apps/extractor-downloads          @cognitedata/cdf-user-experience
 
 
 libs/shared/user-profile-components   @cognitedata/cogs-team
+
+# Functions UI
+apps/functions-ui             @abdullah-cognite @shubhsk88 

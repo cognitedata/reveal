@@ -13,6 +13,7 @@ static final String[] APPLICATIONS = [
   'industry-canvas-ui',
   'interactive-diagrams',
   'iot-hub',
+  'functions-ui',
   '3d-management',
   'transformations',
   'cdf-document-search',
@@ -45,6 +46,7 @@ static final Map<String, String> FIREBASE_APP_SITES = [
   '3d-management': '3d-management',
   'transformations': 'transformations',
   'cdf-document-search': 'document-search',
+  'functions-ui': 'functions-ui',
   'extraction-pipelines': 'extraction-pipelines',
   'extractor-downloads': 'extractor-downloads',
 ]
@@ -60,6 +62,7 @@ static final Map<String, String> PREVIEW_PACKAGE_NAMES = [
   'industry-canvas-ui': "@cognite/cdf-industry-canvas-ui",
   'interactive-diagrams': '@cognite/cdf-context-ui-pnid',
   'iot-hub': "@cognite/cdf-iot-hub",
+  'functions-ui': "@cognite/cdf-functions-ui",
   '3d-management': '@cognite/cdf-3d-management',
   'transformations': "@cognite/cdf-transformations-2",
   'cdf-document-search': '@cognite/cdf-document-search-ui',
