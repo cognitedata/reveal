@@ -6,6 +6,7 @@ import { InputExp } from '@cognite/cogs.js';
 
 import { translationKeys } from '../../../common/i18n/translationKeys';
 import { GeneralDetails } from '../../../components/details';
+import { EmptyState } from '../../../components/EmptyState';
 import { Widget } from '../../../components/widget/Widget';
 import { useTranslation } from '../../../hooks/useTranslation';
 
@@ -25,6 +26,21 @@ export const PropertiesExpanded: React.FC<PropertiesProps> = ({ data }) => {
     return matchSorter(properties, inputValue, { keys: ['key', 'value'] });
   }, [properties, inputValue]);
 
+  const renderContent = () => {
+    if (results.length === 0) {
+      return (
+        <EmptyState
+          title="No results"
+          body={`No search results were found for the query: "${inputValue}"`}
+        />
+      );
+    }
+
+    return results.map(({ key, value }) => {
+      return <GeneralDetails.Item key={key} name={key} value={value} />;
+    });
+  };
+
   return (
     <Widget expanded>
       <Widget.Header>
@@ -41,11 +57,7 @@ export const PropertiesExpanded: React.FC<PropertiesProps> = ({ data }) => {
       </Widget.Header>
 
       <Widget.Body>
-        <GeneralDetails>
-          {results.map(({ key, value }) => {
-            return <GeneralDetails.Item key={key} name={key} value={value} />;
-          })}
-        </GeneralDetails>
+        <GeneralDetails>{renderContent()}</GeneralDetails>
       </Widget.Body>
     </Widget>
   );

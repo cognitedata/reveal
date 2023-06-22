@@ -10,6 +10,7 @@ import { ResourceItem } from '@data-exploration-lib/core';
 import { DateRange, ValueByDataType } from '../containers/search/Filter';
 import { createSearchParams } from '../utils/router';
 
+import { useDataModelParams } from './useDataModelParams';
 import { useSearchFilterParams, useSearchQueryParams } from './useParams';
 import { useGetChartsUrl, useGetCanvasUrl } from './useUrl';
 
@@ -18,6 +19,7 @@ export const useNavigation = () => {
   const navigate = useNavigate();
   const { search, pathname } = useLocation(); // <-- current location being accessed
   const params = useParams();
+  const dataModelParams = useDataModelParams();
   const [_, setQueryParams] = useSearchQueryParams();
   const [__, setFilterParams] = useSearchFilterParams();
   const chartsUrl = useGetChartsUrl();
@@ -78,9 +80,14 @@ export const useNavigation = () => {
 
   const toHomePage = useCallback(
     (space: string, dataModel: string, version: string) => {
-      navigate({
-        pathname: `${basename}/${dataModel}/${space}/${version}`,
-      });
+      navigate(
+        {
+          pathname: `${basename}/${dataModel}/${space}/${version}`,
+        },
+        {
+          replace: true,
+        }
+      );
     },
     [basename, navigate]
   );
@@ -89,15 +96,37 @@ export const useNavigation = () => {
     (
       dataType: string,
       instanceSpace: string | undefined,
-      externalId: string
+      externalId: string,
+      {
+        dataModel,
+        space,
+        version,
+      }: {
+        dataModel?: string;
+        space?: string;
+        version?: string;
+      } = {}
     ) => {
-      const { space, dataModel, version } = params;
+      // const { space, dataModel, version } = params;
+
+      const pathname = [
+        basename,
+        dataModel || dataModelParams?.dataModel,
+        space || dataModelParams?.space,
+        version || dataModelParams?.version,
+        dataType,
+        instanceSpace,
+        externalId,
+      ]
+        .filter(Boolean)
+        .join('/');
+
       navigate({
-        pathname: `${basename}/${dataModel}/${space}/${version}/${dataType}/${instanceSpace}/${externalId}`,
+        pathname,
         search,
       });
     },
-    [basename, navigate, params, search]
+    [basename, navigate, dataModelParams, search]
   );
 
   const toTimeseriesPage = useCallback(
