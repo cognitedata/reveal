@@ -67,6 +67,10 @@ export const CreateJobsModal = ({
 
   const { data: destinations } = useMQTTDestinations();
 
+  const sourceTopicFilters = source.jobs.map((job) => {
+    return job.topicFilter;
+  });
+
   const { mutateAsync: createDestination } = useCreateMQTTDestination();
   const { mutateAsync: createJob } = useCreateMQTTJob({
     onSuccess: () => {
@@ -273,7 +277,8 @@ export const CreateJobsModal = ({
               <Button
                 disabled={
                   !tempTopicFilterInput ||
-                  values.topicFilters?.includes(tempTopicFilterInput)
+                  values.topicFilters?.includes(tempTopicFilterInput) ||
+                  sourceTopicFilters.includes(tempTopicFilterInput)
                 }
                 onClick={handleAddTopicFilter}
                 type="primary"
