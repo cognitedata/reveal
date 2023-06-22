@@ -27,8 +27,7 @@ export const SearchResultsHeader: React.FC<Props> = ({
 
 const Container = styled.div`
   display: flex;
-  /* padding: 16px; */
-  padding-bottom: 16px;
+  padding: 16px 8px;
   gap: 16px;
   align-items: center;
 
