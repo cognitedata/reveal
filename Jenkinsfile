@@ -44,7 +44,7 @@ static final Map<String, String> FIREBASE_APP_SITES = [
   '3d-management': '3d-management',
   'transformations': 'transformations',
   'cdf-document-search': 'document-search',
-  'functions-ui': 'functions-ui',
+  'functions-ui': 'functions',
   'extraction-pipelines': 'extraction-pipelines',
   'extractor-downloads': 'extractor-downloads',
 ]
