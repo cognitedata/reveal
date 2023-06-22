@@ -5,11 +5,11 @@ import React from 'react';
 import styled from 'styled-components';
 import {
   MetricAggregation,
-  getMetricAggregationErrorCount,
-  getMetricAggregationSuccessCount,
+  getWriteFailureAggregationErrorCount,
+  getWriteDataAggregationSuccessCount,
 } from 'utils/hostedExtractors';
 
-type MessageHistoryChartItemProps = {
+type DataHistoryChartItemProps = {
   aggregation: MetricAggregation;
   yMax: number;
 };
@@ -21,15 +21,15 @@ const MIN_BAR_HEIGHT = 4;
 const ACTUAL_BAR_HEIGHT =
   BAR_HEIGHT - CATEGORY_GAP * CATEGORY_COUNT - MIN_BAR_HEIGHT * CATEGORY_COUNT;
 
-export const MessageHistoryChartItem = ({
+export const DataHistoryChartItem = ({
   aggregation,
   yMax,
-}: MessageHistoryChartItemProps): JSX.Element => {
+}: DataHistoryChartItemProps): JSX.Element => {
   const { t } = useTranslation();
 
-  const successCount = getMetricAggregationSuccessCount(aggregation?.data);
+  const successCount = getWriteDataAggregationSuccessCount(aggregation?.data);
   const successPercentage = successCount / yMax;
-  const errorCount = getMetricAggregationErrorCount(aggregation?.data);
+  const errorCount = getWriteFailureAggregationErrorCount(aggregation?.data);
   const errorPercentage = errorCount / yMax;
 
   return (
@@ -48,7 +48,7 @@ export const MessageHistoryChartItem = ({
                   type="CheckmarkFilled"
                   css={{ color: Colors['text-icon--status-success--inverted'] }}
                 />
-                {t('message-transform-succeed', { count: successCount })}
+                {t('values-written-succeed', { count: successCount })}
               </Flex>
             )}
             {errorCount > 0 && (
@@ -59,7 +59,7 @@ export const MessageHistoryChartItem = ({
                     color: Colors['text-icon--status-critical--inverted'],
                   }}
                 />
-                {t('message-transform-failed', { count: errorCount })}
+                {t('values-written-failed', { count: errorCount })}
               </Flex>
             )}
           </Flex>

@@ -176,6 +176,26 @@ export const getMetricAggregationErrorCount = (
   return data.transformFailures;
 };
 
+export const getWriteDataAggregationSuccessCount = (
+  data: MetricAggregation['data']
+): number => {
+  if (!data) {
+    return 0;
+  }
+
+  return data.destinationUploadedValues;
+};
+
+export const getWriteFailureAggregationErrorCount = (
+  data: MetricAggregation['data']
+): number => {
+  if (!data) {
+    return 0;
+  }
+
+  return data.destinationWriteFailures;
+};
+
 type StatusChangeBucket = {
   startTime: number;
   endTime: number;

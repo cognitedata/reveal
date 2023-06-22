@@ -37,6 +37,10 @@
   "cron-info": "Enter a cron expression for when the extraction pipeline is scheduled to run.",
   "cron-learn-more": "How do I write a cron expression?",
   "cron-title": "Cron expression",
+  "data-from-topic-filters": "Data from topic filters",
+  "data-missing-values-error-count_zero": "No write failures",
+  "data-missing-values-error-count_one": "1 missing value",
+  "data-missing-values-error-count_other": "{{count}} missing values",
   "data-set": "Data set",
   "data-set-403": "You do not have access to read data set details",
   "data-set-generic-error": "An error occurred when fetching data set details",
@@ -115,6 +119,7 @@
   "latest-run-view-err-message": "Click to view error message",
   "learning-and-resources": "Learning and resources",
   "message": "Message",
+  "messages-from-topic-filters": "Messages from topic filters",
   "meta-data": "Metadata",
   "meta-data-hint": "Information specific to your organization can be added using metadata fields with key/value pairs.",
   "meta-data-title": "Document metadata associated with the extraction pipeline",
@@ -153,7 +158,6 @@
   "notification-success-source-create": "Successfully created source",
   "notification-success-source-delete": "Successfully deleted source",
   "list-extaction-pipelines-error-403": "You do not have the required permissions to list extraction pipelines",
-
   "notification_other": "Notifications",
   "notification-alert-info": "Sends alerts {{duration}} after no detected activity.",
   "notification-run-alert": "Alerts contacts when runs fail.",
@@ -310,5 +314,9 @@
   "message-transform-succeed": "{{count}} message transformed successfully",
   "message-transform-succeed_other": "{{count}} messages transformed successfully",
   "message-transform-failed_one": "{{count}} message couldn't transformed",
-  "message-transform-failed_other": "{{count}} messages couldn't transformed"
+  "message-transform-failed_other": "{{count}} messages couldn't transformed",
+  "values-written-succeed_one": "{{count}} values written",
+  "values-written-succeed_other": "{{count}} value written",
+  "values-written-failed_one": "{{count}} value failed to write",
+  "values-written-failed_other": "{{count}} values failed to write"
 }
