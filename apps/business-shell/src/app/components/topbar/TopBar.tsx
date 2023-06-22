@@ -1,19 +1,13 @@
 import type { FC } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import {
-  Avatar,
-  TopBar as CogsTopBar,
-  Dropdown,
-  Menu,
-  Tabs,
-} from '@cognite/cogs.js';
+import { TopBar as CogsTopBar, Dropdown, Tabs } from '@cognite/cogs.js';
 import { useFlag } from '@cognite/react-feature-flags';
 
 import { useTranslation } from '../../common';
-import { useAuthContext } from '../../common/auth/AuthProvider';
 
 import { AppSelector } from './AppSelector';
+import UserMenu from './UserMenu';
 
 type Props = {
   tenant?: string;
@@ -24,7 +18,6 @@ type Props = {
 export const TopBar: FC<Props> = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { authState, logout } = useAuthContext();
   const { isEnabled } = useFlag('CDF_BUSINESS_isEnabled', {
     forceRerender: true,
     fallback: false,
@@ -70,23 +63,7 @@ export const TopBar: FC<Props> = () => {
       </CogsTopBar.Left>
 
       <CogsTopBar.Right>
-        <CogsTopBar.Actions
-          actions={[
-            {
-              key: 'help',
-              icon: 'Help',
-            },
-            {
-              key: 'avatar',
-              component: <Avatar text={authState.user.name} tooltip={false} />,
-              menu: (
-                <Menu>
-                  <Menu.Item onClick={logout}>{t('LABEL_APPS')}</Menu.Item>
-                </Menu>
-              ),
-            },
-          ]}
-        />
+        <UserMenu />
       </CogsTopBar.Right>
     </CogsTopBar>
   );

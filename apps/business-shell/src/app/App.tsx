@@ -15,7 +15,7 @@ import { SDKProvider } from '@cognite/sdk-provider';
 
 import { translations } from './common';
 import { useAuthContext } from './common/auth/AuthProvider';
-import { TopBar } from './components/topbar/top-bar';
+import { TopBar } from './components/topbar/TopBar';
 import { queryClient } from './queryClient';
 import { CoreRoutes } from './Routes';
 
