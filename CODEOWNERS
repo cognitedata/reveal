@@ -50,6 +50,9 @@ apps/iot-hub              @davidlky @geircognite @muradsater
 # Vision
 apps/vision              @cognitedata/cdf-user-experience
 
+# Interactive Diagrams
+apps/interactive-diagrams @cognitedata/team-hebe
+
 # 3D / Reveal
 apps/3d-management                @cognitedata/3d-reveal-viewer-team
 
