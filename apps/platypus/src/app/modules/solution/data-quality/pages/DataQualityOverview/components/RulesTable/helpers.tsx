@@ -2,9 +2,9 @@ import { RuleSeverity } from '@data-quality/api/codegen';
 import {
   TimeSeriesType,
   getLastDatapointValue,
+  getScoreValue,
   getTimeSeriesId,
 } from '@data-quality/utils/validationTimeseries';
-import { toNumber } from 'lodash';
 
 import { Body, Chip, Icon } from '@cognite/cogs.js';
 import { Datapoints } from '@cognite/sdk/dist/src';
@@ -42,8 +42,7 @@ export const renderValidityCell = (
     ruleId
   );
   const value = getLastDatapointValue(datapoints, timeSeriesId);
-  const cellValue =
-    value !== undefined ? `${Math.round(toNumber(value) * 100)}%` : value;
+  const cellValue = getScoreValue(value);
 
   return renderCell(cellValue, loadingDatapoints);
 };
@@ -78,9 +77,4 @@ const renderCell = (cellValue?: string | number, isLoading?: boolean) => {
     );
 
   return <Body level={2}>{cellValue?.toLocaleString()}</Body>;
-};
-
-/** Get the latest timestamp from a set of datapoints */
-export const getLastValidationTime = (tsDatapoints: Datapoints[]) => {
-  return tsDatapoints[0]?.datapoints[0]?.timestamp;
 };
