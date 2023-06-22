@@ -1,20 +1,14 @@
 import { useCallback, useMemo } from 'react';
-import {
-  createSearchParams,
-  useLocation,
-  useNavigate,
-  useParams,
-} from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { resourceItemToContainerReference } from '@fusion/industry-canvas';
 import queryString from 'query-string';
 
-import { createLink } from '@cognite/cdf-utilities';
-
 // TODO: move these in fdx?
-import { ResourceItem, ResourceType } from '@data-exploration-lib/core';
+import { ResourceItem } from '@data-exploration-lib/core';
 
 import { DateRange, ValueByDataType } from '../containers/search/Filter';
+import { createSearchParams } from '../utils/router';
 
 import { useSearchFilterParams, useSearchQueryParams } from './useParams';
 
@@ -42,7 +36,7 @@ export const useNavigation = () => {
     (searchQuery: string = '', filters: ValueByDataType = {}) => {
       const params = createSearchParams({
         searchQuery,
-        filters: JSON.stringify(filters),
+        filters,
       });
 
       setQueryParams(searchQuery);

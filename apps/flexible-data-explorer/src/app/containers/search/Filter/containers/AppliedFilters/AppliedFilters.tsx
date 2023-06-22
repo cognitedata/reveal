@@ -46,7 +46,7 @@ export const AppliedFilters: React.FC<AppliedFiltersProps> = ({
 };
 
 const Wrapper = styled.div`
-  .cogs-chip-group__overflow {
+  .cogs-chip {
     background: var(--cogs-surface--status-neutral--muted--default);
     color: var(--cogs-text-icon--status-neutral);
   }

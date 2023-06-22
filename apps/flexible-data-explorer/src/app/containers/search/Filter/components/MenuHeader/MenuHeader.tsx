@@ -2,15 +2,17 @@ import * as React from 'react';
 
 import { Button } from '@cognite/cogs.js';
 
-import { Container, Title } from './elements';
+import { Container, Subtitle, TextContent, Title } from './elements';
 
 export interface MenuHeaderProps {
   title: string;
+  subtitle?: string;
   onBackClick?: () => void;
 }
 
 export const MenuHeader: React.FC<MenuHeaderProps> = ({
   title,
+  subtitle,
   onBackClick,
 }) => {
   return (
@@ -25,7 +27,10 @@ export const MenuHeader: React.FC<MenuHeaderProps> = ({
         />
       )}
 
-      <Title>{title}</Title>
+      <TextContent>
+        <Title>{title}</Title>
+        {subtitle && <Subtitle>{subtitle}</Subtitle>}
+      </TextContent>
     </Container>
   );
 };
