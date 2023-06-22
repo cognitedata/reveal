@@ -1,5 +1,7 @@
 /* eslint-disable import/no-webpack-loader-syntax */
 
+import { loader } from '@monaco-editor/react';
+import * as monaco from 'monaco-editor';
 /**  This is the built in way how to load the web workers using webpack is with worker-loader */
 import { Environment as MonacoEditorEnvironment } from 'monaco-editor';
 import MonacoEditorWorker from 'worker-loader?esModule=true&inline=fallback!monaco-editor/esm/vs/editor/editor.worker?worker';
@@ -13,3 +15,5 @@ declare const self: any;
     return new MonacoEditorWorker();
   },
 } as MonacoEditorEnvironment;
+
+loader.config({ monaco });

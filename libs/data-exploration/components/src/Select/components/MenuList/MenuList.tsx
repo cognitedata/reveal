@@ -15,7 +15,9 @@ import { SearchInput } from '../SearchInput';
 export const MenuList = <OptionType extends OptionTypeBase>({
   children,
   ...props
-}: MenuListComponentProps<OptionType>) => {
+}: // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+MenuListComponentProps<OptionType>) => {
   const {
     showMenuInput,
     inputValue,

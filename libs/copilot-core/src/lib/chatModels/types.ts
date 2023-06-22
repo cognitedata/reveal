@@ -1,3 +1,5 @@
+import { CogniteClient } from '@cognite/sdk';
+
 export declare const ChatCompletionRequestMessageRoleEnum: {
   readonly System: 'system';
   readonly User: 'user';
@@ -30,6 +32,7 @@ export declare interface CogniteChatGPTBaseInput {
 export interface CogniteChatGPTInput extends CogniteChatGPTBaseInput {
   /** ChatGPT messages to pass as a prefix to the prompt */
   prefixMessages?: ChatCompletionRequestMessage[];
+  sdk?: CogniteClient;
 }
 
 /**
