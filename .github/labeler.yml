@@ -38,6 +38,7 @@ cdf-document-search:
 functions-ui:
   - apps/functions-ui/*
   - apps/functions-ui/**/*
+
 interactive-diagrams:
   - apps/interactive-diagrams/*
   - apps/interactive-diagrams/**/*
