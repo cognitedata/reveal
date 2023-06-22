@@ -6,14 +6,14 @@ import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
 import { Body, Flex, Table, TableColumn, Title } from '@cognite/cogs.js';
 
+import { LastValidationTime } from '..';
+
 import {
-  getLastValidationTime,
   renderItemsCheckedCell,
   renderNameCell,
   renderSeverityCell,
   renderValidityCell,
 } from './helpers';
-import { LastValidationTime } from './LastValidationTime';
 
 export const RulesTable = () => {
   const { t } = useTranslation('RulesTable');
@@ -21,8 +21,6 @@ export const RulesTable = () => {
   const { datapoints, error, loadingDatapoints, loadingRules, rules } =
     useLoadRules();
   const { dataSource } = useLoadDataSource();
-
-  const lastValidationTime = getLastValidationTime(datapoints);
 
   const tableColumns: TableColumn<RuleDto>[] = [
     {
@@ -93,8 +91,8 @@ export const RulesTable = () => {
       <Flex direction="row" justifyContent="space-between" gap={10}>
         <Title level={5}>{t('data_quality_all_rules', 'All rules')}</Title>
         <LastValidationTime
+          datapoints={datapoints}
           loading={loadingDatapoints}
-          validationTime={lastValidationTime}
         />
       </Flex>
 
