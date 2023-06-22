@@ -18,6 +18,12 @@ import { MAPBOX_TOKEN, MAPBOX_MAP_ID } from './constants';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { MapPopup } from './MapPopup';
 
+/*
+the access token was not being set even though it's passed to ReactMapboxGL
+https://github.com/alex3165/react-mapbox-gl/issues/822#issuecomment-735726872
+*/
+(MapboxGL as any).accessToken = MAPBOX_TOKEN;
+
 // should be defined outside MapView to avoid re-rendering
 const Mapbox = ReactMapboxGl({
   minZoom: 1,
