@@ -14,7 +14,7 @@
     "@codemirror/legacy-modes": "^6.1.0",
     "@cognite/acl-protos": "^0.19.2",
     "@cognite/annotations": "^1.1.0",
-    "@cognite/auth-react": "^0.0.22-beta",
+    "@cognite/auth-react": "^0.0.23-beta",
     "@cognite/cdf-i18n-utils": "^0.6.3",
     "@cognite/cdf-ui-cli": "^1.1.1",
     "@cognite/cogs.js": "^9.16.8",
