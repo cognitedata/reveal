@@ -1,6 +1,6 @@
+import { ButtonCommands } from './button.commands';
 import { LoginCommand } from './login.commands';
 import { SearchCommand } from './search.commands';
-import { ButtonCommands } from './button.commands';
 import '@testing-library/cypress/add-commands';
 
 declare global {
