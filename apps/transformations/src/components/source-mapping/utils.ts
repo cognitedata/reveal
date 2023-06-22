@@ -1,5 +1,6 @@
 import { QueryClient } from '@tanstack/react-query';
 import { fetchSchema } from '@transformations/hooks';
+import { fetchModel } from '@transformations/hooks/fdm';
 import {
   ColumnProfile,
   getRawProfile,
@@ -111,9 +112,10 @@ ${from};`;
 const fdmFromStatement = (mapping: TransformationMapping) => {
   const level1 = mapping.sourceLevel1?.split('.');
   const space = level1?.[0];
+  const dataModelExternalId = level1?.[1];
   const dataModelVersion = level1?.[2];
 
-  return `cdf_nodes("${space}", "${mapping.sourceLevel2}", "${dataModelVersion}")`;
+  return `cdf_data_models("${space}", "${dataModelExternalId}", "${dataModelVersion}", "${mapping.sourceLevel2}")`;
 };
 
 export const parseTransformationMapping = (
@@ -241,16 +243,34 @@ export const suggestFDMMappings = async (
 ) => {
   const suggestions: Suggestion[] = [];
   if (mapping.sourceLevel1 && mapping.sourceLevel2) {
-    const [space, _, version] = mapping?.sourceLevel1?.split('.') || [];
+    const [space, dataModelExternalId, version] =
+      mapping?.sourceLevel1?.split('.') || [];
+
+    const model = await fetchModel(
+      sdk,
+      client,
+      dataModelExternalId,
+      space,
+      version
+    );
+    const selectedView = model?.views.find(
+      ({ externalId: e }) => e === mapping?.sourceLevel2
+    );
+
+    if (!selectedView) {
+      return [];
+    }
+
     const source: Destination = {
       type: 'nodes',
       instanceSpace: space,
       view: {
-        externalId: mapping?.sourceLevel2,
-        version,
-        space,
+        externalId: selectedView?.externalId,
+        version: selectedView?.version,
+        space: selectedView?.space,
       },
     };
+
     const sourceSchema = await fetchSchema(sdk, client, source!, 'abort');
 
     const suggestedMappings = exactMapping

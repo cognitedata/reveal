@@ -1,0 +1,5 @@
+name: 'Get affected'
+description: 'Fetch changes based on nx'
+runs:
+  using: node16
+  main: index.js

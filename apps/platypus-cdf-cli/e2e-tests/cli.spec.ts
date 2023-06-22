@@ -18,7 +18,7 @@ const getDatamodelNameTimeAppendix = () => {
 describe('platpus-cli', () => {
   beforeAll(async () => {
     return await platypusCli.login();
-  });
+  }, 15000);
 
   describe('cdf data-models publish', () => {
     it('can publish data models and list', async () => {
@@ -53,5 +53,5 @@ describe('platpus-cli', () => {
 
   afterAll(async () => {
     return await platypusCli.logout();
-  });
+  }, 15000);
 });

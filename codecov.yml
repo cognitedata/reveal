@@ -12,6 +12,7 @@ coverage:
           - platypus
           - platypus-cdf-cli
           - functions-ui
+          - extraction-pipelines
       libs:
         flags:
           - cog-data-grid

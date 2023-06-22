@@ -1,19 +1,29 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import { startCase } from 'lodash';
+import styled from 'styled-components';
 
-import { Button, Dropdown, Menu, ToolBar, Tooltip } from '@cognite/cogs.js';
+import { debounce } from 'lodash';
+
+import { Button, Slider, ToolBar, Tooltip } from '@cognite/cogs.js';
 import { PolylineAnnotation } from '@cognite/unified-file-viewer';
 
 import { TEXT_ANNOTATION_COLOR_MAP } from '../../colors';
 import { translationKeys } from '../../common';
-import { LINE_STROKE_WIDTH } from '../../constants';
+import { MIN_STROKE_WIDTH, MAX_STROKE_WIDTH } from '../../constants';
 import { OnUpdateAnnotationStyleByType } from '../../hooks/useManagedTools';
 import { useTranslation } from '../../hooks/useTranslation';
 import { FillColorPalette } from '../color-palettes/FillColorPalette';
 
-import { RightAlignedColorPalettePosition } from './elements';
+import {
+  LeftAlignedColorPalettePosition,
+  RightAlignedColorPalettePosition,
+} from './elements';
+import { LineDashTooltip } from './LineDashTooltip';
 import { LineEndTypeTooltip } from './LineEndTypeTooltip';
+import { LineThicknessButton } from './LineThicknessButton';
+import { SizeEditor } from './SizeEditor';
+
+const UPDATE_STROKE_WIDTH_DEBOUNCE_MS = 200;
 
 enum EditMode {
   IDLE,
@@ -35,8 +45,17 @@ export const LineAnnotationTooltip: React.FC<
   onUpdateAnnotationStyleByType,
   onDeleteSelectedCanvasAnnotation,
 }) => {
+  const [strokeWidth, setStrokeWidth] = useState<number | undefined>(
+    lineAnnotation.style?.strokeWidth ?? MIN_STROKE_WIDTH
+  );
   const [editMode, setEditMode] = useState(EditMode.IDLE);
   const { t } = useTranslation();
+
+  const debouncedUpdateLineAnnotationStrokeWidth = debounce(
+    (value: number) =>
+      onUpdateAnnotationStyleByType({ line: { strokeWidth: value } }),
+    UPDATE_STROKE_WIDTH_DEBOUNCE_MS
+  );
 
   const toggleEditMode = (mode: EditMode) => {
     if (editMode === mode) {
@@ -45,6 +64,22 @@ export const LineAnnotationTooltip: React.FC<
       setEditMode(mode);
     }
   };
+
+  useEffect(() => {
+    if (strokeWidth === undefined) {
+      return;
+    }
+    if (Number.isNaN(strokeWidth)) {
+      return;
+    }
+    if (strokeWidth < MIN_STROKE_WIDTH || strokeWidth > MAX_STROKE_WIDTH) {
+      return;
+    }
+    debouncedUpdateLineAnnotationStrokeWidth(strokeWidth);
+    // We ignore `onUpdateAnnotationStyleByType` as dependency since if we add
+    // that to the list, this hook is, for some reason, called infinitely many times.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [strokeWidth]);
 
   return (
     <>
@@ -74,6 +109,32 @@ export const LineAnnotationTooltip: React.FC<
           />
         </RightAlignedColorPalettePosition>
       )}
+      {editMode === EditMode.EDITING_STROKE_WIDTH && (
+        <StrokeTooltipContainer>
+          <ToolBar direction="vertical">
+            <StyledSlider
+              value={strokeWidth}
+              onChange={setStrokeWidth}
+              min={MIN_STROKE_WIDTH}
+              max={MAX_STROKE_WIDTH}
+            />
+            <ToolBar direction="horizontal">
+              <SizeEditor
+                value={strokeWidth}
+                minValue={MIN_STROKE_WIDTH}
+                maxValue={MAX_STROKE_WIDTH}
+                setValue={setStrokeWidth}
+              />
+              <LineDashTooltip
+                dash={lineAnnotation.style?.dash}
+                onUpdateDash={(dash) =>
+                  onUpdateAnnotationStyleByType({ line: { dash } })
+                }
+              />
+            </ToolBar>
+          </ToolBar>
+        </StrokeTooltipContainer>
+      )}
       <ToolBar direction="horizontal">
         <>
           <Tooltip
@@ -93,48 +154,10 @@ export const LineAnnotationTooltip: React.FC<
               onClick={() => toggleEditMode(EditMode.EDITING_LINE_END_TYPE)}
             />
           </Tooltip>
-          <Dropdown
-            placement="top-start"
-            onShown={() => setEditMode(EditMode.EDITING_STROKE_WIDTH)}
-            content={
-              <Menu>
-                {Object.entries(LINE_STROKE_WIDTH).map(
-                  ([strokeWidthName, strokeWidth]) => (
-                    <Menu.Item
-                      key={strokeWidth}
-                      toggled={
-                        strokeWidth === lineAnnotation.style?.strokeWidth
-                      }
-                      onClick={() => {
-                        onUpdateAnnotationStyleByType({
-                          line: { strokeWidth: strokeWidth },
-                        });
-                      }}
-                    >
-                      {startCase(strokeWidthName.toLowerCase())}
-                    </Menu.Item>
-                  )
-                )}
-              </Menu>
-            }
-          >
-            {/* TODO: This isn't the correct icon. Update to the correct icon when id is added in Cogs.js */}
-            <Tooltip
-              content={t(
-                translationKeys.ANNOTATION_CHANGE_LINE_STROKE_WIDTH,
-                'Change stroke width'
-              )}
-            >
-              <Button
-                type="ghost"
-                icon="AlignCenter"
-                aria-label={t(
-                  translationKeys.ANNOTATION_CHANGE_LINE_STROKE_WIDTH,
-                  'Change stroke width'
-                )}
-              />
-            </Tooltip>
-          </Dropdown>
+          <LineThicknessButton
+            isToggled={editMode === EditMode.EDITING_STROKE_WIDTH}
+            onClick={() => toggleEditMode(EditMode.EDITING_STROKE_WIDTH)}
+          />
           <Tooltip
             content={t(
               translationKeys.ANNOTATION_CHANGE_COLOR_TOOLTIP,
@@ -165,3 +188,14 @@ export const LineAnnotationTooltip: React.FC<
     </>
   );
 };
+
+const STROKE_TOOLTIP_Y_OFFSET_PERCENTAGE = '-52%';
+const StrokeTooltipContainer = styled(LeftAlignedColorPalettePosition)`
+  transform: translate(0%, ${STROKE_TOOLTIP_Y_OFFSET_PERCENTAGE});
+`;
+
+const StyledSlider = styled(Slider)`
+  width: 90%;
+  padding-top: 18px;
+  transform: translate(0%, -30%);
+`;
