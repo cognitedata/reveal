@@ -42,7 +42,8 @@ export class CameraManagerHelper {
   static calculateNewTargetFromRotation(
     camera: THREE.PerspectiveCamera,
     rotation: THREE.Quaternion,
-    currentTarget: THREE.Vector3
+    currentTarget: THREE.Vector3,
+    position: THREE.Vector3
   ): THREE.Vector3 {
     const distToTarget = currentTarget.clone().sub(camera.position);
     const tempCam = camera.clone();
@@ -54,7 +55,7 @@ export class CameraManagerHelper {
       .getWorldDirection(new THREE.Vector3())
       .normalize()
       .multiplyScalar(distToTarget.length())
-      .add(tempCam.position);
+      .add(position);
 
     return newTarget;
   }
