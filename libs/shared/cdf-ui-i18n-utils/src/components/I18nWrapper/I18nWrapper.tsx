@@ -116,7 +116,7 @@ const I18nWrapper = ({
   useEffect(() => {
     if (!didInitializedTranslations) {
       initializeTranslations(
-        language,
+        language as string,
         translations,
         defaultNamespace,
         useLocizeBackend,
@@ -139,7 +139,7 @@ const I18nWrapper = ({
   ]);
 
   if (error && errorScreen) {
-    return errorScreen(error);
+    return errorScreen(error) as any;
   }
 
   if (!didInitializedTranslations || !i18next) {

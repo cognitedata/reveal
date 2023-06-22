@@ -1,9 +1,11 @@
 import { useCallback } from 'react';
 
-import { TOptions, StringMap } from 'i18next';
+import { TOptions } from 'i18next';
 import { UseTranslationOptions, useTranslation } from 'react-i18next';
 
 import { ExtendedTranslationKeys } from '..';
+
+export type StringMap = { [key: string]: any };
 
 export const useTypedTranslation = <K extends string>(
   ns?: string,
@@ -16,6 +18,8 @@ export const useTypedTranslation = <K extends string>(
       key: ExtendedTranslationKeys<K>,
       options?: TOptions<StringMap> | string
     ) => {
+      // eslint-disable-next-line
+      // @ts-ignore
       const translation = oldT(key, options);
       return translation;
     },

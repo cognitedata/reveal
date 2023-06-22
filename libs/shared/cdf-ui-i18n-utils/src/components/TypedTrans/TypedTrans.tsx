@@ -6,6 +6,7 @@ export type TypedTransProps<T extends string> = {
 } & Omit<TransProps<T>, 'i18nKey'>;
 
 const TypedTrans = <K extends string>(props: TypedTransProps<K>) => (
+  // eslint-disable-next-line
   <Trans {...props} />
 );
 

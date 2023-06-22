@@ -2457,6 +2457,13 @@
   dependencies:
     regenerator-runtime "^0.13.11"
 
+"@babel/runtime@^7.22.5":
+  version "7.22.5"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.22.5.tgz#8564dd588182ce0047d55d7a75e93921107b57ec"
+  integrity sha512-ecjvYlnAaZ/KVneE/OdKYBYfgXV3Ptu6zQWmgEF7vwKhQnvVS6bjMD2XYgj+SNvQ1GfK/pjgokfPkC/2CO8CuA==
+  dependencies:
+    regenerator-runtime "^0.13.11"
+
 "@babel/template@^7.12.13", "@babel/template@^7.12.7", "@babel/template@^7.18.10", "@babel/template@^7.20.7", "@babel/template@^7.3.3":
   version "7.20.7"
   resolved "https://registry.yarnpkg.com/@babel/template/-/template-7.20.7.tgz#a15090c2839a83b02aa996c0b4994005841fd5a8"
@@ -4314,6 +4321,11 @@
   version "0.15.0"
   resolved "https://registry.yarnpkg.com/@fluent/syntax/-/syntax-0.15.0.tgz#4b05bc16e6d620a9b230f37cca269a4d56e35553"
   integrity sha512-NIObEPekXiaDDO10NQSOeylOETaI2Ns/ymKJNvgkM6FcBARS+t3NVGyLPPIl/pqHDUB9v7bWeEmuVMJQjnpNeg==
+
+"@fluent/syntax@0.19.0":
+  version "0.19.0"
+  resolved "https://registry.yarnpkg.com/@fluent/syntax/-/syntax-0.19.0.tgz#43f882faba6908b0f1013f6a94e009d0dfbdcb77"
+  integrity sha512-5D2qVpZrgpjtqU4eNOcWGp1gnUCgjfM+vKGE2y03kKN6z5EBhtx0qdRFbg8QuNNj8wXNoX93KJoYb+NqoxswmQ==
 
 "@fortaine/fetch-event-source@^3.0.6":
   version "3.0.6"
@@ -15557,7 +15569,7 @@ cross-fetch@3.1.5, cross-fetch@^3.0.4:
   dependencies:
     node-fetch "2.6.7"
 
-cross-fetch@^3.1.5:
+cross-fetch@3.1.6, cross-fetch@^3.1.5:
   version "3.1.6"
   resolved "https://registry.yarnpkg.com/cross-fetch/-/cross-fetch-3.1.6.tgz#bae05aa31a4da760969756318feeee6e70f15d6c"
   integrity sha512-riRvo06crlE8HiqOwIpQhxwdOk4fOeR7FVM/wXoxchFEqMNUjvbs3bfo4OTgMEMHzppd4DxFBDbyySj8Cv781g==
@@ -17185,15 +17197,20 @@ dotenv-flow@3.2.0:
   dependencies:
     dotenv "^8.0.0"
 
+dotenv@16.0.3, dotenv@^16.0.0:
+  version "16.0.3"
+  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-16.0.3.tgz#115aec42bac5053db3c456db30cc243a5a836a07"
+  integrity sha512-7GO6HghkA5fYG9TYnNxi14/7K9f5occMlp3zXAuSxn7CKCxt9xbNWG7yF8hTCSUchlfWSe3uLmlPfigevRItzQ==
+
 dotenv@^10.0.0, dotenv@~10.0.0:
   version "10.0.0"
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-10.0.0.tgz#3d4227b8fb95f81096cdd2b66653fb2c7085ba81"
   integrity sha512-rlBi9d8jpv9Sf1klPjNfFAuWDjKLwTIJJ/VxtoTwIR6hnZxcEOQCZg2oIL3MWBYw5GpUDKOEnND7LXTbIpQ03Q==
 
-dotenv@^16.0.0:
-  version "16.0.3"
-  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-16.0.3.tgz#115aec42bac5053db3c456db30cc243a5a836a07"
-  integrity sha512-7GO6HghkA5fYG9TYnNxi14/7K9f5occMlp3zXAuSxn7CKCxt9xbNWG7yF8hTCSUchlfWSe3uLmlPfigevRItzQ==
+dotenv@^16.3.1:
+  version "16.3.1"
+  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-16.3.1.tgz#369034de7d7e5b120972693352a3bf112172cc3e"
+  integrity sha512-IPzF4w4/Rd94bA9imS68tZBaYyBWSCE47V1RGuMrB94iyTOIEwRmVL2x/4An+6mETpLrKJ5hQkB8W4kFAadeIQ==
 
 dotenv@^8.0.0:
   version "8.6.0"
@@ -19118,6 +19135,13 @@ fluent_conv@3.1.0:
   integrity sha512-fmS8RFxkEP7P/XTlVbf8b8I0RSLOKFqlrARmwsH1bNrKxmbEGNjZQXg0R6QZz/FdFrHcp7sFAjLp75bB4CSPsA==
   dependencies:
     "@fluent/syntax" "0.15.0"
+
+fluent_conv@3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/fluent_conv/-/fluent_conv-3.2.0.tgz#ef75de5b737a8a5b1d697d9008cb9a52f18b57c3"
+  integrity sha512-EhVRTpoeAk+vchaGXgpQT+cv+89kujnRPn7wBzouNDoNG8Fv2q00mon3l/S2a1g5pM/4/8B35fIchi0mG7WexA==
+  dependencies:
+    "@fluent/syntax" "0.19.0"
 
 flush-write-stream@^1.0.0:
   version "1.1.1"
@@ -21096,6 +21120,13 @@ i18next-locize-backend@^5.0.1:
   dependencies:
     cross-fetch "3.1.5"
 
+i18next-locize-backend@^6.2.2:
+  version "6.2.2"
+  resolved "https://registry.yarnpkg.com/i18next-locize-backend/-/i18next-locize-backend-6.2.2.tgz#861b864f0e2f6e290ab0c5ee40eb57b21bc3b6a3"
+  integrity sha512-G9iGVJF3n8xqBLf5XmdfJldQQgbmMwWM15gA9QZ5tGnbBD24I9bDhf9qgIeuQze7tdAUTU2XRIV0sJbgvTD3tg==
+  dependencies:
+    cross-fetch "3.1.6"
+
 i18next-pseudo@2.2.1:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/i18next-pseudo/-/i18next-pseudo-2.2.1.tgz#f926587a10e37b0ab525fc3330133dbf134ead76"
@@ -21123,6 +21154,13 @@ i18next@^21.6.13:
   integrity sha512-YeuIBmFsGjUfO3qBmMOc0rQaun4mIpGKET5WDwvu8lU7gvwpcariZLNtL0Fzj+zazcHUrlXHiptcFhBMFaxzfg==
   dependencies:
     "@babel/runtime" "^7.17.2"
+
+i18next@^23.2.3:
+  version "23.2.3"
+  resolved "https://registry.yarnpkg.com/i18next/-/i18next-23.2.3.tgz#d89930f0ce343fad2bee0d3c2188f42171a91cdd"
+  integrity sha512-5spO7L0rNmW0jFuNhz+gfirlFt1anle4mTy4+gFkgsH0+T3R5++4oncBrzeKa7v8pweRyGBoGmOpboqlxovg6A==
+  dependencies:
+    "@babel/runtime" "^7.22.5"
 
 iconv-lite@0.4.19:
   version "0.4.19"
@@ -24408,10 +24446,46 @@ locize-cli@^7.13.2:
     xliff "6.1.0"
     xlsx "0.18.5"
 
+locize-cli@^7.14.6:
+  version "7.14.6"
+  resolved "https://registry.yarnpkg.com/locize-cli/-/locize-cli-7.14.6.tgz#1ce8f06c67355ba6dd796fc4801eac7e84e3481c"
+  integrity sha512-NtYYCc7iLRKjfw3Qb+RJ4aai5ixfvjbl4JyRa1hBCM3XiGcoh3Ppt9vXmdB8pGQb7nuEe2UOg5PVFlQykV4QFQ==
+  dependencies:
+    "@js.properties/properties" "0.5.4"
+    android-string-resource "2.3.9"
+    async "3.2.4"
+    cacheable-lookup "6.1.0"
+    colors "1.4.0"
+    commander "9.5.0"
+    csvjson "5.1.0"
+    diff "5.1.0"
+    dotenv "16.0.3"
+    flat "5.0.2"
+    fluent_conv "3.2.0"
+    gettext-converter "1.2.3"
+    https-proxy-agent "5.0.1"
+    ini "3.0.1"
+    js-yaml "4.1.0"
+    laravelphp "2.0.3"
+    lodash.clonedeep "4.5.0"
+    mkdirp "2.1.6"
+    node-fetch "2.6.8"
+    resx "2.0.4"
+    rimraf "3.0.2"
+    strings-file "0.0.5"
+    tmexchange "2.0.5"
+    xliff "6.1.0"
+    xlsx "https://cdn.sheetjs.com/xlsx-0.19.3/xlsx-0.19.3.tgz"
+
 locize@^2.3.0:
   version "2.4.5"
   resolved "https://registry.yarnpkg.com/locize/-/locize-2.4.5.tgz#66ecdb0e9b807b1d793d6db46b72ce85d80f444e"
   integrity sha512-05OVfX93y1STOEq8Ef5ewN7IqMcdaC3NxqWkt56liSbxqY+FhitO7NO7gLnB5jnryWmrKO7OMkLgdSIE6uOEVw==
+
+locize@^2.4.6:
+  version "2.4.6"
+  resolved "https://registry.yarnpkg.com/locize/-/locize-2.4.6.tgz#aa36c38027a7158868c9ab4928e22fa8997dd282"
+  integrity sha512-o3X2/v8D+zuWAJRWuooEZbwblRQMJ5WYaT/4Psgek1+HXgqvb3TeZ7BUHaLc+oX2DK3TFSjSDqEFrSRVdu+B3A==
 
 lodash-es@^4.17.21:
   version "4.17.21"
@@ -26157,6 +26231,11 @@ mkdirp@2.1.3:
   version "2.1.3"
   resolved "https://registry.yarnpkg.com/mkdirp/-/mkdirp-2.1.3.tgz#b083ff37be046fd3d6552468c1f0ff44c1545d1f"
   integrity sha512-sjAkg21peAG9HS+Dkx7hlG9Ztx7HLeKnvB3NQRcu/mltCVmvkF0pisbiTSfDVYTT86XEfZrTUosLdZLStquZUw==
+
+mkdirp@2.1.6:
+  version "2.1.6"
+  resolved "https://registry.yarnpkg.com/mkdirp/-/mkdirp-2.1.6.tgz#964fbcb12b2d8c5d6fbc62a963ac95a273e2cc19"
+  integrity sha512-+hEnITedc8LAtIP9u3HJDFIdcLV2vXP33sqLLIzkv1Db1zO/1OxbvYf0Y1OC/S/Qo5dxHXepofhmxL02PsKe+A==
 
 mkdirp@^1.0.3, mkdirp@^1.0.4, mkdirp@~1.0.4:
   version "1.0.4"
@@ -30572,6 +30651,14 @@ react-i18next@^11.15.6:
     "@babel/runtime" "^7.14.5"
     html-parse-stringify "^3.0.1"
 
+react-i18next@^13.0.1:
+  version "13.0.1"
+  resolved "https://registry.yarnpkg.com/react-i18next/-/react-i18next-13.0.1.tgz#4d047d2d63d9616f7f5fd4ca88b1cc449cc15290"
+  integrity sha512-gMO6N2GfSfuH7xlHSsZ/mZf+Py9bLm/+EDKIn5fNTuDTjcCcwmMU5UEuGCDk5mdfivbo7ySyYXBN7B9tbGUxiA==
+  dependencies:
+    "@babel/runtime" "^7.22.5"
+    html-parse-stringify "^3.0.1"
+
 react-iframe@^1.8.0:
   version "1.8.5"
   resolved "https://registry.yarnpkg.com/react-iframe/-/react-iframe-1.8.5.tgz#33dc091147c3f2371d0826797f1b5767ff28a56f"
@@ -31957,6 +32044,13 @@ resx@2.0.3:
   integrity sha512-BgKMXuX01ACAqNn0XzPGocEY1Gg6D2QUK77b0P0PczLqCkWlA7c7tL1JO37WU8En9E7neQt5SKMDEtAW/0baOQ==
   dependencies:
     xml2js "0.4.23"
+
+resx@2.0.4:
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/resx/-/resx-2.0.4.tgz#4b4202a757e6931b8661207a4085b03a2a837968"
+  integrity sha512-b3IW7ge0nxbWOhbUGO/WULL4NG5ctrpey+UgDIwRq5K4Bblna4t1hLMbA2DZC9Y6e8U/zLuRJHg+qEOVKOoypQ==
+  dependencies:
+    xml2js "0.5.0"
 
 ret@~0.1.10:
   version "0.1.15"
@@ -34747,6 +34841,13 @@ tmexchange@2.0.4:
   dependencies:
     xml2js "0.4.23"
 
+tmexchange@2.0.5:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/tmexchange/-/tmexchange-2.0.5.tgz#00d3528a2c4fed17fd4fa5f8dd98d5fbd7ca04b4"
+  integrity sha512-fJQcBIY/ebEYDagOA0IY2PKYs2OJtBo0UGO+O2huyTkL9h+1Fg75DKw0JHkzXA1C56ejQdLW7S9YS/IL9rOpmQ==
+  dependencies:
+    xml2js "0.5.0"
+
 tmp@^0.0.33:
   version "0.0.33"
   resolved "https://registry.yarnpkg.com/tmp/-/tmp-0.0.33.tgz#6d34335889768d21b2bcda0aa277ced3b1bfadf9"
@@ -37020,6 +37121,10 @@ xlsx@0.18.5:
     wmf "~1.0.1"
     word "~0.3.0"
 
+"xlsx@https://cdn.sheetjs.com/xlsx-0.19.3/xlsx-0.19.3.tgz":
+  version "0.19.3"
+  resolved "https://cdn.sheetjs.com/xlsx-0.19.3/xlsx-0.19.3.tgz#f804c1850e2da5260165db0a059dc2a6099d55f3"
+
 xml-js@1.6.11:
   version "1.6.11"
   resolved "https://registry.yarnpkg.com/xml-js/-/xml-js-1.6.11.tgz#927d2f6947f7f1c19a316dd8eea3614e8b18f8e9"
@@ -37041,6 +37146,14 @@ xml2js@0.4.23:
   version "0.4.23"
   resolved "https://registry.yarnpkg.com/xml2js/-/xml2js-0.4.23.tgz#a0c69516752421eb2ac758ee4d4ccf58843eac66"
   integrity sha512-ySPiMjM0+pLDftHgXY4By0uswI3SPKLDw/i3UXbnO8M/p28zqexCUoPmQFrYD+/1BzhGJSs2i1ERWKJAtiLrug==
+  dependencies:
+    sax ">=0.6.0"
+    xmlbuilder "~11.0.0"
+
+xml2js@0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/xml2js/-/xml2js-0.5.0.tgz#d9440631fbb2ed800203fad106f2724f62c493b7"
+  integrity sha512-drPFnkQJik/O+uPKpqSgr22mpuFHqKdbS835iAQrUC73L2F5WkboIRd63ai/2Yg6I1jzifPFKH2NTK+cfglkIA==
   dependencies:
     sax ">=0.6.0"
     xmlbuilder "~11.0.0"
