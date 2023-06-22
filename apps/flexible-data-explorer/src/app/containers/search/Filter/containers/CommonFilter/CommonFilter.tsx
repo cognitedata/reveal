@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react';
 
 import { ApplyButton, Menu, MenuHeader, Select } from '../../components';
 import { Field, FieldValue, Operator, ValueType } from '../../types';
+import { isNoInputOperator } from '../../utils';
 
 import { CommonFilterInput } from './CommonFilterInput';
 import {
@@ -13,6 +14,7 @@ import {
 } from './utils';
 
 export interface CommonFilterProps {
+  dataType: string;
   field: Field;
   value?: FieldValue;
   onBackClick: () => void;
@@ -20,6 +22,7 @@ export interface CommonFilterProps {
 }
 
 export const CommonFilter: React.FC<CommonFilterProps> = ({
+  dataType,
   field,
   value: fieldValue,
   onBackClick,
@@ -39,31 +42,50 @@ export const CommonFilter: React.FC<CommonFilterProps> = ({
     return getInputType(field.type, operator);
   }, [field.type, operator]);
 
+  const applyButtonDisabled = isApplyButtonDisabled(inputType, value);
+
   const handleChangeOperator = (newOperator: Operator) => {
     setOperator(newOperator);
 
     const newInputType = getInputType(field.type, operator);
-    if (inputType !== newInputType) {
+    if (inputType !== newInputType || isNoInputOperator(newOperator)) {
       setValue(undefined);
     }
   };
 
+  const handleApplyClick = () => {
+    onApplyClick(operator, value!);
+  };
+
+  const handleEnterPress = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (!applyButtonDisabled && (e.key === 'Enter' || e.keyCode === 13)) {
+      (e.target as any).blur();
+      handleApplyClick();
+    }
+  };
+
   return (
-    <Menu>
-      <MenuHeader title={field.name} onBackClick={onBackClick} />
+    <div onKeyUp={handleEnterPress}>
+      <Menu>
+        <MenuHeader
+          title={field.name}
+          subtitle={dataType}
+          onBackClick={onBackClick}
+        />
 
-      <Select<Operator>
-        options={operators}
-        value={operator}
-        onChange={handleChangeOperator}
-      />
+        <Select<Operator>
+          options={operators}
+          value={operator}
+          onChange={handleChangeOperator}
+        />
 
-      <CommonFilterInput type={inputType} value={value} onChange={setValue} />
+        <CommonFilterInput type={inputType} value={value} onChange={setValue} />
 
-      <ApplyButton
-        disabled={isApplyButtonDisabled(inputType, value)}
-        onClick={() => onApplyClick(operator, value!)}
-      />
-    </Menu>
+        <ApplyButton
+          disabled={applyButtonDisabled}
+          onClick={handleApplyClick}
+        />
+      </Menu>
+    </div>
   );
 };
