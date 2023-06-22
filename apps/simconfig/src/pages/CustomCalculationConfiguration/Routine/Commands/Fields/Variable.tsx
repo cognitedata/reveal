@@ -1,16 +1,18 @@
-import { useMatch } from 'react-location';
+import { useState } from 'react';
 
 import { Field, useFormikContext } from 'formik';
 
-import { Select } from '@cognite/cogs.js';
-import type { UserDefined } from '@cognite/simconfig-api-sdk/rtk';
+import { Input } from '@cognite/cogs.js';
+import type {
+  InputTimeSeries,
+  OutputTimeSeries,
+  UserDefined,
+} from '@cognite/simconfig-api-sdk/rtk';
 
 import { InputRow } from 'components/forms/ModelForm/elements';
 
-import { getOptionLabel, getTimeSerieIndexByType } from '../utils';
-import type { ConfigurationFieldProps, ValueOptionType } from '../utils';
-
-import type { AppLocationGenerics } from 'routes';
+import { getTimeSerieIndexByType } from '../utils';
+import type { ConfigurationFieldProps } from '../utils';
 
 interface VariableFieldProps extends ConfigurationFieldProps {
   timeSeriesPrefix: 'inputTimeSeries' | 'outputTimeSeries';
@@ -23,26 +25,15 @@ export function Variable({
   timeSeriesPrefix,
 }: VariableFieldProps) {
   const { setFieldValue, values } = useFormikContext<UserDefined>();
-  const {
-    data: { definitions },
-  } = useMatch<AppLocationGenerics>();
+
+  // state for setting variable error message
+  const [variableError, setVariableError] = useState<string>('');
 
   const timeSeriesTarget =
     timeSeriesPrefix === 'inputTimeSeries'
       ? values.inputTimeSeries
       : values.outputTimeSeries;
 
-  const currentTimeSeries = timeSeriesTarget.map((ts) => ts.type) as string[];
-  const currentValue =
-    values.routine?.[routineIndex].steps[stepIndex].arguments.value;
-  const TIMESERIES_VARIABLE_OPTIONS: ValueOptionType<string>[] = Object.entries(
-    definitions?.type.timeSeries ?? {}
-  )
-    .map(([value, { name }]) => ({ label: name, value }))
-    .filter(
-      ({ value }) =>
-        !currentTimeSeries.includes(value) || value === currentValue
-    );
   const timeSerieIndex = getTimeSerieIndexByType(
     timeSeriesTarget,
     step.arguments.value ?? ''
@@ -56,21 +47,58 @@ export function Variable({
       <div className="cogs-input-container">
         <div className="title">Variable</div>
         <Field
-          as={Select}
+          as={Input}
+          error={variableError}
           name={formikPath}
-          options={TIMESERIES_VARIABLE_OPTIONS}
-          value={{
-            value: step.arguments.value,
-            label: getOptionLabel(
-              TIMESERIES_VARIABLE_OPTIONS,
-              step.arguments.value ?? ''
-            ),
+          style={{ width: 300 }}
+          type="text"
+          validate={() => {
+            // Find the name of the current variable
+            const { name } = timeSeriesTarget[tsIdx];
+
+            if (!name) {
+              return undefined;
+            }
+            // Find all the other variables with the same name
+            const otherInputVariableNames = values.inputTimeSeries.map(
+              (ts: InputTimeSeries | OutputTimeSeries) => ts.name
+            );
+            const otherOutputVariableNames = values.outputTimeSeries.map(
+              (ts: InputTimeSeries | OutputTimeSeries) => ts.name
+            );
+
+            const otherVariableNames = [
+              ...otherInputVariableNames,
+              ...otherOutputVariableNames,
+            ];
+
+            const isDuplicate =
+              otherVariableNames.filter(
+                (variableName: string) =>
+                  variableName.toLowerCase() === name.toLowerCase()
+              ).length > 1;
+
+            if (isDuplicate) {
+              setVariableError('Duplicate variable name');
+            } else {
+              setVariableError('');
+            }
+
+            return undefined;
           }}
-          width={300}
-          onChange={({ value, label }: ValueOptionType<string>) => {
-            setFieldValue(formikPath, value);
-            setFieldValue(`${timeSeriesPrefix}.${tsIdx}.type`, value);
-            setFieldValue(`${timeSeriesPrefix}.${tsIdx}.name`, label);
+          // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+          value={timeSeriesTarget[tsIdx]?.name ?? ''}
+          fullWidth
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+            const { value } = event.currentTarget;
+            const type = `${value
+              .trim()
+              .split(' ')
+              .map((word) => word.charAt(0).toUpperCase())
+              .join('')}${tsIdx}`;
+            setFieldValue(formikPath, type);
+            setFieldValue(`${timeSeriesPrefix}.${tsIdx}.type`, type);
+            setFieldValue(`${timeSeriesPrefix}.${tsIdx}.name`, value.trim());
           }}
         />
       </div>
