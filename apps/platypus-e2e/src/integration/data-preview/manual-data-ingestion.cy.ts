@@ -45,11 +45,13 @@ describe('Platypus Data Preview Page - Manual Data Ingestion', () => {
     cy.intercept('POST', 'api/v1/projects/platypus/datamodelstorage/nodes').as(
       'ingestNodes'
     );
+
     cy.get('div[role="gridcell"][col-id="name"]')
       .should('be.visible')
-      .should('contain', 'John Doe')
+      .should('contain', 'John Doe');
+    cy.get('div[role="gridcell"][col-id="name"]').first().click();
+    cy.get('div[role="gridcell"][col-id="name"]')
       .first()
-      .click()
       .type('{enter}Not John Doe{enter}');
 
     cy.wait('@ingestNodes').then((interception) => {
@@ -125,10 +127,13 @@ describe('Platypus Data Preview Page - Manual Data Ingestion', () => {
     );
     cy.get('div[role="gridcell"][col-id="name"]')
       .should('be.visible')
-      .should('contain', 'John Doe')
+      .should('contain', 'John Doe');
+    cy.get('div[role="gridcell"][col-id="name"]').first().focus();
+    cy.get('div[role="gridcell"][col-id="name"]')
       .first()
-      .focus()
-      .click({ force: true })
+      .click({ force: true });
+    cy.get('div[role="gridcell"][col-id="name"]')
+      .first()
       .type('{enter} Not John Doe{enter}');
 
     cy.get('div[role="gridcell"][col-id="name"]')

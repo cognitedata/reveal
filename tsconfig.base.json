@@ -93,6 +93,7 @@
       "@data-quality/*": [
         "apps/platypus/src/app/modules/solution/data-quality/*"
       ],
+      "@extraction-pipelines/*": ["apps/extraction-pipelines/src/*"],
       "@transformations/*": [
         "apps/transformations/src/*"
       ],

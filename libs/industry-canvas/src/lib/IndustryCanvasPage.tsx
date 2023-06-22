@@ -25,7 +25,6 @@ import {
   Chip,
 } from '@cognite/cogs.js';
 import { isNotUndefined, ResourceItem } from '@cognite/data-exploration';
-import { useFlag } from '@cognite/react-feature-flags';
 import { useSDK } from '@cognite/sdk-provider';
 import {
   UnifiedViewer,
@@ -39,7 +38,6 @@ import { CanvasTitle } from './components/CanvasTitle';
 import DragOverIndicator from './components/DragOverIndicator';
 import IndustryCanvasFileUploadModal from './components/IndustryCanvasFileUploadModal/IndustryCanvasFileUploadModal';
 import {
-  CommentsFeatureFlagKey,
   MetricEvent,
   SEARCH_QUERY_PARAM_KEY,
   SHAMEFUL_WAIT_TO_ENSURE_CONTAINERS_ARE_RENDERED_MS,
@@ -110,6 +108,7 @@ export const IndustryCanvasPage = () => {
     createInitialCanvas,
     hasConsumedInitializeWithContainerReferences,
     setHasConsumedInitializeWithContainerReferences,
+    isCommentsEnabled,
   } = useIndustryCanvasContext();
 
   const {
@@ -133,9 +132,6 @@ export const IndustryCanvasPage = () => {
   });
 
   useTrackCanvasViewed(activeCanvas);
-  const { isEnabled: isCommentsEnabled } = useFlag(CommentsFeatureFlagKey, {
-    fallback: false,
-  });
 
   // if comments is not enabled then return empty, hiding all comments for that project (even if canvas had comments before)
   const commentAnnotations = useMemo(
@@ -403,6 +399,8 @@ export const IndustryCanvasPage = () => {
     unifiedViewerRef,
     hasConsumedInitializeWithContainerReferences,
     onAddContainerReferences,
+    createInitialCanvas,
+    setHasConsumedInitializeWithContainerReferences,
   ]);
 
   useEffect(() => {

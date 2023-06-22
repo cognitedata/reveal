@@ -10,10 +10,12 @@ static final String[] APPLICATIONS = [
   'coding-conventions',
   'copilot',
   'industry-canvas-ui',
+  'interactive-diagrams',
   'iot-hub',
   '3d-management',
   'transformations',
   'cdf-document-search',
+  'extraction-pipelines',
   'extractor-downloads',
   'charts',
 ]
@@ -37,10 +39,12 @@ static final Map<String, String> FIREBASE_APP_SITES = [
   'coding-conventions': 'coding-conventions',
   'copilot': 'copilot',
   'industry-canvas-ui': 'industry-canvas-ui',
+  'interactive-diagrams': 'pnid-contextualization',
   'iot-hub': 'iot-hub',
   '3d-management': '3d-management',
   'transformations': 'transformations',
   'cdf-document-search': 'document-search',
+  'extraction-pipelines': 'extraction-pipelines',
   'extractor-downloads': 'extractor-downloads',
   'charts': 'charts',
 ]
@@ -53,10 +57,12 @@ static final Map<String, String> PREVIEW_PACKAGE_NAMES = [
   'coding-conventions': "@cognite/cdf-coding-conventions",
   'copilot': "@cognite/cdf-copilot",
   'industry-canvas-ui': "@cognite/cdf-industry-canvas-ui",
+  'interactive-diagrams': '@cognite/cdf-context-ui-pnid',
   'iot-hub': "@cognite/cdf-iot-hub",
   '3d-management': '@cognite/cdf-3d-management',
   'transformations': "@cognite/cdf-transformations-2",
-  'cdf-document-search': 'cognite/cdf-document-search-ui',
+  'cdf-document-search': '@cognite/cdf-document-search-ui',
+  'extraction-pipelines': '@cognite/cdf-integrations-ui',
   'extractor-downloads': '@cognite/cdf-extractor-downloads',
   'charts': '@cognite/cdf-charts-ui'
 ]
@@ -121,10 +127,13 @@ static final Map<String, String> VERSIONING_STRATEGY = [
   'data-exploration': 'multi-branch',
   'data-catalog': 'multi-branch',
   'raw-explorer': 'single-branch',
+  '3d-management': 'single-branch',
   'transformations': 'single-branch',
   'copilot': 'single-branch',
   'iot-hub': 'single-branch',
+  'interactive-diagrams': 'multi-branch',
   'cdf-document-search': 'single-branch',
+  'extraction-pipelines': 'single-branch',
   'extractor-downloads': 'single-branch',
   'charts': 'single-branch'
 ]
@@ -132,7 +141,7 @@ static final Map<String, String> VERSIONING_STRATEGY = [
 // The config of which apps have i18n strings that need to be synced to and pulled from locize.io
 static final String[] I18N_APPLICATIONS = [
   'platypus'
- ]
+]
 
 // == End of customization. Everything below here is common. == \\
 
@@ -204,7 +213,7 @@ def getAffectedLibs(boolean isMaster = false){
 
   print "[AFFECTED:NX] Affected libraries: ${affected}";
 
-  return affected.split(",");
+  return affected.replaceAll('[\r\n]+', '').split(', ');
 }
 
 

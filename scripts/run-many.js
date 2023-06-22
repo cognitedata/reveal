@@ -32,7 +32,7 @@ const getReleaseProject = (branchName) => {
 
 const affectedProjects = parseNxTargetString(
   execSync(
-    `npx nx print-affected --target=${target} --base=${baseSha} --head=${headSha}`
+    `npx nx print-affected --target=${target} --base=${baseSha} --head=${headSha} --exclude=[interactive-diagrams]`
   ).toString('utf-8')
 ).filter(({ project }) => {
   return isReleaseBranch(baseBranch)
@@ -73,7 +73,7 @@ const main = () => {
       runCmd(
         `npx nx run-many --configuration=production --target=${target} --projects=${projectNames} --verbose=true --parallel=${
           target === 'build' ? 2 : 5
-        }`
+        } --exclude="interactive-diagrams"`
       );
     }
   }

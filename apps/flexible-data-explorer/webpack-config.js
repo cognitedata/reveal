@@ -10,6 +10,7 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
   config.resolve.fallback = { path: require.resolve('path-browserify') };
 
   if (nodeEnv === 'development') {
+    config.devServer.hot = false;
     // Temp fix to devserver and hmr
     config.devServer.allowedHosts = 'all';
     config.devServer.headers['Access-Control-Allow-Origin'] = '*';
