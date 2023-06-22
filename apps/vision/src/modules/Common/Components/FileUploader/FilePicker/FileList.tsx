@@ -7,7 +7,6 @@ import { FileListItem } from '@vision/modules/Common/Components/FileUploader/Fil
 
 import { Title } from '@cognite/cogs.js';
 
-import SpiderImg from './img/Spider.svg';
 import { CogsFileInfo } from './types';
 
 type FileListProps = {
@@ -25,9 +24,6 @@ export function FileList({ files, onRemove, children }: FileListProps) {
 
       <TableContainer
         style={{
-          ...(!files.length && {
-            background: `url(${SpiderImg}) top no-repeat`,
-          }),
           border:
             files.length && files.every(({ status }) => status === 'done')
               ? '1px solid #31C25A'

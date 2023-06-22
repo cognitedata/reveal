@@ -3,10 +3,9 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { FileListItem } from '@vision/modules/Common/Components/FileUploader/FilePicker/FileListItem';
-import SpiderImg from '@vision/modules/Common/Components/FileUploader/FilePicker/img/Spider.svg';
 import { CogsFileInfo } from '@vision/modules/Common/Components/FileUploader/FilePicker/types';
 
-import { Title } from '@cognite/cogs.js';
+import { Illustrations, Title } from '@cognite/cogs.js';
 
 type ModalFileListProps = {
   files: CogsFileInfo[];
@@ -30,9 +29,6 @@ export function ModalFileList({
 
       <FileListContainer
         style={{
-          ...(!files.length && {
-            background: `url(${SpiderImg}) top no-repeat`,
-          }),
           border:
             files.length && files.every(({ status }) => status === 'done')
               ? '1px solid #31C25A'
@@ -44,6 +40,7 @@ export function ModalFileList({
         ))}
         {!files.length && (
           <Background>
+            <Illustrations.Solo type="EmptyStateFile" prominence="muted" />
             <Title level={5}>No items selected for upload</Title>
           </Background>
         )}
@@ -64,7 +61,8 @@ const FileListContainer = styled.div`
 
 const Background = styled.div`
   text-align: center;
-  top: 75%;
+  top: 50%;
+  transform: translateY(-50%);
   position: relative;
 `;
 
