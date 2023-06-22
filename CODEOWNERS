@@ -18,6 +18,7 @@ apps/platypus                     @cognitedata/cdf-user-experience
 apps/platypus-cdf-cli             @cognitedata/cdf-user-experience
 
 libs/data-modeling                @cognitedata/cdf-user-experience
+libs/shared/cdf-ui-i18n-utils                @cognitedata/cdf-user-experience
 
 # Team data-explorer
 apps/data-exploration             @cognitedata/explorers
