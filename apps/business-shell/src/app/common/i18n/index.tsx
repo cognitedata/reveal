@@ -4,8 +4,8 @@ import {
   useTypedTranslation,
 } from '@cognite/cdf-i18n-utils';
 
-import * as en from './en/business-shell.json';
-import * as ja from './ja/business-shell.json';
+import en from './en/business-shell.json';
+import ja from './ja/business-shell.json';
 
 export const translations = {
   en: { 'business-shell': en },
