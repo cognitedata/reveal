@@ -286,6 +286,7 @@ const LabelItem = styled(Label)<{
     max-width: 150px;
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap; // Only display the text in one line
   }
 `;
 
