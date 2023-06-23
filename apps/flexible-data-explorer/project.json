@@ -56,7 +56,14 @@
       "defaultConfiguration": "development",
       "options": {
         "buildTarget": "flexible-data-explorer:build",
-        "hmr": true
+        "liveReload": true,
+        "hmr": false,
+        "allowedHosts": "all",
+        "headers": {
+          "Access-Control-Allow-Origin": "*"
+        },
+        "ssl": true,
+        "port": 3000
       },
       "configurations": {
         "development": {
