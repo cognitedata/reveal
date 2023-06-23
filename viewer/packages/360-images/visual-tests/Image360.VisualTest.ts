@@ -18,7 +18,7 @@ import { CogniteClient } from '@cognite/sdk';
 import { Image360Entity } from '../src/entity/Image360Entity';
 import { degToRad } from 'three/src/math/MathUtils';
 import TWEEN from '@tweenjs/tween.js';
-import { OrbitControls } from 'three-stdlib';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { Image360CollectionFactory } from '../src/collection/Image360CollectionFactory';
 import { IconOctree } from '@reveal/3d-overlays';
 import { OctreeHelper } from 'sparse-octree';
