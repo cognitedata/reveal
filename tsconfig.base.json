@@ -21,8 +21,12 @@
     "noFallthroughCasesInSwitch": true,
     "baseUrl": ".",
     "paths": {
-      "@3d-management/*": ["apps/3d-management/src/*"],
-      "@access-management/*": ["apps/access-management/src/*"],
+      "@3d-management/*": [
+        "apps/3d-management/src/*"
+      ],
+      "@access-management/*": [
+        "apps/access-management/src/*"
+      ],
       "@cognite/cdf-route-tracker": [
         "libs/shared/cdf-route-tracker/src/index.ts"
       ],
@@ -86,7 +90,9 @@
       "@data-quality/*": [
         "apps/platypus/src/app/modules/solution/data-quality/*"
       ],
-      "@extraction-pipelines/*": ["apps/extraction-pipelines/src/*"],
+      "@extraction-pipelines/*": [
+        "apps/extraction-pipelines/src/*"
+      ],
       "@vision/*": [
         "apps/vision/src/*"
       ],
@@ -129,6 +135,9 @@
       ],
       "@platypus/platypus-core": [
         "libs/data-modeling/platypus-core/src/index.ts"
+      ],
+      "@entity-matching-app/*": [
+        "apps/entity-matching/src/app/*",
       ],
       "@raw-explorer/*": [
         "apps/raw-explorer/src/*"
