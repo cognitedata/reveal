@@ -544,9 +544,18 @@ export const IndustryCanvasPage = () => {
               icon="Lock"
               label={t(translationKeys.CANVAS_LOCKED_CHIP, 'Canvas locked')}
               tooltipProps={{
-                content: t(
-                  translationKeys.CANVAS_LOCKED,
-                  'Canvas is being edited by another user and is therefore not editable'
+                content: (
+                  <>
+                    {t(
+                      translationKeys.CANVAS_LOCKED_REASON,
+                      'The canvas is locked until your colleague has finished editing.'
+                    )}
+                    <br />
+                    {t(
+                      translationKeys.CANVAS_LOCKED_FUTURE,
+                      'Real-time collaboration will be part of a future release.'
+                    )}
+                  </>
                 ),
                 position: 'bottom',
               }}
