@@ -13,8 +13,6 @@ export const InstancesPage = () => {
   useEffect(() => {
     return () => {
       if (isFetched) {
-        console.log('UNMOUNTED');
-
         setRecentlyVisited(data?.name, data?.description);
       }
     };
