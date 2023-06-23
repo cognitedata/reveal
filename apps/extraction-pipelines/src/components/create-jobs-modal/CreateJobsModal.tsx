@@ -15,7 +15,6 @@ import styled from 'styled-components';
 import { useTranslation } from 'common';
 import FormFieldRadioGroup from 'components/form-field-radio-group/FormFieldRadioGroup';
 import {
-  MQTTDestinationType,
   MQTTFormat,
   MQTTSourceWithJobMetrics,
   useCreateMQTTDestination,
@@ -23,16 +22,6 @@ import {
   useMQTTDestinations,
 } from 'hooks/hostedExtractors';
 import FormFieldWrapper from 'components/form-field-wrapper/FormFieldWrapper';
-
-const MQTT_DESTINATION_TYPE_OPTIONS: {
-  label: string;
-  value: MQTTDestinationType;
-}[] = [
-  {
-    label: 'Datapoints',
-    value: 'datapoints',
-  },
-];
 
 type CreateJobsFormDestinationOptionType =
   | 'use-existing'
@@ -46,7 +35,6 @@ type CreateJobsFormValues = {
   destinationExternalIdToCreate?: string;
   clientId?: string;
   clientSecret?: string;
-  type?: MQTTDestinationType;
   format?: MQTTFormat['type'];
 };
 
@@ -116,17 +104,11 @@ export const CreateJobsModal = ({
       if (!values.clientSecret) {
         errors.clientSecret = t('validation-error-field-required');
       }
-      if (!values.type) {
-        errors.type = t('validation-error-field-required');
-      }
     } else {
       if (!values.destinationExternalIdToCreate) {
         errors.destinationExternalIdToCreate = t(
           'validation-error-field-required'
         );
-      }
-      if (!values.type) {
-        errors.type = t('validation-error-field-required');
       }
     }
 
@@ -137,7 +119,6 @@ export const CreateJobsModal = ({
     useFormik<CreateJobsFormValues>({
       initialValues: {
         destinationOption: 'use-existing',
-        type: 'datapoints',
       },
       onSubmit: async (values) => {
         if (!values.topicFilters || values.topicFilters.length === 0) {
@@ -154,8 +135,7 @@ export const CreateJobsModal = ({
           values.destinationOption === 'client-credentials' &&
           values.clientId &&
           values.clientSecret &&
-          values.destinationExternalIdToCreate &&
-          values.type
+          values.destinationExternalIdToCreate
         ) {
           const destination = await createDestination({
             credentials: {
@@ -163,20 +143,17 @@ export const CreateJobsModal = ({
               clientSecret: values.clientSecret,
             },
             externalId: values.destinationExternalIdToCreate,
-            type: values.type,
           });
           destinationExternalId = destination.externalId;
         } else if (
           values.destinationOption === 'current-user' &&
-          values.destinationExternalIdToCreate &&
-          values.type
+          values.destinationExternalIdToCreate
         ) {
           const destination = await createDestination({
             credentials: {
               tokenExchange: true,
             },
             externalId: values.destinationExternalIdToCreate,
-            type: values.type,
           });
           destinationExternalId = destination.externalId;
         }
@@ -399,14 +376,6 @@ export const CreateJobsModal = ({
                 />
               </>
             )}
-            <FormFieldWrapper isRequired title={t('form-destination-type')}>
-              <Select
-                onChange={(e) => setFieldValue('type', e)}
-                options={MQTT_DESTINATION_TYPE_OPTIONS}
-                placeholder={t('form-destination-type-placeholder')}
-                value={values.type}
-              />
-            </FormFieldWrapper>
           </>
         )}
       </Flex>

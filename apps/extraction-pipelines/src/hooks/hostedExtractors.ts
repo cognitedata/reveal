@@ -301,11 +301,8 @@ export const useDeleteMQTTSource = (
 
 // DESTINATIONS
 
-export type MQTTDestinationType = 'datapoints' | 'events' | 'raw';
-
 type BaseMQTTDestination = {
   externalId: string;
-  type: MQTTDestinationType;
 };
 
 type ReadMQTTDestination = BaseMQTTDestination & {
@@ -362,7 +359,6 @@ export const useCreateMQTTDestination = () => {
             items: [
               {
                 externalId: destination.externalId,
-                type: destination.type,
                 credentials: {
                   nonce: session.nonce,
                 },
