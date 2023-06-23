@@ -6,6 +6,7 @@ import {
   IndustryCanvasHomePage,
   IndustryCanvasPage,
   UserProfileProvider,
+  SpaceProvider,
   IndustryCanvasProvider,
   TrackingContextProvider,
   createTrackUsage,
@@ -25,40 +26,42 @@ const trackUsage = createTrackUsage({
 
 const Spinner = () => <Loader />;
 
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+    },
+  },
+});
+
 export default function App() {
   const sdk = useSDK();
   const { flow } = getFlow();
   const { data: userInfo } = useUserInformation();
-
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-        refetchOnWindowFocus: false,
-        refetchOnReconnect: false,
-      },
-    },
-  });
 
   return (
     <Suspense fallback={<Spinner />}>
       <TrackingContextProvider trackUsage={trackUsage}>
         <ICProvider flow={flow} sdk={sdk} userInfo={userInfo}>
           <QueryClientProvider client={queryClient}>
-            <UserProfileProvider>
-              <IndustryCanvasProvider>
-                <Routes>
-                  <Route
-                    path="/industrial-canvas"
-                    element={<IndustryCanvasHomePage />}
-                  />
-                  <Route
-                    path="/industrial-canvas/canvas"
-                    element={<IndustryCanvasPage />}
-                  />
-                </Routes>
-              </IndustryCanvasProvider>
-            </UserProfileProvider>
+            <SpaceProvider>
+              <UserProfileProvider>
+                <IndustryCanvasProvider>
+                  <Routes>
+                    <Route
+                      path="/industrial-canvas"
+                      element={<IndustryCanvasHomePage />}
+                    />
+                    <Route
+                      path="/industrial-canvas/canvas"
+                      element={<IndustryCanvasPage />}
+                    />
+                  </Routes>
+                </IndustryCanvasProvider>
+              </UserProfileProvider>
+            </SpaceProvider>
           </QueryClientProvider>
         </ICProvider>
       </TrackingContextProvider>

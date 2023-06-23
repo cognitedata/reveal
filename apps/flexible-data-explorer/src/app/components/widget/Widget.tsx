@@ -47,7 +47,6 @@ Widget.Header = WidgetHeader;
 Widget.Body = WidgetBody;
 
 const Container = styled.div<BaseWidgetProps>`
-  border: 1px solid rgba(0, 0, 0, 0.15);
   border-radius: 10px;
   display: flex;
   flex-direction: column;

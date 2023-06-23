@@ -54,6 +54,7 @@ export enum QueryKeys {
   USER_PROFILES_BY_IDS = 'user-profiles-by-ids',
   LOCKING = 'canvas.locking',
   CREATE_SPACE = 'create-space',
+  LIST_SPACES = 'list-spaces',
 }
 
 export const SEARCH_QUERY_PARAM_KEY = 'search';

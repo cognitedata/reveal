@@ -1,30 +1,29 @@
 import { useCallback, useMemo } from 'react';
-import {
-  createSearchParams,
-  useLocation,
-  useNavigate,
-  useParams,
-} from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { resourceItemToContainerReference } from '@fusion/industry-canvas';
 import queryString from 'query-string';
 
-import { createLink } from '@cognite/cdf-utilities';
-
 // TODO: move these in fdx?
-import { ResourceItem, ResourceType } from '@data-exploration-lib/core';
+import { ResourceItem } from '@data-exploration-lib/core';
 
 import { DateRange, ValueByDataType } from '../containers/search/Filter';
+import { createSearchParams } from '../utils/router';
 
+import { useDataModelParams } from './useDataModelParams';
 import { useSearchFilterParams, useSearchQueryParams } from './useParams';
+import { useGetChartsUrl, useGetCanvasUrl } from './useUrl';
 
 // TODO: rename this could help, react-router also has a 'useNavigation'.
 export const useNavigation = () => {
   const navigate = useNavigate();
   const { search, pathname } = useLocation(); // <-- current location being accessed
   const params = useParams();
+  const dataModelParams = useDataModelParams();
   const [_, setQueryParams] = useSearchQueryParams();
   const [__, setFilterParams] = useSearchFilterParams();
+  const chartsUrl = useGetChartsUrl();
+  const canvasUrl = useGetCanvasUrl();
 
   // For migration: if we're located at the route, keep the route
   // TODO: Better way to use navigate function to do this?
@@ -42,7 +41,7 @@ export const useNavigation = () => {
     (searchQuery: string = '', filters: ValueByDataType = {}) => {
       const params = createSearchParams({
         searchQuery,
-        filters: JSON.stringify(filters),
+        filters,
       });
 
       setQueryParams(searchQuery);
@@ -81,9 +80,14 @@ export const useNavigation = () => {
 
   const toHomePage = useCallback(
     (space: string, dataModel: string, version: string) => {
-      navigate({
-        pathname: `${basename}/${dataModel}/${space}/${version}`,
-      });
+      navigate(
+        {
+          pathname: `${basename}/${dataModel}/${space}/${version}`,
+        },
+        {
+          replace: true,
+        }
+      );
     },
     [basename, navigate]
   );
@@ -92,15 +96,37 @@ export const useNavigation = () => {
     (
       dataType: string,
       instanceSpace: string | undefined,
-      externalId: string
+      externalId: string,
+      {
+        dataModel,
+        space,
+        version,
+      }: {
+        dataModel?: string;
+        space?: string;
+        version?: string;
+      } = {}
     ) => {
-      const { space, dataModel, version } = params;
+      // const { space, dataModel, version } = params;
+
+      const pathname = [
+        basename,
+        dataModel || dataModelParams?.dataModel,
+        space || dataModelParams?.space,
+        version || dataModelParams?.version,
+        dataType,
+        instanceSpace,
+        externalId,
+      ]
+        .filter(Boolean)
+        .join('/');
+
       navigate({
-        pathname: `${basename}/${dataModel}/${space}/${version}/${dataType}/${instanceSpace}/${externalId}`,
+        pathname,
         search,
       });
     },
-    [basename, navigate, params, search]
+    [basename, navigate, dataModelParams, search]
   );
 
   const toTimeseriesPage = useCallback(
@@ -129,34 +155,28 @@ export const useNavigation = () => {
     navigate('/');
   }, [navigate]);
 
-  const toCharts = useCallback(
-    (timeseriesId: number, dateRange: DateRange) => {
-      const queryObj = {
-        timeseriesIds: timeseriesId,
-        startTime: dateRange[0].getTime(),
-        endTime: dateRange[1].getTime(),
-      };
-      const query = queryString.stringify(queryObj);
+  const toCharts = (timeseriesId: number, dateRange: DateRange) => {
+    const queryObj = {
+      timeserieIds: timeseriesId,
+      startTime: dateRange[0].getTime(),
+      endTime: dateRange[1].getTime(),
+    };
+    const query = queryString.stringify(queryObj);
 
-      navigate(`/charts?${query}`);
-    },
-    [navigate]
-  );
+    window.open(`${chartsUrl}&${query}`, '_blank');
+  };
 
-  const toCanvas = useCallback(
-    (item: ResourceItem) => {
-      const initializeWithContainerReferences = btoa(
-        JSON.stringify([resourceItemToContainerReference(item)])
-      );
+  const toCanvas = (item: ResourceItem) => {
+    const initializeWithContainerReferences = btoa(
+      JSON.stringify([resourceItemToContainerReference(item)])
+    );
 
-      const query = queryString.stringify({
-        initializeWithContainerReferences,
-      });
+    const query = queryString.stringify({
+      initializeWithContainerReferences,
+    });
 
-      navigate(`/canvas?${query}`);
-    },
-    [navigate]
-  );
+    window.open(`${canvasUrl}&${query}`, '_blank');
+  };
 
   const goBack = useCallback(() => {
     navigate('..');
