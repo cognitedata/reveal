@@ -42,9 +42,7 @@ const UserMenu = (): JSX.Element => {
           component: <Avatar text={name} />,
           menu: (
             <Menu>
-              <Menu.Header>
-                {t('title-account', { defaultValue: 'Account' })}
-              </Menu.Header>
+              <Menu.Header>{t('LABEL_ACCOUNT')}</Menu.Header>
               <UserDetailsMenuItem>
                 <Avatar text={name} />
                 <Flex direction="column">
@@ -59,11 +57,11 @@ const UserMenu = (): JSX.Element => {
                   navigate('/profile');
                 }}
               >
-                {t('manage-account', { defaultValue: 'Manage Account' })}
+                {t('LABEL_MANAGE_ACCOUNT')}
               </Menu.Item>
               <Divider />
               <Menu.Item icon="Logout" onClick={handleLogout}>
-                {t('button-sign-out', { defaultValue: 'Sign out' })}
+                {t('SIGN_OUT_BTN_TEXT')}
               </Menu.Item>
             </Menu>
           ),

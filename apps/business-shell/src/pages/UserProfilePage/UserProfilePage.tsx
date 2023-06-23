@@ -56,12 +56,12 @@ export const UserProfilePage = (): JSX.Element => {
       {
         key: 'info',
         icon: 'User',
-        title: t('profile-tab-info-title', { defaultValue: 'Personal info' }),
+        title: t('PERSONAL_INFO_TAB_BTN_TEXT'),
       },
       {
         key: 'language',
         icon: 'Language',
-        title: t('profile-tab-language-title', { defaultValue: 'Language' }),
+        title: t('LANGUAGE_TAB_BTN_TEXT'),
       },
     ];
   }, [t]);
@@ -87,9 +87,32 @@ export const UserProfilePage = (): JSX.Element => {
               <LanguageTab
                 language={getLanguage() ?? 'en'}
                 selectLanguage={selectLanguage}
+                locale={{
+                  translations: {
+                    'language-tab-title': t('LANGUAGE_TAB_TITLE'),
+                    'language-tab-subtitle': t('LANGUAGE_TAB_SUBTITLE'),
+                    'language-field-label': t('LANGUAGE_FIELD_LABEL'),
+                    'language-english-label': t('LANGUAGE_OPTION_ENGLISH'),
+                    'language-japanese-label': t('LANGUAGE_OPTION_JAPANESE'),
+                  },
+                }}
               />
             ) : (
-              <PersonalInfoTab loading={isLoading} userInfo={{ email, name }} />
+              <PersonalInfoTab
+                loading={isLoading}
+                userInfo={{ email, name }}
+                locale={{
+                  translations: {
+                    'personal-info-tab-title': t('PERSONAL_INFO_TAB_TITLE'),
+                    'personal-info-tab-subtitle': t(
+                      'PERSONAL_INFO_TAB_SUBTITLE'
+                    ),
+                    'name-field-label': t('NAME_FIELD_LABEL'),
+                    'email-field-label': t('EMAIL_FIELD_LABEL'),
+                    'email-field-help-text': t('EMAIL_FIELD_HELP_TEXT'),
+                  },
+                }}
+              />
             )}
           </TabContent>
         </Content>
