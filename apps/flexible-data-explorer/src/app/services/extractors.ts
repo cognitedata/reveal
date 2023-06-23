@@ -1,9 +1,9 @@
-import { DataModelTypeDefs } from '@platypus/platypus-core';
+import { DataModelTypeDefsType } from '@platypus/platypus-core';
 
 export const extractFieldsFromSchema = (
-  schema: DataModelTypeDefs | undefined,
+  types: DataModelTypeDefsType[] | undefined,
   selectedDataType: string
 ) => {
-  const dataType = schema?.types.find((item) => item.name === selectedDataType);
+  const dataType = types?.find((item) => item.name === selectedDataType);
   return dataType?.fields;
 };

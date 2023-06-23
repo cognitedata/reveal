@@ -109,6 +109,13 @@ export const useNavigation = () => {
     ) => {
       // const { space, dataModel, version } = params;
 
+      // TODO: Clean me up
+      const queryParams = new URLSearchParams(search);
+
+      if (queryParams.has('expandedId')) {
+        queryParams.delete('expandedId');
+      }
+
       const pathname = [
         basename,
         dataModel || dataModelParams?.dataModel,
@@ -123,7 +130,7 @@ export const useNavigation = () => {
 
       navigate({
         pathname,
-        search,
+        search: queryParams.toString(),
       });
     },
     [basename, navigate, dataModelParams, search]
