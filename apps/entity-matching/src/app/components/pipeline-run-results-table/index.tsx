@@ -115,12 +115,14 @@ const PipelineRunResultsTable = ({
     EMPipelineRunMatch[],
     EMPipelineRunMatch[]
   ] = useMemo(() => {
+    // eslint-disable-next-line @typescript-eslint/no-shadow
     const matched =
       run?.matches?.filter(({ source }) => {
         return (
           typeof source?.id === 'number' && !!realMatchSet[source.id]?.length
         );
       }) ?? [];
+    // eslint-disable-next-line @typescript-eslint/no-shadow
     const unmatched =
       run?.matches?.filter(({ source }) => {
         return (
@@ -131,6 +133,7 @@ const PipelineRunResultsTable = ({
       run.matches?.filter(
         ({ matchType }) => matchType === 'previously-confirmed'
       ) ?? [];
+    // eslint-disable-next-line @typescript-eslint/no-shadow
     const differentRecommendation = matched?.filter(({ source, target }) => {
       return (
         typeof source?.id === 'number' &&

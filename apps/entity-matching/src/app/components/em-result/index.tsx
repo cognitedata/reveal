@@ -67,6 +67,7 @@ export default function EntityMatchingResult({
 
   const matched: any[] = useMemo(
     () =>
+      // eslint-disable-next-line
       // @ts-ignore
       data?.filter((d: any) => {
         switch (sourceType) {
@@ -88,6 +89,7 @@ export default function EntityMatchingResult({
 
   const unmatched: any[] = useMemo(
     () =>
+      // eslint-disable-next-line
       // @ts-ignore
       data?.filter((d: any) => {
         switch (sourceType) {
@@ -109,6 +111,7 @@ export default function EntityMatchingResult({
 
   const diffMatched: any[] = useMemo(
     () =>
+      // eslint-disable-next-line
       // @ts-ignore
       data?.filter((d: any) => {
         switch (sourceType) {
@@ -123,6 +126,7 @@ export default function EntityMatchingResult({
           }
           case 'files':
           case 'events': {
+            // eslint-disable-next-line
             const p = predictions.find((p) => p.source.id === d.id)?.match
               .target.id;
             const r = d as FileInfo | CogniteEvent;

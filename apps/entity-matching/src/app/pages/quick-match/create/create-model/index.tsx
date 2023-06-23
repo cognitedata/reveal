@@ -155,7 +155,9 @@ const CreateModel = (): JSX.Element => {
     isError: is3DError,
   } = useInfinite3dNodes(
     {
+      // eslint-disable-next-line
       modelId: threeDModel?.modelId!,
+      // eslint-disable-next-line
       revisionId: threeDModel?.revisionId!,
     },
     {
@@ -276,10 +278,10 @@ const CreateModel = (): JSX.Element => {
         featureType,
         matchFields,
         supervisedMode,
-      }).then((model) => {
+      }).then((newModel: any) => {
         navigate(
           createLink(
-            `/${subAppPath}/quick-match/create/create-model/${model.id}`
+            `/${subAppPath}/quick-match/create/create-model/${newModel.id}`
           ),
           { replace: true }
         );

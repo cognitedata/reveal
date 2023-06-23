@@ -11,6 +11,7 @@ import { Modal, ModalProps } from '@cognite/cogs.js';
 
 import { useCreatePipeline } from '@entity-matching-app/hooks/entity-matching-pipelines';
 
+// eslint-disable-next-line
 type CreatePipelineModalProps = Pick<ModalProps, 'onCancel' | 'visible'> & {};
 
 const CreatePipelineModal = ({

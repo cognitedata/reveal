@@ -68,14 +68,14 @@ const PipelineDetails = (): JSX.Element => {
     );
   };
 
-  const getPipelineStepOrder = (step?: string): number => {
-    const index = PIPELINE_STEPS.findIndex((value) => value === step);
+  const getPipelineStepOrder = (pipelineStep?: string): number => {
+    const index = PIPELINE_STEPS.findIndex((value) => value === pipelineStep);
     return index;
   };
 
   const matchFields = pipeline?.modelParameters?.matchFields;
   const validMatchFields = matchFields?.filter(
-    ({ source, target }) => !!source && !!target
+    ({ source, target }: any) => !!source && !!target
   );
 
   const hasSources = pipeline ? pipeline?.sources.dataSetIds.length > 0 : false;

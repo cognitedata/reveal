@@ -22,9 +22,7 @@ import { useQuickMatchContext } from '@entity-matching-app/context/QuickMatchCon
 import { RawTarget } from '@entity-matching-app/types/api';
 import { getAdvancedFilter } from '@entity-matching-app/utils';
 
-type Props = {};
-
-export default function TargetSelectionTable({}: Props) {
+export default function TargetSelectionTable() {
   const {
     targetsList,
     setTargetsList,

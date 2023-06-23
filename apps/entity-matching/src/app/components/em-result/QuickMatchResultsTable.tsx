@@ -108,6 +108,7 @@ const QuickMatchResultsTable = ({
   };
 
   const columns = useMemo(() => {
+    // eslint-disable-next-line @typescript-eslint/no-shadow
     const columns: ResultsTableRecordCT[] = [
       {
         title: t('qm-result-source', {

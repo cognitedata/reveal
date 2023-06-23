@@ -19,9 +19,7 @@ import { CogniteInternalId } from '@cognite/sdk';
 
 import { pipelineSourceToAPIType } from '../details/sources';
 
-type PipelineResultsProps = {};
-
-const PipelineResults = ({}: PipelineResultsProps): JSX.Element => {
+const PipelineResults = (): JSX.Element => {
   const { t } = useTranslation();
 
   const { jobId, pipelineId } = useParams<{

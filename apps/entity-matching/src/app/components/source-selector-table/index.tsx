@@ -30,7 +30,6 @@ import TimeseriesTable from './TimeseriesTable';
 
 const { Option } = Select;
 
-type Props = {};
 const supportsAdvancedFilter: Record<API, boolean> = {
   files: false,
   timeseries: true,
@@ -49,7 +48,7 @@ const supportsBasicFilter: Record<API, boolean> = {
   threeD: false,
 };
 
-export default function SourceSelectionTable({}: Props) {
+export default function SourceSelectionTable() {
   const { t } = useTranslation();
   const {
     setSourceType,
@@ -100,7 +99,7 @@ export default function SourceSelectionTable({}: Props) {
   const setSearchParams = _setSearchParams;
 
   const handleSelectSourceType = (selectedSourceType: string) => {
-    if (SOURCE_TYPES.some((type) => type === selectedSourceType)) {
+    if (SOURCE_TYPES.some((type: any) => type === selectedSourceType)) {
       setSourceType(selectedSourceType as SourceType);
     }
     if (selectedSourceType === 'events') {
@@ -126,10 +125,10 @@ export default function SourceSelectionTable({}: Props) {
 
   const handleSelectRow = (row: RawSource, checked: boolean) => {
     if (checked) {
-      setSourcesList((prevState) => prevState.concat([row]));
+      setSourcesList((prevState: any) => prevState.concat([row]));
     } else {
-      setSourcesList((prevState) =>
-        prevState.filter(({ id: testId }) => row.id !== testId)
+      setSourcesList((prevState: any) =>
+        prevState.filter(({ id: testId }: any) => row.id !== testId)
       );
     }
   };
@@ -189,6 +188,7 @@ export default function SourceSelectionTable({}: Props) {
             {supportsAdvancedFilter[sourceType] && (
               <Switch
                 onChange={() =>
+                  // eslint-disable-next-line
                   setUnmatchedOnly((unmatchedOnly) => !unmatchedOnly)
                 }
                 checked={unmatchedOnly}

@@ -71,6 +71,7 @@ const PipelineTable = (): JSX.Element => {
           targets: pipeline.targets,
         },
         {
+          // eslint-disable-next-line @typescript-eslint/no-shadow
           onSuccess: (_: unknown, pipeline) => {
             notification.success({
               message: t('notification-success'),

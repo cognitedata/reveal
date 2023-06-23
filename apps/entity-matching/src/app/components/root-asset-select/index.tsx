@@ -33,8 +33,8 @@ export default function RootAssetSelect({ onChange, selected }: Props) {
   );
 
   const items = useMemo(() => {
-    const items = query ? searchItems : listItems;
-    return items.map((asset) => ({
+    const queryItems = query ? searchItems : listItems;
+    return queryItems.map((asset) => ({
       label: `${asset.name || asset.id.toString()}`,
       value: asset.id,
     }));

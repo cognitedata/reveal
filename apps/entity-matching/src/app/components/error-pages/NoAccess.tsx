@@ -1,3 +1,4 @@
+/* eslint-disable @cognite/require-t-function */
 import styled from 'styled-components';
 import { Colors, Icon, Title } from '@cognite/cogs.js';
 import { Trans, useTranslation } from '@entity-matching-app/common';

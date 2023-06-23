@@ -15,6 +15,7 @@ const QuickMatchCreate = (): JSX.Element => {
   const { hasNextStep, hasPrevStep, popStep, pushStep } =
     useQuickMatchContext();
 
+  // eslint-disable-next-line
   const configureModel = window.location.href.indexOf('configure-model') !== -1;
 
   return (

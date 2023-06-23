@@ -40,7 +40,7 @@ export const useAssets = (
 const useAssetSearchKey = (
   query: string,
   filter?: AssetFilterProps
-): QueryKey => [...assetRootKey, , 'search', query, { filter }];
+): QueryKey => [...assetRootKey, 'search', query, { filter }];
 
 export const useAssetSearch = <T>(
   query: string,

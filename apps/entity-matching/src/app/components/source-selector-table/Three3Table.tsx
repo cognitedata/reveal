@@ -6,8 +6,7 @@ import { Icon } from '@cognite/cogs.js';
 
 import { use3DModels } from '@entity-matching-app/hooks/threeD';
 
-type Props = {};
-export default function ThreeDMOdelGrid({}: Props) {
+export default function ThreeDMOdelGrid() {
   const { data = [], isInitialLoading, error } = use3DModels();
 
   if (error) {
