@@ -2,8 +2,7 @@ import { useCallback } from 'react';
 
 import { TOptions } from 'i18next';
 import { UseTranslationOptions, useTranslation } from 'react-i18next';
-
-import { ExtendedTranslationKeys } from '..';
+import { ExtendedTranslationKeys } from '../types';
 
 export type StringMap = { [key: string]: any };
 
