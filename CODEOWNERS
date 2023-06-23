@@ -47,6 +47,12 @@ apps/copilot              @davidlky @andeplane @miladh @trygveu
 apps/raw-explorer @cognitedata/team-hebe
 apps/iot-hub              @davidlky @geircognite @muradsater
 
+# Entity matching
+apps/entity-matching                @cognitedata/cdf-user-experience
+
+# Vision
+apps/vision              @cognitedata/cdf-user-experience
+
 # Interactive Diagrams
 apps/interactive-diagrams @cognitedata/team-hebe
 
@@ -60,3 +66,6 @@ apps/extractor-downloads          @cognitedata/cdf-user-experience
 
 
 libs/shared/user-profile-components   @cognitedata/cogs-team
+
+# Functions UI
+apps/functions-ui             @abdullah-cognite @shubhsk88 

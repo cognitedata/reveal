@@ -9,10 +9,11 @@ import { SearchBarFilter, ValueByDataType, AppliedFilters } from './Filter';
 export interface SearchFiltersProps {
   value?: ValueByDataType;
   onChange: (value: ValueByDataType) => void;
+  onClick?: () => void;
 }
 
 export const SearchFilters: React.FC<SearchFiltersProps> = React.memo(
-  ({ value, onChange }) => {
+  ({ value, onChange, onClick }) => {
     const { t } = useTranslation();
 
     return (
@@ -28,6 +29,7 @@ export const SearchFilters: React.FC<SearchFiltersProps> = React.memo(
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
+              onClick?.();
             }}
           >
             {t('filter_button', 'Filters')}

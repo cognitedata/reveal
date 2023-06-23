@@ -10,7 +10,7 @@ import {
   useSearchFilterParams,
   useSearchQueryParams,
 } from '../../hooks/useParams';
-import { useTranslation } from '../../hooks/useTranslation';
+// import { useTranslation } from '../../hooks/useTranslation';
 import zIndex from '../../utils/zIndex';
 
 import { SearchFilters } from './SearchFilters';
@@ -19,10 +19,17 @@ import { SearchPreview } from './SearchPreview';
 interface Props {
   width?: string;
   inverted?: boolean;
+  disablePreview?: boolean;
+  autoFocus?: boolean;
 }
 
-export const SearchBar: React.FC<Props> = ({ width, inverted }) => {
-  const { t } = useTranslation();
+export const SearchBar: React.FC<Props> = ({
+  width,
+  inverted,
+  autoFocus,
+  disablePreview,
+}) => {
+  // const { t } = useTranslation();
   const navigate = useNavigation();
 
   const ref = useRef<HTMLDivElement | null>(null);
@@ -30,11 +37,13 @@ export const SearchBar: React.FC<Props> = ({ width, inverted }) => {
   const [queryParams] = useSearchQueryParams();
   const [localQuery, setLocalQuery] = useState('');
   const [filterParams] = useSearchFilterParams();
-  const [isFocused, setFocus] = useState(false);
+  const [isPreviewFocused, setPreviewFocus] = useState(false);
 
   const closePreview = useCallback(() => {
-    setFocus(false);
+    setPreviewFocus(false);
   }, []);
+
+  useClickOutsideListener(closePreview, ref);
 
   useEffect(() => {
     // The query in the url have higher precedence than the local query. Make sure that it is synced.
@@ -43,10 +52,13 @@ export const SearchBar: React.FC<Props> = ({ width, inverted }) => {
     }
   }, [queryParams]);
 
-  useClickOutsideListener(closePreview, ref);
-
   return (
-    <Container ref={ref} focused={isFocused} width={width} inverted={inverted}>
+    <Container
+      ref={ref}
+      focused={isPreviewFocused}
+      width={width}
+      inverted={inverted}
+    >
       <Content>
         <StyledIcon type="Search" />
         <StyledInput
@@ -59,11 +71,20 @@ export const SearchBar: React.FC<Props> = ({ width, inverted }) => {
               navigate.toSearchPage(localQuery, filterParams);
             }
           }}
+          // Do not add onBlur to input, it messes with the search preview.
+          // onBlur={() => {
+          //   if (!disablePreview) {
+          //     closePreview();
+          //   }
+          // }}
           onFocus={() => {
-            setFocus(true);
+            if (!disablePreview) {
+              setPreviewFocus(true);
+            }
           }}
           value={localQuery ?? ''}
-          placeholder={t('search_button', 'Search...')}
+          autoFocus={autoFocus}
+          placeholder="Search..."
           onChange={(e) => {
             e.preventDefault();
 
@@ -73,13 +94,16 @@ export const SearchBar: React.FC<Props> = ({ width, inverted }) => {
 
         <SearchFilters
           value={filterParams}
+          onClick={() => {
+            closePreview();
+          }}
           onChange={(newValue) => {
             navigate.toSearchPage(queryParams, newValue);
           }}
         />
       </Content>
 
-      {isFocused && <SearchPreview />}
+      {isPreviewFocused && <SearchPreview onSelectionClick={closePreview} />}
     </Container>
   );
 };

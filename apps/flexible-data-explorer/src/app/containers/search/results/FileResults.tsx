@@ -1,4 +1,4 @@
-import { formatDate } from '@cognite/cogs.js';
+import { formatDate, Skeleton } from '@cognite/cogs.js';
 
 import { translationKeys } from '../../../common';
 import { Button } from '../../../components/buttons/Button';
@@ -21,12 +21,16 @@ export const FileResults: React.FC = () => {
   const [filesFilterParams] = useDataTypeFilterParams('Files');
   const navigate = useNavigation();
 
-  const { data, hasNextPage, fetchNextPage, isFetchingNextPage } =
+  const { data, hasNextPage, fetchNextPage, isFetchingNextPage, isLoading } =
     useFilesSearchQuery(query, buildFilesFilter(filesFilterParams), PAGE_SIZE);
+
+  if (isLoading) {
+    return <Skeleton.List lines={3} />;
+  }
 
   return (
     <SearchResults empty={data.length === 0}>
-      <SearchResults.Header title="Files" />
+      <SearchResults.Header title="File" />
 
       <SearchResults.Body>
         {data.map(({ item }) => (
@@ -54,7 +58,7 @@ export const FileResults: React.FC = () => {
 
       <SearchResults.Footer>
         <Button
-          type="ghost"
+          type="secondary"
           hidden={!hasNextPage}
           onClick={() => {
             fetchNextPage();

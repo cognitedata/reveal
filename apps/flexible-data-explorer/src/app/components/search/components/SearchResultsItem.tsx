@@ -2,7 +2,7 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { Body, Title } from '@cognite/cogs.js';
+import { Body, Title, Detail } from '@cognite/cogs.js';
 
 interface Props {
   name: string;
@@ -41,10 +41,8 @@ export const SearchResultsItem: React.FC<Props> = ({
       <PropertiesContainer>
         {normalizedProperties.map(({ key, value }, index) => (
           <PropertiesContent key={key || index}>
-            <Body level={4} strong>
-              {key}
-            </Body>
-            <Body>{value}</Body>
+            <Detail>{key}</Detail>
+            <Body strong>{value}</Body>
           </PropertiesContent>
         ))}
       </PropertiesContainer>
@@ -58,13 +56,10 @@ const Container = styled.div`
   padding: 16px;
   display: flex;
   align-items: center;
-  border-radius: 8px;
   cursor: pointer;
-  margin-bottom: 8px;
-  box-shadow: 0px 1px 8px rgba(79, 82, 104, 0.06),
-    0px 1px 1px rgba(79, 82, 104, 0.1);
-
-  transition: background 2s ease;
+  gap: 8px;
+  /* margin-bottom: 8px; */
+  /* border-bottom: 1px solid #ebeef7; */
 
   &:hover {
     background: linear-gradient(
@@ -77,6 +72,7 @@ const Container = styled.div`
 `;
 
 const TitleContent = styled.div`
+  flex: 1;
   display: flex;
   flex-direction: column;
   max-width: 50%;
@@ -84,14 +80,19 @@ const TitleContent = styled.div`
 `;
 
 const PropertiesContainer = styled.div`
+  flex: 1;
   display: flex;
+  max-width: 50%;
   width: 100%;
   height: 100%;
-  justify-content: space-evenly;
-  align-items: center;
-  overflow: auto;
+  justify-content: space-between;
+  align-items: flex-start;
+  word-break: break-all;
 `;
-const PropertiesContent = styled.div``;
+const PropertiesContent = styled.div`
+  flex: 1;
+  margin-right: 8px;
+`;
 
 const NameText = styled(Title).attrs({ level: 6 })`
   overflow: hidden;
@@ -99,4 +100,8 @@ const NameText = styled(Title).attrs({ level: 6 })`
   white-space: nowrap;
 `;
 
-const DescriptionText = styled(Body).attrs({ level: 6 })``;
+const DescriptionText = styled(Body).attrs({ level: 6 })`
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+`;

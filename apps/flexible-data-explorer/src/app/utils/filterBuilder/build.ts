@@ -34,6 +34,10 @@ export const buildFilterByField = (valueByField: ValueByField = {}) => {
     }
   );
 
+  if (filters.length === 0) {
+    return undefined;
+  }
+
   return { and: filters };
 };
 

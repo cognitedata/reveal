@@ -7,7 +7,7 @@ import { WidgetHeader } from './components/WidgetHeader';
 
 export interface BaseWidgetProps {
   id?: string;
-  state?: 'loading' | 'error';
+  state?: 'loading' | 'error' | 'success' | 'empty';
   // TODO: Why do we have 'isExpanded' and 'expanded'?
   isExpanded?: boolean;
   expanded?: boolean; // FIX_ME: make this nicer...
@@ -20,6 +20,8 @@ export interface BaseWidgetProps {
 
   /** Number of rows that the widgets spans */
   rows?: number;
+
+  noPadding?: boolean;
 }
 
 export const Widget = ({
@@ -47,7 +49,6 @@ Widget.Header = WidgetHeader;
 Widget.Body = WidgetBody;
 
 const Container = styled.div<BaseWidgetProps>`
-  border: 1px solid rgba(0, 0, 0, 0.15);
   border-radius: 10px;
   display: flex;
   flex-direction: column;

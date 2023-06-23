@@ -21,14 +21,14 @@
     "noFallthroughCasesInSwitch": true,
     "baseUrl": ".",
     "paths": {
-      "@charts-app/*": [
-        "apps/charts/src/app/*"
-      ],
       "@3d-management/*": [
         "apps/3d-management/src/*"
       ],
       "@access-management/*": [
         "apps/access-management/src/*"
+      ],
+      "@charts-app/*": [
+        "apps/charts/src/app/*"
       ],
       "@cognite/cdf-route-tracker": [
         "libs/shared/cdf-route-tracker/src/index.ts"
@@ -93,7 +93,12 @@
       "@data-quality/*": [
         "apps/platypus/src/app/modules/solution/data-quality/*"
       ],
-      "@extraction-pipelines/*": ["apps/extraction-pipelines/src/*"],
+      "@extraction-pipelines/*": [
+        "apps/extraction-pipelines/src/*"
+      ],
+      "@vision/*": [
+        "apps/vision/src/*"
+      ],
       "@transformations/*": [
         "apps/transformations/src/*"
       ],
@@ -134,11 +139,17 @@
       "@platypus/platypus-core": [
         "libs/data-modeling/platypus-core/src/index.ts"
       ],
+      "@entity-matching-app/*": [
+        "apps/entity-matching/src/app/*",
+      ],
       "@raw-explorer/*": [
         "apps/raw-explorer/src/*"
       ],
       "@data-catalog-app/*": [
         "apps/data-catalog/src/app/*"
+      ],
+      "@functions-ui/*": [
+        "apps/functions-ui/src/*"
       ]
     }
   },

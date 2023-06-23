@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext } from 'react';
 
 import styled from 'styled-components';
 
@@ -7,15 +7,9 @@ import { useQuery } from '@tanstack/react-query';
 import { Colors, Icon } from '@cognite/cogs.js';
 import { CogniteClient, HttpError } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
-import { usePermissions } from '@cognite/sdk-react-query-hooks';
-
-import { AppContext } from '@data-exploration-lib/core';
 
 import { NoAccessPage } from './components/NoAccessPage';
-import { SpaceDoesNotExistPage } from './components/SpaceDoesNotExistPage';
 import { QueryKeys } from './constants';
-import { useCreateSpaceMutation } from './hooks/use-mutation/useCreateSpace';
-import { IndustryCanvasService } from './services/IndustryCanvasService';
 
 export type UserProfile = {
   userIdentifier: string;
@@ -65,82 +59,13 @@ export const UserProfileProvider = ({
 }: {
   children: JSX.Element;
 }) => {
-  const context = useContext(AppContext);
-  const {
-    data: hasDataModelInstancesReadAcl,
-    isLoading: isLoadingHasDataModelInstancesReadAcl,
-  } = usePermissions(
-    context?.flow as any,
-    'dataModelInstancesAcl',
-    'READ',
-    undefined,
-    { enabled: !!context?.flow }
-  );
-
-  const {
-    data: hasDataModelInstancesWriteAcl,
-    isLoading: isLoadingHasDataModelInstancesWriteAcl,
-  } = usePermissions(
-    context?.flow as any,
-    'dataModelInstancesAcl',
-    'WRITE',
-    undefined,
-    { enabled: !!context?.flow }
-  );
-
-  const { data: hasDataModelReadAcl, isLoading: isLoadingHasDataModelReadAcl } =
-    usePermissions(context?.flow as any, 'dataModelsAcl', 'READ', undefined, {
-      enabled: !!context?.flow,
-    });
-
-  const {
-    data: hasDataModelWriteAcl,
-    isLoading: isLoadingHasDataModelWriteAcl,
-  } = usePermissions(
-    context?.flow as any,
-    'dataModelsAcl',
-    'WRITE',
-    undefined,
-    {
-      enabled: !!context?.flow,
-    }
-  );
-
   const {
     data: userProfile,
     isLoading: isLoadingUserProfile,
     error: userProfileError,
   } = useUserProfileQuery();
 
-  const [spaceExists, setSpaceExists] = useState(false);
-  const { mutateAsync: createSpace, isLoading: isCreatingSpace } =
-    useCreateSpaceMutation();
-
-  // Create the instance space for IC, if it doesn't already exist
-  useEffect(() => {
-    if (!hasDataModelWriteAcl || spaceExists) {
-      return;
-    }
-
-    const createSpaceWrapper = async () => {
-      await createSpace({
-        space: IndustryCanvasService.INSTANCE_SPACE,
-        description: 'The Industrial Canvas instance space',
-        name: 'Industrial Canvas instance space',
-      });
-      setSpaceExists(true);
-    };
-    createSpaceWrapper();
-  }, [hasDataModelWriteAcl, spaceExists, setSpaceExists, createSpace]);
-
-  if (
-    isLoadingHasDataModelInstancesReadAcl ||
-    isLoadingHasDataModelInstancesWriteAcl ||
-    isLoadingHasDataModelReadAcl ||
-    isLoadingHasDataModelWriteAcl ||
-    isLoadingUserProfile ||
-    isCreatingSpace
-  ) {
+  if (isLoadingUserProfile) {
     return (
       <LoaderWrapper>
         <Icon type="Loader" />
@@ -148,23 +73,14 @@ export const UserProfileProvider = ({
     );
   }
 
-  const doesNotHaveUserProfileAccess = userProfileError?.status === 403;
-  if (
-    !hasDataModelInstancesReadAcl ||
-    !hasDataModelInstancesWriteAcl ||
-    !hasDataModelReadAcl ||
-    !hasDataModelWriteAcl ||
-    doesNotHaveUserProfileAccess
-  ) {
+  if (userProfileError?.status === 403) {
     return <NoAccessPage />;
   }
 
   if (userProfile === undefined) {
-    return <NoAccessPage />;
-  }
-
-  if (!spaceExists) {
-    return <SpaceDoesNotExistPage />;
+    return (
+      <NoAccessPage isUserProfileApiActivated={userProfile !== undefined} />
+    );
   }
 
   return (

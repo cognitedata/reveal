@@ -43,7 +43,7 @@ export const SearchCategories = () => {
         selected={dataType === 'Timeseries'}
         onClick={() => handleSelectionClick('Timeseries')}
       >
-        <NameText>Timeseries</NameText>
+        <NameText>Time series</NameText>
       </Content>
 
       <Content
@@ -73,7 +73,7 @@ const Content = styled.div<{ selected?: boolean }>`
   display: flex;
   align-items: center;
   padding: 8px 12px;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
   cursor: pointer;
   user-selection: none;
 

@@ -5,6 +5,7 @@
 static final String[] APPLICATIONS = [
   'platypus',
   'data-exploration',
+  'vision',
   'data-catalog',
   'raw-explorer',
   'coding-conventions',
@@ -12,12 +13,14 @@ static final String[] APPLICATIONS = [
   'industry-canvas-ui',
   'interactive-diagrams',
   'iot-hub',
+  'functions-ui',
   '3d-management',
   'transformations',
   'cdf-document-search',
   'extraction-pipelines',
   'extractor-downloads',
   'charts',
+  'entity-matching',
 ]
 
 /*
@@ -34,6 +37,7 @@ static final Map<String, String> NPM_PACKAGES = [
 static final Map<String, String> FIREBASE_APP_SITES = [
   'platypus': 'platypus',
   'data-exploration': 'data-exploration',
+  'vision': 'vision',
   'data-catalog': 'data-catalog',
   'raw-explorer': 'raw-explorer',
   'coding-conventions': 'coding-conventions',
@@ -44,14 +48,17 @@ static final Map<String, String> FIREBASE_APP_SITES = [
   '3d-management': '3d-management',
   'transformations': 'transformations',
   'cdf-document-search': 'document-search',
+  'functions-ui': 'functions',
   'extraction-pipelines': 'extraction-pipelines',
   'extractor-downloads': 'extractor-downloads',
   'charts': 'charts',
+  'entity-matching': 'entity-matching',
 ]
 
 static final Map<String, String> PREVIEW_PACKAGE_NAMES = [
   'platypus': "@cognite/cdf-solutions-ui",
   'data-exploration': "@cognite/cdf-data-exploration",
+  'vision': "@cognite/cdf-vision-subapp",
   'data-catalog': "@cognite/cdf-data-catalog",
   'raw-explorer': "@cognite/cdf-raw-explorer",
   'coding-conventions': "@cognite/cdf-coding-conventions",
@@ -59,12 +66,14 @@ static final Map<String, String> PREVIEW_PACKAGE_NAMES = [
   'industry-canvas-ui': "@cognite/cdf-industry-canvas-ui",
   'interactive-diagrams': '@cognite/cdf-context-ui-pnid',
   'iot-hub': "@cognite/cdf-iot-hub",
+  'functions-ui': "@cognite/cdf-functions-ui",
   '3d-management': '@cognite/cdf-3d-management',
   'transformations': "@cognite/cdf-transformations-2",
   'cdf-document-search': '@cognite/cdf-document-search-ui',
   'extraction-pipelines': '@cognite/cdf-integrations-ui',
   'extractor-downloads': '@cognite/cdf-extractor-downloads',
   'charts': '@cognite/cdf-charts-ui'
+  'entity-matching': '@cognite/cdf-ui-entity-matching',
 ]
 
 // Replace this with your app's ID on https://sentry.io/ -- if you do not have
@@ -125,6 +134,7 @@ static final Map<String, String> VERSIONING_STRATEGY = [
   'platypus': 'multi-branch',
   'coding-conventions': 'multi-branch',
   'data-exploration': 'multi-branch',
+  'vision': 'single-branch',
   'data-catalog': 'multi-branch',
   'raw-explorer': 'single-branch',
   '3d-management': 'single-branch',
@@ -136,6 +146,7 @@ static final Map<String, String> VERSIONING_STRATEGY = [
   'extraction-pipelines': 'single-branch',
   'extractor-downloads': 'single-branch',
   'charts': 'single-branch'
+  'entity-matching': 'single-branch',
 ]
 
 // The config of which apps have i18n strings that need to be synced to and pulled from locize.io

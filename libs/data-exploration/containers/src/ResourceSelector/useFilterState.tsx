@@ -70,7 +70,6 @@ export type UseFilterReturnType = {
     resourceType: keyof FilterState,
     value?: FilterState[keyof FilterState]
   ) => void;
-  resetAllFilters: () => void;
 };
 
 export const useFilterState = (
@@ -111,15 +110,5 @@ export const useFilterState = (
     [dispatch]
   );
 
-  const resetAllFilters = useCallback(() => {
-    Object.keys(EMPTY_FILTER_STATE).forEach((key) => {
-      dispatch({
-        clear: true,
-        type: key as keyof FilterState,
-        value: {},
-      });
-    });
-  }, [dispatch]);
-
-  return { filterState, updateFilterType, resetFilterType, resetAllFilters };
+  return { filterState, updateFilterType, resetFilterType };
 };

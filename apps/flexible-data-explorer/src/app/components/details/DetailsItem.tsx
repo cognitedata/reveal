@@ -2,7 +2,7 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { Body, Flex, Button, Link, Tooltip } from '@cognite/cogs.js';
+import { Body, Button, Link, Tooltip } from '@cognite/cogs.js';
 
 import { useClipboard } from '../../hooks/useClipboard';
 // import { useClipboard } from '@data-exploration-components/hooks';
@@ -32,7 +32,7 @@ export const DetailsItem = ({
   };
 
   return (
-    <Flex>
+    <Container>
       <DetailsItemContainer>
         <Body level={2} strong>
           {name}
@@ -70,9 +70,19 @@ export const DetailsItem = ({
           />
         </Tooltip>
       </ButtonWrapper>
-    </Flex>
+    </Container>
   );
 };
+
+const Container = styled.div`
+  display: flex;
+  padding: 2px 8px;
+  border-radius: 10px;
+
+  &:hover {
+    background-color: var(--cogs-surface--interactive--hover);
+  }
+`;
 
 const DetailsItemContainer = styled.div`
   display: flex;
@@ -101,7 +111,6 @@ const MutedBody = styled(Body)`
 
 const ButtonWrapper = styled.div<{ visible?: boolean }>`
   margin-left: 8px;
-  margin-bottom: 8px;
   display: flex;
   justify-content: center;
   align-items: center;
