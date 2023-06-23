@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { checkUrl, Envs } from '@cognite/cdf-utilities';
 import i18next, { InitOptions, Resource } from 'i18next';
 import I18NextLocizeBackend from 'i18next-locize-backend';
+// eslint-disable-next-line
+// @ts-ignore
 import { locizePlugin } from 'locize';
 import { initReactI18next, useTranslation } from 'react-i18next';
 

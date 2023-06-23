@@ -142,6 +142,9 @@
       "@platypus/platypus-core": [
         "libs/data-modeling/platypus-core/src/index.ts"
       ],
+      "@entity-matching-app/*": [
+        "apps/entity-matching/src/app/*",
+      ],
       "@raw-explorer/*": [
         "apps/raw-explorer/src/*"
       ],

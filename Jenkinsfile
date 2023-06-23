@@ -19,6 +19,7 @@ static final String[] APPLICATIONS = [
   'cdf-document-search',
   'extraction-pipelines',
   'extractor-downloads',
+  'entity-matching',
 ]
 
 /*
@@ -50,6 +51,7 @@ static final Map<String, String> FIREBASE_APP_SITES = [
   'functions-ui': 'functions',
   'extraction-pipelines': 'extraction-pipelines',
   'extractor-downloads': 'extractor-downloads',
+  'entity-matching': 'entity-matching',
 ]
 
 static final Map<String, String> PREVIEW_PACKAGE_NAMES = [
@@ -69,6 +71,7 @@ static final Map<String, String> PREVIEW_PACKAGE_NAMES = [
   'cdf-document-search': '@cognite/cdf-document-search-ui',
   'extraction-pipelines': '@cognite/cdf-integrations-ui',
   'extractor-downloads': '@cognite/cdf-extractor-downloads',
+  'entity-matching': '@cognite/cdf-ui-entity-matching',
 ]
 
 // Replace this with your app's ID on https://sentry.io/ -- if you do not have
@@ -139,6 +142,7 @@ static final Map<String, String> VERSIONING_STRATEGY = [
   'cdf-document-search': 'single-branch',
   'extraction-pipelines': 'single-branch',
   'extractor-downloads': 'single-branch',
+  'entity-matching': 'single-branch',
 ]
 
 // The config of which apps have i18n strings that need to be synced to and pulled from locize.io

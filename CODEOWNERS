@@ -48,6 +48,9 @@ apps/copilot              @davidlky @andeplane @miladh @trygveu
 apps/raw-explorer @cognitedata/team-hebe
 apps/iot-hub              @davidlky @geircognite @muradsater
 
+# Entity matching
+apps/entity-matching                @cognitedata/cdf-user-experience
+
 # Vision
 apps/vision              @cognitedata/cdf-user-experience
 
