@@ -481,11 +481,11 @@ export class Image360ApiHelper {
     }
 
     if (entity !== undefined) {
-      this._image360Facade.hoverIconVisibility = true;
+      this._image360Facade.setHoverIconVisibilityForEntity(entity, true);
       entity.icon.selected = true;
       this._debouncePreLoad(entity);
     } else {
-      this._image360Facade.hoverIconVisibility = false;
+      this._image360Facade.hideAllHoverIcons();
     }
 
     this._needsRedraw = true;
