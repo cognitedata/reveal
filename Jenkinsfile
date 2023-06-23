@@ -72,7 +72,7 @@ static final Map<String, String> PREVIEW_PACKAGE_NAMES = [
   'cdf-document-search': '@cognite/cdf-document-search-ui',
   'extraction-pipelines': '@cognite/cdf-integrations-ui',
   'extractor-downloads': '@cognite/cdf-extractor-downloads',
-  'charts': '@cognite/cdf-charts-ui'
+  'charts': '@cognite/cdf-charts-ui',
   'entity-matching': '@cognite/cdf-ui-entity-matching',
 ]
 
@@ -145,7 +145,7 @@ static final Map<String, String> VERSIONING_STRATEGY = [
   'cdf-document-search': 'single-branch',
   'extraction-pipelines': 'single-branch',
   'extractor-downloads': 'single-branch',
-  'charts': 'single-branch'
+  'charts': 'multi-branch',
   'entity-matching': 'single-branch',
 ]
 
