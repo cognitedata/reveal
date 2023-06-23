@@ -1,14 +1,11 @@
 {
-  "hosting": [
-    {
-      "site": "cdf-extraction-pipelines-prod",
-      "public": "./build",
-      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
-    },
-    {
-      "site": "cdf-extraction-pipelines-staging",
-      "public": "./build",
-      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
-    }
-  ]
+  "hosting": {
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
 }
