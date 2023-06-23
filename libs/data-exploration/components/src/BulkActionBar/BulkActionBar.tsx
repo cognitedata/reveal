@@ -6,28 +6,28 @@ import { Button, Dropdown, Flex, Menu } from '@cognite/cogs.js';
 
 import { EMPTY_ARRAY, useDialog } from '@data-exploration-lib/core';
 
-import { Bar, Separator, Subtitle, Wrapper, Title } from './elements';
+import { Bar, Separator, Title, Subtitle, Wrapper } from './elements';
 
-export interface BulkActionbarOptions {
+export interface BulkActionBarOptions {
   name: string;
   type: string;
 }
 
-export interface BulkActionbarProps {
+export interface BulkActionBarProps {
   isVisible: boolean;
   title: string;
   subtitle?: string;
   children?: React.ReactNode;
-  options?: BulkActionbarOptions[];
+  options?: BulkActionBarOptions[];
 }
 
-export const BulkActionbar = ({
+export const BulkActionBar = ({
   isVisible,
   title,
   subtitle,
   children,
   options = EMPTY_ARRAY,
-}: BulkActionbarProps) => {
+}: BulkActionBarProps) => {
   const { isOpen, toggle } = useDialog();
   return (
     <Wrapper visible={isVisible} data-testid="table-bulk-actions">
@@ -57,8 +57,8 @@ export const BulkActionbar = ({
             />
           </Dropdown>
           <Flex direction="column">
-            <Subtitle>{subtitle}</Subtitle>
             <Title>{title}</Title>
+            <Subtitle>{subtitle}</Subtitle>
           </Flex>
         </Flex>
         <Flex alignItems="center">{children}</Flex>
@@ -67,4 +67,4 @@ export const BulkActionbar = ({
   );
 };
 
-BulkActionbar.Separator = Separator;
+BulkActionBar.Separator = Separator;

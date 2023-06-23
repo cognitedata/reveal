@@ -1,8 +1,6 @@
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 
-import { Flex } from '@cognite/cogs.js';
-
-import { zIndex } from '@data-exploration-lib/core';
+import { Flex, zIndex } from '@data-exploration-lib/core';
 
 interface BarProps {
   visible: boolean;
@@ -15,6 +13,7 @@ export const Wrapper = styled.div<BarProps>`
     --cogs-surface--interactive--hover--inverted
   );
   --cogs-greyscale-grey6: var(--cogs-text-icon--muted--inverted);
+
   .cogs-menu {
     background: var(--cogs-surface--muted--inverted);
   }
@@ -23,20 +22,19 @@ export const Wrapper = styled.div<BarProps>`
   display: flex;
   justify-content: center;
   bottom: 0;
-  width: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 30px;
   padding: 0;
-  visibility: ${({ visible }) => (visible ? 'visible' : 'hidden')};
-  transition: transform 300ms;
-  transform: translateY(
-    ${(props: BarProps) => (props.visible ? '0px' : '88px')}
-  );
-  margin: 16px auto;
+  transition: opacity 300ms, visibility 300ms;
+  opacity: ${(props: BarProps) => (props.visible ? '1' : '0')};
+  visibility: ${(props: BarProps) => (props.visible ? 'visible' : 'hidden')};
   z-index: ${zIndex.BULK_ACTION};
 `;
 
 export const Bar = styled(Flex)`
   padding: 0 16px;
-  width: 70%;
+  width: 450px;
 
   justify-content: space-between;
   align-items: center;
@@ -45,15 +43,15 @@ export const Bar = styled(Flex)`
   border-radius: 8px;
 `;
 
-export const Subtitle = styled.div`
-  color: var(--cogs-text-icon--medium--inverted);
-  font-size: 12px;
-  font-weight: 500;
-`;
-
 export const Title = styled.div`
   color: var(--cogs-text-icon--strong--inverted);
   font-size: 14px;
+  font-weight: 500;
+`;
+
+export const Subtitle = styled.div`
+  color: var(--cogs-text-icon--medium--inverted);
+  font-size: 12px;
   font-weight: 500;
 `;
 
