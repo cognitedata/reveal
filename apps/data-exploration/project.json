@@ -45,7 +45,7 @@
         "production": {
           "optimization": false,
           "outputHashing": "all",
-          "sourceMap": true,
+          "sourceMap": false,
           "extractCss": true,
           "namedChunks": false,
           "extractLicenses": true,
@@ -58,13 +58,17 @@
       "executor": "@nrwl/webpack:dev-server",
       "options": {
         "buildTarget": "data-exploration:build",
-        "hmr": true
+        "hmr": true,
+        "allowedHosts": "all",
+        "headers": {
+          "Access-Control-Allow-Origin": "*"
+        },
+        "ssl": true,
+        "port": 3010
       },
       "configurations": {
         "development": {
-          "buildTarget": "data-exploration:build:development",
-          "hmr": true,
-          "liveReload": true
+          "buildTarget": "data-exploration:build:development"
         },
 
         "preview": {

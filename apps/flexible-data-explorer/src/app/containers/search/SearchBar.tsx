@@ -71,11 +71,12 @@ export const SearchBar: React.FC<Props> = ({
               navigate.toSearchPage(localQuery, filterParams);
             }
           }}
-          onBlur={() => {
-            if (!disablePreview) {
-              closePreview();
-            }
-          }}
+          // Do not add onBlur to input, it messes with the search preview.
+          // onBlur={() => {
+          //   if (!disablePreview) {
+          //     closePreview();
+          //   }
+          // }}
           onFocus={() => {
             if (!disablePreview) {
               setPreviewFocus(true);
@@ -93,6 +94,9 @@ export const SearchBar: React.FC<Props> = ({
 
         <SearchFilters
           value={filterParams}
+          onClick={() => {
+            closePreview();
+          }}
           onChange={(newValue) => {
             navigate.toSearchPage(queryParams, newValue);
           }}
