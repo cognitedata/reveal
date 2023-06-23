@@ -57,10 +57,9 @@ const Container = styled.div`
   display: flex;
   align-items: center;
   cursor: pointer;
+  gap: 8px;
   /* margin-bottom: 8px; */
   /* border-bottom: 1px solid #ebeef7; */
-
-  transition: background 2s ease;
 
   &:hover {
     background: linear-gradient(
