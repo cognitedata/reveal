@@ -217,6 +217,7 @@
     "redux-mock-store": "^1.5.4",
     "redux-thunk": "^2.4.2",
     "regenerator-runtime": "0.13.7",
+    "rehype-katex": "6.0.2",
     "remark-gfm": "^1.0.0",
     "remark-math": "^5.1.1",
     "reselect": "4.0.0",
