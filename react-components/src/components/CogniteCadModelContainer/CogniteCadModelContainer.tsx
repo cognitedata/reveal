@@ -1,17 +1,17 @@
 import { useEffect, useRef, useState } from "react";
-import { Cognite3DViewer, CogniteCadModel } from '@cognite/reveal';
+import { AddModelOptions, Cognite3DViewer, CogniteCadModel } from '@cognite/reveal';
 import { useReveal } from "../RevealContainer/RevealContext";
 import { Matrix4 } from "three";
 
 type Cognite3dModelProps = {
-  modelId: number;
-  revisionId: number;
+  addModelOptions: AddModelOptions;
   transform?: THREE.Matrix4;
 }
 
-export default function CogniteCadModelContainer({ modelId, revisionId, transform }: Cognite3dModelProps) {
+export default function CogniteCadModelContainer({ addModelOptions, transform }: Cognite3dModelProps) {
   const modelRef = useRef<CogniteCadModel>();
   const viewer = useReveal();
+  const { modelId, revisionId } = addModelOptions;
 
   useEffect(() => {
     addModel(modelId, revisionId, transform)
@@ -19,13 +19,13 @@ export default function CogniteCadModelContainer({ modelId, revisionId, transfor
     return () => {
       if (modelRef.current === undefined || (viewer as any).isDisposed) return;
       viewer.removeModel(modelRef.current);
+      modelRef.current = undefined;
     }
-  }, []);
+  }, [addModelOptions]);
 
   if (modelRef.current !== undefined && transform !== undefined) {
     modelRef.current.setModelTransformation(transform);
   }
-
   return <></>;
 
   async function addModel(modelId: number, revisionId: number, transform?: Matrix4) {
