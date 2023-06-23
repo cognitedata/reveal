@@ -2741,26 +2741,15 @@ __metadata:
     "@babel/preset-env": 7.22.5
     "@babel/preset-react": 7.22.5
     "@babel/preset-typescript": 7.22.5
-<<<<<<< HEAD
     "@cognite/cogs.js": ^9.17.0
     "@cognite/reveal": ^4.3.3
     "@cognite/sdk": ^8.2.0
-    "@storybook/addon-essentials": 7.0.21
-    "@storybook/addon-interactions": 7.0.21
-    "@storybook/addon-links": 7.0.21
-    "@storybook/blocks": 7.0.21
-    "@storybook/react": 7.0.21
-    "@storybook/react-webpack5": 7.0.21
-=======
-    "@cognite/cogs.js": ^9.13.2
-    "@cognite/reveal": ^4.3.1
     "@storybook/addon-essentials": 7.0.22
     "@storybook/addon-interactions": 7.0.22
     "@storybook/addon-links": 7.0.22
     "@storybook/blocks": 7.0.22
     "@storybook/react": 7.0.22
     "@storybook/react-webpack5": 7.0.22
->>>>>>> 1f2e5f068f5c719a4267d1dd3bd5c10079709dcb
     "@storybook/testing-library": 0.1.0
     "@types/lodash": ^4.14.190
     "@types/react": 18.2.7
@@ -10744,11 +10733,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-<<<<<<< HEAD
-"node-fetch@npm:^2.6.1, node-fetch@npm:^2.6.11, node-fetch@npm:^2.6.7":
-=======
-"node-fetch@npm:^2.0.0, node-fetch@npm:^2.6.1, node-fetch@npm:^2.6.7":
->>>>>>> 1f2e5f068f5c719a4267d1dd3bd5c10079709dcb
+"node-fetch@npm:^2.0.0, node-fetch@npm:^2.6.1, node-fetch@npm:^2.6.11, node-fetch@npm:^2.6.7":
   version: 2.6.11
   resolution: "node-fetch@npm:2.6.11"
   dependencies:
@@ -13005,7 +12990,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-<<<<<<< HEAD
 "strict-uri-encode@npm:^1.0.0":
   version: 1.1.0
   resolution: "strict-uri-encode@npm:1.1.0"
@@ -13013,10 +12997,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"string-width@npm:^1.0.2 || 2 || 3 || 4, string-width@npm:^4.0.0, string-width@npm:^4.1.0, string-width@npm:^4.2.0, string-width@npm:^4.2.2, string-width@npm:^4.2.3":
-=======
 "string-width@npm:^1.0.2 || 2 || 3 || 4, string-width@npm:^4.1.0, string-width@npm:^4.2.0, string-width@npm:^4.2.3":
->>>>>>> 1f2e5f068f5c719a4267d1dd3bd5c10079709dcb
   version: 4.2.3
   resolution: "string-width@npm:4.2.3"
   dependencies:
