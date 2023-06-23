@@ -19,4 +19,17 @@ export const celaneseConfig: ProjectConfig[] = [
       dataSetIds: ['xyz'],
     },
   },
+  // Duplicating for now...
+  {
+    site: 'Clear Lake',
+    imageUrl:
+      'https://clui.org/sites/default/files/styles/presentation_medium/public/ludb/tx/7826/5663083259_14da9bed95_o.jpg',
+    project: 'celanese-stg',
+
+    dataModels: [],
+    nodeSpaces: [],
+    fileConfig: {
+      dataSetIds: ['xyz'],
+    },
+  },
 ];

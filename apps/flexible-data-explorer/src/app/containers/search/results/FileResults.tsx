@@ -58,7 +58,7 @@ export const FileResults: React.FC = () => {
 
       <SearchResults.Footer>
         <Button
-          type="ghost"
+          type="secondary"
           hidden={!hasNextPage}
           onClick={() => {
             fetchNextPage();
