@@ -7,6 +7,7 @@ import {
   ChartActionMenu,
   ChartActionMenuItem,
   ChartActionContainer,
+  ChartActionIcon,
 } from './elements';
 
 type ChartActionProps = {
@@ -56,7 +57,7 @@ export const ChartActionButton = ({
         }
       >
         <ChartActionButtonRef type="button">
-          <Icon type="AddLarge" css={{ color: 'white' }} size={18} />
+          <ChartActionIcon type="AddLarge" size={18} />
         </ChartActionButtonRef>
       </Dropdown>
     </ChartActionContainer>

@@ -106,26 +106,26 @@ function ChartListTable({
             : list.map((row) => (
                 <tr key={row.id}>
                   <td>
-                    <A onClick={() => onChartClick(row.id)}>
-                      <div
-                        style={{
+                    <div
+                      // todo(DEGR-2397) check accessibility with cogs team
+                      onClick={() => onChartClick(row.id)}
+                      style={{
+                        height: 80,
+                        border: '1px solid var(--cogs-greyscale-grey2)',
+                      }}
+                    >
+                      <RenderWhenOnScreen
+                        containerStyles={{
                           height: 80,
                           border: '1px solid var(--cogs-greyscale-grey2)',
                         }}
+                        loaderComponent={
+                          <Skeleton.Image style={{ height: 80, width: 86 }} />
+                        }
                       >
-                        <RenderWhenOnScreen
-                          containerStyles={{
-                            height: 80,
-                            border: '1px solid var(--cogs-greyscale-grey2)',
-                          }}
-                          loaderComponent={
-                            <Skeleton.Image style={{ height: 80, width: 86 }} />
-                          }
-                        >
-                          <PreviewPlotContainer chart={row.firebaseChart} />
-                        </RenderWhenOnScreen>
-                      </div>
-                    </A>
+                        <PreviewPlotContainer chart={row.firebaseChart} />
+                      </RenderWhenOnScreen>
+                    </div>
                   </td>
                   <td>
                     <A onClick={() => onChartClick(row.id)}>

@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 import { Alert } from 'antd';
 
-import { Dropdown, Title, Menu } from '@cognite/cogs.js';
+import { Dropdown, Title, Menu, Icon } from '@cognite/cogs.js';
 
 export const Header = styled.header`
   && {
@@ -175,16 +175,21 @@ export const ChartActionStyledButton = styled.button`
 `;
 
 export const ChartActionMenu = styled(Menu)`
-  /*sadness as I couldn't find this color token in cogs*/
-  background-color: #4a67fb;
+  background-color: var(--cogs-midblue);
 `;
 
 export const ChartActionMenuItem = styled(Menu.Item)`
+  background-color: var(--cogs-midblue);
   color: white;
+  cursor: pointer;
 `;
 
 export const ChartActionContainer = styled.div`
   position: absolute;
   bottom: 0;
   left: 16px;
+`;
+
+export const ChartActionIcon = styled(Icon)`
+  color: white;
 `;
