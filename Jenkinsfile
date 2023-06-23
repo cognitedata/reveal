@@ -27,7 +27,7 @@ static final String[] APPLICATIONS = [
 */
 static final Map<String, String> NPM_PACKAGES = [
   'shared-plotting-components': "dist/libs/shared/plotting-components",
-  'user-profile-components': "dist/libs/shared/user-profile-components"
+  'user-profile-components': "dist/libs/shared/user-profile-components",
   'cdf-ui-i18n-utils': "dist/libs/shared/cdf-ui-i18n-utils"
 ]
 
