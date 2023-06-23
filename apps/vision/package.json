@@ -1,0 +1,26 @@
+{
+  "name": "@cognite/cdf-vision-subapp",
+  "version": "2.4.0",
+  "scripts": {
+    "start": "../../scripts/start.sh dev vision",
+    "build": "../../scripts/build.sh production vision",
+    "test": "../../scripts/test.sh vision",
+    "lint": "../../scripts/lint.sh vision",
+    "lint:fix": "../../scripts/lint.sh vision --fix",
+    "cypress:dev": "./scripts/cypress-dev.sh"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

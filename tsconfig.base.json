@@ -99,6 +99,9 @@
       "@extraction-pipelines/*": [
         "apps/extraction-pipelines/src/*"
       ],
+      "@vision/*": [
+        "apps/vision/src/*"
+      ],
       "@flexible-data-explorer/*": [
         "apps/flexible-data-explorer/src/*"
       ],

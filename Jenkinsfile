@@ -5,6 +5,7 @@
 static final String[] APPLICATIONS = [
   'platypus',
   'data-exploration',
+  'vision',
   'data-catalog',
   'raw-explorer',
   'coding-conventions',
@@ -27,6 +28,7 @@ static final String[] APPLICATIONS = [
 static final Map<String, String> NPM_PACKAGES = [
   'shared-plotting-components': "dist/libs/shared/plotting-components",
   'user-profile-components': "dist/libs/shared/user-profile-components"
+  'cdf-ui-i18n-utils': "dist/libs/shared/cdf-ui-i18n-utils"
 ]
 
 // This is the Firebase site mapping.
@@ -34,6 +36,7 @@ static final Map<String, String> NPM_PACKAGES = [
 static final Map<String, String> FIREBASE_APP_SITES = [
   'platypus': 'platypus',
   'data-exploration': 'data-exploration',
+  'vision': 'vision',
   'data-catalog': 'data-catalog',
   'raw-explorer': 'raw-explorer',
   'coding-conventions': 'coding-conventions',
@@ -44,7 +47,7 @@ static final Map<String, String> FIREBASE_APP_SITES = [
   '3d-management': '3d-management',
   'transformations': 'transformations',
   'cdf-document-search': 'document-search',
-  'functions-ui': 'functions-ui',
+  'functions-ui': 'functions',
   'extraction-pipelines': 'extraction-pipelines',
   'extractor-downloads': 'extractor-downloads',
 ]
@@ -52,6 +55,7 @@ static final Map<String, String> FIREBASE_APP_SITES = [
 static final Map<String, String> PREVIEW_PACKAGE_NAMES = [
   'platypus': "@cognite/cdf-solutions-ui",
   'data-exploration': "@cognite/cdf-data-exploration",
+  'vision': "@cognite/cdf-vision-subapp",
   'data-catalog': "@cognite/cdf-data-catalog",
   'raw-explorer': "@cognite/cdf-raw-explorer",
   'coding-conventions': "@cognite/cdf-coding-conventions",
@@ -124,6 +128,7 @@ static final Map<String, String> VERSIONING_STRATEGY = [
   'platypus': 'multi-branch',
   'coding-conventions': 'multi-branch',
   'data-exploration': 'multi-branch',
+  'vision': 'single-branch',
   'data-catalog': 'multi-branch',
   'raw-explorer': 'single-branch',
   '3d-management': 'single-branch',

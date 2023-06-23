@@ -43,7 +43,10 @@ export const Explorer = () => {
           {/* We do not have separate ResourcePage's anymore for the full page resource details. */}
           {/* So we are redirecting any old routes to the new routes with 'journey' search param. */}
           {isDetailsOverlayEnabled ? (
-            <Route path="/:resourceType/:id" element={<JourneyRedirect />} />
+            <Route
+              path="/search/:resourceType/:id"
+              element={<JourneyRedirect />}
+            />
           ) : (
             <>
               <Route path={routes.assetPage.path} element={<AssetPage />} />

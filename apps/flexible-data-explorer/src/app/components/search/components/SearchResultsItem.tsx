@@ -73,6 +73,7 @@ const Container = styled.div`
 `;
 
 const TitleContent = styled.div`
+  flex: 1;
   display: flex;
   flex-direction: column;
   max-width: 50%;
@@ -80,14 +81,19 @@ const TitleContent = styled.div`
 `;
 
 const PropertiesContainer = styled.div`
+  flex: 1;
   display: flex;
+  max-width: 50%;
   width: 100%;
   height: 100%;
-  justify-content: space-evenly;
-  align-items: center;
-  overflow: auto;
+  justify-content: space-between;
+  align-items: flex-start;
+  word-break: break-all;
 `;
-const PropertiesContent = styled.div``;
+const PropertiesContent = styled.div`
+  flex: 1;
+  margin-right: 8px;
+`;
 
 const NameText = styled(Title).attrs({ level: 6 })`
   overflow: hidden;
