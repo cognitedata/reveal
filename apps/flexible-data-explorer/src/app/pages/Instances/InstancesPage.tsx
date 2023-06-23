@@ -1,26 +1,24 @@
+import { useEffect } from 'react';
+
 import { Page } from '../../containers/page/Page';
 import { PropertiesWidget } from '../../containers/widgets/Properties/PropertiesWidget';
+import { useRecentlyVisited } from '../../hooks/useRecentlyVisited';
 import { useInstancesQuery } from '../../services/instances/generic/queries/useInstanceByIdQuery';
 
 export const InstancesPage = () => {
-  const { data, isLoading } = useInstancesQuery();
-  // const params = useParams();
+  const { data, isLoading, isFetched } = useInstancesQuery();
 
-  // const [_, setRecentlyViewed] = useLocalStorageState<any>(
-  //   `recently-viewed-v2`,
-  //   {
-  //     defaultValue: [],
-  //   }
-  // );
+  const [, setRecentlyVisited] = useRecentlyVisited();
 
-  // useEffect(() => {
-  //   setRecentlyViewed((prevState: any) => {
-  //     return [
-  //       ...prevState,
-  //       { ...params, name: data?.name, visited: Date.now() },
-  //     ];
-  //   });
-  // }, [isFetched]);
+  useEffect(() => {
+    return () => {
+      if (isFetched) {
+        console.log('UNMOUNTED');
+
+        setRecentlyVisited(data?.name, data?.description);
+      }
+    };
+  }, [isFetched]);
 
   return (
     <Page.Dashboard customName={data?.name} loading={isLoading}>

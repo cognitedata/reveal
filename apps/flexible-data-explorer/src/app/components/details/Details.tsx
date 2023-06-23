@@ -4,11 +4,7 @@ import styled from 'styled-components';
 
 import { DetailsItem } from './DetailsItem';
 
-export const GeneralDetails = ({
-  children,
-}: {
-  children: React.ReactNode[];
-}) => {
+export const GeneralDetails = ({ children }: React.PropsWithChildren) => {
   return (
     <GeneralDetailsCard>
       <GeneralDetailsContent>{children}</GeneralDetailsContent>

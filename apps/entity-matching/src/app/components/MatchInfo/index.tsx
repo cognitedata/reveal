@@ -52,8 +52,8 @@ function FileInfo({ id }: { id: number }) {
   if (data && (data[0]?.assetIds?.length || 0) > 0) {
     return (
       <>
-        {data[0].assetIds?.map((id) => (
-          <AssetCell key={id} id={id} />
+        {data[0].assetIds?.map((assetId: any) => (
+          <AssetCell key={assetId} id={assetId} />
         ))}
       </>
     );
@@ -80,8 +80,8 @@ function EventInfo({ id }: { id: number }) {
   if (data) {
     return (
       <>
-        {data[0].assetIds?.map((id) => (
-          <AssetCell key={id} id={id} />
+        {data[0].assetIds?.map((assetId: any) => (
+          <AssetCell key={assetId} id={assetId} />
         ))}
       </>
     );
