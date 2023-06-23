@@ -20,7 +20,12 @@ export default function CogniteCadModelContainer({ modelId, revisionId, transfor
       if (modelRef.current === undefined || (viewer as any).isDisposed) return;
       viewer.removeModel(modelRef.current);
     }
-  }, [])
+  }, []);
+
+  if (modelRef.current !== undefined && transform !== undefined) {
+    modelRef.current.setModelTransformation(transform);
+  }
+
   return <></>;
 
   async function addModel(modelId: number, revisionId: number, transform?: Matrix4) {

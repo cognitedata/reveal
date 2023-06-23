@@ -9,6 +9,11 @@ const meta = {
   title: 'Example/RevealContainer',
   component: RevealContainer,
   tags: ['autodocs'],
+  argTypes: {
+    sdk: {
+      control: false
+    }
+  }
 } satisfies Meta<typeof RevealContainer>;
 
 export default meta;

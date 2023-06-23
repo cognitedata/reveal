@@ -20,9 +20,7 @@ export default function RevealContainer({ children, sdk, color }: RevealContaine
     setViewer(viewer);
     return () => {
       viewer.dispose();
-      console.log('a');
       setViewer(undefined);
-      console.log('b');
     }
   }, []);
 
