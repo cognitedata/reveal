@@ -5,41 +5,37 @@ import { toast } from '@cognite/cogs.js';
 
 import { QueryKeys, TOAST_POSITION } from '../../constants';
 import type { IndustryCanvasService } from '../../services/IndustryCanvasService';
-import { SerializedCanvasDocument } from '../../types';
 
 export const useCanvasArchiveMutation = (service: IndustryCanvasService) => {
   const queryClient = useQueryClient();
 
   return useMutation(
     [QueryKeys.ARCHIVE_CANVAS],
-    (canvas: SerializedCanvasDocument) => {
-      return service.archiveCanvas(canvas);
+    (externalId: string) => {
+      return service.archiveCanvas(externalId);
     },
     {
-      onMutate: async (canvas) => {
+      onMutate: async (externalId) => {
         // Cancel any outgoing refetches
-        await queryClient.cancelQueries([
-          QueryKeys.GET_CANVAS,
-          canvas.externalId,
-        ]);
+        await queryClient.cancelQueries([QueryKeys.GET_CANVAS, externalId]);
 
         // Snapshot the previous values
-        const previousCanvas = queryClient.getQueryData([
+        const previousExternalId = queryClient.getQueryData([
           QueryKeys.GET_CANVAS,
-          canvas.externalId,
+          externalId,
         ]);
 
         // Optimistically update to the new values
-        queryClient.removeQueries([QueryKeys.GET_CANVAS, canvas.externalId]);
+        queryClient.removeQueries([QueryKeys.GET_CANVAS, externalId]);
 
         // Return a context with the previous and new canvases
-        return { previousCanvas, canvas };
+        return { previousExternalId, externalId };
       },
-      onError: (err, canvas, context) => {
+      onError: (err, externalId, context) => {
         if (context) {
           queryClient.setQueryData(
-            [QueryKeys.GET_CANVAS, canvas.externalId],
-            context.previousCanvas
+            [QueryKeys.GET_CANVAS, externalId],
+            context.previousExternalId
           );
         }
         captureException(err);

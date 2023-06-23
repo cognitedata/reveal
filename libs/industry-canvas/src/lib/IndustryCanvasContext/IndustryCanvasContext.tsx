@@ -32,7 +32,7 @@ export type IndustryCanvasContextType = {
   createCanvas: (
     canvas: IndustryCanvasState
   ) => Promise<SerializedCanvasDocument>;
-  archiveCanvas: (canvas: SerializedCanvasDocument) => Promise<void>;
+  archiveCanvas: (externalId: string) => Promise<void>;
   deleteCanvasIdsByType: ({
     ids,
     canvasExternalId,
@@ -183,15 +183,15 @@ export const IndustryCanvasProvider: React.FC<IndustryCanvasProviderProps> = ({
   );
 
   const archiveCanvasWrapper = useCallback(
-    async (canvasToArchive: SerializedCanvasDocument) => {
+    async (externalId: string) => {
       if (isCanvasLocked) {
         return;
       }
 
-      await archiveCanvas(canvasToArchive);
-      if (canvasToArchive.externalId === activeCanvas?.externalId) {
+      await archiveCanvas(externalId);
+      if (externalId === activeCanvas?.externalId) {
         const nextCanvas = canvases?.find(
-          (canvas) => canvas.externalId !== canvasToArchive.externalId
+          (canvas) => canvas.externalId !== externalId
         );
         setCanvasId(nextCanvas?.externalId, true);
       }

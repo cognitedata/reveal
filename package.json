@@ -31,7 +31,7 @@
     "@cognite/sdk-playground": "^6.0.8",
     "@cognite/sdk-provider": "^2.0.6",
     "@cognite/sidecar": "^0.4.1",
-    "@cognite/unified-file-viewer": "^13.5.6",
+    "@cognite/unified-file-viewer": "^13.5.8",
     "@cognite/z-index": "^0.2.3",
     "@genql/cli": "^4.0.0",
     "@google-cloud/storage": "^5.20.5",
