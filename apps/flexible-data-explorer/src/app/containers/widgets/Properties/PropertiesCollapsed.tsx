@@ -26,12 +26,10 @@ export const PropertiesCollapsed: React.FC<PropertiesProps> = ({
   const properties = useMemo(() => flattenProperties(data), [data]);
 
   const getAdaptiveGridRows = () => {
-    const keys = Object.keys(data || {}).length;
-
     // Bit of magic values below; 4 is the number of items per row in the grid. If we have less than 4 items, we want
     // to show rows in the size of 2, otherwise in the size of 3.
     // TODO: Move the grid numbers to a more central place.
-    return keys <= 4 ? 2 : 3;
+    return properties.length <= 4 ? 2 : 3;
   };
 
   return (
@@ -63,7 +61,7 @@ const PropertiesItem = ({ pair }: { pair: Record<string, any> }) => {
 
   return (
     <Content>
-      <Tooltip content={pair.value} disabled={!isOverflowing}>
+      <Tooltip wrapped content={pair.value} disabled={!isOverflowing}>
         <>
           <KeyText>{pair.key}</KeyText>
           <ValueText ref={ref}>{pair.value || '-'}</ValueText>
