@@ -3,8 +3,8 @@ import React, { useEffect, useCallback, useState } from 'react';
 import styled from 'styled-components';
 
 import {
-  ResourceSelector,
   ResourceSelectorDetails,
+  ResourceSelectorDrawer,
 } from '@data-exploration/containers';
 import { useQueryClient } from '@tanstack/react-query';
 import { Dropdown, Pagination, Spin, Breadcrumb, Modal } from 'antd';
@@ -500,7 +500,7 @@ const AnnotationPreviewSidebar = ({
           }
           onClose={() => setSelectedAnnotations([])}
         />
-        <ResourceSelector
+        <ResourceSelectorDrawer
           visibleResourceTabs={['asset', 'file']}
           visible={visible}
           selectionMode="single"

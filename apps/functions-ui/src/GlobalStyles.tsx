@@ -21,7 +21,7 @@ import collapseStyle from 'antd/es/collapse/style/index.less';
 // import commentStyle from 'antd/es/comment/style/index.less';
 import configProviderStyle from 'antd/es/config-provider/style/index.less';
 // import datePickerStyle from 'antd/es/date-picker/style/index.less';
-// import descriptionsStyle from 'antd/es/descriptions/style/index.less';
+import descriptionsStyle from 'antd/es/descriptions/style/index.less';
 import dividerStyle from 'antd/es/divider/style/index.less';
 import drawerStyle from 'antd/es/drawer/style/index.less';
 import dropdownStyle from 'antd/es/dropdown/style/index.less';
@@ -125,6 +125,7 @@ const styles = [
   uploadStyle,
   tagStyle,
   inputNumberStyle,
+  descriptionsStyle,
 ];
 
 export const getContainer = () => {

@@ -24,6 +24,13 @@ const CollapseDiv = styled.div`
   .ant-collapse-header[aria-expanded='true'] {
     background-color: ${Colors['decorative--blue--200']};
   }
+  .ant-collapse-expand-icon {
+    position: relative;
+    top: 3px;
+    .anticon.ant-collapse-arrow {
+      margin-right: 5px;
+    }
+  }
 `;
 
 const FunctionActivationAlert = styled(Alert)`

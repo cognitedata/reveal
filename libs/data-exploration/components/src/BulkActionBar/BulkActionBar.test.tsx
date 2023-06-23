@@ -2,19 +2,19 @@ import { fireEvent, screen } from '@testing-library/react';
 
 import { Button } from '@cognite/cogs.js';
 
-import { BulkActionbar } from '..';
+import { BulkActionBar } from '..';
 import { renderComponent } from '../__test-utils';
 
-describe('BulkActionbar', () => {
-  test("shouldn't render the componet if the visible props is false", () => {
-    renderComponent(BulkActionbar, {
+describe('BulkActionBar', () => {
+  test("shouldn't render the component if the visible props is false", () => {
+    renderComponent(BulkActionBar, {
       isVisible: false,
       title: 'Title',
     });
     expect(screen.queryByText('Title')).not.toBeVisible();
   });
   test('renders titles', () => {
-    renderComponent(BulkActionbar, {
+    renderComponent(BulkActionBar, {
       isVisible: true,
       title: 'Header',
       subtitle: 'Subheader',
@@ -23,7 +23,7 @@ describe('BulkActionbar', () => {
     expect(screen.getByText('Subheader')).toBeInTheDocument();
   });
   test('render the children', () => {
-    renderComponent(BulkActionbar, {
+    renderComponent(BulkActionBar, {
       isVisible: true,
       title: 'Header',
       children: (
@@ -40,7 +40,7 @@ describe('BulkActionbar', () => {
       { type: 'asset', name: 'Norway' },
       { type: 'event', name: 'Material' },
     ];
-    renderComponent(BulkActionbar, {
+    renderComponent(BulkActionBar, {
       isVisible: true,
       title: 'Header',
       options,

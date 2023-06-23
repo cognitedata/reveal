@@ -1,16 +1,14 @@
-import React from 'react';
-
 import styled from 'styled-components';
 
 import { Button } from '@cognite/cogs.js';
 
 import { useDialog } from '@data-exploration-lib/core';
 
-import { BulkActionbar } from './BulkActionbar';
+import { BulkActionBar } from './BulkActionBar';
 
 export default {
-  title: 'Component/BulkActionbar',
-  component: BulkActionbar,
+  title: 'Component/BulkActionBar',
+  component: BulkActionBar,
   decorators: [(storyFn: any) => <Container>{storyFn()}</Container>],
 };
 export const Example = () => {
@@ -19,13 +17,13 @@ export const Example = () => {
   return (
     <Container>
       <Button onClick={toggle}>Click here</Button>
-      <BulkActionbar title="Random" subtitle="213" isVisible={isOpen}>
+      <BulkActionBar title="Random" subtitle="213" isVisible={isOpen}>
         <Button icon="Add" inverted type="secondary">
           Add to Collection
         </Button>
-        <BulkActionbar.Separator />
+        <BulkActionBar.Separator />
         <Button icon="Close" onClick={close} inverted />
-      </BulkActionbar>
+      </BulkActionBar>
       ;
     </Container>
   );
