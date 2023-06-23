@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 import * as THREE from 'three';
-import { OrbitControls } from 'three-stdlib';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import TWEEN from '@tweenjs/tween.js';
 
 import { CadManager, CadModelUpdateHandler } from '../../packages/cad-geometry-loaders';
