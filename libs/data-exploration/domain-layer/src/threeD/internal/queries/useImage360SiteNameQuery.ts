@@ -1,6 +1,7 @@
 import { UseInfiniteQueryOptions } from '@tanstack/react-query';
 
-import { useEventsListQuery } from '@data-exploration-lib/domain-layer';
+import { useEventsListQuery } from '../../../events';
+
 export const useImage360SiteNameQuery = (
   siteId?: string,
   options?: UseInfiniteQueryOptions

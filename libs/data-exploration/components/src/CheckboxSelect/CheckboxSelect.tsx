@@ -4,7 +4,11 @@ import styled from 'styled-components';
 
 import { Button, Dropdown } from '@cognite/cogs.js';
 
-import { EMPTY_OBJECT, useDeepEffect } from '@data-exploration-lib/core';
+import {
+  EMPTY_OBJECT,
+  useDeepEffect,
+  useTranslation,
+} from '@data-exploration-lib/core';
 
 import { FilterLabel } from '../Labels';
 
@@ -43,6 +47,8 @@ export const CheckboxSelect = ({
   onSearchInputChange,
   isLoading,
 }: CheckboxSelectProps) => {
+  const { t } = useTranslation();
+
   const [selection, setSelection] = React.useState<OptionSelection>(
     customSelection || EMPTY_OBJECT
   );
@@ -115,7 +121,7 @@ export const CheckboxSelect = ({
           onClick={() => setVisible((prevState) => !prevState)}
         >
           <FilterButtonText data-testid="filter-button">
-            {getFilterButtonText(selection)}
+            {getFilterButtonText(selection, t)}
           </FilterButtonText>
         </StyledButton>
       </>

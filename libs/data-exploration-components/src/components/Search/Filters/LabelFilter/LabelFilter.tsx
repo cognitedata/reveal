@@ -8,6 +8,8 @@ import { Body, Tooltip } from '@cognite/cogs.js';
 import { LabelDefinition } from '@cognite/sdk';
 import { useList } from '@cognite/sdk-react-query-hooks';
 
+import { useTranslation } from '@data-exploration-lib/core';
+
 export const LabelFilter = ({
   resourceType,
   value,
@@ -17,6 +19,8 @@ export const LabelFilter = ({
   value: { externalId: string }[] | undefined;
   setValue: (newValue: { externalId: string }[] | undefined) => void;
 }) => {
+  const { t } = useTranslation();
+
   const allowLabels = resourceType === 'asset' || resourceType === 'file';
   const { data: labels = [], isError } = useList<LabelDefinition>(
     'labels',
@@ -41,7 +45,14 @@ export const LabelFilter = ({
     <Tooltip
       interactive
       disabled={!isError}
-      content="Error fetching labels, please make sure you have labelsAcl:READ"
+      content={t(
+        'PERMISSIONS_ERROR_FETCHING',
+        'Error fetching labels, please make sure you have labelsAcl:READ',
+        {
+          dataType: 'labels',
+          permissionType: 'labelsAcl:READ',
+        }
+      )}
     >
       <>
         <Body

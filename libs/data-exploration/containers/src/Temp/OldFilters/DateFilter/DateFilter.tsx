@@ -13,6 +13,7 @@ import {
   DATA_EXPLORATION_COMPONENT,
   TIME_SELECT,
   useMetrics,
+  useTranslation,
   zIndex,
 } from '@data-exploration-lib/core';
 
@@ -53,6 +54,8 @@ export const DateFilterV2 = ({
   ) => void;
 }) => {
   const [period, setPeriod] = useState<PeriodType>(determinePeriod(value));
+
+  const { t } = useTranslation();
   const trackUsage = useMetrics();
 
   const prevValueRef = useRef<PeriodType>();
@@ -74,11 +77,11 @@ export const DateFilterV2 = ({
   const endDate = new Date(value?.max || new Date());
 
   const options = [
-    { value: 'none', label: 'All' },
-    ...(enableNull ? [{ value: 'null', label: 'Empty' }] : []),
-    { value: 'before', label: 'Before' },
-    { value: 'during', label: 'During' },
-    { value: 'after', label: 'After' },
+    { value: 'none', label: t('ALL', 'All') },
+    ...(enableNull ? [{ value: 'null', label: t('EMPTY', 'Empty') }] : []),
+    { value: 'before', label: t('BEFORE', 'Before') },
+    { value: 'during', label: t('DURING', 'During') },
+    { value: 'after', label: t('AFTER', 'After') },
   ];
 
   const handleOnChange = (newValue: OptionType<string>) => {

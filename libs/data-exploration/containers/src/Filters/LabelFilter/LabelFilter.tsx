@@ -4,6 +4,7 @@ import {
   InternalDocumentFilter,
   useDebouncedState,
   useMetrics,
+  useTranslation,
 } from '@data-exploration-lib/core';
 import {
   useAssetsFilterOptions,
@@ -26,6 +27,7 @@ export const LabelFilter = <TFilter,>({
   isError,
   isLoading,
 }: Props<TFilter>) => {
+  const { t } = useTranslation();
   const trackUsage = useMetrics();
 
   const handleChange = (
@@ -44,7 +46,7 @@ export const LabelFilter = <TFilter,>({
 
   return (
     <MultiSelectFilter<string>
-      label="Labels"
+      label={t('LABELS', 'Labels')}
       isLoading={isLoading}
       isError={isError}
       options={options}

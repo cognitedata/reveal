@@ -7,6 +7,7 @@ import {
   getTitle,
   SearchConfigDataType,
   SearchConfigResourceType,
+  useTranslation,
 } from '@data-exploration-lib/core';
 
 import { ColumnHeader, CommonWrapper, ModalCheckbox } from './elements';
@@ -27,6 +28,7 @@ export const ResourceColumns: React.FC<Props> = ({
   isDocumentsApiEnabled = true,
 }: Props) => {
   const sizeOfCommonSection = 5;
+  const { t } = useTranslation();
   return (
     <>
       {(Object.keys(searchConfigData) as Array<SearchConfigResourceType>)
@@ -37,15 +39,19 @@ export const ResourceColumns: React.FC<Props> = ({
           const resourceFilterIds = Object.keys(
             searchConfigData[resource]
           ) as Array<FilterIdType>;
+          const title = getTitle(resource, true);
 
           return (
             <div key={`${resource}`}>
               <CommonWrapper direction="column">
-                <ColumnHeader>{getTitle(resource, true)}</ColumnHeader>
+                <ColumnHeader>
+                  {t(`${title.split(' ').join().toUpperCase()}`, title)}
+                </ColumnHeader>
                 {resourceFilterIds.map((filterId, index) => {
                   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                   // @ts-ignore Property does not exist on type
                   const config = searchConfigData[resource][filterId];
+                  const label = config.label || '';
                   return (
                     <React.Fragment key={`${resource}_${filterId}`}>
                       <ModalCheckbox
@@ -56,7 +62,10 @@ export const ResourceColumns: React.FC<Props> = ({
                         checked={config?.enabled}
                         data-testid={`modal-checkbox-${resource}-${filterId}`}
                       >
-                        {config?.label}
+                        {t(
+                          `${label.split(' ').join('_').toUpperCase()}`,
+                          label
+                        )}
                       </ModalCheckbox>
                       {index === sizeOfCommonSection - 1 && (
                         <Divider data-testid="search-config-divider" />

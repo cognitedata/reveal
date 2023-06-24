@@ -14,6 +14,7 @@ import { Asset } from '@cognite/sdk';
 import {
   InternalAssetFilters,
   useGetSearchConfigFromLocalStorage,
+  useTranslation,
 } from '@data-exploration-lib/core';
 import {
   useAssetsSearchResultWithLabelsQuery,
@@ -64,6 +65,8 @@ export const AssetSearchResults = ({
   onFilterChange?: (newValue: Record<string, unknown>) => void;
 } & Omit<TableProps<AssetWithRelationshipLabels>, 'columns' | 'data' | 'id'> &
   AssetTreeView) => {
+  const { t } = useTranslation();
+
   const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
   const { data, isLoading, isPreviousData, hasNextPage, fetchNextPage } =
     useAssetsSearchResultWithLabelsQuery({
@@ -124,13 +127,13 @@ export const AssetSearchResults = ({
             <SegmentedControl.Button
               icon="Tree"
               key="tree"
-              title="Asset hierarchy"
+              title={t('ASSET_HIERARCHY', 'Asset hierarchy')}
               aria-label="Asset hierarchy"
             />
             <SegmentedControl.Button
               icon="List"
               key="list"
-              title="List"
+              title={t('LIST', 'List')}
               aria-label="List"
             />
           </SegmentedControl>

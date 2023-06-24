@@ -20,7 +20,11 @@ import {
   useResourceDetailSelectedTab,
 } from '@data-exploration-app/hooks';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
-import { SUB_APP_PATH, createInternalLink } from '@data-exploration-lib/core';
+import {
+  useTranslation,
+  SUB_APP_PATH,
+  createInternalLink,
+} from '@data-exploration-lib/core';
 
 import { AssetHierarchyTab } from './AssetHierarchyTab';
 
@@ -42,6 +46,8 @@ export const AssetDetail = ({
   actions?: React.ReactNode;
   hideDefaultCloseActions?: boolean;
 }) => {
+  const { t } = useTranslation();
+
   const [selectedTab, setSelectedTab] = useResourceDetailSelectedTab();
   const [pushJourney] = usePushJourney();
   const [endJourney] = useEndJourney();
@@ -106,7 +112,14 @@ export const AssetDetail = ({
   }
 
   if (!asset) {
-    return <>Asset {assetId} not found!</>;
+    return (
+      <>
+        {t('RESOURCE_NOT_FOUND', `Asset ${assetId} not found!`, {
+          resourceType: t('ASSET', 'Asset'),
+          id: assetId,
+        })}
+      </>
+    );
   }
 
   return (
@@ -130,7 +143,11 @@ export const AssetDetail = ({
         onTabChange={handleTabChange}
         tab={activeTab}
         additionalTabs={[
-          <Tabs.Tab label="Details" key="details" tabKey="details">
+          <Tabs.Tab
+            label={t('DETAILS', 'Details')}
+            key="details"
+            tabKey="details"
+          >
             <DetailsTabWrapper>
               <AssetInfo
                 asset={asset}
@@ -139,7 +156,11 @@ export const AssetDetail = ({
               <Metadata metadata={asset.metadata} />
             </DetailsTabWrapper>
           </Tabs.Tab>,
-          <Tabs.Tab label="Hierarchy" key="children" tabKey="children">
+          <Tabs.Tab
+            label={t('HIERARCHY_TAB_LABEL', 'Hierarchy')}
+            key="children"
+            tabKey="children"
+          >
             <AssetHierarchyTab asset={asset} />
           </Tabs.Tab>,
         ]}

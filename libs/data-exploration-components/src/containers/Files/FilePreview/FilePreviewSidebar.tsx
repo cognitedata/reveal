@@ -8,7 +8,7 @@ import { useDisclosure } from '@data-exploration-components/hooks/index';
 import { Detail, Icon, Title, Modal, Checkbox } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
 
-import { ExtendedAnnotation } from '@data-exploration-lib/core';
+import { ExtendedAnnotation, useTranslation } from '@data-exploration-lib/core';
 
 import { useReviewFile } from '../hooks';
 
@@ -47,6 +47,8 @@ const FilePreviewSidebar = ({
   setSelectedAnnotations,
 }: FilePreviewSidebarProps) => {
   const { onApproveFile } = useReviewFile(file?.id);
+
+  const { t } = useTranslation();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -92,15 +94,17 @@ const FilePreviewSidebar = ({
   return (
     <>
       <Modal
-        okText="Approve tags"
-        title="Are you sure?"
+        okText={t('APPROVE_TAGS', 'Approve tags')}
+        title={t('ARE_YOU_SURE', 'Are you sure?')}
         onCancel={onClose}
         visible={isOpen}
         onOk={onApproveAllAnnotations}
       >
         <span>
-          Are you sure you want to approve all tags for this file? Changes will
-          be saved to CDF.
+          {t(
+            'APPROVE_ALL_ANNOTATION_TAGS',
+            'Are you sure you want to approve all tags for this file? Changes will be saved to CDF.'
+          )}
         </span>
       </Modal>
       <ResourcePreviewSidebar
@@ -113,17 +117,19 @@ const FilePreviewSidebar = ({
               {fileIcon || <Icon type="Document" />}
               <Checkbox
                 onChange={() => setIsAnnotationsShown(!isAnnotationsShown)}
-                name="Hide annotations"
+                name={t('HIDE_ANNOTATIONS', 'Hide annotations')}
                 checked={!isAnnotationsShown}
               >
-                Hide annotations
+                {t('HIDE_ANNOTATIONS', 'Hide annotations')}
               </Checkbox>
             </TitleIconWrapper>
             <FileTitle level={4}>{file?.name}</FileTitle>
             {file?.id && (
               <div>
                 <DiagramReviewStatus fileId={file.id} />
-                <Detail>- Interactive Diagram</Detail>
+                <Detail>
+                  - {t('INTERACTIVE_DIAGRAM', 'Interactive Diagram')}
+                </Detail>
               </div>
             )}
             <FileReview

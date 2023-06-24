@@ -4,7 +4,11 @@ import { capitalize } from 'lodash';
 
 import { Button, Dropdown, Flex, Menu } from '@cognite/cogs.js';
 
-import { EMPTY_ARRAY, useDialog } from '@data-exploration-lib/core';
+import {
+  EMPTY_ARRAY,
+  useDialog,
+  useTranslation,
+} from '@data-exploration-lib/core';
 
 import { Bar, Separator, Title, Subtitle, Wrapper } from './elements';
 
@@ -29,6 +33,7 @@ export const BulkActionBar = ({
   options = EMPTY_ARRAY,
 }: BulkActionBarProps) => {
   const { isOpen, toggle } = useDialog();
+  const { t } = useTranslation();
   return (
     <Wrapper visible={isVisible} data-testid="table-bulk-actions">
       <Bar>
@@ -36,11 +41,14 @@ export const BulkActionBar = ({
           <Dropdown
             content={
               <Menu style={{ maxHeight: 300, overflow: 'auto' }}>
-                <Menu.Header>Selected</Menu.Header>
+                <Menu.Header>{t('SELECTED', 'Selected')}</Menu.Header>
                 {options.map((option) => (
                   <Menu.Item
                     key={option.name}
-                    description={capitalize(option.type)}
+                    description={t(
+                      option.type.toUpperCase(),
+                      capitalize(option.type)
+                    )}
                   >
                     {option.name}
                   </Menu.Item>

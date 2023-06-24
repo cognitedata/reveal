@@ -28,7 +28,6 @@ import ReactUnifiedViewer, {
 
 import { EMPTY_ARRAY, ExtendedAnnotation } from '@data-exploration-lib/core';
 
-import { useIsDocumentsApiEnabled } from '../../../hooks';
 import {
   MAX_CONTAINER_HEIGHT,
   MAX_CONTAINER_WIDTH,
@@ -97,8 +96,6 @@ export const Canvas = ({
       }),
     [files]
   );
-
-  const isDocumentsApiEnabled = useIsDocumentsApiEnabled();
 
   useEffect(() => {
     (async () => {
@@ -219,9 +216,7 @@ export const Canvas = ({
 
   // TODO: How to handle unsupported files
   // Story: User is looking at a file and then tries to add another file which is of an unsupported type
-  if (
-    fileInfos?.some((file) => !isSupportedFileInfo(file, isDocumentsApiEnabled))
-  ) {
+  if (fileInfos?.some((file) => !isSupportedFileInfo(file))) {
     return (
       <StyledFlex
         direction="column"

@@ -23,7 +23,11 @@ import {
   useResourceDetailSelectedTab,
 } from '@data-exploration-app/hooks';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
-import { SUB_APP_PATH, createInternalLink } from '@data-exploration-lib/core';
+import {
+  useTranslation,
+  SUB_APP_PATH,
+  createInternalLink,
+} from '@data-exploration-lib/core';
 
 // TimeseriesPreviewTabType;
 // - details
@@ -42,6 +46,7 @@ export const TimeseriesDetail = ({
 }) => {
   const [selectedTab, setSelectedTab] = useResourceDetailSelectedTab();
   const [endJourney] = useEndJourney();
+  const { t } = useTranslation();
 
   const activeTab = selectedTab || 'details';
 
@@ -81,7 +86,11 @@ export const TimeseriesDetail = ({
   }, [isTimeseriesFetched, timeseries]);
 
   if (!timeseriesId || !Number.isFinite(timeseriesId)) {
-    return <>Invalid time series id {timeseriesId}</>;
+    return (
+      <>
+        {t('INVALID_TIMESERIES_ID', 'Invalid time series id')} {timeseriesId}
+      </>
+    );
   }
   if (!isTimeseriesFetched) {
     return <Loader />;
@@ -98,7 +107,14 @@ export const TimeseriesDetail = ({
   }
 
   if (!timeseries) {
-    return <>Timeseries {timeseriesId} not found!</>;
+    return (
+      <>
+        {t('RESOURCE_NOT_FOUND', `Timeseries ${timeseriesId} not found!`, {
+          resourceType: t('TIMESERIES', 'Timeseries'),
+          id: timeseriesId,
+        })}
+      </>
+    );
   }
 
   return (
@@ -129,7 +145,11 @@ export const TimeseriesDetail = ({
             onTabChange={handleTabChange}
             tab={activeTab}
             additionalTabs={[
-              <Tabs.Tab label="Details" key="details" tabKey="details">
+              <Tabs.Tab
+                label={t('DETAILS', 'Details')}
+                key="details"
+                tabKey="details"
+              >
                 <DetailsTabWrapper>
                   <TimeseriesChart
                     timeseriesId={timeseries.id}

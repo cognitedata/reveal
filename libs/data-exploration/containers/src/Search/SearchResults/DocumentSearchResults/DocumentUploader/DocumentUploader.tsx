@@ -7,6 +7,8 @@ import noop from 'lodash/noop';
 import { Body, Icon, Input } from '@cognite/cogs.js';
 import { FileUploadResponse } from '@cognite/sdk';
 
+import { useTranslation } from '@data-exploration-lib/core';
+
 import { DocumentUploadButtons } from './DocumentUploadButtons';
 
 const { Dragger } = Upload;
@@ -39,6 +41,8 @@ export const DocumentUploader = ({
   beforeUploadStart = noop,
   onFileListChange,
 }: Props) => {
+  const { t } = useTranslation();
+
   const [uploadStatus, setUploadStatus] = useState<STATUS>(STATUS.WAITING);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [datasetId, setDatasetId] = useState<number | undefined>();
@@ -82,14 +86,19 @@ export const DocumentUploader = ({
       >
         <Icon type="Upload" />
         <Body>
-          Click or drag file to this area to upload, will begin upload when you
-          click the Upload button.
+          {t(
+            'DOCUMENT_UPLOADER_TEXT',
+            'Click or drag file to this area to upload, will begin upload when you click the Upload button.'
+          )}
         </Body>
       </Dragger>
       {children}
 
       <Input
-        placeholder="Data set ID (optional)"
+        placeholder={t(
+          'DOCUMENT_UPLOADER_DATASET_ID_PLACEHOLDER',
+          'Data set ID (optional)'
+        )}
         fullWidth
         style={{ margin: '16px 0' }}
         value={datasetId}

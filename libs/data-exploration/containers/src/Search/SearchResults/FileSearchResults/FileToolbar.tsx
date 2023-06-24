@@ -6,7 +6,11 @@ import { Button } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 
-import { AppContext, CLOSE_DROPDOWN_EVENT } from '@data-exploration-lib/core';
+import {
+  AppContext,
+  CLOSE_DROPDOWN_EVENT,
+  useTranslation,
+} from '@data-exploration-lib/core';
 
 import {
   FileUploaderModal,
@@ -27,6 +31,7 @@ export const FileToolbar = ({
   loadedCount?: number;
   totalCount?: string | number;
 }) => {
+  const { t } = useTranslation();
   const context = useContext(AppContext);
   const { data: hasEditPermissions } = usePermissions(
     context?.flow as any,
@@ -57,7 +62,7 @@ export const FileToolbar = ({
             icon="Upload"
             disabled={!hasEditPermissions}
           >
-            Upload
+            {t('UPLOAD', 'Upload')}
           </UploadButton>
         )}
       </SearchResultToolbar>

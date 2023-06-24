@@ -1,5 +1,7 @@
 import { Input } from '@cognite/cogs.js';
 
+import { useTranslation } from '@data-exploration-lib/core';
+
 import { FilterLabel } from '../../Labels/FilterLabel';
 
 export interface StringInputProps {
@@ -15,10 +17,12 @@ export const StringInput = ({
   value,
   onChange,
   label,
-  placeholder = 'Starts with...',
+  placeholder,
   error,
   loading,
 }: StringInputProps) => {
+  const { t } = useTranslation();
+
   const handleOnChange = (newValue: string | undefined) => {
     onChange?.(newValue && newValue.length > 0 ? newValue : undefined);
   };
@@ -34,7 +38,9 @@ export const StringInput = ({
         fullWidth
         variant="noBorder"
         value={value || ''}
-        placeholder={placeholder}
+        placeholder={
+          placeholder || t('STARTS_WITH_PLACEHOLDER', 'Starts with...')
+        }
         onChange={(event) => {
           handleOnChange(event.target.value);
         }}

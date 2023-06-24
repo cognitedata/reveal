@@ -16,6 +16,7 @@ import {
   DATA_EXPLORATION_COMPONENT,
   InternalDocumentFilter,
   useGetSearchConfigFromLocalStorage,
+  useTranslation,
 } from '@data-exploration-lib/core';
 import {
   InternalDocument,
@@ -62,9 +63,12 @@ export const DocumentSearchResults = ({
   ...rest
 }: DocumentSearchResultsProps &
   Omit<TableProps<InternalDocument>, 'data' | 'columns' | 'id'>) => {
+  const { t } = useTranslation();
   const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
   const [realQuery, setRealQuery] = useState<string>();
-  const [gptColumnName, setGptColumnName] = useState<string>('Summary');
+  const [gptColumnName, setGptColumnName] = useState<string>(
+    t('SUMMARY', 'Summary')
+  );
   const context = useContext(AppContext);
 
   const trackUsage = context?.trackUsage;
@@ -92,7 +96,7 @@ export const DocumentSearchResults = ({
     async function retrieveAnswer() {
       if (!query || !query.endsWith('?')) {
         setRealQuery(query);
-        setGptColumnName('Summary');
+        setGptColumnName(t('SUMMARY', 'Summary'));
         return;
       }
 

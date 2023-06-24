@@ -4,7 +4,7 @@ import { HighlightCell } from '@data-exploration/components';
 
 import { Detail, Flex, Icon } from '@cognite/cogs.js';
 
-import { getObjectURL } from '@data-exploration-lib/core';
+import { getObjectURL, useTranslation } from '@data-exploration-lib/core';
 import {
   Model3DWithType,
   use3DModelThumbnailQuery,
@@ -14,6 +14,7 @@ import {
 import { ThreeDThumbnail } from './ThreeDThumbnail';
 
 export const ThreeDModelDisplay = ({ model }: { model: Model3DWithType }) => {
+  const { t } = useTranslation();
   const { data: latestRevision, isLoading: isRevisionLoading } =
     useDefault3DModelRevision(model?.id);
   const [imageUrl, setImage] = useState<string | undefined>(undefined);
@@ -53,7 +54,15 @@ export const ThreeDModelDisplay = ({ model }: { model: Model3DWithType }) => {
         {isRevisionLoading ? (
           <Icon type="Loader" />
         ) : (
-          <Detail>Last version: {latestRevision?.index}</Detail>
+          <Detail>
+            {t(
+              'LAST_VERSION_WITH_VERSION_NUMBER',
+              'Last version: {{ index }}',
+              {
+                index: latestRevision?.index,
+              }
+            )}
+          </Detail>
         )}
       </Flex>
     </Flex>

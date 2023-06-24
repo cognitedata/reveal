@@ -20,6 +20,7 @@ import {
   ResourceSelectorFilter,
   ResourceType,
   useDialog,
+  useTranslation,
   ViewType,
 } from '@data-exploration-lib/core';
 
@@ -91,6 +92,8 @@ export const ResourceSelector = ({
   const { isOpen: showFilter, toggle: onToggleFilter } = useDialog();
   const [activeKey, setActiveKey] = useState(visibleResourceTabs[0]);
   const [previewItem, setPreviewItem] = useState<ResourceItem>();
+  const { t } = useTranslation();
+
   const [selectedRows, setSelectedRows] =
     useState<ResourceSelection>(initialSelectedRows);
 
@@ -202,7 +205,7 @@ export const ResourceSelector = ({
               autoFocus
               fullWidth
               icon="Search"
-              placeholder="Search..."
+              placeholder={t('SEARCH_PLACEHOLDER', 'Search...')}
               onChange={(ev) => setQuery(ev.target.value)}
               value={query}
             />
@@ -219,7 +222,7 @@ export const ResourceSelector = ({
                 <AssetsTab
                   key={tab}
                   tabKey={ViewType.Asset}
-                  label="Assets"
+                  label={t('ASSETS', 'Assets')}
                   query={debouncedQuery}
                   filter={{ ...filterState.common, ...filterState.asset }}
                 />
@@ -231,7 +234,7 @@ export const ResourceSelector = ({
                   tabKey={ViewType.Event}
                   query={debouncedQuery}
                   filter={{ ...filterState.common, ...filterState.event }}
-                  label="Events"
+                  label={t('EVENTS', 'Events')}
                 />
               );
             if (tab === 'file')
@@ -247,6 +250,7 @@ export const ResourceSelector = ({
                       : filterState.file),
                   }}
                   isDocumentsApiEnabled={isDocumentsApiEnabled}
+                  label={t('FILES', 'Files')}
                 />
               );
             if (tab === 'timeSeries')
@@ -259,7 +263,7 @@ export const ResourceSelector = ({
                     ...filterState.common,
                     ...filterState.timeSeries,
                   }}
-                  label="Time Series"
+                  label={t('TIMESERIES', 'Time series')}
                 />
               );
             if (tab === 'sequence')
@@ -271,7 +275,7 @@ export const ResourceSelector = ({
                     ...filterState.common,
                     ...filterState.sequence,
                   }}
-                  label="Sequence"
+                  label={t('SEQUENCES', 'Sequences')}
                 />
               );
             return (
@@ -322,8 +326,10 @@ export const ResourceSelector = ({
       )}
       <BulkActionBar
         options={actionBarOptions}
-        title="Selected"
-        subtitle={`${actionBarOptions.length} items`}
+        title={t('SELECTED', 'Selected')}
+        subtitle={t('BULK_ACTION_SELECT', `${actionBarOptions.length} items`, {
+          itemsLength: actionBarOptions.length,
+        })}
         isVisible={actionBarOptions.length > 0}
       >
         <Button
@@ -336,7 +342,7 @@ export const ResourceSelector = ({
           inverted
           type="primary"
         >
-          {addButtonText ?? 'Add'}
+          {addButtonText ? addButtonText : t('ADD', 'Add')}
         </Button>
         <BulkActionBar.Separator />
         <Button

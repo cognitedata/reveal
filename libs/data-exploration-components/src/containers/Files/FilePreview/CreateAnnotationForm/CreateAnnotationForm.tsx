@@ -8,7 +8,7 @@ import { Input, Button, Title, Icon, Body } from '@cognite/cogs.js';
 import { IdEither } from '@cognite/sdk';
 import { useCdfItem, SdkResourceType } from '@cognite/sdk-react-query-hooks';
 
-import { ExtendedAnnotation } from '@data-exploration-lib/core';
+import { ExtendedAnnotation, useTranslation } from '@data-exploration-lib/core';
 
 import { SpacedRow } from '../../../../components';
 import { convertResourceType } from '../../../../types';
@@ -68,6 +68,7 @@ export const CreateAnnotationForm = ({
   const resourceType = getResourceTypeFromExtendedAnnotation(annotation);
   const api: SdkResourceType | undefined =
     resourceType && convertResourceType(resourceType);
+  const { t } = useTranslation();
 
   const enabled = !!api && !!id;
   const { data: item, isFetched } = useCdfItem<any>(api!, id!, { enabled });
@@ -76,13 +77,16 @@ export const CreateAnnotationForm = ({
     return <Loader />;
   }
 
-  let buttonText = <>Not linked to a Resource</>;
+  let buttonText = (
+    <>{t('NOT_LINKED_TO_A_RESOURCE', 'Not linked to a Resource')}</>
+  );
   if (resourceType) {
     switch (resourceType) {
       case 'asset': {
         buttonText = (
           <>
-            Linked to <Icon type="Assets" /> {item?.name || 'Asset'}
+            {t('LINKED_TO', 'Linked to')} <Icon type="Assets" />{' '}
+            {item?.name || t('ASSET', 'Asset')}
           </>
         );
         break;
@@ -90,7 +94,8 @@ export const CreateAnnotationForm = ({
       case 'timeSeries': {
         buttonText = (
           <>
-            Linked to <Icon type="Timeseries" /> {item?.name || 'Time series'}
+            {t('LINKED_TO', 'Linked to')} <Icon type="Timeseries" />{' '}
+            {item?.name || t('TIMESERIES', 'Time series')}
           </>
         );
         break;
@@ -98,7 +103,8 @@ export const CreateAnnotationForm = ({
       case 'sequence': {
         buttonText = (
           <>
-            Linked to <Icon type="GridFilled" /> {item?.name || 'Sequence'}
+            {t('LINKED_TO', 'Linked to')} <Icon type="GridFilled" />{' '}
+            {item?.name || t('SEQUENCE', 'Sequence')}
           </>
         );
         break;
@@ -106,7 +112,8 @@ export const CreateAnnotationForm = ({
       case 'file': {
         buttonText = (
           <>
-            Linked to <Icon type="Document" /> {item?.name || 'File'}
+            {t('LINKED_TO', 'Linked to')} <Icon type="Document" />{' '}
+            {item?.name || t('FILE', 'File')}
           </>
         );
         break;
@@ -114,8 +121,8 @@ export const CreateAnnotationForm = ({
       case 'event': {
         buttonText = (
           <>
-            Linked to <Icon type="Events" />{' '}
-            {item ? renderTitle(item) : 'Event'}
+            {t('LINKED_TO', 'Linked to')} <Icon type="Events" />{' '}
+            {item ? renderTitle(item) : t('EVENT', 'Event')}
           </>
         );
         break;
@@ -124,23 +131,25 @@ export const CreateAnnotationForm = ({
   }
   return (
     <Wrapper>
-      <Title level={5}>{onCancel ? 'Edit tag' : 'Create tag'}</Title>
+      <Title level={5}>
+        {onCancel ? t('EDIT_TAG', 'Edit tag') : t('CREATE_TAG', 'Create tag')}
+      </Title>
       {previewImageSrc && <PreviewImage src={previewImageSrc} alt="preview" />}
       <Body>{buttonText}</Body>
       <Button onClick={onLinkResource}>
         {resourceType ? (
           <>
-            <Icon type="Edit" /> Edit Resource Link
+            <Icon type="Edit" /> {t('EDIT_RESOURCE_LINK', 'Edit Resource Link')}
           </>
         ) : (
           <>
-            <Icon type="Plus" /> Link to Resource
+            <Icon type="Plus" /> {t('LINK_TO_RESOURCE', 'Link to Resource')}
           </>
         )}
       </Button>
       <Input
         variant="noBorder"
-        placeholder="Label"
+        placeholder={t('LABEL', 'Label')}
         value={getExtendedAnnotationLabel(annotation)}
         onChange={(e) =>
           updateAnnotation(
@@ -150,7 +159,7 @@ export const CreateAnnotationForm = ({
       />
       <Input
         variant="noBorder"
-        placeholder="Description"
+        placeholder={t('DESCRIPTION', 'Description')}
         value={getExtendedAnnotationDescription(annotation)}
         onChange={(e) =>
           updateAnnotation(
@@ -168,13 +177,13 @@ export const CreateAnnotationForm = ({
             getExtendedAnnotationLabel(annotation).length === 0
           }
         >
-          Save
+          {t('SAVE', 'Save')}
         </Button>
         <div style={{ flex: 1 }} />
         {onCancel && <Button onClick={onCancel}>Cancel</Button>}
         {!onCancel ? (
           <Button onClick={onDelete} type="destructive">
-            Cancel
+            {t('CANCEL', 'Cancel')}
           </Button>
         ) : (
           <Button onClick={onDelete} icon="Delete" type="destructive" />

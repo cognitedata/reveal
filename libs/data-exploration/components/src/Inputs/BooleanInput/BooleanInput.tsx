@@ -2,6 +2,8 @@ import { useMemo } from 'react';
 
 import { SegmentedControl, Tooltip } from '@cognite/cogs.js';
 
+import { useTranslation } from '@data-exploration-lib/core';
+
 import { FilterLabel } from '../../Labels/FilterLabel';
 
 export interface BooleanInputProps {
@@ -19,6 +21,8 @@ export const BooleanInput = ({
   error,
   loading,
 }: BooleanInputProps) => {
+  const { t } = useTranslation();
+
   const currentKey = useMemo(() => {
     if (value === undefined) {
       return 'unset';
@@ -45,8 +49,12 @@ export const BooleanInput = ({
         {label && <FilterLabel>{label}</FilterLabel>}
         <SegmentedControl skeleton fullWidth>
           {/* Added Placeholder items for skeleton to work. */}
-          <SegmentedControl.Button key="1">Placeholder</SegmentedControl.Button>
-          <SegmentedControl.Button key="2">Placeholder</SegmentedControl.Button>
+          <SegmentedControl.Button key="1">
+            {t('PLACEHOLDER', 'Placeholder')}
+          </SegmentedControl.Button>
+          <SegmentedControl.Button key="2">
+            {t('PLACEHOLDER', 'Placeholder')}
+          </SegmentedControl.Button>
         </SegmentedControl>
       </>
     );
@@ -55,7 +63,11 @@ export const BooleanInput = ({
   return (
     <>
       {label && <FilterLabel>{label}</FilterLabel>}
-      <Tooltip interactive disabled={!error} content="No data found">
+      <Tooltip
+        interactive
+        disabled={!error}
+        content={t('NO_DATA_FOUND', 'No data found')}
+      >
         <SegmentedControl
           fullWidth
           currentKey={currentKey}
@@ -67,21 +79,21 @@ export const BooleanInput = ({
             data-testid="unset"
             style={{ flex: 1 }}
           >
-            All
+            {t('ALL', 'All')}
           </SegmentedControl.Button>
           <SegmentedControl.Button
             key="true"
             data-testid="true"
             style={{ flex: 1 }}
           >
-            True
+            {t('TRUE', 'True')}
           </SegmentedControl.Button>
           <SegmentedControl.Button
             key="false"
             data-testid="false"
             style={{ flex: 1 }}
           >
-            False
+            {t('FALSE', 'False')}
           </SegmentedControl.Button>
         </SegmentedControl>
       </Tooltip>

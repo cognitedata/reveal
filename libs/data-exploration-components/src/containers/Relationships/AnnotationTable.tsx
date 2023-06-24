@@ -20,6 +20,8 @@ import uniqBy from 'lodash/uniqBy';
 
 import { IdEither } from '@cognite/sdk';
 
+import { useTranslation } from '@data-exploration-lib/core';
+
 import {
   getResourceExternalIdFromTaggedAnnotation,
   getResourceIdFromTaggedAnnotation,
@@ -37,6 +39,8 @@ export function AnnotationTable({
   onItemClicked,
   onParentAssetClick,
 }: Props & SelectableItemsProps) {
+  const { t } = useTranslation();
+
   const {
     data: taggedAnnotations,
     isInitialLoading: isTaggedAnnotationsInitialLoading,
@@ -85,7 +89,14 @@ export function AnnotationTable({
   } = useUniqueCdfItems<any>(convertResourceType(resourceType), ids, true);
 
   if (isError || itemsError) {
-    return <Alert type="warning" message="Error fetching annotations" />;
+    return (
+      <Alert
+        type="warning"
+        message={t('ERROR_FETCHING_DATA', 'Error fetching annotations', {
+          type: t('ANNOTATIONS', 'annotations'),
+        })}
+      />
+    );
   }
 
   if (

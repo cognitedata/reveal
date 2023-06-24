@@ -4,6 +4,8 @@ import styled from 'styled-components';
 
 import { Button, Chip, IconType } from '@cognite/cogs.js';
 
+import { useTranslation } from '@data-exploration-lib/core';
+
 import { TitleName } from '../../Common';
 
 interface Props {
@@ -22,6 +24,7 @@ export const ResourceDetailsHeader: React.FC<Props> = ({
   onSelectClicked,
   onClose,
 }) => {
+  const { t } = useTranslation();
   return (
     <Container>
       <TitleRowWrapper data-testid="title-row-wrapper">
@@ -38,7 +41,7 @@ export const ResourceDetailsHeader: React.FC<Props> = ({
             disabled={isSelected}
             onClick={onSelectClicked}
           >
-            {isSelected ? 'Selected' : 'Select'}
+            {isSelected ? t('SELECTED', 'Selected') : t('SELECT', 'Select')}
           </Button>
         )}
         <Button

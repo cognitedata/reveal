@@ -53,7 +53,7 @@ import {
 import { useDocumentFilters } from '@data-exploration-app/store/filter/selectors/documentSelectors';
 import { SEARCH_KEY } from '@data-exploration-app/utils/constants';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
-import { ViewType } from '@data-exploration-lib/core';
+import { useTranslation, ViewType } from '@data-exploration-lib/core';
 import {
   useAssetsMetadataKeys,
   useTimeseriesMetadataKeys,
@@ -103,6 +103,8 @@ function SearchPage() {
   const [showGPTInfo, setShowGPTInfo] = useState<boolean>(true);
 
   const isDetailsOverlayEnabled = useFlagOverlayNavigation();
+
+  const { t } = useTranslation();
   const isDocumentsApiEnabled = useFlagDocumentsApiEnabled();
 
   const handleFilterToggleClick = React.useCallback(() => {
@@ -168,7 +170,10 @@ function SearchPage() {
               );
             }}
           >
-            <Tabs.Tab tabKey={ViewType.All} label="All resources" />
+            <Tabs.Tab
+              tabKey={ViewType.All}
+              label={t('ALL_RESOURCES', 'All resources')}
+            />
             <AssetsTab
               tabKey={ViewType.Asset}
               query={debouncedQuery}

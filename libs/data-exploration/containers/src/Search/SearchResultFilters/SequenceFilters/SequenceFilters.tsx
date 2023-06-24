@@ -4,6 +4,7 @@ import {
   FilterProps,
   SPECIFIC_INFO_CONTENT,
   hasObjectAnyProperty,
+  useTranslation,
 } from '@data-exploration-lib/core';
 
 import { MetadataFilter } from '../../../Filters';
@@ -17,15 +18,18 @@ export const SequenceFilters: React.FC<FilterProps> = ({
   onResetFilterClick,
   ...rest
 }) => {
+  const { t } = useTranslation();
+
   const sequenceFIlter = filter.sequence;
   const isResetButtonVisible = hasObjectAnyProperty(sequenceFIlter, [
     'metadata',
   ]);
+
   return (
     <BaseFilterCollapse.Panel
-      title="Sequences"
+      title={t('SEQUENCES', 'Sequences')}
       hideResetButton={!isResetButtonVisible}
-      infoContent={SPECIFIC_INFO_CONTENT}
+      infoContent={t('SPECIFIC_INFO_CONTENT', SPECIFIC_INFO_CONTENT)}
       onResetClick={() => onResetFilterClick('sequence')}
       {...rest}
     >

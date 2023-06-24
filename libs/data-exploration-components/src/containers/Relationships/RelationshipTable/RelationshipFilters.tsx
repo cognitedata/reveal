@@ -3,8 +3,10 @@ import { OptionsType, OptionTypeBase } from 'react-select';
 
 import styled from 'styled-components';
 
-import { MultiSelect } from '@data-exploration-components/components';
+import { MultiSelect } from '@data-exploration/components';
 import { RelationshipTypeLabels } from '@data-exploration-components/hooks';
+
+import { useTranslation } from '@data-exploration-lib/core';
 
 interface RelationshipFiltersProps {
   options: string[];
@@ -16,6 +18,8 @@ export function RelationshipFilters({
   onChange,
   value,
 }: RelationshipFiltersProps) {
+  const { t } = useTranslation();
+
   return (
     <SelectWrapper>
       <MultiSelect
@@ -23,7 +27,7 @@ export function RelationshipFilters({
           label: option,
           value: option,
         }))}
-        title="Labels:"
+        title={`${t('LABELS', 'Labels')}:`}
         onChange={(newValue) => {
           onChange(
             newValue

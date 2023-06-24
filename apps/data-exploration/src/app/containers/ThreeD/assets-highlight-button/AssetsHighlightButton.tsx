@@ -17,6 +17,7 @@ import { SmartOverlayTool } from '@data-exploration-app/containers/ThreeD/tools/
 import { getBoundingBoxesByNodeIds } from '@data-exploration-app/containers/ThreeD/utils';
 import { useFlagAssetMappingsOverlays } from '@data-exploration-app/hooks/flags';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
+import { useTranslation } from '@data-exploration-lib/core';
 
 type AssetsHighlightButtonProps = {
   labelsVisibility: boolean;
@@ -32,6 +33,7 @@ const AssetsHighlightButton = ({
   setLabelsVisibility,
 }: AssetsHighlightButtonProps): JSX.Element => {
   const sdk = useSDK();
+  const { t } = useTranslation();
   const useOverlays = useFlagAssetMappingsOverlays();
   const { setAssetHighlightMode, assetHighlightMode } =
     useContext(ThreeDContext);
@@ -83,7 +85,10 @@ const AssetsHighlightButton = ({
     setLabelsVisibility(!labelsVisibility);
   };
   return (
-    <Tooltip content="Emphasize clickable objects" placement="right">
+    <Tooltip
+      content={t('EMPHASIZE_CLICKABLE_OBJECTS', 'Emphasize clickable objects')}
+      placement="right"
+    >
       <FullWidthButton
         onClick={handleAssetHighlighting}
         toggled={assetHighlightMode}

@@ -24,6 +24,7 @@ import {
   useInfiniteAssetMappings,
 } from '@data-exploration-app/containers/ThreeD/hooks';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
+import { useTranslation } from '@data-exploration-lib/core';
 
 type ThreeDSidebarProps = {
   modelId?: number;
@@ -41,6 +42,8 @@ export const AssetMappingsSidebar = ({
   setSelectedAssetId,
   threeDModel,
 }: ThreeDSidebarProps) => {
+  const { t } = useTranslation();
+
   const { data: asset } = useCdfItem<Asset>(
     'assets',
     { id: selectedAssetId! },
@@ -126,7 +129,12 @@ export const AssetMappingsSidebar = ({
               resourceType: '3D',
             });
           }}
-          placeholder={asset?.name || `Search (${isMac ? '⌘' : 'Ctrl'} + K)`}
+          placeholder={
+            asset?.name ||
+            t('SEARCH', `Search (${isMac ? '⌘' : 'Ctrl'} + K)`, {
+              context: isMac ? 'mac' : 'windows',
+            })
+          }
           fullWidth
           size="large"
           iconPlacement="left"
@@ -147,7 +155,7 @@ export const AssetMappingsSidebar = ({
               });
             }}
           >
-            {query ? 'Clear' : 'Close'}
+            {query ? t('CLEAR', 'Clear') : t('CLOSE', 'Close')}
           </StyledButton>
         )}
       </Flex>

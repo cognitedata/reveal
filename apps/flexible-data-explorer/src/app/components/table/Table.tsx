@@ -44,7 +44,7 @@ import {
   TableDataBody,
 } from './elements';
 
-// import { ResourceTableColumns } from './columns';
+// import { getTableColumns } from './columns';
 // import { EmptyState } from '../EmpyState';
 
 // import { CopyToClipboardIconButton } from './CopyToClipboardIconButton';
@@ -96,8 +96,6 @@ const defaultColumn: Partial<ColumnDef<any, any>> = {
   minSize: 200,
   size: 400,
 };
-
-// Table.Columns = ResourceTableColumns;
 
 export function Table<T extends TableData>({
   id,

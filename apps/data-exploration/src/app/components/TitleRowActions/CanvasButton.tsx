@@ -14,6 +14,7 @@ import { useSDK } from '@cognite/sdk-provider';
 
 import { useFlagIndustryCanvas } from '@data-exploration-app/hooks/flags/useFlagIndustryCanvas';
 import { getSearchParams } from '@data-exploration-app/utils/URLUtils';
+import { useTranslation } from '@data-exploration-lib/core';
 import { queryKeys } from '@data-exploration-lib/domain-layer';
 
 type CanvasButtonProps = {
@@ -21,6 +22,7 @@ type CanvasButtonProps = {
 };
 
 const CanvasButton: React.FC<CanvasButtonProps> = ({ item }) => {
+  const { t } = useTranslation();
   const sdk = useSDK();
   const isIndustryCanvasEnabled = useFlagIndustryCanvas();
 
@@ -42,7 +44,9 @@ const CanvasButton: React.FC<CanvasButtonProps> = ({ item }) => {
   );
 
   return (
-    <Tooltip content="Open in Industrial Canvas">
+    <Tooltip
+      content={t('OPEN_IN_INDUSTRIAL_CANVAS', 'Open in Industrial Canvas')}
+    >
       <Link
         to={createLink(`/industrial-canvas/canvas`, {
           ...getSearchParams(window.location.search),
