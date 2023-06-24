@@ -6,15 +6,19 @@ import { RangePicker, VerticalDivider } from '@data-exploration/components';
 
 import { Flex, Button, Tooltip, Dropdown, Menu } from '@cognite/cogs.js';
 
-import { DateRangeProps, useDimensions } from '@data-exploration-lib/core';
+import {
+  DateRangeProps,
+  useDimensions,
+  useTranslation,
+} from '@data-exploration-lib/core';
 
 import { SearchResultCountLabel } from '../SearchResultCountLabel';
 import { SearchResultToolbar } from '../SearchResultToolbar';
 
 const HEADER_BUTTONS_WIDTH_LIMIT = 380;
-const TOOLTIP_CONTENT =
+const DISABLED_HIDE_EMPTY_BUTTON_TOOLTIP_CONTENT =
   'All loaded timeseries are empty. Button will be enabled when at least 1 timeseries has datapoints';
-const RANGE_SELECTOR_TEXT = 'Chart preview';
+const TIMESERIES_RANGE_SELECTOR_TEXT = 'Chart preview';
 const HIDE_TIMESERIES_TEXT = 'Hide empty timeseries';
 
 export const TimeseriesTableHeader = ({
@@ -37,6 +41,7 @@ export const TimeseriesTableHeader = ({
   totalCount: number | string;
 } & DateRangeProps) => {
   const headerButtonsContainerRef = useRef(null);
+  const { t } = useTranslation();
   const { width: headerButtonsWidth } = useDimensions(
     headerButtonsContainerRef
   );
@@ -53,17 +58,30 @@ export const TimeseriesTableHeader = ({
             onRangeChanged={onDateRangeChange}
           >
             <Button icon="XAxis" aria-label="Chart Preview logo">
-              <StyledSpan>{RANGE_SELECTOR_TEXT}</StyledSpan>
+              <StyledSpan>
+                {t(
+                  'TIMESERIES_RANGE_SELECTOR_TEXT',
+                  TIMESERIES_RANGE_SELECTOR_TEXT
+                )}
+              </StyledSpan>
             </Button>
           </RangePicker>
         )}
-        <Tooltip content={TOOLTIP_CONTENT} disabled={tooltipDisabled}>
+        <Tooltip
+          content={t(
+            'DISABLED_HIDE_EMPTY_BUTTON_TOOLTIP_CONTENT',
+            DISABLED_HIDE_EMPTY_BUTTON_TOOLTIP_CONTENT
+          )}
+          disabled={tooltipDisabled}
+        >
           <Button
             toggled={hideEmptyData}
             disabled={hideButtonDisabled}
             onClick={() => setHideEmptyData((prev) => !prev)}
           >
-            <StyledSpan>{HIDE_TIMESERIES_TEXT}</StyledSpan>
+            <StyledSpan>
+              {t('HIDE_TIMESERIES_TEXT', HIDE_TIMESERIES_TEXT)}
+            </StyledSpan>
           </Button>
         </Tooltip>
       </>
@@ -81,17 +99,28 @@ export const TimeseriesTableHeader = ({
                 onRangeChanged={onDateRangeChange}
               >
                 <Menu.Item icon="XAxis">
-                  <>{RANGE_SELECTOR_TEXT}</>
+                  <>
+                    {t(
+                      'TIMESERIES_RANGE_SELECTOR_TEXT',
+                      TIMESERIES_RANGE_SELECTOR_TEXT
+                    )}
+                  </>
                 </Menu.Item>
               </RangePicker>
             )}
-            <Tooltip content={TOOLTIP_CONTENT} disabled={tooltipDisabled}>
+            <Tooltip
+              content={t(
+                'DISABLED_HIDE_EMPTY_BUTTON_TOOLTIP_CONTENT',
+                DISABLED_HIDE_EMPTY_BUTTON_TOOLTIP_CONTENT
+              )}
+              disabled={tooltipDisabled}
+            >
               <Menu.Item
                 toggled={hideEmptyData}
                 disabled={hideButtonDisabled}
                 onClick={() => setHideEmptyData((prev) => !prev)}
               >
-                <>{HIDE_TIMESERIES_TEXT}</>
+                <>{t('HIDE_TIMESERIES_TEXT', HIDE_TIMESERIES_TEXT)}</>
               </Menu.Item>
             </Tooltip>
           </Menu>

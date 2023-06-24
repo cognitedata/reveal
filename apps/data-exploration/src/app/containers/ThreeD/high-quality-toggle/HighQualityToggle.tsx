@@ -7,12 +7,14 @@ import { Cognite3DViewer, ResolutionOptions } from '@cognite/reveal';
 
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
+import { useTranslation } from '@data-exploration-lib/core';
 
 type HighQualityToggleProps = {
   viewer: Cognite3DViewer;
 };
 
 export default function HighQualityToggle({ viewer }: HighQualityToggleProps) {
+  const { t } = useTranslation();
   const [isHighQualityMode, setHighQualityMode] = useState(false);
   const defaults = useMemo(() => {
     return {
@@ -52,7 +54,10 @@ export default function HighQualityToggle({ viewer }: HighQualityToggleProps) {
 
   return (
     <Tooltip
-      content="Toggle improved fidelity rendering. Note that this might affect performance."
+      content={t(
+        'TOGGLE_IMPROVED_FIDELITY_RENDERING',
+        'Toggle improved fidelity rendering. Note that this might affect performance.'
+      )}
       placement="right"
     >
       <FullWidthButton

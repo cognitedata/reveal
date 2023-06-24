@@ -22,7 +22,11 @@ import {
   useResourceDetailSelectedTab,
 } from '@data-exploration-app/hooks';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
-import { SUB_APP_PATH, createInternalLink } from '@data-exploration-lib/core';
+import {
+  useTranslation,
+  SUB_APP_PATH,
+  createInternalLink,
+} from '@data-exploration-lib/core';
 
 // SequencePreviewType;
 // - details
@@ -40,6 +44,8 @@ export const SequenceDetail = ({
   sequenceId: number;
   actions?: React.ReactNode;
 }) => {
+  const { t } = useTranslation();
+
   const [selectedTab, setSelectedTab] = useResourceDetailSelectedTab();
   const [endJourney] = useEndJourney();
 
@@ -93,7 +99,14 @@ export const SequenceDetail = ({
   }
 
   if (!sequence) {
-    return <>Sequence {sequenceId} not found!</>;
+    return (
+      <>
+        {t('RESOURCE_NOT_FOUND', `Sequence ${sequenceId} not found!`, {
+          resourceType: t('SEQUENCE', 'Sequence'),
+          id: sequenceId,
+        })}
+      </>
+    );
   }
 
   return (
@@ -114,10 +127,18 @@ export const SequenceDetail = ({
         onTabChange={handleTabChange}
         tab={activeTab}
         additionalTabs={[
-          <Tabs.Tab label="Preview" tabKey="preview" key="preview">
+          <Tabs.Tab
+            label={t('PREVIEW_TAB_LABEL', 'Preview')}
+            tabKey="preview"
+            key="preview"
+          >
             <SequenceTabPreview sequence={sequence} />
           </Tabs.Tab>,
-          <Tabs.Tab label="Details" tabKey="details" key="details">
+          <Tabs.Tab
+            label={t('DETAILS', 'Details')}
+            tabKey="details"
+            key="details"
+          >
             <DetailsTabWrapper>
               <SequenceInfo sequence={sequence} />
               <Metadata metadata={sequence.metadata} />

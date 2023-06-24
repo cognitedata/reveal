@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 
 import {
+  getTableColumns,
   SubCellMatchingLabels,
   SummaryCardWrapper,
   Table,
@@ -17,6 +18,7 @@ import {
   getHiddenColumns,
   InternalSequenceFilters,
   useGetSearchConfigFromLocalStorage,
+  useTranslation,
 } from '@data-exploration-lib/core';
 import {
   useSequenceSearchResultWithMatchingLabelsQuery,
@@ -49,6 +51,8 @@ export const SequenceSummary = ({
     },
     sequenceSearchConfig
   );
+  const { t } = useTranslation();
+  const tableColumns = getTableColumns(t);
 
   const { metadataColumns, setMetadataKeyQuery } =
     useSequencesMetadataColumns();
@@ -56,15 +60,15 @@ export const SequenceSummary = ({
   const columns = useMemo(
     () =>
       [
-        Table.Columns.name(),
-        Table.Columns.description(),
-        Table.Columns.externalId(),
-        Table.Columns.columns,
-        Table.Columns.lastUpdatedTime,
-        Table.Columns.created,
-        Table.Columns.id(query),
-        Table.Columns.rootAsset(onRootAssetClick),
-        Table.Columns.dataSet,
+        tableColumns.name(),
+        tableColumns.description(),
+        tableColumns.externalId(),
+        tableColumns.columns,
+        tableColumns.lastUpdatedTime,
+        tableColumns.created,
+        tableColumns.id(query),
+        tableColumns.rootAsset(onRootAssetClick),
+        tableColumns.dataSet,
         ...metadataColumns,
       ] as ColumnDef<Sequence>[],
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -85,7 +89,7 @@ export const SequenceSummary = ({
         tableHeaders={
           <SummaryHeader
             icon="Sequences"
-            title="Sequence"
+            title={t('SEQUENCE', 'Sequence')}
             onAllResultsClick={onAllResultsClick}
           />
         }

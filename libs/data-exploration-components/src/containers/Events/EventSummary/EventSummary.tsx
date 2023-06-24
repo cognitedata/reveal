@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 
 import {
+  getTableColumns,
   SubCellMatchingLabels,
   SummaryCardWrapper,
   Table,
@@ -17,6 +18,7 @@ import {
   getHiddenColumns,
   InternalEventsFilters,
   useGetSearchConfigFromLocalStorage,
+  useTranslation,
 } from '@data-exploration-lib/core';
 import {
   useEventsSearchResultWithLabelsQuery,
@@ -48,23 +50,26 @@ export const EventSummary = ({
     },
     eventSearchConfig
   );
+  const { t } = useTranslation();
+  const tableColumns = getTableColumns(t);
+
   const { metadataColumns, setMetadataKeyQuery } = useEventsMetadataColumns();
 
   const columns = useMemo(
     () =>
       [
-        Table.Columns.type(),
-        Table.Columns.subtype(),
-        Table.Columns.description(),
-        Table.Columns.externalId(),
-        Table.Columns.lastUpdatedTime,
-        Table.Columns.created,
-        Table.Columns.id(),
-        Table.Columns.dataSet,
-        Table.Columns.startTime,
-        Table.Columns.endTime,
-        Table.Columns.source(),
-        Table.Columns.assets(onDirectAssetClick),
+        tableColumns.type(),
+        tableColumns.subtype(),
+        tableColumns.description(),
+        tableColumns.externalId(),
+        tableColumns.lastUpdatedTime,
+        tableColumns.created,
+        tableColumns.id(),
+        tableColumns.dataSet,
+        tableColumns.startTime,
+        tableColumns.endTime,
+        tableColumns.source(),
+        tableColumns.assets(onDirectAssetClick),
         ...metadataColumns,
       ] as ColumnDef<CogniteEvent>[],
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -85,7 +90,7 @@ export const EventSummary = ({
         tableHeaders={
           <SummaryHeader
             icon="Events"
-            title="Events"
+            title={t('EVENTS', 'Events')}
             onAllResultsClick={onAllResultsClick}
           />
         }

@@ -38,8 +38,8 @@ export const DocumentPreview = ({
   applicationId,
   fileId,
   showControls = true,
-  isDocumentsApiEnabled = true,
-}: DocumentPreviewProps) => {
+}: // isDocumentsApiEnabled = true,
+DocumentPreviewProps) => {
   const { data: file, isFetched: isFileFetched } = useCdfItem<FileInfo>(
     'files',
     {
@@ -50,13 +50,13 @@ export const DocumentPreview = ({
   const { data: containerData } = useDocumentContainerQuery(file);
 
   const container = useMemo(() => {
-    if (file && isSupportedFileInfo(file, isDocumentsApiEnabled)) {
+    if (file && isSupportedFileInfo(file)) {
       return containerData;
     }
     return undefined;
   }, [file, containerData]);
 
-  if (file !== undefined && !isSupportedFileInfo(file, isDocumentsApiEnabled)) {
+  if (file !== undefined && !isSupportedFileInfo(file)) {
     return (
       <CenteredPlaceholder>
         <h1>No preview for this file type</h1>

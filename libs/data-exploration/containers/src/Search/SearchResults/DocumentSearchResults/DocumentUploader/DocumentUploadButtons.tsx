@@ -12,6 +12,7 @@ import {
   DATA_EXPLORATION_COMPONENT,
   getMIMEType,
   useMetrics,
+  useTranslation,
 } from '@data-exploration-lib/core';
 
 import { STATUS } from './DocumentUploader';
@@ -48,6 +49,7 @@ export const DocumentUploadButtons: React.FC<Props> = ({
   assetIds,
   dataSetId,
 }: Props) => {
+  const { t } = useTranslation();
   const sdk = useSDK();
   const trackUsage = useMetrics();
   // document -> Files table when advance filters enabled.
@@ -100,7 +102,7 @@ export const DocumentUploadButtons: React.FC<Props> = ({
         <>
           <div style={{ flex: 1 }} />
           <Button type="primary" icon="Upload" disabled>
-            Upload
+            {t('UPLOAD', 'Upload')}
           </Button>
         </>
       );
@@ -114,7 +116,7 @@ export const DocumentUploadButtons: React.FC<Props> = ({
             onClick={handleReadyStateOnClick}
             icon="Upload"
           >
-            Upload
+            {t('UPLOAD', 'Upload')}
           </Button>
         </>
       );
@@ -129,7 +131,7 @@ export const DocumentUploadButtons: React.FC<Props> = ({
             onClick={handleOnClickPauseUpload}
             icon="Loader"
           >
-            Pause Upload
+            {t('PAUSE_UPLOAD', 'Pause Upload')}
           </Button>
         </>
       );
@@ -140,7 +142,7 @@ export const DocumentUploadButtons: React.FC<Props> = ({
           <Button onClick={handleOnClickStopUpload}>Cancel Upload</Button>
           <div style={{ flex: 1 }} />
           <Button type="primary" onClick={handleContinueUpload}>
-            Continue Upload
+            {t('CONTINUE_UPLOAD', 'Continue Upload')}
           </Button>
         </>
       );

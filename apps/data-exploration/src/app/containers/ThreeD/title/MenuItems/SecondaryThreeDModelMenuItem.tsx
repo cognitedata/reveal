@@ -7,6 +7,7 @@ import { Model3D } from '@cognite/sdk';
 
 import { SecondaryModelOptions } from '@data-exploration-app/containers/ThreeD/contexts/ThreeDContext';
 import { formatTime } from '@data-exploration-app/containers/ThreeD/timestamp/ThreeDTimestamp';
+import { useTranslation } from '@data-exploration-lib/core';
 import { use3DRevisionsQuery } from '@data-exploration-lib/domain-layer';
 
 export const SecondaryThreeDModelMenuItem = ({
@@ -18,6 +19,7 @@ export const SecondaryThreeDModelMenuItem = ({
   onChange: (nextState: SecondaryModelOptions) => void;
   options?: SecondaryModelOptions;
 }) => {
+  const { t } = useTranslation();
   const { data: revisions = [], isFetched } = use3DRevisionsQuery(model.id);
   const defaultRevision = revisions
     ? revisions.find(({ published }) => published) ?? revisions[0]
@@ -69,8 +71,12 @@ export const SecondaryThreeDModelMenuItem = ({
         <StyledSecondaryObjectDetail>
           {selectedRevision ? (
             <>
-              {`Revision ${selectedRevision.index} - ${
-                selectedRevision.published ? 'Published' : 'Unpublished'
+              {`${t('REVISION_WITH_INDEX', 'Revision {{index}}', {
+                index: selectedRevision.index,
+              })} - ${
+                selectedRevision.published
+                  ? t('PUBLISHED', 'Published')
+                  : t('UNPUBLISHED', 'Unpublished')
               }`}
             </>
           ) : (
@@ -99,13 +105,17 @@ export const SecondaryThreeDModelMenuItem = ({
               toggled={id === options?.revisionId}
               description={
                 published
-                  ? 'Published'
-                  : `Created: ${formatTime(createdTime.getTime())}`
+                  ? t('PUBLISHED', 'Published')
+                  : t('CREATED_WITH_TIME', 'Created: {{time}}', {
+                      time: formatTime(createdTime.getTime()),
+                    })
               }
               key={id}
               onClick={() => handleSelectRevision(id)}
             >
-              Revision {index}
+              {t('REVISION_WITH_INDEX', 'Revision {{index}}', {
+                index,
+              })}
             </Menu.Item>
           ))}
         </StyledMenu>

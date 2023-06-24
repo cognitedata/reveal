@@ -4,7 +4,11 @@ import styled from 'styled-components';
 
 import { Body, Icon, IconType, Switch } from '@cognite/cogs.js';
 
-import { FileTypes, FileTypeVisibility } from '@data-exploration-lib/core';
+import {
+  FileTypes,
+  FileTypeVisibility,
+  useTranslation,
+} from '@data-exploration-lib/core';
 
 const CustomChip = ({
   label,
@@ -38,10 +42,11 @@ export const FileTypeToggle = (
     React.SetStateAction<FileTypeVisibility>
   >
 ) => {
+  const { t } = useTranslation();
   return (
     <>
       <CustomChip
-        label="360 images"
+        label={t('360_IMAGE', '360 Images', { count: 2 })}
         icon="View360"
         checked={fileTypeVisibility.Images360}
         onChange={(nextState: boolean) => {
@@ -52,7 +57,7 @@ export const FileTypeToggle = (
         }}
       />
       <CustomChip
-        label="3D models"
+        label={t('THREED', '3D models', { count: 2 })}
         icon="Cube"
         checked={fileTypeVisibility.Models3D}
         onChange={(nextState: boolean) => {

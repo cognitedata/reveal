@@ -6,7 +6,7 @@ import includes from 'lodash/includes';
 
 import { IconType, Chip } from '@cognite/cogs.js';
 
-import { COMMON_FILTER_KEYS } from '@data-exploration-lib/core';
+import { COMMON_FILTER_KEYS, useTranslation } from '@data-exploration-lib/core';
 
 import { getTitle } from './utils';
 
@@ -24,10 +24,19 @@ export const FilterChip: React.FC<FilterChipProps> = ({
   formatName = true,
   onClick,
 }) => {
+  const { t } = useTranslation();
+
   const isCommonKeyName = includes(COMMON_FILTER_KEYS, name);
 
   const variant = isCommonKeyName ? 'neutral' : 'success';
-  const text = `${formatName ? getTitle(name) : name}: ${value}`;
+  const title = formatName ? getTitle(name) : name;
+
+  /**
+   * Since we get the titles from `CUSTOM_FILTER_TITLE` and
+   * we have included them in upper-case form as translation keys.
+   */
+  const translationKey = title.toUpperCase().replace(/ /g, '_');
+  const text = `${t(translationKey, title)}: ${value}`;
 
   return (
     <StyledChip

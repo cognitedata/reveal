@@ -5,6 +5,7 @@ import {
   InternalDocumentFilter,
   useDebouncedState,
   useMetrics,
+  useTranslation,
 } from '@data-exploration-lib/core';
 import { useDocumentsFilterOptions } from '@data-exploration-lib/domain-layer';
 
@@ -31,10 +32,11 @@ export interface AuthorFilterProps<TFilter>
 export function AuthorFilter<TFilter>({
   options,
   onChange,
-  title = 'Author',
+  title,
   value,
   ...rest
 }: AuthorFilterProps<TFilter>) {
+  const { t } = useTranslation();
   const trackUsage = useMetrics();
 
   const handleChange = (
@@ -53,7 +55,7 @@ export function AuthorFilter<TFilter>({
   return (
     <MultiSelectFilter<string>
       {...rest}
-      label={title}
+      label={title || t('AUTHOR', 'Author')}
       value={value ? transformOptionsForMultiselectFilter(value) : undefined}
       options={options}
       onChange={(_, authors) => handleChange(authors)}

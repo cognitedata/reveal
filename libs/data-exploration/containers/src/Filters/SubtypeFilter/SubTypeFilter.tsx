@@ -5,6 +5,7 @@ import {
   InternalEventsFilters,
   useDebouncedState,
   useMetrics,
+  useTranslation,
 } from '@data-exploration-lib/core';
 import { useEventsFilterOptions } from '@data-exploration-lib/domain-layer';
 
@@ -32,8 +33,10 @@ export function SubTypeFilter<TFilter>({
   value,
   ...rest
 }: SubTypeFilterProps<TFilter>) {
+  const { t } = useTranslation();
   const trackUsage = useMetrics();
-  const filterLabel = 'Sub Type';
+
+  const filterLabel = t('SUB_TYPE', 'Sub type');
 
   const handleChange = (
     newValue: {

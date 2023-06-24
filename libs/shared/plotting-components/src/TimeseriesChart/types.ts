@@ -18,6 +18,11 @@ export interface TimeseriesChartProps {
   onChangeDateRange?: (dateRange: DateRange) => void;
   hideActions?: boolean;
   styles?: Style;
+  /**
+   * Language for i18n translation.
+   * English (en) by default.
+   */
+  language?: 'en';
 }
 
 export type DateRange = [Date, Date];

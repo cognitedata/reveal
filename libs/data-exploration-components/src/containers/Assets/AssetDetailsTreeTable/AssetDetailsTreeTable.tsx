@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 
 import {
   HighlightCell,
+  getTableColumns,
   Table,
   ThreeDModelCell,
 } from '@data-exploration/components';
@@ -20,7 +21,11 @@ import gt from 'lodash/gt';
 import { Icon } from '@cognite/cogs.js';
 import { Asset } from '@cognite/sdk';
 
-import { DASH, getHiddenColumns } from '@data-exploration-lib/core';
+import {
+  DASH,
+  getHiddenColumns,
+  useTranslation,
+} from '@data-exploration-lib/core';
 import {
   useRootAssetsQuery,
   InternalAssetTreeData,
@@ -56,12 +61,14 @@ export const AssetDetailsTreeTable = ({
 
   const rootAssetTree = useRootAssetsQuery(rootExpandedKeys, rootAssetId);
 
+  const { t } = useTranslation();
+  const tableColumns = getTableColumns(t);
+
   const columns = React.useMemo(
     () =>
       [
         {
-          header: 'Name',
-          accessorKey: 'name',
+          ...tableColumns.name(),
           enableHiding: false,
           cell: ({ row, getValue }) => (
             <div
@@ -93,11 +100,11 @@ export const AssetDetailsTreeTable = ({
             </div>
           ),
         },
-        Table.Columns.description(),
-        Table.Columns.externalId(),
+        tableColumns.description(),
+        tableColumns.externalId(),
         {
           id: 'childCount',
-          header: 'Direct children',
+          header: t('DIRECT_CHILDREN', 'Direct children'),
           accessorKey: 'aggregates',
           cell: ({ getValue }) => {
             return (
@@ -112,11 +119,11 @@ export const AssetDetailsTreeTable = ({
         },
         {
           id: 'threeDModels',
-          header: '3D availability',
+          header: t('3D_AVAILABILITY', '3D availability'),
           cell: ({ row }) => <ThreeDModelCell assetId={row.original.id} />,
           size: 300,
         },
-        Table.Columns.source(),
+        tableColumns.source(),
         ...metadataColumns,
       ] as ColumnDef<InternalAssetTreeData>[],
     [metadataColumns]

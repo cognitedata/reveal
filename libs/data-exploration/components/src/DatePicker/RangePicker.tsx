@@ -16,7 +16,7 @@ import {
   Flex,
 } from '@cognite/cogs.js';
 
-import { TIME_SELECT } from '@data-exploration-lib/core';
+import { TIME_SELECT, useTranslation } from '@data-exploration-lib/core';
 
 import { Divider } from '../Common';
 
@@ -44,6 +44,7 @@ export const RangePicker = ({
   // Cogs is stupid af so we have to ref the span
   const spanRef = useRef<HTMLSpanElement>(null);
   const [mode, setMode] = useState<'range' | 'calendar'>('range');
+  const { t } = useTranslation();
 
   const [pivotRange, setPivotRange] = useState<PivotRange>(
     determinePivotRange(initialRange[0], initialRange[1])
@@ -78,10 +79,10 @@ export const RangePicker = ({
         onButtonClicked={(key) => setMode(key as 'range' | 'calendar')}
       >
         <SegmentedControl.Button key="range" icon="Events">
-          Range
+          {t('RANGE', 'Range')}
         </SegmentedControl.Button>
         <SegmentedControl.Button key="calendar" icon="Calendar">
-          Calendar
+          {t('CALENDAR', 'Calendar')}
         </SegmentedControl.Button>
       </SegmentedControl>
       {mode === 'range' ? (
@@ -93,7 +94,7 @@ export const RangePicker = ({
         <DateRange
           type="standard"
           calendarHasBorder={false}
-          title="Select a range"
+          title={t('SELECT_A_RANGE', 'Select a range')}
           showClose
           range={{
             startDate: startEndRange.startDate,

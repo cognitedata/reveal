@@ -13,6 +13,8 @@ import {
   SelectableItemsProps,
 } from '@data-exploration-components/types';
 
+import { useTranslation } from '@data-exploration-lib/core';
+
 export const LinkedResourceTable = ({
   isGroupingFilesEnabled,
   type,
@@ -29,6 +31,8 @@ export const LinkedResourceTable = ({
   onParentAssetClick: (assetId: number) => void;
   isDocumentsApiEnabled?: boolean;
 } & SelectableItemsProps) => {
+  const { t } = useTranslation();
+
   const filter = { assetSubtreeIds: [{ value: parentResource.id }] };
 
   switch (type) {
@@ -75,6 +79,6 @@ export const LinkedResourceTable = ({
         />
       );
     default:
-      return <>No relationships found</>;
+      return <>{t('NO_RELATIONSHIPS_FOUND', 'No relationships found')}</>;
   }
 };

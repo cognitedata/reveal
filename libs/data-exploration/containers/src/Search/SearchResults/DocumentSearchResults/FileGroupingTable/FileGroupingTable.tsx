@@ -9,6 +9,7 @@ import {
   InternalDocumentFilter,
   LOADING_RESULTS,
   REFINE_FILTERS_OR_UPDATE_SEARCH,
+  useTranslation,
 } from '@data-exploration-lib/core';
 import { useDocumentSearchResultQuery } from '@data-exploration-lib/domain-layer';
 
@@ -43,6 +44,8 @@ export const FileGroupingTable = ({
   data,
   onItemClicked,
 }: FileGroupingTableProps) => {
+  const { t } = useTranslation();
+
   const { results: documents, isInitialLoading } = useDocumentSearchResultQuery(
     {
       filter,
@@ -64,11 +67,20 @@ export const FileGroupingTable = ({
   const docs: Document[] = convertFilesToDocs(files || data);
 
   if (isInitialLoading) {
-    return <EmptyState isLoading title={LOADING_RESULTS} />;
+    return (
+      <EmptyState isLoading title={t('LOADING_RESULTS', LOADING_RESULTS)} />
+    );
   }
 
   if (docs.length === 0) {
-    return <EmptyState body={REFINE_FILTERS_OR_UPDATE_SEARCH} />;
+    return (
+      <EmptyState
+        body={t(
+          'REFINE_FILTERS_OR_UPDATE_SEARCH',
+          REFINE_FILTERS_OR_UPDATE_SEARCH
+        )}
+      />
+    );
   }
 
   return (

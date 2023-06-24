@@ -4,6 +4,7 @@ import {
   COMMON_INFO_CONTENT,
   FilterProps,
   isObjectEmpty,
+  useTranslation,
 } from '@data-exploration-lib/core';
 
 import {
@@ -21,11 +22,13 @@ export const CommonFilters: React.FC<FilterProps> = ({
   onResetFilterClick,
   ...rest
 }) => {
+  const { t } = useTranslation();
+
   return (
     <BaseFilterCollapse.Panel
-      title="Common"
+      title={t('COMMON', 'Common')}
       hideResetButton={isObjectEmpty(filter.common as any)}
-      infoContent={COMMON_INFO_CONTENT}
+      infoContent={t('COMMON_INFO_CONTENT', COMMON_INFO_CONTENT)}
       onResetClick={() => onResetFilterClick('common')}
       {...rest}
     >

@@ -4,25 +4,34 @@ import styled from 'styled-components';
 
 import { Button, InputExp, ToolBar, Tooltip } from '@cognite/cogs.js';
 
+import { TFunction, useTranslation } from '@data-exploration-lib/core';
+
 import { UseCurrentSearchResultState } from './hooks/useCurrentSearchResult';
 import { UseSearchBarState } from './hooks/useSearchBarState';
+
+const SEARCHABLE_PAGES_LIMIT = 50;
 
 const getStatusAndStatusText = (
   value: string,
   hasOcrData: boolean,
-  numberOfPages: number
+  numberOfPages: number,
+  t: TFunction
 ): { status: 'critical' | 'warning'; statusText: string } | undefined => {
   if (!hasOcrData && value.length > 0) {
     return {
       status: 'critical',
-      statusText: 'This document is not searchable',
+      statusText: t('FILE_NOT_SEARCHABLE', 'This document is not searchable'),
     };
   }
 
-  if (numberOfPages > 50) {
+  if (numberOfPages > SEARCHABLE_PAGES_LIMIT) {
     return {
       status: 'warning',
-      statusText: 'Only first 50 pages are searchable',
+      statusText: t(
+        'FILE_SEARCHABLE_LIMIT',
+        `Only first ${SEARCHABLE_PAGES_LIMIT} pages are searchable`,
+        { limit: SEARCHABLE_PAGES_LIMIT }
+      ),
     };
   }
 
@@ -56,6 +65,8 @@ export const SearchBar = ({
   hasOcrData,
   numberOfPages,
 }: SearchBarProps) => {
+  const { t } = useTranslation();
+
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Escape') {
       onSearchClose();
@@ -81,13 +92,13 @@ export const SearchBar = ({
     {
       icon: 'ArrowUp',
       onClick: onPreviousResult,
-      description: 'Previous search result',
+      description: t('PREVIOUS_SEARCH_RESULT', 'Previous search result'),
       'aria-label': 'Previous search result',
     },
     {
       icon: 'ArrowDown',
       onClick: onNextResult,
-      description: 'Next search result',
+      description: t('NEXT_SEARCH_RESULT', 'Next search result'),
       'aria-label': 'Next search result',
     },
   ];
@@ -96,7 +107,7 @@ export const SearchBar = ({
   // This is to gather "as real" metrics as possible (e.g. how many users are trying to search in documents that don't have OCR data).
   // In the future we probably want to disable or hide the search bar for documents that don't have OCR data.
   const statusAndStatusText = useMemo(
-    () => getStatusAndStatusText(value, hasOcrData, numberOfPages),
+    () => getStatusAndStatusText(value, hasOcrData, numberOfPages, t),
     [value, hasOcrData, numberOfPages]
   );
 
@@ -109,7 +120,7 @@ export const SearchBar = ({
               <InputExp
                 ref={searchBarInputRef as any}
                 icon="Search"
-                placeholder="Find in document..."
+                placeholder={`${t('FIND_IN_FILE', 'Find in document')}...`}
                 suffix={`${currentSearchResultIndex}/${numberOfSearchResults}`}
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
@@ -134,7 +145,7 @@ export const SearchBar = ({
 
   return (
     <ToolBar>
-      <Tooltip content="Find in document">
+      <Tooltip content={t('FIND_IN_FILE', 'Find in document')}>
         <Button
           icon="Search"
           aria-label="Find in document"

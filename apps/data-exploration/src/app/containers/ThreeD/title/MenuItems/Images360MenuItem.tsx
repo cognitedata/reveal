@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { Checkbox, Flex, Menu } from '@cognite/cogs.js';
 
 import { Image360DatasetOptions } from '@data-exploration-app/containers/ThreeD/contexts/ThreeDContext';
+import { useTranslation } from '@data-exploration-lib/core';
 
 import {
   StyledSecondaryObjectBody,
@@ -23,6 +24,7 @@ export const Images360MenuItem = ({
   onChange: (nextState: Image360DatasetOptions) => void;
   options?: Image360DatasetOptions;
 }) => {
+  const { t } = useTranslation();
   useEffect(() => {
     if (!options) {
       onChange({
@@ -54,7 +56,7 @@ export const Images360MenuItem = ({
           {siteName}
         </StyledSecondaryObjectBody>
         <StyledSecondaryObjectDetail>
-          {imageCount + ' images'}
+          {t('IMAGE_WITH_COUNT', `{{count}} images`, { count: imageCount })}
         </StyledSecondaryObjectDetail>
       </Flex>
     </StyledSecondaryObjectMenuItemContent>

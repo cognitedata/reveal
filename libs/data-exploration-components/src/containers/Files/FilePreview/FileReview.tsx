@@ -8,7 +8,11 @@ import { Tooltip } from 'antd';
 import { Body, Button, Flex, Icon } from '@cognite/cogs.js';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 
-import { AppContext, ExtendedAnnotation } from '@data-exploration-lib/core';
+import {
+  AppContext,
+  ExtendedAnnotation,
+  useTranslation,
+} from '@data-exploration-lib/core';
 
 import {
   getResourceExternalIdFromExtendedAnnotation,
@@ -28,6 +32,7 @@ const FileReview = ({
   onTypeClick: (type: 'assets' | 'files') => void;
 }) => {
   const context = useContext(AppContext);
+  const { t } = useTranslation();
   const { data: labelsReadAcl } = usePermissions(
     context?.flow! as any,
     'labelsAcl',
@@ -68,7 +73,7 @@ const FileReview = ({
         }}
       >
         <Body level={2} strong>
-          All tags
+          {t('ALL_TAGS', 'All tags')}
         </Body>
 
         <Body level={2}>{linkedAnnotations.length}</Body>
@@ -77,7 +82,10 @@ const FileReview = ({
         <Tooltip
           title={
             !labelsAccess &&
-            'Missing permissions to approve tags, labels:read & labels:write'
+            t(
+              'MISSING_PERMISSIONS',
+              'Missing permissions to approve tags, labels:read & labels:write'
+            )
           }
         >
           <ButtonWrapper>
@@ -88,7 +96,11 @@ const FileReview = ({
               type="tertiary"
               disabled={!labelsAccess}
             >
-              Approve {suggestedAnnotations.length} new tags
+              {t(
+                'APPROVE_NEW_TAGS',
+                `Approve ${suggestedAnnotations.length} new tags`,
+                { annotationLength: suggestedAnnotations.length }
+              )}
             </Button>
           </ButtonWrapper>
         </Tooltip>
@@ -104,7 +116,7 @@ const FileReview = ({
             type="asset"
           />
           <Body style={{ color: '#4255BB' }} level={2} strong>
-            Assets
+            {t('ASSETS', 'Assets')}
           </Body>
           {suggestedAssetAnnotations.length ? (
             <Body
@@ -130,7 +142,7 @@ const FileReview = ({
             type="file"
           />{' '}
           <Body style={{ color: '#4255BB' }} level={2} strong>
-            Diagrams
+            {t('DIAGRAMS', 'Diagrams')}
           </Body>
           {suggestedFileAnnotations.length ? (
             <Body

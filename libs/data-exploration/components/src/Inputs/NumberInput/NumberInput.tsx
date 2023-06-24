@@ -1,5 +1,7 @@
 import { Input } from '@cognite/cogs.js';
 
+import { useTranslation } from '@data-exploration-lib/core';
+
 import { FilterLabel } from '../../Labels/FilterLabel';
 
 export interface NumberInputProps {
@@ -15,10 +17,12 @@ export const NumberInput = ({
   value,
   onChange,
   label,
-  placeholder = 'Enter exact match...',
+  placeholder,
   error,
   loading,
 }: NumberInputProps) => {
+  const { t } = useTranslation();
+
   const handleValueChange = (newValue: string | undefined) => {
     const parsedValue = newValue === '' ? undefined : Number(newValue);
     onChange?.(parsedValue);
@@ -38,7 +42,10 @@ export const NumberInput = ({
         error={error}
         fullWidth
         value={value || ''}
-        placeholder={placeholder}
+        placeholder={
+          placeholder ||
+          t('ENTER_EXACT_MATCH_PLACEHOLDER', 'Enter exact match...')
+        }
         onChange={(event) => {
           handleValueChange(event.target.value);
         }}

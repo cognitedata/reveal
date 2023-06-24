@@ -1,6 +1,10 @@
 import React from 'react';
 
-import { EmptyState, Table } from '@data-exploration/components';
+import {
+  EmptyState,
+  getTableColumns,
+  Table,
+} from '@data-exploration/components';
 import { ResultCount } from '@data-exploration/containers';
 import {
   useRelatedResourceResults,
@@ -8,6 +12,7 @@ import {
 } from '@data-exploration-components/hooks';
 import { ColumnDef } from '@tanstack/react-table';
 
+import { useTranslation } from '@data-exploration-lib/core';
 import { AssetWithRelationshipLabels } from '@data-exploration-lib/domain-layer';
 
 import { RelationshipTableProps } from './RelationshipTable';
@@ -16,8 +21,12 @@ export function RelationshipAssetTable({
   parentResource,
   onItemClicked,
 }: Omit<RelationshipTableProps, 'type'>) {
+  const { t } = useTranslation();
+  const tableColumns = getTableColumns(t);
+
   const { relationshipLabels, relation, externalId, rootAsset, name } =
-    Table.Columns;
+    tableColumns;
+
   const columns = [
     name(),
     relationshipLabels,

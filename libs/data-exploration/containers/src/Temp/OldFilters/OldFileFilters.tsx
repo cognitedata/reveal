@@ -7,6 +7,7 @@ import { useList } from '@cognite/sdk-react-query-hooks';
 import {
   FilterResourceType,
   InternalFilesFilters,
+  useTranslation,
 } from '@data-exploration-lib/core';
 import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
 
@@ -26,6 +27,8 @@ export const OldFileFilters = ({
   setFilter: (newFilter: InternalFilesFilters) => void;
   onResetFilterClick: (resourceType: FilterResourceType) => void;
 }) => {
+  const { t } = useTranslation();
+
   const { data: items = [] } = useList<any>('files', {
     filter: transformNewFilterToOldFilter(filter),
     limit: 1000,
@@ -33,7 +36,7 @@ export const OldFileFilters = ({
 
   return (
     <BaseFilterCollapse.Panel
-      title="Files"
+      title={t('FILES', 'Files')}
       {...rest}
       onResetClick={() => {
         onResetFilterClick('file');
@@ -42,13 +45,13 @@ export const OldFileFilters = ({
       <AggregatedFilterV2
         items={items}
         aggregator="mimeType"
-        title="Mime type"
+        title={t('MIME_TYPE', 'MIME type')}
         value={filter.mimeType}
         setValue={(newValue) => setFilter({ ...filter, mimeType: newValue })}
       />
 
       <DateFilterV2
-        title="Source Modified Time"
+        title={t('SOURCE_MODIFIED_TIME', 'Source Modified Time')}
         value={filter.sourceModifiedTime}
         setValue={(newDate) =>
           setFilter({
@@ -69,7 +72,7 @@ export const OldFileFilters = ({
       />
 
       <DateFilterV2
-        title="Uploaded Time"
+        title={t('UPLOADED_TIME', 'Uploaded Time')}
         value={filter.uploadedTime}
         setValue={(newDate) =>
           setFilter({
@@ -79,7 +82,7 @@ export const OldFileFilters = ({
         }
       />
       <StringFilterV2
-        title="Directory prefix"
+        title={t('DIRECTORY_PREFIX', 'Directory prefix')}
         value={(filter as any).directoryPrefix}
         setValue={(newPrefix) =>
           setFilter({
@@ -91,7 +94,7 @@ export const OldFileFilters = ({
         }
       />
       <AggregatedFilterV2
-        title="Source"
+        title={t('SOURCE', 'Source')}
         items={items}
         aggregator="source"
         value={filter.source}
@@ -114,7 +117,7 @@ export const OldFileFilters = ({
       />
 
       <DateFilterV2
-        title="Source Created Time"
+        title={t('SOURCE_CREATED_TIME', 'Source Created Time')}
         value={filter.sourceCreatedTime}
         setValue={(newDate) =>
           setFilter({

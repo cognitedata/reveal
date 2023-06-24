@@ -14,6 +14,7 @@ import {
   InternalCommonFilters,
   InternalDocumentFilter,
   InternalFilesFilters,
+  useTranslation,
 } from '@data-exploration-lib/core';
 import {
   InternalDocument,
@@ -58,6 +59,8 @@ const LinkedFileFilter = ({
   filter: InternalFilesFilters;
   onFilterChange: (newValue: InternalFilesFilters) => void;
 }) => {
+  const { t } = useTranslation();
+
   const { data: items = [] } = useList<FileInfo>('files', {
     filter: transformNewFilterToOldFilter(filter),
     limit: 1000,
@@ -68,7 +71,7 @@ const LinkedFileFilter = ({
       <AggregatedFilterV2
         items={items}
         aggregator="mimeType"
-        title="Mime type"
+        title={t('MIME_TYPE', 'Mime type')}
         value={filter.mimeType}
         setValue={(newValue) => onFilterChange({ mimeType: newValue })}
       />

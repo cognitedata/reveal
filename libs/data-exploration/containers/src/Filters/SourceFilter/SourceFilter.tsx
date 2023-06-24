@@ -7,6 +7,7 @@ import {
   InternalEventsFilters,
   useDebouncedState,
   useMetrics,
+  useTranslation,
 } from '@data-exploration-lib/core';
 import {
   useAssetsFilterOptions,
@@ -47,6 +48,7 @@ export const SourceFilter = <TFilter,>({
   onChange,
   ...rest
 }: SourceFilterProps<TFilter>) => {
+  const { t } = useTranslation();
   const trackUsage = useMetrics();
 
   const handleChange = (
@@ -66,7 +68,7 @@ export const SourceFilter = <TFilter,>({
     <MultiSelectFilter<string>
       {...rest}
       addNilOption
-      label="Source"
+      label={t('SOURCE', 'Source')}
       options={options}
       onChange={(_, newSources) => handleChange(newSources)}
     />
@@ -79,6 +81,7 @@ export const BaseFileSourceFilter = <TFilter,>({
   value,
   ...rest
 }: FileSourceFilterProps<TFilter>) => {
+  const { t } = useTranslation();
   const trackUsage = useMetrics();
 
   const handleChange = (
@@ -98,7 +101,7 @@ export const BaseFileSourceFilter = <TFilter,>({
     <MultiSelectFilter<string>
       {...rest}
       addNilOption
-      label="Source"
+      label={t('SOURCE', 'Source')}
       value={value ? transformOptionsForMultiselectFilter(value) : undefined}
       options={options}
       onChange={(_, newSources) => handleChange(newSources)}

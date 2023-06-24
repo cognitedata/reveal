@@ -15,6 +15,7 @@ import { useCdfItem, baseCacheKey } from '@cognite/sdk-react-query-hooks';
 
 import { DateFilter } from '@data-exploration-app/components/ResourceTitleRow';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
+import { useTranslation } from '@data-exploration-lib/core';
 
 type Props = {
   item: ResourceItem;
@@ -22,8 +23,11 @@ type Props = {
 };
 
 const DOWNLOAD_DATA_LABEL = 'Download data as JSON';
+const DOWNLOAD_DATAPOINTS_LABEL = 'Download data with datapoints as JSON';
 
 function MetadataDownload({ item: { id, type } }: Props) {
+  const { t } = useTranslation();
+
   const [downloading, setDownloading] = useState(false);
   const { data: metadata, isFetched } = useCdfItem(
     convertResourceType(type),
@@ -58,13 +62,13 @@ function MetadataDownload({ item: { id, type } }: Props) {
           setDownloading(true);
         }}
       >
-        {DOWNLOAD_DATA_LABEL}
+        {t('DOWNLOAD_DATA_LABEL', DOWNLOAD_DATA_LABEL)}
       </Menu.Item>
     </Menu>
   );
 
   return (
-    <Tooltip content="Download">
+    <Tooltip content={t('DOWNLOAD', 'Download')}>
       <Dropdown content={menu} openOnHover={false}>
         <Button
           disabled={downloading}
@@ -77,10 +81,17 @@ function MetadataDownload({ item: { id, type } }: Props) {
 }
 
 function FileDownloadMenuItem({ item: { id } }: Props) {
-  return <FileDownloadAnchor text={<>Download original file</>} id={{ id }} />;
+  const { t } = useTranslation();
+  return (
+    <FileDownloadAnchor
+      text={<>{t('DOWNLOAD_ORIGINAL_FILE', 'Download original file')}</>}
+      id={{ id }}
+    />
+  );
 }
 
 function FileDownloadButton({ item }: Props) {
+  const { t } = useTranslation();
   const { id } = item;
   const [downloading, setDownloading] = useState(false);
   const { data: metadata, isFetched } = useCdfItem<FileInfo>(
@@ -120,14 +131,14 @@ function FileDownloadButton({ item }: Props) {
           setDownloading(true);
         }}
       >
-        {DOWNLOAD_DATA_LABEL}
+        {t('DOWNLOAD_DATA_LABEL', DOWNLOAD_DATA_LABEL)}
       </Menu.Item>
       <FileDownloadMenuItem item={item} />
     </Menu>
   );
 
   return (
-    <Tooltip content="Download">
+    <Tooltip content={t('DOWNLOAD', 'Download')}>
       <Dropdown content={menu} openOnHover={false}>
         <Button
           icon={downloading ? 'Loader' : 'Download'}
@@ -141,6 +152,7 @@ function FileDownloadButton({ item }: Props) {
 }
 
 function TimeseriesDownloadButton({ item: { id, type }, dateFilter }: Props) {
+  const { t } = useTranslation();
   const sdk = useSDK();
   const [includeDatapoints, setIncludeDatpoints] = useState(false);
   const [downloading, setDownloading] = useState(false);
@@ -209,7 +221,7 @@ function TimeseriesDownloadButton({ item: { id, type }, dateFilter }: Props) {
           setDownloading(true);
         }}
       >
-        {DOWNLOAD_DATA_LABEL}
+        {t('DOWNLOAD_DATA_LABEL', DOWNLOAD_DATA_LABEL)}
       </Menu.Item>
       <Menu.Item
         onClick={() => {
@@ -217,13 +229,13 @@ function TimeseriesDownloadButton({ item: { id, type }, dateFilter }: Props) {
           setDownloading(true);
         }}
       >
-        Download data with datapoints as JSON
+        {t('DOWNLOAD_DATAPOINTS_LABEL', DOWNLOAD_DATAPOINTS_LABEL)}
       </Menu.Item>
     </Menu>
   );
 
   return (
-    <Tooltip content="Download">
+    <Tooltip content={t('DOWNLOAD', 'Download')}>
       <Dropdown content={menu} openOnHover={false}>
         <Button
           disabled={downloading}

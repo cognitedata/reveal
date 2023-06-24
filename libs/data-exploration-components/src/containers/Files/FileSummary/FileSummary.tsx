@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 
 import {
-  ResourceTableColumns,
+  getTableColumns,
   SummaryCardWrapper,
   Table,
 } from '@data-exploration/components';
@@ -17,6 +17,7 @@ import { Asset, FileInfo } from '@cognite/sdk';
 import {
   getHiddenColumns,
   InternalFilesFilters,
+  useTranslation,
 } from '@data-exploration-lib/core';
 import { useDocumentsMetadataKeys } from '@data-exploration-lib/domain-layer';
 
@@ -38,12 +39,13 @@ export const FileSummary = ({
   const api = convertResourceType('file');
   const { items: results, isFetching: isLoading } =
     useResourceResults<FileInfo>(api, query, filter);
-
+  const { t } = useTranslation();
+  const tableColumns = getTableColumns(t);
   const { data: metadataKeys } = useDocumentsMetadataKeys();
 
   const metadataColumns = useMemo(() => {
     return (metadataKeys || []).map((key: string) =>
-      ResourceTableColumns.metadata(key)
+      tableColumns.metadata(key)
     );
   }, [metadataKeys]);
 
@@ -51,7 +53,7 @@ export const FileSummary = ({
     () =>
       [
         {
-          ...Table.Columns.name(),
+          ...tableColumns.name(),
           cell: ({ getValue, row }) => {
             const fileName = getValue<string>();
             const fileNamePreviewProps = {
@@ -62,16 +64,16 @@ export const FileSummary = ({
             return <FileNamePreview {...fileNamePreviewProps} />;
           },
         },
-        Table.Columns.mimeType,
-        Table.Columns.externalId(),
-        Table.Columns.id(),
-        Table.Columns.uploadedTime,
-        Table.Columns.lastUpdatedTime,
-        Table.Columns.created,
-        Table.Columns.dataSet,
-        Table.Columns.source(),
-        Table.Columns.assets(onDirectAssetClick),
-        Table.Columns.labels,
+        tableColumns.mimeType,
+        tableColumns.externalId(),
+        tableColumns.id(),
+        tableColumns.uploadedTime,
+        tableColumns.lastUpdatedTime,
+        tableColumns.created,
+        tableColumns.dataSet,
+        tableColumns.source(),
+        tableColumns.assets(onDirectAssetClick),
+        tableColumns.labels,
         ...metadataColumns,
       ] as ColumnDef<FileInfo>[],
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -93,7 +95,7 @@ export const FileSummary = ({
         tableHeaders={
           <SummaryHeader
             icon="Document"
-            title="Files"
+            title={t('FILES', 'Files')}
             onAllResultsClick={onAllResultsClick}
           />
         }
