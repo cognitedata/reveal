@@ -7,7 +7,6 @@
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
-    "isolatedModules": true,
   },
   "files": [],
   "include": [],
