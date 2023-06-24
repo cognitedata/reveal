@@ -37,8 +37,7 @@ const CanvasDeletionModal: React.FC<CanvasDeletionModalProps> = ({
           translationKeys.MODAL_CANVAS_DELETION_CONFIRMATION,
           'Are you sure you want to delete the canvas'
         )}{' '}
-        <strong>{canvas.name || '<no name>'}</strong>
-        "?
+        "<strong>{canvas.name || '<no name>'}</strong>"?
         <br />
         {t(
           translationKeys.MODAL_CANVAS_DELETION_MESSAGE,

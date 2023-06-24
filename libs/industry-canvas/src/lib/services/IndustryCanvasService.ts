@@ -406,11 +406,11 @@ export class IndustryCanvasService {
     };
   }
 
-  public async archiveCanvas(canvas: SerializedCanvasDocument): Promise<void> {
+  public async archiveCanvas(externalId: string): Promise<void> {
     await this.fdmClient.upsertNodes([
       {
         modelName: ModelNames.CANVAS,
-        ...omit(canvas, ['data', 'createdTime']),
+        externalId,
         isArchived: true,
       },
     ]);
