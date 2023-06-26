@@ -100,7 +100,7 @@ export const DocumentsTable = (props: DocumentTableProps) => {
                     />
                   );
                 },
-                enableSorting: true,
+                enableSorting: false,
                 enableHiding: true,
               },
             ]
