@@ -2751,7 +2751,7 @@ __metadata:
     "@storybook/react-webpack5": 7.0.22
     "@storybook/testing-library": 0.1.0
     "@types/lodash": ^4.14.190
-    "@types/react": 18.2.12
+    "@types/react": 18.2.13
     "@types/styled-components": 5.1.26
     "@types/three": 0.152.0
     lodash: ^4.17.21
@@ -5464,14 +5464,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:18.2.12":
-  version: 18.2.12
-  resolution: "@types/react@npm:18.2.12"
+"@types/react@npm:18.2.13":
+  version: 18.2.13
+  resolution: "@types/react@npm:18.2.13"
   dependencies:
     "@types/prop-types": "*"
     "@types/scheduler": "*"
     csstype: ^3.0.2
-  checksum: ad85a7eadaf1b35cfeee9f715b39311420ff46d46e0650377d918b3f888c2e47416037da4a765e1dccd3d1916abd54c105a3bee803c971ba56c955a7768ce976
+  checksum: f7c15f19c164a29262993ea2aae2085fa38cddd9b8359fd8fefabfced91010b515a3abe2042b2b7f2f86e6b38a25b191415aa9313a9027175e3a000883c858cc
   languageName: node
   linkType: hard
 
