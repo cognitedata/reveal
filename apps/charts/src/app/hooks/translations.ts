@@ -1,7 +1,7 @@
 import {
   useTranslation,
   UseTranslationResponse,
-  DefaultNamespace,
+  FallbackNs,
 } from 'react-i18next';
 
 type TranslationKey = string | number | symbol;
@@ -17,7 +17,7 @@ export function useTranslations<TranslationKeys extends TranslationKey>(
 ): {
   t: Record<TranslationKeys, string>;
   translationReady: boolean;
-  translate: UseTranslationResponse<DefaultNamespace>['t'];
+  translate: UseTranslationResponse<FallbackNs<{}>, typeof namespace>['t'];
 } {
   const { t, ready } = useTranslation(namespace, { useSuspense: false });
 
