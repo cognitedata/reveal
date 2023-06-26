@@ -32,7 +32,7 @@ module.exports = {
           'block',
           [
             {
-              pattern: `(Copyright 20\\d{2}|istanbul ignore|Adapted from pnext/three-loader)`,
+              pattern: `(Copyright 20\\d{2}|istanbul ignore)`,
               template: `!\n * Copyright ${new Date().getFullYear()} Cognite AS\n `
             }
           ]
