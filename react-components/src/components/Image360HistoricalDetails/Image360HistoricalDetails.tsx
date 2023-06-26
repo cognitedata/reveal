@@ -3,7 +3,7 @@
  */
 
 import { type Cognite3DViewer, type Image360 } from '@cognite/reveal';
-import React, { useEffect, useRef, useState } from 'react';
+import { type ReactElement, useEffect, useRef, useState } from 'react';
 import { Image360HistoricalPanel } from './Panel/Image360HistoricalPanel';
 import { Image360HistoricalSummary } from './Toolbar/Image360HistoricalSummary';
 import { formatDate } from './utils/FormatDate';
@@ -20,7 +20,7 @@ export const Image360HistoricalDetails = ({
   viewer,
   image360Entity,
   onExpand
-}: Image360HistoricalDetailsProps): React.JSX.Element => {
+}: Image360HistoricalDetailsProps): ReactElement => {
   const [revisionDetailsExpanded, setRevisionDetailsExpanded] = useState<boolean>(false);
   const [activeRevision, setActiveRevision] = useState<number>(0);
   const [revisionCollection, setRevisionCollection] = useState<

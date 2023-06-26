@@ -1,5 +1,5 @@
 import { type CogniteClient } from '@cognite/sdk';
-import React, { useEffect, useRef, type ReactNode, useState } from 'react';
+import { useEffect, useRef, type ReactNode, useState, type ReactElement } from 'react';
 import { Cognite3DViewer } from '@cognite/reveal';
 import { RevealContext } from './RevealContext';
 import { type Color } from 'three';
@@ -14,7 +14,7 @@ export default function RevealContainer({
   children,
   sdk,
   color
-}: RevealContainerProps): React.JSX.Element {
+}: RevealContainerProps): ReactElement {
   const [viewer, setViewer] = useState<Cognite3DViewer>();
   const revealDomElementRef = useRef<HTMLDivElement>(null);
 
@@ -32,7 +32,7 @@ export default function RevealContainer({
     };
   }, []);
 
-  const mountChildren = (viewer: Cognite3DViewer | undefined): React.JSX.Element => {
+  const mountChildren = (viewer: Cognite3DViewer | undefined): ReactElement => {
     if (viewer === undefined) return <></>;
     return (
       <>

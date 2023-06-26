@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import { type ReactElement, useEffect, useRef } from 'react';
 import { type AddModelOptions, type CogniteCadModel } from '@cognite/reveal';
 import { useReveal } from '../RevealContainer/RevealContext';
 import { type Matrix4 } from 'three';
@@ -11,7 +11,7 @@ interface Cognite3dModelProps {
 export default function CogniteCadModelContainer({
   addModelOptions,
   transform
-}: Cognite3dModelProps): React.JSX.Element {
+}: Cognite3dModelProps): ReactElement {
   const modelRef = useRef<CogniteCadModel>();
   const viewer = useReveal();
   const { modelId, revisionId } = addModelOptions;

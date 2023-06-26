@@ -3,7 +3,7 @@
  */
 
 import { Chip, Tooltip } from '@cognite/cogs.js';
-import React from 'react';
+import { type ReactElement } from 'react';
 import styled from 'styled-components';
 
 export interface Image360HistoricalPanelProps {
@@ -16,7 +16,7 @@ export const Image360HistoricalPanel = ({
   revisionCount,
   revisionDetailsExpanded,
   setRevisionDetailsExpanded
-}: Image360HistoricalPanelProps): React.JSX.Element => {
+}: Image360HistoricalPanelProps): ReactElement => {
   const count = revisionCount?.toString();
 
   const onDetailsClick = (): void => {

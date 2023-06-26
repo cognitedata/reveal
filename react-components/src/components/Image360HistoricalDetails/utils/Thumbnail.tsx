@@ -3,7 +3,7 @@
  */
 
 import styled from 'styled-components';
-import React, { useMemo } from 'react';
+import { type ReactElement, useMemo } from 'react';
 import { Icon } from '@cognite/cogs.js';
 
 export const Thumbnail = ({
@@ -14,7 +14,7 @@ export const Thumbnail = ({
   imageUrl?: string;
   isActive: boolean;
   isLoading: boolean;
-}): React.JSX.Element => {
+}): ReactElement => {
   const image = useMemo(() => {
     if (imageUrl !== undefined) {
       return (
