@@ -4,12 +4,11 @@
 
 import { Cognite3DViewer, Image360 } from '@cognite/reveal';
 import React, { useEffect, useRef, useState } from 'react';
-import { Image360HistoricalPanel } from '../Panel/Image360HistoricalPanel';
-import { Image360HistoricalSummary } from '../Toolbar/Image360HistoricalSummary';
-import { formatDate } from '../utils/FormatDate';
+import { Image360HistoricalPanel } from './Panel/Image360HistoricalPanel';
+import { Image360HistoricalSummary } from './Toolbar/Image360HistoricalSummary';
+import { formatDate } from './utils/FormatDate';
 import styled from 'styled-components';
-// Using named import to avoid react component creation error when default import is used.
-import { uniqueId } from 'lodash';
+import uniqueId from 'lodash/uniqueId';
 
 export interface Image360HistoricalDetailsProps {
   viewer: Cognite3DViewer;
