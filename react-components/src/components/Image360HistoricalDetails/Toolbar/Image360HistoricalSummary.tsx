@@ -84,8 +84,7 @@ export const Image360HistoricalSummary = forwardRef(
                 key={uniqueId()}
                 onClick={() => {
                   void onRevisionChanged(revisionDetails, index);
-                }}
-              >
+                }}>
                 <Thumbnail
                   key={index}
                   isActive={activeRevision === index}
