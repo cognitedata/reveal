@@ -63,7 +63,7 @@ export const AppSelector = () => {
       </AppSelectorItem>
       <AppSelectorItem onClick={navigate('/inrobot')}>
         <LogoWrapper>
-          <ProductLogo type="Remote" />
+          <ProductLogo type="BestDay" />
         </LogoWrapper>
         <div>
           <h3>{t('INROBOT_APP_TITLE')}</h3>
