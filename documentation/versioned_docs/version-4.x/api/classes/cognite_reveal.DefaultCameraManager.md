@@ -29,7 +29,7 @@ and `viewer.cameraManager.cameraControls.maxDistance`.
 
 #### Defined in
 
-[packages/camera-manager/src/DefaultCameraManager.ts:103](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L103)
+[packages/camera-manager/src/DefaultCameraManager.ts:103](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L103)
 
 ___
 
@@ -54,7 +54,7 @@ viewer.camera.updateProjectionMatrix();
 
 #### Defined in
 
-[packages/camera-manager/src/DefaultCameraManager.ts:95](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L95)
+[packages/camera-manager/src/DefaultCameraManager.ts:95](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L95)
 
 ## Accessors
 
@@ -70,7 +70,7 @@ Whether keyboard control of the camera is enabled/disabled.
 
 #### Defined in
 
-[packages/camera-manager/src/DefaultCameraManager.ts:190](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L190)
+[packages/camera-manager/src/DefaultCameraManager.ts:190](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L190)
 
 • `set` **keyboardNavigationEnabled**(`enabled`): `void`
 
@@ -88,7 +88,7 @@ Sets whether keyboard control of the camera is enabled/disabled.
 
 #### Defined in
 
-[packages/camera-manager/src/DefaultCameraManager.ts:183](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L183)
+[packages/camera-manager/src/DefaultCameraManager.ts:183](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L183)
 
 ## Methods
 
@@ -99,7 +99,7 @@ Sets whether keyboard control of the camera is enabled/disabled.
 Set this manager as active and enable controls.
 
 Should update CameraManager.enabled to reflect the state of the manager.
-Note that this is called automatically when a new CameraManager is set on the [Cognite3DViewer](cognite_reveal.Cognite3DViewer.md).
+Note that this is called automatically when a new CameraManager is set on the viewer.
 
 #### Parameters
 
@@ -117,7 +117,7 @@ Note that this is called automatically when a new CameraManager is set on the [C
 
 #### Defined in
 
-[packages/camera-manager/src/DefaultCameraManager.ts:232](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L232)
+[packages/camera-manager/src/DefaultCameraManager.ts:232](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L232)
 
 ___
 
@@ -128,7 +128,7 @@ ___
 Deactivate this manager and disable controls.
 
 Should update CameraManager.enabled to reflect the state of the manager.
-Note that this is called automatically when a new CameraManager is set on the [Cognite3DViewer](cognite_reveal.Cognite3DViewer.md).
+Note that this is called automatically when a new CameraManager is set on the viewer.
 
 #### Returns
 
@@ -140,7 +140,7 @@ Note that this is called automatically when a new CameraManager is set on the [C
 
 #### Defined in
 
-[packages/camera-manager/src/DefaultCameraManager.ts:246](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L246)
+[packages/camera-manager/src/DefaultCameraManager.ts:246](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L246)
 
 ___
 
@@ -160,7 +160,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/DefaultCameraManager.ts:285](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L285)
+[packages/camera-manager/src/DefaultCameraManager.ts:285](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L285)
 
 ___
 
@@ -188,7 +188,7 @@ Moves camera to a place where the content of a bounding box is visible to the ca
 
 #### Defined in
 
-[packages/camera-manager/src/DefaultCameraManager.ts:159](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L159)
+[packages/camera-manager/src/DefaultCameraManager.ts:159](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L159)
 
 ___
 
@@ -196,7 +196,7 @@ ___
 
 ▸ **getCamera**(): `PerspectiveCamera`
 
-Returns the camera used for rendering in [Cognite3DViewer](cognite_reveal.Cognite3DViewer.md).
+Returns the camera used for rendering the viewer.
 Note that the camera will not be modified directly by Reveal.
 Implementations must trigger the `cameraChange`-event whenever the
 camera changes.
@@ -211,7 +211,7 @@ camera changes.
 
 #### Defined in
 
-[packages/camera-manager/src/DefaultCameraManager.ts:194](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L194)
+[packages/camera-manager/src/DefaultCameraManager.ts:194](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L194)
 
 ___
 
@@ -227,7 +227,7 @@ Gets current camera controls options.
 
 #### Defined in
 
-[packages/camera-manager/src/DefaultCameraManager.ts:257](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L257)
+[packages/camera-manager/src/DefaultCameraManager.ts:257](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L257)
 
 ___
 
@@ -249,7 +249,7 @@ Camera state: position, target and rotation.
 
 #### Defined in
 
-[packages/camera-manager/src/DefaultCameraManager.ts:224](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L224)
+[packages/camera-manager/src/DefaultCameraManager.ts:224](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L224)
 
 ___
 
@@ -265,7 +265,7 @@ Gets current Combo Controls options.
 
 #### Defined in
 
-[packages/camera-manager/src/DefaultCameraManager.ts:168](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L168)
+[packages/camera-manager/src/DefaultCameraManager.ts:168](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L168)
 
 ___
 
@@ -292,7 +292,7 @@ Unsubscribes from changes of the camera event.
 
 #### Defined in
 
-[packages/camera-manager/src/DefaultCameraManager.ts:146](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L146)
+[packages/camera-manager/src/DefaultCameraManager.ts:146](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L146)
 
 ___
 
@@ -321,7 +321,7 @@ Subscribes to events on this camera manager. There are several event types:
 
 #### Defined in
 
-[packages/camera-manager/src/DefaultCameraManager.ts:133](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L133)
+[packages/camera-manager/src/DefaultCameraManager.ts:133](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L133)
 
 ___
 
@@ -343,7 +343,7 @@ Sets camera controls options to customize camera controls modes. See [CameraCont
 
 #### Defined in
 
-[packages/camera-manager/src/DefaultCameraManager.ts:265](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L265)
+[packages/camera-manager/src/DefaultCameraManager.ts:265](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L265)
 
 ___
 
@@ -371,7 +371,7 @@ empty rotation field.
 
 #### Defined in
 
-[packages/camera-manager/src/DefaultCameraManager.ts:204](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L204)
+[packages/camera-manager/src/DefaultCameraManager.ts:204](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L204)
 
 ___
 
@@ -394,7 +394,7 @@ Only provided options will be changed, any undefined options will be kept as is.
 
 #### Defined in
 
-[packages/camera-manager/src/DefaultCameraManager.ts:176](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L176)
+[packages/camera-manager/src/DefaultCameraManager.ts:176](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L176)
 
 ___
 
@@ -423,4 +423,4 @@ Reveal performance affects frequency with which this method is called.
 
 #### Defined in
 
-[packages/camera-manager/src/DefaultCameraManager.ts:275](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L275)
+[packages/camera-manager/src/DefaultCameraManager.ts:275](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/camera-manager/src/DefaultCameraManager.ts#L275)

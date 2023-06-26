@@ -33,7 +33,7 @@ A simple PointCloudObjectCollection that consists of an explicitly provided list
 
 #### Defined in
 
-[packages/pointcloud-styling/src/AnnotationIdPointCloudObjectCollection.ts:13](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/pointcloud-styling/src/AnnotationIdPointCloudObjectCollection.ts#L13)
+[packages/pointcloud-styling/src/AnnotationIdPointCloudObjectCollection.ts:13](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/pointcloud-styling/src/AnnotationIdPointCloudObjectCollection.ts#L13)
 
 ## Accessors
 
@@ -53,7 +53,7 @@ PointCloudObjectCollection.isLoading
 
 #### Defined in
 
-[packages/pointcloud-styling/src/AnnotationIdPointCloudObjectCollection.ts:22](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/pointcloud-styling/src/AnnotationIdPointCloudObjectCollection.ts#L22)
+[packages/pointcloud-styling/src/AnnotationIdPointCloudObjectCollection.ts:22](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/pointcloud-styling/src/AnnotationIdPointCloudObjectCollection.ts#L22)
 
 ## Methods
 
@@ -73,7 +73,7 @@ annotation IDs of the annotations for the objects represented by this PointCloud
 
 #### Defined in
 
-[packages/pointcloud-styling/src/AnnotationIdPointCloudObjectCollection.ts:18](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/pointcloud-styling/src/AnnotationIdPointCloudObjectCollection.ts#L18)
+[packages/pointcloud-styling/src/AnnotationIdPointCloudObjectCollection.ts:18](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/pointcloud-styling/src/AnnotationIdPointCloudObjectCollection.ts#L18)
 
 ___
 
@@ -98,7 +98,7 @@ ___
 
 #### Defined in
 
-[packages/pointcloud-styling/src/PointCloudObjectCollection.ts:30](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/pointcloud-styling/src/PointCloudObjectCollection.ts#L30)
+[packages/pointcloud-styling/src/PointCloudObjectCollection.ts:30](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/pointcloud-styling/src/PointCloudObjectCollection.ts#L30)
 
 ___
 
@@ -123,4 +123,4 @@ ___
 
 #### Defined in
 
-[packages/pointcloud-styling/src/PointCloudObjectCollection.ts:25](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/pointcloud-styling/src/PointCloudObjectCollection.ts#L25)
+[packages/pointcloud-styling/src/PointCloudObjectCollection.ts:25](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/pointcloud-styling/src/PointCloudObjectCollection.ts#L25)

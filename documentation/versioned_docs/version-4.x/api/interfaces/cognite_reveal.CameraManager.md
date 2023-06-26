@@ -9,7 +9,7 @@ custom_edit_url: null
 
 Interface for manager responsible for all manipulations to the camera,
 including animations and modification of state. Implementations are responsible for
-providing a `THREE.PerspectiveCamera` instance to [Cognite3DViewer](../classes/cognite_reveal.Cognite3DViewer.md). Implementations
+providing a `THREE.PerspectiveCamera` instance to the viewer. Implementations
 must trigger the `cameraChange`-event when camera is changed.
 The default implementation is [DefaultCameraManager](../classes/cognite_reveal.DefaultCameraManager.md).
 
@@ -26,7 +26,7 @@ The default implementation is [DefaultCameraManager](../classes/cognite_reveal.D
 Set this manager as active and enable controls.
 
 Should update CameraManager.enabled to reflect the state of the manager.
-Note that this is called automatically when a new CameraManager is set on the [Cognite3DViewer](../classes/cognite_reveal.Cognite3DViewer.md).
+Note that this is called automatically when a new CameraManager is set on the viewer.
 
 #### Parameters
 
@@ -40,7 +40,7 @@ Note that this is called automatically when a new CameraManager is set on the [C
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:59](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/camera-manager/src/CameraManager.ts#L59)
+[packages/camera-manager/src/CameraManager.ts:61](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/camera-manager/src/CameraManager.ts#L61)
 
 ___
 
@@ -51,7 +51,7 @@ ___
 Deactivate this manager and disable controls.
 
 Should update CameraManager.enabled to reflect the state of the manager.
-Note that this is called automatically when a new CameraManager is set on the [Cognite3DViewer](../classes/cognite_reveal.Cognite3DViewer.md).
+Note that this is called automatically when a new CameraManager is set on the viewer.
 
 #### Returns
 
@@ -59,7 +59,7 @@ Note that this is called automatically when a new CameraManager is set on the [C
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:67](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/camera-manager/src/CameraManager.ts#L67)
+[packages/camera-manager/src/CameraManager.ts:69](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/camera-manager/src/CameraManager.ts#L69)
 
 ___
 
@@ -75,7 +75,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:107](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/camera-manager/src/CameraManager.ts#L107)
+[packages/camera-manager/src/CameraManager.ts:109](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/camera-manager/src/CameraManager.ts#L109)
 
 ___
 
@@ -99,7 +99,7 @@ Moves camera to a place where the content of a bounding box is visible to the ca
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:95](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/camera-manager/src/CameraManager.ts#L95)
+[packages/camera-manager/src/CameraManager.ts:97](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/camera-manager/src/CameraManager.ts#L97)
 
 ___
 
@@ -107,7 +107,7 @@ ___
 
 ▸ **getCamera**(): `PerspectiveCamera`
 
-Returns the camera used for rendering in [Cognite3DViewer](../classes/cognite_reveal.Cognite3DViewer.md).
+Returns the camera used for rendering the viewer.
 Note that the camera will not be modified directly by Reveal.
 Implementations must trigger the `cameraChange`-event whenever the
 camera changes.
@@ -118,7 +118,7 @@ camera changes.
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:27](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/camera-manager/src/CameraManager.ts#L27)
+[packages/camera-manager/src/CameraManager.ts:29](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/camera-manager/src/CameraManager.ts#L29)
 
 ___
 
@@ -136,7 +136,7 @@ Camera state: position, target and rotation.
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:50](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/camera-manager/src/CameraManager.ts#L50)
+[packages/camera-manager/src/CameraManager.ts:52](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/camera-manager/src/CameraManager.ts#L52)
 
 ___
 
@@ -159,7 +159,7 @@ Unsubscribes from changes of the camera event.
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:85](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/camera-manager/src/CameraManager.ts#L85)
+[packages/camera-manager/src/CameraManager.ts:87](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/camera-manager/src/CameraManager.ts#L87)
 
 ▸ **off**(`event`, `callback`): `void`
 
@@ -176,7 +176,7 @@ Unsubscribes from changes of the camera event.
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:86](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/camera-manager/src/CameraManager.ts#L86)
+[packages/camera-manager/src/CameraManager.ts:88](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/camera-manager/src/CameraManager.ts#L88)
 
 ▸ **off**(`event`, `callback`): `void`
 
@@ -193,7 +193,7 @@ Unsubscribes from changes of the camera event.
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:87](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/camera-manager/src/CameraManager.ts#L87)
+[packages/camera-manager/src/CameraManager.ts:89](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/camera-manager/src/CameraManager.ts#L89)
 
 ___
 
@@ -218,7 +218,7 @@ Subscribes to events on this camera manager. There are several event types:
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:76](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/camera-manager/src/CameraManager.ts#L76)
+[packages/camera-manager/src/CameraManager.ts:78](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/camera-manager/src/CameraManager.ts#L78)
 
 ▸ **on**(`event`, `callback`): `void`
 
@@ -235,7 +235,7 @@ Subscribes to events on this camera manager. There are several event types:
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:77](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/camera-manager/src/CameraManager.ts#L77)
+[packages/camera-manager/src/CameraManager.ts:79](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/camera-manager/src/CameraManager.ts#L79)
 
 ▸ **on**(`event`, `callback`): `void`
 
@@ -252,7 +252,7 @@ Subscribes to events on this camera manager. There are several event types:
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:78](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/camera-manager/src/CameraManager.ts#L78)
+[packages/camera-manager/src/CameraManager.ts:80](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/camera-manager/src/CameraManager.ts#L80)
 
 ___
 
@@ -284,7 +284,7 @@ cameraManager.setCameraState({ position, target });
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:44](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/camera-manager/src/CameraManager.ts#L44)
+[packages/camera-manager/src/CameraManager.ts:46](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/camera-manager/src/CameraManager.ts#L46)
 
 ___
 
@@ -309,4 +309,4 @@ Reveal performance affects frequency with which this method is called.
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:103](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/camera-manager/src/CameraManager.ts#L103)
+[packages/camera-manager/src/CameraManager.ts:105](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/camera-manager/src/CameraManager.ts#L105)

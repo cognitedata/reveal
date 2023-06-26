@@ -50,8 +50,12 @@ custom_edit_url: null
 - [CdfModelNodeCollectionDataProvider](../interfaces/cognite_reveal.CdfModelNodeCollectionDataProvider.md)
 - [Cognite3DViewerOptions](../interfaces/cognite_reveal.Cognite3DViewerOptions.md)
 - [Image360](../interfaces/cognite_reveal.Image360.md)
+- [Image360Annotation](../interfaces/cognite_reveal.Image360Annotation.md)
 - [Image360Collection](../interfaces/cognite_reveal.Image360Collection.md)
+- [Image360Revision](../interfaces/cognite_reveal.Image360Revision.md)
 - [Image360Visualization](../interfaces/cognite_reveal.Image360Visualization.md)
+- [Overlay3D](../interfaces/cognite_reveal.Overlay3D.md)
+- [OverlayCollection](../interfaces/cognite_reveal.OverlayCollection.md)
 
 ## Type Aliases
 
@@ -64,11 +68,11 @@ custom_edit_url: null
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `collectionTransform?` | `THREE.Matrix4` | An optional transformation which will be applied to all 360 images that are fetched. |
-| `preMultipliedRotation?` | `boolean` | Set this to false if the 360 images' rotation is not pre-multiplied to fit the given model. **`Default`** true |
+| `preMultipliedRotation?` | `boolean` | Set this to false if the 360 images' rotation is not pre-multiplied to fit the given model. **`Default`** ```ts true ``` |
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:190](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/types.ts#L190)
+[packages/api/src/public/migration/types.ts:203](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/api/src/public/migration/types.ts#L203)
 
 ___
 
@@ -97,7 +101,7 @@ Delegate for event triggered when scene is about to be rendered.
 
 #### Defined in
 
-[packages/utilities/src/events/types.ts:25](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/utilities/src/events/types.ts#L25)
+[packages/utilities/src/events/types.ts:25](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/utilities/src/events/types.ts#L25)
 
 ___
 
@@ -117,7 +121,7 @@ ___
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:202](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/types.ts#L202)
+[packages/api/src/public/migration/types.ts:215](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/api/src/public/migration/types.ts#L215)
 
 ___
 
@@ -136,7 +140,7 @@ Represents a measurement of how much geometry can be loaded.
 
 #### Defined in
 
-[packages/cad-geometry-loaders/src/CadModelBudget.ts:10](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/cad-geometry-loaders/src/CadModelBudget.ts#L10)
+[packages/cad-geometry-loaders/src/CadModelBudget.ts:10](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/cad-geometry-loaders/src/CadModelBudget.ts#L10)
 
 ___
 
@@ -161,7 +165,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/types.ts:85](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/camera-manager/src/types.ts#L85)
+[packages/camera-manager/src/types.ts:85](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/camera-manager/src/types.ts#L85)
 
 ___
 
@@ -180,7 +184,7 @@ Represents a camera configuration, consisting of a camera position and target.
 
 #### Defined in
 
-[packages/utilities/src/CameraConfiguration.ts:8](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/utilities/src/CameraConfiguration.ts#L8)
+[packages/utilities/src/CameraConfiguration.ts:8](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/utilities/src/CameraConfiguration.ts#L8)
 
 ___
 
@@ -197,7 +201,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/types.ts:5](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/camera-manager/src/types.ts#L5)
+[packages/camera-manager/src/types.ts:5](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/camera-manager/src/types.ts#L5)
 
 ___
 
@@ -209,7 +213,7 @@ Union type of all camera event delegates
 
 #### Defined in
 
-[packages/camera-manager/src/types.ts:96](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/camera-manager/src/types.ts#L96)
+[packages/camera-manager/src/types.ts:96](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/camera-manager/src/types.ts#L96)
 
 ___
 
@@ -221,7 +225,7 @@ Union type of the supported camera manager event types
 
 #### Defined in
 
-[packages/camera-manager/src/types.ts:123](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/camera-manager/src/types.ts#L123)
+[packages/camera-manager/src/types.ts:123](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/camera-manager/src/types.ts#L123)
 
 ___
 
@@ -239,7 +243,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/types.ts:66](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/camera-manager/src/types.ts#L66)
+[packages/camera-manager/src/types.ts:66](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/camera-manager/src/types.ts#L66)
 
 ___
 
@@ -257,7 +261,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/types.ts:91](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/camera-manager/src/types.ts#L91)
+[packages/camera-manager/src/types.ts:91](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/camera-manager/src/types.ts#L91)
 
 ___
 
@@ -276,7 +280,7 @@ ___
 
 #### Defined in
 
-[packages/api/src/utilities/ViewStateHelper.ts:28](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/utilities/ViewStateHelper.ts#L28)
+[packages/api/src/utilities/ViewStateHelper.ts:28](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/api/src/utilities/ViewStateHelper.ts#L28)
 
 ___
 
@@ -288,7 +292,7 @@ Type abstraction for CogniteCadModel or CognitePointCloudModel;.
 
 #### Defined in
 
-[packages/api/src/public/types.ts:11](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/types.ts#L11)
+[packages/api/src/public/types.ts:11](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/api/src/public/types.ts#L11)
 
 ___
 
@@ -339,7 +343,7 @@ Exposed options for Combo Controls
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:47](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/camera-manager/src/ComboControls.ts#L47)
+[packages/camera-manager/src/ComboControls.ts:47](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/camera-manager/src/ComboControls.ts#L47)
 
 ___
 
@@ -349,7 +353,27 @@ ___
 
 #### Defined in
 
-[packages/pointcloud-styling/src/PointCloudAppearance.ts:12](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/pointcloud-styling/src/PointCloudAppearance.ts#L12)
+[packages/pointcloud-styling/src/PointCloudAppearance.ts:12](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/pointcloud-styling/src/PointCloudAppearance.ts#L12)
+
+___
+
+### DefaultMetadataType
+
+Ƭ **DefaultMetadataType**: `Object`
+
+#### Index signature
+
+▪ [key: `string`]: `string` \| `undefined`
+
+#### Type declaration
+
+| Name | Type |
+| :------ | :------ |
+| `text?` | `string` |
+
+#### Defined in
+
+[packages/3d-overlays/src/OverlayCollection.ts:6](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/3d-overlays/src/OverlayCollection.ts#L6)
 
 ___
 
@@ -367,7 +391,7 @@ ___
 
 #### Defined in
 
-[packages/utilities/src/events/types.ts:20](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/utilities/src/events/types.ts#L20)
+[packages/utilities/src/events/types.ts:20](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/utilities/src/events/types.ts#L20)
 
 ___
 
@@ -386,7 +410,7 @@ Configuration parameters for Eye Dome Lighting (EDL) point cloud post-processing
 
 #### Defined in
 
-[packages/rendering/src/rendering/types.ts:22](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/rendering/src/rendering/types.ts#L22)
+[packages/rendering/src/rendering/types.ts:22](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/rendering/src/rendering/types.ts#L22)
 
 ___
 
@@ -403,17 +427,94 @@ ___
 
 #### Defined in
 
-[packages/cad-model/src/types.ts:21](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/cad-model/src/types.ts#L21)
+[packages/cad-model/src/types.ts:23](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/cad-model/src/types.ts#L23)
+
+___
+
+### Image360AnnotationAppearance
+
+Ƭ **Image360AnnotationAppearance**: `Object`
+
+The appearance of a 360 image annotation
+
+#### Type declaration
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `color?` | `Color` | The color of the annotation. Default: Random, based on annotation label |
+| `visible?` | `boolean` | Whether the annotation is visible. Default: true |
+
+#### Defined in
+
+[packages/360-images/src/annotation/types.ts:10](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/360-images/src/annotation/types.ts#L10)
+
+___
+
+### Image360AnnotationAssetFilter
+
+Ƭ **Image360AnnotationAssetFilter**: `Object`
+
+Filter for finding annotation related to asset
+
+#### Type declaration
+
+| Name | Type |
+| :------ | :------ |
+| `assetRef` | `IdEither` |
+
+#### Defined in
+
+[packages/360-images/src/collection/Image360Collection.ts:16](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/360-images/src/collection/Image360Collection.ts#L16)
+
+___
+
+### Image360AnnotationAssetQueryResult
+
+Ƭ **Image360AnnotationAssetQueryResult**: `Object`
+
+Result item from an asset annotation query
+
+#### Type declaration
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `annotation` | [`Image360Annotation`](../interfaces/cognite_reveal.Image360Annotation.md) | The found annotation |
+| `image` | [`Image360`](../interfaces/cognite_reveal.Image360.md) | The Image360 to which the result annotation belongs |
+| `revision` | [`Image360Revision`](../interfaces/cognite_reveal.Image360Revision.md) | The image revision to which the result annotation belongs |
+
+#### Defined in
+
+[packages/360-images/src/collection/Image360Collection.ts:23](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/360-images/src/collection/Image360Collection.ts#L23)
+
+___
+
+### Image360AnnotationIntersection
+
+Ƭ **Image360AnnotationIntersection**: `Object`
+
+Describes an intersection with a 360 image annotation
+
+#### Type declaration
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `annotation` | [`Image360Annotation`](../interfaces/cognite_reveal.Image360Annotation.md) | The intersected annotation |
+| `direction` | `Vector3` | The world direction from the camera to the intersection point |
+| `type` | ``"image360Annotation"`` | The intersection type. |
+
+#### Defined in
+
+[packages/360-images/src/annotation/Image360AnnotationIntersection.ts:11](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/360-images/src/annotation/Image360AnnotationIntersection.ts#L11)
 
 ___
 
 ### Image360EnteredDelegate
 
-Ƭ **Image360EnteredDelegate**: (`image360`: [`Image360`](../interfaces/cognite_reveal.Image360.md)) => `void`
+Ƭ **Image360EnteredDelegate**: (`image360`: [`Image360`](../interfaces/cognite_reveal.Image360.md), `revision`: [`Image360Revision`](../interfaces/cognite_reveal.Image360Revision.md)) => `void`
 
 #### Type declaration
 
-▸ (`image360`): `void`
+▸ (`image360`, `revision`): `void`
 
 Delegate for 360 image mode entered events.
 
@@ -422,6 +523,7 @@ Delegate for 360 image mode entered events.
 | Name | Type |
 | :------ | :------ |
 | `image360` | [`Image360`](../interfaces/cognite_reveal.Image360.md) |
+| `revision` | [`Image360Revision`](../interfaces/cognite_reveal.Image360Revision.md) |
 
 ##### Returns
 
@@ -429,7 +531,7 @@ Delegate for 360 image mode entered events.
 
 #### Defined in
 
-[packages/360-images/src/types.ts:10](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/360-images/src/types.ts#L10)
+[packages/360-images/src/types.ts:11](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/360-images/src/types.ts#L11)
 
 ___
 
@@ -449,7 +551,25 @@ Delegate for 360 image mode exited events.
 
 #### Defined in
 
-[packages/360-images/src/types.ts:15](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/360-images/src/types.ts#L15)
+[packages/360-images/src/types.ts:16](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/360-images/src/types.ts#L16)
+
+___
+
+### Image360Metadata
+
+Ƭ **Image360Metadata**: `Object`
+
+#### Type declaration
+
+| Name | Type |
+| :------ | :------ |
+| `collection` | `string` |
+| `date?` | `Date` |
+| `station` | `string` |
+
+#### Defined in
+
+[packages/360-images/src/entity/Image360.ts:8](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/360-images/src/entity/Image360.ts#L8)
 
 ___
 
@@ -459,7 +579,7 @@ ___
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:255](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/types.ts#L255)
+[packages/api/src/public/migration/types.ts:268](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/api/src/public/migration/types.ts#L268)
 
 ___
 
@@ -478,7 +598,7 @@ ___
 
 #### Defined in
 
-[packages/api/src/utilities/ViewStateHelper.ts:35](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/utilities/ViewStateHelper.ts#L35)
+[packages/api/src/utilities/ViewStateHelper.ts:35](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/api/src/utilities/ViewStateHelper.ts#L35)
 
 ___
 
@@ -505,7 +625,7 @@ Type for defining node appearance profiles to style a 3D CAD model.
 
 #### Defined in
 
-[packages/cad-styling/src/NodeAppearance.ts:22](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/cad-styling/src/NodeAppearance.ts#L22)
+[packages/cad-styling/src/NodeAppearance.ts:22](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/cad-styling/src/NodeAppearance.ts#L22)
 
 ___
 
@@ -522,7 +642,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollectionDeserializer.ts:22](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/cad-styling/src/NodeCollectionDeserializer.ts#L22)
+[packages/cad-styling/src/NodeCollectionDeserializer.ts:22](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/cad-styling/src/NodeCollectionDeserializer.ts#L22)
 
 ___
 
@@ -548,7 +668,31 @@ ___
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:24](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/types.ts#L24)
+[packages/api/src/public/migration/types.ts:27](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/api/src/public/migration/types.ts#L27)
+
+___
+
+### OverlayInfo
+
+Ƭ **OverlayInfo**<`MetadataType`\>: `Object`
+
+#### Type parameters
+
+| Name | Type |
+| :------ | :------ |
+| `MetadataType` | [`DefaultMetadataType`](cognite_reveal.md#defaultmetadatatype) |
+
+#### Type declaration
+
+| Name | Type |
+| :------ | :------ |
+| `color?` | `THREE.Color` |
+| `metadata?` | `MetadataType` |
+| `position` | `THREE.Vector3` |
+
+#### Defined in
+
+[packages/3d-overlays/src/OverlayCollection.ts:11](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/3d-overlays/src/OverlayCollection.ts#L11)
 
 ___
 
@@ -565,7 +709,7 @@ ___
 
 #### Defined in
 
-[packages/pointcloud-styling/src/PointCloudAppearance.ts:7](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/pointcloud-styling/src/PointCloudAppearance.ts#L7)
+[packages/pointcloud-styling/src/PointCloudAppearance.ts:7](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/pointcloud-styling/src/PointCloudAppearance.ts#L7)
 
 ___
 
@@ -584,7 +728,7 @@ loaded at the same time.
 
 #### Defined in
 
-[packages/pointclouds/src/PointCloudBudget.ts:10](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/pointclouds/src/PointCloudBudget.ts#L10)
+[packages/pointclouds/src/PointCloudBudget.ts:10](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/pointclouds/src/PointCloudBudget.ts#L10)
 
 ___
 
@@ -600,13 +744,13 @@ ___
 | `assetRef?` | `AnnotationsAssetRef` | Reference to the asset associated to the intersected point cloud object, if any. |
 | `distanceToCamera` | `number` | Distance from the camera to the intersection. |
 | `model` | [`CognitePointCloudModel`](../classes/cognite_reveal.CognitePointCloudModel.md) | The model that was intersected. |
-| `point` | `THREE.Vector3` | Tree index of the intersected 3D node. |
+| `point` | `THREE.Vector3` | Coordinate of the intersection. |
 | `pointIndex` | `number` | The index of the point that was intersected. |
 | `type` | ``"pointcloud"`` | The intersection type. |
 
 #### Defined in
 
-[packages/pointclouds/src/PointCloudIntersection.ts:7](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/pointclouds/src/PointCloudIntersection.ts#L7)
+[packages/pointclouds/src/PointCloudIntersection.ts:7](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/pointclouds/src/PointCloudIntersection.ts#L7)
 
 ___
 
@@ -621,13 +765,13 @@ Metadata for a single point cloud object
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `annotationId` | `number` | The CDF Annotation ID associated with the point cloud object. |
-| `assetId?` | `number` | The CDF Asset ID associated with the point cloud object, if any. **`Deprecated`** Use PointCloudObjectMetadata.assetRef instead. |
+| `assetId?` | `number` | The CDF Asset ID associated with the point cloud object, if any. **`Deprecated`** Use [assetRef](cognite_reveal.md#assetref) instead. |
 | `assetRef?` | `AnnotationsAssetRef` | Asset identifiers for asset associated with this point cloud object, if any. |
 | `boundingBox` | `Box3` | The bounding box of this annotation |
 
 #### Defined in
 
-[packages/data-providers/src/pointcloud-stylable-object-providers/types.ts:21](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/data-providers/src/pointcloud-stylable-object-providers/types.ts#L21)
+[packages/data-providers/src/pointcloud-stylable-object-providers/types.ts:21](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/data-providers/src/pointcloud-stylable-object-providers/types.ts#L21)
 
 ___
 
@@ -645,7 +789,7 @@ ___
 
 #### Defined in
 
-[packages/utilities/src/events/types.ts:15](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/utilities/src/events/types.ts#L15)
+[packages/utilities/src/events/types.ts:15](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/utilities/src/events/types.ts#L15)
 
 ___
 
@@ -669,7 +813,7 @@ ___
 
 #### Defined in
 
-[packages/utilities/src/events/types.ts:9](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/utilities/src/events/types.ts#L9)
+[packages/utilities/src/events/types.ts:9](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/utilities/src/events/types.ts#L9)
 
 ___
 
@@ -687,7 +831,25 @@ Options for [PropertyFilterNodeCollection](../classes/cognite_reveal.PropertyFil
 
 #### Defined in
 
-[packages/cad-styling/src/PropertyFilterNodeCollection.ts:17](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/cad-styling/src/PropertyFilterNodeCollection.ts#L17)
+[packages/cad-styling/src/PropertyFilterNodeCollection.ts:18](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/cad-styling/src/PropertyFilterNodeCollection.ts#L18)
+
+___
+
+### RenderParameters
+
+Ƭ **RenderParameters**: `Object`
+
+Some parameters of THREE.WebGLRenderer initialized with [Cognite3DViewer](../classes/cognite_reveal.Cognite3DViewer.md).
+
+#### Type declaration
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `renderSize` | `THREE.Vector2` | Current width and height of the renderer's output canvas, in pixels. |
+
+#### Defined in
+
+[packages/api/src/public/migration/types.ts:32](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/api/src/public/migration/types.ts#L32)
 
 ___
 
@@ -704,7 +866,7 @@ ___
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:231](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/types.ts#L231)
+[packages/api/src/public/migration/types.ts:244](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/api/src/public/migration/types.ts#L244)
 
 ___
 
@@ -732,7 +894,7 @@ ___
 
 #### Defined in
 
-[packages/utilities/src/events/types.ts:35](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/utilities/src/events/types.ts#L35)
+[packages/utilities/src/events/types.ts:35](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/utilities/src/events/types.ts#L35)
 
 ___
 
@@ -755,7 +917,7 @@ Type that represents a [NodeAppearance](cognite_reveal.md#nodeappearance) in a s
 
 #### Defined in
 
-[packages/cad-styling/src/NodeAppearance.ts:77](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/cad-styling/src/NodeAppearance.ts#L77)
+[packages/cad-styling/src/NodeAppearance.ts:77](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/cad-styling/src/NodeAppearance.ts#L77)
 
 ___
 
@@ -773,7 +935,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/SerializedNodeCollection.ts:4](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/cad-styling/src/SerializedNodeCollection.ts#L4)
+[packages/cad-styling/src/SerializedNodeCollection.ts:4](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/cad-styling/src/SerializedNodeCollection.ts#L4)
 
 ___
 
@@ -783,7 +945,7 @@ ___
 
 #### Defined in
 
-[packages/model-base/src/SupportedModelTypes.ts:4](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/model-base/src/SupportedModelTypes.ts#L4)
+[packages/model-base/src/SupportedModelTypes.ts:4](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/model-base/src/SupportedModelTypes.ts#L4)
 
 ___
 
@@ -809,7 +971,7 @@ ___
 
 #### Defined in
 
-[packages/api/src/utilities/ViewStateHelper.ts:19](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/utilities/ViewStateHelper.ts#L19)
+[packages/api/src/utilities/ViewStateHelper.ts:19](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/api/src/utilities/ViewStateHelper.ts#L19)
 
 ___
 
@@ -821,7 +983,7 @@ Units supported by [CogniteCadModel](../classes/cognite_reveal.CogniteCadModel.m
 
 #### Defined in
 
-[packages/cad-model/src/types.ts:8](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/cad-model/src/types.ts#L8)
+[packages/cad-model/src/types.ts:10](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/cad-model/src/types.ts#L10)
 
 ## Variables
 
@@ -833,7 +995,7 @@ List of supported event types (adapted from https://stackoverflow.com/questions/
 
 #### Defined in
 
-[packages/camera-manager/src/types.ts:118](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/camera-manager/src/types.ts#L118)
+[packages/camera-manager/src/types.ts:118](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/camera-manager/src/types.ts#L118)
 
 ___
 
@@ -842,13 +1004,11 @@ ___
 • `Const` **CDF\_TO\_VIEWER\_TRANSFORMATION**: `Matrix4` = `cadFromCdfToThreeMatrix`
 
 The transformation matrix from CDF coordinates to ThreeJS/Reveal.
-Note that this is already applied to [CogniteCadModel](../classes/cognite_reveal.CogniteCadModel.md) and [CognitePointCloudModel](../classes/cognite_reveal.CognitePointCloudModel.md)
-automatically, as it is factored into the matrix returned from e.g.
-the [getCdfToDefaultModelTransformation](../classes/cognite_reveal.CogniteCadModel.md#getcdftodefaultmodeltransformation) method.
+Note that this is already applied to Reveal models.
 
 #### Defined in
 
-[packages/utilities/src/constants.ts:16](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/utilities/src/constants.ts#L16)
+[packages/utilities/src/constants.ts:14](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/utilities/src/constants.ts#L14)
 
 ___
 
@@ -877,7 +1037,7 @@ A set of default node appearances used in Reveal.
 
 #### Defined in
 
-[packages/cad-styling/src/NodeAppearance.ts:142](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/cad-styling/src/NodeAppearance.ts#L142)
+[packages/cad-styling/src/NodeAppearance.ts:142](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/cad-styling/src/NodeAppearance.ts#L142)
 
 ___
 
@@ -887,7 +1047,7 @@ ___
 
 #### Defined in
 
-[packages/pointcloud-styling/src/PointCloudAppearance.ts:14](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/pointcloud-styling/src/PointCloudAppearance.ts#L14)
+[packages/pointcloud-styling/src/PointCloudAppearance.ts:14](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/pointcloud-styling/src/PointCloudAppearance.ts#L14)
 
 ___
 
@@ -897,7 +1057,7 @@ ___
 
 #### Defined in
 
-[packages/api/index.ts:11](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/index.ts#L11)
+[packages/api/index.ts:11](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/api/index.ts#L11)
 
 ## Functions
 
@@ -924,4 +1084,4 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollectionDeserializer.ts:156](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/cad-styling/src/NodeCollectionDeserializer.ts#L156)
+[packages/cad-styling/src/NodeCollectionDeserializer.ts:156](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/cad-styling/src/NodeCollectionDeserializer.ts#L156)
