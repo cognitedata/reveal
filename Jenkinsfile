@@ -19,6 +19,7 @@ static final String[] APPLICATIONS = [
   'cdf-document-search',
   'extraction-pipelines',
   'extractor-downloads',
+  'charts',
   'entity-matching',
 ]
 
@@ -51,6 +52,7 @@ static final Map<String, String> FIREBASE_APP_SITES = [
   'functions-ui': 'functions',
   'extraction-pipelines': 'extraction-pipelines',
   'extractor-downloads': 'extractor-downloads',
+  'charts': 'charts',
   'entity-matching': 'entity-matching',
 ]
 
@@ -71,6 +73,7 @@ static final Map<String, String> PREVIEW_PACKAGE_NAMES = [
   'cdf-document-search': '@cognite/cdf-document-search-ui',
   'extraction-pipelines': '@cognite/cdf-integrations-ui',
   'extractor-downloads': '@cognite/cdf-extractor-downloads',
+  'charts': '@cognite/cdf-charts-ui',
   'entity-matching': '@cognite/cdf-ui-entity-matching',
 ]
 
@@ -79,7 +82,8 @@ static final Map<String, String> PREVIEW_PACKAGE_NAMES = [
 static final Map<String, String> SENTRY_PROJECT_NAMES = [
   'platypus': "platypus",
   'data-exploration': "data-explorer",
-  'coding-conventions': "coding-conventions"
+  'coding-conventions': "coding-conventions",
+  'charts': 'cognite-charts'
 ]
 
 // Add apps/libs name to the list where you want the storybook preview to build.
@@ -142,6 +146,7 @@ static final Map<String, String> VERSIONING_STRATEGY = [
   'cdf-document-search': 'single-branch',
   'extraction-pipelines': 'single-branch',
   'extractor-downloads': 'single-branch',
+  'charts': 'multi-branch',
   'entity-matching': 'single-branch',
   'functions-ui' : 'single-branch',
 ]

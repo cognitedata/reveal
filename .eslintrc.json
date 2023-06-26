@@ -43,6 +43,7 @@
               "@platypus-core",
               "@cognite/platypus-cdf-cli",
               "@cognite/data-exploration",
+              "@charts-app",
               "@entity-matching-app",
               "@data-catalog-app"
             ],

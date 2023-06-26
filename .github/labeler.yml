@@ -49,3 +49,7 @@ extraction-pipelines:
 
 design-system:
   - libs/shared/user-profile-components/**/*
+
+charts:
+  - apps/charts/*
+  - apps/charts/**/*
