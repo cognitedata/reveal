@@ -1951,6 +1951,7 @@ __metadata:
     eslint: ^8.0.1
     eslint-config-prettier: ^8.8.0
     eslint-config-standard-with-typescript: latest
+    eslint-plugin-header: ^3.1.1
     eslint-plugin-import: ^2.25.2
     eslint-plugin-n: ^15.0.0
     eslint-plugin-prettier: ^4.2.1
@@ -7575,6 +7576,15 @@ __metadata:
   peerDependencies:
     eslint: ">=4.19.1"
   checksum: 26b87a216d3625612b1d3ca8653ac8a1d261046d2a973bb0eb2759070267d2bfb0509051facdeb5ae03dc8dfb51a434be23aff7309a752ca901d637da535677f
+  languageName: node
+  linkType: hard
+
+"eslint-plugin-header@npm:^3.1.1":
+  version: 3.1.1
+  resolution: "eslint-plugin-header@npm:3.1.1"
+  peerDependencies:
+    eslint: ">=7.7.0"
+  checksum: 2353e4ba011be81d5c27fbd79929e18dce118d7673a2f717b1ac5a0bceb33e06ec9a7c80a01dddc5804df75e2cc8eb475d268cd1abef5eab5088ede62e5ad246
   languageName: node
   linkType: hard
 

@@ -1,3 +1,6 @@
+/*!
+ * Copyright 2023 Cognite AS
+ */
 import type { Meta, StoryObj } from '@storybook/react';
 import { Image360HistoricalDetails } from '../src';
 import { It, Mock } from 'moq.ts';

@@ -1,3 +1,6 @@
+/*!
+ * Copyright 2023 Cognite AS
+ */
 import type { Meta, StoryObj } from '@storybook/react';
 import { CogniteCadModelContainer, RevealContainer } from '../src';
 import { CogniteClient } from '@cognite/sdk';

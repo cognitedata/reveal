@@ -1,3 +1,6 @@
+/*!
+ * Copyright 2023 Cognite AS
+ */
 import { type Cognite3DViewer } from '@cognite/reveal';
 import { createContext, useContext } from 'react';
 

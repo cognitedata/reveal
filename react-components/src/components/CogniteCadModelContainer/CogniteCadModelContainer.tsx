@@ -1,3 +1,6 @@
+/*!
+ * Copyright 2023 Cognite AS
+ */
 import { type ReactElement, useEffect, useRef } from 'react';
 import { type AddModelOptions, type CogniteCadModel } from '@cognite/reveal';
 import { useReveal } from '../RevealContainer/RevealContext';

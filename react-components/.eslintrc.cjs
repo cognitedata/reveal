@@ -14,7 +14,7 @@ module.exports = {
     sourceType: 'module',
     project: ['./tsconfig.json']
   },
-  plugins: ['react', 'prettier'],
+  plugins: ['react', 'prettier', 'header'],
   rules: {
     'react/react-in-jsx-scope': 'off'
   },
@@ -22,5 +22,22 @@ module.exports = {
     react: {
       version: 'detect'
     }
-  }
+  },
+  overrides: [
+    {
+      files: ['src/**/*.ts', 'src/**/*.tsx', 'stories/**/*.ts', 'stories/**/*.tsx'],
+      rules: {
+        'header/header': [
+          'error',
+          'block',
+          [
+            {
+              pattern: `(Copyright 20\\d{2}|istanbul ignore|Adapted from pnext/three-loader)`,
+              template: `!\n * Copyright ${new Date().getFullYear()} Cognite AS\n `
+            }
+          ]
+        ]
+      }
+    }
+  ]
 };

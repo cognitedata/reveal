@@ -44,6 +44,7 @@
     "eslint": "^8.0.1",
     "eslint-config-prettier": "^8.8.0",
     "eslint-config-standard-with-typescript": "latest",
+    "eslint-plugin-header": "^3.1.1",
     "eslint-plugin-import": "^2.25.2",
     "eslint-plugin-n": "^15.0.0",
     "eslint-plugin-prettier": "^4.2.1",

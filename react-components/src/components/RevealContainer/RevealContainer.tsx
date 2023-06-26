@@ -1,3 +1,6 @@
+/*!
+ * Copyright 2023 Cognite AS
+ */
 import { type CogniteClient } from '@cognite/sdk';
 import { useEffect, useRef, type ReactNode, useState, type ReactElement } from 'react';
 import { Cognite3DViewer } from '@cognite/reveal';
