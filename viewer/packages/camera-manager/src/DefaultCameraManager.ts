@@ -212,7 +212,8 @@ export class DefaultCameraManager implements CameraManager {
         ? CameraManagerHelper.calculateNewTargetFromRotation(
             this._camera,
             state.rotation,
-            this._controls.getState().target
+            this._controls.getState().target,
+            newPosition
           )
         : this._controls.getState().target);
 

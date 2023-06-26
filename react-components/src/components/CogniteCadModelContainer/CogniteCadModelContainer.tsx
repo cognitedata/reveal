@@ -25,17 +25,18 @@ export default function CogniteCadModelContainer({
     };
   }, [addModelOptions]);
 
-  if (modelRef.current !== undefined && transform !== undefined) {
+  useEffect(() => {
+    if (modelRef.current === undefined || transform === undefined) return;
     modelRef.current.setModelTransformation(transform);
-  }
+  }, [transform]);
+
   return <></>;
 
-  async function addModel(modelId: number, revisionId: number, transform?: Matrix4): Promise<void> {
+  async function addModel(modelId: number, revisionId: number, transform?: Matrix4) {
     const cadModel = await viewer.addCadModel({ modelId, revisionId });
     if (transform !== undefined) {
       cadModel.setModelTransformation(transform);
     }
-    viewer.fitCameraToModel(cadModel);
     modelRef.current = cadModel;
   }
 }

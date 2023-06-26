@@ -8,6 +8,8 @@ import { SsaoParameters } from '../rendering/types';
 import { RenderPass } from '../RenderPass';
 import { createFullScreenTriangleMesh, unitOrthographicCamera } from '../utilities/renderUtilities';
 
+import SeededRandom from 'random-seed';
+
 export class SSAOPass implements RenderPass {
   private readonly _fullScreenTriangle: THREE.Mesh;
   private readonly _ssaoShaderMaterial: THREE.RawShaderMaterial;
@@ -63,14 +65,15 @@ export class SSAOPass implements RenderPass {
   }
 
   private createKernel(kernelSize: number): THREE.Vector3[] {
+    const random = SeededRandom.create('some_seed');
     const result: THREE.Vector3[] = [];
     for (let i = 0; i < kernelSize; i++) {
       const sample = new THREE.Vector3(1, 1, 1);
       while (sample.length() > 1.0) {
         // Ensure some distance in samples
-        sample.x = Math.random() * 2 - 1;
-        sample.y = Math.random() * 2 - 1;
-        sample.z = Math.random();
+        sample.x = random.random() * 2 - 1;
+        sample.y = random.random() * 2 - 1;
+        sample.z = random.random();
       }
       sample.normalize();
       let scale = i / kernelSize;

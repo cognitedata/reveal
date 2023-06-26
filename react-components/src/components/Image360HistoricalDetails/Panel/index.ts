@@ -1,1 +1,1 @@
-export { Image360HistoricalPanel } from './Image360HistoricalPanel';
+export { Image360HistoricalPanel } from "./Image360HistoricalPanel";

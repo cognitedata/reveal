@@ -6,7 +6,7 @@ import { Detail, Flex } from '@cognite/cogs.js';
 import React, { forwardRef, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { Thumbnail } from '../utils/Thumbnail';
-import { type Cognite3DViewer, type Image360 } from '@cognite/reveal';
+import { Cognite3DViewer, Image360 } from '@cognite/reveal';
 // Using named import to avoid react component creation error when default import is used.
 import { uniqueId } from 'lodash';
 
@@ -40,16 +40,13 @@ export const Image360HistoricalSummary = forwardRef(
   ) => {
     const gridContainerRef = useRef<HTMLDivElement>(null);
 
-    const onRevisionChanged = async (
-      revisionDetails: Image360RevisionDetails,
-      index: number
-    ): Promise<void> => {
-      if (viewer != null && revisionDetails.image360Entity != null) {
+    const onRevisionChanged = (revisionDetails: Image360RevisionDetails, index: number) => {
+      if (viewer && revisionDetails.image360Entity) {
         setActiveRevision(index);
         const revisions = revisionDetails.image360Entity.getRevisions();
-        const revisionIndex = revisionDetails.index;
+        const revisionIndex = revisionDetails.index!;
         if (revisionIndex >= 0 && revisionIndex < revisions.length) {
-          await viewer.enter360Image(revisionDetails.image360Entity, revisions[revisionIndex]);
+          viewer.enter360Image(revisionDetails.image360Entity, revisions[revisionIndex]);
         }
       }
     };
@@ -58,15 +55,15 @@ export const Image360HistoricalSummary = forwardRef(
       return (ref as React.MutableRefObject<T>).current !== undefined;
     }
 
-    function onScroll(e: React.UIEvent<HTMLDivElement, UIEvent>): void {
+    function onScroll(e: React.UIEvent<HTMLDivElement, UIEvent>) {
       if (isMutableRefObject(ref)) {
         ref.current = e.currentTarget.scrollLeft;
       }
     }
 
     useEffect(() => {
-      if (gridContainerRef.current != null && isMutableRefObject(ref)) {
-        gridContainerRef.current.scrollLeft = ref.current;
+      if (gridContainerRef.current && isMutableRefObject(ref)) {
+        gridContainerRef.current.scrollLeft = ref.current!;
       }
     }, []);
 
@@ -82,9 +79,7 @@ export const Image360HistoricalSummary = forwardRef(
             {revisionCollection.map((revisionDetails, index) => (
               <RevisionItem
                 key={uniqueId()}
-                onClick={() => {
-                  void onRevisionChanged(revisionDetails, index);
-                }}>
+                onClick={onRevisionChanged.bind(null, revisionDetails, index)}>
                 <Thumbnail
                   key={index}
                   isActive={activeRevision === index}
@@ -100,8 +95,6 @@ export const Image360HistoricalSummary = forwardRef(
     );
   }
 );
-
-Image360HistoricalSummary.displayName = 'Image360HistoricalSummary';
 
 const StyledSubFlex = styled(Flex)`
   align-items: flex-start;
