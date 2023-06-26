@@ -1,7 +1,7 @@
 /* eslint-disable global-require */
 
 const mockIsProductionValueGetter = jest.fn();
-jest.mock('utils/environment', () => ({
+jest.mock('@charts-app/utils/environment', () => ({
   get isProduction() {
     return mockIsProductionValueGetter();
   },

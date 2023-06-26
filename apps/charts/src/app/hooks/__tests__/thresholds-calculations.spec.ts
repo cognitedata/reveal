@@ -18,8 +18,8 @@ const thresholdResultMockData = {
   error: null,
 };
 
-jest.mock('hooks/calculation-backend', () => ({
-  ...jest.requireActual('hooks/calculation-backend'),
+jest.mock('@charts-app/hooks/calculation-backend', () => ({
+  ...jest.requireActual('@charts-app/hooks/calculation-backend'),
   useCreateThreshold: () => () => {
     return {
       data: {
@@ -37,8 +37,8 @@ jest.mock('hooks/calculation-backend', () => ({
   },
 }));
 
-jest.mock('models/chart/atom', () => ({
-  ...jest.requireActual('models/chart/atom'),
+jest.mock('@charts-app/models/chart/atom', () => ({
+  ...jest.requireActual('@charts-app/models/chart/atom'),
   useChartAtom: () => {
     const id = '816711a7-25a3-48a3-a7e1-822e35a515sa';
     const chart: Chart = {
