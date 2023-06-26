@@ -6,7 +6,7 @@ import { useScheduledCalculationCreateMutate } from '@charts-app/domain/schedule
 import { useChartAtom } from '@charts-app/models/chart/atom';
 import { useOperations } from '@charts-app/models/operations/atom';
 
-import { ModalSize, ModalDefaultProps } from '@cognite/cogs.js';
+import { ModalDefaultProps } from '@cognite/cogs.js';
 
 import { useGetWorkflow } from '../../domain/chart/internal/queries/useGetWorkflow';
 import {

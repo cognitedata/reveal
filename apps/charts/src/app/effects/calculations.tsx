@@ -162,7 +162,7 @@ function CalculationEffects({ calculation }: { calculation: ChartWorkflowV2 }) {
     enabled,
   ]);
 
-  const currentCallStatus = useCalculationStatus(call?.callId!, {
+  const currentCallStatus = useCalculationStatus(call?.callId, {
     refetchInterval,
   });
 

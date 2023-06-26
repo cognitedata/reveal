@@ -1,10 +1,10 @@
+import { enGB, enUS, ja, nb } from 'date-fns/locale';
 import dayjs from 'dayjs';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
 import 'dayjs/locale/en';
 import 'dayjs/locale/en-gb';
 import 'dayjs/locale/nb';
 import 'dayjs/locale/ja';
-import { enGB, enUS, ja, nb } from 'date-fns/locale';
 
 import i18n from './i18n';
 

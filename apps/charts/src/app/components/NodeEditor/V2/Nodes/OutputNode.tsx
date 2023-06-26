@@ -13,7 +13,7 @@ import {
 } from './elements';
 import NodeHandle from './NodeHandle';
 
-export type OutputNodeDataDehydrated = {};
+export type OutputNodeDataDehydrated = object;
 
 export type OutputNodeCallbacks = {
   onOutputNameChange: (newName: string) => void;

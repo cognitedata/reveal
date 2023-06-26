@@ -49,7 +49,9 @@ function AppBarCommonActions({
                 href={config.cogniteHubGroupUrl}
                 style={{
                   color: 'var(--cogs-text-color)',
-                }} // @ts-ignore Cogs does not have the correct typing for this element
+                }}
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore Cogs does not have the correct typing for this element
                 target="_blank"
               >
                 {t['Charts group on Cognite Hub']}
@@ -58,7 +60,9 @@ function AppBarCommonActions({
                 href={config.privacyPolicyUrl}
                 style={{
                   color: 'var(--cogs-text-color)',
-                }} // @ts-ignore Cogs does not have the correct typing for this element
+                }}
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore Cogs does not have the correct typing for this element
                 target="_blank"
               >
                 {t['Privacy policy']}

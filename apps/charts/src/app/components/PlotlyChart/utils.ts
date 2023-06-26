@@ -12,6 +12,7 @@ import { ScheduledCalculationsDataMap } from '@charts-app/models/scheduled-calcu
 import { TimeseriesEntry } from '@charts-app/models/timeseries-results/types';
 import { DEFAULT_EVENT_COLOR, hexToRGBA } from '@charts-app/utils/colors';
 import { roundToSignificantDigits } from '@charts-app/utils/numbers';
+import { isThresholdValid } from '@charts-app/utils/threshold';
 import {
   convertUnits,
   convertThresholdUnits,
@@ -19,7 +20,6 @@ import {
 } from '@charts-app/utils/units';
 import dayjs from 'dayjs';
 import groupBy from 'lodash/groupBy';
-import { isThresholdValid } from '@charts-app/utils/threshold';
 
 import {
   CogniteEvent,

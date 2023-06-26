@@ -120,9 +120,11 @@ export const ScheduledCalculationRow = ({
 
   const handleRemoveSource = async (shouldDeleteTimeseries: boolean) => {
     try {
-      await deleteScheduledCalculation([
-        { externalId: scheduledCalculationResult?.externalId! },
-      ]);
+      if (scheduledCalculationResult?.externalId) {
+        await deleteScheduledCalculation([
+          { externalId: scheduledCalculationResult?.externalId },
+        ]);
+      }
       if (
         shouldDeleteTimeseries &&
         scheduledCalculationResult?.targetTimeseriesExternalId
@@ -266,7 +268,9 @@ export const ScheduledCalculationRow = ({
             />
             {deleteModalOpen && (
               <ScheduledCalculationDeleteModal
-                name={scheduledCalculationResult?.name!}
+                name={
+                  scheduledCalculationResult?.name || scheduledCalculation.name
+                }
                 onOk={handleRemoveSource}
                 onCancel={() => setDeleteModalOpen(false)}
               />

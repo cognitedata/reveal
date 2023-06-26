@@ -37,6 +37,8 @@ export const UnitSelector = ({
     <Select<string>
       placeholder="Select or Create custom unit"
       onInputChange={setInput}
+      // todo(DEGR-2397) check if this is working in new select
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore No idea why is it not accepting a React Element
       menuHeader={
         <Button type="primary" onClick={handleCreateCustomUnitClick}>

@@ -32,7 +32,6 @@ export const useExtractedAnnotations = (
           .then((url) => fetch(url))
           .then((response) => response.text())
           .then((svgString) => {
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
             const { svg, annotations } =
               getDecomposedContextualizedSvg(svgString);
             setExtractedAnnotations(annotations);

@@ -85,7 +85,6 @@ export const MonitoringSidebar = memo(
       <Sidebar visible>
         <TopContainer>
           <TopContainerTitle>
-            {/* @ts-ignore */}
             <Icon size={21} type="Alarm" />
             {t.Monitoring}
           </TopContainerTitle>

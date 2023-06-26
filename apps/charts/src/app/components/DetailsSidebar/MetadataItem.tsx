@@ -64,7 +64,9 @@ export const DataSetItem = ({
 }) => {
   const { data: dataSet } = useCdfItem<DataSet>(
     'datasets',
-    { id: timeseries?.dataSetId! },
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore will not be undefined as this query is enabled only when timeseries?.dataSetId is Finite Number
+    { id: timeseries?.dataSetId },
     {
       enabled: Number.isFinite(timeseries?.dataSetId),
     }
@@ -92,7 +94,9 @@ export const LinkedAssetItem = ({
 }) => {
   const { data: asset } = useCdfItem<Asset>(
     'assets',
-    { id: timeseries?.assetId! },
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore will not be undefined as this query is enabled only when timeseries?.assetId is Finite Number
+    { id: timeseries?.assetId },
     {
       enabled: Number.isFinite(timeseries?.assetId),
     }

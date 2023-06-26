@@ -1,10 +1,9 @@
 import { useEffect } from 'react';
 
-import { useScheduledCalculationData } from '@charts-app/models/scheduled-calculation-results/atom';
 import { useScheduledCalculationTasks } from '@charts-app/domain/scheduled-calculation/service/queries/useScheduledCalculationTasks';
-import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { CalculationTaskSchedule } from '@charts-app/domain/scheduled-calculation/service/types';
 import { useChartAtom } from '@charts-app/models/chart/atom';
+import { useScheduledCalculationData } from '@charts-app/models/scheduled-calculation-results/atom';
 import { fetchRawOrAggregatedDatapoints } from '@charts-app/services/cdf-api';
 import { CHART_POINTS_PER_SERIES } from '@charts-app/utils/constants';
 import { calculateGranularity } from '@charts-app/utils/timeseries';
@@ -15,6 +14,7 @@ import { useDebounce } from 'use-debounce';
 
 import { DatapointsMultiQuery, Timeseries } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
+import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 
 export const ScheduledCalculationCollectionEffects = () => {
   const [chart] = useChartAtom();

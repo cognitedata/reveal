@@ -1,4 +1,4 @@
-/* eslint-disable global-require */
+/* eslint-disable @typescript-eslint/no-var-requires */
 
 const mockIsProductionValueGetter = jest.fn();
 jest.mock('@charts-app/utils/environment', () => ({

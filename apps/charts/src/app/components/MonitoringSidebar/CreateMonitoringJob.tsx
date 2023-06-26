@@ -101,7 +101,6 @@ const CreateMonitoringJob = ({ translations, onCancel }: Props) => {
   }
   const userAuthId = userInfo.data?.id;
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
   const onBack = (data: CreateMonitoringJobFormData) => {
     // Save the data from the corresponding step when the user goes back
     setSteppedFormValues(data);
@@ -165,9 +164,6 @@ const CreateMonitoringJob = ({ translations, onCancel }: Props) => {
       alertThreshold,
       minimumDuration,
     } = steppedFormValues;
-    // @ts-ignore
-    const scheduleCalc = Number(schedule.value);
-
     const activationInterval = `${minimumDuration}m`;
 
     if (
@@ -180,7 +176,7 @@ const CreateMonitoringJob = ({ translations, onCancel }: Props) => {
       const dataToSend: CreateMonitoringJobPayload = {
         monitoringTaskName: transformName(name),
         FolderId: folder.value,
-        evaluateEvery: scheduleCalc,
+        evaluateEvery: Number(schedule?.value),
         modelExternalId: alertThresholdType?.value,
         activationInterval,
         nonce: createdNonce,

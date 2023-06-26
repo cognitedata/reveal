@@ -97,7 +97,8 @@ const TopBarWrapper = () => {
                     <Menu.Item
                       href={config.cogniteHubGroupUrl}
                       style={{ color: 'var(--cogs-text-color)' }}
-                      // @ts-ignore
+                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                      // @ts-ignore Cogs doesn't have correct type
                       target="_blank"
                     >
                       {t['Early Adopter Group on Cognite Hub']}
@@ -105,7 +106,8 @@ const TopBarWrapper = () => {
                     <Menu.Item
                       href={config.privacyPolicyUrl}
                       style={{ color: 'var(--cogs-text-color)' }}
-                      // @ts-ignore
+                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                      // @ts-ignore Cogs doesn't have correct type
                       target="_blank"
                     >
                       {t['Privacy policy']}

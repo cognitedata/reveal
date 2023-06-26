@@ -12,7 +12,7 @@ import {
 } from '@charts-app/utils/date';
 import Layers from '@charts-app/utils/z-index';
 
-import { Body, Flex, Collapse, Button, Icon, Title } from '@cognite/cogs.js';
+import { Body, Flex, Collapse, Button } from '@cognite/cogs.js';
 
 import { useScheduledCalculationDataValue } from '../../../models/scheduled-calculation-results/atom';
 
@@ -115,6 +115,7 @@ export const ScheduledCalculationSummary = ({
           visible
           onCancel={() => setIsDescriptionModalOpen(false)}
           hideFooter
+          // todo(DEGR-2397)
           // footer={
           //   <Button
           //     type="ghost"

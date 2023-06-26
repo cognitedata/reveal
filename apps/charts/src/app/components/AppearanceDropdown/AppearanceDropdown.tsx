@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars-experimental */
 import { Interpolation, LineStyle } from '@charts-app/models/chart/types';
 import { trackUsage } from '@charts-app/services/metrics';
 import { availableColors } from '@charts-app/utils/colors';

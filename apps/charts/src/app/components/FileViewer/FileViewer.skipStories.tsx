@@ -6,7 +6,6 @@ import { Meta, Story } from '@storybook/react';
 
 import { CogniteClient, FileInfo as File } from '@cognite/sdk';
 
-// @ts-ignore
 import pdfFileUrl from './pdf/example.pdf';
 import dataExplorationDecorator from './utils/dataExplorationDecorator';
 

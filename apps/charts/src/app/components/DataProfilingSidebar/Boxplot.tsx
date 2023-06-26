@@ -1,4 +1,7 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
+// Need a lot of fixes for data props & layout props for fixing ts-nocheck
+
 /**
  * Data Profiling Boxplot
  */

@@ -12,16 +12,17 @@ export const useFileUrl = (
   const sdk = useSDK();
   const { id: fileId } = file || {};
 
-  if (!fileId) {
-    return { fileUrl: undefined };
-  }
-
   const { data } = useQuery(
     [...baseCacheKey('files'), 'downloadLink', fileId],
     () =>
+      // @ts-ignore query is enabled only when fileId is present
       sdk.files.getDownloadUrls([{ id: fileId }]).then((results) => results[0]),
-    { refetchInterval: FILE_URL_REFETCH_INTERVAL, enabled: !!fileId }
+    { refetchInterval: FILE_URL_REFETCH_INTERVAL, enabled: Boolean(fileId) }
   );
+
+  if (!fileId) {
+    return { fileUrl: undefined };
+  }
 
   return { fileUrl: data?.downloadUrl };
 };

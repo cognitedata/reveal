@@ -67,10 +67,7 @@ export const CalculationPreview = memo(({ workflowId, period }: Props) => {
     return (
       <PreviewStatus $variant="danger">
         <Icon type="ErrorFilled" />
-        {
-          // @ts-ignore
-          error?.message
-        }
+        {(error as unknown as { message?: string })?.message}
       </PreviewStatus>
     );
 

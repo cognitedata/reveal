@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars-experimental */
-
 import { ChartTimeSeries, ChartWorkflow } from '@charts-app/models/chart/types';
 import {
   fetchCalculationQueriesResult,

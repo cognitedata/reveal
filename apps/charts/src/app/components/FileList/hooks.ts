@@ -31,7 +31,7 @@ export const useFilesAssetAppearsIn = (
              * NOTE: assetExternalIds is not supported by the SDK client,
              * but is supported by the api (for some reason).
              */
-            assetExternalIds: [asset?.externalId!],
+            assetExternalIds: [asset?.externalId],
             mimeType: 'image/svg+xml',
           } as any,
         });
@@ -48,7 +48,7 @@ export const useFilesAssetAppearsIn = (
              * NOTE: assetExternalIds is not supported by the SDK client,
              * but is supported by the api (for some reason).
              */
-            assetExternalIds: [asset?.externalId!],
+            assetExternalIds: [asset?.externalId],
             mimeType: 'application/pdf',
           } as any,
         });

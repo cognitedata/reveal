@@ -1,7 +1,7 @@
 import { useTranslations } from '@charts-app/hooks/translations';
 import { makeDefaultTranslations } from '@charts-app/utils/translations';
 
-import { Flex, Button, Body } from '@cognite/cogs.js';
+import { Flex, Body } from '@cognite/cogs.js';
 
 import { StyledModal, StyledUl } from './elements';
 

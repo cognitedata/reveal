@@ -1,4 +1,4 @@
-import { FC, PropsWithChildren } from 'react';
+import { FC } from 'react';
 import { Controller, Control, RegisterOptions } from 'react-hook-form';
 
 import { UnitSelector } from '@charts-app/components/UnitDropdown/UnitSelector';
@@ -59,7 +59,7 @@ const FieldLabel = ({
   return <FieldTitle>{title}</FieldTitle>;
 };
 
-export const FormInputWithController: FC<PropsWithChildren<Props>> = ({
+export const FormInputWithController: FC<Props> = ({
   control,
   name,
   type,
@@ -76,7 +76,6 @@ export const FormInputWithController: FC<PropsWithChildren<Props>> = ({
   info,
   radioValue,
   autoFocus,
-  children,
   label,
 }) => (
   <>

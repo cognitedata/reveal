@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+// todo(DEGR-2397)
 import { useState } from 'react';
 import { Trans } from 'react-i18next';
 
