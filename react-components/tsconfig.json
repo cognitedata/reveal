@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     "target": "ES6",
-    "baseUrl": "./src",
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "skipLibCheck": false,
@@ -15,5 +14,5 @@
     "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true
   },
-  "include": ["src/*"]
+  "include": ["src/*", "stories/*"]
 }

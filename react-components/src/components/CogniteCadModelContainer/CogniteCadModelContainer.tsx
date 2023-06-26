@@ -32,7 +32,7 @@ export default function CogniteCadModelContainer({
 
   return <></>;
 
-  async function addModel(modelId: number, revisionId: number, transform?: Matrix4) {
+  async function addModel(modelId: number, revisionId: number, transform?: Matrix4): Promise<void> {
     const cadModel = await viewer.addCadModel({ modelId, revisionId });
     if (transform !== undefined) {
       cadModel.setModelTransformation(transform);

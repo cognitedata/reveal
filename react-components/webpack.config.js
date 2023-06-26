@@ -22,7 +22,10 @@ export default (_, argv) => {
         {
           test: /\.tsx?$/,
           loader: 'ts-loader',
-          exclude: /node_modules/
+          exclude: /node_modules/,
+          options: {
+            onlyCompileBundledFiles: true
+          }
         },
         {
           test: /\.css$/i,
