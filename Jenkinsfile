@@ -147,6 +147,7 @@ static final Map<String, String> VERSIONING_STRATEGY = [
   'extractor-downloads': 'single-branch',
   'charts': 'multi-branch',
   'entity-matching': 'single-branch',
+  'functions-ui' : 'single-branch',
 ]
 
 // The config of which apps have i18n strings that need to be synced to and pulled from locize.io
