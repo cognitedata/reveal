@@ -1,6 +1,6 @@
 import { setupServer } from 'msw/node';
-import { renderHookWithWrapper } from 'tests/testUtils';
 
+import { renderHookWithWrapper } from '../../../../tests/testUtils';
 import { getMockCapabilities } from '../__mocks/getMockCapabilities';
 import { useCapabilities, useExperimentalCapabilitiesCheck } from '../queries';
 
