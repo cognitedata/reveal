@@ -22,6 +22,22 @@ export default function RevealContainer({
   const revealDomElementRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    initializeViewer();
+    return disposeViewer;
+  }, []);
+
+  return <div ref={revealDomElementRef}>{mountChildren()}</div>;
+
+  function mountChildren(): ReactElement {
+    if (viewer === undefined) return <></>;
+    return (
+      <>
+        <RevealContext.Provider value={viewer}>{children}</RevealContext.Provider>
+      </>
+    );
+  }
+
+  function initializeViewer(): void {
     const domElement = revealDomElementRef.current;
     if (domElement === null) {
       throw new Error('Failure in mounting RevealContainer to DOM.');
@@ -29,20 +45,11 @@ export default function RevealContainer({
     const viewer = new Cognite3DViewer({ sdk, domElement });
     viewer.setBackgroundColor({ color, alpha: 1 });
     setViewer(viewer);
-    return () => {
-      viewer.dispose();
-      setViewer(undefined);
-    };
-  }, []);
+  }
 
-  const mountChildren = (viewer: Cognite3DViewer | undefined): ReactElement => {
-    if (viewer === undefined) return <></>;
-    return (
-      <>
-        <RevealContext.Provider value={viewer}>{children}</RevealContext.Provider>
-      </>
-    );
-  };
-
-  return <div ref={revealDomElementRef}>{mountChildren(viewer)}</div>;
+  function disposeViewer(): void {
+    if (viewer === undefined) return;
+    viewer.dispose();
+    setViewer(undefined);
+  }
 }

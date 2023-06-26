@@ -21,11 +21,7 @@ export default function CogniteCadModelContainer({
 
   useEffect(() => {
     addModel(modelId, revisionId, transform).catch(console.error);
-    return () => {
-      if (modelRef.current === undefined || !viewer.models.includes(modelRef.current)) return;
-      viewer.removeModel(modelRef.current);
-      modelRef.current = undefined;
-    };
+    return removeModel;
   }, [addModelOptions]);
 
   useEffect(() => {
@@ -41,5 +37,11 @@ export default function CogniteCadModelContainer({
       cadModel.setModelTransformation(transform);
     }
     modelRef.current = cadModel;
+  }
+
+  function removeModel(): void {
+    if (modelRef.current === undefined || !viewer.models.includes(modelRef.current)) return;
+    viewer.removeModel(modelRef.current);
+    modelRef.current = undefined;
   }
 }
