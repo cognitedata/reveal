@@ -41,8 +41,7 @@
             "input": ".",
             "output": "."
           }
-        ],
-        "babelUpwardRootMode": true
+        ]
       }
     },
     "test": {

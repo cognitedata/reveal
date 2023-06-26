@@ -1,7 +1,7 @@
-import { renderComponent } from '@data-exploration/components';
 import { fireEvent, screen } from '@testing-library/react';
 
 import {
+  renderComponent,
   COMMON_COLUMN_HEADER,
   getMockSearchConfig,
   searchConfigCommonColumns,

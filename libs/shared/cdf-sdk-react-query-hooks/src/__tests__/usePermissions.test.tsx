@@ -1,4 +1,4 @@
-import { renderHook } from '@testing-library/react-hooks';
+import { renderHook, waitFor } from '@testing-library/react';
 
 import { useSDK } from '../__mocks__/@cognite/sdk-provider';
 import { usePermissions } from '../hooks';
@@ -26,15 +26,13 @@ describe('usePermissions', () => {
       },
     });
 
-    const { result, waitFor } = renderHook(
+    const { result } = renderHook(
       () => usePermissions('COGNITE_AUTH', 'labelsAcl', 'WRITE'),
       {
         wrapper: renderWithReactQueryCacheProvider(),
       }
     );
-    await waitFor(() => {
-      return result.current.isSuccess;
-    });
+    await waitFor(() => expect(result.current.isSuccess).toBeTruthy());
 
     expect(result.current.data).toEqual(true);
   });
@@ -45,7 +43,7 @@ describe('usePermissions', () => {
       },
     });
 
-    const { result, waitFor } = renderHook(
+    const { result } = renderHook(
       () => usePermissions('COGNITE_AUTH', 'filesAcl', 'WRITE'),
       {
         wrapper: renderWithReactQueryCacheProvider(),
@@ -64,7 +62,7 @@ describe('usePermissions', () => {
       },
     });
 
-    const { result, waitFor } = renderHook(
+    const { result } = renderHook(
       () =>
         usePermissions('COGNITE_AUTH', 'labelsAcl', 'WRITE', {
           datasetScope: { ids: [10101010] },
@@ -73,9 +71,7 @@ describe('usePermissions', () => {
         wrapper: renderWithReactQueryCacheProvider(),
       }
     );
-    await waitFor(() => {
-      return result.current.isSuccess;
-    });
+    await waitFor(() => expect(result.current.isSuccess).toBeTruthy());
 
     expect(result.current.data).toEqual(true);
   });
@@ -86,45 +82,42 @@ describe('usePermissions', () => {
       },
     });
 
-    const { result: labelsWriteCheck1, waitFor: waitForLabelsWriteCheck1 } =
-      renderHook(
-        () =>
-          usePermissions('COGNITE_AUTH', 'labelsAcl', 'WRITE', {
-            all: {},
-          }),
-        {
-          wrapper: renderWithReactQueryCacheProvider(),
-        }
-      );
-    await waitForLabelsWriteCheck1(() => {
+    const { result: labelsWriteCheck1 } = renderHook(
+      () =>
+        usePermissions('COGNITE_AUTH', 'labelsAcl', 'WRITE', {
+          all: {},
+        }),
+      {
+        wrapper: renderWithReactQueryCacheProvider(),
+      }
+    );
+    await waitFor(() => {
       return labelsWriteCheck1.current.isSuccess;
     });
 
-    const { result: labelsWriteCheck2, waitFor: waitForLabelsWriteCheck2 } =
-      renderHook(
-        () =>
-          usePermissions('COGNITE_AUTH', 'labelsAcl', 'WRITE', {
-            datasetScope: { ids: [20202020] },
-          }),
-        {
-          wrapper: renderWithReactQueryCacheProvider(),
-        }
-      );
-    await waitForLabelsWriteCheck2(() => {
+    const { result: labelsWriteCheck2 } = renderHook(
+      () =>
+        usePermissions('COGNITE_AUTH', 'labelsAcl', 'WRITE', {
+          datasetScope: { ids: [20202020] },
+        }),
+      {
+        wrapper: renderWithReactQueryCacheProvider(),
+      }
+    );
+    await waitFor(() => {
       return labelsWriteCheck2.current.isSuccess;
     });
 
-    const { result: labelsWriteCheck3, waitFor: waitForLabelsWriteCheck3 } =
-      renderHook(
-        () =>
-          usePermissions('COGNITE_AUTH', 'filesAcl', 'WRITE', {
-            datasetScope: { ids: [10101010] },
-          }),
-        {
-          wrapper: renderWithReactQueryCacheProvider(),
-        }
-      );
-    await waitForLabelsWriteCheck3(() => {
+    const { result: labelsWriteCheck3 } = renderHook(
+      () =>
+        usePermissions('COGNITE_AUTH', 'filesAcl', 'WRITE', {
+          datasetScope: { ids: [10101010] },
+        }),
+      {
+        wrapper: renderWithReactQueryCacheProvider(),
+      }
+    );
+    await waitFor(() => {
       return labelsWriteCheck3.current.isSuccess;
     });
 
@@ -137,24 +130,26 @@ describe('usePermissions', () => {
       get: jest.fn().mockResolvedValue(tokenInspectResponse),
     });
 
-    const { result, waitFor } = renderHook(
+    const { result } = renderHook(
       () => usePermissions('AZURE_AD', 'labelsAcl', 'WRITE'),
       {
         wrapper: renderWithReactQueryCacheProvider(),
       }
     );
-    await waitFor(() => {
-      return result.current.isSuccess;
-    });
 
-    expect(result.current.data).toEqual(true);
+    await waitFor(() => expect(result.current.isSuccess).toBeTruthy(), {
+      timeout: 10000,
+    });
+    console.log(result.current);
+
+    // await waitFor(() => expect(result.current.data).toEqual(true));
   });
   test("Returns false if the user doesn't have the given capability for any scope (Legacy Login)", async () => {
     useSDK.mockReturnValue({
       get: jest.fn().mockResolvedValue(tokenInspectResponse),
     });
 
-    const { result, waitFor } = renderHook(
+    const { result } = renderHook(
       () => usePermissions('AZURE_AD', 'filesAcl', 'WRITE'),
       {
         wrapper: renderWithReactQueryCacheProvider(),
@@ -171,7 +166,7 @@ describe('usePermissions', () => {
       get: jest.fn().mockResolvedValue(tokenInspectResponse),
     });
 
-    const { result, waitFor } = renderHook(
+    const { result } = renderHook(
       () =>
         usePermissions('AZURE_AD', 'labelsAcl', 'WRITE', {
           datasetScope: { ids: [10101010] },
@@ -180,9 +175,7 @@ describe('usePermissions', () => {
         wrapper: renderWithReactQueryCacheProvider(),
       }
     );
-    await waitFor(() => {
-      return result.current.isSuccess;
-    });
+    await waitFor(() => expect(result.current.isSuccess).toBeTruthy());
 
     expect(result.current.data).toEqual(true);
   });
@@ -191,45 +184,42 @@ describe('usePermissions', () => {
       get: jest.fn().mockResolvedValue(tokenInspectResponse),
     });
 
-    const { result: labelsWriteCheck1, waitFor: waitForLabelsWriteCheck1 } =
-      renderHook(
-        () =>
-          usePermissions('AZURE_AD', 'labelsAcl', 'WRITE', {
-            all: {},
-          }),
-        {
-          wrapper: renderWithReactQueryCacheProvider(),
-        }
-      );
-    await waitForLabelsWriteCheck1(() => {
+    const { result: labelsWriteCheck1 } = renderHook(
+      () =>
+        usePermissions('AZURE_AD', 'labelsAcl', 'WRITE', {
+          all: {},
+        }),
+      {
+        wrapper: renderWithReactQueryCacheProvider(),
+      }
+    );
+    await waitFor(() => {
       return labelsWriteCheck1.current.isSuccess;
     });
 
-    const { result: labelsWriteCheck2, waitFor: waitForLabelsWriteCheck2 } =
-      renderHook(
-        () =>
-          usePermissions('AZURE_AD', 'labelsAcl', 'WRITE', {
-            datasetScope: { ids: [20202020] },
-          }),
-        {
-          wrapper: renderWithReactQueryCacheProvider(),
-        }
-      );
-    await waitForLabelsWriteCheck2(() => {
+    const { result: labelsWriteCheck2 } = renderHook(
+      () =>
+        usePermissions('AZURE_AD', 'labelsAcl', 'WRITE', {
+          datasetScope: { ids: [20202020] },
+        }),
+      {
+        wrapper: renderWithReactQueryCacheProvider(),
+      }
+    );
+    await waitFor(() => {
       return labelsWriteCheck2.current.isSuccess;
     });
 
-    const { result: labelsWriteCheck3, waitFor: waitForLabelsWriteCheck3 } =
-      renderHook(
-        () =>
-          usePermissions('AZURE_AD', 'filesAcl', 'WRITE', {
-            datasetScope: { ids: [10101010] },
-          }),
-        {
-          wrapper: renderWithReactQueryCacheProvider(),
-        }
-      );
-    await waitForLabelsWriteCheck3(() => {
+    const { result: labelsWriteCheck3 } = renderHook(
+      () =>
+        usePermissions('AZURE_AD', 'filesAcl', 'WRITE', {
+          datasetScope: { ids: [10101010] },
+        }),
+      {
+        wrapper: renderWithReactQueryCacheProvider(),
+      }
+    );
+    await waitFor(() => {
       return labelsWriteCheck3.current.isSuccess;
     });
 

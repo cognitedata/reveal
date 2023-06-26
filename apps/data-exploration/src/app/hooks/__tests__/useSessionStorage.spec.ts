@@ -1,6 +1,6 @@
-import { renderHook, act } from '@testing-library/react-hooks';
+import { renderHook, act } from '@testing-library/react';
 
-import { useSessionStorage } from '../storage/useSessionStorage';
+import { useSessionStorage } from '../storage';
 
 const TEST_KEY = 'key';
 const TEST_VALUE = { test: 'test' };

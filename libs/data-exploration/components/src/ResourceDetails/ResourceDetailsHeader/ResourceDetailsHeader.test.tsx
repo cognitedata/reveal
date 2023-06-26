@@ -1,6 +1,6 @@
 import { fireEvent, screen } from '@testing-library/react';
 
-import { renderComponent } from '../../__test-utils';
+import { renderComponent } from '@data-exploration-lib/core';
 
 import { ResourceDetailsHeader } from './ResourceDetailsHeader';
 

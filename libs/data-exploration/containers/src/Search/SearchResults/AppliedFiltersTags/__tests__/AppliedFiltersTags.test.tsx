@@ -1,6 +1,7 @@
 import '@testing-library/jest-dom/extend-expect';
-import { renderComponent } from '@data-exploration/components';
 import { screen } from '@testing-library/react';
+
+import { renderComponent } from '@data-exploration-lib/core';
 
 import {
   AppliedFiltersTags,

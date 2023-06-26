@@ -1,9 +1,9 @@
-import { renderHook } from '@testing-library/react-hooks';
+import { renderHook } from '@testing-library/react';
 import { setupServer } from 'msw/node';
 
 import { mockCogniteClient } from '../../../../__mocks';
-import { getMockAssetsAggregatePost } from '../../../service/__mocks';
 import { getAssetsMetadataValues } from '../../__fixtures/getAssetsMetadataValuesFixture';
+import { getMockAssetsAggregatePost } from '../../__mocks';
 import { getAssetsAggregate } from '../getAssetsAggregate';
 
 const testData = getAssetsMetadataValues();
