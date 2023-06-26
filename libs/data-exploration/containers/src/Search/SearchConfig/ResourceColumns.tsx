@@ -61,6 +61,7 @@ export const ResourceColumns: React.FC<Props> = ({
                         name={config?.label}
                         checked={config?.enabled}
                         data-testid={`modal-checkbox-${resource}-${filterId}`}
+                        id={`modal-checkbox-${resource}-${filterId}`}
                       >
                         {t(
                           `${label.split(' ').join('_').toUpperCase()}`,

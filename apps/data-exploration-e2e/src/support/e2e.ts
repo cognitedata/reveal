@@ -14,7 +14,7 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
-import './commands';
+import './commands/commands';
 import './injectToken';
 Cypress.on('uncaught:exception', (err) => {
   // returning false here prevents Cypress from
