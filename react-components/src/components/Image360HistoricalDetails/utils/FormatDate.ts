@@ -2,8 +2,8 @@
  * Copyright 2023 Cognite AS
  */
 
-export const formatDate = (date: Date | undefined) => {
-  if (!date) {
+export const formatDate = (date: Date | undefined): string => {
+  if (date == null) {
     return '';
   }
   const year = date.getFullYear();
@@ -13,4 +13,4 @@ export const formatDate = (date: Date | undefined) => {
   const minutes = String(date.getMinutes()).padStart(2, '0');
 
   return `${year}.${month}.${day} ${hours}:${minutes}`;
-}
+};

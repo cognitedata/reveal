@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { Cognite3DViewer, Image360 } from '@cognite/reveal';
+import { type Cognite3DViewer, type Image360 } from '@cognite/reveal';
 import React, { useEffect, useRef, useState } from 'react';
 import { Image360HistoricalPanel } from './Panel/Image360HistoricalPanel';
 import { Image360HistoricalSummary } from './Toolbar/Image360HistoricalSummary';
@@ -20,35 +20,37 @@ export const Image360HistoricalDetails = ({
   viewer,
   image360Entity,
   onExpand
-}: Image360HistoricalDetailsProps) => {
+}: Image360HistoricalDetailsProps): React.JSX.Element => {
   const [revisionDetailsExpanded, setRevisionDetailsExpanded] = useState<boolean>(false);
   const [activeRevision, setActiveRevision] = useState<number>(0);
   const [revisionCollection, setRevisionCollection] = useState<
-    {
+    Array<{
       date?: string;
       imageUrl?: string;
       index: number;
       image360Entity: Image360 | undefined;
-    }[]
+    }>
   >([]);
-  const [imageUrls, setImageUrls] = useState<(string | undefined)[]>([]);
+  const [imageUrls, setImageUrls] = useState<Array<string | undefined>>([]);
   const [minWidth, setMinWidth] = useState('100px');
   const newScrollPosition = useRef(0);
 
   useEffect(() => {
-    const fetchRevisionCollection = async () => {
-      if (image360Entity) {
+    const fetchRevisionCollection = async (): Promise<void> => {
+      if (image360Entity != null) {
         const revisions = image360Entity.getRevisions();
         const revisionDates = revisions.map((revision) => revision.date);
-        const imageDatas = await Promise.all(revisions.map(async (revision) => await revision.getPreviewThumbnailUrl()));
+        const imageDatas = await Promise.all(
+          revisions.map(async (revision) => await revision.getPreviewThumbnailUrl())
+        );
         setImageUrls(imageDatas);
 
         const collection = revisionDates.map((date, index) => {
           return {
-            date: formatDate(date!),
-            imageUrl: imageDatas[index]!,
-            index: index,
-            image360Entity: image360Entity
+            date: formatDate(date),
+            imageUrl: imageDatas[index],
+            index,
+            image360Entity
           };
         });
 
@@ -58,12 +60,12 @@ export const Image360HistoricalDetails = ({
       }
     };
 
-    fetchRevisionCollection();
+    void fetchRevisionCollection();
 
     return () => {
       // Remove image URLs
       imageUrls.forEach((url) => {
-        if (url) {
+        if (url !== undefined) {
           URL.revokeObjectURL(url);
         }
       });
@@ -74,14 +76,14 @@ export const Image360HistoricalDetails = ({
   useEffect(() => {
     const newMinWidth = revisionDetailsExpanded ? '100%' : '100px';
     setMinWidth(newMinWidth);
-    if (onExpand) {
+    if (onExpand != null) {
       onExpand(revisionDetailsExpanded);
     }
   }, [revisionDetailsExpanded]);
 
   return (
     <DetailsContainer style={{ minWidth }}>
-      {viewer && (
+      {
         <>
           <Image360HistoricalPanel
             key={uniqueId()}
@@ -102,7 +104,7 @@ export const Image360HistoricalDetails = ({
             />
           )}
         </>
-      )}
+      }
     </DetailsContainer>
   );
 };

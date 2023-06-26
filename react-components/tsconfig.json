@@ -14,10 +14,5 @@
     "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
   },
-  "include": [
-    "src"
-  ],
-  "exclude": [
-    "**/*.stories.ts"
-  ]
+  "include": ["src", "stories"]
 }
