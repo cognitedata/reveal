@@ -2658,20 +2658,10 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@codemirror/autocomplete@^6.0.0":
+"@codemirror/autocomplete@^6.0.0", "@codemirror/autocomplete@^6.8.0":
   version "6.8.1"
   resolved "https://registry.yarnpkg.com/@codemirror/autocomplete/-/autocomplete-6.8.1.tgz#3f3daa9f591186901db07f58d17256656242e841"
   integrity sha512-HpphvDcTdOx+9R3eUw9hZK9JA77jlaBF0kOt2McbyfvY0rX9pnMoO8rkkZc0GzSbzhIY4m5xJ0uHHgjfqHNmXQ==
-  dependencies:
-    "@codemirror/language" "^6.0.0"
-    "@codemirror/state" "^6.0.0"
-    "@codemirror/view" "^6.6.0"
-    "@lezer/common" "^1.0.0"
-
-"@codemirror/autocomplete@^6.8.0":
-  version "6.8.0"
-  resolved "https://registry.yarnpkg.com/@codemirror/autocomplete/-/autocomplete-6.8.0.tgz#20d46587ffe0e8df24f5a503c13ab994c2c73107"
-  integrity sha512-nTimZYnTYaZ5skAt+zlk8BD41GvjpWgtDni2K+BritA7Ed9A0aJWwo1ohTvwUEfHfhIVtcFSLEddVPkegw8C/Q==
   dependencies:
     "@codemirror/language" "^6.0.0"
     "@codemirror/state" "^6.0.0"
@@ -2736,12 +2726,7 @@
     "@codemirror/view" "^6.0.0"
     crelt "^1.0.5"
 
-"@codemirror/state@^6.0.0", "@codemirror/state@^6.1.4":
-  version "6.2.0"
-  resolved "https://registry.yarnpkg.com/@codemirror/state/-/state-6.2.0.tgz#a0fb08403ced8c2a68d1d0acee926bd20be922f2"
-  integrity sha512-69QXtcrsc3RYtOtd+GsvczJ319udtBf1PTrr2KbLWM/e2CXUPnh0Nz9AUo8WfhSQ7GeL8dPVNUmhQVgpmuaNGA==
-
-"@codemirror/state@^6.1.1", "@codemirror/state@^6.2.0":
+"@codemirror/state@^6.0.0", "@codemirror/state@^6.1.4", "@codemirror/state@^6.1.1", "@codemirror/state@^6.2.0":
   version "6.2.1"
   resolved "https://registry.yarnpkg.com/@codemirror/state/-/state-6.2.1.tgz#6dc8d8e5abb26b875e3164191872d69a5e85bd73"
   integrity sha512-RupHSZ8+OjNT38zU9fKH2sv+Dnlr8Eb8sl4NOnnqz95mCFTZUaiRP8Xv5MeeaG0px2b8Bnfe7YGwCV3nsBhbuw==
