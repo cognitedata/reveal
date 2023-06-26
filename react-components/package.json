@@ -33,7 +33,7 @@
     "@storybook/blocks": "7.0.23",
     "@storybook/react": "7.0.23",
     "@storybook/react-webpack5": "7.0.23",
-    "@storybook/testing-library": "0.1.0",
+    "@storybook/testing-library": "0.2.0",
     "@types/lodash": "^4.14.190",
     "@types/react": "18.2.12",
     "@types/styled-components": "5.1.26",
