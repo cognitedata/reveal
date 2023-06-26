@@ -33,4 +33,4 @@ custom_edit_url: null
 
 #### Defined in
 
-[packages/data-providers/src/types.ts:11](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/data-providers/src/types.ts#L11)
+[packages/data-providers/src/types.ts:12](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/data-providers/src/types.ts#L12)

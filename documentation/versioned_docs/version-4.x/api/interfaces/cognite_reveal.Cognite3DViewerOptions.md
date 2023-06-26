@@ -30,7 +30,7 @@ Currently the default mode is FXAA, but this is subject to change.
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:100](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/types.ts#L100)
+[packages/api/src/public/migration/types.ts:113](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/api/src/public/migration/types.ts#L113)
 
 ___
 
@@ -46,7 +46,7 @@ Default implementation is [DefaultCameraManager](../classes/cognite_reveal.Defau
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:65](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/types.ts#L65)
+[packages/api/src/public/migration/types.ts:78](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/api/src/public/migration/types.ts#L78)
 
 ___
 
@@ -62,7 +62,7 @@ Default value is set to true.
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:160](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/types.ts#L160)
+[packages/api/src/public/migration/types.ts:173](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/api/src/public/migration/types.ts#L173)
 
 ___
 
@@ -75,13 +75,13 @@ use to load model data. Note that some features might not
 work when implementing a custom data source. Please refer
 to the Reveal documentation for details.
 
-Note that the data source must support CdfModelIdentifier.
+Note that the data source must support [CdfModelIdentifier](../classes/cognite_reveal_extensions_datasource.CdfModelIdentifier.md).
 
-This cannot be used together with _localModels.
+This cannot be used together with Cognite3DViewerOptions._localModels.
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:151](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/types.ts#L151)
+[packages/api/src/public/migration/types.ts:164](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/api/src/public/migration/types.ts#L164)
 
 ___
 
@@ -93,7 +93,7 @@ An existing DOM element that we will render canvas into.
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:34](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/types.ts#L34)
+[packages/api/src/public/migration/types.ts:47](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/api/src/public/migration/types.ts#L47)
 
 ___
 
@@ -105,7 +105,7 @@ Enables / disables visualizing the edges of geometry. Defaults to true.
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:136](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/types.ts#L136)
+[packages/api/src/public/migration/types.ts:149](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/api/src/public/migration/types.ts#L149)
 
 ___
 
@@ -124,7 +124,7 @@ Style the loading indicator.
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:47](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/types.ts#L47)
+[packages/api/src/public/migration/types.ts:60](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/api/src/public/migration/types.ts#L60)
 
 ___
 
@@ -136,7 +136,7 @@ Send anonymous usage statistics.
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:37](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/types.ts#L37)
+[packages/api/src/public/migration/types.ts:50](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/api/src/public/migration/types.ts#L50)
 
 ___
 
@@ -148,7 +148,7 @@ Callback to download stream progress.
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:139](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/types.ts#L139)
+[packages/api/src/public/migration/types.ts:152](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/api/src/public/migration/types.ts#L152)
 
 ___
 
@@ -167,7 +167,7 @@ Point cloud visualisation effects parameteres.
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:121](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/types.ts#L121)
+[packages/api/src/public/migration/types.ts:134](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/api/src/public/migration/types.ts#L134)
 
 ___
 
@@ -186,7 +186,7 @@ Render to offscreen buffer instead of canvas.
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:42](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/types.ts#L42)
+[packages/api/src/public/migration/types.ts:55](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/api/src/public/migration/types.ts#L55)
 
 ___
 
@@ -200,7 +200,7 @@ Note that when providing a custom renderer, this should be configured with
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:71](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/types.ts#L71)
+[packages/api/src/public/migration/types.ts:84](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/api/src/public/migration/types.ts#L84)
 
 ___
 
@@ -220,7 +220,7 @@ Use [setResolutionOptions](../classes/cognite_reveal.Cognite3DViewer.md#setresol
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:82](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/types.ts#L82)
+[packages/api/src/public/migration/types.ts:95](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/api/src/public/migration/types.ts#L95)
 
 ___
 
@@ -232,7 +232,7 @@ Initialized connection to CDF used to load data.
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:31](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/types.ts#L31)
+[packages/api/src/public/migration/types.ts:44](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/api/src/public/migration/types.ts#L44)
 
 ___
 
@@ -245,4 +245,4 @@ an effect creating shadows and that gives the rendered image more depth.
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:116](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/api/src/public/migration/types.ts#L116)
+[packages/api/src/public/migration/types.ts:129](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/api/src/public/migration/types.ts#L129)

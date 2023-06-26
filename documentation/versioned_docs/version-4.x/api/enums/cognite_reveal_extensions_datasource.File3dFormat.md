@@ -15,7 +15,7 @@ custom_edit_url: null
 
 #### Defined in
 
-[packages/data-providers/src/types.ts:65](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/data-providers/src/types.ts#L65)
+[packages/data-providers/src/types.ts:76](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/data-providers/src/types.ts#L76)
 
 ___
 
@@ -25,7 +25,7 @@ ___
 
 #### Defined in
 
-[packages/data-providers/src/types.ts:60](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/data-providers/src/types.ts#L60)
+[packages/data-providers/src/types.ts:71](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/data-providers/src/types.ts#L71)
 
 ___
 
@@ -37,4 +37,4 @@ Reveal v9 and above (GLTF based output)
 
 #### Defined in
 
-[packages/data-providers/src/types.ts:64](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/data-providers/src/types.ts#L64)
+[packages/data-providers/src/types.ts:75](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/data-providers/src/types.ts#L75)
