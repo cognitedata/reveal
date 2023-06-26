@@ -435,7 +435,10 @@ export class Cognite3DViewer {
       cancelAnimationFrame(this.latestRequestId);
     }
 
-    for (const model of this._models.values()) {
+    // Copy list, as this._models will be mutated in below iteration
+    const modelListCopy = [...this._models];
+
+    for (const model of modelListCopy) {
       this.removeModel(model);
     }
 

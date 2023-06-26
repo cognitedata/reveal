@@ -2142,10 +2142,10 @@ __metadata:
     "@docusaurus/core": 2.4.1
     "@docusaurus/preset-classic": 2.4.1
     "@docusaurus/remark-plugin-npm2yarn": 2.4.1
-    "@types/react": 18.2.11
+    "@types/react": 18.2.12
     "@types/styled-components": 5.1.26
-    "@uiw/codemirror-theme-material": 4.21.2
-    "@uiw/react-codemirror": 4.21.2
+    "@uiw/codemirror-theme-material": 4.21.3
+    "@uiw/react-codemirror": 4.21.3
     clsx: 1.2.1
     copyfiles: 2.4.1
     cross-env: 7.0.3
@@ -3756,14 +3756,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:18.2.11":
-  version: 18.2.11
-  resolution: "@types/react@npm:18.2.11"
+"@types/react@npm:18.2.12":
+  version: 18.2.12
+  resolution: "@types/react@npm:18.2.12"
   dependencies:
     "@types/prop-types": "*"
     "@types/scheduler": "*"
     csstype: ^3.0.2
-  checksum: 3dcc326ea87468a06079b6c3a9e0f9a98a8438526aba81d29820954e2cb343b6beb8ca3d6a212878797a909fbd3199d07a4d819cd3efbbdba8c22039c06f1ed8
+  checksum: ad85a7eadaf1b35cfeee9f715b39311420ff46d46e0650377d918b3f888c2e47416037da4a765e1dccd3d1916abd54c105a3bee803c971ba56c955a7768ce976
   languageName: node
   linkType: hard
 
@@ -3892,9 +3892,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@uiw/codemirror-extensions-basic-setup@npm:4.21.2":
-  version: 4.21.2
-  resolution: "@uiw/codemirror-extensions-basic-setup@npm:4.21.2"
+"@uiw/codemirror-extensions-basic-setup@npm:4.21.3":
+  version: 4.21.3
+  resolution: "@uiw/codemirror-extensions-basic-setup@npm:4.21.3"
   dependencies:
     "@codemirror/autocomplete": ^6.0.0
     "@codemirror/commands": ^6.0.0
@@ -3911,22 +3911,22 @@ __metadata:
     "@codemirror/search": ">=6.0.0"
     "@codemirror/state": ">=6.0.0"
     "@codemirror/view": ">=6.0.0"
-  checksum: 6c674ad774cdd9c84da1d3c2f7a2f488d6ad00d3c096910cbcc3954f658f5a553073e0240360b1322e35721f790870178784d1d2e71797d3e9d0d85a1749b13e
+  checksum: 6e6081c363391192c9f83c8277cc6e9de15ac6d9ad54a1318a165dae17a0ac944c2ed0fac6c955cf89dfefbd2c66ccac4ca43a085002dd70f580a02ca725fd46
   languageName: node
   linkType: hard
 
-"@uiw/codemirror-theme-material@npm:4.21.2":
-  version: 4.21.2
-  resolution: "@uiw/codemirror-theme-material@npm:4.21.2"
+"@uiw/codemirror-theme-material@npm:4.21.3":
+  version: 4.21.3
+  resolution: "@uiw/codemirror-theme-material@npm:4.21.3"
   dependencies:
-    "@uiw/codemirror-themes": 4.21.2
-  checksum: 16a8e1ceca65a4f7e7867402e3b092eaaba42077c2fbbb395da51b2aa249ba08eb8d3c72b9ba3ff5f69d0fdb495ce975f415ca2d94e1e8b97e6ff6c57112c633
+    "@uiw/codemirror-themes": 4.21.3
+  checksum: 19101f032dcb8c00b919fc0b1b67b5647b5ef11e46843d16f5a5e2d68ce6da93faa0fa0a58980e3828b2276a091974b9d3e989ce43c380cb27f5374e211ab687
   languageName: node
   linkType: hard
 
-"@uiw/codemirror-themes@npm:4.21.2":
-  version: 4.21.2
-  resolution: "@uiw/codemirror-themes@npm:4.21.2"
+"@uiw/codemirror-themes@npm:4.21.3":
+  version: 4.21.3
+  resolution: "@uiw/codemirror-themes@npm:4.21.3"
   dependencies:
     "@codemirror/language": ^6.0.0
     "@codemirror/state": ^6.0.0
@@ -3935,19 +3935,19 @@ __metadata:
     "@codemirror/language": ">=6.0.0"
     "@codemirror/state": ">=6.0.0"
     "@codemirror/view": ">=6.0.0"
-  checksum: af350c08a55d165ca60e1037dabed89efdf1d5cf89477f54941068b8de843c60bf9a63af3ce9f35fc85bf4f676a733d17e6b9e8e41f4eeb30e74200515bed653
+  checksum: e47fa187d5fb308eb9bd709b6ef7bde7fd59171f80db9eb4f53998444c34cd3890eeea1b7b0d91f9744107d316c79b26f3565f4c6a632db7eb7bf4fe4980dda6
   languageName: node
   linkType: hard
 
-"@uiw/react-codemirror@npm:4.21.2":
-  version: 4.21.2
-  resolution: "@uiw/react-codemirror@npm:4.21.2"
+"@uiw/react-codemirror@npm:4.21.3":
+  version: 4.21.3
+  resolution: "@uiw/react-codemirror@npm:4.21.3"
   dependencies:
     "@babel/runtime": ^7.18.6
     "@codemirror/commands": ^6.1.0
     "@codemirror/state": ^6.1.1
     "@codemirror/theme-one-dark": ^6.0.0
-    "@uiw/codemirror-extensions-basic-setup": 4.21.2
+    "@uiw/codemirror-extensions-basic-setup": 4.21.3
     codemirror: ^6.0.0
   peerDependencies:
     "@babel/runtime": ">=7.11.0"
@@ -3957,7 +3957,7 @@ __metadata:
     codemirror: ">=6.0.0"
     react: ">=16.8.0"
     react-dom: ">=16.8.0"
-  checksum: 590f6d1ce28f0db1de036ea155e25bf4b4ce5a0e291511e4a43b1fa2d12eceef5f31d5898f7482a16a72b557ef083328a092e5c3b5e8a344572a9568e8fe06f6
+  checksum: 7864f63b23283c2cab85e1bfce6cc00b0cd8787867ad878b359fa047676f70eac0b96d68d98dc0925ed8b2f6ba4e1cc4ee7196ddc70053bacbd5ca0948e67944
   languageName: node
   linkType: hard
 
