@@ -14,7 +14,7 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "tsc": "tsc",
-    "lint": "eslint ."
+    "lint": "eslint . --cache"
   },
   "peerDependencies": {
     "@cognite/cogs.js": ">=9",
