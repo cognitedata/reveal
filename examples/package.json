@@ -30,7 +30,8 @@
     "react-dom": "18.2.0",
     "react-router-dom": "6.11.1",
     "stats.js": "0.17.0",
-    "styled-components": "5.3.10"
+    "styled-components": "5.3.10",
+    "three-stdlib": "2.23.10"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.11.5",
