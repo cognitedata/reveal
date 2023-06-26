@@ -70,6 +70,7 @@ export const CommonColumn = ({
                 indeterminate={isOptionIndeterminate(checkedColumnsLength)}
                 checked={isOptionChecked(checkedColumnsLength)}
                 data-testid={`common-column-checkbox-${column}`}
+                id={`common-column-checkbox-${column}`}
               >
                 {t(
                   `${column
