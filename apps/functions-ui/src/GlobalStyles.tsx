@@ -71,7 +71,6 @@ import treeStyle from 'antd/es/tree/style/index.less';
 import typographyStyle from 'antd/es/typography/style/index.less';
 import uploadStyle from 'antd/es/upload/style/index.less';
 import highlight from 'highlight.js/styles/dracula.css';
-import monacoStyles from 'monaco-editor/dev/vs/editor/editor.main.css';
 
 import { useGlobalStyles } from '@cognite/cdf-utilities';
 import {
@@ -152,12 +151,7 @@ Dropdown.defaultProps = {
 };
 
 export default function GlobalStyles(props: { children: React.ReactNode }) {
-  const isStyleLoaded = useGlobalStyles([
-    cogsStyles,
-    botui,
-    highlight,
-    monacoStyles,
-  ]);
+  const isStyleLoaded = useGlobalStyles([cogsStyles, botui, highlight]);
 
   useEffect(() => {
     styles.forEach((style) => style.use());

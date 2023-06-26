@@ -12,8 +12,6 @@ import { FlagProvider } from '@cognite/react-feature-flags';
 import RootApp from './containers/RootApp';
 import { queryClient } from './queryClient';
 
-import './utils/setupMonaco';
-
 setupMixpanel();
 
 function App() {
