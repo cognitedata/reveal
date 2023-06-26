@@ -37,6 +37,7 @@ export class CameraManagerHelper {
    * @param camera Used camera instance.
    * @param rotation New camera rotation in quaternion form.
    * @param currentTarget Current camera target.
+   * @param position New camera position.
    * @returns
    */
   static calculateNewTargetFromRotation(
