@@ -5,7 +5,10 @@ import { Button, Dropdown } from '@cognite/cogs.js';
 import { useTranslation } from '../../../hooks/useTranslation';
 import { useTypesDataModelQuery } from '../../../services/dataModels/query/useTypesDataModelQuery';
 import { ValueByField } from '../../search/Filter';
-import { FilterBuilderByField } from '../../search/Filter/containers';
+import {
+  AppliedFilters,
+  FilterBuilderByField,
+} from '../../search/Filter/containers';
 import { transformDefFieldsToFilterFields } from '../../search/Filter/filters/SearchBarFilter/utils';
 
 export interface SearchBarFilterProps {
@@ -30,7 +33,7 @@ export const RelationshipFilter: React.FC<SearchBarFilterProps> = ({
 
   return (
     <>
-      {/* <AppliedFilters value={value} onRemove={onChange} /> */}
+      <AppliedFilters value={value} onRemove={onChange} />
 
       <Dropdown
         placement="bottom-end"

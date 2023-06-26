@@ -1,2 +1,3 @@
+export * from './isFieldValue';
 export * from './isNoInputOperator';
-export * from './removeFilter';
+export * from './isValueByField';
