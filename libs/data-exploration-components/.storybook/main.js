@@ -1,8 +1,6 @@
 const rootMain = require('../../../.storybook/main');
-
 module.exports = {
   ...rootMain,
-
   stories: [
     ...rootMain.stories,
     '../src/**/*.stories.mdx',
@@ -11,12 +9,15 @@ module.exports = {
   addons: [
     '@storybook/addon-essentials',
     ...rootMain.addons,
-    '@nrwl/react/plugins/storybook',
+    '@nx/react/plugins/storybook',
+    '@storybook/addon-mdx-gfm',
   ],
   webpackFinal: async (config, { configType }) => {
     // apply any global webpack configs that might have been specified in .storybook/main.js
     if (rootMain.webpackFinal) {
-      config = await rootMain.webpackFinal(config, { configType });
+      config = await rootMain.webpackFinal(config, {
+        configType,
+      });
     }
 
     // add your own webpack tweaks if needed
@@ -24,7 +25,6 @@ module.exports = {
       test: /\.pdf$/,
       use: ['file-loader'],
     });
-
     return config;
   },
 };

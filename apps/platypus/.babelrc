@@ -1,7 +1,7 @@
 {
   "presets": [
     [
-      "@nrwl/react/babel",
+      "@nx/react/babel",
       {
         "runtime": "automatic"
       }
@@ -9,9 +9,7 @@
   ],
   "env": {
     "mock": {
-      "plugins": [
-        "istanbul"
-      ]
+      "plugins": ["istanbul"]
     }
   },
   "plugins": []

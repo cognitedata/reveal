@@ -11,7 +11,7 @@ module.exports = {
   addons: [
     ...rootMain.addons,
     '@storybook/addon-essentials',
-    '@nrwl/react/plugins/storybook',
+    '@nx/react/plugins/storybook',
   ],
   features: {
     babelModeV7: true,

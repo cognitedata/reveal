@@ -6,9 +6,9 @@ import {
   names,
   Tree,
   updateJson,
-} from '@nrwl/devkit';
-import { Linter } from '@nrwl/linter';
-import { applicationGenerator } from '@nrwl/react';
+} from '@nx/devkit';
+import { Linter } from '@nx/linter';
+import { applicationGenerator } from '@nx/react';
 
 import { FusionSubappGeneratorSchema } from './schema';
 

@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 
 import styled from 'styled-components';
 
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { TOOLTIP_DELAY_IN_MS } from '@cognite/cdf-utilities';
 import {
   Button,
