@@ -19,4 +19,4 @@ Opaqueness of the 360 image
 
 #### Defined in
 
-[packages/360-images/src/entity/Image360Visualization.ts:12](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/360-images/src/entity/Image360Visualization.ts#L12)
+[packages/360-images/src/entity/Image360Visualization.ts:12](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/360-images/src/entity/Image360Visualization.ts#L12)

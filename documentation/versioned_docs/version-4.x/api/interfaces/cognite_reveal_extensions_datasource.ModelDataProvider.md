@@ -43,7 +43,7 @@ Downloads a binary blob.
 
 #### Defined in
 
-[packages/data-providers/src/ModelDataProvider.ts:23](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/data-providers/src/ModelDataProvider.ts#L23)
+[packages/data-providers/src/ModelDataProvider.ts:23](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/data-providers/src/ModelDataProvider.ts#L23)
 
 ___
 
@@ -70,4 +70,4 @@ Download and parse a JSON file and return the resulting struct.
 
 #### Defined in
 
-[packages/data-providers/src/ModelDataProvider.ts:16](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/data-providers/src/ModelDataProvider.ts#L16)
+[packages/data-providers/src/ModelDataProvider.ts:16](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/data-providers/src/ModelDataProvider.ts#L16)
