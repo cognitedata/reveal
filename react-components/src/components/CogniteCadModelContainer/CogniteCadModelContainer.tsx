@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import { AddModelOptions, Cognite3DViewer, CogniteCadModel } from '@cognite/reveal';
+import { useEffect, useRef } from "react";
+import { AddModelOptions, CogniteCadModel } from '@cognite/reveal';
 import { useReveal } from "../RevealContainer/RevealContext";
 import { Matrix4 } from "three";
 
@@ -17,7 +17,7 @@ export default function CogniteCadModelContainer({ addModelOptions, transform }:
     addModel(modelId, revisionId, transform)
       .catch(console.error);
     return () => {
-      if (modelRef.current === undefined || (viewer as any).isDisposed) return;
+      if (modelRef.current === undefined || !viewer.models.includes(modelRef.current)) return;
       viewer.removeModel(modelRef.current);
       modelRef.current = undefined;
     }
