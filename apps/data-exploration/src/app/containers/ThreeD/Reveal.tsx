@@ -24,6 +24,8 @@ import {
   Image360AnnotationIntersection,
 } from '@cognite/reveal';
 
+import { useTranslation } from '@data-exploration-lib/core';
+
 import { ThreeDContext } from './contexts/ThreeDContext';
 import { use3DModel } from './hooks';
 import { useViewerDoubleClickListener } from './hooks/useViewerDoubleClickListener';
@@ -62,6 +64,7 @@ export function Reveal({
   setImage360Entity,
   onViewerClick,
 }: Props) {
+  const { t } = useTranslation();
   const {
     setViewState,
     viewer,
@@ -288,7 +291,7 @@ export function Reveal({
 
   useEffect(() => {
     if (modelError) {
-      toast.error(<RevealErrorToast error={modelError} />, {
+      toast.error(<RevealErrorToast error={modelError} t={t} />, {
         toastId: 'reveal-model-load-error',
       });
     }

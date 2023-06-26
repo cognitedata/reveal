@@ -336,6 +336,7 @@
     "@swc-node/register": "^1.4.2",
     "@swc/cli": "^0.1.61",
     "@swc/core": "^1.2.173",
+    "@testing-library/cypress": "^9.0.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/react-hooks": "^8.0.1",

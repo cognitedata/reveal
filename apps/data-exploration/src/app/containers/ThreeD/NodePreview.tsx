@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import styled from 'styled-components';
 
@@ -18,6 +18,8 @@ import {
 } from '@cognite/data-exploration';
 import { Asset } from '@cognite/sdk';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
+
+import { useTranslation } from '@data-exploration-lib/core';
 
 export type ResourceTabType = 'details' | ResourceType;
 
@@ -68,6 +70,7 @@ export default function NodePreview({
   closePreview,
   openDetails,
 }: Props) {
+  const { t } = useTranslation();
   const { data: assetInfo, isFetching } = useCdfItem<Asset>('assets', {
     id: assetId,
   });
@@ -80,28 +83,30 @@ export default function NodePreview({
 
   const { counts } = useRelatedResourceCounts(parentResource);
 
-  const details: Array<Details> = [
-    {
-      detailTypeKey: 'asset',
-      detailType: 'Assets',
-      count: counts.asset,
-    },
-    {
-      detailTypeKey: 'timeSeries',
-      detailType: 'Timeseries',
-      count: counts.timeSeries,
-    },
-    {
-      detailTypeKey: 'file',
-      detailType: 'Files',
-      count: counts.file,
-    },
-    {
-      detailTypeKey: 'event',
-      detailType: 'Events',
-      count: counts.event,
-    },
-  ];
+  const details: Array<Details> = useMemo(() => {
+    return [
+      {
+        detailTypeKey: 'asset',
+        detailType: t('ASSETS', 'Assets'),
+        count: counts.asset,
+      },
+      {
+        detailTypeKey: 'timeSeries',
+        detailType: t('TIMESERIES', 'Time series'),
+        count: counts.timeSeries,
+      },
+      {
+        detailTypeKey: 'file',
+        detailType: t('FILES', 'Files'),
+        count: counts.file,
+      },
+      {
+        detailTypeKey: 'event',
+        detailType: t('EVENTS', 'Events'),
+        count: counts.event,
+      },
+    ];
+  }, [t]);
 
   return (
     <Wrapper>
@@ -110,7 +115,7 @@ export default function NodePreview({
           {isFetching ? <Icon type="Loader" /> : assetInfo?.name}
         </StyledAssetName>
         <StyledOverline>
-          {assetInfo?.description || 'No description'}
+          {assetInfo?.description || t('NO_DESCRIPTION', 'No description')}
         </StyledOverline>
       </StyledAssetInfo>
       <Divider />
@@ -135,10 +140,10 @@ export default function NodePreview({
             closePreview();
           }}
         >
-          Cancel
+          {t('CANCEL', 'Cancel')}
         </StyledButton>
         <StyledButton type="tertiary" onClick={() => openDetails()}>
-          Details
+          {t('DETAILS', 'Details')}
         </StyledButton>
       </Flex>
     </Wrapper>

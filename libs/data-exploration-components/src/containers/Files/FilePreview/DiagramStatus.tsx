@@ -6,6 +6,8 @@ import { Chip, ChipType, ChipProps } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 
+import { TFunction, useTranslation } from '@data-exploration-lib/core';
+
 import {
   PENDING_LABEL,
   INTERACTIVE_LABEL,
@@ -22,27 +24,40 @@ export type ReviewStatus = {
   tooltip: string;
 };
 
-export const approvalDetails: { [key: string]: ReviewStatus } = {
-  pending: {
-    status: PENDING_LABEL.externalId,
-    variant: 'warning',
-    label: 'Pending approval',
-    tooltip: 'New detected tags that need to be reviewed',
-  },
-  approved: {
-    status: INTERACTIVE_LABEL.externalId,
-    variant: 'success',
-    label: 'Approved',
-    tooltip: 'All tags have been reviewed',
-  },
-  unknown: {
-    status: 'No tags detected',
-    variant: 'default',
-    label: 'No tags detected',
-    tooltip: 'No tags were found in the diagram',
-  },
+export const getApprovalDetails = (
+  t: TFunction
+): { [key: string]: ReviewStatus } => {
+  return {
+    pending: {
+      status: PENDING_LABEL.externalId,
+      variant: 'warning',
+      label: t('PENDING_APPROVAL', 'Pending approval'),
+      tooltip: t(
+        'NEW_TAGS_NEED_REVIEW',
+        'New detected tags that need to be reviewed'
+      ),
+    },
+    approved: {
+      status: INTERACTIVE_LABEL.externalId,
+      variant: 'success',
+      label: t('APPROVED', 'Approved'),
+      tooltip: t('ALL_TAGS_REVIEWED', 'All tags have been reviewed'),
+    },
+    unknown: {
+      status: 'No tags detected',
+      variant: 'default',
+      label: t('NO_TAGS_DETECTED', 'No tags detected'),
+      tooltip: t(
+        'NO_TAGS_FOUND_IN_DIAGRAM',
+        'No tags were found in the diagram'
+      ),
+    },
+  };
 };
 export default function DiagramReviewStatus({ fileId }: Props) {
+  const { t } = useTranslation();
+  const approvalDetails = getApprovalDetails(t);
+
   const [fileStatus, setFileStatus] = useState<ReviewStatus>(
     approvalDetails.unknown
   );

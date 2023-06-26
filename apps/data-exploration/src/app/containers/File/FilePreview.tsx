@@ -28,7 +28,7 @@ import {
   useOnPreviewTabChange,
 } from '@data-exploration-app/hooks/hooks';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
-import { APPLICATION_ID } from '@data-exploration-lib/core';
+import { APPLICATION_ID, useTranslation } from '@data-exploration-lib/core';
 
 export type FilePreviewTabType =
   | 'preview'
@@ -46,6 +46,8 @@ export const FilePreview = ({
   fileId: number;
   actions?: React.ReactNode;
 }) => {
+  const { t } = useTranslation();
+
   const [editMode, setEditMode] = useState<boolean>(false);
   const { resourcesState, setResourcesState } = useContext(
     ResourceSelectionContext
@@ -129,7 +131,14 @@ export const FilePreview = ({
 
   // TODO: is this a needed check?
   if (!fileInfo) {
-    return <>File {fileId} not found!</>;
+    return (
+      <>
+        {t('RESOURCE_NOT_FOUND', `File ${fileId} not found!`, {
+          resourceType: t('FILE', 'File'),
+          id: fileId,
+        })}
+      </>
+    );
   }
 
   return (
@@ -150,15 +159,22 @@ export const FilePreview = ({
         onTabChange={onTabChange}
         tab={activeTab}
         additionalTabs={[
-          <Tabs.Tab label="Preview" key="preview" tabKey="preview">
+          <Tabs.Tab
+            label={t('PREVIEW_TAB_LABEL', 'Preview')}
+            key="preview"
+            tabKey="preview"
+          >
             <PreviewTabWrapper>
               {editMode && (
                 <Infobar
                   type="neutral"
-                  buttonText="Done editing"
+                  buttonText={t('DONE_EDITION', 'Done editing')}
                   onButtonClick={() => setEditMode(false)}
                 >
-                  You are in editing mode.
+                  {t(
+                    'FILE_EDITING_MODE_NOTIFY_TEXT',
+                    'You are in editing mode.'
+                  )}
                 </Infobar>
               )}
               <CogniteFilePreview
@@ -182,7 +198,7 @@ export const FilePreview = ({
               />
             </PreviewTabWrapper>
           </Tabs.Tab>,
-          <Tabs.Tab label="Details" key="info" tabKey="info">
+          <Tabs.Tab label={t('DETAILS', 'Details')} key="info" tabKey="info">
             <DetailsTabWrapper>
               <FileInfo file={fileInfo} />
               <Metadata metadata={fileInfo.metadata} />

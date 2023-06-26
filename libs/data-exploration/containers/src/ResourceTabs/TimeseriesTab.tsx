@@ -1,4 +1,7 @@
-import { useGetSearchConfigFromLocalStorage } from '@data-exploration-lib/core';
+import {
+  useGetSearchConfigFromLocalStorage,
+  useTranslation,
+} from '@data-exploration-lib/core';
 import { useTimeseriesAggregateCountQuery } from '@data-exploration-lib/domain-layer';
 
 import { CounterTab } from './elements';
@@ -8,6 +11,8 @@ import { ResourceTabProps } from './types';
 export const TimeseriesTab = ({ query, filter, ...rest }: ResourceTabProps) => {
   const timeseriesSearchConfig =
     useGetSearchConfigFromLocalStorage('timeSeries');
+  const { t } = useTranslation();
+
   const { data, isLoading } = useTimeseriesAggregateCountQuery(
     {
       timeseriesFilters: filter,
@@ -20,5 +25,11 @@ export const TimeseriesTab = ({ query, filter, ...rest }: ResourceTabProps) => {
     isLoading
   );
 
-  return <CounterTab label="Time series" {...chipRightProps} {...rest} />;
+  return (
+    <CounterTab
+      label={t('TIMESERIES', 'Time series')}
+      {...chipRightProps}
+      {...rest}
+    />
+  );
 };

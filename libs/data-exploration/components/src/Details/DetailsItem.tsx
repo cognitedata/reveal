@@ -19,6 +19,7 @@ import {
   ResourceType,
   useClipboard,
   useMetrics,
+  useTranslation,
 } from '@data-exploration-lib/core';
 import {
   DetailedMapping,
@@ -46,6 +47,8 @@ export const DetailsItem = ({
   copyable = false,
   link,
 }: DetailsItemProps) => {
+  const { t } = useTranslation();
+
   const clipboardValue =
     copyable && (typeof value === 'string' || typeof value === 'number')
       ? value
@@ -56,7 +59,7 @@ export const DetailsItem = ({
 
   const handleOnClickCopy = () => {
     onCopy(clipboardValue.toString());
-    toast.success(COPIED_TEXT);
+    toast.success(t('COPIED', COPIED_TEXT));
     trackUsage(DATA_EXPLORATION_COMPONENT.CLICK.COPY_TO_CLIPBOARD, { name });
   };
 
@@ -101,6 +104,8 @@ export const DataSetItem = ({
   id: number;
   type: ResourceType;
 }) => {
+  const { t } = useTranslation();
+
   const { data: item, isFetched } = useCdfItem<{ dataSetId?: number }>(
     convertResourceType(type),
     { id }
@@ -118,7 +123,7 @@ export const DataSetItem = ({
   if (isFetched && item) {
     return (
       <DetailsItem
-        name="Data set"
+        name={t('DATA_SET', 'Data set')}
         value={dataSet?.name || item?.dataSetId}
         link={
           item.dataSetId
@@ -133,6 +138,8 @@ export const DataSetItem = ({
 };
 
 export const AssetItem = ({ id }: { id: number }) => {
+  const { t } = useTranslation();
+
   const { data: item, isFetched } = useCdfItem<{ name?: string }>('assets', {
     id,
   });
@@ -140,7 +147,7 @@ export const AssetItem = ({ id }: { id: number }) => {
   if (isFetched && item) {
     return (
       <DetailsItem
-        name="Linked asset(s)"
+        name={t('LINKED_ASSETS', 'Linked asset(s)')}
         value={item.name}
         link={createLink(`/explore/asset/${id}`)}
         copyable
@@ -160,8 +167,10 @@ export const AssetsItem = ({
   linkId: number;
   type: ResourceType;
 }) => {
+  const { t } = useTranslation();
+
   if (!assetIds || assetIds?.length === 0) {
-    return <DetailsItem name="Linked asset(s)" />;
+    return <DetailsItem name={t('LINKED_ASSETS', 'Linked asset(s)')} />;
   }
 
   if (assetIds.length === 1) {
@@ -182,7 +191,7 @@ export const AssetsItem = ({
   const assetsLinkText = `${assetIds.length} assets`;
   return (
     <DetailsItem
-      name="Linked asset(s)"
+      name={t('LINKED_ASSETS', 'Linked asset(s)')}
       value={assetsLinkText}
       link={assetsLink}
     />
@@ -196,13 +205,14 @@ export const RootAssetItem = ({
   assetId?: number;
   onClick: (rootAsset: Asset) => void;
 }) => {
+  const { t } = useTranslation();
   const { data: rootAsset } = useRootAssetQuery(assetId);
   const { onCopy, hasCopied } = useClipboard();
   const rootAssetName = rootAsset?.name || '';
 
   const handleCopy = () => {
     onCopy(rootAssetName);
-    toast.success(COPIED_TEXT);
+    toast.success(t('COPIED', COPIED_TEXT));
   };
 
   const onClickHandler = () => {
@@ -211,7 +221,7 @@ export const RootAssetItem = ({
 
   return (
     <DetailsItem
-      name="Root Asset"
+      name={t('ROOT_ASSET', 'Root Asset')}
       value={
         <Flex wrap="wrap" gap={8} justifyContent="flex-end">
           <RootAssetWrapper onClick={onClickHandler}>
@@ -225,15 +235,18 @@ export const RootAssetItem = ({
 };
 
 export const LabelsItem = ({ labels = [] }: { labels?: string[] }) => {
+  const { t } = useTranslation();
   const { onCopy } = useClipboard();
+
   const handleCopy = (value: string) => {
     onCopy(value);
-    toast.success(COPIED_TEXT);
+    toast.success(t('COPIED', COPIED_TEXT));
   };
+
   if (labels.length > 0) {
     return (
       <DetailsItem
-        name="Labels"
+        name={t('LABELS', 'Labels')}
         value={
           <Flex wrap="wrap" gap={8} justifyContent="flex-end">
             {labels.map((label) => (
@@ -250,7 +263,7 @@ export const LabelsItem = ({ labels = [] }: { labels?: string[] }) => {
       />
     );
   }
-  return <DetailsItem name="Labels" />;
+  return <DetailsItem name={t('LABELS', 'Labels')} />;
 };
 
 export const ThreeDModelItem = ({
@@ -260,18 +273,27 @@ export const ThreeDModelItem = ({
   assetId: number;
   mappings: DetailedMapping[];
 }) => {
+  const { t } = useTranslation();
   return (
     <Flex>
       <DetailsItemContainer>
         <Body level={2} strong>
-          {mappings.length === 1 ? 'Linked 3D model' : 'Linked 3D models'}
+          {t(
+            'LINKED_3D_MODEL',
+            mappings.length === 1 ? 'Linked 3D model' : 'Linked 3D models',
+            { count: mappings.length }
+          )}
         </Body>
         <Spacer />
 
         {mappings.length === 1 ? (
           <ThreeDModelCellLink assetId={assetId} mapping={mappings[0]} />
         ) : (
-          <Body level={2}>{mappings.length} models</Body>
+          <Body level={2}>
+            {t('MODELS_WITH_COUNT', '{{count}} models', {
+              count: mappings.length,
+            })}
+          </Body>
         )}
       </DetailsItemContainer>
       <ButtonWrapper visible={mappings.length > 1}>

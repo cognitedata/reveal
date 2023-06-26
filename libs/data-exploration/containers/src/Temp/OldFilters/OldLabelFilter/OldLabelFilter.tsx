@@ -8,6 +8,7 @@ import {
   DATA_EXPLORATION_COMPONENT,
   ResourceType,
   useMetrics,
+  useTranslation,
   zIndex,
 } from '@data-exploration-lib/core';
 import { useAssetsUniqueValuesByProperty } from '@data-exploration-lib/domain-layer';
@@ -26,6 +27,7 @@ export const LabelFilterV2 = ({
   setValue: (newValue: OptionValue) => void;
   addNilOption?: boolean;
 }) => {
+  const { t } = useTranslation();
   const trackUsage = useMetrics();
 
   const allowLabels = resourceType === 'asset' || resourceType === 'file';
@@ -56,10 +58,17 @@ export const LabelFilterV2 = ({
     <Tooltip
       interactive
       disabled={!isError}
-      content="Error fetching labels, please make sure you have labelsAcl:READ"
+      content={t(
+        'PERMISSIONS_ERROR_FETCHING',
+        'Error fetching labels, please make sure you have labelsAcl:READ',
+        {
+          dataType: 'labels',
+          permissionType: 'labelsAcl:READ',
+        }
+      )}
     >
       <>
-        <FilterFacetTitle>Labels</FilterFacetTitle>
+        <FilterFacetTitle>{t('LABELS', 'Labels')}</FilterFacetTitle>
         <MultiSelect
           options={labels.map((label) => ({
             label: String(label.value),

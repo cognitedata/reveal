@@ -3,7 +3,12 @@ import {
   useJourney,
   usePruneJourney,
 } from '@data-exploration-app/hooks';
-import { getTitle, JourneyItem } from '@data-exploration-lib/core';
+import {
+  getTitle,
+  JourneyItem,
+  TFunction,
+  useTranslation,
+} from '@data-exploration-lib/core';
 
 import { Breadcrumb } from './Breadcrumb';
 import { BreadcrumbItemWrapper, BreadcrumbsWrapper } from './elements';
@@ -11,6 +16,7 @@ import { BreadcrumbItemWrapper, BreadcrumbsWrapper } from './elements';
 // TODO;
 // - add ellipsis for long journeys
 export const BreadcrumbsV2 = () => {
+  const { t } = useTranslation();
   const [journey] = useJourney();
   const [firstJourney] = useGetJourney();
   const [, pruneJourney] = usePruneJourney();
@@ -23,7 +29,7 @@ export const BreadcrumbsV2 = () => {
     <BreadcrumbsWrapper>
       <BreadcrumbItemWrapper>
         <span style={{ whiteSpace: 'nowrap' }}>
-          {firstJourney && firstJourney.type && getTitle(firstJourney.type)}
+          {getBreadcrumbTitle(firstJourney, t)}
         </span>
       </BreadcrumbItemWrapper>
       {journey?.map(({ id, type }: JourneyItem, index: number) => {
@@ -38,4 +44,19 @@ export const BreadcrumbsV2 = () => {
       })}
     </BreadcrumbsWrapper>
   );
+};
+
+const getBreadcrumbTitle = (journey: JourneyItem | undefined, t: TFunction) => {
+  if (!journey?.type) {
+    return;
+  }
+
+  const { type } = journey;
+
+  const titleTranslationKey = `${type.toUpperCase()}_other`;
+  const title = getTitle(type, true);
+
+  return t(titleTranslationKey, title, {
+    count: 2, // To pluralize
+  });
 };

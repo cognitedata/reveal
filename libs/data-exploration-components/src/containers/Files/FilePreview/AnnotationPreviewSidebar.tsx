@@ -27,6 +27,7 @@ import {
   SIDEBAR_RESIZE_EVENT,
   sleep,
   useDialog,
+  useTranslation,
 } from '@data-exploration-lib/core';
 import {
   useCreateAnnotation,
@@ -89,6 +90,7 @@ const AnnotationPreviewSidebar = ({
   setSelectedAnnotations,
   isDocumentsApiEnabled = true,
 }: Props) => {
+  const { t } = useTranslation();
   const client = useQueryClient();
   const { isOpen, open, close: modalClose } = useDialog();
   const {
@@ -175,23 +177,27 @@ const AnnotationPreviewSidebar = ({
     setPendingAnnotations((pendingAnnotations) =>
       pendingAnnotations.filter((el) => el.id !== selectedAnnotation?.id)
     );
-    toast.success(`Tag ${action} successfully`);
+    toast.success(
+      t('ANNOTATION_TAG_ACTION_TEXT_SUCCESS', `Tag ${action} successfully`, {
+        action,
+      })
+    );
   };
 
   const createAnnotation = useCreateAnnotation({
-    onSuccess: () => onSuccess('created'),
+    onSuccess: () => onSuccess(t('ANNOTATION_TAG_ACTION_CREATED', 'created')),
   });
 
   const updateAnnotations = useUpdateAnnotations({
-    onSuccess: () => onSuccess('saved'),
+    onSuccess: () => onSuccess(t('ANNOTATION_TAG_ACTION_SAVED', 'saved')),
   });
 
   const approveAnnotations = useUpdateAnnotations({
-    onSuccess: () => onSuccess('approved'),
+    onSuccess: () => onSuccess(t('ANNOTATION_TAG_ACTION_APPROVED', 'approved')),
   });
 
   const deleteAnnotation = useDeleteAnnotation({
-    onSuccess: () => onSuccess('deleted'),
+    onSuccess: () => onSuccess(t('ANNOTATION_TAG_ACTION_DELETED', 'deleted')),
   });
 
   const onSaveAnnotation = (annotation: ExtendedAnnotation) => {
@@ -217,17 +223,24 @@ const AnnotationPreviewSidebar = ({
     status: AnnotationStatus
   ) => {
     const isApprove = status === 'approved';
-    const okText = isApprove ? 'Approve tag' : 'Reject tag';
+    const okText = isApprove
+      ? t('APPROVE_TAG_TEXT', 'Approve tag')
+      : t('REJECT_TAG_TEXT', 'Reject tag');
     const content = isApprove ? (
       <Body level={2} strong>
-        Approve this tag?
+        {t('APPROVE_TAG_CONFIRMATION_TEXT', 'Approve this tag?')}
       </Body>
     ) : (
       <>
         <Body level={2} strong>
-          Reject this tag?
+          {t('REJECT_TAG_CONFIRMATION_TEXT', 'Reject this tag?')}
         </Body>
-        <Body level={2}>The tag will be removed from the diagram.</Body>
+        <Body level={2}>
+          {t(
+            'REMOVE_TAG_WARNING_TEXT',
+            'The tag will be removed from the diagram.'
+          )}
+        </Body>
       </>
     );
     setAnnotationModalState({
@@ -258,11 +271,13 @@ const AnnotationPreviewSidebar = ({
     } else {
       // Otherwise, the annotation may be deleted using the SDK
       setAnnotationModalState({
-        title: 'Are you sure?',
+        title: t('ARE_YOU_SURE', 'Are you sure?'),
         content: (
           <span>
-            These annotations will be deleted. However, you can always
-            re-contextualize the file.
+            {t(
+              'DELETE_TAG_WARNING_TEXT',
+              'These annotations will be deleted. However, you can always re-contextualize the file.'
+            )}
           </span>
         ),
         onOk: async () => {
@@ -336,9 +351,11 @@ const AnnotationPreviewSidebar = ({
   }) => {
     const menuOptions = () => (
       <Menu>
-        <Menu.Item onClick={() => setEditing(true)}> Edit</Menu.Item>
+        <Menu.Item onClick={() => setEditing(true)}>
+          {t('EDIT', 'Edit')}
+        </Menu.Item>
         <Menu.Item onClick={() => onDeleteAnnotation(annotation)}>
-          Delete
+          {t('DELETE', 'Delete')}
         </Menu.Item>
       </Menu>
     );
@@ -467,7 +484,7 @@ const AnnotationPreviewSidebar = ({
                   })
                 }
               >
-                View {type}
+                {t('VIEW', 'View')} {type}
               </Button>,
             ]
           }

@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 
 import {
+  getTableColumns,
   SubCellMatchingLabels,
   Table,
   TableProps,
@@ -9,7 +10,7 @@ import {
 import { ColumnDef } from '@tanstack/react-table';
 import noop from 'lodash/noop';
 
-import { getHiddenColumns } from '@data-exploration-lib/core';
+import { getHiddenColumns, useTranslation } from '@data-exploration-lib/core';
 import {
   AssetWithRelationshipLabels,
   InternalAssetDataWithMatchingLabels,
@@ -25,33 +26,35 @@ export const AssetTable = ({
   ...rest
 }: Omit<TableProps<AssetWithRelationshipLabels>, 'columns'>) => {
   const { metadataColumns, setMetadataKeyQuery } = useAssetsMetadataColumns();
+  const { t } = useTranslation();
+  const tableColumns = getTableColumns(t);
 
   const columns = useMemo(
     () =>
       [
         {
-          ...Table.Columns.name(query),
+          ...tableColumns.name(query),
           enableHiding: false,
         },
-        Table.Columns.description(query),
-        Table.Columns.externalId(query),
-        Table.Columns.rootAsset((rootAsset) => onRowClick(rootAsset)),
+        tableColumns.description(query),
+        tableColumns.externalId(query),
+        tableColumns.rootAsset((rootAsset) => onRowClick(rootAsset)),
         {
           accessorKey: 'id',
-          header: '3D availability',
+          header: t('3D_AVAILABILITY', '3D availability'),
           cell: ({ getValue }) => (
             <ThreeDModelCell assetId={getValue<number>()} />
           ),
           size: 300,
           enableSorting: false,
         },
-        Table.Columns.created,
+        tableColumns.created,
         {
-          ...Table.Columns.labels,
+          ...tableColumns.labels,
           enableSorting: false,
         },
-        Table.Columns.source(query),
-        { ...Table.Columns.dataSet, enableSorting: true },
+        tableColumns.source(query),
+        { ...tableColumns.dataSet, enableSorting: true },
         ...metadataColumns,
       ] as ColumnDef<AssetWithRelationshipLabels>[],
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import {
   EmptyState,
-  ResourceTableColumns,
+  getTableColumns,
   Table,
 } from '@data-exploration/components';
 import {
@@ -16,7 +16,10 @@ import {
 } from '@data-exploration-components/hooks';
 import { ColumnDef } from '@tanstack/react-table';
 
-import { FileWithRelationshipLabels } from '@data-exploration-lib/core';
+import {
+  FileWithRelationshipLabels,
+  useTranslation,
+} from '@data-exploration-lib/core';
 
 import {
   GroupingTableContainer,
@@ -26,26 +29,6 @@ import {
 
 import { RelationshipTableProps } from './RelationshipTable';
 
-const {
-  relationshipLabels,
-  relation,
-  name,
-  mimeType,
-  uploadedTime,
-  lastUpdatedTime,
-  created,
-} = ResourceTableColumns;
-
-const columns = [
-  name(),
-  relationshipLabels,
-  relation,
-  mimeType,
-  uploadedTime,
-  lastUpdatedTime,
-  created,
-] as ColumnDef<FileWithRelationshipLabels>[];
-
 export function RelationshipFileTable({
   parentResource,
   onItemClicked,
@@ -54,6 +37,21 @@ export function RelationshipFileTable({
   const [currentView, setCurrentView] = useState<string>(
     isGroupingFilesEnabled ? 'tree' : 'list'
   );
+
+  const { t } = useTranslation();
+  const tableColumns = getTableColumns(t);
+
+  const columns = useMemo(() => {
+    return [
+      tableColumns.name(),
+      tableColumns.relationshipLabels,
+      tableColumns.relation,
+      tableColumns.mimeType,
+      tableColumns.uploadedTime,
+      tableColumns.lastUpdatedTime,
+      tableColumns.created,
+    ] as ColumnDef<FileWithRelationshipLabels>[];
+  }, []);
 
   const { data: count } = useRelationshipCount(parentResource, 'file');
 

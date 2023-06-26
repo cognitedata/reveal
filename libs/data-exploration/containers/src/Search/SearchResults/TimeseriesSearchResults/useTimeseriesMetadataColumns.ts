@@ -1,9 +1,10 @@
 import { useCallback, useMemo, useState } from 'react';
 
-import { ResourceTableColumns } from '@data-exploration/components';
+import { getTableColumns } from '@data-exploration/components';
 import debounce from 'lodash/debounce';
 import isEmpty from 'lodash/isEmpty';
 
+import { useTranslation } from '@data-exploration-lib/core';
 import { useTimeseriesMetadataKeys } from '@data-exploration-lib/domain-layer';
 
 export const useTimeseriesMetadataColumns = () => {
@@ -14,12 +15,12 @@ export const useTimeseriesMetadataColumns = () => {
     query,
     enabled: !isEmpty(query),
   });
-
+  const { t } = useTranslation();
   const metadataColumns = useMemo(() => {
     const allMetadataKeys = [...metadataKeys, ...metadataKeysDynamic];
     const uniqueMetadataKeys = [...new Set(allMetadataKeys)];
     return uniqueMetadataKeys.map((key) =>
-      ResourceTableColumns.metadata(String(key))
+      getTableColumns(t).metadata(String(key))
     );
   }, [metadataKeys, metadataKeysDynamic]);
 

@@ -4,6 +4,8 @@ import styled from 'styled-components';
 
 import { Title as DefaultTitle, Detail, Tooltip, Icon } from '@cognite/cogs.js';
 
+import { useTranslation } from '@data-exploration-lib/core';
+
 const Content = styled.div`
   display: flex;
   flex-direction: column;
@@ -33,13 +35,15 @@ export interface Props {
 }
 export const BaseFilterHeader: React.FC<React.PropsWithChildren<Props>> =
   React.memo(({ title, infoContent, handleFilterClick }) => {
+    const { t } = useTranslation();
+
     return (
       <Content>
         <BaseTitle level={6} onClick={handleFilterClick && handleFilterClick}>
           {title}
         </BaseTitle>
         <BaseSubtitle strong>
-          Filters
+          {t('FILTERS', 'Filters')}
           {infoContent && (
             <Tooltip content={infoContent}>
               <Icon type="Info" size={12} data-testid="header-info-icon" />

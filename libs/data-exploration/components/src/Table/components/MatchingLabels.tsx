@@ -6,24 +6,45 @@ import isEmpty from 'lodash/isEmpty';
 
 import { Chip, Flex, Tooltip } from '@cognite/cogs.js';
 
-import { capitalizeFirstLetter } from '@data-exploration-lib/core';
+import {
+  TFunction,
+  capitalizeFirstLetter,
+  useTranslation,
+} from '@data-exploration-lib/core';
 import { MatchingLabels } from '@data-exploration-lib/domain-layer';
 
-const getMainTooltipContent = (title: string, items: string[]) => (
-  <>
-    {capitalizeFirstLetter(title)} match:
-    <Ul>
-      {items.map((item) => (
-        <li key={item}>{capitalizeFirstLetter(item)}</li>
-      ))}
-    </Ul>
-  </>
-);
+const getMainTooltipContent = (
+  title: string,
+  items: string[],
+  t: TFunction
+) => {
+  const type = capitalizeFirstLetter(title)!;
 
-const getLabelFromMatchingItem = (title: string, items: string[]) =>
-  `${capitalizeFirstLetter(title)} match: ${items
-    .map((item) => capitalizeFirstLetter(item))
-    .join(', ')}`;
+  return (
+    <>
+      {t('MATCHING_BY_TYPE', `${type} match`, { type })}:
+      <Ul>
+        {items.map((item) => (
+          <li key={item}>{capitalizeFirstLetter(item)}</li>
+        ))}
+      </Ul>
+    </>
+  );
+};
+
+const getLabelFromMatchingItem = (
+  title: string,
+  items: string[],
+  t: TFunction
+) => {
+  const type = capitalizeFirstLetter(title)!;
+  const matches = items.map((item) => capitalizeFirstLetter(item)).join(', ');
+
+  return t('MATCHING_LABEL_TITLE', `${type} match: ${matches}`, {
+    type: t(title.toUpperCase(), type),
+    matches,
+  });
+};
 
 const getFirstMatchingItem = ({
   exact,
@@ -56,8 +77,11 @@ const getRestMatchingItems = (data: MatchingLabels, firstItem?: string) => {
 };
 
 export const MatchingLabelsComponent: React.FC<MatchingLabels> = (data) => {
+  const { t } = useTranslation();
+
   const firstMatchingItem = getFirstMatchingItem(data);
   const restMatchingItem = getRestMatchingItems(data, firstMatchingItem?.match);
+
   return (
     <StyledFlex gap={4}>
       {firstMatchingItem && (
@@ -65,7 +89,8 @@ export const MatchingLabelsComponent: React.FC<MatchingLabels> = (data) => {
           position="right"
           content={getMainTooltipContent(
             firstMatchingItem.match,
-            firstMatchingItem.value
+            firstMatchingItem.value,
+            t
           )}
         >
           <Chip
@@ -73,7 +98,8 @@ export const MatchingLabelsComponent: React.FC<MatchingLabels> = (data) => {
             size="x-small"
             label={getLabelFromMatchingItem(
               firstMatchingItem.match,
-              firstMatchingItem.value
+              firstMatchingItem.value,
+              t
             )}
             {...(firstMatchingItem.match === 'exact'
               ? { icon: 'MagicWand', type: 'success' }
@@ -88,7 +114,7 @@ export const MatchingLabelsComponent: React.FC<MatchingLabels> = (data) => {
             <div>
               {restMatchingItem.map(({ value, match }) => (
                 <React.Fragment key={match}>
-                  {getMainTooltipContent(match, value)}
+                  {getMainTooltipContent(match, value, t)}
                 </React.Fragment>
               ))}
             </div>

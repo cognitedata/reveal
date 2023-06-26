@@ -1,4 +1,4 @@
-import { Revision3DWithIndex } from '@data-exploration-lib/domain-layer';
+import { Revision3DWithIndex } from '../threeD';
 
 export const selectDefaultRevision = (revisions: Revision3DWithIndex[]) => {
   const publishedRevisions = revisions.filter((r) => r.published);

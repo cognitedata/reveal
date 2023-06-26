@@ -30,6 +30,7 @@ import {
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import {
   APPLICATION_ID,
+  useTranslation,
   SUB_APP_PATH,
   createInternalLink,
 } from '@data-exploration-lib/core';
@@ -54,6 +55,7 @@ export const FileDetail = ({
   const { resourcesState, setResourcesState } = useContext(
     ResourceSelectionContext
   );
+  const { t } = useTranslation();
   const [pushJourney] = usePushJourney();
   const isActive = resourcesState.some(
     // eslint-disable-next-line lodash/prefer-matches
@@ -141,7 +143,9 @@ export const FileDetail = ({
   }
 
   if (!fileInfo) {
-    return <>File {fileId} not found!</>;
+    return (
+      <>{t('FILE_ID_NOT_FOUND', `File ${fileId} not found!`, { fileId })}</>
+    );
   }
 
   return (
@@ -162,15 +166,22 @@ export const FileDetail = ({
         onTabChange={handleTabChange}
         tab={activeTab}
         additionalTabs={[
-          <Tabs.Tab label="Preview" key="preview" tabKey="preview">
+          <Tabs.Tab
+            label={t('PREVIEW_TAB_LABEL', 'Preview')}
+            key="preview"
+            tabKey="preview"
+          >
             <PreviewTabWrapper>
               {editMode && (
                 <Infobar
                   type="neutral"
-                  buttonText="Done editing"
+                  buttonText={t('DONE_EDITION', 'Done editing')}
                   onButtonClick={() => setEditMode(false)}
                 >
-                  You are in editing mode.
+                  {t(
+                    'FILE_EDITING_MODE_NOTIFY_TEXT',
+                    'You are in editing mode.'
+                  )}
                 </Infobar>
               )}
               <CogniteFilePreview
@@ -189,7 +200,7 @@ export const FileDetail = ({
               />
             </PreviewTabWrapper>
           </Tabs.Tab>,
-          <Tabs.Tab label="Details" key="info" tabKey="info">
+          <Tabs.Tab label={t('DETAILS', 'Details')} key="info" tabKey="info">
             <DetailsTabWrapper>
               <FileInfo file={fileInfo} />
               <Metadata metadata={fileInfo.metadata} />

@@ -1,4 +1,7 @@
-import { useGetSearchConfigFromLocalStorage } from '@data-exploration-lib/core';
+import {
+  useGetSearchConfigFromLocalStorage,
+  useTranslation,
+} from '@data-exploration-lib/core';
 import { useEventsAggregateCountQuery } from '@data-exploration-lib/domain-layer';
 
 import { CounterTab } from './elements';
@@ -6,6 +9,7 @@ import { getChipRightPropsForResourceCounter } from './getChipRightPropsForResou
 import { ResourceTabProps } from './types';
 
 export const EventsTab = ({ query, filter, ...rest }: ResourceTabProps) => {
+  const { t } = useTranslation();
   const eventSearchConfig = useGetSearchConfigFromLocalStorage('event');
   const { data, isLoading } = useEventsAggregateCountQuery(
     { eventsFilters: filter, query },
@@ -18,5 +22,7 @@ export const EventsTab = ({ query, filter, ...rest }: ResourceTabProps) => {
     isLoading
   );
 
-  return <CounterTab label="Events" {...chipRightProps} {...rest} />;
+  return (
+    <CounterTab label={t('EVENTS', 'Events')} {...chipRightProps} {...rest} />
+  );
 };

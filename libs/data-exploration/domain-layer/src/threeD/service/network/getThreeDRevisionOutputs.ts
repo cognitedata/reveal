@@ -1,6 +1,6 @@
 import { CogniteClient } from '@cognite/sdk';
 
-import { ThreeDRevisionOutput } from '@data-exploration-lib/domain-layer';
+import { ThreeDRevisionOutput } from '../types';
 
 export const getThreeDRevisionOutputs = async (
   sdk: CogniteClient,

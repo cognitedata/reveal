@@ -5,6 +5,7 @@ import {
   fuzzySearchToggleColumns,
   searchConfigCommonColumns,
   SearchConfigDataType,
+  useTranslation,
 } from '@data-exploration-lib/core';
 
 import { checkFuzzySearchEnabled } from '../SearchResults/utils/checkFuzzySearchEnabled';
@@ -30,6 +31,7 @@ export const CommonColumn = ({
   onToggleFuzzySearch,
 }: Props) => {
   const resourcesLength = Object.keys(searchConfigData).length;
+  const { t } = useTranslation();
 
   const isOptionIndeterminate = (checkedColumnsLength: number) => {
     return checkedColumnsLength > 0 && checkedColumnsLength < resourcesLength;
@@ -45,7 +47,7 @@ export const CommonColumn = ({
   return (
     <CommonColumnWrapper>
       <CommonWrapper direction="column">
-        <ColumnHeader>{COMMON_COLUMN_HEADER}</ColumnHeader>
+        <ColumnHeader>{t('COMMON', COMMON_COLUMN_HEADER)}</ColumnHeader>
         {searchConfigCommonColumns.map((column, index) => {
           const checkedColumnsLength = getNumberOfCheckedColumns(
             searchConfigData,
@@ -68,8 +70,17 @@ export const CommonColumn = ({
                 indeterminate={isOptionIndeterminate(checkedColumnsLength)}
                 checked={isOptionChecked(checkedColumnsLength)}
                 data-testid={`common-column-checkbox-${column}`}
+                id={`common-column-checkbox-${column}`}
               >
-                {column}
+                {t(
+                  `${column
+                    .split(' / ')
+                    .join('_')
+                    .split(' ')
+                    .join('_')
+                    .toUpperCase()}`,
+                  column
+                )}
               </ModalCheckbox>
 
               <FuzzySearchToggle

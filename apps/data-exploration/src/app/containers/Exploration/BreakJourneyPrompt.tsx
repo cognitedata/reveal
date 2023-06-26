@@ -8,11 +8,13 @@ import { usePushJourney } from '@data-exploration-app/hooks';
 import {
   getSearchParamsWithJourney,
   getSearchParamsWithJourneyAndSelectedTab,
+  useTranslation,
 } from '@data-exploration-lib/core';
 
-import { useBreakJourneyPromptState } from '../../hooks/detailsNavigation/useBreakJourneyPromptState';
+import { useBreakJourneyPromptState } from '../../hooks';
 
 export const BreakJourneyPrompt: React.FC<unknown> = () => {
+  const { t } = useTranslation();
   const [pushJourney] = usePushJourney();
   const [{ isOpen, journey }, setPromptOpen] = useBreakJourneyPromptState();
 
@@ -28,14 +30,19 @@ export const BreakJourneyPrompt: React.FC<unknown> = () => {
         handlePromptToggle(false);
       }}
     >
-      <div>You are about to end your current journey</div>
+      <div>
+        {t(
+          'BREAK_JOURNEY_PROMPT_MESSAGE',
+          'You are about to end your current journey'
+        )}
+      </div>
       <div style={{ display: 'flex', marginTop: '30px' }}>
         <Button
           type="ghost"
           alignVertically="left"
           onClick={() => handlePromptToggle(false)}
         >
-          Cancel
+          {t('CANCEL', 'Cancel')}
         </Button>
         <div
           style={{
@@ -54,7 +61,7 @@ export const BreakJourneyPrompt: React.FC<unknown> = () => {
               handlePromptToggle(false);
             }}
           >
-            Overwrite current flow
+            {t('OVERWRITE_CURRENT_FLOW', 'Overwrite current flow')}
           </Button>
           <Button
             icon="ArrowUpRight"
@@ -75,7 +82,7 @@ export const BreakJourneyPrompt: React.FC<unknown> = () => {
               handlePromptToggle(false);
             }}
           >
-            Open in new browser tab
+            {t('OPEN_IN_NEW_TAB', 'Open in new browser tab')}
           </Button>
         </div>
       </div>

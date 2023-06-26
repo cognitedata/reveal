@@ -7,6 +7,8 @@ import {
   Tooltip,
 } from '@cognite/cogs.js';
 
+import { useTranslation } from '@data-exploration-lib/core';
+
 import { BaseIcon } from '../../Icons';
 
 type Props = ButtonProps & {
@@ -17,8 +19,12 @@ export const SearchConfigButton: React.FC<Props> = ({
   showNotificationDot = false,
   ...buttonProps
 }: Props) => {
+  const { t } = useTranslation();
   return (
-    <Tooltip content="Search parameters" position="bottom">
+    <Tooltip
+      content={t('SEARCH_PARAMETERS', 'Search parameters')}
+      position="bottom"
+    >
       <ButtonWrapper>
         <Button {...buttonProps}>
           <NotificationDot hidden={!showNotificationDot}>
@@ -27,7 +33,7 @@ export const SearchConfigButton: React.FC<Props> = ({
               <BaseIcon type="Configure" style={{ verticalAlign: 'middle' }} />
             }
           </NotificationDot>
-          <StyledSpan>Config</StyledSpan>
+          <StyledSpan>{t('CONFIG', 'Config')}</StyledSpan>
         </Button>
       </ButtonWrapper>
     </Tooltip>

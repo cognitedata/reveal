@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 
 import {
+  getTableColumns,
   SubCellMatchingLabels,
   Table,
   TableProps,
@@ -13,6 +14,7 @@ import {
   getHiddenColumns,
   RelationshipLabels,
   SequenceWithRelationshipLabels,
+  useTranslation,
 } from '@data-exploration-lib/core';
 import { InternalSequenceDataWithMatchingLabels } from '@data-exploration-lib/domain-layer';
 
@@ -40,6 +42,9 @@ export const SequenceTable = ({
   onRootAssetClick,
   ...rest
 }: SequenceTableProps) => {
+  const { t } = useTranslation();
+  const tableColumns = getTableColumns(t);
+
   const { metadataColumns, setMetadataKeyQuery } =
     useSequencesMetadataColumns();
 
@@ -47,25 +52,25 @@ export const SequenceTable = ({
     () =>
       [
         {
-          ...Table.Columns.name(query),
+          ...tableColumns.name(query),
           enableHiding: false,
         },
-        Table.Columns.description(query),
-        Table.Columns.externalId(query),
+        tableColumns.description(query),
+        tableColumns.externalId(query),
         {
-          ...Table.Columns.columns,
+          ...tableColumns.columns,
           enableSorting: false,
         },
-        Table.Columns.lastUpdatedTime,
-        Table.Columns.created,
+        tableColumns.lastUpdatedTime,
+        tableColumns.created,
         {
-          ...Table.Columns.id(query),
+          ...tableColumns.id(query),
           enableSorting: false,
         },
-        Table.Columns.rootAsset(onRootAssetClick),
-        Table.Columns.assets(onRootAssetClick),
+        tableColumns.rootAsset(onRootAssetClick),
+        tableColumns.assets(onRootAssetClick),
         {
-          ...Table.Columns.dataSet,
+          ...tableColumns.dataSet,
           enableSorting: true,
         },
         ...metadataColumns,

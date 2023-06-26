@@ -3,9 +3,12 @@ import { StringInput, StringInputProps } from '@data-exploration/components';
 import {
   DATA_EXPLORATION_COMPONENT,
   useDebouncedMetrics,
+  useTranslation,
 } from '@data-exploration-lib/core';
 
 export const ExternalIdFilter = ({ onChange, ...rest }: StringInputProps) => {
+  const { t } = useTranslation();
+
   const trackUsage = useDebouncedMetrics();
   const handleChange = (value?: string) => {
     onChange?.(value);
@@ -15,5 +18,11 @@ export const ExternalIdFilter = ({ onChange, ...rest }: StringInputProps) => {
     });
   };
 
-  return <StringInput label="External ID" onChange={handleChange} {...rest} />;
+  return (
+    <StringInput
+      label={t('EXTERNAL_ID', 'External ID')}
+      onChange={handleChange}
+      {...rest}
+    />
+  );
 };

@@ -9,6 +9,7 @@ import {
   getSearchParams,
   removeProjectFromPath,
 } from '@data-exploration-app/utils/URLUtils';
+import { useTranslation } from '@data-exploration-lib/core';
 
 type BreadcrumbsProps = {
   currentResource: {
@@ -18,6 +19,7 @@ type BreadcrumbsProps = {
 
 // TODO: We have a new version `BreadcrumbsV2`, can remove this file after new navigation adoption.
 export const Breadcrumbs = ({ currentResource }: BreadcrumbsProps) => {
+  const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -38,7 +40,7 @@ export const Breadcrumbs = ({ currentResource }: BreadcrumbsProps) => {
   return (
     <BreadcrumbWrapper>
       <Breadcrumb>
-        <Breadcrumb.Item label="Search" link="" />
+        <Breadcrumb.Item label={t('SEARCH', 'Search')} link="" />
         {location.state?.history?.map(
           ({ path, resource }: any, index: number) => (
             <Breadcrumb.Item

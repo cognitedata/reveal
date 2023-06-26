@@ -14,6 +14,7 @@ import {
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 import { ThreeDContext } from '@data-exploration-app/containers/ThreeD/contexts/ThreeDContext';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
+import { useTranslation } from '@data-exploration-lib/core';
 
 import { ids } from '../../../../cogs-variables';
 
@@ -23,6 +24,7 @@ type SliderProps = {
 };
 
 export const Slicer = ({ viewer, viewerModel }: SliderProps): JSX.Element => {
+  const { t } = useTranslation();
   const { setSlicingState, slicingState } = useContext(ThreeDContext);
 
   const [min, max] = useMemo(() => {
@@ -71,7 +73,7 @@ export const Slicer = ({ viewer, viewerModel }: SliderProps): JSX.Element => {
       }
       placement="right-end"
     >
-      <Tooltip content="Slice" placement="right">
+      <Tooltip content={t('SLICE', 'Slice')} placement="right">
         <FullWidthButton
           icon="Slice"
           type="ghost"

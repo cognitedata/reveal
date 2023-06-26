@@ -1,6 +1,9 @@
 import { TabProps } from '@cognite/cogs.js';
 
-import { useGetSearchConfigFromLocalStorage } from '@data-exploration-lib/core';
+import {
+  useGetSearchConfigFromLocalStorage,
+  useTranslation,
+} from '@data-exploration-lib/core';
 import { useAssetsSearchAggregateQuery } from '@data-exploration-lib/domain-layer';
 
 import { CounterTab } from './elements';
@@ -12,6 +15,7 @@ interface Props extends TabProps {
 }
 
 export const AssetsTab = ({ query, filter, ...rest }: Props) => {
+  const { t } = useTranslation();
   const assetSearchConfig = useGetSearchConfigFromLocalStorage('asset');
 
   const {
@@ -27,5 +31,7 @@ export const AssetsTab = ({ query, filter, ...rest }: Props) => {
 
   const chipRightProps = getChipRightPropsForResourceCounter(count, isLoading);
 
-  return <CounterTab label="Assets" {...chipRightProps} {...rest} />;
+  return (
+    <CounterTab label={t('ASSETS', 'Assets')} {...chipRightProps} {...rest} />
+  );
 };

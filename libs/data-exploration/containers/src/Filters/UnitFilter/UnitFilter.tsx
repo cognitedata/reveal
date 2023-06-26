@@ -6,6 +6,7 @@ import {
   InternalTimeseriesFilters,
   useDebouncedState,
   useMetrics,
+  useTranslation,
 } from '@data-exploration-lib/core';
 import { useTimeseriesFilterOptions } from '@data-exploration-lib/domain-layer';
 
@@ -33,6 +34,7 @@ export function UnitFilter<TFilter>({
   value,
   ...rest
 }: UnitFilterProps<TFilter>) {
+  const { t } = useTranslation();
   const trackUsage = useMetrics();
 
   const handleChange = (
@@ -51,7 +53,7 @@ export function UnitFilter<TFilter>({
   return (
     <MultiSelectFilter<string>
       {...rest}
-      label="Unit"
+      label={t('UNIT', 'Unit')}
       value={value ? transformOptionsForMultiselectFilter(value) : undefined}
       options={options}
       onChange={(_, units) => handleChange(units)}

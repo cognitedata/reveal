@@ -2,7 +2,11 @@ import styled from 'styled-components';
 
 import { Body, Flex, Icon, Infobar } from '@cognite/cogs.js';
 
+import { useTranslation } from '@data-exploration-lib/core';
+
 export const GPTInfobar = ({ onClose }: { onClose: () => void }) => {
+  const { t } = useTranslation();
+
   return (
     <GPTTipContainer>
       <InfobarWrapper close onClose={onClose}>
@@ -14,8 +18,10 @@ export const GPTInfobar = ({ onClose }: { onClose: () => void }) => {
         >
           <Icon type="LightBulb" />
           <Body style={{ paddingLeft: '10.5px' }}>
-            Tip: Add a question mark to your search to get ChatGPT powered
-            results
+            {t(
+              'GPT_INFO',
+              'Tip: Add a question mark to your search to get ChatGPT powered results'
+            )}
           </Body>
         </div>
       </InfobarWrapper>

@@ -4,10 +4,11 @@ import { useSearchParams } from 'react-router-dom';
 import { Button, Tooltip } from '@cognite/cogs.js';
 
 import { useEndJourney, useViewModeToggle } from '@data-exploration-app/hooks';
-import { VIEW_MODE_FIELD } from '@data-exploration-lib/core';
+import { VIEW_MODE_FIELD, useTranslation } from '@data-exploration-lib/core';
 
 // This is the close button for details overlay
 export const PreviewCloseButtonV2 = () => {
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const [endJourney] = useEndJourney();
   const [viewModeToggle, setViewModeToggle] = useViewModeToggle();
@@ -23,7 +24,7 @@ export const PreviewCloseButtonV2 = () => {
   }
 
   return (
-    <Tooltip content="Close journey">
+    <Tooltip content={t('CLOSE_JOURNEY', 'Close journey')}>
       <Button
         icon="Close"
         aria-label="Close"

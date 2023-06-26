@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import {
   EmptyState,
-  ResourceTableColumns,
+  getTableColumns,
   Table,
 } from '@data-exploration/components';
 import { ResultCount } from '@data-exploration/containers';
@@ -12,34 +12,32 @@ import {
 } from '@data-exploration-components/hooks';
 import { ColumnDef } from '@tanstack/react-table';
 
-import { SequenceWithRelationshipLabels } from '@data-exploration-lib/core';
+import {
+  SequenceWithRelationshipLabels,
+  useTranslation,
+} from '@data-exploration-lib/core';
 
 import { RelationshipTableProps } from './RelationshipTable';
-
-const {
-  relationshipLabels,
-  relation,
-  name,
-  mimeType,
-  uploadedTime,
-  lastUpdatedTime,
-  created,
-} = ResourceTableColumns;
-
-const columns = [
-  name(),
-  relationshipLabels,
-  relation,
-  mimeType,
-  uploadedTime,
-  lastUpdatedTime,
-  created,
-] as ColumnDef<SequenceWithRelationshipLabels>[];
 
 export function RelationshipSequenceTable({
   parentResource,
   onItemClicked,
 }: Omit<RelationshipTableProps, 'type'>) {
+  const { t } = useTranslation();
+  const tableColumns = getTableColumns(t);
+
+  const columns = useMemo(() => {
+    return [
+      tableColumns.name(),
+      tableColumns.relationshipLabels,
+      tableColumns.relation,
+      tableColumns.mimeType,
+      tableColumns.uploadedTime,
+      tableColumns.lastUpdatedTime,
+      tableColumns.created,
+    ] as ColumnDef<SequenceWithRelationshipLabels>[];
+  }, []);
+
   const { data: count } = useRelationshipCount(parentResource, 'sequence');
 
   const { hasNextPage, fetchNextPage, isLoading, items } =

@@ -2,8 +2,13 @@ import * as React from 'react';
 
 import { Button } from '@cognite/cogs.js';
 
+import { useTranslation } from '../../i18n/useTranslation';
 import { TimePeriod, UpdateTimePeriodProps } from '../../types';
-import { getDateRangeForTimePeriod } from '../../utils/getDateRangeForTimePeriod';
+import {
+  getDateRangeForTimePeriod,
+  getTimePeriodTranslationKey,
+} from '../../utils/getDateRangeForTimePeriod';
+import { getTimePeriodData } from '../../utils/getTimePeriodData';
 
 export interface TimePeriodButtonProps {
   timePeriod: TimePeriod;
@@ -16,6 +21,11 @@ export const TimePeriodButton: React.FC<TimePeriodButtonProps> = ({
   isSelected = false,
   onClick,
 }) => {
+  const { t } = useTranslation();
+
+  const { time, period } = getTimePeriodData(timePeriod);
+  const translationKey = getTimePeriodTranslationKey(period);
+
   const handleClick = () => {
     const dateRange = getDateRangeForTimePeriod(timePeriod);
     onClick({ timePeriod, dateRange });
@@ -31,7 +41,7 @@ export const TimePeriodButton: React.FC<TimePeriodButtonProps> = ({
         padding: 8,
       }}
     >
-      {timePeriod}
+      {t(translationKey, timePeriod, { time })}
     </Button>
   );
 };

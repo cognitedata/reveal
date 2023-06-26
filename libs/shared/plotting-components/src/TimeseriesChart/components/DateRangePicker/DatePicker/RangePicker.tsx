@@ -15,6 +15,8 @@ import {
   Flex,
 } from '@cognite/cogs.js';
 
+import { useTranslation } from '../../../i18n/useTranslation';
+
 import { CalendarPicker } from './CalendarPicker';
 import {
   PivotRange,
@@ -39,6 +41,8 @@ export const RangePicker = ({
   buttonProps,
   children,
 }: RangePickerProps) => {
+  const { t } = useTranslation();
+
   // Cogs is stupid af so we have to ref the span
   const spanRef = useRef<HTMLSpanElement>(null);
   const [mode, setMode] = useState<'range' | 'calendar'>('range');
@@ -76,10 +80,10 @@ export const RangePicker = ({
         onButtonClicked={(key) => setMode(key as 'range' | 'calendar')}
       >
         <SegmentedControl.Button key="range" icon="Events">
-          Range
+          {t('RANGE', 'Range')}
         </SegmentedControl.Button>
         <SegmentedControl.Button key="calendar" icon="Calendar">
-          Calendar
+          {t('CALENDAR', 'Calendar')}
         </SegmentedControl.Button>
       </SegmentedControl>
       {mode === 'range' ? (

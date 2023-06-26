@@ -14,6 +14,7 @@ import {
   InternalTimeseriesFilters,
   useDebouncedState,
   useMetrics,
+  useTranslation,
 } from '@data-exploration-lib/core';
 import {
   useAssetsMetadataFilterOptions,
@@ -51,7 +52,9 @@ export const MetadataFilter = <TFilter,>({
   onChange,
   ...rest
 }: MetadataFilterProps<TFilter>) => {
+  const { t } = useTranslation();
   const trackUsage = useMetrics();
+
   const selection = transformMetadataValues(values);
 
   const handleOnClickApply = (newSelection: OptionSelection) => {
@@ -67,7 +70,7 @@ export const MetadataFilter = <TFilter,>({
       {...rest}
       width="100%"
       selection={selection}
-      label="Metadata"
+      label={t('METADATA', 'Metadata')}
       options={options}
       onSearchInputChange={onSearchInputChange}
       onClickApply={handleOnClickApply}

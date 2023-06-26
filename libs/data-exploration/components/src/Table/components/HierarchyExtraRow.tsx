@@ -4,6 +4,8 @@ import { Row } from '@tanstack/react-table';
 
 import { Icon } from '@cognite/cogs.js';
 
+import { TFunction } from '@data-exploration-lib/core';
+
 import { Tr } from '../elements';
 
 export const HierarchyExtraRow = <
@@ -12,7 +14,8 @@ export const HierarchyExtraRow = <
   }
 >(
   row: Row<T>,
-  onAssetSeeMoreClicked: (item: T) => void
+  onAssetSeeMoreClicked: (item: T) => void,
+  t: TFunction
 ) => {
   const { shouldShowMoreAssetsRow } = row.original;
 
@@ -29,7 +32,9 @@ export const HierarchyExtraRow = <
     >
       <SeeMoreWrapper depth={row.depth} canExpand={row.getCanExpand()}>
         <SpanWrapper>
-          <StyledSpan>View full hierarchy</StyledSpan>
+          <StyledSpan>
+            {t('VIEW_FULL_HIERARCHY', 'View full hierarchy')}
+          </StyledSpan>
           <Icon size={12} type="ArrowRight" />
         </SpanWrapper>
       </SeeMoreWrapper>

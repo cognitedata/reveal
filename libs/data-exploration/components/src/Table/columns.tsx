@@ -13,6 +13,7 @@ import {
   getMetadataValueByKey,
   isNumber,
   mapFileType,
+  TFunction,
 } from '@data-exploration-lib/core';
 
 import { RootAsset } from '../RootAsset';
@@ -23,10 +24,10 @@ import { StyledLabel } from './elements';
 import { ResourceTableHashMap } from './types';
 
 // TODO: this whole approach needs to be refactored a bit, especially the usage of hooks and stuff
-export const ResourceTableColumns: ResourceTableHashMap = {
+export const getTableColumns = (t: TFunction): ResourceTableHashMap => ({
   name: (query?: string) => {
     return {
-      header: 'Name',
+      header: t('NAME', 'Name'),
       accessorKey: 'name',
       cell: ({ getValue }) => {
         return (
@@ -41,7 +42,7 @@ export const ResourceTableColumns: ResourceTableHashMap = {
   },
   description: (query?: string) => {
     return {
-      header: 'Description',
+      header: t('DESCRIPTION', 'Description'),
       accessorKey: 'description',
       cell: ({ getValue }) => {
         return (
@@ -59,7 +60,7 @@ export const ResourceTableColumns: ResourceTableHashMap = {
   // https://docs.google.com/document/d/1NealpKxykyosTPul9695oX_njJjwyIlEhqYoDAsCLIg
   externalId: (query?: string) => {
     return {
-      header: 'External ID',
+      header: t('EXTERNAL_ID', 'External ID'),
       accessorKey: 'externalId',
       cell: ({ getValue }) => {
         return (
@@ -74,7 +75,7 @@ export const ResourceTableColumns: ResourceTableHashMap = {
   },
   type: (query?: string) => {
     return {
-      header: 'Type',
+      header: t('TYPE', 'Type'),
       accessorKey: 'type',
       cell: ({ getValue }) => {
         return (
@@ -90,7 +91,7 @@ export const ResourceTableColumns: ResourceTableHashMap = {
   rootAsset: (onClick) => {
     return {
       accessorFn: (resourceData) => resourceData.assetId || resourceData.rootId,
-      header: 'Root asset',
+      header: t('ROOT_ASSET', 'Root asset'),
       id: 'rootAsset',
       enableSorting: false,
       cell: ({ row, getValue }) => {
@@ -108,7 +109,7 @@ export const ResourceTableColumns: ResourceTableHashMap = {
   assets: (onClick) => {
     return {
       accessorFn: (resourceData) => resourceData.assetId,
-      header: 'Direct asset',
+      header: t('DIRECT_ASSET', 'Direct asset'),
       id: 'directAsset',
       enableSorting: false,
       cell: ({ getValue, row }) => {
@@ -136,7 +137,7 @@ export const ResourceTableColumns: ResourceTableHashMap = {
   },
   id: (query?: string) => {
     return {
-      header: 'ID',
+      header: t('ID', 'ID'),
       accessorKey: 'id',
       cell: ({ getValue }) => {
         const text = isNumber(getValue<number>())
@@ -149,7 +150,7 @@ export const ResourceTableColumns: ResourceTableHashMap = {
   subtype: (query?: string) => {
     return {
       accessorKey: 'subtype',
-      header: 'Subtype',
+      header: t('SUBTYPE', 'Subtype'),
       cell: ({ getValue }) => {
         return (
           <HighlightCell
@@ -164,7 +165,7 @@ export const ResourceTableColumns: ResourceTableHashMap = {
   source: (query?: string) => {
     return {
       accessorKey: 'source',
-      header: 'Source',
+      header: t('SOURCE', 'Source'),
       cell: ({ getValue }) => (
         <HighlightCell
           text={getValue<string>() || DASH}
@@ -175,7 +176,7 @@ export const ResourceTableColumns: ResourceTableHashMap = {
     };
   },
   created: {
-    header: 'Created',
+    header: t('CREATED_TIME', 'Created'),
     accessorKey: 'createdTime',
     cell: ({ getValue }) => (
       <Body level={2}>
@@ -184,11 +185,14 @@ export const ResourceTableColumns: ResourceTableHashMap = {
     ),
   },
   relation: {
-    header: 'Relationship description(Source/Target)',
+    header: t(
+      'RELATIONSHIP_DESCRIPTION',
+      'Relationship description(Source/Target)'
+    ),
     accessorKey: 'relation',
   },
   labels: {
-    header: 'Labels',
+    header: t('LABELS', 'Labels'),
     accessorKey: 'labels',
     cell: ({ getValue }) => (
       <Flex gap={2} wrap="wrap">
@@ -203,7 +207,7 @@ export const ResourceTableColumns: ResourceTableHashMap = {
   },
   lastUpdatedTime: {
     accessorKey: 'lastUpdatedTime',
-    header: 'Last updated',
+    header: t('LAST_UPDATED', 'Last updated'),
     cell: ({ getValue }) => (
       <Body level={2}>
         <TimeDisplay value={getValue<number | Date>()} relative withTooltip />
@@ -211,7 +215,7 @@ export const ResourceTableColumns: ResourceTableHashMap = {
     ),
   },
   parentExternalId: {
-    header: 'Parent external ID',
+    header: t('PARENT_EXTERNAL_ID', 'Parent external ID'),
     accessorKey: 'parentExternalId',
     cell: ({ getValue }) => (
       <HighlightCell text={getValue<string>() || DASH} lines={1} />
@@ -219,7 +223,7 @@ export const ResourceTableColumns: ResourceTableHashMap = {
   },
   unit: (query?: string) => {
     return {
-      header: 'Unit',
+      header: t('UNIT', 'Unit'),
       accessorKey: 'unit',
       cell: ({ getValue }) => (
         <HighlightCell
@@ -231,21 +235,21 @@ export const ResourceTableColumns: ResourceTableHashMap = {
     };
   },
   isString: {
-    header: 'Is string',
+    header: t('IS_STRING', 'Is string'),
     accessorKey: 'isString',
     cell: ({ getValue }) => (
       <Body level={2}>{capitalize(getValue<boolean>().toString())}</Body>
     ),
   },
   isStep: {
-    header: 'Is step',
+    header: t('IS_STEP', 'Is step'),
     accessorKey: 'isStep',
     cell: ({ getValue }) => (
       <Body level={2}>{capitalize(getValue<boolean>().toString())}</Body>
     ),
   },
   dataSet: {
-    header: 'Dataset',
+    header: t('DATASET', 'Dataset'),
     id: 'dataSetId',
     enableSorting: false,
     accessorFn: (resource) => resource.dataSetId,
@@ -263,7 +267,7 @@ export const ResourceTableColumns: ResourceTableHashMap = {
   },
   startTime: {
     accessorKey: 'startTime',
-    header: 'Start time',
+    header: t('START_TIME', 'Start time'),
     cell: ({ getValue }) => (
       <Body level={2}>
         {getValue() ? <TimeDisplay value={getValue<number | Date>()} /> : DASH}
@@ -272,7 +276,7 @@ export const ResourceTableColumns: ResourceTableHashMap = {
   },
   endTime: {
     accessorKey: 'endTime',
-    header: 'End time',
+    header: t('END_TIME', 'End time'),
     cell: ({ getValue }) => (
       <Body level={2}>
         {getValue() ? <TimeDisplay value={getValue<number | Date>()} /> : DASH}
@@ -281,7 +285,7 @@ export const ResourceTableColumns: ResourceTableHashMap = {
   },
   mimeType: {
     accessorKey: 'mimeType',
-    header: 'Type',
+    header: t('TYPE', 'Type'),
     cell: ({ getValue }) => (
       <Body level={2}>
         <Tooltip interactive content={getValue<string>()}>
@@ -292,7 +296,7 @@ export const ResourceTableColumns: ResourceTableHashMap = {
   },
   uploadedTime: {
     accessorKey: 'uploadedTime',
-    header: 'Uploaded',
+    header: t('UPLOADED', 'Uploaded'),
     cell: ({ row: { original: file } }) => (
       <Body level={2}>
         {file && file.uploaded ? (
@@ -305,7 +309,7 @@ export const ResourceTableColumns: ResourceTableHashMap = {
   },
   columns: {
     accessorKey: 'columns',
-    header: '№ of Columns',
+    header: t('NUMBER_OF_COLUMNS', '№ of Columns'),
     cell: ({ getValue }) => (
       <Body level={2}>
         {getValue() ? getValue<Array<unknown>>().length : 0}
@@ -315,7 +319,7 @@ export const ResourceTableColumns: ResourceTableHashMap = {
 
   relationshipLabels: {
     accessorKey: 'relationshipLabels',
-    header: 'Relationship labels',
+    header: t('RELATIONSHIP_LABELS', 'Relationship labels'),
     size: 250,
     cell: ({ getValue }) => (
       <Flex gap={2} wrap="wrap">
@@ -340,4 +344,4 @@ export const ResourceTableColumns: ResourceTableHashMap = {
       },
     };
   },
-};
+});
