@@ -1,8 +1,10 @@
 import React, { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 import { Loader, Metadata } from '@data-exploration/components';
 import { SequenceInfo } from '@data-exploration/containers';
 
+import { useCdfUserHistoryService } from '@cognite/cdf-utilities';
 import { Tabs } from '@cognite/cogs.js';
 import {
   SequencePreview as SequenceTabPreview,
@@ -20,6 +22,11 @@ import {
   useResourceDetailSelectedTab,
 } from '@data-exploration-app/hooks';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
+import {
+  useTranslation,
+  SUB_APP_PATH,
+  createInternalLink,
+} from '@data-exploration-lib/core';
 
 // SequencePreviewType;
 // - details
@@ -37,10 +44,15 @@ export const SequenceDetail = ({
   sequenceId: number;
   actions?: React.ReactNode;
 }) => {
+  const { t } = useTranslation();
+
   const [selectedTab, setSelectedTab] = useResourceDetailSelectedTab();
   const [endJourney] = useEndJourney();
 
   const activeTab = selectedTab || 'preview';
+
+  const { pathname, search: searchParams } = useLocation();
+  const userHistoryService = useCdfUserHistoryService();
 
   const handlePreviewClose = () => {
     endJourney();
@@ -56,11 +68,23 @@ export const SequenceDetail = ({
 
   const {
     data: sequence,
-    isFetched,
+    isFetched: isSequenceFetched,
     error,
   } = useCdfItem<Sequence>('sequences', { id: sequenceId });
 
-  if (!isFetched) {
+  useEffect(() => {
+    if (isSequenceFetched && sequence) {
+      // save Sequence preview as view resource in user history
+      if (sequence?.name)
+        userHistoryService.logNewResourceView({
+          application: SUB_APP_PATH,
+          name: sequence?.name,
+          path: createInternalLink(pathname, searchParams),
+        });
+    }
+  }, [isSequenceFetched, sequence]);
+
+  if (!isSequenceFetched) {
     return <Loader />;
   }
 
@@ -75,7 +99,14 @@ export const SequenceDetail = ({
   }
 
   if (!sequence) {
-    return <>Sequence {sequenceId} not found!</>;
+    return (
+      <>
+        {t('RESOURCE_NOT_FOUND', `Sequence ${sequenceId} not found!`, {
+          resourceType: t('SEQUENCE', 'Sequence'),
+          id: sequenceId,
+        })}
+      </>
+    );
   }
 
   return (
@@ -96,10 +127,18 @@ export const SequenceDetail = ({
         onTabChange={handleTabChange}
         tab={activeTab}
         additionalTabs={[
-          <Tabs.Tab label="Preview" tabKey="preview" key="preview">
+          <Tabs.Tab
+            label={t('PREVIEW_TAB_LABEL', 'Preview')}
+            tabKey="preview"
+            key="preview"
+          >
             <SequenceTabPreview sequence={sequence} />
           </Tabs.Tab>,
-          <Tabs.Tab label="Details" tabKey="details" key="details">
+          <Tabs.Tab
+            label={t('DETAILS', 'Details')}
+            tabKey="details"
+            key="details"
+          >
             <DetailsTabWrapper>
               <SequenceInfo sequence={sequence} />
               <Metadata metadata={sequence.metadata} />

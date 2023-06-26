@@ -27,14 +27,16 @@ export const FileNamePreview = ({
   fileName,
   file,
   query,
+  shouldShowPreviews = true,
 }: {
   fileName: string;
   file: FileInfo;
   query: string | undefined;
+  shouldShowPreviews?: boolean;
 }) => {
   const isPreviewable = isFilePreviewable(file);
 
-  if (isPreviewable) {
+  if (shouldShowPreviews && isPreviewable) {
     return (
       <Popover
         content={<FileThumbnail file={file} />}

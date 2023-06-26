@@ -13,6 +13,7 @@ import {
   EMPTY_OBJECT,
   APPLICATION_ID,
   ResourceType,
+  useTranslation,
 } from '@data-exploration-lib/core';
 import {
   useAssetsByIdQuery,
@@ -82,6 +83,8 @@ export const DocumentDetails: FC<
     isSequenceVisible,
     isEventVisible,
   } = getResourcesVisibility(visibleResources);
+
+  const { t } = useTranslation();
 
   const assetIds = parentDocument?.assetIds || [];
   const isQueryEnabled = assetIds.length > 0;
@@ -156,7 +159,10 @@ export const DocumentDetails: FC<
       onSelectClicked={onSelect}
     >
       <StyledCollapse accordion ghost defaultActiveKey="document-preview">
-        <Collapse.Panel key="document-preview" header={<h4>{PREVIEW}</h4>}>
+        <Collapse.Panel
+          key="document-preview"
+          header={<h4>{t('PREVIEW_TAB_LABEL', PREVIEW)}</h4>}
+        >
           <PreviewWrapper>
             {parentDocument?.id && (
               <DocumentPreview
@@ -171,17 +177,22 @@ export const DocumentDetails: FC<
             )}
           </PreviewWrapper>
         </Collapse.Panel>
-        <Collapse.Panel key="document-details" header={<h4>{DETAILS}</h4>}>
+        <Collapse.Panel
+          key="document-details"
+          header={<h4>{t('DETAILS', DETAILS)}</h4>}
+        >
           {parentDocument ? (
             <FileInfo file={parentDocument as any} />
           ) : (
-            <Title level={5}>{NO_DETAILS_AVAILABLE}</Title>
+            <Title level={5}>
+              {t('NO_DETAILS_AVAILABLE', NO_DETAILS_AVAILABLE)}
+            </Title>
           )}
         </Collapse.Panel>
         {isAssetVisible && (
           <Collapse.Panel
             key="document-asset-detail"
-            header={<h4>{ASSETS}</h4>}
+            header={<h4>{t('ASSETS', ASSETS)}</h4>}
           >
             <AssetDetailsTable
               id="asset-resource-document-detail-table"
@@ -198,7 +209,7 @@ export const DocumentDetails: FC<
         {isTimeseriesVisible && (
           <Collapse.Panel
             key="document-timeseries-detail"
-            header={<h4>{TIME_SERIES}</h4>}
+            header={<h4>{t('TIMESERIES', TIME_SERIES)}</h4>}
           >
             <TimeseriesDetailsTable
               id="timeseries-resource-document-detail-table"
@@ -217,7 +228,7 @@ export const DocumentDetails: FC<
         {isFileVisible && (
           <Collapse.Panel
             key="document-documents-detail"
-            header={<h4>{FILES}</h4>}
+            header={<h4>{t('FILES', FILES)}</h4>}
           >
             <FileDetailsTable
               id="documents-resource-document-detail-table"
@@ -236,7 +247,7 @@ export const DocumentDetails: FC<
         {isEventVisible && (
           <Collapse.Panel
             key="document-events-detail"
-            header={<h4>{EVENTS}</h4>}
+            header={<h4>{t('EVENTS', EVENTS)}</h4>}
           >
             <EventDetailsTable
               id="event-resource-document-detail-table"
@@ -255,7 +266,7 @@ export const DocumentDetails: FC<
         {isSequenceVisible && (
           <Collapse.Panel
             key="document-sequence-detail"
-            header={<h4>{SEQUENCES}</h4>}
+            header={<h4>{t('SEQUENCES', SEQUENCES)}</h4>}
           >
             <SequenceDetailsTable
               id="sequence-resource-document-detail-table"

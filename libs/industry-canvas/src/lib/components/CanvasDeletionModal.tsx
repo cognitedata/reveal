@@ -1,5 +1,7 @@
 import { Body, Modal } from '@cognite/cogs.js';
 
+import { translationKeys } from '../common';
+import { useTranslation } from '../hooks/useTranslation';
 import { SerializedCanvasDocument } from '../types';
 
 type CanvasDeletionModalProps = {
@@ -15,13 +17,14 @@ const CanvasDeletionModal: React.FC<CanvasDeletionModalProps> = ({
   onDeleteCanvas,
   isDeleting,
 }) => {
+  const { t } = useTranslation();
   if (canvas === undefined) {
     return <></>;
   }
   return (
     <Modal
       visible={canvas !== undefined}
-      title="Delete canvas?"
+      title={t(translationKeys.MODAL_CANVAS_DELETION_TITLE, 'Delete canvas?')}
       onCancel={onCancel}
       onOk={() => onDeleteCanvas(canvas)}
       okDisabled={isDeleting}
@@ -30,11 +33,16 @@ const CanvasDeletionModal: React.FC<CanvasDeletionModalProps> = ({
       destructive
     >
       <Body level={2}>
-        Are you sure you want to delete the canvas "
-        <strong>{canvas.name || '<no name>'}</strong>
-        "?
+        {t(
+          translationKeys.MODAL_CANVAS_DELETION_CONFIRMATION,
+          'Are you sure you want to delete the canvas'
+        )}{' '}
+        "<strong>{canvas.name || '<no name>'}</strong>"?
         <br />
-        The canvas will be deleted permanently.
+        {t(
+          translationKeys.MODAL_CANVAS_DELETION_MESSAGE,
+          'The canvas will be deleted permanently.'
+        )}
       </Body>
     </Modal>
   );

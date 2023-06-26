@@ -1,8 +1,10 @@
 import React, { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 import { Loader, Metadata } from '@data-exploration/components';
 import { EventInfo } from '@data-exploration/containers';
 
+import { useCdfUserHistoryService } from '@cognite/cdf-utilities';
 import { Tabs } from '@cognite/cogs.js';
 import { ErrorFeedback } from '@cognite/data-exploration';
 import { CogniteError, CogniteEvent } from '@cognite/sdk';
@@ -18,6 +20,11 @@ import {
 } from '@data-exploration-app/hooks';
 import { renderTitle } from '@data-exploration-app/utils/EventsUtils';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
+import {
+  useTranslation,
+  SUB_APP_PATH,
+  createInternalLink,
+} from '@data-exploration-lib/core';
 
 // EventPreviewTabType;
 // - details
@@ -34,10 +41,15 @@ export const EventDetail = ({
   eventId: number;
   actions?: React.ReactNode;
 }) => {
+  const { t } = useTranslation();
+
   const [selectedTab, setSelectedTab] = useResourceDetailSelectedTab();
   const [endJourney] = useEndJourney();
 
   const activeTab = selectedTab || 'details';
+
+  const { pathname, search: searchParams } = useLocation();
+  const userHistoryService = useCdfUserHistoryService();
 
   const handlePreviewClose = () => {
     endJourney();
@@ -50,19 +62,36 @@ export const EventDetail = ({
   useEffect(() => {
     trackUsage('Exploration.Preview.Event', { eventId });
   }, [eventId]);
+
   const {
     data: event,
     error,
-    isFetched,
+    isFetched: isEventFetched,
   } = useCdfItem<CogniteEvent>('events', {
     id: eventId,
   });
 
+  useEffect(() => {
+    if (isEventFetched && event) {
+      // save Event preview as view resource in user history
+      if (event?.id)
+        userHistoryService.logNewResourceView({
+          application: SUB_APP_PATH,
+          name: renderTitle(event),
+          path: createInternalLink(pathname, searchParams),
+        });
+    }
+  }, [isEventFetched, event]);
+
   if (!eventId || !Number.isFinite(eventId)) {
-    return <>Invalid event id: {eventId}</>;
+    return (
+      <>
+        {t('INVALID_EVENT_ID', 'Invalid event id')}: {eventId}
+      </>
+    );
   }
 
-  if (!isFetched) {
+  if (!isEventFetched) {
     return <Loader />;
   }
 
@@ -77,7 +106,14 @@ export const EventDetail = ({
   }
 
   if (!event) {
-    return <>Event {eventId} not found!</>;
+    return (
+      <>
+        {t('RESOURCE_NOT_FOUND', `Event ${eventId} not found!`, {
+          resourceType: t('EVENT', 'Event'),
+          id: eventId,
+        })}
+      </>
+    );
   }
 
   return (
@@ -98,7 +134,11 @@ export const EventDetail = ({
         onTabChange={handleTabChange}
         tab={activeTab}
         additionalTabs={[
-          <Tabs.Tab key="details" label="Details" tabKey="details">
+          <Tabs.Tab
+            key="details"
+            label={t('DETAILS', 'Details')}
+            tabKey="details"
+          >
             <DetailsTabWrapper>
               <EventInfo event={event} />
               <Metadata metadata={event.metadata} />

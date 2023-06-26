@@ -1,8 +1,10 @@
 import React, { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 import { Loader, Metadata } from '@data-exploration/components';
 import { AssetInfo } from '@data-exploration/containers';
 
+import { useCdfUserHistoryService } from '@cognite/cdf-utilities';
 import { Tabs } from '@cognite/cogs.js';
 import { ErrorFeedback, ResourceTypes } from '@cognite/data-exploration';
 import { Asset, CogniteError } from '@cognite/sdk';
@@ -18,6 +20,11 @@ import {
   useResourceDetailSelectedTab,
 } from '@data-exploration-app/hooks';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
+import {
+  useTranslation,
+  SUB_APP_PATH,
+  createInternalLink,
+} from '@data-exploration-lib/core';
 
 import { AssetHierarchyTab } from './AssetHierarchyTab';
 
@@ -39,11 +46,16 @@ export const AssetDetail = ({
   actions?: React.ReactNode;
   hideDefaultCloseActions?: boolean;
 }) => {
+  const { t } = useTranslation();
+
   const [selectedTab, setSelectedTab] = useResourceDetailSelectedTab();
   const [pushJourney] = usePushJourney();
   const [endJourney] = useEndJourney();
 
   const activeTab = selectedTab ?? 'details';
+
+  const { pathname, search: searchParams } = useLocation();
+  const userHistoryService = useCdfUserHistoryService();
 
   const handlePreviewClose = () => {
     endJourney();
@@ -63,7 +75,7 @@ export const AssetDetail = ({
 
   const {
     data: asset,
-    isFetched,
+    isFetched: isAssetFetched,
     error,
   } = useCdfItem<Asset>(
     'assets',
@@ -73,7 +85,19 @@ export const AssetDetail = ({
     }
   );
 
-  if (!isFetched) {
+  useEffect(() => {
+    if (isAssetFetched && asset) {
+      // save Asset preview as view resource in user history
+      if (asset?.name)
+        userHistoryService.logNewResourceView({
+          application: SUB_APP_PATH,
+          name: asset?.name,
+          path: createInternalLink(pathname, searchParams),
+        });
+    }
+  }, [isAssetFetched, asset]);
+
+  if (!isAssetFetched) {
     return <Loader />;
   }
 
@@ -88,7 +112,14 @@ export const AssetDetail = ({
   }
 
   if (!asset) {
-    return <>Asset {assetId} not found!</>;
+    return (
+      <>
+        {t('RESOURCE_NOT_FOUND', `Asset ${assetId} not found!`, {
+          resourceType: t('ASSET', 'Asset'),
+          id: assetId,
+        })}
+      </>
+    );
   }
 
   return (
@@ -112,7 +143,11 @@ export const AssetDetail = ({
         onTabChange={handleTabChange}
         tab={activeTab}
         additionalTabs={[
-          <Tabs.Tab label="Details" key="details" tabKey="details">
+          <Tabs.Tab
+            label={t('DETAILS', 'Details')}
+            key="details"
+            tabKey="details"
+          >
             <DetailsTabWrapper>
               <AssetInfo
                 asset={asset}
@@ -121,7 +156,11 @@ export const AssetDetail = ({
               <Metadata metadata={asset.metadata} />
             </DetailsTabWrapper>
           </Tabs.Tab>,
-          <Tabs.Tab label="Hierarchy" key="children" tabKey="children">
+          <Tabs.Tab
+            label={t('HIERARCHY_TAB_LABEL', 'Hierarchy')}
+            key="children"
+            tabKey="children"
+          >
             <AssetHierarchyTab asset={asset} />
           </Tabs.Tab>,
         ]}

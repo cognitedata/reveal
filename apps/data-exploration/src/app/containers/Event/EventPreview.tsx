@@ -19,6 +19,7 @@ import {
 } from '@data-exploration-app/hooks/hooks';
 import { renderTitle } from '@data-exploration-app/utils/EventsUtils';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
+import { useTranslation } from '@data-exploration-lib/core';
 
 export type EventPreviewTabType =
   | 'details'
@@ -35,6 +36,8 @@ export const EventPreview = ({
   eventId: number;
   actions?: React.ReactNode;
 }) => {
+  const { t } = useTranslation();
+
   const { tabType } = useParams<{
     tabType: EventPreviewTabType;
   }>();
@@ -59,7 +62,11 @@ export const EventPreview = ({
   });
 
   if (!eventId || !Number.isFinite(eventId)) {
-    return <>Invalid event id: {eventId}</>;
+    return (
+      <>
+        {t('INVALID_EVENT_ID', 'Invalid event id')}: {eventId}
+      </>
+    );
   }
 
   if (!isFetched) {
@@ -77,7 +84,14 @@ export const EventPreview = ({
   }
 
   if (!event) {
-    return <>Event {eventId} not found!</>;
+    return (
+      <>
+        {t('RESOURCE_NOT_FOUND', `Event ${eventId} not found!`, {
+          resourceType: t('EVENT', 'Event'),
+          id: eventId,
+        })}
+      </>
+    );
   }
 
   return (
@@ -98,7 +112,11 @@ export const EventPreview = ({
         onTabChange={onTabChange}
         tab={activeTab}
         additionalTabs={[
-          <Tabs.Tab key="details" label="Details" tabKey="details">
+          <Tabs.Tab
+            key="details"
+            label={t('DETAILS', 'Details')}
+            tabKey="details"
+          >
             <DetailsTabWrapper>
               <EventInfo event={event} />
               <Metadata metadata={event.metadata} />

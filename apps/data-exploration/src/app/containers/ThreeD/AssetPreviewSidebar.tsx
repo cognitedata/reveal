@@ -6,6 +6,7 @@ import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 import { AssetPreview } from '@data-exploration-app/containers/Asset/AssetPreview';
 import { ResourceTabType } from '@data-exploration-app/containers/ThreeD/NodePreview';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
+import { useTranslation } from '@data-exploration-lib/core';
 
 export const AssetPreviewSidebar = ({
   assetId,
@@ -16,8 +17,9 @@ export const AssetPreviewSidebar = ({
   onClose: () => void;
   tab?: ResourceTabType;
 }) => {
+  const { t } = useTranslation();
   const closePreviewButton = (
-    <Tooltip content="Close preview">
+    <Tooltip content={t('CLOSE_PREVIEW', 'Close preview')}>
       <Button
         icon="Close"
         aria-label="close-assets-preview-button"

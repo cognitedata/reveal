@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 
 import {
+  getTableColumns,
   SubCellMatchingLabels,
   Table,
   TableProps,
@@ -12,6 +13,7 @@ import { Asset, CogniteEvent } from '@cognite/sdk';
 import {
   getHiddenColumns,
   RelationshipLabels,
+  useTranslation,
 } from '@data-exploration-lib/core';
 import { InternalEventDataWithMatchingLabels } from '@data-exploration-lib/domain-layer';
 
@@ -28,25 +30,27 @@ export const EventTable = ({
   onDirectAssetClick?: (directAsset: Asset, resourceId?: number) => void;
 }) => {
   const { metadataColumns, setMetadataKeyQuery } = useEventsMetadataColumns();
+  const { t } = useTranslation();
+  const tableColumns = getTableColumns(t);
 
   const columns = useMemo(
     () =>
       [
-        { ...Table.Columns.type(query), enableHiding: false },
-        Table.Columns.subtype(query),
-        Table.Columns.description(query),
-        Table.Columns.externalId(query),
-        Table.Columns.lastUpdatedTime,
-        Table.Columns.created,
+        { ...tableColumns.type(query), enableHiding: false },
+        tableColumns.subtype(query),
+        tableColumns.description(query),
+        tableColumns.externalId(query),
+        tableColumns.lastUpdatedTime,
+        tableColumns.created,
         {
-          ...Table.Columns.id(query),
+          ...tableColumns.id(query),
           enableSorting: false,
         },
-        { ...Table.Columns.dataSet, enableSorting: true },
-        Table.Columns.startTime,
-        Table.Columns.endTime,
-        Table.Columns.source(query),
-        Table.Columns.assets(onDirectAssetClick),
+        { ...tableColumns.dataSet, enableSorting: true },
+        tableColumns.startTime,
+        tableColumns.endTime,
+        tableColumns.source(query),
+        tableColumns.assets(onDirectAssetClick),
         ...metadataColumns,
       ] as ColumnDef<CogniteEvent>[],
     // eslint-disable-next-line react-hooks/exhaustive-deps

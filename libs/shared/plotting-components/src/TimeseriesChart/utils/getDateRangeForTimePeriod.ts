@@ -13,6 +13,15 @@ const TIME_PERIOD_TYPE_MAP: Record<TimePeriodType, ManipulateType> = {
   Min: 'minutes',
 };
 
+const TIME_PERIOD_TRANSLATION_KEY_MAP: Record<TimePeriodType, string> = {
+  Y: 'TIME_PERIOD_YEARS',
+  M: 'TIME_PERIOD_MONTHS',
+  W: 'TIME_PERIOD_WEEKS',
+  D: 'TIME_PERIOD_DAYS',
+  H: 'TIME_PERIOD_HOURS',
+  Min: 'TIME_PERIOD_MINUTES',
+};
+
 export const getDateRangeForTimePeriod = (
   timePeriod: TimePeriod
 ): DateRange => {
@@ -34,4 +43,8 @@ export const getDateRangeUnit = (period: TimePeriodType): OpUnitType => {
     return 'minute';
   }
   return 'day';
+};
+
+export const getTimePeriodTranslationKey = (period: TimePeriodType) => {
+  return TIME_PERIOD_TRANSLATION_KEY_MAP[period];
 };

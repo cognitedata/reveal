@@ -8,6 +8,7 @@ import { FileResults } from '../containers/search/results/FileResults';
 import { GenericResults } from '../containers/search/results/GenericResults';
 import { TimeseriesResults } from '../containers/search/results/TimeseriesResults';
 import { SearchCategories } from '../containers/search/SearchCategories';
+import { SearchConfiguration } from '../containers/search/SearchConfiguration';
 
 export const SearchPage = () => {
   const { dataType } = useParams();
@@ -39,7 +40,10 @@ export const SearchPage = () => {
       <Page.Body>
         <Container>
           <Suspense fallback="Loading">
-            <Content>{renderResults()}</Content>
+            <Content>
+              <SearchConfiguration prefix="Search results from" />
+              {renderResults()}
+            </Content>
 
             <SearchCategories />
           </Suspense>
@@ -59,6 +63,5 @@ const Container = styled.div`
   max-width: 100%;
   width: 100%;
   gap: 32px;
-
-  padding-top: 36px;
+  padding-top: 24px;
 `;

@@ -29,6 +29,8 @@ import {
   ANNOTATION_SOURCE_KEY,
   AnnotationSource,
   ExtendedAnnotation,
+  useDebouncedMetrics,
+  useTranslation,
 } from '@data-exploration-lib/core';
 import {
   useSearchResults,
@@ -47,11 +49,7 @@ import { useNumPages } from './hooks/useNumPages';
 import usePrevious from './hooks/usePrevious';
 import { useSearchBarState } from './hooks/useSearchBarState';
 import { Pagination } from './Pagination';
-import {
-  getContainerId,
-  getSearchResultAnnotationStyle,
-  useDebouncedMetrics,
-} from './utils';
+import { getContainerId, getSearchResultAnnotationStyle } from './utils';
 
 type FilePreviewProps = {
   id: string;
@@ -103,6 +101,7 @@ export const FilePreview = ({
   setEditMode = noop,
   hideEdit = false,
 }: FilePreviewProps) => {
+  const { t } = useTranslation();
   const trackUsage = useDebouncedMetrics();
   const [unifiedViewerRef, setUnifiedViewerRef] = useState<UnifiedViewer>();
   const [page, setPage] = useState(1);
@@ -380,7 +379,7 @@ export const FilePreview = ({
   if (file !== undefined && !isSupportedFileInfo(file, isDocumentsApiEnabled)) {
     return (
       <CenteredPlaceholder>
-        <h1>No preview for this file type</h1>
+        <h1>{t('FILE_NO_PREVIEW_TEXT', 'No preview for this file type')}</h1>
       </CenteredPlaceholder>
     );
   }

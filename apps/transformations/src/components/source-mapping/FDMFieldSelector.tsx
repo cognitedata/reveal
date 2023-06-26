@@ -9,6 +9,7 @@ import {
 import FormFieldSelect from '@transformations/components/form-field-select';
 import SchemaItem from '@transformations/components/target/SchemaItem';
 import { useSchema } from '@transformations/hooks';
+import { useModel } from '@transformations/hooks/fdm';
 import { isFDMDestination } from '@transformations/types';
 
 import { Flex, Icon } from '@cognite/cogs.js';
@@ -30,7 +31,16 @@ export default function FDMFieldSelector({
   const { t } = useTranslation();
   const mapping = getTransformationMapping(transformation.query);
 
-  const [space, _, version] = mapping?.sourceLevel1?.split('.') || [];
+  const [space, dataModelExternalId, version] =
+    mapping?.sourceLevel1?.split('.') || [];
+
+  const { data: model } = useModel(dataModelExternalId, space, version);
+
+  const selectedView = useMemo(() => {
+    return model?.views.find(
+      ({ externalId: e }) => e === mapping?.sourceLevel2
+    );
+  }, [mapping?.sourceLevel2, model?.views]);
 
   const { data: destinationSchemas } = useSchema({
     destination: transformation.destination,
@@ -43,15 +53,15 @@ export default function FDMFieldSelector({
         type: 'nodes', // we only support nodes as source atm
         instanceSpace: space,
         view: {
-          externalId: mapping?.sourceLevel2!,
-          version,
-          space,
+          externalId: selectedView?.externalId!,
+          version: selectedView?.version!,
+          space: selectedView?.space!,
         },
       },
       action: 'abort',
     },
     {
-      enabled: !!mapping?.sourceLevel2,
+      enabled: !!selectedView,
     }
   );
 

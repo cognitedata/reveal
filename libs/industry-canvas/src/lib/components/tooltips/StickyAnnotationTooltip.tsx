@@ -4,7 +4,9 @@ import { Button, ToolBar, Tooltip, Colors } from '@cognite/cogs.js';
 import { StickyAnnotation } from '@cognite/unified-file-viewer/dist/core/annotations/types';
 
 import { STICKY_ANNOTATION_COLOR_MAP } from '../../colors';
+import { translationKeys } from '../../common';
 import { OnUpdateAnnotationStyleByType } from '../../hooks/useManagedTools';
+import { useTranslation } from '../../hooks/useTranslation';
 import { CircleButton } from '../color-palettes/CircleButton';
 
 import { RightAlignedColorPalettePosition } from './elements';
@@ -23,6 +25,7 @@ export const StickyAnnotationTooltip: React.FC<
   onDeleteSelectedCanvasAnnotation,
 }) => {
   const [isInEditFillMode, setIsInEditFillMode] = useState(false);
+  const { t } = useTranslation();
 
   return (
     <>
@@ -49,10 +52,18 @@ export const StickyAnnotationTooltip: React.FC<
       )}
       <ToolBar direction="horizontal">
         <>
-          <Tooltip content="Change color">
+          <Tooltip
+            content={t(
+              translationKeys.ANNOTATION_CHANGE_COLOR_TOOLTIP,
+              'Change color'
+            )}
+          >
             <CircleButton
               isToggled={isInEditFillMode}
-              aria-label="Edit color"
+              aria-label={t(
+                translationKeys.ANNOTATION_CHANGE_COLOR_TOOLTIP,
+                'Change color'
+              )}
               onClick={() => {
                 setIsInEditFillMode((prev) => !prev);
               }}
@@ -61,11 +72,11 @@ export const StickyAnnotationTooltip: React.FC<
             />
           </Tooltip>
         </>
-        <Tooltip content="Remove">
+        <Tooltip content={t(translationKeys.REMOVE, 'Remove')}>
           <Button
             icon="Delete"
             type="ghost"
-            aria-label="Remove sticky"
+            aria-label={t(translationKeys.REMOVE, 'Remove')}
             onClick={onDeleteSelectedCanvasAnnotation}
           />
         </Tooltip>

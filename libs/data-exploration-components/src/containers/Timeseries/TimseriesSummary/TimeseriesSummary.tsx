@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 
 import {
+  getTableColumns,
   SubCellMatchingLabels,
   SummaryCardWrapper,
   Table,
@@ -16,6 +17,7 @@ import {
   getHiddenColumns,
   InternalTimeseriesFilters,
   useGetSearchConfigFromLocalStorage,
+  useTranslation,
 } from '@data-exploration-lib/core';
 import {
   useTimeseriesSearchResultWithLabelsQuery,
@@ -51,16 +53,18 @@ export const TimeseriesSummary = ({
     undefined,
     timeseriesSearchConfig
   );
+  const { t } = useTranslation();
+  const tableColumns = getTableColumns(t);
 
   const { metadataColumns, setMetadataKeyQuery } =
     useTimeseriesMetadataColumns();
 
   const columns = useMemo(() => {
     return [
-      Table.Columns.name(),
-      Table.Columns.description(),
-      Table.Columns.unit(),
-      Table.Columns.lastUpdatedTime,
+      tableColumns.name(),
+      tableColumns.description(),
+      tableColumns.unit(),
+      tableColumns.lastUpdatedTime,
       {
         header: 'Last reading',
         accessorKey: 'lastReading',
@@ -68,12 +72,12 @@ export const TimeseriesSummary = ({
           return <TimeseriesLastReading timeseriesId={row.original.id} />;
         },
       },
-      Table.Columns.created,
-      Table.Columns.id(),
-      Table.Columns.isString,
-      Table.Columns.isStep,
-      Table.Columns.dataSet,
-      Table.Columns.rootAsset(onRootAssetClick),
+      tableColumns.created,
+      tableColumns.id(),
+      tableColumns.isString,
+      tableColumns.isStep,
+      tableColumns.dataSet,
+      tableColumns.rootAsset(onRootAssetClick),
       ...metadataColumns,
     ] as ColumnDef<Timeseries>[];
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -92,7 +96,7 @@ export const TimeseriesSummary = ({
         tableHeaders={
           <SummaryHeader
             icon="Timeseries"
-            title="Time series"
+            title={t('TIMESERIES', 'Time series')}
             onAllResultsClick={onAllResultsClick}
           />
         }

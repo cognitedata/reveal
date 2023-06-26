@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { Route, Routes, BrowserRouter } from 'react-router-dom';
 
 import { ThemeProvider } from 'styled-components';
@@ -11,14 +11,10 @@ import { RecoilRoot } from 'recoil';
 import { RecoilDevTools } from 'recoil-gear';
 import { RecoilURLSyncJSON } from 'recoil-sync';
 
-import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
-import {
-  SubAppWrapper,
-  AuthWrapper,
-  getProject,
-  getEnv,
-} from '@cognite/cdf-utilities';
-import { Loader, ToastContainer } from '@cognite/cogs.js';
+import { I18nWrapper } from '@cognite/cdf-i18n-utils';
+import sdk from '@cognite/cdf-sdk-singleton';
+import { getProject } from '@cognite/cdf-utilities';
+import { ToastContainer } from '@cognite/cogs.js';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 import { ErrorBoundary } from '@cognite/react-errors';
 import { FlagProvider } from '@cognite/react-feature-flags';
@@ -28,11 +24,13 @@ import RootApp from '@data-exploration-app/containers/App';
 import GlobalStyle from '@data-exploration-app/styles/global-styles';
 import AntStyles from '@data-exploration-app/styles/Styles';
 
+import { translations } from '../i18n';
+
+import { AuthContainer } from './AuthContainer';
 import rootStyles from './styles/index.css';
 import theme from './styles/theme';
 
 export default () => {
-  const env = getEnv();
   const project = getProject();
 
   if (!project) {
@@ -66,35 +64,35 @@ export default () => {
       <SDKProvider sdk={sdk}>
         <ErrorBoundary>
           <QueryClientProvider client={queryClient}>
-            <SubAppWrapper title="Data Exploration">
-              <AuthWrapper
-                loadingScreen={<Loader darkMode={false} />}
-                login={() => loginAndAuthIfNeeded(project, env)}
-              >
-                <ThemeProvider theme={theme}>
-                  <FlagProvider
-                    apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
-                    appName="data-exploration"
-                    projectName={project}
-                    remoteAddress={window.location.hostname}
-                    disableMetrics
-                    refreshInterval={86400}
-                  >
-                    <RecoilRoot>
-                      <RecoilURLSyncJSON location={{ part: 'queryParams' }}>
+            <AuthContainer>
+              <ThemeProvider theme={theme}>
+                <FlagProvider
+                  apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
+                  appName="data-exploration"
+                  projectName={project}
+                  remoteAddress={window.location.hostname}
+                  disableMetrics
+                  refreshInterval={86400}
+                >
+                  <RecoilRoot>
+                    <RecoilURLSyncJSON location={{ part: 'queryParams' }}>
+                      <I18nWrapper
+                        translations={translations}
+                        defaultNamespace="data-exploration"
+                      >
                         <BrowserRouter>
                           <Routes>
                             <Route path="/:tenant/*" element={<RootApp />} />
                           </Routes>
                         </BrowserRouter>
                         <RecoilDevTools />
-                      </RecoilURLSyncJSON>
-                    </RecoilRoot>
-                  </FlagProvider>
-                </ThemeProvider>
-                <GlobalStyle theme={theme} />
-              </AuthWrapper>
-            </SubAppWrapper>
+                      </I18nWrapper>
+                    </RecoilURLSyncJSON>
+                  </RecoilRoot>
+                </FlagProvider>
+              </ThemeProvider>
+              <GlobalStyle theme={theme} />
+            </AuthContainer>
             <ToastContainer />
             <ReactQueryDevtools initialIsOpen={false} />
           </QueryClientProvider>

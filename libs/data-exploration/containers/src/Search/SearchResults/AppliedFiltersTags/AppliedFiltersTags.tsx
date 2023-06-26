@@ -7,6 +7,8 @@ import isEqual from 'lodash/isEqual';
 
 import { Flex, IconType } from '@cognite/cogs.js';
 
+import { useTranslation } from '@data-exploration-lib/core';
+
 import { NewFiltersType } from '../../../Filters';
 
 import { FilterChip } from './FilterChip';
@@ -23,6 +25,7 @@ export const AppliedFiltersTags: React.FC<AppliedFiltersTagsProps> = ({
   onFilterChange,
   icon,
 }) => {
+  const { t } = useTranslation();
   const filterKeys = Object.keys(
     filter || {}
   ) as unknown as (keyof NewFiltersType)[];
@@ -38,7 +41,7 @@ export const AppliedFiltersTags: React.FC<AppliedFiltersTagsProps> = ({
 
         if (isArray(filterValues)) {
           return filterValues.map((value) => {
-            const displayValue = formatValue(value);
+            const displayValue = formatValue(value, t);
 
             return (
               <FilterChip
@@ -57,7 +60,7 @@ export const AppliedFiltersTags: React.FC<AppliedFiltersTagsProps> = ({
           });
         }
 
-        const displayValue = formatValue(filterValues);
+        const displayValue = formatValue(filterValues, t);
         return (
           <FilterChip
             key={`${key}-${displayValue}`}

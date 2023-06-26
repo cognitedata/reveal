@@ -1,150 +1,48 @@
-import { useCallback, useState } from 'react';
-
 import styled from 'styled-components';
 
-import { Body, Icon, Title } from '@cognite/cogs.js';
+import { Title } from '@cognite/cogs.js';
 
 import { translationKeys } from '../../app/common/i18n/translationKeys';
-import { CategoryCard } from '../components/cards/CategoryCard';
-import { DataModelSelectorModal } from '../containers/modals/DataModelSelectorModal';
+import { RecentlyViewedList } from '../containers/lists/recentlyViewed/RecentlyViewedList';
 import { Page } from '../containers/page/Page';
+import { DataExplorerLink } from '../containers/search/DataExplorerLink';
 import { SearchBar } from '../containers/search/SearchBar';
-import { useDataModelParams } from '../hooks/useDataModelParams';
-import { useNavigation } from '../hooks/useNavigation';
+import { SearchConfiguration } from '../containers/search/SearchConfiguration';
+import { useRecentlyVisited } from '../hooks/useRecentlyVisited';
 import { useTranslation } from '../hooks/useTranslation';
-import { useGetAssetCentricDataExplorerUrl } from '../hooks/useUrl';
-import { useTypesDataModelQuery } from '../services/dataModels/query/useTypesDataModelQuery';
 
 export const HomePage = () => {
   const { t } = useTranslation();
 
-  const { toListPage } = useNavigation();
-
-  const { data, isLoading } = useTypesDataModelQuery();
-  const selectedDataModel = useDataModelParams();
-
-  const [siteSelectionVisible, setSiteSelectionVisible] =
-    useState<boolean>(false);
-
-  const assetCentricDataExplorerUrl = useGetAssetCentricDataExplorerUrl();
-
-  const handleCategoryClick = useCallback(
-    (dataType: string) => {
-      if (selectedDataModel) {
-        toListPage(
-          selectedDataModel.space,
-          selectedDataModel.dataModel,
-          selectedDataModel.version,
-          dataType
-        );
-      }
-    },
-    [toListPage, selectedDataModel]
-  );
-
-  const getSpaceText = () => {
-    if (selectedDataModel && selectedDataModel.dataModel) {
-      return selectedDataModel.dataModel;
-    } else {
-      return '...';
-    }
-  };
+  const [recentlyViewed] = useRecentlyVisited();
 
   return (
     <Page>
       <SearchContainer>
-        <TitleContainer>
-          <Title level={3}>
-            {t(translationKeys.homePageTitle, 'Explore all your data from')}{' '}
-          </Title>
-          <StyledBody onClick={() => setSiteSelectionVisible(true)}>
-            {getSpaceText()}
-            {selectedDataModel && selectedDataModel.dataModel && (
-              <Icon type="ChevronDownLarge" />
-            )}
-          </StyledBody>
-        </TitleContainer>
-        <SearchBar width="640px" />
-        <FooterContainer
-          href={assetCentricDataExplorerUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <span>Open in Data Explorer</span>
-          <Icon type="ExternalLink" />
-        </FooterContainer>
+        <SearchConfiguration prefix="Search for" header />
+
+        <SearchBar width="774px" disablePreview autoFocus />
+
+        <DataExplorerLink />
       </SearchContainer>
 
-      <Page.Body loading={isLoading}>
-        <CategoriesContainer>
-          <Title level={4}>
-            {t('categories_title', 'Categories')} {data?.length}
-          </Title>
+      <Page.Body>
+        <RecentlyViewedContainer>
+          {/* Code-smell... find a better way of handling this. */}
+          {recentlyViewed.length > 0 && (
+            <TitleContent>
+              <Title level={6}>
+                {t(translationKeys.recentlyViewedTitle, 'Recently viewed')}
+              </Title>
+            </TitleContent>
+          )}
 
-          <CategoryContent>
-            {data?.map((item) => (
-              <CategoryCard
-                key={item.name}
-                type={item.name}
-                description={item.description}
-                onClick={handleCategoryClick}
-              />
-            ))}
-          </CategoryContent>
-        </CategoriesContainer>
+          <RecentlyViewedList />
+        </RecentlyViewedContainer>
       </Page.Body>
-
-      <DataModelSelectorModal
-        isVisible={siteSelectionVisible}
-        onModalClose={() => setSiteSelectionVisible(false)}
-        isClosable
-      />
     </Page>
   );
 };
-
-const FooterContainer = styled.a`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(
-      269.53deg,
-      rgba(109, 135, 191, 0.8) 0.32%,
-      rgba(19, 28, 66, 0.8) 99.67%
-    ),
-    rgba(250, 250, 250, 0.8);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  text-fill-color: transparent;
-
-  .cogs-icon {
-    margin-left: 7px;
-    color: #6d87bfcc;
-  }
-`;
-
-const TitleContainer = styled.span`
-  display: flex;
-  align-items: center;
-`;
-
-const StyledBody = styled(Body)`
-  display: flex;
-  align-items: center;
-  font-size: 24px;
-  color: rgba(51, 51, 51, 0.8);
-  margin-left: 8px;
-
-  &:hover {
-    cursor: pointer;
-    color: rgba(51, 51, 51, 0.5);
-  }
-
-  .cogs-icon {
-    margin-left: 8px;
-  }
-`;
 
 const SearchContainer = styled.div`
   display: flex;
@@ -152,12 +50,7 @@ const SearchContainer = styled.div`
   align-items: center;
   justify-content: center;
 
-  min-height: 70vh;
-  background-color: radial-gradient(
-    62.29% 135.84% at 0% 0%,
-    rgba(10, 119, 247, 0.1024) 0%,
-    rgba(10, 119, 246, 0) 100%
-  );
+  min-height: 60vh;
 
   box-sizing: border-box;
 
@@ -176,16 +69,16 @@ const SearchContainer = styled.div`
   border-bottom: 1px solid rgba(83, 88, 127, 0.16);
 `;
 
-const CategoriesContainer = styled.div`
+const RecentlyViewedContainer = styled.div`
   height: 10%;
   padding-top: 24px;
+  padding-bottom: 24px;
+  width: 774px;
+  max-width: 774px;
+  align-self: center;
 `;
 
-const CategoryContent = styled.div`
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-column-gap: 10px;
-  grid-row-gap: 10px;
-
-  padding: 16px 0;
+const TitleContent = styled.div`
+  padding-left: 8px;
+  padding-bottom: 16px;
 `;

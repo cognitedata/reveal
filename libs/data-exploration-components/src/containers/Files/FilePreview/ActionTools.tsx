@@ -8,6 +8,8 @@ import { Button, Dropdown, Menu, ToolBar } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
 import { UnifiedViewer } from '@cognite/unified-file-viewer';
 
+import { useTranslation } from '@data-exploration-lib/core';
+
 import { EditFileButton, ShowHideDetailsButton } from '../../../components';
 
 import { UseSearchBarState } from './hooks/useSearchBarState';
@@ -64,6 +66,8 @@ export const ActionTools = ({
     | 'onNextResult'
     | 'onPreviousResult'
   >): JSX.Element | null => {
+  const { t } = useTranslation();
+
   if (!fileUrl) return null;
 
   const handleDownloadFileWithAnnotations = async () => {
@@ -124,10 +128,10 @@ export const ActionTools = ({
             content={
               <Menu>
                 <Menu.Item href={fileUrl} style={{ color: 'unset' }}>
-                  Original File
+                  {t('ORIGINAL_FILE', 'Original File')}
                 </Menu.Item>
                 <Menu.Item onClick={handleDownloadFileWithAnnotations}>
-                  File with Annotations
+                  {t('FILE_WITH_ANNOTATIONS', 'File with Annotations')}
                 </Menu.Item>
               </Menu>
             }

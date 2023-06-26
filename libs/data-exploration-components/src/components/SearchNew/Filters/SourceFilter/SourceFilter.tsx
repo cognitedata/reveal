@@ -5,6 +5,8 @@ import head from 'lodash/head';
 
 import { extractSources, MultiSelectFilter } from '@cognite/data-exploration';
 
+import { useTranslation } from '@data-exploration-lib/core';
+
 import { OptionValue } from '../types';
 
 export interface SourceFilterProps<T extends { source?: string }> {
@@ -21,6 +23,8 @@ export const SourceFilter = <T extends { source?: string }>({
   onChange,
   ...rest
 }: SourceFilterProps<T>) => {
+  const { t } = useTranslation();
+
   const options = React.useMemo(() => {
     return extractSources(items).map((option) => ({
       label: option,
@@ -37,7 +41,7 @@ export const SourceFilter = <T extends { source?: string }>({
       <AggregatedFilterV2
         addNilOption
         {...rest}
-        title="Source"
+        title={t('SOURCE', 'Source')}
         aggregator="source"
         items={items}
         value={head(rest.value)?.value}
@@ -57,7 +61,7 @@ export const SourceFilter = <T extends { source?: string }>({
     <MultiSelectFilter<string>
       addNilOption
       {...rest}
-      title="Source"
+      title={t('SOURCE', 'Source')}
       options={options}
       onChange={(_, newSources) => onChange(newSources)}
     />

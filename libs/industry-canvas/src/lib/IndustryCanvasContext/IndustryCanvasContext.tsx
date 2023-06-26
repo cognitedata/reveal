@@ -1,9 +1,10 @@
 import { createContext, useCallback, useContext, useMemo } from 'react';
 
+import { useFlag } from '@cognite/react-feature-flags';
 import { useSDK } from '@cognite/sdk-provider';
 import { IdsByType } from '@cognite/unified-file-viewer';
 
-import { MetricEvent } from '../constants';
+import { CommentsFeatureFlagKey, MetricEvent } from '../constants';
 import { useCanvasArchiveMutation } from '../hooks/use-mutation/useCanvasArchiveMutation';
 import { useCanvasCreateMutation } from '../hooks/use-mutation/useCanvasCreateMutation';
 import { useCanvasSaveMutation } from '../hooks/use-mutation/useCanvasSaveMutation';
@@ -31,7 +32,7 @@ export type IndustryCanvasContextType = {
   createCanvas: (
     canvas: IndustryCanvasState
   ) => Promise<SerializedCanvasDocument>;
-  archiveCanvas: (canvas: SerializedCanvasDocument) => Promise<void>;
+  archiveCanvas: (externalId: string) => Promise<void>;
   deleteCanvasIdsByType: ({
     ids,
     canvasExternalId,
@@ -47,6 +48,12 @@ export type IndustryCanvasContextType = {
   initializeWithContainerReferences: ContainerReference[] | undefined;
   setCanvasId: (canvasId: string) => void;
   isCanvasLocked: boolean;
+  createInitialCanvas: () => Promise<void>;
+  hasConsumedInitializeWithContainerReferences: boolean;
+  setHasConsumedInitializeWithContainerReferences: (
+    nextHasConsumed: boolean
+  ) => void;
+  isCommentsEnabled: boolean;
 };
 
 export const IndustryCanvasContext = createContext<IndustryCanvasContextType>({
@@ -75,6 +82,16 @@ export const IndustryCanvasContext = createContext<IndustryCanvasContextType>({
   isArchivingCanvas: false,
   initializeWithContainerReferences: undefined,
   isCanvasLocked: false,
+  createInitialCanvas: () => {
+    throw new Error('createInitialCanvas called before initialisation');
+  },
+  hasConsumedInitializeWithContainerReferences: false,
+  setHasConsumedInitializeWithContainerReferences: () => {
+    throw new Error(
+      'setHasConsumedInitializeWithContainerReferences called before initialisation'
+    );
+  },
+  isCommentsEnabled: false,
 });
 
 type IndustryCanvasProviderProps = {
@@ -90,8 +107,18 @@ export const IndustryCanvasProvider: React.FC<IndustryCanvasProviderProps> = ({
     () => new IndustryCanvasService(sdk, userProfile),
     [sdk, userProfile]
   );
-  const { canvasId, setCanvasId, initializeWithContainerReferences } =
-    useIndustryCanvasSearchParameters();
+
+  const { isEnabled: isCommentsEnabled } = useFlag(CommentsFeatureFlagKey, {
+    fallback: false,
+  });
+
+  const {
+    canvasId,
+    setCanvasId,
+    initializeWithContainerReferences,
+    hasConsumedInitializeWithContainerReferences,
+    setHasConsumedInitializeWithContainerReferences,
+  } = useIndustryCanvasSearchParameters();
 
   const { data: activeCanvas, isLoading: isLoadingCanvas } =
     useGetCanvasByIdQuery(canvasService, canvasId);
@@ -126,27 +153,21 @@ export const IndustryCanvasProvider: React.FC<IndustryCanvasProviderProps> = ({
     [saveCanvas, isCanvasLocked]
   );
 
-  // Initialize the page with a new and empty canvas if the canvasId query
-  // parameter is not provided. This path is primarily used for the
-  // "Open in Canvas" button in DE.
-  // useEffect(() => {
-  //   // const createInitialCanvas = async () => {
-  //   //   if (canvasId === undefined && !isCreatingCanvas) {
-  //   //     const initialCanvas = canvasService.makeEmptyCanvas();
-  //   //     const createdCanvas = await createCanvas(initialCanvas);
-  //   //     setCanvasId(createdCanvas.externalId);
-  //   //     refetchCanvases();
-  //   //   }
-  //   // };
-  //   // createInitialCanvas();
-  // }, [
-  //   canvasId,
-  //   isCreatingCanvas,
-  //   canvasService,
-  //   createCanvas,
-  //   refetchCanvases,
-  //   setCanvasId,
-  // ]);
+  const createInitialCanvas = useCallback(async () => {
+    if (canvasId === undefined && !isCreatingCanvas) {
+      const initialCanvas = canvasService.makeEmptyCanvas();
+      const createdCanvas = await createCanvas(initialCanvas);
+      setCanvasId(createdCanvas.externalId);
+      refetchCanvases();
+    }
+  }, [
+    canvasId,
+    isCreatingCanvas,
+    canvasService,
+    createCanvas,
+    refetchCanvases,
+    setCanvasId,
+  ]);
 
   const createCanvasWrapper = useCallback(
     async (canvas: IndustryCanvasState) => {
@@ -162,15 +183,15 @@ export const IndustryCanvasProvider: React.FC<IndustryCanvasProviderProps> = ({
   );
 
   const archiveCanvasWrapper = useCallback(
-    async (canvasToArchive: SerializedCanvasDocument) => {
+    async (externalId: string) => {
       if (isCanvasLocked) {
         return;
       }
 
-      await archiveCanvas(canvasToArchive);
-      if (canvasToArchive.externalId === activeCanvas?.externalId) {
+      await archiveCanvas(externalId);
+      if (externalId === activeCanvas?.externalId) {
         const nextCanvas = canvases?.find(
-          (canvas) => canvas.externalId !== canvasToArchive.externalId
+          (canvas) => canvas.externalId !== externalId
         );
         setCanvasId(nextCanvas?.externalId, true);
       }
@@ -222,10 +243,14 @@ export const IndustryCanvasProvider: React.FC<IndustryCanvasProviderProps> = ({
         createCanvas: createCanvasWrapper,
         saveCanvas: saveCanvasWrapper,
         archiveCanvas: archiveCanvasWrapper,
-        initializeWithContainerReferences,
         setCanvasId,
         deleteCanvasIdsByType: deleteCanvasIdsByTypeWrapper,
         isCanvasLocked,
+        createInitialCanvas,
+        initializeWithContainerReferences,
+        hasConsumedInitializeWithContainerReferences,
+        setHasConsumedInitializeWithContainerReferences,
+        isCommentsEnabled,
       }}
     >
       {children}

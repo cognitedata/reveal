@@ -17,6 +17,7 @@ import { CogniteError } from '@cognite/sdk';
 
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
+import { useTranslation } from '@data-exploration-lib/core';
 
 import { AugmentedMapping } from './hooks';
 import { prepareSearchString, grepContains } from './utils';
@@ -31,34 +32,43 @@ const FeedbackContainer = ({ children }: { children?: React.ReactNode }) => (
 );
 
 const EmptyAssetMappings = () => {
+  const { t } = useTranslation();
   return (
     <FeedbackContainer>
       <SearchEmpty />
-      No results
+      {t('NO_RESULTS', 'No results')}
     </FeedbackContainer>
   );
 };
 
 const MappingsMissing = () => {
+  const { t } = useTranslation();
   return (
     <FeedbackContainer>
       <SearchEmpty />
-      <Body>No asset mapping found</Body>
+      <Body>{t('NO_ASSET_MAPPING_FOUND', 'No asset mapping found')}</Body>
       <Link
         to={createLink('/entity_matching/3d_matching')}
         style={{ color: 'var(--cogs-primary)' }}
       >
-        Go to 3D entity matching
+        {t('GO_TO_3D_ENTITY_MATCHING', 'Go to 3D entity matching')}
       </Link>
     </FeedbackContainer>
   );
 };
 
 const MappingsError = () => {
+  const { t } = useTranslation();
   return (
     <FeedbackContainer>
       <SearchEmpty />
-      <Body>An error occured retriving masset mappings</Body>
+      <Body>
+        {' '}
+        {t(
+          'ERROR_OCCURRED_RETRIEVING_ASSET_MAPPINGS',
+          'An error occurred retrieving asset mappings'
+        )}
+      </Body>
     </FeedbackContainer>
   );
 };

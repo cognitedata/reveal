@@ -1,23 +1,16 @@
 import { CallbackManagerForChainRun } from 'langchain/callbacks';
-import {
-  ChainInputs,
-  BaseChain,
-  LLMChain,
-  SequentialChain,
-} from 'langchain/chains';
+import { LLMChain, SequentialChain } from 'langchain/chains';
 import { BaseChatModel } from 'langchain/chat_models/base';
 import { PromptTemplate } from 'langchain/prompts';
 import { ChainValues } from 'langchain/schema';
 
+import { CogniteBaseChain, CogniteChainInput } from '../../types';
+import { sendFromCopilotEvent } from '../../utils';
+
 import { GRAPHQL_TYPE_TEMPLATE, GRAPHQL_QUERY_TEMPLATE } from './prompts';
 
-export interface GraphQlChainInput extends ChainInputs {
-  /** LLM Wrapper to use */
-  llm: BaseChatModel;
-  /** Which variables should be returned as a result of executing the chain. If not specified, output of the last of the chains is used. */
-  outputVariables?: string[];
-  /** Whether or not to return all intermediate outputs and variables (excluding initial input variables). */
-  returnAll?: boolean;
+export interface GraphQlChainInput extends CogniteChainInput {
+  types: string[];
 }
 
 /**
@@ -33,22 +26,26 @@ export interface GraphQlChainInput extends ChainInputs {
  *   llm: new CogniteChatGPT(),
  *   returnAll: true,
  *   verbose: true,
+ *   types: ['Pump', 'Valve', 'Motor']
  * });
  *
  * const prompt = 'List all valves belonging to pump 23';
- * const types = '[Pump, Valve, Motor]';
  *
- * const res = await chain.call({ prompt: prompt, types: types });
+ * const res = await chain.call({ input: prompt});
  * ```
  */
-export class GraphQlChain extends BaseChain implements GraphQlChainInput {
+export class GraphQlChain extends CogniteBaseChain {
   llm: BaseChatModel;
   outputVariables: string[];
   returnAll?: boolean | undefined;
+  types: string[];
+
+  description = 'Good for retrieving data from data models in CDF.';
 
   constructor(fields: GraphQlChainInput) {
     super(fields);
     this.llm = fields.llm;
+    this.types = fields.types;
     this.outputVariables = fields.outputVariables ?? [];
     if (this.outputVariables.length > 0 && fields.returnAll) {
       throw new Error(
@@ -59,7 +56,7 @@ export class GraphQlChain extends BaseChain implements GraphQlChainInput {
   }
 
   get inputKeys() {
-    return ['prompt', 'types'];
+    return ['input'];
   }
 
   get outputKeys(): string[] {
@@ -73,7 +70,7 @@ export class GraphQlChain extends BaseChain implements GraphQlChainInput {
   /** @ignore */
   async _call(
     values: ChainValues,
-    runManager?: CallbackManagerForChainRun
+    _runManager?: CallbackManagerForChainRun
   ): Promise<ChainValues> {
     const validKeys = this.inputKeys.every((k) => k in values);
 
@@ -85,7 +82,7 @@ export class GraphQlChain extends BaseChain implements GraphQlChainInput {
 
     // Chain 1: Extract relevant types
     const graphQlTypePromptTemplate = new PromptTemplate({
-      template: GRAPHQL_TYPE_TEMPLATE,
+      template: GRAPHQL_TYPE_TEMPLATE.replace('{types}', this.types.toString()),
       inputVariables: this.inputKeys,
     });
     const graphQlType = new LLMChain({
@@ -97,7 +94,7 @@ export class GraphQlChain extends BaseChain implements GraphQlChainInput {
     // Chain 2: Construct query
     const queryPromptTemplate = new PromptTemplate({
       template: GRAPHQL_QUERY_TEMPLATE,
-      inputVariables: ['prompt', 'relevantTypes'],
+      inputVariables: ['input', 'relevantTypes'],
     });
     const graphQlQuery = new LLMChain({
       llm: this.llm,
@@ -110,15 +107,17 @@ export class GraphQlChain extends BaseChain implements GraphQlChainInput {
       chains: [graphQlType, graphQlQuery],
       verbose: this.verbose,
       inputVariables: this.inputKeys,
-      outputVariables: ['relevantTypes', 'query'],
+      outputVariables: ['query'],
     });
     const query = await overallChain.call({
-      prompt: values.prompt,
-      types: values.types,
+      input: values.input,
     });
 
-    return {
-      query: query,
-    };
+    sendFromCopilotEvent('NEW_BOT_MESSAGE', {
+      type: 'text',
+      content: query.query,
+    });
+
+    return query;
   }
 }

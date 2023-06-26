@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 
 import {
+  getTableColumns,
   SubCellMatchingLabels,
   SummaryCardWrapper,
   Table,
@@ -17,6 +18,7 @@ import { Asset } from '@cognite/sdk';
 import {
   getHiddenColumns,
   InternalSequenceFilters,
+  useTranslation,
 } from '@data-exploration-lib/core';
 import {
   AssetWithRelationshipLabels,
@@ -45,30 +47,32 @@ export const AssetSummary = ({
   });
 
   const { metadataColumns, setMetadataKeyQuery } = useAssetsMetadataColumns();
+  const { t } = useTranslation();
+  const tableColumns = getTableColumns(t);
 
   const columns = useMemo(
     () =>
       [
-        Table.Columns.name(),
-        Table.Columns.description(),
-        Table.Columns.externalId(),
-        Table.Columns.rootAsset(onRowClick),
+        tableColumns.name(),
+        tableColumns.description(),
+        tableColumns.externalId(),
+        tableColumns.rootAsset(onRowClick),
         {
           accessorKey: 'id',
-          header: '3D availability',
+          header: t('3D_AVAILABILITY', '3D availability'),
           cell: ({ getValue }) => (
             <ThreeDModelCell assetId={getValue<number>()} />
           ),
           size: 300,
           enableSorting: false,
         },
-        Table.Columns.created,
+        tableColumns.created,
         {
-          ...Table.Columns.labels,
+          ...tableColumns.labels,
           enableSorting: false,
         },
-        Table.Columns.source(),
-        Table.Columns.dataSet,
+        tableColumns.source(),
+        tableColumns.dataSet,
         ...metadataColumns,
       ] as ColumnDef<AssetWithRelationshipLabels>[],
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -89,7 +93,7 @@ export const AssetSummary = ({
         tableHeaders={
           <SummaryHeader
             icon="Assets"
-            title="Assets"
+            title={t('ASSETS', 'Assets')}
             onAllResultsClick={onAllResultsClick}
           />
         }

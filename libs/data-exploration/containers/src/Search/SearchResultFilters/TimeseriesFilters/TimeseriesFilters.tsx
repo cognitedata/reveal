@@ -4,6 +4,7 @@ import {
   FilterProps,
   SPECIFIC_INFO_CONTENT,
   hasObjectAnyProperty,
+  useTranslation,
 } from '@data-exploration-lib/core';
 
 import {
@@ -21,31 +22,34 @@ export const TimeseriesFilters: React.FC<FilterProps> = ({
   query,
   ...rest
 }) => {
-  const timeseriesFilter = filter.timeseries;
-  const isResetButtonVisible = hasObjectAnyProperty(timeseriesFilter, [
+  const { t } = useTranslation();
+
+  const timeSeriesFilter = filter.timeSeries;
+  const isResetButtonVisible = hasObjectAnyProperty(timeSeriesFilter, [
     'metadata',
     'isStep',
     'isString',
     'unit',
   ]);
+
   return (
     <BaseFilterCollapse.Panel
-      title="Time series"
+      title={t('TIMESERIES', 'Time series')}
       hideResetButton={!isResetButtonVisible}
-      infoContent={SPECIFIC_INFO_CONTENT}
+      infoContent={t('SPECIFIC_INFO_CONTENT', SPECIFIC_INFO_CONTENT)}
       onResetClick={() => onResetFilterClick('timeSeries')}
       {...rest}
     >
       <TempMultiSelectFix>
         <IsStepFilter
-          value={timeseriesFilter.isStep}
+          value={timeSeriesFilter.isStep}
           onChange={(newValue) =>
             onFilterChange('timeSeries', { isStep: newValue })
           }
         />
 
         <IsStringFilter
-          value={timeseriesFilter.isString}
+          value={timeSeriesFilter.isString}
           onChange={(newValue) =>
             onFilterChange('timeSeries', { isString: newValue })
           }
@@ -53,8 +57,8 @@ export const TimeseriesFilters: React.FC<FilterProps> = ({
 
         <UnitFilter.Timeseries
           query={query}
-          filter={timeseriesFilter}
-          value={timeseriesFilter.unit}
+          filter={timeSeriesFilter}
+          value={timeSeriesFilter.unit}
           onChange={(newUnit) =>
             onFilterChange('timeSeries', { unit: newUnit })
           }
@@ -62,8 +66,8 @@ export const TimeseriesFilters: React.FC<FilterProps> = ({
 
         <MetadataFilter.Timeseries
           query={query}
-          filter={timeseriesFilter}
-          values={timeseriesFilter.metadata}
+          filter={timeSeriesFilter}
+          values={timeSeriesFilter.metadata}
           onChange={(newMetadata) => {
             onFilterChange('timeSeries', {
               metadata: newMetadata,

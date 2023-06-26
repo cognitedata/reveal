@@ -16,5 +16,5 @@ export const useTranslation = () => useTypedTranslation<TranslationKeys>();
 
 export const Trans = (props: TypedTransProps<TranslationKeys>) => {
   const { t } = useTranslation();
-  return <TypedTrans<TranslationKeys> t={t} {...props} />;
+  return <TypedTrans<TranslationKeys> t={t as any} {...props} />;
 };

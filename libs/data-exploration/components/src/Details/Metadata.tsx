@@ -10,6 +10,7 @@ import {
   isValidUrl,
   useDebounceTrackUsage,
   useMetrics,
+  useTranslation,
 } from '@data-exploration-lib/core';
 
 import { TooltipCell, Table } from '..';
@@ -30,6 +31,7 @@ interface DataSource {
 }
 
 export function Metadata({ metadata }: { metadata?: { [k: string]: string } }) {
+  const { t } = useTranslation();
   const [query, setQuery] = useState('');
   const [hideEmpty, setHideEmpty] = useState(false);
   const trackUsage = useMetrics();
@@ -39,7 +41,7 @@ export function Metadata({ metadata }: { metadata?: { [k: string]: string } }) {
     () =>
       [
         {
-          header: 'Key',
+          header: t('KEY', 'Key'),
           accessorKey: 'key',
           maxSize: undefined,
           cell: ({ getValue }) => {
@@ -47,7 +49,7 @@ export function Metadata({ metadata }: { metadata?: { [k: string]: string } }) {
           },
         },
         {
-          header: 'Value',
+          header: t('VALUE', 'Value'),
           accessorKey: 'value',
           maxSize: undefined,
           cell: ({ getValue }) => {
@@ -117,11 +119,11 @@ export function Metadata({ metadata }: { metadata?: { [k: string]: string } }) {
   return (
     <MetadataCard>
       <MetadataHeader>
-        <Title level={5}>Metadata</Title>
+        <Title level={5}>{t('METADATA', 'Metadata')}</Title>
         <FilterContainer>
           <FilterInput
             value={query}
-            placeholder="Filter"
+            placeholder={t('FILTER_PLACEHOLDER', 'Filter')}
             size="small"
             variant="noBorder"
             onChange={handleFilterInputOnChange}
@@ -131,7 +133,9 @@ export function Metadata({ metadata }: { metadata?: { [k: string]: string } }) {
             size="small"
             onClick={handleOnClickHideEmpty}
           >
-            {hideEmpty ? 'Show' : 'Hide'} empty
+            {t('EMPTY_VISIBILITY', `${hideEmpty ? 'Show' : 'Hide'} empty`, {
+              action: hideEmpty ? t('SHOW', 'Show') : t('HIDE', 'Hide'),
+            })}
           </Button>
         </FilterContainer>
       </MetadataHeader>

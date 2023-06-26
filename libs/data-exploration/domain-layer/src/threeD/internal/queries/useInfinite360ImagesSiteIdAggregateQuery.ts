@@ -3,12 +3,13 @@ import { useCallback } from 'react';
 import { InfiniteData, UseInfiniteQueryResult } from '@tanstack/react-query';
 
 import { InternalThreeDFilters } from '@data-exploration-lib/core';
+
 import {
   EventsAggregateFilters,
   EventsMetadataAggregateResponse,
   EventsMetadataAggregateResponseItems,
   useEventsAdvancedMetadataValuesAggregateQuery,
-} from '@data-exploration-lib/domain-layer';
+} from '../../../events';
 
 export const useInfinite360ImagesSiteIdAggregateQuery = (
   query?: string,

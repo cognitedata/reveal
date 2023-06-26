@@ -7,6 +7,7 @@ import { Input } from '@cognite/cogs.js';
 import {
   DATA_EXPLORATION_COMPONENT,
   useDebounceTrackUsage,
+  useTranslation,
 } from '@data-exploration-lib/core';
 
 interface Props {
@@ -18,6 +19,7 @@ export const DefaultPreviewFilter: React.FC<React.PropsWithChildren<Props>> = ({
   onQueryChange,
   children,
 }) => {
+  const { t } = useTranslation();
   const track = useDebounceTrackUsage();
 
   const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -31,7 +33,10 @@ export const DefaultPreviewFilter: React.FC<React.PropsWithChildren<Props>> = ({
       <StyledInput
         variant="default"
         value={query || ''}
-        placeholder="Search for name, description, etc..."
+        placeholder={t(
+          'PREVIEW_FILTER_PLACEHOLDER',
+          'Search for name, description, etc...'
+        )}
         onChange={handleOnChange}
       />
       <FlexGrow />

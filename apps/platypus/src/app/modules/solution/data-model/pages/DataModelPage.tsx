@@ -39,7 +39,7 @@ import { getKeyForDataModel } from '@platypus-app/utils/local-storage-utils';
 import { QueryKeys } from '@platypus-app/utils/queryKeys';
 import { useQueryClient } from '@tanstack/react-query';
 
-import { useCdfUserHistoryService } from '@cognite/cdf-utilities';
+import { createLink, useCdfUserHistoryService } from '@cognite/cdf-utilities';
 import { Flex } from '@cognite/cogs.js';
 
 import { useDataModelState } from '../../hooks/useDataModelState';
@@ -179,7 +179,7 @@ export const DataModelPage = () => {
       userHistoryService.logNewResourceView({
         application: SUB_APP_PATH,
         name: dataModelExternalId.trim(),
-        path: dataModelPathname,
+        path: createLink(dataModelPathname),
       });
   }, [userHistoryService, dataModelExternalId, dataModelPathname]);
 
@@ -362,7 +362,7 @@ export const DataModelPage = () => {
           userHistoryService.logNewResourceEdit({
             application: SUB_APP_PATH,
             name: dataModelExternalId.trim(), // how to get data-model name here?
-            path: publishedVersionPath,
+            path: createLink(publishedVersionPath),
           });
 
         Notification({

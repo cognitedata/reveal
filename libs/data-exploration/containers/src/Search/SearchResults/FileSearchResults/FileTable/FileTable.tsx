@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 
 import {
-  ResourceTableColumns,
+  getTableColumns,
   Table,
   TableProps,
 } from '@data-exploration/components';
@@ -13,6 +13,7 @@ import {
   FileWithRelationshipLabels,
   getHiddenColumns,
   RelationshipLabels,
+  useTranslation,
 } from '@data-exploration-lib/core';
 import { useDocumentsMetadataKeys } from '@data-exploration-lib/domain-layer';
 
@@ -26,6 +27,7 @@ export type FileTableProps = Omit<
     query?: string;
     visibleColumns?: string[];
     onDirectAssetClick?: (rootAsset: Asset, resourceId?: number) => void;
+    shouldShowPreviews?: boolean;
   };
 
 const defaultVisibleColumns = ['name', 'mimeType', 'uploadedTime'];
@@ -34,14 +36,17 @@ export const FileTable = (props: FileTableProps) => {
     query,
     visibleColumns = defaultVisibleColumns,
     onDirectAssetClick,
+    shouldShowPreviews = true,
   } = props;
   const { data: metadataKeys } = useDocumentsMetadataKeys();
+  const { t } = useTranslation();
+  const tableColumns = getTableColumns(t);
 
   const [sorting, setSorting] = React.useState<SortingState>([]);
 
   const metadataColumns = useMemo(() => {
     return (metadataKeys || []).map((key: string) =>
-      ResourceTableColumns.metadata(key)
+      tableColumns.metadata(key)
     );
   }, [metadataKeys]);
 
@@ -49,7 +54,7 @@ export const FileTable = (props: FileTableProps) => {
     () =>
       [
         {
-          ...Table.Columns.name(),
+          ...tableColumns.name(),
           header: 'Name',
           accessorKey: 'name',
           enableHiding: false,
@@ -59,20 +64,21 @@ export const FileTable = (props: FileTableProps) => {
               fileName,
               file: row.original,
               query,
+              shouldShowPreviews,
             };
             return <FileNamePreview {...fileNamePreviewProps} />;
           },
         },
-        Table.Columns.mimeType,
-        Table.Columns.externalId(query),
-        Table.Columns.id(query),
-        Table.Columns.uploadedTime,
-        Table.Columns.lastUpdatedTime,
-        Table.Columns.created,
-        Table.Columns.dataSet,
-        Table.Columns.source(query),
-        Table.Columns.assets(onDirectAssetClick),
-        Table.Columns.labels,
+        tableColumns.mimeType,
+        tableColumns.externalId(query),
+        tableColumns.id(query),
+        tableColumns.uploadedTime,
+        tableColumns.lastUpdatedTime,
+        tableColumns.created,
+        tableColumns.dataSet,
+        tableColumns.source(query),
+        tableColumns.assets(onDirectAssetClick),
+        tableColumns.labels,
         ...metadataColumns,
       ] as ColumnDef<FileInfo>[],
     // eslint-disable-next-line react-hooks/exhaustive-deps

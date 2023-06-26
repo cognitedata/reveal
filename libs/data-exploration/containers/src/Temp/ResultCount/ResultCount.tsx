@@ -13,6 +13,7 @@ import {
   formatNumber,
   getTitle,
   ResourceType,
+  useTranslation,
 } from '@data-exploration-lib/core';
 import {
   ThreeDModelsResponse,
@@ -31,6 +32,7 @@ export type ResultProps = {
 };
 
 export function ResultCount(props: ResultProps) {
+  const { t } = useTranslation();
   const resultWithFilters = useResultCount(props);
   const result = useResultCount({
     ...props,
@@ -39,9 +41,20 @@ export function ResultCount(props: ResultProps) {
 
   if (!result.count) return null;
 
+  const titleTranslationKey = result.label.toUpperCase();
+  const titleTranslated = t(titleTranslationKey, result.label).toLowerCase();
+
   return (
     <Chip
-      label={`${resultWithFilters.count} of ${result.count} ${result.label}`}
+      label={t(
+        'SEARCH_RESULTS_COUNT_LABEL',
+        `${resultWithFilters.count} of ${result.count} ${result.label}`,
+        {
+          loaded: resultWithFilters.count,
+          total: result.count,
+          resourceType: titleTranslated,
+        }
+      )}
       type="neutral"
     />
   );

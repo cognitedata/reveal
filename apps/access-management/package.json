@@ -1,0 +1,26 @@
+{
+  "name": "@cognite/cdf-access-management",
+  "version": "2.4.0",
+  "scripts": {
+    "start": "../../scripts/start.sh dev access-management",
+    "build": "../../scripts/build.sh production access-management",
+    "test": "../../scripts/test.sh access-management",
+    "lint": "../../scripts/lint.sh access-management",
+    "lint:fix": "../../scripts/lint.sh access-management --fix",
+    "cypress:dev": "./scripts/cypress-dev.sh"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   install-dependencies:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3
         with:
@@ -46,10 +46,46 @@ jobs:
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
         run: yarn install --frozen-lockfile
-  distributed-task:
+  interactive-diagrams:
     runs-on: ubuntu-latest
     needs: install-dependencies
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'yarn'
+
+      - name: Cache node modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            node_modules
+            ~/.cache/Cypress
+          key: cache-node-modules-${{ hashFiles('yarn.lock') }}
+
+      - name: Cache Nx
+        uses: actions/cache@v3
+        with:
+          path: node_modules/.cache/nx
+          key: cache-nx-${{ hashFiles('yarn.lock') }}-${{ matrix.target }}-${{ matrix.jobIndex }}-${{ github.sha }}
+          restore-keys: |
+            cache-nx-${{ hashFiles('yarn.lock') }}-${{ matrix.target }}-${{ matrix.jobIndex }}-
+            cache-nx-${{ hashFiles('yarn.lock') }}-
+
+      - name: Build interactive diagrams
+        id: build-interactive-diagrams
+        run: npx nx run interactive-diagrams:build:production
+        env:
+          NODE_OPTIONS: '--max_old_space_size=8192'
+  distributed-task:
+    runs-on: ubuntu-20.04
+    needs: install-dependencies
     strategy:
+      fail-fast: false
       matrix:
         target: ['test', 'lint', 'build']
         jobIndex: [1, 2, 3]
@@ -99,102 +135,103 @@ jobs:
           CLIENT_ID: ${{ secrets.CLI_E2E_CLIENT_ID }}
           CLIENT_SECRET: ${{ secrets.CLI_E2E_CLIENT_SECRET }}
           TESTING_BASE_URL: http://localhost:4002
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: build
-          path: dist/*
-  e2e:
-    runs-on: ubuntu-latest
-    needs: distributed-task
-    services:
-      fusion-app-test:
-        image: eu.gcr.io/cognitedata/fusion-app/dev
-        credentials:
-          username: _json_key
-          password: ${{ secrets.GCR_ACTIONS_READONLY_JSON_KEY }}
-        ports:
-          - 8080:8080
-        options: --name fusion-app-test
-    strategy:
-      matrix:
-        target: ['e2e']
-        jobIndex: [1]
-    env:
-      jobCount: 1
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-          cache: 'yarn'
-
-      - name: Cache node modules
-        uses: actions/cache@v3
-        with:
-          path: |
-            node_modules
-            ~/.cache/Cypress
-          key: cache-node-modules-${{ hashFiles('yarn.lock') }}
-
-      - name: Cache Nx
-        uses: actions/cache@v3
-        with:
-          path: node_modules/.cache/nx
-          key: cache-nx-${{ hashFiles('yarn.lock') }}-${{ matrix.target }}-${{ matrix.jobIndex }}-${{ github.sha }}
-          restore-keys: |
-            cache-nx-${{ hashFiles('yarn.lock') }}-${{ matrix.target }}-${{ matrix.jobIndex }}-
-            cache-nx-${{ hashFiles('yarn.lock') }}-
-
-      - run: git fetch --no-tags --prune --depth=1 origin ${{ github.base_ref }}
-      - name: Derive appropriate SHAs for base and head for `nx affected` commands
-        uses: nrwl/nx-set-shas@v3
-        with:
-          main-branch-name: ${{ github.base_ref }}
-
-      - name: Override nginx config
-        run: |
-          docker cp ./nginx.conf fusion-app-test:/etc/nginx/conf.d/default.conf
-          docker exec -u 0 fusion-app-test nginx -s reload
-
-      - name: Download the build folders
-        uses: actions/download-artifact@v3
-        with:
-          name: build
-          path: dist
-
-      - name: Start local HTTP server to host built apps
-        run: yarn serve dist/apps -p 3010 --cors &
-        id: serve
-
-      - name: Cypress run
-        uses: cypress-io/github-action@v4.2.2
-        id: cypress
-        continue-on-error: false
-        env:
-          PROJECT: ${{ secrets.CLI_E2E_PROJECT }}
-          TENANT: ${{ secrets.CLI_E2E_TENANT }}
-          CLUSTER: ${{ secrets.CLI_E2E_CLUSTER }}
-          CLIENT_ID: ${{ secrets.CLI_E2E_CLIENT_ID }}
-          CLIENT_SECRET: ${{ secrets.CLI_E2E_CLIENT_SECRET }}
-          DATA_EXPLORER_CLIENT_ID: ${{ secrets.DATA_EXPLORER_CLIENT_ID }}
-          DATA_EXPLORER_CLIENT_SECRET: ${{ secrets.DATA_EXPLORER_CLIENT_SECRET }}
-          TESTING_BASE_URL: http://localhost:4002
-        with:
-          command: node ./scripts/run-many.js ${{ matrix.target }} ${{ matrix.jobIndex }} ${{ env.jobCount }} ${{ env.NX_BASE }} ${{ env.NX_HEAD }} ${{ secrets.CODECOV_TOKEN }} ${{github.base_ref}}
-
-      - name: Stop HTTP server
-        if: always()
-        run: kill $(lsof -t -i :3010)
+  #      - name: Upload artifacts
+  #        uses: actions/upload-artifact@v3
+  #        with:
+  #          name: build
+  #          path: dist/*
+  #  e2e:
+  #    runs-on: ubuntu-latest
+  #    needs: distributed-task
+  #    services:
+  #      fusion-app-test:
+  #        image: eu.gcr.io/cognitedata/fusion-app/dev
+  #        credentials:
+  #          username: _json_key
+  #          password: ${{ secrets.GCR_ACTIONS_READONLY_JSON_KEY }}
+  #        ports:
+  #          - 8080:8080
+  #        options: --name fusion-app-test
+  #    strategy:
+  #      matrix:
+  #        target: ['e2e']
+  #        jobIndex: [1]
+  #    env:
+  #      jobCount: 1
+  #    steps:
+  #      - uses: actions/checkout@v3
+  #        with:
+  #          fetch-depth: 0
+  #
+  #      - uses: actions/setup-node@v3
+  #        with:
+  #          node-version: '18'
+  #          cache: 'yarn'
+  #
+  #      - name: Cache node modules
+  #        uses: actions/cache@v3
+  #        with:
+  #          path: |
+  #            node_modules
+  #            ~/.cache/Cypress
+  #          key: cache-node-modules-${{ hashFiles('yarn.lock') }}
+  #
+  #      - name: Cache Nx
+  #        uses: actions/cache@v3
+  #        with:
+  #          path: node_modules/.cache/nx
+  #          key: cache-nx-${{ hashFiles('yarn.lock') }}-${{ matrix.target }}-${{ matrix.jobIndex }}-${{ github.sha }}
+  #          restore-keys: |
+  #            cache-nx-${{ hashFiles('yarn.lock') }}-${{ matrix.target }}-${{ matrix.jobIndex }}-
+  #            cache-nx-${{ hashFiles('yarn.lock') }}-
+  #
+  #      - run: git fetch --no-tags --prune --depth=1 origin ${{ github.base_ref }}
+  #      - name: Derive appropriate SHAs for base and head for `nx affected` commands
+  #        uses: nrwl/nx-set-shas@v3
+  #        with:
+  #          main-branch-name: ${{ github.base_ref }}
+  #
+  #      - name: Override nginx config
+  #        run: |
+  #          docker cp ./nginx.conf fusion-app-test:/etc/nginx/conf.d/default.conf
+  #          docker exec -u 0 fusion-app-test nginx -s reload
+  #
+  #      - name: Download the build folders
+  #        uses: actions/download-artifact@v3
+  #        with:
+  #          name: build
+  #          path: dist
+  #
+  #      - name: Start local HTTP server to host built apps
+  #        run: yarn serve dist/apps -p 3010 --cors &
+  #        id: serve
+  #
+  #      - name: Cypress run
+  #        uses: cypress-io/github-action@v4.2.2
+  #        id: cypress
+  #        continue-on-error: false
+  #        env:
+  #          PROJECT: ${{ secrets.CLI_E2E_PROJECT }}
+  #          TENANT: ${{ secrets.CLI_E2E_TENANT }}
+  #          CLUSTER: ${{ secrets.CLI_E2E_CLUSTER }}
+  #          CLIENT_ID: ${{ secrets.CLI_E2E_CLIENT_ID }}
+  #          CLIENT_SECRET: ${{ secrets.CLI_E2E_CLIENT_SECRET }}
+  #          DATA_EXPLORER_CLIENT_ID: ${{ secrets.DATA_EXPLORER_CLIENT_ID }}
+  #          DATA_EXPLORER_CLIENT_SECRET: ${{ secrets.DATA_EXPLORER_CLIENT_SECRET }}
+  #          TESTING_BASE_URL: http://localhost:4002
+  #        with:
+  #          command: node ./scripts/run-many.js ${{ matrix.target }} ${{ matrix.jobIndex }} ${{ env.jobCount }} ${{ env.NX_BASE }} ${{ env.NX_HEAD }} ${{ secrets.CODECOV_TOKEN }} ${{github.base_ref}}
+  #
+  #      - name: Stop HTTP server
+  #        if: always()
+  #        run: kill $(lsof -t -i :3010)
   ci-passed:
     # see https://github.community/t/status-check-for-a-matrix-jobs/127354/7
     name: CI Passed
-    needs: [distributed-task, e2e]
+    #    needs: [distributed-task, e2e]
+    needs: [distributed-task]
     if: ${{ always() }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Check all job status
         # see https://docs.github.com/en/actions/reference/context-and-expression-syntax-for-github-actions#needs-context

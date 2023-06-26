@@ -24,6 +24,8 @@ import {
   Image360AnnotationIntersection,
 } from '@cognite/reveal';
 
+import { useTranslation } from '@data-exploration-lib/core';
+
 import { ThreeDContext } from './contexts/ThreeDContext';
 import { use3DModel } from './hooks';
 import { useViewerDoubleClickListener } from './hooks/useViewerDoubleClickListener';
@@ -62,6 +64,7 @@ export function Reveal({
   setImage360Entity,
   onViewerClick,
 }: Props) {
+  const { t } = useTranslation();
   const {
     setViewState,
     viewer,
@@ -79,7 +82,7 @@ export function Reveal({
     pointCloudModel?: CognitePointCloudModel;
     imageCollection?: Image360Collection;
   }>();
-  const [modelError, setModelError] = useState<Error>();
+  const [modelError, setModelError] = useState<{ message: string }>();
 
   const revealContainerRef = useRef<HTMLDivElement>(null);
   const hasCameraInitialised = useRef<boolean>(false);
@@ -135,10 +138,9 @@ export function Reveal({
             revisionId,
           });
         } catch {
-          return Promise.reject({
-            message:
-              'The selected 3D model is not supported and can not be loaded. If the 3D model is very old, try uploading a new revision under Upload 3D models in Fusion.',
-          });
+          return Promise.reject(
+            'The selected 3D model is not supported and can not be loaded. If the 3D model is very old, try uploading a new revision under Upload 3D models in Fusion.'
+          );
         }
       }
 
@@ -176,9 +178,7 @@ export function Reveal({
             { preMultipliedRotation: false }
           );
         } catch {
-          return Promise.reject({
-            message: 'The selected 360 image set is not supported',
-          });
+          return Promise.reject('The selected 360 image set is not supported');
         }
 
         const currentImage360 = initialViewerState
@@ -220,7 +220,9 @@ export function Reveal({
 
     const modelsPromise = loadModel();
 
-    modelsPromise.then(setModels, (reason) => setModelError(new Error(reason)));
+    modelsPromise.then(setModels, (reason) =>
+      setModelError({ message: reason })
+    );
 
     return () => {
       if (!viewer) return;
@@ -289,12 +291,9 @@ export function Reveal({
 
   useEffect(() => {
     if (modelError) {
-      toast.error(
-        <RevealErrorToast error={modelError as { message?: string }} />,
-        {
-          toastId: 'reveal-model-load-error',
-        }
-      );
+      toast.error(<RevealErrorToast error={modelError} t={t} />, {
+        toastId: 'reveal-model-load-error',
+      });
     }
   }, [modelError]);
 

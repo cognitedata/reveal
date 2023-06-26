@@ -9,6 +9,7 @@ import {
   ResourceType,
   SelectableItemsProps,
   ViewType,
+  useTranslation,
 } from '@data-exploration-lib/core';
 import {
   useAssetsByIdQuery,
@@ -66,6 +67,8 @@ export const SequenceDetails: FC<
   } = useSequenceSearchResultQuery({
     filter: { internalId: sequenceId },
   });
+  const { t } = useTranslation();
+
   const enableDetailTableSelection = selectionMode === 'multiple';
 
   const {
@@ -152,18 +155,23 @@ export const SequenceDetails: FC<
       onSelectClicked={onSelect}
     >
       <StyledCollapse accordion ghost defaultActiveKey="sequence-details">
-        <Collapse.Panel key="sequence-details" header={<h4>{DETAILS}</h4>}>
+        <Collapse.Panel
+          key="sequence-details"
+          header={<h4>{t('DETAILS', DETAILS)}</h4>}
+        >
           {parentSequence ? (
             <SequenceInfo sequence={parentSequence} />
           ) : (
-            <Title level={5}>{NO_DETAILS_AVAILABLE}</Title>
+            <Title level={5}>
+              {t('NO_DETAILS_AVAILABLE', NO_DETAILS_AVAILABLE)}
+            </Title>
           )}
         </Collapse.Panel>
 
         {isAssetVisible && (
           <Collapse.Panel
             key="sequence-asset-detail"
-            header={<h4>{ASSETS}</h4>}
+            header={<h4>{t('ASSETS', ASSETS)}</h4>}
           >
             <AssetDetailsTable
               id="asset-resource-sequence-detail-table"
@@ -181,7 +189,7 @@ export const SequenceDetails: FC<
         {isTimeseriesVisible && (
           <Collapse.Panel
             key="sequence-timeseries-detail"
-            header={<h4>{TIME_SERIES}</h4>}
+            header={<h4>{t('TIMESERIES', TIME_SERIES)}</h4>}
           >
             <TimeseriesDetailsTable
               id="timeseries-resource-sequence-detail-table"
@@ -200,7 +208,7 @@ export const SequenceDetails: FC<
         {isFileVisible && (
           <Collapse.Panel
             key="sequence-documents-detail"
-            header={<h4>{FILES}</h4>}
+            header={<h4>{t('FILES', FILES)}</h4>}
           >
             <FileDetailsTable
               id="documents-resource-sequence-detail-table"
@@ -219,7 +227,7 @@ export const SequenceDetails: FC<
         {isEventVisible && (
           <Collapse.Panel
             key="sequence-events-detail"
-            header={<h4>{EVENTS}</h4>}
+            header={<h4>{t('EVENTS', EVENTS)}</h4>}
           >
             <EventDetailsTable
               id="event-resource-sequence-detail-table"
@@ -238,7 +246,7 @@ export const SequenceDetails: FC<
         {isSequenceVisible && (
           <Collapse.Panel
             key="sequence-sequence-detail"
-            header={<h4>{SEQUENCES}</h4>}
+            header={<h4>{t('SEQUENCES', SEQUENCES)}</h4>}
           >
             <SequenceDetailsTable
               id="sequence-resource-sequence-detail-table"

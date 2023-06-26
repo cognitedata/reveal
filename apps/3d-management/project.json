@@ -1,0 +1,98 @@
+{
+  "name": "3d-management",
+  "sourceRoot": "apps/3d-management/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/3d-management",
+        "index": "apps/3d-management/src/index.html",
+        "main": "apps/3d-management/src/index.tsx",
+        "runtimeChunk": false,
+        "vendorChunk": false,
+        "commonChunk": false,
+        "tsConfig": "apps/3d-management/tsconfig.app.json",
+        "assets": ["apps/3d-management/src/assets"],
+        "styles": [],
+        "scripts": [],
+        "webpackConfig": "apps/3d-management/webpack-config.js"
+      },
+      "configurations": {
+        "development": {
+          "optimization": false,
+          "outputHashing": "all",
+          "sourceMap": true,
+          "extractCss": false,
+          "namedChunks": false,
+          "extractLicenses": false,
+          "vendorChunk": false,
+          "runtimeChunk": false,
+          "budgets": []
+        },
+        "preview": {
+          "optimization": true,
+          "outputHashing": "all",
+          "sourceMap": true,
+          "extractCss": true,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "vendorChunk": false,
+          "runtimeChunk": false,
+          "budgets": []
+        },
+        "production": {
+          "optimization": true,
+          "outputHashing": "all",
+          "sourceMap": true,
+          "extractCss": true,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "vendorChunk": false,
+          "budgets": []
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/webpack:dev-server",
+      "options": {
+        "buildTarget": "3d-management:build",
+        "hmr": true
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "3d-management:build:development",
+          "hmr": true,
+          "liveReload": true
+        },
+
+        "preview": {
+          "buildTarget": "3d-management:build:preview",
+          "hmr": false
+        },
+        "production": {
+          "buildTarget": "3d-management:build:production",
+          "hmr": false
+        }
+      },
+      "defaultConfiguration": "development"
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/3d-management/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/apps/3d-management"],
+      "options": {
+        "jestConfig": "apps/3d-management/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

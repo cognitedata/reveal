@@ -5,6 +5,8 @@ import relativeTimePlugin from 'dayjs/plugin/relativeTime';
 
 import { Tooltip } from '@cognite/cogs.js';
 
+import { useTranslation } from '@data-exploration-lib/core';
+
 dayjs.extend(relativeTimePlugin);
 export interface TimeDisplayProps {
   value?: number | Date;
@@ -17,8 +19,9 @@ export const TimeDisplay = ({
   relative = false,
   withTooltip = false,
 }: TimeDisplayProps) => {
+  const { t } = useTranslation();
   if (value === undefined) {
-    return <em>Not set</em>;
+    return <em>{t('NOT_SET', 'Not set')}</em>;
   }
 
   const absoluteTime = dayjs(value).format('YYYY-MM-DD HH:mm');

@@ -1,5 +1,5 @@
 import React, { useEffect, useContext, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 
 import styled from 'styled-components';
 
@@ -7,6 +7,7 @@ import { Loader, Metadata } from '@data-exploration/components';
 import { FileInfo } from '@data-exploration/containers';
 
 import { getFlow } from '@cognite/cdf-sdk-singleton';
+import { useCdfUserHistoryService } from '@cognite/cdf-utilities';
 import { Tabs, Infobar } from '@cognite/cogs.js';
 import {
   FilePreview as CogniteFilePreview,
@@ -27,7 +28,12 @@ import {
   useResourceDetailSelectedTab,
 } from '@data-exploration-app/hooks';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
-import { APPLICATION_ID } from '@data-exploration-lib/core';
+import {
+  APPLICATION_ID,
+  useTranslation,
+  SUB_APP_PATH,
+  createInternalLink,
+} from '@data-exploration-lib/core';
 
 // FilePreviewTabType;
 // - preview
@@ -49,6 +55,7 @@ export const FileDetail = ({
   const { resourcesState, setResourcesState } = useContext(
     ResourceSelectionContext
   );
+  const { t } = useTranslation();
   const [pushJourney] = usePushJourney();
   const isActive = resourcesState.some(
     // eslint-disable-next-line lodash/prefer-matches
@@ -66,6 +73,9 @@ export const FileDetail = ({
   const { resourceType } = useParams<{
     resourceType: ResourceType;
   }>();
+
+  const { pathname, search: searchParams } = useLocation();
+  const userHistoryService = useCdfUserHistoryService();
 
   const [selectedTab, setSelectedTab] = useResourceDetailSelectedTab();
   const [endJourney] = useEndJourney();
@@ -105,6 +115,13 @@ export const FileDetail = ({
 
   useEffect(() => {
     if (fileInfo !== undefined) {
+      // save File preview as view resource in user history
+      if (fileInfo?.name)
+        userHistoryService.logNewResourceView({
+          application: SUB_APP_PATH,
+          name: fileInfo?.name,
+          path: createInternalLink(pathname, searchParams),
+        });
       trackUsage('Exploration.Preview.File.MimeType', {
         mimeType: fileInfo.mimeType,
       });
@@ -126,7 +143,9 @@ export const FileDetail = ({
   }
 
   if (!fileInfo) {
-    return <>File {fileId} not found!</>;
+    return (
+      <>{t('FILE_ID_NOT_FOUND', `File ${fileId} not found!`, { fileId })}</>
+    );
   }
 
   return (
@@ -147,15 +166,22 @@ export const FileDetail = ({
         onTabChange={handleTabChange}
         tab={activeTab}
         additionalTabs={[
-          <Tabs.Tab label="Preview" key="preview" tabKey="preview">
+          <Tabs.Tab
+            label={t('PREVIEW_TAB_LABEL', 'Preview')}
+            key="preview"
+            tabKey="preview"
+          >
             <PreviewTabWrapper>
               {editMode && (
                 <Infobar
                   type="neutral"
-                  buttonText="Done editing"
+                  buttonText={t('DONE_EDITION', 'Done editing')}
                   onButtonClick={() => setEditMode(false)}
                 >
-                  You are in editing mode.
+                  {t(
+                    'FILE_EDITING_MODE_NOTIFY_TEXT',
+                    'You are in editing mode.'
+                  )}
                 </Infobar>
               )}
               <CogniteFilePreview
@@ -174,7 +200,7 @@ export const FileDetail = ({
               />
             </PreviewTabWrapper>
           </Tabs.Tab>,
-          <Tabs.Tab label="Details" key="info" tabKey="info">
+          <Tabs.Tab label={t('DETAILS', 'Details')} key="info" tabKey="info">
             <DetailsTabWrapper>
               <FileInfo file={fileInfo} />
               <Metadata metadata={fileInfo.metadata} />

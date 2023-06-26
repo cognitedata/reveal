@@ -4,7 +4,7 @@ import { HighlightCell } from '@data-exploration/components';
 
 import { Detail, Flex, Icon } from '@cognite/cogs.js';
 
-import { getObjectURL } from '@data-exploration-lib/core';
+import { getObjectURL, useTranslation } from '@data-exploration-lib/core';
 import {
   Model3DWithType,
   use360ImageThumbnail,
@@ -15,6 +15,7 @@ import {
 import { ThreeDThumbnail } from './ThreeDThumbnail';
 
 export const Image360Display = ({ model }: { model: Model3DWithType }) => {
+  const { t } = useTranslation();
   const [imageUrl, setImage] = useState<string | undefined>(undefined);
 
   const { data: image360Data, isInitialLoading: isLoadingThumbnail } =
@@ -63,7 +64,9 @@ export const Image360Display = ({ model }: { model: Model3DWithType }) => {
           <Icon type="Loader" />
         ) : (
           <Detail>
-            Est. number of images: <>{image360FileCount}</>
+            {t('EST_NUMBER_OF_IMAGES', 'Est. number of images: {{ count }}', {
+              count: image360FileCount,
+            })}
           </Detail>
         )}
       </Flex>

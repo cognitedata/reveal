@@ -1,16 +1,24 @@
 import React, { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 
 import styled from 'styled-components';
 
 import { useQueryClient } from '@tanstack/react-query';
 import { Modal } from 'antd';
 
+import { useCdfUserHistoryService } from '@cognite/cdf-utilities';
 import { Button } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
 import {
   searchBaseCacheKey,
   listBaseCacheKey,
 } from '@cognite/sdk-react-query-hooks';
+
+import {
+  useTranslation,
+  SUB_APP_PATH,
+  createInternalLink,
+} from '@data-exploration-lib/core';
 
 import { DocumentUploader } from './DocumentUploader';
 
@@ -46,17 +54,29 @@ export const DocumentUploaderModal = ({
 }: Props) => {
   const [fileList, setFileList] = useState<FileInfo[]>([]);
   const client = useQueryClient();
+  const { t } = useTranslation();
+
+  const { pathname } = useLocation();
+  const userHistoryService = useCdfUserHistoryService();
 
   return (
     <Modal
       visible={visible}
       onCancel={onCancel}
-      title="Upload File"
+      title={t('UPLOAD_FILE', 'Upload File')}
       footer={null}
     >
       <Wrapper>
         <DocumentUploader
           onUploadSuccess={(file) => {
+            // save File preview as edit resource in user history
+            if (file)
+              userHistoryService.logNewResourceEdit({
+                application: SUB_APP_PATH,
+                name: file?.name,
+                path: createInternalLink(pathname),
+              });
+
             setFileList((list) => [...list, file]);
             client.refetchQueries(listBaseCacheKey('files'));
             client.refetchQueries(searchBaseCacheKey('files'));
@@ -70,14 +90,17 @@ export const DocumentUploaderModal = ({
               <ul>
                 {fileList.map((file) => (
                   <li>
-                    File{' '}
+                    {t('FILE', 'File')}{' '}
                     <Button
                       type="ghost-accent"
                       onClick={() => onFileSelected(file)}
                     >
                       {file.name}
                     </Button>{' '}
-                    successfully uploaded!
+                    {t(
+                      'FILE_SUCCESSFULLY_UPLOADED_TEXT',
+                      'successfully uploaded!'
+                    )}
                   </li>
                 ))}
               </ul>

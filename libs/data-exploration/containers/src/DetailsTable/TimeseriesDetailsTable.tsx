@@ -1,8 +1,13 @@
 import React, { useMemo } from 'react';
 
-import { Table, TableProps } from '@data-exploration/components';
+import {
+  getTableColumns,
+  Table,
+  TableProps,
+} from '@data-exploration/components';
 import { ColumnDef } from '@tanstack/react-table';
 
+import { useTranslation } from '@data-exploration-lib/core';
 import { InternalTimeseriesData } from '@data-exploration-lib/domain-layer';
 
 import { Wrapper } from './elements';
@@ -10,8 +15,10 @@ import { Wrapper } from './elements';
 export const TimeseriesDetailsTable = (
   props: Omit<TableProps<InternalTimeseriesData>, 'columns'>
 ) => {
+  const { t } = useTranslation();
+
   const columns = useMemo(
-    () => [Table.Columns.name()],
+    () => [getTableColumns(t).name()],
     []
   ) as ColumnDef<InternalTimeseriesData>[];
   return (

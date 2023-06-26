@@ -21,7 +21,9 @@ export const Option = <OptionType extends OptionTypeBase>({
   data,
   isSelected,
   ...props
-}: OptionProps<OptionType>) => {
+}: // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+OptionProps<OptionType>) => {
   // eslint-disable-next-line prefer-const
   let { label, count } = data;
   const isDisabled = count === 0;

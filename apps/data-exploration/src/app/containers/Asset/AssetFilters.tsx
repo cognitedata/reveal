@@ -12,6 +12,7 @@ import {
   useFilterEmptyState,
   useResetAssetFilters,
 } from '@data-exploration-app/store/filter';
+import { useTranslation } from '@data-exploration-lib/core';
 import {
   transformNewFilterToOldFilter,
   useAssetsMetadataKeysAggregateQuery,
@@ -20,6 +21,7 @@ import {
 } from '@data-exploration-lib/domain-layer';
 
 export const AssetFilters = ({ ...rest }) => {
+  const { t } = useTranslation();
   const [assetFilters, setAssetFilters] = useAssetFilters();
   const resetAssetFilters = useResetAssetFilters();
   const isFiltersEmpty = useFilterEmptyState('asset');
@@ -46,9 +48,9 @@ export const AssetFilters = ({ ...rest }) => {
 
   return (
     <BaseFilterCollapse.Panel
-      title="Assets"
+      title={t('ASSETS', 'Assets')}
       hideResetButton={isFiltersEmpty}
-      infoContent={SPECIFIC_INFO_CONTENT}
+      infoContent={t('SPECIFIC_INFO_CONTENT', SPECIFIC_INFO_CONTENT)}
       onResetClick={resetAssetFilters}
       {...rest}
     >

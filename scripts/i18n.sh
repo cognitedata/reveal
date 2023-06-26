@@ -35,4 +35,5 @@ esac
 # Docs can be found here
 # https://github.com/cognitedata/cdf-ui-i18n-utils/blob/main/bin/README.md
 
-cdf-i18n-utils-cli ${cliCommand} --namespace=${project} --path=apps/${project}/src/app/common/i18n
+# The script is in the monorepo, run locally
+./libs/shared/cdf-ui-i18n-utils/src/cdf-i18n-utils-cli.cjs ${cliCommand} --namespace=${project} --path=apps/${project}/src/i18n

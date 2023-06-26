@@ -7,6 +7,7 @@ import { Model3D } from '@cognite/sdk';
 
 import { useAPMConfig } from '@data-exploration-app/containers/ThreeD/hooks';
 import { useFlagPointsOfInterestFeature } from '@data-exploration-app/hooks/flags';
+import { useTranslation } from '@data-exploration-lib/core';
 import {
   Revision3DWithIndex,
   Image360SiteData,
@@ -41,6 +42,8 @@ export const ThreeDTopbar = ({
     setPointsOfInterest,
   } = useContext(ThreeDContext);
 
+  const { t } = useTranslation();
+
   const usePointsOfInterestFeatureFlag = useFlagPointsOfInterestFeature();
   const { data: config } = useAPMConfig();
 
@@ -53,13 +56,14 @@ export const ThreeDTopbar = ({
     <>
       <Flex direction="row" gap={16}>
         <VerticallyCenteredText>
-          {`Last update: ${
-            lastUpdatedTime?.toLocaleDateString('no-NO', {
-              day: '2-digit',
-              month: '2-digit',
-              year: 'numeric',
-            }) ?? 'no data'
-          }`}
+          {t('LAST_UPDATE_WITH_TIME', 'Last update: {{time}}', {
+            time:
+              lastUpdatedTime?.toLocaleDateString('no-NO', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+              }) ?? t('NO_DATA', 'No data'),
+          })}
         </VerticallyCenteredText>
         <Divider direction="vertical" weight="2px" length="16px" />
         <Flex direction="row" gap={8}>
@@ -79,7 +83,7 @@ export const ThreeDTopbar = ({
               />
             }
           >
-            CAD, Point cloud models
+            {t('CAD_POINT_CLOUD_MODELS', 'CAD, Point cloud models')}
           </ModelTypeButton>
           <ModelTypeButton
             onVisibilityChange={(v) =>
@@ -97,7 +101,7 @@ export const ThreeDTopbar = ({
               />
             }
           >
-            360 images
+            {t('360_IMAGE', '360 images', { count: 100 })}
           </ModelTypeButton>
           {usePointsOfInterestFeatureFlag && (
             <ModelTypeButton
@@ -116,7 +120,7 @@ export const ThreeDTopbar = ({
                 />
               }
             >
-              Points of interest
+              {t('POINTS_OF_INTEREST', 'Points of interest')}
             </ModelTypeButton>
           )}
         </Flex>

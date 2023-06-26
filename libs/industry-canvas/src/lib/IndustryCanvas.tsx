@@ -19,11 +19,13 @@ import {
   ZOOM_DURATION_SECONDS,
   ZOOM_TO_FIT_MARGIN,
   ZOOM_LEVELS,
+  CANVAS_FLOATING_ELEMENT_MARGIN,
 } from './constants';
 import useEditOnSelect from './hooks/useEditOnSelect';
 import useIndustryCanvasTooltips from './hooks/useIndustryCanvasTooltips';
 import { UseManagedStateReturnType } from './hooks/useManagedState';
 import { UseManagedToolsReturnType } from './hooks/useManagedTools';
+import { UseResourceSelectorActionsReturnType } from './hooks/useResourceSelectorActions';
 import { useTooltipsOptions } from './hooks/useTooltipsOptions';
 import { OnAddContainerReferences } from './IndustryCanvasPage';
 import {
@@ -50,6 +52,7 @@ export type IndustryCanvasProps = {
   tool: IndustryCanvasToolType;
   setTool: Dispatch<SetStateAction<IndustryCanvasToolType>>;
   isCanvasLocked: boolean;
+  onResourceSelectorOpen: UseResourceSelectorActionsReturnType['onResourceSelectorOpen'];
 } & Pick<
   UseManagedStateReturnType,
   | 'container'
@@ -94,6 +97,7 @@ export const IndustryCanvas = ({
   toolOptions,
   commentAnnotations,
   isCanvasLocked,
+  onResourceSelectorOpen,
 }: IndustryCanvasProps) => {
   const sdk = useSDK();
 
@@ -150,6 +154,7 @@ export const IndustryCanvas = ({
     onUpdateAnnotationStyleByType,
     updateContainerById,
     removeContainerById,
+    onResourceSelectorOpen,
     commentAnnotations,
   });
 
@@ -324,17 +329,14 @@ const FullHeightWrapper = styled.div`
   position: relative;
 `;
 
-const BOTTOM_MARGIN = 20;
-const SIDE_MARGIN = 20;
-
 const ZoomControlsWrapper = styled.div`
   position: absolute;
-  bottom: ${BOTTOM_MARGIN}px;
-  right: ${isDevelopment() ? 70 : SIDE_MARGIN}px;
+  bottom: ${CANVAS_FLOATING_ELEMENT_MARGIN}px;
+  right: ${CANVAS_FLOATING_ELEMENT_MARGIN}px;
 `;
 
 const ToolbarWrapper = styled.div`
   position: absolute;
-  bottom: ${isDevelopment() ? 70 : BOTTOM_MARGIN}px;
-  left: ${SIDE_MARGIN}px;
+  bottom: ${isDevelopment() ? 70 : CANVAS_FLOATING_ELEMENT_MARGIN}px;
+  left: ${CANVAS_FLOATING_ELEMENT_MARGIN}px;
 `;

@@ -1,0 +1,42 @@
+{
+  "name": "@cognite/cdf-3d-management",
+  "version": "4.3.5",
+  "private": true,
+  "scripts": {
+    "start": "../../scripts/start.sh dev 3d-management",
+    "build": "../../scripts/build.sh production 3d-management",
+    "test": "../../scripts/test.sh 3d-management",
+    "lint": "../../scripts/lint.sh 3d-management",
+    "lint:fix": "../../scripts/lint.sh 3d-management --fix",
+    "analyze": "source-map-explorer '../../dist/apps/3d-management/static/js/*.js' --gzip",
+    "storybook": "../../scripts/storybook.sh 3d-management"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "jest": {
+    "testPathIgnorePatterns": [
+      "<rootDir>/src/pages/RevisionDetails/components/ToolbarTreeView/",
+      "<rootDir>/src/store/modules/TreeView",
+      "<rootDir>/src/components/PageHeader",
+      "<rootDir>/src/pages/RevisionDetails/components/TreeView"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged",
+      "pre-push": "yarn lint"
+    }
+  }
+}

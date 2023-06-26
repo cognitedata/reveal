@@ -8,15 +8,17 @@ import {
   DATA_EXPLORATION_COMPONENT,
   useClipboard,
   useMetrics,
+  useTranslation,
 } from '@data-exploration-lib/core';
 
 export const CopyToClipboardIconButton = ({ value }: { value: string }) => {
+  const { t } = useTranslation();
   const { hasCopied, onCopy } = useClipboard();
   const trackUsage = useMetrics();
   const handleCopy = (copyValue: string) => {
     onCopy(copyValue);
 
-    toast.success(COPIED_TEXT);
+    toast.success(t('COPIED', COPIED_TEXT));
     trackUsage(DATA_EXPLORATION_COMPONENT.CLICK.COPY_TO_CLIPBOARD);
   };
 

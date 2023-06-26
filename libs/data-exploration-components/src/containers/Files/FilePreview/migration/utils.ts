@@ -135,7 +135,6 @@ export const setExtendedAnnotationResource = (
               // @ts-expect-error
               ...annotationData.assetRef,
               id: resource.id,
-              externalId: resource.externalId,
             },
           },
         },
@@ -159,7 +158,6 @@ export const setExtendedAnnotationResource = (
               // @ts-expect-error
               ...annotationData.fileRef,
               id: resource.id,
-              externalId: resource.externalId,
             },
           },
         },

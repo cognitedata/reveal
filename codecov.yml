@@ -4,12 +4,16 @@ coverage:
       default: off
       apps:
         flags:
+          - 3d-management
           - data-exploration
           - data-catalog
           - flexible-data-explorer
           - mock-server
           - platypus
           - platypus-cdf-cli
+          - functions-ui
+          - extraction-pipelines
+          - entity-matching
       libs:
         flags:
           - cog-data-grid

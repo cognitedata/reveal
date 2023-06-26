@@ -24,8 +24,11 @@ import {
   Tooltip,
   Chip,
 } from '@cognite/cogs.js';
-import { isNotUndefined, ResourceItem } from '@cognite/data-exploration';
-import { useFlag } from '@cognite/react-feature-flags';
+import {
+  isNotUndefined,
+  ResourceItem,
+  Splitter,
+} from '@cognite/data-exploration';
 import { useSDK } from '@cognite/sdk-provider';
 import {
   UnifiedViewer,
@@ -33,14 +36,14 @@ import {
   ZoomToFitMode,
 } from '@cognite/unified-file-viewer';
 
-import { useDialog } from '@data-exploration-lib/core';
-
+import { translationKeys } from './common';
 import CanvasDropdown from './components/CanvasDropdown';
 import { CanvasTitle } from './components/CanvasTitle';
+import { CloseResourceSelectorButton } from './components/CloseResourceSelectorButton';
 import DragOverIndicator from './components/DragOverIndicator';
 import IndustryCanvasFileUploadModal from './components/IndustryCanvasFileUploadModal/IndustryCanvasFileUploadModal';
 import {
-  CommentsFeatureFlagKey,
+  CANVAS_MIN_WIDTH,
   MetricEvent,
   SEARCH_QUERY_PARAM_KEY,
   SHAMEFUL_WAIT_TO_ENSURE_CONTAINERS_ARE_RENDERED_MS,
@@ -48,11 +51,14 @@ import {
   ZOOM_TO_FIT_MARGIN,
 } from './constants';
 import { useDragAndDrop } from './hooks/useDragAndDrop';
+import useLocalStorage from './hooks/useLocalStorage';
 import useManagedState from './hooks/useManagedState';
 import useManagedTools from './hooks/useManagedTools';
 import { useQueryParameter } from './hooks/useQueryParameter';
+import { useResourceSelectorActions } from './hooks/useResourceSelectorActions';
 import { useSelectedAnnotationOrContainer } from './hooks/useSelectedAnnotationOrContainer';
 import useTrackCanvasViewed from './hooks/useTrackCanvasViewed';
+import { useTranslation } from './hooks/useTranslation';
 import { IndustryCanvas } from './IndustryCanvas';
 import { useIndustryCanvasContext } from './IndustryCanvasContext';
 import {
@@ -80,18 +86,19 @@ const APPLICATION_ID_INDUSTRY_CANVAS = 'industryCanvas';
 export const IndustryCanvasPage = () => {
   const trackUsage = useMetrics();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [unifiedViewerRef, setUnifiedViewerRef] =
     useState<UnifiedViewer | null>(null);
   const [shouldShowConnectionAnnotations, setShouldShowConnectionAnnotations] =
     useState<boolean>(true);
   const [currentZoomScale, setCurrentZoomScale] = useState<number>(1);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
-  const [
-    hasConsumedInitializeWithContainerReferences,
-    setHasConsumedInitializeWithContainerReferences,
-  ] = useState(false);
   const { tool, setTool } = useManagedTool(IndustryCanvasToolType.SELECT);
   const { queryString } = useQueryParameter({ key: SEARCH_QUERY_PARAM_KEY });
+  const [resourceSelectorWidth, setResourceSelectorWidth] = useLocalStorage(
+    'COGNITE_INDUSTRIAL_CANVAS_RESOURCE_SELECTOR_WIDTH',
+    700
+  );
 
   const [hasZoomedToFitOnInitialLoad, setHasZoomedToFitOnInitialLoad] =
     useState(false);
@@ -109,6 +116,10 @@ export const IndustryCanvasPage = () => {
     initializeWithContainerReferences,
     setCanvasId,
     isCanvasLocked,
+    createInitialCanvas,
+    hasConsumedInitializeWithContainerReferences,
+    setHasConsumedInitializeWithContainerReferences,
+    isCommentsEnabled,
   } = useIndustryCanvasContext();
 
   const {
@@ -132,9 +143,6 @@ export const IndustryCanvasPage = () => {
   });
 
   useTrackCanvasViewed(activeCanvas);
-  const { isEnabled: isCommentsEnabled } = useFlag(CommentsFeatureFlagKey, {
-    fallback: false,
-  });
 
   // if comments is not enabled then return empty, hiding all comments for that project (even if canvas had comments before)
   const commentAnnotations = useMemo(
@@ -149,11 +157,6 @@ export const IndustryCanvasPage = () => {
     }
   }, [isCanvasLocked, setTool, tool]);
 
-  const {
-    isOpen: visibleResourceSelector,
-    open: onResourceSelectorOpen,
-    close: onResourceSelectorClose,
-  } = useDialog();
   const { selectedCanvasAnnotation, selectedContainer } =
     useSelectedAnnotationOrContainer({
       unifiedViewerRef,
@@ -161,6 +164,14 @@ export const IndustryCanvasPage = () => {
       canvasAnnotations,
       container,
     });
+
+  const {
+    onResourceSelectorClose,
+    onResourceSelectorOpen,
+    isResourceSelectorOpen,
+    resourceSelectorFilter,
+    initialSelectedResource,
+  } = useResourceSelectorActions();
 
   const { onUpdateAnnotationStyleByType, toolOptions } = useManagedTools({
     tool,
@@ -212,8 +223,18 @@ export const IndustryCanvasPage = () => {
       if (containerReferencesToAdd.length !== containerReferences.length) {
         toast.error(
           <div>
-            <h4>Could not add resource(s) to your canvas</h4>
-            <p>Resource(s) already added to the canvas.</p>
+            <h4>
+              {t(
+                translationKeys.CANVAS_ADD_RESOURCE_ERROR_TITLE,
+                'Could not add resource(s) to your canvas'
+              )}
+            </h4>
+            <p>
+              {t(
+                translationKeys.CANVAS_ADD_RESOURCE_ERROR_MESSAGE,
+                'At least one resource needs to be selected.'
+              )}
+            </p>
           </div>,
           {
             toastId: `canvas-file-already-added-${uuid()}`,
@@ -248,7 +269,12 @@ export const IndustryCanvasPage = () => {
 
       toast.success(
         <div>
-          <h4>Resource(s) added to your canvas</h4>
+          <h4>
+            {t(
+              translationKeys.CANVAS_RESOURCES_ADDED,
+              'Resource(s) added to your canvas'
+            )}
+          </h4>
         </div>,
         {
           toastId: `canvas-file-added-${uuid()}`,
@@ -263,6 +289,7 @@ export const IndustryCanvasPage = () => {
       clickedContainerAnnotation,
       container?.children,
       isCanvasLocked,
+      t,
     ]
   );
 
@@ -291,8 +318,18 @@ export const IndustryCanvasPage = () => {
       if (results === undefined || results.length === 0) {
         toast.error(
           <div>
-            <h4>Could not add resource(s) to your canvas</h4>
-            <p>At least one resource needs to be selected.</p>
+            <h4>
+              {t(
+                translationKeys.CANVAS_ADD_RESOURCE_ERROR_TITLE,
+                'Could not add resource(s) to your canvas'
+              )}
+            </h4>
+            <p>
+              {t(
+                translationKeys.CANVAS_ADD_RESOURCE_ERROR_TITLE,
+                'At least one resource needs to be selected.'
+              )}
+            </p>
           </div>,
           {
             toastId: 'industry-canvas-no-selected-resources-to-add-error',
@@ -343,6 +380,16 @@ export const IndustryCanvasPage = () => {
       return;
     }
 
+    if (
+      activeCanvas?.externalId === undefined &&
+      !isCreatingCanvas &&
+      !hasConsumedInitializeWithContainerReferences &&
+      initializeWithContainerReferences !== undefined
+    ) {
+      createInitialCanvas();
+      return;
+    }
+
     if (activeCanvas?.externalId === undefined) {
       return;
     }
@@ -358,10 +405,13 @@ export const IndustryCanvasPage = () => {
     setHasConsumedInitializeWithContainerReferences(true);
   }, [
     initializeWithContainerReferences,
+    isCreatingCanvas,
     activeCanvas?.externalId,
     unifiedViewerRef,
     hasConsumedInitializeWithContainerReferences,
     onAddContainerReferences,
+    createInitialCanvas,
+    setHasConsumedInitializeWithContainerReferences,
   ]);
 
   useEffect(() => {
@@ -383,12 +433,17 @@ export const IndustryCanvasPage = () => {
   const onKeyDown: KeyboardEventHandler<HTMLElement> = (event) => {
     if ((event.ctrlKey || event.metaKey) && event.key === 'z') {
       if (event.shiftKey) {
+        event.stopPropagation();
+        event.preventDefault();
         redo.fn();
         trackUsage(MetricEvent.HOTKEYS_USED, {
           hotkey: 'Ctrl/Cmd + Shift + Z',
         });
         return;
       }
+
+      event.stopPropagation();
+      event.preventDefault();
       undo.fn();
       trackUsage(MetricEvent.HOTKEYS_USED, {
         hotkey: 'Ctrl/Cmd + Z',
@@ -404,6 +459,8 @@ export const IndustryCanvasPage = () => {
     }
 
     if ((event.ctrlKey || event.metaKey) && event.key === 's') {
+      event.stopPropagation();
+      event.preventDefault();
       trackUsage(MetricEvent.HOTKEYS_USED, {
         hotkey: 'Ctrl/Cmd + S',
       });
@@ -411,6 +468,8 @@ export const IndustryCanvasPage = () => {
     }
 
     if ((event.ctrlKey || event.metaKey) && event.key === 'a') {
+      event.stopPropagation();
+      event.preventDefault();
       trackUsage(MetricEvent.HOTKEYS_USED, {
         hotkey: 'Ctrl/Cmd + A',
       });
@@ -418,6 +477,8 @@ export const IndustryCanvasPage = () => {
     }
 
     if (event.key === 'Escape') {
+      event.stopPropagation();
+      event.preventDefault();
       unifiedViewerRef?.selectByIds({
         containerIds: [],
         annotationIds: [],
@@ -436,20 +497,15 @@ export const IndustryCanvasPage = () => {
 
   return (
     <>
-      <ResourceSelector
-        onSelect={onAddResourcePress}
-        visible={visibleResourceSelector}
-        onClose={onResourceSelectorCloseWrapper}
-        visibleResourceTabs={['file', 'timeSeries', 'asset', 'event']}
-        selectionMode="multiple"
-        addButtonText="Add to canvas"
-      />
-      <PageTitle title="Industry Canvas" />
+      <PageTitle title="Industrial Canvas" />
       <TitleRowWrapper>
         <PreviewLinkWrapper>
           <Flex alignItems="center">
             <Tooltip
-              content="Go back to Industry Canvas home page"
+              content={t(
+                translationKeys.GO_BACK_HOMEPAGE_BUTTON,
+                'Go back to Industrial Canvas home page'
+              )}
               position="bottom"
             >
               <Button
@@ -486,51 +542,76 @@ export const IndustryCanvasPage = () => {
             <Chip
               type="warning"
               icon="Lock"
-              label="Canvas locked"
+              label={t(translationKeys.CANVAS_LOCKED_CHIP, 'Canvas locked')}
               tooltipProps={{
-                content:
-                  'Canvas is being edited by another user and is therefore not editable',
+                content: (
+                  <>
+                    {t(
+                      translationKeys.CANVAS_LOCKED_REASON,
+                      'The canvas is locked until your colleague has finished editing.'
+                    )}
+                    <br />
+                    {t(
+                      translationKeys.CANVAS_LOCKED_FUTURE,
+                      'Real-time collaboration will be part of a future release.'
+                    )}
+                  </>
+                ),
                 position: 'bottom',
               }}
             />
           )}
-          <Tooltip content="Undo" position="bottom">
+          <Tooltip
+            content={t(translationKeys.CANVAS_UNDO, 'Undo')}
+            position="bottom"
+          >
             <Button
               type="ghost"
               icon="Restore"
               onClick={undo.fn}
               disabled={isCanvasLocked || undo.isDisabled}
-              aria-label="Undo"
+              aria-label={t(translationKeys.CANVAS_UNDO, 'Undo')}
             />
           </Tooltip>
-          <Tooltip content="Redo" position="bottom">
+          <Tooltip
+            content={t(translationKeys.CANVAS_REDO, 'Redo')}
+            position="bottom"
+          >
             <Button
               type="ghost"
               icon="Refresh"
               onClick={redo.fn}
               disabled={isCanvasLocked || redo.isDisabled}
-              aria-label="Redo"
+              aria-label={t(translationKeys.CANVAS_REDO, 'Redo')}
             />
           </Tooltip>
 
           <Button
+            type="primary"
+            disabled={isCanvasLocked || isResourceSelectorOpen}
+            aria-label="Add data"
             onClick={() => {
               onResourceSelectorOpen();
               trackUsage(MetricEvent.ADD_DATA_BUTTON_CLICKED);
             }}
-            disabled={isCanvasLocked}
           >
-            <Icon type="Plus" /> Add data
+            <Icon type="Plus" />
+            {t(translationKeys.CANVAS_ADD_RESOURCE_BUTTON, 'Add data')}
           </Button>
 
           <Dropdown
             content={
               <Menu>
-                <Menu.Item onClick={onDownloadPress}>Download as PDF</Menu.Item>
+                <Menu.Item onClick={onDownloadPress}>
+                  {t(translationKeys.CANVAS_DOWNLOAD_PDF, 'Download as PDF')}
+                </Menu.Item>
                 <Menu.Item
                   hasSwitch
                   toggled={shouldShowConnectionAnnotations}
-                  aria-label="Always show connection lines"
+                  aria-label={t(
+                    translationKeys.SHOW_CONNECTION_LINES_SWITCH,
+                    'Always show connection lines'
+                  )}
                   onChange={() => {
                     const nextValue = !shouldShowConnectionAnnotations;
                     setShouldShowConnectionAnnotations(nextValue);
@@ -540,9 +621,10 @@ export const IndustryCanvasPage = () => {
                     });
                   }}
                 >
-                  Always show
-                  <br />
-                  connection lines
+                  {t(
+                    translationKeys.SHOW_CONNECTION_LINES_SWITCH,
+                    'Always show connection lines'
+                  )}
                 </Menu.Item>
               </Menu>
             }
@@ -551,36 +633,62 @@ export const IndustryCanvasPage = () => {
           </Dropdown>
         </StyledGoBackWrapper>
       </TitleRowWrapper>
-      <PreviewTabWrapper onKeyDown={onKeyDown} onDrop={onDrop}>
-        <IndustryCanvas
-          id={APPLICATION_ID_INDUSTRY_CANVAS}
-          viewerRef={unifiedViewerRef}
-          onRef={setUnifiedViewerRef}
-          shouldShowConnectionAnnotations={shouldShowConnectionAnnotations}
-          currentZoomScale={currentZoomScale}
-          applicationId={APPLICATION_ID_INDUSTRY_CANVAS}
-          onAddContainerReferences={onAddContainerReferences}
-          onDeleteRequest={onDeleteRequest}
-          onUpdateRequest={onUpdateRequest}
-          interactionState={interactionState}
-          setInteractionState={setInteractionState}
-          containerAnnotations={containerAnnotations}
-          clickedContainerAnnotation={clickedContainerAnnotation}
-          container={container}
-          updateContainerById={updateContainerById}
-          removeContainerById={removeContainerById}
-          selectedContainer={selectedContainer}
-          canvasAnnotations={canvasAnnotations}
-          selectedCanvasAnnotation={selectedCanvasAnnotation}
-          tool={tool}
-          setTool={setTool}
-          onUpdateAnnotationStyleByType={onUpdateAnnotationStyleByType}
-          toolOptions={toolOptions}
-          isCanvasLocked={isCanvasLocked}
-          commentAnnotations={commentAnnotations}
-        />
-        <DragOverIndicator isDragging={isDragging} />
-      </PreviewTabWrapper>
+      <StyledSplitter
+        primaryMinSize={CANVAS_MIN_WIDTH}
+        secondaryInitialSize={resourceSelectorWidth}
+        onSecondaryPaneSizeChange={setResourceSelectorWidth}
+        primaryIndex={0}
+      >
+        <IndustryCanvasWrapper onKeyDown={onKeyDown} onDrop={onDrop}>
+          <IndustryCanvas
+            id={APPLICATION_ID_INDUSTRY_CANVAS}
+            viewerRef={unifiedViewerRef}
+            onRef={setUnifiedViewerRef}
+            shouldShowConnectionAnnotations={shouldShowConnectionAnnotations}
+            currentZoomScale={currentZoomScale}
+            applicationId={APPLICATION_ID_INDUSTRY_CANVAS}
+            onAddContainerReferences={onAddContainerReferences}
+            onDeleteRequest={onDeleteRequest}
+            onUpdateRequest={onUpdateRequest}
+            interactionState={interactionState}
+            setInteractionState={setInteractionState}
+            containerAnnotations={containerAnnotations}
+            clickedContainerAnnotation={clickedContainerAnnotation}
+            container={container}
+            updateContainerById={updateContainerById}
+            removeContainerById={removeContainerById}
+            selectedContainer={selectedContainer}
+            canvasAnnotations={canvasAnnotations}
+            selectedCanvasAnnotation={selectedCanvasAnnotation}
+            tool={tool}
+            setTool={setTool}
+            onUpdateAnnotationStyleByType={onUpdateAnnotationStyleByType}
+            toolOptions={toolOptions}
+            isCanvasLocked={isCanvasLocked}
+            onResourceSelectorOpen={onResourceSelectorOpen}
+            commentAnnotations={commentAnnotations}
+          />
+
+          <CloseResourceSelectorButton
+            isVisible={isResourceSelectorOpen}
+            onClick={onResourceSelectorCloseWrapper}
+          />
+
+          <DragOverIndicator isDragging={isDragging} />
+        </IndustryCanvasWrapper>
+
+        {isResourceSelectorOpen && (
+          <ResourceSelector
+            onSelect={onAddResourcePress}
+            visibleResourceTabs={['file', 'timeSeries', 'asset', 'event']}
+            selectionMode="multiple"
+            initialFilter={resourceSelectorFilter}
+            initialSelectedResource={initialSelectedResource}
+            addButtonText="Add to canvas"
+            shouldShowPreviews={false}
+          />
+        )}
+      </StyledSplitter>
       <IndustryCanvasFileUploadModal
         fileDropData={fileDropData}
         onCancel={resetFileDropData}
@@ -602,6 +710,7 @@ export const IndustryCanvasPage = () => {
   );
 };
 
+const TITlE_ROW_HEIGHT = 57;
 const TitleRowWrapper = styled.div`
   h1 {
     margin: 0px;
@@ -610,10 +719,15 @@ const TitleRowWrapper = styled.div`
   align-items: center;
   flex-wrap: nowrap;
   padding: 10px 12px;
+  height: ${TITlE_ROW_HEIGHT}px;
   border-bottom: 1px solid ${Colors['decorative--grayscale--300']};
 `;
 
-const PreviewTabWrapper = styled.div`
+const StyledSplitter = styled(Splitter)`
+  height: calc(100% - ${TITlE_ROW_HEIGHT}px);
+`;
+
+const IndustryCanvasWrapper = styled.div`
   height: 100%;
   position: relative;
 `;

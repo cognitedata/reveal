@@ -45,6 +45,7 @@ export const FilterBuilderByField: React.FC<FilterBuilderByFieldProps> = ({
   if (selectedField) {
     return (
       <CommonFilter
+        dataType={name}
         field={selectedField}
         value={value[selectedField.name]}
         onBackClick={() => setSelectedField(undefined)}

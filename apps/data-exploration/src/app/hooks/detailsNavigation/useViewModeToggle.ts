@@ -15,7 +15,7 @@ export const useViewModeToggle = (): [
   boolean | undefined,
   (isFullScreen: boolean) => void
 ] => {
-  const location = useLocation();
+  const { search, pathname } = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
   const [journey] = useJourney();
 
@@ -45,7 +45,7 @@ export const useViewModeToggle = (): [
       });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [location.search]
+    [search, pathname]
   );
 
   return [viewMode, setOverlayViewMode];

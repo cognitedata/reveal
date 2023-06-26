@@ -13,7 +13,7 @@ export const ButtonOpenIn = ({ loading }: { loading?: boolean }) => {
       type="tertiary"
       disabled={loading}
     >
-      {t(translationKeys.openInButton, 'Open in...')}
+      {t(translationKeys.openIn, 'Open in')}...
     </Button>
   );
 };

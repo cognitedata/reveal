@@ -25,7 +25,7 @@ import {
 } from '@data-exploration-app/hooks/flags';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { addPlusSignToCount } from '@data-exploration-app/utils/stringUtils';
-import { RelationshipLabels } from '@data-exploration-lib/core';
+import { RelationshipLabels, useTranslation } from '@data-exploration-lib/core';
 
 type TypeOption = {
   label: string;
@@ -40,12 +40,14 @@ export const RelatedResources = ({
   onParentAssetClick,
   ...props
 }: RelationshipTableProps & SelectableItemsProps) => {
+  const { t } = useTranslation();
+
   const [selectedType, setSelectedType] = useState<TypeOption>();
   const isGroupingFilesEnabled = useFlagFileCategorization();
   const isDocumentsApiEnabled = useFlagDocumentsApiEnabled();
 
   const {
-    relationshipCount,
+    relationshipCount = 0,
     linkedResourceCount = 0,
     assetIdCount,
     annotationCount,
@@ -53,10 +55,12 @@ export const RelatedResources = ({
     isFetched,
   } = useRelatedResourceCount(parentResource, type, isDocumentsApiEnabled);
 
+  const resourceType = convertResourceType(type);
+
   const getRelatedResourceType = () => {
     let types: TypeOption[] = [
       {
-        label: `Relationships (${addPlusSignToCount(
+        label: `${t('RELATIONSHIPS', 'Relationships')} (${addPlusSignToCount(
           relationshipCount,
           hasMoreRelationships
         )})`,
@@ -68,7 +72,7 @@ export const RelatedResources = ({
     if (type === 'asset') {
       types = [
         {
-          label: `Asset ID (${assetIdCount})`,
+          label: `${t('ASSET_ID', 'Asset ID')} (${assetIdCount})`,
           value: 'assetId',
           count: assetIdCount,
         },
@@ -79,7 +83,11 @@ export const RelatedResources = ({
     if (parentResource.type === 'asset') {
       types = [
         {
-          label: `Linked ${convertResourceType(type)} (${linkedResourceCount})`,
+          label: t(
+            'LINKED_RESOURCE_TYPE',
+            `Linked ${resourceType} (${linkedResourceCount})`,
+            { resourceType, count: linkedResourceCount }
+          ),
           value: 'linkedResource',
           count: linkedResourceCount,
         },
@@ -90,7 +98,7 @@ export const RelatedResources = ({
     if (parentResource.type === 'file') {
       types = [
         {
-          label: `Annotations (${annotationCount})`,
+          label: `${t('ANNOTATIONS', 'Annotations')} (${annotationCount})`,
           value: 'annotation',
           count: annotationCount,
         },
@@ -111,7 +119,9 @@ export const RelatedResources = ({
   useEffect(
     () => {
       setSelectedType(
-        relatedResourceTypes.find((t) => t.count > 0) || relatedResourceTypes[0]
+        relatedResourceTypes.find(
+          (relatedResourceType) => relatedResourceType.count > 0
+        ) || relatedResourceTypes[0]
       );
     },
 
@@ -131,7 +141,8 @@ export const RelatedResources = ({
       <FilterWrapper>
         <SelectWrapper>
           <Select
-            title="Filter By:"
+            title={`${t('FILTER_BY', 'Filter By')}:`}
+            placeholder={t('SELECT_PLACEHOLDER', 'Select...')}
             value={selectedType}
             onChange={(newType: TypeOption) => {
               setSelectedType(newType);

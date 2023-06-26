@@ -5,7 +5,7 @@ import groupBy from 'lodash/groupBy';
 import { createLink } from '@cognite/cdf-utilities';
 import { Body, Button, Dropdown, Flex, Link, Menu } from '@cognite/cogs.js';
 
-import { DASH } from '@data-exploration-lib/core';
+import { DASH, useTranslation } from '@data-exploration-lib/core';
 import {
   DetailedMapping,
   useDetailedMappingsByAssetIdQuery,
@@ -41,6 +41,7 @@ export const ThreeDModelCellDropdown = ({
   assetId: number;
   mappings: DetailedMapping[];
 }) => {
+  const { t } = useTranslation();
   const mappingGroups = groupBy(
     mappings.sort((a, b) => a.model.name.localeCompare(b.model.name)),
     ({ model }) => model.id
@@ -49,7 +50,7 @@ export const ThreeDModelCellDropdown = ({
     <Dropdown
       content={
         <Menu>
-          <Menu.Header>Models</Menu.Header>
+          <Menu.Header>{t('MODELS', 'Models')}</Menu.Header>
 
           {Object.entries(mappingGroups).map(([id, mappingsLocal]) =>
             mappingsLocal.map((mapping) => (
@@ -65,7 +66,7 @@ export const ThreeDModelCellDropdown = ({
                   value={mapping.revision.createdTime}
                   relative
                 />{' '}
-                revision)
+                {t('REVISION', 'revision')})
               </Menu.Item>
             ))
           )}

@@ -7,6 +7,8 @@ import noop from 'lodash/noop';
 
 import { Button, Flex, Icon, IconType, Title } from '@cognite/cogs.js';
 
+import { useTranslation } from '@data-exploration-lib/core';
+
 interface SummaryHeaderProps {
   icon?: IconType;
   title: string;
@@ -19,6 +21,8 @@ export function SummaryHeader({
   title,
   onAllResultsClick = noop,
 }: SummaryHeaderProps) {
+  const { t } = useTranslation();
+
   return (
     <StyledFlex justifyContent="space-between">
       <Flex alignItems="center" gap={8}>
@@ -36,7 +40,7 @@ export function SummaryHeader({
           onClick={onAllResultsClick}
         >
           {' '}
-          All results
+          {t('ALL_RESULTS', 'All results')}
         </Button>
         <VerticalDivider />
       </Flex>

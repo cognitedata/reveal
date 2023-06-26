@@ -1,4 +1,7 @@
-import { useGetSearchConfigFromLocalStorage } from '@data-exploration-lib/core';
+import {
+  useGetSearchConfigFromLocalStorage,
+  useTranslation,
+} from '@data-exploration-lib/core';
 import { useDocumentFilteredAggregateCount } from '@data-exploration-lib/domain-layer';
 
 import { useResultCount } from '../Temp';
@@ -13,6 +16,8 @@ export const FilesTab = ({
   isDocumentsApiEnabled = true,
   ...rest
 }: ResourceTabProps) => {
+  const { t } = useTranslation();
+
   // Legacy support for old filter style it will be deleted again
 
   const result = useResultCount({
@@ -37,5 +42,7 @@ export const FilesTab = ({
     isDocumentsApiEnabled ? isLoading : result?.isFetching
   );
 
-  return <CounterTab label="Files" {...chipRightProps} {...rest} />;
+  return (
+    <CounterTab label={t('FILES', 'Files')} {...chipRightProps} {...rest} />
+  );
 };

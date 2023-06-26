@@ -4,6 +4,7 @@ import {
   FilterProps,
   SPECIFIC_INFO_CONTENT,
   hasObjectAnyProperty,
+  useTranslation,
 } from '@data-exploration-lib/core';
 
 import {
@@ -28,6 +29,8 @@ export const FileFilters: React.FC<FileFilterProps> = ({
   onResetFilterClick,
   ...rest
 }) => {
+  const { t } = useTranslation();
+
   const documentFilter = filter.document;
   const isResetButtonVisible = hasObjectAnyProperty(documentFilter, [
     'labels',
@@ -36,11 +39,12 @@ export const FileFilters: React.FC<FileFilterProps> = ({
     'author',
     'source',
   ]);
+
   return (
     <BaseFilterCollapse.Panel
-      title="Files"
+      title={t('FILES', 'Files')}
       hideResetButton={!isResetButtonVisible}
-      infoContent={SPECIFIC_INFO_CONTENT}
+      infoContent={t('SPECIFIC_INFO_CONTENT', SPECIFIC_INFO_CONTENT)}
       onResetClick={() => onResetFilterClick('document')}
       {...rest}
     >

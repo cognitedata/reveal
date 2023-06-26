@@ -6,14 +6,16 @@ import { OptionType } from '@cognite/cogs.js';
 
 import {
   DATA_EXPLORATION_COMPONENT,
+  NIL_FILTER_LABEL,
   useMetrics,
+  useTranslation,
 } from '@data-exploration-lib/core';
 import { NIL_FILTER_VALUE } from '@data-exploration-lib/domain-layer';
 
 import { reactSelectCogsStylingProps } from '../elements';
 import { FilterFacetTitle } from '../FilterFacetTitle';
 
-export const AggregatedFilterV2 = <T,>({
+export const AggregatedFilterV2 = <T extends object>({
   items,
   value,
   setValue,
@@ -28,6 +30,8 @@ export const AggregatedFilterV2 = <T,>({
   setValue: (newValue: string | undefined) => void;
   addNilOption?: boolean;
 }) => {
+  const { t } = useTranslation();
+
   const setSource = (newValue: string | undefined) => {
     const newSource = newValue && newValue.length > 0 ? newValue : undefined;
     setValue(newSource);
@@ -63,7 +67,13 @@ export const AggregatedFilterV2 = <T,>({
         {...reactSelectCogsStylingProps}
         value={
           value
-            ? { value, label: value === NIL_FILTER_VALUE ? 'N/A' : value }
+            ? {
+                value,
+                label:
+                  value === NIL_FILTER_VALUE
+                    ? t('NOT_AVAILABLE', NIL_FILTER_LABEL)
+                    : value,
+              }
             : undefined
         }
         onChange={handleOnChange}

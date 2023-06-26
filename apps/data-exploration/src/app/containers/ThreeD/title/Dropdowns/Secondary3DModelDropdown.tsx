@@ -16,6 +16,7 @@ import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 import { SecondaryModelOptions } from '@data-exploration-app/containers/ThreeD/contexts/ThreeDContext';
 import { SecondaryThreeDModelMenuItem } from '@data-exploration-app/containers/ThreeD/title/MenuItems/SecondaryThreeDModelMenuItem';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
+import { useTranslation } from '@data-exploration-lib/core';
 import {
   DEFAULT_GLOBAL_TABLE_MAX_RESULT_LIMIT,
   ThreeDModelsResponse,
@@ -35,6 +36,7 @@ const Secondary3DModelDropdown = ({
   secondaryModels,
   setSecondaryModels,
 }: Secondary3DModelDropdownProps): JSX.Element => {
+  const { t } = useTranslation();
   const [numOfModelToDisplay, setNumOfModelToDisplay] = useState<number>(
     SECONDARY_MODEL_DISPLAY_LIMIT
   );
@@ -70,7 +72,7 @@ const Secondary3DModelDropdown = ({
   const models = useMemo(
     () =>
       modelData.pages
-        .reduce((accl, t) => accl.concat(t.items), [] as Model3D[])
+        .reduce((accl, res) => accl.concat(res.items), [] as Model3D[])
         .filter(({ id: tId }) => tId !== mainModel?.id)
         .sort((m1, m2) => {
           const isModel1Applied = secondaryModels.find(
@@ -143,7 +145,7 @@ const Secondary3DModelDropdown = ({
         <StyledInput
           autoFocus
           onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Search"
+          placeholder={t('SEARCH', 'Search')}
           value={searchQuery || ''}
           onKeyDown={(e) => {
             // Need to stop propagation to fix losing focus
@@ -169,8 +171,14 @@ const Secondary3DModelDropdown = ({
         ) : (
           <StyledNoResultsContainer>
             <TableNoResults
-              title="No results found"
-              content={`The search ${searchQuery} did not match any models. Please try another search.`}
+              title={t('NO_RESULTS_FOUND', 'No results found')}
+              content={t(
+                'NO_MODELS_FOUND_TRY_ANOTHER_SEARCH',
+                `The search ${searchQuery} did not match any models. Please try another search.`,
+                {
+                  query: searchQuery,
+                }
+              )}
             />
           </StyledNoResultsContainer>
         )}
@@ -180,7 +188,7 @@ const Secondary3DModelDropdown = ({
         onClick={handleApply}
         type="primary"
       >
-        Apply
+        {t('APPLY', 'Apply')}
       </StyledApplyButton>
     </MenuWrapper>
   );
