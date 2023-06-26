@@ -3,7 +3,6 @@ const {
 } = require('../../tools/webpack/single-spa-webpack-config');
 const { composePlugins, withNx } = require('@nrwl/webpack');
 const { withReact } = require('@nrwl/react');
-const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 
 const nodeEnv = process.env.NODE_ENV || 'production';
 const useMockEnv =
@@ -23,13 +22,6 @@ module.exports = composePlugins(
     );
 
     config.resolve.fallback = { path: require.resolve('path-browserify') };
-
-    config.plugins.push(
-      new MonacoWebpackPlugin({
-        publicPath: '/',
-        languages: ['python'],
-      })
-    );
 
     // if (
     //   nodeEnv === 'mock' ||
