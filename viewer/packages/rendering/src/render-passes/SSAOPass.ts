@@ -8,7 +8,7 @@ import { SsaoParameters } from '../rendering/types';
 import { RenderPass } from '../RenderPass';
 import { createFullScreenTriangleMesh, unitOrthographicCamera } from '../utilities/renderUtilities';
 
-import * as SeededRandom from 'random-seed';
+import SeededRandom from 'random-seed';
 
 export class SSAOPass implements RenderPass {
   private readonly _fullScreenTriangle: THREE.Mesh;
