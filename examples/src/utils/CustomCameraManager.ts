@@ -48,7 +48,12 @@ export class CustomCameraManager implements CameraManager {
     const target =
       state.target ??
       (state.rotation
-        ? CameraManagerHelper.calculateNewTargetFromRotation(this._camera, state.rotation, this._controls.target)
+        ? CameraManagerHelper.calculateNewTargetFromRotation(
+            this._camera,
+            state.rotation,
+            this._controls.target,
+            position
+          )
         : this._controls.target);
 
     this._camera.position.copy(position);
