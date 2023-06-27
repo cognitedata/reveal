@@ -10,7 +10,6 @@ on:
       - "viewer/**"
       - "documentation/**"
       - "examples/**"
-      - ".github/**"
     types:
       - opened
       - synchronize
