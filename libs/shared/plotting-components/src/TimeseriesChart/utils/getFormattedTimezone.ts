@@ -9,5 +9,5 @@ export const getFormattedTimezone = (date: Date) => {
 
   const formattedOffsetValue = `${offsetHours}:${offsetMinutes}`;
 
-  return `${formattedOffsetValue} GMT(${sign}${formattedOffsetValue})`;
+  return `GMT(${sign}${formattedOffsetValue})`;
 };
