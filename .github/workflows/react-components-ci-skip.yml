@@ -4,7 +4,7 @@ on:
   pull_request:
     paths-ignore:
       - "react-components/**"
-      - ".github/workflows/react-components-ci.yml"
+      - ".github/**"
     branches:
       - "**"
 

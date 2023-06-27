@@ -10,7 +10,7 @@ on:
       - "viewer/**"
       - "documentation/**"
       - "examples/**"
-      - ".github/workflows/ci.yml"
+      - ".github/**"
     types:
       - opened
       - synchronize
