@@ -11,20 +11,20 @@ jobs:
     permissions:
       pull-requests: read
     outputs:
-      react-components: ${{ steps.filter.outputs.reactComponents }}
+      react-components: ${{ steps.filter.outputs.react-components }}
     steps:
       # For pull requests it's not necessary to checkout the code
       - uses: dorny/paths-filter@v2
         id: filter
         with:
           filters: |
-            reactComponents:
+            react-components:
                 - 'react-components/**'
 
   react-components-ci:
     needs: changes
     runs-on: ubuntu-latest
-    if: ${{ needs.changes.outputs.reactComponents == 'true' }}
+    if: ${{ needs.changes.outputs.react-components == 'true' }}
     steps:
       - uses: actions/checkout@v3
         with:
