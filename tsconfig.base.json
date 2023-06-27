@@ -27,6 +27,9 @@
       "@access-management/*": [
         "apps/access-management/src/*"
       ],
+      "@charts-app/*": [
+        "apps/charts/src/app/*"
+      ],
       "@cognite/cdf-i18n-utils": [
         "libs/shared/cdf-ui-i18n-utils/src/index.ts"
       ],
