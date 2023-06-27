@@ -2,8 +2,9 @@ name: React Components CI
 
 on:
   pull_request:
-    paths-ignore:
-      - "react-components/**"
+    paths:
+      - "**"
+      - "!react-components/**"
     branches:
       - "**"
 
