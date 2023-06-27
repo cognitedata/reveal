@@ -29,6 +29,7 @@ export class PointCloudManager {
   private readonly _loadingStateHandler: PointCloudLoadingStateHandler;
   private readonly _potreeInstance: Potree;
   private readonly _pointCloudNodes: PointCloudNode[] = [];
+  private _globalClippingPlanes: THREE.Plane[] = [];
 
   private readonly _cameraSubject: Subject<THREE.PerspectiveCamera> = new Subject();
   private readonly _modelSubject: Subject<{ modelIdentifier: ModelIdentifier; operation: 'add' | 'remove' }> =
@@ -94,6 +95,7 @@ export class PointCloudManager {
   }
 
   set clippingPlanes(planes: THREE.Plane[]) {
+    this._globalClippingPlanes = planes;
     this._pointCloudNodes.forEach(node => node.octree.setGlobalClippingPlane(planes));
     this.requestRedraw();
   }
@@ -131,7 +133,10 @@ export class PointCloudManager {
     this._loadingStateHandler.onModelAdded();
 
     this._modelSubject.next({ modelIdentifier, operation: 'add' });
-    this._materialManager.initializeClippingPlanesForPointCloud(modelIdentifier.revealInternalId);
+    this._materialManager.initializeClippingPlanesForPointCloud(
+      modelIdentifier.revealInternalId,
+      this._globalClippingPlanes
+    );
 
     return pointCloudNode;
   }
