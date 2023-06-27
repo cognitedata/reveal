@@ -71,7 +71,7 @@ const PHRASES: Record<string, string> = {
   'No diagnostics': 'No diagnostics',
 };
 
-export type CommandFunction = (args: any[]) => void;
+export type CommandFunction = (...args: unknown[]) => void;
 
 /**
  * Turns standard functions into CodeMirror commands. Returning `true` means no
@@ -84,8 +84,8 @@ export const getCommands = (
     (commands, key) => ({
       ...commands,
       [key]: functions[key]
-        ? (...args: any[]) => {
-            functions[key]?.(args);
+        ? (...args: unknown[]) => {
+            functions[key]?.(...args);
             return true;
           }
         : () => false,
