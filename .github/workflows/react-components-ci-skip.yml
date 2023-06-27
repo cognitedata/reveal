@@ -1,0 +1,15 @@
+name: React Components CI
+
+on:
+  pull_request:
+    paths-ignore:
+      - "react-components/**"
+      - ".github/workflows/react-components-ci.yml"
+    branches:
+      - "**"
+
+jobs:
+  react-components-ci:
+    runs-on: ubuntu-latest
+    steps:
+      - run: 'echo "Skip due to no changes in react-components"'
