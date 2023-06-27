@@ -1,10 +1,6 @@
 import React, { lazy } from 'react';
 import { Route, Routes } from 'react-router-dom';
 
-import { getFlow } from '@cognite/cdf-sdk-singleton';
-import { Loader } from '@cognite/cogs.js';
-import { usePermissions } from '@cognite/sdk-react-query-hooks';
-
 import { FallbackWrapper } from './components/FallbackWrapper';
 
 // lazy loads
@@ -13,24 +9,6 @@ const RevisionDetails = lazy(() => import('./pages/RevisionDetails'));
 const NoAccessPage = lazy(() => import('./pages/NoAccessPage'));
 
 export function ModelRoutes() {
-  const { flow } = getFlow();
-  const {
-    data: threedRead,
-    isFetched: threedReadFetched,
-    error: threedReadError,
-  } = usePermissions(flow as any, 'threedAcl', 'READ');
-
-  if (threedReadError) {
-    return <p>Error retrieving permissions</p>;
-  }
-  if (!threedReadFetched) {
-    return <Loader />;
-  }
-
-  if (!threedRead) {
-    return <NoAccessPage />;
-  }
-
   return (
     <Routes>
       <Route path="/:tenant/3d-models" element={FallbackWrapper(AllModels)} />
