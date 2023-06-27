@@ -65,7 +65,8 @@ const LeftSidebar: React.FC = () => {
   const dispatch = useDispatch();
   const apiClient = useContext(ApiClientContext);
   const suites = useSelector(getRootSuites);
-  const { activeApplications: applications } = useCogniteApplications();
+  const { activeApplications: applications, getInstalledApplications } =
+    useCogniteApplications();
   const metrics = useMetrics('LeftSidebar');
   const admin = useSelector(isAdmin);
   const sideBarState = JSON.parse(
@@ -73,6 +74,11 @@ const LeftSidebar: React.FC = () => {
   );
   const [isOpen, setOpen] = useState(sideBarState);
   const [suitesOrder, setSuitesOrder] = useState<string[]>([]);
+  const [installedApps, setInstalledApps] = useState<ApplicationItem[]>([]);
+
+  useEffect(() => {
+    getInstalledApplications().then(setInstalledApps);
+  }, []);
 
   useEffect(() => {
     localStorage.setItem('sideBarState', JSON.stringify(isOpen));
@@ -201,7 +207,9 @@ const LeftSidebar: React.FC = () => {
             <Overline level={2}>{isOpen ? 'Applications' : 'Apps'}</Overline>
           </TitleContainer>
           <ItemsContainer>
-            {applications.map((item) => renderApplicationItem(item))}
+            {[...installedApps, ...applications].map((item) =>
+              renderApplicationItem(item)
+            )}
           </ItemsContainer>
         </>
       )}
