@@ -15,6 +15,14 @@ jobs:
         with:
           persist-credentials: false
 
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          registry-url: "https://registry.npmjs.org"
+          always-auth: true
+          cache: "yarn"
+          cache-dependency-path: "react-components/yarn.lock"
+
       - name: Setup Cognite CICD Yarn
         working-directory: react-components
         run: |
