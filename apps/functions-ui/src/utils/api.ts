@@ -11,6 +11,7 @@ import {
 import { QueryKey } from '@tanstack/react-query';
 import { UploadFile } from 'antd/lib/upload/interface';
 import _ from 'lodash';
+import mime from 'mime-types';
 
 import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
 import { getProject } from '@cognite/cdf-utilities';
@@ -179,6 +180,7 @@ export const deleteFunction = async ({
 const GCSUploader = (
   file: Blob | UploadFile,
   uploadUrl: string,
+  contentType: string,
   callback: (info: any) => void = _.noop
 ) => {
   // This is what is recommended from google when uploading files.
@@ -194,6 +196,7 @@ const GCSUploader = (
   return new UploadGCS({
     id: 'datastudio-upload',
     url: uploadUrl,
+    contentType,
     file,
     chunkSize: 262144 * chunkMultiple,
     onChunkUpload: callback,
@@ -201,8 +204,12 @@ const GCSUploader = (
 };
 
 const uploadFile = async (file: UploadFile, dataSetId: number | undefined) => {
+  const mimeType = mime.lookup(file.name);
+  const fallbackMimeType = 'application/octet-stream';
+
   const { uploadUrl, id } = (await sdk.files.upload({
     name: file.name,
+    mimeType: mimeType || fallbackMimeType,
     source: 'Datastudio',
     dataSetId,
   })) as FileUploadResponse;
@@ -213,10 +220,15 @@ const uploadFile = async (file: UploadFile, dataSetId: number | undefined) => {
     throw new Error('Upload error, did not recieve "id"');
   }
 
-  const currentUpload = await GCSUploader(file, uploadUrl, (info: any) => {
-    file.response = info;
-    file.percent = (info.uploadedBytes / info.totalBytes) * 100;
-  });
+  const currentUpload = await GCSUploader(
+    file,
+    uploadUrl,
+    mimeType || fallbackMimeType,
+    (info: any) => {
+      file.response = info;
+      file.percent = (info.uploadedBytes / info.totalBytes) * 100;
+    }
+  );
 
   await currentUpload.start();
 
