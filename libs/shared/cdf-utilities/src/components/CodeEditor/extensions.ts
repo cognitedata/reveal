@@ -114,7 +114,6 @@ export const getHotkeyExtension = ({ onRun }: Record<string, Command>) => {
     },
   ];
 
-  // @ts-ignore Branko - Can you please check this?
   return keymap.of([
     ...customHotkeys,
     ...closeBracketsKeymap,
