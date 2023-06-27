@@ -3,7 +3,8 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { CodeEditor, CodeEditorProps, CopyButton } from '..';
+import { CodeEditor, CodeEditorProps } from '../CodeEditor';
+import { CopyButton } from '../CopyButton';
 
 export type CodeSnippetProps = Omit<CodeEditorProps, 'disabled'>;
 
