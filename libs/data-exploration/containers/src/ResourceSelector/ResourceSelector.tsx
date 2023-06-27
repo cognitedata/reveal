@@ -138,35 +138,36 @@ export const ResourceSelector = ({
       resourceType?: ResourceType
     ) => {
       setSelectedRows((prev) => {
-        if (updater && currentData && resourceType) {
-          if (typeof updater === 'function') {
-            return {
-              ...prev,
-              [resourceType]: mapValues(
-                updater(
-                  mapValues(prev[resourceType], function (resourceItem) {
-                    return Boolean(resourceItem?.id);
-                  })
-                ),
-                function (_, key) {
-                  return currentData.find((item) => String(item?.id) === key);
-                }
-              ),
-            };
-          }
+        if (!updater || !currentData || !resourceType) {
           return {
             ...prev,
-            [resourceType]: mapValues(updater, function (_, key) {
-              return currentData.find((item) => String(item?.id) === key);
-            }),
+            [previewItem!.type]: {
+              ...prev[previewItem!.type],
+              [previewItem!.id]: previewItem,
+            },
+          };
+        }
+
+        if (typeof updater === 'function') {
+          return {
+            ...prev,
+            [resourceType]: mapValues(
+              updater(
+                mapValues(prev[resourceType], (resourceItem) => {
+                  return Boolean(resourceItem?.id);
+                })
+              ),
+              (_, key) => {
+                return currentData.find((item) => String(item?.id) === key);
+              }
+            ),
           };
         }
         return {
           ...prev,
-          [previewItem!.type]: {
-            ...prev[previewItem!.type],
-            [previewItem!.id]: previewItem,
-          },
+          [resourceType]: mapValues(updater, function (_, key) {
+            return currentData.find((item) => String(item?.id) === key);
+          }),
         };
       });
     },

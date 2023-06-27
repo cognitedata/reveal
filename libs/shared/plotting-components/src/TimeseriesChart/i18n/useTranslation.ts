@@ -10,7 +10,7 @@ export const useTranslation = () => {
   const translate: TFunction = useCallback(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     (key: string, referenceValue: string, options?: {}) => {
-      return 'XXXXXXX';
+      return referenceValue;
     },
     []
   );
