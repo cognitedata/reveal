@@ -67,7 +67,8 @@ export class CodeActionProvider implements languages.CodeActionProvider {
     return {
       edits: edit.edits.map((workerEdit) => ({
         resource: model.uri,
-        edit: {
+        versionId: model.getVersionId(),
+        textEdit: {
           text: workerEdit.edit.text,
           range: new Range(
             workerEdit.edit.range.startLineNumber,

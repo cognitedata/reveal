@@ -16,6 +16,7 @@
       "executor": "@nrwl/rollup:rollup",
       "outputs": ["{options.outputPath}"],
       "options": {
+        "rootDir": ".",
         "outputPath": "dist/libs/copilot-core",
         "tsConfig": "libs/copilot-core/tsconfig.lib.json",
         "project": "libs/copilot-core/package.json",

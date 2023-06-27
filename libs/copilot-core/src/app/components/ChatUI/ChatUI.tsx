@@ -3,8 +3,8 @@ import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 
 import styled from 'styled-components';
 
-import { BotUI } from '@botui/react';
-import { BotuiInterface, createBot } from 'botui';
+import { useBotUI } from '@botui/react';
+import { BotuiInterface } from 'botui';
 import { BufferMemory, ChatMessageHistory } from 'langchain/memory';
 import { AIChatMessage, HumanChatMessage } from 'langchain/schema';
 
@@ -19,7 +19,11 @@ import {
   CopilotMessage,
   CopilotSupportedFeatureType,
 } from '../../../lib/types';
-import { addFromCopilotEventListener } from '../../../lib/utils';
+import {
+  addToCopilotEventListener,
+  cachedListeners,
+  sendToCopilotEvent,
+} from '../../../lib/utils';
 import {
   getFromCache,
   useFromCache,
@@ -31,39 +35,18 @@ import { LargeChatUI } from './LargeChatUI';
 import { SmallChatUI } from './SmallChatUI';
 
 export const ChatUI = ({
+  visible,
   onClose,
   feature,
 }: {
+  visible: boolean;
   onClose: () => void;
   feature?: CopilotSupportedFeatureType;
 }) => {
-  const bot = useRef(createBot());
-
-  return (
-    <BotUI bot={bot.current}>
-      <ChatUIInner bot={bot.current} onClose={onClose} feature={feature} />
-    </BotUI>
-  );
-};
-
-const ChatUIInner = ({
-  bot,
-  onClose,
-  feature,
-}: {
-  bot: BotuiInterface;
-  onClose: () => void;
-  feature?: CopilotSupportedFeatureType;
-  chains?: string[];
-}) => {
+  const bot = useBotUI();
   const sdk = useSDK();
   const messages = useRef<CopilotMessage[]>([]);
-  const [showOverlay, setShowOverlay] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { data: isExpanded = false } =
-    useFromCache<boolean>('CHATBOT_EXPANDED');
-
-  const { mutate: setIsExpanded } = useSaveToCache<boolean>('CHATBOT_EXPANDED');
 
   const { mutate: setChatHistory } =
     useSaveToCache<CopilotMessage[]>('CHAT_HISTORY');
@@ -71,27 +54,52 @@ const ChatUIInner = ({
   const model = useMemo(() => new CogniteChatGPT(sdk), [sdk]);
 
   const conversationChain = useMemo(() => {
-    return newChain(sdk, model);
-  }, [sdk, model]);
+    return newChain(sdk, model, messages);
+  }, [sdk, model, messages]);
+
+  const updateMessage = useCallback(
+    async (key: number, result: CopilotBotMessage) => {
+      sendToCopilotEvent('NEW_MESSAGES', [
+        { key: key, source: 'bot', ...result },
+      ]);
+    },
+    []
+  );
 
   const addMessageForBot = useCallback(
     async (chatBot: BotuiInterface, result: CopilotBotMessage) => {
       messages.current.push({ ...result, source: 'bot' });
-      setChatHistory(messages.current);
-      await chatBot.message.add(result, { messageType: result.type });
+      await setChatHistory(messages.current);
+      await chatBot.message.add(result, {
+        messageType: result.type,
+        updateMessage,
+      });
     },
-    [setChatHistory]
+    [setChatHistory, updateMessage]
   );
 
   useEffect(() => {
-    const removeListener = addFromCopilotEventListener(
-      'NEW_BOT_MESSAGE',
-      (message) => {
-        addMessageForBot(bot, message);
+    const removeListener = addToCopilotEventListener(
+      'NEW_MESSAGES',
+      async (newMessages) => {
+        for (const message of newMessages) {
+          if (message.key === undefined) {
+            await addMessageForBot(bot, message);
+          } else {
+            messages.current[message.key] = message;
+            setChatHistory(messages.current);
+            await bot.message.update(message.key, message);
+          }
+        }
       }
     );
-    return removeListener;
-  }, [bot, addMessageForBot]);
+    return () => {
+      removeListener();
+      for (const listener of cachedListeners) {
+        window.removeEventListener(listener.event, listener.listener);
+      }
+    };
+  }, [bot, addMessageForBot, setChatHistory]);
 
   const setupMessages = useCallback(
     async (newMessages?: CopilotMessage[]) => {
@@ -99,7 +107,6 @@ const ChatUIInner = ({
       const cachedMessages =
         newMessages ||
         (await getFromCache<CopilotMessage[]>(sdk.project, 'CHAT_HISTORY'));
-      console.log(cachedMessages);
       messages.current = [];
       messages.current.push(...(cachedMessages || []));
       await bot.message.removeAll();
@@ -109,6 +116,7 @@ const ChatUIInner = ({
           key: i,
           type: el.type,
           meta: {
+            updateMessage,
             messageType: el.type,
             ...(el.source === 'user' && {
               previous: {
@@ -122,7 +130,7 @@ const ChatUIInner = ({
           data: el,
         }))
       );
-      conversationChain.memory = new BufferMemory({
+      conversationChain.defaultChain.memory = new BufferMemory({
         chatHistory: new ChatMessageHistory(
           cachedMessages?.map((el) =>
             el.source === 'user'
@@ -134,7 +142,7 @@ const ChatUIInner = ({
       const promptUser = () => {
         bot.action
           .set({ feature }, { actionType: 'text', feature })
-          .then(({ content }: { content: string }) => {
+          .then(async ({ content }: { content: string }) => {
             messages.current.push({
               content: content,
               type: 'text',
@@ -154,7 +162,7 @@ const ChatUIInner = ({
               }
             });
             if (messages.current.length > 0) {
-              bot.wait();
+              await bot.wait();
             }
           });
       };
@@ -176,21 +184,48 @@ const ChatUIInner = ({
       }
       setIsLoading(false);
     },
-    [setChatHistory, feature, bot, conversationChain, addMessageForBot, sdk]
+    [
+      setChatHistory,
+      feature,
+      bot,
+      conversationChain,
+      addMessageForBot,
+      sdk,
+      updateMessage,
+    ]
   );
-
-  const onReset = useCallback(async () => {
-    await setChatHistory([]);
-    await setupMessages([]);
-  }, [setupMessages, setChatHistory]);
 
   useEffect(() => {
     setupMessages();
   }, [setupMessages]);
 
-  if (isLoading) {
+  if (!visible || isLoading) {
     return <></>;
   }
+  return <ChatUIInner onClose={onClose} setupMessages={setupMessages} />;
+};
+
+const ChatUIInner = ({
+  onClose,
+  setupMessages,
+}: {
+  onClose: () => void;
+  chains?: string[];
+  setupMessages: (messages: CopilotMessage[]) => void;
+}) => {
+  const [showOverlay, setShowOverlay] = useState(false);
+  const { data: isExpanded = false } =
+    useFromCache<boolean>('CHATBOT_EXPANDED');
+
+  const { mutate: setIsExpanded } = useSaveToCache<boolean>('CHATBOT_EXPANDED');
+
+  const { mutate: setChatHistory } =
+    useSaveToCache<CopilotMessage[]>('CHAT_HISTORY');
+
+  const onReset = useCallback(async () => {
+    await setChatHistory([]);
+    await setupMessages([]);
+  }, [setupMessages, setChatHistory]);
 
   return (
     <>

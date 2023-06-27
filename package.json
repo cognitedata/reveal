@@ -160,7 +160,7 @@
     "mixpanel": "^0.14.0",
     "mixpanel-browser": "^2.45.0",
     "moment": "^2.29.4",
-    "monaco-editor": "^0.33.0",
+    "monaco-editor": "^0.39.0",
     "oidc-client-ts": "^2.2.4",
     "open": "^8.4.0",
     "openapi-codegen": "2.2.2",

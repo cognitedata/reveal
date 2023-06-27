@@ -5,7 +5,11 @@ import { PromptTemplate } from 'langchain/prompts';
 import { ChainValues } from 'langchain/schema';
 
 import { CogniteBaseChain, CogniteChainInput } from '../../types';
-import { addToCopilotEventListener, sendFromCopilotEvent } from '../../utils';
+import {
+  addToCopilotEventListener,
+  sendFromCopilotEvent,
+  sendToCopilotEvent,
+} from '../../utils';
 
 import { APP_BUILDER_PROMPT } from './prompts';
 
@@ -95,12 +99,15 @@ export class AppBuilderChain extends CogniteBaseChain {
       input: values.input,
     });
 
-    sendFromCopilotEvent('NEW_BOT_MESSAGE', {
-      type: 'code',
-      language: 'python',
-      content: text,
-      prevContent,
-    });
+    sendToCopilotEvent('NEW_MESSAGES', [
+      {
+        source: 'bot',
+        type: 'code',
+        language: 'python',
+        content: text,
+        prevContent,
+      },
+    ]);
 
     return { text };
   }

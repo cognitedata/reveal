@@ -1,5 +1,8 @@
 import { CopilotEvents } from './types';
 
+export let cachedListeners: { event: string; listener: (ev: Event) => void }[] =
+  [];
+
 const createGenericCopilotEventHandler = <
   I extends keyof CopilotEvents,
   T extends keyof CopilotEvents[I]
@@ -54,9 +57,17 @@ export const addFromCopilotEventListener = <
   handler: (data: CopilotEvents['FromCopilot'][T]) => void
 ) => {
   const listener = createFromCopilotEventHandler(handler);
-  window.addEventListener(`FromCopilot-${type as string}`, listener, false);
-  return () =>
-    window.removeEventListener(`FromCopilot-${type as string}`, listener);
+  const event = `FromCopilot-${type as string}`;
+  window.addEventListener(event, listener, false);
+  cachedListeners.push({ event: event, listener });
+  return () => {
+    window.removeEventListener(event, listener);
+    cachedListeners = cachedListeners.reduce(
+      (prev, el) =>
+        el.event === event && el.listener === listener ? prev : prev.concat(el),
+      [] as typeof cachedListeners
+    );
+  };
 };
 
 export const addToCopilotEventListener = <
@@ -66,7 +77,15 @@ export const addToCopilotEventListener = <
   handler: (data: CopilotEvents['ToCopilot'][T]) => void
 ) => {
   const listener = createToCopilotEventHandler(handler);
-  window.addEventListener(`ToCopilot-${type as string}`, listener, false);
-  return () =>
-    window.removeEventListener(`ToCopilot-${type as string}`, listener);
+  const event = `ToCopilot-${type as string}`;
+  window.addEventListener(event, listener, false);
+  cachedListeners.push({ event: event, listener });
+  return () => {
+    window.removeEventListener(event, listener);
+    cachedListeners = cachedListeners.reduce(
+      (prev, el) =>
+        el.event === event && el.listener === listener ? prev : prev.concat(el),
+      [] as typeof cachedListeners
+    );
+  };
 };
