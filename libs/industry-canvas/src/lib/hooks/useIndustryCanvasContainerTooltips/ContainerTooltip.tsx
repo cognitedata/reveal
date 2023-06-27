@@ -403,13 +403,23 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
                   shouldApplyToAllTimeSeries ? containers : [selectedContainer]
                 ).filter(isIndustryCanvasTimeSeriesContainer);
 
+                const startDate = dayjs(dateRange.startDate)
+                  .startOf('day')
+                  .toDate();
+
+                const endDate = dayjs(dateRange.endDate).endOf('day').toDate();
+
+                onUpdateTooltipsOptions(ContainerType.TIMESERIES, {
+                  shouldApplyToAll: shouldApplyToAllTimeSeries,
+                  startDate,
+                  endDate,
+                });
+
                 containersToUpdate.forEach((container) => {
                   onUpdateContainer({
                     ...container,
-                    startDate: dayjs(dateRange.startDate)
-                      .startOf('day')
-                      .toDate(),
-                    endDate: dayjs(dateRange.endDate).endOf('day').toDate(),
+                    startDate,
+                    endDate,
                   });
                 });
 

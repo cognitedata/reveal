@@ -58,6 +58,7 @@ import {
   useHistory,
 } from './useCanvasStateHistory';
 import { useContainerAnnotations } from './useContainerAnnotations';
+import { TooltipsOptions } from './useTooltipsOptions';
 import resolveContainerConfig from './utils/resolveContainerConfig';
 
 export type InteractionState = {
@@ -330,10 +331,12 @@ const useManagedState = ({
   unifiedViewer,
   setTool,
   tool,
+  tooltipsOptions,
 }: {
   unifiedViewer: UnifiedViewer | null;
   tool: IndustryCanvasToolType;
   setTool: Dispatch<SetStateAction<IndustryCanvasToolType>>;
+  tooltipsOptions: TooltipsOptions;
 }): UseManagedStateReturnType => {
   const sdk = useSDK();
   const trackUsage = useMetrics();
@@ -525,7 +528,13 @@ const useManagedState = ({
         })
       );
     },
-    [unifiedViewer, sdk, pushState, canvasState.canvasAnnotations]
+    [
+      unifiedViewer,
+      sdk,
+      pushState,
+      canvasState.canvasAnnotations,
+      tooltipsOptions,
+    ]
   );
 
   const removeContainerById = useCallback(
