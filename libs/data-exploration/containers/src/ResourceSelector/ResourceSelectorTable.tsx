@@ -62,23 +62,25 @@ export const ResourceSelectorTable = ({
     ) => {
       setSelectedRows((prev) => {
         if (typeof updater === 'function') {
+          const selectedRowIds = updater(
+            mapValues(prev[resourceType], (resourceItem) => {
+              return Boolean(resourceItem?.id);
+            })
+          );
+
           return {
             ...prev,
-            [resourceType]: mapValues(
-              updater(
-                mapValues(prev[resourceType], function (resourceItem) {
-                  return Boolean(resourceItem?.id);
-                })
-              ),
-              function (_, key) {
-                return data.find((item) => String(item.id) === key);
-              }
-            ),
+            [resourceType]: mapValues(selectedRowIds, (_, key) => {
+              return (
+                data.find((item) => String(item.id) === key) ||
+                prev[resourceType][key]
+              );
+            }),
           };
         }
         return {
           ...prev,
-          [resourceType]: mapValues(updater, function (_, key) {
+          [resourceType]: mapValues(updater, (_, key) => {
             return data.find((item) => String(item.id) === key);
           }),
         };
