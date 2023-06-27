@@ -14,6 +14,7 @@ jobs:
           persist-credentials: false
 
       - name: Setup Cognite CICD Yarn
+        working-directory: react-components
         run: |
           echo "
           npmScopes:
