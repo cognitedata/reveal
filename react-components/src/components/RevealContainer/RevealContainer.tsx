@@ -7,11 +7,11 @@ import { Cognite3DViewer } from '@cognite/reveal';
 import { RevealContext } from './RevealContext';
 import { type Color } from 'three';
 
-interface RevealContainerProps {
+type RevealContainerProps = {
   color?: Color;
   sdk: CogniteClient;
   children?: ReactNode;
-}
+};
 
 export default function RevealContainer({
   children,

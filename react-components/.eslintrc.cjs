@@ -16,7 +16,9 @@ module.exports = {
   },
   plugins: ['react', 'prettier', 'header'],
   rules: {
-    'react/react-in-jsx-scope': 'off'
+    'react/react-in-jsx-scope': 'off',
+    '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
+    eqeqeq: ['error', 'always']
   },
   settings: {
     react: {

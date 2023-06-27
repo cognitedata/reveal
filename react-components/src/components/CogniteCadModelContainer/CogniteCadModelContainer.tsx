@@ -6,10 +6,10 @@ import { type AddModelOptions, type CogniteCadModel } from '@cognite/reveal';
 import { useReveal } from '../RevealContainer/RevealContext';
 import { type Matrix4 } from 'three';
 
-interface Cognite3dModelProps {
+type Cognite3dModelProps = {
   addModelOptions: AddModelOptions;
   transform?: Matrix4;
-}
+};
 
 export default function CogniteCadModelContainer({
   addModelOptions,

@@ -3,7 +3,7 @@
  */
 
 export const formatDate = (date: Date | undefined): string => {
-  if (date == null) {
+  if (date === undefined) {
     return '';
   }
   const year = date.getFullYear();

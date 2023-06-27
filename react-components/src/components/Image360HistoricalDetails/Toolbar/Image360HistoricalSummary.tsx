@@ -10,21 +10,21 @@ import { type Cognite3DViewer, type Image360 } from '@cognite/reveal';
 // Using named import to avoid react component creation error when default import is used.
 import { uniqueId } from 'lodash';
 
-export interface Image360RevisionDetails {
+export type Image360RevisionDetails = {
   date?: string;
   imageUrl?: string;
   index: number;
   image360Entity: Image360 | undefined;
-}
+};
 
-export interface Image360HistoricalSummaryProps {
+export type Image360HistoricalSummaryProps = {
   stationId?: string;
   stationName?: string;
   viewer?: Cognite3DViewer;
   revisionCollection: Image360RevisionDetails[];
   activeRevision: number;
   setActiveRevision: (index: number) => void;
-}
+};
 
 export const Image360HistoricalSummary = forwardRef(
   (
@@ -44,7 +44,7 @@ export const Image360HistoricalSummary = forwardRef(
       revisionDetails: Image360RevisionDetails,
       index: number
     ): Promise<void> => {
-      if (viewer != null && revisionDetails.image360Entity != null) {
+      if (viewer !== undefined && revisionDetails.image360Entity !== undefined) {
         setActiveRevision(index);
         const revisions = revisionDetails.image360Entity.getRevisions();
         const revisionIndex = revisionDetails.index;
@@ -65,7 +65,7 @@ export const Image360HistoricalSummary = forwardRef(
     }
 
     useEffect(() => {
-      if (gridContainerRef.current != null && isMutableRefObject(ref)) {
+      if (gridContainerRef.current !== null && isMutableRefObject(ref)) {
         gridContainerRef.current.scrollLeft = ref.current;
       }
     }, []);

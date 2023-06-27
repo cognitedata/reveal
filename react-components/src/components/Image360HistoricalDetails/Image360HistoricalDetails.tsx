@@ -10,11 +10,11 @@ import { formatDate } from './utils/FormatDate';
 import styled from 'styled-components';
 import uniqueId from 'lodash/uniqueId';
 
-export interface Image360HistoricalDetailsProps {
+export type Image360HistoricalDetailsProps = {
   viewer: Cognite3DViewer;
   image360Entity?: Image360;
   onExpand?: (isExpanded: boolean) => void;
-}
+};
 
 export const Image360HistoricalDetails = ({
   viewer,
@@ -37,7 +37,7 @@ export const Image360HistoricalDetails = ({
 
   useEffect(() => {
     const fetchRevisionCollection = async (): Promise<void> => {
-      if (image360Entity != null) {
+      if (image360Entity !== undefined) {
         const revisions = image360Entity.getRevisions();
         const revisionDates = revisions.map((revision) => revision.date);
         const imageDatas = await Promise.all(
@@ -76,7 +76,7 @@ export const Image360HistoricalDetails = ({
   useEffect(() => {
     const newMinWidth = revisionDetailsExpanded ? '100%' : '100px';
     setMinWidth(newMinWidth);
-    if (onExpand != null) {
+    if (onExpand !== undefined) {
       onExpand(revisionDetailsExpanded);
     }
   }, [revisionDetailsExpanded]);
