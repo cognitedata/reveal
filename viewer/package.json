@@ -62,7 +62,7 @@
     "ws:lint": "cd $INIT_CWD && eslint . --ext .ts,.js --max-warnings 0 --cache"
   },
   "dependencies": {
-    "@tweenjs/tween.js": "19.0.0",
+    "@tweenjs/tween.js": "20.0.3",
     "assert": "2.0.0",
     "async-mutex": "0.4.0",
     "glslify": "7.1.1",
