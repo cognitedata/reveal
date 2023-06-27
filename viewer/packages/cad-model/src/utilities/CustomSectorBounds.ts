@@ -8,7 +8,7 @@ import { CadNode } from '../wrappers/CadNode';
 
 type TransformedNode = {
   currentTransform: THREE.Matrix4;
-  originalBoundingBox: THREE.Box3;
+  originalBoundingBox?: THREE.Box3;
   inSectors: Set<number>;
 };
 
@@ -47,7 +47,7 @@ export class CustomSectorBounds {
    * @param treeIndex Tree index of the transformed node
    * @param originalBoundingBox The original bounding box of this node
    */
-  registerTransformedNode(treeIndex: number, originalBoundingBox: THREE.Box3): void {
+  registerTransformedNode(treeIndex: number, originalBoundingBox?: THREE.Box3): void {
     if (this.isRegistered(treeIndex)) {
       throw new Error(`Attempted to register already registered node (tree index ${treeIndex})`);
     }
@@ -55,7 +55,7 @@ export class CustomSectorBounds {
     // Update mapping from tree index to transformed node
     this._treeIndexToTransformedNodeMap.set(treeIndex, {
       currentTransform: new THREE.Matrix4(),
-      originalBoundingBox: originalBoundingBox.clone(),
+      originalBoundingBox: originalBoundingBox?.clone(),
       inSectors: new Set<number>()
     });
   }
@@ -142,10 +142,12 @@ export class CustomSectorBounds {
       // Compute the bounding boxes for the transformed nodes in this sector
       const boundingBoxes: THREE.Box3[] = [];
       this._sectorIdToTransformedNodesMap.get(sectorId)?.forEach(transformedNode => {
-        // Compute the intersection between the original sector bounds and the original node bounds
-        const originalBoundingBoxInSector = transformedNode.originalBoundingBox
-          .clone()
-          .intersect(this.getOriginalSectorBounds(sectorId));
+        // Compute the intersection between the original sector bounds and the original node bounds if available,
+        // otherwise just assume the node has geometry in the entire sector
+        const originalSectorBounds = this.getOriginalSectorBounds(sectorId);
+        const originalBoundingBoxInSector =
+          transformedNode.originalBoundingBox?.clone().intersect(originalSectorBounds) ?? originalSectorBounds.clone();
+
         if (!originalBoundingBoxInSector.isEmpty()) {
           // Apply the current transform to this box, giving us the relevant bounds that the sector should currently contain
           const effectiveBoundingBox = originalBoundingBoxInSector

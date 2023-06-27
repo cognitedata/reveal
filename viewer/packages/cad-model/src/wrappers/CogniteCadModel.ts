@@ -208,8 +208,9 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
    * node isn't supported and might lead to undefined results.
    * @param treeIndices       Tree indices of nodes to apply the transformation to.
    * @param transformMatrix   Transformation to apply.
+   * @param boundingBox       Optional bounding box for the nodes before any transformation is applied. If given, it is assumed that all the nodes' geometry fit inside.
    */
-  async setNodeTransform(treeIndices: NumericRange, transformMatrix: THREE.Matrix4): Promise<void> {
+  setNodeTransform(treeIndices: NumericRange, transformMatrix: THREE.Matrix4, boundingBox?: THREE.Box3): void {
     MetricsLogger.trackCadNodeTransformOverridden(treeIndices.count, transformMatrix);
     this.nodeTransformProvider.setNodeTransform(treeIndices, transformMatrix);
 
@@ -222,13 +223,16 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
     // Convert the transform to CDF space
     const transformMatrixCdf = modelToCdfTransform.clone().multiply(transformMatrix).multiply(cdfToModelTransform);
 
+    // Transform bounding box to CDF space, if given
+    let nodeBoundingBox: THREE.Box3 | undefined;
+    if (boundingBox) {
+      nodeBoundingBox = boundingBox.clone();
+      nodeBoundingBox.applyMatrix4(modelToCdfTransform);
+    }
+
     // Update sector bounds
     for (const treeIndex of treeIndices.toArray()) {
-      const nodeBoundingBox = await this.getBoundingBoxByTreeIndex(treeIndex); // Fetch prior to checking registration status, to avoid race
       if (!this.customSectorBounds.isRegistered(treeIndex)) {
-        // Compute the original bounding box in CDF space
-        nodeBoundingBox.applyMatrix4(modelToCdfTransform);
-
         // Register node as transformed
         this.customSectorBounds.registerTransformedNode(treeIndex, nodeBoundingBox);
 
@@ -259,7 +263,8 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
     applyToChildren = true
   ): Promise<number> {
     const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
-    await this.setNodeTransform(treeIndices, transform);
+    const boundingBox = await this.getBoundingBoxByTreeIndex(treeIndex);
+    await this.setNodeTransform(treeIndices, transform, boundingBox);
     return treeIndices.count;
   }
 

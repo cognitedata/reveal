@@ -363,6 +363,17 @@ describe('CustomSectorBounds', () => {
     [0, 1, 2, 3, 4, 5].forEach(i => expectOriginalBounds(i));
   });
 
+  test('Transform node without knowledge of node bounds', () => {
+    // Transform node A, without giving node bounds
+    customSectorBounds.registerTransformedNode(nodeA.treeIndex, undefined);
+    customSectorBounds.updateNodeSectors(nodeA.treeIndex, [2]);
+    customSectorBounds.updateNodeTransform(nodeA.treeIndex, translation(1, 0));
+    customSectorBounds.recomputeSectorBounds();
+
+    expectBoundsApproximatelyEqual(2, boundsFrom(0, 0, 3, 2)); // Should expand to guaranteed contain node A, no matter where node A was in the sector
+    [0, 1, 3, 4, 5].forEach(i => expectOriginalBounds(i));
+  });
+
   function translation(x: number, y: number): THREE.Matrix4 {
     return new THREE.Matrix4().setPosition(x, y, 0);
   }
