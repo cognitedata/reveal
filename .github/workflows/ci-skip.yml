@@ -19,7 +19,50 @@ on:
       - "**"
 
 jobs:
-  skip:
+  populate-caches:
+    name: Update NPM and Cargo caches
     runs-on: ubuntu-latest
     steps:
-      - run: 'echo "No build required"'
+      - run: 'echo "Skip due to no changes in viewer, documentation or examples"'
+
+  build-viewer:
+    name: Build Reveal
+    runs-on: ubuntu-latest
+    steps:
+      - run: 'echo "Skip due to no changes in viewer, documentation or examples"'
+
+  run-coverage-tests:
+    name: Run unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - run: 'echo "Skip due to no changes in viewer, documentation or examples"'
+
+  run-visual-tests:
+    name: Visual Tests
+    runs-on: ubuntu-latest
+    steps:
+      - run: 'echo "Skip due to no changes in viewer, documentation or examples"'
+
+  ci-examples:
+    name: Examples
+    runs-on: ubuntu-latest
+    steps:
+      - run: 'echo "Skip due to no changes in viewer, documentation or examples"'
+
+  build-preview-documentation:
+    name: Build preview documentation
+    runs-on: ubuntu-latest
+    steps:
+      - run: 'echo "Skip due to no changes in viewer, documentation or examples"'
+
+  deploy-preview-documentation:
+    name: Publish documentation preview
+    runs-on: ubuntu-latest
+    steps:
+      - run: 'echo "Skip due to no changes in viewer, documentation or examples"'
+
+  cleanup:
+    name: Cleanup
+    runs-on: ubuntu-latest
+    steps:
+      - run: 'echo "Skip due to no changes in viewer, documentation or examples"'
