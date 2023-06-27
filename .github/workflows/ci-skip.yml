@@ -1,0 +1,25 @@
+name: CI
+
+# Dummy workflow to skip builds on PRs that do not affect viewer, documentation or examples
+# https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/troubleshooting-required-status-checks#handling-skipped-but-required-checks
+on:
+  push:
+    branches: [master]
+  pull_request:
+    paths-ignore:
+      - "viewer/**"
+      - "documentation/**"
+      - "examples/**"
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - labeled
+    branches:
+      - "**"
+
+jobs:
+  skip:
+    runs-on: ubuntu-latest
+    steps:
+      - run: 'echo "No build required"'
