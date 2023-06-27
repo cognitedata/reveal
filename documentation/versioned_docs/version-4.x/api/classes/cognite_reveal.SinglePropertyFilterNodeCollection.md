@@ -40,7 +40,7 @@ Construct a new node set.
 
 #### Defined in
 
-[packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts:41](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts#L41)
+[packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts:41](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts#L41)
 
 ## Properties
 
@@ -50,7 +50,7 @@ Construct a new node set.
 
 #### Defined in
 
-[packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts:24](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts#L24)
+[packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts:24](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts#L24)
 
 ## Accessors
 
@@ -68,7 +68,7 @@ CdfNodeCollectionBase.classToken
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollection.ts:23](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/cad-styling/src/NodeCollection.ts#L23)
+[packages/cad-styling/src/NodeCollection.ts:23](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/cad-styling/src/NodeCollection.ts#L23)
 
 ___
 
@@ -86,7 +86,7 @@ CdfNodeCollectionBase.isLoading
 
 #### Defined in
 
-[packages/cad-styling/src/CdfNodeCollectionBase.ts:25](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/cad-styling/src/CdfNodeCollectionBase.ts#L25)
+[packages/cad-styling/src/CdfNodeCollectionBase.ts:25](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/cad-styling/src/CdfNodeCollectionBase.ts#L25)
 
 ## Methods
 
@@ -106,7 +106,7 @@ Clears the node collection and interrupts any ongoing operations.
 
 #### Defined in
 
-[packages/cad-styling/src/CdfNodeCollectionBase.ts:69](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/cad-styling/src/CdfNodeCollectionBase.ts#L69)
+[packages/cad-styling/src/CdfNodeCollectionBase.ts:69](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/cad-styling/src/CdfNodeCollectionBase.ts#L69)
 
 ___
 
@@ -116,7 +116,7 @@ ___
 
 Execute filter asynchronously, replacing any existing filter active. When propertyValues
 contains more than 1000 elements, the operation will be split into multiple batches that
-are executed in parallel. Note that when providing a PropertyFilterNodeCollectionOptions.requestPartitions
+are executed in parallel. Note that when providing a [requestPartitions](../modules/cognite_reveal.md#requestpartitions)
 during construction of the node set, the total number of batches will be requestPartitions*numberOfBatches.
 
 #### Parameters
@@ -133,7 +133,7 @@ during construction of the node set, the total number of batches will be request
 
 #### Defined in
 
-[packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts:62](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts#L62)
+[packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts:62](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts#L62)
 
 ___
 
@@ -155,7 +155,7 @@ implementations supports this.
 
 #### Defined in
 
-[packages/cad-styling/src/CdfNodeCollectionBase.ts:81](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/cad-styling/src/CdfNodeCollectionBase.ts#L81)
+[packages/cad-styling/src/CdfNodeCollectionBase.ts:81](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/cad-styling/src/CdfNodeCollectionBase.ts#L81)
 
 ___
 
@@ -173,7 +173,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/CdfNodeCollectionBase.ts:77](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/cad-styling/src/CdfNodeCollectionBase.ts#L77)
+[packages/cad-styling/src/CdfNodeCollectionBase.ts:77](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/cad-styling/src/CdfNodeCollectionBase.ts#L77)
 
 ___
 
@@ -198,7 +198,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollection.ts:32](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/cad-styling/src/NodeCollection.ts#L32)
+[packages/cad-styling/src/NodeCollection.ts:32](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/cad-styling/src/NodeCollection.ts#L32)
 
 ___
 
@@ -223,7 +223,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollection.ts:27](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/cad-styling/src/NodeCollection.ts#L27)
+[packages/cad-styling/src/NodeCollection.ts:27](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/cad-styling/src/NodeCollection.ts#L27)
 
 ___
 
@@ -241,4 +241,4 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts:97](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts#L97)
+[packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts:97](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts#L97)

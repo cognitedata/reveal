@@ -1,24 +1,18 @@
 {
   "compilerOptions": {
     "target": "ES6",
-    "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
-    "skipLibCheck": true,
+    "skipLibCheck": false,
     "jsx": "react-jsx",
-    "module": "ESNext",
+    "module": "ES2020",
     "declaration": true,
     "declarationDir": "dist",
     "declarationMap": true,
     "sourceMap": true,
     "outDir": "dist",
     "moduleResolution": "bundler",
-    "allowSyntheticDefaultImports": true,
+    "allowSyntheticDefaultImports": true
   },
-  "include": [
-    "src"
-  ],
-  "exclude": [
-    "**/*.stories.ts"
-  ]
+  "include": ["src/*", "stories/*"]
 }
