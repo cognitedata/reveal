@@ -3,44 +3,43 @@
  */
 
 import { Chip, Tooltip } from '@cognite/cogs.js';
-import React from 'react';
+import { type ReactElement } from 'react';
 import styled from 'styled-components';
 
-export interface Image360HistoricalPanelProps {
+export type Image360HistoricalPanelProps = {
   revisionCount?: number;
   revisionDetailsExpanded: boolean;
   setRevisionDetailsExpanded: (detailed: boolean) => void;
-}
+};
 
 export const Image360HistoricalPanel = ({
   revisionCount,
   revisionDetailsExpanded,
   setRevisionDetailsExpanded
-}: Image360HistoricalPanelProps) => {
+}: Image360HistoricalPanelProps): ReactElement => {
   const count = revisionCount?.toString();
 
-  const onDetailsClick = () => {
-    setRevisionDetailsExpanded!(!revisionDetailsExpanded);
+  const onDetailsClick = (): void => {
+    setRevisionDetailsExpanded(!revisionDetailsExpanded);
   };
 
   return (
     <Container isExpanded={revisionDetailsExpanded}>
-    <Tooltip content="360 Image historical details">
-      <StyledToolBar onClick={onDetailsClick} isExpanded={revisionDetailsExpanded}>
-        {!revisionDetailsExpanded && (
-          <>
-            <StyledChip icon='History' iconPlacement='right' label='Details' hideTooltip />
-            <StyledChipCount label={count} hideTooltip />
-          </>
-          )
-        }
-        {revisionDetailsExpanded && (
-          <StyledChip icon='PushRight' iconPlacement='right' label='Details' hideTooltip/>
-        )}
-      </StyledToolBar>
-    </Tooltip>
+      <Tooltip content="360 Image historical details">
+        <StyledToolBar onClick={onDetailsClick} isExpanded={revisionDetailsExpanded}>
+          {!revisionDetailsExpanded && (
+            <>
+              <StyledChip icon="History" iconPlacement="right" label="Details" hideTooltip />
+              <StyledChipCount label={count} hideTooltip />
+            </>
+          )}
+          {revisionDetailsExpanded && (
+            <StyledChip icon="PushRight" iconPlacement="right" label="Details" hideTooltip />
+          )}
+        </StyledToolBar>
+      </Tooltip>
     </Container>
-  )
+  );
 };
 
 const StyledToolBar = styled.div<{ isExpanded: boolean }>`
@@ -49,10 +48,10 @@ const StyledToolBar = styled.div<{ isExpanded: boolean }>`
   display: flex;
   flex-direction: row;
   padding: 0px 0px 0px 5px;
-  background: #FFFFFF;
+  background: #ffffff;
 
   ${({ isExpanded }) =>
-  isExpanded &&
+    isExpanded &&
     `
     padding: 0px 0px 0px 25px;
   `}
@@ -74,7 +73,7 @@ const StyledChip = styled(Chip)`
 
 const StyledChipCount = styled(Chip)`
   && {
-    background: #5874FF;
+    background: #5874ff;
     border-radius: 2px;
     width: fit-content;
     height: 20px;
@@ -82,7 +81,7 @@ const StyledChipCount = styled(Chip)`
     min-height: 20px;
     min-width: 20px;
     padding: 4px;
-    color: #FFFFFF;
+    color: #ffffff;
 
     /* Font */
     font-family: 'Inter';
@@ -105,7 +104,7 @@ const Container = styled.div<{ isExpanded: boolean }>`
   border-radius: 6px;
 
   ${({ isExpanded }) =>
-  isExpanded &&
+    isExpanded &&
     `
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;

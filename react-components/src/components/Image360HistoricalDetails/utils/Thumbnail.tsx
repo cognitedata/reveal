@@ -3,20 +3,20 @@
  */
 
 import styled from 'styled-components';
-import React, { useMemo } from 'react';
+import { type ReactElement, useMemo } from 'react';
 import { Icon } from '@cognite/cogs.js';
 
 export const Thumbnail = ({
   imageUrl,
   isActive,
-  isLoading,
+  isLoading
 }: {
   imageUrl?: string;
   isActive: boolean;
   isLoading: boolean;
-}) => {
+}): ReactElement => {
   const image = useMemo(() => {
-    if (imageUrl) {
+    if (imageUrl !== undefined) {
       return (
         <div>
           <img src={imageUrl} alt="thumbnail" />
@@ -43,7 +43,7 @@ const StyledThumbnail = styled.div<{ isActive: boolean }>`
   width: 160px;
   min-width: 56px;
   height: 90px;
-  border: 2px solid #D9D9D9;
+  border: 2px solid #d9d9d9;
   border-radius: 12px;
   gap: 6px;
 

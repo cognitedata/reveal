@@ -13,7 +13,8 @@
     "build:watch": "yarn run build --watch",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "tsc": "tsc"
+    "tsc": "tsc",
+    "lint": "eslint . --cache"
   },
   "peerDependencies": {
     "@cognite/cogs.js": ">=9",
@@ -39,7 +40,18 @@
     "@types/react": "18.2.7",
     "@types/styled-components": "5.1.26",
     "@types/three": "0.152.0",
+    "@typescript-eslint/eslint-plugin": "^5.50.0",
+    "eslint": "^8.0.1",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-config-standard-with-typescript": "latest",
+    "eslint-plugin-header": "^3.1.1",
+    "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-n": "^15.0.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-promise": "^6.0.0",
+    "eslint-plugin-react": "latest",
     "moq.ts": "^10.0.6",
+    "prettier": "^2.8.8",
     "prop-types": "15.8.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",

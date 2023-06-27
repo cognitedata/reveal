@@ -22,11 +22,14 @@ export default (_, argv) => {
         {
           test: /\.tsx?$/,
           loader: 'ts-loader',
-          exclude: /node_modules/
+          exclude: /node_modules/,
+          options: {
+            onlyCompileBundledFiles: true
+          }
         },
         {
           test: /\.css$/i,
-          use: ["style-loader", "css-loader"],
+          use: ['style-loader', 'css-loader']
         }
       ]
     },
@@ -36,7 +39,7 @@ export default (_, argv) => {
       })
     ],
     resolve: {
-      extensions: ['.tsx', '.ts'],
+      extensions: ['.tsx', '.ts']
     },
     devtool: isProduction ? 'source-map' : 'eval-source-map',
     optimization: {
@@ -44,8 +47,8 @@ export default (_, argv) => {
         new TerserPlugin({
           terserOptions: {
             format: {
-              comments: false,
-            },
+              comments: false
+            }
           },
           extractComments: false
         })
@@ -54,5 +57,5 @@ export default (_, argv) => {
     experiments: {
       outputModule: true
     }
-  }
-}
+  };
+};

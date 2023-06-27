@@ -1,12 +1,15 @@
+/*!
+ * Copyright 2023 Cognite AS
+ */
 import type { Meta, StoryObj } from '@storybook/react';
-import { Image360HistoricalDetails } from '..';
+import { Image360HistoricalDetails } from '../src';
 import { It, Mock } from 'moq.ts';
-import { Cognite3DViewer, Image360, Image360Revision } from '@cognite/reveal';
+import { type Cognite3DViewer, type Image360, type Image360Revision } from '@cognite/reveal';
 
 const meta = {
   title: 'Example/Image360HistoricalDetails',
   component: Image360HistoricalDetails,
-  tags: ['autodocs'],
+  tags: ['autodocs']
 } satisfies Meta<typeof Image360HistoricalDetails>;
 
 export default meta;
@@ -14,46 +17,48 @@ type Story = StoryObj<typeof meta>;
 
 const revisionMocks = [
   new Mock<Image360Revision>()
-    .setup(p => p.getPreviewThumbnailUrl())
+    .setup(async (p) => await p.getPreviewThumbnailUrl())
     .returns(Promise.resolve(undefined))
-    .setup(p => p.date)
+    .setup((p) => p.date)
     .returns(undefined)
     .object(),
   new Mock<Image360Revision>()
-    .setup(p => p.getPreviewThumbnailUrl())
+    .setup(async (p) => await p.getPreviewThumbnailUrl())
     .returns(Promise.resolve(undefined))
-    .setup(p => p.date)
+    .setup((p) => p.date)
     .returns(new Date('2024.01.13 13:23'))
     .object(),
   new Mock<Image360Revision>()
-    .setup(p => p.getPreviewThumbnailUrl())
+    .setup(async (p) => await p.getPreviewThumbnailUrl())
     .returns(Promise.resolve(undefined))
-    .setup(p => p.date)
+    .setup((p) => p.date)
     .returns(new Date('2025.01.14 13:23'))
     .object(),
   new Mock<Image360Revision>()
-    .setup(p => p.getPreviewThumbnailUrl())
+    .setup(async (p) => await p.getPreviewThumbnailUrl())
     .returns(Promise.resolve(undefined))
-    .setup(p => p.date)
+    .setup((p) => p.date)
     .returns(new Date('2026.01.15 15:23'))
     .object(),
   new Mock<Image360Revision>()
-    .setup(p => p.getPreviewThumbnailUrl())
+    .setup(async (p) => await p.getPreviewThumbnailUrl())
     .returns(Promise.resolve(undefined))
-    .setup(p => p.date)
+    .setup((p) => p.date)
     .returns(new Date('2024.01.16 23:23'))
-    .object(),
+    .object()
 ];
 
 const viewerMock = new Mock<Cognite3DViewer>()
-  .setup(p => p.enter360Image(It.IsAny()))
+  .setup(async (p) => {
+    await p.enter360Image(It.IsAny());
+  })
   .returns(Promise.resolve());
 const image360Mock = new Mock<Image360>()
-  .setup(p => p.getRevisions())
+  .setup((p) => p.getRevisions())
   .returns(revisionMocks)
-  .setup(p => p.id)
+  .setup((p) => p.id)
   .returns('Station-Id')
-  .setup(p => p.label)
+  .setup((p) => p.label)
   .returns('Station Name');
 
 export const Main: Story = {
