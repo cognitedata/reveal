@@ -126,10 +126,12 @@ export const Plot = memo(
       const initialRange = usePlotDataRangeInitial({
         plotDataRange,
         dataRevision,
+        presetRange,
       });
 
       const { range, setPlotRange, resetPlotRange } = useHandlePlotRange({
         initialRange,
+        plotDataRange,
         onRangeChange,
       });
 
@@ -167,8 +169,14 @@ export const Plot = memo(
           hovermode: getPlotlyHoverMode(config.hoverMode),
           autosize: responsive,
         }),
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        [tickCount, presetRange, range, fixedRange, fixedRangeLayoutConfig]
+        [
+          tickCount,
+          presetRange,
+          range,
+          fixedRange,
+          fixedRangeLayoutConfig,
+          margin,
+        ]
       );
 
       const isScrollZoomEnabled = Boolean(scrollZoom);
@@ -192,7 +200,7 @@ export const Plot = memo(
       const handleRelayout = useCallback(
         debounce((event: PlotRelayoutEvent) => {
           const plotRange = getPlotRangeFromRelayoutEvent(event);
-          setPlotRange(plotRange);
+          setPlotRange(plotRange, true);
           handleManualRelayout();
         }, 500),
         [plotDataRange, setPlotRange, handleManualRelayout]
@@ -201,7 +209,7 @@ export const Plot = memo(
       const handleSelected = useCallback(
         (event?: PlotSelectionEvent) => {
           const plotRange = getPlotRangeFromPlotSelectionEvent(event);
-          setPlotRange(plotRange);
+          setPlotRange(plotRange, false);
           onSelected?.(event);
         },
         [setPlotRange, onSelected]

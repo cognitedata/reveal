@@ -9,7 +9,12 @@ export const isValidPlotRange = (range: Partial<PlotRange>) => {
 
   const values = [...(range.x || []), ...(range.y || [])];
 
-  if (values.some((value) => value === Infinity || value === -Infinity)) {
+  if (
+    values.some(
+      (value) =>
+        value === Infinity || value === -Infinity || Number.isNaN(value)
+    )
+  ) {
     return false;
   }
 

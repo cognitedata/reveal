@@ -9,7 +9,7 @@ import { DateRangePicker } from './components/DateRangePicker';
 import { OpenInChartsButton } from './components/OpenInChartsButton';
 import { TimePeriods } from './components/TimePeriods';
 import { TimePeriodSelect } from './components/TimePeriodSelect';
-import { TIME_PERIOD_OPTIONS } from './constants';
+import { DEFAULT_DATE_RANGE, TIME_PERIOD_OPTIONS } from './constants';
 import { useTimeseriesChartData } from './domain/internal/hooks/useTimeseriesChartData';
 import {
   DateRange,
@@ -25,7 +25,7 @@ export const TimeseriesChart: React.FC<TimeseriesChartProps> = ({
   variant = 'large',
   numberOfPoints,
   quickTimePeriodOptions = [],
-  dateRange: dateRangeProp,
+  dateRange: dateRangeProp = DEFAULT_DATE_RANGE,
   height,
   dataFetchOptions,
   autoRange,
@@ -35,9 +35,7 @@ export const TimeseriesChart: React.FC<TimeseriesChartProps> = ({
   styles,
 }) => {
   const [selectedTimePeriod, setSelectedTimePeriod] = useState<TimePeriod>();
-  const [dateRange, setDateRange] = useState<DateRange | undefined>(
-    dateRangeProp
-  );
+  const [dateRange, setDateRange] = useState<DateRange>(dateRangeProp);
 
   const { data, metadata, isLoading } = useTimeseriesChartData({
     query: {
@@ -53,7 +51,7 @@ export const TimeseriesChart: React.FC<TimeseriesChartProps> = ({
   }, [quickTimePeriodOptions]);
 
   const chartRange = useMemo(() => {
-    if (autoRange || !dateRange) {
+    if (autoRange) {
       return undefined;
     }
     return {
