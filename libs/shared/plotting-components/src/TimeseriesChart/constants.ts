@@ -1,6 +1,7 @@
 import { Data } from '../LineChart';
 
 import { TimePeriod } from './types';
+import { getDateRangeForTimePeriod } from './utils/getDateRangeForTimePeriod';
 
 export const AXIS_DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss.SSS';
 
@@ -22,3 +23,5 @@ export const TIME_PERIOD_OPTIONS: TimePeriod[] = [
   '5Y',
   '10Y',
 ];
+
+export const DEFAULT_DATE_RANGE = getDateRangeForTimePeriod('2Y');

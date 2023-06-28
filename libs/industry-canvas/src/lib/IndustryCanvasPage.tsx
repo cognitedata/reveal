@@ -15,14 +15,14 @@ import { v4 as uuid } from 'uuid';
 import { createLink, PageTitle } from '@cognite/cdf-utilities';
 import {
   Button,
-  Dropdown,
-  Menu,
+  Chip,
   Colors,
+  Dropdown,
   Flex,
   Icon,
+  Menu,
   toast,
   Tooltip,
-  Chip,
 } from '@cognite/cogs.js';
 import {
   isNotUndefined,
@@ -57,6 +57,7 @@ import useManagedTools from './hooks/useManagedTools';
 import { useQueryParameter } from './hooks/useQueryParameter';
 import { useResourceSelectorActions } from './hooks/useResourceSelectorActions';
 import { useSelectedAnnotationOrContainer } from './hooks/useSelectedAnnotationOrContainer';
+import { useTooltipsOptions } from './hooks/useTooltipsOptions';
 import useTrackCanvasViewed from './hooks/useTrackCanvasViewed';
 import { useTranslation } from './hooks/useTranslation';
 import { IndustryCanvas } from './IndustryCanvas';
@@ -71,6 +72,7 @@ import {
   DEFAULT_CONTAINER_MAX_HEIGHT,
   DEFAULT_CONTAINER_MAX_WIDTH,
 } from './utils/addDimensionsToContainerReference';
+import enforceTimeseriesApplyToAllIfEnabled from './utils/enforceTimeseriesApplyToAllIfEnabled';
 import isSupportedResourceItem from './utils/isSupportedResourceItem';
 import resourceItemToContainerReference from './utils/resourceItemToContainerReference';
 import useMetrics from './utils/tracking/useMetrics';
@@ -93,6 +95,7 @@ export const IndustryCanvasPage = () => {
     useState<boolean>(true);
   const [currentZoomScale, setCurrentZoomScale] = useState<number>(1);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const { tooltipsOptions, onUpdateTooltipsOptions } = useTooltipsOptions();
   const { tool, setTool } = useManagedTool(IndustryCanvasToolType.SELECT);
   const { queryString } = useQueryParameter({ key: SEARCH_QUERY_PARAM_KEY });
   const [resourceSelectorWidth, setResourceSelectorWidth] = useLocalStorage(
@@ -140,6 +143,7 @@ export const IndustryCanvasPage = () => {
     unifiedViewer: unifiedViewerRef,
     setTool,
     tool,
+    tooltipsOptions,
   });
 
   useTrackCanvasViewed(activeCanvas);
@@ -247,7 +251,12 @@ export const IndustryCanvasPage = () => {
         return;
       }
 
-      addContainerReferences(containerReferencesToAdd).then((containers) => {
+      addContainerReferences(
+        enforceTimeseriesApplyToAllIfEnabled(
+          tooltipsOptions,
+          containerReferencesToAdd
+        )
+      ).then((containers) => {
         // When we add new containers, we want to zoom to fit and select them.
         // Since the new containers might not be rendered immediately, we need to wait a bit before we can do that.
         setTimeout(() => {
@@ -290,6 +299,7 @@ export const IndustryCanvasPage = () => {
       container?.children,
       isCanvasLocked,
       t,
+      tooltipsOptions,
     ]
   );
 
@@ -667,6 +677,8 @@ export const IndustryCanvasPage = () => {
             isCanvasLocked={isCanvasLocked}
             onResourceSelectorOpen={onResourceSelectorOpen}
             commentAnnotations={commentAnnotations}
+            tooltipsOptions={tooltipsOptions}
+            onUpdateTooltipsOptions={onUpdateTooltipsOptions}
           />
 
           <CloseResourceSelectorButton

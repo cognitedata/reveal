@@ -7,6 +7,7 @@ import { Checkbox } from '@cognite/cogs.js';
 
 import { formatBigNumbersWithSuffix } from '@data-exploration-lib/core';
 
+import { Ellipsis } from '../../Ellipsis';
 import {
   OptionLabel,
   OptionSecondaryLabel,
@@ -43,17 +44,23 @@ export const Option: React.FC<OptionProps> = ({
   const OptionCountChip = isDisabled ? OptionCountDisabled : OptionCount;
 
   return (
-    <OptionWrapper data-testid="option" {...rest}>
+    <OptionWrapper
+      data-testid="option"
+      onClick={() => {
+        !isDisabled && onChange(!checked);
+      }}
+      {...rest}
+    >
       <LabelWrapper>
         <Checkbox
           data-testid="option-label"
           name={label || value}
           checked={checked}
           indeterminate={indeterminate}
-          onChange={(_, nextState) => onChange(!!nextState)}
-        >
-          <OptionLabel>{label || value}</OptionLabel>
-        </Checkbox>
+        />
+        <OptionLabel>
+          <Ellipsis value={label || value} />
+        </OptionLabel>
 
         {options && !isEmpty(options) && (
           <OptionSecondaryLabel data-testid="option-secondary-label">

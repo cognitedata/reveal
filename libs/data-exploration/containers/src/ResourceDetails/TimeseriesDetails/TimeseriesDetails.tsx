@@ -157,13 +157,8 @@ export const TimeseriesDetails: FC<
           >
             <TimeseriesChart
               timeseriesId={timeseries.id}
-              height={300}
-              numberOfPoints={100}
-              variant="medium"
-              dataFetchOptions={{
-                mode: 'aggregate',
-              }}
-              autoRange
+              height={400}
+              quickTimePeriodOptions={['1D', '1W', '1Y']}
             />
           </Collapse.Panel>
         ) : null}

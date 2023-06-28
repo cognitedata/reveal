@@ -4,9 +4,9 @@ import styled from 'styled-components';
 
 import { ColumnType, SortOrder } from 'antd/lib/table/interface';
 
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import { TOOLTIP_DELAY_IN_MS } from '@cognite/cdf-utilities';
 import { Body, Button, Flex, Tooltip, TooltipProps } from '@cognite/cogs.js';
+
+import { TOOLTIP_DELAY_IN_MS } from '../../common';
 
 type TableColumnTitleProps<RecordType> = {
   _key: ColumnType<RecordType>['key'];

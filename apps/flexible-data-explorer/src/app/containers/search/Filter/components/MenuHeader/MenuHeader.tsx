@@ -28,8 +28,8 @@ export const MenuHeader: React.FC<MenuHeaderProps> = ({
       )}
 
       <TextContent>
-        <Title>{title}</Title>
         {subtitle && <Subtitle>{subtitle}</Subtitle>}
+        <Title>{title}</Title>
       </TextContent>
     </Container>
   );

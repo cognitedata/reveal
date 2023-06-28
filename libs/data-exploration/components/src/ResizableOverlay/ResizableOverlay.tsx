@@ -137,7 +137,7 @@ interface DetailsOverlayWrapperProps {
 export const DetailsOverlayWrapper = styled.div<DetailsOverlayWrapperProps>`
   height: 100%;
   width: 60%;
-  min-width: 600px;
+  min-width: 620px;
   background-color: var(--cogs-surface--muted);
   display: ${(props) => (props.showOverlay ? 'flex' : 'none')};
   z-index: ${zIndex.MAXIMUM};

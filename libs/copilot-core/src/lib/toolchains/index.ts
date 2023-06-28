@@ -3,7 +3,7 @@ import { BaseChatModel } from 'langchain/chat_models/base';
 
 import { CogniteClient } from '@cognite/sdk';
 
-import { CogniteBaseChain } from '../types';
+import { CogniteBaseChain, CopilotMessage } from '../types';
 
 import { createDefaultChain } from './conversation/base';
 import { GraphQlChain } from './graphql/graphql';
@@ -14,20 +14,23 @@ type ChainName = 'GraphQlChain' | 'AppBuilderChain';
 
 const destinationChains = (
   sdk: CogniteClient,
-  model: BaseChatModel
+  model: BaseChatModel,
+  messages: React.RefObject<CopilotMessage[]>
 ): {
   [key in ChainName]: CogniteBaseChain;
 } => ({
   GraphQlChain: new GraphQlChain({
     llm: model,
     sdk,
+    messages,
     returnAll: true,
     verbose: true,
-    types: ['Pump', 'Valve', 'Motor'],
+    humanApproval: false,
   }),
   AppBuilderChain: new AppBuilderChain({
     llm: model,
     sdk,
+    messages,
     returnAll: true,
     verbose: true,
   }),
@@ -36,9 +39,10 @@ const destinationChains = (
 export const newChain = (
   sdk: CogniteClient, // TODO: remove this
   model: BaseChatModel,
+  ref: React.RefObject<CopilotMessage[]>,
   excludeChains: ChainName[] = []
 ) => {
-  const chains = destinationChains(sdk, model);
+  const chains = destinationChains(sdk, model, ref);
   const templates = Object.entries(chains)
     // make sure the key is not excluded in the `chains` that the user wants
     .filter(([key]) => !excludeChains.includes(key as ChainName))

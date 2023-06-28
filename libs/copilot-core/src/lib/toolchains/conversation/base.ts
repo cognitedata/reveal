@@ -3,7 +3,7 @@ import { ConversationChain } from 'langchain/chains';
 import { BufferMemory } from 'langchain/memory';
 import { PromptTemplate } from 'langchain/prompts';
 
-import { sendFromCopilotEvent } from '../../utils';
+import { sendToCopilotEvent } from '../../utils';
 
 export const promptTemplate = `
 The following is a friendly conversation between a human and an industrial AI called CogPilot, 
@@ -64,10 +64,13 @@ export const createDefaultChain = (model: BaseLanguageModel) =>
     callbacks: [
       {
         handleChainEnd(outputs) {
-          sendFromCopilotEvent('NEW_BOT_MESSAGE', {
-            content: outputs.response,
-            type: 'text',
-          });
+          sendToCopilotEvent('NEW_MESSAGES', [
+            {
+              source: 'bot',
+              content: outputs.response,
+              type: 'text',
+            },
+          ]);
         },
       },
     ],

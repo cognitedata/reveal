@@ -16,7 +16,7 @@ export const TextAction = () => {
   const textActionProps = useBotUIAction();
 
   const {
-    meta: { feature },
+    meta: { feature, waiting },
   } = textActionProps!;
 
   const bot = useBotUI(); // current instance
@@ -54,10 +54,15 @@ export const TextAction = () => {
   }, [sdk, bot, feature]);
 
   return (
-    <Flex gap={4} direction="column">
+    <Flex
+      gap={4}
+      direction="column"
+      style={{ position: 'relative', width: '100%' }}
+    >
       <Textarea
         ref={ref}
         value={value}
+        disabled={!!waiting}
         onChange={(e) => setValue(e.target.value)}
         placeholder="Ask CogPilot anything..."
         style={{

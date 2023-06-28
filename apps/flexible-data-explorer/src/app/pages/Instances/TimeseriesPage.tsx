@@ -99,6 +99,7 @@ export const TimeseriesPage = () => {
       ]}
     >
       <Page.Widgets>
+        <PropertiesWidget id="Properties" data={data} columns={2} />
         <TimeseriesWidget
           id="Timeseries"
           timeseriesId={data?.id}
@@ -107,7 +108,6 @@ export const TimeseriesPage = () => {
           rows={8}
           columns={2}
         />
-        <PropertiesWidget id="Properties" data={data} columns={2} />
       </Page.Widgets>
     </Page.Dashboard>
   );

@@ -35,13 +35,13 @@ export const LargeChatUI = ({
         <Button icon="Close" onClick={onClose} inverted aria-label="close" />
       </Flex>
       <>
-        <BotUIAction renderer={actionRenderers} />
         <Flex
           direction="column"
-          style={{ overflow: 'auto', marginBottom: 8, flex: 1 }}
+          style={{ overflow: 'auto', marginBottom: 8, marginTop: 8, flex: 1 }}
         >
           <BotUIMessageList renderer={messageRenderers} />
         </Flex>
+        <BotUIAction renderer={actionRenderers} />
       </>
     </LargeChatWrapper>
   );
@@ -80,23 +80,27 @@ const LargeChatWrapper = styled(Flex)`
     position: relative;
     overflow: hidden;
     display: flex;
-    flex-direction: column;
+    flex-direction: column-reverse;
   }
   .botui_message_list {
     padding: 0;
     flex: 1;
-    overflow: auto;
+    overflow: hidden;
     width: 100%;
+    display: flex;
+    flex-direction: column;
     > div {
-      flex-direction: column-reverse;
-      display: flex;
+      overflow: auto;
+      align-self: end;
+      width: 100%;
       overflow: auto;
     }
   }
   .botui_action_container {
     padding: 0;
-    margin-top: 20%;
-    margin-bottom: 32px;
+    margin-bottom: 120px;
+    margin-top: 32px;
+    min-height: 104px;
     .botui_action {
       padding: 0;
     }
