@@ -1,12 +1,16 @@
-import { SegmentedControl, Title } from '@cognite/cogs.js';
-import { useTranslation } from 'common';
-import Section from 'components/section';
-import { MQTTJobWithMetrics } from 'hooks/hostedExtractors';
 import React, { useState } from 'react';
+
 import styled from 'styled-components';
-import { AggregationInterval } from 'utils/hostedExtractors';
-import { MessageHistoryChart } from './MessageHistoryChart';
+
+import { SegmentedControl, Title } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../common';
+import Section from '../../components/section';
+import { MQTTJobWithMetrics } from '../../hooks/hostedExtractors';
+import { AggregationInterval } from '../../utils/hostedExtractors';
+
 import { DataHistoryChart } from './DataHistoryChart';
+import { MessageHistoryChart } from './MessageHistoryChart';
 
 type MessageHistoryChartSectionProps = {
   className?: string;

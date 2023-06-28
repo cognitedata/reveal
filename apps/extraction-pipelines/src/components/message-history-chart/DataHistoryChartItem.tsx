@@ -1,13 +1,16 @@
+import React from 'react';
+
+import styled from 'styled-components';
+
 import { formatTime } from '@cognite/cdf-utilities';
 import { Colors, Flex, Icon, Tooltip } from '@cognite/cogs.js';
-import { useTranslation } from 'common';
-import React from 'react';
-import styled from 'styled-components';
+
+import { useTranslation } from '../../common';
 import {
   MetricAggregation,
   getWriteFailureAggregationErrorCount,
   getWriteDataAggregationSuccessCount,
-} from 'utils/hostedExtractors';
+} from '../../utils/hostedExtractors';
 
 type DataHistoryChartItemProps = {
   aggregation: MetricAggregation;
