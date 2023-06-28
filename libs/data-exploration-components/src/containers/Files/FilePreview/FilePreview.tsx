@@ -30,6 +30,7 @@ import {
   AnnotationSource,
   ExtendedAnnotation,
   useDebouncedMetrics,
+  useTranslation,
 } from '@data-exploration-lib/core';
 import {
   useSearchResults,
@@ -100,6 +101,7 @@ export const FilePreview = ({
   setEditMode = noop,
   hideEdit = false,
 }: FilePreviewProps) => {
+  const { t } = useTranslation();
   const trackUsage = useDebouncedMetrics();
   const [unifiedViewerRef, setUnifiedViewerRef] = useState<UnifiedViewer>();
   const [page, setPage] = useState(1);
@@ -377,7 +379,7 @@ export const FilePreview = ({
   if (file !== undefined && !isSupportedFileInfo(file, isDocumentsApiEnabled)) {
     return (
       <CenteredPlaceholder>
-        <h1>No preview for this file type</h1>
+        <h1>{t('FILE_NO_PREVIEW_TEXT', 'No preview for this file type')}</h1>
       </CenteredPlaceholder>
     );
   }

@@ -15,6 +15,7 @@ import {
   DATA_EXPLORATION_COMPONENT,
   TIME_SELECT,
   useMetrics,
+  useTranslation,
   zIndex,
 } from '@data-exploration-lib/core';
 
@@ -54,7 +55,9 @@ export const DateFilter = ({
   label,
   enableNull = false,
 }: DateFilterProps) => {
+  const { t } = useTranslation();
   const trackUsage = useMetrics();
+
   const initialPeriod = determinePeriod(value);
   const [period, setPeriod] = useState<PeriodType>(initialPeriod);
 
@@ -68,11 +71,11 @@ export const DateFilter = ({
   const endDate = new Date(value?.max || new Date());
 
   const options = [
-    { value: 'none', label: 'All' },
-    ...(enableNull ? [{ value: 'null', label: 'Empty' }] : []),
-    { value: 'before', label: 'Before' },
-    { value: 'during', label: 'During' },
-    { value: 'after', label: 'After' },
+    { value: 'none', label: t('ALL', 'All') },
+    ...(enableNull ? [{ value: 'null', label: t('EMPTY', 'Empty') }] : []),
+    { value: 'before', label: t('BEFORE', 'Before') },
+    { value: 'during', label: t('DURING', 'During') },
+    { value: 'after', label: t('AFTER', 'After') },
   ];
 
   const handleOnChange = (newValue: OptionType<string>) => {
@@ -181,22 +184,26 @@ export const DateFilter = ({
   );
 };
 const CreatedTimeFilter = (props: DateFilterProps) => {
-  return <DateFilter {...props} label="Created Time" />;
+  const { t } = useTranslation();
+  return <DateFilter {...props} label={t('CREATED_TIME', 'Created Time')} />;
 };
 
 const UpdatedTimeFilter = (props: DateFilterProps) => {
-  return <DateFilter {...props} label="Updated Time" />;
+  const { t } = useTranslation();
+  return <DateFilter {...props} label={t('UPDATED_TIME', 'Updated Time')} />;
 };
 
 const StartTimeFilter = (props: DateFilterProps) => {
-  return <DateFilter {...props} label="Start time" />;
+  const { t } = useTranslation();
+  return <DateFilter {...props} label={t('START_TIME', 'Start time')} />;
+};
+
+const EndTimeFilter = (props: DateFilterProps) => {
+  const { t } = useTranslation();
+  return <DateFilter {...props} label={t('END_TIME', 'End time')} />;
 };
 
 DateFilter.StartTime = StartTimeFilter;
-const EndTimeFilter = (props: DateFilterProps) => {
-  return <DateFilter {...props} label="End time" />;
-};
-
 DateFilter.Created = CreatedTimeFilter;
 DateFilter.EndTime = EndTimeFilter;
 DateFilter.Updated = UpdatedTimeFilter;

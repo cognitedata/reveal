@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import styled from 'styled-components';
 
@@ -19,10 +19,10 @@ import { lowerBound } from '../../utils/lowerBound';
 
 type SizeEditorProps = {
   value: number | undefined;
+  setValue: (value: number | undefined) => void;
   minValue?: number;
   maxValue?: number;
   dropdownValues?: number[];
-  setValue: (value: number | undefined) => void;
   suffix?: string;
 };
 
@@ -35,8 +35,21 @@ export const SizeEditor: React.FC<SizeEditorProps> = ({
   maxValue = Number.POSITIVE_INFINITY,
 }: SizeEditorProps) => {
   const [inputRef, setInputRef] = useState<HTMLInputElement | null>(null);
+  const [prevDefinedValue, setPrevDefinedValue] = useState<number>(
+    value ?? minValue
+  );
   const [shouldShowDropdown, setShouldShowDropdown] = useState<boolean>(false);
   const { t } = useTranslation();
+
+  const setValueWrapper = useCallback(
+    (newValue: number | undefined): void => {
+      if (value !== undefined) {
+        setPrevDefinedValue(value);
+      }
+      setValue(newValue);
+    },
+    [value, setValue, setPrevDefinedValue]
+  );
 
   useEffect(() => {
     if (inputRef === null) {
@@ -45,9 +58,9 @@ export const SizeEditor: React.FC<SizeEditorProps> = ({
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Enter') {
-        setValue(clamp(value ?? minValue, minValue, maxValue));
-        setShouldShowDropdown(false);
         inputRef.blur();
+        setShouldShowDropdown(false);
+        setValueWrapper(clamp(value ?? prevDefinedValue, minValue, maxValue));
         return;
       }
     };
@@ -56,18 +69,18 @@ export const SizeEditor: React.FC<SizeEditorProps> = ({
     return () => {
       inputRef.removeEventListener('keydown', handleKeyDown);
     };
-  }, [inputRef, value, minValue, maxValue, setValue]);
+  }, [inputRef, value, minValue, maxValue, prevDefinedValue, setValueWrapper]);
 
   const onValueChange = (stringValue: string) => {
     if (stringValue === '') {
-      setValue(undefined);
+      setValueWrapper(undefined);
       return;
     }
     const numericValue = Number(stringValue);
     if (Number.isNaN(numericValue)) {
       return;
     }
-    setValue(numericValue);
+    setValueWrapper(numericValue);
   };
 
   const onAddValue = (valueToAdd: number) => {
@@ -78,16 +91,16 @@ export const SizeEditor: React.FC<SizeEditorProps> = ({
     if (dropdownValues !== undefined) {
       const nextIndex = lowerBound(dropdownValues, value) + valueToAdd;
       const clampedIndex = clamp(nextIndex, 0, dropdownValues.length - 1);
-      setValue(dropdownValues[clampedIndex]);
+      setValueWrapper(dropdownValues[clampedIndex]);
       return;
     }
 
-    setValue(clamp(value + valueToAdd, minValue, maxValue));
+    setValueWrapper(clamp(value + valueToAdd, minValue, maxValue));
   };
 
   const onDropdownValueClicked = (dropdownValue: number) => {
     setShouldShowDropdown(false);
-    setValue(dropdownValue);
+    setValueWrapper(dropdownValue);
   };
 
   return (

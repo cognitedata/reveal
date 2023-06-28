@@ -5,17 +5,22 @@
 static final String[] APPLICATIONS = [
   'platypus',
   'data-exploration',
+  'vision',
   'data-catalog',
   'raw-explorer',
   'coding-conventions',
   'copilot',
   'industry-canvas-ui',
+  'interactive-diagrams',
   'iot-hub',
+  'functions-ui',
   '3d-management',
   'transformations',
   'cdf-document-search',
   'extraction-pipelines',
   'extractor-downloads',
+  'charts',
+  'entity-matching',
 ]
 
 /*
@@ -24,7 +29,8 @@ static final String[] APPLICATIONS = [
 */
 static final Map<String, String> NPM_PACKAGES = [
   'shared-plotting-components': "dist/libs/shared/plotting-components",
-  'user-profile-components': "dist/libs/shared/user-profile-components"
+  'user-profile-components': "dist/libs/shared/user-profile-components",
+  'cdf-ui-i18n-utils': "dist/libs/shared/cdf-ui-i18n-utils"
 ]
 
 // This is the Firebase site mapping.
@@ -32,33 +38,43 @@ static final Map<String, String> NPM_PACKAGES = [
 static final Map<String, String> FIREBASE_APP_SITES = [
   'platypus': 'platypus',
   'data-exploration': 'data-exploration',
+  'vision': 'vision',
   'data-catalog': 'data-catalog',
   'raw-explorer': 'raw-explorer',
   'coding-conventions': 'coding-conventions',
   'copilot': 'copilot',
   'industry-canvas-ui': 'industry-canvas-ui',
+  'interactive-diagrams': 'pnid-contextualization',
   'iot-hub': 'iot-hub',
   '3d-management': '3d-management',
   'transformations': 'transformations',
   'cdf-document-search': 'document-search',
+  'functions-ui': 'functions',
   'extraction-pipelines': 'extraction-pipelines',
   'extractor-downloads': 'extractor-downloads',
+  'charts': 'charts',
+  'entity-matching': 'entity-matching',
 ]
 
 static final Map<String, String> PREVIEW_PACKAGE_NAMES = [
   'platypus': "@cognite/cdf-solutions-ui",
   'data-exploration': "@cognite/cdf-data-exploration",
+  'vision': "@cognite/cdf-vision-subapp",
   'data-catalog': "@cognite/cdf-data-catalog",
   'raw-explorer': "@cognite/cdf-raw-explorer",
   'coding-conventions': "@cognite/cdf-coding-conventions",
   'copilot': "@cognite/cdf-copilot",
   'industry-canvas-ui': "@cognite/cdf-industry-canvas-ui",
+  'interactive-diagrams': '@cognite/cdf-context-ui-pnid',
   'iot-hub': "@cognite/cdf-iot-hub",
+  'functions-ui': "@cognite/cdf-functions-ui",
   '3d-management': '@cognite/cdf-3d-management',
   'transformations': "@cognite/cdf-transformations-2",
   'cdf-document-search': '@cognite/cdf-document-search-ui',
   'extraction-pipelines': '@cognite/cdf-integrations-ui',
   'extractor-downloads': '@cognite/cdf-extractor-downloads',
+  'charts': '@cognite/cdf-charts-ui',
+  'entity-matching': '@cognite/cdf-ui-entity-matching',
 ]
 
 // Replace this with your app's ID on https://sentry.io/ -- if you do not have
@@ -66,7 +82,8 @@ static final Map<String, String> PREVIEW_PACKAGE_NAMES = [
 static final Map<String, String> SENTRY_PROJECT_NAMES = [
   'platypus': "platypus",
   'data-exploration': "data-explorer",
-  'coding-conventions': "coding-conventions"
+  'coding-conventions': "coding-conventions",
+  'charts': 'cognite-charts'
 ]
 
 // Add apps/libs name to the list where you want the storybook preview to build.
@@ -118,20 +135,26 @@ static final Map<String, String> VERSIONING_STRATEGY = [
   'platypus': 'multi-branch',
   'coding-conventions': 'multi-branch',
   'data-exploration': 'multi-branch',
+  'vision': 'single-branch',
   'data-catalog': 'multi-branch',
   'raw-explorer': 'single-branch',
   '3d-management': 'single-branch',
   'transformations': 'single-branch',
   'copilot': 'single-branch',
   'iot-hub': 'single-branch',
+  'interactive-diagrams': 'multi-branch',
   'cdf-document-search': 'single-branch',
   'extraction-pipelines': 'single-branch',
   'extractor-downloads': 'single-branch',
+  'charts': 'multi-branch',
+  'entity-matching': 'single-branch',
+  'functions-ui' : 'single-branch',
 ]
 
 // The config of which apps have i18n strings that need to be synced to and pulled from locize.io
 static final String[] I18N_APPLICATIONS = [
-  'platypus'
+  'platypus',
+  'data-exploration'
 ]
 
 // == End of customization. Everything below here is common. == \\
@@ -204,7 +227,7 @@ def getAffectedLibs(boolean isMaster = false){
 
   print "[AFFECTED:NX] Affected libraries: ${affected}";
 
-  return affected.split(",");
+  return affected.replaceAll('[\r\n]+', '').split(', ');
 }
 
 

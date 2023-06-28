@@ -4,6 +4,7 @@ import { Button, Colors, Dropdown, Menu, Tooltip } from '@cognite/cogs.js';
 
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
+import { useTranslation } from '@data-exploration-lib/core';
 
 import { ids } from '../../../../../cogs-variables';
 
@@ -14,6 +15,7 @@ import {
 } from './sections';
 
 const HelpButton = (): JSX.Element => {
+  const { t } = useTranslation();
   return (
     <Dropdown
       appendTo={() => document.getElementsByClassName(ids.styleScope).item(0)!}
@@ -26,7 +28,7 @@ const HelpButton = (): JSX.Element => {
       }
       placement="right-end"
     >
-      <Tooltip content="Help" placement="right">
+      <Tooltip content={t('HELP', 'Help')} placement="right">
         <FullWidthButton
           icon="Help"
           type="ghost"

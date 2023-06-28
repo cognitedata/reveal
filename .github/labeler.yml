@@ -35,9 +35,21 @@ cdf-document-search:
   - apps/cdf-document-search/*
   - apps/cdf-document-search/**/*
 
+functions-ui:
+  - apps/functions-ui/*
+  - apps/functions-ui/**/*
+
+interactive-diagrams:
+  - apps/interactive-diagrams/*
+  - apps/interactive-diagrams/**/*
+
 extraction-pipelines:
   - apps/extraction-pipelines/*
   - apps/extraction-pipelines/**/*
 
 design-system:
   - libs/shared/user-profile-components/**/*
+
+charts:
+  - apps/charts/*
+  - apps/charts/**/*

@@ -4,7 +4,7 @@ import startCase from 'lodash/startCase';
 import { formatDate } from '@cognite/cogs.js';
 import { DateRange, Metadata } from '@cognite/sdk';
 
-import { METADATA_ALL_VALUE } from '@data-exploration-lib/core';
+import { METADATA_ALL_VALUE, TFunction } from '@data-exploration-lib/core';
 import {
   NIL_FILTER_VALUE,
   NIL_FILTER_LABEL,
@@ -29,18 +29,21 @@ type FilterValues =
   | boolean
   | undefined;
 
-export const formatValue = (input?: FilterValues): string => {
+export const formatValue = (
+  input: FilterValues = undefined,
+  t: TFunction
+): string => {
   if (input === undefined) {
     return '';
   }
 
   if (typeof input === 'boolean') {
-    return input ? 'True' : 'False';
+    return input ? t('TRUE', 'True') : t('FAlSE', 'False');
   }
 
   if (typeof input === 'string') {
     if (input === NIL_FILTER_VALUE) {
-      return NIL_FILTER_LABEL;
+      return t('NOT_AVAILABLE', NIL_FILTER_LABEL);
     }
 
     return input;
@@ -58,11 +61,15 @@ export const formatValue = (input?: FilterValues): string => {
     }
 
     if (input.min) {
-      return `After ${formatDate(input.min as number)}`;
+      return t('AFTER_DATE', `After ${formatDate(input.min as number)}`, {
+        date: formatDate(input.min as number),
+      });
     }
 
     if (input.max) {
-      return `Before ${formatDate(input.max as number)}`;
+      return t('BEFORE_DATE', `Before ${formatDate(input.max as number)}`, {
+        date: formatDate(input.min as number),
+      });
     }
   }
 

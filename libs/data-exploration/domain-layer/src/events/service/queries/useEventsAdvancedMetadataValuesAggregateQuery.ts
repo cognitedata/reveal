@@ -7,12 +7,12 @@ import isUndefined from 'lodash/isUndefined';
 
 import { useSDK } from '@cognite/sdk-provider';
 
+import { queryKeys } from '../../../queryKeys';
+import { getEventsMetadataValuesAggregate } from '../network';
 import {
-  getEventsMetadataValuesAggregate,
-  EventsMetadataAggregateResponse,
-  queryKeys,
   EventsAggregateFilters,
-} from '@data-exploration-lib/domain-layer';
+  EventsMetadataAggregateResponse,
+} from '../types';
 
 export const useEventsAdvancedMetadataValuesAggregateQuery = (
   metadataKey?: string | null,

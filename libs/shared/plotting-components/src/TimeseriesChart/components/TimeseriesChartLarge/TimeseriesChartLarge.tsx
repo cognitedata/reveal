@@ -2,6 +2,7 @@ import * as React from 'react';
 
 import { LineChart, LineChartProps } from '../../../LineChart';
 import { TimeseriesChartMetadata } from '../../domain/internal/types';
+import { useTranslation } from '../../i18n/useTranslation';
 
 import { CONFIG, LAYOUT } from './constants';
 import { formatHoverLineInfo } from './helpers/formatHoverLineInfo';
@@ -15,6 +16,8 @@ export const TimeseriesChartLarge: React.FC<TimeseriesChartLargeProps> = ({
   metadata,
   ...props
 }) => {
+  const { t } = useTranslation();
+
   const { dataFetchMode, unit } = metadata;
 
   return (
@@ -30,7 +33,7 @@ export const TimeseriesChartLarge: React.FC<TimeseriesChartLargeProps> = ({
       }}
       config={CONFIG}
       formatTooltipContent={(tooltipProps) =>
-        formatTooltipContent(tooltipProps, unit)
+        formatTooltipContent(tooltipProps, unit, t)
       }
       formatHoverLineInfo={formatHoverLineInfo}
     />

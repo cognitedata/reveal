@@ -5,6 +5,14 @@
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
       "rules": {}
+    },
+    {
+      "files": ["*.cy.ts", "*.commands.ts"],
+      "rules": {
+        "testing-library/await-async-utils": ["off"],
+        "testing-library/prefer-screen-queries": ["off"],
+        "testing-library/await-async-query": ["off"]
+      }
     }
   ]
 }

@@ -4,6 +4,7 @@ import {
   FilterProps,
   SPECIFIC_INFO_CONTENT,
   hasObjectAnyProperty,
+  useTranslation,
 } from '@data-exploration-lib/core';
 
 import { LabelFilter, MetadataFilter, SourceFilter } from '../../../Filters';
@@ -16,6 +17,8 @@ export const AssetFilters: React.FC<FilterProps> = ({
   onResetFilterClick,
   ...rest
 }) => {
+  const { t } = useTranslation();
+
   const assetFilter = filter.asset;
   const isResetButtonVisible = hasObjectAnyProperty(assetFilter, [
     'labels',
@@ -25,9 +28,9 @@ export const AssetFilters: React.FC<FilterProps> = ({
 
   return (
     <BaseFilterCollapse.Panel
-      title="Assets"
+      title={t('ASSETS', 'Assets')}
       hideResetButton={!isResetButtonVisible}
-      infoContent={SPECIFIC_INFO_CONTENT}
+      infoContent={t('SPECIFIC_INFO_CONTENT', SPECIFIC_INFO_CONTENT)}
       onResetClick={() => onResetFilterClick('asset')}
       {...rest}
     >

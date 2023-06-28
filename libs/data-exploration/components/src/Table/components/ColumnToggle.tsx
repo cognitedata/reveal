@@ -22,6 +22,7 @@ import {
 import {
   DATA_EXPLORATION_COMPONENT,
   useMetrics,
+  useTranslation,
 } from '@data-exploration-lib/core';
 
 import {
@@ -70,6 +71,7 @@ export function ColumnToggle<T extends TableData = any>({
 }: ColumnToggleProps<T>) {
   const [searchInput, setSearchInput] = useState('');
   const [tab, setTab] = useState('All');
+  const { t } = useTranslation();
 
   const elementOrders = allColumns().map((column) => column.id);
   const trackUsage = useMetrics();
@@ -131,9 +133,11 @@ export function ColumnToggle<T extends TableData = any>({
               onButtonClicked={handleTabClick}
               currentKey={tab}
             >
-              <StyledSegmentedButton key="All">All</StyledSegmentedButton>
+              <StyledSegmentedButton key="All">
+                {t('ALL', 'All')}
+              </StyledSegmentedButton>
               <StyledSegmentedButton key="Selected">
-                Selected
+                {t('SELECTED', 'Selected')}
                 <StyledCountLabel
                   size="small"
                   label={String(selectedColumnsCount)}
@@ -144,7 +148,7 @@ export function ColumnToggle<T extends TableData = any>({
             <StyledInput
               type="search"
               clearable={{ callback: () => setSearchInput('') }}
-              placeholder="Filter by name"
+              placeholder={t('FILTER_BY_NAME', 'Filter by name')}
               fullWidth
               variant="noBorder"
               value={searchInput}
@@ -156,7 +160,12 @@ export function ColumnToggle<T extends TableData = any>({
             />
 
             {!isSearchResultEmpty && searchInput && (
-              <SearchResultText>Results for "{searchInput}":</SearchResultText>
+              <SearchResultText>
+                {t('RESULTS_FOR_QUERY', `Results for "${searchInput}"`, {
+                  query: searchInput,
+                })}
+                :
+              </SearchResultText>
             )}
 
             <MenuItemsWrapper>
@@ -186,7 +195,9 @@ export function ColumnToggle<T extends TableData = any>({
                             text={column.columnDef.header?.toString()}
                           />
                           {has(column.columnDef?.meta, 'isMetadata') && (
-                            <MetadataHeaderText>Metadata</MetadataHeaderText>
+                            <MetadataHeaderText>
+                              {t('METADATA', 'Metadata')}
+                            </MetadataHeaderText>
                           )}
                         </Flex>
                       </StyledLabel>
@@ -198,19 +209,35 @@ export function ColumnToggle<T extends TableData = any>({
 
             {(isSelectedItemsEmpty || isSearchResultEmpty) && (
               <EmptyStateContainer alignItems="center" justifyContent="center">
-                <EmptyText>No options</EmptyText>
+                <EmptyText>{t('NO_OPTIONS', 'No options')}</EmptyText>
               </EmptyStateContainer>
             )}
 
             {!isSearchResultEmpty && isSelectedCountLimitExceedingMaxValue && (
               <Footer>
                 <WarningInfobar>
-                  Due to{' '}
-                  {columnSelectionLimit === 2 ? 'usability' : 'performance'}{' '}
-                  reasons, the max amount of columns that can be selected is{' '}
-                  {columnSelectionLimit}.{' '}
+                  {t(
+                    'COLUMN_TOGGLE_LIMIT_WARNING',
+                    `Due to ${
+                      columnSelectionLimit === 2 ? 'usability' : 'performance'
+                    } reasons, the max amount of columns that can be selected is ${columnSelectionLimit}.`,
+                    {
+                      reason:
+                        columnSelectionLimit === 2
+                          ? t(
+                              'COLUMN_TOGGLE_LIMIT_REASON_USABILITY',
+                              'usability'
+                            )
+                          : t(
+                              'COLUMN_TOGGLE_LIMIT_REASON_PERFORMACE',
+                              'performance'
+                            ),
+                      limit: columnSelectionLimit,
+                    }
+                  )}
+
                   <StyledResetSpan onClick={onResetSelectedColumns}>
-                    Reset to default
+                    {t('RESET_TO_DEFAULT', 'Reset to default')}
                   </StyledResetSpan>
                 </WarningInfobar>
               </Footer>

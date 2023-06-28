@@ -17,6 +17,7 @@ import {
   useFilterEmptyState,
   useResetEventsFilters,
 } from '@data-exploration-app/store/filter';
+import { useTranslation } from '@data-exploration-lib/core';
 import {
   transformNewFilterToOldFilter,
   useEventsMetadataKeysAggregateQuery,
@@ -26,6 +27,7 @@ import {
 import { BaseFilterCollapse } from '../../components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
 
 export const EventFilters = ({ ...rest }: Record<string, unknown>) => {
+  const { t } = useTranslation();
   const [eventFilter, setEventFilter] = useEventsFilters();
   const resetEventFilters = useResetEventsFilters();
   const isFiltersEmpty = useFilterEmptyState('event');
@@ -40,8 +42,8 @@ export const EventFilters = ({ ...rest }: Record<string, unknown>) => {
 
   return (
     <BaseFilterCollapse.Panel
-      title="Events"
-      infoContent={SPECIFIC_INFO_CONTENT}
+      title={t('EVENTS', 'Events')}
+      infoContent={t('SPECIFIC_INFO_CONTENT', SPECIFIC_INFO_CONTENT)}
       hideResetButton={isFiltersEmpty}
       onResetClick={resetEventFilters}
       {...rest}
@@ -53,12 +55,12 @@ export const EventFilters = ({ ...rest }: Record<string, unknown>) => {
           setValue={(newValue) => {
             setEventFilter({ type: newValue });
           }}
-          title="Type"
+          title={t('TYPE', 'Type')}
           value={eventFilter.type || []}
           isMulti={isAdvancedFiltersEnabled}
         />
         <DateFilterV2
-          title="Start time"
+          title={t('START_TIME', 'Start time')}
           value={eventFilter.startTime}
           setValue={(newDate) =>
             setEventFilter({
@@ -67,7 +69,7 @@ export const EventFilters = ({ ...rest }: Record<string, unknown>) => {
           }
         />
         <DateFilterV2
-          title="End time"
+          title={t('END_TIME', 'End time')}
           enableNull
           value={
             eventFilter.endTime && 'isNull' in eventFilter.endTime
@@ -87,7 +89,7 @@ export const EventFilters = ({ ...rest }: Record<string, unknown>) => {
           setValue={(newValue) => {
             setEventFilter({ subtype: newValue });
           }}
-          title="Sub-type"
+          title={t('SUB_TYPE', 'Sub type')}
           value={eventFilter.subtype || []}
           isMulti={isAdvancedFiltersEnabled}
         />

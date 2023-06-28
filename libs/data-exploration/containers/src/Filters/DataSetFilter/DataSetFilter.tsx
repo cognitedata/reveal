@@ -4,6 +4,7 @@ import {
   DATA_EXPLORATION_COMPONENT,
   ResourceType,
   useMetrics,
+  useTranslation,
 } from '@data-exploration-lib/core';
 import {
   DataSetInternal,
@@ -28,6 +29,7 @@ export const DataSetFilter = <TFilter,>({
   isLoading,
 }: DataSetFilterProps<TFilter>) => {
   const trackUsage = useMetrics();
+  const { t } = useTranslation();
 
   const handleChange = (
     newValue: {
@@ -48,11 +50,18 @@ export const DataSetFilter = <TFilter,>({
       disabled={!isError}
       content={
         isError &&
-        'Error fetching datasets, please make sure you have datasetsAcl:READ'
+        t(
+          'PERMISSIONS_ERROR_FETCHING',
+          'Error fetching datasets, please make sure you have datasetsAcl:READ',
+          {
+            dataType: 'datasets',
+            permissionType: 'datasetsAcl:READ',
+          }
+        )
       }
     >
       <MultiSelectFilter<number>
-        label="Data set"
+        label={t('DATA_SET', 'Data set')}
         options={options || []}
         isLoading={isLoading}
         isDisabled={isError}

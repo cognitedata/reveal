@@ -54,6 +54,7 @@ export enum QueryKeys {
   USER_PROFILES_BY_IDS = 'user-profiles-by-ids',
   LOCKING = 'canvas.locking',
   CREATE_SPACE = 'create-space',
+  LIST_SPACES = 'list-spaces',
 }
 
 export const SEARCH_QUERY_PARAM_KEY = 'search';
@@ -84,9 +85,15 @@ export const LINE_STROKE_WIDTH = {
   MEDIUM: 6,
   LARGE: 10,
 };
+export const MIN_STROKE_WIDTH = 1;
+export const MAX_STROKE_WIDTH = 50;
+export const LINE_DASH_ARRAY = [10, 10];
 
 // TODO: These timeouts can be removed when we implement the appropriate event in UFV: https://cognitedata.atlassian.net/browse/UFV-587
 export const SHAMEFUL_WAIT_TO_ENSURE_ANNOTATIONS_ARE_RENDERED_MS = 100;
 export const SHAMEFUL_WAIT_TO_ENSURE_CONTAINERS_ARE_RENDERED_MS = 100;
 
 export const CommentsFeatureFlagKey = 'UFV_INDUSTRY_CANVAS_COMMENTS';
+
+export const CANVAS_FLOATING_ELEMENT_MARGIN = 15;
+export const CANVAS_MIN_WIDTH = 420;

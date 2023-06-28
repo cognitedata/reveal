@@ -14,7 +14,11 @@ import {
   listBaseCacheKey,
 } from '@cognite/sdk-react-query-hooks';
 
-import { SUB_APP_PATH, createInternalLink } from '@data-exploration-lib/core';
+import {
+  useTranslation,
+  SUB_APP_PATH,
+  createInternalLink,
+} from '@data-exploration-lib/core';
 
 import { DocumentUploader } from './DocumentUploader';
 
@@ -50,6 +54,7 @@ export const DocumentUploaderModal = ({
 }: Props) => {
   const [fileList, setFileList] = useState<FileInfo[]>([]);
   const client = useQueryClient();
+  const { t } = useTranslation();
 
   const { pathname } = useLocation();
   const userHistoryService = useCdfUserHistoryService();
@@ -58,7 +63,7 @@ export const DocumentUploaderModal = ({
     <Modal
       visible={visible}
       onCancel={onCancel}
-      title="Upload File"
+      title={t('UPLOAD_FILE', 'Upload File')}
       footer={null}
     >
       <Wrapper>
@@ -85,14 +90,17 @@ export const DocumentUploaderModal = ({
               <ul>
                 {fileList.map((file) => (
                   <li>
-                    File{' '}
+                    {t('FILE', 'File')}{' '}
                     <Button
                       type="ghost-accent"
                       onClick={() => onFileSelected(file)}
                     >
                       {file.name}
                     </Button>{' '}
-                    successfully uploaded!
+                    {t(
+                      'FILE_SUCCESSFULLY_UPLOADED_TEXT',
+                      'successfully uploaded!'
+                    )}
                   </li>
                 ))}
               </ul>

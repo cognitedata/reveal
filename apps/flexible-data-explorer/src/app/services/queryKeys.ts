@@ -23,8 +23,24 @@ export const queryKeys = {
       dataModel,
     ] as const,
 
-  instance: (instance: Instance, dataModel?: DataModel) =>
-    [...queryKeys.all, 'instance', instance, dataModel] as const,
+  instance: (instance: Instance, types: any, dataModel?: DataModel) =>
+    [...queryKeys.all, 'instance', types, instance, dataModel] as const,
+  instanceDirect: (instance: Instance, dataModel?: DataModel, types?: any) =>
+    [...queryKeys.all, 'instance-direct', instance, dataModel, types] as const,
+  instanceRelationship: (
+    instance: Instance,
+    dataModel: DataModel,
+    type: string,
+    filters: any
+  ) =>
+    [
+      ...queryKeys.all,
+      'instance-relationship',
+      instance,
+      dataModel,
+      type,
+      filters,
+    ] as const,
 
   searchFiles: (query: string, filter?: DocumentFilter, limit?: number) => [
     ...queryKeys.all,

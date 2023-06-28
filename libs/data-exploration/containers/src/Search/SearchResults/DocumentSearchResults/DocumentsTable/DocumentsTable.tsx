@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 
 import {
+  getTableColumns,
   SubCellMatchingLabels,
   Table,
   TableProps,
@@ -11,7 +12,11 @@ import { ColumnDef, Row } from '@tanstack/react-table';
 import { Body } from '@cognite/cogs.js';
 import { Asset } from '@cognite/sdk';
 
-import { DASH, getHiddenColumns } from '@data-exploration-lib/core';
+import {
+  DASH,
+  getHiddenColumns,
+  useTranslation,
+} from '@data-exploration-lib/core';
 import {
   InternalDocument,
   InternalDocumentWithMatchingLabels,
@@ -49,12 +54,13 @@ export const DocumentsTable = (props: DocumentTableProps) => {
   const { query, shouldShowPreviews = true, onRootAssetClick } = props;
   const { metadataColumns, setMetadataKeyQuery } =
     useDocumentsMetadataColumns();
-
+  const { t } = useTranslation();
+  const tableColumns = getTableColumns(t);
   const columns = useMemo(
     () =>
       [
         {
-          ...Table.Columns.name(),
+          ...tableColumns.name(),
           enableHiding: false,
           cell: ({ row }: { row: Row<InternalDocumentWithMatchingLabels> }) => {
             const fileNamePreviewProps = {
@@ -73,7 +79,7 @@ export const DocumentsTable = (props: DocumentTableProps) => {
         },
         {
           accessorKey: 'content',
-          header: 'Content',
+          header: t('CONTENT', 'Content'),
           cell: ({ row }: { row: Row<InternalDocument> }) => {
             return (
               <DocumentContentPreview document={row.original} query={query} />
@@ -94,7 +100,7 @@ export const DocumentsTable = (props: DocumentTableProps) => {
                     />
                   );
                 },
-                enableSorting: true,
+                enableSorting: false,
                 enableHiding: true,
               },
             ]
@@ -102,14 +108,14 @@ export const DocumentsTable = (props: DocumentTableProps) => {
         {
           accessorKey: 'author',
           id: 'author',
-          header: 'Author',
+          header: t('AUTHOR', 'Author'),
           cell: ({ row }: { row: Row<InternalDocument> }) => {
             return <Body level={2}>{row.original.author || DASH}</Body>;
           },
         },
         {
           id: 'directory',
-          header: 'Directory',
+          header: t('DIRECTORY', 'Directory'),
           cell: ({ row }) => {
             return (
               <Body level={2}>
@@ -122,30 +128,30 @@ export const DocumentsTable = (props: DocumentTableProps) => {
         {
           // You do not have to add an id field if accessor is given a string.
           accessorKey: 'type',
-          header: 'File type',
+          header: t('FILE_TYPE', 'File type'),
           cell: ({ row }: { row: Row<InternalDocument> }) => {
             return <Body level={2}>{row.original.type}</Body>;
           },
         },
         {
           accessorKey: 'modifiedTime',
-          header: 'Last updated',
+          header: t('LAST_UPDATED', 'Last updated'),
           cell: ({ row }: { row: Row<InternalDocument> }) => (
             <Body level={2}>
               <TimeDisplay value={row.original.modifiedTime} />
             </Body>
           ),
         },
-        Table.Columns.created,
+        tableColumns.created,
         {
-          ...Table.Columns.rootAsset(onRootAssetClick),
+          ...tableColumns.rootAsset(onRootAssetClick),
           accessorFn: (doc) => doc?.assetIds?.length && doc.assetIds[0],
         },
-        Table.Columns.assets(onRootAssetClick),
-        Table.Columns.externalId(query),
-        Table.Columns.id(query),
+        tableColumns.assets(onRootAssetClick),
+        tableColumns.externalId(query),
+        tableColumns.id(query),
         {
-          ...Table.Columns.dataSet,
+          ...tableColumns.dataSet,
           accessorFn: (document) => document.sourceFile.datasetId,
           enableSorting: true,
         },

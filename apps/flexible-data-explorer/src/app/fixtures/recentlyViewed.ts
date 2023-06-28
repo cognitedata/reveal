@@ -65,7 +65,6 @@ export const getRecentlyViewed = () => {
       },
     },
     {
-      description: 'ts description',
       name: '22PT1019-MF_22_0132_P007', // fallback instance.externalID
 
       dataModel: {

@@ -144,6 +144,7 @@ const SmallChatBotWrapper = styled(ResizableBox)`
   }
   .botui_action_container {
     padding: 0;
+    min-height: 104px;
     .botui_action {
       padding: 0;
     }

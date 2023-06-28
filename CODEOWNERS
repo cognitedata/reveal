@@ -18,6 +18,7 @@ apps/platypus                     @cognitedata/cdf-user-experience
 apps/platypus-cdf-cli             @cognitedata/cdf-user-experience
 
 libs/data-modeling                @cognitedata/cdf-user-experience
+libs/shared/cdf-ui-i18n-utils                @cognitedata/cdf-user-experience
 
 # Team data-explorer
 apps/data-exploration             @cognitedata/explorers
@@ -47,13 +48,27 @@ apps/copilot              @davidlky @andeplane @miladh @trygveu
 apps/raw-explorer @cognitedata/team-hebe
 apps/iot-hub              @davidlky @geircognite @muradsater
 
+# Entity matching
+apps/entity-matching                @cognitedata/cdf-user-experience
+
+# Vision
+apps/vision              @cognitedata/cdf-user-experience
+
+# Interactive Diagrams
+apps/interactive-diagrams @cognitedata/team-hebe
+
 # 3D / Reveal
 apps/3d-management                @cognitedata/3d-reveal-viewer-team
 
 # Migrated CDF-UX Subapps
 apps/data-catalog                 @cognitedata/cdf-user-experience
-apps/extraction-pipelines		  @cognitedata/cdf-user-experience
+apps/extraction-pipelines         @cognitedata/cdf-user-experience
 apps/extractor-downloads          @cognitedata/cdf-user-experience
+
+libs/shared/cdf-utilities         @cognitedata/cdf-user-experience
 
 
 libs/shared/user-profile-components   @cognitedata/cogs-team
+
+# Functions UI
+apps/functions-ui             @abdullah-cognite @shubhsk88 

@@ -4,6 +4,8 @@ import styled from 'styled-components';
 
 import { Title } from '@cognite/cogs.js';
 
+import { useTranslation } from '@data-exploration-lib/core';
+
 import {
   AssetItem,
   AssetsItem,
@@ -19,12 +21,14 @@ export const GeneralDetails = ({
 }: {
   children: React.ReactNode[];
 }) => {
+  const { t } = useTranslation();
+
   const isPreview: boolean = window.location.pathname.includes('/search');
 
   return (
     <GeneralDetailsCard>
       <GeneralDetailsHeader>
-        <Title level={5}>General</Title>
+        <Title level={5}>{t('GENERAL', 'General')}</Title>
       </GeneralDetailsHeader>
       <GeneralDetailsContent isPreview={isPreview}>
         {children}

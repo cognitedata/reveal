@@ -38,7 +38,7 @@ export const App = () => {
     defaultOptions: {
       queries: {
         retry: false,
-        staleTime: 10 * 60 * 1000, // Pretty long
+        staleTime: 10 * 60 * 1000, // 10 minutes
       },
     },
   });

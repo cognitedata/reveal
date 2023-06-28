@@ -15,16 +15,20 @@ import { v4 as uuid } from 'uuid';
 import { createLink, PageTitle } from '@cognite/cdf-utilities';
 import {
   Button,
-  Dropdown,
-  Menu,
+  Chip,
   Colors,
+  Dropdown,
   Flex,
   Icon,
+  Menu,
   toast,
   Tooltip,
-  Chip,
 } from '@cognite/cogs.js';
-import { isNotUndefined, ResourceItem } from '@cognite/data-exploration';
+import {
+  isNotUndefined,
+  ResourceItem,
+  Splitter,
+} from '@cognite/data-exploration';
 import { useSDK } from '@cognite/sdk-provider';
 import {
   UnifiedViewer,
@@ -35,9 +39,11 @@ import {
 import { translationKeys } from './common';
 import CanvasDropdown from './components/CanvasDropdown';
 import { CanvasTitle } from './components/CanvasTitle';
+import { CloseResourceSelectorButton } from './components/CloseResourceSelectorButton';
 import DragOverIndicator from './components/DragOverIndicator';
 import IndustryCanvasFileUploadModal from './components/IndustryCanvasFileUploadModal/IndustryCanvasFileUploadModal';
 import {
+  CANVAS_MIN_WIDTH,
   MetricEvent,
   SEARCH_QUERY_PARAM_KEY,
   SHAMEFUL_WAIT_TO_ENSURE_CONTAINERS_ARE_RENDERED_MS,
@@ -45,11 +51,13 @@ import {
   ZOOM_TO_FIT_MARGIN,
 } from './constants';
 import { useDragAndDrop } from './hooks/useDragAndDrop';
+import useLocalStorage from './hooks/useLocalStorage';
 import useManagedState from './hooks/useManagedState';
 import useManagedTools from './hooks/useManagedTools';
 import { useQueryParameter } from './hooks/useQueryParameter';
 import { useResourceSelectorActions } from './hooks/useResourceSelectorActions';
 import { useSelectedAnnotationOrContainer } from './hooks/useSelectedAnnotationOrContainer';
+import { useTooltipsOptions } from './hooks/useTooltipsOptions';
 import useTrackCanvasViewed from './hooks/useTrackCanvasViewed';
 import { useTranslation } from './hooks/useTranslation';
 import { IndustryCanvas } from './IndustryCanvas';
@@ -64,6 +72,7 @@ import {
   DEFAULT_CONTAINER_MAX_HEIGHT,
   DEFAULT_CONTAINER_MAX_WIDTH,
 } from './utils/addDimensionsToContainerReference';
+import enforceTimeseriesApplyToAllIfEnabled from './utils/enforceTimeseriesApplyToAllIfEnabled';
 import isSupportedResourceItem from './utils/isSupportedResourceItem';
 import resourceItemToContainerReference from './utils/resourceItemToContainerReference';
 import useMetrics from './utils/tracking/useMetrics';
@@ -86,8 +95,13 @@ export const IndustryCanvasPage = () => {
     useState<boolean>(true);
   const [currentZoomScale, setCurrentZoomScale] = useState<number>(1);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const { tooltipsOptions, onUpdateTooltipsOptions } = useTooltipsOptions();
   const { tool, setTool } = useManagedTool(IndustryCanvasToolType.SELECT);
   const { queryString } = useQueryParameter({ key: SEARCH_QUERY_PARAM_KEY });
+  const [resourceSelectorWidth, setResourceSelectorWidth] = useLocalStorage(
+    'COGNITE_INDUSTRIAL_CANVAS_RESOURCE_SELECTOR_WIDTH',
+    700
+  );
 
   const [hasZoomedToFitOnInitialLoad, setHasZoomedToFitOnInitialLoad] =
     useState(false);
@@ -129,6 +143,7 @@ export const IndustryCanvasPage = () => {
     unifiedViewer: unifiedViewerRef,
     setTool,
     tool,
+    tooltipsOptions,
   });
 
   useTrackCanvasViewed(activeCanvas);
@@ -236,7 +251,12 @@ export const IndustryCanvasPage = () => {
         return;
       }
 
-      addContainerReferences(containerReferencesToAdd).then((containers) => {
+      addContainerReferences(
+        enforceTimeseriesApplyToAllIfEnabled(
+          tooltipsOptions,
+          containerReferencesToAdd
+        )
+      ).then((containers) => {
         // When we add new containers, we want to zoom to fit and select them.
         // Since the new containers might not be rendered immediately, we need to wait a bit before we can do that.
         setTimeout(() => {
@@ -279,6 +299,7 @@ export const IndustryCanvasPage = () => {
       container?.children,
       isCanvasLocked,
       t,
+      tooltipsOptions,
     ]
   );
 
@@ -422,12 +443,17 @@ export const IndustryCanvasPage = () => {
   const onKeyDown: KeyboardEventHandler<HTMLElement> = (event) => {
     if ((event.ctrlKey || event.metaKey) && event.key === 'z') {
       if (event.shiftKey) {
+        event.stopPropagation();
+        event.preventDefault();
         redo.fn();
         trackUsage(MetricEvent.HOTKEYS_USED, {
           hotkey: 'Ctrl/Cmd + Shift + Z',
         });
         return;
       }
+
+      event.stopPropagation();
+      event.preventDefault();
       undo.fn();
       trackUsage(MetricEvent.HOTKEYS_USED, {
         hotkey: 'Ctrl/Cmd + Z',
@@ -443,6 +469,8 @@ export const IndustryCanvasPage = () => {
     }
 
     if ((event.ctrlKey || event.metaKey) && event.key === 's') {
+      event.stopPropagation();
+      event.preventDefault();
       trackUsage(MetricEvent.HOTKEYS_USED, {
         hotkey: 'Ctrl/Cmd + S',
       });
@@ -450,6 +478,8 @@ export const IndustryCanvasPage = () => {
     }
 
     if ((event.ctrlKey || event.metaKey) && event.key === 'a') {
+      event.stopPropagation();
+      event.preventDefault();
       trackUsage(MetricEvent.HOTKEYS_USED, {
         hotkey: 'Ctrl/Cmd + A',
       });
@@ -457,6 +487,8 @@ export const IndustryCanvasPage = () => {
     }
 
     if (event.key === 'Escape') {
+      event.stopPropagation();
+      event.preventDefault();
       unifiedViewerRef?.selectByIds({
         containerIds: [],
         annotationIds: [],
@@ -475,17 +507,6 @@ export const IndustryCanvasPage = () => {
 
   return (
     <>
-      <ResourceSelector
-        onSelect={onAddResourcePress}
-        visible={isResourceSelectorOpen}
-        onClose={onResourceSelectorCloseWrapper}
-        visibleResourceTabs={['file', 'timeSeries', 'asset', 'event']}
-        selectionMode="multiple"
-        initialFilter={resourceSelectorFilter}
-        initialSelectedResource={initialSelectedResource}
-        addButtonText="Add to canvas"
-        shouldShowPreviews={false}
-      />
       <PageTitle title="Industrial Canvas" />
       <TitleRowWrapper>
         <PreviewLinkWrapper>
@@ -533,9 +554,18 @@ export const IndustryCanvasPage = () => {
               icon="Lock"
               label={t(translationKeys.CANVAS_LOCKED_CHIP, 'Canvas locked')}
               tooltipProps={{
-                content: t(
-                  translationKeys.CANVAS_LOCKED,
-                  'Canvas is being edited by another user and is therefore not editable'
+                content: (
+                  <>
+                    {t(
+                      translationKeys.CANVAS_LOCKED_REASON,
+                      'The canvas is locked until your colleague has finished editing.'
+                    )}
+                    <br />
+                    {t(
+                      translationKeys.CANVAS_LOCKED_FUTURE,
+                      'Real-time collaboration will be part of a future release.'
+                    )}
+                  </>
                 ),
                 position: 'bottom',
               }}
@@ -567,7 +597,8 @@ export const IndustryCanvasPage = () => {
           </Tooltip>
 
           <Button
-            disabled={isCanvasLocked}
+            type="primary"
+            disabled={isCanvasLocked || isResourceSelectorOpen}
             aria-label="Add data"
             onClick={() => {
               onResourceSelectorOpen();
@@ -612,37 +643,64 @@ export const IndustryCanvasPage = () => {
           </Dropdown>
         </StyledGoBackWrapper>
       </TitleRowWrapper>
-      <PreviewTabWrapper onKeyDown={onKeyDown} onDrop={onDrop}>
-        <IndustryCanvas
-          id={APPLICATION_ID_INDUSTRY_CANVAS}
-          viewerRef={unifiedViewerRef}
-          onRef={setUnifiedViewerRef}
-          shouldShowConnectionAnnotations={shouldShowConnectionAnnotations}
-          currentZoomScale={currentZoomScale}
-          applicationId={APPLICATION_ID_INDUSTRY_CANVAS}
-          onAddContainerReferences={onAddContainerReferences}
-          onDeleteRequest={onDeleteRequest}
-          onUpdateRequest={onUpdateRequest}
-          interactionState={interactionState}
-          setInteractionState={setInteractionState}
-          containerAnnotations={containerAnnotations}
-          clickedContainerAnnotation={clickedContainerAnnotation}
-          container={container}
-          updateContainerById={updateContainerById}
-          removeContainerById={removeContainerById}
-          selectedContainer={selectedContainer}
-          canvasAnnotations={canvasAnnotations}
-          selectedCanvasAnnotation={selectedCanvasAnnotation}
-          tool={tool}
-          setTool={setTool}
-          onUpdateAnnotationStyleByType={onUpdateAnnotationStyleByType}
-          toolOptions={toolOptions}
-          isCanvasLocked={isCanvasLocked}
-          onResourceSelectorOpen={onResourceSelectorOpen}
-          commentAnnotations={commentAnnotations}
-        />
-        <DragOverIndicator isDragging={isDragging} />
-      </PreviewTabWrapper>
+      <StyledSplitter
+        primaryMinSize={CANVAS_MIN_WIDTH}
+        secondaryInitialSize={resourceSelectorWidth}
+        onSecondaryPaneSizeChange={setResourceSelectorWidth}
+        primaryIndex={0}
+      >
+        <IndustryCanvasWrapper onKeyDown={onKeyDown} onDrop={onDrop}>
+          <IndustryCanvas
+            id={APPLICATION_ID_INDUSTRY_CANVAS}
+            viewerRef={unifiedViewerRef}
+            onRef={setUnifiedViewerRef}
+            shouldShowConnectionAnnotations={shouldShowConnectionAnnotations}
+            currentZoomScale={currentZoomScale}
+            applicationId={APPLICATION_ID_INDUSTRY_CANVAS}
+            onAddContainerReferences={onAddContainerReferences}
+            onDeleteRequest={onDeleteRequest}
+            onUpdateRequest={onUpdateRequest}
+            interactionState={interactionState}
+            setInteractionState={setInteractionState}
+            containerAnnotations={containerAnnotations}
+            clickedContainerAnnotation={clickedContainerAnnotation}
+            container={container}
+            updateContainerById={updateContainerById}
+            removeContainerById={removeContainerById}
+            selectedContainer={selectedContainer}
+            canvasAnnotations={canvasAnnotations}
+            selectedCanvasAnnotation={selectedCanvasAnnotation}
+            tool={tool}
+            setTool={setTool}
+            onUpdateAnnotationStyleByType={onUpdateAnnotationStyleByType}
+            toolOptions={toolOptions}
+            isCanvasLocked={isCanvasLocked}
+            onResourceSelectorOpen={onResourceSelectorOpen}
+            commentAnnotations={commentAnnotations}
+            tooltipsOptions={tooltipsOptions}
+            onUpdateTooltipsOptions={onUpdateTooltipsOptions}
+          />
+
+          <CloseResourceSelectorButton
+            isVisible={isResourceSelectorOpen}
+            onClick={onResourceSelectorCloseWrapper}
+          />
+
+          <DragOverIndicator isDragging={isDragging} />
+        </IndustryCanvasWrapper>
+
+        {isResourceSelectorOpen && (
+          <ResourceSelector
+            onSelect={onAddResourcePress}
+            visibleResourceTabs={['file', 'timeSeries', 'asset', 'event']}
+            selectionMode="multiple"
+            initialFilter={resourceSelectorFilter}
+            initialSelectedResource={initialSelectedResource}
+            addButtonText="Add to canvas"
+            shouldShowPreviews={false}
+          />
+        )}
+      </StyledSplitter>
       <IndustryCanvasFileUploadModal
         fileDropData={fileDropData}
         onCancel={resetFileDropData}
@@ -664,6 +722,7 @@ export const IndustryCanvasPage = () => {
   );
 };
 
+const TITlE_ROW_HEIGHT = 57;
 const TitleRowWrapper = styled.div`
   h1 {
     margin: 0px;
@@ -672,10 +731,15 @@ const TitleRowWrapper = styled.div`
   align-items: center;
   flex-wrap: nowrap;
   padding: 10px 12px;
+  height: ${TITlE_ROW_HEIGHT}px;
   border-bottom: 1px solid ${Colors['decorative--grayscale--300']};
 `;
 
-const PreviewTabWrapper = styled.div`
+const StyledSplitter = styled(Splitter)`
+  height: calc(100% - ${TITlE_ROW_HEIGHT}px);
+`;
+
+const IndustryCanvasWrapper = styled.div`
   height: 100%;
   position: relative;
 `;

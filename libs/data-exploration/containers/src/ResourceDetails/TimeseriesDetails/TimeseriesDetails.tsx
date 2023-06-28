@@ -12,6 +12,7 @@ import {
   ResourceType,
   SelectableItemsProps,
   ViewType,
+  useTranslation,
 } from '@data-exploration-lib/core';
 import {
   useAssetsByIdQuery,
@@ -31,7 +32,16 @@ import {
 } from '../../DetailsTable';
 import { TimeseriesInfo } from '../../Info';
 import { ResourceSelection } from '../../ResourceSelector';
-import { EVENTS, FILES, SEQUENCES, TIME_SERIES } from '../constant';
+import {
+  ASSETS,
+  DETAILS,
+  EVENTS,
+  FILES,
+  NO_DETAILS_AVAILABLE,
+  PREVIEW,
+  SEQUENCES,
+  TIME_SERIES,
+} from '../constant';
 import { getResourcesVisibility } from '../utils';
 
 interface Props {
@@ -61,6 +71,7 @@ export const TimeseriesDetails: FC<
   const timeseries = useMemo(() => {
     return data ? data[0] : undefined;
   }, [data]);
+  const { t } = useTranslation();
 
   const {
     isAssetVisible,
@@ -140,28 +151,31 @@ export const TimeseriesDetails: FC<
     >
       <StyledCollapse accordion ghost defaultActiveKey="preview">
         {timeseries ? (
-          <Collapse.Panel key="preview" header={<h4>Preview</h4>}>
+          <Collapse.Panel
+            key="preview"
+            header={<h4>{t('PREVIEW', PREVIEW)}</h4>}
+          >
             <TimeseriesChart
               timeseriesId={timeseries.id}
-              height={300}
-              numberOfPoints={100}
-              variant="medium"
-              dataFetchOptions={{
-                mode: 'aggregate',
-              }}
-              autoRange
+              height={400}
+              quickTimePeriodOptions={['1D', '1W', '1Y']}
             />
           </Collapse.Panel>
         ) : null}
-        <Collapse.Panel key="timeseries-details" header={<h4>Details</h4>}>
+        <Collapse.Panel
+          key="timeseries-details"
+          header={<h4>{t('DETAILS', DETAILS)}</h4>}
+        >
           {timeseries ? (
             <TimeseriesInfo timeseries={timeseries} />
           ) : (
-            <Title level={5}>No Details Available</Title>
+            <Title level={5}>
+              {t('NO_DETAILS_AVAILABLE', NO_DETAILS_AVAILABLE)}
+            </Title>
           )}
         </Collapse.Panel>
         {isAssetVisible && (
-          <Collapse.Panel header={<h4>Assets</h4>}>
+          <Collapse.Panel header={<h4>{t('ASSETS', ASSETS)}</h4>}>
             <AssetDetailsTable
               id="related-asset-timeseries-details"
               data={relatedAssets}
@@ -177,7 +191,7 @@ export const TimeseriesDetails: FC<
         {isTimeseriesVisible && (
           <Collapse.Panel
             key="event-timeseries-detail"
-            header={<h4>{TIME_SERIES}</h4>}
+            header={<h4>{t('TIMESERIES', TIME_SERIES)}</h4>}
           >
             <TimeseriesDetailsTable
               id="timeseries-resource-event-detail-table"
@@ -196,7 +210,7 @@ export const TimeseriesDetails: FC<
         {isFileVisible && (
           <Collapse.Panel
             key="timeseries-documents-detail"
-            header={<h4>{FILES}</h4>}
+            header={<h4>{t('FILES', FILES)}</h4>}
           >
             <FileDetailsTable
               id="documents-resource-timeseries-detail-table"
@@ -215,7 +229,7 @@ export const TimeseriesDetails: FC<
         {isEventVisible && (
           <Collapse.Panel
             key="timeseries-events-detail"
-            header={<h4>{EVENTS}</h4>}
+            header={<h4>{t('EVENTS', EVENTS)}</h4>}
           >
             <EventDetailsTable
               id="event-resource-timeseries-detail-table"
@@ -234,7 +248,7 @@ export const TimeseriesDetails: FC<
         {isSequenceVisible && (
           <Collapse.Panel
             key="timeseries-sequence-detail"
-            header={<h4>{SEQUENCES}</h4>}
+            header={<h4>{t('SEQUENCES', SEQUENCES)}</h4>}
           >
             <SequenceDetailsTable
               id="sequence-resource-timeseries-detail-table"

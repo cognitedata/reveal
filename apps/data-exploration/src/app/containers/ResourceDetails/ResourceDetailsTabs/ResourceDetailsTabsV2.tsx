@@ -9,7 +9,6 @@ import {
   useRelatedResourceCounts,
   ResourceType,
   ResourceItem,
-  getTitle,
 } from '@cognite/data-exploration';
 
 import { RelatedResources } from '@data-exploration-app/containers/ResourceDetails/RelatedResources/RelatedResources';
@@ -21,6 +20,9 @@ import {
 import { addPlusSignToCount } from '@data-exploration-app/utils/stringUtils';
 import {
   formatNumber,
+  getTitle,
+  getTranslationEntry,
+  useTranslation,
   withThousandSeparator,
 } from '@data-exploration-lib/core';
 
@@ -94,6 +96,7 @@ export const ResourceDetailsTabsV2 = ({
     parentResource,
     isAdvancedFiltersEnabled
   );
+  const { t } = useTranslation();
 
   const filteredTabs = defaultRelationshipTabs.filter(
     (type) => !excludedTypes.includes(type)
@@ -105,23 +108,32 @@ export const ResourceDetailsTabsV2 = ({
       : addPlusSignToCount(formatNumber(count), hasMoreRelationships[key]!);
   };
 
-  const relationshipTabs = filteredTabs.map((key) => (
-    <Tabs.Tab
-      tabKey={key}
-      key={key}
-      label={getTitle(key)}
-      chipRight={{
-        label: getCountLabel(counts[key] || 0, key),
-        size: 'x-small',
-        tooltipProps: { content: withThousandSeparator(counts[key], ',') },
-      }}
-    >
-      <ResourceDetailTabContent
-        resource={parentResource}
-        type={key as ResourceType}
-      />
-    </Tabs.Tab>
-  ));
+  const relationshipTabs = filteredTabs.map((key) => {
+    const totalCount = counts[key] || 0;
+    const titleTranslationKey = `${key}_${getTranslationEntry(totalCount)}`;
+
+    const title = getTitle(key, totalCount !== 1);
+    const titleTranslated = t(titleTranslationKey, title, {
+      count: totalCount,
+    });
+    return (
+      <Tabs.Tab
+        tabKey={key}
+        key={key}
+        label={titleTranslated}
+        chipRight={{
+          label: getCountLabel(totalCount, key),
+          size: 'x-small',
+          tooltipProps: { content: withThousandSeparator(totalCount, ',') },
+        }}
+      >
+        <ResourceDetailTabContent
+          resource={parentResource}
+          type={key as ResourceType}
+        />
+      </Tabs.Tab>
+    );
+  });
   const tabs = [...additionalTabs, ...relationshipTabs];
 
   return (

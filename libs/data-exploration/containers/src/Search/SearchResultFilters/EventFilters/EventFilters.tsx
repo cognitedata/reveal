@@ -4,6 +4,7 @@ import {
   FilterProps,
   SPECIFIC_INFO_CONTENT,
   hasObjectAnyProperty,
+  useTranslation,
 } from '@data-exploration-lib/core';
 
 import {
@@ -22,6 +23,8 @@ export const EventFilters: React.FC<FilterProps> = ({
   onResetFilterClick,
   ...rest
 }) => {
+  const { t } = useTranslation();
+
   const eventFilter = filter.event;
   const isResetButtonVisible = hasObjectAnyProperty(eventFilter, [
     'sources',
@@ -31,9 +34,10 @@ export const EventFilters: React.FC<FilterProps> = ({
     'subtype',
     'type',
   ]);
+
   return (
     <BaseFilterCollapse.Panel
-      title="Events"
+      title={t('EVENTS', 'Events')}
       hideResetButton={!isResetButtonVisible}
       infoContent={SPECIFIC_INFO_CONTENT}
       onResetClick={() => onResetFilterClick('event')}

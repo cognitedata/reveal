@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { ResourceItem } from '@data-exploration-lib/core';
@@ -8,6 +9,7 @@ import { Menu } from '../../components/menu/Menu';
 import { Page } from '../../containers/page/Page';
 import { FileWidget, PropertiesWidget } from '../../containers/widgets';
 import { useNavigation } from '../../hooks/useNavigation';
+import { useRecentlyVisited } from '../../hooks/useRecentlyVisited';
 import { useFileByIdQuery } from '../../services/instances/file/queries/useFileByIdQuery';
 
 const FileActions = ({
@@ -35,8 +37,9 @@ const FileActions = ({
 export const FilePage = () => {
   const navigate = useNavigation();
   const { externalId } = useParams();
+  const [, setRecentlyVisited] = useRecentlyVisited();
 
-  const { data, isLoading } = useFileByIdQuery(externalId);
+  const { data, isLoading, isFetched } = useFileByIdQuery(externalId);
 
   const handleNavigateToCanvasClick = () => {
     if (data && data.id) {
@@ -44,6 +47,17 @@ export const FilePage = () => {
       navigate.toCanvas(file);
     }
   };
+
+  useEffect(() => {
+    return () => {
+      if (isFetched && externalId) {
+        setRecentlyVisited(data?.name, undefined, {
+          externalId,
+          dataType: 'file',
+        });
+      }
+    };
+  }, [isFetched]);
 
   return (
     <Page.Dashboard
@@ -58,8 +72,8 @@ export const FilePage = () => {
       ]}
     >
       <Page.Widgets>
-        <FileWidget id="Preview" fileId={data?.id} rows={8} columns={2} />
         <PropertiesWidget id="Properties" data={data} columns={2} />
+        <FileWidget id="Preview" fileId={data?.id} rows={8} columns={2} />
       </Page.Widgets>
     </Page.Dashboard>
   );

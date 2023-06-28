@@ -14,7 +14,7 @@ const useCanvasDeletion = () => {
   const { isArchivingCanvas, archiveCanvas } = useIndustryCanvasContext();
 
   const onDeleteCanvasConfirmed = (canvas: SerializedCanvasDocument) => {
-    archiveCanvas(canvas);
+    archiveCanvas(canvas.externalId);
     toast.success(`Deleted canvas '${canvas.name}'`, {
       toastId: `deleted-canvas-${canvas.externalId}`,
       position: TOAST_POSITION,

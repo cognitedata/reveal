@@ -12,6 +12,7 @@ import {
   NIL_FILTER_LABEL,
   isEscapeButton,
   useDeepEffect,
+  useTranslation,
 } from '@data-exploration-lib/core';
 
 import {
@@ -60,6 +61,8 @@ export const OptionsMenu = ({
   disableOptionsMenu,
   isLoading,
 }: OptionsMenuProps) => {
+  const { t } = useTranslation();
+
   const [displayOptions, setDisplayOptions] = useState(options);
 
   const [hoverOption, setHoverOption] = useState<OptionType>();
@@ -152,8 +155,13 @@ export const OptionsMenu = ({
       <OptionMenuContainer>
         <OptionMenuLoadingWrapper>
           <Icon size={21} type="Loader" />
-          <Title level={5}>Loading...</Title>
-          <Body level={3}>Amount of data might affect loading time</Body>
+          <Title level={5}>{t('LOADING', 'Loading...')}</Title>
+          <Body level={3}>
+            {t(
+              'LOADING_TIME_WARNING',
+              'Amount of data might affect loading time'
+            )}
+          </Body>
         </OptionMenuLoadingWrapper>
       </OptionMenuContainer>
     );

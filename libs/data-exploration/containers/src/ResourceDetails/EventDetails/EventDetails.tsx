@@ -8,6 +8,7 @@ import {
   EMPTY_OBJECT,
   ResourceType,
   SelectableItemsProps,
+  useTranslation,
 } from '@data-exploration-lib/core';
 import {
   useAssetsByIdQuery,
@@ -73,6 +74,7 @@ export const EventDetails: FC<
   } = getResourcesVisibility(visibleResources);
 
   const parentEvent = event?.[0];
+  const { t } = useTranslation();
 
   const assetIds: number[] = parentEvent?.assetIds || [];
   const isQueryEnabled = assetIds.length > 0;
@@ -147,15 +149,23 @@ export const EventDetails: FC<
       onSelectClicked={onSelect}
     >
       <StyledCollapse accordion ghost defaultActiveKey="event-details">
-        <Collapse.Panel key="event-details" header={<h4>{DETAILS}</h4>}>
+        <Collapse.Panel
+          key="event-details"
+          header={<h4>{t('DETAILS', DETAILS)}</h4>}
+        >
           {parentEvent ? (
             <EventInfo event={parentEvent} />
           ) : (
-            <Title level={5}>{NO_DETAILS_AVAILABLE}</Title>
+            <Title level={5}>
+              {t('NO_DETAILS_AVAILABLE', NO_DETAILS_AVAILABLE)}
+            </Title>
           )}
         </Collapse.Panel>
         {isAssetVisible && (
-          <Collapse.Panel key="event-asset-detail" header={<h4>{ASSETS}</h4>}>
+          <Collapse.Panel
+            key="event-asset-detail"
+            header={<h4>{t('ASSETS', ASSETS)}</h4>}
+          >
             <AssetDetailsTable
               id="asset-resource-event-detail-table"
               data={assets}
@@ -171,7 +181,7 @@ export const EventDetails: FC<
         {isTimeseriesVisible && (
           <Collapse.Panel
             key="event-timeseries-detail"
-            header={<h4>{TIME_SERIES}</h4>}
+            header={<h4>{t('TIMESERIES', TIME_SERIES)}</h4>}
           >
             <TimeseriesDetailsTable
               id="timeseries-resource-event-detail-table"
@@ -190,7 +200,7 @@ export const EventDetails: FC<
         {isFileVisible && (
           <Collapse.Panel
             key="event-documents-detail"
-            header={<h4>{FILES}</h4>}
+            header={<h4>{t('FILES', FILES)}</h4>}
           >
             <FileDetailsTable
               id="documents-resource-event-detail-table"
@@ -207,7 +217,10 @@ export const EventDetails: FC<
           </Collapse.Panel>
         )}
         {isEventVisible && (
-          <Collapse.Panel key="event-events-detail" header={<h4>{EVENTS}</h4>}>
+          <Collapse.Panel
+            key="event-events-detail"
+            header={<h4>{t('EVENTS', EVENTS)}</h4>}
+          >
             <EventDetailsTable
               id="event-resource-event-detail-table"
               data={events}
@@ -225,7 +238,7 @@ export const EventDetails: FC<
         {isSequenceVisible && (
           <Collapse.Panel
             key="event-sequence-detail"
-            header={<h4>{SEQUENCES}</h4>}
+            header={<h4>{t('SEQUENCES', SEQUENCES)}</h4>}
           >
             <SequenceDetailsTable
               id="sequence-resource-event-detail-table"

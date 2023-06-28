@@ -8,8 +8,10 @@ import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 import { ThreeDContext } from '@data-exploration-app/containers/ThreeD/contexts/ThreeDContext';
 import { getStateUrl } from '@data-exploration-app/containers/ThreeD/utils';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
+import { useTranslation } from '@data-exploration-lib/core';
 
 const ShareButton = (): JSX.Element => {
+  const { t } = useTranslation();
   const {
     viewer,
     slicingState,
@@ -37,9 +39,12 @@ const ShareButton = (): JSX.Element => {
     await navigator.clipboard.writeText(`${link}`);
     toast.info(
       <div>
-        <h4>URL in clipboard</h4>
+        <h4>{t('URL_IN_CLIPBOARD', 'URL in clipboard')}</h4>
         <p>
-          Sharable link with viewer state is now available in your clipboard.
+          {t(
+            'SHAREABLE_LINK_AVAILABLE_IN_CLIPBOARD',
+            `Sharable link with viewer state is now available in your clipboard.`
+          )}
         </p>
       </div>,
       { toastId: 'url-state-clipboard' }
@@ -51,7 +56,10 @@ const ShareButton = (): JSX.Element => {
   };
 
   return (
-    <Tooltip content="Copy URL to current state" placement="right">
+    <Tooltip
+      content={t('COPY_URL_TO_STATE', 'Copy URL to current state')}
+      placement="right"
+    >
       <FullWidthButton
         icon="Link"
         onClick={handleShare}

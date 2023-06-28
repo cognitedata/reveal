@@ -20,7 +20,7 @@ export const FuzzySearchToggle: React.FC<FuzzySearchToggleProps> = ({
   }
 
   return (
-    <ModalSwitchContainer>
+    <ModalSwitchContainer data-testid="fuzzy-search-toggle">
       <Tooltip content="Fuzzy search" placement="right">
         <Switch
           size="tiny"

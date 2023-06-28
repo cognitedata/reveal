@@ -4,19 +4,19 @@ import isUndefined from 'lodash/isUndefined';
 import { FieldValue } from '../../../types';
 
 export interface Props {
-  dataType: string;
+  dataType?: string;
   field: string;
   fieldValue: FieldValue;
 }
 
 export const getChipLabel = ({
-  dataType,
+  dataType = '',
   field,
   fieldValue,
 }: Props): string => {
   const { operator, value } = fieldValue;
 
-  const prefix = `${dataType} ${field} ${operator.toLowerCase()}`;
+  const prefix = `${dataType} ${field} ${operator.toLowerCase()}`.trim();
 
   if (isUndefined(value)) {
     return prefix;

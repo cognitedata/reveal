@@ -11,7 +11,7 @@ import { createLink } from '@cognite/cdf-utilities';
 import { A } from '@cognite/cogs.js';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 
-import { AppContext } from '@data-exploration-lib/core';
+import { AppContext, useTranslation } from '@data-exploration-lib/core';
 
 import { RelationshipAssetTable } from './RelationshipAssetTable';
 import { RelationshipEventTable } from './RelationshipEventTable';
@@ -41,7 +41,9 @@ export const RelationshipTable = ({
   onParentAssetClick,
   isGroupingFilesEnabled,
 }: RelationshipTableProps & SelectableItemsProps) => {
+  const { t } = useTranslation();
   const context = useContext(AppContext);
+
   const { data: relationshipPermission, isFetched: permissionFetched } =
     usePermissions(
       context?.flow! as any,
@@ -57,13 +59,17 @@ export const RelationshipTable = ({
     return (
       <Alert
         type="warning"
-        message="Permissions missing"
+        message={t('PERMISSIONS_MISSING', 'Permissions missing')}
         description={
           <>
-            Related resources could not be looked up because you do not have
-            access to the relationship feature. Add
-            &apos;relationships:read&apos; to your service account in{' '}
-            <A href={createLink('/access-management')}>access management</A>.
+            {t(
+              'RELATIONSHIP_PERMISSIONS_MISSING_ERROR',
+              `Related resources could not be looked up because you do not have access to the relationship feature. Add 'relationships:read'; to your service account in`
+            )}{' '}
+            <A href={createLink('/access-management')}>
+              {t('ACCESS_MANAGEMENT_LINK', 'access management')}
+            </A>
+            .
           </>
         }
       />

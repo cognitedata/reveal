@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import {
+  getTableColumns,
   SubCellMatchingLabels,
   Table,
   TableProps,
@@ -16,6 +17,7 @@ import {
   getHiddenColumns,
   RelationshipLabels,
   TIME_SELECT,
+  useTranslation,
 } from '@data-exploration-lib/core';
 import {
   InternalTimeseriesDataWithMatchingLabels,
@@ -41,6 +43,7 @@ export const TimeseriesTable = ({
   ...props
 }: TimeseriesTableProps) => {
   const { data, ...rest } = props;
+  const { t } = useTranslation();
 
   const [dateRange, setDateRange] = useState(
     dateRangeProp || TIME_SELECT['1Y'].getTime()
@@ -57,10 +60,11 @@ export const TimeseriesTable = ({
 
   const startTime = dateRange[0].getTime();
   const endTime = dateRange[1].getTime();
+  const tableColumns = getTableColumns(t);
 
   const sparkLineColumn: ColumnDef<Timeseries & { data: any }> = useMemo(
     () => ({
-      header: 'Preview',
+      header: t('TIMESERIES_PREVIEW', 'Preview'),
       accessorKey: 'data',
       size: 400,
       enableSorting: false,
@@ -89,19 +93,19 @@ export const TimeseriesTable = ({
   const columns = useMemo(() => {
     return [
       {
-        ...Table.Columns.name(query),
+        ...tableColumns.name(query),
         enableHiding: false,
       },
-      Table.Columns.description(query),
-      Table.Columns.externalId(query),
+      tableColumns.description(query),
+      tableColumns.externalId(query),
       {
-        ...Table.Columns.unit(query),
+        ...tableColumns.unit(query),
         enableSorting: false,
       },
       sparkLineColumn,
-      Table.Columns.lastUpdatedTime,
+      tableColumns.lastUpdatedTime,
       {
-        header: 'Last reading',
+        header: t('LAST_READING', 'Last reading'),
         accessorKey: 'lastReading',
         cell: ({ row }) => {
           const lastReadingDate = row.original.latestDatapointDate
@@ -111,25 +115,25 @@ export const TimeseriesTable = ({
         },
         enableSorting: false,
       },
-      Table.Columns.created,
+      tableColumns.created,
       {
-        ...Table.Columns.id(query),
+        ...tableColumns.id(query),
         enableSorting: false,
       },
       {
-        ...Table.Columns.isString,
+        ...tableColumns.isString,
         enableSorting: false,
       },
       {
-        ...Table.Columns.isStep,
+        ...tableColumns.isStep,
         enableSorting: false,
       },
       {
-        ...Table.Columns.dataSet,
+        ...tableColumns.dataSet,
         enableSorting: true,
       },
-      Table.Columns.rootAsset(onRootAssetClick),
-      Table.Columns.assets(onRootAssetClick),
+      tableColumns.rootAsset(onRootAssetClick),
+      tableColumns.assets(onRootAssetClick),
       ...metadataColumns,
     ] as ColumnDef<TimeseriesWithRelationshipLabels>[];
     // eslint-disable-next-line react-hooks/exhaustive-deps

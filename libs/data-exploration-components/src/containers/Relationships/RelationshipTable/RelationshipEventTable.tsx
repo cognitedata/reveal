@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import {
   EmptyState,
-  ResourceTableColumns,
+  getTableColumns,
   Table,
 } from '@data-exploration/components';
 import {
@@ -15,31 +15,29 @@ import {
 } from '@data-exploration-components/hooks';
 import { ColumnDef } from '@tanstack/react-table';
 
+import { useTranslation } from '@data-exploration-lib/core';
+
 import { RelationshipTableProps } from './RelationshipTable';
-
-const {
-  relationshipLabels,
-  relation,
-  externalId,
-  type,
-  lastUpdatedTime,
-  created,
-} = ResourceTableColumns;
-
-const columns = [
-  type(),
-  relationshipLabels,
-  relation,
-  externalId(),
-  lastUpdatedTime,
-  created,
-] as ColumnDef<EventWithRelationshipLabels>[];
 
 export function RelationshipEventTable({
   parentResource,
   onItemClicked,
 }: Omit<RelationshipTableProps, 'type'>) {
   const { data: count } = useRelationshipCount(parentResource, 'event');
+
+  const { t } = useTranslation();
+  const tableColumns = getTableColumns(t);
+
+  const columns = useMemo(() => {
+    return [
+      tableColumns.type(),
+      tableColumns.relationshipLabels,
+      tableColumns.relation,
+      tableColumns.externalId(),
+      tableColumns.lastUpdatedTime,
+      tableColumns.created,
+    ] as ColumnDef<EventWithRelationshipLabels>[];
+  }, []);
 
   const { hasNextPage, fetchNextPage, isLoading, items } =
     useRelatedResourceResults<EventWithRelationshipLabels>(

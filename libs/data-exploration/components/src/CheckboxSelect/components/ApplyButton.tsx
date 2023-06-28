@@ -4,6 +4,8 @@ import styled from 'styled-components';
 
 import { Button, Menu } from '@cognite/cogs.js';
 
+import { useTranslation } from '@data-exploration-lib/core';
+
 import { ApplyButtonWrapper } from '../elements';
 
 export interface ApplyButtonProps {
@@ -15,6 +17,8 @@ export const ApplyButton: React.FC<ApplyButtonProps> = ({
   disabled,
   onClick,
 }) => {
+  const { t } = useTranslation();
+
   return (
     <React.Fragment>
       <Menu.Divider />
@@ -26,7 +30,7 @@ export const ApplyButton: React.FC<ApplyButtonProps> = ({
           disabled={disabled}
           onClick={onClick}
         >
-          Apply
+          {t('APPLY', 'Apply')}
         </StyledButton>
       </ApplyButtonWrapper>
     </React.Fragment>

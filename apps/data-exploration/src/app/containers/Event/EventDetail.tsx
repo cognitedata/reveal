@@ -20,7 +20,11 @@ import {
 } from '@data-exploration-app/hooks';
 import { renderTitle } from '@data-exploration-app/utils/EventsUtils';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
-import { SUB_APP_PATH, createInternalLink } from '@data-exploration-lib/core';
+import {
+  useTranslation,
+  SUB_APP_PATH,
+  createInternalLink,
+} from '@data-exploration-lib/core';
 
 // EventPreviewTabType;
 // - details
@@ -37,6 +41,8 @@ export const EventDetail = ({
   eventId: number;
   actions?: React.ReactNode;
 }) => {
+  const { t } = useTranslation();
+
   const [selectedTab, setSelectedTab] = useResourceDetailSelectedTab();
   const [endJourney] = useEndJourney();
 
@@ -78,7 +84,11 @@ export const EventDetail = ({
   }, [isEventFetched, event]);
 
   if (!eventId || !Number.isFinite(eventId)) {
-    return <>Invalid event id: {eventId}</>;
+    return (
+      <>
+        {t('INVALID_EVENT_ID', 'Invalid event id')}: {eventId}
+      </>
+    );
   }
 
   if (!isEventFetched) {
@@ -96,7 +106,14 @@ export const EventDetail = ({
   }
 
   if (!event) {
-    return <>Event {eventId} not found!</>;
+    return (
+      <>
+        {t('RESOURCE_NOT_FOUND', `Event ${eventId} not found!`, {
+          resourceType: t('EVENT', 'Event'),
+          id: eventId,
+        })}
+      </>
+    );
   }
 
   return (
@@ -117,7 +134,11 @@ export const EventDetail = ({
         onTabChange={handleTabChange}
         tab={activeTab}
         additionalTabs={[
-          <Tabs.Tab key="details" label="Details" tabKey="details">
+          <Tabs.Tab
+            key="details"
+            label={t('DETAILS', 'Details')}
+            tabKey="details"
+          >
             <DetailsTabWrapper>
               <EventInfo event={event} />
               <Metadata metadata={event.metadata} />

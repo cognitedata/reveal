@@ -11,6 +11,7 @@ import { RecoilRoot } from 'recoil';
 import { RecoilDevTools } from 'recoil-gear';
 import { RecoilURLSyncJSON } from 'recoil-sync';
 
+import { I18nWrapper } from '@cognite/cdf-i18n-utils';
 import sdk from '@cognite/cdf-sdk-singleton';
 import { getProject } from '@cognite/cdf-utilities';
 import { ToastContainer } from '@cognite/cogs.js';
@@ -22,6 +23,8 @@ import { SDKProvider } from '@cognite/sdk-provider';
 import RootApp from '@data-exploration-app/containers/App';
 import GlobalStyle from '@data-exploration-app/styles/global-styles';
 import AntStyles from '@data-exploration-app/styles/Styles';
+
+import { translations } from '../i18n';
 
 import { AuthContainer } from './AuthContainer';
 import rootStyles from './styles/index.css';
@@ -73,12 +76,17 @@ export default () => {
                 >
                   <RecoilRoot>
                     <RecoilURLSyncJSON location={{ part: 'queryParams' }}>
-                      <BrowserRouter>
-                        <Routes>
-                          <Route path="/:tenant/*" element={<RootApp />} />
-                        </Routes>
-                      </BrowserRouter>
-                      <RecoilDevTools />
+                      <I18nWrapper
+                        translations={translations}
+                        defaultNamespace="data-exploration"
+                      >
+                        <BrowserRouter>
+                          <Routes>
+                            <Route path="/:tenant/*" element={<RootApp />} />
+                          </Routes>
+                        </BrowserRouter>
+                        <RecoilDevTools />
+                      </I18nWrapper>
                     </RecoilURLSyncJSON>
                   </RecoilRoot>
                 </FlagProvider>

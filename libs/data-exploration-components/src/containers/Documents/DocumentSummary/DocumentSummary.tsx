@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 
 import {
+  getTableColumns,
   SubCellMatchingLabels,
   SummaryCardWrapper,
   Table,
@@ -23,6 +24,7 @@ import {
   getHiddenColumns,
   InternalDocumentFilter,
   useGetSearchConfigFromLocalStorage,
+  useTranslation,
 } from '@data-exploration-lib/core';
 import {
   InternalDocument,
@@ -58,11 +60,14 @@ export const DocumentSummary = ({
   const { metadataColumns, setMetadataKeyQuery } =
     useDocumentsMetadataColumns();
 
+  const { t } = useTranslation();
+  const tableColumns = getTableColumns(t);
+
   const columns = useMemo(
     () =>
       [
         {
-          ...Table.Columns.name(),
+          ...tableColumns.name(),
           cell: ({ row }: { row: Row<InternalDocument> }) => {
             const fileNamePreviewProps = {
               fileName: row.original.name || '',
@@ -73,7 +78,7 @@ export const DocumentSummary = ({
         },
         {
           accessorKey: 'content',
-          header: 'Content',
+          header: t('CONTENT', 'Content'),
           cell: ({ row }: { row: Row<InternalDocument> }) => {
             return <DocumentContentPreview document={row.original} query="" />;
           },
@@ -81,14 +86,14 @@ export const DocumentSummary = ({
         {
           accessorKey: 'author',
           id: 'author',
-          header: 'Author',
+          header: t('AUTHOR', 'Author'),
           cell: ({ row }: { row: Row<InternalDocument> }) => {
             return <Body level={2}>{row.original.author || DASH}</Body>;
           },
         },
         {
           id: 'directory',
-          header: 'Directory',
+          header: t('DIRECTORY', 'Directory'),
           cell: ({ row }) => {
             return (
               <Body level={2}>
@@ -100,29 +105,29 @@ export const DocumentSummary = ({
         {
           // You do not have to add an id field if accessor is given a string.
           accessorKey: 'type',
-          header: 'File type',
+          header: t('FILE_TYPE', 'File type'),
           cell: ({ row }: { row: Row<InternalDocument> }) => {
             return <Body level={2}>{row.original.type}</Body>;
           },
         },
         {
           accessorKey: 'modifiedTime',
-          header: 'Last updated',
+          header: t('LAST_UPDATED', 'Last updated'),
           cell: ({ row }: { row: Row<InternalDocument> }) => (
             <Body level={2}>
               <TimeDisplay value={row.original.modifiedTime} />
             </Body>
           ),
         },
-        Table.Columns.created,
+        tableColumns.created,
         {
-          ...Table.Columns.rootAsset(onRootAssetClick),
+          ...tableColumns.rootAsset(onRootAssetClick),
           accessorFn: (doc) => doc?.assetIds?.length && doc.assetIds[0],
         },
-        Table.Columns.externalId(),
-        Table.Columns.id(),
+        tableColumns.externalId(),
+        tableColumns.id(),
         {
-          ...Table.Columns.dataSet,
+          ...tableColumns.dataSet,
           accessorFn: (document) => document.sourceFile.datasetId,
         },
         ...metadataColumns,
@@ -143,7 +148,7 @@ export const DocumentSummary = ({
         tableHeaders={
           <SummaryHeader
             icon="Document"
-            title="Files"
+            title={t('FILES', 'Files')}
             onAllResultsClick={onAllResultsClick}
           />
         }

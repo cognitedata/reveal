@@ -2,11 +2,16 @@ import React, { useMemo } from 'react';
 
 import styled from 'styled-components';
 
-import { Table, TableProps } from '@data-exploration/components';
+import {
+  getTableColumns,
+  Table,
+  TableProps,
+} from '@data-exploration/components';
 import { ColumnDef } from '@tanstack/react-table';
 
 import { Icon } from '@cognite/cogs.js';
 
+import { useTranslation } from '@data-exploration-lib/core';
 import { InternalThreeDModelData } from '@data-exploration-lib/domain-layer';
 
 import { Image360Display } from './Image360Display';
@@ -36,13 +41,16 @@ export const ThreeDTable = ({
     siteId: model.siteId,
   }));
 
+  const { t } = useTranslation();
+  const tableColumns = getTableColumns(t);
+
   const columns = useMemo(
     () =>
       [
         {
           id: 'name',
           accessorKey: 'name',
-          header: 'Name',
+          header: t('NAME', 'Name'),
           cell: ({ row }) => (
             <div
               style={{
@@ -84,7 +92,7 @@ export const ThreeDTable = ({
         {
           id: 'revisions',
           accessorKey: 'id',
-          header: 'Revisions',
+          header: t('REVISIONS', 'Revisions'),
           cell: ({ getValue, row }) => (
             <ThreeDRevisions
               modelId={getValue<number>()}
@@ -97,7 +105,7 @@ export const ThreeDTable = ({
         {
           id: 'updated',
           accessorKey: 'id',
-          header: 'Updated',
+          header: t('UPDATED', 'Updated'),
           cell: ({ getValue, row }) => (
             <ThreeDModelLastUpdated
               modelId={getValue<number>()}
@@ -106,7 +114,7 @@ export const ThreeDTable = ({
           ),
           enableSorting: false,
         },
-        { ...Table.Columns.created, enableSorting: true },
+        { ...tableColumns.created, enableSorting: true },
       ] as ColumnDef<InternalThreeDModelData>[],
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [query]

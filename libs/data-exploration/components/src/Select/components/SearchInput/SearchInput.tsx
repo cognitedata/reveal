@@ -3,6 +3,8 @@ import { InputActionMeta } from 'react-select';
 
 import { Input, InputProps } from '@cognite/cogs.js';
 
+import { useTranslation } from '@data-exploration-lib/core';
+
 import { InputWrapper } from './elements';
 
 export interface SearchInputProps extends Omit<InputProps, 'onChange'> {
@@ -14,6 +16,7 @@ export const SearchInput: React.FC<SearchInputProps> = ({
   onChange,
   ...rest
 }) => {
+  const { t } = useTranslation();
   const inputElement = React.useRef<HTMLInputElement>(null);
 
   // this is used to focus the input default. autoFocus not functioning here
@@ -26,7 +29,9 @@ export const SearchInput: React.FC<SearchInputProps> = ({
       <Input
         {...rest}
         variant="noBorder"
-        placeholder="Filter by name"
+        placeholder={t('FILTER_BY_PROPERTY', 'Filter by name', {
+          property: 'name',
+        })}
         value={value}
         onChange={(event) =>
           onChange(event.target.value, {

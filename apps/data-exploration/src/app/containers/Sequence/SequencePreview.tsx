@@ -21,6 +21,7 @@ import {
   useOnPreviewTabChange,
 } from '@data-exploration-app/hooks/hooks';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
+import { useTranslation } from '@data-exploration-lib/core';
 
 export type SequencePreviewType =
   | 'details'
@@ -38,6 +39,8 @@ export const SequencePreview = ({
   sequenceId: number;
   actions?: React.ReactNode;
 }) => {
+  const { t } = useTranslation();
+
   const { tabType } = useParams<{
     tabType: SequencePreviewType;
   }>();
@@ -75,7 +78,14 @@ export const SequencePreview = ({
   }
 
   if (!sequence) {
-    return <>Sequence {sequenceId} not found!</>;
+    return (
+      <>
+        {t('RESOURCE_NOT_FOUND', `Sequence ${sequenceId} not found!`, {
+          resourceType: t('SEQUENCE', 'Sequence'),
+          id: sequenceId,
+        })}
+      </>
+    );
   }
 
   return (
@@ -100,10 +110,18 @@ export const SequencePreview = ({
         onTabChange={onTabChange}
         tab={activeTab}
         additionalTabs={[
-          <Tabs.Tab label="Preview" tabKey="preview" key="preview">
+          <Tabs.Tab
+            label={t('PREVIEW_TAB_LABEL', 'Preview')}
+            tabKey="preview"
+            key="preview"
+          >
             <SequenceTabPreview sequence={sequence} />
           </Tabs.Tab>,
-          <Tabs.Tab label="Details" tabKey="details" key="details">
+          <Tabs.Tab
+            label={t('DETAILS', 'Details')}
+            tabKey="details"
+            key="details"
+          >
             <DetailsTabWrapper>
               <SequenceInfo sequence={sequence} />
               <Metadata metadata={sequence.metadata} />

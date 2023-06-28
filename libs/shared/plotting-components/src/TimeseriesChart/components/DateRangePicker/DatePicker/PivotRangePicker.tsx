@@ -6,6 +6,8 @@ import dayjs from 'dayjs';
 
 import { Body, Input } from '@cognite/cogs.js';
 
+import { useTranslation } from '../../../i18n/useTranslation';
+
 import { DatePickerInput, PivotRange, renderCustomHeader } from './Common';
 import {
   DatePickerWrapper,
@@ -42,6 +44,8 @@ export const PivotRangePicker = ({
   onRangeChanged,
   units = ['minute', 'hour', 'day', 'week', 'month', 'year'],
 }: PivotRangePickerProps) => {
+  const { t } = useTranslation();
+
   const options = units.map((key) => ({
     value: key,
     label: Number(amount) > 1 ? `${key}s` : key,
@@ -53,7 +57,7 @@ export const PivotRangePicker = ({
 
   return (
     <PivotRangePickerWrapper>
-      <Body>Show me data from</Body>
+      <Body>{t('SHOW_ME_DATA_FROM', 'Show me data from')}</Body>
       <SpacedRow style={{ marginBottom: 8, marginTop: 8 }}>
         <PivotRangeInput>
           <Input
@@ -91,7 +95,10 @@ export const PivotRangePicker = ({
           >
             {options.map((duration) => (
               <option value={duration.value} key={duration.value}>
-                {duration.label}
+                {t(
+                  `DURATION_LABEL_${duration.label.toUpperCase()}`,
+                  duration.label
+                )}
               </option>
             ))}
           </select>
@@ -113,7 +120,12 @@ export const PivotRangePicker = ({
         >
           {directions.map((directionValue) => (
             <option value={directionValue.value} key={directionValue.label}>
-              {directionValue.label}
+              {t(
+                `DIRECTION_${directionValue.label
+                  .toUpperCase()
+                  .replace(/ /g, '_')}`,
+                directionValue.label
+              )}
             </option>
           ))}
         </select>

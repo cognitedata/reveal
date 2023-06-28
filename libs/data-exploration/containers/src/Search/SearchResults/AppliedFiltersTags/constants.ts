@@ -5,4 +5,5 @@ export const CUSTOM_FILTER_TITLE: Record<string, string> = {
   externalIdPrefix: 'External ID',
   dataSetIds: 'Data sets',
   mimeType: 'File type',
+  internalId: 'Internal ID',
 } as const;

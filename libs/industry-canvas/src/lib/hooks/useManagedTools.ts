@@ -60,6 +60,7 @@ type LineAnnotationStyle = {
   strokeWidth?: number;
   startEndType?: PolylineEndType;
   endEndType?: PolylineEndType;
+  dash?: number[];
 };
 
 type StickyAnnotationStyle = {
