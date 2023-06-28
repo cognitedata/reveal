@@ -27,29 +27,27 @@ import {
   Select,
 } from '@cognite/cogs.js';
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 const selectStyles: Partial<Styles> = {
-  container: (style: CSSRuleList) => ({
+  container: (style) => ({
     ...style,
     width: '100%',
   }),
-  valueContainer: (style: CSSRuleList) => ({
+  valueContainer: (style) => ({
     ...style,
     flexWrap: 'nowrap',
     height: 32,
   }),
-  control: (style: CSSRuleList) => ({
+  control: (style) => ({
     ...style,
     border: '2px solid var(--cogs-border-default)',
     height: 36,
     minHeight: 36,
   }),
-  indicatorsContainer: (style: CSSRuleList) => ({
+  indicatorsContainer: (style) => ({
     ...style,
     height: 32,
   }),
-  option: (style: CSSRuleList) => ({
+  option: (style) => ({
     ...style,
     background: 'white',
     color: 'black',
@@ -57,22 +55,16 @@ const selectStyles: Partial<Styles> = {
   }),
 };
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 const components: SelectComponentsConfig<{
   label: string;
   value: string | number;
   title?: string;
 }> = {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
   SingleValue: (newProps) => (
     <ReactSelectComponents.SingleValue {...newProps}>
       {newProps.data.title || newProps.data.label}
     </ReactSelectComponents.SingleValue>
   ),
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
   Option: (newProps) => (
     <Flex
       {...newProps.innerProps}

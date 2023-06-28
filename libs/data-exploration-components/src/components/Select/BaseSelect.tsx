@@ -97,7 +97,6 @@ export const BaseSelect = <ValueType,>({
   if (creatable) {
     return (
       <ReactSelectCreatable
-        // @ts-ignore
         {...(props as ReactSelectCreatableProps<OptionType<ValueType>>)}
         formatCreateLabel={(input) => `Use "${input}"`}
         value={props.value ? props.value : null} // should pass null when clear selected items

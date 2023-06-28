@@ -27,8 +27,6 @@ import { Group } from '@cognite/sdk';
 
 const { Panel } = Collapse;
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 const OwnerOption = (props: OptionProps<Group>) => {
   return (
     <components.Option {...props}>

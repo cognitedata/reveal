@@ -60,9 +60,8 @@ apps/interactive-diagrams @cognitedata/team-hebe
 # 3D / Reveal
 apps/3d-management                @cognitedata/3d-reveal-viewer-team
 
-# Migrated CDF-UX Subapps
+# Data Catalog
 apps/data-catalog                 @cognitedata/cdf-user-experience
-apps/extraction-pipelines         @cognitedata/cdf-user-experience
 apps/extractor-downloads          @cognitedata/cdf-user-experience
 
 libs/shared/cdf-utilities         @cognitedata/cdf-user-experience

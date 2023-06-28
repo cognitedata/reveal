@@ -1,14 +1,32 @@
-import { createElement, FC, Fragment } from 'react';
+import React, { JSXElementConstructor } from 'react';
 
-import { render, RenderOptions, RenderResult } from '@testing-library/react';
+// Here is where our custom render is being defined, so we don't need this check
+import { render, RenderOptions } from '@testing-library/react';
 
-export const renderComponent = <Props extends object>(
-  component: FC<Props>,
-  props: Props,
-  options?: RenderOptions
-): RenderResult => {
+export type CogniteRenderOptions = Omit<RenderOptions, 'queries'>;
+
+type RenderableComponent<Props, T> = React.ReactElement<
+  Props,
+  JSXElementConstructor<Props> & { story?: T }
+>;
+
+export default <Props, T>(
+  ui: RenderableComponent<Props, T>,
+  options: CogniteRenderOptions = {}
+) => {
+  // This is where you can wrap your rendered UI component in redux stores,
+  // providers, or anything else you might want.
+
+  return render(ui, { ...options });
+};
+
+export const renderComponent = <PropsType extends object>(
+  component: React.FC<PropsType>,
+  props: PropsType,
+  options?: CogniteRenderOptions
+) => {
   return render(
-    <Fragment>{createElement(component, props)}</Fragment>,
+    <React.Fragment>{React.createElement(component, props)}</React.Fragment>,
     options
   );
 };
