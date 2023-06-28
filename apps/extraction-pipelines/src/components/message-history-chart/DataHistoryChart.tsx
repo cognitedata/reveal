@@ -1,36 +1,31 @@
-import React, { useMemo } from 'react';
-
-import styled from 'styled-components';
-
 import { Body, Colors, Detail, Flex, Icon, Title } from '@cognite/cogs.js';
-
-import { useTranslation } from '../../common';
-import { MQTTJobWithMetrics } from '../../hooks/hostedExtractors';
+import { useTranslation } from 'common';
+import Section from 'components/section';
+import { MQTTJobWithMetrics } from 'hooks/hostedExtractors';
+import React, { useMemo } from 'react';
+import styled from 'styled-components';
 import {
-  getMetricAggregationErrorCount,
-  getMetricAggregationSuccessCount,
+  getWriteFailureAggregationErrorCount,
+  getWriteDataAggregationSuccessCount,
   getMetricAggregations,
-} from '../../utils/hostedExtractors';
-import Section from '../section';
+} from 'utils/hostedExtractors';
+import { BAR_HEIGHT, DataHistoryChartItem } from './DataHistoryChartItem';
 
-import { BAR_HEIGHT, MessageHistoryChartItem } from './MessageHistoryChartItem';
-
-type MessageHistoryChartProps = {
+type DataHistoryChartProps = {
   className?: string;
   jobs: MQTTJobWithMetrics[];
   aggregationInterval: 'hourly' | 'daily';
 };
 
-export const MessageHistoryChart = ({
+export const DataHistoryChart = ({
   className,
   jobs,
   aggregationInterval,
-}: MessageHistoryChartProps): JSX.Element => {
+}: DataHistoryChartProps): JSX.Element => {
   const { t } = useTranslation();
 
   const aggregations = useMemo(() => {
-    const metrics = jobs.flatMap(({ metrics: m }) => m);
-
+    const metrics = jobs.flatMap(({ metrics }) => metrics);
     return getMetricAggregations(
       metrics,
       aggregationInterval,
@@ -44,15 +39,15 @@ export const MessageHistoryChart = ({
         return 0;
       }
 
-      const successCount = getMetricAggregationSuccessCount(data);
-      const errorCount = getMetricAggregationErrorCount(data);
+      const successCount = getWriteDataAggregationSuccessCount(data);
+      const errorCount = getWriteFailureAggregationErrorCount(data);
       return successCount + errorCount;
     })
   );
 
   const totalErrorCount = useMemo(() => {
     return aggregations.reduce((acc, cur) => {
-      return acc + getMetricAggregationErrorCount(cur.data);
+      return acc + getWriteFailureAggregationErrorCount(cur.data);
     }, 0);
   }, [aggregations]);
 
@@ -62,7 +57,7 @@ export const MessageHistoryChart = ({
       className={className}
       title={
         <Flex direction="column" gap={2}>
-          <Title level={6}>{t('messages-from-topic-filters')}</Title>
+          <Title level={6}>{t('data-from-topic-filters')}</Title>
           <Flex alignItems="center" gap={4}>
             <Icon
               type={totalErrorCount === 0 ? 'CheckmarkFilled' : 'ErrorFilled'}
@@ -74,7 +69,7 @@ export const MessageHistoryChart = ({
               }}
             />
             <Body level={3} muted>
-              {t('message-transform-error-count', { count: totalErrorCount })}
+              {t('data-missing-values-error-count', { count: totalErrorCount })}
             </Body>
           </Flex>
         </Flex>
@@ -99,7 +94,7 @@ export const MessageHistoryChart = ({
         </XAxis>
         <ChartContent>
           {aggregations.map((aggregation) => (
-            <MessageHistoryChartItem
+            <DataHistoryChartItem
               key={aggregation.startTime}
               aggregation={aggregation}
               yMax={yMax}
