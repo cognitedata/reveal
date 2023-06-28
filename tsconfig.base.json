@@ -40,7 +40,7 @@
       "@cognite/iot-hub": ["apps/iot-hub/src/index.ts"],
       "@cognite/login-utils": ["libs/shared/cdf-login-utils/src/index.ts"],
       "@cognite/platypus-cdf-cli/*": ["apps/platypus-cdf-cli/src/*"],
-      "@cognite/plotting-components": [
+      "@plotting-components": [
         "libs/shared/plotting-components/src/index.ts"
       ],
       "@cognite/sdk-react-query-hooks": [

@@ -3,9 +3,9 @@ import React, { FC, useMemo } from 'react';
 import styled from 'styled-components';
 
 import { ResourceDetailsTemplate } from '@data-exploration/components';
+import { TimeseriesChart } from '@plotting-components';
 
 import { Collapse, Title } from '@cognite/cogs.js';
-import { TimeseriesChart } from '@cognite/plotting-components';
 
 import {
   EMPTY_OBJECT,

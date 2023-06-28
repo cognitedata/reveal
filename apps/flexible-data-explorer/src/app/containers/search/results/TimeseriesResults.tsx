@@ -1,7 +1,7 @@
+import { TimeseriesChart } from '@plotting-components';
 import isEmpty from 'lodash/isEmpty';
 
 import { Button, formatDate, Skeleton } from '@cognite/cogs.js';
-import { TimeseriesChart } from '@cognite/plotting-components';
 
 import { translationKeys } from '../../../common/i18n/translationKeys';
 import { SearchResults } from '../../../components/search/SearchResults';
