@@ -11,7 +11,7 @@ jest.mock('./utils/Metrics');
 window.URL.createObjectURL = noop;
 
 jest.mock('@cognite/unified-file-viewer', () => ({}));
-jest.mock('@plotting-components', () => ({}));
+jest.mock('@cognite/plotting-components', () => ({}));
 jest.mock('@cognite/data-exploration', () => ({}));
 
 jest.mock('@cognite/unified-file-viewer', () => {

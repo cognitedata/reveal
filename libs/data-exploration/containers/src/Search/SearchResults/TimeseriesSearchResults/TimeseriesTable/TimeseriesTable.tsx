@@ -7,9 +7,9 @@ import {
   TableProps,
   TimeDisplay,
 } from '@data-exploration/components';
-import { TimeseriesChart } from '@plotting-components';
 import { ColumnDef } from '@tanstack/react-table';
 
+import { TimeseriesChart } from '@cognite/plotting-components';
 import { Asset, Timeseries } from '@cognite/sdk';
 
 import {

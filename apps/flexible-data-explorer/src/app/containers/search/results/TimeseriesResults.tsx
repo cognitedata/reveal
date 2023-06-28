@@ -1,4 +1,4 @@
-import { TimeseriesChart } from '@plotting-components';
+import { TimeseriesChart } from '@cognite/plotting-components';
 import isEmpty from 'lodash/isEmpty';
 
 import { Button, formatDate, Skeleton } from '@cognite/cogs.js';

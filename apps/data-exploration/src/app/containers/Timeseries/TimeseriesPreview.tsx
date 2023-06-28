@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 import { Loader, Metadata } from '@data-exploration/components';
 import { TimeseriesInfo } from '@data-exploration/containers';
-import { TimeseriesChart } from '@plotting-components';
+import { TimeseriesChart } from '@cognite/plotting-components';
 
 import { Tabs } from '@cognite/cogs.js';
 import { ErrorFeedback } from '@cognite/data-exploration';

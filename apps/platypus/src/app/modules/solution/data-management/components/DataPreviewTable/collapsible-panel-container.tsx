@@ -7,7 +7,7 @@ import {
   DataModelVersion,
   KeyValueMap,
 } from '@platypus/platypus-core';
-import { TimeseriesChart } from '@plotting-components';
+import { TimeseriesChart } from '@cognite/plotting-components';
 
 import { createLink } from '@cognite/cdf-utilities';
 import { CogDataList } from '@cognite/cog-data-grid';

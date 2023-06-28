@@ -9,7 +9,7 @@ export default {
   moduleNameMapper: {
     '\\.(css|less)$': 'identity-obj-proxy',
     'd3(.*)': '<rootDir>/../../node_modules/d3$1/dist/d3$1.min.js',
-    '@plotting-components':
+    '@cognite/plotting-components':
       '<rootDir>/../../libs/shared/plotting-components/src',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
