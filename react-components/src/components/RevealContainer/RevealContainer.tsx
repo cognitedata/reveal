@@ -26,7 +26,11 @@ export default function RevealContainer({
     return disposeViewer;
   }, []);
 
-  return <div ref={revealDomElementRef}>{mountChildren()}</div>;
+  return (
+    <div style={{ width: '100%', height: '100%' }} ref={revealDomElementRef}>
+      {mountChildren()}
+    </div>
+  );
 
   function mountChildren(): ReactElement {
     if (viewer === undefined) return <></>;
