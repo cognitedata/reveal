@@ -36,15 +36,14 @@ export const OptionWrapper = styled(Flex)`
 `;
 
 export const LabelWrapper = styled(Flex)`
-  flex-direction: column;
-  /* width: 100%; */
-  margin-right: 16px;
+  gap: 8px;
 `;
 
 export const OptionLabel = styled.span`
   font-weight: 500;
   font-size: 14px;
   line-height: 20px;
+  max-width: 130px;
 `;
 
 export const OptionSecondaryLabel = styled.span`
