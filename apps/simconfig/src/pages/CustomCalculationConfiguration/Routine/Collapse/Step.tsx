@@ -91,9 +91,7 @@ export function Step({
         />
       </div>
 
-      <div className="step-content">
-        {isOpen && <StepCommand routineOrder={routineOrder} step={step} />}
-      </div>
+      {isOpen && <StepCommand routineOrder={routineOrder} step={step} />}
     </CollapseStepContainer>
   );
 }
@@ -101,13 +99,6 @@ export function Step({
 const CollapseStepContainer = styled.div`
   margin-bottom: 0.5em;
   margin-left: 1em;
-
-  .step-content {
-    &,
-    * {
-      background-color: #ffffff;
-    }
-  }
 
   .step-title {
     width: 100%;
