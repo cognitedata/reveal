@@ -1,5 +1,6 @@
 import { Button } from '../../../components/buttons/Button';
 import { Widget } from '../../../components/widget/Widget';
+import { useTranslation } from '../../../hooks/useTranslation';
 
 import { FDXFilePreview } from './FilePreview';
 import { FileWidgetProps } from './FileWidget';
@@ -11,9 +12,11 @@ export const FileCollapsed: React.FC<FileWidgetProps> = ({
   rows,
   columns,
 }) => {
+  const { t } = useTranslation();
+
   return (
     <Widget id={id} rows={rows} columns={columns}>
-      <Widget.Header title="Preview">
+      <Widget.Header title={t('FILE_PREVIEW_WIDGET_NAME')}>
         <Button.Fullscreen onClick={() => onExpandClick?.(id)} />
       </Widget.Header>
 

@@ -2,6 +2,7 @@ import { PropsWithChildren } from 'react';
 
 import styled, { css } from 'styled-components';
 
+import { useTranslation } from '../../../hooks/useTranslation';
 import { EmptyState } from '../../EmptyState';
 import { BaseWidgetProps } from '../Widget';
 
@@ -13,12 +14,14 @@ export const WidgetBody = ({
 }: PropsWithChildren<
   Pick<BaseWidgetProps, 'state' | 'fullWidth' | 'noPadding'>
 >) => {
+  const { t } = useTranslation();
+
   const renderContent = () => {
     if (state === 'empty') {
       return (
         <EmptyState
-          title="No results"
-          body="We couldn't find any results for your query"
+          title={t('WIDGET_EMPTY_TITLE')}
+          body={t('WIDGET_EMPTY_BODY')}
         />
       );
     }
@@ -26,8 +29,8 @@ export const WidgetBody = ({
     if (state === 'loading') {
       return (
         <EmptyState
-          title="Loading results"
-          body="We are fetching your data. Hang on tight"
+          title={t('WIDGET_LOADING_TITLE')}
+          body={t('WIDGET_LOADING_BODY')}
         />
       );
     }

@@ -5,6 +5,8 @@ import isUndefined from 'lodash/isUndefined';
 
 import { OptionType, Select as CogsSelect } from '@cognite/cogs.js';
 
+import { useTranslation } from '../../../../../hooks/useTranslation';
+
 import { SelectWrapper } from './elements';
 import { mapOptionsToOptionType, mapOptionToOptionType } from './utils';
 
@@ -21,15 +23,16 @@ export const Select = <T extends string>({
   defaultSelectFirstOption = true,
   onChange,
 }: SelectProps<T>) => {
+  const { t } = useTranslation();
   const [selectedOption, setSelectedOption] = useState<OptionType<T>>();
 
   const selectOptions = useMemo(() => {
-    return mapOptionsToOptionType(options);
+    return mapOptionsToOptionType(options, t);
   }, [options]);
 
   const selectValue = useMemo(() => {
     if (value) {
-      return mapOptionToOptionType(value);
+      return mapOptionToOptionType(value, t);
     }
 
     if (selectedOption) {

@@ -4,6 +4,7 @@ import { TimeseriesChart } from '@cognite/plotting-components';
 
 import { BaseWidgetProps, Widget } from '../../components/widget/Widget';
 import { DateRange } from '../../containers/search/Filter';
+import { useTranslation } from '../../hooks/useTranslation';
 
 export interface TimeseriesProps extends BaseWidgetProps {
   timeseriesId?: number;
@@ -19,9 +20,11 @@ export const TimeseriesWidget: React.FC<TimeseriesProps> = ({
   rows,
   columns,
 }) => {
+  const { t } = useTranslation();
+
   return (
     <Widget id={id} rows={rows} columns={columns}>
-      <Widget.Header title="Chart preview"></Widget.Header>
+      <Widget.Header title={t('TIMESERIES_WIDGET_NAME')}></Widget.Header>
 
       <Widget.Body>
         <Content>

@@ -6,7 +6,6 @@ import take from 'lodash/take';
 
 import { Button, Skeleton } from '@cognite/cogs.js';
 
-import { translationKeys } from '../../../common/i18n/translationKeys';
 import { SearchResults } from '../../../components/search/SearchResults';
 import { EMPTY_ARRAY } from '../../../constants/object';
 import { useNavigation } from '../../../hooks/useNavigation';
@@ -131,7 +130,7 @@ const GenericResultItem: React.FC<Props> = ({ dataType, values, type }) => {
           type="secondary"
           hidden={normalizedValues.length <= page}
         >
-          {t(translationKeys.showMore, 'Show more...')}
+          {t('GENERAL_SHOW_MORE')}
         </Button>
       </SearchResults.Footer>
     </SearchResults>

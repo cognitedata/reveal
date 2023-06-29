@@ -9,6 +9,7 @@ import { Button } from '../../../components/buttons/Button';
 import { BaseWidgetProps, Widget } from '../../../components/widget/Widget';
 import { useIsOverflow } from '../../../hooks/useIsOverflow';
 import { useNavigation } from '../../../hooks/useNavigation';
+import { useTranslation } from '../../../hooks/useTranslation';
 import { useInstanceRelationshipQuery } from '../../../services/instances/generic/queries/useInstanceDirectRelationshipQuery';
 
 interface Props extends BaseWidgetProps {
@@ -24,6 +25,7 @@ export const RelationshipDirectWidget: React.FC<Props> = ({
   columns,
   type,
 }) => {
+  const { t } = useTranslation();
   const { instanceSpace } = useParams();
   const { data, status, isLoading } = useInstanceRelationshipQuery(type);
 
@@ -31,7 +33,9 @@ export const RelationshipDirectWidget: React.FC<Props> = ({
 
   return (
     <Widget id={id} rows={rows || 3} columns={columns}>
-      <Widget.Header title={`Linked ${type.field}`}>
+      <Widget.Header
+        title={t('RELATIONSHIP_DIRECT_WIDGET_TITLE', { type: type.field })}
+      >
         <Button.InternalRedirect
           onClick={() => {
             navigate.toInstancePage(type.type, instanceSpace, data.externalId);

@@ -3,7 +3,6 @@ import { useState } from 'react';
 
 import isUndefined from 'lodash/isUndefined';
 
-import { translationKeys } from '../../../../../common';
 import { useTranslation } from '../../../../../hooks/useTranslation';
 import { DateRange, InputControlProps } from '../../types';
 import { DateTimeInput } from '../DateTimeInput';
@@ -34,7 +33,7 @@ export const DateTimeRangeInput: React.FC<DateTimeRangeInputProps> = ({
         }}
       />
 
-      <Chip>{t(translationKeys.filterAND, 'AND')}</Chip>
+      <Chip>{t('FILTER_AND_OPERATION')}</Chip>
 
       <DateTimeInput
         value={max}

@@ -1,41 +1,19 @@
-# flexible-data-explorer
+# Flexible Data Explorer (FDX)
 
-## Further steps:
+Ownership: [team-explorers](https://cognitedata.slack.com/archives/C041Y4SJXC6) -
+[CDF Program - End User Experience (UX++)](https://cognitedata.atlassian.net/wiki/spaces/PD/pages/3984130104/CDF+Program+-+End+User+Experience+UX)
 
-https://cognitedata.atlassian.net/wiki/spaces/CE/pages/3682697292/...create+a+new+sub-app#Make-the-app-visible-in-Fusion
+## Running application locally
 
-## Running application in fusion
-
-1. Start local development server
+1. Start local development server for the business applications shell:
+   ```
+   nx serve business-shell
+   ```
+   ...or, start the application directly:
    ```
    nx serve flexible-data-explorer
    ```
-2. Navigate to [dev.fusion.cogniteapp.com](dev.fusion.cogniteapp.com)
-3. Run `importMapOverrides.enableUI()` in the console
-4. Click the <img width="32" valign="bottom" src="https://user-images.githubusercontent.com/6615090/165697621-dc80186c-2bdc-4f1c-90a1-d7ab4f985efc.png"> button that appears in the bottom right corner
-5. Find `@cognite/cdf-data-exploration` module name and click on the row including it
-6. Override using `https://localhost:3001/index.js` (port might differ depending on your local settings)
-7. Click `Apply override` and refresh ✨
-
-## Running application against mock server
-
-1. Start your app by passing the configuration parameter
-   ```
-   NODE_ENV=mock nx serve flexible-data-explorer --configuration mock
-   ```
-2. Start the mock server `nx serve mock-server`
-3. Open browser on `https://localhost:3001/test-app`
-
-## Troubleshooting
-
-### I get "Refused to load the script `https://localhost:3001/index.js"` error when I apply a subapp override
-
-1.  Open `https://localhost:3001/index.js` in a new tab.
-2.  Ignore the security warning and click “Proceed to site”.
-3.  Go back to dev.fusion.cogniteapp.com and refresh 🔄
-
-To avoid doing this multiple times, enable this flag on Chrome:
-[chrome://flags/#allow-insecure-localhost](chrome://flags/#allow-insecure-localhost)
+2. Navigate to [localhost:3000](https://localhost:3000)
 
 ## Testing
 
@@ -43,6 +21,36 @@ To avoid doing this multiple times, enable this flag on Chrome:
 nx test flexible-data-explorer
 ```
 
-## Internationalization with Locize in Fusion
+## Linting
 
-Follow the guide [here](https://cognitedata.atlassian.net/wiki/spaces/CE/pages/3519545557/Internationalization+with+Locize+in+Fusion)
+```
+nx lint flexible-data-explorer
+```
+
+## Internationalization with Locize
+
+Follow the guide [here](https://cognitedata.atlassian.net/wiki/spaces/CE/pages/3924164983/Internationalization+infrastructure#Implementation-Guidelines) (also read upon the outdated, but relevant, guide [here](https://cognitedata.atlassian.net/wiki/spaces/CE/pages/3519545557/Internationalization+with+Locize+in+Fusion)).
+
+> TL;DR: all _static_ strings that are rendered in the application has to be wrapped with translation.
+>
+> ```ts
+> import { useNavigation } from '../../hooks/useNavigation';
+>
+> const { t } = useTranslation();
+>
+> const Component = () => <p>{t('GENERAL_HELLO')}</p>;
+> ```
+
+**NOTE:** The source of truth is the english translation file (found in 'src/i18n/en/flexible-data-explorer.json'). All translation keys have to adhere to key-value pair in that file.
+
+## Troubleshooting
+
+### I get redirected to the Microsoft login page and/or stuck in a login-loop
+
+1. Keep the inspect window (for developer's) open under the 'Application' -> 'Storage' tab (make sure the checkbox for **including third-party cookies** is checked).
+2. Open `https://localhost:3000` and quickly press on the 'Clear site data' button.
+3. You will automatically be redirected to `https://apps.cognite.com/signin`, press the 'Clear site data' button, again.
+4. Proceed with the login steps.
+
+Keep having issues? Reach out the team in
+[#temp-unified-login](https://cognitedata.slack.com/archives/C0457PWB5HR) on Slack.

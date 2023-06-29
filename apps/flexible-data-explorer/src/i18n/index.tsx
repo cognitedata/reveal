@@ -6,5 +6,3 @@ import * as en from './en/flexible-data-explorer.json';
 export const translations = {
   en: { 'flexible-data-explorer': en },
 };
-
-export * from './translationKeys';
