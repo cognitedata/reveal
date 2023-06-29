@@ -9,6 +9,7 @@ import { Body, Tooltip } from '@cognite/cogs.js';
 import { Button } from '../../../components/buttons/Button';
 import { Widget } from '../../../components/widget/Widget';
 import { useIsOverflow } from '../../../hooks/useIsOverflow';
+import { useTranslation } from '../../../hooks/useTranslation';
 
 import { PropertiesProps } from './PropertiesWidget';
 import { flattenProperties } from './utils';
@@ -23,6 +24,8 @@ export const PropertiesCollapsed: React.FC<PropertiesProps> = ({
   rows,
   columns,
 }) => {
+  const { t } = useTranslation();
+
   const properties = useMemo(() => flattenProperties(data), [data]);
 
   const getAdaptiveGridRows = () => {
@@ -34,7 +37,7 @@ export const PropertiesCollapsed: React.FC<PropertiesProps> = ({
 
   return (
     <Widget rows={rows || getAdaptiveGridRows()} columns={columns} id={id}>
-      <Widget.Header title={`${id}`}>
+      <Widget.Header title={t('PROPERTIES_WIDGET_NAME')}>
         <Button.Fullscreen onClick={() => onExpandClick?.(id)} />
       </Widget.Header>
 

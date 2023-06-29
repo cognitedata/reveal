@@ -5,11 +5,13 @@ import styled, { css } from 'styled-components';
 import { Body, Title as CogsTitle } from '@cognite/cogs.js';
 
 import { useNavigation } from '../../hooks/useNavigation';
+import { useTranslation } from '../../hooks/useTranslation';
 import { useTypesDataModelQuery } from '../../services/dataModels/query/useTypesDataModelQuery';
 
 export const SearchCategories = () => {
   const navigate = useNavigation();
   const { dataType } = useParams();
+  const { t } = useTranslation();
 
   const { data: types } = useTypesDataModelQuery();
 
@@ -19,13 +21,13 @@ export const SearchCategories = () => {
 
   return (
     <Container>
-      <Title level={6}>Categories</Title>
+      <Title level={6}>{t('SEARCH_CATEGORIES_HEADER')}</Title>
 
       <Content
         selected={dataType === undefined}
         onClick={() => handleSelectionClick(undefined)}
       >
-        <NameText>All</NameText>
+        <NameText>{t('SEARCH_CATEGORIES_ALL_OPTION')}</NameText>
       </Content>
 
       {types?.map((type) => (

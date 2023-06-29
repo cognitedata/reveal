@@ -1,6 +1,5 @@
 import { Button } from '@cognite/cogs.js';
 
-import { translationKeys } from '../../common/i18n/translationKeys';
 import { useTranslation } from '../../hooks/useTranslation';
 
 export const ButtonOpenIn = ({ loading }: { loading?: boolean }) => {
@@ -13,7 +12,7 @@ export const ButtonOpenIn = ({ loading }: { loading?: boolean }) => {
       type="tertiary"
       disabled={loading}
     >
-      {t(translationKeys.openIn, 'Open in')}...
+      {t('GENERAL_OPEN_IN')}...
     </Button>
   );
 };

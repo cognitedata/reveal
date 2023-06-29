@@ -1,11 +1,8 @@
 import * as React from 'react';
 
-import { translationKeys } from '../../../../../common';
 import { useTranslation } from '../../../../../hooks/useTranslation';
 import { InputControlProps } from '../../types';
 import { Input } from '../Input';
-
-export const DEFAULT_TEXT_INPUT_PLACEHOLDER = 'Enter value...';
 
 export type TextInputProps = InputControlProps<string>;
 
@@ -16,10 +13,7 @@ export const TextInput: React.FC<TextInputProps> = ({ value, onChange }) => {
     <Input
       type="text"
       variant="default"
-      placeholder={t(
-        translationKeys.filterTextInputPlaceholder,
-        'Enter value...'
-      )}
+      placeholder={t('FILTER_TEXT_INPUT_PLACEHOLDER')}
       value={value}
       onChange={onChange}
     />

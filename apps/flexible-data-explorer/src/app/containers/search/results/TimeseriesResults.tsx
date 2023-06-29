@@ -3,7 +3,6 @@ import isEmpty from 'lodash/isEmpty';
 import { Button, formatDate, Skeleton } from '@cognite/cogs.js';
 import { TimeseriesChart } from '@cognite/plotting-components';
 
-import { translationKeys } from '../../../common/i18n/translationKeys';
 import { SearchResults } from '../../../components/search/SearchResults';
 import { useNavigation } from '../../../hooks/useNavigation';
 import {
@@ -87,7 +86,7 @@ export const TimeseriesResults = () => {
           }}
           loading={isFetchingNextPage}
         >
-          {t(translationKeys.showMore, 'Show more')}
+          {t('GENERAL_SHOW_MORE')}
         </Button>
       </SearchResults.Footer>
     </SearchResults>

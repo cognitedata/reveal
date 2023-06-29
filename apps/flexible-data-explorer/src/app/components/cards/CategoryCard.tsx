@@ -26,9 +26,7 @@ export const CategoryCard: React.FC<Props> = React.memo(
               {type}
             </Body>
           </Header>
-          <Body level={4}>
-            {description || t('no_description', 'No description')}
-          </Body>
+          <Body level={4}>{description || t('GENERAL_NO_DESCRIPTION')}</Body>
         </Content>
 
         <Button
