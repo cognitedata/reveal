@@ -11,7 +11,12 @@ import { notification } from 'antd';
 
 import { getFlow, getToken } from '@cognite/cdf-sdk-singleton';
 import { getEnv, getProject } from '@cognite/cdf-utilities';
-import { CogniteCapability, CogniteClient, Group } from '@cognite/sdk';
+import {
+  CogniteCapability,
+  CogniteClient,
+  Group,
+  SingleCogniteCapability,
+} from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 import { usePermissions as _usePermissions } from '@cognite/sdk-react-query-hooks';
 
@@ -28,12 +33,11 @@ export const useGroups = (all = false) => {
          * it will have some extra properties in every capability object.
          * Here, I'm removing those objects, and instead adding an editable property to the group
          * But typescript can't detect that I'm removing properties that won't already match the type
-         * and is complaining; hence the ts-ignore.
+         * and is complaining; hence the ts-ignore and the type casting.
          *
          * When the types and the code is updated the support project hierarchy, both this ts-ignore
          * and the code piece itself should be removed.
          */
-        // @ts-ignore
         const capabilities: CogniteCapability | undefined = g.capabilities?.map(
           (c) => {
             const capabilityKeys = Object.keys(c);
@@ -43,7 +47,7 @@ export const useGroups = (all = false) => {
               return {
                 // @ts-ignore I can't properly type the key, but it's not generic string for sure
                 [acl]: c[acl],
-              };
+              } as SingleCogniteCapability;
             }
             return c;
           }
