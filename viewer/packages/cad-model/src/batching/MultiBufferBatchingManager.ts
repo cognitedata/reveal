@@ -230,14 +230,16 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
     );
     const treeIndexInterleavedAttribute = this.getTreeIndexAttribute(sourceInstanceAttributes);
 
-    // Update mapping from tree indices to sector ids
-    if (!this.treeIndexToSectorsMap.isCompleted(sectorId, parsedGeometry.type)) {
-      for (let i = 0; i < treeIndexInterleavedAttribute.count; i++) {
-        const treeIndex = treeIndexInterleavedAttribute.getX(i);
-        this.treeIndexToSectorsMap.set(treeIndex, sectorId);
-      }
-      this.treeIndexToSectorsMap.markCompleted(sectorId, parsedGeometry.type);
+    if (this.treeIndexToSectorsMap.isCompleted(sectorId, parsedGeometry.type)) {
+      return;
     }
+
+    // Update mapping from tree indices to sector ids
+    for (let i = 0; i < treeIndexInterleavedAttribute.count; i++) {
+      const treeIndex = treeIndexInterleavedAttribute.getX(i);
+      this.treeIndexToSectorsMap.set(treeIndex, sectorId);
+    }
+    this.treeIndexToSectorsMap.markCompleted(sectorId, parsedGeometry.type);
   }
 
   private reallocateBufferGeometry({ buffer, mesh }: BatchBuffer) {

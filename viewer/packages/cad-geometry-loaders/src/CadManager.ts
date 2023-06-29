@@ -104,18 +104,7 @@ export class CadManager {
 
       this.markNeedsRedraw();
 
-      // Update mapping from tree indices to sector ids
-      if (!cadModel.treeIndexToSectorsMap.isCompleted(sector.metadata.id, RevealGeometryCollectionType.TriangleMesh)) {
-        if (sector.group?.children.length === 1) {
-          const treeIndices = sector.group.children[0].userData?.treeIndices as Map<number, number> | undefined;
-          if (treeIndices !== undefined) {
-            for (const treeIndex of treeIndices.keys()) {
-              cadModel.treeIndexToSectorsMap.set(treeIndex, sector.metadata.id);
-            }
-            cadModel.treeIndexToSectorsMap.markCompleted(sector.metadata.id, RevealGeometryCollectionType.TriangleMesh);
-          }
-        }
-      }
+      this.updateTreeIndexToSectorsMap(cadModel, sector);
     };
 
     this._subscription.add(
@@ -228,5 +217,25 @@ export class CadManager {
 
   private handleMaterialsChanged() {
     this.requestRedraw();
+  }
+
+  private updateTreeIndexToSectorsMap(cadModel: CadNode, sector: ConsumedSector): void {
+    if (cadModel.treeIndexToSectorsMap.isCompleted(sector.metadata.id, RevealGeometryCollectionType.TriangleMesh)) {
+      return;
+    }
+
+    if (sector.group?.children.length !== 1) {
+      return;
+    }
+
+    const treeIndices = sector.group.children[0].userData?.treeIndices as Map<number, number> | undefined;
+    if (!treeIndices) {
+      return;
+    }
+
+    for (const treeIndex of treeIndices.keys()) {
+      cadModel.treeIndexToSectorsMap.set(treeIndex, sector.metadata.id);
+    }
+    cadModel.treeIndexToSectorsMap.markCompleted(sector.metadata.id, RevealGeometryCollectionType.TriangleMesh);
   }
 }

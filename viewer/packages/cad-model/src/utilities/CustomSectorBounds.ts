@@ -93,21 +93,23 @@ export class CustomSectorBounds {
     }
 
     for (const newSector of newSectors) {
-      if (!transformedNode.inSectors.has(newSector)) {
-        // Add sector to transformed node
-        transformedNode.inSectors.add(newSector);
-
-        // Update mapping from sector to transformed nodes
-        const transformedNodesForSector = this._sectorIdToTransformedNodesMap.get(newSector);
-        if (transformedNodesForSector) {
-          transformedNodesForSector.add(transformedNode);
-        } else {
-          this._sectorIdToTransformedNodesMap.set(newSector, new Set<TransformedNode>([transformedNode]));
-        }
-
-        // Mark sector as dirty, to be updated during the next recomputeSectorBounds() call
-        this._sectorsWithInvalidBounds.add(newSector);
+      if (transformedNode.inSectors.has(newSector)) {
+        continue;
       }
+
+      // Add sector to transformed node
+      transformedNode.inSectors.add(newSector);
+
+      // Update mapping from sector to transformed nodes
+      const transformedNodesForSector = this._sectorIdToTransformedNodesMap.get(newSector);
+      if (transformedNodesForSector) {
+        transformedNodesForSector.add(transformedNode);
+      } else {
+        this._sectorIdToTransformedNodesMap.set(newSector, new Set<TransformedNode>([transformedNode]));
+      }
+
+      // Mark sector as dirty, to be updated during the next recomputeSectorBounds() call
+      this._sectorsWithInvalidBounds.add(newSector);
     }
   }
 

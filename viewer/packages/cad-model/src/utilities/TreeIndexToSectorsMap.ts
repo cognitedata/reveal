@@ -11,8 +11,8 @@ import { RevealGeometryCollectionType } from '@reveal/sector-parser';
  */
 export class TreeIndexToSectorsMap {
   public onChange?: (treeIndex: number, newSectorId: number) => void;
-  private readonly treeIndexToSectorIds = new Map<number, Set<number>>();
-  private readonly parsedSectors = new Map<number, Set<RevealGeometryCollectionType>>();
+  private readonly _treeIndexToSectorIds = new Map<number, Set<number>>();
+  private readonly _parsedSectors = new Map<number, Set<RevealGeometryCollectionType>>();
 
   /**
    * Store the fact that a tree index is found to have geometry in a certain sector
@@ -20,14 +20,15 @@ export class TreeIndexToSectorsMap {
    * @param sectorId The sector id where the tree index was found
    */
   set(treeIndex: number, sectorId: number): void {
-    const existingSet = this.treeIndexToSectorIds.get(treeIndex);
-    if (existingSet) {
-      if (!existingSet.has(sectorId)) {
-        existingSet.add(sectorId);
-        this.onChange?.(treeIndex, sectorId);
-      }
-    } else {
-      this.treeIndexToSectorIds.set(treeIndex, new Set<number>([sectorId]));
+    const existingSet = this._treeIndexToSectorIds.get(treeIndex);
+    if (!existingSet) {
+      this._treeIndexToSectorIds.set(treeIndex, new Set<number>([sectorId]));
+      this.onChange?.(treeIndex, sectorId);
+      return;
+    }
+
+    if (!existingSet.has(sectorId)) {
+      existingSet.add(sectorId);
       this.onChange?.(treeIndex, sectorId);
     }
   }
@@ -37,8 +38,8 @@ export class TreeIndexToSectorsMap {
    * @param treeIndex Tree index
    * @returns The set of sectors
    */
-  get(treeIndex: number): Set<number> {
-    return this.treeIndexToSectorIds.get(treeIndex) ?? new Set<number>();
+  getSectorIdsForTreeIndex(treeIndex: number): Set<number> {
+    return this._treeIndexToSectorIds.get(treeIndex) ?? new Set<number>();
   }
 
   /**
@@ -48,11 +49,11 @@ export class TreeIndexToSectorsMap {
    * @param type The geometry type
    */
   markCompleted(sectorId: number, type: RevealGeometryCollectionType): void {
-    const existingSet = this.parsedSectors.get(sectorId);
+    const existingSet = this._parsedSectors.get(sectorId);
     if (existingSet) {
       existingSet.add(sectorId);
     } else {
-      this.parsedSectors.set(sectorId, new Set<number>([type]));
+      this._parsedSectors.set(sectorId, new Set<number>([type]));
     }
   }
 
@@ -63,7 +64,7 @@ export class TreeIndexToSectorsMap {
    * @returns True if completed, false otherwise
    */
   isCompleted(sectorId: number, type: RevealGeometryCollectionType): boolean {
-    const parsedTypes = this.parsedSectors.get(sectorId);
+    const parsedTypes = this._parsedSectors.get(sectorId);
     if (parsedTypes) {
       return parsedTypes.has(type);
     }

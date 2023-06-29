@@ -240,7 +240,7 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
         // when sectors are loaded, this node may have geometry in more sectors than what is currently known. If new sectors with geometry
         // from this node are discovered at a later point, customSectorBounds.updateNodeSectors will be called through the
         // treeIndexToSectorsMap.onChange callback, which is setup in the constructor.
-        const sectorIds = this.cadNode.treeIndexToSectorsMap.get(treeIndex);
+        const sectorIds = this.cadNode.treeIndexToSectorsMap.getSectorIdsForTreeIndex(treeIndex);
         if (sectorIds.size) {
           this.customSectorBounds.updateNodeSectors(treeIndex, Array.from(sectorIds));
         }

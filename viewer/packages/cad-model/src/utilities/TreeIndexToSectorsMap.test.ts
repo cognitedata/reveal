@@ -15,13 +15,13 @@ describe('TreeIndexToSectorsMap', () => {
   });
 
   test('maps from tree index to set of sectors', () => {
-    expect(Array.from(map.get(100))).toIncludeSameMembers([]);
+    expect(Array.from(map.getSectorIdsForTreeIndex(100))).toIncludeSameMembers([]);
 
     map.set(100, 1);
     map.set(100, 2);
     map.set(100, 3);
 
-    expect(Array.from(map.get(100))).toIncludeSameMembers([1, 2, 3]);
+    expect(Array.from(map.getSectorIdsForTreeIndex(100))).toIncludeSameMembers([1, 2, 3]);
   });
 
   test('fires callback when tree index is found in a new sector', () => {
