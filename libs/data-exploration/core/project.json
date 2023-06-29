@@ -11,8 +11,14 @@
         "outputPath": "dist/libs/data-exploration/core",
         "main": "libs/data-exploration/core/src/index.ts",
         "tsConfig": "libs/data-exploration/core/tsconfig.lib.json",
-        "assets": [],
-        "project": "libs/data-exploration/core/package.json"
+        "format": ["esm"],
+        "assets": [
+          {
+            "glob": "libs/data-exploration/containers/README.md",
+            "input": ".",
+            "output": "."
+          }
+        ]
       }
     },
     "lint": {
