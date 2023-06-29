@@ -11,21 +11,45 @@ import { notification } from 'antd';
 
 import { getFlow, getToken } from '@cognite/cdf-sdk-singleton';
 import { getEnv, getProject } from '@cognite/cdf-utilities';
-import { CogniteClient, Group } from '@cognite/sdk';
+import { CogniteCapability, CogniteClient, Group } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 import { usePermissions as _usePermissions } from '@cognite/sdk-react-query-hooks';
 
 export const useGroups = (all = false) => {
   const sdk = useSDK();
-  return useQuery(['groups', { all }], async () => {
+  return useQuery<Group[]>(['groups', { all }], async () => {
     const list = await sdk.groups.list({ all: true });
-    return list.sort((a, b) => {
-      try {
-        return (a.name || '').localeCompare(b.name || '');
-      } catch {
-        return 0;
-      }
-    });
+    return list
+      .map((g) => {
+        let editable = true;
+        // @ts-ignore It can't detect that I'm only deleting some untyped properties
+        const capabilities: CogniteCapability | undefined = g.capabilities?.map(
+          (c) => {
+            const capabilityKeys = Object.keys(c);
+            if (capabilityKeys.length > 1) {
+              editable = false;
+              const acl = capabilityKeys.find((key) => key.endsWith('Acl'));
+              return {
+                // @ts-ignore I can't properly type the key, but it's not generic string for sure
+                [acl]: c[acl],
+              };
+            }
+            return c;
+          }
+        );
+        return {
+          ...g,
+          capabilities,
+          editable,
+        };
+      })
+      .sort((a, b) => {
+        try {
+          return (a.name || '').localeCompare(b.name || '');
+        } catch {
+          return 0;
+        }
+      });
   });
 };
 
