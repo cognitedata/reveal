@@ -1,6 +1,6 @@
 {
   "name": "@cognite/reveal-react-components",
-  "version": "0.1.2",
+  "version": "0.2.1",
   "exports": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "type": "module",
@@ -46,7 +46,7 @@
     "eslint-config-standard-with-typescript": "latest",
     "eslint-plugin-header": "^3.1.1",
     "eslint-plugin-import": "^2.25.2",
-    "eslint-plugin-n": "^15.0.0",
+    "eslint-plugin-n": "^16.0.0",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-promise": "^6.0.0",
     "eslint-plugin-react": "latest",
@@ -66,7 +66,7 @@
   },
   "packageManager": "yarn@3.6.0",
   "files": [
-    "./dist/*"
+    "dist"
   ],
   "dependencies": {
     "lodash": "^4.17.21",
