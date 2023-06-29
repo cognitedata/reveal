@@ -22,7 +22,18 @@ export const useGroups = (all = false) => {
     return list
       .map((g) => {
         let editable = true;
-        // @ts-ignore It can't detect that I'm only deleting some untyped properties
+        /**
+         * g.capabilities is of type CogniteCapability | undefined
+         * But sometimes, if the group is created with project hierarchy properties,
+         * it will have some extra properties in every capability object.
+         * Here, I'm removing those objects, and instead adding an editable property to the group
+         * But typescript can't detect that I'm removing properties that won't already match the type
+         * and is complaining; hence the ts-ignore.
+         *
+         * When the types and the code is updated the support project hierarchy, both this ts-ignore
+         * and the code piece itself should be removed.
+         */
+        // @ts-ignore
         const capabilities: CogniteCapability | undefined = g.capabilities?.map(
           (c) => {
             const capabilityKeys = Object.keys(c);
