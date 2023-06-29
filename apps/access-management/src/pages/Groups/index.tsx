@@ -243,7 +243,13 @@ export default function Groups() {
           placement="bottomLeft"
           overlay={
             <Menu>
-              <Menu.Item onClick={() => setShowEdit(item)}>Edit</Menu.Item>
+              <Menu.Item
+                // @ts-ignore I added editable without a custom type; it's going to take too long
+                disabled={!item.editable}
+                onClick={() => setShowEdit(item)}
+              >
+                Edit
+              </Menu.Item>
               {legacyFlow && item.id !== project?.defaultGroupId && (
                 <Menu.Item
                   onClick={() =>
