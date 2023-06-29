@@ -106,7 +106,7 @@ export default function NodePreview({
         count: counts.event,
       },
     ];
-  }, [t]);
+  }, [t, counts]);
 
   return (
     <Wrapper>
