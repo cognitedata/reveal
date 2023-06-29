@@ -16,8 +16,8 @@ import {
 import FormFieldWrapper from '../form-field-wrapper/FormFieldWrapper';
 
 export const MQTT_SOURCE_TYPE_LABEL: Record<MQTTSourceType, string> = {
-  mqtt3: 'Version 5',
-  mqtt5: 'Version 3.1.1',
+  mqtt3: 'Version 3.1.1',
+  mqtt5: 'Version 5',
 };
 
 export const MQTT_SOURCE_TYPE_OPTIONS: {
@@ -97,7 +97,7 @@ export const CreateSourceModal = ({
   const { errors, handleSubmit, setFieldValue, values } =
     useFormik<CreateMQTTSourceFormValues>({
       initialValues: {
-        type: MQTT_SOURCE_TYPE_OPTIONS[0].value,
+        type: 'mqtt5',
       },
       onSubmit: (val) => {
         if (
