@@ -23,6 +23,7 @@ import {
   fitCameraToAsset,
 } from '@data-exploration-app/containers/ThreeD/utils';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
+import { useTranslation } from '@data-exploration-lib/core';
 
 export { default as HelpButton } from './help-button';
 export { default as ShareButton } from './share-button';
@@ -50,12 +51,13 @@ export const ExpandButton = ({
   viewer: Cognite3DViewer;
   model?: CogniteCadModel | CognitePointCloudModel;
 }) => {
+  const { t } = useTranslation();
   if (!model) {
     return <></>;
   }
 
   return (
-    <Tooltip content="Fit view" placement="right">
+    <Tooltip content={t('Fit view', 'Fit view')} placement="right">
       <FullWidthButton
         icon="ExpandAlternative"
         aria-label="Fit to view"
@@ -81,6 +83,7 @@ export const FocusAssetButton = ({
   viewer: Cognite3DViewer;
   threeDModel?: CogniteCadModel | Image360Collection;
 }) => {
+  const { t } = useTranslation();
   const sdk = useSDK();
   const queryClient = useQueryClient();
 
@@ -89,7 +92,7 @@ export const FocusAssetButton = ({
   }
 
   return (
-    <Tooltip content="Fit asset" placement="right">
+    <Tooltip content={t('FIT_ASSET', 'Fit asset')} placement="right">
       <FullWidthButton
         icon="Collapse"
         onClick={() => {
@@ -98,8 +101,7 @@ export const FocusAssetButton = ({
               sdk,
               queryClient,
               viewer,
-              threeDModel,
-              {},
+              { model: threeDModel },
               selectedAssetId
             );
           }
@@ -122,6 +124,8 @@ export const PointToPointMeasurementButton = ({
   nodesSelectable: boolean;
   setNodesSelectable: (selectable: boolean) => void;
 }) => {
+  const { t } = useTranslation();
+
   const measurementTool = useMemo(() => {
     return new MeasurementTool(viewer, {
       distanceToLabelCallback: (distanceInMeters: number) => {
@@ -159,7 +163,10 @@ export const PointToPointMeasurementButton = ({
   };
 
   return (
-    <Tooltip content="Distance measuring tool" placement="right">
+    <Tooltip
+      content={t('DISTANCE_MEASURING_TOOL', 'Distance measuring tool')}
+      placement="right"
+    >
       <FullWidthButton
         icon="Ruler"
         onClick={handleClick}

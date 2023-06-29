@@ -7,16 +7,16 @@ import debounce from 'lodash/debounce';
 import { Input } from '@cognite/cogs.js';
 
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
-import { useFlagAdvancedFilters } from '@data-exploration-app/hooks/flags/useFlagAdvancedFilters';
 import { useQueryString } from '@data-exploration-app/hooks/hooks';
 import { SEARCH_KEY } from '@data-exploration-app/utils/constants';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
+import { useTranslation } from '@data-exploration-lib/core';
 
 export const ExplorationSearchBar = () => {
+  const { t } = useTranslation();
   const [urlQuery, setUrlQuery] = useQueryString(SEARCH_KEY);
   const debouncedSetUrlQuery = debounce(setUrlQuery, 500);
   const [localQuery, setLocalQuery] = useState(urlQuery);
-  const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
 
   useEffect(() => {
     if (localQuery !== urlQuery) {
@@ -42,11 +42,11 @@ export const ExplorationSearchBar = () => {
       fullWidth
       clearable={{ callback: () => setLocalQuery('') }}
       icon="Search"
-      placeholder={
-        isAdvancedFiltersEnabled
-          ? 'Search for name, description, content, ID, external ID, and metadata...'
-          : 'Search...'
-      }
+      data-testid="main-search-input"
+      placeholder={t(
+        'EXPLORER_SEARCH_BAR_PLACEHOLDER',
+        'Search for name, description, content, ID, external ID, and metadata...'
+      )}
       onChange={handleOnChange}
       value={localQuery}
     />

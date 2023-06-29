@@ -6,6 +6,7 @@ import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 import { Image360DatasetOptions } from '@data-exploration-app/containers/ThreeD/contexts/ThreeDContext';
 import { Images360MenuItem } from '@data-exploration-app/containers/ThreeD/title/MenuItems/Images360MenuItem';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
+import { useTranslation } from '@data-exploration-lib/core';
 import { useInfinite360Images } from '@data-exploration-lib/domain-layer';
 
 import { SECONDARY_MODEL_DISPLAY_LIMIT } from '../../utils';
@@ -30,6 +31,7 @@ const SecondaryImages360Dropdown = ({
   images360,
   setImages360,
 }: SecondaryImages360DropdownProps): JSX.Element => {
+  const { t } = useTranslation();
   const [numOfImages360ToDisplay, setNumOfImages360ToDisplay] =
     useState<number>(SECONDARY_MODEL_DISPLAY_LIMIT);
   const [searchQuery, setSearchQuery] = useState('');
@@ -133,7 +135,7 @@ const SecondaryImages360Dropdown = ({
         <StyledInput
           autoFocus
           onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Search"
+          placeholder={t('SEARCH', 'Search')}
           value={searchQuery || ''}
           onKeyDown={(e) => {
             // Need to stop propagation to fix losing focus
@@ -163,8 +165,14 @@ const SecondaryImages360Dropdown = ({
         ) : (
           <StyledNoResultsContainer>
             <TableNoResults
-              title="No results found"
-              content={`The search ${searchQuery} did not match any 360 images. Please try another search.`}
+              title={t('NO_RESULTS_FOUND', 'No results found')}
+              content={t(
+                'NO_360_IMAGES_FOUND_TRY_ANOTHER_SEARCH',
+                `The search ${searchQuery} did not match any 360 images. Please try another search.`,
+                {
+                  query: searchQuery,
+                }
+              )}
             />
           </StyledNoResultsContainer>
         )}
@@ -174,7 +182,7 @@ const SecondaryImages360Dropdown = ({
         onClick={handleApply}
         type="primary"
       >
-        Apply
+        {t('APPLY', 'Apply')}
       </StyledApplyButton>
     </MenuWrapper>
   );

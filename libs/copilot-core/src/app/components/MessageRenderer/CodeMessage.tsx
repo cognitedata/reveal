@@ -5,6 +5,7 @@ import { Body, Button, Flex, Icon, Modal } from '@cognite/cogs.js';
 
 import { CopilotCodeMessage } from '../../../lib/types';
 import { sendFromCopilotEvent } from '../../../lib/utils';
+import { getContainer } from '../../utils/getContainer';
 import { Editor } from '../Editor/Editor';
 
 export const CodeMessage = ({
@@ -63,7 +64,7 @@ export const CodeMessage = ({
         onCancel={() => setOpen(false)}
         hideFooter
         hidePaddings
-        getContainer={() => document.getElementById('copilot-wrapper')}
+        getContainer={getContainer()}
         className="full-height"
       >
         <Flex

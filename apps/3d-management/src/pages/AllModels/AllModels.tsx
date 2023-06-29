@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from 'react';
+import React, { ChangeEvent, lazy, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import styled from 'styled-components';
@@ -55,12 +55,12 @@ const ButtonRow = styled.div`
   }
 `;
 
+const NoAccessPage = lazy(() => import('../NoAccessPage'));
+
 export default function AllModels() {
   const metrics = useMetrics('3D');
-  const modelsQuery = useModels();
-  const props = useParams();
 
-  const { data: models } = modelsQuery;
+  const props = useParams();
 
   const { mutate: createModel } = useCreateModelMutation();
   const { mutate: createRevision } = useCreateRevisionMutation();
@@ -94,10 +94,18 @@ export default function AllModels() {
   };
 
   const { flow } = getFlow();
+  const { data: hasThreedReadCapability } = usePermissions(
+    flow as any,
+    'threedAcl',
+    'READ'
+  );
   const { data: hasThreedCreateCapability, isFetched: isFetchedThreedCreate } =
     usePermissions(flow as any, 'threedAcl', 'CREATE');
   const { data: hasFilesWriteCapability, isFetched: isFetchedFilesWrite } =
     usePermissions(flow as any, 'filesAcl', 'WRITE');
+
+  const modelsQuery = useModels({ enabled: hasThreedReadCapability });
+  const { data: models } = modelsQuery;
 
   const showAddModelButton =
     hasThreedCreateCapability && hasFilesWriteCapability;
@@ -176,8 +184,15 @@ export default function AllModels() {
     },
   ];
 
-  if (modelsQuery.isLoading || !isFetchedFilesWrite || !isFetchedThreedCreate) {
+  if (
+    modelsQuery.isInitialLoading ||
+    !isFetchedFilesWrite ||
+    !isFetchedThreedCreate
+  ) {
     return <Spinner />;
+  }
+  if (!hasThreedReadCapability && !models) {
+    return <NoAccessPage />;
   }
 
   return (

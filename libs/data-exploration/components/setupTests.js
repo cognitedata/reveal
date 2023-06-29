@@ -8,3 +8,12 @@ window.URL.createObjectURL = noop;
 jestPreviewConfigure({ autoPreview: true });
 
 jest.mock('@cognite/unified-file-viewer', () => ({}));
+
+jest.mock('@data-exploration-lib/core', () => ({
+  ...jest.requireActual('@data-exploration-lib/core'),
+  useTranslation: () => ({
+    t: (_key, referenceValue, _options) => {
+      return referenceValue;
+    },
+  }),
+}));

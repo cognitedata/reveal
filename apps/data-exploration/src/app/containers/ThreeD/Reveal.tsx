@@ -24,6 +24,8 @@ import {
   Image360AnnotationIntersection,
 } from '@cognite/reveal';
 
+import { useTranslation } from '@data-exploration-lib/core';
+
 import { ThreeDContext } from './contexts/ThreeDContext';
 import { use3DModel } from './hooks';
 import { useViewerDoubleClickListener } from './hooks/useViewerDoubleClickListener';
@@ -44,6 +46,9 @@ type Props = {
   nodesSelectable: boolean;
   initialViewerState?: ViewerState;
   setImage360Entity?: (entity: Image360 | undefined) => void;
+  setEntered360ImageCollection?: (
+    collection: Image360Collection | undefined
+  ) => void;
   image360Entities?: { siteId: string; images: Image360Collection }[];
   onViewerClick?: (
     intersection: Intersection | null,
@@ -60,12 +65,14 @@ export function Reveal({
   nodesSelectable,
   initialViewerState,
   setImage360Entity,
+  setEntered360ImageCollection,
   onViewerClick,
 }: Props) {
+  const { t } = useTranslation();
   const {
     setViewState,
     viewer,
-    set3DModel,
+    setCadModel,
     setPointCloudModel,
     setImage360,
     secondaryObjectsVisibilityState,
@@ -198,9 +205,11 @@ export function Reveal({
 
         imageCollection.on('image360Entered', (image360) => {
           setImage360Entity?.(image360);
+          setEntered360ImageCollection?.(imageCollection);
         });
         imageCollection.on('image360Exited', () => {
           setImage360Entity?.(undefined);
+          setEntered360ImageCollection?.(undefined);
         });
       }
 
@@ -208,7 +217,7 @@ export function Reveal({
       const pointCloudModel =
         model instanceof CognitePointCloudModel ? model : undefined;
 
-      set3DModel(threeDModel);
+      setCadModel(threeDModel);
       setPointCloudModel(pointCloudModel);
       setImage360(imageCollection);
 
@@ -256,7 +265,7 @@ export function Reveal({
     revisionId,
     image360SiteId,
     initialViewerState,
-    set3DModel,
+    setCadModel,
     setImage360,
     setImage360Entity,
     setPointCloudModel,
@@ -288,7 +297,7 @@ export function Reveal({
 
   useEffect(() => {
     if (modelError) {
-      toast.error(<RevealErrorToast error={modelError} />, {
+      toast.error(<RevealErrorToast error={modelError} t={t} />, {
         toastId: 'reveal-model-load-error',
       });
     }

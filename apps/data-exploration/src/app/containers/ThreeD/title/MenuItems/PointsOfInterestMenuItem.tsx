@@ -2,6 +2,8 @@ import { useEffect } from 'react';
 
 import { Checkbox, Flex, Menu } from '@cognite/cogs.js';
 
+import { useTranslation } from '@data-exploration-lib/core';
+
 import { PointsOfInterestCollection, PointOfInterest } from '../../hooks';
 
 import {
@@ -25,6 +27,7 @@ export const PointsOfInterestMenuItem = ({
   onChange: (item: PointsOfInterestCollection) => void;
   pointsOfInterestCollection?: PointsOfInterestCollection;
 }) => {
+  const { t } = useTranslation();
   useEffect(() => {
     if (!pointsOfInterestCollection) {
       onChange({
@@ -57,7 +60,7 @@ export const PointsOfInterestMenuItem = ({
     <StyledSecondaryObjectMenuItemContent gap={8}>
       <Checkbox
         checked={Boolean(pointsOfInterestCollection?.applied)}
-        name={title ?? 'No title'}
+        name={title ?? t('NO_TITLE', 'No title')}
         onChange={(_, checked) => handleClickModelMenuItem(!!checked)}
       />
       <Flex alignItems="flex-start" direction="column">
@@ -67,7 +70,9 @@ export const PointsOfInterestMenuItem = ({
           {title}
         </StyledSecondaryObjectBody>
         <StyledSecondaryObjectDetail>
-          {pointsOfInterest?.length.toString() + ' points of interest'}
+          {t('POINTS_OF_INTEREST_WITH_COUNT', '{{count}} points of interest', {
+            count: pointsOfInterest?.length,
+          })}
         </StyledSecondaryObjectDetail>
       </Flex>
     </StyledSecondaryObjectMenuItemContent>

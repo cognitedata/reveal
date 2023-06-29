@@ -4,6 +4,7 @@ import {
   FilterProps,
   SPECIFIC_INFO_CONTENT,
   hasObjectAnyProperty,
+  useTranslation,
 } from '@data-exploration-lib/core';
 
 import {
@@ -21,6 +22,8 @@ export const TimeseriesFilters: React.FC<FilterProps> = ({
   query,
   ...rest
 }) => {
+  const { t } = useTranslation();
+
   const timeSeriesFilter = filter.timeSeries;
   const isResetButtonVisible = hasObjectAnyProperty(timeSeriesFilter, [
     'metadata',
@@ -28,11 +31,12 @@ export const TimeseriesFilters: React.FC<FilterProps> = ({
     'isString',
     'unit',
   ]);
+
   return (
     <BaseFilterCollapse.Panel
-      title="Time series"
+      title={t('TIMESERIES', 'Time series')}
       hideResetButton={!isResetButtonVisible}
-      infoContent={SPECIFIC_INFO_CONTENT}
+      infoContent={t('SPECIFIC_INFO_CONTENT', SPECIFIC_INFO_CONTENT)}
       onResetClick={() => onResetFilterClick('timeSeries')}
       {...rest}
     >

@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
+import { BotUI } from '@botui/react';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
+import { createBot } from 'botui';
 import styled from 'styled-components/macro';
 
 import { ToastContainer } from '@cognite/cogs.js';
@@ -36,6 +38,8 @@ export const Copilot = ({
     };
   }, []);
 
+  const bot = useRef(createBot());
+
   return (
     <SDKProvider sdk={sdk}>
       <QueryClientProvider client={queryClient}>
@@ -48,8 +52,9 @@ export const Copilot = ({
             remoteAddress={window.location.hostname}
             disableMetrics
           >
-            {isVisible && (
+            <BotUI bot={bot.current}>
               <ChatUI
+                visible={isVisible}
                 feature={feature}
                 onClose={() => {
                   window.dispatchEvent(
@@ -59,7 +64,7 @@ export const Copilot = ({
                   );
                 }}
               />
-            )}
+            </BotUI>
             <CopilotButton />
           </FlagProvider>
         </StyledWrapper>
@@ -71,7 +76,7 @@ export const Copilot = ({
 const StyledWrapper = styled.div`
   display: flex;
   flex-flow: column;
-  height: 100%;
+  height: 0;
   overflow: hidden;
 
   .cogs-modal__content {

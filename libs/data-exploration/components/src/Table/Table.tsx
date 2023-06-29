@@ -36,11 +36,11 @@ import {
   isElementHorizontallyInViewport,
   ResourceItem,
   useMetrics,
+  useTranslation,
 } from '@data-exploration-lib/core';
 
 import { EmptyState } from '../EmpyState';
 
-import { ResourceTableColumns } from './columns';
 import {
   ColumnToggle,
   SortIcon,
@@ -118,8 +118,6 @@ export type TableProps<T extends Record<string, any>> = LoadMoreProps & {
 
 export type TableData = Record<string, any>;
 
-Table.Columns = ResourceTableColumns;
-
 export function Table<T extends TableData>({
   id,
   columns,
@@ -156,6 +154,8 @@ export function Table<T extends TableData>({
   renderCellSubComponent,
   onChangeSearchInput,
 }: TableProps<T>) {
+  const { t } = useTranslation();
+
   const defaultColumn: Partial<ColumnDef<T, unknown>> = useMemo(
     () => ({
       minSize: 200,
@@ -361,14 +361,25 @@ export function Table<T extends TableData>({
 
   const renderTableContent = () => {
     if (isDataLoading) {
-      return <EmptyState isLoading title={LOADING_RESULTS} />;
+      return (
+        <EmptyState isLoading title={t('LOADING_RESULTS', LOADING_RESULTS)} />
+      );
     }
 
     if (!data || data.length === 0) {
-      return <EmptyState body={REFINE_FILTERS_OR_UPDATE_SEARCH} />;
+      return (
+        <EmptyState
+          body={t(
+            'REFINE_FILTERS_OR_UPDATE_SEARCH',
+            REFINE_FILTERS_OR_UPDATE_SEARCH
+          )}
+        />
+      );
     }
     if (!getIsSomeColumnsVisible()) {
-      return <EmptyState body="Please, select your columns" />;
+      return (
+        <EmptyState body={t('SELECT_COLUMNS', 'Please, select your columns')} />
+      );
     }
 
     return (
@@ -392,7 +403,9 @@ export function Table<T extends TableData>({
                     <ThWrapper>
                       <Flex direction="column" gap={2}>
                         {has(header.column.columnDef?.meta, 'isMetadata') && (
-                          <MetadataHeaderText>Metadata</MetadataHeaderText>
+                          <MetadataHeaderText>
+                            {t('METADATA', 'Metadata')}
+                          </MetadataHeaderText>
                         )}
                         {flexRender(
                           header.column.columnDef.header,

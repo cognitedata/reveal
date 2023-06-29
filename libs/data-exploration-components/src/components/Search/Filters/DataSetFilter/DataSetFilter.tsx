@@ -15,6 +15,8 @@ import { Body, Tooltip } from '@cognite/cogs.js';
 import { DataSet, IdEither } from '@cognite/sdk';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 
+import { useTranslation } from '@data-exploration-lib/core';
+
 export const DataSetFilter = ({
   resourceType,
   value,
@@ -24,6 +26,8 @@ export const DataSetFilter = ({
   value: IdEither[] | undefined;
   setValue: (newValue: IdEither[] | undefined) => void;
 }) => {
+  const { t } = useTranslation();
+
   const { data: currentDataSets } = useCdfItems<DataSet>(
     'datasets',
     value || [],
@@ -56,7 +60,14 @@ export const DataSetFilter = ({
       disabled={!isError}
       content={
         isError &&
-        'Error fetching datasets, please make sure you have datasetsAcl:READ'
+        t(
+          'PERMISSIONS_ERROR_FETCHING',
+          'Error fetching datasets, please make sure you have datasetsAcl:READ',
+          {
+            dataType: 'datasets',
+            permissionType: 'datasetsAcl:READ',
+          }
+        )
       }
     >
       <>

@@ -22,6 +22,8 @@ import { addPlusSignToCount } from '@data-exploration-app/utils/stringUtils';
 import { getSearchParams } from '@data-exploration-app/utils/URLUtils';
 import {
   formatNumber,
+  getTranslationEntry,
+  useTranslation,
   withThousandSeparator,
 } from '@data-exploration-lib/core';
 
@@ -95,6 +97,7 @@ export const ResourceDetailsTabs = ({
   onTabChange,
   style = {},
 }: ResouceDetailsTabsProps) => {
+  const { t } = useTranslation();
   const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
   const { counts, hasMoreRelationships } = useRelatedResourceCounts(
     parentResource,
@@ -111,23 +114,33 @@ export const ResourceDetailsTabs = ({
       : addPlusSignToCount(formatNumber(count), hasMoreRelationships[key]!);
   };
 
-  const relationshipTabs = filteredTabs.map((key) => (
-    <Tabs.Tab
-      tabKey={key}
-      key={key}
-      label={getTitle(key)}
-      chipRight={{
-        label: getCountLabel(counts[key] || 0, key),
-        size: 'x-small',
-        tooltipProps: { content: withThousandSeparator(counts[key], ',') },
-      }}
-    >
-      <ResourceDetailTabContent
-        resource={parentResource}
-        type={key as ResourceType}
-      />
-    </Tabs.Tab>
-  ));
+  const relationshipTabs = filteredTabs.map((key) => {
+    const totalCount = counts[key] || 0;
+    const titleTranslationKey = `${key}_${getTranslationEntry(totalCount)}`;
+
+    const title = getTitle(key, totalCount !== 1);
+    const titleTranslated = t(titleTranslationKey, title, {
+      count: totalCount,
+    });
+
+    return (
+      <Tabs.Tab
+        tabKey={key}
+        key={key}
+        label={titleTranslated}
+        chipRight={{
+          label: getCountLabel(counts[key] || 0, key),
+          size: 'x-small',
+          tooltipProps: { content: withThousandSeparator(counts[key], ',') },
+        }}
+      >
+        <ResourceDetailTabContent
+          resource={parentResource}
+          type={key as ResourceType}
+        />
+      </Tabs.Tab>
+    );
+  });
   const tabs = [...additionalTabs, ...relationshipTabs];
 
   return (

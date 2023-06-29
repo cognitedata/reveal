@@ -10,6 +10,8 @@ import {
 
 import { Body, Colors, Detail, Flex, Title } from '@cognite/cogs.js';
 
+import { useTranslation } from '@data-exploration-lib/core';
+
 interface HelpMenuSectionProps {
   children: React.ReactNode;
   title: string;
@@ -25,54 +27,76 @@ export const HelpMenuSection = ({
   </StyledSectionContainer>
 );
 
-export const MouseNavigation = (): JSX.Element => (
-  <HelpMenuSection title="Mouse">
-    <StyledMouseNavigationGrid>
-      <StyledInstructionText>
-        Zoom <StyledInstructionDetail>scroll</StyledInstructionDetail>
-      </StyledInstructionText>
-      <StyledInstructionText>
-        Rotate
-        <br />
-        <StyledInstructionDetail> click+drag</StyledInstructionDetail>
-      </StyledInstructionText>
-      <StyledMouseGraphic />
-      <StyledInstructionText>
-        Pan
-        <br />
-        <StyledInstructionDetail> click+drag</StyledInstructionDetail>
-      </StyledInstructionText>
-    </StyledMouseNavigationGrid>
-  </HelpMenuSection>
-);
-
-export const TouchNavigation = (): JSX.Element => (
-  <HelpMenuSection title="Touch">
-    <StyledTouchNavigationContainer>
-      <Flex direction="column" gap={4}>
+export const MouseNavigation = (): JSX.Element => {
+  const { t } = useTranslation();
+  return (
+    <HelpMenuSection title={t('MOUSE', 'Mouse')}>
+      <StyledMouseNavigationGrid>
         <StyledInstructionText>
-          Rotate <StyledInstructionDetail>click</StyledInstructionDetail>
+          {t('ZOOM', 'Zoom')}{' '}
+          <StyledInstructionDetail>
+            {t('SCROLL', 'scroll')}
+          </StyledInstructionDetail>
         </StyledInstructionText>
-        <Rotate />
-      </Flex>
-      <Flex direction="column" gap={4}>
         <StyledInstructionText>
-          Zoom <StyledInstructionDetail>pinch</StyledInstructionDetail>
+          {t('ROTATE', 'Rotate')}
+          <br />
+          <StyledInstructionDetail>
+            {t('CLICK_N_DRAG', 'click+drag')}
+          </StyledInstructionDetail>
         </StyledInstructionText>
-        <PinchRight style={{ width: 80 }} />
-      </Flex>
-    </StyledTouchNavigationContainer>
-  </HelpMenuSection>
-);
+        <StyledMouseGraphic />
+        <StyledInstructionText>
+          {t('PAN', 'Pan')}
+          <br />
+          <StyledInstructionDetail>
+            {t('CLICK_N_DRAG', 'click+drag')}
+          </StyledInstructionDetail>
+        </StyledInstructionText>
+      </StyledMouseNavigationGrid>
+    </HelpMenuSection>
+  );
+};
 
-export const KeyboardNavigation = (): JSX.Element => (
-  <HelpMenuSection title="Keyboard">
-    <Flex gap={16}>
-      <WASDNavigation style={{ width: 150 }} />
-      <ArrowsNavigation style={{ width: 135 }} />
-    </Flex>
-  </HelpMenuSection>
-);
+export const TouchNavigation = (): JSX.Element => {
+  const { t } = useTranslation();
+  return (
+    <HelpMenuSection title={t('TOUCH', 'Touch')}>
+      <StyledTouchNavigationContainer>
+        <Flex direction="column" gap={4}>
+          <StyledInstructionText>
+            {t('ROTATE', 'Rotate')}{' '}
+            <StyledInstructionDetail>
+              {t('CLICK', 'click')}
+            </StyledInstructionDetail>
+          </StyledInstructionText>
+          <Rotate />
+        </Flex>
+        <Flex direction="column" gap={4}>
+          <StyledInstructionText>
+            {t('ZOOM', 'Zoom')}{' '}
+            <StyledInstructionDetail>
+              {t('PINCH', 'pinch')}
+            </StyledInstructionDetail>
+          </StyledInstructionText>
+          <PinchRight style={{ width: 80 }} />
+        </Flex>
+      </StyledTouchNavigationContainer>
+    </HelpMenuSection>
+  );
+};
+
+export const KeyboardNavigation = (): JSX.Element => {
+  const { t } = useTranslation();
+  return (
+    <HelpMenuSection title={t('KEYBOARD', 'Keyboard')}>
+      <Flex gap={16}>
+        <WASDNavigation style={{ width: 150 }} />
+        <ArrowsNavigation style={{ width: 135 }} />
+      </Flex>
+    </HelpMenuSection>
+  );
+};
 
 export const StyledSectionContainer = styled.div`
   display: flex;

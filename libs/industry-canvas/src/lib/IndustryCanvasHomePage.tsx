@@ -29,7 +29,6 @@ import useTableState from './hooks/useTableState';
 import { useTranslation } from './hooks/useTranslation';
 import { useIndustryCanvasContext } from './IndustryCanvasContext';
 import { UserProfile, useUserProfile } from './UserProfileProvider';
-import convertCanvasWithUserProfileToSerializedCanvasDocument from './utils/convertCanvasWithUserProfileToSerializedCanvasDocument';
 import { getCanvasLink } from './utils/getCanvasLink';
 
 export const IndustryCanvasHomePage = () => {
@@ -168,9 +167,7 @@ export const IndustryCanvasHomePage = () => {
         aria-label={t(translationKeys.COMMON_CANVAS_DELETE, 'Delete canvas')}
         onClick={(ev) => {
           ev.stopPropagation();
-          setCanvasToDelete(
-            convertCanvasWithUserProfileToSerializedCanvasDocument(row)
-          );
+          setCanvasToDelete(row);
         }}
       />
     </Tooltip>

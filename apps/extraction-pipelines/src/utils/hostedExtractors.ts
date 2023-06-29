@@ -8,16 +8,30 @@ import {
 } from '../hooks/hostedExtractors';
 
 const MQTT_JOB_LOG_ERROR_TYPES: ReadMQTTJobLog['type'][] = [
-  'error',
+  'error', // TODO: remove
   'startup_error',
+  'connection_error',
+  'transform_error',
+  'destination_error',
 ];
-const MQTT_JOB_LOG_SUCCESS_TYPES: ReadMQTTJobLog['type'][] = ['ok'];
+const MQTT_JOB_LOG_SUCCESS_TYPES: ReadMQTTJobLog['type'][] = [
+  'ok',
+  'connected',
+];
+
+const MQTT_JOB_LOG_PAUSE_TYPES: ReadMQTTJobLog['type'][] = ['stopped'];
 
 const MQTT_JOB_STATUS_ERROR_TYPES: ReadMQTTJob['status'][] = [
-  'error',
+  'error', // TODO: remove
   'startup_error',
+  'connection_error',
+  'transform_error',
+  'destination_error',
 ];
-const MQTT_JOB_STATUS_SUCCESS_TYPES: ReadMQTTJob['status'][] = ['running'];
+const MQTT_JOB_STATUS_SUCCESS_TYPES: ReadMQTTJob['status'][] = [
+  'running',
+  'connected',
+];
 const MQTT_JOB_STATUS_NEUTRAL_TYPES: ReadMQTTJob['status'][] = [
   'shutting_down',
   'waiting',
@@ -32,6 +46,10 @@ export const doesLogHaveErrorType = (log: ReadMQTTJobLog) => {
 
 export const doesLogHaveSuccessType = (log: ReadMQTTJobLog) => {
   return MQTT_JOB_LOG_SUCCESS_TYPES.includes(log.type);
+};
+
+export const doesLogHavePauseType = (log: ReadMQTTJobLog) => {
+  return MQTT_JOB_LOG_PAUSE_TYPES.includes(log.type);
 };
 
 export const doesJobStatusHaveErrorType = (job: ReadMQTTJob) => {
@@ -165,10 +183,31 @@ export const getMetricAggregationErrorCount = (
   return data.transformFailures;
 };
 
+export const getWriteDataAggregationSuccessCount = (
+  data: MetricAggregation['data']
+): number => {
+  if (!data) {
+    return 0;
+  }
+
+  return data.destinationUploadedValues;
+};
+
+export const getWriteFailureAggregationErrorCount = (
+  data: MetricAggregation['data']
+): number => {
+  if (!data) {
+    return 0;
+  }
+
+  return data.destinationWriteFailures;
+};
+
 type StatusChangeBucket = {
   startTime: number;
   endTime: number;
   isUp: boolean;
+  log: ReadMQTTJobLog;
 };
 
 export const getStatusChangeBuckets = (logs?: ReadMQTTJobLog[]) => {
@@ -180,7 +219,8 @@ export const getStatusChangeBuckets = (logs?: ReadMQTTJobLog[]) => {
     {
       startTime: logs[0].createdTime,
       endTime: Number.MAX_SAFE_INTEGER,
-      isUp: doesLogHaveSuccessType(logs[0]),
+      isUp: doesLogHaveSuccessType(logs[0]) || doesLogHavePauseType(logs[0]),
+      log: logs[0],
     },
   ];
 
@@ -189,7 +229,8 @@ export const getStatusChangeBuckets = (logs?: ReadMQTTJobLog[]) => {
     buckets.push({
       startTime: log.createdTime,
       endTime: prevItem.createdTime,
-      isUp: doesLogHaveSuccessType(log),
+      isUp: doesLogHaveSuccessType(log) || doesLogHavePauseType(log),
+      log: log,
     });
   });
 
@@ -226,6 +267,7 @@ export type UptimeAggregation = {
   startTime: number;
   endTime: number;
   uptimePercentage: number;
+  logs: ReadMQTTJobLog[];
 };
 
 export const getUptimeAggregations = (
@@ -258,6 +300,7 @@ export const getUptimeAggregations = (
           endTime,
           startTime,
           uptimePercentage: -1,
+          logs: [],
         };
       }
 
@@ -279,11 +322,17 @@ export const getUptimeAggregations = (
         return acc;
       }, 0);
 
+      let bucketedLogs: ReadMQTTJobLog[] = [];
+      bucketsForCurrentInterval.forEach((bucket) => {
+        bucketedLogs.push(bucket.log);
+      });
+
       return {
         endTime,
         startTime,
         uptimePercentage:
           (uptime / (endTime - Math.max(startTime, firstLogTime))) * 100,
+        logs: bucketedLogs,
       };
     });
 

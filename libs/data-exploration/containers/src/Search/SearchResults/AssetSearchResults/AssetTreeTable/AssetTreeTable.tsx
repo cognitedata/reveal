@@ -7,6 +7,7 @@ import {
   SubCellMatchingLabels,
   Table,
   ThreeDModelCell,
+  getTableColumns,
 } from '@data-exploration/components';
 import { ColumnDef } from '@tanstack/react-table';
 import { ExpandedState } from '@tanstack/table-core';
@@ -20,6 +21,7 @@ import {
   getHiddenColumns,
   InternalAssetFilters,
   useGetSearchConfigFromLocalStorage,
+  useTranslation,
 } from '@data-exploration-lib/core';
 import {
   InternalAssetTreeData,
@@ -54,6 +56,8 @@ export const AssetTreeTable = ({
   scrollIntoViewRow?: string | number; //Scroll into center row when the selectedRows changes
   tableSubHeaders?: React.ReactElement;
 }) => {
+  const { t } = useTranslation();
+
   const [rootExpanded, setRootExpanded] = useState<ExpandedState>({});
   const [searchExpanded, setSearchExpanded] = useState<ExpandedState>({});
 
@@ -123,11 +127,13 @@ export const AssetTreeTable = ({
     }
   }, [query, filter]);
 
+  const tableColumns = getTableColumns(t);
+
   const columns = React.useMemo(
     () =>
       [
         {
-          header: 'Name',
+          header: t('NAME', 'Name'),
           accessorKey: 'name',
           enableHiding: false,
           cell: ({ row, getValue }) => (
@@ -167,11 +173,13 @@ export const AssetTreeTable = ({
             isExpandable: true,
           },
         },
-        Table.Columns.description(query),
-        Table.Columns.externalId(query),
+        tableColumns.description(query),
+        tableColumns.externalId(query),
         {
           id: 'childCount',
-          header: startFromRoot ? 'Direct children' : 'Results under asset',
+          header: startFromRoot
+            ? t('DIRECT_CHILDREN', 'Direct children')
+            : t('RESULTS_UNDER_ASSET', 'Results under asset'),
           accessorKey: 'aggregates',
           cell: ({ getValue }) => {
             return (
@@ -186,12 +194,12 @@ export const AssetTreeTable = ({
         },
         {
           id: 'threeDModels',
-          header: '3D availability',
+          header: t('3D_AVAILABILITY', '3D availability'),
           cell: ({ row }) => <ThreeDModelCell assetId={row.original.id} />,
           size: 300,
         },
-        Table.Columns.source(query),
-        Table.Columns.dataSet,
+        tableColumns.source(query),
+        tableColumns.dataSet,
         ...metadataColumns,
       ] as ColumnDef<InternalAssetTreeData>[],
     [query, startFromRoot, metadataColumns]
@@ -242,7 +250,7 @@ export const AssetTreeTable = ({
           }
         }}
         renderSubRowComponent={(row) =>
-          HierarchyExtraRow(row, onAssetSeeMoreClicked)
+          HierarchyExtraRow(row, onAssetSeeMoreClicked, t)
         }
         renderCellSubComponent={SubCellMatchingLabels}
         onChangeSearchInput={setMetadataKeyQuery}

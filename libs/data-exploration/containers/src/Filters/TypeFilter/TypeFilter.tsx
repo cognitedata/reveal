@@ -6,6 +6,7 @@ import {
   InternalEventsFilters,
   useDebouncedState,
   useMetrics,
+  useTranslation,
 } from '@data-exploration-lib/core';
 import {
   useDocumentsFilterOptions,
@@ -33,10 +34,11 @@ export interface TypeFilterProps<TFilter> extends BaseTypeFilterProps<TFilter> {
 export function TypeFilter<TFilter>({
   options,
   onChange,
-  title = 'Type',
+  title,
   value,
   ...rest
 }: TypeFilterProps<TFilter>) {
+  const { t } = useTranslation();
   const trackUsage = useMetrics();
 
   const handleChange = (
@@ -45,7 +47,7 @@ export function TypeFilter<TFilter>({
       value: string;
     }[]
   ) => {
-    onChange?.(type.map((t) => t.value));
+    onChange?.(type.map((option) => option.value));
     trackUsage(DATA_EXPLORATION_COMPONENT.SELECT.AGGREGATE_EVENT_FILTER, {
       value: type,
       title,
@@ -55,7 +57,7 @@ export function TypeFilter<TFilter>({
   return (
     <MultiSelectFilter<string>
       {...rest}
-      label={title}
+      label={title || t('TYPE', 'Type')}
       value={value ? transformOptionsForMultiselectFilter(value) : undefined}
       options={options}
       onChange={(_, type) => handleChange(type)}
@@ -65,6 +67,7 @@ export function TypeFilter<TFilter>({
 }
 
 const FileTypeFilter = (props: BaseTypeFilterProps<InternalDocumentFilter>) => {
+  const { t } = useTranslation();
   const [query, setQuery] = useDebouncedState<string>();
 
   const { options, isLoading, isError } = useDocumentsFilterOptions({
@@ -81,7 +84,7 @@ const FileTypeFilter = (props: BaseTypeFilterProps<InternalDocumentFilter>) => {
       isError={isError}
       isLoading={isLoading}
       options={options}
-      title="File type"
+      title={t('FILE_TYPE', 'File type')}
     />
   );
 };

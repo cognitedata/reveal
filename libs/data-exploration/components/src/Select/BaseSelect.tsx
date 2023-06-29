@@ -11,7 +11,11 @@ import {
   Tooltip,
 } from '@cognite/cogs.js';
 
-import { NIL_FILTER_LABEL, NIL_FILTER_VALUE } from '@data-exploration-lib/core';
+import {
+  NIL_FILTER_LABEL,
+  NIL_FILTER_VALUE,
+  useTranslation,
+} from '@data-exploration-lib/core';
 
 import { Option, MultiValue, MenuList } from './components';
 
@@ -36,8 +40,11 @@ export const BaseSelect = <ValueType,>({
   isError = false,
   isLoading,
   isSearchable,
+  placeholder,
   ...rest
 }: BaseSelectProps<ValueType>) => {
+  const { t } = useTranslation();
+
   const [selectIsFocused, setSelectIsFocused] = useState(false);
   const [menuInputIsFocused, setMenuInputIsFocused] = useState(false);
   const [menuIsOpen, setMenuIsOpen] = useState(false);
@@ -126,7 +133,11 @@ export const BaseSelect = <ValueType,>({
   }, [menuInputIsFocused, selectIsFocused]);
 
   return (
-    <Tooltip interactive disabled={!isError} content="No data found">
+    <Tooltip
+      interactive
+      disabled={!isError}
+      content={t('NO_DATA_FOUND', 'No data found')}
+    >
       <CogsSelectWrapper
         isError={isError}
         onFocus={() => setSelectIsFocused(true)}
@@ -140,6 +151,8 @@ export const BaseSelect = <ValueType,>({
             MenuList,
           }}
           disabled={isError || isLoading}
+          placeholder={placeholder || t('SELECT_PLACEHOLDER', 'Select...')}
+          noOptionsMessage={() => t('NO_OPTIONS', 'No options')}
           isSearchable={false}
           showMenuInput={isSearchable}
           menuIsOpen={menuIsOpen}

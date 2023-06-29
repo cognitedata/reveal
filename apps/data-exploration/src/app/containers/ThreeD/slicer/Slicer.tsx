@@ -14,6 +14,7 @@ import {
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 import { ThreeDContext } from '@data-exploration-app/containers/ThreeD/contexts/ThreeDContext';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
+import { useTranslation } from '@data-exploration-lib/core';
 
 import { ids } from '../../../../cogs-variables';
 
@@ -23,6 +24,7 @@ type SliderProps = {
 };
 
 export const Slicer = ({ viewer, viewerModel }: SliderProps): JSX.Element => {
+  const { t } = useTranslation();
   const { setSlicingState, slicingState } = useContext(ThreeDContext);
 
   const [min, max] = useMemo(() => {
@@ -38,7 +40,7 @@ export const Slicer = ({ viewer, viewerModel }: SliderProps): JSX.Element => {
     const maxVector = [0, -1, 0];
     const minVector = [0, 1, 0];
 
-    viewer.setClippingPlanes([
+    viewer.setGlobalClippingPlanes([
       new THREE.Plane(new THREE.Vector3(...minVector), -slicingState.bottom),
       new THREE.Plane(new THREE.Vector3(...maxVector), slicingState.top),
     ]);
@@ -71,7 +73,7 @@ export const Slicer = ({ viewer, viewerModel }: SliderProps): JSX.Element => {
       }
       placement="right-end"
     >
-      <Tooltip content="Slice" placement="right">
+      <Tooltip content={t('SLICE', 'Slice')} placement="right">
         <FullWidthButton
           icon="Slice"
           type="ghost"

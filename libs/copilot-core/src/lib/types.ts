@@ -1,26 +1,47 @@
 import { BaseChain, ChainInputs } from 'langchain/chains';
 import { BaseChatModel } from 'langchain/chat_models/base';
+import { ChainValues } from 'langchain/schema';
 
 import { CogniteClient } from '@cognite/sdk';
+
+import { addToCopilotEventListener, sendToCopilotEvent } from './utils';
 export type CopilotSupportedFeatureType = 'Streamlit' | 'IndustryCanvas';
 
-type DefaultMessage = {};
+type DefaultMessage = {
+  key?: number;
+  content: string;
+  pending?: boolean;
+};
 
 export type CopilotTextMessage = {
   type: 'text';
-  content: string;
+} & DefaultMessage;
+
+export type CopilotHumanApprovalMessage = {
+  type: 'human-approval';
+  approved?: boolean;
 } & DefaultMessage;
 
 export type CopilotCodeMessage = {
   type: 'code';
-  content: string;
   prevContent?: string;
   highlightLines?: [number, number][]; // [start, end]
   language: 'python';
 } & DefaultMessage;
 
+export type CopilotDataModelSelectionMessage = {
+  type: 'data-model';
+  space?: string;
+  dataModel?: string;
+  version?: string;
+} & DefaultMessage;
+
 export type CopilotUserMessage = CopilotTextMessage;
-export type CopilotBotMessage = CopilotTextMessage | CopilotCodeMessage;
+export type CopilotBotMessage =
+  | CopilotTextMessage
+  | CopilotCodeMessage
+  | CopilotDataModelSelectionMessage
+  | CopilotHumanApprovalMessage;
 
 export type CopilotMessage =
   | (CopilotUserMessage & { source: 'user' })
@@ -58,15 +79,61 @@ export interface CogniteChainInput extends ChainInputs {
   returnAll?: boolean;
   /** Cognite Client */
   sdk: CogniteClient;
+
+  messages: React.RefObject<CopilotMessage[]>;
+  humanApproval?: boolean;
 }
 
 export abstract class CogniteBaseChain extends BaseChain {
   public abstract description: string;
+
+  constructor(fields: CogniteChainInput) {
+    super(fields);
+    const name = this.constructor.name;
+    if (!!fields?.humanApproval) {
+      this.callbacks = [
+        {
+          async handleChainStart(_: ChainValues) {
+            return new Promise((resolve, reject) => {
+              sendToCopilotEvent('NEW_MESSAGES', [
+                {
+                  source: 'bot',
+                  type: 'human-approval',
+                  content: `Run "${name}" chain?`,
+                  pending: true,
+                },
+              ]);
+              const removeListener = addToCopilotEventListener(
+                'NEW_MESSAGES',
+                (data) => {
+                  if (data.length === 1 && data[0].type === 'human-approval') {
+                    removeListener();
+                    if (data[0].approved) {
+                      return resolve();
+                    } else {
+                      sendToCopilotEvent('NEW_MESSAGES', [
+                        {
+                          source: 'bot',
+                          type: 'text',
+                          content: `Ok, I won't run "${name}" chain.`,
+                          pending: false,
+                        },
+                      ]);
+                      return reject();
+                    }
+                  }
+                }
+              );
+            });
+          },
+        },
+      ];
+    }
+  }
 }
 
 export type CopilotEvents = {
   FromCopilot: {
-    NEW_BOT_MESSAGE: CopilotBotMessage;
     // get code from selected area
     GET_CODE_FOR_SELECTION: undefined;
     // get all code from streamlit
@@ -77,6 +144,8 @@ export type CopilotEvents = {
     };
   };
   ToCopilot: {
+    // only the last message will be processed
+    NEW_MESSAGES: CopilotMessage[];
     // get code from selected area
     GET_CODE_FOR_SELECTION: {
       content: string;

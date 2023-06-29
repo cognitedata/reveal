@@ -13,9 +13,11 @@ import { useQueryClient } from '@tanstack/react-query';
 import { Colors, Flex } from '@cognite/cogs.js';
 import {
   CogniteCadModel,
+  CogniteModel,
   CognitePointCloudModel,
   Image360,
   Image360AnnotationIntersection,
+  Image360Collection,
   Intersection,
 } from '@cognite/reveal';
 import { Image360HistoricalDetails } from '@cognite/reveal-react-components';
@@ -96,7 +98,7 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
 
   const {
     viewer,
-    threeDModel,
+    cadModel,
     pointCloudModel,
     assetDetailsExpanded,
     assetHighlightMode,
@@ -117,7 +119,7 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
     image360,
   } = useContext(ThreeDContext);
 
-  const model = threeDModel ?? pointCloudModel ?? image360;
+  const model = cadModel ?? pointCloudModel ?? image360;
 
   // Changes to the view state in the url should not cause any updates
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -129,6 +131,10 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
     undefined
   );
 
+  const [enteredImage360Collection, setEnteredImage360Collection] = useState<
+    Image360Collection | undefined
+  >(undefined);
+
   const [loadedSecondaryModels, setLoadedSecondaryModels] = useState<
     (CogniteCadModel | CognitePointCloudModel)[]
   >([]);
@@ -139,6 +145,10 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
   const handleExpand = useCallback((isExpanded: boolean) => {
     setIs360HistoricalPanelExpanded(isExpanded);
   }, []);
+
+  const [clickedModel, setClickedModel] = useState<
+    CogniteModel | Image360Collection | undefined
+  >();
 
   const setSelectedAssetAndFitCamera = useCallback(
     (
@@ -155,7 +165,6 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
           sdk,
           queryClient,
           viewer,
-          model,
           assetSelectionState,
           newSelectedAssetId
         );
@@ -171,15 +180,23 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
     ) => {
       (async () => {
         let closestAssetId: number | undefined;
-        const assetSelectionState: AssetSelectionState = {};
+        const assetSelectionState: AssetSelectionState = {
+          model: model!,
+        };
 
-        if (image360AnnotationIntersection) {
+        if (
+          image360AnnotationIntersection &&
+          enteredImage360Collection !== undefined
+        ) {
           closestAssetId = getAssetIdFromImageAnnotation(
             image360AnnotationIntersection.annotation.annotation
           );
 
           assetSelectionState.imageAnnotation =
             image360AnnotationIntersection.annotation;
+          assetSelectionState.model = enteredImage360Collection;
+
+          setClickedModel(enteredImage360Collection);
         }
 
         if (
@@ -191,11 +208,15 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
           closestAssetId = await findClosestAsset(
             sdk,
             queryClient,
-            threeDModel!,
+            intersection.model,
             modelId,
             revisionId!,
             intersection
           );
+
+          assetSelectionState.model = intersection.model;
+
+          setClickedModel(intersection.model);
         }
 
         if (closestAssetId && closestAssetId !== selectedAssetId) {
@@ -205,7 +226,7 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
           });
         } else if (!closestAssetId) {
           trackUsage(EXPLORATION.THREED_SELECT.UNCLICKABLE_OBJECT, {
-            modelId: threeDModel?.modelId,
+            modelId: cadModel?.modelId,
             resourceType: '3D',
           });
         }
@@ -220,7 +241,8 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
       sdk,
       selectedAssetId,
       setSelectedAssetAndFitCamera,
-      threeDModel,
+      cadModel,
+      enteredImage360Collection,
     ]
   );
 
@@ -246,15 +268,27 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
   useEffect(() => {
     if (
       viewer === undefined ||
+      clickedModel === undefined ||
       model === undefined ||
       overlayTool === undefined
     ) {
       return;
     }
-    setStylingState(
-      new StylingState(model, sdk, viewer, queryClient, overlayTool)
+
+    const newStylingState = new StylingState(
+      clickedModel ?? model,
+      sdk,
+      viewer,
+      queryClient,
+      overlayTool
     );
-  }, [sdk, viewer, queryClient, overlayTool, model]);
+
+    setStylingState(newStylingState);
+
+    return () => {
+      newStylingState.resetStyles();
+    };
+  }, [sdk, viewer, queryClient, overlayTool, model, clickedModel]);
 
   useEffect(() => {
     stylingState?.updateState(
@@ -295,6 +329,7 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
             nodesSelectable={nodesSelectable && !assetDetailsExpanded}
             initialViewerState={initialUrlViewState}
             setImage360Entity={setImage360Entity}
+            setEntered360ImageCollection={setEnteredImage360Collection}
             onViewerClick={onViewerClick}
           >
             {({
@@ -312,6 +347,7 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
                 <LoadImages360
                   images360={images360}
                   setImage360Entity={setImage360Entity}
+                  setEntered360ImageCollection={setEnteredImage360Collection}
                   viewer={revealViewer}
                 />
                 {usePointsOfInterestFeatureFlag && (
@@ -392,6 +428,7 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
                       selectedAssetId={selectedAssetId}
                       setSelectedAssetId={(id) =>
                         setSelectedAssetAndFitCamera(id, {
+                          model: model!,
                           imageEntity: image360Entity,
                         })
                       }

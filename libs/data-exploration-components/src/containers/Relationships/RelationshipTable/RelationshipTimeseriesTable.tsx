@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import {
   EmptyState,
-  ResourceTableColumns,
+  getTableColumns,
   Table,
 } from '@data-exploration/components';
 import { ResultCount } from '@data-exploration/containers';
@@ -12,20 +12,10 @@ import {
 } from '@data-exploration-components/hooks';
 import { ColumnDef } from '@tanstack/react-table';
 
+import { useTranslation } from '@data-exploration-lib/core';
 import { TimeseriesWithRelationshipLabels } from '@data-exploration-lib/domain-layer';
 
 import { RelationshipTableProps } from './RelationshipTable';
-
-const {
-  relationshipLabels,
-  relation,
-  externalId,
-  name,
-  description,
-  lastUpdatedTime,
-  created,
-  assets,
-} = ResourceTableColumns;
 
 export function RelationshipTimeseriesTable({
   parentResource,
@@ -34,16 +24,21 @@ export function RelationshipTimeseriesTable({
 }: Omit<RelationshipTableProps, 'type'> & {
   onParentAssetClick: (assetId: number) => void;
 }) {
-  const columns = [
-    name(),
-    relationshipLabels,
-    relation,
-    externalId(),
-    description(),
-    lastUpdatedTime,
-    created,
-    assets((directAsset) => onParentAssetClick(directAsset.id)),
-  ] as ColumnDef<TimeseriesWithRelationshipLabels>[];
+  const { t } = useTranslation();
+  const tableColumns = getTableColumns(t);
+
+  const columns = useMemo(() => {
+    return [
+      tableColumns.name(),
+      tableColumns.relationshipLabels,
+      tableColumns.relation,
+      tableColumns.externalId(),
+      tableColumns.description(),
+      tableColumns.lastUpdatedTime,
+      tableColumns.created,
+      tableColumns.assets((directAsset) => onParentAssetClick(directAsset.id)),
+    ] as ColumnDef<TimeseriesWithRelationshipLabels>[];
+  }, []);
 
   const { data: count } = useRelationshipCount(parentResource, 'timeSeries');
 

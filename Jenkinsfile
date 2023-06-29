@@ -19,6 +19,8 @@ static final String[] APPLICATIONS = [
   'cdf-document-search',
   'extraction-pipelines',
   'extractor-downloads',
+  'charts',
+  'entity-matching',
 ]
 
 /*
@@ -27,7 +29,8 @@ static final String[] APPLICATIONS = [
 */
 static final Map<String, String> NPM_PACKAGES = [
   'shared-plotting-components': "dist/libs/shared/plotting-components",
-  'user-profile-components': "dist/libs/shared/user-profile-components"
+  'user-profile-components': "dist/libs/shared/user-profile-components",
+  'cdf-ui-i18n-utils': "dist/libs/shared/cdf-ui-i18n-utils"
 ]
 
 // This is the Firebase site mapping.
@@ -49,6 +52,8 @@ static final Map<String, String> FIREBASE_APP_SITES = [
   'functions-ui': 'functions',
   'extraction-pipelines': 'extraction-pipelines',
   'extractor-downloads': 'extractor-downloads',
+  'charts': 'charts',
+  'entity-matching': 'entity-matching',
 ]
 
 static final Map<String, String> PREVIEW_PACKAGE_NAMES = [
@@ -68,6 +73,8 @@ static final Map<String, String> PREVIEW_PACKAGE_NAMES = [
   'cdf-document-search': '@cognite/cdf-document-search-ui',
   'extraction-pipelines': '@cognite/cdf-integrations-ui',
   'extractor-downloads': '@cognite/cdf-extractor-downloads',
+  'charts': '@cognite/cdf-charts-ui',
+  'entity-matching': '@cognite/cdf-ui-entity-matching',
 ]
 
 // Replace this with your app's ID on https://sentry.io/ -- if you do not have
@@ -75,7 +82,8 @@ static final Map<String, String> PREVIEW_PACKAGE_NAMES = [
 static final Map<String, String> SENTRY_PROJECT_NAMES = [
   'platypus': "platypus",
   'data-exploration': "data-explorer",
-  'coding-conventions': "coding-conventions"
+  'coding-conventions': "coding-conventions",
+  'charts': 'cognite-charts'
 ]
 
 // Add apps/libs name to the list where you want the storybook preview to build.
@@ -138,11 +146,15 @@ static final Map<String, String> VERSIONING_STRATEGY = [
   'cdf-document-search': 'single-branch',
   'extraction-pipelines': 'single-branch',
   'extractor-downloads': 'single-branch',
+  'charts': 'multi-branch',
+  'entity-matching': 'single-branch',
+  'functions-ui' : 'single-branch',
 ]
 
 // The config of which apps have i18n strings that need to be synced to and pulled from locize.io
 static final String[] I18N_APPLICATIONS = [
-  'platypus'
+  'platypus',
+  'data-exploration'
 ]
 
 // == End of customization. Everything below here is common. == \\

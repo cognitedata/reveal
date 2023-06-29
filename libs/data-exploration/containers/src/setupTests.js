@@ -12,3 +12,12 @@ jest.mock('@cognite/cdf-sdk-singleton', () => ({
 }));
 
 jest.mock('@cognite/unified-file-viewer', () => ({}));
+
+jest.mock('@data-exploration-lib/core', () => ({
+  ...jest.requireActual('@data-exploration-lib/core'),
+  useTranslation: () => ({
+    t: (_key, referenceValue, _options) => {
+      return referenceValue;
+    },
+  }),
+}));

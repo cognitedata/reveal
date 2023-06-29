@@ -7,6 +7,7 @@ import { Body, Button } from '@cognite/cogs.js';
 import {
   DATA_EXPLORATION_COMPONENT,
   useMetrics,
+  useTranslation,
 } from '@data-exploration-lib/core';
 
 import { FilterFormV2 } from '../../FilterFormV2/FilterFormV2';
@@ -39,6 +40,7 @@ export const MetadataFilterV2 = <
     isFetched: boolean;
   };
 }) => {
+  const { t } = useTranslation();
   const trackUsage = useMetrics();
   const metadata = useMemo(() => {
     if (!useAggregateMetadataValues) {
@@ -62,11 +64,11 @@ export const MetadataFilterV2 = <
     <>
       <FilterHeader>
         <Body level={2} strong style={{ marginBottom: 5 }} className="title">
-          Metadata
+          {t('METADATA', 'Metadata')}
         </Body>
         {showClearFiltersButton && (
           <Button type="ghost" onClick={clearFilters}>
-            Clear all
+            {t('CLEAR_ALL', 'Clear all')}
           </Button>
         )}
       </FilterHeader>

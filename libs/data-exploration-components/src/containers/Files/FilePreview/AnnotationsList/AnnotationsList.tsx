@@ -20,7 +20,7 @@ import {
 import { Asset } from '@cognite/sdk';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 
-import { ExtendedAnnotation } from '@data-exploration-lib/core';
+import { ExtendedAnnotation, useTranslation } from '@data-exploration-lib/core';
 
 import {
   getExtendedAnnotationLabel,
@@ -46,6 +46,8 @@ const AnnotationsList = ({
   reset,
   setSelectedAnnotations,
 }: AnnotationsListProps) => {
+  const { t } = useTranslation();
+
   const [filterType, setFilterType] = useState<AnnotationType>('all');
   const [filteredList, setFilteredList] = useState<ExtendedAnnotation[]>([]);
 
@@ -163,12 +165,14 @@ const AnnotationsList = ({
             setFilterType(key as AnnotationType)
           }
         >
-          <SegmentedControl.Button key="all">All</SegmentedControl.Button>
+          <SegmentedControl.Button key="all">
+            {t('ALL', 'All')}
+          </SegmentedControl.Button>
           <SegmentedControl.Button key="pending">
-            Pending
+            {t('PENDING', 'Pending')}
           </SegmentedControl.Button>
           <SegmentedControl.Button key="approved">
-            Approved
+            {t('APPROVED', 'Approved')}
           </SegmentedControl.Button>
         </SegmentedControl>
         <ListWrapper>

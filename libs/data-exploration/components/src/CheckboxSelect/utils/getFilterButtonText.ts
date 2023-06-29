@@ -1,11 +1,20 @@
 import isEmpty from 'lodash/isEmpty';
 
+import { TFunction } from '@data-exploration-lib/core';
+
 import { OptionSelection } from '../types';
 
-export const getFilterButtonText = (selection: OptionSelection) => {
+export const getFilterButtonText = (
+  selection: OptionSelection,
+  t: TFunction
+) => {
   if (isEmpty(selection)) {
-    return 'Select...';
+    return t('SELECT_PLACEHOLDER', 'Select...');
   }
 
-  return `Selected: ${Object.keys(selection).length}`;
+  const selectedCount = Object.keys(selection).length;
+
+  return t('SELECTED_COUNT', `Selected: ${selectedCount}`, {
+    count: selectedCount,
+  });
 };

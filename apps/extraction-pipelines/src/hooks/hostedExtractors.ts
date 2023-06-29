@@ -303,11 +303,8 @@ export const useDeleteMQTTSource = (
 
 // DESTINATIONS
 
-export type MQTTDestinationType = 'datapoints' | 'events' | 'raw';
-
 type BaseMQTTDestination = {
   externalId: string;
-  type: MQTTDestinationType;
 };
 
 type ReadMQTTDestination = BaseMQTTDestination & {
@@ -364,7 +361,6 @@ export const useCreateMQTTDestination = () => {
             items: [
               {
                 externalId: destination.externalId,
-                type: destination.type,
                 credentials: {
                   nonce: session.nonce,
                 },
@@ -393,8 +389,12 @@ type MQTTJobStatus =
   | 'running'
   | 'paused'
   | 'shutting_down'
-  | 'error'
+  | 'error' // TODO: remove
   | 'startup_error'
+  | 'connection_error'
+  | 'connected'
+  | 'transform_error'
+  | 'destination_error'
   | 'waiting';
 
 type MQTTJobTargetStatus = 'running' | 'paused';
@@ -560,7 +560,17 @@ export const useMQTTJobMetrics = (sourceExternalId?: string) => {
   });
 };
 
-type MQTTJobLogType = 'startup_error' | 'error' | 'ok' | 'debug' | 'stopped';
+type MQTTJobLogType =
+  | 'startup_error'
+  | 'error' // TODO: remove
+  | 'ok'
+  | 'debug' // TODO: remove
+  | 'stopped' // TODO: remove
+  | 'paused'
+  | 'connection_error'
+  | 'connected'
+  | 'transform_error'
+  | 'destination_error';
 
 export type ReadMQTTJobLog = {
   createdTime: number;

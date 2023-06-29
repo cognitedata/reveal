@@ -21,7 +21,7 @@ import collapseStyle from 'antd/es/collapse/style/index.less';
 // import commentStyle from 'antd/es/comment/style/index.less';
 import configProviderStyle from 'antd/es/config-provider/style/index.less';
 // import datePickerStyle from 'antd/es/date-picker/style/index.less';
-// import descriptionsStyle from 'antd/es/descriptions/style/index.less';
+import descriptionsStyle from 'antd/es/descriptions/style/index.less';
 import dividerStyle from 'antd/es/divider/style/index.less';
 import drawerStyle from 'antd/es/drawer/style/index.less';
 import dropdownStyle from 'antd/es/dropdown/style/index.less';
@@ -71,7 +71,6 @@ import treeStyle from 'antd/es/tree/style/index.less';
 import typographyStyle from 'antd/es/typography/style/index.less';
 import uploadStyle from 'antd/es/upload/style/index.less';
 import highlight from 'highlight.js/styles/dracula.css';
-import monacoStyles from 'monaco-editor/dev/vs/editor/editor.main.css';
 
 import { useGlobalStyles } from '@cognite/cdf-utilities';
 import {
@@ -125,6 +124,7 @@ const styles = [
   uploadStyle,
   tagStyle,
   inputNumberStyle,
+  descriptionsStyle,
 ];
 
 export const getContainer = () => {
@@ -151,12 +151,7 @@ Dropdown.defaultProps = {
 };
 
 export default function GlobalStyles(props: { children: React.ReactNode }) {
-  const isStyleLoaded = useGlobalStyles([
-    cogsStyles,
-    botui,
-    highlight,
-    monacoStyles,
-  ]);
+  const isStyleLoaded = useGlobalStyles([cogsStyles, botui, highlight]);
 
   useEffect(() => {
     styles.forEach((style) => style.use());

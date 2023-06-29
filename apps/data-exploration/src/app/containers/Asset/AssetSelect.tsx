@@ -11,6 +11,8 @@ import {
   useList,
 } from '@cognite/sdk-react-query-hooks';
 
+import { useTranslation } from '@data-exploration-lib/core';
+
 // import { Props, OptionTypeBase } from 'react-select';
 
 type AssetInfo = { value: number; name: string };
@@ -27,6 +29,8 @@ export const AssetSelect = ({
   rootOnly,
   ...extraProps
 }: AssetSelectProps) => {
+  const { t } = useTranslation();
+
   const [query, setQuery] = useState('');
   const [debouncedQuery] = useDebounce(query, 100);
 
@@ -71,14 +75,14 @@ export const AssetSelect = ({
       }))
     : [
         {
-          label: 'Root assets',
+          label: t('ROOT_ASSETS', 'Root assets'),
           options: (rootData || []).map((el) => ({
             label: el.name,
             value: el.id,
           })),
         },
         {
-          label: 'All assets',
+          label: t('ALL_ASSETS', 'All assets'),
           options: (data || []).map((el) => ({ label: el.name, value: el.id })),
         },
       ];

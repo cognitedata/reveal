@@ -1,5 +1,4 @@
-import { OutputItem } from '@data-exploration-lib/domain-layer';
-
+import { OutputItem } from '../../threeD';
 import { isPointCloudModel } from '../isPointCloudModel';
 
 describe('isPointCloudModel', () => {

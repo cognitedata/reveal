@@ -1,21 +1,12 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 
 import styled from 'styled-components';
 
-import {
-  Body,
-  Colors,
-  Detail,
-  Flex,
-  Icon,
-  SegmentedControl,
-  Title,
-} from '@cognite/cogs.js';
+import { Body, Colors, Detail, Flex, Icon, Title } from '@cognite/cogs.js';
 
 import { useTranslation } from '../../common';
 import { MQTTJobWithMetrics } from '../../hooks/hostedExtractors';
 import {
-  AggregationInterval,
   getMetricAggregationErrorCount,
   getMetricAggregationSuccessCount,
   getMetricAggregations,
@@ -27,16 +18,15 @@ import { BAR_HEIGHT, MessageHistoryChartItem } from './MessageHistoryChartItem';
 type MessageHistoryChartProps = {
   className?: string;
   jobs: MQTTJobWithMetrics[];
+  aggregationInterval: 'hourly' | 'daily';
 };
 
 export const MessageHistoryChart = ({
   className,
   jobs,
+  aggregationInterval,
 }: MessageHistoryChartProps): JSX.Element => {
   const { t } = useTranslation();
-
-  const [aggregationInterval, setAggregationInterval] =
-    useState<AggregationInterval>('hourly');
 
   const aggregations = useMemo(() => {
     const metrics = jobs.flatMap(({ metrics: m }) => m);
@@ -44,7 +34,7 @@ export const MessageHistoryChart = ({
     return getMetricAggregations(
       metrics,
       aggregationInterval,
-      aggregationInterval === 'hourly' ? 72 : 30
+      aggregationInterval === 'hourly' ? 24 : 30
     );
   }, [jobs, aggregationInterval]);
 
@@ -70,25 +60,9 @@ export const MessageHistoryChart = ({
     <Section
       borderless
       className={className}
-      extra={
-        <SegmentedControl
-          controlled
-          currentKey={aggregationInterval}
-          onButtonClicked={(interval) => {
-            setAggregationInterval(interval as AggregationInterval);
-          }}
-        >
-          <SegmentedControl.Button key="hourly">
-            {t('hourly')}
-          </SegmentedControl.Button>
-          <SegmentedControl.Button key="daily">
-            {t('daily')}
-          </SegmentedControl.Button>
-        </SegmentedControl>
-      }
       title={
         <Flex direction="column" gap={2}>
-          <Title level={6}>{t('topic-filters-status')}</Title>
+          <Title level={6}>{t('messages-from-topic-filters')}</Title>
           <Flex alignItems="center" gap={4}>
             <Icon
               type={totalErrorCount === 0 ? 'CheckmarkFilled' : 'ErrorFilled'}

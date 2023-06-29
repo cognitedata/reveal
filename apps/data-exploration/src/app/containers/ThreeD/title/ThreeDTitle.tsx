@@ -12,6 +12,7 @@ import {
   useRevisionIndex,
 } from '@data-exploration-app/containers/ThreeD/hooks';
 import MainModelDropdown from '@data-exploration-app/containers/ThreeD/title/Dropdowns/MainModelDropdown';
+import { useTranslation } from '@data-exploration-lib/core';
 
 import { getMainModelTitle } from '../utils';
 
@@ -24,6 +25,7 @@ export const ThreeDTitle = ({
   id?: number;
   image360SiteId?: string;
 }): JSX.Element => {
+  const { t } = useTranslation();
   const { revisionId } = useContext(ThreeDContext);
 
   const { data: apiThreeDModel, error: modelError, isSuccess } = use3DModel(id);
@@ -57,15 +59,19 @@ export const ThreeDTitle = ({
 
   return (
     <>
-      <PageTitle title={getMainModelTitle(apiThreeDModel, image360SiteData)} />
+      <PageTitle
+        title={getMainModelTitle(t, apiThreeDModel, image360SiteData)}
+      />
       <SecondaryTopbar
         goBackFallback={goBackFallback}
-        title={getMainModelTitle(apiThreeDModel, image360SiteData)}
+        title={getMainModelTitle(t, apiThreeDModel, image360SiteData)}
         subtitle={
           revisionId && revisionIndex && Number.isFinite(revisionIndex)
-            ? `Revision ${revisionIndex}`
+            ? t('REVISION_WITH_INDEX', 'Revision {{index}}', {
+                index: revisionIndex,
+              })
             : image360SiteId
-            ? '360 Image'
+            ? t('360_IMAGE', '360 Image', { count: 1 })
             : undefined
         }
         dropdownProps={{

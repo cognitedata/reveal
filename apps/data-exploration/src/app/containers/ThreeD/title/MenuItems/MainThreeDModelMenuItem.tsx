@@ -7,6 +7,7 @@ import { Model3D } from '@cognite/sdk';
 
 import { ThreeDContext } from '@data-exploration-app/containers/ThreeD/contexts/ThreeDContext';
 import { getStateUrl } from '@data-exploration-app/containers/ThreeD/utils';
+import { useTranslation } from '@data-exploration-lib/core';
 import {
   Image360SiteData,
   Revision3DWithIndex,
@@ -21,6 +22,7 @@ export const MainThreeDModelMenuItem = ({
   image360SiteData?: Image360SiteData;
   revision?: Revision3DWithIndex;
 }) => {
+  const { t } = useTranslation();
   const {
     viewState,
     assetDetailsExpanded,
@@ -38,7 +40,9 @@ export const MainThreeDModelMenuItem = ({
   if (!model) {
     return (
       <Menu>
-        <Menu.Header>No revisions available</Menu.Header>
+        <Menu.Header>
+          {t('NO_REVISIONS_AVAILABLE', 'No revisions available')}
+        </Menu.Header>
       </Menu>
     );
   }
@@ -50,8 +54,10 @@ export const MainThreeDModelMenuItem = ({
           toggled={id === revision?.id}
           description={
             published
-              ? 'Published'
-              : `Created: ${formatTime(createdTime.getTime())}`
+              ? t('PUBLISHED', 'Published')
+              : t('CREATED_WITH_TIME', 'Created: {{time}}', {
+                  time: formatTime(createdTime.getTime()),
+                })
           }
           key={id}
           onClick={() => {
@@ -71,7 +77,9 @@ export const MainThreeDModelMenuItem = ({
             }
           }}
         >
-          Revision {index}
+          {t('REVISION_WITH_INDEX', 'Revision {{index}}', {
+            index,
+          })}
         </Menu.Item>
       ))}
     </Menu>

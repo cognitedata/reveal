@@ -9,6 +9,7 @@ import { useList, useSearch } from '@cognite/sdk-react-query-hooks';
 import {
   useMetrics,
   DATA_EXPLORATION_COMPONENT,
+  useTranslation,
 } from '@data-exploration-lib/core';
 import { InternalAssetData } from '@data-exploration-lib/domain-layer';
 
@@ -27,8 +28,6 @@ interface ByAssetFilterProps<TFilter>
   onInputChange?: (query: string) => void;
 }
 
-const FILTER_LABEL = 'Asset';
-
 export const AssetSelectFilter = <TFilter,>({
   value,
   onChange,
@@ -37,6 +36,7 @@ export const AssetSelectFilter = <TFilter,>({
   isError,
   isLoading,
 }: ByAssetFilterProps<TFilter>) => {
+  const { t } = useTranslation();
   const trackUsage = useMetrics();
 
   const handleChange = (
@@ -49,7 +49,7 @@ export const AssetSelectFilter = <TFilter,>({
     onChange?.(newFilters);
     trackUsage(DATA_EXPLORATION_COMPONENT.SELECT.ASSET_FILTER, {
       ...newValue,
-      title: FILTER_LABEL,
+      title: 'Asset',
     });
   };
 
@@ -58,9 +58,15 @@ export const AssetSelectFilter = <TFilter,>({
   };
 
   return (
-    <Tooltip interactive disabled={!isError} content="Error fetching assets!">
+    <Tooltip
+      interactive
+      disabled={!isError}
+      content={t('ERROR_FETCHING_DATA', 'Error fetching assets!', {
+        type: 'assets',
+      })}
+    >
       <MultiSelectFilter<number>
-        label={FILTER_LABEL}
+        label={t('ASSET', 'Asset')}
         isMulti
         isClearable
         value={value}
@@ -80,6 +86,8 @@ export const AssetSelectFilter = <TFilter,>({
 const CommonAssetSelectFilter = (
   props: BaseAssetSelectFilterProps<InternalAssetData>
 ) => {
+  const { t } = useTranslation();
+
   const { rootOnly, value } = props;
   const [query, setQuery] = useState('');
   const [debouncedQuery] = useDebounce(query, 100);
@@ -138,14 +146,14 @@ const CommonAssetSelectFilter = (
       }))
     : [
         {
-          label: 'Root assets',
+          label: t('ROOT_ASSETS', 'Root assets'),
           options: (rootData || []).map((el) => ({
             label: el.name,
             value: el.id,
           })),
         },
         {
-          label: 'All assets',
+          label: t('ALL_ASSETS', 'All assets'),
           options: (data || []).map((el) => ({
             label: el.name,
             value: el.id,

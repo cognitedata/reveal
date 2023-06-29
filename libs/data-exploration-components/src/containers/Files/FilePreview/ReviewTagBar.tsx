@@ -9,7 +9,7 @@ import { createLink } from '@cognite/cdf-utilities';
 import { Body, Button, Icon, Link } from '@cognite/cogs.js';
 import { ResourceType } from '@cognite/data-exploration';
 
-import { ExtendedAnnotation } from '@data-exploration-lib/core';
+import { ExtendedAnnotation, useTranslation } from '@data-exploration-lib/core';
 
 import {
   getExtendedAnnotationLabel,
@@ -26,71 +26,74 @@ const ReviewTagBar = ({
   annotation: ExtendedAnnotation;
   onApprove: (annotation: ExtendedAnnotation) => void;
   onReject: (annotation: ExtendedAnnotation) => void;
-}) => (
-  <ReviewTagWrapper>
-    <div style={{ display: 'flex', flexDirection: 'row' }}>
-      {getResourceTypeFromExtendedAnnotation(annotation) && (
-        <ResourceIcons
-          type={
-            getResourceTypeFromExtendedAnnotation(annotation) as ResourceType
-          }
-          style={{
-            background: 'white',
-            color: 'black',
-            marginTop: '-5px',
-          }}
-        />
-      )}
-      <Body level={2} strong>
-        {getResourceTypeFromExtendedAnnotation(annotation)
-          ? capitalizeFirstLetter(
-              getResourceTypeFromExtendedAnnotation(annotation)
-            )
-          : 'Unlinked tag'}
-      </Body>
-    </div>
-    <StyledTag>
-      {getExtendedAnnotationLabel(annotation) || 'N/A'}{' '}
-      {getResourceIdFromExtendedAnnotation(annotation) ? (
-        <Link
-          href={createLink(
-            `/explore/${getResourceTypeFromExtendedAnnotation(
-              annotation
-            )}/${getResourceIdFromExtendedAnnotation(annotation)}`
-          )}
-          target="_blank"
-        >
-          <StyledIcon type="ArrowUpRight" />
-        </Link>
-      ) : undefined}
-    </StyledTag>
+}) => {
+  const { t } = useTranslation();
+  return (
+    <ReviewTagWrapper>
+      <div style={{ display: 'flex', flexDirection: 'row' }}>
+        {getResourceTypeFromExtendedAnnotation(annotation) && (
+          <ResourceIcons
+            type={
+              getResourceTypeFromExtendedAnnotation(annotation) as ResourceType
+            }
+            style={{
+              background: 'white',
+              color: 'black',
+              marginTop: '-5px',
+            }}
+          />
+        )}
+        <Body level={2} strong>
+          {getResourceTypeFromExtendedAnnotation(annotation)
+            ? capitalizeFirstLetter(
+                getResourceTypeFromExtendedAnnotation(annotation)
+              )
+            : t('UNLINKED_TAG', 'Unlinked tag')}
+        </Body>
+      </div>
+      <StyledTag>
+        {getExtendedAnnotationLabel(annotation) || 'N/A'}{' '}
+        {getResourceIdFromExtendedAnnotation(annotation) ? (
+          <Link
+            href={createLink(
+              `/explore/${getResourceTypeFromExtendedAnnotation(
+                annotation
+              )}/${getResourceIdFromExtendedAnnotation(annotation)}`
+            )}
+            target="_blank"
+          >
+            <StyledIcon type="ArrowUpRight" />
+          </Link>
+        ) : undefined}
+      </StyledTag>
 
-    {isSuggestedAnnotation(annotation) && (
-      <>
-        <ButtonWrapper>
-          <Button
-            onClick={() => onApprove(annotation)}
-            type="primary"
-            icon="Checkmark"
-            style={{ width: '100%' }}
-          >
-            Approve tag
-          </Button>
-        </ButtonWrapper>
-        <ButtonWrapper>
-          <Button
-            onClick={() => onReject(annotation)}
-            type="secondary"
-            icon="Close"
-            style={{ width: '100%' }}
-          >
-            Reject tag
-          </Button>
-        </ButtonWrapper>
-      </>
-    )}
-  </ReviewTagWrapper>
-);
+      {isSuggestedAnnotation(annotation) && (
+        <>
+          <ButtonWrapper>
+            <Button
+              onClick={() => onApprove(annotation)}
+              type="primary"
+              icon="Checkmark"
+              style={{ width: '100%' }}
+            >
+              {t('APPROVE_TAG_TEXT', 'Approve tag')}
+            </Button>
+          </ButtonWrapper>
+          <ButtonWrapper>
+            <Button
+              onClick={() => onReject(annotation)}
+              type="secondary"
+              icon="Close"
+              style={{ width: '100%' }}
+            >
+              {t('REJECT_TAG_TEXT', 'Reject tag')}
+            </Button>
+          </ButtonWrapper>
+        </>
+      )}
+    </ReviewTagWrapper>
+  );
+};
 
 export default ReviewTagBar;
 

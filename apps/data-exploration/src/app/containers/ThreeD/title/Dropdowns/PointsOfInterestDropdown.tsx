@@ -10,6 +10,7 @@ import { TableNoResults } from '@cognite/cdf-utilities';
 
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
+import { useTranslation } from '@data-exploration-lib/core';
 
 import { APMConfigNode, PointsOfInterestCollection } from '../../hooks';
 import { useInfinitePointsOfInterestCollections } from '../../hooks/useInfinitePointsOfInterestCollection';
@@ -38,6 +39,7 @@ const PointsOfInterestDropdown = ({
   setInternalPointsOfInterestCollections,
   config,
 }: PointsOfInterestDropdownProps) => {
+  const { t } = useTranslation();
   const [
     numberOfPointsOfInterestToDisplay,
     setNumberOfPointsOfInterestToDisplay,
@@ -134,7 +136,7 @@ const PointsOfInterestDropdown = ({
         <StyledInput
           autoFocus
           onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Search"
+          placeholder={t('SEARCH', 'Search')}
           value={searchQuery || ''}
           onKeyDown={(e) => {
             // Need to stop propagation to fix losing focus
@@ -163,8 +165,14 @@ const PointsOfInterestDropdown = ({
         ) : (
           <StyledNoResultsContainer>
             <TableNoResults
-              title="No results found"
-              content={`The search ${searchQuery} did not match any points of interest. Please try another search.`}
+              title={t('NO_RESULTS_FOUND', 'No results found')}
+              content={t(
+                'NO_POINTS_OF_INTEREST_FOUND_TRY_ANOTHER_SEARCH',
+                `The search ${searchQuery} did not match any points of interest. Please try another search.`,
+                {
+                  query: searchQuery,
+                }
+              )}
             />
           </StyledNoResultsContainer>
         )}
@@ -174,7 +182,7 @@ const PointsOfInterestDropdown = ({
         onClick={handleApply}
         type="primary"
       >
-        Apply
+        {t('APPLY', 'Apply')}
       </StyledApplyButton>
     </MenuWrapper>
   );

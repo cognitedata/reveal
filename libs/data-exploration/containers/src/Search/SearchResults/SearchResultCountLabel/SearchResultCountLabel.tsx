@@ -1,6 +1,6 @@
 import { Chip } from '@cognite/cogs.js';
 
-import { ResourceType } from '@data-exploration-lib/core';
+import { ResourceType, useTranslation } from '@data-exploration-lib/core';
 
 import { getSearchResultCountLabel } from '../utils';
 
@@ -13,11 +13,18 @@ export const SearchResultCountLabel = ({
   totalCount: number | string;
   resourceType: ResourceType;
 }) => {
+  const { t } = useTranslation();
+
   return (
     <Chip
       type="neutral"
       hideTooltip
-      label={getSearchResultCountLabel(loadedCount, totalCount, resourceType)}
+      label={getSearchResultCountLabel(
+        loadedCount,
+        Number(totalCount),
+        resourceType,
+        t
+      )}
     />
   );
 };

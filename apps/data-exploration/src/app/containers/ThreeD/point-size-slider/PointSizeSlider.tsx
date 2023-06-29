@@ -14,6 +14,8 @@ import {
 } from '@cognite/cogs.js';
 import { Cognite3DViewer, CognitePointCloudModel } from '@cognite/reveal';
 
+import { useTranslation } from '@data-exploration-lib/core';
+
 import { ids } from '../../../../cogs-variables';
 import { ThreeDContext } from '../contexts/ThreeDContext';
 import { updateAllPointCloudsPointSize } from '../utils';
@@ -29,6 +31,7 @@ export default function PointSizeSlider({
   pointCloudModel,
   viewer,
 }: SliderProps) {
+  const { t } = useTranslation();
   const { secondaryModels } = useContext(ThreeDContext);
   const [sliderValue, setSliderValue] = useState(DEFAULT_POINT_SIZE);
   const [isSecondaryPointCloudLoaded, setIsSecondaryPointCloudLoaded] =
@@ -59,7 +62,9 @@ export default function PointSizeSlider({
         <StyledMenu>
           <Flex direction="column" gap={12}>
             <Flex direction="column" gap={2}>
-              <StyledHeader strong>Point size</StyledHeader>
+              <StyledHeader strong>
+                {t('POINT_SIZE', 'Point size')}
+              </StyledHeader>
               <StyledSlider
                 min={0.01}
                 max={5}
@@ -75,7 +80,7 @@ export default function PointSizeSlider({
         </StyledMenu>
       }
     >
-      <Tooltip content="Point size" placement="right">
+      <Tooltip content={t('POINT_SIZE', 'Point size')} placement="right">
         <FullWidthButton
           icon="DotLarge"
           type="ghost"

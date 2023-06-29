@@ -64,8 +64,8 @@ type ThreeDContext = {
   viewer?: Cognite3DViewer;
   overlayTool?: SmartOverlayTool;
   setOverlayTool: Dispatch<SetStateAction<SmartOverlayTool | undefined>>;
-  threeDModel?: CogniteCadModel;
-  set3DModel: Dispatch<SetStateAction<CogniteCadModel | undefined>>;
+  cadModel?: CogniteCadModel;
+  setCadModel: Dispatch<SetStateAction<CogniteCadModel | undefined>>;
   pointCloudModel?: CognitePointCloudModel;
   setPointCloudModel: Dispatch<
     SetStateAction<CognitePointCloudModel | undefined>
@@ -112,7 +112,7 @@ export const ThreeDContext = createContext<ThreeDContext>({
   setViewState: noop,
   setSlicingState: noop,
   setOverlayTool: noop,
-  set3DModel: noop,
+  setCadModel: noop,
   setPointCloudModel: noop,
   setSplitterColumnWidth: noop,
   setRevisionId: noop,
@@ -260,7 +260,7 @@ export const ThreeDContextProvider = ({
   const [overlayTool, setOverlayTool] = useState<
     SmartOverlayTool | undefined
   >();
-  const [threeDModel, set3DModel] = useState<CogniteCadModel | undefined>();
+  const [cadModel, setCadModel] = useState<CogniteCadModel | undefined>();
   const [pointCloudModel, setPointCloudModel] = useState<
     CognitePointCloudModel | undefined
   >();
@@ -373,8 +373,8 @@ export const ThreeDContextProvider = ({
         viewer,
         overlayTool,
         setOverlayTool,
-        threeDModel,
-        set3DModel,
+        cadModel,
+        setCadModel,
         pointCloudModel,
         setPointCloudModel,
         viewState,

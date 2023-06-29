@@ -9,6 +9,7 @@ import { OptionType, Tooltip } from '@cognite/cogs.js';
 import {
   DATA_EXPLORATION_COMPONENT,
   useMetrics,
+  useTranslation,
 } from '@data-exploration-lib/core';
 import { useDatasetsListQuery } from '@data-exploration-lib/domain-layer';
 
@@ -32,6 +33,7 @@ export const DataSetFilterV2 = ({
   value?: OptionValue<number>[];
   setValue: (newValue: OptionValue<number>[] | undefined) => void;
 }) => {
+  const { t } = useTranslation();
   const trackUsage = useMetrics();
 
   const { data: datasetOptions = [], isError } = useDatasetsListQuery({
@@ -48,7 +50,14 @@ export const DataSetFilterV2 = ({
       disabled={!isError}
       content={
         isError &&
-        'Error fetching datasets, please make sure you have datasetsAcl:READ'
+        t(
+          'PERMISSIONS_ERROR_FETCHING',
+          'Error fetching datasets, please make sure you have datasetsAcl:READ',
+          {
+            dataType: 'datasets',
+            permissionType: 'datasetsAcl:READ',
+          }
+        )
       }
     >
       <MultiSelectFilter<number>

@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 
 import { Data, LineChart, LineChartProps, Layout } from '../../../LineChart';
 import { TimeseriesChartMetadata } from '../../domain/internal/types';
+import { useTranslation } from '../../i18n/useTranslation';
 
 import { CONFIG, LAYOUT } from './constants';
 import { formatTooltipContent } from './helpers/formatTooltipContent';
@@ -15,6 +16,8 @@ export const TimeseriesChartSmall: React.FC<TimeseriesChartSmallProps> = ({
   metadata,
   ...props
 }) => {
+  const { t } = useTranslation();
+
   const layout: Partial<Layout> = useMemo(() => {
     const numberOfPoints = (props.data as Data).x.length;
 
@@ -42,7 +45,7 @@ export const TimeseriesChartSmall: React.FC<TimeseriesChartSmallProps> = ({
       layout={layout}
       config={CONFIG}
       formatTooltipContent={(tooltipProps) =>
-        formatTooltipContent(tooltipProps, unit)
+        formatTooltipContent(tooltipProps, unit, t)
       }
     />
   );

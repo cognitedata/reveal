@@ -80,7 +80,7 @@ export const TimeseriesResults = () => {
 
       <SearchResults.Footer>
         <Button
-          type="ghost"
+          type="secondary"
           hidden={!hasNextPage}
           onClick={() => {
             fetchNextPage();
