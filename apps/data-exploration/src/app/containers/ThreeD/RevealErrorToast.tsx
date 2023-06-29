@@ -13,7 +13,6 @@ export default function RevealErrorToast({
 }) {
   return (
     <Flex direction="column" gap={10}>
-      <Title level={6}>Failed to load 3D Data</Title>
       <Title level={6}>
         {t('FAILED_TO_LOAD_3D_DATA', 'Failed to load 3D Data')}
       </Title>

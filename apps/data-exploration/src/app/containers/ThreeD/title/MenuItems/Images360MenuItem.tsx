@@ -56,7 +56,7 @@ export const Images360MenuItem = ({
           {siteName}
         </StyledSecondaryObjectBody>
         <StyledSecondaryObjectDetail>
-          {t('IMAGE_WITH_COUNT', `{{count}} images`, { count: imageCount })}
+          {t('IMAGE_WITH_COUNT', `${imageCount} images`, { count: imageCount })}
         </StyledSecondaryObjectDetail>
       </Flex>
     </StyledSecondaryObjectMenuItemContent>

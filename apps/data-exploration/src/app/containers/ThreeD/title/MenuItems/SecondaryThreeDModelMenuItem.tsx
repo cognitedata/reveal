@@ -71,9 +71,13 @@ export const SecondaryThreeDModelMenuItem = ({
         <StyledSecondaryObjectDetail>
           {selectedRevision ? (
             <>
-              {`${t('REVISION_WITH_INDEX', 'Revision {{index}}', {
-                index: selectedRevision.index,
-              })} - ${
+              {`${t(
+                'REVISION_WITH_INDEX',
+                `Revision ${selectedRevision.index}`,
+                {
+                  index: selectedRevision.index,
+                }
+              )} - ${
                 selectedRevision.published
                   ? t('PUBLISHED', 'Published')
                   : t('UNPUBLISHED', 'Unpublished')
@@ -106,14 +110,18 @@ export const SecondaryThreeDModelMenuItem = ({
               description={
                 published
                   ? t('PUBLISHED', 'Published')
-                  : t('CREATED_WITH_TIME', 'Created: {{time}}', {
-                      time: formatTime(createdTime.getTime()),
-                    })
+                  : t(
+                      'CREATED_WITH_TIME',
+                      `Created: ${formatTime(createdTime.getTime())}`,
+                      {
+                        time: formatTime(createdTime.getTime()),
+                      }
+                    )
               }
               key={id}
               onClick={() => handleSelectRevision(id)}
             >
-              {t('REVISION_WITH_INDEX', 'Revision {{index}}', {
+              {t('REVISION_WITH_INDEX', `Revision ${index}`, {
                 index,
               })}
             </Menu.Item>

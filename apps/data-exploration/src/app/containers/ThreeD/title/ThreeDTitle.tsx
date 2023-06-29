@@ -67,7 +67,7 @@ export const ThreeDTitle = ({
         title={getMainModelTitle(t, apiThreeDModel, image360SiteData)}
         subtitle={
           revisionId && revisionIndex && Number.isFinite(revisionIndex)
-            ? t('REVISION_WITH_INDEX', 'Revision {{index}}', {
+            ? t('REVISION_WITH_INDEX', `Revision ${revisionIndex}`, {
                 index: revisionIndex,
               })
             : image360SiteId
