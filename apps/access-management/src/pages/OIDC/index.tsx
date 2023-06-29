@@ -79,11 +79,16 @@ export default function OIDCConfigContainer() {
           message: t('oidc-settings-update-success'),
         });
       },
-      onError() {
+      onError(error) {
         notification.error({
           key: 'oidc-settings',
           message: t('oidc-settings-update-fail'),
-          description: t('oidc-settings-update-error'),
+          description: (
+            <>
+              <p>{t('oidc-settings-update-error')}</p>
+              <pre>{JSON.stringify(error, null, 2)}</pre>
+            </>
+          ),
         });
       },
       onSettled() {

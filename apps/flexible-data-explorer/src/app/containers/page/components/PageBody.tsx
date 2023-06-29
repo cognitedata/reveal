@@ -8,17 +8,19 @@ import { useUserSettings } from '../../../hooks/useUserSettings';
 
 interface Props {
   loading?: boolean;
+  fullscreen?: boolean;
 }
 
 export const PageBody: React.FC<PropsWithChildren<Props>> = ({
   children,
   loading,
+  fullscreen,
 }) => {
   const { compact } = useUserSettings();
 
   return (
     <Container>
-      <Content compact={compact}>
+      <Content compact={compact} fullscreen={fullscreen}>
         {loading ? <Skeleton.List lines={10} /> : <>{children}</>}
       </Content>
     </Container>
@@ -33,9 +35,10 @@ const Container = styled.div`
   /* position: relative; */
 `;
 
-const Content = styled.div<{ compact?: boolean }>`
+const Content = styled.div<{ compact?: boolean; fullscreen?: boolean }>`
   ${(props) => (props.compact ? `max-width: 1024px;` : '')}
   width: 100%;
+  ${({ fullscreen }) => fullscreen && `min-width: 100%;`}
   height: 100%;
   display: flex;
   flex-direction: column;

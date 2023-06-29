@@ -26,7 +26,7 @@ const OverlayTool = ({
   const sdk = useSDK();
   const queryClient = useQueryClient();
 
-  const { threeDModel, setOverlayTool } = useContext(ThreeDContext);
+  const { cadModel, setOverlayTool } = useContext(ThreeDContext);
 
   const smartOverlayTool = useMemo(() => {
     if (!viewer) return;
@@ -39,12 +39,12 @@ const OverlayTool = ({
   }, [setOverlayTool, smartOverlayTool]);
 
   useEffect(() => {
-    if (!viewer || !threeDModel || !smartOverlayTool) {
+    if (!viewer || !cadModel || !smartOverlayTool) {
       return;
     }
 
     smartOverlayTool.maxPointIndicatorDistance =
-      threeDModel
+      cadModel
         .getModelBoundingBox(undefined, true)
         .getBoundingSphere(new THREE.Sphere()).radius * 0.07;
     smartOverlayTool.visible = false;
@@ -60,7 +60,7 @@ const OverlayTool = ({
     });
 
     smartOverlayTool.on('click', onLabelClick ?? noop);
-  }, [threeDModel, onLabelClick, smartOverlayTool, sdk, viewer, queryClient]);
+  }, [cadModel, onLabelClick, smartOverlayTool, sdk, viewer, queryClient]);
 
   return <></>;
 };

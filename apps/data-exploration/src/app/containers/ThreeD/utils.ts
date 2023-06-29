@@ -63,6 +63,7 @@ export const SECONDARY_MODEL_DISPLAY_LIMIT = 20;
 export type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 
 export type AssetSelectionState = {
+  model: CogniteModel | Image360Collection;
   imageAnnotation?: Image360Annotation | undefined;
   imageEntity?: Image360 | undefined;
 };
@@ -135,10 +136,11 @@ export const fitCameraToAsset = async (
   sdk: CogniteClient,
   queryClient: QueryClient,
   viewer: Cognite3DViewer,
-  threeDModel: CogniteModel | Image360Collection,
   assetSelectionState: AssetSelectionState,
   assetId: number
 ) => {
+  const threeDModel = assetSelectionState.model;
+
   if (threeDModel instanceof CogniteCadModel) {
     const { modelId, revisionId } = threeDModel;
     const mappings = await fetchAssetMappingsByAssetIdQuery(

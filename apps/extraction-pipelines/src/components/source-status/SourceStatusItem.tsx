@@ -4,12 +4,17 @@ import styled from 'styled-components';
 
 import { Colors } from '@cognite/cogs.js';
 
-import { UptimeAggregation } from '../../utils/hostedExtractors';
+import { MQTTSourceWithJobMetrics } from '../../hooks/hostedExtractors';
+import {
+  UptimeAggregation,
+  doesLogHavePauseType,
+} from '../../utils/hostedExtractors';
 
 import SourceStatusItemTooltip from './SourceStatusItemTooltip';
 
 type SourceStatusItemProps = {
   aggregation: UptimeAggregation;
+  source: MQTTSourceWithJobMetrics;
 };
 
 const renderItem = (uptimePercentage: number) => {
@@ -30,11 +35,20 @@ const renderItem = (uptimePercentage: number) => {
 
 export const SourceStatusItem = ({
   aggregation,
+  source,
 }: SourceStatusItemProps): JSX.Element => {
+  const isPausedEntireTime = aggregation.logs.every((log) => {
+    return doesLogHavePauseType(log);
+  });
+
   return (
     <div style={{ flex: 1 }}>
-      <SourceStatusItemTooltip aggregation={aggregation}>
-        {renderItem(aggregation.uptimePercentage)}
+      <SourceStatusItemTooltip aggregation={aggregation} source={source}>
+        {isPausedEntireTime ? (
+          <AggregationItemAllPaused />
+        ) : (
+          renderItem(aggregation.uptimePercentage)
+        )}
       </SourceStatusItemTooltip>
     </div>
   );
@@ -92,5 +106,17 @@ const AggregationItemWarning = styled(AggregationItemBase)`
 
   :active {
     background-color: ${Colors['decorative--yellow--700']};
+  }
+`;
+
+const AggregationItemAllPaused = styled(AggregationItemBase)`
+  background-color: ${Colors['surface--status-undefined--strong--default']};
+
+  :hover {
+    background-color: ${Colors['surface--status-undefined--strong--hover']};
+  }
+
+  :active {
+    background-color: ${Colors['surface--status-undefined--strong--pressed']};
   }
 `;

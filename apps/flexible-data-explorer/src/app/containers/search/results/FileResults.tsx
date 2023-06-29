@@ -1,6 +1,5 @@
 import { formatDate, Skeleton } from '@cognite/cogs.js';
 
-import { translationKeys } from '../../../common';
 import { Button } from '../../../components/buttons/Button';
 import { SearchResults } from '../../../components/search/SearchResults';
 import { useNavigation } from '../../../hooks/useNavigation';
@@ -65,7 +64,7 @@ export const FileResults: React.FC = () => {
           }}
           loading={isFetchingNextPage}
         >
-          {t(translationKeys.showMore, 'Show more')}
+          {t('GENERAL_SHOW_MORE')}
         </Button>
       </SearchResults.Footer>
     </SearchResults>

@@ -3339,10 +3339,10 @@
     "@types/history" "4.7.9"
     rrweb "1.0.6"
 
-"@cognite/reveal-react-components@0.1.2":
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/@cognite/reveal-react-components/-/reveal-react-components-0.1.2.tgz#fbd9568d298b9779d0e0c9e975a9fbc469e1180f"
-  integrity sha512-oyAQBDs+o5jPno48Cy3/cJNwfxv5fjfmateTD6iZAoLVtjcRUIBPJF3l8SfZIJBUAgBRvmqjH+rVipJTlwGOkg==
+"@cognite/reveal-react-components@0.2.1":
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/@cognite/reveal-react-components/-/reveal-react-components-0.2.1.tgz#1d0437a6cac552ca8f44cf9df561f19d6b39d7a4"
+  integrity sha512-Frew+lriBJarMunY1XpSxnTQRCUQPwOJap+bvGhanTk6phk35Kwy4GJx1xgkCD2mnFVYythvSpOO/fiLfLQ7sw==
   dependencies:
     lodash "^4.17.21"
     style-loader "^3.3.3"
@@ -3516,10 +3516,10 @@
   resolved "https://registry.yarnpkg.com/@cognite/testing/-/testing-0.1.1-rc.0.tgz#409bbac7e38c39892876d7a5c2667ccb76608435"
   integrity sha512-dcPCgmy64cQX0WgUerLKGwUhGSQw0S8iokFSeQ0jknexAJAjbkuQS5vyx1HOyHN1HJR1pQP5pQh5uiTUkZJuwg==
 
-"@cognite/unified-file-viewer@^13.5.8":
-  version "13.5.8"
-  resolved "https://registry.yarnpkg.com/@cognite/unified-file-viewer/-/unified-file-viewer-13.5.8.tgz#4febd56c09d3d60bc8bcbb3a7b0e2331043630b2"
-  integrity sha512-3Ys47dg7Vq1NjxPyKslkMFO6EnzFA8+SXhfgKzh0SrRY+r/UxnPD5KjNTARqVaKSMkBCyxvsZDXl8lvlNjTwWQ==
+"@cognite/unified-file-viewer@^13.7.2":
+  version "13.7.2"
+  resolved "https://registry.yarnpkg.com/@cognite/unified-file-viewer/-/unified-file-viewer-13.7.2.tgz#c5e072d1084da5bd5c9fa55f636b3fd5f90dfb80"
+  integrity sha512-+QUkhRpyH4r+wP5IYQ/ZCcC5OzKAaZ5o/b1XcnlmWyienD3udN4P5CggNN+W6YshFbHmR29q3y00dPHNTcJFKQ==
   dependencies:
     "@cognite/cogs.js" "^9.10.0"
     "@cognite/plotting-components" "^0.0.10"
@@ -3544,7 +3544,7 @@
     lodash "^4.17.21"
     mixpanel-browser "^2.45.0"
     pdf-lib "^1.17.1"
-    pdfjs-dist "3.5.141"
+    pdfjs-dist "3.7.107"
     styled-components "^5.3.5"
     three "0.148.0"
     uuid "^9.0.0"
@@ -11039,13 +11039,13 @@
   resolved "https://registry.yarnpkg.com/@types/emscripten/-/emscripten-1.39.6.tgz#698b90fe60d44acf93c31064218fbea93fbfd85a"
   integrity sha512-H90aoynNhhkQP6DRweEjJp5vfUVdIj7tdPLsu7pq89vODD/lcugKfZOsfgwpvM6XUewEp2N5dCg1Uf3Qe55Dcg==
 
-"@types/enzyme@3.10.12":
-  version "3.10.12"
-  resolved "https://registry.yarnpkg.com/@types/enzyme/-/enzyme-3.10.12.tgz#ac4494801b38188935580642f772ad18f72c132f"
-  integrity sha512-xryQlOEIe1TduDWAOphR0ihfebKFSWOXpIsk+70JskCfRfW+xALdnJ0r1ZOTo85F9Qsjk6vtlU7edTYHbls9tA==
+"@types/enzyme@^3.10.12":
+  version "3.10.13"
+  resolved "https://registry.yarnpkg.com/@types/enzyme/-/enzyme-3.10.13.tgz#332c0ed59b01f7b1c398c532a1c21a5feefabeb1"
+  integrity sha512-FCtoUhmFsud0Yx9fmZk179GkdZ4U9B0GFte64/Md+W/agx0L5SxsIIbhLBOxIb9y2UfBA4WQnaG1Od/UsUQs9Q==
   dependencies:
     "@types/cheerio" "*"
-    "@types/react" "*"
+    "@types/react" "^16"
 
 "@types/escodegen@^0.0.6":
   version "0.0.6"
@@ -11818,6 +11818,15 @@
   version "18.2.14"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-18.2.14.tgz#fa7a6fecf1ce35ca94e74874f70c56ce88f7a127"
   integrity sha512-A0zjq+QN/O0Kpe30hA1GidzyFjatVvrpIvWLxD+xv67Vt91TWWgco9IvrJBkeyHm1trGaFS/FSGqPlhyeZRm0g==
+  dependencies:
+    "@types/prop-types" "*"
+    "@types/scheduler" "*"
+    csstype "^3.0.2"
+
+"@types/react@^16":
+  version "16.14.43"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-16.14.43.tgz#bc6e7a0e99826809591d38ddf1193955de32c446"
+  integrity sha512-7zdjv7jvoLLQg1tTvpQsm+hyNUMT2mPlNV1+d0I8fbGhkJl82spopMyBlu4wb1dviZAxpGdk5eHu/muacknnfw==
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "*"
@@ -15600,10 +15609,10 @@ canvas-fit@^1.5.0:
   dependencies:
     element-size "^1.1.1"
 
-canvas@^2.11.0:
-  version "2.11.0"
-  resolved "https://registry.yarnpkg.com/canvas/-/canvas-2.11.0.tgz#7f0c3e9ae94cf469269b5d3a7963a7f3a9936434"
-  integrity sha512-bdTjFexjKJEwtIo0oRx8eD4G2yWoUOXP9lj279jmQ2zMnTQhT8C3512OKz3s+ZOaQlLbE7TuVvRDYDB3Llyy5g==
+canvas@^2.11.2:
+  version "2.11.2"
+  resolved "https://registry.yarnpkg.com/canvas/-/canvas-2.11.2.tgz#553d87b1e0228c7ac0fc72887c3adbac4abbd860"
+  integrity sha512-ItanGBMrmRV7Py2Z+Xhs7cT+FNt5K0vPL4p9EZ/UX/Mu7hFbkxSjKF2KVtPwX7UYWp7dRKnrTvReflgrItJbdw==
   dependencies:
     "@mapbox/node-pre-gyp" "^1.0.0"
     nan "^2.17.0"
@@ -30318,15 +30327,13 @@ pdf-lib@^1.17.1:
     pako "^1.0.11"
     tslib "^1.11.1"
 
-pdfjs-dist@3.5.141:
-  version "3.5.141"
-  resolved "https://registry.yarnpkg.com/pdfjs-dist/-/pdfjs-dist-3.5.141.tgz#a98c2d4dd3192592ba7055d3e450ed6e97112f41"
-  integrity sha512-lYIvyi5grtYOIatsfCifIKwxHeAJ8eHyP22DTdvY4pm0yWVSFQnMafpgCPSw8gaNRDDdcHnBVOkqMsyK8SRxZg==
-  dependencies:
-    path2d-polyfill "^2.0.1"
-    web-streams-polyfill "^3.2.1"
+pdfjs-dist@3.7.107:
+  version "3.7.107"
+  resolved "https://registry.yarnpkg.com/pdfjs-dist/-/pdfjs-dist-3.7.107.tgz#011ca8a6753966f1670458e87d15f32f00ae1357"
+  integrity sha512-D0pZgz4u8VNjCCXfNCjzeFcenxKFGh2RnGlLIvDHgpT+ZvOlsBlHugpOfmcLQyKk7csHBhPalf+mCM6thiclSQ==
   optionalDependencies:
-    canvas "^2.11.0"
+    canvas "^2.11.2"
+    path2d-polyfill "^2.0.1"
 
 peek-readable@^5.0.0:
   version "5.0.0"
@@ -39510,11 +39517,6 @@ web-namespaces@^2.0.0:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/web-namespaces/-/web-namespaces-2.0.1.tgz#1010ff7c650eccb2592cebeeaf9a1b253fd40692"
   integrity sha512-bKr1DkiNa2krS7qxNtdrtHAmzuYGFQLiQ13TsorsdT6ULTkPLKuu5+GsFpDlg6JFjUTwX2DyhMPG2be8uPrqsQ==
-
-web-streams-polyfill@^3.2.1:
-  version "3.2.1"
-  resolved "https://registry.yarnpkg.com/web-streams-polyfill/-/web-streams-polyfill-3.2.1.tgz#71c2718c52b45fd49dbeee88634b3a60ceab42a6"
-  integrity sha512-e0MO3wdXWKrLbL0DgGnUV7WHVuw9OUvL4hjgnPkIeEvESk74gAITi5G606JtZPp39cd8HA9VQzCIvA49LpPN5Q==
 
 web-vitals@2.1.4, web-vitals@^2.1.1:
   version "2.1.4"

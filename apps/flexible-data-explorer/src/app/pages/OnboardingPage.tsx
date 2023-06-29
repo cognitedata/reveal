@@ -4,7 +4,6 @@ import styled from 'styled-components';
 
 import { Button } from '@cognite/cogs.js';
 
-import { translationKeys } from '../../app/common/i18n/translationKeys';
 import { DataModelSelectorModal } from '../containers/modals/DataModelSelectorModal';
 import { Page } from '../containers/page/Page';
 import { useDataModelLocalStorage } from '../hooks/useLocalStorage';
@@ -39,10 +38,7 @@ export const OnboardingPage = () => {
             type="secondary"
             onClick={() => setSiteSelectionVisible(true)}
           >
-            {t(
-              translationKeys.onboardingPageModalButton,
-              'Please select a Data Model to explore'
-            )}
+            {t('ONBOARDING_PAGE_TOGGLE_DATA_MODEL_BUTTON')}
           </Button>
         </Container>
       </Page.Body>

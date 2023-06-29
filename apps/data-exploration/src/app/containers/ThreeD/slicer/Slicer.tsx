@@ -40,7 +40,7 @@ export const Slicer = ({ viewer, viewerModel }: SliderProps): JSX.Element => {
     const maxVector = [0, -1, 0];
     const minVector = [0, 1, 0];
 
-    viewer.setClippingPlanes([
+    viewer.setGlobalClippingPlanes([
       new THREE.Plane(new THREE.Vector3(...minVector), -slicingState.bottom),
       new THREE.Plane(new THREE.Vector3(...maxVector), slicingState.top),
     ]);

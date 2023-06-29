@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { Body, Button, Link, Tooltip } from '@cognite/cogs.js';
 
 import { useClipboard } from '../../hooks/useClipboard';
+import { useTranslation } from '../../hooks/useTranslation';
 // import { useClipboard } from '@data-exploration-components/hooks';
 
 type DetailsItemProps = {
@@ -20,6 +21,8 @@ export const DetailsItem = ({
   copyable = true,
   link,
 }: DetailsItemProps) => {
+  const { t } = useTranslation();
+
   const clipboardValue =
     copyable && (typeof value === 'string' || typeof value === 'number')
       ? value
@@ -59,7 +62,7 @@ export const DetailsItem = ({
       </DetailsItemContainer>
 
       <ButtonWrapper visible={copyable && Boolean(value)}>
-        <Tooltip content={hasCopied ? 'Copied' : 'Copy'}>
+        <Tooltip content={hasCopied ? t('GENERAL_COPIED') : t('GENERAL_COPY')}>
           <Button
             type="ghost"
             size="small"
