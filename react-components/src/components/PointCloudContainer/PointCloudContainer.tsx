@@ -1,21 +1,22 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-import { type ReactElement, useEffect, useRef } from 'react';
-import { type AddModelOptions, type CogniteCadModel } from '@cognite/reveal';
-import { useReveal } from '../RevealContainer/RevealContext';
+
+import { type CognitePointCloudModel, type AddModelOptions } from '@cognite/reveal';
+import { useEffect, useRef, type ReactElement } from 'react';
 import { type Matrix4 } from 'three';
+import { useReveal } from '../RevealContainer/RevealContext';
 
 type Cognite3dModelProps = {
   addModelOptions: AddModelOptions;
   transform?: Matrix4;
 };
 
-export default function CogniteCadModelContainer({
+export default function PointCloudContainer({
   addModelOptions,
   transform
 }: Cognite3dModelProps): ReactElement {
-  const modelRef = useRef<CogniteCadModel>();
+  const modelRef = useRef<CognitePointCloudModel>();
   const viewer = useReveal();
   const { modelId, revisionId } = addModelOptions;
 
@@ -32,11 +33,12 @@ export default function CogniteCadModelContainer({
   return <></>;
 
   async function addModel(modelId: number, revisionId: number, transform?: Matrix4): Promise<void> {
-    const cadModel = await viewer.addCadModel({ modelId, revisionId });
+    const pointCloudModel = await viewer.addPointCloudModel({ modelId, revisionId });
     if (transform !== undefined) {
-      cadModel.setModelTransformation(transform);
+      pointCloudModel.setModelTransformation(transform);
     }
-    modelRef.current = cadModel;
+    console.log(pointCloudModel.getModelBoundingBox());
+    modelRef.current = pointCloudModel;
   }
 
   function removeModel(): void {

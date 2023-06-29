@@ -2,15 +2,15 @@
  * Copyright 2023 Cognite AS
  */
 import type { Meta, StoryObj } from '@storybook/react';
-import { CogniteCadModelContainer, RevealContainer } from '../src';
+import { CadModelContainer, RevealContainer } from '../src';
 import { CogniteClient } from '@cognite/sdk';
 import { Color, Matrix4 } from 'three';
 
 const meta = {
-  title: 'Example/CogniteCadModelContainer',
-  component: CogniteCadModelContainer,
+  title: 'Example/CadModelContainer',
+  component: CadModelContainer,
   tags: ['autodocs']
-} satisfies Meta<typeof CogniteCadModelContainer>;
+} satisfies Meta<typeof CadModelContainer>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -33,8 +33,8 @@ export const Main: Story = {
   },
   render: ({ addModelOptions, transform }) => (
     <RevealContainer sdk={sdk} color={new Color(0x4a4a4a)}>
-      <CogniteCadModelContainer addModelOptions={addModelOptions} />
-      <CogniteCadModelContainer addModelOptions={addModelOptions} transform={transform} />
+      <CadModelContainer addModelOptions={addModelOptions} />
+      <CadModelContainer addModelOptions={addModelOptions} transform={transform} />
     </RevealContainer>
   )
 };
