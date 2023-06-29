@@ -28,7 +28,7 @@
     "@cognite/react-feature-flags": "^1.0.1",
     "@cognite/react-image-annotate": "^1.8.0-v4-17",
     "@cognite/reveal": "4.3.2",
-    "@cognite/reveal-react-components": "0.1.2",
+    "@cognite/reveal-react-components": "0.2.1",
     "@cognite/schema-matching": "^4.0.1",
     "@cognite/sdk": "^7.19.1",
     "@cognite/sdk-playground": "^6.0.8",
