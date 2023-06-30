@@ -6,7 +6,7 @@ import { RecentlyViewedList } from '../containers/lists/recentlyViewed/RecentlyV
 import { Page } from '../containers/page/Page';
 import { DataExplorerLink } from '../containers/search/DataExplorerLink';
 import { SearchBar } from '../containers/search/SearchBar';
-import { SearchBarSwitch } from '../containers/search/SearchBarSwitch';
+// import { SearchBarSwitch } from '../containers/search/SearchBarSwitch';
 import { SearchConfiguration } from '../containers/search/SearchConfiguration';
 import { useRecentlyVisited } from '../hooks/useRecentlyVisited';
 import { useTranslation } from '../hooks/useTranslation';
@@ -23,7 +23,8 @@ export const HomePage = () => {
 
         <SearchBarContainer>
           <SearchBar width="774px" disablePreview autoFocus />
-          <SearchBarSwitch />
+          {/* Hide this for now. until we have flags */}
+          {/* <SearchBarSwitch /> */}
         </SearchBarContainer>
 
         <DataExplorerLink />
