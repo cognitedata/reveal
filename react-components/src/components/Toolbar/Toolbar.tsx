@@ -5,7 +5,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Divider, ToolBar } from '@cognite/cogs.js';
-import { SliceButton } from './SliceButton';
 import { FitModelsButton } from './FitModelsButton';
 
 import { ToolbarButton } from './ToolbarButton';
@@ -16,16 +15,13 @@ export type ToolbarProps = {
 
 const defaultButtons = (
   <>
-    <ToolbarButton icon="Layers" aria-label="Show layer options" />
-
-    <Divider />
-
     <FitModelsButton />
+
     <ToolbarButton icon="Collapse" aria-label="Focus asset" />
 
     <Divider />
 
-    <SliceButton />
+    <ToolbarButton icon="Slice" aria-label="Slice models" />
     <ToolbarButton icon="Ruler" aria-label="Make measurements" />
 
     <Divider />
@@ -36,9 +32,7 @@ const defaultButtons = (
 );
 
 const Toolbar = (props: ToolbarProps) => {
-  const hasCustomChildren = props.children !== undefined;
-
-  return <FloatingToolbar>{hasCustomChildren ? props.children : defaultButtons}</FloatingToolbar>;
+  return <FloatingToolbar>{props.children ?? defaultButtons}</FloatingToolbar>;
 };
 
 const FloatingToolbar = styled(ToolBar)`
