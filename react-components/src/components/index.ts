@@ -5,3 +5,5 @@ import '@cognite/cogs.js/dist/cogs.css';
 export { default as RevealContainer } from './RevealContainer/RevealContainer';
 export { default as CogniteCadModelContainer } from './CogniteCadModelContainer/CogniteCadModelContainer';
 export { Image360HistoricalDetails } from './Image360HistoricalDetails/Image360HistoricalDetails';
+export { default as Toolbar } from './Toolbar/Toolbar';
+export { ToolbarButton } from './Toolbar/ToolbarButton';
