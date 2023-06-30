@@ -4,10 +4,17 @@ export type DataModelConfig = {
   version: string;
 };
 
+export type ModelTranslation = {
+  x: number;
+  y: number;
+  z: number;
+};
+
 export type ModelIdentifier = {
   type: 'cad' | 'pointcloud';
   modelId: number;
   revisionId: number;
+  transform?: ModelTranslation;
 };
 
 export type ThreeDResource = ModelIdentifier | Collection360;

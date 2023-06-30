@@ -1,4 +1,4 @@
-import { Color } from 'three';
+import { Color, Matrix4 } from 'three';
 
 import {
   CogniteCadModelContainer,
@@ -29,8 +29,15 @@ const CadModels: React.FC = () => {
 
   return (
     <>
-      {modelIdentifiers.map(({ modelId, revisionId }) => (
-        <CogniteCadModelContainer addModelOptions={{ modelId, revisionId }} />
+      {modelIdentifiers.map(({ modelId, revisionId, transform }) => (
+        <CogniteCadModelContainer
+          addModelOptions={{ modelId, revisionId }}
+          transform={new Matrix4().makeTranslation(
+            transform?.x ?? 0,
+            transform?.y ?? 0,
+            transform?.z ?? 0
+          )}
+        />
       ))}
     </>
   );
