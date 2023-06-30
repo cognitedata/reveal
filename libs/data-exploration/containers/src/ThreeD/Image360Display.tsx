@@ -64,9 +64,13 @@ export const Image360Display = ({ model }: { model: Model3DWithType }) => {
           <Icon type="Loader" />
         ) : (
           <Detail>
-            {t('EST_NUMBER_OF_IMAGES', 'Est. number of images: {{ count }}', {
-              count: image360FileCount,
-            })}
+            {t(
+              'EST_NUMBER_OF_IMAGES',
+              `Est. number of images: ${image360FileCount}`,
+              {
+                count: image360FileCount,
+              }
+            )}
           </Detail>
         )}
       </Flex>
