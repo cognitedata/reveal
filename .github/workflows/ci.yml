@@ -314,6 +314,7 @@ jobs:
           yarn build:fast
 
       - name: Upload documentation artifact
+        if: ${{ contains(github.event.pull_request.labels.*.name, 'preview-docs') }}
         uses: actions/upload-artifact@v3
         with:
           name: preview-docs
@@ -321,7 +322,7 @@ jobs:
 
   deploy-preview-documentation:
     needs: [changes, build-preview-documentation]
-    if: ${{ needs.changes.outputs.should-run == 'true' || contains(github.event.pull_request.labels.*.name, 'preview-docs') }}
+    if: ${{ needs.changes.outputs.should-run == 'true' && contains(github.event.pull_request.labels.*.name, 'preview-docs') }}
     name: Publish documentation preview
     # Ensures that there only will be executed one "instance" of this operation
     # across all ongoing Github Action executions
