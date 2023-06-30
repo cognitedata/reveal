@@ -85,7 +85,8 @@
       ],
       "@platypus-core/*": ["libs/data-modeling/platypus-core/src/lib/*"],
       "@fusion/data-modeling": [
-        "libs/data-modeling/platypus-core/src/index.ts"],
+        "libs/data-modeling/platypus-core/src/index.ts"
+      ],
       "@platypus/@cognite/fdm-client": [
         "libs/@cognite/fdm-client/src/index.ts"
       ],

@@ -52,7 +52,7 @@ export default async function (
   // run the original generator
   await applicationGenerator(tree, {
     ...generatorOptions,
-    standaloneConfig: true,
+    // standaloneConfig: true,
     style: 'styled-components',
     e2eTestRunner: generatorOptions.e2eTestRunner || 'cypress',
     linter: Linter.EsLint,
