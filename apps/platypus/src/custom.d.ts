@@ -13,12 +13,16 @@
  * 1. Firstly, you can inline the worker as a blob instead of downloading it as an external script via the inline parameter
  * 2. Secondly, you may override the base download URL for your worker script via the publicPath option
  */
-declare module 'worker-loader*' {
+
+declare module '*.worker.ts' {
+  // You need to change `Worker`, if you specified a different value for the `workerType` option
   class WebpackWorker extends Worker {
     constructor();
   }
 
-  export = WebpackWorker;
+  // Uncomment this if you set the `esModule` option to `false`
+  // export = WebpackWorker;
+  export default WebpackWorker;
 }
 
 declare module '*.json' {
