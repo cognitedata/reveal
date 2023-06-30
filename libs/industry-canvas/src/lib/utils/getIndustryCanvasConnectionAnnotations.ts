@@ -3,6 +3,7 @@ import { uniqBy } from 'lodash';
 import {
   getFileIdFromExtendedAnnotation,
   getResourceIdFromExtendedAnnotation,
+  getResourceTypeAnnotationColor,
   getResourceTypeFromExtendedAnnotation,
 } from '@cognite/data-exploration';
 import {
@@ -18,9 +19,10 @@ import { ExtendedAnnotation } from '@data-exploration-lib/core';
 
 import { IndustryCanvasContainerConfig } from '../types';
 
-const CONNECTION_OPACITY = 0.35;
-const CONNECTION_STROKE_WIDTH = 5;
-const CONNECTION_STROKE = 'blue';
+const CONNECTION_OPACITY = 0.5;
+const CONNECTION_STROKE_WIDTH = 2;
+const FILE_CONNECTION_STROKE =
+  getResourceTypeAnnotationColor('file').strokeColor;
 const ONLY_SHOW_REGION_TO_REGION_IF_ONE_TO_ONE = true;
 
 const getAnnotationToRegionConnection = ({
@@ -30,10 +32,10 @@ const getAnnotationToRegionConnection = ({
   sourceAnnotation: ExtendedAnnotation;
   targetContainer: IndustryCanvasContainerConfig;
 }): Annotation[] => {
-  const hightlightingRectangleId = `highlighting-rectangle-${sourceAnnotation.containerId}`;
+  const highlightingRectangleId = `highlighting-rectangle-${targetContainer.id}`;
   const highlightingRectangle: RectangleAnnotation = {
     type: AnnotationType.RECTANGLE,
-    id: hightlightingRectangleId,
+    id: highlightingRectangleId,
     containerId: targetContainer.id,
     x: 0,
     y: 0,
@@ -42,8 +44,9 @@ const getAnnotationToRegionConnection = ({
     isSelectable: false,
     style: {
       fill: 'transparent',
-      stroke: 'blue',
-      strokeWidth: 2,
+      stroke: FILE_CONNECTION_STROKE,
+      strokeWidth: CONNECTION_STROKE_WIDTH,
+      opacity: CONNECTION_OPACITY,
     },
   };
 
@@ -51,9 +54,9 @@ const getAnnotationToRegionConnection = ({
     id: `connection-${sourceAnnotation.id}}`,
     type: AnnotationType.POLYLINE,
     fromId: sourceAnnotation.id,
-    toId: hightlightingRectangleId,
+    toId: highlightingRectangleId,
     style: {
-      stroke: CONNECTION_STROKE,
+      stroke: FILE_CONNECTION_STROKE,
       strokeWidth: CONNECTION_STROKE_WIDTH,
       opacity: CONNECTION_OPACITY,
       lineType: LineType.STRAIGHT,
@@ -103,7 +106,8 @@ const getConnectionAnnotations = ({
   const linkedContainers = containers.filter(
     (containerConfig) =>
       (containerConfig.type === ContainerType.DOCUMENT ||
-        containerConfig.type === ContainerType.IMAGE) &&
+        containerConfig.type === ContainerType.IMAGE ||
+        containerConfig.type === ContainerType.TEXT) &&
       containerConfig.metadata.resourceId === targetFileId
   );
 
@@ -138,7 +142,7 @@ const getConnectionAnnotations = ({
           fromId: sourceAnnotation.id,
           toId: targetAnnotation.id,
           style: {
-            stroke: CONNECTION_STROKE,
+            stroke: FILE_CONNECTION_STROKE,
             strokeWidth: CONNECTION_STROKE_WIDTH,
             opacity: CONNECTION_OPACITY,
             lineType: LineType.RIGHT_ANGLES,
