@@ -29,8 +29,8 @@ export const SearchConfiguration: React.FC<Props> = ({ header }) => {
     <Container>
       <Wrapper level={header ? 3 : 6}>
         {header
-          ? t('HOMEPAGE_HEADER', { site: config?.[0].site, model: '' })
-          : t('SEARCH_RESULTS_HEADER', { site: config?.[0].site, model: '' })}
+          ? t('HOMEPAGE_HEADER', { site: config?.site, model: '' })
+          : t('SEARCH_RESULTS_HEADER', { site: config?.site, model: '' })}
 
         <StyledBody
           onClick={() => setSiteSelectionVisible(true)}

@@ -20,18 +20,12 @@ export const ThreeDContent = () => {
 
 const CadModels: React.FC = () => {
   const projectConfigs = useProjectConfig();
-  const modelIdentifiers = projectConfigs
-    .filter(
-      (config) =>
-        config.threeDResources !== undefined &&
-        config.threeDResources.length > 0
-    )
-    .flatMap((config) => config.threeDResources)
-    .filter(
-      (resource): resource is ModelIdentifier =>
-        (resource as ModelIdentifier).modelId !== undefined &&
-        (resource as ModelIdentifier).type === 'cad'
-    );
+
+  const modelIdentifiers = projectConfigs?.threeDResources as ModelIdentifier[];
+
+  if (!modelIdentifiers) {
+    return null;
+  }
 
   return (
     <>
