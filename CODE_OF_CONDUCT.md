@@ -4,3 +4,5 @@ This project is governed by the Contributor Covenant version 1.4
 All contributors and participants agree to abide by its terms.
 
 To report violations, send an email to dragly@cognite.com.
+
+Some new change
