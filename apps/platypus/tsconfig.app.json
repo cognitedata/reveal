@@ -3,7 +3,9 @@
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
     "resolveJsonModule": true,
-    "types": ["node"]
+    "types": [
+      "node"
+    ]
   },
   "files": [
     "../../node_modules/@nx/react/typings/cssmodule.d.ts",
@@ -17,7 +19,13 @@
     "**/*.stories.jsx",
     "**/*.stories.tsx",
     "**/mocks/**.*",
+    "**/tests/**.*",
     "jest.config.ts"
   ],
-  "include": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"]
+  "include": [
+    "**/*.js",
+    "**/*.jsx",
+    "**/*.ts",
+    "**/*.tsx"
+  ]
 }

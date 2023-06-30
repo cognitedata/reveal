@@ -14,8 +14,8 @@ import {
 
 import { setupGraphql } from '../../web-workers';
 // web workers stuff
-import GraphQlWorker from '../../web-workers/worker-loaders/graphqlWorkerLoader';
-import MonacoEditorWorker from '../../web-workers/worker-loaders/monacoLanguageServiceWorkerLoader';
+import { getGraphQlWorker } from '../../web-workers/worker-loaders/graphqlWorkerLoader';
+import { getMonacoEditorWorker } from '../../web-workers/worker-loaders/monacoLanguageServiceWorkerLoader';
 
 import { StyledEditor } from './elements';
 import { ErrorsByGroup } from './Model';
@@ -66,16 +66,15 @@ const getSampleDataModel = (
 
 // point here so the context can be used
 declare const self: any;
-
 (self as any).MonacoEnvironment = {
   getWorker(_: string, label: string) {
-    // // when graphql, load our custom web worker
+    // when graphql, load our custom web worker
     if (label === 'graphql') {
-      return new GraphQlWorker();
+      return getGraphQlWorker();
     }
 
     // otherwise, load the default web worker from monaco
-    return new MonacoEditorWorker();
+    return getMonacoEditorWorker();
   },
 } as MonacoEditorEnvironment;
 
