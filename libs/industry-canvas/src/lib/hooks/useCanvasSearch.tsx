@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 
 import { useDebounce } from 'use-debounce';
 
+import { UserProfile } from '../UserProfileProvider';
 import caseInsensitiveIncludes from '../utils/caseInsensitiveIncludes';
 
 const SEARCH_DEBOUNCE_MS = 100;
@@ -15,7 +16,14 @@ type UseCanvasSearchReturnType<T> = {
   filteredCanvases: T[];
 };
 
-const useCanvasSearch = <T extends { name: string; externalId: string }>({
+const useCanvasSearch = <
+  T extends {
+    name: string;
+    externalId: string;
+    createdByUserProfile?: UserProfile;
+    updatedByUserProfile?: UserProfile;
+  }
+>({
   canvases,
   searchString,
 }: UseCanvasSearchProps<T>): UseCanvasSearchReturnType<T> => {
@@ -23,8 +31,17 @@ const useCanvasSearch = <T extends { name: string; externalId: string }>({
 
   const filteredCanvases = useMemo(
     () =>
-      canvases.filter((canvas) =>
-        caseInsensitiveIncludes(canvas.name, debouncedSearchString)
+      canvases.filter(
+        (canvas) =>
+          caseInsensitiveIncludes(canvas.name, debouncedSearchString) ||
+          caseInsensitiveIncludes(
+            canvas.createdByUserProfile?.displayName,
+            debouncedSearchString
+          ) ||
+          caseInsensitiveIncludes(
+            canvas.updatedByUserProfile?.displayName,
+            debouncedSearchString
+          )
       ),
     [debouncedSearchString, canvases]
   );
