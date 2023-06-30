@@ -14,6 +14,7 @@ import {
 } from '@reveal/utilities';
 import { GeometryBufferUtils } from '../utilities/GeometryBufferUtils';
 import { getShaderMaterial } from '../utilities/getShaderMaterial';
+import { TreeIndexToSectorsMap } from '../utilities/TreeIndexToSectorsMap';
 import { DrawCallBatchingManager } from './DrawCallBatchingManager';
 
 /**
@@ -68,6 +69,7 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
     batchGroup: Group,
     materials: Materials,
     styleTreeIndexSets: StyledTreeIndexSets,
+    private readonly treeIndexToSectorsMap: TreeIndexToSectorsMap,
     private readonly initialBufferSize = 1024,
     private readonly numberOfInstanceBatches = 2
   ) {
@@ -89,7 +91,7 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
       if (parsedGeometry.instanceId === undefined) {
         return;
       }
-      this.processGeometries(parsedGeometry as Required<ParsedGeometry>, sectorBatch);
+      this.processGeometries(parsedGeometry as Required<ParsedGeometry>, sectorBatch, sectorId);
     });
   }
 
@@ -160,9 +162,10 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
     }
   }
 
-  private processGeometries(parsedGeometry: Required<ParsedGeometry>, sectorBatch: SectorBatch) {
+  private processGeometries(parsedGeometry: Required<ParsedGeometry>, sectorBatch: SectorBatch, sectorId: number) {
     const instanceBatch = this.getOrCreateInstanceBatch(parsedGeometry);
     this.batchInstanceAttributes(parsedGeometry.geometryBuffer, parsedGeometry.instanceId, instanceBatch, sectorBatch);
+    this.updateTreeIndexToSectorsMap(parsedGeometry, sectorId);
   }
 
   private batchInstanceAttributes(
@@ -218,6 +221,25 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
     for (let i = 0; i < treeIndexInterleavedAttribute.count; i++) {
       incrementOrInsertIndex(batchBuffer.mesh.userData.treeIndices, treeIndexInterleavedAttribute.getX(i));
     }
+  }
+
+  private updateTreeIndexToSectorsMap(parsedGeometry: ParsedGeometry, sectorId: number) {
+    const sourceInstanceAttributes = GeometryBufferUtils.getAttributes(
+      parsedGeometry.geometryBuffer,
+      InterleavedBufferAttribute
+    );
+    const treeIndexInterleavedAttribute = this.getTreeIndexAttribute(sourceInstanceAttributes);
+
+    if (this.treeIndexToSectorsMap.isCompleted(sectorId, parsedGeometry.type)) {
+      return;
+    }
+
+    // Update mapping from tree indices to sector ids
+    for (let i = 0; i < treeIndexInterleavedAttribute.count; i++) {
+      const treeIndex = treeIndexInterleavedAttribute.getX(i);
+      this.treeIndexToSectorsMap.set(treeIndex, sectorId);
+    }
+    this.treeIndexToSectorsMap.markCompleted(sectorId, parsedGeometry.type);
   }
 
   private reallocateBufferGeometry({ buffer, mesh }: BatchBuffer) {

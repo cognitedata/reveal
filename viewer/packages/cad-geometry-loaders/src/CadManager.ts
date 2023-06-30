@@ -14,6 +14,7 @@ import { File3dFormat, ModelIdentifier } from '@reveal/data-providers';
 import { MetricsLogger } from '@reveal/metrics';
 import { CadModelBudget, defaultDesktopCadModelBudget } from './CadModelBudget';
 import { CadModelFactory, CadModelSectorLoadStatistics, CadNode, GeometryFilter } from '@reveal/cad-model';
+import { RevealGeometryCollectionType } from '@reveal/sector-parser';
 
 export class CadManager {
   private readonly _materialManager: CadMaterialManager;
@@ -102,6 +103,8 @@ export class CadManager {
       }
 
       this.markNeedsRedraw();
+
+      this.updateTreeIndexToSectorsMap(cadModel, sector);
     };
 
     this._subscription.add(
@@ -214,5 +217,25 @@ export class CadManager {
 
   private handleMaterialsChanged() {
     this.requestRedraw();
+  }
+
+  private updateTreeIndexToSectorsMap(cadModel: CadNode, sector: ConsumedSector): void {
+    if (cadModel.treeIndexToSectorsMap.isCompleted(sector.metadata.id, RevealGeometryCollectionType.TriangleMesh)) {
+      return;
+    }
+
+    if (sector.group?.children.length !== 1) {
+      return;
+    }
+
+    const treeIndices = sector.group.children[0].userData?.treeIndices as Map<number, number> | undefined;
+    if (!treeIndices) {
+      return;
+    }
+
+    for (const treeIndex of treeIndices.keys()) {
+      cadModel.treeIndexToSectorsMap.set(treeIndex, sector.metadata.id);
+    }
+    cadModel.treeIndexToSectorsMap.markCompleted(sector.metadata.id, RevealGeometryCollectionType.TriangleMesh);
   }
 }
