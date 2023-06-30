@@ -4,7 +4,6 @@ import styled from 'styled-components/macro';
 
 import { EmptyState as CogsEmptyState } from '@cognite/cogs.js';
 
-import { translationKeys } from '../../../../../common';
 import { useTranslation } from '../../../../../hooks/useTranslation';
 
 export const ErrorState: React.FC = () => {
@@ -15,11 +14,8 @@ export const ErrorState: React.FC = () => {
       <CogsEmptyState
         illustration="WrongStopNo"
         illustrationColor="red"
-        title={t(translationKeys.filterEmptyStateTitle, 'Error')}
-        body={t(
-          translationKeys.filterEmptyStateSubtitle,
-          'Sorry, we have encountered an error while loading filter options.'
-        )}
+        title={t('FILTER_ERROR_STATE_TITLE')}
+        body={t('FILTER_ERROR_STATE_BODY')}
         href=""
         target="_self"
       />

@@ -4,6 +4,7 @@ import unset from 'lodash/unset';
 
 import { Chip } from '@cognite/cogs.js';
 
+import { useTranslation } from '../../../../../hooks/useTranslation';
 import { ValueByField } from '../../types';
 
 import { getChipLabel } from './utils';
@@ -19,6 +20,8 @@ export const AppliedFiltersByField: React.FC<AppliedFiltersByFieldProps> = ({
   value = {},
   onRemove,
 }) => {
+  const { t } = useTranslation();
+
   const handleRemove = (field: string) => {
     const newValue = { ...value };
     unset(newValue, field);
@@ -29,7 +32,7 @@ export const AppliedFiltersByField: React.FC<AppliedFiltersByFieldProps> = ({
   return (
     <>
       {Object.entries(value).map(([field, fieldValue]) => {
-        const label = getChipLabel({ dataType, field, fieldValue });
+        const label = getChipLabel({ dataType, field, fieldValue, t });
 
         return (
           <Chip

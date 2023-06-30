@@ -17,7 +17,6 @@ import {
 
 import { useTranslation } from '../../common';
 import {
-  MQTTDestinationType,
   MQTTFormat,
   MQTTSourceWithJobMetrics,
   useCreateMQTTDestination,
@@ -26,16 +25,6 @@ import {
 } from '../../hooks/hostedExtractors';
 import FormFieldRadioGroup from '../form-field-radio-group/FormFieldRadioGroup';
 import FormFieldWrapper from '../form-field-wrapper/FormFieldWrapper';
-
-const MQTT_DESTINATION_TYPE_OPTIONS: {
-  label: string;
-  value: MQTTDestinationType;
-}[] = [
-  {
-    label: 'Datapoints',
-    value: 'datapoints',
-  },
-];
 
 type CreateJobsFormDestinationOptionType =
   | 'use-existing'
@@ -49,7 +38,6 @@ type CreateJobsFormValues = {
   destinationExternalIdToCreate?: string;
   clientId?: string;
   clientSecret?: string;
-  type?: MQTTDestinationType;
   format?: MQTTFormat['type'];
 };
 
@@ -69,6 +57,10 @@ export const CreateJobsModal = ({
   const [tempTopicFilterInput, setTempTopicFilterInput] = useState('');
 
   const { data: destinations } = useMQTTDestinations();
+
+  const sourceTopicFilters = source.jobs.map((job) => {
+    return job.topicFilter;
+  });
 
   const { mutateAsync: createDestination } = useCreateMQTTDestination();
   const { mutateAsync: createJob } = useCreateMQTTJob({
@@ -115,17 +107,11 @@ export const CreateJobsModal = ({
       if (!values.clientSecret) {
         errors.clientSecret = t('validation-error-field-required');
       }
-      if (!values.type) {
-        errors.type = t('validation-error-field-required');
-      }
     } else {
       if (!values.destinationExternalIdToCreate) {
         errors.destinationExternalIdToCreate = t(
           'validation-error-field-required'
         );
-      }
-      if (!values.type) {
-        errors.type = t('validation-error-field-required');
       }
     }
 
@@ -136,7 +122,6 @@ export const CreateJobsModal = ({
     useFormik<CreateJobsFormValues>({
       initialValues: {
         destinationOption: 'use-existing',
-        type: 'datapoints',
       },
       onSubmit: async (val) => {
         if (!val.topicFilters || val.topicFilters.length === 0) {
@@ -153,8 +138,7 @@ export const CreateJobsModal = ({
           val.destinationOption === 'client-credentials' &&
           val.clientId &&
           val.clientSecret &&
-          val.destinationExternalIdToCreate &&
-          val.type
+          val.destinationExternalIdToCreate
         ) {
           const destination = await createDestination({
             credentials: {
@@ -162,20 +146,17 @@ export const CreateJobsModal = ({
               clientSecret: val.clientSecret,
             },
             externalId: val.destinationExternalIdToCreate,
-            type: val.type,
           });
           destinationExternalId = destination.externalId;
         } else if (
           val.destinationOption === 'current-user' &&
-          val.destinationExternalIdToCreate &&
-          val.type
+          val.destinationExternalIdToCreate
         ) {
           const destination = await createDestination({
             credentials: {
               tokenExchange: true,
             },
             externalId: val.destinationExternalIdToCreate,
-            type: val.type,
           });
           destinationExternalId = destination.externalId;
         }
@@ -276,7 +257,8 @@ export const CreateJobsModal = ({
               <Button
                 disabled={
                   !tempTopicFilterInput ||
-                  values.topicFilters?.includes(tempTopicFilterInput)
+                  values.topicFilters?.includes(tempTopicFilterInput) ||
+                  sourceTopicFilters.includes(tempTopicFilterInput)
                 }
                 onClick={handleAddTopicFilter}
                 type="primary"
@@ -397,14 +379,6 @@ export const CreateJobsModal = ({
                 />
               </>
             )}
-            <FormFieldWrapper isRequired title={t('form-destination-type')}>
-              <Select
-                onChange={(e) => setFieldValue('type', e)}
-                options={MQTT_DESTINATION_TYPE_OPTIONS}
-                placeholder={t('form-destination-type-placeholder')}
-                value={values.type}
-              />
-            </FormFieldWrapper>
           </>
         )}
       </Flex>

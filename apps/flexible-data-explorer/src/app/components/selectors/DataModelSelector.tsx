@@ -12,7 +12,6 @@ import {
   Title,
 } from '@cognite/cogs.js';
 
-import { translationKeys } from '../../common/i18n/translationKeys';
 import { useTranslation } from '../../hooks/useTranslation';
 import { DataModelListResponse } from '../../services/types';
 import { EmptyState } from '../EmptyState';
@@ -29,24 +28,15 @@ const Sidebar = React.memo(() => {
   return (
     <InfoContent>
       <Overline level={3}>
-        {t(translationKeys.dataModelSelectorGetStartedHeader, 'Get started')}
+        {t('DATA_MODEL_SELECTOR_GET_STARTED_HEADER')}
       </Overline>
-      <Title level={4}>
-        {t(
-          translationKeys.dataModelSelectorGetStartedTitle,
-          'Get started working with your data right now by selecting a Data Model'
-        )}
-      </Title>
-      <Body level={3}>
-        {t(
-          translationKeys.dataModelSelectorGetStartedBody,
-          'Cognite Data Fusion has a large range of possibilities, we recommend starting testing one of the following.'
-        )}
-      </Body>
+      <Title level={4}>{t('DATA_MODEL_SELECTOR_GET_STARTED_TITLE')}</Title>
+      <Body level={3}>{t('DATA_MODEL_SELECTOR_GET_STARTED_BODY')}</Body>
     </InfoContent>
   );
 });
 
+// TODO: move to container, this is not a component
 export const DataModelSelector: React.FC<Props> = ({
   loading,
   isError,
@@ -69,29 +59,14 @@ export const DataModelSelector: React.FC<Props> = ({
         <ListContent>
           {loading && <Skeleton.List lines={7} />}
           {isError && (
-            <Infobox
-              type="danger"
-              title={t(
-                translationKeys.dataModelSelectorInfoboxDangerTitle,
-                'Error'
-              )}
-            >
-              {t(
-                translationKeys.dataModelSelectorInfoboxDangerBody,
-                'There were some struggles to fetch data models.'
-              )}
+            <Infobox type="danger" title={t('DATA_MODEL_SELECTOR_ERROR_TITLE')}>
+              {t('DATA_MODEL_SELECTOR_ERROR_BODY')}
             </Infobox>
           )}
           {isDataModelsEmpty && (
             <EmptyState
-              title={t(
-                translationKeys.dataModelSelectorInfoboxNeutralTitle,
-                'No Data Models found'
-              )}
-              body={
-                (t(translationKeys.dataModelSelectorInfoboxNeutralBody),
-                'Reach out to your IT support for further assistance')
-              }
+              title={t('DATA_MODEL_SELECTOR_EMPTY_TITLE')}
+              body={t('DATA_MODEL_SELECTOR_EMPTY_BODY')}
               centerVertically
             />
           )}
@@ -121,7 +96,7 @@ export const DataModelSelector: React.FC<Props> = ({
           disabled={!selectedDataModel}
           onClick={() => onSelectionClick?.(selectedDataModel!)}
         >
-          {t(translationKeys.dataModelSelectorGetStartedConfirm, 'Confirm')}
+          {t('DATA_MODEL_SELECTOR_GET_STARTED_CONFIRM_BUTTON')}
         </Button>
       </ActionContainer>
     </Container>

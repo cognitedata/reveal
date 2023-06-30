@@ -4,9 +4,10 @@ import styled from 'styled-components';
 
 import { Modal as AntdModal, ModalProps as AntdModalProps } from 'antd';
 
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import { ModalWidth } from '@cognite/cdf-utilities';
 import { Icon } from '@cognite/cogs.js';
+
+import { ModalWidth } from '../../common';
+
 import 'antd/es/style/index.css';
 import 'antd/es/modal/style/index.css';
 

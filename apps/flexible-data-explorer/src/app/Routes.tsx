@@ -10,6 +10,7 @@ import { TimeseriesPage } from './pages/Instances/TimeseriesPage';
 import { ListPage } from './pages/ListPage';
 import { OnboardingPage } from './pages/OnboardingPage';
 import { SearchPage } from './pages/SearchPage';
+import { ThreeDPage } from './pages/ThreeDPage';
 import { FDMProvider } from './providers/FDMProvider';
 
 const Routes = () => {
@@ -44,13 +45,10 @@ const Routes = () => {
           <Route path="timeseries/:externalId" element={<TimeseriesPage />} />
           <Route path="file/:externalId" element={<FilePage />} />
 
+          <Route path="3d" element={<ThreeDPage />} />
           <Route
             path=":dataType/:instanceSpace/:externalId/overview?"
             element={<InstancesPage />}
-          />
-          <Route
-            path=":dataType/:instanceSpace/:externalId/3d"
-            element={<p>3D</p>}
           />
           <Route
             path=":dataType/:instanceSpace/:externalId/map"

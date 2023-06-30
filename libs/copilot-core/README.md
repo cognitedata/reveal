@@ -95,7 +95,7 @@ flowchart LR
 To add a tool chain, simply:
 
 1. Create a new toolchain in the `src/lib/toolchains` folder (under a feature group preferably), make sure the tool chain extends from `CogniteBaseChain`.
-2. Code the chain, in here you have access to the sdk, the latest message and also the ability to communicate to the app or send message to the user via `FromCopilot.NEW_BOT_MESSAGE` (more in the next section).
+2. Code the chain, in here you have access to the sdk, the latest message and also the ability to communicate to the app or send message to the user via `ToCopilot.NEW_MESSAGES` **with the source as bot!** (more in the next section).
    > We recommend taking a look at the simple `appBuilder.ts` toolchain to get started.
 3. Add the new toolchain in the `src/lib/toolchains/index.ts` file, and add it to the `ChainName` type with the literal of the name. and to
    `destinationChains` mapping between the name and the instantiated chain.
@@ -132,15 +132,12 @@ In this case, you want to add a way to listen for `GET_CODE` **from** the App, a
 
 ```typescript
 // creates a listener for `GET_CODE_RESPONSE` from Copilot, we will use the returned function later
-const removeEventListener = addToCopilotEventListener(
-  'GET_CODE,
-  (event) => {
-    // do something with the event.content code
-    // ...
+const removeEventListener = addToCopilotEventListener('GET_CODE', (event) => {
+  // do something with the event.content code
+  // ...
 
-    removeEventListener();
-  }
-);
+  removeEventListener();
+});
 
 // send the event to the App (from the Copilot) to trigger a response.
 sendFromCopilotEvent('GET_CODE', null);
@@ -240,6 +237,8 @@ In fusion, you can just run `yarn nx serve copilot` and it will have copilot, wh
 To host build the library by itself, you can just run `yarn nx build copilot-core --watch`. The `--watch` will allow NX to watch for changes and rebuild the library.
 
 The output of the library will be at `dist/libs/copilot-core`. This is good to know as you can run `yarn link` from the library, and then `yarn link @cognite/copilot-core` from the app you want to use it in. This will allow you to use the locally built library from the app. To see how yarn link works, [check here](https://classic.yarnpkg.com/lang/en/docs/cli/link/).
+
+Note: you may have to do the same thing for `@cognite/sdk` and `monaco-editor`. To do this, go to `node_modules/<package>` like `node_modules/@cognite/sdk` and run yarn link from this repo, then in the other side side, do `yarn link <package>`.
 
 ## Running unit tests
 

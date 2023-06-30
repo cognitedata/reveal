@@ -2,7 +2,6 @@ import styled from 'styled-components';
 
 import { Icon } from '@cognite/cogs.js';
 
-import { translationKeys } from '../../../app/common/i18n/translationKeys';
 import { useTranslation } from '../../hooks/useTranslation';
 import { useGetAssetCentricDataExplorerUrl } from '../../hooks/useUrl';
 
@@ -16,7 +15,7 @@ export const DataExplorerLink = () => {
       target="_blank"
       rel="noopener noreferrer"
     >
-      <span>{t(translationKeys.openIn, 'Open in')} Data Explorer</span>
+      <span>{t('GENERAL_OPEN_IN')} Data Explorer</span>
       <Icon type="ExternalLink" />
     </StyledLink>
   );

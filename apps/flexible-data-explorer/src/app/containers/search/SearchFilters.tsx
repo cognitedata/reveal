@@ -32,7 +32,7 @@ export const SearchFilters: React.FC<SearchFiltersProps> = React.memo(
               onClick?.();
             }}
           >
-            {t('filter_button', 'Filters')}
+            {t('FILTER_BUTTON')}
           </Button>
         </Dropdown>
       </>

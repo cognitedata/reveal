@@ -7,6 +7,7 @@ import ReactUnifiedViewer, {
   isSupportedFileInfo,
 } from '@cognite/unified-file-viewer';
 
+import { useTranslation } from '../../../../hooks/useTranslation';
 import { useFileContainerQuery } from '../../../../services/files/queries/useFileContainerQuery';
 import { useFileByIdQuery } from '../../../../services/instances/file/queries/useFileByIdQuery';
 
@@ -33,6 +34,7 @@ export const FilePreview = ({
   fileId,
   showControls = true,
 }: FilePreviewProps) => {
+  const { t } = useTranslation();
   const { data: file, isFetched: isFileFetched } = useFileByIdQuery(fileId);
 
   const { data: containerData } = useFileContainerQuery(file);
@@ -46,7 +48,7 @@ export const FilePreview = ({
   if (file !== undefined && !isSupportedFileInfo(file)) {
     return (
       <CenteredPlaceholder>
-        <h1>No preview for this file type</h1>
+        <h1>{t('FILE_PREVIEW_UNSUPPORTED_FILE_TYPE')}</h1>
       </CenteredPlaceholder>
     );
   }

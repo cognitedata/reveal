@@ -7,11 +7,11 @@ import {
   DataModelVersion,
   KeyValueMap,
 } from '@platypus/platypus-core';
+import { TimeseriesChart } from '@cognite/plotting-components';
 
 import { createLink } from '@cognite/cdf-utilities';
 import { CogDataList } from '@cognite/cog-data-grid';
 import { Button, CollapsablePanel, Icon } from '@cognite/cogs.js';
-import { TimeseriesChart } from '@cognite/plotting-components';
 import { Timeseries } from '@cognite/sdk/dist/src';
 import { SDKProvider } from '@cognite/sdk-provider';
 

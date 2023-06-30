@@ -3,7 +3,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { JobsTable } from '../../components/jobs-table/JobsTable';
-import { MessageHistoryChart } from '../../components/message-history-chart/MessageHistoryChart';
+import { MessageHistoryChartSection } from '../../components/message-history-chart/MessageHistoryChartSection';
 import { MQTTSourceWithJobMetrics } from '../../hooks/hostedExtractors';
 import { PAGE_WIDTH } from '../../utils/constants';
 
@@ -25,11 +25,11 @@ export const HostedExtractionPipelineInsight = ({
 const InsightGrid = styled.div`
   display: grid;
   gap: 16px;
-  grid-template-rows: [start] 300px [first] auto [end];
+  grid-template-rows: [start] 380px [first] auto [end];
   width: ${PAGE_WIDTH}px;
 `;
 
-const MessageHistorySection = styled(MessageHistoryChart)`
+const MessageHistorySection = styled(MessageHistoryChartSection)`
   grid-row: start / first;
   margin-bottom: 0;
 `;

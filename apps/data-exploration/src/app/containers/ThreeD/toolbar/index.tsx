@@ -101,8 +101,7 @@ export const FocusAssetButton = ({
               sdk,
               queryClient,
               viewer,
-              threeDModel,
-              {},
+              { model: threeDModel },
               selectedAssetId
             );
           }

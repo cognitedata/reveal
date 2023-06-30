@@ -11,6 +11,7 @@ import {
   useSearchQueryParams,
 } from '../../hooks/useParams';
 // import { useTranslation } from '../../hooks/useTranslation';
+import { useTranslation } from '../../hooks/useTranslation';
 import zIndex from '../../utils/zIndex';
 
 import { SearchFilters } from './SearchFilters';
@@ -29,7 +30,7 @@ export const SearchBar: React.FC<Props> = ({
   autoFocus,
   disablePreview,
 }) => {
-  // const { t } = useTranslation();
+  const { t } = useTranslation();
   const navigate = useNavigation();
 
   const ref = useRef<HTMLDivElement | null>(null);
@@ -84,7 +85,7 @@ export const SearchBar: React.FC<Props> = ({
           }}
           value={localQuery ?? ''}
           autoFocus={autoFocus}
-          placeholder="Search..."
+          placeholder={t('SEARCH_PLACEHOLDER')}
           onChange={(e) => {
             e.preventDefault();
 

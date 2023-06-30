@@ -8,6 +8,9 @@ on:
       - 'libs/platypus-core/**'
       - 'libs/platypus-common-utils/**'
       - 'yarn.lock'
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   install-dependencies:
     runs-on: ubuntu-latest

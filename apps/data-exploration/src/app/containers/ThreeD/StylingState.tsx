@@ -24,7 +24,6 @@ import {
 
 export class StylingState {
   private _lastStyledImageAnnotations: Image360Annotation[] = [];
-  private _lastAssetId: number | undefined;
 
   constructor(
     private _model: CogniteModel | Image360Collection,
@@ -33,6 +32,22 @@ export class StylingState {
     private _queryClient: QueryClient,
     private _overlayTool: SmartOverlayTool
   ) {}
+
+  resetStyles() {
+    this._viewer.models.forEach((modelObject) => {
+      this.removeAllStyles(modelObject);
+    });
+    this._viewer.get360ImageCollections().forEach((collection) =>
+      collection.setDefaultAnnotationStyle({
+        color: undefined,
+        visible: undefined,
+      })
+    );
+
+    this._lastStyledImageAnnotations.forEach((a) => a.setColor(undefined));
+
+    this._lastStyledImageAnnotations = [];
+  }
 
   updateState(
     selectedAssetId: number | undefined,
@@ -56,21 +71,7 @@ export class StylingState {
       return;
     }
 
-    this._viewer.models.forEach((modelObject) => {
-      this.removeAllStyles(modelObject);
-    });
-    this._viewer.get360ImageCollections().forEach((collection) =>
-      collection.setDefaultAnnotationStyle({
-        color: undefined,
-        visible: undefined,
-      })
-    );
-
-    if (selectedAssetId !== this._lastAssetId) {
-      this._lastStyledImageAnnotations.forEach((a) => a.setColor(undefined));
-    }
-
-    this._lastStyledImageAnnotations = [];
+    this.resetStyles();
 
     if (selectedAssetId) {
       if (assetDetailsExpanded) {
@@ -89,8 +90,6 @@ export class StylingState {
       }
       this._overlayTool.visible = labelsVisibility;
     }
-
-    this._lastAssetId = selectedAssetId;
   }
 
   private async ghostAsset(

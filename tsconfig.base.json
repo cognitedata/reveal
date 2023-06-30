@@ -1,6 +1,7 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "rootDir": "./",
     "sourceMap": true,
     "declaration": false,
     "moduleResolution": "node",
@@ -18,6 +19,7 @@
     "paths": {
       "@3d-management/*": ["apps/3d-management/src/*"],
       "@access-management/*": ["apps/access-management/src/*"],
+      "@charts-app/*": ["apps/charts/src/app/*"],
       "@cognite/cdf-i18n-utils": ["libs/shared/cdf-ui-i18n-utils/src/index.ts"],
       "@cognite/cdf-route-tracker": [
         "libs/shared/cdf-route-tracker/src/index.ts"
@@ -67,8 +69,8 @@
       "@data-quality/*": [
         "apps/platypus/src/app/modules/solution/data-quality/*"
       ],
-      "@entity-matching-app/*": ["apps/entity-matching/src/app/*"],
       "@extraction-pipelines/*": ["apps/extraction-pipelines/src/*"],
+      "@vision/*": ["apps/vision/src/*"],
       "@flexible-data-explorer/*": ["apps/flexible-data-explorer/src/*"],
       "@functions-ui/*": ["apps/functions-ui/src/*"],
       "@fusion/cdf-nx-plugin": ["libs/cdf-nx-plugin/src/index.ts"],
@@ -82,6 +84,8 @@
         "apps/platypus/src/environments/environment.ts"
       ],
       "@platypus-core/*": ["libs/data-modeling/platypus-core/src/lib/*"],
+      "@fusion/data-modeling": [
+        "libs/data-modeling/platypus-core/src/index.ts"],
       "@platypus/@cognite/fdm-client": [
         "libs/@cognite/fdm-client/src/index.ts"
       ],
@@ -91,9 +95,9 @@
       "@platypus/platypus-core": [
         "libs/data-modeling/platypus-core/src/index.ts"
       ],
+      "@entity-matching-app/*": ["apps/entity-matching/src/app/*"],
       "@raw-explorer/*": ["apps/raw-explorer/src/*"],
-      "@transformations/*": ["apps/transformations/src/*"],
-      "@vision/*": ["apps/vision/src/*"]
+      "@transformations/*": ["apps/transformations/src/*"]
     }
   },
   "exclude": ["node_modules", "tmp", "proxy"]

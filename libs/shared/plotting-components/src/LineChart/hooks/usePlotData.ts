@@ -24,7 +24,10 @@ export const usePlotData = ({
 
   const plotData = useMemo(() => {
     if (isEmptyData && presetRange) {
-      return adaptPresetRangeToPlotlyData(presetRange);
+      if (presetRange) {
+        return adaptPresetRangeToPlotlyData(presetRange);
+      }
+      return [];
     }
     return adaptToPlotlyPlotData({ data, showMarkers, variant });
   }, [data, isEmptyData, presetRange, showMarkers, variant]);

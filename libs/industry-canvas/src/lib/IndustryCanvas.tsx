@@ -26,7 +26,7 @@ import useIndustryCanvasTooltips from './hooks/useIndustryCanvasTooltips';
 import { UseManagedStateReturnType } from './hooks/useManagedState';
 import { UseManagedToolsReturnType } from './hooks/useManagedTools';
 import { UseResourceSelectorActionsReturnType } from './hooks/useResourceSelectorActions';
-import { useTooltipsOptions } from './hooks/useTooltipsOptions';
+import { UseTooltipsOptionsReturnType } from './hooks/useTooltipsOptions';
 import { OnAddContainerReferences } from './IndustryCanvasPage';
 import {
   CanvasAnnotation,
@@ -69,6 +69,10 @@ export type IndustryCanvasProps = {
   Pick<
     UseManagedToolsReturnType,
     'toolOptions' | 'onUpdateAnnotationStyleByType'
+  > &
+  Pick<
+    UseTooltipsOptionsReturnType,
+    'tooltipsOptions' | 'onUpdateTooltipsOptions'
   >;
 
 export const IndustryCanvas = ({
@@ -98,11 +102,12 @@ export const IndustryCanvas = ({
   commentAnnotations,
   isCanvasLocked,
   onResourceSelectorOpen,
+  tooltipsOptions,
+  onUpdateTooltipsOptions,
 }: IndustryCanvasProps) => {
   const sdk = useSDK();
 
   const unifiedViewerRef = React.useRef<UnifiedViewer | null>(null);
-  const { tooltipsOptions, onUpdateTooltipsOptions } = useTooltipsOptions();
 
   const onDeleteSelectedCanvasAnnotation = useCallback(() => {
     setInteractionState({

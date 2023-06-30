@@ -1,6 +1,5 @@
 import * as React from 'react';
 
-import { translationKeys } from '../../../../../common';
 import { useTranslation } from '../../../../../hooks/useTranslation';
 import { Input } from '../Input';
 
@@ -19,10 +18,7 @@ export const SearchInput: React.FC<SearchInputProps> = ({
     <Input
       type="text"
       variant="noBorder"
-      placeholder={t(
-        translationKeys.filterSearchInputPlaceholder,
-        'Filter by name...'
-      )}
+      placeholder={t('FILTER_SEARCH_INPUT_PLACEHOLDER')}
       value={value}
       onChange={onChange}
     />

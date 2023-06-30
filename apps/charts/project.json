@@ -1,0 +1,124 @@
+{
+  "name": "charts",
+  "sourceRoot": "apps/charts/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/charts",
+        "index": "apps/charts/src/index.html",
+        "main": "apps/charts/src/main.tsx",
+        "tsConfig": "apps/charts/tsconfig.app.json",
+        "assets": ["apps/charts/src/favicon.ico", "apps/charts/src/assets"],
+        "styles": [],
+        "scripts": [],
+        "runtimeChunk": false,
+        "vendorChunk": false,
+        "commonChunk": false,
+        "webpackConfig": "apps/charts/webpack-config.js"
+      },
+      "configurations": {
+        "development": {
+          "optimization": false,
+          "outputHashing": "all",
+          "sourceMap": true,
+          "extractCss": false,
+          "namedChunks": false,
+          "extractLicenses": false,
+          "vendorChunk": false,
+          "runtimeChunk": false,
+          "budgets": []
+        },
+        "production": {
+          "fileReplacements": [
+            {
+              "replace": "apps/charts/src/environments/environment.ts",
+              "with": "apps/charts/src/environments/environment.prod.ts"
+            }
+          ],
+          "optimization": true,
+          "outputHashing": "all",
+          "sourceMap": false,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "vendorChunk": false
+        },
+        "mock": {
+          "fileReplacements": [
+            {
+              "replace": "apps/charts/src/environments/environment.ts",
+              "with": "apps/charts/src/environments/mock/environment.mock.ts"
+            },
+            {
+              "replace": "apps/charts/src/AppWrapper.tsx",
+              "with": "apps/charts/src/environments/mock/AppWrapper.tsx"
+            },
+            {
+              "replace": "apps/charts/src/cogniteSdk.ts",
+              "with": "apps/charts/src/environments/mock/cogniteSdk.ts"
+            }
+          ],
+          "optimization": false,
+          "outputHashing": "all",
+          "sourceMap": true,
+          "extractCss": false,
+          "namedChunks": false,
+          "extractLicenses": false,
+          "vendorChunk": false
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/webpack:dev-server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "charts:build",
+        "hmr": true,
+        "port": 3000,
+        "ssl": true,
+        "allowedHosts": ".dev.fusion.cogniteapp.com"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "charts:build:development"
+        },
+        "production": {
+          "buildTarget": "charts:build:production",
+          "hmr": false
+        },
+        "mock": {
+          "buildTarget": "charts:build:mock",
+          "hmr": true,
+          "port": 3001,
+          "ssl": true,
+          "proxyConfig": "apps/charts/proxy.conf.json"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/charts/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "apps/charts/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    }
+  },
+  "tags": []
+}

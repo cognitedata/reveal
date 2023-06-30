@@ -4,7 +4,6 @@ import { matchSorter } from 'match-sorter';
 
 import { InputExp } from '@cognite/cogs.js';
 
-import { translationKeys } from '../../../common/i18n/translationKeys';
 import { GeneralDetails } from '../../../components/details';
 import { EmptyState } from '../../../components/EmptyState';
 import { Widget } from '../../../components/widget/Widget';
@@ -30,8 +29,8 @@ export const PropertiesExpanded: React.FC<PropertiesProps> = ({ data }) => {
     if (results.length === 0) {
       return (
         <EmptyState
-          title="No results"
-          body={`No search results were found for the query: "${inputValue}"`}
+          title={t('PROPERTIES_WIDGET_EMPTY_TITLE')}
+          body={t('PROPERTIES_WIDGET_EMPTY_BODY', { query: inputValue })}
         />
       );
     }
@@ -47,10 +46,7 @@ export const PropertiesExpanded: React.FC<PropertiesProps> = ({ data }) => {
         <InputExp
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
-          placeholder={t(
-            translationKeys.propertiesWidgetFilterByPlaceholder,
-            'Filter by name'
-          )}
+          placeholder={t('PROPERTIES_WIDGET_SEARCH_INPUT_PLACEHOLDER')}
           icon="Search"
           clearable
         />

@@ -855,6 +855,9 @@ export const getImages360QueryFn =
     siteId: string,
     applied?: boolean,
     setImage360Entity?: (entity: Image360 | undefined) => void,
+    setEnteredImage360Collection?: (
+      collection: Image360Collection | undefined
+    ) => void,
     rotationMatrix?: THREE.Matrix4,
     translationMatrix?: THREE.Matrix4
   ) =>
@@ -875,7 +878,6 @@ export const getImages360QueryFn =
     const imageEntities = viewer.get360ImageCollections();
 
     const hasAdded = imageEntities.some(({ id: tmId }) => siteId === tmId);
-
     if (applied && !hasAdded) {
       const collectionTransform = translationMatrix?.multiply(rotationMatrix!);
       let images360Set: Image360Collection;
@@ -908,9 +910,11 @@ export const getImages360QueryFn =
 
       images360Set.on('image360Entered', (image360) => {
         setImage360Entity?.(image360);
+        setEnteredImage360Collection?.(images360Set);
       });
       images360Set.on('image360Exited', () => {
         setImage360Entity?.(undefined);
+        setEnteredImage360Collection?.(undefined);
       });
     } else if (!applied && hasAdded) {
       const images360ToRemove = imageEntities.find(
