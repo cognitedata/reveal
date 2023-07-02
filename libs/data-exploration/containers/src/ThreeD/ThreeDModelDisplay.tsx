@@ -57,7 +57,7 @@ export const ThreeDModelDisplay = ({ model }: { model: Model3DWithType }) => {
           <Detail>
             {t(
               'LAST_VERSION_WITH_VERSION_NUMBER',
-              'Last version: {{ index }}',
+              `Last version: ${latestRevision?.index}`,
               {
                 index: latestRevision?.index,
               }

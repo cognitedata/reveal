@@ -6,15 +6,16 @@ import { Body, Title } from '@cognite/cogs.js';
 
 import { useDataModelParams } from '../../hooks/useDataModelParams';
 import { useProjectConfig } from '../../hooks/useProjectConfig';
+import { useTranslation } from '../../hooks/useTranslation';
 import { DataModelSelectorModal } from '../modals/DataModelSelectorModal';
 
 interface Props {
-  prefix?: string;
   header?: boolean;
 }
 
 // NOTE: This component is, with a lack of a better word, a mess!! Align it better with design
-export const SearchConfiguration: React.FC<Props> = ({ prefix, header }) => {
+export const SearchConfiguration: React.FC<Props> = ({ header }) => {
+  const { t } = useTranslation();
   const config = useProjectConfig();
 
   const selectedDataModel = useDataModelParams();
@@ -27,11 +28,13 @@ export const SearchConfiguration: React.FC<Props> = ({ prefix, header }) => {
   return (
     <Container>
       <Wrapper level={header ? 3 : 6}>
-        {prefix ? `${prefix} ` : ''}
-        {config?.[0]?.site || 'all'} data in{' '}
+        {header
+          ? t('HOMEPAGE_HEADER', { site: config?.site, model: '' })
+          : t('SEARCH_RESULTS_HEADER', { site: config?.site, model: '' })}
+
         <StyledBody
           onClick={() => setSiteSelectionVisible(true)}
-          header={header}
+          isHeader={header}
         >
           {selectedDataModel?.dataModel || '...'}
         </StyledBody>
@@ -50,11 +53,11 @@ const Container = styled.div`
   padding-left: 8px;
 `;
 
-const StyledBody = styled(Body)<{ header?: boolean }>`
+const StyledBody = styled(Body)<{ isHeader?: boolean }>`
   display: inline-flex;
   align-items: center;
   color: rgba(51, 51, 51, 0.6);
-  font-size: ${({ header }) => (header ? '24px' : '14px')};
+  font-size: ${({ isHeader }) => (isHeader ? '24px' : '14px')};
 
   &:hover {
     cursor: pointer;

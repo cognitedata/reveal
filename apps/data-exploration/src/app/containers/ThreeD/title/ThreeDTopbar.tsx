@@ -56,14 +56,24 @@ export const ThreeDTopbar = ({
     <>
       <Flex direction="row" gap={16}>
         <VerticallyCenteredText>
-          {t('LAST_UPDATE_WITH_TIME', 'Last update: {{time}}', {
-            time:
+          {t(
+            'LAST_UPDATE_WITH_TIME',
+            `Last update: ${
               lastUpdatedTime?.toLocaleDateString('no-NO', {
                 day: '2-digit',
                 month: '2-digit',
                 year: 'numeric',
-              }) ?? t('NO_DATA', 'No data'),
-          })}
+              }) ?? 'no data'
+            }`,
+            {
+              time:
+                lastUpdatedTime?.toLocaleDateString('no-NO', {
+                  day: '2-digit',
+                  month: '2-digit',
+                  year: 'numeric',
+                }) ?? t('NO_DATA', 'No data'),
+            }
+          )}
         </VerticallyCenteredText>
         <Divider direction="vertical" weight="2px" length="16px" />
         <Flex direction="row" gap={8}>

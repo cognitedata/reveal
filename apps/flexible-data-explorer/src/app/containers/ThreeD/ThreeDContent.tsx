@@ -1,4 +1,4 @@
-import { Color } from 'three';
+import { Color, Matrix4 } from 'three';
 
 import {
   CogniteCadModelContainer,
@@ -20,23 +20,24 @@ export const ThreeDContent = () => {
 
 const CadModels: React.FC = () => {
   const projectConfigs = useProjectConfig();
-  const modelIdentifiers = projectConfigs
-    .filter(
-      (config) =>
-        config.threeDResources !== undefined &&
-        config.threeDResources.length > 0
-    )
-    .flatMap((config) => config.threeDResources)
-    .filter(
-      (resource): resource is ModelIdentifier =>
-        (resource as ModelIdentifier).modelId !== undefined &&
-        (resource as ModelIdentifier).type === 'cad'
-    );
+
+  const modelIdentifiers = projectConfigs?.threeDResources as ModelIdentifier[];
+
+  if (!modelIdentifiers) {
+    return null;
+  }
 
   return (
     <>
-      {modelIdentifiers.map(({ modelId, revisionId }) => (
-        <CogniteCadModelContainer addModelOptions={{ modelId, revisionId }} />
+      {modelIdentifiers.map(({ modelId, revisionId, transform }) => (
+        <CogniteCadModelContainer
+          addModelOptions={{ modelId, revisionId }}
+          transform={new Matrix4().makeTranslation(
+            transform?.x ?? 0,
+            transform?.y ?? 0,
+            transform?.z ?? 0
+          )}
+        />
       ))}
     </>
   );

@@ -54,7 +54,7 @@ export const RelationshipFilter: React.FC<SearchBarFilterProps> = ({
             e.stopPropagation();
           }}
         >
-          {t('filter_button', 'Filters')}
+          {t('FILTER_BUTTON')}
         </Button>
       </Dropdown>
     </>

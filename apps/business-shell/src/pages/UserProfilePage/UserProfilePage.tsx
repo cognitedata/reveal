@@ -92,8 +92,20 @@ export const UserProfilePage = (): JSX.Element => {
                     'language-tab-title': t('LANGUAGE_TAB_TITLE'),
                     'language-tab-subtitle': t('LANGUAGE_TAB_SUBTITLE'),
                     'language-field-label': t('LANGUAGE_FIELD_LABEL'),
-                    'language-english-label': t('LANGUAGE_OPTION_ENGLISH'),
-                    'language-japanese-label': t('LANGUAGE_OPTION_JAPANESE'),
+                    'language-chinese-label':
+                      '中文 (Zhōngwén), 汉语, 漢語 | zh',
+                    'language-dutch-label': 'Nederlands, Vlaams | nl',
+                    'language-english-label': 'English | en',
+                    'language-french-label': 'Français, langue française | fr',
+                    'language-german-label': 'Deutsch | de',
+                    'language-italian-label': 'Italiano | it',
+                    'language-japanese-label':
+                      '日本語 (にほんご／にっぽんご) | ja',
+                    'language-korean-label':
+                      '한국어 (韓國語), 조선말 (朝鮮語) | ko',
+                    'language-portuguese-label': 'Português | pt',
+                    'language-spanish-label': 'Español, Castellano | es',
+                    'language-swedish-label': 'svenska | sv',
                   },
                 }}
               />

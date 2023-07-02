@@ -31,9 +31,17 @@ case "$commandArg": in
     exit 1
 esac
 
+path=apps/${project}/src/i18n
+
+# if industy-canvas, use different path
+if [ "$project" = "industry-canvas" ]; then
+  path=libs/industry-canvas/src/lib/common/i18n
+  project="industrial-canvas"
+fi
+
 
 # Docs can be found here
 # https://github.com/cognitedata/cdf-ui-i18n-utils/blob/main/bin/README.md
 
 # The script is in the monorepo, run locally
-./libs/shared/cdf-ui-i18n-utils/src/cdf-i18n-utils-cli.cjs ${cliCommand} --namespace=${project} --path=apps/${project}/src/i18n
+./libs/shared/cdf-ui-i18n-utils/src/cdf-i18n-utils-cli.cjs ${cliCommand} --namespace=${project} --path=${path}

@@ -41,7 +41,7 @@ export const SearchPage = () => {
         <Container>
           <Suspense fallback="Loading">
             <Content>
-              <SearchConfiguration prefix="Search results from" />
+              <SearchConfiguration />
               {renderResults()}
             </Content>
 

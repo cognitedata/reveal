@@ -4,6 +4,7 @@ import { Button } from '../../../components/buttons/Button';
 import { SearchResults } from '../../../components/search/SearchResults';
 import { Widget } from '../../../components/widget/Widget';
 import { useNavigation } from '../../../hooks/useNavigation';
+import { useTranslation } from '../../../hooks/useTranslation';
 import { useInstanceRelationshipQuery } from '../../../services/instances/generic/queries/useInstanceRelationshipQuery';
 
 import { RelationshipEdgesProps } from './RelationshipEdgesWidget';
@@ -15,13 +16,14 @@ export const RelationshipEdgesCollapsed: React.FC<RelationshipEdgesProps> = ({
   columns,
   type,
 }) => {
+  const { t } = useTranslation();
   const { instanceSpace } = useParams();
   const navigate = useNavigation();
   const { data, isLoading, status } = useInstanceRelationshipQuery(type);
 
   return (
     <Widget rows={rows || 4} columns={columns} id={id}>
-      <Widget.Header title={`Related ${id}`}>
+      <Widget.Header title={t('RELATIONSHIP_EDGES_WIDGET_TITLE', { type: id })}>
         <Button.Fullscreen
           onClick={() => onExpandClick?.(id)}
           loading={isLoading}

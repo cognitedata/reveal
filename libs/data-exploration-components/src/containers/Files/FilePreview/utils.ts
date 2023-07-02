@@ -1,7 +1,7 @@
 import { Colors } from '@cognite/cogs.js';
 import { AnnotationType } from '@cognite/unified-file-viewer';
 
-import { ExtendedAnnotation } from '@data-exploration-lib/core';
+import { ExtendedAnnotation, ResourceType } from '@data-exploration-lib/core';
 
 import { getResourceTypeFromExtendedAnnotation } from './migration/utils';
 
@@ -19,11 +19,10 @@ export const getStyledAnnotationFromAnnotation = (
     throw new Error('Unsupported annotation type');
   }
 
-  const colors = selectAnnotationColors(
-    annotation,
+  const colors = getResourceTypeAnnotationColor(
+    getResourceTypeFromExtendedAnnotation(annotation),
     isSelected,
-    isPending,
-    getResourceTypeFromExtendedAnnotation(annotation)
+    isPending
   );
 
   return {
@@ -45,11 +44,10 @@ const getRGBA = (rgbString: string, alpha: number): string => {
   return rgbString.replace(')', `, ${alpha})`).replace('rgb', 'rgba');
 };
 
-export const selectAnnotationColors = (
-  annotation: ExtendedAnnotation,
+export const getResourceTypeAnnotationColor = (
+  resourceType?: ResourceType,
   isSelected = false,
-  isPending = false,
-  resourceType?: string
+  isPending = false
 ): { strokeColor: string; backgroundColor: string } => {
   if (isSelected)
     return {
@@ -59,11 +57,13 @@ export const selectAnnotationColors = (
         0.1
       ),
     };
+
   if (isPending)
     return {
       strokeColor: Colors['decorative--yellow--400'],
       backgroundColor: getRGBA(Colors['decorative--yellow--400'], 0.2),
     };
+
   if (resourceType === 'asset')
     return {
       strokeColor: Colors['decorative--purple--400'],
@@ -89,6 +89,7 @@ export const selectAnnotationColors = (
       strokeColor: Colors['decorative--pink--400'],
       backgroundColor: getRGBA(Colors['decorative--pink--400'], 0.2),
     };
+
   return {
     strokeColor: Colors['decorative--grayscale--700'],
     backgroundColor: getRGBA(Colors['decorative--grayscale--700'], 0.2),

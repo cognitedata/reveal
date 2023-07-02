@@ -2,11 +2,11 @@ import styled from 'styled-components';
 
 import { Title } from '@cognite/cogs.js';
 
-import { translationKeys } from '../../app/common/i18n/translationKeys';
 import { RecentlyViewedList } from '../containers/lists/recentlyViewed/RecentlyViewedList';
 import { Page } from '../containers/page/Page';
 import { DataExplorerLink } from '../containers/search/DataExplorerLink';
 import { SearchBar } from '../containers/search/SearchBar';
+// import { SearchBarSwitch } from '../containers/search/SearchBarSwitch';
 import { SearchConfiguration } from '../containers/search/SearchConfiguration';
 import { useRecentlyVisited } from '../hooks/useRecentlyVisited';
 import { useTranslation } from '../hooks/useTranslation';
@@ -19,9 +19,13 @@ export const HomePage = () => {
   return (
     <Page>
       <SearchContainer>
-        <SearchConfiguration prefix="Search for" header />
+        <SearchConfiguration header />
 
-        <SearchBar width="774px" disablePreview autoFocus />
+        <SearchBarContainer>
+          <SearchBar width="774px" disablePreview autoFocus />
+          {/* Hide this for now. until we have flags */}
+          {/* <SearchBarSwitch /> */}
+        </SearchBarContainer>
 
         <DataExplorerLink />
       </SearchContainer>
@@ -32,7 +36,9 @@ export const HomePage = () => {
           {recentlyViewed.length > 0 && (
             <TitleContent>
               <Title level={6}>
-                {t(translationKeys.recentlyViewedTitle, 'Recently viewed')}
+                {t('RECENTLY_VIEWED_TITLE', {
+                  count: recentlyViewed.length,
+                })}
               </Title>
             </TitleContent>
           )}
@@ -81,4 +87,10 @@ const RecentlyViewedContainer = styled.div`
 const TitleContent = styled.div`
   padding-left: 8px;
   padding-bottom: 16px;
+`;
+
+const SearchBarContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;

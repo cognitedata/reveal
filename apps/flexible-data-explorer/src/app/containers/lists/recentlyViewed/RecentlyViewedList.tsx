@@ -9,6 +9,7 @@ import {
   RecentlyViewed,
   useRecentlyVisited,
 } from '../../../hooks/useRecentlyVisited';
+import { useTranslation } from '../../../hooks/useTranslation';
 
 interface Props {
   onSelectionClick?: () => void;
@@ -19,6 +20,7 @@ export const RecentlyViewedList: React.FC<Props> = ({
   onSelectionClick,
   hideShadow,
 }) => {
+  const { t } = useTranslation();
   const { toInstancePage } = useNavigation();
   const [recentlyViewed] = useRecentlyVisited();
 
@@ -40,8 +42,8 @@ export const RecentlyViewedList: React.FC<Props> = ({
   if (recentlyViewed.length === 0) {
     return (
       <EmptyState
-        title="No recent views"
-        body="Once you start using Cognite Data Fusion, you can see your recent activities here"
+        title={t('RECENTLY_VIEWED_EMPTY_TITLE')}
+        body={t('RECENTLY_VIEWED_EMPTY_BODY')}
       />
     );
   }

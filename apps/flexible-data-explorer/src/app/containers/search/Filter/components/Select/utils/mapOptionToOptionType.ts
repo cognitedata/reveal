@@ -1,10 +1,13 @@
 import { OptionType } from '@cognite/cogs.js';
 
+import { TFunction } from '../../../../../../hooks/useTranslation';
+
 export const mapOptionToOptionType = <T extends string>(
-  option: T
+  option: T,
+  t: TFunction
 ): OptionType<T> => {
   return {
-    label: option,
+    label: t(option as any),
     value: option,
   };
 };

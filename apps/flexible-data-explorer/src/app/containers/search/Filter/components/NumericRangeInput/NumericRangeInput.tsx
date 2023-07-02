@@ -38,7 +38,10 @@ export const NumericRangeInput: React.FC<NumericRangeInputProps> = ({
         }}
       />
 
-      <Chip label={t('filter_AND', 'AND')} tooltipProps={{ disabled: true }} />
+      <Chip
+        label={t('FILTER_AND_OPERATION')}
+        tooltipProps={{ disabled: true }}
+      />
 
       <NumberInput
         placeholder={PLACEHOLDER}

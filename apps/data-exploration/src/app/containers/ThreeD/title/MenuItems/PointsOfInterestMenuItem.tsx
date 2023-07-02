@@ -70,9 +70,13 @@ export const PointsOfInterestMenuItem = ({
           {title}
         </StyledSecondaryObjectBody>
         <StyledSecondaryObjectDetail>
-          {t('POINTS_OF_INTEREST_WITH_COUNT', '{{count}} points of interest', {
-            count: pointsOfInterest?.length,
-          })}
+          {t(
+            'POINTS_OF_INTEREST_WITH_COUNT',
+            `${pointsOfInterest?.length} points of interest`,
+            {
+              count: pointsOfInterest?.length,
+            }
+          )}
         </StyledSecondaryObjectDetail>
       </Flex>
     </StyledSecondaryObjectMenuItemContent>

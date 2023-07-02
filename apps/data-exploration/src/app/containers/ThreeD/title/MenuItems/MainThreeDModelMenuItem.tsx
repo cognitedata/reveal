@@ -55,9 +55,13 @@ export const MainThreeDModelMenuItem = ({
           description={
             published
               ? t('PUBLISHED', 'Published')
-              : t('CREATED_WITH_TIME', 'Created: {{time}}', {
-                  time: formatTime(createdTime.getTime()),
-                })
+              : t(
+                  'CREATED_WITH_TIME',
+                  `Created: ${formatTime(createdTime.getTime())}`,
+                  {
+                    time: formatTime(createdTime.getTime()),
+                  }
+                )
           }
           key={id}
           onClick={() => {
@@ -77,7 +81,7 @@ export const MainThreeDModelMenuItem = ({
             }
           }}
         >
-          {t('REVISION_WITH_INDEX', 'Revision {{index}}', {
+          {t('REVISION_WITH_INDEX', `Revision ${index}`, {
             index,
           })}
         </Menu.Item>

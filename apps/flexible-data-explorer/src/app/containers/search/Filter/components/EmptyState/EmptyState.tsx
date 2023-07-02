@@ -4,7 +4,6 @@ import styled from 'styled-components/macro';
 
 import { EmptyState as CogsEmptyState } from '@cognite/cogs.js';
 
-import { translationKeys } from '../../../../../common';
 import { useTranslation } from '../../../../../hooks/useTranslation';
 
 export const EmptyState: React.FC = () => {
@@ -14,11 +13,8 @@ export const EmptyState: React.FC = () => {
     <Wrapper>
       <CogsEmptyState
         illustration="EmptyStateSearchSad"
-        title={t(translationKeys.filterEmptyStateTitle, 'No options')}
-        body={t(
-          translationKeys.filterEmptyStateSubtitle,
-          'Try changing your search phrase'
-        )}
+        title={t('FILTER_EMPTY_STATE_TITLE')}
+        body={t('FILTER_EMPTY_STATE_BODY')}
         href=""
         target="_self"
       />

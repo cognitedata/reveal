@@ -33,8 +33,13 @@ export const cogniteConfig: ProjectConfig[] = [
     threeDResources: [
       {
         type: 'cad',
-        modelId: 1791160622840317,
-        revisionId: 498427137020189,
+        modelId: 8107452010081355,
+        revisionId: 8837417595712351,
+        transform: {
+          x: -318.035541033616,
+          y: -519.7672256248517,
+          z: 97.79506579524228,
+        },
       },
     ],
   },
