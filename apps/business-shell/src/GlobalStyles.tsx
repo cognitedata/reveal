@@ -6,7 +6,7 @@ import { Tooltip as CogsTooltip, Modal, Dropdown } from '@cognite/cogs.js';
 
 import 'monaco-editor/dev/vs/editor/editor.main.css';
 
-import styleScope from './styleScope';
+// import styleScope from './styleScope';
 
 export const getContainer = () => document.body;
 
@@ -28,9 +28,5 @@ Dropdown.defaultProps = {
 };
 
 export default function GlobalStyles(props: { children: React.ReactNode }) {
-  return (
-    <div className={styleScope.styleScope} style={{ height: '100%' }}>
-      {props.children}
-    </div>
-  );
+  return <div style={{ height: '100%' }}>{props.children}</div>;
 }
