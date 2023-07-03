@@ -8,10 +8,10 @@ import {
   getLanguage,
   selectLanguage,
 } from '@cognite/cdf-i18n-utils';
-import { Colors, Title } from '@cognite/cogs.js';
 import {
   LanguageTab,
   PersonalInfoTab,
+  ProfilePageHeader,
   VerticalTab,
   VerticalTabs,
 } from '@cognite/user-profile-components';
@@ -68,11 +68,7 @@ export const UserProfilePage = (): JSX.Element => {
 
   return (
     <Page>
-      <HeaderSection>
-        <Header>
-          <Title level={3}>{name}</Title>
-        </Header>
-      </HeaderSection>
+      <ProfilePageHeader name={name || ''} />
       <ContentSection>
         <Content>
           <ProfileTabs>
@@ -120,6 +116,7 @@ export const UserProfilePage = (): JSX.Element => {
                       'PERSONAL_INFO_TAB_SUBTITLE'
                     ),
                     'name-field-label': t('NAME_FIELD_LABEL'),
+                    'name-field-help-text': t('NAME_FIELD_HELP_TEXT'),
                     'email-field-label': t('EMAIL_FIELD_LABEL'),
                     'email-field-help-text': t('EMAIL_FIELD_HELP_TEXT'),
                   },
@@ -135,24 +132,6 @@ export const UserProfilePage = (): JSX.Element => {
 
 const Page = styled.div`
   height: 100%;
-`;
-
-const HeaderSection = styled.div`
-  /* TODO: set a constant */
-  height: 108px;
-  width: 100%;
-
-  background-color: ${Colors['surface--strong']};
-  display: flex;
-  justify-content: center;
-`;
-
-const Header = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  height: 100%;
-  width: 960px;
 `;
 
 const ContentSection = styled.div`

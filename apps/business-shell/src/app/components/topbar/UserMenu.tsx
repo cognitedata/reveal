@@ -16,6 +16,7 @@ import {
 } from '@cognite/cogs.js';
 
 import { useUserInfo } from '../../../hooks/useUserInfo';
+import './UserMenu.css';
 
 const UserMenu = (): JSX.Element => {
   const { t } = useTranslation();
@@ -41,15 +42,17 @@ const UserMenu = (): JSX.Element => {
           key: 'avatar',
           component: <Avatar text={name} />,
           menu: (
-            <Menu>
+            <StyledUserMenu>
               <Menu.Header>{t('LABEL_ACCOUNT')}</Menu.Header>
               <UserDetailsMenuItem>
                 <Avatar text={name} />
-                <Flex direction="column">
+                <Flex direction="column" justifyContent="center">
                   <Body level={2}>{name}</Body>
-                  <Body level={2} muted>
-                    {email}
-                  </Body>
+                  {!!email && (
+                    <Body level={2} muted>
+                      {email}
+                    </Body>
+                  )}
                 </Flex>
               </UserDetailsMenuItem>
               <Menu.Item
@@ -63,13 +66,18 @@ const UserMenu = (): JSX.Element => {
               <Menu.Item icon="Logout" onClick={handleLogout}>
                 {t('SIGN_OUT_BTN_TEXT')}
               </Menu.Item>
-            </Menu>
+            </StyledUserMenu>
           ),
         },
       ]}
     />
   );
 };
+
+const StyledUserMenu = styled(Menu)`
+  min-width: 312px;
+  max-width: unset;
+`;
 
 const UserDetailsMenuItem = styled.div`
   display: flex;
