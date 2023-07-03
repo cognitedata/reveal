@@ -17,6 +17,7 @@
       "outputs": ["{options.outputPath}"],
       "options": {
         "rootDir": ".",
+        "format": ["esm"],
         "outputPath": "dist/libs/copilot-core",
         "tsConfig": "libs/copilot-core/tsconfig.lib.json",
         "project": "libs/copilot-core/package.json",
