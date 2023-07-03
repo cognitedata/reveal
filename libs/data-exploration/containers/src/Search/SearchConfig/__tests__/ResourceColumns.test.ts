@@ -1,7 +1,6 @@
 import { fireEvent, screen } from '@testing-library/react';
 
 import {
-  renderComponent,
   getMockSearchConfig,
   getTitle,
   renderComponent,
