@@ -1,7 +1,7 @@
 import '../styles/index.less';
 
 export { default as AuthWrapper } from './AuthWrapper';
-export { default as Breadcrumb } from './Breadcrumb';
+export { Breadcrumb } from './Breadcrumb';
 export { default as Background } from './Background';
 export { default as BulkActionBar } from './BulkActionBar';
 export * from './CodeEditor';

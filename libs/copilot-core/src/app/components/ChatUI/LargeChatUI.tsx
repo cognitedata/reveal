@@ -24,15 +24,20 @@ export const LargeChatUI = ({
           icon="ClearAll"
           aria-label="clear"
           onClick={() => onReset()}
-          inverted
+          type="secondary"
         />
         <Button
           icon="ScaleDown"
           aria-label="collapse"
           onClick={() => setIsExpanded(false)}
-          inverted
+          type="secondary"
         />
-        <Button icon="Close" onClick={onClose} inverted aria-label="close" />
+        <Button
+          icon="Close"
+          onClick={onClose}
+          aria-label="close"
+          type="secondary"
+        />
       </Flex>
       <>
         <Flex

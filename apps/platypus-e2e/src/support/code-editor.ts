@@ -72,6 +72,11 @@ Cypress.Commands.add('openCodeEditorTab', () => {
 
 Cypress.Commands.add('setCodeEditorText', (text: string) => {
   cy.ensureCodeEditorIsVisible();
+  /**
+   * TODO(@nrwl/cypress): Nesting Cypress commands in a should assertion now throws.
+   * You should use .then() to chain commands instead.
+   * More Info: https://docs.cypress.io/guides/references/migration-guide#-should
+   **/
   cy.window()
     .its('monaco')
     .should('exist')

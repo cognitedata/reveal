@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { Colors } from '@cognite/cogs.js';
 
 import { getCluster, getProject } from '../../utils';
-import Breadcrumb from '../Breadcrumb/Breadcrumb';
+import { Breadcrumb } from '../Breadcrumb';
 import PageTitle from '../PageTitle/PageTitle';
 
 import { SubAppProvider } from './context';

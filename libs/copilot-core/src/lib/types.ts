@@ -36,12 +36,21 @@ export type CopilotDataModelSelectionMessage = {
   version?: string;
 } & DefaultMessage;
 
+export type CopilotDataModelQueryMessage = {
+  type: 'data-model-query';
+  space: string;
+  dataModel: string;
+  version: string;
+  query: string;
+} & DefaultMessage;
+
 export type CopilotUserMessage = CopilotTextMessage;
 export type CopilotBotMessage =
   | CopilotTextMessage
   | CopilotCodeMessage
   | CopilotDataModelSelectionMessage
-  | CopilotHumanApprovalMessage;
+  | CopilotHumanApprovalMessage
+  | CopilotDataModelQueryMessage;
 
 export type CopilotMessage =
   | (CopilotUserMessage & { source: 'user' })
@@ -141,6 +150,11 @@ export type CopilotEvents = {
     // send code to streamlit
     USE_CODE: {
       content: string;
+    };
+    // send code to streamlit
+    GQL_QUERY: {
+      query: string;
+      arguments: any;
     };
   };
   ToCopilot: {

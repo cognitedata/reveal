@@ -6,6 +6,10 @@ This is the core logic part of copilot, where both the UI and business logic liv
 
 We will go over how the business logic works first, and UI second.
 
+## Feature Flag
+
+To have the copilot feature enabled on your project, you would also need to have this feature flag enabled for your project here https://unleash-apps.cognite.ai/projects/default/features/COGNITE_COPILOT.
+
 # Business logic part
 
 For the Copilot, there are 3 categories of logic, both living in `src/lib`:
@@ -207,14 +211,11 @@ and import it in the root.
 Additionally, make sure to load in the styles!
 
 ```js
-import '@botui/react/default-theme';
 import 'highlight.js/styles/dracula.css';
 import 'monaco-editor/dev/vs/editor/editor.main.css';
 import 'react-resizable/css/styles.css';
 import '@cognite/cogs.js/dist/cogs.css';
 ```
-
-Note that the `@botui/react/default-theme` may not be picked up by linters, you may have to `@ts-ignore` it. Additionally it is a SASS module, needing `sass-loader`. (ref the [webpack config](../../tools/webpack/single-spa-webpack-config.js) in this repo to see how to do this)
 
 then
 
@@ -234,7 +235,9 @@ export const SomeComponent = () => {
 
 In fusion, you can just run `yarn nx serve copilot` and it will have copilot, which is a simple wrapper on this library.
 
-To host build the library by itself, you can just run `yarn nx build copilot-core --watch`. The `--watch` will allow NX to watch for changes and rebuild the library.
+To host build the library by itself, you can just run `yarn nx build copilot-core --with-deps --watch`. The `--watch` will allow NX to watch for changes and rebuild the library.
+
+Also, for debugging add `--skip-nx-cache` if you want to make sure it is always building, and not loading from cache.
 
 The output of the library will be at `dist/libs/copilot-core`. This is good to know as you can run `yarn link` from the library, and then `yarn link @cognite/copilot-core` from the app you want to use it in. This will allow you to use the locally built library from the app. To see how yarn link works, [check here](https://classic.yarnpkg.com/lang/en/docs/cli/link/).
 

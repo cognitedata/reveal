@@ -52,7 +52,7 @@ describe('fusion-subapp generator', () => {
      * test-app app translations
      */
     export const translations = {
-      en: { "test-app": en },
+      en: {'test-app': en },
     };
     `;
 

@@ -4,6 +4,10 @@ export default {
   preset: '../../jest.preset.js',
   globals: {},
   testEnvironment: 'node',
+  moduleNameMapper: {
+    // See https://github.com/uuidjs/uuid/issues/451
+    '^uuid$': 'uuid',
+  },
   transform: {
     '^.+\\.[tj]s$': [
       'ts-jest',

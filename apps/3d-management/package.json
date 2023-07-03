@@ -25,14 +25,6 @@
       "last 1 safari version"
     ]
   },
-  "jest": {
-    "testPathIgnorePatterns": [
-      "<rootDir>/src/pages/RevisionDetails/components/ToolbarTreeView/",
-      "<rootDir>/src/store/modules/TreeView",
-      "<rootDir>/src/components/PageHeader",
-      "<rootDir>/src/pages/RevisionDetails/components/TreeView"
-    ]
-  },
   "husky": {
     "hooks": {
       "pre-commit": "pretty-quick --staged",

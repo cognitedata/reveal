@@ -19,6 +19,7 @@ const destinationChains = (
 ): {
   [key in ChainName]: CogniteBaseChain;
 } => ({
+  // TODO: pass in messages and sdk at _call level, not at constructore
   GraphQlChain: new GraphQlChain({
     llm: model,
     sdk,

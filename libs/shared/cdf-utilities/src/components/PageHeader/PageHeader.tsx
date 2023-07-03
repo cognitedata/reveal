@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { Title } from '@cognite/cogs.js';
 
-import Breadcrumb, { BreadcrumbProps } from '../Breadcrumb/Breadcrumb';
+import { Breadcrumb, BreadcrumbProps } from '../Breadcrumb';
 
 export type PageHeaderProps = {
   breadcrumbItems: BreadcrumbProps['items'];

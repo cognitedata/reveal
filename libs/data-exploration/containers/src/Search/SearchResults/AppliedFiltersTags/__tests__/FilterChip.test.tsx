@@ -2,8 +2,8 @@ import '@testing-library/jest-dom/extend-expect';
 import { screen } from '@testing-library/react';
 
 import {
-  renderComponent,
   COMMON_FILTER_KEYS,
+  renderComponent,
 } from '@data-exploration-lib/core';
 
 import { FilterChip, FilterChipProps } from '../FilterChip';

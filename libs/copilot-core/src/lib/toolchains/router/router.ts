@@ -36,7 +36,7 @@ export const getRouterChain = (
   // Now we can construct the router with the list of route names and descriptions
   let routerPrompt = new PromptTemplate({
     template: routerTemplate,
-    inputVariables: ['input'],
+    inputVariables: ['input', 'sdk', 'pastMessages'],
     outputParser: routerParser,
     partialVariables: {
       format_instructions: routerFormat,

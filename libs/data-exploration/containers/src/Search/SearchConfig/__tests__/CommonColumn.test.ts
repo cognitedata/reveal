@@ -4,6 +4,7 @@ import {
   renderComponent,
   COMMON_COLUMN_HEADER,
   getMockSearchConfig,
+  renderComponent,
   searchConfigCommonColumns,
   SearchConfigDataType,
 } from '@data-exploration-lib/core';

@@ -6,6 +6,7 @@ import { TextMessage } from './TextMessage';
 export const messageRenderers = {
   text: TextMessage,
   code: CodeMessage,
+  'data-model-query': CodeMessage,
   'data-model': DataModelMessage,
   'human-approval': HumanApprovalMessage,
 };

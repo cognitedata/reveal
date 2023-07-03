@@ -8,8 +8,8 @@ import {
   UpdateDataModelFieldDTO,
   DataModelValidationError,
   ArgumentNodeProps,
+  IGraphQlUtilsService,
 } from '@platypus/platypus-core';
-import { IGraphQlUtilsService } from '@platypus-core/domain/data-model/boundaries';
 import {
   ObjectTypeDefinitionNode,
   parse,

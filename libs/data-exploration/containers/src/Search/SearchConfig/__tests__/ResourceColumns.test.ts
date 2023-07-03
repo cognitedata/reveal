@@ -4,6 +4,7 @@ import {
   renderComponent,
   getMockSearchConfig,
   getTitle,
+  renderComponent,
   ResourceTypes,
   SearchConfigDataType,
 } from '@data-exploration-lib/core';

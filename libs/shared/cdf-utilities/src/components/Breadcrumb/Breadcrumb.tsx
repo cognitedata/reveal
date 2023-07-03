@@ -31,7 +31,11 @@ const StyledExtraContentWrapper = styled.div`
   margin-left: auto;
 `;
 
-const Breadcrumb = ({ className, extraContent, items }: BreadcrumbProps) => {
+export const Breadcrumb = ({
+  className,
+  extraContent,
+  items,
+}: BreadcrumbProps) => {
   const mergedItems = [
     {
       path: '/',
@@ -61,5 +65,3 @@ const Breadcrumb = ({ className, extraContent, items }: BreadcrumbProps) => {
     </StyledBreadcrumbContainer>
   );
 };
-
-export default Breadcrumb;

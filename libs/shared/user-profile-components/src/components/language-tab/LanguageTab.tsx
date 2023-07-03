@@ -8,13 +8,36 @@ type LanguageTabProps = {
   selectLanguage: (language: string) => void;
 };
 
+const supportedLanguages = {
+  en: 'english',
+  de: 'german',
+  es: 'spanish',
+  fr: 'french',
+  it: 'italian',
+  ja: 'japanese',
+  ko: 'korean',
+  nl: 'dutch',
+  pt: 'portuguese',
+  sv: 'swedish',
+  zh: 'chinese',
+} as const;
+
 export type LanguageTabLocale = {
   translations: {
     'language-tab-title': string;
     'language-tab-subtitle': string;
     'language-field-label': string;
+    'language-chinese-label'?: string;
+    'language-dutch-label'?: string;
     'language-english-label': string;
+    'language-french-label'?: string;
+    'language-german-label'?: string;
+    'language-italian-label'?: string;
     'language-japanese-label': string;
+    'language-korean-label'?: string;
+    'language-portuguese-label'?: string;
+    'language-spanish-label'?: string;
+    'language-swedish-label'?: string;
   };
 };
 
@@ -24,8 +47,17 @@ const DEFAULT_LOCALE: LanguageTabLocale = {
     'language-tab-subtitle':
       'Information about your language preferences across Cognite Data Fusion',
     'language-field-label': 'Language',
-    'language-english-label': 'English',
-    'language-japanese-label': '日本語',
+    'language-chinese-label': '中文 (Zhōngwén), 汉语, 漢語 | zh',
+    'language-dutch-label': 'Nederlands, Vlaams | nl',
+    'language-english-label': 'English | en',
+    'language-french-label': 'Français, langue française | fr',
+    'language-german-label': 'Deutsch | de',
+    'language-italian-label': 'Italiano | it',
+    'language-japanese-label': '日本語 (にほんご／にっぽんご) | ja',
+    'language-korean-label': '한국어 (韓國語), 조선말 (朝鮮語) | ko',
+    'language-portuguese-label': 'Português | pt',
+    'language-spanish-label': 'Español, Castellano | es',
+    'language-swedish-label': 'svenska | sv',
   },
 };
 
@@ -35,16 +67,23 @@ export const LanguageTab = ({
   locale = DEFAULT_LOCALE,
 }: LanguageTabProps): JSX.Element => {
   const options = useMemo(
-    () => [
-      {
-        label: locale.translations['language-english-label'],
-        value: 'en',
-      },
-      {
-        label: locale.translations['language-japanese-label'],
-        value: 'ja',
-      },
-    ],
+    () =>
+      Object.keys(supportedLanguages)
+        .map((languageKey) => ({
+          label:
+            locale.translations[
+              `language-${
+                supportedLanguages[
+                  languageKey as keyof typeof supportedLanguages
+                ]
+              }-label`
+            ],
+          value: languageKey,
+        }))
+        .filter(
+          (l): l is { label: string; value: string } =>
+            Boolean(l.label) && Boolean(l.value)
+        ),
     [locale]
   );
 

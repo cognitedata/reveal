@@ -2,7 +2,6 @@
 // @ts-nocheck
 import React from 'react';
 
-import botui from '@botui/react/default-theme';
 import highlight from 'highlight.js/styles/dracula.css';
 import monacoStyles from 'monaco-editor/dev/vs/editor/editor.main.css';
 import reactResizableStyles from 'react-resizable/css/styles.css';
@@ -44,7 +43,6 @@ Dropdown.defaultProps = {
 export default function GlobalStyles(props: { children: React.ReactNode }) {
   const isStyleLoaded = useGlobalStyles([
     cogsStyles,
-    botui,
     highlight,
     monacoStyles,
     reactResizableStyles,

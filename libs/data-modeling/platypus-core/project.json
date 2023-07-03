@@ -9,7 +9,7 @@
       "outputs": ["{options.outputPath}"],
       "options": {
         "rootDir": ".",
-        "outputPath": "dist/libs/data-modeling/platypus-core",
+        "outputPath": "dist/libs/@platypus/platypus-core",
         "tsConfig": "libs/data-modeling/platypus-core/tsconfig.lib.json",
         "project": "libs/data-modeling/platypus-core/package.json",
         "entryFile": "libs/data-modeling/platypus-core/src/index.ts",

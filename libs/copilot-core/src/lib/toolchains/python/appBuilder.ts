@@ -78,7 +78,6 @@ export class AppBuilderChain extends CogniteBaseChain {
     let prevContent: string = '';
 
     const unmount = addToCopilotEventListener('GET_CODE', (e) => {
-      console.log(e);
       prevContent = e.content || '';
       unmount();
     });

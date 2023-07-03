@@ -9,9 +9,9 @@
       "executor": "nx:run-commands",
       "dependsOn": ["build"],
       "options": {
+        "outputPath": "dist/libs/shared/plotting-components",
         "commands": ["./scripts/npm.sh"]
-      },
-      "outputs": ["{workspaceRoot}/dist/libs/shared/plotting-components"]
+      }
     },
     "lint": {
       "executor": "@nx/linter:eslint",

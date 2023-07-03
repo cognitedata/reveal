@@ -16,6 +16,7 @@ export type PersonalInfoTabLocale = {
     'personal-info-tab-title': string;
     'personal-info-tab-subtitle': string;
     'name-field-label': string;
+    'name-field-help-text': string;
     'email-field-label': string;
     'email-field-help-text': string;
   };
@@ -27,6 +28,7 @@ const DEFAULT_LOCALE: PersonalInfoTabLocale = {
     'personal-info-tab-subtitle':
       'Information about you across Cognite Data Fusion',
     'name-field-label': 'Name',
+    'name-field-help-text': 'Your display name is managed by your organisation',
     'email-field-label': 'Email address',
     'email-field-help-text':
       'Your name and email address are managed by your organization',
@@ -55,6 +57,9 @@ export const PersonalInfoTab = ({
         <InputExp
           disabled
           fullWidth
+          helpText={
+            !email ? locale.translations['name-field-help-text'] : undefined
+          }
           icon={loading ? 'Loader' : undefined}
           label={{
             info: undefined,
@@ -64,19 +69,21 @@ export const PersonalInfoTab = ({
           size="large"
           value={name}
         />
-        <InputExp
-          disabled
-          fullWidth
-          helpText={locale.translations['email-field-help-text']}
-          icon={loading ? 'Loader' : undefined}
-          label={{
-            info: undefined,
-            required: true,
-            text: locale.translations['email-field-label'],
-          }}
-          size="large"
-          value={email}
-        />
+        {!!email && (
+          <InputExp
+            disabled
+            fullWidth
+            helpText={locale.translations['email-field-help-text']}
+            icon={loading ? 'Loader' : undefined}
+            label={{
+              info: undefined,
+              required: true,
+              text: locale.translations['email-field-label'],
+            }}
+            size="large"
+            value={email}
+          />
+        )}
       </Flex>
     </Flex>
   );

@@ -4,6 +4,28 @@
   "sourceRoot": "libs/shared/mock-data/src",
   "projectType": "library",
   "targets": {
+    "build": {
+      "executor": "@nrwl/rollup:rollup",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "rootDir": ".",
+        "outputPath": "dist/libs/@fusion/mock-data",
+        "tsConfig": "libs/shared/mock-data/tsconfig.lib.json",
+        "project": "libs/shared/mock-data/package.json",
+        "entryFile": "libs/shared/mock-data/src/index.ts",
+        "external": ["react/jsx-runtime"],
+        "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
+        "compiler": "babel",
+        "assets": [
+          {
+            "glob": "libs/shared/mock-data/README.md",
+            "input": ".",
+            "output": "."
+          }
+        ],
+        "updateBuildableProjectDepsInPackageJson": true
+      }
+    },
     "lint": {
       "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],

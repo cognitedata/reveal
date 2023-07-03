@@ -1,5 +1,4 @@
 module.exports = {
-  stories: [],
   addons: [],
   framework: {
     name: '@storybook/react-webpack5',

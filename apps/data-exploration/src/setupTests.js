@@ -44,3 +44,12 @@ jest.mock('@cognite/sdk-provider', () => {
     useSDK: jest.fn(),
   };
 });
+
+jest.mock('@data-exploration-lib/core', () => ({
+  ...jest.requireActual('@data-exploration-lib/core'),
+  useTranslation: () => ({
+    t: (_key, referenceValue, _options) => {
+      return referenceValue;
+    },
+  }),
+}));
