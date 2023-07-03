@@ -35,6 +35,7 @@ export const getTableColumns = (t: TFunction): ResourceTableHashMap => ({
             query={query}
             text={getValue<string>() || DASH}
             lines={1}
+            highlightPrefix={false}
           />
         );
       },
@@ -50,6 +51,7 @@ export const getTableColumns = (t: TFunction): ResourceTableHashMap => ({
             query={query}
             text={getValue<string>() || DASH}
             lines={1}
+            highlightPrefix={false}
           />
         );
       },
@@ -68,6 +70,7 @@ export const getTableColumns = (t: TFunction): ResourceTableHashMap => ({
             query={query}
             text={getValue<string>() || DASH}
             lines={1}
+            highlightPrefix={true}
           />
         );
       },
@@ -83,6 +86,7 @@ export const getTableColumns = (t: TFunction): ResourceTableHashMap => ({
             query={query}
             text={getValue<string>() || DASH}
             lines={1}
+            highlightPrefix={true}
           />
         );
       },
@@ -143,7 +147,14 @@ export const getTableColumns = (t: TFunction): ResourceTableHashMap => ({
         const text = isNumber(getValue<number>())
           ? `${getValue<number>()}`
           : DASH;
-        return <HighlightCell query={query} text={text} lines={1} />;
+        return (
+          <HighlightCell
+            query={query}
+            text={text}
+            lines={1}
+            highlightPrefix={true}
+          />
+        );
       },
     };
   },
@@ -157,6 +168,7 @@ export const getTableColumns = (t: TFunction): ResourceTableHashMap => ({
             lines={1}
             text={getValue<string>() || DASH}
             query={query}
+            highlightPrefix={true}
           />
         );
       },
@@ -166,13 +178,16 @@ export const getTableColumns = (t: TFunction): ResourceTableHashMap => ({
     return {
       accessorKey: 'source',
       header: t('SOURCE', 'Source'),
-      cell: ({ getValue }) => (
-        <HighlightCell
-          text={getValue<string>() || DASH}
-          lines={1}
-          query={query}
-        />
-      ),
+      cell: ({ getValue }) => {
+        return (
+          <HighlightCell
+            text={getValue<string>() || DASH}
+            lines={1}
+            query={query}
+            highlightPrefix={true}
+          />
+        );
+      },
     };
   },
   created: {
@@ -225,13 +240,16 @@ export const getTableColumns = (t: TFunction): ResourceTableHashMap => ({
     return {
       header: t('UNIT', 'Unit'),
       accessorKey: 'unit',
-      cell: ({ getValue }) => (
-        <HighlightCell
-          text={getValue<string>() || DASH}
-          lines={1}
-          query={query}
-        />
-      ),
+      cell: ({ getValue }) => {
+        return (
+          <HighlightCell
+            text={getValue<string>() || DASH}
+            lines={1}
+            query={query}
+            highlightPrefix={true}
+          />
+        );
+      },
     };
   },
   isString: {

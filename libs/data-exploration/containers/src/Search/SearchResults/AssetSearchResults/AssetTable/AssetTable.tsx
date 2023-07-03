@@ -6,11 +6,16 @@ import {
   Table,
   TableProps,
   ThreeDModelCell,
+  getHighlightQuery,
 } from '@data-exploration/components';
 import { ColumnDef } from '@tanstack/react-table';
 import noop from 'lodash/noop';
 
-import { getHiddenColumns, useTranslation } from '@data-exploration-lib/core';
+import {
+  getHiddenColumns,
+  useGetSearchConfigFromLocalStorage,
+  useTranslation,
+} from '@data-exploration-lib/core';
 import {
   AssetWithRelationshipLabels,
   InternalAssetDataWithMatchingLabels,
@@ -28,16 +33,23 @@ export const AssetTable = ({
   const { metadataColumns, setMetadataKeyQuery } = useAssetsMetadataColumns();
   const { t } = useTranslation();
   const tableColumns = getTableColumns(t);
+  const assetSearchConfig = useGetSearchConfigFromLocalStorage('asset');
 
   const columns = useMemo(
     () =>
       [
         {
-          ...tableColumns.name(query),
+          ...tableColumns.name(
+            getHighlightQuery(assetSearchConfig?.name.enabled, query)
+          ),
           enableHiding: false,
         },
-        tableColumns.description(query),
-        tableColumns.externalId(query),
+        tableColumns.description(
+          getHighlightQuery(assetSearchConfig?.description.enabled, query)
+        ),
+        tableColumns.externalId(
+          getHighlightQuery(assetSearchConfig?.externalId.enabled, query)
+        ),
         tableColumns.rootAsset((rootAsset) => onRowClick(rootAsset)),
         {
           accessorKey: 'id',
@@ -53,7 +65,9 @@ export const AssetTable = ({
           ...tableColumns.labels,
           enableSorting: false,
         },
-        tableColumns.source(query),
+        tableColumns.source(
+          getHighlightQuery(assetSearchConfig?.source.enabled, query)
+        ),
         { ...tableColumns.dataSet, enableSorting: true },
         ...metadataColumns,
       ] as ColumnDef<AssetWithRelationshipLabels>[],
