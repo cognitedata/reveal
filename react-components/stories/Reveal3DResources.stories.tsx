@@ -5,6 +5,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { Reveal3DResources, RevealContainer } from '../src';
 import { CogniteClient } from '@cognite/sdk';
 import { Color, Matrix4 } from 'three';
+import { CameraController } from '../src/';
 
 const meta = {
   title: 'Example/Reveal3DResources',
@@ -50,6 +51,11 @@ export const Main: Story = {
   render: ({ resources }) => (
     <RevealContainer sdk={sdk} color={new Color(0x4a4a4a)}>
       <Reveal3DResources resources={resources} />
+      <CameraController
+        initialFitCamera={{
+          to: 'allModels'
+        }}
+      />
     </RevealContainer>
   )
 };

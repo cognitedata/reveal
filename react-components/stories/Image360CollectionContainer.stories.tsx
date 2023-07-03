@@ -7,7 +7,7 @@ import { CogniteClient } from '@cognite/sdk';
 import { Color } from 'three';
 
 const meta = {
-  title: 'Example/Image360CollectionContainer',
+  title: 'Example/PrimitiveWrappers/Image360CollectionContainer',
   component: Image360CollectionContainer,
   tags: ['autodocs']
 } satisfies Meta<typeof Image360CollectionContainer>;

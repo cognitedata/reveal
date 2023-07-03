@@ -7,7 +7,7 @@ import { CogniteClient } from '@cognite/sdk';
 import { Color, Matrix4 } from 'three';
 
 const meta = {
-  title: 'Example/CadModelContainer',
+  title: 'Example/PrimitiveWrappers/CadModelContainer',
   component: CadModelContainer,
   tags: ['autodocs']
 } satisfies Meta<typeof CadModelContainer>;

@@ -7,7 +7,7 @@ import { CogniteClient } from '@cognite/sdk';
 import { Color, Matrix4 } from 'three';
 
 const meta = {
-  title: 'Example/PointCloudContainer',
+  title: 'Example/PrimitiveWrappers/PointCloudContainer',
   component: PointCloudContainer,
   tags: ['autodocs']
 } satisfies Meta<typeof PointCloudContainer>;
