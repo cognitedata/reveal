@@ -6,6 +6,7 @@ import * as THREE from 'three';
 import { Mock } from 'moq.ts';
 import { Materials, StyledTreeIndexSets } from '@reveal/rendering';
 import { MultiBufferBatchingManager } from './MultiBufferBatchingManager';
+import { TreeIndexToSectorsMap } from '../utilities/TreeIndexToSectorsMap';
 import sum from 'lodash/sum';
 import { IndexSet } from '@reveal/utilities';
 
@@ -22,7 +23,14 @@ describe(MultiBufferBatchingManager.name, () => {
       inFront: new IndexSet(),
       visible: new IndexSet()
     };
-    manager = new MultiBufferBatchingManager(geometryGroup, materials, styledIndexSets, 1024, numberOfInstanceBuffers);
+    manager = new MultiBufferBatchingManager(
+      geometryGroup,
+      materials,
+      styledIndexSets,
+      new TreeIndexToSectorsMap(),
+      1024,
+      numberOfInstanceBuffers
+    );
   });
 
   test('batchGeometries() first time adds new geometry to group', () => {

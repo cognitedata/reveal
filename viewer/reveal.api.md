@@ -473,7 +473,7 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
     setDefaultNodeAppearance(appearance: NodeAppearance): void;
     setModelClippingPlanes(clippingPlanes: THREE_2.Plane[]): void;
     setModelTransformation(matrix: THREE_2.Matrix4): void;
-    setNodeTransform(treeIndices: NumericRange, transformMatrix: THREE_2.Matrix4): void;
+    setNodeTransform(treeIndices: NumericRange, transformMatrix: THREE_2.Matrix4, boundingBox?: THREE_2.Box3): void;
     setNodeTransformByTreeIndex(treeIndex: number, transform: THREE_2.Matrix4, applyToChildren?: boolean): Promise<number>;
     get styledNodeCollections(): {
         nodeCollection: NodeCollection;
