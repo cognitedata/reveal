@@ -8,6 +8,10 @@ export default {
     },
   },
   testEnvironment: 'node',
+  moduleNameMapper: {
+    // See https://github.com/uuidjs/uuid/issues/451
+    '^uuid$': 'uuid',
+  },
   transform: {
     '^.+\\.[tj]s$': 'ts-jest',
   },

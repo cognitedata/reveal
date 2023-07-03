@@ -5,26 +5,13 @@
   "projectType": "application",
   "targets": {
     "build": {
-      "executor": "@nrwl/webpack:webpack",
+      "executor": "@nrwl/vite:build",
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
-        "compiler": "babel",
-        "outputPath": "dist/apps/flexible-data-explorer",
-        "index": "apps/flexible-data-explorer/src/index.html",
-        "baseHref": "/",
-        "main": "apps/flexible-data-explorer/src/main.tsx",
-        "tsConfig": "apps/flexible-data-explorer/tsconfig.app.json",
-        "assets": [
-          "apps/flexible-data-explorer/src/favicon.ico",
-          "apps/flexible-data-explorer/src/assets"
-        ],
-        "styles": [],
-        "scripts": [],
-        "isolatedConfig": true,
-        "webpackConfig": "apps/flexible-data-explorer/webpack-config.js",
-        "inputs": ["pipeline"]
+        "outputPath": "dist/apps/flexible-data-explorer"
       },
+      "inputs": ["pipeline"],
       "configurations": {
         "development": {
           "extractLicenses": false,
@@ -52,12 +39,11 @@
       }
     },
     "serve": {
-      "executor": "@nrwl/webpack:dev-server",
+      "executor": "@nrwl/vite:dev-server",
       "defaultConfiguration": "development",
       "options": {
         "buildTarget": "flexible-data-explorer:build",
-        "liveReload": true,
-        "hmr": false,
+        "hmr": true,
         "allowedHosts": "all",
         "headers": {
           "Access-Control-Allow-Origin": "*"
@@ -100,6 +86,21 @@
         "ci": {
           "ci": true,
           "codeCoverage": true
+        }
+      }
+    },
+    "preview": {
+      "executor": "@nrwl/vite:preview-server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "flexible-data-explorer:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "flexible-data-explorer:build:development"
+        },
+        "production": {
+          "buildTarget": "flexible-data-explorer:build:production"
         }
       }
     }

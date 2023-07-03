@@ -11,7 +11,6 @@
       "options": {
         "outputPath": "dist/libs/data-exploration-components",
         "tsConfig": "libs/data-exploration-components/tsconfig.lib.json",
-        "project": "libs/data-exploration-components/package.json",
         "entryFile": "libs/data-exploration-components/src/index.ts",
         "external": ["react/jsx-runtime"],
         "rollupConfig": "@nrwl/react/plugins/bundle-rollup",

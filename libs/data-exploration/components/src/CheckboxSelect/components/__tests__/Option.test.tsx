@@ -1,8 +1,8 @@
 import '@testing-library/jest-dom/extend-expect';
-
 import { screen } from '@testing-library/react';
 
-import { renderComponent } from '../../../__test-utils';
+import { renderComponent } from '@data-exploration-lib/core';
+
 import { OptionType } from '../../types';
 import { Option, OptionProps } from '../Option';
 

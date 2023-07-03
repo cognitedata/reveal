@@ -1,1 +1,1 @@
-export { default, TypedTransProps } from './TypedTrans';
+export { TypedTrans, type TypedTransProps } from './TypedTrans';

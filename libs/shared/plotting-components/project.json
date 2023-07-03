@@ -7,21 +7,15 @@
   "targets": {
     "npm": {
       "executor": "nx:run-commands",
-      "dependsOn": [
-        "build"
-      ],
+      "dependsOn": ["build"],
       "options": {
         "outputPath": "dist/libs/shared/plotting-components",
-        "commands": [
-          "./scripts/npm.sh"
-        ]
+        "commands": ["./scripts/npm.sh"]
       }
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",
-      "outputs": [
-        "{options.outputFile}"
-      ],
+      "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
           "libs/shared/plotting-components/**/*.{ts,tsx,js,jsx}"
@@ -30,16 +24,10 @@
     },
     "build": {
       "executor": "@nrwl/rollup:rollup",
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "outputs": ["{options.outputPath}"],
       "options": {
-        "format": [
-          "esm"
-        ],
-        "external": [
-          "react/jsx-runtime"
-        ],
+        "format": ["esm"],
+        "external": ["react/jsx-runtime"],
         "outputPath": "dist/libs/shared/plotting-components",
         "tsConfig": "libs/shared/plotting-components/tsconfig.lib.json",
         "project": "libs/shared/plotting-components/package.json",
@@ -59,9 +47,7 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": [
-        "{workspaceRoot}/coverage/{projectRoot}"
-      ],
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
         "jestConfig": "libs/shared/plotting-components/jest.config.ts",
         "passWithNoTests": true
@@ -82,9 +68,7 @@
     },
     "build-storybook": {
       "executor": "@nrwl/storybook:build",
-      "outputs": [
-        "{options.outputDir}"
-      ],
+      "outputs": ["{options.outputDir}"],
       "options": {
         "uiFramework": "@storybook/react",
         "configDir": "libs/shared/plotting-components/.storybook",

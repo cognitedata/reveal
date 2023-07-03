@@ -24,9 +24,7 @@
       "executor": "@nrwl/rollup:rollup",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "format": [
-          "esm"
-        ],
+        "format": ["esm"],
         "outputPath": "dist/libs/shared/cdf-utilities",
         "tsConfig": "libs/shared/cdf-utilities/tsconfig.lib.json",
         "project": "libs/shared/cdf-utilities/package.json",

@@ -11,8 +11,7 @@
         "outputPath": "dist/libs/data-exploration/core",
         "main": "libs/data-exploration/core/src/index.ts",
         "tsConfig": "libs/data-exploration/core/tsconfig.lib.json",
-        "assets": [],
-        "project": "libs/data-exploration/core/package.json"
+        "assets": []
       }
     },
     "lint": {

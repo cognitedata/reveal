@@ -2,7 +2,8 @@ import '@testing-library/jest-dom/extend-expect';
 
 import { screen, fireEvent } from '@testing-library/react';
 
-import { renderComponent } from '../../../__test-utils';
+import { renderComponent } from '@data-exploration-lib/core';
+
 import { SortDirection } from '../../types';
 import { SortAction, SortActionProps } from '../SortAction';
 

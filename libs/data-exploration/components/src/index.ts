@@ -1,4 +1,3 @@
-export * from './__test-utils';
 export * from './Buttons';
 export * from './Checkboxes';
 export * from './CheckboxSelect';

@@ -1,8 +1,9 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
+import { renderComponent } from '@data-exploration-lib/core';
+
 import { Drawer } from '..';
-import { renderComponent } from '../';
 
 describe('Drawer', () => {
   //   const { isOpen, open, close } = useDialog();
