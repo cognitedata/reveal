@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 
 import {
+  getHighlightQuery,
   getTableColumns,
   SubCellMatchingLabels,
   Table,
@@ -14,6 +15,7 @@ import {
   getHiddenColumns,
   RelationshipLabels,
   SequenceWithRelationshipLabels,
+  useGetSearchConfigFromLocalStorage,
   useTranslation,
 } from '@data-exploration-lib/core';
 import { InternalSequenceDataWithMatchingLabels } from '@data-exploration-lib/domain-layer';
@@ -44,6 +46,7 @@ export const SequenceTable = ({
 }: SequenceTableProps) => {
   const { t } = useTranslation();
   const tableColumns = getTableColumns(t);
+  const sequenceSearchConfig = useGetSearchConfigFromLocalStorage('sequence');
 
   const { metadataColumns, setMetadataKeyQuery } =
     useSequencesMetadataColumns();
@@ -52,11 +55,17 @@ export const SequenceTable = ({
     () =>
       [
         {
-          ...tableColumns.name(query),
+          ...tableColumns.name(
+            getHighlightQuery(sequenceSearchConfig?.name.enabled, query)
+          ),
           enableHiding: false,
         },
-        tableColumns.description(query),
-        tableColumns.externalId(query),
+        tableColumns.description(
+          getHighlightQuery(sequenceSearchConfig?.description.enabled, query)
+        ),
+        tableColumns.externalId(
+          getHighlightQuery(sequenceSearchConfig?.externalId.enabled, query)
+        ),
         {
           ...tableColumns.columns,
           enableSorting: false,
@@ -64,7 +73,9 @@ export const SequenceTable = ({
         tableColumns.lastUpdatedTime,
         tableColumns.created,
         {
-          ...tableColumns.id(query),
+          ...tableColumns.id(
+            getHighlightQuery(sequenceSearchConfig?.id.enabled, query)
+          ),
           enableSorting: false,
         },
         tableColumns.rootAsset(onRootAssetClick),

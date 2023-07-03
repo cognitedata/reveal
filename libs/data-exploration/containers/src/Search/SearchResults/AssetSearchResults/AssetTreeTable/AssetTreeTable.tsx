@@ -8,6 +8,7 @@ import {
   Table,
   ThreeDModelCell,
   getTableColumns,
+  getHighlightQuery,
 } from '@data-exploration/components';
 import { ColumnDef } from '@tanstack/react-table';
 import { ExpandedState } from '@tanstack/table-core';
@@ -165,7 +166,10 @@ export const AssetTreeTable = ({
               <HighlightCell
                 text={getValue<string>() || DASH}
                 lines={1}
-                query={query}
+                query={getHighlightQuery(
+                  assetSearchConfig?.name.enabled,
+                  query
+                )}
               />
             </div>
           ),
@@ -173,8 +177,12 @@ export const AssetTreeTable = ({
             isExpandable: true,
           },
         },
-        tableColumns.description(query),
-        tableColumns.externalId(query),
+        tableColumns.description(
+          getHighlightQuery(assetSearchConfig?.description.enabled, query)
+        ),
+        tableColumns.externalId(
+          getHighlightQuery(assetSearchConfig?.externalId.enabled, query)
+        ),
         {
           id: 'childCount',
           header: startFromRoot
@@ -198,10 +206,13 @@ export const AssetTreeTable = ({
           cell: ({ row }) => <ThreeDModelCell assetId={row.original.id} />,
           size: 300,
         },
-        tableColumns.source(query),
+        tableColumns.source(
+          getHighlightQuery(assetSearchConfig?.source.enabled, query)
+        ),
         tableColumns.dataSet,
         ...metadataColumns,
       ] as ColumnDef<InternalAssetTreeData>[],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [query, startFromRoot, metadataColumns]
   );
 
