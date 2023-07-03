@@ -28,12 +28,10 @@ export const Main: Story = {
   args: {
     resources: [
       {
-        type: 'cad',
         modelId: 1791160622840317,
         revisionId: 498427137020189
       },
       {
-        type: 'cad',
         modelId: 1791160622840317,
         revisionId: 502149125550840,
         transform: new Matrix4().makeTranslation(0, 10, 0)
@@ -42,7 +40,6 @@ export const Main: Story = {
         siteId: 'c_RC_2'
       },
       {
-        type: 'pointcloud',
         modelId: 3865289545346058,
         revisionId: 4160448151596909
       }

@@ -9,6 +9,11 @@ export { Image360CollectionContainer } from './components/Image360CollectionCont
 export { Image360HistoricalDetails } from './components/Image360HistoricalDetails/Image360HistoricalDetails';
 export {
   Reveal3DResources,
-  type AddResourceOptions
+  type Reveal3DResourcesProps
 } from './components/Reveal3DResources/Reveal3DResources';
 export { CameraController } from './components/CameraController/CameraController';
+export type {
+  AddImageCollection360Options,
+  AddResourceOptions,
+  AddReveal3DModelOptions
+} from './components/Reveal3DResources/types';
