@@ -20,11 +20,12 @@ jobs:
     permissions:
       pull-requests: read
     outputs:
-      should-run: ${{ steps.filter.outputs.should-run }}
+      should-run: ${{ github.event_name != 'pull_request' || steps.filter.outputs.should-run }}
     steps:
       # For pull requests it's not necessary to checkout the code
       - uses: dorny/paths-filter@v2
         id: filter
+        if: ${{ github.event_name == 'pull_request' }}
         with:
           filters: |
             should-run:
@@ -314,6 +315,7 @@ jobs:
           yarn build:fast
 
       - name: Upload documentation artifact
+        if: ${{ contains(github.event.pull_request.labels.*.name, 'preview-docs') }}
         uses: actions/upload-artifact@v3
         with:
           name: preview-docs
@@ -321,7 +323,7 @@ jobs:
 
   deploy-preview-documentation:
     needs: [changes, build-preview-documentation]
-    if: ${{ needs.changes.outputs.should-run == 'true' || contains(github.event.pull_request.labels.*.name, 'preview-docs') }}
+    if: ${{ needs.changes.outputs.should-run == 'true' && contains(github.event.pull_request.labels.*.name, 'preview-docs') }}
     name: Publish documentation preview
     # Ensures that there only will be executed one "instance" of this operation
     # across all ongoing Github Action executions

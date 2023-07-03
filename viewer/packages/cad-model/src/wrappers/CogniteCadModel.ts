@@ -16,6 +16,7 @@ import { NodeAppearance, NodeCollection, CdfModelNodeCollectionDataProvider } fr
 import { NodeIdAndTreeIndexMaps } from '../utilities/NodeIdAndTreeIndexMaps';
 import { CadNode } from './CadNode';
 import { WellKnownUnit } from '../types';
+import { CustomSectorBounds } from '../utilities/CustomSectorBounds';
 
 /**
  * Represents a single 3D CAD model loaded from CDF.
@@ -84,6 +85,7 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
   private readonly nodesApiClient: NodesApiClient;
   private readonly nodeIdAndTreeIndexMaps: NodeIdAndTreeIndexMaps;
   private readonly _styledNodeCollections: { nodeCollection: NodeCollection; appearance: NodeAppearance }[] = [];
+  private readonly customSectorBounds: CustomSectorBounds;
 
   /**
    * @param modelId
@@ -100,6 +102,12 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
     this.nodeIdAndTreeIndexMaps = new NodeIdAndTreeIndexMaps(modelId, revisionId, this.nodesApiClient);
 
     this.cadNode = cadNode;
+    this.customSectorBounds = new CustomSectorBounds(this.cadNode);
+    this.cadNode.treeIndexToSectorsMap.onChange = (treeIndex: number, newSectorId: number) => {
+      if (this.customSectorBounds.isRegistered(treeIndex)) {
+        this.customSectorBounds.updateNodeSectors(treeIndex, [newSectorId]);
+      }
+    };
   }
 
   /**
@@ -200,10 +208,47 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
    * node isn't supported and might lead to undefined results.
    * @param treeIndices       Tree indices of nodes to apply the transformation to.
    * @param transformMatrix   Transformation to apply.
+   * @param boundingBox       Optional bounding box for the nodes before any transformation is applied. If given, it is assumed that all the nodes' geometry fit inside.
    */
-  setNodeTransform(treeIndices: NumericRange, transformMatrix: THREE.Matrix4): void {
+  setNodeTransform(treeIndices: NumericRange, transformMatrix: THREE.Matrix4, boundingBox?: THREE.Box3): void {
     MetricsLogger.trackCadNodeTransformOverridden(treeIndices.count, transformMatrix);
     this.nodeTransformProvider.setNodeTransform(treeIndices, transformMatrix);
+
+    // Metadata bounding boxes are in CDF space. Precompute the necessary transformations once.
+    const cdfToModelTransform = this.getModelTransformation()
+      .clone()
+      .multiply(this.getCdfToDefaultModelTransformation());
+    const modelToCdfTransform = cdfToModelTransform.clone().invert();
+
+    // Convert the transform to CDF space
+    const transformMatrixCdf = modelToCdfTransform.clone().multiply(transformMatrix).multiply(cdfToModelTransform);
+
+    // Transform bounding box to CDF space, if given
+    let nodeBoundingBox: THREE.Box3 | undefined;
+    if (boundingBox) {
+      nodeBoundingBox = boundingBox.clone();
+      nodeBoundingBox.applyMatrix4(modelToCdfTransform);
+    }
+
+    // Update sector bounds
+    for (const treeIndex of treeIndices.toArray()) {
+      if (!this.customSectorBounds.isRegistered(treeIndex)) {
+        // Register node as transformed
+        this.customSectorBounds.registerTransformedNode(treeIndex, nodeBoundingBox);
+
+        // Get the sectors that this node is currently known to have geometry in. As the mapping from tree index to sectors is built
+        // when sectors are loaded, this node may have geometry in more sectors than what is currently known. If new sectors with geometry
+        // from this node are discovered at a later point, customSectorBounds.updateNodeSectors will be called through the
+        // treeIndexToSectorsMap.onChange callback, which is setup in the constructor.
+        const sectorIds = this.cadNode.treeIndexToSectorsMap.getSectorIdsForTreeIndex(treeIndex);
+        if (sectorIds.size) {
+          this.customSectorBounds.updateNodeSectors(treeIndex, Array.from(sectorIds));
+        }
+      }
+
+      this.customSectorBounds.updateNodeTransform(treeIndex, transformMatrixCdf);
+    }
+    this.customSectorBounds.recomputeSectorBounds();
   }
 
   /**
@@ -218,7 +263,8 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
     applyToChildren = true
   ): Promise<number> {
     const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
-    this.setNodeTransform(treeIndices, transform);
+    const boundingBox = await this.getBoundingBoxByTreeIndex(treeIndex);
+    await this.setNodeTransform(treeIndices, transform, boundingBox);
     return treeIndices.count;
   }
 
@@ -228,6 +274,10 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
    */
   resetNodeTransform(treeIndices: NumericRange): void {
     this.nodeTransformProvider.resetNodeTransform(treeIndices);
+
+    // Update sector bounds
+    treeIndices.forEach(treeIndex => this.customSectorBounds.unregisterTransformedNode(treeIndex));
+    this.customSectorBounds.recomputeSectorBounds();
   }
 
   /**

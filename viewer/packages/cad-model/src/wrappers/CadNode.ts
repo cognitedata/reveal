@@ -17,6 +17,7 @@ import {
 import { Group, Object3D, Plane, Matrix4 } from 'three';
 import { DrawCallBatchingManager } from '../batching/DrawCallBatchingManager';
 import { MultiBufferBatchingManager } from '../batching/MultiBufferBatchingManager';
+import { TreeIndexToSectorsMap } from '../utilities/TreeIndexToSectorsMap';
 
 export class CadNode extends Object3D {
   private readonly _cadModelMetadata: CadModelMetadata;
@@ -37,6 +38,8 @@ export class CadNode extends Object3D {
   private readonly _styledTreeIndexSets: StyledTreeIndexSets;
 
   private _needsRedraw: boolean = false;
+
+  public readonly treeIndexToSectorsMap = new TreeIndexToSectorsMap();
 
   public readonly type = 'CadNode';
 
@@ -65,7 +68,8 @@ export class CadNode extends Object3D {
     this._geometryBatchingManager = new MultiBufferBatchingManager(
       this._batchedGeometryMeshGroup,
       materials,
-      this._styledTreeIndexSets
+      this._styledTreeIndexSets,
+      this.treeIndexToSectorsMap
     );
     this._rootSector = new RootSectorNode(model);
 
