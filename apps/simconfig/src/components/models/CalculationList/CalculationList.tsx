@@ -81,6 +81,9 @@ export function CalculationList({
   const [shouldPollOnDelete, setShouldPollOnDelete] = useState<boolean>(false);
   const [triggeredRuns, setTriggeredRuns] = useState<TriggeredRunInfo>();
   const { isEnabled: isCustomCalculationEnabled } = useFlag('SIMCONFIG_UDC');
+  const { isEnabled: isPredefinedCalculationEnabled } = useFlag(
+    'SIMCONFIG_PROSPER_PREDEFINED_CALCULATIONS'
+  );
 
   const [deletedExternalIds, setDeletedExternalIds] = useState<string[]>([]);
 
@@ -521,11 +524,11 @@ export function CalculationList({
       {nonConfiguredCalculations
         .sort((a: CalculationType, b: CalculationType) => a.localeCompare(b))
         .filter((calcConfig: CalculationType) => {
-          // For PROSPER, the show all the predefined calcuations
-          if (simulator === 'PROSPER') {
+          // For PROSPER, show all the predefined calcuations if feature flag is enabled
+          if (simulator === 'PROSPER' && isPredefinedCalculationEnabled) {
             return true;
           }
-          // For ProcessSim, the show only "Rate by Nodal Analysis"
+          // For ProcessSim, show only "Rate by Nodal Analysis"
           if (simulator === 'ProcessSim' && calcConfig === 'IPR/VLP') {
             return true;
           }
