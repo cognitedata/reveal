@@ -4,6 +4,28 @@
   "sourceRoot": "libs/data-modeling/platypus-common-utils/src",
   "projectType": "library",
   "targets": {
+    "build": {
+      "executor": "@nrwl/rollup:rollup",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "rootDir": ".",
+        "outputPath": "dist/libs/@platypus/platypus-common-utils",
+        "tsConfig": "libs/data-modeling/platypus-common-utils/tsconfig.lib.json",
+        "project": "libs/data-modeling/platypus-common-utils/package.json",
+        "entryFile": "libs/data-modeling/platypus-common-utils/src/index.ts",
+        "external": ["react/jsx-runtime"],
+        "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
+        "compiler": "babel",
+        "assets": [
+          {
+            "glob": "libs/data-modeling/platypus-common-utils/README.md",
+            "input": ".",
+            "output": "."
+          }
+        ],
+        "updateBuildableProjectDepsInPackageJson": true
+      }
+    },
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],

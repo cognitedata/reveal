@@ -10,6 +10,9 @@ import zIndex from '../../utils/zIndex';
 import { actionRenderers } from '../ActionRenderer';
 import { messageRenderers } from '../MessageRenderer';
 
+const MAX_WIDTH = window.innerWidth - 120;
+const MAX_HEIGHT = window.innerHeight - 120;
+
 export const SmallChatUI = ({
   setIsExpanded,
   setShowOverlay,
@@ -26,7 +29,16 @@ export const SmallChatUI = ({
     height: number;
   }>('SMALL_CHATBOT_DIMENTIONS');
 
-  const { width, height } = dimensions || { width: 320, height: 400 };
+  const { width, height } =
+    dimensions &&
+    // make sure the dimensions are not bigger than the screen
+    dimensions.width <= MAX_WIDTH &&
+    dimensions.height <= MAX_HEIGHT
+      ? dimensions
+      : {
+          width: 320,
+          height: 400,
+        };
 
   const { mutate: saveToCache } = useSaveToCache<{
     width: number;
@@ -42,6 +54,7 @@ export const SmallChatUI = ({
       width={width}
       height={height}
       minConstraints={[320, 400]}
+      maxConstraints={[MAX_WIDTH, MAX_HEIGHT]}
       resizeHandles={['nw']}
       onResizeStart={() => setShowOverlay(true)}
       onResizeStop={(_e, data) => {
@@ -113,62 +126,6 @@ const SmallChatBotWrapper = styled(ResizableBox)`
   display: flex;
   flex-direction: column;
 
-  .botui_message {
-    margin: 0;
-    margin-bottom: 8px;
-  }
-  .botui_message_content {
-    overflow: auto;
-  }
-  .botui_app_container {
-    width: 100%;
-    overflow: hidden;
-    flex: 1;
-    position: relative;
-    display: flex;
-  }
-  .botui_container {
-    height: auto;
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-  }
-  .botui_message_list {
-    padding: 0;
-    width: 100%;
-    > div {
-      /* height: 100%;
-      overflow: auto; */
-    }
-  }
-  .botui_action_container {
-    padding: 0;
-    min-height: 104px;
-    .botui_action {
-      padding: 0;
-    }
-  }
-  .cogs-textarea {
-    flex: 1;
-    height: 100px;
-  }
-  .botui_message_content {
-    background: #dadffc;
-  }
-  .botui_message_content.human {
-    background: #f5f5f5;
-  }
-  .cogs-textarea {
-    width: 100%;
-    textarea {
-      color: black !important;
-    }
-  }
-  pre {
-    overflow: hidden;
-    margin-bottom: 0;
-  }
   .react-resizable-handle-nw {
     background-image: none;
     transform: translate(-50%, -50%) rotate(90deg);

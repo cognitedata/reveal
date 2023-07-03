@@ -21,9 +21,8 @@
         "tsConfig": "libs/copilot-core/tsconfig.lib.json",
         "project": "libs/copilot-core/package.json",
         "entryFile": "libs/copilot-core/src/index.ts",
-        "external": ["react/jsx-runtime"],
-        "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
         "compiler": "babel",
+        "rollupConfig": "libs/copilot-core/rollup.config.js",
         "assets": [
           {
             "glob": "libs/copilot-core/README.md",
@@ -31,7 +30,7 @@
             "output": "."
           }
         ],
-        "updateBuildableProjectDepsInPackageJson": true
+        "updateBuildableProjectDepsInPackageJson": false
       }
     },
     "test": {

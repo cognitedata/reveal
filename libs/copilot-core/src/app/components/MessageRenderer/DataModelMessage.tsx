@@ -9,7 +9,6 @@ import {
   CopilotDataModelSelectionMessage,
 } from '../../../lib/types';
 import { useDataModel, useDataModels } from '../../hooks/useDataModels';
-import { getContainer } from '../../utils/getContainer';
 
 const CustomOption = ({
   innerRef,
@@ -70,6 +69,7 @@ export const DataModelMessage = ({
       })),
     [dataModels]
   );
+
   const versionOptions = useMemo(
     () =>
       dataModelVersions.map((el) => ({
@@ -78,13 +78,12 @@ export const DataModelMessage = ({
       })),
     [dataModelVersions]
   );
-  console.log(message);
   return (
     <Flex direction="column" gap={4}>
       <Body level={2}>{message.content}</Body>
       <Select
         label="Select data model"
-        menuPortalTarget={getContainer()!}
+        menuPortalTarget={document.body}
         components={{ Option: CustomOption }}
         disabled={!message.pending}
         value={
@@ -113,7 +112,7 @@ export const DataModelMessage = ({
       {message.dataModel && (
         <Select
           label="Select version"
-          menuPortalTarget={getContainer()!}
+          menuPortalTarget={document.body!}
           disabled={!message.pending}
           value={
             message.version

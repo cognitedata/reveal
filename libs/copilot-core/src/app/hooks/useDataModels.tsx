@@ -1,4 +1,4 @@
-import { FdmMixerApiService } from '@fusion/data-modeling';
+import { FdmMixerApiService } from '@platypus/platypus-core';
 import { useQuery } from '@tanstack/react-query';
 
 import { useSDK } from '@cognite/sdk-provider';

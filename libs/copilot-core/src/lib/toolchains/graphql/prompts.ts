@@ -1,6 +1,8 @@
 export const GRAPHQL_TYPE_TEMPLATE = ` 
 You are an AI assistant that converts a natural language prompt into GraphQL queries.\
-The prompts will refer to various GraphQL types.
+
+You have the following GraphQL types:
+{types}
 
 For each type, there is a query:
 

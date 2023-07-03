@@ -9,6 +9,7 @@ import { BufferMemory, ChatMessageHistory } from 'langchain/memory';
 import { AIChatMessage, HumanChatMessage } from 'langchain/schema';
 
 import { Flex } from '@cognite/cogs.js';
+import { useFlag } from '@cognite/react-feature-flags';
 import { useSDK } from '@cognite/sdk-provider';
 
 import { CogniteChatGPT } from '../../../lib/chatModels';
@@ -43,6 +44,10 @@ export const ChatUI = ({
   onClose: () => void;
   feature?: CopilotSupportedFeatureType;
 }) => {
+  const { isEnabled } = useFlag('COGNITE_COPILOT', {
+    fallback: false,
+    forceRerender: true,
+  });
   const bot = useBotUI();
   const sdk = useSDK();
   const messages = useRef<CopilotMessage[]>([]);
@@ -66,40 +71,106 @@ export const ChatUI = ({
     []
   );
 
-  const addMessageForBot = useCallback(
-    async (chatBot: BotuiInterface, result: CopilotBotMessage) => {
-      messages.current.push({ ...result, source: 'bot' });
+  const addMessage = useCallback(
+    async (chatBot: BotuiInterface, message: CopilotMessage) => {
+      messages.current.push(message);
       await setChatHistory(messages.current);
-      await chatBot.message.add(result, {
-        messageType: result.type,
+      const messageCount = messages.current.length;
+      await chatBot.message.add(message, {
+        ...(message.source === 'user' && {
+          previous: {
+            key: messageCount - 1,
+            type: 'action',
+            data: {},
+            meta: {},
+          },
+        }),
+        messageType: message.type,
         updateMessage,
       });
     },
     [setChatHistory, updateMessage]
   );
 
+  const promptUser = useCallback(() => {
+    bot.action
+      .set({ feature }, { actionType: 'text', feature })
+      .then(async ({ content }: { content: string }) => {
+        messages.current.push({
+          content: content,
+          type: 'text',
+          source: 'user',
+        });
+        setChatHistory(messages.current);
+        processMessage(
+          feature,
+          conversationChain,
+          sdk,
+          content,
+          messages.current,
+          (message) => addMessage(bot, { ...message, source: 'bot' })
+        ).then((shouldPrompt) => {
+          if (shouldPrompt) {
+            promptUser();
+          }
+        });
+        if (messages.current.length > 0) {
+          await bot.wait();
+        }
+      });
+  }, [addMessage, bot, conversationChain, feature, sdk, setChatHistory]);
+
   useEffect(() => {
-    const removeListener = addToCopilotEventListener(
-      'NEW_MESSAGES',
-      async (newMessages) => {
-        for (const message of newMessages) {
-          if (message.key === undefined) {
-            await addMessageForBot(bot, message);
-          } else {
-            messages.current[message.key] = message;
-            setChatHistory(messages.current);
-            await bot.message.update(message.key, message);
+    if (isEnabled) {
+      const removeListener = addToCopilotEventListener(
+        'NEW_MESSAGES',
+        async (newMessages) => {
+          if (newMessages.length > 0) {
+            for (const message of newMessages) {
+              if (message.key === undefined) {
+                await addMessage(bot, message);
+              } else {
+                messages.current[message.key] = message;
+                setChatHistory(messages.current);
+                await bot.message.update(message.key, message);
+              }
+            }
+            const lastMessage = newMessages[newMessages.length - 1];
+            if (lastMessage.source === 'user') {
+              bot.wait();
+              processMessage(
+                feature,
+                conversationChain,
+                sdk,
+                lastMessage.content,
+                messages.current,
+                (message) => addMessage(bot, { ...message, source: 'bot' })
+              ).then((shouldPrompt) => {
+                if (shouldPrompt) {
+                  promptUser();
+                }
+              });
+            }
           }
         }
-      }
-    );
-    return () => {
-      removeListener();
-      for (const listener of cachedListeners) {
-        window.removeEventListener(listener.event, listener.listener);
-      }
-    };
-  }, [bot, addMessageForBot, setChatHistory]);
+      );
+      return () => {
+        removeListener();
+        for (const listener of cachedListeners) {
+          window.removeEventListener(listener.event, listener.listener);
+        }
+      };
+    }
+  }, [
+    isEnabled,
+    bot,
+    addMessage,
+    setChatHistory,
+    promptUser,
+    feature,
+    sdk,
+    conversationChain,
+  ]);
 
   const setupMessages = useCallback(
     async (newMessages?: CopilotMessage[]) => {
@@ -139,33 +210,6 @@ export const ChatUI = ({
           )
         ),
       });
-      const promptUser = () => {
-        bot.action
-          .set({ feature }, { actionType: 'text', feature })
-          .then(async ({ content }: { content: string }) => {
-            messages.current.push({
-              content: content,
-              type: 'text',
-              source: 'user',
-            });
-            setChatHistory(messages.current);
-            processMessage(
-              feature,
-              conversationChain,
-              sdk,
-              content,
-              messages.current,
-              (message) => addMessageForBot(bot, message)
-            ).then((shouldPrompt) => {
-              if (shouldPrompt) {
-                promptUser();
-              }
-            });
-            if (messages.current.length > 0) {
-              await bot.wait();
-            }
-          });
-      };
       if (messages.current.length === 0) {
         processMessage(
           feature,
@@ -173,7 +217,7 @@ export const ChatUI = ({
           sdk,
           '',
           messages.current,
-          (message) => addMessageForBot(bot, message)
+          (message) => addMessage(bot, { ...message, source: 'bot' })
         ).then((shouldPrompt) => {
           if (shouldPrompt) {
             promptUser();
@@ -185,12 +229,12 @@ export const ChatUI = ({
       setIsLoading(false);
     },
     [
-      setChatHistory,
+      promptUser,
       feature,
-      bot,
       conversationChain,
-      addMessageForBot,
       sdk,
+      addMessage,
+      bot,
       updateMessage,
     ]
   );

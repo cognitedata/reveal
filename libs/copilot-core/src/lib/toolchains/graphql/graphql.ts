@@ -1,4 +1,5 @@
-import { FdmMixerApiService } from '@fusion/data-modeling';
+import { GraphQlUtilsService } from '@platypus/platypus-common-utils';
+import { FdmMixerApiService } from '@platypus/platypus-core';
 import {
   BaseCallbackHandler,
   CallbackManager,
@@ -14,36 +15,48 @@ import {
   CogniteChainInput,
   CopilotMessage,
 } from '../../types';
-import { addToCopilotEventListener, sendToCopilotEvent } from '../../utils';
+import {
+  addToCopilotEventListener,
+  sendFromCopilotEvent,
+  sendToCopilotEvent,
+} from '../../utils';
 
 import { GRAPHQL_TYPE_TEMPLATE, GRAPHQL_QUERY_TEMPLATE } from './prompts';
+import { augmentQueryWithRequiredFields } from './utils';
 
-const handleChainStart = async (_: ChainValues): Promise<void> => {
-  return new Promise((resolve) => {
-    sendToCopilotEvent('NEW_MESSAGES', [
-      {
-        source: 'bot',
-        type: 'data-model',
-        content: 'Which data model are you referring to?',
-        pending: true,
-      },
-    ]);
-
-    const removeListener = addToCopilotEventListener('NEW_MESSAGES', (data) => {
-      if (
-        data.length === 1 &&
-        data[0].type === 'data-model' &&
-        !!data[0].space &&
-        !!data[0].dataModel &&
-        !!data[0].version &&
-        !data[0].pending
-      ) {
-        removeListener();
+const handleChainStart =
+  (messages: CogniteChainInput['messages']) => async (): Promise<void> => {
+    return new Promise((resolve) => {
+      if (getLatestDataModelMessage(messages.current || [])) {
         return resolve();
       }
+      sendToCopilotEvent('NEW_MESSAGES', [
+        {
+          source: 'bot',
+          type: 'data-model',
+          content: 'Which data model are you referring to?',
+          pending: true,
+        },
+      ]);
+
+      const removeListener = addToCopilotEventListener(
+        'NEW_MESSAGES',
+        (data) => {
+          if (
+            data.length === 1 &&
+            data[0].type === 'data-model' &&
+            !!data[0].space &&
+            !!data[0].dataModel &&
+            !!data[0].version &&
+            !data[0].pending
+          ) {
+            removeListener();
+            return resolve();
+          }
+        }
+      );
     });
-  });
-};
+  };
 
 /**
  * Chain to run queries against LLMs.
@@ -84,29 +97,25 @@ export class GraphQlChain extends CogniteBaseChain {
     }
     this.returnAll = fields.returnAll ?? false;
 
-    if (getLatestDataModelMessage(this.fields.messages.current || [])) {
-      return;
-    }
-
     // TODO refactor to generic class soon
     if (this.callbacks instanceof CallbackManager) {
       this.callbacks.addHandler(
         BaseCallbackHandler.fromMethods({
-          handleChainStart,
+          handleChainStart: handleChainStart(this.fields.messages),
         })
       );
     } else {
       this.callbacks = [
         ...(this.callbacks || []),
         BaseCallbackHandler.fromMethods({
-          handleChainStart,
+          handleChainStart: handleChainStart(this.fields.messages),
         }),
       ];
     }
   }
 
   get inputKeys() {
-    return ['input'];
+    return ['input', 'types'];
   }
 
   get outputKeys(): string[] {
@@ -133,12 +142,17 @@ export class GraphQlChain extends CogniteBaseChain {
       this.fields.sdk
     ).getDataModelVersionsById(space, dataModel);
     const dmVersion = versions.find((el) => el.version === version);
-    if (!version) {
+    if (!dmVersion) {
       throw new Error(
         `Data model ${dataModel} version ${version} not found in space ${space}`
       );
     }
-    console.log(dmVersion?.graphQlDml);
+    if (!dmVersion?.graphQlDml) {
+      throw new Error('Data model is empty');
+    }
+    const dataModelTypes = new GraphQlUtilsService().parseSchema(
+      dmVersion?.graphQlDml
+    );
     // Chain 1: Extract relevant types
     const graphQlTypePromptTemplate = new PromptTemplate({
       template: GRAPHQL_TYPE_TEMPLATE,
@@ -170,16 +184,26 @@ export class GraphQlChain extends CogniteBaseChain {
     });
     const query = await overallChain.call({
       input: values.input,
+      types: dataModelTypes.types.map((el) => el.name),
     });
+
+    const augmentedQuery = augmentQueryWithRequiredFields(
+      query.query,
+      dataModelTypes
+    );
 
     sendToCopilotEvent('NEW_MESSAGES', [
       {
         source: 'bot',
-        type: 'text',
-        content: query.query,
-        pending: false,
+        type: 'data-model-query',
+        version,
+        space,
+        dataModel,
+        content: augmentedQuery,
+        query: augmentedQuery,
       },
     ]);
+    sendFromCopilotEvent('GQL_QUERY', { query: augmentedQuery, arguments: {} });
 
     return query;
   }

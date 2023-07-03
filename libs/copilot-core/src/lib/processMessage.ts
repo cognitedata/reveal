@@ -15,7 +15,11 @@ export const processMessage = async (
       const sendMessage = params[3];
       const message = params[1];
       if (message) {
-        await chain.run(message);
+        await chain.call({
+          input: message,
+          sdk: params[0],
+          pastMessages: params[2],
+        });
       } else {
         sendMessage({
           type: 'text',

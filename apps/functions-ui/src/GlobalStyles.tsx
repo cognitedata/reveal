@@ -2,7 +2,6 @@
 // @ts-nocheck
 import React, { useEffect } from 'react';
 
-import botui from '@botui/react/default-theme';
 import affixStyle from 'antd/es/affix/style/index.less';
 import alertStyle from 'antd/es/alert/style/index.less';
 // import anchorStyle from 'antd/es/anchor/style/index.less';
@@ -70,7 +69,6 @@ import tooltipStyle from 'antd/es/tooltip/style/index.less';
 import treeStyle from 'antd/es/tree/style/index.less';
 import typographyStyle from 'antd/es/typography/style/index.less';
 import uploadStyle from 'antd/es/upload/style/index.less';
-import highlight from 'highlight.js/styles/dracula.css';
 
 import { useGlobalStyles } from '@cognite/cdf-utilities';
 import {
@@ -151,7 +149,7 @@ Dropdown.defaultProps = {
 };
 
 export default function GlobalStyles(props: { children: React.ReactNode }) {
-  const isStyleLoaded = useGlobalStyles([cogsStyles, botui, highlight]);
+  const isStyleLoaded = useGlobalStyles([cogsStyles]);
 
   useEffect(() => {
     styles.forEach((style) => style.use());
