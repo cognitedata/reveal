@@ -64,6 +64,7 @@ apps/3d-management                @cognitedata/3d-reveal-viewer-team
 apps/data-catalog                 @cognitedata/cdf-user-experience
 apps/extraction-pipelines         @cognitedata/cdf-user-experience
 apps/extractor-downloads          @cognitedata/cdf-user-experience
+apps/access-management            @cognitedata/cdf-user-experience
 
 libs/shared/cdf-utilities         @cognitedata/cdf-user-experience
 

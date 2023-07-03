@@ -53,3 +53,7 @@ design-system:
 charts:
   - apps/charts/*
   - apps/charts/**/*
+
+access-management:
+  - apps/access-management/*
+  - apps/access-management/**/*
