@@ -9,20 +9,22 @@ import { type Matrix4 } from 'three';
 type Cognite3dModelProps = {
   addModelOptions: AddModelOptions;
   transform?: Matrix4;
+  onLoad?: () => void;
 };
 
 export default function CadModelContainer({
   addModelOptions,
-  transform
+  transform,
+  onLoad
 }: Cognite3dModelProps): ReactElement {
   const modelRef = useRef<CogniteCadModel>();
   const viewer = useReveal();
-  const { modelId, revisionId } = addModelOptions;
+  const { modelId, revisionId, geometryFilter } = addModelOptions;
 
   useEffect(() => {
-    addModel(modelId, revisionId, transform).catch(console.error);
+    addModel(modelId, revisionId, transform, onLoad).catch(console.error);
     return removeModel;
-  }, [addModelOptions]);
+  }, [modelId, revisionId, geometryFilter]);
 
   useEffect(() => {
     if (modelRef.current === undefined || transform === undefined) return;
@@ -31,12 +33,18 @@ export default function CadModelContainer({
 
   return <></>;
 
-  async function addModel(modelId: number, revisionId: number, transform?: Matrix4): Promise<void> {
+  async function addModel(
+    modelId: number,
+    revisionId: number,
+    transform?: Matrix4,
+    onLoad?: () => void
+  ): Promise<void> {
     const cadModel = await viewer.addCadModel({ modelId, revisionId });
     if (transform !== undefined) {
       cadModel.setModelTransformation(transform);
     }
     modelRef.current = cadModel;
+    onLoad?.();
   }
 
   function removeModel(): void {

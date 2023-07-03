@@ -7,10 +7,12 @@ import { type Image360Collection } from '@cognite/reveal';
 
 type Image360CollectionContainerProps = {
   siteId: string;
+  onLoad?: () => void;
 };
 
 export function Image360CollectionContainer({
-  siteId
+  siteId,
+  onLoad
 }: Image360CollectionContainerProps): ReactElement {
   const modelRef = useRef<Image360Collection>();
   const viewer = useReveal();
@@ -25,6 +27,7 @@ export function Image360CollectionContainer({
   async function addModel(): Promise<void> {
     const image360Collection = await viewer.add360ImageSet('events', { site_id: siteId });
     modelRef.current = image360Collection;
+    onLoad?.();
   }
 
   function removeModel(): void {

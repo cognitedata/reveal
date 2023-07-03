@@ -7,3 +7,4 @@ export { default as PointCloudContainer } from './PointCloudContainer/PointCloud
 export { default as CadModelContainer } from './CadModelContainer/CadModelContainer';
 export { Image360CollectionContainer } from './Image360CollectionContainer/Image360CollectionContainer';
 export { Image360HistoricalDetails } from './Image360HistoricalDetails/Image360HistoricalDetails';
+export { Reveal3DResources } from './Reveal3DResources/Reveal3DResources';

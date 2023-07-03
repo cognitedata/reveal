@@ -10,11 +10,13 @@ import { useReveal } from '../RevealContainer/RevealContext';
 type Cognite3dModelProps = {
   addModelOptions: AddModelOptions;
   transform?: Matrix4;
+  onLoad?: () => void;
 };
 
 export default function PointCloudContainer({
   addModelOptions,
-  transform
+  transform,
+  onLoad
 }: Cognite3dModelProps): ReactElement {
   const modelRef = useRef<CognitePointCloudModel>();
   const viewer = useReveal();
@@ -23,7 +25,7 @@ export default function PointCloudContainer({
   useEffect(() => {
     addModel(modelId, revisionId, transform).catch(console.error);
     return removeModel;
-  }, [addModelOptions]);
+  }, [modelId, revisionId]);
 
   useEffect(() => {
     if (modelRef.current === undefined || transform === undefined) return;
@@ -37,8 +39,8 @@ export default function PointCloudContainer({
     if (transform !== undefined) {
       pointCloudModel.setModelTransformation(transform);
     }
-    console.log(pointCloudModel.getModelBoundingBox());
     modelRef.current = pointCloudModel;
+    onLoad?.();
   }
 
   function removeModel(): void {
