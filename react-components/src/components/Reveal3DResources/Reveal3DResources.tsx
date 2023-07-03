@@ -4,8 +4,10 @@
 import { useRef, type ReactElement, useContext } from 'react';
 import { type AddModelOptions } from '@cognite/reveal';
 import { type Matrix4 } from 'three';
-import { CadModelContainer, Image360CollectionContainer, PointCloudContainer } from '..';
 import { ModelsLoadingStateContext } from './ModelsLoadingContext';
+import CadModelContainer from '../CadModelContainer/CadModelContainer';
+import PointCloudContainer from '../PointCloudContainer/PointCloudContainer';
+import { Image360CollectionContainer } from '../Image360CollectionContainer/Image360CollectionContainer';
 
 export type AddImageCollection360Options = {
   siteId: string;
