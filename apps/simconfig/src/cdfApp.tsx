@@ -10,7 +10,7 @@ import {
   getEnv,
   getProject,
 } from '@cognite/cdf-utilities';
-import { Loader } from '@cognite/cogs.js';
+import { Loader } from '@cognite/cogs.js-v9';
 import { FlagProvider } from '@cognite/react-feature-flags';
 import { SDKProvider } from '@cognite/sdk-provider';
 
