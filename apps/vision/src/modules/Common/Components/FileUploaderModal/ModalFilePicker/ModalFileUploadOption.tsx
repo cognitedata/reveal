@@ -9,7 +9,7 @@ import {
   setDataSetIds,
   setExtractExif,
 } from '@vision/modules/Common/store/files/slice';
-import { AppDispatch } from '@vision/store';
+import { useThunkDispatch } from '@vision/store';
 import { RootState } from '@vision/store/rootReducer';
 
 import { Body, Checkbox, Detail, Icon, Tooltip } from '@cognite/cogs.js';
@@ -24,7 +24,7 @@ export function ModalFileUploadOption({
   isDisabled,
 }: ModalFileUploadOptionProps) {
   const queryClient = new QueryClient();
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useThunkDispatch();
 
   const { dataSetIds } = useSelector((state: RootState) => state.fileReducer); // remove these state dependencies
   const { extractExif } = useSelector((state: RootState) => state.fileReducer);

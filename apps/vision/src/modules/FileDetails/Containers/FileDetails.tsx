@@ -13,7 +13,7 @@ import {
   selectUpdatedFileMeta,
 } from '@vision/modules/FileDetails/selectors';
 import { fileInfoEdit } from '@vision/modules/FileDetails/slice';
-import { AppDispatch } from '@vision/store';
+import { useThunkDispatch } from '@vision/store';
 import { RootState } from '@vision/store/rootReducer';
 import { updateFileInfoField } from '@vision/store/thunks/Files/updateFileInfoField';
 import isEqual from 'lodash/isEqual';
@@ -31,7 +31,7 @@ export const FileDetails = ({
   onClose: () => void;
   onReview: () => void;
 }) => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useThunkDispatch();
 
   const fileDetails = useSelector((state: RootState) =>
     selectUpdatedFileDetails(state, fileId)

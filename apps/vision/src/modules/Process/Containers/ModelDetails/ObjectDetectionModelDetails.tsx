@@ -8,7 +8,7 @@ import {
 import ObjectDetectionIllustration from '@vision/assets/visualDescriptions/ObjectDetectionIllustration';
 import { ColorsObjectDetection } from '@vision/constants/Colors';
 import { setUnsavedDetectionModelSettings } from '@vision/modules/Process/store/slice';
-import { AppDispatch } from '@vision/store';
+import { useThunkDispatch } from '@vision/store';
 import { RootState } from '@vision/store/rootReducer';
 import { InputNumber } from 'antd';
 
@@ -41,7 +41,7 @@ export const badge = (modelName: string, hideText = false) => {
 };
 
 const Content = (modelIndex: number) => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useThunkDispatch();
 
   const modelName = useSelector(
     ({ processSlice }: RootState) =>

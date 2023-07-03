@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import styled from 'styled-components';
 
@@ -22,7 +22,7 @@ import {
   resetDetectionModelParameters,
   addToAvailableDetectionModels,
 } from '@vision/modules/Process/store/slice';
-import { AppDispatch } from '@vision/store';
+import { useThunkDispatch } from '@vision/store';
 import { RootState } from '@vision/store/rootReducer';
 import { RunDetectionModels } from '@vision/store/thunks/Process/RunDetectionModels';
 import { getContainer } from '@vision/utils';
@@ -43,7 +43,7 @@ export const ProcessToolBar = () => {
   if (!visionAutoMLEnabled)
     disabledModelTypes.push(VisionDetectionModelType.CustomModel);
 
-  const dispatch: AppDispatch = useDispatch<AppDispatch>();
+  const dispatch = useThunkDispatch();
 
   const processFiles = useSelector((state: RootState) =>
     selectAllProcessFiles(state)

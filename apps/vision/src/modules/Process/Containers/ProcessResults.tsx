@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import styled from 'styled-components';
@@ -51,7 +51,7 @@ import {
   setCurrentPage,
   setPageSize,
 } from '@vision/modules/Process/store/slice';
-import { AppDispatch } from '@vision/store';
+import { useThunkDispatch } from '@vision/store';
 import { RootState } from '@vision/store/rootReducer';
 import { RetrieveAnnotations } from '@vision/store/thunks/Annotation/RetrieveAnnotations';
 import { DeleteFilesById } from '@vision/store/thunks/Files/DeleteFilesById';
@@ -74,7 +74,7 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
     setShowContextMenu,
   } = useContextMenu();
 
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useThunkDispatch();
   const navigate = useNavigate();
   const focusedFileId = useSelector(
     ({ processSlice }: RootState) => processSlice.focusedFileId
