@@ -93,10 +93,12 @@ export function CalculationDetails() {
               <div>Simulator</div>
               <div>{modelCalculation.configuration.simulator}</div>
             </div>
-            <div className="entry">
-              <div>Unit system</div>
-              <div>{modelCalculation.configuration.unitSystem}</div>
-            </div>
+            {modelCalculation.configuration.unitSystem && (
+              <div className="entry">
+                <div>Unit system</div>
+                <div>{modelCalculation.configuration.unitSystem}</div>
+              </div>
+            )}
             <div className="entry">
               <div>Model name</div>
               <div>{modelCalculation.configuration.modelName}</div>

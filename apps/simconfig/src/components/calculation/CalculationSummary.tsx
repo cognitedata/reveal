@@ -325,7 +325,7 @@ export function CalculationSummary({ configuration }: CalculationSummaryProps) {
 
       {'routine' in configuration ? (
         <ConfigurationSection>
-          <h3>Calculation routine</h3>
+          <h3>Routine</h3>
           <CalculationRoutineList>
             {configuration.routine
               ? configuration.routine.map(({ order, description, steps }) => (
@@ -337,10 +337,7 @@ export function CalculationSummary({ configuration }: CalculationSummaryProps) {
                       <React.Fragment key={step}>
                         <div className="step">
                           {order}.{step}. {type} (
-                          {args.value
-                            ? `${args.address}, ${args.value}`
-                            : args.address}
-                          )
+                          {Object.values(args).join(', ')})
                         </div>
                       </React.Fragment>
                     ))}
@@ -366,10 +363,12 @@ export function CalculationSummary({ configuration }: CalculationSummaryProps) {
           )}
         </h3>
         <InputTimeseriesList>
-          <div className="heading">Input</div>
+          <div className="heading">Name</div>
           <div className="heading">Unit</div>
-          <div className="heading">Sensor time series</div>
-          <div className="heading">Sampling method</div>
+          <InputTimeseriesSublist>
+            <div className="heading">Sensor time series</div>
+            <div className="heading">Sampling method</div>
+          </InputTimeseriesSublist>
           {configuration.inputTimeSeries.map(
             ({
               name,
@@ -394,14 +393,16 @@ export function CalculationSummary({ configuration }: CalculationSummaryProps) {
                   (
                   <NullableValue value={unitType} />)
                 </div>
-                <div>
-                  <NullableValue value={sensorExternalId} />
-                </div>
-                <div>
-                  <NullableValue
-                    value={definitions?.type.aggregate[aggregateType]}
-                  />
-                </div>
+                <InputTimeseriesSublist>
+                  <div>
+                    <NullableValue value={sensorExternalId} />
+                  </div>
+                  <div>
+                    <NullableValue
+                      value={definitions?.type.aggregate[aggregateType]}
+                    />
+                  </div>
+                </InputTimeseriesSublist>
               </React.Fragment>
             )
           )}
@@ -468,10 +469,8 @@ function NullableValue({
 }
 
 const ConfigurationSection = styled.div`
-  &:not(:first-child) {
-    border-top: 1px solid var(--cogs-border-default);
-    margin-top: 24px;
-  }
+  border-top: 1px solid var(--cogs-border-default);
+  margin-top: 24px;
   h3 {
     margin-top: 24px;
     text-transform: none;
@@ -522,7 +521,7 @@ const ChokeCurve = styled.div`
 
 const InputTimeseriesList = styled.div`
   display: grid;
-  grid-template-columns: 1fr 0.5fr 1fr 0.5fr;
+  grid-template-columns: 1fr 0.5fr 1.5fr;
   & > div {
     white-space: nowrap;
     overflow: hidden;
@@ -534,9 +533,19 @@ const InputTimeseriesList = styled.div`
   }
 `;
 
+const InputTimeseriesSublist = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 0.5fr;
+  & > div {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+`;
+
 const OutputTimeseriesList = styled.div`
   display: grid;
-  grid-template-columns: 1fr 0.5fr 1fr;
+  grid-template-columns: 1fr 0.5fr 1.5fr;
   & > div {
     white-space: nowrap;
     overflow: hidden;
