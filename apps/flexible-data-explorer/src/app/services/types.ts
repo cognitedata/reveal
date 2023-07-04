@@ -5,6 +5,8 @@ export type DataModel = {
   version?: string;
 };
 
+export type DataType = string;
+
 export type Instance = {
   dataType?: string;
   instanceSpace?: string;
@@ -26,6 +28,20 @@ export type DataModelByIdResponse = {
   version: string;
   name: string;
   description: string;
+};
+
+export type SearchResponse = {
+  items: any[];
+};
+
+export type SearchAggregateCountResponse = {
+  items: [
+    {
+      count: {
+        externalId: number;
+      };
+    }
+  ];
 };
 
 export type IntrospectionResponse = {
