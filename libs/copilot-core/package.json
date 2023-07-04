@@ -27,9 +27,5 @@
   },
   "peerDependencies": {
     "@cognite/sdk": "^7.19.1"
-  },
-  "module": "./index.js",
-  "main": "./index.js",
-  "type": "module",
-  "types": "./src/index.d.ts"
+  }
 }
