@@ -2,19 +2,16 @@ import {
   PointsOfInterestCollection,
   PointOfInterest,
   useInfiniteChecklistItems,
-  APMConfigNode,
 } from '../hooks';
 
-export const useInfinitePointsOfInterestCollections = (
-  apmConfig?: APMConfigNode
-) => {
+export const useInfinitePointsOfInterestCollections = () => {
   const {
     data: fdmChecklistResponse,
     hasNextPage,
     fetchNextPage,
     isFetchingNextPage,
     isFetching,
-  } = useInfiniteChecklistItems(apmConfig);
+  } = useInfiniteChecklistItems();
 
   const pointsOfInterestCollections: PointsOfInterestCollection[] =
     fdmChecklistResponse?.pages?.flatMap((page): PointsOfInterestCollection[] =>

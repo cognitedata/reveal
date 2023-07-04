@@ -5,7 +5,6 @@ import styled from 'styled-components';
 import { Divider, Flex } from '@cognite/cogs.js';
 import { Model3D } from '@cognite/sdk';
 
-import { useAPMConfig } from '@data-exploration-app/containers/ThreeD/hooks';
 import { useFlagPointsOfInterestFeature } from '@data-exploration-app/hooks/flags';
 import { useTranslation } from '@data-exploration-lib/core';
 import {
@@ -45,7 +44,6 @@ export const ThreeDTopbar = ({
   const { t } = useTranslation();
 
   const usePointsOfInterestFeatureFlag = useFlagPointsOfInterestFeature();
-  const { data: config } = useAPMConfig();
 
   if (!secondaryObjectsVisibilityState) return <></>;
 
@@ -126,7 +124,6 @@ export const ThreeDTopbar = ({
                 <PointsOfInterestDropdown
                   internalPointsOfInterestCollections={pointsOfInterest}
                   setInternalPointsOfInterestCollections={setPointsOfInterest}
-                  config={config}
                 />
               }
             >

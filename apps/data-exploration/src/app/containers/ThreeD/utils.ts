@@ -34,6 +34,7 @@ import {
   SlicingState,
 } from '@data-exploration-app/containers/ThreeD/contexts/ThreeDContext';
 import {
+  PointsOfInterestCollection,
   fetchAssetDetails,
   fetchAssetMappingsByAssetIdQuery,
   fetchClosestAssetIdQuery,
@@ -50,6 +51,7 @@ export const THREE_D_SELECTED_ASSET_QUERY_PARAMETER_KEY = 'selectedAssetId';
 export const THREE_D_ASSET_DETAILS_EXPANDED_QUERY_PARAMETER_KEY = 'expanded';
 export const THREE_D_ASSET_HIGHLIGHT_MODE_PARAMETER_KEY = 'hl_mode';
 export const THREE_D_SECONDARY_MODELS_QUERY_PARAMETER_KEY = 'secondaryModels';
+export const THREE_D_POINTS_OF_INTEREST_QUERY_PARAMETER_KEY = 'pointsOfInterest';
 export const THREE_D_REVISION_ID_QUERY_PARAMETER_KEY = 'revisionId';
 export const THREE_D_CUBEMAP_360_IMAGES_QUERY_PARAMETER_KEY = 'images360';
 
@@ -436,9 +438,11 @@ export const getStateUrl = ({
   assetDetailsExpanded,
   selectedAssetId,
   secondaryModels,
+  pointsOfInterest,
   images360,
   assetHighlightMode,
 }: {
+  pointsOfInterest?: PointsOfInterestCollection[];
   revisionId?: number;
   viewState?: ViewerState;
   slicingState?: SlicingState;
@@ -454,7 +458,6 @@ export const getStateUrl = ({
   } else {
     searchParams.delete(THREE_D_REVISION_ID_QUERY_PARAMETER_KEY);
   }
-
   if (selectedAssetId) {
     searchParams.set(
       THREE_D_SELECTED_ASSET_QUERY_PARAMETER_KEY,
@@ -475,6 +478,19 @@ export const getStateUrl = ({
     searchParams.set(THREE_D_ASSET_HIGHLIGHT_MODE_PARAMETER_KEY, 'true');
   } else {
     searchParams.delete(THREE_D_ASSET_HIGHLIGHT_MODE_PARAMETER_KEY);
+  }
+  if (pointsOfInterest) {
+    const selectedPointsOfInterest = pointsOfInterest
+      .filter((poi) => !!poi.applied)
+      .map((poi) => ({
+        id: poi.externalId
+      }));
+    searchParams.set(
+      THREE_D_POINTS_OF_INTEREST_QUERY_PARAMETER_KEY,
+      JSON.stringify(selectedPointsOfInterest)
+    );
+  } else {
+    searchParams.delete(THREE_D_POINTS_OF_INTEREST_QUERY_PARAMETER_KEY);
   }
   if (secondaryModels) {
     const selectedModels = secondaryModels
