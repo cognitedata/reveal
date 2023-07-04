@@ -77,7 +77,6 @@ function ModalBody({ logs, call, errors, fetched }: BodyProps) {
       <p key={`${call?.id}-logs`}>
         {logs?.map((log: Log, index) => (
           <React.Fragment key={index}>
-            {log.message}
             <Highlighter
               highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
               searchWords={[logsSearch]}
