@@ -3,18 +3,12 @@ import { PropsWithChildren } from 'react';
 import styled from 'styled-components';
 
 interface Props {
-  empty?: boolean;
   noShadow?: boolean;
 }
 export const SearchResultsBody: React.FC<PropsWithChildren<Props>> = ({
   children,
   noShadow,
-  empty,
 }) => {
-  if (empty) {
-    return null;
-  }
-
   return <Container noShadow={noShadow}>{children}</Container>;
 };
 

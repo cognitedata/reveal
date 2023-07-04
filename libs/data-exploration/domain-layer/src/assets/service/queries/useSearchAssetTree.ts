@@ -93,7 +93,11 @@ export const useSearchAssetTree = (
 
       const flaggedTreeForMore = isEmpty(concattedParentsTree)
         ? ([] as InternalAssetTreeData[])
-        : [setIsLastFetched(concattedParentsTree[0])];
+        : [
+            ...concattedParentsTree.map((parentTree) =>
+              setIsLastFetched(parentTree)
+            ),
+          ];
 
       return { data: flaggedTreeForMore, ...rest };
     }

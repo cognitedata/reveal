@@ -188,6 +188,9 @@ export function Table<T extends TableData>({
             disabled: !row.getCanSelect(),
             indeterminate: row.getIsSomeSelected(),
             onChange: row.getToggleSelectedHandler(),
+            onClick: (event: React.MouseEvent<HTMLInputElement>) => {
+              event.stopPropagation();
+            },
           }}
         />
       );

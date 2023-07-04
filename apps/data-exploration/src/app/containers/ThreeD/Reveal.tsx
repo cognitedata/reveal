@@ -128,7 +128,7 @@ export function Reveal({
   useEffect(() => {
     const loadModel = async () => {
       if (!viewer) {
-        return Promise.reject('Viewer missing');
+        return Promise.reject(new Error('Viewer missing'));
       }
 
       let model;
@@ -143,7 +143,9 @@ export function Reveal({
           });
         } catch {
           return Promise.reject(
-            'The selected 3D model is not supported and can not be loaded. If the 3D model is very old, try uploading a new revision under Upload 3D models in Fusion.'
+            new Error(
+              'The selected 3D model is not supported and can not be loaded. If the 3D model is very old, try uploading a new revision under Upload 3D models in Fusion.'
+            )
           );
         }
       }
@@ -182,7 +184,9 @@ export function Reveal({
             { preMultipliedRotation: false }
           );
         } catch {
-          return Promise.reject('The selected 360 image set is not supported');
+          return Promise.reject(
+            new Error('The selected 360 image set is not supported')
+          );
         }
 
         const currentImage360 = initialViewerState
@@ -226,8 +230,8 @@ export function Reveal({
 
     const modelsPromise = loadModel();
 
-    modelsPromise.then(setModels, (reason) =>
-      setModelError({ message: reason })
+    modelsPromise.then(setModels, (reason: Error) =>
+      setModelError({ message: reason.message })
     );
 
     return () => {
@@ -269,6 +273,7 @@ export function Reveal({
     setImage360,
     setImage360Entity,
     setPointCloudModel,
+    setEntered360ImageCollection,
   ]);
 
   useEffect(() => {
@@ -301,7 +306,7 @@ export function Reveal({
         toastId: 'reveal-model-load-error',
       });
     }
-  }, [modelError]);
+  }, [modelError, t]);
 
   const threeDModel = models?.threeDModel;
   const imageCollection = models?.imageCollection;
