@@ -25,7 +25,7 @@ import {
   EventDetailsTable,
   FileDetailsTable,
   SequenceDetailsTable,
-  TimeseriesDetailsTable,
+  TimesereisSmallPreviewTable,
 } from '../../DetailsTable';
 import { AssetInfo } from '../../Info';
 import { ResourceSelection } from '../../ResourceSelector';
@@ -187,17 +187,14 @@ export const AssetDetails: FC<
 
         {isTimeseriesVisible && (
           <Collapse.Panel header={<h4>{t('TIMESERIES', TIME_SERIES)}</h4>}>
-            <TimeseriesDetailsTable
-              id="related-timeseries-asset-details"
+            <TimesereisSmallPreviewTable
               data={relatedTimeseries}
               fetchMore={timeseriesFetchNextPage}
               hasNextPage={timeseriesHasNextPage}
-              isLoadingMore={isTimeseriesLoading}
-              enableSelection={enableDetailTableSelection}
-              selectedRows={selectedRows?.timeSeries || {}}
-              onRowSelection={(updater, currentTimeseries) =>
-                onSelect?.(updater, currentTimeseries, 'timeSeries')
-              }
+              isLoading={isTimeseriesLoading}
+              enableDetailTableSelection={enableDetailTableSelection}
+              selectedRows={selectedRows}
+              onSelect={onSelect}
             />
           </Collapse.Panel>
         )}

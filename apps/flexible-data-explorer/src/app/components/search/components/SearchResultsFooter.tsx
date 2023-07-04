@@ -8,12 +8,7 @@ interface Props {
 
 export const SearchResultsFooter: React.FC<PropsWithChildren<Props>> = ({
   children,
-  empty,
 }) => {
-  if (empty) {
-    return null;
-  }
-
   return <Container>{children}</Container>;
 };
 

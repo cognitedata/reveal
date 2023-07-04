@@ -44,7 +44,7 @@ export const useDataSourceValidity = () => {
           type: 'error',
           message: t(
             'data_quality_not_found_timeseries_ds',
-            "Something went wrong. We couldn't load the timeseries for the data source."
+            'Something went wrong. The timeseries for the data source could not be loaded.'
           ),
           errors: JSON.stringify(err),
         });

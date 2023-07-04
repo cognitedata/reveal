@@ -40,6 +40,7 @@ export const useLoadDataSource = (): {
     data: dataSourcesData,
     error: dataSourcesError,
     isLoading: dataSourcesLoading,
+    isRefetching: dataSourcesRefetching,
     refetch,
   } = useListDataSources({});
 
@@ -97,7 +98,7 @@ export const useLoadDataSource = (): {
     };
 
     // Start looking for a data source when we have the list of all datasources
-    if (dataSourcesLoading || dataSourcesError) return;
+    if (dataSourcesLoading || dataSourcesError || dataSourcesRefetching) return;
 
     // Try to find an existing data source in the fetched list
     const existingDataSource = findDataSource(
@@ -119,7 +120,7 @@ export const useLoadDataSource = (): {
           type: 'error',
           message: t(
             'data_quality_not_found_ds',
-            "Something went wrong. We couldn't load the data source."
+            'Something went wrong. The data source could not be loaded.'
           ),
           errors: JSON.stringify(err?.stack?.error),
         });

@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 
 import {
+  getHighlightQuery,
   getTableColumns,
   SubCellMatchingLabels,
   Table,
@@ -13,6 +14,7 @@ import { Asset, CogniteEvent } from '@cognite/sdk';
 import {
   getHiddenColumns,
   RelationshipLabels,
+  useGetSearchConfigFromLocalStorage,
   useTranslation,
 } from '@data-exploration-lib/core';
 import { InternalEventDataWithMatchingLabels } from '@data-exploration-lib/domain-layer';
@@ -32,24 +34,40 @@ export const EventTable = ({
   const { metadataColumns, setMetadataKeyQuery } = useEventsMetadataColumns();
   const { t } = useTranslation();
   const tableColumns = getTableColumns(t);
+  const eventSearchConfig = useGetSearchConfigFromLocalStorage('event');
 
   const columns = useMemo(
     () =>
       [
-        { ...tableColumns.type(query), enableHiding: false },
-        tableColumns.subtype(query),
-        tableColumns.description(query),
-        tableColumns.externalId(query),
+        {
+          ...tableColumns.type(
+            getHighlightQuery(eventSearchConfig?.type.enabled, query)
+          ),
+          enableHiding: false,
+        },
+        tableColumns.subtype(
+          getHighlightQuery(eventSearchConfig?.subtype.enabled, query)
+        ),
+        tableColumns.description(
+          getHighlightQuery(eventSearchConfig?.description.enabled, query)
+        ),
+        tableColumns.externalId(
+          getHighlightQuery(eventSearchConfig?.externalId.enabled, query)
+        ),
         tableColumns.lastUpdatedTime,
         tableColumns.created,
         {
-          ...tableColumns.id(query),
+          ...tableColumns.id(
+            getHighlightQuery(eventSearchConfig?.id.enabled, query)
+          ),
           enableSorting: false,
         },
         { ...tableColumns.dataSet, enableSorting: true },
         tableColumns.startTime,
         tableColumns.endTime,
-        tableColumns.source(query),
+        tableColumns.source(
+          getHighlightQuery(eventSearchConfig?.source.enabled, query)
+        ),
         tableColumns.assets(onDirectAssetClick),
         ...metadataColumns,
       ] as ColumnDef<CogniteEvent>[],

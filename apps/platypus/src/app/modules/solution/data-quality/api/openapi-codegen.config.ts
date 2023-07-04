@@ -2,6 +2,7 @@ import { defineConfig } from '@openapi-codegen/cli';
 import {
   generateSchemaTypes,
   generateReactQueryComponents,
+  forceReactQueryComponent,
 } from '@openapi-codegen/typescript';
 
 export default defineConfig({
@@ -13,6 +14,12 @@ export default defineConfig({
     outputDir: 'codegen',
     to: async (context) => {
       const filenamePrefix = 'DataQuality';
+
+      context.openAPIDocument = forceReactQueryComponent({
+        openAPIDocument: context.openAPIDocument,
+        component: 'useQuery',
+        operationId: 'listByIdsRulesets',
+      });
 
       const { schemasFiles } = await generateSchemaTypes(context, {
         filenamePrefix,

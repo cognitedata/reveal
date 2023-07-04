@@ -32,15 +32,14 @@ jobs:
           channelId: live
           projectId: fbhosting-217032465111-staging
           target: cognite-flexible-data-explorer-staging
-# Disabled temporarily
-#      - uses: FirebaseExtended/action-hosting-deploy@v0
-#        with:
-#          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-#          firebaseServiceAccount: '${{ secrets.FIREBASE_HOSTING_DEPLOY_SA }}'
-#          channelId: live
-#          projectId: fbhosting-217032465111
-#          target: cognite-flexible-data-explorer-production
-
+      # Disabled temporarily
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_HOSTING_DEPLOY_SA }}'
+          channelId: live
+          projectId: fbhosting-217032465111
+          target: cognite-flexible-data-explorer-production
 # Bring this back when the release strategy is in place for fdx
 # - uses: FirebaseExtended/action-hosting-deploy@v0
 #   with:

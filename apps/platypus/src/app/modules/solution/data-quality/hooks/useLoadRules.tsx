@@ -25,6 +25,7 @@ export const useLoadRules = () => {
     data: rulesData,
     isLoading: rulesLoading,
     error: rulesError,
+    refetch,
   } = useListAllRules(
     {
       pathParams: {
@@ -63,8 +64,8 @@ export const useLoadRules = () => {
         Notification({
           type: 'error',
           message: t(
-            'data_quality_not_found_timeseries',
-            "Something went wrong. We couldn't load the timeseries for the given rules."
+            'data_quality_not_found_timeseries_rules',
+            'Something went wrong. The timeseries for the given rules could not be loaded.'
           ),
           errors: JSON.stringify(err),
         });
@@ -86,6 +87,7 @@ export const useLoadRules = () => {
     error: rulesError,
     loadingDatapoints,
     loadingRules: rulesLoading,
+    refetchRules: refetch,
     rules,
   };
 };

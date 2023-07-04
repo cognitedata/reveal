@@ -2,6 +2,7 @@ import basicSsl from '@vitejs/plugin-basic-ssl';
 import react from '@vitejs/plugin-react';
 import { defineConfig, loadEnv, searchForWorkspaceRoot } from 'vite';
 import macrosPlugin from 'vite-plugin-babel-macros';
+import svgr from 'vite-plugin-svgr';
 import viteTsConfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig((configType) => {
@@ -39,6 +40,7 @@ export default defineConfig((configType) => {
 
     plugins: [
       basicSsl(),
+      svgr(),
       react(),
       viteTsConfigPaths({
         projects: ['../../tsconfig.base.json', './tsconfig.json'],

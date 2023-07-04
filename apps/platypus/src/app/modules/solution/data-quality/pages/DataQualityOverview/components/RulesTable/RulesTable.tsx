@@ -1,5 +1,8 @@
+import { useState } from 'react';
+
 import { RuleDto } from '@data-quality/api/codegen';
 import { useLoadDataSource, useLoadRules } from '@data-quality/hooks';
+import { UpsertRuleDrawer } from '@data-quality/pages';
 import { BasicPlaceholder } from '@platypus-app/components/BasicPlaceholder/BasicPlaceholder';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
@@ -9,14 +12,16 @@ import { Body, Flex, Table, TableColumn, Title } from '@cognite/cogs.js';
 import { LastValidationTime } from '..';
 
 import {
-  renderItemsCheckedCell,
-  renderNameCell,
-  renderSeverityCell,
-  renderValidityCell,
-} from './helpers';
+  NameCell,
+  ValidityCell,
+  SeverityCell,
+  ItemsCheckedCell,
+} from './RulesTableCells';
 
 export const RulesTable = () => {
   const { t } = useTranslation('RulesTable');
+
+  const [editedRule, setEditedRule] = useState<RuleDto | undefined>();
 
   const { datapoints, error, loadingDatapoints, loadingRules, rules } =
     useLoadRules();
@@ -27,35 +32,44 @@ export const RulesTable = () => {
       Header: 'Name',
       accessor: 'name',
       Cell: ({ row }: any) => {
-        return renderNameCell(row.original.name);
+        return (
+          <NameCell
+            onClick={() => setEditedRule(row.original)}
+            ruleName={row.original.name}
+          />
+        );
       },
     },
     {
       Header: 'Severity',
       accessor: 'severity',
       Cell: ({ row }: any) => {
-        return renderSeverityCell(row.original.severity);
+        return <SeverityCell severity={row.original.severity} />;
       },
     },
     {
       Header: 'Validity',
       Cell: ({ row }: any) => {
-        return renderValidityCell(
-          row.original.externalId,
-          datapoints,
-          loadingDatapoints,
-          dataSource?.externalId
+        return (
+          <ValidityCell
+            datapoints={datapoints}
+            dataSourceId={dataSource?.externalId}
+            loadingDatapoints={loadingDatapoints}
+            ruleId={row.original.externalId}
+          />
         );
       },
     },
     {
       Header: 'Items checked',
       Cell: ({ row }: any) => {
-        return renderItemsCheckedCell(
-          row.original.externalId,
-          datapoints,
-          loadingDatapoints,
-          dataSource?.externalId
+        return (
+          <ItemsCheckedCell
+            datapoints={datapoints}
+            dataSourceId={dataSource?.externalId}
+            loadingDatapoints={loadingDatapoints}
+            ruleId={row.original.externalId}
+          />
         );
       },
     },
@@ -70,7 +84,7 @@ export const RulesTable = () => {
           type="EmptyStateFolderSad"
           title={t(
             'data_quality_not_found_rules',
-            "Something went wrong. We couldn't load the rules."
+            'Something went wrong. The rules could not be loaded.'
           )}
         >
           <Body level={5}>{JSON.stringify(error)}</Body>
@@ -87,16 +101,24 @@ export const RulesTable = () => {
   };
 
   return (
-    <Flex direction="column" gap={22}>
-      <Flex direction="row" justifyContent="space-between" gap={10}>
-        <Title level={5}>{t('data_quality_all_rules', 'All rules')}</Title>
-        <LastValidationTime
-          datapoints={datapoints}
-          loading={loadingDatapoints}
-        />
+    <>
+      <Flex direction="column" gap={22}>
+        <Flex direction="row" justifyContent="space-between" gap={10}>
+          <Title level={5}>{t('data_quality_all_rules', 'All rules')}</Title>
+          <LastValidationTime
+            datapoints={datapoints}
+            loading={loadingDatapoints}
+          />
+        </Flex>
+
+        {renderContent()}
       </Flex>
 
-      {renderContent()}
-    </Flex>
+      <UpsertRuleDrawer
+        editedRule={editedRule}
+        isVisible={!!editedRule}
+        onCancel={() => setEditedRule(undefined)}
+      />
+    </>
   );
 };

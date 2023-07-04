@@ -11,6 +11,7 @@ type LanguageTabProps = {
 const supportedLanguages = {
   en: 'english',
   de: 'german',
+  'de-AT': 'german-at',
   es: 'spanish',
   fr: 'french',
   it: 'italian',
@@ -18,6 +19,7 @@ const supportedLanguages = {
   ko: 'korean',
   nl: 'dutch',
   pt: 'portuguese',
+  ro: 'romanian',
   sv: 'swedish',
   zh: 'chinese',
 } as const;
@@ -32,10 +34,12 @@ export type LanguageTabLocale = {
     'language-english-label': string;
     'language-french-label'?: string;
     'language-german-label'?: string;
+    'language-german-at-label'?: string;
     'language-italian-label'?: string;
     'language-japanese-label': string;
     'language-korean-label'?: string;
     'language-portuguese-label'?: string;
+    'language-romanian-label'?: string;
     'language-spanish-label'?: string;
     'language-swedish-label'?: string;
   };
@@ -52,10 +56,12 @@ const DEFAULT_LOCALE: LanguageTabLocale = {
     'language-english-label': 'English | en',
     'language-french-label': 'Français, langue française | fr',
     'language-german-label': 'Deutsch | de',
+    'language-german-at-label': 'Deutsch AT | de-AT',
     'language-italian-label': 'Italiano | it',
     'language-japanese-label': '日本語 (にほんご／にっぽんご) | ja',
     'language-korean-label': '한국어 (韓國語), 조선말 (朝鮮語) | ko',
     'language-portuguese-label': 'Português | pt',
+    'language-romanian-label': 'română | ro',
     'language-spanish-label': 'Español, Castellano | es',
     'language-swedish-label': 'svenska | sv',
   },

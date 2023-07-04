@@ -331,7 +331,7 @@ export type CreateRulesetsVariables = {
 } & DataQualityContext['fetcherOptions'];
 
 /**
- * Add or update (upsert) rulesets.
+ * Add rulesets.
  */
 export const fetchCreateRulesets = (
   variables: CreateRulesetsVariables,
@@ -352,7 +352,7 @@ export const fetchCreateRulesets = (
   });
 
 /**
- * Add or update (upsert) rulesets.
+ * Add rulesets.
  */
 export const useCreateRulesets = (
   options?: Omit<
@@ -513,25 +513,35 @@ export const fetchListByIdsRulesets = (
 /**
  * Retrieve up to 100 rulesets by specifying their ids.
  */
-export const useListByIdsRulesets = (
+export const useListByIdsRulesets = <TData = Responses.RulesetListResponse>(
+  variables: ListByIdsRulesetsVariables,
   options?: Omit<
-    reactQuery.UseMutationOptions<
+    reactQuery.UseQueryOptions<
       Responses.RulesetListResponse,
       ListByIdsRulesetsError,
-      ListByIdsRulesetsVariables
+      TData
     >,
-    'mutationFn'
+    'queryKey' | 'queryFn'
   >
 ) => {
-  const { fetcherOptions } = useDataQualityContext();
-  return reactQuery.useMutation<
+  const { fetcherOptions, queryOptions, queryKeyFn } =
+    useDataQualityContext(options);
+  return reactQuery.useQuery<
     Responses.RulesetListResponse,
     ListByIdsRulesetsError,
-    ListByIdsRulesetsVariables
+    TData
   >(
-    (variables: ListByIdsRulesetsVariables) =>
-      fetchListByIdsRulesets({ ...fetcherOptions, ...variables }),
-    options
+    queryKeyFn({
+      path: '/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/rulesets/byids',
+      operationId: 'listByIdsRulesets',
+      variables,
+    }),
+    ({ signal }) =>
+      fetchListByIdsRulesets({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions,
+    }
   );
 };
 
@@ -638,7 +648,7 @@ export type CreateRulesVariables = {
 } & DataQualityContext['fetcherOptions'];
 
 /**
- * Add or update (upsert) rules.
+ * Create a set of new rules.
  */
 export const fetchCreateRules = (
   variables: CreateRulesVariables,
@@ -659,7 +669,7 @@ export const fetchCreateRules = (
   });
 
 /**
- * Add or update (upsert) rules.
+ * Create a set of new rules.
  */
 export const useCreateRules = (
   options?: Omit<
@@ -920,6 +930,79 @@ export const useDeleteRules = (
   );
 };
 
+export type UpdateRulesPathParams = {
+  /**
+   * The project name.
+   *
+   * @example publicdata
+   */
+  project?: string;
+  /**
+   * The external id of the data source.
+   */
+  dataSourceId?: string;
+  /**
+   * The external id of the ruleset.
+   */
+  rulesetId?: string;
+};
+
+export type UpdateRulesError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: Responses.ErrorResponse;
+}>;
+
+export type UpdateRulesVariables = {
+  body: Schemas.RuleUpdateRequest;
+  pathParams?: UpdateRulesPathParams;
+} & DataQualityContext['fetcherOptions'];
+
+/**
+ * Update the properties of a set of rules
+ */
+export const fetchUpdateRules = (
+  variables: UpdateRulesVariables,
+  signal?: AbortSignal
+) =>
+  dataQualityFetch<
+    Responses.RuleListResponse,
+    UpdateRulesError,
+    Schemas.RuleUpdateRequest,
+    {},
+    {},
+    UpdateRulesPathParams
+  >({
+    url: '/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/rulesets/{rulesetId}/rules/update',
+    method: 'post',
+    ...variables,
+    signal,
+  });
+
+/**
+ * Update the properties of a set of rules
+ */
+export const useUpdateRules = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      Responses.RuleListResponse,
+      UpdateRulesError,
+      UpdateRulesVariables
+    >,
+    'mutationFn'
+  >
+) => {
+  const { fetcherOptions } = useDataQualityContext();
+  return reactQuery.useMutation<
+    Responses.RuleListResponse,
+    UpdateRulesError,
+    UpdateRulesVariables
+  >(
+    (variables: UpdateRulesVariables) =>
+      fetchUpdateRules({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
 export type ListAllRulesPathParams = {
   /**
    * The project name.
@@ -1086,6 +1169,11 @@ export type QueryOperation =
       path: '/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/rulesets';
       operationId: 'listRulesets';
       variables: ListRulesetsVariables;
+    }
+  | {
+      path: '/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/rulesets/byids';
+      operationId: 'listByIdsRulesets';
+      variables: ListByIdsRulesetsVariables;
     }
   | {
       path: '/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/rulesets/{rulesetId}/rules';
