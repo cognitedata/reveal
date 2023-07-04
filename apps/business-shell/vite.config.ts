@@ -1,3 +1,4 @@
+/// <reference types="vitest" />
 import basicSsl from '@vitejs/plugin-basic-ssl';
 import react from '@vitejs/plugin-react';
 import { defineConfig, loadEnv, searchForWorkspaceRoot } from 'vite';
@@ -15,7 +16,7 @@ export default defineConfig((configType) => {
   };
 
   return {
-    cacheDir: '../../node_modules/.vite/flexible-data-explorer',
+    cacheDir: '../../node_modules/.vite/business-shell',
 
     resolve: {
       dedupe: ['@cognite/plotting-components'],
@@ -29,13 +30,13 @@ export default defineConfig((configType) => {
         allow: [searchForWorkspaceRoot(process.cwd())],
       },
     },
+    define: {
+      'process.env': env,
+    },
 
     preview: {
       port: 4300,
       host: 'localhost',
-    },
-    define: {
-      'process.env': env,
     },
 
     plugins: [
