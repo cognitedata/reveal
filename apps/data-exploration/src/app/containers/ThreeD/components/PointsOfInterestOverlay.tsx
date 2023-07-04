@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import sdk from '@cognite/cdf-sdk-singleton';
+import { createLink } from '@cognite/cdf-utilities';
 import {
   Button,
   Tooltip,
@@ -21,7 +22,6 @@ import { useFileDownloadLinks } from '../hooks/useFileDownloadLinks';
 
 export type PointsOfInterestOverlayProps = {
   pointOfInterestData: PointOfInterestOverlayData;
-  visible: boolean;
   onClose: () => void;
 };
 
@@ -33,9 +33,10 @@ export type PointOfInterestOverlayData = {
 
 export const PointsOfInterestOverlay: React.FC<
   PointsOfInterestOverlayProps
-> = ({ pointOfInterestData, onClose, visible }) => {
+> = ({ pointOfInterestData, onClose }) => {
   const [imagePreviewState, setImagePreviewState] = useState({
     visible: false,
+    fileId: -1,
     src: '',
   });
 
@@ -52,9 +53,11 @@ export const PointsOfInterestOverlay: React.FC<
 
   const onImageClick = async (externalId: string) => {
     const links = await sdk.files.getDownloadUrls([{ externalId }]);
+    const fileId = (await sdk.files.retrieve([{ externalId }]))[0]?.id;
 
     setImagePreviewState({
       visible: true,
+      fileId,
       src: links[0].downloadUrl,
     });
   };
@@ -63,9 +66,23 @@ export const PointsOfInterestOverlay: React.FC<
     <>
       <StyledModal
         title={pointOfInterestData.title + ' media preview'}
-        hideFooter={true}
+        additionalActions={{
+          children: 'File details',
+          icon: 'ExternalLink',
+          iconPlacement: 'right',
+          onClick: () => {
+            window.open(
+              createLink(`/explore/search/file/${imagePreviewState.fileId}`),
+              '_blank',
+              'noreferrer'
+            );
+          },
+        }}
         size="x-large"
         onCancel={() =>
+          setImagePreviewState({ ...imagePreviewState, visible: false })
+        }
+        onOk={() =>
           setImagePreviewState({ ...imagePreviewState, visible: false })
         }
         visible={imagePreviewState.visible}
@@ -76,11 +93,7 @@ export const PointsOfInterestOverlay: React.FC<
           <StyledImage src={imagePreviewState.src} alt="thumbnail" />
         </div>
       </StyledModal>
-      <Container
-        style={{
-          visibility: visible ? 'visible' : 'hidden',
-        }}
-      >
+      <Container>
         <Header>
           <InnerHeaderWrapper>
             <StyledIcon
@@ -124,6 +137,8 @@ export const PointsOfInterestOverlay: React.FC<
                 return (
                   <StyledImage
                     src={link.downloadUrl}
+                    key={link.downloadUrl}
+                    draggable={false}
                     alt="thumbnail"
                     onClick={() => onImageClick(link.externalId)}
                   />
@@ -148,12 +163,11 @@ const MediaHeader = styled(Body)`
   color: ${Colors['text-icon--strong']};
 `;
 
-const StyledImage = styled.img.attrs((props) => ({
-  src: props.src,
-}))`
+const StyledImage = styled.img`
   border-radius: 6px;
   border: 2px solid #53587f3d;
   width: 100%;
+  cursor: pointer;
 `;
 
 const Container = styled.div`

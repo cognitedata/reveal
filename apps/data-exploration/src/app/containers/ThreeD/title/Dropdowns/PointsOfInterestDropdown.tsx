@@ -12,7 +12,7 @@ import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { useTranslation } from '@data-exploration-lib/core';
 
-import { APMConfigNode, PointsOfInterestCollection } from '../../hooks';
+import { PointsOfInterestCollection } from '../../hooks';
 import { useInfinitePointsOfInterestCollections } from '../../hooks/useInfinitePointsOfInterestCollection';
 import { SECONDARY_MODEL_DISPLAY_LIMIT } from '../../utils';
 import { PointsOfInterestMenuItem } from '../MenuItems/PointsOfInterestMenuItem';
@@ -31,13 +31,11 @@ type PointsOfInterestDropdownProps = {
   setInternalPointsOfInterestCollections: Dispatch<
     SetStateAction<PointsOfInterestCollection[]>
   >;
-  config?: APMConfigNode;
 };
 
 const PointsOfInterestDropdown = ({
   internalPointsOfInterestCollections,
   setInternalPointsOfInterestCollections,
-  config,
 }: PointsOfInterestDropdownProps) => {
   const { t } = useTranslation();
   const [
@@ -46,7 +44,7 @@ const PointsOfInterestDropdown = ({
   ] = useState<number>(SECONDARY_MODEL_DISPLAY_LIMIT);
   const [searchQuery, setSearchQuery] = useState('');
   const [tempPointsOfInterestCollections, setTempPointsOfInterestCollections] =
-    useState(internalPointsOfInterestCollections);
+    useState<PointsOfInterestCollection[]>(internalPointsOfInterestCollections);
 
   const canApplyPointsOfInterest = useMemo(
     () =>
@@ -65,10 +63,25 @@ const PointsOfInterestDropdown = ({
     fetchNextPage: fetchMore,
     isFetchingNextPage: isFetchingMore,
     isFetching,
-  } = useInfinitePointsOfInterestCollections(config);
+  } = useInfinitePointsOfInterestCollections();
 
   const filteredPOIs = useMemo(() => {
     return pointsOfInterestCollections
+      .sort((poi1, poi2) => {
+        const isPoi1Applied = internalPointsOfInterestCollections.find(
+          (poi) => poi.externalId === poi1.externalId
+        )?.applied;
+        const isPoi2Applied = internalPointsOfInterestCollections.find(
+          (poi) => poi.externalId === poi2.externalId
+        )?.applied;
+
+        if (isPoi1Applied && !isPoi2Applied) return -1;
+        if (!isPoi1Applied && isPoi2Applied) return 1;
+
+        return poi1
+          .title!.toLocaleLowerCase()
+          .localeCompare(poi2.title!.toLocaleLowerCase());
+      })
       .filter(
         ({ pointsOfInterest }) =>
           pointsOfInterest && pointsOfInterest.length > 0
@@ -76,7 +89,11 @@ const PointsOfInterestDropdown = ({
       .filter(({ title }) =>
         title?.toLowerCase().includes(searchQuery.toLowerCase())
       );
-  }, [pointsOfInterestCollections, searchQuery]);
+  }, [
+    internalPointsOfInterestCollections,
+    pointsOfInterestCollections,
+    searchQuery,
+  ]);
 
   useEffect(() => {
     if (canFetchMore && !isFetchingMore) {

@@ -130,6 +130,16 @@ const PointsOfInterestLoader = ({
   const queryClient = useQueryClient();
 
   useEffect(() => {
+    if (overlayRef.current === null) return;
+
+    const overlay = overlayRef.current;
+
+    overlay.addEventListener('pointerdown', (event) => {
+      event.stopPropagation();
+    });
+  }, []);
+
+  useEffect(() => {
     if (previousClickHandler) {
       overlay3DTool.off('click', previousClickHandler);
     }
@@ -190,11 +200,12 @@ const PointsOfInterestLoader = ({
       }}
       ref={overlayRef}
     >
-      <PointsOfInterestOverlay
-        pointOfInterestData={currentPOIData}
-        onClose={onClose}
-        visible={displayPOIOverlay}
-      ></PointsOfInterestOverlay>
+      {displayPOIOverlay && (
+        <PointsOfInterestOverlay
+          pointOfInterestData={currentPOIData}
+          onClose={onClose}
+        />
+      )}
     </div>
   );
 };

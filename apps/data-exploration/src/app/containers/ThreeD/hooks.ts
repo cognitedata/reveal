@@ -247,7 +247,6 @@ export const useAPMConfig = () => {
       // Find correct version and space for the APM_Config
       const listDataModelsUrl = `${baseUrl}/api/v1/projects/${project}/models/datamodels`;
       const listDataModelsResponse = await sdk.get(listDataModelsUrl);
-
       const dataModelsList =
         listDataModelsResponse.data as ListFDMDataModelsResponse;
 
@@ -302,10 +301,11 @@ export const useAPMConfig = () => {
 };
 
 export const useInfiniteChecklistItems = (
-  apmConfig?: APMConfigNode,
-  config?: UseInfiniteQueryOptions<FDMChecklistResponse, CogniteError>
+  configProp?: UseInfiniteQueryOptions<FDMChecklistResponse, CogniteError>
 ) => {
   const sdk = useSDK();
+
+  const { data: apmConfig } = useAPMConfig();
 
   return useInfiniteQuery<FDMChecklistResponse, CogniteError>(
     ['cdf', 'infinite', '3d', '3d-points-of-interest'],
@@ -330,7 +330,6 @@ export const useInfiniteChecklistItems = (
       if (!apmConfig) {
         return emptyResponse;
       }
-
       // Get checklist data
       const fdmGetChecklistItemsQueryEndpoint = `${baseUrl}/api/v1/projects/${project}/userapis/spaces/${apmConfig.appDataSpaceId}/datamodels/${apmConfig.appDataSpaceId}/versions/${apmConfig.appDataSpaceVersion}/graphql`;
 
@@ -412,7 +411,8 @@ export const useInfiniteChecklistItems = (
           ? prevPage.data.listAPM_Checklist.pageInfo.endCursor
           : undefined;
       },
-      ...config,
+      ...configProp,
+      enabled: !!apmConfig,
     }
   );
 };
@@ -954,7 +954,11 @@ export const getPointsOfInterestsQueryFn = (
     if (!overlayTool) return;
 
     const shouldAddPointsOfInterest = pointsOfInterestCollection.applied;
-    if (shouldAddPointsOfInterest) {
+    const hasAdded = pointsOfInterestOverlayCollection.some(
+      ({ externalId: tmId }) => pointsOfInterestCollection.externalId === tmId
+    );
+
+    if (shouldAddPointsOfInterest && !hasAdded) {
       const labels:
         | OverlayInfo<PointsOfInterestOverlayCollectionType>[]
         | undefined = pointsOfInterestCollection.pointsOfInterest?.map(
@@ -980,7 +984,7 @@ export const getPointsOfInterestsQueryFn = (
         externalId: pointsOfInterestCollection.externalId,
         overlays: collection,
       });
-    } else {
+    } else if (!shouldAddPointsOfInterest && hasAdded) {
       const collectionToRemove = pointsOfInterestOverlayCollection.find(
         (collection) =>
           collection.externalId === pointsOfInterestCollection.externalId

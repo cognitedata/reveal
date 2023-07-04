@@ -31,6 +31,7 @@ export const MainThreeDModelMenuItem = ({
     images360,
     slicingState,
     assetHighlightMode,
+    pointsOfInterest,
   } = useContext(ThreeDContext);
 
   const { data: revisions = [], isFetching } = use3DRevisionsQuery(model?.id);
@@ -74,6 +75,7 @@ export const MainThreeDModelMenuItem = ({
                   selectedAssetId,
                   assetDetailsExpanded,
                   secondaryModels,
+                  pointsOfInterest,
                   images360,
                   assetHighlightMode,
                 })
