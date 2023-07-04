@@ -1,5 +1,12 @@
-import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
+import { useDispatch } from 'react-redux';
+
+import {
+  ThunkDispatch,
+  configureStore,
+  getDefaultMiddleware,
+} from '@reduxjs/toolkit';
 import { loadState, saveState } from '@vision/utils/localStorage/LocalStorage';
+import { AnyAction } from 'redux';
 
 import rootReducer from './rootReducer';
 
@@ -14,5 +21,7 @@ store.subscribe(() => {
 });
 
 export type AppDispatch = typeof store.dispatch;
+export const useThunkDispatch = () =>
+  useDispatch<ThunkDispatch<any, void, AnyAction>>();
 
 export default store;

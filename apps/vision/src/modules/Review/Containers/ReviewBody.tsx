@@ -1,5 +1,5 @@
 import React, { ReactText, useCallback, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import styled from 'styled-components';
@@ -14,7 +14,7 @@ import { FileProcessStatusWrapper } from '@vision/modules/Review/Containers/File
 import { ImagePreview } from '@vision/modules/Review/Containers/ImagePreview';
 import { selectAllReviewFiles } from '@vision/modules/Review/store/review/selectors';
 import { setScrollToId } from '@vision/modules/Review/store/review/slice';
-import { AppDispatch } from '@vision/store';
+import { useThunkDispatch } from '@vision/store';
 import { RootState } from '@vision/store/rootReducer';
 import { getParamLink, workflowRoutes } from '@vision/utils/workflowRoutes';
 import { Spin, notification } from 'antd';
@@ -29,7 +29,7 @@ const queryClient = new QueryClient();
 const ReviewBody = (props: { file: FileInfo; prev: string | undefined }) => {
   const { file } = props;
   const navigate = useNavigate();
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useThunkDispatch();
   const [inFocus, setInFocus] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [currentTab, tabChange] = useState('1');

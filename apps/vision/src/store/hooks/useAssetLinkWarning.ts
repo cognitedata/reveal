@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import { useDispatch } from 'react-redux';
 
 import { unwrapResult } from '@reduxjs/toolkit';
 import { ImageAssetLink, Status } from '@vision/api/annotation/types';
@@ -7,7 +6,7 @@ import { VisionAsset } from '@vision/modules/Common/store/files/types';
 import { VisionAnnotationDataType } from '@vision/modules/Common/types';
 import { isImageAssetLinkData } from '@vision/modules/Common/types/typeGuards';
 import { VisionReviewAnnotation } from '@vision/modules/Review/types';
-import { AppDispatch } from '@vision/store';
+import { useThunkDispatch } from '@vision/store';
 import { fetchAssets } from '@vision/store/thunks/fetchAssets';
 
 import { FileInfo } from '@cognite/sdk';
@@ -29,7 +28,7 @@ const useAssetLinkWarning = (
     AssetWarnTypes.NoWarning
   );
   const [asset, setAsset] = useState<VisionAsset | null>(null);
-  const dispatch: AppDispatch = useDispatch<AppDispatch>();
+  const dispatch = useThunkDispatch();
   const approvedAnnotationNotLinkedToFileTimer = useRef<any>(null);
   const rejectedAnnotationLinkedToFileTimer = useRef<any>(null);
 

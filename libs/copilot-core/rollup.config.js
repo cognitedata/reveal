@@ -15,7 +15,6 @@ module.exports = (config, context) => {
       moduleDirectories: ['node_modules', 'dist'],
       modulePaths: ['dist/libs'],
     }),
-    // tsConfigPaths({ tsConfigPath: 'libs/copilot-core/tsconfig.lib.json' }),
     ...config.plugins,
   ];
   return config;

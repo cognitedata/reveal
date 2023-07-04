@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 
 import {
+  getHighlightQuery,
   getTableColumns,
   SubCellMatchingLabels,
   Table,
@@ -15,6 +16,7 @@ import { Asset } from '@cognite/sdk';
 import {
   DASH,
   getHiddenColumns,
+  useGetSearchConfigFromLocalStorage,
   useTranslation,
 } from '@data-exploration-lib/core';
 import {
@@ -56,6 +58,8 @@ export const DocumentsTable = (props: DocumentTableProps) => {
     useDocumentsMetadataColumns();
   const { t } = useTranslation();
   const tableColumns = getTableColumns(t);
+  const documentSearchConfig = useGetSearchConfigFromLocalStorage('file');
+
   const columns = useMemo(
     () =>
       [
@@ -72,7 +76,10 @@ export const DocumentsTable = (props: DocumentTableProps) => {
               <DocumentNamePreview
                 {...fileNamePreviewProps}
                 shouldShowPreviews={shouldShowPreviews}
-                query={query}
+                query={getHighlightQuery(
+                  documentSearchConfig?.['sourceFile|name']?.enabled,
+                  query
+                )}
               />
             );
           },
@@ -82,7 +89,15 @@ export const DocumentsTable = (props: DocumentTableProps) => {
           header: t('CONTENT', 'Content'),
           cell: ({ row }: { row: Row<InternalDocument> }) => {
             return (
-              <DocumentContentPreview document={row.original} query={query} />
+              <DocumentContentPreview
+                document={row.original}
+                query={getHighlightQuery(
+                  // Here in order to search for content, fuzzy search should also be enabled.
+                  documentSearchConfig?.content.enabled &&
+                    documentSearchConfig?.content.enabledFuzzySearch,
+                  query
+                )}
+              />
             );
           },
           enableSorting: false,
@@ -148,8 +163,12 @@ export const DocumentsTable = (props: DocumentTableProps) => {
           accessorFn: (doc) => doc?.assetIds?.length && doc.assetIds[0],
         },
         tableColumns.assets(onRootAssetClick),
-        tableColumns.externalId(query),
-        tableColumns.id(query),
+        tableColumns.externalId(
+          getHighlightQuery(documentSearchConfig?.externalId.enabled, query)
+        ),
+        tableColumns.id(
+          getHighlightQuery(documentSearchConfig?.id.enabled, query)
+        ),
         {
           ...tableColumns.dataSet,
           accessorFn: (document) => document.sourceFile.datasetId,

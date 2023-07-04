@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useDispatch } from 'react-redux';
 
 import styled from 'styled-components';
 
@@ -20,7 +19,7 @@ import {
   PredefinedVisionAnnotations,
   VisionOptionType,
 } from '@vision/modules/Review/types';
-import { AppDispatch } from '@vision/store';
+import { useThunkDispatch } from '@vision/store';
 import { deselectAllSelectionsReviewPage } from '@vision/store/commonActions';
 
 import {
@@ -64,7 +63,7 @@ export const AnnotationEditPopup = ({
   popupReference: any;
   predefinedAnnotations: PredefinedVisionAnnotations;
 }) => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useThunkDispatch();
 
   const title = useMemo(() => {
     switch (region.type) {

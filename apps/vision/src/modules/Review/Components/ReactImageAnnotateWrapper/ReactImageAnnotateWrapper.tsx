@@ -7,7 +7,6 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { useDispatch } from 'react-redux';
 
 import styled from 'styled-components';
 
@@ -50,7 +49,7 @@ import {
   TempKeypointCollection,
   VisionReviewAnnotation,
 } from '@vision/modules/Review/types';
-import { AppDispatch } from '@vision/store';
+import { useThunkDispatch } from '@vision/store';
 import { deselectAllSelectionsReviewPage } from '@vision/store/commonActions';
 import { getIcon } from '@vision/utils/iconUtils';
 
@@ -105,7 +104,7 @@ export const ReactImageAnnotateWrapper = ({
   onDeleteAnnotation,
   openAnnotationSettings,
 }: ReactImageAnnotateWrapperProps) => {
-  const dispatch: AppDispatch = useDispatch<AppDispatch>();
+  const dispatch = useThunkDispatch();
   const currentKeypointCollectionIsComplete =
     useIsCurrentKeypointCollectionComplete(fileInfo.id);
 

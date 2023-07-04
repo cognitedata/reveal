@@ -7,7 +7,7 @@ import { ParamsGaugeReader } from '@vision/api/vision/detectionModels/types';
 import GaugeReaderIllustration from '@vision/assets/visualDescriptions/GaugeReaderIllustration';
 import { ColorsObjectDetection } from '@vision/constants/Colors';
 import { setUnsavedDetectionModelSettings } from '@vision/modules/Process/store/slice';
-import { AppDispatch } from '@vision/store';
+import { useThunkDispatch } from '@vision/store';
 import { RootState } from '@vision/store/rootReducer';
 
 import {
@@ -51,7 +51,7 @@ export const badge = (modelName: string, hideText = false) => {
 };
 
 export const Content = (modelIndex: number) => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useThunkDispatch();
   const params: ParamsGaugeReader = useSelector(
     ({ processSlice }: RootState) =>
       processSlice.availableDetectionModels[modelIndex]

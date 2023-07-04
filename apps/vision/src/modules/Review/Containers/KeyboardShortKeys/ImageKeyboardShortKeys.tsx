@@ -1,14 +1,13 @@
 import React from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
-import { useDispatch } from 'react-redux';
 
 import { HotKeys } from '@vision/constants/HotKeys';
 import { tools } from '@vision/modules/Review/Components/ReactImageAnnotateWrapper/Tools';
 import { setSelectedTool } from '@vision/modules/Review/store/annotatorWrapper/slice';
-import { AppDispatch } from '@vision/store';
+import { useThunkDispatch } from '@vision/store';
 
 export const ImageKeyboardShortKeys = ({ children }: { children: any }) => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useThunkDispatch();
 
   useHotkeys(
     HotKeys.select_tool,

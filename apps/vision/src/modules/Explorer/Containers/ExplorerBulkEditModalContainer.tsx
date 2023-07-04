@@ -9,12 +9,12 @@ import {
 import { BulkEditUnsavedState } from '@vision/modules/Common/store/common/types';
 import { VisionFile } from '@vision/modules/Common/store/files/types';
 import { selectExplorerAllSelectedFilesInSortedOrder } from '@vision/modules/Explorer/store/selectors';
-import { AppDispatch } from '@vision/store';
+import { useThunkDispatch } from '@vision/store';
 import { RootState } from '@vision/store/rootReducer';
 import { updateBulk } from '@vision/store/thunks/Files/updateBulk';
 
 export const ExplorerBulkEditModalContainer = () => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useThunkDispatch();
 
   const showBulkEditModal = useSelector(
     ({ commonReducer }: RootState) => commonReducer.showBulkEditModal

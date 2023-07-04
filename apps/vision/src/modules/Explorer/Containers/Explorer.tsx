@@ -27,7 +27,7 @@ import { cancelFileDetailsEdit } from '@vision/modules/FileDetails/slice';
 import FilterToggleButton from '@vision/modules/FilterSidePanel/Components/FilterToggleButton';
 import { FilterSidePanel } from '@vision/modules/FilterSidePanel/Containers/FilterSidePanel';
 import { StatusToolBar } from '@vision/modules/Process/Containers/StatusToolBar';
-import { AppDispatch } from '@vision/store';
+import { useThunkDispatch } from '@vision/store';
 import { RootState } from '@vision/store/rootReducer';
 import { ClearExplorerStateOnTransition } from '@vision/store/thunks/Explorer/ClearExplorerStateOnTransition';
 import { FetchFilesById } from '@vision/store/thunks/Files/FetchFilesById';
@@ -50,7 +50,7 @@ const Explorer = () => {
   } = useContextMenu();
 
   const navigate = useNavigate();
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useThunkDispatch();
 
   const queryClient = new QueryClient();
 
@@ -280,7 +280,7 @@ const DeselectContainer = styled.div`
 `;
 
 const Deselect = () => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useThunkDispatch();
   const focusedFileId = useSelector(
     ({ explorerReducer }: RootState) => explorerReducer.focusedFileId
   );
