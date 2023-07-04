@@ -5,24 +5,11 @@
   "projectType": "application",
   "targets": {
     "build": {
-      "executor": "@nx/webpack:webpack",
+      "executor": "@nx/vite:build",
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
-        "compiler": "babel",
-        "outputPath": "dist/apps/business-shell",
-        "index": "apps/business-shell/src/index.html",
-        "baseHref": "/",
-        "main": "apps/business-shell/src/main.tsx",
-        "tsConfig": "apps/business-shell/tsconfig.app.json",
-        "assets": [
-          "apps/business-shell/src/favicon.ico",
-          "apps/business-shell/src/assets"
-        ],
-        "styles": [],
-        "scripts": [],
-        "isolatedConfig": true,
-        "webpackConfig": "apps/business-shell/webpack-config.js"
+        "outputPath": "dist/apps/business-shell"
       },
       "configurations": {
         "development": {
@@ -51,7 +38,7 @@
       }
     },
     "serve": {
-      "executor": "@nx/webpack:dev-server",
+      "executor": "@nx/vite:dev-server",
       "defaultConfiguration": "development",
       "options": {
         "buildTarget": "business-shell:build",
@@ -92,6 +79,21 @@
         "ci": {
           "ci": true,
           "codeCoverage": true
+        }
+      }
+    },
+    "preview": {
+      "executor": "@nrwl/vite:preview-server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "business-shell:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "business-shell:build:development"
+        },
+        "production": {
+          "buildTarget": "business-shell:build:production"
         }
       }
     }
