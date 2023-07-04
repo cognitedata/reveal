@@ -1,20 +1,5 @@
-import {
-  Edge,
-  Elements,
-  FlowElement,
-  FlowExportObject,
-  Node,
-} from 'react-flow-renderer';
-
-import { ConstantNodeDataDehydrated } from '@charts-app/components/NodeEditor/V2/Nodes/ConstantNode';
-import { FunctionNodeDataDehydrated } from '@charts-app/components/NodeEditor/V2/Nodes/FunctionNode/FunctionNode';
-import { SourceNodeDataDehydrated } from '@charts-app/components/NodeEditor/V2/Nodes/SourceNode';
-import {
-  NodeDataDehydratedVariants,
-  NodeTypes,
-} from '@charts-app/components/NodeEditor/V2/types';
-import { initializeParameterValues } from '@charts-app/components/NodeEditor/V2/utils';
-import { AxisUpdate } from '@charts-app/components/PlotlyChart/utils';
+import { Timeseries } from '@cognite/sdk';
+import { v4 as uuidv4 } from 'uuid';
 import {
   Chart,
   ChartSource,
@@ -25,16 +10,29 @@ import {
   SourceCollectionData,
   CollectionType,
   StorableNode,
-} from '@charts-app/models/chart/types';
-import { getEntryColor } from '@charts-app/utils/colors';
-import { compareVersions } from 'compare-versions';
+} from 'models/chart/types';
+import { getEntryColor } from 'utils/colors';
 import dayjs from 'dayjs';
+import {
+  NodeDataDehydratedVariants,
+  NodeTypes,
+} from 'components/NodeEditor/V2/types';
+import { FunctionNodeDataDehydrated } from 'components/NodeEditor/V2/Nodes/FunctionNode/FunctionNode';
+import {
+  Edge,
+  Elements,
+  FlowElement,
+  FlowExportObject,
+  Node,
+} from 'react-flow-renderer';
+import { ConstantNodeDataDehydrated } from 'components/NodeEditor/V2/Nodes/ConstantNode';
+import { SourceNodeDataDehydrated } from 'components/NodeEditor/V2/Nodes/SourceNode';
 import { omit } from 'lodash';
-import { v4 as uuidv4 } from 'uuid';
-
 import { Operation } from '@cognite/calculation-backend';
-import { Timeseries } from '@cognite/sdk';
-
+import { initializeParameterValues } from 'components/NodeEditor/V2/utils';
+import compareVersions from 'compare-versions';
+import { AxisUpdate } from 'components/PlotlyChart/utils';
+import { CalculationDeepCloneAndReplaceIds } from 'utils/calculations';
 import { removeItem, addItem } from './helpers';
 
 function updateCollItem<T extends ChartSource>(
@@ -162,8 +160,10 @@ export function removeSource(chart: Chart, sourceId: string): Chart {
 export function duplicateWorkflow(chart: Chart, wfId: string): Chart {
   const wf = chart.workflowCollection?.find((w) => w.id === wfId);
   if (wf) {
+    const clonedWf = CalculationDeepCloneAndReplaceIds(wf);
+
     const newWf = {
-      ...wf,
+      ...clonedWf,
       id: uuidv4(),
       name: `${wf.name} Copy`,
       color: getEntryColor(chart.id, wf.id),
