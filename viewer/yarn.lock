@@ -774,14 +774,14 @@ __metadata:
     eslint-plugin-unused-imports: 2.0.0
     file-loader: 6.2.0
     gl: 6.0.2
-    glob: 10.3.0
+    glob: 10.3.1
     glslify: 7.1.1
     glslify-import: 3.1.0
     glslify-loader: 2.0.0
     html-webpack-plugin: 5.5.3
     html2canvas: ^1.4.1
     jest: 29.5.0
-    jest-canvas-mock: 2.5.1
+    jest-canvas-mock: 2.5.2
     jest-environment-jsdom: 29.5.0
     jest-extended: 4.0.0
     jest-image-snapshot: 6.1.0
@@ -795,7 +795,7 @@ __metadata:
     path-browserify: 1.0.1
     prettier: 2.8.8
     process: 0.11.10
-    puppeteer: 20.7.3
+    puppeteer: 20.7.4
     random-seed: 0.3.0
     raw-loader: 4.0.2
     remove-files-webpack-plugin: 1.5.0
@@ -809,7 +809,7 @@ __metadata:
     ts-jest: 29.1.0
     ts-loader: 9.4.3
     tsc-alias: 1.8.6
-    typescript: 5.1.3
+    typescript: 5.1.6
     wasm-pack: 0.12.0
     webpack: 5.88.0
     webpack-cli: 5.1.4
@@ -1547,15 +1547,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@puppeteer/browsers@npm:1.4.2":
-  version: 1.4.2
-  resolution: "@puppeteer/browsers@npm:1.4.2"
+"@puppeteer/browsers@npm:1.4.3":
+  version: 1.4.3
+  resolution: "@puppeteer/browsers@npm:1.4.3"
   dependencies:
     debug: 4.3.4
     extract-zip: 2.0.1
     progress: 2.0.3
     proxy-agent: 6.2.1
-    tar-fs: 3.0.2
+    tar-fs: 3.0.3
     unbzip2-stream: 1.4.3
     yargs: 17.7.1
   peerDependencies:
@@ -1565,7 +1565,7 @@ __metadata:
       optional: true
   bin:
     browsers: lib/cjs/main-cli.js
-  checksum: ad7766062faf3a954c2aab646b0a917805162fab1384e7e23c204c80830e85ff088b0f76b5045df192edda455f2ed2d5b2c23b1823e49e2f236d76392997f666
+  checksum: bcea67bc954a788cf7c3424786bd4f4fb661ceb941c42a366f462e065b9215452c038dd9fe5e7ed8f00904ce5b2622264d93c923dd55fb613fbde6bd0bd93fdb
   languageName: node
   linkType: hard
 
@@ -3835,14 +3835,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chromium-bidi@npm:0.4.12":
-  version: 0.4.12
-  resolution: "chromium-bidi@npm:0.4.12"
+"chromium-bidi@npm:0.4.16":
+  version: 0.4.16
+  resolution: "chromium-bidi@npm:0.4.16"
   dependencies:
     mitt: 3.0.0
   peerDependencies:
     devtools-protocol: "*"
-  checksum: 8cbffd8d51a07eb05338217e48b06d53143bb4106f8798daecda48a0a86d3c8c5544bff4aa90ef146de41c2527cd5cbe13481ecdf962b4ab61eb32b1231d8607
+  checksum: 9cbb362fdf589dbdfd1618499c5bbdac45a3aa1291c1d2faa2f1ea3768738677985175d1bb1511dfe3e188bc78e6ea2acb453564ece7e09f535bbcd2253ce06a
   languageName: node
   linkType: hard
 
@@ -5891,18 +5891,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"glob@npm:10.3.0":
-  version: 10.3.0
-  resolution: "glob@npm:10.3.0"
+"glob@npm:10.3.1":
+  version: 10.3.1
+  resolution: "glob@npm:10.3.1"
   dependencies:
     foreground-child: ^3.1.0
     jackspeak: ^2.0.3
     minimatch: ^9.0.1
     minipass: ^5.0.0 || ^6.0.2
-    path-scurry: ^1.7.0
+    path-scurry: ^1.10.0
   bin:
     glob: dist/cjs/src/bin.js
-  checksum: 6fa4ac0a86ffec1c5715a2e6fbdd63e1e7f1c2c8f5db08cc3256cdfcb81093678e7c80a3d100b502a1b9d141369ecf87bc24fe2bcb72acec7b14626d358a4eb0
+  checksum: 19c8c2805658b1002fecf0722cd609a33153d756a0d5260676bd0e9c5e6ef889ec9cce6d3dac0411aa90bce8de3d14f25b6f5589a3292582cccbfeddd0e98cc4
   languageName: node
   linkType: hard
 
@@ -7162,13 +7162,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-canvas-mock@npm:2.5.1":
-  version: 2.5.1
-  resolution: "jest-canvas-mock@npm:2.5.1"
+"jest-canvas-mock@npm:2.5.2":
+  version: 2.5.2
+  resolution: "jest-canvas-mock@npm:2.5.2"
   dependencies:
     cssfontparser: ^1.2.1
     moo-color: ^1.0.2
-  checksum: b8ff56c1b7b7feb6d33b7914dbfac21f19a5a33db0bc092f0426e500e80e67df1286bf817eb780e378b648c9130d7b8ca20cd46e45520657996273a948a7c198
+  checksum: a3004d2e96473049045e49dcf98e5ea6011494048ab42b5422b3089d9ff406aaca8353e79587055d840fa145541668eb8f78613765f252ad5901a8217e91ea5d
   languageName: node
   linkType: hard
 
@@ -8277,10 +8277,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lru-cache@npm:^9.0.0":
-  version: 9.1.0
-  resolution: "lru-cache@npm:9.1.0"
-  checksum: 97b46faa2e8195b75b1c48a5515f8e458b8f6a0d0933c0484a4e45b6aa67406dcc5f6c8774fef206fd918dce6a4b4a6f627541fbdf74f8e6b3c71f688f43041e
+"lru-cache@npm:^9.1.1 || ^10.0.0":
+  version: 10.0.0
+  resolution: "lru-cache@npm:10.0.0"
+  checksum: 18f101675fe283bc09cda0ef1e3cc83781aeb8373b439f086f758d1d91b28730950db785999cd060d3c825a8571c03073e8c14512b6655af2188d623031baf50
   languageName: node
   linkType: hard
 
@@ -8613,13 +8613,6 @@ __metadata:
   dependencies:
     yallist: ^4.0.0
   checksum: 523a338f42140c2e62bff3429f236cc44a32ddd29a70d5221e0570ace237057190981cad406fd3a420f03a95cc001ad58a388d902b9519038e27f190bb88a6e7
-  languageName: node
-  linkType: hard
-
-"minipass@npm:^5.0.0":
-  version: 5.0.0
-  resolution: "minipass@npm:5.0.0"
-  checksum: 425dab288738853fded43da3314a0b5c035844d6f3097a8e3b5b29b328da8f3c1af6fc70618b32c29ff906284cf6406b6841376f21caaadd0793c1d5a6a620ea
   languageName: node
   linkType: hard
 
@@ -9403,13 +9396,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"path-scurry@npm:^1.7.0":
-  version: 1.7.0
-  resolution: "path-scurry@npm:1.7.0"
+"path-scurry@npm:^1.10.0":
+  version: 1.10.0
+  resolution: "path-scurry@npm:1.10.0"
   dependencies:
-    lru-cache: ^9.0.0
-    minipass: ^5.0.0
-  checksum: 4e86df0fa6848cef1ba672d4a332b8dbd0297c42d5123bcc419d714c34b25ee6775b0d2e66dd5e698a38e9bcd808f8fc47333e3a3357307cada98e16bfae8b98
+    lru-cache: ^9.1.1 || ^10.0.0
+    minipass: ^5.0.0 || ^6.0.2
+  checksum: 3b66a4a6ab66e45755b577c966ecf0da92d3e068b3c992d8f69aa2cc908ef4eda9358253e9b4f86cad43d3ad810ec445be164105975f5cb3fdab68459c59dc6e
   languageName: node
   linkType: hard
 
@@ -9789,12 +9782,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"puppeteer-core@npm:20.7.3":
-  version: 20.7.3
-  resolution: "puppeteer-core@npm:20.7.3"
+"puppeteer-core@npm:20.7.4":
+  version: 20.7.4
+  resolution: "puppeteer-core@npm:20.7.4"
   dependencies:
-    "@puppeteer/browsers": 1.4.2
-    chromium-bidi: 0.4.12
+    "@puppeteer/browsers": 1.4.3
+    chromium-bidi: 0.4.16
     cross-fetch: 3.1.6
     debug: 4.3.4
     devtools-protocol: 0.0.1135028
@@ -9804,18 +9797,18 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: fce26285dc2ef54bd57ab62eeb9a0eabfb81363457dcaebbe455545d7c624657fe0361189d34f7e8dd302a30b03be3220e0b78f2661ec7e4fe1887b8b628b577
+  checksum: 7a41a89a176a2223c5df3892d2ceffc0d0c2d4c2c7d6084841edec9d9577f773ea2b23c57205ff71d383f48c6257f8b19775cbaa584452dd0149160155f4d1f8
   languageName: node
   linkType: hard
 
-"puppeteer@npm:20.7.3":
-  version: 20.7.3
-  resolution: "puppeteer@npm:20.7.3"
+"puppeteer@npm:20.7.4":
+  version: 20.7.4
+  resolution: "puppeteer@npm:20.7.4"
   dependencies:
-    "@puppeteer/browsers": 1.4.2
+    "@puppeteer/browsers": 1.4.3
     cosmiconfig: 8.2.0
-    puppeteer-core: 20.7.3
-  checksum: 802ffddac4e84a0e39c01d41b0885866baf6eefe6d416c36c9518f21234d81f894f402e50b62e3487fb235ade4e91cd2c55cb88cb0aae9b92c114ebe29eb4645
+    puppeteer-core: 20.7.4
+  checksum: 8e0436e1b9969f61ae588dafc5d03bee5028f2389e5e4f386e3133bc296f1814f41bc0706ad5d8600d1538d78a6e9256f9a5274c71d5c70e4b33436a94c5bb55
   languageName: node
   linkType: hard
 
@@ -11209,14 +11202,14 @@ resolve@~1.19.0:
   languageName: node
   linkType: hard
 
-"tar-fs@npm:3.0.2":
-  version: 3.0.2
-  resolution: "tar-fs@npm:3.0.2"
+"tar-fs@npm:3.0.3":
+  version: 3.0.3
+  resolution: "tar-fs@npm:3.0.3"
   dependencies:
     mkdirp-classic: ^0.5.2
     pump: ^3.0.0
     tar-stream: ^3.1.0
-  checksum: cbc2467c57f596595411334c24be3cbbb3b54ae15fd65b2608478a9584c603c5bcddd37538bc5ec149517c41fc2a911ecc46aab5335203ebb7c231f1ea81facb
+  checksum: fb38b45d9782267b1a4f495b3d8f1ba824cdb18f0b6f768c45f855f6cab71955b470eae742d1628eff8af70ca0eb3c63093aeb2a8362fc9e40d09d0118590ad1
   languageName: node
   linkType: hard
 
@@ -11673,23 +11666,23 @@ resolve@~1.19.0:
   languageName: node
   linkType: hard
 
-"typescript@npm:5.1.3":
-  version: 5.1.3
-  resolution: "typescript@npm:5.1.3"
+"typescript@npm:5.1.6":
+  version: 5.1.6
+  resolution: "typescript@npm:5.1.6"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: d9d51862d98efa46534f2800a1071a613751b1585dc78884807d0c179bcd93d6e9d4012a508e276742f5f33c480adefc52ffcafaf9e0e00ab641a14cde9a31c7
+  checksum: b2f2c35096035fe1f5facd1e38922ccb8558996331405eb00a5111cc948b2e733163cc22fab5db46992aba7dd520fff637f2c1df4996ff0e134e77d3249a7350
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@5.1.3#~builtin<compat/typescript>":
-  version: 5.1.3
-  resolution: "typescript@patch:typescript@npm%3A5.1.3#~builtin<compat/typescript>::version=5.1.3&hash=5da071"
+"typescript@patch:typescript@5.1.6#~builtin<compat/typescript>":
+  version: 5.1.6
+  resolution: "typescript@patch:typescript@npm%3A5.1.6#~builtin<compat/typescript>::version=5.1.6&hash=5da071"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 6f0a9dca6bf4ce9dcaf4e282aade55ef4c56ecb5fb98d0a4a5c0113398815aea66d871b5611e83353e5953a19ed9ef103cf5a76ac0f276d550d1e7cd5344f61e
+  checksum: f53bfe97f7c8b2b6d23cf572750d4e7d1e0c5fff1c36d859d0ec84556a827b8785077bc27676bf7e71fae538e517c3ecc0f37e7f593be913d884805d931bc8be
   languageName: node
   linkType: hard
 
