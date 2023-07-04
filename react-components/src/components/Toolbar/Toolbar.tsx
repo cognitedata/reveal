@@ -2,21 +2,25 @@
  * Copyright 2023 Cognite AS
  */
 
-import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
+import { type CSSProperties, type ReactElement } from 'react';
 import { Divider, ToolBar } from '@cognite/cogs.js';
 import { FitModelsButton } from './FitModelsButton';
 
 import { ToolbarButton } from './ToolbarButton';
 
-export type ToolbarProps = {
-  children?: JSX.Element;
+export type RevealToolbarProps = {
+  children?: ReactElement;
+  className?: string;
+  style?: CSSProperties;
 };
 
 const defaultButtons = (
   <>
-    <FitModelsButton />
+    <ToolbarButton icon="Layers" aria-label="3D Resource layers" />
 
+    <Divider />
+
+    <FitModelsButton />
     <ToolbarButton icon="Collapse" aria-label="Focus asset" />
 
     <Divider />
@@ -31,14 +35,17 @@ const defaultButtons = (
   </>
 );
 
-const Toolbar = (props: ToolbarProps) => {
-  return <FloatingToolbar>{props.children ?? defaultButtons}</FloatingToolbar>;
+const defaultStyle: CSSProperties = { position: 'absolute', bottom: '30px', left: '100px' };
+
+const RevealToolbar = ({ children, className, style }: RevealToolbarProps): ReactElement => {
+  if (className === undefined && style === undefined) {
+    style = { ...defaultStyle };
+  }
+  return (
+    <ToolBar className={className} style={style}>
+      {children ?? defaultButtons}
+    </ToolBar>
+  );
 };
 
-const FloatingToolbar = styled(ToolBar)`
-  position: absolute;
-  left: 30px;
-  bottom: 30px;
-`;
-
-export default Toolbar;
+export default RevealToolbar;

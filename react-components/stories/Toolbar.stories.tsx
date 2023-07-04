@@ -3,9 +3,10 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { CogniteCadModelContainer, RevealContainer, Toolbar, ToolbarButton } from '../src';
+import { CogniteCadModelContainer, RevealContainer, RevealToolbar } from '../src';
 import { CogniteClient } from '@cognite/sdk';
 import { Color } from 'three';
+import styled from 'styled-components';
 
 const meta = {
   title: 'Example/Toolbar',
@@ -24,6 +25,12 @@ const sdk = new CogniteClient({
   getToken: async () => await Promise.resolve(token)
 });
 
+const FloatingToolbar = styled(RevealToolbar)`
+  position: absolute;
+  left: 20px;
+  top: 70px;
+`;
+
 export const Main: Story = {
   args: {
     addModelOptions: {
@@ -34,7 +41,7 @@ export const Main: Story = {
   render: ({ addModelOptions }) => (
     <RevealContainer sdk={sdk} color={new Color(0x4a4a4a)}>
       <CogniteCadModelContainer addModelOptions={addModelOptions} />
-      <Toolbar />
+      <FloatingToolbar />
     </RevealContainer>
   )
 };

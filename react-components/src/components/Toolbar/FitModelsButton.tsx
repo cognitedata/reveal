@@ -2,14 +2,14 @@
  * Copyright 2023 Cognite AS
  */
 
-import React, { useCallback, useEffect, useState } from 'react';
+import { type ReactElement, useCallback } from 'react';
 
 import { Box3 } from 'three';
 
 import { useReveal } from '../RevealContainer/RevealContext';
 import { ToolbarButton } from './ToolbarButton';
 
-export const FitModelsButton = () => {
+export const FitModelsButton = (): ReactElement => {
   const viewer = useReveal();
 
   const modelList = viewer.models;
