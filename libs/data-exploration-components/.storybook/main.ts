@@ -1,3 +1,6 @@
+import * as fs from 'fs';
+import * as path from 'path';
+
 import { StorybookConfig } from '@storybook/react-vite';
 import { mergeConfig, loadEnv, searchForWorkspaceRoot } from 'vite';
 import macrosPlugin from 'vite-plugin-babel-macros';
@@ -21,16 +24,19 @@ const config: StorybookConfig = {
     // Add your configuration here
     return mergeConfig(config, {
       cacheDir:
-        '../../node_modules/.vite/storybook/data-exploration-components',
-
+        '../../node_modules/.vite/storybook/data-exploration-components-old',
       resolve: {
         dedupe: ['@cognite/plotting-components'],
       },
       plugins: [
         viteTsConfigPaths({
-          projects: ['../../../tsconfig.base.json', './tsconfig.json'],
+          projects: [
+            `${searchForWorkspaceRoot(process.cwd())}/tsconfig.base.json`,
+            './tsconfig.json',
+          ],
         }),
         macrosPlugin(),
+        reactVirtualized(),
       ],
       define: {
         'process.env': env,
@@ -40,8 +46,30 @@ const config: StorybookConfig = {
           allow: [searchForWorkspaceRoot(process.cwd())],
         },
       },
+      build: {
+        sourcemap: false,
+      },
     });
   },
 };
+
+// REF: https://github.com/uber/baseweb/issues/4129#issuecomment-1208168306
+const WRONG_CODE = `import { bpfrpt_proptype_WindowScroller } from "../WindowScroller.js";`;
+export function reactVirtualized() {
+  return {
+    name: 'my:react-virtualized',
+    configResolved() {
+      const file = require
+        .resolve('react-virtualized')
+        .replace(
+          path.join('dist', 'commonjs', 'index.js'),
+          path.join('dist', 'es', 'WindowScroller', 'utils', 'onScroll.js')
+        );
+      const code = fs.readFileSync(file, 'utf-8');
+      const modified = code.replace(WRONG_CODE, '');
+      fs.writeFileSync(file, modified);
+    },
+  };
+}
 
 export default config;

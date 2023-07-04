@@ -5,7 +5,7 @@ import { ComponentStory } from '@storybook/react';
 import { BooleanFilter } from './BooleanFilter';
 
 export default {
-  title: 'Search Results/Filters/BooleanFilter',
+  title: 'Search Results New/Filters/BooleanFilter',
   component: BooleanFilter,
   argTypes: {
     title: {

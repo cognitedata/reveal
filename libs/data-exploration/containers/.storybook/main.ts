@@ -20,6 +20,11 @@ const config: StorybookConfig = {
 
     // Add your configuration here
     return mergeConfig(config, {
+      cacheDir:
+        '../../node_modules/.vite/storybook/data-exploration-containers',
+      resolve: {
+        dedupe: ['@cognite/plotting-components'],
+      },
       plugins: [
         viteTsConfigPaths({
           projects: ['../../../tsconfig.base.json', './tsconfig.json'],
@@ -33,6 +38,9 @@ const config: StorybookConfig = {
         fs: {
           allow: [searchForWorkspaceRoot(process.cwd())],
         },
+      },
+      build: {
+        sourcemap: false,
       },
     });
   },

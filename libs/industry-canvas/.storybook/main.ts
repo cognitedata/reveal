@@ -20,6 +20,10 @@ const config: StorybookConfig = {
 
     // Add your configuration here
     return mergeConfig(config, {
+      cacheDir: '../../node_modules/.vite/storybook/industry-canvas',
+      resolve: {
+        dedupe: ['@cognite/plotting-components'],
+      },
       plugins: [
         viteTsConfigPaths({
           projects: [
@@ -36,6 +40,9 @@ const config: StorybookConfig = {
         fs: {
           allow: [searchForWorkspaceRoot(process.cwd())],
         },
+      },
+      build: {
+        sourcemap: false,
       },
     });
   },
