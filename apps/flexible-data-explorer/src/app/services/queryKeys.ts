@@ -22,6 +22,19 @@ export const queryKeys = {
       filter,
       dataModel,
     ] as const,
+  searchAggregates: (
+    query: string,
+    filter: Record<string, unknown>,
+    dataModel?: DataModel
+  ) =>
+    [
+      ...queryKeys.all,
+      'dataTypes',
+      'search-aggregate',
+      query,
+      filter,
+      dataModel,
+    ] as const,
 
   instance: (instance: Instance, types: any, dataModel?: DataModel) =>
     [...queryKeys.all, 'instance', types, instance, dataModel] as const,
@@ -50,6 +63,21 @@ export const queryKeys = {
     filter,
     limit,
   ],
-
+  aggregateFiles: (query?: string, filter?: any, limit?: number) => [
+    ...queryKeys.all,
+    'files',
+    'aggregate',
+    query,
+    filter,
+    limit,
+  ],
   fileContainer: (file?: FileInfo) => [...queryKeys.all, 'file', file] as const,
+
+  aggregateTimeseries: (query: string, filter?: any) => [
+    ...queryKeys.all,
+    'timeseries',
+    'aggregate',
+    query,
+    filter,
+  ],
 };

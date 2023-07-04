@@ -14,8 +14,11 @@ import {
   DataModel,
   DataModelByIdResponse,
   DataModelListResponse,
+  DataType,
   Instance,
   IntrospectionResponse,
+  SearchAggregateCountResponse,
+  SearchResponse,
 } from './types';
 
 export interface FDMError {
@@ -279,16 +282,62 @@ export class FDMClient extends BaseFDMClient {
 
     const payload = query(constructPayload);
 
-    const result = await this.gqlRequest<
-      Record<
-        string,
-        {
-          items: any[];
-        }
-      >
-    >(payload);
+    const result = await this.gqlRequest<Record<DataType, SearchResponse>>(
+      payload
+    );
 
     return result;
+  }
+
+  public async searchAggregateCount(
+    queryString: string,
+    filters: Record<string, unknown>,
+    types: DataModelTypeDefsType[] = []
+  ) {
+    const constructPayload = types.map((item) => {
+      const dataType = item.name;
+
+      return {
+        operation: { name: `aggregate${dataType}`, alias: dataType },
+        fields: [
+          {
+            items: [
+              {
+                count: ['externalId'],
+              },
+            ],
+          },
+        ],
+        variables: {
+          query: { value: queryString, required: true },
+          [`filter${dataType}`]: {
+            value: filters[dataType] || {},
+            name: 'filter',
+            type: `_Search${dataType}Filter`,
+          },
+        },
+      };
+    });
+
+    const payload = query(constructPayload);
+
+    const result = await this.gqlRequest<
+      Record<DataType, SearchAggregateCountResponse>
+    >(payload);
+
+    const normalizeResult = Object.entries(result ?? {}).reduce(
+      (acc, [key, value]) => {
+        const count = value.items?.[0]?.count?.externalId;
+
+        return {
+          ...acc,
+          [key]: count,
+        };
+      },
+      {} as Record<DataType, number>
+    );
+
+    return normalizeResult;
   }
 
   public async listDataTypes<T>(

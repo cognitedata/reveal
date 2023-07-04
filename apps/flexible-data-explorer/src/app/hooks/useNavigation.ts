@@ -11,7 +11,6 @@ import { DateRange, ValueByDataType } from '../containers/search/Filter';
 import { createSearchParams } from '../utils/router';
 
 import { useDataModelParams } from './useDataModelParams';
-import { useSearchFilterParams, useSearchQueryParams } from './useParams';
 import { useGetChartsUrl, useGetCanvasUrl } from './useUrl';
 
 // TODO: rename this could help, react-router also has a 'useNavigation'.
@@ -20,8 +19,6 @@ export const useNavigation = () => {
   const { search, pathname } = useLocation(); // <-- current location being accessed
   const params = useParams();
   const dataModelParams = useDataModelParams();
-  const [_, setQueryParams] = useSearchQueryParams();
-  const [__, setFilterParams] = useSearchFilterParams();
   const chartsUrl = useGetChartsUrl();
   const canvasUrl = useGetCanvasUrl();
 
@@ -39,20 +36,19 @@ export const useNavigation = () => {
 
   const toSearchPage = useCallback(
     (searchQuery: string = '', filters: ValueByDataType = {}) => {
-      const params = createSearchParams({
+      const { dataType } = params;
+
+      const queryParams = createSearchParams({
         searchQuery,
         filters,
       });
 
-      setQueryParams(searchQuery);
-      setFilterParams(filters);
-
       navigate({
-        pathname: `search`,
-        search: `?${params.toString()}`,
+        pathname: ['search', dataType].filter(Boolean).join('/'),
+        search: queryParams.toString(),
       });
     },
-    [basename, navigate]
+    [params, navigate]
   );
 
   const redirectSearchPage = useCallback(
@@ -125,7 +121,7 @@ export const useNavigation = () => {
         instanceSpace,
         externalId,
       ]
-        .filter(Boolean)
+        .filter((item) => item !== undefined)
         .join('/');
 
       navigate({
@@ -139,6 +135,10 @@ export const useNavigation = () => {
   const toTimeseriesPage = useCallback(
     (externalId: string | number) => {
       const { space, dataModel, version } = params;
+      console.log(
+        'LOL',
+        `${basename}/${dataModel}/${space}/${version}/timeseries/${externalId}`
+      );
       navigate({
         pathname: `${basename}/${dataModel}/${space}/${version}/timeseries/${externalId}`,
         search,
