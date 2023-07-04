@@ -6,6 +6,7 @@ import { useEffect, useRef, type ReactNode, useState, type ReactElement } from '
 import { Cognite3DViewer } from '@cognite/reveal';
 import { RevealContext } from './RevealContext';
 import { type Color } from 'three';
+import { ModelsLoadingStateContext } from '../Reveal3DResources/ModelsLoadingContext';
 
 type RevealContainerProps = {
   color?: Color;
@@ -13,11 +14,7 @@ type RevealContainerProps = {
   children?: ReactNode;
 };
 
-export default function RevealContainer({
-  children,
-  sdk,
-  color
-}: RevealContainerProps): ReactElement {
+export function RevealContainer({ children, sdk, color }: RevealContainerProps): ReactElement {
   const [viewer, setViewer] = useState<Cognite3DViewer>();
   const revealDomElementRef = useRef<HTMLDivElement>(null);
 
@@ -36,7 +33,9 @@ export default function RevealContainer({
     if (viewer === undefined) return <></>;
     return (
       <>
-        <RevealContext.Provider value={viewer}>{children}</RevealContext.Provider>
+        <RevealContext.Provider value={viewer}>
+          <ModelsLoadingProvider>{children}</ModelsLoadingProvider>
+        </RevealContext.Provider>
       </>
     );
   }
@@ -56,4 +55,14 @@ export default function RevealContainer({
     viewer.dispose();
     setViewer(undefined);
   }
+}
+
+function ModelsLoadingProvider({ children }: { children?: ReactNode }): ReactElement {
+  const [modelsLoading, setModelsLoading] = useState(false);
+  return (
+    <ModelsLoadingStateContext.Provider
+      value={{ modelsAdded: modelsLoading, setModelsAdded: setModelsLoading }}>
+      {children}
+    </ModelsLoadingStateContext.Provider>
+  );
 }

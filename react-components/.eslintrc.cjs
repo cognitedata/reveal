@@ -1,5 +1,3 @@
-const path = require('path');
-
 module.exports = {
   env: {
     browser: true,
@@ -14,7 +12,8 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 'latest',
     sourceType: 'module',
-    project: [path.join(__dirname, 'tsconfig.json')]
+    project: './tsconfig.json',
+    tsconfigRootDir: __dirname
   },
   plugins: ['react', 'prettier', 'header'],
   rules: {
