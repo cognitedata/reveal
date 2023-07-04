@@ -4,8 +4,8 @@
 import { useRef, type ReactElement, useContext, useState, useEffect } from 'react';
 import { type Cognite3DViewer } from '@cognite/reveal';
 import { ModelsLoadingStateContext } from './ModelsLoadingContext';
-import CadModelContainer from '../CadModelContainer/CadModelContainer';
-import PointCloudContainer from '../PointCloudContainer/PointCloudContainer';
+import { CadModelContainer } from '../CadModelContainer/CadModelContainer';
+import { PointCloudContainer } from '../PointCloudContainer/PointCloudContainer';
 import { Image360CollectionContainer } from '../Image360CollectionContainer/Image360CollectionContainer';
 import { useReveal } from '../RevealContainer/RevealContext';
 import {
@@ -27,7 +27,7 @@ export const Reveal3DResources = ({ resources }: Reveal3DResourcesProps): ReactE
 
   useEffect(() => {
     getTypedModels(resources, viewer).then(setReveal3DModels).catch(console.error);
-  }, []);
+  }, [resources]);
 
   const image360CollectionAddOptions = resources.filter(
     (resource): resource is AddImageCollection360Options =>
@@ -45,10 +45,10 @@ export const Reveal3DResources = ({ resources }: Reveal3DResourcesProps): ReactE
     <>
       {reveal3DModels
         .filter(({ type }) => type === 'cad')
-        .map((addModelOption) => {
+        .map((addModelOption, index) => {
           return (
             <CadModelContainer
-              key={`${addModelOption.modelId}/${addModelOption.revisionId}`}
+              key={`${addModelOption.modelId}/${addModelOption.revisionId}/${index}`}
               addModelOptions={addModelOption}
               transform={addModelOption.transform}
               onLoad={onModelLoaded}
@@ -57,10 +57,10 @@ export const Reveal3DResources = ({ resources }: Reveal3DResourcesProps): ReactE
         })}
       {reveal3DModels
         .filter(({ type }) => type === 'pointcloud')
-        .map((addModelOption) => {
+        .map((addModelOption, index) => {
           return (
             <PointCloudContainer
-              key={`${addModelOption.modelId}/${addModelOption.revisionId}`}
+              key={`${addModelOption.modelId}/${addModelOption.revisionId}/${index}`}
               addModelOptions={addModelOption}
               transform={addModelOption.transform}
               onLoad={onModelLoaded}

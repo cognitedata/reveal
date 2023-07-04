@@ -13,7 +13,7 @@ type Cognite3dModelProps = {
   onLoad?: () => void;
 };
 
-export default function PointCloudContainer({
+export function PointCloudContainer({
   addModelOptions,
   transform,
   onLoad

@@ -14,11 +14,7 @@ type RevealContainerProps = {
   children?: ReactNode;
 };
 
-export default function RevealContainer({
-  children,
-  sdk,
-  color
-}: RevealContainerProps): ReactElement {
+export function RevealContainer({ children, sdk, color }: RevealContainerProps): ReactElement {
   const [viewer, setViewer] = useState<Cognite3DViewer>();
   const revealDomElementRef = useRef<HTMLDivElement>(null);
 

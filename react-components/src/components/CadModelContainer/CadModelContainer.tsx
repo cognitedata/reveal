@@ -12,7 +12,7 @@ type Cognite3dModelProps = {
   onLoad?: () => void;
 };
 
-export default function CadModelContainer({
+export function CadModelContainer({
   addModelOptions,
   transform,
   onLoad

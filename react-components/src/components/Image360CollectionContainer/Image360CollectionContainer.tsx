@@ -18,19 +18,19 @@ export function Image360CollectionContainer({
   const viewer = useReveal();
 
   useEffect(() => {
-    addModel().catch(console.error);
-    return removeModel;
+    add360Collection().catch(console.error);
+    return remove360Collection;
   }, [siteId]);
 
   return <></>;
 
-  async function addModel(): Promise<void> {
+  async function add360Collection(): Promise<void> {
     const image360Collection = await viewer.add360ImageSet('events', { site_id: siteId });
     modelRef.current = image360Collection;
     onLoad?.();
   }
 
-  function removeModel(): void {
+  function remove360Collection(): void {
     if (modelRef.current === undefined) return;
     viewer.remove360ImageSet(modelRef.current);
     modelRef.current = undefined;
