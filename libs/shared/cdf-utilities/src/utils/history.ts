@@ -26,45 +26,48 @@ interface CdfUserHistoryStorage {
 class LocalStorageHistoryProvider implements CdfUserHistoryStorage {
   constructor(user: CdfHistoryUser) {
     this.localStorageKey = `@cognite/fusion/browsing-history-${user.id}-${user.cluster}-${user.project}`;
+  }
+
+  private localStorageKey: string;
+
+  private writeToLocalStorage(data: CdfUserHistoryStorage) {
+    localStorage.setItem(this.localStorageKey, JSON.stringify(data));
+  }
+
+  private readFromLocalStorage(): CdfUserHistoryStorage {
     const lsValue = localStorage.getItem(this.localStorageKey);
-    this.dataCache = lsValue
+    return lsValue
       ? JSON.parse(lsValue)
       : { editedResources: [], viewedResources: [], usedApplications: [] };
   }
 
-  private localStorageKey: string;
-  private dataCache: CdfUserHistoryStorage;
-
-  private writeToLocalStorage() {
-    localStorage.setItem(this.localStorageKey, JSON.stringify(this.dataCache));
-  }
-
   get editedResources() {
-    return this.dataCache.editedResources;
+    return this.readFromLocalStorage().editedResources;
   }
 
   set editedResources(arr: CdfResourceUsage[]) {
-    this.dataCache.editedResources = arr;
-    this.writeToLocalStorage();
+    const stored = this.readFromLocalStorage();
+    this.writeToLocalStorage({ ...stored, editedResources: arr });
   }
 
   get viewedResources() {
-    return this.dataCache.viewedResources;
+    return this.readFromLocalStorage().viewedResources;
   }
 
   set viewedResources(arr: CdfResourceUsage[]) {
-    this.dataCache.viewedResources = arr;
-    this.writeToLocalStorage();
+    const stored = this.readFromLocalStorage();
+    this.writeToLocalStorage({ ...stored, viewedResources: arr });
   }
 
   get usedApplications() {
-    return this.dataCache.usedApplications;
+    return this.readFromLocalStorage().usedApplications;
   }
 
   set usedApplications(arr: CdfApplicationUsage[]) {
+    const stored = this.readFromLocalStorage();
     // sort by count before saving it to localStorage
-    this.dataCache.usedApplications = arr.sort((a, b) => b.count - a.count);
-    this.writeToLocalStorage();
+    const usedApplications = arr.sort((a, b) => b.count - a.count);
+    this.writeToLocalStorage({ ...stored, usedApplications });
   }
 }
 
