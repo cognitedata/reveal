@@ -50,11 +50,9 @@ export function CalculationRunList({
         return (
           <div className="grid-row" key={run.id}>
             <span className="simulators">
-              {
-                definitions?.simulatorsConfig?.filter(
-                  ({ key }) => key === run.source
-                )?.[0].name
-              }
+              {definitions?.simulatorsConfig?.filter(
+                ({ key }) => key === run.source
+              )?.[0]?.name ?? run.source}
             </span>
             <span className="model-name">{run.metadata.modelName}</span>
 
