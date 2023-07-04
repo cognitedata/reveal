@@ -23,6 +23,8 @@ interface CdfUserHistoryStorage {
   usedApplications: CdfApplicationUsage[];
 }
 
+const SAVED_RESOURCE_LIMIT = 10;
+
 class LocalStorageHistoryProvider implements CdfUserHistoryStorage {
   constructor(user: CdfHistoryUser) {
     this.localStorageKey = `@cognite/fusion/browsing-history-${user.id}-${user.cluster}-${user.project}`;
@@ -107,7 +109,7 @@ export class CdfUserHistoryService {
         ...resource,
       },
       ...resourceList,
-    ].slice(0, 9);
+    ].slice(0, SAVED_RESOURCE_LIMIT);
   }
 
   logNewResourceView(resource: Omit<CdfResourceUsage, 'timestamp'>) {
@@ -121,7 +123,7 @@ export class CdfUserHistoryService {
         ...resource,
       },
       ...resourceList,
-    ].slice(0, 9);
+    ].slice(0, SAVED_RESOURCE_LIMIT);
   }
 
   // read user history resources from localStorage
