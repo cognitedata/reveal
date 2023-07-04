@@ -1,3 +1,4 @@
+import { waitFor } from '@testing-library/react';
 import { setupServer } from 'msw/node';
 
 import { renderHookWithWrapper } from '../../../../tests/testUtils';
@@ -13,10 +14,8 @@ describe('capabilities hooks', () => {
 
   describe('useCapabilities', () => {
     it('should return capabilities', async () => {
-      const { result, waitFor } = renderHookWithWrapper(() =>
-        useCapabilities()
-      );
-      await waitFor(() => result.current.isLoading === false);
+      const { result } = renderHookWithWrapper(() => useCapabilities());
+      await waitFor(() => expect(result.current.isLoading).toBeFalsy());
       const capabilities = result.current.data;
       expect(capabilities?.length).toBeGreaterThan(0);
       expect(

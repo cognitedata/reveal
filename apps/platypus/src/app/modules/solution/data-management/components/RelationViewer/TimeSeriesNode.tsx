@@ -1,9 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import { TimeseriesChart } from '@cognite/plotting-components';
-
 import { createLink } from '@cognite/cdf-utilities';
 import { Button, Flex } from '@cognite/cogs.js';
+import { TimeseriesChart } from '@cognite/plotting-components';
 
 import { getCogniteSDKClient } from '../../../../../../environments/cogniteSdk';
 

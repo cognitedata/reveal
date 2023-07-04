@@ -5,7 +5,7 @@ export default {
     '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': '@nx/react/plugins/jest',
     '^.+\\.[tj]sx?$': ['babel-jest', { presets: ['@nx/react/babel'] }],
   },
-  transformIgnorePatterns: ['/node_modules/three'],
+  transformIgnorePatterns: ['/node_modules/three', 'jest-runner'],
   testPathIgnorePatterns: [
     '<rootDir>/src/pages/RevisionDetails/components/ToolbarTreeView/',
     '<rootDir>/src/store/modules/TreeView',
