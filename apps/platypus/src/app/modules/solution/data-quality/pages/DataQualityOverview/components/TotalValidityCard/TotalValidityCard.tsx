@@ -36,7 +36,7 @@ export const TotalValidityCard = () => {
           type="EmptyStateFolderSad"
           title={t(
             'data_quality_not_found_ds_validity',
-            "Something went wrong. We couldn't load the validity of the data source."
+            'Something went wrong. The validity score of the data source could not be loaded.'
           )}
         >
           <Body level={5}>{JSON.stringify(errorRules)}</Body>
@@ -64,13 +64,15 @@ export const TotalValidityCard = () => {
   };
 
   return (
-    <Card>
-      <Overline level={3}>
-        {t('data_quality_total_validity', 'Total validity')}
-      </Overline>
+    <Flex>
+      <Card>
+        <Overline level={3}>
+          {t('data_quality_total_validity', 'Total validity')}
+        </Overline>
 
-      {renderContent()}
-    </Card>
+        {renderContent()}
+      </Card>
+    </Flex>
   );
 };
 
@@ -79,7 +81,7 @@ const Card = styled.div`
   box-shadow: var(--cogs-elevation--surface--interactive);
   overflow: auto;
   padding: 0.5rem 1.5rem 2rem 1.5rem;
-  width: min(40vw, 600px);
+  width: min(40vw, 500px);
 
   .cogs-overline-3 {
     margin-bottom: 1rem;
