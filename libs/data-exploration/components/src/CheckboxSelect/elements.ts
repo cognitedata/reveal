@@ -80,7 +80,7 @@ export const OptionContainer = styled.div`
 `;
 
 export const OptionMenuContainer: any = styled(Menu)`
-  max-height: 350px;
+  max-height: 300px;
   overflow: auto;
   max-width: 270px;
 `;
