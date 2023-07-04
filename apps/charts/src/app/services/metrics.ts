@@ -11,23 +11,17 @@ const mixpanelConfig = {
   prefix: 'Charts',
 };
 
-const { hostname } = window.location;
-const isPreviewLink = hostname.includes('fusion-pr-preview');
-const configToApply = { ...config };
-if ((!configToApply.mixpanelToken && isPreviewLink) || isDevelopment) {
-  configToApply.mixpanelToken = '741a2c6ee88f7a1191cce6515493a541';
-}
-if (configToApply.mixpanelToken) {
-  mixpanel.init(configToApply.mixpanelToken, { debug: isDevelopment });
-} else if ((isProduction || isStaging) && !config.isStorybook) {
-  throw new Error('Mixpanel token must be present outside of development!');
+const shouldMixpanelTrack = isStaging || isProduction;
+
+if (shouldMixpanelTrack) {
+  mixpanel.init(config.mixpanelToken, { debug: isDevelopment });
 } else {
   // eslint-disable-next-line no-console
   console.warn('Mixpanel token not present. No tracking will be done.');
 }
 
 export function trackUsage(eventName: string, properties = {}) {
-  if (!config.mixpanelToken) return;
+  if (!shouldMixpanelTrack) return;
   if (!eventName) {
     throw new Error('Event Name is missing!');
   }
@@ -46,7 +40,7 @@ export function trackUsage(eventName: string, properties = {}) {
 }
 
 export function startTimer(eventName: string) {
-  if (!config.mixpanelToken) return;
+  if (!shouldMixpanelTrack) return;
   if (!eventName) {
     throw new Error('Event Name is missing!');
   }
@@ -55,7 +49,7 @@ export function startTimer(eventName: string) {
 }
 
 export function stopTimer(eventName: string, properties = {}) {
-  if (!config.mixpanelToken) return;
+  if (!shouldMixpanelTrack) return;
   trackUsage(eventName, properties);
 }
 
@@ -74,7 +68,7 @@ export const identifyUserForMetrics = (
   azureADTenant?: string
 ) => {
   if (user) {
-    if (config.mixpanelToken) {
+    if (shouldMixpanelTrack) {
       mixpanel.identify(user.mail || user.displayName || user.id);
       mixpanel.people.set({ $name: user.displayName, $email: user.mail });
       mixpanel.people.union('Projects', project);
