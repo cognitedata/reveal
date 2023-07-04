@@ -19,7 +19,11 @@ export const EventDetailsTable = (
   const tableColumns = getTableColumns(t);
 
   const columns = useMemo(
-    () => [tableColumns.type(), tableColumns.description()],
+    () => [
+      tableColumns.type(),
+      tableColumns.description(),
+      tableColumns.subtype(),
+    ],
     []
   ) as ColumnDef<InternalEventsData>[];
   return (

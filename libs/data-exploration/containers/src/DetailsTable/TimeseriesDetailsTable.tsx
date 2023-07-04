@@ -17,8 +17,10 @@ export const TimeseriesDetailsTable = (
 ) => {
   const { t } = useTranslation();
 
+  const tableColumns = getTableColumns(t);
+
   const columns = useMemo(
-    () => [getTableColumns(t).name()],
+    () => [tableColumns.name(), tableColumns.description()],
     []
   ) as ColumnDef<InternalTimeseriesData>[];
   return (
