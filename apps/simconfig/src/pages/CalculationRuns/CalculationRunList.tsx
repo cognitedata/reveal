@@ -124,20 +124,13 @@ function ExpansionMenu({ run }: { run: CalculationRun }) {
           <Skeleton.Text />
         </Menu.Item>
       ) : (
-        <a href={chartLinks?.inputLink} rel="noreferrer" target="_blank">
+        <a
+          href={chartLinks?.timeSeriesChartsLink}
+          rel="noreferrer"
+          target="_blank"
+        >
           <Menu.Item>
-            <Icon type="LineChart" /> Open inputs in Charts
-          </Menu.Item>
-        </a>
-      )}
-      {isFetchingChartLinks ? (
-        <Menu.Item>
-          <Skeleton.Text />
-        </Menu.Item>
-      ) : (
-        <a href={chartLinks?.outputLink} rel="noreferrer" target="_blank">
-          <Menu.Item>
-            <Icon type="LineChart" /> Open outputs in Charts
+            <Icon type="LineChart" /> Open timeseries in Charts
           </Menu.Item>
         </a>
       )}
