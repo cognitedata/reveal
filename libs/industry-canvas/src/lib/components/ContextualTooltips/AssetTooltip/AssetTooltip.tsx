@@ -115,13 +115,13 @@ const AssetTooltip: React.FC<AssetTooltipProps> = ({
                   icon="ListSearch"
                   onClick={onOpenInResourceSelector}
                   aria-label={t(
-                    translationKeys.OPEN_IN_RESOURCE_SELECTOR,
-                    'Open in Resource Selector'
+                    translationKeys.FIND_RELATED_RESOURCES,
+                    'Find related resources'
                   )}
                 >
                   {t(
-                    translationKeys.OPEN_IN_RESOURCE_SELECTOR,
-                    'Open in Resource Selector'
+                    translationKeys.FIND_RELATED_RESOURCES,
+                    'Find related resources'
                   )}
                 </Menu.Item>
               </ContextualTooltip.DropdownMenu>
