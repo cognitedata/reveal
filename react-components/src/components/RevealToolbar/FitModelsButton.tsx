@@ -12,15 +12,13 @@ import { Button } from '@cognite/cogs.js';
 export const FitModelsButton = (): ReactElement => {
   const viewer = useReveal();
 
-  const modelList = viewer.models;
-
   const updateCamera = useCallback(() => {
     const box = new Box3();
 
     viewer.models.forEach((model) => box.union(model.getModelBoundingBox()));
 
     viewer.cameraManager.fitCameraToBoundingBox(box);
-  }, [viewer, ...modelList]);
+  }, [viewer, ...viewer.models]);
 
   return (
     <Button
