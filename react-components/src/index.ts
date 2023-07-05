@@ -17,3 +17,4 @@ export type {
   AddResourceOptions,
   AddReveal3DModelOptions
 } from './components/Reveal3DResources/types';
+export { RevealToolbar } from './components/RevealToolbar/RevealToolbar';
