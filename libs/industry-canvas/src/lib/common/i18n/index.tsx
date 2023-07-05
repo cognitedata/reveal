@@ -14,17 +14,17 @@ import * as zh from './zh/industrial-canvas.json';
  * Platypus app translations
  */
 export const translations = {
-  en: { 'data-exploration': en },
-  de: { 'data-exploration': de },
-  es: { 'data-exploration': es },
-  fr: { 'data-exploration': fr },
-  it: { 'data-exploration': it },
-  ja: { 'data-exploration': ja },
-  ko: { 'data-exploration': ko },
-  nl: { 'data-exploration': nl },
-  pt: { 'data-exploration': pt },
-  sv: { 'data-exploration': sv },
-  zh: { 'data-exploration': zh },
+  en: { 'industrial-canvas': en },
+  de: { 'industrial-canvas': de },
+  es: { 'industrial-canvas': es },
+  fr: { 'industrial-canvas': fr },
+  it: { 'industrial-canvas': it },
+  ja: { 'industrial-canvas': ja },
+  ko: { 'industrial-canvas': ko },
+  nl: { 'industrial-canvas': nl },
+  pt: { 'industrial-canvas': pt },
+  sv: { 'industrial-canvas': sv },
+  zh: { 'industrial-canvas': zh },
 };
 
 export * from './translationKeys';
