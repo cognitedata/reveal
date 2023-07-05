@@ -1,3 +1,5 @@
+import { ComponentProps } from 'react';
+
 import { Color } from 'three';
 
 import {
@@ -9,10 +11,26 @@ import { useSDK } from '@cognite/sdk-provider';
 
 import { useProjectConfig } from '../../hooks/useProjectConfig';
 
+import { StyledRevealToolBar } from './components/ToolBar/StyledRevealToolBar';
+
+const defaultViewerOptions: ComponentProps<
+  typeof RevealContainer
+>['viewerOptions'] = {
+  loadingIndicatorStyle: {
+    placement: 'topRight',
+    opacity: 0.2,
+  },
+};
+
 export const ThreeDContent = () => {
   const sdk = useSDK();
   return (
-    <RevealContainer sdk={sdk} color={new Color(0x4a4a4b)}>
+    <RevealContainer
+      sdk={sdk}
+      color={new Color(0x4a4a4b)}
+      viewerOptions={defaultViewerOptions}
+    >
+      <StyledRevealToolBar />
       <ThreeDResources />
       <CameraController initialFitCamera={{ to: 'allModels' }} />
     </RevealContainer>
