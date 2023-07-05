@@ -342,7 +342,11 @@ export function CalculationConfiguration() {
           )}
         </Formik>
       ) : (
-        <Infobox title="Model type cannot be determined" type="warning">
+        <Infobox
+          style={{ marginTop: '4.5rem' }}
+          title="Model type cannot be determined"
+          type="warning"
+        >
           Check that the PROSPER integration is available, then refresh the page
           and try again.
         </Infobox>
@@ -430,10 +434,6 @@ const CalculationConfigurationContainer = styled.main`
     top: 7rem;
     padding-bottom: 2.7em;
     z-index: ${LAYER.CALCULATION_CONFIGURATION_HEADER}; // less than WIZARD_PROGRESS_CONTAINER
-  }
-
-  .cogs-infobox {
-    margin-top: 4.5rem;
   }
 `;
 

@@ -1,8 +1,6 @@
-import classNames from 'classnames';
 import { isAfter } from 'date-fns/esm';
-import styled from 'styled-components/macro';
 
-import { Label } from '@cognite/cogs.js';
+import { Chip } from '@cognite/cogs.js-v9';
 import type { SimulatorInstance } from '@cognite/simconfig-api-sdk/rtk';
 
 import { HEARTBEAT_TIMEOUT_SECONDS } from 'components/simulator/constants';
@@ -28,28 +26,17 @@ export function SimulatorStatusLabel({
   const statusDisplayTitle = isSimulatorAvailable ? 'Available' : 'Unavailable';
 
   return (
-    <SimulatorStatusLabelContainer isMain={isMain}>
-      <Label
-        className={classNames({ 'cogs-label--is-interactive': title })}
-        icon={isSimulatorAvailable ? 'CheckmarkAlternative' : 'Warning'}
-        size={!isMain ? 'small' : undefined}
-        variant={isSimulatorAvailable ? 'success' : 'danger'}
-      >
-        {onMenuBar ? title : statusDisplayTitle}
-      </Label>
-    </SimulatorStatusLabelContainer>
+    <Chip
+      icon={isSimulatorAvailable ? 'CheckmarkAlternative' : 'Warning'}
+      label={onMenuBar ? title : statusDisplayTitle}
+      size={!isMain ? 'x-small' : undefined}
+      type={isSimulatorAvailable ? 'success' : 'danger'}
+      hideTooltip
+      {...(title && {
+        onClick: () => {
+          /* the onClick prop only serves to make the chip have an interactive hover state */
+        },
+      })}
+    />
   );
 }
-
-const SimulatorStatusLabelContainer = styled.div<
-  Omit<SimulatorStatusCellProps, 'simulator' | 'title'>
->`
-  .cogs-label {
-    column-gap: 5px;
-    ${(props) =>
-      props.isMain && {
-        height: 28,
-        fontSize: 13,
-      }};
-  }
-`;

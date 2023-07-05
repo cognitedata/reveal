@@ -6,6 +6,7 @@ import parseISO from 'date-fns/parseISO';
 import styled from 'styled-components/macro';
 
 import { Button, Icon, Skeleton, Tooltip, toast } from '@cognite/cogs.js';
+import { Infobox } from '@cognite/cogs.js-v9';
 import type {
   CogniteApiError,
   ModelFile,
@@ -25,10 +26,7 @@ import { downloadModelFile } from 'utils/fileDownload';
 import { TRACKING_EVENTS } from 'utils/metrics/constants';
 import { trackUsage } from 'utils/metrics/tracking';
 
-import {
-  BoundaryConditionTable,
-  ProcessingStatus,
-} from './BoundaryConditionTable';
+import { BoundaryConditionTable } from './BoundaryConditionTable';
 
 interface ModelVersionDetailsProps {
   modelFile: ModelFile;
@@ -168,9 +166,9 @@ export function ModelVersionDetails({ modelFile }: ModelVersionDetailsProps) {
       {simulatorConfigDetails?.isBoundaryConditionsEnabled &&
       boundaryConditions?.status === 'success' &&
       !boundaryConditions.modelBoundaryConditionList.length ? (
-        <ProcessingStatus icon="WarningTriangleFilled" variant="warning">
+        <Infobox type="warning">
           There are no boundary conditions extracted for this model version
-        </ProcessingStatus>
+        </Infobox>
       ) : undefined}
 
       {simulatorConfigDetails?.isBoundaryConditionsEnabled &&
@@ -185,12 +183,12 @@ export function ModelVersionDetails({ modelFile }: ModelVersionDetailsProps) {
       ) : undefined}
 
       {isErrorBoundaryConditions ? (
-        <ProcessingStatus icon="WarningTriangleFilled" variant="warning">
+        <Infobox type="warning">
           {
             (errorMessageBoundaryConditions as InteralError).data?.error
               ?.message
           }
-        </ProcessingStatus>
+        </Infobox>
       ) : undefined}
 
       <ModelVersionProperties>

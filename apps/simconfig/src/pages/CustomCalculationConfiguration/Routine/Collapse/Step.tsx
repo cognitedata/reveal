@@ -7,7 +7,8 @@ import { useDragControls } from 'framer-motion';
 import cloneDeep from 'lodash/cloneDeep';
 import styled from 'styled-components/macro';
 
-import { Icon, Label } from '@cognite/cogs.js';
+import { Icon } from '@cognite/cogs.js';
+import { Chip } from '@cognite/cogs.js-v9';
 import type { UserDefined } from '@cognite/simconfig-api-sdk/rtk';
 
 import { StepCommand } from '../Commands/StepCommand';
@@ -77,9 +78,12 @@ export function Step({
           <span className="step-position">{stepPosition}</span>
           {title}
           {!isValidStep(step) && (
-            <Label className="warning-label" size="small">
-              Configuration incomplete
-            </Label>
+            <Chip
+              css={{ marginLeft: '1em' }}
+              label="Configuration incomplete"
+              size="x-small"
+              type="warning"
+            />
           )}
         </div>
 
@@ -121,17 +125,6 @@ const CollapseStepContainer = styled.div`
 
     .cogs-icon {
       margin-right: 10px;
-    }
-
-    .warning-label {
-      cursor: pointer;
-      border: 2px solid rgba(255, 187, 0, 0.2);
-      border-radius: 4px;
-      color: #b55800;
-      font-size: 13px;
-      font-weight: 500;
-      background-color: transparent;
-      margin-left: 1em;
     }
   }
 `;

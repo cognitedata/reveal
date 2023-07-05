@@ -8,13 +8,13 @@ import {
   Button,
   Dropdown,
   Icon,
-  Label,
   Menu,
   SegmentedControl,
   Skeleton,
   Tabs,
   toast,
 } from '@cognite/cogs.js';
+import { Chip } from '@cognite/cogs.js-v9';
 import type { ExternalId, Simulator } from '@cognite/simconfig-api-sdk/rtk';
 import {
   useDeleteModelFileMutation,
@@ -177,17 +177,24 @@ export function ModelDetails({
               )}
               {isDeletionInProgress ? (
                 <li>
-                  <Label size="medium" variant="danger">
-                    <Icon type="Loader" />
-                    &nbsp;&nbsp; Deletion in progress
-                  </Label>
+                  <Chip
+                    css={{ marginLeft: '12px' }}
+                    icon="Loader"
+                    label="Deletion in progress"
+                    size="small"
+                    type="danger"
+                    hideTooltip
+                  />
                 </li>
               ) : undefined}
               {modelFile.deletionStatus?.erroredResources?.length ? (
                 <li>
-                  <Label size="large" variant="danger">
-                    Partial deleted model, some of the resources are not deleted
-                  </Label>
+                  <Chip
+                    css={{ marginLeft: '12px' }}
+                    label="Partial deleted model, some of the resources are not deleted"
+                    size="medium"
+                    type="danger"
+                  />
                 </li>
               ) : undefined}
             </ul>

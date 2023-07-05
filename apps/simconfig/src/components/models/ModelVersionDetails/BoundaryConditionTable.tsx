@@ -3,7 +3,8 @@ import React from 'react';
 import classNames from 'classnames';
 import styled from 'styled-components/macro';
 
-import { Label, Tooltip } from '@cognite/cogs.js';
+import { Tooltip } from '@cognite/cogs.js';
+import { Chip, Infobox } from '@cognite/cogs.js-v9';
 import type {
   BoundaryConditionValue,
   ModelFile,
@@ -24,12 +25,12 @@ export function BoundaryConditionTable({
   if (!boundaryConditions?.length) {
     if (modelFile?.metadata.errorMessage !== undefined) {
       return (
-        <ProcessingStatus icon="WarningTriangleFilled" variant="warning">
-          Processing failed: {modelFile.metadata.errorMessage}
-        </ProcessingStatus>
+        <Infobox type="warning">
+          {`Processing failed: ${modelFile.metadata.errorMessage}`}
+        </Infobox>
       );
     }
-    return <ProcessingStatus icon="Loader">Processing...</ProcessingStatus>;
+    return <Chip icon="Loader" label="Processing..." type="neutral" />;
   }
 
   return (
@@ -138,11 +139,4 @@ const BoundaryConditionsTableContainer = styled.div`
     background: var(--cogs-red-8);
     color: var(--cogs-red-1);
   }
-`;
-
-export const ProcessingStatus = styled(Label)`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
 `;

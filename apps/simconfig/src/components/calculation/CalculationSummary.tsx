@@ -4,7 +4,7 @@ import { useMatch } from 'react-location';
 import classNames from 'classnames';
 import styled from 'styled-components/macro';
 
-import { Label } from '@cognite/cogs.js';
+import { Chip } from '@cognite/cogs.js-v9';
 import type {
   CalculationTemplate,
   DefinitionMap,
@@ -51,9 +51,7 @@ export function CalculationSummary({ configuration }: CalculationSummaryProps) {
         <h3>
           Schedule{' '}
           {configuration.schedule.enabled || (
-            <Label size="small" variant="danger">
-              disabled
-            </Label>
+            <Chip label="disabled" size="x-small" type="danger" hideTooltip />
           )}
         </h3>
         <CalculationScheduleIndicator
@@ -98,9 +96,7 @@ export function CalculationSummary({ configuration }: CalculationSummaryProps) {
         <h3>
           Logical check{' '}
           {configuration.logicalCheck.enabled || (
-            <Label size="small" variant="danger">
-              disabled
-            </Label>
+            <Chip label="disabled" size="x-small" type="danger" hideTooltip />
           )}
         </h3>
         <div className="properties">
@@ -151,9 +147,7 @@ export function CalculationSummary({ configuration }: CalculationSummaryProps) {
         <h3>
           Steady state detection{' '}
           {configuration.steadyStateDetection.enabled || (
-            <Label size="small" variant="danger">
-              disabled
-            </Label>
+            <Chip label="disabled" size="x-small" type="danger" hideTooltip />
           )}
         </h3>
         <div className="properties">
@@ -236,9 +230,7 @@ export function CalculationSummary({ configuration }: CalculationSummaryProps) {
           <h3>
             BHP estimation{' '}
             {configuration.estimateBHP.enabled || (
-              <Label size="small" variant="danger">
-                disabled
-              </Label>
+              <Chip label="disabled" size="x-small" type="danger" hideTooltip />
             )}
           </h3>
           <div className="properties">
@@ -357,9 +349,7 @@ export function CalculationSummary({ configuration }: CalculationSummaryProps) {
         <h3>
           Inputs{' '}
           {!!configuration.inputTimeSeries.length || (
-            <Label size="small" variant="danger">
-              disabled
-            </Label>
+            <Chip label="disabled" size="x-small" type="danger" hideTooltip />
           )}
         </h3>
         <InputTimeseriesList>
@@ -417,9 +407,7 @@ export function CalculationSummary({ configuration }: CalculationSummaryProps) {
         <h3>
           Outputs{' '}
           {!!configuration.outputTimeSeries.length || (
-            <Label size="small" variant="danger">
-              disabled
-            </Label>
+            <Chip label="disabled" size="x-small" type="danger" hideTooltip />
           )}
         </h3>
         <OutputTimeseriesList>

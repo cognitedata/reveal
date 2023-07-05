@@ -7,7 +7,8 @@ import classNames from 'classnames';
 import { Field, useFormikContext } from 'formik';
 
 import type { OptionType } from '@cognite/cogs.js';
-import { Label, Select } from '@cognite/cogs.js';
+import { Select } from '@cognite/cogs.js';
+import { Infobox } from '@cognite/cogs.js-v9';
 import type { CalculationTemplate } from '@cognite/simconfig-api-sdk/rtk';
 
 import { TimeseriesChart } from 'components/charts/TimeseriesChart';
@@ -120,12 +121,10 @@ export function InputStep({ isDisabled }: StepProps) {
                     />
                   </div>
                 </FormRow>
-                <Label icon="Timeseries">
-                  <span>
-                    Sampled input values will be saved to{' '}
-                    <code>{sampleExternalId}</code>
-                  </span>
-                </Label>
+                <Infobox type="neutral">
+                  Sampled input values will be saved to{' '}
+                  <code>{sampleExternalId}</code>
+                </Infobox>
               </div>
               <div
                 className={classNames('chart', 'short', {

@@ -2,14 +2,8 @@ import React from 'react';
 import { Link, useMatch } from 'react-location';
 import { useSelector } from 'react-redux';
 
-import {
-  Button,
-  Dropdown,
-  Icon,
-  Label,
-  Menu,
-  Skeleton,
-} from '@cognite/cogs.js';
+import { Button, Dropdown, Icon, Menu, Skeleton } from '@cognite/cogs.js';
+import { Chip } from '@cognite/cogs.js-v9';
 import type { CalculationRun } from '@cognite/simconfig-api-sdk/rtk';
 import { useGetCalculationQuery } from '@cognite/simconfig-api-sdk/rtk';
 
@@ -58,9 +52,12 @@ export function CalculationRunList({
 
             <span className="model-version">
               {run.metadata.modelVersion ? (
-                <Label size="small" variant="unknown">
-                  v{run.metadata.modelVersion}
-                </Label>
+                <Chip
+                  label={`v${run.metadata.modelVersion}`}
+                  size="x-small"
+                  type="default"
+                  hideTooltip
+                />
               ) : null}
             </span>
 

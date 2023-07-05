@@ -44,7 +44,6 @@ export const CalculationRunsListContainer = styled.div`
   }
 
   .cogs-tooltip__content {
-    cursor: help;
     display: flex;
     column-gap: 6px;
     align-items: center;

@@ -3,15 +3,8 @@ import { useSelector } from 'react-redux';
 
 import styled from 'styled-components/macro';
 
-import {
-  Button,
-  Dropdown,
-  Icon,
-  Input,
-  Label,
-  Menu,
-  toast,
-} from '@cognite/cogs.js';
+import { Button, Dropdown, Icon, Input, Menu, toast } from '@cognite/cogs.js';
+import { Chip, ChipGroup } from '@cognite/cogs.js-v9';
 import type { LabelDetails, ModelFile } from '@cognite/simconfig-api-sdk/rtk';
 import {
   useCreateLabelMutation,
@@ -121,51 +114,24 @@ export function ModelLabels({
     <ModelLabelsContainer>
       <LabelsModal isOpen={isOpen} setOpen={setOpen} />
       <LabelsLine>
-        {selectedLabels.length > 0 &&
-          selectedLabels.slice(0, 2).map((label) => (
-            <LabelItem key={label.value} marginLeft={8}>
-              {' '}
-              <span className="label-name">{label.label}</span>
-              <Icon
-                className="remove-label-icon"
-                type="Close"
-                onClick={() => {
-                  removeLabelFromModel(label.value);
-                  toast.success('Label is removed');
-                }}
-              />
-            </LabelItem>
+        <ChipGroup
+          overflow={3}
+          size="medium"
+          onRemoveChip={(chipName: string) => {
+            removeLabelFromModel(chipName);
+            toast.success('Label is removed');
+          }}
+        >
+          {selectedLabels.map((label) => (
+            <Chip
+              key={label.value}
+              label={label.label}
+              name={label.value}
+              type="neutral"
+              hideTooltip
+            />
           ))}
-
-        {selectedLabels.length > 2 && (
-          <Dropdown
-            content={
-              <Menu>
-                {selectedLabels
-                  .slice(2, selectedLabels.length)
-                  .map((label, idx) => (
-                    <LabelItem key={label.value} marginTop={idx !== 0 ? 8 : 0}>
-                      {' '}
-                      <span className="label-name">{label.label}</span>
-                      <Icon
-                        className="remove-label-icon"
-                        type="Close"
-                        onClick={() => {
-                          removeLabelFromModel(label.value);
-                          toast.success('Label is removed');
-                        }}
-                      />
-                    </LabelItem>
-                  ))}
-              </Menu>
-            }
-          >
-            <LabelItem marginLeft={8}>
-              +{selectedLabels.length - 2}
-              <Icon type="ChevronDown" />
-            </LabelItem>
-          </Dropdown>
-        )}
+        </ChipGroup>
 
         <Dropdown
           content={
@@ -260,34 +226,6 @@ const LabelsLine = styled.div`
   align-content: center;
   align-self: center;
   vertical-align: center;
-`;
-
-const LabelItem = styled(Label)<{
-  marginLeft?: number;
-  marginRight?: number;
-  marginTop?: number;
-}>`
-  color: #396bd7;
-  height: 28px;
-  background-color: rgba(64, 120, 240, 0.1);
-  transition: background-color 0.25s;
-  font-size: 13px;
-  &:hover {
-    background-color: rgba(64, 120, 240, 0.2);
-  }
-  margin-left: ${(p) => p.marginLeft}px;
-  margin-right: ${(p) => p.marginRight}px;
-  margin-top: ${(p) => p.marginTop}px;
-  .cogs-icon {
-    cursor: pointer;
-    margin-left: 9.5px;
-  }
-  .label-name {
-    max-width: 150px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap; // Only display the text in one line
-  }
 `;
 
 const AddLabelButton = styled(Button)`

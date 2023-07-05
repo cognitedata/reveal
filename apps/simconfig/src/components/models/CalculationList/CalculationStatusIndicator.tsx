@@ -1,7 +1,8 @@
 import styled from 'styled-components/macro';
 
-import type { LabelVariants } from '@cognite/cogs.js';
-import { Label, Tooltip } from '@cognite/cogs.js';
+import { Tooltip } from '@cognite/cogs.js';
+import type { ChipType } from '@cognite/cogs.js-v9';
+import { Chip } from '@cognite/cogs.js-v9';
 import type { CalculationRunMetadata } from '@cognite/simconfig-api-sdk/rtk';
 
 export function CalculationStatusIndicator({
@@ -9,37 +10,34 @@ export function CalculationStatusIndicator({
   statusMessage,
 }: Partial<Pick<CalculationRunMetadata, 'status' | 'statusMessage'>>) {
   if (!status || !statusMessage) {
-    return (
-      <CalculationStatusLabel size="small" variant="unknown">
-        N/A
-      </CalculationStatusLabel>
-    );
+    return <CalculationStatusChip label="N/A" type="default" />;
   }
 
   return (
     <Tooltip content={statusMessage}>
-      <CalculationStatusLabel
-        size="small"
-        variant={CalculationStatusLabelVariantMap[status]}
-      >
-        {status}
-      </CalculationStatusLabel>
+      <CalculationStatusChip
+        label={status}
+        type={CalculationStatusChipVariantMap[status]}
+      />
     </Tooltip>
   );
 }
 
-const CalculationStatusLabelVariantMap: Record<
+const CalculationStatusChipVariantMap: Record<
   CalculationRunMetadata['status'],
-  LabelVariants
+  keyof typeof ChipType
 > = {
-  unknown: 'unknown',
-  ready: 'default',
+  unknown: 'default',
+  ready: 'neutral',
   running: 'warning',
   success: 'success',
   failure: 'danger',
 } as const;
 
-const CalculationStatusLabel = styled(Label)`
+const CalculationStatusChip = styled(Chip).attrs({
+  hideTooltip: true,
+  size: 'x-small',
+})`
   cursor: help;
   text-transform: capitalize;
 `;

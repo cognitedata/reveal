@@ -8,8 +8,8 @@ import parseISO from 'date-fns/parseISO';
 import styled from 'styled-components/macro';
 
 import type { CollapsePanelProps } from '@cognite/cogs.js';
-import { Collapse, Icon, Label, Skeleton, Tooltip } from '@cognite/cogs.js';
-import { Pagination } from '@cognite/cogs.js-v9';
+import { Collapse, Icon, Skeleton, Tooltip } from '@cognite/cogs.js';
+import { Chip, Pagination } from '@cognite/cogs.js-v9';
 import type { ModelFile, Simulator } from '@cognite/simconfig-api-sdk/rtk';
 import { useGetModelFileVersionListQuery } from '@cognite/simconfig-api-sdk/rtk';
 
@@ -113,10 +113,12 @@ export function ModelVersionList({
                     )}
                     {modelFile.metadata.errorMessage && (
                       <Tooltip content={modelFile.metadata.errorMessage}>
-                        <Label
-                          icon="WarningTriangle"
-                          size="small"
-                          variant="warning"
+                        <Chip
+                          css={{ marginLeft: '12px' }}
+                          icon="Warning"
+                          size="x-small"
+                          type="warning"
+                          hideTooltip
                         />
                       </Tooltip>
                     )}

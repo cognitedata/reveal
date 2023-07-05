@@ -10,12 +10,12 @@ import {
   Dropdown,
   Graphic,
   Icon,
-  Label,
   Menu,
   Skeleton,
   Tooltip,
   toast,
 } from '@cognite/cogs.js';
+import { Chip } from '@cognite/cogs.js-v9';
 import { useFlag } from '@cognite/react-feature-flags';
 import type {
   CalculationRun,
@@ -342,10 +342,14 @@ export function CalculationList({
               {(calculation.deletionStatus &&
                 !calculation.deletionStatus.erroredResources?.length) ||
               deletedExternalIds.includes(calculation.externalId) ? (
-                <Label size="medium" variant="danger">
-                  <Icon type="Loader" />
-                  &nbsp;&nbsp; Deletion in progress
-                </Label>
+                <Chip
+                  css={{ marginLeft: '12px' }}
+                  icon="Loader"
+                  label="Deletion in progress"
+                  size="small"
+                  type="danger"
+                  hideTooltip
+                />
               ) : undefined}
 
               {!isFetchingModelFile &&
@@ -368,7 +372,13 @@ export function CalculationList({
                   elevated
                   wrapped
                 >
-                  <Label icon="WarningTriangle" variant="warning" />
+                  <Chip
+                    css={{ marginLeft: '12px' }}
+                    icon="Warning"
+                    size="small"
+                    type="warning"
+                    hideTooltip
+                  />
                 </Tooltip>
               ) : undefined}
             </span>
