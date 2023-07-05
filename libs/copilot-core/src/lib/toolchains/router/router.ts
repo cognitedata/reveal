@@ -4,7 +4,7 @@ import { RouterOutputParser } from 'langchain/output_parsers';
 import { PromptTemplate } from 'langchain/prompts';
 import { z } from 'zod';
 
-import { ROUTER_TEMPLATE } from './templates';
+import { copilotRouterPrompt } from '@cognite/llm-hub';
 
 export const getRouterChain = (
   model: BaseLanguageModel,
@@ -13,11 +13,6 @@ export const getRouterChain = (
   let destinations = templates
     .map((item) => item.name + ': ' + item.description)
     .join('\n');
-
-  const routerTemplate = ROUTER_TEMPLATE.replace(
-    '{destinations}',
-    destinations
-  );
 
   let routerParser = RouterOutputParser.fromZodSchema(
     z.object({
@@ -35,11 +30,12 @@ export const getRouterChain = (
 
   // Now we can construct the router with the list of route names and descriptions
   let routerPrompt = new PromptTemplate({
-    template: routerTemplate,
+    template: copilotRouterPrompt.template,
     inputVariables: ['input', 'sdk', 'pastMessages'],
     outputParser: routerParser,
     partialVariables: {
       format_instructions: routerFormat,
+      destinations: destinations,
     },
   });
 

@@ -11,6 +11,12 @@ import { PromptTemplate } from 'langchain/prompts';
 import { ChainValues } from 'langchain/schema';
 
 import {
+  copilotDestinationGraphqlPrompt,
+  datamodelTypePrompt,
+  graphqlPrompt,
+} from '@cognite/llm-hub';
+
+import {
   CogniteBaseChain,
   CogniteChainInput,
   CopilotMessage,
@@ -21,7 +27,6 @@ import {
   sendToCopilotEvent,
 } from '../../utils';
 
-import { GRAPHQL_TYPE_TEMPLATE, GRAPHQL_QUERY_TEMPLATE } from './prompts';
 import { augmentQueryWithRequiredFields } from './utils';
 
 const handleChainStart =
@@ -84,7 +89,7 @@ export class GraphQlChain extends CogniteBaseChain {
   outputVariables: string[];
   returnAll?: boolean | undefined;
 
-  description = 'Good for retrieving data from data models in CDF.';
+  description = copilotDestinationGraphqlPrompt.template;
 
   constructor(private fields: CogniteChainInput) {
     super(fields);
@@ -115,7 +120,7 @@ export class GraphQlChain extends CogniteBaseChain {
   }
 
   get inputKeys() {
-    return ['input', 'types'];
+    return datamodelTypePrompt.input_variables;
   }
 
   get outputKeys(): string[] {
@@ -155,8 +160,8 @@ export class GraphQlChain extends CogniteBaseChain {
     );
     // Chain 1: Extract relevant types
     const graphQlTypePromptTemplate = new PromptTemplate({
-      template: GRAPHQL_TYPE_TEMPLATE,
-      inputVariables: this.inputKeys,
+      template: datamodelTypePrompt.template,
+      inputVariables: datamodelTypePrompt.input_variables,
     });
     const graphQlType = new LLMChain({
       llm: this.llm,
@@ -166,8 +171,8 @@ export class GraphQlChain extends CogniteBaseChain {
 
     // Chain 2: Construct query
     const queryPromptTemplate = new PromptTemplate({
-      template: GRAPHQL_QUERY_TEMPLATE,
-      inputVariables: ['input', 'relevantTypes'],
+      template: graphqlPrompt.template,
+      inputVariables: graphqlPrompt.input_variables,
     });
     const graphQlQuery = new LLMChain({
       llm: this.llm,
