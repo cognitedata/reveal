@@ -95,12 +95,17 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
         return;
       }
 
-      await facade.preload(entity, entity.getActiveRevision());
+      await facade.preload(entity, entity.getRevisions()[0]);
       entity.image360Visualization.visible = true;
       entity.icon.setVisible(false);
+      entity.setActiveRevision(entity.getRevisions()[0]);
 
       if (lastClicked !== undefined) {
+        await entity.getActiveRevision().applyFullResolutionTextures();
+        entity.image360Visualization.opacity = 1;
         this.transition360Image(lastClicked, entity, camera, cameraControls);
+        lastClicked.image360Visualization.visible = false;
+        lastClicked.icon.setVisible(true);
         lastClicked = entity;
         return;
       }
@@ -144,7 +149,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
       const from = { t: 0 };
       const to = { t: 1 };
       const anim = new TWEEN.Tween(from)
-        .to(to, 1000)
+        .to(to, 500)
         .onUpdate(() => {
           const animatedPosition = new THREE.Vector3().lerpVectors(translationFrom, translationTo, from.t);
           camera.position.copy(animatedPosition);
