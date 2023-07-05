@@ -23,19 +23,11 @@ export const CloseResourceSelectorButton = ({
   return (
     <TopRightAbsoluteWrapper>
       <ToolBar>
-        <Tooltip
-          content={t(
-            translationKeys.CLOSE_RESOURCE_SELECTOR,
-            'Close Resource Selector'
-          )}
-        >
+        <Tooltip content={t(translationKeys.CLOSE, 'Close')}>
           <Button
             icon="Close"
             type="ghost"
-            aria-label={t(
-              translationKeys.CLOSE_RESOURCE_SELECTOR,
-              'Close Resource Selector'
-            )}
+            aria-label={t(translationKeys.CLOSE, 'Close')}
             onClick={onClick}
           ></Button>
         </Tooltip>
