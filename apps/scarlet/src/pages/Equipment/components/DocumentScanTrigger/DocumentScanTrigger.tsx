@@ -5,7 +5,6 @@ import {
   callDiagramDetection,
   callScarletScanner,
   getScarletScannerStatus,
-  clearEquipmentState,
 } from 'api';
 import { useAppContext, usePolling } from 'hooks';
 import { AppActionType } from 'types';
@@ -17,23 +16,10 @@ const ONE_MIN = 20000;
 export const DocumentScanTrigger = ({ documentId }: { documentId: number }) => {
   const { client } = useAuthContext();
   const {
-    appState: { facility, unitId, equipment, equipmentId },
+    appState: { equipment },
     appDispatch,
   } = useAppContext();
   const [scanJobId, setScanJobId] = useState<number>();
-
-  const triggerRescan = async () => {
-    if (!client) return;
-    if (!facility) return;
-    if (!unitId) return;
-    if (!equipmentId) return;
-    clearEquipmentState(client, {
-      facility,
-      unitId,
-      equipmentId,
-    });
-    await triggerScan();
-  };
 
   const triggerScan = async () => {
     if (!client) return;
@@ -79,7 +65,7 @@ export const DocumentScanTrigger = ({ documentId }: { documentId: number }) => {
         type="tertiary"
         size="default"
         aria-label="Scan Document"
-        onClick={triggerRescan}
+        onClick={triggerScan}
         disabled={!!scanJobId}
       >
         {equipment.data?.latestAnnotations ? 'Re-scan' : 'Scan'} Document
