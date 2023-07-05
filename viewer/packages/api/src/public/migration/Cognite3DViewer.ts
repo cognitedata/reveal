@@ -1462,6 +1462,7 @@ export class Cognite3DViewer {
 
         this.revealManager.render(camera);
         this.revealManager.resetRedraw();
+        this._image360ApiHelper?.resetRedraw();
         this._clippingNeedsUpdate = false;
         const renderTime = Date.now() - start;
 
