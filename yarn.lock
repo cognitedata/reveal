@@ -3321,10 +3321,10 @@
     "@types/history" "4.7.9"
     rrweb "1.0.6"
 
-"@cognite/reveal-react-components@0.2.1":
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/@cognite/reveal-react-components/-/reveal-react-components-0.2.1.tgz#1d0437a6cac552ca8f44cf9df561f19d6b39d7a4"
-  integrity sha512-Frew+lriBJarMunY1XpSxnTQRCUQPwOJap+bvGhanTk6phk35Kwy4GJx1xgkCD2mnFVYythvSpOO/fiLfLQ7sw==
+"@cognite/reveal-react-components@0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@cognite/reveal-react-components/-/reveal-react-components-0.3.0.tgz#d8dedf551ebc21171a346f63c0442436d2faf179"
+  integrity sha512-XgIQduzO0zec630MBcl46uOeOZTxz8mbW7EM8bgDd2C4zdjQIwpx0ioeERuL0NpPGvP3FqcYzhiNziXQkFR24g==
   dependencies:
     lodash "^4.17.21"
     style-loader "^3.3.3"
