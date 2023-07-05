@@ -2,24 +2,24 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type CSSProperties, type ReactElement } from 'react';
-import { Button, ToolBar } from '@cognite/cogs.js';
+import { type ReactElement } from 'react';
+import { Button, ToolBar, type ToolBarProps } from '@cognite/cogs.js';
 import { FitModelsButton } from './FitModelsButton';
 
-export type RevealToolbarProps = {
-  children?: ReactElement;
-  className?: string;
-  style?: CSSProperties;
+const defaultStyle: ToolBarProps = {
+  style: {
+    position: 'absolute',
+    left: '20px',
+    top: '70px'
+  }
 };
 
-const defaultStyle: CSSProperties = { position: 'absolute', bottom: '30px', left: '100px' };
-
-export const RevealToolbar = ({ className, style }: RevealToolbarProps): ReactElement => {
-  if (className === undefined && style === undefined) {
-    style = { ...defaultStyle };
+export const RevealToolbar = (toolBarProps: ToolBarProps): ReactElement => {
+  if (toolBarProps.className === undefined && toolBarProps.style === undefined) {
+    toolBarProps = { ...toolBarProps, ...defaultStyle };
   }
   return (
-    <ToolBar className={className} style={style}>
+    <ToolBar {...toolBarProps}>
       <>
         <Button type="ghost" icon="Layers" aria-label="3D Resource layers" />
 

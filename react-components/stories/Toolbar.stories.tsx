@@ -26,15 +26,9 @@ const sdk = new CogniteClient({
   getToken: async () => await Promise.resolve(token)
 });
 
-const StyledRevealToolBar = styled(RevealToolbar)`
+const MyCustomToolbar = styled(ToolBar)`
   position: absolute;
-  left: 20px;
-  top: 70px;
-`;
-
-const RightStyledToolbar = styled(ToolBar)`
-  position: absolute;
-  left: 80px;
+  right: 20px;
   top: 70px;
 `;
 
@@ -57,11 +51,11 @@ export const Main: Story = {
   render: ({ addModelOptions }) => (
     <RevealContainer sdk={sdk} color={new Color(0x4a4a4a)}>
       <CadModelContainer addModelOptions={addModelOptions} />
-      <StyledRevealToolBar />
-      <RightStyledToolbar>
+      <RevealToolbar />
+      <MyCustomToolbar>
         <RevealToolbar.FitModelsButton />
         <ToolBar.ButtonGroup buttonGroup={exampleToolBarButtons} />
-      </RightStyledToolbar>
+      </MyCustomToolbar>
     </RevealContainer>
   )
 };
