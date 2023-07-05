@@ -18,4 +18,3 @@ export type {
   AddReveal3DModelOptions
 } from './components/Reveal3DResources/types';
 export { RevealToolbar } from './components/RevealToolbar/RevealToolbar';
-export { RevealToolbarButton } from './components/RevealToolbar/RevealToolbarButton';

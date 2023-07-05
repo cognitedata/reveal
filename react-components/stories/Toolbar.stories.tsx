@@ -7,6 +7,7 @@ import { CadModelContainer, RevealContainer, RevealToolbar } from '../src';
 import { CogniteClient } from '@cognite/sdk';
 import { Color } from 'three';
 import styled from 'styled-components';
+import { ToolBar, type ToolBarButton } from '@cognite/cogs.js';
 
 const meta = {
   title: 'Example/Toolbar',
@@ -25,11 +26,26 @@ const sdk = new CogniteClient({
   getToken: async () => await Promise.resolve(token)
 });
 
-const FloatingToolbar = styled(RevealToolbar)`
+const StyledRevealToolBar = styled(RevealToolbar)`
   position: absolute;
   left: 20px;
   top: 70px;
 `;
+
+const RightStyledToolbar = styled(ToolBar)`
+  position: absolute;
+  left: 80px;
+  top: 70px;
+`;
+
+const exampleToolBarButtons: ToolBarButton[] = [
+  {
+    icon: 'Edit'
+  },
+  {
+    icon: 'World'
+  }
+];
 
 export const Main: Story = {
   args: {
@@ -41,7 +57,11 @@ export const Main: Story = {
   render: ({ addModelOptions }) => (
     <RevealContainer sdk={sdk} color={new Color(0x4a4a4a)}>
       <CadModelContainer addModelOptions={addModelOptions} />
-      <FloatingToolbar />
+      <StyledRevealToolBar />
+      <RightStyledToolbar>
+        <RevealToolbar.FitModelsButton />
+        <ToolBar.ButtonGroup buttonGroup={exampleToolBarButtons} />
+      </RightStyledToolbar>
     </RevealContainer>
   )
 };

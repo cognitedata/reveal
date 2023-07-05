@@ -7,7 +7,7 @@ import { type ReactElement, useCallback } from 'react';
 import { Box3 } from 'three';
 
 import { useReveal } from '../RevealContainer/RevealContext';
-import { RevealToolbarButton } from './RevealToolbarButton';
+import { Button } from '@cognite/cogs.js';
 
 export const FitModelsButton = (): ReactElement => {
   const viewer = useReveal();
@@ -23,7 +23,8 @@ export const FitModelsButton = (): ReactElement => {
   }, [viewer, ...modelList]);
 
   return (
-    <RevealToolbarButton
+    <Button
+      type="ghost"
       icon="ExpandAlternative"
       aria-label="Fit camera to models"
       onClick={updateCamera}
