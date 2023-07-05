@@ -14,7 +14,7 @@ import { useSDK } from '@cognite/sdk-provider';
 
 import { CogniteChatGPT } from '../../../lib/chatModels';
 import { processMessage } from '../../../lib/processMessage';
-import { newChain } from '../../../lib/toolchains';
+import { CogniteChainName, newChain } from '../../../lib/toolchains';
 import {
   CopilotBotMessage,
   CopilotMessage,
@@ -39,10 +39,12 @@ export const ChatUI = ({
   visible,
   onClose,
   feature,
+  excludeChains,
 }: {
   visible: boolean;
   onClose: () => void;
   feature?: CopilotSupportedFeatureType;
+  excludeChains: CogniteChainName[];
 }) => {
   const { isEnabled } = useFlag('COGNITE_COPILOT', {
     fallback: false,
@@ -59,8 +61,8 @@ export const ChatUI = ({
   const model = useMemo(() => new CogniteChatGPT(sdk), [sdk]);
 
   const conversationChain = useMemo(() => {
-    return newChain(sdk, model, messages);
-  }, [sdk, model, messages]);
+    return newChain(sdk, model, messages, excludeChains);
+  }, [sdk, model, messages, excludeChains]);
 
   const updateMessage = useCallback(
     async (key: number, result: CopilotBotMessage) => {
@@ -201,7 +203,7 @@ export const ChatUI = ({
           data: el,
         }))
       );
-      conversationChain.defaultChain.memory = new BufferMemory({
+      const memory = new BufferMemory({
         chatHistory: new ChatMessageHistory(
           cachedMessages?.map((el) =>
             el.source === 'user'
@@ -209,6 +211,13 @@ export const ChatUI = ({
               : new AIChatMessage(el.content)
           )
         ),
+      });
+      [
+        ...Object.values(conversationChain.destinationChains),
+        conversationChain.defaultChain,
+        conversationChain,
+      ].forEach((el) => {
+        el.memory = memory;
       });
       if (messages.current.length === 0) {
         processMessage(

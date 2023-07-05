@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 
 import { BotUI } from '@botui/react';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
@@ -10,6 +10,7 @@ import { FlagProvider } from '@cognite/react-feature-flags';
 import { CogniteClient } from '@cognite/sdk';
 import { SDKProvider } from '@cognite/sdk-provider';
 
+import { CogniteChainName } from '../lib/toolchains';
 import { CopilotSupportedFeatureType } from '../lib/types';
 
 import { ChatUI } from './components/ChatUI';
@@ -18,9 +19,11 @@ import { COPILOT_TOGGLE, CopilotButton } from './components/CopilotButton';
 export const Copilot = ({
   feature,
   sdk,
+  excludeChains = [],
 }: {
   feature?: CopilotSupportedFeatureType;
   sdk: CogniteClient;
+  excludeChains?: CogniteChainName[];
 }) => {
   const [isVisible, setIsVisible] = useState(false);
   useEffect(() => {
@@ -37,6 +40,16 @@ export const Copilot = ({
       window.removeEventListener(COPILOT_TOGGLE, listener);
     };
   }, []);
+
+  const stringifiedExclusionList = useMemo(
+    () => JSON.stringify(excludeChains),
+    [excludeChains]
+  );
+
+  const memoizedExcludeChains = useMemo(
+    () => JSON.parse(stringifiedExclusionList) as CogniteChainName[],
+    [stringifiedExclusionList]
+  );
 
   const bot = useRef(createBot());
 
@@ -55,6 +68,7 @@ export const Copilot = ({
             <BotUI bot={bot.current}>
               <ChatUI
                 visible={isVisible}
+                excludeChains={memoizedExcludeChains}
                 feature={feature}
                 onClose={() => {
                   window.dispatchEvent(
@@ -81,6 +95,7 @@ const StyledWrapper = styled.div`
   flex-flow: column;
   height: 0;
   overflow: hidden;
+  z-index: ${1};
 
   .cogs-modal__content {
     height: 100%;

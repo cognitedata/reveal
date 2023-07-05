@@ -1,10 +1,10 @@
-import { ConversationChain, MultiPromptChain } from 'langchain/chains';
+import { BaseChain } from 'langchain/chains';
 
 import { CopilotSupportedFeatureType, ProcessMessageFunc } from './types';
 
 export const processMessage = async (
   feature: CopilotSupportedFeatureType | undefined,
-  chain: ConversationChain | MultiPromptChain,
+  chain: BaseChain,
   ...params: Parameters<ProcessMessageFunc>
 ) => {
   //  when the user indicates an intention to do something, we have these tools available for the user.
@@ -15,11 +15,7 @@ export const processMessage = async (
       const sendMessage = params[3];
       const message = params[1];
       if (message) {
-        await chain.call({
-          input: message,
-          sdk: params[0],
-          pastMessages: params[2],
-        });
+        await chain.call({ input: message });
       } else {
         sendMessage({
           type: 'text',
