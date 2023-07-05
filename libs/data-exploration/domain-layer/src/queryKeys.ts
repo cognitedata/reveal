@@ -266,6 +266,18 @@ export const queryKeys = {
     'previewURL',
   ],
 
+  // Relationships
+  relationships: () => [...queryKeys.all, 'relationships'] as const,
+  resourceRelationships: (
+    resourceExternalIds: string[],
+    relationshipResourceTypes: string[]
+  ) =>
+    [
+      ...queryKeys.relationships(),
+      ...resourceExternalIds,
+      ...relationshipResourceTypes,
+    ] as const,
+
   // Annotations
   annotations: () => [...queryKeys.all, 'annotations'] as const,
   annotationsPagedFileReferences: (
