@@ -40,7 +40,15 @@ export const Main: Story = {
     ]
   },
   render: ({ resources }) => (
-    <RevealContainer sdk={sdk} color={new Color(0x4a4a4a)}>
+    <RevealContainer
+      sdk={sdk}
+      color={new Color(0x4a4a4a)}
+      viewerOptions={{
+        loadingIndicatorStyle: {
+          opacity: 1,
+          placement: 'topRight'
+        }
+      }}>
       <Reveal3DResources resources={resources} />
       <CameraController
         initialFitCamera={{
