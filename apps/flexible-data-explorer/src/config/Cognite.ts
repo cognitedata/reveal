@@ -1,3 +1,5 @@
+import { Matrix4 } from 'three';
+
 import { ProjectConfig } from './types';
 
 export const cogniteConfig: ProjectConfig[] = [
@@ -32,14 +34,20 @@ export const cogniteConfig: ProjectConfig[] = [
     nodeSpaces: undefined,
     threeDResources: [
       {
-        type: 'cad',
-        modelId: 8107452010081355,
-        revisionId: 8837417595712351,
-        transform: {
-          x: -318.035541033616,
-          y: -519.7672256248517,
-          z: 97.79506579524228,
-        },
+        modelId: 1791160622840317,
+        revisionId: 498427137020189,
+      },
+      {
+        modelId: 1791160622840317,
+        revisionId: 502149125550840,
+        transform: new Matrix4().makeTranslation(0, 10, 0),
+      },
+      {
+        siteId: 'c_RC_2',
+      },
+      {
+        modelId: 3865289545346058,
+        revisionId: 4160448151596909,
       },
     ],
   },
