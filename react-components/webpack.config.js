@@ -14,7 +14,7 @@ export default (_, argv) => {
     output: {
       path: path.resolve(__dirname, 'dist'),
       filename: 'index.js',
-      clean: true,
+      clean: false,
       libraryTarget: 'module'
     },
     module: {

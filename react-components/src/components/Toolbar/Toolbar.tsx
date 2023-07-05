@@ -37,7 +37,7 @@ const defaultButtons = (
 
 const defaultStyle: CSSProperties = { position: 'absolute', bottom: '30px', left: '100px' };
 
-const RevealToolbar = ({ children, className, style }: RevealToolbarProps): ReactElement => {
+export const RevealToolbar = ({ children, className, style }: RevealToolbarProps): ReactElement => {
   if (className === undefined && style === undefined) {
     style = { ...defaultStyle };
   }
@@ -47,5 +47,3 @@ const RevealToolbar = ({ children, className, style }: RevealToolbarProps): Reac
     </ToolBar>
   );
 };
-
-export default RevealToolbar;

@@ -752,7 +752,7 @@ __metadata:
     "@types/jsdom": 21.1.1
     "@types/lodash": 4.14.195
     "@types/mixpanel-browser": 2.47.0
-    "@types/node": 18.16.18
+    "@types/node": 18.16.19
     "@types/random-seed": 0.3.3
     "@types/skmeans": 0.11.4
     "@types/stats": 0.16.30
@@ -806,12 +806,12 @@ __metadata:
     sparse-octree: 7.1.8
     stats.js: 0.17.0
     three: 0.152.2
-    ts-jest: 29.1.0
+    ts-jest: 29.1.1
     ts-loader: 9.4.3
     tsc-alias: 1.8.6
     typescript: 5.1.6
-    wasm-pack: 0.12.0
-    webpack: 5.88.0
+    wasm-pack: 0.12.1
+    webpack: 5.88.1
     webpack-cli: 5.1.4
     webpack-dev-server: 4.15.1
     webpack-node-externals: 3.0.0
@@ -2303,10 +2303,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:18.16.18":
-  version: 18.16.18
-  resolution: "@types/node@npm:18.16.18"
-  checksum: d32d8a0a04cd3f5ecb361bcb42f3a07623881ac90d680e06bf626defb3c663a94860d11690babe607cfe67265eceeb8a59ba5fe40c0e49f5a1b01e0088640469
+"@types/node@npm:18.16.19":
+  version: 18.16.19
+  resolution: "@types/node@npm:18.16.19"
+  checksum: 63c31f09616508aa7135380a4c79470a897b75f9ff3a70eb069e534dfabdec3f32fb0f9df5939127f1086614d980ddea0fa5e8cc29a49103c4f74cd687618aaf
   languageName: node
   linkType: hard
 
@@ -10397,7 +10397,16 @@ resolve@~1.19.0:
   languageName: node
   linkType: hard
 
-"semver@npm:7.x, semver@npm:^7.3.4, semver@npm:^7.3.5":
+"semver@npm:^6.0.0, semver@npm:^6.3.0":
+  version: 6.3.0
+  resolution: "semver@npm:6.3.0"
+  bin:
+    semver: ./bin/semver.js
+  checksum: 1b26ecf6db9e8292dd90df4e781d91875c0dcc1b1909e70f5d12959a23c7eebb8f01ea581c00783bbee72ceeaad9505797c381756326073850dc36ed284b21b9
+  languageName: node
+  linkType: hard
+
+"semver@npm:^7.3.4, semver@npm:^7.3.5":
   version: 7.3.5
   resolution: "semver@npm:7.3.5"
   dependencies:
@@ -10405,15 +10414,6 @@ resolve@~1.19.0:
   bin:
     semver: bin/semver.js
   checksum: 5eafe6102bea2a7439897c1856362e31cc348ccf96efd455c8b5bc2c61e6f7e7b8250dc26b8828c1d76a56f818a7ee907a36ae9fb37a599d3d24609207001d60
-  languageName: node
-  linkType: hard
-
-"semver@npm:^6.0.0, semver@npm:^6.3.0":
-  version: 6.3.0
-  resolution: "semver@npm:6.3.0"
-  bin:
-    semver: ./bin/semver.js
-  checksum: 1b26ecf6db9e8292dd90df4e781d91875c0dcc1b1909e70f5d12959a23c7eebb8f01ea581c00783bbee72ceeaad9505797c381756326073850dc36ed284b21b9
   languageName: node
   linkType: hard
 
@@ -10436,6 +10436,17 @@ resolve@~1.19.0:
   bin:
     semver: bin/semver.js
   checksum: d16dbedad53c65b086f79524b9ef766bf38670b2395bdad5c957f824dcc566b624988013564f4812bcace3f9d405355c3635e2007396a39d1bffc71cfec4a2fc
+  languageName: node
+  linkType: hard
+
+"semver@npm:^7.5.3":
+  version: 7.5.3
+  resolution: "semver@npm:7.5.3"
+  dependencies:
+    lru-cache: ^6.0.0
+  bin:
+    semver: bin/semver.js
+  checksum: 9d58db16525e9f749ad0a696a1f27deabaa51f66e91d2fa2b0db3de3e9644e8677de3b7d7a03f4c15bc81521e0c3916d7369e0572dbde250d9bedf5194e2a8a7
   languageName: node
   linkType: hard
 
@@ -11484,9 +11495,9 @@ resolve@~1.19.0:
   languageName: node
   linkType: hard
 
-"ts-jest@npm:29.1.0":
-  version: 29.1.0
-  resolution: "ts-jest@npm:29.1.0"
+"ts-jest@npm:29.1.1":
+  version: 29.1.1
+  resolution: "ts-jest@npm:29.1.1"
   dependencies:
     bs-logger: 0.x
     fast-json-stable-stringify: 2.x
@@ -11494,7 +11505,7 @@ resolve@~1.19.0:
     json5: ^2.2.3
     lodash.memoize: 4.x
     make-error: 1.x
-    semver: 7.x
+    semver: ^7.5.3
     yargs-parser: ^21.0.1
   peerDependencies:
     "@babel/core": ">=7.0.0-beta.0 <8"
@@ -11513,7 +11524,7 @@ resolve@~1.19.0:
       optional: true
   bin:
     ts-jest: cli.js
-  checksum: 535dc42ad523cbe1e387701fb2e448518419b515c082f09b25411f0b3dd0b854cf3e8141c316d6f4b99883aeb4a4f94159cbb1edfb06d7f77ea6229fadb2e1bf
+  checksum: a8c9e284ed4f819526749f6e4dc6421ec666f20ab44d31b0f02b4ed979975f7580b18aea4813172d43e39b29464a71899f8893dd29b06b4a351a3af8ba47b402
   languageName: node
   linkType: hard
 
@@ -11960,14 +11971,14 @@ typescript@~4.8.4:
   languageName: node
   linkType: hard
 
-"wasm-pack@npm:0.12.0":
-  version: 0.12.0
-  resolution: "wasm-pack@npm:0.12.0"
+"wasm-pack@npm:0.12.1":
+  version: 0.12.1
+  resolution: "wasm-pack@npm:0.12.1"
   dependencies:
     binary-install: ^1.0.1
   bin:
     wasm-pack: run.js
-  checksum: 1ce87351b3a7e7b03aa31787237097caef6f4894a639566330e92075a9e37a06224e3deb787a40bf09ac78fba4ce19ddac9159d9188da60d694fa4ccb84de514
+  checksum: 497abceb48b15329bb30f614b9ed7b07d82554ff225b93485794fb91b074a98aeda8091146aafe969c7f9615d106c770d215cf916bebf65451978f7222fcbe0b
   languageName: node
   linkType: hard
 
@@ -12122,9 +12133,9 @@ typescript@~4.8.4:
   languageName: node
   linkType: hard
 
-"webpack@npm:5.88.0":
-  version: 5.88.0
-  resolution: "webpack@npm:5.88.0"
+"webpack@npm:5.88.1":
+  version: 5.88.1
+  resolution: "webpack@npm:5.88.1"
   dependencies:
     "@types/eslint-scope": ^3.7.3
     "@types/estree": ^1.0.0
@@ -12155,7 +12166,7 @@ typescript@~4.8.4:
       optional: true
   bin:
     webpack: bin/webpack.js
-  checksum: 9fd1568b34ec2e99ba97c8509a15ab2576ec80c396e7015551ec814b24cfc11de173acba3e114dafe95f1a6d460781b09d6201e6a1fb15110e1d01a09f61a283
+  checksum: 726e7e05ab2e7c142609a673dd6aa1a711ed97f349418a2a393d650c5ddad172d191257f60e1e37f6b2a77261571c202aabd5ce9240791a686774f0801cf5ec2
   languageName: node
   linkType: hard
 
