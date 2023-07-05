@@ -5,7 +5,10 @@ import { ChainValues } from 'langchain/schema';
 import { CogniteClient } from '@cognite/sdk';
 
 import { addToCopilotEventListener, sendToCopilotEvent } from './utils';
-export type CopilotSupportedFeatureType = 'Streamlit' | 'IndustryCanvas';
+export type CopilotSupportedFeatureType =
+  | 'Streamlit'
+  | 'IndustryCanvas'
+  | 'Infield';
 
 type DefaultMessage = {
   key?: number;
@@ -151,11 +154,19 @@ export type CopilotEvents = {
     USE_CODE: {
       content: string;
     };
+
+    // get the external asset id from infield
+    GET_EXTERNAL_ASSETID: undefined;
+    // send documentId to infield
+    PUSH_DOC_ID: {
+      content: string;
+    };
     // send code to streamlit
     GQL_QUERY: {
       query: string;
       arguments: any;
     };
+    GET_LANGUAGE: undefined;
   };
   ToCopilot: {
     // only the last message will be processed
@@ -166,6 +177,17 @@ export type CopilotEvents = {
     };
     // get all code from streamlit
     GET_CODE: {
+      content: string;
+    };
+    // get the external asset id from infield
+    GET_EXTERNAL_ASSETID: {
+      content: string;
+    };
+    // get response from infield
+    PUSH_DOC_ID: undefined;
+
+    // get the language of the page from infield
+    GET_LANGUAGE: {
       content: string;
     };
   };
