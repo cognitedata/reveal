@@ -22,7 +22,6 @@ export const useRevealError = (
           <RevealErrorToast error={error as { message?: string }} t={t} />,
           {
             toastId: 'reveal-model-load-error',
-            autoClose: false,
           }
         );
       });
