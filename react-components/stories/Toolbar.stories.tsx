@@ -3,16 +3,16 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { CogniteCadModelContainer, RevealContainer, RevealToolbar } from '../src';
+import { CadModelContainer, RevealContainer, RevealToolbar } from '../src';
 import { CogniteClient } from '@cognite/sdk';
 import { Color } from 'three';
 import styled from 'styled-components';
 
 const meta = {
   title: 'Example/Toolbar',
-  component: CogniteCadModelContainer,
+  component: CadModelContainer,
   tags: ['autodocs']
-} satisfies Meta<typeof CogniteCadModelContainer>;
+} satisfies Meta<typeof CadModelContainer>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -40,7 +40,7 @@ export const Main: Story = {
   },
   render: ({ addModelOptions }) => (
     <RevealContainer sdk={sdk} color={new Color(0x4a4a4a)}>
-      <CogniteCadModelContainer addModelOptions={addModelOptions} />
+      <CadModelContainer addModelOptions={addModelOptions} />
       <FloatingToolbar />
     </RevealContainer>
   )

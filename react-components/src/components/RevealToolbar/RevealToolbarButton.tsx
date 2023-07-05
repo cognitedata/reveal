@@ -5,6 +5,6 @@
 import React, { type ReactElement } from 'react';
 import { Button, type ButtonProps } from '@cognite/cogs.js';
 
-export const ToolbarButton = (
+export const RevealToolbarButton = (
   props: ButtonProps & React.RefAttributes<HTMLButtonElement>
 ): ReactElement => <Button type="ghost" {...props} />;

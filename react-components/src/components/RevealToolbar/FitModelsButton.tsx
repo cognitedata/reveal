@@ -7,7 +7,7 @@ import { type ReactElement, useCallback } from 'react';
 import { Box3 } from 'three';
 
 import { useReveal } from '../RevealContainer/RevealContext';
-import { ToolbarButton } from './ToolbarButton';
+import { RevealToolbarButton } from './RevealToolbarButton';
 
 export const FitModelsButton = (): ReactElement => {
   const viewer = useReveal();
@@ -23,7 +23,7 @@ export const FitModelsButton = (): ReactElement => {
   }, [viewer, ...modelList]);
 
   return (
-    <ToolbarButton
+    <RevealToolbarButton
       icon="ExpandAlternative"
       aria-label="Fit camera to models"
       onClick={updateCamera}

@@ -6,7 +6,7 @@ import { type CSSProperties, type ReactElement } from 'react';
 import { Divider, ToolBar } from '@cognite/cogs.js';
 import { FitModelsButton } from './FitModelsButton';
 
-import { ToolbarButton } from './ToolbarButton';
+import { RevealToolbarButton } from './RevealToolbarButton';
 
 export type RevealToolbarProps = {
   children?: ReactElement;
@@ -16,22 +16,22 @@ export type RevealToolbarProps = {
 
 const defaultButtons = (
   <>
-    <ToolbarButton icon="Layers" aria-label="3D Resource layers" />
+    <RevealToolbarButton icon="Layers" aria-label="3D Resource layers" />
 
     <Divider />
 
     <FitModelsButton />
-    <ToolbarButton icon="Collapse" aria-label="Focus asset" />
+    <RevealToolbarButton icon="Collapse" aria-label="Focus asset" />
 
     <Divider />
 
-    <ToolbarButton icon="Slice" aria-label="Slice models" />
-    <ToolbarButton icon="Ruler" aria-label="Make measurements" />
+    <RevealToolbarButton icon="Slice" aria-label="Slice models" />
+    <RevealToolbarButton icon="Ruler" aria-label="Make measurements" />
 
     <Divider />
 
-    <ToolbarButton icon="Settings" aria-label="Show settings" />
-    <ToolbarButton icon="Help" aria-label="Display help" />
+    <RevealToolbarButton icon="Settings" aria-label="Show settings" />
+    <RevealToolbarButton icon="Help" aria-label="Display help" />
   </>
 );
 
