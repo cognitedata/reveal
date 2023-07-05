@@ -2,7 +2,8 @@ import { useState } from 'react';
 
 import styled from 'styled-components/macro';
 
-import { Button, Colors, Tooltip, toast } from '@cognite/cogs.js';
+import { Button, Tooltip, toast } from '@cognite/cogs.js';
+import { Colors } from '@cognite/cogs.js-v9';
 
 export interface CopyValueProps {
   value: number | string;
@@ -38,13 +39,13 @@ export function CopyValue({
 const CopyValueButton = styled(Button)`
   height: auto !important;
   transition: all 0.3s linear;
-  color: ${Colors.black.fade(0.1).toString()}!important;
+  color: ${Colors['decorative--grayscale--900']}!important;
   &:hover {
-    color: ${Colors.black.fade(0.2).toString()}!important;
+    color: ${Colors['decorative--grayscale--1000']}!important;
   }
   &.has-copied {
-    background: ${Colors.success.fade(0.9).toString()};
-    color: ${Colors.success.darken(0.3).toString()}!important;
+    background: ${Colors['surface--status-success--muted--default']};
+    color: ${Colors['border--status-success--strong']}!important;
   }
   .cogs-icon {
     width: 0.8em !important;

@@ -1,6 +1,7 @@
 import styled from 'styled-components/macro';
 
-import { Colors, Icon } from '@cognite/cogs.js';
+import { Icon } from '@cognite/cogs.js';
+import { Colors } from '@cognite/cogs.js-v9';
 
 export const LoaderOverlay = styled(Icon).attrs((props) => ({
   ...props,
@@ -11,7 +12,7 @@ export const LoaderOverlay = styled(Icon).attrs((props) => ({
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: ${Colors.primary.hex()};
+  color: ${Colors['surface--action--strong--default']};
 `;
 
 export const SelectContainer = styled.div`

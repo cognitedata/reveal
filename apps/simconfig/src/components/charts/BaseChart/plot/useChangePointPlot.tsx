@@ -2,7 +2,9 @@ import { useMemo } from 'react';
 
 import { Group } from '@visx/group';
 
-import { Colors } from '@cognite/cogs.js';
+import Color from 'color';
+
+import { Colors } from '@cognite/cogs.js-v9';
 
 import { getX, getY } from 'components/charts/utils';
 
@@ -11,8 +13,6 @@ import { usePortalTooltip } from '../usePortalTooltip';
 
 import type { Plot, PlotFunctionProps, PlotProps } from './types';
 
-import type Color from 'color';
-
 export function useChangePointPlot({
   geometry,
   scale: defaultScale,
@@ -20,7 +20,7 @@ export function useChangePointPlot({
   return useMemo(() => {
     const usePlot = ({
       data,
-      color = Colors.red,
+      color = Color(Colors['decorative--red--500']),
       label = 'n/a',
       radius = 5.5,
       scale = defaultScale,

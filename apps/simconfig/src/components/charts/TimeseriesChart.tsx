@@ -4,7 +4,7 @@ import { Threshold } from '@visx/threshold';
 
 import { format as formatNumber, max, min } from 'd3';
 
-import { Colors } from '@cognite/cogs.js';
+import { Colors } from '@cognite/cogs.js-v9';
 import type { DatapointAggregate } from '@cognite/sdk';
 import type { AggregateType } from '@cognite/simconfig-api-sdk/rtk';
 
@@ -110,7 +110,7 @@ export function TimeseriesChart({
 
       <Threshold<DatapointAggregate>
         belowAreaProps={{
-          fill: Colors.primary.hex(),
+          fill: Colors['surface--action--strong--default'],
           fillOpacity: 0.2,
         }}
         clipAboveTo={0}
@@ -135,7 +135,7 @@ export function TimeseriesChart({
           tickLabelProps={() => ({
             ...rightTickLabelProps(),
             paintOrder: 'stroke',
-            stroke: Colors.white.hex(),
+            stroke: Colors['decorative--grayscale--white'],
             strokeWidth: 2,
           })}
           tickLength={-3}
@@ -147,16 +147,16 @@ export function TimeseriesChart({
       <circle
         cx={xScaleGeometry(+latestDatapoint.timestamp)}
         cy={yScaleGeometry(latestDatapoint[aggregateType] ?? 0)}
-        fill={Colors.primary.hex()}
+        fill={Colors['surface--action--strong--default']}
         r={2}
       />
 
       <Text
         dy={isRising ? 3 : -3}
-        fill={Colors.primary.hex()}
+        fill={Colors['surface--action--strong--default']}
         fontSize={9}
         paintOrder="stroke"
-        stroke={Colors.white.hex()}
+        stroke={Colors['decorative--grayscale--white']}
         strokeWidth={2}
         textAnchor="end"
         verticalAnchor={isRising ? 'start' : 'end'}

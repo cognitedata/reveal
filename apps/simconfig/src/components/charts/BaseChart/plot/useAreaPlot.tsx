@@ -4,9 +4,10 @@ import type { PatternOrientation } from '@visx/pattern';
 import { PatternLines } from '@visx/pattern';
 import { AreaClosed } from '@visx/shape';
 
+import Color from 'color';
 import { curveMonotoneX } from 'd3';
 
-import { Colors } from '@cognite/cogs.js';
+import { Colors } from '@cognite/cogs.js-v9';
 
 import { getX, getY } from 'components/charts/utils';
 
@@ -23,7 +24,7 @@ export function useAreaPlot({
   return useMemo(() => {
     const usePlot = ({
       data,
-      color = Colors.primary,
+      color = Color(Colors['surface--action--strong--default']),
       curve = defaultCurve,
       label = 'n/a',
       pattern,

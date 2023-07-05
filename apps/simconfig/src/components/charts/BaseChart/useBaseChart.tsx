@@ -8,7 +8,7 @@ import classNames from 'classnames';
 import { curveMonotoneX } from 'd3';
 import styled from 'styled-components/macro';
 
-import { Colors } from '@cognite/cogs.js';
+import { Colors } from '@cognite/cogs.js-v9';
 
 import { getAxis } from './axis';
 import { getGrid } from './grid';
@@ -84,7 +84,7 @@ export function useBaseChart({
             height={5}
             id={`${chartId}-invalid-fill`}
             orientation={['diagonal']}
-            stroke={Colors.red.hex()}
+            stroke={Colors['decorative--red--500']}
             strokeWidth={1}
             width={5}
           />
@@ -117,8 +117,8 @@ export function useBaseChart({
                 <rect
                   fill={
                     isValid
-                      ? Colors.white.fade(0.3).rgb().toString()
-                      : Colors.red.fade(0.9).rgb().toString()
+                      ? Colors['decorative--grayscale--white']
+                      : Colors['surface--status-critical--muted--default']
                   }
                   height={height}
                   width={width}
@@ -129,8 +129,8 @@ export function useBaseChart({
                   className="overlay"
                   fill={
                     isValid
-                      ? Colors.black.fade(0.5).rgb().toString()
-                      : Colors.red.fade(0.5).rgb().toString()
+                      ? Colors['decorative--grayscale--600']
+                      : Colors['decorative--red--300']
                   }
                   x={
                     isValid

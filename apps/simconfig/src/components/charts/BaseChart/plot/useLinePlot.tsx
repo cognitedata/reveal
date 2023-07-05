@@ -4,7 +4,9 @@ import { curveMonotoneX } from '@visx/curve';
 import { GridRows } from '@visx/grid';
 import { LinePath } from '@visx/shape';
 
-import { Colors } from '@cognite/cogs.js';
+import Color from 'color';
+
+import { Colors } from '@cognite/cogs.js-v9';
 
 import { getExtents, getX, getY } from 'components/charts/utils';
 
@@ -23,7 +25,7 @@ export function useLinePlot({
 
     const usePlot = ({
       data,
-      color = Colors.primary,
+      color = Color(Colors['surface--action--strong--default']),
       curve = defaultCurve,
       label = 'n/a',
       width = 1,

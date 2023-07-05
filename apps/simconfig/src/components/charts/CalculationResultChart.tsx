@@ -1,15 +1,15 @@
 import { curveMonotoneX } from '@visx/curve';
 
+import Color from 'color';
 import { max, min } from 'd3';
 
-import { Colors } from '@cognite/cogs.js';
+import { Colors } from '@cognite/cogs.js-v9';
 
 import { useBaseChart } from './BaseChart';
 import { linearScale } from './BaseChart/scale';
 import type { Margin } from './BaseChart/types';
 import { useMultiPlotTooltip } from './BaseChart/useMultiSeriesTooltip';
 
-import type Color from 'color';
 import type { CurveFactory } from 'd3';
 
 export interface CalculationResultDatum {
@@ -117,4 +117,7 @@ export function CalculationResultChart({
   );
 }
 
-const palette: Color[] = [Colors.primary, Colors.red];
+const palette: Color[] = [
+  Color(Colors['surface--action--strong--default']),
+  Color(Colors['decorative--red--500']),
+];

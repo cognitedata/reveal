@@ -4,11 +4,12 @@ import { localPoint } from '@visx/event';
 import { Bar, Line } from '@visx/shape';
 import { Portal, Tooltip, defaultStyles, useTooltip } from '@visx/tooltip';
 
+import Color from 'color';
 import { bisector } from 'd3';
 import { formatISO9075 } from 'date-fns';
 import styled from 'styled-components/macro';
 
-import { Colors } from '@cognite/cogs.js';
+import { Colors } from '@cognite/cogs.js-v9';
 
 import type { DatumType } from 'components/charts/types';
 import { getExtents, getX, getY } from 'components/charts/utils';
@@ -16,8 +17,6 @@ import { getFormattedSciNumber } from 'utils/numberUtils';
 import { LAYER } from 'utils/zIndex';
 
 import type { ChartGeometry, ChartScale } from './types';
-
-import type Color from 'color';
 
 type TooltipData = Partial<DatumType> & {
   left?: number;
@@ -39,7 +38,7 @@ export function usePortalTooltip({
   geometry,
   scale,
   data,
-  color = Colors.primary,
+  color = Color(Colors['surface--action--strong--default']),
 }: TooltipHookProps) {
   const { margin } = geometry;
   const { xScaleGetter, yScaleGetter } = scale;

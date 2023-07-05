@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 
+import Color from 'color';
 import { curveStepAfter, max, min } from 'd3';
 
 import { Colors, toast } from '@cognite/cogs.js';
@@ -138,7 +139,7 @@ export function LogicalCheckChart({
   const Threshold = Plot.LineRegular({
     label: 'Check threshold',
     data: [],
-    color: Colors.red,
+    color: Color(Colors['decorative--red--500']),
     width: 1,
     threshold,
     dashes: '5,1',
