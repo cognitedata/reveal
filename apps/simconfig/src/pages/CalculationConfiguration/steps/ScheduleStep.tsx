@@ -4,8 +4,14 @@ import { Calendar } from 'react-date-range';
 import { getDate, getMonth, getYear, set } from 'date-fns';
 import { Field, useFormikContext } from 'formik';
 
-import { Dropdown, Menu, Switch } from '@cognite/cogs.js';
-import { Colors, Input, type OptionType, Select } from '@cognite/cogs.js-v9';
+import { Dropdown, Menu } from '@cognite/cogs.js';
+import {
+  Colors,
+  Input,
+  type OptionType,
+  Select,
+  Switch,
+} from '@cognite/cogs.js-v9';
 import type { CalculationTemplate } from '@cognite/simconfig-api-sdk/rtk';
 
 import {
@@ -74,7 +80,10 @@ export function ScheduleStep() {
           checked={values.schedule.enabled}
           defaultChecked={false}
           name="schedule.enabled"
-          onChange={(value: boolean) => {
+          onChange={(
+            _e: React.ChangeEvent<HTMLInputElement>,
+            value: boolean
+          ) => {
             setFieldValue('schedule.enabled', value);
           }}
         />

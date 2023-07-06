@@ -6,9 +6,8 @@ import { ParentSizeModern } from '@visx/responsive';
 import classNames from 'classnames';
 import { Field, useFormikContext } from 'formik';
 
-import { Switch } from '@cognite/cogs.js';
 import type { OptionType } from '@cognite/cogs.js-v9';
-import { SegmentedControl, Select } from '@cognite/cogs.js-v9';
+import { SegmentedControl, Select, Switch } from '@cognite/cogs.js-v9';
 import type { CalculationTemplate } from '@cognite/simconfig-api-sdk/rtk';
 
 import { LogicalCheckChart } from 'components/charts/LogicalCheckChart';
@@ -272,7 +271,10 @@ export function DataSamplingStep() {
           checked={values.logicalCheck.enabled}
           defaultChecked={false}
           name="logicalCheck.enabled"
-          onChange={(value: boolean) => {
+          onChange={(
+            _e: React.ChangeEvent<HTMLInputElement>,
+            value: boolean
+          ) => {
             setFieldValue('logicalCheck.enabled', value);
           }}
         />
@@ -367,7 +369,10 @@ export function DataSamplingStep() {
           checked={values.steadyStateDetection.enabled}
           defaultChecked={false}
           name="steadyStateDetection.enabled"
-          onChange={(value: boolean) => {
+          onChange={(
+            _e: React.ChangeEvent<HTMLInputElement>,
+            value: boolean
+          ) => {
             setFieldValue('steadyStateDetection.enabled', value);
           }}
         />

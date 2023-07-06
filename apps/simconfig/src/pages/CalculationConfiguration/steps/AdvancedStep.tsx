@@ -7,9 +7,16 @@ import { ParentSizeModern } from '@visx/responsive';
 import { Field, useFormikContext } from 'formik';
 import styled from 'styled-components/macro';
 
-import { Switch, Table } from '@cognite/cogs.js';
+import { Table } from '@cognite/cogs.js';
 import type { ButtonProps, OptionType } from '@cognite/cogs.js-v9';
-import { Button, Input, Select, Tooltip, toast } from '@cognite/cogs.js-v9';
+import {
+  Button,
+  Input,
+  Select,
+  Switch,
+  Tooltip,
+  toast,
+} from '@cognite/cogs.js-v9';
 import type { CalculationTemplate } from '@cognite/simconfig-api-sdk/rtk';
 
 import { ChokeCurveChart } from 'components/charts/ChokeCurveChart';
@@ -251,7 +258,10 @@ export function AdvancedStep({ isDisabled }: StepProps) {
               checked={values.estimateBHP.enabled}
               defaultChecked={false}
               name="estimateBHP.enabled"
-              onChange={(value: boolean) => {
+              onChange={(
+                _e: React.ChangeEvent<HTMLInputElement>,
+                value: boolean
+              ) => {
                 setFieldValue('estimateBHP.enabled', value);
               }}
             />

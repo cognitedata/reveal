@@ -4,8 +4,8 @@ import { useNavigate } from 'react-location';
 import { Form, Formik } from 'formik';
 import styled from 'styled-components/macro';
 
-import { Infobox, Switch } from '@cognite/cogs.js';
-import { toast } from '@cognite/cogs.js-v9';
+import { Infobox } from '@cognite/cogs.js';
+import { Switch, toast } from '@cognite/cogs.js-v9';
 import type { UserDefined } from '@cognite/simconfig-api-sdk/rtk';
 import { useUpsertCalculationMutation } from '@cognite/simconfig-api-sdk/rtk';
 
@@ -168,7 +168,12 @@ export function CustomCalculationBuilder({
                   checked={isEditorEnabled}
                   name="routine-editor-switch"
                   style={{ marginBottom: '1em' }}
-                  onChange={setIsEditorEnabled}
+                  onChange={(
+                    _e: React.ChangeEvent<HTMLInputElement>,
+                    value: boolean
+                  ) => {
+                    setIsEditorEnabled(value);
+                  }}
                 >
                   {!isEditorEnabled
                     ? 'Switch to JSON editor'
