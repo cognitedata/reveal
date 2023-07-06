@@ -86,9 +86,14 @@ jobs:
       #      - name: Find affected projects for build
       #        run: yarn nx print-affected --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }} --select=projects --target=build > affected-projects-build.txt
       - name: 'Print affected projects: BUILD'
-        run: |
-          echo "::set-env name=AFFECTED_PROJECTS_BUILD::$(yarn nx print-affected --base=origin/main --head=HEAD --select=projects --target=build)" 
-          echo "Affected projects for lint: ${{env.AFFECTED_PROJECTS_BUILD}}"
+        id: find-affected-projects
+        run: echo "::set-output name=projects::$(yarn nx print-affected --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }} --select=projects --target=build)"
+
+      - name: Show affected projects for build
+        run: echo "${{ steps.find-affected-projects.outputs.projects }}"
+#        run: |
+#          echo "::set-env name=AFFECTED_PROJECTS_BUILD::$(yarn nx print-affected --base=origin/main --head=HEAD --select=projects --target=build)"
+#          echo "Affected projects for lint: ${{env.AFFECTED_PROJECTS_BUILD}}"
 
   #      - name: Find affected projects for e2e
   #        run: yarn nx print-affected --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }} --select=projects --target=e2e > affected-projects-e2e.txt
@@ -99,7 +104,7 @@ jobs:
     needs: print-affected
     strategy:
       matrix:
-        project: "${{ env.AFFECTED_PROJECTS_BUILD }}"
+        project: ${{ fromJson(steps.find-affected-projects.outputs.projects) }}
     steps:
       - uses: actions/checkout@v3
         with:
