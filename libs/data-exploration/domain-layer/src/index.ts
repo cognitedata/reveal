@@ -3,6 +3,7 @@ export * from './annotations';
 export * from './assets';
 export * from './builders';
 export * from './constants';
+export * from './counts';
 export * from './dataSets';
 export * from './documents';
 export * from './events';
