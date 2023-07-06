@@ -1,8 +1,8 @@
 const {
   withSingleSpa,
 } = require('../../tools/webpack/single-spa-webpack-config');
-const { composePlugins, withNx } = require('@nrwl/webpack');
-const { withReact } = require('@nrwl/react');
+const { composePlugins, withNx } = require('@nx/webpack');
+const { withReact } = require('@nx/react');
 
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 
@@ -22,6 +22,8 @@ module.exports = composePlugins(
     console.log(`Custom webpack config(${nodeEnv}) for Platypus was loaded...`);
 
     config.resolve.fallback = { path: require.resolve('path-browserify') };
+    // This fixes the issue with the monaco editor not being able to load its web workers
+    config.output.publicPath = '/';
 
     if (useMockEnv) {
       // add your own webpack tweaks if needed

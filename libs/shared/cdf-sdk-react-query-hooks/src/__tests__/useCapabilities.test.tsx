@@ -1,4 +1,4 @@
-import { renderHook } from '@testing-library/react-hooks';
+import { renderHook, waitFor } from '@testing-library/react';
 
 import { useSDK } from '../__mocks__/@cognite/sdk-provider';
 import { useCapabilities } from '../hooks';
@@ -23,15 +23,10 @@ describe('useCapabilities', () => {
       },
     });
 
-    const { result, waitFor } = renderHook(
-      () => useCapabilities('COGNITE_AUTH'),
-      {
-        wrapper: renderWithReactQueryCacheProvider(),
-      }
-    );
-    await waitFor(() => {
-      return result.current.isSuccess;
+    const { result } = renderHook(() => useCapabilities('COGNITE_AUTH'), {
+      wrapper: renderWithReactQueryCacheProvider(),
     });
+    await waitFor(() => expect(result.current.isSuccess).toBeTruthy());
 
     expect(useSDK().groups.list).toBeCalledTimes(1);
     expect(result.current.data).toEqual(expectedCapabilities);
@@ -41,12 +36,10 @@ describe('useCapabilities', () => {
       get: jest.fn().mockResolvedValue(tokenInspectResponse),
     });
 
-    const { result, waitFor } = renderHook(() => useCapabilities('AZURE_AD'), {
+    const { result } = renderHook(() => useCapabilities('AZURE_AD'), {
       wrapper: renderWithReactQueryCacheProvider(),
     });
-    await waitFor(() => {
-      return result.current.isSuccess;
-    });
+    await waitFor(() => expect(result.current.isSuccess).toBeTruthy());
 
     expect(useSDK().get).toBeCalledTimes(1);
     expect(result.current.data).toEqual(expectedCapabilities);

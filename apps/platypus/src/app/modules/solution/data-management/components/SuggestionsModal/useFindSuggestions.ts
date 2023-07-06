@@ -2,7 +2,7 @@ import { QueryKeys } from '@platypus-app/utils/queryKeys';
 import { DMSRecord, SuggestionsMatch } from '@platypus-core/domain/suggestions';
 import { useQuery } from '@tanstack/react-query';
 
-import SuggestionsWorker from './suggestionsWorkerLoader';
+import { getSuggestionsWorker } from './suggestionsWorkerLoader';
 
 export const useFindSuggestions = (
   sourceRecords?: DMSRecord[],
@@ -19,7 +19,7 @@ export const useFindSuggestions = (
     ),
     async () => {
       return new Promise<SuggestionsMatch[]>((resolve, _reject) => {
-        const worker = new SuggestionsWorker();
+        const worker = getSuggestionsWorker();
         worker.onmessage = (e: MessageEvent<SuggestionsMatch[]>) => {
           worker.terminate();
           resolve(e.data);

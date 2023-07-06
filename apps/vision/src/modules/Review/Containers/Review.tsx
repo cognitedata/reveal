@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { batch, useDispatch, useSelector } from 'react-redux';
+import { batch, useSelector } from 'react-redux';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import styled from 'styled-components';
@@ -10,7 +10,7 @@ import { resetEditHistory } from '@vision/modules/FileDetails/slice';
 import { StatusToolBar } from '@vision/modules/Process/Containers/StatusToolBar';
 import ReviewBody from '@vision/modules/Review/Containers/ReviewBody';
 import { resetPreview } from '@vision/modules/Review/store/review/slice';
-import { AppDispatch } from '@vision/store';
+import { useThunkDispatch } from '@vision/store';
 import { RootState } from '@vision/store/rootReducer';
 import { PopulateAnnotationTemplates } from '@vision/store/thunks/Annotation/PopulateAnnotationTemplates';
 import { RetrieveAnnotations } from '@vision/store/thunks/Annotation/RetrieveAnnotations';
@@ -51,7 +51,7 @@ const Review = () => {
   const [isDeleteInProgress, setIsDeleteInProgress] = useState<boolean>(false);
 
   const navigate = useNavigate();
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useThunkDispatch();
   const { fileId } = useParams<{ fileId: string }>();
   const { state } = useLocation();
 

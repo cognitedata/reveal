@@ -1,5 +1,5 @@
 import React, { ReactText, useCallback, useMemo } from 'react';
-import { batch, useDispatch, useSelector } from 'react-redux';
+import { batch, useSelector } from 'react-redux';
 
 import styled from 'styled-components';
 
@@ -45,7 +45,7 @@ import {
 } from '@vision/modules/Review/store/review/slice';
 import { convertTempKeypointCollectionToVisionReviewImageKeypointCollection } from '@vision/modules/Review/store/review/utils';
 import { VisionReviewAnnotation } from '@vision/modules/Review/types';
-import { AppDispatch } from '@vision/store';
+import { useThunkDispatch } from '@vision/store';
 import { deselectAllSelectionsReviewPage } from '@vision/store/commonActions';
 import { RootState } from '@vision/store/rootReducer';
 import { AnnotationStatusChange } from '@vision/store/thunks/Annotation/AnnotationStatusChange';
@@ -61,7 +61,7 @@ export const AnnotationDetailPanel = ({
   file: FileInfo;
   showEditOptions: boolean;
 }) => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useThunkDispatch();
   const annotationCategoryState = useSelector(
     (state: RootState) =>
       state.annotationDetailPanelReducer.annotationCategories

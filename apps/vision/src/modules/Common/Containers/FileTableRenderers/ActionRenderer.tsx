@@ -12,7 +12,7 @@ import { selectExplorerSelectedIds } from '@vision/modules/Explorer/store/select
 import { selectUpdatedFileDetails } from '@vision/modules/FileDetails/selectors';
 import { makeSelectJobStatusForFile } from '@vision/modules/Process/store/selectors';
 import { isProcessingFile } from '@vision/modules/Process/store/utils';
-import { AppDispatch } from '@vision/store';
+import { useThunkDispatch } from '@vision/store';
 import { RootState } from '@vision/store/rootReducer';
 import { DeleteFilesById } from '@vision/store/thunks/Files/DeleteFilesById';
 
@@ -23,7 +23,7 @@ export function ActionRenderer(
   mode: VisionMode,
   actionDisabled: boolean
 ) {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useThunkDispatch();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { menuActions, rowKey, ...fileInfo } = rowData;
 

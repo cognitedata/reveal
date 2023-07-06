@@ -1,5 +1,5 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import { ExploreModal } from '@vision/modules/Common/Components/ExploreModal/ExploreModal';
 import { TableDataItem } from '@vision/modules/Common/types';
@@ -14,14 +14,14 @@ import {
   setProcessFileIds,
   setSelectFromExploreModalVisibility,
 } from '@vision/modules/Process/store/slice';
-import { AppDispatch } from '@vision/store';
+import { useThunkDispatch } from '@vision/store';
 import { RootState } from '@vision/store/rootReducer';
 import { ClearExplorerStateOnTransition } from '@vision/store/thunks/Explorer/ClearExplorerStateOnTransition';
 
 import { FileFilterProps } from '@cognite/sdk';
 
 export const ExploreModalContainer = () => {
-  const dispatch: AppDispatch = useDispatch<AppDispatch>();
+  const dispatch = useThunkDispatch();
 
   const processFiles = useSelector((state: RootState) =>
     selectAllProcessFiles(state)

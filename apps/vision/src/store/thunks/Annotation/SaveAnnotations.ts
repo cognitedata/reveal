@@ -10,25 +10,25 @@ import {
   VisionAnnotationDataType,
   UnsavedVisionAnnotation,
 } from '@vision/modules/Common/types';
-import { ThunkConfig } from '@vision/store/rootReducer';
 
 import sdk from '@cognite/cdf-sdk-singleton';
 
-export const SaveAnnotations = createAsyncThunk<
-  VisionAnnotation<VisionAnnotationDataType>[],
-  UnsavedVisionAnnotation<VisionAnnotationDataType>[],
-  ThunkConfig
->('SaveAnnotations', async (unsavedAnnotations) => {
-  const annotations = await sdk.annotations.create(
-    unsavedAnnotations.map((ann) => ({
-      ...ann,
-      annotatedResourceType: ANNOTATED_RESOURCE_TYPE,
-      creatingApp: CREATING_APP,
-      creatingAppVersion: CREATING_APP_VERSION,
-      creatingUser: null,
-    }))
-  );
-  const visionAnnotations: VisionAnnotation<VisionAnnotationDataType>[] =
-    convertCDFAnnotationToVisionAnnotations(annotations);
-  return visionAnnotations;
-});
+export const SaveAnnotations = createAsyncThunk(
+  'SaveAnnotations',
+  async (
+    unsavedAnnotations: UnsavedVisionAnnotation<VisionAnnotationDataType>[]
+  ) => {
+    const annotations = await sdk.annotations.create(
+      unsavedAnnotations.map((ann) => ({
+        ...ann,
+        annotatedResourceType: ANNOTATED_RESOURCE_TYPE,
+        creatingApp: CREATING_APP,
+        creatingAppVersion: CREATING_APP_VERSION,
+        creatingUser: null,
+      }))
+    );
+    const visionAnnotations: VisionAnnotation<VisionAnnotationDataType>[] =
+      convertCDFAnnotationToVisionAnnotations(annotations);
+    return visionAnnotations;
+  }
+);

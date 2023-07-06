@@ -9,7 +9,7 @@ export default {
   title: 'Components/AlertIcon',
 } as Meta;
 
-const Template: Story<ComponentProps<typeof AlertIcon>> = (args) => (
+const Template: Story<ComponentProps<typeof AlertIcon>> = (args: any) => (
   <AlertIcon {...args} />
 );
 

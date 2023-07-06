@@ -1,4 +1,4 @@
-/* eslint-disable @nrwl/nx/enforce-module-boundaries */
+/* eslint-disable @nx/enforce-module-boundaries */
 import { Route, Routes, Navigate } from 'react-router-dom';
 
 import ExplorerRoutes from '@flexible-data-explorer/app/Routes';

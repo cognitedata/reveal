@@ -1,4 +1,4 @@
-import { renderHook } from '@testing-library/react-hooks';
+import { renderHook, waitFor } from '@testing-library/react';
 import { setupServer } from 'msw/node';
 
 import { testQueryClientWrapper as wrapper } from '@data-exploration-lib/core';
@@ -18,12 +18,9 @@ describe('use3DRevisionsQuery', () => {
     mockServer.close();
   });
   it('should be okay', async () => {
-    const { result, waitFor } = renderHook(
-      () => use3DRevisionsQuery(mockModelObj.id),
-      {
-        wrapper,
-      }
-    );
+    const { result } = renderHook(() => use3DRevisionsQuery(mockModelObj.id), {
+      wrapper,
+    });
 
     await waitFor(() => expect(result.current.isLoading).toEqual(false), {
       timeout: 10000,

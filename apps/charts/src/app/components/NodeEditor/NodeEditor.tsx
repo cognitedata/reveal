@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from 'react';
+import { ComponentProps, useCallback, useEffect, useMemo } from 'react';
 import { ReactFlowProvider } from 'react-flow-renderer';
 
 import ErrorToast from '@charts-app/components/ErrorToast/ErrorToast';
@@ -15,6 +15,7 @@ import {
   updateWorkflow,
 } from '@charts-app/models/chart/updates';
 import { useOperations } from '@charts-app/models/operations/atom';
+import { useScheduledCalculationDataValue } from '@charts-app/models/scheduled-calculation-results/atom';
 import { SetterOrUpdater, useRecoilValue } from 'recoil';
 
 import { Icon, toast } from '@cognite/cogs.js';
@@ -31,6 +32,9 @@ interface Props {
   setChart: SetterOrUpdater<Chart | undefined>;
   translations: typeof defaultTranslations;
   onErrorIconClick: (id: string) => void;
+  onRemoveSourceClick: ComponentProps<
+    typeof ReactFlowNodeEditorContainer
+  >['onRemoveSourceClick'];
 }
 
 const NodeEditor = ({
@@ -40,6 +44,7 @@ const NodeEditor = ({
   setChart,
   translations,
   onErrorIconClick,
+  onRemoveSourceClick,
 }: Props) => {
   const t = useMemo(
     () => ({ ...defaultTranslations, ...translations }),
@@ -47,6 +52,7 @@ const NodeEditor = ({
   );
   const { data: login } = useUserInfo();
   const isOwner = useIsChartOwner(chart);
+  const scheduledCalculationData = useScheduledCalculationDataValue();
 
   /**
    * Get all operations
@@ -117,6 +123,8 @@ const NodeEditor = ({
     (sc) => sc.id === sourceId
   );
 
+  const scheduledCalculationResult = scheduledCalculationData?.[sourceId];
+
   const sourceType = workflow?.type || scheduledCalculation?.type;
 
   const readOnly =
@@ -148,7 +156,9 @@ const NodeEditor = ({
         readOnly={readOnly}
         translations={t}
         onErrorIconClick={onErrorIconClick}
+        onRemoveSourceClick={onRemoveSourceClick}
         calculationResult={result}
+        scheduledCalculationResult={scheduledCalculationResult}
       />
     </ReactFlowProvider>
   );

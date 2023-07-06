@@ -22,5 +22,5 @@ export const getIcon = (value: string): IconType => {
     return 'Document';
   }
 
-  return 'DataTable';
+  return 'Component';
 };

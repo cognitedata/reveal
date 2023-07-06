@@ -6,7 +6,7 @@ import { Detail, Flex, Icon } from '@cognite/cogs.js';
 
 import { getObjectURL, useTranslation } from '@data-exploration-lib/core';
 import {
-  Model3DWithType,
+  Image360Data,
   use360ImageThumbnail,
   useFilesAggregateBySiteId,
   useImage360SiteNameQuery,
@@ -14,7 +14,7 @@ import {
 
 import { ThreeDThumbnail } from './ThreeDThumbnail';
 
-export const Image360Display = ({ model }: { model: Model3DWithType }) => {
+export const Image360Display = ({ model }: { model: Image360Data }) => {
   const { t } = useTranslation();
   const [imageUrl, setImage] = useState<string | undefined>(undefined);
 

@@ -1,6 +1,10 @@
 module.exports = {
   addons: [],
-  core: {
-    builder: 'webpack5',
+  framework: {
+    name: '@storybook/react-webpack5',
+    options: {}
   },
+  docs: {
+    autodocs: true
+  }
 };

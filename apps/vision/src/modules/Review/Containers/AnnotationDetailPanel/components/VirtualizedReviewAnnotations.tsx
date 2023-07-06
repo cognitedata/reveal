@@ -123,6 +123,7 @@ export const VirtualizedReviewAnnotations = <T,>({
     return (
       <AutoSizer disableWidth>
         {({ height }) => (
+          /* @ts-ignore: ref */
           <Tree
             ref={treeRef}
             treeWalker={walkerFunction as any}

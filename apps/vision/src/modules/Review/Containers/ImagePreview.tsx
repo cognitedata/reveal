@@ -36,7 +36,7 @@ import {
 } from '@vision/modules/Review/store/review/selectors';
 import { showAnnotationSettingsModel } from '@vision/modules/Review/store/review/slice';
 import { PredefinedVisionAnnotations } from '@vision/modules/Review/types';
-import { AppDispatch } from '@vision/store';
+import { useThunkDispatch } from '@vision/store';
 import { RootState } from '@vision/store/rootReducer';
 import { SaveAnnotations } from '@vision/store/thunks/Annotation/SaveAnnotations';
 import { SaveAnnotationTemplates } from '@vision/store/thunks/Annotation/SaveAnnotationTemplates';
@@ -59,7 +59,7 @@ export const ImagePreview = ({
   isLoading: (status: boolean) => void;
   scrollIntoView: (id: ReactText) => void;
 }) => {
-  const dispatch: AppDispatch = useDispatch<AppDispatch>();
+  const dispatch = useThunkDispatch();
   const [showKeyboardShortcutModal, setShowKeyboardShortcutModal] =
     useState(false);
 

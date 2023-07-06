@@ -9,7 +9,7 @@ import {
   AnnotationFilterType,
   VisionFilterItemProps,
 } from '@vision/modules/FilterSidePanel/types';
-import { AppDispatch } from '@vision/store';
+import { useThunkDispatch } from '@vision/store';
 import { PopulateAnnotationTemplates } from '@vision/store/thunks/Annotation/PopulateAnnotationTemplates';
 import { Radio, RadioChangeEvent } from 'antd';
 
@@ -26,7 +26,7 @@ export const AnnotationFilter = ({
   setFilter,
 }: VisionFilterItemProps) => {
   const { annotation } = filter;
-  const dispatch: AppDispatch = useDispatch<AppDispatch>();
+  const dispatch = useThunkDispatch();
 
   const [annotationLabels, setAnnotationLabels] = useState<
     { value: string; label: string }[]

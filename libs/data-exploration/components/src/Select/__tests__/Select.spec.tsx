@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { Select } from '../Select';
@@ -21,7 +21,10 @@ describe('Select', () => {
       />
     );
 
-    userEvent.click(screen.getByText('Select...'));
+    // eslint-disable-next-line testing-library/no-unnecessary-act
+    act(() => {
+      userEvent.click(screen.getByText('Select...'));
+    });
 
     const { label, value } = options[0];
 

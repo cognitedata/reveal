@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { ComponentStory } from '@storybook/react';
 
-import FileGroupingTable from './FileGroupingTable';
+import { FileGroupingTable } from './FileGroupingTable';
 
 export default {
   title: 'Files/FileGroupingTable',

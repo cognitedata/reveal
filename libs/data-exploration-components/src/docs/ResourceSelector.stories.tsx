@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { action } from '@storybook/addon-actions';
+// @ts-ignore
 import { PartialStoryFn } from '@storybook/addons';
 
 import { Button } from '@cognite/cogs.js';

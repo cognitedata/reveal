@@ -40,7 +40,7 @@ import {
   setExploreModalReverse,
   setExploreModalSortKey,
 } from '@vision/modules/Explorer/store/slice';
-import { AppDispatch } from '@vision/store';
+import { useThunkDispatch } from '@vision/store';
 import { RootState } from '@vision/store/rootReducer';
 import noop from 'lodash/noop';
 
@@ -65,7 +65,7 @@ export const ExplorerSearchResults = ({
   onItemRightClick?: (event: MouseEvent, item: TableDataItem) => void;
   onItemSelect: (item: TableDataItem, selected: boolean) => void;
 }) => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useThunkDispatch();
 
   const allFilesSelected = useSelector((state: RootState) =>
     selectExplorerAllFilesSelected(state.explorerReducer)

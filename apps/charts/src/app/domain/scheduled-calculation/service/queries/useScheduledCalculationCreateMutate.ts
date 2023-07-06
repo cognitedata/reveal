@@ -10,7 +10,7 @@ import { useSDK } from '@cognite/sdk-provider';
 
 import { ScheduleCalculationFieldValues } from '../../internal/types';
 import { createScheduledCalculation } from '../network/createScheduledCalculation';
-import { CalculationTaskSchedule } from '../types';
+import { ScheduledCalculationTask } from '../types';
 
 import { useTimeseriesCreateMutate } from './useTimeseriesCreateMutate';
 
@@ -35,7 +35,7 @@ export const useScheduledCalculationCreateMutate = () => {
   const { mutateAsync: createTimeseries } = useTimeseriesCreateMutate();
 
   return useMutation<
-    [Timeseries, CalculationTaskSchedule],
+    [Timeseries, ScheduledCalculationTask],
     CogniteError,
     MutateProps
   >(

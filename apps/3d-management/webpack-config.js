@@ -1,5 +1,5 @@
-const { composePlugins, withNx } = require('@nrwl/webpack');
-const { withReact } = require('@nrwl/react');
+const { composePlugins, withNx } = require('@nx/webpack');
+const { withReact } = require('@nx/react');
 const {
   withSingleSpa,
 } = require('../../tools/webpack/single-spa-webpack-config');

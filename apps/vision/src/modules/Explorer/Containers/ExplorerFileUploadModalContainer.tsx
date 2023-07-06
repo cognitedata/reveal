@@ -8,7 +8,7 @@ import {
   clearExplorerUploadedFileIds,
   setExplorerFileUploadModalVisibility,
 } from '@vision/modules/Explorer/store/slice';
-import { AppDispatch } from '@vision/store';
+import { useThunkDispatch } from '@vision/store';
 import { RootState } from '@vision/store/rootReducer';
 import { DeleteFilesById } from '@vision/store/thunks/Files/DeleteFilesById';
 import { PopulateProcessFiles } from '@vision/store/thunks/Process/PopulateProcessFiles';
@@ -19,7 +19,7 @@ export const ExplorerFileUploadModalContainer = ({
 }: {
   refetch: () => void;
 }) => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useThunkDispatch();
   const navigate = useNavigate();
 
   const showFileUploadModal = useSelector(
