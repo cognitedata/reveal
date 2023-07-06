@@ -1,6 +1,8 @@
 import { IdEither } from '@cognite/sdk';
 
-import { CountsResourceType } from '../types';
+import { ResourceTypes } from '@data-exploration-lib/core';
+
+import { Counts } from '../types';
 
 import { useLinkedAssetsCount } from './useLinkedAssetsCount';
 import { useLinkedEventsCount } from './useLinkedEventsCount';
@@ -15,12 +17,12 @@ export const useLinkedResourcesCounts = (resourceId?: IdEither) => {
   const sequences = useLinkedSequencesCount(resourceId);
   const files = useLinkedFilesCount(resourceId);
 
-  const data: Record<CountsResourceType, number> = {
-    asset: assets.data,
-    event: events.data,
-    timeSeries: timeseries.data,
-    sequence: sequences.data,
-    file: files.data,
+  const data: Counts = {
+    [ResourceTypes.Asset]: assets.data,
+    [ResourceTypes.Event]: events.data,
+    [ResourceTypes.TimeSeries]: timeseries.data,
+    [ResourceTypes.Sequence]: sequences.data,
+    [ResourceTypes.File]: files.data,
   };
 
   const isLoading =
