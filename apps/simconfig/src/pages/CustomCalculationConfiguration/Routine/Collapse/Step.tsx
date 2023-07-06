@@ -7,8 +7,7 @@ import { useDragControls } from 'framer-motion';
 import cloneDeep from 'lodash/cloneDeep';
 import styled from 'styled-components/macro';
 
-import { Icon } from '@cognite/cogs.js';
-import { Chip } from '@cognite/cogs.js-v9';
+import { Chip, Icon } from '@cognite/cogs.js-v9';
 import type { UserDefined } from '@cognite/simconfig-api-sdk/rtk';
 
 import { StepCommand } from '../Commands/StepCommand';
@@ -121,10 +120,6 @@ const CollapseStepContainer = styled.div`
     .step-position {
       font-weight: 500;
       margin-right: 20px;
-    }
-
-    .cogs-icon {
-      margin-right: 10px;
     }
   }
 `;

@@ -1,6 +1,4 @@
-import styled from 'styled-components/macro';
-
-import { Icon } from '@cognite/cogs.js';
+import { Button } from '@cognite/cogs.js-v9';
 
 import type { DragControls } from 'framer-motion';
 
@@ -14,30 +12,24 @@ export function CollapseOptions({
   handleDelete,
 }: CollapseOptionsProps) {
   return (
-    <CollapseOptionsContainer>
-      <Icon
-        className="step-dnd"
-        type="DragHandleVertical"
-        onPointerDown={(e) => {
+    <div>
+      <Button
+        aria-label="Drag to reorder"
+        icon="DragHandleVertical"
+        style={{ cursor: 'move' }}
+        type="ghost"
+        onPointerDown={(e: React.PointerEvent<HTMLButtonElement>) => {
           controls.start(e);
         }}
       />
-      <Icon
-        className="step-delete"
-        type="Delete"
+      <Button
+        aria-label="Delete"
+        icon="Delete"
+        type="ghost"
         onClick={() => {
           handleDelete();
         }}
       />
-    </CollapseOptionsContainer>
+    </div>
   );
 }
-
-const CollapseOptionsContainer = styled.div`
-  .step-dnd {
-    cursor: move;
-  }
-  .step-delete {
-    cursor: pointer;
-  }
-`;

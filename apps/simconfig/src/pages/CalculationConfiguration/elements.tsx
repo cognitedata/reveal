@@ -1,7 +1,6 @@
 import styled from 'styled-components/macro';
 
-import { Icon } from '@cognite/cogs.js';
-import { Colors } from '@cognite/cogs.js-v9';
+import { Colors, Icon } from '@cognite/cogs.js-v9';
 
 export const LoaderOverlay = styled(Icon).attrs((props) => ({
   ...props,

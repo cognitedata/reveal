@@ -2,7 +2,7 @@ import format from 'date-fns/format';
 import formatDuration from 'date-fns/formatDuration';
 import styled from 'styled-components/macro';
 
-import { Icon } from '@cognite/cogs.js';
+import { Icon } from '@cognite/cogs.js-v9';
 import type { CalculationSchedule } from '@cognite/simconfig-api-sdk/rtk';
 
 import {

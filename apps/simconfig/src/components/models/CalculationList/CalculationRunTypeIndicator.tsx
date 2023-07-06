@@ -1,6 +1,7 @@
 import styled from 'styled-components/macro';
 
-import { Icon, Tooltip } from '@cognite/cogs.js';
+import { Tooltip } from '@cognite/cogs.js';
+import { Icon } from '@cognite/cogs.js-v9';
 import type { CalculationRunMetadata } from '@cognite/simconfig-api-sdk/rtk';
 
 export function CalculationRunTypeIndicator({
@@ -31,14 +32,11 @@ const indicatorMap: Record<
   ),
   none: () => (
     <Tooltip content="Calculation has not been run yet">
-      <CalculationRunTypeIcon className="disabled" type="Error" />
+      <CalculationRunTypeIcon type="Error" />
     </Tooltip>
   ),
 } as const;
 
 const CalculationRunTypeIcon = styled(Icon)`
   cursor: help;
-  &.disabled {
-    color: var(--cogs-text-hint);
-  }
 `;

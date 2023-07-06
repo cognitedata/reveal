@@ -5,8 +5,8 @@ import formatISO9075 from 'date-fns/formatISO9075';
 import parseISO from 'date-fns/parseISO';
 import styled from 'styled-components/macro';
 
-import { Icon, Skeleton, Tooltip, toast } from '@cognite/cogs.js';
-import { Button, Infobox, Link } from '@cognite/cogs.js-v9';
+import { Skeleton, Tooltip, toast } from '@cognite/cogs.js';
+import { Button, Icon, Infobox, Link } from '@cognite/cogs.js-v9';
 import type {
   CogniteApiError,
   ModelFile,

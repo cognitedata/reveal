@@ -4,8 +4,8 @@ import { useNavigate } from 'react-location';
 import { Field, Form, Formik } from 'formik';
 import styled from 'styled-components/macro';
 
-import { Icon, Input, Modal } from '@cognite/cogs.js';
-import { Button } from '@cognite/cogs.js-v9';
+import { Input, Modal } from '@cognite/cogs.js';
+import { Button, Icon } from '@cognite/cogs.js-v9';
 import { useFlag } from '@cognite/react-feature-flags';
 import { useSDK } from '@cognite/sdk-provider';
 

@@ -6,14 +6,13 @@ import styled from 'styled-components/macro';
 
 import {
   Dropdown,
-  Icon,
   Menu,
   SegmentedControl,
   Skeleton,
   Tabs,
   toast,
 } from '@cognite/cogs.js';
-import { Button, Chip } from '@cognite/cogs.js-v9';
+import { Button, Chip, Icon } from '@cognite/cogs.js-v9';
 import type { ExternalId, Simulator } from '@cognite/simconfig-api-sdk/rtk';
 import {
   useDeleteModelFileMutation,

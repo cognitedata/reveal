@@ -8,8 +8,8 @@ import parseISO from 'date-fns/parseISO';
 import styled from 'styled-components/macro';
 
 import type { CollapsePanelProps } from '@cognite/cogs.js';
-import { Collapse, Icon, Skeleton, Tooltip } from '@cognite/cogs.js';
-import { Chip, Pagination } from '@cognite/cogs.js-v9';
+import { Collapse, Skeleton, Tooltip } from '@cognite/cogs.js';
+import { Chip, Icon, Pagination } from '@cognite/cogs.js-v9';
 import type { ModelFile, Simulator } from '@cognite/simconfig-api-sdk/rtk';
 import { useGetModelFileVersionListQuery } from '@cognite/simconfig-api-sdk/rtk';
 
@@ -237,7 +237,7 @@ const ModelVersionListContainer = styled.div`
 
 const expandIcon = ({ isActive }: CollapsePanelProps) => (
   <Icon
-    style={{
+    css={{
       marginRight: 8,
       transition: 'transform .2s',
       transform: `rotate(${isActive ? 0 : -90}deg)`,

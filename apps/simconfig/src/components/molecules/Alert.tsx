@@ -1,7 +1,8 @@
 import styled from 'styled-components/macro';
 
-import type { IconType } from '@cognite/cogs.js';
-import { Colors, Icon } from '@cognite/cogs.js';
+import { Colors } from '@cognite/cogs.js';
+import type { IconType } from '@cognite/cogs.js-v9';
+import { Icon } from '@cognite/cogs.js-v9';
 
 interface AlertContainerProps {
   readonly color: string;

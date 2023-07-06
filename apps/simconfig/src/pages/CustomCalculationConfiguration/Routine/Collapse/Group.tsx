@@ -6,7 +6,7 @@ import { Field, useFormikContext } from 'formik';
 import { useDragControls } from 'framer-motion';
 import styled from 'styled-components/macro';
 
-import { Icon } from '@cognite/cogs.js';
+import { Icon } from '@cognite/cogs.js-v9';
 import type {
   CalculationProcedure,
   UserDefined,
@@ -113,10 +113,6 @@ const CollapseStepContainer = styled.div`
     .procedure-order {
       font-weight: 500;
       margin-right: 20px;
-    }
-
-    .cogs-icon {
-      margin-right: 10px;
     }
   }
   .group-content {

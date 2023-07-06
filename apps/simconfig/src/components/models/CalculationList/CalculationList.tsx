@@ -8,13 +8,12 @@ import styled from 'styled-components/macro';
 import {
   Dropdown,
   Graphic,
-  Icon,
   Menu,
   Skeleton,
   Tooltip,
   toast,
 } from '@cognite/cogs.js';
-import { Button, Chip } from '@cognite/cogs.js-v9';
+import { Button, Chip, Icon } from '@cognite/cogs.js-v9';
 import { useFlag } from '@cognite/react-feature-flags';
 import type {
   CalculationRun,
