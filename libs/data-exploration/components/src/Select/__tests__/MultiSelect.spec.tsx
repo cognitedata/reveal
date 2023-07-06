@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { MultiSelect } from '../MultiSelect';
@@ -11,7 +11,7 @@ const options = [
 ];
 
 describe('MultiSelect', () => {
-  test('Selecting option(s) from the multiselect', () => {
+  test('Selecting option(s) from the multiselect', async () => {
     const onChange = jest.fn();
 
     render(
@@ -23,8 +23,11 @@ describe('MultiSelect', () => {
       />
     );
 
-    userEvent.click(screen.getByText('Select...'));
-
+    console.log(screen.getByText('Select...'));
+    // eslint-disable-next-line testing-library/no-unnecessary-act
+    act(() => {
+      userEvent.click(screen.getByText('Select...'));
+    });
     userEvent.click(screen.getByText(options[0].label));
 
     // Unit test bug? The menu closes when selecting one item (that should not happen)

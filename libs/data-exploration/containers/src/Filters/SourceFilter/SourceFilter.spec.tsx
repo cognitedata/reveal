@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { SourceFilter } from './SourceFilter';
@@ -9,8 +9,10 @@ describe('SourceFilter', () => {
       render(<SourceFilter options={[]} />);
 
       expect(screen.getByText(/source/gi)).toBeInTheDocument();
-      userEvent.click(screen.getByText('Select...'));
-
+      // eslint-disable-next-line testing-library/no-unnecessary-act
+      act(() => {
+        userEvent.click(screen.getByText('Select...'));
+      });
       expect(screen.getByText('N/A')).toBeInTheDocument();
     });
 

@@ -35,7 +35,7 @@ import {
   selectAnnotation,
   setScrollToId,
 } from '@vision/modules/Review/store/review/slice';
-import { AppDispatch } from '@vision/store';
+import { useThunkDispatch } from '@vision/store';
 import { deselectAllSelectionsReviewPage } from '@vision/store/commonActions';
 import { AnnotationStatusChange } from '@vision/store/thunks/Annotation/AnnotationStatusChange';
 import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from '@vision/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
@@ -54,7 +54,7 @@ export const AnnotationDetailPanelHotKeys = ({
   scrollId: ReactText;
   file: FileInfo;
 }) => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useThunkDispatch();
   const modalRef = useRef<{ destroy: () => void } | null>(null);
 
   useEffect(() => {

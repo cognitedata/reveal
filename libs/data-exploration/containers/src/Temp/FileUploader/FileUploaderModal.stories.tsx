@@ -7,7 +7,7 @@ import { Button } from '@cognite/cogs.js';
 import { FileUploaderModal } from './FileUploaderModal';
 
 export default {
-  title: 'Files/FileUploaderModal',
+  title: 'Files/FileUploaderModal(TEMP)',
   component: FileUploaderModal,
 };
 

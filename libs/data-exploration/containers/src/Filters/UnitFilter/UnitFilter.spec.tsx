@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { UnitFilter } from './UnitFilter';
@@ -9,7 +9,10 @@ describe('UnitFilter', () => {
       render(<UnitFilter options={[]} />);
       expect(screen.getByText(/unit/gi)).toBeInTheDocument();
 
-      userEvent.click(screen.getByText('Select...'));
+      // eslint-disable-next-line testing-library/no-unnecessary-act
+      act(() => {
+        userEvent.click(screen.getByText('Select...'));
+      });
 
       expect(screen.getByText('No options')).toBeInTheDocument();
     });

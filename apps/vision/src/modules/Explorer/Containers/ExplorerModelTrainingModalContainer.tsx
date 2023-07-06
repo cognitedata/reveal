@@ -5,11 +5,11 @@ import { ModelTrainingModal } from '@vision/modules/Common/Components/ModelTrain
 import { setModelTrainingModalVisibility } from '@vision/modules/Common/store/common/slice';
 import { VisionFile } from '@vision/modules/Common/store/files/types';
 import { selectExplorerAllSelectedFilesInSortedOrder } from '@vision/modules/Explorer/store/selectors';
-import { AppDispatch } from '@vision/store';
+import { useThunkDispatch } from '@vision/store';
 import { RootState } from '@vision/store/rootReducer';
 
 export const ExplorerModelTrainingModalContainer = () => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useThunkDispatch();
 
   const showModelTrainingModal = useSelector(
     ({ commonReducer }: RootState) => commonReducer.showModelTrainingModal

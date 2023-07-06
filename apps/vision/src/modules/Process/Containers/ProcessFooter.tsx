@@ -1,5 +1,5 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import styled from 'styled-components';
@@ -10,7 +10,7 @@ import {
   selectAllProcessFiles,
 } from '@vision/modules/Process/store/selectors';
 import { setSummaryModalVisibility } from '@vision/modules/Process/store/slice';
-import { AppDispatch } from '@vision/store';
+import { useThunkDispatch } from '@vision/store';
 import { RootState } from '@vision/store/rootReducer';
 import { PopulateProcessFiles } from '@vision/store/thunks/Process/PopulateProcessFiles';
 import { zIndex } from '@vision/utils/zIndex';
@@ -23,7 +23,7 @@ import { SummaryModal } from './SummaryModal/SummaryModal';
 
 export const ProcessFooter = () => {
   const navigate = useNavigate();
-  const dispatch: AppDispatch = useDispatch<AppDispatch>();
+  const dispatch = useThunkDispatch();
   const isPollingFinished = useSelector((state: RootState) => {
     return selectIsPollingComplete(state.processSlice);
   });
