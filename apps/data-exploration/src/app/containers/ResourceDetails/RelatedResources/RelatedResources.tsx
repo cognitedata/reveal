@@ -11,7 +11,6 @@ import {
   AssetIdTable,
   RelatedResourceType,
   LinkedResourceTable,
-  useRelatedResourceCount,
   AnnotationTable,
   AnnotatedWithTable,
   RelationshipFilters,
@@ -24,8 +23,8 @@ import {
   useFlagFileCategorization,
 } from '@data-exploration-app/hooks/flags';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
-import { addPlusSignToCount } from '@data-exploration-app/utils/stringUtils';
 import { RelationshipLabels, useTranslation } from '@data-exploration-lib/core';
+import { useRelatedResourcesCount } from '@data-exploration-lib/domain-layer';
 
 type TypeOption = {
   label: string;
@@ -47,34 +46,35 @@ export const RelatedResources = ({
   const isDocumentsApiEnabled = useFlagDocumentsApiEnabled();
 
   const {
-    relationshipCount = 0,
-    linkedResourceCount = 0,
-    assetIdCount,
-    annotationCount,
-    hasMoreRelationships,
-    isFetched,
-  } = useRelatedResourceCount(parentResource, type, isDocumentsApiEnabled);
+    data: {
+      relationshipsCount,
+      assetIdsCount,
+      linkedResourcesCount,
+      annotationsCount,
+    },
+    isLoading,
+  } = useRelatedResourcesCount({
+    resource: parentResource,
+    resourceType: type,
+  });
 
   const resourceType = convertResourceType(type);
 
   const getRelatedResourceType = () => {
     let types: TypeOption[] = [
       {
-        label: `${t('RELATIONSHIPS', 'Relationships')} (${addPlusSignToCount(
-          relationshipCount,
-          hasMoreRelationships
-        )})`,
+        label: `${t('RELATIONSHIPS', 'Relationships')} (${relationshipsCount})`,
         value: 'relationship',
-        count: relationshipCount,
+        count: relationshipsCount,
       },
     ];
 
     if (type === 'asset') {
       types = [
         {
-          label: `${t('ASSET_ID', 'Asset ID')} (${assetIdCount})`,
+          label: `${t('ASSET_ID', 'Asset ID')} (${assetIdsCount})`,
           value: 'assetId',
-          count: assetIdCount,
+          count: assetIdsCount,
         },
         ...types,
       ];
@@ -85,11 +85,11 @@ export const RelatedResources = ({
         {
           label: t(
             'LINKED_RESOURCE_TYPE',
-            `Linked ${resourceType} (${linkedResourceCount})`,
-            { resourceType, count: linkedResourceCount }
+            `Linked ${resourceType} (${linkedResourcesCount})`,
+            { resourceType, count: linkedResourcesCount }
           ),
           value: 'linkedResource',
-          count: linkedResourceCount,
+          count: linkedResourcesCount,
         },
         ...types,
       ];
@@ -98,9 +98,9 @@ export const RelatedResources = ({
     if (parentResource.type === 'file') {
       types = [
         {
-          label: `${t('ANNOTATIONS', 'Annotations')} (${annotationCount})`,
+          label: `${t('ANNOTATIONS', 'Annotations')} (${annotationsCount})`,
           value: 'annotation',
-          count: annotationCount,
+          count: annotationsCount,
         },
         ...types,
       ];
@@ -127,7 +127,7 @@ export const RelatedResources = ({
 
     // Should NOT set state when relatedResourceTypes changes!
     // eslint-disable-next-line
-    [isFetched, linkedResourceCount]
+    [isLoading, linkedResourcesCount]
   );
   const { relationshipLabelOptions, onChangeLabelValue, labelValue } =
     useRelatedResourceResults<RelationshipLabels>(
