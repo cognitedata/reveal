@@ -1,4 +1,4 @@
-import { A } from '@cognite/cogs.js';
+import { Link } from '@cognite/cogs.js-v9';
 
 import { InfoDrawer } from 'components/shared/InfoDrawer';
 
@@ -17,13 +17,12 @@ export function SteadyStateDetectionInfoDrawer() {
         <dd>
           More information about sampling methods (also known as aggregation
           functions) can be found at{' '}
-          <A
+          <Link
             href="https://docs.cognite.com/dev/concepts/aggregation/"
             target="_blank"
-            isExternal
           >
             https://docs.cognite.com/dev/concepts/aggregation/
-          </A>
+          </Link>
         </dd>
         <dt>Min Section Size</dt>
         <dd>
