@@ -20,7 +20,6 @@
       "options": {
         "outputPath": "dist/libs/data-exploration/containers",
         "tsConfig": "libs/data-exploration/containers/tsconfig.lib.json",
-        "project": "libs/data-exploration/containers/package.json",
         "entryFile": "libs/data-exploration/containers/src/index.ts",
         "external": ["react/jsx-runtime"],
         "rollupConfig": "@nx/react/plugins/bundle-rollup",

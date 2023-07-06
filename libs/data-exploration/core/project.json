@@ -14,7 +14,7 @@
         "format": ["esm"],
         "assets": [
           {
-            "glob": "libs/data-exploration/containers/README.md",
+            "glob": "libs/data-exploration/core/README.md",
             "input": ".",
             "output": "."
           }
