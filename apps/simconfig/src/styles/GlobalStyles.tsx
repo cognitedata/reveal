@@ -2,13 +2,8 @@
 // @ts-nocheck
 
 import { useGlobalStyles } from '@cognite/cdf-utilities';
-import {
-  Dropdown as CogsDropdown,
-  DateRange,
-  Drawer,
-  Modal,
-} from '@cognite/cogs.js';
-import { Tooltip as CogsTooltip, Loader } from '@cognite/cogs.js-v9';
+import { Dropdown as CogsDropdown, DateRange, Drawer } from '@cognite/cogs.js';
+import { Tooltip as CogsTooltip, Loader, Modal } from '@cognite/cogs.js-v9';
 import cogs9Styles from '@cognite/cogs.js-v9/dist/cogs.css';
 import cogsStyles from '@cognite/cogs.js/dist/cogs-without-fonts.css';
 

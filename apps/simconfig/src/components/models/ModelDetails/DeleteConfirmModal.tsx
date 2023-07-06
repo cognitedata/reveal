@@ -1,5 +1,4 @@
-import { Modal } from '@cognite/cogs.js';
-import { Button } from '@cognite/cogs.js-v9';
+import { Modal } from '@cognite/cogs.js-v9';
 
 interface DeleteConfirmModalProps {
   isModelOpen: boolean;
@@ -14,30 +13,15 @@ export function DeleteConfirmModal({
 }: DeleteConfirmModalProps) {
   return (
     <Modal
-      footer={
-        <div className="cogs-modal-footer-buttons">
-          <Button
-            onClick={() => {
-              handleModalConfirm(false);
-            }}
-          >
-            Cancel
-          </Button>
-          <Button
-            type="destructive"
-            onClick={() => {
-              handleModalConfirm(true);
-            }}
-          >
-            Delete model
-          </Button>
-        </div>
-      }
-      style={{ top: '15%' }}
+      okText="Delete model"
       title={`Delete model ${decodeURIComponent(modalName)}?`}
       visible={isModelOpen}
+      destructive
       onCancel={() => {
         handleModalConfirm(false);
+      }}
+      onOk={() => {
+        handleModalConfirm(true);
       }}
     >
       <h3>

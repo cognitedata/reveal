@@ -4,8 +4,8 @@ import { useNavigate } from 'react-location';
 import { Field, Form, Formik } from 'formik';
 import styled from 'styled-components/macro';
 
-import { Input, Modal } from '@cognite/cogs.js';
-import { Button, Icon } from '@cognite/cogs.js-v9';
+import { Input } from '@cognite/cogs.js';
+import { Button, Icon, Modal } from '@cognite/cogs.js-v9';
 import { useFlag } from '@cognite/react-feature-flags';
 import { useSDK } from '@cognite/sdk-provider';
 
@@ -67,19 +67,15 @@ export function ConfigureCustomCalculation({
   return (
     <>
       <Modal
-        appElement={document.getElementById('root') ?? undefined}
-        footer={null}
-        style={{
-          padding: 0,
-        }}
+        icon="Function"
+        size="small"
+        title="Create custom calculation"
         visible={isModalOpen}
+        hideFooter
         onCancel={() => {
           setIsModalOpen(false);
         }}
       >
-        <h4>
-          <Icon type="Function" /> Create custom calculation
-        </h4>
         <Formik
           initialValues={{
             calculationName: '',

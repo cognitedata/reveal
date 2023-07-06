@@ -1,5 +1,4 @@
-import { Modal } from '@cognite/cogs.js';
-import { Button } from '@cognite/cogs.js-v9';
+import { Modal } from '@cognite/cogs.js-v9';
 
 import type { ModelCalculation } from './CalculationList';
 
@@ -20,30 +19,15 @@ export function DeleteConfirmModal({
   const calcName = calculationConfig?.configuration.calculationName ?? 'NA';
   return (
     <Modal
-      footer={
-        <div className="cogs-modal-footer-buttons">
-          <Button
-            onClick={() => {
-              handleModalConfirm(false);
-            }}
-          >
-            Cancel
-          </Button>
-          <Button
-            type="destructive"
-            onClick={() => {
-              handleModalConfirm(true, calculationConfig);
-            }}
-          >
-            Delete
-          </Button>
-        </div>
-      }
-      style={{ top: '20%' }}
+      okText="Delete"
       title={`Delete ${decodeURIComponent(calcName)}?`}
       visible={isModelOpen}
+      destructive
       onCancel={() => {
         handleModalConfirm(false);
+      }}
+      onOk={() => {
+        handleModalConfirm(true, calculationConfig);
       }}
     >
       <h3>

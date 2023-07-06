@@ -4,8 +4,8 @@ import { useSelector } from 'react-redux';
 
 import styled from 'styled-components/macro';
 
-import { Input, Modal } from '@cognite/cogs.js';
-import { Button } from '@cognite/cogs.js-v9';
+import { Input } from '@cognite/cogs.js';
+import { Button, Modal } from '@cognite/cogs.js-v9';
 import type { LabelDetails } from '@cognite/simconfig-api-sdk/rtk';
 import {
   useCreateLabelMutation,
@@ -44,13 +44,12 @@ export function LabelsModal({ isOpen, setOpen }: LabelsModalProps) {
 
   return (
     <Modal
-      appElement={document.getElementById('root') ?? undefined}
-      closeIcon={false}
-      footer={null}
-      style={{
-        padding: 8,
-      }}
+      icon="Tag"
+      position="top"
+      size="small"
+      title="Manage labels"
       visible={isOpen}
+      hideFooter
       onCancel={() => {
         setOpen(false);
       }}
