@@ -1,7 +1,7 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-import { type ReactElement, useEffect, useRef } from 'react';
+import { type ReactElement, useEffect, useRef, useState } from 'react';
 import { NodeAppearance, type AddModelOptions, type CogniteCadModel, TreeIndexNodeCollection, NodeIdNodeCollection, DefaultNodeAppearance} from '@cognite/reveal';
 import { useReveal } from '../RevealContainer/RevealContext';
 import { type Matrix4 } from 'three';
@@ -30,31 +30,29 @@ type CogniteCadModelProps = {
   onLoad?: () => void;
 };
 
-export default function CadModelContainer({
+export function CadModelContainer({
   addModelOptions,
   transform,
   styling,
   onLoad
 }: CogniteCadModelProps): ReactElement {
-  const modelRef = useRef<CogniteCadModel>();
+  const [model, setModel] = useState<CogniteCadModel>();
   const viewer = useReveal();
   const sdk = useSDK();
 
   const { modelId, revisionId, geometryFilter } = addModelOptions;
 
   useEffect(() => {
-    addModel(modelId, revisionId, transform, onLoad).then((model) => applyStyling(sdk, model, styling)).catch(console.error);
+    addModel(modelId, revisionId, transform, onLoad).catch(console.error);
     return removeModel;
   }, [modelId, revisionId, geometryFilter]);
 
   useEffect(() => {
-    if (modelRef.current === undefined || transform === undefined) return;
-    modelRef.current.setModelTransformation(transform);
-  }, [transform]);
+    if (model === undefined || transform === undefined) return;
+    model.setModelTransformation(transform);
+  }, [transform, model]);
 
   useEffect(() => {
-    const model = modelRef.current;
-
     if (model === undefined || styling === undefined) return;
 
     applyStyling(sdk, model, styling);
@@ -63,7 +61,7 @@ export default function CadModelContainer({
       model.removeAllStyledNodeCollections();
       model.setDefaultNodeAppearance(DefaultNodeAppearance.Default);
     };
-  }, [styling, modelRef.current]);
+  }, [styling, model]);
 
   return <></>;
 
@@ -77,16 +75,16 @@ export default function CadModelContainer({
     if (transform !== undefined) {
       cadModel.setModelTransformation(transform);
     }
-    modelRef.current = cadModel;
+    setModel(cadModel);
     onLoad?.();
 
     return cadModel;
   }
 
   function removeModel(): void {
-    if (modelRef.current === undefined || !viewer.models.includes(modelRef.current)) return;
-    viewer.removeModel(modelRef.current);
-    modelRef.current = undefined;
+    if (model === undefined || !viewer.models.includes(model)) return;
+    viewer.removeModel(model);
+    setModel(undefined);
   }
 }
 
