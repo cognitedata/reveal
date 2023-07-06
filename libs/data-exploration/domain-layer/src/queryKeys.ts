@@ -290,6 +290,8 @@ export const queryKeys = {
   counts: () => [...queryKeys.all, 'counts'] as const,
   linkedResourcesCount: (resourceType: string, resourceId: unknown) =>
     [...queryKeys.counts(), resourceType, resourceId] as const,
+  assetIdsCount: (resourceType: string, resourceId: unknown) =>
+    [...queryKeys.counts(), resourceType, resourceId] as const,
 
   // Industry Canvas
   canvas: () => [...queryKeys.all, 'canvas'] as const,

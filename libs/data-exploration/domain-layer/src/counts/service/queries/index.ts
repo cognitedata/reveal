@@ -1,2 +1,2 @@
-export * from './useLinkedDocumentsCountQuery';
+export * from './useAssetIdsCountQuery';
 export * from './useLinkedResourcesCountQuery';
