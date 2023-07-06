@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import Tabs from 'rc-tabs';
 import styled from 'styled-components/macro';
 
-import { Button } from '@cognite/cogs.js';
+import { Button } from '@cognite/cogs.js-v9';
 
 import { LAYER } from '../../../utils/zIndex';
 

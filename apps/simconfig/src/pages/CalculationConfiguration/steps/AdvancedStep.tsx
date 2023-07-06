@@ -7,16 +7,10 @@ import { ParentSizeModern } from '@visx/responsive';
 import { Field, useFormikContext } from 'formik';
 import styled from 'styled-components/macro';
 
-import type { ButtonProps, OptionType } from '@cognite/cogs.js';
-import {
-  Button,
-  Input,
-  Select,
-  Switch,
-  Table,
-  Tooltip,
-  toast,
-} from '@cognite/cogs.js';
+import type { OptionType } from '@cognite/cogs.js';
+import { Input, Select, Switch, Table, Tooltip, toast } from '@cognite/cogs.js';
+import type { ButtonProps } from '@cognite/cogs.js-v9';
+import { Button } from '@cognite/cogs.js-v9';
 import type { CalculationTemplate } from '@cognite/simconfig-api-sdk/rtk';
 
 import { ChokeCurveChart } from 'components/charts/ChokeCurveChart';
@@ -185,7 +179,6 @@ export function AdvancedStep({ isDisabled }: StepProps) {
                     Copy to clipboard
                   </Button>
                   <PasteButton
-                    block
                     onPasteSuccess={(text) => {
                       try {
                         const curve = text
@@ -464,9 +457,9 @@ const ClipboardContainer = styled.div`
   }
 `;
 
-interface PasteButtonProps extends ButtonProps {
+type PasteButtonProps = ButtonProps & {
   onPasteSuccess: (pastedText: string) => void;
-}
+};
 
 function PasteButton({ onPasteSuccess, ...props }: PasteButtonProps) {
   const [text, setText] = useState('');

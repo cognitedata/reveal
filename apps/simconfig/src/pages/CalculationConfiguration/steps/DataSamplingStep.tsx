@@ -8,11 +8,11 @@ import { Field, useFormikContext } from 'formik';
 
 import type { OptionType } from '@cognite/cogs.js';
 import { Select, Switch } from '@cognite/cogs.js';
+import { SegmentedControl } from '@cognite/cogs.js-v9';
 import type { CalculationTemplate } from '@cognite/simconfig-api-sdk/rtk';
 
 import { LogicalCheckChart } from 'components/charts/LogicalCheckChart';
 import { SteadyStateDetectionChart } from 'components/charts/SteadyStateDetectionChart';
-import { SegmentedControl } from 'components/forms/controls/SegmentedControl';
 import {
   FormContainer,
   FormHeader,
@@ -35,8 +35,7 @@ const DATA_SAMPLING_VALUE_THROTTLE = 1000;
 const SSD_VALUE_THROTTLE = 500;
 
 export function DataSamplingStep() {
-  const { errors, values, setFieldValue } =
-    useFormikContext<CalculationTemplate>();
+  const { values, setFieldValue } = useFormikContext<CalculationTemplate>();
 
   const validationOffset = useMemo(
     () => getScheduleRepeat(values.dataSampling.validationEndOffset ?? '0m'),
@@ -294,7 +293,6 @@ export function DataSamplingStep() {
                 <div className="title">Check</div>
                 <SegmentedControl
                   currentKey={values.logicalCheck.check ?? ''}
-                  error={errors.logicalCheck?.check}
                   fullWidth
                   onButtonClicked={(value: string) => {
                     setFieldValue('logicalCheck.check', value);

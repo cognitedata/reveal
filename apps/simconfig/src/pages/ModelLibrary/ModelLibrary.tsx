@@ -5,8 +5,8 @@ import { useSelector } from 'react-redux';
 import styled from 'styled-components/macro';
 
 import { getProject } from '@cognite/cdf-utilities';
-import { Button, Input, Skeleton } from '@cognite/cogs.js';
-import { Illustrations, Pagination } from '@cognite/cogs.js-v9';
+import { Input, Skeleton } from '@cognite/cogs.js';
+import { Button, Illustrations, Pagination } from '@cognite/cogs.js-v9';
 import { useSDK } from '@cognite/sdk-provider';
 import { useGetModelFileListV2Query } from '@cognite/simconfig-api-sdk/rtk';
 
@@ -130,7 +130,6 @@ export function ModelLibrary() {
                 icon="Add"
                 style={{ width: '100%' }}
                 type="secondary"
-                block
                 onClick={() => {
                   trackUsage(TRACKING_EVENTS.NEW_MODEL, { simulator });
                 }}

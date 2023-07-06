@@ -2,8 +2,8 @@ import React from 'react';
 import { Link, useMatch } from 'react-location';
 import { useSelector } from 'react-redux';
 
-import { Button, Dropdown, Icon, Menu, Skeleton } from '@cognite/cogs.js';
-import { Chip } from '@cognite/cogs.js-v9';
+import { Dropdown, Icon, Menu, Skeleton } from '@cognite/cogs.js';
+import { Button, Chip } from '@cognite/cogs.js-v9';
 import type { CalculationRun } from '@cognite/simconfig-api-sdk/rtk';
 import { useGetCalculationQuery } from '@cognite/simconfig-api-sdk/rtk';
 

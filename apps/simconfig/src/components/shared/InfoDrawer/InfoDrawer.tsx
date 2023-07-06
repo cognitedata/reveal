@@ -2,18 +2,15 @@ import { useState } from 'react';
 
 import styled from 'styled-components/macro';
 
-import type { ButtonType, DrawerProps, IconType } from '@cognite/cogs.js';
-import { Button, Drawer, Graphic } from '@cognite/cogs.js';
+import type { DrawerProps } from '@cognite/cogs.js';
+import { Drawer, Graphic } from '@cognite/cogs.js';
+import { Button } from '@cognite/cogs.js-v9';
 
 interface InfoDrawerProps extends React.PropsWithChildren<DrawerProps> {
-  buttonIcon?: IconType;
-  buttonType?: ButtonType;
   buttonTitle?: string;
 }
 
 export function InfoDrawer({
-  buttonIcon,
-  buttonType,
   buttonTitle,
   children,
   ...drawerProps
@@ -22,10 +19,10 @@ export function InfoDrawer({
   return (
     <>
       <Button
-        icon={buttonIcon ?? 'Info'}
-        title="Display information"
-        type={buttonType ?? 'ghost'}
         aria-label="Display information"
+        icon="Info"
+        title="Display information"
+        type="ghost"
         onClick={() => {
           setIsVisible(true);
         }}

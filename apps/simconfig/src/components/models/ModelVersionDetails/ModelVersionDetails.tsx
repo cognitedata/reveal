@@ -5,8 +5,8 @@ import formatISO9075 from 'date-fns/formatISO9075';
 import parseISO from 'date-fns/parseISO';
 import styled from 'styled-components/macro';
 
-import { Button, Icon, Skeleton, Tooltip, toast } from '@cognite/cogs.js';
-import { Infobox } from '@cognite/cogs.js-v9';
+import { Icon, Skeleton, Tooltip, toast } from '@cognite/cogs.js';
+import { Button, Infobox, Link } from '@cognite/cogs.js-v9';
 import type {
   CogniteApiError,
   ModelFile,
@@ -210,31 +210,29 @@ export function ModelVersionDetails({ modelFile }: ModelVersionDetailsProps) {
           <div className="actions">
             {simulatorConfigDetails?.isBoundaryConditionsEnabled ? (
               <div className="charts-link">
-                <Button
+                <Link
                   disabled={!boundaryConditions?.chartsUrl}
-                  href={boundaryConditions?.chartsUrl}
-                  icon="LineChart"
+                  href={boundaryConditions?.chartsUrl ?? '#'}
                   size="small"
+                  style={{ marginRight: '12px' }}
                   target="_blank"
-                  type="link"
                 >
                   View in Charts
-                </Button>
+                </Link>
               </div>
             ) : null}
 
-            <div className="download-link">
-              <Button
-                disabled={isModelFileDownloading}
-                icon="Download"
-                loading={isModelFileDownloading}
-                size="small"
-                type="link"
-                onClick={onDownloadClicked}
-              >
-                Download
-              </Button>
-            </div>
+            <Button
+              disabled={isModelFileDownloading}
+              icon="Download"
+              loading={isModelFileDownloading}
+              size="small"
+              style={{ margin: '6px 0' }}
+              type="ghost-accent"
+              onClick={onDownloadClicked}
+            >
+              Download
+            </Button>
             {Object.keys(additionalMetadata).length ? (
               <div className="more-info">
                 <ModelMetaTooltip
@@ -260,7 +258,7 @@ export function ModelVersionDetails({ modelFile }: ModelVersionDetailsProps) {
                 >
                   <Button
                     icon="Info"
-                    type="link"
+                    type="ghost-accent"
                     onClick={() => {
                       setIsAdditionMetaInfoTooltipEnabled(true);
                     }}
@@ -308,16 +306,6 @@ const ModelVersionProperties = styled.main`
     .actions {
       display: flex;
       align-items: center;
-    }
-  }
-  .charts-link,
-  .download-link {
-    margin: 6px 0;
-    .cogs-btn {
-      display: flex;
-      text-align: center;
-      align-items: center;
-      white-space: nowrap;
     }
   }
 `;

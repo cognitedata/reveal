@@ -6,7 +6,6 @@ import { parseISO } from 'date-fns';
 import styled from 'styled-components/macro';
 
 import {
-  Button,
   Dropdown,
   Graphic,
   Icon,
@@ -15,7 +14,7 @@ import {
   Tooltip,
   toast,
 } from '@cognite/cogs.js';
-import { Chip } from '@cognite/cogs.js-v9';
+import { Button, Chip } from '@cognite/cogs.js-v9';
 import { useFlag } from '@cognite/react-feature-flags';
 import type {
   CalculationRun,
@@ -557,12 +556,7 @@ export function CalculationList({
                 });
               }}
             >
-              <Button
-                className="configure-calculation"
-                icon="Settings"
-                size="small"
-                type="tertiary"
-              >
+              <Button icon="Settings" size="small" type="tertiary">
                 Configure
               </Button>
             </Link>
@@ -597,7 +591,4 @@ const NonConfiguredCalculationList = styled.div`
   grid-template-columns: 100px auto;
   grid-gap: 12px;
   align-items: center;
-  .configure-calculation {
-    font-size: var(--cogs-detail-font-size);
-  }
 `;

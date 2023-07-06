@@ -2,10 +2,10 @@ import { Field, useFormikContext } from 'formik';
 import styled from 'styled-components/macro';
 
 import { Input, Slider, TextInput } from '@cognite/cogs.js';
+import { SegmentedControl } from '@cognite/cogs.js-v9';
 
 import { getNodeFromPath } from 'utils/formUtils';
 
-import { SegmentedControl } from './controls/SegmentedControl';
 import TimeseriesSelector from './controls/TimeSeriesSelector/TimeSeriesSelector';
 import type { TimeseriesOption } from './controls/TimeSeriesSelector/types';
 
@@ -269,7 +269,6 @@ export function TimeSeriesField({
   const externalIdValue = getNodeFromPath(values, externalIdField);
   const aggregateTypeValue = getNodeFromPath(values, aggregateTypeField);
   const externalIdErrorText = getNodeFromPath(errors, externalIdField);
-  const aggregateTypeErrorText = getNodeFromPath(errors, aggregateTypeField);
 
   if (
     typeof externalIdValue !== 'string' ||
@@ -304,7 +303,6 @@ export function TimeSeriesField({
         <SegmentedControl
           currentKey={aggregateTypeValue}
           disabled={aggregateTypeDisabled}
-          error={aggregateTypeErrorText as string}
           fullWidth
           onButtonClicked={(value: string) => {
             setFieldValue(aggregateTypeField, value);

@@ -3,8 +3,8 @@ import { useSelector } from 'react-redux';
 
 import styled from 'styled-components/macro';
 
-import { Button, Dropdown, Icon, Input, Menu, toast } from '@cognite/cogs.js';
-import { Chip, ChipGroup } from '@cognite/cogs.js-v9';
+import { Dropdown, Icon, Input, Menu, toast } from '@cognite/cogs.js';
+import { Button, Chip, ChipGroup } from '@cognite/cogs.js-v9';
 import type { LabelDetails, ModelFile } from '@cognite/simconfig-api-sdk/rtk';
 import {
   useCreateLabelMutation,
@@ -199,9 +199,9 @@ export function ModelLabels({
           {...(isOpen && { visible: !isOpen })}
           hideOnClick
         >
-          <AddLabelButton
+          <Button
             icon="Tag"
-            size="large"
+            style={{ marginLeft: '8px' }}
             onClick={() => {
               const [dropdownInput] = document.querySelectorAll(
                 '.add-label-button input'
@@ -226,13 +226,6 @@ const LabelsLine = styled.div`
   align-content: center;
   align-self: center;
   vertical-align: center;
-`;
-
-const AddLabelButton = styled(Button)`
-  color: #4a67fb;
-  border: 0;
-  height: 28px;
-  margin-left: 8px !important;
 `;
 
 const CreateLabelButton = styled(Button)`

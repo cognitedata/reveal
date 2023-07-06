@@ -4,7 +4,8 @@ import { useSelector } from 'react-redux';
 
 import styled from 'styled-components/macro';
 
-import { Button, Input, Modal } from '@cognite/cogs.js';
+import { Input, Modal } from '@cognite/cogs.js';
+import { Button } from '@cognite/cogs.js-v9';
 import type { LabelDetails } from '@cognite/simconfig-api-sdk/rtk';
 import {
   useCreateLabelMutation,
@@ -67,9 +68,9 @@ export function LabelsModal({ isOpen, setOpen }: LabelsModalProps) {
           }}
         />
         <Button
-          className="create-label-button"
           disabled={dropdownOptions?.length !== 0 || !(searchTerm.length > 0)}
           icon="Add"
+          style={{ marginBottom: '16px', marginTop: '16px', width: '100%' }}
           type="primary"
           onClick={handleLabelCreation}
         >
@@ -101,12 +102,6 @@ export function LabelsModal({ isOpen, setOpen }: LabelsModalProps) {
 const LabelsModalContainer = styled.div`
   margin-top: 15px;
   .cogs-input,
-  .create-label-button {
-    width: 100%;
-  }
-  .create-label-button {
-    margin-top: 16px;
-  }
 `;
 
 const LabelsListDropdown = styled.ul`

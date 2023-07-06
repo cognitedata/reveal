@@ -1,4 +1,5 @@
-import { Button, Modal } from '@cognite/cogs.js';
+import { Modal } from '@cognite/cogs.js';
+import { Button } from '@cognite/cogs.js-v9';
 
 import type { ModelCalculation } from './CalculationList';
 
@@ -29,7 +30,7 @@ export function DeleteConfirmModal({
             Cancel
           </Button>
           <Button
-            type="danger"
+            type="destructive"
             onClick={() => {
               handleModalConfirm(true, calculationConfig);
             }}

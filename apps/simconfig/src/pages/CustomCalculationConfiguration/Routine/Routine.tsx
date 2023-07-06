@@ -4,7 +4,7 @@ import { useFormikContext } from 'formik';
 import { Reorder } from 'framer-motion';
 import cloneDeep from 'lodash/cloneDeep';
 
-import { Button } from '@cognite/cogs.js';
+import { Button } from '@cognite/cogs.js-v9';
 import type {
   CalculationProcedure,
   CalculationStep,

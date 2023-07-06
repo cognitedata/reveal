@@ -5,7 +5,6 @@ import { useSelector } from 'react-redux';
 import styled from 'styled-components/macro';
 
 import {
-  Button,
   Dropdown,
   Icon,
   Menu,
@@ -14,7 +13,7 @@ import {
   Tabs,
   toast,
 } from '@cognite/cogs.js';
-import { Chip } from '@cognite/cogs.js-v9';
+import { Button, Chip } from '@cognite/cogs.js-v9';
 import type { ExternalId, Simulator } from '@cognite/simconfig-api-sdk/rtk';
 import {
   useDeleteModelFileMutation,
@@ -244,7 +243,6 @@ export function ModelDetails({
               >
                 <Button
                   icon="Add"
-                  size="large"
                   type="primary"
                   onClick={() => {
                     trackUsage(TRACKING_EVENTS.NEW_MODEL_VERSION, {

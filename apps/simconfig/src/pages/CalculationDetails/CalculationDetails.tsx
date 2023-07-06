@@ -4,7 +4,8 @@ import { useSelector } from 'react-redux';
 
 import styled from 'styled-components/macro';
 
-import { Button, Skeleton, Switch } from '@cognite/cogs.js';
+import { Skeleton, Switch } from '@cognite/cogs.js';
+import { Button } from '@cognite/cogs.js-v9';
 import {
   useGetModelCalculationQuery,
   useGetModelFileQuery,
