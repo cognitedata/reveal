@@ -1,6 +1,6 @@
 import { BaseChain } from 'langchain/chains';
 
-import langjson from './cogpilotGreeting.json';
+import { langs } from './cogpilotGreeting';
 import { getPageLanguage } from './toolchains/infield-chains/utils';
 import { CopilotSupportedFeatureType, ProcessMessageFunc } from './types';
 
@@ -23,7 +23,7 @@ export const processMessage = async (
           'Hello from CogPilot! How can I assist you with your Infield work today?';
         try {
           const pageLang = (await getPageLanguage()) as string;
-          msgContent = langjson[pageLang];
+          msgContent = langs[pageLang];
         } catch (e) {
           console.log(e);
         }

@@ -16,11 +16,9 @@
       "executor": "@nx/rollup:rollup",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "rootDir": ".",
         "format": ["esm"],
-        "outputPath": "dist/libs/copilot-core",
+        "outputPath": "dist/libs/@fusion/copilot-core",
         "tsConfig": "libs/copilot-core/tsconfig.lib.json",
-        "project": "libs/copilot-core/package.json",
         "entryFile": "libs/copilot-core/src/index.ts",
         "compiler": "babel",
         "rollupConfig": "libs/copilot-core/rollup.config.js",
