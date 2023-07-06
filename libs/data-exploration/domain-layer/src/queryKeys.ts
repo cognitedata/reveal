@@ -281,7 +281,7 @@ export const queryKeys = {
   // Annotations
   annotations: () => [...queryKeys.all, 'annotations'] as const,
   fileAnnotations: (fileId: unknown) =>
-    [...queryKeys.annotations(), fileId] as const,
+    [...queryKeys.annotations(), 'file', fileId] as const,
   annotationsPagedFileReferences: (
     pagedFileReferences: { id: number; page: number | undefined }[]
   ) => [...queryKeys.annotations(), pagedFileReferences] as const,
@@ -289,9 +289,14 @@ export const queryKeys = {
   // Counts
   counts: () => [...queryKeys.all, 'counts'] as const,
   linkedResourcesCount: (resourceType: string, resourceId: unknown) =>
-    [...queryKeys.counts(), resourceType, resourceId] as const,
+    [
+      ...queryKeys.counts(),
+      'linked-resources',
+      resourceType,
+      resourceId,
+    ] as const,
   assetIdsCount: (resourceType: string, resourceId: unknown) =>
-    [...queryKeys.counts(), resourceType, resourceId] as const,
+    [...queryKeys.counts(), 'assets-ids', resourceType, resourceId] as const,
 
   // Industry Canvas
   canvas: () => [...queryKeys.all, 'canvas'] as const,

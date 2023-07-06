@@ -25,9 +25,8 @@ export const getAssetIdsCount = <T extends BaseCdfItemProps>(
           'cdf-version': 'alpha',
         },
         data: {
-          filter: {
-            assetSubtreeIds: [resourceId],
-          },
+          items: [resourceId],
+          ignoreUnknownIds: true,
         },
       }
     )
