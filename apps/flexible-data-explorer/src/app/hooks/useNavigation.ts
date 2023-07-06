@@ -36,7 +36,7 @@ export const useNavigation = () => {
 
   const toSearchPage = useCallback(
     (searchQuery: string = '', filters: ValueByDataType = {}) => {
-      const { dataType } = params;
+      const { type } = params;
 
       const queryParams = createSearchParams({
         searchQuery,
@@ -44,7 +44,7 @@ export const useNavigation = () => {
       });
 
       navigate({
-        pathname: ['search', dataType].filter(Boolean).join('/'),
+        pathname: ['search', type].filter(Boolean).join('/'),
         search: queryParams.toString(),
       });
     },

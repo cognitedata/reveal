@@ -16,7 +16,7 @@ export const SearchCategories = () => {
   const { t } = useTranslation();
   const navigate = useNavigation();
 
-  const { dataType } = useParams();
+  const { type } = useParams();
 
   const { data: genericCount, isLoading: isGenericLoading } =
     useSearchAggregateQuery();
@@ -27,7 +27,7 @@ export const SearchCategories = () => {
 
   const { totalCount, isLoading: isTotalCountLoading } = useSearchTotalCount();
 
-  const isSelected = (name?: string) => dataType === name;
+  const isSelected = (name?: string) => type === name;
 
   const handleSelectionClick = (name?: string) => {
     navigate.redirectSearchPage(name);
@@ -52,21 +52,21 @@ export const SearchCategories = () => {
         />
       </Content>
 
-      {Object.keys(genericCount ?? {})?.map((type) => {
-        const count = genericCount?.[type];
+      {Object.keys(genericCount ?? {})?.map((dataType) => {
+        const count = genericCount?.[dataType];
         const isDisabled = !count;
 
         return (
           <Content
-            key={type}
-            selected={isSelected(type)}
+            key={dataType}
+            selected={isSelected(dataType)}
             disabled={isDisabled}
-            onClick={() => !isDisabled && handleSelectionClick(type)}
+            onClick={() => !isDisabled && handleSelectionClick(dataType)}
           >
-            <NameText>{type}</NameText>
+            <NameText>{dataType}</NameText>
             <Chip
               size="x-small"
-              type={isSelected(type) ? 'neutral' : undefined}
+              type={isSelected(dataType) ? 'neutral' : undefined}
               label={String(count ?? '?')}
             />
           </Content>

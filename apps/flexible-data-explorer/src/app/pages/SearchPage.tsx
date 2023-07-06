@@ -12,19 +12,19 @@ import { SearchCategories } from '../containers/search/SearchCategories';
 import { SearchConfiguration } from '../containers/search/SearchConfiguration';
 
 export const SearchPage = () => {
-  const { dataType } = useParams();
+  const { type } = useParams();
 
   const renderResults = () => {
-    if (dataType === 'Files') {
+    if (type === 'Files') {
       return <FileResults />;
     }
 
-    if (dataType === 'Timeseries') {
+    if (type === 'Timeseries') {
       return <TimeseriesResults />;
     }
 
-    if (dataType !== undefined) {
-      return <GenericResults selectedDataType={dataType} />;
+    if (type !== undefined) {
+      return <GenericResults selectedDataType={type} />;
     }
 
     return (
