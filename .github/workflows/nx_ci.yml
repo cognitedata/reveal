@@ -87,13 +87,13 @@ jobs:
       #        run: yarn nx print-affected --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }} --select=projects --target=build > affected-projects-build.txt
       - name: 'Print affected projects: BUILD'
         run: |
-          yarn nx print-affected --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }} --select=projects --target=build > affected-projects-build.txt
-          cat affected-projects-build.txt
+          echo "::set-env name=AFFECTED_PROJECTS_BUILD::$(yarn nx print-affected --base=origin/main --head=HEAD --select=projects --target=build)" 
+          echo "Affected projects for lint: ${{env.AFFECTED_PROJECTS_BUILD}}"
 
-#      - name: Find affected projects for e2e
-#        run: yarn nx print-affected --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }} --select=projects --target=e2e > affected-projects-e2e.txt
-#      - name: Show affected projects for e2e
-#        run: cat affected-projects-e2e.txt
+  #      - name: Find affected projects for e2e
+  #        run: yarn nx print-affected --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }} --select=projects --target=e2e > affected-projects-e2e.txt
+  #      - name: Show affected projects for e2e
+  #        run: cat affected-projects-e2e.txt
   build:
     needs: print-affected
     strategy:
