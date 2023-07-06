@@ -217,20 +217,21 @@ jobs:
   #      - name: Stop HTTP server
   #        if: always()
   #        run: kill $(lsof -t -i :3010)
-  ci-passed:
-    # see https://github.community/t/status-check-for-a-matrix-jobs/127354/7
-    name: CI Passed
-    #    needs: [distributed-task, e2e]
-    needs: [distributed-task]
-    if: ${{ always() }}
-    runs-on: ubuntu-20.04
-    steps:
-      - name: Check all job status
-        # see https://docs.github.com/en/actions/reference/context-and-expression-syntax-for-github-actions#needs-context
-        # see https://stackoverflow.com/a/67532120/4907315
-        if: >-
-          ${{
-               contains(needs.*.result, 'failure')
-            || contains(needs.*.result, 'cancelled')
-          }}
-        run: exit 1
+
+#  ci-passed:
+#    # see https://github.community/t/status-check-for-a-matrix-jobs/127354/7
+#    name: CI Passed
+#    #    needs: [distributed-task, e2e]
+#    needs: [distributed-task]
+#    if: ${{ always() }}
+#    runs-on: ubuntu-20.04
+#    steps:
+#      - name: Check all job status
+#        # see https://docs.github.com/en/actions/reference/context-and-expression-syntax-for-github-actions#needs-context
+#        # see https://stackoverflow.com/a/67532120/4907315
+#        if: >-
+#          ${{
+#               contains(needs.*.result, 'failure')
+#            || contains(needs.*.result, 'cancelled')
+#          }}
+#        run: exit 1
