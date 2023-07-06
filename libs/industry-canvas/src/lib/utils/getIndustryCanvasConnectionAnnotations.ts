@@ -19,19 +19,29 @@ import { ExtendedAnnotation } from '@data-exploration-lib/core';
 
 import { IndustryCanvasContainerConfig } from '../types';
 
+const ONLY_SHOW_REGION_TO_REGION_IF_ONE_TO_ONE = true;
 const CONNECTION_OPACITY = 0.5;
 const CONNECTION_STROKE_WIDTH = 2;
 const FILE_CONNECTION_STROKE =
   getResourceTypeAnnotationColor('file').strokeColor;
-const ONLY_SHOW_REGION_TO_REGION_IF_ONE_TO_ONE = true;
+const ASSET_CONNECTION_STROKE =
+  getResourceTypeAnnotationColor('asset').strokeColor;
+
+const resourceTypeToConnectionStroke = {
+  file: FILE_CONNECTION_STROKE,
+  asset: ASSET_CONNECTION_STROKE,
+};
 
 const getAnnotationToRegionConnection = ({
   sourceAnnotation,
   targetContainer,
+  resourceType,
 }: {
   sourceAnnotation: ExtendedAnnotation;
   targetContainer: IndustryCanvasContainerConfig;
+  resourceType: 'file' | 'asset';
 }): Annotation[] => {
+  const stroke = resourceTypeToConnectionStroke[resourceType];
   const highlightingRectangleId = `highlighting-rectangle-${targetContainer.id}`;
   const highlightingRectangle: RectangleAnnotation = {
     type: AnnotationType.RECTANGLE,
@@ -44,7 +54,7 @@ const getAnnotationToRegionConnection = ({
     isSelectable: false,
     style: {
       fill: 'transparent',
-      stroke: FILE_CONNECTION_STROKE,
+      stroke,
       strokeWidth: CONNECTION_STROKE_WIDTH,
       opacity: CONNECTION_OPACITY,
     },
@@ -56,10 +66,9 @@ const getAnnotationToRegionConnection = ({
     fromId: sourceAnnotation.id,
     toId: highlightingRectangleId,
     style: {
-      stroke: FILE_CONNECTION_STROKE,
+      stroke,
       strokeWidth: CONNECTION_STROKE_WIDTH,
       opacity: CONNECTION_OPACITY,
-      lineType: LineType.STRAIGHT,
     },
     isSelectable: false,
   };
@@ -80,11 +89,70 @@ const getConnectionAnnotations = ({
   sourceAnnotation: ExtendedAnnotation;
   container: IndustryCanvasContainerConfig;
   annotations: ExtendedAnnotation[];
-}): { connectionAnnotations: Annotation[]; targetAnnotationIds?: string[] } => {
-  if (getResourceTypeFromExtendedAnnotation(sourceAnnotation) !== 'file') {
+}): {
+  connectionAnnotations: Annotation[];
+  targetAnnotationIds?: string[];
+} => {
+  const sourceResourceType =
+    getResourceTypeFromExtendedAnnotation(sourceAnnotation);
+  if (sourceResourceType === 'asset') {
+    return getAssetConnectionAnnotations({
+      sourceAnnotation,
+      container,
+    });
+  }
+
+  if (sourceResourceType === 'file') {
+    return getFileConnectionAnnotations({
+      sourceAnnotation,
+      annotations,
+      container,
+    });
+  }
+
+  return EMPTY_CONNECTION_ANNOTATIONS;
+};
+
+const getAssetConnectionAnnotations = ({
+  sourceAnnotation,
+  container,
+}: {
+  sourceAnnotation: ExtendedAnnotation;
+  container: IndustryCanvasContainerConfig;
+}) => {
+  const targetAssetId = getResourceIdFromExtendedAnnotation(sourceAnnotation);
+  if (targetAssetId === undefined) {
     return EMPTY_CONNECTION_ANNOTATIONS;
   }
 
+  const linkedAssetContainers = (container.children ?? []).filter(
+    (containerConfig) =>
+      containerConfig.type === ContainerType.TABLE &&
+      containerConfig.metadata.resourceId === targetAssetId
+  );
+
+  return {
+    targetAnnotationIds: [],
+    connectionAnnotations: linkedAssetContainers.flatMap(
+      (targetContainer): Annotation[] =>
+        getAnnotationToRegionConnection({
+          sourceAnnotation,
+          targetContainer,
+          resourceType: 'asset',
+        })
+    ),
+  };
+};
+
+const getFileConnectionAnnotations = ({
+  sourceAnnotation,
+  annotations,
+  container,
+}: {
+  sourceAnnotation: ExtendedAnnotation;
+  container: IndustryCanvasContainerConfig;
+  annotations: ExtendedAnnotation[];
+}) => {
   const sourceFileId = getFileIdFromExtendedAnnotation(sourceAnnotation);
   if (sourceFileId === undefined) {
     // Note: this should never happen since we are filtering on file annotations
@@ -101,9 +169,7 @@ const getConnectionAnnotations = ({
     return EMPTY_CONNECTION_ANNOTATIONS;
   }
 
-  const containers = container.children ?? [];
-
-  const linkedContainers = containers.filter(
+  const linkedContainers = (container.children ?? []).filter(
     (containerConfig) =>
       (containerConfig.type === ContainerType.DOCUMENT ||
         containerConfig.type === ContainerType.IMAGE ||
@@ -114,7 +180,7 @@ const getConnectionAnnotations = ({
   const targetAnnotationIds: string[] = [];
 
   const connectionAnnotations = linkedContainers.flatMap<Annotation>(
-    (containerConfig) => {
+    (targetContainer): Annotation[] => {
       const targetAnnotations = annotations.filter(
         (annotation) =>
           getResourceTypeFromExtendedAnnotation(annotation) === 'file' &&
@@ -129,7 +195,8 @@ const getConnectionAnnotations = ({
       if (!isRegionToRegionLink) {
         return getAnnotationToRegionConnection({
           sourceAnnotation,
-          targetContainer: containerConfig,
+          targetContainer,
+          resourceType: 'file',
         });
       }
 
