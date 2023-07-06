@@ -71,10 +71,6 @@ export const CopilotContextProvider = ({
     localForage.ready(() => setIsReady(true));
   }, []);
 
-  useEffect(() => {
-    bot.current = createBot();
-  }, [currentChatId]);
-
   if (!isReady) {
     return <></>;
   }
