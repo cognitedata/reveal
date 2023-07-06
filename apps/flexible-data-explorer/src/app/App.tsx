@@ -1,6 +1,9 @@
 import { ErrorBoundary } from 'react-error-boundary';
 import { BrowserRouter as Router } from 'react-router-dom';
 
+import styled from 'styled-components';
+
+import { Copilot } from '@fusion/copilot-core';
 import {
   QueryErrorResetBoundary,
   QueryClientProvider,
@@ -14,39 +17,50 @@ import { useAuthContext } from './common/auth/AuthProvider';
 import { TopBar } from './common/topbar/top-bar';
 import { queryClient } from './queryClient';
 import Routes from './Routes';
+import zIndex from './utils/zIndex';
 
 function App() {
   const { client } = useAuthContext();
 
   return (
-    <SDKProvider sdk={client}>
-      <QueryClientProvider client={queryClient}>
-        <ReactQueryDevtools initialIsOpen={false} />
-        <ToastContainer />
-        <TopBar />
-        <QueryErrorResetBoundary>
-          {({ reset }) => (
-            <ErrorBoundary
-              onReset={reset}
-              fallbackRender={({ resetErrorBoundary }) => (
-                <div>
-                  There was an error!
-                  <Button onClick={() => resetErrorBoundary()}>
-                    Try again!
-                  </Button>
-                </div>
-              )}
-            >
-              <Router window={window} children={<Routes />} />
-            </ErrorBoundary>
-          )}
-        </QueryErrorResetBoundary>
-      </QueryClientProvider>
-    </SDKProvider>
+    <>
+      <SDKProvider sdk={client}>
+        <QueryClientProvider client={queryClient}>
+          <ReactQueryDevtools initialIsOpen={false} />
+          <ToastContainer />
+          <TopBar />
+          <QueryErrorResetBoundary>
+            {({ reset }) => (
+              <ErrorBoundary
+                onReset={reset}
+                fallbackRender={({ resetErrorBoundary }) => (
+                  <div>
+                    There was an error!
+                    <Button onClick={() => resetErrorBoundary()}>
+                      Try again!
+                    </Button>
+                  </div>
+                )}
+              >
+                <Router window={window} children={<Routes />} />
+              </ErrorBoundary>
+            )}
+          </QueryErrorResetBoundary>
+        </QueryClientProvider>
+      </SDKProvider>
+      <CopilotWrapper>
+        <Copilot sdk={client} />
+      </CopilotWrapper>
+    </>
   );
 }
 
 export default App;
+
+const CopilotWrapper = styled.div`
+  z-index: ${zIndex.COPILOT};
+  position: absolute;
+`;
 
 // Leaving these stylings for now, will remove later...
 // const StyledWrapper = styled.div`

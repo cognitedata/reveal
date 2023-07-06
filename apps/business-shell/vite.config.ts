@@ -30,9 +30,15 @@ export default defineConfig((configType) => {
         allow: [searchForWorkspaceRoot(process.cwd())],
       },
     },
-    define: {
-      'process.env': env,
-    },
+    // dont just blanket expose process.env, expose just the ones you need.
+    // https://dev.to/whchi/how-to-use-processenv-in-vite-ho9
+    define: Object.entries(env).reduce(
+      (obj, [key, value]) => ({
+        ...obj,
+        [`process.env.${key}`]: JSON.stringify(value),
+      }),
+      {}
+    ),
 
     preview: {
       port: 4300,

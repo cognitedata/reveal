@@ -33,32 +33,10 @@ export const use3DResults = (
     query
   );
 
-  const normalizedImage360Api = useMemo(() => {
-    return {
-      ...image360Api,
-      data: image360Api.data && {
-        ...image360Api.data,
-        pages: image360Api.data?.pages.map((page) => {
-          return {
-            ...page,
-            items: page.items.map((eventAggregate) => ({
-              type: 'img360',
-              name: eventAggregate.values[0],
-              siteId: eventAggregate.values[0],
-            })),
-          };
-        }),
-      },
-    };
-  }, [image360Api]);
-
   const { data, loadMore, isFetching, canFetchMore, fetchedCount } =
     useApiBuffer(
       [
-        {
-          ...(normalizedImage360Api as ApiBufferApi),
-          enabled: fileTypeVisibility.Images360,
-        },
+        { ...image360Api, enabled: fileTypeVisibility.Images360 },
         { ...threeDModelApi, enabled: fileTypeVisibility.Models3D },
       ],
       limit,

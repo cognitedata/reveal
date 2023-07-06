@@ -96,4 +96,4 @@ export const SHAMEFUL_WAIT_TO_ENSURE_CONTAINERS_ARE_RENDERED_MS = 100;
 export const CommentsFeatureFlagKey = 'UFV_INDUSTRY_CANVAS_COMMENTS';
 
 export const CANVAS_FLOATING_ELEMENT_MARGIN = 15;
-export const CANVAS_MIN_WIDTH = 420;
+export const CANVAS_MIN_WIDTH = 40 + 2 * CANVAS_FLOATING_ELEMENT_MARGIN; // close button width + left&right margin
