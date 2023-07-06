@@ -85,45 +85,56 @@ jobs:
 
       #      - name: Find affected projects for build
       #        run: yarn nx print-affected --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }} --select=projects --target=build > affected-projects-build.txt
+
       - name: 'Print affected projects: BUILD'
         id: find-affected-projects
         run: echo "::set-output name=projects::$(yarn nx print-affected --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }} --select=projects --target=build)"
 
       - name: Show affected projects for build
         run: echo "${{ steps.find-affected-projects.outputs.projects }}"
-#        run: |
-#          echo "::set-env name=AFFECTED_PROJECTS_BUILD::$(yarn nx print-affected --base=origin/main --head=HEAD --select=projects --target=build)"
-#          echo "Affected projects for lint: ${{env.AFFECTED_PROJECTS_BUILD}}"
+  #        run: |
+  #          echo "::set-env name=AFFECTED_PROJECTS_BUILD::$(yarn nx print-affected --base=origin/main --head=HEAD --select=projects --target=build)"
+  #          echo "Affected projects for lint: ${{env.AFFECTED_PROJECTS_BUILD}}"
 
   #      - name: Find affected projects for e2e
   #        run: yarn nx print-affected --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }} --select=projects --target=e2e > affected-projects-e2e.txt
   #      - name: Show affected projects for e2e
   #        run: cat affected-projects-e2e.txt
-  build:
+
+  test:
     runs-on: ubuntu-20.04
     needs: print-affected
-    strategy:
-      matrix:
-        project: ${{ fromJson(needs.print-affected.outputs.projects) }}
     steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-          cache: 'yarn'
+      - name: Print
+        run: |
+          echo ${{ fromJson(needs.print-affected.outputs.projects) }}
+          echo ${{ needs.print-affected.outputs.projects }}
+#  build:
+#    runs-on: ubuntu-20.04
+#    needs: print-affected
+#    strategy:
+#      matrix:
+#        project: ${{ fromJson(needs.print-affected.outputs.projects) }}
+#    steps:
+#      - uses: actions/checkout@v3
+#        with:
+#          fetch-depth: 0
+#      - uses: actions/setup-node@v3
+#        with:
+#          node-version: '18'
+#          cache: 'yarn'
+#
+#      - name: Cache node modules
+#        uses: actions/cache@v3
+#        with:
+#          path: |
+#            node_modules
+#            ~/.cache/Cypress
+#          key: cache-node-modules-${{ hashFiles('yarn.lock') }}
+#
+#      - name: Build
+#        run: yarn nx run ${{ matrix.project }}:build
 
-      - name: Cache node modules
-        uses: actions/cache@v3
-        with:
-          path: |
-            node_modules
-            ~/.cache/Cypress
-          key: cache-node-modules-${{ hashFiles('yarn.lock') }}
-
-      - name: Build
-        run: yarn nx run ${{ matrix.project }}:build
 #  distributed-task:
 #    runs-on: ubuntu-20.04
 #    needs: install-dependencies
