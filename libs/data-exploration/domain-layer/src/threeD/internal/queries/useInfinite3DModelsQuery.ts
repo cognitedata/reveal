@@ -39,11 +39,13 @@ export const useInfinite3DModelsQuery = (
             pages: data.pages.map((modelArr) => {
               return {
                 ...modelArr,
-                items: modelArr.items.filter((model) =>
-                  !!query
-                    ? model.name.toLowerCase().includes(query.toLowerCase())
-                    : model
-                ),
+                items: modelArr.items
+                  .map((model) => ({ ...model, name: model.name.trim() }))
+                  .filter((model) =>
+                    !!query
+                      ? model.name.toLowerCase().includes(query.toLowerCase())
+                      : model
+                  ),
               };
             }),
           };
