@@ -4,8 +4,8 @@ import { Calendar } from 'react-date-range';
 import { getDate, getMonth, getYear, set } from 'date-fns';
 import { Field, useFormikContext } from 'formik';
 
-import { Colors, Dropdown, Input, Menu, Switch } from '@cognite/cogs.js';
-import { type OptionType, Select } from '@cognite/cogs.js-v9';
+import { Dropdown, Input, Menu, Switch } from '@cognite/cogs.js';
+import { Colors, type OptionType, Select } from '@cognite/cogs.js-v9';
 import type { CalculationTemplate } from '@cognite/simconfig-api-sdk/rtk';
 
 import {
@@ -88,7 +88,7 @@ export function ScheduleStep() {
                 <Menu>
                   <Field
                     as={Calendar}
-                    color={Colors['midblue-3'].hex()}
+                    color={Colors['decorative--blue--500']}
                     date={scheduleStart.date}
                     onChange={(date: Date) => {
                       setScheduleStart({ date });
