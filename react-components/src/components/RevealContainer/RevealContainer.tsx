@@ -7,6 +7,7 @@ import { Cognite3DViewer } from '@cognite/reveal';
 import { RevealContext } from './RevealContext';
 import { type Color } from 'three';
 import { ModelsLoadingStateContext } from '../Reveal3DResources/ModelsLoadingContext';
+import { SDKProvider } from './SDKProvider';
 
 type RevealContainerProps = {
   color?: Color;
@@ -37,9 +38,13 @@ export default function RevealContainer({
     if (viewer === undefined) return <></>;
     return (
       <>
-        <RevealContext.Provider value={viewer}>
-          <ModelsLoadingProvider>{children}</ModelsLoadingProvider>
-        </RevealContext.Provider>
+        <SDKProvider sdk={sdk}>
+          <RevealContext.Provider value={viewer}>
+            <ModelsLoadingProvider>
+              {children}
+            </ModelsLoadingProvider>
+          </RevealContext.Provider>
+        </SDKProvider>
       </>
     );
   }

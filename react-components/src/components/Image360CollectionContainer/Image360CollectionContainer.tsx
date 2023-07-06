@@ -3,15 +3,21 @@
  */
 import { type ReactElement, useEffect, useRef } from 'react';
 import { useReveal } from '../RevealContainer/RevealContext';
-import { type Image360Collection } from '@cognite/reveal';
+import { type Image360Collection, type Image360AnnotationAppearance } from '@cognite/reveal';
+
+type Image360CollectionStyling = {
+  defaultStyle?: Image360AnnotationAppearance;
+};
 
 type Image360CollectionContainerProps = {
   siteId: string;
+  styling?: Image360CollectionStyling; 
   onLoad?: () => void;
 };
 
 export function Image360CollectionContainer({
   siteId,
+  styling,
   onLoad
 }: Image360CollectionContainerProps): ReactElement {
   const modelRef = useRef<Image360Collection>();

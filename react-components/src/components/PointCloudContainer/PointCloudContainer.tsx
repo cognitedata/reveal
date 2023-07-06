@@ -2,13 +2,22 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type CognitePointCloudModel, type AddModelOptions } from '@cognite/reveal';
+import { type CognitePointCloudModel, type AddModelOptions, PointCloudAppearance } from '@cognite/reveal';
 import { useEffect, useRef, type ReactElement } from 'react';
 import { type Matrix4 } from 'three';
 import { useReveal } from '../RevealContainer/RevealContext';
 
-type Cognite3dModelProps = {
+export type AnnotationIdStylingGroup = {
+  annotationIds: number[];
+  style: PointCloudAppearance;
+};
+
+export type CognitePointCloudModelProps = {
   addModelOptions: AddModelOptions;
+  styling?: {
+    defaultStyle?: PointCloudAppearance;
+    groups?: AnnotationIdStylingGroup[]
+  };
   transform?: Matrix4;
   onLoad?: () => void;
 };
@@ -17,7 +26,7 @@ export default function PointCloudContainer({
   addModelOptions,
   transform,
   onLoad
-}: Cognite3dModelProps): ReactElement {
+}: CognitePointCloudModelProps): ReactElement {
   const modelRef = useRef<CognitePointCloudModel>();
   const viewer = useReveal();
   const { modelId, revisionId } = addModelOptions;

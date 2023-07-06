@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 import { useRef, type ReactElement, useContext, useState, useEffect } from 'react';
-import { type Cognite3DViewer } from '@cognite/reveal';
+import { type Cognite3DViewer, AssetNodeCollection, type NodeAppearance, PointCloudAppearance } from '@cognite/reveal';
 import { ModelsLoadingStateContext } from './ModelsLoadingContext';
 import CadModelContainer from '../CadModelContainer/CadModelContainer';
 import PointCloudContainer from '../PointCloudContainer/PointCloudContainer';
@@ -14,9 +14,16 @@ import {
   type TypedReveal3DModel,
   type AddResourceOptions
 } from './types';
+import { CogniteExternalId } from '@cognite/sdk';
+
+export type AssetStylingGroup = {
+  assetIds: CogniteExternalId[];
+  style: { cad?: NodeAppearance; pointcloud?: PointCloudAppearance };
+}
 
 export type Reveal3DResourcesProps = {
   resources: AddResourceOptions[];
+  styling?: { groups?: AssetStylingGroup[], defaultStyle?: {cad?: NodeAppearance, pointcloud?: PointCloudAppearance } };
 };
 
 export const Reveal3DResources = ({ resources }: Reveal3DResourcesProps): ReactElement => {
@@ -27,7 +34,7 @@ export const Reveal3DResources = ({ resources }: Reveal3DResourcesProps): ReactE
 
   useEffect(() => {
     getTypedModels(resources, viewer).then(setReveal3DModels).catch(console.error);
-  }, []);
+  }, [resources]);
 
   const image360CollectionAddOptions = resources.filter(
     (resource): resource is AddImageCollection360Options =>
