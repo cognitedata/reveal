@@ -8,17 +8,17 @@ import { type Matrix4 } from 'three';
 import { useSDK } from '../RevealContainer/SDKProvider';
 import { CogniteClient } from '@cognite/sdk';
 
-type NodeStylingGroup = {
+export type NodeStylingGroup = {
   nodeIds: number[];
   style: NodeAppearance;
 };
 
-type TreeIndexStylingGroup = {
+export type TreeIndexStylingGroup = {
   treeIndices: number[];
   style: NodeAppearance;
 };
 
-type CadModelStyling = {
+export type CadModelStyling = {
   defaultStyle?: NodeAppearance;
   groups?: (NodeStylingGroup | TreeIndexStylingGroup) []
 };

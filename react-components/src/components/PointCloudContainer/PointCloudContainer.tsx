@@ -42,7 +42,7 @@ export function PointCloudContainer({
   useEffect(() => {
     if (model === undefined || transform === undefined) return;
     model.setModelTransformation(transform);
-  }, [transform]);
+  }, [transform, model]);
 
   useEffect(() => {
     if (model === undefined || styling === undefined) return;

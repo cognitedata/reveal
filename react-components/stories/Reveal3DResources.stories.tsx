@@ -37,9 +37,19 @@ export const Main: Story = {
         modelId: 3865289545346058,
         revisionId: 4160448151596909
       }
-    ]
+    ],
+    styling: {
+      defaultStyle: {
+        cad: {
+          color: new Color('yellow')
+        },
+        pointcloud: {
+          color: new Color('blue')
+        }
+      }
+    }
   },
-  render: ({ resources }) => (
+  render: ({ resources, styling}) => (
     <RevealContainer
       sdk={sdk}
       color={new Color(0x4a4a4a)}
@@ -49,7 +59,7 @@ export const Main: Story = {
           placement: 'topRight'
         }
       }}>
-      <Reveal3DResources resources={resources} />
+      <Reveal3DResources resources={resources} styling={styling} />
       <CameraController
         initialFitCamera={{
           to: 'allModels'
