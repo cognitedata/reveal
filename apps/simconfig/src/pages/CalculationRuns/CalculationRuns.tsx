@@ -9,8 +9,8 @@ import capitalize from 'lodash/capitalize';
 import uniq from 'lodash/uniq';
 import styled from 'styled-components/macro';
 
-import type { OptionType } from '@cognite/cogs.js';
 import { AutoComplete, DateRange } from '@cognite/cogs.js';
+import type { OptionType } from '@cognite/cogs.js-v9';
 import { Illustrations, Skeleton } from '@cognite/cogs.js-v9';
 import {
   useGetCalculationRunListV2Query,

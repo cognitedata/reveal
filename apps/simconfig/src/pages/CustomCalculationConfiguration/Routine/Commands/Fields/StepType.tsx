@@ -1,6 +1,6 @@
 import { Field, useFormikContext } from 'formik';
 
-import { Select } from '@cognite/cogs.js';
+import { Select } from '@cognite/cogs.js-v9';
 import type { UserDefined } from '@cognite/simconfig-api-sdk/rtk';
 
 import { InputRow } from 'components/forms/ModelForm/elements';

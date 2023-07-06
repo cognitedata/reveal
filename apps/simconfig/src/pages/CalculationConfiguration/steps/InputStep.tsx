@@ -6,9 +6,8 @@ import { ParentSizeModern } from '@visx/responsive';
 import classNames from 'classnames';
 import { Field, useFormikContext } from 'formik';
 
-import type { OptionType } from '@cognite/cogs.js';
-import { Select } from '@cognite/cogs.js';
-import { Infobox } from '@cognite/cogs.js-v9';
+import type { OptionType } from '@cognite/cogs.js-v9';
+import { Infobox, Select } from '@cognite/cogs.js-v9';
 import type { CalculationTemplate } from '@cognite/simconfig-api-sdk/rtk';
 
 import { TimeseriesChart } from 'components/charts/TimeseriesChart';

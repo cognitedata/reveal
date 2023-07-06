@@ -2,7 +2,7 @@ import { useMatch } from 'react-location';
 
 import { Field, useFormikContext } from 'formik';
 
-import { Select } from '@cognite/cogs.js';
+import { Select } from '@cognite/cogs.js-v9';
 import type {
   DefinitionMap,
   UserDefined,

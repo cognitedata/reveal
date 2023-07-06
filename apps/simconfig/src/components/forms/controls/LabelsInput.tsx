@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux';
 
 import { Field } from 'formik';
 
-import { Select } from '@cognite/cogs.js';
+import { Select } from '@cognite/cogs.js-v9';
 import { useGetLabelsListQuery } from '@cognite/simconfig-api-sdk/rtk';
 
 import { selectProject } from 'store/simconfigApiProperties/selectors';
