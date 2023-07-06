@@ -6,11 +6,17 @@ import { CogniteClient } from '@cognite/sdk';
 import { CogniteBaseChain, CopilotMessage } from '../types';
 
 import { createDefaultChain } from './conversation/base';
+import { FusionQAChain } from './fusionQA/fusionQA';
 import { GraphQlChain } from './graphql/graphql';
+import { DocumentQueryChain } from './infield-chains/documentQueryChain';
 import { AppBuilderChain } from './python/appBuilder';
 import { getRouterChain } from './router/router';
 
-export type CogniteChainName = 'GraphQlChain' | 'AppBuilderChain';
+export type CogniteChainName =
+  | 'GraphQlChain'
+  | 'AppBuilderChain'
+  | 'DocumentQueryChain'
+  | 'FusionQAChain';
 
 const destinationChains = (
   sdk: CogniteClient,
@@ -34,6 +40,20 @@ const destinationChains = (
     messages,
     returnAll: true,
     verbose: true,
+  }),
+  DocumentQueryChain: new DocumentQueryChain({
+    llm: model,
+    sdk,
+    messages,
+    returnAll: true,
+    verbose: true,
+  }),
+  FusionQAChain: new FusionQAChain({
+    llm: model,
+    sdk,
+    messages,
+    returnAll: true,
+    verbose: false,
   }),
 });
 
