@@ -1,4 +1,4 @@
-import { toast } from '@cognite/cogs.js';
+import { toast } from '@cognite/cogs.js-v9';
 import type { HttpHeaders } from '@cognite/sdk';
 import type { Metadata } from '@cognite/simconfig-api-sdk/rtk';
 

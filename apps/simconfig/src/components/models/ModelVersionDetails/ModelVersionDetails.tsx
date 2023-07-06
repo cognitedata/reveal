@@ -5,7 +5,6 @@ import formatISO9075 from 'date-fns/formatISO9075';
 import parseISO from 'date-fns/parseISO';
 import styled from 'styled-components/macro';
 
-import { toast } from '@cognite/cogs.js';
 import {
   Button,
   Icon,
@@ -13,6 +12,7 @@ import {
   Link,
   Skeleton,
   Tooltip,
+  toast,
 } from '@cognite/cogs.js-v9';
 import type {
   CogniteApiError,

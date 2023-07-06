@@ -5,8 +5,15 @@ import { useSelector } from 'react-redux';
 import { parseISO } from 'date-fns';
 import styled from 'styled-components/macro';
 
-import { Dropdown, Graphic, Menu, toast } from '@cognite/cogs.js';
-import { Button, Chip, Icon, Skeleton, Tooltip } from '@cognite/cogs.js-v9';
+import { Dropdown, Graphic, Menu } from '@cognite/cogs.js';
+import {
+  Button,
+  Chip,
+  Icon,
+  Skeleton,
+  Tooltip,
+  toast,
+} from '@cognite/cogs.js-v9';
 import { useFlag } from '@cognite/react-feature-flags';
 import type {
   CalculationRun,

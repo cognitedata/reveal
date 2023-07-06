@@ -3,8 +3,7 @@ import { useMemo } from 'react';
 import Color from 'color';
 import { curveStepAfter, max, min } from 'd3';
 
-import { toast } from '@cognite/cogs.js';
-import { Colors } from '@cognite/cogs.js-v9';
+import { Colors, toast } from '@cognite/cogs.js-v9';
 import type {
   AggregateType,
   LogicalCheck,

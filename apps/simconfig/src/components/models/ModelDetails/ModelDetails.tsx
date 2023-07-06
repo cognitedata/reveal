@@ -4,14 +4,8 @@ import { useSelector } from 'react-redux';
 
 import styled from 'styled-components/macro';
 
-import {
-  Dropdown,
-  Menu,
-  SegmentedControl,
-  Tabs,
-  toast,
-} from '@cognite/cogs.js';
-import { Button, Chip, Icon, Skeleton } from '@cognite/cogs.js-v9';
+import { Dropdown, Menu, SegmentedControl, Tabs } from '@cognite/cogs.js';
+import { Button, Chip, Icon, Skeleton, toast } from '@cognite/cogs.js-v9';
 import type { ExternalId, Simulator } from '@cognite/simconfig-api-sdk/rtk';
 import {
   useDeleteModelFileMutation,

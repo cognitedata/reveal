@@ -6,8 +6,8 @@ import { useSelector } from 'react-redux';
 import { Field, Form, Formik } from 'formik';
 import styled from 'styled-components/macro';
 
-import { Input, toast } from '@cognite/cogs.js';
-import { Button, Select } from '@cognite/cogs.js-v9';
+import { Input } from '@cognite/cogs.js';
+import { Button, Select, toast } from '@cognite/cogs.js-v9';
 import type { DataSet } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 import type {

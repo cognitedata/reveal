@@ -7,8 +7,8 @@ import { Form, Formik, useFormikContext } from 'formik';
 import styled from 'styled-components/macro';
 import * as Yup from 'yup';
 
-import { Infobox, toast } from '@cognite/cogs.js';
-import { Button, Icon, Skeleton } from '@cognite/cogs.js-v9';
+import { Infobox } from '@cognite/cogs.js';
+import { Button, Icon, Skeleton, toast } from '@cognite/cogs.js-v9';
 import type {
   AggregateType,
   CalculationTemplate,

@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { toast } from '@cognite/cogs.js';
+import { toast } from '@cognite/cogs.js-v9';
 import type { AggregateType } from '@cognite/simconfig-api-sdk/rtk';
 
 import { edPelt, steadyStateDetection } from 'utils/ssd';
