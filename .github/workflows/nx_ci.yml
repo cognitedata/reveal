@@ -114,22 +114,22 @@ jobs:
           main-branch-name: ${{ github.base_ref }}
 
       - name: Find affected projects for lint
-        run: yarn nx print-affected --base=${{ github.base_ref }} --head=${{ github.base_head }} --select=projects --target=lint > affected-projects-lint.txt
+        run: yarn nx print-affected --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }} --select=projects --target=lint > affected-projects-lint.txt
       - name: Show affected projects for lint
         run: cat affected-projects-lint.txt
 
       - name: Find affected projects for test
-        run: yarn nx print-affected --base=${{ github.base_ref }} --head=${{ github.base_head }} --select=projects --target=test > affected-projects-test.txt
+        run: yarn nx print-affected --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }} --select=projects --target=test > affected-projects-test.txt
       - name: Show affected projects for test
         run: cat affected-projects-test.txt
 
       - name: Find affected projects for build
-        run: yarn nx print-affected --base=${{ github.base_ref }} --head=${{ github.base_head }} --select=projects --target=build > affected-projects-build.txt
+        run: yarn nx print-affected --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }} --select=projects --target=build > affected-projects-build.txt
       - name: Show affected projects for build
         run: cat affected-projects-build.txt
 
       - name: Find affected projects for e2e
-        run: yarn nx print-affected --base=${{ github.base_ref }} --head=${{ github.base_head }} --select=projects --target=e2e > affected-projects-e2e.txt
+        run: yarn nx print-affected --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }} --select=projects --target=e2e > affected-projects-e2e.txt
       - name: Show affected projects for e2e
         run: cat affected-projects-e2e.txt
 #  distributed-task:
