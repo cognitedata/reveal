@@ -142,6 +142,7 @@ export const BaseSelect = <ValueType,>({
         isError={isError}
         onFocus={() => setSelectIsFocused(true)}
         onBlur={() => setSelectIsFocused(false)}
+        data-testid={`${rest['data-testid']}`}
       >
         <CogsSelect
           {...props}

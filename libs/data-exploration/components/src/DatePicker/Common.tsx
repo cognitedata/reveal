@@ -156,6 +156,7 @@ export const renderCustomHeader = (
         />
         <YearWrapper>
           <YearSelect
+            data-testid="yearSelect"
             onChange={(value) => {
               changeYear(years[value.target.selectedIndex]);
             }}
@@ -174,6 +175,7 @@ export const renderCustomHeader = (
         </YearWrapper>
         <MonthWrapper>
           <MonthSelect
+            data-testid="monthSelect"
             onChange={(value) => {
               changeMonth(value.target.selectedIndex);
             }}

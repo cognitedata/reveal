@@ -532,7 +532,11 @@ export function Table<T extends TableData>({
         </ColumnSelectorWrapper>
       ) : null}
 
-      {tableSubHeaders && <SubTableWrapper>{tableSubHeaders}</SubTableWrapper>}
+      {tableSubHeaders && (
+        <SubTableWrapper data-testid="sub-table-wrapper">
+          {tableSubHeaders}
+        </SubTableWrapper>
+      )}
 
       {renderTableContent()}
     </TableContainer>
