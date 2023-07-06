@@ -2,15 +2,17 @@ import { useMemo } from 'react';
 
 import styled from 'styled-components';
 
-import { Body, Flex, Icon } from '@cognite/cogs.js';
+import { Body, Button, Flex, Icon } from '@cognite/cogs.js';
 
-import { Chat, useChats } from '../../hooks/useChatHistory';
+import { Chat, useChats, useDeleteChat } from '../../hooks/useChatHistory';
 import { useCopilotContext } from '../../utils/CopilotContext';
 
 export const HistoryList = () => {
   const { data: chats } = useChats();
 
   const { setCurrentChatId, setMode } = useCopilotContext();
+
+  const { mutate: deleteChat } = useDeleteChat();
 
   const groupedChats = useMemo(() => groupChatsByTime(chats || []), [chats]);
 
@@ -35,9 +37,19 @@ export const HistoryList = () => {
               <div className="cogs-avatar">
                 <Icon type="Comment" />
               </div>
-              <Body level={2}>
+              <Body level={2} style={{ flex: 1 }}>
                 {chat.name || chat.dateUpdated.toLocaleString()}
               </Body>
+              <Button
+                type="ghost-destructive"
+                icon="Delete"
+                className="delete-btn"
+                aria-label="delete"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  deleteChat(chat.id);
+                }}
+              />
             </ChatItemWrapper>
           ))}
         </>
@@ -47,7 +59,7 @@ export const HistoryList = () => {
 };
 
 // thx gpt
-const groupChatsByTime = (items: Chat[]): { [key: string]: Chat[] } => {
+const groupChatsByTime = (items: Chat[] = []): { [key: string]: Chat[] } => {
   const groupedItems: { [key: string]: Chat[] } = {};
 
   // Get today's date
@@ -119,8 +131,16 @@ const ChatItemWrapper = styled(Flex)`
     border-radius: 6px;
   }
 
+  .delete-btn {
+    opacity: 0;
+    transition: 0.3s all;
+  }
+
   &&:hover {
     background: rgba(153, 137, 250, 0.2);
+    .delete-btn {
+      opacity: 1;
+    }
   }
 `;
 

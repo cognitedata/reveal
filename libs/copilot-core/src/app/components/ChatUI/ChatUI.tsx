@@ -25,7 +25,7 @@ import {
   cachedListeners,
   sendToCopilotEvent,
 } from '../../../lib/utils';
-import { useChat, useSaveChat } from '../../hooks/useChatHistory';
+import { getChatHistory, useSaveChat } from '../../hooks/useChatHistory';
 import { useCopilotContext } from '../../utils/CopilotContext';
 import zIndex from '../../utils/zIndex';
 
@@ -53,8 +53,6 @@ export const ChatUI = ({
   const { currentChatId } = useCopilotContext();
 
   const { mutate: setChatHistory } = useSaveChat(currentChatId);
-  const { data: chatHistory, isLoading: isLoadingMessages } =
-    useChat(currentChatId);
 
   const model = useMemo(() => new CogniteChatGPT(sdk), [sdk]);
 
@@ -174,7 +172,6 @@ export const ChatUI = ({
 
   const setupMessages = useCallback(
     async (newMessages: CopilotMessage[]) => {
-      setIsLoading(true);
       const cachedMessages = newMessages;
       messages.current = [];
       messages.current.push(...(cachedMessages || []));
@@ -199,7 +196,6 @@ export const ChatUI = ({
           data: el,
         }))
       );
-      bot.message.getAll().then(console.log);
       const memory = new BufferMemory({
         chatHistory: new ChatMessageHistory(
           cachedMessages?.map((el) =>
@@ -232,7 +228,6 @@ export const ChatUI = ({
       } else {
         promptUser();
       }
-      setIsLoading(false);
     },
     [
       promptUser,
@@ -246,13 +241,16 @@ export const ChatUI = ({
   );
 
   useEffect(() => {
-    if (chatHistory?.history && !isLoadingMessages) {
-      setupMessages(chatHistory?.history);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [setupMessages, isLoadingMessages]);
+    (async () => {
+      setIsLoading(true);
+      setupMessages(
+        (await getChatHistory(sdk.project, currentChatId))?.history || []
+      );
+      setTimeout(() => setIsLoading(false), 100);
+    })();
+  }, [currentChatId]);
 
-  if (!visible || isLoading || isLoadingMessages) {
+  if (!visible || isLoading) {
     return <></>;
   }
   return <ChatUIInner />;

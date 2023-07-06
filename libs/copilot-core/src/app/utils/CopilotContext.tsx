@@ -58,22 +58,21 @@ export const CopilotContextProvider = ({
   }, [createChat]);
 
   useEffect(() => {
-    if (chats) {
+    if (chats !== undefined && currentChatId === '') {
       if (chats.length > 0 && chats[0] !== null) {
-        return setCurrentChatId(chats[0].id);
+        setCurrentChatId(chats[0].id);
       } else {
         createNewChat();
       }
     }
-  }, [chats, createNewChat]);
+  }, [chats, createNewChat, currentChatId]);
 
   useEffect(() => {
     localForage.ready(() => setIsReady(true));
   }, []);
 
   useEffect(() => {
-    setIsReady(false);
-    setTimeout(() => setIsReady(true), 100);
+    bot.current = createBot();
   }, [currentChatId]);
 
   if (!isReady) {
