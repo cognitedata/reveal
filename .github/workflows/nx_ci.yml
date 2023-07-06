@@ -95,11 +95,11 @@ jobs:
   #      - name: Show affected projects for e2e
   #        run: cat affected-projects-e2e.txt
   build:
+    runs-on: ubuntu-20.04
     needs: print-affected
     strategy:
       matrix:
-        project: ${{ env.AFFECTED_PROJECTS_BUILD }}
-    runs-on: ubuntu-latest
+        project: "${{ env.AFFECTED_PROJECTS_BUILD }}"
     steps:
       - uses: actions/checkout@v3
         with:
