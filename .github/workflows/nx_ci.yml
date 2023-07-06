@@ -90,7 +90,8 @@ jobs:
 
       - name: 'Print affected projects: BUILD'
         id: find-affected-projects
-        run: echo "projects=$(yarn nx print-affected --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }} --select=projects --target=build)" >> "$GITHUB_OUTPUT"
+        run: echo "::set-output name=projects::$(yarn nx print-affected --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }} --select=projects --target=build)"
+      #        run: echo "projects=$(yarn nx print-affected --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }} --select=projects --target=build)" >> "$GITHUB_OUTPUT"
 
       - name: Show affected projects for build
         run: echo "${{ steps.find-affected-projects.outputs.projects }}"
