@@ -1,7 +1,7 @@
 import { ComputationStep } from '@cognite/calculation-backend';
 import { CogniteExternalId } from '@cognite/sdk';
 
-export type CalculationTaskSchedule = {
+export type ScheduledCalculationTask = {
   externalId: CogniteExternalId;
   name?: string;
   description?: string;
@@ -12,6 +12,6 @@ export type CalculationTaskSchedule = {
   createdTime?: number;
 };
 
-export type CalculationTaskScheduledCreate = CalculationTaskSchedule & {
+export type ScheduledCalculationTaskCreate = ScheduledCalculationTask & {
   nonce: string;
 };

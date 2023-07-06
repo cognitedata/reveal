@@ -15,10 +15,13 @@ import {
   FlowTransform,
 } from 'react-flow-renderer';
 
+import { ScheduledCalculationDeleteModal } from '@charts-app/components/ScheduledCalculation/ScheduledCalculationDeleteModal';
+import { useScheduledCalculationDeleteMutate } from '@charts-app/domain/scheduled-calculation/internal/queries/useScheduledCalculationDeleteMutate';
 import {
   ChartWorkflowV2,
   ScheduledCalculation,
 } from '@charts-app/models/chart/types';
+import { ScheduledCalculationData } from '@charts-app/models/scheduled-calculation-results/types';
 import Layers from '@charts-app/utils/z-index';
 import styled from 'styled-components/macro';
 import { v4 as uuidv4 } from 'uuid';
@@ -76,6 +79,10 @@ type Props = {
   calculationResult: ComponentProps<
     typeof ReactFlowNodeEditor
   >['calculationResult'];
+  scheduledCalculationResult?: ScheduledCalculationData;
+  onRemoveSourceClick: (
+    source: ChartWorkflowV2 | ScheduledCalculation
+  ) => () => void;
 };
 
 const ReactFlowNodeEditorContainer = ({
@@ -90,8 +97,17 @@ const ReactFlowNodeEditorContainer = ({
   translations: t,
   onErrorIconClick,
   calculationResult,
-}: // scheduledCalculationData,
-Props) => {
+  scheduledCalculationResult,
+  onRemoveSourceClick,
+}: Props) => {
+  const [sourceDeleteModalOpen, setSourceDeleteModalOpen] = useState(false);
+
+  /**
+   * Delete scheduled calculation task and remove entry from firestore collection
+   */
+  const { mutateAsync: deleteScheduledCalculation } =
+    useScheduledCalculationDeleteMutate();
+
   /**
    * Hook onto the internal react-flow state
    * to be able to set selected element
@@ -285,6 +301,24 @@ Props) => {
     [onUpdateWorkflow, localWorkflow, steps, isValid]
   );
 
+  const handleDeleteSource = useCallback(
+    async (shouldDeleteTimeseries: boolean) => {
+      await deleteScheduledCalculation({
+        scheduledCalculationResult,
+        shouldDeleteTimeseries,
+      });
+      onRemoveSourceClick(localWorkflow)();
+      onClose();
+    },
+    [
+      onRemoveSourceClick,
+      onClose,
+      localWorkflow,
+      deleteScheduledCalculation,
+      scheduledCalculationResult,
+    ]
+  );
+
   /**
    * Node handlers
    */
@@ -462,6 +496,7 @@ Props) => {
         onAddOutputNode={handleAddOutputNode}
         onMove={handleUpdatePositionAndZoom}
         onErrorIconClick={onErrorIconClick}
+        onDeleteSource={() => setSourceDeleteModalOpen(true)}
         translations={t}
       />
       <CloseButton
@@ -472,6 +507,13 @@ Props) => {
         }}
         aria-label={t.Close}
       />
+      {sourceDeleteModalOpen ? (
+        <ScheduledCalculationDeleteModal
+          onOk={handleDeleteSource}
+          name={scheduledCalculationResult?.name || ''}
+          onCancel={() => setSourceDeleteModalOpen(false)}
+        />
+      ) : null}
     </>
   );
 };

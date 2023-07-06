@@ -1,4 +1,4 @@
-import { CalculationTaskSchedule } from '@charts-app/domain/scheduled-calculation/service/types';
+import { ScheduledCalculationTask } from '@charts-app/domain/scheduled-calculation/service/types';
 
 import {
   DatapointAggregates,
@@ -6,7 +6,7 @@ import {
   DoubleDatapoints,
 } from '@cognite/sdk';
 
-export type ScheduledCalculationData = CalculationTaskSchedule & {
+export type ScheduledCalculationData = ScheduledCalculationTask & {
   loading: boolean;
   series?: DatapointAggregates | StringDatapoints | DoubleDatapoints;
 };
