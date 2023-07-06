@@ -1,8 +1,7 @@
-import { IdEither } from '@cognite/sdk';
+import { ResourceType, ResourceTypes } from '@data-exploration-lib/core';
 
-import { ResourceTypes } from '@data-exploration-lib/core';
-
-import { Counts } from '../types';
+import { BaseResource, Counts } from '../types';
+import { getResourceId } from '../utils';
 
 import { useLinkedAssetsCount } from './useLinkedAssetsCount';
 import { useLinkedEventsCount } from './useLinkedEventsCount';
@@ -10,8 +9,16 @@ import { useLinkedFilesCount } from './useLinkedFilesCount';
 import { useLinkedSequencesCount } from './useLinkedSequencesCount';
 import { useLinkedTimeseriesCount } from './useLinkedTimeseriesCount';
 
-export const useLinkedResourcesCounts = (resourceId?: IdEither) => {
-  const assets = useLinkedAssetsCount(resourceId);
+export const useLinkedResourcesCounts = ({
+  resource,
+  resourceType,
+}: {
+  resource?: BaseResource;
+  resourceType: ResourceType;
+}) => {
+  const resourceId = getResourceId(resource);
+
+  const assets = useLinkedAssetsCount(resourceId, resourceType);
   const events = useLinkedEventsCount(resourceId);
   const timeseries = useLinkedTimeseriesCount(resourceId);
   const sequences = useLinkedSequencesCount(resourceId);
