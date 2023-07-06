@@ -1,21 +1,16 @@
 import styled from 'styled-components/macro';
 
-import { Colors } from '@cognite/cogs.js';
 import type { IconType } from '@cognite/cogs.js-v9';
-import { Icon } from '@cognite/cogs.js-v9';
+import { Colors, Icon } from '@cognite/cogs.js-v9';
 
-interface AlertContainerProps {
-  readonly color: string;
-}
-
-const AlertContainer = styled.div<AlertContainerProps>`
+const AlertContainer = styled.div`
   padding: 12px;
   margin-bottom: 12px;
   display: flex;
   column-gap: 6px;
   border-radius: var(--cogs-border-radius--default);
   .cogs-icon {
-    color: ${(props) => Colors[props.color].toString()};
+    color: ${Colors['surface--action--strong--default']};
     flex: 0 0 1.4em;
   }
   p {
@@ -26,17 +21,12 @@ const AlertContainer = styled.div<AlertContainerProps>`
 `;
 
 export interface AlertProps {
-  readonly color: string;
   readonly icon: IconType;
 }
 
-export function Alert({
-  color,
-  children,
-  icon,
-}: React.PropsWithChildren<AlertProps>) {
+export function Alert({ children, icon }: React.PropsWithChildren<AlertProps>) {
   return (
-    <AlertContainer className="z-1 cogs-detail" color={color}>
+    <AlertContainer className="z-1 cogs-detail">
       <Icon type={icon} />
       <div>{children}</div>
     </AlertContainer>

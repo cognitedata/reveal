@@ -1,6 +1,6 @@
 import styled from 'styled-components/macro';
 
-import { Colors } from '@cognite/cogs.js';
+import { Colors } from '@cognite/cogs.js-v9';
 
 interface HighlightMatchProps {
   text: string;
@@ -11,7 +11,7 @@ interface HighlightMatchProps {
 function HighlightMatch({
   text,
   searchString,
-  highlightColor = Colors['yellow-4'].alpha(0.4).toString(),
+  highlightColor = Colors['decorative--yellow--300'],
 }: HighlightMatchProps) {
   if (!searchString) {
     return <>{text}</>;

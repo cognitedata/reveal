@@ -148,7 +148,7 @@ export function AdvancedStep({ isDisabled }: StepProps) {
               </div>
 
               <ClipboardContainer>
-                <Alert color="primary" icon="Info">
+                <Alert icon="Info">
                   <p>
                     You can copy and paste Tabular choke curve data from Excel,
                     Google Sheets, etc. below.
