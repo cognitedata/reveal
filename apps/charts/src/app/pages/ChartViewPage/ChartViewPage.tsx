@@ -947,6 +947,7 @@ const ChartViewPage = () => {
                       sourceId={selectedSourceId}
                       onClose={handleCloseEditor}
                       onErrorIconClick={handleErrorIconClick}
+                      onRemoveSourceClick={handleRemoveSourceClick}
                       chart={chart}
                       translations={nodeEditorTranslations}
                     />

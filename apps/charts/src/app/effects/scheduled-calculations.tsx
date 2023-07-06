@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 import { useScheduledCalculationTasks } from '@charts-app/domain/scheduled-calculation/service/queries/useScheduledCalculationTasks';
-import { CalculationTaskSchedule } from '@charts-app/domain/scheduled-calculation/service/types';
+import { ScheduledCalculationTask } from '@charts-app/domain/scheduled-calculation/service/types';
 import { useChartAtom } from '@charts-app/models/chart/atom';
 import { useScheduledCalculationData } from '@charts-app/models/scheduled-calculation-results/atom';
 import { fetchRawOrAggregatedDatapoints } from '@charts-app/services/cdf-api';
@@ -35,7 +35,7 @@ export const ScheduledCalculationCollectionEffects = () => {
 export const ScheduledCalculationEffects = ({
   task,
 }: {
-  task: CalculationTaskSchedule;
+  task: ScheduledCalculationTask;
 }) => {
   const [chart] = useChartAtom();
   const { dateFrom, dateTo } = chart!;

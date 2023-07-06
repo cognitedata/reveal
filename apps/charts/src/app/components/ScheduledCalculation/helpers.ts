@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 
-import { CalculationTaskSchedule } from '@charts-app/domain/scheduled-calculation/service/types';
+import { ScheduledCalculationTask } from '@charts-app/domain/scheduled-calculation/service/types';
 import {
   Chart,
   ChartWorkflow,
@@ -39,7 +39,7 @@ export const handleNext = ({
   >;
   formMethods: UseFormReturn<ScheduleCalculationFieldValues>;
   createScheduledCalculation: UseMutateAsyncFunction<
-    [Timeseries, CalculationTaskSchedule],
+    [Timeseries, ScheduledCalculationTask],
     unknown,
     {
       calculation: ScheduleCalculationFieldValues;
