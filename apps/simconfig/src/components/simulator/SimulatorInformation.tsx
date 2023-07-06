@@ -3,8 +3,7 @@ import { useSelector } from 'react-redux';
 import { formatDistanceToNow } from 'date-fns';
 import styled from 'styled-components/macro';
 
-import { Collapse } from '@cognite/cogs.js';
-import { Skeleton } from '@cognite/cogs.js-v9';
+import { Collapse, Skeleton } from '@cognite/cogs.js-v9';
 import type { SimulatorInstance } from '@cognite/simconfig-api-sdk/rtk';
 import { useGetSimulatorDetailsQuery } from '@cognite/simconfig-api-sdk/rtk';
 

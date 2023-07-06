@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 
 import styled from 'styled-components/macro';
 
-import { Collapse } from '@cognite/cogs.js';
+import { Collapse } from '@cognite/cogs.js-v9';
 import type { SimulatorInstance } from '@cognite/simconfig-api-sdk/rtk';
 import { useGetDefinitionsQuery } from '@cognite/simconfig-api-sdk/rtk';
 

@@ -7,9 +7,9 @@ import { ParentSizeModern } from '@visx/responsive';
 
 import styled from 'styled-components/macro';
 
-import { Collapse, Graphic } from '@cognite/cogs.js';
+import { Graphic } from '@cognite/cogs.js';
 import type { OptionType } from '@cognite/cogs.js-v9';
-import { Button, Skeleton, toast } from '@cognite/cogs.js-v9';
+import { Button, Collapse, Skeleton, toast } from '@cognite/cogs.js-v9';
 import type { CogniteEvent, Sequence } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 import type {
