@@ -1,53 +1,34 @@
 import { BotUIMessageList, BotUIAction } from '@botui/react';
 import styled from 'styled-components/macro';
 
-import { Button, Flex } from '@cognite/cogs.js';
+import { Flex } from '@cognite/cogs.js';
 
+import { useCopilotContext } from '../../utils/CopilotContext';
 import zIndex from '../../utils/zIndex';
 import { actionRenderers } from '../ActionRenderer';
 import { messageRenderers } from '../MessageRenderer';
 
-export const LargeChatUI = ({
-  setIsExpanded,
-  onClose,
-  onReset,
-}: {
-  setIsExpanded: (visible: boolean) => void;
-  onClose: () => void;
-  onReset: () => void;
-}) => {
+import { ChatHeader } from './ChatHeader';
+import { HistoryList } from './HistoryList';
+
+export const LargeChatUI = () => {
+  const { mode } = useCopilotContext();
   return (
     <LargeChatWrapper>
-      <Flex className="header" gap={6} alignItems="center">
-        <div style={{ flex: 1 }} />
-        <Button
-          icon="ClearAll"
-          aria-label="clear"
-          onClick={() => onReset()}
-          type="secondary"
-        />
-        <Button
-          icon="ScaleDown"
-          aria-label="collapse"
-          onClick={() => setIsExpanded(false)}
-          type="secondary"
-        />
-        <Button
-          icon="Close"
-          onClick={onClose}
-          aria-label="close"
-          type="secondary"
-        />
-      </Flex>
-      <>
-        <Flex
-          direction="column"
-          style={{ overflow: 'auto', marginBottom: 8, marginTop: 8, flex: 1 }}
-        >
-          <BotUIMessageList renderer={messageRenderers} />
-        </Flex>
-        <BotUIAction renderer={actionRenderers} />
-      </>
+      <ChatHeader style={{ paddingTop: 16, paddingBottom: 16 }} />
+      {mode === 'chat' ? (
+        <>
+          <Flex
+            direction="column"
+            style={{ overflow: 'auto', marginBottom: 8, marginTop: 8, flex: 1 }}
+          >
+            <BotUIMessageList renderer={messageRenderers} />
+          </Flex>
+          <BotUIAction renderer={actionRenderers} />
+        </>
+      ) : (
+        <HistoryList />
+      )}
     </LargeChatWrapper>
   );
 };
@@ -60,74 +41,7 @@ const LargeChatWrapper = styled(Flex)`
   max-width: 800px;
   height: 100vh;
   padding: 16px;
-  margin: 0 auto;
-  padding: 16px;
   display: flex;
   flex-direction: column;
-
-  .botui_message {
-    margin: 0;
-    margin-bottom: 8px;
-    pointer-events: all;
-  }
-  .botui_message_content {
-    overflow: auto;
-  }
-  .botui_app_container {
-    width: 100%;
-    overflow: hidden;
-    flex: 1;
-    position: relative;
-    display: flex;
-  }
-  .botui_container {
-    height: auto;
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column-reverse;
-  }
-  .botui_message_list {
-    padding: 0;
-    flex: 1;
-    overflow: hidden;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    > div {
-      overflow: auto;
-      align-self: end;
-      width: 100%;
-      overflow: auto;
-    }
-  }
-  .botui_action_container {
-    padding: 0;
-    margin-bottom: 120px;
-    margin-top: 32px;
-    min-height: 104px;
-    .botui_action {
-      padding: 0;
-    }
-  }
-  .cogs-textarea {
-    flex: 1;
-    height: 100px;
-  }
-  .botui_message_content {
-    background: #dadffc;
-  }
-  .botui_message_content.human {
-    background: #f5f5f5;
-  }
-  .cogs-textarea {
-    width: 100%;
-    textarea {
-      color: black !important;
-    }
-  }
-  pre {
-    overflow: hidden;
-    margin-bottom: 0;
-  }
+  margin: 0 auto;
 `;

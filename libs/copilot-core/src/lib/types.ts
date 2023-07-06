@@ -18,6 +18,7 @@ type DefaultMessage = {
 
 export type CopilotTextMessage = {
   type: 'text';
+  context?: string;
 } & DefaultMessage;
 
 export type CopilotHumanApprovalMessage = {
