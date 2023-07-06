@@ -73,25 +73,52 @@ jobs:
         with:
           main-branch-name: ${{ github.base_ref }}
 
-      - name: Find affected projects for lint
-        run: yarn nx print-affected --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }} --select=projects --target=lint > affected-projects-lint.txt
-      - name: Show affected projects for lint
-        run: cat affected-projects-lint.txt
+      #      - name: Find affected projects for lint
+      #        run: yarn nx print-affected --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }} --select=projects --target=lint > affected-projects-lint.txt
+      #      - name: Show affected projects for lint
+      #        run: cat affected-projects-lint.txt
+      #
+      #      - name: Find affected projects for test
+      #        run: yarn nx print-affected --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }} --select=projects --target=test > affected-projects-test.txt
+      #      - name: Show affected projects for test
+      #        run: cat affected-projects-test.txt
 
-      - name: Find affected projects for test
-        run: yarn nx print-affected --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }} --select=projects --target=test > affected-projects-test.txt
-      - name: Show affected projects for test
-        run: cat affected-projects-test.txt
+      #      - name: Find affected projects for build
+      #        run: yarn nx print-affected --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }} --select=projects --target=build > affected-projects-build.txt
+      - name: 'Print affected projects: BUILD'
+        run: |
+          yarn nx print-affected --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }} --select=projects --target=build > affected-projects-build.txt
+          cat affected-projects-build.txt
 
-      - name: Find affected projects for build
-        run: yarn nx print-affected --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }} --select=projects --target=build > affected-projects-build.txt
-      - name: Show affected projects for build
-        run: cat affected-projects-build.txt
+#      - name: Find affected projects for e2e
+#        run: yarn nx print-affected --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }} --select=projects --target=e2e > affected-projects-e2e.txt
+#      - name: Show affected projects for e2e
+#        run: cat affected-projects-e2e.txt
+  build:
+    needs: print-affected
+    strategy:
+      matrix:
+        project: ${{ fromJson(file("affected-projects-build.txt")) }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'yarn'
 
-      - name: Find affected projects for e2e
-        run: yarn nx print-affected --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }} --select=projects --target=e2e > affected-projects-e2e.txt
-      - name: Show affected projects for e2e
-        run: cat affected-projects-e2e.txt
+      - name: Cache node modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            node_modules
+            ~/.cache/Cypress
+          key: cache-node-modules-${{ hashFiles('yarn.lock') }}
+
+      - name: Build
+        run: yarn nx run ${{ matrix.project }}:build
 #  distributed-task:
 #    runs-on: ubuntu-20.04
 #    needs: install-dependencies
