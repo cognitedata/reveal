@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { Page } from '../containers/page/Page';
+import { AIResults } from '../containers/search/results/AIResults';
 import { FileResults } from '../containers/search/results/FileResults';
 import { GenericResults } from '../containers/search/results/GenericResults';
 import { TimeseriesResults } from '../containers/search/results/TimeseriesResults';
@@ -28,6 +29,7 @@ export const SearchPage = () => {
 
     return (
       <>
+        <AIResults />
         <GenericResults />
         <TimeseriesResults />
         <FileResults />
