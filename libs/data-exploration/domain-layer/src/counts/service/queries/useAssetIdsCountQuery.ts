@@ -5,7 +5,7 @@ import { useSDK } from '@cognite/sdk-provider';
 import { SdkResourceType } from '@cognite/sdk-react-query-hooks';
 
 import { queryKeys } from '../../../queryKeys';
-import { getAssetIdsCount } from '../network';
+import { getAssetIdsCount, getDocumentAssetIdsCount } from '../network';
 
 export const useAssetIdsCountQuery = ({
   resourceType,
@@ -21,6 +21,9 @@ export const useAssetIdsCountQuery = ({
     () => {
       if (!resourceId) {
         return undefined;
+      }
+      if (resourceType === 'files') {
+        return getDocumentAssetIdsCount(sdk, { resourceId });
       }
       return getAssetIdsCount(sdk, {
         resourceType,
