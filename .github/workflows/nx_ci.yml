@@ -98,7 +98,7 @@ jobs:
     needs: print-affected
     strategy:
       matrix:
-        project: ${{ fromJson(file("affected-projects-build.txt")) }}
+        project: ${{ env.AFFECTED_PROJECTS_BUILD }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
