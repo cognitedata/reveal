@@ -8,9 +8,9 @@ import { Field, useFormikContext } from 'formik';
 import styled from 'styled-components/macro';
 
 import type { OptionType } from '@cognite/cogs.js';
-import { Input, Select, Switch, Table, Tooltip, toast } from '@cognite/cogs.js';
+import { Input, Select, Switch, Table, toast } from '@cognite/cogs.js';
 import type { ButtonProps } from '@cognite/cogs.js-v9';
-import { Button } from '@cognite/cogs.js-v9';
+import { Button, Tooltip } from '@cognite/cogs.js-v9';
 import type { CalculationTemplate } from '@cognite/simconfig-api-sdk/rtk';
 
 import { ChokeCurveChart } from 'components/charts/ChokeCurveChart';

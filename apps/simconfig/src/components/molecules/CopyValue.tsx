@@ -2,8 +2,8 @@ import { useState } from 'react';
 
 import styled from 'styled-components/macro';
 
-import { Tooltip, toast } from '@cognite/cogs.js';
-import { Button, Colors } from '@cognite/cogs.js-v9';
+import { toast } from '@cognite/cogs.js';
+import { Button, Colors, Tooltip } from '@cognite/cogs.js-v9';
 
 export interface CopyValueProps {
   value: number | string;

@@ -1,7 +1,6 @@
 import styled from 'styled-components/macro';
 
-import { Tooltip } from '@cognite/cogs.js';
-import { Icon } from '@cognite/cogs.js-v9';
+import { Icon, Tooltip } from '@cognite/cogs.js-v9';
 
 import type { DateType } from 'utils/timeUtils';
 import {

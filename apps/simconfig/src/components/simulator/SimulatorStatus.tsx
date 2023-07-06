@@ -3,8 +3,8 @@ import { useSelector } from 'react-redux';
 
 import styled from 'styled-components/macro';
 
-import { Skeleton, Tooltip } from '@cognite/cogs.js';
-import { Button } from '@cognite/cogs.js-v9';
+import { Skeleton } from '@cognite/cogs.js';
+import { Button, Tooltip } from '@cognite/cogs.js-v9';
 import {
   useGetDefinitionsQuery,
   useGetSimulatorsListV2Query,

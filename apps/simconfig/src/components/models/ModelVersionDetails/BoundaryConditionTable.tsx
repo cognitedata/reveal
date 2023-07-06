@@ -3,8 +3,7 @@ import React from 'react';
 import classNames from 'classnames';
 import styled from 'styled-components/macro';
 
-import { Tooltip } from '@cognite/cogs.js';
-import { Chip, Infobox } from '@cognite/cogs.js-v9';
+import { Chip, Infobox, Tooltip } from '@cognite/cogs.js-v9';
 import type {
   BoundaryConditionValue,
   ModelFile,

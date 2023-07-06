@@ -3,7 +3,7 @@ import React, { useMemo } from 'react';
 import classNames from 'classnames';
 import styled from 'styled-components/macro';
 
-import { Tooltip } from '@cognite/cogs.js';
+import { Tooltip } from '@cognite/cogs.js-v9';
 
 import { CopyValue } from 'components/molecules/CopyValue';
 import { getFormattedSciNumber } from 'utils/numberUtils';

@@ -1,6 +1,6 @@
 import styled from 'styled-components/macro';
 
-import { Tooltip } from '@cognite/cogs.js';
+import { Tooltip } from '@cognite/cogs.js-v9';
 
 import { TimeseriesChart } from 'components/charts/TimeseriesChart';
 import HighlightMatch from 'components/shared/HighlightMatch';
