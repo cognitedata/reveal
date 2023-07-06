@@ -10,13 +10,23 @@ import { useRelationshipsCount } from './useRelationshipsCount';
 export const useRelatedResourcesCount = ({
   resource,
   resourceType,
+  isDocumentsApiEnabled = true,
 }: {
   resource?: BaseResourceProps;
   resourceType: ResourceType;
+  isDocumentsApiEnabled?: boolean;
 }) => {
   const annotations = useAnnotationsCount({ resource, resourceType });
-  const assetIds = useAssetIdsCount({ resource, resourceType });
-  const linkedResources = useLinkedResourcesCount({ resource, resourceType });
+  const assetIds = useAssetIdsCount({
+    resource,
+    resourceType,
+    isDocumentsApiEnabled,
+  });
+  const linkedResources = useLinkedResourcesCount({
+    resource,
+    resourceType,
+    isDocumentsApiEnabled,
+  });
   const relationships = useRelationshipsCount({ resource, resourceType });
 
   const data = {

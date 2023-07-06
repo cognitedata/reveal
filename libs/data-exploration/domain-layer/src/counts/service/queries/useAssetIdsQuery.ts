@@ -10,9 +10,11 @@ import { getAssetIds, getDocumentAssetIds } from '../network';
 export const useAssetIdsQuery = ({
   resourceType,
   resourceId,
+  isDocumentsApiEnabled,
 }: {
   resourceType: SdkResourceType;
   resourceId?: IdEither;
+  isDocumentsApiEnabled: boolean;
 }) => {
   const sdk = useSDK();
 
@@ -22,7 +24,7 @@ export const useAssetIdsQuery = ({
       if (!resourceId) {
         return undefined;
       }
-      if (resourceType === 'files') {
+      if (resourceType === 'files' && isDocumentsApiEnabled) {
         return getDocumentAssetIds(sdk, { resourceId });
       }
       return getAssetIds(sdk, {

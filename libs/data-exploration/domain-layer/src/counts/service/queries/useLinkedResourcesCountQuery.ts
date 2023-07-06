@@ -10,9 +10,11 @@ import { getLinkedDocumentsCount, getLinkedResourcesCount } from '../network';
 export const useLinkedResourcesCountQuery = ({
   resourceType,
   resourceId,
+  isDocumentsApiEnabled,
 }: {
   resourceType: SdkResourceType;
   resourceId?: IdEither;
+  isDocumentsApiEnabled: boolean;
 }) => {
   const sdk = useSDK();
 
@@ -22,7 +24,7 @@ export const useLinkedResourcesCountQuery = ({
       if (!resourceId) {
         return undefined;
       }
-      if (resourceType === 'files') {
+      if (resourceType === 'files' && isDocumentsApiEnabled) {
         return getLinkedDocumentsCount(sdk, { resourceId });
       }
       return getLinkedResourcesCount(sdk, {

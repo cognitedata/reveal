@@ -7,13 +7,16 @@ import { convertToSdkResourceType, getResourceId } from '../utils';
 export const useAssetIdsCount = ({
   resource,
   resourceType,
+  isDocumentsApiEnabled,
 }: {
   resource?: BaseResourceProps;
   resourceType: ResourceType;
+  isDocumentsApiEnabled: boolean;
 }) => {
   const { data = [], isLoading } = useAssetIdsQuery({
     resourceType: convertToSdkResourceType(resourceType),
     resourceId: getResourceId(resource),
+    isDocumentsApiEnabled,
   });
   const count = data.length;
 

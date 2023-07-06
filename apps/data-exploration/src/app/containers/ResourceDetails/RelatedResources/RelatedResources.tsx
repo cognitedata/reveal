@@ -56,6 +56,7 @@ export const RelatedResources = ({
   } = useRelatedResourcesCount({
     resource: parentResource,
     resourceType: type,
+    isDocumentsApiEnabled,
   });
 
   const resourceType = convertResourceType(type);
