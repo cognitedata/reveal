@@ -6,16 +6,22 @@ import { useSDK } from '@cognite/sdk-provider';
 import { queryKeys } from '../../../queryKeys';
 import { getAnnotations } from '../network';
 
-export const useFileAnnotationsQuery = (fileId?: IdEither) => {
+export const useFileAnnotationsQuery = (fileId?: IdEither, enabled = true) => {
   const sdk = useSDK();
 
-  return useQuery(queryKeys.fileAnnotations(fileId), () => {
-    if (!fileId) {
-      return [];
+  return useQuery(
+    queryKeys.fileAnnotations(fileId),
+    () => {
+      if (!fileId) {
+        return [];
+      }
+      return getAnnotations(sdk, {
+        annotatedResourceType: 'file',
+        annotatedResourceIds: [fileId],
+      });
+    },
+    {
+      enabled: enabled || !!fileId,
     }
-    return getAnnotations(sdk, {
-      annotatedResourceType: 'file',
-      annotatedResourceIds: [fileId],
-    });
-  });
+  );
 };

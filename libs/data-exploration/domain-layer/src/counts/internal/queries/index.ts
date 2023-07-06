@@ -1,3 +1,4 @@
+export * from './useAnnotationsCounts';
 export * from './useLinkedAssetsCount';
 export * from './useLinkedEventsCount';
 export * from './useLinkedFilesCount';
