@@ -90,7 +90,7 @@
     "@types/jsdom": "21.1.1",
     "@types/lodash": "4.14.195",
     "@types/mixpanel-browser": "2.47.0",
-    "@types/node": "18.16.18",
+    "@types/node": "18.16.19",
     "@types/random-seed": "0.3.3",
     "@types/skmeans": "0.11.4",
     "@types/stats": "0.16.30",
@@ -101,10 +101,10 @@
     "concurrently": "8.2.0",
     "cross-env": "7.0.3",
     "dat.gui": "0.7.9",
-    "eslint": "8.43.0",
+    "eslint": "8.44.0",
     "eslint-config-prettier": "8.8.0",
     "eslint-plugin-header": "3.1.1",
-    "eslint-plugin-jsdoc": "46.3.0",
+    "eslint-plugin-jsdoc": "46.4.3",
     "eslint-plugin-lodash": "7.4.0",
     "eslint-plugin-prettier": "4.2.1",
     "eslint-plugin-unused-imports": "2.0.0",
@@ -137,7 +137,7 @@
     "tsc-alias": "1.8.6",
     "typescript": "5.1.6",
     "wasm-pack": "0.12.1",
-    "webpack": "5.88.0",
+    "webpack": "5.88.1",
     "webpack-cli": "5.1.4",
     "webpack-dev-server": "4.15.1",
     "webpack-node-externals": "3.0.0",
@@ -156,5 +156,5 @@
   "files": [
     "./dist/*"
   ],
-  "packageManager": "yarn@3.6.0"
+  "packageManager": "yarn@3.6.1"
 }

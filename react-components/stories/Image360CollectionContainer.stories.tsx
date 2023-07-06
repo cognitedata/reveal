@@ -3,8 +3,8 @@
  */
 import type { Meta, StoryObj } from '@storybook/react';
 import { Image360CollectionContainer, RevealContainer } from '../src';
-import { CogniteClient } from '@cognite/sdk';
 import { Color } from 'three';
+import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 
 const meta = {
   title: 'Example/PrimitiveWrappers/Image360CollectionContainer',
@@ -15,13 +15,7 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const token = new URLSearchParams(window.location.search).get('token') ?? '';
-const sdk = new CogniteClient({
-  appId: 'reveal.example',
-  baseUrl: 'https://greenfield.cognitedata.com',
-  project: '3d-test',
-  getToken: async () => await Promise.resolve(token)
-});
+const sdk = createSdkByUrlToken();
 
 export const Main: Story = {
   args: {

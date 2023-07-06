@@ -3,8 +3,8 @@
  */
 import type { Meta, StoryObj } from '@storybook/react';
 import { CadModelContainer, RevealContainer } from '../src';
-import { CogniteClient } from '@cognite/sdk';
 import { Color, Matrix4 } from 'three';
+import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import { NumericRange } from '@cognite/reveal';
 
 const meta = {
@@ -45,13 +45,7 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const token = new URLSearchParams(window.location.search).get('token') ?? '';
-const sdk = new CogniteClient({
-  appId: 'reveal.example',
-  baseUrl: 'https://greenfield.cognitedata.com',
-  project: '3d-test',
-  getToken: async () => await Promise.resolve(token)
-});
+const sdk = createSdkByUrlToken();
 
 export const Main: Story = {
   args: {

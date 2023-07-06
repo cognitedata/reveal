@@ -1,8 +1,8 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-
 import { type CognitePointCloudModel, type AddModelOptions, PointCloudAppearance } from '@cognite/reveal';
+
 import { useEffect, useRef, type ReactElement } from 'react';
 import { type Matrix4 } from 'three';
 import { useReveal } from '../RevealContainer/RevealContext';
@@ -22,8 +22,9 @@ export type CognitePointCloudModelProps = {
   onLoad?: () => void;
 };
 
-export default function PointCloudContainer({
+export function PointCloudContainer({
   addModelOptions,
+  styling,
   transform,
   onLoad
 }: CognitePointCloudModelProps): ReactElement {
@@ -45,6 +46,7 @@ export default function PointCloudContainer({
 
   async function addModel(modelId: number, revisionId: number, transform?: Matrix4): Promise<void> {
     const pointCloudModel = await viewer.addPointCloudModel({ modelId, revisionId });
+
     if (transform !== undefined) {
       pointCloudModel.setModelTransformation(transform);
     }

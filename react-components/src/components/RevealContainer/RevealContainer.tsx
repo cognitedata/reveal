@@ -3,7 +3,7 @@
  */
 import { type CogniteClient } from '@cognite/sdk';
 import { useEffect, useRef, type ReactNode, useState, type ReactElement } from 'react';
-import { Cognite3DViewer } from '@cognite/reveal';
+import { Cognite3DViewer, type Cognite3DViewerOptions } from '@cognite/reveal';
 import { RevealContext } from './RevealContext';
 import { type Color } from 'three';
 import { ModelsLoadingStateContext } from '../Reveal3DResources/ModelsLoadingContext';
@@ -13,12 +13,23 @@ type RevealContainerProps = {
   color?: Color;
   sdk: CogniteClient;
   children?: ReactNode;
+  viewerOptions?: Pick<
+    Cognite3DViewerOptions,
+    | 'antiAliasingHint'
+    | 'loadingIndicatorStyle'
+    | 'rendererResolutionThreshold'
+    | 'antiAliasingHint'
+    | 'ssaoQualityHint'
+    | 'pointCloudEffects'
+    | 'enableEdges'
+  >;
 };
 
-export default function RevealContainer({
+export function RevealContainer({
   children,
   sdk,
-  color
+  color,
+  viewerOptions
 }: RevealContainerProps): ReactElement {
   const [viewer, setViewer] = useState<Cognite3DViewer>();
   const revealDomElementRef = useRef<HTMLDivElement>(null);
@@ -54,7 +65,7 @@ export default function RevealContainer({
     if (domElement === null) {
       throw new Error('Failure in mounting RevealContainer to DOM.');
     }
-    const viewer = new Cognite3DViewer({ sdk, domElement });
+    const viewer = new Cognite3DViewer({ ...viewerOptions, sdk, domElement });
     viewer.setBackgroundColor({ color, alpha: 1 });
     setViewer(viewer);
   }
