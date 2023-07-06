@@ -1,3 +1,5 @@
+import { IdEither } from '@cognite/sdk';
+
 import { CountsResourceType } from '../types';
 
 import { useLinkedAssetsCount } from './useLinkedAssetsCount';
@@ -6,7 +8,7 @@ import { useLinkedFilesCount } from './useLinkedFilesCount';
 import { useLinkedSequencesCount } from './useLinkedSequencesCount';
 import { useLinkedTimeseriesCount } from './useLinkedTimeseriesCount';
 
-export const useLinkedResourcesCounts = (resourceId?: number) => {
+export const useLinkedResourcesCounts = (resourceId?: IdEither) => {
   const assets = useLinkedAssetsCount(resourceId);
   const events = useLinkedEventsCount(resourceId);
   const timeseries = useLinkedTimeseriesCount(resourceId);

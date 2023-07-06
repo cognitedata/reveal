@@ -1,12 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 
+import { IdEither } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 
 import { queryKeys } from '../../../queryKeys';
 import { getLinkedDocumentsCount } from '../network';
 
 export const useLinkedDocumentsCountQuery = (
-  resourceId?: number,
+  resourceId?: IdEither,
   enabled = true
 ) => {
   const sdk = useSDK();

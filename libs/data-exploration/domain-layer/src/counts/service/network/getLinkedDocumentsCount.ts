@@ -1,7 +1,9 @@
-import { CogniteClient } from '@cognite/sdk';
+import { CogniteClient, IdEither } from '@cognite/sdk';
+
+import { getDocumentsAggregateFilter } from '../utils';
 
 type Payload = {
-  resourceId: number;
+  resourceId: IdEither;
 };
 
 export const getLinkedDocumentsCount = (
@@ -11,11 +13,6 @@ export const getLinkedDocumentsCount = (
   const { resourceId } = payload;
 
   return sdk.documents.aggregate.count({
-    filter: {
-      inAssetSubtree: {
-        property: ['assetIds'],
-        values: [resourceId],
-      },
-    },
+    filter: getDocumentsAggregateFilter(resourceId),
   });
 };

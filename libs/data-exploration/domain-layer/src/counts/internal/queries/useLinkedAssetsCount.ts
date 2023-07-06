@@ -1,8 +1,10 @@
 import { useMemo } from 'react';
 
+import { IdEither } from '@cognite/sdk';
+
 import { useLinkedResourcesCountQuery } from '../../service';
 
-export const useLinkedAssetsCount = (resourceId?: number) => {
+export const useLinkedAssetsCount = (resourceId?: IdEither) => {
   const { data = 0, isLoading } = useLinkedResourcesCountQuery({
     resourceId,
     resourceType: 'assets',

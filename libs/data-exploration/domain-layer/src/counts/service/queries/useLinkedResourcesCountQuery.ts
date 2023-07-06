@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
+import { IdEither } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 import { SdkResourceType } from '@cognite/sdk-react-query-hooks';
 
@@ -11,7 +12,7 @@ export const useLinkedResourcesCountQuery = ({
   resourceId,
 }: {
   resourceType: SdkResourceType;
-  resourceId?: number;
+  resourceId?: IdEither;
 }) => {
   const sdk = useSDK();
 
