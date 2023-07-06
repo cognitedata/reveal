@@ -22,7 +22,10 @@ export const useLinkedResourcesCountQuery = ({
       if (!resourceId) {
         return undefined;
       }
-      return getLinkedResourcesCount(sdk, resourceType, resourceId);
+      return getLinkedResourcesCount(sdk, {
+        resourceType,
+        resourceId,
+      });
     },
     {
       enabled: !!resourceId,
