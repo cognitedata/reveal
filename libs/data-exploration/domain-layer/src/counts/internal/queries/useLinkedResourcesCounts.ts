@@ -14,11 +14,11 @@ export const useLinkedResourcesCounts = (resourceId?: number) => {
   const files = useLinkedFilesCount(resourceId);
 
   const data: Record<CountsResourceType, number> = {
-    asset: assets.data || 0,
-    event: events.data || 0,
-    timeSeries: timeseries.data || 0,
-    sequence: sequences.data || 0,
-    file: files.data || 0,
+    asset: assets.data,
+    event: events.data,
+    timeSeries: timeseries.data,
+    sequence: sequences.data,
+    file: files.data,
   };
 
   const isLoading =
