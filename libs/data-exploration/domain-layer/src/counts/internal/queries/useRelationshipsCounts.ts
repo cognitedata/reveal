@@ -1,15 +1,14 @@
 import { useMemo } from 'react';
 
-import { IdEither } from '@cognite/sdk';
-
 import { useRelatedResourceExternalIds } from '../../../relationships';
-import { Counts } from '../types';
-import { extractExternalId } from '../utils';
+import { BaseResource, Counts } from '../types';
+import { extractExternalId, getResourceId } from '../utils';
 
-export const useRelationshipsCounts = (resourceId?: IdEither) => {
-  const { data, isLoading } = useRelatedResourceExternalIds(
-    extractExternalId(resourceId)
-  );
+export const useRelationshipsCounts = (resource?: BaseResource) => {
+  const resourceId = getResourceId(resource);
+  const resourceExternalId = extractExternalId(resourceId);
+
+  const { data, isLoading } = useRelatedResourceExternalIds(resourceExternalId);
 
   const counts: Counts = useMemo(() => {
     return Object.entries(data).reduce((result, [type, externalIds]) => {
