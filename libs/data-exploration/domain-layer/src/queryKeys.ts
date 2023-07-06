@@ -280,6 +280,8 @@ export const queryKeys = {
 
   // Annotations
   annotations: () => [...queryKeys.all, 'annotations'] as const,
+  fileAnnotations: (fileId: unknown) =>
+    [...queryKeys.annotations(), fileId] as const,
   annotationsPagedFileReferences: (
     pagedFileReferences: { id: number; page: number | undefined }[]
   ) => [...queryKeys.annotations(), pagedFileReferences] as const,
