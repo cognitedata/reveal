@@ -83,13 +83,13 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
     divElement.style.width = `${this._layoutConfig.size}px`;
     divElement.style.zIndex = '1';
 
-    divElement.addEventListener('mousedown', event => {
+    divElement.addEventListener('pointerdown', event => {
       event.stopPropagation();
     });
 
     divElement.addEventListener('contextmenu', event => event.preventDefault());
 
-    divElement.addEventListener('mouseup', event => {
+    divElement.addEventListener('pointerup', event => {
       const rect = viewer.domElement.getBoundingClientRect();
       const x = event.clientX - rect.left;
       const y = event.clientY - rect.top;

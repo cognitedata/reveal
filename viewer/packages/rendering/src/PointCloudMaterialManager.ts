@@ -5,6 +5,7 @@
 import { PointCloudObjectIdMaps } from './pointcloud-rendering/PointCloudObjectIdMaps';
 import { PointCloudMaterial } from './pointcloud-rendering';
 import { PointCloudMaterialParameters } from './render-passes/types';
+import { Plane } from 'three';
 
 export class PointCloudMaterialManager {
   private readonly _modelsMaterialsMap: Map<symbol, PointCloudMaterial> = new Map();
@@ -38,16 +39,16 @@ export class PointCloudMaterialManager {
     return material;
   }
 
-  initializeClippingPlanesForPointCloud(modelIdentifier: symbol): void {
+  initializeClippingPlanesForPointCloud(modelIdentifier: symbol, clippingPlanes: Plane[]): void {
     const material = this.getModelMaterial(modelIdentifier);
 
     material.clipping = true;
     material.clipIntersection = false;
-    material.clippingPlanes = [];
+    material.clippingPlanes = [...clippingPlanes];
 
     material.defines = {
       ...material.defines,
-      NUM_CLIPPING_PLANES: 0,
+      NUM_CLIPPING_PLANES: clippingPlanes.length,
       UNION_CLIPPING_PLANES: 0
     };
   }

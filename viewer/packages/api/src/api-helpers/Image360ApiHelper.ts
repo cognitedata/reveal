@@ -36,7 +36,6 @@ import {
 import { CameraManager, ProxyCameraManager, StationaryCameraManager } from '@reveal/camera-manager';
 import { MetricsLogger } from '@reveal/metrics';
 import debounce from 'lodash/debounce';
-import pull from 'lodash/pull';
 
 export class Image360ApiHelper {
   private readonly _image360Facade: Image360Facade<Metadata | DM360CollectionIdentifier>;
@@ -44,7 +43,6 @@ export class Image360ApiHelper {
   private _transitionInProgress: boolean = false;
   private readonly _raycaster = new THREE.Raycaster();
   private _needsRedraw: boolean = false;
-  private readonly _imageCollections: Image360Collection[] = [];
 
   private readonly _interactionState: {
     currentImage360Hovered?: Image360Entity;
@@ -171,14 +169,12 @@ export class Image360ApiHelper {
       preMultipliedRotation
     );
 
-    this._imageCollections.push(imageCollection);
-
     this._needsRedraw = true;
     return imageCollection;
   }
 
   public getImageCollections(): Image360Collection[] {
-    return [...this._imageCollections];
+    return [...this._image360Facade.collections];
   }
 
   public async remove360Images(entities: Image360[]): Promise<void> {
@@ -201,9 +197,8 @@ export class Image360ApiHelper {
       this.exit360Image();
     }
 
-    pull(this._imageCollections, collection);
+    this._image360Facade.removeSet(collection as DefaultImage360Collection);
 
-    (collection as DefaultImage360Collection).dispose();
     this._needsRedraw = true;
   }
 
@@ -499,11 +494,11 @@ export class Image360ApiHelper {
     }
 
     if (entity !== undefined) {
-      this._image360Facade.hoverIconVisibility = true;
+      this._image360Facade.setHoverIconVisibilityForEntity(entity, true);
       entity.icon.selected = true;
       this._debouncePreLoad(entity);
     } else {
-      this._image360Facade.hoverIconVisibility = false;
+      this._image360Facade.hideAllHoverIcons();
     }
 
     this._needsRedraw = true;

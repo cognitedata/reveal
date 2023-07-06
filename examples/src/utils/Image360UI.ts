@@ -39,8 +39,9 @@ export class Image360UI {
   private params = {
     siteId: getSiteIdFromUrl() ?? '',
     add: () => this.add360ImageSet(),
+    remove: () => this.remove360ImageSet(),
     premultipliedRotation: false,
-    remove: () => this.removeAll360Images(),
+    removeAll: () => this.removeAll360Images(),
     saveToUrl: () => this.saveImage360SiteToUrl(),
     assetId: '',
     findAsset: () => this.findAsset()
@@ -97,6 +98,7 @@ export class Image360UI {
     optionsFolder.add(params, 'premultipliedRotation').name('Pre-multiplied rotation');
 
     this.gui.add(params, 'add').name('Add image set');
+    this.gui.add(params, 'remove').name('Remove image set');
 
     this.gui.add(this.opacity, 'alpha', 0, 1, 0.01).onChange(() => {
       this.entities.forEach(p => (p.image360Visualization.opacity = this.opacity.alpha));
@@ -131,7 +133,7 @@ export class Image360UI {
       });
 
     this.gui.add(params, 'saveToUrl').name('Save 360 site to URL');
-    this.gui.add(params, 'remove').name('Remove all 360 images');
+    this.gui.add(params, 'removeAll').name('Remove all 360 images');
 
     //restore image 360
     if (params.siteId.length > 0) {
@@ -162,6 +164,18 @@ export class Image360UI {
 
       gui.add(params, 'remove').name('Remove all 360 images');
     }
+  }
+
+  private remove360ImageSet() {
+    if (this.params.siteId.length === 0) return;
+
+    const collection = this.viewer.get360ImageCollections().find(c => c.id === this.params.siteId);
+
+    if (collection === undefined) {
+      return;
+    }
+
+    this.viewer.remove360ImageSet(collection);
   }
 
   private async add360ImageSet() {

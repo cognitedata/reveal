@@ -251,7 +251,7 @@ export class CameraManagerHelper {
         target: THREE_2.Vector3;
     };
     static calculateNewRotationFromTarget(camera: THREE_2.PerspectiveCamera, newTarget: THREE_2.Vector3): THREE_2.Quaternion;
-    static calculateNewTargetFromRotation(camera: THREE_2.PerspectiveCamera, rotation: THREE_2.Quaternion, currentTarget: THREE_2.Vector3): THREE_2.Vector3;
+    static calculateNewTargetFromRotation(camera: THREE_2.PerspectiveCamera, rotation: THREE_2.Quaternion, currentTarget: THREE_2.Vector3, position: THREE_2.Vector3): THREE_2.Vector3;
     static updateCameraNearAndFar(camera: THREE_2.PerspectiveCamera, combinedBbox: THREE_2.Box3): void;
 }
 
@@ -474,7 +474,7 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
     setDefaultNodeAppearance(appearance: NodeAppearance): void;
     setModelClippingPlanes(clippingPlanes: THREE_2.Plane[]): void;
     setModelTransformation(matrix: THREE_2.Matrix4): void;
-    setNodeTransform(treeIndices: NumericRange, transformMatrix: THREE_2.Matrix4): void;
+    setNodeTransform(treeIndices: NumericRange, transformMatrix: THREE_2.Matrix4, boundingBox?: THREE_2.Box3): void;
     setNodeTransformByTreeIndex(treeIndex: number, transform: THREE_2.Matrix4, applyToChildren?: boolean): Promise<number>;
     get styledNodeCollections(): {
         nodeCollection: NodeCollection;

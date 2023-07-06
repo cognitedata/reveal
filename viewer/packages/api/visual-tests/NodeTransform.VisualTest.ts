@@ -8,6 +8,7 @@ import {
   ViewerTestFixtureComponents,
   ViewerVisualTestFixture
 } from '../../../visual-tests/test-fixtures/ViewerVisualTestFixture';
+import { NumericRange } from '@reveal/utilities';
 
 export default class NodeTransformVisualTest extends ViewerVisualTestFixture {
   public async setup(testFixtureComponents: ViewerTestFixtureComponents): Promise<void> {
@@ -21,17 +22,14 @@ export default class NodeTransformVisualTest extends ViewerVisualTestFixture {
       const translation = new THREE.Matrix4().makeTranslation(12, 10, -12);
 
       const transform = translation.multiply(rotation.multiply(scale));
-      await model.setNodeTransformByTreeIndex(1, transform, false);
+      model.setNodeTransform(new NumericRange(1, 1), transform);
 
-      await Promise.all(
-        Array.from({ length: 80 - 2 }, (_, k) => k + 2).map(i => {
-          return model.setNodeTransformByTreeIndex(
-            i,
-            new THREE.Matrix4().makeTranslation(0, ((i % 2) * 2 - 1) * 2, 0),
-            false
-          );
-        })
-      );
+      Array.from({ length: 80 - 2 }, (_, k) => k + 2).map(i => {
+        return model.setNodeTransform(
+          new NumericRange(i, 1),
+          new THREE.Matrix4().makeTranslation(0, ((i % 2) * 2 - 1) * 2, 0)
+        );
+      });
     }
 
     return Promise.resolve();

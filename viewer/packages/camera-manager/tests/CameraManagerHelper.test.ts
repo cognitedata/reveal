@@ -20,7 +20,7 @@ describe(CameraManagerHelper.name, () => {
     // creates rotation around Y axis of 180 degrees.
     const rotation = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI);
 
-    const newTarget = CameraManagerHelper.calculateNewTargetFromRotation(camera, rotation, target);
+    const newTarget = CameraManagerHelper.calculateNewTargetFromRotation(camera, rotation, target, camera.position);
 
     expect(newTarget.x).toBeCloseTo(target.x);
     expect(newTarget.y).toBeCloseTo(target.y);

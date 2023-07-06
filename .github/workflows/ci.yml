@@ -4,7 +4,7 @@ name: CI
 # events but only for the master branch
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
     types:
       - opened
@@ -12,231 +12,254 @@ on:
       - reopened
       - labeled
     branches:
-      - '**'
+      - "**"
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    outputs:
+      should-run: ${{ github.event_name != 'pull_request' || steps.filter.outputs.should-run }}
+    steps:
+      # For pull requests it's not necessary to checkout the code
+      - uses: dorny/paths-filter@v2
+        id: filter
+        if: ${{ github.event_name == 'pull_request' }}
+        with:
+          filters: |
+            should-run:
+              - 'viewer/**'
+              - 'documentation/**'
+              - 'examples/**'
+
   populate-caches:
+    needs: changes
+    if: ${{ needs.changes.outputs.should-run == 'true' }}
     name: Update NPM and Cargo caches
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Cache NPM packages
-      uses: actions/cache@v3
-      id: npm_cache
-      with:
-        path: '**/node_modules'
-        key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+      - name: Cache NPM packages
+        uses: actions/cache@v3
+        id: npm_cache
+        with:
+          path: "**/node_modules"
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
 
-    - name: Install NPM dependencies
-      if: steps.npm_cache.outputs.cache-hit != 'true'
-      working-directory: viewer
-      run: yarn install --immutable
+      - name: Install NPM dependencies
+        if: steps.npm_cache.outputs.cache-hit != 'true'
+        working-directory: viewer
+        run: yarn install --immutable
 
-    - name: Cache cargo registry
-      uses: actions/cache@v3
-      id: cargo_cache
-      with:
-        path: ~/.cargo/registry
-        key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+      - name: Cache cargo registry
+        uses: actions/cache@v3
+        id: cargo_cache
+        with:
+          path: ~/.cargo/registry
+          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
 
-    - name: Download cargo packages and ensure Cargo.lock up to date
-      if: steps.cargo_cache.outputs.cache-hit != 'true'
-      working-directory: viewer
-      continue-on-error: false
-      run: cargo update --locked
-
-
+      - name: Download cargo packages and ensure Cargo.lock up to date
+        if: steps.cargo_cache.outputs.cache-hit != 'true'
+        working-directory: viewer
+        continue-on-error: false
+        run: cargo update --locked
 
   build-viewer:
+    needs: [changes, populate-caches]
+    if: ${{ needs.changes.outputs.should-run == 'true' }}
     name: Build Reveal
     runs-on: ubuntu-latest
-    needs: populate-caches
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Cache NPM packages
-      uses: actions/cache@v3
-      id: npm_cache
-      with:
-        path: '**/node_modules'
-        key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+      - name: Cache NPM packages
+        uses: actions/cache@v3
+        id: npm_cache
+        with:
+          path: "**/node_modules"
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
 
-    - name: Cache cargo registry
-      uses: actions/cache@v3
-      id: cargo_cache
-      with:
-        path: ~/.cargo/registry
-        key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+      - name: Cache cargo registry
+        uses: actions/cache@v3
+        id: cargo_cache
+        with:
+          path: ~/.cargo/registry
+          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
 
-    - name: Check that yarn.lock is up to date
-      working-directory: viewer
-      continue-on-error: false
-      run: yarn install --immutable
+      - name: Check that yarn.lock is up to date
+        working-directory: viewer
+        continue-on-error: false
+        run: yarn install --immutable
 
-    - name: Check that Cargo.lock is up to date
-      working-directory: viewer
-      continue-on-error: false
-      run: cargo update --locked --offline
+      - name: Check that Cargo.lock is up to date
+        working-directory: viewer
+        continue-on-error: false
+        run: cargo update --locked --offline
 
-    - name: Lint
-      working-directory: viewer
-      continue-on-error: false
-      run: yarn run lint
+      - name: Lint
+        working-directory: viewer
+        continue-on-error: false
+        run: yarn run lint
 
-    - name: Rust fmt
-      working-directory: viewer
-      continue-on-error: false
-      run: |
-           rustup component add rustfmt
-           cargo fmt --check
+      - name: Rust fmt
+        working-directory: viewer
+        continue-on-error: false
+        run: |
+          rustup component add rustfmt
+          cargo fmt --check
 
-    - name: Build development version
-      working-directory: viewer
-      run: yarn run build
+      - name: Build development version
+        working-directory: viewer
+        run: yarn run build
 
-    - name: Check for API changes
-      working-directory: viewer
-      continue-on-error: false
-      run: |
-        # Run api-extractor comparison, output diff if failing
-        npx api-extractor run || (diff reveal.api.md api-extractor-temp/reveal.api.md && exit 1)
+      - name: Check for API changes
+        working-directory: viewer
+        continue-on-error: false
+        run: |
+          # Run api-extractor comparison, output diff if failing
+          npx api-extractor run || (diff reveal.api.md api-extractor-temp/reveal.api.md && exit 1)
 
-    - name: Upload dist/ artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: viewer
-        path: viewer/dist/
+      - name: Upload dist/ artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: viewer
+          path: viewer/dist/
 
   run-coverage-tests:
+    needs: [changes, populate-caches]
+    if: ${{ needs.changes.outputs.should-run == 'true' }}
     name: Run unit tests
     runs-on: ubuntu-latest
-    needs: populate-caches
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - uses: actions/cache@v3
-      id: npm_cache
-      with:
-        path: '**/node_modules'
-        key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+      - uses: actions/cache@v3
+        id: npm_cache
+        with:
+          path: "**/node_modules"
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
 
-    - name: Cache cargo registry
-      uses: actions/cache@v3
-      id: cargo_cache
-      with:
-        path: ~/.cargo/registry
-        key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+      - name: Cache cargo registry
+        uses: actions/cache@v3
+        id: cargo_cache
+        with:
+          path: ~/.cargo/registry
+          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
 
-    - name: Setup tools for coverage tests
-      working-directory: viewer
-      run: |
-        sudo apt-get update
-        sudo apt-get install xvfb mesa-utils libgl1-mesa-dri libglapi-mesa libosmesa6
-        echo "DISPLAY=:99.0" >> $GITHUB_ENV
+      - name: Setup tools for coverage tests
+        working-directory: viewer
+        run: |
+          sudo apt-get update
+          sudo apt-get install xvfb mesa-utils libgl1-mesa-dri libglapi-mesa libosmesa6
+          echo "DISPLAY=:99.0" >> $GITHUB_ENV
 
-    - name: Run coverage tests
-      working-directory: viewer
-      run: |
-        xvfb-run yarn run coverage
+      - name: Run coverage tests
+        working-directory: viewer
+        run: |
+          xvfb-run yarn run coverage
 
-    - name: Publish to codecov
-      uses: codecov/codecov-action@v3
+      - name: Publish to codecov
+        uses: codecov/codecov-action@v3
 
   run-visual-tests:
+    needs: [changes, populate-caches]
+    if: ${{ needs.changes.outputs.should-run == 'true' }}
     name: Visual Tests
     runs-on: ubuntu-latest
-    needs: populate-caches
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - uses: actions/cache@v3
-      id: npm_cache
-      with:
-        path: '**/node_modules'
-        key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+      - uses: actions/cache@v3
+        id: npm_cache
+        with:
+          path: "**/node_modules"
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
 
-    - name: Cache cargo registry
-      uses: actions/cache@v3
-      id: cargo_cache
-      with:
-        path: ~/.cargo/registry
-        key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+      - name: Cache cargo registry
+        uses: actions/cache@v3
+        id: cargo_cache
+        with:
+          path: ~/.cargo/registry
+          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
 
-    - name: Execute visual tests
-      id: viewerVisualTests
-      working-directory: viewer
-      run: 'yarn test:visual'
-      continue-on-error: true
+      - name: Execute visual tests
+        id: viewerVisualTests
+        working-directory: viewer
+        run: "yarn test:visual"
+        continue-on-error: true
 
-    - name: Check for failed visual test diffs
-      if: (steps.viewerVisualTests.outcome == 'failure')
-      uses: savokr/comment-on-pr@v1.3.2
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        msg: |
-          There were failures in the visual tests workflow.
-          Image diffs for visual tests can be downloaded as an artifact [here](https://github.com/cognitedata/reveal/actions/runs/${{ github.run_id }}).
+      - name: Check for failed visual test diffs
+        if: (steps.viewerVisualTests.outcome == 'failure')
+        uses: savokr/comment-on-pr@v1.3.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          msg: |
+            There were failures in the visual tests workflow.
+            Image diffs for visual tests can be downloaded as an artifact [here](https://github.com/cognitedata/reveal/actions/runs/${{ github.run_id }}).
 
-    - name: Upload image diffs for failed visual tests
-      if: (steps.viewerVisualTests.outcome == 'failure')
-      uses: actions/upload-artifact@v3
-      with:
-        name: image-diffs-${{ github.sha }}
-        path: viewer/visual-tests/__diff_output__/*
+      - name: Upload image diffs for failed visual tests
+        if: (steps.viewerVisualTests.outcome == 'failure')
+        uses: actions/upload-artifact@v3
+        with:
+          name: image-diffs-${{ github.sha }}
+          path: viewer/visual-tests/__diff_output__/*
 
-    - name: Report failed visual tests
-      if: (steps.viewerVisualTests.outcome == 'failure')
-      run: |
-        echo There are failed visual tests, please inspect test results.
-        exit 1
+      - name: Report failed visual tests
+        if: (steps.viewerVisualTests.outcome == 'failure')
+        run: |
+          echo There are failed visual tests, please inspect test results.
+          exit 1
 
   ci-examples:
+    needs: [changes, build-viewer]
+    if: ${{ needs.changes.outputs.should-run == 'true' }}
     name: Examples
     runs-on: ubuntu-latest
-    needs: build-viewer
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Download viewer build artifact
-      uses: actions/download-artifact@v3
-      with:
-        name: viewer
-        path: viewer/dist/
+      - name: Download viewer build artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: viewer
+          path: viewer/dist/
 
-    - uses: actions/cache@v3
-      id: npm_cache
-      with:
-        path: '**/node_modules'
-        key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+      - uses: actions/cache@v3
+        id: npm_cache
+        with:
+          path: "**/node_modules"
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
 
-    - name: Cache cargo registry
-      uses: actions/cache@v3
-      id: cargo_cache
-      with:
-        path: ~/.cargo/registry
-        key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+      - name: Cache cargo registry
+        uses: actions/cache@v3
+        id: cargo_cache
+        with:
+          path: ~/.cargo/registry
+          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
 
-    - name: Install NPM examples dependencies
-      # Note! react-app-rewired doesn't work when we get deps from cache for some reason,
-      # so we'll ignore the cache.
-      # if: steps.npm_cache.outputs.cache-hit != 'true'
-      working-directory: examples
-      run: yarn install --immutable
+      - name: Install NPM examples dependencies
+        # Note! react-app-rewired doesn't work when we get deps from cache for some reason,
+        # so we'll ignore the cache.
+        # if: steps.npm_cache.outputs.cache-hit != 'true'
+        working-directory: examples
+        run: yarn install --immutable
 
-    - name: Lint examples
-      working-directory: examples
-      run: yarn lint:check
+      - name: Lint examples
+        working-directory: examples
+        run: yarn lint:check
 
-    - name: Build examples
-      working-directory: examples
-      run: yarn build
+      - name: Build examples
+        working-directory: examples
+        run: yarn build
 
   build-preview-documentation:
+    needs: [changes, populate-caches]
+    if: ${{ needs.changes.outputs.should-run == 'true' }}
     name: Build preview documentation
     runs-on: ubuntu-latest
-    needs: populate-caches
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v3 # If you're using actions/checkout@v2 you must set persist-credentials to false in most cases for the deployment to work correctly.
@@ -253,7 +276,7 @@ jobs:
       - uses: actions/cache@v3
         id: npm_cache
         with:
-          path: '**/node_modules'
+          path: "**/node_modules"
           key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
 
       - name: Cache cargo registry
@@ -292,19 +315,20 @@ jobs:
           yarn build:fast
 
       - name: Upload documentation artifact
+        if: ${{ contains(github.event.pull_request.labels.*.name, 'preview-docs') }}
         uses: actions/upload-artifact@v3
         with:
           name: preview-docs
           path: documentation/build/
 
   deploy-preview-documentation:
+    needs: [changes, build-preview-documentation]
+    if: ${{ needs.changes.outputs.should-run == 'true' && contains(github.event.pull_request.labels.*.name, 'preview-docs') }}
     name: Publish documentation preview
     # Ensures that there only will be executed one "instance" of this operation
     # across all ongoing Github Action executions
     concurrency: deploy-preview-documentation
     runs-on: ubuntu-latest
-    needs: build-preview-documentation
-    if: "contains(github.event.pull_request.labels.*.name, 'preview-docs')"
     steps:
       - name: Initialize variables
         run: |
@@ -340,15 +364,14 @@ jobs:
             :orange_book: Documentation preview is available from
             https://cognitedata.github.io/reveal-docs-preview/${{ env.PR_NUMBER }}/docs/next/.
 
-
   cleanup:
+    needs: [changes, ci-examples, build-viewer, deploy-preview-documentation]
+    if: ${{ needs.changes.outputs.should-run == 'true' && always() }}
     name: Cleanup
     runs-on: ubuntu-latest
-    needs: [ci-examples, build-viewer, deploy-preview-documentation]
-    if: always()
     steps:
-    - uses: geekyeggo/delete-artifact@v2
-      with:
-        name: |
-          viewer
-          preview-docs
+      - uses: geekyeggo/delete-artifact@v2
+        with:
+          name: |
+            viewer
+            preview-docs

@@ -19,9 +19,44 @@ A list containing all the 360 images in this set.
 
 #### Defined in
 
-[packages/360-images/src/collection/Image360Collection.ts:15](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/360-images/src/collection/Image360Collection.ts#L15)
+[packages/360-images/src/collection/Image360Collection.ts:45](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/360-images/src/collection/Image360Collection.ts#L45)
+
+___
+
+### targetRevisionDate
+
+• **targetRevisionDate**: `undefined` \| `Date`
+
+If defined, any subsequently entered 360 images will load the revision that are closest to the target date.
+If undefined, the most recent revision will be loaded.
+
+#### Defined in
+
+[packages/360-images/src/collection/Image360Collection.ts:51](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/360-images/src/collection/Image360Collection.ts#L51)
 
 ## Methods
+
+### findImageAnnotation
+
+▸ **findImageAnnotation**(`filter`): `Promise`<[`Image360AnnotationAssetQueryResult`](../modules/cognite_reveal.md#image360annotationassetqueryresult)[]\>
+
+Find 360 images associated with a asset with the given assetRef
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `filter` | [`Image360AnnotationAssetFilter`](../modules/cognite_reveal.md#image360annotationassetfilter) |
+
+#### Returns
+
+`Promise`<[`Image360AnnotationAssetQueryResult`](../modules/cognite_reveal.md#image360annotationassetqueryresult)[]\>
+
+#### Defined in
+
+[packages/360-images/src/collection/Image360Collection.ts:92](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/360-images/src/collection/Image360Collection.ts#L92)
+
+___
 
 ### off
 
@@ -42,7 +77,7 @@ Unsubscribes from 360 image dataset event.
 
 #### Defined in
 
-[packages/360-images/src/collection/Image360Collection.ts:45](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/360-images/src/collection/Image360Collection.ts#L45)
+[packages/360-images/src/collection/Image360Collection.ts:81](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/360-images/src/collection/Image360Collection.ts#L81)
 
 ▸ **off**(`event`, `callback`): `void`
 
@@ -59,7 +94,7 @@ Unsubscribes from 360 image dataset event.
 
 #### Defined in
 
-[packages/360-images/src/collection/Image360Collection.ts:46](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/360-images/src/collection/Image360Collection.ts#L46)
+[packages/360-images/src/collection/Image360Collection.ts:82](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/360-images/src/collection/Image360Collection.ts#L82)
 
 ___
 
@@ -84,7 +119,7 @@ Subscribes to events on 360 Image datasets. There are several event types:
 
 #### Defined in
 
-[packages/360-images/src/collection/Image360Collection.ts:37](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/360-images/src/collection/Image360Collection.ts#L37)
+[packages/360-images/src/collection/Image360Collection.ts:73](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/360-images/src/collection/Image360Collection.ts#L73)
 
 ▸ **on**(`event`, `callback`): `void`
 
@@ -101,7 +136,7 @@ Subscribes to events on 360 Image datasets. There are several event types:
 
 #### Defined in
 
-[packages/360-images/src/collection/Image360Collection.ts:38](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/360-images/src/collection/Image360Collection.ts#L38)
+[packages/360-images/src/collection/Image360Collection.ts:74](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/360-images/src/collection/Image360Collection.ts#L74)
 
 ___
 
@@ -124,7 +159,29 @@ Specify parameters used to determine the number of icons that are visible when e
 
 #### Defined in
 
-[packages/360-images/src/collection/Image360Collection.ts:22](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/360-images/src/collection/Image360Collection.ts#L22)
+[packages/360-images/src/collection/Image360Collection.ts:58](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/360-images/src/collection/Image360Collection.ts#L58)
+
+___
+
+### setDefaultAnnotationStyle
+
+▸ **setDefaultAnnotationStyle**(`appearance`): `void`
+
+Assign a default style which affects all annotations
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `appearance` | [`Image360AnnotationAppearance`](../modules/cognite_reveal.md#image360annotationappearance) |
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[packages/360-images/src/collection/Image360Collection.ts:87](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/360-images/src/collection/Image360Collection.ts#L87)
 
 ___
 
@@ -146,4 +203,4 @@ Set visibility of all 360 image icons.
 
 #### Defined in
 
-[packages/360-images/src/collection/Image360Collection.ts:28](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/360-images/src/collection/Image360Collection.ts#L28)
+[packages/360-images/src/collection/Image360Collection.ts:64](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/360-images/src/collection/Image360Collection.ts#L64)

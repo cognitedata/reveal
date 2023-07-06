@@ -24,7 +24,7 @@ Represents an object collection that is associated with an appearance
 
 #### Defined in
 
-[packages/pointcloud-styling/src/StyledPointCloudObjectCollection.ts:12](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/pointcloud-styling/src/StyledPointCloudObjectCollection.ts#L12)
+[packages/pointcloud-styling/src/StyledPointCloudObjectCollection.ts:12](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/pointcloud-styling/src/StyledPointCloudObjectCollection.ts#L12)
 
 ## Properties
 
@@ -34,7 +34,7 @@ Represents an object collection that is associated with an appearance
 
 #### Defined in
 
-[packages/pointcloud-styling/src/StyledPointCloudObjectCollection.ts:12](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/pointcloud-styling/src/StyledPointCloudObjectCollection.ts#L12)
+[packages/pointcloud-styling/src/StyledPointCloudObjectCollection.ts:12](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/pointcloud-styling/src/StyledPointCloudObjectCollection.ts#L12)
 
 ___
 
@@ -44,4 +44,4 @@ ___
 
 #### Defined in
 
-[packages/pointcloud-styling/src/StyledPointCloudObjectCollection.ts:12](https://github.com/cognitedata/reveal/blob/917d1d190/viewer/packages/pointcloud-styling/src/StyledPointCloudObjectCollection.ts#L12)
+[packages/pointcloud-styling/src/StyledPointCloudObjectCollection.ts:12](https://github.com/cognitedata/reveal/blob/e9e26d38/viewer/packages/pointcloud-styling/src/StyledPointCloudObjectCollection.ts#L12)

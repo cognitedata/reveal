@@ -30,8 +30,12 @@ export class Image360Facade<T> {
     this._image360Collections.forEach(collection => collection.setSelectedForAll(visible));
   }
 
-  set hoverIconVisibility(visible: boolean) {
-    this._image360Collections.forEach(collection => collection.setSelectedVisibility(visible));
+  setHoverIconVisibilityForEntity(entity: Image360Entity, visible: boolean): void {
+    this.getCollectionContainingEntity(entity).setSelectedVisibility(visible);
+  }
+
+  hideAllHoverIcons(): void {
+    this._image360Collections.forEach(collection => collection.setSelectedVisibility(false));
   }
 
   set allIconCullingScheme(scheme: IconCullingScheme) {
@@ -58,6 +62,11 @@ export class Image360Facade<T> {
     );
     this._image360Collections.push(image360Collection);
     return image360Collection;
+  }
+
+  public removeSet(collection: DefaultImage360Collection): void {
+    pull(this._image360Collections, collection);
+    collection.dispose();
   }
 
   public async delete(entity: Image360Entity): Promise<void> {

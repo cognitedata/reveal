@@ -435,7 +435,10 @@ export class Cognite3DViewer {
       cancelAnimationFrame(this.latestRequestId);
     }
 
-    for (const model of this._models.values()) {
+    // Copy list, as this._models will be mutated in below iteration
+    const modelListCopy = [...this._models];
+
+    for (const model of modelListCopy) {
       this.removeModel(model);
     }
 
@@ -1475,6 +1478,7 @@ export class Cognite3DViewer {
 
         this.revealManager.render(camera);
         this.revealManager.resetRedraw();
+        this._image360ApiHelper?.resetRedraw();
         this._clippingNeedsUpdate = false;
         const renderTime = Date.now() - start;
 
