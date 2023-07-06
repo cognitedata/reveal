@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { Field, useFormikContext } from 'formik';
 
-import { Input } from '@cognite/cogs.js';
+import { Input } from '@cognite/cogs.js-v9';
 import type {
   InputTimeSeries,
   OutputTimeSeries,

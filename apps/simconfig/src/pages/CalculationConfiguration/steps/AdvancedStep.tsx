@@ -7,9 +7,9 @@ import { ParentSizeModern } from '@visx/responsive';
 import { Field, useFormikContext } from 'formik';
 import styled from 'styled-components/macro';
 
-import { Input, Switch, Table } from '@cognite/cogs.js';
+import { Switch, Table } from '@cognite/cogs.js';
 import type { ButtonProps, OptionType } from '@cognite/cogs.js-v9';
-import { Button, Select, Tooltip, toast } from '@cognite/cogs.js-v9';
+import { Button, Input, Select, Tooltip, toast } from '@cognite/cogs.js-v9';
 import type { CalculationTemplate } from '@cognite/simconfig-api-sdk/rtk';
 
 import { ChokeCurveChart } from 'components/charts/ChokeCurveChart';

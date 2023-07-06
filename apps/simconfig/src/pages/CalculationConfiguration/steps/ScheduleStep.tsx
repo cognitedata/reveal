@@ -4,8 +4,8 @@ import { Calendar } from 'react-date-range';
 import { getDate, getMonth, getYear, set } from 'date-fns';
 import { Field, useFormikContext } from 'formik';
 
-import { Dropdown, Input, Menu, Switch } from '@cognite/cogs.js';
-import { Colors, type OptionType, Select } from '@cognite/cogs.js-v9';
+import { Dropdown, Menu, Switch } from '@cognite/cogs.js';
+import { Colors, Input, type OptionType, Select } from '@cognite/cogs.js-v9';
 import type { CalculationTemplate } from '@cognite/simconfig-api-sdk/rtk';
 
 import {

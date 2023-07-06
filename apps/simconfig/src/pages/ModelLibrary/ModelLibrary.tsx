@@ -5,10 +5,10 @@ import { useSelector } from 'react-redux';
 import styled from 'styled-components/macro';
 
 import { getProject } from '@cognite/cdf-utilities';
-import { Input } from '@cognite/cogs.js';
 import {
   Button,
   Illustrations,
+  Input,
   Pagination,
   Skeleton,
 } from '@cognite/cogs.js-v9';

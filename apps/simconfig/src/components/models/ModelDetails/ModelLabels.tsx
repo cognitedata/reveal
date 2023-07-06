@@ -3,8 +3,15 @@ import { useSelector } from 'react-redux';
 
 import styled from 'styled-components/macro';
 
-import { Dropdown, Input, Menu } from '@cognite/cogs.js';
-import { Button, Chip, ChipGroup, Icon, toast } from '@cognite/cogs.js-v9';
+import { Dropdown, Menu } from '@cognite/cogs.js';
+import {
+  Button,
+  Chip,
+  ChipGroup,
+  Icon,
+  Input,
+  toast,
+} from '@cognite/cogs.js-v9';
 import type { LabelDetails, ModelFile } from '@cognite/simconfig-api-sdk/rtk';
 import {
   useCreateLabelMutation,

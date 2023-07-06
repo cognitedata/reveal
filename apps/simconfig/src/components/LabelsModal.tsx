@@ -4,8 +4,7 @@ import { useSelector } from 'react-redux';
 
 import styled from 'styled-components/macro';
 
-import { Input } from '@cognite/cogs.js';
-import { Button, Modal } from '@cognite/cogs.js-v9';
+import { Button, Input, Modal } from '@cognite/cogs.js-v9';
 import type { LabelDetails } from '@cognite/simconfig-api-sdk/rtk';
 import {
   useCreateLabelMutation,

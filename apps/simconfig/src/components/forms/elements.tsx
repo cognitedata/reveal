@@ -1,8 +1,8 @@
 import { Field, useFormikContext } from 'formik';
 import styled from 'styled-components/macro';
 
-import { Input, Slider, TextInput } from '@cognite/cogs.js';
-import { SegmentedControl } from '@cognite/cogs.js-v9';
+import { Slider, TextInput } from '@cognite/cogs.js';
+import { Input, SegmentedControl } from '@cognite/cogs.js-v9';
 
 import { getNodeFromPath } from 'utils/formUtils';
 
