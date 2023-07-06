@@ -1,6 +1,4 @@
-import React from 'react';
-
-import { makeDecorator, WrapperSettings } from '@storybook/addons';
+import { makeDecorator } from '@storybook/addons';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { ToastContainer } from '@cognite/cogs.js';
@@ -10,12 +8,12 @@ import { DataExplorationProvider } from '../src';
 import { Container, sdkMock } from '../src/docs/stub';
 
 type DataExplorationProviderParameters = {
-  mockCdfClient?: Partial<CogniteClient>;
+  sdkMockOverride?: Partial<CogniteClient>;
 };
 
 type ExplorerWrapperSettings = {
   parameters: DataExplorationProviderParameters;
-} & WrapperSettings;
+};
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -36,6 +34,7 @@ export default makeDecorator({
     return (
       <Container>
         <DataExplorationProvider
+          // @ts-ignore
           sdk={mockCDFClient}
           flow="UNKNOWN"
           userInfo={{}}
@@ -43,6 +42,7 @@ export default makeDecorator({
           {/* Added toast container to show toast in storybook */}
           <ToastContainer />
           <QueryClientProvider client={queryClient}>
+            {/*@ts-ignore*/}
             {storyFn(context)}
           </QueryClientProvider>
         </DataExplorationProvider>

@@ -6,7 +6,7 @@
   "tags": [],
   "targets": {
     "build": {
-      "executor": "@nrwl/rollup:rollup",
+      "executor": "@nx/rollup:rollup",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/libs/data-modeling/cog-data-grid",
@@ -14,18 +14,19 @@
         "project": "libs/data-modeling/cog-data-grid/package.json",
         "entryFile": "libs/data-modeling/cog-data-grid/src/index.ts",
         "external": ["react/jsx-runtime"],
-        "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
+        "rollupConfig": "@nx/react/plugins/bundle-rollup",
         "assets": [
           {
             "glob": "libs/data-modeling/cog-data-grid/README.md",
             "input": ".",
             "output": "."
           }
-        ]
+        ],
+        "babelUpwardRootMode": true
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
@@ -34,7 +35,7 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/data-modeling/cog-data-grid"],
       "options": {
         "jestConfig": "libs/data-modeling/cog-data-grid/jest.config.ts",

@@ -21,7 +21,7 @@ import {
 } from '.';
 
 export default {
-  title: 'Search Results/ResourceFilters',
+  title: 'Search Results New/ResourceFilters',
   component: AssetFiltersV2,
   decorators: [(storyFn: any) => <Container>{storyFn()}</Container>],
 };

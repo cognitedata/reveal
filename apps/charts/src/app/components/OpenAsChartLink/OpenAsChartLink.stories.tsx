@@ -9,7 +9,7 @@ export default {
   title: 'Components/Open As Chart Link',
 } as Meta;
 
-const Template: Story<Props> = (args) => <OpenAsChartLink {...args} />;
+const Template: Story<Props> = (args: any) => <OpenAsChartLink {...args} />;
 
 export const Demo = Template.bind({});
 

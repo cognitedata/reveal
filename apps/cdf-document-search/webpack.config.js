@@ -1,7 +1,7 @@
 const {
   withSingleSpa,
 } = require('../../tools/webpack/single-spa-webpack-config');
-const { composePlugins, withNx } = require('@nrwl/webpack');
+const { composePlugins, withNx } = require('@nx/webpack');
 const webpack = require('webpack');
 const PrefixWrap = require('postcss-prefixwrap');
 module.exports = composePlugins(

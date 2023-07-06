@@ -11,7 +11,7 @@ import {
   AutoMLTrainingJob,
 } from '@vision/api/vision/autoML/types';
 import { StatusToolBar } from '@vision/modules/Process/Containers/StatusToolBar';
-import { AppDispatch } from '@vision/store';
+import { useThunkDispatch } from '@vision/store';
 import { PopulateCustomModel } from '@vision/store/thunks/Process/PopulateCustomModel';
 import { getLink, workflowRoutes } from '@vision/utils/workflowRoutes';
 
@@ -25,7 +25,7 @@ const getModelTypeExtension = (exportFormat: AutoMLExportFormat) => {
   return exportFormat === AutoMLExportFormat.tflite ? exportFormat : 'pb';
 };
 const AutoML = () => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useThunkDispatch();
   const navigate = useNavigate();
 
   const [modelList, setModelList] = useState<AutoMLModelCore[] | undefined>();

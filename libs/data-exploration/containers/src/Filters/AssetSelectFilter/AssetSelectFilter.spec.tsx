@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { AssetSelectFilter } from './AssetSelectFilter';
@@ -11,7 +11,10 @@ describe('AssetSelectFilter', () => {
       expect(screen.getByTestId('filter-label')).toBeInTheDocument();
       expect(screen.getByText(/asset/i)).toBeInTheDocument();
 
-      userEvent.click(screen.getByText('Select...'));
+      // eslint-disable-next-line testing-library/no-unnecessary-act
+      act(() => {
+        userEvent.click(screen.getByText('Select...'));
+      });
 
       expect(screen.getByText('No options')).toBeInTheDocument();
     });

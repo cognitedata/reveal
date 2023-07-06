@@ -1,5 +1,5 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import styled from 'styled-components';
@@ -7,14 +7,14 @@ import styled from 'styled-components';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { FileDetails } from '@vision/modules/FileDetails/Containers/FileDetails';
 import { hideFileMetadata } from '@vision/modules/Process/store/slice';
-import { AppDispatch } from '@vision/store';
+import { useThunkDispatch } from '@vision/store';
 import { RootState } from '@vision/store/rootReducer';
 import { getParamLink, workflowRoutes } from '@vision/utils/workflowRoutes';
 import { zIndex } from '@vision/utils/zIndex';
 
 export const ProcessFileDetailsContainer = () => {
   const queryClient = new QueryClient();
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useThunkDispatch();
   const navigate = useNavigate();
   const fileId = useSelector(
     ({ processSlice }: RootState) => processSlice.focusedFileId

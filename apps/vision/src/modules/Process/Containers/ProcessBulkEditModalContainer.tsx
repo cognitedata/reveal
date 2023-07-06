@@ -1,5 +1,5 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import { BulkEditModal } from '@vision/modules/Common/Components/BulkEdit/BulkEditModal';
 import {
@@ -8,12 +8,12 @@ import {
 } from '@vision/modules/Common/store/common/slice';
 import { BulkEditUnsavedState } from '@vision/modules/Common/store/common/types';
 import { selectProcessAllSelectedFilesInSortedOrder } from '@vision/modules/Process/store/selectors';
-import { AppDispatch } from '@vision/store';
+import { useThunkDispatch } from '@vision/store';
 import { RootState } from '@vision/store/rootReducer';
 import { updateBulk } from '@vision/store/thunks/Files/updateBulk';
 
 export const ProcessBulkEditModalContainer = () => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useThunkDispatch();
 
   const selectedFiles = useSelector((state: RootState) =>
     selectProcessAllSelectedFilesInSortedOrder(state)

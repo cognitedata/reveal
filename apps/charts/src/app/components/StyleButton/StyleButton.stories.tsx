@@ -13,7 +13,7 @@ export default {
   title: 'Components/Style Button',
 } as Meta;
 
-const Template: Story<ComponentProps<typeof StyleButton>> = (args) => (
+const Template: Story<ComponentProps<typeof StyleButton>> = (args: any) => (
   <StyleButton {...args} />
 );
 

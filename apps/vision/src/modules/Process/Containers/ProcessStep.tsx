@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import styled from 'styled-components';
 
@@ -19,7 +19,7 @@ import {
   setCurrentView,
   setFocusedFileId,
 } from '@vision/modules/Process/store/slice';
-import { AppDispatch } from '@vision/store';
+import { useThunkDispatch } from '@vision/store';
 import { RootState } from '@vision/store/rootReducer';
 import { PopulateProcessFiles } from '@vision/store/thunks/Process/PopulateProcessFiles';
 import { pushMetric } from '@vision/utils/pushMetric';
@@ -40,7 +40,7 @@ const TitleContainer = styled.div`
 const queryClient = new QueryClient();
 
 export default function ProcessStep() {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useThunkDispatch();
 
   const processFileIds = useSelector(
     (state: RootState) => state.processSlice.fileIds
@@ -88,7 +88,7 @@ export default function ProcessStep() {
 }
 
 const Deselect = () => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useThunkDispatch();
   const focusedFileId = useSelector(
     ({ processSlice }: RootState) => processSlice.focusedFileId
   );

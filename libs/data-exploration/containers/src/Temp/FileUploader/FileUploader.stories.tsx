@@ -6,7 +6,7 @@ import { ComponentStory } from '@storybook/react';
 import { FileUploader } from './FileUploader';
 
 export default {
-  title: 'Files/FileUploader',
+  title: 'Files/FileUploader(TEMP)',
   component: FileUploader,
 };
 

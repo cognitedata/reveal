@@ -2,7 +2,7 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { makeDecorator, WrapperSettings } from '@storybook/addons';
+import { makeDecorator } from '@storybook/addons';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RecoilRoot } from 'recoil';
 
@@ -11,12 +11,12 @@ import { CogniteClient } from '@cognite/sdk';
 import { DataExplorationProvider } from '../../../context';
 
 type DataExplorationProviderParameters = {
-  mockCdfClient?: Partial<CogniteClient>;
+  sdkMockOverride?: Partial<CogniteClient>;
 };
 
 type ExplorerWrapperSettings = {
   parameters: DataExplorationProviderParameters;
-} & WrapperSettings;
+};
 
 const queryClient = new QueryClient();
 
@@ -30,6 +30,8 @@ export default makeDecorator({
 
     return (
       <Container>
+        {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+        {/* @ts-ignore*/}
         <DataExplorationProvider sdk={mockCDFClient}>
           <QueryClientProvider client={queryClient}>
             <RecoilRoot>{storyFn(context) as React.ReactNode}</RecoilRoot>

@@ -5,7 +5,7 @@ import { CogsTooltipProps, Icon, Tooltip } from '@cognite/cogs.js';
 import { TOOLTIP_DELAY_IN_MS } from '../../common';
 import { formatTime, getDetailedTime } from '../../utils';
 
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+// eslint-disable-next-line @nx/enforce-module-boundaries
 
 type TimestampProps = {
   absolute?: boolean;

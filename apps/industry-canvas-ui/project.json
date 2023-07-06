@@ -1,13 +1,12 @@
 {
   "name": "industry-canvas-ui",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/industry-canvas-ui/src",
   "projectType": "application",
   "targets": {
     "build": {
-      "executor": "@nrwl/webpack:webpack",
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "executor": "@nx/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/industry-canvas-ui",
         "index": "apps/industry-canvas-ui/src/index.html",
@@ -16,9 +15,7 @@
         "vendorChunk": false,
         "commonChunk": false,
         "tsConfig": "apps/industry-canvas-ui/tsconfig.app.json",
-        "assets": [
-          "apps/industry-canvas-ui/src/assets"
-        ],
+        "assets": ["apps/industry-canvas-ui/src/assets"],
         "styles": [],
         "scripts": [],
         "webpackConfig": "apps/industry-canvas-ui/webpack-config.js"
@@ -59,7 +56,7 @@
       }
     },
     "serve": {
-      "executor": "@nrwl/webpack:dev-server",
+      "executor": "@nx/webpack:dev-server",
       "options": {
         "buildTarget": "industry-canvas-ui:build",
         "hmr": true
@@ -82,14 +79,10 @@
       "defaultConfiguration": "development"
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
-      "outputs": [
-        "{options.outputFile}"
-      ],
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": [
-          "apps/industry-canvas-ui/**/*.{ts,tsx,js,jsx}"
-        ]
+        "lintFilePatterns": ["apps/industry-canvas-ui/**/*.{ts,tsx,js,jsx}"]
       }
     }
   },
