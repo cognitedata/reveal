@@ -1,14 +1,9 @@
-import {
-  AggregateResponse,
-  CogniteClient,
-  CursorResponse,
-  IdEither,
-} from '@cognite/sdk';
+import { AggregateResponse, CogniteClient, CursorResponse } from '@cognite/sdk';
 import { SdkResourceType } from '@cognite/sdk-react-query-hooks';
 
 type Payload = {
   resourceType: SdkResourceType;
-  resourceId: IdEither;
+  resourceId: number;
 };
 
 export const getLinkedResourcesCount = (
@@ -26,20 +21,13 @@ export const getLinkedResourcesCount = (
         },
         data: {
           filter: {
-            assetSubtreeIds: [resourceId],
+            assetSubtreeIds: [{ id: resourceId }],
           },
         },
       }
     )
     .then(({ data }) => {
-      const { count } = data.items[0];
-
-      // Exclude the root asset
-      if (resourceType === 'assets') {
-        return count - 1;
-      }
-
-      return count;
+      return data.items[0].count;
     })
     .catch(() => {
       return 0;
