@@ -5,6 +5,9 @@ import React from 'react';
 import { Tooltip as CogsTooltip, Modal, Dropdown } from '@cognite/cogs.js';
 
 import 'monaco-editor/dev/vs/editor/editor.main.css';
+// copilot styles
+import 'highlight.js/styles/dracula.css';
+import 'react-resizable/css/styles.css';
 
 // import styleScope from './styleScope';
 const styleScope = 'flexible-data-explorer-style-scope';
