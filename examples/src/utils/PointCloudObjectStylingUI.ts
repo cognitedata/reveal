@@ -40,6 +40,7 @@ export class PointCloudObjectStylingUI {
     creatingUser: '',
     assetRef: 0
   };
+  private _createAnnotationsOnClick = false;
 
   constructor(uiFolder: dat.GUI, model: CognitePointCloudModel, viewer: Cognite3DViewer, client: CogniteClient) {
     this._model = model;
@@ -53,10 +54,18 @@ export class PointCloudObjectStylingUI {
     this.createAnnotationUi(this._selectedAnnotationFolder);
 
     const state = {
-      showBoundingBoxes: false
+      showBoundingBoxes: false,
+      createAnnotationsOnClick: false
     };
 
     const actions = {
+      deleteAllAnnotations: async () => {
+        const annotations = await client.annotations.list({ filter: { annotatedResourceIds: [{ id: model.modelId }], annotatedResourceType: 'threedmodel' } }).autoPagingToArray({ limit: 1000 });
+
+        await client.annotations.delete(annotations.map(annotation => ({ id: annotation.id })));
+
+        console.log(`Deleted ${annotations.length} annotations`);
+      },
       reset: () => {
         this._model.removeAllStyledObjectCollections();
       },
@@ -75,13 +84,22 @@ export class PointCloudObjectStylingUI {
         });
       }
     };
-
+    
+    uiFolder.addFolder('DANGER ZONE').add(actions, 'deleteAllAnnotations').name('Delete all annotations for model');
     uiFolder.add(actions, 'reset').name('Reset all styled objects');
-    uiFolder.add(actions, 'randomColors').name('Set random for objects');
+    uiFolder.add(actions, 'randomColors').name('Set random colors for objects');
     uiFolder
       .add(state, 'showBoundingBoxes')
       .name('Show object bounding boxes')
       .onChange((value: boolean) => this.toggleObjectBoundingBoxes(value));
+    uiFolder
+      .add(state, 'createAnnotationsOnClick')
+      .name('Create annotations on model click')
+      .onChange((value: boolean) => (this._createAnnotationsOnClick = value));
+  }
+
+  get createAnnotationsOnClick() {
+    return this._createAnnotationsOnClick;
   }
 
   async updateSelectedAnnotation(annotationId: number | undefined) {

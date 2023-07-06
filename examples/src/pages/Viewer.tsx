@@ -16,7 +16,8 @@ import {
   CameraControlsOptions,
   DefaultCameraManager,
   CogniteModel,
-  AnnotationIdPointCloudObjectCollection
+  AnnotationIdPointCloudObjectCollection,
+  CDF_TO_VIEWER_TRANSFORMATION
 } from '@cognite/reveal';
 import { DebugCameraTool, Corner, AxisViewTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
@@ -471,8 +472,36 @@ export function Viewer() {
                     new THREE.SphereGeometry(0.1),
                     new THREE.MeshBasicMaterial({ color: 'red' })
                   );
+
                   sphere.position.copy(point);
                   viewer.addObject3D(sphere);
+                  
+                  if (pointCloudObjectsUi.createAnnotationsOnClick) {
+                    const cdfPosition = point.clone().applyMatrix4(model.getCdfToDefaultModelTransformation().invert());
+                    //model.mapPointFromCdfToModelCoordinates(cdfPosition);
+
+                    const annotation = await client.annotations.create([{
+                      annotatedResourceId: model.modelId,
+                      annotatedResourceType: 'threedmodel',
+                      annotationType: 'pointcloud.BoundingVolume',
+                      status: 'suggested',
+                      creatingApp: 'reveal-examples',
+                      creatingUser: 'reveal-user',
+                      creatingAppVersion: '0.0.1',
+                      data: {
+                        label: 'Dummy annotation',
+                        region: [
+                          {
+                            box: {
+                              matrix: new THREE.Matrix4().makeTranslation(cdfPosition.x, cdfPosition.y, cdfPosition.z).transpose().elements,
+                            }
+                          }
+                        ]
+                      },
+                    }])
+
+                    console.log('Annotation successfully created', annotation);
+                  }
                 }
               }
               break;
