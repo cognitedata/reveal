@@ -107,7 +107,7 @@ jobs:
     steps:
       - name: Print
         run: |
-          echo ${{ fromJson(needs.print-affected.outputs.projects) }}
+#          echo ${{ fromJson(needs.print-affected.outputs.projects) }}
           echo ${{ needs.print-affected.outputs.projects }}
 #  build:
 #    runs-on: ubuntu-20.04
