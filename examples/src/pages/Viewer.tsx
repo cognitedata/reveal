@@ -51,7 +51,7 @@ export function Viewer() {
     // Check in order to avoid double initialization of everything, especially dat.gui.
     // See https://reactjs.org/docs/strict-mode.html#detecting-unexpected-side-effects for why its called twice.
     if (!canvasWrapperRef.current) {
-      return () => { };
+      return () => {};
     }
 
     const gui = new dat.GUI({ width: Math.min(500, 0.8 * window.innerWidth) });
@@ -107,9 +107,9 @@ export function Viewer() {
           pointBlending: urlParams.get('pointBlending') === 'true' ?? undefined,
           edlOptions: edlEnabled
             ? {
-              strength: parseFloat(urlParams.get('edlStrength') ?? '0.5'),
-              radius: parseFloat(urlParams.get('edlRadius') ?? '2.2')
-            }
+                strength: parseFloat(urlParams.get('edlStrength') ?? '0.5'),
+                radius: parseFloat(urlParams.get('edlRadius') ?? '2.2')
+              }
             : 'disabled'
         }
       };
@@ -123,12 +123,12 @@ export function Viewer() {
       } else if (!project) {
         throw new Error(
           'A "project" URL parameter is needed to load models from CDF.' +
-          'Optionally, use "modelUrl" to load local models.'
+            'Optionally, use "modelUrl" to load local models.'
         );
       } else if (!environment && !overrideToken) {
         throw new Error(
           'You must provide either "env" or "token" as URL parameters to load models from CDF.' +
-          'Optionally, use "modelUrl" to load local models.'
+            'Optionally, use "modelUrl" to load local models.'
         );
       }
 
@@ -438,11 +438,10 @@ export function Viewer() {
       const collection = await viewer.add360ImageSet('datamodels', {
         dataModelExternalId: 'Image360DM',
         space: 'Image_360',
-        image360CollectionExternalId: 'Hibernia_RS2',
+        image360CollectionExternalId: 'Hibernia_RS2'
       });
 
       console.log(collection.image360Entities.length);
-
 
       viewer.on('click', async event => {
         const { offsetX, offsetY } = event;
