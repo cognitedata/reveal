@@ -609,22 +609,10 @@
   resolved "https://registry.yarnpkg.com/@types/webxr/-/webxr-0.5.2.tgz#5d9627b0ffe223aa3b166de7112ac8a9460dc54f"
   integrity sha512-szL74BnIcok9m7QwYtVmQ+EdIKwbjPANudfuvDrAF8Cljg9MKUlIoc1w5tjj9PMpeSH3U1Xnx//czQybJ0EfSw==
 
-<<<<<<< HEAD
-"@types/webxr@^0.5.2":
-  version "0.5.2"
-  resolved "https://registry.yarnpkg.com/@types/webxr/-/webxr-0.5.2.tgz#5d9627b0ffe223aa3b166de7112ac8a9460dc54f"
-  integrity sha512-szL74BnIcok9m7QwYtVmQ+EdIKwbjPANudfuvDrAF8Cljg9MKUlIoc1w5tjj9PMpeSH3U1Xnx//czQybJ0EfSw==
-
-"@types/ws@^8.5.1":
-  version "8.5.3"
-  resolved "https://registry.yarnpkg.com/@types/ws/-/ws-8.5.3.tgz#7d25a1ffbecd3c4f2d35068d0b283c037003274d"
-  integrity sha512-6YOoWjruKj1uLf3INHH7D3qTXwFfEsg1kf3c0uDdSBJwfa/llkwIjrAGV7j7mVgGNbzTQ3HiHKKDXl6bJPD97w==
-=======
 "@types/ws@^8.5.5":
   version "8.5.5"
   resolved "https://registry.yarnpkg.com/@types/ws/-/ws-8.5.5.tgz#af587964aa06682702ee6dcbc7be41a80e4b28eb"
   integrity sha512-lwhs8hktwxSjf9UaZ9tG5M03PGogvFaH8gUgLNbN9HKIg0dvv6q+gkSuJ8HN4/VbyxkuLzCjlN7GquQ0gUJfIg==
->>>>>>> 15a4389156ffb26c98c0aa4fed75db919a190a08
   dependencies:
     "@types/node" "*"
 
@@ -3801,17 +3789,10 @@ text-segmentation@^1.0.3:
   dependencies:
     utrie "^1.0.2"
 
-<<<<<<< HEAD
-three-stdlib@2.23.7:
-  version "2.23.7"
-  resolved "https://registry.yarnpkg.com/three-stdlib/-/three-stdlib-2.23.7.tgz#18b4a1a00d79737006622c9a2301232c3f4fa9e9"
-  integrity sha512-nxs0z6OthtN+Qy6N1Ee0ztR87IcaCEOF+WHCJCzjpu+37c+/IFDzI9igg7xgw4qWM05vETxUAkrXnLRxSZlgcw==
-=======
 three-stdlib@2.23.10:
   version "2.23.10"
   resolved "https://registry.yarnpkg.com/three-stdlib/-/three-stdlib-2.23.10.tgz#94907a558a00da327bd74308c92078fea72f77fc"
   integrity sha512-y0DlxaN5HZXI9hKjEtqO2xlCEt7XyDCOMvD2M3JJFBmYjwbU+PbJ1n3Z+7Hr/6BeVGE6KZYcqPMnfKrTK5WTJg==
->>>>>>> 15a4389156ffb26c98c0aa4fed75db919a190a08
   dependencies:
     "@types/draco3d" "^1.4.0"
     "@types/offscreencanvas" "^2019.6.4"
