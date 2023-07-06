@@ -10,8 +10,8 @@ import uniq from 'lodash/uniq';
 import styled from 'styled-components/macro';
 
 import type { OptionType } from '@cognite/cogs.js';
-import { AutoComplete, DateRange, Skeleton } from '@cognite/cogs.js';
-import { Illustrations } from '@cognite/cogs.js-v9';
+import { AutoComplete, DateRange } from '@cognite/cogs.js';
+import { Illustrations, Skeleton } from '@cognite/cogs.js-v9';
 import {
   useGetCalculationRunListV2Query,
   useGetModelFileListV2Query,

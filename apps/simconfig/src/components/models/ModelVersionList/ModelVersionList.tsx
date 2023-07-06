@@ -8,8 +8,8 @@ import parseISO from 'date-fns/parseISO';
 import styled from 'styled-components/macro';
 
 import type { CollapsePanelProps } from '@cognite/cogs.js';
-import { Collapse, Skeleton } from '@cognite/cogs.js';
-import { Chip, Icon, Pagination, Tooltip } from '@cognite/cogs.js-v9';
+import { Collapse } from '@cognite/cogs.js';
+import { Chip, Icon, Pagination, Skeleton, Tooltip } from '@cognite/cogs.js-v9';
 import type { Simulator } from '@cognite/simconfig-api-sdk/rtk';
 import { useGetModelFileVersionListQuery } from '@cognite/simconfig-api-sdk/rtk';
 

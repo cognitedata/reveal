@@ -5,8 +5,13 @@ import { useSelector } from 'react-redux';
 import styled from 'styled-components/macro';
 
 import { getProject } from '@cognite/cdf-utilities';
-import { Input, Skeleton } from '@cognite/cogs.js';
-import { Button, Illustrations, Pagination } from '@cognite/cogs.js-v9';
+import { Input } from '@cognite/cogs.js';
+import {
+  Button,
+  Illustrations,
+  Pagination,
+  Skeleton,
+} from '@cognite/cogs.js-v9';
 import { useSDK } from '@cognite/sdk-provider';
 import { useGetModelFileListV2Query } from '@cognite/simconfig-api-sdk/rtk';
 

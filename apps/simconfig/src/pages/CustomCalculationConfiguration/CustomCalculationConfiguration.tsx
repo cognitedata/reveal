@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useMatch, useSearch } from 'react-location';
 import { useSelector } from 'react-redux';
 
-import { Skeleton } from '@cognite/cogs.js';
+import { Skeleton } from '@cognite/cogs.js-v9';
 import type { UserDefined } from '@cognite/simconfig-api-sdk/rtk';
 import {
   useGetModelCalculationQuery,

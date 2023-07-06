@@ -8,8 +8,8 @@ import { ParentSizeModern } from '@visx/responsive';
 import styled from 'styled-components/macro';
 
 import type { OptionType } from '@cognite/cogs.js';
-import { Collapse, Graphic, Skeleton, toast } from '@cognite/cogs.js';
-import { Button } from '@cognite/cogs.js-v9';
+import { Collapse, Graphic, toast } from '@cognite/cogs.js';
+import { Button, Skeleton } from '@cognite/cogs.js-v9';
 import type { CogniteEvent, Sequence } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 import type {
