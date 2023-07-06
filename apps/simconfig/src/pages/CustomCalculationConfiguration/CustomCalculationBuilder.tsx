@@ -4,8 +4,7 @@ import { useNavigate } from 'react-location';
 import { Form, Formik } from 'formik';
 import styled from 'styled-components/macro';
 
-import { Infobox } from '@cognite/cogs.js';
-import { Switch, toast } from '@cognite/cogs.js-v9';
+import { Infobox, Switch, toast } from '@cognite/cogs.js-v9';
 import type { UserDefined } from '@cognite/simconfig-api-sdk/rtk';
 import { useUpsertCalculationMutation } from '@cognite/simconfig-api-sdk/rtk';
 
