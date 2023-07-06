@@ -12,3 +12,4 @@ FORCE_COLOR=true ISOLATED_MODULES=true nx run-many --target=test --projects=${pr
   --reporters=jest-junit \
   --coverageReporters=html,lcov,json,text-summary,cobertura \
   --collectCoverage \
+  --watchAll=false
