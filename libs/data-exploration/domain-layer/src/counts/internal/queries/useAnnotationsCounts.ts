@@ -1,11 +1,11 @@
 import { ResourceType, ResourceTypes } from '@data-exploration-lib/core';
 
 import { useFileAnnotationsQuery } from '../../../annotations';
-import { BaseResource, Counts } from '../types';
+import { BaseResourceProps, Counts } from '../types';
 import { getResourceId } from '../utils';
 
 export const useAnnotationsCounts = (
-  resource: BaseResource | undefined,
+  resource: BaseResourceProps | undefined,
   resourceType: ResourceType
 ) => {
   const resourceId = getResourceId(resource);

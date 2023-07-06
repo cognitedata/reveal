@@ -1,9 +1,9 @@
 import { IdEither } from '@cognite/sdk';
 
-import { BaseResource } from '../types';
+import { BaseResourceProps } from '../types';
 
 export const getResourceId = (
-  resource?: BaseResource
+  resource?: BaseResourceProps
 ): IdEither | undefined => {
   if (!resource) {
     return undefined;

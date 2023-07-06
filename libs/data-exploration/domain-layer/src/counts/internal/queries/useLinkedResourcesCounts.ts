@@ -1,6 +1,6 @@
 import { ResourceType, ResourceTypes } from '@data-exploration-lib/core';
 
-import { BaseResource, Counts } from '../types';
+import { BaseResourceProps, Counts } from '../types';
 import { getResourceId } from '../utils';
 
 import { useLinkedAssetsCount } from './useLinkedAssetsCount';
@@ -13,7 +13,7 @@ export const useLinkedResourcesCounts = ({
   resource,
   resourceType,
 }: {
-  resource?: BaseResource;
+  resource?: BaseResourceProps;
   resourceType: ResourceType;
 }) => {
   const resourceId = getResourceId(resource);

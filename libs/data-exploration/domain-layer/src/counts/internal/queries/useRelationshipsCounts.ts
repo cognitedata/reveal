@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
 
 import { useRelatedResourceExternalIds } from '../../../relationships';
-import { BaseResource, Counts } from '../types';
+import { BaseResourceProps, Counts } from '../types';
 import { extractExternalId, getResourceId } from '../utils';
 
-export const useRelationshipsCounts = (resource?: BaseResource) => {
+export const useRelationshipsCounts = (resource?: BaseResourceProps) => {
   const resourceId = getResourceId(resource);
   const resourceExternalId = extractExternalId(resourceId);
 

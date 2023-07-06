@@ -6,7 +6,7 @@ export type CountsResourceType = Exclude<ResourceType, 'threeD'>;
 
 export type Counts = Record<CountsResourceType, number>;
 
-export interface BaseResource {
+export interface BaseResourceProps {
   id: CogniteInternalId;
   externalId?: CogniteExternalId;
 }
