@@ -1,4 +1,4 @@
-export * from './getAssetIdsCount';
-export * from './getDocumentAssetIdsCount';
+export * from './getAssetIds';
+export * from './getDocumentAssetIds';
 export * from './getLinkedDocumentsCount';
 export * from './getLinkedResourcesCount';

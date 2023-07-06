@@ -2,7 +2,7 @@ import { ResourceType } from '@data-exploration-lib/core';
 
 import { useRelatedResourceExternalIds } from '../../../relationships';
 import { BaseResourceProps } from '../types';
-import { extractExternalId, getResourceId } from '../utils';
+import { extractExternalId } from '../utils';
 
 export const useRelationshipsCount = ({
   resource,
@@ -11,10 +11,9 @@ export const useRelationshipsCount = ({
   resource?: BaseResourceProps;
   resourceType: ResourceType;
 }) => {
-  const resourceId = getResourceId(resource);
-  const resourceExternalId = extractExternalId(resourceId);
-
-  const { data, isLoading } = useRelatedResourceExternalIds(resourceExternalId);
+  const { data, isLoading } = useRelatedResourceExternalIds(
+    extractExternalId(resource)
+  );
 
   const count = data[resourceType].length;
 

@@ -1,6 +1,6 @@
 import { ResourceType } from '@data-exploration-lib/core';
 
-import { useAssetIdsCountQuery } from '../../service';
+import { useAssetIdsQuery } from '../../service';
 import { BaseResourceProps } from '../types';
 import { convertToSdkResourceType, getResourceId } from '../utils';
 
@@ -11,10 +11,11 @@ export const useAssetIdsCount = ({
   resource?: BaseResourceProps;
   resourceType: ResourceType;
 }) => {
-  const { data = 0, isLoading } = useAssetIdsCountQuery({
+  const { data = [], isLoading } = useAssetIdsQuery({
     resourceType: convertToSdkResourceType(resourceType),
     resourceId: getResourceId(resource),
   });
+  const count = data.length;
 
-  return { data, isLoading };
+  return { data: count, isLoading };
 };

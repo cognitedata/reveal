@@ -7,11 +7,11 @@ type Payload = {
 };
 
 type BaseCdfItemProps = OneOf<{
-  assetId?: string;
-  assetIds?: string[];
+  assetId?: number;
+  assetIds?: number[];
 }>;
 
-export const getAssetIdsCount = <T extends BaseCdfItemProps>(
+export const getAssetIds = <T extends BaseCdfItemProps>(
   sdk: CogniteClient,
   payload: Payload
 ) => {
@@ -34,16 +34,14 @@ export const getAssetIdsCount = <T extends BaseCdfItemProps>(
       const item = data.items[0];
 
       if (item?.assetId) {
-        return 1;
+        return [item.assetId];
       }
-
       if (item?.assetIds) {
-        return item.assetIds.length;
+        return item.assetIds;
       }
-
-      return 0;
+      return [] as number[];
     })
     .catch(() => {
-      return 0;
+      return [] as number[];
     });
 };

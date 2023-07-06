@@ -6,10 +6,7 @@ type Payload = {
   resourceId: IdEither;
 };
 
-export const getDocumentAssetIdsCount = (
-  sdk: CogniteClient,
-  payload: Payload
-) => {
+export const getDocumentAssetIds = (sdk: CogniteClient, payload: Payload) => {
   const { resourceId } = payload;
 
   return sdk.documents
@@ -17,6 +14,6 @@ export const getDocumentAssetIdsCount = (
       filter: getDocumentByIdFilter(resourceId),
     })
     .then(({ items }) => {
-      return items[0].assetIds?.length || 0;
+      return items[0].assetIds || [];
     });
 };
