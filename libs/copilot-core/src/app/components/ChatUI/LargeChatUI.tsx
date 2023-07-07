@@ -14,7 +14,7 @@ export const LargeChatUI = () => {
   return (
     <LargeChatWrapper>
       <ChatHeader style={{ paddingTop: 16, paddingBottom: 16 }} hideHistory />
-      <Flex style={{ flex: 1 }} gap={16}>
+      <Flex style={{ flex: 1, overflow: 'hidden' }} gap={16}>
         <div
           style={{
             overflow: 'auto',
