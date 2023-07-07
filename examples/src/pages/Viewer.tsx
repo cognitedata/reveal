@@ -436,9 +436,8 @@ export function Viewer() {
       new LoadGltfUi(gui.addFolder('GLTF'), viewer);
 
       const collection = await viewer.add360ImageSet('datamodels', {
-        dataModelExternalId: 'Image360DM',
-        space: 'Image_360',
-        image360CollectionExternalId: 'Hibernia_RS2'
+        space: 'image_360_space',
+        image360CollectionExternalId: 'c_RC_2'
       });
 
       console.log(collection.image360Entities.length);

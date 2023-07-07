@@ -151,7 +151,6 @@ export class Image360RevisionEntity implements Image360Revision {
     const annotationData = await this._imageProvider.get360ImageAnnotations(this._image360Descriptor.faceDescriptors);
 
     const filteredAnnotationData = annotationData.filter(a => this._annotationFilterer.filter(a));
-
     const annotationObjects = filteredAnnotationData
       .map(data => {
         const faceDescriptor = getAssociatedFaceDescriptor(data, this._image360Descriptor);

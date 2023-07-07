@@ -32,7 +32,7 @@ export class Cdf360CombinedDescriptorProvider
       metadataFilter: Metadata | DM360CollectionIdentifier
     ): metadataFilter is DM360CollectionIdentifier {
       const fdmFilter = metadataFilter as DM360CollectionIdentifier;
-      return fdmFilter !== undefined && fdmFilter.space !== undefined && fdmFilter.dataModelExternalId !== undefined;
+      return fdmFilter !== undefined && fdmFilter.space !== undefined;
     }
   }
 }
