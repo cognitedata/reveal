@@ -75,45 +75,21 @@ jobs:
         with:
           main-branch-name: ${{ github.base_ref }}
 
-      #      - name: Find affected projects for lint
-      #        run: yarn nx print-affected --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }} --select=projects --target=lint > affected-projects-lint.txt
-      #      - name: Show affected projects for lint
-      #        run: cat affected-projects-lint.txt
-      #
-      #      - name: Find affected projects for test
-      #        run: yarn nx print-affected --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }} --select=projects --target=test > affected-projects-test.txt
-      #      - name: Show affected projects for test
-      #        run: cat affected-projects-test.txt
-
-      #      - name: Find affected projects for build
-      #        run: yarn nx print-affected --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }} --select=projects --target=build > affected-projects-build.txt
-
       - name: 'Print affected projects: BUILD'
         id: find-affected-projects
         run: |
-          echo "::set-output name=projects::$(yarn nx show projects --affected --withTarget=build --json --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }})"
-#          echo "projects2=$(yarn nx show projects --affected --withTarget=build --json --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }})" >> "$GITHUB_OUTPUT"
-
+#          echo "::set-output name=projects::$(yarn nx show projects --affected --withTarget=build --json --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }})"
+          AFFECTED_BUILD=$(yarn nx show projects --affected --withTarget=build --json --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }})
+          echo "projects2=$AFFECTED_BUILD" >> $GITHUB_OUTPUT
       - name: Show affected projects for build
         run: |
-          echo "${{ steps.find-affected-projects.outputs.projects }}"
-#          echo "${{ fromJson(steps.find-affected-projects.outputs.projects2) }}"
+          echo "${{ steps.find-affected-projects.outputs.projects2 }}"
+  #          echo "${{ fromJson(steps.find-affected-projects.outputs.projects2) }}"
   #        run: |
   #          echo "::set-env name=AFFECTED_PROJECTS_BUILD::$(yarn nx print-affected --base=origin/main --head=HEAD --select=projects --target=build)"
   #          echo "Affected projects for lint: ${{env.AFFECTED_PROJECTS_BUILD}}"
 
-  #      - name: Find affected projects for e2e
-  #        run: yarn nx print-affected --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }} --select=projects --target=e2e > affected-projects-e2e.txt
-  #      - name: Show affected projects for e2e
-  #        run: cat affected-projects-e2e.txt
 
-  test:
-    runs-on: ubuntu-20.04
-    needs: print-affected
-    steps:
-      - name: Print
-        run: |
-          echo ${{ needs.print-affected.outputs.build }}
 
 #  build:
 #    runs-on: ubuntu-20.04
