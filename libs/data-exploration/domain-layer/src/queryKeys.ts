@@ -266,11 +266,43 @@ export const queryKeys = {
     'previewURL',
   ],
 
+  // Relationships
+  relationships: () => [...queryKeys.all, 'relationships'] as const,
+  resourceRelationships: (
+    resourceExternalIds: string[],
+    relationshipResourceTypes: string[]
+  ) =>
+    [
+      ...queryKeys.relationships(),
+      ...resourceExternalIds,
+      ...relationshipResourceTypes,
+    ] as const,
+
   // Annotations
   annotations: () => [...queryKeys.all, 'annotations'] as const,
+  fileAnnotations: (fileId: unknown) =>
+    [...queryKeys.annotations(), 'file', fileId] as const,
   annotationsPagedFileReferences: (
     pagedFileReferences: { id: number; page: number | undefined }[]
   ) => [...queryKeys.annotations(), pagedFileReferences] as const,
+
+  // Counts
+  counts: () => [...queryKeys.all, 'counts'] as const,
+  linkedResourcesCount: (
+    resourceType: string,
+    resourceId: unknown,
+    linkedResourceIds?: unknown[]
+  ) =>
+    [
+      ...queryKeys.counts(),
+      'linked-resources',
+      resourceType,
+      resourceId,
+      ...(linkedResourceIds || []),
+    ] as const,
+  assetIdsCount: (resourceType: string, resourceId: unknown) =>
+    [...queryKeys.counts(), 'assets-ids', resourceType, resourceId] as const,
+
   // Industry Canvas
   canvas: () => [...queryKeys.all, 'canvas'] as const,
   supportedResourceItem: (item: { id: number; type: string }) =>
