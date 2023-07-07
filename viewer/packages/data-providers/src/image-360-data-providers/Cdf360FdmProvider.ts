@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { CogniteClient } from '@cognite/sdk';
+import { CogniteClient, InternalId } from '@cognite/sdk';
 import {
   Historical360ImageSet,
   Image360FileDescriptor,
@@ -13,6 +13,8 @@ import {
 import { Euler, Matrix4 } from 'three';
 import assert from 'assert';
 import { DmsSDK, EdgeItem, Item, Source } from './DmsSdk';
+import zip from 'lodash/zip';
+import chunk from 'lodash/chunk';
 
 export type DM360CollectionIdentifier = {
   space: string;
@@ -27,16 +29,10 @@ type Image360Station = {
   };
 };
 
-type Image360Revision = {
+type Image360RevisionSharedData = {
   externalId: string;
   label?: string;
   timeTaken?: number;
-  cubeMapBack: string;
-  cubeMapBottom: string;
-  cubeMapFront: string;
-  cubeMapLeft: string;
-  cubeMapRight: string;
-  cubeMapTop: string;
   eulerRotationX: number;
   eulerRotationY: number;
   eulerRotationZ: number;
@@ -45,11 +41,31 @@ type Image360Revision = {
   translationZ: number;
 };
 
+type Image360RevisionDmsResult = Image360RevisionSharedData & {
+  cubeMapBack: string;
+  cubeMapBottom: string;
+  cubeMapFront: string;
+  cubeMapLeft: string;
+  cubeMapRight: string;
+  cubeMapTop: string;
+};
+
+type Image360Revision = Image360RevisionSharedData & {
+  cubeMapBack: InternalId;
+  cubeMapBottom: InternalId;
+  cubeMapFront: InternalId;
+  cubeMapLeft: InternalId;
+  cubeMapRight: InternalId;
+  cubeMapTop: InternalId;
+};
+
 export class Cdf360FdmProvider implements Image360DescriptorProvider<DM360CollectionIdentifier> {
   private readonly _dmsSDK: DmsSDK;
+  private readonly _cogniteSdk: CogniteClient;
 
   constructor(sdk: CogniteClient) {
     this._dmsSDK = new DmsSDK(sdk);
+    this._cogniteSdk = sdk;
   }
   public async get360ImageDescriptors(
     metadataFilter: DM360CollectionIdentifier,
@@ -172,25 +188,45 @@ export class Cdf360FdmProvider implements Image360DescriptorProvider<DM360Collec
       revisionIdToStationIdMap.set(edgeItem.endNode.externalId, edgeItem.startNode.externalId);
     });
 
-    const image360RevisionsResult = await this._dmsSDK.getInstancesByExternalIds<Image360Revision>(
+    const image360RevisionsResult = await this._dmsSDK.getInstancesByExternalIds<Image360RevisionDmsResult>(
       fetchRevisionItems,
       revisionSource
     );
 
-    // const fileIds = image360RevisionsResult.flatMap(revision => [
-    //   { externalId: revision.cubeMapBack },
-    //   { externalId: revision.cubeMapFront },
-    //   { externalId: revision.cubeMapLeft },
-    //   { externalId: revision.cubeMapRight },
-    //   { externalId: revision.cubeMapTop },
-    //   { externalId: revision.cubeMapBottom }
-    // ]);
+    const fileIds = image360RevisionsResult.flatMap(revision => [
+      { externalId: revision.cubeMapBack },
+      { externalId: revision.cubeMapFront },
+      { externalId: revision.cubeMapLeft },
+      { externalId: revision.cubeMapRight },
+      { externalId: revision.cubeMapTop },
+      { externalId: revision.cubeMapBottom }
+    ]);
 
-    // const files = await this._cogniteSdk.files.retrieve(fileIds);
+    const files = (
+      await Promise.all(
+        chunk(fileIds, 1000).map(fileIdsChunk => {
+          return this._cogniteSdk.files.retrieve(fileIdsChunk);
+        })
+      )
+    ).flatMap(p => p);
+
+    const image360Revisions: Image360Revision[] = zip(image360RevisionsResult, chunk(files, 6)).map(
+      ([revision, file]) => {
+        return {
+          ...revision!,
+          cubeMapBack: { id: file![0].id },
+          cubeMapFront: { id: file![1].id },
+          cubeMapLeft: { id: file![2].id },
+          cubeMapRight: { id: file![3].id },
+          cubeMapTop: { id: file![4].id },
+          cubeMapBottom: { id: file![5].id }
+        };
+      }
+    );
 
     const stationIdToRevisionMap = new Map<string, Image360Revision[]>();
 
-    image360RevisionsResult.forEach(revisionResult => {
+    image360Revisions.forEach(revisionResult => {
       const stationId = revisionIdToStationIdMap.get(revisionResult.externalId);
       if (!stationId) {
         throw new Error('Station id not found');
@@ -248,11 +284,14 @@ export class Cdf360FdmProvider implements Image360DescriptorProvider<DM360Collec
 
   private async getRevisionDescriptor(revision: Image360Revision): Promise<Image360Descriptor> {
     const faceDescriptors: Image360FileDescriptor[] = Object.entries(revision)
-      .filter((revisionEntry): revisionEntry is [string, string] => revisionEntry[0].includes('cubeMap'))
-      .map(([cubeMapKey, fileExternalId]) => [cubeMapKey.replace('cubeMap', '').toLowerCase(), fileExternalId])
-      .map(([faceKey, fileExternalId]) => {
+      .filter((revisionEntry): revisionEntry is [string, InternalId] => revisionEntry[0].includes('cubeMap'))
+      .map(
+        ([cubeMapKey, fileInternalId]) =>
+          [cubeMapKey.replace('cubeMap', '').toLowerCase(), fileInternalId] as [string, InternalId]
+      )
+      .map(([faceKey, fileInternalId]) => {
         const face = faceKey as Image360FileDescriptor['face'];
-        return { face, fileId: { externalId: fileExternalId }, mimeType: 'image/jpeg' };
+        return { face, fileId: fileInternalId, mimeType: 'image/jpeg' };
       });
 
     return {

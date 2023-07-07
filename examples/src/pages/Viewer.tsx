@@ -440,8 +440,6 @@ export function Viewer() {
         image360CollectionExternalId: 'c_RC_2'
       });
 
-      console.log(collection.image360Entities.length);
-
       viewer.on('click', async event => {
         const { offsetX, offsetY } = event;
         console.log('2D coordinates', event);

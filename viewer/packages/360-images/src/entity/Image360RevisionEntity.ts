@@ -229,7 +229,7 @@ function getAssociatedFaceDescriptor(
   imageDescriptors: Image360Descriptor
 ): Image360FileDescriptor {
   const fileDescriptors = imageDescriptors.faceDescriptors.filter(
-    desc => (desc.fileId as any).id === annotation.annotatedResourceId
+    desc => desc.fileId.id === annotation.annotatedResourceId
   );
 
   assert(fileDescriptors.length !== 0);
