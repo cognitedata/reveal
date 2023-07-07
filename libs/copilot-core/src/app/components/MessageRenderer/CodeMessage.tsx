@@ -13,12 +13,14 @@ import { sendFromCopilotEvent } from '../../../lib/utils';
 import { getContainer } from '../../utils/getContainer';
 import { Editor } from '../Editor/Editor';
 
+import { MessageBase } from './MessageBase';
+
 export const CodeMessage = ({
   message: { data },
 }: {
   message: { data: CopilotCodeMessage | CopilotDataModelQueryMessage };
 }) => {
-  const content = data.content;
+  const { content, actions: prevActions } = data;
   const language = data.type === 'data-model-query' ? 'graphql' : data.language;
   const prevContent = data.type === 'data-model-query' ? '' : data.prevContent;
   const actions =
@@ -32,6 +34,7 @@ export const CodeMessage = ({
               });
             },
           },
+          ...(prevActions || []),
         ]
       : [
           {
@@ -42,80 +45,75 @@ export const CodeMessage = ({
               });
             },
           },
+          ...(prevActions || []),
         ];
   const [open, setOpen] = useState(false);
   const [showDiff, setShowDiff] = useState(false);
   return (
-    <Wrapper direction="column" gap={4}>
-      <Body level={2}>Click to view the follow code in full screen</Body>
-      <Flex
-        style={{
-          overflow: 'hidden',
-          cursor: 'pointer',
-          position: 'relative',
-          maxHeight: 200,
-        }}
-        onClick={() => setOpen(true)}
-      >
+    <MessageBase message={{ source: 'bot', content }} actions={actions}>
+      <Wrapper direction="column" gap={4}>
+        <Body level={2}>Click to view the follow code in full screen</Body>
         <Flex
-          className="hover-code"
-          justifyContent="center"
-          alignItems="center"
+          style={{
+            overflow: 'hidden',
+            cursor: 'pointer',
+            position: 'relative',
+            maxHeight: 200,
+          }}
+          onClick={() => setOpen(true)}
         >
-          <Icon type="Expand" />
+          <Flex
+            className="hover-code"
+            justifyContent="center"
+            alignItems="center"
+          >
+            <Icon type="Expand" />
+          </Flex>
+          <Highlight className={language}>{content}</Highlight>
         </Flex>
-        <Highlight className={language}>{content}</Highlight>
-      </Flex>
-      {actions && (
-        <Flex gap={4}>
-          {actions.map((el) => (
-            <Button onClick={el.onClick} key={el.content}>
-              {el.content}
-            </Button>
-          ))}
-        </Flex>
-      )}
-      <Modal
-        visible={open}
-        title="Code preview"
-        size="full-screen"
-        onCancel={() => setOpen(false)}
-        hideFooter
-        hidePaddings
-        getContainer={getContainer()}
-        className="full-height"
-      >
-        <Flex
-          direction="column"
-          gap={16}
-          style={{ padding: 16, height: '100%' }}
+        <Modal
+          visible={open}
+          title="Code preview"
+          size="full-screen"
+          onCancel={() => setOpen(false)}
+          hideFooter
+          hidePaddings
+          getContainer={getContainer()}
+          className="full-height"
         >
-          <Flex style={{ flex: 1 }}>
-            <Editor
-              language={language}
-              code={content}
-              prevCode={showDiff ? prevContent : undefined}
-            />
+          <Flex
+            direction="column"
+            gap={16}
+            style={{ padding: 16, height: '100%' }}
+          >
+            <Flex style={{ flex: 1 }}>
+              <Editor
+                language={language}
+                code={content}
+                prevCode={showDiff ? prevContent : undefined}
+              />
+            </Flex>
+            <Flex gap={4}>
+              {prevContent && (
+                <Button onClick={() => setShowDiff(!showDiff)}>
+                  {showDiff ? 'Hide Diff' : 'Show Diff'}
+                </Button>
+              )}
+              {actions?.map((el) => (
+                <Button onClick={el.onClick} key={el.content}>
+                  {el.content}
+                </Button>
+              ))}
+            </Flex>
           </Flex>
-          <Flex gap={4}>
-            {prevContent && (
-              <Button onClick={() => setShowDiff(!showDiff)}>
-                {showDiff ? 'Hide Diff' : 'Show Diff'}
-              </Button>
-            )}
-            {actions?.map((el) => (
-              <Button onClick={el.onClick} key={el.content}>
-                {el.content}
-              </Button>
-            ))}
-          </Flex>
-        </Flex>
-      </Modal>
-    </Wrapper>
+        </Modal>
+      </Wrapper>
+    </MessageBase>
   );
 };
 
 const Wrapper = styled(Flex)`
+  width: 100%;
   pre {
     width: 100%;
   }

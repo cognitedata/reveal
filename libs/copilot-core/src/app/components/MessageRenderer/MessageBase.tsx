@@ -40,32 +40,44 @@ export const MessageBase = ({
         {source === 'bot' && (
           <Flex gap={4}>
             <div style={{ flex: 1 }}>
-              <ResponsiveActions actions={actions} />
+              <ResponsiveActions
+                actions={[
+                  ...actions,
+                  {
+                    content: 'Copy',
+                    icon: 'ReportCopy',
+                    onClick: () => {
+                      navigator.clipboard.writeText(content);
+                      toast.success('Copied to clipboard');
+                    },
+                  },
+                ]}
+              />
             </div>
-            <Button
+            {/* <Button
               icon="Copy"
               aria-label="Copy"
               type="ghost"
               size="small"
-              className="hover ai"
+              className="ai"
               onClick={() => {
                 navigator.clipboard.writeText(content);
                 toast.success('Copied to clipboard');
               }}
-            />
+            /> */}
             <Button
               icon="ThumbUp"
               aria-label="Give positive feedback"
               type="ghost"
               size="small"
-              className="hover ai"
+              className="ai"
             />
             <Button
               icon="ThumbDown"
               aria-label="Give negative feedback"
               type="ghost"
               size="small"
-              className="hover ai"
+              className="ai thumbsdown"
             />
           </Flex>
         )}
@@ -77,6 +89,8 @@ export const MessageBase = ({
 const Wrapper = styled(Flex)`
   overflow: hidden;
   position: relative;
+  max-width: 800px;
+  margin: 0 auto;
 
   .cogs-button.hover {
     opacity: 0;
@@ -92,6 +106,10 @@ const Wrapper = styled(Flex)`
   .cogs-button.ai:hover {
     background: rgba(111, 59, 228, 0.18);
     color: #6f3be4;
+  }
+
+  .thumbsdown svg {
+    transform: scaleX(-1);
   }
 `;
 

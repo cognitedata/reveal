@@ -2,6 +2,7 @@ import { BaseChain, ChainInputs } from 'langchain/chains';
 import { BaseChatModel } from 'langchain/chat_models/base';
 import { ChainValues } from 'langchain/schema';
 
+import { IconType } from '@cognite/cogs.js';
 import { CogniteClient } from '@cognite/sdk';
 
 import { addToCopilotEventListener, sendToCopilotEvent } from './utils';
@@ -14,6 +15,7 @@ type DefaultMessage = {
   key?: number;
   content: string;
   pending?: boolean;
+  actions?: CopilotAction[];
 };
 
 export type CopilotTextMessage = {
@@ -62,7 +64,11 @@ export type CopilotMessage =
       source: 'bot';
     });
 
-export type CopilotAction = { onClick: () => void; content: string };
+export type CopilotAction = {
+  onClick: () => void;
+  content: string;
+  icon?: IconType;
+};
 
 /**
  * @returns whether to accept more inputs

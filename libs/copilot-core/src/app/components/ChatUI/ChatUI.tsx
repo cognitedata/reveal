@@ -248,7 +248,7 @@ export const ChatUI = ({
       );
       setTimeout(() => setIsLoading(false), 100);
     })();
-  }, [currentChatId]);
+  }, [currentChatId, sdk.project, setupMessages]);
 
   if (!visible || isLoading) {
     return <></>;
@@ -256,7 +256,7 @@ export const ChatUI = ({
   return <ChatUIInner />;
 };
 
-const ChatUIInner = () => {
+export const ChatUIInner = () => {
   const [showOverlay, setShowOverlay] = useState(false);
 
   const { setIsExpanded, isExpanded } = useCopilotContext();

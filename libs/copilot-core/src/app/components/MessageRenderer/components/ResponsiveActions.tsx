@@ -7,6 +7,7 @@ import { useDebounce } from 'use-debounce';
 import { Button, Dropdown, Menu } from '@cognite/cogs.js';
 
 import { CopilotAction } from '../../../../lib/types';
+import { getContainer } from '../../../utils/getContainer';
 
 const getButtonWidth = (text: string) => text.length * 8 + 20;
 
@@ -69,6 +70,7 @@ export const ResponsiveActions = ({
         <Button
           size="small"
           key={item.content}
+          icon={item.icon}
           onClick={item.onClick}
           className="ai"
         >
@@ -77,6 +79,7 @@ export const ResponsiveActions = ({
       ))}
       {moreItems.length > 0 && (
         <Dropdown
+          appendTo={getContainer() || document.body}
           content={
             <Menu>
               {moreItems.map((item) => (

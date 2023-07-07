@@ -10,7 +10,7 @@ import { useCopilotContext } from '../../utils/CopilotContext';
 export const HistoryList = () => {
   const { data: chats } = useChats();
 
-  const { setCurrentChatId, setMode } = useCopilotContext();
+  const { setCurrentChatId, setMode, currentChatId } = useCopilotContext();
 
   const { mutate: deleteChat } = useDeleteChat();
 
@@ -25,6 +25,7 @@ export const HistoryList = () => {
           </Body>
           {value.map((chat) => (
             <ChatItemWrapper
+              $isSelected={currentChatId === chat.id}
               gap={16}
               alignItems="center"
               direction="row"
@@ -112,8 +113,11 @@ const groupChatsByTime = (items: Chat[] = []): { [key: string]: Chat[] } => {
   return groupedItems;
 };
 
-const ChatItemWrapper = styled(Flex)`
-  background: rgba(153, 137, 250, 0.08);
+const ChatItemWrapper = styled(Flex)<{ $isSelected?: boolean }>`
+  background: ${(props) =>
+    props.$isSelected
+      ? 'rgba(153, 137, 250, 0.18)'
+      : 'rgba(153, 137, 250, 0.08)'};
   transition: 0.3s all;
   padding: 16px;
   .cogs-avatar {
@@ -137,7 +141,7 @@ const ChatItemWrapper = styled(Flex)`
   }
 
   &&:hover {
-    background: rgba(153, 137, 250, 0.2);
+    background: rgba(153, 137, 250, 0.18);
     .delete-btn {
       opacity: 1;
     }

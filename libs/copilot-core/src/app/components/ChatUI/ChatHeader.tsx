@@ -3,13 +3,19 @@ import { Button, Flex, Title } from '@cognite/cogs.js';
 import { ReactComponent as CopilotIcon } from '../../../assets/CopilotIcon.svg';
 import { useCopilotContext } from '../../utils/CopilotContext';
 
-export const ChatHeader = ({ style }: { style?: React.CSSProperties }) => {
+export const ChatHeader = ({
+  style,
+  hideHistory,
+}: {
+  style?: React.CSSProperties;
+  hideHistory?: boolean;
+}) => {
   const { setMode, createNewChat, isExpanded, setIsExpanded, mode } =
     useCopilotContext();
   return (
     <Flex className="header" gap={6} alignItems="center" style={style}>
       <CopilotIcon
-        style={{ height: 16, width: 16, fill: 'rgba(0, 0, 0, 0.7)' }}
+        style={{ height: 20, width: 20, fill: 'rgba(0, 0, 0, 0.7)' }}
       />
       <Title level={5}>CogPilot</Title>
       <div style={{ flex: 1 }} />
@@ -23,13 +29,15 @@ export const ChatHeader = ({ style }: { style?: React.CSSProperties }) => {
           >
             New chat
           </Button>
-          <Button
-            size="small"
-            icon="History"
-            aria-label="history"
-            type="tertiary"
-            onClick={() => setMode('history')}
-          />
+          {!hideHistory && (
+            <Button
+              size="small"
+              icon="History"
+              aria-label="history"
+              type="tertiary"
+              onClick={() => setMode('history')}
+            />
+          )}
           <Button
             icon={isExpanded ? 'Collapse' : 'Expand'}
             type="tertiary"

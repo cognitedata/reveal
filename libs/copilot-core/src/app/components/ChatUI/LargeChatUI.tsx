@@ -3,7 +3,6 @@ import styled from 'styled-components/macro';
 
 import { Flex } from '@cognite/cogs.js';
 
-import { useCopilotContext } from '../../utils/CopilotContext';
 import zIndex from '../../utils/zIndex';
 import { actionRenderers } from '../ActionRenderer';
 import { messageRenderers } from '../MessageRenderer';
@@ -12,23 +11,44 @@ import { ChatHeader } from './ChatHeader';
 import { HistoryList } from './HistoryList';
 
 export const LargeChatUI = () => {
-  const { mode } = useCopilotContext();
   return (
     <LargeChatWrapper>
-      <ChatHeader style={{ paddingTop: 16, paddingBottom: 16 }} />
-      {mode === 'chat' ? (
-        <>
+      <ChatHeader style={{ paddingTop: 16, paddingBottom: 16 }} hideHistory />
+      <Flex style={{ flex: 1 }} gap={16}>
+        <div
+          style={{
+            overflow: 'auto',
+            width: 280,
+            height: '100%',
+            paddingRight: 16,
+            borderRight: '1px solid #e5e5e5',
+          }}
+        >
+          <HistoryList />
+        </div>
+        <div style={{ overflow: 'hidden', flex: 1 }}>
           <Flex
+            style={{
+              overflow: 'hidden',
+              height: '100%',
+            }}
             direction="column"
-            style={{ overflow: 'auto', marginBottom: 8, marginTop: 8, flex: 1 }}
           >
-            <BotUIMessageList renderer={messageRenderers} />
+            <Flex
+              direction="column"
+              style={{
+                overflow: 'auto',
+                marginBottom: 8,
+                marginTop: 8,
+                flex: 1,
+              }}
+            >
+              <BotUIMessageList renderer={messageRenderers} />
+            </Flex>
+            <BotUIAction renderer={actionRenderers} />
           </Flex>
-          <BotUIAction renderer={actionRenderers} />
-        </>
-      ) : (
-        <HistoryList />
-      )}
+        </div>
+      </Flex>
     </LargeChatWrapper>
   );
 };
@@ -38,7 +58,6 @@ const LargeChatWrapper = styled(Flex)`
   position: fixed;
   left: 0;
   right: 0;
-  max-width: 800px;
   height: 100vh;
   padding: 16px;
   display: flex;

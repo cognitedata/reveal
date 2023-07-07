@@ -90,6 +90,7 @@ export const TextAction = () => {
         <Button
           className="send-button"
           icon="Send"
+          disabled={!!waiting}
           onClick={() => {
             if (value) {
               bot.next({ content: value, type: 'text' });
@@ -105,6 +106,8 @@ export const TextAction = () => {
 
 const Wrapper = styled(Flex)`
   padding: 16px;
+  max-width: 800px;
+  margin: 0 auto;
 
   .send-button {
     position: absolute;
