@@ -12,9 +12,7 @@ export const getResourceId = (
   const { id, externalId } = resource;
 
   if (externalId) {
-    return {
-      externalId,
-    };
+    return { externalId };
   }
 
   return { id };

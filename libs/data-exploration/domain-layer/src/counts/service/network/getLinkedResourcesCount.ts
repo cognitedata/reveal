@@ -6,16 +6,19 @@ import {
 } from '@cognite/sdk';
 import { SdkResourceType } from '@cognite/sdk-react-query-hooks';
 
+import { convertIdEither } from '../utils';
+
 type Payload = {
   resourceType: SdkResourceType;
   resourceId: IdEither;
+  linkedResourceIds?: IdEither[];
 };
 
 export const getLinkedResourcesCount = (
   sdk: CogniteClient,
   payload: Payload
 ) => {
-  const { resourceId, resourceType } = payload;
+  const { resourceId, resourceType, linkedResourceIds } = payload;
 
   return sdk
     .post<CursorResponse<AggregateResponse[]>>(
@@ -28,6 +31,13 @@ export const getLinkedResourcesCount = (
           filter: {
             assetSubtreeIds: [resourceId],
           },
+          advancedFilter: linkedResourceIds
+            ? {
+                or: linkedResourceIds.map((linkedResourceId) =>
+                  convertIdEither('equals', linkedResourceId)
+                ),
+              }
+            : undefined,
         },
       }
     )

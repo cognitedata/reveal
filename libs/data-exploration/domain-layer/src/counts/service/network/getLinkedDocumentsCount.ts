@@ -1,18 +1,46 @@
-import { CogniteClient, IdEither } from '@cognite/sdk';
+import {
+  AggregateResponse,
+  CogniteClient,
+  CursorResponse,
+  IdEither,
+} from '@cognite/sdk';
 
-import { getDocumentsAggregateFilter } from '../utils';
+import { convertIdEither } from '../utils';
 
 type Payload = {
   resourceId: IdEither;
+  linkedResourceIds?: IdEither[];
 };
 
 export const getLinkedDocumentsCount = (
   sdk: CogniteClient,
   payload: Payload
 ) => {
-  const { resourceId } = payload;
+  const { resourceId, linkedResourceIds } = payload;
 
-  return sdk.documents.aggregate.count({
-    filter: getDocumentsAggregateFilter(resourceId),
-  });
+  return sdk
+    .post<CursorResponse<AggregateResponse[]>>(
+      `/api/v1/projects/${sdk.project}/documents/aggregate`,
+      {
+        headers: {
+          'cdf-version': 'alpha',
+        },
+        data: {
+          filter: convertIdEither('inAssetSubtree', resourceId),
+          advancedFilter: linkedResourceIds
+            ? {
+                or: linkedResourceIds.map((linkedResourceId) =>
+                  convertIdEither('equals', linkedResourceId)
+                ),
+              }
+            : undefined,
+        },
+      }
+    )
+    .then(({ data }) => {
+      return data.items[0].count;
+    })
+    .catch(() => {
+      return 0;
+    });
 };

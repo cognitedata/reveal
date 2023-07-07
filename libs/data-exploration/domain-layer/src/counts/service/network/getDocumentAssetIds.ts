@@ -1,6 +1,6 @@
 import { CogniteClient, IdEither } from '@cognite/sdk';
 
-import { getDocumentByIdFilter } from '../utils';
+import { convertIdEither } from '../utils';
 
 type Payload = {
   resourceId: IdEither;
@@ -11,7 +11,7 @@ export const getDocumentAssetIds = (sdk: CogniteClient, payload: Payload) => {
 
   return sdk.documents
     .list({
-      filter: getDocumentByIdFilter(resourceId),
+      filter: convertIdEither('equals', resourceId),
     })
     .then(({ items }) => {
       return items[0].assetIds || [];
