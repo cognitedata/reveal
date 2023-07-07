@@ -5,17 +5,17 @@ const EXISTANCE_OPERATORS = [Operator.IS_SET, Operator.IS_NOT_SET];
 export const files: DataTypeOption = {
   name: 'Files',
   fields: [
-    {
-      name: 'Data Set',
-      type: 'number',
-      operators: [
-        Operator.CONTAINS,
-        Operator.NOT_CONTAINS,
-        Operator.EQUALS,
-        Operator.NOT_EQUALS,
-        ...EXISTANCE_OPERATORS,
-      ],
-    },
+    // {
+    //   name: 'Data Set',
+    //   type: 'number',
+    //   operators: [
+    //     Operator.CONTAINS,
+    //     Operator.NOT_CONTAINS,
+    //     Operator.EQUALS,
+    //     Operator.NOT_EQUALS,
+    //     ...EXISTANCE_OPERATORS,
+    //   ],
+    // },
     {
       name: 'Asset',
       type: 'number',
