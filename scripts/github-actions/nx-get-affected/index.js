@@ -1,24 +1,29 @@
 const { execSync } = require('child_process');
 
-const { debug, setFailed, setOutput } = require('@actions/core');
+const { debug, setFailed, setOutput, getInput } = require('@actions/core');
 
 const run = async () => {
-
   try {
-    const json = await execSync(
-      `npx nx print-affected --base=origin/master --head=HEAD`,
-      {
-        encoding: 'utf-8',
-      }
-    );
+    const base = getInput('base') || 'origin/master';
+    const head = getInput('head') || 'HEAD';
+    const target = getInput('target') || 'build';
+    const type = getInput('type');
+
+    const projects = execSync(
+      `npx nx show projects --affected  --json --withTarget=${target} --base=${base} --head=${head} ${
+        type ? `--projects ${type}/*` : ''
+      }`
+      // `npx nx show projects --affected --json --withTarget=build`
+    ).toString('utf-8');
 
     // eslint-disable-next-line testing-library/no-debugging-utils
-    debug(`Output from NX: ${json}`);
+    debug(`Output from NX: ${projects}`);
+    //
+    const parsedOutput = JSON.parse(projects);
+    // setOutput('list', parsedOutput);
 
-    const parsedOutput = JSON.parse(json);
-
-    parsedOutput.projects.forEach((package) => {
-      setOutput(package, true);
+    parsedOutput.forEach((project) => {
+      // setOutput(project, true);
     });
   } catch (error) {
     if (error instanceof Error || typeof error === 'string') {
