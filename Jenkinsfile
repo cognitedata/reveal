@@ -417,38 +417,38 @@ pods {
               return
             }
 
-            deleteComments('[FUSION_PREVIEW_URL]')
-
-            for (int i = 0; i < projects.size(); i++) {
-              def project = projects[i];
-              def packageName = PREVIEW_PACKAGE_NAMES[project]
-
-              if (packageName == null) {
-                print "No preview available for: ${project}"
-                continue
-              }
-
-              dir("apps/${project}") {
-                // Run the yarn install in the app in cases of local packages.json file
-                if (fileExists("yarn.lock")) {
-                  yarn.setup()
-                }
-              }
-
-              stageWithNotify("Build and deploy PR for: ${project}") {
-                def prefix = "${jenkinsHelpersUtil.determineRepoName()}-${project}"
-                def domain = 'fusion-preview'
-                previewServer(
-                  repo: domain,
-                  prefix: prefix,
-                  buildCommand: "yarn build preview ${project}",
-                  buildFolder: "dist/apps/${project}",
-                )
-                deleteComments(PR_COMMENT_MARKER)
-                def url = "https://fusion-pr-preview.cogniteapp.com/?externalOverride=${packageName}&overrideUrl=https://${prefix}-${env.CHANGE_ID}.${domain}.preview.cogniteapp.com/index.js"
-                pullRequest.comment("[FUSION_PREVIEW_URL] Use cog-appdev as domain. Click here to preview: [$url]($url) for application ${project}<br><br>![AppBadge](https://img.shields.io/static/v1?label=Application&message=${project}&color=orange)")
-              }
-            }
+//             deleteComments('[FUSION_PREVIEW_URL]')
+//
+//             for (int i = 0; i < projects.size(); i++) {
+//               def project = projects[i];
+//               def packageName = PREVIEW_PACKAGE_NAMES[project]
+//
+//               if (packageName == null) {
+//                 print "No preview available for: ${project}"
+//                 continue
+//               }
+//
+//               dir("apps/${project}") {
+//                 // Run the yarn install in the app in cases of local packages.json file
+//                 if (fileExists("yarn.lock")) {
+//                   yarn.setup()
+//                 }
+//               }
+//
+//               stageWithNotify("Build and deploy PR for: ${project}") {
+//                 def prefix = "${jenkinsHelpersUtil.determineRepoName()}-${project}"
+//                 def domain = 'fusion-preview'
+//                 previewServer(
+//                   repo: domain,
+//                   prefix: prefix,
+//                   buildCommand: "yarn build preview ${project}",
+//                   buildFolder: "dist/apps/${project}",
+//                 )
+//                 deleteComments(PR_COMMENT_MARKER)
+//                 def url = "https://fusion-pr-preview.cogniteapp.com/?externalOverride=${packageName}&overrideUrl=https://${prefix}-${env.CHANGE_ID}.${domain}.preview.cogniteapp.com/index.js"
+//                 pullRequest.comment("[FUSION_PREVIEW_URL] Use cog-appdev as domain. Click here to preview: [$url]($url) for application ${project}<br><br>![AppBadge](https://img.shields.io/static/v1?label=Application&message=${project}&color=orange)")
+//               }
+//             }
           }
         },
 
