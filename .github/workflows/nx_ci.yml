@@ -79,7 +79,7 @@ jobs:
         id: find-affected-projects
         shell: bash
         run: | 
-          ROJECTS_BUILD=$(yarn nx show projects --affected --withTarget=build --json --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }})
+          PROJECTS_BUILD=$(yarn nx show projects --affected --withTarget=build --json --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }})
           echo $PROJECTS_BUILD
 
 #          echo "projects=$(yarn nx show projects --affected --withTarget=build --json --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }})" >> $GITHUB_OUTPUT
