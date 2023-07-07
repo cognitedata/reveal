@@ -69,7 +69,7 @@ const handleChainStart =
  * @example
  * ```ts
  * import { LLMChain } from "langchain/chains";
- * import { CogniteChatGPT} from "@fusion/copilot-core"
+ * import { CogniteChatGPT} from "@cognite/copilot-core"
  * import { PromptTemplate } from "langchain/prompts";
  *
  * const chain = new GraphQlChain({
