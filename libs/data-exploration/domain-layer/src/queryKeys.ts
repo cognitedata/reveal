@@ -288,12 +288,17 @@ export const queryKeys = {
 
   // Counts
   counts: () => [...queryKeys.all, 'counts'] as const,
-  linkedResourcesCount: (resourceType: string, resourceId: unknown) =>
+  linkedResourcesCount: (
+    resourceType: string,
+    resourceId: unknown,
+    linkedResourceIds?: unknown[]
+  ) =>
     [
       ...queryKeys.counts(),
       'linked-resources',
       resourceType,
       resourceId,
+      ...(linkedResourceIds || []),
     ] as const,
   assetIdsCount: (resourceType: string, resourceId: unknown) =>
     [...queryKeys.counts(), 'assets-ids', resourceType, resourceId] as const,

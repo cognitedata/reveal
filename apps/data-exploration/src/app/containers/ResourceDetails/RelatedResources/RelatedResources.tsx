@@ -15,14 +15,17 @@ import {
   AnnotatedWithTable,
   RelationshipFilters,
   useRelatedResourceResults,
+  useRelatedResourceCount,
 } from '@cognite/data-exploration';
 
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 import {
   useFlagDocumentsApiEnabled,
   useFlagFileCategorization,
+  useFlagNewCounts,
 } from '@data-exploration-app/hooks/flags';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
+import { addPlusSignToCount } from '@data-exploration-app/utils/stringUtils';
 import { RelationshipLabels, useTranslation } from '@data-exploration-lib/core';
 import { useRelatedResourcesCount } from '@data-exploration-lib/domain-layer';
 
@@ -44,27 +47,46 @@ export const RelatedResources = ({
   const [selectedType, setSelectedType] = useState<TypeOption>();
   const isGroupingFilesEnabled = useFlagFileCategorization();
   const isDocumentsApiEnabled = useFlagDocumentsApiEnabled();
+  const isNewCountsEnabled = useFlagNewCounts();
 
   const {
-    data: {
-      relationshipsCount,
-      assetIdsCount,
-      linkedResourcesCount,
-      annotationsCount,
-    },
-    isLoading,
-  } = useRelatedResourcesCount({
+    relationshipCount = 0,
+    linkedResourceCount = 0,
+    assetIdCount,
+    annotationCount,
+    hasMoreRelationships,
+    isFetched,
+  } = useRelatedResourceCount(parentResource, type, isDocumentsApiEnabled);
+
+  const { data: newCount, isLoading } = useRelatedResourcesCount({
     resource: parentResource,
     resourceType: type,
     isDocumentsApiEnabled,
   });
+
+  const relationshipsCount = isNewCountsEnabled
+    ? newCount.relationshipsCount
+    : relationshipCount;
+  const assetIdsCount = isNewCountsEnabled
+    ? newCount.assetIdsCount
+    : assetIdCount;
+  const linkedResourcesCount = isNewCountsEnabled
+    ? newCount.linkedResourcesCount
+    : linkedResourceCount;
+  const annotationsCount = isNewCountsEnabled
+    ? newCount.annotationsCount
+    : annotationCount;
 
   const resourceType = convertResourceType(type);
 
   const getRelatedResourceType = () => {
     let types: TypeOption[] = [
       {
-        label: `${t('RELATIONSHIPS', 'Relationships')} (${relationshipsCount})`,
+        label: `${t('RELATIONSHIPS', 'Relationships')} (${
+          isNewCountsEnabled
+            ? relationshipsCount
+            : addPlusSignToCount(relationshipCount, hasMoreRelationships)
+        })`,
         value: 'relationship',
         count: relationshipsCount,
       },
@@ -128,7 +150,7 @@ export const RelatedResources = ({
 
     // Should NOT set state when relatedResourceTypes changes!
     // eslint-disable-next-line
-    [isLoading, linkedResourcesCount]
+    [isLoading, isFetched, linkedResourcesCount]
   );
   const { relationshipLabelOptions, onChangeLabelValue, labelValue } =
     useRelatedResourceResults<RelationshipLabels>(

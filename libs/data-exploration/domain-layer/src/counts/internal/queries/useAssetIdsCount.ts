@@ -18,6 +18,7 @@ export const useAssetIdsCount = ({
     resourceId: getResourceId(resource),
     isDocumentsApiEnabled,
   });
+
   const count = data.length;
 
   return { data: count, isLoading };

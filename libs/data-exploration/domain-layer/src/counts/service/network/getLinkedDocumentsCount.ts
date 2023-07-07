@@ -1,3 +1,5 @@
+import head from 'lodash/head';
+
 import {
   AggregateResponse,
   CogniteClient,
@@ -38,7 +40,7 @@ export const getLinkedDocumentsCount = (
       }
     )
     .then(({ data }) => {
-      return data.items[0].count;
+      return head(data.items)?.count || 0;
     })
     .catch(() => {
       return 0;

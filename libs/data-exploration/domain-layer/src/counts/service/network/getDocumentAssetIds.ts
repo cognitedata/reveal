@@ -1,3 +1,5 @@
+import head from 'lodash/head';
+
 import { CogniteClient, IdEither } from '@cognite/sdk';
 
 import { convertIdEither } from '../utils';
@@ -14,6 +16,6 @@ export const getDocumentAssetIds = (sdk: CogniteClient, payload: Payload) => {
       filter: convertIdEither('equals', resourceId),
     })
     .then(({ items }) => {
-      return items[0].assetIds || [];
+      return head(items)?.assetIds || [];
     });
 };

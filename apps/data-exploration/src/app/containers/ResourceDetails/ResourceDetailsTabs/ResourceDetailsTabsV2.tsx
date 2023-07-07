@@ -2,19 +2,21 @@ import React, { useContext } from 'react';
 
 import styled from 'styled-components';
 
-import { getTabCountLabel } from '@data-exploration-components/utils';
+import { getChipRightPropsForResourceCounter } from '@data-exploration/containers';
 
 import { Tabs, TabProps } from '@cognite/cogs.js';
 import {
-  useRelatedResourceCounts,
   ResourceType,
   ResourceItem,
+  useRelatedResourceCounts,
+  getTabCountLabel,
 } from '@cognite/data-exploration';
 
 import { RelatedResources } from '@data-exploration-app/containers/ResourceDetails/RelatedResources/RelatedResources';
 import ResourceSelectionContext from '@data-exploration-app/context/ResourceSelectionContext';
 import {
-  useFlagAdvancedFilters,
+  useFlagDocumentsApiEnabled,
+  useFlagNewCounts,
   usePushJourney,
 } from '@data-exploration-app/hooks';
 import { addPlusSignToCount } from '@data-exploration-app/utils/stringUtils';
@@ -25,6 +27,7 @@ import {
   useTranslation,
   withThousandSeparator,
 } from '@data-exploration-lib/core';
+import { useTotalRelatedResourcesCounts } from '@data-exploration-lib/domain-layer';
 
 type ResouceDetailsTabsProps = {
   parentResource: ResourceItem & { title: string };
@@ -91,41 +94,65 @@ export const ResourceDetailsTabsV2 = ({
   onTabChange,
   style = {},
 }: ResouceDetailsTabsProps) => {
-  const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
-  const { counts, hasMoreRelationships } = useRelatedResourceCounts(
-    parentResource,
-    isAdvancedFiltersEnabled
-  );
+  const isDocumentsApiEnabled = useFlagDocumentsApiEnabled();
+  const isNewCountsEnabled = useFlagNewCounts();
+
+  const {
+    counts: oldCounts,
+    hasMoreRelationships,
+    isLoading: isOldCountsLoading,
+  } = useRelatedResourceCounts(parentResource, isDocumentsApiEnabled);
+
+  const { data: newCounts, isLoading: isNewCountsLoading } =
+    useTotalRelatedResourcesCounts({
+      resource: parentResource,
+      isDocumentsApiEnabled,
+    });
+
   const { t } = useTranslation();
+
+  const counts = isNewCountsEnabled ? newCounts : oldCounts;
+  const isLoading = isNewCountsEnabled
+    ? isNewCountsLoading
+    : isOldCountsLoading;
+
+  const getChipRightProps = (count: number, key: ResourceType) => {
+    if (isNewCountsEnabled) {
+      return getChipRightPropsForResourceCounter(
+        count,
+        isLoading[key] || false
+      );
+    }
+
+    return {
+      chipRight: {
+        label: isDocumentsApiEnabled
+          ? getTabCountLabel(count)
+          : addPlusSignToCount(formatNumber(count), hasMoreRelationships[key]!),
+        size: 'x-small',
+        tooltipProps: { content: withThousandSeparator(count, ',') },
+      },
+    };
+  };
 
   const filteredTabs = defaultRelationshipTabs.filter(
     (type) => !excludedTypes.includes(type)
   );
 
-  const getCountLabel = (count: number, key: ResourceType) => {
-    return isAdvancedFiltersEnabled
-      ? getTabCountLabel(count)
-      : addPlusSignToCount(formatNumber(count), hasMoreRelationships[key]!);
-  };
-
   const relationshipTabs = filteredTabs.map((key) => {
-    const totalCount = counts[key] || 0;
-    const titleTranslationKey = `${key}_${getTranslationEntry(totalCount)}`;
+    const count = counts[key] || 0;
+    const isCountLoading = isLoading[key] || false;
+    const titleTranslationKey = `${key}_${getTranslationEntry(count)}`;
 
-    const title = getTitle(key, totalCount !== 1);
-    const titleTranslated = t(titleTranslationKey, title, {
-      count: totalCount,
-    });
+    const title = getTitle(key, isCountLoading || count !== 1);
+    const titleTranslated = t(titleTranslationKey, title, { count });
+
     return (
       <Tabs.Tab
+        {...getChipRightProps(count, key)}
         tabKey={key}
         key={key}
         label={titleTranslated}
-        chipRight={{
-          label: getCountLabel(totalCount, key),
-          size: 'x-small',
-          tooltipProps: { content: withThousandSeparator(totalCount, ',') },
-        }}
       >
         <ResourceDetailTabContent
           resource={parentResource}
@@ -134,6 +161,7 @@ export const ResourceDetailsTabsV2 = ({
       </Tabs.Tab>
     );
   });
+
   const tabs = [...additionalTabs, ...relationshipTabs];
 
   return (

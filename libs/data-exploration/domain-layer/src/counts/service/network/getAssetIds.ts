@@ -1,3 +1,5 @@
+import head from 'lodash/head';
+
 import { CogniteClient, CursorResponse, IdEither } from '@cognite/sdk';
 import { SdkResourceType } from '@cognite/sdk-react-query-hooks';
 
@@ -31,7 +33,7 @@ export const getAssetIds = <T extends BaseCdfItemProps>(
       }
     )
     .then(({ data }) => {
-      const item = data.items[0];
+      const item = head(data.items);
 
       if (item?.assetId) {
         return [item.assetId];
