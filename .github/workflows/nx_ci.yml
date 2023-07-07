@@ -90,11 +90,14 @@ jobs:
 
       - name: 'Print affected projects: BUILD'
         id: find-affected-projects
-        run: echo "::set-output name=projects::$(yarn nx print-affected --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }} --select=projects --target=build)"
-      #        run: echo "projects=$(yarn nx print-affected --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }} --select=projects --target=build)" >> "$GITHUB_OUTPUT"
+        run: |
+          echo "::set-output name=projects::$(yarn nx show projects --affected --withTarget=build --json --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }})"
+          echo "projects2=$(yarn nx show projects --affected --withTarget=build --json --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }})" >> "$GITHUB_OUTPUT"
 
       - name: Show affected projects for build
-        run: echo "${{ steps.find-affected-projects.outputs.projects }}"
+        run: |
+          echo "${{ fromJson(steps.find-affected-projects.outputs.projects) }}"
+          echo "${{ fromJson(steps.find-affected-projects.outputs.projects2) }}"
   #        run: |
   #          echo "::set-env name=AFFECTED_PROJECTS_BUILD::$(yarn nx print-affected --base=origin/main --head=HEAD --select=projects --target=build)"
   #          echo "Affected projects for lint: ${{env.AFFECTED_PROJECTS_BUILD}}"
@@ -110,7 +113,7 @@ jobs:
     steps:
       - name: Print
         run: |
-          echo ${{ needs.print-affected.outputs.build }}
+          echo ${{ fromJson(needs.print-affected.outputs.build )}}
 
 #  build:
 #    runs-on: ubuntu-20.04
