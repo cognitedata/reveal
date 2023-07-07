@@ -2,9 +2,8 @@ import { useState } from 'react';
 
 import styled from 'styled-components/macro';
 
-import type { DrawerProps } from '@cognite/cogs.js';
-import { Drawer, Graphic } from '@cognite/cogs.js';
-import { Button } from '@cognite/cogs.js-v9';
+import type { DrawerProps } from '@cognite/cogs.js-v9';
+import { Button, CogniteLogo, Drawer, Flex } from '@cognite/cogs.js-v9';
 
 interface InfoDrawerProps extends React.PropsWithChildren<DrawerProps> {
   buttonTitle?: string;
@@ -30,7 +29,11 @@ export function InfoDrawer({
         {buttonTitle}
       </Button>
       <Drawer
-        footer={<FooterGraphic type="Cognite" />}
+        footer={
+          <Flex justifyContent="center">
+            <CogniteLogo type="logomark" />
+          </Flex>
+        }
         okText="Close"
         visible={isVisible}
         width={420}
@@ -57,8 +60,4 @@ const InfoDrawerContainer = styled.div`
       }
     }
   }
-`;
-
-const FooterGraphic = styled(Graphic)`
-  margin: 0 auto;
 `;

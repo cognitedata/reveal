@@ -2,8 +2,14 @@ import React from 'react';
 import { Link, useMatch } from 'react-location';
 import { useSelector } from 'react-redux';
 
-import { Dropdown, Menu } from '@cognite/cogs.js';
-import { Button, Chip, Icon, Skeleton } from '@cognite/cogs.js-v9';
+import {
+  Button,
+  Chip,
+  Divider,
+  Dropdown,
+  Menu,
+  Skeleton,
+} from '@cognite/cogs.js-v9';
 import type { CalculationRun } from '@cognite/simconfig-api-sdk/rtk';
 import { useGetCalculationQuery } from '@cognite/simconfig-api-sdk/rtk';
 
@@ -111,11 +117,11 @@ function ExpansionMenu({ run }: { run: CalculationRun }) {
   return (
     <Menu>
       <Link to={createCdfLink(`${run.id}`)}>
-        <Menu.Item>
-          <Icon type="Info" /> Calculation run details
+        <Menu.Item icon="Info" iconPlacement="left">
+          Calculation run details
         </Menu.Item>
       </Link>
-      <Menu.Divider />
+      <Divider />
       {isFetchingChartLinks ? (
         <Menu.Item>
           <Skeleton.Text />
@@ -126,12 +132,12 @@ function ExpansionMenu({ run }: { run: CalculationRun }) {
           rel="noreferrer"
           target="_blank"
         >
-          <Menu.Item>
-            <Icon type="LineChart" /> Open timeseries in Charts
+          <Menu.Item icon="LineChart" iconPlacement="left">
+            Open timeseries in Charts
           </Menu.Item>
         </a>
       )}
-      <Menu.Divider />
+      <Divider />
       <Link
         to={createCdfLink(
           `/model-library/models/${encodeURIComponent(
@@ -139,8 +145,8 @@ function ExpansionMenu({ run }: { run: CalculationRun }) {
           )}/${encodeURIComponent(run.metadata.modelName)}`
         )}
       >
-        <Menu.Item>
-          <Icon type="DataSource" /> View model
+        <Menu.Item icon="DataSource" iconPlacement="left">
+          View model
         </Menu.Item>
       </Link>
       <Link
@@ -151,8 +157,8 @@ function ExpansionMenu({ run }: { run: CalculationRun }) {
         )}/calculations/${encodeURIComponent(run.metadata.calcType)}
         /${run.metadata.calcType === 'UserDefined' ? calculationType : ''}`)}
       >
-        <Menu.Item>
-          <Icon type="Settings" /> View configuration
+        <Menu.Item icon="Settings" iconPlacement="left">
+          View configuration
         </Menu.Item>
       </Link>
     </Menu>

@@ -2,10 +2,15 @@
 // @ts-nocheck
 
 import { useGlobalStyles } from '@cognite/cdf-utilities';
-import { Dropdown as CogsDropdown, DateRange, Drawer } from '@cognite/cogs.js';
-import { Tooltip as CogsTooltip, Loader, Modal } from '@cognite/cogs.js-v9';
+import {
+  Dropdown as CogsDropdown,
+  Tooltip as CogsTooltip,
+  DateRange,
+  Drawer,
+  Loader,
+  Modal,
+} from '@cognite/cogs.js-v9';
 import cogs9Styles from '@cognite/cogs.js-v9/dist/cogs.css';
-import cogsStyles from '@cognite/cogs.js/dist/cogs-without-fonts.css';
 
 const STYLE_SCOPE = 'cdf-simint-ui-style-scope';
 
@@ -52,7 +57,7 @@ export default function GlobalStyles({
 }: {
   children: React.ReactNode;
 }) {
-  const didLoadStyles = useGlobalStyles([cogsStyles, cogs9Styles]);
+  const didLoadStyles = useGlobalStyles([cogs9Styles]);
 
   if (!didLoadStyles) {
     return <Loader />;

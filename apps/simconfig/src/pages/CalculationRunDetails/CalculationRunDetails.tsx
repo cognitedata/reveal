@@ -7,9 +7,14 @@ import { ParentSizeModern } from '@visx/responsive';
 
 import styled from 'styled-components/macro';
 
-import { Graphic } from '@cognite/cogs.js';
 import type { OptionType } from '@cognite/cogs.js-v9';
-import { Button, Collapse, Skeleton, toast } from '@cognite/cogs.js-v9';
+import {
+  Button,
+  Collapse,
+  Illustrations,
+  Skeleton,
+  toast,
+} from '@cognite/cogs.js-v9';
 import type { CogniteEvent, Sequence } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 import type {
@@ -280,7 +285,7 @@ export function CalculationRunDetails() {
 
     return (
       <NoResultContainer>
-        <Graphic type="Search" />
+        <Illustrations.Solo type="EmptyStateSearch" />
         <p>No data available.</p>
       </NoResultContainer>
     );

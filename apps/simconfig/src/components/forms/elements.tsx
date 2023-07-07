@@ -1,8 +1,7 @@
 import { Field, useFormikContext } from 'formik';
 import styled from 'styled-components/macro';
 
-import { Slider, TextInput } from '@cognite/cogs.js';
-import { Input, SegmentedControl } from '@cognite/cogs.js-v9';
+import { Input, SegmentedControl, Slider } from '@cognite/cogs.js-v9';
 
 import { getNodeFromPath } from 'utils/formUtils';
 
@@ -24,7 +23,7 @@ export const FormContainer = styled.div`
   row-gap: 12px;
 `;
 
-export const NumberInput = styled(TextInput)`
+export const NumberInput = styled(Input)`
   width: ${(props) => props.width ?? 100}px;
   .title:empty {
     display: none;

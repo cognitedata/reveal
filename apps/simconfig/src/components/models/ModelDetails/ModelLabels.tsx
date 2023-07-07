@@ -3,13 +3,14 @@ import { useSelector } from 'react-redux';
 
 import styled from 'styled-components/macro';
 
-import { Dropdown, Menu } from '@cognite/cogs.js';
 import {
   Button,
   Chip,
   ChipGroup,
+  Dropdown,
   Icon,
   Input,
+  Menu,
   toast,
 } from '@cognite/cogs.js-v9';
 import type { LabelDetails, ModelFile } from '@cognite/simconfig-api-sdk/rtk';
@@ -148,7 +149,7 @@ export function ModelLabels({
                 icon="Search"
                 iconPlacement="left"
                 style={{
-                  width: 179,
+                  width: '100%',
                 }}
                 value={searchTerm}
                 onChange={(ev) => {

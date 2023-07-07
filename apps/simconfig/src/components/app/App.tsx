@@ -6,8 +6,7 @@ import GlobalStyles from 'global-styles';
 import { routes } from 'routes';
 import styled from 'styled-components/macro';
 
-import { ToastContainer } from '@cognite/cogs.js';
-import { Loader } from '@cognite/cogs.js-v9';
+import { Loader, ToastContainer } from '@cognite/cogs.js-v9';
 import { FlagProvider } from '@cognite/react-feature-flags';
 import { useSDK } from '@cognite/sdk-provider';
 

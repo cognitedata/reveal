@@ -5,11 +5,13 @@ import { useSelector } from 'react-redux';
 import { parseISO } from 'date-fns';
 import styled from 'styled-components/macro';
 
-import { Dropdown, Graphic, Menu } from '@cognite/cogs.js';
 import {
   Button,
   Chip,
-  Icon,
+  Divider,
+  Dropdown,
+  Illustrations,
+  Menu,
   Skeleton,
   Tooltip,
   toast,
@@ -298,9 +300,10 @@ export function CalculationList({
           (calculation) =>
             calculation.configuration.calculationType !== 'UserDefined'
         );
+
     return !configuredCalculations.length ? (
       <GraphicContainer>
-        <Graphic type="RuleMonitoring" /> No configured calculations
+        <Illustrations.Solo type="EmptyStateFile" /> No configured calculations
       </GraphicContainer>
     ) : (
       <ConfiguredCalculationList>
@@ -402,6 +405,8 @@ export function CalculationList({
                 content={
                   <Menu>
                     <Menu.Item
+                      icon="Info"
+                      iconPlacement="left"
                       onClick={() => {
                         if (calculation.configuration.calcTypeUserDefined) {
                           navigate({
@@ -424,9 +429,11 @@ export function CalculationList({
                         }
                       }}
                     >
-                      <Icon type="Info" /> Calculation details
+                      Calculation details
                     </Menu.Item>
                     <Menu.Item
+                      icon="History"
+                      iconPlacement="left"
                       onClick={() => {
                         const { modelName, simulator, calculationType } =
                           calculation.configuration;
@@ -453,10 +460,12 @@ export function CalculationList({
                         });
                       }}
                     >
-                      <Icon type="History" /> Calculation run history
+                      Calculation run history
                     </Menu.Item>
-                    <Menu.Divider />
+                    <Divider />
                     <Menu.Item
+                      icon="Settings"
+                      iconPlacement="left"
                       onClick={() => {
                         trackUsage(TRACKING_EVENTS.MODEL_CALC_EDIT, {
                           modelName: decodeURI(modelName),
@@ -485,16 +494,18 @@ export function CalculationList({
                         }
                       }}
                     >
-                      <Icon type="Settings" /> Edit configuration
+                      Edit configuration
                     </Menu.Item>
                     {isDeleteEnabled ? (
                       <Menu.Item
+                        icon="Delete"
+                        iconPlacement="left"
                         onClick={() => {
                           setConfirmDeleteCalucation(calculation);
                           setIsDeleteConfirmModalOpen(true);
                         }}
                       >
-                        <Icon type="Delete" /> Delete configuration
+                        Delete configuration
                       </Menu.Item>
                     ) : undefined}
                   </Menu>
@@ -521,7 +532,8 @@ export function CalculationList({
 
   return !nonConfiguredCalculations.length ? (
     <GraphicContainer>
-      <Graphic type="RuleCreating" /> No non-configured calculations
+      <Illustrations.Solo type="EmptyStateFile" /> No non-configured
+      calculations
     </GraphicContainer>
   ) : (
     <NonConfiguredCalculationList>

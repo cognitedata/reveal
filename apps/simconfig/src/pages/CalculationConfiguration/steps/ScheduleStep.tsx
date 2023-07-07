@@ -4,10 +4,11 @@ import { Calendar } from 'react-date-range';
 import { getDate, getMonth, getYear, set } from 'date-fns';
 import { Field, useFormikContext } from 'formik';
 
-import { Dropdown, Menu } from '@cognite/cogs.js';
 import {
   Colors,
+  Dropdown,
   Input,
+  Menu,
   type OptionType,
   Select,
   Switch,

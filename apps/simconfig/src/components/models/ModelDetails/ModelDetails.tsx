@@ -4,8 +4,17 @@ import { useSelector } from 'react-redux';
 
 import styled from 'styled-components/macro';
 
-import { Dropdown, Menu, SegmentedControl, Tabs } from '@cognite/cogs.js';
-import { Button, Chip, Icon, Skeleton, toast } from '@cognite/cogs.js-v9';
+import {
+  Button,
+  Chip,
+  Dropdown,
+  Icon,
+  Menu,
+  SegmentedControl,
+  Skeleton,
+  Tabs,
+  toast,
+} from '@cognite/cogs.js-v9';
 import type { ExternalId, Simulator } from '@cognite/simconfig-api-sdk/rtk';
 import {
   useDeleteModelFileMutation,
@@ -122,22 +131,77 @@ export function ModelDetails({
     throw new Error('No model file returned from backend');
   }
 
-  const extraContent: Record<string, JSX.Element | undefined> = {
-    calculations: (
-      <SegmentedControl
-        currentKey={showCalculations}
-        size="small"
-        onButtonClicked={setShowCalculations}
-      >
-        <SegmentedControl.Button key="configured">
-          Configured
-        </SegmentedControl.Button>
-        <SegmentedControl.Button key="not-configured">
-          Not configured
-        </SegmentedControl.Button>
-      </SegmentedControl>
-    ),
-  };
+  const tabs = [
+    {
+      icon: 'History',
+      label: 'Model versions',
+      key: 'model-versions',
+      content: (
+        <ModelVersionList
+          modelName={modelFile.metadata.modelName}
+          simulator={modelFile.metadata.simulator}
+        />
+      ),
+    },
+  ];
+
+  if (simulatorConfigDetails?.isCalculationsEnabled) {
+    tabs.push({
+      icon: 'Function',
+      label: 'Calculation',
+      key: 'calculations',
+      content: (
+        <>
+          <SegmentedControl
+            css={{ marginBottom: '24px' }}
+            currentKey={showCalculations}
+            size="small"
+            onButtonClicked={setShowCalculations}
+          >
+            <SegmentedControl.Button key="configured">
+              Configured
+            </SegmentedControl.Button>
+            <SegmentedControl.Button key="not-configured">
+              Not configured
+            </SegmentedControl.Button>
+          </SegmentedControl>
+          <CalculationList
+            modelName={modelName}
+            showConfigured={showCalculations === 'configured'}
+            simulator={simulator}
+          />
+        </>
+      ),
+    });
+  }
+
+  if (selectedTab === 'new-version') {
+    tabs.push({
+      icon: 'Add',
+      label: 'New version',
+      key: 'new-version',
+      content: (
+        <ModelForm
+          initialModelFormState={{
+            fileInfo: {
+              ...modelFile,
+            },
+            metadata: {
+              ...modelFile.metadata,
+            },
+            boundaryConditions: [],
+            labels: [],
+            availableBoundaryConditions:
+              modelFile.availableBoundaryConditions ?? [],
+          }}
+          onUpload={() => {
+            navigate({ to: '../model-versions' });
+            // TODO(SIM-209): Invalidate model list
+          }}
+        />
+      ),
+    });
+  }
 
   return (
     <ModelDetailsContainer>
@@ -196,11 +260,13 @@ export function ModelDetails({
               content={
                 <Menu>
                   <Menu.Item
+                    icon="Delete"
+                    iconPlacement="left"
                     onClick={() => {
                       setShouldShowDeleteConfirmModal(true);
                     }}
                   >
-                    <Icon type="Delete" /> Delete model
+                    Delete model
                   </Menu.Item>
                 </Menu>
               }
@@ -252,8 +318,8 @@ export function ModelDetails({
       </div>
       <Tabs
         activeKey={selectedTab}
-        tabBarExtraContent={extraContent[selectedTab] ?? null}
-        onChange={(tab) => {
+        // tabBarExtraContent={extraContent[selectedTab] ?? null}
+        onTabClick={(tab) => {
           trackUsage(TRACKING_EVENTS.MODEL_CALC_LIST, {
             simulator,
             modelName: decodeURI(modelName),
@@ -267,65 +333,16 @@ export function ModelDetails({
           });
         }}
       >
-        <Tabs.TabPane
-          key="model-versions"
-          tab={
-            <>
-              <Icon type="History" /> Model versions
-            </>
-          }
-        >
-          <ModelVersionList
-            modelName={modelFile.metadata.modelName}
-            simulator={modelFile.metadata.simulator}
-          />
-        </Tabs.TabPane>
-        {simulatorConfigDetails?.isCalculationsEnabled ? (
-          <Tabs.TabPane
-            key="calculations"
-            tab={
-              <>
-                <Icon type="Function" /> Calculations
-              </>
-            }
+        {tabs.map((tab) => (
+          <Tabs.Tab
+            iconLeft={tab.icon}
+            key={tab.key}
+            label={tab.label}
+            tabKey={tab.key}
           >
-            <CalculationList
-              modelName={modelName}
-              showConfigured={showCalculations === 'configured'}
-              simulator={simulator}
-            />
-          </Tabs.TabPane>
-        ) : null}
-
-        {selectedTab === 'new-version' && (
-          <Tabs.TabPane
-            key="new-version"
-            tab={
-              <>
-                <Icon type="Add" /> New version
-              </>
-            }
-          >
-            <ModelForm
-              initialModelFormState={{
-                fileInfo: {
-                  ...modelFile,
-                },
-                metadata: {
-                  ...modelFile.metadata,
-                },
-                boundaryConditions: [],
-                labels: [],
-                availableBoundaryConditions:
-                  modelFile.availableBoundaryConditions ?? [],
-              }}
-              onUpload={() => {
-                navigate({ to: '../model-versions' });
-                // TODO(SIM-209): Invalidate model list
-              }}
-            />
-          </Tabs.TabPane>
-        )}
+            <div style={{ padding: '24px 24px 24px 0' }}>{tab.content}</div>
+          </Tabs.Tab>
+        ))}
       </Tabs>
       <DeleteConfirmModal
         handleModalConfirm={handleDeleteModelConfirm}

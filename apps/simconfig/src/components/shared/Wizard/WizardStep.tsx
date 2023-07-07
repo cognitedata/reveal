@@ -1,6 +1,6 @@
 import { TabPane } from 'rc-tabs';
 
-import type { IconType } from '@cognite/cogs.js';
+import type { IconType } from '@cognite/cogs.js-v9';
 
 import type { TabPaneProps } from 'rc-tabs';
 

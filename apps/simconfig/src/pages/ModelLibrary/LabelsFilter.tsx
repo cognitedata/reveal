@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux';
 
-import { AutoComplete } from '@cognite/cogs.js';
+import { AutoComplete } from '@cognite/cogs.js-v9';
 import { useGetLabelsListQuery } from '@cognite/simconfig-api-sdk/rtk';
 
 import { selectProject } from 'store/simconfigApiProperties/selectors';

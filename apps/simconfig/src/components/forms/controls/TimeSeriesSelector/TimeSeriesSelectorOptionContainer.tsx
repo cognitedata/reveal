@@ -2,7 +2,7 @@ import type { GroupTypeBase, Props } from 'react-select';
 
 import styled from 'styled-components/macro';
 
-import { Title } from '@cognite/cogs.js';
+import { Title } from '@cognite/cogs.js-v9';
 import type { OptionProps, OptionType } from '@cognite/cogs.js-v9';
 
 import type { TimeseriesOption } from './types';

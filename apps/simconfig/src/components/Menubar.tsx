@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useMatchRoute, useNavigate } from 'react-location';
 import { useSelector } from 'react-redux';
 
-import { TopBar } from '@cognite/cogs.js';
+import { TopBar } from '@cognite/cogs.js-v9';
 
 import { SimulatorStatus } from 'components/simulator/SimulatorStatus';
 import { selectIsLabelsEnabled } from 'store/capabilities/selectors';
@@ -19,44 +19,46 @@ export function MenuBar() {
   const isLabelsEnabled = useSelector(selectIsLabelsEnabled);
 
   return (
-    <TopBar data-cy="top-bar">
-      {isLabelsEnabled && <LabelsModal isOpen={isOpen} setOpen={setOpen} />}
-      <TopBar.Left>
-        <TopBar.Navigation
-          links={[
-            {
-              name: 'Model library',
-              isActive: !!matchRoute({
-                to: '/simint/model-library',
-                fuzzy: true,
-              }),
-              onClick: () => {
-                navigate({
-                  to: createCdfLink('/model-library'),
-                });
+    <div data-cy="top-bar">
+      <TopBar>
+        {isLabelsEnabled && <LabelsModal isOpen={isOpen} setOpen={setOpen} />}
+        <TopBar.Left>
+          <TopBar.Navigation
+            links={[
+              {
+                name: 'Model library',
+                isActive: !!matchRoute({
+                  to: '/simint/model-library',
+                  fuzzy: true,
+                }),
+                onClick: () => {
+                  navigate({
+                    to: createCdfLink('/model-library'),
+                  });
+                },
               },
-            },
-            {
-              name: 'Run browser',
-              isActive: !!matchRoute({
-                to: '/simint/calculations/runs',
-                fuzzy: true,
-              }),
-              onClick: () => {
-                trackUsage(TRACKING_EVENTS.RUN_BROWSER_VIEW, {});
-                navigate({
-                  to: createCdfLink('/calculations/runs'),
-                });
+              {
+                name: 'Run browser',
+                isActive: !!matchRoute({
+                  to: '/simint/calculations/runs',
+                  fuzzy: true,
+                }),
+                onClick: () => {
+                  trackUsage(TRACKING_EVENTS.RUN_BROWSER_VIEW, {});
+                  navigate({
+                    to: createCdfLink('/calculations/runs'),
+                  });
+                },
               },
-            },
-          ]}
-        />
-      </TopBar.Left>
-      <TopBar.Right>
-        <div className="cogs-topbar--item" style={{ padding: '0 24px' }}>
-          <SimulatorStatus />
-        </div>
-      </TopBar.Right>
-    </TopBar>
+            ]}
+          />
+        </TopBar.Left>
+        <TopBar.Right>
+          <div className="cogs-topbar--item" style={{ padding: '0 24px' }}>
+            <SimulatorStatus />
+          </div>
+        </TopBar.Right>
+      </TopBar>
+    </div>
   );
 }

@@ -2,8 +2,7 @@ import type { ChangeEvent, DragEvent } from 'react';
 
 import styled from 'styled-components/macro';
 
-import { Flex } from '@cognite/cogs.js';
-import { Icon } from '@cognite/cogs.js-v9';
+import { Flex, Icon } from '@cognite/cogs.js-v9';
 
 import { getFileExtensionFromFileName } from 'utils/formUtils';
 
