@@ -96,7 +96,7 @@ jobs:
 
       - name: Show affected projects for build
         run: |
-          echo "${{ fromJson(steps.find-affected-projects.outputs.projects) }}"
+          echo "${{ steps.find-affected-projects.outputs.projects }}"
 #          echo "${{ fromJson(steps.find-affected-projects.outputs.projects2) }}"
   #        run: |
   #          echo "::set-env name=AFFECTED_PROJECTS_BUILD::$(yarn nx print-affected --base=origin/main --head=HEAD --select=projects --target=build)"
@@ -113,7 +113,7 @@ jobs:
     steps:
       - name: Print
         run: |
-          echo ${{ fromJson(needs.print-affected.outputs.build )}}
+          echo ${{ needs.print-affected.outputs.build }}
 
 #  build:
 #    runs-on: ubuntu-20.04
