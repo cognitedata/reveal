@@ -10,6 +10,8 @@ import {
 } from '../../../lib/types';
 import { useDataModel, useDataModels } from '../../hooks/useDataModels';
 
+import { MessageBase } from './MessageBase';
+
 const CustomOption = ({
   innerRef,
   innerProps,
@@ -79,63 +81,65 @@ export const DataModelMessage = ({
     [dataModelVersions]
   );
   return (
-    <Flex direction="column" gap={4}>
-      <Body level={2}>{message.content}</Body>
-      <Select
-        label="Select data model"
-        menuPortalTarget={document.body}
-        components={{ Option: CustomOption }}
-        disabled={!message.pending}
-        value={
-          message.dataModel
-            ? dataModelOptions.find((el) => el.value === message.dataModel)
-            : undefined
-        }
-        options={dataModelOptions}
-        onChange={({
-          value,
-          version,
-          space,
-        }: {
-          value: string;
-          space: string;
-          version: string;
-        }) => {
-          updateMessage(key, {
-            ...message,
-            dataModel: value,
-            space,
-            version,
-          });
-        }}
-      />
-      {message.dataModel && (
+    <MessageBase message={{ source: 'bot', content: message.content }}>
+      <Flex direction="column">
+        <Body level={2}>{message.content}</Body>
         <Select
-          label="Select version"
-          menuPortalTarget={document.body!}
+          label="Select data model"
+          menuPortalTarget={document.body}
+          components={{ Option: CustomOption }}
           disabled={!message.pending}
           value={
-            message.version
-              ? { label: message.version, value: message.version }
+            message.dataModel
+              ? dataModelOptions.find((el) => el.value === message.dataModel)
               : undefined
           }
-          options={versionOptions}
-          onChange={({ value }: { value: string }) => {
-            updateMessage(key, { ...message, version: value });
+          options={dataModelOptions}
+          onChange={({
+            value,
+            version,
+            space,
+          }: {
+            value: string;
+            space: string;
+            version: string;
+          }) => {
+            updateMessage(key, {
+              ...message,
+              dataModel: value,
+              space,
+              version,
+            });
           }}
         />
-      )}
-      {message.pending && (
-        <Button
-          onClick={() => {
-            updateMessage(key, { ...message, pending: false });
-          }}
-          disabled={!(message.version && message.dataModel && message.space)}
-        >
-          Confirm
-        </Button>
-      )}
-    </Flex>
+        {message.dataModel && (
+          <Select
+            label="Select version"
+            menuPortalTarget={document.body!}
+            disabled={!message.pending}
+            value={
+              message.version
+                ? { label: message.version, value: message.version }
+                : undefined
+            }
+            options={versionOptions}
+            onChange={({ value }: { value: string }) => {
+              updateMessage(key, { ...message, version: value });
+            }}
+          />
+        )}
+        {message.pending && (
+          <Button
+            onClick={() => {
+              updateMessage(key, { ...message, pending: false });
+            }}
+            disabled={!(message.version && message.dataModel && message.space)}
+          >
+            Confirm
+          </Button>
+        )}
+      </Flex>
+    </MessageBase>
   );
 };
 

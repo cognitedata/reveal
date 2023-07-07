@@ -25,11 +25,8 @@ import {
   cachedListeners,
   sendToCopilotEvent,
 } from '../../../lib/utils';
-import {
-  getFromCache,
-  useFromCache,
-  useSaveToCache,
-} from '../../hooks/useCache';
+import { getChatHistory, useSaveChat } from '../../hooks/useChatHistory';
+import { useCopilotContext } from '../../utils/CopilotContext';
 import zIndex from '../../utils/zIndex';
 
 import { LargeChatUI } from './LargeChatUI';
@@ -37,12 +34,10 @@ import { SmallChatUI } from './SmallChatUI';
 
 export const ChatUI = ({
   visible,
-  onClose,
   feature,
   excludeChains,
 }: {
   visible: boolean;
-  onClose: () => void;
   feature?: CopilotSupportedFeatureType;
   excludeChains: CogniteChainName[];
 }) => {
@@ -55,8 +50,9 @@ export const ChatUI = ({
   const messages = useRef<CopilotMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const { mutate: setChatHistory } =
-    useSaveToCache<CopilotMessage[]>('CHAT_HISTORY');
+  const { currentChatId } = useCopilotContext();
+
+  const { mutate: setChatHistory } = useSaveChat(currentChatId);
 
   const model = useMemo(() => new CogniteChatGPT(sdk), [sdk]);
 
@@ -175,11 +171,8 @@ export const ChatUI = ({
   ]);
 
   const setupMessages = useCallback(
-    async (newMessages?: CopilotMessage[]) => {
-      setIsLoading(true);
-      const cachedMessages =
-        newMessages ||
-        (await getFromCache<CopilotMessage[]>(sdk.project, 'CHAT_HISTORY'));
+    async (newMessages: CopilotMessage[]) => {
+      const cachedMessages = newMessages;
       messages.current = [];
       messages.current.push(...(cachedMessages || []));
       await bot.message.removeAll();
@@ -235,7 +228,6 @@ export const ChatUI = ({
       } else {
         promptUser();
       }
-      setIsLoading(false);
     },
     [
       promptUser,
@@ -249,73 +241,196 @@ export const ChatUI = ({
   );
 
   useEffect(() => {
-    setupMessages();
-  }, [setupMessages]);
+    (async () => {
+      setIsLoading(true);
+      setupMessages(
+        (await getChatHistory(sdk.project, currentChatId))?.history || []
+      );
+      setTimeout(() => setIsLoading(false), 100);
+    })();
+  }, [currentChatId, sdk.project, setupMessages]);
 
   if (!visible || isLoading) {
     return <></>;
   }
-  return <ChatUIInner onClose={onClose} setupMessages={setupMessages} />;
+  return <ChatUIInner />;
 };
 
-const ChatUIInner = ({
-  onClose,
-  setupMessages,
-}: {
-  onClose: () => void;
-  chains?: string[];
-  setupMessages: (messages: CopilotMessage[]) => void;
-}) => {
+export const ChatUIInner = () => {
   const [showOverlay, setShowOverlay] = useState(false);
-  const { data: isExpanded = false } =
-    useFromCache<boolean>('CHATBOT_EXPANDED');
 
-  const { mutate: setIsExpanded } = useSaveToCache<boolean>('CHATBOT_EXPANDED');
-
-  const { mutate: setChatHistory } =
-    useSaveToCache<CopilotMessage[]>('CHAT_HISTORY');
-
-  const onReset = useCallback(async () => {
-    await setChatHistory([]);
-    await setupMessages([]);
-  }, [setupMessages, setChatHistory]);
+  const { setIsExpanded, isExpanded } = useCopilotContext();
 
   return (
-    <>
+    <Wrapper>
       <Overlay
         $showOverlay={showOverlay}
         $isExpanded={!!isExpanded}
         onClick={() => setIsExpanded(false)}
       />
       {isExpanded ? (
-        <LargeChatUI
-          onClose={onClose}
-          setIsExpanded={setIsExpanded}
-          onReset={onReset}
-        />
+        <LargeChatUI />
       ) : (
-        <SmallChatUI
-          setShowOverlay={setShowOverlay}
-          onReset={onReset}
-          onClose={onClose}
-          setIsExpanded={setIsExpanded}
-        />
+        <SmallChatUI setShowOverlay={setShowOverlay} />
       )}
-    </>
+    </Wrapper>
   );
 };
+
+const Wrapper = styled.div`
+  .botui_action {
+    width: 100%;
+    max-width: 100%;
+    padding: 7px 14px;
+    display: inline-block;
+
+    &.action_input {
+      form {
+        display: flex;
+        justify-content: flex-end;
+      }
+    }
+  }
+
+  .botui_message_container {
+    width: 100%;
+  }
+
+  .botui_message {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .botui_message_content {
+    padding: 16px;
+    width: 100%;
+    overflow: scroll;
+    display: inline-block;
+    overflow: auto;
+    background: rgba(153, 137, 250, 0.08);
+    overflow: auto;
+
+    &.human {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    iframe {
+      border: 0;
+      width: 100%;
+    }
+  }
+
+  .botui_app_container {
+    width: 100%; // mobile-first
+    height: 100%;
+    line-height: 1;
+
+    @media (min-width: $botui-width) {
+      height: 500px;
+      margin: 0 auto;
+      width: $botui-width;
+    }
+  }
+
+  .botui_container {
+    width: 100%;
+    height: auto;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .botui_app_container {
+    width: 100%;
+    overflow: hidden;
+    flex: 1;
+    position: relative;
+    display: flex;
+  }
+  .botui_message_list {
+    padding: 0;
+    width: 100%;
+  }
+
+  .botui_action_container {
+    padding: 0;
+    .botui_action {
+      padding: 0;
+    }
+  }
+  pre {
+    overflow: hidden;
+    margin-bottom: 0;
+  }
+
+  /*
+Animation of loading dots
+*/
+  .loading_dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 0.5rem;
+    display: inline-block;
+    background-color: $primary-color;
+
+    &:nth-last-child(1) {
+      margin-left: 0.3rem;
+      animation: loading 0.6s 0.3s linear infinite;
+    }
+    &:nth-last-child(2) {
+      margin-left: 0.3rem;
+      animation: loading 0.6s 0.2s linear infinite;
+    }
+    &:nth-last-child(3) {
+      animation: loading 0.6s 0.1s linear infinite;
+    }
+  }
+
+  @keyframes loading {
+    0% {
+      transform: translate(0, 0);
+      background-color: $primary-color;
+    }
+
+    25% {
+      transform: translate(0, -3px);
+    }
+    50% {
+      transform: translate(0, 0px);
+      background-color: $primary-color;
+    }
+    75% {
+      transform: translate(0, 3px);
+    }
+    100% {
+      transform: translate(0, 0px);
+    }
+  }
+
+  .slide-fade-enter-done {
+    transition: all 0.3s ease;
+  }
+
+  .slide-fade-enter,
+  .slide-fade-exit-done {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+`;
 
 const Overlay = styled(Flex)<{ $showOverlay: boolean; $isExpanded: boolean }>`
   position: fixed;
   height: 100vh;
   width: 100vw;
   left: 0;
-  transition: 0.3s backdrop-filter;
+  transition: 0.3s all;
   backdrop-filter: ${(props) =>
     props.$showOverlay || props.$isExpanded
       ? 'blur(10px) opacity(1)'
       : 'blur(10px) opacity(0)'};
 
+  background: ${(props) =>
+    props.$showOverlay || props.$isExpanded ? 'rgba(255, 255, 255, 0.9)' : ''};
   z-index: ${zIndex.OVERLAY};
   display: block;
   pointer-events: ${(props) =>
