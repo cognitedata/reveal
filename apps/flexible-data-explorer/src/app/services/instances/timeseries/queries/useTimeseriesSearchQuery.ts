@@ -1,13 +1,26 @@
 import { useMemo } from 'react';
 
-import { Timeseries, TimeseriesFilter } from '@cognite/sdk';
+import { Timeseries } from '@cognite/sdk';
 import { useInfiniteSearch } from '@cognite/sdk-react-query-hooks';
 
-export const useTimeseriesSearchQuery = (
-  query: string,
-  limit?: number,
-  filter?: TimeseriesFilter
-) => {
+import {
+  useDataTypeFilterParams,
+  useSearchQueryParams,
+} from '../../../../hooks/useParams';
+import { useProjectConfig } from '../../../../hooks/useProjectConfig';
+import { buildTimeseriesFilter } from '../../../../utils/filterBuilder';
+
+export const useTimeseriesSearchQuery = (limit?: number) => {
+  const config = useProjectConfig();
+
+  const [query] = useSearchQueryParams();
+
+  const [timeseriesFilterParams] = useDataTypeFilterParams('Timeseries');
+  const filter = useMemo(
+    () => buildTimeseriesFilter(timeseriesFilterParams, config),
+    [timeseriesFilterParams, config]
+  );
+
   const { data, ...rest } = useInfiniteSearch<Timeseries>(
     'timeseries',
     query,

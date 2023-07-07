@@ -3,11 +3,11 @@ import { DataTypeOption, Operator } from '../../../types';
 export const timeseries: DataTypeOption = {
   name: 'Timeseries',
   fields: [
-    {
-      name: 'Data Set',
-      type: 'string',
-      operators: [Operator.STARTS_WITH],
-    },
+    // {
+    //   name: 'Data Set',
+    //   type: 'string',
+    //   operators: [Operator.STARTS_WITH],
+    // },
     {
       name: 'Asset',
       type: 'string',
