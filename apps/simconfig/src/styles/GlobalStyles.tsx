@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck
 
+import rcTabsStyles from 'rc-tabs/assets/index.css';
+
 import { useGlobalStyles } from '@cognite/cdf-utilities';
 import {
   Dropdown as CogsDropdown,
@@ -57,7 +59,7 @@ export default function GlobalStyles({
 }: {
   children: React.ReactNode;
 }) {
-  const didLoadStyles = useGlobalStyles([cogs9Styles]);
+  const didLoadStyles = useGlobalStyles([cogs9Styles, rcTabsStyles]);
 
   if (!didLoadStyles) {
     return <Loader />;

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useState } from 'react';
 
 import classNames from 'classnames';
@@ -122,7 +121,11 @@ export function Wizard({
     <WizardContainer>
       <Tabs
         activeKey={activeKey}
+        // @ts-expect-error rc-tabs deprecates the panes prop but still uses it internally, so we get a type error
+        // https://github.com/react-component/tabs/blob/master/src/interface.ts#L45-L46
+        // https://github.com/react-component/tabs/blob/master/docs/examples/renderTabBar-use-panes.tsx#L8
         renderTabBar={renderTabBar}
+        style={{ border: 'none' }}
         onChange={setStep}
         {...additionalProps}
       >
