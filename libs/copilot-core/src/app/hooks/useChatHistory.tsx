@@ -4,9 +4,9 @@ import localforage, * as localForage from 'localforage';
 import { useSDK } from '@cognite/sdk-provider';
 
 import { CopilotMessage } from '../../lib/types';
+import { useCopilotContext } from '../utils/CopilotContext';
 
 import { getCacheKey } from './useCache';
-import { useCopilotContext } from '../utils/CopilotContext';
 
 const CHAT_PREFIX = 'chats-1';
 
