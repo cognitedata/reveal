@@ -165,6 +165,7 @@ function TimeseriesSelector({
         inputValue={queryString}
         isDisabled={disabled}
         isLoading={!isReady()}
+        menuPortalTarget={document.body}
         name={name}
         options={queryResult?.slice(0, pagination)}
         placeholder="Type to search"

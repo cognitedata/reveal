@@ -11,9 +11,9 @@ import styled from 'styled-components/macro';
 
 import type { OptionType } from '@cognite/cogs.js-v9';
 import {
-  AutoComplete,
   DateRange,
   Illustrations,
+  Select,
   Skeleton,
 } from '@cognite/cogs.js-v9';
 import {
@@ -379,10 +379,9 @@ function Filter({
   return (
     <div className="cogs-input-container">
       <label className="title">{label}</label>
-      <AutoComplete
+      <Select
         isClearable={isClearable}
         options={options}
-        title={label}
         value={options[0]?.options?.find(
           ({ value }) =>
             value?.key === filterKey && value.value === currentValue
