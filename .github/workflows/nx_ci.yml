@@ -97,9 +97,9 @@ jobs:
   test:
     runs-on: ubuntu-20.04
     needs: print-affected
-#    strategy:
-#      matrix:
-#        project: ${{ fromJson(needs.print-affected.outputs.build)  }}
+    strategy:
+      matrix:
+        project: ${{ fromJson(needs.print-affected.outputs.build)  }}
     steps:
       - name: Print
         run: |
