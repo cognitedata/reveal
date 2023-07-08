@@ -77,7 +77,7 @@ jobs:
 
       - name: 'Get Affected'
         id: affected
-        uses: ./scripts/github-actions/get-affected
+        uses: ./scripts/github-actions/nx-get-affected
         with:
           base: ${{env.NX_BASE}}
           head: ${{env.NX_HEAD}}
