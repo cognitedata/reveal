@@ -4,12 +4,11 @@ import { ProjectConfig } from './types';
 
 export const cogniteConfig: ProjectConfig[] = [
   {
+    project: 'dss-dev',
     site: 'Akerkvartalet',
     description:
       'All the data from the offices in Oslo is consolidated within this area.',
-    imageUrl:
-      'https://probea.no/wp-content/uploads/2019/03/probea_fornebu-17-1440x760.jpg',
-    project: 'dss-dev',
+
     dataModels: [
       {
         name: 'MovieDM',
@@ -22,16 +21,23 @@ export const cogniteConfig: ProjectConfig[] = [
         version: '2',
       },
     ],
-    nodeSpaces: undefined,
+
+    fileConfig: {
+      dataSetIds: [
+        8790386435534646 /* test */,
+        2380258309190866 /* best_day_demo_deviation_events */,
+      ],
+    },
+    timeseriesConfig: {
+      dataSetIds: [3736355216889108 /* infield-measurement-timeseries */],
+    },
   },
   {
+    project: '3d-test',
     site: 'My Site',
     description: 'Test site for 3D visualization.',
-    imageUrl:
-      'https://probea.no/wp-content/uploads/2019/03/probea_fornebu-17-1440x760.jpg',
-    project: '3d-test',
+
     dataModels: [],
-    nodeSpaces: undefined,
     threeDResources: [
       {
         modelId: 1791160622840317,

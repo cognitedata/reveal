@@ -37,7 +37,7 @@ jobs:
           tag: latest
           access: public
           check-version: true
-          package: ./dist/libs/copilot-core/package.json
+          package: ./dist/libs/@fusion/copilot-core/package.json
 
       - name: Create Release
         if: steps.publish.outputs.type != 'none'
@@ -47,4 +47,4 @@ jobs:
           automatic_release_tag: copilot-core-${{ steps.publish.outputs.version }}
           title: copilot-core Release ${{ steps.publish.outputs.version }}
           files: |
-            ./dist/libs/copilot-core/*.js*
+            ./dist/libs/@fusion/copilot-core/*.js*

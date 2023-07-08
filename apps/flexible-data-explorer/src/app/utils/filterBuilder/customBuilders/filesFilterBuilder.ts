@@ -3,6 +3,7 @@ import isEmpty from 'lodash/isEmpty';
 
 import { DocumentFilter } from '@cognite/sdk';
 
+import { ProjectConfig } from '../../../../config/types';
 import {
   DateRange,
   NumericRange,
@@ -15,13 +16,10 @@ type Builder = (field: string, value: any) => DocumentFilter;
 type Builders = Record<Operator, Builder>;
 
 export const buildFilesFilter = (
-  params?: ValueByField
+  params?: ValueByField,
+  config?: ProjectConfig
 ): DocumentFilter | undefined => {
-  if (!params) {
-    return undefined;
-  }
-
-  const filters = Object.entries(params).reduce(
+  const filters = Object.entries(params ?? {}).reduce(
     (result, [field, { operator, value }]) => {
       const builder = getBuilder(field, operator);
       const build = builder(field, value);
@@ -29,6 +27,15 @@ export const buildFilesFilter = (
     },
     [] as DocumentFilter[]
   );
+
+  if (config?.fileConfig?.dataSetIds) {
+    filters.push({
+      in: {
+        property: ['sourceFile', 'datasetId'],
+        values: config?.fileConfig?.dataSetIds,
+      },
+    });
+  }
 
   if (isEmpty(filters)) {
     return undefined;
