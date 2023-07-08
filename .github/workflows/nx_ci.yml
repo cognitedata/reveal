@@ -85,6 +85,10 @@ jobs:
       - name: Show affected projects for build
         run: |
           echo "${{ steps.affected.outputs.samir }}"
+          echo "${{ steps.affected.outputs.list }}"
+          echo "${{ fromJson(steps.affected.outputs.list) }}"
+          echo "${{ steps.affected.outputs.list2 }}"
+          echo "${{ fromJson(steps.affected.outputs.list2) }}"
   #          echo "${{ fromJson(steps.find-affected-projects.outputs.projects2) }}"
   #        run: |
   #          echo "::set-env name=AFFECTED_PROJECTS_BUILD::$(yarn nx print-affected --base=origin/main --head=HEAD --select=projects --target=build)"
