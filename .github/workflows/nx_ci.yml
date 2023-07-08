@@ -82,6 +82,12 @@ jobs:
           base: ${{env.NX_BASE}}
           head: ${{env.NX_HEAD}}
 
+      - name: Show affected projects for build
+        run: |
+          echo "${{ steps.affected.outputs.samir }}"
+          echo "${{ steps.affected.outputs.list }}"
+          echo "${{ fromJson(steps.affected.outputs.list) }}"
+
   test:
     runs-on: ubuntu-20.04
     needs: print-affected
