@@ -51,7 +51,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: install-dependencies
     outputs:
-      build: ${{ steps.find-affected-projects.outputs.projects }}
+      build: ${{ steps.affected.outputs.list }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -97,6 +97,9 @@ jobs:
   test:
     runs-on: ubuntu-20.04
     needs: print-affected
+    strategy:
+      matrix:
+        project: ${{ fromJson(needs.print-affected.outputs.build)  }}
     steps:
       - name: Print
         run: |
