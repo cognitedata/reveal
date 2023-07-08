@@ -16,13 +16,10 @@ const run = async () => {
       // `npx nx show projects --affected --json --withTarget=build`
     ).toString('utf-8');
 
-    setOutput('list2', projects);
-
     debug(`Output from NX: ${projects}`);
     //
     const parsedOutput = JSON.parse(projects);
-    setOutput('list', parsedOutput);
-    setOutput('samir', 'works');
+    setOutput('list', ['test', 'test2']);
 
     parsedOutput.forEach((project) => {
       setOutput(project, true);

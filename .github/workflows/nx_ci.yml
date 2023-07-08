@@ -82,18 +82,6 @@ jobs:
           base: ${{env.NX_BASE}}
           head: ${{env.NX_HEAD}}
 
-      - name: Show affected projects for build
-        run: |
-          echo "${{ steps.affected.outputs.samir }}"
-          echo "${{ steps.affected.outputs.list }}"
-          echo "${{ fromJson(steps.affected.outputs.list) }}"
-          echo "${{ steps.affected.outputs.list2 }}"
-          echo "${{ fromJson(steps.affected.outputs.list2) }}"
-  #          echo "${{ fromJson(steps.find-affected-projects.outputs.projects2) }}"
-  #        run: |fromJson(needs.print-affected.outputs.build)
-  #          echo "::set-env name=AFFECTED_PROJECTS_BUILD::$(yarn nx print-affected --base=origin/main --head=HEAD --select=projects --target=build)"
-  #          echo "Affected projects for lint: ${{env.AFFECTED_PROJECTS_BUILD}}"
-
   test:
     runs-on: ubuntu-20.04
     needs: print-affected
