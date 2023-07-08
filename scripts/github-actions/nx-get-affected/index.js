@@ -20,10 +20,10 @@ const run = async () => {
     debug(`Output from NX: ${projects}`);
     //
     const parsedOutput = JSON.parse(projects);
-    // setOutput('list', parsedOutput);
+    setOutput('list', parsedOutput);
 
     parsedOutput.forEach((project) => {
-      // setOutput(project, true);
+      setOutput(project, true);
     });
   } catch (error) {
     if (error instanceof Error || typeof error === 'string') {
