@@ -93,12 +93,12 @@ jobs:
     needs: print-affected
     strategy:
       matrix:
-        project: ${{ fromJson(needs.print-affected.outputs.build)  }}
+        project: ${{ needs.print-affected.outputs.build  }}
     steps:
       - name: Print
         run: |
           echo ${{ needs.print-affected.outputs.build }}
-          echo ${{ fromJson(needs.print-affected.outputs.build) }}
+#          echo ${{ fromJson(needs.print-affected.outputs.build) }}
 
 #  build:
 #    runs-on: ubuntu-20.04
