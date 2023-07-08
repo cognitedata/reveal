@@ -1,6 +1,12 @@
 const { execSync } = require('child_process');
 
-const { debug, setFailed, setOutput, getInput } = require('@actions/core');
+const {
+  debug,
+  setFailed,
+  setOutput,
+  getInput,
+  info,
+} = require('@actions/core');
 
 const run = async () => {
   try {
@@ -17,6 +23,8 @@ const run = async () => {
         type ? `--projects ${type}/*` : ''
       }`
     ).toString('utf-8');
+
+    info(`NX: ${projects}`);
 
     debug(`Output from NX: ${projects}`);
     //

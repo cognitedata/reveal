@@ -69,6 +69,16 @@ jobs:
             ~/.cache/Cypress
           key: cache-node-modules-${{ hashFiles('yarn.lock') }}
 
+      - name: Cache Nx
+        uses: actions/cache@v3
+        with:
+          path: node_modules/.cache/nx
+          key: cache-nx-${{ hashFiles('yarn.lock') }}-${{ matrix.target }}-${{ matrix.jobIndex }}-${{ github.sha }}
+          restore-keys: |
+            cache-nx-${{ hashFiles('yarn.lock') }}-${{ matrix.target }}-${{ matrix.jobIndex }}-
+            cache-nx-${{ hashFiles('yarn.lock') }}-
+
+
       - run: git fetch --no-tags --prune --depth=1 origin ${{ github.base_ref }}
       - name: Derive appropriate SHAs for base and head for `nx affected` commands
         uses: nrwl/nx-set-shas@v3
@@ -84,7 +94,6 @@ jobs:
 
       - name: Show affected projects for build
         run: |
-          echo "${{ steps.affected.outputs.samir }}"
           echo "${{ steps.affected.outputs.list }}"
           echo "${{ fromJson(steps.affected.outputs.list) }}"
 
