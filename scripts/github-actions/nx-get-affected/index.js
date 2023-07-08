@@ -21,7 +21,7 @@ const run = async () => {
     debug(`Output from NX: ${projects}`);
     //
     const parsedOutput = JSON.parse(projects);
-    setOutput('list', ['test', 'test2']);
+    setOutput('list', parsedOutput);
 
     parsedOutput.forEach((project) => {
       setOutput(project, true);
