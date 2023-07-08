@@ -10,10 +10,12 @@ const run = async () => {
     const type = getInput('type');
 
     const projects = execSync(
-      `npx nx show projects --affected  --json --withTarget=${target} --base=${base} --head=${head} ${
+      // `npx nx show projects --affected  --json --withTarget=${target} --base=${base} --head=${head} ${
+      //   type ? `--projects ${type}/*` : ''
+      // }`
+      `npx nx show projects --affected  --json --withTarget=${target} ${
         type ? `--projects ${type}/*` : ''
       }`
-      // `npx nx show projects --affected --json --withTarget=build`
     ).toString('utf-8');
 
     debug(`Output from NX: ${projects}`);
