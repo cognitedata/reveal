@@ -51,7 +51,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: install-dependencies
     outputs:
-      build: ${{ steps.affected.outputs.list }}
+      build: ${{ fromJson(steps.affected.outputs.list) }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -90,20 +90,21 @@ jobs:
           echo "${{ steps.affected.outputs.list2 }}"
           echo "${{ fromJson(steps.affected.outputs.list2) }}"
   #          echo "${{ fromJson(steps.find-affected-projects.outputs.projects2) }}"
-  #        run: |
+  #        run: |fromJson(needs.print-affected.outputs.build)
   #          echo "::set-env name=AFFECTED_PROJECTS_BUILD::$(yarn nx print-affected --base=origin/main --head=HEAD --select=projects --target=build)"
   #          echo "Affected projects for lint: ${{env.AFFECTED_PROJECTS_BUILD}}"
 
   test:
     runs-on: ubuntu-20.04
     needs: print-affected
-    strategy:
-      matrix:
-        project: ${{ fromJson(needs.print-affected.outputs.build)  }}
+#    strategy:
+#      matrix:
+#        project: ${{ fromJson(needs.print-affected.outputs.build)  }}
     steps:
       - name: Print
         run: |
           echo ${{ needs.print-affected.outputs.build }}
+          echo ${{ fromJson(needs.print-affected.outputs.build) }}
 
 #  build:
 #    runs-on: ubuntu-20.04
