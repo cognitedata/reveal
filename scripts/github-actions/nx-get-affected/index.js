@@ -16,11 +16,11 @@ const run = async () => {
       // `npx nx show projects --affected --json --withTarget=build`
     ).toString('utf-8');
 
-    // eslint-disable-next-line testing-library/no-debugging-utils
     debug(`Output from NX: ${projects}`);
     //
     const parsedOutput = JSON.parse(projects);
     setOutput('list', parsedOutput);
+    setOutput('samir', 'works');
 
     parsedOutput.forEach((project) => {
       setOutput(project, true);
