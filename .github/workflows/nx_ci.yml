@@ -95,14 +95,14 @@ jobs:
       - name: 'Affected inline'
         id: affected-inline
         run: |
-          echo "::set-output name=projects::$(yarn nx show projects --affected --withTarget=build --json --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }})"
+#          echo "::set-output name=projects::$(yarn nx show projects --affected --withTarget=build --json --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }})"
           PROJECTS_BUILD=$(npx nx show projects --affected --withTarget=build --json --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }})
-          echo $PROJECTS_BUILD
+          echo "projects=$PROJECTS_BUILD" >> $GITHUB_OUTPUT
 
       - name: Show affected projects for build
         run: |
-          echo "${{ steps.affected.outputs.list }}"
-          echo "${{ fromJson(steps.affected-inline.outputs.projects) }}"
+#          echo "${{ steps.affected.outputs.list }}"
+          echo "${{ steps.affected-inline.outputs.projects }}"
 
   test:
     runs-on: ubuntu-20.04
