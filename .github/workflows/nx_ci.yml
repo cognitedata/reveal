@@ -96,23 +96,19 @@ jobs:
           PROJECTS_BUILD=$(npx nx show projects --affected --withTarget=build --json --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }} | jq '-c') 
           echo $PROJECTS_BUILD
           echo "::set-output name=projects::$PROJECTS_BUILD"
-      - name: Show affected projects for build
-        run: |
-          echo "${{ steps.affected-inline.outputs.projects }}"
-
     outputs:
       build: ${{ steps.affected.outputs.list }}
       build-inline: ${{ steps.affected-inline.outputs.projects }}
+
   test:
     runs-on: ubuntu-20.04
     needs: print-affected
-    #    strategy:
-    #      matrix:
-    #        project: ${{ fromJson(needs.print-affected.outputs.build)  }}
+    strategy:
+      matrix:
+        project: ${{ fromJson(needs.print-affected.outputs.build-inline)  }}
     steps:
       - name: Print
         run: |
-          echo ${{ needs.print-affected.outputs.build }}
           echo ${{ needs.print-affected.outputs.build-inline }}
 
 #          echo ${{ fromJson(needs.print-affected.outputs.build) }}
