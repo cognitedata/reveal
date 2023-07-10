@@ -102,7 +102,7 @@ jobs:
       - name: Show affected projects for build
         run: |
           echo "${{ steps.affected.outputs.list }}"
-          echo "${{ steps.affected-inline.outputs.projects }}"
+          echo "${{ fromJson(steps.affected-inline.outputs.projects) }}"
 
   test:
     runs-on: ubuntu-20.04
