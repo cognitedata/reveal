@@ -82,13 +82,6 @@ jobs:
         with:
           main-branch-name: ${{ github.base_ref }}
 
-      - name: 'Get Affected'
-        id: affected
-        uses: ./scripts/github-actions/nx-get-affected
-        with:
-          base: ${{env.NX_BASE}}
-          head: ${{env.NX_HEAD}}
-
       - name: 'Affected inline'
         id: affected-inline
         shell: 'bash'
@@ -97,20 +90,17 @@ jobs:
           echo $PROJECTS_BUILD
           echo "::set-output name=projects::$PROJECTS_BUILD"
     outputs:
-      build: ${{ steps.affected.outputs.list }}
       build-inline: ${{ steps.affected-inline.outputs.projects }}
 
-  test:
+  build:
     runs-on: ubuntu-20.04
     needs: print-affected
     strategy:
       matrix:
         project: ${{ fromJson(needs.print-affected.outputs.build-inline)  }}
     steps:
-      - name: Print
-        run: |
-          echo ${{ needs.print-affected.outputs.build-inline }}
-
+      - name: Build
+        run: npx nx build ${{ matrix.target }} --configuration=production
 #          echo ${{ fromJson(needs.print-affected.outputs.build) }}
 
 #  build:
