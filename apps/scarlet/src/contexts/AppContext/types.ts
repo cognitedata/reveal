@@ -24,6 +24,7 @@ export type AppStateDataElementModal = {
 };
 
 export type AppState = {
+  facilityList: APIState<Facility[]>;
   facility?: Facility;
   unitId: string;
   equipmentId: string;
@@ -38,6 +39,10 @@ export type AppState = {
 };
 
 export type AppAction =
+  | {
+      type: AppActionType.INIT_FACILITY_LIST;
+      facilityList: APIState<Facility[]>;
+    }
   | {
       type: AppActionType.INIT_UNITS;
       unitListByFacility: APIState<UnitListByFacility>;
@@ -119,6 +124,7 @@ export type AppAction =
     };
 
 export enum AppActionType {
+  INIT_FACILITY_LIST = 'init-facility-list',
   INIT_UNITS = 'init-units',
   // equipment
   INIT_EQUIPMENT = 'init-equipment',

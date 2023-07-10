@@ -9,6 +9,7 @@ const initialUnitState = {
 
 const initialState: HomePageState = {
   facility: undefined,
+  facilityListQuery: { loading: true },
   unitListQuery: { loading: true },
   ...initialUnitState,
 };
@@ -36,6 +37,11 @@ function reducer(state: HomePageState, action: HomePageAction) {
       return {
         ...state,
         unitListQuery: action.unitListQuery,
+      };
+    case HomePageActionType.SET_FACILITY_LIST:
+      return {
+        ...state,
+        facilityListQuery: action.facilityListQuery,
       };
     case HomePageActionType.SET_UNIT:
       if (action.unitId === state.unitId) return state;

@@ -29,6 +29,7 @@ const equipmentInitialState = {
 
 const initialState: AppState = {
   ...equipmentInitialState,
+  facilityList: { loading: true },
   unitListByFacility: { loading: true },
 };
 
@@ -39,6 +40,11 @@ export const AppContext = React.createContext(initialState);
 
 function reducer(state: AppState, action: AppAction) {
   switch (action.type) {
+    case AppActionType.INIT_FACILITY_LIST:
+      return {
+        ...state,
+        facilityList: action.facilityList,
+      };
     case AppActionType.INIT_UNITS:
       return {
         ...state,

@@ -1,8 +1,6 @@
 import { Icon, Input, Skeleton } from '@cognite/cogs.js';
-import { useAuthContext } from '@cognite/react-container';
 import { useMemo, useState } from 'react';
 import { Facility, SortOrder } from 'types';
-import { facilityList } from 'config';
 import { useAppState } from 'hooks';
 
 import { SortOrderButton } from '..';
@@ -14,8 +12,7 @@ type FacilityNavigationProps = {
 };
 
 export const FacilityNavigation = ({ onChange }: FacilityNavigationProps) => {
-  const { client } = useAuthContext();
-  const { unitListByFacility } = useAppState();
+  const { facilityList, unitListByFacility } = useAppState();
   const [search, setSearch] = useState('');
   const [sortOrder, setSortOrder] = useState(SortOrder.ASCENDING);
 
@@ -26,8 +23,8 @@ export const FacilityNavigation = ({ onChange }: FacilityNavigationProps) => {
         ? (a: Facility, b: Facility) => (a.shortName < b.shortName ? 1 : -1)
         : (a: Facility, b: Facility) => (a.shortName < b.shortName ? -1 : 1);
 
-    return facilityList(client?.project || '')
-      .filter((facility) =>
+    return facilityList.data
+      ?.filter((facility) =>
         facility.shortName.toLocaleLowerCase().includes(filter)
       )
       .sort(compareFn);

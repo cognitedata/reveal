@@ -8,6 +8,7 @@ export * from './useDataPanelContext';
 export * from './useDetectionOrigin';
 export * from './useEquipmentComponentsByType';
 export * from './useFacility';
+export * from './useFacilityList';
 export * from './useHomePageContext';
 export * from './useOrnateTags';
 export * from './usePoolExportFileId';
