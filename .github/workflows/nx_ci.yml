@@ -97,7 +97,7 @@ jobs:
         shell: 'bash'
         run: |
           PROJECTS_BUILD=$(toJSON(npx nx show projects --affected --withTarget=build --json --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }}))
-          PROJECTS_BUILD2=$(fromJson(npx nx show projects --affected --withTarget=build --json --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }}))
+          PROJECTS_BUILD2=$(fromJSON(npx nx show projects --affected --withTarget=build --json --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }}))
           echo $PROJECTS_BUILD
           echo $PROJECTS_BUILD2
 #          echo "projects=$PROJECTS_BUILD" >> $GITHUB_OUTPUT
