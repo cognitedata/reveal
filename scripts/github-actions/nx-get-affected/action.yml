@@ -1,5 +1,18 @@
-name: 'Get affected'
-description: 'Fetch changes based on nx'
+name: 'Get affected projects'
+description: 'Get affected projects'
 runs:
   using: node16
   main: index.js
+inputs:
+  base:
+    description: 'Base commit'
+    default: 'origin/master'
+  head:
+    description: 'Head commit'
+    default: 'HEAD'
+  target:
+    description: 'Target'
+    default: 'build'
+  type:
+    description: 'Type of project (apps/libs)'
+    default: 'all'
