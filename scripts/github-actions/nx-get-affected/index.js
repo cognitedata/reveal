@@ -1,12 +1,6 @@
 const { execSync } = require('child_process');
 
-const {
-  debug,
-  setFailed,
-  setOutput,
-  getInput,
-  info,
-} = require('@actions/core');
+const { setFailed, setOutput, getInput, info } = require('@actions/core');
 
 const run = async () => {
   try {
@@ -16,18 +10,13 @@ const run = async () => {
     const type = getInput('type');
 
     const projects = execSync(
-      // `npx nx show projects --affected  --json --withTarget=${target} --base=${base} --head=${head} ${
-      //   type ? `--projects ${type}/*` : ''
-      // }`
-      `npx nx show projects --affected  --json --withTarget=${target} ${
+      `npx nx show projects --affected  --json --withTarget=${target} --base=${base} --head=${head} ${
         type ? `--projects ${type}/*` : ''
       }`
     ).toString('utf-8');
 
-    info(`NX: ${projects}`);
+    info(`Output from NX: ${projects}`);
 
-    debug(`Output from NX: ${projects}`);
-    //
     const parsedOutput = JSON.parse(projects);
     setOutput('list', parsedOutput);
 

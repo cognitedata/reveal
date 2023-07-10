@@ -10,9 +10,6 @@ inputs:
   head:
     description: 'Head commit'
     default: 'HEAD'
-  #  select:
-  #    description: 'Select'
-  #    default: 'projects'
   target:
     description: 'Target'
     default: 'build'
