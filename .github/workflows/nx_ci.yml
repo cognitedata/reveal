@@ -86,7 +86,7 @@ jobs:
         id: affected-inline
         shell: 'bash'
         run: |
-          PROJECTS_BUILD=$(npx nx show projects --affected --withTarget=build --json --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }} | jq '-c') 
+          PROJECTS_BUILD=$(npx nx show projects --affected --withTarget=build --json --projects="apps/*" --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }} | jq '-c') 
           echo $PROJECTS_BUILD
           echo "::set-output name=projects::$PROJECTS_BUILD"
     outputs:
