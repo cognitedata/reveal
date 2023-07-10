@@ -50,9 +50,6 @@ jobs:
   print-affected:
     runs-on: ubuntu-latest
     needs: install-dependencies
-    outputs:
-      build: ${{ steps.affected.outputs.list }}
-      build-inline: ${{ steps.affected-inline.outputs.projects }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -102,6 +99,9 @@ jobs:
         run: |
           echo "${{ steps.affected-inline.outputs.projects }}"
 
+    outputs:
+      build: ${{ steps.affected.outputs.list }}
+      build-inline: ${{ steps.affected-inline.outputs.projects }}
   test:
     runs-on: ubuntu-20.04
     needs: print-affected
