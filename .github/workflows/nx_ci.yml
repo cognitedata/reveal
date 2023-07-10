@@ -106,8 +106,15 @@ jobs:
         with:
           node-version: '18'
           cache: 'yarn'
+      - name: Cache node modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            node_modules
+            ~/.cache/Cypress
+          key: cache-node-modules-${{ hashFiles('yarn.lock') }}
       - name: Build
-        run: npx nx build ${{ matrix.target }} --configuration=production
+        run: yarn nx build ${{ matrix.target }} --configuration=production
 #          echo ${{ fromJson(needs.print-affected.outputs.build) }}
 
 #  build:
