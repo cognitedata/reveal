@@ -52,6 +52,7 @@ jobs:
     needs: install-dependencies
     outputs:
       build: ${{ steps.affected.outputs.list }}
+      build-inline: ${{ steps.affected-inline.outputs.projects }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -78,7 +79,6 @@ jobs:
             cache-nx-${{ hashFiles('yarn.lock') }}-${{ matrix.target }}-${{ matrix.jobIndex }}-
             cache-nx-${{ hashFiles('yarn.lock') }}-
 
-
       - run: git fetch --no-tags --prune --depth=1 origin ${{ github.base_ref }}
       - name: Derive appropriate SHAs for base and head for `nx affected` commands
         uses: nrwl/nx-set-shas@v3
@@ -92,21 +92,30 @@ jobs:
           base: ${{env.NX_BASE}}
           head: ${{env.NX_HEAD}}
 
+      - name: 'Affected inline'
+        id: affected-inline
+        run: |
+          echo "::set-output name=projects::$(yarn nx show projects --affected --withTarget=build --json --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }})"
+      #          PROJECTS_BUILD=$(npx nx show projects --affected --withTarget=build --json --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }})
+      #          echo $PROJECTS_BUILD
+
       - name: Show affected projects for build
         run: |
           echo "${{ steps.affected.outputs.list }}"
-          echo "${{ fromJson(steps.affected.outputs.list) }}"
+          echo "${{ steps.affected-inline.outputs.projects }}"
 
   test:
     runs-on: ubuntu-20.04
     needs: print-affected
-    strategy:
-      matrix:
-        project: ${{ fromJson(needs.print-affected.outputs.build)  }}
+    #    strategy:
+    #      matrix:
+    #        project: ${{ fromJson(needs.print-affected.outputs.build)  }}
     steps:
       - name: Print
         run: |
           echo ${{ needs.print-affected.outputs.build }}
+          echo ${{ needs.print-affected.outputs.build-inline }}
+
 #          echo ${{ fromJson(needs.print-affected.outputs.build) }}
 
 #  build:
