@@ -21,6 +21,7 @@
         "tsConfig": "libs/copilot-core/tsconfig.lib.json",
         "entryFile": "libs/copilot-core/src/index.ts",
         "compiler": "babel",
+        "project": "libs/copilot-core/package.json",
         "rollupConfig": "libs/copilot-core/rollup.config.js",
         "assets": [
           {
