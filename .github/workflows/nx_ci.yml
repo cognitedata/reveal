@@ -94,8 +94,8 @@ jobs:
 
       - name: 'Affected inline'
         id: affected-inline
+        shell: 'bash'
         run: |
-#          echo "::set-output name=projects::$(yarn nx show projects --affected --withTarget=build --json --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }})"
           PROJECTS_BUILD=$(npx nx show projects --affected --withTarget=build --json --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }})
           echo "projects=$PROJECTS_BUILD" >> $GITHUB_OUTPUT
 
