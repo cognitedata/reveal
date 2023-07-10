@@ -96,8 +96,8 @@ jobs:
         id: affected-inline
         run: |
           echo "::set-output name=projects::$(yarn nx show projects --affected --withTarget=build --json --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }})"
-      #          PROJECTS_BUILD=$(npx nx show projects --affected --withTarget=build --json --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }})
-      #          echo $PROJECTS_BUILD
+          PROJECTS_BUILD=$(npx nx show projects --affected --withTarget=build --json --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }})
+          echo $PROJECTS_BUILD
 
       - name: Show affected projects for build
         run: |
