@@ -97,7 +97,7 @@ jobs:
         shell: 'bash'
         run: |
           PROJECTS_BUILD=$(npx nx show projects --affected --withTarget=build --json --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }})
-          echo "projects=$PROJECTS_BUILD" >> $GITHUB_OUTPUT
+#          echo "projects=$PROJECTS_BUILD" >> $GITHUB_OUTPUT
 
       - name: Show affected projects for build
         run: |
