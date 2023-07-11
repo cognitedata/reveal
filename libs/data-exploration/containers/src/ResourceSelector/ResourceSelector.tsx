@@ -70,6 +70,7 @@ export type ResourceSelection = Record<
 export type ResourceSelectorProps = {
   visibleResourceTabs?: ResourceType[];
   initialFilter?: ResourceSelectorFilter;
+  initialTab?: ResourceType;
   initialSelectedResource?: ResourceItem;
   addButtonText?: string;
   isDocumentsApiEnabled?: boolean;
@@ -80,6 +81,7 @@ export const ResourceSelector = ({
   visibleResourceTabs = DEFAULT_VISIBLE_RESOURCE_TABS,
   selectionMode = 'single',
   initialFilter = EMPTY_OBJECT,
+  initialTab = visibleResourceTabs[0],
   onSelect = noop,
   initialSelectedResource,
   isDocumentsApiEnabled = true,
@@ -90,7 +92,7 @@ export const ResourceSelector = ({
     useFilterState(initialFilter);
   const [query, setQuery] = useState<string>('');
   const { isOpen: showFilter, toggle: onToggleFilter } = useDialog();
-  const [activeKey, setActiveKey] = useState(visibleResourceTabs[0]);
+  const [activeKey, setActiveKey] = useState(initialTab);
   const [previewItem, setPreviewItem] = useState<ResourceItem>();
   const { t } = useTranslation();
 
@@ -105,6 +107,14 @@ export const ResourceSelector = ({
     setPreviewItem(initialSelectedResource);
     setActiveKey(initialSelectedResource.type);
   }, [initialSelectedResource]);
+
+  useEffect(() => {
+    if (initialTab === undefined) {
+      return;
+    }
+
+    setActiveKey(initialTab);
+  }, [initialTab]);
 
   const [debouncedQuery] = useDebounce(query, 100);
   const allSelectedRows = useMemo(
