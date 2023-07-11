@@ -27,6 +27,7 @@ export enum MetricEvent {
   ASSET_TOOLTIP_ADD_THREE_D = 'IC.AssetTooltip.AddThreeD',
   ASSET_TOOLTIP_ADD_TIMESERIES = 'IC.AssetTooltip.AddTimeseries',
   ASSET_TOOLTIP_OPEN_IN_RESOURCE_SELECTOR = 'IC.AssetTooltip.OpenInResourceSelector',
+  ASSET_TOOLTIP_OPEN_TIMESERIES_TAB_IN_RESOURCE_SELECTOR = 'IC.AssetTooltip.OpenTimeseriesTabInResourceSelector',
   ASSET_TOOLTIP_ADD_ASSET = 'IC.AssetTooltip.AddAsset',
   ASSET_TOOLTIP_OPEN_IN_DATA_EXPLORER = 'IC.AssetTooltip.OpenInDataExplorer',
   FILE_TOOLTIP_ADD_FILE = 'IC.FileTooltip.AddFile',

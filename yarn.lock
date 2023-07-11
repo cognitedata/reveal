@@ -3109,10 +3109,10 @@
   dependencies:
     axios "0.25.0"
 
-"@cognite/llm-hub@^0.0.5":
-  version "0.0.5"
-  resolved "https://registry.yarnpkg.com/@cognite/llm-hub/-/llm-hub-0.0.5.tgz#0218fd8aacfe96ad9d6c054cd86562bebd0f9ff8"
-  integrity sha512-zXWn59p+Dd15GPqds2jwKkRqzKXaHG/Z05+GoYCS7jA+3frXkwxTHCX6JS53Fifo9EkTUjASbqsYvRrVy3f3IQ==
+"@cognite/llm-hub@^0.0.7":
+  version "0.0.7"
+  resolved "https://registry.yarnpkg.com/@cognite/llm-hub/-/llm-hub-0.0.7.tgz#e7bb7c32f58308972a3047f4a0e503fcd3ce9ef3"
+  integrity sha512-hDS/gGyp7MK4V6Rc+7g7xeIkvENitlVrOn+1KaxX3ZLTGE1Y+i2f6UMtytEeuGMYFAVl+CzZnW+gv+RFb2lTwg==
 
 "@cognite/metrics@1.2.2":
   version "1.2.2"
@@ -18159,11 +18159,6 @@ decamelize-keys@^1.1.0:
     decamelize "^1.1.0"
     map-obj "^1.0.0"
 
-decamelize@5:
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/decamelize/-/decamelize-5.0.1.tgz#db11a92e58c741ef339fb0a2868d8a06a9a7b1e9"
-  integrity sha512-VfxadyCECXgQlkoEAjeghAr5gY3Hf+IKjKb+X8tGVDtveCjN+USwprd2q3QXBR9T1+x2DG0XZF5/w+7HAtSaXA==
-
 decamelize@^1.1.0, decamelize@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/decamelize/-/decamelize-1.2.0.tgz#f6534d15148269b20352e7bee26f501f9a191290"
@@ -25884,24 +25879,26 @@ ktx-parse@^0.4.5:
   resolved "https://registry.yarnpkg.com/ktx-parse/-/ktx-parse-0.4.5.tgz#79905e22281a9d3e602b2ff522df1ee7d1813aa6"
   integrity sha512-MK3FOody4TXbFf8Yqv7EBbySw7aPvEcPX++Ipt6Sox+/YMFvR5xaTyhfNSk1AEmMy+RYIw81ctN4IMxCB8OAlg==
 
-langchain@^0.0.96:
-  version "0.0.96"
-  resolved "https://registry.yarnpkg.com/langchain/-/langchain-0.0.96.tgz#13ebdc76397a473b054e091e061de6f531bdaf57"
-  integrity sha512-m1d0IWjwZK+D19uBfgmfp5sUTxJXcjJb/YuIyn2cGNmXGqOH2r2cl0TUnhuFKxTXpMTXgTywd7MYF5U5/qkNTQ==
+langchain@^0.0.105:
+  version "0.0.105"
+  resolved "https://registry.yarnpkg.com/langchain/-/langchain-0.0.105.tgz#874ab2f6732e8189b4fe7ebbb4229e1049eb1d36"
+  integrity sha512-iytaHWDQw6U1KG47MTeZOlzQeWGjadBWXxkf1LkmZSPnbGsgFHea/fufKcaIrhsHJn7whf7UIhuBjqu+6TjDmg==
   dependencies:
     "@anthropic-ai/sdk" "^0.4.3"
     ansi-styles "^5.0.0"
     binary-extensions "^2.2.0"
     camelcase "6"
-    decamelize "5"
+    decamelize "^1.2.0"
     expr-eval "^2.0.2"
     flat "^5.0.2"
     js-tiktoken "^1.0.7"
+    js-yaml "^4.1.0"
     jsonpointer "^5.0.1"
-    langchainplus-sdk "^0.0.11"
+    langchainplus-sdk "^0.0.19"
     ml-distance "^4.0.0"
     object-hash "^3.0.0"
     openai "^3.3.0"
+    openapi-types "^12.1.3"
     p-queue "^6.6.2"
     p-retry "4"
     uuid "^9.0.0"
@@ -25909,10 +25906,10 @@ langchain@^0.0.96:
     zod "^3.21.4"
     zod-to-json-schema "^3.20.4"
 
-langchainplus-sdk@^0.0.11:
-  version "0.0.11"
-  resolved "https://registry.yarnpkg.com/langchainplus-sdk/-/langchainplus-sdk-0.0.11.tgz#bf833c183520983c229ef50071c17c1e3399909d"
-  integrity sha512-bEovYVJZq88LYznDfK+ohNVd0lqQ1DMgE/A/8ZkqsiyaRuEjvIQj4PLc0VQ8htWPBljrfTu8oS7g+SGWYTZfNw==
+langchainplus-sdk@^0.0.19:
+  version "0.0.19"
+  resolved "https://registry.yarnpkg.com/langchainplus-sdk/-/langchainplus-sdk-0.0.19.tgz#356774670fbbe75dd17932c46492544959660aa2"
+  integrity sha512-WKMN90E8M/JWO9lajbw8sv32xVHUZM+fN9I4LUveffBoX4qoJFi6uzYeDH0loW2SjnOSh3Tnzlz+Qp6ZenCu6g==
   dependencies:
     "@types/uuid" "^9.0.1"
     commander "^10.0.1"
@@ -29776,6 +29773,11 @@ openapi-sampler@^1.0.0-beta.8:
   dependencies:
     "@types/json-schema" "^7.0.7"
     json-pointer "0.6.2"
+
+openapi-types@^12.1.3:
+  version "12.1.3"
+  resolved "https://registry.yarnpkg.com/openapi-types/-/openapi-types-12.1.3.tgz#471995eb26c4b97b7bd356aacf7b91b73e777dd3"
+  integrity sha512-N4YtSYJqghVu4iek2ZUvcN/0aqH1kRDuNqzcycDxhOUpg7GdvLa2F3DgS6yBNhInhv2r/6I0Flkn7CqL8+nIcw==
 
 openapi3-ts@^2.0.1:
   version "2.0.2"

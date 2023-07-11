@@ -2,7 +2,7 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { Button, Icon, Body, Colors, Tooltip } from '@cognite/cogs.js';
+import { Button, Icon, Body, Colors, Tooltip, Flex } from '@cognite/cogs.js';
 
 import { translationKeys } from '../../../common';
 import { useAssetTimeseries } from '../../../hooks/useAssetTimeseries';
@@ -11,11 +11,13 @@ import { useTranslation } from '../../../hooks/useTranslation';
 type TimeseriesListProps = {
   assetId: number;
   onAddTimeseries: (timeseriesId: number) => void;
+  onFindRelatedTimeseries: () => void;
 };
 
 const TimeseriesList: React.FC<TimeseriesListProps> = ({
   assetId,
   onAddTimeseries,
+  onFindRelatedTimeseries,
 }) => {
   const { data: timeseries = [], isLoading } = useAssetTimeseries(assetId);
   const { t } = useTranslation();
@@ -31,8 +33,29 @@ const TimeseriesList: React.FC<TimeseriesListProps> = ({
   return (
     <Container>
       <TimeseriesHeadline>
-        Time series
-        <div className="badge">{timeseries.length}</div>
+        <Flex alignItems="center">
+          Time series
+          <div className="badge">{timeseries.length}</div>
+        </Flex>
+        <Tooltip
+          position="right"
+          content={t(
+            translationKeys.FIND_RELATED_TIMESERIES,
+            'Find related time series'
+          )}
+        >
+          <Button
+            onClick={onFindRelatedTimeseries}
+            type="ghost"
+            inverted
+            size="medium"
+            icon="ListSearch"
+            aria-label={t(
+              translationKeys.FIND_RELATED_TIMESERIES,
+              'Find related time series'
+            )}
+          />
+        </Tooltip>
       </TimeseriesHeadline>
       <TimeseriesContainer>
         {timeseries.map((ts, index) => (
@@ -44,6 +67,7 @@ const TimeseriesList: React.FC<TimeseriesListProps> = ({
               <Name level={3}>{ts.name}</Name>
             </InnerWrapper>
             <Tooltip
+              position="right"
               content={t(
                 translationKeys.TOOLTIP_TIMESERIES_ADD_TO_CANVAS,
                 'Add timeseries'
@@ -105,6 +129,7 @@ const TimeseriesHeadline = styled.div`
   font-size: 12px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   .badge {
     background: ${Colors['surface--action--muted--default--inverted']};
     background: Co;

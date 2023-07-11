@@ -179,6 +179,7 @@ export const IndustryCanvasPage = () => {
     isResourceSelectorOpen,
     resourceSelectorFilter,
     initialSelectedResource,
+    initialTab,
   } = useResourceSelectorActions();
 
   const { onUpdateAnnotationStyleByType, toolOptions } = useManagedTools({
@@ -719,6 +720,7 @@ export const IndustryCanvasPage = () => {
             visibleResourceTabs={['file', 'timeSeries', 'asset', 'event']}
             selectionMode="multiple"
             initialFilter={resourceSelectorFilter}
+            initialTab={initialTab}
             initialSelectedResource={initialSelectedResource}
             addButtonText="Add to canvas"
             shouldShowPreviews={false}

@@ -34,7 +34,8 @@ export type AssetTooltipProps = {
   onAddTimeseries: (timeseriesId: number) => void;
   onAddAsset: () => void;
   onViewAsset: () => void;
-  onOpenInResourceSelector: () => void;
+  onOpenAssetInResourceSelector: () => void;
+  onOpenTimeseriesTabInResourceSelector: () => void;
 };
 
 const AssetTooltip: React.FC<AssetTooltipProps> = ({
@@ -43,7 +44,8 @@ const AssetTooltip: React.FC<AssetTooltipProps> = ({
   onViewAsset,
   onAddThreeD,
   onAddTimeseries,
-  onOpenInResourceSelector,
+  onOpenAssetInResourceSelector,
+  onOpenTimeseriesTabInResourceSelector,
 }) => {
   const { data: asset, isLoading } = useAsset(id);
   const { t } = useTranslation();
@@ -113,7 +115,7 @@ const AssetTooltip: React.FC<AssetTooltipProps> = ({
                 <Menu.Item
                   iconPlacement="left"
                   icon="ListSearch"
-                  onClick={onOpenInResourceSelector}
+                  onClick={onOpenAssetInResourceSelector}
                   aria-label={t(
                     translationKeys.FIND_RELATED_RESOURCES,
                     'Find related resources'
@@ -146,7 +148,11 @@ const AssetTooltip: React.FC<AssetTooltipProps> = ({
           {asset.description}
         </ContextualTooltip.Description>
       )}
-      <TimeseriesList assetId={id} onAddTimeseries={onAddTimeseries} />
+      <TimeseriesList
+        assetId={id}
+        onAddTimeseries={onAddTimeseries}
+        onFindRelatedTimeseries={onOpenTimeseriesTabInResourceSelector}
+      />
     </ContextualTooltip.Container>
   );
 };

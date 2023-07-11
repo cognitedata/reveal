@@ -7,17 +7,19 @@ import { useDebounce } from 'use-debounce';
 import { Button, Dropdown, Menu } from '@cognite/cogs.js';
 
 import { CopilotAction } from '../../../../lib/types';
+import {
+  sendFromCopilotEvent,
+  sendToCopilotEvent,
+} from '../../../../lib/utils';
 import { getContainer } from '../../../utils/getContainer';
 
 const getButtonWidth = (text: string) => text.length * 8 + 20;
 
-export const ResponsiveActions = ({
-  actions,
-}: {
-  actions: CopilotAction[];
-}) => {
-  const [priorityItems, setPriorityItems] = useState<CopilotAction[]>(actions);
-  const [moreItems, setMoreItems] = useState<CopilotAction[]>([]);
+type Action = CopilotAction;
+
+export const ResponsiveActions = ({ actions }: { actions: Action[] }) => {
+  const [priorityItems, setPriorityItems] = useState<Action[]>(actions);
+  const [moreItems, setMoreItems] = useState<Action[]>([]);
 
   const navigationOuter = useRef<HTMLDivElement>(null);
   //Add resize listener but throttle for smoother experience
@@ -71,7 +73,15 @@ export const ResponsiveActions = ({
           size="small"
           key={item.content}
           icon={item.icon}
-          onClick={item.onClick}
+          onClick={() => {
+            if ('onClick' in item && item.onClick) {
+              item.onClick();
+            } else if ('fromCopilotEvent' in item) {
+              sendFromCopilotEvent(...item.fromCopilotEvent);
+            } else if ('toCopilotEvent' in item) {
+              sendToCopilotEvent(...item.toCopilotEvent);
+            }
+          }}
           className="ai"
         >
           {item.content}
@@ -83,7 +93,18 @@ export const ResponsiveActions = ({
           content={
             <Menu>
               {moreItems.map((item) => (
-                <Menu.Item key={item.content} onClick={item.onClick}>
+                <Menu.Item
+                  key={item.content}
+                  onClick={() => {
+                    if ('onClick' in item && item.onClick) {
+                      item.onClick();
+                    } else if ('fromCopilotEvent' in item) {
+                      sendFromCopilotEvent(...item.fromCopilotEvent);
+                    } else if ('toCopilotEvent' in item) {
+                      sendToCopilotEvent(...item.toCopilotEvent);
+                    }
+                  }}
+                >
                   {item.content}
                 </Menu.Item>
               ))}

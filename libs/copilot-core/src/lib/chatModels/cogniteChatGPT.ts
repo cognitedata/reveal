@@ -1,11 +1,11 @@
 import { CallbackManagerForLLMRun } from 'langchain/callbacks';
 import { BaseChatModel, BaseChatModelParams } from 'langchain/chat_models/base';
 import {
-  AIChatMessage,
+  AIMessage,
   ChatMessage,
-  HumanChatMessage,
-  SystemChatMessage,
-  BaseChatMessage,
+  HumanMessage,
+  SystemMessage,
+  BaseMessage,
   ChatResult,
   MessageType,
   ChatGeneration,
@@ -38,14 +38,14 @@ function messageTypeToOpenAIRole(
 function openAIResponseToChatMessage(
   role: ChatCompletionResponseMessageRoleEnum | undefined,
   text: string
-): BaseChatMessage {
+): BaseMessage {
   switch (role) {
     case 'user':
-      return new HumanChatMessage(text);
+      return new HumanMessage(text);
     case 'assistant':
-      return new AIChatMessage(text);
+      return new AIMessage(text);
     case 'system':
-      return new SystemChatMessage(text);
+      return new SystemMessage(text);
     default:
       return new ChatMessage(text, role ?? 'unknown');
   }
@@ -102,7 +102,7 @@ export class CogniteChatGPT
 
   /** @ignore */
   async _generate(
-    messages: BaseChatMessage[],
+    messages: BaseMessage[],
     _options?: this['ParsedCallOptions'],
     _runManager?: CallbackManagerForLLMRun
   ): Promise<ChatResult> {
@@ -142,6 +142,7 @@ export class CogniteChatGPT
     const res = await this.sdk.post(url, {
       data: request,
       withCredentials: true,
+      retryValidator: (_, res, counter) => res?.status === 504 && counter < 3,
     });
     return res.data;
   }

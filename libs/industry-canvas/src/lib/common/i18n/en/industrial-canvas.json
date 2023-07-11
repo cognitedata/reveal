@@ -25,6 +25,7 @@
   "GO_BACK_HOMEPAGE_BUTTON": "Go back to Industrial Canvas home page",
   "OPEN_IN_DATA_EXPLORER": "Open in Data Explorer",
   "FIND_RELATED_RESOURCES": "Find related resources",
+  "FIND_RELATED_TIMESERIES": "Find related time series",
   "CLOSE": "Close",
   "REMOVE_CONTAINER_TOOLTIP": "Remove",
   "CHANGE_LABEL_TOOLTIP": "Change label",

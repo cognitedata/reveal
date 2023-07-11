@@ -133,3 +133,107 @@ export const augmentQueryWithRequiredFields = (
 
   return print(editedQuery);
 };
+
+export type QueryType = 'list' | 'search' | 'aggregate' | 'get';
+
+export const getOperationName = (queryType: QueryType, type: string) => {
+  switch (queryType) {
+    case 'get':
+      return `get${type}ById`;
+    default:
+      return `${queryType}${type}`;
+  }
+};
+
+export const getFilterTypeName = (queryType: QueryType, type: string) => {
+  switch (queryType) {
+    case 'search':
+    case 'aggregate':
+      return `_Search${type}Filter`;
+    case 'list':
+      return `_List${type}Filter`;
+    default:
+      return '';
+  }
+};
+
+export const getFields = (
+  typeName: string,
+  relevantFields: Map<string, string[]>,
+  dataModelTypes: DataModelTypeDefs,
+  isList?: boolean
+) => {
+  const typeDef = dataModelTypes.types.find((el) => el.name === typeName);
+  if (!typeDef) {
+    throw Error('Unknown type for building fields for');
+  }
+  const nestedSet = new Map(relevantFields);
+  nestedSet.delete(typeName);
+
+  const fields = relevantFields.get(typeName);
+  return `{
+    ${isList ? 'items {' : ''}
+      ${typeDef?.fields
+        .filter((field) => fields?.includes(field.name))
+        .map((field): string => {
+          if (field.type.custom) {
+            if (nestedSet.has(field.type.name)) {
+              return `${field.name} ${getFields(
+                field.type.name,
+                nestedSet,
+                dataModelTypes,
+                field.type.list
+              )}`;
+            }
+            // skip, knowing we need to add dependecy checks later
+            return '';
+          }
+          return field.name;
+        })
+        .join('\n')}
+    ${isList ? '}' : ''}
+  }`;
+};
+
+export type GptGQLFilter = {
+  [key in string]: {
+    property: string;
+    operator: 'eq' | 'in' | 'prefix' | 'lt' | 'lte' | 'gt' | 'gte';
+    value: string;
+  }[];
+};
+
+export const constructFilter = (filter: GptGQLFilter) => {
+  const baseLevelOp = Object.keys(filter)[0];
+
+  return {
+    [baseLevelOp]: filter[baseLevelOp].map((el) => {
+      // TODO last year
+      // TODO add validation of valid property
+      return { [el.property]: { [el.operator]: el.value } };
+    }),
+  };
+};
+
+export const constructGraphQLTypes = (
+  types: string[],
+  dataModelTypes: DataModelTypeDefs
+) => {
+  return `\`\`\`graphql
+${dataModelTypes.types
+  .filter((type) => types.includes(type.name))
+  .map(
+    (type) => `type ${type.name} {
+  ${type.fields
+    .map(
+      (field) =>
+        `${field.name}: ${field.list ? '[' : ''} ${field.type} ${
+          field.list ? ']' : ''
+        }`
+    )
+    .join('\n')}
+}`
+  )
+  .join('\n')}
+\`\`\``;
+};

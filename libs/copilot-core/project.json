@@ -20,7 +20,7 @@
         "outputPath": "dist/libs/@fusion/copilot-core",
         "tsConfig": "libs/copilot-core/tsconfig.lib.json",
         "entryFile": "libs/copilot-core/src/index.ts",
-        "compiler": "babel",
+        "compiler": "tsc",
         "project": "libs/copilot-core/package.json",
         "rollupConfig": "libs/copilot-core/rollup.config.js",
         "assets": [
@@ -30,8 +30,7 @@
             "output": "."
           }
         ],
-        "updateBuildableProjectDepsInPackageJson": false,
-        "babelUpwardRootMode": true
+        "updateBuildableProjectDepsInPackageJson": false
       }
     },
     "test": {

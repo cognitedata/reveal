@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { useBotUI } from '@botui/react';
 import { BotuiInterface } from 'botui';
 import { BufferMemory, ChatMessageHistory } from 'langchain/memory';
-import { AIChatMessage, HumanChatMessage } from 'langchain/schema';
+import { AIMessage, HumanMessage } from 'langchain/schema';
 
 import { Flex } from '@cognite/cogs.js';
 import { useFlag } from '@cognite/react-feature-flags';
@@ -200,8 +200,8 @@ export const ChatUI = ({
         chatHistory: new ChatMessageHistory(
           cachedMessages?.map((el) =>
             el.source === 'user'
-              ? new HumanChatMessage(el.content)
-              : new AIChatMessage(el.content)
+              ? new HumanMessage(el.content)
+              : new AIMessage(el.content)
           )
         ),
       });
