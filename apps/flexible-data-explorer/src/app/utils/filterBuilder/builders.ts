@@ -2,7 +2,7 @@ import {
   DateRange,
   NumericRange,
   Operator,
-} from '../../containers/search/Filter/types';
+} from '../../containers/Filter/types';
 
 export const builders: Record<
   Operator,

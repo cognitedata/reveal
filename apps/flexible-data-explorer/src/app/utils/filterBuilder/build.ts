@@ -1,10 +1,7 @@
 import isArray from 'lodash/isArray';
 import mergeWith from 'lodash/mergeWith';
 
-import {
-  ValueByDataType,
-  ValueByField,
-} from '../../containers/search/Filter/types';
+import { ValueByDataType, ValueByField } from '../../containers/Filter/types';
 
 import { builders } from './builders';
 

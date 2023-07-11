@@ -7,7 +7,7 @@ import queryString from 'query-string';
 // TODO: move these in fdx?
 import { ResourceItem } from '@data-exploration-lib/core';
 
-import { DateRange, ValueByDataType } from '../containers/search/Filter';
+import { DateRange, ValueByDataType } from '../containers/Filter';
 import { createSearchParams } from '../utils/router';
 
 import { useDataModelParams } from './useDataModelParams';
@@ -35,7 +35,11 @@ export const useNavigation = () => {
   }, [basename, params]);
 
   const toSearchPage = useCallback(
-    (searchQuery: string = '', filters: ValueByDataType = {}) => {
+    (
+      searchQuery: string = '',
+      filters: ValueByDataType = {},
+      ignoreType?: boolean
+    ) => {
       const { type } = params;
 
       const queryParams = createSearchParams({
@@ -44,20 +48,20 @@ export const useNavigation = () => {
       });
 
       navigate({
-        pathname: ['search', type].filter(Boolean).join('/'),
+        pathname: ['search', !ignoreType && type].filter(Boolean).join('/'),
         search: queryParams.toString(),
       });
     },
     [params, navigate]
   );
 
-  const redirectSearchPage = useCallback(
-    (dataType?: string) => {
+  const toSearchCategoryPage = useCallback(
+    (dataType?: string, cleanSearch?: boolean) => {
       navigate({
         pathname: [`${basePath}/search`, dataType && `/${dataType}`]
           .filter(Boolean)
           .join(''),
-        search,
+        search: cleanSearch ? undefined : search,
       });
     },
     [basePath, navigate, search]
@@ -192,7 +196,7 @@ export const useNavigation = () => {
   return {
     toLandingPage,
     toSearchPage,
-    redirectSearchPage,
+    toSearchCategoryPage,
     toListPage,
     toHomePage,
 

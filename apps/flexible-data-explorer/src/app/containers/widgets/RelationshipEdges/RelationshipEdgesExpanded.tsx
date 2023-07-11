@@ -10,7 +10,7 @@ import { Widget } from '../../../components/widget/Widget';
 import { useNavigation } from '../../../hooks/useNavigation';
 import { useTypesDataModelQuery } from '../../../services/dataModels/query/useTypesDataModelQuery';
 import { useInstanceRelationshipQuery } from '../../../services/instances/generic/queries/useInstanceRelationshipQuery';
-import { ValueByField } from '../../search/Filter';
+import { ValueByField } from '../../Filter';
 
 import { RelationshipFilter } from './Filters';
 import { RelationshipEdgesProps } from './RelationshipEdgesWidget';

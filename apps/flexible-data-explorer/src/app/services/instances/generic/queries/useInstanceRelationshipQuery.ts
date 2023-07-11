@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import { useInfiniteQuery } from '@tanstack/react-query';
 
 import { EMPTY_ARRAY } from '../../../../constants/object';
-import { ValueByField } from '../../../../containers/search/Filter';
+import { ValueByField } from '../../../../containers/Filter';
 import { useFDM } from '../../../../providers/FDMProvider';
 import { buildFilterByField } from '../../../../utils/filterBuilder';
 import { useTypesDataModelQuery } from '../../../dataModels/query/useTypesDataModelQuery';

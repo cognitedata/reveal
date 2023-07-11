@@ -3,8 +3,7 @@ import React from 'react';
 import { Button, Dropdown } from '@cognite/cogs.js';
 
 import { useTranslation } from '../../hooks/useTranslation';
-
-import { SearchBarFilter, ValueByDataType, AppliedFilters } from './Filter';
+import { SearchBarFilter, ValueByDataType, AppliedFilters } from '../Filter';
 
 export interface SearchFiltersProps {
   value?: ValueByDataType;

@@ -39,6 +39,14 @@ export const InstancesPage = () => {
       <Page.Widgets>
         <PropertiesWidget id="Properties" data={data} columns={2} />
 
+        {directRelationships?.map((item) => (
+          <RelationshipDirectWidget
+            key={item.name}
+            id={item.name}
+            type={{ field: item.name, type: item.type.name }}
+          />
+        ))}
+
         {edges?.map((item) => {
           return (
             <RelationshipEdgesWidget
@@ -48,14 +56,6 @@ export const InstancesPage = () => {
             />
           );
         })}
-
-        {directRelationships?.map((item) => (
-          <RelationshipDirectWidget
-            key={item.name}
-            id={item.name}
-            type={{ field: item.name, type: item.type.name }}
-          />
-        ))}
       </Page.Widgets>
     </Page.Dashboard>
   );

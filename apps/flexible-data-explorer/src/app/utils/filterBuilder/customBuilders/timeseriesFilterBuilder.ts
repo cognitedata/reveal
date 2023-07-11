@@ -7,11 +7,7 @@ import omitBy from 'lodash/omitBy';
 import { DateRange, TimeseriesFilter } from '@cognite/sdk';
 
 import { ProjectConfig } from '../../../../config/types';
-import {
-  Operator,
-  ValueByField,
-  ValueType,
-} from '../../../containers/search/Filter';
+import { Operator, ValueByField, ValueType } from '../../../containers/Filter';
 
 export const buildTimeseriesFilter = (
   params?: ValueByField,

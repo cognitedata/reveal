@@ -31,7 +31,7 @@ const Routes = () => {
           element={
             <Container>
               <Content>
-                <SearchBar width="1036px" inverted />
+                <SearchBar width="1026px" inverted />
               </Content>
               <Outlet />
             </Container>
