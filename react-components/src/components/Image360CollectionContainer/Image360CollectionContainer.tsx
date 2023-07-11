@@ -12,7 +12,7 @@ type Image360CollectionStyling = {
 type Image360CollectionContainerProps = {
   siteId: string;
   styling?: Image360CollectionStyling; 
-  onLoad?: () => void;
+  onLoad?: (image360: Image360Collection) => void;
 };
 
 export function Image360CollectionContainer({
@@ -33,7 +33,7 @@ export function Image360CollectionContainer({
   async function add360Collection(): Promise<void> {
     const image360Collection = await viewer.add360ImageSet('events', { site_id: siteId });
     modelRef.current = image360Collection;
-    onLoad?.();
+    onLoad?.(image360Collection);
   }
 
   function remove360Collection(): void {

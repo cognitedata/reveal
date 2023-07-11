@@ -16,8 +16,7 @@ import {
   CameraControlsOptions,
   DefaultCameraManager,
   CogniteModel,
-  AnnotationIdPointCloudObjectCollection,
-  CDF_TO_VIEWER_TRANSFORMATION
+  AnnotationIdPointCloudObjectCollection
 } from '@cognite/reveal';
 import { DebugCameraTool, Corner, AxisViewTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
@@ -478,7 +477,6 @@ export function Viewer() {
                   
                   if (pointCloudObjectsUi.createAnnotationsOnClick) {
                     const cdfPosition = point.clone().applyMatrix4(model.getCdfToDefaultModelTransformation().invert());
-                    //model.mapPointFromCdfToModelCoordinates(cdfPosition);
 
                     const annotation = await client.annotations.create([{
                       annotatedResourceId: model.modelId,

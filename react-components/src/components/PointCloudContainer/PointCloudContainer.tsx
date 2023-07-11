@@ -21,7 +21,7 @@ export type CognitePointCloudModelProps = {
   addModelOptions: AddModelOptions;
   styling?: PointCloudModelStyling;
   transform?: Matrix4;
-  onLoad?: () => void;
+  onLoad?: (model: CognitePointCloudModel) => void;
 };
 
 export function PointCloudContainer({
@@ -63,7 +63,7 @@ export function PointCloudContainer({
       pointCloudModel.setModelTransformation(transform);
     }
     setModel(pointCloudModel);
-    onLoad?.();
+    onLoad?.(pointCloudModel);
   }
 
   function removeModel(): void {

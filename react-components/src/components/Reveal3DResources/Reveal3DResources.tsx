@@ -1,8 +1,8 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-import { useRef, type ReactElement, useContext, useState, useEffect } from 'react';
-import { NodeAppearance, type Cognite3DViewer, PointCloudAppearance } from '@cognite/reveal';
+import { useRef, type ReactElement, useContext, useState, useEffect, useMemo } from 'react';
+import { NodeAppearance, type Cognite3DViewer, PointCloudAppearance, CogniteCadModel, CognitePointCloudModel, Image360Collection } from '@cognite/reveal';
 import { ModelsLoadingStateContext } from './ModelsLoadingContext';
 import { CadModelContainer, CadModelStyling } from '../CadModelContainer/CadModelContainer';
 import { PointCloudContainer, PointCloudModelStyling } from '../PointCloudContainer/PointCloudContainer';
@@ -15,15 +15,18 @@ import {
   type AddResourceOptions
 } from './types';
 import { CogniteExternalId } from '@cognite/sdk';
+import { useSDK } from '../RevealContainer/SDKProvider';
+import { FdmAssetMappingsConfig, useFdmAssetMappings } from '../../hooks/useFdmAssetMappings';
 
-export type AssetStylingGroup = {
-  assetExternalIds: CogniteExternalId[];
+
+export type FdmAssetStylingGroup = {
+  fdmAssetExternalIds: CogniteExternalId[];
   style: { cad?: NodeAppearance; pointcloud?: PointCloudAppearance };
 }
 
 export type Reveal3DResourcesStyling = {
   defaultStyle?: { cad?: NodeAppearance, pointcloud?: PointCloudAppearance }
-  groups?: AssetStylingGroup[],
+  groups?: FdmAssetStylingGroup[],
 };
 
 export type Reveal3DResourcesProps = {
@@ -39,14 +42,28 @@ export const Reveal3DResources = ({ resources, styling }: Reveal3DResourcesProps
   const viewer = useReveal();
   const numModelsLoaded = useRef(0);
 
+  const stylingExternalIds = useMemo(() => styling?.groups?.flatMap((group) => group.fdmAssetExternalIds) ?? [], [styling]);
+  const fdmAssetMappingSource: FdmAssetMappingsConfig = {
+    source: {
+      space: 'fdm-3d-test-savelii',
+      version: '1',
+      type: 'view',
+      externalId: 'CDF_3D_Connection_Data',
+    },
+    assetFdmSpace: 'bark-corporation'
+  };
+    
+  const mappings = useFdmAssetMappings(stylingExternalIds, fdmAssetMappingSource);
+
   useEffect(() => {
     getTypedModels(resources, viewer).then(setReveal3DModels).catch(console.error);
-  }, [resources]);
-
+  }, [resources, viewer]);
+  
+  
   useEffect(() => {
-    if (styling === undefined || reveal3DModels === undefined) return;
+    if (styling === undefined || reveal3DModels === undefined) return;  
 
-    const modelStylings = reveal3DModels.map((model) => {
+    const modelsStyling = reveal3DModels.map((model) => {
       let modelStyling: PointCloudModelStyling | CadModelStyling;
       switch (model.type) {
         case 'cad':
@@ -68,9 +85,34 @@ export const Reveal3DResources = ({ resources, styling }: Reveal3DResourcesProps
       return modelStyling;
     });
 
-    setReveal3DModelsStyling(modelStylings);
+    mappings.then((modelMappings) => {
+      const newModelsStyling = modelsStyling.map((modelStyling, index) => {
+        const model = reveal3DModels[index];
+        if (model.type === 'cad') {
+          const modelNodeMappings = modelMappings.find((mapping) => mapping.modelId === model.modelId && mapping.revisionId === model.revisionId);
+          const nodeStyling = styling?.groups?.find((group) => 
+            group.fdmAssetExternalIds.filter((externalId) =>
+              modelNodeMappings?.mappings.some((modelNodeMapping) =>
+                modelNodeMapping.externalId === externalId))
+            .length > 0
+          );
 
-  }, [styling, reveal3DModels]);
+          if (modelNodeMappings && styling?.groups) {
+            (modelStyling as CadModelStyling).groups = [...((modelStyling as CadModelStyling)?.groups ?? []), {style: nodeStyling?.style?.cad!, nodeIds: modelNodeMappings.mappings.map((mapping) => mapping.nodeId)}]
+          }
+
+          return modelStyling;
+        } else if (model.type === 'pointcloud') {
+          return modelStyling;
+        }
+
+        return modelStyling;
+      });
+
+      setReveal3DModelsStyling(newModelsStyling);
+    });
+
+  }, [mappings, styling, reveal3DModels]);
 
   const image360CollectionAddOptions = resources.filter(
     (resource): resource is AddImageCollection360Options =>
@@ -79,6 +121,7 @@ export const Reveal3DResources = ({ resources, styling }: Reveal3DResourcesProps
 
   const onModelLoaded = (): void => {
     numModelsLoaded.current += 1;
+
     if (numModelsLoaded.current === resources.length) {
       setModelsAdded(true);
     }

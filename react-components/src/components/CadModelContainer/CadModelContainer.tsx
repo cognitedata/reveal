@@ -27,7 +27,7 @@ type CogniteCadModelProps = {
   addModelOptions: AddModelOptions;
   styling?: CadModelStyling;
   transform?: Matrix4;
-  onLoad?: () => void;
+  onLoad?: (model: CogniteCadModel) => void;
 };
 
 export function CadModelContainer({
@@ -69,14 +69,14 @@ export function CadModelContainer({
     modelId: number,
     revisionId: number,
     transform?: Matrix4,
-    onLoad?: () => void
+    onLoad?: (model: CogniteCadModel) => void
   ): Promise<CogniteCadModel> {
     const cadModel = await viewer.addCadModel({ modelId, revisionId });
     if (transform !== undefined) {
       cadModel.setModelTransformation(transform);
     }
     setModel(cadModel);
-    onLoad?.();
+    onLoad?.(cadModel);
 
     return cadModel;
   }
