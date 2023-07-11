@@ -15,13 +15,14 @@ type AccessCheckProps = {
 const AccessCheck = ({ children }: AccessCheckProps): JSX.Element => {
   const { t } = useTranslation();
   const { flow } = getFlow();
-  const { data: hasReadAccess, isFetched } = usePermissions(
+
+  const { data: hasReadAccess, isLoading } = usePermissions(
     flow as any,
     'datasetsAcl',
     'READ'
   );
 
-  if (!isFetched) {
+  if (isLoading) {
     return <Loader />;
   }
 
