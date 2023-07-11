@@ -67,15 +67,6 @@ jobs:
             ~/.cache/Cypress
           key: cache-node-modules-${{ hashFiles('yarn.lock') }}
 
-      - name: Cache Nx
-        uses: actions/cache@v3
-        with:
-          path: node_modules/.cache/nx
-          key: cache-nx-${{ hashFiles('yarn.lock') }}-${{ matrix.target }}-${{ matrix.jobIndex }}-${{ github.sha }}
-          restore-keys: |
-            cache-nx-${{ hashFiles('yarn.lock') }}-${{ matrix.target }}-${{ matrix.jobIndex }}-
-            cache-nx-${{ hashFiles('yarn.lock') }}-
-
       - run: git fetch --no-tags --prune --depth=1 origin ${{ github.base_ref }}
       - name: Derive appropriate SHAs for base and head for `nx affected` commands
         uses: nrwl/nx-set-shas@v3
@@ -92,9 +83,36 @@ jobs:
     outputs:
       build-inline: ${{ steps.affected-inline.outputs.projects }}
 
+  build-libs:
+    name: 'Build libs'
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'yarn'
+      - name: Cache node modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            node_modules
+            ~/.cache/Cypress
+          key: cache-node-modules-${{ hashFiles('yarn.lock') }}
+      - name: Cache Nx
+        uses: actions/cache@v3
+        with:
+          path: node_modules/.cache/nx
+          key: cache-nx-${{ hashFiles('yarn.lock') }}-build-libs-${{ github.sha }}
+          restore-keys: |
+            cache-nx-${{ hashFiles('yarn.lock') }}-build-libs
+            cache-nx-${{ hashFiles('yarn.lock') }}-
+
   build:
     runs-on: ubuntu-20.04
-    needs: print-affected
+    needs: [print-affected, build-libs]
     strategy:
       matrix:
         project: ${{ fromJson(needs.print-affected.outputs.build-inline)  }}
@@ -113,8 +131,16 @@ jobs:
             node_modules
             ~/.cache/Cypress
           key: cache-node-modules-${{ hashFiles('yarn.lock') }}
+      - name: Cache Nx
+        uses: actions/cache@v3
+        with:
+          path: node_modules/.cache/nx
+          key: cache-nx-${{ hashFiles('yarn.lock') }}-${{ matrix.project }}-${{ github.sha }}
+          restore-keys: |
+            cache-nx-${{ hashFiles('yarn.lock') }}-${{ matrix.project }}
+            cache-nx-${{ hashFiles('yarn.lock') }}-
       - name: Build
-        run: yarn nx build ${{ matrix.target }} --configuration=production
+        run: yarn nx build ${{ matrix.project }} --configuration=production
 #          echo ${{ fromJson(needs.print-affected.outputs.build) }}
 
 #  build:
