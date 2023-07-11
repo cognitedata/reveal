@@ -253,6 +253,26 @@ describe('Utils', () => {
         '/cdf/test-project/data-models?cluster=greenfield.cognitedata.com&env=sandfield&organization=cog-appdev'
       );
     });
+
+    it('Should not duplicate project when unified signin', () => {
+      Object.defineProperty(window, 'location', {
+        writable: true,
+        value: {
+          href: 'https://apps-staging.cognite.com/cdf/test-project?project=test-project&cluster=greenfield.cognitedata.com&idpInternalId=a5bc6507-2644-4004-87eb-efdb3124e3e2&organization=cog-appdev',
+          pathname: '/cdf/test-project',
+          hostname: 'apps-staging.cognite.com',
+          host: 'apps-staging.cognite.com',
+          search:
+            '?project=test-project&cluster=greenfield.cognitedata.com&idpInternalId=a5bc6507-2644-4004-87eb-efdb3124e3e2&organization=cog-appdev',
+        },
+      });
+
+      expect(
+        createLink('/test-project/data-models', { env: 'sandfield' })
+      ).toEqual(
+        '/cdf/test-project/data-models?cluster=greenfield.cognitedata.com&env=sandfield&organization=cog-appdev'
+      );
+    });
   });
 
   describe('checkUrl', () => {

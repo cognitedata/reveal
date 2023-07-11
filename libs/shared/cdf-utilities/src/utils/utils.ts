@@ -71,10 +71,16 @@ export const createLink = (
     },
     opts
   );
+
+  const pathName =
+    isUsingUnifiedSignin() && path.startsWith(`/${project}`)
+      ? path.replace(`/${project}`, '')
+      : path;
+
   if (query.length > 0) {
-    return `${cdfAppName}/${project}${path}?${query}`;
+    return `${cdfAppName}/${project}${pathName}?${query}`;
   }
-  if (path.length > 0 && path !== '/') {
+  if (pathName.length > 0 && path !== '/') {
     return `${cdfAppName}/${project}${path}`;
   }
   return `${cdfAppName}/${project}`;
