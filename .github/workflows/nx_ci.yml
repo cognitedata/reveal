@@ -1,9 +1,3 @@
-#
-# Based on this article https://medium.com/emoteev-blog/10x-faster-ci-with-nx-and-github-actions-9a51fc4e82a6
-#
-# Control how many jobs run in parallel by changing jobIndex: [1, 2] and jobCount: 2
-# IMPORTANT - Make sure jobCount matches number of elements in jobIndex array
-
 name: NX - CI
 on:
   pull_request:
@@ -149,8 +143,6 @@ jobs:
             cache-nx-${{ hashFiles('yarn.lock') }}-
       - name: Build
         run: yarn nx build ${{ matrix.project }} --configuration=production
-#          echo ${{ fromJson(needs.print-affected.outputs.build) }}
-
 #  build:
 #    runs-on: ubuntu-20.04
 #    needs: print-affected
