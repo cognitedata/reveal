@@ -62,12 +62,20 @@ export const createLink = (
   const env = getEnv();
   const cluster = getCluster();
   const organization = isUsingUnifiedSignin() ? getOrganization() : '';
+  const idpInternalId = isUsingUnifiedSignin()
+    ? getQueryParameter('idpInternalId')
+    : '';
+  const loginHintProject = isUsingUnifiedSignin()
+    ? getQueryParameter('project')
+    : '';
   const query = queryString.stringify(
     {
       ...queries,
       ...(env ? { env } : {}),
       ...(cluster ? { cluster } : {}),
       ...(organization ? { organization } : {}),
+      ...(idpInternalId ? { idpInternalId } : {}),
+      ...(loginHintProject ? { project: loginHintProject } : {}),
     },
     opts
   );
