@@ -110,6 +110,11 @@ jobs:
           restore-keys: |
             cache-nx-${{ hashFiles('yarn.lock') }}-build-libs
             cache-nx-${{ hashFiles('yarn.lock') }}-
+      - run: git fetch --no-tags --prune --depth=1 origin ${{ github.base_ref }}
+      - name: Derive appropriate SHAs for base and head for `nx affected` commands
+        uses: nrwl/nx-set-shas@v3
+        with:
+          main-branch-name: ${{ github.base_ref }}
       - name: Build libs
         run: yarn nx affected --targets=build --exclude="apps/*" --nx-bail --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }}
 
