@@ -110,6 +110,8 @@ jobs:
           restore-keys: |
             cache-nx-${{ hashFiles('yarn.lock') }}-build-libs
             cache-nx-${{ hashFiles('yarn.lock') }}-
+      - name: Build libs
+        run: yarn nx affected --targets=build --exclude="apps/*" --nx-bail --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }}
 
   build:
     runs-on: ubuntu-20.04
