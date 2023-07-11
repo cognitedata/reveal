@@ -100,9 +100,9 @@ jobs:
         uses: actions/cache@v3
         with:
           path: node_modules/.cache/nx
-          key: cache-nx-${{ hashFiles('yarn.lock') }}-build-libs-${{ github.sha }}
+          key: cache-nx-${{ hashFiles('yarn.lock') }}-${{ github.sha }}
           restore-keys: |
-            cache-nx-${{ hashFiles('yarn.lock') }}-build-libs
+            cache-nx-${{ hashFiles('yarn.lock') }}-${{ github.sha }}
             cache-nx-${{ hashFiles('yarn.lock') }}-
       - run: git fetch --no-tags --prune --depth=1 origin ${{ github.base_ref }}
       - name: Derive appropriate SHAs for base and head for `nx affected` commands
@@ -137,9 +137,9 @@ jobs:
         uses: actions/cache@v3
         with:
           path: node_modules/.cache/nx
-          key: cache-nx-${{ hashFiles('yarn.lock') }}-${{ matrix.project }}-${{ github.sha }}
+          key: cache-nx-${{ hashFiles('yarn.lock') }}-${{ github.sha }}
           restore-keys: |
-            cache-nx-${{ hashFiles('yarn.lock') }}-${{ matrix.project }}
+            cache-nx-${{ hashFiles('yarn.lock') }}-${{ github.sha }}
             cache-nx-${{ hashFiles('yarn.lock') }}-
       - name: Build
         run: yarn nx build ${{ matrix.project }} --configuration=production
