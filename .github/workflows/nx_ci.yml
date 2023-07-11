@@ -8,6 +8,7 @@ concurrency:
 
 jobs:
   install-dependencies:
+    name: Install dependencies
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3
@@ -42,6 +43,7 @@ jobs:
         run: yarn install --frozen-lockfile
 
   print-affected:
+    name: 'Get affected apps for build'
     runs-on: ubuntu-latest
     needs: install-dependencies
     steps:
@@ -78,7 +80,7 @@ jobs:
       build-inline: ${{ steps.affected-inline.outputs.projects }}
 
   build-libs:
-    name: 'Build libs'
+    name: Build libs
     runs-on: ubuntu-20.04
     needs: install-dependencies
     steps:
@@ -113,6 +115,7 @@ jobs:
         run: yarn nx affected --targets=build --exclude="apps/*" --nx-bail --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }}
 
   build:
+    name: Build
     runs-on: ubuntu-20.04
     needs: [print-affected, build-libs]
     strategy:
