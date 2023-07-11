@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
-import { ValueByDataType, ValueByField } from '../containers/search/Filter';
+import { ValueByDataType, ValueByField } from '../containers/Filter';
 
 export enum ParamKeys {
   ExpandedId = 'expandedId',

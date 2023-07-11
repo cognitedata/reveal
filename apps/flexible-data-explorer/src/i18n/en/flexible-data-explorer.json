@@ -7,10 +7,14 @@
 
   "HOMEPAGE_HEADER": "Search for {{site}} data in {{model}}",
 
+  "SEARCH_PLACEHOLDER": "Search...",
+  "SEARCH_BAR_SEARCH_FOR": "Search for \"{{query}}\"",
+  "SEARCH_BAR_SEARCH_FOR_IN_TYPE": "Search for \"{{query}}\" in {{type}}",
+  "SEARCH_BAR_LIST_ALL": "List all {{type}}",
+
   "SEARCH_RESULTS_HEADER": "Search results from {{site}} data in {{model}}",
   "SEARCH_CATEGORIES_HEADER": "Categories",
   "SEARCH_CATEGORIES_ALL_OPTION": "All",
-  "SEARCH_PLACEHOLDER": "Search...",
 
   "ONBOARDING_PAGE_TOGGLE_DATA_MODEL_BUTTON": "Please select a Data Model to explore",
 

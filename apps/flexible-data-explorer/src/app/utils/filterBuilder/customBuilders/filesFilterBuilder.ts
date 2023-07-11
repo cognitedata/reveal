@@ -9,7 +9,7 @@ import {
   NumericRange,
   Operator,
   ValueByField,
-} from '../../../containers/search/Filter';
+} from '../../../containers/Filter';
 import { getTimestamp } from '../../date';
 
 type Builder = (field: string, value: any) => DocumentFilter;

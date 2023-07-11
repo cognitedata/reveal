@@ -3,8 +3,8 @@ import styled from 'styled-components';
 import { TimeseriesChart } from '@cognite/plotting-components';
 
 import { BaseWidgetProps, Widget } from '../../components/widget/Widget';
-import { DateRange } from '../../containers/search/Filter';
 import { useTranslation } from '../../hooks/useTranslation';
+import { DateRange } from '../Filter';
 
 export interface TimeseriesProps extends BaseWidgetProps {
   timeseriesId?: number;

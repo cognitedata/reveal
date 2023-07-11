@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 
+import { DataExplorerLink } from '../components/links/DataExplorerLink';
 import { Categories } from '../containers/category/Categories';
 import { Page } from '../containers/page/Page';
-import { DataExplorerLink } from '../containers/search/DataExplorerLink';
 import { SearchBar } from '../containers/search/SearchBar';
 import { SearchConfiguration } from '../containers/search/SearchConfiguration';
 
