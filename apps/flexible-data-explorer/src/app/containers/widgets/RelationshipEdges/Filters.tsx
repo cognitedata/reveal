@@ -4,12 +4,9 @@ import { Button, Dropdown } from '@cognite/cogs.js';
 
 import { useTranslation } from '../../../hooks/useTranslation';
 import { useTypesDataModelQuery } from '../../../services/dataModels/query/useTypesDataModelQuery';
-import { ValueByField } from '../../search/Filter';
-import {
-  AppliedFilters,
-  FilterBuilderByField,
-} from '../../search/Filter/containers';
-import { transformDefFieldsToFilterFields } from '../../search/Filter/filters/SearchBarFilter/utils';
+import { ValueByField } from '../../Filter';
+import { AppliedFilters, FilterBuilderByField } from '../../Filter/containers';
+import { transformDefFieldsToFilterFields } from '../../Filter/filters/SearchBarFilter/utils';
 
 export interface SearchBarFilterProps {
   value?: ValueByField;

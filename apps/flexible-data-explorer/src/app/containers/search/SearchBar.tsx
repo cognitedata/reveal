@@ -35,9 +35,9 @@ export const SearchBar: React.FC<Props> = ({
 
   const ref = useRef<HTMLDivElement | null>(null);
 
-  const [queryParams] = useSearchQueryParams();
+  const [globalQuery] = useSearchQueryParams();
   const [localQuery, setLocalQuery] = useState('');
-  const [filterParams] = useSearchFilterParams();
+  const [filters] = useSearchFilterParams();
   const [isPreviewFocused, setPreviewFocus] = useState(false);
 
   const closePreview = useCallback(() => {
@@ -48,10 +48,10 @@ export const SearchBar: React.FC<Props> = ({
 
   useEffect(() => {
     // The query in the url have higher precedence than the local query. Make sure that it is synced.
-    if (localQuery !== queryParams) {
-      setLocalQuery(queryParams ?? '');
+    if (localQuery !== globalQuery) {
+      setLocalQuery(globalQuery ?? '');
     }
-  }, [queryParams]);
+  }, [globalQuery]);
 
   return (
     <Container
@@ -68,8 +68,12 @@ export const SearchBar: React.FC<Props> = ({
               e.preventDefault();
               (e.target as any).blur();
 
-              closePreview();
-              navigate.toSearchPage(localQuery, filterParams);
+              // Rest of the search logic is handled inside @{SearchPreviewActions}
+              if (!localQuery) {
+                closePreview();
+
+                navigate.toSearchPage(localQuery, filters);
+              }
             }
           }}
           // Do not add onBlur to input, it messes with the search preview.
@@ -94,17 +98,19 @@ export const SearchBar: React.FC<Props> = ({
         />
 
         <SearchFilters
-          value={filterParams}
+          value={filters}
           onClick={() => {
             closePreview();
           }}
           onChange={(newValue) => {
-            navigate.toSearchPage(queryParams, newValue);
+            navigate.toSearchPage(globalQuery, newValue);
           }}
         />
       </Content>
 
-      {isPreviewFocused && <SearchPreview onSelectionClick={closePreview} />}
+      {isPreviewFocused && (
+        <SearchPreview query={localQuery} onSelectionClick={closePreview} />
+      )}
     </Container>
   );
 };
@@ -119,7 +125,7 @@ const Container = styled.div<{
   height: 52px;
   margin: 24px;
   border-bottom: none;
-  border-bottom-left: none;
+  /* border-bottom-left: none; */
   z-index: ${zIndex.SEARCH};
 
   ${(props) => {

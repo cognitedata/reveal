@@ -1,4 +1,4 @@
-import { ValueByDataType } from './containers/search/Filter';
+import { ValueByDataType } from './containers/Filter';
 
 export interface SearchParams {
   searchQuery?: string;

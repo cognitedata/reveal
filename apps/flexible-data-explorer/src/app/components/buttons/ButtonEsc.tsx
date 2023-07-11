@@ -1,9 +1,9 @@
 import { Button, Shortcut } from '@cognite/cogs.js';
 
-import { useEscapeButtonListener } from '../../hooks/listeners/useEscapeButtonListener';
+import { useEscapeKeyListener } from '../../hooks/listeners/useKeyboardListener';
 
 export const ButtonEsc = ({ onCloseClick }: { onCloseClick?: () => void }) => {
-  useEscapeButtonListener(onCloseClick);
+  useEscapeKeyListener(onCloseClick);
 
   return (
     <Button type="tertiary" icon="Collapse" onClick={() => onCloseClick?.()}>

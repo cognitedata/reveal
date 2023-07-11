@@ -12,13 +12,13 @@ import { CategoryCard } from './components/CategoryCard';
 export const Categories = () => {
   const { data: types, isLoading } = useTypesDataModelQuery();
 
-  const { redirectSearchPage } = useNavigation();
+  const navigate = useNavigation();
 
   const handleCategoryClick = useCallback(
     (dataType: string) => {
-      redirectSearchPage(dataType);
+      navigate.toSearchCategoryPage(dataType);
     },
-    [redirectSearchPage]
+    [navigate]
   );
 
   if (isLoading) {

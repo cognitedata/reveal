@@ -30,7 +30,7 @@ export const SearchCategories = () => {
   const isSelected = (name?: string) => type === name;
 
   const handleSelectionClick = (name?: string) => {
-    navigate.redirectSearchPage(name);
+    navigate.toSearchCategoryPage(name);
   };
 
   if (isGenericLoading || isFilesLoading || isTimeseriesLoading) {

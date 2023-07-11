@@ -32,7 +32,7 @@ export const RelationshipDirectWidget: React.FC<Props> = ({
   const navigate = useNavigation();
 
   return (
-    <Widget id={id} rows={rows || 3} columns={columns}>
+    <Widget id={id} rows={rows || 4} columns={columns}>
       <Widget.Header
         title={t('RELATIONSHIP_DIRECT_WIDGET_TITLE', { type: type.field })}
       >
@@ -40,11 +40,12 @@ export const RelationshipDirectWidget: React.FC<Props> = ({
           onClick={() => {
             navigate.toInstancePage(type.type, instanceSpace, data.externalId);
           }}
+          disabled={!isLoading && data === null}
           loading={isLoading}
         />
       </Widget.Header>
 
-      <Widget.Body state={status}>
+      <Widget.Body state={!isLoading && data === null ? 'empty' : status}>
         <Container>
           {Object.entries(data || {}).map(([key, value], index) => {
             // THIS IS SOO BAD
