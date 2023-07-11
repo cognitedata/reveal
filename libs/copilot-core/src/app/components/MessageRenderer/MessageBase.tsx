@@ -1,6 +1,8 @@
+import React from 'react';
+
 import styled from 'styled-components';
 
-import { Avatar, Button, Flex, toast } from '@cognite/cogs.js';
+import { Avatar, Body, Button, Flex, toast } from '@cognite/cogs.js';
 
 import { ReactComponent as CopilotIcon } from '../../../assets/CopilotIcon.svg';
 import { CopilotAction } from '../../../lib/types';
@@ -9,14 +11,21 @@ import { useUserProfile } from '../../hooks/useUserProfile';
 import { ResponsiveActions } from './components/ResponsiveActions';
 
 export const MessageBase = ({
-  message: { content, source },
+  message: {
+    data: { content, source, actions = [] },
+  },
   children,
-  actions = [],
 }: {
-  message: { content: string; source: 'user' | 'bot' };
+  message: {
+    data: {
+      content: string;
+      source: 'user' | 'bot';
+      actions?: CopilotAction[];
+    };
+  };
   children: React.ReactNode;
-  actions?: CopilotAction[];
 }) => {
+  console.log(content, source);
   const { data: user } = useUserProfile();
   return (
     <Wrapper gap={10}>
@@ -29,7 +38,9 @@ export const MessageBase = ({
       )}
       <Flex direction="column" gap={16} style={{ flex: 1, overflow: 'hidden' }}>
         <Flex gap={10} alignItems="start">
-          <Flex style={{ flex: 1 }}>{children}</Flex>
+          <ErrorBoundary>
+            <Flex style={{ flex: 1 }}>{children}</Flex>
+          </ErrorBoundary>
           <Button
             icon="EllipsisVertical"
             type="ghost"
@@ -54,17 +65,6 @@ export const MessageBase = ({
                 ]}
               />
             </div>
-            {/* <Button
-              icon="Copy"
-              aria-label="Copy"
-              type="ghost"
-              size="small"
-              className="ai"
-              onClick={() => {
-                navigator.clipboard.writeText(content);
-                toast.success('Copied to clipboard');
-              }}
-            /> */}
             <Button
               icon="ThumbUp"
               aria-label="Give positive feedback"
@@ -123,3 +123,31 @@ const CopilotIconWrapper = styled(Flex)`
     #5e28d9 100%
   );
 `;
+class ErrorBoundary extends React.Component<any, { hasError: boolean }> {
+  constructor(props: any) {
+    super(props);
+    // initialize the error state
+    this.state = { hasError: false };
+  }
+
+  // if an error happened, set the state to true
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  componentDidCatch = () => {
+    this.setState({ hasError: true });
+  };
+
+  render() {
+    // if error happened, return a fallback component
+    if (this.state.hasError) {
+      return (
+        <Body level={2}>
+          Unable to display message, please delete and create a new chat.
+        </Body>
+      );
+    }
+
+    return this.props.children;
+  }
+}

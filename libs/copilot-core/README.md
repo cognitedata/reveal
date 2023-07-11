@@ -237,9 +237,25 @@ To host build the library by itself, you can just run `yarn nx build copilot-cor
 
 Also, for debugging add `--skip-nx-cache` if you want to make sure it is always building, and not loading from cache.
 
-The output of the library will be at `dist/libs/copilot-core`. This is good to know as you can run `yarn link` from the library, and then `yarn link @cognite/copilot-core` from the app you want to use it in. This will allow you to use the locally built library from the app. To see how yarn link works, [check here](https://classic.yarnpkg.com/lang/en/docs/cli/link/).
+The output of the library will be at `dist/libs/@fusion/copilot-core` (NOT `dist/libs/copilot-core`). This is good to know as you can run `yarn link` from the library, and then `yarn link @cognite/copilot-core` from the app you want to use it in. This will allow you to use the locally built library from the app. To see how yarn link works, [check here](https://classic.yarnpkg.com/lang/en/docs/cli/link/).
 
-Note: you may have to do the same thing for `@cognite/sdk` and `monaco-editor`. To do this, go to `node_modules/<package>` like `node_modules/@cognite/sdk` and run yarn link from this repo, then in the other side side, do `yarn link <package>`.
+> Important
+> the correct location for the built copilot now is `dist/libs/@fusion/copilot-core` (NOT `dist/libs/copilot-core`).
+
+### issues locally built library linking
+
+Copilot is built in fusion, which is linked and imported from other apps (link from fusion, used in app), in these cases you may see errors for common libraries, like
+`error: react hooks invalid` or `core-js not found`.
+
+In these cases, the app you are running takes priority, and `fusion` side needs to respect the packages of your app.
+You then would link `@cognite/sdk` and `monaco-editor` and `react` the opposite way - from your app to fusion. To do this, go to `node_modules/<package>` like `node_modules/@cognite/sdk` and run yarn link from the other repo (the app you are running copilot in), then in the fusion side (from the root folder `/fusion` NOT `/fusion/lib/copilot-core`), do `yarn link <package>`.
+
+`yarn nx build copilot-core --watch` again
+
+Note:
+
+> Intel chips
+> There is a potential issue with core-js, in which case, install core-js in the root of this repo / in the `libs/copilot-core`.
 
 ## Running unit tests
 

@@ -5,7 +5,11 @@ import { ChainValues } from 'langchain/schema';
 import { IconType } from '@cognite/cogs.js';
 import { CogniteClient } from '@cognite/sdk';
 
-import { addToCopilotEventListener, sendToCopilotEvent } from './utils';
+import {
+  addToCopilotEventListener,
+  sendFromCopilotEvent,
+  sendToCopilotEvent,
+} from './utils';
 export type CopilotSupportedFeatureType =
   | 'Streamlit'
   | 'IndustryCanvas'
@@ -47,7 +51,12 @@ export type CopilotDataModelQueryMessage = {
   space: string;
   dataModel: string;
   version: string;
-  query: string;
+  graphql: {
+    query: string;
+    variables: any;
+  };
+  summary?: string;
+  data?: any;
 } & DefaultMessage;
 
 export type CopilotUserMessage = CopilotTextMessage;
@@ -65,10 +74,20 @@ export type CopilotMessage =
     });
 
 export type CopilotAction = {
-  onClick: () => void;
   content: string;
   icon?: IconType;
-};
+} & (
+  | {
+      // THIS IS NOT CACHED, MEANING IF CHAT IS EVER RELOADED, THIS WILL BE LOST
+      onClick?: () => void;
+    }
+  | {
+      fromCopilotEvent: Parameters<typeof sendFromCopilotEvent>;
+    }
+  | {
+      toCopilotEvent: Parameters<typeof sendToCopilotEvent>;
+    }
+);
 
 /**
  * @returns whether to accept more inputs
@@ -171,7 +190,7 @@ export type CopilotEvents = {
     // send code to streamlit
     GQL_QUERY: {
       query: string;
-      arguments: any;
+      variables: any;
     };
     GET_LANGUAGE: undefined;
   };

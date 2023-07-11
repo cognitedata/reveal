@@ -10,8 +10,6 @@ import {
 } from '../../../lib/types';
 import { useDataModel, useDataModels } from '../../hooks/useDataModels';
 
-import { MessageBase } from './MessageBase';
-
 const CustomOption = ({
   innerRef,
   innerProps,
@@ -81,65 +79,63 @@ export const DataModelMessage = ({
     [dataModelVersions]
   );
   return (
-    <MessageBase message={{ source: 'bot', content: message.content }}>
-      <Flex direction="column">
-        <Body level={2}>{message.content}</Body>
+    <Flex direction="column">
+      <Body level={2}>{message.content}</Body>
+      <Select
+        label="Select data model"
+        menuPortalTarget={document.body}
+        components={{ Option: CustomOption }}
+        disabled={!message.pending}
+        value={
+          message.dataModel
+            ? dataModelOptions.find((el) => el.value === message.dataModel)
+            : undefined
+        }
+        options={dataModelOptions}
+        onChange={({
+          value,
+          version,
+          space,
+        }: {
+          value: string;
+          space: string;
+          version: string;
+        }) => {
+          updateMessage(key, {
+            ...message,
+            dataModel: value,
+            space,
+            version,
+          });
+        }}
+      />
+      {message.dataModel && (
         <Select
-          label="Select data model"
-          menuPortalTarget={document.body}
-          components={{ Option: CustomOption }}
+          label="Select version"
+          menuPortalTarget={document.body!}
           disabled={!message.pending}
           value={
-            message.dataModel
-              ? dataModelOptions.find((el) => el.value === message.dataModel)
+            message.version
+              ? { label: message.version, value: message.version }
               : undefined
           }
-          options={dataModelOptions}
-          onChange={({
-            value,
-            version,
-            space,
-          }: {
-            value: string;
-            space: string;
-            version: string;
-          }) => {
-            updateMessage(key, {
-              ...message,
-              dataModel: value,
-              space,
-              version,
-            });
+          options={versionOptions}
+          onChange={({ value }: { value: string }) => {
+            updateMessage(key, { ...message, version: value });
           }}
         />
-        {message.dataModel && (
-          <Select
-            label="Select version"
-            menuPortalTarget={document.body!}
-            disabled={!message.pending}
-            value={
-              message.version
-                ? { label: message.version, value: message.version }
-                : undefined
-            }
-            options={versionOptions}
-            onChange={({ value }: { value: string }) => {
-              updateMessage(key, { ...message, version: value });
-            }}
-          />
-        )}
-        {message.pending && (
-          <Button
-            onClick={() => {
-              updateMessage(key, { ...message, pending: false });
-            }}
-            disabled={!(message.version && message.dataModel && message.space)}
-          >
-            Confirm
-          </Button>
-        )}
-      </Flex>
-    </MessageBase>
+      )}
+      {message.pending && (
+        <Button
+          onClick={() => {
+            updateMessage(key, { ...message, pending: false });
+          }}
+          disabled={!(message.version && message.dataModel && message.space)}
+        >
+          Confirm
+        </Button>
+      )}
+    </Flex>
   );
 };
 

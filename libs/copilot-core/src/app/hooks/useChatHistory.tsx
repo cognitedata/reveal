@@ -68,7 +68,11 @@ export const useSaveChat = (id: string) => {
             id,
             dateUpdated: new Date(),
             dateCreated: data?.dateCreated || new Date(),
-            history: messages,
+            history: messages.map(({ actions = [], ...el }) => ({
+              ...el,
+              // we cannot store custom onclick in localforage
+              actions: actions.filter((action) => !('onClick' in action)),
+            })),
           })
         : Promise.resolve(null),
     {
