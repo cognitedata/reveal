@@ -8,6 +8,8 @@ import { RevealContext } from './RevealContext';
 import { type Color } from 'three';
 import { ModelsLoadingStateContext } from '../Reveal3DResources/ModelsLoadingContext';
 import { SDKProvider } from './SDKProvider';
+import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 type RevealContainerProps = {
   color?: Color;
@@ -25,6 +27,8 @@ type RevealContainerProps = {
   >;
 };
 
+const queryClient = new QueryClient();
+
 export function RevealContainer({
   children,
   sdk,
@@ -40,22 +44,24 @@ export function RevealContainer({
   }, []);
 
   return (
-    <div style={{ width: '100%', height: '100%' }} ref={revealDomElementRef}>
-      {mountChildren()}
-    </div>
+    <SDKProvider sdk={sdk}>
+      <QueryClientProvider client={queryClient}>
+          <div style={{ width: '100%', height: '100%' }} ref={revealDomElementRef}>
+            {mountChildren()}
+          </div>
+      </QueryClientProvider>
+    </SDKProvider>
   );
 
   function mountChildren(): ReactElement {
     if (viewer === undefined) return <></>;
     return (
       <>
-        <SDKProvider sdk={sdk}>
-          <RevealContext.Provider value={viewer}>
-            <ModelsLoadingProvider>
-              {children}
-            </ModelsLoadingProvider>
-          </RevealContext.Provider>
-        </SDKProvider>
+        <RevealContext.Provider value={viewer}>
+          <ModelsLoadingProvider>
+            {children}
+          </ModelsLoadingProvider>
+        </RevealContext.Provider>
       </>
     );
   }

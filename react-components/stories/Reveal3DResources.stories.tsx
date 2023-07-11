@@ -28,7 +28,7 @@ const meta = {
         },
         GreenPointCloud: {
           defaultStyle: {
-            pointCloud: { color: new Color('green') }
+            pointcloud: { color: new Color('green') }
           }
         },
         BlueCrane: {

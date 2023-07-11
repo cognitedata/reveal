@@ -13,7 +13,10 @@ const meta = {
   argTypes: {
     styling: {
       description: 'Styling of the first model',
-      options: ['FullRed', 'HalfGreen', 'SomeBlue', 'None'],
+      options: ['FullRed', 'HalfGreen', 'SomeBlue', 'Colorful', 'None'],
+      control: {
+        type: 'radio',
+      },
       label: 'Styling of the first model',
       mapping: {
         FullRed: {
@@ -33,6 +36,22 @@ const meta = {
               nodeIds: [8757509474262596, 2712303310330098, 1903632131225149, 8923105504012177, 3709428615074138],
               style: { color: new Color('blue') }
             }
+          ]
+        },
+        Colorful: {
+          groups: [
+            {
+              treeIndices: new NumericRange(0, 40),
+              style: { color: new Color('red') }
+            },
+            {
+              nodeIds: [1903632131225149, 8923105504012177],
+              style: { color: new Color('green') }
+            },
+            {
+              nodeIds: [8757509474262596, 2712303310330098, 3709428615074138 ],
+              style: { color: new Color('blue') }
+            },
           ]
         },
         None: {}

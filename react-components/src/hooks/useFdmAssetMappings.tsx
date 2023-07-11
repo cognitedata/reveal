@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { CogniteExternalId } from '@cognite/sdk';
 import { useFdmSdk } from '../components/RevealContainer/SDKProvider';
 import { Source } from '../utilities/FdmSdk';
+import { UseQueryResult, useQuery } from '@tanstack/react-query';
 
 export type FdmAssetMappingsConfig = {
     source: Source;
@@ -14,12 +15,8 @@ export type ThreeDModelMappings = { modelId: number, revisionId: number, mapping
  * This hook fetches the list of FDM asset mappings for the given external ids
  */
 export const useFdmAssetMappings = (fdmAssetExternalIds: CogniteExternalId[], fdmConfig: FdmAssetMappingsConfig):
-    Promise<ThreeDModelMappings []> => {
+    UseQueryResult<ThreeDModelMappings []> => {
     const fdmSdk = useFdmSdk();
-
-    if (!fdmSdk || fdmAssetExternalIds?.length === 0) {
-        return new Promise(() => []);
-    }
 
     const fdmAssetMappingFilter = {
         in: {
@@ -28,7 +25,10 @@ export const useFdmAssetMappings = (fdmAssetExternalIds: CogniteExternalId[], fd
         }
     };
     
-    const modelMappings = useMemo(async () => {
+    return useQuery(['reveal','react-components', fdmAssetExternalIds], async () => {
+        if (fdmAssetExternalIds?.length === 0) 
+            return [];
+
         const instances = await fdmSdk.filterInstances(fdmAssetMappingFilter, "edge", fdmConfig.source);
 
         const modelMappingsTemp: ThreeDModelMappings[] = [];
@@ -56,9 +56,5 @@ export const useFdmAssetMappings = (fdmAssetExternalIds: CogniteExternalId[], fd
         });
 
         return modelMappingsTemp;
-        
-    }, [fdmAssetExternalIds]);
-  
-    return modelMappings;
-
+    }, {staleTime: 600000});
 };

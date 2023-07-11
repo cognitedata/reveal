@@ -36,6 +36,7 @@
     "@storybook/react": "7.0.24",
     "@storybook/react-webpack5": "7.0.24",
     "@storybook/testing-library": "0.2.0",
+    "@tanstack/react-query-devtools": "^4.29.19",
     "@types/lodash": "^4.14.190",
     "@types/react": "18.2.7",
     "@types/styled-components": "5.1.26",
@@ -69,6 +70,7 @@
     "dist"
   ],
   "dependencies": {
+    "@tanstack/react-query": "^4.29.19",
     "lodash": "^4.17.21",
     "style-loader": "^3.3.3"
   }

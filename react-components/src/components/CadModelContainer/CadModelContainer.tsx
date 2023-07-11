@@ -10,12 +10,12 @@ import { CogniteClient } from '@cognite/sdk';
 
 export type NodeStylingGroup = {
   nodeIds: number[];
-  style: NodeAppearance;
+  style?: NodeAppearance;
 };
 
 export type TreeIndexStylingGroup = {
   treeIndices: number[];
-  style: NodeAppearance;
+  style?: NodeAppearance;
 };
 
 export type CadModelStyling = {
@@ -97,10 +97,10 @@ function applyStyling(sdk: CogniteClient, model: CogniteCadModel, styling?: CadM
   
   if (styling.groups !== undefined) {
     for (const group of styling.groups) {
-      if ('treeIndices' in group) {
+      if ('treeIndices' in group && group.style !== undefined) {
         const nodes = new TreeIndexNodeCollection(group.treeIndices);
         model.assignStyledNodeCollection(nodes, group.style);
-      } else if ('nodeIds' in group) {
+      } else if ('nodeIds' in group && group.style !== undefined) {
         const nodes = new NodeIdNodeCollection(sdk, model);
         nodes.executeFilter(group.nodeIds);
         model.assignStyledNodeCollection(nodes, group.style);
