@@ -1,18 +1,14 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-import { useRef, type ReactElement, useContext, useState, useEffect, useMemo } from 'react';
+import { useRef, type ReactElement, useContext, useState, useEffect } from 'react';
 import {
   type NodeAppearance,
   type Cognite3DViewer,
   type PointCloudAppearance
 } from '@cognite/reveal';
 import { ModelsLoadingStateContext } from './ModelsLoadingContext';
-import {
-  CadModelContainer,
-  type CadModelStyling,
-  type NodeStylingGroup
-} from '../CadModelContainer/CadModelContainer';
+import { CadModelContainer, type CadModelStyling } from '../CadModelContainer/CadModelContainer';
 import {
   PointCloudContainer,
   type PointCloudModelStyling
@@ -26,8 +22,8 @@ import {
   type AddResourceOptions
 } from './types';
 import { type CogniteExternalId } from '@cognite/sdk';
-import { useFdmAssetMappings } from '../../hooks/useFdmAssetMappings';
 import { type FdmAssetMappingsConfig } from '../../hooks/types';
+import { useCalculateModelsStyling } from '../../hooks/useCalculateModelsStyling';
 
 export type FdmAssetStylingGroup = {
   fdmAssetExternalIds: CogniteExternalId[];
@@ -59,76 +55,15 @@ export const Reveal3DResources = ({
   const viewer = useReveal();
   const numModelsLoaded = useRef(0);
 
-  const stylingExternalIds = useMemo(
-    () => styling?.groups?.flatMap((group) => group.fdmAssetExternalIds) ?? [],
-    [styling]
-  );
-
-  const { data: mappings } = useFdmAssetMappings(stylingExternalIds, fdmAssetMappingConfig);
-
   useEffect(() => {
     getTypedModels(resources, viewer).then(setReveal3DModels).catch(console.error);
   }, [resources, viewer]);
 
+  const modelsStyling = useCalculateModelsStyling(reveal3DModels, styling, fdmAssetMappingConfig);
+
   useEffect(() => {
-    if (styling === undefined || reveal3DModels === undefined) return;
-
-    const modelsStyling = reveal3DModels.map((model) => {
-      let modelStyling: PointCloudModelStyling | CadModelStyling;
-
-      switch (model.type) {
-        case 'cad': {
-          const modelNodeMappings = mappings?.find(
-            (mapping) =>
-              mapping.modelId === model.modelId && mapping.revisionId === model.revisionId
-          );
-
-          const newStylingGroups: NodeStylingGroup[] | undefined =
-            styling.groups !== null ? [] : undefined;
-
-          styling.groups?.forEach((group) => {
-            const connectedExternalIds = group.fdmAssetExternalIds.filter((externalId) =>
-              modelNodeMappings?.mappings.some(
-                (modelNodeMapping) => modelNodeMapping.externalId === externalId
-              )
-            );
-
-            const newGroup: NodeStylingGroup = {
-              style: group.style.cad,
-              nodeIds: connectedExternalIds.map((externalId) => {
-                const mapping = modelNodeMappings?.mappings.find(
-                  (mapping) => mapping.externalId === externalId
-                );
-                return mapping?.nodeId ?? -1;
-              })
-            };
-
-            if (connectedExternalIds.length > 0) newStylingGroups?.push(newGroup);
-          });
-
-          modelStyling = {
-            defaultStyle: styling.defaultStyle?.cad,
-            groups: newStylingGroups
-          };
-          break;
-        }
-        case 'pointcloud': {
-          modelStyling = {
-            defaultStyle: styling.defaultStyle?.pointcloud
-          };
-          break;
-        }
-        default: {
-          modelStyling = {};
-          console.warn(`Unknown model type: ${model.type}`);
-          break;
-        }
-      }
-      return modelStyling;
-    });
-
     setReveal3DModelsStyling(modelsStyling);
-  }, [mappings, styling, reveal3DModels, mappings]);
+  }, [modelsStyling]);
 
   const image360CollectionAddOptions = resources.filter(
     (resource): resource is AddImageCollection360Options =>

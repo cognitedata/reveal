@@ -41,20 +41,6 @@ export class FdmSDK {
     this._sdk = sdk;
   }
 
-  public async getInstancesByExternalIds<T = Record<string, any>>(
-    items: Item[],
-    source: Source
-  ): Promise<T[]> {
-    const result = await this._sdk.post(this._byIdsEndpoint, {
-      data: { items, sources: [{ source }] }
-    });
-
-    if (result.status === 200) {
-      return result.data.items;
-    }
-    throw new Error(`Failed to fetch instances. Status: ${result.status}`);
-  }
-
   public async filterInstances<PropertiesType = Record<string, any>>(
     filter: any,
     instanceType: InstanceType,
