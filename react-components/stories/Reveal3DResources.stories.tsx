@@ -112,9 +112,18 @@ export const Main: Story = {
         transform: new Matrix4().makeTranslation(-340, -480, 80)
       }
     ],
-    styling: {}
+    styling: {},
+    fdmAssetMappingConfig: {
+      source: {
+        space: 'fdm-3d-test-savelii',
+        version: '1',
+        type: 'view',
+        externalId: 'CDF_3D_Connection_Data'
+      },
+      assetFdmSpace: 'bark-corporation'
+    }
   },
-  render: ({ resources, styling }) => (
+  render: ({ resources, styling, fdmAssetMappingConfig }) => (
     <RevealContainer
       sdk={sdk}
       color={new Color(0x4a4a4a)}
@@ -125,7 +134,11 @@ export const Main: Story = {
           placement: 'topRight'
         }
       }}>
-      <Reveal3DResources resources={resources} styling={styling} />
+      <Reveal3DResources
+        resources={resources}
+        styling={styling}
+        fdmAssetMappingConfig={fdmAssetMappingConfig}
+      />
       <CameraController
         initialFitCamera={{
           to: 'allModels'

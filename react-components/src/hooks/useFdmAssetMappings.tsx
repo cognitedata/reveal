@@ -3,11 +3,17 @@
  */
 import { type CogniteExternalId } from '@cognite/sdk';
 import { useFdmSdk } from '../components/RevealContainer/SDKProvider';
-import { type Source } from '../utilities/FdmSdk';
+import { type Source } from '../utilities/FdmSDK';
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 
 export type FdmAssetMappingsConfig = {
+  /**
+   * 3D Data model source
+   */
   source: Source;
+  /*
+   * FDM space where model assets are located
+   */
   assetFdmSpace: string;
 };
 
@@ -17,12 +23,22 @@ export type ThreeDModelMappings = {
   mappings: Array<{ nodeId: number; externalId: string }>;
 };
 
+const DefaultFdmConfig: FdmAssetMappingsConfig = {
+  source: {
+    space: 'fdm-3d-test-savelii',
+    version: '1',
+    type: 'view',
+    externalId: 'CDF_3D_Connection_Data'
+  },
+  assetFdmSpace: 'bark-corporation'
+};
+
 /**
  * This hook fetches the list of FDM asset mappings for the given external ids
  */
 export const useFdmAssetMappings = (
   fdmAssetExternalIds: CogniteExternalId[],
-  fdmConfig: FdmAssetMappingsConfig
+  fdmConfig: FdmAssetMappingsConfig = DefaultFdmConfig
 ): UseQueryResult<ThreeDModelMappings[]> => {
   const fdmSdk = useFdmSdk();
 

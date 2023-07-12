@@ -40,10 +40,15 @@ export type Reveal3DResourcesStyling = {
 
 export type Reveal3DResourcesProps = {
   resources: AddResourceOptions[];
+  fdmAssetMappingConfig?: FdmAssetMappingsConfig;
   styling?: Reveal3DResourcesStyling;
 };
 
-export const Reveal3DResources = ({ resources, styling }: Reveal3DResourcesProps): ReactElement => {
+export const Reveal3DResources = ({
+  resources,
+  styling,
+  fdmAssetMappingConfig
+}: Reveal3DResourcesProps): ReactElement => {
   const [reveal3DModels, setReveal3DModels] = useState<TypedReveal3DModel[]>([]);
   const [reveal3DModelsStyling, setReveal3DModelsStyling] = useState<
     Array<PointCloudModelStyling | CadModelStyling>
@@ -57,17 +62,8 @@ export const Reveal3DResources = ({ resources, styling }: Reveal3DResourcesProps
     () => styling?.groups?.flatMap((group) => group.fdmAssetExternalIds) ?? [],
     [styling]
   );
-  const fdmAssetMappingSource: FdmAssetMappingsConfig = {
-    source: {
-      space: 'fdm-3d-test-savelii',
-      version: '1',
-      type: 'view',
-      externalId: 'CDF_3D_Connection_Data'
-    },
-    assetFdmSpace: 'bark-corporation'
-  };
 
-  const { data: mappings } = useFdmAssetMappings(stylingExternalIds, fdmAssetMappingSource);
+  const { data: mappings } = useFdmAssetMappings(stylingExternalIds, fdmAssetMappingConfig);
 
   useEffect(() => {
     getTypedModels(resources, viewer).then(setReveal3DModels).catch(console.error);
