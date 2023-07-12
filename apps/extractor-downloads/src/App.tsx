@@ -4,17 +4,12 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
-import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
-import {
-  AuthWrapper,
-  getEnv,
-  getProject,
-  SubAppWrapper,
-} from '@cognite/cdf-utilities';
-import { Loader } from '@cognite/cogs.js';
+import sdk from '@cognite/cdf-sdk-singleton';
+import { getProject, isUsingUnifiedSignin } from '@cognite/cdf-utilities';
 import { FlagProvider } from '@cognite/react-feature-flags';
 import { SDKProvider } from '@cognite/sdk-provider';
 
+import { AuthContainer } from './AuthContainer';
 import { translations } from './common/i18n';
 import { ExtractorDetails } from './components/ExtractorDetails';
 import { NewExtractor } from './components/NewExtractor';
@@ -34,7 +29,10 @@ const queryClient = new QueryClient({
 const App = () => {
   const appName = 'cdf-extractor-downloads';
   const projectName = getProject();
-  const env = getEnv();
+
+  const baseUrl = isUsingUnifiedSignin()
+    ? `/cdf/${projectName}`
+    : `/${projectName}`;
 
   return (
     <I18nWrapper
@@ -48,35 +46,30 @@ const App = () => {
       >
         <QueryClientProvider client={queryClient}>
           <GlobalStyles>
-            <SubAppWrapper title="Extractor Downloads">
-              <AuthWrapper
-                loadingScreen={<Loader />}
-                login={() => loginAndAuthIfNeeded(projectName, env)}
-              >
-                <SDKProvider sdk={sdk}>
-                  <Router>
-                    <Routes>
-                      <Route
-                        path="/:project/:subAppPath/new"
-                        element={<NewExtractor />}
-                      />
-                      <Route
-                        path="/:project/:subAppPath/extractor/:extractorExternalId"
-                        element={<ExtractorDetails />}
-                      />
-                      <Route
-                        path="/:project/:subAppPath/source-system/:sourceSystemExternalId"
-                        element={<SourceSystemDetails />}
-                      />
-                      <Route
-                        path="/:project/:subAppPath"
-                        element={<ExtractorDownloads />}
-                      />
-                    </Routes>
-                  </Router>
-                </SDKProvider>
-              </AuthWrapper>
-            </SubAppWrapper>
+            <SDKProvider sdk={sdk}>
+              <AuthContainer>
+                <Router>
+                  <Routes>
+                    <Route
+                      path={`${baseUrl}/:subAppPath/new`}
+                      element={<NewExtractor />}
+                    />
+                    <Route
+                      path={`${baseUrl}/:subAppPath/extractor/:extractorExternalId`}
+                      element={<ExtractorDetails />}
+                    />
+                    <Route
+                      path={`${baseUrl}/:subAppPath/source-system/:sourceSystemExternalId`}
+                      element={<SourceSystemDetails />}
+                    />
+                    <Route
+                      path={`${baseUrl}/:subAppPath`}
+                      element={<ExtractorDownloads />}
+                    />
+                  </Routes>
+                </Router>
+              </AuthContainer>
+            </SDKProvider>
           </GlobalStyles>
           <ReactQueryDevtools initialIsOpen={false} />
         </QueryClientProvider>
