@@ -37,8 +37,6 @@ export default () => {
     throw new Error('project missing');
   }
 
-  console.log('trigger build');
-
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
