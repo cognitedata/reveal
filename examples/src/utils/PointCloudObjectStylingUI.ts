@@ -60,7 +60,9 @@ export class PointCloudObjectStylingUI {
 
     const actions = {
       deleteAllAnnotations: async () => {
-        const annotations = await client.annotations.list({ filter: { annotatedResourceIds: [{ id: model.modelId }], annotatedResourceType: 'threedmodel' } }).autoPagingToArray({ limit: 1000 });
+        const annotations = await client.annotations
+          .list({ filter: { annotatedResourceIds: [{ id: model.modelId }], annotatedResourceType: 'threedmodel' } })
+          .autoPagingToArray({ limit: 1000 });
 
         await client.annotations.delete(annotations.map(annotation => ({ id: annotation.id })));
 
@@ -84,7 +86,7 @@ export class PointCloudObjectStylingUI {
         });
       }
     };
-    
+
     uiFolder.addFolder('DANGER ZONE').add(actions, 'deleteAllAnnotations').name('Delete all annotations for model');
     uiFolder.add(actions, 'reset').name('Reset all styled objects');
     uiFolder.add(actions, 'randomColors').name('Set random colors for objects');
