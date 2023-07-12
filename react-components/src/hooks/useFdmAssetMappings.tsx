@@ -5,6 +5,7 @@ import { type CogniteExternalId } from '@cognite/sdk';
 import { useFdmSdk } from '../components/RevealContainer/SDKProvider';
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { type FdmAssetMappingsConfig, type ThreeDModelMappings } from './types';
+import { DEFAULT_QUERY_STALE_TIME } from '../utilities/constants';
 
 const DefaultFdmConfig: FdmAssetMappingsConfig = {
   source: {
@@ -83,6 +84,6 @@ export const useFdmAssetMappings = (
 
       return modelMappingsTemp;
     },
-    { staleTime: 600000 }
+    { staleTime: DEFAULT_QUERY_STALE_TIME }
   );
 };
