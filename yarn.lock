@@ -3503,16 +3503,18 @@
   resolved "https://registry.yarnpkg.com/@cognite/testing/-/testing-0.1.1-rc.0.tgz#409bbac7e38c39892876d7a5c2667ccb76608435"
   integrity sha512-dcPCgmy64cQX0WgUerLKGwUhGSQw0S8iokFSeQ0jknexAJAjbkuQS5vyx1HOyHN1HJR1pQP5pQh5uiTUkZJuwg==
 
-"@cognite/unified-file-viewer@^13.7.2":
-  version "13.7.2"
-  resolved "https://registry.yarnpkg.com/@cognite/unified-file-viewer/-/unified-file-viewer-13.7.2.tgz#c5e072d1084da5bd5c9fa55f636b3fd5f90dfb80"
-  integrity sha512-+QUkhRpyH4r+wP5IYQ/ZCcC5OzKAaZ5o/b1XcnlmWyienD3udN4P5CggNN+W6YshFbHmR29q3y00dPHNTcJFKQ==
+"@cognite/unified-file-viewer@^14.0.0":
+  version "14.0.0"
+  resolved "https://registry.yarnpkg.com/@cognite/unified-file-viewer/-/unified-file-viewer-14.0.0.tgz#11da6dee07144fe57cb41ee001cb7fa1a4a91a43"
+  integrity sha512-vCE+uKXJLNudGbfYR1mtR3Lge0FypWQ2ghY7RZLDvQUj5dURlmE/qus+3oeLVJKINRSUPtnhHHX4P663BVHWbg==
   dependencies:
     "@cognite/cogs.js" "^9.10.0"
     "@cognite/plotting-components" "^0.0.10"
     "@cognite/reveal" "^4.1.2"
     "@cognite/sdk" "^7.13.0"
+    "@cognite/sdk-provider" "^2.0.6"
     "@mathigon/euclid" "^1.1.6"
+    "@tanstack/react-query" "^4.29.19"
     "@visx/axis" "^2.14.0"
     "@visx/event" "^2.6.0"
     "@visx/gradient" "^2.10.0"
@@ -10411,6 +10413,11 @@
   resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-4.29.11.tgz#fa338f7d6897c6be5de6d8dabd603d9b78ee48c7"
   integrity sha512-8C+hF6SFAb/TlFZyS9FItgNwrw4PMa7YeX+KQYe2ZAiEz6uzg6yIr+QBzPkUwZ/L0bXvGd1sufTm3wotoz+GwQ==
 
+"@tanstack/query-core@4.29.19":
+  version "4.29.19"
+  resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-4.29.19.tgz#49ccbd0606633d1e55baf3b91ab7cc7aef411b1d"
+  integrity sha512-uPe1DukeIpIHpQi6UzIgBcXsjjsDaLnc7hF+zLBKnaUlh7jFE/A+P8t4cU4VzKPMFB/C970n/9SxtpO5hmIRgw==
+
 "@tanstack/react-query-devtools@4.10.1":
   version "4.10.1"
   resolved "https://registry.yarnpkg.com/@tanstack/react-query-devtools/-/react-query-devtools-4.10.1.tgz#6b1d9d5e15cb44048f9ed9b4e64a4df4cac76ab2"
@@ -10443,6 +10450,14 @@
   integrity sha512-qF8SHosMU6SzxWa7Ivxp3Q07zXvH+8PBDAlH8CR9ywfT3Y7uOK3jclfwMLzqgoGgDnYCarY2Ra+qDV0+xm19JQ==
   dependencies:
     "@tanstack/query-core" "4.29.11"
+    use-sync-external-store "^1.2.0"
+
+"@tanstack/react-query@^4.29.19":
+  version "4.29.19"
+  resolved "https://registry.yarnpkg.com/@tanstack/react-query/-/react-query-4.29.19.tgz#6ba187f2d0ea36ae83ff1f67068f53c88ce7b228"
+  integrity sha512-XiTIOHHQ5Cw1WUlHaD4fmVUMhoWjuNJlAeJGq7eM4BraI5z7y8WkZO+NR8PSuRnQGblpuVdjClQbDFtwxTtTUw==
+  dependencies:
+    "@tanstack/query-core" "4.29.19"
     use-sync-external-store "^1.2.0"
 
 "@tanstack/react-query@^4.6.1":

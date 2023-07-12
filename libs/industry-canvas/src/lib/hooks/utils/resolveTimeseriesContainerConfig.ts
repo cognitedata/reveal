@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 import { v4 as uuid } from 'uuid';
 
 import { CogniteClient } from '@cognite/sdk';
-import { getTimeseriesContainerConfig } from '@cognite/unified-file-viewer';
+import { ContainerType } from '@cognite/unified-file-viewer';
 
 import {
   IndustryCanvasContainerConfig,
@@ -36,38 +36,30 @@ const resolveTimeseriesContainerConfig = async (
   const name = timeseries[0].name;
   const timeseriesExternalId = timeseries[0].externalId;
 
-  const containerConfig = await getTimeseriesContainerConfig(
-    sdk as any,
-    {
-      id: id || uuid(),
-      label: label ?? name ?? timeseriesExternalId,
-      startDate:
-        startDate !== undefined
-          ? new Date(startDate)
-          : dayjs(new Date()).subtract(2, 'years').startOf('day').toDate(),
-      endDate:
-        endDate !== undefined
-          ? new Date(endDate)
-          : dayjs(new Date()).endOf('day').toDate(),
-      x: x,
-      y: y,
-      width: width ?? DEFAULT_TIMESERIES_WIDTH,
-      height: height ?? DEFAULT_TIMESERIES_HEIGHT,
-    },
-    {
-      timeseriesId: resourceId,
-    }
-  );
-
   return {
-    ...containerConfig,
+    id: id || uuid(),
+    type: ContainerType.TIMESERIES,
+    label: label ?? name ?? timeseriesExternalId,
+    startDate:
+      startDate !== undefined
+        ? new Date(startDate)
+        : dayjs(new Date()).subtract(2, 'years').startOf('day').toDate(),
+    endDate:
+      endDate !== undefined
+        ? new Date(endDate)
+        : dayjs(new Date()).endOf('day').toDate(),
+    x: x,
+    y: y,
+    width: width ?? DEFAULT_TIMESERIES_WIDTH,
+    height: height ?? DEFAULT_TIMESERIES_HEIGHT,
+    timeseriesId: resourceId,
     metadata: {
       resourceId,
       name: name,
       externalId: timeseriesExternalId,
       resourceType: 'timeSeries',
     },
-  } as IndustryCanvasContainerConfig;
+  };
 };
 
 export default resolveTimeseriesContainerConfig;

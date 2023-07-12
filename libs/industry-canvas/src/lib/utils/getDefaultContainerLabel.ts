@@ -9,7 +9,9 @@ const getDefaultContainerLabel = (container: IndustryCanvasContainerConfig) => {
     container.type === ContainerType.IMAGE ||
     container.type === ContainerType.TEXT ||
     container.type === ContainerType.TIMESERIES ||
-    container.type === ContainerType.TABLE
+    container.type === ContainerType.TABLE ||
+    container.type === ContainerType.EVENT ||
+    container.type === ContainerType.ASSET
   ) {
     return container.metadata.name ?? container.metadata.externalId;
   }

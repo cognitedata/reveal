@@ -109,37 +109,10 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
       if (resourceType === undefined || resourceId === undefined) {
         return;
       }
-      if (container.type === ContainerType.TABLE) {
-        onResourceSelectorOpen({
-          initialSelectedResourceItem: {
-            type: resourceType,
-            id: resourceId,
-          },
-          initialFilter: {
-            common: {
-              internalId: resourceId,
-            },
-          },
-        });
-        return;
-      }
-
-      if (container.type === ContainerType.TIMESERIES) {
-        onResourceSelectorOpen({
-          initialSelectedResourceItem: {
-            type: resourceType,
-            id: resourceId,
-          },
-          initialFilter: {
-            common: {
-              internalId: resourceId,
-            },
-          },
-        });
-        return;
-      }
-
       if (
+        container.type === ContainerType.ASSET ||
+        container.type === ContainerType.EVENT ||
+        container.type === ContainerType.TIMESERIES ||
         container.type === ContainerType.DOCUMENT ||
         container.type === ContainerType.IMAGE ||
         container.type === ContainerType.TEXT
@@ -161,7 +134,8 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
       if (
         container.type === ContainerType.ROW ||
         container.type === ContainerType.COLUMN ||
-        container.type === ContainerType.FLEXIBLE_LAYOUT
+        container.type === ContainerType.FLEXIBLE_LAYOUT ||
+        container.type === ContainerType.TABLE
       ) {
         throw new Error(
           'Find related resources not implemented for container type: ' +
@@ -186,17 +160,10 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
     setIsInEditLabelMode(false);
   }, []);
 
-  if (selectedContainer.type === ContainerType.TABLE) {
-    if (selectedContainer.metadata.resourceType === undefined) {
-      throw new Error('resourceType is undefined');
-    }
-    if (
-      selectedContainer.metadata.resourceType !== 'asset' &&
-      selectedContainer.metadata.resourceType !== 'event'
-    ) {
-      throw new Error('resourceType must be one of event and asset');
-    }
-
+  if (
+    selectedContainer.type === ContainerType.ASSET ||
+    selectedContainer.type === ContainerType.EVENT
+  ) {
     return (
       <TooltipToolBarContainer>
         {isInEditLabelMode && (

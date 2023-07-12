@@ -132,8 +132,8 @@ const getAssetConnectionAnnotations = ({
 
   const linkedAssetContainers = (container.children ?? []).filter(
     (containerConfig) =>
-      containerConfig.type === ContainerType.TABLE &&
-      containerConfig.metadata.resourceId === targetAssetId
+      containerConfig.type === ContainerType.ASSET &&
+      containerConfig.assetId === targetAssetId
   );
 
   return linkedAssetContainers.flatMap((targetContainer): Annotation[] =>
