@@ -15,7 +15,7 @@ const meta = {
       description: 'Styling of the first model',
       options: ['FullRed', 'HalfGreen', 'SomeBlue', 'Colorful', 'None'],
       control: {
-        type: 'radio',
+        type: 'radio'
       },
       label: 'Styling of the first model',
       mapping: {
@@ -33,7 +33,10 @@ const meta = {
         SomeBlue: {
           groups: [
             {
-              nodeIds: [8757509474262596, 2712303310330098, 1903632131225149, 8923105504012177, 3709428615074138],
+              nodeIds: [
+                8757509474262596, 2712303310330098, 1903632131225149, 8923105504012177,
+                3709428615074138
+              ],
               style: { color: new Color('blue') }
             }
           ]
@@ -49,9 +52,9 @@ const meta = {
               style: { color: new Color('green') }
             },
             {
-              nodeIds: [8757509474262596, 2712303310330098, 3709428615074138 ],
+              nodeIds: [8757509474262596, 2712303310330098, 3709428615074138],
               style: { color: new Color('blue') }
-            },
+            }
           ]
         },
         None: {}
@@ -77,14 +80,14 @@ export const Main: Story = {
     },
     transform: new Matrix4().makeTranslation(0, 10, 0)
   },
-  render: ({ addModelOptions, transform, styling}) => (
+  render: ({ addModelOptions, transform, styling }) => (
     <RevealContainer sdk={sdk} color={new Color(0x4a4a4a)}>
-      <CadModelContainer addModelOptions={addModelOptions} styling={styling}/>
+      <CadModelContainer addModelOptions={addModelOptions} styling={styling} />
       <CadModelContainer addModelOptions={addModelOptions} transform={transform} />
       <CameraController
         initialFitCamera={{
           to: 'cameraState',
-          state: { position: new Vector3(10, 20, 15), target: new Vector3(10, 0, -10)}
+          state: { position: new Vector3(10, 20, 15), target: new Vector3(10, 0, -10) }
         }}
       />
     </RevealContainer>

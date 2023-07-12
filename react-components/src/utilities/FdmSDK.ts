@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { CogniteClient } from '@cognite/sdk';
+import { type CogniteClient } from '@cognite/sdk';
 
 type InstanceType = 'node' | 'edge';
 
@@ -41,8 +41,13 @@ export class FdmSDK {
     this._sdk = sdk;
   }
 
-  public async getInstancesByExternalIds<T = { [key: string]: any }>(items: Item[], source: Source): Promise<T []> {
-    const result = await this._sdk.post(this._byIdsEndpoint, { data: { items, sources: [{ source }] } });
+  public async getInstancesByExternalIds<T = Record<string, any>>(
+    items: Item[],
+    source: Source
+  ): Promise<T[]> {
+    const result = await this._sdk.post(this._byIdsEndpoint, {
+      data: { items, sources: [{ source }] }
+    });
 
     if (result.status === 200) {
       return result.data.items;
@@ -50,23 +55,26 @@ export class FdmSDK {
     throw new Error(`Failed to fetch instances. Status: ${result.status}`);
   }
 
-  public async filterInstances<PropertiesType = {[key: string]: any}>(
+  public async filterInstances<PropertiesType = Record<string, any>>(
     filter: any,
     instanceType: InstanceType,
     source?: Source,
     cursor?: string
-  ): Promise<{ edges: EdgeItem<PropertiesType>[]; nextCursor?: string }> {
+  ): Promise<{ edges: Array<EdgeItem<PropertiesType>>; nextCursor?: string }> {
     const data: any = { filter, instanceType };
-    if (source) {
+    if (source !== null) {
       data.sources = [{ source }];
     }
-    if (cursor) {
+    if (cursor !== undefined) {
       data.cursor = cursor;
     }
 
     const result = await this._sdk.post(this._listEndpoint, { data });
     if (result.status === 200) {
-      return { edges: result.data.items as EdgeItem<PropertiesType>[], nextCursor: result.data.nextCursor };
+      return {
+        edges: result.data.items as Array<EdgeItem<PropertiesType>>,
+        nextCursor: result.data.nextCursor
+      };
     }
     throw new Error(`Failed to fetch instances. Status: ${result.status}`);
   }

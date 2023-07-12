@@ -1,12 +1,19 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-import { type ReactElement, useEffect, useRef, useState } from 'react';
-import { NodeAppearance, type AddModelOptions, type CogniteCadModel, TreeIndexNodeCollection, NodeIdNodeCollection, DefaultNodeAppearance} from '@cognite/reveal';
+import { type ReactElement, useEffect, useState } from 'react';
+import {
+  type NodeAppearance,
+  type AddModelOptions,
+  type CogniteCadModel,
+  TreeIndexNodeCollection,
+  NodeIdNodeCollection,
+  DefaultNodeAppearance
+} from '@cognite/reveal';
 import { useReveal } from '../RevealContainer/RevealContext';
 import { type Matrix4 } from 'three';
 import { useSDK } from '../RevealContainer/SDKProvider';
-import { CogniteClient } from '@cognite/sdk';
+import { type CogniteClient } from '@cognite/sdk';
 
 export type NodeStylingGroup = {
   nodeIds: number[];
@@ -20,7 +27,7 @@ export type TreeIndexStylingGroup = {
 
 export type CadModelStyling = {
   defaultStyle?: NodeAppearance;
-  groups?: (NodeStylingGroup | TreeIndexStylingGroup) []
+  groups?: Array<NodeStylingGroup | TreeIndexStylingGroup>;
 };
 
 type CogniteCadModelProps = {
@@ -55,8 +62,8 @@ export function CadModelContainer({
   useEffect(() => {
     if (model === undefined || styling === undefined) return;
 
-    applyStyling(sdk, model, styling);
-    
+    applyStyling(sdk, model, styling).catch(console.error);
+
     return () => {
       model.removeAllStyledNodeCollections();
       model.setDefaultNodeAppearance(DefaultNodeAppearance.Default);
@@ -88,13 +95,17 @@ export function CadModelContainer({
   }
 }
 
-function applyStyling(sdk: CogniteClient, model: CogniteCadModel, styling?: CadModelStyling): void {
+async function applyStyling(
+  sdk: CogniteClient,
+  model: CogniteCadModel,
+  styling?: CadModelStyling
+): Promise<void> {
   if (styling === undefined) return;
 
   if (styling.defaultStyle !== undefined) {
     model.setDefaultNodeAppearance(styling.defaultStyle);
   }
-  
+
   if (styling.groups !== undefined) {
     for (const group of styling.groups) {
       if ('treeIndices' in group && group.style !== undefined) {
@@ -102,7 +113,7 @@ function applyStyling(sdk: CogniteClient, model: CogniteCadModel, styling?: CadM
         model.assignStyledNodeCollection(nodes, group.style);
       } else if ('nodeIds' in group && group.style !== undefined) {
         const nodes = new NodeIdNodeCollection(sdk, model);
-        nodes.executeFilter(group.nodeIds);
+        await nodes.executeFilter(group.nodeIds);
         model.assignStyledNodeCollection(nodes, group.style);
       }
     }

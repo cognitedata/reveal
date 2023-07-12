@@ -1,7 +1,13 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-import { type CognitePointCloudModel, type AddModelOptions, PointCloudAppearance, DefaultPointCloudAppearance, AnnotationIdPointCloudObjectCollection } from '@cognite/reveal';
+import {
+  type CognitePointCloudModel,
+  type AddModelOptions,
+  type PointCloudAppearance,
+  DefaultPointCloudAppearance,
+  AnnotationIdPointCloudObjectCollection
+} from '@cognite/reveal';
 
 import { useEffect, type ReactElement, useState } from 'react';
 import { type Matrix4 } from 'three';
@@ -68,7 +74,7 @@ export function PointCloudContainer({
 
   function removeModel(): void {
     if (model === undefined || !viewer.models.includes(model)) return;
-    
+
     viewer.removeModel(model);
     setModel(undefined);
   }

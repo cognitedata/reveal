@@ -4,7 +4,11 @@
 import { type ReactElement, useEffect, useContext, useRef } from 'react';
 import { useReveal } from '../RevealContainer/RevealContext';
 import { ModelsLoadingStateContext } from '../Reveal3DResources/ModelsLoadingContext';
-import { DefaultCameraManager, type CameraControlsOptions, type CameraState } from '@cognite/reveal';
+import {
+  DefaultCameraManager,
+  type CameraControlsOptions,
+  type CameraState
+} from '@cognite/reveal';
 
 export type CameraControllerProps = {
   initialFitCamera?: FittingStrategy;
@@ -16,7 +20,10 @@ type FittingStrategy =
   | { to: 'allModels' }
   | { to: 'none' };
 
-export function CameraController({ initialFitCamera, cameraControlsOptions }: CameraControllerProps): ReactElement {
+export function CameraController({
+  initialFitCamera,
+  cameraControlsOptions
+}: CameraControllerProps): ReactElement {
   const initialCameraSet = useRef(false);
   const viewer = useReveal();
   const { modelsAdded } = useContext(ModelsLoadingStateContext);
@@ -28,7 +35,7 @@ export function CameraController({ initialFitCamera, cameraControlsOptions }: Ca
 
     if (!(viewer.cameraManager instanceof DefaultCameraManager))
       throw new Error('CameraControlsOptions can be set only on default CameraManager');
-    
+
     viewer.cameraManager.setCameraControlsOptions(cameraControlsOptions);
   }, [cameraControlsOptions]);
 

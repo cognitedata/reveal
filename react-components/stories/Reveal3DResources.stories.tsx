@@ -16,8 +16,7 @@ const meta = {
       description: 'Styling of all models',
       options: ['RedCad', 'GreenPointCloud', 'BlueCrane', 'GreenRedAssetMapped', 'None'],
       control: {
-        type: 'radio',
-
+        type: 'radio'
       },
       label: 'Styling of models',
       mapping: {
@@ -35,7 +34,7 @@ const meta = {
           groups: [
             {
               fdmAssetExternalIds: [
-                '23de4d93f9f482f307272f4924b83bd9cdc71e33e06003c7ec0b540135e13c24', // Rotating crane
+                '23de4d93f9f482f307272f4924b83bd9cdc71e33e06003c7ec0b540135e13c24' // Rotating crane
               ],
               style: {
                 cad: {
@@ -53,7 +52,7 @@ const meta = {
             {
               fdmAssetExternalIds: [
                 '23de4d93f9f482f307272f4924b83bd9cdc71e33e06003c7ec0b540135e13c24', // Rotating crane
-                'ca020a82b244eed433ca598a7410169fc21543d6192eebd74fba70a5af984db7', // 1 Pipe in the middle
+                'ca020a82b244eed433ca598a7410169fc21543d6192eebd74fba70a5af984db7' // 1 Pipe in the middle
               ],
               style: {
                 cad: {
@@ -65,7 +64,7 @@ const meta = {
               fdmAssetExternalIds: [
                 '783fe42d9b24229e1873a49a0ce189fc27c0741f6739f82b29e765b835de17f2', // Big tank on the side
                 'e39746a8d819f863a92ef37edc1b5d99e89d2e990c1a5951adfe9835f90de34c', // 2 Pipe in the middle
-                '1db4e31c8f68acee9ff62a098a103cd49e5cea0320d7aed8aa345e99c6b2663d', // 3 Pipe in the middle
+                '1db4e31c8f68acee9ff62a098a103cd49e5cea0320d7aed8aa345e99c6b2663d' // 3 Pipe in the middle
               ],
               style: {
                 cad: {
@@ -113,33 +112,9 @@ export const Main: Story = {
       }
     ],
     styling: {
-      defaultStyle: {
-        cad: {
-          color: new Color('yellow')
-        },
-        pointcloud: {
-          color: new Color('blue')
-        }
-      },
-      groups: [
-        {
-          fdmAssetExternalIds: [
-            '23de4d93f9f482f307272f4924b83bd9cdc71e33e06003c7ec0b540135e13c24', // Rotating crane
-            '783fe42d9b24229e1873a49a0ce189fc27c0741f6739f82b29e765b835de17f2', // Big tank on the side
-            'ca020a82b244eed433ca598a7410169fc21543d6192eebd74fba70a5af984db7', // 1 Pipe in the middle
-            'e39746a8d819f863a92ef37edc1b5d99e89d2e990c1a5951adfe9835f90de34c', // 2 Pipe in the middle
-            '1db4e31c8f68acee9ff62a098a103cd49e5cea0320d7aed8aa345e99c6b2663d', // 3 Pipe in the middle
-          ],
-          style: {
-            cad: {
-              color: new Color('red')
-            }
-          }
-        }
-      ]
     }
   },
-  render: ({ resources, styling}) => (
+  render: ({ resources, styling }) => (
     <RevealContainer
       sdk={sdk}
       color={new Color(0x4a4a4a)}
