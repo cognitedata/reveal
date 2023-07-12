@@ -1,10 +1,10 @@
-import { useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import styled from 'styled-components';
 
 import { formatDistance, format } from 'date-fns';
-import { sortBy } from 'lodash';
+import { useDebounce } from 'use-debounce';
 
 import {
   Button,
@@ -13,6 +13,7 @@ import {
   toast,
   Tooltip,
   Body,
+  Loader,
 } from '@cognite/cogs.js';
 
 import { translationKeys } from './common';
@@ -31,8 +32,10 @@ import { useIndustryCanvasContext } from './IndustryCanvasContext';
 import { UserProfile, useUserProfile } from './UserProfileProvider';
 import { getCanvasLink } from './utils/getCanvasLink';
 
+const SEARCH_DEBOUNCE_MS = 500;
+
 export const IndustryCanvasHomePage = () => {
-  const { canvases, isCreatingCanvas, createCanvas } =
+  const { canvases, isCreatingCanvas, isListingCanvases, createCanvas } =
     useIndustryCanvasContext();
   const { userProfile } = useUserProfile();
   const { t } = useTranslation();
@@ -40,18 +43,16 @@ export const IndustryCanvasHomePage = () => {
   const { canvasesWithUserProfiles } = useCanvasesWithUserProfiles({
     canvases,
   });
-  const { queryString: searchString, setQueryString: setSearchString } =
-    useQueryParameter({
-      key: SEARCH_QUERY_PARAM_KEY,
-    });
+  const { setQueryString } = useQueryParameter({ key: SEARCH_QUERY_PARAM_KEY });
+  const [searchString, setSearchString] = useState<string>('');
+  const [debouncedSearchString] = useDebounce(searchString, SEARCH_DEBOUNCE_MS);
   const { filteredCanvases } = useCanvasSearch({
     canvases: canvasesWithUserProfiles,
-    searchString,
+    searchString: debouncedSearchString,
   });
-  const sortedCanvases = useMemo(
-    () => sortBy(filteredCanvases, 'updatedAtDate').reverse(),
-    [filteredCanvases]
-  );
+  useEffect(() => {
+    setQueryString(debouncedSearchString);
+  }, [debouncedSearchString, setQueryString]);
   const {
     canvasToDelete,
     setCanvasToDelete,
@@ -101,6 +102,7 @@ export const IndustryCanvasHomePage = () => {
         icon="Plus"
         iconPlacement="left"
         type="primary"
+        disabled={isListingCanvases}
         loading={isCreatingCanvas}
         aria-label={t(
           translationKeys.COMMON_CREATE_CANVAS,
@@ -194,103 +196,125 @@ export const IndustryCanvasHomePage = () => {
           </div>
           {renderNewCanvasButton()}
         </HomeHeader>
-        <CanvasListContainer>
-          <SearchCanvasInput
-            placeholder={t(
-              translationKeys.HOMEPAGE_TABLE_SEARCH_PLACEHOLDER,
-              'Browse canvases'
-            )}
-            fullWidth
-            value={searchString}
-            icon="Search"
-            onChange={(e) => setSearchString(e.target.value)}
-          />
-          <Table<CanvasDocumentWithUserProfile>
-            initialState={initialTableState}
-            onStateChange={onTableStateChange}
-            onRowClick={(row) =>
-              navigate(
-                getCanvasLink(row.original.externalId, {
-                  [SEARCH_QUERY_PARAM_KEY]: searchString,
-                })
-              )
-            }
-            columns={[
-              {
-                Header: t(translationKeys.HOMEPAGE_TABLE_NAME_COLUMN, 'Name'),
-                accessor: 'name',
-              },
-              {
-                Header: t(
-                  translationKeys.HOMEPAGE_TABLE_UPDATED_AT_COLUMN,
-                  'Updated at'
-                ),
-                accessor: 'updatedAtDate',
-                Cell: ({ row }): JSX.Element => {
-                  const rowData = row.original;
-
-                  const lastUpdatedString = formatDistance(
-                    rowData.updatedAtDate,
-                    new Date(),
-                    {
-                      addSuffix: true,
-                    }
-                  );
-
-                  return (
-                    <div style={{ display: 'flex', flexDirection: 'column' }}>
-                      <span>{lastUpdatedString}</span>
-                      <Body level={3} muted>
-                        {getUpdatedByUserString(rowData.updatedByUserProfile)}
-                      </Body>
-                    </div>
-                  );
+        {isListingCanvases ? (
+          <LoaderWrapper>
+            <Loader
+              darkMode={false}
+              infoTitle={t(
+                translationKeys.LOADING_CANVASES,
+                'Loading canvases...'
+              )}
+            />
+          </LoaderWrapper>
+        ) : (
+          <CanvasListContainer>
+            <SearchCanvasInput
+              placeholder={t(
+                translationKeys.HOMEPAGE_TABLE_SEARCH_PLACEHOLDER,
+                'Browse canvases'
+              )}
+              fullWidth
+              value={searchString}
+              icon="Search"
+              onChange={(e) => setSearchString(e.target.value)}
+            />
+            <Table<CanvasDocumentWithUserProfile>
+              initialState={initialTableState}
+              onStateChange={onTableStateChange}
+              onRowClick={(row) =>
+                navigate(
+                  getCanvasLink(row.original.externalId, {
+                    [SEARCH_QUERY_PARAM_KEY]: debouncedSearchString,
+                  })
+                )
+              }
+              columns={[
+                {
+                  Header: t(translationKeys.HOMEPAGE_TABLE_NAME_COLUMN, 'Name'),
+                  accessor: 'name',
                 },
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore - sortType is not defined in the Cogs table types, but works just fine. Tracked by: https://cognitedata.atlassian.net/browse/CDS-1530
-                sortType: 'datetime',
-              },
-              {
-                Header: t(
-                  translationKeys.HOMEPAGE_TABLE_CREATED_AT_COLUMN,
-                  'Created at'
-                ),
-                accessor: 'createdAtDate',
-                Cell: ({ value }: { value: Date }): JSX.Element => (
-                  <span>{format(value, 'yyyy-MM-dd')}</span>
-                ),
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore - sortType is not defined in the Cogs table types, but works just fine. Tracked by: https://cognitedata.atlassian.net/browse/CDS-1530
-                sortType: 'datetime',
-              },
-              {
-                Header: t(
-                  translationKeys.HOMEPAGE_TABLE_CREATED_BY_COLUMN,
-                  'Created by'
-                ),
-                accessor: (row) => getCreatedByName(row.createdByUserProfile),
-              },
-              {
-                id: 'row-options',
-                accessor: (row) => (
-                  <>
-                    {renderCopyCanvasLinkButton(row)}
-                    {renderDeleteCanvasButton(row)}
-                  </>
-                ),
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore - disableSortBy works just fine, but the type definition is wrong. Tracked by: https://cognitedata.atlassian.net/browse/CDS-1530
-                disableSortBy: true,
-              },
-            ]}
-            rowKey={(canvas) => canvas.externalId}
-            dataSource={sortedCanvases}
-          />
-        </CanvasListContainer>
+                {
+                  Header: t(
+                    translationKeys.HOMEPAGE_TABLE_UPDATED_AT_COLUMN,
+                    'Updated at'
+                  ),
+                  accessor: 'updatedAtDate',
+                  Cell: ({ row }): JSX.Element => {
+                    const rowData = row.original;
+
+                    const lastUpdatedString = formatDistance(
+                      rowData.updatedAtDate,
+                      new Date(),
+                      {
+                        addSuffix: true,
+                      }
+                    );
+
+                    return (
+                      <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <span>{lastUpdatedString}</span>
+                        <Body level={3} muted>
+                          {getUpdatedByUserString(rowData.updatedByUserProfile)}
+                        </Body>
+                      </div>
+                    );
+                  },
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore - sortType is not defined in the Cogs table types, but works just fine. Tracked by: https://cognitedata.atlassian.net/browse/CDS-1530
+                  sortType: 'datetime',
+                },
+                {
+                  Header: t(
+                    translationKeys.HOMEPAGE_TABLE_CREATED_AT_COLUMN,
+                    'Created at'
+                  ),
+                  accessor: 'createdAtDate',
+                  Cell: ({ value }: { value: Date }): JSX.Element => (
+                    <span>{format(value, 'yyyy-MM-dd')}</span>
+                  ),
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore - sortType is not defined in the Cogs table types, but works just fine. Tracked by: https://cognitedata.atlassian.net/browse/CDS-1530
+                  sortType: 'datetime',
+                },
+                {
+                  Header: t(
+                    translationKeys.HOMEPAGE_TABLE_CREATED_BY_COLUMN,
+                    'Created by'
+                  ),
+                  accessor: (row) => getCreatedByName(row.createdByUserProfile),
+                },
+                {
+                  id: 'row-options',
+                  accessor: (row) => (
+                    <>
+                      {renderCopyCanvasLinkButton(row)}
+                      {renderDeleteCanvasButton(row)}
+                    </>
+                  ),
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore - disableSortBy works just fine, but the type definition is wrong. Tracked by: https://cognitedata.atlassian.net/browse/CDS-1530
+                  disableSortBy: true,
+                },
+              ]}
+              rowKey={(canvas) => canvas.externalId}
+              dataSource={filteredCanvases}
+            />
+          </CanvasListContainer>
+        )}
       </div>
     </>
   );
 };
+
+const LoaderWrapper = styled.div`
+  background: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+`;
 
 const HomeHeader = styled.div`
   align-items: center;
