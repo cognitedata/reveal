@@ -9,18 +9,16 @@ import isObject from 'lodash/isObject';
 import collapseStyle from 'rc-collapse/assets/index.css';
 
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
-import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
 import {
-  AuthWrapper,
   getEnv,
   getProject,
-  SubAppWrapper,
+  isUsingUnifiedSignin,
 } from '@cognite/cdf-utilities';
 import { Loader, ToastContainer } from '@cognite/cogs.js';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 import { FlagProvider } from '@cognite/react-feature-flags';
-import { SDKProvider } from '@cognite/sdk-provider';
 
+import { AuthContainer } from './AuthContainer';
 import { translations } from './common/i18n';
 import { AppEnvProvider } from './hooks/useAppEnv';
 import CreateExtpipe from './pages/create/CreateExtpipe';
@@ -32,7 +30,6 @@ import antdTheme from './styles/antd-theme.less';
 import GlobalStyles from './styles/GlobalStyles';
 import rootStyles from './styles/index.css';
 import theme from './styles/theme';
-import { EXTRACTION_PIPELINES } from './utils/constants';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -58,6 +55,9 @@ const queryClient = new QueryClient({
 const App = () => {
   const appName = 'cdf-integrations-ui';
   const projectName = getProject();
+  const baseUrl = isUsingUnifiedSignin()
+    ? `/cdf/${projectName}`
+    : `/${projectName}`;
   const env = getEnv();
   const { origin } = window.location;
 
@@ -86,47 +86,40 @@ const App = () => {
       >
         <QueryClientProvider client={queryClient}>
           <AppScopeStyles>
-            <SubAppWrapper title={EXTRACTION_PIPELINES}>
-              <AuthWrapper
-                loadingScreen={<Loader />}
-                login={() => loginAndAuthIfNeeded(projectName, env)}
-              >
-                <SDKProvider sdk={sdk}>
-                  <ThemeProvider theme={theme}>
-                    <AppEnvProvider
-                      cdfEnv={env}
-                      project={projectName}
-                      origin={origin}
-                    >
-                      <Suspense fallback={<Loader />}>
-                        <ToastContainer />
-                        <Router>
-                          <Routes>
-                            <Route
-                              path="/:projectName/:subAppPath/create"
-                              element={<CreateExtpipe />}
-                            />
-                            <Route
-                              path="/:projectName/:subAppPath/extpipe/:id*"
-                              element={<ExtpipePage />}
-                            />
-                            <Route
-                              path="/:projectName/:subAppPath/hosted-extraction-pipeline/:externalId"
-                              element={<HostedExtractionPipelineDetails />}
-                            />
-                            <Route
-                              path="/:projectName/:subAppPath"
-                              element={<Extpipes />}
-                            />
-                          </Routes>
-                        </Router>
-                      </Suspense>
-                    </AppEnvProvider>
-                  </ThemeProvider>
-                  <GlobalStyles theme={theme} />
-                </SDKProvider>
-              </AuthWrapper>
-            </SubAppWrapper>
+            <AuthContainer>
+              <ThemeProvider theme={theme}>
+                <AppEnvProvider
+                  cdfEnv={env}
+                  project={projectName}
+                  origin={origin}
+                >
+                  <Suspense fallback={<Loader />}>
+                    <ToastContainer />
+                    <Router>
+                      <Routes>
+                        <Route
+                          path={`${baseUrl}/:subAppPath/create`}
+                          element={<CreateExtpipe />}
+                        />
+                        <Route
+                          path={`${baseUrl}/:subAppPath/extpipe/:id*`}
+                          element={<ExtpipePage />}
+                        />
+                        <Route
+                          path={`${baseUrl}/:subAppPath/hosted-extraction-pipeline/:externalId`}
+                          element={<HostedExtractionPipelineDetails />}
+                        />
+                        <Route
+                          path={`${baseUrl}/:subAppPath`}
+                          element={<Extpipes />}
+                        />
+                      </Routes>
+                    </Router>
+                  </Suspense>
+                </AppEnvProvider>
+              </ThemeProvider>
+              <GlobalStyles theme={theme} />
+            </AuthContainer>
           </AppScopeStyles>
           <ReactQueryDevtools />
         </QueryClientProvider>
