@@ -79,7 +79,6 @@ export const createLink = (
     },
     opts
   );
-
   const pathName =
     isUsingUnifiedSignin() && path.startsWith(`/${project}`)
       ? path.replace(`/${project}`, '')
@@ -91,6 +90,7 @@ export const createLink = (
   if (pathName.length > 0 && path !== '/') {
     return `${cdfAppName}/${project}${path}`;
   }
+
   return `${cdfAppName}/${project}`;
 };
 

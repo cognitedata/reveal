@@ -9,6 +9,7 @@ import {
 } from '@tanstack/react-query';
 import { BASE_QUERY_KEY } from '@transformations/common';
 
+import { getProject } from '@cognite/cdf-utilities';
 import { CogniteClient, CogniteError } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 
@@ -128,7 +129,7 @@ export const useModels = (
     ({ pageParam }) =>
       sdk
         .get<DataModelResponse>(
-          `/api/v1/projects/${sdk.project}/models/datamodels`,
+          `/api/v1/projects/${getProject()}/models/datamodels`,
           {
             headers,
             params: { cursor: pageParam, inlineViews: true, allVersions: true },
@@ -159,7 +160,7 @@ export const getModel = (
 ) =>
   sdk
     .post<DataModelResponse>(
-      `/api/v1/projects/${sdk.project}/models/datamodels/byids?inlineViews=true`,
+      `/api/v1/projects/${getProject()}/models/datamodels/byids?inlineViews=true`,
       { data: { items: [{ externalId, space, version }] }, headers }
     )
     .then((r) => r.data.items[0]);
@@ -220,7 +221,7 @@ export const useSpaces = (
     ({ pageParam }) =>
       sdk
         .get<DMSSpaceResponse>(
-          `/api/v1/projects/${sdk.project}/models/spaces`,
+          `/api/v1/projects/${getProject()}/models/spaces`,
           { headers, params: { cursor: pageParam, limit: 100 } }
         )
         .then((r) => r.data),
