@@ -475,35 +475,7 @@ export function Viewer() {
                   sphere.position.copy(point);
                   viewer.addObject3D(sphere);
 
-                  if (pointCloudObjectsUi.createAnnotationsOnClick) {
-                    const cdfPosition = point.clone().applyMatrix4(model.getCdfToDefaultModelTransformation().invert());
-
-                    const annotation = await client.annotations.create([
-                      {
-                        annotatedResourceId: model.modelId,
-                        annotatedResourceType: 'threedmodel',
-                        annotationType: 'pointcloud.BoundingVolume',
-                        status: 'suggested',
-                        creatingApp: 'reveal-examples',
-                        creatingUser: 'reveal-user',
-                        creatingAppVersion: '0.0.1',
-                        data: {
-                          label: 'Dummy annotation',
-                          region: [
-                            {
-                              box: {
-                                matrix: new THREE.Matrix4()
-                                  .makeTranslation(cdfPosition.x, cdfPosition.y, cdfPosition.z)
-                                  .transpose().elements
-                              }
-                            }
-                          ]
-                        }
-                      }
-                    ]);
-
-                    console.log('Annotation successfully created', annotation);
-                  }
+                  pointCloudObjectsUi.createModelAnnotation(point, model);
                 }
               }
               break;

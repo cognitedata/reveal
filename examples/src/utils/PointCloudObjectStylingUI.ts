@@ -100,8 +100,35 @@ export class PointCloudObjectStylingUI {
       .onChange((value: boolean) => (this._createAnnotationsOnClick = value));
   }
 
-  get createAnnotationsOnClick() {
-    return this._createAnnotationsOnClick;
+  async createModelAnnotation(position: THREE.Vector3, model: CognitePointCloudModel) {
+    if (!this._createAnnotationsOnClick) return;
+
+    const cdfPosition = position.clone().applyMatrix4(model.getCdfToDefaultModelTransformation().invert());
+
+    const annotation = await this._client.annotations.create([
+      {
+        annotatedResourceId: model.modelId,
+        annotatedResourceType: 'threedmodel',
+        annotationType: 'pointcloud.BoundingVolume',
+        status: 'suggested',
+        creatingApp: 'reveal-examples',
+        creatingUser: 'reveal-user',
+        creatingAppVersion: '0.0.1',
+        data: {
+          label: 'Dummy annotation',
+          region: [
+            {
+              box: {
+                matrix: new THREE.Matrix4().makeTranslation(cdfPosition.x, cdfPosition.y, cdfPosition.z).transpose()
+                  .elements
+              }
+            }
+          ]
+        }
+      }
+    ]);
+
+    console.log('Annotation successfully created', annotation);
   }
 
   async updateSelectedAnnotation(annotationId: number | undefined) {
