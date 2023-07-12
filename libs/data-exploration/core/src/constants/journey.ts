@@ -6,4 +6,3 @@ export const JOURNEY_ITEM_SEPARATOR = '-'; // Separates a journey item to type a
 export const JOURNEY_FIELD = 'journey';
 export const VIEW_MODE_FIELD = 'full-page';
 export const SELECTED_TAB_FIELD = 'selected-tab';
-export const BREAK_JOURNEY_FIELD = 'break-journey';

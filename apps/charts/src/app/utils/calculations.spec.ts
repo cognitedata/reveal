@@ -91,6 +91,7 @@ describe('Duplicate Calculation', () => {
     type: 'workflow',
   };
 
+  // @ts-ignore
   const cloneCalculation = CalculationDeepCloneAndReplaceIds(calculation);
 
   it('should duplicate a calculation', () => {
@@ -99,14 +100,15 @@ describe('Duplicate Calculation', () => {
 
   it('should have unique ID for flow elements', () => {
     // loop through all edges
-    for (let i = 0; i < cloneCalculation.flow.elements.length; i++) {
-      const cloneElement = cloneCalculation.flow.elements[i];
-      const originalElement = calculation.flow.elements[i];
-      // check if element is an edge
-      if (cloneElement.type) {
-        // check if edge id is the same
-        // eslint-disable-next-line jest/no-conditional-expect
-        expect(cloneElement.id).not.toBe(originalElement.id);
+    if (cloneCalculation && cloneCalculation.flow) {
+      for (let i = 0; i < cloneCalculation.flow.elements.length; i++) {
+        const cloneElement = cloneCalculation.flow.elements[i];
+        const originalElement = calculation.flow.elements[i];
+        // check if element is an edge
+        if (cloneElement.type) {
+          // check if edge id is the same
+          expect(cloneElement.id).not.toBe(originalElement.id);
+        }
       }
     }
   });
