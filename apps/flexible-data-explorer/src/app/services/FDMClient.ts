@@ -289,6 +289,16 @@ export class FDMClient extends BaseFDMClient {
     return result;
   }
 
+  public async aiSearch(queryString: string, variables: Record<string, any>) {
+    const payload = { variables, query: queryString };
+
+    const result = await this.gqlRequest<Record<DataType, SearchResponse>>(
+      payload
+    );
+
+    return result;
+  }
+
   public async searchAggregateCount(
     queryString: string,
     filters: Record<string, unknown>,

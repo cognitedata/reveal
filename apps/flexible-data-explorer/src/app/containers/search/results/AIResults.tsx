@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import {
+  addFromCopilotEventListener,
   sendToCopilotEvent,
   useFromCopilotEventHandler,
 } from '@fusion/copilot-core';
@@ -12,25 +13,28 @@ import {
   useSearchFilterParams,
   useSearchQueryParams,
 } from '../../../hooks/useParams';
+import { useAIDataTypesQuery } from '../../../services/dataTypes/queries/useAIDataTypesQuery';
 
 export const AIResults = () => {
   const [query] = useSearchQueryParams();
   const [filters] = useSearchFilterParams();
   const selectedDataModel = useDataModelParams();
 
-  const [data, _setData] = useState([
-    { name: 'test', value: 1 },
-    { name: 'test2', value: 2 },
-  ]);
   const [gqlQuery, setGQLQuery] = useState('');
+  const [variables, setVariables] = useState({});
 
-  useFromCopilotEventHandler('GQL_QUERY', ({ query: newGqlQuery }) => {
-    setGQLQuery(newGqlQuery);
-  });
+  const { data } = useAIDataTypesQuery(gqlQuery, variables);
+
+  useFromCopilotEventHandler(
+    'GQL_QUERY',
+    ({ query: newGqlQuery, variables: newVariables }) => {
+      setGQLQuery(newGqlQuery);
+      setVariables(newVariables);
+    }
+  );
 
   useEffect(() => {
-    // TODO on page refresh, should resend this (changes needed copilot side)
-    if (query && selectedDataModel) {
+    const sendMessage = () =>
       sendToCopilotEvent('NEW_MESSAGES', [
         {
           source: 'bot',
@@ -44,9 +48,18 @@ export const AIResults = () => {
             filters
           )} \`\`\``,
           type: 'text',
+          context: 'Searched in Explorer',
         },
       ]);
+    if (query && selectedDataModel) {
+      sendMessage();
     }
+    const removeHandler = addFromCopilotEventListener('CHAT_READY', () => {
+      if (query && selectedDataModel) {
+        sendMessage();
+      }
+      removeHandler();
+    });
   }, [query, filters, selectedDataModel]);
 
   if (!gqlQuery) {
@@ -57,14 +70,13 @@ export const AIResults = () => {
     <Wrapper>
       <h2>AI Results:</h2>
       <pre>{JSON.stringify(data, null, 2)}</pre>
-      <pre>query: {gqlQuery}</pre>
     </Wrapper>
   );
 };
 
 const Wrapper = styled.div`
   width: 100%;
-  height: 400px;
+  padding: 16px;
   background: mediumpurple;
   margin-bottom: 50px;
 `;

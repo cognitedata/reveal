@@ -46,6 +46,7 @@ export function printSources(sourceList: sourceResponse[]) {
       source: 'bot',
       type: 'text',
       content: sourceString,
+      chain: 'DocumentQueryChain',
     },
   ]);
   console.log(sourceString);

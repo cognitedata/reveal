@@ -6,13 +6,15 @@ import styled from 'styled-components/macro';
 import { Button, Flex, Icon } from '@cognite/cogs.js';
 
 import { useFromCache, useSaveToCache } from '../../hooks/useCache';
-import { useCopilotContext } from '../../utils/CopilotContext';
+import { useCopilotContext } from '../../hooks/useCopilotContext';
+import { useMetrics } from '../../hooks/useMetrics';
 import zIndex from '../../utils/zIndex';
 import { actionRenderers } from '../ActionRenderer';
 import { messageRenderers } from '../MessageRenderer';
 
 import { ChatHeader } from './ChatHeader';
 import { HistoryList } from './HistoryList';
+import { LoadingMessage } from './LoadingMessage';
 
 const MAX_WIDTH = window.innerWidth - 120;
 const MAX_HEIGHT = window.innerHeight - 120;
@@ -45,6 +47,8 @@ export const SmallChatUI = ({
     height: number;
   }>('SMALL_CHATBOT_DIMENTIONS');
 
+  const { track } = useMetrics();
+
   if (isLoading) {
     return <Icon type="Loader" />;
   }
@@ -58,6 +62,7 @@ export const SmallChatUI = ({
       resizeHandles={['nw']}
       onResizeStart={() => setShowOverlay(true)}
       onResizeStop={(_e, data) => {
+        track('RESIZE', { size: [data.size.width, data.size.height] });
         setShowOverlay(false);
         saveToCache(data.size);
         window.dispatchEvent(new Event('small-resize'));
@@ -76,6 +81,7 @@ export const SmallChatUI = ({
         <>
           <Flex direction="column" style={{ overflow: 'auto', flex: 1 }}>
             <BotUIMessageList renderer={messageRenderers} />
+            <LoadingMessage />
           </Flex>
           <BotUIAction renderer={actionRenderers} />
         </>

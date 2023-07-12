@@ -4,9 +4,10 @@ import localforage, * as localForage from 'localforage';
 import { useSDK } from '@cognite/sdk-provider';
 
 import { CopilotMessage } from '../../lib/types';
-import { useCopilotContext } from '../utils/CopilotContext';
 
 import { getCacheKey } from './useCache';
+import { useCopilotContext } from './useCopilotContext';
+import { useMetrics } from './useMetrics';
 
 const CHAT_PREFIX = 'chats-1';
 
@@ -85,10 +86,12 @@ export const useSaveChat = (id: string) => {
 export const useDeleteChat = () => {
   const sdk = useSDK();
   const queryClient = useQueryClient();
+  const { track } = useMetrics();
   const { currentChatId, setCurrentChatId } = useCopilotContext();
   return useMutation(
     [getCacheKey(sdk.project, `delete-1`)],
     async (id: string) => {
+      track('DELETE_CHAT', undefined);
       await localForage.removeItem(
         getCacheKey(sdk.project, `${CHAT_PREFIX}-${id}`)
       );

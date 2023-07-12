@@ -1,8 +1,6 @@
-import { createContext, useContext, useEffect, useMemo } from 'react';
+import { createContext, useContext, useMemo } from 'react';
 import type { FC, PropsWithChildren } from 'react';
 import { useParams } from 'react-router-dom';
-
-import { sendToCopilotEvent } from '@fusion/copilot-core';
 
 import { useSDK } from '@cognite/sdk-provider';
 
@@ -21,23 +19,6 @@ export const FDMProvider: FC<PropsWithChildren> = ({ children }) => {
 
     return new FDMClient(sdk, { dataModel, space, version });
   }, [sdk, dataModel, space, version]);
-
-  useEffect(() => {
-    if (dataModel && space && version) {
-      // TODO: fix code to send correct event name and data to copilot
-      sendToCopilotEvent('NEW_MESSAGES', [
-        {
-          type: 'data-model',
-          space,
-          version,
-          dataModel,
-          content: 'I want to search on this data model',
-          source: 'bot',
-        },
-      ]);
-      // sendToCopilotEvent('GET_CODE', selectedDataModel?.dataModel);
-    }
-  }, [dataModel, space, version]);
 
   return (
     <FDMContext.Provider value={fdmClient}>{children}</FDMContext.Provider>

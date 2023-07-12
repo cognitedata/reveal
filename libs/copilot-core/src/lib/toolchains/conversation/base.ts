@@ -23,6 +23,7 @@ export const createDefaultChain = (model: BaseLanguageModel) =>
               source: 'bot',
               content: outputs.response,
               type: 'text',
+              chain: this.constructor.name,
             },
           ]);
         },

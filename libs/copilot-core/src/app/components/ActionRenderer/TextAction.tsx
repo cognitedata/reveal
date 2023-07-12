@@ -62,10 +62,8 @@ export const TextAction = () => {
       direction="column"
       style={{ position: 'relative', width: '100%' }}
     >
-      {actions?.length > 0 && (
-        <Flex gap={4}>
-          <ResponsiveActions actions={actions} />
-        </Flex>
+      {!waiting && actions?.length > 0 && (
+        <ResponsiveActions actions={actions} />
       )}
       <div style={{ position: 'relative', width: '100%' }}>
         <Textarea

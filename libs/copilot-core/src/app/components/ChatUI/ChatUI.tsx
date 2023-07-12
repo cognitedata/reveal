@@ -1,5 +1,5 @@
 /* eslint-disable testing-library/await-async-utils */
-import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 
 import styled from 'styled-components';
 
@@ -22,15 +22,26 @@ import {
 } from '../../../lib/types';
 import {
   addToCopilotEventListener,
-  cachedListeners,
+  sendFromCopilotEvent,
   sendToCopilotEvent,
 } from '../../../lib/utils';
 import { getChatHistory, useSaveChat } from '../../hooks/useChatHistory';
-import { useCopilotContext } from '../../utils/CopilotContext';
+import { useCopilotContext } from '../../hooks/useCopilotContext';
+import { useMetrics } from '../../hooks/useMetrics';
 import zIndex from '../../utils/zIndex';
 
 import { LargeChatUI } from './LargeChatUI';
 import { SmallChatUI } from './SmallChatUI';
+
+const scrollToBottom = () => {
+  const messagesDiv = document.querySelector('.botui_message_list');
+  if (messagesDiv) {
+    if (messagesDiv.parentElement) {
+      messagesDiv.parentElement.scrollTop = messagesDiv.scrollHeight;
+    }
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  }
+};
 
 export const ChatUI = ({
   visible,
@@ -47,12 +58,13 @@ export const ChatUI = ({
   });
   const bot = useBotUI();
   const sdk = useSDK();
-  const messages = useRef<CopilotMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const { currentChatId } = useCopilotContext();
+  const { currentChatId, setLoadingStatus, messages } = useCopilotContext();
 
   const { mutate: setChatHistory } = useSaveChat(currentChatId);
+
+  const { track } = useMetrics();
 
   const model = useMemo(() => new CogniteChatGPT(sdk), [sdk]);
 
@@ -87,13 +99,15 @@ export const ChatUI = ({
         updateMessage,
       });
     },
-    [setChatHistory, updateMessage]
+    [setChatHistory, updateMessage, messages]
   );
 
   const promptUser = useCallback(() => {
+    setLoadingStatus('');
     bot.action
       .set({ feature }, { actionType: 'text', feature })
       .then(async ({ content }: { content: string }) => {
+        track('USER_PROMPT', undefined);
         messages.current.push({
           content: content,
           type: 'text',
@@ -105,18 +119,29 @@ export const ChatUI = ({
           conversationChain,
           sdk,
           content,
-          messages.current,
-          (message) => addMessage(bot, { ...message, source: 'bot' })
+          messages.current
         ).then((shouldPrompt) => {
           if (shouldPrompt) {
             promptUser();
           }
         });
+        setTimeout(() => {
+          scrollToBottom();
+        }, 100);
         if (messages.current.length > 0) {
           await bot.wait();
         }
       });
-  }, [addMessage, bot, conversationChain, feature, sdk, setChatHistory]);
+  }, [
+    bot,
+    track,
+    conversationChain,
+    feature,
+    sdk,
+    setChatHistory,
+    setLoadingStatus,
+    messages,
+  ]);
 
   useEffect(() => {
     if (isEnabled) {
@@ -141,8 +166,7 @@ export const ChatUI = ({
                 conversationChain,
                 sdk,
                 lastMessage.content,
-                messages.current,
-                (message) => addMessage(bot, { ...message, source: 'bot' })
+                messages.current
               ).then((shouldPrompt) => {
                 if (shouldPrompt) {
                   promptUser();
@@ -154,9 +178,6 @@ export const ChatUI = ({
       );
       return () => {
         removeListener();
-        for (const listener of cachedListeners) {
-          window.removeEventListener(listener.event, listener.listener);
-        }
       };
     }
   }, [
@@ -168,6 +189,7 @@ export const ChatUI = ({
     feature,
     sdk,
     conversationChain,
+    messages,
   ]);
 
   const setupMessages = useCallback(
@@ -218,8 +240,7 @@ export const ChatUI = ({
           conversationChain,
           sdk,
           '',
-          messages.current,
-          (message) => addMessage(bot, { ...message, source: 'bot' })
+          messages.current
         ).then((shouldPrompt) => {
           if (shouldPrompt) {
             promptUser();
@@ -229,15 +250,7 @@ export const ChatUI = ({
         promptUser();
       }
     },
-    [
-      promptUser,
-      feature,
-      conversationChain,
-      sdk,
-      addMessage,
-      bot,
-      updateMessage,
-    ]
+    [promptUser, feature, conversationChain, sdk, bot, updateMessage, messages]
   );
 
   useEffect(() => {
@@ -246,7 +259,10 @@ export const ChatUI = ({
       setupMessages(
         (await getChatHistory(sdk.project, currentChatId))?.history || []
       );
-      setTimeout(() => setIsLoading(false), 100);
+      setTimeout(() => {
+        setIsLoading(false);
+        sendFromCopilotEvent('CHAT_READY', undefined);
+      }, 100);
     })();
   }, [currentChatId, sdk.project, setupMessages]);
 

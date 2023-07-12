@@ -9,6 +9,7 @@ import { messageRenderers } from '../MessageRenderer';
 
 import { ChatHeader } from './ChatHeader';
 import { HistoryList } from './HistoryList';
+import { LoadingMessage } from './LoadingMessage';
 
 export const LargeChatUI = () => {
   return (
@@ -44,6 +45,7 @@ export const LargeChatUI = () => {
               }}
             >
               <BotUIMessageList renderer={messageRenderers} />
+              <LoadingMessage />
             </Flex>
             <BotUIAction renderer={actionRenderers} />
           </Flex>
