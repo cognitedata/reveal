@@ -4,7 +4,7 @@ import { RelationshipResourceType } from '@cognite/sdk';
 
 import { ALL_RELATIONSHIP_RESOURCE_TYPES } from '../../constants';
 import { useRelationshipsQuery } from '../../service';
-import { transformToRelatedResourceExternalIds } from '../transformers';
+import { extractRelationshipLabels } from '../transformers';
 import { RelationshipsFilterInternal } from '../types';
 
 interface Props {
@@ -13,7 +13,7 @@ interface Props {
   filter?: RelationshipsFilterInternal;
 }
 
-export const useRelatedResourceExternalIds = ({
+export const useRelationshipLabels = ({
   resourceExternalId,
   relationshipResourceTypes = ALL_RELATIONSHIP_RESOURCE_TYPES,
   filter,
@@ -24,12 +24,12 @@ export const useRelatedResourceExternalIds = ({
     filter,
   });
 
-  const transformedData = useMemo(() => {
-    return transformToRelatedResourceExternalIds(data, resourceExternalId);
-  }, [data, resourceExternalId]);
+  const relationshipLabels = useMemo(() => {
+    return extractRelationshipLabels(data);
+  }, [data]);
 
   return {
-    data: transformedData,
+    data: relationshipLabels,
     isLoading,
   };
 };

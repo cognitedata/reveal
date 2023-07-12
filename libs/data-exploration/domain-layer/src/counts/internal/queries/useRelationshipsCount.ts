@@ -11,9 +11,9 @@ export const useRelationshipsCount = ({
   resource?: BaseResourceProps;
   resourceType: ResourceType;
 }) => {
-  const { data, isLoading } = useRelatedResourceExternalIds(
-    extractExternalId(resource)
-  );
+  const { data, isLoading } = useRelatedResourceExternalIds({
+    resourceExternalId: extractExternalId(resource),
+  });
 
   const count = data[resourceType].length;
 

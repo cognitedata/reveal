@@ -2,31 +2,30 @@ import { useMemo } from 'react';
 
 import { RelationshipResourceType } from '@cognite/sdk';
 
-import { ALL_RELATIONSHIP_RESOURCE_TYPES } from '../../constants';
 import { useRelationshipsQuery } from '../../service';
-import { transformToRelatedResourceExternalIds } from '../transformers';
+import { transformToDetailViewData } from '../transformers';
 import { RelationshipsFilterInternal } from '../types';
 
 interface Props {
   resourceExternalId?: string;
-  relationshipResourceTypes?: RelationshipResourceType[];
+  relationshipResourceType: RelationshipResourceType;
   filter?: RelationshipsFilterInternal;
 }
 
-export const useRelatedResourceExternalIds = ({
+export const useRelatedResourceDataForDetailView = ({
   resourceExternalId,
-  relationshipResourceTypes = ALL_RELATIONSHIP_RESOURCE_TYPES,
+  relationshipResourceType,
   filter,
 }: Props) => {
   const { data = [], isLoading } = useRelationshipsQuery({
     resourceExternalIds: resourceExternalId ? [resourceExternalId] : [],
-    relationshipResourceTypes,
+    relationshipResourceTypes: [relationshipResourceType],
     filter,
   });
 
   const transformedData = useMemo(() => {
-    return transformToRelatedResourceExternalIds(data, resourceExternalId);
-  }, [data, resourceExternalId]);
+    return transformToDetailViewData(data);
+  }, [data]);
 
   return {
     data: transformedData,

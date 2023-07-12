@@ -25,6 +25,8 @@ export type RelationshipTableProps = {
   onItemClicked: (id: number) => void;
   onParentAssetClick: (assetId: number) => void;
   isGroupingFilesEnabled?: boolean;
+  labels?: string[];
+  isDocumentsApiEnabled?: boolean;
 };
 const relationshipMapper = {
   asset: RelationshipAssetTable,
@@ -40,6 +42,8 @@ export const RelationshipTable = ({
   onItemClicked,
   onParentAssetClick,
   isGroupingFilesEnabled,
+  isDocumentsApiEnabled,
+  labels,
 }: RelationshipTableProps & SelectableItemsProps) => {
   const { t } = useTranslation();
   const context = useContext(AppContext);
@@ -88,6 +92,8 @@ export const RelationshipTable = ({
       onItemClicked={onItemClicked}
       onParentAssetClick={onParentAssetClick}
       isGroupingFilesEnabled={isGroupingFilesEnabled}
+      labels={labels}
+      isDocumentsApiEnabled={isDocumentsApiEnabled}
     />
   );
 };

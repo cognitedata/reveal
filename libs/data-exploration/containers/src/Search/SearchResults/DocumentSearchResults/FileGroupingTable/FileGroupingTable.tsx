@@ -6,6 +6,7 @@ import { Document, DocumentTable } from '@cognite/react-document-table';
 import { FileInfo } from '@cognite/sdk/dist/src';
 
 import {
+  FileWithRelationshipLabels,
   InternalDocumentFilter,
   LOADING_RESULTS,
   REFINE_FILTERS_OR_UPDATE_SEARCH,
@@ -16,7 +17,7 @@ import { useDocumentSearchResultQuery } from '@data-exploration-lib/domain-layer
 import { docTypes } from './docTypes';
 
 type FileGroupingTableProps = {
-  data?: FileInfo[];
+  data?: FileWithRelationshipLabels[];
   query?: string;
   filter?: InternalDocumentFilter;
   onItemClicked: (file: any) => void;
