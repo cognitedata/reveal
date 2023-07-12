@@ -3,7 +3,7 @@
  */
 import React, { useContext, createContext, useMemo } from 'react';
 import { type CogniteClient } from '@cognite/sdk';
-import { FdmSDK } from '../../utilities/FdmSdk';
+import { FdmSDK } from '../../utilities/FdmSDK';
 
 const SdkContext = createContext<CogniteClient | null>(null);
 const FdmSdkContext = createContext<FdmSDK | null>(null);

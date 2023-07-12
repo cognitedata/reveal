@@ -13,6 +13,7 @@ import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 type RevealContainerProps = {
   color?: Color;
   sdk: CogniteClient;
+  uiElements?: ReactNode;
   children?: ReactNode;
   viewerOptions?: Pick<
     Cognite3DViewerOptions,
@@ -31,6 +32,7 @@ const queryClient = new QueryClient();
 export function RevealContainer({
   children,
   sdk,
+  uiElements,
   color,
   viewerOptions
 }: RevealContainerProps): ReactElement {
@@ -48,6 +50,7 @@ export function RevealContainer({
         <div style={{ width: '100%', height: '100%' }} ref={revealDomElementRef}>
           {mountChildren()}
         </div>
+        {uiElements}
       </QueryClientProvider>
     </SDKProvider>
   );
