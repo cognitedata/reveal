@@ -217,7 +217,9 @@ export const IndustryCanvas = ({
       // ...getClickedContainerOutlineAnnotation(clickedContainer),
       ...getIndustryCanvasConnectionAnnotations({
         container,
+        selectedContainer,
         hoverId: interactionState.hoverId,
+        clickedId: interactionState.clickedContainerAnnotationId,
         annotations: containerAnnotations,
         shouldShowAllConnectionAnnotations: shouldShowConnectionAnnotations,
       }),
@@ -226,7 +228,9 @@ export const IndustryCanvas = ({
     ],
     [
       container,
+      selectedContainer,
       interactionState.hoverId,
+      interactionState.clickedContainerAnnotationId,
       containerAnnotations,
       canvasAnnotationWithEventHandlers,
       shouldShowConnectionAnnotations,
@@ -337,7 +341,7 @@ const FullHeightWrapper = styled.div`
 const ZoomControlsWrapper = styled.div`
   position: absolute;
   bottom: ${CANVAS_FLOATING_ELEMENT_MARGIN}px;
-  right: ${CANVAS_FLOATING_ELEMENT_MARGIN}px;
+  right: ${isDevelopment() ? 70 : CANVAS_FLOATING_ELEMENT_MARGIN}px;
 `;
 
 const ToolbarWrapper = styled.div`

@@ -79,7 +79,7 @@ export const DataModelMessage = ({
     [dataModelVersions]
   );
   return (
-    <Flex direction="column" gap={4}>
+    <Flex direction="column">
       <Body level={2}>{message.content}</Body>
       <Select
         label="Select data model"

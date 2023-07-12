@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import { FileUploadModal } from '@vision/modules/Common/Components/FileUploaderModal/FileUploaderModal';
 import { selectAllProcessFiles } from '@vision/modules/Process/store/selectors';
@@ -9,12 +9,12 @@ import {
   setProcessFileIds,
   setProcessViewFileUploadModalVisibility,
 } from '@vision/modules/Process/store/slice';
-import { AppDispatch } from '@vision/store';
+import { useThunkDispatch } from '@vision/store';
 import { RootState } from '@vision/store/rootReducer';
 import { DeleteFilesById } from '@vision/store/thunks/Files/DeleteFilesById';
 
 export const ProcessFileUploadModalContainer = () => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useThunkDispatch();
 
   const processFiles = useSelector((state: RootState) =>
     selectAllProcessFiles(state)

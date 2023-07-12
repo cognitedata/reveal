@@ -85,7 +85,7 @@ const useIndustryCanvasAssetTooltips = (
       trackUsage(MetricEvent.ASSET_TOOLTIP_OPEN_IN_DATA_EXPLORER);
     };
 
-    const onOpenInResourceSelector = (): void => {
+    const onOpenAssetInResourceSelector = (): void => {
       trackUsage(MetricEvent.ASSET_TOOLTIP_OPEN_IN_RESOURCE_SELECTOR, {
         containerType: 'file',
         resourceType: 'asset',
@@ -103,6 +103,24 @@ const useIndustryCanvasAssetTooltips = (
       });
     };
 
+    const onOpenTimeseriesTabInResourceSelector = (): void => {
+      trackUsage(
+        MetricEvent.ASSET_TOOLTIP_OPEN_TIMESERIES_TAB_IN_RESOURCE_SELECTOR,
+        {
+          containerType: 'file',
+          resourceType: 'timeseries',
+        }
+      );
+      onResourceSelectorOpen({
+        initialFilter: {
+          common: {
+            assetSubtreeIds: [{ value: resourceId }],
+          },
+        },
+        initialTab: 'timeSeries',
+      });
+    };
+
     return [
       {
         targetId: String(selectedAnnotation?.id),
@@ -113,7 +131,10 @@ const useIndustryCanvasAssetTooltips = (
             onAddTimeseries={onAddTimeseries}
             onAddAsset={onAddAsset}
             onViewAsset={onViewAsset}
-            onOpenInResourceSelector={onOpenInResourceSelector}
+            onOpenAssetInResourceSelector={onOpenAssetInResourceSelector}
+            onOpenTimeseriesTabInResourceSelector={
+              onOpenTimeseriesTabInResourceSelector
+            }
           />
         ),
         anchorTo: ANNOTATION_TOOLTIP_POSITION,

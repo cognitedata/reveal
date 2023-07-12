@@ -9,7 +9,7 @@ export default {
   title: 'Components/Copy Button',
 } as Meta;
 
-const Template: Story<ComponentProps<typeof CopyButton>> = (args) => (
+const Template: Story<ComponentProps<typeof CopyButton>> = (args: any) => (
   <CopyButton {...args} />
 );
 

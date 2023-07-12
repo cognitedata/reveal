@@ -3,6 +3,7 @@ import { useState } from 'react';
 import {
   ResourceItem,
   ResourceSelectorFilter,
+  ResourceType,
   useDialog,
 } from '@data-exploration-lib/core';
 
@@ -12,6 +13,9 @@ export type OnResourceSelectorOpenPropsType = {
 
   // Opens the resource selector with the given filter applied.
   initialFilter?: ResourceSelectorFilter;
+
+  // Opens the resource selector with the given tab selected.
+  initialTab?: ResourceType;
 };
 
 export type UseResourceSelectorActionsReturnType = {
@@ -20,6 +24,7 @@ export type UseResourceSelectorActionsReturnType = {
   isResourceSelectorOpen: boolean;
   resourceSelectorFilter: ResourceSelectorFilter | undefined;
   initialSelectedResource: ResourceItem | undefined;
+  initialTab: ResourceType | undefined;
 };
 
 export const useResourceSelectorActions =
@@ -43,5 +48,6 @@ export const useResourceSelectorActions =
       resourceSelectorFilter: resourceSelectorOpenProps?.initialFilter,
       initialSelectedResource:
         resourceSelectorOpenProps?.initialSelectedResourceItem,
+      initialTab: resourceSelectorOpenProps?.initialTab,
     };
   };

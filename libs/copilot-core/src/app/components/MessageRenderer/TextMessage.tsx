@@ -4,14 +4,21 @@ import { CopilotTextMessage } from '../../../lib/types';
 
 export const TextMessage = ({
   message: {
-    data: { content },
+    data: { content, context },
   },
 }: {
-  message: { data: CopilotTextMessage };
+  message: { data: CopilotTextMessage & { source: 'user' | 'bot' } };
 }) => {
   return (
-    <Flex direction="column" gap={4}>
-      <Body level={2}>{content}</Body>
+    <Flex direction="column" gap={4} style={{ marginTop: 8 }}>
+      <Body level={2} style={{ flex: 1 }}>
+        {content}
+      </Body>
+      {context && (
+        <Body level={3} style={{ flex: 1 }} muted>
+          {context}
+        </Body>
+      )}
     </Flex>
   );
 };

@@ -6,14 +6,12 @@ import omitBy from 'lodash/omitBy';
 
 import { DateRange, TimeseriesFilter } from '@cognite/sdk';
 
-import {
-  Operator,
-  ValueByField,
-  ValueType,
-} from '../../../containers/search/Filter';
+import { ProjectConfig } from '../../../../config/types';
+import { Operator, ValueByField, ValueType } from '../../../containers/Filter';
 
 export const buildTimeseriesFilter = (
-  params?: ValueByField
+  params?: ValueByField,
+  config?: ProjectConfig
 ): TimeseriesFilter | undefined => {
   if (!params) {
     return undefined;
@@ -21,9 +19,10 @@ export const buildTimeseriesFilter = (
 
   let filter: TimeseriesFilter = {};
 
-  const dataSet = getParamValue<string>(params, 'Data Set');
-  if (dataSet) {
-    filter.dataSetIds = [{ externalId: dataSet }];
+  if (config?.timeseriesConfig?.dataSetIds) {
+    filter.dataSetIds = config?.timeseriesConfig?.dataSetIds.map((id) => ({
+      id,
+    }));
   }
 
   const asset = getParamValue<string>(params, 'Asset');

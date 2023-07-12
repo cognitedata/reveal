@@ -1,24 +1,23 @@
 {
-    "extends": ["plugin:@nrwl/nx/react", "../../.eslintrc.json"],
-    "ignorePatterns": ["!**/*"],
-    "overrides": [
-      {
-        "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
-        "rules": {}
-      },
-      {
-        "files": ["*.ts", "*.tsx"],
-        "rules": {
-          "@nrwl/nx/enforce-module-boundaries": [
-            "error",
-            { "allow": ["cronstrue", "cron-validator", "@functions-ui"] }
-          ]
-        }
-      },
-      {
-        "files": ["*.js", "*.jsx"],
-        "rules": {}
+  "extends": ["plugin:@nx/react", "../../.eslintrc.json"],
+  "ignorePatterns": ["!**/*"],
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+      "rules": {}
+    },
+    {
+      "files": ["*.ts", "*.tsx"],
+      "rules": {
+        "@nx/enforce-module-boundaries": [
+          "error",
+          { "allow": ["cronstrue", "cron-validator", "@functions-ui"] }
+        ]
       }
-    ]
-  }
-  
+    },
+    {
+      "files": ["*.js", "*.jsx"],
+      "rules": {}
+    }
+  ]
+}

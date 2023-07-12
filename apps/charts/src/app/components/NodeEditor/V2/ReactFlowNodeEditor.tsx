@@ -19,7 +19,7 @@ import { trackUsage } from '@charts-app/services/metrics';
 import { compareVersions } from 'compare-versions';
 
 import { Operation } from '@cognite/calculation-backend';
-import { Chip } from '@cognite/cogs.js';
+import { Chip, Flex } from '@cognite/cogs.js';
 import { useFlag } from '@cognite/react-feature-flags';
 
 import { ScheduledCalculationButton } from '../../ScheduledCalculation/ScheduledCalculationButton';
@@ -29,7 +29,12 @@ import AddButton, { AddMenu } from './AddButton';
 import { CanvasContext } from './CanvasContext';
 import EditorControls from './EditorControls/EditorControls';
 import EditorToolbar from './EditorToolbar/EditorToolbar';
-import { NodeEditorContainer, ContextMenu, ScheduleToolbar } from './elements';
+import {
+  NodeEditorContainer,
+  ContextMenu,
+  ScheduleToolbar,
+  DeleteSourceButton,
+} from './elements';
 import ConstantNode from './Nodes/ConstantNode';
 import FunctionNode from './Nodes/FunctionNode/FunctionNode';
 import OutputNode from './Nodes/OutputNode';
@@ -68,6 +73,7 @@ type Props = {
   ) => void;
   onAddOutputNode: (position: XYPosition) => void;
   onMove: (transform: FlowTransform) => void;
+  onDeleteSource?: () => void;
   translations: typeof defaultTranslations;
   onErrorIconClick: (id: string) => void;
 };
@@ -102,6 +108,7 @@ const ReactFlowNodeEditor = ({
   onAddFunctionNode,
   onAddOutputNode,
   onMove,
+  onDeleteSource,
   translations: t,
   onErrorIconClick,
 }: Props) => {
@@ -282,6 +289,18 @@ const ReactFlowNodeEditor = ({
                 translations={t}
                 horizontal
               />
+              {isPersistenceCalcEnabled &&
+              sourceType === 'scheduledCalculation' ? (
+                <Flex>
+                  <DeleteSourceButton
+                    type="ghost"
+                    size="small"
+                    icon="Delete"
+                    onClick={onDeleteSource}
+                  />
+                </Flex>
+              ) : null}
+
               {calculationResult ? (
                 <>
                   {calculationResult.loading && (

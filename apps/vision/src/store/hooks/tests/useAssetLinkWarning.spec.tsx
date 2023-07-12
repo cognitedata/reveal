@@ -1,5 +1,4 @@
-import { waitFor } from '@testing-library/react';
-import { act, renderHook } from '@testing-library/react-hooks';
+import { waitFor, act, renderHook } from '@testing-library/react';
 import { mockFileList } from '@vision/__test-utils/fixtures/files';
 import { getDummyImageAssetLinkAnnotation } from '@vision/__test-utils/getDummyAnnotations';
 import { WrappedWithProviders } from '@vision/__test-utils/renderer';

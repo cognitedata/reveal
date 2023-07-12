@@ -9,19 +9,19 @@
       "executor": "nx:run-commands",
       "dependsOn": ["build"],
       "options": {
-        "outputPath": "dist/libs/shared/cdf-utilities",
         "commands": ["./scripts/npm.sh"]
-      }
+      },
+      "outputs": ["{workspaceRoot}/dist/libs/shared/cdf-utilities"]
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["libs/shared/cdf-utilities/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "build": {
-      "executor": "@nrwl/rollup:rollup",
+      "executor": "@nx/rollup:rollup",
       "outputs": ["{options.outputPath}"],
       "options": {
         "format": ["esm"],
@@ -30,7 +30,7 @@
         "project": "libs/shared/cdf-utilities/package.json",
         "entryFile": "libs/shared/cdf-utilities/src/index.ts",
         "external": ["react/jsx-runtime"],
-        "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
+        "rollupConfig": "@nx/react/plugins/bundle-rollup",
         "compiler": "babel",
         "updateBuildableProjectDepsInPackageJson": true,
         "buildableProjectDepsInPackageJsonType": "dependencies",
@@ -40,42 +40,16 @@
             "input": ".",
             "output": "."
           }
-        ]
+        ],
+        "babelUpwardRootMode": true
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
         "jestConfig": "libs/shared/cdf-utilities/jest.config.ts",
         "passWithNoTests": true
-      }
-    },
-    "storybook": {
-      "executor": "@nrwl/storybook:storybook",
-      "options": {
-        "uiFramework": "@storybook/react",
-        "port": 4400,
-        "configDir": "libs/shared/cdf-utilities/.storybook"
-      },
-      "configurations": {
-        "ci": {
-          "quiet": true
-        }
-      }
-    },
-    "build-storybook": {
-      "executor": "@nrwl/storybook:build",
-      "outputs": ["{options.outputDir}"],
-      "options": {
-        "uiFramework": "@storybook/react",
-        "configDir": "libs/shared/cdf-utilities/.storybook",
-        "outputDir": "storybook-static"
-      },
-      "configurations": {
-        "ci": {
-          "quiet": true
-        }
       }
     }
   }

@@ -11,7 +11,7 @@ import TagdetectionIllustration from '@vision/assets/visualDescriptions/Tagdetec
 import { ColorsTagDetection } from '@vision/constants/Colors';
 import { setUnsavedDetectionModelSettings } from '@vision/modules/Process/store/slice';
 import { AssetSelector } from '@vision/modules/Review/Components/AssetSelector/AssetSelector';
-import { AppDispatch } from '@vision/store';
+import { useThunkDispatch } from '@vision/store';
 import { RootState } from '@vision/store/rootReducer';
 import { InputNumber } from 'antd';
 
@@ -56,7 +56,7 @@ export const badge = (modelName: string, hideText = false) => {
 };
 
 const Content = (modelIndex: number) => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useThunkDispatch();
 
   const modelName = useSelector(
     ({ processSlice }: RootState) =>

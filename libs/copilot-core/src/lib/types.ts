@@ -2,9 +2,14 @@ import { BaseChain, ChainInputs } from 'langchain/chains';
 import { BaseChatModel } from 'langchain/chat_models/base';
 import { ChainValues } from 'langchain/schema';
 
+import { IconType } from '@cognite/cogs.js';
 import { CogniteClient } from '@cognite/sdk';
 
-import { addToCopilotEventListener, sendToCopilotEvent } from './utils';
+import {
+  addToCopilotEventListener,
+  sendFromCopilotEvent,
+  sendToCopilotEvent,
+} from './utils';
 export type CopilotSupportedFeatureType =
   | 'Streamlit'
   | 'IndustryCanvas'
@@ -14,10 +19,12 @@ type DefaultMessage = {
   key?: number;
   content: string;
   pending?: boolean;
+  actions?: CopilotAction[];
 };
 
 export type CopilotTextMessage = {
   type: 'text';
+  context?: string;
 } & DefaultMessage;
 
 export type CopilotHumanApprovalMessage = {
@@ -44,7 +51,12 @@ export type CopilotDataModelQueryMessage = {
   space: string;
   dataModel: string;
   version: string;
-  query: string;
+  graphql: {
+    query: string;
+    variables: any;
+  };
+  summary?: string;
+  data?: any;
 } & DefaultMessage;
 
 export type CopilotUserMessage = CopilotTextMessage;
@@ -61,7 +73,21 @@ export type CopilotMessage =
       source: 'bot';
     });
 
-export type CopilotAction = { onClick: () => void; content: string };
+export type CopilotAction = {
+  content: string;
+  icon?: IconType;
+} & (
+  | {
+      // THIS IS NOT CACHED, MEANING IF CHAT IS EVER RELOADED, THIS WILL BE LOST
+      onClick?: () => void;
+    }
+  | {
+      fromCopilotEvent: Parameters<typeof sendFromCopilotEvent>;
+    }
+  | {
+      toCopilotEvent: Parameters<typeof sendToCopilotEvent>;
+    }
+);
 
 /**
  * @returns whether to accept more inputs
@@ -164,7 +190,7 @@ export type CopilotEvents = {
     // send code to streamlit
     GQL_QUERY: {
       query: string;
-      arguments: any;
+      variables: any;
     };
     GET_LANGUAGE: undefined;
   };

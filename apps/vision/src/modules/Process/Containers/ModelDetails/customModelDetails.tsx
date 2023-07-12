@@ -13,7 +13,7 @@ import CustomModelIllustration from '@vision/assets/visualDescriptions/CustomMod
 import { ColorsObjectDetection } from '@vision/constants/Colors';
 import { AutoMLModelSelectFilter } from '@vision/modules/Process/Components/AutoMLModelSelectFilter';
 import { setUnsavedDetectionModelSettings } from '@vision/modules/Process/store/slice';
-import { AppDispatch } from '@vision/store';
+import { useThunkDispatch } from '@vision/store';
 import { RootState } from '@vision/store/rootReducer';
 import { getLink, workflowRoutes } from '@vision/utils/workflowRoutes';
 import { InputNumber } from 'antd';
@@ -73,7 +73,7 @@ export const badge = ({
 
 const Content = (modelIndex: number, customModels?: AutoMLModelCore[]) => {
   const [verifyingModel, setVerifyingModel] = useState<boolean>();
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useThunkDispatch();
   const params: ParamsCustomModel = useSelector(
     ({ processSlice }: RootState) => {
       if (modelIndex < processSlice.availableDetectionModels.length) {

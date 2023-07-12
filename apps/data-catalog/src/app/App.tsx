@@ -6,16 +6,20 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
-import { createLink, getProject } from '@cognite/cdf-utilities';
+import {
+  createLink,
+  getProject,
+  isUsingUnifiedSignin,
+} from '@cognite/cdf-utilities';
 import { Loader, ToastContainer } from '@cognite/cogs.js';
 import { FlagProvider } from '@cognite/react-feature-flags';
 
-import AccessCheck from './AccessCheck';
 import { AuthContainer } from './AuthContainer';
 import { translations } from './common/i18n';
 import { DataSetsContextProvider } from './context';
 import GlobalStyles from './styles/GlobalStyles';
 import { trackUsage } from './utils';
+import AccessCheck from './AccessCheck';
 
 const DataSetsList = lazy(() => import('./pages/DataSetsList/DataSetsList'));
 const DataSetDetails = lazy(
@@ -37,6 +41,7 @@ const App = () => {
   const appName = 'cdf-data-catalog';
   const projectName = getProject();
   const flagProviderApiToken = 'v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE';
+  const tenant = isUsingUnifiedSignin() ? `/cdf/${projectName}` : projectName;
 
   useEffect(() => {
     trackUsage({ e: 'data.sets.navigate' });
@@ -59,17 +64,15 @@ const App = () => {
                     <AccessCheck>
                       <Routes>
                         <Route
-                          path="/:tenant/:appPath"
+                          path={`${tenant}/:appPath`}
                           element={<DataSetsList />}
                         />
                         <Route
-                          path="/:tenant/:appPath/data-set/:dataSetId"
+                          path={`${tenant}/:appPath/data-set/:dataSetId`}
                           element={<DataSetDetails />}
                         />
-                        {/* We used to use the /data-sets route, now we're redirecting */}
-                        {/* to /data-catalog instead, this basically sets up a redirect. */}
                         <Route
-                          path="/:tenant/data-sets"
+                          path={`${tenant}/data-sets`}
                           element={
                             <Navigate
                               replace

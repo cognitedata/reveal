@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals';
-import { renderHook } from '@testing-library/react-hooks';
+import { renderHook, waitFor } from '@testing-library/react';
 import { setupServer } from 'msw/node';
 
 import { testQueryClientWrapper as wrapper } from '@data-exploration-lib/core';
@@ -24,7 +24,7 @@ describe('useDefault3DModelRevision', () => {
   });
 
   it('should be okay when all results are not published', async () => {
-    const { result, waitFor } = renderHook(
+    const { result } = renderHook(
       () => useDefault3DModelRevision(mockModelObj.id),
       {
         wrapper,
@@ -52,7 +52,7 @@ describe('useDefault3DModelRevision', () => {
       };
     });
 
-    const { result, waitFor } = renderHook(
+    const { result } = renderHook(
       () => useDefault3DModelRevision(mockModelObj.id),
       {
         wrapper,
@@ -85,7 +85,7 @@ describe('useDefault3DModelRevision', () => {
       };
     });
 
-    const { result, waitFor } = renderHook(
+    const { result } = renderHook(
       () => useDefault3DModelRevision(mockModelObj.id),
       {
         wrapper,

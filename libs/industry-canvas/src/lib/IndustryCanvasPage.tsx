@@ -3,6 +3,7 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -97,6 +98,9 @@ export const IndustryCanvasPage = () => {
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const { tooltipsOptions, onUpdateTooltipsOptions } = useTooltipsOptions();
   const { tool, setTool } = useManagedTool(IndustryCanvasToolType.SELECT);
+  const toolBeforeSpacePress = useRef<IndustryCanvasToolType | undefined>(
+    undefined
+  );
   const { queryString } = useQueryParameter({ key: SEARCH_QUERY_PARAM_KEY });
   const [resourceSelectorWidth, setResourceSelectorWidth] = useLocalStorage(
     'COGNITE_INDUSTRIAL_CANVAS_RESOURCE_SELECTOR_WIDTH',
@@ -175,6 +179,7 @@ export const IndustryCanvasPage = () => {
     isResourceSelectorOpen,
     resourceSelectorFilter,
     initialSelectedResource,
+    initialTab,
   } = useResourceSelectorActions();
 
   const { onUpdateAnnotationStyleByType, toolOptions } = useManagedTools({
@@ -495,6 +500,22 @@ export const IndustryCanvasPage = () => {
       });
       return;
     }
+
+    if (event.key === ' ') {
+      // Only record the previous tool *before* the space key was pressed.
+      // Otherwise, we will record the tool while space is being pressed
+      if (toolBeforeSpacePress.current === undefined) {
+        toolBeforeSpacePress.current = tool;
+      }
+      setTool(IndustryCanvasToolType.PAN);
+    }
+  };
+
+  const onKeyUp: KeyboardEventHandler<HTMLElement> = (event) => {
+    if (event.key === ' ' && toolBeforeSpacePress.current !== undefined) {
+      setTool(toolBeforeSpacePress.current);
+      toolBeforeSpacePress.current = undefined;
+    }
   };
 
   const handleGoBackToIndustryCanvasButtonClick = () => {
@@ -649,7 +670,11 @@ export const IndustryCanvasPage = () => {
         onSecondaryPaneSizeChange={setResourceSelectorWidth}
         primaryIndex={0}
       >
-        <IndustryCanvasWrapper onKeyDown={onKeyDown} onDrop={onDrop}>
+        <IndustryCanvasWrapper
+          onKeyDown={onKeyDown}
+          onKeyUp={onKeyUp}
+          onDrop={onDrop}
+        >
           <IndustryCanvas
             id={APPLICATION_ID_INDUSTRY_CANVAS}
             viewerRef={unifiedViewerRef}
@@ -695,6 +720,7 @@ export const IndustryCanvasPage = () => {
             visibleResourceTabs={['file', 'timeSeries', 'asset', 'event']}
             selectionMode="multiple"
             initialFilter={resourceSelectorFilter}
+            initialTab={initialTab}
             initialSelectedResource={initialSelectedResource}
             addButtonText="Add to canvas"
             shouldShowPreviews={false}

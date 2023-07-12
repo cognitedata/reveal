@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 
+import styled from 'styled-components';
+
 import { useBotUI, useBotUIAction } from '@botui/react';
 
 import { Button, Flex, Textarea } from '@cognite/cogs.js';
@@ -11,6 +13,7 @@ import {
   CopilotMessage,
   CopilotSupportedFeatureType,
 } from '../../../lib/types';
+import { ResponsiveActions } from '../MessageRenderer/components/ResponsiveActions';
 
 export const TextAction = () => {
   const textActionProps = useBotUIAction();
@@ -23,7 +26,7 @@ export const TextAction = () => {
   const sdk = useSDK();
 
   const [value, setValue] = useState('');
-  const [actions, setActions] = useState<CopilotAction[]>();
+  const [actions, setActions] = useState<CopilotAction[]>([]);
 
   const ref = useRef<HTMLTextAreaElement>(null);
 
@@ -54,35 +57,69 @@ export const TextAction = () => {
   }, [sdk, bot, feature]);
 
   return (
-    <Flex
-      gap={4}
+    <Wrapper
+      gap={8}
       direction="column"
       style={{ position: 'relative', width: '100%' }}
     >
-      <Textarea
-        ref={ref}
-        value={value}
-        disabled={!!waiting}
-        onChange={(e) => setValue(e.target.value)}
-        placeholder="Ask CogPilot anything..."
-        style={{
-          height: 100,
-          width: '100%',
-          margin: 0,
-        }}
-        onKeyDown={(e) => {
-          if (!e.shiftKey && e.keyCode === 13) {
-            bot.next({ content: value, type: 'text' });
-          }
-        }}
-      />
-      <Flex gap={4}>
-        {actions?.map((action) => (
-          <Button onClick={action.onClick} size="small" key={action.content}>
-            {action.content}
-          </Button>
-        ))}
-      </Flex>
-    </Flex>
+      {actions?.length > 0 && (
+        <Flex gap={4}>
+          <ResponsiveActions actions={actions} />
+        </Flex>
+      )}
+      <div style={{ position: 'relative', width: '100%' }}>
+        <Textarea
+          ref={ref}
+          value={value}
+          disabled={!!waiting}
+          onChange={(e) => setValue(e.target.value)}
+          placeholder="Ask CogPilot anything..."
+          style={{
+            height: 56,
+            padding: 16,
+            width: '100%',
+            margin: 0,
+          }}
+          onKeyDown={(e) => {
+            if (!e.shiftKey && e.keyCode === 13 && !!value) {
+              bot.next({ content: value, type: 'text' });
+            }
+          }}
+        />
+
+        <Button
+          className="send-button"
+          icon="Send"
+          disabled={!!waiting}
+          onClick={() => {
+            if (value) {
+              bot.next({ content: value, type: 'text' });
+            }
+          }}
+          type="ghost"
+          size="small"
+        />
+      </div>
+    </Wrapper>
   );
 };
+
+const Wrapper = styled(Flex)`
+  padding: 16px;
+  max-width: 800px;
+  margin: 0 auto;
+
+  .send-button {
+    position: absolute;
+    right: 16px;
+    top: 14px;
+    color: rgba(83, 88, 127, 0.8);
+  }
+
+  .cogs-textarea {
+    width: 100%;
+    textarea {
+      color: black !important;
+    }
+  }
+`;

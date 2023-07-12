@@ -1,6 +1,5 @@
 {
   "$schema": "http://json-schema.org/schema",
-  "cli": "nx",
   "$id": "FusionSubapp",
   "title": "Create a Fusion SubApp",
   "description": "Create a React application ready to be integrated into Fusion platform.",
@@ -42,7 +41,10 @@
     },
     "e2eTestRunner": {
       "type": "string",
-      "enum": ["cypress", "none"],
+      "enum": [
+        "cypress",
+        "none"
+      ],
       "description": "Test runner to use for end to end (E2E) tests.",
       "default": "cypress"
     },
@@ -57,5 +59,7 @@
       "alias": "t"
     }
   },
-  "required": ["name"]
+  "required": [
+    "name"
+  ]
 }

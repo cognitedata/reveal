@@ -1,7 +1,7 @@
 const {
   withSingleSpa,
 } = require('../../tools/webpack/single-spa-webpack-config');
-const { composePlugins, withNx } = require('@nrwl/webpack');
+const { composePlugins, withNx } = require('@nx/webpack');
 
 module.exports = composePlugins(
   withNx(),

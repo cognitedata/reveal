@@ -1,4 +1,4 @@
-import { renderHook } from '@testing-library/react-hooks';
+import { renderHook, waitFor } from '@testing-library/react';
 import { setupServer } from 'msw/node';
 
 import { testQueryClientWrapper as wrapper } from '@data-exploration-lib/core';
@@ -15,12 +15,11 @@ describe('useAssetsMetadataValuesOptionsQuery', () => {
     mockServer.close();
   });
   it('should be okay', async () => {
-    const { result, waitForNextUpdate } = renderHook(
+    const { result } = renderHook(
       () => useAssetsSearchAggregateQuery({ assetsFilters: {} }),
       { wrapper }
     );
 
-    await waitForNextUpdate();
-    expect(result.current.data.count).toEqual(43);
+    await waitFor(() => expect(result.current.data.count).toEqual(43));
   });
 });

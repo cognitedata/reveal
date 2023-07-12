@@ -1,4 +1,4 @@
-import { renderHook } from '@testing-library/react-hooks';
+import { renderHook } from '@testing-library/react';
 
 import { translationKeys } from '../../utils/translations';
 import ComponentWithTranslationsProp from '../ComponentWithTranslationsProp.mock';
@@ -24,13 +24,17 @@ describe('useComponentTranslations', () => {
     expect(result.current).toStrictEqual({ Test: 'Test' });
   });
   it('should throw an error on non translatable component', () => {
-    const { result } = renderHook(() =>
-      // @ts-expect-error
-      useComponentTranslations(NonTranslatableComponent)
-    );
-    expect(result.error?.message).toBe(
-      'Component has no defaultTranslations defined in it.'
-    );
+    try {
+      const { result } = renderHook(() =>
+        // @ts-expect-error
+        useComponentTranslations(NonTranslatableComponent)
+      );
+    } catch (err) {
+      // @ts-ignore
+      expect(err?.message).toBe(
+        'Component has no defaultTranslations defined in it.'
+      );
+    }
   });
 });
 

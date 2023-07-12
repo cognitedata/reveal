@@ -1,7 +1,7 @@
 import { PropsWithChildren } from 'react';
 
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
-import { renderHook } from '@testing-library/react-hooks';
+import { renderHook } from '@testing-library/react';
 
 import { CogniteClient } from '@cognite/sdk';
 import { SDKProvider } from '@cognite/sdk-provider';
@@ -40,7 +40,7 @@ export const testWrapper = ({ children }: { children: React.ReactNode }) => {
 export const renderHookWithWrapper = <TProps, TResult>(
   fn: (props: TProps) => TResult
 ) => {
-  return renderHook<PropsWithChildren<TProps>, TResult>(fn, {
+  return renderHook<TResult, PropsWithChildren<TProps>>(fn, {
     wrapper: ({ children }) => testWrapper({ children }),
   });
 };

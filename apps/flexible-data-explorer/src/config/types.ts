@@ -12,16 +12,16 @@ export type ProjectConfig = {
   imageUrl?: string;
   description?: string;
   dataModels: DataModelConfig[];
-  nodeSpaces?: string[];
+  instanceSpaces?: string[];
   threeDResources?: AddResourceOptions[];
 
   // Files and ts are fetched from the Cognite API, users might have
   // different data sets for each site, so we need to specify which
 
   fileConfig?: {
-    dataSetIds: string[];
+    dataSetIds: number[];
   };
   timeseriesConfig?: {
-    dataSetIds: string[];
+    dataSetIds: number[];
   };
 };

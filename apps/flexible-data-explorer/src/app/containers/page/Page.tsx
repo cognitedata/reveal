@@ -24,4 +24,5 @@ const PageContainer = styled.div`
   overflow: auto;
   height: calc(100% - var(--top-bar-height));
   background-color: var(--default-bg-color);
+  scrollbar-gutter: stable both-edges;
 `;

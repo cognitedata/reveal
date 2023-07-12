@@ -8,7 +8,7 @@ import {
   fileMetaDataAddRow,
   toggleMetaDataTableEditMode,
 } from '@vision/modules/FileDetails/slice';
-import { AppDispatch } from '@vision/store';
+import { useThunkDispatch } from '@vision/store';
 
 import { Button } from '@cognite/cogs.js';
 
@@ -23,7 +23,7 @@ export const MetadataTableToolBar = ({
   onAddRow?: () => void;
   onEditModeChange: (mode: boolean) => void;
 }) => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useThunkDispatch();
 
   const handleEditModeChange = () => {
     dispatch(toggleMetaDataTableEditMode(metadata));

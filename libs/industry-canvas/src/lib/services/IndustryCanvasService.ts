@@ -282,6 +282,7 @@ export class IndustryCanvasService {
             filter: $filter,
             first: ${limit},
             after: ${cursor === undefined ? null : `"${cursor}"`}
+            sort: { lastUpdatedTime: ASC }
           ) {
             items {
               text

@@ -7,7 +7,6 @@ import { HomePage } from './pages/HomePage';
 import { FilePage } from './pages/Instances/FilePage';
 import { InstancesPage } from './pages/Instances/InstancesPage';
 import { TimeseriesPage } from './pages/Instances/TimeseriesPage';
-import { ListPage } from './pages/ListPage';
 import { OnboardingPage } from './pages/OnboardingPage';
 import { SearchPage } from './pages/SearchPage';
 import { ThreeDPage } from './pages/ThreeDPage';
@@ -32,15 +31,15 @@ const Routes = () => {
           element={
             <Container>
               <Content>
-                <SearchBar width="1036px" inverted />
+                <SearchBar width="1026px" inverted />
               </Content>
               <Outlet />
             </Container>
           }
         >
-          <Route path="search/:dataType?" element={<SearchPage />} />
+          <Route path="search/:type?" element={<SearchPage />} />
 
-          <Route path="list/:dataType" element={<ListPage />} />
+          {/* <Route path="list/:dataType" element={<ListPage />} /> */}
 
           <Route path="timeseries/:externalId" element={<TimeseriesPage />} />
           <Route path="file/:externalId" element={<FilePage />} />

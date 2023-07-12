@@ -10,7 +10,7 @@ import { PredictionObject } from '@entity-matching-app/hooks/entity-matching-pre
 import { styleScope } from '../styles/styleScope';
 import { API } from '@entity-matching-app/types/api';
 
-import { createLink } from '@cognite/cdf-utilities';
+import { createLink, isUsingUnifiedSignin } from '@cognite/cdf-utilities';
 import { Metadata } from '@cognite/sdk';
 
 export const getContainer = () => {
@@ -20,7 +20,9 @@ export const getContainer = () => {
 };
 
 export const createInternalLink = (path?: string | number) => {
-  const mountPoint = window.location.pathname.split('/')[2];
+  const mountPoint = isUsingUnifiedSignin()
+    ? window.location.pathname.split('/')[3]
+    : window.location.pathname.split('/')[2];
   return createLink(`/${mountPoint}/${path || ''}`);
 };
 

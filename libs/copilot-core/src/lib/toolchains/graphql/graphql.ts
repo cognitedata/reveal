@@ -5,15 +5,17 @@ import {
   CallbackManager,
   CallbackManagerForChainRun,
 } from 'langchain/callbacks';
-import { LLMChain, SequentialChain } from 'langchain/chains';
+import { LLMChain } from 'langchain/chains';
 import { BaseChatModel } from 'langchain/chat_models/base';
 import { PromptTemplate } from 'langchain/prompts';
 import { ChainValues } from 'langchain/schema';
 
 import {
   copilotDestinationGraphqlPrompt,
-  datamodelTypePrompt,
-  graphqlPrompt,
+  datamodelQueryFilterPrompt,
+  datamodelQueryTypePrompt,
+  datamodelRelevantPropertiesPrompt,
+  datamodelRelevantTypePrompt,
 } from '@cognite/llm-hub';
 
 import {
@@ -27,8 +29,16 @@ import {
   sendToCopilotEvent,
 } from '../../utils';
 
-import { augmentQueryWithRequiredFields } from './utils';
-
+import {
+  augmentQueryWithRequiredFields,
+  getFilterTypeName,
+  getOperationName,
+  type QueryType,
+  type GptGQLFilter,
+  getFields,
+  constructFilter,
+  constructGraphQLTypes,
+} from './utils';
 const handleChainStart =
   (messages: CogniteChainInput['messages']) => async (): Promise<void> => {
     return new Promise((resolve) => {
@@ -69,7 +79,7 @@ const handleChainStart =
  * @example
  * ```ts
  * import { LLMChain } from "langchain/chains";
- * import { CogniteChatGPT} from "@fusion/copilot-core"
+ * import { CogniteChatGPT} from "@cognite/copilot-core"
  * import { PromptTemplate } from "langchain/prompts";
  *
  * const chain = new GraphQlChain({
@@ -120,7 +130,7 @@ export class GraphQlChain extends CogniteBaseChain {
   }
 
   get inputKeys() {
-    return datamodelTypePrompt.input_variables;
+    return datamodelRelevantTypePrompt.input_variables;
   }
 
   get outputKeys(): string[] {
@@ -158,59 +168,205 @@ export class GraphQlChain extends CogniteBaseChain {
     const dataModelTypes = new GraphQlUtilsService().parseSchema(
       dmVersion?.graphQlDml
     );
-    // Chain 1: Extract relevant types
-    const graphQlTypePromptTemplate = new PromptTemplate({
-      template: datamodelTypePrompt.template,
-      inputVariables: datamodelTypePrompt.input_variables,
-    });
-    const graphQlType = new LLMChain({
-      llm: this.llm,
-      prompt: graphQlTypePromptTemplate,
-      outputKey: 'relevantTypes',
-    });
 
-    // Chain 2: Construct query
-    const queryPromptTemplate = new PromptTemplate({
-      template: graphqlPrompt.template,
-      inputVariables: graphqlPrompt.input_variables,
-    });
-    const graphQlQuery = new LLMChain({
-      llm: this.llm,
-      prompt: queryPromptTemplate,
-      outputKey: 'query',
-    });
+    try {
+      // Chain 1: Extract relevant types
+      const graphQlRelevantTypesChain = new LLMChain({
+        llm: this.llm,
+        prompt: new PromptTemplate({
+          template: datamodelRelevantTypePrompt.template,
+          inputVariables: datamodelRelevantTypePrompt.input_variables,
+        }),
+        outputKey: 'output',
+        verbose: true,
+      });
 
-    // Chain 3: Combined chain
-    const overallChain = new SequentialChain({
-      chains: [graphQlType, graphQlQuery],
-      verbose: this.verbose,
-      inputVariables: this.inputKeys,
-      outputVariables: ['query'],
-    });
-    const query = await overallChain.call({
-      input: values.input,
-      types: dataModelTypes.types.map((el) => el.name),
-    });
+      const typeNames = dataModelTypes.types.map((el) => el.name);
 
-    const augmentedQuery = augmentQueryWithRequiredFields(
-      query.query,
-      dataModelTypes
-    );
+      const { output: relevantTypesResponse } =
+        await graphQlRelevantTypesChain.call({
+          question: values.input,
+          types: typeNames,
+        });
 
-    sendToCopilotEvent('NEW_MESSAGES', [
-      {
-        source: 'bot',
-        type: 'data-model-query',
-        version,
-        space,
-        dataModel,
-        content: augmentedQuery,
-        query: augmentedQuery,
-      },
-    ]);
-    sendFromCopilotEvent('GQL_QUERY', { query: augmentedQuery, arguments: {} });
+      const relevantTypes: string[] = relevantTypesResponse
+        .substring(
+          (relevantTypesResponse as string).indexOf('[') + 1,
+          (relevantTypesResponse as string).indexOf(']')
+        )
+        .split(',')
+        .map((el: string) => el.replaceAll('"', '').trim());
 
-    return query;
+      const filteredTypes = relevantTypes.filter((el) =>
+        typeNames.includes(el)
+      );
+
+      if (filteredTypes.length === 0) {
+        throw new Error('No relevant types found');
+      }
+
+      // Chain 2: Identify correct operation and type
+      const graphqlOperationChain = new LLMChain({
+        llm: this.llm,
+        prompt: new PromptTemplate({
+          template: datamodelQueryTypePrompt.template,
+          inputVariables: datamodelQueryTypePrompt.input_variables,
+        }),
+        outputKey: 'output',
+        verbose: true,
+      });
+
+      const { output: operationResponse } = await graphqlOperationChain.call({
+        question: values.input,
+        relevantTypes: filteredTypes,
+      });
+
+      const { queryType, type } = JSON.parse(operationResponse) as {
+        queryType: QueryType;
+        type: string;
+      };
+
+      if (
+        !['list', 'aggregate', 'search', 'get'].includes(queryType) ||
+        !filteredTypes.includes(type)
+      ) {
+        throw new Error('Invalid query type or type');
+      }
+
+      // Chain 3: Identify correct operation and type
+      const queryFilterChain = new LLMChain({
+        llm: this.llm,
+        prompt: new PromptTemplate({
+          template: datamodelQueryFilterPrompt.template,
+          inputVariables: datamodelQueryFilterPrompt.input_variables,
+        }),
+        outputKey: 'output',
+        verbose: true,
+      });
+
+      const { output: queryFilterResponse } = await queryFilterChain.call({
+        question: values.input,
+        relevantTypes: constructGraphQLTypes(filteredTypes, dataModelTypes),
+      });
+
+      // Chain 4: Identify relevant fields for type
+      const relevantFieldsChain = new LLMChain({
+        llm: this.llm,
+        prompt: new PromptTemplate({
+          template: datamodelRelevantPropertiesPrompt.template,
+          inputVariables: datamodelRelevantPropertiesPrompt.input_variables,
+        }),
+        outputKey: 'output',
+        verbose: true,
+      });
+
+      let { output: relevantFieldsResponse } = await relevantFieldsChain.call({
+        question: values.input,
+        relevantTypes: constructGraphQLTypes(filteredTypes, dataModelTypes),
+      });
+
+      relevantFieldsResponse = relevantFieldsResponse
+        .replaceAll(/[\n\t]+| {2,}/g, ' ')
+        .replaceAll('], }', '] }');
+
+      const fields = JSON.parse(relevantFieldsResponse) as {
+        [key: string]: string[];
+      };
+
+      // validate values
+      Object.entries(fields).forEach(([key, values]) => {
+        if (!relevantTypes.includes(key)) {
+          delete fields[key];
+        }
+        const typeDef = dataModelTypes.types.find((el) => el.name === key);
+        let validFields = [];
+        for (let field of values) {
+          if (typeDef?.fields.some((el) => el.name === field)) {
+            validFields.push(field);
+          }
+        }
+        fields[key] = validFields;
+      });
+
+      const operationName = getOperationName(queryType, type);
+      const filterTypeName = getFilterTypeName(queryType, type);
+      const filter = JSON.parse(queryFilterResponse) as GptGQLFilter;
+
+      const query = augmentQueryWithRequiredFields(
+        `query ${operationName} ($filter: ${filterTypeName}) {
+  ${operationName}(filter: $filter) 
+  ${getFields(type, new Map(Object.entries(fields)), dataModelTypes, true)}
+}`,
+        dataModelTypes
+      );
+
+      const constructedFilter = constructFilter(filter);
+
+      // Get summary
+      const queryService = new FdmMixerApiService(this.fields.sdk);
+
+      const response = await queryService.runQuery({
+        dataModelId: dataModel,
+        schemaVersion: version,
+        space: space,
+        graphQlParams: {
+          query: query,
+          variables: { filter: constructedFilter },
+        },
+      });
+
+      console.log(response);
+      // assume no aggregate atm
+      const summary = `${response.data[operationName]['items'].length}+`;
+
+      sendToCopilotEvent('NEW_MESSAGES', [
+        {
+          source: 'bot',
+          type: 'data-model-query',
+          version,
+          space,
+          dataModel,
+          content: `Found these results: ${summary} for ${type}`,
+          graphql: { query: query, variables: { filter: constructedFilter } },
+          actions: [
+            {
+              content: 'Debug',
+              onClick: () => {
+                console.log('query', query);
+                console.log('variables', { filter: constructedFilter });
+                navigator.clipboard.writeText(
+                  JSON.stringify({
+                    query,
+                    variables: { filter: constructedFilter },
+                  })
+                );
+              },
+            },
+          ],
+        },
+      ]);
+      sendFromCopilotEvent('GQL_QUERY', {
+        query: query,
+        variables: { filter: constructedFilter },
+      });
+
+      return {
+        query: JSON.stringify({
+          query,
+          argument: { $filter: constructedFilter },
+        }),
+      };
+    } catch (e) {
+      console.log('error', e);
+      sendToCopilotEvent('NEW_MESSAGES', [
+        {
+          source: 'bot',
+          type: 'text',
+          content: 'Unable to find any data, can you try again?',
+        },
+      ]);
+    }
+    return { query: 'query' };
   }
 }
 

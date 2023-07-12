@@ -3,7 +3,7 @@ import Highlight from 'react-highlight';
 
 import styled from 'styled-components';
 
-import { Body, Button, Flex, Icon, Modal } from '@cognite/cogs.js';
+import { Body, Flex, Icon, Modal } from '@cognite/cogs.js';
 
 import {
   CopilotCodeMessage,
@@ -13,14 +13,19 @@ import { sendFromCopilotEvent } from '../../../lib/utils';
 import { getContainer } from '../../utils/getContainer';
 import { Editor } from '../Editor/Editor';
 
+import { ResponsiveActions } from './components/ResponsiveActions';
+
 export const CodeMessage = ({
   message: { data },
 }: {
   message: { data: CopilotCodeMessage | CopilotDataModelQueryMessage };
 }) => {
-  const content = data.content;
+  const { actions: prevActions } = data;
+  const content =
+    data.type === 'data-model-query' ? data.graphql.query : data.content;
   const language = data.type === 'data-model-query' ? 'graphql' : data.language;
   const prevContent = data.type === 'data-model-query' ? '' : data.prevContent;
+  // handle breaking change in message format
   const actions =
     data.type === 'data-model-query'
       ? [
@@ -32,6 +37,7 @@ export const CodeMessage = ({
               });
             },
           },
+          ...(prevActions || []),
         ]
       : [
           {
@@ -42,6 +48,7 @@ export const CodeMessage = ({
               });
             },
           },
+          ...(prevActions || []),
         ];
   const [open, setOpen] = useState(false);
   const [showDiff, setShowDiff] = useState(false);
@@ -66,15 +73,6 @@ export const CodeMessage = ({
         </Flex>
         <Highlight className={language}>{content}</Highlight>
       </Flex>
-      {actions && (
-        <Flex gap={4}>
-          {actions.map((el) => (
-            <Button onClick={el.onClick} key={el.content}>
-              {el.content}
-            </Button>
-          ))}
-        </Flex>
-      )}
       <Modal
         visible={open}
         title="Code preview"
@@ -97,18 +95,19 @@ export const CodeMessage = ({
               prevCode={showDiff ? prevContent : undefined}
             />
           </Flex>
-          <Flex gap={4}>
-            {prevContent && (
-              <Button onClick={() => setShowDiff(!showDiff)}>
-                {showDiff ? 'Hide Diff' : 'Show Diff'}
-              </Button>
-            )}
-            {actions?.map((el) => (
-              <Button onClick={el.onClick} key={el.content}>
-                {el.content}
-              </Button>
-            ))}
-          </Flex>
+          <ResponsiveActions
+            actions={[
+              ...(prevContent
+                ? [
+                    {
+                      content: showDiff ? 'Hide Diff' : 'Show Diff',
+                      onClick: () => setShowDiff(!showDiff),
+                    },
+                  ]
+                : []),
+              ...actions,
+            ]}
+          />
         </Flex>
       </Modal>
     </Wrapper>
@@ -116,6 +115,7 @@ export const CodeMessage = ({
 };
 
 const Wrapper = styled(Flex)`
+  width: 100%;
   pre {
     width: 100%;
   }
