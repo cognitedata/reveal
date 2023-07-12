@@ -14,15 +14,10 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
-import { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
-import {
-  AuthWrapper,
-  getEnv,
-  getProject,
-  SubAppWrapper,
-} from '@cognite/cdf-utilities';
-import { Loader } from '@cognite/cogs.js';
+import { getProject, isUsingUnifiedSignin } from '@cognite/cdf-utilities';
 import { SDKProvider } from '@cognite/sdk-provider';
+
+import { AuthContainer } from './AuthContainer';
 
 setupMixpanel();
 
@@ -38,7 +33,7 @@ const App = () => {
 
   // const appName = 'cdf-raw-explorer';
   const projectName = getProject();
-  const env = getEnv();
+  const tenant = isUsingUnifiedSignin() ? `/cdf/${projectName}` : projectName;
 
   return (
     <I18nWrapper
@@ -57,21 +52,16 @@ const App = () => {
           <QueryClientProvider client={queryClient}>
             <GlobalStyles>
               <AntStyles>
-                <SubAppWrapper title="RAW Explorer">
-                  <AuthWrapper
-                    loadingScreen={<Loader />}
-                    login={() => loginAndAuthIfNeeded(projectName, env)}
-                  >
-                    <Router
-                      basename={`${projectName}/raw`}
-                      children={
-                        <RawExplorerProvider>
-                          <RawExplorer />
-                        </RawExplorerProvider>
-                      }
-                    />
-                  </AuthWrapper>
-                </SubAppWrapper>
+                <AuthContainer>
+                  <Router
+                    basename={`${tenant}/raw`}
+                    children={
+                      <RawExplorerProvider>
+                        <RawExplorer />
+                      </RawExplorerProvider>
+                    }
+                  />
+                </AuthContainer>
               </AntStyles>
             </GlobalStyles>
             <ReactQueryDevtools initialIsOpen={false} />
