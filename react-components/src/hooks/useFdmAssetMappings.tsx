@@ -3,25 +3,8 @@
  */
 import { type CogniteExternalId } from '@cognite/sdk';
 import { useFdmSdk } from '../components/RevealContainer/SDKProvider';
-import { type Source } from '../utilities/FdmSDK';
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
-
-export type FdmAssetMappingsConfig = {
-  /**
-   * 3D Data model source
-   */
-  source: Source;
-  /*
-   * FDM space where model assets are located
-   */
-  assetFdmSpace: string;
-};
-
-export type ThreeDModelMappings = {
-  modelId: number;
-  revisionId: number;
-  mappings: Array<{ nodeId: number; externalId: string }>;
-};
+import { type FdmAssetMappingsConfig, type ThreeDModelMappings } from './types';
 
 const DefaultFdmConfig: FdmAssetMappingsConfig = {
   source: {

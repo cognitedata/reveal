@@ -26,7 +26,8 @@ import {
   type AddResourceOptions
 } from './types';
 import { type CogniteExternalId } from '@cognite/sdk';
-import { type FdmAssetMappingsConfig, useFdmAssetMappings } from '../../hooks/useFdmAssetMappings';
+import { useFdmAssetMappings } from '../../hooks/useFdmAssetMappings';
+import { type FdmAssetMappingsConfig } from '../../hooks/types';
 
 export type FdmAssetStylingGroup = {
   fdmAssetExternalIds: CogniteExternalId[];
