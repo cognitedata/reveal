@@ -1,6 +1,3 @@
-import isArray from 'lodash/isArray';
-import mergeWith from 'lodash/mergeWith';
-
 import { ValueByDataType, ValueByField } from '../../containers/Filter/types';
 
 import { builders } from './builders';
@@ -22,13 +19,17 @@ export const buildFilterByDataType = (
 };
 
 export const buildFilterByField = (valueByField: ValueByField = {}) => {
-  const filters = Object.entries(valueByField).map(
-    ([field, { operator, value }]) => {
+  const filters = Object.entries(valueByField).reduce(
+    (result, [field, { operator, value }]) => {
       const builder = builders[operator];
       const build = builder(field, value);
 
-      return build;
-    }
+      return {
+        ...result,
+        ...build,
+      };
+    },
+    {} as Record<string, unknown>
   );
 
   if (filters.length === 0) {
@@ -36,15 +37,4 @@ export const buildFilterByField = (valueByField: ValueByField = {}) => {
   }
 
   return { and: filters };
-};
-
-export const mergeBuildWithResult = (
-  result: Record<string, unknown>,
-  build: Record<string, unknown>
-) => {
-  return mergeWith(result, build, (obj, src) => {
-    if (isArray(obj)) {
-      obj.concat(src);
-    }
-  });
 };
