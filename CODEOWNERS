@@ -70,6 +70,7 @@ libs/shared/cdf-utilities         @cognitedata/cdf-user-experience
 
 
 libs/shared/user-profile-components   @cognitedata/cogs-team
+libs/shared/user-onboarding-components   @cognitedata/cogs-team
 
 # Functions UI
 apps/functions-ui             @abdullah-cognite @shubhsk88 

@@ -81,6 +81,9 @@
       ],
       "@fusion/industry-canvas": ["libs/industry-canvas/src/index.ts"],
       "@fusion/mock-data": ["libs/shared/mock-data/src/index.ts"],
+      "@fusion/shared/user-onboarding-components": [
+        "libs/shared/user-onboarding-components/src/index.ts"
+      ],
       "@industry-canvas-ui/*": ["apps/industry-canvas-ui/src/*"],
       "@platypus-app/*": [
         "apps/platypus/src/app/*",

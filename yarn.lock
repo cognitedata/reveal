@@ -3026,16 +3026,17 @@
     tippy.js "6.3.7"
     ts-dedent "2.2.0"
 
-"@cognite/cogs.js@^9.16.8":
-  version "9.16.8"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-9.16.8.tgz#a7ce19e512f57968f536e1f5657baac1e189b930"
-  integrity sha512-K0xD0Kf/F1NW9+6em11TgIxAvuXNXaWk0UlfeLg9wfECONpe5ReYgwtuZIcHVQzuGxG4Ck55QWVyc3zFsWTneQ==
+"@cognite/cogs.js@^9.22.1":
+  version "9.22.1"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-9.22.1.tgz#08b8db25e01f2118d85efb5a7f1c21b2cf2a1d3d"
+  integrity sha512-wIoWnJURorJ83CH1cSrw4csacQ7QVkSfUAKAt9Q/0ixtGoWLHyd//Ar2blltpEKo4kKnyVMlMjr3Rr/Zs5llfg==
   dependencies:
     "@emotion/react" "11.10.6"
     "@emotion/styled" "11.10.6"
     "@mui/base" "5.0.0-alpha.97"
     "@mui/joy" "5.0.0-alpha.41"
     "@mui/material" "5.9.2"
+    "@mui/x-date-pickers" "^6.5.0"
     "@notionhq/client" "2.2.3"
     "@react-hook/resize-observer" "1.2.6"
     "@tippyjs/react" "4.2.6"
@@ -6387,6 +6388,29 @@
     "@types/react-is" "^16.7.1 || ^17.0.0"
     prop-types "^15.8.1"
     react-is "^18.2.0"
+
+"@mui/utils@^5.13.6":
+  version "5.13.7"
+  resolved "https://registry.yarnpkg.com/@mui/utils/-/utils-5.13.7.tgz#7e6a8336e05eb2642667a5c02eb605351e27ec20"
+  integrity sha512-/3BLptG/q0u36eYED7Nhf4fKXmcKb6LjjT7ZMwhZIZSdSxVqDqSTmATW3a56n3KEPQUXCU9TpxAfCBQhs6brVA==
+  dependencies:
+    "@babel/runtime" "^7.22.5"
+    "@types/prop-types" "^15.7.5"
+    "@types/react-is" "^18.2.1"
+    prop-types "^15.8.1"
+    react-is "^18.2.0"
+
+"@mui/x-date-pickers@^6.5.0":
+  version "6.9.2"
+  resolved "https://registry.yarnpkg.com/@mui/x-date-pickers/-/x-date-pickers-6.9.2.tgz#35059a5ba3c4459889b79a955bca6c99f87ff995"
+  integrity sha512-WoXRBUwb/nN/Hg+rArefkuRe30eVTN29dbjTN/vTydBFoNIp8vCaSeqRIEP6Zq2NaDHFWW9FMGChuuFEdROxWA==
+  dependencies:
+    "@babel/runtime" "^7.22.5"
+    "@mui/utils" "^5.13.6"
+    "@types/react-transition-group" "^4.4.6"
+    clsx "^1.2.1"
+    prop-types "^15.8.1"
+    react-transition-group "^4.4.5"
 
 "@n1ru4l/push-pull-async-iterable-iterator@^3.1.0":
   version "3.2.0"
@@ -11757,6 +11781,13 @@
   version "18.2.0"
   resolved "https://registry.yarnpkg.com/@types/react-is/-/react-is-18.2.0.tgz#2f5137853a46017b3d56447940fb3eb92bbf24a5"
   integrity sha512-1vz2yObaQkLL7YFe/pme2cpvDsCwI1WXIfL+5eLz0MI9gFG24Re16RzUsI8t9XZn9ZWvgLNDrJBmrqXJO7GNQQ==
+  dependencies:
+    "@types/react" "*"
+
+"@types/react-is@^18.2.1":
+  version "18.2.1"
+  resolved "https://registry.yarnpkg.com/@types/react-is/-/react-is-18.2.1.tgz#61d01c2a6fc089a53520c0b66996d458fdc46863"
+  integrity sha512-wyUkmaaSZEzFZivD8F2ftSyAfk6L+DfFliVj/mYdOXbVjRcS87fQJLTnhk6dRZPuJjI+9g6RZJO4PNCngUrmyw==
   dependencies:
     "@types/react" "*"
 
