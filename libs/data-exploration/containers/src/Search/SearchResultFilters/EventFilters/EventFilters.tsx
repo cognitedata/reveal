@@ -44,12 +44,31 @@ export const EventFilters: React.FC<FilterProps> = ({
       {...rest}
     >
       <TempMultiSelectFix>
+        <MetadataFilter.Events
+          query={query}
+          filter={eventFilter}
+          values={eventFilter.metadata}
+          onChange={(newMetadata) => {
+            onFilterChange('event', {
+              metadata: newMetadata,
+            });
+          }}
+        />
         <TypeFilter.Event
           query={query}
           filter={eventFilter}
           value={eventFilter.type}
           onChange={(newFilters) =>
             onFilterChange('event', { type: newFilters })
+          }
+        />
+
+        <SubTypeFilter.Event
+          query={query}
+          filter={eventFilter}
+          value={eventFilter.subtype}
+          onChange={(newFilters) =>
+            onFilterChange('event', { subtype: newFilters })
           }
         />
 
@@ -73,15 +92,6 @@ export const EventFilters: React.FC<FilterProps> = ({
           }
         />
 
-        <SubTypeFilter.Event
-          query={query}
-          filter={eventFilter}
-          value={eventFilter.subtype}
-          onChange={(newFilters) =>
-            onFilterChange('event', { subtype: newFilters })
-          }
-        />
-
         <SourceFilter.Event
           query={query}
           filter={eventFilter}
@@ -91,16 +101,6 @@ export const EventFilters: React.FC<FilterProps> = ({
               sources: newSources,
             })
           }
-        />
-        <MetadataFilter.Events
-          query={query}
-          filter={eventFilter}
-          values={eventFilter.metadata}
-          onChange={(newMetadata) => {
-            onFilterChange('event', {
-              metadata: newMetadata,
-            });
-          }}
         />
       </TempMultiSelectFix>
     </BaseFilterCollapse.Panel>
