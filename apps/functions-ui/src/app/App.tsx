@@ -5,7 +5,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import styled from 'styled-components/macro';
 
-import { getProject } from '@cognite/cdf-utilities';
+import { getProject, isUsingUnifiedSignin } from '@cognite/cdf-utilities';
 import { ToastContainer } from '@cognite/cogs.js';
 import { FlagProvider } from '@cognite/react-feature-flags';
 
@@ -15,6 +15,9 @@ import { queryClient } from './queryClient';
 setupMixpanel();
 
 function App() {
+  const project = getProject();
+  const baseUrl = isUsingUnifiedSignin() ? `/cdf/${project}` : `/${project}}`;
+
   return (
     <QueryClientProvider client={queryClient}>
       <ReactQueryDevtools initialIsOpen={false} />
@@ -29,7 +32,7 @@ function App() {
         >
           <BrowserRouter>
             <Routes>
-              <Route path="*" element={<RootApp />} />
+              <Route path={`${baseUrl}/*`} element={<RootApp />} />
             </Routes>
           </BrowserRouter>
         </FlagProvider>
