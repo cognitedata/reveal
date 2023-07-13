@@ -32,7 +32,7 @@ import { useIndustryCanvasContext } from './IndustryCanvasContext';
 import { UserProfile, useUserProfile } from './UserProfileProvider';
 import { getCanvasLink } from './utils/getCanvasLink';
 
-const SEARCH_DEBOUNCE_MS = 500;
+const SEARCH_DEBOUNCE_MS = 200;
 
 export const IndustryCanvasHomePage = () => {
   const { canvases, isCreatingCanvas, isListingCanvases, createCanvas } =

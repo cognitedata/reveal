@@ -67,6 +67,7 @@ export class FusionQAChain extends CogniteBaseChain {
         source: 'bot',
         type: 'text',
         content: response.response,
+        chain: this.constructor.name,
       },
     ]);
 

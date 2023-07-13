@@ -95,6 +95,7 @@ static final String[] PREVIEW_STORYBOOK = [
   'platypus',
   'data-exploration-components-old',
   'shared-plotting-components',
+  'user-profile-components',
 ]
   // '3d-management',
   // Should be added after monorepo storybook version is upgraded to v7.

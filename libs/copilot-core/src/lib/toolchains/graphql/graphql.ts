@@ -1,5 +1,6 @@
 import { GraphQlUtilsService } from '@platypus/platypus-common-utils';
 import { FdmMixerApiService } from '@platypus/platypus-core';
+import * as Sentry from '@sentry/react';
 import {
   BaseCallbackHandler,
   CallbackManager,
@@ -51,6 +52,7 @@ const handleChainStart =
           type: 'data-model',
           content: 'Which data model are you referring to?',
           pending: true,
+          chain: 'GraphQlChain',
         },
       ]);
 
@@ -315,7 +317,6 @@ export class GraphQlChain extends CogniteBaseChain {
         },
       });
 
-      console.log(response);
       // assume no aggregate atm
       const summary = `${response.data[operationName]['items'].length}+`;
 
@@ -328,6 +329,7 @@ export class GraphQlChain extends CogniteBaseChain {
           dataModel,
           content: `Found these results: ${summary} for ${type}`,
           graphql: { query: query, variables: { filter: constructedFilter } },
+          chain: this.constructor.name,
           actions: [
             {
               content: 'Debug',
@@ -357,12 +359,13 @@ export class GraphQlChain extends CogniteBaseChain {
         }),
       };
     } catch (e) {
-      console.log('error', e);
+      Sentry.captureException(e);
       sendToCopilotEvent('NEW_MESSAGES', [
         {
           source: 'bot',
           type: 'text',
           content: 'Unable to find any data, can you try again?',
+          chain: this.constructor.name,
         },
       ]);
     }

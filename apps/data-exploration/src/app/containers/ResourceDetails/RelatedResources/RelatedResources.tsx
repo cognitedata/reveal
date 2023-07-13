@@ -14,9 +14,9 @@ import {
   AnnotationTable,
   AnnotatedWithTable,
   RelationshipFilters,
-  useRelatedResourceResults,
   useRelatedResourceCount,
 } from '@cognite/data-exploration';
+import { RelationshipResourceType } from '@cognite/sdk';
 
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 import {
@@ -26,8 +26,11 @@ import {
 } from '@data-exploration-app/hooks/flags';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { addPlusSignToCount } from '@data-exploration-app/utils/stringUtils';
-import { RelationshipLabels, useTranslation } from '@data-exploration-lib/core';
-import { useRelatedResourcesCount } from '@data-exploration-lib/domain-layer';
+import { useTranslation } from '@data-exploration-lib/core';
+import {
+  useRelatedResourcesCount,
+  useRelationshipLabels,
+} from '@data-exploration-lib/domain-layer';
 
 type TypeOption = {
   label: string;
@@ -152,12 +155,14 @@ export const RelatedResources = ({
     // eslint-disable-next-line
     [isLoading, isFetched, linkedResourcesCount]
   );
-  const { relationshipLabelOptions, onChangeLabelValue, labelValue } =
-    useRelatedResourceResults<RelationshipLabels>(
-      selectedType?.value || 'linkedResource',
-      type,
-      parentResource
-    );
+
+  const [selectedRelationshipLabels, setSelectedRelationshipLabels] =
+    useState<string[]>();
+
+  const { data: relationshipLabels } = useRelationshipLabels({
+    resourceExternalId: parentResource.externalId,
+    relationshipResourceTypes: [type as RelationshipResourceType],
+  });
 
   return (
     <RelatedResourcesContainer>
@@ -178,15 +183,15 @@ export const RelatedResources = ({
         </SelectWrapper>
         {selectedType?.value === 'relationship' && (
           <RelationshipFilters
-            options={relationshipLabelOptions}
+            options={relationshipLabels}
             onChange={(labels) => {
-              onChangeLabelValue(labels);
+              setSelectedRelationshipLabels(labels);
               trackUsage(EXPLORATION.SELECT.RELATIONSHIP_LABEL, {
                 labels,
                 type,
               });
             }}
-            value={labelValue}
+            value={selectedRelationshipLabels}
           />
         )}
       </FilterWrapper>
@@ -199,6 +204,8 @@ export const RelatedResources = ({
               isGroupingFilesEnabled={isGroupingFilesEnabled}
               onItemClicked={onItemClicked}
               onParentAssetClick={onParentAssetClick}
+              labels={selectedRelationshipLabels}
+              isDocumentsApiEnabled={isDocumentsApiEnabled}
               {...props}
             />
           </>

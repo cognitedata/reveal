@@ -22,9 +22,9 @@ export const useNonLinkedRelatedResourcesIds = ({
   resourceType: ResourceType;
   isDocumentsApiEnabled?: boolean;
 }) => {
-  const relatedResourceExternalIds = useRelatedResourceExternalIds(
-    extractExternalId(resource)
-  );
+  const relatedResourceExternalIds = useRelatedResourceExternalIds({
+    resourceExternalId: extractExternalId(resource),
+  });
 
   const assetIds = useAssetIdsQuery({
     resourceType: convertToSdkResourceType(resourceType),

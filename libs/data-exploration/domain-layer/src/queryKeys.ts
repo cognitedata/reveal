@@ -270,12 +270,14 @@ export const queryKeys = {
   relationships: () => [...queryKeys.all, 'relationships'] as const,
   resourceRelationships: (
     resourceExternalIds: string[],
-    relationshipResourceTypes: string[]
+    relationshipResourceTypes: string[],
+    filter: any = {}
   ) =>
     [
       ...queryKeys.relationships(),
       ...resourceExternalIds,
       ...relationshipResourceTypes,
+      filter,
     ] as const,
 
   // Annotations

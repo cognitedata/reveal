@@ -5,7 +5,8 @@ import { CogniteExternalId, Relationship } from '@cognite/sdk';
 import { ResourceType } from '@data-exploration-lib/core';
 
 export const transformToRelatedResourceExternalIds = (
-  relationships: Relationship[]
+  relationships: Relationship[],
+  resourceExternalId?: string
 ) => {
   const result: Record<ResourceType, CogniteExternalId[]> = {
     asset: [],
@@ -18,8 +19,12 @@ export const transformToRelatedResourceExternalIds = (
 
   relationships.forEach(
     ({ sourceType, sourceExternalId, targetType, targetExternalId }) => {
-      result[sourceType].push(sourceExternalId);
-      result[targetType].push(targetExternalId);
+      if (sourceExternalId !== resourceExternalId) {
+        result[sourceType].push(sourceExternalId);
+      }
+      if (targetExternalId !== resourceExternalId) {
+        result[targetType].push(targetExternalId);
+      }
     }
   );
 

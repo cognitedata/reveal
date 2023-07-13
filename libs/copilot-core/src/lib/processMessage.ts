@@ -3,6 +3,7 @@ import { BaseChain } from 'langchain/chains';
 import { langs } from './cogpilotGreeting';
 import { getPageLanguage } from './toolchains/infield-chains/utils';
 import { CopilotSupportedFeatureType, ProcessMessageFunc } from './types';
+import { sendToCopilotEvent } from './utils';
 
 export const processMessage = async (
   feature: CopilotSupportedFeatureType | undefined,
@@ -14,7 +15,6 @@ export const processMessage = async (
   // switch case for the possibility to add specific functionality for each feature
   switch (feature) {
     case 'Infield': {
-      const sendMessage = params[3];
       const message = params[1];
       if (message) {
         await chain.call({ input: message });
@@ -27,23 +27,33 @@ export const processMessage = async (
         } catch (e) {
           console.log(e);
         }
-        sendMessage({
-          type: 'text',
-          content: msgContent,
-        });
+        sendToCopilotEvent('NEW_MESSAGES', [
+          {
+            type: 'text',
+            content: msgContent,
+            source: 'bot',
+            chain: 'Welcome',
+          },
+        ]);
       }
       return true;
     }
     default: {
-      const sendMessage = params[3];
       const message = params[1];
       if (message) {
+        sendToCopilotEvent('LOADING_STATUS', {
+          status: 'Reasoning next steps...',
+        });
         await chain.call({ input: message });
       } else {
-        sendMessage({
-          type: 'text',
-          content: 'Hello from CogPilot! How can I assist you today?',
-        });
+        sendToCopilotEvent('NEW_MESSAGES', [
+          {
+            type: 'text',
+            content: 'Hello from CogPilot! How can I assist you today?',
+            source: 'bot',
+            chain: 'Welcome',
+          },
+        ]);
       }
       return true;
     }

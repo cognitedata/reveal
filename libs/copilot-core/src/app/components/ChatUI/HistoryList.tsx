@@ -5,7 +5,8 @@ import styled from 'styled-components';
 import { Body, Button, Flex, Icon } from '@cognite/cogs.js';
 
 import { Chat, useChats, useDeleteChat } from '../../hooks/useChatHistory';
-import { useCopilotContext } from '../../utils/CopilotContext';
+import { useCopilotContext } from '../../hooks/useCopilotContext';
+import { useMetrics } from '../../hooks/useMetrics';
 
 export const HistoryList = () => {
   const { data: chats } = useChats();
@@ -13,6 +14,7 @@ export const HistoryList = () => {
   const { setCurrentChatId, setMode, currentChatId } = useCopilotContext();
 
   const { mutate: deleteChat } = useDeleteChat();
+  const { track } = useMetrics();
 
   const groupedChats = useMemo(() => groupChatsByTime(chats || []), [chats]);
 
@@ -31,6 +33,7 @@ export const HistoryList = () => {
               direction="row"
               key={chat.id}
               onClick={() => {
+                track('VIEW_CHAT', undefined);
                 setCurrentChatId(chat.id);
                 setMode('chat');
               }}

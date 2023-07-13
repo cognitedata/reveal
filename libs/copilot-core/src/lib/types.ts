@@ -22,6 +22,10 @@ type DefaultMessage = {
   actions?: CopilotAction[];
 };
 
+type DefaultBotMessage = {
+  chain?: string;
+} & DefaultMessage;
+
 export type CopilotTextMessage = {
   type: 'text';
   context?: string;
@@ -30,21 +34,21 @@ export type CopilotTextMessage = {
 export type CopilotHumanApprovalMessage = {
   type: 'human-approval';
   approved?: boolean;
-} & DefaultMessage;
+} & DefaultBotMessage;
 
 export type CopilotCodeMessage = {
   type: 'code';
   prevContent?: string;
   highlightLines?: [number, number][]; // [start, end]
   language: 'python';
-} & DefaultMessage;
+} & DefaultBotMessage;
 
 export type CopilotDataModelSelectionMessage = {
   type: 'data-model';
   space?: string;
   dataModel?: string;
   version?: string;
-} & DefaultMessage;
+} & DefaultBotMessage;
 
 export type CopilotDataModelQueryMessage = {
   type: 'data-model-query';
@@ -57,11 +61,11 @@ export type CopilotDataModelQueryMessage = {
   };
   summary?: string;
   data?: any;
-} & DefaultMessage;
+} & DefaultBotMessage;
 
 export type CopilotUserMessage = CopilotTextMessage;
 export type CopilotBotMessage =
-  | CopilotTextMessage
+  | (CopilotTextMessage & DefaultBotMessage)
   | CopilotCodeMessage
   | CopilotDataModelSelectionMessage
   | CopilotHumanApprovalMessage
@@ -95,8 +99,7 @@ export type CopilotAction = {
 export type ProcessMessageFunc = (
   sdk: CogniteClient,
   message: string,
-  pastMessages: CopilotMessage[],
-  sendMessage: (message: CopilotBotMessage) => Promise<void>
+  pastMessages: CopilotMessage[]
 ) => Promise<boolean>;
 
 /**
@@ -139,6 +142,7 @@ export abstract class CogniteBaseChain extends BaseChain {
                   type: 'human-approval',
                   content: `Run "${name}" chain?`,
                   pending: true,
+                  chain: this.constructor.name,
                 },
               ]);
               const removeListener = addToCopilotEventListener(
@@ -155,6 +159,7 @@ export abstract class CogniteBaseChain extends BaseChain {
                           type: 'text',
                           content: `Ok, I won't run "${name}" chain.`,
                           pending: false,
+                          chain: this.constructor.name,
                         },
                       ]);
                       return reject();
@@ -172,6 +177,8 @@ export abstract class CogniteBaseChain extends BaseChain {
 
 export type CopilotEvents = {
   FromCopilot: {
+    // copilot is successfully mounted
+    CHAT_READY: undefined;
     // get code from selected area
     GET_CODE_FOR_SELECTION: undefined;
     // get all code from streamlit
@@ -197,6 +204,9 @@ export type CopilotEvents = {
   ToCopilot: {
     // only the last message will be processed
     NEW_MESSAGES: CopilotMessage[];
+    LOADING_STATUS: {
+      status: string;
+    };
     // get code from selected area
     GET_CODE_FOR_SELECTION: {
       content: string;

@@ -5,19 +5,28 @@ import { RelationshipResourceType } from '@cognite/sdk';
 import { ALL_RELATIONSHIP_RESOURCE_TYPES } from '../../constants';
 import { useRelationshipsQuery } from '../../service';
 import { transformToRelatedResourceExternalIds } from '../transformers';
+import { RelationshipsFilterInternal } from '../types';
 
-export const useRelatedResourceExternalIds = (
-  resourceExternalId?: string,
-  relationshipResourceTypes: RelationshipResourceType[] = ALL_RELATIONSHIP_RESOURCE_TYPES
-) => {
-  const { data = [], isLoading } = useRelationshipsQuery(
-    resourceExternalId ? [resourceExternalId] : [],
-    relationshipResourceTypes
-  );
+interface Props {
+  resourceExternalId?: string;
+  relationshipResourceTypes?: RelationshipResourceType[];
+  filter?: RelationshipsFilterInternal;
+}
+
+export const useRelatedResourceExternalIds = ({
+  resourceExternalId,
+  relationshipResourceTypes = ALL_RELATIONSHIP_RESOURCE_TYPES,
+  filter,
+}: Props) => {
+  const { data = [], isLoading } = useRelationshipsQuery({
+    resourceExternalIds: resourceExternalId ? [resourceExternalId] : [],
+    relationshipResourceTypes,
+    filter,
+  });
 
   const transformedData = useMemo(() => {
-    return transformToRelatedResourceExternalIds(data);
-  }, [data]);
+    return transformToRelatedResourceExternalIds(data, resourceExternalId);
+  }, [data, resourceExternalId]);
 
   return {
     data: transformedData,

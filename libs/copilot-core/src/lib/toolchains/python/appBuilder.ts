@@ -105,6 +105,7 @@ export class AppBuilderChain extends CogniteBaseChain {
         language: 'python',
         content: text,
         prevContent,
+        chain: this.constructor.name,
       },
     ]);
 

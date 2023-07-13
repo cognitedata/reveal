@@ -1,37 +1,44 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import styled from 'styled-components';
 
-import { Avatar, Body, Button, Flex, toast } from '@cognite/cogs.js';
+import { Avatar, Body, Button, Flex, Icon, toast } from '@cognite/cogs.js';
 
 import { ReactComponent as CopilotIcon } from '../../../assets/CopilotIcon.svg';
-import { CopilotAction } from '../../../lib/types';
+import { CopilotMessage } from '../../../lib/types';
+import { useMetrics } from '../../hooks/useMetrics';
 import { useUserProfile } from '../../hooks/useUserProfile';
 
 import { ResponsiveActions } from './components/ResponsiveActions';
 
 export const MessageBase = ({
-  message: {
-    data: { content, source, actions = [] },
-  },
+  message: { data },
   children,
 }: {
   message: {
-    data: {
-      content: string;
-      source: 'user' | 'bot';
-      actions?: CopilotAction[];
-    };
+    data: CopilotMessage;
   };
   children: React.ReactNode;
 }) => {
-  console.log(content, source);
-  const { data: user } = useUserProfile();
+  const { content, source, actions = [] } = data;
+  const { data: user, isLoading } = useUserProfile();
+
+  const [selectedFeedback, setSelectedFeedback] = useState('');
+
+  const { track } = useMetrics();
   return (
     <Wrapper gap={10}>
       {source === 'bot' ? (
         <CopilotIconWrapper alignItems="center" justifyContent="center">
           <CopilotIcon style={{ width: 16, height: 16, fill: 'white' }} />
+        </CopilotIconWrapper>
+      ) : isLoading ? (
+        <CopilotIconWrapper
+          alignItems="center"
+          justifyContent="center"
+          style={{ background: 'lightgrey' }}
+        >
+          <Icon type="Loader" />
         </CopilotIconWrapper>
       ) : (
         <Avatar text={user?.displayName} />
@@ -69,15 +76,35 @@ export const MessageBase = ({
               icon="ThumbUp"
               aria-label="Give positive feedback"
               type="ghost"
+              disabled={!!selectedFeedback}
               size="small"
-              className="ai"
+              className={`ai ${
+                selectedFeedback === 'positive' ? 'selected' : ''
+              }`}
+              onClick={() => {
+                setSelectedFeedback('positive');
+                track('FEEDBACK_POSITIVE', {
+                  content: content,
+                  chain: data.chain,
+                });
+              }}
             />
             <Button
               icon="ThumbDown"
               aria-label="Give negative feedback"
               type="ghost"
+              disabled={!!selectedFeedback}
               size="small"
-              className="ai thumbsdown"
+              className={`ai thumbsdown ${
+                selectedFeedback === 'negative' ? 'selected' : ''
+              }`}
+              onClick={() => {
+                setSelectedFeedback('negative');
+                track('FEEDBACK_NEGATIVE', {
+                  content: content,
+                  chain: data.chain,
+                });
+              }}
             />
           </Flex>
         )}
@@ -102,6 +129,17 @@ const Wrapper = styled(Flex)`
   .cogs-button.ai {
     background: rgba(111, 59, 228, 0.08);
     color: #6f3be4;
+  }
+  .cogs-button.ai.cogs-button--disabled {
+    background: transparent;
+    color: #6f3be4;
+    opacity: 0.5;
+  }
+  .cogs-button.ai.cogs-button--disabled.selected {
+    opacity: 1;
+  }
+  .cogs-button.ai.cogs-button--disabled:hover {
+    background: none;
   }
   .cogs-button.ai:hover {
     background: rgba(111, 59, 228, 0.18);

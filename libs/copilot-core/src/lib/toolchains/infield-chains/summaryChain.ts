@@ -125,6 +125,7 @@ export class SummaryChain extends CogniteBaseChain {
         source: 'bot',
         type: 'text',
         content: res.text,
+        chain: this.constructor.name,
       },
     ]);
 
