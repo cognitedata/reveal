@@ -19,8 +19,7 @@
           "e2e",
           "build-storybook"
         ],
-        "parallel": 2,
-        "accessToken": "NGZiZDg2NmQtNzAzZC00YjNlLTg5OGUtYjRhNjZiYThmOWM1fHJlYWQtd3JpdGU="
+        "parallel": 2
       }
     }
   },

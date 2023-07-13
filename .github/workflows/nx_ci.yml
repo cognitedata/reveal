@@ -206,6 +206,7 @@ jobs:
       - name: Build
         env:
           NODE_OPTIONS: '--max_old_space_size=8192'
+          NX_CLOUD_ACCESS_TOKEN: ${{secrets.NX_CLOUD_ACCESS_TOKEN}}
         run: yarn nx affected --targets=build --exclude="apps/*" --parallel --nx-bail --configuration=production --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }}
 
   build:
@@ -244,6 +245,7 @@ jobs:
       - name: Build
         env:
           NODE_OPTIONS: '--max_old_space_size=8192'
+          NX_CLOUD_ACCESS_TOKEN: ${{secrets.NX_CLOUD_ACCESS_TOKEN}}
         run: yarn nx build ${{ matrix.project }} --configuration=production
   ci-passed:
     # see https://github.community/t/status-check-for-a-matrix-jobs/127354/7
