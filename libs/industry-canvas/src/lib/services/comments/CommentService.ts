@@ -3,7 +3,7 @@ import { CogniteClient } from '@cognite/sdk';
 import { FDMClient, gql } from '../../utils/FDMClient';
 import { isNotUndefined } from '../../utils/isNotUndefined';
 
-import { CommentFilter, Comment } from './types';
+import { CommentFilter, SerializedComment } from './types';
 import { composeFilter, removeNullEntries } from './utils';
 
 type PageInfo = {
@@ -36,8 +36,8 @@ export class CommentService {
   }
 
   public async upsertComments(
-    comments: Omit<Comment, 'lastUpdatedTime' | 'createdTime'>[]
-  ): Promise<Comment[]> {
+    comments: Omit<SerializedComment, 'lastUpdatedTime' | 'createdTime'>[]
+  ): Promise<SerializedComment[]> {
     const updatedComments = await this.fdmClient.upsertNodes(
       comments.map((comment) => ({
         ...comment,
@@ -53,24 +53,31 @@ export class CommentService {
       }))
     );
 
-    const timingMapByExternalId = new Map(
-      updatedComments.map(({ externalId, lastUpdatedTime, createdTime }) => [
+    const createdTimeByExternalId = new Map(
+      updatedComments.map(({ externalId, createdTime }) => [
         externalId,
-        { lastUpdatedTime, createdTime },
+        createdTime,
+      ])
+    );
+    const lastUpdatedTimeByExternalId = new Map(
+      updatedComments.map(({ externalId, lastUpdatedTime }) => [
+        externalId,
+        lastUpdatedTime,
       ])
     );
     const commentsWithCreatedAndUpdatedTimes = comments
-      .map((comment): Comment | undefined => {
-        const { createdTime, lastUpdatedTime } =
-          timingMapByExternalId.get(comment.externalId) ?? {};
-
-        if (createdTime === undefined) {
+      .map((comment): SerializedComment | undefined => {
+        const createdTime = createdTimeByExternalId.get(comment.externalId);
+        const lastUpdatedTime = lastUpdatedTimeByExternalId.get(
+          comment.externalId
+        );
+        if (createdTime === undefined || lastUpdatedTime === undefined) {
           return undefined;
         }
 
         return {
           ...comment,
-          lastUpdatedTime: new Date(lastUpdatedTime ?? Date.now()),
+          lastUpdatedTime: new Date(lastUpdatedTime),
           createdTime: new Date(createdTime),
         };
       })
@@ -83,70 +90,15 @@ export class CommentService {
     await this.fdmClient.deleteNodes(commentExternalIds);
   }
 
-  public async fetchCommentsByIds(
-    commentExternalIds: string[]
-  ): Promise<Comment[]> {
-    const res = await this.fdmClient.graphQL<{
-      comments: { items: Comment[] };
-    }>(
-      gql`
-        query GetCommentsByIds($filter: _List${CommentService.COMMENT_MODEL_NAME}Filter) {
-          comments: listComment(filter: $filter) {
-            items {
-              text
-              createdById
-              status
-              parentComment {
-                externalId
-              }
-
-              targetId
-              targetType
-              contextId
-              contextType
-              contextData
-
-              taggedUsers
-
-              externalId
-              lastUpdatedTime
-              createdTime
-            }
-          }
-        }
-      `,
-      CommentService.DATA_MODEL_EXTERNAL_ID,
-      {
-        filter: {
-          and: [
-            { externalId: { in: commentExternalIds } },
-            {
-              space: {
-                eq: CommentService.INSTANCE_SPACE,
-              },
-            },
-          ],
-        },
-      }
-    );
-    if (res.comments.items.length === 0) {
-      throw new Error(
-        `Couldn't find any comments with external ids ${commentExternalIds}`
-      );
-    }
-
-    return res.comments.items.map(removeNullEntries);
-  }
-
   private async getPaginatedComments(
     filter: CommentFilter,
     cursor: string | undefined = undefined,
-    paginatedData: Comment[] = [],
+    paginatedData: SerializedComment[] = [],
     limit: number = this.LIST_LIMIT
-  ): Promise<Comment[]> {
+  ): Promise<SerializedComment[]> {
     const res = await this.fdmClient.graphQL<{
       comments: {
-        items: (Omit<Comment, 'createdTime' | 'lastUpdatedTime'> & {
+        items: (Omit<SerializedComment, 'createdTime' | 'lastUpdatedTime'> & {
           createdTime: string;
           lastUpdatedTime: string;
         })[];
@@ -228,7 +180,9 @@ export class CommentService {
     return paginatedData;
   }
 
-  public async listComments(filter: CommentFilter = {}): Promise<Comment[]> {
+  public async listComments(
+    filter: CommentFilter = {}
+  ): Promise<SerializedComment[]> {
     const comments = await this.getPaginatedComments(filter);
     return comments.map(removeNullEntries);
   }

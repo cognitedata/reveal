@@ -9,7 +9,7 @@ import { useSDK } from '@cognite/sdk-provider';
 
 import { QueryKeys, TOAST_POSITION } from '../../../../constants';
 import { CommentService } from '../../CommentService';
-import { Comment } from '../../types';
+import { SerializedComment } from '../../types';
 
 export const useCommentsUpsertMutation = <ContextDataType = any>() => {
   const queryClient = useQueryClient();
@@ -20,22 +20,19 @@ export const useCommentsUpsertMutation = <ContextDataType = any>() => {
     [QueryKeys.UPSERT_COMMENTS],
     (
       comments: Omit<
-        Comment<ContextDataType>,
+        SerializedComment<ContextDataType>,
         'lastUpdatedTime' | 'createdTime'
       >[]
     ) => service.upsertComments(comments),
     {
       onMutate: async (comments) => {
         // Cancel any outgoing refetches
-        await queryClient.cancelQueries([
-          QueryKeys.FETCH_COMMENTS_BY_IDS,
-          ...comments.map(({ externalId }) => externalId),
-        ]);
-
         await queryClient.cancelQueries([QueryKeys.LIST_COMMENTS]);
-        queryClient.setQueriesData<Comment<ContextDataType>[]>(
+
+        // Optimistically update to the new value
+        queryClient.setQueriesData<SerializedComment<ContextDataType>[]>(
           [QueryKeys.LIST_COMMENTS],
-          (previousComments: Comment<ContextDataType>[] = []) =>
+          (previousComments: SerializedComment<ContextDataType>[] = []) =>
             uniqBy(
               [
                 ...comments.map((comment) => ({
@@ -50,6 +47,12 @@ export const useCommentsUpsertMutation = <ContextDataType = any>() => {
         );
 
         return true;
+      },
+      onSettled: (comments) => {
+        if (comments === undefined) {
+          return;
+        }
+        queryClient.invalidateQueries([QueryKeys.LIST_COMMENTS]);
       },
       onError: (err, _failedComment, context?: boolean) => {
         if (context === true) {

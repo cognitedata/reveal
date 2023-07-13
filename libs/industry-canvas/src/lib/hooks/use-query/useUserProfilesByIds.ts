@@ -25,6 +25,7 @@ export const getUserProfilesByIds = async (
 export type UseCanvasesWithUserProfilesReturnType = {
   userProfiles: UserProfile[];
   isLoading: boolean;
+  isError: boolean;
 };
 
 type UseCanvasesWithUserProfilesProps = {
@@ -36,7 +37,11 @@ export const useUserProfilesByIds = ({
 }: UseCanvasesWithUserProfilesProps) => {
   const sdk = useSDK();
 
-  const { data: userProfiles = [], isLoading } = useQuery(
+  const {
+    data: userProfiles = [],
+    isLoading,
+    isError,
+  } = useQuery(
     [QueryKeys.USER_PROFILES_BY_IDS, userIdentifiers],
     () => getUserProfilesByIds(sdk, userIdentifiers),
     {
@@ -44,5 +49,5 @@ export const useUserProfilesByIds = ({
     }
   );
 
-  return { userProfiles, isLoading };
+  return { userProfiles, isLoading, isError };
 };

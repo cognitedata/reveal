@@ -2,7 +2,7 @@ import pickBy from 'lodash/pickBy';
 
 import { isNotUndefined } from '../../utils/isNotUndefined';
 
-import { CommentFilter, Comment } from './types';
+import { CommentFilter } from './types';
 
 export const composeFilter = (filter: CommentFilter) =>
   Object.entries(filter)
@@ -28,5 +28,7 @@ export const composeFilter = (filter: CommentFilter) =>
     })
     .filter(isNotUndefined);
 
-export const removeNullEntries = (comment: Comment): Comment =>
-  pickBy(comment, (value) => value !== null) as Comment;
+export const removeNullEntries = <T extends object>(obj: T): T =>
+  pickBy(obj, (value) => value !== null) as T;
+
+export const isNonEmptyString = (str: string): boolean => str.trim().length > 0;
