@@ -5,7 +5,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { CadModelContainer, RevealContainer, RevealToolbar } from '../src';
 import { CogniteClient } from '@cognite/sdk';
-import { Color } from 'three';
+import { Color, Matrix4 } from 'three';
 import styled from 'styled-components';
 import { ToolBar, type ToolBarButton } from '@cognite/cogs.js';
 
@@ -46,11 +46,13 @@ export const Main: Story = {
     addModelOptions: {
       modelId: 1791160622840317,
       revisionId: 498427137020189
-    }
+    },
+    transform: new Matrix4().makeTranslation(0, 10, 0)
   },
-  render: ({ addModelOptions }) => (
+  render: ({ addModelOptions, transform }) => (
     <RevealContainer sdk={sdk} color={new Color(0x4a4a4a)}>
       <CadModelContainer addModelOptions={addModelOptions} />
+      <CadModelContainer addModelOptions={addModelOptions} transform={transform} />
       <RevealToolbar />
       <MyCustomToolbar>
         <RevealToolbar.FitModelsButton />
