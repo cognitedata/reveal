@@ -6,7 +6,7 @@ import { PageToolbar } from '@platypus-app/components/PageToolbar/PageToolbar';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
-import { Body, Button, Flex } from '@cognite/cogs.js';
+import { Body, Button, Flex, Tooltip } from '@cognite/cogs.js';
 
 import { DataQualityOverview, UpsertRuleDrawer } from './pages';
 
@@ -20,8 +20,12 @@ export const DataQualityPage = () => {
     error,
     isLoading: loadingDataSource,
   } = useLoadDataSource();
-  const { isLoading: validationInProgress, startValidation } =
-    useStartValidation();
+  const {
+    isDisabled: validationDisabled,
+    isLoading: validationInProgress,
+    disabledMessage,
+    startValidation,
+  } = useStartValidation();
 
   const renderContent = () => {
     if (loadingDataSource) return <Spinner />;
@@ -47,13 +51,15 @@ export const DataQualityPage = () => {
       <PageContentLayout.Header data-cy="dq-page-header">
         <PageToolbar title={t('data_quality_title', 'Data quality')}>
           <Flex direction="row" gap={8}>
-            <Button
-              disabled={!dataSource}
-              loading={validationInProgress}
-              onClick={startValidation}
-            >
-              {t('data_quality_validate_now', 'Validate now')}
-            </Button>
+            <Tooltip content={disabledMessage} disabled={!validationDisabled}>
+              <Button
+                disabled={validationDisabled}
+                loading={validationInProgress}
+                onClick={startValidation}
+              >
+                {t('data_quality_validate_now', 'Validate now')}
+              </Button>
+            </Tooltip>
             <Button
               disabled={!dataSource}
               onClick={upsertRuleDrawer.onOpen}

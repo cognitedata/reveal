@@ -2,7 +2,7 @@ import { SplitPanel } from '@platypus-app/components/Layouts/elements';
 
 import { Flex } from '@cognite/cogs.js';
 
-import { RulesTable, TotalValidityCard } from './components';
+import { DownloadReport, RulesTable, TotalValidityCard } from './components';
 
 export const DataQualityOverview = () => {
   return (
@@ -13,7 +13,15 @@ export const DataQualityOverview = () => {
         gap={32}
         style={{ padding: '1rem 2rem' }}
       >
-        <TotalValidityCard />
+        <Flex
+          alignItems="flex-start"
+          direction="row"
+          justifyContent="space-between"
+        >
+          <TotalValidityCard />
+          <DownloadReport />
+        </Flex>
+
         <RulesTable />
       </Flex>
     </SplitPanel>

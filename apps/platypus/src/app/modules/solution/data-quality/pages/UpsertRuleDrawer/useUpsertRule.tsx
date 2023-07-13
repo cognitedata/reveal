@@ -101,12 +101,7 @@ export const useUpsertRule = () => {
     // Update a rule
     else {
       try {
-        const updatedRule: RuleUpdateItem = {
-          externalId: editedRule.externalId,
-          update: { ...values },
-        };
-
-        const noChanges = isEqual(updatedRule, editedRule);
+        const noChanges = compareChanges(values, editedRule);
 
         if (noChanges) {
           Notification({
@@ -120,6 +115,11 @@ export const useUpsertRule = () => {
 
           return;
         }
+
+        const updatedRule: RuleUpdateItem = {
+          externalId: editedRule.externalId,
+          update: { ...values },
+        };
 
         await updateRuleMutation(
           {
@@ -148,4 +148,14 @@ export const useUpsertRule = () => {
   };
 
   return { isLoading, upsertRule };
+};
+
+/** Check if there have been no changes when editing a rule */
+const compareChanges = (updatedValues: RuleFormValues, editedRule: RuleDto) => {
+  const updatedRule = {
+    externalId: editedRule.externalId,
+    ...updatedValues,
+  };
+
+  return isEqual(updatedRule, editedRule);
 };

@@ -1110,6 +1110,7 @@ export type DataSourceValidationError = Fetcher.ErrorWrapper<{
 }>;
 
 export type DataSourceValidationVariables = {
+  body: Schemas.DataSourceValidationRequest;
   pathParams?: DataSourceValidationPathParams;
 } & DataQualityContext['fetcherOptions'];
 
@@ -1123,7 +1124,7 @@ export const fetchDataSourceValidation = (
   dataQualityFetch<
     undefined,
     DataSourceValidationError,
-    undefined,
+    Schemas.DataSourceValidationRequest,
     {},
     {},
     DataSourceValidationPathParams

@@ -386,6 +386,13 @@ paths:
       parameters:
       - $ref: "#/components/parameters/project"
       - $ref: "#/components/parameters/dataSourceId"
+      requestBody:
+        description: Nonce token to be used for validation.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DataSourceValidationRequest"
+        required: true
       x-capability:
       - "DatamodelsAcl:READ"
       responses:
@@ -667,6 +674,9 @@ components:
       pattern: "^[a-zA-Z]([a-zA-Z0-9_]{0,253}[a-zA-Z0-9])?$"
       minLength: 1
       maxLength: 255
+
+    Nonce:
+      type: string
 
     DataSourceDraft:
       allOf:
@@ -1005,3 +1015,11 @@ components:
               externalId:
                 description: Ids from rules
                 $ref: "#/components/schemas/ExternalId"
+
+    DataSourceValidationRequest:
+      type: object
+      required: [nonce]
+      nonce:
+        type: string
+        description: Nonce token to be used for validation.
+        $ref: "#/components/schemas/Nonce"
