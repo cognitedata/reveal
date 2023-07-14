@@ -7,6 +7,8 @@ import { Button } from '@cognite/cogs.js';
 
 import { zIndex } from '@data-exploration-lib/core';
 
+import { Splitter } from '../Splitter';
+
 interface DrawerProps {
   visible?: boolean;
   width?: string;
@@ -16,55 +18,63 @@ interface DrawerProps {
 export const Drawer: React.FC<PropsWithChildren<DrawerProps>> = ({
   visible,
   onClose,
-  ...rest
+  children,
 }) => {
   return createPortal(
-    <>
-      <StyledDrawer visible={visible} {...rest}></StyledDrawer>
-      <Overlay visible={visible} onClick={onClose} />
-      {visible && (
-        <ClosedButton>
-          <Button
-            type="tertiary"
-            aria-label="Close button"
-            icon="Close"
-            onClick={onClose}
-          />
-        </ClosedButton>
-      )}
-    </>,
+    <DrawerContainer visible={visible}>
+      <StyledSplitter
+        percentage
+        primaryMinSize={10}
+        secondaryInitialSize={70}
+        primaryIndex={0}
+      >
+        <PrimaryContainer onClick={onClose}>
+          <ClosedButton>
+            <Button
+              type="tertiary"
+              aria-label="Close button"
+              icon="Close"
+              onClick={onClose}
+            />
+          </ClosedButton>
+        </PrimaryContainer>
+        <SecondaryContainer>{children}</SecondaryContainer>
+      </StyledSplitter>
+    </DrawerContainer>,
     document.body
   );
 };
 
-const StyledDrawer = styled.div<{ visible?: boolean; width?: string }>`
-  position: fixed;
-  top: 0;
-  right: 0;
-  isolation: isolate;
-  width: ${({ visible, width = '80vw' }) => (visible ? width : '0')};
+const DrawerContainer = styled.div<{ visible?: boolean }>`
+  position: relative;
   height: 100%;
-  z-index: ${zIndex.DRAWER};
-  background: #fff;
+  width: ${(props) => (props.visible ? '100%' : '0')};
+  display: ${(props) => (props.visible ? 'flex' : 'none')};
+  justify-content: end;
+  background: rgba(0, 0, 0, 0.1);
   transition: 0.3s all;
 `;
-const Overlay = styled.div<{ visible?: boolean }>`
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 100vw;
+
+const StyledSplitter = styled(Splitter)`
   height: 100%;
-  z-index: ${zIndex.OVERLAY};
-  display: ${(props) => (props.visible ? 'block' : 'none')};
-  background-color: ${(props) =>
-    props.visible ? 'rgba(0, 0, 0, 0.1)' : 'rgba(0,0,0,0)'};
+`;
+
+const PrimaryContainer = styled.div`
+  width: 100%;
+  height: 100%;
+`;
+
+const SecondaryContainer = styled.div`
+  width: 100%;
+  height: 100%;
+  background: #fff;
   transition: 0.3s all;
 `;
 
 const ClosedButton = styled.div`
   position: absolute;
   top: 20px;
-  left: 15%;
+  right: 20px;
   z-index: ${zIndex.DRAWER};
   .cogs.cogs-button--type-tertiary:hover:not([aria-disabled='true']) {
     background: white;
