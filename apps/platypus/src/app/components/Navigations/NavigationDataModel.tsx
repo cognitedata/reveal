@@ -30,7 +30,6 @@ import {
   Dropdown,
   Flex,
   Menu,
-  NotificationDot,
   Tooltip,
 } from '@cognite/cogs.js';
 
@@ -208,25 +207,10 @@ export const NavigationDataModel = () => {
                 </Menu.Item>
               </Tooltip>
               <Divider />
-              <Menu.Item
-                icon="Experiment"
-                iconPlacement="left"
-                style={{
-                  background: 'var(--cogs-decorative--gradient--dawn)',
-                  color: 'white',
-                }}
-                onClick={() => {
-                  setShowFeatureToggle(true);
-                }}
-              >
-                {t('menu-item-experiments', 'Feature preview')}
-              </Menu.Item>
             </Menu>
           }
         >
-          <NotificationDot>
-            <Button icon="EllipsisVertical" aria-label="Overflow Menu" />
-          </NotificationDot>
+          <Button icon="EllipsisVertical" aria-label="Overflow Menu" />
         </Dropdown>
       </StyledTopBarRight>
     );

@@ -227,7 +227,7 @@ ${dataModelTypes.types
   ${type.fields
     .map(
       (field) =>
-        `${field.name}: ${field.list ? '[' : ''} ${field.type} ${
+        `${field.name}: ${field.list ? '[' : ''} ${field.type.name} ${
           field.list ? ']' : ''
         }`
     )

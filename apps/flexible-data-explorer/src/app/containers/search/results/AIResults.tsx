@@ -8,6 +8,9 @@ import {
   useFromCopilotEventHandler,
 } from '@fusion/copilot-core';
 
+import { Icon } from '@cognite/cogs.js';
+import { useFlag } from '@cognite/react-feature-flags';
+
 import { useDataModelParams } from '../../../hooks/useDataModelParams';
 import {
   useSearchFilterParams,
@@ -22,19 +25,25 @@ export const AIResults = () => {
 
   const [gqlQuery, setGQLQuery] = useState('');
   const [variables, setVariables] = useState({});
+  const [isAILoading, setIsAILoading] = useState(false);
 
-  const { data } = useAIDataTypesQuery(gqlQuery, variables);
+  const { data, isLoading } = useAIDataTypesQuery(gqlQuery, variables);
+
+  const { isEnabled: isCopilotEnabled } = useFlag('COGNITE_COPILOT', {
+    fallback: false,
+  });
 
   useFromCopilotEventHandler(
     'GQL_QUERY',
     ({ query: newGqlQuery, variables: newVariables }) => {
       setGQLQuery(newGqlQuery);
       setVariables(newVariables);
+      setIsAILoading(false);
     }
   );
 
   useEffect(() => {
-    const sendMessage = () =>
+    const sendMessage = () => {
       sendToCopilotEvent('NEW_MESSAGES', [
         {
           source: 'bot',
@@ -51,7 +60,9 @@ export const AIResults = () => {
           context: 'Searched in Explorer',
         },
       ]);
-    if (query && selectedDataModel) {
+      setIsAILoading(true);
+    };
+    if (query && selectedDataModel && isCopilotEnabled) {
       sendMessage();
     }
     const removeHandler = addFromCopilotEventListener('CHAT_READY', () => {
@@ -60,10 +71,18 @@ export const AIResults = () => {
       }
       removeHandler();
     });
-  }, [query, filters, selectedDataModel]);
+  }, [query, filters, selectedDataModel, isCopilotEnabled]);
 
-  if (!gqlQuery) {
+  if (!isCopilotEnabled) {
     return <></>;
+  }
+
+  if (isLoading || isAILoading) {
+    return (
+      <Wrapper>
+        <Icon type="Loader" />
+      </Wrapper>
+    );
   }
 
   return (

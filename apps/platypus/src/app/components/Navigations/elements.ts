@@ -6,10 +6,6 @@ export const StyledTopBarRight = styled(TopBar.Right)`
   display: flex;
   align-items: center;
   padding-right: 12px;
-
-  .cogs-notification-dot__bubble {
-    background: var(--cogs-decorative--gradient--dawn);
-  }
 `;
 
 export const StyledTopBarLeft = styled(TopBar.Left)`
@@ -60,6 +56,10 @@ export const SideBarMenu = styled.div`
   width: 56px; // fit to the navbar's 56px + 1px of border
   padding: 10px;
   border-right: solid 1px var(--cogs-greyscale-grey3);
+
+  .cogs-notification-dot__bubble {
+    background: var(--cogs-decorative--gradient--dawn);
+  }
 `;
 
 export const SideBarItem = styled(Button)`

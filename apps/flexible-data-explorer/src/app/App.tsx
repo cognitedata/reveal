@@ -11,6 +11,7 @@ import {
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import { Button, ToastContainer } from '@cognite/cogs.js';
+import { FlagProvider } from '@cognite/react-feature-flags';
 import { SDKProvider } from '@cognite/sdk-provider';
 
 import { useAuthContext } from './common/auth/AuthProvider';
@@ -23,7 +24,12 @@ function App() {
   const { client } = useAuthContext();
 
   return (
-    <>
+    <FlagProvider
+      appName="business-portal"
+      projectName={`${client.project}`}
+      apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
+      remoteAddress={window.location.hostname}
+    >
       <SDKProvider sdk={client}>
         <QueryClientProvider client={queryClient}>
           <ReactQueryDevtools initialIsOpen={false} />
@@ -51,7 +57,7 @@ function App() {
       <CopilotWrapper>
         <Copilot sdk={client} />
       </CopilotWrapper>
-    </>
+    </FlagProvider>
   );
 }
 

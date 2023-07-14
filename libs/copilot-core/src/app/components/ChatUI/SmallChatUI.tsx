@@ -1,7 +1,8 @@
 import { ResizableBox } from 'react-resizable';
 
+import styled from 'styled-components';
+
 import { BotUIMessageList, BotUIAction } from '@botui/react';
-import styled from 'styled-components/macro';
 
 import { Button, Flex, Icon } from '@cognite/cogs.js';
 

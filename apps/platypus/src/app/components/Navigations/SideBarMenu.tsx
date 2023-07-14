@@ -3,7 +3,7 @@ import { useParams, useLocation } from 'react-router-dom';
 import { useNavigate } from '@platypus-app/flags/useNavigate';
 import uniqueId from 'lodash/uniqueId';
 
-import { Icon, IconType, Tooltip } from '@cognite/cogs.js';
+import { Body, Button, Flex, Icon, IconType, Tooltip } from '@cognite/cogs.js';
 
 import * as S from './elements';
 
@@ -62,24 +62,58 @@ export const SideBarMenu = ({ items }: SideBarProps) => {
 
   return (
     <S.SideBarMenu>
-      <div>
-        {items.map((item) => {
-          if (item.tooltip) {
-            return (
-              <Tooltip
-                placement="right"
-                content={item.tooltip}
-                arrow={false}
-                delay={250}
-                key={`${item.slug}-${uniqueId()}`}
+      {items.map((item) => {
+        if (item.tooltip) {
+          return (
+            <Tooltip
+              placement="right"
+              content={item.tooltip}
+              arrow={false}
+              delay={250}
+              key={`${item.slug}-${uniqueId()}`}
+            >
+              {renderIcon(item)}
+            </Tooltip>
+          );
+        }
+        return renderIcon(item);
+      })}
+      <div style={{ flex: 1 }} />
+
+      <Tooltip
+        placement="right"
+        content={
+          <Flex direction="column" gap={8} style={{ maxWidth: 240 }}>
+            <Body level={2} style={{ color: 'white' }} strong>
+              Experimental features available
+            </Body>
+            <Body level={2} style={{ color: 'white' }}>
+              Toggle on and off new features that are not yet ready for the
+              public.
+            </Body>
+            <Flex direction="row-reverse">
+              <Button
+                inverted
+                type="primary"
+                size="small"
+                style={{
+                  background: 'var(--cogs-decorative--gradient--dawn)',
+                  color: 'white',
+                }}
               >
-                {renderIcon(item)}
-              </Tooltip>
-            );
-          }
-          return renderIcon(item);
+                OK
+              </Button>
+            </Flex>
+          </Flex>
+        }
+        delay={250}
+      >
+        {renderIcon({
+          icon: 'Lightning',
+          slug: 'experimental',
+          disabled: false,
         })}
-      </div>
+      </Tooltip>
     </S.SideBarMenu>
   );
 };
