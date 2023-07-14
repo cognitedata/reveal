@@ -2,15 +2,13 @@ import { useCallback } from 'react';
 
 import styled from 'styled-components';
 
-import { Skeleton } from '@cognite/cogs.js';
-
 import { useNavigation } from '../../hooks/useNavigation';
-import { useTypesDataModelQuery } from '../../services/dataModels/query/useTypesDataModelQuery';
+import { useFDM } from '../../providers/FDMProvider';
 
 import { CategoryCard } from './components/CategoryCard';
 
 export const Categories = () => {
-  const { data: types, isLoading } = useTypesDataModelQuery();
+  const client = useFDM();
 
   const navigate = useNavigation();
 
@@ -21,17 +19,13 @@ export const Categories = () => {
     [navigate]
   );
 
-  if (isLoading) {
-    return <Skeleton.List lines={4} />;
-  }
-
   return (
     <CategoriesContainer>
       <CategoryContent>
-        {types?.map((item) => (
+        {client.allDataTypes?.map((item, index) => (
           <CategoryCard
-            key={item.name}
-            type={item.name}
+            key={index}
+            type={item.displayName || item.name}
             description={item.description}
             onClick={handleCategoryClick}
           />

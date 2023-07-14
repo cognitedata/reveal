@@ -7,7 +7,7 @@ import { useKeyboardListener } from '../../hooks/listeners/useKeyboardListener';
 import { useNavigation } from '../../hooks/useNavigation';
 import { useSearchFilterParams } from '../../hooks/useParams';
 import { useTranslation } from '../../hooks/useTranslation';
-import { useTypesDataModelQuery } from '../../services/dataModels/query/useTypesDataModelQuery';
+import { useFDM } from '../../providers/FDMProvider';
 
 import { SearchList } from './components/SearchList';
 
@@ -28,14 +28,14 @@ export const SearchPreviewActions = ({
   const navigate = useNavigation();
   const [filterParams] = useSearchFilterParams();
 
-  const { data } = useTypesDataModelQuery();
+  const client = useFDM();
 
   const types = useMemo(() => {
-    const genericTypes = (data || []).map(({ name }) => name);
+    const genericTypes = (client.allDataTypes || []).map(({ name }) => name);
 
     // TODO: Fix hardcoded types
     return [...genericTypes, 'Timeseries', 'Files'];
-  }, [data]);
+  }, [client]);
 
   const typesResults = useMemo(
     () =>

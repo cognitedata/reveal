@@ -10,7 +10,7 @@ import { SearchResults } from '../../../components/search/SearchResults';
 import { EMPTY_ARRAY } from '../../../constants/object';
 import { useNavigation } from '../../../hooks/useNavigation';
 import { useTranslation } from '../../../hooks/useTranslation';
-import { useTypesDataModelQuery } from '../../../services/dataModels/query/useTypesDataModelQuery';
+import { useFDM } from '../../../providers/FDMProvider';
 import { useSearchDataTypesQuery } from '../../../services/dataTypes/queries/useSearchDataTypesQuery';
 
 import { PAGE_SIZE } from './constants';
@@ -18,16 +18,17 @@ import { PAGE_SIZE } from './constants';
 export const GenericResults: React.FC<{ selectedDataType?: string }> = ({
   selectedDataType,
 }) => {
+  const client = useFDM();
   const { data: hits, isLoading } = useSearchDataTypesQuery();
-  const { data: types } = useTypesDataModelQuery();
 
   if (isLoading) {
     return <Skeleton.List lines={3} />;
   }
 
   if (selectedDataType) {
-    const type = types?.find((item) => item.name === selectedDataType);
-
+    const type = client.allDataTypes?.find(
+      (item) => item.name === selectedDataType
+    );
     return (
       <GenericResultItem
         dataType={selectedDataType}
@@ -40,7 +41,9 @@ export const GenericResults: React.FC<{ selectedDataType?: string }> = ({
   return (
     <>
       {Object.keys(hits || {}).map((dataType) => {
-        const type = types?.find((item) => item.name === dataType);
+        const type = client.allDataTypes?.find(
+          (item) => item.name === dataType
+        );
 
         return (
           <GenericResultItem
@@ -63,6 +66,7 @@ interface Props {
 const GenericResultItem: React.FC<Props> = ({ dataType, values, type }) => {
   const navigate = useNavigation();
   const { t } = useTranslation();
+  const client = useFDM();
 
   const [page, setPage] = useState<number>(PAGE_SIZE);
 
@@ -79,9 +83,14 @@ const GenericResultItem: React.FC<Props> = ({ dataType, values, type }) => {
 
   const handleRowClick = useCallback(
     (row: any) => {
-      navigate.toInstancePage(dataType, row.space, row.externalId);
+      const dataModel = client.getDataModelByDataType(dataType);
+      navigate.toInstancePage(dataType, row.space, row.externalId, {
+        dataModel: dataModel?.externalId,
+        space: dataModel?.space,
+        version: dataModel?.version,
+      });
     },
-    [navigate, dataType]
+    [navigate, dataType, client]
   );
 
   return (

@@ -8,9 +8,9 @@ import queryString from 'query-string';
 import { ResourceItem } from '@data-exploration-lib/core';
 
 import { DateRange, ValueByDataType } from '../containers/Filter';
+import { useSelectedDataModels } from '../services/useSelectedDataModels';
 import { createSearchParams } from '../utils/router';
 
-import { useDataModelParams } from './useDataModelParams';
 import { useGetChartsUrl, useGetCanvasUrl } from './useUrl';
 
 // TODO: rename this could help, react-router also has a 'useNavigation'.
@@ -18,9 +18,11 @@ export const useNavigation = () => {
   const navigate = useNavigate();
   const { search, pathname } = useLocation(); // <-- current location being accessed
   const params = useParams();
-  const dataModelParams = useDataModelParams();
+  // const dataModelParams = useDataModelParams();
   const chartsUrl = useGetChartsUrl();
   const canvasUrl = useGetCanvasUrl();
+
+  const selectedDataModels = useSelectedDataModels();
 
   // For migration: if we're located at the route, keep the route
   // TODO: Better way to use navigate function to do this?
@@ -29,10 +31,10 @@ export const useNavigation = () => {
     [pathname]
   );
 
-  const basePath = useMemo(() => {
-    const { space, dataModel, version } = params;
-    return `${basename}/${dataModel}/${space}/${version}`;
-  }, [basename, params]);
+  // const basePath = useMemo(() => {
+  //   const { space, dataModel, version } = params;
+  //   return `${basename}/${dataModel}/${space}/${version}`;
+  // }, [basename, params]);
 
   const toSearchPage = useCallback(
     (
@@ -48,23 +50,25 @@ export const useNavigation = () => {
       });
 
       navigate({
-        pathname: ['search', !ignoreType && type].filter(Boolean).join('/'),
+        pathname: [basename, 'search', !ignoreType ? type : undefined]
+          .filter((item) => item !== undefined)
+          .join('/'),
         search: queryParams.toString(),
       });
     },
-    [params, navigate]
+    [basename, params, navigate]
   );
 
   const toSearchCategoryPage = useCallback(
     (dataType?: string, cleanSearch?: boolean) => {
       navigate({
-        pathname: [`${basePath}/search`, dataType && `/${dataType}`]
-          .filter(Boolean)
-          .join(''),
+        pathname: [basename, `search`, dataType ? `${dataType}` : undefined]
+          .filter((item) => item !== undefined)
+          .join('/'),
         search: cleanSearch ? undefined : search,
       });
     },
-    [basePath, navigate, search]
+    [basename, navigate, search]
   );
 
   // NOTE: this is gonna be removed, there will be no list pages, only search results.
@@ -118,9 +122,9 @@ export const useNavigation = () => {
 
       const pathname = [
         basename,
-        dataModel || dataModelParams?.dataModel,
-        space || dataModelParams?.space,
-        version || dataModelParams?.version,
+        dataModel,
+        space,
+        version,
         dataType,
         instanceSpace,
         externalId,
@@ -133,16 +137,13 @@ export const useNavigation = () => {
         search: queryParams.toString(),
       });
     },
-    [basename, navigate, dataModelParams, search]
+    [basename, navigate, search]
   );
 
   const toTimeseriesPage = useCallback(
     (externalId: string | number) => {
       const { space, dataModel, version } = params;
-      console.log(
-        'LOL',
-        `${basename}/${dataModel}/${space}/${version}/timeseries/${externalId}`
-      );
+
       navigate({
         pathname: `${basename}/${dataModel}/${space}/${version}/timeseries/${externalId}`,
         search,

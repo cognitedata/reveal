@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import styled from 'styled-components';
 
-import { Body, Title } from '@cognite/cogs.js';
+import { Body, Title, Tooltip } from '@cognite/cogs.js';
 
-import { useDataModelParams } from '../../hooks/useDataModelParams';
+import { ModalConfirm } from '../../components/confirm/ModalConfirm';
+import { useDataModelsLocalStorage } from '../../hooks/useLocalStorage';
 import { useProjectConfig } from '../../hooks/useProjectConfig';
 import { useTranslation } from '../../hooks/useTranslation';
-import { DataModelSelectorModal } from '../modals/DataModelSelectorModal';
+import { useSelectedDataModels } from '../../services/useSelectedDataModels';
 
 interface Props {
   header?: boolean;
@@ -18,10 +19,11 @@ export const SearchConfiguration: React.FC<Props> = ({ header }) => {
   const { t } = useTranslation();
   const config = useProjectConfig();
 
-  const selectedDataModel = useDataModelParams();
+  const selectedDataModels = useSelectedDataModels();
 
-  const [siteSelectionVisible, setSiteSelectionVisible] =
-    useState<boolean>(false);
+  const [, setSelectedDataModels] = useDataModelsLocalStorage();
+
+  const dataModels = selectedDataModels?.map((item) => item.externalId);
 
   const Wrapper: any = header ? Title : Body;
 
@@ -29,21 +31,30 @@ export const SearchConfiguration: React.FC<Props> = ({ header }) => {
     <Container>
       <Wrapper level={header ? 3 : 6}>
         {header
-          ? t('HOMEPAGE_HEADER', { site: config?.site, model: '' })
-          : t('SEARCH_RESULTS_HEADER', { site: config?.site, model: '' })}
+          ? t('HOMEPAGE_HEADER', { site: config?.site })
+          : t('SEARCH_RESULTS_HEADER', { site: config?.site })}
 
-        <StyledBody
-          onClick={() => setSiteSelectionVisible(true)}
-          isHeader={header}
-        >
-          {selectedDataModel?.dataModel || '...'}
-        </StyledBody>
+        {!config?.dataModels && (
+          <ModalConfirm
+            title="Are you sure you want to change the data models?"
+            content="By confirming, you will lose all your current selections!"
+          >
+            <StyledBody
+              onClick={() => setSelectedDataModels(undefined)}
+              $isHeader={header}
+            >
+              {dataModels?.splice(0, 2).join(', ') || '...'}
+              <Tooltip wrapped content={dataModels?.join(', ')}>
+                <>
+                  {dataModels &&
+                    dataModels.length > 0 &&
+                    `, +${dataModels?.length}`}
+                </>
+              </Tooltip>
+            </StyledBody>
+          </ModalConfirm>
+        )}
       </Wrapper>
-      <DataModelSelectorModal
-        isVisible={siteSelectionVisible}
-        onModalClose={() => setSiteSelectionVisible(false)}
-        isClosable
-      />
     </Container>
   );
 };
@@ -53,11 +64,11 @@ const Container = styled.div`
   padding-left: 8px;
 `;
 
-const StyledBody = styled(Body)<{ isHeader?: boolean }>`
+const StyledBody = styled.p<{ $isHeader?: boolean }>`
   display: inline-flex;
   align-items: center;
   color: rgba(51, 51, 51, 0.6);
-  font-size: ${({ isHeader }) => (isHeader ? '24px' : '14px')};
+  font-size: ${({ $isHeader }) => ($isHeader ? '24px' : '14px')};
 
   &:hover {
     cursor: pointer;

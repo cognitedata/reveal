@@ -1,27 +1,61 @@
 import { createContext, useContext, useMemo } from 'react';
 import type { FC, PropsWithChildren } from 'react';
-import { useParams } from 'react-router-dom';
 
+import { Loader } from '@cognite/cogs.js';
 import { useSDK } from '@cognite/sdk-provider';
 
-import { FDMClient } from '../services/FDMClient';
+import { DataModelSelector } from '../containers/selectors/DataModelSelector';
+import { useTypesDataModelsQuery } from '../services/dataModels/query/useTypesDataModelQuery';
+import { FDMClientV2 } from '../services/FDMClientV2';
+import { FDMComposer } from '../services/FDMComposer';
+import { FDMSchema } from '../services/FDMSchema';
+import { useSelectedDataModels } from '../services/useSelectedDataModels';
 
-const FDMContext = createContext<FDMClient | undefined>(undefined);
+const FDMContext = createContext<FDMComposer | undefined>(undefined);
 
 export const FDMProvider: FC<PropsWithChildren> = ({ children }) => {
   const sdk = useSDK();
-  const { dataModel, space, version } = useParams();
 
-  const fdmClient = useMemo(() => {
-    if (!(dataModel && space && version)) {
-      throw new Error('Missing dataModel, space or version');
-    }
+  const dataModels = useSelectedDataModels();
 
-    return new FDMClient(sdk, { dataModel, space, version });
-  }, [sdk, dataModel, space, version]);
+  const { data, isLoading } = useTypesDataModelsQuery();
+
+  const fdmComposer = useMemo(() => {
+    const fdmClients = data?.map((dataModel) => {
+      const schema = new FDMSchema(dataModel);
+      return new FDMClientV2(sdk, schema);
+    });
+
+    return new FDMComposer(fdmClients);
+  }, [sdk, data]);
+
+  // useEffect(() => {
+  //   if (dataModel && space && version) {
+  //     // TODO: fix code to send correct event name and data to copilot
+  //     sendToCopilotEvent('NEW_MESSAGES', [
+  //       {
+  //         type: 'data-model',
+  //         space,
+  //         version,
+  //         dataModel,
+  //         content: 'I want to search on this data model',
+  //         source: 'bot',
+  //       },
+  //     ]);
+  //     // sendToCopilotEvent('GET_CODE', selectedDataModel?.dataModel);
+  //   }
+  // }, [dataModel, space, version]);
+
+  if (!dataModels) {
+    return <DataModelSelector />;
+  }
+
+  if (isLoading) {
+    return <Loader />;
+  }
 
   return (
-    <FDMContext.Provider value={fdmClient}>{children}</FDMContext.Provider>
+    <FDMContext.Provider value={fdmComposer}>{children}</FDMContext.Provider>
   );
 };
 

@@ -26,7 +26,7 @@ export const RelationshipDirectWidget: React.FC<Props> = ({
   type,
 }) => {
   const { t } = useTranslation();
-  const { instanceSpace } = useParams();
+  const { instanceSpace, dataModel, space, version } = useParams();
   const { data, status, isLoading } = useInstanceRelationshipQuery(type);
 
   const navigate = useNavigation();
@@ -38,7 +38,11 @@ export const RelationshipDirectWidget: React.FC<Props> = ({
       >
         <Button.InternalRedirect
           onClick={() => {
-            navigate.toInstancePage(type.type, instanceSpace, data.externalId);
+            navigate.toInstancePage(type.type, instanceSpace, data.externalId, {
+              dataModel,
+              space,
+              version,
+            });
           }}
           disabled={!isLoading && data === null}
           loading={isLoading}

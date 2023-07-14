@@ -1,5 +1,7 @@
 import { type AddResourceOptions } from '@cognite/reveal-react-components';
 
+import { DataModelV2 } from '../app/services/types';
+
 export type DataModelConfig = {
   name: string;
   space: string;
@@ -11,7 +13,7 @@ export type ProjectConfig = {
   site: string;
   imageUrl?: string;
   description?: string;
-  dataModels: DataModelConfig[];
+  dataModels?: DataModelV2[];
   instanceSpaces?: string[];
   threeDResources?: AddResourceOptions[];
 
