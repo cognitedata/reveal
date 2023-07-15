@@ -180,26 +180,17 @@ const LeftSidebar: React.FC = () => {
         />
       </CollapseButton>
       <ItemsContainer>
-        <NavLink
-          to="/explore"
-          key="explorer"
-          onClick={() => {
-            metrics.track('Navigated to Explorer', {
-              key: 'explorer',
-              application: 'explorer',
-            });
-          }}
-        >
+        <a href="https://apps.cognite.com" key="explorer">
           <ApplicationNavigationItem
             item={{
               iconKey: 'Cognite',
               key: 'Explorer',
               title: 'Explorer',
-              url: '/explore',
+              url: 'https://apps.cognite.com',
             }}
             isOpen={isOpen}
           />
-        </NavLink>
+        </a>
       </ItemsContainer>
       {!!applications.length && (
         <>

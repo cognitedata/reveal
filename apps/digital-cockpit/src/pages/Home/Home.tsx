@@ -140,7 +140,7 @@ const Home = () => {
   const renderSolutions = () => {
     return (
       <>
-        <Link to="/explore">
+        <a href="https://apps.cognite.com">
           <Card
             isMini
             header={{
@@ -151,7 +151,7 @@ const Home = () => {
               },
             }}
           />
-        </Link>
+        </a>
         {[...(installedApps || []), ...(applications || [])].map(
           (item: ApplicationItem) => (
             <Card
