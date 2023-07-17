@@ -55,18 +55,28 @@ export const useRelatedTimeseriesQuery = ({
     [sortBy]
   );
 
-  const { data = [], ...rest } = useTimeseriesListQuery(
+  const hasRelatedTimeseries = !isEmpty(detailViewRelatedResourcesData);
+
+  const {
+    data = [],
+    isLoading,
+    ...rest
+  } = useTimeseriesListQuery(
     {
       advancedFilter,
       sort,
       limit: 20,
     },
-    { enabled: !isEmpty(detailViewRelatedResourcesData) }
+    { enabled: hasRelatedTimeseries }
   );
 
   const transformedData = useMemo(() => {
     return addDetailViewData(data, detailViewRelatedResourcesData);
   }, [data, detailViewRelatedResourcesData]);
 
-  return { data: transformedData, ...rest };
+  return {
+    data: transformedData,
+    isLoading: hasRelatedTimeseries && isLoading,
+    ...rest,
+  };
 };

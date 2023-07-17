@@ -52,18 +52,28 @@ export const useRelatedAssetsQuery = ({
 
   const sort = useMemo(() => mapTableSortByToAssetSortFields(sortBy), [sortBy]);
 
-  const { data = [], ...rest } = useAssetsListQuery(
+  const hasRelatedAssets = !isEmpty(detailViewRelatedResourcesData);
+
+  const {
+    data = [],
+    isLoading,
+    ...rest
+  } = useAssetsListQuery(
     {
       advancedFilter,
       sort,
       limit: 20,
     },
-    { enabled: !isEmpty(detailViewRelatedResourcesData) }
+    { enabled: hasRelatedAssets }
   );
 
   const transformedData = useMemo(() => {
     return addDetailViewData(data, detailViewRelatedResourcesData);
   }, [data, detailViewRelatedResourcesData]);
 
-  return { data: transformedData, ...rest };
+  return {
+    data: transformedData,
+    isLoading: hasRelatedAssets && isLoading,
+    ...rest,
+  };
 };

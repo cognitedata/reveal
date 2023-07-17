@@ -85,6 +85,7 @@ export const FileRelatedSearchResults: React.FC<Props> = ({
   const filesQuery = useRelatedFilesQuery({
     resourceExternalId,
     relationshipFilter: { labels },
+    enabled: !isDocumentsApiEnabled,
   });
 
   const documentsQuery = useRelatedDocumentsQuery({
@@ -93,6 +94,7 @@ export const FileRelatedSearchResults: React.FC<Props> = ({
     documentFilter,
     query: debouncedQuery,
     sortBy,
+    enabled: isDocumentsApiEnabled,
   });
 
   const { data, isLoading, hasNextPage, fetchNextPage } = isDocumentsApiEnabled

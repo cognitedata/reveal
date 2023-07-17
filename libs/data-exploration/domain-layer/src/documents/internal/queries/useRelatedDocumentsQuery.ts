@@ -29,12 +29,14 @@ export const useRelatedDocumentsQuery = ({
   documentFilter = {},
   query,
   sortBy,
+  enabled = true,
 }: {
   resourceExternalId?: string;
   relationshipFilter?: RelationshipsFilterInternal;
   documentFilter?: InternalDocumentFilter;
   query?: string;
   sortBy?: TableSortBy[];
+  enabled?: boolean;
 }) => {
   const { data: detailViewRelatedResourcesData } =
     useRelatedResourceDataForDetailView({
@@ -57,13 +59,15 @@ export const useRelatedDocumentsQuery = ({
     [sortBy]
   );
 
-  const { data, ...rest } = useDocumentSearchQuery(
+  const hasRelatedDocuments = !isEmpty(detailViewRelatedResourcesData);
+
+  const { data, isLoading, ...rest } = useDocumentSearchQuery(
     {
       filter,
       sort,
       limit: 20,
     },
-    { enabled: !isEmpty(detailViewRelatedResourcesData) }
+    { enabled: enabled && hasRelatedDocuments }
   );
 
   const transformedData = useMemo(() => {
@@ -78,5 +82,9 @@ export const useRelatedDocumentsQuery = ({
     return addDetailViewData(documents, detailViewRelatedResourcesData);
   }, [data, detailViewRelatedResourcesData]);
 
-  return { data: transformedData, ...rest };
+  return {
+    data: transformedData,
+    isLoading: enabled && hasRelatedDocuments && isLoading,
+    ...rest,
+  };
 };

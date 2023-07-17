@@ -55,18 +55,28 @@ export const useRelatedSequenceQuery = ({
     [sortBy]
   );
 
-  const { data = [], ...rest } = useSequenceListQuery(
+  const hasRelatedSequences = !isEmpty(detailViewRelatedResourcesData);
+
+  const {
+    data = [],
+    isLoading,
+    ...rest
+  } = useSequenceListQuery(
     {
       advancedFilter,
       sort,
       limit: 20,
     },
-    { enabled: !isEmpty(detailViewRelatedResourcesData) }
+    { enabled: hasRelatedSequences }
   );
 
   const transformedData = useMemo(() => {
     return addDetailViewData(data, detailViewRelatedResourcesData);
   }, [data, detailViewRelatedResourcesData]);
 
-  return { data: transformedData, ...rest };
+  return {
+    data: transformedData,
+    isLoading: hasRelatedSequences && isLoading,
+    ...rest,
+  };
 };

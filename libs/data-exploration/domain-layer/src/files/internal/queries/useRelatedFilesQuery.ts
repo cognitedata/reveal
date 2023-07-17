@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 
 import { useInfiniteQuery } from '@tanstack/react-query';
+import isEmpty from 'lodash/isEmpty';
 
 import { FileInfo } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
@@ -22,7 +23,7 @@ import {
 export const useRelatedFilesQuery = ({
   resourceExternalId,
   relationshipFilter,
-  enabled,
+  enabled = true,
 }: {
   resourceExternalId?: string;
   relationshipFilter?: RelationshipsFilterInternal;
@@ -43,12 +44,14 @@ export const useRelatedFilesQuery = ({
     }));
   }, [detailViewRelatedResourcesData]);
 
-  const { data, ...rest } = useInfiniteQuery(
+  const hasRelatedFiles = !isEmpty(detailViewRelatedResourcesData);
+
+  const { data, isLoading, ...rest } = useInfiniteQuery(
     queryKeys.relatedFiles(externalIds),
     () => {
       return sdk.files.retrieve(externalIds).catch(() => []);
     },
-    { enabled }
+    { enabled: enabled && hasRelatedFiles }
   );
 
   const transformedData = useMemo(() => {
@@ -61,5 +64,9 @@ export const useRelatedFilesQuery = ({
     return addDetailViewData(files, detailViewRelatedResourcesData);
   }, [data, detailViewRelatedResourcesData]);
 
-  return { data: transformedData, ...rest };
+  return {
+    data: transformedData,
+    isLoading: enabled && hasRelatedFiles && isLoading,
+    ...rest,
+  };
 };

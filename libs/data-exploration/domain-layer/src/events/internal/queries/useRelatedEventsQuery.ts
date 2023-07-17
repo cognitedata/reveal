@@ -52,18 +52,28 @@ export const useRelatedEventsQuery = ({
 
   const sort = useMemo(() => mapTableSortByToEventSortFields(sortBy), [sortBy]);
 
-  const { data = [], ...rest } = useEventsListQuery(
+  const hasRelatedEvents = !isEmpty(detailViewRelatedResourcesData);
+
+  const {
+    data = [],
+    isLoading,
+    ...rest
+  } = useEventsListQuery(
     {
       advancedFilter,
       sort,
       limit: 20,
     },
-    { enabled: !isEmpty(detailViewRelatedResourcesData) }
+    { enabled: hasRelatedEvents }
   );
 
   const transformedData = useMemo(() => {
     return addDetailViewData(data, detailViewRelatedResourcesData);
   }, [data, detailViewRelatedResourcesData]);
 
-  return { data: transformedData, ...rest };
+  return {
+    data: transformedData,
+    isLoading: hasRelatedEvents && isLoading,
+    ...rest,
+  };
 };
