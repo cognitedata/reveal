@@ -35,7 +35,6 @@ Install the package
 ```
 npm install -g @cognite/cdf-mock-server
 ```
-
 Or
 
 ```

@@ -19,6 +19,15 @@ jobs:
         with:
           node-version: '18'
 
+      - name: Set NPMKEY variable
+        run: |
+          export NPMKEY=$(echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_READONLY_TOKEN }}")
+          echo "::set-output name=NPMKEY::$NPMKEY"
+        id: npm_auth_key
+
+      - name: Create .npmrc
+        run: echo '${{ steps.npm_auth_key.outputs.NPMKEY }}' > .npmrc
+
       - name: Cache node modules
         id: cache-node-modules
         uses: actions/cache@v3
