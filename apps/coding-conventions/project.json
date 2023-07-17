@@ -54,7 +54,8 @@
       },
       "configurations": {
         "development": {
-          "buildTarget": "coding-conventions:build:development"
+          "buildTarget": "coding-conventions:build:development",
+          "allowedHosts": "*.dev.fusion.cogniteapp.com,apps-staging.cognite.com"
         },
         "production": {
           "buildTarget": "coding-conventions:build:production",
