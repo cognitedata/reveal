@@ -60,7 +60,7 @@ export default function GroupDrawer({ group, onClose }: Props) {
   });
 
   return (
-    <Drawer visible onClose={onClose} width={720} title="Create new group">
+    <Drawer open onClose={onClose} width={720} title="Create new group">
       <Form
         layout="vertical"
         onFinish={(g: Group) => {
