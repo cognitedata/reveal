@@ -22,7 +22,7 @@ export const InstancesPage = () => {
     version,
   });
 
-  const edgeRelationshios = client.listEdgeRelationships(dataType, {
+  const edgeRelationships = client.listEdgeRelationships(dataType, {
     dataModel,
     space,
     version,
@@ -54,7 +54,7 @@ export const InstancesPage = () => {
           />
         ))}
 
-        {edgeRelationshios?.map((item) => {
+        {edgeRelationships?.map((item) => {
           return (
             <RelationshipEdgesWidget
               key={item.name}
