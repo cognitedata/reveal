@@ -5,3 +5,4 @@ export * from './useAssetsSearchAggregateQuery';
 export * from './useAssetsSearchResultQuery';
 export * from './useAssetsSearchResultWithLabelsQuery';
 export * from './useGetRootAsset';
+export * from './useRelatedAssetsQuery';
