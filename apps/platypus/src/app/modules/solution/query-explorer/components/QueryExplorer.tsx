@@ -25,7 +25,8 @@ type QueryExplorerType = {
   space: string;
   schemaVersion: string;
   defaultQuery?: string;
-  onQueryChange?: (query?: string) => void;
+  defaultVariables?: any;
+  onQueryChange?: (newVar: { query: string; variables?: any }) => void;
 };
 
 export const QueryExplorer = ({
@@ -34,6 +35,7 @@ export const QueryExplorer = ({
   space,
   onQueryChange,
   defaultQuery,
+  defaultVariables,
 }: QueryExplorerType) => {
   const { t } = useTranslation('query_explorer');
   const localStorageProvider = useInjection(
@@ -53,7 +55,9 @@ export const QueryExplorer = ({
   const [gqlSchema, setGqlSchema] = useState<GraphQLSchema>();
   const [isReady, setIsReady] = useState<boolean>(false);
   const [explorerQuery, handleEditQuery] = useState(defaultQuery);
-  const [explorerVariables, handleEditVariables] = useState('{}');
+  const [explorerVariables, handleEditVariables] = useState(
+    JSON.stringify(defaultVariables || {}, null, 2)
+  );
   const { track } = useMixpanel();
 
   const explorerPlugin = useExplorerPlugin({
@@ -64,10 +68,15 @@ export const QueryExplorer = ({
   });
 
   useEffect(() => {
-    if (onQueryChange) {
-      onQueryChange(explorerQuery);
+    if (onQueryChange && explorerQuery) {
+      try {
+        const variables = JSON.parse(explorerVariables.trim() || '{}');
+        onQueryChange({ query: explorerQuery, variables });
+      } catch {
+        //ignore
+      }
     }
-  }, [onQueryChange, explorerQuery]);
+  }, [onQueryChange, explorerQuery, explorerVariables]);
 
   useEffect(() => {
     if (isReady || !dataModelExternalId || !schemaVersion) {

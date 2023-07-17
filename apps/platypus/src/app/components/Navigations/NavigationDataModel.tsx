@@ -33,7 +33,6 @@ import {
   Tooltip,
 } from '@cognite/cogs.js';
 
-import { FeaturePreview } from '../FeaturePreview/FeaturePreview';
 import { SchemaVersionDropdown } from '../SchemaVersionDropdown/SchemaVersionDropdown';
 
 import {
@@ -145,7 +144,6 @@ export const NavigationDataModel = () => {
   };
 
   const [showEndpointModal, setShowEndpointModal] = useState(false);
-  const [showFeatureToggle, setShowFeatureToggle] = useState(false);
 
   const docsLinkUrl =
     currentPage === 'preview' ? DOCS_LINKS.QUERYING : DOCS_LINKS.CREATION;
@@ -286,16 +284,6 @@ export const NavigationDataModel = () => {
         <EndpointModal
           endpoint={fdmClient.getQueryEndpointUrl(selectedDataModelVersion)}
           onRequestClose={() => setShowEndpointModal(false)}
-        />
-      )}
-      {showFeatureToggle && (
-        <FeaturePreview
-          onRequestClose={(hasChanged) => {
-            setShowFeatureToggle(false);
-            if (hasChanged) {
-              window.location.reload();
-            }
-          }}
         />
       )}
 

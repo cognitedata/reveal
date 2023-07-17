@@ -12,7 +12,6 @@ import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedData
 import { fetchGptAutoQuery } from '@platypus-app/utils/gpt-query';
 import zIndex from '@platypus-app/utils/zIndex';
 
-import sdk from '@cognite/cdf-sdk-singleton';
 import {
   Button,
   Collapse,
@@ -35,8 +34,6 @@ import { GraphqlCodeEditor } from '../../data-model/components/GraphqlCodeEditor
 import { QueryExplorer } from '../components/QueryExplorer';
 import graphqlQueryFetcher from '../utils/graphqlQueryFetcher';
 
-import { augmentQueryWithRequiredFields } from './util';
-
 export interface QueryExplorerPageProps {
   dataModelExternalId: string;
   space: string;
@@ -50,11 +47,11 @@ export const SearchPage = ({
   const [searchText, setSearchText] = useState('');
   const [isQueryExplorerVisible, setQueryExplorerVisible] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
-  const [graphQLQuery, setGraphQLQuery] = useState<string | undefined>(
-    undefined
-  );
+  const [graphQLQuery, setGraphQLQuery] = useState<
+    { query: string; variables?: any } | undefined
+  >(undefined);
   const [queryExplorerQuery, setQueryExplorerQuery] = useState<
-    string | undefined
+    { query: string; variables?: any } | undefined
   >(undefined);
   const [result, setResult] = useState<any>(undefined);
   const [error, setError] = useState<string | undefined>(undefined);
@@ -76,24 +73,20 @@ export const SearchPage = ({
   const onSearch = () => {
     setIsSearching(true);
     async function generateQuery() {
-      const query = await fetchGptAutoQuery(
+      const newQuery = await fetchGptAutoQuery(
         searchText,
-        selectedDataModelVersion.schema,
-        sdk
+        selectedDataModelVersion.externalId,
+        selectedDataModelVersion.version,
+        selectedDataModelVersion.space
       );
       // reset query explorer and result
       setQueryExplorerQuery(undefined);
       setResult(undefined);
       track('ChatGPTSearch.GeneratedQuery', {
         searchText,
-        query: graphQLQuery,
+        ...newQuery,
       });
-
-      const augmentedQuery = augmentQueryWithRequiredFields(
-        query,
-        dataModelTypeDefs
-      );
-      setGraphQLQuery(augmentedQuery);
+      setGraphQLQuery(newQuery);
     }
     generateQuery();
   };
@@ -105,14 +98,14 @@ export const SearchPage = ({
       setResult(undefined);
       graphqlQueryFetcher
         .fetcher(
-          { query: graphQLQuery },
+          graphQLQuery,
           dataModelExternalId,
           selectedDataModelVersion.version,
           space
         )
         .then((data) => {
           setIsSearching(false);
-          track('ChatGPTSearch.RunQuery', { query: graphQLQuery });
+          track('ChatGPTSearch.RunQuery', { ...graphQLQuery });
           setResult(data);
         })
         .catch((e) => {
@@ -184,7 +177,12 @@ export const SearchPage = ({
         />
         {graphQLQuery && (
           <div style={{ right: 16, position: 'absolute', top: 6 }}>
-            <NotificationDot hidden={queryExplorerQuery !== graphQLQuery}>
+            <NotificationDot
+              hidden={
+                JSON.stringify(queryExplorerQuery) !==
+                JSON.stringify(graphQLQuery)
+              }
+            >
               <Button
                 icon={error ? 'Warning' : 'Code'}
                 size="small"
@@ -321,7 +319,8 @@ export const SearchPage = ({
                 space={space}
                 dataModelExternalId={dataModelExternalId}
                 schemaVersion={selectedDataModelVersion.version}
-                defaultQuery={graphQLQuery}
+                defaultVariables={graphQLQuery?.query}
+                defaultQuery={graphQLQuery?.variables}
                 onQueryChange={(query) => {
                   setQueryExplorerQuery(query);
                   setGraphQLQuery(undefined);

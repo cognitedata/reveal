@@ -1,4 +1,4 @@
-import { useFeatureToggle, useUpdateFeatureToggle } from './flag';
+import { useFlag } from '@cognite/react-feature-flags';
 
-export const useGPTSearch = () => useFeatureToggle('GPT_SEARCH');
-export const useUpdateGPTSearch = () => useUpdateFeatureToggle('GPT_SEARCH');
+export const useGPTSearch = () => useFlag('COGNITE_COPILOT');
+// export const useUpdateGPTSearch = () => useUpdateFeatureToggle('GPT_SEARCH');
