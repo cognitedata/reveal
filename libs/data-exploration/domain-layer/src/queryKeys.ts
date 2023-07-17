@@ -265,6 +265,8 @@ export const queryKeys = {
     fileId,
     'previewURL',
   ],
+  relatedFiles: (input?: any[]) =>
+    [...queryKeys.files(), 'related-files', ...(input || [])] as const,
 
   // Relationships
   relationships: () => [...queryKeys.all, 'relationships'] as const,
