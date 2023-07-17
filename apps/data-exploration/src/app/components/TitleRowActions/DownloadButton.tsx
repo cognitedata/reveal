@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { useQuery } from '@tanstack/react-query';
+import isEmpty from 'lodash/isEmpty';
 
 import { Button, Dropdown, Menu, Tooltip } from '@cognite/cogs.js';
 import {
@@ -9,13 +9,16 @@ import {
   FileDownloadAnchor,
   Resource,
 } from '@cognite/data-exploration';
-import { FileInfo } from '@cognite/sdk';
-import { useSDK } from '@cognite/sdk-provider';
-import { useCdfItem, baseCacheKey } from '@cognite/sdk-react-query-hooks';
+import { DoubleDatapoint, FileInfo } from '@cognite/sdk';
+import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 
 import { DateFilter } from '@data-exploration-app/components/ResourceTitleRow';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { useTranslation } from '@data-exploration-lib/core';
+import {
+  MAX_DOWNLOAD_LIMIT_DATAPOINTS,
+  useTimeseriesDataPointsQuery,
+} from '@data-exploration-lib/domain-layer';
 
 type Props = {
   item: ResourceItem;
@@ -24,6 +27,7 @@ type Props = {
 
 const DOWNLOAD_DATA_LABEL = 'Download data as JSON';
 const DOWNLOAD_DATAPOINTS_LABEL = 'Download data with datapoints as JSON';
+const DOWNLOAD_DATAPOINTS_CSV_LABEL = 'Download datapoints as CSV';
 
 function MetadataDownload({ item: { id, type } }: Props) {
   const { t } = useTranslation();
@@ -153,50 +157,78 @@ function FileDownloadButton({ item }: Props) {
 
 function TimeseriesDownloadButton({ item: { id, type }, dateFilter }: Props) {
   const { t } = useTranslation();
-  const sdk = useSDK();
   const [includeDatapoints, setIncludeDatpoints] = useState(false);
   const [downloading, setDownloading] = useState(false);
+  const [downloadCSV, setDownloadCSV] = useState(false);
 
   const api = convertResourceType(type);
 
-  const { data: metadata = {}, isFetched: metadataFetched } =
-    useCdfItem<Resource>(api, { id }, { enabled: downloading });
-
-  const limit = 100000;
-  const { data: datapoints = [], isFetched: dataPointsFetched } = useQuery(
-    [...baseCacheKey(api), 'datapoints', id, limit, dateFilter],
-    () =>
-      sdk.datapoints
-        .retrieve({ items: [{ id }], limit, ...dateFilter })
-        .then((r) => r[0].datapoints || []),
-    { enabled: downloading && includeDatapoints }
+  const { data: metadata, isFetched: metadataFetched } = useCdfItem<Resource>(
+    api,
+    { id },
+    { enabled: downloading }
   );
+
+  const { data = [], isFetched: dataPointsFetched } =
+    useTimeseriesDataPointsQuery(
+      [{ id }],
+      { ...dateFilter },
+      { enabled: downloading && includeDatapoints },
+      MAX_DOWNLOAD_LIMIT_DATAPOINTS
+    );
 
   useEffect(() => {
     if (includeDatapoints) {
-      if (downloading && metadataFetched && dataPointsFetched) {
-        const dataStr = `data:text/json;charset=utf-8,${encodeURIComponent(
-          JSON.stringify({ ...metadata, datapoints }, null, 2)
-        )}`;
+      if (
+        downloading &&
+        metadataFetched &&
+        dataPointsFetched &&
+        !isEmpty(data)
+      ) {
+        if (downloadCSV) {
+          const { datapoints, externalId } = data[0];
 
-        const dlAnchorElem = document.createElement('a');
-        dlAnchorElem.setAttribute('href', dataStr);
-        dlAnchorElem.setAttribute('download', `${type}-${id}.json`);
-        dlAnchorElem.click();
-        setDownloading(false);
+          const csvContent =
+            'data:text/csv;charset=utf-8,' +
+            'timestamp,value\n' +
+            (datapoints as DoubleDatapoint[])
+              .map((point) => `${point.timestamp},${point.value}`)
+              .join('\n');
+          const dlAnchorElem = document.createElement('a');
+          dlAnchorElem.setAttribute('href', csvContent);
+          dlAnchorElem.setAttribute('download', `${type}-${externalId}.csv`);
+          dlAnchorElem.click();
+
+          setDownloading(false);
+        } else {
+          const { datapoints, externalId } = data[0];
+          const dataStr = `data:text/json;charset=utf-8,${encodeURIComponent(
+            JSON.stringify({ ...metadata, datapoints }, null, 2)
+          )}`;
+
+          const dlAnchorElem = document.createElement('a');
+          dlAnchorElem.setAttribute('href', dataStr);
+          dlAnchorElem.setAttribute('download', `${type}-${externalId}.json`);
+          dlAnchorElem.click();
+
+          setDownloading(false);
+        }
       }
-    } else if (downloading && metadataFetched) {
+
+      trackUsage('Exploration.Action.Download.Timeseries', { id });
+    } else if (downloading && metadataFetched && !isEmpty(metadata)) {
+      const { externalId } = metadata;
       const dataStr = `data:text/json;charset=utf-8,${encodeURIComponent(
         JSON.stringify(metadata, null, 2)
       )}`;
 
       const dlAnchorElem = document.createElement('a');
       dlAnchorElem.setAttribute('href', dataStr);
-      dlAnchorElem.setAttribute('download', `${type}-${id}.json`);
+      dlAnchorElem.setAttribute('download', `${type}-${externalId}.json`);
       dlAnchorElem.click();
 
-      trackUsage('Exploration.Action.Download.Timeseries', { id });
       setDownloading(false);
+      trackUsage('Exploration.Action.Download.Timeseries', { id });
     }
   }, [
     downloading,
@@ -205,8 +237,9 @@ function TimeseriesDownloadButton({ item: { id, type }, dateFilter }: Props) {
     metadata,
     metadataFetched,
     dataPointsFetched,
-    datapoints,
+    data,
     includeDatapoints,
+    downloadCSV,
   ]);
 
   useEffect(() => {
@@ -230,6 +263,15 @@ function TimeseriesDownloadButton({ item: { id, type }, dateFilter }: Props) {
         }}
       >
         {t('DOWNLOAD_DATAPOINTS_LABEL', DOWNLOAD_DATAPOINTS_LABEL)}
+      </Menu.Item>
+      <Menu.Item
+        onClick={() => {
+          setIncludeDatpoints(true);
+          setDownloading(true);
+          setDownloadCSV(true);
+        }}
+      >
+        {t('DOWNLOAD_DATAPOINTS_CSV_LABEL', DOWNLOAD_DATAPOINTS_CSV_LABEL)}
       </Menu.Item>
     </Menu>
   );
