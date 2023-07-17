@@ -6,6 +6,7 @@ import { Body, Chip } from '@cognite/cogs.js';
 
 import { useNavigation } from '../../hooks/useNavigation';
 import { useTranslation } from '../../hooks/useTranslation';
+import { useFDM } from '../../providers/FDMProvider';
 import { useSearchAggregateQuery } from '../../services/dataTypes/queries/useSearchAggregatesQuery';
 import { useFilesSearchAggregateCountQuery } from '../../services/instances/file/queries/useFilesSearchAggregateCountQuery';
 import { useTimeseriesSearchAggregateCountQuery } from '../../services/instances/timeseries/queries/useTimeseriesSearchAggregateCountQuery';
@@ -17,6 +18,7 @@ export const SearchCategories = () => {
   const navigate = useNavigation();
 
   const { type } = useParams();
+  const client = useFDM();
 
   const { data: genericCount, isLoading: isGenericLoading } =
     useSearchAggregateQuery();
@@ -52,7 +54,8 @@ export const SearchCategories = () => {
         />
       </Content>
 
-      {Object.keys(genericCount ?? {})?.map((dataType) => {
+      {client.allDataTypes?.map((item) => {
+        const dataType = item.name;
         const count = genericCount?.[dataType];
         const isDisabled = !count;
 
@@ -63,7 +66,7 @@ export const SearchCategories = () => {
             disabled={isDisabled}
             onClick={() => !isDisabled && handleSelectionClick(dataType)}
           >
-            <NameText>{dataType}</NameText>
+            <NameText>{item.displayName || dataType}</NameText>
             <Chip
               size="x-small"
               type={isSelected(dataType) ? 'neutral' : undefined}

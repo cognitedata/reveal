@@ -185,12 +185,20 @@ export const DateFilter = ({
 };
 const CreatedTimeFilter = (props: DateFilterProps) => {
   const { t } = useTranslation();
-  return <DateFilter {...props} label={t('CREATED_TIME', 'Created Time')} />;
+  return (
+    <div data-testid="common-created-time-filter">
+      <DateFilter {...props} label={t('CREATED_TIME', 'Created Time')} />
+    </div>
+  );
 };
 
 const UpdatedTimeFilter = (props: DateFilterProps) => {
   const { t } = useTranslation();
-  return <DateFilter {...props} label={t('UPDATED_TIME', 'Updated Time')} />;
+  return (
+    <div data-testid="common-updated-time-filter">
+      <DateFilter {...props} label={t('UPDATED_TIME', 'Updated Time')} />
+    </div>
+  );
 };
 
 const StartTimeFilter = (props: DateFilterProps) => {

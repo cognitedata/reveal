@@ -1,0 +1,35 @@
+name: NX CD pipeline
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  setup:
+    name: Setup
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Cache node modules
+        id: cache-node-modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            node_modules
+            ~/.cache/Cypress
+          key: cache-node-modules-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            cache-node-modules-${{ hashFiles('yarn.lock') }}
+            cache-node-modules-
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile

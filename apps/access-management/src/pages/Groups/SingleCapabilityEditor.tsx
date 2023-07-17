@@ -296,7 +296,7 @@ const SingleCapabilityEditor = (props: SingleCapabilityEditorProps) => {
     <Drawer
       width={720}
       title={title}
-      visible={visible}
+      open={visible}
       onClose={() => clearStateAndExit()}
     >
       <Form layout="vertical">

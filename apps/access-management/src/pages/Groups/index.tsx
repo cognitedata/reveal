@@ -3,7 +3,6 @@ import { useParams } from 'react-router-dom';
 
 import { useTranslation } from '@access-management/common/i18n';
 import {
-  useAuthConfiguration,
   useGroups,
   usePermissions,
   useListServiceAccounts,
@@ -69,7 +68,7 @@ export default function Groups() {
       refetchInterval: localDefaultGroup ? 1000 : false,
     }
   );
-  const { data: authSettings } = useAuthConfiguration();
+
   const { data: groups, isFetched: groupsFetched } = useGroups(true);
   const { data: serviceAccounts } = useListServiceAccounts(legacyFlow);
 
@@ -159,10 +158,7 @@ export default function Groups() {
       },
       render(id: number) {
         let extra;
-        if (
-          id === project?.defaultGroupId &&
-          authSettings?.isLegacyLoginFlowAndApiKeysEnabled
-        ) {
+        if (id === project?.defaultGroupId) {
           extra = (
             <Tooltip
               key={id}
@@ -292,8 +288,7 @@ export default function Groups() {
   return (
     <>
       <AccessConfigurationWarning />
-      {!authSettings?.isLegacyLoginFlowAndApiKeysEnabled &&
-      serviceAccounts?.length ? (
+      {serviceAccounts?.length ? (
         <LegacyServiceAccountsWarning accounts={serviceAccounts} />
       ) : null}
       <Row justify="space-between">

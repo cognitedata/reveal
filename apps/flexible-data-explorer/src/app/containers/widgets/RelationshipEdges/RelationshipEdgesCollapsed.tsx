@@ -17,7 +17,7 @@ export const RelationshipEdgesCollapsed: React.FC<RelationshipEdgesProps> = ({
   type,
 }) => {
   const { t } = useTranslation();
-  const { instanceSpace } = useParams();
+  const { instanceSpace, dataModel, version, space } = useParams();
   const navigate = useNavigation();
   const { data, isLoading, status } = useInstanceRelationshipQuery(type);
 
@@ -45,7 +45,12 @@ export const RelationshipEdgesCollapsed: React.FC<RelationshipEdgesProps> = ({
                   navigate.toInstancePage(
                     type.type,
                     instanceSpace,
-                    item.externalId
+                    item.externalId,
+                    {
+                      dataModel,
+                      space,
+                      version,
+                    }
                   );
                 }}
               />

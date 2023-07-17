@@ -4,21 +4,21 @@ import { ProjectConfig } from './types';
 
 export const cogniteConfig: ProjectConfig[] = [
   {
-    project: 'dss-dev',
+    project: 'dss-dev-dss',
     site: 'Akerkvartalet',
     description:
       'All the data from the offices in Oslo is consolidated within this area.',
 
     dataModels: [
       {
-        name: 'MovieDM',
+        externalId: 'MovieDM',
         space: 'deep',
         version: '4',
       },
       {
-        name: 'IndustryCanvas',
-        space: 'IndustryCanvas',
-        version: '2',
+        externalId: 'AdvancedJoins',
+        space: 'AdvancedJoins',
+        version: '3',
       },
     ],
 
@@ -37,7 +37,6 @@ export const cogniteConfig: ProjectConfig[] = [
     site: 'My Site',
     description: 'Test site for 3D visualization.',
 
-    dataModels: [],
     threeDResources: [
       {
         modelId: 1791160622840317,

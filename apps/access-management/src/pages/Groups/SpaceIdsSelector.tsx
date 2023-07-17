@@ -6,6 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 import Select from 'antd/lib/select';
 
 import sdk from '@cognite/cdf-sdk-singleton';
+import { getProject } from '@cognite/cdf-utilities';
 
 interface SpaceIdsSelectorProps {
   value: number[];
@@ -54,12 +55,14 @@ const useSpaces = () => {
     }
     return items;
   };
-  return useQuery(['getSpaces'], () => {
+  const project = getProject();
+
+  return useQuery(['getSpaces', project], () => {
     return autoPageToArray(
       async (cursor) =>
         (
           await sdk.get<{ items: Space[]; nextCursor?: string }>(
-            `/api/v1/projects/${sdk.project}/models/spaces`,
+            `/api/v1/projects/${project}/models/spaces`,
             {
               params: {
                 cursor,

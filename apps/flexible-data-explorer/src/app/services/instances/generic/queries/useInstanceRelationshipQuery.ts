@@ -7,8 +7,6 @@ import { EMPTY_ARRAY } from '../../../../constants/object';
 import { ValueByField } from '../../../../containers/Filter';
 import { useFDM } from '../../../../providers/FDMProvider';
 import { buildFilterByField } from '../../../../utils/filterBuilder';
-import { useTypesDataModelQuery } from '../../../dataModels/query/useTypesDataModelQuery';
-import { extractFieldsFromSchema } from '../../../extractors';
 import { queryKeys } from '../../../queryKeys';
 
 export const useInstanceRelationshipQuery = (
@@ -22,8 +20,8 @@ export const useInstanceRelationshipQuery = (
   filters?: ValueByField
 ) => {
   const client = useFDM();
-  const { dataType, instanceSpace, externalId } = useParams();
-  const { data: types } = useTypesDataModelQuery();
+  const { dataType, instanceSpace, externalId, dataModel, version, space } =
+    useParams();
 
   const transformedFilter = useMemo(() => {
     return buildFilterByField(filters);
@@ -32,59 +30,45 @@ export const useInstanceRelationshipQuery = (
   const { data, ...rest } = useInfiniteQuery(
     queryKeys.instanceRelationship(
       { dataType, instanceSpace, externalId },
-      client.getHeaders,
       type,
       transformedFilter
     ),
     async ({ pageParam }) => {
-      if (!(dataType && externalId && instanceSpace && types)) {
+      if (
+        !(
+          dataType &&
+          externalId &&
+          instanceSpace &&
+          dataModel &&
+          version &&
+          space
+        )
+      ) {
         return Promise.reject(new Error('Missing headers...'));
       }
 
-      const extractedFields = extractFieldsFromSchema(types, type);
-
-      // Fix me!
-      const fields = extractedFields
-        ?.filter((item) => client.isPrimitive(item.type.name))
-        .map((item) => item.name);
-
-      if (!fields) {
-        return Promise.reject(new Error('Missing fields...'));
-      }
-
-      // TOTALLY FIX THIS!
-      const instance = await client.getInstanceById<any>(
-        [
-          {
-            operation: field,
-            variables: {
-              first: 100,
-              after: pageParam,
-              filter: {
-                value: transformedFilter || {},
-                name: 'filter',
-                type: `_List${type}Filter`,
-              },
-            },
-            fields: [
-              {
-                items: ['externalId', ...fields],
-              },
-              { pageInfo: ['hasNextPage', 'endCursor'] },
-            ],
-          },
-        ],
+      const instance = await client.getEdgeRelationshipInstancesById(
+        transformedFilter,
         {
-          instanceSpace,
+          relatedField: field,
+          relatedType: type,
+        },
+        {
+          dataModel,
+          version,
+          space,
           dataType,
+          instanceSpace,
           externalId,
+        },
+        {
+          cursor: pageParam,
         }
       );
 
       return instance[field];
     },
     {
-      enabled: !!types,
       getNextPageParam: (param) =>
         param.pageInfo.hasNextPage && param.pageInfo.endCursor,
     }

@@ -37,9 +37,11 @@ jobs:
             node_modules
             ~/.cache/Cypress
           key: cache-node-modules-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            cache-node-modules-${{ hashFiles('yarn.lock') }}
+            cache-node-modules-
 
       - name: Install dependencies
-        if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: yarn install --frozen-lockfile
 
       - run: git fetch --no-tags --prune --depth=1 origin ${{ github.base_ref }}

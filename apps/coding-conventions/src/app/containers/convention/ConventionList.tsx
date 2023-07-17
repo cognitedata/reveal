@@ -28,7 +28,7 @@ export const ConventionList: React.FC<Props> = ({
           onKeysChange(keys);
         }}
         onIconClick={() => {
-          console.log('HEY');
+          console.log('Icon Clicked');
         }}
       >
         {conventions
