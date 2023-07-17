@@ -33,6 +33,7 @@ export type DataModelByIdResponse = {
   graphQlDml: string;
   version: string;
   name: string;
+  externalId: string;
   space: string;
   description: string;
 };

@@ -129,7 +129,7 @@ const GenericResultItem: React.FC<Props> = ({ dataType, values, type }) => {
           return (
             <SearchResults.Item
               key={item.externalId}
-              name={item.name}
+              name={item.name || item.externalId}
               description={item.description}
               properties={properties}
               onClick={() => handleRowClick(item)}
