@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import {
   DefaultPreviewFilter,
@@ -9,6 +9,8 @@ import {
 import { ColumnDef } from '@tanstack/react-table';
 import isEmpty from 'lodash/isEmpty';
 import { useDebounce } from 'use-debounce';
+
+import { Asset } from '@cognite/sdk';
 
 import {
   InternalTimeseriesFilters,
@@ -24,17 +26,20 @@ import {
 import { AppliedFiltersTags } from '../AppliedFiltersTags';
 
 import { TimeseriesTableFilters } from './TimeseriesTableFilters';
+import { useTimeseriesMetadataColumns } from './useTimeseriesMetadataColumns';
 
 interface Props {
   resourceExternalId?: string;
   labels?: string[];
   onClick?: (item: WithDetailViewData<InternalTimeseriesData>) => void;
+  onParentAssetClick: (asset: Asset) => void;
 }
 
 export const TimeseriesRelatedSearchResults: React.FC<Props> = ({
   resourceExternalId,
   labels,
   onClick,
+  onParentAssetClick,
 }) => {
   const [query, setQuery] = useState<string | undefined>();
   const [debouncedQuery] = useDebounce(query, 300);
@@ -44,15 +49,23 @@ export const TimeseriesRelatedSearchResults: React.FC<Props> = ({
 
   const { t } = useTranslation();
   const tableColumns = getTableColumns(t);
+  const { metadataColumns, setMetadataKeyQuery } =
+    useTimeseriesMetadataColumns();
 
-  const columns = [
-    tableColumns.type(),
-    tableColumns.relationshipLabels,
-    tableColumns.relation,
-    tableColumns.externalId(),
-    tableColumns.lastUpdatedTime,
-    tableColumns.created,
-  ] as ColumnDef<WithDetailViewData<InternalTimeseriesData>>[];
+  const columns = useMemo(() => {
+    return [
+      tableColumns.name(),
+      tableColumns.relationshipLabels,
+      tableColumns.relation,
+      tableColumns.externalId(),
+      tableColumns.description(),
+      tableColumns.lastUpdatedTime,
+      tableColumns.created,
+      tableColumns.assets(onParentAssetClick),
+      ...metadataColumns,
+    ] as ColumnDef<WithDetailViewData<InternalTimeseriesData>>[];
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [metadataColumns]);
 
   const { data, hasNextPage, fetchNextPage, isLoading } =
     useRelatedTimeseriesQuery({
@@ -78,6 +91,7 @@ export const TimeseriesRelatedSearchResults: React.FC<Props> = ({
       showLoadButton
       columns={columns}
       query={debouncedQuery}
+      onChangeSearchInput={setMetadataKeyQuery}
       onRowClick={onClick}
       sorting={sortBy}
       onSort={setSortBy}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import {
   DefaultPreviewFilter,
@@ -24,6 +24,7 @@ import {
 import { AppliedFiltersTags } from '../AppliedFiltersTags';
 
 import { EventTableFilters } from './EventTableFilters';
+import { useEventsMetadataColumns } from './useEventsMetadataColumns';
 
 interface Props {
   resourceExternalId?: string;
@@ -43,15 +44,20 @@ export const EventRelatedSearchResults: React.FC<Props> = ({
 
   const { t } = useTranslation();
   const tableColumns = getTableColumns(t);
+  const { metadataColumns, setMetadataKeyQuery } = useEventsMetadataColumns();
 
-  const columns = [
-    tableColumns.type(),
-    tableColumns.relationshipLabels,
-    tableColumns.relation,
-    tableColumns.externalId(),
-    tableColumns.lastUpdatedTime,
-    tableColumns.created,
-  ] as ColumnDef<WithDetailViewData<InternalEventsData>>[];
+  const columns = useMemo(() => {
+    return [
+      tableColumns.type(),
+      tableColumns.relationshipLabels,
+      tableColumns.relation,
+      tableColumns.externalId(),
+      tableColumns.lastUpdatedTime,
+      tableColumns.created,
+      ...metadataColumns,
+    ] as ColumnDef<WithDetailViewData<InternalEventsData>>[];
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [metadataColumns]);
 
   const { data, hasNextPage, fetchNextPage, isLoading } = useRelatedEventsQuery(
     {
@@ -78,6 +84,7 @@ export const EventRelatedSearchResults: React.FC<Props> = ({
       showLoadButton
       columns={columns}
       query={debouncedQuery}
+      onChangeSearchInput={setMetadataKeyQuery}
       onRowClick={onClick}
       sorting={sortBy}
       onSort={setSortBy}

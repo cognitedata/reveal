@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import {
   DefaultPreviewFilter,
@@ -26,6 +26,7 @@ import {
 import { AppliedFiltersTags } from '../AppliedFiltersTags';
 
 import { AssetTableFilters } from './AssetTableFilters';
+import { useAssetsMetadataColumns } from './useAssetsMetadataColumns';
 
 interface Props {
   resourceExternalId?: string;
@@ -45,14 +46,19 @@ export const AssetRelatedSearchResults: React.FC<Props> = ({
 
   const { t } = useTranslation();
   const tableColumns = getTableColumns(t);
+  const { metadataColumns, setMetadataKeyQuery } = useAssetsMetadataColumns();
 
-  const columns = [
-    tableColumns.name(),
-    tableColumns.relationshipLabels,
-    tableColumns.relation,
-    tableColumns.externalId(),
-    tableColumns.rootAsset(onClick),
-  ] as ColumnDef<WithDetailViewData<InternalAssetData>>[];
+  const columns = useMemo(() => {
+    return [
+      tableColumns.name(),
+      tableColumns.relationshipLabels,
+      tableColumns.relation,
+      tableColumns.externalId(),
+      tableColumns.rootAsset(onClick),
+      ...metadataColumns,
+    ] as ColumnDef<WithDetailViewData<InternalAssetData>>[];
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [metadataColumns]);
 
   const { data, hasNextPage, fetchNextPage, isLoading } = useRelatedAssetsQuery(
     {
@@ -79,6 +85,7 @@ export const AssetRelatedSearchResults: React.FC<Props> = ({
       showLoadButton
       columns={columns}
       query={debouncedQuery}
+      onChangeSearchInput={setMetadataKeyQuery}
       onRowClick={onClick}
       sorting={sortBy}
       onSort={setSortBy}
