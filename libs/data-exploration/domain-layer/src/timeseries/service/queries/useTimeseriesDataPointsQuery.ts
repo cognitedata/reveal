@@ -15,14 +15,15 @@ import { getTimeseriesDatapoints } from '../network';
 export const useTimeseriesDataPointsQuery = (
   items: IdEither[],
   filter: Omit<DatapointsMultiQuery, 'items'> = EMPTY_OBJECT,
-  options?: UseQueryOptions<Datapoints[]>
+  options?: UseQueryOptions<Datapoints[]>,
+  limit?: number
 ) => {
   const sdk = useSDK();
 
   return useQuery(
-    queryKeys.timeseriesDatapoints(items, filter),
+    queryKeys.timeseriesDatapoints(items, filter, limit),
     async () => {
-      return getTimeseriesDatapoints(sdk, { items, ...filter });
+      return getTimeseriesDatapoints(sdk, { items, ...filter }, limit);
     },
     { ...(options as any) }
   );

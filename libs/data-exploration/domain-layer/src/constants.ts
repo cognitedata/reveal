@@ -13,6 +13,7 @@ export const NIL_FILTER_LABEL = 'N/A';
 export const METADATA_KEY_SEPARATOR = '-';
 export const MAX_RESULT_LIMIT_ASSET = 1000;
 export const MAX_RESULT_LIMIT_DATAPOINTS = 100;
+export const MAX_DOWNLOAD_LIMIT_DATAPOINTS = 100000;
 
 export const DEFAULT_SCORE_SORTING = [
   {
