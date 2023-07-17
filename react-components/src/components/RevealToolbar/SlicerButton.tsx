@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type ReactElement, useState, useMemo } from 'react';
+import { type ReactElement, useState, useEffect } from 'react';
 
 import { Box3, Plane, Vector3 } from 'three';
 
@@ -14,14 +14,48 @@ import styled from 'styled-components';
 export const SlicerButton = (): ReactElement => {
   const viewer = useReveal();
 
-  const [minHeight, maxHeight] = useMemo(() => {
+  const [{ minHeight, maxHeight, topRatio, bottomRatio }, setSliceState] = useState<{
+    minHeight: number;
+    maxHeight: number;
+    topRatio: number;
+    bottomRatio: number;
+  }>({
+    minHeight: 0,
+    maxHeight: 0,
+    topRatio: 1,
+    bottomRatio: 0
+  });
+
+  // Heuristic to increase chance that update is propagated even
+  // if multiple additions/deletions of models occur.
+  const lastModel =
+    viewer.models.length === 0 ? undefined : viewer.models[viewer.models.length - 1];
+
+  useEffect(() => {
     const box = new Box3();
     viewer.models.forEach((model) => box.union(model.getModelBoundingBox()));
 
-    return [box.min.y, box.max.y];
-  }, [viewer, viewer.models.length]);
+    const newMaxY = box.max.y;
+    const newMinY = box.min.y;
 
-  const [currentValue, setCurrentValue] = useState<number[]>([0, 1]);
+    if (maxHeight !== newMaxY || minHeight !== newMinY) {
+      const newTopRatio = getRatioForNewRange(topRatio, minHeight, maxHeight, newMinY, newMaxY);
+      const newBottomRatio = getRatioForNewRange(
+        bottomRatio,
+        minHeight,
+        maxHeight,
+        newMinY,
+        newMaxY
+      );
+
+      setSliceState({
+        maxHeight: newMaxY,
+        minHeight: newMinY,
+        topRatio: newTopRatio,
+        bottomRatio: newBottomRatio
+      });
+    }
+  }, [viewer, viewer.models.length, lastModel]);
 
   return (
     <Dropdown
@@ -33,16 +67,20 @@ export const SlicerButton = (): ReactElement => {
             max={1}
             step={0.01}
             setValue={(v: number[]) => {
-              if (v[0] !== undefined && v[1] !== undefined) {
-                setCurrentValue(v);
-                viewer.setGlobalClippingPlanes([
-                  new Plane(new Vector3(0, 1, 0), -(minHeight + v[0] * (maxHeight - minHeight))),
-                  new Plane(new Vector3(0, -1, 0), minHeight + v[1] * (maxHeight - minHeight))
-                ]);
-              }
+              viewer.setGlobalClippingPlanes([
+                new Plane(new Vector3(0, 1, 0), -(minHeight + v[0] * (maxHeight - minHeight))),
+                new Plane(new Vector3(0, -1, 0), minHeight + v[1] * (maxHeight - minHeight))
+              ]);
+
+              setSliceState({
+                maxHeight,
+                minHeight,
+                bottomRatio: v[0],
+                topRatio: v[1]
+              });
             }}
             marks={{}}
-            value={currentValue}
+            value={[bottomRatio, topRatio]}
             vertical
           />
         </StyledMenu>
@@ -52,6 +90,23 @@ export const SlicerButton = (): ReactElement => {
     </Dropdown>
   );
 };
+
+function getRatioForNewRange(
+  ratio: number,
+  oldMin: number,
+  oldMax: number,
+  newMin: number,
+  newMax: number
+): number {
+  if (ratio === 0 || ratio === 1) {
+    return ratio;
+  }
+
+  const position = oldMin + ratio * (oldMax - oldMin);
+  const newRatio = (position - newMin) / (newMax - newMin);
+
+  return Math.min(1.0, Math.max(0.0, newRatio));
+}
 
 const StyledMenu = styled(Menu)`
   height: 512px;
