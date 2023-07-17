@@ -2,7 +2,14 @@ import { useMemo } from 'react';
 
 import styled from 'styled-components';
 
-import { Body, Button, Flex, Select, Tooltip } from '@cognite/cogs.js';
+import {
+  Body,
+  Button,
+  Flex,
+  Select,
+  Tooltip,
+  SelectComponents,
+} from '@cognite/cogs.js';
 
 import {
   CopilotBotMessage,
@@ -79,12 +86,12 @@ export const DataModelMessage = ({
     [dataModelVersions]
   );
   return (
-    <Flex direction="column">
+    <Wrapper direction="column" gap={6}>
       <Body level={2}>{message.content}</Body>
       <Select
-        label="Select data model"
+        placeholder="Select data model"
         menuPortalTarget={document.body}
-        components={{ Option: CustomOption }}
+        components={{ ...SelectComponents, Option: CustomOption }}
         disabled={!message.pending}
         value={
           message.dataModel
@@ -111,7 +118,7 @@ export const DataModelMessage = ({
       />
       {message.dataModel && (
         <Select
-          label="Select version"
+          placeholder="Select version"
           menuPortalTarget={document.body!}
           disabled={!message.pending}
           value={
@@ -127,6 +134,8 @@ export const DataModelMessage = ({
       )}
       {message.pending && (
         <Button
+          id="confirm"
+          type="primary"
           onClick={() => {
             updateMessage(key, { ...message, pending: false });
           }}
@@ -135,9 +144,15 @@ export const DataModelMessage = ({
           Confirm
         </Button>
       )}
-    </Flex>
+    </Wrapper>
   );
 };
+
+const Wrapper = styled(Flex)`
+  #confirm {
+    margin-top: 6px;
+  }
+`;
 
 const Option = styled.div<{ isSelected: boolean }>`
   padding: 8px 4px;
