@@ -1,25 +1,20 @@
 import { useEffect } from 'react';
 
+import { QueryClientProvider } from '@tanstack/react-query';
+
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
-import { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
-import {
-  AuthWrapper,
-  getEnv,
-  getProject,
-  SubAppWrapper,
-} from '@cognite/cdf-utilities';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 
 import './set-public-path';
 
 import App from './app/App';
 import { translations } from './app/common';
+import { queryClient } from './app/queryClient';
+import { AuthContainer } from './AuthContainer';
 import GlobalStyles from './GlobalStyles';
 
 export const AppWrapper = () => {
   const projectName = 'functions-ui';
-  const project = getProject();
-  const env = getEnv();
 
   useEffect(() => {
     cogsStyles.use();
@@ -31,11 +26,11 @@ export const AppWrapper = () => {
   return (
     <GlobalStyles>
       <I18nWrapper translations={translations} defaultNamespace={projectName}>
-        <AuthWrapper login={() => loginAndAuthIfNeeded(project, env)}>
-          <SubAppWrapper title="Functions UI">
+        <QueryClientProvider client={queryClient}>
+          <AuthContainer>
             <App />
-          </SubAppWrapper>
-        </AuthWrapper>
+          </AuthContainer>
+        </QueryClientProvider>
       </I18nWrapper>
     </GlobalStyles>
   );
