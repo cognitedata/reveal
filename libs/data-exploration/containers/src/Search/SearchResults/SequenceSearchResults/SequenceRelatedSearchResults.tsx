@@ -12,6 +12,7 @@ import { useDebounce } from 'use-debounce';
 
 import {
   InternalSequenceFilters,
+  getHiddenColumns,
   useTranslation,
 } from '@data-exploration-lib/core';
 import {
@@ -25,6 +26,16 @@ import { AppliedFiltersTags } from '../AppliedFiltersTags';
 
 import { SequenceTableFilters } from './SequenceTableFilters';
 import { useSequencesMetadataColumns } from './useSequencesMetadataColumns';
+
+const visibleColumns = [
+  'name',
+  'relationshipLabels',
+  'relation',
+  'mimeType',
+  'uploadedTime',
+  'lastUpdatedTime',
+  'created',
+];
 
 interface Props {
   resourceExternalId?: string;
@@ -86,6 +97,7 @@ export const SequenceRelatedSearchResults: React.FC<Props> = ({
       enableSorting
       showLoadButton
       columns={columns}
+      hiddenColumns={getHiddenColumns(columns, visibleColumns)}
       query={debouncedQuery}
       onChangeSearchInput={setMetadataKeyQuery}
       onRowClick={onClick}

@@ -14,6 +14,7 @@ import { Asset } from '@cognite/sdk';
 
 import {
   InternalAssetFilters,
+  getHiddenColumns,
   useTranslation,
 } from '@data-exploration-lib/core';
 import {
@@ -27,6 +28,14 @@ import { AppliedFiltersTags } from '../AppliedFiltersTags';
 
 import { AssetTableFilters } from './AssetTableFilters';
 import { useAssetsMetadataColumns } from './useAssetsMetadataColumns';
+
+const visibleColumns = [
+  'name',
+  'relationshipLabels',
+  'relation',
+  'externalId',
+  'rootAsset',
+];
 
 interface Props {
   resourceExternalId?: string;
@@ -84,6 +93,7 @@ export const AssetRelatedSearchResults: React.FC<Props> = ({
       enableSorting
       showLoadButton
       columns={columns}
+      hiddenColumns={getHiddenColumns(columns, visibleColumns)}
       query={debouncedQuery}
       onChangeSearchInput={setMetadataKeyQuery}
       onRowClick={onClick}

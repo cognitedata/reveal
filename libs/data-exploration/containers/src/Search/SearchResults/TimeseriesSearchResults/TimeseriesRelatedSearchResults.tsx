@@ -14,6 +14,7 @@ import { Asset } from '@cognite/sdk';
 
 import {
   InternalTimeseriesFilters,
+  getHiddenColumns,
   useTranslation,
 } from '@data-exploration-lib/core';
 import {
@@ -27,6 +28,17 @@ import { AppliedFiltersTags } from '../AppliedFiltersTags';
 
 import { TimeseriesTableFilters } from './TimeseriesTableFilters';
 import { useTimeseriesMetadataColumns } from './useTimeseriesMetadataColumns';
+
+const visibleColumns = [
+  'name',
+  'relationshipLabels',
+  'relation',
+  'externalId',
+  'description',
+  'lastUpdatedTime',
+  'created',
+  'directAsset',
+];
 
 interface Props {
   resourceExternalId?: string;
@@ -90,6 +102,7 @@ export const TimeseriesRelatedSearchResults: React.FC<Props> = ({
       enableSorting
       showLoadButton
       columns={columns}
+      hiddenColumns={getHiddenColumns(columns, visibleColumns)}
       query={debouncedQuery}
       onChangeSearchInput={setMetadataKeyQuery}
       onRowClick={onClick}

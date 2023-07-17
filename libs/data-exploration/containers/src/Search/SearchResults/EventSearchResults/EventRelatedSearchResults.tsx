@@ -12,6 +12,7 @@ import { useDebounce } from 'use-debounce';
 
 import {
   InternalEventsFilters,
+  getHiddenColumns,
   useTranslation,
 } from '@data-exploration-lib/core';
 import {
@@ -25,6 +26,15 @@ import { AppliedFiltersTags } from '../AppliedFiltersTags';
 
 import { EventTableFilters } from './EventTableFilters';
 import { useEventsMetadataColumns } from './useEventsMetadataColumns';
+
+const visibleColumns = [
+  'type',
+  'relationshipLabels',
+  'relation',
+  'externalId',
+  'lastUpdatedTime',
+  'created',
+];
 
 interface Props {
   resourceExternalId?: string;
@@ -83,6 +93,7 @@ export const EventRelatedSearchResults: React.FC<Props> = ({
       enableSorting
       showLoadButton
       columns={columns}
+      hiddenColumns={getHiddenColumns(columns, visibleColumns)}
       query={debouncedQuery}
       onChangeSearchInput={setMetadataKeyQuery}
       onRowClick={onClick}

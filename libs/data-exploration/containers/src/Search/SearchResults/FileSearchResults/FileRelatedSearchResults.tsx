@@ -14,6 +14,7 @@ import { Document, FileInfo } from '@cognite/sdk';
 
 import {
   InternalDocumentFilter,
+  getHiddenColumns,
   useTranslation,
 } from '@data-exploration-lib/core';
 import {
@@ -27,6 +28,16 @@ import { AppliedFiltersTags } from '../AppliedFiltersTags';
 import { useDocumentsMetadataColumns } from '../DocumentSearchResults';
 
 import { FileTableFiltersDocument } from './FileTableFilters';
+
+const visibleColumns = [
+  'name',
+  'relationshipLabels',
+  'relation',
+  'mimeType',
+  'uploadedTime',
+  'lastUpdatedTime',
+  'created',
+];
 
 interface Props {
   resourceExternalId?: string;
@@ -102,6 +113,7 @@ export const FileRelatedSearchResults: React.FC<Props> = ({
       enableSorting
       showLoadButton
       columns={columns}
+      hiddenColumns={getHiddenColumns(columns, visibleColumns)}
       query={debouncedQuery}
       onChangeSearchInput={setMetadataKeyQuery}
       onRowClick={onClick}
