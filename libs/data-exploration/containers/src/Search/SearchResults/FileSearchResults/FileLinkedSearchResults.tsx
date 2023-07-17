@@ -1,24 +1,18 @@
 import React, { useMemo, useState } from 'react';
 
-import {
-  DefaultPreviewFilter,
-  PreviewFilterDropdown,
-} from '@data-exploration/components';
+import { DefaultPreviewFilter } from '@data-exploration/components';
 import { useDebounce } from 'use-debounce';
 
 import { FileInfo } from '@cognite/sdk';
-import { useList } from '@cognite/sdk-react-query-hooks';
 
 import {
   convertResourceType,
   InternalCommonFilters,
   InternalDocumentFilter,
   InternalFilesFilters,
-  useTranslation,
 } from '@data-exploration-lib/core';
 import {
   InternalDocument,
-  transformNewFilterToOldFilter,
   useDocumentSearchResultQuery,
 } from '@data-exploration-lib/domain-layer';
 
@@ -26,12 +20,6 @@ import {
   AppliedFiltersTags,
   DocumentsTable,
   FileGroupingTable,
-  LabelFilter,
-  MetadataFilter,
-  SourceFilter,
-  TypeFilter,
-  AggregatedFilterV2,
-  MetadataFilterV2,
   useResourceResults,
   OldFileGroupTable,
 } from '../../../index';
@@ -42,6 +30,10 @@ import {
   GroupingTableWrapper,
 } from './elements';
 import { FileTable } from './FileTable';
+import {
+  FileTableFiltersDocument,
+  FileTableFiltersFile,
+} from './FileTableFilters';
 import { FileViewSwitcher } from './FileViewSwitcher';
 
 interface Props {
@@ -51,77 +43,6 @@ interface Props {
   onParentAssetClick: (assetId: number) => void;
   isDocumentsApiEnabled?: boolean;
 }
-
-const LinkedFileFilter = ({
-  filter,
-  onFilterChange,
-}: {
-  filter: InternalFilesFilters;
-  onFilterChange: (newValue: InternalFilesFilters) => void;
-}) => {
-  const { t } = useTranslation();
-
-  const { data: items = [] } = useList<FileInfo>('files', {
-    filter: transformNewFilterToOldFilter(filter),
-    limit: 1000,
-  });
-
-  return (
-    <PreviewFilterDropdown>
-      <AggregatedFilterV2
-        items={items}
-        aggregator="mimeType"
-        title={t('MIME_TYPE', 'Mime type')}
-        value={filter.mimeType}
-        setValue={(newValue) => onFilterChange({ mimeType: newValue })}
-      />
-      <MetadataFilterV2
-        items={items}
-        value={filter.metadata}
-        setValue={(newValue) => onFilterChange({ metadata: newValue })}
-      />
-    </PreviewFilterDropdown>
-  );
-};
-
-const LinkedDocumentFilter = ({
-  filter,
-  onFilterChange,
-}: {
-  filter: InternalDocumentFilter;
-  onFilterChange: (newValue: InternalDocumentFilter) => void;
-}) => {
-  return (
-    <PreviewFilterDropdown>
-      <LabelFilter.File
-        filter={filter}
-        value={filter.labels}
-        onChange={(newFilters) => onFilterChange({ labels: newFilters })}
-      />
-      <SourceFilter.File
-        filter={filter}
-        value={filter.source}
-        onChange={(newSources) =>
-          onFilterChange({
-            source: newSources,
-          })
-        }
-      />
-      <TypeFilter.File
-        filter={filter}
-        value={filter.type}
-        onChange={(newValue) => onFilterChange({ type: newValue as any })}
-      />
-      <MetadataFilter.Files
-        filter={filter}
-        values={filter.metadata}
-        onChange={(newMetadata) => {
-          onFilterChange({ metadata: newMetadata });
-        }}
-      />
-    </PreviewFilterDropdown>
-  );
-};
 
 export const FileLinkedSearchResults: React.FC<Props> = ({
   defaultFilter,
@@ -195,12 +116,12 @@ export const FileLinkedSearchResults: React.FC<Props> = ({
             <GroupingTableHeader>
               <DefaultPreviewFilter query={query} onQueryChange={setQuery}>
                 {!isDocumentsApiEnabled ? (
-                  <LinkedFileFilter
+                  <FileTableFiltersFile
                     filter={fileFilters}
                     onFilterChange={handleFileFilterChange}
                   />
                 ) : (
-                  <LinkedDocumentFilter
+                  <FileTableFiltersDocument
                     filter={documentFilters}
                     onFilterChange={handleDocumentFilterChange}
                   />
@@ -261,7 +182,7 @@ export const FileLinkedSearchResults: React.FC<Props> = ({
             tableHeaders={
               <>
                 <DefaultPreviewFilter query={query} onQueryChange={setQuery}>
-                  <LinkedFileFilter
+                  <FileTableFiltersFile
                     filter={fileFilters}
                     onFilterChange={handleFileFilterChange}
                   />
@@ -298,7 +219,7 @@ export const FileLinkedSearchResults: React.FC<Props> = ({
             tableHeaders={
               <>
                 <DefaultPreviewFilter query={query} onQueryChange={setQuery}>
-                  <LinkedDocumentFilter
+                  <FileTableFiltersDocument
                     filter={documentFilters}
                     onFilterChange={handleDocumentFilterChange}
                   />
