@@ -1,61 +1,51 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 
-import {
-  QueryClientProvider as TanstackProvider,
-  QueryClientProvider,
-  QueryClient,
-} from '@tanstack/react-query';
+import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import styled from 'styled-components/macro';
 
-import sdk from '@cognite/cdf-sdk-singleton';
-import { getProject } from '@cognite/cdf-utilities';
+import { getProject, isUsingUnifiedSignin } from '@cognite/cdf-utilities';
 import { ToastContainer } from '@cognite/cogs.js';
-import { SDKProvider } from '@cognite/sdk-provider';
 
-import { queryClient } from './queryClient';
+import { AuthContainer } from './AuthContainer';
 import Routes from './Routes';
-import { Database } from './service/storage/Database';
 
 function App() {
   const project = getProject();
-  const basename = `${project}/coding-conventions`;
+  const basename = isUsingUnifiedSignin()
+    ? `/cdf/${project}/coding-conventions`
+    : `${project}/coding-conventions`;
 
-  useEffect(() => {
-    Database.init();
-  }, []);
-
-  const queryClientNormal = new QueryClient({
+  const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
         retry: false,
         staleTime: 10 * 60 * 1000, // Pretty long
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: false,
       },
     },
   });
 
   return (
-    <SDKProvider sdk={sdk}>
-      <TanstackProvider client={queryClient}>
-        <QueryClientProvider client={queryClientNormal}>
-          <ReactQueryDevtools initialIsOpen={false} />
-
-          <ToastContainer />
-          <StyledWrapper>
-            <Router
-              basename={basename}
-              window={window}
-              children={
-                <StyledPage>
-                  <Routes />
-                </StyledPage>
-              }
-            />
-          </StyledWrapper>
-        </QueryClientProvider>
-      </TanstackProvider>
-    </SDKProvider>
+    <QueryClientProvider client={queryClient}>
+      <AuthContainer>
+        <ReactQueryDevtools initialIsOpen={false} />
+        <ToastContainer />
+        <StyledWrapper>
+          <Router
+            basename={basename}
+            window={window}
+            children={
+              <StyledPage>
+                <Routes />
+              </StyledPage>
+            }
+          />
+        </StyledWrapper>
+      </AuthContainer>
+    </QueryClientProvider>
   );
 }
 

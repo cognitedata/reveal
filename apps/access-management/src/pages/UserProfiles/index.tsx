@@ -5,6 +5,7 @@ import { UserProfilesConfigurationWarning } from '@access-management/pages/compo
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Checkbox, Form, notification } from 'antd';
 
+import { getProject } from '@cognite/cdf-utilities';
 import { Icon, Button } from '@cognite/cogs.js';
 import { useSDK } from '@cognite/sdk-provider';
 
@@ -31,10 +32,11 @@ export default function UserProfilesConfigContainer() {
   const cache = useQueryClient();
   const sdk = useSDK();
   const { tenant } = useParams();
+  const project = getProject();
 
   const { mutate, isLoading: updating } = useMutation(
     (update: any) =>
-      sdk.post(`/api/v1/projects/${sdk.project}/update`, {
+      sdk.post(`/api/v1/projects/${project}/update`, {
         data: {
           update,
         },

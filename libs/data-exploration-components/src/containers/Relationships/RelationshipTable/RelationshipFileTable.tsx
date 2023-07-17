@@ -16,6 +16,7 @@ import {
   useRelationshipCount,
 } from '@data-exploration-components/hooks';
 import { ColumnDef } from '@tanstack/react-table';
+import isEmpty from 'lodash/isEmpty';
 
 import { DocumentSearchItem } from '@cognite/sdk';
 
@@ -72,12 +73,17 @@ export function RelationshipFileTable({
       filter: { labels },
     });
 
-  const documentsQuery = useDocumentSearchQuery({
-    filter: buildAdvancedFilterFromDetailViewData(
-      detailViewRelatedResourcesData
-    ),
-    limit: 20,
-  });
+  const hasRelationships = !isEmpty(detailViewRelatedResourcesData);
+
+  const documentsQuery = useDocumentSearchQuery(
+    {
+      filter: buildAdvancedFilterFromDetailViewData(
+        detailViewRelatedResourcesData
+      ),
+      limit: 20,
+    },
+    { enabled: hasRelationships && isDocumentsApiEnabled }
+  );
 
   const filesQuery = useRelatedResourceResults<FileWithRelationshipLabels>(
     'relationship',
@@ -113,8 +119,8 @@ export function RelationshipFileTable({
 
   const { data: count } = useRelationshipCount(parentResource, 'file');
 
-  if (isLoading) {
-    return <EmptyState isLoading={isLoading} />;
+  if (isEmpty(tableData)) {
+    return <EmptyState isLoading={hasRelationships && isLoading} />;
   }
 
   return (

@@ -54,14 +54,14 @@ export const SearchCategories = () => {
         />
       </Content>
 
-      {client.allDataTypes?.map((item) => {
+      {client.allDataTypes?.map((item, index) => {
         const dataType = item.name;
         const count = genericCount?.[dataType];
         const isDisabled = !count;
 
         return (
           <Content
-            key={dataType}
+            key={`${dataType}-${index}`}
             selected={isSelected(dataType)}
             disabled={isDisabled}
             onClick={() => !isDisabled && handleSelectionClick(dataType)}

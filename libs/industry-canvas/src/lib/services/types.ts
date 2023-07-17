@@ -35,23 +35,23 @@ export type PickAll<
     : Otherwise;
 };
 
-type CommonFDMCanvasAnnotationProps =
+type CommonDTOCanvasAnnotationProps =
   | 'id'
   | 'containerId'
   | 'isSelectable'
   | 'isDraggable'
   | 'isResizable'
   | 'metadata';
-export type FDMCanvasAnnotation = Pick<
+export type DTOCanvasAnnotation = Pick<
   CanvasAnnotation,
-  CommonFDMCanvasAnnotationProps
+  CommonDTOCanvasAnnotationProps
 > & {
   externalId: string;
   annotationType: AnnotationType;
-  properties: Omit<PickAll<CanvasAnnotation>, CommonFDMCanvasAnnotationProps>;
+  properties: Omit<PickAll<CanvasAnnotation>, CommonDTOCanvasAnnotationProps>;
 };
 
-type CommonFDMContainerReferenceProps =
+type CommonDTOContainerReferenceProps =
   | 'id'
   | 'label'
   | 'width'
@@ -60,9 +60,9 @@ type CommonFDMContainerReferenceProps =
   | 'maxHeight'
   | 'x'
   | 'y';
-export type FDMContainerReference = Pick<
+export type DTOContainerReference = Pick<
   ContainerReference,
-  CommonFDMContainerReferenceProps
+  CommonDTOContainerReferenceProps
 > & {
   externalId: string;
   containerReferenceType: ContainerReferenceType;
@@ -70,11 +70,11 @@ export type FDMContainerReference = Pick<
   resourceSubId?: number | null;
   properties: Omit<
     PickAll<ContainerReference>,
-    CommonFDMContainerReferenceProps | 'resourceId' | 'resourceSubId'
+    CommonDTOContainerReferenceProps | 'resourceId' | 'resourceSubId'
   >;
 };
 
-export type FDMCanvasState = {
-  canvasAnnotations: { items: FDMCanvasAnnotation[] } | null;
-  containerReferences: { items: FDMContainerReference[] } | null;
+export type DTOCanvasState = {
+  canvasAnnotations: { items: DTOCanvasAnnotation[] } | null;
+  containerReferences: { items: DTOContainerReference[] } | null;
 };

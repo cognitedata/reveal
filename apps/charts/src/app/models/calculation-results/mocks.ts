@@ -1,4 +1,5 @@
 import { SourceOption } from '@charts-app/components/NodeEditor/V2/types';
+import { Chart } from '@charts-app/models/chart/types';
 
 export const mockSourceList: SourceOption[] = [
   {
@@ -26,3 +27,229 @@ export const mockSourceList: SourceOption[] = [
     type: 'workflow',
   },
 ];
+
+export const mockChartWithDuplicateCalculationIds: Chart = {
+  id: 'chart-id-1',
+  name: 'Chart Calculations',
+  userInfo: {
+    displayName: 'Shekhar  Sharma',
+    id: 'abcdefgijklmn-1234-4567-a19c-e232e2c03a43',
+    email: 'shekhar.sharma@cognitedata.com',
+  },
+  dateFrom: '2023-05-23T19:14:52.784Z',
+  workflowCollection: [
+    {
+      version: 'v2',
+      id: 'calc-aa-id-1',
+      name: 'Calc AA',
+      color: '#005d5d',
+      flow: {
+        elements: [
+          {
+            id: 'calc-aa-id-1-output-element-1',
+            type: 'CalculationOutput',
+            position: { x: 702, y: 82 },
+          },
+          {
+            id: 'calc-aa-id-1-input-element-1',
+            type: 'Constant',
+            data: { value: 3 },
+            position: { x: 99, y: 146 },
+          },
+          {
+            id: 'calc-aa-id-1-input-element-2',
+            type: 'Constant',
+            data: { value: 1 },
+            position: { x: 114, y: 255 },
+          },
+          {
+            id: 'calc-aa-id-1-toolbox-element-1',
+            type: 'ToolboxFunction',
+            data: {
+              selectedOperation: { op: 'add', version: '1.0' },
+              parameterValues: {},
+            },
+            position: { x: 304, y: 102 },
+          },
+          {
+            source: 'calc-aa-id-1-input-element-2',
+            sourceHandle: null,
+            target: 'calc-aa-id-1-toolbox-element-1',
+            targetHandle: 'b',
+            id: 'reactflow__edge-calc-aa-id-1-input-element-2null-calc-aa-id-1-toolbox-element-1b',
+          },
+          {
+            source: 'calc-aa-id-1-input-element-1',
+            sourceHandle: null,
+            target: 'calc-aa-id-1-toolbox-element-1',
+            targetHandle: 'a',
+            id: 'reactflow__edge-calc-aa-id-1-input-element-1null-calc-aa-id-1-toolbox-element-1a',
+          },
+          {
+            source: 'calc-aa-id-1-toolbox-element-1',
+            sourceHandle: 'out-result-0',
+            target: 'calc-aa-id-1-output-element-1',
+            targetHandle: 'datapoints',
+            id: 'reactflow__edge-calc-aa-id-1-toolbox-element-1out-result-0-calc-aa-id-1-output-element-1datapoints',
+          },
+        ],
+        position: [-7, -8],
+        zoom: 1,
+      },
+      lineWeight: 1,
+      lineStyle: 'solid',
+      enabled: true,
+      createdAt: 1688304543922,
+      unit: 'c',
+      preferredUnit: 'f',
+      settings: {
+        autoAlign: true,
+      },
+      type: 'workflow',
+      range: [],
+    },
+    {
+      version: 'v2',
+      id: 'calc-aa-id-2',
+      name: 'Calc AA (Copy)',
+      color: '#005d5d',
+      flow: {
+        elements: [
+          {
+            id: 'calc-aa-id-1-output-element-1',
+            type: 'CalculationOutput',
+            position: { x: 702, y: 82 },
+          },
+          {
+            id: 'calc-aa-id-1-input-element-1',
+            type: 'Constant',
+            data: { value: 3 },
+            position: { x: 99, y: 146 },
+          },
+          {
+            id: 'calc-aa-id-1-input-element-2',
+            type: 'Constant',
+            data: { value: 1 },
+            position: { x: 114, y: 255 },
+          },
+          {
+            id: 'calc-aa-id-1-toolbox-element-1',
+            type: 'ToolboxFunction',
+            data: {
+              selectedOperation: { op: 'add', version: '1.0' },
+              parameterValues: {},
+            },
+            position: { x: 304, y: 102 },
+          },
+          {
+            source: 'calc-aa-id-1-input-element-2',
+            sourceHandle: null,
+            target: 'calc-aa-id-1-toolbox-element-1',
+            targetHandle: 'b',
+            id: 'reactflow__edge-calc-aa-id-1-input-element-2null-calc-aa-id-1-toolbox-element-1b',
+          },
+          {
+            source: 'calc-aa-id-1-input-element-1',
+            sourceHandle: null,
+            target: 'calc-aa-id-1-toolbox-element-1',
+            targetHandle: 'a',
+            id: 'reactflow__edge-calc-aa-id-1-input-element-1null-calc-aa-id-1-toolbox-element-1a',
+          },
+          {
+            source: 'calc-aa-id-1-toolbox-element-1',
+            sourceHandle: 'out-result-0',
+            target: 'calc-aa-id-1-output-element-1',
+            targetHandle: 'datapoints',
+            id: 'reactflow__edge-calc-aa-id-1-toolbox-element-1out-result-0-calc-aa-id-1-output-element-1datapoints',
+          },
+        ],
+        position: [-7, -8],
+        zoom: 1,
+      },
+      lineWeight: 1,
+      lineStyle: 'solid',
+      enabled: true,
+      createdAt: 1688304543922,
+      unit: 'c',
+      preferredUnit: 'f',
+      settings: { autoAlign: true },
+      type: 'workflow',
+      range: [],
+    },
+    {
+      version: 'v2',
+      id: 'calc-aa-id-3',
+      name: 'Calc AA (Copy) (Copy)',
+      color: '#005d5d',
+      flow: {
+        elements: [
+          {
+            id: 'calc-aa-id-1-output-element-1',
+            type: 'CalculationOutput',
+            position: { x: 702, y: 82 },
+          },
+          {
+            id: 'calc-aa-id-1-input-element-1',
+            type: 'Constant',
+            data: { value: 3 },
+            position: { x: 99, y: 146 },
+          },
+          {
+            id: 'calc-aa-id-1-input-element-2',
+            type: 'Constant',
+            data: { value: 1 },
+            position: { x: 114, y: 255 },
+          },
+          {
+            id: 'calc-aa-id-1-toolbox-element-1',
+            type: 'ToolboxFunction',
+            data: {
+              selectedOperation: { op: 'add', version: '1.0' },
+              parameterValues: {},
+            },
+            position: { x: 304, y: 102 },
+          },
+          {
+            source: 'calc-aa-id-1-input-element-2',
+            sourceHandle: null,
+            target: 'calc-aa-id-1-toolbox-element-1',
+            targetHandle: 'b',
+            id: 'reactflow__edge-calc-aa-id-1-input-element-2null-calc-aa-id-1-toolbox-element-1b',
+          },
+          {
+            source: 'calc-aa-id-1-input-element-1',
+            sourceHandle: null,
+            target: 'calc-aa-id-1-toolbox-element-1',
+            targetHandle: 'a',
+            id: 'reactflow__edge-calc-aa-id-1-input-element-1null-calc-aa-id-1-toolbox-element-1a',
+          },
+          {
+            source: 'calc-aa-id-1-toolbox-element-1',
+            sourceHandle: 'out-result-0',
+            target: 'calc-aa-id-1-output-element-1',
+            targetHandle: 'datapoints',
+            id: 'reactflow__edge-calc-aa-id-1-toolbox-element-1out-result-0-calc-aa-id-1-output-element-1datapoints',
+          },
+        ],
+        position: [-7, -8],
+        zoom: 1,
+      },
+      lineWeight: 1,
+      lineStyle: 'solid',
+      enabled: true,
+      createdAt: 1688304543922,
+      unit: 'c',
+      preferredUnit: 'f',
+      settings: {
+        autoAlign: true,
+      },
+      type: 'workflow',
+      range: [],
+    },
+  ],
+  user: 'abcdefgijklmn-1234-4567-a19c-e232e2c03a43',
+  version: 1,
+  dateTo: '2023-06-23T19:14:52.784Z',
+  createdAt: 1688304516913,
+  updatedAt: 1688304516913,
+};

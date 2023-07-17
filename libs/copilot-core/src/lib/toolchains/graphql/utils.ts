@@ -28,6 +28,7 @@ export const augmentQueryWithRequiredFields = (
   // list values - relationships
   // expandMultiFields = ['manyRelations']
 ) => {
+  console.log(query);
   const editedQuery = visit(parse(query), {
     enter: (node, _key, parent) => {
       switch (node.kind) {
@@ -169,10 +170,10 @@ export const getFields = (
   }
   const nestedSet = new Map(relevantFields);
   nestedSet.delete(typeName);
-
+  console.log(nestedSet, relevantFields, typeName);
   const fields = relevantFields.get(typeName);
   return `{
-    ${isList ? 'items {' : ''}
+    ${isList ? 'items { externalId \n' : 'externalId\n'}
       ${typeDef?.fields
         .filter((field) => fields?.includes(field.name))
         .map((field): string => {
@@ -227,7 +228,7 @@ ${dataModelTypes.types
   ${type.fields
     .map(
       (field) =>
-        `${field.name}: ${field.list ? '[' : ''} ${field.type} ${
+        `${field.name}: ${field.list ? '[' : ''} ${field.type.name} ${
           field.list ? ']' : ''
         }`
     )

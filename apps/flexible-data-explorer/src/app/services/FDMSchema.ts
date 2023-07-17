@@ -34,6 +34,7 @@ const extractDescriptionTokens = (description?: string) => {
 
 export class FDMSchema {
   public name: string;
+  public externalId: string;
   private description: string;
   private version: string;
   private space: string;
@@ -41,6 +42,7 @@ export class FDMSchema {
 
   constructor(dataModel: DataModelByIdResponse) {
     this.name = dataModel.name;
+    this.externalId = dataModel.externalId;
     this.space = dataModel.space;
     this.version = dataModel.version;
     this.description = dataModel.description;
@@ -67,7 +69,7 @@ export class FDMSchema {
 
   public get dataModel(): DataModelV2 {
     return {
-      externalId: this.name,
+      externalId: this.externalId,
       space: this.space,
       version: this.version,
     };

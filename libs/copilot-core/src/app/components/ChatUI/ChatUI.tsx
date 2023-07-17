@@ -7,6 +7,7 @@ import { useBotUI } from '@botui/react';
 import { BotuiInterface } from 'botui';
 import { BufferMemory, ChatMessageHistory } from 'langchain/memory';
 import { AIMessage, HumanMessage } from 'langchain/schema';
+import noop from 'lodash/noop';
 
 import { Flex } from '@cognite/cogs.js';
 import { useFlag } from '@cognite/react-feature-flags';
@@ -180,6 +181,7 @@ export const ChatUI = ({
         removeListener();
       };
     }
+    return noop;
   }, [
     isEnabled,
     bot,

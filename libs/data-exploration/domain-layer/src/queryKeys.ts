@@ -84,8 +84,8 @@ export const queryKeys = {
       advancedFilter,
     ] as const,
 
-  timeseriesDatapoints: (items: IdEither[], filter?: any) =>
-    [...queryKeys.timeseries(), 'datapoints', items, filter] as const,
+  timeseriesDatapoints: (items: IdEither[], filter?: any, limit?: number) =>
+    [...queryKeys.timeseries(), 'datapoints', items, filter, limit] as const,
   timeseriesLatestDatapoints: (
     items: LatestDataBeforeRequest[],
     filter?: any

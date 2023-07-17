@@ -1,7 +1,9 @@
-/** Test Workflow Duplication */
-import { CalculationDeepCloneAndReplaceIds } from './calculations';
+/**
+ * npx jest ./src/utils/calculations.spec.ts
+ */
+import { calcDeepCloneAndReplaceNodeElementsId } from './calculations';
 
-describe('Duplicate Calculation', () => {
+describe('Duplicate calculation with unique Ids', () => {
   const calculation = {
     version: 'v2',
     id: '12804f3c-076b-43d1-81bd-cfb8120975b8',
@@ -91,8 +93,7 @@ describe('Duplicate Calculation', () => {
     type: 'workflow',
   };
 
-  // @ts-ignore
-  const cloneCalculation = CalculationDeepCloneAndReplaceIds(calculation);
+  const cloneCalculation = calcDeepCloneAndReplaceNodeElementsId(calculation);
 
   it('should duplicate a calculation', () => {
     expect(cloneCalculation).not.toBe(calculation);
@@ -100,15 +101,13 @@ describe('Duplicate Calculation', () => {
 
   it('should have unique ID for flow elements', () => {
     // loop through all edges
-    if (cloneCalculation && cloneCalculation.flow) {
-      for (let i = 0; i < cloneCalculation.flow.elements.length; i++) {
-        const cloneElement = cloneCalculation.flow.elements[i];
-        const originalElement = calculation.flow.elements[i];
-        // check if element is an edge
-        if (cloneElement.type) {
-          // check if edge id is the same
-          expect(cloneElement.id).not.toBe(originalElement.id);
-        }
+    for (let i = 0; i < cloneCalculation.flow.elements.length; i++) {
+      const cloneElement = cloneCalculation.flow.elements[i];
+      const originalElement = calculation.flow.elements[i];
+      // check if element is an edge
+      if (cloneElement.type) {
+        // check if edge id is the same
+        expect(cloneElement.id).not.toBe(originalElement.id);
       }
     }
   });

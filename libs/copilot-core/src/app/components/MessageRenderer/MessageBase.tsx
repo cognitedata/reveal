@@ -20,7 +20,7 @@ export const MessageBase = ({
   };
   children: React.ReactNode;
 }) => {
-  const { content, source, actions = [] } = data;
+  const { content, source, actions = [], type } = data;
   const { data: user, isLoading } = useUserProfile();
 
   const [selectedFeedback, setSelectedFeedback] = useState('');
@@ -48,14 +48,16 @@ export const MessageBase = ({
           <ErrorBoundary>
             <Flex style={{ flex: 1 }}>{children}</Flex>
           </ErrorBoundary>
-          <Button
-            icon="EllipsisVertical"
-            type="ghost"
-            className="hover"
-            aria-label="overflow menu"
-          />
+          {source === 'bot' && type !== 'data-model' && (
+            <Button
+              icon="EllipsisVertical"
+              type="ghost"
+              className="hover"
+              aria-label="overflow menu"
+            />
+          )}
         </Flex>
-        {source === 'bot' && (
+        {source === 'bot' && type !== 'data-model' && (
           <Flex gap={4}>
             <div style={{ flex: 1 }}>
               <ResponsiveActions
@@ -149,6 +151,24 @@ const Wrapper = styled(Flex)`
   .thumbsdown svg {
     transform: scaleX(-1);
   }
+
+  .cogs-select__control:not(.cogs-select__control--is-disabled) {
+    border: 1px solid #e4dffb;
+    background: #fff;
+  }
+  .cogs-select__control:not(.cogs-select__control--is-disabled):hover {
+    border: 1px solid #8d6eed;
+    background: #fff;
+  }
+  .cogs-select__control.cogs-select__control--is-focused:not(
+      .cogs-select__control--is-disabled
+    ) {
+    border: 1px solid #6f3be4;
+    background: #fff;
+  }
+
+  --cogs-surface--action--strong--hover: #632cd4;
+  --cogs-surface--action--strong--default: #6f3be4;
 `;
 
 const CopilotIconWrapper = styled(Flex)`

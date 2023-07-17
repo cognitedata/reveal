@@ -1,7 +1,7 @@
 {
   "DATA_OPS_APP_SUBTITLE": "Data Management platform",
   "DATA_OPS_APP_TITLE": "DataOps",
-  "EMAIL_FIELD_HELP_TEXT": "Your name and email address are managed by your organization",
+  "EMAIL_FIELD_HELP_TEXT": "Contact your administrator if you want to change your name or email address",
   "EMAIL_FIELD_LABEL": "Email address",
   "INFIELD_APP_SUBTITLE": "Create and execute field operations",
   "INFIELD_APP_TITLE": "Infield",
@@ -22,7 +22,7 @@
   "LANGUAGE_TAB_TITLE": "Language",
   "MAINTAIN_APP_SUBTITLE": "Plan and optimise assest maintenance",
   "MAINTAIN_APP_TITLE": "Maintain",
-  "NAME_FIELD_HELP_TEXT": "Your display name is managed by your organisation",
+  "NAME_FIELD_HELP_TEXT": "Contact your administrator if you want to change your name",
   "NAME_FIELD_LABEL": "Name",
   "PERSONAL_INFO_TAB_BTN_TEXT": "Personal info",
   "PERSONAL_INFO_TAB_SUBTITLE": "Information about you across Cognite Data Fusion",

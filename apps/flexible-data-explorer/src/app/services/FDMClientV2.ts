@@ -111,7 +111,14 @@ export class BaseFDMClient {
       operation,
       fields: [
         {
-          items: ['name', 'description', 'space', 'graphQlDml', 'version'],
+          items: [
+            'name',
+            'externalId',
+            'description',
+            'space',
+            'graphQlDml',
+            'version',
+          ],
         },
       ],
       variables: {

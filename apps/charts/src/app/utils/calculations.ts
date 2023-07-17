@@ -6,9 +6,9 @@ import { FlowElement } from 'react-flow-renderer';
 import { ChartWorkflow, ChartWorkflowV2 } from '@charts-app/models/chart/types';
 import { v4 as uuidv4 } from 'uuid';
 
-type IdMapType = { [key: string]: string };
+type IdMapType = Record<string, string>;
 
-export function CalculationDeepCloneAndReplaceIds(
+export function calcDeepCloneAndReplaceNodeElementsId(
   calculation: ChartWorkflowV2 | ChartWorkflow
 ) {
   // Deep clone

@@ -21,6 +21,7 @@ import {
   notification,
 } from 'antd';
 
+import { getProject } from '@cognite/cdf-utilities';
 import { useSDK } from '@cognite/sdk-provider';
 
 import {
@@ -88,13 +89,16 @@ const noLabelItemLayout = {
 const LegacyIdentityProviderForm = () => {
   const { t } = useTranslation();
   const sdk = useSDK();
+
   const { mutate } = useMutation(
-    (update: UpdateBody) =>
-      sdk.post(`/api/v1/projects/${sdk.project}/update`, {
+    (update: UpdateBody) => {
+      const project = getProject();
+      return sdk.post(`/api/v1/projects/${project}/update`, {
         data: {
           update,
         },
-      }),
+      });
+    },
     {
       onMutate() {
         notification.info({
@@ -117,9 +121,10 @@ const LegacyIdentityProviderForm = () => {
       },
     }
   );
-  const { data: project } = useQuery(['project'], () =>
-    sdk.projects.retrieve(sdk.project)
-  );
+  const { data: project } = useQuery(['project'], () => {
+    const projectToRetrieve = getProject();
+    return sdk.projects.retrieve(projectToRetrieve);
+  });
   const { data: writeOk } = usePermissions('projectsAcl', 'UPDATE');
 
   const [identityProvider, setIdentityProvider] =

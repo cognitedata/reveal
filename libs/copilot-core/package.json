@@ -4,7 +4,6 @@
   "dependencies": {
     "@botui/react": "^1.1.5",
     "@cognite/cogs.js": "^9.16.4",
-    "@cognite/llm-hub": "^0.0.7",
     "@cognite/react-feature-flags": "^1.0.1",
     "@cognite/sdk": "^7.19.1",
     "@cognite/sdk-provider": "^2.0.6",
@@ -22,7 +21,6 @@
     "langchain": "^0.0.105",
     "localforage": "^1.10.0",
     "monaco-editor": "^0.39.0",
-    "react": "^18.2.0",
     "react-highlight": "^0.15.0",
     "react-resizable": "^3.0.5",
     "styled-components": "^5.3.6",
@@ -31,6 +29,8 @@
     "zod": "^3.21.4"
   },
   "peerDependencies": {
-    "@cognite/sdk": "^7.19.1"
+    "@cognite/sdk": "^7.19.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   }
 }

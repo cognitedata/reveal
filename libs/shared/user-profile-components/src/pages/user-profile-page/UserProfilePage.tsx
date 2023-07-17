@@ -8,6 +8,7 @@ import { PersonalInfoTab } from '../../components/personal-info-tab/PersonalInfo
 import { ProfilePageHeader } from '../../components/profile-page-header/ProfilePageHeader';
 import { VerticalTabs } from '../../components/vertical-tabs/VerticalTabs';
 import { ProfileTabKey, useActiveTabKey } from '../../hooks/useActiveTabKey';
+import { OnTrackEvent } from '../../metrics';
 
 export type SidebarLocale = {
   // TODO: provide detailed descriptions
@@ -18,14 +19,12 @@ export type SidebarLocale = {
 export type LanguageTabLocale = {
   // TODO: provide detailed descriptions
   title: string;
-  subtitle: string;
   languageFieldLabel: string;
 };
 
 export type PersonalInfoTabLocale = {
   // TODO: provide detailed descriptions
   title: string;
-  subtitle: string;
   nameFieldLabel: string;
   nameFieldHelpText: string;
   emailFieldLabel: string;
@@ -41,6 +40,7 @@ export type UserProfilePageProps = {
   sidebarLocale?: SidebarLocale;
   languageTabLocale?: LanguageTabLocale;
   personalInfoTabLocale?: PersonalInfoTabLocale;
+  onTrackEvent?: OnTrackEvent;
 };
 
 export const UserProfilePage = ({
@@ -52,6 +52,7 @@ export const UserProfilePage = ({
   sidebarLocale,
   languageTabLocale,
   personalInfoTabLocale,
+  onTrackEvent,
 }: UserProfilePageProps): JSX.Element => {
   const name = userInfo?.name ?? '';
   const email = userInfo?.email ?? '';
@@ -91,6 +92,7 @@ export const UserProfilePage = ({
               activeKey={activeTabKey}
               onChange={handleChange}
               tabs={profileTabs}
+              onTrackEvent={onTrackEvent}
             />
           </ProfileTabs>
 
@@ -101,15 +103,14 @@ export const UserProfilePage = ({
                 supportedLanguages={supportedLanguages}
                 onLanguageChange={onLanguageChange}
                 title={languageTabLocale?.title}
-                subtitle={languageTabLocale?.subtitle}
                 languageFieldLabel={languageTabLocale?.languageFieldLabel}
+                onTrackEvent={onTrackEvent}
               />
             ) : (
               <PersonalInfoTab
                 userInfo={{ email, name }}
                 isUserInfoLoading={isUserInfoLoading}
                 title={personalInfoTabLocale?.title}
-                subtitle={personalInfoTabLocale?.subtitle}
                 nameFieldLabel={personalInfoTabLocale?.nameFieldLabel}
                 nameFieldHelpText={personalInfoTabLocale?.nameFieldHelpText}
                 emailFieldLabel={personalInfoTabLocale?.emailFieldLabel}

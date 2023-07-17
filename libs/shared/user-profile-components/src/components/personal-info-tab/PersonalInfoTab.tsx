@@ -1,4 +1,4 @@
-import { Body, Flex, InputExp, Title } from '@cognite/cogs.js';
+import { Flex, InputExp, Title } from '@cognite/cogs.js';
 
 import { UserInfo } from '../../common/types';
 
@@ -6,7 +6,6 @@ export type PersonalInfoTabProps = {
   userInfo?: UserInfo;
   isUserInfoLoading?: boolean;
   title?: string;
-  subtitle?: string;
   nameFieldLabel?: string;
   nameFieldHelpText?: string;
   emailFieldLabel?: string;
@@ -17,11 +16,10 @@ export const PersonalInfoTab = ({
   userInfo,
   isUserInfoLoading,
   title = 'Personal info',
-  subtitle = 'Information about you across Cognite Data Fusion',
   nameFieldLabel = 'Name',
-  nameFieldHelpText = 'Your display name is managed by your organisation',
+  nameFieldHelpText = 'Contact your administrator if you want to change your name',
   emailFieldLabel = 'Email address',
-  emailFieldHelpText = 'Your name and email address are managed by your organization',
+  emailFieldHelpText = 'Contact your administrator if you want to change your name or email address',
 }: PersonalInfoTabProps): JSX.Element => {
   const name = userInfo?.name ?? '';
   const email = userInfo?.email ?? '';
@@ -30,7 +28,6 @@ export const PersonalInfoTab = ({
     <Flex direction="column" gap={24}>
       <Flex direction="column" gap={4}>
         <Title level={4}>{title}</Title>
-        <Body level={2}>{subtitle}</Body>
       </Flex>
       <Flex direction="column" gap={24}>
         <InputExp

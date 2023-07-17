@@ -1,7 +1,7 @@
 import styled from 'styled-components/macro';
 
 export const MenuListWrapper = styled.div`
-  max-height: 250px;
+  max-height: 512px;
   overflow-y: auto;
 
   ::-webkit-scrollbar {

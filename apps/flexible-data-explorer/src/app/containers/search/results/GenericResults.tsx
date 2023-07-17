@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 
 import { DataModelTypeDefsType } from '@platypus/platypus-core';
+import { isArray, isObject } from 'lodash';
 import isEmpty from 'lodash/isEmpty';
 import take from 'lodash/take';
 
@@ -112,17 +113,23 @@ const GenericResultItem: React.FC<Props> = ({ dataType, values, type }) => {
               return acc;
             }
 
-            if (item[field.name] === undefined || item[field.name] === null) {
+            const value = item[field.name];
+
+            if (value === undefined || value === null) {
               return acc;
             }
 
-            return [...acc, { key: field.name, value: item[field.name] }];
+            if (isObject(value) || isArray(value)) {
+              return acc;
+            }
+
+            return [...acc, { key: field.name, value: value }];
           }, [] as { key: string; value: string }[]);
 
           return (
             <SearchResults.Item
               key={item.externalId}
-              name={item.name}
+              name={item.name || item.externalId}
               description={item.description}
               properties={properties}
               onClick={() => handleRowClick(item)}

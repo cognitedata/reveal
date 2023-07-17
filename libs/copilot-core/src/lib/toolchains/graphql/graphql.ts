@@ -1,6 +1,6 @@
 import { GraphQlUtilsService } from '@platypus/platypus-common-utils';
 import { FdmMixerApiService } from '@platypus/platypus-core';
-import * as Sentry from '@sentry/react';
+import { jsonrepair } from 'jsonrepair';
 import {
   BaseCallbackHandler,
   CallbackManager,
@@ -13,6 +13,7 @@ import { ChainValues } from 'langchain/schema';
 
 import {
   copilotDestinationGraphqlPrompt,
+  datamodelAggregateFieldsPrompt,
   datamodelQueryFilterPrompt,
   datamodelQueryTypePrompt,
   datamodelRelevantPropertiesPrompt,
@@ -191,13 +192,11 @@ export class GraphQlChain extends CogniteBaseChain {
           types: typeNames,
         });
 
-      const relevantTypes: string[] = relevantTypesResponse
-        .substring(
-          (relevantTypesResponse as string).indexOf('[') + 1,
-          (relevantTypesResponse as string).indexOf(']')
-        )
-        .split(',')
-        .map((el: string) => el.replaceAll('"', '').trim());
+      const { relevantTypes } = JSON.parse(
+        jsonrepair(relevantTypesResponse.replaceAll('\n', ''))
+      ) as { relevantTypes: string[] };
+
+      console.log(relevantTypes);
 
       const filteredTypes = relevantTypes.filter((el) =>
         typeNames.includes(el)
@@ -223,19 +222,151 @@ export class GraphQlChain extends CogniteBaseChain {
         relevantTypes: filteredTypes,
       });
 
-      const { queryType, type } = JSON.parse(operationResponse) as {
+      const { queryType, type } = JSON.parse(
+        jsonrepair(operationResponse.replaceAll('\n', ''))
+      ) as {
         queryType: QueryType;
         type: string;
       };
 
       if (
-        !['list', 'aggregate', 'search', 'get'].includes(queryType) ||
+        !['list', 'aggregate'].includes(queryType) ||
         !filteredTypes.includes(type)
       ) {
         throw new Error('Invalid query type or type');
       }
 
-      // Chain 3: Identify correct operation and type
+      const operationName = getOperationName(queryType, type);
+      const filterTypeName = getFilterTypeName(queryType, type);
+
+      let variables: any = {};
+      let query: string = '';
+
+      if (queryType === 'list') {
+        // List - Chain 3: Identify relevant fields for aggregate
+        const aggregateFieldsChain = new LLMChain({
+          llm: this.llm,
+          prompt: new PromptTemplate({
+            template: datamodelRelevantPropertiesPrompt.template,
+            inputVariables: datamodelRelevantPropertiesPrompt.input_variables,
+          }),
+          outputKey: 'output',
+          verbose: true,
+        });
+
+        const { output: aggregateFieldsResponse } =
+          await aggregateFieldsChain.call({
+            question: values.input,
+            relevantTypes: constructGraphQLTypes(filteredTypes, dataModelTypes),
+          });
+
+        const fields = JSON.parse(
+          jsonrepair(aggregateFieldsResponse.replaceAll('\n', ''))
+        ) as {
+          [key: string]: string[];
+        };
+
+        // validate values
+        Object.entries(fields).forEach(([key, values]) => {
+          if (!relevantTypes.includes(key)) {
+            delete fields[key];
+          }
+          const typeDef = dataModelTypes.types.find((el) => el.name === key);
+          let validFields = [];
+          for (let field of values) {
+            if (typeDef?.fields.some((el) => el.name === field)) {
+              validFields.push(field);
+            }
+          }
+          fields[key] = validFields;
+        });
+        query = augmentQueryWithRequiredFields(
+          `query ${operationName} ($filter: ${filterTypeName}) {
+          ${operationName}(filter: $filter) 
+          ${getFields(
+            type,
+            new Map(Object.entries(fields)),
+            dataModelTypes,
+            true
+          )}
+        }`,
+          dataModelTypes
+        );
+      } else {
+        const typePropertiesForAggregate =
+          dataModelTypes.types
+            .find((dataType) => dataType.name === type)
+            ?.fields.filter(
+              // custom and list fields are not supported
+              (field) => !(field.type.list || field.type.custom)
+            ) || [];
+        // List - Chain 3: Identify relevant fields for type
+        const relevantFieldsChain = new LLMChain({
+          llm: this.llm,
+          prompt: new PromptTemplate({
+            template: datamodelAggregateFieldsPrompt.template,
+            inputVariables: datamodelAggregateFieldsPrompt.input_variables,
+          }),
+          outputKey: 'output',
+          verbose: true,
+        });
+
+        const { output: relevantFieldsResponse } =
+          await relevantFieldsChain.call({
+            question: values.input,
+            typeProperties: typePropertiesForAggregate.map(
+              (field) => `${field.name}: ${field.type.name}`
+            ),
+            typeName: type,
+          });
+
+        const aggregateFields = JSON.parse(
+          jsonrepair(relevantFieldsResponse.replaceAll('\n', ''))
+        ) as {
+          groupBy?: string;
+          aggregateProperties: { [key in string]: string[] };
+        };
+
+        // validate values
+        if (
+          aggregateFields.groupBy &&
+          !typePropertiesForAggregate.some(
+            (el) => el.name === aggregateFields.groupBy
+          )
+        ) {
+          throw new Error(
+            `Cannot aggregate on this field - ${aggregateFields.groupBy} for ${type}`
+          );
+        }
+        query = `query ${operationName} ($filter: ${filterTypeName}, $groupBy: [_Search${type}Fields!]) {
+          ${operationName}(filter: $filter, groupBy: $groupBy) {
+            items {
+              group
+              ${Object.entries(aggregateFields.aggregateProperties).map(
+                ([key, values]) => {
+                  const realFields = typePropertiesForAggregate.filter((el) =>
+                    values.includes(el.name)
+                  );
+                  if (key === 'count' && realFields.length === 0) {
+                    return 'count { externalId }';
+                  }
+                  if (realFields.length === 0) {
+                    throw new Error(`no relevant field to group on for ${key}`);
+                  }
+                  return `${key} { ${realFields
+                    .map((el) => el.name)
+                    .join('\n')} }`;
+                }
+              )}
+            }
+          }
+        }`;
+        variables = aggregateFields.groupBy
+          ? { groupBy: [aggregateFields.groupBy] }
+          : {};
+      }
+
+      // Chain 4: Indentify relevant filter
       const queryFilterChain = new LLMChain({
         llm: this.llm,
         prompt: new PromptTemplate({
@@ -250,57 +381,11 @@ export class GraphQlChain extends CogniteBaseChain {
         question: values.input,
         relevantTypes: constructGraphQLTypes(filteredTypes, dataModelTypes),
       });
+      const filter = JSON.parse(
+        jsonrepair(queryFilterResponse.replaceAll('\n', ''))
+      ) as GptGQLFilter;
 
-      // Chain 4: Identify relevant fields for type
-      const relevantFieldsChain = new LLMChain({
-        llm: this.llm,
-        prompt: new PromptTemplate({
-          template: datamodelRelevantPropertiesPrompt.template,
-          inputVariables: datamodelRelevantPropertiesPrompt.input_variables,
-        }),
-        outputKey: 'output',
-        verbose: true,
-      });
-
-      let { output: relevantFieldsResponse } = await relevantFieldsChain.call({
-        question: values.input,
-        relevantTypes: constructGraphQLTypes(filteredTypes, dataModelTypes),
-      });
-
-      relevantFieldsResponse = relevantFieldsResponse
-        .replaceAll(/[\n\t]+| {2,}/g, ' ')
-        .replaceAll('], }', '] }');
-
-      const fields = JSON.parse(relevantFieldsResponse) as {
-        [key: string]: string[];
-      };
-
-      // validate values
-      Object.entries(fields).forEach(([key, values]) => {
-        if (!relevantTypes.includes(key)) {
-          delete fields[key];
-        }
-        const typeDef = dataModelTypes.types.find((el) => el.name === key);
-        let validFields = [];
-        for (let field of values) {
-          if (typeDef?.fields.some((el) => el.name === field)) {
-            validFields.push(field);
-          }
-        }
-        fields[key] = validFields;
-      });
-
-      const operationName = getOperationName(queryType, type);
-      const filterTypeName = getFilterTypeName(queryType, type);
-      const filter = JSON.parse(queryFilterResponse) as GptGQLFilter;
-
-      const query = augmentQueryWithRequiredFields(
-        `query ${operationName} ($filter: ${filterTypeName}) {
-  ${operationName}(filter: $filter) 
-  ${getFields(type, new Map(Object.entries(fields)), dataModelTypes, true)}
-}`,
-        dataModelTypes
-      );
+      variables = { ...variables, filter: constructFilter(filter) };
 
       const constructedFilter = constructFilter(filter);
 
@@ -313,12 +398,15 @@ export class GraphQlChain extends CogniteBaseChain {
         space: space,
         graphQlParams: {
           query: query,
-          variables: { filter: constructedFilter },
+          variables,
         },
       });
 
       // assume no aggregate atm
-      const summary = `${response.data[operationName]['items'].length}+`;
+      const summary =
+        queryType === 'list'
+          ? `${response.data[operationName]['items'].length}+`
+          : JSON.stringify(response.data[operationName]['items']);
 
       sendToCopilotEvent('NEW_MESSAGES', [
         {
@@ -327,19 +415,19 @@ export class GraphQlChain extends CogniteBaseChain {
           version,
           space,
           dataModel,
-          content: `Found these results: ${summary} for ${type}`,
-          graphql: { query: query, variables: { filter: constructedFilter } },
+          content: `Found ${summary} results for ${type}`,
+          graphql: { query, variables },
           chain: this.constructor.name,
           actions: [
             {
               content: 'Debug',
               onClick: () => {
                 console.log('query', query);
-                console.log('variables', { filter: constructedFilter });
+                console.log('variables', variables);
                 navigator.clipboard.writeText(
                   JSON.stringify({
                     query,
-                    variables: { filter: constructedFilter },
+                    variables,
                   })
                 );
               },
@@ -349,17 +437,18 @@ export class GraphQlChain extends CogniteBaseChain {
       ]);
       sendFromCopilotEvent('GQL_QUERY', {
         query: query,
-        variables: { filter: constructedFilter },
+        variables,
       });
 
       return {
         query: JSON.stringify({
           query,
-          argument: { $filter: constructedFilter },
+          variables,
         }),
       };
     } catch (e) {
-      Sentry.captureException(e);
+      console.log(e);
+      // Sentry.captureException(e);
       sendToCopilotEvent('NEW_MESSAGES', [
         {
           source: 'bot',

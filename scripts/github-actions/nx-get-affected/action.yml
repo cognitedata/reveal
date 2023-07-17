@@ -13,6 +13,7 @@ inputs:
   target:
     description: 'Target'
     default: 'build'
-  type:
-    description: 'Type of project (apps/libs)'
-    default: 'all'
+  projects:
+    description: 'Projects filter. ref:https://nx.dev/packages/nx/documents/show#projects'
+  exclude:
+    description: 'Which projects to exclude. ref: https://nx.dev/packages/nx/documents/show#exclude'

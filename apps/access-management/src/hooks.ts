@@ -9,7 +9,11 @@ import {
 } from '@tanstack/react-query';
 import { notification } from 'antd';
 
-import { getFlow, getToken } from '@cognite/cdf-sdk-singleton';
+import {
+  getFlow,
+  getToken,
+  getUserInformation,
+} from '@cognite/cdf-sdk-singleton';
 import { getEnv, getProject } from '@cognite/cdf-utilities';
 import {
   CogniteCapability,
@@ -65,18 +69,6 @@ export const useGroups = (all = false) => {
           return 0;
         }
       });
-  });
-};
-
-export const useAuthConfiguration = () => {
-  const sdk = useSDK();
-  return useQuery(['auth-configuration'], () => {
-    return sdk
-      .get<{
-        isLegacyLoginFlowAndApiKeysEnabled: boolean;
-        isOidcEnabled: boolean;
-      }>(`/api/playground/projects/${sdk.project}/configuration`)
-      .then((r) => r.data);
   });
 };
 
@@ -167,4 +159,8 @@ export const useDeleteServiceAccounts = (project: string) => {
       });
     },
   });
+};
+
+export const useUserInformation = () => {
+  return useQuery(['user-info'], getUserInformation);
 };

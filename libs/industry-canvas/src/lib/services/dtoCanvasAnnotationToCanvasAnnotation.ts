@@ -12,17 +12,17 @@ import { StickyAnnotation } from '@cognite/unified-file-viewer/dist/core/annotat
 import { CanvasAnnotation } from '../types';
 import assertNever from '../utils/assertNever';
 
-import { FDMCanvasAnnotation } from './types';
+import { DTOCanvasAnnotation } from './types';
 
-export const fdmCanvasAnnotationToCanvasAnnotation = (
-  fdmContainerRef: FDMCanvasAnnotation
+export const dtoCanvasAnnotationToCanvasAnnotation = (
+  dtoCanvasAnnotation: DTOCanvasAnnotation
 ): CanvasAnnotation => {
-  const { annotationType, properties, ...commonProps } = fdmContainerRef;
+  const { annotationType, properties, ...commonProps } = dtoCanvasAnnotation;
   // Filter out null values from commonProps
   const filteredCommonProps: typeof commonProps = {
     ...pickBy(commonProps, (value) => value !== null),
-    id: fdmContainerRef.id,
-    externalId: fdmContainerRef.externalId,
+    id: dtoCanvasAnnotation.id,
+    externalId: dtoCanvasAnnotation.externalId,
   };
 
   if (annotationType === AnnotationType.RECTANGLE) {

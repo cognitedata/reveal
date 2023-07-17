@@ -34,6 +34,11 @@ export const useTypesDataModelsQuery = () => {
       isLoading: results.some((item) => item.isLoading),
       data: results?.reduce((acc, item) => {
         if (item.data) {
+          // Ignore data models without graphQlDml
+          if (!item.data.graphQlDml) {
+            return acc;
+          }
+
           return [...acc, item.data];
         }
 

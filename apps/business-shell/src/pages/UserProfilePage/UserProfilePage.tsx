@@ -3,6 +3,7 @@ import {
   getLanguage,
   selectLanguage,
 } from '@cognite/cdf-i18n-utils';
+import { trackEvent } from '@cognite/cdf-route-tracker';
 import {
   Language,
   UserProfilePage as SharedUserProfilePage,
@@ -34,20 +35,23 @@ export const UserProfilePage = (): JSX.Element => {
   const { data = {}, isLoading } = useUserInfo();
   const { name, email, picture: profilePicture } = data;
 
+  const handleLanguageChange = (language: Language | undefined) => {
+    selectLanguage(language?.code || 'en');
+  };
+
   return (
     <SharedUserProfilePage
       userInfo={{ name, email, profilePicture }}
       isUserInfoLoading={isLoading}
       selectedLanguage={selectedLanguage}
       supportedLanguages={SUPPORTED_LANGUAGES}
-      onLanguageChange={(language) => selectLanguage(language?.code || 'en')}
+      onLanguageChange={handleLanguageChange}
       sidebarLocale={{
         personalInfoTabBtnText: t('PERSONAL_INFO_TAB_BTN_TEXT'),
         languageTabBtnText: t('LANGUAGE_TAB_BTN_TEXT'),
       }}
       personalInfoTabLocale={{
         title: t('PERSONAL_INFO_TAB_TITLE'),
-        subtitle: t('PERSONAL_INFO_TAB_SUBTITLE'),
         nameFieldLabel: t('NAME_FIELD_LABEL'),
         nameFieldHelpText: t('NAME_FIELD_HELP_TEXT'),
         emailFieldLabel: t('EMAIL_FIELD_LABEL'),
@@ -55,8 +59,10 @@ export const UserProfilePage = (): JSX.Element => {
       }}
       languageTabLocale={{
         title: t('LANGUAGE_TAB_TITLE'),
-        subtitle: t('LANGUAGE_TAB_SUBTITLE'),
         languageFieldLabel: t('LANGUAGE_FIELD_LABEL'),
+      }}
+      onTrackEvent={(eventName, metaData) => {
+        trackEvent(`BusinessShell.UserProfilePage.${eventName}`, metaData);
       }}
     />
   );

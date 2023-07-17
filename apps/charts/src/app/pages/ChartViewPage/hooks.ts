@@ -13,6 +13,7 @@ import {
   ScheduledCalculation,
   ChartSource,
 } from '@charts-app/models/chart/types';
+import { updateDuplicateIds } from '@charts-app/models/chart/update-duplicate-ids';
 import {
   updateChartDateRange,
   updateWorkflowsFromV1toV2,
@@ -36,9 +37,20 @@ import {
   CreateStatisticsParams,
   StatusStatusEnum,
 } from '@cognite/calculation-backend';
+import { useFlag } from '@cognite/react-feature-flags';
 import { useSDK } from '@cognite/sdk-provider';
 
 export const useInitializedChart = (chartId: string) => {
+  /**
+   * Get feature flag for duplicate id migration
+   */
+  const { isEnabled: isDuplicateIdMigrationEnabled } = useFlag(
+    'CHARTS_UI_CALC_DUPLICATE_ID_MIGRATION',
+    {
+      fallback: false,
+    }
+  );
+
   /**
    * Get stored chart
    */
@@ -90,7 +102,13 @@ export const useInitializedChart = (chartId: string) => {
       /**
        * Convert/migrate from v2 format to v3 (toolFunction -> selectedOperation, functionData -> parameterValues, etc...)
        */
-      .map((_chart) => updateWorkflowsToSupportVersions(_chart))[0];
+      .map((_chart) => updateWorkflowsToSupportVersions(_chart))
+      /**
+       * Remove duplicate ids from workflows
+       */
+      .map((_chart) =>
+        isDuplicateIdMigrationEnabled ? updateDuplicateIds(_chart) : _chart
+      )[0];
 
     /**
      * Add chart to local state atom

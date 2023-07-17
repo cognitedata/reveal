@@ -8,7 +8,7 @@ import { SearchConfiguration } from '../containers/search/SearchConfiguration';
 
 export const HomePage = () => {
   return (
-    <Page>
+    <Page disableScrollbarGutter>
       <SearchContainer>
         <SearchConfiguration header />
 

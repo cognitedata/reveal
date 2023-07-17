@@ -7,6 +7,7 @@ import {
 } from '@data-exploration/components';
 import { SearchResultCountLabel } from '@data-exploration/containers';
 import { ColumnDef } from '@tanstack/react-table';
+import isEmpty from 'lodash/isEmpty';
 
 import {
   ResourceTypes,
@@ -49,24 +50,29 @@ export function RelationshipSequenceTable({
       filter: { labels },
     });
 
+  const hasRelationships = !isEmpty(detailViewRelatedResourcesData);
+
   const {
     data = [],
     hasNextPage,
     fetchNextPage,
     isLoading,
-  } = useSequenceListQuery({
-    advancedFilter: buildAdvancedFilterFromDetailViewData(
-      detailViewRelatedResourcesData
-    ),
-    limit: 20,
-  });
+  } = useSequenceListQuery(
+    {
+      advancedFilter: buildAdvancedFilterFromDetailViewData(
+        detailViewRelatedResourcesData
+      ),
+      limit: 20,
+    },
+    { enabled: hasRelationships }
+  );
 
   const tableData = useMemo(() => {
     return addDetailViewData(data, detailViewRelatedResourcesData);
   }, [data, detailViewRelatedResourcesData]);
 
-  if (isLoading) {
-    return <EmptyState isLoading={isLoading} />;
+  if (isEmpty(tableData)) {
+    return <EmptyState isLoading={hasRelationships && isLoading} />;
   }
 
   return (

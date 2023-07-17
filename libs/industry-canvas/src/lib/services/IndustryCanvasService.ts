@@ -10,10 +10,10 @@ import { FDMClient, gql } from '../utils/FDMClient';
 
 import {
   getAnnotationOrContainerExternalId,
-  getSerializedCanvasStateFromFDMCanvasState,
+  getSerializedCanvasStateFromDTOCanvasState,
   upsertCanvas,
 } from './dataModelUtils';
-import { FDMCanvasState } from './types';
+import { DTOCanvasState } from './types';
 
 export const DEFAULT_CANVAS_NAME = 'Untitled canvas';
 
@@ -78,7 +78,7 @@ export class IndustryCanvasService {
   ): Promise<SerializedCanvasDocument> {
     const res = await this.fdmClient.graphQL<{
       canvases: {
-        items: (Omit<SerializedCanvasDocument, 'data'> & FDMCanvasState)[];
+        items: (Omit<SerializedCanvasDocument, 'data'> & DTOCanvasState)[];
       };
     }>(
       // TODO(DEGR-2457): add support for paginating through containerReferences and canvasAnnotations
@@ -143,12 +143,12 @@ export class IndustryCanvasService {
       );
     }
 
-    const fdmCanvas = res.canvases.items[0];
+    const dtoCanvas = res.canvases.items[0];
     return {
-      ...omit(fdmCanvas, ['canvasAnnotations', 'containerReferences']),
-      data: getSerializedCanvasStateFromFDMCanvasState({
-        containerReferences: fdmCanvas.containerReferences,
-        canvasAnnotations: fdmCanvas.canvasAnnotations,
+      ...omit(dtoCanvas, ['canvasAnnotations', 'containerReferences']),
+      data: getSerializedCanvasStateFromDTOCanvasState({
+        containerReferences: dtoCanvas.containerReferences,
+        canvasAnnotations: dtoCanvas.canvasAnnotations,
       }),
     };
   }

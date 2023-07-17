@@ -1,5 +1,4 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { useAuth } from '@cognite/auth-react';
 import { useTypedTranslation as useTranslation } from '@cognite/cdf-i18n-utils';
@@ -13,7 +12,6 @@ import './UserMenu.css';
 
 const UserMenu = (): JSX.Element => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const { logout } = useAuth();
 
   const { data = {} } = useUserInfo();
@@ -21,8 +19,14 @@ const UserMenu = (): JSX.Element => {
   const userInfo = { name, email, profilePicture };
 
   const handleLogout = async () => {
-    trackEvent('Navigation.Logout.Click');
     logout();
+  };
+
+  const handleManageAccountClick = () => {
+    const { pathname, search } = window.location;
+    const project = pathname.split('/')[1];
+    const url = `${project}/profile${search}`;
+    window.open(url, '_blank');
   };
 
   return (
@@ -38,11 +42,14 @@ const UserMenu = (): JSX.Element => {
           menu: (
             <SharedUserMenu
               userInfo={userInfo}
-              onManageAccountClick={() => navigate('/profile')}
-              onLogoutClick={() => handleLogout()}
+              onManageAccountClick={handleManageAccountClick}
+              onLogoutClick={handleLogout}
               menuTitle={t('LABEL_ACCOUNT')}
               menuItemManageAccountBtnText={t('LABEL_MANAGE_ACCOUNT')}
               menuItemLogoutBtnText={t('SIGN_OUT_BTN_TEXT')}
+              onTrackEvent={(eventName, metaData) => {
+                trackEvent(`BusinessShell.UserMenu.${eventName}`, metaData);
+              }}
             />
           ),
         },
