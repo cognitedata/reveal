@@ -3,10 +3,10 @@ import { pickBy } from 'lodash';
 import { ContainerReference, ContainerReferenceType } from '../types';
 import assertNever from '../utils/assertNever';
 
-import { FDMContainerReference } from './types';
+import { DTOContainerReference } from './types';
 
-export const fdmContainerReferenceToContainerReference = (
-  fdmContainerRef: FDMContainerReference
+export const dtoContainerReferenceToContainerReference = (
+  dtoContainerReference: DTOContainerReference
 ): ContainerReference => {
   const {
     containerReferenceType,
@@ -14,7 +14,7 @@ export const fdmContainerReferenceToContainerReference = (
     resourceSubId,
     properties,
     ...commonProps
-  } = fdmContainerRef;
+  } = dtoContainerReference;
   // Filter out null values from commonProps
   const filteredCommonProps = pickBy(commonProps, (val) => val !== null);
 
