@@ -30,11 +30,9 @@ import {
   Dropdown,
   Flex,
   Menu,
-  NotificationDot,
   Tooltip,
 } from '@cognite/cogs.js';
 
-import { FeaturePreview } from '../FeaturePreview/FeaturePreview';
 import { SchemaVersionDropdown } from '../SchemaVersionDropdown/SchemaVersionDropdown';
 
 import {
@@ -146,7 +144,6 @@ export const NavigationDataModel = () => {
   };
 
   const [showEndpointModal, setShowEndpointModal] = useState(false);
-  const [showFeatureToggle, setShowFeatureToggle] = useState(false);
 
   const docsLinkUrl =
     currentPage === 'preview' ? DOCS_LINKS.QUERYING : DOCS_LINKS.CREATION;
@@ -208,25 +205,10 @@ export const NavigationDataModel = () => {
                 </Menu.Item>
               </Tooltip>
               <Divider />
-              <Menu.Item
-                icon="Experiment"
-                iconPlacement="left"
-                style={{
-                  background: 'var(--cogs-decorative--gradient--dawn)',
-                  color: 'white',
-                }}
-                onClick={() => {
-                  setShowFeatureToggle(true);
-                }}
-              >
-                {t('menu-item-experiments', 'Feature preview')}
-              </Menu.Item>
             </Menu>
           }
         >
-          <NotificationDot>
-            <Button icon="EllipsisVertical" aria-label="Overflow Menu" />
-          </NotificationDot>
+          <Button icon="EllipsisVertical" aria-label="Overflow Menu" />
         </Dropdown>
       </StyledTopBarRight>
     );
@@ -302,16 +284,6 @@ export const NavigationDataModel = () => {
         <EndpointModal
           endpoint={fdmClient.getQueryEndpointUrl(selectedDataModelVersion)}
           onRequestClose={() => setShowEndpointModal(false)}
-        />
-      )}
-      {showFeatureToggle && (
-        <FeaturePreview
-          onRequestClose={(hasChanged) => {
-            setShowFeatureToggle(false);
-            if (hasChanged) {
-              window.location.reload();
-            }
-          }}
         />
       )}
 

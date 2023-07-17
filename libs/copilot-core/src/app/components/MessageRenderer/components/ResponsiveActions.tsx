@@ -64,6 +64,7 @@ export const ResponsiveActions = ({ actions }: { actions: Action[] }) => {
         total += array[i];
       }
     }
+    return Infinity;
   };
 
   return (

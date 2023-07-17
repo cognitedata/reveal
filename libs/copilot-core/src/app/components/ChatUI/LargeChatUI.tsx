@@ -1,5 +1,6 @@
+import styled from 'styled-components';
+
 import { BotUIMessageList, BotUIAction } from '@botui/react';
-import styled from 'styled-components/macro';
 
 import { Flex } from '@cognite/cogs.js';
 

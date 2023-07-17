@@ -1,8 +1,10 @@
 import { useCallback } from 'react';
 
-import { trackEvent } from '@cognite/cdf-route-tracker';
+import mixpanel from 'mixpanel-browser';
 
 import { useCopilotContext } from './useCopilotContext';
+
+mixpanel.init('5c4d853e7c3b77b1eb4468d5329b278c', {}, 'cdf_copilot');
 
 type TrackingEvent = {
   FEEDBACK_POSITIVE: { chain?: string; content: string };
@@ -39,5 +41,7 @@ export const useMetrics = <T extends keyof TrackingEvent>() => {
 };
 
 export const trackUsage = (event: string, content: any) => {
-  return trackEvent(`COPILOT_${event}`, content);
+  return (
+    mixpanel as unknown as { [key in string]: typeof mixpanel }
+  ).cdf_copilot.track(`COPILOT_${event}`, content);
 };
