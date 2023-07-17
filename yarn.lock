@@ -3131,7 +3131,7 @@
     lodash "4.17.21"
     mixpanel-browser "2.41.0"
 
-"@cognite/metrics@2.0.0":
+"@cognite/metrics@2.0.0", "@cognite/metrics@^2.0.0":
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@cognite/metrics/-/metrics-2.0.0.tgz#9c78512c5709b4a18cd5a197f61eec90fa092d0a"
   integrity sha512-abPcEmEc8s6kGKehJjuOU0pWgfIkmYNuPdKl4etAA9H6MF5/hA7hlLDpJAFEK3IbW34ULGnmVyq1pueF0FmXUw==

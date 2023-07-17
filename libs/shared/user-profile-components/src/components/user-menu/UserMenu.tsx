@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { Avatar, Body, Divider, Flex, Loader, Menu } from '@cognite/cogs.js';
 
 import { UserInfo } from '../../common/types';
+import { OnTrackEvent, manageAccountClickEvent } from '../../metrics';
 
 export type UserMenuProps = PropsWithChildren & {
   userInfo?: UserInfo;
@@ -14,6 +15,7 @@ export type UserMenuProps = PropsWithChildren & {
   menuTitle?: string;
   menuItemManageAccountBtnText?: string;
   menuItemLogoutBtnText?: string;
+  onTrackEvent?: OnTrackEvent;
 };
 
 export const UserMenu = ({
@@ -24,6 +26,7 @@ export const UserMenu = ({
   menuTitle = 'Account',
   menuItemManageAccountBtnText = 'Manage Account',
   menuItemLogoutBtnText = 'Sign out',
+  onTrackEvent,
   children,
 }: UserMenuProps): JSX.Element => {
   const { name = '', email = '', profilePicture = '' } = userInfo || {};
@@ -47,7 +50,13 @@ export const UserMenu = ({
           </>
         )}
       </UserDetailsMenuItem>
-      <Menu.Item onClick={onManageAccountClick}>
+      <Menu.Item
+        icon="ExternalLink"
+        onClick={() => {
+          onTrackEvent?.(manageAccountClickEvent);
+          onManageAccountClick();
+        }}
+      >
         {menuItemManageAccountBtnText}
       </Menu.Item>
       <Divider />

@@ -30,7 +30,14 @@
         "tsConfig": "libs/shared/user-profile-components/tsconfig.lib.json",
         "project": "libs/shared/user-profile-components/package.json",
         "entryFile": "libs/shared/user-profile-components/src/index.ts",
-        "external": "all",
+        "external": [
+          "react/jsx-runtime",
+          "react",
+          "react-dom",
+          "styled-components",
+          "@cognite/cogs.js",
+          "@cognite/metrics"
+        ],
         "rollupConfig": "@nx/react/plugins/bundle-rollup",
         "compiler": "babel",
         "format": ["esm"],

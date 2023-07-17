@@ -1,15 +1,16 @@
-import { Body, Flex, Select, Title } from '@cognite/cogs.js';
+import { Flex, Select, Title } from '@cognite/cogs.js';
 
 import { DEFAULT_SUPPORTED_LANGUAGES } from '../../common/constants';
 import { Language } from '../../common/types';
+import { OnTrackEvent, languageChangeEvent } from '../../metrics';
 
 type LanguageTabProps = {
   selectedLanguage: Language;
   supportedLanguages: Language[];
   onLanguageChange: (language: Language | undefined) => void;
   title?: string;
-  subtitle?: string;
   languageFieldLabel?: string;
+  onTrackEvent?: OnTrackEvent;
 };
 
 export const LanguageTab = ({
@@ -17,8 +18,8 @@ export const LanguageTab = ({
   supportedLanguages = DEFAULT_SUPPORTED_LANGUAGES,
   onLanguageChange,
   title = 'Language',
-  subtitle = 'Information about your language preferences across Cognite Data Fusion',
   languageFieldLabel = 'Language',
+  onTrackEvent,
 }: LanguageTabProps): JSX.Element => {
   const options = supportedLanguages
     .map((language) => ({
@@ -31,7 +32,6 @@ export const LanguageTab = ({
     <Flex direction="column" gap={24}>
       <Flex direction="column" gap={4}>
         <Title level={4}>{title}</Title>
-        <Body level={2}>{subtitle}</Body>
       </Flex>
       <Flex direction="column" gap={24}>
         <Select
@@ -43,6 +43,10 @@ export const LanguageTab = ({
             const newLanguage = supportedLanguages.find(
               ({ code }: Language) => code === option.value
             );
+            onTrackEvent?.(languageChangeEvent, {
+              prevLanguage: selectedLanguage,
+              newLanguage: newLanguage || null,
+            });
             onLanguageChange(newLanguage);
           }}
           options={options}
