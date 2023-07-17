@@ -5,6 +5,7 @@
 import { type ReactElement } from 'react';
 import { Button, ToolBar, type ToolBarProps } from '@cognite/cogs.js';
 import { FitModelsButton } from './FitModelsButton';
+import { SlicerButton } from './SlicerButton';
 
 const defaultStyle: ToolBarProps = {
   style: {
@@ -30,7 +31,7 @@ export const RevealToolbar = (toolBarProps: ToolBarProps): ReactElement => {
 
         <div className="cogs-toolbar-divider" />
 
-        <Button type="ghost" icon="Slice" aria-label="Slice models" />
+        <SlicerButton />
         <Button type="ghost" icon="Ruler" aria-label="Make measurements" />
 
         <div className="cogs-toolbar-divider" />
