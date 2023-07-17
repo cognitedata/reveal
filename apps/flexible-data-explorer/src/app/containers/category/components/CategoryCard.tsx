@@ -27,7 +27,9 @@ export const CategoryCard: React.FC<Props> = React.memo(
         <Content>
           <span>
             <Title>{type}</Title>
-            <Body level={4}>{description || t('GENERAL_NO_DESCRIPTION')}</Body>
+            <Description>
+              {description || t('GENERAL_NO_DESCRIPTION')}
+            </Description>
           </span>
 
           <Icon type="ArrowRight" />
@@ -38,8 +40,8 @@ export const CategoryCard: React.FC<Props> = React.memo(
 );
 
 const Container = styled.div.attrs({ role: 'button' })`
-  width: 100%;
   min-height: 100px;
+  width: 247px;
   background-color: white;
   border-radius: 10px;
   padding: 16px;
@@ -70,8 +72,15 @@ const Content = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  overflow: hidden;
 `;
 
 const Title = styled(Body).attrs({ level: 5 })`
   font-weight: 600;
+`;
+
+const Description = styled(Body).attrs({ level: 4 })`
+  white-space: nowrap;
+  display: block;
+  text-overflow: ellipsis;
 `;

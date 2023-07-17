@@ -37,7 +37,7 @@ export class FDMComposer {
   }
 
   public async search(query: string, filters: Record<string, unknown>) {
-    const promises = await Promise.all(
+    const promises = await Promise.allSettled(
       (this.clients || []).map(async (client) => {
         const results = await client.searchDataTypes(query, filters);
 
@@ -46,7 +46,11 @@ export class FDMComposer {
     );
 
     return promises.reduce((acc, item) => {
-      return merge(acc, item);
+      if (item.status === 'rejected') {
+        return acc;
+      }
+
+      return merge(acc, item.value);
     }, {} as Record<string, SearchResponse>);
   }
 
@@ -54,7 +58,7 @@ export class FDMComposer {
     query: string,
     filters: Record<string, unknown>
   ) {
-    const promises = await Promise.all(
+    const promises = await Promise.allSettled(
       (this.clients || []).map(async (client) => {
         const results = await client.searchAggregateCount(query, filters);
 
@@ -63,7 +67,11 @@ export class FDMComposer {
     );
 
     return promises.reduce((acc, item) => {
-      return merge(acc, item);
+      if (item.status === 'rejected') {
+        return acc;
+      }
+
+      return merge(acc, item.value);
     }, {} as Record<string, number>);
   }
 

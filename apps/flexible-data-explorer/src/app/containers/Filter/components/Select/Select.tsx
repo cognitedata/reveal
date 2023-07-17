@@ -1,10 +1,11 @@
 import { useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import head from 'lodash/head';
 import isUndefined from 'lodash/isUndefined';
 
 import { OptionType, Select as CogsSelect } from '@cognite/cogs.js';
+
+import { useTranslation } from '../../../../hooks/useTranslation';
 
 import { SelectWrapper } from './elements';
 import { mapOptionsToOptionType, mapOptionToOptionType } from './utils';
@@ -27,7 +28,7 @@ export const Select = <T extends string>({
 
   const selectOptions = useMemo(() => {
     return mapOptionsToOptionType(options, t);
-  }, [options]);
+  }, [options, t]);
 
   const selectValue = useMemo(() => {
     if (value) {
@@ -41,7 +42,7 @@ export const Select = <T extends string>({
     if (defaultSelectFirstOption) {
       return head(selectOptions);
     }
-  }, [defaultSelectFirstOption, selectOptions, selectedOption, value]);
+  }, [defaultSelectFirstOption, selectOptions, selectedOption, value, t]);
 
   return (
     <SelectWrapper>

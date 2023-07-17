@@ -53,10 +53,9 @@ const CategoriesContainer = styled.div`
 `;
 
 const CategoryContent = styled.div`
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-column-gap: 16px;
-  grid-row-gap: 16px;
-
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  gap: 16px;
   padding: 16px 0;
 `;

@@ -8,7 +8,6 @@ import queryString from 'query-string';
 import { ResourceItem } from '@data-exploration-lib/core';
 
 import { DateRange, ValueByDataType } from '../containers/Filter';
-import { useSelectedDataModels } from '../services/useSelectedDataModels';
 import { createSearchParams } from '../utils/router';
 
 import { useGetChartsUrl, useGetCanvasUrl } from './useUrl';
@@ -21,8 +20,6 @@ export const useNavigation = () => {
   // const dataModelParams = useDataModelParams();
   const chartsUrl = useGetChartsUrl();
   const canvasUrl = useGetCanvasUrl();
-
-  const selectedDataModels = useSelectedDataModels();
 
   // For migration: if we're located at the route, keep the route
   // TODO: Better way to use navigate function to do this?
