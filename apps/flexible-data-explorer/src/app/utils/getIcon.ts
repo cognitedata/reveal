@@ -14,12 +14,20 @@ export const getIcon = (value: string): IconType => {
     return 'Assets';
   }
 
-  if (['time series'].includes(type)) {
+  if (['time series', 'timeseries'].includes(type)) {
     return 'Timeseries';
   }
 
   if (['document', 'file'].includes(type)) {
     return 'Document';
+  }
+
+  if (['pump', 'compressor', 'valve', 'flange', 'tank'].includes(type)) {
+    return 'Gauge';
+  }
+
+  if (['manufacturer', 'supplier', 'facility', 'vendor'].includes(type)) {
+    return 'AzureDataFactory';
   }
 
   return 'Component';

@@ -8,7 +8,7 @@ import { useSDK } from '@cognite/sdk-provider';
 
 import { QueryKeys, TOAST_POSITION } from '../../../../constants';
 import { CommentService } from '../../CommentService';
-import { Comment } from '../../types';
+import { SerializedComment } from '../../types';
 
 export const useCommentsDeleteMutation = () => {
   const queryClient = useQueryClient();
@@ -22,24 +22,16 @@ export const useCommentsDeleteMutation = () => {
       onMutate: async (deletedCommentExternalIds) => {
         const removedExternalIds = new Set(deletedCommentExternalIds);
         // Cancel any outgoing refetches
-        await queryClient.cancelQueries([
-          QueryKeys.FETCH_COMMENTS_BY_IDS,
-          ...removedExternalIds,
-        ]);
         await queryClient.cancelQueries([QueryKeys.LIST_COMMENTS]);
 
         // Optimistically update to the new values
-        queryClient.setQueriesData<Comment[]>(
+        queryClient.setQueriesData<SerializedComment[]>(
           [QueryKeys.LIST_COMMENTS],
-          (previousComments: Comment[] = []) =>
+          (previousComments: SerializedComment[] = []) =>
             previousComments.filter(
               (prevComment) => !removedExternalIds.has(prevComment.externalId)
             )
         );
-        queryClient.removeQueries([
-          QueryKeys.FETCH_COMMENTS_BY_IDS,
-          ...removedExternalIds,
-        ]);
 
         return true;
       },

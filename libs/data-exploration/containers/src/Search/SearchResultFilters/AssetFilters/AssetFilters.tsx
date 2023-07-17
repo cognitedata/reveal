@@ -35,6 +35,16 @@ export const AssetFilters: React.FC<FilterProps> = ({
       {...rest}
     >
       <TempMultiSelectFix>
+        <MetadataFilter.Assets
+          query={query}
+          filter={assetFilter}
+          values={assetFilter.metadata}
+          onChange={(newMetadata) => {
+            onFilterChange('asset', {
+              metadata: newMetadata,
+            });
+          }}
+        />
         <LabelFilter.Asset
           query={query}
           filter={assetFilter}
@@ -54,17 +64,6 @@ export const AssetFilters: React.FC<FilterProps> = ({
               sources: newSources,
             })
           }
-        />
-
-        <MetadataFilter.Assets
-          query={query}
-          filter={assetFilter}
-          values={assetFilter.metadata}
-          onChange={(newMetadata) => {
-            onFilterChange('asset', {
-              metadata: newMetadata,
-            });
-          }}
         />
       </TempMultiSelectFix>
     </BaseFilterCollapse.Panel>

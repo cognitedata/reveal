@@ -35,3 +35,4 @@ export * from './Divider';
 export * from './KeepMounted';
 export * from './PreviewFilter';
 export * from './UploadButton';
+export * from './Splitter';

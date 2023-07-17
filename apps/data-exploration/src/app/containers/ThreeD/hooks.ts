@@ -11,6 +11,7 @@ import keyBy from 'lodash/keyBy';
 import uniqBy from 'lodash/uniqBy';
 import THREE, { Vector3, Color } from 'three';
 
+import { getProject } from '@cognite/cdf-utilities';
 import {
   CogniteModel,
   CogniteCadModel,
@@ -238,7 +239,7 @@ export const useImage360 = (siteId?: string): Image360SiteData | undefined => {
 
 export const useAPMConfig = () => {
   const sdk = useSDK();
-  const project = sdk.project;
+  const project = getProject();
   const baseUrl = sdk.getBaseUrl();
 
   return useQuery<APMConfigNode>(
@@ -324,7 +325,7 @@ export const useInfiniteChecklistItems = (
         },
       };
 
-      const project = sdk.project;
+      const project = getProject();
       const baseUrl = sdk.getBaseUrl();
 
       if (!apmConfig) {
@@ -568,7 +569,7 @@ export const getAssetMappingsQueryFn = async (
 
   const { nextCursor, items } = (
     await sdk.get<MappingResponse>(
-      `/api/v1/projects/${sdk.project}/3d/models/${modelId}/revisions/${revisionId}/mappings`,
+      `/api/v1/projects/${getProject()}/3d/models/${modelId}/revisions/${revisionId}/mappings`,
       { params: opts }
     )
   ).data;

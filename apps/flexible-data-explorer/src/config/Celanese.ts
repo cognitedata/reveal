@@ -7,13 +7,21 @@ export const celaneseConfig: ProjectConfig[] = [
 
     dataModels: [
       {
-        name: 'AssetHierarchyDOM',
+        externalId: 'AssetHierarchyDOM',
         space: 'EDG-COR-ALL-DMD',
         version: '1_0_11',
       },
-      { name: 'LaboratoryDOM', space: 'EDG-COR-ALL-DMD', version: '1_0_3' },
-      { name: 'MaintenanceDOM', space: 'EDG-COR-ALL-DMD', version: '1_0_3' },
-      { name: 'MaterialDOM', space: 'EDG-COR-ALL-DMD', version: '1_0_0' },
+      {
+        externalId: 'LaboratoryDOM',
+        space: 'EDG-COR-ALL-DMD',
+        version: '1_0_3',
+      },
+      {
+        externalId: 'MaintenanceDOM',
+        space: 'EDG-COR-ALL-DMD',
+        version: '1_0_3',
+      },
+      { externalId: 'MaterialDOM', space: 'EDG-COR-ALL-DMD', version: '1_0_0' },
     ],
     instanceSpaces: ['SAP-COR-ALL-DAT', 'REF-COR-ALL-DAT'],
 
@@ -97,13 +105,21 @@ export const celaneseConfig: ProjectConfig[] = [
 
     dataModels: [
       {
-        name: 'AssetHierarchyDOM',
+        externalId: 'AssetHierarchyDOM',
         space: 'EDG-COR-ALL-DMD',
         version: '1_0_11',
       },
-      { name: 'LaboratoryDOM', space: 'EDG-COR-ALL-DMD', version: '1_0_3' },
-      { name: 'MaintenanceDOM', space: 'EDG-COR-ALL-DMD', version: '1_0_3' },
-      { name: 'MaterialDOM', space: 'EDG-COR-ALL-DMD', version: '1_0_0' },
+      {
+        externalId: 'LaboratoryDOM',
+        space: 'EDG-COR-ALL-DMD',
+        version: '1_0_3',
+      },
+      {
+        externalId: 'MaintenanceDOM',
+        space: 'EDG-COR-ALL-DMD',
+        version: '1_0_3',
+      },
+      { externalId: 'MaterialDOM', space: 'EDG-COR-ALL-DMD', version: '1_0_0' },
     ],
     instanceSpaces: ['SAP-COR-ALL-DAT', 'REF-COR-ALL-DAT'],
 

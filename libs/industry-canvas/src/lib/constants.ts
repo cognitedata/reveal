@@ -50,7 +50,6 @@ export enum QueryKeys {
   LIST_CANVASES = 'canvas.list',
   LIST_COMMENTS = 'comments.list',
   GET_COMMENT = 'comments.get',
-  FETCH_COMMENTS_BY_IDS = 'comments.fetch-by-ids',
   DELETE_CANVAS_ITEMS = 'canvas.delete-items',
   USER_PROFILE = 'user-profile',
   USERS = 'users',

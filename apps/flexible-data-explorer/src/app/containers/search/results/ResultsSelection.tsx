@@ -4,20 +4,20 @@ import styled, { css } from 'styled-components';
 
 import { Chip, Divider, Dropdown, Menu } from '@cognite/cogs.js';
 
-import { useTypesDataModelQuery } from '../../../services/dataModels/query/useTypesDataModelQuery';
+import { useFDM } from '../../../providers/FDMProvider';
 
 import { RESULT_TOGGLE_LIMIT } from './constants';
 
 export const ResultsSelection = () => {
+  const client = useFDM();
   const [selected, setSelected] = useState<string[]>([]);
-  const { data: schema } = useTypesDataModelQuery();
 
   const fields = useMemo(() => {
-    if (!schema) {
+    if (!client.allDataTypes) {
       return [];
     }
-    return [{ name: 'Time series' }, ...schema];
-  }, [schema]);
+    return [{ name: 'Time series' }, ...client.allDataTypes];
+  }, [client.allDataTypes]);
 
   // Show first 5 results as chips, the rest as dropdown items.
   const group = fields?.reduce(

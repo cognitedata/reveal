@@ -31,6 +31,7 @@ static final String[] APPLICATIONS = [
 static final Map<String, String> NPM_PACKAGES = [
   'shared-plotting-components': "dist/libs/shared/plotting-components",
   'user-profile-components': "dist/libs/shared/user-profile-components",
+  'user-onboarding-components': "dist/libs/shared/user-onboarding-components",
   'cdf-ui-i18n-utils': "dist/libs/shared/cdf-ui-i18n-utils",
   'cdf-utilities': 'dist/libs/shared/cdf-utilities',
 ]
@@ -96,6 +97,7 @@ static final String[] PREVIEW_STORYBOOK = [
   'data-exploration-components-old',
   'shared-plotting-components',
   'user-profile-components',
+  'user-onboarding-components'
 ]
   // '3d-management',
   // Should be added after monorepo storybook version is upgraded to v7.

@@ -1,0 +1,266 @@
+import { merge } from 'lodash';
+
+import { FDMClientV2 } from './FDMClientV2';
+import { SearchResponse } from './types';
+
+export class FDMComposer {
+  private clients: FDMClientV2[] | undefined;
+
+  constructor(clients: FDMClientV2[] | undefined) {
+    this.clients = clients;
+  }
+
+  private getClient(dataModel: string, version: string, space: string) {
+    return this.clients?.find((client) => {
+      return (
+        client.schema.dataModel.externalId === dataModel &&
+        client.schema.dataModel.version === version &&
+        client.schema.dataModel.space === space
+      );
+    });
+  }
+
+  public get allDataTypes() {
+    const schema = (this.clients || []).flatMap(
+      (client) => client.schema.types
+    );
+
+    return schema;
+  }
+
+  public getDataModelByDataType(dataType: string) {
+    const client = this.clients?.find((client) => {
+      return client.schema.types.some((type) => type.name === dataType);
+    });
+
+    return client?.schema.dataModel;
+  }
+
+  public async search(query: string, filters: Record<string, unknown>) {
+    const promises = await Promise.all(
+      (this.clients || []).map(async (client) => {
+        const results = await client.searchDataTypes(query, filters);
+
+        return results;
+      })
+    );
+
+    return promises.reduce((acc, item) => {
+      return merge(acc, item);
+    }, {} as Record<string, SearchResponse>);
+  }
+
+  public async searchAggregateCount(
+    query: string,
+    filters: Record<string, unknown>
+  ) {
+    const promises = await Promise.all(
+      (this.clients || []).map(async (client) => {
+        const results = await client.searchAggregateCount(query, filters);
+
+        return results;
+      })
+    );
+
+    return promises.reduce((acc, item) => {
+      return merge(acc, item);
+    }, {} as Record<string, number>);
+  }
+
+  public aiSearch(query: string, variables: Record<string, unknown>) {
+    const promises = (this.clients || []).map(async (client) => {
+      const results = await client.aiSearch(query, variables);
+
+      return results;
+    });
+
+    return Promise.all(promises);
+  }
+
+  public async getInstancesById(header: {
+    dataType: string;
+    externalId: string;
+    instanceSpace: string;
+    dataModel: string;
+    version: string;
+    space: string;
+  }) {
+    const client = this.getClient(
+      header.dataModel,
+      header.version,
+      header.space
+    );
+
+    if (!client) {
+      return Promise.reject(new Error('Missing client...'));
+    }
+
+    const primitiveFields = client.schema.getPrimitiveFields(header.dataType);
+
+    const instance = await client.getInstanceById<Record<string, any>>(
+      primitiveFields,
+      {
+        instanceSpace: header.instanceSpace,
+        dataType: header.dataType,
+        externalId: header.externalId,
+      }
+    );
+
+    return instance;
+  }
+
+  public getDirectRelationships(
+    dataType: string | undefined,
+    headers: {
+      dataModel?: string;
+      version?: string;
+      space?: string;
+    }
+  ) {
+    if (!(headers.dataModel && headers.version && headers.space)) {
+      return [];
+    }
+
+    const client = this.getClient(
+      headers.dataModel,
+      headers.version,
+      headers.space
+    );
+
+    if (!dataType || !client) {
+      return [];
+    }
+
+    return client.schema.getDirectRelationships(dataType);
+  }
+
+  public listEdgeRelationships(
+    dataType: string | undefined,
+    headers: {
+      dataModel?: string;
+      version?: string;
+      space?: string;
+    }
+  ) {
+    if (!(headers.dataModel && headers.version && headers.space)) {
+      return [];
+    }
+
+    const client = this.getClient(
+      headers.dataModel,
+      headers.version,
+      headers.space
+    );
+
+    if (!dataType || !client) {
+      return [];
+    }
+
+    return client.schema.listEdgeRelationships(dataType);
+  }
+
+  public async getDirectRelationshipInstancesById(
+    relationship: {
+      relatedType: string;
+      relatedField: string;
+    },
+    header: {
+      dataType: string;
+      externalId: string;
+      instanceSpace: string;
+      dataModel: string;
+      version: string;
+      space: string;
+    }
+  ) {
+    const client = this.getClient(
+      header.dataModel,
+      header.version,
+      header.space
+    );
+
+    if (!client) {
+      return Promise.reject(new Error('Missing client...'));
+    }
+
+    const primitiveFields = client.schema.getPrimitiveFields(
+      relationship?.relatedType
+    );
+
+    const fields = [
+      {
+        [relationship.relatedField]: primitiveFields,
+      },
+    ];
+
+    const instance = await client.getInstanceById<any>(fields, {
+      instanceSpace: header.instanceSpace,
+      dataType: header.dataType,
+      externalId: header.externalId,
+    });
+
+    return instance;
+  }
+
+  public async getEdgeRelationshipInstancesById(
+    filters: Record<string, any> | undefined,
+    relationship: {
+      relatedType: string;
+      relatedField: string;
+    },
+    instance: {
+      dataType: string;
+      externalId: string;
+      instanceSpace: string;
+      dataModel: string;
+      version: string;
+      space: string;
+    },
+    context: {
+      cursor?: string;
+    }
+  ) {
+    const client = this.getClient(
+      instance.dataModel,
+      instance.version,
+      instance.space
+    );
+
+    if (!client) {
+      return Promise.reject(new Error('Missing client...'));
+    }
+
+    const primitiveFields = client.schema.getPrimitiveFields(
+      relationship?.relatedType
+    );
+
+    const fields = [
+      {
+        operation: relationship.relatedField,
+        variables: {
+          first: 100,
+          after: context.cursor,
+          filter: {
+            value: filters || {},
+            name: 'filter',
+            type: `_List${relationship.relatedType}Filter`,
+          },
+        },
+        fields: [
+          {
+            items: primitiveFields,
+          },
+          { pageInfo: ['hasNextPage', 'endCursor'] },
+        ],
+      },
+    ];
+
+    const result = await client.getInstanceById<any>(fields, {
+      instanceSpace: instance.instanceSpace,
+      dataType: instance.dataType,
+      externalId: instance.externalId,
+    });
+
+    return result;
+  }
+}

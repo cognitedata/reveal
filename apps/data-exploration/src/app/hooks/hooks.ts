@@ -14,7 +14,7 @@ import isArray from 'lodash/isArray';
 import qs from 'query-string';
 
 import { getUserInformation } from '@cognite/cdf-sdk-singleton';
-import { createLink } from '@cognite/cdf-utilities';
+import { createLink, isUsingUnifiedSignin } from '@cognite/cdf-utilities';
 import { ResourceItem, ResourceType } from '@cognite/data-exploration';
 
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
@@ -72,16 +72,37 @@ export const useCurrentSearchResourceTypeFromLocation = () => {
   // sample path2: "/dss-dev/explore/search/asset/:asset-id"
   // sample path3: "/dss-dev/explore/search/asset/:asset-id/asset"
   // sample path4: "/dss-dev/explore/search/timeSeries/:timerseries-id/asset/:asset-id/asset"
+
+  // For Unified Signin, the path is different
+  // sample path1: "/cdf/dss-dev/explore/search/asset"
+  // sample path2: "/cdf/dss-dev/explore/search/asset/:asset-id"
+  // sample path3: "/cdf/dss-dev/explore/search/asset/:asset-id/asset"
+  // sample path4: "/cdf/dss-dev/explore/search/timeSeries/:timerseries-id/asset/:asset-id/asset"
   const path = location.pathname;
 
   const splittedPath = path.split('/');
-  if (splittedPath.includes('search') && splittedPath.length >= 5) {
-    return splittedPath[4] as ResourceType;
+
+  const getPossibleResourceTypeIndex = (baseNumberOfSplittedPath: number) =>
+    isUsingUnifiedSignin()
+      ? baseNumberOfSplittedPath + 1
+      : baseNumberOfSplittedPath;
+
+  if (
+    splittedPath.includes('search') &&
+    splittedPath.length >= getPossibleResourceTypeIndex(5)
+  ) {
+    return splittedPath[getPossibleResourceTypeIndex(5) - 1] as ResourceType;
   }
 
   // sample path: "/dss-dev/explore/asset/123123123/asset"
-  if (!splittedPath.includes('search') && splittedPath.length >= 4) {
-    return splittedPath[3] as ResourceType;
+
+  // For Unified Signin, the path is different
+  // sample path: "/cdf/dss-dev/explore/asset/123123123/asset"
+  if (
+    !splittedPath.includes('search') &&
+    splittedPath.length >= getPossibleResourceTypeIndex(4)
+  ) {
+    return splittedPath[getPossibleResourceTypeIndex(4) - 1] as ResourceType;
   }
 
   return undefined;

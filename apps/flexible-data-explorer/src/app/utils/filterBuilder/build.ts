@@ -1,3 +1,5 @@
+import { isEmpty } from 'lodash';
+
 import { ValueByDataType, ValueByField } from '../../containers/Filter/types';
 
 import { builders } from './builders';
@@ -32,7 +34,7 @@ export const buildFilterByField = (valueByField: ValueByField = {}) => {
     {} as Record<string, unknown>
   );
 
-  if (filters.length === 0) {
+  if (isEmpty(filters)) {
     return undefined;
   }
 

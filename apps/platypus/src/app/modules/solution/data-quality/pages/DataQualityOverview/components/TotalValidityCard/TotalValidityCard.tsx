@@ -1,6 +1,10 @@
 import styled from 'styled-components';
 
-import { useLoadDataSource, useLoadRules } from '@data-quality/hooks';
+import {
+  useDataSourceValidity,
+  useLoadDataSource,
+  useLoadRules,
+} from '@data-quality/hooks';
 import { emptyDatapoints } from '@data-quality/utils/validationTimeseries';
 import { BasicPlaceholder } from '@platypus-app/components/BasicPlaceholder/BasicPlaceholder';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
@@ -8,7 +12,6 @@ import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
 import { Body, Detail, Flex, Overline } from '@cognite/cogs.js';
 
-import { useDataSourceValidity } from './useDataSourceValidity';
 import { ValidationStatistics } from './ValidationStatistics';
 
 export const TotalValidityCard = () => {

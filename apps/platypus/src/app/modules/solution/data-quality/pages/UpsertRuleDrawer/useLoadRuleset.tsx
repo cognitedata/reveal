@@ -9,6 +9,7 @@ import {
 import { useLoadDataSource } from '@data-quality/hooks';
 import { Notification } from '@platypus-app/components/Notification/Notification';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
+import { queryClient } from '@platypus-app/queryClient';
 
 type LoadRulesetOptions = {
   rulesetId: string;
@@ -23,7 +24,7 @@ export const useLoadRuleset = ({ rulesetId }: LoadRulesetOptions) => {
   const {
     data: rulesetsData,
     error: rulesetsError,
-    isLoading: rulesetsLoading,
+    isRefetching,
     refetch,
   } = useListByIdsRulesets(
     {
@@ -36,9 +37,9 @@ export const useLoadRuleset = ({ rulesetId }: LoadRulesetOptions) => {
   const {
     isLoading: createRulesetsLoading,
     mutateAsync: createRulesetsMutation,
-  } = useCreateRulesets();
+  } = useCreateRulesets({ mutationKey: ['createRulesets'] });
 
-  const isLoading = rulesetsLoading || createRulesetsLoading || dsLoading;
+  const isLoading = createRulesetsLoading || dsLoading || isRefetching;
 
   if (rulesetsError) {
     Notification({
@@ -54,27 +55,21 @@ export const useLoadRuleset = ({ rulesetId }: LoadRulesetOptions) => {
   }
 
   useEffect(() => {
-    if (dsLoading) return;
-
-    if (!dataSource?.externalId) {
-      Notification({
-        type: 'error',
-        message: t(
-          'data_quality_error_ruleset_create',
-          'Something went wrong. Can not create a ruleset without datasource.'
-        ),
-        errors: `Data source id is "${dataSource?.externalId}". Ruleset id is "${ruleset?.externalId}"`,
-        options: { position: 'bottom-left' },
-      });
-
-      return;
-    }
-
     const loadRuleset = async () => {
+      if (isLoading) return;
+
+      if (!dataSource) return;
+
       const response = await refetch();
       const rulesetFound = response.data?.items[0];
 
       if (rulesetFound) return;
+
+      // Check if the creatingRuleset mutation is in use; refetch might be slow to catch up
+      const creatingRuleset = queryClient.isMutating({
+        mutationKey: ['createRulesets'],
+      });
+      if (creatingRuleset) return;
 
       const newRuleset: RulesetDraft = {
         externalId: rulesetId,
@@ -88,7 +83,7 @@ export const useLoadRuleset = ({ rulesetId }: LoadRulesetOptions) => {
             body: { items: [newRuleset] },
             pathParams: { dataSourceId: dataSource?.externalId },
           },
-          { onSuccess: () => refetch() }
+          { onSuccess: async () => await refetch() }
         );
       } catch (err: any) {
         Notification({

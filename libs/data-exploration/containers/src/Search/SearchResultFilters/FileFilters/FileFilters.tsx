@@ -49,6 +49,24 @@ export const FileFilters: React.FC<FileFilterProps> = ({
       {...rest}
     >
       <TempMultiSelectFix>
+        <MetadataFilter.Files
+          query={query}
+          filter={documentFilter}
+          values={documentFilter.metadata}
+          onChange={(newMetadata) => {
+            onFilterChange('document', {
+              metadata: newMetadata,
+            });
+          }}
+        />
+        <TypeFilter.File
+          query={query}
+          filter={documentFilter}
+          value={documentFilter.type}
+          onChange={(newFilters) =>
+            onFilterChange('document', { type: newFilters })
+          }
+        />
         {enableDocumentLabelsFilter && (
           <LabelFilter.File
             query={query}
@@ -59,15 +77,6 @@ export const FileFilters: React.FC<FileFilterProps> = ({
             }
           />
         )}
-
-        <TypeFilter.File
-          query={query}
-          filter={documentFilter}
-          value={documentFilter.type}
-          onChange={(newFilters) =>
-            onFilterChange('document', { type: newFilters })
-          }
-        />
 
         <AuthorFilter.File
           query={query}
@@ -87,17 +96,6 @@ export const FileFilters: React.FC<FileFilterProps> = ({
               source: newSources,
             })
           }
-        />
-
-        <MetadataFilter.Files
-          query={query}
-          filter={documentFilter}
-          values={documentFilter.metadata}
-          onChange={(newMetadata) => {
-            onFilterChange('document', {
-              metadata: newMetadata,
-            });
-          }}
         />
       </TempMultiSelectFix>
     </BaseFilterCollapse.Panel>

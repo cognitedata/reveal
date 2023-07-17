@@ -92,6 +92,8 @@ export type DataModelVersion = string;
  */
 export type ExternalId = string;
 
+export type Nonce = string;
+
 export type DataSourceDraft = {
   /**
    * Id of the data model that the data source belongs to
@@ -481,3 +483,5 @@ export type RuleListIdsRequest = {
     externalId: ExternalId;
   }[];
 };
+
+export type DataSourceValidationRequest = Record<string, any>;

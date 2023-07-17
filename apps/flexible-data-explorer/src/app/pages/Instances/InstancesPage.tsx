@@ -6,25 +6,27 @@ import { PropertiesWidget } from '../../containers/widgets/Properties/Properties
 import { RelationshipDirectWidget } from '../../containers/widgets/RelationshipDirect/RelationshipDirect';
 import { RelationshipEdgesWidget } from '../../containers/widgets/RelationshipEdges/RelationshipEdgesWidget';
 import { useRecentlyVisited } from '../../hooks/useRecentlyVisited';
-import { useTypesDataModelQuery } from '../../services/dataModels/query/useTypesDataModelQuery';
+import { useFDM } from '../../providers/FDMProvider';
 import { useInstancesQuery } from '../../services/instances/generic/queries/useInstanceByIdQuery';
 
 export const InstancesPage = () => {
-  const { dataType } = useParams();
-  const { data, isLoading, isFetched } = useInstancesQuery();
+  const { dataType, dataModel, space, version } = useParams();
+  const client = useFDM();
+  const { data, isLoading, isFetched, status } = useInstancesQuery();
 
   const [, setRecentlyVisited] = useRecentlyVisited();
 
-  const { data: types } = useTypesDataModelQuery();
+  const directRelationships = client.getDirectRelationships(dataType, {
+    dataModel,
+    space,
+    version,
+  });
 
-  const directRelationships = types
-    ?.find((type) => type.name === dataType)
-    ?.fields.filter((item) => item.type.custom && !item.type.list);
-
-  // Fix me
-  const edges = (types || [])
-    .find((item) => item.name === dataType)
-    ?.fields.filter((item) => Boolean(item.type.custom && item.type.list));
+  const edgeRelationshios = client.listEdgeRelationships(dataType, {
+    dataModel,
+    space,
+    version,
+  });
 
   useEffect(() => {
     return () => {
@@ -37,7 +39,12 @@ export const InstancesPage = () => {
   return (
     <Page.Dashboard loading={isLoading}>
       <Page.Widgets>
-        <PropertiesWidget id="Properties" data={data} columns={2} />
+        <PropertiesWidget
+          id="Properties"
+          state={status}
+          data={data}
+          columns={2}
+        />
 
         {directRelationships?.map((item) => (
           <RelationshipDirectWidget
@@ -47,7 +54,7 @@ export const InstancesPage = () => {
           />
         ))}
 
-        {edges?.map((item) => {
+        {edgeRelationshios?.map((item) => {
           return (
             <RelationshipEdgesWidget
               key={item.name}

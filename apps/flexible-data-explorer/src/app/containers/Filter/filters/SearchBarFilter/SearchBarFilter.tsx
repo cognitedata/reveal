@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { useTypesDataModelQuery } from '../../../../services/dataModels/query/useTypesDataModelQuery';
+import { useFDM } from '../../../../providers/FDMProvider';
 import { FilterBuilderByDataType } from '../../containers';
 import { ValueByDataType } from '../../types';
 
@@ -16,21 +16,20 @@ export const SearchBarFilter: React.FC<SearchBarFilterProps> = ({
   value,
   onChange,
 }) => {
-  const { data = [], isError } = useTypesDataModelQuery();
+  const client = useFDM();
 
   const dataTypes = useMemo(() => {
     return [
-      ...transformDefTypesToFilterOptions(data),
+      ...transformDefTypesToFilterOptions(client.allDataTypes),
       ...customDataTypeOptions,
     ];
-  }, [data]);
+  }, [client.allDataTypes]);
 
   return (
     <FilterBuilderByDataType
       dataTypes={dataTypes}
       value={value}
       onChange={onChange}
-      isError={isError}
     />
   );
 };

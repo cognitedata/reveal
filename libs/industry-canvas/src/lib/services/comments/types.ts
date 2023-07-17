@@ -17,7 +17,11 @@ export enum CommentContextType {
 
 export type Comment<CommentContextDataType = any> = {
   text: string;
-  createdById: string;
+  // It might be that, for a given user identifier, the corresponding user
+  // profile may not exist (e.g., because the user has deleted their account).
+  // To let the application developer handle this case themselves, we allow
+  // createdBy to be undefined.
+  createdBy: UserProfile | undefined;
   status?: CommentStatus;
   parentComment?: Pick<Comment, 'externalId'>;
 
@@ -27,27 +31,24 @@ export type Comment<CommentContextDataType = any> = {
   contextType?: CommentContextType;
   contextData?: CommentContextDataType;
 
-  taggedUsers?: string[];
+  taggedUsers?: UserProfile[];
 
   externalId: string;
   lastUpdatedTime: Date;
   createdTime: Date;
 };
 
-export type CommentWithUserProfile<CommentContextDataType = any> = Omit<
+export type SerializedComment<CommentContextDataType = any> = Omit<
   Comment<CommentContextDataType>,
-  'createdById' | 'taggedUsers'
+  'createdBy' | 'taggedUsers'
 > & {
-  // It might be that, for a given user identifier, the corresponding user
-  // profile may not exist. This is why we have the `undefined` in the type,
-  // so that the application may handle this edge case themselves
-  createdBy: UserProfile | undefined;
-  taggedUsers?: (UserProfile | undefined)[];
+  createdById: string;
+  taggedUsers?: string[];
 };
 
 export type CommentFilter = Partial<
   Pick<
-    Comment,
+    SerializedComment,
     | 'externalId'
     | 'createdById'
     | 'status'

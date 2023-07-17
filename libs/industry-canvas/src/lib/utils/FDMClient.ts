@@ -16,8 +16,8 @@ type NodeOrEdgeDefinition = {
   externalId: string;
   wasModified: boolean;
   version: number;
-  createdTime?: number;
-  lastUpdatedTime?: number;
+  createdTime: number;
+  lastUpdatedTime: number;
 };
 
 export interface FDMError {

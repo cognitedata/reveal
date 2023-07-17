@@ -1,4 +1,4 @@
-import { useLoadRules } from '@data-quality/hooks';
+import { useDataSourceValidity, useLoadRules } from '@data-quality/hooks';
 import {
   TimeSeriesType,
   getLastDatapointValue,
@@ -10,8 +10,6 @@ import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { Body, Detail, Divider, Flex, Title } from '@cognite/cogs.js';
 
 import { LastValidationTime } from '..';
-
-import { useDataSourceValidity } from './useDataSourceValidity';
 
 type ValidationStatisticsProps = {
   dataSourceId: string;
@@ -39,6 +37,10 @@ export const ValidationStatistics = ({
     getLastDatapointValue(datapoints, timeSeriesIdInstances) || 0;
 
   const rulesCount = rules.length;
+  const rulesText =
+    rules.length === 1
+      ? t('data_quality_rule', 'rule')
+      : t('data_quality_rules', 'rules');
 
   return (
     <Flex direction="row" gap={16} justifyContent="space-between">
@@ -54,7 +56,7 @@ export const ValidationStatistics = ({
       <Flex direction="column" gap={4}>
         <Flex direction="row" gap={8} alignItems="center">
           <Title>{rulesCount}</Title>
-          <Detail>{t('data_quality_rules', 'rules')}</Detail>
+          <Detail>{rulesText}</Detail>
         </Flex>
         <Flex direction="column">
           <Body level={6}>{`${totalInstancesValue.toLocaleString()} ${t(
