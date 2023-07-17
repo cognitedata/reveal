@@ -26,7 +26,8 @@ jobs:
           base: { some SHA } #[OPTIONAL] defaults to `origin/master`
           head: { some SHA } #[OPTIONAL] defaults to `HEAD`
           target: 'test' #[OPTIONAL] defaults to `build`
-          type: 'apps' #[OPTIONAL]
+          type: 'app' #[OPTIONAL] options: app/lib
+          exclude: 'some-app, some-other-app' #[OPTIONAL] app names separated by comma or wildcard
 
       # Do something more meaningful here, like push to NPM, do heavy computing, etc.
       - name: Get list of affected projects

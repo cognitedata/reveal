@@ -5,6 +5,9 @@ on:
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
+env:
+  NX_CLOUD_ACCESS_TOKEN: ${{secrets.NX_CLOUD_ACCESS_TOKEN}}
+  NX_VERBOSE_LOGGING: true
 
 jobs:
   setup:
@@ -34,12 +37,11 @@ jobs:
         uses: actions/cache@v3
         with:
           path: |
-            node_modules
+            node_modules/*
+            !node_modules/.cache/nx
             ~/.cache/Cypress
           key: cache-node-modules-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            cache-node-modules-${{ hashFiles('yarn.lock') }}
-            cache-node-modules-
+          restore-keys: cache-node-modules-
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
@@ -50,57 +52,74 @@ jobs:
         with:
           main-branch-name: ${{ github.base_ref }}
 
+      - name: 'Get affected action'
+        uses: './scripts/github-actions/nx-get-affected'
+
       - name: 'Get affected libs to build'
         id: affected-libs
-        shell: 'bash'
-        run: |
-          LIBS_BUILD=$(npx nx show projects --affected --withTarget=build --json --projects="libs/*" --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }} | jq '-c') 
-          echo $LIBS_BUILD
-          echo "::set-output name=projects::$LIBS_BUILD"
+        uses: './scripts/github-actions/nx-get-affected'
+        with:
+          base: ${{ env.NX_BASE }}
+          head: ${{ env.NX_HEAD }}
+          projects: 'libs/*'
 
       - name: 'Get affected apps to build'
         id: affected-apps
-        shell: 'bash'
-        run: |
-          APPS_BUILD=$(npx nx show projects --affected --withTarget=build --json --projects="apps/*" --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }} | jq '-c') 
-          echo $APPS_BUILD
-          echo "::set-output name=projects::$APPS_BUILD"
+        uses: './scripts/github-actions/nx-get-affected'
+        with:
+          base: ${{ env.NX_BASE }}
+          head: ${{ env.NX_HEAD }}
+          projects: 'apps/*'
+          exclude: '*shell'
+
+      - name: 'Get affected shell apps to build'
+        id: affected-shell-apps
+        uses: './scripts/github-actions/nx-get-affected'
+        with:
+          base: ${{ env.NX_BASE }}
+          head: ${{ env.NX_HEAD }}
+          projects: '*shell'
 
       - name: 'Get affected projects for lint'
         id: affected-lint
-        shell: 'bash'
-        run: |
-          LINT=$(npx nx show projects --affected --withTarget=lint --json --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }} | jq '-c') 
-          echo $LINT
-          echo "::set-output name=projects::$LINT"
+        uses: './scripts/github-actions/nx-get-affected'
+        with:
+          base: ${{ env.NX_BASE }}
+          head: ${{ env.NX_HEAD }}
+          target: 'lint'
 
       - name: 'Get affected projects for test'
         id: affected-test
-        shell: 'bash'
-        run: |
-          TEST=$(npx nx show projects --affected --withTarget=test --json --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }} | jq '-c') 
-          echo $TEST
-          echo "::set-output name=projects::$TEST"
+        uses: './scripts/github-actions/nx-get-affected'
+        with:
+          base: ${{ env.NX_BASE }}
+          head: ${{ env.NX_HEAD }}
+          target: 'test'
 
       - name: 'Get affected projects for e2e'
         id: affected-e2e
-        shell: 'bash'
-        run: |
-          E2E=$(npx nx show projects --affected --withTarget=e2e --json --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }} | jq '-c') 
-          echo $E2E
-          echo "::set-output name=projects::$E2E"
+        uses: './scripts/github-actions/nx-get-affected'
+        with:
+          base: ${{ env.NX_BASE }}
+          head: ${{ env.NX_HEAD }}
+          target: 'e2e'
+
     outputs:
       affected-libs: ${{ steps.affected-libs.outputs.projects }}
-      affected-apps: ${{ steps.affected-apps.outputs.projects }}
+      affected-libs-string: ${{ steps.affected-libs.outputs.projectsString }}
       affected-lint: ${{ steps.affected-lint.outputs.projects }}
+      affected-lint-string: ${{ steps.affected-lint.outputs.projectsString }}
       affected-test: ${{ steps.affected-test.outputs.projects }}
+      affected-test-string: ${{ steps.affected-test.outputs.projectsString }}
+      affected-apps: ${{ steps.affected-apps.outputs.projects }}
+      affected-shell-apps: ${{ steps.affected-shell-apps.outputs.projects }}
       affected-e2e: ${{ steps.affected-e2e.outputs.projects }}
 
   lint:
     name: 'Lint'
     runs-on: ubuntu-latest
     needs: setup
-    if: ${{ fromJSON(needs.setup.outputs.affected-lint) != '[]' }}
+    if: ${{ needs.setup.outputs.affected-lint != '' && toJson(fromJson(needs.setup.outputs.affected-lint)) != '[]' }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -116,14 +135,7 @@ jobs:
             node_modules
             ~/.cache/Cypress
           key: cache-node-modules-${{ hashFiles('yarn.lock') }}
-      - name: Cache Nx
-        uses: actions/cache@v3
-        with:
-          path: node_modules/.cache/nx
-          key: cache-nx-${{ hashFiles('yarn.lock') }}-lint-${{ github.sha }}
-          restore-keys: |
-            cache-nx-${{ hashFiles('yarn.lock') }}-lint-${{ github.sha }}
-            cache-nx-${{ hashFiles('yarn.lock') }}-lint-
+
       - run: git fetch --no-tags --prune --depth=1 origin ${{ github.base_ref }}
       - name: Derive appropriate SHAs for base and head for `nx affected` commands
         uses: nrwl/nx-set-shas@v3
@@ -132,13 +144,13 @@ jobs:
       - name: Lint
         env:
           NODE_OPTIONS: '--max_old_space_size=8192'
-        run: yarn nx affected --targets=lint --parallel --nx-bail --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }}
+        run: npx nx run-many --target=lint --parallel --nx-bail --projects=${{ needs.setup.outputs.affected-lint-string }}
 
   test:
     name: 'Test'
     runs-on: ubuntu-latest
     needs: setup
-    if: ${{ fromJSON(needs.setup.outputs.affected-test) != '[]' }}
+    if: ${{ needs.setup.outputs.affected-test != '' && toJson(fromJson(needs.setup.outputs.affected-test)) != '[]' }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -154,14 +166,7 @@ jobs:
             node_modules
             ~/.cache/Cypress
           key: cache-node-modules-${{ hashFiles('yarn.lock') }}
-      - name: Cache Nx
-        uses: actions/cache@v3
-        with:
-          path: node_modules/.cache/nx
-          key: cache-nx-${{ hashFiles('yarn.lock') }}-test-${{ github.sha }}
-          restore-keys: |
-            cache-nx-${{ hashFiles('yarn.lock') }}-test-${{ github.sha }}
-            cache-nx-${{ hashFiles('yarn.lock') }}-test-
+
       - run: git fetch --no-tags --prune --depth=1 origin ${{ github.base_ref }}
       - name: Derive appropriate SHAs for base and head for `nx affected` commands
         uses: nrwl/nx-set-shas@v3
@@ -170,13 +175,13 @@ jobs:
       - name: Test
         env:
           NODE_OPTIONS: '--max_old_space_size=8192'
-        run: yarn nx affected --targets=test --parallel --nx-bail --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }}
+        run: npx nx run-many --target=test --parallel --nx-bail --projects=${{ needs.setup.outputs.affected-test-string }}
 
   build-libs:
     name: 'Build libs'
     runs-on: ubuntu-20.04
     needs: setup
-    if: ${{ fromJSON(needs.setup.outputs.affected-libs) != '[]' }}
+    if: ${{ needs.setup.outputs.affected-libs != '' && toJson(fromJson(needs.setup.outputs.affected-libs)) != '[]' }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -192,14 +197,7 @@ jobs:
             node_modules
             ~/.cache/Cypress
           key: cache-node-modules-${{ hashFiles('yarn.lock') }}
-      - name: Cache Nx
-        uses: actions/cache@v3
-        with:
-          path: node_modules/.cache/nx
-          key: cache-nx-${{ hashFiles('yarn.lock') }}-libs-${{ github.sha }}
-          restore-keys: |
-            cache-nx-${{ hashFiles('yarn.lock') }}-libs-${{ github.sha }}
-            cache-nx-${{ hashFiles('yarn.lock') }}-libs-
+
       - run: git fetch --no-tags --prune --depth=1 origin ${{ github.base_ref }}
       - name: Derive appropriate SHAs for base and head for `nx affected` commands
         uses: nrwl/nx-set-shas@v3
@@ -208,14 +206,13 @@ jobs:
       - name: Build
         env:
           NODE_OPTIONS: '--max_old_space_size=8192'
-          NX_CLOUD_ACCESS_TOKEN: ${{secrets.NX_CLOUD_ACCESS_TOKEN}}
-        run: yarn nx affected --targets=build --exclude="apps/*" --parallel --nx-bail --configuration=production --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }}
+        run: npx nx run-many --target=build --parallel --nx-bail --configuration=production --projects=${{ needs.setup.outputs.affected-libs-string }}
 
   build:
     name: Build
     runs-on: ubuntu-20.04
     needs: [setup, build-libs]
-    if: ${{ fromJSON(needs.setup.outputs.affected-apps) != '[]' }}
+    if: ${{ needs.setup.outputs.affected-apps != '' && toJson(fromJson(needs.setup.outputs.affected-apps)) != '[]' }}
     strategy:
       matrix:
         project: ${{ fromJson(needs.setup.outputs.affected-apps)  }}
@@ -234,25 +231,44 @@ jobs:
             node_modules
             ~/.cache/Cypress
           key: cache-node-modules-${{ hashFiles('yarn.lock') }}
-      - name: Cache Nx
-        uses: actions/cache@v3
-        with:
-          path: node_modules/.cache/nx
-          key: cache-nx-${{ hashFiles('yarn.lock') }}-${{ matrix.project }}-${{ github.sha }}
-          restore-keys: |
-            cache-nx-${{ hashFiles('yarn.lock') }}-${{ matrix.project }}-${{ github.sha }}
-            cache-nx-${{ hashFiles('yarn.lock') }}-libs-${{ github.sha }}
-            cache-nx-${{ hashFiles('yarn.lock') }}-libs-
-            cache-nx-${{ hashFiles('yarn.lock') }}-
+
       - name: Build
         env:
           NODE_OPTIONS: '--max_old_space_size=8192'
-          NX_CLOUD_ACCESS_TOKEN: ${{secrets.NX_CLOUD_ACCESS_TOKEN}}
-        run: yarn nx build ${{ matrix.project }} --configuration=production
+        run: npx nx build ${{ matrix.project }} --configuration=production
+
+  build-shell:
+    name: 'Build shell apps'
+    runs-on: ubuntu-20.04
+    needs: [setup, build]
+    if: ${{ needs.setup.outputs.affected-shell-apps != '' && toJson(fromJson(needs.setup.outputs.affected-shell-apps)) != '[]' }}
+    strategy:
+      matrix:
+        project: ${{ fromJson(needs.setup.outputs.affected-shell-apps)  }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'yarn'
+      - name: Cache node modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            node_modules
+            ~/.cache/Cypress
+          key: cache-node-modules-${{ hashFiles('yarn.lock') }}
+
+      - name: Build
+        env:
+          NODE_OPTIONS: '--max_old_space_size=8192'
+        run: npx nx build ${{ matrix.project }} --configuration=production
   ci-passed:
     # see https://github.community/t/status-check-for-a-matrix-jobs/127354/7
     name: CI Passed
-    needs: [setup, build-libs, build, lint, test]
+    needs: [setup, build-libs, build, build-shell, lint, test]
     if: ${{ always() }}
     runs-on: ubuntu-20.04
     steps:
@@ -300,15 +316,6 @@ jobs:
 #            node_modules
 #            ~/.cache/Cypress
 #          key: cache-node-modules-${{ hashFiles('yarn.lock') }}
-#
-#      - name: Cache Nx
-#        uses: actions/cache@v3
-#        with:
-#          path: node_modules/.cache/nx
-#          key: cache-nx-${{ hashFiles('yarn.lock') }}-${{ matrix.target }}-${{ matrix.jobIndex }}-${{ github.sha }}
-#          restore-keys: |
-#            cache-nx-${{ hashFiles('yarn.lock') }}-${{ matrix.target }}-${{ matrix.jobIndex }}-
-#            cache-nx-${{ hashFiles('yarn.lock') }}-
 #
 #      - run: git fetch --no-tags --prune --depth=1 origin ${{ github.base_ref }}
 #      - name: Derive appropriate SHAs for base and head for `nx affected` commands
