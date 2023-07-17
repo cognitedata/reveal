@@ -1,6 +1,5 @@
 import React, { useContext } from 'react';
 
-import { AssetRelatedSearchResults } from '@data-exploration/containers';
 import {
   ResourceItem,
   ResourceType,
@@ -84,18 +83,6 @@ export const RelationshipTable = ({
   // Do we show same relationship table for files and documents(files tab when advanced filters disabled)?
   // TODO needs to add the table related to documents
   if (type === 'threeD') return null;
-
-  /**
-   * TEMP. Just for a POC.
-   */
-  if (type === 'asset') {
-    return (
-      <AssetRelatedSearchResults
-        resourceExternalId={parentResource.externalId}
-        labels={labels}
-      />
-    );
-  }
 
   const RelationshipMappedTable = relationshipMapper[type];
 

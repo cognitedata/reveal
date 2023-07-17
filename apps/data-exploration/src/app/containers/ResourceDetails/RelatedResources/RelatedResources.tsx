@@ -4,7 +4,6 @@ import styled from 'styled-components';
 
 import { Select } from '@cognite/cogs.js';
 import {
-  RelationshipTable,
   RelationshipTableProps,
   SelectableItemsProps,
   convertResourceType,
@@ -15,6 +14,7 @@ import {
   AnnotatedWithTable,
   RelationshipFilters,
   useRelatedResourceCount,
+  RelationshipTableV2,
 } from '@cognite/data-exploration';
 import { RelationshipResourceType } from '@cognite/sdk';
 
@@ -198,7 +198,7 @@ export const RelatedResources = ({
       <TableOffsetHeightWrapper>
         {selectedType?.value === 'relationship' && (
           <>
-            <RelationshipTable
+            <RelationshipTableV2
               parentResource={parentResource}
               type={type}
               isGroupingFilesEnabled={isGroupingFilesEnabled}
