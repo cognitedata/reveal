@@ -20,6 +20,7 @@ export type ApplyStyleDelegate = (treeIndices: IndexSet, appearance: NodeAppeara
 type StyledNodeCollection = {
   nodeCollection: NodeCollection;
   appearance: NodeAppearance;
+  importance: number;
   handleNodeCollectionChangedListener: () => void;
 };
 
@@ -79,15 +80,18 @@ export class NodeAppearanceProvider {
     }
   }
 
-  assignStyledNodeCollection(nodeCollection: NodeCollection, appearance: NodeAppearance): void {
+  assignStyledNodeCollection(nodeCollection: NodeCollection, appearance: NodeAppearance, importance: number = 0): void {
     const existingCollection = this._styledCollections.find(x => x.nodeCollection === nodeCollection);
     if (existingCollection !== undefined) {
       existingCollection.appearance = appearance;
+      existingCollection.importance = importance;
+
       this.handleNodeCollectionChanged(existingCollection);
     } else {
       const styledCollection: StyledNodeCollection = {
         nodeCollection: nodeCollection,
         appearance,
+        importance: importance,
         handleNodeCollectionChangedListener: () => {
           this.handleNodeCollectionChanged(styledCollection);
         }
@@ -97,6 +101,9 @@ export class NodeAppearanceProvider {
       nodeCollection.on('changed', styledCollection.handleNodeCollectionChangedListener);
       this.scheduleNotifyChanged();
     }
+
+    // Sort ascending, to set the most important styles last so they override the unimportant
+    this._styledCollections.sort((a, b) => a.importance - b.importance);
 
     if (appearance.prioritizedForLoadingHint) {
       this.notifyPrioritizedAreasChanged();
