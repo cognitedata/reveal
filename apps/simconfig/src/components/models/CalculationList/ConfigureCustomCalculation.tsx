@@ -5,6 +5,7 @@ import { Field, Form, Formik } from 'formik';
 import styled from 'styled-components/macro';
 
 import { Button, Icon, Input, Modal } from '@cognite/cogs.js';
+import { Textarea } from '@cognite/cogs.js-v9';
 import { useFlag } from '@cognite/react-feature-flags';
 import { useSDK } from '@cognite/sdk-provider';
 
@@ -70,15 +71,17 @@ export function ConfigureCustomCalculation({
         footer={null}
         style={{
           padding: 0,
+          top: '15%',
         }}
         visible={isModalOpen}
         onCancel={() => {
           setIsModalOpen(false);
         }}
       >
-        <h4>
-          <Icon type="Function" /> Create custom calculation
-        </h4>
+        <StyledH4>
+          <Icon type="Function" />
+          Create simulation routine
+        </StyledH4>
         <Formik
           initialValues={{
             calculationName: '',
@@ -93,6 +96,7 @@ export function ConfigureCustomCalculation({
                 error={errors.calculationName?.length}
                 maxLength={25}
                 name="calculationName"
+                placeholder="Enter name"
                 title="Name"
                 validate={validateCalculationName}
                 fullWidth
@@ -105,12 +109,19 @@ export function ConfigureCustomCalculation({
                 <span>{values.calculationName.length}/25</span>
               </HelperContainer>
 
-              <Field
-                as={Input}
-                name="calculationDescription"
-                title="Description"
-                fullWidth
-              />
+              <div>
+                <StyledTitle htmlFor="calculationDescription">
+                  Description
+                </StyledTitle>
+                <Field
+                  as={Textarea}
+                  id="calculationDescription"
+                  name="calculationDescription"
+                  placeholder="Add description"
+                  fullWidth
+                />
+              </div>
+
               <FooterButtons>
                 <Button disabled={!isValid} htmlType="submit" type="primary">
                   Create
@@ -147,6 +158,22 @@ export function ConfigureCustomCalculation({
     </>
   );
 }
+
+const StyledH4 = styled.h4`
+  display: flex;
+  align-items: center;
+  i {
+    margin-right: 8px;
+  }
+`;
+
+const StyledTitle = styled.label`
+  display: block;
+  margin-bottom: 4px;
+  color: var(--cogs-greyscale-grey8);
+  font-size: 13px;
+  font-weight: 500;
+`;
 
 const FooterButtons = styled.div`
   display: flex;
