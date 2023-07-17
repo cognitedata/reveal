@@ -182,7 +182,10 @@ const Card = styled.div<{ isSelected: boolean }>`
   ${(props) =>
     props.isSelected &&
     css`
-      background-color: var(--cogs-surface--interactive--pressed) !important;
+      background-color: var(
+        --surface-interactive-toggled-default,
+        rgba(74, 103, 251, 0.08)
+      ) !important;
     `}
 
   &:hover {
