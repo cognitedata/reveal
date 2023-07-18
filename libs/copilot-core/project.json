@@ -12,9 +12,29 @@
         "lintFilePatterns": ["libs/copilot-core/**/*.{ts,tsx,js,jsx}"]
       }
     },
+    "dev": {
+      "executor": "@nx/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/@fusion/copilot-core",
+        "main": "libs/copilot-core/src/index.ts",
+        "tsConfig": "libs/copilot-core/tsconfig.lib.json",
+        "assets": ["libs/copilot-core/src/assets"],
+        "generatePackageJson": true,
+        "extractLicenses": true,
+        "sourceMap": true,
+        "target": "node",
+        "compiler": "tsc",
+        "watch": true,
+        "webpackConfig": "libs/copilot-core/webpack-config.js"
+      }
+    },
     "build": {
       "executor": "@nx/rollup:rollup",
       "outputs": ["{options.outputPath}"],
+      "configurations": {
+        "development": {}
+      },
       "options": {
         "format": ["esm"],
         "outputPath": "dist/libs/@fusion/copilot-core",

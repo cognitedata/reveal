@@ -9,6 +9,7 @@ import { createDefaultChain } from './conversation/base';
 import { FusionQAChain } from './fusionQA/fusionQA';
 import { GraphQlChain } from './graphql/graphql';
 import { DocumentQueryChain } from './infield-chains/documentQueryChain';
+import { SummaryChain } from './infield-chains/summaryChain';
 import { AppBuilderChain } from './python/appBuilder';
 import { getRouterChain } from './router/router';
 
@@ -16,6 +17,7 @@ export type CogniteChainName =
   | 'GraphQlChain'
   | 'AppBuilderChain'
   | 'DocumentQueryChain'
+  | 'SummaryChain'
   | 'FusionQAChain';
 
 const destinationChains = (
@@ -49,6 +51,13 @@ const destinationChains = (
     verbose: true,
   }),
   FusionQAChain: new FusionQAChain({
+    llm: model,
+    sdk,
+    messages,
+    returnAll: true,
+    verbose: true,
+  }),
+  SummaryChain: new SummaryChain({
     llm: model,
     sdk,
     messages,

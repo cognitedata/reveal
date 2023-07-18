@@ -4,20 +4,27 @@ import { BaseChatModel } from 'langchain/chat_models/base';
 import { PromptTemplate } from 'langchain/prompts';
 import { ChainValues } from 'langchain/schema';
 
-import { CogniteBaseChain, CogniteChainInput } from '../../types';
+import {
+  copilotDestinationInfieldDocumentQueryPrompt,
+  infieldDocumentMultipleContextQueryPrompt,
+  infieldDocumentSingleContextQueryPrompt,
+} from '@cognite/llm-hub';
+
+import {
+  CogniteBaseChain,
+  CogniteChainInput,
+  CopilotAction,
+} from '../../types';
 import { sendToCopilotEvent } from '../../utils';
 import { sourceResponse } from '../../utils/types';
 import { retrieveContext } from '../../utils/utils';
 
 import {
-  QUERY_SINGLE_CONTEXT_PROMPT,
-  QUERY_SUMMARIZE_ANSWERS_PROMPT,
-} from './prompts';
-import {
   getExternalId,
   parallelGPTCalls,
   pushDocumentId,
   translateInputToEnglish,
+  prepareSources,
 } from './utils';
 
 export let sourceList: sourceResponse[] = [];
@@ -27,8 +34,7 @@ export class DocumentQueryChain extends CogniteBaseChain {
   outputVariables: string[];
   returnAll?: boolean | undefined;
 
-  description =
-    'Good for answering questions or retrieving facts about an asset. Use this chain when talking about assets, technical data, facts, etc.';
+  description = copilotDestinationInfieldDocumentQueryPrompt.template;
 
   constructor(private fields: CogniteChainInput) {
     super(fields);
@@ -43,7 +49,7 @@ export class DocumentQueryChain extends CogniteBaseChain {
   }
 
   get inputKeys() {
-    return ['input', 'context', 'language'];
+    return infieldDocumentMultipleContextQueryPrompt.input_variables;
   }
 
   get outputKeys(): string[] {
@@ -51,21 +57,11 @@ export class DocumentQueryChain extends CogniteBaseChain {
   }
 
   _chainType() {
-    return 'sequential_chain' as const;
+    return 'llm' as const;
   }
 
   /** @ignore */
   async _call(values: ChainValues, _runManager?: CallbackManagerForChainRun) {
-    values.context = '';
-    values.language = '';
-    const validKeys = this.inputKeys.every((k) => k in values);
-
-    if (!validKeys) {
-      throw new Error(
-        `The following values must be provided: ${this.inputKeys}`
-      );
-    }
-
     //Detecting language
     const langTrans = await translateInputToEnglish(values.input, this.llm);
     values.language = langTrans.language;
@@ -73,8 +69,12 @@ export class DocumentQueryChain extends CogniteBaseChain {
 
     console.log(values);
 
+    sendToCopilotEvent('LOADING_STATUS', {
+      status: 'Retrieving information...',
+    });
+
     //let externalAssetId = (await getExternalId()) as string;
-    let externalAssetId = 'test27JC0001'; //hardcoded for now, use line above when ready
+    let externalAssetId = 'test500_27JC0001'; //hardcoded for now, use line above when ready
 
     let queryContext = await retrieveContext(
       values.input,
@@ -85,14 +85,14 @@ export class DocumentQueryChain extends CogniteBaseChain {
     console.log(queryContext);
 
     // Generating answers prompt and chain initialization
-    const singleQueryPrompt = new PromptTemplate({
-      template: QUERY_SINGLE_CONTEXT_PROMPT,
-      inputVariables: this.inputKeys,
+    const singleQueryPromptTemplate = new PromptTemplate({
+      template: infieldDocumentSingleContextQueryPrompt.template,
+      inputVariables: infieldDocumentSingleContextQueryPrompt.input_variables,
     });
 
     const singleQueryChain = new LLMChain({
       llm: this.llm,
-      prompt: singleQueryPrompt,
+      prompt: singleQueryPromptTemplate,
     });
 
     const numDocuments = 5; // queryContext.items.length; // Can be specified
@@ -102,18 +102,19 @@ export class DocumentQueryChain extends CogniteBaseChain {
     const returnedAnswers = await parallelGPTCalls(inputList, singleQueryChain);
 
     // Summarize answer prompt and chain initialization
-    const summarizeAnswersPrompt = new PromptTemplate({
-      template: QUERY_SUMMARIZE_ANSWERS_PROMPT,
-      inputVariables: this.inputKeys,
+    const summarizeAnswersPromptTemplate = new PromptTemplate({
+      template: infieldDocumentMultipleContextQueryPrompt.template,
+      inputVariables: infieldDocumentMultipleContextQueryPrompt.input_variables,
     });
 
     const summarizeAnswersQueryChain = new LLMChain({
       llm: this.llm,
-      prompt: summarizeAnswersPrompt,
+      prompt: summarizeAnswersPromptTemplate,
     });
-
+    console.log(returnedAnswers);
     // A list that can be used later on to find source of answers
-    sourceList = [];
+    const sourceList: sourceResponse[] = [];
+
     let stringOfAnswers = '';
     for (let j = 0; j < returnedAnswers.length; j++) {
       if (!returnedAnswers[j].text.includes('WARNING REMOVE WARNING')) {
@@ -131,6 +132,10 @@ export class DocumentQueryChain extends CogniteBaseChain {
     console.log(values.context);
     console.log(sourceList);
 
+    sendToCopilotEvent('LOADING_STATUS', {
+      status: 'Preparing an answer...',
+    });
+
     // Final call for summarizing answers
     const res = (
       await parallelGPTCalls(
@@ -143,7 +148,7 @@ export class DocumentQueryChain extends CogniteBaseChain {
         ],
         summarizeAnswersQueryChain,
         3,
-        5000
+        8000 // 8 seconds now to ensure that we almost always get an answer. Can definitely be lowered later on.
       )
     )[0];
 
@@ -155,6 +160,22 @@ export class DocumentQueryChain extends CogniteBaseChain {
         source: 'bot',
         type: 'text',
         content: res.text,
+        actions: [
+          {
+            content: 'Get source',
+            onClick: () => {
+              const preparedSources = prepareSources(sourceList);
+              sendToCopilotEvent('NEW_MESSAGES', [
+                {
+                  source: 'bot',
+                  type: 'text',
+                  content: preparedSources[0] as string,
+                  actions: preparedSources[1] as CopilotAction[],
+                },
+              ]);
+            },
+          },
+        ],
         chain: this.constructor.name,
       },
     ]);

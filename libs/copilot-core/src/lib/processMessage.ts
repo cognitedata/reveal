@@ -15,9 +15,24 @@ export const processMessage = async (
   // switch case for the possibility to add specific functionality for each feature
   switch (feature) {
     case 'Infield': {
-      const message = params[1];
+      let message = params[1];
       if (message) {
-        await chain.call({ input: message });
+        sendToCopilotEvent('LOADING_STATUS', {
+          status: 'Reasoning next steps...',
+        });
+        message = inputCleaning(message);
+        try {
+          await chain.call({ input: message });
+        } catch (error) {
+          sendToCopilotEvent('NEW_MESSAGES', [
+            {
+              type: 'text',
+              content: 'ERROR: Please try again.',
+              source: 'bot',
+              chain: 'Error',
+            },
+          ]);
+        }
       } else {
         let msgContent =
           'Hello from CogPilot! How can I assist you with your Infield work today?';
@@ -58,4 +73,23 @@ export const processMessage = async (
       return true;
     }
   }
+};
+
+//Maybe put somewhere else?
+//Clean up the input message
+const inputCleaning = (message: string) => {
+  // remove all emojis
+  message = message.replace(
+    /([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g,
+    ''
+  );
+  // remove all extra spaces
+  message = message.replace(/\s{2,}/g, ' ');
+  // remove all extra newlines
+  message = message.replace(/\n{2,}/g, '\n');
+  // remove all extra tabs
+  message = message.replace(/\t{2,}/g, '\t');
+  // remove all extra carriage returns
+  message = message.replace(/\r{2,}/g, '\r');
+  return message;
 };

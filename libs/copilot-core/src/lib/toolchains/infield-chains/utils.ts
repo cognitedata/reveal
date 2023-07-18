@@ -3,6 +3,9 @@ import { BaseChatModel } from 'langchain/chat_models/base';
 import { PromptTemplate } from 'langchain/prompts';
 import { ChainValues } from 'langchain/schema';
 
+import { generalLanguageDetectTranslationPrompt } from '@cognite/llm-hub';
+
+import { CopilotAction } from '../../types';
 import {
   addToCopilotEventListener,
   sendFromCopilotEvent,
@@ -10,7 +13,6 @@ import {
 } from '../../utils';
 import { sourceResponse, translationResponse } from '../../utils/types';
 
-import { DETECT_LANGUAGE_PROMPT } from './prompts';
 // Function for sending event to Infield, and retrieving the external asset id.
 export const getExternalId = async () => {
   return new Promise((resolve) => {
@@ -34,23 +36,31 @@ export const pushDocumentId = async (docId: string) => {
 };
 
 // Function for printing the sources used to find multiple answers
-export function printSources(sourceList: sourceResponse[]) {
+// Also used to generate CopilotActions for opening the documents
+export function prepareSources(sourceList: sourceResponse[]) {
   let sourceString = '';
+  const openDocActionList: CopilotAction[] = [];
   for (let i = 0; i < sourceList.length; i++) {
-    sourceString += `${i + 1}. Answer: ${sourceList[i].text} \n Source: ${
-      sourceList[i].source
-    } \n Page: ${sourceList[i].page} \n\n`;
+    if (
+      !(
+        sourceString.includes(sourceList[i].source) &&
+        sourceString.includes(sourceList[i].page)
+      )
+    ) {
+      if (openDocActionList.length < 3) {
+        openDocActionList.push({
+          content: 'Open: ' + (openDocActionList.length + 1),
+          onClick: () => {
+            pushDocumentId('446078535171616'); //DOCUMENT ID HERE
+          },
+        } as CopilotAction);
+      }
+
+      sourceString += `${openDocActionList.length}. Source: ${sourceList[i].source} \n Page: ${sourceList[i].page} \n\n`;
+    }
   }
-  sendToCopilotEvent('NEW_MESSAGES', [
-    {
-      source: 'bot',
-      type: 'text',
-      content: sourceString,
-      chain: 'DocumentQueryChain',
-    },
-  ]);
   console.log(sourceString);
-  return sourceString;
+  return [sourceString, openDocActionList];
 }
 
 // Function for sending getLanguage event to Infield, and retrieving the language of the page.
@@ -69,14 +79,14 @@ export const translateInputToEnglish = async (
   input: string,
   llm: BaseChatModel
 ) => {
-  const detectLanguagePrompt = new PromptTemplate({
-    template: DETECT_LANGUAGE_PROMPT,
-    inputVariables: ['input'],
+  const detectLanguagePromptTemplate = new PromptTemplate({
+    template: generalLanguageDetectTranslationPrompt.template,
+    inputVariables: generalLanguageDetectTranslationPrompt.input_variables,
   });
 
   const detectLanguageChain = new LLMChain({
     llm: llm,
-    prompt: detectLanguagePrompt,
+    prompt: detectLanguagePromptTemplate,
   });
   try {
     return JSON.parse(

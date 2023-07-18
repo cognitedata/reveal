@@ -4,22 +4,32 @@ import { BaseChatModel } from 'langchain/chat_models/base';
 import { PromptTemplate } from 'langchain/prompts';
 import { ChainValues } from 'langchain/schema';
 
-import { CogniteBaseChain, CogniteChainInput } from '../../types';
+import {
+  infieldDocumentSummaryPrompt,
+  copilotDestinationInfieldSummaryPrompt,
+} from '@cognite/llm-hub';
+
+import {
+  CogniteBaseChain,
+  CogniteChainInput,
+  CopilotAction,
+} from '../../types';
 import { sendToCopilotEvent } from '../../utils';
+import { sourceResponse } from '../../utils/types';
 import { retrieveContext } from '../../utils/utils';
 
 import {
-  SUMMARY_SINGLE_CONTEXT_PROMPT,
-  SUMMARY_MULTI_CONTEXT_PROMPT,
-} from './prompts';
-import { getExternalId, pushDocumentId } from './utils';
+  parallelGPTCalls,
+  translateInputToEnglish,
+  prepareSources,
+} from './utils';
 
 export class SummaryChain extends CogniteBaseChain {
   llm: BaseChatModel;
   outputVariables: string[];
   returnAll?: boolean | undefined;
 
-  description = 'Good for providing summaries';
+  description = copilotDestinationInfieldSummaryPrompt.template;
 
   constructor(private fields: CogniteChainInput) {
     super(fields);
@@ -34,7 +44,7 @@ export class SummaryChain extends CogniteBaseChain {
   }
 
   get inputKeys() {
-    return ['input', 'context'];
+    return infieldDocumentSummaryPrompt.input_variables;
   }
 
   get outputKeys(): string[] {
@@ -42,12 +52,14 @@ export class SummaryChain extends CogniteBaseChain {
   }
 
   _chainType() {
-    return 'sequential_chain' as const;
+    return 'llm' as const;
   }
 
   /** @ignore */
   async _call(values: ChainValues, _runManager?: CallbackManagerForChainRun) {
     values.context = '';
+    values.prevAnswer = '';
+    values.language = '';
     const validKeys = this.inputKeys.every((k) => k in values);
 
     if (!validKeys) {
@@ -56,8 +68,17 @@ export class SummaryChain extends CogniteBaseChain {
       );
     }
 
+    //Detecting language
+    const langTrans = await translateInputToEnglish(values.input, this.llm);
+    values.language = langTrans.language;
+    values.input = langTrans.translation;
+
+    sendToCopilotEvent('LOADING_STATUS', {
+      status: 'Retrieving information...',
+    });
+
     //let externalAssetId = (await getExternalId()) as string;
-    let externalAssetId = 'test27JC0001'; //hardcoded for now, use line above when ready
+    let externalAssetId = 'test1000_27JC0001'; //hardcoded for now, use line above when ready
 
     let queryContext = await retrieveContext(
       values.input,
@@ -66,69 +87,74 @@ export class SummaryChain extends CogniteBaseChain {
       'vectorstore' // 'ada' or 'vectorstore' embedding
     );
 
-    // Generating answers prompt and chain initialization
-    const singleSummaryPrompt = new PromptTemplate({
-      template: SUMMARY_SINGLE_CONTEXT_PROMPT,
+    const refineSummaryPrompt = new PromptTemplate({
+      template: infieldDocumentSummaryPrompt.template,
       inputVariables: this.inputKeys,
     });
 
-    const singleSummaryChain = new LLMChain({
+    const refineSummaryChain = new LLMChain({
       llm: this.llm,
-      prompt: singleSummaryPrompt,
+      prompt: refineSummaryPrompt,
     });
 
-    const promisedAnswers: Promise<ChainValues>[] = [];
-    const numDocuments = queryContext.items.length; // Can be specified, for now we use all
+    sendToCopilotEvent('LOADING_STATUS', {
+      status: 'Preparing an answer...',
+    });
 
-    // Running the GPT calls in parallel
-    for (let i = 0; i < numDocuments; i++) {
-      values.context = queryContext.items[i].text;
-      const res = singleSummaryChain.call({
-        input: values.input,
-        context: values.context,
-      });
-      promisedAnswers.push(res);
+    let refinedResponse: ChainValues = { text: '' };
+    for (let i = 0; i < queryContext.items.length; i++) {
+      refinedResponse = (
+        await parallelGPTCalls(
+          [
+            {
+              input: values.input,
+              context: queryContext.items[i].text,
+              prevAnswer: refinedResponse.text,
+              language: values.language,
+            },
+          ],
+          refineSummaryChain
+        )
+      )[0];
+      console.log(`Refined response ${i}: ` + refinedResponse.text);
     }
-    // Awaiting all answers
-    const returnedAnswers = await Promise.all(promisedAnswers);
 
-    // Summarize answer prompt and chain initialization
-    const summarizeAnswersPrompt = new PromptTemplate({
-      template: SUMMARY_MULTI_CONTEXT_PROMPT,
-      inputVariables: this.inputKeys,
-    });
-
-    const summarizeSummaryChain = new LLMChain({
-      llm: this.llm,
-      prompt: summarizeAnswersPrompt,
-    });
-
-    // Constructing a string of all answers, should filter out nulls if GPT cooperates
-    values.context = returnedAnswers
-      .map((answer) =>
-        !answer.text.includes('WARNING REMOVE WARNING') ? answer.text : ''
-      )
-      .join('\n\n');
-    console.log(values.context);
-
-    // Final call for summarizing answers
-    const res = await summarizeSummaryChain.call({
-      input: values.input,
-      context: values.context,
-    });
-
-    // Implement check for whether you want to be sent to the document
-    // pushDocumentId('446078535171616'); // Should be the document id of where the information was found
+    // Return a list of the top 3 sources used to find the answer
+    const sourceList: sourceResponse[] = [];
+    for (let i = 0; i < 3; i++) {
+      sourceList.push({
+        source: queryContext.items[i].metadata.source,
+        page: queryContext.items[i].metadata.page,
+        text: queryContext.items[i].text,
+        index: i,
+      });
+    }
 
     sendToCopilotEvent('NEW_MESSAGES', [
       {
         source: 'bot',
         type: 'text',
-        content: res.text,
+        content: refinedResponse.text,
+        actions: [
+          {
+            content: 'Get source',
+            onClick: () => {
+              const preparedSources = prepareSources(sourceList);
+              sendToCopilotEvent('NEW_MESSAGES', [
+                {
+                  source: 'bot',
+                  type: 'text',
+                  content: preparedSources[0] as string,
+                  actions: preparedSources[1] as CopilotAction[],
+                },
+              ]);
+            },
+          },
+        ],
         chain: this.constructor.name,
       },
     ]);
 
-    return { res };
+    return { refinedResponse };
   }
 }
