@@ -39,6 +39,7 @@ type DetailsItemProps = {
   value?: React.ReactNode;
   copyable?: boolean;
   link?: string;
+  hideCopyButton?: boolean; // keep this true if a copy button is included with the value
 };
 // If you enable the copyable props, Make sure to add the Unique key props  to the component wherever it is being used
 export const DetailsItem = ({
@@ -46,6 +47,7 @@ export const DetailsItem = ({
   value,
   copyable = false,
   link,
+  hideCopyButton = false,
 }: DetailsItemProps) => {
   const { t } = useTranslation();
 
@@ -88,8 +90,8 @@ export const DetailsItem = ({
           ))}
         {!value && <MutedBody level={2}>{DASH}</MutedBody>}
       </DetailsItemContainer>
-      {copyable && Boolean(value) && (
-        <ButtonWrapper visible={true}>
+      {!hideCopyButton && (
+        <ButtonWrapper visible={copyable && Boolean(value)}>
           <CopyButton onClick={handleOnClickCopy} hasCopied={hasCopied} />
         </ButtonWrapper>
       )}
@@ -230,6 +232,7 @@ export const RootAssetItem = ({
           <CopyButton onClick={handleCopy} hasCopied={hasCopied} />
         </Flex>
       }
+      hideCopyButton
     />
   );
 };
