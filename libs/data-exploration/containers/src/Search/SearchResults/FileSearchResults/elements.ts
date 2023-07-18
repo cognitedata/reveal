@@ -21,3 +21,10 @@ export const FileSwitcherWrapper = styled.div`
   display: flex;
   justify-content: flex-end;
 `;
+
+export const GroupingTableContentWrapper = styled.div`
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+`;

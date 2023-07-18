@@ -24,13 +24,18 @@ import {
   useRelatedFilesQuery,
 } from '@data-exploration-lib/domain-layer';
 
+import { OldFileGroupTable } from '../../../Temp';
 import { AppliedFiltersTags } from '../AppliedFiltersTags';
 import {
   FileGroupingTable,
   useDocumentsMetadataColumns,
 } from '../DocumentSearchResults';
 
-import { FileSwitcherWrapper, GroupingTableContainer } from './elements';
+import {
+  GroupingTableContainer,
+  GroupingTableContentWrapper,
+  GroupingTableWrapper,
+} from './elements';
 import { FileTableFiltersDocument } from './FileTableFilters';
 import { FileViewSwitcher } from './FileViewSwitcher';
 
@@ -122,13 +127,47 @@ export const FileRelatedSearchResults: React.FC<Props> = ({
   if (currentView === 'tree') {
     return (
       <GroupingTableContainer>
-        <FileSwitcherWrapper>
-          <FileViewSwitcher
-            setCurrentView={setCurrentView}
-            currentView={currentView}
+        <GroupingTableContentWrapper>
+          {isDocumentsApiEnabled && (
+            <DefaultPreviewFilter query={query} onQueryChange={setQuery}>
+              <FileTableFiltersDocument
+                filter={documentFilter}
+                onFilterChange={handleDocumentFilterChange}
+              />
+            </DefaultPreviewFilter>
+          )}
+
+          {isGroupingFilesEnabled && (
+            <FileViewSwitcher
+              setCurrentView={setCurrentView}
+              currentView={currentView}
+            />
+          )}
+        </GroupingTableContentWrapper>
+
+        {isDocumentsApiEnabled && (
+          <AppliedFiltersTags
+            filter={documentFilter}
+            onFilterChange={handleDocumentFilterChange}
           />
-        </FileSwitcherWrapper>
-        <FileGroupingTable data={data} onItemClicked={onClick} />
+        )}
+
+        <GroupingTableWrapper>
+          {isDocumentsApiEnabled ? (
+            <FileGroupingTable
+              query={debouncedQuery}
+              data={data}
+              onItemClicked={onClick}
+            />
+          ) : (
+            <OldFileGroupTable
+              query={debouncedQuery}
+              currentView={currentView}
+              setCurrentView={setCurrentView}
+              onItemClicked={onClick}
+            />
+          )}
+        </GroupingTableWrapper>
       </GroupingTableContainer>
     );
   }
