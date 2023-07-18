@@ -31,7 +31,6 @@ jobs:
         with:
           script: return "${{ github.event.pull_request.base.ref }}.replace('release-preview-', '').replace('release-', '')"
           result-encoding: string
-
       - name: Get result
         run: echo "${{steps.set-result.outputs.result}}"
 
