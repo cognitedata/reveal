@@ -61,4 +61,4 @@ jobs:
         id: get-project-name
         run: echo "::set-output name=project::$(echo $GITHUB_REPOSITORY | cut -d'/' -f2)"
 
-    outputs:
+
