@@ -53,10 +53,12 @@ export const Main: Story = {
     <RevealContainer sdk={sdk} color={new Color(0x4a4a4a)}>
       <CadModelContainer addModelOptions={addModelOptions} />
       <CadModelContainer addModelOptions={addModelOptions} transform={transform} />
-      <PointCloudContainer addModelOptions={{
+      <PointCloudContainer
+        addModelOptions={{
           modelId: 3865289545346058,
           revisionId: 4160448151596909
-        }} transform={new Matrix4()}
+        }}
+        transform={new Matrix4()}
       />
       <RevealToolbar />
       <MyCustomToolbar>

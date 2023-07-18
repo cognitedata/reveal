@@ -53,7 +53,7 @@ export const CadModelLayersContainer = (): ReactElement => {
   const cadModelContent = (): React.JSX.Element => {
     return (
       <StyledSubMenuWrapper label={'Opacity'}>
-        <OpacitySlider onChange={onOpacityChange}/>
+        <OpacitySlider onChange={onOpacityChange} />
         <Divider />
         <StyledSubMenu>
           {selectedCadModels.length > 0 ? (
