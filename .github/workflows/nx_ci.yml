@@ -212,7 +212,10 @@ jobs:
     name: Build
     runs-on: ubuntu-20.04
     needs: [setup, build-libs]
-    if: ${{ needs.setup.outputs.affected-apps != '' && toJson(fromJson(needs.setup.outputs.affected-apps)) != '[]' }}
+    if: |
+      ${{ needs.setup.outputs.affected-apps != '' && 
+      toJson(fromJson(needs.setup.outputs.affected-apps)) != '[]' }} &&
+      (needs.build-libs.result == 'success' || needs.build-libs.result == 'skipped')
     strategy:
       matrix:
         project: ${{ fromJson(needs.setup.outputs.affected-apps)  }}
