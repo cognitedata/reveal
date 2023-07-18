@@ -117,13 +117,13 @@ function ExpansionMenu({ run }: { run: CalculationRun }) {
   return (
     <Menu>
       <Link to={createCdfLink(`${run.id}`)}>
-        <Menu.Item icon="Info" iconPlacement="left">
+        <Menu.Item css="" icon="Info" iconPlacement="left">
           Calculation run details
         </Menu.Item>
       </Link>
       <Divider />
       {isFetchingChartLinks ? (
-        <Menu.Item>
+        <Menu.Item css="">
           <Skeleton.Text />
         </Menu.Item>
       ) : (
@@ -132,7 +132,7 @@ function ExpansionMenu({ run }: { run: CalculationRun }) {
           rel="noreferrer"
           target="_blank"
         >
-          <Menu.Item icon="LineChart" iconPlacement="left">
+          <Menu.Item css="" icon="LineChart" iconPlacement="left">
             Open timeseries in Charts
           </Menu.Item>
         </a>
@@ -145,7 +145,7 @@ function ExpansionMenu({ run }: { run: CalculationRun }) {
           )}/${encodeURIComponent(run.metadata.modelName)}`
         )}
       >
-        <Menu.Item icon="DataSource" iconPlacement="left">
+        <Menu.Item css="" icon="DataSource" iconPlacement="left">
           View model
         </Menu.Item>
       </Link>
@@ -157,7 +157,7 @@ function ExpansionMenu({ run }: { run: CalculationRun }) {
         )}/calculations/${encodeURIComponent(run.metadata.calcType)}
         /${run.metadata.calcType === 'UserDefined' ? calculationType : ''}`)}
       >
-        <Menu.Item icon="Settings" iconPlacement="left">
+        <Menu.Item css="" icon="Settings" iconPlacement="left">
           View configuration
         </Menu.Item>
       </Link>

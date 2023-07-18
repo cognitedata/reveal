@@ -405,6 +405,7 @@ export function CalculationList({
                 content={
                   <Menu>
                     <Menu.Item
+                      css=""
                       icon="Info"
                       iconPlacement="left"
                       onClick={() => {
@@ -432,6 +433,7 @@ export function CalculationList({
                       Calculation details
                     </Menu.Item>
                     <Menu.Item
+                      css=""
                       icon="History"
                       iconPlacement="left"
                       onClick={() => {
@@ -464,6 +466,7 @@ export function CalculationList({
                     </Menu.Item>
                     <Divider />
                     <Menu.Item
+                      css=""
                       icon="Settings"
                       iconPlacement="left"
                       onClick={() => {
@@ -498,6 +501,7 @@ export function CalculationList({
                     </Menu.Item>
                     {isDeleteEnabled ? (
                       <Menu.Item
+                        css=""
                         icon="Delete"
                         iconPlacement="left"
                         onClick={() => {

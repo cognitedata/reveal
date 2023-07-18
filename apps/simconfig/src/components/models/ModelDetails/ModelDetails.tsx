@@ -8,7 +8,6 @@ import {
   Button,
   Chip,
   Dropdown,
-  Icon,
   Menu,
   SegmentedControl,
   Skeleton,
@@ -260,6 +259,7 @@ export function ModelDetails({
               content={
                 <Menu>
                   <Menu.Item
+                    css=""
                     icon="Delete"
                     iconPlacement="left"
                     onClick={() => {
