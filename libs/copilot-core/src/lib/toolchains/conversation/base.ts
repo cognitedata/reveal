@@ -13,7 +13,8 @@ export const createDefaultChain = (model: BaseLanguageModel) =>
     memory: new BufferMemory({}),
     prompt: new PromptTemplate({
       template: copilotInstructionsPrompt.template,
-      inputVariables: copilotInstructionsPrompt.input_variables,
+      inputVariables:
+        copilotInstructionsPrompt.input_variables as unknown as string[],
     }),
     callbacks: [
       {

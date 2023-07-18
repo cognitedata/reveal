@@ -1,15 +1,10 @@
-import { BaseChain, ChainInputs } from 'langchain/chains';
+import { ChainInputs } from 'langchain/chains';
 import { BaseChatModel } from 'langchain/chat_models/base';
-import { ChainValues } from 'langchain/schema';
 
 import { IconType } from '@cognite/cogs.js';
 import { CogniteClient } from '@cognite/sdk';
 
-import {
-  addToCopilotEventListener,
-  sendFromCopilotEvent,
-  sendToCopilotEvent,
-} from './utils';
+import { sendFromCopilotEvent, sendToCopilotEvent } from './utils';
 export type CopilotSupportedFeatureType =
   | 'Streamlit'
   | 'IndustryCanvas'
@@ -110,70 +105,6 @@ export type GetActionsFunc = (
   pastMessages: CopilotMessage[],
   sendMessage: (message: CopilotBotMessage) => Promise<void>
 ) => Promise<CopilotAction[]>;
-
-export interface CogniteChainInput extends ChainInputs {
-  /** LLM Wrapper to use */
-  llm: BaseChatModel;
-  /** Which variables should be returned as a result of executing the chain. If not specified, output of the last of the chains is used. */
-  outputVariables?: string[];
-  /** Whether or not to return all intermediate outputs and variables (excluding initial input variables). */
-  returnAll?: boolean;
-  /** Cognite Client */
-  sdk: CogniteClient;
-
-  messages: React.RefObject<CopilotMessage[]>;
-  humanApproval?: boolean;
-}
-
-export abstract class CogniteBaseChain extends BaseChain {
-  public abstract description: string;
-
-  constructor(fields: CogniteChainInput) {
-    super(fields);
-    const name = this.constructor.name;
-    if (!!fields?.humanApproval) {
-      this.callbacks = [
-        {
-          async handleChainStart(_: ChainValues) {
-            return new Promise((resolve, reject) => {
-              sendToCopilotEvent('NEW_MESSAGES', [
-                {
-                  source: 'bot',
-                  type: 'human-approval',
-                  content: `Run "${name}" chain?`,
-                  pending: true,
-                  chain: this.constructor.name,
-                },
-              ]);
-              const removeListener = addToCopilotEventListener(
-                'NEW_MESSAGES',
-                (data) => {
-                  if (data.length === 1 && data[0].type === 'human-approval') {
-                    removeListener();
-                    if (data[0].approved) {
-                      return resolve();
-                    } else {
-                      sendToCopilotEvent('NEW_MESSAGES', [
-                        {
-                          source: 'bot',
-                          type: 'text',
-                          content: `Ok, I won't run "${name}" chain.`,
-                          pending: false,
-                          chain: this.constructor.name,
-                        },
-                      ]);
-                      return reject();
-                    }
-                  }
-                }
-              );
-            });
-          },
-        },
-      ];
-    }
-  }
-}
 
 export type CopilotEvents = {
   FromCopilot: {
