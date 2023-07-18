@@ -15,3 +15,9 @@ export const GroupingTableHeader = styled.div`
 export const GroupingTableWrapper = styled.div`
   margin-top: 8px;
 `;
+
+export const FileSwitcherWrapper = styled.div`
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+`;

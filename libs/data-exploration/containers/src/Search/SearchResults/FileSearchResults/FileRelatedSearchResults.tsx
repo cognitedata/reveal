@@ -25,9 +25,14 @@ import {
 } from '@data-exploration-lib/domain-layer';
 
 import { AppliedFiltersTags } from '../AppliedFiltersTags';
-import { useDocumentsMetadataColumns } from '../DocumentSearchResults';
+import {
+  FileGroupingTable,
+  useDocumentsMetadataColumns,
+} from '../DocumentSearchResults';
 
+import { FileSwitcherWrapper, GroupingTableContainer } from './elements';
 import { FileTableFiltersDocument } from './FileTableFilters';
+import { FileViewSwitcher } from './FileViewSwitcher';
 
 const visibleColumns = [
   'name',
@@ -46,6 +51,7 @@ interface Props {
     item: WithDetailViewData<FileInfo> | WithDetailViewData<Document>
   ) => void;
   isDocumentsApiEnabled?: boolean;
+  isGroupingFilesEnabled?: boolean;
 }
 
 export const FileRelatedSearchResults: React.FC<Props> = ({
@@ -53,6 +59,7 @@ export const FileRelatedSearchResults: React.FC<Props> = ({
   labels,
   onClick,
   isDocumentsApiEnabled = true,
+  isGroupingFilesEnabled = true,
 }) => {
   const [query, setQuery] = useState<string | undefined>();
   const [debouncedQuery] = useDebounce(query, 300);
@@ -60,6 +67,9 @@ export const FileRelatedSearchResults: React.FC<Props> = ({
     {}
   );
   const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
+  const [currentView, setCurrentView] = useState(
+    isGroupingFilesEnabled ? 'tree' : 'list'
+  );
 
   const { t } = useTranslation();
   const tableColumns = getTableColumns(t);
@@ -109,6 +119,20 @@ export const FileRelatedSearchResults: React.FC<Props> = ({
     return <EmptyState isLoading={isLoading} />;
   }
 
+  if (currentView === 'tree') {
+    return (
+      <GroupingTableContainer>
+        <FileSwitcherWrapper>
+          <FileViewSwitcher
+            setCurrentView={setCurrentView}
+            currentView={currentView}
+          />
+        </FileSwitcherWrapper>
+        <FileGroupingTable data={data} onItemClicked={onClick} />
+      </GroupingTableContainer>
+    );
+  }
+
   return (
     <Table
       id="file-related-search-results"
@@ -130,21 +154,25 @@ export const FileRelatedSearchResults: React.FC<Props> = ({
             filter={documentFilter}
             onFilterChange={handleDocumentFilterChange}
           />
-        ) : (
-          <></>
-        )
+        ) : undefined
       }
       tableHeaders={
-        <DefaultPreviewFilter query={query} onQueryChange={setQuery}>
-          {isDocumentsApiEnabled ? (
-            <FileTableFiltersDocument
-              filter={documentFilter}
-              onFilterChange={handleDocumentFilterChange}
-            />
-          ) : (
-            <></>
+        <>
+          {isDocumentsApiEnabled && (
+            <DefaultPreviewFilter query={query} onQueryChange={setQuery}>
+              <FileTableFiltersDocument
+                filter={documentFilter}
+                onFilterChange={handleDocumentFilterChange}
+              />
+            </DefaultPreviewFilter>
           )}
-        </DefaultPreviewFilter>
+          {isGroupingFilesEnabled && (
+            <FileViewSwitcher
+              setCurrentView={setCurrentView}
+              currentView={currentView}
+            />
+          )}
+        </>
       }
     />
   );

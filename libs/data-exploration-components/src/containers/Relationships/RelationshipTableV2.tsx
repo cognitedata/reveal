@@ -23,6 +23,7 @@ export const RelationshipTableV2 = ({
   onParentAssetClick,
   labels,
   isDocumentsApiEnabled = true,
+  isGroupingFilesEnabled = true,
 }: {
   type: ResourceType;
   isGroupingFilesEnabled?: boolean;
@@ -97,6 +98,7 @@ export const RelationshipTableV2 = ({
           labels={labels}
           onClick={(file) => onItemClicked(file.id)}
           isDocumentsApiEnabled={isDocumentsApiEnabled}
+          isGroupingFilesEnabled={isGroupingFilesEnabled}
         />
       );
     case 'sequence':

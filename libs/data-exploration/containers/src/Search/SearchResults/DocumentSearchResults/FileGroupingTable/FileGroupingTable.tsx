@@ -3,7 +3,7 @@ import React from 'react';
 import { EmptyState } from '@data-exploration/components';
 
 import { Document, DocumentTable } from '@cognite/react-document-table';
-import { FileInfo } from '@cognite/sdk/dist/src';
+import { FileInfo, Document as SdkDocument } from '@cognite/sdk';
 
 import {
   FileWithRelationshipLabels,
@@ -12,15 +12,21 @@ import {
   REFINE_FILTERS_OR_UPDATE_SEARCH,
   useTranslation,
 } from '@data-exploration-lib/core';
-import { useDocumentSearchResultQuery } from '@data-exploration-lib/domain-layer';
+import {
+  WithDetailViewData,
+  useDocumentSearchResultQuery,
+} from '@data-exploration-lib/domain-layer';
 
 import { docTypes } from './docTypes';
 
 type FileGroupingTableProps = {
-  data?: FileWithRelationshipLabels[];
+  data?:
+    | FileWithRelationshipLabels[]
+    | WithDetailViewData<FileInfo>[]
+    | WithDetailViewData<SdkDocument>[];
   query?: string;
   filter?: InternalDocumentFilter;
-  onItemClicked: (file: any) => void;
+  onItemClicked?: (file: any) => void;
 };
 const convertFilesToDocs = <
   T extends Pick<FileInfo, 'id' | 'name' | 'metadata' | 'directory' | 'source'>
