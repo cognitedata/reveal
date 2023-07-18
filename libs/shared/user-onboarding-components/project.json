@@ -75,13 +75,24 @@
       "executor": "@nx/storybook:build",
       "outputs": ["{options.outputDir}"],
       "options": {
-        "uiFramework": "@storybook/react",
-        "configDir": "libs/shared/user-onboarding-components",
+        "configDir": "libs/shared/user-onboarding-components/.storybook",
         "outputDir": "storybook-static"
       },
       "configurations": {
         "ci": {
           "quiet": true
+        }
+      }
+    },
+    "static-storybook": {
+      "executor": "@nx/web:file-server",
+      "options": {
+        "buildTarget": "user-onboarding-components:build-storybook",
+        "staticFilePath": "dist/storybook/user-onboarding-components"
+      },
+      "configurations": {
+        "ci": {
+          "buildTarget": "user-onboarding-components:build-storybook:ci"
         }
       }
     }

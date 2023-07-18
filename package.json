@@ -191,6 +191,7 @@
     "react-iframe": "^1.8.0",
     "react-infinite-scroll-component": "^6.1.0",
     "react-is": "18.2.0",
+    "react-joyride": "^2.5.4",
     "react-mapbox-gl": "4.8.6",
     "react-markdown": "^8.0.7",
     "react-modal": "^3.14.3",
@@ -498,4 +499,3 @@
     "node": "^18"
   }
 }
-
