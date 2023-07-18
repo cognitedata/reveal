@@ -3,12 +3,12 @@ import {
   getLanguage,
   selectLanguage,
 } from '@cognite/cdf-i18n-utils';
-import { trackEvent } from '@cognite/cdf-route-tracker';
 import {
   Language,
   UserProfilePage as SharedUserProfilePage,
 } from '@cognite/user-profile-components';
 
+import { useTracker } from '../../app/common/metrics';
 import { useUserInfo } from '../../hooks/useUserInfo';
 
 const SUPPORTED_LANGUAGES: Language[] = [
@@ -34,6 +34,7 @@ export const UserProfilePage = (): JSX.Element => {
   const { t } = useTranslation();
   const { data = {}, isLoading } = useUserInfo();
   const { name, email, picture: profilePicture } = data;
+  const { track } = useTracker();
 
   const handleLanguageChange = (language: Language | undefined) => {
     selectLanguage(language?.code || 'en');
@@ -62,7 +63,7 @@ export const UserProfilePage = (): JSX.Element => {
         languageFieldLabel: t('LANGUAGE_FIELD_LABEL'),
       }}
       onTrackEvent={(eventName, metaData) => {
-        trackEvent(`BusinessShell.UserProfilePage.${eventName}`, metaData);
+        track(`BusinessShell.UserProfilePage.${eventName}`, metaData);
       }}
     />
   );
