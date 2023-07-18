@@ -26,14 +26,6 @@ jobs:
           node-version: '18'
           registry-url: 'https://registry.npmjs.org'
 
-      - uses: actions/github-script@v6
-        id: set-result
-        with:
-          script: return "${{ github.event.pull_request.base.ref }}.replace('release-preview-', '').replace('release-', '')"
-          result-encoding: string
-      - name: Get result
-        run: echo "${{steps.set-result.outputs.result}}"
-
       - name: Cache node modules
         id: cache-node-modules
         uses: actions/cache@v3
@@ -50,14 +42,36 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_READONLY_TOKEN }}
 
-      - run: git fetch --no-tags --prune --depth=1 origin ${{ github.base_ref }}
-      - name: Derive appropriate SHAs for base and head for `nx affected` commands
-        uses: nrwl/nx-set-shas@v3
-        with:
-          main-branch-name: ${{ github.base_ref }}
-
       - name: 'Get project name'
+        uses: actions/github-script@v6
         id: get-project-name
-        run: echo "::set-output name=project::$(echo $GITHUB_REPOSITORY | cut -d'/' -f2)"
+        with:
+          script: return "${{ github.event.pull_request.base.ref }}".replace('release-preview-', '').replace('release-', '')
+          result-encoding: string
+  build:
+    runs-on: ubuntu-20.04
+    needs: setup
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          registry-url: 'https://registry.npmjs.org'
 
+      - name: Cache node modules
+        id: cache-node-modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            node_modules/*
+            !node_modules/.cache/nx
+            ~/.cache/Cypress
+          key: cache-node-modules-${{ hashFiles('yarn.lock') }}
+          restore-keys: cache-node-modules-
+
+      - name: Build
+        run: npx nx run ${{ needs.setup.outputs.get-project-name }}:build:production
