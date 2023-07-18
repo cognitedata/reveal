@@ -31,13 +31,16 @@ export function Get({ step, routineOrder, stepIndex }: StepCommandProps) {
   useEffect(() => {
     if (timeSerieIndex !== -1) {
       const currentTs = values.outputTimeSeries[timeSerieIndex];
-      const sample = generateOutputTimeSeriesExternalId({
+      const generateTimeSeriesExternalId = generateOutputTimeSeriesExternalId({
         simulator: values.simulator,
         calculationType: values.calculationName,
         modelName: values.modelName,
         timeSeriesType: currentTs.type,
       });
-      setFieldValue(`outputTimeSeries.${timeSerieIndex}.externalId`, sample);
+      setFieldValue(
+        `outputTimeSeries.${timeSerieIndex}.externalId`,
+        generateTimeSeriesExternalId
+      );
     }
   }, [values.outputTimeSeries]);
 

@@ -4,6 +4,10 @@ export const CustomCalculationBuilderContainer = styled.div`
   color: rgba(0, 0, 0, 0.9);
   margin-left: 20px;
 
+  .routine-editor-switch {
+    margin-bottom: 1em;
+  }
+
   .rc-tabs-content-holder {
     margin-top: 2em;
   }

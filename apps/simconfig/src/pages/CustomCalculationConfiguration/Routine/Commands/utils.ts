@@ -23,6 +23,10 @@ export interface ConfigurationFieldProps {
   stepIndex: number;
 }
 
+export interface TimeSeriesPrefixProps {
+  timeSeriesPrefix: 'inputTimeSeries' | 'outputTimeSeries';
+}
+
 export type ValueOptionType<T> = OptionType<T> &
   Required<Pick<OptionType<T>, 'value'>>;
 

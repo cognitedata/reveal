@@ -39,7 +39,7 @@ export function Set({ step, routineOrder, stepIndex }: StepCommandProps) {
   useEffect(() => {
     if (timeSerieIndex !== -1) {
       const currentTs = values.inputTimeSeries[timeSerieIndex];
-      const sample = generateInputTimeSeriesExternalId({
+      const generateSampleExternalId = generateInputTimeSeriesExternalId({
         simulator: values.simulator,
         calculationType: values.calculationName,
         modelName: values.modelName,
@@ -47,7 +47,7 @@ export function Set({ step, routineOrder, stepIndex }: StepCommandProps) {
       });
       setFieldValue(
         `inputTimeSeries.${timeSerieIndex}.sampleExternalId`,
-        sample
+        generateSampleExternalId
       );
     }
   }, [values.inputTimeSeries]);
