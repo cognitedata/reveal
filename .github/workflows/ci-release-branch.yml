@@ -1,8 +1,8 @@
 name: CI Release Branch
 on:
   pull_request:
-    branches:
-      - release/*
+#    branches:
+#      - release*
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -20,19 +20,20 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-node@v3
+      - name: Setup Node
+        uses: actions/setup-node@v3
         with:
           node-version: '18'
-          cache: 'yarn'
+          registry-url: 'https://registry.npmjs.org'
 
-      - name: Set NPMKEY variable
-        run: |
-          export NPMKEY=$(echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_READONLY_TOKEN }}")
-          echo "::set-output name=NPMKEY::$NPMKEY"
-        id: npm_auth_key
+      - uses: actions/github-script@v6
+        id: set-result
+        with:
+          script: return ${{ github.event.pull_request.base.ref }}.replace('release-preview-', '').replace('release-', '');
+          result-encoding: string
 
-      - name: Create .npmrc
-        run: echo '${{ steps.npm_auth_key.outputs.NPMKEY }}' > .npmrc
+      - name: Get result
+        run: echo "${{steps.set-result.outputs.result}}"
 
       - name: Cache node modules
         id: cache-node-modules
@@ -47,6 +48,8 @@ jobs:
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_READONLY_TOKEN }}
 
       - run: git fetch --no-tags --prune --depth=1 origin ${{ github.base_ref }}
       - name: Derive appropriate SHAs for base and head for `nx affected` commands
@@ -54,66 +57,8 @@ jobs:
         with:
           main-branch-name: ${{ github.base_ref }}
 
-      - name: 'Get affected action'
-        uses: './scripts/github-actions/nx-get-affected'
-
-      - name: 'Get affected libs to build'
-        id: affected-libs
-        uses: './scripts/github-actions/nx-get-affected'
-        with:
-          base: ${{ env.NX_BASE }}
-          head: ${{ env.NX_HEAD }}
-          projects: 'libs/*'
-
-      - name: 'Get affected apps to build'
-        id: affected-apps
-        uses: './scripts/github-actions/nx-get-affected'
-        with:
-          base: ${{ env.NX_BASE }}
-          head: ${{ env.NX_HEAD }}
-          projects: 'apps/*'
-          exclude: '*shell'
-
-      - name: 'Get affected shell apps to build'
-        id: affected-shell-apps
-        uses: './scripts/github-actions/nx-get-affected'
-        with:
-          base: ${{ env.NX_BASE }}
-          head: ${{ env.NX_HEAD }}
-          projects: '*shell'
-
-      - name: 'Get affected projects for lint'
-        id: affected-lint
-        uses: './scripts/github-actions/nx-get-affected'
-        with:
-          base: ${{ env.NX_BASE }}
-          head: ${{ env.NX_HEAD }}
-          target: 'lint'
-
-      - name: 'Get affected projects for test'
-        id: affected-test
-        uses: './scripts/github-actions/nx-get-affected'
-        with:
-          base: ${{ env.NX_BASE }}
-          head: ${{ env.NX_HEAD }}
-          target: 'test'
-
-      - name: 'Get affected projects for e2e'
-        id: affected-e2e
-        uses: './scripts/github-actions/nx-get-affected'
-        with:
-          base: ${{ env.NX_BASE }}
-          head: ${{ env.NX_HEAD }}
-          target: 'e2e'
+      - name: 'Get project name'
+        id: get-project-name
+        run: echo "::set-output name=project::$(echo $GITHUB_REPOSITORY | cut -d'/' -f2)"
 
     outputs:
-      affected-libs: ${{ steps.affected-libs.outputs.projects }}
-      affected-libs-string: ${{ steps.affected-libs.outputs.projectsString }}
-      affected-lint: ${{ steps.affected-lint.outputs.projects }}
-      affected-lint-string: ${{ steps.affected-lint.outputs.projectsString }}
-      affected-test: ${{ steps.affected-test.outputs.projects }}
-      affected-test-string: ${{ steps.affected-test.outputs.projectsString }}
-      affected-apps: ${{ steps.affected-apps.outputs.projects }}
-      affected-shell-apps: ${{ steps.affected-shell-apps.outputs.projects }}
-      affected-e2e: ${{ steps.affected-e2e.outputs.projects }}
-
