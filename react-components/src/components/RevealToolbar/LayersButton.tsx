@@ -2,32 +2,23 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type ReactElement, useCallback, useState } from 'react';
-import { Button } from '@cognite/cogs.js';
+import { type ReactElement, useState } from 'react';
+import { Button, Dropdown } from '@cognite/cogs.js';
 import { LayersContainer } from './LayersContainer/LayersContainer';
-import styled from 'styled-components';
 
 export const LayersButton = (): ReactElement => {
   const [layersEnabled, setLayersEnabled] = useState(false);
-  const showLayers = () => {
+  const showLayers = (): void => {
     setLayersEnabled(!layersEnabled);
   };
 
   return (
-    <LayersButtonContainer>
-      <Button
-        type="ghost"
-        icon="Layers"
-        aria-label="3D Resource layers"
-        onClick={showLayers} />
-        {layersEnabled && <LayersContainer />}
-    </LayersButtonContainer>
+    <Dropdown
+      appendTo={document.body}
+      content={<LayersContainer />}
+      visible={layersEnabled}
+      placement="auto">
+      <Button type="ghost" icon="Layers" aria-label="3D Resource layers" onClick={showLayers} />
+    </Dropdown>
   );
 };
-
-const LayersButtonContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-`;
