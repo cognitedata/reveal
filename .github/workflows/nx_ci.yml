@@ -18,19 +18,11 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-node@v3
+      - name: Setup Node
+        uses: actions/setup-node@v3
         with:
           node-version: '18'
-          cache: 'yarn'
-
-      - name: Set NPMKEY variable
-        run: |
-          export NPMKEY=$(echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_READONLY_TOKEN }}")
-          echo "::set-output name=NPMKEY::$NPMKEY"
-        id: npm_auth_key
-
-      - name: Create .npmrc
-        run: echo '${{ steps.npm_auth_key.outputs.NPMKEY }}' > .npmrc
+          registry-url: 'https://registry.npmjs.org'
 
       - name: Cache node modules
         id: cache-node-modules
@@ -45,6 +37,8 @@ jobs:
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_READONLY_TOKEN }}
 
       - run: git fetch --no-tags --prune --depth=1 origin ${{ github.base_ref }}
       - name: Derive appropriate SHAs for base and head for `nx affected` commands
@@ -127,7 +121,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '18'
-          cache: 'yarn'
+
       - name: Cache node modules
         uses: actions/cache@v3
         with:
@@ -158,7 +152,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '18'
-          cache: 'yarn'
+
       - name: Cache node modules
         uses: actions/cache@v3
         with:
@@ -189,7 +183,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '18'
-          cache: 'yarn'
+
       - name: Cache node modules
         uses: actions/cache@v3
         with:
@@ -228,7 +222,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '18'
-          cache: 'yarn'
+
       - name: Cache node modules
         uses: actions/cache@v3
         with:
@@ -262,7 +256,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '18'
-          cache: 'yarn'
+
       - name: Cache node modules
         uses: actions/cache@v3
         with:
@@ -317,7 +311,6 @@ jobs:
 #      - uses: actions/setup-node@v3
 #        with:
 #          node-version: '18'
-#          cache: 'yarn'
 #
 #      - name: Cache node modules
 #        uses: actions/cache@v3
