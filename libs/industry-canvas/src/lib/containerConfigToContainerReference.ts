@@ -94,6 +94,23 @@ const containerConfigToContainerReference = (
     };
   }
 
+  if (containerConfig.type === ContainerType.FDM_INSTANCE) {
+    return {
+      type: ContainerReferenceType.FDM_INSTANCE,
+      id: containerConfig.id,
+      x: containerConfig.x,
+      y: containerConfig.y,
+      width: containerConfig.width,
+      height: containerConfig.height,
+      label: containerConfig.label,
+      instanceExternalId: containerConfig.instanceExternalId,
+      instanceSpace: containerConfig.instanceSpace,
+      viewExternalId: containerConfig.viewExternalId,
+      viewSpace: containerConfig.viewSpace,
+      viewVersion: containerConfig.viewVersion,
+    };
+  }
+
   throw new Error(`Unknown container type  ${containerType}`);
 };
 

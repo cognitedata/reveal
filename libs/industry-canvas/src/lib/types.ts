@@ -18,6 +18,7 @@ export enum ContainerReferenceType {
   ASSET = 'asset',
   EVENT = 'event',
   THREE_D = 'threeD',
+  FDM_INSTANCE = 'fdmInstance',
 }
 
 export type Dimensions = {
@@ -81,12 +82,27 @@ export type ThreeDContainerReference = {
   label?: string;
 } & Partial<Dimensions>;
 
-export type ContainerReference =
+export type AssetCentricContainerReference =
   | FileContainerReference
   | TimeseriesContainerReference
   | AssetContainerReference
   | EventContainerReference
   | ThreeDContainerReference;
+
+export type FdmInstanceContainerReference = {
+  id?: string;
+  type: ContainerReferenceType.FDM_INSTANCE;
+  instanceExternalId: string;
+  instanceSpace: string;
+  viewExternalId: string;
+  viewSpace: string;
+  viewVersion?: string; // If not specified, the latest version of the view is used
+  label?: string;
+} & Partial<Dimensions>;
+
+export type ContainerReference =
+  | AssetCentricContainerReference
+  | FdmInstanceContainerReference;
 
 export const isFileContainerReference = (
   containerReference: ContainerReference
@@ -112,6 +128,11 @@ export const isThreeDContainerReference = (
   containerReference: ContainerReference
 ): containerReference is ThreeDContainerReference =>
   containerReference.type === ContainerReferenceType.THREE_D;
+
+export const isFdmInstanceContainerReference = (
+  containerReference: ContainerReference
+): containerReference is FdmInstanceContainerReference =>
+  containerReference.type === ContainerReferenceType.FDM_INSTANCE;
 
 export type ShapeAnnotation = RectangleAnnotation | EllipseAnnotation;
 
@@ -149,6 +170,10 @@ export const isIndustryCanvasContainerConfig = (
     return metadata !== undefined && 'modelId' in metadata;
   }
 
+  if (container.type === ContainerType.FDM_INSTANCE) {
+    return metadata !== undefined;
+  }
+
   return metadata !== undefined && 'resourceId' in container.metadata;
 };
 
@@ -167,7 +192,8 @@ export type IndustryCanvasState = {
 };
 
 export type SerializedIndustryCanvasState = {
-  containerReferences: ContainerReference[];
+  containerReferences: AssetCentricContainerReference[];
+  fdmInstanceContainerReferences: FdmInstanceContainerReference[];
   canvasAnnotations: CanvasAnnotation[];
 };
 
