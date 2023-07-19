@@ -2,7 +2,6 @@ import React, { CSSProperties, useState } from 'react';
 
 import { Modal, message } from 'antd';
 
-import sdk from '@cognite/cdf-sdk-singleton';
 import { Button } from '@cognite/cogs.js';
 import {
   CogniteCadModel,
@@ -10,6 +9,7 @@ import {
   CognitePointCloudModel,
 } from '@cognite/reveal';
 import { FileUploadResponse, HttpError } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
 
 import { fireErrorNotification } from '../../../../utils/notifications';
 
@@ -25,6 +25,7 @@ export function ThumbnailUploader({ style, viewer, model, ...props }: Props) {
   const [thumbnailUri, setThumbnailUri] = useState('');
   const [thumbnailBlob, setThumbnailBlob] = useState<Blob>();
   const [isUploading, setIsUploading] = useState(false);
+  const sdk = useSDK();
 
   const screenshotWidth = 826;
   const screenshotHeight = 512;

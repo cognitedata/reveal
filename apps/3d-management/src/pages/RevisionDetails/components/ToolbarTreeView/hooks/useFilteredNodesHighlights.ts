@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import sdk from '@cognite/cdf-sdk-singleton';
 import {
   PropertyFilterNodeCollection,
   CogniteCadModel,
   NodeOutlineColor,
 } from '@cognite/reveal';
+import { useSDK } from '@cognite/sdk-provider';
 
 import { RootState } from '../../../../../store';
 import {
@@ -24,6 +24,7 @@ export function useFilteredNodesHighlights({
   const { value: filter } = useSelector(
     ({ toolbar }: RootState) => toolbar.nodePropertyFilter
   );
+  const sdk = useSDK();
 
   const filteredNodes = React.useRef<PropertyFilterNodeCollection>(
     new PropertyFilterNodeCollection(sdk as any, model, {

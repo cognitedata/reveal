@@ -8,6 +8,7 @@ import { Modal, Steps, message } from 'antd';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { Button, Flex, Input } from '@cognite/cogs.js';
 import { Model3D } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 
 import { PageHeader } from '../../components/PageHeader';
@@ -57,10 +58,12 @@ const ButtonRow = styled.div`
 
 const NoAccessPage = lazy(() => import('../NoAccessPage'));
 
-export default function AllModels() {
+export const AllModels = () => {
   const metrics = useMetrics('3D');
 
   const props = useParams();
+
+  const sdk = useSDK();
 
   const { mutate: createModel } = useCreateModelMutation();
   const { mutate: createRevision } = useCreateRevisionMutation();
@@ -150,6 +153,7 @@ export default function AllModels() {
       title: 'Upload an Initial Model',
       content: (
         <FileUploader
+          sdk={sdk}
           beforeUploadStart={async () => {
             metrics.track('Models.Add');
             await createModel(
@@ -191,6 +195,7 @@ export default function AllModels() {
   ) {
     return <Spinner />;
   }
+
   if (!hasThreedReadCapability && !models) {
     return <NoAccessPage />;
   }
@@ -239,4 +244,4 @@ export default function AllModels() {
       </Modal>
     </div>
   );
-}
+};

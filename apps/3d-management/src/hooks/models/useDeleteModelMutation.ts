@@ -2,20 +2,20 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import sdk from '@cognite/cdf-sdk-singleton';
 import { Model3D } from '@cognite/sdk';
 import { HttpError, InternalId } from '@cognite/sdk-core/dist/src';
+import { useSDK } from '@cognite/sdk-provider';
 
 import { setSelectedModels } from '../../store/modules/App';
 import { AppState } from '../../store/modules/App/types';
 import { fireErrorNotification, QUERY_KEY } from '../../utils';
 
-const deleteModel = async ({ id }: InternalId): Promise<void> => {
-  await sdk.models3D.delete([{ id }]);
-};
-
 export function useDeleteModelMutation() {
   const queryClient = useQueryClient();
+  const sdk = useSDK();
+  const deleteModel = async ({ id }: InternalId): Promise<void> => {
+    await sdk.models3D.delete([{ id }]);
+  };
   const dispatch = useDispatch();
   const appState = useSelector((state: any) => state.app) as AppState;
 

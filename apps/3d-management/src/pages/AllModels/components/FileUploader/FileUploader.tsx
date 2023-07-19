@@ -6,10 +6,10 @@ import { FileAddOutlined } from '@ant-design/icons';
 import { Upload, Modal, message } from 'antd';
 import mime from 'mime-types';
 
-import sdk from '@cognite/cdf-sdk-singleton';
+import { getProject } from '@cognite/cdf-utilities';
 import { Button } from '@cognite/cogs.js';
 import UploadGCS from '@cognite/gcs-browser-upload';
-import { FileInfo, FileUploadResponse } from '@cognite/sdk';
+import { CogniteClient, FileInfo, FileUploadResponse } from '@cognite/sdk';
 
 import { DEFAULT_MARGIN_V, getContainer, sleep } from '../../../../utils';
 import {
@@ -53,6 +53,7 @@ const defaultState = {
 };
 
 type Props = {
+  sdk: CogniteClient;
   onUploadSuccess: (fileId: number) => void;
   onUploadFailure: () => void;
   onCancel: () => void;
@@ -114,8 +115,8 @@ class FileUploader extends React.Component<Props, State> {
     const supportedExtensions: Array<string> = [];
 
     // This end point is hidden and not in the SDK.
-    const response = await sdk.get(
-      `api/v1/projects/${sdk.project}/3d/supportedfileformats`
+    const response = await this.props.sdk.get(
+      `api/v1/projects/${getProject()}/3d/supportedfileformats`
     );
     response.data.items.forEach((fileFormat) => {
       fileFormat.extensions.forEach((extension) => {
@@ -143,7 +144,7 @@ class FileUploader extends React.Component<Props, State> {
     const file = this.state.fileList![0];
     const mimeType = this.getMIMEType(file.name);
 
-    const { uploadUrl, id } = (await sdk.files.upload({
+    const { uploadUrl, id } = (await this.props.sdk.files.upload({
       name: file.name,
       mimeType,
       source: '3d-models',
@@ -193,7 +194,7 @@ class FileUploader extends React.Component<Props, State> {
       // Files are not available through the files API immediately after upload
       // so we making sure that they are available to avoid revisions endpoint to fail
       const getFileInfo = (): Promise<FileInfo> =>
-        sdk.files.retrieve([{ id }]).then((r) => r[0]);
+        this.props.sdk.files.retrieve([{ id }]).then((r) => r[0]);
 
       let fileInfo = await getFileInfo();
       let retries = 0;

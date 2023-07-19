@@ -1,20 +1,14 @@
 import queryString from 'query-string';
 
+import { getCluster, getProject } from '@cognite/cdf-utilities';
+
 // @cognite/cdf-utilities utils
 // please remove all the things below and adopt this package
 // you also need to remove Breadcrumbs related components from this project and use those from cdf-utilities package
 
-export const getProject = () =>
-  new URL(window.location.href).pathname.split('/')[1];
-
 export const getQueryParameter = (parameterKey: string) => {
   const parameters = queryString.parse(window.location.search) ?? {};
   return parameters[parameterKey] ?? '';
-};
-
-export const getCluster = () => {
-  const cluster = getQueryParameter('cluster');
-  return Array.isArray(cluster) ? cluster[0] : cluster;
 };
 
 export const getEnv = () => {
@@ -31,10 +25,21 @@ export const createLink = (
   const project = getProject() || '';
   const env = getEnv();
   const cluster = getCluster();
+  const idpInternalId = getQueryParameter('idpInternalId');
+  const organization = getQueryParameter('organization');
+
   const query = queryString.stringify(
-    { ...queries, ...(env ? { env } : {}), ...(cluster ? { cluster } : {}) },
+    {
+      ...queries,
+      ...(env ? { env } : {}),
+      ...(cluster ? { cluster } : {}),
+      ...(idpInternalId ? { idpInternalId } : {}),
+      ...(organization ? { organization } : {}),
+      ...(project ? { project } : {}),
+    },
     opts
   );
+
   if (query.length > 0) {
     return `/${project}${path}?${query}`;
   }
