@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { isVideo } from '@vision/modules/Common/Components/FileUploader/utils/FileUtils';
 import { FileDetailsReview } from '@vision/modules/FileDetails/Containers/FileDetailsReview/FileDetailsReview';
 import { PreviewProcessingOverlay } from '@vision/modules/Review/Components/PreviewProcessingOverlay/PreviewProcessingOverlay';
@@ -23,8 +22,6 @@ import { Tabs, Title } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
 
 import { AnnotationDetailPanel } from './AnnotationDetailPanel/AnnotationDetailPanel';
-
-const queryClient = new QueryClient();
 
 const ReviewBody = (props: { file: FileInfo; prev: string | undefined }) => {
   const { file } = props;
@@ -89,74 +86,70 @@ const ReviewBody = (props: { file: FileInfo; prev: string | undefined }) => {
   );
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <AnnotationContainer id="annotationContainer">
-        <FilePreviewContainer>
-          <PreviewContainer
-            fullHeight={reviewFiles.length === 1}
-            inFocus={inFocus}
-          >
-            {loading && (
-              <PreviewLoader style={{ zIndex: 1000 }} isVideo={isVideo(file)}>
-                <Spin />
-              </PreviewLoader>
-            )}
-            {file && isVideo(file) ? (
-              <VideoPreview
-                fileObj={file}
-                isLoading={handleLoad}
-                onError={handleError}
-              />
-            ) : (
-              <FileProcessStatusWrapper fileId={file.id}>
-                {({ isFileProcessing }) => {
-                  return (
-                    // Disabling all the mouse events inside this wrapper when the file is processing using css
-                    <PreviewWrapper isFileProcessing={isFileProcessing}>
-                      <ImagePreview
-                        file={file}
-                        onEditMode={onEditMode}
-                        isLoading={handleLoad}
-                        scrollIntoView={scrollToItem}
-                      />
-                      {isFileProcessing && <PreviewProcessingOverlay />}
-                    </PreviewWrapper>
-                  );
-                }}
-              </FileProcessStatusWrapper>
-            )}
-          </PreviewContainer>
-          {reviewFiles.length > 1 && (
-            <ThumbnailCarousel files={reviewFiles} onItemClick={onItemClick} />
+    <AnnotationContainer id="annotationContainer">
+      <FilePreviewContainer>
+        <PreviewContainer
+          fullHeight={reviewFiles.length === 1}
+          inFocus={inFocus}
+        >
+          {loading && (
+            <PreviewLoader style={{ zIndex: 1000 }} isVideo={isVideo(file)}>
+              <Spin />
+            </PreviewLoader>
           )}
-        </FilePreviewContainer>
-        <RightPanelContainer>
-          <StyledTitle level={4}>{file?.name}</StyledTitle>
-          <TabsContainer>
-            <Tabs
-              defaultActiveKey={isVideo(file) ? '2' : currentTab}
-              onTabClick={tabChange}
-            >
-              <Tabs.Tab label="Annotations" tabKey="1" disabled={isVideo(file)}>
+          {file && isVideo(file) ? (
+            <VideoPreview
+              fileObj={file}
+              isLoading={handleLoad}
+              onError={handleError}
+            />
+          ) : (
+            <FileProcessStatusWrapper fileId={file.id}>
+              {({ isFileProcessing }) => {
+                return (
+                  // Disabling all the mouse events inside this wrapper when the file is processing using css
+                  <PreviewWrapper isFileProcessing={isFileProcessing}>
+                    <ImagePreview
+                      file={file}
+                      onEditMode={onEditMode}
+                      isLoading={handleLoad}
+                      scrollIntoView={scrollToItem}
+                    />
+                    {isFileProcessing && <PreviewProcessingOverlay />}
+                  </PreviewWrapper>
+                );
+              }}
+            </FileProcessStatusWrapper>
+          )}
+        </PreviewContainer>
+        {reviewFiles.length > 1 && (
+          <ThumbnailCarousel files={reviewFiles} onItemClick={onItemClick} />
+        )}
+      </FilePreviewContainer>
+      <RightPanelContainer>
+        <StyledTitle level={4}>{file?.name}</StyledTitle>
+        <TabsContainer>
+          <Tabs
+            defaultActiveKey={isVideo(file) ? '2' : currentTab}
+            onTabClick={tabChange}
+          >
+            <Tabs.Tab label="Annotations" tabKey="1" disabled={isVideo(file)}>
+              <FileDetailsContent>
+                <AnnotationDetailPanel file={file} showEditOptions />
+              </FileDetailsContent>
+            </Tabs.Tab>
+            <Tabs.Tab label="File details" tabKey="2">
+              {file && (
                 <FileDetailsContent>
-                  <AnnotationDetailPanel file={file} showEditOptions />
+                  <FileDetailsReview fileObj={file} />
                 </FileDetailsContent>
-              </Tabs.Tab>
-              <Tabs.Tab label="File details" tabKey="2">
-                {file && (
-                  <QueryClientProvider client={queryClient}>
-                    <FileDetailsContent>
-                      <FileDetailsReview fileObj={file} />
-                    </FileDetailsContent>
-                  </QueryClientProvider>
-                )}
-              </Tabs.Tab>
-            </Tabs>
-          </TabsContainer>
-        </RightPanelContainer>
-        <div aria-hidden="true" className="confirm-delete-modal-anchor" />
-      </AnnotationContainer>
-    </QueryClientProvider>
+              )}
+            </Tabs.Tab>
+          </Tabs>
+        </TabsContainer>
+      </RightPanelContainer>
+      <div aria-hidden="true" className="confirm-delete-modal-anchor" />
+    </AnnotationContainer>
   );
 };
 export default ReviewBody;

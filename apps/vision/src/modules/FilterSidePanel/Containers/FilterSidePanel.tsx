@@ -90,7 +90,7 @@ export const FilterSidePanel = () => {
         <Collapse
           bordered={false}
           defaultActiveKey={[]}
-          expandIconPosition="right"
+          expandIconPosition="end"
           expandIcon={({ isActive }) => (
             <CaretRightOutlined
               style={{ color: '#595959' }}

@@ -14,7 +14,7 @@ export const KeyboardShortcutModal = (props: KeyboardShortcutModalProps) => {
   return (
     <Modal
       getContainer={getContainer}
-      visible={props.showModal}
+      open={props.showModal}
       onCancel={props.onCancel}
       width={680}
       footer={null} // to remove default ok and cancel buttons

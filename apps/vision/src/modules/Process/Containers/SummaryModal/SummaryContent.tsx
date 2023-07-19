@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux';
 
 import styled from 'styled-components';
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
   FileBland,
   FileUnresolvedPerson,
@@ -17,8 +16,6 @@ import { calculateSummaryStats } from '@vision/modules/Process/utils';
 import { RootState } from '@vision/store/rootReducer';
 
 import { Title } from '@cognite/cogs.js';
-
-const queryClient = new QueryClient();
 
 export default function SummaryContent() {
   const [statView, setStatView] = useState('totalFiles');
@@ -34,182 +31,176 @@ export default function SummaryContent() {
 
   return (
     <>
-      <QueryClientProvider client={queryClient}>
-        <Title level={2}>Process summary</Title>
-        <Container>
-          <CarouselContainer>
-            <StatsCarouselContainer>
-              <StatsCarouselLeft>
-                {Object.entries(stats).map((pair) => (
-                  <>
-                    {statView === pair[0] && (
-                      <FancyButton
-                        key={`${pair[0]}_focused`}
-                        style={{
-                          background: 'rgba(74, 103, 251, 0.1)',
-                        }}
-                        onClick={() => {
-                          setStatView(pair[0]);
-                        }}
-                      >
-                        <table>
-                          <tbody>
-                            <tr>
-                              <td key={`${pair[0]}-tabular-data1`}>
-                                <b
-                                  style={{
-                                    fontSize: '20px',
-                                    paddingRight: '5px',
-                                  }}
-                                >
-                                  {pair[1].value}
-                                </b>
-                              </td>
-                              <td key={`${pair[0]}-tabular-data2`}>
-                                {pair[1].text}
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </FancyButton>
-                    )}
-                    {statView !== pair[0] && (
-                      <FancyButton
-                        key={`${pair[0]}`}
-                        onClick={() => {
-                          setStatView(pair[0]);
-                        }}
-                      >
-                        <table>
-                          <tbody>
-                            <tr>
-                              <td>
-                                <b
-                                  style={{
-                                    fontSize: '20px',
-                                    paddingRight: '5px',
-                                  }}
-                                >
-                                  {pair[1].value}
-                                </b>
-                              </td>
-                              <td>{pair[1].text}</td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </FancyButton>
-                    )}
-                  </>
-                ))}
-              </StatsCarouselLeft>
-
-              {statView === 'totalFiles' && (
-                <StatsCarouselRight key={statView}>
-                  <RenderFileIcons
-                    length={stats[statView].value}
-                    icon={FileUploadedIcon}
-                    keyString={statView}
-                  />
-                </StatsCarouselRight>
-              )}
-
-              {statView === 'filesGeolocated' && (
-                <StatsCarouselRight key={statView}>
-                  <RenderFileIcons
-                    length={stats[statView].value}
-                    icon={FileWithExifIcon}
-                    keyString={statView}
-                  />
-                  {stats[statView].value < stats.totalFiles.value && (
-                    <RenderFileIcons
-                      length={stats.totalFiles.value - stats[statView].value}
-                      icon={FileBland}
-                      keyString="fileWithoutGeolocation"
-                    />
+      <Title level={2}>Process summary</Title>
+      <Container>
+        <CarouselContainer>
+          <StatsCarouselContainer>
+            <StatsCarouselLeft>
+              {Object.entries(stats).map((pair) => (
+                <>
+                  {statView === pair[0] && (
+                    <FancyButton
+                      key={`${pair[0]}_focused`}
+                      style={{
+                        background: 'rgba(74, 103, 251, 0.1)',
+                      }}
+                      onClick={() => {
+                        setStatView(pair[0]);
+                      }}
+                    >
+                      <table>
+                        <tbody>
+                          <tr>
+                            <td key={`${pair[0]}-tabular-data1`}>
+                              <b
+                                style={{
+                                  fontSize: '20px',
+                                  paddingRight: '5px',
+                                }}
+                              >
+                                {pair[1].value}
+                              </b>
+                            </td>
+                            <td key={`${pair[0]}-tabular-data2`}>
+                              {pair[1].text}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </FancyButton>
                   )}
-                </StatsCarouselRight>
-              )}
+                  {statView !== pair[0] && (
+                    <FancyButton
+                      key={`${pair[0]}`}
+                      onClick={() => {
+                        setStatView(pair[0]);
+                      }}
+                    >
+                      <table>
+                        <tbody>
+                          <tr>
+                            <td>
+                              <b
+                                style={{
+                                  fontSize: '20px',
+                                  paddingRight: '5px',
+                                }}
+                              >
+                                {pair[1].value}
+                              </b>
+                            </td>
+                            <td>{pair[1].text}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </FancyButton>
+                  )}
+                </>
+              ))}
+            </StatsCarouselLeft>
 
-              {statView === 'filesUserReviewed' && (
-                <StatsCarouselRight key={statView}>
+            {statView === 'totalFiles' && (
+              <StatsCarouselRight key={statView}>
+                <RenderFileIcons
+                  length={stats[statView].value}
+                  icon={FileUploadedIcon}
+                  keyString={statView}
+                />
+              </StatsCarouselRight>
+            )}
+
+            {statView === 'filesGeolocated' && (
+              <StatsCarouselRight key={statView}>
+                <RenderFileIcons
+                  length={stats[statView].value}
+                  icon={FileWithExifIcon}
+                  keyString={statView}
+                />
+                {stats[statView].value < stats.totalFiles.value && (
                   <RenderFileIcons
-                    length={stats[statView].value}
-                    icon={FileWasReviewed}
-                    keyString={statView}
+                    length={stats.totalFiles.value - stats[statView].value}
+                    icon={FileBland}
+                    keyString="fileWithoutGeolocation"
                   />
-                  {stats[statView].value < stats.totalFiles.value && (
-                    <RenderFileIcons
-                      length={stats.totalFiles.value - stats[statView].value}
-                      icon={FileBland}
-                      keyString="notUserReviewedFiles"
-                    />
-                  )}
-                </StatsCarouselRight>
-              )}
+                )}
+              </StatsCarouselRight>
+            )}
 
-              {statView === 'filesWithModelDetections' && (
-                <StatsCarouselRightDivider>
-                  <StatsCarouselRight key={statView}>
-                    <RenderFileIcons
-                      length={stats[statView].value}
-                      icon={FileWithAnnotations}
-                      keyString={statView}
-                    />
-                    {stats[statView].value < stats.totalFiles.value && (
-                      <RenderFileIcons
-                        length={stats.totalFiles.value - stats[statView].value}
-                        icon={FileBland}
-                        keyString="filesWithoutModelDetections"
-                      />
-                    )}
-                  </StatsCarouselRight>
-                  {stats.totalFiles.value > 0 && (
-                    <DetectionStats>
-                      <PercentBar
-                        tagPercentage={
-                          stats[statView].filesWithAssets.percentage
-                        }
-                        textPercentage={
-                          stats[statView].filesWithText.percentage
-                        }
-                        objectPercentage={
-                          stats[statView].filesWithObjects.percentage
-                        }
-                        tagCount={stats[statView].filesWithAssets.count}
-                        textCount={stats[statView].filesWithText.count}
-                        objectCount={stats[statView].filesWithObjects.count}
-                      />
-                    </DetectionStats>
-                  )}
-                </StatsCarouselRightDivider>
-              )}
-              {statView === 'filesWithUnresolvedPersonCases' && (
+            {statView === 'filesUserReviewed' && (
+              <StatsCarouselRight key={statView}>
+                <RenderFileIcons
+                  length={stats[statView].value}
+                  icon={FileWasReviewed}
+                  keyString={statView}
+                />
+                {stats[statView].value < stats.totalFiles.value && (
+                  <RenderFileIcons
+                    length={stats.totalFiles.value - stats[statView].value}
+                    icon={FileBland}
+                    keyString="notUserReviewedFiles"
+                  />
+                )}
+              </StatsCarouselRight>
+            )}
+
+            {statView === 'filesWithModelDetections' && (
+              <StatsCarouselRightDivider>
                 <StatsCarouselRight key={statView}>
                   <RenderFileIcons
                     length={stats[statView].value}
-                    icon={FileUnresolvedPerson}
+                    icon={FileWithAnnotations}
                     keyString={statView}
                   />
                   {stats[statView].value < stats.totalFiles.value && (
                     <RenderFileIcons
                       length={stats.totalFiles.value - stats[statView].value}
                       icon={FileBland}
-                      keyString="notPersonCases"
+                      keyString="filesWithoutModelDetections"
                     />
                   )}
                 </StatsCarouselRight>
-              )}
-            </StatsCarouselContainer>
-          </CarouselContainer>
-        </Container>
-      </QueryClientProvider>
+                {stats.totalFiles.value > 0 && (
+                  <DetectionStats>
+                    <PercentBar
+                      tagPercentage={stats[statView].filesWithAssets.percentage}
+                      textPercentage={stats[statView].filesWithText.percentage}
+                      objectPercentage={
+                        stats[statView].filesWithObjects.percentage
+                      }
+                      tagCount={stats[statView].filesWithAssets.count}
+                      textCount={stats[statView].filesWithText.count}
+                      objectCount={stats[statView].filesWithObjects.count}
+                    />
+                  </DetectionStats>
+                )}
+              </StatsCarouselRightDivider>
+            )}
+            {statView === 'filesWithUnresolvedPersonCases' && (
+              <StatsCarouselRight key={statView}>
+                <RenderFileIcons
+                  length={stats[statView].value}
+                  icon={FileUnresolvedPerson}
+                  keyString={statView}
+                />
+                {stats[statView].value < stats.totalFiles.value && (
+                  <RenderFileIcons
+                    length={stats.totalFiles.value - stats[statView].value}
+                    icon={FileBland}
+                    keyString="notPersonCases"
+                  />
+                )}
+              </StatsCarouselRight>
+            )}
+          </StatsCarouselContainer>
+        </CarouselContainer>
+      </Container>
     </>
   );
 }
 
 export const RenderFileIcons = ({
   length,
-  icon: Icon,
+  icon,
   keyString,
 }: {
   length: number;
@@ -220,7 +211,7 @@ export const RenderFileIcons = ({
     <>
       {Array.from({ length }, (_, i: number) => (
         <FileIconContainer key={`${keyString}_${i}`}>
-          <Icon />
+          <img src={icon} alt={keyString} />
         </FileIconContainer>
       ))}
     </>

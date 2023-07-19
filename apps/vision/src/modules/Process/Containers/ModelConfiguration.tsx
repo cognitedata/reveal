@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux';
 
 import styled from 'styled-components';
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AutoMLModelCore } from '@vision/api/vision/autoML/types';
 import {
   ParamsCustomModel,
@@ -20,8 +19,6 @@ import * as objectDetectionModelDetails from './ModelDetails/ObjectDetectionMode
 import * as ocrModelDetails from './ModelDetails/OcrModelDetails';
 import * as peopleDetectionModelDetails from './ModelDetails/PeopleDetectionModelDetails';
 import * as tagDetectionModelDetails from './ModelDetails/TagDetectionModelDetails';
-
-const queryClient = new QueryClient();
 
 type SelectOption = {
   label: any;
@@ -163,37 +160,35 @@ export const ModelConfiguration = (props: {
 
   return (
     <>
-      <QueryClientProvider client={queryClient}>
-        <Container>
-          <ModelSelectContainer>
-            <Body> Annotation Model</Body>
-            <SelectContainer>
-              <Select
-                closeMenuOnSelect
-                value={options.filter(
-                  (item) => item.value === currentModelSettings
-                )}
-                onChange={(option: any) => {
-                  // We handle model creation here instead of in an onClick for
-                  // the button. This is because the user may be able to click
-                  // outside the dropdown, yet inside the dropdown select.
-                  if (!option.modelType) props.handleCustomModelCreate();
-                  setCurrentModelSettings(option.value);
-                }}
-                options={options}
-                disableTyping
-              />
-            </SelectContainer>
-          </ModelSelectContainer>
-          <ModelSettingsContainer>
-            {
-              modelSelectOptions.find(
+      <Container>
+        <ModelSelectContainer>
+          <Body> Annotation Model</Body>
+          <SelectContainer>
+            <Select
+              closeMenuOnSelect
+              value={options.filter(
                 (item) => item.value === currentModelSettings
-              )?.content
-            }
-          </ModelSettingsContainer>
-        </Container>
-      </QueryClientProvider>
+              )}
+              onChange={(option: any) => {
+                // We handle model creation here instead of in an onClick for
+                // the button. This is because the user may be able to click
+                // outside the dropdown, yet inside the dropdown select.
+                if (!option.modelType) props.handleCustomModelCreate();
+                setCurrentModelSettings(option.value);
+              }}
+              options={options}
+              disableTyping
+            />
+          </SelectContainer>
+        </ModelSelectContainer>
+        <ModelSettingsContainer>
+          {
+            modelSelectOptions.find(
+              (item) => item.value === currentModelSettings
+            )?.content
+          }
+        </ModelSettingsContainer>
+      </Container>
     </>
   );
 };
