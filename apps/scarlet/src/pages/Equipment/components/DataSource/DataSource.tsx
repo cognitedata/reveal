@@ -83,7 +83,9 @@ export const DataSource = ({
     let detection = dataPanelState.newDetection;
 
     const { documents } = appState;
-    const U1doc = documents.data?.find((doc) => doc.type === 'U1');
+    const U1doc = documents.data?.find(
+      (doc) => doc.type === 'U1' || doc.name.includes('_U1')
+    );
     // const doc1 = useState<EquipmentDocument>();
     if (U1doc) {
       const boundingString = async () => {

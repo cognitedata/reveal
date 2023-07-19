@@ -4,6 +4,7 @@ export enum DocumentType {
 
 export type EquipmentDocument = {
   id: number;
+  name: string;
   externalId?: string;
   downloadUrl: string;
   type?: string;
