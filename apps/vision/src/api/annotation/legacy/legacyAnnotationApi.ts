@@ -1,4 +1,5 @@
 import sdk from '@cognite/cdf-sdk-singleton';
+import { getProject } from '@cognite/cdf-utilities';
 import { HttpResponse, ItemsResponse } from '@cognite/sdk';
 
 import {
@@ -21,9 +22,7 @@ export class LegacyAnnotationApi {
     }
 
     const response = await sdk.post(
-      `${sdk.getBaseUrl()}/api/playground/projects/${
-        sdk.project
-      }/context/annotations/list`,
+      `${sdk.getBaseUrl()}/api/playground/projects/${getProject()}/context/annotations/list`,
       { data: request }
     );
 
@@ -73,9 +72,7 @@ export class LegacyAnnotationApi {
   ): Promise<HttpResponse<ItemsResponse<LegacyAnnotation>>> {
     const data = { data: request };
     return sdk.post(
-      `${sdk.getBaseUrl()}/api/playground/projects/${
-        sdk.project
-      }/context/annotations`,
+      `${sdk.getBaseUrl()}/api/playground/projects/${getProject()}/context/annotations`,
       data
     );
   }
@@ -85,9 +82,7 @@ export class LegacyAnnotationApi {
   ): Promise<HttpResponse<ItemsResponse<LegacyAnnotation>>> {
     const data = { data: request };
     return sdk.post(
-      `${sdk.getBaseUrl()}/api/playground/projects/${
-        sdk.project
-      }/context/annotations/update`,
+      `${sdk.getBaseUrl()}/api/playground/projects/${getProject()}/context/annotations/update`,
       data
     );
   }

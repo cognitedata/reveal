@@ -17,7 +17,7 @@ export const FileUploadModal = (props: FileUploadModalProps) => {
   return (
     <Modal
       getContainer={getContainer}
-      visible={props.showModal}
+      open={props.showModal}
       onCancel={props.onCancel}
       width={1000}
       maskClosable={false}

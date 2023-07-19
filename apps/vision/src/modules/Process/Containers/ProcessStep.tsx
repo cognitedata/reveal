@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux';
 
 import styled from 'styled-components';
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 // import { CustomPrompt } from '@vision/modules/Common/Components/CustomPrompt/CustomPrompt';
 import { ViewMode } from '@vision/modules/Common/types';
 import { ExploreModalContainer } from '@vision/modules/Process/Containers/ExploreModalContainer';
@@ -37,8 +36,6 @@ const TitleContainer = styled.div`
   padding: 5px 0;
 `;
 
-const queryClient = new QueryClient();
-
 export default function ProcessStep() {
   const dispatch = useThunkDispatch();
 
@@ -67,22 +64,21 @@ export default function ProcessStep() {
       <Deselect />
       <ProcessFileUploadModalContainer />
       <ProcessFileDownloadModalContainer />
-      <QueryClientProvider client={queryClient}>
-        <TitleContainer>
-          <Title level={2}>Contextualize Imagery Data</Title>
-        </TitleContainer>
-        <ProcessToolBar />
-        <FileToolbar
-          currentView={currentView}
-          onViewChange={(view) => dispatch(setCurrentView(view as ViewMode))}
-        />
-        <ResultsContainer>
-          <ProcessResults currentView={currentView as ViewMode} />
-        </ResultsContainer>
-        <ProcessFooter />
-        <ExploreModalContainer />
-        <ProcessBulkEditModalContainer />
-      </QueryClientProvider>
+
+      <TitleContainer>
+        <Title level={2}>Contextualize Imagery Data</Title>
+      </TitleContainer>
+      <ProcessToolBar />
+      <FileToolbar
+        currentView={currentView}
+        onViewChange={(view) => dispatch(setCurrentView(view as ViewMode))}
+      />
+      <ResultsContainer>
+        <ProcessResults currentView={currentView as ViewMode} />
+      </ResultsContainer>
+      <ProcessFooter />
+      <ExploreModalContainer />
+      <ProcessBulkEditModalContainer />
     </>
   );
 }

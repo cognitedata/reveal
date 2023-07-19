@@ -11,18 +11,11 @@ import GlobalStyles from '@vision/styles/global-styles';
 import theme from '@vision/styles/theme';
 import datePickerStyle from 'react-datepicker/dist/react-datepicker.css';
 
-import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
-import {
-  AuthWrapper,
-  SubAppWrapper,
-  getProject,
-  getEnv,
-} from '@cognite/cdf-utilities';
-import { Loader } from '@cognite/cogs.js';
+import { getProject, isUsingUnifiedSignin } from '@cognite/cdf-utilities';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 import { FlagProvider } from '@cognite/react-feature-flags';
-import { SDKProvider } from '@cognite/sdk-provider';
 
+import { AuthContainer } from './AuthContainer';
 import { DataExplorationWrapper } from './DataExplorationWrapper';
 import { AppRoutes } from './Routes';
 import rootStyles from './styles/index.css';
@@ -51,39 +44,34 @@ const App = () => {
   });
 
   const project = getProject();
-  const env = getEnv();
+
+  const baseUrl = isUsingUnifiedSignin() ? '/cdf' : '';
+
   return (
     <AntStyles>
-      <AuthWrapper
-        loadingScreen={<Loader />}
-        login={() => loginAndAuthIfNeeded(project, env)}
-      >
-        <ThemeProvider theme={theme}>
-          <SDKProvider sdk={sdk}>
-            <FlagProvider // https://cog.link/cdf-frontend-wiki
-              apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
-              appName={subAppName}
-              projectName={project}
-              remoteAddress={window.location.hostname}
-            >
-              <QueryClientProvider client={queryClient}>
-                <ReduxProvider store={store}>
-                  <DataExplorationWrapper>
-                    <SubAppWrapper title="Cognite Vision">
-                      <BrowserRouter>
-                        <Routes>
-                          <Route path="/*" element={<AppRoutes />} />
-                        </Routes>
-                      </BrowserRouter>
-                    </SubAppWrapper>
-                  </DataExplorationWrapper>
-                </ReduxProvider>
-              </QueryClientProvider>
-            </FlagProvider>
-          </SDKProvider>
-        </ThemeProvider>
-        <GlobalStyles theme={theme} />
-      </AuthWrapper>
+      <ThemeProvider theme={theme}>
+        <FlagProvider // https://cog.link/cdf-frontend-wiki
+          apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
+          appName={subAppName}
+          projectName={project}
+          remoteAddress={window.location.hostname}
+        >
+          <QueryClientProvider client={queryClient}>
+            <AuthContainer>
+              <ReduxProvider store={store}>
+                <DataExplorationWrapper>
+                  <BrowserRouter>
+                    <Routes>
+                      <Route path={`${baseUrl}/*`} element={<AppRoutes />} />
+                    </Routes>
+                  </BrowserRouter>
+                </DataExplorationWrapper>
+              </ReduxProvider>
+            </AuthContainer>
+          </QueryClientProvider>
+        </FlagProvider>
+      </ThemeProvider>
+      <GlobalStyles theme={theme} />
     </AntStyles>
   );
 };

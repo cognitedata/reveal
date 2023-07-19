@@ -2,6 +2,7 @@ import { FileIdEither } from '@vision/api/vision/detectionModels/types';
 import { ToastUtils } from '@vision/utils/ToastUtils';
 
 import sdk from '@cognite/cdf-sdk-singleton';
+import { getProject } from '@cognite/cdf-utilities';
 
 import {
   AutoMLDownload,
@@ -15,9 +16,7 @@ import {
 export class AutoMLAPI {
   public static listAutoMLModels = async (): Promise<AutoMLModelCore[]> => {
     const response = await sdk.get(
-      `${sdk.getBaseUrl()}/api/playground/projects/${
-        sdk.project
-      }/context/vision/automl/list`
+      `${sdk.getBaseUrl()}/api/playground/projects/${getProject()}/context/vision/automl/list`
     );
 
     return response.data?.items || [];
@@ -27,9 +26,7 @@ export class AutoMLAPI {
     id: number
   ): Promise<AutoMLTrainingJob> => {
     const response = await sdk.get(
-      `${sdk.getBaseUrl()}/api/playground/projects/${
-        sdk.project
-      }/context/vision/automl/${id}`
+      `${sdk.getBaseUrl()}/api/playground/projects/${getProject()}/context/vision/automl/${id}`
     );
     return response.data || {};
   };
@@ -40,9 +37,7 @@ export class AutoMLAPI {
   ): Promise<AutoMLDownload | undefined> => {
     try {
       const response = await sdk.get(
-        `${sdk.getBaseUrl()}/api/playground/projects/${
-          sdk.project
-        }/context/vision/automl/${id}/download`,
+        `${sdk.getBaseUrl()}/api/playground/projects/${getProject()}/context/vision/automl/${id}/download`,
         { params: { exportFormat } }
       );
 
@@ -74,9 +69,7 @@ export class AutoMLAPI {
 
     try {
       const response = await sdk.post(
-        `${sdk.getBaseUrl()}/api/playground/projects/${
-          sdk.project
-        }/context/vision/automl`,
+        `${sdk.getBaseUrl()}/api/playground/projects/${getProject()}/context/vision/automl`,
         data
       );
 
@@ -104,9 +97,7 @@ export class AutoMLAPI {
 
     try {
       const response = await sdk.post(
-        `${sdk.getBaseUrl()}/api/playground/projects/${
-          sdk.project
-        }/context/vision/automl/delete`,
+        `${sdk.getBaseUrl()}/api/playground/projects/${getProject()}/context/vision/automl/delete`,
         data
       );
 

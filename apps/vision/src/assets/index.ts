@@ -1,10 +1,10 @@
 /* eslint-disable */
-import FileBland from '-!@svgr/webpack!./FileBland.svg';
-import FileUnresolvedPerson from '-!@svgr/webpack!./FileUnresolvedPerson.svg';
-import FileUploadedIcon from '-!@svgr/webpack!./FileUploadedIcon.svg';
-import FileWasReviewed from '-!@svgr/webpack!./FileWasReviewed.svg';
-import FileWithAnnotations from '-!@svgr/webpack!./FileWithAnnotations.svg';
-import FileWithExifIcon from '-!@svgr/webpack!./FileWithExifIcon.svg';
+import FileBland from './FileBland.svg';
+import FileUnresolvedPerson from './FileUnresolvedPerson.svg';
+import FileUploadedIcon from './FileUploadedIcon.svg';
+import FileWasReviewed from './FileWasReviewed.svg';
+import FileWithAnnotations from './FileWithAnnotations.svg';
+import FileWithExifIcon from './FileWithExifIcon.svg';
 export {
   FileBland,
   FileUnresolvedPerson,

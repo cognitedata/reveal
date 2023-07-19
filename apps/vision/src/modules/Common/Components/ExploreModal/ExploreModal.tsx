@@ -17,7 +17,7 @@ export const ExploreModal = (props: ExploreModalProps) => {
     <Modal
       destroyOnClose
       getContainer={getContainer}
-      visible={props.showModal}
+      open={props.showModal}
       onCancel={props.onCloseModal}
       width={1000}
       footer={null} // to remove default ok and cancel buttons

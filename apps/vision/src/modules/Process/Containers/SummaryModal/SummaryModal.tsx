@@ -70,7 +70,7 @@ export const SummaryModal = () => {
             </Button>
           </FooterContainer>
         }
-        visible={showSummaryModal}
+        open={showSummaryModal}
         width={800}
         closable={false}
         onCancel={onCancel}

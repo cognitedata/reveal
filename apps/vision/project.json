@@ -65,7 +65,9 @@
         "development": {
           "buildTarget": "vision:build:development",
           "hmr": true,
-          "liveReload": true
+          "liveReload": true,
+          "allowedHosts": "*.dev.fusion.cogniteapp.com,apps-staging.cognite.com",
+          "ssl": true
         },
         "preview": {
           "buildTarget": "vision:build:preview",

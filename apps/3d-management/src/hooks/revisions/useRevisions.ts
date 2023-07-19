@@ -2,23 +2,23 @@ import { useState } from 'react';
 
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
-import sdk from '@cognite/cdf-sdk-singleton';
 import { Revision3D, HttpError } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
 
 import { fireErrorNotification, QUERY_KEY } from '../../utils';
 import { getReFetchInterval } from '../../utils/getReFetchInterval';
 
 type Args = { modelId: number };
 
-const fetchRevisions = ({ modelId }: Args): Promise<Revision3D[]> => {
-  return sdk.revisions3D.list(modelId).autoPagingToArray({ limit: Infinity });
-};
-
 export function useRevisions(modelId: number) {
   const [startTime, _] = useState(Date.now());
   const queryClient = useQueryClient();
   const queryKey = QUERY_KEY.REVISIONS({ modelId });
+  const sdk = useSDK();
 
+  const fetchRevisions = ({ modelId }: Args): Promise<Revision3D[]> => {
+    return sdk.revisions3D.list(modelId).autoPagingToArray({ limit: Infinity });
+  };
   return useQuery<Revision3D[], HttpError>(
     queryKey,
     () => fetchRevisions({ modelId }),

@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { FileDetails } from '@vision/modules/FileDetails/Containers/FileDetails';
 import { hideFileMetadata } from '@vision/modules/Process/store/slice';
 import { useThunkDispatch } from '@vision/store';
@@ -13,7 +12,6 @@ import { getParamLink, workflowRoutes } from '@vision/utils/workflowRoutes';
 import { zIndex } from '@vision/utils/zIndex';
 
 export const ProcessFileDetailsContainer = () => {
-  const queryClient = new QueryClient();
   const dispatch = useThunkDispatch();
   const navigate = useNavigate();
   const fileId = useSelector(
@@ -35,13 +33,11 @@ export const ProcessFileDetailsContainer = () => {
   if (showFileDetails && fileId) {
     return (
       <Container>
-        <QueryClientProvider client={queryClient}>
-          <FileDetails
-            fileId={fileId}
-            onClose={onClose}
-            onReview={onFileDetailReview}
-          />
-        </QueryClientProvider>
+        <FileDetails
+          fileId={fileId}
+          onClose={onClose}
+          onReview={onFileDetailReview}
+        />
       </Container>
     );
   }
