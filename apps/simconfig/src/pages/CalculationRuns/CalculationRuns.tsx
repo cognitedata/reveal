@@ -185,21 +185,24 @@ export function CalculationRuns() {
       <CalculationsFilterContainer>
         <div className="cogs-input-container">
           <span className="title">Date range</span>
-          <DateRange
-            endDatePlaceholder="Select"
-            format="YYYY.MM.DD"
-            maxDate={new Date()}
-            range={{
-              startDate: parseISO(
-                searchFilters.eventStartTime ?? initialDateRange.eventStartTime
-              ),
-              endDate: parseISO(
-                searchFilters.eventEndTime ?? initialDateRange.eventEndTime
-              ),
-            }}
-            startDatePlaceholder="Interval"
-            onChange={handleDateChange}
-          />
+          <DateRangeWrapped>
+            <DateRange
+              endDatePlaceholder="Select"
+              format="YYYY.MM.DD"
+              maxDate={new Date()}
+              range={{
+                startDate: parseISO(
+                  searchFilters.eventStartTime ??
+                    initialDateRange.eventStartTime
+                ),
+                endDate: parseISO(
+                  searchFilters.eventEndTime ?? initialDateRange.eventEndTime
+                ),
+              }}
+              startDatePlaceholder="Interval"
+              onChange={handleDateChange}
+            />
+          </DateRangeWrapped>
         </div>
 
         <Filter
@@ -354,6 +357,28 @@ const CalculationsFilterContainer = styled.form`
   }
   & .cogs-input-container .title {
     text-transform: none;
+  }
+`;
+
+const DateRangeWrapped = styled.div`
+  .cogs-dropdown {
+    .rc-tabs {
+      border: 0;
+      height: 90%;
+      .rc-tabs-tab {
+        font-size: 1em;
+      }
+    }
+    .cogs-date-range--input {
+      & {
+        border-color: var(--cogs-border-default);
+      }
+      ,
+      &,
+      &:hover {
+        border-width: 2px;
+      }
+    }
   }
 `;
 

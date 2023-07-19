@@ -24,4 +24,9 @@ export default createGlobalStyle`
 .Toastify__toast-container {
   margin-top: 6.5rem;
 }
+
+.rc-tabs {
+  border: none;
+  font-size: 1em;
+}
 `;
