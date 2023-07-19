@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useMatch, useNavigate } from 'react-location';
 import { useSelector } from 'react-redux';
@@ -258,8 +259,8 @@ export function ModelDetails({
             <Dropdown
               content={
                 <Menu>
+                  {/* @ts-ignore */}
                   <Menu.Item
-                    css=""
                     icon="Delete"
                     iconPlacement="left"
                     onClick={() => {
