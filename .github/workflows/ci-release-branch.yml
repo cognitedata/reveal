@@ -48,7 +48,11 @@ jobs:
         with:
           script: return "${{ github.event.pull_request.base.ref }}".replace('release-preview-', '').replace('release-', '')
           result-encoding: string
+
+    outputs:
+      project: ${{ steps.get-project-name.outputs.result }}
   build:
+    name: 'Build'
     runs-on: ubuntu-20.04
     needs: setup
     steps:
@@ -74,4 +78,6 @@ jobs:
           restore-keys: cache-node-modules-
 
       - name: Build
-        run: npx nx run ${{ needs.setup.outputs.get-project-name }}:build:production
+        env:
+          NODE_OPTIONS: '--max_old_space_size=8192'
+        run: npx nx run ${{ needs.setup.outputs.project }}:build:production
