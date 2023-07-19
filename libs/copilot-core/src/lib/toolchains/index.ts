@@ -3,7 +3,8 @@ import { BaseChatModel } from 'langchain/chat_models/base';
 
 import { CogniteClient } from '@cognite/sdk';
 
-import { CogniteBaseChain, CopilotMessage } from '../types';
+import { CogniteBaseChain } from '../CogniteBaseChain';
+import { CopilotMessage } from '../types';
 
 import { createDefaultChain } from './conversation/base';
 import { FusionQAChain } from './fusionQA/fusionQA';

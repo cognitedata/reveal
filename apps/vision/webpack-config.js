@@ -11,6 +11,7 @@ module.exports = composePlugins(
   }),
   withSingleSpa({ useMockEnv: false }),
   (config) => {
+    config.output.publicPath = '/';
     const nodeEnv = process.env.NODE_ENV || 'production';
     console.log(
       `Custom webpack config(${nodeEnv}) for Data Exploration was loaded...`

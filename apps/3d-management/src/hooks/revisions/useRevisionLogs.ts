@@ -2,8 +2,9 @@ import { useState } from 'react';
 
 import { useQuery } from '@tanstack/react-query';
 
-import sdk from '@cognite/cdf-sdk-singleton';
+import { getProject } from '@cognite/cdf-utilities';
 import { HttpError } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
 
 import { fireErrorNotification, QUERY_KEY } from '../../utils';
 import { getOrganizedRevisionLogs } from '../../utils/getOrganizedRevisionLogs';
@@ -11,19 +12,19 @@ import { getReFetchInterval } from '../../utils/getReFetchInterval';
 import { RevisionLog3D } from '../../utils/sdk/3dApiUtils';
 import { RevisionIds } from '../../utils/types';
 
-const fetchLogs =
-  ({ modelId, revisionId }: RevisionIds) =>
-  async (): Promise<RevisionLog3D[]> => {
-    const {
-      data: { items },
-    } = await sdk.get<{ items: RevisionLog3D[] }>(
-      `api/v1/projects/${sdk.project}/3d/models/${modelId}/revisions/${revisionId}/logs?severity=3`
-    );
-    return items;
-  };
-
 export function useRevisionLogs(args: RevisionIds) {
   const [startTime, _] = useState(Date.now());
+  const sdk = useSDK();
+  const fetchLogs =
+    ({ modelId, revisionId }: RevisionIds) =>
+    async (): Promise<RevisionLog3D[]> => {
+      const {
+        data: { items },
+      } = await sdk.get<{ items: RevisionLog3D[] }>(
+        `api/v1/projects/${getProject()}/3d/models/${modelId}/revisions/${revisionId}/logs?severity=3`
+      );
+      return items;
+    };
 
   return useQuery<RevisionLog3D[], HttpError>(
     QUERY_KEY.REVISIONS(args),

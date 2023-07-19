@@ -5,6 +5,7 @@ import { StorageProviderType } from '@fusion/data-modeling';
 import { TOKENS } from '@platypus-app/di';
 import { useNavigate } from '@platypus-app/flags/useNavigate';
 import { useInjection } from '@platypus-app/hooks/useInjection';
+import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import uniqueId from 'lodash/uniqueId';
 
 import {
@@ -43,6 +44,8 @@ export const SideBarMenu = ({ items }: SideBarProps) => {
     version: string;
     space: string;
   }>();
+
+  const { t } = useTranslation('Sidebar menu');
 
   const [showFeatureToggle, setShowFeatureToggle] = useState(false);
 
@@ -130,11 +133,16 @@ export const SideBarMenu = ({ items }: SideBarProps) => {
         content={
           <Flex direction="column" gap={8} style={{ maxWidth: 240 }}>
             <Body level={2} style={{ color: 'white' }} strong>
-              Experimental features available
+              {t(
+                'experimental-feature-menu-tooltip',
+                'Experimental features available'
+              )}
             </Body>
             <Body level={2} style={{ color: 'white' }}>
-              Toggle on and off new features that are not yet ready for the
-              public.
+              {t(
+                'experimental-feature-menu-tooltip-body',
+                'Toggle on and off new features that are not yet ready for the public.'
+              )}
             </Body>
             {!hasSeenTooltip && (
               <Flex direction="row-reverse">

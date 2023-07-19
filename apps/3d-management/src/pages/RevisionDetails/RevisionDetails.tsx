@@ -82,7 +82,7 @@ type RevisionDetailsParams = {
   modelId: string;
   revisionId: string;
 };
-export default function RevisionDetails() {
+export const RevisionDetails = () => {
   const metrics = useMetrics('3D.Revisions');
   const params = useParams<RevisionDetailsParams>();
   const navigate = useNavigate();
@@ -338,4 +338,4 @@ export default function RevisionDetails() {
       </Modal>
     </PageWithFixedWidth>
   );
-}
+};

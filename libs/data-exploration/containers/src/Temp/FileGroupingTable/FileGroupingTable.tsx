@@ -9,10 +9,10 @@ import { docTypes, useResourceResults } from '../../index';
 
 type FileGroupingTableProps = {
   query?: string;
-  filter: InternalFilesFilters;
+  filter?: InternalFilesFilters;
   currentView: string;
   setCurrentView: (view: string) => void;
-  onItemClicked: (file: any) => void;
+  onItemClicked?: (file: any) => void;
 };
 
 const convertFilesToDocs = (files: FileInfo[] = []): Document[] => {

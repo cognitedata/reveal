@@ -132,6 +132,7 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
       }
 
       if (
+        container.type === ContainerType.FDM_INSTANCE ||
         container.type === ContainerType.ROW ||
         container.type === ContainerType.COLUMN ||
         container.type === ContainerType.FLEXIBLE_LAYOUT ||
@@ -704,6 +705,46 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
                 'Remove document'
               )}
               type="ghost"
+            />
+          </Tooltip>
+        </ToolBar>
+      </TooltipToolBarContainer>
+    );
+  }
+
+  if (selectedContainer.type === ContainerType.FDM_INSTANCE) {
+    return (
+      <TooltipToolBarContainer>
+        {isInEditLabelMode && (
+          <LabelToolbar
+            onClose={onClose}
+            onSave={onSaveLabel}
+            initialValue={selectedContainer.label}
+          />
+        )}
+        <ToolBar direction="horizontal">
+          <>
+            <Tooltip
+              content={t(translationKeys.CHANGE_LABEL_TOOLTIP, 'Change label')}
+            >
+              <Button
+                icon="String"
+                onClick={() => setIsInEditLabelMode((prevState) => !prevState)}
+                type="ghost"
+                aria-label={t(
+                  translationKeys.CHANGE_LABEL_TOOLTIP,
+                  'Change label'
+                )}
+              />
+            </Tooltip>
+            {/* TODO: add support for opening the clicked container in FDX? */}
+          </>
+          <Tooltip content={t(translationKeys.REMOVE, 'Remove')}>
+            <Button
+              icon="Delete"
+              onClick={onRemoveContainer}
+              type="ghost"
+              aria-label={`Remove ${selectedContainer.metadata.resourceType}`}
             />
           </Tooltip>
         </ToolBar>

@@ -1,16 +1,12 @@
-import { LLMChain } from 'langchain/chains';
-import { BaseChatModel } from 'langchain/chat_models/base';
-import { PromptTemplate } from 'langchain/prompts';
-import { ChainValues } from 'langchain/schema';
-
 import { generalLanguageDetectTranslationPrompt } from '@cognite/llm-hub';
 
-import { CopilotAction } from '../../types';
 import {
-  addToCopilotEventListener,
-  sendFromCopilotEvent,
-  sendToCopilotEvent,
-} from '../../utils';
+  CogniteBaseChain,
+  callPromptChain,
+  safeConvertToJson,
+} from '../../CogniteBaseChain';
+import { CopilotAction } from '../../types';
+import { addToCopilotEventListener, sendFromCopilotEvent } from '../../utils';
 import { sourceResponse, translationResponse } from '../../utils/types';
 
 // Function for sending event to Infield, and retrieving the external asset id.
@@ -76,73 +72,18 @@ export const getPageLanguage = async () => {
 
 // calls GPT to translate input to english as well as recording original language
 export const translateInputToEnglish = async (
-  input: string,
-  llm: BaseChatModel
+  chain: CogniteBaseChain,
+  input: string
 ) => {
-  const detectLanguagePromptTemplate = new PromptTemplate({
-    template: generalLanguageDetectTranslationPrompt.template,
-    inputVariables: generalLanguageDetectTranslationPrompt.input_variables,
-  });
-
-  const detectLanguageChain = new LLMChain({
-    llm: llm,
-    prompt: detectLanguagePromptTemplate,
-  });
   try {
-    return JSON.parse(
-      (await parallelGPTCalls([{ input: input }], detectLanguageChain))[0].text
-    ) as translationResponse;
+    return (
+      await callPromptChain(chain, generalLanguageDetectTranslationPrompt, [
+        {
+          input: input,
+        },
+      ]).then(safeConvertToJson<translationResponse>)
+    )[0];
   } catch (error) {
     return { language: 'english', translation: input } as translationResponse;
   }
 };
-
-// Can be used for any chain, and even for single inputs to ensure retries and timeouts.
-// Takes in a list of input (ChainValues objects) and a chain which should call on them.
-// For each call, creates a race between the call and a timeout promise.
-// Retries the call if it times out, up to maxRetries times.
-// If after maxRetries the call still times out, the result is just an {text:''} object, therefore the chain implementing this should never fail.
-// Returns a list of results, where the index of each result corresponds to the index of the input.
-export async function parallelGPTCalls(
-  inputList: ChainValues[],
-  chain: LLMChain,
-  maxRetries: number = 3,
-  timeout: number = 3000
-): Promise<ChainValues[]> {
-  const results: ChainValues[] = [];
-  const retries: number[] = Array(inputList.length).fill(maxRetries);
-
-  const executeCall = async (index: number): Promise<void> => {
-    const input = inputList[index];
-    let timeoutId: NodeJS.Timeout | null = null;
-
-    const timeoutPromise = new Promise<never>((_, reject) => {
-      timeoutId = setTimeout(() => {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        clearTimeout(timeoutId!);
-        reject(new Error('Request timed out'));
-      }, timeout);
-    });
-
-    try {
-      const response = await Promise.race([chain.call(input), timeoutPromise]);
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      clearTimeout(timeoutId!);
-      results[index] = response;
-    } catch (error) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      clearTimeout(timeoutId!);
-      if (retries[index] > 0) {
-        retries[index]--;
-        console.log(`Retrying call ${index}...`);
-        await executeCall(index); // Retry the call
-      } else {
-        results[index] = { text: '' }; // Max retries reached or timed out, return empty result
-      }
-    }
-  };
-
-  await Promise.all(inputList.map((_, index) => executeCall(index)));
-
-  return results;
-}

@@ -1,9 +1,10 @@
 import { AnnotationType } from '@cognite/unified-file-viewer';
 
 import {
+  AssetCentricContainerReference,
   CanvasAnnotation,
-  ContainerReference,
   ContainerReferenceType,
+  FdmInstanceContainerReference,
 } from '../types';
 
 // The type utilities below are stolen from https://stackoverflow.com/a/75113990
@@ -51,7 +52,7 @@ export type DTOCanvasAnnotation = Pick<
   properties: Omit<PickAll<CanvasAnnotation>, CommonDTOCanvasAnnotationProps>;
 };
 
-type CommonDTOContainerReferenceProps =
+type CommonDTOAssetCentricContainerReferenceProps =
   | 'id'
   | 'label'
   | 'width'
@@ -60,21 +61,50 @@ type CommonDTOContainerReferenceProps =
   | 'maxHeight'
   | 'x'
   | 'y';
-export type DTOContainerReference = Pick<
-  ContainerReference,
-  CommonDTOContainerReferenceProps
+export type DTOAssetCentricContainerReference = Pick<
+  AssetCentricContainerReference,
+  CommonDTOAssetCentricContainerReferenceProps
 > & {
   externalId: string;
   containerReferenceType: ContainerReferenceType;
   resourceId: number;
   resourceSubId?: number | null;
   properties: Omit<
-    PickAll<ContainerReference>,
-    CommonDTOContainerReferenceProps | 'resourceId' | 'resourceSubId'
+    PickAll<AssetCentricContainerReference>,
+    | CommonDTOAssetCentricContainerReferenceProps
+    | 'resourceId'
+    | 'resourceSubId'
+  >;
+};
+
+type CommonDTOFdmInstanceContainerReferenceProps =
+  CommonDTOAssetCentricContainerReferenceProps;
+export type DTOFdmInstanceContainerReference = Pick<
+  FdmInstanceContainerReference,
+  CommonDTOFdmInstanceContainerReferenceProps
+> & {
+  externalId: string;
+  containerReferenceType: ContainerReferenceType;
+  instanceExternalId: string;
+  instanceSpace: string;
+  viewExternalId: string;
+  viewSpace: string;
+  viewVersion?: string;
+  properties: Omit<
+    PickAll<FdmInstanceContainerReference>,
+    | CommonDTOFdmInstanceContainerReferenceProps
+    | 'instanceExternalId'
+    | 'instanceSpace'
+    | 'viewExternalId'
+    | 'viewSpace'
+    | 'viewVersion'
   >;
 };
 
 export type DTOCanvasState = {
   canvasAnnotations: { items: DTOCanvasAnnotation[] } | null;
-  containerReferences: { items: DTOContainerReference[] } | null;
+  containerReferences: { items: DTOAssetCentricContainerReference[] } | null;
+  fdmInstanceContainerReferences: {
+    items: DTOFdmInstanceContainerReference[];
+  } | null;
 };

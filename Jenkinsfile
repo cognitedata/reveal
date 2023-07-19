@@ -22,6 +22,7 @@ static final String[] APPLICATIONS = [
   'charts',
   'entity-matching',
   'access-management',
+  'business-shell'
 ]
 
 /*
@@ -58,6 +59,7 @@ static final Map<String, String> FIREBASE_APP_SITES = [
   'charts': 'charts',
   'entity-matching': 'entity-matching',
   'access-management': 'access-management',
+  'business-shell': 'flexible-data-explorer' //The naming needs to be fixed at some later point
 ]
 
 static final Map<String, String> PREVIEW_PACKAGE_NAMES = [
@@ -80,6 +82,7 @@ static final Map<String, String> PREVIEW_PACKAGE_NAMES = [
   'charts': '@cognite/cdf-charts-ui',
   'entity-matching': '@cognite/cdf-ui-entity-matching',
   'access-management': '@cognite/cdf-access-management',
+  'business-shell': '@cognite/business-shell'
 ]
 
 // Replace this with your app's ID on https://sentry.io/ -- if you do not have
@@ -157,6 +160,7 @@ static final Map<String, String> VERSIONING_STRATEGY = [
   'entity-matching': 'single-branch',
   'functions-ui' : 'single-branch',
   'access-management': 'single-branch',
+  'business-shell': 'single-branch'
 ]
 
 // The config of which apps have i18n strings that need to be synced to and pulled from locize.io
@@ -444,11 +448,11 @@ pods {
                 previewServer(
                   repo: domain,
                   prefix: prefix,
-                  buildCommand: "yarn build preview ${project}",
+                  buildCommand: " NODE_OPTIONS=--max-old-space-size=8192 yarn build preview ${project}",
                   buildFolder: "dist/apps/${project}",
                 )
                 deleteComments(PR_COMMENT_MARKER)
-                def url = "https://fusion-pr-preview.cogniteapp.com/?externalOverride=${packageName}&overrideUrl=https://${prefix}-${env.CHANGE_ID}.${domain}.preview.cogniteapp.com/index.js"
+                def url = project == 'business-shell' ? "https://${prefix}-${env.CHANGE_ID}.${domain}.preview.cogniteapp.com" : "https://fusion-pr-preview.cogniteapp.com/?externalOverride=${packageName}&overrideUrl=https://${prefix}-${env.CHANGE_ID}.${domain}.preview.cogniteapp.com/index.js"
                 pullRequest.comment("[FUSION_PREVIEW_URL] Use cog-appdev as domain. Click here to preview: [$url]($url) for application ${project}<br><br>![AppBadge](https://img.shields.io/static/v1?label=Application&message=${project}&color=orange)")
               }
             }
@@ -501,9 +505,9 @@ pods {
                   appName: firebaseSiteName,
                   environment: releaseEnvironment,
                   firebaseJson: "dist/apps/${project}/firebase.json",
-                  buildCommand: "yarn build production ${project}",
+                  buildCommand: "NODE_OPTIONS=--max-old-space-size=8192 yarn build production ${project}",
                   buildFolder: "dist/apps/${project}",
-                  isFusionSubapp: true,
+                  isFusionSubapp: project == 'business-shell' ? false : true,
                 )
 
                 slack.send(

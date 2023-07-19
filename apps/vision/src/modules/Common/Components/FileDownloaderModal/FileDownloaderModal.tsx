@@ -10,7 +10,7 @@ export const FileDownloaderModal = (props: FileDownloaderModalProps) => {
   return (
     <Modal
       getContainer={getContainer}
-      visible={props.showModal}
+      open={props.showModal}
       onCancel={props.onCancel}
       width={800}
       footer={null} // to remove default ok and cancel buttons

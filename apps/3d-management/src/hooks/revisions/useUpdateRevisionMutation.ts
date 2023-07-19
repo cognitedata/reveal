@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import sdk from '@cognite/cdf-sdk-singleton';
 import { HttpError, Revision3D, UpdateRevision3D } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
 
 import { fireErrorNotification, QUERY_KEY } from '../../utils';
 
@@ -10,33 +10,33 @@ type UpdateArgs = {
   revisionId: number;
 } & Partial<Pick<Revision3D, 'published' | 'rotation' | 'camera'>>;
 
-const updateRevision = async (payload: UpdateArgs): Promise<Revision3D> => {
-  const filter = ['published', 'rotation', 'camera'];
-
-  const filtered: UpdateRevision3D['update'] = filter.reduce(
-    (accumulator, key) => {
-      if (key in payload) {
-        accumulator[key] = { set: payload[key] };
-      }
-      return accumulator;
-    },
-    {}
-  );
-
-  const items = await sdk.revisions3D.update(payload.modelId, [
-    {
-      id: payload.revisionId,
-      update: {
-        ...filtered,
-      },
-    },
-  ]);
-
-  return items[0];
-};
-
 export function useUpdateRevisionMutation() {
   const queryClient = useQueryClient();
+  const sdk = useSDK();
+  const updateRevision = async (payload: UpdateArgs): Promise<Revision3D> => {
+    const filter = ['published', 'rotation', 'camera'];
+
+    const filtered: UpdateRevision3D['update'] = filter.reduce(
+      (accumulator, key) => {
+        if (key in payload) {
+          accumulator[key] = { set: payload[key] };
+        }
+        return accumulator;
+      },
+      {}
+    );
+
+    const items = await sdk.revisions3D.update(payload.modelId, [
+      {
+        id: payload.revisionId,
+        update: {
+          ...filtered,
+        },
+      },
+    ]);
+
+    return items[0];
+  };
   return useMutation<Revision3D, HttpError, UpdateArgs, Revision3D[]>(
     updateRevision,
     {

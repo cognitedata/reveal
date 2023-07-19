@@ -12,7 +12,6 @@ import { AutoMLModelNameBadge } from '@vision/modules/AutoML/Components/AutoMLMo
 
 import {
   Button,
-  Detail,
   Dropdown,
   Icon,
   Menu,

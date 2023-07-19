@@ -56,7 +56,7 @@ export type ValueType =
 
 export interface InputControlProps<T extends ValueType> {
   value?: T;
-  onChange: (value: T) => void;
+  onChange: (value?: T) => void;
 }
 
 export interface DataType {

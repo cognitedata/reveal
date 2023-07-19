@@ -196,7 +196,7 @@ export default function ProgressStatus() {
               strokeLinecap="round"
               style={{
                 display: 'flex',
-                justifyContent: 'end',
+                gap: '8px',
                 alignItems: 'center',
               }}
             />
@@ -217,11 +217,7 @@ const Container = styled.div`
   min-width: 300px;
 
   .ant-progress-outer {
-    width: 75%;
-    padding-right: 10px;
-    .ant-progress-inner {
-      width: 100%;
-    }
+    width: 80%;
   }
 `;
 
