@@ -7,10 +7,13 @@ import { Cognite3DViewer, type Cognite3DViewerOptions } from '@cognite/reveal';
 import { RevealContext } from './RevealContext';
 import { type Color } from 'three';
 import { ModelsLoadingStateContext } from '../Reveal3DResources/ModelsLoadingContext';
+import { SDKProvider } from './SDKProvider';
+import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 
 type RevealContainerProps = {
   color?: Color;
   sdk: CogniteClient;
+  uiElements?: ReactNode;
   children?: ReactNode;
   viewerOptions?: Pick<
     Cognite3DViewerOptions,
@@ -24,9 +27,12 @@ type RevealContainerProps = {
   >;
 };
 
+const queryClient = new QueryClient();
+
 export function RevealContainer({
   children,
   sdk,
+  uiElements,
   color,
   viewerOptions
 }: RevealContainerProps): ReactElement {
@@ -39,9 +45,14 @@ export function RevealContainer({
   }, []);
 
   return (
-    <div style={{ width: '100%', height: '100%' }} ref={revealDomElementRef}>
-      {mountChildren()}
-    </div>
+    <SDKProvider sdk={sdk}>
+      <QueryClientProvider client={queryClient}>
+        <div style={{ width: '100%', height: '100%' }} ref={revealDomElementRef}>
+          {mountChildren()}
+        </div>
+        {uiElements}
+      </QueryClientProvider>
+    </SDKProvider>
   );
 
   function mountChildren(): ReactElement {

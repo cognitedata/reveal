@@ -23,19 +23,20 @@
     "styled-components": ">=5"
   },
   "devDependencies": {
-    "@babel/preset-env": "7.22.6",
+    "@babel/preset-env": "7.22.9",
     "@babel/preset-react": "7.22.5",
     "@babel/preset-typescript": "7.22.5",
     "@cognite/cogs.js": "^9.17.0",
     "@cognite/reveal": "4.3.4",
     "@cognite/sdk": "^8.2.0",
-    "@storybook/addon-essentials": "7.0.24",
-    "@storybook/addon-interactions": "7.0.24",
-    "@storybook/addon-links": "7.0.24",
-    "@storybook/blocks": "7.0.24",
-    "@storybook/react": "7.0.24",
-    "@storybook/react-webpack5": "7.0.24",
+    "@storybook/addon-essentials": "7.0.27",
+    "@storybook/addon-interactions": "7.0.27",
+    "@storybook/addon-links": "7.0.27",
+    "@storybook/blocks": "7.0.27",
+    "@storybook/react": "7.0.27",
+    "@storybook/react-webpack5": "7.0.27",
     "@storybook/testing-library": "0.2.0",
+    "@tanstack/react-query-devtools": "^4.29.19",
     "@types/lodash": "^4.14.190",
     "@types/react": "18.2.7",
     "@types/styled-components": "5.1.26",
@@ -55,7 +56,7 @@
     "prop-types": "15.8.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "storybook": "7.0.24",
+    "storybook": "7.0.27",
     "styled-components": "5.3.11",
     "three": "0.152.2",
     "ts-loader": "9.4.3",
@@ -69,6 +70,7 @@
     "dist"
   ],
   "dependencies": {
+    "@tanstack/react-query": "^4.29.19",
     "lodash": "^4.17.21",
     "style-loader": "^3.3.3"
   }
