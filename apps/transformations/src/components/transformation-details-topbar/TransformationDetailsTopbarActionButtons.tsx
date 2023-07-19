@@ -79,7 +79,7 @@ const TransformationDetailsTopbarActionButtons = ({
         appendTo={getContainer()}
         content={
           <Menu>
-            {isTokenExchangeSupported && (
+            {isTokenExchangeSupported?.supported && (
               <Item
                 key="personal-credentials"
                 onClick={() => {
