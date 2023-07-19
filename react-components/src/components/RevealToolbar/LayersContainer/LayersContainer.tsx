@@ -9,6 +9,7 @@ import styled from 'styled-components';
 
 import { CadModelLayersContainer } from './CadModelLayersContainer';
 import { PointCloudLayersContainer } from './PointCloudLayersContainer';
+import { Image360CollectionLayerContainer } from './Image360LayersContainer';
 
 export const LayersContainer = (): ReactElement => {
   return (
@@ -16,6 +17,7 @@ export const LayersContainer = (): ReactElement => {
       <StyleMenu>
         <CadModelLayersContainer />
         <PointCloudLayersContainer />
+        <Image360CollectionLayerContainer />
       </StyleMenu>
     </Container>
   );

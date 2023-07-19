@@ -3,14 +3,18 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { CadModelContainer, RevealContainer, RevealToolbar } from '../src';
+import {
+  CadModelContainer,
+  Image360CollectionContainer,
+  PointCloudContainer,
+  RevealContainer,
+  RevealToolbar
+} from '../src';
 import { CogniteClient } from '@cognite/sdk';
-import { Color } from 'three';
-import styled from 'styled-components';
-import { ToolBar, type ToolBarButton } from '@cognite/cogs.js';
+import { Color, Matrix4 } from 'three';
 
 const meta = {
-  title: 'Example/Toolbar',
+  title: 'Example/Toolbar/LayersContainer',
   component: CadModelContainer,
   tags: ['autodocs']
 } satisfies Meta<typeof CadModelContainer>;
@@ -26,36 +30,27 @@ const sdk = new CogniteClient({
   getToken: async () => await Promise.resolve(token)
 });
 
-const MyCustomToolbar = styled(ToolBar)`
-  position: absolute;
-  right: 20px;
-  top: 70px;
-`;
-
-const exampleToolBarButtons: ToolBarButton[] = [
-  {
-    icon: 'Edit'
-  },
-  {
-    icon: 'World'
-  }
-];
-
 export const Main: Story = {
   args: {
     addModelOptions: {
       modelId: 1791160622840317,
       revisionId: 498427137020189
-    }
+    },
+    transform: new Matrix4().makeTranslation(0, 10, 0)
   },
-  render: ({ addModelOptions }) => (
+  render: ({ addModelOptions, transform }) => (
     <RevealContainer sdk={sdk} color={new Color(0x4a4a4a)}>
       <CadModelContainer addModelOptions={addModelOptions} />
+      <CadModelContainer addModelOptions={addModelOptions} transform={transform} />
+      <PointCloudContainer
+        addModelOptions={{
+          modelId: 3865289545346058,
+          revisionId: 4160448151596909
+        }}
+        transform={new Matrix4()}
+      />
+      <Image360CollectionContainer siteId={'Hibernia_RS2'} />
       <RevealToolbar />
-      <MyCustomToolbar>
-        <RevealToolbar.FitModelsButton />
-        <ToolBar.ButtonGroup buttonGroup={exampleToolBarButtons} />
-      </MyCustomToolbar>
     </RevealContainer>
   )
 };
