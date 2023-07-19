@@ -3,6 +3,7 @@ import { CogniteError } from '@cognite/sdk';
 import { Job, ManifestSchedule, Schedule } from './';
 
 export type TransformationRead = {
+  dataModel: string;
   id: number;
   name: string;
   query: string;
