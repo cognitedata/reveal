@@ -80,7 +80,7 @@ export const CadModelLayersContainer = (): ReactElement => {
           <Menu.Submenu content={cadModelContent()}>CAD models</Menu.Submenu>
         </StyledMenu>
       ) : (
-        <>No CAD models</>
+        <></>
       )}
     </>
   );

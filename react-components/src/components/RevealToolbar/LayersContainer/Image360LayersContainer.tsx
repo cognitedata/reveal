@@ -48,22 +48,20 @@ export const Image360CollectionLayerContainer = (): ReactElement => {
   const image360Content = (): React.JSX.Element => {
     return (
       <StyledSubMenu>
-        <>
-          {selectedImage360Collection.map((data) => (
-            <Menu.Item
-              key={data.image360.id}
-              hasCheckbox
-              checkboxProps={{
-                checked: data.isToggled,
-                onChange: (e: { stopPropagation: () => void }) => {
-                  e.stopPropagation();
-                  handle360ImagesVisibility(data.image360);
-                }
-              }}>
-              {data.image360.label}
-            </Menu.Item>
-          ))}
-        </>
+        {selectedImage360Collection.map((data) => (
+          <Menu.Item
+            key={data.image360.id}
+            hasCheckbox
+            checkboxProps={{
+              checked: data.isToggled,
+              onChange: (e: { stopPropagation: () => void }) => {
+                e.stopPropagation();
+                handle360ImagesVisibility(data.image360);
+              }
+            }}>
+            {data.image360.label}
+          </Menu.Item>
+        ))}
       </StyledSubMenu>
     );
   };
