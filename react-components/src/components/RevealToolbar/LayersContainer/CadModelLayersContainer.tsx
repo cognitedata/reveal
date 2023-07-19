@@ -56,41 +56,41 @@ export const CadModelLayersContainer = (): ReactElement => {
         <OpacitySlider onChange={onOpacityChange} />
         <Divider />
         <StyledSubMenu>
-          {selectedCadModels.length > 0 ? (
-            <>
-              {selectedCadModels.map((data) => (
-                <Menu.Item
-                  key={data.model.modelId}
-                  hasCheckbox
-                  checkboxProps={{
-                    checked: data.isToggled,
-                    onChange: (e: { stopPropagation: () => void }) => {
-                      e.stopPropagation();
-                      handleCadModelVisibility(data.model);
-                    }
-                  }}>
-                  {data.model.modelId}
-                </Menu.Item>
-              ))}
-            </>
-          ) : (
-            <Menu.Item>No CAD models</Menu.Item>
-          )}
+          {selectedCadModels.map((data) => (
+            <Menu.Item
+              key={data.model.modelId}
+              hasCheckbox
+              checkboxProps={{
+                checked: data.isToggled,
+                onChange: (e: { stopPropagation: () => void }) => {
+                  e.stopPropagation();
+                  handleCadModelVisibility(data.model);
+                }
+              }}>
+              {data.model.modelId}
+            </Menu.Item>
+          ))}
         </StyledSubMenu>
       </StyledSubMenuWrapper>
     );
   };
 
   return (
-    <StyledMenu>
-      <StyledCheckbox
-        checked={allCadModelVisible}
-        onChange={(e, c) => {
-          e.stopPropagation();
-          handleAllCadModelsVisibility(c as boolean);
-        }}
-      />
-      <Menu.Submenu content={cadModelContent()}>CAD models</Menu.Submenu>
-    </StyledMenu>
+    <>
+      {selectedCadModels.length > 0 ? (
+        <StyledMenu>
+          <StyledCheckbox
+            checked={allCadModelVisible}
+            onChange={(e, c) => {
+              e.stopPropagation();
+              handleAllCadModelsVisibility(c as boolean);
+            }}
+          />
+          <Menu.Submenu content={cadModelContent()}>CAD models</Menu.Submenu>
+        </StyledMenu>
+      ) : (
+        <>No CAD models</>
+      )}
+    </>
   );
 };

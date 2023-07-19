@@ -57,41 +57,41 @@ export const PointCloudLayersContainer = (): ReactElement => {
         <OpacitySlider onChange={onOpacityChange} />
         <Divider />
         <StyledSubMenu>
-          {selectedPointCloudModels.length > 0 ? (
-            <>
-              {selectedPointCloudModels.map((data) => (
-                <Menu.Item
-                  key={data.model.modelId}
-                  hasCheckbox
-                  checkboxProps={{
-                    checked: data.isToggled,
-                    onChange: (e: { stopPropagation: () => void }) => {
-                      e.stopPropagation();
-                      handlePointCloudVisibility(data.model);
-                    }
-                  }}>
-                  {data.model.modelId}
-                </Menu.Item>
-              ))}
-            </>
-          ) : (
-            <Menu.Item>No Point Cloud</Menu.Item>
-          )}
+          {selectedPointCloudModels.map((data) => (
+            <Menu.Item
+              key={data.model.modelId}
+              hasCheckbox
+              checkboxProps={{
+                checked: data.isToggled,
+                onChange: (e: { stopPropagation: () => void }) => {
+                  e.stopPropagation();
+                  handlePointCloudVisibility(data.model);
+                }
+              }}>
+              {data.model.modelId}
+            </Menu.Item>
+          ))}
         </StyledSubMenu>
       </StyledSubMenuWrapper>
     );
   };
 
   return (
-    <StyledMenu>
-      <StyledCheckbox
-        checked={allPointCloudModelVisible}
-        onChange={(e, c) => {
-          e.stopPropagation();
-          handleAllPointCloudModelsVisibility(c as boolean);
-        }}
-      />
-      <Menu.Submenu content={pointCloudModelContent()}>Point clouds</Menu.Submenu>
-    </StyledMenu>
+    <>
+      {selectedPointCloudModels.length > 0 ? (
+        <StyledMenu>
+          <StyledCheckbox
+            checked={allPointCloudModelVisible}
+            onChange={(e, c) => {
+              e.stopPropagation();
+              handleAllPointCloudModelsVisibility(c as boolean);
+            }}
+          />
+          <Menu.Submenu content={pointCloudModelContent()}>Point clouds</Menu.Submenu>
+        </StyledMenu>
+      ) : (
+        <></>
+      )}
+    </>
   );
 };

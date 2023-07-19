@@ -56,41 +56,43 @@ export const Image360CollectionLayerContainer = (): ReactElement => {
         <OpacitySlider onChange={onOpacityChange} />
         <Divider />
         <StyledSubMenu>
-          {selectedImage360Collection.length > 0 ? (
-            <>
-              {selectedImage360Collection.map((data) => (
-                <Menu.Item
-                  key={data.image360.id}
-                  hasCheckbox
-                  checkboxProps={{
-                    checked: data.isToggled,
-                    onChange: (e: { stopPropagation: () => void }) => {
-                      e.stopPropagation();
-                      handle360ImagesVisibility(data.image360);
-                    }
-                  }}>
-                  {data.image360.label}
-                </Menu.Item>
-              ))}
-            </>
-          ) : (
-            <Menu.Item>No 360 images</Menu.Item>
-          )}
+          <>
+            {selectedImage360Collection.map((data) => (
+              <Menu.Item
+                key={data.image360.id}
+                hasCheckbox
+                checkboxProps={{
+                  checked: data.isToggled,
+                  onChange: (e: { stopPropagation: () => void }) => {
+                    e.stopPropagation();
+                    handle360ImagesVisibility(data.image360);
+                  }
+                }}>
+                {data.image360.label}
+              </Menu.Item>
+            ))}
+          </>
         </StyledSubMenu>
       </StyledSubMenuWrapper>
     );
   };
 
   return (
-    <StyledMenu>
-      <StyledCheckbox
-        checked={all360ImagesVisible}
-        onChange={(e, c) => {
-          e.stopPropagation();
-          handleAll360ImagesVisibility(c as boolean);
-        }}
-      />
-      <Menu.Submenu content={image360Content()}>360 images</Menu.Submenu>
-    </StyledMenu>
+    <>
+      {selectedImage360Collection.length > 0 ? (
+        <StyledMenu>
+          <StyledCheckbox
+            checked={all360ImagesVisible}
+            onChange={(e, c) => {
+              e.stopPropagation();
+              handleAll360ImagesVisibility(c as boolean);
+            }}
+          />
+          <Menu.Submenu content={image360Content()}>360 images</Menu.Submenu>
+        </StyledMenu>
+      ) : (
+        <></>
+      )}
+    </>
   );
 };
