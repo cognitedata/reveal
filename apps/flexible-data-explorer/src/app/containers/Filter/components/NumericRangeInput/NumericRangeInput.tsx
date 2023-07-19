@@ -32,7 +32,7 @@ export const NumericRangeInput: React.FC<NumericRangeInputProps> = ({
         onChange={(newMin) => {
           setMin(newMin);
 
-          if (!isUndefined(max)) {
+          if (!isUndefined(newMin) && !isUndefined(max)) {
             onChange([newMin, max]);
           }
         }}
@@ -49,7 +49,7 @@ export const NumericRangeInput: React.FC<NumericRangeInputProps> = ({
         onChange={(newMax) => {
           setMax(newMax);
 
-          if (!isUndefined(min)) {
+          if (!isUndefined(min) && !isUndefined(newMax)) {
             onChange([min, newMax]);
           }
         }}
