@@ -271,7 +271,7 @@
   "failed": "Failed",
   "failed-colon": "Failed: {{time}}",
   "false": "False",
-  "fdm-space": "Space",
+  "fdm-instance-space": "Target space",
   "fdm-space-placeholder": "Which space do you want to write into?",
   "fdm-version": "Version",
   "fdm-version-placeholder": "What is the version of your data model?",
