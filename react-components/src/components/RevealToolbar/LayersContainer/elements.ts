@@ -20,9 +20,3 @@ export const StyledSubMenu = styled(Menu)`
   box-shadow: none;
   padding: 8px;
 `;
-
-export const StyledSubMenuWrapper = styled(Menu.Section)`
-  background-color: #ffffff;
-  border-radius: 8px;
-  overflow: auto;
-`;

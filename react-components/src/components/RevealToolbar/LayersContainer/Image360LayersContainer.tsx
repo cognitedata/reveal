@@ -4,10 +4,9 @@
 
 import React, { type ReactElement, useState } from 'react';
 import { useReveal } from '../../RevealContainer/RevealContext';
-import { Divider, Menu } from '@cognite/cogs.js';
-import { StyledCheckbox, StyledSubMenu, StyledMenu, StyledSubMenuWrapper } from './elements';
+import { Menu } from '@cognite/cogs.js';
+import { StyledCheckbox, StyledSubMenu, StyledMenu } from './elements';
 import { type Image360Collection } from '@cognite/reveal';
-import { OpacitySlider } from './OpacitySlider';
 
 export const Image360CollectionLayerContainer = (): ReactElement => {
   const viewer = useReveal();
@@ -46,34 +45,26 @@ export const Image360CollectionLayerContainer = (): ReactElement => {
     setSelectedImage360Collection([...selectedImage360Collection]);
   };
 
-  const onOpacityChange = (opacity: number): void => {
-    console.log('360 Images Opacity: ', opacity);
-  };
-
   const image360Content = (): React.JSX.Element => {
     return (
-      <StyledSubMenuWrapper label={'Opacity'}>
-        <OpacitySlider onChange={onOpacityChange} />
-        <Divider />
-        <StyledSubMenu>
-          <>
-            {selectedImage360Collection.map((data) => (
-              <Menu.Item
-                key={data.image360.id}
-                hasCheckbox
-                checkboxProps={{
-                  checked: data.isToggled,
-                  onChange: (e: { stopPropagation: () => void }) => {
-                    e.stopPropagation();
-                    handle360ImagesVisibility(data.image360);
-                  }
-                }}>
-                {data.image360.label}
-              </Menu.Item>
-            ))}
-          </>
-        </StyledSubMenu>
-      </StyledSubMenuWrapper>
+      <StyledSubMenu>
+        <>
+          {selectedImage360Collection.map((data) => (
+            <Menu.Item
+              key={data.image360.id}
+              hasCheckbox
+              checkboxProps={{
+                checked: data.isToggled,
+                onChange: (e: { stopPropagation: () => void }) => {
+                  e.stopPropagation();
+                  handle360ImagesVisibility(data.image360);
+                }
+              }}>
+              {data.image360.label}
+            </Menu.Item>
+          ))}
+        </>
+      </StyledSubMenu>
     );
   };
 

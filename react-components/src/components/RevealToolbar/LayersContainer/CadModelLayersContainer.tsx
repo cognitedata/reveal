@@ -5,9 +5,8 @@
 import React, { type ReactElement, useState } from 'react';
 import { useReveal } from '../../RevealContainer/RevealContext';
 import { type CogniteCadModel } from '@cognite/reveal';
-import { Divider, Menu } from '@cognite/cogs.js';
-import { StyledCheckbox, StyledSubMenu, StyledMenu, StyledSubMenuWrapper } from './elements';
-import { OpacitySlider } from './OpacitySlider';
+import { Menu } from '@cognite/cogs.js';
+import { StyledCheckbox, StyledSubMenu, StyledMenu } from './elements';
 
 export const CadModelLayersContainer = (): ReactElement => {
   const viewer = useReveal();
@@ -46,32 +45,24 @@ export const CadModelLayersContainer = (): ReactElement => {
     setSelectedCadModels([...selectedCadModels]);
   };
 
-  const onOpacityChange = (opacity: number): void => {
-    console.log('Point Cloud Opacity: ', opacity);
-  };
-
   const cadModelContent = (): React.JSX.Element => {
     return (
-      <StyledSubMenuWrapper label={'Opacity'}>
-        <OpacitySlider onChange={onOpacityChange} />
-        <Divider />
-        <StyledSubMenu>
-          {selectedCadModels.map((data) => (
-            <Menu.Item
-              key={data.model.modelId}
-              hasCheckbox
-              checkboxProps={{
-                checked: data.isToggled,
-                onChange: (e: { stopPropagation: () => void }) => {
-                  e.stopPropagation();
-                  handleCadModelVisibility(data.model);
-                }
-              }}>
-              {data.model.modelId}
-            </Menu.Item>
-          ))}
-        </StyledSubMenu>
-      </StyledSubMenuWrapper>
+      <StyledSubMenu>
+        {selectedCadModels.map((data) => (
+          <Menu.Item
+            key={data.model.modelId}
+            hasCheckbox
+            checkboxProps={{
+              checked: data.isToggled,
+              onChange: (e: { stopPropagation: () => void }) => {
+                e.stopPropagation();
+                handleCadModelVisibility(data.model);
+              }
+            }}>
+            {data.model.modelId}
+          </Menu.Item>
+        ))}
+      </StyledSubMenu>
     );
   };
 
