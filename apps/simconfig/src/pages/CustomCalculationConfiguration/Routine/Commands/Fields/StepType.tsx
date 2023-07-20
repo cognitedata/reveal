@@ -8,6 +8,8 @@ import { InputRow } from 'components/forms/ModelForm/elements';
 import { ACTION_OPTIONS, getOptionLabel } from '../utils';
 import type { ConfigurationFieldProps, ValueOptionType } from '../utils';
 
+type StepOption = 'Command' | 'Get' | 'Set';
+
 const mapStep = {
   Get: {
     type: 'Get',
@@ -52,7 +54,7 @@ export function StepType({
             label: getOptionLabel(ACTION_OPTIONS, step.type),
           }}
           width={300}
-          onChange={(option: ValueOptionType<'Command' | 'Get' | 'Set'>) => {
+          onChange={(option: ValueOptionType<StepOption>) => {
             setFieldValue(`${formikPath}`, {
               step: step.step,
               ...mapStep[option.value],

@@ -9,34 +9,48 @@ import type {
 } from '@cognite/simconfig-api-sdk/rtk';
 
 import { InputRow } from 'components/forms/ModelForm/elements';
+import { getTargetTimeseriesByPrefix } from 'utils/routineUtils';
 
 import { getOptionLabel, getTimeSerieIndexByType } from '../utils';
-import type { ConfigurationFieldProps, ValueOptionType } from '../utils';
+import type {
+  ConfigurationFieldProps,
+  TimeSeriesPrefixProps,
+  ValueOptionType,
+} from '../utils';
 
 import type { AppLocationGenerics } from 'routes';
 
-interface UnitFieldProps extends ConfigurationFieldProps {
-  timeSeriesPrefix: 'inputTimeSeries' | 'outputTimeSeries';
-}
+interface UnitFieldProps
+  extends ConfigurationFieldProps,
+    TimeSeriesPrefixProps {}
 
 export function Unit({ routineIndex, step, timeSeriesPrefix }: UnitFieldProps) {
   const { setFieldValue, values } = useFormikContext<UserDefined>();
-  const timeSeriesTarget =
-    timeSeriesPrefix === 'inputTimeSeries'
-      ? values.inputTimeSeries
-      : values.outputTimeSeries;
+  const timeSeriesTarget = getTargetTimeseriesByPrefix(
+    timeSeriesPrefix,
+    values
+  );
 
   const {
     data: { definitions },
   } = useMatch<AppLocationGenerics>();
 
-  const timeSerieIndex = getTimeSerieIndexByType(
+  const routineTimeSerieIndex = getTimeSerieIndexByType(
     timeSeriesTarget,
     step.arguments.value ?? ''
   );
-  const tsIdx =
-    timeSerieIndex !== -1 ? timeSerieIndex : timeSeriesTarget.length;
-  const isUnitTypeInTimeSerie = Object.entries(timeSeriesTarget[tsIdx])
+
+  //
+  // when the timeseries index is not found, it means that the step is a new one
+  // which means that the index is the last and current one
+  // if the index is found, it will overwrite the found timeseries index
+  const stepTimeserieIndex =
+    routineTimeSerieIndex !== -1
+      ? routineTimeSerieIndex
+      : timeSeriesTarget.length;
+  const isUnitTypeInTimeSerie = Object.entries(
+    timeSeriesTarget[stepTimeserieIndex]
+  )
     .map(([entry]) => entry)
     .includes('unitType');
 
@@ -44,7 +58,7 @@ export function Unit({ routineIndex, step, timeSeriesPrefix }: UnitFieldProps) {
     return null;
   }
 
-  const timeserieUnitType = timeSeriesTarget[tsIdx]
+  const timeserieUnitType = timeSeriesTarget[stepTimeserieIndex]
     .unitType as keyof DefinitionMap['map']['unitType'];
 
   const unitLabels = definitions.map.unitType[timeserieUnitType];
@@ -62,16 +76,19 @@ export function Unit({ routineIndex, step, timeSeriesPrefix }: UnitFieldProps) {
           name={formikPath}
           options={TIMESERIES_UNIT_OPTIONS}
           value={{
-            value: timeSeriesTarget[tsIdx].unit,
+            value: timeSeriesTarget[stepTimeserieIndex].unit,
             label: getOptionLabel(
               TIMESERIES_UNIT_OPTIONS,
-              timeSeriesTarget[tsIdx].unit ?? ''
+              timeSeriesTarget[stepTimeserieIndex].unit ?? ''
             ),
           }}
           width={300}
           onChange={({ value }: ValueOptionType<string>) => {
             setFieldValue(formikPath, value);
-            setFieldValue(`${timeSeriesPrefix}.${tsIdx}.unit`, value);
+            setFieldValue(
+              `${timeSeriesPrefix}.${stepTimeserieIndex}.unit`,
+              value
+            );
           }}
         />
       </div>

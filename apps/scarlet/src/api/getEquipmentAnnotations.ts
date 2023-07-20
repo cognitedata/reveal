@@ -18,7 +18,8 @@ export const getEquipmentAnnotations = async (
   annotations: ScannerDetection[];
 }> => {
   const u1Documents = documents?.filter(
-    (document) => document.type === DocumentType.U1
+    (document) =>
+      document.type === DocumentType.U1 || document.name.includes('_U1')
   );
   const creatingAppVersions = config?.creatingAppVersions || [];
   if (!u1Documents?.length || !creatingAppVersions?.length)

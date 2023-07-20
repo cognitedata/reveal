@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { useEffect } from 'react';
 import { Outlet, ReactLocation, Router } from 'react-location';
 import { useSelector } from 'react-redux';
@@ -10,6 +12,7 @@ import { Loader, ToastContainer } from '@cognite/cogs.js-v9';
 import { FlagProvider } from '@cognite/react-feature-flags';
 import { useSDK } from '@cognite/sdk-provider';
 
+import { AccessControlWrapper } from 'components/accesscontrolwrapper';
 import { MenuBar } from 'components/Menubar';
 import { useTitle } from 'hooks/useTitle';
 import { useUserInfo } from 'hooks/useUserInfo';
@@ -20,6 +23,7 @@ import { simconfigApiPropertiesSlice } from 'store/simconfigApiProperties';
 import { selectProject } from 'store/simconfigApiProperties/selectors';
 import { identifyUser } from 'utils/metrics/tracking';
 
+import { BASIC_CAPABILITIES_REQUIRED } from './constants';
 import { enhanceSimconfigApiEndpoints } from './enhanceSimconfigApiEndpoints';
 
 const location = new ReactLocation();
@@ -83,11 +87,15 @@ export default function App() {
           disableMetrics
         >
           <RoutedAppContainer>
-            <MenuBar />
-            <Content>
-              <ToastContainer />
-              <Outlet />
-            </Content>
+            <AccessControlWrapper
+              requiredCapabilities={BASIC_CAPABILITIES_REQUIRED}
+            >
+              <MenuBar />
+              <Content>
+                <ToastContainer />
+                <Outlet />
+              </Content>
+            </AccessControlWrapper>
           </RoutedAppContainer>
         </FlagProvider>
       </Router>

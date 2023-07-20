@@ -83,7 +83,7 @@ export const allApplications: ApplicationItem[] = [
     description:
       'Cognite InFields collects, cleans, and contextualizes all kinds of industrial data to make it accessible and meaningful. ',
     url: '',
-    urlTemplate: `https://infield${clusterPlaceholder}.cogniteapp.com/${tenantPlaceholder}`,
+    urlTemplate: `https://cognite-infield.cogniteapp.com`,
     viewLink: 'https://www.cognite.com/en/product/applications/cognite_infield',
   },
   {
@@ -117,7 +117,7 @@ export const allApplications: ApplicationItem[] = [
     categories: ['Cognite Application', 'Maintenance & Planning'],
     description:
       'Cognite Maintain lets you construct, optimize, and analyze maintenance plans flexibly, intuitively, and automatically. ',
-    url: `https://mp.cogniteapp.com/${tenantPlaceholder}`,
+    url: `https://maintain.cogniteapp.com`,
     viewLink:
       'https://www.cognite.com/en/product/applications/cognite_maintain',
   },

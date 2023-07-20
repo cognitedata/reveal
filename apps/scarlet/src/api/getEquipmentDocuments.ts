@@ -38,6 +38,7 @@ export const getEquipmentDocuments = async (
   const documents: EquipmentDocument[] = documentsResp.items
     .map((item) => ({
       id: item.id,
+      name: item.name,
       externalId: item.externalId,
       downloadUrl: downloadUrlsDictionary[item.id],
       type: item.metadata?.document_type,

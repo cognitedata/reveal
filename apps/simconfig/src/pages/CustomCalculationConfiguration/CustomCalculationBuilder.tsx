@@ -165,6 +165,7 @@ export function CustomCalculationBuilder({
               >
                 <Switch
                   checked={isEditorEnabled}
+                  className="routine-editor-switch"
                   name="routine-editor-switch"
                   style={{ marginBottom: '1em' }}
                   onChange={(

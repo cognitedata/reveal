@@ -153,6 +153,7 @@ TYPE_DEPENDENCIES = [
 
 # Dev dependencies from package.json
 DEV_DEPENDENCIES = [
+    "@npm//@testing-library/react-hooks",
     "@npm//@testing-library/jest-dom",
     "@npm//eslint-config-react-app",
 ]

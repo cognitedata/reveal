@@ -6,15 +6,20 @@ import { Select } from '@cognite/cogs.js-v9';
 import type { UserDefined } from '@cognite/simconfig-api-sdk/rtk';
 
 import { InputRow } from 'components/forms/ModelForm/elements';
+import { getTargetTimeseriesByPrefix } from 'utils/routineUtils';
 
 import { getOptionLabel, getTimeSerieIndexByType } from '../utils';
-import type { ConfigurationFieldProps, ValueOptionType } from '../utils';
+import type {
+  ConfigurationFieldProps,
+  TimeSeriesPrefixProps,
+  ValueOptionType,
+} from '../utils';
 
 import type { AppLocationGenerics } from 'routes';
 
-interface UnitTypeFieldProps extends ConfigurationFieldProps {
-  timeSeriesPrefix: 'inputTimeSeries' | 'outputTimeSeries';
-}
+interface UnitTypeFieldProps
+  extends ConfigurationFieldProps,
+    TimeSeriesPrefixProps {}
 
 export function UnitType({
   routineIndex,
@@ -22,10 +27,11 @@ export function UnitType({
   timeSeriesPrefix,
 }: UnitTypeFieldProps) {
   const { setFieldValue, values } = useFormikContext<UserDefined>();
-  const timeSeriesTarget =
-    timeSeriesPrefix === 'inputTimeSeries'
-      ? values.inputTimeSeries
-      : values.outputTimeSeries;
+  const timeSeriesTarget = getTargetTimeseriesByPrefix(
+    timeSeriesPrefix,
+    values
+  );
+
   const {
     data: { definitions },
   } = useMatch<AppLocationGenerics>();
@@ -36,12 +42,14 @@ export function UnitType({
   const unitLabels = definitions.map.unitLabel;
   const TIMESERIES_UNIT_TYPE_OPTIONS: ValueOptionType<string>[] =
     Object.entries(unitLabels).map(([value, label]) => ({ label, value }));
-  const timeSerieIndex = getTimeSerieIndexByType(
+  const routineTimeSerieIndex = getTimeSerieIndexByType(
     timeSeriesTarget,
     step.arguments.value ?? ''
   );
-  const tsIdx =
-    timeSerieIndex !== -1 ? timeSerieIndex : timeSeriesTarget.length;
+  const stepTimeserieIndex =
+    routineTimeSerieIndex !== -1
+      ? routineTimeSerieIndex
+      : timeSeriesTarget.length;
   const formikPath = `routine.${timeSeriesPrefix}.${routineIndex}.unitType`;
 
   return (
@@ -53,16 +61,19 @@ export function UnitType({
           name={formikPath}
           options={TIMESERIES_UNIT_TYPE_OPTIONS}
           value={{
-            value: timeSeriesTarget[tsIdx].unitType,
+            value: timeSeriesTarget[stepTimeserieIndex].unitType,
             label: getOptionLabel(
               TIMESERIES_UNIT_TYPE_OPTIONS,
-              timeSeriesTarget[tsIdx].unitType
+              timeSeriesTarget[stepTimeserieIndex].unitType
             ),
           }}
           width={300}
           onChange={({ value }: ValueOptionType<string>) => {
             setFieldValue(formikPath, value);
-            setFieldValue(`${timeSeriesPrefix}.${tsIdx}.unitType`, value);
+            setFieldValue(
+              `${timeSeriesPrefix}.${stepTimeserieIndex}.unitType`,
+              value
+            );
           }}
         />
       </div>

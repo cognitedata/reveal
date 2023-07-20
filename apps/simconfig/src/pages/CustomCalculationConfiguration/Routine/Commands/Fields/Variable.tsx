@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useMatch } from 'react-location';
 
 import { Field, useFormikContext } from 'formik';
 
@@ -10,13 +11,20 @@ import type {
 } from '@cognite/simconfig-api-sdk/rtk';
 
 import { InputRow } from 'components/forms/ModelForm/elements';
+import { getTargetTimeseriesByPrefix } from 'utils/routineUtils';
 
-import { getTimeSerieIndexByType } from '../utils';
-import type { ConfigurationFieldProps } from '../utils';
+import { getOptionLabel, getTimeSerieIndexByType } from '../utils';
+import type {
+  ConfigurationFieldProps,
+  TimeSeriesPrefixProps,
+  ValueOptionType,
+} from '../utils';
 
-interface VariableFieldProps extends ConfigurationFieldProps {
-  timeSeriesPrefix: 'inputTimeSeries' | 'outputTimeSeries';
-}
+import type { AppLocationGenerics } from 'routes';
+
+interface VariableFieldProps
+  extends ConfigurationFieldProps,
+    TimeSeriesPrefixProps {}
 
 export function Variable({
   step,
@@ -25,21 +33,39 @@ export function Variable({
   timeSeriesPrefix,
 }: VariableFieldProps) {
   const { setFieldValue, values } = useFormikContext<UserDefined>();
+  const {
+    data: { definitions },
+  } = useMatch<AppLocationGenerics>();
 
   // state for setting variable error message
   const [variableError, setVariableError] = useState<string>('');
 
-  const timeSeriesTarget =
-    timeSeriesPrefix === 'inputTimeSeries'
-      ? values.inputTimeSeries
-      : values.outputTimeSeries;
+  const timeSeriesTarget = getTargetTimeseriesByPrefix(
+    timeSeriesPrefix as string,
+    values
+  );
 
-  const timeSerieIndex = getTimeSerieIndexByType(
+  const currentTimeSeries = timeSeriesTarget.map((ts) => ts.type);
+  const currentValue =
+    values.routine?.[routineIndex].steps[stepIndex].arguments.value;
+  const TIMESERIES_VARIABLE_OPTIONS: ValueOptionType<string>[] = Object.entries(
+    definitions?.type.timeSeries ?? {}
+  )
+    .map(([value, { name }]) => ({ label: name, value }))
+    .filter(
+      ({ value }) =>
+        !currentTimeSeries.includes(value) || value === currentValue
+    );
+  // If the time serie is in the routine, we get its index
+  const timeSerieIndexInRoutine = getTimeSerieIndexByType(
     timeSeriesTarget,
     step.arguments.value ?? ''
   );
-  const tsIdx =
-    timeSerieIndex !== -1 ? timeSerieIndex : timeSeriesTarget.length;
+  //  If the time serie is not in the routine, we add it at the end
+  const timeSerieIndex =
+    timeSerieIndexInRoutine !== -1
+      ? timeSerieIndexInRoutine
+      : timeSeriesTarget.length;
   const formikPath = `routine.${routineIndex}.steps.${stepIndex}.arguments.value`;
 
   return (
@@ -50,11 +76,12 @@ export function Variable({
           as={Input}
           error={variableError}
           name={formikPath}
+          options={TIMESERIES_VARIABLE_OPTIONS}
           style={{ width: 300 }}
           type="text"
           validate={() => {
             // Find the name of the current variable
-            const { name } = timeSeriesTarget[tsIdx];
+            const { name } = timeSeriesTarget[timeSerieIndex];
 
             if (!name) {
               return undefined;
@@ -86,8 +113,13 @@ export function Variable({
 
             return undefined;
           }}
-          // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-          value={timeSeriesTarget[tsIdx]?.name ?? ''}
+          value={{
+            value: step.arguments.value,
+            label: getOptionLabel(
+              TIMESERIES_VARIABLE_OPTIONS,
+              step.arguments.value ?? ''
+            ),
+          }}
           fullWidth
           onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
             const { value } = event.currentTarget;
@@ -95,10 +127,13 @@ export function Variable({
               .trim()
               .split(' ')
               .map((word) => word.charAt(0).toUpperCase())
-              .join('')}${tsIdx}`;
+              .join('')}${timeSerieIndex}`;
             setFieldValue(formikPath, type);
-            setFieldValue(`${timeSeriesPrefix}.${tsIdx}.type`, type);
-            setFieldValue(`${timeSeriesPrefix}.${tsIdx}.name`, value.trim());
+            setFieldValue(`${timeSeriesPrefix}.${timeSerieIndex}.type`, type);
+            setFieldValue(
+              `${timeSeriesPrefix}.${timeSerieIndex}.name`,
+              value.trim()
+            );
           }}
         />
       </div>
