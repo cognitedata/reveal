@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 import { Alert } from 'antd';
 
-import { Dropdown, Title, Menu, Icon } from '@cognite/cogs.js';
+import { Dropdown, Title, Menu, Icon, Colors } from '@cognite/cogs.js';
 
 export const Header = styled.header`
   && {
@@ -70,22 +70,22 @@ export const ChartContainer = styled.div`
   height: 100%;
 `;
 
-export const SourceCircle = styled.span`
+export const SourceCircle = styled.div`
   height: 20px;
   width: 20px;
   background-color: ${(props) => props.color || 'lightgreen'};
-  margin: 20px;
+  margin-right: 5px;
   margin-left: 5px;
   border-radius: 50%;
   flex-shrink: 0;
   opacity: ${(props: { fade?: boolean }) => (props.fade ? '0.2' : '1')};
 `;
 
-export const SourceSquare = styled.span`
+export const SourceSquare = styled.div`
   height: 20px;
   width: 20px;
   background-color: ${(props) => props.color || 'lightgreen'};
-  margin: 20px;
+  margin-right: 5px;
   margin-left: 5px;
   flex-shrink: 0;
   opacity: ${(props: { fade?: boolean }) => (props.fade ? '0.2' : '1')};
@@ -164,9 +164,9 @@ export const ChartActionStyledButton = styled.button`
 
   border: none;
 
-  background-color: #4a67fb;
+  background-color: ${Colors['surface--action--strong--default']};
   &:hover {
-    background-color: #3a4aa3;
+    background-color: ${Colors['surface--action--strong--hover']};
   }
 
   box-shadow: var(--cogs-elevation--surface--interactive);
@@ -175,13 +175,10 @@ export const ChartActionStyledButton = styled.button`
 `;
 
 export const ChartActionMenu = styled(Menu)`
-  background-color: var(--cogs-midblue);
-`;
-
-export const ChartActionMenuItem = styled(Menu.Item)`
-  background-color: var(--cogs-midblue);
-  color: white;
-  cursor: pointer;
+  background-color: ${Colors['surface--action--strong--default']};
+  button.cogs-menu-item {
+    color: white;
+  }
 `;
 
 export const ChartActionContainer = styled.div`

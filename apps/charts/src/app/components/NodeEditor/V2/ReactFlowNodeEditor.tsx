@@ -78,7 +78,6 @@ type Props = {
   onErrorIconClick: (id: string) => void;
 };
 
-// todo(DEGR-2397) check if this is working fine
 const NODE_TYPES: NodeTypesType = {
   [NodeTypes.SOURCE]: SourceNode as unknown as ReactNode,
   [NodeTypes.FUNCTION]: FunctionNode as unknown as ReactNode,
@@ -157,7 +156,6 @@ const ReactFlowNodeEditor = ({
    */
   const handleMove = useCallback(
     (transform: FlowTransform | undefined) => {
-      // todo(DEGR-2397) check if this is working fine
       transform && onMove(transform);
     },
     [onMove]
@@ -349,8 +347,8 @@ const ReactFlowNodeEditor = ({
             sourceType === 'scheduledCalculation' ? (
               <ScheduleToolbar>
                 <Chip
-                  size="medium"
-                  type="default"
+                  size="small"
+                  type="neutral"
                   label={t['Running on Schedule']}
                 />
               </ScheduleToolbar>

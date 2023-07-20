@@ -47,6 +47,7 @@ export const UnitSelector = ({
             : 'Type to create custom unit'}
         </Button>
       }
+      menuPortalTarget={document.body}
       onChange={onChange}
       inputValue={input}
       value={value}

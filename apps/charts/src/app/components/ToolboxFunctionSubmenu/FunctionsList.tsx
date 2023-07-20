@@ -33,12 +33,14 @@ const FunctionsList = ({
             style={{ minHeight: 40 }}
           >
             <FunctionNameWrapper>
-              <span style={{ textAlign: 'left' }}>
+              <span style={{ textAlign: 'left', fontSize: '13px' }}>
                 {latestVersionOfOperation.name}
               </span>
               {latestVersionOfOperation.description && (
                 <InfoButton
+                  type="ghost"
                   icon="Info"
+                  size="small"
                   id={`${operation.op}-info-button`}
                   onClick={(e) => {
                     e.stopPropagation();

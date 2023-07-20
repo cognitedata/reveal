@@ -105,7 +105,7 @@ export default function AssetSearchHit({
       <Row>
         <InfoContainer>
           <ResourceNameWrapper>
-            <Icon type="Assets" size={14} css={{ marginRight: 5 }} />
+            <Icon type="Assets" size={14} />
             <Highlighter
               highlightStyle={{
                 backgroundColor: Colors['decorative--yellow--400'],
@@ -113,9 +113,12 @@ export default function AssetSearchHit({
               }}
               searchWords={removeIllegalCharacters(query).split(' ')}
               textToHighlight={asset.name}
-              className="cogs-anchor"
+              className="cogs cogs-anchor"
               onClick={() => handleSelectAsset(asset.id)}
-              style={{ cursor: 'pointer' }}
+              style={{
+                cursor: 'pointer',
+                marginLeft: '5px',
+              }}
             />
           </ResourceNameWrapper>
 
@@ -150,7 +153,11 @@ export default function AssetSearchHit({
           {searchResultElements}
           {dataAmount && dataAmount.count > TIMESERIES_COUNT && (
             <TSItem>
-              <Button type="ghost" onClick={() => handleSelectAsset(asset.id)}>
+              <Button
+                style={{ marginTop: '10px' }}
+                type="ghost-accent"
+                onClick={() => handleSelectAsset(asset.id)}
+              >
                 {t['View all']} ({dataAmount.count})
               </Button>
             </TSItem>

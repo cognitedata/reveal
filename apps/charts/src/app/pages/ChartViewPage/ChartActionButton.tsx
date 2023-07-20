@@ -1,11 +1,10 @@
 import * as React from 'react';
 
-import { Dropdown, Menu, Icon } from '@cognite/cogs.js';
+import { Dropdown, Divider, Menu } from '@cognite/cogs.js';
 
 import {
   ChartActionStyledButton,
   ChartActionMenu,
-  ChartActionMenuItem,
   ChartActionContainer,
   ChartActionIcon,
 } from './elements';
@@ -31,28 +30,31 @@ export const ChartActionButton = ({
       <Dropdown
         content={
           <ChartActionMenu>
-            <ChartActionMenuItem
+            <Menu.Item
               key="add-timeseries"
               onClick={handleOpenSearch}
+              icon="Timeseries"
+              iconPlacement="left"
             >
-              <Icon type="Timeseries" />
               Add time series
-            </ChartActionMenuItem>
-            <Menu.Divider />
-            <ChartActionMenuItem
+            </Menu.Item>
+            <Divider />
+            <Menu.Item
               key="add-calculation"
               onClick={handleClickNewWorkflow}
+              icon="Function"
+              iconPlacement="left"
             >
-              <Icon type="Function" />
               Add calculation
-            </ChartActionMenuItem>
-            <ChartActionMenuItem
+            </Menu.Item>
+            <Menu.Item
+              icon="Download"
+              iconPlacement="left"
               key="import-calculation"
               onClick={handleImportCalculationsClick}
             >
-              <Icon type="Download" />
               Import calculation
-            </ChartActionMenuItem>
+            </Menu.Item>
           </ChartActionMenu>
         }
       >

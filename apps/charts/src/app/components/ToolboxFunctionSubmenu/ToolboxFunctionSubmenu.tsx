@@ -7,12 +7,12 @@ import { compareVersions } from 'compare-versions';
 import styled from 'styled-components/macro';
 
 import { Operation } from '@cognite/calculation-backend';
-import { Button, Dropdown, Input, Modal } from '@cognite/cogs.js';
+import { Button, Input, Modal, Menu } from '@cognite/cogs.js';
 
 import CategoryMenu from './CategoryMenu';
 import SearchResultMenu from './SearchResultMenu';
 
-const ToolboxFunctionDropdown = ({
+export const ToolboxFunctionSubmenu = ({
   categories,
   initialFunction,
   onFunctionSelected,
@@ -55,7 +55,7 @@ const ToolboxFunctionDropdown = ({
 
   return (
     <>
-      <FunctionsDropdown
+      <FunctionsSubmenu
         visible={isDropdownVisible}
         // Prevent dropdown from closing on modal click
         onClickOutside={() => {
@@ -66,7 +66,7 @@ const ToolboxFunctionDropdown = ({
         zIndex={Layers.DROPDOWN}
         placement="right"
         content={
-          <FunctionsDropdownContent maxHeight={maxHeight}>
+          <FunctionsSubmenuContent maxHeight={maxHeight}>
             <Input
               id="phrase"
               value={phrase}
@@ -93,7 +93,7 @@ const ToolboxFunctionDropdown = ({
                 onInfoButtonClick={handleInfoButtonClick}
               />
             )}
-          </FunctionsDropdownContent>
+          </FunctionsSubmenuContent>
         }
       >
         {!children ? (
@@ -130,7 +130,7 @@ const ToolboxFunctionDropdown = ({
             },
           })
         )}
-      </FunctionsDropdown>
+      </FunctionsSubmenu>
       <InfoModal
         title={latestVersionOfSelectedOperation?.name}
         visible={isModalVisible}
@@ -146,8 +146,7 @@ const ToolboxFunctionDropdown = ({
   );
 };
 
-const FunctionsDropdown = styled(Dropdown)`
-  width: 275px;
+const FunctionsSubmenu = styled(Menu.Submenu)`
   .cogs-input-container {
     padding: 8px;
     input,
@@ -158,9 +157,13 @@ const FunctionsDropdown = styled(Dropdown)`
       box-shadow: none;
     }
   }
+  &.cogs.cogs-dropdown .tippy-box {
+    background-color: white;
+  }
 `;
 
-const FunctionsDropdownContent = styled.div<{ maxHeight?: number }>`
+const FunctionsSubmenuContent = styled.div<{ maxHeight?: number }>`
+  width: 275px;
   max-height: ${(props) =>
     typeof props.maxHeight === 'number' ? props.maxHeight : 400}px;
   overflow-y: auto;
@@ -172,5 +175,3 @@ const InfoModal = styled(Modal)`
     font-size: var(--cogs-t3-font-size);
   }
 `;
-
-export default ToolboxFunctionDropdown;
