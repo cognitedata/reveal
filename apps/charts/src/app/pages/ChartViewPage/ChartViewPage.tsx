@@ -69,7 +69,6 @@ import { eventResultsAtom } from '@charts-app/models/event-results/atom';
 import interactionsAtom from '@charts-app/models/interactions/atom';
 import { timeseriesAtom } from '@charts-app/models/timeseries-results/atom';
 import { timeseriesSummaries } from '@charts-app/models/timeseries-results/selectors';
-import ChartViewPageAppBar from '@charts-app/pages/ChartViewPage/ChartViewPageAppBar';
 import ChartViewPageSecondaryAppBar from '@charts-app/pages/ChartViewPage/ChartViewPageSecondaryAppBar';
 import { Modes } from '@charts-app/pages/types';
 import {
@@ -105,7 +104,6 @@ import { useScheduledCalculationDataValue } from '../../models/scheduled-calcula
 import { scheduledCalculationSummaries } from '../../models/scheduled-calculation-results/selectors';
 
 import { ChartActionButton } from './ChartActionButton';
-import ChartViewHeader from './ChartViewHeader';
 import {
   BottomPaneWrapper,
   ChartContainer,
@@ -622,7 +620,7 @@ const ChartViewPage = () => {
   }, [chart, setChart, openNodeEditor, setSelectedSourceId]);
 
   const handleDateChange: ComponentProps<
-    typeof ChartViewHeader
+    typeof ChartViewPageSecondaryAppBar
   >['handleDateChange'] = ({ startDate, endDate }) => {
     if (startDate || endDate) {
       setChart((oldChart: any) =>
@@ -871,7 +869,6 @@ const ChartViewPage = () => {
         capabilities={ALERTING_CAPABILITIES}
         onOk={handleAccessDeniedModalClose}
       />
-      <ChartViewPageAppBar allChartsLabel={t['All charts']} />
       <ChartViewPageSecondaryAppBar
         handleDateChange={handleDateChange}
         showYAxis={showYAxis}

@@ -16,7 +16,6 @@ import {
 
 import {
   Button,
-  Icon,
   Input,
   Tabs,
   SegmentedControl,
@@ -144,12 +143,8 @@ const ChartListPage = () => {
             currentKey={viewOption}
             onButtonClicked={(key) => setViewOption(key as typeof viewOption)}
           >
-            <SegmentedControl.Button key="grid">
-              <Icon type="Grid" />
-            </SegmentedControl.Button>
-            <SegmentedControl.Button key="list">
-              <Icon type="List" />
-            </SegmentedControl.Button>
+            <SegmentedControl.Button key="grid" icon="Grid" aria-label="Grid" />
+            <SegmentedControl.Button key="list" icon="List" aria-label="List" />
           </SegmentedControl>
         </div>
       </Flex>

@@ -8,7 +8,6 @@ import {
 import styled from 'styled-components/macro';
 
 import {
-  Button,
   Dropdown,
   Switch,
   Title,
@@ -20,7 +19,7 @@ import {
   DropdownProps,
 } from '@cognite/cogs.js';
 
-interface SharingDropdownProps extends DropdownProps {
+interface SharingDropdownProps extends Omit<DropdownProps, 'children'> {
   chart: {
     name: string;
     public: boolean;
@@ -28,7 +27,6 @@ interface SharingDropdownProps extends DropdownProps {
   onToggleChartAccess: ComponentProps<typeof Switch>['onChange'];
   disabled?: boolean;
   translations?: typeof defaultTranslations;
-  label?: string | undefined;
   popperOptions?: ComponentProps<typeof Dropdown>['popperOptions'];
 }
 
@@ -45,7 +43,6 @@ const SharingDropdown = ({
   disabled = false,
   onToggleChartAccess,
   translations,
-  label,
   popperOptions = {
     modifiers: [
       {
@@ -113,16 +110,7 @@ const SharingDropdown = ({
         </SharingMenu>
       }
       {...rest}
-    >
-      <StyledButton
-        icon="Share"
-        type="ghost"
-        disabled={disabled}
-        aria-label="share"
-      >
-        {label}
-      </StyledButton>
-    </StyledDropdown>
+    />
   );
 };
 
@@ -158,17 +146,7 @@ const ShareLink = styled(Input)`
 `;
 
 const StyledDropdown = styled(Dropdown)`
-  top: 0;
-  position: absolute;
-  right: 1px;
-  transform: translate(50%);
-`;
-
-const StyledButton = styled(Button)`
-  &&&:disabled {
-    border: 0;
-    background: none;
-  }
+  width: 100%;
 `;
 
 SharingDropdown.defaultTranslations = defaultTranslations;

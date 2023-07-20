@@ -25,21 +25,16 @@ import { createInternalLink } from '@charts-app/utils/link';
 import { useRecoilState } from 'recoil';
 import useScreenshot from 'use-screenshot-hook';
 
-import { Button, Dropdown, Popconfirm, toast } from '@cognite/cogs.js';
+import { Button, Dropdown, toast, Divider } from '@cognite/cogs.js';
 
-import {
-  StyledMenu,
-  HorizontalDivider,
-  StyledMenuButton,
-  StyledMenuButtonDelete,
-  StyledMenuDuplicate,
-  PopupText,
-  PopupContainer,
-} from './elements';
+import { DeleteModal } from '../DeleteModal/DeleteModal';
+
+import { StyledMenu, StyledMenuButton } from './elements';
 
 export const ChartActions = () => {
   const { t } = useTranslations(
     [
+      'Actions',
       'Chart could not be deleted!',
       'Chart could not be saved!',
       'There was a problem deleting the chart. Try again!',
@@ -66,6 +61,7 @@ export const ChartActions = () => {
   const { data: login } = useUserInfo();
   const { takeScreenshot } = useScreenshot();
   const [isCSVModalVisible, setIsCSVModalVisible] = useState(false);
+  const [isDeleteModalVisisble, setIsDeleteModalVisisble] = useState(false);
 
   const {
     mutateAsync: updateChart,
@@ -170,7 +166,7 @@ export const ChartActions = () => {
       {
         name: 'offset',
         options: {
-          offset: [-550, 10],
+          offset: [-400, 15],
         },
       },
     ],
@@ -180,53 +176,43 @@ export const ChartActions = () => {
       <Dropdown
         content={
           <StyledMenu className="downloadChartHide">
-            <StyledMenuButton type="ghost">
-              <ConnectedSharingDropdown
-                label={t.Share}
-                popperOptions={popperOptions}
-              />
-            </StyledMenuButton>
-            <StyledMenuButton type="ghost">
-              <DownloadDropdown
-                label={t['Download Chart']}
-                translations={dropdownTranslations}
-                onDownloadCalculations={handleDownloadCalculations}
-                onDownloadImage={handleDownloadImage}
-                onCsvDownload={() => setIsCSVModalVisible(true)}
-              />
-            </StyledMenuButton>
-            <StyledMenuDuplicate
+            <ConnectedSharingDropdown popperOptions={popperOptions}>
+              <StyledMenuButton
+                icon="Share"
+                type="ghost"
+                disabled={!isOwner}
+                aria-label="share"
+              >
+                {t.Share}
+              </StyledMenuButton>
+            </ConnectedSharingDropdown>
+            <DownloadDropdown
+              label={t['Download Chart']}
+              translations={dropdownTranslations}
+              onDownloadCalculations={handleDownloadCalculations}
+              onDownloadImage={handleDownloadImage}
+              onCsvDownload={() => setIsCSVModalVisible(true)}
+            />
+            <StyledMenuButton
               icon="Duplicate"
               type="ghost"
               onClick={handleDuplicateChart}
             >
               {t.Duplicate}
-            </StyledMenuDuplicate>
-            <HorizontalDivider />
-            <PopupContainer>
-              <Popconfirm
-                content={
-                  <PopupText>
-                    {t['Are you sure you want to delete this chart?']}
-                  </PopupText>
-                }
-                onConfirm={handleDeleteChart}
-                disabled={!isOwner}
-              >
-                <StyledMenuButtonDelete
-                  icon="Delete"
-                  type="ghost"
-                  onClick={() => {}}
-                >
-                  {t['Delete chart']}
-                </StyledMenuButtonDelete>
-              </Popconfirm>
-            </PopupContainer>
+            </StyledMenuButton>
+            <Divider />
+            <StyledMenuButton
+              icon="Delete"
+              type="ghost-destructive"
+              onClick={() => setIsDeleteModalVisisble(true)}
+            >
+              {t['Delete chart']}
+            </StyledMenuButton>
           </StyledMenu>
         }
       >
         <Button icon="EllipsisHorizontal" iconPlacement="right">
-          Actions
+          {t.Actions}
         </Button>
       </Dropdown>
       <CSVModal
@@ -238,6 +224,14 @@ export const ChartActions = () => {
         onDateChange={handleDateChange}
         locale={currentDateRangeLocale()}
       />
+      <DeleteModal
+        visible={isDeleteModalVisisble}
+        onOk={handleDeleteChart}
+        onCancel={() => setIsDeleteModalVisisble(false)}
+        title={t['Delete chart']}
+      >
+        {t['Are you sure you want to delete this chart?']}
+      </DeleteModal>
     </>
   );
 };

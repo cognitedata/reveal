@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Elements } from 'react-flow-renderer';
 
-import ToolboxFunctionDropdown from '@charts-app/components/ToolboxFunctionDropdown/ToolboxFunctionDropdown';
+import { ToolboxFunctionSubmenu } from '@charts-app/components/ToolboxFunctionSubmenu/ToolboxFunctionSubmenu';
 import {
   SourceCircle,
   SourceSquare,
@@ -9,7 +9,7 @@ import {
 import styled from 'styled-components/macro';
 
 import { Operation } from '@cognite/calculation-backend';
-import { Button, Dropdown, Menu } from '@cognite/cogs.js';
+import { Button, Dropdown, Menu, Flex } from '@cognite/cogs.js';
 
 import { defaultTranslations } from '../translations';
 import { getOperationsGroupedByCategory } from '../utils';
@@ -53,17 +53,19 @@ const SourceListDropdown = ({
       <Menu.Header>{t['Select wanted sources']}</Menu.Header>
       <SourcesContainer maxHeight={maxHeight}>
         {sources.map((source) => (
-          <SourceMenuItem
+          <Menu.Item
             key={source.value}
             onClick={(event) => addSourceNode(event, source)}
           >
-            {source.type === 'timeseries' ? (
-              <SourceCircle color={source?.color} fade={false} />
-            ) : (
-              <SourceSquare color={source?.color} fade={false} />
-            )}
-            {source.label}
-          </SourceMenuItem>
+            <Flex>
+              {source.type === 'timeseries' ? (
+                <SourceCircle color={source?.color} fade={false} />
+              ) : (
+                <SourceSquare color={source?.color} fade={false} />
+              )}
+              {source.label}
+            </Flex>
+          </Menu.Item>
         ))}
       </SourcesContainer>
     </SourceDropdownMenu>
@@ -90,27 +92,27 @@ const AddMenu = ({
 
   return (
     <AddDropdownMenu>
-      <MenuItemWrapper
-        onClick={() => setIsSourceMenuOpen((isOpen) => !isOpen)}
-        onKeyDown={() => setIsSourceMenuOpen((isOpen) => !isOpen)}
-        role="button"
+      <Menu.Submenu
+        visible={isSourceMenuOpen}
+        openOnHover={false}
+        onClickOutside={() => setIsSourceMenuOpen(false)}
+        content={
+          <SourceListDropdown
+            sources={sources}
+            addSourceNode={addSourceNode}
+            translations={translations}
+          />
+        }
       >
-        <Menu.Submenu
-          visible={isSourceMenuOpen}
-          onClickOutside={() => setIsSourceMenuOpen(false)}
-          content={
-            <SourceListDropdown
-              sources={sources}
-              addSourceNode={addSourceNode}
-              translations={translations}
-            />
-          }
+        <SourceItemTextWrapper
+          onClick={() => setIsSourceMenuOpen((isOpen) => !isOpen)}
+          onKeyDown={() => setIsSourceMenuOpen((isOpen) => !isOpen)}
         >
-          <SourceItemTextWrapper>{t.Source}</SourceItemTextWrapper>
-        </Menu.Submenu>
-      </MenuItemWrapper>
+          {t.Source}
+        </SourceItemTextWrapper>
+      </Menu.Submenu>
       {!!operations.length && (
-        <ToolboxFunctionDropdown
+        <ToolboxFunctionSubmenu
           categories={{
             Recent: [],
             ...getOperationsGroupedByCategory(operations, [
@@ -122,8 +124,8 @@ const AddMenu = ({
             addFunctionNode(event, func);
           }}
         >
-          <Menu.Item icon="ChevronRight">{t.Function}</Menu.Item>
-        </ToolboxFunctionDropdown>
+          <div>{t.Function}</div>
+        </ToolboxFunctionSubmenu>
       )}
       <Menu.Item onClick={addConstantNode}>{t.Constant}</Menu.Item>
       {!hasOutputNode && (
@@ -178,8 +180,6 @@ const AddButton = ({
   );
 };
 
-const MenuItemWrapper = styled.div``;
-
 const SourceItemTextWrapper = styled.div`
   height: 100%;
   width: 100%;
@@ -194,12 +194,6 @@ const AddDropdownMenu = styled(Menu)`
 const SourceDropdownMenu = styled(Menu)`
   max-width: 275px;
   padding: 5px 5px;
-`;
-
-const SourceMenuItem = styled(Menu.Item)`
-  height: 40px;
-  text-align: left;
-  word-break: break-all;
 `;
 
 const SourcesContainer = styled.div<{ maxHeight?: number }>`

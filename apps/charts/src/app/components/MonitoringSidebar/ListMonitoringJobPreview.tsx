@@ -16,7 +16,7 @@ import { format } from 'date-fns';
 import { head } from 'lodash';
 import { nanoid } from 'nanoid';
 
-import { Button, Icon, toast, Body } from '@cognite/cogs.js';
+import { Button, Icon, toast, Body, Colors } from '@cognite/cogs.js';
 import { Timeseries } from '@cognite/sdk';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 
@@ -232,7 +232,7 @@ const ListMonitoringJobPreview = ({
       }
     >
       <HeaderRow>
-        <WrappedTimeseriesName span={19}>
+        <WrappedTimeseriesName span={18}>
           <TimeseriesIcon type="Timeseries" />
           {name}
         </WrappedTimeseriesName>
@@ -245,9 +245,17 @@ const ListMonitoringJobPreview = ({
           ) : (
             <>
               {isSubscribed ? (
-                <ActionIcon icon="BellFilled" onClick={handleUnsubscribe} />
+                <ActionButton
+                  size="small"
+                  icon="BellFilled"
+                  onClick={handleUnsubscribe}
+                />
               ) : (
-                <ActionIcon icon="Bell" onClick={handleSubscribe} />
+                <ActionButton
+                  size="small"
+                  icon="Bell"
+                  onClick={handleSubscribe}
+                />
               )}
             </>
           )}
@@ -271,9 +279,11 @@ const ListMonitoringJobPreview = ({
               setIsOpen(false);
             }}
           >
-            <ActionIcon
+            <ActionButton
+              size="small"
               icon="EllipsisVertical"
               onClick={() => setIsOpen(true)}
+              style={{ marginLeft: '4px' }}
             />
           </Dropdown>
         </Col>
@@ -370,18 +380,14 @@ export const TimeseriesIcon = styled(Icon)`
   margin-right: 5px;
 `;
 
-export const ActionIcon = styled(Button)`
+export const ActionButton = styled(Button)`
   &&& {
-    position: relative;
-    top: 3px;
-    cursor: pointer;
-    background: var(--cogs-midblue-7);
-    color: var(--cogs-midblue-2);
-    display: inline-block;
-    width: 22px !important;
-    height: 22px;
-    padding: 5px;
-    border-radius: 5px;
+    color: ${Colors['decorative--blue--600']};
+    background-color: ${Colors['decorative--blue--100']};
+  }
+  i {
+    width: 12px !important;
+    height: 12px;
   }
 `;
 

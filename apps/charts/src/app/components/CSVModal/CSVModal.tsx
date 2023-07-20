@@ -16,6 +16,9 @@ import {
   StatusContainer,
   StatusText,
   StatusIcon,
+  ErrorIcon,
+  WarningIcon,
+  SuccessIcon,
 } from './elements';
 
 export const defaultTranslations = makeDefaultTranslations(
@@ -219,13 +222,7 @@ export const CSVModal = ({
           {error && (
             <Tooltip maxWidth={350} content={error.message}>
               <StatusText title={error.message}>
-                <StatusIcon
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore // todo(DEGR-2397)
-                  style={{ color: 'var(--cogs-red)' }}
-                  type="Error"
-                />{' '}
-                {t['Export failed']}
+                <ErrorIcon type="Error" /> {t['Export failed']}
               </StatusText>
             </Tooltip>
           )}
@@ -239,13 +236,7 @@ export const CSVModal = ({
               }
             >
               <StatusText>
-                <StatusIcon
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore // todo(DEGR-2397)
-                  style={{ color: 'var(--cogs-yellow)' }}
-                  type="WarningFilled"
-                />{' '}
-                {t['Nothing to export']}
+                <WarningIcon type="WarningFilled" /> {t['Nothing to export']}
               </StatusText>
             </Tooltip>
           )}
@@ -256,13 +247,7 @@ export const CSVModal = ({
           )}
           {!error && isDoneExporting && (
             <StatusText>
-              <StatusIcon
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore // todo(DEGR-2397)
-                style={{ color: 'var(--cogs-green)' }}
-                type="Checkmark"
-              />{' '}
-              {t['Export successful']}
+              <SuccessIcon type="Checkmark" /> {t['Export successful']}
             </StatusText>
           )}
         </StatusContainer>

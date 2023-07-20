@@ -61,7 +61,7 @@ const ChartViewOptions = ({
       >
         <Button
           icon="GridLines"
-          type="ghost"
+          type={showGridlines ? 'ghost-accent' : 'ghost'}
           aria-label="view"
           onClick={() =>
             handleSettingsToggle(
@@ -77,7 +77,7 @@ const ChartViewOptions = ({
       >
         <Button
           icon="Timeseries"
-          type="ghost"
+          type={showMinMax ? 'ghost-accent' : 'ghost'}
           aria-label="view"
           onClick={() =>
             handleSettingsToggle(CHART_SETTINGS_KEYS.SHOW_MIN_MAX, !showMinMax)
@@ -85,7 +85,7 @@ const ChartViewOptions = ({
           style={{ marginLeft: 4 }}
         />
       </Tooltip>
-      <Tooltip content={t['Y axes']}>
+      <Tooltip content={t['Y axes']} position="top">
         <Dropdown
           content={
             <Menu>
@@ -93,29 +93,28 @@ const ChartViewOptions = ({
                 <DropdownTitle>{t['Y axis']}</DropdownTitle>
                 <Switch
                   name="toggleYAxis"
-                  value={showYAxis}
+                  checked={showYAxis}
                   onChange={() =>
                     handleSettingsToggle(
                       CHART_SETTINGS_KEYS.SHOW_Y_AXIS,
                       !showYAxis
                     )
                   }
+                  label={t['Show Y axes']}
                   style={{ marginBottom: 15 }}
-                >
-                  {t['Show Y axes']}
-                </Switch>
+                />
+
                 <Switch
                   name="toggleUnitMerging"
-                  value={mergeUnits}
+                  checked={mergeUnits}
                   onChange={() =>
                     handleSettingsToggle(
                       CHART_SETTINGS_KEYS.MERGE_UNITS,
                       !mergeUnits
                     )
                   }
-                >
-                  {t['Merge units']}
-                </Switch>
+                  label={t['Merge units']}
+                />
               </DropdownWrapper>
             </Menu>
           }
@@ -139,7 +138,7 @@ const ChartViewOptions = ({
       >
         <Button
           icon="StackedChart"
-          type="ghost"
+          type={stackedMode ? 'ghost-accent' : 'ghost'}
           onClick={() => setStackedMode(!stackedMode)}
           aria-label="view"
           style={{ marginLeft: 4 }}

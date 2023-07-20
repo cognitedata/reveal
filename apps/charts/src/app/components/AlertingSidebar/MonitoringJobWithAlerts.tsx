@@ -8,16 +8,13 @@ import { trackUsage } from '@charts-app/services/metrics';
 import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import { head } from 'lodash';
 
-import { Col, Icon, Menu, Modal, Row, Chip } from '@cognite/cogs.js';
+import { Col, Icon, Menu, Modal, Row, Dropdown } from '@cognite/cogs.js';
 import { Timeseries } from '@cognite/sdk';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 
-import {
-  TimeseriesContainer,
-  DropdownMenuItem,
-  ModalBody,
-  DropdownActionAlerts,
-} from './elements';
+import { ActionButton } from '../MonitoringSidebar/ListMonitoringJobPreview';
+
+import { TimeseriesContainer, ModalBody } from './elements';
 import { useListAlerts } from './hooks';
 
 const defaultTranslations = makeDefaultTranslations(
@@ -73,7 +70,10 @@ const MonitoringJobWithAlerts = ({ job, translations }: Props) => {
     false
   );
 
-  const handleAddSourceToChart = () => {
+  const handleAddSourceToChart = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    event.stopPropagation();
     if (timeseriesDef) {
       addTimeseries(timeseriesDef[0]);
       trackUsage('Sidebar.Alerting.AddSource', {
@@ -108,37 +108,42 @@ const MonitoringJobWithAlerts = ({ job, translations }: Props) => {
             </div>
           </Col>
           <Col span={3}>
-            <DropdownActionAlerts
+            <Dropdown
               visible={isMenuOpen}
               onClickOutside={onCloseDropdown}
               content={
                 <div>
                   <Menu onClick={onCloseDropdown} style={{ width: '15rem' }}>
                     {!chartHasTimeseries && (
-                      <DropdownMenuItem
+                      <Menu.Item
                         key="mt-row-action-add-source"
                         onClick={handleAddSourceToChart}
+                        icon="Plus"
+                        iconPlacement="left"
                       >
-                        <Icon type="Plus" />
                         {t['Add source to chart']}
-                      </DropdownMenuItem>
+                      </Menu.Item>
                     )}
-                    <DropdownMenuItem
+                    <Menu.Item
                       key="mt-row-action-mark-all-resolved"
-                      onClick={() => setIsConfirmModalOpen(true)}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        setIsConfirmModalOpen(true);
+                      }}
+                      icon="CheckmarkAlternative"
+                      iconPlacement="left"
                     >
-                      <Icon type="CheckmarkAlternative" />
                       {t['Mark all alerts as resolved']}
-                    </DropdownMenuItem>
+                    </Menu.Item>
                   </Menu>
                 </div>
               }
             >
-              <Chip
+              <ActionButton
                 icon="EllipsisVertical"
-                type="neutral"
                 size="small"
-                onClick={() => {
+                onClick={(event) => {
+                  event.stopPropagation();
                   if (isMenuOpen) {
                     onCloseDropdown();
                   } else {
@@ -146,7 +151,7 @@ const MonitoringJobWithAlerts = ({ job, translations }: Props) => {
                   }
                 }}
               />
-            </DropdownActionAlerts>
+            </Dropdown>
           </Col>
         </Row>
       </TimeseriesContainer>

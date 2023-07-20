@@ -14,16 +14,7 @@ export const HorizontalDivider = styled(Flex)`
 
 export const StyledMenuButton = styled(Button)`
   width: 100%;
-  justify-content: flex-start;
-`;
-
-export const StyledMenuButtonDelete = styled(StyledMenuButton)`
-  color: var(--cogs-midorange-1);
-  padding-left: 24px !important;
-`;
-
-export const StyledMenuDuplicate = styled(StyledMenuButton)`
-  padding-left: 24px !important;
+  justify-content: flex-start !important;
 `;
 
 export const PopupText = styled.span`

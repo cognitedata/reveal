@@ -1,4 +1,4 @@
-import { ComponentProps } from 'react';
+import { ComponentProps, PropsWithChildren } from 'react';
 
 import { useComponentTranslations } from '@charts-app/hooks/translations';
 import { useIsChartOwner } from '@charts-app/hooks/user';
@@ -11,19 +11,24 @@ import { Dropdown } from '@cognite/cogs.js';
 import SharingDropdown from './SharingDropdown';
 
 type Props = {
-  label?: string | undefined;
   popperOptions?: ComponentProps<typeof Dropdown>['popperOptions'];
+  children?: ComponentProps<typeof Dropdown>['children'];
 };
 
-const ConnectedSharingDropdown = ({ label, popperOptions }: Props) => {
+const ConnectedSharingDropdown = ({
+  popperOptions,
+  ...rest
+}: PropsWithChildren<Props>) => {
   const [chart, setChart] = useRecoilState(chartAtom);
   const isOwner = useIsChartOwner(chart);
   if (!chart) throw new Error('No Chart Present!');
 
-  const handleToggleChartAccess = (newPublic: boolean) => {
+  const handleToggleChartAccess = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setChart((oldChart) => ({
       ...oldChart!,
-      public: newPublic,
+      public: event.target.checked,
     }));
 
     trackUsage('ChartView.ChangeChartAccess', {
@@ -37,8 +42,8 @@ const ConnectedSharingDropdown = ({ label, popperOptions }: Props) => {
       onToggleChartAccess={handleToggleChartAccess}
       disabled={!isOwner}
       translations={useComponentTranslations(SharingDropdown)}
-      label={label}
       popperOptions={popperOptions}
+      {...rest}
     />
   );
 };
