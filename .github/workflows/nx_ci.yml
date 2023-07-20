@@ -196,7 +196,7 @@ jobs:
     name: Build
     runs-on: ubuntu-20.04
     needs: [setup, build-libs]
-    if: ${{ needs.build-libs.result != 'failure' && needs.build-libs.result != 'cancelled' && needs.setup.outputs.affected-apps != '' && toJson(fromJson(needs.setup.outputs.affected-apps)) != '[]' }}
+    if: ${{ !cancelled() && !failure() && needs.build-libs.result != 'failure' && needs.build-libs.result != 'cancelled' && needs.setup.outputs.affected-apps != '' && toJson(fromJson(needs.setup.outputs.affected-apps)) != '[]' }}
     strategy:
       matrix:
         project: ${{ fromJson(needs.setup.outputs.affected-apps)  }}
@@ -223,7 +223,7 @@ jobs:
     name: 'Build shell apps'
     runs-on: ubuntu-20.04
     needs: [setup, build]
-    if: ${{ needs.build.result != 'failure' && needs.build.result != 'cancelled' && needs.setup.outputs.affected-shell-apps != '' && toJson(fromJson(needs.setup.outputs.affected-shell-apps)) != '[]' }}
+    if: ${{ !cancelled() && !failure() && needs.setup.outputs.affected-shell-apps != '' && toJson(fromJson(needs.setup.outputs.affected-shell-apps)) != '[]' }}
     strategy:
       matrix:
         project: ${{ fromJson(needs.setup.outputs.affected-shell-apps)  }}
