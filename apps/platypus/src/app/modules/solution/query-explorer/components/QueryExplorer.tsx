@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import { useExplorerPlugin } from '@graphiql/plugin-explorer';
+import { explorerPlugin } from '@graphiql/plugin-explorer';
 import { StorageProviderType } from '@platypus/platypus-core';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { TOKENS } from '@platypus-app/di';
@@ -15,6 +15,8 @@ import {
   IntrospectionQuery,
 } from 'graphql';
 
+import { Checkbox, Icon } from '@cognite/cogs.js';
+
 import { GraphiqlStorageProvider } from '../utils/graphiqlStorageProvider';
 import graphQlQueryFetcher from '../utils/graphqlQueryFetcher';
 
@@ -28,6 +30,13 @@ type QueryExplorerType = {
   defaultVariables?: any;
   onQueryChange?: (newVar: { query: string; variables?: any }) => void;
 };
+const explorer = explorerPlugin({
+  showAttribution: false,
+  arrowClosed: <Icon type="ChevronDown" />,
+  arrowOpen: <Icon type="ChevronUp" />,
+  checkboxChecked: <Checkbox checked />,
+  checkboxUnchecked: <Checkbox checked={false} />,
+});
 
 export const QueryExplorer = ({
   dataModelExternalId,
@@ -59,13 +68,6 @@ export const QueryExplorer = ({
     JSON.stringify(defaultVariables || {}, null, 2)
   );
   const { track } = useMixpanel();
-
-  const explorerPlugin = useExplorerPlugin({
-    schema: gqlSchema,
-    query: explorerQuery || '',
-    onEdit: handleEditQuery,
-    showAttribution: false,
-  });
 
   useEffect(() => {
     if (onQueryChange && explorerQuery) {
@@ -139,7 +141,7 @@ export const QueryExplorer = ({
         onEditVariables={handleEditVariables}
         query={explorerQuery}
         schema={gqlSchema}
-        plugins={[explorerPlugin]}
+        plugins={[explorer]}
         isHeadersEditorEnabled={false}
         variables={explorerVariables}
         storage={graphiqlStorageApi}

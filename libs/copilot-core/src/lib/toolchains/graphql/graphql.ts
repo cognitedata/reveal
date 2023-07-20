@@ -7,7 +7,7 @@ import {
   datamodelQueryFilterPrompt,
   datamodelQueryTypePrompt,
   datamodelRelevantPropertiesPrompt,
-  datamodelRelevantTypePrompt,
+  datamodelRelevantTypeMultiModelsPrompt,
 } from '@cognite/llm-hub';
 
 import {
@@ -65,42 +65,70 @@ export class GraphQlChain extends CogniteBaseChain {
     {
       name: 'process-graphql',
       loadingMessage: 'Finding data...',
-      run: async ({ message, messages, llm, sdk }) => {
-        const details = getLatestDataModelMessage(messages.current || []);
-        if (!details) {
+      run: async ({ message, messages, sdk }) => {
+        const selectedDataModels = getLatestDataModelMessage(
+          messages.current || []
+        );
+        if (!selectedDataModels) {
           throw new Error(`Data model not speified`);
         }
-        const { space, dataModel, version } = details;
-        const versions = await new FdmMixerApiService(
+        const allDataModels = await new FdmMixerApiService(
           sdk
-        ).getDataModelVersionsById(space, dataModel);
-        const dmVersion = versions.find((el) => el.version === version);
-        if (!dmVersion) {
-          throw new Error(
-            `Data model ${dataModel} version ${version} not found in space ${space}`
-          );
-        }
-        if (!dmVersion?.graphQlDml) {
-          throw new Error('Data model is empty');
-        }
-        const dataModelTypes = new GraphQlUtilsService().parseSchema(
-          dmVersion?.graphQlDml
+        ).listDataModelVersions();
+
+        const dataModels = allDataModels.filter((dataModel) =>
+          selectedDataModels.some(
+            (el) =>
+              // ignoring `version` for now
+              el.dataModel === dataModel.externalId &&
+              el.space === dataModel.space
+          )
         );
+        let typeNames = '';
+        for (const dataModel of dataModels) {
+          if (!dataModel.graphQlDml) {
+            continue;
+          }
+          const dataModelTypes = new GraphQlUtilsService().parseSchema(
+            dataModel.graphQlDml
+          );
+          // Chain 1: Extract relevant types
+          typeNames += `\n\n[${dataModel.externalId}_${dataModel.space}]\n`;
+          typeNames += `\`\`\`graphql\n${dataModelTypes.types
+            .map((el) => el.name)
+            .join('\n')}\n\`\`\``;
+        }
 
         try {
-          // Chain 1: Extract relevant types
-          const typeNames = dataModelTypes.types.map((el) => el.name);
+          const [{ relevantTypes, dataModel: dataModelName }] =
+            await callPromptChain(
+              this,
+              datamodelRelevantTypeMultiModelsPrompt,
+              [
+                {
+                  question: message,
+                  types: typeNames,
+                },
+              ]
+            ).then(
+              safeConvertToJson<{ relevantTypes: string[]; dataModel: string }>
+            );
 
-          const [{ relevantTypes }] = await callPromptChain(
-            this,
-            datamodelRelevantTypePrompt,
-            [
-              {
-                question: message,
-                types: typeNames,
-              },
-            ]
-          ).then(safeConvertToJson<{ relevantTypes: string[] }>);
+          const selectedDataModel =
+            dataModels.find(
+              (dataModel) =>
+                `${dataModel.externalId}_${dataModel.space}` === dataModelName
+            ) || dataModels[0];
+
+          if (!selectedDataModel || !selectedDataModel.graphQlDml) {
+            throw new Error('No data model selected or invalid data model.');
+          }
+
+          const { externalId: dataModel, version, space } = selectedDataModel;
+
+          const dataModelTypes = new GraphQlUtilsService().parseSchema(
+            selectedDataModel.graphQlDml
+          );
 
           const filteredTypes = relevantTypes.filter((el) =>
             typeNames.includes(el)
@@ -322,6 +350,11 @@ export class GraphQlChain extends CogniteBaseChain {
           sendFromCopilotEvent('GQL_QUERY', {
             query: query,
             variables,
+            dataModel: {
+              externalId: dataModel,
+              version,
+              space,
+            },
           });
 
           return {
@@ -351,35 +384,25 @@ export class GraphQlChain extends CogniteBaseChain {
 const getLatestDataModelMessage = (messages: CopilotMessage[] = []) => {
   const dataModelSelectionMsg = [...messages]
     .reverse()
-    .find((el) => el.type === 'data-model');
-  if (
-    dataModelSelectionMsg &&
-    dataModelSelectionMsg.type === 'data-model' &&
-    !!dataModelSelectionMsg.space &&
-    !!dataModelSelectionMsg.dataModel &&
-    !!dataModelSelectionMsg.version &&
-    !dataModelSelectionMsg.pending
-  ) {
-    return {
-      space: dataModelSelectionMsg.space,
-      version: dataModelSelectionMsg.version,
-      dataModel: dataModelSelectionMsg.dataModel,
-    };
+    .find((el) => el.type === 'data-models');
+  if (dataModelSelectionMsg && dataModelSelectionMsg.type === 'data-models') {
+    return dataModelSelectionMsg.dataModels;
   }
-  return undefined;
+  return [];
 };
 
 const dataModelStage: ChainStage = {
   name: 'data-model',
   loadingMessage: 'Confirming data model...',
   run: async ({ messages }) => {
-    if (getLatestDataModelMessage(messages.current || [])) {
+    if (getLatestDataModelMessage(messages.current || []).length > 0) {
       return { abort: false, data: {} };
     }
     sendToCopilotEvent('NEW_MESSAGES', [
       {
         source: 'bot',
-        type: 'data-model',
+        type: 'data-models',
+        dataModels: [],
         content: 'Which data model are you referring to?',
         pending: true,
         chain: 'GraphQlChain',
@@ -392,10 +415,8 @@ const dataModelStage: ChainStage = {
         (data) => {
           if (
             data.length === 1 &&
-            data[0].type === 'data-model' &&
-            !!data[0].space &&
-            !!data[0].dataModel &&
-            !!data[0].version &&
+            data[0].type === 'data-models' &&
+            data[0].dataModels.length > 0 &&
             !data[0].pending
           ) {
             removeListener();

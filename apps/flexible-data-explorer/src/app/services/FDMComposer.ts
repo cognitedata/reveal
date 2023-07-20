@@ -75,14 +75,19 @@ export class FDMComposer {
     }, {} as Record<string, number>);
   }
 
-  public aiSearch(query: string, variables: Record<string, unknown>) {
-    const promises = (this.clients || []).map(async (client) => {
-      const results = await client.aiSearch(query, variables);
-
-      return results;
-    });
-
-    return Promise.all(promises);
+  public aiSearch(
+    dataModel?: { externalId: string; version: string; space: string },
+    query?: string,
+    variables: Record<string, unknown> = {}
+  ) {
+    if (!dataModel || !query) {
+      return Promise.resolve([]);
+    }
+    return this.getClient(
+      dataModel.externalId,
+      dataModel.version,
+      dataModel.space
+    )?.aiSearch(query, variables);
   }
 
   public async getInstancesById(header: {

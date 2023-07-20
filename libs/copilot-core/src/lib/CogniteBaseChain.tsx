@@ -50,7 +50,7 @@ export abstract class CogniteBaseChain extends BaseChain {
   }
 
   get inputKeys() {
-    return ['history', 'input'];
+    return [];
   }
 
   get outputKeys(): string[] {
@@ -143,7 +143,7 @@ export const callPromptChain = async <
     timeout?: number;
   } = {
     maxRetries: 3,
-    timeout: 3000,
+    timeout: 15000,
   }
 ) => {
   const newChain = new LLMChain({
@@ -152,7 +152,7 @@ export const callPromptChain = async <
       template: prompt.template,
       inputVariables: prompt.input_variables as unknown as string[],
     }),
-    memory: chain.memory,
+    // memory: chain.memory,
     outputKey: 'output',
     verbose: true,
   });
@@ -163,9 +163,10 @@ export const callPromptChain = async <
     options.maxRetries,
     options.timeout
   )) as {
-    output: string;
+    output?: string;
+    text: string;
   }[];
-  return outputs.map((el) => el.output);
+  return outputs.map((el) => el.output || el.text);
 };
 
 export const safeConvertToJson = <T,>(outputs: string[]): T[] => {
@@ -173,7 +174,7 @@ export const safeConvertToJson = <T,>(outputs: string[]): T[] => {
     try {
       return JSON.parse(output) as T;
     } catch (e) {
-      return jsonrepair(output.replaceAll('\n', ' ')) as T;
+      return JSON.parse(jsonrepair(output.replaceAll('\n', ' '))) as T;
     }
   });
 };
@@ -218,7 +219,7 @@ export async function parallelGPTCalls(
         console.log(`Retrying call ${index}...`);
         await executeCall(index); // Retry the call
       } else {
-        results[index] = { text: '' }; // Max retries reached or timed out, return empty result
+        results[index] = { output: '' }; // Max retries reached or timed out, return empty result
       }
     }
   };

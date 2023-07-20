@@ -23,6 +23,7 @@ import {
 } from '../../../lib/types';
 import {
   addToCopilotEventListener,
+  cachedListeners,
   sendFromCopilotEvent,
   sendToCopilotEvent,
 } from '../../../lib/utils';
@@ -161,12 +162,20 @@ export const ChatUI = ({
             }
             const lastMessage = newMessages[newMessages.length - 1];
             if (lastMessage.source === 'user') {
+              let message = lastMessage.content;
+              if (lastMessage.context) {
+                if (lastMessage.context.includes('Explorer')) {
+                  message = `${lastMessage.content} ${
+                    lastMessage.context ? ' via graphql' : ''
+                  }`;
+                }
+              }
               bot.wait();
               processMessage(
                 feature,
                 conversationChain,
                 sdk,
-                lastMessage.content,
+                message,
                 messages.current
               ).then((shouldPrompt) => {
                 if (shouldPrompt) {
@@ -179,6 +188,9 @@ export const ChatUI = ({
       );
       return () => {
         removeListener();
+        for (const listener of cachedListeners) {
+          window.removeEventListener(listener.event, listener.listener);
+        }
       };
     }
     return noop;
@@ -221,6 +233,7 @@ export const ChatUI = ({
         }))
       );
       const memory = new BufferMemory({
+        inputKey: 'input',
         chatHistory: new ChatMessageHistory(
           cachedMessages?.map((el) =>
             el.source === 'user'

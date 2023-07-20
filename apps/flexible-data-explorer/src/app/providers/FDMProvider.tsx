@@ -29,23 +29,6 @@ export const FDMProvider: FC<PropsWithChildren> = ({ children }) => {
     return new FDMComposer(fdmClients);
   }, [sdk, data]);
 
-  // useEffect(() => {
-  //   if (dataModel && space && version) {
-  //     // TODO: fix code to send correct event name and data to copilot
-  //     sendToCopilotEvent('NEW_MESSAGES', [
-  //       {
-  //         type: 'data-model',
-  //         space,
-  //         version,
-  //         dataModel,
-  //         content: 'I want to search on this data model',
-  //         source: 'bot',
-  //       },
-  //     ]);
-  //     // sendToCopilotEvent('GET_CODE', selectedDataModel?.dataModel);
-  //   }
-  // }, [dataModel, space, version]);
-
   if (!dataModels) {
     return <DataModelSelector />;
   }

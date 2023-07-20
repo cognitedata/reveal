@@ -90,4 +90,13 @@ export const QueryExplorerContainer = styled.div`
       }
     }
   }
+
+  div[data-arg-name] > span {
+    display: flex;
+    gap: 4px;
+  }
+  span[data-field-name] {
+    display: flex;
+    gap: 4px;
+  }
 `;
