@@ -51,7 +51,7 @@ const PipelineActionsMenu = (props: PipelineActionsMenuProps) => {
         {props.latestRun && (
           <>
             <Menu.Item
-              icon={'Play'}
+              icon="Play"
               iconPlacement="left"
               onClick={() => handleReRunPipeline(props.pipeline.id)}
               disabled={running}
