@@ -1,21 +1,15 @@
-import React, { useEffect } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import { Provider } from 'react-redux';
 import { Route, Routes, BrowserRouter } from 'react-router-dom';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import debounce from 'lodash/debounce';
 
-import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
-import {
-  AuthWrapper,
-  SubAppWrapper,
-  getProject,
-  getEnv,
-} from '@cognite/cdf-utilities';
-import { Loader } from '@cognite/cogs.js';
+import { getProject, isUsingUnifiedSignin } from '@cognite/cdf-utilities';
+import { Icon } from '@cognite/cogs.js';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
-import { SDKProvider } from '@cognite/sdk-provider';
 
+import { AuthContainer } from './AuthContainer';
 import { AppStateProvider } from './context';
 import { setItemInStorage } from './hooks';
 import RootApp from './pages/App';
@@ -26,7 +20,6 @@ import { AntStyles, GlobalStyles } from './styles';
 
 const App = () => {
   const project = getProject();
-  const env = getEnv();
   const LS_KEY = `${LS_KEY_PREFIX}_${project}`;
 
   const updateLocalStorage = debounce(() => {
@@ -60,29 +53,26 @@ const App = () => {
     // If styles are broken please check: .rescripts#PrefixWrap(
     <GlobalStyles>
       <AntStyles>
-        <AuthWrapper
-          loadingScreen={<Loader darkMode={false} />}
-          login={() => loginAndAuthIfNeeded(project, env)}
-        >
-          <SDKProvider sdk={sdk}>
-            <QueryClientProvider client={queryClient}>
+        <QueryClientProvider client={queryClient}>
+          <AuthContainer>
+            <Suspense fallback={<Icon type="Loader" />}>
               <AppStateProvider>
                 <Provider store={store}>
-                  <SubAppWrapper title="Interactive Engineering Diagrams">
-                    <BrowserRouter>
-                      <Routes>
-                        <Route
-                          path={`/:project/${root}/*`}
-                          element={<RootApp />}
-                        />
-                      </Routes>
-                    </BrowserRouter>
-                  </SubAppWrapper>
+                  <BrowserRouter
+                    basename={isUsingUnifiedSignin() ? '/cdf' : ''}
+                  >
+                    <Routes>
+                      <Route
+                        path={`/:project/${root}/*`}
+                        element={<RootApp />}
+                      />
+                    </Routes>
+                  </BrowserRouter>
                 </Provider>
               </AppStateProvider>
-            </QueryClientProvider>
-          </SDKProvider>
-        </AuthWrapper>
+            </Suspense>
+          </AuthContainer>
+        </QueryClientProvider>
       </AntStyles>
     </GlobalStyles>
   );

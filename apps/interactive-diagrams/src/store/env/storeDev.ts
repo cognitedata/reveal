@@ -14,6 +14,7 @@ export function createStore(): any {
     devTools: true,
   });
 
+  // TODO: commenting this might help if not working in localhost
   if ((module as any).hot) {
     // Enable Webpack hot module replacement for reducers
     (module as any).hot.accept(
