@@ -30,10 +30,7 @@ jobs:
         id: cache-node-modules
         uses: actions/cache@v3
         with:
-          path: |
-            node_modules/*
-            !node_modules/.cache/nx
-            ~/.cache/Cypress
+          path: node_modules
           key: cache-node-modules-${{ hashFiles('yarn.lock') }}
           restore-keys: cache-node-modules-
 
@@ -124,9 +121,7 @@ jobs:
       - name: Cache node modules
         uses: actions/cache@v3
         with:
-          path: |
-            node_modules
-            ~/.cache/Cypress
+          path: node_modules
           key: cache-node-modules-${{ hashFiles('yarn.lock') }}
 
       - run: git fetch --no-tags --prune --depth=1 origin ${{ github.base_ref }}
@@ -155,9 +150,7 @@ jobs:
       - name: Cache node modules
         uses: actions/cache@v3
         with:
-          path: |
-            node_modules
-            ~/.cache/Cypress
+          path: node_modules
           key: cache-node-modules-${{ hashFiles('yarn.lock') }}
 
       - run: git fetch --no-tags --prune --depth=1 origin ${{ github.base_ref }}
@@ -186,9 +179,7 @@ jobs:
       - name: Cache node modules
         uses: actions/cache@v3
         with:
-          path: |
-            node_modules
-            ~/.cache/Cypress
+          path: node_modules
           key: cache-node-modules-${{ hashFiles('yarn.lock') }}
 
       - run: git fetch --no-tags --prune --depth=1 origin ${{ github.base_ref }}
@@ -225,9 +216,7 @@ jobs:
       - name: Cache node modules
         uses: actions/cache@v3
         with:
-          path: |
-            node_modules
-            ~/.cache/Cypress
+          path: node_modules
           key: cache-node-modules-${{ hashFiles('yarn.lock') }}
 
       - name: Build
