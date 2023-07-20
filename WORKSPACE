@@ -11,9 +11,13 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_file"
 
 http_archive(
     name = "build_bazel_rules_nodejs",
-    sha256 = "6f15d75f9e99c19d9291ff8e64e4eb594a6b7d25517760a75ad3621a7a48c2df",
-    urls = ["https://github.com/bazelbuild/rules_nodejs/releases/download/4.7.0/rules_nodejs-4.7.0.tar.gz"],
+    sha256 = "5aae76dced38f784b58d9776e4ab12278bc156a9ed2b1d9fcd3e39921dc88fda",
+    urls = ["https://github.com/bazelbuild/rules_nodejs/releases/download/5.7.1/rules_nodejs-5.7.1.tar.gz"],
 )
+
+load("@build_bazel_rules_nodejs//:repositories.bzl", "build_bazel_rules_nodejs_dependencies")
+
+build_bazel_rules_nodejs_dependencies()
 
 load("@build_bazel_rules_nodejs//:index.bzl", "node_repositories", "yarn_install")
 
@@ -28,19 +32,26 @@ node_repositories(
 # It also extracts any Bazel rules distributed in an npm package.
 yarn_install(
     name = "npm",
+    data = [
+        "//:patches/@cognite+cogs.js+7.8.3.patch",
+        "//:patches/@storybook+core-server+6.5.10.patch",
+        "//:patches/react-virtualized+9.22.3.patch",
+        "//:patches/resize-observer-polyfill+1.5.1.patch",
+    ],
+    exports_directories_only = False,
     package_json = "//:package.json",
     # firebase-updater-* packages require explicit listing of transitive dependencies
     # which we don't want to install
     strict_visibility = False,
+    symlink_node_modules = True,
     yarn_lock = "//:yarn.lock",
 )
 
 # Install the Docker rules for Blazier required dependencies
 http_archive(
     name = "io_bazel_rules_docker",
-    sha256 = "92779d3445e7bdc79b961030b996cb0c91820ade7ffa7edca69273f404b085d5",
-    strip_prefix = "rules_docker-0.20.0",
-    urls = ["https://github.com/bazelbuild/rules_docker/releases/download/v0.20.0/rules_docker-v0.20.0.tar.gz"],
+    sha256 = "b1e80761a8a8243d03ebca8845e9cc1ba6c82ce7c5179ce2b295cd36f7e394bf",
+    urls = ["https://github.com/bazelbuild/rules_docker/releases/download/v0.25.0/rules_docker-v0.25.0.tar.gz"],
 )
 
 load(
@@ -92,9 +103,9 @@ cognitedata_bazel_tools_deps()
 
 http_archive(
     name = "com_cognitedata_bazel_snapshots",
-    sha256 = "f2f8aea4ce183a2b5cd48962c272575be28859cedbf2f987bfe456ed2c251e7f",
+    sha256 = "896ccc4939d05305cca0ed3b106411f36d4f9c1a19a41fed53f0fcaeba47f8d5",
     urls = [
-        "https://github.com/cognitedata/bazel-snapshots/releases/download/0.2.0/snapshots-0.2.0.tar",
+        "https://github.com/cognitedata/bazel-snapshots/releases/download/0.3.0/snapshots-0.3.0.tar",
     ],
 )
 
@@ -111,5 +122,6 @@ load("@build_bazel_rules_nodejs//toolchains/cypress:cypress_repositories.bzl", "
 # The name you pass here names the external repository you can load cypress_web_test from
 cypress_repositories(
     name = "cypress",
-    version = "9.2.1",
+    linux_sha256 = "0a8f6617add18bf9ea3c77a4e9d01aaa66ccd1f7572995216fb9e16196a3c7fd",
+    version = "9.7.0",
 )

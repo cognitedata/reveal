@@ -8,6 +8,9 @@ def _build_sed_impl(ctx):
         outputs = [out_file],
         arguments = [ctx.files.src_dir[0].path, out_file.path, ctx.attr.app],
         executable = ctx.executable.binary,
+        execution_requirements = {
+            "no-cache": "1",
+        },
     )
 
     return DefaultInfo(files = depset([out_file]))

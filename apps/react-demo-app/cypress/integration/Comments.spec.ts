@@ -1,4 +1,4 @@
-import login from './login.test';
+import { login } from '../support';
 
 beforeEach(login);
 

@@ -1,8 +1,9 @@
 import fs from 'fs';
+import { rm } from 'fs/promises';
 
 import express from 'express';
 
-module.exports = (_, config) => {
+module.exports = (on, config) => {
   const port = process.env.PORT;
   const pathToBuild = './apps/simconfig/build_bazel';
   const html = fs.readFileSync(`${pathToBuild}/index.html`);
@@ -17,6 +18,16 @@ module.exports = (_, config) => {
   app.use(redirectUnmatched);
 
   app.listen(port);
+
+  const filesToDelete = [];
+  on('after:spec', (spec, results) => {
+    if (results.stats.failures === 0 && results.video) {
+      filesToDelete.push(results.video);
+    }
+  });
+  on('after:run', async () => {
+    await Promise.all(filesToDelete.map((videoFile) => rm(videoFile)));
+  });
 
   return {
     ...config,

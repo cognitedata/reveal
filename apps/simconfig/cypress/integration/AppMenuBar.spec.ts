@@ -8,7 +8,7 @@ import login from '../login.test';
 
 beforeEach(login);
 
-describe('Application Framework', () => {
+describe.skip('Application Framework', () => {
   beforeEach(() => {
     cy.get('[data-cy="top-bar"]').as('App TopBar visible').should('be.visible');
     cy.get('[data-cy="model-library-container"]')

@@ -75,6 +75,7 @@ generate_package_json_helpers(
     out_dir = "build",
     package_json = "//:package.json",
     src_dir = "src",
+    tags = ["manual"],
     workspace = "@npm",
 )
 
@@ -245,6 +246,7 @@ write_file(
     name = "write_chdir_worspace_script",
     out = "chdir-workspace.js",
     content = ["process.chdir(require('path').join(process.env.BUILD_WORKSPACE_DIRECTORY, '" + package_name() + "'));"],
+    tags = ["manual"],
 )
 
 _RUNTIME_DEPS = [
@@ -295,6 +297,7 @@ jest(
         # ibazel send EOF to stdin by default and `react-scripts start` will stop when getting EOF in stdin.
         # So use this to prevent EOF.
         "ibazel_notify_changes",
+        "manual",
     ],
 )
 
@@ -329,6 +332,7 @@ history_server(
         "$(rootpath :build_sed)",
     ],
     data = [":build_sed"],
+    tags = ["manual"],
 )
 
 ### Storybook ###
@@ -352,6 +356,7 @@ start_storybook(
         # ibazel send EOF to stdin by default and target will stop when getting EOF in stdin.
         # So use this to prevent EOF.
         "ibazel_notify_changes",
+        "manual",
     ],
 )
 

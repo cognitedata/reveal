@@ -41,17 +41,15 @@ def prettier_test(name, data, prettier_config, **kwargs):
     )
 
 def _prettier_config_impl(ctx):
-    transitive = []
+    runfiles = ctx.runfiles()
     for dep in ctx.attr.deps:
         if DefaultInfo in dep:
-            for file in dep[DefaultInfo].files.to_list():
-                transitive.append(file)
-            for file in dep[DefaultInfo].data_runfiles.files.to_list():
-                transitive.append(file)
+            runfiles = runfiles.merge(ctx.runfiles(transitive_files = dep[DefaultInfo].files))
+            runfiles = runfiles.merge(ctx.runfiles(transitive_files = dep[DefaultInfo].data_runfiles.files))
     files = depset([ctx.file.src])
 
     return [
-        DefaultInfo(files = files, runfiles = ctx.runfiles(transitive)),
+        DefaultInfo(files = files, runfiles = runfiles),
     ]
 
 prettier_config = rule(

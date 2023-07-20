@@ -24,7 +24,10 @@ function getLocalPackages(returnName) {
 module.exports = (appName, override) => {
   return {
     framework: '@storybook/react',
-    core: { builder: '@storybook/builder-vite' },
+    core: {
+      builder: '@storybook/builder-vite',
+      disableTelemetry: true,
+    },
     stories: ['../src/**/*.stories.tsx'],
     addons: [
       '@storybook/addon-links',

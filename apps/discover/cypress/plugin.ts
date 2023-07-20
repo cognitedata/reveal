@@ -1,4 +1,5 @@
 import { readFileSync } from 'fs';
+import { rm } from 'fs/promises';
 import path from 'path';
 
 import webpackPreprocessor from '@cypress/webpack-preprocessor';
@@ -68,8 +69,15 @@ module.exports = async (on, config) => {
     }
   );
 
+  const filesToDelete = [];
+  on('after:spec', (spec, results) => {
+    if (results.stats.failures === 0 && results.video) {
+      filesToDelete.push(results.video);
+    }
+  });
   on('after:run', async (results) => {
     await deleteE2EUsers(results.config);
+    await Promise.all(filesToDelete.map((videoFile) => rm(videoFile)));
   });
 
   console.log('Running tests with userID: ', uniqueId);

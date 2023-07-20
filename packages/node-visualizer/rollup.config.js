@@ -2,7 +2,6 @@ import typescript from 'rollup-plugin-typescript2';
 import json from 'rollup-plugin-json';
 import images from '@rollup/plugin-image';
 import alias from '@rollup/plugin-alias';
-import resolve from '@rollup/plugin-node-resolve';
 
 import pkg from './package.json';
 
@@ -42,7 +41,6 @@ export default {
         images: `${__dirname}/src/images`,
       },
     }),
-    resolve(),
     typescript({
       typescript: require('typescript'),
     }),

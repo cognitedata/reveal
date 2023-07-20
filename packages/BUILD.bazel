@@ -19,6 +19,22 @@ copy_to_bin(
     visibility = ["//visibility:public"],
 )
 
+copy_to_bin(
+    name = "jest-config",
+    srcs = [
+        "jest.config.js",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+copy_to_bin(
+    name = "jest-react-config",
+    srcs = [
+        "jest.react.config.js",
+    ],
+    visibility = ["//visibility:public"],
+)
+
 # Base ESLint config
 eslint_config(
     name = "eslint_config",

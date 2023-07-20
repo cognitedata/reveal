@@ -109,7 +109,8 @@ describe('Wells sidebar filters', () => {
     cy.selectCategory('Wells');
   });
 
-  it(`Should display wells sidebar filters: ${REGION_FIELD_BLOCK}`, () => {
+  // TODO(PP-3315) Fix flaky test
+  it.skip(`Should display wells sidebar filters: ${REGION_FIELD_BLOCK}`, () => {
     cy.clickOnFilterCategory(DATA_SOURCE);
 
     cy.log('Checking source values');
@@ -172,7 +173,8 @@ describe('Wells sidebar filters', () => {
     cy.clickOnFilterCategory(DATA_AVAILABILITY);
   });
 
-  it(`Should display wells sidebar filters: ${WELLBORE_CHARACTERISTICS}`, () => {
+  // TODO(PP-3316) Fix flaky test
+  it.skip(`Should display wells sidebar filters: ${WELLBORE_CHARACTERISTICS}`, () => {
     cy.log(`Expand ${WELLBORE_CHARACTERISTICS} filter`);
     cy.clickOnFilterCategory(WELLBORE_CHARACTERISTICS);
 

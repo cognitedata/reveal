@@ -136,11 +136,7 @@ describe('FeatureToggle', () => {
   };
 
   const RenderedComponent = (
-    <FlagProvider
-      appName="not used"
-      apiToken="not used"
-      projectName="not used"
-    >
+    <FlagProvider appName="not used" apiToken="not used" projectName="not used">
       <ToggledDiv />
     </FlagProvider>
   );

@@ -22,6 +22,7 @@ generate_package_json_helpers(
     out_dir = "dist",
     package_json = "//:package.json",
     src_dir = "lib",
+    tags = ["manual"],
     workspace = "@npm",
 )
 
