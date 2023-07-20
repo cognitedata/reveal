@@ -5,6 +5,7 @@ export const IDP_TYPES = [
   'AUTH0',
   'AAD_B2C',
   'KEYCLOAK',
+  'COGNITE_IDP',
 ] as const;
 export type IDPType = (typeof IDP_TYPES)[number];
 
@@ -116,7 +117,11 @@ export interface KeycloakResponse extends IDP {
     clientId: string;
   };
 }
-
+export interface CogniteIdPResponse extends IDP {
+  appConfiguration: {
+    clientId: string;
+  };
+}
 export interface AADB2CResponse extends IDP {
   appConfiguration: {
     clientId: string;

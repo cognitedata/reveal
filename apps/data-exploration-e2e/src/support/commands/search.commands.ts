@@ -1,3 +1,4 @@
+/* eslint-disable cypress/unsafe-to-chain-command */
 Cypress.Commands.add(
   'goToTab',
   (tab: 'Assets' | 'Time series' | 'Files' | 'Events' | 'Sequence') => {

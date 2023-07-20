@@ -288,7 +288,7 @@ export const useReviewFiles = (fileIds: Array<number>) => {
   const clearFileLabels = async (selectedFileIds: Array<number>) => {
     const updatePatch: FileChangeUpdate[] = selectedFileIds.map((fileId) => {
       const file = files?.find((curFile) => curFile.id === fileId);
-      const labelsToRemove = [];
+      const labelsToRemove: { externalId: string }[] = [];
       if (isFileApproved(file)) {
         labelsToRemove.push({ externalId: INTERACTIVE_LABEL.externalId });
       }

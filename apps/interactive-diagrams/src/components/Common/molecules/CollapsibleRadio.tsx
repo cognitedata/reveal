@@ -99,7 +99,13 @@ export const CollapsibleRadio = ({
         }}
       >
         <div>
-          <Radio checked={isChecked} name={name} value={value} />
+          <Radio
+            checked={isChecked}
+            name={name}
+            value={value}
+            // eslint-disable-next-line no-console
+            onChange={() => console.log(isChecked)}
+          />
         </div>
         <Flex
           column

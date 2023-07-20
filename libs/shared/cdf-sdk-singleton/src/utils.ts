@@ -5,14 +5,25 @@ import {
   IDPResponse,
   LegacyProject,
 } from '@cognite/login-utils';
+import { CogniteClient } from '@cognite/sdk';
+
+import { isUsingUnifiedSignin } from './unified-signin';
 
 export const getQueryParameter = (parameterKey: string) => {
   const parameters = queryString.parse(window.location.search) ?? {};
   return parameters[parameterKey] ?? '';
 };
 
-export const getProject = () =>
-  new URL(window.location.href).pathname.split('/')[1];
+export const getProject = () => {
+  // if unified signin, the url is apps.cognite.com/cdf/project
+  // otherwise is fusion.cognite.com/project
+  // when splitting, for fusion index is 1, for /cdf is 2
+  const projectPathParamLocation = isUsingUnifiedSignin() ? 2 : 1;
+
+  return new URL(window.location.href).pathname.split('/')[
+    projectPathParamLocation
+  ];
+};
 
 export const getCluster = () => {
   const cluster = getQueryParameter('cluster');
@@ -32,18 +43,23 @@ export const getUrl = (
   if (hostname.substr(0, protocol.length) !== protocol) {
     url = `${protocol}://${hostname}`;
   }
-
   return url;
 };
 
 export async function getIDP(): Promise<IDPResponse | LegacyProject> {
+  if (isUsingUnifiedSignin()) {
+    let loginHints = localStorage.getItem('@cognite/auth-react/login-hints');
+    if (!loginHints) {
+      return Promise.reject(new Error('IDP not selected'));
+    }
+
+    loginHints = JSON.parse(loginHints);
+    return Promise.resolve((loginHints as any).idpInternalId);
+  }
   const { internalId } = getSelectedIdpDetails() ?? {};
 
-  if (!internalId) {
-    return Promise.reject(new Error('IDP not selected'));
-  }
   const { idps = [], legacyProjects = [] } = await fetch(
-    `https://app-login-configuration-lookup.cognite.ai/fusion/cog-demo`
+    `/_api/login_info`
   ).then(
     (r: Response) =>
       r.json() as Promise<{
@@ -51,6 +67,13 @@ export async function getIDP(): Promise<IDPResponse | LegacyProject> {
         legacyProjects: LegacyProject[];
       }>
   );
+
+  if (!internalId && idps.length === 1) {
+    return idps[0];
+  }
+  if (!internalId) {
+    return Promise.reject(new Error('IDP not selected'));
+  }
 
   const idp =
     idps.find((i) => i.internalId === internalId) ||
@@ -86,7 +109,34 @@ export const getBaseUrl = async (): Promise<string | undefined> => {
   if (domainServiceCluster) {
     return getUrl(domainServiceCluster);
   }
-  // TODO
-  return 'cluster';
   return Promise.reject(new Error('cluster not found'));
 };
+
+/* eslint-disable */
+export function convertToProxy(originalInstance: CogniteClient) {
+  originalInstance = Object(originalInstance);
+  let proxy = new Proxy(new WrappedSdkClient(originalInstance), {
+    get: function (originalObj, key, proxy) {
+      switch (key) {
+        case 'overrideInstance':
+          return originalObj.overrideInstance;
+        default:
+          // @ts-ignore
+          return originalObj.instance[key];
+      }
+    },
+  });
+  return proxy;
+}
+
+export class WrappedSdkClient {
+  instance: CogniteClient;
+
+  constructor(sdkInstance: CogniteClient) {
+    this.instance = sdkInstance;
+  }
+
+  overrideInstance(newSdk: CogniteClient) {
+    this.instance = newSdk;
+  }
+}

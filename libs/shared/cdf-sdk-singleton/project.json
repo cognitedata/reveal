@@ -45,6 +45,46 @@
         "babelUpwardRootMode": true
       }
     },
+    "build-single-spa": {
+      "executor": "@nx/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/shared/cdf-sdk-singleton",
+        "tsConfig": "libs/shared/cdf-sdk-singleton/tsconfig.lib.json",
+        "project": "libs/shared/cdf-sdk-singleton/package.json",
+        "main": "libs/shared/cdf-sdk-singleton/src/index.ts",
+        "generatePackageJson": false,
+        "extractLicenses": true,
+        "sourceMap": false,
+        "vendorChunk": false,
+        "optimization": true,
+        "commonChunk": false,
+        "runtimeChunk": false,
+        "compiler": "tsc",
+        "assets": [],
+        "fileReplacements": [
+          {
+            "replace": "libs/shared/cdf-sdk-singleton/src/set-public-path.ts",
+            "with": "libs/shared/cdf-sdk-singleton/src/environments/single-spa/set-public-path.ts"
+          }
+        ],
+        "webpackConfig": "libs/shared/cdf-sdk-singleton/webpack-config.js"
+      }
+    },
+    "serve-static": {
+      "executor": "@nrwl/web:file-server",
+      "defaultConfiguration": "development",
+      "options": {
+        "staticFilePath": "dist/libs/shared/cdf-sdk-singleton",
+        "buildTarget": "cdf-sdk-singleton:build-single-spa",
+        "port": 3005
+      },
+      "configurations": {
+        "production": {
+          "buildTarget": "cdf-sdk-singleton:build-single-spa:production"
+        }
+      }
+    },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],

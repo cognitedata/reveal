@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { User, UserProfile } from 'oidc-client-ts';
+
 import { getUserManager } from '@cognite/login-utils';
 
 import { UserInfo } from './types';
@@ -44,7 +47,7 @@ export const getAccessToken = (params: {
         }
         return user;
       })
-      .then((user) => resolve(user?.access_token || ''))
+      .then((user) => resolve(user!.access_token))
       .catch((e) => {
         reject(e);
       })
@@ -55,6 +58,11 @@ export const getAccessToken = (params: {
     getAccessTokenPromise = undefined;
   });
   return getAccessTokenPromise;
+};
+
+// subid is part of sauth profile
+type ExtenedUserProfile = User & {
+  profile: UserProfile & { subid?: string };
 };
 
 export const getUserInfo = async (params: {
@@ -68,10 +76,13 @@ export const getUserInfo = async (params: {
     client_id: params.clientId,
     ...params,
   });
-  const user = await userManager.getUser();
+
+  // @ts-ignore
+  const user: ExtenedUserProfile = await userManager.getUser();
   return {
-    id: user?.profile.sid || '',
-    displayName: user?.profile.preferred_username,
+    // @ts-ignore
+    id: user?.profile.sid || user?.profile.subid,
+    displayName: user?.profile.preferred_username || user?.profile.name,
     mail: user?.profile.email,
     userPrincipalName: user?.profile.sub,
   };

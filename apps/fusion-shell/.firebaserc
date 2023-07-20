@@ -1,0 +1,8 @@
+{
+  "projects": {
+    "default": "fbhosting-217032465111-staging",
+    "staging": "fbhosting-217032465111-staging",
+    "preview": "fbhosting-217032465111-preview",
+    "prod": "fbhosting-217032465111"
+  }
+}

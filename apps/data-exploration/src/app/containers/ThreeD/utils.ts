@@ -15,6 +15,7 @@ import {
   Image360Collection,
   Image360Annotation,
   Image360,
+  Image360AnnotationAssetQueryResult,
 } from '@cognite/reveal';
 import {
   CogniteClient,
@@ -204,7 +205,8 @@ export const fitCameraToAsset = async (
       return;
     }
 
-    let selectedAnnotation = undefined;
+    let selectedAnnotation: Image360AnnotationAssetQueryResult | undefined =
+      undefined;
 
     if (assetSelectionState.imageAnnotation) {
       selectedAnnotation = annotationInfo.find(
@@ -221,7 +223,7 @@ export const fitCameraToAsset = async (
       );
     }
 
-    selectedAnnotation ??= annotationInfo[0];
+    selectedAnnotation = annotationInfo?.[0];
 
     await viewer.enter360Image(
       selectedAnnotation.image,

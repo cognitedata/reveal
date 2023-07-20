@@ -1,3 +1,4 @@
+/* eslint-disable cypress/unsafe-to-chain-command */
 import { getUrl } from '../../utils/url';
 
 describe('Platypus Data Preview Page - Suggestions', () => {

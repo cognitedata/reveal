@@ -12,7 +12,8 @@ export const translations = {
   en: { transformations: en },
 };
 
-export const useTranslation = () => useTypedTranslation<TranslationKeys>();
+export const useTranslation = () =>
+  useTypedTranslation<TranslationKeys>('transformations');
 
 export const Trans = (props: TypedTransProps<TranslationKeys>) => (
   <TypedTrans<TranslationKeys> {...props} />

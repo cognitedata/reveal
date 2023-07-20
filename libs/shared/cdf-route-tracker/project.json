@@ -23,26 +23,37 @@
       }
     },
     "build": {
-      "executor": "@nx/rollup:rollup",
+      "executor": "@nx/webpack:webpack",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/libs/shared/cdf-route-tracker",
         "tsConfig": "libs/shared/cdf-route-tracker/tsconfig.lib.json",
         "project": "libs/shared/cdf-route-tracker/package.json",
-        "entryFile": "libs/shared/cdf-route-tracker/src/index.ts",
-        "external": ["react/jsx-runtime"],
-        "rollupConfig": "@nx/react/plugins/bundle-rollup",
-        "compiler": "babel",
-        "updateBuildableProjectDepsInPackageJson": true,
-        "buildableProjectDepsInPackageJsonType": "dependencies",
-        "assets": [
-          {
-            "glob": "libs/shared/cdf-route-tracker/README.md",
-            "input": ".",
-            "output": "."
-          }
-        ],
-        "babelUpwardRootMode": true
+        "main": "libs/shared/cdf-route-tracker/src/index.ts",
+        "generatePackageJson": false,
+        "extractLicenses": true,
+        "sourceMap": false,
+        "vendorChunk": false,
+        "optimization": true,
+        "commonChunk": false,
+        "runtimeChunk": false,
+        "compiler": "tsc",
+        "assets": [],
+        "webpackConfig": "libs/shared/cdf-route-tracker/webpack.config.js"
+      }
+    },
+    "serve-static": {
+      "executor": "@nrwl/web:file-server",
+      "defaultConfiguration": "development",
+      "options": {
+        "staticFilePath": "dist/libs/shared/cdf-route-tracker",
+        "buildTarget": "cdf-route-tracker:build",
+        "port": 3009
+      },
+      "configurations": {
+        "production": {
+          "buildTarget": "cdf-route-tracker:build-:production"
+        }
       }
     },
     "test": {

@@ -24,7 +24,7 @@ const getSubdirectoryList = (
   filter: VisionFileFilterProps
 ) => {
   const currentDirectory = filter.directoryPrefix ?? '';
-  let subdirectoryList = [];
+  let subdirectoryList: string[] = [];
   let subdirectoryPaths: string[] = [];
   let exactMatch = true;
 

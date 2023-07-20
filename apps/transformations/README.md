@@ -99,3 +99,5 @@ yarn test:once
 ## Releasing a new version to Fusion
 
 The release process is documented on the [How to release](https://cognitedata.atlassian.net/wiki/spaces/DEGEXP/pages/3830743065/How+to+release) page
+
+`NOTE: This app now uses multi branch deployment strategy. Merging PR on master deploys on staging, and merging master into release-transformations deploys on production`

@@ -80,6 +80,8 @@ const initialConfig: Config = {
       step: 1,
       jsType: '',
       factory: (props) => (
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         <InputWidget {...(props as NumberWidgetProps)} inputType="number" />
       ),
     },
@@ -89,6 +91,8 @@ const initialConfig: Config = {
       jsType: '',
       formatValue: (val) => `${Math.floor(Number(val))}`,
       factory: (props) => (
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         <InputWidget {...(props as NumberWidgetProps)} inputType="number" />
       ),
     },
@@ -98,6 +102,8 @@ const initialConfig: Config = {
       jsType: '',
       formatValue: (val) => `${Math.floor(Number(val))}`,
       factory: (props) => (
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         <InputWidget {...(props as NumberWidgetProps)} inputType="number" />
       ),
     },
@@ -105,6 +111,8 @@ const initialConfig: Config = {
       ...InitialConfig.widgets.number,
       jsType: '',
       factory: (props) => (
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         <InputWidget {...(props as NumberWidgetProps)} inputType="number" />
       ),
     },
@@ -112,6 +120,8 @@ const initialConfig: Config = {
       ...InitialConfig.widgets.number,
       jsType: '',
       factory: (props) => (
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         <InputWidget {...(props as NumberWidgetProps)} inputType="number" />
       ),
     },
@@ -119,6 +129,8 @@ const initialConfig: Config = {
       ...InitialConfig.widgets.number,
       jsType: '',
       factory: (props) => (
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         <InputWidget {...(props as NumberWidgetProps)} inputType="number" />
       ),
     },

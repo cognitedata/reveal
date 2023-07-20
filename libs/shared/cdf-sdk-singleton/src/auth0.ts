@@ -17,10 +17,10 @@ export async function getUserInformation(
   });
   const user = await auth0.getUser();
   return {
-    id: user?.sub || '',
-    displayName: user?.name || '',
-    userPrincipalName: user?.sub || '',
-    mail: user?.email || '',
+    id: user!.sub as string,
+    displayName: user!.name,
+    userPrincipalName: user!.sub,
+    mail: user!.email,
   };
 }
 

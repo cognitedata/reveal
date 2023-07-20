@@ -7,7 +7,6 @@ import {
   RELEASE_BANNER_SESSION_STORAGE_KEY,
 } from '@transformations/common';
 import { JobMetricsGroup, Warning } from '@transformations/hooks';
-import { styleScope } from '@transformations/styles/styleScope';
 import { Items, Job, Schema, TransformationRead } from '@transformations/types';
 
 import { getFlow } from '@cognite/cdf-sdk-singleton';
@@ -39,9 +38,7 @@ export const shouldUseApiKeysAsDestinationCredentials = (
 };
 
 export const getContainer = () => {
-  const els = document.getElementsByClassName(styleScope);
-  const el = els.item(0)! as HTMLElement;
-  return el;
+  return document.body;
 };
 
 export const capitalizeEveryWord = (

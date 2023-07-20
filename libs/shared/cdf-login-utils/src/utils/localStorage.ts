@@ -11,7 +11,6 @@ export const getSelectedIdpDetails = (): SelectedIdpDetails | undefined => {
   try {
     const selectedIdpDetails =
       localStorage.getItem(SELECTED_IDP_DETAILS_LS_KEY) ?? '';
-    console.log(selectedIdpDetails);
     const parsed = JSON.parse(selectedIdpDetails);
     if (typeof parsed?.internalId !== 'string') {
       throw new Error('Idp internalId is invalid');

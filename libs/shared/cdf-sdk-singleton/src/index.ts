@@ -1,35 +1,22 @@
-import './set-public-path';
-import {
-  getSelectedIdpDetails,
-  Auth0Response,
-  IDPType,
-  KeycloakResponse,
-} from '@cognite/login-utils';
+import { IDPType } from '@cognite/login-utils';
 import { ClientOptions, CogniteClient } from '@cognite/sdk';
 
-import getAADAccessToken, {
-  getUserInformation as getAADUserInfo,
-  logout as aadLogout,
-} from './aad';
+import { FusionTokenProvider } from './fusionTokenProvider';
+import './set-public-path';
+import { SdkClientTokenProvider, UserInfo } from './types';
+import { isUsingUnifiedSignin } from './unified-signin';
+import { UnifiedSigninTokenProvider } from './unifiedSigninTokenProvider';
 import {
-  getAccessToken as getADFSAccessToken,
-  logout as adfsLogout,
-} from './adfs2016';
-import {
-  logout as auth0Logout,
-  getAccessToken as getAuth0AccessToken,
-  getUserInformation as getAuth0UserInfo,
-} from './auth0';
-import {
-  getAccessToken as getKeycloakAccessToken,
-  logout as keycloakLogout,
-  getUserInfo as getKeycloakUserInfo,
-} from './keycloak';
-import getLegacyToken, { logout as legacyLogout } from './legacy';
-import { UserInfo } from './types';
-import { getIDP, getBaseUrl, getCluster, getProject, getUrl } from './utils';
+  convertToProxy,
+  getBaseUrl,
+  getCluster,
+  getProject,
+  getUrl,
+} from './utils';
 
-export { getIDP } from './utils';
+// import { isProduction } from '../environment';
+
+export { isUsingUnifiedSignin, unifiedSignInAppName } from './unified-signin';
 
 export type AuthenticatedUser = {
   authenticated: boolean;
@@ -40,12 +27,49 @@ export type AuthenticatedUser = {
 const urlCluster = getCluster();
 const project = getProject();
 
-const sdk = new CogniteClient({
-  appId: 'fusion.cognite.com',
-  getToken,
-  baseUrl: urlCluster ? getUrl(urlCluster) : undefined,
-  project,
-});
+let sdkTokenProvider: SdkClientTokenProvider = isUsingUnifiedSignin()
+  ? new UnifiedSigninTokenProvider()
+  : new FusionTokenProvider();
+
+/**
+ * Creates a CogniteSDK Client.
+ * When served from fusion it uses the default token providere
+ * When used from unified singin, the provider is passed as arg
+ */
+export const createSdkClient = (
+  clientOptions: ClientOptions,
+  tokenProvider?: SdkClientTokenProvider
+): CogniteClient => {
+  sdkTokenProvider =
+    tokenProvider || isUsingUnifiedSignin()
+      ? new UnifiedSigninTokenProvider()
+      : new FusionTokenProvider();
+  return new CogniteClient({
+    ...clientOptions,
+    appId: sdkTokenProvider.getAppId(),
+    getToken,
+  });
+};
+
+const getSdkBaseUrl = () => {
+  // temporary hack, needed to test app locally
+  if (window.location.host === 'localhost:8080') {
+    return 'http://localhost:8080';
+  }
+
+  return urlCluster ? getUrl(urlCluster) : undefined;
+};
+
+const sdkSingelton = convertToProxy(
+  createSdkClient({
+    appId: sdkTokenProvider.getAppId(),
+    baseUrl: getSdkBaseUrl(),
+    project,
+  })
+) as unknown as CogniteClient;
+
+// eslint-disable-next-line @cognite/no-unissued-todos
+// TODO: Not sure where and how it is used, will leave it as it is for now...
 export const getSDK = async (
   clientOptions?: ClientOptions
 ): Promise<CogniteClient> => {
@@ -54,65 +78,28 @@ export const getSDK = async (
     return new CogniteClient(clientOptions);
   }
   return new CogniteClient({
-    appId: 'fusion.cognite.com',
+    appId: sdkTokenProvider.getAppId(),
     getToken,
     baseUrl,
     project,
   });
 };
 
-/**
- * In order to support login via the frontend-proxy, while simultaneously supporting
- * cdf-ui-hub's cdf-hub-login-page, we want to expose this condition in order to know
- * appropriately which login flow to display, hence we export this single point of reference.
- */
-export const isFrontendProxyLogin = window.location.href.includes('/cdf');
-
 const ensureCorrectBaseUrlP = urlCluster
   ? Promise.resolve()
   : getBaseUrl().then((baseUrl) => {
-      if (baseUrl && baseUrl !== sdk.getBaseUrl()) {
+      if (baseUrl && baseUrl !== sdkSingelton.getBaseUrl()) {
         // @ts-ignore
-        sdk.httpClient.setBaseUrl(getUrl(baseUrl));
+        sdkSingelton.httpClient.setBaseUrl(getUrl(baseUrl));
       }
     });
 
 export async function getUserInformation(): Promise<UserInfo> {
-  const idp = await getIDP();
-  switch (idp.type) {
-    case 'AZURE_AD': {
-      return getAADUserInfo(idp.authority, idp.appConfiguration.clientId);
-    }
-    // case 'COGNITE_AUTH': {
-    //   const { user } = await sdk.login.status();
-    //   return { id: user, mail: user, displayName: user };
-    // }
-    case 'AUTH0': {
-      return getAuth0UserInfo(
-        idp.appConfiguration.clientId,
-        idp.authority,
-        (idp as Auth0Response).appConfiguration.audience || ''
-      );
-    }
-    case 'KEYCLOAK': {
-      const keycloakResponse = idp as KeycloakResponse;
-      return getKeycloakUserInfo({
-        authority: keycloakResponse.authority,
-        clientId: keycloakResponse.appConfiguration.clientId,
-        cluster: keycloakResponse.clusters[0],
-        realm: keycloakResponse.realm,
-        audience: keycloakResponse.appConfiguration.audience,
-      });
-    }
-    default: {
-      throw new Error('Unknown login type');
-    }
-  }
+  return sdkTokenProvider.getUserInformation();
 }
 
 export function getFlow(): { flow: IDPType | undefined } {
-  const { type } = getSelectedIdpDetails() ?? {};
-  return { flow: type };
+  return sdkTokenProvider.getFlow() as { flow: IDPType | undefined };
 }
 
 export async function getToken() {
@@ -122,93 +109,43 @@ export async function getToken() {
   }
 
   await ensureCorrectBaseUrlP;
-  const idp = await getIDP();
-  switch (idp.type) {
-    case 'AZURE_AD': {
-      return getAADAccessToken(idp.authority, idp.appConfiguration.clientId);
-    }
-    case 'COGNITE_AUTH': {
-      return getLegacyToken();
-    }
-    case 'ADFS2016': {
-      return getADFSAccessToken(
-        `${idp.authority}/authorize`,
-        idp.appConfiguration.clientId
-      );
-    }
-    case 'AUTH0': {
-      return getAuth0AccessToken(
-        idp.appConfiguration.clientId,
-        idp.authority,
-        (idp as Auth0Response).appConfiguration.audience || ''
-      );
-    }
-    case 'KEYCLOAK': {
-      const keycloakResponse = idp as KeycloakResponse;
-      const token = await getKeycloakAccessToken({
-        authority: keycloakResponse.authority,
-        clientId: keycloakResponse.appConfiguration.clientId,
-        cluster: keycloakResponse.clusters[0],
-        realm: keycloakResponse.realm,
-        audience: keycloakResponse.appConfiguration.audience,
-      });
-      return token;
-    }
-    default: {
-      throw new Error('Unknown login type');
-    }
-  }
+  return sdkTokenProvider.getToken();
 }
 
 /**
  * Logout from the frontend only, login session will still be active on the IDP
  */
 export async function logout() {
-  const idp = await getIDP();
-  switch (idp.type) {
-    case 'AZURE_AD': {
-      await aadLogout(idp.authority, idp.appConfiguration.clientId);
-      break;
-    }
-    case 'AUTH0': {
-      await auth0Logout(
-        idp.appConfiguration.clientId,
-        idp.authority,
-        (idp as Auth0Response).appConfiguration.audience || ''
-      );
-      break;
-    }
-    case 'ADFS2016': {
-      adfsLogout(idp.authority);
-      break;
-    }
-    case 'COGNITE_AUTH': {
-      legacyLogout();
-      break;
-    }
-    case 'KEYCLOAK': {
-      const keycloakResponse = idp as KeycloakResponse;
-      await keycloakLogout({
-        authority: keycloakResponse.authority,
-        clientId: keycloakResponse.appConfiguration.clientId,
-        cluster: keycloakResponse.clusters[0],
-        realm: keycloakResponse.realm,
-        audience: keycloakResponse.appConfiguration.audience,
-      });
-      break;
-    }
-  }
-  window.location.href = '/';
+  return sdkTokenProvider.logout();
 }
 
-export default sdk;
+/**
+ * Some background for this and why going this route....
+ * For Unified signin, we are using methods like getToken and others from auth-react.
+ * Those are wrapped inside provider and you can get them only via react hooks.
+ *
+ * To make fusion, working with both fusion.cognite.com and apps.cognite.com/cdf (unified signin),
+ * we need to inject/override those methods from the sdk with the ones from auth-react package.
+ *
+ * All sub-apps in fusion are importing and using this sdk package directly ex:
+ * import sdk from @cognite/cdf-sdk-singleton
+ *
+ * The problem now is that cdf-sdk-singleton, previously exported the sdk as default export.
+ * With this, you are going to get a read-only copy of this file (sdk instance).
+ * This means that it is impossible to override or extend the functionality.
+ *
+ * To avoid changing all sub-apps and making a lot of changes, the easiest solution is to export a proxy object.
+ * When exporting object, you can override the properties (sdk).
+ * We are going to do this only in the shared auth-wrapper and avoid changing all subapps
+ */
+export default sdkSingelton;
 
 let authInit: Promise<void> | undefined;
 export function loginAndAuthIfNeeded(): Promise<void> {
   if (!authInit) {
-    authInit = sdk
+    authInit = sdkSingelton
       .authenticate()
-      // eslint-disable-next-line lodash/prefer-noop
+      // eslint-disable-next-line
       .then(() => {})
       .catch(() => {
         window.location.href = '/';

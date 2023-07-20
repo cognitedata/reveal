@@ -1,3 +1,4 @@
+/* eslint-disable cypress/unsafe-to-chain-command */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // ***********************************************
 // This example commands.js shows you how to
@@ -143,6 +144,8 @@ Cypress.Commands.add(
           .find(`[col-id="nonNull"]`);
         const input = col.find('input');
 
+        // eslint-disable-next-line
+        // @ts-ignore
         if (input.checked !== required) {
           col.click();
         }

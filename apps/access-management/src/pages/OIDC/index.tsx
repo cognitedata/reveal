@@ -1,5 +1,3 @@
-import { useParams } from 'react-router-dom';
-
 import styled from 'styled-components';
 
 import {
@@ -57,7 +55,6 @@ export default function OIDCConfigContainer() {
   const { t } = useTranslation();
   const cache = useQueryClient();
   const sdk = useSDK();
-  const { tenant } = useParams();
   const project = getProject();
 
   const { mutate, isLoading: updating } = useMutation(
@@ -100,7 +97,7 @@ export default function OIDCConfigContainer() {
 
   const { data: projectSettings, isFetched: areProjectSettingsFetched } =
     useQuery(['project-settings'], () => {
-      return sdk.projects.retrieve(tenant!);
+      return sdk.projects.retrieve(project!);
     });
 
   const handleSubmit = (values: any) => {

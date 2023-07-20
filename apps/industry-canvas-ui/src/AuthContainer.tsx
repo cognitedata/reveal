@@ -88,7 +88,7 @@ export interface FusionAuthContainerProps {
 export const AuthContainer = ({ children }: FusionAuthContainerProps) => {
   if (isUsingUnifiedSignin()) {
     return (
-      <AuthProvider>
+      <AuthProvider loader={<Loader darkMode={false} />}>
         <AuthProxyProvider>
           <FusionSubAppWrapper>{children}</FusionSubAppWrapper>
         </AuthProxyProvider>

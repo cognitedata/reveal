@@ -1,5 +1,4 @@
 import { Count } from '@raw-explorer/hooks/profiling-service';
-import { styleScope } from '@raw-explorer/styles/styleScope';
 import { QueryKey, useQuery, UseQueryOptions } from '@tanstack/react-query';
 
 import { RAW_EXPLORER_TAB_PANE_KEY_SEPARATOR } from './constants';
@@ -39,9 +38,7 @@ const nameToAclTypeMap = {
 
 // Use this getContainer for all antd components such as: dropdown, tooltip, popover, modals etc
 export const getContainer = () => {
-  const els = document.getElementsByClassName(styleScope);
-  const el = els.item(0)! as HTMLElement;
-  return el;
+  return document.body;
 };
 
 export const stringCompare = (a = '', b = '') => {
