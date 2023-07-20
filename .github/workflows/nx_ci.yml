@@ -196,12 +196,7 @@ jobs:
     name: Build
     runs-on: ubuntu-20.04
     needs: [setup, build-libs]
-    if: |
-      ${{
-        always() && !failure() && !cancelled()
-        && needs.setup.outputs.affected-apps != ''
-        && toJson(fromJson(needs.setup.outputs.affected-apps)) != '[]'
-      }}
+    if: ${{ needs.build-libs.result != 'failure' && needs.build-libs.result != 'cancelled' && needs.setup.outputs.affected-apps != '' && toJson(fromJson(needs.setup.outputs.affected-apps)) != '[]' }}
     strategy:
       matrix:
         project: ${{ fromJson(needs.setup.outputs.affected-apps)  }}
@@ -224,43 +219,36 @@ jobs:
           NODE_OPTIONS: '--max_old_space_size=8192'
         run: npx nx build ${{ matrix.project }} --configuration=production
 
-  # build-shell:
-  #   name: 'Build shell apps'
-  #   runs-on: ubuntu-20.04
-  #   needs: [setup, build]
-  #   if: |
-  #     ${{
-  #       always() && !failure() && !cancelled()
-  #       && needs.setup.outputs.affected-shell-apps != ''
-  #       && toJson(fromJson(needs.setup.outputs.affected-shell-apps)) != '[]'
-  #     }}
-  #   strategy:
-  #     matrix:
-  #       project: ${{ fromJson(needs.setup.outputs.affected-shell-apps)  }}
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #       with:
-  #         fetch-depth: 0
-  #     - uses: actions/setup-node@v3
-  #       with:
-  #         node-version: '18'
+  build-shell:
+    name: 'Build shell apps'
+    runs-on: ubuntu-20.04
+    needs: [setup, build]
+    if: ${{ needs.build.result != 'failure' && needs.build.result != 'cancelled' && needs.setup.outputs.affected-shell-apps != '' && toJson(fromJson(needs.setup.outputs.affected-shell-apps)) != '[]' }}
+    strategy:
+      matrix:
+        project: ${{ fromJson(needs.setup.outputs.affected-shell-apps)  }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
 
-  #     - name: Cache node modules
-  #       uses: actions/cache@v3
-  #       with:
-  #         path: |
-  #           node_modules
-  #           ~/.cache/Cypress
-  #         key: cache-node-modules-${{ hashFiles('yarn.lock') }}
+      - name: Cache node modules
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: cache-node-modules-${{ hashFiles('yarn.lock') }}
 
-  #     - name: Build
-  #       env:
-  #         NODE_OPTIONS: '--max_old_space_size=8192'
-  #       run: npx nx build ${{ matrix.project }} --configuration=production
+      - name: Build
+        env:
+          NODE_OPTIONS: '--max_old_space_size=8192'
+        run: npx nx build ${{ matrix.project }} --configuration=production
   ci-passed:
     # see https://github.community/t/status-check-for-a-matrix-jobs/127354/7
     name: CI Passed
-    needs: [setup, build-libs, build, lint, test]
+    needs: [setup, build-libs, build, build-shell, lint, test]
     if: ${{ always() }}
     runs-on: ubuntu-20.04
     steps:
