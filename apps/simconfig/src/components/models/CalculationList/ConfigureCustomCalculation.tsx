@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-location';
+import { useSelector } from 'react-redux';
 
 import { Field, Form, Formik } from 'formik';
 import styled from 'styled-components/macro';
@@ -9,6 +10,7 @@ import { Textarea } from '@cognite/cogs.js-v9';
 import { useFlag } from '@cognite/react-feature-flags';
 import { useSDK } from '@cognite/sdk-provider';
 
+import { selectBaseUrl } from 'store/simconfigApiProperties/selectors';
 import { createCdfLink } from 'utils/createCdfLink';
 
 export function ConfigureCustomCalculation({
@@ -20,6 +22,7 @@ export function ConfigureCustomCalculation({
 }) {
   const { isEnabled: isCustomCalculationEnabled } = useFlag('SIMCONFIG_UDC');
   const client = useSDK();
+  const baseUrl = useSelector(selectBaseUrl);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const navigate = useNavigate();
 
@@ -31,7 +34,7 @@ export function ConfigureCustomCalculation({
     navigate({
       to: createCdfLink(
         `UserDefined/new-calculation/configuration`,
-        client.getBaseUrl(),
+        baseUrl,
         new URLSearchParams({ calculationDescription, calculationName })
       ),
     });

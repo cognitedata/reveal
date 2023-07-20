@@ -35,8 +35,12 @@ export default function App() {
   const isInitialized = useSelector(selectIsInitialized);
   const project = useSelector(selectProject);
 
+  const BASE_URL = process.env.REACT_APP_LOCAL_SERVICE
+    ? `https://localhost:8810`
+    : client.getBaseUrl();
+
   simconfigApiPropertiesSlice.actions.setProperties({
-    baseUrl: client.getBaseUrl(),
+    baseUrl: BASE_URL,
   });
   enhanceSimconfigApiEndpoints();
 
@@ -56,13 +60,13 @@ export default function App() {
     dispatch(
       simconfigApiPropertiesSlice.actions.setProperties({
         authHeaders: client.getDefaultRequestHeaders(),
-        baseUrl: client.getBaseUrl(),
+        baseUrl: BASE_URL,
         project: client.project,
       })
     );
 
     dispatch(appSlice.actions.setIsInitialized(true));
-  }, [user, client, project, dispatch]);
+  }, [user, client, project, BASE_URL, dispatch]);
 
   if (!isInitialized) {
     return null;
