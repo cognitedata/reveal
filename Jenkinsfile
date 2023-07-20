@@ -1,7 +1,7 @@
 @Library('jenkins-helpers') _
 
 properties([
-  disableConcurrentBuilds()
+  disableConcurrentBuilds(abortPrevious: env.BRANCH_NAME != 'master')
 ])
 static final String NODE_VERSION = 'node:16'
 
@@ -29,7 +29,7 @@ void bazelPod(Map params = new HashMap(), body) {
           containerTemplate(
               name: 'bazel',
               // TODO: Define custom docker image to include bazel instead of installing
-              image: 'eu.gcr.io/cognitedata/apps-tools/bazel-applications:5.0.0-1',
+              image: 'eu.gcr.io/cognitedata/apps-tools/bazel-applications:5.3.1',
               command: '/bin/cat -',
               resourceRequestCpu: '3000m',
               resourceLimitCpu: '16000m',
@@ -134,12 +134,13 @@ def pods = { body ->
 
 def handleError = { err ->
   container('bazel') {
+    sh(label: 'kill Xvfb', script: 'if pgrep Xvfb; then pkill Xvfb; fi')
     sh('mkdir -p artifacts')
     sh("find -L `readlink dist/testlogs` -type f -name '*.zip' | xargs -n1 unzip -uo -d artifacts")
     // We execute the find command in a subcommand to actually preserve directory structure
     sh("CURRENTDIR=\$(pwd) && (cd `readlink dist/testlogs` && find -type f -wholename '*_test*/*.log' | xargs cp --parents -t \$CURRENTDIR/artifacts)")
 
-    def artifactPaths = 'artifacts/**/screenshots/**/*.png,artifacts/**/video/**/*.mp4,artifacts/**/cypress/**/*.mp4,artifacts/**/*unit_test*/**/*.log,artifacts/**/*jest_test*/**/*.log,artifacts/**/*cypress_test*/**/*.log'
+    def artifactPaths = 'artifacts/**/screenshots/**/*.png,artifacts/**/video/**/*.mp4,artifacts/**/cypress/**/*.mp4,artifacts/**/*unit_test*/**/*.log,artifacts/**/*jest_test*/**/*.log,artifacts/**/*cypress.batch*/**/*.log'
 
     archiveArtifacts allowEmptyArchive: true, artifacts: artifactPaths
   }
@@ -277,6 +278,7 @@ pods {
           comment += targetComment(changedPackageInfos, 'package_info', ':gift:')
           comment += targetComment(changedPublishFas, 'publish_fas', ':bus:')
           comment += targetComment(changedPublishStorybook, 'publish_storybook', ':bike:')
+          comment += targetComment(changedPublishChromatic, 'publish_chromatic', ':boat:')
 
           def removed = diff.findAll { change -> change.change == 'removed' }
           if (removed.size() > 0) {
@@ -298,7 +300,9 @@ pods {
         if (isProduction || (!isPullRequest && isReleaseBranch)) {
           sh(label: 'bazel test //...', script: 'bazel test //... --test_tag_filters=-ignore_test_in_cd,-nightly')
         } else {
+          sh(label: 'spawn Xvfb', script: 'Xvfb :99 &')
           sh(label: 'bazel test //...', script: 'bazel test //... --test_tag_filters=-nightly')
+          sh(label: 'kill Xvfb', script: 'pkill Xvfb')
         }
 
         // Bazel stores test outputs as zip files
@@ -322,7 +326,7 @@ pods {
         container('bazel') {
           changedPublishStorybook.each { change ->
             change.run.each { cmd ->
-              def storybookJsonString = sh(script: "bazel run --stamp ${cmd}", returnStdout: true)
+              def storybookJsonString = sh(script: "bazel run ${cmd}", returnStdout: true)
               def params = readJSON text: storybookJsonString
               def target = cmd.split(':')[0].split('//')[1]
               sh("rm -rf storybook-static && cp -r `readlink dist/bin`/${target}/storybook-static storybook-static")
@@ -360,7 +364,7 @@ pods {
       container('bazel') {
         changedPublishFas.each { change ->
           change.run.each { cmd ->
-            def fasJsonString = sh(script: "bazel run --stamp ${cmd}", returnStdout: true)
+            def fasJsonString = sh(script: "bazel run ${cmd}", returnStdout: true)
             def params = readJSON text: fasJsonString
             print(params)
             def isFusionPreview = params.fusion_preview == 'true'
@@ -545,6 +549,10 @@ pods {
             )
             if (statusCode != 0) {
               if (isPullRequest) {
+                sh(
+                  label: "Build ${packageInfo.name} package",
+                  script: "bazel build --stamp ${packageInfo.target}:npm-package.pack",
+                )
                 packageNameTag = sh(
                   label: "Publish ${packageInfo.name} package",
                   script: "bazel run --stamp ${packageInfo.target}:npm-package.pack",
@@ -552,6 +560,10 @@ pods {
                 ).trim()
                 print("Dry run package $packageNameTag")
               } else {
+                sh(
+                  label: "Build ${packageInfo.name} package",
+                  script: "bazel build --stamp ${packageInfo.target}:npm-package.publish",
+                )
                 packageNameTag = sh(
                   label: "Publish ${packageInfo.name} package",
                   script: "bazel run --stamp ${packageInfo.target}:npm-package.publish",

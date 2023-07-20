@@ -54,6 +54,7 @@ generate_package_json_helpers(
     out_dir = "build",
     package_json = "//:package.json",
     src_dir = "src",
+    tags = ["manual"],
     workspace = "@npm",
 )
 
@@ -176,6 +177,7 @@ write_file(
     name = "write_chdir_worspace_script",
     out = "chdir-workspace.js",
     content = ["process.chdir(require('path').join(process.env.BUILD_WORKSPACE_DIRECTORY, '" + package_name() + "'));"],
+    tags = ["manual"],
 )
 
 _RUNTIME_DEPS = [
@@ -216,6 +218,7 @@ vite(
     env = {
         "NODE_OPTIONS": "--max_old_space_size=4096",
     },
+    tags = ["manual"],
 )
 
 ### vite test CI ###
@@ -261,6 +264,7 @@ jest(
         # ibazel send EOF to stdin by default and `react-scripts start` will stop when getting EOF in stdin.
         # So use this to prevent EOF.
         "ibazel_notify_changes",
+        "manual",
     ],
 )
 
@@ -295,6 +299,7 @@ history_server(
         "$(rootpath :build_sed)",
     ],
     data = [":build_sed"],
+    tags = ["manual"],
 )
 
 ### Storybook ###
@@ -318,6 +323,7 @@ start_storybook(
         # ibazel send EOF to stdin by default and target will stop when getting EOF in stdin.
         # So use this to prevent EOF.
         "ibazel_notify_changes",
+        "manual",
     ],
 )
 
@@ -338,8 +344,5 @@ publish_fas(
     # FAS staging app id
     staging_app_id = "cognuit-dev",
     versioning_strategy = "multi-branch",
-    deps = _RUNTIME_DEPS + DEPENDENCIES + TYPE_DEPENDENCIES + [
-        "@npm//vite",
-        ":vite_config",
-    ],
+    deps = [":build_tmp"],
 )

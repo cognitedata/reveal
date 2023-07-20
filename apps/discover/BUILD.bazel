@@ -9,9 +9,6 @@ load("//rules/lint:index.bzl", "eslint_config", "eslint_test", "prettier_test")
 load("//rules/package_json_helpers:generate.bzl", "generate_package_json_helpers")
 load("//rules/build_sed:build_sed.bzl", "build_sed")
 load("//rules/publish:publish_fas.bzl", "publish_fas")
-load("@npm//@bazel/typescript:index.bzl", "ts_project")
-load("@npm//@bazel/cypress:index.bzl", "cypress_web_test")
-load("@npm//cypress:index.bzl", "cypress")
 load("//apps:apps.bzl", "VITE_DEPENDENCIES")
 load("@npm//history-server:index.bzl", "history_server")
 
@@ -65,6 +62,7 @@ generate_package_json_helpers(
     out_dir = "build",
     package_json = "//:package.json",
     src_dir = "src",
+    tags = ["manual"],
     workspace = "@npm",
 )
 
@@ -280,6 +278,7 @@ write_file(
     name = "write_chdir_worspace_script",
     out = "chdir-workspace.js",
     content = ["process.chdir(require('path').join(process.env.BUILD_WORKSPACE_DIRECTORY, '" + package_name() + "'));"],
+    tags = ["manual"],
 )
 
 _RUNTIME_DEPS = [
@@ -323,6 +322,7 @@ vite(
     env = {
         "NODE_OPTIONS": "--max_old_space_size=4096",
     },
+    tags = ["manual"],
 )
 
 ### vite test CI ###
@@ -368,6 +368,7 @@ jest(
         # ibazel send EOF to stdin by default and `react-scripts start` will stop when getting EOF in stdin.
         # So use this to prevent EOF.
         "ibazel_notify_changes",
+        "manual",
     ],
 )
 
@@ -399,6 +400,7 @@ history_server(
         "$(rootpath :build_sed)",
     ],
     data = [":build_sed"],
+    tags = ["manual"],
 )
 
 ### Storybook ###
@@ -422,6 +424,7 @@ start_storybook(
         # ibazel send EOF to stdin by default and target will stop when getting EOF in stdin.
         # So use this to prevent EOF.
         "ibazel_notify_changes",
+        "manual",
     ],
 )
 
@@ -442,135 +445,133 @@ publish_fas(
     # FAS staging app id
     staging_app_id = "discover-staging",
     versioning_strategy = "multi-branch",
-    deps = _RUNTIME_DEPS + DEPENDENCIES + TYPE_DEPENDENCIES + [
-        "@npm//vite",
-        ":vite_config",
-    ],
+    deps = [":build_tmp"],
 )
 
 ### Cypress ###
+# NOTE: The tests are disabled as they're failing because of Fake IDP.
 
-_CYPRESS_FILES = glob([
-    "cypress/**/*.ts",
-])
+# _CYPRESS_FILES = glob([
+#     "cypress/**/*.ts",
+# ])
 
-CYPRESS_EXTERNAL_FILES = [
-    "src/components/AddToFavoriteSetMenu/constants.ts",
-    "src/components/EmptyState/constants.ts",
-    "src/components/SearchUsers/constants.ts",
-    "src/components/Charts/common/ResetToDefault/constants.ts",
-    "src/constants/app.ts",
-    "src/constants/units.ts",
-    "src/core/constants.ts",
-    "src/domain/documents/constants.ts",
-    "src/domain/feedback/service/__fixtures/getDocumentFeedbackPostResponse.ts",
-    "src/domain/feedback/service/__fixtures/getGeneralFeedbackPostResponse.ts",
-    "src/modules/wellSearch/constantsSidebarFilters.ts",
-    "src/pages/authorized/admin/feedback/constants.ts",
-    "src/pages/authorized/favorites/tabs/savedSearches/constants.ts",
-    "src/pages/authorized/search/map/constants.ts",
-    "src/pages/authorized/search/well/content/constants.ts",
-    "src/pages/authorized/search/well/inspect/constants.ts",
-    "src/pages/authorized/search/well/inspect/modules/common/Events/types.ts",
-    "src/pages/authorized/search/well/inspect/modules/measurements/wellCentricView/constants.ts",
-    "src/pages/authorized/search/well/inspect/modules/ndsEvents/components/Filters/constants.ts",
-    "src/pages/authorized/search/well/inspect/modules/wellLogs/constants.ts",
-    "src/utils/isISODateRegex.ts",
-]
+# CYPRESS_EXTERNAL_FILES = [
+#     "src/components/AddToFavoriteSetMenu/constants.ts",
+#     "src/components/EmptyState/constants.ts",
+#     "src/components/SearchUsers/constants.ts",
+#     "src/components/Charts/common/ResetToDefault/constants.ts",
+#     "src/constants/app.ts",
+#     "src/constants/units.ts",
+#     "src/core/constants.ts",
+#     "src/domain/documents/constants.ts",
+#     "src/domain/feedback/service/__fixtures/getDocumentFeedbackPostResponse.ts",
+#     "src/domain/feedback/service/__fixtures/getGeneralFeedbackPostResponse.ts",
+#     "src/modules/wellSearch/constantsSidebarFilters.ts",
+#     "src/pages/authorized/admin/feedback/constants.ts",
+#     "src/pages/authorized/favorites/tabs/savedSearches/constants.ts",
+#     "src/pages/authorized/search/map/constants.ts",
+#     "src/pages/authorized/search/well/content/constants.ts",
+#     "src/pages/authorized/search/well/inspect/constants.ts",
+#     "src/pages/authorized/search/well/inspect/modules/common/Events/types.ts",
+#     "src/pages/authorized/search/well/inspect/modules/measurements/wellCentricView/constants.ts",
+#     "src/pages/authorized/search/well/inspect/modules/ndsEvents/components/Filters/constants.ts",
+#     "src/pages/authorized/search/well/inspect/modules/wellLogs/constants.ts",
+#     "src/utils/isISODateRegex.ts",
+# ]
 
-CYPRESS_FILES = _CYPRESS_FILES + CYPRESS_EXTERNAL_FILES
+# CYPRESS_FILES = _CYPRESS_FILES + CYPRESS_EXTERNAL_FILES
 
-ts_project(
-    name = "cypress_files",
-    srcs = CYPRESS_FILES,
-    tsconfig = "cypress/tsconfig.json",
-    deps = DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + [
-        "@npm//@testing-library/cypress",
-        "@npm//cypress",
-        "@npm//@types/node",
-        "@npm//express",
-        "@npm//@cypress/webpack-preprocessor",
-        "@npm//@types/webpack-dev-server",
-        "@npm//axios",
-        "@npm//webpack",
-        # Manual import of package files due to main js-library only exporting package.json
-        "//packages/sidecar:sidecar-files",
-        "//packages/intercom-helper:intercom-helper-files",
-    ],
-)
+# cypress_test(
+#     name = "cypress",
+#     app_name = "discover",
+#     batches = [
+#         glob([
+#             "cypress/integration/wells/inspect-view/**/*.smoke.spec.ts",
+#             "cypress/integration/feedback/*.smoke.spec.ts",
+#         ]),
+#         glob([
+#             "cypress/integration/wells/*.smoke.spec.ts",
+#         ]),
+#         glob([
+#             "cypress/integration/documents/*.smoke.spec.ts",
+#             "cypress/integration/favorites/*.smoke.spec.ts",
+#         ]),
+#         glob([
+#             "cypress/integration/saved-search/*.smoke.spec.ts",
+#             "cypress/integration/map/*.smoke.spec.ts",
+#             "cypress/integration/project-config/*.smoke.spec.ts",
+#             "cypress/integration/user-profile/*.smoke.spec.ts",
+#         ]),
+#     ],
+#     build_src = ":build_sed",
+#     cypress_files = CYPRESS_FILES,
+#     fixture_files = True,
+#     starting_port = 12211,
+#     support_files = True,
+#     ts_deps = DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + [
+#         "@npm//@testing-library/cypress",
+#         "@npm//cypress",
+#         "@npm//@types/node",
+#         "@npm//express",
+#         "@npm//@cypress/webpack-preprocessor",
+#         "@npm//@types/webpack-dev-server",
+#         "@npm//axios",
+#         "@npm//webpack",
+#         # Manual import of package files due to main js-library only exporting package.json
+#         "//packages/sidecar:sidecar-files",
+#         "//packages/intercom-helper:intercom-helper-files",
+#     ],
+#     web_test_deps = [
+#         "@npm//@testing-library/cypress",
+#         "@npm//babel-loader",
+#         "@npm//@babel/preset-env",
+#         "@npm//axios",
+#         "@npm//process",
+#         "//packages/sidecar:sidecar-files",
+#         "//packages/intercom-helper:intercom-helper-files",
+#     ],
+# )
 
-cypress_web_test(
-    name = "cypress_test",
-    timeout = "eternal",
-    srcs = [
-        ":cypress_files",
-    ],
-    # A cypress config file is required
-    config_file = "cypress.json",
-    # Any runtime dependencies you need to boot your server or run your tests
-    data = DEPENDENCIES + [
-        ":build_sed",
-    ],
-    env = {
-        "PORT": "11120",
-    },
-    tags = [
-        "ignore_test_in_cd",
-    ],
-    templated_args = [
-        "--spec \"apps/discover/cypress/integration/**/*.smoke.*\"",
-        "--config " +
-        "supportFile=./apps/discover/cypress/support," +
-        "integrationFolder=./apps/discover/cypress/integration," +
-        "pluginsFile=./apps/discover/cypress/plugin.js," +
-        "videosFolder=$TEST_UNDECLARED_OUTPUTS_DIR/test.outputs/discover/video," +
-        "screenshotsFolder=$TEST_UNDECLARED_OUTPUTS_DIR/test.outputs/discover/screenshots",
-    ],
-)
-
-cypress_web_test(
-    name = "cypress_nightly_test",
-    timeout = "eternal",
-    srcs = [
-        ":cypress_files",
-    ],
-    # A cypress config file is required
-    config_file = "cypress.json",
-    # Any runtime dependencies you need to boot your server or run your tests
-    data = DEPENDENCIES + [
-        ":build_sed",
-    ],
-    env = {
-        "PORT": "11120",
-    },
-    tags = [
-        "ignore_test_in_cd",
-        "nightly",
-    ],
-    templated_args = [
-        "--record",
-        "--key 57e436d7-0dbb-401d-ac07-7a1ec69e7a90",
-        "--tag \"discover,staging,nightly\"",
-        "--config " +
-        "retries=1," +
-        "supportFile=./apps/discover/cypress/support," +
-        "integrationFolder=./apps/discover/cypress/integration," +
-        "pluginsFile=./apps/discover/cypress/plugin.js," +
-        "videosFolder=$TEST_UNDECLARED_OUTPUTS_DIR/test.outputs/discover/video," +
-        "screenshotsFolder=$TEST_UNDECLARED_OUTPUTS_DIR/test.outputs/discover/screenshots",
-    ],
-)
-
-cypress(
-    name = "cypress_run",
-    args = [
-        "run",
-        "--headed",
-        "--project ./apps/discover",
-        "--config supportFile=cypress/support,integrationFolder=cypress/integration",
-    ],
-    data = [
-        "cypress.json",
-        ":cypress_files",
-    ],
-)
+# cypress_web_test(
+#     name = "cypress.nightly_test",
+#     size = "enormous",
+#     timeout = "eternal",
+#     srcs = [
+#         "cypress.cypress_files",
+#     ],
+#     # A cypress config file is required
+#     config_file = "cypress.json",
+#     # Any runtime dependencies you need to boot your server or run your tests
+#     data = [
+#         ":build_sed",
+#         "//packages/intercom-helper:intercom-helper-files",
+#         "//packages/sidecar:sidecar-files",
+#         "@npm//@babel/preset-env",
+#         "@npm//@testing-library/cypress",
+#         "@npm//axios",
+#         "@npm//babel-loader",
+#         "@npm//process",
+#     ],
+#     env = {
+#         "PORT": "12211",
+#     },
+#     # Your cypress plugin used to configure cypress and boot your server
+#     plugin_file = "cypress.plugin_file",
+#     tags = [
+#         "ignore_test_in_cd",
+#         "nightly",
+#     ],
+#     templated_args = [
+#         "--record",
+#         "--key 57e436d7-0dbb-401d-ac07-7a1ec69e7a90",
+#         "--tag \"discover,staging,nightly\"",
+#         "--config " +
+#         "retries=1," +
+#         "integrationFolder=./apps/discover/cypress/integration," +
+#         "pluginsFile=./apps/discover/cypress/plugin.js," +
+#         "videosFolder=$TEST_UNDECLARED_OUTPUTS_DIR/test.outputs/discover/video," +
+#         "screenshotsFolder=$TEST_UNDECLARED_OUTPUTS_DIR/test.outputs/discover/screenshots" +
+#         ",supportFile=./apps/discover/cypress/support" +
+#         ",fixturesFolder=./apps/discover/cypress/fixtures",
+#     ],
+# )

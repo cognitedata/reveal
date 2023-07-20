@@ -46,11 +46,11 @@ is_published = rule(
             allow_single_file = True,
         ),
         "_node": attr.label(
-            default = Label("@nodejs//:node_bin"),
+            default = Label("@nodejs_host//:node"),
             allow_single_file = True,
         ),
         "_npm": attr.label(
-            default = Label("@nodejs//:npm_bin"),
+            default = Label("@nodejs_host//:npm"),
             allow_single_file = True,
         ),
     },

@@ -7,8 +7,10 @@ load("@npm//jest-cli:index.bzl", _jest_cli = "jest")
 def _jest_deps_impl(ctx):
     declarations = []
     files = []
+    npm_files = []
 
     internal_deps = [dep for dep in ctx.attr.deps if not dep.label.workspace_name]
+    external_deps = [dep for dep in ctx.attr.deps if dep.label.workspace_name]
     for dep in internal_deps:
         if dep[DeclarationInfo]:
             declarations.append(dep[DeclarationInfo].declarations)
@@ -17,9 +19,15 @@ def _jest_deps_impl(ctx):
             files.append(dep[JSModuleInfo].sources)
         files.append(dep[DefaultInfo].files)
 
+    for d in external_deps:
+        if JSModuleInfo in d:
+            npm_files.append(d[JSModuleInfo].sources)
+        if DeclarationInfo in d:
+            npm_files.append(d[DeclarationInfo].declarations)
+
     return [
-        DefaultInfo(files = depset(transitive = files + declarations)),
-        DeclarationInfo(transitive_declarations = depset(transitive = declarations)),
+        DefaultInfo(files = depset(transitive = files + declarations + npm_files)),
+        DeclarationInfo(transitive_declarations = depset(transitive = declarations + npm_files)),
     ]
 
 _jest_deps = rule(

@@ -1,16 +1,13 @@
 load("@bazel_skylib//rules:write_file.bzl", "write_file")
-load("@npm//@bazel/typescript:index.bzl", "ts_project")
 load("@build_bazel_rules_nodejs//:index.bzl", "copy_to_bin")
 load("@npm//@storybook/react:index.bzl", "build_storybook", "start_storybook")
 load("@npm//vite:index.bzl", "vite")
 load("//rules/vite:vite_build.bzl", "vite_build")
 load("//rules/test:jest.bzl", "jest_test")
 load("@npm//jest:index.bzl", "jest")
-load("@npm//cypress:index.bzl", "cypress")
 load("//rules/lint:index.bzl", "eslint_config", "eslint_test", "prettier_test")
 load("//rules/package_json_helpers:generate.bzl", "generate_package_json_helpers")
 load("//rules/publish:publish_fas.bzl", "publish_fas")
-load("//rules/test:cypress_batch_test.bzl", "cypress_batch_test")
 load("//rules/build_sed:build_sed.bzl", "build_sed")
 load("//rules/storybook:move_assets.bzl", "move_assets")
 load("//rules/publish:publish_chromatic.bzl", "publish_chromatic")
@@ -31,9 +28,9 @@ _TESTS = [
     "src/utils/test/*",
 ]
 
-_TESTS_CYPRESS = [
-    "cypress/**/*.test.ts",
-]
+# _CYPRESS_FILES = [
+#     "cypress/**/*.ts",
+# ]
 
 _STORYBOOK = [
     ".storybook/*",
@@ -46,7 +43,7 @@ _SOURCES = [
 
 TESTS = glob(_TESTS + _STORYBOOK)
 
-TESTS_CYPRESS = glob(_TESTS_CYPRESS)
+# CYPRESS_FILES = glob(_CYPRESS_FILES)
 
 STORYBOOK = glob(_STORYBOOK)
 
@@ -68,6 +65,7 @@ generate_package_json_helpers(
     out_dir = "build",
     package_json = "//:package.json",
     src_dir = "src",
+    tags = ["manual"],
     workspace = "@npm",
 )
 
@@ -189,6 +187,7 @@ write_file(
     name = "write_chdir_worspace_script",
     out = "chdir-workspace.js",
     content = ["process.chdir(require('path').join(process.env.BUILD_WORKSPACE_DIRECTORY, '" + package_name() + "'));"],
+    tags = ["manual"],
 )
 
 _RUNTIME_DEPS = [
@@ -229,6 +228,7 @@ vite(
     env = {
         "NODE_OPTIONS": "--max_old_space_size=4096",
     },
+    tags = ["manual"],
 )
 
 ### vite test CI ###
@@ -273,6 +273,7 @@ jest(
         # ibazel send EOF to stdin by default and `react-scripts start` will stop when getting EOF in stdin.
         # So use this to prevent EOF.
         "ibazel_notify_changes",
+        "manual",
     ],
 )
 
@@ -309,57 +310,39 @@ history_server(
         "$(rootpath :build_sed)",
     ],
     data = [":build_sed"],
+    tags = ["manual"],
 )
 
 ### E2E Tests End ###
 
 ### Cypress ###
 
-# The cypress folder has to have a "plugin.ts" file serving your files, as well as a "tsconfig.json"
-cypress_batch_test(
-    name = "cypress_test",
-    build_src = ":build_sed",
-    cypress_files = [
-        glob(["cypress/*.spec.ts"]),
-    ],
-    cypress_folder = "cypress",
-    global_cypress_files = TESTS_CYPRESS,
-    starting_port = 12111,
-    tags = [
-        "ignore_test_in_cd",
-    ],
-)
-
-# You can write your cypress tests a javascript files or in typescript.
-ts_project(
-    name = "cypress_project",
-    srcs = TESTS_CYPRESS + glob(["cypress/*.spec.ts"]),
-    extends = "cypress/tsconfig.json",
-    tsconfig = {
-        "compilerOptions": {
-            "types": ["cypress"],
-        },
-    },
-    deps = [
-        "@npm//cypress",
-    ],
-)
-
-cypress(
-    name = "cypress",
-    args = [
-        "run",
-        "--headed",
-        "--project ./apps/react-demo-app",
-        "--spec ./apps/react-demo-app/cypress/**/*.spec.js",
-        "--env BASE_URL=https://localhost:3000",
-    ],
-    data = [
-        "cypress.json",
-        ":cypress_project",
-        ":start",
-    ],
-)
+##
+# Exposes the following targets:
+# bazel build :cypress.cypress_files
+# bazel build :cypress.plugin_file
+# bazel build :cypress.batch_files_i (i represents the batch index in `batches` parameter)
+# bazel test :cypress.batch_i_test (i represents the batch index in `batches` parameter)
+# bazel test :cypress.nightly_test
+# bazel run :cypress.manual
+##
+# NOTE: The tests are disabled as they're failing because of Fake IDP.
+# cypress_test(
+#     name = "cypress",
+#     app_name = "react-demo-app",
+#     batches = [
+#         glob(["cypress/integration/*.spec.ts"]),
+#     ],
+#     build_src = ":build_sed",
+#     cypress_files = CYPRESS_FILES,
+#     starting_port = 12111,
+#     ts_deps = [
+#         "@npm//@types/node",
+#         "@npm//express",
+#         "@npm//cypress",
+#     ],
+#     web_test_deps = [],
+# )
 
 ### Cypress End ###
 
@@ -399,7 +382,7 @@ publish_chromatic(
     name = "publish_chromatic",
     project_name = "react-demo-app",
     storybook_folder = ":storybook-static",
-    deps = _RUNTIME_DEPS,
+    deps = [":storybook-static-tmp"],
 )
 
 start_storybook(
@@ -421,6 +404,7 @@ start_storybook(
         # ibazel send EOF to stdin by default and target will stop when getting EOF in stdin.
         # So use this to prevent EOF.
         "ibazel_notify_changes",
+        "manual",
     ],
 )
 
@@ -441,8 +425,5 @@ publish_fas(
     # FAS staging app id
     staging_app_id = "fas-demo",
     versioning_strategy = "single-branch",
-    deps = _RUNTIME_DEPS + DEPENDENCIES + TYPE_DEPENDENCIES + [
-        "@npm//vite",
-        ":vite_config",
-    ],
+    deps = [":build_tmp"],
 )

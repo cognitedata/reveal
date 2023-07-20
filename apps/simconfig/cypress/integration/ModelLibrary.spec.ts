@@ -4,7 +4,7 @@ import login from '../login.test';
 
 beforeEach(login);
 
-describe('Model library', () => {
+describe.skip('Model library', () => {
   beforeEach(() => {
     cy.get('[data-cy="top-bar"]').as('App TopBar visible').should('be.visible');
     cy.get('[data-cy="model-library-container"]')

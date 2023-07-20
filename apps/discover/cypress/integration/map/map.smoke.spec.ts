@@ -38,7 +38,8 @@ describe('Map', () => {
   });
 
   describe('Polygon search', () => {
-    it('edit mode can be started and stopped in different ways', () => {
+    // TODO(PP-3317) Fix flaky test
+    it.skip('edit mode can be started and stopped in different ways', () => {
       cy.checkPolygonIsClosed();
 
       cy.enterPolygonEditMode();

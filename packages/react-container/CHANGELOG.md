@@ -1,6 +1,6 @@
 ## 9.1.1 February 06 2023
 
-- bugfix add `defaultAzureDirectory` to TokenFactory 
+- bugfix add `defaultAzureDirectory` to TokenFactory
 
 ## 9.1.0 February 06 2023
 
