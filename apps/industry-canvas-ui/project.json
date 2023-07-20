@@ -65,7 +65,8 @@
         "development": {
           "buildTarget": "industry-canvas-ui:build:development",
           "hmr": true,
-          "liveReload": true
+          "liveReload": true,
+          "allowedHosts": ".dev.fusion.cogniteapp.com,apps-staging.cognite.com"
         },
         "preview": {
           "buildTarget": "industry-canvas-ui:build:preview",

@@ -1,7 +1,10 @@
 import { trackEvent } from '@cognite/cdf-route-tracker';
+import { isUsingUnifiedSignin } from '@cognite/cdf-utilities';
 
 const getPathWithoutTenant = (pathName: string) => {
-  const pathWithoutTenant = pathName.substring(pathName.indexOf('/', 1));
+  const pathWithoutTenant = isUsingUnifiedSignin()
+    ? pathName.substring(pathName.indexOf('/', 2))
+    : pathName.substring(pathName.indexOf('/', 1));
   return pathWithoutTenant;
 };
 

@@ -7,7 +7,7 @@ import singleSpaReact from 'single-spa-react';
 
 import { getEnvironment } from '@cognite/cdf-utilities';
 
-import App from './app/App';
+import { AppWrapper } from './AppWrapper';
 import { environment } from './environment';
 
 if (environment.SENTRY_DSN && getEnvironment() === 'production') {
@@ -25,5 +25,5 @@ if (environment.SENTRY_DSN && getEnvironment() === 'production') {
 export const { bootstrap, mount, unmount } = singleSpaReact({
   React,
   ReactDOMClient,
-  rootComponent: App,
+  rootComponent: AppWrapper,
 });
