@@ -29,6 +29,6 @@ const Container = styled.div`
   top: calc(-70%);
 `;
 
-const StyleMenu = styled(Menu)`
+const StyledMenu = styled(Menu)`
   padding: 6px;
 `;
