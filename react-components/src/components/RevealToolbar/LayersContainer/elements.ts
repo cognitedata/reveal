@@ -10,10 +10,7 @@ export const StyledCheckbox = styled(Checkbox)`
 `;
 
 export const StyledMenu = styled(Menu)`
-  display: flex;
-  flex-direction: row;
-  box-shadow: none;
-  padding: 0px;
+  padding: 6px;
 `;
 
 export const StyledSubMenu = styled(Menu)`
