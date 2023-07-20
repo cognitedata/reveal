@@ -1,9 +1,15 @@
-import { getFlow } from '@cognite/cdf-sdk-singleton';
+import { useQuery } from '@tanstack/react-query';
+
+import { getFlow, getUserInformation } from '@cognite/cdf-sdk-singleton';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 
 type Permission = {
   label: string;
   hasPermission?: boolean;
+};
+
+export const useUserInformation = () => {
+  return useQuery(['user-info'], getUserInformation);
 };
 
 export const useUserPermissions = () => {

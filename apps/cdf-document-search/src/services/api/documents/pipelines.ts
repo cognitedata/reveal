@@ -1,3 +1,4 @@
+import { getProject } from '@cognite/cdf-utilities';
 import { CogniteClient, Label, ListResponse } from '@cognite/sdk';
 import {
   DocumentsClassifier,
@@ -9,9 +10,10 @@ export const createDocumentPipeline = (
   sdk: CogniteClient,
   classifierName: string
 ) => {
+  const project = getProject();
   return sdk
     .post<ListResponse<DocumentsPipeline[]>>(
-      `/api/playground/projects/${sdk.project}/documents/pipelines`,
+      `/api/playground/projects/${project}/documents/pipelines`,
       {
         data: {
           items: [
@@ -29,8 +31,9 @@ export const createDocumentPipeline = (
 };
 
 export const fetchDocumentPipelines = async (sdk: CogniteClient) => {
+  const project = getProject();
   const result = await sdk.get<ListResponse<DocumentsPipeline[]>>(
-    `/api/playground/projects/${sdk.project}/documents/pipelines`
+    `/api/playground/projects/${project}/documents/pipelines`
   );
 
   let pipeline = result.data.items?.[0];
@@ -47,9 +50,10 @@ export const updateDocumentPipelinesActiveClassifier = (
   sdk: CogniteClient,
   classifierId: number
 ) => {
+  const project = getProject();
   return sdk
     .post<ListResponse<DocumentsClassifier[]>>(
-      `/api/playground/projects/${sdk.project}/documents/pipelines/update`,
+      `/api/playground/projects/${project}/documents/pipelines/update`,
       {
         data: {
           items: [
@@ -82,9 +86,10 @@ export const updateDocumentPipelinesTrainingLabels = (
   action: 'add' | 'remove',
   trainingLabels: Label[]
 ) => {
+  const project = getProject();
   return sdk
     .post<{ items: DocumentsPipeline[] }>(
-      `/api/playground/projects/${sdk.project}/documents/pipelines/update`,
+      `/api/playground/projects/${project}/documents/pipelines/update`,
       {
         data: {
           items: [

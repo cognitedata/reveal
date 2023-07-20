@@ -1,3 +1,4 @@
+import { getProject } from '@cognite/cdf-utilities';
 import { CogniteClient, ListResponse } from '@cognite/sdk';
 import {
   DocumentsClassifierCreate,
@@ -10,9 +11,10 @@ export const createDocumentClassifier = (
   sdk: CogniteClient,
   create: DocumentsClassifierCreate
 ) => {
+  const project = getProject();
   return sdk
     .post<ListResponse<Classifier[]>>(
-      `/api/playground/projects/${sdk.project}/documents/classifiers`,
+      `/api/playground/projects/${project}/documents/classifiers`,
       {
         data: {
           items: [create],
@@ -31,7 +33,8 @@ export const fetchDocumentClassifiers = (
   sdk: CogniteClient,
   cursor?: string
 ) => {
-  let url = `/api/playground/projects/${sdk.project}/documents/classifiers`;
+  const project = getProject();
+  let url = `/api/playground/projects/${project}/documents/classifiers`;
   if (cursor !== undefined) {
     url += `?cursor=${cursor}`;
   }
@@ -54,12 +57,13 @@ export const fetchDocumentClassifierByIds = (
   sdk: CogniteClient,
   ids: DocumentsClassifierListByIds[]
 ) => {
+  const project = getProject();
   const request: DocumentsClassifierListByIdsRequest = {
     items: ids,
   };
   return sdk
     .post<ListResponse<Classifier[]>>(
-      `/api/playground/projects/${sdk.project}/documents/classifiers/byids`,
+      `/api/playground/projects/${project}/documents/classifiers/byids`,
       {
         data: request,
       }
@@ -73,15 +77,13 @@ export const fetchDocumentClassifierByIds = (
 };
 
 export const deleteDocumentClassifier = (sdk: CogniteClient, id: number) => {
+  const project = getProject();
   return sdk
-    .post(
-      `/api/playground/projects/${sdk.project}/documents/classifiers/delete`,
-      {
-        data: {
-          items: [{ id }],
-        },
-      }
-    )
+    .post(`/api/playground/projects/${project}/documents/classifiers/delete`, {
+      data: {
+        items: [{ id }],
+      },
+    })
     .then((result) => {
       return result.data;
     })
