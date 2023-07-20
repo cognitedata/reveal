@@ -1,13 +1,16 @@
 import { pickBy } from 'lodash';
 
-import { ContainerReference, ContainerReferenceType } from '../types';
+import {
+  AssetCentricContainerReference,
+  ContainerReferenceType,
+} from '../types';
 import assertNever from '../utils/assertNever';
 
-import { DTOContainerReference } from './types';
+import { DTOAssetCentricContainerReference } from './types';
 
-export const dtoContainerReferenceToContainerReference = (
-  dtoContainerReference: DTOContainerReference
-): ContainerReference => {
+export const dtoAssetCentricContainerReferenceToContainerReference = (
+  dtoContainerReference: DTOAssetCentricContainerReference
+): AssetCentricContainerReference => {
   const {
     containerReferenceType,
     resourceId,
@@ -55,6 +58,12 @@ export const dtoContainerReferenceToContainerReference = (
       initialAssetId: properties.initialAssetId,
       camera: properties.camera,
     };
+  }
+
+  if (containerReferenceType === ContainerReferenceType.FDM_INSTANCE) {
+    throw new Error(
+      `containerReference cannot be '${ContainerReferenceType.FDM_INSTANCE}' for asset-centric container references`
+    );
   }
 
   if (

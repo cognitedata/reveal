@@ -83,7 +83,6 @@
     "default": ["{projectRoot}/**/*", "sharedGlobals"],
     "sharedGlobals": [
       "{workspaceRoot}/babel.config.json",
-      "{workspaceRoot}/scripts/run-many.js",
       "{workspaceRoot}/.github/workflows/nx_ci.yml"
     ],
     "production": [

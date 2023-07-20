@@ -2,7 +2,8 @@ import isArray from 'lodash/isArray';
 import isUndefined from 'lodash/isUndefined';
 
 import { TFunction } from '../../../../../hooks/useTranslation';
-import { FieldValue } from '../../../types';
+import { isDate, formatDate } from '../../../../../utils/date';
+import { FieldValue, ValueType } from '../../../types';
 
 export interface Props {
   dataType?: string;
@@ -27,11 +28,29 @@ export const getChipLabel = ({
     return prefix;
   }
 
-  if (isArray(value)) {
-    return `${prefix} ${value.join(
+  const formattedValue = formatValue(value);
+
+  if (isArray(formattedValue)) {
+    return `${prefix} ${formattedValue.join(
       ` ${t('FILTER_AND_OPERATION', { postProcess: 'lowercase' })} `
     )}`;
   }
 
-  return `${prefix} ${value}`;
+  return `${prefix} ${formattedValue}`;
+};
+
+export const formatValue = (value: ValueType) => {
+  if (isArray(value)) {
+    return value.map(formatSingleValue);
+  }
+  return formatSingleValue(value);
+};
+
+export const formatSingleValue = (
+  value: string | number | Date | boolean | never
+) => {
+  if (isDate(value)) {
+    return formatDate(value);
+  }
+  return value;
 };

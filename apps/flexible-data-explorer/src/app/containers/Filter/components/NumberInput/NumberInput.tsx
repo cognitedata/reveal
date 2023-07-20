@@ -21,7 +21,10 @@ export const NumberInput: React.FC<NumberInputProps> = ({
       variant="default"
       placeholder={placeholder ?? t('FILTER_NUMBER_INPUT_PLACEHOLDER')}
       value={value}
-      onChange={(inputValue) => onChange(Number(inputValue))}
+      onChange={(inputValue) => {
+        const newValue = inputValue.length ? Number(inputValue) : undefined;
+        onChange(newValue);
+      }}
     />
   );
 };

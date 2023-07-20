@@ -1,6 +1,8 @@
 name: NX - CI
 on:
   pull_request:
+    branches-ignore:
+      - release*
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -45,9 +47,6 @@ jobs:
         uses: nrwl/nx-set-shas@v3
         with:
           main-branch-name: ${{ github.base_ref }}
-
-      - name: 'Get affected action'
-        uses: './scripts/github-actions/nx-get-affected'
 
       - name: 'Get affected libs to build'
         id: affected-libs

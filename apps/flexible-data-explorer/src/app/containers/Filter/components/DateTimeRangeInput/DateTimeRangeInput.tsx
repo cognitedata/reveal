@@ -27,7 +27,7 @@ export const DateTimeRangeInput: React.FC<DateTimeRangeInputProps> = ({
         onChange={(newMin) => {
           setMin(newMin);
 
-          if (!isUndefined(max)) {
+          if (!isUndefined(newMin) && !isUndefined(max)) {
             onChange([newMin, max]);
           }
         }}
@@ -40,7 +40,7 @@ export const DateTimeRangeInput: React.FC<DateTimeRangeInputProps> = ({
         onChange={(newMax) => {
           setMax(newMax);
 
-          if (!isUndefined(min)) {
+          if (!isUndefined(min) && !isUndefined(newMax)) {
             onChange([min, newMax]);
           }
         }}

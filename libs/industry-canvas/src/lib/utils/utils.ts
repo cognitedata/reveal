@@ -1,4 +1,4 @@
-import { differenceBy } from 'lodash';
+import { differenceBy, partition } from 'lodash';
 
 import { CogniteClient } from '@cognite/sdk/dist/src/index';
 import { IdsByType } from '@cognite/unified-file-viewer';
@@ -9,9 +9,9 @@ import resolveContainerConfig from '../hooks/utils/resolveContainerConfig';
 import {
   IndustryCanvasState,
   SerializedIndustryCanvasState,
-  IndustryCanvasContainerConfig,
   SerializedCanvasDocument,
   CanvasDocument,
+  isFdmInstanceContainerReference,
 } from '../types';
 
 import { isNotUndefined } from './isNotUndefined';
@@ -19,12 +19,15 @@ import { isNotUndefined } from './isNotUndefined';
 export const serializeCanvasState = (
   state: IndustryCanvasState
 ): SerializedIndustryCanvasState => {
+  const containerReferences = (state.container.children ?? []).map(
+    containerConfigToContainerReference
+  );
+  const [fdmInstanceContainerReferences, assetCentricContainerReferences] =
+    partition(containerReferences, isFdmInstanceContainerReference);
   return {
     canvasAnnotations: state.canvasAnnotations,
-    containerReferences:
-      state.container.children?.map((childContainerConfig) =>
-        containerConfigToContainerReference(childContainerConfig)
-      ) ?? [],
+    containerReferences: assetCentricContainerReferences,
+    fdmInstanceContainerReferences: fdmInstanceContainerReferences,
   };
 };
 
@@ -38,11 +41,14 @@ export const deserializeCanvasState = async (
       container: {
         ...EMPTY_FLEXIBLE_LAYOUT,
         children: await Promise.all(
-          state.containerReferences?.map((containerReference) =>
+          [
+            ...state.containerReferences,
+            ...state.fdmInstanceContainerReferences,
+          ].map((containerReference) =>
             resolveContainerConfig(sdk, containerReference)
           )
         ),
-      } as IndustryCanvasContainerConfig,
+      },
     };
   } catch (error) {
     console.error('Error deserializing canvas container', error);
@@ -63,6 +69,11 @@ export const deserializeCanvasDocument = async (
   };
 };
 
+const getContainerReferenceIds = (state: SerializedIndustryCanvasState) =>
+  [...state.containerReferences, ...state.fdmInstanceContainerReferences].map(
+    (ref) => ref.id
+  );
+
 export const getRemovedIdsByType = (
   currentState: SerializedIndustryCanvasState,
   prevState: SerializedIndustryCanvasState
@@ -73,8 +84,8 @@ export const getRemovedIdsByType = (
       prevState.canvasAnnotations.map((anno) => anno.id)
     ),
     containerIds: differenceBy(
-      currentState.containerReferences.map((ref) => ref.id),
-      prevState.containerReferences.map((ref) => ref.id)
+      getContainerReferenceIds(currentState),
+      getContainerReferenceIds(prevState)
     ).filter(isNotUndefined),
   };
 };

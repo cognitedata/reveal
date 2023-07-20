@@ -8,11 +8,13 @@ import {
   isFileContainerReference,
   isThreeDContainerReference,
   isTimeseriesContainerReference,
+  isFdmInstanceContainerReference,
 } from '../../types';
 import assertNever from '../../utils/assertNever';
 
 import resolveAssetContainerConfig from './resolveAssetContainerConfig';
 import resolveEventContainerConfig from './resolveEventContainerConfig';
+import resolveFdmInstanceContainerConfig from './resolveFdmInstanceContainerConfig';
 import resolveFileContainerConfig from './resolveFileContainerConfig';
 import resolveRevealContainerConfig from './resolveRevealContainerConfig';
 import resolveTimeseriesContainerConfig from './resolveTimeseriesContainerConfig';
@@ -39,6 +41,10 @@ const resolveContainerConfig = async (
 
   if (isThreeDContainerReference(containerReference)) {
     return resolveRevealContainerConfig(sdk, containerReference);
+  }
+
+  if (isFdmInstanceContainerReference(containerReference)) {
+    return resolveFdmInstanceContainerConfig(sdk, containerReference);
   }
 
   assertNever(containerReference, 'Unsupported container reference type');

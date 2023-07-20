@@ -20,6 +20,7 @@ export const DEFAULT_CANVAS_NAME = 'Untitled canvas';
 export enum ModelNames {
   CANVAS = 'Canvas',
   CONTAINER_REFERENCE = 'ContainerReference',
+  FDM_INSTANCE_CONTAINER_REFERENCE = 'FdmInstanceContainerReference',
   CANVAS_ANNOTATION = 'CanvasAnnotation',
 }
 
@@ -41,7 +42,7 @@ export class IndustryCanvasService {
   public static readonly SYSTEM_SPACE = 'cdf_industrial_canvas';
   // Note: To simplify the code, we assume that the data models and
   // the views in the system space always have the same version.
-  public static readonly SYSTEM_SPACE_VERSION = 'v1';
+  public static readonly SYSTEM_SPACE_VERSION = 'v2';
   public static readonly INSTANCE_SPACE = 'IndustrialCanvasInstanceSpace';
   public static readonly DATA_MODEL_EXTERNAL_ID = 'IndustrialCanvas';
   private readonly LIST_LIMIT = 1000; // The max number of items to retrieve in one list request
@@ -114,6 +115,25 @@ export class IndustryCanvasService {
                   y
                 }
               }
+              fdmInstanceContainerReferences (first: ${this.LIST_LIMIT}) {
+                items {
+                  id
+                  containerReferenceType
+                  instanceExternalId
+                  instanceSpace
+                  viewExternalId
+                  viewSpace
+                  viewVersion
+                  label
+                  properties
+                  width
+                  height
+                  maxWidth
+                  maxHeight
+                  x
+                  y
+                }
+              }
               canvasAnnotations (first: ${this.LIST_LIMIT}) {
                 items {
                   id
@@ -145,10 +165,16 @@ export class IndustryCanvasService {
 
     const dtoCanvas = res.canvases.items[0];
     return {
-      ...omit(dtoCanvas, ['canvasAnnotations', 'containerReferences']),
+      ...omit(dtoCanvas, [
+        'canvasAnnotations',
+        'containerReferences',
+        'fdmInstanceContainerReferences',
+      ]),
       data: getSerializedCanvasStateFromDTOCanvasState({
         containerReferences: dtoCanvas.containerReferences,
         canvasAnnotations: dtoCanvas.canvasAnnotations,
+        fdmInstanceContainerReferences:
+          dtoCanvas.fdmInstanceContainerReferences,
       }),
     };
   }
@@ -456,6 +482,7 @@ export class IndustryCanvasService {
       data: {
         containerReferences: [],
         canvasAnnotations: [],
+        fdmInstanceContainerReferences: [],
       },
     };
   };

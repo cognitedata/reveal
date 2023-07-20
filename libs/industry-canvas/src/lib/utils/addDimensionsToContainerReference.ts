@@ -30,6 +30,9 @@ export const DEFAULT_EVENT_WIDTH = 600;
 export const DEFAULT_EVENT_HEIGHT = 500;
 export const DEFAULT_THREE_D_WIDTH = 600;
 export const DEFAULT_THREE_D_HEIGHT = 400;
+export const DEFAULT_FDM_INSTANCE_WIDTH = 600;
+export const DEFAULT_FDM_INSTANCE_HEIGHT = 500;
+
 const getInitialContainerReferenceDimensions = (
   currentMaxX: number,
   containerReference: ContainerReference
@@ -77,6 +80,15 @@ const getInitialContainerReferenceDimensions = (
       y: 0,
       width: DEFAULT_THREE_D_WIDTH,
       height: DEFAULT_THREE_D_HEIGHT,
+    };
+  }
+
+  if (containerReferenceType === ContainerReferenceType.FDM_INSTANCE) {
+    return {
+      x: currentMaxX + INITIAL_CONTAINER_MARGIN,
+      y: 0,
+      width: DEFAULT_FDM_INSTANCE_WIDTH,
+      height: DEFAULT_FDM_INSTANCE_HEIGHT,
     };
   }
 
