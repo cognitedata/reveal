@@ -1,3 +1,4 @@
+/* eslint-disable cypress/unsafe-to-chain-command */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // ***********************************************
 // This example commands.js shows you how to

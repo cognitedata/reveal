@@ -155,7 +155,7 @@ export function NotSupportedFeaturesRule(
     const typeMap = schema.getTypeMap();
 
     const fieldName = fieldDef.name.value;
-    let typeNode = undefined;
+    let typeNode: TypeDefinitionNode | undefined = undefined;
 
     for (const key in typeMap) {
       const type = schema.getType(key);
@@ -171,7 +171,7 @@ export function NotSupportedFeaturesRule(
           type.astNode?.fields[fieldIdx as number]?.loc?.startToken.line ===
             fieldDef.loc?.startToken.line
         ) {
-          typeNode = type as any as TypeDefinitionNode;
+          typeNode = type as unknown as TypeDefinitionNode;
           break;
         }
       }

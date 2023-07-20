@@ -95,7 +95,11 @@ export const findSuggestions = <A extends DMSRecord, B extends DMSRecord>({
     0.0
   );
 
-  const matches = [];
+  const matches: {
+    sourceExternalId: string;
+    targetExternalId: string;
+    score: number;
+  }[] = [];
   const externalIdToSourceRecord: Map<string, DMSRecord> = new Map(
     sourceRecords.map((r) => [r.externalId, r])
   );

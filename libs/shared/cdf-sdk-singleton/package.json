@@ -1,4 +1,8 @@
 {
   "name": "@cognite/cdf-sdk-singleton",
-  "version": "0.0.5"
+  "version": "0.14.0",
+  "description": "The sdk provided to all subapps for the unified cdf ui",
+  "dependencies": {
+    "@cognite/login-utils": "^5.2.0"
+  }
 }

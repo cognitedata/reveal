@@ -13,7 +13,8 @@ export const translations = {
 };
 export const languages = Object.keys(translations);
 
-export const useTranslation = () => useTypedTranslation<TranslationKeys>();
+export const useTranslation = () =>
+  useTypedTranslation<TranslationKeys>('entity-matching');
 
 export const Trans = (props: TypedTransProps<TranslationKeys>) => (
   <TypedTrans<TranslationKeys> {...props} />

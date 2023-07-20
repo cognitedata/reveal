@@ -1,4 +1,24 @@
 {
   "name": "@cognite/login-utils",
-  "version": "0.0.5"
+  "version": "5.2.0",
+  "license": "UNLICENSED",
+  "sideEffects": false,
+  "peerDependencies": {
+    "@tanstack/react-query": "^4",
+    "react": ">=16",
+    "react-dom": ">=16"
+  },
+  "devDependencies": {
+    "@nx/react": "16.4.1",
+    "@rollup/plugin-node-resolve": "^15.0.2",
+    "@testing-library/jest-dom": "^5.16.5",
+    "jest-preview": "^0.3.1",
+    "lodash": "^4.17.21"
+  },
+  "dependencies": {
+    "@auth0/auth0-spa-js": "1.20.0",
+    "@azure/msal-browser": "2.11.0",
+    "@cognite/sdk-core": "^4.6.6",
+    "oidc-client-ts": "^2.2.4"
+  }
 }

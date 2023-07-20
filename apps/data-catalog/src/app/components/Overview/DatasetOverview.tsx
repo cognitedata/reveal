@@ -373,7 +373,7 @@ const StyledCard = styled(Card)`
 `;
 
 const StyledTitle = styled(Title)`
-  padding: 16px 24px;
+  padding: 16px 24px !important;
 `;
 
 const StyledActionTitle = styled(Flex)`

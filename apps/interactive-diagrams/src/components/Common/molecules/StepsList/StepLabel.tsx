@@ -33,7 +33,7 @@ export const StepLabel = ({ step }: { step?: WorkflowStep }): JSX.Element => {
     );
   }
   if (step === 'resourceSelectionAssets' || step === 'resourceSelectionFiles') {
-    const counts = [];
+    const counts: string[] = [];
     const assetsCount = resourceCount?.assets;
     const filesCount = resourceCount?.files;
     if (assetsCount) counts.push(`${assetsCount} assets`);

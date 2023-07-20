@@ -19,10 +19,6 @@ type RouteDef = {
   breadcrumbs?: any;
 };
 
-function PageNotFound() {
-  return <h1>Page not found</h1>;
-}
-
 export default function RootApp() {
   const navigate = useNavigate();
 
@@ -52,10 +48,9 @@ export default function RootApp() {
 
   const routes = [
     {
-      path: '/:tenant/functions',
+      path: '/',
       component: Functions,
     },
-    { path: '/:tenant/*', component: PageNotFound },
   ] as RouteDef[];
 
   // inside component

@@ -16,4 +16,5 @@ export const Trans = (props: TypedTransProps<TranslationKeys>) => (
   <TypedTrans<TranslationKeys> {...props} />
 );
 
-export const useTranslation = () => useTypedTranslation<TranslationKeys>();
+export const useTranslation = () =>
+  useTypedTranslation<TranslationKeys>('extractor-downloads');

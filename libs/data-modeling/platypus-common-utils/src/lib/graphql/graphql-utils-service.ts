@@ -455,8 +455,8 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
   private graphQlToValidationError(
     error: GraphQLError
   ): DataModelValidationError {
-    let typeName = undefined;
-    let fieldName = undefined;
+    let typeName: string | undefined = undefined;
+    let fieldName: string | undefined = undefined;
 
     if (error.nodes?.length) {
       const node = error.nodes[0];

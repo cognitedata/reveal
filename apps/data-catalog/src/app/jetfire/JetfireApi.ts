@@ -71,7 +71,7 @@ export class JetfireApi {
   async jobDetails(configId: number): Promise<Job[]> {
     const uri = '/jobs';
     let jobs: Job[] = [];
-    let cursor = null;
+    let cursor: string | null = null;
 
     do {
       const params: HttpQueryParams = {
@@ -137,7 +137,7 @@ export class JetfireApi {
   }): Promise<Transformation[]> {
     const uri = '/';
     let transformations: Transformation[] = [];
-    let cursor = null;
+    let cursor: string | null = null;
     do {
       const params: HttpQueryParams = {
         includePublic: includePublic.toString(),

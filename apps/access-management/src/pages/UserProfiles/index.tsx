@@ -1,5 +1,3 @@
-import { useParams } from 'react-router-dom';
-
 import { useTranslation } from '@access-management/common/i18n';
 import { UserProfilesConfigurationWarning } from '@access-management/pages/components/UserProfilesConfigurationWarning';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -31,7 +29,6 @@ export default function UserProfilesConfigContainer() {
   const { t } = useTranslation();
   const cache = useQueryClient();
   const sdk = useSDK();
-  const { tenant } = useParams();
   const project = getProject();
 
   const { mutate, isLoading: updating } = useMutation(
@@ -69,7 +66,7 @@ export default function UserProfilesConfigContainer() {
 
   const { data: projectSettings, isFetched: areProjectSettingsFetched } =
     useQuery(['project-settings'], () => {
-      return sdk.projects.retrieve(tenant!);
+      return sdk.projects.retrieve(project!);
     });
 
   const handleSubmit = (values: any) => {

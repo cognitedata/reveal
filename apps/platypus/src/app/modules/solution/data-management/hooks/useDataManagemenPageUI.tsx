@@ -17,7 +17,7 @@ export const useDataManagementPageUI = () => {
   ]).isAclSupported;
 
   const getMissingPermissions = () => {
-    const missingPermissions = [];
+    const missingPermissions: string[] = [];
     if (!doesSupportRead) {
       missingPermissions.push('READ');
     }

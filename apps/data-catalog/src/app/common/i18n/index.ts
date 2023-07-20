@@ -7,4 +7,5 @@ export const translations = {
 };
 export type TranslationKeys = keyof typeof en;
 
-export const useTranslation = () => useTypedTranslation<TranslationKeys>();
+export const useTranslation = () =>
+  useTypedTranslation<TranslationKeys>('data-catalog');

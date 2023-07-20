@@ -282,6 +282,8 @@ export const InputWidget = (
         hideSelectedOptions={false}
         onChange={(newValue) => {
           props.setValue(
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             newValue
               ? (newValue as unknown as { value: string }[])
                   .map((el) => formatValue(inputType, el.value))
@@ -304,9 +306,13 @@ export const InputWidget = (
     return (
       <SegmentedControl
         currentKey={
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
           currValue === true
             ? 'true'
-            : currValue === false
+            : // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            currValue === false
             ? 'false'
             : 'gibberish'
         }

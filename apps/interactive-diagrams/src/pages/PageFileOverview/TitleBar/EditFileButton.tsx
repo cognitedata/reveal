@@ -32,7 +32,7 @@ export const EditFileButton = ({
   }
 
   if (!writeAccess) {
-    const errors = [];
+    const errors: string[] = [];
     if (!filesAcl) {
       errors.push('files:write is missing');
     }

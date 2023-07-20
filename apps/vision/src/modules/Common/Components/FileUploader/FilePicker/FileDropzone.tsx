@@ -143,7 +143,7 @@ async function recursivelyGetAllEntries(
   directoryEntry: InternalDataTransferItem
 ) {
   const directoryReader = directoryEntry.createReader();
-  const entries = [];
+  const entries: InternalDataTransferItem[] = [];
   let readEntries = await readEntriesPromise(directoryReader);
   /* eslint-disable no-await-in-loop */
   while (readEntries.length > 0) {

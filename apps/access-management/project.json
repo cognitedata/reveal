@@ -78,6 +78,25 @@
       },
       "defaultConfiguration": "development"
     },
+    "serve-static": {
+      "executor": "@nrwl/web:file-server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "access-management:build",
+        "port": 3010
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "access-management:build:development"
+        },
+        "preview": {
+          "buildTarget": "access-management:build:preview"
+        },
+        "production": {
+          "buildTarget": "access-management:build:production"
+        }
+      }
+    },
     "lint": {
       "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],

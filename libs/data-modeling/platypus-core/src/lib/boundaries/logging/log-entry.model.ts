@@ -8,10 +8,10 @@ export class LogEntry {
   logWithDate = true;
 
   buildLogString(): string {
-    const ret = [];
+    const ret: string[] = [];
 
     if (this.logWithDate) {
-      ret.push(new Date());
+      ret.push(new Date().toDateString());
     }
 
     ret.push(`Type: ${LogLevel[this.level]}`);

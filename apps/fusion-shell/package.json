@@ -1,0 +1,21 @@
+{
+  "name": "@cognite/fusion-shell",
+  "version": "0.1.0",
+  "scripts": {
+    "start": "../../scripts/start.sh dev fusion-shell",
+    "build": "../../scripts/build.sh production fusion-shell",
+    "test": "../../scripts/test.sh fusion-shell"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

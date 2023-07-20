@@ -66,7 +66,7 @@ const DataSetDetails = (): JSX.Element => {
   const [changesSaved, setChangesSaved] = useState<boolean>(true);
   const { dataSetId } = useParams();
   const navigate = useNavigate();
-  const { appPath } = useParams<{ appPath?: string }>();
+  const { subAppPath: appPath } = useParams<{ subAppPath?: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = setDefaultActiveTab(searchParams.get('activeTab'));
 

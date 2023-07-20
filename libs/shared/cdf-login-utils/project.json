@@ -17,7 +17,10 @@
       "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["libs/shared/cdf-login-utils/**/*.{ts,tsx,js,jsx}"]
+        "lintFilePatterns": [
+          "libs/shared/cdf-login-utils/**/*.{ts,tsx,js,jsx}",
+          "libs/shared/cdf-login-utils/package.json"
+        ]
       }
     },
     "build": {
@@ -28,14 +31,25 @@
         "tsConfig": "libs/shared/cdf-login-utils/tsconfig.lib.json",
         "project": "libs/shared/cdf-login-utils/package.json",
         "entryFile": "libs/shared/cdf-login-utils/src/index.ts",
-        "external": ["react/jsx-runtime"],
-        "rollupConfig": "@nx/react/plugins/bundle-rollup",
-        "compiler": "babel",
-        "updateBuildableProjectDepsInPackageJson": true,
-        "buildableProjectDepsInPackageJsonType": "dependencies",
+        "external": [
+          "react/jsx-runtime",
+          "react",
+          "react-dom",
+          "@tanstack/react-query",
+          "styled-components"
+        ],
+        "rollupConfig": "libs/shared/cdf-login-utils/rollup-config.js",
+        "compiler": "tsc",
+        "updateBuildableProjectDepsInPackageJson": false,
+        "format": ["esm", "cjs"],
         "assets": [
           {
             "glob": "libs/shared/cdf-login-utils/README.md",
+            "input": ".",
+            "output": "."
+          },
+          {
+            "glob": "libs/shared/cdf-login-utils/CHANGELOG.md",
             "input": ".",
             "output": "."
           }
