@@ -48,7 +48,7 @@ export const MessageBase = ({
           <ErrorBoundary>
             <Flex style={{ flex: 1 }}>{children}</Flex>
           </ErrorBoundary>
-          {source === 'bot' && type !== 'data-model' && (
+          {source === 'bot' && type !== 'data-models' && (
             <Button
               icon="EllipsisVertical"
               type="ghost"
@@ -57,7 +57,7 @@ export const MessageBase = ({
             />
           )}
         </Flex>
-        {source === 'bot' && type !== 'data-model' && (
+        {source === 'bot' && type !== 'data-models' && (
           <Flex gap={4}>
             <div style={{ flex: 1 }}>
               <ResponsiveActions

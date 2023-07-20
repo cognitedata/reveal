@@ -40,6 +40,7 @@ module.exports = composePlugins(
       };
     }
 
+    config.mode = nodeEnv === 'production' ? 'production' : 'development';
     return config;
   }
 );
