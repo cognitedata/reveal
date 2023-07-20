@@ -22,6 +22,7 @@ export const Image360CollectionLayerContainer = (): ReactElement => {
   );
 
   const [all360ImagesVisible, setAll360ImagesVisible] = useState(true);
+  const [indeterminate, setIndeterminate] = useState<boolean>(false);
 
   const handle360ImagesVisibility = (image360: Image360Collection): void => {
     selectedImage360Collection.map((data) => {
@@ -33,6 +34,8 @@ export const Image360CollectionLayerContainer = (): ReactElement => {
     });
     viewer.requestRedraw();
     setSelectedImage360Collection([...selectedImage360Collection]);
+    setIndeterminate(selectedImage360Collection.some((data) => !data.isToggled));
+    setAll360ImagesVisible(!selectedImage360Collection.every((data) => !data.isToggled));
   };
 
   const handleAll360ImagesVisibility = (visible: boolean): void => {
@@ -42,6 +45,7 @@ export const Image360CollectionLayerContainer = (): ReactElement => {
     });
     viewer.requestRedraw();
     setAll360ImagesVisible(visible);
+    setIndeterminate(false);
     setSelectedImage360Collection([...selectedImage360Collection]);
   };
 
@@ -72,6 +76,7 @@ export const Image360CollectionLayerContainer = (): ReactElement => {
         <StyledMenu>
           <StyledCheckbox
             checked={all360ImagesVisible}
+            indeterminate={indeterminate}
             onChange={(e, c) => {
               e.stopPropagation();
               handleAll360ImagesVisibility(c as boolean);

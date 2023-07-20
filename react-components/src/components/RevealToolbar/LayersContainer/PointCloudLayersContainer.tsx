@@ -23,6 +23,7 @@ export const PointCloudLayersContainer = (): ReactElement => {
   );
 
   const [allPointCloudModelVisible, setAllPointCloudModelVisible] = useState(true);
+  const [indeterminate, setIndeterminate] = useState<boolean>(false);
 
   const handlePointCloudVisibility = (model: CognitePointCloudModel): void => {
     selectedPointCloudModels.map((data) => {
@@ -34,6 +35,8 @@ export const PointCloudLayersContainer = (): ReactElement => {
     });
     viewer.requestRedraw();
     setSelectedPointCloudModels([...selectedPointCloudModels]);
+    setIndeterminate(selectedPointCloudModels.some((data) => !data.isToggled));
+    setAllPointCloudModelVisible(!selectedPointCloudModels.every((data) => !data.isToggled));
   };
 
   const handleAllPointCloudModelsVisibility = (visible: boolean): void => {
@@ -73,6 +76,7 @@ export const PointCloudLayersContainer = (): ReactElement => {
         <StyledMenu>
           <StyledCheckbox
             checked={allPointCloudModelVisible}
+            indeterminate={indeterminate}
             onChange={(e, c) => {
               e.stopPropagation();
               handleAllPointCloudModelsVisibility(c as boolean);

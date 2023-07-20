@@ -29,5 +29,6 @@ export type {
   AddReveal3DModelOptions
 } from './components/Reveal3DResources/types';
 export { RevealToolbar } from './components/RevealToolbar/RevealToolbar';
+export { LayersButton } from './components/RevealToolbar/LayersButton';
 export { useFdmAssetMappings } from './hooks/useFdmAssetMappings';
 export { type FdmAssetMappingsConfig } from './hooks/types';

@@ -22,6 +22,7 @@ export const CadModelLayersContainer = (): ReactElement => {
   );
 
   const [allCadModelVisible, setAllCadModelVisible] = useState(true);
+  const [indeterminate, setIndeterminate] = useState<boolean>(false);
 
   const handleCadModelVisibility = (model: CogniteCadModel): void => {
     selectedCadModels.map((data) => {
@@ -33,6 +34,8 @@ export const CadModelLayersContainer = (): ReactElement => {
     model.visible = !model.visible;
     viewer.requestRedraw();
     setSelectedCadModels([...selectedCadModels]);
+    setIndeterminate(selectedCadModels.some((data) => !data.isToggled));
+    setAllCadModelVisible(!selectedCadModels.every((data) => !data.isToggled));
   };
 
   const handleAllCadModelsVisibility = (visible: boolean): void => {
@@ -42,6 +45,7 @@ export const CadModelLayersContainer = (): ReactElement => {
     });
     viewer.requestRedraw();
     setAllCadModelVisible(visible);
+    setIndeterminate(false);
     setSelectedCadModels([...selectedCadModels]);
   };
 
@@ -72,6 +76,7 @@ export const CadModelLayersContainer = (): ReactElement => {
         <StyledMenu>
           <StyledCheckbox
             checked={allCadModelVisible}
+            indeterminate={indeterminate}
             onChange={(e, c) => {
               e.stopPropagation();
               handleAllCadModelsVisibility(c as boolean);
