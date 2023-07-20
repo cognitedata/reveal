@@ -8,7 +8,7 @@ import shouldFireToolKeyboardShortcut from './shouldFireToolKeyboardShortcut';
 const useManagedTool = (
   initialIndustryCanvasToolType: IndustryCanvasToolType
 ) => {
-  const [tool, setTool] = useState<IndustryCanvasToolType>(
+  const [toolType, setToolType] = useState<IndustryCanvasToolType>(
     initialIndustryCanvasToolType
   );
 
@@ -21,7 +21,7 @@ const useManagedTool = (
       const matchingIndustryCanvasToolType =
         IndustryCanvasToolTypeByShortcutKey[event.key];
       if (matchingIndustryCanvasToolType !== undefined) {
-        setTool(matchingIndustryCanvasToolType);
+        setToolType(matchingIndustryCanvasToolType);
       }
     };
 
@@ -29,11 +29,11 @@ const useManagedTool = (
     return () => {
       document.removeEventListener('keydown', onKeyDown);
     };
-  }, [setTool]);
+  }, [setToolType]);
 
   return {
-    tool,
-    setTool,
+    toolType,
+    setToolType,
   };
 };
 

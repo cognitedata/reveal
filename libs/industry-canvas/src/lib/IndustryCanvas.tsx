@@ -6,7 +6,6 @@ import { isDevelopment } from '@cognite/cdf-utilities';
 import { useSDK } from '@cognite/sdk-provider';
 import ReactUnifiedViewer, {
   Annotation,
-  ToolType,
   UnifiedViewer,
   ZoomToFitMode,
 } from '@cognite/unified-file-viewer';
@@ -49,8 +48,8 @@ export type IndustryCanvasProps = {
   selectedContainer: IndustryCanvasContainerConfig | undefined;
   selectedCanvasAnnotation: CanvasAnnotation | undefined;
   commentAnnotations: CommentAnnotation[];
-  tool: IndustryCanvasToolType;
-  setTool: Dispatch<SetStateAction<IndustryCanvasToolType>>;
+  toolType: IndustryCanvasToolType;
+  setToolType: Dispatch<SetStateAction<IndustryCanvasToolType>>;
   isCanvasLocked: boolean;
   onResourceSelectorOpen: UseResourceSelectorActionsReturnType['onResourceSelectorOpen'];
 } & Pick<
@@ -66,10 +65,7 @@ export type IndustryCanvasProps = {
   | 'setInteractionState'
   | 'containerAnnotations'
 > &
-  Pick<
-    UseManagedToolsReturnType,
-    'toolOptions' | 'onUpdateAnnotationStyleByType'
-  > &
+  Pick<UseManagedToolsReturnType, 'tool' | 'onUpdateAnnotationStyleByType'> &
   Pick<
     UseTooltipsOptionsReturnType,
     'tooltipsOptions' | 'onUpdateTooltipsOptions'
@@ -94,11 +90,11 @@ export const IndustryCanvas = ({
   onAddContainerReferences,
   onRef,
   viewerRef,
-  tool,
-  setTool,
+  toolType,
+  setToolType,
   onUpdateAnnotationStyleByType,
   shouldShowConnectionAnnotations,
-  toolOptions,
+  tool,
   commentAnnotations,
   isCanvasLocked,
   onResourceSelectorOpen,
@@ -169,8 +165,8 @@ export const IndustryCanvas = ({
       // We want the tooltip to stay open in this case.
       // TODO: Bug tracked by https://cognitedata.atlassian.net/browse/UFV-507
       if (
-        tool === IndustryCanvasToolType.LINE ||
-        tool === IndustryCanvasToolType.ELLIPSE
+        toolType === IndustryCanvasToolType.LINE ||
+        toolType === IndustryCanvasToolType.ELLIPSE
       ) {
         return;
       }
@@ -186,13 +182,13 @@ export const IndustryCanvas = ({
         hoverId: undefined,
       });
     },
-    [setInteractionState, tool]
+    [setInteractionState, toolType]
   );
 
   const { handleSelect, getAnnotationEditHandlers } = useEditOnSelect(
     unifiedViewerRef,
-    tool,
-    setTool
+    toolType,
+    setToolType
   );
 
   const canvasAnnotationWithEventHandlers = useMemo(
@@ -284,14 +280,8 @@ export const IndustryCanvas = ({
         onClick={onStageClick}
         shouldShowZoomControls={false}
         setRef={handleRef}
-        tool={
-          // TODO helperfunction here and clean up
-          tool === IndustryCanvasToolType.COMMENT
-            ? ToolType.RECTANGLE
-            : (tool as unknown as ToolType)
-        }
+        tool={tool}
         onSelect={handleSelect}
-        toolOptions={toolOptions}
         onDeleteRequest={onDeleteRequest}
         onUpdateRequest={onUpdateRequest}
         initialViewport={{
@@ -307,8 +297,8 @@ export const IndustryCanvas = ({
       />
       <ToolbarWrapper>
         <ToolbarComponent
-          activeTool={tool}
-          onToolChange={setTool}
+          activeTool={toolType}
+          onToolChange={setToolType}
           isCanvasLocked={isCanvasLocked}
         />
       </ToolbarWrapper>

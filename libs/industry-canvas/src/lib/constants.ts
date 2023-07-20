@@ -82,11 +82,6 @@ export const DEFAULT_FONT_SIZE = '18px';
 export const MIN_FONT_SIZE = 1;
 export const MAX_FONT_SIZE = 999;
 
-export const LINE_STROKE_WIDTH = {
-  SMALL: 2,
-  MEDIUM: 6,
-  LARGE: 10,
-};
 export const MIN_STROKE_WIDTH = 1;
 export const MAX_STROKE_WIDTH = 50;
 export const LINE_DASH_ARRAY = [10, 10];
