@@ -129,6 +129,14 @@ export const checkUrl = (env: Envs) => {
   return hostnameEnv === env;
 };
 
+const unifiedSigninProdUrls = ['apps.cognite.com'];
+
+const unifiedSigninStagingUrls = [
+  'apps-staging.cognite.com',
+  'apps-preview.cognite.com',
+  'apps-test.cognite.com',
+];
+
 export enum Envs {
   PROD = 'prod',
   DEV = 'dev',
@@ -141,8 +149,13 @@ export enum Envs {
 export const isDevelopment = () =>
   checkUrl(Envs.DEV) || checkUrl(Envs.LOCALHOST);
 export const isStaging = () =>
-  checkUrl(Envs.STAGING) || checkUrl(Envs.PR) || checkUrl(Envs.NEXT_RELEASE);
-export const isProduction = () => !(isStaging() || isDevelopment());
+  checkUrl(Envs.STAGING) ||
+  checkUrl(Envs.PR) ||
+  checkUrl(Envs.NEXT_RELEASE) ||
+  unifiedSigninStagingUrls.includes(window.location.host);
+export const isProduction = () =>
+  !(isStaging() || isDevelopment()) ||
+  unifiedSigninProdUrls.includes(window.location.host);
 
 export const getEnvironment = () => {
   if (isDevelopment()) {
