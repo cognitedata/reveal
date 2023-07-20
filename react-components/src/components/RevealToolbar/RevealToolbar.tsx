@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type ReactElement } from 'react';
+import { type ReactElement, type JSX } from 'react';
 import { Button, ToolBar, type ToolBarProps } from '@cognite/cogs.js';
 import { FitModelsButton } from './FitModelsButton';
 import { SlicerButton } from './SlicerButton';
