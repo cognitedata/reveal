@@ -132,7 +132,7 @@ jobs:
       - name: Lint
         env:
           NODE_OPTIONS: '--max_old_space_size=8192'
-        run: npx nx run-many --target=lint --parallel --nx-bail --projects=${{ needs.setup.outputs.affected-lint-string }}
+        run: npx nx run-many --target=lint --parallel --nx-bail --projects ${{ needs.setup.outputs.affected-lint-string }}
 
   test:
     name: 'Test'
@@ -161,7 +161,7 @@ jobs:
       - name: Test
         env:
           NODE_OPTIONS: '--max_old_space_size=8192'
-        run: npx nx run-many --target=test --parallel --nx-bail --projects=${{ needs.setup.outputs.affected-test-string }}
+        run: npx nx run-many --target=test --parallel --nx-bail --projects ${{ needs.setup.outputs.affected-test-string }}
 
   build-libs:
     name: 'Build libs'
@@ -190,7 +190,7 @@ jobs:
       - name: Build
         env:
           NODE_OPTIONS: '--max_old_space_size=8192'
-        run: npx nx run-many --target=build --parallel --nx-bail --configuration=production --projects=${{ needs.setup.outputs.affected-libs-string }}
+        run: npx nx run-many --target=build --parallel --nx-bail --configuration=production --projects ${{ needs.setup.outputs.affected-libs-string }}
 
   build:
     name: Build
