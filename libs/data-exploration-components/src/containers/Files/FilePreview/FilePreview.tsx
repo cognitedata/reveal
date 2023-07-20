@@ -19,6 +19,8 @@ import ReactUnifiedViewer, {
   getCanonicalMimeType,
   getContainerConfigFromFileInfo,
   isSupportedFileInfo,
+  PanToolConfig,
+  RectangleToolConfig,
   ToolType,
   UnifiedViewer,
 } from '@cognite/unified-file-viewer';
@@ -70,17 +72,15 @@ type FilePreviewProps = {
   hideEdit?: boolean;
 };
 
-const RectangleToolProps = {
-  tool: ToolType.RECTANGLE,
-  toolOptions: {
-    fill: 'transparent',
-    strokeWidth: 4,
-    stroke: 'black',
-  },
+const RECTANGLE_TOOL: RectangleToolConfig = {
+  type: ToolType.RECTANGLE,
+  fill: 'transparent',
+  strokeWidth: 4,
+  stroke: 'black',
 };
 
-const PanToolProps = {
-  tool: ToolType.PAN,
+const PAN_TOOL: PanToolConfig = {
+  type: ToolType.PAN,
 };
 
 export const FilePreview = ({
@@ -388,8 +388,6 @@ export const FilePreview = ({
     return <Loader />;
   }
 
-  const toolProps = creatable ? RectangleToolProps : PanToolProps;
-
   const handleOnKeyDown = (event: React.KeyboardEvent) => {
     if (event.code === 'ArrowLeft') {
       setPage((prevPage) => Math.max(prevPage - 1, 1));
@@ -434,7 +432,7 @@ export const FilePreview = ({
             onClick={onStageClick}
             shouldShowZoomControls={showControls}
             onUpdateRequest={handleUpdateRequest}
-            {...toolProps}
+            tool={creatable ? RECTANGLE_TOOL : PAN_TOOL}
           />
         </UFVWrapper>
         <Pagination

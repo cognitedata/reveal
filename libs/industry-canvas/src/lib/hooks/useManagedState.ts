@@ -329,14 +329,12 @@ const usePersistence = (
 
 const useManagedState = ({
   unifiedViewer,
-  setTool,
-  tool,
-  tooltipsOptions,
+  toolType,
+  setToolType,
 }: {
   unifiedViewer: UnifiedViewer | null;
-  tool: IndustryCanvasToolType;
-  setTool: Dispatch<SetStateAction<IndustryCanvasToolType>>;
-  tooltipsOptions: TooltipsOptions;
+  toolType: IndustryCanvasToolType;
+  setToolType: Dispatch<SetStateAction<IndustryCanvasToolType>>;
 }): UseManagedStateReturnType => {
   const sdk = useSDK();
   const trackUsage = useMetrics();
@@ -378,7 +376,7 @@ const useManagedState = ({
 
         if (hasAnnotationBeenCreated) {
           // Augment the annotation with the comment metadata if the tool is comment
-          if (tool === IndustryCanvasToolType.COMMENT) {
+          if (toolType === IndustryCanvasToolType.COMMENT) {
             updatedAnnotation.isSelectable = false;
             updatedAnnotation.metadata = {
               ...updatedAnnotation.metadata,
@@ -396,7 +394,7 @@ const useManagedState = ({
             hoverId: undefined,
             clickedContainerAnnotationId: updatedAnnotation.id,
           });
-          setTool(IndustryCanvasToolType.SELECT);
+          setToolType(IndustryCanvasToolType.SELECT);
 
           unifiedViewer?.once(UnifiedViewerEventType.ON_TOOL_CHANGE, () => {
             // It takes a little bit of time before the annotation is added, hence the timeout.
@@ -427,9 +425,9 @@ const useManagedState = ({
     },
     [
       pushState,
-      setTool,
       unifiedViewer,
-      tool,
+      toolType,
+      setToolType,
       activeCanvasExternalId,
       saveComment,
       userIdentifier,
@@ -528,13 +526,7 @@ const useManagedState = ({
         })
       );
     },
-    [
-      unifiedViewer,
-      sdk,
-      pushState,
-      canvasState.canvasAnnotations,
-      tooltipsOptions,
-    ]
+    [unifiedViewer, sdk, pushState, canvasState.canvasAnnotations]
   );
 
   const removeContainerById = useCallback(

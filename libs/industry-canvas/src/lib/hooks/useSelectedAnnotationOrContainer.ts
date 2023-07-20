@@ -17,7 +17,7 @@ import { UseManagedStateReturnType } from './useManagedState';
 
 type UseSelectedAnnotationOrContainerProps = {
   unifiedViewerRef: UnifiedViewer | null;
-  tool: IndustryCanvasToolType;
+  toolType: IndustryCanvasToolType;
   canvasAnnotations: UseManagedStateReturnType['canvasAnnotations'];
   container: UseManagedStateReturnType['container'];
 };
@@ -29,7 +29,7 @@ export type UseSelectedAnnotationOrContainerReturnType = {
 
 export const useSelectedAnnotationOrContainer = ({
   unifiedViewerRef,
-  tool,
+  toolType,
   canvasAnnotations,
   container,
 }: UseSelectedAnnotationOrContainerProps) => {
@@ -45,7 +45,7 @@ export const useSelectedAnnotationOrContainer = ({
 
   const selectedCanvasAnnotation = useMemo(() => {
     // This is to avoid the bug in UFV where the ON_SELECT is not emitted with empty IDs when changing tool
-    if (tool !== IndustryCanvasToolType.SELECT) {
+    if (toolType !== IndustryCanvasToolType.SELECT) {
       return undefined;
     }
 
@@ -59,11 +59,11 @@ export const useSelectedAnnotationOrContainer = ({
     return canvasAnnotations.find(
       (annotation) => annotation.id === selectedIdsByType.annotationIds[0]
     );
-  }, [canvasAnnotations, selectedIdsByType, tool]);
+  }, [canvasAnnotations, selectedIdsByType, toolType]);
 
   const selectedContainer = useMemo(() => {
     // This is to avoid the bug in UFV where the ON_SELECT is not emitted with empty IDs when changing tool
-    if (tool !== IndustryCanvasToolType.SELECT) {
+    if (toolType !== IndustryCanvasToolType.SELECT) {
       return undefined;
     }
 
@@ -77,7 +77,7 @@ export const useSelectedAnnotationOrContainer = ({
     return (container.children ?? []).find(
       (child) => child.id === selectedIdsByType.containerIds[0]
     );
-  }, [container.children, selectedIdsByType, tool]);
+  }, [container.children, selectedIdsByType, toolType]);
 
   return {
     selectedCanvasAnnotation,

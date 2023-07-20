@@ -8,6 +8,7 @@ import {
   Metadata,
   RectangleAnnotation,
   TimeseriesContainerProps,
+  ToolType,
 } from '@cognite/unified-file-viewer';
 
 import { ResourceType } from '@data-exploration-lib/core';
@@ -218,17 +219,14 @@ export type SerializedCanvasDocument = Omit<CanvasDocument, 'data'> & {
   data: SerializedIndustryCanvasState;
 };
 
-// TODO: fix the enum typings here
 export enum IndustryCanvasToolType {
-  ELLIPSE = 'ellipse',
-  IMAGE = 'image',
-  STICKY = 'sticky',
-  LINE = 'line',
-  PAN = 'pan',
-  POLYLINE = 'polyline',
-  RECTANGLE = 'rectangle',
-  SELECT = 'select',
-  TEXT = 'text',
+  ELLIPSE = ToolType.ELLIPSE,
+  STICKY = ToolType.STICKY,
+  LINE = ToolType.LINE,
+  PAN = ToolType.PAN,
+  RECTANGLE = ToolType.RECTANGLE,
+  SELECT = ToolType.SELECT,
+  TEXT = ToolType.TEXT,
   COMMENT = 'comment',
 }
 

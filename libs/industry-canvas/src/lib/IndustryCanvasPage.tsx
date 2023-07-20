@@ -97,7 +97,9 @@ export const IndustryCanvasPage = () => {
   const [currentZoomScale, setCurrentZoomScale] = useState<number>(1);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const { tooltipsOptions, onUpdateTooltipsOptions } = useTooltipsOptions();
-  const { tool, setTool } = useManagedTool(IndustryCanvasToolType.SELECT);
+  const { toolType, setToolType } = useManagedTool(
+    IndustryCanvasToolType.SELECT
+  );
   const toolBeforeSpacePress = useRef<IndustryCanvasToolType | undefined>(
     undefined
   );
@@ -145,9 +147,8 @@ export const IndustryCanvasPage = () => {
     containerAnnotations,
   } = useManagedState({
     unifiedViewer: unifiedViewerRef,
-    setTool,
-    tool,
-    tooltipsOptions,
+    toolType,
+    setToolType,
   });
 
   useTrackCanvasViewed(activeCanvas);
@@ -160,15 +161,15 @@ export const IndustryCanvasPage = () => {
   );
 
   useEffect(() => {
-    if (isCanvasLocked && tool !== IndustryCanvasToolType.PAN) {
-      setTool(IndustryCanvasToolType.PAN);
+    if (isCanvasLocked && toolType !== IndustryCanvasToolType.PAN) {
+      setToolType(IndustryCanvasToolType.PAN);
     }
-  }, [isCanvasLocked, setTool, tool]);
+  }, [isCanvasLocked, setToolType, toolType]);
 
   const { selectedCanvasAnnotation, selectedContainer } =
     useSelectedAnnotationOrContainer({
       unifiedViewerRef,
-      tool,
+      toolType,
       canvasAnnotations,
       container,
     });
@@ -182,8 +183,8 @@ export const IndustryCanvasPage = () => {
     initialTab,
   } = useResourceSelectorActions();
 
-  const { onUpdateAnnotationStyleByType, toolOptions } = useManagedTools({
-    tool,
+  const { onUpdateAnnotationStyleByType, tool } = useManagedTools({
+    toolType,
     selectedCanvasAnnotation,
     onUpdateRequest,
   });
@@ -505,15 +506,15 @@ export const IndustryCanvasPage = () => {
       // Only record the previous tool *before* the space key was pressed.
       // Otherwise, we will record the tool while space is being pressed
       if (toolBeforeSpacePress.current === undefined) {
-        toolBeforeSpacePress.current = tool;
+        toolBeforeSpacePress.current = toolType;
       }
-      setTool(IndustryCanvasToolType.PAN);
+      setToolType(IndustryCanvasToolType.PAN);
     }
   };
 
   const onKeyUp: KeyboardEventHandler<HTMLElement> = (event) => {
     if (event.key === ' ' && toolBeforeSpacePress.current !== undefined) {
-      setTool(toolBeforeSpacePress.current);
+      setToolType(toolBeforeSpacePress.current);
       toolBeforeSpacePress.current = undefined;
     }
   };
@@ -696,9 +697,9 @@ export const IndustryCanvasPage = () => {
             canvasAnnotations={canvasAnnotations}
             selectedCanvasAnnotation={selectedCanvasAnnotation}
             tool={tool}
-            setTool={setTool}
+            toolType={toolType}
+            setToolType={setToolType}
             onUpdateAnnotationStyleByType={onUpdateAnnotationStyleByType}
-            toolOptions={toolOptions}
             isCanvasLocked={isCanvasLocked}
             onResourceSelectorOpen={onResourceSelectorOpen}
             commentAnnotations={commentAnnotations}
