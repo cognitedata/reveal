@@ -1,3 +1,4 @@
+import { getProject } from '@cognite/cdf-utilities';
 import { CogniteClient, ListResponse } from '@cognite/sdk';
 import {
   Document,
@@ -11,9 +12,10 @@ import { DOCUMENTS_AGGREGATES } from '../../constants';
 import { DocumentSearchQuery } from '../../types';
 
 export const fetchDocumentAggregates = (sdk: CogniteClient) => {
+  const project = getProject();
   return sdk
     .post<DocumentsSearchResponse>(
-      `/api/playground/projects/${sdk.project}/documents/search`,
+      `/api/playground/projects/${project}/documents/search`,
       {
         data: {
           aggregates: [
@@ -50,10 +52,11 @@ export const doDocumentSearch = (
   query?: DocumentSearchQuery
 ) => {
   const filterBuilder = documentBuilder(query);
+  const project = getProject();
 
   return sdk
     .post<DocumentsSearchResponse>(
-      `/api/playground/projects/${sdk.project}/documents/search`,
+      `/api/playground/projects/${project}/documents/search`,
       {
         data: {
           ...filterBuilder,
@@ -69,9 +72,10 @@ export const doDocumentSearch = (
 };
 
 export const fetchDocumentList = (sdk: CogniteClient, externalId: string) => {
+  const project = getProject();
   return sdk
     .post<ListResponse<Document[]>>(
-      `/api/playground/projects/${sdk.project}/documents/list`,
+      `/api/playground/projects/${project}/documents/list`,
       {
         data: {
           filter: {
@@ -93,9 +97,10 @@ export const fetchDocumentList = (sdk: CogniteClient, externalId: string) => {
 };
 
 export const fetchDocumentById = (sdk: CogniteClient, documentId: number) => {
+  const project = getProject();
   return sdk
     .post<ListResponse<Document[]>>(
-      `/api/playground/projects/${sdk.project}/documents/list`,
+      `/api/playground/projects/${project}/documents/list`,
       {
         data: {
           filter: {
@@ -115,20 +120,18 @@ export const previewDocument = (
   documentId?: number,
   page: 0 | 1 | 2 = 0
 ) => {
+  const project = getProject();
   return sdk
-    .get<ArrayBuffer>(
-      `/api/playground/projects/${sdk.project}/documents/preview`,
-      {
-        params: {
-          documentId,
-          page,
-        },
-        responseType: 'arraybuffer',
-        headers: {
-          Accept: 'image/png',
-        },
-      }
-    )
+    .get<ArrayBuffer>(`/api/playground/projects/${project}/documents/preview`, {
+      params: {
+        documentId,
+        page,
+      },
+      responseType: 'arraybuffer',
+      headers: {
+        Accept: 'image/png',
+      },
+    })
     .then((result) => parseArrayBufferToBase64(result.data))
     .catch((error) => {
       throw error;
