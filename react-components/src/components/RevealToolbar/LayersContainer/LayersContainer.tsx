@@ -30,7 +30,5 @@ const Container = styled.div`
 `;
 
 const StyleMenu = styled(Menu)`
-  display: flex;
-  flex-direction: column;
-  padding: 0px 0px 0px 0px;
+  padding: 6px;
 `;
