@@ -24,8 +24,8 @@ const UserMenu = (): JSX.Element => {
   };
 
   const handleManageAccountClick = () => {
-    const { search } = window.location;
-    const url = `/profile${search}`;
+    const { origin, search, hash } = window.location;
+    const url = `${origin}/profile${search}${hash}`;
     window.open(url, '_blank');
   };
 
