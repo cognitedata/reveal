@@ -48,11 +48,7 @@ export const DisplayAlerts = ({
         activeKey={activeKeys}
         onChange={handleToggleAccordian}
         expandIcon={({ isActive }) => (
-          <ExpandIcon
-            $active={Boolean(isActive)}
-            type="ChevronDownSmall"
-            css={{ top: '14px' }}
-          />
+          <ExpandIcon $active={Boolean(isActive)} type="ChevronDownSmall" />
         )}
       >
         {jobs?.map((job: MonitoringJob) => (

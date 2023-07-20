@@ -32,9 +32,9 @@ export const AlertContainer = styled.div`
 export const TimeseriesContainer = styled.div`
   font-size: 90%;
   margin-top: 12px;
-  i {
+  .cogs-icon--type-timeseries {
     position: relative;
-    top: 3px;
+    top: 5px;
     margin-right: 4px;
   }
 `;
@@ -151,10 +151,11 @@ export const SidebarCollapseAlert = styled(SidebarCollapseWrapped)`
       }
     }
   }
+  .cogs-icon--type-chevrondownsmall {
+    top: 14px;
+  }
 `;
 
 export const SidebarWithScroll = styled(Sidebar)`
   overflow-y: auto;
 `;
-
-export const DropdownActionAlerts = styled(Dropdown)``;

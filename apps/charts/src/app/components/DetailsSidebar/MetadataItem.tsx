@@ -43,7 +43,12 @@ export const MetadataItem = ({
             value
           )}
           {!!value && copyable && (
-            <CopyIcon icon={iconType} onClick={copyValue} />
+            <CopyButton
+              type="ghost-accent"
+              size="small"
+              icon={iconType}
+              onClick={copyValue}
+            />
           )}
         </Value>
       ) : (
@@ -131,7 +136,7 @@ const Value = styled(Body)`
   word-wrap: break-word;
 `;
 
-const CopyIcon = styled(Button)`
+const CopyButton = styled(Button)`
   color: ${(props: { icon: 'Copy' | 'Checkmark' }) =>
     props.icon === 'Copy'
       ? 'var(--cogs-link-primary-default)'

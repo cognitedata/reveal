@@ -36,7 +36,6 @@ type PropsRouteWithFirebase = {
 };
 const RouteWithFirebase = ({
   element,
-  enableSecondaryNavBar,
 }: PropsRouteWithFirebase): JSX.Element => {
   const { isFetched: firebaseDone, isError: isFirebaseError } =
     useFirebaseInit(true);
@@ -76,7 +75,7 @@ const RouteWithFirebase = ({
   }
   return (
     <PageLayout className="PageLayout">
-      {enableSecondaryNavBar && <SecondaryTopBar />}
+      <SecondaryTopBar />
       <main>
         <Component />
       </main>
@@ -100,9 +99,7 @@ const Routes = () => {
       />
       <RouteWithSentry
         path={getPath(':chartId')}
-        element={
-          <RouteWithFirebase element={ChartViewPage} enableSecondaryNavBar />
-        }
+        element={<RouteWithFirebase element={ChartViewPage} />}
       />
       <RouteWithSentry
         path={getPath(':chartId/files/:assetId')}

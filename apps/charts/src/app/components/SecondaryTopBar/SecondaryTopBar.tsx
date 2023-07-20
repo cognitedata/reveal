@@ -3,12 +3,24 @@ import { useNavigate } from 'react-router-dom';
 
 import styled from 'styled-components';
 
+import { useTranslations } from '@charts-app/hooks/translations';
 import { createInternalLink } from '@charts-app/utils/link';
+import {
+  makeDefaultTranslations,
+  translationKeys,
+} from '@charts-app/utils/translations';
 
 import { Button, Colors, Flex } from '@cognite/cogs.js';
 
+const defaultTranslations = makeDefaultTranslations('All charts');
+
 const SecondaryTopBar = () => {
   const move = useNavigate();
+
+  const t = {
+    ...defaultTranslations,
+    ...useTranslations(translationKeys(defaultTranslations), 'ChartView').t,
+  };
 
   const handleGoBackClick = () => move(createInternalLink());
 
@@ -17,7 +29,7 @@ const SecondaryTopBar = () => {
       <StyledContainer>
         <Flex alignItems="center" gap={8}>
           <Button icon="ArrowLeft" onClick={handleGoBackClick} type="ghost">
-            All charts
+            {t['All charts']}
           </Button>
           <Divider />
         </Flex>

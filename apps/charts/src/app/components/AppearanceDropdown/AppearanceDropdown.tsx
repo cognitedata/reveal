@@ -3,7 +3,7 @@ import { trackUsage } from '@charts-app/services/metrics';
 import { availableColors } from '@charts-app/utils/colors';
 import { makeDefaultTranslations } from '@charts-app/utils/translations';
 
-import { Menu } from '@cognite/cogs.js';
+import { Menu, Flex } from '@cognite/cogs.js';
 
 import {
   DropdownWrapper,
@@ -12,6 +12,7 @@ import {
   ColorPreview,
   WeightLine,
   TypeLine,
+  StyledMenu,
 } from './elements';
 import { InterpolationStepIcon, InterpolationLinearIcon } from './Icons';
 
@@ -41,7 +42,7 @@ const AppearanceDropdown = ({
 }: AppearanceDropdownProps) => {
   const t = { ...defaultTranslation, ...translations };
   return (
-    <Menu style={{ maxWidth: 600 }}>
+    <StyledMenu>
       <DropdownWrapper>
         <ColorDropdown
           label={t.Color}
@@ -85,7 +86,7 @@ const AppearanceDropdown = ({
           }}
         />
       </DropdownWrapper>
-    </Menu>
+    </StyledMenu>
   );
 };
 
@@ -151,8 +152,10 @@ export const ColorDropdown = ({
               : {}
           }
         >
-          <ColorPreview color={color} />
-          {color}
+          <Flex>
+            <ColorPreview color={color} />
+            {color}
+          </Flex>
         </Menu.Item>
       ))}
     </MenuWrapper>
@@ -186,8 +189,10 @@ const WeightDropdown = ({
               : {}
           }
         >
-          <WeightPreview weight={weight} />
-          {weight}px
+          <Flex>
+            <WeightPreview weight={weight} />
+            {weight}px
+          </Flex>
         </Menu.Item>
       ))}
     </MenuWrapper>
@@ -221,8 +226,10 @@ const TypeDropdown = ({
               : {}
           }
         >
-          <TypePreview type={style} />
-          {style}
+          <Flex>
+            <TypePreview type={style} />
+            {style}
+          </Flex>
         </Menu.Item>
       ))}
     </MenuWrapper>
@@ -267,8 +274,10 @@ const InterpolationDropdown = ({
               : {}
           }
         >
-          <InterpolationPreview label={label} iconImage={image} />
-          {label}
+          <Flex>
+            <InterpolationPreview label={label} iconImage={image} />
+            {label}
+          </Flex>
         </Menu.Item>
       ))}
     </MenuWrapper>

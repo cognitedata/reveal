@@ -1,37 +1,6 @@
 import styled from 'styled-components';
 
-import {
-  Button,
-  Collapse,
-  Icon,
-  Chip,
-  Flex,
-  Title,
-  Body,
-} from '@cognite/cogs.js';
-
-export const SidebarChip = styled(Chip)`
-  margin-left: 1em;
-  font-size: 12px;
-  line-height: 16px;
-  font-weight: 500;
-  height: 20px;
-  padding: 2px 6px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 4px;
-
-  &.cogs-label--variant-default {
-    color: var(--cogs-text-icon--status-undefined);
-    background: rgba(102, 102, 102, 0.1);
-  }
-  &&& {
-    .cogs-label--icon {
-      margin-right: 0px;
-    }
-  }
-`;
+import { Button, Collapse, Icon, Flex, Title, Body } from '@cognite/cogs.js';
 
 export const SidebarCollapseWrapped = styled(Collapse)`
   &&& {
@@ -44,7 +13,7 @@ export const SidebarCollapseWrapped = styled(Collapse)`
         position: relative;
         background-color: #f5f5f5;
         border-radius: 4px;
-        i.cogs-icon-ChevronDownSmall {
+        i.cogs-icon--type-chevrondownsmall {
           position: absolute;
           right: 10px;
         }

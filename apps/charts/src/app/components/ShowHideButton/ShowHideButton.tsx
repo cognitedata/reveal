@@ -15,12 +15,12 @@ interface Props {
 export const ShowHideButton = ({ enabled, onClick }: Props) => {
   return (
     <Button
+      type="ghost"
       icon={enabled ? 'EyeShow' : 'EyeHide'}
       onClick={(event) => onClick(event)}
       title="Toggle visibility"
       style={{
-        marginLeft: 7,
-        marginRight: 20,
+        marginRight: 10,
         verticalAlign: 'middle',
       }}
     />

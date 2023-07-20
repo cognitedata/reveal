@@ -65,5 +65,6 @@ export const DeleteSourceButton = styled(Button)`
       width: 14px;
       height: 14px;
     }
+    padding: 0;
   }
 `;

@@ -1,31 +1,13 @@
 import { useTranslations } from '@charts-app/hooks/translations';
 import { makeDefaultTranslations } from '@charts-app/utils/translations';
 
-import { Flex, Button, Title, Body } from '@cognite/cogs.js';
-
-import { ErrorIcon } from './elements';
+import { Flex, Button, Body } from '@cognite/cogs.js';
 
 const defaultTranslations = makeDefaultTranslations(
-  'Error occured',
   'Cancel',
   'Retry',
   'Process failed due to a critical error. Please retry action using button below or start over. If the problem will continue contact our support.'
 );
-
-export const Step3Header = () => {
-  const t = {
-    ...defaultTranslations,
-    ...useTranslations(Object.keys(defaultTranslations), 'ScheduledCalculation')
-      .t,
-  };
-
-  return (
-    <Flex gap={8} alignItems="center">
-      <ErrorIcon type="WarningFilled" />
-      <Title level={5}>{t['Error occured']}</Title>
-    </Flex>
-  );
-};
 
 export const Step3Body = () => {
   const t = {

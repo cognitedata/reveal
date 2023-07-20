@@ -246,7 +246,7 @@ const CreateMonitoringJobStep1 = ({
             max={MINIMUM_DURATION_LIMIT}
             name="minimumDuration"
             placeholder="1"
-            suffix={<Chip size="small" type="default" label={t.Minutes} />}
+            suffix={<Chip size="x-small" type="default" label={t.Minutes} />}
             required={t['Minimum duration is required']}
             validate={{
               minDuration: (value: string) =>

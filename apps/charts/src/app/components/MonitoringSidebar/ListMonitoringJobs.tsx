@@ -18,11 +18,11 @@ import { Col, Row } from 'antd';
 import difference from 'lodash/difference';
 import head from 'lodash/head';
 
-import { Collapse } from '@cognite/cogs.js';
+import { Collapse, Chip } from '@cognite/cogs.js';
 
 import { getTsIds } from '../../domain/chart/internal/transformers/getTsIds';
 
-import { SidebarChip, SidebarCollapseWrapped, ExpandTitle } from './elements';
+import { SidebarCollapseWrapped, ExpandTitle } from './elements';
 import EmptyState from './EmptyState';
 import { useMonitoringFoldersWithJobs } from './hooks';
 import {
@@ -156,10 +156,11 @@ const ListMonitoringJobs = memo(() => {
                           </ExpandTitle>
                         </Col>
                         <Col>
-                          <SidebarChip
+                          <Chip
                             icon="Alarm"
-                            size="medium"
+                            size="x-small"
                             label={`${folder.count}`}
+                            style={{ marginLeft: 4 }}
                           />
                         </Col>
                       </Row>
