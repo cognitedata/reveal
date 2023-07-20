@@ -13,6 +13,7 @@ const renderers = {
   code: CodeMessage,
   'data-model-query': TextMessage,
   'data-model': DataModelMessage,
+  'data-models': DataModelMessage,
   'human-approval': HumanApprovalMessage,
 };
 

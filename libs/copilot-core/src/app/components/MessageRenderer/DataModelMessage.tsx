@@ -14,8 +14,9 @@ import {
 import {
   CopilotBotMessage,
   CopilotDataModelSelectionMessage,
+  _DeprecatedCopilotDataModelSelectionMessage,
 } from '../../../lib/types';
-import { useDataModel, useDataModels } from '../../hooks/useDataModels';
+import { useDataModels } from '../../hooks/useDataModels';
 
 const CustomOption = ({
   innerRef,
@@ -55,91 +56,103 @@ export const DataModelMessage = ({
 }: {
   message: {
     key: number;
-    data: CopilotDataModelSelectionMessage;
+    data:
+      | CopilotDataModelSelectionMessage
+      | _DeprecatedCopilotDataModelSelectionMessage;
     meta: { updateMessage: (key: number, message: CopilotBotMessage) => void };
   };
 }) => {
   const { data: dataModels = [] } = useDataModels();
-  const { data: dataModelVersions = [] } = useDataModel(
-    dataModels.find((el) => el.externalId === message.dataModel)?.space,
-    dataModels.find((el) => el.externalId === message.dataModel)?.externalId
-  );
 
   const dataModelOptions = useMemo(
     () =>
       dataModels.map((el) => ({
+        dataModel: el.externalId,
         space: el.space,
-        value: el.externalId,
         version: el.version,
+        value: el.externalId,
         label: el.name || `<${el.externalId}>`,
         tooltip: `${el.name} <${el.externalId}> [${el.space}]`,
       })),
     [dataModels]
   );
 
-  const versionOptions = useMemo(
-    () =>
-      dataModelVersions.map((el) => ({
-        value: el.version,
-        label: el.version,
-      })),
-    [dataModelVersions]
-  );
+  const selectedDataModels = useMemo(() => {
+    if (message.type === 'data-model') {
+      if (message.dataModel && message.space && message.version) {
+        return [
+          {
+            dataModel: message.dataModel,
+            space: message.space,
+            version: message.version,
+          },
+        ];
+      }
+      return [];
+    }
+    return message.dataModels;
+  }, [message]);
+
   return (
     <Wrapper direction="column" gap={6}>
       <Body level={2}>{message.content}</Body>
       <Select
-        placeholder="Select data model"
+        placeholder="Select data models"
+        isMulti
         menuPortalTarget={document.body}
         components={{ ...SelectComponents, Option: CustomOption }}
         disabled={!message.pending}
         value={
-          message.dataModel
-            ? dataModelOptions.find((el) => el.value === message.dataModel)
+          selectedDataModels
+            ? dataModelOptions.filter((el) =>
+                selectedDataModels.some(
+                  (selected) =>
+                    selected.dataModel === el.dataModel &&
+                    selected.space === el.space
+                )
+              )
             : undefined
         }
         options={dataModelOptions}
-        onChange={({
-          value,
-          version,
-          space,
-        }: {
-          value: string;
-          space: string;
-          version: string;
-        }) => {
-          updateMessage(key, {
-            ...message,
-            dataModel: value,
-            space,
-            version,
-          });
+        onChange={(
+          values: {
+            dataModel: string;
+            space: string;
+            version: string;
+          }[]
+        ) => {
+          if (!values) {
+            if (message.type === 'data-model') {
+              return;
+            } else {
+              updateMessage(key, {
+                ...message,
+                dataModels: values || [],
+              });
+            }
+            return;
+          }
+          if (message.type === 'data-model') {
+            return;
+          } else {
+            updateMessage(key, {
+              ...message,
+              dataModels: values,
+            });
+          }
         }}
       />
-      {message.dataModel && (
-        <Select
-          placeholder="Select version"
-          menuPortalTarget={document.body!}
-          disabled={!message.pending}
-          value={
-            message.version
-              ? { label: message.version, value: message.version }
-              : undefined
-          }
-          options={versionOptions}
-          onChange={({ value }: { value: string }) => {
-            updateMessage(key, { ...message, version: value });
-          }}
-        />
-      )}
       {message.pending && (
         <Button
           id="confirm"
           type="primary"
           onClick={() => {
-            updateMessage(key, { ...message, pending: false });
+            updateMessage(key, {
+              ...message,
+              pending: false,
+            } as CopilotDataModelSelectionMessage);
           }}
-          disabled={!(message.version && message.dataModel && message.space)}
+          disabled={!(selectedDataModels.length > 0)}
         >
           Confirm
         </Button>

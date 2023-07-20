@@ -10,7 +10,7 @@ import { sendToCopilotEvent } from '../../utils';
 export const createDefaultChain = (model: BaseLanguageModel) =>
   new ConversationChain({
     llm: model,
-    memory: new BufferMemory({}),
+    memory: new BufferMemory({ inputKey: 'input' }),
     prompt: new PromptTemplate({
       template: copilotInstructionsPrompt.template,
       inputVariables:

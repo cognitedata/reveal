@@ -1,7 +1,9 @@
+/* eslint-disable no-template-curly-in-string */
 import {
   DataModelTypeDefs,
   DataModelTypeDefsType,
 } from '@platypus/platypus-core';
+import dayjs from 'dayjs';
 import { FieldNode, Kind, parse, print, visit } from 'graphql';
 
 const additionalFields: FieldNode[] = [
@@ -28,7 +30,6 @@ export const augmentQueryWithRequiredFields = (
   // list values - relationships
   // expandMultiFields = ['manyRelations']
 ) => {
-  console.log(query);
   const editedQuery = visit(parse(query), {
     enter: (node, _key, parent) => {
       switch (node.kind) {
@@ -170,7 +171,6 @@ export const getFields = (
   }
   const nestedSet = new Map(relevantFields);
   nestedSet.delete(typeName);
-  console.log(nestedSet, relevantFields, typeName);
   const fields = relevantFields.get(typeName);
   return `{
     ${isList ? 'items { externalId \n' : 'externalId\n'}
@@ -208,11 +208,40 @@ export const constructFilter = (filter: GptGQLFilter) => {
   const baseLevelOp = Object.keys(filter)[0];
 
   return {
-    [baseLevelOp]: filter[baseLevelOp].map((el) => {
-      // TODO last year
-      // TODO add validation of valid property
-      return { [el.property]: { [el.operator]: el.value } };
-    }),
+    [baseLevelOp === 'or' ? 'or' : 'and']: filter[baseLevelOp]
+      .filter((el) =>
+        ['prefix', 'eq', 'gt', 'gte', 'lt', 'lte', 'isNull'].includes(
+          el.operator
+        )
+      )
+      .map((el) => {
+        // TODO last year
+        // TODO add validation of valid property
+        let value = `${el.value}`;
+        if (typeof el.value === 'string') {
+          switch (el.value.toLowerCase().trim()) {
+            case '${lastyear}$':
+              value = dayjs().subtract(1, 'year').toISOString();
+              break;
+            case '${lastweek}$':
+              value = dayjs().subtract(1, 'week').toISOString();
+              break;
+            case '${yearstart}$':
+              value = dayjs().set('date', 1).set('month', 1).toISOString();
+              break;
+            case '${today}$':
+              value = dayjs().toISOString();
+              break;
+          }
+        }
+        const path = el.property.split('.');
+        return path.reduceRight((prev, currPath, i) => {
+          if (i === path.length - 1) {
+            return { [currPath.trim()]: { [el.operator]: value } };
+          }
+          return { [currPath.trim()]: prev };
+        }, {} as any);
+      }),
   };
 };
 

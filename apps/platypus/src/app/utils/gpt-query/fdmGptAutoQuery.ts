@@ -20,11 +20,9 @@ export async function fetchGptAutoQuery(
 
     sendToCopilotEvent('NEW_MESSAGES', [
       {
-        type: 'data-model',
+        type: 'data-models',
         source: 'bot',
-        dataModel,
-        version,
-        space,
+        dataModels: [{ dataModel, version, space }],
         pending: false,
         content: 'I am searching on this data model',
       },

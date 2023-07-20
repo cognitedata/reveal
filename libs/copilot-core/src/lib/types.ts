@@ -38,11 +38,16 @@ export type CopilotCodeMessage = {
   language: 'python';
 } & DefaultBotMessage;
 
-export type CopilotDataModelSelectionMessage = {
+export type _DeprecatedCopilotDataModelSelectionMessage = {
   type: 'data-model';
   space?: string;
   dataModel?: string;
   version?: string;
+} & DefaultBotMessage;
+
+export type CopilotDataModelSelectionMessage = {
+  type: 'data-models';
+  dataModels: { space: string; dataModel: string; version: string }[];
 } & DefaultBotMessage;
 
 export type CopilotDataModelQueryMessage = {
@@ -129,6 +134,7 @@ export type CopilotEvents = {
     GQL_QUERY: {
       query: string;
       variables: any;
+      dataModel: { externalId: string; space: string; version: string };
     };
     GET_LANGUAGE: undefined;
   };

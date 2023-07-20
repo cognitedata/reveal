@@ -11,23 +11,30 @@ import {
 import { Icon } from '@cognite/cogs.js';
 import { useFlag } from '@cognite/react-feature-flags';
 
-import { useDataModelParams } from '../../../hooks/useDataModelParams';
 import {
   useSearchFilterParams,
   useSearchQueryParams,
 } from '../../../hooks/useParams';
 import { useAIDataTypesQuery } from '../../../services/dataTypes/queries/useAIDataTypesQuery';
+import { useSelectedDataModels } from '../../../services/useSelectedDataModels';
 
 export const AIResults = () => {
   const [query] = useSearchQueryParams();
   const [filters] = useSearchFilterParams();
-  const selectedDataModel = useDataModelParams();
+  const selectedDataModels = useSelectedDataModels();
 
   const [gqlQuery, setGQLQuery] = useState('');
   const [variables, setVariables] = useState({});
+  const [dataModel, setDataModel] = useState<
+    { space: string; externalId: string; version: string } | undefined
+  >(undefined);
   const [isAILoading, setIsAILoading] = useState(false);
 
-  const { data, isLoading } = useAIDataTypesQuery(gqlQuery, variables);
+  const { data, isLoading } = useAIDataTypesQuery(
+    dataModel,
+    gqlQuery,
+    variables
+  );
 
   const { isEnabled: isCopilotEnabled } = useFlag('COGNITE_COPILOT', {
     fallback: false,
@@ -35,9 +42,14 @@ export const AIResults = () => {
 
   useFromCopilotEventHandler(
     'GQL_QUERY',
-    ({ query: newGqlQuery, variables: newVariables }) => {
+    ({
+      query: newGqlQuery,
+      variables: newVariables,
+      dataModel: newDataModel,
+    }) => {
       setGQLQuery(newGqlQuery);
       setVariables(newVariables);
+      setDataModel(newDataModel);
       setIsAILoading(false);
     }
   );
@@ -47,31 +59,33 @@ export const AIResults = () => {
       sendToCopilotEvent('NEW_MESSAGES', [
         {
           source: 'bot',
-          type: 'data-model',
-          ...selectedDataModel,
+          type: 'data-models',
+          dataModels: (selectedDataModels || []).map((model) => ({
+            dataModel: model.externalId,
+            space: model.space,
+            version: model.version,
+          })),
           content: 'I am looking at data in this data model',
         },
         {
           source: 'user',
-          content: `I would like to search for data in my data model: "${query}" with this filter: \`\`\`${JSON.stringify(
-            filters
-          )} \`\`\``,
+          content: query,
           type: 'text',
           context: 'Searched in Explorer',
         },
       ]);
       setIsAILoading(true);
     };
-    if (query && selectedDataModel && isCopilotEnabled) {
+    if (query && selectedDataModels && isCopilotEnabled) {
       sendMessage();
     }
     const removeHandler = addFromCopilotEventListener('CHAT_READY', () => {
-      if (query && selectedDataModel) {
+      if (query && selectedDataModels) {
         sendMessage();
       }
       removeHandler();
     });
-  }, [query, filters, selectedDataModel, isCopilotEnabled]);
+  }, [query, filters, selectedDataModels, isCopilotEnabled]);
 
   if (!isCopilotEnabled) {
     return <></>;
@@ -84,6 +98,8 @@ export const AIResults = () => {
       </Wrapper>
     );
   }
+
+  console.log(data);
 
   return (
     <Wrapper>
