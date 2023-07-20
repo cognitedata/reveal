@@ -5,18 +5,8 @@ import { useQueries, useQuery } from '@tanstack/react-query';
 
 import { BASE_QUERY_KEY } from '../common';
 import {
-  getAADB2CQueryKey,
-  getAADQueryKey,
-  getADFS2016QueryKey,
-  getAuth0QueryKey,
-  getKeycloakQueryKey,
-  useAADB2CProjects,
-  useAADProjects,
-  useADFS2016Projects,
-  useAuth0Projects,
-} from '../hooks';
-import {
   Auth0Response,
+  CogniteIdPResponse,
   DomainResponse,
   IDPResponse,
   KeycloakResponse,
@@ -31,6 +21,8 @@ import {
   getADFS2016Token,
   getAuth0Client,
   getAuth0Token,
+  getCogniteIdPToken,
+  getCogniteIdPUserManager,
   getKeycloakToken,
   getPca,
   getProjects,
@@ -39,7 +31,17 @@ import {
   validateLegacyProject,
 } from '../utils';
 
-import { useKeycloakProjects } from './keycloak';
+import {
+  getAADB2CQueryKey,
+  getAADQueryKey,
+  getADFS2016QueryKey,
+  useAADB2CProjects,
+  useAADProjects,
+  useADFS2016Projects,
+} from './aad';
+import { getAuth0QueryKey, useAuth0Projects } from './auth0';
+import { getCogniteIdPQueryKey, useCogniteIdPProjects } from './cogniteIdP';
+import { getKeycloakQueryKey, useKeycloakProjects } from './keycloak';
 
 const getLoginInfoQueryKey = () => [BASE_QUERY_KEY, 'login-info'];
 const getIdpQueryKey = (...args: string[]) => [BASE_QUERY_KEY, 'idp', ...args];
@@ -123,6 +125,15 @@ export const useIdpProjects = (
     }
   );
 
+  const cogniteIdpEnabled = idp?.type === 'COGNITE_IDP';
+  const cogniteIdpProjectQuery = useCogniteIdPProjects(
+    cluster,
+    idp as CogniteIdPResponse,
+    {
+      enabled: cogniteIdpEnabled && options.enabled,
+    }
+  );
+
   const unknownIdpQuery = useQuery(
     ['projects', 'unknown-idp'],
     () => Promise.reject(new Error('Unknown IDP')),
@@ -150,6 +161,9 @@ export const useIdpProjects = (
     }
     case 'KEYCLOAK': {
       return keycloakProjectQuery;
+    }
+    case 'COGNITE_IDP': {
+      return cogniteIdpProjectQuery;
     }
     default:
       return unknownIdpQuery;
@@ -179,6 +193,8 @@ export const useIdpProjectsFromAllClusters = (
         return getAuth0QueryKey(cluster, idp, type);
       case 'KEYCLOAK':
         return getKeycloakQueryKey(cluster, idp, type);
+      case 'COGNITE_IDP':
+        return getCogniteIdPQueryKey(idp, type);
     }
   };
 
@@ -227,6 +243,13 @@ export const useIdpProjectsFromAllClusters = (
         });
         // @ts-ignore
         return () => getKeycloakToken(userManager);
+      case 'COGNITE_IDP':
+        const cdfIdp = idp as CogniteIdPResponse;
+        const cdfUserManager = getCogniteIdPUserManager({
+          authority: cdfIdp.authority || '',
+          client_id: cdfIdp.appConfiguration.clientId || '',
+        });
+        return () => getCogniteIdPToken(cdfUserManager) as Promise<string>;
       default:
         return () => null;
     }

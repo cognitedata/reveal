@@ -54,10 +54,14 @@ export const getUrl = (
 export const createLink = (
   path: string,
   queries: any = {},
-  opts?: queryString.StringifyOptions
+  opts?: queryString.StringifyOptions,
+  appendUnifiedSigninBasePath = true
 ): string => {
   // No more base project name
-  const cdfAppName = isUsingUnifiedSignin() ? `/${unifiedSignInAppName}` : '';
+  const cdfAppName =
+    isUsingUnifiedSignin() && appendUnifiedSigninBasePath
+      ? `/${unifiedSignInAppName}`
+      : '';
   const project = getProject() || '';
   const env = getEnv();
   const cluster = getCluster();
@@ -79,16 +83,16 @@ export const createLink = (
     },
     opts
   );
-  const pathName =
-    isUsingUnifiedSignin() && path.startsWith(`/${project}`)
-      ? path.replace(`/${project}`, '')
-      : path;
+  const pathName = isUsingUnifiedSignin()
+    ? // eslint-disable-next-line no-useless-escape
+      path.replace(new RegExp(`(\/cdf)?\/${project}`, 'gmi'), '')
+    : path;
 
   if (query.length > 0) {
     return `${cdfAppName}/${project}${pathName}?${query}`;
   }
   if (pathName.length > 0 && path !== '/') {
-    return `${cdfAppName}/${project}${path}`;
+    return `${cdfAppName}/${project}${pathName}`;
   }
 
   return `${cdfAppName}/${project}`;
@@ -160,8 +164,5 @@ export const isValidEmail = (email: string) => {
 };
 
 export const isUsingUnifiedSignin = () => {
-  return (
-    unifiedSigninUrls.includes(window.location.host) &&
-    window.location.pathname.startsWith(`/${unifiedSignInAppName}`)
-  );
+  return window.location.pathname.startsWith(`/${unifiedSignInAppName}`);
 };

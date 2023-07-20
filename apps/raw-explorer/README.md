@@ -16,6 +16,8 @@ It demonstrates best practices, such as:
 Please see the [deployment guide] for more information how to actually get this app into production.
 (It should be pretty easy!)
 
+`NOTE: This app now uses multi branch deployment strategy. Merging PR on master deploys on staging, and merging master into release-raw-explorer deploys on production`
+
 ## Template repo
 
 This repo is configured as a template, so it's easy to get started.

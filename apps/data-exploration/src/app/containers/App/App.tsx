@@ -7,6 +7,7 @@ import { getFlow } from '@cognite/cdf-sdk-singleton';
 import {
   FileContextualizationContextProvider,
   DataExplorationProvider,
+  Flow,
 } from '@cognite/data-exploration';
 import { useSDK } from '@cognite/sdk-provider';
 
@@ -30,7 +31,7 @@ const Exploration = React.lazy(
     )
 );
 
-export default function App() {
+export default function App({ useInShell = false }: { useInShell?: boolean }) {
   const sdk = useSDK();
   const { flow } = getFlow();
   const { data: userInfo } = useUserInformation();
@@ -43,7 +44,7 @@ export default function App() {
         <ResourceSelectionProvider allowEdit mode="none">
           <ResourceActionsProvider>
             <DataExplorationProvider
-              flow={flow}
+              flow={flow as Flow}
               sdk={sdk}
               userInfo={userInfo}
               styleScopeId={ids.styleScope}
@@ -55,9 +56,13 @@ export default function App() {
               isAdvancedFiltersEnabled={isAdvancedFiltersEnabled}
               isDocumentsApiEnabled={isDocumentsApiEnabled}
             >
-              <Routes>
-                <Route path="/explore/*" element={<Exploration />} />
-              </Routes>
+              {useInShell ? (
+                <Exploration />
+              ) : (
+                <Routes>
+                  <Route path="/explore/*" element={<Exploration />} />
+                </Routes>
+              )}
             </DataExplorationProvider>
           </ResourceActionsProvider>
         </ResourceSelectionProvider>

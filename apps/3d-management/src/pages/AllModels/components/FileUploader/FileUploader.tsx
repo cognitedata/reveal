@@ -70,6 +70,8 @@ type State = {
 // fixme[D3M-23] - currently it requires Modal wrapper and it causes different handling of modal closing
 //  here is the cancel button, but Modal still can be closed by clicking outside of it and it isn't handled
 class FileUploader extends React.Component<Props, State> {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore Cannot use namespace 'UploadGCS' as a type.
   currentUpload: UploadGCS | null = null;
 
   constructor(props) {

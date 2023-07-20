@@ -19,10 +19,12 @@ import ReactUnifiedViewer, {
   getCanonicalMimeType,
   getContainerConfigFromFileInfo,
   isSupportedFileInfo,
-  PanToolConfig,
-  RectangleToolConfig,
   ToolType,
   UnifiedViewer,
+} from '@cognite/unified-file-viewer';
+import type {
+  PanToolConfig,
+  RectangleToolConfig,
 } from '@cognite/unified-file-viewer';
 import { FileContainerProps } from '@cognite/unified-file-viewer/dist/core/utils/getContainerConfigFromUrl';
 

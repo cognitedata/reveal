@@ -11,7 +11,7 @@ export const createQgramTokenizer = (q: number, pad?: string): Tokenizer => {
     if (pad) {
       s = pad.repeat(q - 1) + s + pad.repeat(q - 1);
     }
-    const qgrams = [];
+    const qgrams: string[] = [];
     for (let i = 0; i < s.length - q + 1; i++) {
       qgrams.push(s.substring(i, i + q));
     }
@@ -67,12 +67,12 @@ export const createTfidfVectorSpaceModel = (
   }
 
   return (s: string) => {
-    const knownTokens = [];
-    const unknownTokens = [];
+    const knownTokens: string[] = [];
+    const unknownTokens: string[] = [];
     for (const token of tokenizer(s)) {
       const tokenId = vocabulary.get(token);
       if (tokenId !== undefined) {
-        knownTokens.push(tokenId);
+        knownTokens.push(String(tokenId));
       } else {
         unknownTokens.push(token);
       }
@@ -98,7 +98,7 @@ export const createTfidfVectorSpaceModel = (
 
     // Construct sparse tfidf vector of tokens in vocabulary
     // Count term frequencies by first sorting and counting sequential duplicates
-    knownTokens.sort((a, b) => a - b);
+    knownTokens.sort((a, b) => Number(a) - Number(b));
     const vector: SparseVector = { indexes: [], values: [], l2Sum: 0.0 };
     tf = 0;
     for (let i = 0; i < knownTokens.length; i++) {
@@ -107,9 +107,9 @@ export const createTfidfVectorSpaceModel = (
         i === knownTokens.length - 1 ||
         knownTokens[i] !== knownTokens[i + 1]
       ) {
-        const idf = tokenIdToTfidf[knownTokens[i]] || 0;
+        const idf = tokenIdToTfidf[Number(knownTokens[i])] || 0;
         const weight = calculateTfidf(tf, idf);
-        vector.indexes.push(knownTokens[i]);
+        vector.indexes.push(Number(knownTokens[i]));
         vector.values.push(weight);
         vector.l2Sum += weight * weight;
         tf = 0;

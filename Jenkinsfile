@@ -147,9 +147,9 @@ static final Map<String, String> VERSIONING_STRATEGY = [
   'data-exploration': 'multi-branch',
   'vision': 'single-branch',
   'data-catalog': 'multi-branch',
-  'raw-explorer': 'single-branch',
+  'raw-explorer': 'multi-branch',
   '3d-management': 'single-branch',
-  'transformations': 'single-branch',
+  'transformations': 'multi-branch',
   'copilot': 'single-branch',
   'iot-hub': 'single-branch',
   'interactive-diagrams': 'multi-branch',
@@ -159,7 +159,7 @@ static final Map<String, String> VERSIONING_STRATEGY = [
   'charts': 'multi-branch',
   'entity-matching': 'single-branch',
   'functions-ui' : 'single-branch',
-  'access-management': 'single-branch',
+  'access-management': 'multi-branch',
   'business-shell': 'single-branch'
 ]
 

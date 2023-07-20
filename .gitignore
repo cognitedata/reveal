@@ -50,3 +50,7 @@ cypress/videos
 yalc.lock
 /.idea/
 /.log/
+
+# Firebase
+ui-debug.log
+firebase-debug.log

@@ -76,12 +76,14 @@
       "defaultConfiguration": "development",
       "options": {
         "buildTarget": "data-catalog:build",
-        "hmr": true
+        "hmr": true,
+        "port": 3001,
+        "ssl": true,
+        "allowedHosts": ".dev.fusion.cogniteapp.com,apps-staging.cognite.com"
       },
       "configurations": {
         "development": {
-          "buildTarget": "data-catalog:build:development",
-          "allowedHosts": ".dev.fusion.cogniteapp.com"
+          "buildTarget": "data-catalog:build:development"
         },
         "production": {
           "buildTarget": "data-catalog:build:production",
@@ -89,9 +91,6 @@
         },
         "mock": {
           "buildTarget": "data-catalog:build:mock",
-          "hmr": true,
-          "port": 3001,
-          "ssl": true,
           "proxyConfig": "apps/data-catalog/proxy.conf.json"
         }
       }

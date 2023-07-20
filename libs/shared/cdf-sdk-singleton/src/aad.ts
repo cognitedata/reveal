@@ -88,11 +88,10 @@ export async function logout(authority: string, clientId: string) {
     cache: CACHE_CONFIG,
   });
   const account = pca.getActiveAccount();
-  if (account) {
-    pca.logout({
-      account,
-      onRedirectNavigate: () => false,
-    });
-  }
+  // @ts-ignore
+  pca.logoutRedirect({
+    account,
+    onRedirectNavigate: () => false,
+  });
   pca.setActiveAccount(null);
 }

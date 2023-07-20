@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Cognite Data Fusion</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="theme-color" content="#00467d">
+
+  <!--Adds a referer meta tag to avoid leaking idTokens when making requests to servers (cdf-api)
+        https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Referrer-Policy
+      -->
+  <meta name="referrer" content="origin">
+
+
+  <meta name="importmap-type" content="systemjs-importmap" />
+  <link rel="shortcut icon" href="favicon.ico">
+  <base href="/cdf/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script type="systemjs-importmap" src="import-map.json"></script>
+  <script type="systemjs-importmap" src="sub-apps-import-map.json"></script>
+
+  <script src="assets/dependencies/systemjs@6.3.1/dist/system.min.js"></script>
+  <script src="assets/dependencies/systemjs@6.3.1/dist/extras/amd.min.js"></script>
+  <script src="assets/dependencies/systemjs@6.3.1/dist/extras/named-exports.min.js"></script>
+
+  <!-- Tires to -->
+  <!-- <% if(NODE_ENV !="production" ) { %> -->
+  <script src="assets/dependencies/import-map-overrides@1.14.6/dist/import-map-overrides.js"></script>
+  <script src="assets/dependencies/query-string@7.1.1/dist/query-string.js"></script>
+  <import-map-overrides-full show-when-local-storage="devtools" dev-libs></import-map-overrides-full>
+  <script src="assets/dependencies/dev-setup.js"></script>
+  <!-- <% } %> -->
+
+  <!-- This script is executed and starts the app -->
+  <script>
+    // System.import('@cognite/cdf-root-config');
+    System.import('@cognite/cdf-route-tracker');
+    System.import('@cognite/cdf-sdk-singleton');
+  </script>
+
+  <style>
+    :root {
+      --cdf-ui-navigation-height: 56px;
+    }
+  </style>
+</head>
+
+<body>
+  <noscript>
+    You need to enable JavaScript to start Cognite Data Fusion.
+  </noscript>
+  <div id="root"></div>
+  <div id="single-spa-application:@cognite/cdf-solutions-ui"></div>
+
+</body>
+
+</html>

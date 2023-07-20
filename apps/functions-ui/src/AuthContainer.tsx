@@ -76,7 +76,7 @@ export interface FusionSubAppWrapperProps {
 const FusionSubAppWrapper = ({ children }: FusionSubAppWrapperProps) => {
   const { data: userData } = useUserInformation();
   return (
-    <SubAppWrapper title="Data Exploration" userId={userData?.id}>
+    <SubAppWrapper title="Cognite Functions" userId={userData?.id}>
       {children}
     </SubAppWrapper>
   );
@@ -89,7 +89,7 @@ export interface FusionAuthContainerProps {
 export const AuthContainer = ({ children }: FusionAuthContainerProps) => {
   if (isUsingUnifiedSignin()) {
     return (
-      <AuthProvider>
+      <AuthProvider loader={<Loader infoText="Loading" />}>
         <AuthProxyProvider>
           <FusionSubAppWrapper>{children}</FusionSubAppWrapper>
         </AuthProxyProvider>

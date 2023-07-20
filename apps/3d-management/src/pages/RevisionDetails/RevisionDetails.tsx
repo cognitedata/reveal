@@ -7,6 +7,7 @@ import { Card, message, Modal } from 'antd';
 import dayjs from 'dayjs';
 
 import { getFlow } from '@cognite/cdf-sdk-singleton';
+import { createLink } from '@cognite/cdf-utilities';
 import { Tooltip, Button, Flex, Icon } from '@cognite/cogs.js';
 import { Revision3D } from '@cognite/sdk';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
@@ -24,7 +25,6 @@ import {
 } from '../../hooks/revisions';
 import { useMetrics } from '../../hooks/useMetrics';
 import { APP_TITLE, getContainer, DEFAULT_MARGIN_V } from '../../utils';
-import { createLink } from '../../utils/cdf-utilities';
 import NotFound from '../NotFound';
 
 import { FileLink } from './components/FileLink/FileLink';

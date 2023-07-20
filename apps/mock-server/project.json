@@ -44,7 +44,10 @@
     "serve": {
       "executor": "@nx/js:node",
       "options": {
-        "buildTarget": "mock-server:build"
+        "buildTarget": "mock-server:build",
+        "inspect": false,
+        "debounce": 0,
+        "watch": false
       },
       "configurations": {
         "production": {

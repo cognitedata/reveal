@@ -79,6 +79,25 @@
       },
       "defaultConfiguration": "development"
     },
+    "serve-static": {
+      "executor": "@nrwl/web:file-server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "industry-canvas-ui:build",
+        "port": 3010
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "industry-canvas-ui:build:development"
+        },
+        "preview": {
+          "buildTarget": "industry-canvas-ui:build:preview"
+        },
+        "production": {
+          "buildTarget": "industry-canvas-ui:build:production"
+        }
+      }
+    },
     "lint": {
       "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
