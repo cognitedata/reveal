@@ -1,8 +1,5 @@
-import { useLocation, useNavigate } from 'react-router-dom';
-
 import styled from 'styled-components';
 
-import { createLink } from '@cognite/cdf-utilities';
 import {
   SequenceSummary,
   AssetSummary,
@@ -18,19 +15,16 @@ import { Asset } from '@cognite/sdk';
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 import { SearchResultWrapper } from '@data-exploration-app/containers/elements';
 import {
-  useCurrentResourceId,
   useCurrentResourceType,
   useQueryString,
 } from '@data-exploration-app/hooks/hooks';
 import { useCommonFilters } from '@data-exploration-app/store';
 import { SEARCH_KEY } from '@data-exploration-app/utils/constants';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
-import { getSearchParams } from '@data-exploration-app/utils/URLUtils';
 
 import {
   useJourneyLength,
   usePushJourney,
-  useFlagOverlayNavigation,
   useFlagAdvancedFilters,
   useFlagDocumentsApiEnabled,
   useBreakJourneyPromptState,
@@ -38,15 +32,10 @@ import {
 
 export const AllTab = () => {
   const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
-  const isDetailsOverlayEnabled = useFlagOverlayNavigation();
   const isDocumentsApiEnabled = useFlagDocumentsApiEnabled();
   const [commonFilters] = useCommonFilters();
   const [query] = useQueryString(SEARCH_KEY);
   const [_, setCurrentResourceType] = useCurrentResourceType();
-  const [, openPreview] = useCurrentResourceId();
-  const location = useLocation();
-  const navigate = useNavigate();
-  const search = getSearchParams(location.search);
   const [pushJourney] = usePushJourney();
   const [journeyLength] = useJourneyLength();
   const [, setPromptOpen] = useBreakJourneyPromptState();
@@ -58,29 +47,21 @@ export const AllTab = () => {
 
   // We use the same function for both root asset and direct asset click.
   // TODO: for journey?
-  const handleParentAssetClick = (
-    rootAsset: Asset,
-    resourceId?: number,
-    type?: ResourceType
-  ) => {
-    openPreview(resourceId, false, ResourceTypes.Asset, rootAsset.id, type);
+  const handleParentAssetClick = (rootAsset: Asset) => {
+    if (journeyLength > 1) {
+      // If there is a journey going on (i.e. journey length is more than 1), then show the prompt modal.
+      setPromptOpen(true, { id: rootAsset.id, type: 'asset' });
+    } else {
+      pushJourney({ id: rootAsset.id, type: 'asset' }, true);
+    }
   };
 
   const handleSummaryRowClick = (rowType: ResourceType, id: number) => {
-    if (isDetailsOverlayEnabled) {
-      if (journeyLength > 1) {
-        // If there is a journey going on (i.e. journey length is more than 1), then show the prompt modal.
-        // console.log('TODO: here show modal and ask to terminate journey');
-        setPromptOpen(true, { id, type: rowType });
-      } else {
-        pushJourney({ id, type: rowType }, true);
-      }
+    if (journeyLength > 1) {
+      // If there is a journey going on (i.e. journey length is more than 1), then show the prompt modal.
+      setPromptOpen(true, { id, type: rowType });
     } else {
-      navigate(createLink(`/explore/${rowType}/${id}`, search), {
-        state: {
-          history: location.state?.history,
-        },
-      });
+      pushJourney({ id, type: rowType }, true);
     }
   };
 
@@ -106,13 +87,7 @@ export const AllTab = () => {
           onAllResultsClick={() =>
             handleAllResultsClick(ResourceTypes.TimeSeries)
           }
-          onRootAssetClick={(rootAsset, resourceId) =>
-            handleParentAssetClick(
-              rootAsset,
-              resourceId,
-              ResourceTypes.TimeSeries
-            )
-          }
+          onRootAssetClick={(rootAsset) => handleParentAssetClick(rootAsset)}
         />
         {isDocumentsApiEnabled ? (
           <DocumentSummary
@@ -122,9 +97,7 @@ export const AllTab = () => {
               handleSummaryRowClick(ResourceTypes.File, row.id)
             }
             onAllResultsClick={() => handleAllResultsClick(ResourceTypes.File)}
-            onRootAssetClick={(rootAsset, resourceId) =>
-              handleParentAssetClick(rootAsset, resourceId, ResourceTypes.File)
-            }
+            onRootAssetClick={(rootAsset) => handleParentAssetClick(rootAsset)}
           />
         ) : (
           <FileSummary
@@ -134,12 +107,8 @@ export const AllTab = () => {
               handleSummaryRowClick(ResourceTypes.File, row.id)
             }
             onAllResultsClick={() => handleAllResultsClick(ResourceTypes.File)}
-            onDirectAssetClick={(directAsset, resourceId) =>
-              handleParentAssetClick(
-                directAsset,
-                resourceId,
-                ResourceTypes.File
-              )
+            onDirectAssetClick={(directAsset) =>
+              handleParentAssetClick(directAsset)
             }
           />
         )}
@@ -151,8 +120,8 @@ export const AllTab = () => {
             handleSummaryRowClick(ResourceTypes.Event, row.id)
           }
           onAllResultsClick={() => handleAllResultsClick(ResourceTypes.Event)}
-          onDirectAssetClick={(directAsset, resourceId) =>
-            handleParentAssetClick(directAsset, resourceId, ResourceTypes.Event)
+          onDirectAssetClick={(directAsset) =>
+            handleParentAssetClick(directAsset)
           }
         />
         <SequenceSummary
@@ -165,13 +134,7 @@ export const AllTab = () => {
           onAllResultsClick={() =>
             handleAllResultsClick(ResourceTypes.Sequence)
           }
-          onRootAssetClick={(rootAsset, resourceId) =>
-            handleParentAssetClick(
-              rootAsset,
-              resourceId,
-              ResourceTypes.Sequence
-            )
-          }
+          onRootAssetClick={(rootAsset) => handleParentAssetClick(rootAsset)}
         />
       </AllTabContainer>
     </SearchResultWrapper>

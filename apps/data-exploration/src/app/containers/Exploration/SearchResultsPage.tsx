@@ -36,7 +36,6 @@ import { ThreeDSearchContextProvider } from '@data-exploration-app/context/Three
 import {
   useFlagDocumentGPT,
   useFlagDocumentLabelsFilter,
-  useFlagOverlayNavigation,
 } from '@data-exploration-app/hooks';
 import {
   useQueryString,
@@ -101,8 +100,6 @@ function SearchPage() {
 
   const isDocumentGPTEnabled = useFlagDocumentGPT();
   const [showGPTInfo, setShowGPTInfo] = useState<boolean>(true);
-
-  const isDetailsOverlayEnabled = useFlagOverlayNavigation();
 
   const { t } = useTranslation();
   const isDocumentsApiEnabled = useFlagDocumentsApiEnabled();
@@ -237,8 +234,8 @@ function SearchPage() {
           </Wrapper>
         </MainContainer>
       </MainSearchContainer>
-      {isDetailsOverlayEnabled && <DetailsOverlay />}
-      {isDetailsOverlayEnabled && <BreakJourneyPrompt />}
+      <DetailsOverlay />
+      <BreakJourneyPrompt />
     </RootHeightWrapper>
   );
 }

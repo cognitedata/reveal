@@ -18,9 +18,9 @@ import { CogniteError, FileInfo as FileInfoType } from '@cognite/sdk';
 import { useCdfItem, usePermissions } from '@cognite/sdk-react-query-hooks';
 
 import { BreadcrumbsV2 } from '@data-exploration-app/components/Breadcrumbs/BreadcrumbsV2';
-import ResourceTitleRowV2 from '@data-exploration-app/components/ResourceTitleRowV2';
+import ResourceTitleRow from '@data-exploration-app/components/ResourceTitleRow';
 import { DetailsTabWrapper } from '@data-exploration-app/containers/Common/element';
-import { ResourceDetailsTabsV2 } from '@data-exploration-app/containers/ResourceDetails';
+import { ResourceDetailsTabs } from '@data-exploration-app/containers/ResourceDetails';
 import ResourceSelectionContext from '@data-exploration-app/context/ResourceSelectionContext';
 import {
   useEndJourney,
@@ -151,12 +151,12 @@ export const FileDetail = ({
   return (
     <>
       <BreadcrumbsV2 />
-      <ResourceTitleRowV2
+      <ResourceTitleRow
         item={{ id: fileId!, type: resourceType || 'file' }}
         title={fileInfo.name}
         afterDefaultActions={actions}
       />
-      <ResourceDetailsTabsV2
+      <ResourceDetailsTabs
         parentResource={{
           type: 'file',
           id: fileId,

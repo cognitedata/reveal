@@ -6,9 +6,13 @@ import { Colors, Title } from '@cognite/cogs.js';
 import { ResourceItem, ResourceIcons } from '@cognite/data-exploration';
 import { DatapointsMultiQuery } from '@cognite/sdk';
 
+import { BackInJourneyButton } from '../components/TitleRowActions/BackInJourneyButton';
+import { useJourneyLength } from '../hooks/detailsNavigation';
+
 import { TitleRowActions } from './TitleRowActions';
 
 export type DateFilter = Pick<DatapointsMultiQuery, 'start' | 'end'>;
+
 type Props = {
   title?: string;
   item: ResourceItem;
@@ -19,7 +23,6 @@ type Props = {
   hideDefaultCloseActions?: boolean;
 };
 
-// TODO: We have a new version `ResourceTitleRowV2`, can remove this file after new navigation adoption.
 export default function ResourceTitleRow({
   title,
   item: { type, id },
@@ -28,15 +31,33 @@ export default function ResourceTitleRow({
   afterDefaultActions,
   hideDefaultCloseActions,
 }: Props) {
+  const [journeyLength] = useJourneyLength();
+
+  const backButton = (
+    <>
+      <BackInJourneyButton />
+      <Divider />
+    </>
+  );
+
   const name = (
     <NameWrapper>
-      <ResourceIcons type={type} style={{ marginRight: '10px' }} />
+      {journeyLength > 1 && backButton}
+      <ResourceIcons
+        type={type}
+        style={{
+          marginRight: '10px',
+          backgroundColor:
+            'var(--cogs-surface--status-neutral--muted--default)',
+          color: 'var(--cogs-text-icon--status-neutral)',
+        }}
+      />
       <Name level="3">{title || id}</Name>
     </NameWrapper>
   );
 
   return (
-    <TitleRowWrapper>
+    <ResourceTitleRowWrapper>
       <PreviewLinkWrapper>{name}</PreviewLinkWrapper>
       <StyledGoBackWrapper>
         <TitleRowActions
@@ -47,7 +68,7 @@ export default function ResourceTitleRow({
           hideDefaultCloseActions={hideDefaultCloseActions}
         />
       </StyledGoBackWrapper>
-    </TitleRowWrapper>
+    </ResourceTitleRowWrapper>
   );
 }
 
@@ -60,6 +81,16 @@ export const TitleRowWrapper = styled.div`
   flex-wrap: nowrap;
   padding: 16px;
   border-bottom: 1px solid ${Colors['decorative--grayscale--300']};
+`;
+
+const ResourceTitleRowWrapper = styled.div`
+  h1 {
+    margin: 0px;
+  }
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  padding: 16px;
 `;
 
 const NameWrapper = styled.div`
@@ -82,4 +113,11 @@ const PreviewLinkWrapper = styled.div`
   overflow: hidden;
   vertical-align: bottom;
   flex: 1 1 auto;
+`;
+
+const Divider = styled.div`
+  width: 1px;
+  height: 16px;
+  margin: 0 8px;
+  background-color: var(--cogs-border--muted);
 `;

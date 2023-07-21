@@ -14,9 +14,9 @@ import { CogniteError, Timeseries } from '@cognite/sdk';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 
 import { BreadcrumbsV2 } from '@data-exploration-app/components/Breadcrumbs/BreadcrumbsV2';
-import ResourceTitleRowV2 from '@data-exploration-app/components/ResourceTitleRowV2';
+import ResourceTitleRow from '@data-exploration-app/components/ResourceTitleRow';
 import { DetailsTabWrapper } from '@data-exploration-app/containers/Common/element';
-import { ResourceDetailsTabsV2 } from '@data-exploration-app/containers/ResourceDetails';
+import { ResourceDetailsTabs } from '@data-exploration-app/containers/ResourceDetails';
 import {
   useEndJourney,
   usePreviewDateRange,
@@ -120,7 +120,7 @@ export const TimeseriesDetail = ({
   return (
     <>
       <BreadcrumbsV2 />
-      <ResourceTitleRowV2
+      <ResourceTitleRow
         datefilter={{
           start: dateRange[0],
           end: dateRange[1],
@@ -132,7 +132,7 @@ export const TimeseriesDetail = ({
 
       {timeseries && (
         <TimeseriesWrapper>
-          <ResourceDetailsTabsV2
+          <ResourceDetailsTabs
             parentResource={{
               type: 'timeSeries',
               id: timeseries.id,
