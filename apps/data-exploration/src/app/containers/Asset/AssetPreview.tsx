@@ -34,7 +34,6 @@ export type AssetPreviewTabType =
   | 'events'
   | 'children';
 
-// TODO: rename this to AssetDetail or sth. else!
 export const AssetPreview = ({
   assetId,
   actions,

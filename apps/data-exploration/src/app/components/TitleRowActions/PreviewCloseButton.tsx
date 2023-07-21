@@ -1,61 +1,35 @@
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import React from 'react';
+import { useSearchParams } from 'react-router-dom';
 
-import { createLink } from '@cognite/cdf-utilities';
 import { Button, Tooltip } from '@cognite/cogs.js';
-import { ResourceItem } from '@cognite/data-exploration';
 
-import { EXPLORATION } from '@data-exploration-app/constants/metrics';
-import { FilePreviewTabType } from '@data-exploration-app/containers/File/FilePreview';
-import { useCurrentResourceId } from '@data-exploration-app/hooks/hooks';
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
-import { getSearchParams } from '@data-exploration-app/utils/URLUtils';
+import { useEndJourney, useViewModeToggle } from '@data-exploration-app/hooks';
+import { VIEW_MODE_FIELD, useTranslation } from '@data-exploration-lib/core';
 
-export const PreviewCloseButton: React.FC<{ item: ResourceItem }> = ({
-  item,
-}) => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const isPreview = location.pathname.includes('/search');
+// This is the close button for details overlay
+export const PreviewCloseButton = () => {
+  const { t } = useTranslation();
+  const [searchParams] = useSearchParams();
+  const [endJourney] = useEndJourney();
+  const [viewModeToggle, setViewModeToggle] = useViewModeToggle();
 
-  const [, openPreview] = useCurrentResourceId();
-  const { tabType } = useParams<{
-    tabType: FilePreviewTabType;
-  }>();
+  React.useEffect(() => {
+    setViewModeToggle(searchParams.has(VIEW_MODE_FIELD));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams.get(VIEW_MODE_FIELD)]);
 
-  const handlePreviewClose = () => {
-    openPreview(undefined);
-    trackUsage(EXPLORATION.CLICK.CLOSE_DETAILED_VIEW, item);
-  };
-
-  const search = getSearchParams(location.search);
-  const goToPreview = () => {
-    navigate(
-      createLink(
-        `/explore/search/${item.type}/${item.id}${
-          tabType ? `/${tabType}` : ''
-        }`,
-        search
-      ),
-      {
-        state: {
-          history: location.state?.history,
-        },
-      }
-    );
-    trackUsage(EXPLORATION.CLICK.COLLAPSE_FULL_PAGE, item);
-  };
+  // Do not show preview close button when in fullpage.
+  if (viewModeToggle) {
+    return null;
+  }
 
   return (
-    <Tooltip content="Close preview">
+    <Tooltip content={t('CLOSE_JOURNEY', 'Close journey')}>
       <Button
         icon="Close"
         aria-label="Close"
         onClick={() => {
-          if (isPreview) {
-            handlePreviewClose();
-          } else {
-            goToPreview();
-          }
+          endJourney();
         }}
       />
     </Tooltip>
