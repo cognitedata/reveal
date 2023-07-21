@@ -6,6 +6,7 @@ import { type ReactElement, type JSX } from 'react';
 import { Button, ToolBar, type ToolBarProps } from '@cognite/cogs.js';
 import { FitModelsButton } from './FitModelsButton';
 import { SlicerButton } from './SlicerButton';
+import { HighQualityButton } from './HighQualityButton';
 
 const defaultStyle: ToolBarProps = {
   style: {
@@ -31,7 +32,7 @@ const defaultContent = (
 
     <div className="cogs-toolbar-divider" />
 
-    <Button type="ghost" icon="Settings" aria-label="Show settings" />
+    <HighQualityButton />
     <Button type="ghost" icon="Help" aria-label="Display help" />
   </>
 );
