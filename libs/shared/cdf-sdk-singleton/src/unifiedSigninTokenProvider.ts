@@ -11,6 +11,18 @@ import { SdkClientTokenProvider } from './types';
 // sure they're always present if we want to rely on them.
 const { organization, cluster, idpInternalId } = readLoginHints() ?? {};
 
+const getService = async () => {
+  if (!organization || !idpInternalId || !cluster) {
+    return Promise.reject(new Error('Missing login hints'));
+  }
+  const dlc = await getDlc(organization);
+  const idp = await getIdp(dlc.idps, idpInternalId);
+  if (!idp) {
+    return Promise.reject(new Error('Missing idp'));
+  }
+  return new OidcService(idp, organization, cluster);
+};
+
 export class UnifiedSigninTokenProvider implements SdkClientTokenProvider {
   private service: OidcService | undefined;
 
@@ -44,23 +56,11 @@ export class UnifiedSigninTokenProvider implements SdkClientTokenProvider {
 
   private async initService() {
     if (!this.service) {
-      this.service = await this.getService();
+      this.service = await getService();
     }
     // If the IdP has changed, we need to reinitialize the service.
     if (this.service.idp.internalId !== idpInternalId) {
-      this.service = await this.getService();
+      this.service = await getService();
     }
-  }
-
-  private async getService() {
-    if (!organization || !idpInternalId || !cluster) {
-      return Promise.reject(new Error('Missing login hints'));
-    }
-    const dlc = await getDlc(organization);
-    const idp = await getIdp(dlc.idps, idpInternalId);
-    if (!idp) {
-      return Promise.reject(new Error('Missing idp'));
-    }
-    return new OidcService(idp, organization, cluster);
   }
 }
