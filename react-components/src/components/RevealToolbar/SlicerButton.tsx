@@ -47,7 +47,7 @@ export const SlicerButton = (): ReactElement => {
     }
   }, [viewer, viewer.models.length, lastModel]);
 
-  function changeSlicingState(newValues: number[]) {
+  function changeSlicingState(newValues: number[]): void {
     viewer.setGlobalClippingPlanes([
       new Plane(new Vector3(0, 1, 0), -(minHeight + newValues[0] * (maxHeight - minHeight))),
       new Plane(new Vector3(0, -1, 0), minHeight + newValues[1] * (maxHeight - minHeight))
