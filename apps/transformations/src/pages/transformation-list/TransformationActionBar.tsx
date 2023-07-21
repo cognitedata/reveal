@@ -10,6 +10,7 @@ import {
   useDeleteTransformation,
   useDuplicateTransformation,
   useUpdateSchedule,
+  useRunTransformation,
 } from '@transformations/hooks';
 import { Schedule } from '@transformations/types';
 import { getTrackEvent } from '@transformations/utils';
@@ -28,6 +29,8 @@ import {
   Tooltip,
   Colors,
 } from '@cognite/cogs.js';
+
+import RunConfirmationModal from '../../components/run-confirmation-modal';
 
 import { TransformationListTableRecord } from './TransformationListTable';
 
@@ -58,6 +61,12 @@ const TransformationActionBar = ({
     useDeleteTransformation();
   const { mutate: bulkUpdate, isLoading: isUpdatingSchedule } =
     useUpdateSchedule();
+  const { mutateAsync: bulkRun } = useRunTransformation();
+
+  const [runConfirmationModalState, setRunConfirmationModalState] = useState<{
+    open: boolean;
+    personalCredentials?: boolean;
+  }>({ open: false, personalCredentials: false });
   // TODO: uncomment if we have a resolution on this
   // const { mutate: bulkSchedule, isLoading: isBulkScheduleRunning } =
   //   useScheduleTransformation();
@@ -164,6 +173,7 @@ const TransformationActionBar = ({
       );
     }
   };
+
   // TODO: commenting this out because it doesn't seem to work
   // we're unsure if there's a way for us to bulk reschedule blocked
   // transformations.
@@ -197,6 +207,19 @@ const TransformationActionBar = ({
   //     },
   //   });
   // };
+
+  const onRunTransformations = async () => {
+    trackEvent(getTrackEvent('event-tr-list-bulk-action-run-click'));
+    const selectedTransformationRuns = selectedRows.map((transformation) => {
+      return {
+        id: transformation.id,
+        personalCredentials: !!runConfirmationModalState.personalCredentials,
+      };
+    });
+    selectedTransformationRuns.map((transformationRun) => {
+      bulkRun(transformationRun);
+    });
+  };
 
   const onCloseDeleteModal = () => {
     setIsDeleteModalOpen(false);
@@ -252,6 +275,21 @@ const TransformationActionBar = ({
             />
           )} */}
           <StyledActionBarDivider />
+          <StyledActionButton
+            iconType="Play"
+            text={t('run-now')}
+            onClick={() => {
+              if (selectedRows.length === 1) {
+                onRunTransformations();
+              } else {
+                setRunConfirmationModalState({
+                  open: true,
+                  personalCredentials: true,
+                });
+              }
+            }}
+            inverted
+          />
           {scheduleButtonDisplay() !== undefined && (
             <StyledActionButton
               iconType="Clock"
@@ -386,6 +424,15 @@ const TransformationActionBar = ({
         items={selectedRows}
         visible={isUpdateScheduleModalOpen}
         loading={isUpdatingSchedule}
+      />
+      <RunConfirmationModal
+        onCancel={() => setRunConfirmationModalState({ open: false })}
+        onConfirm={() => {
+          onRunTransformations();
+          setRunConfirmationModalState({ open: false });
+        }}
+        open={runConfirmationModalState.open}
+        items={selectedRows}
       />
     </>
   );

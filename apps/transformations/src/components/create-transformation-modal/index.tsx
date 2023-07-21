@@ -167,6 +167,7 @@ const CreateTransformationModal = ({
   return (
     <Modal
       title={t('create-transformation')}
+      subtitle={detailsForm.values.name}
       icon={isLoading ? 'Loader' : undefined}
       visible={visible}
       onCancel={onCancel}
