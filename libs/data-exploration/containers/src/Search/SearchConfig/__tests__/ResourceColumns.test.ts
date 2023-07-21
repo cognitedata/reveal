@@ -10,7 +10,7 @@ import {
 
 import { ResourceColumns } from '../ResourceColumns';
 
-const totalNumberOfCheckboxes = 32;
+const totalNumberOfCheckboxes = 31;
 
 const mockData = getMockSearchConfig();
 
