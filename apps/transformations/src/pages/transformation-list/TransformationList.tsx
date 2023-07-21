@@ -13,6 +13,7 @@ import {
 } from '@transformations/hooks';
 import {
   collectPages,
+  flattenFDMModels,
   getFilteredTransformationList,
   getTrackEvent,
 } from '@transformations/utils';
@@ -20,6 +21,9 @@ import { omit, uniq } from 'lodash';
 
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import { Loader } from '@cognite/cogs.js';
+
+import { DataModel, useModels } from '../../hooks/fdm';
+import { getDataModelKey } from '../../utils/fdm';
 
 import BlockedTransformationsAlert from './BlockedTransformationsAlert';
 import TransformationListEmpty from './TransformationListEmpty';
@@ -45,6 +49,7 @@ interface FiltersStateBase {
   lastRun: string[];
   schedule: ScheduleStatus[];
   dataSet: string;
+  dataModel: string;
   search: string;
 }
 export interface FiltersState extends FiltersStateBase {
@@ -56,6 +61,7 @@ const getInitialFiltersStateBase = (
   lastRun: init?.lastRun ?? [],
   schedule: init?.schedule ?? [],
   dataSet: init?.dataSet ?? '',
+  dataModel: init?.dataModel ?? '',
   search: init?.search ?? '',
 });
 const getInitialState = (init?: Partial<FiltersStateBase>): FiltersState => ({
@@ -70,13 +76,13 @@ export type FiltersAction = {
 };
 
 export type FilterArrayFields = 'lastRun' | 'schedule';
-export type FilterStringFields = 'search' | 'dataSet';
+export type FilterStringFields = 'search' | 'dataSet' | 'dataModel';
 
 const isFilterArrayField = (prop?: string) =>
   prop && ['lastRun', 'schedule'].includes(prop);
 
 const isFilterStringField = (prop?: string) =>
-  prop && ['search', 'dataSet'].includes(prop);
+  prop && ['search', 'dataSet', 'dataModel'].includes(prop);
 
 const reducer = (state: FiltersState, action: FiltersAction): FiltersState => {
   const { type, field, payload } = action;
@@ -214,6 +220,35 @@ const TransformationList = ({}: TransformationListProps): JSX.Element => {
     })
     .sort((a, b) => a.label.localeCompare(b.label));
 
+  const { data: modelsData } = useModels();
+
+  const models = useMemo(
+    () =>
+      flattenFDMModels(
+        modelsData?.pages.reduce(
+          (accl, p) => [...accl, ...p.items],
+          [] as DataModel[]
+        ) || []
+      ),
+    [modelsData]
+  );
+
+  const dataModelOptions = models
+    .map((dataModel) => {
+      return {
+        value: getDataModelKey({
+          externalId: dataModel.externalId,
+          space: dataModel.space,
+        }),
+        label: dataModel.externalId,
+        key: getDataModelKey({
+          externalId: dataModel.externalId,
+          space: dataModel.space,
+        }),
+      };
+    })
+    .sort((a, b) => a.label.localeCompare(b.label));
+
   const lastRunOptions = [
     {
       label: t('fail'),
@@ -260,14 +295,15 @@ const TransformationList = ({}: TransformationListProps): JSX.Element => {
     dispatch({ type: 'submit' });
   };
 
-  const { search, lastRun, schedule, dataSet } = state?.applied;
+  const { search, lastRun, schedule, dataSet, dataModel } = state?.applied;
 
   const filteredTransformationList = getFilteredTransformationList(
     transformationList,
     search,
     lastRun,
     schedule,
-    dataSet
+    dataSet,
+    dataModel
   );
 
   if (error) {
@@ -296,6 +332,7 @@ const TransformationList = ({}: TransformationListProps): JSX.Element => {
             lastRunOptions={lastRunOptions}
             scheduleOptions={scheduleOptions}
             dataSetOptions={dataSetOptions}
+            dataModelOptions={dataModelOptions}
             onFilterChange={dispatch}
             columnStates={columnStates}
             setColumnStates={setColumnStates}

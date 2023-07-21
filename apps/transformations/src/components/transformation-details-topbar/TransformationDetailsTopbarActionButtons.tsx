@@ -79,7 +79,7 @@ const TransformationDetailsTopbarActionButtons = ({
         appendTo={getContainer()}
         content={
           <Menu>
-            {isTokenExchangeSupported && (
+            {isTokenExchangeSupported?.supported && (
               <Item
                 key="personal-credentials"
                 onClick={() => {
@@ -183,6 +183,11 @@ const TransformationDetailsTopbarActionButtons = ({
           setRunConfirmationModalState({ open: false });
         }}
         open={runConfirmationModalState.open}
+        items={
+          transformation?.name
+            ? [{ id: transformation.id, name: transformation.name }]
+            : []
+        }
       />
     </Flex>
   );

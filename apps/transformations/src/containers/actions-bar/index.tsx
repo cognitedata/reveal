@@ -59,6 +59,7 @@ export type ActionBarProps = {
   lastRunOptions: SelectFilterOption[];
   scheduleOptions: SelectFilterOption[];
   dataSetOptions: SelectFilterOption[];
+  dataModelOptions: SelectFilterOption[];
   onFilterChange: (action: FiltersAction) => void;
   columnStates: ColumnState[];
   setColumnStates: Dispatch<SetStateAction<ColumnState[]>>;
@@ -97,6 +98,7 @@ export const ActionsBar = ({
   lastRunOptions,
   scheduleOptions,
   dataSetOptions,
+  dataModelOptions,
   onFilterChange,
   columnStates,
   setColumnStates,
@@ -129,7 +131,7 @@ export const ActionsBar = ({
       });
     };
 
-  const { lastRun, schedule, dataSet, search } = filterState;
+  const { lastRun, schedule, dataSet, dataModel, search } = filterState;
 
   const handleColumnListItemClick = (key: string, selected: boolean) => {
     setColumnStates((prevState) => {
@@ -214,7 +216,8 @@ export const ActionsBar = ({
                                 search ?? '',
                                 [ele.value],
                                 schedule,
-                                dataSet
+                                dataSet,
+                                dataModel
                               ).length
                             }`}
                           />
@@ -249,7 +252,8 @@ export const ActionsBar = ({
                                   search ?? '',
                                   lastRun,
                                   [scheduleValue],
-                                  dataSet
+                                  dataSet,
+                                  dataModel
                                 ).length
                               }`}
                             />
@@ -282,6 +286,32 @@ export const ActionsBar = ({
                       value={dataSet || undefined}
                       placeholder={t('create-transformation-select-dataset')}
                     />
+                    <StyledWrapper>
+                      <Body level={3} strong>
+                        {t('target-data-model')}
+                      </Body>
+                      <DataModelSelectFilter
+                        options={dataModelOptions}
+                        onClear={() => {
+                          onFilterChange({
+                            type: 'change',
+                            field: 'dataModel',
+                            payload: '',
+                          });
+                        }}
+                        onChange={(dm) => {
+                          onFilterChange({
+                            type: 'change',
+                            field: 'dataModel',
+                            payload: dm.value,
+                          });
+                        }}
+                        value={dataModel || undefined}
+                        placeholder={t(
+                          'create-transformation-select-datamodel'
+                        )}
+                      />
+                    </StyledWrapper>
                   </StyledMenuSection>
                 </StyledMenuContent>
                 <Button
@@ -352,6 +382,10 @@ export const ActionsBar = ({
   );
 };
 
+const StyledWrapper = styled.div`
+  margin-top: 16px;
+`;
+
 const SectionWrapper = styled.div`
   display: flex;
   justify-content: space-between;
@@ -396,6 +430,11 @@ const StyledFilterCount = styled(Chip).attrs({
 `;
 
 const DataSetSelectFilter = styled(TransformationFilter)`
+  margin-top: 6px;
+  width: 100%;
+`;
+
+const DataModelSelectFilter = styled(TransformationFilter)`
   margin-top: 6px;
   width: 100%;
 `;
