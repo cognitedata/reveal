@@ -2,12 +2,13 @@ import { useState, useEffect } from 'react';
 
 import styled from 'styled-components';
 
+import { AssetsOfResourceSearchResults } from '@data-exploration/containers';
+
 import { Select } from '@cognite/cogs.js';
 import {
   RelationshipTableProps,
   SelectableItemsProps,
   convertResourceType,
-  AssetIdTable,
   RelatedResourceType,
   LinkedResourceTable,
   AnnotationTable,
@@ -224,9 +225,10 @@ export const RelatedResources = ({
         )}
 
         {selectedType?.value === 'assetId' && (
-          <AssetIdTable
+          <AssetsOfResourceSearchResults
             resource={parentResource}
             onItemClicked={onItemClicked}
+            isDocumentsApiEnabled={isDocumentsApiEnabled}
             {...props}
           />
         )}

@@ -5,37 +5,34 @@ import { useSDK } from '@cognite/sdk-provider';
 import { SdkResourceType } from '@cognite/sdk-react-query-hooks';
 
 import { queryKeys } from '../../../queryKeys';
-import { getAssetIds, getDocumentAssetIds } from '../network';
+import { getValidDocumentsCount, getValidResourcesCount } from '../network';
 
-export const useAssetIdsQuery = ({
+export const useValidResourcesCountQuery = ({
   resourceType,
-  resourceId,
+  resourceIds,
   isDocumentsApiEnabled,
-  enabled = true,
 }: {
   resourceType: SdkResourceType;
-  resourceId?: IdEither;
+  resourceIds: IdEither[];
   isDocumentsApiEnabled: boolean;
-  enabled?: boolean;
 }) => {
   const sdk = useSDK();
 
   return useQuery(
-    queryKeys.assetIdsCount(resourceType, resourceId),
+    queryKeys.validResourcesCount(resourceType, resourceIds),
     () => {
-      if (!resourceId) {
-        return undefined;
-      }
       if (resourceType === 'files' && isDocumentsApiEnabled) {
-        return getDocumentAssetIds(sdk, { resourceId });
+        return getValidDocumentsCount(sdk, {
+          resourceIds,
+        });
       }
-      return getAssetIds(sdk, {
+      return getValidResourcesCount(sdk, {
         resourceType,
-        resourceId,
+        resourceIds,
       });
     },
     {
-      enabled: enabled && !!resourceId,
+      enabled: !!resourceIds.length,
     }
   );
 };

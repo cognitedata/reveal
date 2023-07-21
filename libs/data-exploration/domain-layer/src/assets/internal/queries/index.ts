@@ -1,6 +1,7 @@
 export * from './useAssetsFilterOptions';
 export * from './useAssetsMetadataFilterOptions';
 export * from './useAssetsMetadataValuesOptionsQuery';
+export * from './useAssetsOfResourceQuery';
 export * from './useAssetsSearchAggregateQuery';
 export * from './useAssetsSearchResultQuery';
 export * from './useAssetsSearchResultWithLabelsQuery';

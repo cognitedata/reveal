@@ -12,7 +12,7 @@ export const useLinkedResourcesCount = ({
   linkedResourceIds,
   isDocumentsApiEnabled,
 }: {
-  resource?: BaseResourceProps;
+  resource: BaseResourceProps;
   resourceType: ResourceType;
   linkedResourceIds?: IdEither[];
   isDocumentsApiEnabled: boolean;

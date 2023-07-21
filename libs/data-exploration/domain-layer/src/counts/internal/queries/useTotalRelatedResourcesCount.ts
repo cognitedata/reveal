@@ -13,7 +13,7 @@ export const useTotalRelatedResourcesCount = ({
   resourceType,
   isDocumentsApiEnabled = true,
 }: {
-  resource?: BaseResourceProps;
+  resource: BaseResourceProps;
   resourceType: ResourceType;
   isDocumentsApiEnabled?: boolean;
 }) => {
@@ -28,7 +28,11 @@ export const useTotalRelatedResourcesCount = ({
     resourceType,
     isDocumentsApiEnabled,
   });
-  const relationships = useRelationshipsCount({ resource, resourceType });
+  const relationships = useRelationshipsCount({
+    resource,
+    resourceType,
+    isDocumentsApiEnabled,
+  });
   const nonLinkedRelatedResources = useNonLinkedRelatedResourcesCount({
     resource,
     resourceType,

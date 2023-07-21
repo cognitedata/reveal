@@ -8,17 +8,21 @@ export const useAnnotationsCount = ({
   resource,
   resourceType,
 }: {
-  resource?: BaseResourceProps;
+  resource: BaseResourceProps;
   resourceType: ResourceType;
 }) => {
   const resourceId = getResourceId(resource);
+  const enabled = resourceType === 'file';
 
-  const { data = [], isLoading } = useFileAnnotationsQuery(
+  const { data = [], isInitialLoading } = useFileAnnotationsQuery(
     resourceId,
-    resourceType === 'file'
+    enabled
   );
 
-  const count = data.length;
+  const count = enabled ? data.length : 0;
 
-  return { data: count, isLoading };
+  return {
+    data: count,
+    isLoading: isInitialLoading,
+  };
 };

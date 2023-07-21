@@ -1,4 +1,3 @@
-import compact from 'lodash/compact';
 import head from 'lodash/head';
 
 import {
@@ -11,23 +10,14 @@ import {
 import { convertIdEither } from '../utils';
 
 type Payload = {
-  resourceId: IdEither;
-  linkedResourceIds?: IdEither[];
+  resourceIds: IdEither[];
 };
 
-export const getLinkedDocumentsCount = (
+export const getValidDocumentsCount = (
   sdk: CogniteClient,
   payload: Payload
 ) => {
-  const { resourceId, linkedResourceIds } = payload;
-
-  const linkedResourceIdsFilter = linkedResourceIds
-    ? {
-        or: linkedResourceIds.map((linkedResourceId) =>
-          convertIdEither('equals', linkedResourceId)
-        ),
-      }
-    : undefined;
+  const { resourceIds } = payload;
 
   return sdk
     .post<CursorResponse<AggregateResponse[]>>(
@@ -38,10 +28,9 @@ export const getLinkedDocumentsCount = (
         },
         data: {
           filter: {
-            and: compact([
-              convertIdEither('inAssetSubtree', resourceId),
-              linkedResourceIdsFilter,
-            ]),
+            or: resourceIds.map((resourceId) =>
+              convertIdEither('equals', resourceId)
+            ),
           },
         },
       }

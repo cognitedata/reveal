@@ -21,7 +21,7 @@ export const useFileAnnotationsQuery = (fileId?: IdEither, enabled = true) => {
       });
     },
     {
-      enabled: enabled || !!fileId,
+      enabled: enabled && !!fileId,
     }
   );
 };

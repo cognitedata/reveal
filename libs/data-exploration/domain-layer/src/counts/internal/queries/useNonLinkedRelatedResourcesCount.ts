@@ -10,7 +10,7 @@ export const useNonLinkedRelatedResourcesCount = ({
   resourceType,
   isDocumentsApiEnabled = true,
 }: {
-  resource?: BaseResourceProps;
+  resource: BaseResourceProps;
   resourceType: ResourceType;
   isDocumentsApiEnabled?: boolean;
 }) => {

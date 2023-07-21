@@ -12,7 +12,7 @@ export const useRelatedResourcesCount = ({
   resourceType,
   isDocumentsApiEnabled = true,
 }: {
-  resource?: BaseResourceProps;
+  resource: BaseResourceProps;
   resourceType: ResourceType;
   isDocumentsApiEnabled?: boolean;
 }) => {
@@ -27,7 +27,11 @@ export const useRelatedResourcesCount = ({
     resourceType,
     isDocumentsApiEnabled,
   });
-  const relationships = useRelationshipsCount({ resource, resourceType });
+  const relationships = useRelationshipsCount({
+    resource,
+    resourceType,
+    isDocumentsApiEnabled,
+  });
 
   const data = {
     annotationsCount: annotations.data,

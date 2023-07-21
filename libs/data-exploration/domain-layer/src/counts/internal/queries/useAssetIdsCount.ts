@@ -1,4 +1,4 @@
-import { ResourceType } from '@data-exploration-lib/core';
+import { ResourceType, ResourceTypes } from '@data-exploration-lib/core';
 
 import { useAssetIdsQuery } from '../../service';
 import { BaseResourceProps } from '../types';
@@ -9,17 +9,29 @@ export const useAssetIdsCount = ({
   resourceType,
   isDocumentsApiEnabled,
 }: {
-  resource?: BaseResourceProps;
+  resource: BaseResourceProps;
   resourceType: ResourceType;
   isDocumentsApiEnabled: boolean;
 }) => {
-  const { data = [], isLoading } = useAssetIdsQuery({
-    resourceType: convertToSdkResourceType(resourceType),
+  const { data = [], isInitialLoading } = useAssetIdsQuery({
+    /**
+     * We should fetch the actual item.
+     * Hence, we should pass the arent resource type as resourceType.
+     */
+    resourceType: convertToSdkResourceType(resource.type),
     resourceId: getResourceId(resource),
     isDocumentsApiEnabled,
+    enabled: resourceType === ResourceTypes.Asset,
   });
 
-  const count = data.length;
+  /**
+   * Asset ID's count is relevant only to Assets.
+   * Hence, the count should be considered only when the required resource type is Asset.
+   */
+  const count = resourceType === ResourceTypes.Asset ? data.length : 0;
 
-  return { data: count, isLoading };
+  return {
+    data: count,
+    isLoading: isInitialLoading,
+  };
 };

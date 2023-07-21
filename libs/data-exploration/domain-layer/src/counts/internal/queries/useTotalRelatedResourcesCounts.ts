@@ -8,7 +8,7 @@ export const useTotalRelatedResourcesCounts = ({
   resource,
   isDocumentsApiEnabled = true,
 }: {
-  resource?: BaseResourceProps;
+  resource: BaseResourceProps;
   isDocumentsApiEnabled?: boolean;
 }) => {
   const assets = useTotalRelatedResourcesCount({

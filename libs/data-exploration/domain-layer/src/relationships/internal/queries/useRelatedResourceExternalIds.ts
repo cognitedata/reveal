@@ -18,7 +18,7 @@ export const useRelatedResourceExternalIds = ({
   relationshipResourceTypes = ALL_RELATIONSHIP_RESOURCE_TYPES,
   filter,
 }: Props) => {
-  const { data = [], isLoading } = useRelationshipsQuery({
+  const { data = [], isInitialLoading } = useRelationshipsQuery({
     resourceExternalIds: resourceExternalId ? [resourceExternalId] : [],
     relationshipResourceTypes,
     filter,
@@ -30,6 +30,6 @@ export const useRelatedResourceExternalIds = ({
 
   return {
     data: transformedData,
-    isLoading,
+    isLoading: isInitialLoading,
   };
 };
