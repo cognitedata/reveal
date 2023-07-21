@@ -24,43 +24,27 @@ const getService = async () => {
 };
 
 export class UnifiedSigninTokenProvider implements SdkClientTokenProvider {
-  private service: OidcService | undefined;
-
   getAppId() {
     return 'apps.cognite.com/cdf';
   }
 
   async getToken() {
-    await this.initService();
-    const token = await this.service?.acquireTokenSilent(cluster);
-    if (!token) {
-      throw new Error('Failed to get token');
-    }
-    return token;
+    const service = await getService();
+    return service.acquireTokenSilent(cluster);
   }
 
   async getUserInformation() {
-    await this.initService();
-    return this.service?.getUser();
+    const service = await getService();
+    return service.getUser();
   }
 
   async getFlow() {
-    await this.initService();
-    return { flow: this.service?.idp.type as string };
+    const service = await getService();
+    return { flow: service.idp.type as string };
   }
 
   async logout() {
-    await this.initService();
-    this.service?.logout();
-  }
-
-  private async initService() {
-    if (!this.service) {
-      this.service = await getService();
-    }
-    // If the IdP has changed, we need to reinitialize the service.
-    if (this.service.idp.internalId !== idpInternalId) {
-      this.service = await getService();
-    }
+    const service = await getService();
+    service.logout();
   }
 }
