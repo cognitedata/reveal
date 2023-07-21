@@ -32,3 +32,4 @@ export { RevealToolbar } from './components/RevealToolbar/RevealToolbar';
 export { LayersButton } from './components/RevealToolbar/LayersButton';
 export { useFdmAssetMappings } from './hooks/useFdmAssetMappings';
 export { type FdmAssetMappingsConfig } from './hooks/types';
+export { use3DModelName } from './hooks/use3DModelName';

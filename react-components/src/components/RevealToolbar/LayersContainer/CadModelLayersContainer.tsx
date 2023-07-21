@@ -5,24 +5,31 @@
 import React, { type ReactElement, useState } from 'react';
 import { useReveal } from '../../RevealContainer/RevealContext';
 import { type CogniteCadModel } from '@cognite/reveal';
-import { Menu } from '@cognite/cogs.js';
-import { StyledCheckbox, StyledSubMenu, StyledMenu } from './elements';
+import { Checkbox, Flex, Menu } from '@cognite/cogs.js';
+import { StyledChipCount, StyledLabel, StyledSubMenu } from './elements';
+import { use3DModelName } from '../../../hooks/use3DModelName';
 
 export const CadModelLayersContainer = (): ReactElement => {
   const viewer = useReveal();
   const cadModels = viewer.models.filter((model) => model.type === 'cad');
+  const cadModelIds = cadModels.map((model) => model.modelId);
+
+  const modelName = use3DModelName(cadModelIds);
 
   const [selectedCadModels, setSelectedCadModels] = useState<
-    Array<{ model: CogniteCadModel; isToggled: boolean }>
+    Array<{ model: CogniteCadModel; isToggled: boolean; name: string }>
   >(
-    cadModels.map((model) => ({
+    cadModels.map((model, index) => ({
       model: model as CogniteCadModel,
-      isToggled: (model as CogniteCadModel).visible
+      isToggled: (model as CogniteCadModel).visible,
+      name: modelName?.data?.[index] ?? 'No model name'
     }))
   );
 
   const [allCadModelVisible, setAllCadModelVisible] = useState(true);
   const [indeterminate, setIndeterminate] = useState<boolean>(false);
+
+  const count = selectedCadModels.length.toString();
 
   const handleCadModelVisibility = (model: CogniteCadModel): void => {
     selectedCadModels.map((data) => {
@@ -63,7 +70,7 @@ export const CadModelLayersContainer = (): ReactElement => {
                 handleCadModelVisibility(data.model);
               }
             }}>
-            {data.model.modelId}
+            {data.name}
           </Menu.Item>
         ))}
       </StyledSubMenu>
@@ -71,22 +78,19 @@ export const CadModelLayersContainer = (): ReactElement => {
   };
 
   return (
-    <>
-      {selectedCadModels.length > 0 ? (
-        <StyledMenu>
-          <StyledCheckbox
-            checked={allCadModelVisible}
-            indeterminate={indeterminate}
-            onChange={(e, c) => {
-              e.stopPropagation();
-              handleAllCadModelsVisibility(c as boolean);
-            }}
-          />
-          <Menu.Submenu content={cadModelContent()}>CAD models</Menu.Submenu>
-        </StyledMenu>
-      ) : (
-        <></>
-      )}
-    </>
+    <Menu.Submenu content={cadModelContent()} title="CAD models">
+      <Flex direction="row" justifyContent="space-between" gap={4}>
+        <Checkbox
+          checked={allCadModelVisible}
+          indeterminate={indeterminate}
+          onChange={(e, c) => {
+            e.stopPropagation();
+            handleAllCadModelsVisibility(c as boolean);
+          }}
+        />
+        <StyledLabel> CAD models </StyledLabel>
+        <StyledChipCount label={count} hideTooltip />
+      </Flex>
+    </Menu.Submenu>
   );
 };

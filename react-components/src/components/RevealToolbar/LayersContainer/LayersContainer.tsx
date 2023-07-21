@@ -14,11 +14,11 @@ import { Image360CollectionLayerContainer } from './Image360LayersContainer';
 export const LayersContainer = (): ReactElement => {
   return (
     <Container>
-      <StyleMenu>
+      <StyledMenu>
         <CadModelLayersContainer />
         <PointCloudLayersContainer />
         <Image360CollectionLayerContainer />
-      </StyleMenu>
+      </StyledMenu>
     </Container>
   );
 };
@@ -31,4 +31,5 @@ const Container = styled.div`
 
 const StyledMenu = styled(Menu)`
   padding: 6px;
+  width: 214px;
 `;

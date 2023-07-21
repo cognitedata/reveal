@@ -4,8 +4,8 @@
 
 import React, { type ReactElement, useState } from 'react';
 import { useReveal } from '../../RevealContainer/RevealContext';
-import { Menu } from '@cognite/cogs.js';
-import { StyledCheckbox, StyledSubMenu, StyledMenu } from './elements';
+import { Checkbox, Flex, Menu } from '@cognite/cogs.js';
+import { StyledChipCount, StyledLabel, StyledSubMenu } from './elements';
 import { type Image360Collection } from '@cognite/reveal';
 
 export const Image360CollectionLayerContainer = (): ReactElement => {
@@ -23,6 +23,8 @@ export const Image360CollectionLayerContainer = (): ReactElement => {
 
   const [all360ImagesVisible, setAll360ImagesVisible] = useState(true);
   const [indeterminate, setIndeterminate] = useState<boolean>(false);
+
+  const count = image360Collection.length.toString();
 
   const handle360ImagesVisibility = (image360: Image360Collection): void => {
     selectedImage360Collection.map((data) => {
@@ -71,22 +73,19 @@ export const Image360CollectionLayerContainer = (): ReactElement => {
   };
 
   return (
-    <>
-      {selectedImage360Collection.length > 0 ? (
-        <StyledMenu>
-          <StyledCheckbox
-            checked={all360ImagesVisible}
-            indeterminate={indeterminate}
-            onChange={(e, c) => {
-              e.stopPropagation();
-              handleAll360ImagesVisibility(c as boolean);
-            }}
-          />
-          <Menu.Submenu content={image360Content()}>360 images</Menu.Submenu>
-        </StyledMenu>
-      ) : (
-        <></>
-      )}
-    </>
+    <Menu.Submenu content={image360Content()} title="360 images">
+      <Flex direction="row" justifyContent="space-between">
+        <Checkbox
+          checked={all360ImagesVisible}
+          indeterminate={indeterminate}
+          onChange={(e, c) => {
+            e.stopPropagation();
+            handleAll360ImagesVisibility(c as boolean);
+          }}
+        />
+        <StyledLabel> 360 images </StyledLabel>
+        <StyledChipCount label={count} hideTooltip />
+      </Flex>
+    </Menu.Submenu>
   );
 };

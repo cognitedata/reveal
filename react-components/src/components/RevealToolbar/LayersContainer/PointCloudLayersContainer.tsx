@@ -5,25 +5,32 @@
 import React, { type ReactElement, useState } from 'react';
 
 import { useReveal } from '../../RevealContainer/RevealContext';
-import { Menu } from '@cognite/cogs.js';
-import { StyledCheckbox, StyledSubMenu, StyledMenu } from './elements';
+import { Checkbox, Flex, Menu } from '@cognite/cogs.js';
+import { StyledChipCount, StyledLabel, StyledSubMenu } from './elements';
 import { type CognitePointCloudModel } from '@cognite/reveal';
+import { use3DModelName } from '../../../hooks/use3DModelName';
 
 export const PointCloudLayersContainer = (): ReactElement => {
   const viewer = useReveal();
   const pointCloudModels = viewer.models.filter((model) => model.type === 'pointcloud');
+  const pointCloudModelIds = pointCloudModels.map((model) => model.modelId);
+
+  const modelName = use3DModelName(pointCloudModelIds);
 
   const [selectedPointCloudModels, setSelectedPointCloudModels] = useState<
-    Array<{ model: CognitePointCloudModel; isToggled: boolean }>
+    Array<{ model: CognitePointCloudModel; isToggled: boolean; name: string }>
   >(
-    pointCloudModels.map((model) => ({
+    pointCloudModels.map((model, index) => ({
       model: model as CognitePointCloudModel,
-      isToggled: (model as CognitePointCloudModel).getDefaultPointCloudAppearance().visible ?? true
+      isToggled: (model as CognitePointCloudModel).getDefaultPointCloudAppearance().visible ?? true,
+      name: modelName?.data?.[index] ?? 'No model name'
     }))
   );
 
   const [allPointCloudModelVisible, setAllPointCloudModelVisible] = useState(true);
   const [indeterminate, setIndeterminate] = useState<boolean>(false);
+
+  const count = pointCloudModels.length.toString();
 
   const handlePointCloudVisibility = (model: CognitePointCloudModel): void => {
     selectedPointCloudModels.map((data) => {
@@ -63,7 +70,7 @@ export const PointCloudLayersContainer = (): ReactElement => {
                 handlePointCloudVisibility(data.model);
               }
             }}>
-            {data.model.modelId}
+            {data.name}
           </Menu.Item>
         ))}
       </StyledSubMenu>
@@ -71,22 +78,19 @@ export const PointCloudLayersContainer = (): ReactElement => {
   };
 
   return (
-    <>
-      {selectedPointCloudModels.length > 0 ? (
-        <StyledMenu>
-          <StyledCheckbox
-            checked={allPointCloudModelVisible}
-            indeterminate={indeterminate}
-            onChange={(e, c) => {
-              e.stopPropagation();
-              handleAllPointCloudModelsVisibility(c as boolean);
-            }}
-          />
-          <Menu.Submenu content={pointCloudModelContent()}>Point clouds</Menu.Submenu>
-        </StyledMenu>
-      ) : (
-        <></>
-      )}
-    </>
+    <Menu.Submenu content={pointCloudModelContent()} title="Point clouds">
+      <Flex direction="row" justifyContent="space-between">
+        <Checkbox
+          checked={allPointCloudModelVisible}
+          indeterminate={indeterminate}
+          onChange={(e, c) => {
+            e.stopPropagation();
+            handleAllPointCloudModelsVisibility(c as boolean);
+          }}
+        />
+        <StyledLabel> Point clouds </StyledLabel>
+        <StyledChipCount label={count} hideTooltip />
+      </Flex>
+    </Menu.Submenu>
   );
 };
