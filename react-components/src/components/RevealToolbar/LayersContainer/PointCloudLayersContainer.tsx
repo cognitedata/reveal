@@ -9,6 +9,7 @@ import { Checkbox, Flex, Menu } from '@cognite/cogs.js';
 import { StyledChipCount, StyledLabel, StyledSubMenu } from './elements';
 import { type CognitePointCloudModel } from '@cognite/reveal';
 import { use3DModelName } from '../../../hooks/use3DModelName';
+import uniqueId from 'lodash/uniqueId';
 
 export const PointCloudLayersContainer = (): ReactElement => {
   const viewer = useReveal();
@@ -61,7 +62,7 @@ export const PointCloudLayersContainer = (): ReactElement => {
       <StyledSubMenu>
         {selectedPointCloudModels.map((data) => (
           <Menu.Item
-            key={data.model.modelId}
+            key={uniqueId()}
             hasCheckbox
             checkboxProps={{
               checked: data.isToggled,

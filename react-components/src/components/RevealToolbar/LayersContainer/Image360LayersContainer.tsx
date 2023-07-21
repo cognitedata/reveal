@@ -7,6 +7,7 @@ import { useReveal } from '../../RevealContainer/RevealContext';
 import { Checkbox, Flex, Menu } from '@cognite/cogs.js';
 import { StyledChipCount, StyledLabel, StyledSubMenu } from './elements';
 import { type Image360Collection } from '@cognite/reveal';
+import uniqueId from 'lodash/uniqueId';
 
 export const Image360CollectionLayerContainer = (): ReactElement => {
   const viewer = useReveal();
@@ -56,7 +57,7 @@ export const Image360CollectionLayerContainer = (): ReactElement => {
       <StyledSubMenu>
         {selectedImage360Collection.map((data) => (
           <Menu.Item
-            key={data.image360.id}
+            key={uniqueId()}
             hasCheckbox
             checkboxProps={{
               checked: data.isToggled,

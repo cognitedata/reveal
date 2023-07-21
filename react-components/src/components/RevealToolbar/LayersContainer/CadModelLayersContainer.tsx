@@ -8,6 +8,7 @@ import { type CogniteCadModel } from '@cognite/reveal';
 import { Checkbox, Flex, Menu } from '@cognite/cogs.js';
 import { StyledChipCount, StyledLabel, StyledSubMenu } from './elements';
 import { use3DModelName } from '../../../hooks/use3DModelName';
+import uniqueId from 'lodash/uniqueId';
 
 export const CadModelLayersContainer = (): ReactElement => {
   const viewer = useReveal();
@@ -61,7 +62,7 @@ export const CadModelLayersContainer = (): ReactElement => {
       <StyledSubMenu>
         {selectedCadModels.map((data) => (
           <Menu.Item
-            key={data.model.modelId}
+            key={uniqueId()}
             hasCheckbox
             checkboxProps={{
               checked: data.isToggled,
