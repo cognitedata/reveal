@@ -60,7 +60,7 @@ const getSdkBaseUrl = () => {
   return urlCluster ? getUrl(urlCluster) : undefined;
 };
 
-const sdkSingelton = convertToProxy(
+const sdkSingleton = convertToProxy(
   createSdkClient({
     appId: sdkTokenProvider.getAppId(),
     baseUrl: getSdkBaseUrl(),
@@ -88,7 +88,7 @@ export const getSDK = async (
 const ensureCorrectBaseUrlP = urlCluster
   ? Promise.resolve()
   : getBaseUrl().then((baseUrl) => {
-      if (baseUrl && baseUrl !== sdkSingelton.getBaseUrl()) {
+      if (baseUrl && baseUrl !== sdkSingleton.getBaseUrl()) {
         // @ts-ignore
         sdkSingelton.httpClient.setBaseUrl(getUrl(baseUrl));
       }
@@ -138,12 +138,12 @@ export async function logout() {
  * When exporting object, you can override the properties (sdk).
  * We are going to do this only in the shared auth-wrapper and avoid changing all subapps
  */
-export default sdkSingelton;
+export default sdkSingleton;
 
 let authInit: Promise<void> | undefined;
 export function loginAndAuthIfNeeded(): Promise<void> {
   if (!authInit) {
-    authInit = sdkSingelton
+    authInit = sdkSingleton
       .authenticate()
       // eslint-disable-next-line
       .then(() => {})
