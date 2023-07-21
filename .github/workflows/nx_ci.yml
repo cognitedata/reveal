@@ -51,7 +51,7 @@ jobs:
         with:
           base: ${{ env.NX_BASE }}
           head: ${{ env.NX_HEAD }}
-          projects: 'libs/*'
+          projects: 'libs/**'
 
       - name: 'Get affected apps to build'
         id: affected-apps
@@ -59,7 +59,7 @@ jobs:
         with:
           base: ${{ env.NX_BASE }}
           head: ${{ env.NX_HEAD }}
-          projects: 'apps/*'
+          projects: 'apps/**'
           exclude: '*shell'
 
       - name: 'Get affected shell apps to build'
