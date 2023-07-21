@@ -11,20 +11,24 @@ import { Button, Dropdown, Menu, RangeSlider } from '@cognite/cogs.js';
 
 import styled from 'styled-components';
 
+type SliceState = {
+  minHeight: number;
+  maxHeight: number;
+  topRatio: number;
+  bottomRatio: number;
+};
+
 export const SlicerButton = (): ReactElement => {
   const viewer = useReveal();
 
-  const [{ minHeight, maxHeight, topRatio, bottomRatio }, setSliceState] = useState<{
-    minHeight: number;
-    maxHeight: number;
-    topRatio: number;
-    bottomRatio: number;
-  }>({
+  const [sliceState, setSliceState] = useState<SliceState>({
     minHeight: 0,
     maxHeight: 0,
     topRatio: 1,
     bottomRatio: 0
   });
+
+  const { minHeight, maxHeight, topRatio, bottomRatio } = sliceState;
 
   // Heuristic to increase chance that update is propagated even
   // if multiple additions/deletions of models occur.
@@ -39,23 +43,23 @@ export const SlicerButton = (): ReactElement => {
     const newMinY = box.min.y;
 
     if (maxHeight !== newMaxY || minHeight !== newMinY) {
-      const newTopRatio = getRatioForNewRange(topRatio, minHeight, maxHeight, newMinY, newMaxY);
-      const newBottomRatio = getRatioForNewRange(
-        bottomRatio,
-        minHeight,
-        maxHeight,
-        newMinY,
-        newMaxY
-      );
-
-      setSliceState({
-        maxHeight: newMaxY,
-        minHeight: newMinY,
-        topRatio: newTopRatio,
-        bottomRatio: newBottomRatio
-      });
+      setSliceState(getNewSliceState(sliceState, newMinY, newMaxY));
     }
   }, [viewer, viewer.models.length, lastModel]);
+
+  function changeSlicingState(newValues: number[]) {
+    viewer.setGlobalClippingPlanes([
+      new Plane(new Vector3(0, 1, 0), -(minHeight + newValues[0] * (maxHeight - minHeight))),
+      new Plane(new Vector3(0, -1, 0), minHeight + newValues[1] * (maxHeight - minHeight))
+    ]);
+
+    setSliceState({
+      maxHeight,
+      minHeight,
+      bottomRatio: newValues[0],
+      topRatio: newValues[1]
+    });
+  }
 
   return (
     <Dropdown
@@ -66,19 +70,7 @@ export const SlicerButton = (): ReactElement => {
             min={0}
             max={1}
             step={0.01}
-            setValue={(v: number[]) => {
-              viewer.setGlobalClippingPlanes([
-                new Plane(new Vector3(0, 1, 0), -(minHeight + v[0] * (maxHeight - minHeight))),
-                new Plane(new Vector3(0, -1, 0), minHeight + v[1] * (maxHeight - minHeight))
-              ]);
-
-              setSliceState({
-                maxHeight,
-                minHeight,
-                bottomRatio: v[0],
-                topRatio: v[1]
-              });
-            }}
+            setValue={changeSlicingState}
             marks={{}}
             value={[bottomRatio, topRatio]}
             vertical
@@ -91,21 +83,27 @@ export const SlicerButton = (): ReactElement => {
   );
 };
 
-function getRatioForNewRange(
-  ratio: number,
-  oldMin: number,
-  oldMax: number,
-  newMin: number,
-  newMax: number
-): number {
-  if (ratio === 0 || ratio === 1) {
-    return ratio;
+function getNewSliceState(oldSliceState: SliceState, newMin: number, newMax: number): SliceState {
+  function getRatioForNewRange(ratio: number): number {
+    if (ratio === 0 || ratio === 1) {
+      return ratio;
+    }
+
+    const oldMin = oldSliceState.minHeight;
+    const oldMax = oldSliceState.maxHeight;
+
+    const position = oldMin + ratio * (oldMax - oldMin);
+    const newRatio = (position - newMin) / (newMax - newMin);
+
+    return Math.min(1.0, Math.max(0.0, newRatio));
   }
 
-  const position = oldMin + ratio * (oldMax - oldMin);
-  const newRatio = (position - newMin) / (newMax - newMin);
-
-  return Math.min(1.0, Math.max(0.0, newRatio));
+  return {
+    maxHeight: newMax,
+    minHeight: newMin,
+    topRatio: getRatioForNewRange(oldSliceState.topRatio),
+    bottomRatio: getRatioForNewRange(oldSliceState.bottomRatio)
+  };
 }
 
 const StyledMenu = styled(Menu)`
