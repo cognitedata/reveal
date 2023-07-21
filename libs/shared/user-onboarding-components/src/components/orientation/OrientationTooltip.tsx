@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { Icon } from '@cognite/cogs.js';
+
+import { ORIENTATION_ACTIONS, ORIENTATION_EVENT } from '../../metrics';
 
 import {
   OrientationButtonClose,
@@ -48,6 +50,56 @@ export const OrientationTooltip = ({
   tooltipProps,
 }: OrientationTooltipProps) => {
   const { state } = useOrientation();
+  const { onTrackEvent } = state;
+  const currentStep = `Step-${index + 1}`;
+  useEffect(() => {
+    onTrackEvent?.(ORIENTATION_EVENT, {
+      'POPUP STEP': currentStep,
+      flowName: state.id,
+      action: ORIENTATION_ACTIONS.STARTED,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const onNext = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    if (isLastStep) {
+      onTrackEvent?.(ORIENTATION_EVENT, {
+        'POPUP STEP': currentStep,
+        action: ORIENTATION_ACTIONS.LAST_STEP,
+        flowName: state.id,
+      });
+    } else {
+      onTrackEvent?.(ORIENTATION_EVENT, {
+        'POPUP STEP': currentStep,
+        action: ORIENTATION_ACTIONS.NEXT,
+        flowName: state.id,
+      });
+    }
+    if (primaryProps.onClick) {
+      primaryProps.onClick(e);
+    }
+  };
+  const onClose = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    onTrackEvent?.(ORIENTATION_EVENT, {
+      'POPUP STEP': currentStep,
+      action: ORIENTATION_ACTIONS.CLOSED,
+      flowName: state.id,
+    });
+    if (skipProps.onClick) {
+      skipProps.onClick(e);
+    }
+  };
+  const onBack = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    onTrackEvent?.(ORIENTATION_EVENT, {
+      'POPUP STEP': currentStep,
+      action: ORIENTATION_ACTIONS.PREVIOUS,
+      flowName: state.id,
+    });
+    if (backProps.onClick) {
+      backProps.onClick(e);
+    }
+  };
+
   return (
     <OrientationWrapper data-testid={`orientation-${index}`} {...tooltipProps}>
       {step.content}
@@ -63,11 +115,17 @@ export const OrientationTooltip = ({
               inverted
               type="ghost"
               {...backProps}
+              onClick={onBack}
             >
               {state.backButton || 'Back'}
             </OrientationButtonPrevious>
           )}
-          <OrientationButtonNext type="tertiary" size="small" {...primaryProps}>
+          <OrientationButtonNext
+            type="tertiary"
+            size="small"
+            {...primaryProps}
+            onClick={onNext}
+          >
             {isLastStep
               ? state.lastStepButton || 'Got it!'
               : state.nextButton || 'Next'}
@@ -78,6 +136,7 @@ export const OrientationTooltip = ({
         size="small"
         type="ghost"
         {...skipProps}
+        onClick={onClose}
         icon="CloseLarge"
         aria-label="Close orientation"
       />
