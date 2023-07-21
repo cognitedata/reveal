@@ -87,9 +87,7 @@ export const AuthContainer = ({
 }: PropsWithChildren<{ title: string }>) => {
   if (isUsingUnifiedSignin()) {
     return (
-      <AuthProvider
-      //  loader={<Loader />}
-      >
+      <AuthProvider loader={<Loader />}>
         <AuthProxyProvider>
           <FusionSubAppWrapper title={title}>{children}</FusionSubAppWrapper>
         </AuthProxyProvider>
