@@ -351,7 +351,7 @@ export class GltfSectorParser {
     stride: number,
     transformAttributeName: (attributeName: string) => string,
     bufferGeometry: THREE.BufferGeometry | THREE.InstancedBufferGeometry,
-    bufferType: { new (array: ArrayLike<number>, stride: number): T }
+    bufferType: { new (array: THREE.TypedArray, stride: number): T }
   ) {
     const componentTypes = Object.values(attributes).map(accessorId => json.accessors[accessorId].componentType);
 
@@ -408,7 +408,7 @@ export class GltfSectorParser {
     byteOffset: number,
     byteLength: number,
     byteStride: number,
-    bufferType: new (array: ArrayLike<number>, stride: number) => T
+    bufferType: new (array: THREE.TypedArray, stride: number) => T
   ) {
     const typedArrays = [...new Set(componentTypes)].map(componentType => {
       const TypedArray = DATA_TYPE_BYTE_SIZES.get(componentType)!;
