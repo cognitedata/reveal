@@ -141,32 +141,32 @@ jobs:
 #          target: cognite-data-exploration-staging
 #          entryPoint: dist/apps/data-exploration/
 
-#  build-shell:
-#    name: 'Build shell apps'
-#    runs-on: ubuntu-20.04
-#    needs: [setup, build]
-#    if: ${{ !cancelled() && !failure() && needs.setup.outputs.affected-shell-apps != '' && toJson(fromJson(needs.setup.outputs.affected-shell-apps)) != '[]' }}
-#    strategy:
-#      matrix:
-#        project: ${{ fromJson(needs.setup.outputs.affected-shell-apps)  }}
-#    steps:
-#      - uses: actions/checkout@v3
-#        with:
-#          fetch-depth: 0
-#      - uses: actions/setup-node@v3
-#        with:
-#          node-version: '18'
-#
-#      - name: Cache node modules
-#        uses: actions/cache@v3
-#        with:
-#          path: node_modules
-#          key: cache-node-modules-${{ hashFiles('yarn.lock') }}
-#
-#      - name: Build
-#        env:
-#          NODE_OPTIONS: '--max_old_space_size=8192'
-#        run: npx nx build ${{ matrix.project }} --configuration=production
+  build-shell:
+    name: 'Build shell apps'
+    runs-on: ubuntu-20.04
+    needs: [setup, build]
+    if: ${{ !cancelled() && !failure() && needs.setup.outputs.affected-shell-apps != '' && toJson(fromJson(needs.setup.outputs.affected-shell-apps)) != '[]' }}
+    strategy:
+      matrix:
+        project: ${{ fromJson(needs.setup.outputs.affected-shell-apps)  }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Cache node modules
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: cache-node-modules-${{ hashFiles('yarn.lock') }}
+
+      - name: Build
+        env:
+          NODE_OPTIONS: '--max_old_space_size=8192'
+        run: npx nx build ${{ matrix.project }} --configuration=production
 #  ci-passed:
 #    # see https://github.community/t/status-check-for-a-matrix-jobs/127354/7
 #    name: CI Passed
