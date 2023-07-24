@@ -24,27 +24,57 @@ const getService = async () => {
 };
 
 export class UnifiedSigninTokenProvider implements SdkClientTokenProvider {
+  private service?: OidcService;
+
   getAppId() {
     return 'apps.cognite.com/cdf';
   }
 
   async getToken() {
-    const service = await getService();
-    return service.acquireTokenSilent(cluster);
+    await this.initService();
+    const token = this.service?.acquireTokenSilent(cluster);
+    if (!token) {
+      throw new Error('Token not found');
+    }
+    return token;
   }
 
   async getUserInformation() {
-    const service = await getService();
-    return service.getUser();
+    await this.initService();
+    const user = await this.service?.getUser();
+    if (!user) {
+      throw new Error('User not found');
+    }
+    return {
+      id: user?.id,
+      mail: user?.email,
+      displayName: user?.name,
+      ...user,
+    };
   }
 
   async getFlow() {
-    const service = await getService();
-    return { flow: service.idp.type as string };
+    await this.initService();
+    // TODO: there's a likelihood of the idp type not matching what we've been
+    // expecting in fusion until now. Now the `idp.type` comes from DLC, but we had
+    // a slightly modified type in fusion.
+    const flow = this.service?.idp.type as string;
+    return { flow };
   }
 
   async logout() {
-    const service = await getService();
-    service.logout();
+    await this.initService();
+    this.service?.logout();
+  }
+
+  private async initService() {
+    // Initialize the service if we don't have it.
+    if (!this.service) {
+      this.service = await getService();
+    }
+    // If the idp is different reinitialize the service.
+    if (this.service.idp.internalId !== idpInternalId) {
+      this.service = await getService();
+    }
   }
 }
