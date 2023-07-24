@@ -13,7 +13,8 @@ const run = async () => {
     const branchName = getInput('branchName');
 
     info(branchName);
-    if (isRelease === 'true' && branchName.startsWith('release-')) {
+    // if (isRelease === 'true' && branchName.startsWith('release-')) {
+    if (isRelease === 'true' && branchName === 'feat/gh-actions-cd') {
       const project = branchName
         .replace('release-preview-', '')
         .replace('release-', '');

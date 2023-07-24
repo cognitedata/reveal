@@ -70,7 +70,7 @@ jobs:
         uses: './scripts/github-actions/nx-get-affected'
         with:
           base: 'HEAD~1'
-          branchName: ${{ github.event.push.base_ref }}
+          branchName: ${{ github.ref_name }}
           projects: 'apps/data-exploration'
           exclude: '*shell'
           isRelease: 'true'
