@@ -7,5 +7,4 @@ export * from './useFilterBuilder';
 export * from './useColumnSelection';
 export * from './useGraphViewer';
 export * from './useGPTSearch';
-export { isFDMv3 } from './isFDMv3';
 export { useDataQualityFeatureFlag } from './useDataQuality';

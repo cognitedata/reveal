@@ -1,8 +1,6 @@
 import { Router } from 'express';
 import { LowdbSync } from 'lowdb';
 
-import { Api } from './middlewares/data-modeling/types';
-
 export type FilterMode = 'list' | 'byids' | 'filter' | 'search';
 
 export interface KeyValuePair {
@@ -17,34 +15,12 @@ export interface CdfResourceObject extends KeyValuePair {
   lastUpdatedTime?: number;
 }
 
-export interface TemplateGroup {
-  id?: number | string;
-  externalId: string;
-  description: string;
-  owners: string[];
-  createdTime: number;
-  lastUpdatedTime: number;
-}
-
-export interface TemplateGroupTemplate {
-  id?: number | string;
-  version: number;
-  schema: string;
-  createdTime: number;
-  lastUpdatedTime: number;
-  templategroups_id?: number | string;
-  db?: MockData; // the template version tables and storage
-}
-
 export type MockData = {
   [name: string]: CdfResourceObject[];
 } & {
   assets?: CdfResourceObject[];
   datasets?: CdfResourceObject[];
   events?: CdfResourceObject[];
-  templategroups?: TemplateGroup[];
-  templates?: TemplateGroupTemplate[];
-  schema?: Api[];
 };
 
 export interface CdfApiEndpointFilterConfig {

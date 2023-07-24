@@ -1,7 +1,5 @@
 import { GraphQlUtilsService } from '@platypus/platypus-common-utils';
 import {
-  MixerApiService,
-  DmsApiService,
   DataModelsHandler,
   DataModelVersionHandler,
   DataModelTypeDefsBuilderService,
@@ -10,7 +8,6 @@ import {
   TimeUtils,
   StorageProviderFactory,
   DataManagementHandler,
-  FdmV2Client,
   FdmClient,
   FlexibleDataModelingClient,
   SpacesApiService,
@@ -18,15 +15,13 @@ import {
   ContainersApiService,
   ViewsApiService,
   DataModelsApiService,
+  InstancesApiService,
 } from '@platypus/platypus-core';
 import { DateUtilsImpl, TimeUtilsImpl } from '@platypus-app/utils/data';
 import { StorageProviderFactoryImpl } from '@platypus-app/utils/persistence';
-import { InstancesApiService } from '@platypus-core/domain/data-model/providers/fdm-next/services/data-modeling-api/instances-api.service';
 import { Container, token } from 'brandi';
 
 import { getCogniteSDKClient } from '../environments/cogniteSdk';
-
-import { isFDMv3 } from './flags';
 
 // First define the Tokens
 export const TOKENS = {
@@ -39,11 +34,7 @@ export const TOKENS = {
   dataModelVersionHandler: token<DataModelVersionHandler>(
     'dataModelVersionHandler'
   ),
-  mixerApiService: token<MixerApiService>('mixerApiService'),
   dataModelsApiService: token<DataModelsApiService>('dataModelsApiService'),
-  dataModelStorageApiService: token<DmsApiService>(
-    'dataModelStorageApiService'
-  ),
   dataModelTypeDefsBuilderService: token<DataModelTypeDefsBuilderService>(
     'dataModelTypeDefsBuilderService'
   ),
@@ -61,26 +52,16 @@ rootInjector
   .bind(TOKENS.fdmClient)
   .toInstance(() => {
     const sdkClient = getCogniteSDKClient();
-
-    if (isFDMv3()) {
-      return new FdmClient(
-        new SpacesApiService(sdkClient),
-        new ContainersApiService(sdkClient),
-        new ViewsApiService(sdkClient),
-        new DataModelsApiService(sdkClient),
-        new FdmMixerApiService(sdkClient),
-        new GraphQlUtilsService(),
-        new TransformationApiService(sdkClient),
-        new InstancesApiService(sdkClient)
-      );
-    } else {
-      return new FdmV2Client(
-        new MixerApiService(sdkClient),
-        new DmsApiService(sdkClient),
-        new TransformationApiService(sdkClient),
-        new GraphQlUtilsService()
-      );
-    }
+    return new FdmClient(
+      new SpacesApiService(sdkClient),
+      new ContainersApiService(sdkClient),
+      new ViewsApiService(sdkClient),
+      new DataModelsApiService(sdkClient),
+      new FdmMixerApiService(sdkClient),
+      new GraphQlUtilsService(),
+      new TransformationApiService(sdkClient),
+      new InstancesApiService(sdkClient)
+    );
   })
   .inSingletonScope();
 
@@ -97,22 +78,6 @@ rootInjector
 rootInjector
   .bind(TOKENS.storageProviderFactory)
   .toInstance(StorageProviderFactoryImpl)
-  .inSingletonScope();
-
-rootInjector
-  .bind(TOKENS.mixerApiService)
-  .toInstance(() => {
-    const sdkClient = getCogniteSDKClient();
-    return new MixerApiService(sdkClient);
-  })
-  .inSingletonScope();
-
-rootInjector
-  .bind(TOKENS.dataModelStorageApiService)
-  .toInstance(() => {
-    const sdkClient = getCogniteSDKClient();
-    return new DmsApiService(sdkClient);
-  })
   .inSingletonScope();
 
 rootInjector

@@ -1,4 +1,3 @@
-import { DataModelStorageBindingsDTO } from '../providers/fdm-current';
 import { DataModelVersion, DataModelVersionStatus } from '../types';
 
 export interface FetchDataModelVersionDTO {
@@ -24,7 +23,6 @@ export interface CreateDataModelVersionDTO {
   schema: string;
   version?: string;
   previousVersion?: string;
-  bindings?: DataModelStorageBindingsDTO[];
   /**
    * When resource was created
    */
@@ -42,6 +40,5 @@ export interface CreateDataModelVersionDTO {
 }
 
 export interface PublishDataModelVersionDTO extends DataModelVersion {
-  bindings?: DataModelStorageBindingsDTO[];
   previousVersion?: string;
 }

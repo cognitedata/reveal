@@ -7,7 +7,6 @@ import {
   getOneToManyModelName,
   getVersionedExternalId,
 } from '@platypus/platypus-core';
-import { isFDMv3 } from '@platypus-app/flags';
 import { useCustomTypeNames } from '@platypus-app/hooks/useDataModelActions';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { generateId } from '@platypus-app/utils/uuid';
@@ -15,7 +14,6 @@ import { generateId } from '@platypus-app/utils/uuid';
 import { createLink } from '@cognite/cdf-utilities';
 import { Modal, OptionType } from '@cognite/cogs.js';
 
-import { useDataManagementPageUI } from '../../hooks/useDataManagemenPageUI';
 import useTransformationCreateMutation from '../../hooks/useTransformationCreateMutation';
 import {
   CreateTransformationForm,
@@ -41,15 +39,12 @@ export const CreateTransformationModal = ({
   space,
   viewVersion,
 }: CreateTransformationModalProps) => {
-  const isFDMV3 = isFDMv3();
   const { t } = useTranslation('CreateTransformationModal');
 
   const [selectedRelationship, setSelectedRelationship] = useState<Option>();
   const [transformationType, setTransformationType] = useState(
     TransformationType.Data
   );
-  const { setIsTransformationModalOpen } = useDataManagementPageUI();
-
   const customTypesNames = useCustomTypeNames(
     dataModelExternalId,
     dataModelVersion,
@@ -95,11 +90,7 @@ export const CreateTransformationModal = ({
   const handleSubmit = () => {
     createTransformationMutation.mutate(
       {
-        destination: isFDMV3
-          ? selectedRelationship
-            ? 'edges'
-            : 'nodes'
-          : 'data_model_instances',
+        destination: selectedRelationship ? 'edges' : 'nodes',
         space,
         oneToManyFieldName: selectedRelationship
           ? selectedRelationship.value
@@ -112,14 +103,10 @@ export const CreateTransformationModal = ({
       {
         onSuccess: (transformation) => {
           onRequestClose();
-          if (isFDMV3) {
-            window.open(
-              createLink(`/transformations/${transformation.id}`),
-              '_blank'
-            );
-          } else {
-            setIsTransformationModalOpen(true, transformation.id);
-          }
+          window.open(
+            createLink(`/transformations/${transformation.id}`),
+            '_blank'
+          );
         },
       }
     );

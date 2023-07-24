@@ -14,20 +14,16 @@ import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedData
 import useSelector from '@platypus-app/hooks/useSelector';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { DataManagementState } from '@platypus-app/redux/reducers/global/dataManagementReducer';
-import { QueryKeys } from '@platypus-app/utils/queryKeys';
 import { mixerApiInlineTypeDirectiveName } from '@platypus-core/domain/data-model';
-import { useQueryClient } from '@tanstack/react-query';
 
 import { getQueryParameter } from '@cognite/cdf-utilities';
-import { Flex, Modal } from '@cognite/cogs.js';
+import { Flex } from '@cognite/cogs.js';
 
 import {
   DataPreviewTable,
   DataPreviewTableRef,
 } from '../components/DataPreviewTable/DataPreviewTable';
-import { TransformationIframe } from '../components/TransformationPlaceholder/TransformationIframe';
 import { TypeList } from '../components/TypeList/TypeList';
-import { useDataManagementPageUI } from '../hooks/useDataManagemenPageUI';
 import { useDraftRows } from '../hooks/useDraftRows';
 
 export interface PreviewProps {
@@ -38,7 +34,6 @@ export interface PreviewProps {
 export const Preview = ({ dataModelExternalId, space }: PreviewProps) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const queryClient = useQueryClient();
   const dataPreviewTableRef = useRef<DataPreviewTableRef>(null);
   const { version } = useParams() as { version: string };
   const [_, setSearchParams] = useSearchParams();
@@ -51,11 +46,10 @@ export const Preview = ({ dataModelExternalId, space }: PreviewProps) => {
     space
   );
   const selectedTypeNameFromQuery = getQueryParameter('type');
-  const { selectedType, isTransformationModalOpen, transformationId } =
-    useSelector<DataManagementState>((state) => state.dataManagement);
+  const { selectedType } = useSelector<DataManagementState>(
+    (state) => state.dataManagement
+  );
   const { setSelectedType, clearState } = useDraftRows();
-
-  const { setIsTransformationModalOpen } = useDataManagementPageUI();
 
   useEffect(() => {
     return () => {
@@ -102,36 +96,6 @@ export const Preview = ({ dataModelExternalId, space }: PreviewProps) => {
 
   return (
     <div>
-      {selectedType && (
-        <Modal
-          visible={isTransformationModalOpen}
-          title="Transformations"
-          onOk={() => {
-            // refetch aggregate count
-            queryClient.refetchQueries(
-              QueryKeys.PUBLISHED_ROWS_COUNT_BY_TYPE(
-                space,
-                dataModelExternalId,
-                selectedType.name
-              )
-            );
-
-            // tell table to refetch data
-            dataPreviewTableRef.current &&
-              dataPreviewTableRef.current.purgeInfiniteCache();
-
-            setIsTransformationModalOpen(false, null);
-          }}
-          onCancel={() => {
-            setIsTransformationModalOpen(false, null);
-          }}
-          size="full-screen"
-        >
-          <div style={{ height: '100%' }}>
-            <TransformationIframe transformationId={transformationId} />
-          </div>
-        </Modal>
-      )}
       <SplitPanelLayout
         sidebarMinWidth={250}
         sidebar={

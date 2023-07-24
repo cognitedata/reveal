@@ -16,7 +16,6 @@ import createCdfRestRouter from './cdf-rest-middleware';
 import { fdmConfigOverrides } from './data-modeling/config-overrides';
 import flexibleDataModelingMiddleware from './data-modeling/flexible-data-modeling-middleware';
 import filesMiddleware from './files';
-import templatesMiddleware from './templates';
 import timeseriesMiddleware from './timeseries';
 
 export default function (
@@ -42,8 +41,6 @@ export default function (
   );
   serverConfig = mergeConfigs(fdmConfigOverrides, serverConfig);
 
-  const templatesApiRouter = templatesMiddleware(jsonServerDb, serverConfig);
-
   const timeseriesApiRouter = timeseriesMiddleware(jsonServerDb, serverConfig);
 
   const schemaServiceApiRouter = flexibleDataModelingMiddleware(
@@ -68,7 +65,6 @@ export default function (
     cdfRouter.use(customMiddlewares);
   }
 
-  cdfRouter.use(templatesApiRouter);
   cdfRouter.use(timeseriesApiRouter);
   cdfRouter.use(schemaServiceApiRouter);
   cdfRouter.use(filesApiRouter);
@@ -81,7 +77,6 @@ export default function (
     jsonServerApiRouter.db.defaults(cdfMockData).write();
     jsonServerDb = jsonServerApiRouter.db as any as CdfMockDatabase;
 
-    templatesApiRouter.init(jsonServerDb);
     schemaServiceApiRouter.init(jsonServerDb);
 
     cdfDb = cdfMockData;

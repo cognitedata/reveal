@@ -1,7 +1,6 @@
 import { useCallback } from 'react';
 
 import { TOKENS } from '@platypus-app/di';
-import { isFDMv3 } from '@platypus-app/flags';
 import { useInjection } from '@platypus-app/hooks/useInjection';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { ColDef, GridOptions, ValueFormatterParams } from 'ag-grid-community';
@@ -26,8 +25,6 @@ const caseInsensitiveSorting = (a: string, b: string) => {
 export const useDataModelsGridConfig = () => {
   const { t } = useTranslation('DataModelsTable');
   const dateUtils = useInjection(TOKENS.dateUtils);
-
-  const isFDMV3 = isFDMv3();
 
   const getGridOptions = useCallback(() => {
     return Object.assign(gridConfigService.getGridConfig('basic-striped'), {
@@ -86,16 +83,12 @@ export const useDataModelsGridConfig = () => {
         type: 'textColType',
         comparator: caseInsensitiveSorting,
       },
-      ...(isFDMV3
-        ? [
-            {
-              headerName: '',
-              type: 'customColType',
-              sortable: false,
-              cellRenderer: DataModelActionsCellRenderer,
-            },
-          ]
-        : []),
+      {
+        headerName: '',
+        type: 'customColType',
+        sortable: false,
+        cellRenderer: DataModelActionsCellRenderer,
+      },
     ];
   }, [dateUtils, t]);
 

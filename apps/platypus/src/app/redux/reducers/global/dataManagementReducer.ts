@@ -18,7 +18,6 @@ export interface IDataManagementState {
   draftRows: DraftRows;
   shouldShowDraftRows: boolean;
   shouldShowPublishedRows: boolean;
-  isTransformationModalOpen: boolean;
   transformationId: number | null;
 }
 
@@ -29,7 +28,6 @@ const initialState = {
   draftRows: {} as DraftRows,
   shouldShowDraftRows: true,
   shouldShowPublishedRows: true,
-  isTransformationModalOpen: false,
   transformationId: null,
 } as IDataManagementState;
 
@@ -178,17 +176,6 @@ const dataManagementSlice = createSlice({
 
     toggleShouldShowPublishedRows: (state) => {
       state.shouldShowPublishedRows = !state.shouldShowPublishedRows;
-    },
-    setIsTransformationModalOpen: (
-      state,
-      action: PayloadAction<{
-        isTransformationModalOpen: boolean;
-        transformationId: number | null;
-      }>
-    ) => {
-      state.isTransformationModalOpen =
-        action.payload.isTransformationModalOpen;
-      state.transformationId = action.payload.transformationId;
     },
   },
 });

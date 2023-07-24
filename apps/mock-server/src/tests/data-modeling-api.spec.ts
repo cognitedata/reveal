@@ -617,41 +617,4 @@ describe('DataModelingAPI Test', () => {
       expect(qryResult.items[0].properties.blog.User.name).toEqual('New User');
     });
   });
-
-  // it('Should search nodes', async () => {
-  //   // https://pr-ark-codegen-1692.specs.preview.cogniteapp.com/v1.json.html#operation/listNodes
-  //   const response = await request(server)
-  //     .post('/datamodelstorage/nodes/search')
-  //     .set('Accept', 'application/json')
-  //     .send({
-  //       model: 'UserTable',
-  //       query: 'James',
-  //     });
-  //   const qryResult = response.body;
-
-  //   expect(response.statusCode).toEqual(200);
-  //   expect(qryResult.items.length).toBeGreaterThanOrEqual(1);
-  //   expect(qryResult.items[0].externalId).toEqual('user_2');
-  //   expect(qryResult.items[0].name).toEqual('James Bond');
-  // });
-
-  // it('Should get nodes by id', async () => {
-  //   // https://pr-ark-codegen-1692.specs.preview.cogniteapp.com/v1.json.html#operation/byIdsNodes
-  //   const response = await request(server)
-  //     .post('/datamodelstorage/nodes/byids')
-  //     .set('Accept', 'application/json')
-  //     .send({
-  //       model: 'UserTable',
-  //       items: [
-  //         {
-  //           externalId: 'user_1',
-  //         },
-  //       ],
-  //     });
-  //   const qryResult = response.body;
-
-  //   expect(response.statusCode).toEqual(200);
-  //   expect(qryResult.items.length).toBeGreaterThanOrEqual(1);
-  //   expect(qryResult.items[0].externalId).toEqual('user_1');
-  // });
 });

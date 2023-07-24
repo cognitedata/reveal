@@ -2,14 +2,11 @@ import { useEffect, useState } from 'react';
 
 import {
   DataModelExternalIdValidator,
+  DataModelNameValidator,
   Validator,
 } from '@platypus/platypus-core';
-import { isFDMv3 } from '@platypus-app/flags';
 import { useDataModels } from '@platypus-app/hooks/useDataModelActions';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { DataModelExternalIdValidatorV2 } from '@platypus-core/domain/data-model/validators/data-model-external-id-validator-v2';
-import { DataModelNameValidator } from '@platypus-core/domain/data-model/validators/data-model-name-validator';
-import { DataModelNameValidatorV2 } from '@platypus-core/domain/data-model/validators/data-model-name-validator-v2';
 
 import {
   Body,
@@ -56,7 +53,6 @@ export type DataModelDetailModalProps = {
 
 export const DataModelDetailModal = (props: DataModelDetailModalProps) => {
   const { t } = useTranslation('DataModelDetailModal');
-  const isFDMV3 = isFDMv3();
   const [externalIdErrorMessage, setExternalIdErrorMessage] = useState();
   const [nameErrorMessage, setNameErrorMessage] = useState();
   const [isCreateSpaceModalVisible, setIsCreateSpaceModalVisible] =
@@ -78,9 +74,7 @@ export const DataModelDetailModal = (props: DataModelDetailModalProps) => {
 
   const validateName = (value: string) => {
     const validator = new Validator({ name: value });
-    const dataModelNameValidator = isFDMV3
-      ? new DataModelNameValidator()
-      : new DataModelNameValidatorV2();
+    const dataModelNameValidator = new DataModelNameValidator();
     validator.addRule('name', dataModelNameValidator);
     const result = validator.validate();
     setNameErrorMessage(result.valid ? null : result.errors.name);
@@ -90,9 +84,7 @@ export const DataModelDetailModal = (props: DataModelDetailModalProps) => {
 
   const validateExternalId = (value: string) => {
     const validator = new Validator({ externalId: value });
-    const dataModelExternalIdValidator = isFDMV3
-      ? new DataModelExternalIdValidator()
-      : new DataModelExternalIdValidatorV2();
+    const dataModelExternalIdValidator = new DataModelExternalIdValidator();
     validator.addRule('externalId', dataModelExternalIdValidator);
     const result = validator.validate();
 
@@ -101,12 +93,14 @@ export const DataModelDetailModal = (props: DataModelDetailModalProps) => {
     return result.valid;
   };
 
+  console.log('props', props);
+
   const isSubmitDisabled =
     !props.name.trim() ||
     props.hasInputError ||
     nameErrorMessage ||
     externalIdErrorMessage ||
-    (isFDMV3 && !props.space) ||
+    !props.space ||
     props.isLoading;
 
   return (
@@ -190,7 +184,7 @@ export const DataModelDetailModal = (props: DataModelDetailModalProps) => {
             ></Textarea>
           </label>
 
-          {isFDMV3 && props.onDMLChange && (
+          {props.onDMLChange && (
             <>
               <Divider style={{ margin: '16px 0px' }} />
               <FormLabel level={2} strong>
@@ -237,20 +231,18 @@ export const DataModelDetailModal = (props: DataModelDetailModalProps) => {
             </>
           )}
 
-          {isFDMV3 && (
-            <DataModelSpaceSelect
-              isDisabled={props.isSpaceDisabled || props.isLoading}
-              onChange={(selectedSpaceOption) =>
-                props.onSpaceChange?.(selectedSpaceOption.value)
-              }
-              onRequestCreateSpace={() => setIsCreateSpaceModalVisible(true)}
-              value={
-                props.space
-                  ? { label: props.space, value: props.space }
-                  : undefined
-              }
-            />
-          )}
+          <DataModelSpaceSelect
+            isDisabled={props.isSpaceDisabled || props.isLoading}
+            onChange={(selectedSpaceOption) =>
+              props.onSpaceChange?.(selectedSpaceOption.value)
+            }
+            onRequestCreateSpace={() => setIsCreateSpaceModalVisible(true)}
+            value={
+              props.space
+                ? { label: props.space, value: props.space }
+                : undefined
+            }
+          />
         </div>
       </Modal>
       {isCreateSpaceModalVisible && (
