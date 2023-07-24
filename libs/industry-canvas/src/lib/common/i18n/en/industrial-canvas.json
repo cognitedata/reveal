@@ -83,5 +83,10 @@
   "CANVAS_DROPDOWN_SEARCH": "Search",
   "CANVAS_DROPDOWN_CURRENTLY_VIEWING": "Currently viewing",
   "CONTAINER_TOOLTIP_SUMMARIZATION_UNAVAILABLE": "Summarization is unavailable for this {{type}} (Experimental)",
-  "CONTAINER_TOOLTIP_SUMMARIZE": "Summarize the {{type}} (Experimental)"
+  "CONTAINER_TOOLTIP_SUMMARIZE": "Summarize the {{type}} (Experimental)",
+  "MODAL_ADD_RESOURCE_TO_CANVAS_TITLE": "Add resource to canvas",
+  "MODAL_ADD_RESOURCE_TO_CANVAS_NEW_CANVAS_PLACEHOLDER": "New canvas...",
+  "MODAL_ADD_RESOURCE_TO_CANVAS_CANVAS_NOT_FOUND": "Unable to find canvas with id {{id}}. Please refresh the page and try again",
+  "EXISTING_CANVAS": "Existing canvas",
+  "NEW_CANVAS": "New canvas"
 }

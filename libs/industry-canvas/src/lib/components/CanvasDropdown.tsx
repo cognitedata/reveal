@@ -26,7 +26,6 @@ import { useClipboard } from '@data-exploration-lib/core';
 
 import { translationKeys } from '../common';
 import { MetricEvent, TOAST_POSITION } from '../constants';
-import { EMPTY_FLEXIBLE_LAYOUT } from '../hooks/constants';
 import useCanvasDeletion from '../hooks/useCanvasDeletion';
 import useCanvasSearch from '../hooks/useCanvasSearch';
 import { useTranslation } from '../hooks/useTranslation';
@@ -134,11 +133,7 @@ const CanvasDropdown: React.FC<CanvasDropdownProps> = ({
   };
 
   const onCreateCanvasClick = async () => {
-    const { externalId } = await createCanvas({
-      canvasAnnotations: [],
-      container: EMPTY_FLEXIBLE_LAYOUT,
-    });
-
+    const { externalId } = await createCanvas();
     navigate(getCanvasLink(externalId));
   };
 

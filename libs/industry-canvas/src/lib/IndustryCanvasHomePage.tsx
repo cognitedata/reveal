@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import styled from 'styled-components';
 
 import { formatDistance, format } from 'date-fns';
+import { partition } from 'lodash';
 import { useDebounce } from 'use-debounce';
 
 import {
@@ -17,9 +18,13 @@ import {
 } from '@cognite/cogs.js';
 
 import { translationKeys } from './common';
+import {
+  AddResourceToCanvasModal,
+  AddResourcesToCanvasType,
+  AddResourcesToCanvasOnOkArgs,
+} from './components/AddResourceToCanvasModal';
 import CanvasDeletionModal from './components/CanvasDeletionModal';
 import { SEARCH_QUERY_PARAM_KEY, TOAST_POSITION } from './constants';
-import { EMPTY_FLEXIBLE_LAYOUT } from './hooks/constants';
 import useCanvasDeletion from './hooks/useCanvasDeletion';
 import useCanvasesWithUserProfiles, {
   CanvasDocumentWithUserProfile,
@@ -29,14 +34,26 @@ import { useQueryParameter } from './hooks/useQueryParameter';
 import useTableState from './hooks/useTableState';
 import { useTranslation } from './hooks/useTranslation';
 import { useIndustryCanvasContext } from './IndustryCanvasContext';
+import { isFdmInstanceContainerReference } from './types';
 import { UserProfile, useUserProfile } from './UserProfileProvider';
+import { addIdToContainerReference } from './utils/addIdToContainerReference';
+import { addDimensionsToContainerReferencesIfNotExists } from './utils/dimensions';
 import { getCanvasLink } from './utils/getCanvasLink';
 
 const SEARCH_DEBOUNCE_MS = 200;
 
 export const IndustryCanvasHomePage = () => {
-  const { canvases, isCreatingCanvas, isListingCanvases, createCanvas } =
-    useIndustryCanvasContext();
+  const {
+    canvases,
+    isCreatingCanvas,
+    isListingCanvases,
+    createCanvas,
+    saveCanvas,
+    getCanvasById,
+    initializeWithContainerReferences,
+    hasConsumedInitializeWithContainerReferences,
+    setHasConsumedInitializeWithContainerReferences,
+  } = useIndustryCanvasContext();
   const { userProfile } = useUserProfile();
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -96,6 +113,80 @@ export const IndustryCanvasHomePage = () => {
     return createdByUserProfile.displayName;
   };
 
+  const handleOnOk = useCallback(
+    async (args: AddResourcesToCanvasOnOkArgs) => {
+      const containerReferencesWithIds = args.containerReferences.map(
+        addIdToContainerReference
+      );
+
+      if (args.type === AddResourcesToCanvasType.NEW_CANVAS) {
+        const [fdmInstanceContainerReferences, containerReferences] = partition(
+          containerReferencesWithIds,
+          isFdmInstanceContainerReference
+        );
+        const { externalId } = await createCanvas({
+          name: args.name,
+          containerReferences,
+          fdmInstanceContainerReferences,
+        });
+        navigate(getCanvasLink(externalId));
+        setHasConsumedInitializeWithContainerReferences(true);
+        return;
+      }
+
+      if (args.type === AddResourcesToCanvasType.EXISTING_CANVAS) {
+        const existingCanvas = await getCanvasById(args.externalId);
+
+        if (existingCanvas === undefined) {
+          toast.error(
+            t(
+              translationKeys.MODAL_ADD_RESOURCE_TO_CANVAS_CANVAS_NOT_FOUND,
+              'Unable to find canvas with id {{id}}. Please refresh the page and try again.'
+            ),
+            {
+              position: TOAST_POSITION,
+            }
+          );
+          return;
+        }
+
+        const [fdmInstanceContainerReferences, containerReferences] = partition(
+          addDimensionsToContainerReferencesIfNotExists(
+            containerReferencesWithIds,
+            existingCanvas.data
+          ),
+          isFdmInstanceContainerReference
+        );
+
+        await saveCanvas({
+          ...existingCanvas,
+          data: {
+            ...existingCanvas.data,
+            containerReferences: [
+              ...existingCanvas.data.containerReferences,
+              ...containerReferences,
+            ],
+            fdmInstanceContainerReferences: [
+              ...existingCanvas.data.fdmInstanceContainerReferences,
+              ...fdmInstanceContainerReferences,
+            ],
+          },
+        });
+        navigate(getCanvasLink(existingCanvas.externalId));
+        setHasConsumedInitializeWithContainerReferences(true);
+        return;
+      }
+    },
+    [
+      createCanvas,
+      getCanvasById,
+      navigate,
+      saveCanvas,
+      setHasConsumedInitializeWithContainerReferences,
+      t,
+    ]
+  );
+
   const renderNewCanvasButton = () => (
     <div>
       <Button
@@ -108,11 +199,9 @@ export const IndustryCanvasHomePage = () => {
           translationKeys.COMMON_CREATE_CANVAS,
           'Create new canvas'
         )}
-        onClick={() => {
-          createCanvas({
-            canvasAnnotations: [],
-            container: EMPTY_FLEXIBLE_LAYOUT,
-          }).then(({ externalId }) => navigate(getCanvasLink(externalId)));
+        onClick={async () => {
+          const { externalId } = await createCanvas();
+          navigate(getCanvasLink(externalId));
         }}
       >
         {t(translationKeys.COMMON_CREATE_CANVAS, 'Create new canvas')}
@@ -182,6 +271,16 @@ export const IndustryCanvasHomePage = () => {
         onCancel={() => setCanvasToDelete(undefined)}
         onDeleteCanvas={onDeleteCanvasConfirmed}
         isDeleting={isDeletingCanvas}
+      />
+      <AddResourceToCanvasModal
+        containerReferences={initializeWithContainerReferences}
+        canvases={canvases}
+        isVisible={
+          !hasConsumedInitializeWithContainerReferences &&
+          initializeWithContainerReferences !== undefined
+        }
+        onCancel={() => setHasConsumedInitializeWithContainerReferences(true)}
+        onOk={handleOnOk}
       />
       <div>
         <HomeHeader>

@@ -10,7 +10,7 @@ import {
 import {
   DEFAULT_ASSET_HEIGHT,
   DEFAULT_ASSET_WIDTH,
-} from '../../utils/addDimensionsToContainerReference';
+} from '../../utils/dimensions';
 
 const resolveAssetContainerConfig = async (
   sdk: CogniteClient,

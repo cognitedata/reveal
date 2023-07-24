@@ -1,11 +1,11 @@
 import { omit } from 'lodash';
-import { v4 as uuid } from 'uuid';
 
 import type { CogniteClient } from '@cognite/sdk';
 import { IdsByType } from '@cognite/unified-file-viewer';
 
 import { Comment, CanvasMetadata, SerializedCanvasDocument } from '../types';
 import { UserProfile } from '../UserProfileProvider';
+import { createSerializedCanvasDocument } from '../utils/createSerializedCanvasDocument';
 import { FDMClient, gql } from '../utils/FDMClient';
 
 import {
@@ -223,6 +223,7 @@ export class IndustryCanvasService {
     return res.canvases.items[0];
   }
 
+  // TODO: This methods says that is returns a full SerializedCanvasDocument, but it doesn't doesn't include the `data` field.
   private async getPaginatedCanvasData(
     cursor: string | undefined = undefined,
     paginatedData: SerializedCanvasDocument[] = [],
@@ -472,18 +473,6 @@ export class IndustryCanvasService {
   }
 
   public makeEmptyCanvas = (): SerializedCanvasDocument => {
-    return {
-      externalId: uuid(),
-      name: DEFAULT_CANVAS_NAME,
-      createdTime: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      updatedBy: this.userProfile.userIdentifier,
-      createdBy: this.userProfile.userIdentifier,
-      data: {
-        containerReferences: [],
-        canvasAnnotations: [],
-        fdmInstanceContainerReferences: [],
-      },
-    };
+    return createSerializedCanvasDocument(this.userProfile.userIdentifier);
   };
 }

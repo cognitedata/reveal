@@ -72,7 +72,7 @@ import {
 import {
   DEFAULT_CONTAINER_MAX_HEIGHT,
   DEFAULT_CONTAINER_MAX_WIDTH,
-} from './utils/addDimensionsToContainerReference';
+} from './utils/dimensions';
 import enforceTimeseriesApplyToAllIfEnabled from './utils/enforceTimeseriesApplyToAllIfEnabled';
 import isSupportedResourceItem from './utils/isSupportedResourceItem';
 import resourceItemToContainerReference from './utils/resourceItemToContainerReference';
@@ -122,12 +122,8 @@ export const IndustryCanvasPage = () => {
     isListingCanvases,
     saveCanvas,
     createCanvas,
-    initializeWithContainerReferences,
     setCanvasId,
     isCanvasLocked,
-    createInitialCanvas,
-    hasConsumedInitializeWithContainerReferences,
-    setHasConsumedInitializeWithContainerReferences,
     isCommentsEnabled,
   } = useIndustryCanvasContext();
 
@@ -392,45 +388,6 @@ export const IndustryCanvasPage = () => {
   };
 
   useEffect(() => {
-    if (unifiedViewerRef === null) {
-      return;
-    }
-
-    if (
-      activeCanvas?.externalId === undefined &&
-      !isCreatingCanvas &&
-      !hasConsumedInitializeWithContainerReferences &&
-      initializeWithContainerReferences !== undefined
-    ) {
-      createInitialCanvas();
-      return;
-    }
-
-    if (activeCanvas?.externalId === undefined) {
-      return;
-    }
-
-    if (hasConsumedInitializeWithContainerReferences) {
-      return;
-    }
-
-    if (initializeWithContainerReferences !== undefined) {
-      onAddContainerReferences(initializeWithContainerReferences);
-    }
-
-    setHasConsumedInitializeWithContainerReferences(true);
-  }, [
-    initializeWithContainerReferences,
-    isCreatingCanvas,
-    activeCanvas?.externalId,
-    unifiedViewerRef,
-    hasConsumedInitializeWithContainerReferences,
-    onAddContainerReferences,
-    createInitialCanvas,
-    setHasConsumedInitializeWithContainerReferences,
-  ]);
-
-  useEffect(() => {
     if (unifiedViewerRef === null || hasZoomedToFitOnInitialLoad) {
       return;
     }
@@ -542,6 +499,7 @@ export const IndustryCanvasPage = () => {
             >
               <Button
                 icon="ArrowLeft"
+                aria-label="Go back to Industrial Canvas home page"
                 onClick={handleGoBackToIndustryCanvasButtonClick}
               />
             </Tooltip>
@@ -661,7 +619,7 @@ export const IndustryCanvasPage = () => {
               </Menu>
             }
           >
-            <Button icon="EllipsisHorizontal" />
+            <Button icon="EllipsisHorizontal" aria-label="More options" />
           </Dropdown>
         </StyledGoBackWrapper>
       </TitleRowWrapper>
