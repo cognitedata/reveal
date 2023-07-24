@@ -45,7 +45,10 @@ export function FileInput({
         </Flex>
       </DropTextWrapper>
       <div>
-        <label className="cogs-btn cogs-btn--padding" htmlFor="file-upload">
+        <label
+          className="cogs-btn cogs-btn--padding cogs cogs-button cogs-button--type-primary"
+          htmlFor="file-upload"
+        >
           Browse...
           <HiddenInputFile
             accept={extensions?.join(',')}
