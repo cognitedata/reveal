@@ -92,7 +92,7 @@ export const CadModelLayersContainer = (): ReactElement => {
           }}
         />
         <StyledLabel> CAD models </StyledLabel>
-        <StyledChipCount label={count} hideTooltip />
+        <StyledChipCount label={count} hideTooltip type='neutral' />
       </Flex>
     </Menu.Submenu>
   );
