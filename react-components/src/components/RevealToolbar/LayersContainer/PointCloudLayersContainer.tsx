@@ -90,7 +90,7 @@ export const PointCloudLayersContainer = (): ReactElement => {
           }}
         />
         <StyledLabel> Point clouds </StyledLabel>
-        <StyledChipCount label={count} hideTooltip />
+        <StyledChipCount label={count} hideTooltip type="neutral" />
       </Flex>
     </Menu.Submenu>
   );

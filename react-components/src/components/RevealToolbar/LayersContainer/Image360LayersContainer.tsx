@@ -85,7 +85,7 @@ export const Image360CollectionLayerContainer = (): ReactElement => {
           }}
         />
         <StyledLabel> 360 images </StyledLabel>
-        <StyledChipCount label={count} hideTooltip />
+        <StyledChipCount label={count} hideTooltip type="neutral" />
       </Flex>
     </Menu.Submenu>
   );
