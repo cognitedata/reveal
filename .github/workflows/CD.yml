@@ -51,7 +51,13 @@ jobs:
       #        uses: nrwl/nx-set-shas@v3
       #        with:
       #          main-branch-name: ${{ github.base_ref }}
-
+      - name: Test
+        run: |
+          echo ${{ github.event.push.base_ref }}
+          echo ${{ GITHUB_REF }}
+          echo ${{ GITHUB_REF_NAME }}
+          echo ${{ env.GITHUB_REF }}
+          echo ${{ env.GITHUB_REF_NAME }}
       - name: 'Get affected libs to build'
         id: affected-libs
         uses: './scripts/github-actions/nx-get-affected'
@@ -64,10 +70,10 @@ jobs:
         uses: './scripts/github-actions/nx-get-affected'
         with:
           base: 'HEAD~1'
+          branchName: ${{ github.event.push.base_ref }}
           projects: 'apps/data-exploration'
           exclude: '*shell'
           isRelease: 'true'
-          branchName: ${{ github.event.push.base_ref }}
 
       - name: 'Get affected shell apps to build'
         id: affected-shell-apps
@@ -137,7 +143,6 @@ jobs:
         env:
           NODE_OPTIONS: '--max_old_space_size=8192'
         run: npx nx build ${{ matrix.project }} --configuration=production
-
 #      - uses: FirebaseExtended/action-hosting-deploy@v0
 #        with:
 #          repoToken: '${{ secrets.GITHUB_TOKEN }}'
@@ -147,32 +152,32 @@ jobs:
 #          target: cognite-data-exploration-staging
 #          entryPoint: dist/apps/data-exploration/
 
-  #  build-shell:
-  #    name: 'Build shell apps'
-  #    runs-on: ubuntu-20.04
-  #    needs: [setup, build]
-  #    if: ${{ !cancelled() && !failure() && needs.setup.outputs.affected-shell-apps != '' && toJson(fromJson(needs.setup.outputs.affected-shell-apps)) != '[]' }}
-  #    strategy:
-  #      matrix:
-  #        project: ${{ fromJson(needs.setup.outputs.affected-shell-apps)  }}
-  #    steps:
-  #      - uses: actions/checkout@v3
-  #        with:
-  #          fetch-depth: 0
-  #      - uses: actions/setup-node@v3
-  #        with:
-  #          node-version: '18'
-  #
-  #      - name: Cache node modules
-  #        uses: actions/cache@v3
-  #        with:
-  #          path: node_modules
-  #          key: cache-node-modules-${{ hashFiles('yarn.lock') }}
-  #
-  #      - name: Build
-  #        env:
-  #          NODE_OPTIONS: '--max_old_space_size=8192'
-  #        run: npx nx build ${{ matrix.project }} --configuration=production
+#  build-shell:
+#    name: 'Build shell apps'
+#    runs-on: ubuntu-20.04
+#    needs: [setup, build]
+#    if: ${{ !cancelled() && !failure() && needs.setup.outputs.affected-shell-apps != '' && toJson(fromJson(needs.setup.outputs.affected-shell-apps)) != '[]' }}
+#    strategy:
+#      matrix:
+#        project: ${{ fromJson(needs.setup.outputs.affected-shell-apps)  }}
+#    steps:
+#      - uses: actions/checkout@v3
+#        with:
+#          fetch-depth: 0
+#      - uses: actions/setup-node@v3
+#        with:
+#          node-version: '18'
+#
+#      - name: Cache node modules
+#        uses: actions/cache@v3
+#        with:
+#          path: node_modules
+#          key: cache-node-modules-${{ hashFiles('yarn.lock') }}
+#
+#      - name: Build
+#        env:
+#          NODE_OPTIONS: '--max_old_space_size=8192'
+#        run: npx nx build ${{ matrix.project }} --configuration=production
 #  ci-passed:
 #    # see https://github.community/t/status-check-for-a-matrix-jobs/127354/7
 #    name: CI Passed
