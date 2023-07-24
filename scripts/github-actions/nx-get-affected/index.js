@@ -12,6 +12,7 @@ const run = async () => {
     const isRelease = getInput('isRelease');
     const branchName = getInput('branchName');
 
+    console.info(branchName);
     if (isRelease === 'true' && branchName.startsWith('release-')) {
       const project = branchName
         .replace('release-preview-', '')

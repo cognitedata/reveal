@@ -138,14 +138,14 @@ jobs:
           NODE_OPTIONS: '--max_old_space_size=8192'
         run: npx nx build ${{ matrix.project }} --configuration=production
 
-      - uses: FirebaseExtended/action-hosting-deploy@v0
-        with:
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_HOSTING_DEPLOY_SA }}'
-          channelId: live
-          projectId: fbhosting-217032465111-staging
-          target: cognite-data-exploration-staging
-          entryPoint: dist/apps/data-exploration/
+#      - uses: FirebaseExtended/action-hosting-deploy@v0
+#        with:
+#          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+#          firebaseServiceAccount: '${{ secrets.FIREBASE_HOSTING_DEPLOY_SA }}'
+#          channelId: live
+#          projectId: fbhosting-217032465111-staging
+#          target: cognite-data-exploration-staging
+#          entryPoint: dist/apps/data-exploration/
 
   #  build-shell:
   #    name: 'Build shell apps'
