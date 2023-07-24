@@ -42,7 +42,7 @@ export const Image360CollectionLayerContainer = (): ReactElement => {
   };
 
   const handleAll360ImagesVisibility = (visible: boolean): void => {
-    selectedImage360Collection.forEach((data) => {
+    [...selectedImage360Collection].forEach((data) => {
       data.isToggled = visible;
       data.image360.setIconsVisibility(data.isToggled);
     });
