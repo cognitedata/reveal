@@ -109,8 +109,8 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-20.04
-    needs: [setup, build-libs]
-    if: ${{ !cancelled() && !failure() && needs.build-libs.result != 'failure' && needs.build-libs.result != 'cancelled' && needs.setup.outputs.affected-apps != '' && toJson(fromJson(needs.setup.outputs.affected-apps)) != '[]' }}
+    needs: [setup]
+#    if: ${{ !cancelled() && !failure() && needs.build-libs.result != 'failure' && needs.build-libs.result != 'cancelled' && needs.setup.outputs.affected-apps != '' && toJson(fromJson(needs.setup.outputs.affected-apps)) != '[]' }}
     strategy:
       matrix:
         project: ${{ fromJson(needs.setup.outputs.affected-apps)  }}
