@@ -26,8 +26,8 @@ jobs:
           base: { some SHA } #[OPTIONAL] defaults to `origin/master`
           head: { some SHA } #[OPTIONAL] defaults to `HEAD`
           target: 'test' #[OPTIONAL] defaults to `build`
-          type: 'app' #[OPTIONAL] options: app/lib
           exclude: 'some-app, some-other-app' #[OPTIONAL] app names separated by comma or wildcard
+          # for whole list of options checkout scripts/github-actions/nx-get-affected/action.yml
 
       # Do something more meaningful here, like push to NPM, do heavy computing, etc.
       - name: Get list of affected projects
@@ -36,6 +36,16 @@ jobs:
       - name: Validate Action Output
         if: steps.affected.outputs.maintain == 'true' # Check output if it changed or not (returns a boolean)
         run: echo 'maintain has changed!'
+        
+      # we can use this action for CD also to get project name from branc
+      - name: Get project name
+        id: affected
+        uses: ./scripts/github-actions/get-affected
+        with:
+          base: 'HEAD~1'
+          target: 'build'
+          isRelease: 'true'
+          branchName: ${{ github.ref_name }} 
 ```
 
 ### Options

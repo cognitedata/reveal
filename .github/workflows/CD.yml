@@ -45,12 +45,6 @@ jobs:
         run: yarn install --frozen-lockfile
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_READONLY_TOKEN }}
-      #
-      #      - run: git fetch --no-tags --prune --depth=1 origin ${{ github.base_ref }}
-      #      - name: Derive appropriate SHAs for base and head for `nx affected` commands
-      #        uses: nrwl/nx-set-shas@v3
-      #        with:
-      #          main-branch-name: ${{ github.base_ref }}
 
       - name: 'Get affected libs to build'
         id: affected-libs
@@ -64,10 +58,10 @@ jobs:
         uses: './scripts/github-actions/nx-get-affected'
         with:
           base: 'HEAD~1'
-          branchName: ${{ github.ref_name }}
-          projects: 'apps/data-exploration'
+          projects: 'apps/**'
           exclude: '*shell'
           isRelease: 'true'
+          branchName: ${{ github.ref_name }}
 
       - name: 'Get affected shell apps to build'
         id: affected-shell-apps
@@ -110,6 +104,7 @@ jobs:
         env:
           NODE_OPTIONS: '--max_old_space_size=8192'
         run: npx nx run-many --target=build --parallel --nx-bail --configuration=production --projects ${{ needs.setup.outputs.affected-libs-string }}
+      # here we add the part about publishing the libs to npm
 
   build:
     name: Build
