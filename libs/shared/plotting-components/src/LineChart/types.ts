@@ -31,6 +31,7 @@ export interface Data {
   color?: string;
   customData?: CustomDataType | CustomDataType[];
   interpolation?: Interpolation;
+  showMarkers?: boolean;
 }
 
 export interface Layout {

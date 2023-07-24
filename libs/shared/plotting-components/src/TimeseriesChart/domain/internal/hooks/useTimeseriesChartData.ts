@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 
 import isEmpty from 'lodash/isEmpty';
+import keyBy from 'lodash/keyBy';
 
 import { Data } from '../../../../LineChart';
 import { EMPTY_DATA } from '../../../constants';
@@ -8,7 +9,7 @@ import { DataFetchOptions } from '../../../types';
 import { useTimeseriesDatapointsQuery } from '../../service/queries';
 import {
   mapToChartData,
-  mapToTimeseriesDatapointsQuery,
+  mapToTimeseriesDatapointsQueries,
 } from '../transformers';
 import { TimeseriesChartQuery } from '../types';
 
@@ -29,22 +30,30 @@ export const useTimeseriesChartData = ({ query, dataFetchOptions }: Props) => {
     dataFetchOptions,
   });
 
-  const { data: datapoints, isInitialLoading: isInitialDatapointsLoading } =
+  const { data = [], isInitialLoading: isInitialDatapointsLoading } =
     useTimeseriesDatapointsQuery({
-      query: mapToTimeseriesDatapointsQuery({ query, metadata }),
+      queries: mapToTimeseriesDatapointsQueries({ query, metadata }),
       enabled: isFetched,
     });
 
-  const chartData: Data = useMemo(() => {
-    if (!datapoints || isEmpty(datapoints)) {
-      return EMPTY_DATA;
-    }
-    return mapToChartData({
-      datapoints,
-      metadata,
-      color: query.timeseries.color,
+  const metadataById = useMemo(() => {
+    return keyBy(metadata, 'id');
+  }, [metadata]);
+
+  const chartData: Data[] = useMemo(() => {
+    return data.map((item) => {
+      const { id, datapoints } = item;
+
+      if (isEmpty(datapoints)) {
+        return EMPTY_DATA;
+      }
+
+      return mapToChartData({
+        datapoints,
+        metadata: metadataById[id],
+      });
     });
-  }, [datapoints, metadata, query.timeseries.color]);
+  }, [data, metadataById]);
 
   return {
     data: chartData,

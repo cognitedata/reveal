@@ -1,2 +1,2 @@
 export * from './mapToChartData';
-export * from './mapToTimeseriesDatapointsQuery';
+export * from './mapToTimeseriesDatapointsQueries';

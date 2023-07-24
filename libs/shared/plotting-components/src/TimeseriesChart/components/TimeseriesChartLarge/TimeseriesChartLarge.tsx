@@ -1,15 +1,17 @@
 import * as React from 'react';
+import { useMemo } from 'react';
 
 import { LineChart, LineChartProps } from '../../../LineChart';
 import { TimeseriesChartMetadata } from '../../domain/internal/types';
 import { useTranslation } from '../../i18n/useTranslation';
+import { getChartAxisDisplayUnit } from '../../utils/getChartAxisDisplayUnit';
 
 import { CONFIG, LAYOUT } from './constants';
 import { formatHoverLineInfo } from './helpers/formatHoverLineInfo';
 import { formatTooltipContent } from './helpers/formatTooltipContent';
 
 export interface TimeseriesChartLargeProps extends LineChartProps {
-  metadata: TimeseriesChartMetadata;
+  metadata: TimeseriesChartMetadata[];
 }
 
 export const TimeseriesChartLarge: React.FC<TimeseriesChartLargeProps> = ({
@@ -18,7 +20,9 @@ export const TimeseriesChartLarge: React.FC<TimeseriesChartLargeProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  const { dataFetchMode, unit } = metadata;
+  const unit = useMemo(() => {
+    return getChartAxisDisplayUnit(metadata);
+  }, [metadata]);
 
   return (
     <LineChart
@@ -27,10 +31,7 @@ export const TimeseriesChartLarge: React.FC<TimeseriesChartLargeProps> = ({
       yAxis={{
         name: unit,
       }}
-      layout={{
-        ...LAYOUT,
-        showMarkers: dataFetchMode === 'raw',
-      }}
+      layout={LAYOUT}
       config={CONFIG}
       formatTooltipContent={(tooltipProps) =>
         formatTooltipContent(tooltipProps, unit, t)

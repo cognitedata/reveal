@@ -3,7 +3,7 @@ import { IdEither } from '@cognite/sdk';
 import { Style, Variant } from '../LineChart';
 
 export interface TimeseriesChartProps {
-  timeseries: TimeseriesItem;
+  timeseries: TimeseriesItem | TimeseriesItem[];
   variant?: Variant;
   numberOfPoints?: number;
   quickTimePeriodOptions?: TimePeriod[];

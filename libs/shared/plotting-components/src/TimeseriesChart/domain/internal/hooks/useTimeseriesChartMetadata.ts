@@ -7,6 +7,8 @@ import { CHART_POINTS_PER_SERIES } from '../constants';
 import { TimeseriesChartMetadata, TimeseriesChartQuery } from '../types';
 import { getDataFetchMode } from '../utils';
 
+import { useTimeseriesColor } from './useTimeseriesColor';
+
 interface Props {
   query: TimeseriesChartQuery;
   dataFetchOptions?: DataFetchOptions;
@@ -18,38 +20,55 @@ export const useTimeseriesChartMetadata = ({
 }: Props) => {
   const { timeseries, dateRange } = query;
 
-  const { data, isFetched, isInitialLoading } =
-    useTimeseriesSingleAggregateQuery({
-      query: {
-        ...getIdEither(timeseries),
-        aggregates: ['count'],
-        start: dateRange?.[0].valueOf(),
-        end: dateRange?.[1].valueOf(),
-      },
+  const {
+    data: aggregates = [],
+    isFetched,
+    isInitialLoading,
+  } = useTimeseriesSingleAggregateQuery({
+    query: {
+      items: timeseries.map(getIdEither),
+      aggregates: ['count'],
+      start: dateRange?.[0].valueOf(),
+      end: dateRange?.[1].valueOf(),
+    },
+  });
+
+  const getTimeseriesColor = useTimeseriesColor(timeseries);
+
+  const metadata: TimeseriesChartMetadata[] = useMemo(() => {
+    return aggregates.map((aggregate) => {
+      const {
+        id,
+        externalId,
+        data: { count: aggregateCount = CHART_POINTS_PER_SERIES },
+        isString,
+        isStep,
+        unit,
+      } = aggregate;
+
+      const numberOfPoints = Math.min(
+        query.numberOfPoints || aggregateCount,
+        CHART_POINTS_PER_SERIES
+      );
+
+      const dataFetchMode = getDataFetchMode({
+        numberOfPoints,
+        dataFetchOptions,
+        isString,
+      });
+
+      return {
+        id,
+        externalId,
+        numberOfPoints,
+        dataFetchMode,
+        isStep,
+        isString,
+        unit,
+        color: getTimeseriesColor({ id, externalId }),
+      };
     });
-
-  const metadata: TimeseriesChartMetadata = useMemo(() => {
-    const numberOfPoints = Math.min(
-      query.numberOfPoints || data?.data.count || CHART_POINTS_PER_SERIES,
-      CHART_POINTS_PER_SERIES
-    );
-
-    const isString = data?.isString;
-
-    const dataFetchMode = getDataFetchMode({
-      numberOfPoints,
-      dataFetchOptions,
-      isString,
-    });
-
-    return {
-      numberOfPoints,
-      dataFetchMode,
-      isStep: data?.isStep,
-      isString,
-      unit: data?.unit,
-    };
-  }, [data, dataFetchOptions, query.numberOfPoints]);
+  }, [aggregates, dataFetchOptions, getTimeseriesColor, query.numberOfPoints]);
 
   return {
     data: metadata,

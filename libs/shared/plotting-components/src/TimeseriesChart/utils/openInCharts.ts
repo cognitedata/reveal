@@ -16,7 +16,7 @@ export interface OpenInChartsQuery {
 }
 
 export interface Props {
-  timeseries: TimeseriesItem;
+  timeseries: TimeseriesItem[];
   dateRange?: DateRange;
 }
 
@@ -31,14 +31,20 @@ export const openInCharts = ({ timeseries, dateRange }: Props) => {
   window.open(link, '_blank');
 };
 
-export const getOpenInChartsQueryIds = (item: TimeseriesItem) => {
-  if ('id' in item) {
-    return {
-      timeserieIds: [item.id],
-    };
-  }
+export const getOpenInChartsQueryIds = (timeseries: TimeseriesItem[]) => {
+  const timeserieIds: CogniteInternalId[] = [];
+  const timeserieExternalIds: CogniteExternalId[] = [];
+
+  timeseries.forEach((item) => {
+    if ('id' in item) {
+      timeserieIds.push(item.id);
+    } else {
+      timeserieExternalIds.push(item.externalId);
+    }
+  });
 
   return {
-    timeserieExternalIds: [item.externalId],
+    timeserieIds,
+    timeserieExternalIds,
   };
 };

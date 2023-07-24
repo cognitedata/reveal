@@ -14,9 +14,9 @@ export const queryKeys = {
     query,
   ],
 
-  datapoints: (query: TimeseriesDatapointsQuery) => [
+  datapoints: (queries: TimeseriesDatapointsQuery[]) => [
     ...queryKeys.timeseriesChart,
     'datapoints',
-    query,
+    queries,
   ],
 };

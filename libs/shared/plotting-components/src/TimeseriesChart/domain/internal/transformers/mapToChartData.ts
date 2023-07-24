@@ -7,15 +7,10 @@ import { getDatapointValue } from '../utils';
 
 interface Props {
   datapoints: TimeseriesDatapoint[];
-  metadata: TimeseriesChartMetadata;
-  color?: string;
+  metadata?: TimeseriesChartMetadata;
 }
 
-export const mapToChartData = ({
-  datapoints,
-  metadata,
-  color,
-}: Props): Data => {
+export const mapToChartData = ({ datapoints, metadata }: Props): Data => {
   let x: ValueType[] = [];
   let y: ValueType[] = [];
   let customData: TimeseriesDatapoint[] = [];
@@ -38,7 +33,8 @@ export const mapToChartData = ({
     x,
     y,
     customData,
-    interpolation: metadata.isStep ? 'step' : undefined,
-    color,
+    interpolation: metadata?.isStep ? 'step' : undefined,
+    color: metadata?.color,
+    showMarkers: metadata?.dataFetchMode === 'raw',
   };
 };

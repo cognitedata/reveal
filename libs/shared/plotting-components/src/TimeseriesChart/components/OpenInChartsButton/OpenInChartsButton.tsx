@@ -9,7 +9,7 @@ import { openInCharts } from '../../utils/openInCharts';
 import { ButtonWrapper } from './elements';
 
 export interface OpenInChartsButtonProps {
-  timeseries: TimeseriesItem;
+  timeseries: TimeseriesItem[];
   dateRange?: DateRange;
 }
 

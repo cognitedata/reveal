@@ -166,8 +166,9 @@ export const Plot = memo(
           },
           ...fixedRangeLayoutConfig,
           margin,
-          hovermode: getPlotlyHoverMode(config.hoverMode),
+          hovermode: getPlotlyHoverMode(config.hoverMode, plotData.length),
           autosize: responsive,
+          showlegend: false,
         }),
         [
           tickCount,
@@ -176,6 +177,7 @@ export const Plot = memo(
           fixedRange,
           fixedRangeLayoutConfig,
           margin,
+          plotData.length,
         ]
       );
 
