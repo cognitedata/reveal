@@ -7,6 +7,8 @@ const run = async () => {
     const baseBranch = getInput('baseBranch');
     const releaseStrategy = getInput('releaseStrategy');
 
+    const isReleaseBranch = baseBranch.includes('release-');
+
     const affectedProjects = execSync(
       `npx nx show projects --affected --json --withTarget=${target} --base=${base} --head=${head} --projects ${projects} --exclude ${exclude}`
     ).toString('utf-8');

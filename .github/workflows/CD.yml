@@ -140,7 +140,6 @@ jobs:
           channelId: live
           projectId: fbhosting-217032465111-staging
           target: cognite-data-exploration-staging
-          entryPoint: dist/apps/${{ matrix.project }}/
 
   #  build-shell:
   #    name: 'Build shell apps'
