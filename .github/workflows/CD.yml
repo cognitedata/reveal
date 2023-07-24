@@ -54,8 +54,6 @@ jobs:
       - name: Test
         run: |
           echo ${{ github.event.push.base_ref }}
-          echo ${{ GITHUB_REF }}
-          echo ${{ GITHUB_REF_NAME }}
           echo ${{ env.GITHUB_REF }}
           echo ${{ env.GITHUB_REF_NAME }}
       - name: 'Get affected libs to build'
