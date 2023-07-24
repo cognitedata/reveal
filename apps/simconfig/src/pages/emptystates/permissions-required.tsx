@@ -1,11 +1,15 @@
 /* eslint-disable @cognite/no-number-z-index */
-import React from 'react';
 import { useNavigate } from 'react-location';
 
 import styled from 'styled-components/macro';
 
-import { Button, Collapse, Icon, Title } from '@cognite/cogs.js';
-import { Illustrations } from '@cognite/cogs.js-v9';
+import {
+  Button,
+  Collapse,
+  Icon,
+  Illustrations,
+  Title,
+} from '@cognite/cogs.js-v9';
 
 import { createCdfLink } from 'utils/createCdfLink';
 
@@ -76,8 +80,8 @@ const Wrapper = styled.div`
   position: absolute;
   top: -10px;
   background-color: var(--cogs-greyscale-grey2);
-  height: 100vh;
-  width: 100vw;
+  height: 100%;
+  width: 100%;
   z-index: 10;
 `;
 
@@ -90,7 +94,7 @@ const Card = styled.div`
   left: calc(25vw + 2em);
   border-radius: 10px;
   padding: 2em;
-  overflow: scroll;
+  overflow-y: scroll;
 `;
 
 const TitleWrapper = styled(Title)`
