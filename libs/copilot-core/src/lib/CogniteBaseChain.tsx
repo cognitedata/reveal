@@ -1,7 +1,7 @@
 import { jsonrepair } from 'jsonrepair';
-import { PromptTemplate } from 'langchain';
 import { BaseChain, ChainInputs, LLMChain } from 'langchain/chains';
 import { BaseChatModel } from 'langchain/chat_models/base';
+import { PromptTemplate } from 'langchain/prompts';
 import { ChainValues } from 'langchain/schema';
 
 import { CogniteClient } from '@cognite/sdk/dist/src';
