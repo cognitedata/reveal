@@ -163,6 +163,7 @@ export const Plot = memo(
             nticks: tickCount.y,
             range: presetRange?.y || range?.y,
             fixedrange: fixedRange.y,
+            automargin: true,
           },
           ...fixedRangeLayoutConfig,
           margin,
