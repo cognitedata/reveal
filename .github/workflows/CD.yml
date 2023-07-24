@@ -7,7 +7,7 @@ on:
 
 env:
   NX_CLOUD_ACCESS_TOKEN: ${{secrets.NX_CLOUD_ACCESS_TOKEN}}
-#  NX_VERBOSE_LOGGING: true
+
 jobs:
   setup:
     name: Setup
@@ -95,11 +95,6 @@ jobs:
           path: node_modules
           key: cache-node-modules-${{ hashFiles('yarn.lock') }}
 
-      - run: git fetch --no-tags --prune --depth=1 origin ${{ github.base_ref }}
-      - name: Derive appropriate SHAs for base and head for `nx affected` commands
-        uses: nrwl/nx-set-shas@v3
-        with:
-          main-branch-name: ${{ github.base_ref }}
       - name: Build
         env:
           NODE_OPTIONS: '--max_old_space_size=8192'
@@ -132,14 +127,22 @@ jobs:
         env:
           NODE_OPTIONS: '--max_old_space_size=8192'
         run: npx nx build ${{ matrix.project }} --configuration=production
-#      - uses: FirebaseExtended/action-hosting-deploy@v0
-#        with:
-#          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-#          firebaseServiceAccount: '${{ secrets.FIREBASE_HOSTING_DEPLOY_SA }}'
-#          channelId: live
-#          projectId: fbhosting-217032465111-staging
-#          target: cognite-data-exploration-staging
-#          entryPoint: dist/apps/data-exploration/
+
+      - name: Get deploy environment
+        id: deploy-environment
+        uses: ./scripts/github-actions/get-deploy-environment
+        with:
+          project: ${{ matrix.project }}
+          branch: ${{ github.ref_name }}
+
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_HOSTING_DEPLOY_SA }}'
+          channelId: live
+          projectId: fbhosting-217032465111-${{ steps.deploy-environment.outputs.environment }}
+          target: cognite-${{ matrix.project }}-${{ steps.deploy-environment.outputs.environment }}
+          entryPoint: dist/apps/${{ matrix.project }}/
 
   build-shell:
     name: 'Build shell apps'
