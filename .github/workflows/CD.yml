@@ -67,7 +67,7 @@ jobs:
           projects: 'apps/data-exploration'
           exclude: '*shell'
           isRelease: 'true'
-          branchName: '${{ github.event.push.base_ref }}'
+          branchName: ${{ github.event.push.base_ref }}
 
       - name: 'Get affected shell apps to build'
         id: affected-shell-apps
