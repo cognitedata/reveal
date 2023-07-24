@@ -17,3 +17,8 @@ inputs:
     description: 'Projects filter. ref:https://nx.dev/packages/nx/documents/show#projects'
   exclude:
     description: 'Which projects to exclude. ref: https://nx.dev/packages/nx/documents/show#exclude'
+  isRelease:
+    description: 'Is release branch'
+    default: 'false'
+  branchName:
+    description: 'Branch name'
