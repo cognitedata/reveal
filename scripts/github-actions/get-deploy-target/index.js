@@ -4,11 +4,8 @@ const { setFailed, setOutput, getInput, info } = require('@actions/core');
 
 const run = async () => {
   try {
-    const base = getInput('base');
-    const head = getInput('head');
-    const target = getInput('target');
-    const projects = getInput('projects');
-    const exclude = getInput('exclude');
+    const baseBranch = getInput('baseBranch');
+    const releaseStrategy = getInput('releaseStrategy');
 
     const affectedProjects = execSync(
       `npx nx show projects --affected --json --withTarget=${target} --base=${base} --head=${head} --projects ${projects} --exclude ${exclude}`

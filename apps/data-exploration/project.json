@@ -100,5 +100,6 @@
   },
   "implicitDependencies": ["data-exploration-e2e"],
   "tags": [],
-  "releaseStrategy": "multi-branch"
+  "releaseStrategy": "multi-branch",
+  "createPreviewLink": true
 }

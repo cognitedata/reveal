@@ -61,7 +61,7 @@ jobs:
         uses: './scripts/github-actions/nx-get-affected'
         with:
           base: 'HEAD~1'
-          projects: 'apps/**'
+          projects: 'apps/data-exploration'
           exclude: '*shell'
 
       - name: 'Get affected shell apps to build'
