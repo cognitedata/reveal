@@ -7,9 +7,9 @@ const run = async () => {
     const project = getInput('project');
     const branch = getInput('branch');
 
-    const projectConfigRaw = execSync(`nx show project ${project}`).toString(
-      'utf-8'
-    );
+    const projectConfigRaw = execSync(
+      `npx nx show project ${project}`
+    ).toString('utf-8');
     const projectConfig = JSON.parse(projectConfigRaw);
 
     const isPreviewBranch = branch.startsWith('release-preview-');
