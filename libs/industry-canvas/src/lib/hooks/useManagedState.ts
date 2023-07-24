@@ -8,7 +8,7 @@ import {
   useState,
 } from 'react';
 
-import { debounce, isEqual } from 'lodash';
+import debounce from 'lodash/debounce';
 
 import { useSDK } from '@cognite/sdk-provider';
 import {
@@ -45,6 +45,7 @@ import {
 } from '../types';
 import { useUserProfile } from '../UserProfileProvider';
 import addDimensionsIfNotExists from '../utils/addDimensionsIfNotExists';
+import { deepEqualWithMissingProperties } from '../utils/deepEqualWithMissingProperties';
 import useMetrics from '../utils/tracking/useMetrics';
 import {
   deserializeCanvasDocument,
@@ -259,7 +260,7 @@ const useAutoSaveState = (
     }
 
     const serializedData = serializeCanvasState(canvasState);
-    if (isEqual(serializedData, activeCanvas.data)) {
+    if (deepEqualWithMissingProperties(serializedData, activeCanvas.data)) {
       return;
     }
 
