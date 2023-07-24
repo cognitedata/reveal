@@ -19,6 +19,7 @@ import { ModelDetails, ModelList } from 'components/models';
 import { capabilitiesSlice } from 'store/capabilities';
 import { selectIsLabelsEnabled } from 'store/capabilities/selectors';
 import { useAppDispatch } from 'store/hooks';
+import { selectBaseUrl } from 'store/simconfigApiProperties/selectors';
 import { createCdfLink } from 'utils/createCdfLink';
 import { TRACKING_EVENTS } from 'utils/metrics/constants';
 import { trackUsage } from 'utils/metrics/tracking';
@@ -36,7 +37,7 @@ type ItemsPerPage = React.ComponentProps<typeof Pagination>['itemsPerPage'];
 
 export function ModelLibrary() {
   const dispatch = useAppDispatch();
-  const client = useSDK();
+  const baseUrl = useSelector(selectBaseUrl);
   const project = getProject();
 
   const {
@@ -109,7 +110,7 @@ export function ModelLibrary() {
         `/model-library/models/${encodeURIComponent(
           firstFile.source
         )}/${encodeURIComponent(firstFile.metadata.modelName)}/`,
-        client.getBaseUrl()
+        baseUrl
       ),
     });
   }
