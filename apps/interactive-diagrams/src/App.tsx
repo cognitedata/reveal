@@ -21,6 +21,7 @@ import { AntStyles, GlobalStyles } from './styles';
 const App = () => {
   const project = getProject();
   const LS_KEY = `${LS_KEY_PREFIX}_${project}`;
+  const baseUrl = isUsingUnifiedSignin() ? '/cdf' : '';
 
   const updateLocalStorage = debounce(() => {
     const localStorageContent = persistedState(store.getState());
@@ -58,12 +59,10 @@ const App = () => {
             <Suspense fallback={<Icon type="Loader" />}>
               <AppStateProvider>
                 <Provider store={store}>
-                  <BrowserRouter
-                    basename={isUsingUnifiedSignin() ? '/cdf' : ''}
-                  >
+                  <BrowserRouter>
                     <Routes>
                       <Route
-                        path={`/:project/${root}/*`}
+                        path={`${baseUrl}/:project/${root}/*`}
                         element={<RootApp />}
                       />
                     </Routes>
