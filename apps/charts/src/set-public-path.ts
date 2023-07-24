@@ -6,4 +6,8 @@
 
 import { setPublicPath } from 'systemjs-webpack-interop';
 
-setPublicPath('@cognite/cdf-charts-ui');
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+if (typeof System !== 'undefined') {
+  setPublicPath('@cognite/cdf-charts-ui');
+}
