@@ -56,6 +56,8 @@ jobs:
           echo ${{ github.event.push.base_ref }}
           echo ${{ env.GITHUB_REF }}
           echo ${{ env.GITHUB_REF_NAME }}
+          echo ${{ github.head_ref }} 
+          echo ${{ github.ref_name  }}
       - name: 'Get affected libs to build'
         id: affected-libs
         uses: './scripts/github-actions/nx-get-affected'
