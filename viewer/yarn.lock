@@ -822,7 +822,7 @@ __metadata:
     webpack-cli: 5.1.4
     webpack-dev-server: 4.15.1
     webpack-node-externals: 3.0.0
-    whatwg-fetch: 3.6.2
+    whatwg-fetch: 3.6.16
     workerize-loader: 2.0.2
   peerDependencies:
     "@cognite/sdk": ^7.16.0 || ^8.0.0
@@ -12319,10 +12319,10 @@ typescript@~4.8.4:
   languageName: node
   linkType: hard
 
-"whatwg-fetch@npm:3.6.2":
-  version: 3.6.2
-  resolution: "whatwg-fetch@npm:3.6.2"
-  checksum: ee976b7249e7791edb0d0a62cd806b29006ad7ec3a3d89145921ad8c00a3a67e4be8f3fb3ec6bc7b58498724fd568d11aeeeea1f7827e7e1e5eae6c8a275afed
+"whatwg-fetch@npm:3.6.16":
+  version: 3.6.16
+  resolution: "whatwg-fetch@npm:3.6.16"
+  checksum: b23cb4457a61d04ca53a798811d45f8599c9e640fe254ce73f32162caed937e463c00772ea5b011e3803e829bee159369f5a47e58f157e002ffffe0ce016fbc5
   languageName: node
   linkType: hard
 
