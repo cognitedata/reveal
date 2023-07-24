@@ -99,5 +99,6 @@
     }
   },
   "implicitDependencies": ["data-exploration-e2e"],
-  "tags": []
+  "tags": [],
+  "releaseStrategy": "multi-branch"
 }
