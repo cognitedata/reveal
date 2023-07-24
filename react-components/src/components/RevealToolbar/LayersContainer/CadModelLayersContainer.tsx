@@ -35,7 +35,9 @@ export const CadModelLayersContainer = (): ReactElement => {
   const handleCadModelVisibility = (model: CogniteCadModel): void => {
     selectedCadModels.map((data) => {
       if (data.model === model) {
-        data.isToggled = !data.isToggled;
+        return {
+           ..data,
+           isToggled: !data.isToggled
       }
       return data;
     });
