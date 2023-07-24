@@ -1,8 +1,7 @@
+import { createLink } from '@cognite/cdf-utilities';
 import { CogniteExternalId, CogniteInternalId } from '@cognite/sdk';
 
 import { DateRange, TimeseriesItem } from '../types';
-
-import { createLink } from './utils';
 
 /**
  * https://cognitedata.atlassian.net/wiki/spaces/PI/pages/2867596394/Open+in+Charts+from+other+apps
