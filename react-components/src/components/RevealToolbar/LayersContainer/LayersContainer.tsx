@@ -24,9 +24,8 @@ export const LayersContainer = (): ReactElement => {
 };
 
 const Container = styled.div`
-  position: absolute;
-  left: calc(0%);
-  top: calc(-70%);
+  position: relative;
+  top: 40px;
 `;
 
 const StyledMenu = styled(Menu)`

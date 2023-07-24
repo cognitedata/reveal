@@ -2,21 +2,33 @@
  * Copyright 2023 Cognite AS
  */
 
-import { useQuery, type UseQueryResult } from '@tanstack/react-query';
+import { type QueryFunction, useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { useSDK } from '../components/RevealContainer/SDKProvider';
 
 export const use3DModelName = (ids: number[]): UseQueryResult<string[] | undefined, unknown> => {
   const sdk = useSDK();
 
-  const queryResult = useQuery<string[] | undefined>(['cdf', '3d', 'model', ids], async () => {
-    const modelNames: string[] = await Promise.allSettled(
+  const queryFunction: QueryFunction<string[] | undefined> = async () => {
+    const modelNamePromises = await Promise.allSettled(
       ids.map(async (id) => {
         const model = await sdk.models3D.retrieve(id);
         return model.name;
       })
     );
-    return modelNames;
-  });
+
+    const modelResolvedNames: string[] = [];
+    modelNamePromises.forEach((modelNamePromise) => {
+      if (modelNamePromise.status === 'fulfilled') {
+        modelResolvedNames.push(modelNamePromise.value);
+      } else if (modelNamePromise.status === 'rejected') {
+        console.error('Error while retriving Model Name', modelNamePromise.reason);
+      }
+    });
+
+    return modelResolvedNames;
+  };
+
+  const queryResult = useQuery<string[] | undefined>(['cdf', '3d', 'model', ids], queryFunction);
 
   return queryResult;
 };

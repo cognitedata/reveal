@@ -36,10 +36,12 @@ export const CadModelLayersContainer = (): ReactElement => {
     selectedCadModels.map((data) => {
       if (data.model === model) {
         return {
-           ..data,
-           isToggled: !data.isToggled
+          ...data,
+          isToggled: !data.isToggled
+        };
+      } else {
+        return data;
       }
-      return data;
     });
     model.visible = !model.visible;
     viewer.requestRedraw();
@@ -92,7 +94,7 @@ export const CadModelLayersContainer = (): ReactElement => {
           }}
         />
         <StyledLabel> CAD models </StyledLabel>
-        <StyledChipCount label={count} hideTooltip type='neutral' />
+        <StyledChipCount label={count} hideTooltip type="neutral" />
       </Flex>
     </Menu.Submenu>
   );

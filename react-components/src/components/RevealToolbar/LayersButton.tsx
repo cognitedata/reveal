@@ -18,7 +18,13 @@ export const LayersButton = (): ReactElement => {
       content={<LayersContainer />}
       visible={layersEnabled}
       placement="auto">
-      <Button type="ghost" icon="Layers" aria-label="3D Resource layers" onClick={showLayers} />
+      <Button
+        type="ghost"
+        toggled={layersEnabled}
+        icon="Layers"
+        aria-label="3D Resource layers"
+        onClick={showLayers}
+      />
     </Dropdown>
   );
 };
