@@ -1,8 +1,6 @@
 import isEmpty from 'lodash/isEmpty';
 import styled from 'styled-components/macro';
 
-import { ChipGroup } from '@cognite/cogs.js';
-
 import { ValueByDataType, ValueByField } from '../../types';
 import { isValueByField } from '../../utils';
 
@@ -18,33 +16,27 @@ export const AppliedFilters = <T extends ValueByDataType | ValueByField>({
   value,
   onRemove,
 }: AppliedFiltersProps<T>) => {
-  const renderAppliedFilters = () => {
-    if (!value || isEmpty(value)) {
-      return null;
-    }
+  if (!value || isEmpty(value)) {
+    return null;
+  }
 
-    if (isValueByField(value)) {
-      return (
+  if (isValueByField(value)) {
+    return (
+      <Wrapper>
         <AppliedFiltersByField
           value={value}
           onRemove={(newValue) => onRemove?.(newValue as T)}
         />
-      );
-    }
+      </Wrapper>
+    );
+  }
 
-    return (
+  return (
+    <Wrapper>
       <AppliedFiltersByDataType
         value={value}
         onRemove={(newValue) => onRemove?.(newValue as T)}
       />
-    );
-  };
-
-  return (
-    <Wrapper>
-      <ChipGroup type="neutral" size="medium" overflow={2}>
-        {renderAppliedFilters()}
-      </ChipGroup>
     </Wrapper>
   );
 };

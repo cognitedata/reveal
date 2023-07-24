@@ -3,9 +3,16 @@ import * as React from 'react';
 import isEmpty from 'lodash/isEmpty';
 import unset from 'lodash/unset';
 
-import { ValueByDataType, ValueByField } from '../../types';
+import { Chip, ChipGroup } from '@cognite/cogs.js';
 
-import { AppliedFiltersByField } from './AppliedFiltersByField';
+import { useTranslation } from '../../../../hooks/useTranslation';
+import { ValueByDataType } from '../../types';
+
+import {
+  APPLIED_FILTERS_CHIP_GROUP_PROPS,
+  APPLIED_FILTER_CHIP_TYPE,
+} from './constants';
+import { getChipLabel } from './utils';
 
 export interface AppliedFiltersByDataTypeProps {
   value?: ValueByDataType;
@@ -15,32 +22,36 @@ export interface AppliedFiltersByDataTypeProps {
 export const AppliedFiltersByDataType: React.FC<
   AppliedFiltersByDataTypeProps
 > = ({ value = {}, onRemove }) => {
-  const handleRemove = (dataType: string, valueByField: ValueByField) => {
+  const { t } = useTranslation();
+
+  const handleRemove = (dataType: string, field: string) => {
     const newValue = { ...value };
 
-    if (isEmpty(valueByField)) {
+    unset(newValue[dataType], field);
+
+    if (isEmpty(newValue[dataType])) {
       unset(newValue, dataType);
-    } else {
-      newValue[dataType] = valueByField;
     }
 
     onRemove?.(newValue);
   };
 
   return (
-    <>
-      {Object.entries(value).map(([dataType, valueByField]) => {
-        return (
-          <AppliedFiltersByField
-            key={dataType}
-            dataType={dataType}
-            value={valueByField}
-            onRemove={(newValueByField) =>
-              handleRemove(dataType, newValueByField)
-            }
-          />
-        );
+    <ChipGroup {...APPLIED_FILTERS_CHIP_GROUP_PROPS}>
+      {Object.entries(value).flatMap(([dataType, valueByField]) => {
+        return Object.entries(valueByField).map(([field, fieldValue]) => {
+          const label = getChipLabel({ dataType, field, fieldValue, t });
+
+          return (
+            <Chip
+              key={label}
+              type={APPLIED_FILTER_CHIP_TYPE}
+              label={label}
+              onRemove={() => handleRemove(dataType, field)}
+            />
+          );
+        });
       })}
-    </>
+    </ChipGroup>
   );
 };
