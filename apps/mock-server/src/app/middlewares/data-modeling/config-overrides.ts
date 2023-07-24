@@ -7,6 +7,8 @@ export const fdmConfigOverrides = {
   urlRewrites: {
     // DMS V3
     '/models/spaces': '/dmsV3Spaces',
+    '/models/spaces?*': '/dmsV3Spaces?$1',
+    '/models/spaces/list?*': '/dmsV3Spaces?$1',
     '/models/spaces/byids': '/dmsV3Spaces',
     '/models/spaces/delete': '/dmsV3Spaces',
     '/models/spaces/search': '/dmsV3Spaces',

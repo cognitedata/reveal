@@ -37,10 +37,6 @@ export function transformDeleteRequest(
       const internalId = objToDelete.id || objToDelete.externalId;
       req.params = { ...req.params, id: internalId };
       req.url += `/${internalId}`;
-
-      if (req.url.includes('datamodelstorage')) {
-        req.url = req.url.replace('/datamodelstorage', '');
-      }
     }
   }
 }

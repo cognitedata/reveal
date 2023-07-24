@@ -1,9 +1,7 @@
 import { GraphQlUtilsService } from '@platypus/platypus-common-utils';
 import {
   DataModelsHandler,
-  DmsApiService,
   DataModelVersionHandler,
-  MixerApiService,
   TransformationApiService,
   FdmClient,
   FdmMixerApiService,
@@ -16,11 +14,6 @@ import { InstancesApiService } from '@platypus-core/domain/data-model/providers/
 
 import { getCogniteSDKClient } from '../../utils/cogniteSdk';
 
-export const getMixerApiService = () => {
-  const client = getCogniteSDKClient();
-  return new MixerApiService(client);
-};
-
 export const getFdmV3MixerApiService = () => {
   const client = getCogniteSDKClient();
   return new FdmMixerApiService(client);
@@ -29,11 +22,6 @@ export const getFdmV3MixerApiService = () => {
 export const getFdmV3SpacesApiService = () => {
   const client = getCogniteSDKClient();
   return new SpacesApiService(client);
-};
-
-export const getDataModelStorageApiService = () => {
-  const client = getCogniteSDKClient();
-  return new DmsApiService(client);
 };
 
 export const getTransformationsApiService = () => {

@@ -4,11 +4,14 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { ContainerReference } from '../types';
 import { getCanvasLink } from '../utils/getCanvasLink';
 
+const INITIALIZE_WITH_CONTAINER_REFERENCES_PARAM_NAME =
+  'initializeWithContainerReferences';
+
 const getInitializeWithContainerReferencesFromSearchParams = (
   searchParams: URLSearchParams
 ): ContainerReference[] | undefined => {
   const initializeWithContainerReferencesParam = searchParams.get(
-    'initializeWithContainerReferences'
+    INITIALIZE_WITH_CONTAINER_REFERENCES_PARAM_NAME
   );
 
   if (initializeWithContainerReferencesParam === null) {
@@ -28,6 +31,16 @@ const getInitializeWithContainerReferencesFromSearchParams = (
   } catch (error) {
     return undefined;
   }
+};
+
+const removeInitializeWithContainerReferencesFromSearchParams = () => {
+  const searchParams = new URLSearchParams(window.location.search);
+  searchParams.delete(INITIALIZE_WITH_CONTAINER_REFERENCES_PARAM_NAME);
+  window.history.replaceState(
+    {},
+    '',
+    `${window.location.pathname}?${searchParams.toString()}`
+  );
 };
 
 const getCanvasIdFromSearchParams = (
@@ -65,12 +78,26 @@ const useIndustryCanvasSearchParameters = () => {
     [navigate, canvasId]
   );
 
+  const setHasConsumedInitializeWithContainerReferencesWrapper = useCallback(
+    (nextHasConsumedInitializeWithContainerReferences: boolean) => {
+      if (nextHasConsumedInitializeWithContainerReferences) {
+        removeInitializeWithContainerReferencesFromSearchParams();
+      }
+
+      setHasConsumedInitializeWithContainerReferences(
+        nextHasConsumedInitializeWithContainerReferences
+      );
+    },
+    []
+  );
+
   return {
     canvasId: getCanvasIdFromSearchParams(searchParams),
     setCanvasId,
     initializeWithContainerReferences,
     hasConsumedInitializeWithContainerReferences,
-    setHasConsumedInitializeWithContainerReferences,
+    setHasConsumedInitializeWithContainerReferences:
+      setHasConsumedInitializeWithContainerReferencesWrapper,
   };
 };
 

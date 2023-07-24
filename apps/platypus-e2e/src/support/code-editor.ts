@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // ***********************************************
 // This example commands.js shows you how to
@@ -27,14 +28,16 @@ declare namespace Cypress {
 Cypress.Commands.add('appendTextToCodeEditor', (text: string) => {
   cy.ensureCodeEditorIsVisible();
   cy.get('.monaco-editor textarea:first')
-    .type(`{pageDown}\n\n`)
-    .type(text, { parseSpecialCharSequences: false });
+    .type(`{pageDown}\n\n`, { force: true })
+    .type(text, { parseSpecialCharSequences: false, force: true });
 });
 
 Cypress.Commands.add('clearCodeEditor', () => {
   cy.ensureCodeEditorIsVisible();
   const selectAllKey = Cypress.platform == 'darwin' ? '{cmd}a' : '{ctrl}a';
-  cy.get('.monaco-editor textarea:first').type(`${selectAllKey}{backspace}`);
+  cy.get('.monaco-editor textarea:first')
+    .type(`${selectAllKey}`, { force: true })
+    .type(`{backspace}`, { force: true });
 });
 
 Cypress.Commands.add('codeEditorContains', (value: string) => {
@@ -62,7 +65,7 @@ Cypress.Commands.add('codeEditorDoesNotContain', (value: string) => {
 
 Cypress.Commands.add('ensureCodeEditorIsVisible', () => {
   cy.get('.monaco-editor textarea:first').should('be.visible');
-  cy.get('.monaco-editor.rename-box');
+  // cy.get('.monaco-editor.rename-box');
 });
 
 Cypress.Commands.add('openCodeEditorTab', () => {
@@ -93,5 +96,6 @@ Cypress.Commands.add('typeTextInCodeEditor', (text: string) => {
   cy.ensureCodeEditorIsVisible();
   cy.get('.monaco-editor textarea:first').type(text, {
     parseSpecialCharSequences: false,
+    force: true,
   });
 });

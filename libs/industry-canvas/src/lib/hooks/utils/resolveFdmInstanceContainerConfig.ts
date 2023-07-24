@@ -10,7 +10,7 @@ import {
 import {
   DEFAULT_FDM_INSTANCE_HEIGHT,
   DEFAULT_FDM_INSTANCE_WIDTH,
-} from '../../utils/addDimensionsToContainerReference';
+} from '../../utils/dimensions';
 
 const resolveFdmInstanceContainerConfig = async (
   _: CogniteClient,

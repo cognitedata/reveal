@@ -121,6 +121,7 @@ const mockInitialState = {
   draftRows: {} as DraftRows,
   shouldShowDraftRows: true,
   shouldShowPublishedRows: true,
+  transformationId: null,
 };
 
 describe('DataManagement reducer', () => {

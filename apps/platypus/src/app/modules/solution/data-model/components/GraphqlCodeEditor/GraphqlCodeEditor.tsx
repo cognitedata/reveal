@@ -3,7 +3,6 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Editor, { Monaco } from '@monaco-editor/react';
 import { DataModelTypeDefs } from '@platypus/platypus-core';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
-import { isFDMv3 } from '@platypus-app/flags';
 import debounce from 'lodash/debounce';
 import noop from 'lodash/noop';
 import {
@@ -111,7 +110,7 @@ export const GraphqlCodeEditor = React.memo(
 
     const editorWillMount = (monacoInstance: Monaco) => {
       langProviders.current = setupGraphql(monacoInstance, {
-        useExtendedSdl: isFDMv3(),
+        useExtendedSdl: true,
       });
     };
 

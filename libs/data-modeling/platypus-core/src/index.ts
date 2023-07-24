@@ -11,5 +11,5 @@ export * from './lib/domain/common/validators';
 export * from './lib/domain/data-model/services';
 export * from './lib/domain/data-model/constants';
 export * from './lib/domain/data-model/utils';
-export * from './lib/domain/data-model/providers/fdm-current';
+export * from './lib/domain/data-model/validators';
 export * from './lib/domain/data-model/providers/fdm-next';

@@ -55,7 +55,7 @@
           "outputHashing": "all",
           "sourceMap": true,
           "extractCss": true,
-          "namedChunks": false,
+          "namedChunks": true,
           "extractLicenses": true,
           "vendorChunk": false,
           "runtimeChunk": false,
@@ -78,6 +78,10 @@
             {
               "replace": "apps/platypus/src/environments/useFlag.ts",
               "with": "apps/platypus/src/environments/mock/useFlag.ts"
+            },
+            {
+              "replace": "apps/platypus/src/environments/fusion/SubAppContainer.tsx",
+              "with": "apps/platypus/src/environments/mock/SubAppContainer.tsx"
             }
           ],
           "optimization": false,

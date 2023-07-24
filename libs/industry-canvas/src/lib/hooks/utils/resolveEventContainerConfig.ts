@@ -10,7 +10,7 @@ import {
 import {
   DEFAULT_EVENT_HEIGHT,
   DEFAULT_EVENT_WIDTH,
-} from '../../utils/addDimensionsToContainerReference';
+} from '../../utils/dimensions';
 
 const getEventTableTitle = (event: CogniteEvent): string => {
   let title = '';

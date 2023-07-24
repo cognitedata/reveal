@@ -7,7 +7,7 @@ import {
   Size,
 } from '@platypus-app/components/PageToolbar/PageToolbar';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
-import { isFDMv3, useUIEditorFeatureFlag } from '@platypus-app/flags';
+import { useUIEditorFeatureFlag } from '@platypus-app/flags';
 import { useDataModelVersions } from '@platypus-app/hooks/useDataModelActions';
 import useSelector from '@platypus-app/hooks/useSelector';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
@@ -50,11 +50,9 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
 }) => {
   const { t } = useTranslation('EditorPanel');
   const { isEnabled: isUIEditorFlagEnabled } = useUIEditorFeatureFlag();
-  const isFDMV3 = isFDMv3();
 
-  // always show the ui editor for fdm v2 users
   // for fdm v3 users, only show the ui editor if the feature toggle is on.
-  const isUIEditorVisible = (isUIEditorFlagEnabled && isFDMV3) || !isFDMV3;
+  const isUIEditorVisible = isUIEditorFlagEnabled;
 
   const [currentView, setCurrentView] = useState(
     isUIEditorVisible ? 'ui' : 'code'

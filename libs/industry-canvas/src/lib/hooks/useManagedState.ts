@@ -8,7 +8,7 @@ import {
   useState,
 } from 'react';
 
-import { debounce, isEqual } from 'lodash';
+import debounce from 'lodash/debounce';
 
 import { useSDK } from '@cognite/sdk-provider';
 import {
@@ -44,7 +44,8 @@ import {
   isIndustryCanvasContainerConfig,
 } from '../types';
 import { useUserProfile } from '../UserProfileProvider';
-import addDimensionsIfNotExists from '../utils/addDimensionsIfNotExists';
+import { deepEqualWithMissingProperties } from '../utils/deepEqualWithMissingProperties';
+import { addDimensionsToContainerReferencesIfNotExists } from '../utils/dimensions';
 import useMetrics from '../utils/tracking/useMetrics';
 import {
   deserializeCanvasDocument,
@@ -58,7 +59,6 @@ import {
   useHistory,
 } from './useCanvasStateHistory';
 import { useContainerAnnotations } from './useContainerAnnotations';
-import { TooltipsOptions } from './useTooltipsOptions';
 import resolveContainerConfig from './utils/resolveContainerConfig';
 
 export type InteractionState = {
@@ -259,7 +259,7 @@ const useAutoSaveState = (
     }
 
     const serializedData = serializeCanvasState(canvasState);
-    if (isEqual(serializedData, activeCanvas.data)) {
+    if (deepEqualWithMissingProperties(serializedData, activeCanvas.data)) {
       return;
     }
 
@@ -499,10 +499,9 @@ const useManagedState = ({
       }
 
       return Promise.all(
-        addDimensionsIfNotExists(
-          unifiedViewer,
+        addDimensionsToContainerReferencesIfNotExists(
           containerReferences,
-          canvasState.canvasAnnotations
+          serializeCanvasState(canvasState)
         ).map(async (containerReference) => {
           const containerConfig = await resolveContainerConfig(
             sdk,
@@ -526,7 +525,7 @@ const useManagedState = ({
         })
       );
     },
-    [unifiedViewer, sdk, pushState, canvasState.canvasAnnotations]
+    [unifiedViewer, sdk, pushState, canvasState]
   );
 
   const removeContainerById = useCallback(

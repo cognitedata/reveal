@@ -80,7 +80,7 @@ type PageInfo {
   endCursor: String
 }
 input InstanceRef {
-  spaceExternalId: String!
+  space: String!
   externalId: String!
 }
 
@@ -157,7 +157,7 @@ type Post {
   externalId: ID!
   lastUpdatedTime: Timestamp!
   createdTime: Timestamp!
-  spaceExternalId:String!
+  space:String!
   title: String!
   views: Int!
   user: User
@@ -173,7 +173,7 @@ type User {
   externalId: ID!
   lastUpdatedTime: Timestamp!
   createdTime: Timestamp!
-  spaceExternalId:String!
+  space:String!
   name: String!
 }
 
@@ -181,7 +181,7 @@ type Comment {
   externalId: ID!
   lastUpdatedTime: Timestamp!
   createdTime: Timestamp!
-  spaceExternalId:String!
+  space:String!
   body: String!
   date: Timestamp!
   post: Post

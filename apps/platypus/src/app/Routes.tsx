@@ -1,19 +1,11 @@
 import React, { useEffect } from 'react';
-import {
-  Outlet,
-  Routes as ReactRoutes,
-  Route,
-  useLocation,
-} from 'react-router-dom';
+import { Outlet, Routes as ReactRoutes, Route } from 'react-router-dom';
 
 import { DRAG_DROP_PORTAL_CLASS } from '@data-exploration/components';
 
 import { Spinner } from './components/Spinner/Spinner';
-import { TOKENS } from './di';
-import { isFDMv3 } from './flags';
 import { getContainer } from './GlobalStyles';
 import { useFusionQuery } from './hooks/useFusionQuery';
-import { useInjection } from './hooks/useInjection';
 import { DataModelsPage } from './modules/data-models/DataModelsPage';
 import { DataModel } from './modules/solution/DataModel';
 import zIndex from './utils/zIndex';
@@ -44,18 +36,6 @@ const DataModelSubRoutes = () => (
 const Routes = () => {
   useFusionQuery();
 
-  const location = useLocation();
-  const fdmClient = useInjection(TOKENS.fdmClient);
-
-  useEffect(() => {
-    if (
-      (fdmClient.version === 'beta' && isFDMv3()) ||
-      (fdmClient.version === 'stable' && !isFDMv3())
-    ) {
-      window.location.reload();
-    }
-  }, [location.pathname, fdmClient]);
-
   useEffect(() => {
     const dragDropPortal: HTMLElement = document.createElement('div');
     dragDropPortal.classList.add(DRAG_DROP_PORTAL_CLASS);
@@ -70,10 +50,6 @@ const Routes = () => {
         <Route path="/" element={<Outlet />}>
           <Route index element={<DataModelsPage />} />
           <Route path="data-models/*" element={<DataModelSubRoutes />} />
-          <Route
-            path="data-models-previous/*"
-            element={<DataModelSubRoutes />}
-          />
         </Route>
       </ReactRoutes>
     </React.Suspense>

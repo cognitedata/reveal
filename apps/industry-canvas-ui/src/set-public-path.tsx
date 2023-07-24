@@ -4,5 +4,8 @@ import { setPublicPath } from 'systemjs-webpack-interop';
  * https://webpack.js.org/guides/public-path/#on-the-fly
  * https://single-spa.js.org/docs/faq/#code-splits
  */
-
-setPublicPath('@cognite/cdf-industry-canvas-ui');
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+if (typeof System !== 'undefined') {
+  setPublicPath('@cognite/cdf-industry-canvas-ui');
+}

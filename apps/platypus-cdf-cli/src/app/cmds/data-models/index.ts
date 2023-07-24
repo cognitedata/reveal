@@ -6,7 +6,6 @@ import deleteCmd from './delete';
 import generateCmd from './generate';
 import listCmd from './list';
 import publishCmd from './publish';
-import * as storageCmds from './storage';
 
 export const command = 'data-models <command>';
 export const desc = 'Manage data models to store and retrieve data.';
@@ -16,7 +15,7 @@ export const builder = (yargs: Argv) => {
   const cmds = yargs;
 
   if (process.env.ENABLE_EXPERIMENTAL_CMDS) {
-    cmds.command(storageCmds).command(apiCmds).command(deleteCmd);
+    cmds.command(apiCmds).command(deleteCmd);
   }
 
   cmds

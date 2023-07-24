@@ -31,6 +31,8 @@ module.exports = composePlugins(
         './src/environments/mock/cogniteSdkSingleton.ts'
       );
 
+      config.mode = nodeEnv === 'production' ? 'production' : 'development';
+
       return {
         ...config,
         plugins: [

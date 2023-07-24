@@ -1,10 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import {
-  DataModelVersionValidator,
-  DataModelVersionValidatorV2,
-} from '@platypus/platypus-core';
-import { isFDMv3 } from '@platypus-app/flags';
+import { DataModelVersionValidator } from '@platypus/platypus-core';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
 import { Body, Button, Flex, Input, Modal, Radio } from '@cognite/cogs.js';
@@ -33,8 +29,6 @@ export const PublishVersionModal = (props: PublishVersionModalProps) => {
   );
   const [error, setError] = useState('');
 
-  const isFDMV3 = isFDMv3();
-
   const MINIMUM_CHANGES_VISIBLE = 4;
   const [showAllChanges, setShowAllChanges] = useState(false);
   const breakingChangesLines = props.breakingChanges
@@ -61,9 +55,7 @@ export const PublishVersionModal = (props: PublishVersionModalProps) => {
       return;
     }
 
-    const validator = isFDMV3
-      ? new DataModelVersionValidator()
-      : new DataModelVersionValidatorV2();
+    const validator = new DataModelVersionValidator();
 
     const validationResult = validator.validate('version', version);
 
@@ -74,7 +66,7 @@ export const PublishVersionModal = (props: PublishVersionModalProps) => {
 
     setError('');
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [version, t, isFDMV3, props.publishedVersions]);
+  }, [version, t, props.publishedVersions]);
 
   return (
     <Modal
@@ -85,11 +77,7 @@ export const PublishVersionModal = (props: PublishVersionModalProps) => {
         const finalizedVersion = keepCurrentVersion
           ? props.currentVersion
           : version;
-        props.onUpdate(
-          !isFDMV3
-            ? parseInt(finalizedVersion, 10).toString()
-            : finalizedVersion
-        );
+        props.onUpdate(finalizedVersion);
       }}
       okText={t('publish_new_version', 'Publish')}
       okDisabled={props.isUpdating || props.isSaving || !!error}
@@ -130,7 +118,7 @@ export const PublishVersionModal = (props: PublishVersionModalProps) => {
             fullWidth
             autoFocus
             value={version}
-            onChange={(e) => setVersion(e.currentTarget.value)}
+            onChange={(e: any) => setVersion(e.currentTarget.value)}
             error={error || false}
           />
         </>
@@ -177,10 +165,8 @@ export const PublishVersionModal = (props: PublishVersionModalProps) => {
               fullWidth
               autoFocus
               value={version}
-              onChange={(e) => setVersion(e.currentTarget.value)}
-              disabled={
-                (!props.breakingChanges && keepCurrentVersion) || !isFDMV3
-              }
+              onChange={(e: any) => setVersion(e.currentTarget.value)}
+              disabled={!props.breakingChanges && keepCurrentVersion}
               variant={
                 !props.breakingChanges && keepCurrentVersion
                   ? 'noBorder'

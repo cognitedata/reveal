@@ -14,7 +14,6 @@ import {
   sortCollection,
 } from '../../../../utils';
 import { capitalize } from '../../../../utils/text-utils';
-import { DmsBinding } from '../../types';
 
 export interface BuildQueryResolversParams {
   version: number;
@@ -305,8 +304,3 @@ function fetchAndQueryData(props: FetchAndQueryDataProps): CdfResourceObject[] {
 
   return data;
 }
-
-export const getDataModelStorageExternalId = (binding: DmsBinding) => {
-  return binding.dataModelStorageMappingSource.filter.and[0].hasData
-    .models[0][1];
-};

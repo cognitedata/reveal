@@ -11,7 +11,7 @@ import {
 import {
   DEFAULT_TIMESERIES_HEIGHT,
   DEFAULT_TIMESERIES_WIDTH,
-} from '../../utils/addDimensionsToContainerReference';
+} from '../../utils/dimensions';
 
 const resolveTimeseriesContainerConfig = async (
   sdk: CogniteClient,

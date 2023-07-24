@@ -10,6 +10,7 @@ import { createMockServer } from './app/mock-server';
 import { getArgs } from './cli/cli-args';
 // hardcoded for now, should be loaded from file
 import { loadConfig, loadMockData } from './cli/loader';
+import { loginInfoMockData } from './login-info-mock-data';
 import { userTokenData } from './user-token-data';
 
 const TENANT = process.env.NODE_ENV || 'mock';
@@ -72,6 +73,14 @@ server.get('/api/v1/token/inspect', (req, res) => {
     'access-control-allow-origin': baseUrl,
   });
   res.jsonp(mockTokenData);
+});
+server.get('/_api/login_info', (req, res) => {
+  res.set({
+    'content-type': 'application/json',
+    'access-control-allow-credentials': true,
+    'access-control-allow-origin': baseUrl,
+  });
+  res.jsonp(loginInfoMockData);
 });
 
 // updates the JSON token at runtime
