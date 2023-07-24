@@ -45,12 +45,12 @@ jobs:
         run: yarn install --frozen-lockfile
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_READONLY_TOKEN }}
-#
-#      - run: git fetch --no-tags --prune --depth=1 origin ${{ github.base_ref }}
-#      - name: Derive appropriate SHAs for base and head for `nx affected` commands
-#        uses: nrwl/nx-set-shas@v3
-#        with:
-#          main-branch-name: ${{ github.base_ref }}
+      #
+      #      - run: git fetch --no-tags --prune --depth=1 origin ${{ github.base_ref }}
+      #      - name: Derive appropriate SHAs for base and head for `nx affected` commands
+      #        uses: nrwl/nx-set-shas@v3
+      #        with:
+      #          main-branch-name: ${{ github.base_ref }}
 
       - name: 'Get affected libs to build'
         id: affected-libs
@@ -80,40 +80,40 @@ jobs:
       affected-apps: ${{ steps.affected-apps.outputs.projects }}
       affected-shell-apps: ${{ steps.affected-shell-apps.outputs.projects }}
 
-#  build-libs:
-#    name: 'Build libs'
-#    runs-on: ubuntu-20.04
-#    needs: setup
-#    if: ${{ needs.setup.outputs.affected-libs != '' && toJson(fromJson(needs.setup.outputs.affected-libs)) != '[]' }}
-#    steps:
-#      - uses: actions/checkout@v3
-#        with:
-#          fetch-depth: 0
-#      - uses: actions/setup-node@v3
-#        with:
-#          node-version: '18'
-#
-#      - name: Cache node modules
-#        uses: actions/cache@v3
-#        with:
-#          path: node_modules
-#          key: cache-node-modules-${{ hashFiles('yarn.lock') }}
-#
-#      - run: git fetch --no-tags --prune --depth=1 origin ${{ github.base_ref }}
-#      - name: Derive appropriate SHAs for base and head for `nx affected` commands
-#        uses: nrwl/nx-set-shas@v3
-#        with:
-#          main-branch-name: ${{ github.base_ref }}
-#      - name: Build
-#        env:
-#          NODE_OPTIONS: '--max_old_space_size=8192'
-#        run: npx nx run-many --target=build --parallel --nx-bail --configuration=production --projects ${{ needs.setup.outputs.affected-libs-string }}
+  #  build-libs:
+  #    name: 'Build libs'
+  #    runs-on: ubuntu-20.04
+  #    needs: setup
+  #    if: ${{ needs.setup.outputs.affected-libs != '' && toJson(fromJson(needs.setup.outputs.affected-libs)) != '[]' }}
+  #    steps:
+  #      - uses: actions/checkout@v3
+  #        with:
+  #          fetch-depth: 0
+  #      - uses: actions/setup-node@v3
+  #        with:
+  #          node-version: '18'
+  #
+  #      - name: Cache node modules
+  #        uses: actions/cache@v3
+  #        with:
+  #          path: node_modules
+  #          key: cache-node-modules-${{ hashFiles('yarn.lock') }}
+  #
+  #      - run: git fetch --no-tags --prune --depth=1 origin ${{ github.base_ref }}
+  #      - name: Derive appropriate SHAs for base and head for `nx affected` commands
+  #        uses: nrwl/nx-set-shas@v3
+  #        with:
+  #          main-branch-name: ${{ github.base_ref }}
+  #      - name: Build
+  #        env:
+  #          NODE_OPTIONS: '--max_old_space_size=8192'
+  #        run: npx nx run-many --target=build --parallel --nx-bail --configuration=production --projects ${{ needs.setup.outputs.affected-libs-string }}
 
   build:
     name: Build
     runs-on: ubuntu-20.04
     needs: [setup]
-#    if: ${{ !cancelled() && !failure() && needs.build-libs.result != 'failure' && needs.build-libs.result != 'cancelled' && needs.setup.outputs.affected-apps != '' && toJson(fromJson(needs.setup.outputs.affected-apps)) != '[]' }}
+    #    if: ${{ !cancelled() && !failure() && needs.build-libs.result != 'failure' && needs.build-libs.result != 'cancelled' && needs.setup.outputs.affected-apps != '' && toJson(fromJson(needs.setup.outputs.affected-apps)) != '[]' }}
     strategy:
       matrix:
         project: ${{ fromJson(needs.setup.outputs.affected-apps)  }}
@@ -143,6 +143,7 @@ jobs:
           channelId: live
           projectId: fbhosting-217032465111-staging
           target: cognite-data-exploration-staging
+          entryPoint: dist/apps/data-exploration/
 
   #  build-shell:
   #    name: 'Build shell apps'
