@@ -60,7 +60,7 @@ export const TimeSeriesNode = ({
       </Flex>
       {isOpen && resourceId && (
         <TimeseriesChart
-          timeseriesId={resourceId}
+          timeseries={{ id: resourceId }}
           variant="small"
           height={100}
           dateRange={dateRange}

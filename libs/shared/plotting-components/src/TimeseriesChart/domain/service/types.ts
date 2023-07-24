@@ -1,13 +1,17 @@
 import {
   Aggregate,
   CogniteExternalId,
+  CogniteInternalId,
   DatapointAggregate,
   DatapointsMultiQueryBase,
+  IdEither,
   InternalId,
   Timestamp,
 } from '@cognite/sdk';
 
-export interface TimeseriesSingleAggregateQuery extends InternalId {
+export interface TimeseriesSingleAggregateQuery {
+  id?: CogniteInternalId;
+  externalId?: CogniteExternalId;
   aggregates: Aggregate[];
   start?: string | Timestamp;
   end?: string | Timestamp;
@@ -21,8 +25,10 @@ export interface TimeseriesSingleAggregate extends InternalId {
   unit?: string;
 }
 
-export type TimeseriesDatapointsQueryBase = InternalId &
-  Omit<DatapointsMultiQueryBase, 'aggregates' | 'granularity'>;
+export interface TimeseriesDatapointsQueryBase
+  extends Omit<DatapointsMultiQueryBase, 'aggregates' | 'granularity'> {
+  items: IdEither[];
+}
 
 export type TimeseriesRawDatapointsQuery = TimeseriesDatapointsQueryBase;
 

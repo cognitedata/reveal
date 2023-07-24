@@ -30,7 +30,7 @@ export const TimeseriesWidget: React.FC<TimeseriesProps> = ({
         <Content>
           <TimeseriesChart
             // Come back and fix this
-            timeseriesId={timeseriesId || 0}
+            timeseries={{ id: timeseriesId || 0 }}
             hideActions
             styles={timeseriesStyles}
             // Here this component is controlled by giving the 'dateRange' state as prop

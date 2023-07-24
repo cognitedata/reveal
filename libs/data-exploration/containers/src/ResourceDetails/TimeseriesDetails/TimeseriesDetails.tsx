@@ -156,7 +156,7 @@ export const TimeseriesDetails: FC<
             header={<h4>{t('PREVIEW', PREVIEW)}</h4>}
           >
             <TimeseriesChart
-              timeseriesId={timeseries.id}
+              timeseries={{ id: timeseries.id }}
               height={400}
               quickTimePeriodOptions={['1D', '1W', '1Y']}
             />

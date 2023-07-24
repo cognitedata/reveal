@@ -1,7 +1,7 @@
-import { DataFetchMode, DateRange } from '../../types';
+import { DataFetchMode, DateRange, TimeseriesItem } from '../../types';
 
 export interface TimeseriesChartQuery {
-  timeseriesId: number;
+  timeseries: TimeseriesItem;
   dateRange?: DateRange;
   numberOfPoints?: number;
 }

@@ -68,7 +68,7 @@ export const TimesereisSmallPreviewTable: FC<
       </Button>
       <TimeseriesWrapper>
         <TimeseriesChart
-          timeseriesId={selected}
+          timeseries={{ id: selected }}
           height={300}
           styles={{ width: 500 }}
         />

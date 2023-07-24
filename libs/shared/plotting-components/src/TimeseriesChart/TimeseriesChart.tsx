@@ -19,9 +19,10 @@ import {
 } from './types';
 import { formatDateRangeForAxis } from './utils/formatDateRangeForAxis';
 import { getChartByVariant } from './utils/getChartByVariant';
+import { getDataRevision } from './utils/getDataRevision';
 
 export const TimeseriesChart: React.FC<TimeseriesChartProps> = ({
-  timeseriesId,
+  timeseries,
   variant = 'large',
   numberOfPoints,
   quickTimePeriodOptions = [],
@@ -39,7 +40,7 @@ export const TimeseriesChart: React.FC<TimeseriesChartProps> = ({
 
   const { data, metadata, isLoading } = useTimeseriesChartData({
     query: {
-      timeseriesId,
+      timeseries,
       dateRange,
       numberOfPoints,
     },
@@ -80,7 +81,7 @@ export const TimeseriesChart: React.FC<TimeseriesChartProps> = ({
   useEffect(() => {
     setSelectedTimePeriod(undefined);
     setDateRange(dateRangeProp);
-  }, [dateRangeProp, timeseriesId]);
+  }, [dateRangeProp, timeseries]);
 
   const Chart = getChartByVariant(variant);
 
@@ -88,7 +89,7 @@ export const TimeseriesChart: React.FC<TimeseriesChartProps> = ({
     <Chart
       data={data}
       metadata={metadata}
-      dataRevision={timeseriesId}
+      dataRevision={getDataRevision(timeseries)}
       isLoading={isLoading}
       range={chartRange}
       style={{ height, ...styles }}
@@ -111,7 +112,7 @@ export const TimeseriesChart: React.FC<TimeseriesChartProps> = ({
           ? undefined
           : () => [
               <OpenInChartsButton
-                timeseriesId={timeseriesId}
+                timeseries={timeseries}
                 dateRange={dateRange}
               />,
             ]

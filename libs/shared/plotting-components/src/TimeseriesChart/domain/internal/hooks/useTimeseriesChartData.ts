@@ -39,8 +39,12 @@ export const useTimeseriesChartData = ({ query, dataFetchOptions }: Props) => {
     if (!datapoints || isEmpty(datapoints)) {
       return EMPTY_DATA;
     }
-    return mapToChartData({ datapoints, metadata });
-  }, [datapoints, metadata]);
+    return mapToChartData({
+      datapoints,
+      metadata,
+      color: query.timeseries.color,
+    });
+  }, [datapoints, metadata, query.timeseries.color]);
 
   return {
     data: chartData,

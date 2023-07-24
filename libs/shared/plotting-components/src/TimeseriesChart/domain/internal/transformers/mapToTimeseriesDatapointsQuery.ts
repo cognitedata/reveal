@@ -1,3 +1,4 @@
+import { getIdEither } from '../../../utils/getIdEither';
 import {
   TimeseriesDatapointsQuery,
   TimeseriesDatapointsQueryBase,
@@ -14,11 +15,11 @@ export const mapToTimeseriesDatapointsQuery = ({
   query,
   metadata,
 }: Props): TimeseriesDatapointsQuery => {
-  const { timeseriesId, dateRange } = query;
+  const { timeseries, dateRange } = query;
   const { numberOfPoints, dataFetchMode } = metadata;
 
   const queryBase: TimeseriesDatapointsQueryBase = {
-    id: timeseriesId,
+    items: [getIdEither(timeseries)],
     start: dateRange?.[0],
     end: dateRange?.[1],
     limit: numberOfPoints,

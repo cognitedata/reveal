@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 
 import { DataFetchOptions } from '../../../types';
+import { getIdEither } from '../../../utils/getIdEither';
 import { useTimeseriesSingleAggregateQuery } from '../../service/queries';
 import { CHART_POINTS_PER_SERIES } from '../constants';
 import { TimeseriesChartMetadata, TimeseriesChartQuery } from '../types';
@@ -15,12 +16,12 @@ export const useTimeseriesChartMetadata = ({
   query,
   dataFetchOptions,
 }: Props) => {
-  const { timeseriesId, dateRange } = query;
+  const { timeseries, dateRange } = query;
 
   const { data, isFetched, isInitialLoading } =
     useTimeseriesSingleAggregateQuery({
       query: {
-        id: timeseriesId,
+        ...getIdEither(timeseries),
         aggregates: ['count'],
         start: dateRange?.[0].valueOf(),
         end: dateRange?.[1].valueOf(),

@@ -40,7 +40,7 @@ export const TimeseriesResults = () => {
               {
                 value: (
                   <TimeseriesChart
-                    timeseriesId={item.id}
+                    timeseries={{ id: item.id }}
                     variant="small"
                     numberOfPoints={100}
                     height={55}

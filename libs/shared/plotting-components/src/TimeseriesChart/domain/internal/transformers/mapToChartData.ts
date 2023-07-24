@@ -8,9 +8,14 @@ import { getDatapointValue } from '../utils';
 interface Props {
   datapoints: TimeseriesDatapoint[];
   metadata: TimeseriesChartMetadata;
+  color?: string;
 }
 
-export const mapToChartData = ({ datapoints, metadata }: Props): Data => {
+export const mapToChartData = ({
+  datapoints,
+  metadata,
+  color,
+}: Props): Data => {
   let x: ValueType[] = [];
   let y: ValueType[] = [];
   let customData: TimeseriesDatapoint[] = [];
@@ -34,5 +39,6 @@ export const mapToChartData = ({ datapoints, metadata }: Props): Data => {
     y,
     customData,
     interpolation: metadata.isStep ? 'step' : undefined,
+    color,
   };
 };

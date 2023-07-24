@@ -8,13 +8,8 @@ export const getTimeseriesDatapoints = (
   sdk: CogniteClient,
   query: TimeseriesDatapointsQuery
 ): Promise<TimeseriesDatapoint[]> => {
-  const { id, ...rest } = query;
-
   return sdk.datapoints
-    .retrieve({
-      items: [{ id }],
-      ...rest,
-    })
+    .retrieve(query)
     .then((items) => {
       if (isEmpty(items)) {
         return [];

@@ -152,7 +152,7 @@ export const TimeseriesDetail = ({
               >
                 <DetailsTabWrapper>
                   <TimeseriesChart
-                    timeseriesId={timeseries.id}
+                    timeseries={{ id: timeseries.id }}
                     height={300}
                     quickTimePeriodOptions={['1D', '1W', '1Y']}
                     dateRange={dateRange}

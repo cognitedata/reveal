@@ -77,7 +77,7 @@ export const TimeseriesTable = ({
 
         return (
           <TimeseriesChart
-            timeseriesId={timeseries.id}
+            timeseries={{ id: timeseries.id }}
             variant="small"
             dateRange={dateRange}
             numberOfPoints={100}

@@ -1,4 +1,6 @@
-import { DateRange } from '../types';
+import { CogniteExternalId, CogniteInternalId } from '@cognite/sdk';
+
+import { DateRange, TimeseriesItem } from '../types';
 
 import { createLink } from './utils';
 
@@ -7,23 +9,36 @@ import { createLink } from './utils';
  */
 
 export interface OpenInChartsQuery {
-  timeserieIds: number[];
+  timeserieIds?: CogniteInternalId[];
+  timeserieExternalIds?: CogniteExternalId[];
   startTime?: string | number | Date;
   endTime?: string | number | Date;
 }
 
 export interface Props {
-  timeseriesId: number;
+  timeseries: TimeseriesItem;
   dateRange?: DateRange;
 }
 
-export const openInCharts = ({ timeseriesId, dateRange }: Props) => {
+export const openInCharts = ({ timeseries, dateRange }: Props) => {
   const query: OpenInChartsQuery = {
-    timeserieIds: [timeseriesId],
+    ...getOpenInChartsQueryIds(timeseries),
     startTime: dateRange?.[0].getTime(),
     endTime: dateRange?.[1].getTime(),
   };
 
   const link = createLink('/charts', query);
   window.open(link, '_blank');
+};
+
+export const getOpenInChartsQueryIds = (item: TimeseriesItem) => {
+  if ('id' in item) {
+    return {
+      timeserieIds: [item.id],
+    };
+  }
+
+  return {
+    timeserieExternalIds: [item.externalId],
+  };
 };
