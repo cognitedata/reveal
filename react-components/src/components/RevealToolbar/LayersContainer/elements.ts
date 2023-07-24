@@ -20,7 +20,6 @@ export const StyledSubMenu = styled(Menu)`
 
 export const StyledChipCount = styled(Chip)`
   && {
-    background: #5874ff;
     border-radius: 2px;
     width: fit-content;
     height: 20px;
@@ -28,14 +27,6 @@ export const StyledChipCount = styled(Chip)`
     min-height: 20px;
     min-width: 20px;
     padding: 4px;
-    color: #ffffff;
-
-    /* Font */
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 500;
-    font-size: 12px;
-    line-height: 16px;
   }
 `;
 
