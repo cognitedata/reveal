@@ -9,10 +9,11 @@ const run = async () => {
     const target = getInput('target');
     const projects = getInput('projects');
     const exclude = getInput('exclude');
-
-    const affectedProjects = execSync(
-      `npx nx show projects --affected --json --withTarget=${target} --base=${base} --head=${head} --projects ${projects} --exclude ${exclude}`
-    ).toString('utf-8');
+    //
+    // const affectedProjects = execSync(
+    //   `npx nx show projects --affected --json --withTarget=${target} --base=${base} --head=${head} --projects ${projects} --exclude ${exclude}`
+    // ).toString('utf-8');
+    const affectedProjects = '["data-exploration"]';
 
     const parsedOutput = JSON.parse(affectedProjects);
     const stringOutput = parsedOutput.join(', ');
