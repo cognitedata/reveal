@@ -11,7 +11,7 @@ const run = async () => {
     const projectConfig = JSON.parse(projectConfigRaw);
     info(`NX project config: ${projectConfig}`);
 
-    setOutput('config', projectConfig);
+    setOutput('config', projectConfigRaw);
   } catch (error) {
     if (error instanceof Error || typeof error === 'string') {
       setFailed(error);
