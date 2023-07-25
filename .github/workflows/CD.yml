@@ -80,8 +80,9 @@ jobs:
 
       - name: Print config
         run: |
-          echo ${{ fromJson(toJson(steps.project-config.outputs.config.CD.useGHActionsRelease)) }}
-          echo ${{ fromJson(toJson(steps.project-config.outputs.config)).CD.useGHActionsRelease }}
+          echo ${{ toJson(steps.project-config.outputs.config) }}
+          echo ${{ toJson(steps.project-config.outputs.config.CD) }}
+          echo ${{ toJson(steps.project-config.outputs.config.CD.useGHActionsRelease) }}
 
     outputs:
       affected-libs: ${{ steps.affected-libs.outputs.projects }}
@@ -136,10 +137,10 @@ jobs:
           path: node_modules
           key: cache-node-modules-${{ hashFiles('yarn.lock') }}
 
-#      - name: Build
-#        env:
-#          NODE_OPTIONS: '--max_old_space_size=8192'
-#        run: npx nx build ${{ matrix.project }} --configuration=production
+      #      - name: Build
+      #        env:
+      #          NODE_OPTIONS: '--max_old_space_size=8192'
+      #        run: npx nx build ${{ matrix.project }} --configuration=production
 
       - name: Get deploy environment
         id: deploy-environment
