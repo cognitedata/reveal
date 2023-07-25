@@ -72,6 +72,16 @@ jobs:
           isRelease: 'true'
           branchName: ${{ github.ref_name }}
 
+      - name: Get project config
+        id: project-config
+        uses: ./scripts/github-actions/nx-get-project-config
+        with:
+          project: 'data-exploration'
+
+      - name: Print config
+        run: |
+          echo ${{ fromJson(steps.project-config.outputs.config.CD.useGHActionsRelease) }}
+
     outputs:
       affected-libs: ${{ steps.affected-libs.outputs.projects }}
       affected-libs-string: ${{ steps.affected-libs.outputs.projectsString }}
