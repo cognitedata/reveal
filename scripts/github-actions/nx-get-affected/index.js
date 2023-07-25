@@ -24,11 +24,9 @@ const run = async () => {
       return;
     }
 
-    //
-    // const affectedProjects = execSync(
-    //   `npx nx show projects --affected --json --withTarget=${target} --base=${base} --head=${head} --projects ${projects} --exclude ${exclude}`
-    // ).toString('utf-8');
-    const affectedProjects = '["data-exploration"]';
+    const affectedProjects = execSync(
+      `npx nx show projects --affected --json --withTarget=${target} --base=${base} --head=${head} --projects ${projects} --exclude ${exclude}`
+    ).toString('utf-8');
 
     const parsedOutput = JSON.parse(affectedProjects);
     const stringOutput = parsedOutput.join(', ');
