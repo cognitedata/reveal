@@ -71,17 +71,13 @@ export function ConfigureCustomCalculation({
       <Modal
         icon="Function"
         size="small"
-        title="Create custom calculation"
+        title="Create simulation routine"
         visible={isModalOpen}
         hideFooter
         onCancel={() => {
           setIsModalOpen(false);
         }}
       >
-        <StyledH4>
-          <Icon type="Function" />
-          Create simulation routine
-        </StyledH4>
         <Formik
           initialValues={{
             calculationName: '',
