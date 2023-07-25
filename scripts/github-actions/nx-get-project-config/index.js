@@ -9,9 +9,6 @@ const run = async () => {
       `npx nx show project ${project}`
     ).toString('utf-8');
     const projectConfig = JSON.parse(projectConfigRaw);
-
-    console.log(projectConfigRaw);
-    console.log(projectConfig);
     info(`NX project config: ${projectConfigRaw}`);
 
     setOutput('config', projectConfig);

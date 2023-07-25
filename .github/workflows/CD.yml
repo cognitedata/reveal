@@ -79,10 +79,7 @@ jobs:
           project: 'data-exploration'
 
       - name: Print config
-        run: |
-          echo ${{ toJson(steps.project-config.outputs.config) }}
-          echo ${{ fromJson(toJson(steps.project-config.outputs.config)).CD }}
-          echo ${{ toJson(fromJson(toJson(steps.project-config.outputs.config)).CD) }}
+        run: echo ${{ steps.project-config.outputs.config['CD'].['useGHActionsRelease'] }}
 
     outputs:
       affected-libs: ${{ steps.affected-libs.outputs.projects }}
