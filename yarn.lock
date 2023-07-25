@@ -3135,10 +3135,10 @@
   dependencies:
     axios "0.25.0"
 
-"@cognite/llm-hub@^0.0.10":
-  version "0.0.10"
-  resolved "https://registry.yarnpkg.com/@cognite/llm-hub/-/llm-hub-0.0.10.tgz#c6dbf5f4bc81b57757f20c32cf33801b79887d70"
-  integrity sha512-wgcVikFKK7VRV6q8d9+7FvSI0Tt0bg78FUMaZIY7WOOwQVP/pdl/TrsLcnnQJuc6t/wsTWPmQYG0UeCxSxXSvA==
+"@cognite/llm-hub@^0.0.11":
+  version "0.0.11"
+  resolved "https://registry.yarnpkg.com/@cognite/llm-hub/-/llm-hub-0.0.11.tgz#065f4bee7ed94f6700427a2b29d7bf30aa1898c8"
+  integrity sha512-BXhiFepLbn/R/+iqU0rw0I5q2O3zMM9dkqolet8jPqyN8MAnCwPbfZzSHFCWIxUrBQ2ULxC0Lfgf3IWwFqQzRg==
 
 "@cognite/metrics@1.2.2":
   version "1.2.2"
