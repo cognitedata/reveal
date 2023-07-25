@@ -37,13 +37,15 @@ export const useNavigation = () => {
     (
       searchQuery: string = '',
       filters: ValueByDataType = {},
-      ignoreType?: boolean
+      ignoreType?: boolean,
+      enableAISearch: boolean = false
     ) => {
       const { type } = params;
 
       const queryParams = createSearchParams({
         searchQuery,
         filters,
+        aiSearch: String(enableAISearch),
       });
 
       navigate({

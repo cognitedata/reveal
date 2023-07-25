@@ -11,6 +11,7 @@
   "SEARCH_BAR_SEARCH_FOR": "Search for \"{{query}}\"",
   "SEARCH_BAR_SEARCH_FOR_IN_TYPE": "Search for \"{{query}}\" in {{type}}",
   "SEARCH_BAR_LIST_ALL": "List all {{type}}",
+  "SEARCH_BAR_SEARCH_IN_AI_FOR": "Ask CogPilot about \"{{query}}\"",
 
   "SEARCH_RESULTS_HEADER": "Search results from data in {{site}}",
   "SEARCH_CATEGORIES_HEADER": "Categories",
