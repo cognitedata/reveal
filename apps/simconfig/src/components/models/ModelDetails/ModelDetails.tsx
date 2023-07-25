@@ -151,26 +151,13 @@ export function ModelDetails({
       label: 'Calculation',
       key: 'calculations',
       content: (
-        <>
-          <SegmentedControl
-            css={{ marginBottom: '24px' }}
-            currentKey={showCalculations}
-            size="small"
-            onButtonClicked={setShowCalculations}
-          >
-            <SegmentedControl.Button key="configured">
-              Configured
-            </SegmentedControl.Button>
-            <SegmentedControl.Button key="not-configured">
-              Not configured
-            </SegmentedControl.Button>
-          </SegmentedControl>
+        <div style={{ position: 'relative' }}>
           <CalculationList
             modelName={modelName}
             showConfigured={showCalculations === 'configured'}
             simulator={simulator}
           />
-        </>
+        </div>
       ),
     });
   }
@@ -317,6 +304,7 @@ export function ModelDetails({
           )}
         </div>
       </div>
+
       <Tabs
         activeKey={selectedTab}
         // tabBarExtraContent={extraContent[selectedTab] ?? null}
@@ -341,10 +329,28 @@ export function ModelDetails({
             label={tab.label}
             tabKey={tab.key}
           >
+            {selectedTab === 'calculations' && (
+              <SegmentedControlWrapper>
+                <SegmentedControl
+                  css={{ marginBottom: '24px' }}
+                  currentKey={showCalculations}
+                  size="small"
+                  onButtonClicked={setShowCalculations}
+                >
+                  <SegmentedControl.Button key="configured">
+                    Configured
+                  </SegmentedControl.Button>
+                  <SegmentedControl.Button key="not-configured">
+                    Not configured
+                  </SegmentedControl.Button>
+                </SegmentedControl>
+              </SegmentedControlWrapper>
+            )}
             <div style={{ padding: '24px 24px 24px 0' }}>{tab.content}</div>
           </Tabs.Tab>
         ))}
       </Tabs>
+
       <DeleteConfirmModal
         handleModalConfirm={handleDeleteModelConfirm}
         isModelOpen={shouldShowDeleteConfirmModal}
@@ -441,4 +447,11 @@ const ModelDetailsContainer = styled.div`
   .tippy-box[data-theme='cogs'] .tippy-arrow {
     color: var(--cogs-greyscale-grey9);
   }
+`;
+
+const SegmentedControlWrapper = styled.div`
+  position: absolute;
+  right: 1em;
+  top: 10em;
+  z-index: 10;
 `;
