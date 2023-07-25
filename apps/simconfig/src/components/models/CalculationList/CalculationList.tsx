@@ -52,6 +52,7 @@ import { STATUS_POLLING_INTERVAL } from './constants';
 import DeleteConfirmModal from './DeleteConfirmModal';
 
 import type { AppLocationGenerics } from 'routes';
+import RuleMonitoring from 'assets/RuleMonitoring';
 
 type TriggeredRunInfo = Record<string, number>;
 interface CalculationListProps {
@@ -304,7 +305,10 @@ export function CalculationList({
 
     return !configuredCalculations.length ? (
       <GraphicContainer>
-        <Illustrations.Solo type="EmptyStateFile" /> No configured calculations
+        <IconWrapper>
+          <RuleMonitoring />
+        </IconWrapper>
+        No configured calculations
       </GraphicContainer>
     ) : (
       <ConfiguredCalculationList>
@@ -614,4 +618,10 @@ const NonConfiguredCalculationList = styled.div`
   grid-template-columns: 100px auto;
   grid-gap: 12px;
   align-items: center;
+`;
+
+const IconWrapper = styled.div`
+  width: 120px;
+  height: 120px;
+  margin-bottom: 10px;
 `;
