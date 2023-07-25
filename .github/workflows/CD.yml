@@ -81,8 +81,8 @@ jobs:
       - name: Print config
         run: |
           echo ${{ toJson(steps.project-config.outputs.config) }}
-          echo ${{ toJson(steps.project-config.outputs.config.CD) }}
-          echo ${{ toJson(steps.project-config.outputs.config.CD.useGHActionsRelease) }}
+          echo ${{ fromJson(toJson(steps.project-config.outputs.config)).CD }}
+          echo ${{ toJson(fromJson(toJson(steps.project-config.outputs.config)).CD) }}
 
     outputs:
       affected-libs: ${{ steps.affected-libs.outputs.projects }}
