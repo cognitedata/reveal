@@ -22,7 +22,8 @@ static final String[] APPLICATIONS = [
   'charts',
   'entity-matching',
   'access-management',
-  'business-shell'
+  'business-shell',
+  'notebook'
 ]
 
 /*
@@ -59,7 +60,8 @@ static final Map<String, String> FIREBASE_APP_SITES = [
   'charts': 'charts',
   'entity-matching': 'entity-matching',
   'access-management': 'access-management',
-  'business-shell': 'flexible-data-explorer' //The naming needs to be fixed at some later point
+  'business-shell': 'flexible-data-explorer', //The naming needs to be fixed at some later point
+  'notebook': 'notebook'
 ]
 
 static final Map<String, String> PREVIEW_PACKAGE_NAMES = [
@@ -82,7 +84,8 @@ static final Map<String, String> PREVIEW_PACKAGE_NAMES = [
   'charts': '@cognite/cdf-charts-ui',
   'entity-matching': '@cognite/cdf-ui-entity-matching',
   'access-management': '@cognite/cdf-access-management',
-  'business-shell': '@cognite/business-shell'
+  'business-shell': '@cognite/business-shell',
+  'notebook': '@cognite/cdf-ui-notebook'
 ]
 
 // Replace this with your app's ID on https://sentry.io/ -- if you do not have
@@ -160,7 +163,8 @@ static final Map<String, String> VERSIONING_STRATEGY = [
   'entity-matching': 'single-branch',
   'functions-ui' : 'single-branch',
   'access-management': 'multi-branch',
-  'business-shell': 'single-branch'
+  'business-shell': 'single-branch',
+  'notebook': 'single-branch'
 ]
 
 // The config of which apps have i18n strings that need to be synced to and pulled from locize.io
