@@ -145,7 +145,6 @@ jobs:
 
       - name: Print config
         run: |
-          echo ${{ fromJson(steps.project-config.outputs.config.CD).useGHActionsRelease}}
           echo ${{ steps.project-config.outputs.config.CD.useGHActionsRelease }}
 
 #      - uses: FirebaseExtended/action-hosting-deploy@v0
