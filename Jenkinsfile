@@ -92,7 +92,7 @@ static final Map<String, String> PREVIEW_PACKAGE_NAMES = [
 ]
 
 // Replace this with your app's ID on https://sentry.io/ -- if you do not have
-// one (or do not have access to Sentry), stop by #frontend to ask for help. :)
+// one (or do not have access to Sentry), stop by #frontend to ask for help. 
 static final Map<String, String> SENTRY_PROJECT_NAMES = [
   'platypus': "platypus",
   'data-exploration': "data-explorer",
@@ -257,6 +257,8 @@ def shouldDeployPackage(String packageName, Map<String, String> NPM_PACKAGES, bo
     return false;
   }
 
+  sh(script: "./node_modules/.bin/nx build ${packageName}", returnStdout: true); 
+
   def packageJson = "${NPM_PACKAGES[packageName]}/package.json";
 
   def packageJsonString = sh(
@@ -333,7 +335,8 @@ def pods = { body ->
 pods {
   app.safeRun(
     slackChannel: SLACK_CHANNEL,
-    logErrors: isMaster || isRelease
+    logErrors: isMaster || isRelease,
+    timeout: 150
   ) {
     dir('main') {
       stage('Checkout code') {
