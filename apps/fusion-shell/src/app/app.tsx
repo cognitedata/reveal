@@ -11,9 +11,9 @@ import styled from 'styled-components';
 
 import {
   SubAppProvider,
+  createLink,
   getCluster,
   getProject,
-  isUsingUnifiedSignin,
 } from '@cognite/cdf-utilities';
 
 import AllApps from '../components/AllApps';
@@ -50,7 +50,6 @@ const SubAppPathElement = ({ isReleaseBanner }: SubAppPathElementProps) => {
 export function App() {
   const project = getProject();
   const cluster = getCluster();
-  const routerBasename = isUsingUnifiedSignin() ? `/cdf/:project` : '/';
 
   const [isReleaseBanner, setReleaseBanner] = useState<string>(
     () => localStorage.getItem(`isCDFReleaseBanner`) || 'true'
@@ -64,7 +63,7 @@ export function App() {
         project,
       }}
     >
-      <BrowserRouter>
+      <BrowserRouter basename="/cdf">
         <Navigation
           isReleaseBanner={isReleaseBanner}
           setReleaseBanner={setReleaseBanner}
@@ -74,19 +73,18 @@ export function App() {
           <Routes>
             <Route
               path="/"
-              element={<Navigate to={routerBasename} replace={true} />}
+              element={
+                <Navigate to={createLink(`/${getProject()}`)} replace={true} />
+              }
             />
             <Route
-              path={routerBasename}
+              path="/:project"
               element={<LandingPage isReleaseBanner={isReleaseBanner} />}
             />
-            <Route path={`${routerBasename}/apps`} element={<AllApps />} />
+            <Route path="/:project/apps" element={<AllApps />} />
+            <Route path="/:project/profile" element={<UserProfilePage />} />
             <Route
-              path={`${routerBasename}/profile`}
-              element={<UserProfilePage />}
-            />
-            <Route
-              path={`${routerBasename}/:subAppPath/*`}
+              path="/:project/:subAppPath/*"
               element={<SubAppPathElement isReleaseBanner={isReleaseBanner} />}
             />
           </Routes>
