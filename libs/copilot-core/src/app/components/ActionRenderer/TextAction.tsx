@@ -56,6 +56,23 @@ export const TextAction = () => {
     });
   }, [sdk, bot, feature]);
 
+  const handleInputChange = () => {
+    const textarea = ref.current;
+    if (textarea) {
+      // Calculate the number of rows (lines) in the textarea based on the content
+      const rows = textarea?.value.split('\n').length || 1;
+
+      // Set a maximum of 7 lines (you can adjust this number as needed)
+      const maxRows = 7;
+
+      // Calculate the maximum height based on the number of rows
+      const maxHeight = `${Math.min(rows, maxRows) * 1.5}em`; // Adjust the line height as needed
+
+      // Set the maximum height to the textarea
+      textarea.style.height = maxHeight;
+    }
+  };
+
   return (
     <Wrapper
       gap={8}
@@ -70,12 +87,15 @@ export const TextAction = () => {
           ref={ref}
           value={value}
           disabled={!!waiting}
-          onChange={(e) => setValue(e.target.value)}
+          onChange={(e) => {
+            handleInputChange();
+            setValue(e.target.value);
+          }}
           placeholder="Ask CogPilot anything..."
+          rows={1}
           style={{
-            height: 56,
-            padding: 16,
             width: '100%',
+            padding: 0,
             margin: 0,
           }}
           onKeyDown={(e) => {
@@ -116,8 +136,16 @@ const Wrapper = styled(Flex)`
 
   .cogs-textarea {
     width: 100%;
+    padding: 16px;
+    border: 2px solid var(--cogs-border--interactive--default);
+    border-radius: var(--cogs-border-radius--default);
+    outline: none;
+    resize: none;
     textarea {
+      border-radius: 0;
+      border: none;
       color: black !important;
+      padding-right: 28px;
     }
   }
 `;
