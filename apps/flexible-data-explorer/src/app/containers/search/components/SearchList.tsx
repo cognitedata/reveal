@@ -2,7 +2,10 @@ import React, { PropsWithChildren } from 'react';
 
 import styled, { css } from 'styled-components';
 
-import { Body, Chip, Detail, IconType } from '@cognite/cogs.js';
+import { Body, Detail, IconType } from '@cognite/cogs.js';
+
+import { ExperimentalIndicator } from './ExperimentalIndicator';
+import { SearchListItemIcon } from './SearchListItemIcon';
 
 export const SearchList = ({
   children,
@@ -14,15 +17,25 @@ export const SearchList = ({
 interface Props {
   title: string;
   subtitle?: string;
-  icon?: IconType;
+  icon?: IconType | 'AiSearch';
   description?: string;
   onClick?: () => void;
   focused?: boolean;
+  experimental?: boolean;
   hideEnterIcon?: boolean;
 }
 export const SearchListItem = React.forwardRef<HTMLDivElement, Props>(
   (
-    { title, subtitle, icon, description, onClick, focused, hideEnterIcon },
+    {
+      title,
+      subtitle,
+      icon,
+      description,
+      onClick,
+      focused,
+      experimental,
+      hideEnterIcon,
+    },
     ref
   ) => {
     return (
@@ -35,12 +48,7 @@ export const SearchListItem = React.forwardRef<HTMLDivElement, Props>(
       >
         <Content>
           <InfoContent>
-            <Chip
-              icon={icon}
-              // NOTE: ugly hack for now
-              type={icon === 'List' ? 'success' : 'neutral'}
-              size="small"
-            />
+            <SearchListItemIcon icon={icon} />
             <InfoTextContent>
               <Detail muted>{subtitle}</Detail>
               <Body strong level={4}>
@@ -53,6 +61,7 @@ export const SearchListItem = React.forwardRef<HTMLDivElement, Props>(
               {description}
             </DescriptionText>
           </DescriptionContent>
+          {experimental && <ExperimentalIndicator />}
           {!hideEnterIcon && <EnterIcon />}
         </Content>
       </Container>

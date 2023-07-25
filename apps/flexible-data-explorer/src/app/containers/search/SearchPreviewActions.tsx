@@ -12,7 +12,8 @@ import { useFDM } from '../../providers/FDMProvider';
 import { SearchList } from './components/SearchList';
 
 enum SearchActions {
-  SEARCH_IN_TYPE = -2,
+  SEARCH_IN_TYPE = -3,
+  SEARCH_IN_AI = -2,
   SEARCH_IN_ALL = -1,
 }
 
@@ -116,6 +117,17 @@ export const SearchPreviewActions = ({
           navigate.toSearchPage(query, filterParams, true);
           onSelectionClick?.();
         }}
+      />
+
+      <SearchList.Item
+        focused={active === SearchActions.SEARCH_IN_AI}
+        title={t('SEARCH_BAR_SEARCH_IN_AI_FOR', { query })}
+        icon="AiSearch"
+        onClick={() => {
+          navigate.toSearchPage(query, filterParams, true, true);
+          onSelectionClick?.();
+        }}
+        experimental
       />
 
       {typesResults.map((item, index) => (
