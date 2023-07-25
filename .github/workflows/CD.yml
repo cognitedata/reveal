@@ -145,7 +145,6 @@ jobs:
           project: ${{ matrix.project }}
 
       - name: Build
-        if: ${{
         env:
           NODE_OPTIONS: '--max_old_space_size=8192'
         run: npx nx build ${{ matrix.project }} --configuration=production
