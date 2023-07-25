@@ -144,7 +144,7 @@ jobs:
           project: ${{ matrix.project }}
 
       - name: Print config
-        run: echo ${{steps.project-config.outputs.config.CD}}
+        run: echo ${{steps.project-config.outputs.config}}
 
 #      - uses: FirebaseExtended/action-hosting-deploy@v0
 #        with:
