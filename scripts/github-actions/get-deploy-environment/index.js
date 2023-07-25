@@ -15,7 +15,7 @@ const run = async () => {
     const isPreviewBranch = branch.startsWith('release-preview-');
     const isReleaseBranch = !isPreviewBranch && branch.startsWith('release-');
     const isUsingSingleBranchStrategy =
-      projectConfig.releaseStrategy === 'single-branch';
+      projectConfig.CD.releaseStrategy === 'single-branch';
 
     const releaseToProd = isUsingSingleBranchStrategy || isReleaseBranch;
 

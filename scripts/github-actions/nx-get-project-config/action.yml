@@ -1,0 +1,8 @@
+name: 'Get project config '
+description: 'Get project config from project.json'
+runs:
+  using: node16
+  main: index.js
+inputs:
+  project:
+    description: 'Project name'

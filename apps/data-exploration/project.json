@@ -100,6 +100,11 @@
   },
   "implicitDependencies": ["data-exploration-e2e"],
   "tags": [],
-  "releaseStrategy": "multi-branch",
-  "createPreviewLink": true
+  "CI": {
+    "createPreviewLink": true
+  },
+  "CD": {
+    "releaseStrategy": "multi-branch",
+    "useGHActionsRelease": true
+  }
 }
