@@ -145,7 +145,7 @@ jobs:
 
       - name: Print config
         run: |
-          echo ${{ fromJson(steps.project-config.outputs.config.CD.useGHActionsRelease)}}
+          echo ${{ fromJson(toJson(steps.project-config.outputs.config)).CD.useGHActionsRelease}}
 #      - uses: FirebaseExtended/action-hosting-deploy@v0
 #        with:
 #          repoToken: '${{ secrets.GITHUB_TOKEN }}'
