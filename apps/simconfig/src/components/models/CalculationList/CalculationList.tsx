@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Link, useMatch, useNavigate } from 'react-location';
 import { useSelector } from 'react-redux';
 
+import RuleMonitoring from 'assets/RuleMonitoring.svg';
 import { parseISO } from 'date-fns';
 import styled from 'styled-components/macro';
 
@@ -52,7 +53,6 @@ import { STATUS_POLLING_INTERVAL } from './constants';
 import DeleteConfirmModal from './DeleteConfirmModal';
 
 import type { AppLocationGenerics } from 'routes';
-import RuleMonitoring from 'assets/RuleMonitoring';
 
 type TriggeredRunInfo = Record<string, number>;
 interface CalculationListProps {
@@ -306,7 +306,7 @@ export function CalculationList({
     return !configuredCalculations.length ? (
       <GraphicContainer>
         <IconWrapper>
-          <RuleMonitoring />
+          <img alt="" src={RuleMonitoring} />
         </IconWrapper>
         No configured calculations
       </GraphicContainer>
