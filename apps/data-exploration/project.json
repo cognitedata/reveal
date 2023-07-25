@@ -105,6 +105,6 @@
   },
   "CD": {
     "releaseStrategy": "multi-branch",
-    "useGHActionsRelease": true
+    "useGHActionsRelease": false
   }
 }
