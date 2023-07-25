@@ -1,0 +1,59 @@
+name: Deploy CDF UI host to Staging
+on:
+  push:
+    branches:
+      - master
+
+env:
+  NODE_OPTIONS: '--max_old_space_size=4096'
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'yarn'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Cache node modules
+        id: cache-node-modules
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: cache-node-modules-${{ hashFiles('yarn.lock') }}
+          restore-keys: cache-node-modules-
+
+      - name: Install & build 🔧
+        run: yarn --network-timeout 1000000 --frozen-lockfile && npx nx build fusion-shell --configuration=staging
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_READONLY_TOKEN }}
+
+      # Deploying to staging and prod on master by default for now
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_HOSTING_DEPLOY_SA }}'
+          channelId: live
+          projectId: fusion-217032465111-staging
+          target: cdf-ui-host-staging
+          entryPoint: './dist/apps/fusion-shell'
+
+      # - name: Deploy Cloud Functions
+      #   working-directory: './dist/apps/fusion-shell'
+      #   run: npx firebase-tools@latest deploy --only functions --project fusion-217032465111-staging --json
+      #   env:
+      #     FIREBASE_TOKEN: ${{ secrets.FIREBASE_HOSTING_DEPLOY_SA }}
+
+
+      # - uses: w9jds/firebase-action@master
+      #   with:
+      #     args: deploy --only functions
+      #     entryPoint: './dist/apps/fusion-shell'
+      #   env:
+      #     FIREBASE_TOKEN: '${{ secrets.FIREBASE_HOSTING_DEPLOY_SA }}'
+      #     PROJECT_ID: fusion-217032465111-staging
+      #     PROJECT_PATH: './dist/apps/fusion-shell'

@@ -1,3 +1,8 @@
+import { generateRedirectUri } from '@cognite/auth-react';
+import {
+  clearLoginHints,
+  clearUrlLoginHints,
+} from '@cognite/auth-react/src/lib/base';
 import { IDPType } from '@cognite/login-utils';
 import { ClientOptions, CogniteClient } from '@cognite/sdk';
 
@@ -148,7 +153,13 @@ export function loginAndAuthIfNeeded(): Promise<void> {
       // eslint-disable-next-line
       .then(() => {})
       .catch(() => {
-        window.location.href = '/';
+        if (isUsingUnifiedSignin()) {
+          clearUrlLoginHints();
+          clearLoginHints();
+          window.location.href = generateRedirectUri();
+        } else {
+          window.location.href = '/';
+        }
       });
   }
   return authInit;

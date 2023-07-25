@@ -6,24 +6,6 @@ import type {
   queryResponse,
 } from './types';
 
-// Get asset document download urls from asset id
-export const getAssetDocuments = async (
-  assetId: number,
-  sdk: CogniteClient
-) => {
-  const files_filter = await sdk.files.list({
-    filter: { mimeType: 'application/pdf', assetIds: [assetId] },
-  });
-
-  const files: string[] = [];
-  files_filter.items.forEach(async (file) => {
-    const f = await getDownloadUrlFromId(file.id, sdk);
-    files.push(f);
-  });
-
-  return files;
-};
-
 // Convert external id to id
 export const getAssetByExternalId = async (
   externalId: string,
@@ -94,8 +76,6 @@ export const retrieveContext = async (
   return response.data as queryResponse;
 };
 
-// Get download url from file id
-const getDownloadUrlFromId = async (documentId: number, sdk: CogniteClient) => {
-  const f = await sdk.files.getDownloadUrls([{ id: documentId }]);
-  return f[0].downloadUrl;
+export const retrieveAsset = async (externalId: string, sdk: CogniteClient) => {
+  return await sdk.assets.retrieve([{ externalId: externalId }]);
 };

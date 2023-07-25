@@ -1,3 +1,6 @@
+import { generateRedirectUri } from '@cognite/auth-react';
+import { isUsingUnifiedSignin } from '@cognite/cdf-utilities';
+
 import { ProjectList, TokenInspect } from '../types';
 
 export const redirectToApp = (
@@ -18,10 +21,14 @@ export const redirectToApp = (
 };
 
 export const redirectToLogin = () => {
-  const path = encodeURIComponent(
-    window.location.pathname.split('/').slice(2).join('/')
-  );
-  window.location.href = path ? `/?ref=${path}` : '/';
+  if (isUsingUnifiedSignin()) {
+    window.location.href = generateRedirectUri();
+  } else {
+    const path = encodeURIComponent(
+      window.location.pathname.split('/').slice(2).join('/')
+    );
+    window.location.href = path ? `/?ref=${path}` : '/';
+  }
 };
 
 export const parseEnvFromCluster = (cluster: string) => {

@@ -8,7 +8,8 @@ import { sendFromCopilotEvent, sendToCopilotEvent } from './utils';
 export type CopilotSupportedFeatureType =
   | 'Streamlit'
   | 'IndustryCanvas'
-  | 'Infield';
+  | 'Infield'
+  | 'Unsupported';
 
 type DefaultMessage = {
   key?: number;
@@ -127,8 +128,9 @@ export type CopilotEvents = {
     // get the external asset id from infield
     GET_EXTERNAL_ASSETID: undefined;
     // send documentId to infield
-    PUSH_DOC_ID: {
-      content: string;
+    PUSH_DOC_ID_AND_PAGE: {
+      docId: string;
+      page: string;
     };
     // send code to streamlit
     GQL_QUERY: {
@@ -137,6 +139,7 @@ export type CopilotEvents = {
       dataModel: { externalId: string; space: string; version: string };
     };
     GET_LANGUAGE: undefined;
+    GET_ACTIVITIES: undefined;
   };
   ToCopilot: {
     // only the last message will be processed
@@ -157,11 +160,16 @@ export type CopilotEvents = {
       content: string;
     };
     // get response from infield
-    PUSH_DOC_ID: undefined;
+    PUSH_DOC_ID_AND_PAGE: undefined;
 
     // get the language of the page from infield
     GET_LANGUAGE: {
       content: string;
+    };
+
+    // get the activities from infield
+    GET_ACTIVITIES: {
+      content: any;
     };
   };
 };

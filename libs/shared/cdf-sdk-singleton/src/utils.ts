@@ -1,5 +1,6 @@
 import queryString from 'query-string';
 
+import { readLoginHints } from '@cognite/auth-react/src/lib/base';
 import {
   getSelectedIdpDetails,
   IDPResponse,
@@ -9,12 +10,22 @@ import { CogniteClient } from '@cognite/sdk';
 
 import { isUsingUnifiedSignin } from './unified-signin';
 
-export const getQueryParameter = (parameterKey: string) => {
+const loginHints = readLoginHints();
+
+export const getQueryParameter = (parameterKey: string): string => {
   const parameters = queryString.parse(window.location.search) ?? {};
-  return parameters[parameterKey] ?? '';
+  return (parameters[parameterKey] ?? '') as string;
 };
 
-export const getProject = () => {
+export const getProject = (): string => {
+  if (isUsingUnifiedSignin()) {
+    const project = getQueryParameter('project') || loginHints?.project;
+    // If we're able to find the project return it, otherwise default to the previous behaviour.
+    if (project) {
+      return project;
+    }
+  }
+
   // if unified signin, the url is apps.cognite.com/cdf/project
   // otherwise is fusion.cognite.com/project
   // when splitting, for fusion index is 1, for /cdf is 2
@@ -26,7 +37,7 @@ export const getProject = () => {
 };
 
 export const getCluster = () => {
-  const cluster = getQueryParameter('cluster');
+  const cluster = getQueryParameter('cluster') || loginHints?.cluster;
   return Array.isArray(cluster) ? cluster[0] : cluster;
 };
 

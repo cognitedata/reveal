@@ -2780,10 +2780,10 @@
   dependencies:
     lodash "^4.17.20"
 
-"@cognite/auth-react@^0.0.27-beta":
-  version "0.0.27-beta"
-  resolved "https://registry.yarnpkg.com/@cognite/auth-react/-/auth-react-0.0.27-beta.tgz#ac0f4948ebf16b760c1f47993dae2bc684d832f9"
-  integrity sha512-l004vzYioy9qIFqljjS8X0b84mb/9fgZFI0HxEMRT8CYlc6H0rRXYGw6o5BlUfR9iVur/xgCuFVsD2dUWXNDjA==
+"@cognite/auth-react@^0.0.28-beta":
+  version "0.0.28-beta"
+  resolved "https://registry.yarnpkg.com/@cognite/auth-react/-/auth-react-0.0.28-beta.tgz#0e48960a654612ad853a97d8bf95e3df3022f84f"
+  integrity sha512-fFqyQoeM59CgDu+5Sy6l782q+rgWTW+AfLaoWHB0/+0Aqu1jBVpSnIS9c4WU2IflLVphZzQ/y+xmh4na9r9Tcg==
   dependencies:
     "@auth0/auth0-spa-js" "2.0.4"
     "@azure/msal-browser" "2.35.0"
@@ -3135,10 +3135,10 @@
   dependencies:
     axios "0.25.0"
 
-"@cognite/llm-hub@^0.0.10":
-  version "0.0.10"
-  resolved "https://registry.yarnpkg.com/@cognite/llm-hub/-/llm-hub-0.0.10.tgz#c6dbf5f4bc81b57757f20c32cf33801b79887d70"
-  integrity sha512-wgcVikFKK7VRV6q8d9+7FvSI0Tt0bg78FUMaZIY7WOOwQVP/pdl/TrsLcnnQJuc6t/wsTWPmQYG0UeCxSxXSvA==
+"@cognite/llm-hub@^0.0.11":
+  version "0.0.11"
+  resolved "https://registry.yarnpkg.com/@cognite/llm-hub/-/llm-hub-0.0.11.tgz#065f4bee7ed94f6700427a2b29d7bf30aa1898c8"
+  integrity sha512-BXhiFepLbn/R/+iqU0rw0I5q2O3zMM9dkqolet8jPqyN8MAnCwPbfZzSHFCWIxUrBQ2ULxC0Lfgf3IWwFqQzRg==
 
 "@cognite/metrics@1.2.2":
   version "1.2.2"

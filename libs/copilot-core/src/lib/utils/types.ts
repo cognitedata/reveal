@@ -24,6 +24,7 @@ export type queryResponse = {
       id: string;
       text: string;
       metadata: {
+        fileId: string;
         namespace: string;
         page: string;
         source: string;
@@ -36,6 +37,7 @@ export type queryResponse = {
 };
 
 export type sourceResponse = {
+  fileId: string;
   source: string;
   page: string;
   text: string;
