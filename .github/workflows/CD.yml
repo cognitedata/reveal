@@ -125,10 +125,10 @@ jobs:
           path: node_modules
           key: cache-node-modules-${{ hashFiles('yarn.lock') }}
 
-      #      - name: Build
-      #        env:
-      #          NODE_OPTIONS: '--max_old_space_size=8192'
-      #        run: npx nx build ${{ matrix.project }} --configuration=production
+#      - name: Build
+#        env:
+#          NODE_OPTIONS: '--max_old_space_size=8192'
+#        run: npx nx build ${{ matrix.project }} --configuration=production
 
       - name: Get deploy environment
         id: deploy-environment
@@ -145,7 +145,7 @@ jobs:
 
       - name: Print config
         run: |
-          echo ${{ fromJson(toJson(steps.project-config.outputs.config)).CD.useGHActionsRelease}}
+          echo ${{ fromJson(steps.project-config.outputs.config.CD).useGHActionsRelease}}
 #      - uses: FirebaseExtended/action-hosting-deploy@v0
 #        with:
 #          repoToken: '${{ secrets.GITHUB_TOKEN }}'
