@@ -4,14 +4,17 @@ const { setFailed, setOutput, getInput, info } = require('@actions/core');
 
 const run = async () => {
   try {
-    const project = getInput('project');
+    const project = getInput('project') || 'data-exploration';
     const projectConfigRaw = execSync(
       `npx nx show project ${project}`
     ).toString('utf-8');
     const projectConfig = JSON.parse(projectConfigRaw);
-    info(`NX project config: ${projectConfig}`);
 
-    setOutput('config', projectConfigRaw);
+    console.log(projectConfigRaw);
+    console.log(projectConfig);
+    info(`NX project config: ${projectConfigRaw}`);
+
+    setOutput('config', projectConfig);
   } catch (error) {
     if (error instanceof Error || typeof error === 'string') {
       setFailed(error);
