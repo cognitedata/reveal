@@ -7,22 +7,12 @@ import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { type FdmAssetMappingsConfig, type ThreeDModelMappings } from './types';
 import { DEFAULT_QUERY_STALE_TIME } from '../utilities/constants';
 
-const DefaultFdmConfig: FdmAssetMappingsConfig = {
-  source: {
-    space: 'fdm-3d-test-savelii',
-    version: '1',
-    type: 'view',
-    externalId: 'CDF_3D_Connection_Data'
-  },
-  assetFdmSpace: 'bark-corporation'
-};
-
 /**
  * This hook fetches the list of FDM asset mappings for the given external ids
  */
 export const useFdmAssetMappings = (
   fdmAssetExternalIds: CogniteExternalId[],
-  fdmConfig: FdmAssetMappingsConfig = DefaultFdmConfig
+  fdmConfig: FdmAssetMappingsConfig
 ): UseQueryResult<ThreeDModelMappings[]> => {
   const fdmSdk = useFdmSdk();
 
