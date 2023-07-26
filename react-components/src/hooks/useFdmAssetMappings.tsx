@@ -46,7 +46,7 @@ export const useFdmAssetMappings = (
           ];
 
         const modelId = Number.parseInt(instance.endNode.externalId.slice(9));
-        const revisionId = mappingProperty.RevisionId;
+        const revisionId = mappingProperty.revisionId;
 
         const isAdded = modelMappingsTemp.some(
           (mapping) => mapping.modelId === modelId && mapping.revisionId === revisionId
@@ -57,7 +57,7 @@ export const useFdmAssetMappings = (
             modelId,
             revisionId,
             mappings: [
-              { nodeId: mappingProperty.NodeId, externalId: instance.startNode.externalId }
+              { nodeId: mappingProperty.nodeId, externalId: instance.startNode.externalId }
             ]
           });
         } else {
@@ -66,7 +66,7 @@ export const useFdmAssetMappings = (
           );
 
           modelMapping?.mappings.push({
-            nodeId: mappingProperty.NodeId,
+            nodeId: mappingProperty.nodeId,
             externalId: instance.startNode.externalId
           });
         }
