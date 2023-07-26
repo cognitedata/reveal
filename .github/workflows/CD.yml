@@ -1,9 +1,9 @@
 name: NX CD pipeline
 on:
   push:
-#    branches:
-#      - master
-#      - release*
+    branches:
+      - master
+      - release*
 
 env:
   NX_CLOUD_ACCESS_TOKEN: ${{secrets.NX_CLOUD_ACCESS_TOKEN}}
