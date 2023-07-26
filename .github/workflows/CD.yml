@@ -1,9 +1,9 @@
 name: NX CD pipeline
 on:
   push:
-    branches:
-      - master
-      - release*
+#    branches:
+#      - master
+#      - release*
 
 env:
   NX_CLOUD_ACCESS_TOKEN: ${{secrets.NX_CLOUD_ACCESS_TOKEN}}
@@ -143,7 +143,8 @@ jobs:
           NODE_OPTIONS: '--max_old_space_size=8192'
         run: npx nx build ${{ matrix.project }} --configuration=production
 
-      - uses: FirebaseExtended/action-hosting-deploy@v0
+      - name: Deploy to firebase hosting (${{ steps.deploy-environment.outputs.environment }})
+        uses: FirebaseExtended/action-hosting-deploy@v0
         if: ${{ fromJson(steps.project-config.outputs.config).CD.useGHActionsRelease }}
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
@@ -152,6 +153,7 @@ jobs:
           projectId: fbhosting-217032465111-${{ steps.deploy-environment.outputs.environment }}
           target: cognite-${{ matrix.project }}-${{ steps.deploy-environment.outputs.environment }}
           entryPoint: dist/apps/${{ matrix.project }}/
+
   build-shell:
     name: 'Build shell apps'
     runs-on: ubuntu-20.04
@@ -174,10 +176,35 @@ jobs:
           path: node_modules
           key: cache-node-modules-${{ hashFiles('yarn.lock') }}
 
+      - name: Get deploy environment
+        id: deploy-environment
+        uses: ./scripts/github-actions/get-deploy-environment
+        with:
+          project: ${{ matrix.project }}
+          branch: ${{ github.ref_name }}
+
+      - name: Get project config
+        id: project-config
+        uses: ./scripts/github-actions/nx-get-project-config
+        with:
+          project: ${{ matrix.project }}
+
       - name: Build
         env:
           NODE_OPTIONS: '--max_old_space_size=8192'
         run: npx nx build ${{ matrix.project }} --configuration=production
+
+      - name: Deploy to firebase hosting (${{ steps.deploy-environment.outputs.environment }})
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        if: ${{ fromJson(steps.project-config.outputs.config).CD.useGHActionsRelease }}
+        with:
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_HOSTING_DEPLOY_SA }}'
+          channelId: live
+          projectId: fbhosting-217032465111-${{ steps.deploy-environment.outputs.environment }}
+          target: cognite-${{ matrix.project }}-${{ steps.deploy-environment.outputs.environment }}
+          entryPoint: dist/apps/${{ matrix.project }}/
+
   ci-passed:
     # see https://github.community/t/status-check-for-a-matrix-jobs/127354/7
     name: CI Passed
