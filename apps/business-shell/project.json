@@ -98,5 +98,9 @@
       }
     }
   },
-  "tags": []
+  "tags": [],
+  "pipeline": {
+    "releaseStrategy": "single-branch",
+    "useGHActionsRelease": true
+  }
 }
