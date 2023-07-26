@@ -7,8 +7,8 @@ import { FlagProvider } from '@cognite/react-feature-flags';
 
 import App from './app/app';
 import { AuthContainer } from './AuthContainer';
-import { translations } from './common/i18n';
-import GlobalStyle from './styles/GlobalStyle';
+import { translations } from './i18n';
+import GlobalStyle from './app/styles/GlobalStyle';
 
 const queryClient = new QueryClient({
   defaultOptions: {

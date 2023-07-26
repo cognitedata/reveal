@@ -5,7 +5,7 @@
   "projectType": "application",
   "targets": {
     "internal-build": {
-      "executor": "@nrwl/webpack:webpack",
+      "executor": "@nx/webpack:webpack",
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
@@ -119,6 +119,10 @@
             {
               "replace": "apps/fusion-shell/src/environments/environment.ts",
               "with": "apps/fusion-shell/src/environments/unified-signin/preview/environment.preview.ts"
+            },
+            {
+              "replace": "apps/fusion-shell/src/app/DynamicRoutes.tsx",
+              "with": "apps/fusion-shell/src/environments/unified-signin/preview/DynamicRoutes.tsx"
             }
           ]
         },
@@ -132,7 +136,7 @@
           "fileReplacements": [
             {
               "replace": "apps/fusion-shell/src/environments/environment.ts",
-              "with": "apps/fusion-shell/src/environments/unified-signin/environment.prod.ts"
+              "with": "apps/fusion-shell/src/environments/unified-signin/production/environment.prod.ts"
             }
           ]
         },
@@ -173,6 +177,11 @@
             "forwardAllArgs": true
           },
           {
+            "command": "nx run cdf-route-tracker:build-single-spa",
+            "description": "Building cdf-route-tracker",
+            "forwardAllArgs": true
+          },
+          {
             "command": "./apps/fusion-shell/tools/scripts/fusion-post-build.sh {args.configuration} {args.build_mode}",
             "description": "Running post build script",
             "forwardAllArgs": true
@@ -184,7 +193,7 @@
         "^internal-build",
         {
           "projects": ["cdf-route-tracker"],
-          "target": "build"
+          "target": "build-single-spa"
         },
         {
           "projects": ["cdf-sdk-singleton"],
@@ -225,7 +234,7 @@
         "buildTarget": "fusion-shell:build",
         "port": 8080,
         "ssl": true,
-        "allowedHosts": ".dev.fusion.cogniteapp.com,apps-staging.cognite.com"
+        "allowedHosts": ".dev.fusion.cogniteapp.com,apps-staging.cognite.com,all"
       },
       "configurations": {
         "fusion-dev": {

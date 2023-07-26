@@ -1,11 +1,5 @@
-import { Suspense, useState } from 'react';
-import {
-  BrowserRouter,
-  Navigate,
-  Route,
-  Routes,
-  useParams,
-} from 'react-router-dom';
+import { useState } from 'react';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 
 import styled from 'styled-components';
 
@@ -14,12 +8,14 @@ import {
   createLink,
   getCluster,
   getProject,
+  isUsingUnifiedSignin,
 } from '@cognite/cdf-utilities';
 
-import AllApps from '../components/AllApps';
-import LandingPage from '../components/LandingPage/LandingPage';
-import Navigation from '../components/Navigation';
-import { UserProfilePage } from '../components/UserProfilePage/UserProfilePage';
+import AllApps from './components/AllApps';
+import LandingPage from './components/LandingPage/LandingPage';
+import Navigation from './components/Navigation';
+import { UserProfilePage } from './components/UserProfilePage/UserProfilePage';
+import { DynamicRoutes } from './DynamicRoutes';
 
 const RoutesWrapper = styled.div`
   height: 100vh;
@@ -28,28 +24,10 @@ const RoutesWrapper = styled.div`
     height: 100%;
   }
 `;
-
-type SubAppPathElementProps = {
-  isReleaseBanner: string;
-};
-
-const SubAppPathElement = ({ isReleaseBanner }: SubAppPathElementProps) => {
-  const { subAppPath } = useParams<{ subAppPath: string }>();
-  if (!subAppPath) {
-    return <LandingPage isReleaseBanner={isReleaseBanner} />;
-  }
-
-  return (
-    <Suspense fallback={<div>loading app...</div>}>
-      {/* <SubApp useInShell /> */}
-      <div></div>
-    </Suspense>
-  );
-};
-
 export function App() {
   const project = getProject();
   const cluster = getCluster();
+  const routerBasename = isUsingUnifiedSignin() ? `/cdf/:project` : '/';
 
   const [isReleaseBanner, setReleaseBanner] = useState<string>(
     () => localStorage.getItem(`isCDFReleaseBanner`) || 'true'
@@ -63,7 +41,7 @@ export function App() {
         project,
       }}
     >
-      <BrowserRouter basename="/cdf">
+      <BrowserRouter>
         <Navigation
           isReleaseBanner={isReleaseBanner}
           setReleaseBanner={setReleaseBanner}
@@ -78,15 +56,15 @@ export function App() {
               }
             />
             <Route
-              path="/:project"
+              path={routerBasename}
               element={<LandingPage isReleaseBanner={isReleaseBanner} />}
             />
-            <Route path="/:project/apps" element={<AllApps />} />
-            <Route path="/:project/profile" element={<UserProfilePage />} />
+            <Route path={`${routerBasename}/apps`} element={<AllApps />} />
             <Route
-              path="/:project/:subAppPath/*"
-              element={<SubAppPathElement isReleaseBanner={isReleaseBanner} />}
+              path={`${routerBasename}/profile`}
+              element={<UserProfilePage />}
             />
+            {DynamicRoutes(routerBasename, isReleaseBanner)}
           </Routes>
         </RoutesWrapper>
       </BrowserRouter>

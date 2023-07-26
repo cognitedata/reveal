@@ -6,8 +6,14 @@ import {
 
 import queryString from 'query-string';
 
+import { createLink, getProject } from '@cognite/cdf-utilities';
+
+import { environment } from '../../environments/environment';
+
 export const useNavigate = () => {
   const origNavigate = origUseNavigate();
+  const project = getProject();
+
   return (to: To, options?: NavigateOptions) => {
     const fdmV3Path = 'data-models';
     let newToUrl = typeof to === 'string' ? to : to.pathname;
@@ -16,17 +22,25 @@ export const useNavigate = () => {
         newToUrl.startsWith('/') ? '' : '/'
       }${newToUrl}`;
     }
+
     const { url, query: params } = queryString.parseUrl(newToUrl || '/');
-    if (typeof to === 'string') {
-      origNavigate(
-        `${url}?${queryString.stringify({
-          ...queryString.parse(window.location.search),
-          ...params,
-        })}`,
-        options
-      );
-    } else {
-      origNavigate({ ...to, pathname: newToUrl }, options);
+
+    let generatedLink = createLink(
+      url,
+      {
+        ...queryString.parse(window.location.search),
+        ...params,
+      },
+      undefined,
+      environment.APP_ENV === 'preview'
+    );
+
+    if (
+      environment.APP_ENV !== 'preview' &&
+      generatedLink.includes('/' + project)
+    ) {
+      generatedLink = generatedLink.replace('/' + project, '');
     }
+    origNavigate(generatedLink, options);
   };
 };

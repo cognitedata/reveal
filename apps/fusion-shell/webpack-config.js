@@ -1,5 +1,7 @@
 const { composePlugins, withNx } = require('@nx/webpack');
 const { withReact } = require('@nx/react');
+const { withModuleFederation } = require('@nx/react/module-federation');
+
 const {
   generateProxyConfigObject,
   generateSubAppsImportMap,
@@ -20,6 +22,13 @@ const useMockEnv =
     process.env.NX_TASK_TARGET_CONFIGURATION === 'mock') ||
   isUsingFusionEnv;
 
+const coreLibraries = new Set([
+  'react',
+  'react-dom',
+  'react-router-dom',
+  '@fusion/load-remote-module',
+]);
+
 // Nx plugins for webpack.
 module.exports = composePlugins(
   withNx({
@@ -30,6 +39,21 @@ module.exports = composePlugins(
   withReact({
     nx: {
       svgr: true,
+    },
+  }),
+  withModuleFederation({
+    name: 'fusion-shell',
+    remotes: [], // using dynamic remotes, not needed here
+    shared: (libraryName, defaultConfig) => {
+      if (coreLibraries.has(libraryName)) {
+        return {
+          ...defaultConfig,
+          eager: true,
+        };
+      }
+
+      // Returning false means the library is not shared.
+      return false;
     },
   }),
   (config) => {
@@ -73,6 +97,13 @@ module.exports = composePlugins(
       const subAppsImportManifest = JSON.parse(
         fs.readFileSync(
           './apps/fusion-shell/src/environments/fusion/next-release/sub-apps-import-map.json',
+          'utf8'
+        )
+      );
+
+      const subAppsModulesConfig = JSON.parse(
+        fs.readFileSync(
+          './apps/fusion-shell/src/environments/unified-signin/preview/sub-apps-modules-config.json',
           'utf8'
         )
       );
@@ -121,6 +152,15 @@ module.exports = composePlugins(
             );
           }
         );
+
+        // The idea is to generate the sub-apps-modules-config.json file on the fly
+        // And load the sub-apps that are using module federation directly from firebase
+        devServer.app.get(
+          `${publicPath}sub-apps-modules-config.json`,
+          (_, response) => {
+            response.json(subAppsModulesConfig);
+          }
+        );
         return middlewares;
       };
 
@@ -137,6 +177,31 @@ module.exports = composePlugins(
         ],
       })
     );
+
+    // exception for preview env only.... this is a temporary solutiion
+    if (process.env.NX_TASK_TARGET_CONFIGURATION === 'preview') {
+      config.plugins.push(
+        new CopyPlugin({
+          patterns: [
+            {
+              from: './src/environments/unified-signin/preview/sub-apps-modules-config.json',
+              to: path.resolve(__dirname, '../../dist/apps/fusion-shell/cdf'),
+            },
+          ],
+        })
+      );
+    } else {
+      config.plugins.push(
+        new CopyPlugin({
+          patterns: [
+            {
+              from: './src/sub-apps-modules-config.json',
+              to: path.resolve(__dirname, '../../dist/apps/fusion-shell/cdf'),
+            },
+          ],
+        })
+      );
+    }
 
     config.optimization.minimize = true;
 

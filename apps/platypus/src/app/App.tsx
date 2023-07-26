@@ -1,11 +1,8 @@
-import { BrowserRouter as Router } from 'react-router-dom';
-
 import { QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { ContainerProvider } from 'brandi-react';
 import styled from 'styled-components/macro';
 
-import { getProject, isUsingUnifiedSignin } from '@cognite/cdf-utilities';
 import { ToastContainer } from '@cognite/cogs.js';
 
 import { FeatureFlagProvider } from '../environments/FeatureFlagProvider';
@@ -16,13 +13,7 @@ import { rootInjector } from './di';
 import { queryClient } from './queryClient';
 import Routes from './Routes';
 
-// Globally defined global
-// GraphiQL package needs this to be run correctly
-(window as any).global = window;
-
 function App() {
-  const tenant = isUsingUnifiedSignin() ? `/cdf/${getProject()}` : getProject();
-
   return (
     <FeatureFlagProvider>
       <QueryClientProvider client={queryClient}>
@@ -32,15 +23,9 @@ function App() {
             <ToastContainer />
             <StyledWrapper>
               <NoAccessWrapper>
-                <Router
-                  basename={tenant}
-                  window={window}
-                  children={
-                    <StyledPage>
-                      <Routes />
-                    </StyledPage>
-                  }
-                />
+                <StyledPage>
+                  <Routes />
+                </StyledPage>
               </NoAccessWrapper>
             </StyledWrapper>
           </ContainerProvider>

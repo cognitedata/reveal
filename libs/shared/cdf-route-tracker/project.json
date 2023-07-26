@@ -34,12 +34,32 @@
         "extractLicenses": true,
         "sourceMap": false,
         "vendorChunk": false,
-        "optimization": true,
+        "optimization": false,
         "commonChunk": false,
         "runtimeChunk": false,
         "compiler": "tsc",
         "assets": [],
         "webpackConfig": "libs/shared/cdf-route-tracker/webpack.config.js"
+      },
+      "configurations": {
+        "single-spa": {
+          "fileReplacements": [
+            {
+              "replace": "libs/shared/cdf-route-tracker/src/set-public-path.ts",
+              "with": "libs/shared/cdf-route-tracker/src/environments/single-spa/set-public-path.ts"
+            }
+          ]
+        },
+        "production": {
+          // "generatePackageJson": true
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "build-single-spa": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "nx build cdf-route-tracker --configuration=single-spa"
       }
     },
     "serve-static": {

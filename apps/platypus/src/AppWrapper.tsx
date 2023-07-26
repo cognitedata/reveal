@@ -3,6 +3,8 @@ import store from './app/redux/store';
 import sidecar from './app/utils/sidecar';
 import { AppContainer } from './environments/AppContainer';
 
+import './app/utils/sentry';
+
 //
 // Globally defined global
 //
