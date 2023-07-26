@@ -17,9 +17,6 @@ jobs:
         id: deploy-env
         uses: ./scripts/github-actions/get-deploy-environment
         with:
-          base: { some SHA } #[OPTIONAL] defaults to `origin/master`
-          head: { some SHA } #[OPTIONAL] defaults to `HEAD`
-          target: 'test' #[OPTIONAL] defaults to `build`
-          type: 'app' #[OPTIONAL] options: app/lib
-          exclude: 'some-app, some-other-app' #[OPTIONAL]
+          project:
+          description: 'Branch name where the actions is running'
 ```

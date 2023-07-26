@@ -4,7 +4,7 @@ const { setFailed, setOutput, getInput, info } = require('@actions/core');
 
 const run = async () => {
   try {
-    const project = getInput('project') || 'data-exploration';
+    const project = getInput('project');
     const projectConfigRaw = execSync(
       `npx nx show project ${project}`
     ).toString('utf-8');
