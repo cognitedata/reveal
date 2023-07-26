@@ -25,7 +25,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { RecoilRoot } from 'recoil';
 
 import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
-import { getProject, isUsingUnifiedSignin } from '@cognite/cdf-utilities';
+import { getProject } from '@cognite/cdf-utilities';
 import { ToastContainer } from '@cognite/cogs.js';
 import { FlagProvider } from '@cognite/react-feature-flags';
 
@@ -88,7 +88,7 @@ export const RootApp = () => {
             showDialog
           >
             <RecoilRoot>
-              <Router basename={isUsingUnifiedSignin() ? '/cdf' : '/'}>
+              <Router>
                 <ToastContainer style={{ top: '5em' }} />
                 {/* need root for png screenshot when we download chart  */}
                 {/* https://github.com/fayeed/use-screenshot/issues/9#issuecomment-1245094413  */}
