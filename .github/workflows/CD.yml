@@ -125,6 +125,11 @@ jobs:
           path: node_modules
           key: cache-node-modules-${{ hashFiles('yarn.lock') }}
 
+      - name: Build
+        env:
+          NODE_OPTIONS: '--max_old_space_size=8192'
+        run: npx nx build ${{ matrix.project }} --configuration=production
+
       - name: Get deploy environment
         id: deploy-environment
         uses: ./scripts/github-actions/get-deploy-environment
@@ -138,11 +143,6 @@ jobs:
         with:
           project: ${{ matrix.project }}
 
-      - name: Build
-        env:
-          NODE_OPTIONS: '--max_old_space_size=8192'
-        run: npx nx build ${{ matrix.project }} --configuration=production
-
       - name: Deploy to firebase hosting (${{ steps.deploy-environment.outputs.environment }})
         uses: FirebaseExtended/action-hosting-deploy@v0
         if: ${{ fromJson(steps.project-config.outputs.config).pipeline.useGHActionsRelease }}
@@ -150,7 +150,7 @@ jobs:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_HOSTING_DEPLOY_SA }}'
           channelId: live
-          projectId: fbhosting-217032465111-${{ steps.deploy-environment.outputs.environment }}
+          projectId: fbhosting-217032465111${{ if ne(steps.deploy-environment.outputs.environment, 'production') }}-${{ steps.deploy-environment.outputs.environment }}{{ else }}{{ endif }}
           target: cognite-${{ matrix.project }}-${{ steps.deploy-environment.outputs.environment }}
           entryPoint: dist/apps/${{ matrix.project }}/
 
@@ -176,6 +176,11 @@ jobs:
           path: node_modules
           key: cache-node-modules-${{ hashFiles('yarn.lock') }}
 
+      - name: Build
+        env:
+          NODE_OPTIONS: '--max_old_space_size=8192'
+        run: npx nx build ${{ matrix.project }} --configuration=production
+
       - name: Get deploy environment
         id: deploy-environment
         uses: ./scripts/github-actions/get-deploy-environment
@@ -189,11 +194,6 @@ jobs:
         with:
           project: ${{ matrix.project }}
 
-      - name: Build
-        env:
-          NODE_OPTIONS: '--max_old_space_size=8192'
-        run: npx nx build ${{ matrix.project }} --configuration=production
-
       - name: Deploy to firebase hosting (${{ steps.deploy-environment.outputs.environment }})
         uses: FirebaseExtended/action-hosting-deploy@v0
         if: ${{ fromJson(steps.project-config.outputs.config).pipeline.useGHActionsRelease }}
@@ -201,7 +201,7 @@ jobs:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_HOSTING_DEPLOY_SA }}'
           channelId: live
-          projectId: fbhosting-217032465111-${{ steps.deploy-environment.outputs.environment }}
+          projectId: fbhosting-217032465111${{ if ne(steps.deploy-environment.outputs.environment, 'production') }}-${{ steps.deploy-environment.outputs.environment }}{{ else }}{{ endif }}
           target: cognite-${{ matrix.project }}-${{ steps.deploy-environment.outputs.environment }}
           entryPoint: dist/apps/${{ matrix.project }}/
 

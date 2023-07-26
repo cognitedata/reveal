@@ -8,9 +8,10 @@ const run = async () => {
     const projectConfigRaw = execSync(
       `npx nx show project ${project}`
     ).toString('utf-8');
-    const projectConfig = JSON.parse(projectConfigRaw);
-    info(`NX project config: ${projectConfigRaw}`);
 
+    const projectConfig = JSON.parse(projectConfigRaw);
+
+    info(`NX project config: ${projectConfigRaw}`);
     setOutput('config', projectConfig);
   } catch (error) {
     if (error instanceof Error || typeof error === 'string') {
