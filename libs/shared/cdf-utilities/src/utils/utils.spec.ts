@@ -250,7 +250,7 @@ describe('Utils', () => {
       });
 
       expect(createLink('/data-models', { env: 'sandfield' })).toEqual(
-        '/cdf/test-project/data-models?cluster=greenfield.cognitedata.com&env=sandfield&idpInternalId=a5bc6507-2644-4004-87eb-efdb3124e3e2&organization=cog-appdev&project=test-project'
+        '/test-project/data-models?cluster=greenfield.cognitedata.com&env=sandfield&idpInternalId=a5bc6507-2644-4004-87eb-efdb3124e3e2&organization=cog-appdev&project=test-project'
       );
     });
 
@@ -270,13 +270,13 @@ describe('Utils', () => {
       expect(
         createLink('/test-project/data-models', { env: 'sandfield' })
       ).toEqual(
-        '/cdf/test-project/data-models?cluster=greenfield.cognitedata.com&env=sandfield&idpInternalId=a5bc6507-2644-4004-87eb-efdb3124e3e2&organization=cog-appdev&project=test-project'
+        '/test-project/data-models?cluster=greenfield.cognitedata.com&env=sandfield&idpInternalId=a5bc6507-2644-4004-87eb-efdb3124e3e2&organization=cog-appdev&project=test-project'
       );
 
       expect(
-        createLink('/cdf/test-project/data-models', { env: 'sandfield' })
+        createLink('/test-project/data-models', { env: 'sandfield' })
       ).toEqual(
-        '/cdf/test-project/data-models?cluster=greenfield.cognitedata.com&env=sandfield&idpInternalId=a5bc6507-2644-4004-87eb-efdb3124e3e2&organization=cog-appdev&project=test-project'
+        '/test-project/data-models?cluster=greenfield.cognitedata.com&env=sandfield&idpInternalId=a5bc6507-2644-4004-87eb-efdb3124e3e2&organization=cog-appdev&project=test-project'
       );
     });
   });

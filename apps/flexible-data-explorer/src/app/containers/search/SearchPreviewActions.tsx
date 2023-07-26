@@ -13,8 +13,8 @@ import { SearchList } from './components/SearchList';
 
 enum SearchActions {
   SEARCH_IN_TYPE = -3,
-  SEARCH_IN_AI = -2,
-  SEARCH_IN_ALL = -1,
+  SEARCH_IN_ALL = -2,
+  SEARCH_IN_AI = -1,
 }
 
 export const SearchPreviewActions = ({

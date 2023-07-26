@@ -154,7 +154,7 @@ export const callPromptChain = async <
     }),
     // memory: chain.memory,
     outputKey: 'output',
-    verbose: true,
+    verbose: false,
   });
 
   const outputs = (await parallelGPTCalls(
@@ -219,7 +219,7 @@ export async function parallelGPTCalls(
         console.log(`Retrying call ${index}...`);
         await executeCall(index); // Retry the call
       } else {
-        results[index] = { output: '' }; // Max retries reached or timed out, return empty result
+        results[index] = { output: '', text: '' }; // Max retries reached or timed out, return empty result
       }
     }
   };

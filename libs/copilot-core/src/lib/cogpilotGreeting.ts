@@ -1,4 +1,4 @@
-export const langs: Record<string, string> = {
+export const greetingLangs: Record<string, string> = {
   en: 'Hello from CogPilot! How can I assist you with your Infield work today?',
   de: 'Hallo von CogPilot! Wie kann ich Ihnen heute bei Ihrer Arbeit in Infield helfen?',
   ja: 'CogPilotからこんにちは！今日はInfieldでのお仕事で何かお手伝いできることはありますか？',

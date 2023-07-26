@@ -3,7 +3,7 @@ import { ThreeDContent } from '../containers/ThreeD/ThreeDContent';
 
 export const ThreeDPage = () => {
   return (
-    <Page>
+    <Page disableScrollbarGutter>
       <Page.Body fullscreen>
         <ThreeDContent />
       </Page.Body>

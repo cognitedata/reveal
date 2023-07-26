@@ -4,33 +4,44 @@ import { ProjectConfig } from './types';
 
 export const cogniteConfig: ProjectConfig[] = [
   {
-    project: 'dss-dev-dss',
-    site: 'Akerkvartalet',
-    description:
-      'All the data from the offices in Oslo is consolidated within this area.',
+    project: 'dss-dev',
+    // NOTE: Configured this project with empty site and data models because we want to show a three d model,
+    // but also able to switch between data models. (will be fixed when we implement 3D model selection in the UI)
 
-    dataModels: [
+    site: ' ',
+    // dataModels: [
+    //   {
+    //     externalId: 'MovieDM',
+    //     space: 'deep',
+    //     version: '4',
+    //   },
+    //   {
+    //     externalId: 'AdvancedJoins',
+    //     space: 'AdvancedJoins',
+    //     version: '3',
+    //   },
+    // ],
+
+    // fileConfig: {
+    //   dataSetIds: [
+    //     8790386435534646 /* test */,
+    //     2380258309190866 /* best_day_demo_deviation_events */,
+    //   ],
+    // },
+    // timeseriesConfig: {
+    //   dataSetIds: [3736355216889108 /* infield-measurement-timeseries */],
+    // },
+
+    threeDResources: [
       {
-        externalId: 'MovieDM',
-        space: 'deep',
-        version: '4',
+        modelId: 7617970672125413,
+        revisionId: 8633577232574048,
       },
       {
-        externalId: 'AdvancedJoins',
-        space: 'AdvancedJoins',
-        version: '3',
+        modelId: 3556440842981678,
+        revisionId: 6686136028338439,
       },
     ],
-
-    fileConfig: {
-      dataSetIds: [
-        8790386435534646 /* test */,
-        2380258309190866 /* best_day_demo_deviation_events */,
-      ],
-    },
-    timeseriesConfig: {
-      dataSetIds: [3736355216889108 /* infield-measurement-timeseries */],
-    },
   },
   {
     project: '3d-test',

@@ -23,7 +23,8 @@ static final String[] APPLICATIONS = [
   'entity-matching',
   'access-management',
   'business-shell',
-  'notebook'
+  'notebook',
+  'fusion-shell'
 ]
 
 /*
@@ -61,7 +62,8 @@ static final Map<String, String> FIREBASE_APP_SITES = [
   'entity-matching': 'entity-matching',
   'access-management': 'access-management',
   'business-shell': 'flexible-data-explorer', //The naming needs to be fixed at some later point
-  'notebook': 'notebook'
+  'notebook': 'notebook',
+  'fusion-shell': 'ui-host'
 ]
 
 static final Map<String, String> PREVIEW_PACKAGE_NAMES = [
@@ -85,11 +87,12 @@ static final Map<String, String> PREVIEW_PACKAGE_NAMES = [
   'entity-matching': '@cognite/cdf-ui-entity-matching',
   'access-management': '@cognite/cdf-access-management',
   'business-shell': '@cognite/business-shell',
-  'notebook': '@cognite/cdf-ui-notebook'
+  'notebook': '@cognite/cdf-ui-notebook',
+  'fusion-shell': '@cognite/fusion-shell'
 ]
 
 // Replace this with your app's ID on https://sentry.io/ -- if you do not have
-// one (or do not have access to Sentry), stop by #frontend to ask for help. :)
+// one (or do not have access to Sentry), stop by #frontend to ask for help. 
 static final Map<String, String> SENTRY_PROJECT_NAMES = [
   'platypus': "platypus",
   'data-exploration': "data-explorer",
@@ -164,7 +167,8 @@ static final Map<String, String> VERSIONING_STRATEGY = [
   'functions-ui' : 'single-branch',
   'access-management': 'multi-branch',
   'business-shell': 'single-branch',
-  'notebook': 'single-branch'
+  'notebook': 'single-branch',
+  'fusion-shell': 'mutli-branch'
 ]
 
 // The config of which apps have i18n strings that need to be synced to and pulled from locize.io
@@ -253,6 +257,8 @@ def shouldDeployPackage(String packageName, Map<String, String> NPM_PACKAGES, bo
     return false;
   }
 
+  sh(script: "./node_modules/.bin/nx build ${packageName}", returnStdout: true); 
+
   def packageJson = "${NPM_PACKAGES[packageName]}/package.json";
 
   def packageJsonString = sh(
@@ -329,7 +335,8 @@ def pods = { body ->
 pods {
   app.safeRun(
     slackChannel: SLACK_CHANNEL,
-    logErrors: isMaster || isRelease
+    logErrors: isMaster || isRelease,
+    timeout: 150
   ) {
     dir('main') {
       stage('Checkout code') {
