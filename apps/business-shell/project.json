@@ -101,6 +101,8 @@
   "tags": [],
   "pipeline": {
     "releaseStrategy": "single-branch",
-    "useGHActionsRelease": true
+    "useGHActionsRelease": true,
+    "firebaseProjectId": "fbhosting-217032465111",
+    "firebaseTarget": "cognite-flexible-data-explorer"
   }
 }

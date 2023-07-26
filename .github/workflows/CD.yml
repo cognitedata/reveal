@@ -143,6 +143,21 @@ jobs:
         with:
           project: ${{ matrix.project }}
 
+      - name: Get firebase projectId
+        id: firebase-project
+        uses: ./scripts/github-actions/get-firebase-project
+        with:
+          firebaseProjectId: ${{ fromJson(steps.project-config.outputs.config).pipeline.firebaseProjectId }}
+          environment: ${{ steps.deploy-environment.outputs.environment }}
+
+      - name: Get firebase target
+        id: firebase-target
+        uses: ./scripts/github-actions/get-firebase-target
+        with:
+          project: ${{ matrix.project }}
+          environment: ${{ steps.deploy-environment.outputs.environment }}
+          firebaseTarget: ${{ fromJson(steps.project-config.outputs.config).pipeline.firebaseTarget }}
+
       - name: Deploy to firebase hosting (${{ steps.deploy-environment.outputs.environment }})
         uses: FirebaseExtended/action-hosting-deploy@v0
         if: ${{ fromJson(steps.project-config.outputs.config).pipeline.useGHActionsRelease }}
@@ -150,8 +165,8 @@ jobs:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_HOSTING_DEPLOY_SA }}'
           channelId: live
-          projectId: fbhosting-217032465111${{ if ne(steps.deploy-environment.outputs.environment, 'production') }}-${{ steps.deploy-environment.outputs.environment }}{{ else }}{{ endif }}
-          target: cognite-${{ matrix.project }}-${{ steps.deploy-environment.outputs.environment }}
+          projectId: ${{ steps.firebase-project.outputs.projectId }}
+          target: ${{ steps.firebase-target.outputs.target }}
           entryPoint: dist/apps/${{ matrix.project }}/
 
   build-shell:
@@ -194,6 +209,21 @@ jobs:
         with:
           project: ${{ matrix.project }}
 
+      - name: Get firebase projectId
+        id: firebase-project
+        uses: ./scripts/github-actions/get-firebase-project
+        with:
+          firebaseProjectId: ${{ fromJson(steps.project-config.outputs.config).pipeline.firebaseProjectId }}
+          environment: ${{ steps.deploy-environment.outputs.environment }}
+
+      - name: Get firebase target
+        id: firebase-target
+        uses: ./scripts/github-actions/get-firebase-target
+        with:
+          project: ${{ matrix.project }}
+          environment: ${{ steps.deploy-environment.outputs.environment }}
+          firebaseTarget: ${{ fromJson(steps.project-config.outputs.config).pipeline.firebaseTarget }}
+
       - name: Deploy to firebase hosting (${{ steps.deploy-environment.outputs.environment }})
         uses: FirebaseExtended/action-hosting-deploy@v0
         if: ${{ fromJson(steps.project-config.outputs.config).pipeline.useGHActionsRelease }}
@@ -201,8 +231,8 @@ jobs:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_HOSTING_DEPLOY_SA }}'
           channelId: live
-          projectId: fbhosting-217032465111${{ if ne(steps.deploy-environment.outputs.environment, 'production') }}-${{ steps.deploy-environment.outputs.environment }}{{ else }}{{ endif }}
-          target: cognite-${{ matrix.project }}-${{ steps.deploy-environment.outputs.environment }}
+          projectId: ${{ steps.firebase-project.outputs.projectId }}
+          target: ${{ steps.firebase-target.outputs.target }}
           entryPoint: dist/apps/${{ matrix.project }}/
 
   ci-passed:

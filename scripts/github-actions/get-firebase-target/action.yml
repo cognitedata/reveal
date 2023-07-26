@@ -1,0 +1,15 @@
+name: 'Get firebase target'
+description: 'Get firebase target based on project config and environment'
+runs:
+  using: node16
+  main: index.js
+inputs:
+  project:
+    description: 'NX project name'
+    required: true
+  firebaseTarget:
+    description: 'firebase target. Defaults to cognite-${project}-${environment}'
+    required: false
+  environment:
+    description: 'The environment on firebase. Options: production, preview, staging'
+    required: true
