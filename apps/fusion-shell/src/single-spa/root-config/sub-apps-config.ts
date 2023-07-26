@@ -2,7 +2,7 @@ import { RegisterApplicationConfig } from 'single-spa';
 
 import { isUsingUnifiedSignin } from '@cognite/cdf-utilities';
 
-import { matchesAny } from '../../utils/utils';
+import { matchesAny } from '../../app/utils/utils';
 
 import {
   consoleRoutes,

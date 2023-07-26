@@ -169,6 +169,9 @@
       ],
       "@interactive-diagrams/*": [
         "apps/interactive-diagrams/src/*"
+      ],
+      "@fusion/load-remote-module": [
+        "libs/shared/load-remote-module/src/index.ts"
       ]
     }
   },

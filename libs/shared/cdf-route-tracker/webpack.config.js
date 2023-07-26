@@ -11,7 +11,7 @@ module.exports = (config) => {
     devtoolNamespace: 'cdf-route-tracker',
     publicPath: '',
   };
-  config.optimization.minimize = true;
+  config.optimization.minimize = false;
   config.externals = ['@cognite/cdf-sdk-singleton', 'react', 'react-dom'];
 
   config.plugins.push(

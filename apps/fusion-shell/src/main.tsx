@@ -1,16 +1,11 @@
-import { StrictMode } from 'react';
+import { isUsingUnifiedSignin } from '@cognite/cdf-utilities';
+import { setRemoteDefinitions } from '@fusion/load-remote-module';
+import('./bootstrap');
 
-import ReactDOMClient from 'react-dom/client';
+const basePath = isUsingUnifiedSignin() ? `/cdf/` : '/';
 
-import { AppWrapper } from './AppWrapper';
-import './single-spa';
-
-const root = ReactDOMClient.createRoot(
-  document.getElementById('root') as HTMLElement
-);
-
-root.render(
-  <StrictMode>
-    <AppWrapper />
-  </StrictMode>
-);
+// Load module federation manifest for sub-apps we want to use
+fetch(basePath + 'sub-apps-modules-config.json')
+  .then((res) => res.json())
+  .then((definitions) => setRemoteDefinitions(definitions))
+  .then(() => import('./bootstrap').catch((err) => console.error(err)));

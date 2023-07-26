@@ -6,6 +6,7 @@
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "resolveJsonModule": true,
+    "forceConsistentCasingInFileNames": true,
     // Remove this and fix the issues
     "noImplicitAny": false,
   },

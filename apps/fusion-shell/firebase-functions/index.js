@@ -15,13 +15,11 @@ const cdfProxy = express();
 
 let proxyToEnv = 'staging';
 
-if (process.env.GCLOUD_PROJECT === 'fbhosting-217032465111-preview') {
-  // proxyToEnv = 'preview';
-  // for testing purposes only
-  proxyToEnv = 'staging';
+if (process.env.GCLOUD_PROJECT === 'fusion-217032465111-preview') {
+  proxyToEnv = 'preview';
 }
 
-if (process.env.GCLOUD_PROJECT === 'fbhosting-217032465111') {
+if (process.env.GCLOUD_PROJECT === 'fusion-217032465111') {
   proxyToEnv = 'prod';
 }
 
@@ -32,101 +30,121 @@ const firebaseAppSites = {
   'cdf-solutions-ui': {
     firebaseSiteName: 'platypus',
     staging: 'staging',
+    preview: 'preview',
     prod: 'prod',
   },
   'cdf-data-exploration': {
     firebaseSiteName: 'data-exploration',
     staging: 'preview',
+    preview: 'preview',
     prod: 'prod',
   },
   'cdf-vision-subapp': {
     firebaseSiteName: 'vision',
     staging: 'prod',
+    preview: 'prod',
     prod: 'prod',
   },
   'cdf-data-catalog': {
     firebaseSiteName: 'data-catalog',
     staging: 'staging',
+    preview: 'preview',
     prod: 'prod',
   },
   'cdf-raw-explorer': {
     firebaseSiteName: 'raw-explorer',
     staging: 'prod',
+    preview: 'preview',
     prod: 'prod',
   },
   'cdf-coding-conventions': {
     firebaseSiteName: 'coding-conventions',
     staging: 'staging',
+    preview: 'preview',
     prod: 'prod',
   },
   'cdf-copilot': {
     firebaseSiteName: 'copilot',
     staging: 'prod',
+    preview: 'prod',
     prod: 'prod',
   },
   'cdf-industry-canvas-ui': {
     firebaseSiteName: 'industry-canvas-ui',
     staging: 'staging',
+    preview: 'preview',
     prod: 'prod',
   },
   'cdf-context-ui-pnid': {
     firebaseSiteName: 'pnid-contextualization',
     staging: 'staging',
+    preview: 'preview',
     prod: 'prod',
   },
   'cdf-iot-hub': {
     firebaseSiteName: 'iot-hub',
     staging: 'prod',
+    preview: 'prod',
     prod: 'prod',
   },
   'cdf-3d-management': {
     firebaseSiteName: '3d-management',
     staging: 'prod',
+    preview: 'prod',
     prod: 'prod',
   },
   'cdf-transformations-2': {
     firebaseSiteName: 'transformations',
-    staging: 'prod',
+    staging: 'staging',
+    preview: 'preview',
     prod: 'prod',
   },
   'cdf-transformations': {
     firebaseSiteName: 'transformations',
-    staging: 'prod',
+    staging: 'staging',
+    preview: 'preview',
     prod: 'prod',
   },
   'cdf-document-search-ui': {
     firebaseSiteName: 'document-search',
     staging: 'prod',
+    preview: 'prod',
     prod: 'prod',
   },
   'cdf-functions-ui': {
     firebaseSiteName: 'functions',
     staging: 'prod',
+    preview: 'prod',
     prod: 'prod',
   },
   'cdf-integrations-ui': {
     firebaseSiteName: 'extraction-pipelines',
     staging: 'prod',
+    preview: 'prod',
     prod: 'prod',
   },
   'cdf-extractor-downloads': {
     firebaseSiteName: 'extractor-downloads',
     staging: 'prod',
+    preview: 'prod',
     prod: 'prod',
   },
   'cdf-charts-ui': {
     firebaseSiteName: 'charts',
     staging: 'staging',
+    preview: 'staging',
     prod: 'prod',
   },
   'cdf-ui-entity-matching': {
     firebaseSiteName: 'entity-matching',
     staging: 'prod',
+    preview: 'prod',
     prod: 'prod',
   },
   'cdf-access-management': {
     firebaseSiteName: 'access-management',
     staging: 'staging',
+    preview: 'preview',
     prod: 'prod',
   },
 };
