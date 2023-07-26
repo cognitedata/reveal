@@ -3,6 +3,10 @@ on:
   push:
     branches:
       - master
+      - release*
+
+env:
+  NX_CLOUD_ACCESS_TOKEN: ${{secrets.NX_CLOUD_ACCESS_TOKEN}}
 
 jobs:
   setup:
@@ -41,3 +45,179 @@ jobs:
         run: yarn install --frozen-lockfile
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_READONLY_TOKEN }}
+
+      - name: 'Get affected libs to build'
+        id: affected-libs
+        uses: './scripts/github-actions/nx-get-affected'
+        with:
+          base: 'HEAD~1'
+          projects: 'libs/**'
+
+      - name: 'Get affected apps to build'
+        id: affected-apps
+        uses: './scripts/github-actions/nx-get-affected'
+        with:
+          base: 'HEAD~1'
+          projects: 'apps/**'
+          exclude: '*shell'
+          isRelease: 'true'
+          branchName: ${{ github.ref_name }}
+
+      - name: 'Get affected shell apps to build'
+        id: affected-shell-apps
+        uses: './scripts/github-actions/nx-get-affected'
+        with:
+          base: 'HEAD~1'
+          projects: '*shell'
+          isRelease: 'true'
+          branchName: ${{ github.ref_name }}
+
+    outputs:
+      affected-libs: ${{ steps.affected-libs.outputs.projects }}
+      affected-libs-string: ${{ steps.affected-libs.outputs.projectsString }}
+      affected-apps: ${{ steps.affected-apps.outputs.projects }}
+      affected-shell-apps: ${{ steps.affected-shell-apps.outputs.projects }}
+
+  build-libs:
+    name: 'Build libs'
+    runs-on: ubuntu-20.04
+    needs: setup
+    if: ${{ github.ref_name == 'master' && needs.setup.outputs.affected-libs != '' && toJson(fromJson(needs.setup.outputs.affected-libs)) != '[]' }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Cache node modules
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: cache-node-modules-${{ hashFiles('yarn.lock') }}
+
+      - name: Build
+        env:
+          NODE_OPTIONS: '--max_old_space_size=8192'
+        run: npx nx run-many --target=build --parallel --nx-bail --configuration=production --projects ${{ needs.setup.outputs.affected-libs-string }}
+      # here we add the part about publishing the libs to npm
+
+  build:
+    name: Build
+    runs-on: ubuntu-20.04
+    needs: [setup, build-libs]
+    if: ${{ !cancelled() && !failure() && needs.build-libs.result != 'failure' && needs.build-libs.result != 'cancelled' && needs.setup.outputs.affected-apps != '' && toJson(fromJson(needs.setup.outputs.affected-apps)) != '[]' }}
+    strategy:
+      matrix:
+        project: ${{ fromJson(needs.setup.outputs.affected-apps)  }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Cache node modules
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: cache-node-modules-${{ hashFiles('yarn.lock') }}
+
+      - name: Get deploy environment
+        id: deploy-environment
+        uses: ./scripts/github-actions/get-deploy-environment
+        with:
+          project: ${{ matrix.project }}
+          branch: ${{ github.ref_name }}
+
+      - name: Get project config
+        id: project-config
+        uses: ./scripts/github-actions/nx-get-project-config
+        with:
+          project: ${{ matrix.project }}
+
+      - name: Build
+        env:
+          NODE_OPTIONS: '--max_old_space_size=8192'
+        run: npx nx build ${{ matrix.project }} --configuration=production
+
+      - name: Deploy to firebase hosting (${{ steps.deploy-environment.outputs.environment }})
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        if: ${{ fromJson(steps.project-config.outputs.config).pipeline.useGHActionsRelease }}
+        with:
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_HOSTING_DEPLOY_SA }}'
+          channelId: live
+          projectId: fbhosting-217032465111-${{ steps.deploy-environment.outputs.environment }}
+          target: cognite-${{ matrix.project }}-${{ steps.deploy-environment.outputs.environment }}
+          entryPoint: dist/apps/${{ matrix.project }}/
+
+  build-shell:
+    name: 'Build shell apps'
+    runs-on: ubuntu-20.04
+    needs: [setup, build]
+    if: ${{ github.ref_name == 'master' && !cancelled() && !failure() && needs.setup.outputs.affected-shell-apps != '' && toJson(fromJson(needs.setup.outputs.affected-shell-apps)) != '[]' }}
+    strategy:
+      matrix:
+        project: ${{ fromJson(needs.setup.outputs.affected-shell-apps)  }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Cache node modules
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: cache-node-modules-${{ hashFiles('yarn.lock') }}
+
+      - name: Get deploy environment
+        id: deploy-environment
+        uses: ./scripts/github-actions/get-deploy-environment
+        with:
+          project: ${{ matrix.project }}
+          branch: ${{ github.ref_name }}
+
+      - name: Get project config
+        id: project-config
+        uses: ./scripts/github-actions/nx-get-project-config
+        with:
+          project: ${{ matrix.project }}
+
+      - name: Build
+        env:
+          NODE_OPTIONS: '--max_old_space_size=8192'
+        run: npx nx build ${{ matrix.project }} --configuration=production
+
+      - name: Deploy to firebase hosting (${{ steps.deploy-environment.outputs.environment }})
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        if: ${{ fromJson(steps.project-config.outputs.config).pipeline.useGHActionsRelease }}
+        with:
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_HOSTING_DEPLOY_SA }}'
+          channelId: live
+          projectId: fbhosting-217032465111-${{ steps.deploy-environment.outputs.environment }}
+          target: cognite-${{ matrix.project }}-${{ steps.deploy-environment.outputs.environment }}
+          entryPoint: dist/apps/${{ matrix.project }}/
+
+  ci-passed:
+    # see https://github.community/t/status-check-for-a-matrix-jobs/127354/7
+    name: CI Passed
+    needs: [setup, build-libs, build, build-shell]
+    if: ${{ always() }}
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Check all job status
+        # see https://docs.github.com/en/actions/reference/context-and-expression-syntax-for-github-actions#needs-context
+        # see https://stackoverflow.com/a/67532120/4907315
+        if: >-
+          ${{
+               contains(needs.*.result, 'failure')
+            || contains(needs.*.result, 'cancelled')
+          }}
+        run: exit 1

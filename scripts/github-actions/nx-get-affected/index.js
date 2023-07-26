@@ -9,6 +9,20 @@ const run = async () => {
     const target = getInput('target');
     const projects = getInput('projects');
     const exclude = getInput('exclude');
+    const isRelease = getInput('isRelease');
+    const branchName = getInput('branchName');
+
+    if (isRelease === 'true' && branchName.startsWith('release-')) {
+      const project = branchName
+        .replace('release-preview-', '')
+        .replace('release-', '');
+
+      setOutput('projects', [project]);
+      setOutput('projectsString', project);
+      setOutput(project, true);
+
+      return;
+    }
 
     const affectedProjects = execSync(
       `npx nx show projects --affected --json --withTarget=${target} --base=${base} --head=${head} --projects ${projects} --exclude ${exclude}`

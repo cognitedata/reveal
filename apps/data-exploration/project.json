@@ -99,5 +99,9 @@
     }
   },
   "implicitDependencies": ["data-exploration-e2e"],
-  "tags": []
+  "tags": [],
+  "pipeline": {
+    "releaseStrategy": "multi-branch",
+    "useGHActionsRelease": true
+  }
 }
