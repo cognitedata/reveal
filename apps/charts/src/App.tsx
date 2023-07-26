@@ -25,7 +25,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { RecoilRoot } from 'recoil';
 
 import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
-import { getProject, isUsingUnifiedSignin } from '@cognite/cdf-utilities';
+import { getProject } from '@cognite/cdf-utilities';
 import { ToastContainer } from '@cognite/cogs.js';
 import { FlagProvider } from '@cognite/react-feature-flags';
 
