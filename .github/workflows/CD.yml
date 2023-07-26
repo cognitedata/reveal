@@ -145,7 +145,7 @@ jobs:
 
       - name: Deploy to firebase hosting (${{ steps.deploy-environment.outputs.environment }})
         uses: FirebaseExtended/action-hosting-deploy@v0
-        if: ${{ fromJson(steps.project-config.outputs.config).CD.useGHActionsRelease }}
+        if: ${{ fromJson(steps.project-config.outputs.config).pipeline.useGHActionsRelease }}
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_HOSTING_DEPLOY_SA }}'
@@ -196,7 +196,7 @@ jobs:
 
       - name: Deploy to firebase hosting (${{ steps.deploy-environment.outputs.environment }})
         uses: FirebaseExtended/action-hosting-deploy@v0
-        if: ${{ fromJson(steps.project-config.outputs.config).CD.useGHActionsRelease }}
+        if: ${{ fromJson(steps.project-config.outputs.config).pipeline.useGHActionsRelease }}
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_HOSTING_DEPLOY_SA }}'
