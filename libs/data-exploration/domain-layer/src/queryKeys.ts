@@ -338,8 +338,13 @@ export const queryKeys = {
     [...queryKeys.all, '360Image', 'icon', file?.id] as const,
   filesAggregateBySiteId: (siteId: string | undefined) =>
     [...queryKeys.files(), 'aggregate', siteId] as const,
-  siteNameBySiteId: (...input: any[]) => [
+  eventsBySiteId: (...input: any[]) => [
     ...queryKeys.listEvents(),
     ...(input || []),
+  ],
+  image360DataBySiteId: (siteId: string) => [
+    ...queryKeys.threeD(),
+    'image360',
+    siteId,
   ],
 } as const;

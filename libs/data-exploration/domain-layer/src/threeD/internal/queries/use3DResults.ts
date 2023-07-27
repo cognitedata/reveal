@@ -1,5 +1,3 @@
-import { useMemo } from 'react';
-
 import {
   DEFAULT_SEARCH_RESULTS_PAGE_SIZE_3D,
   FileTypeVisibility,
@@ -12,8 +10,8 @@ import {
 } from '../../../constants';
 import { TableSortBy } from '../../../types';
 
-import { ApiBufferApi, useApiBuffer } from './useApiBuffer';
-import { useInfinite360ImagesSiteIdAggregateQuery } from './useInfinite360ImagesSiteIdAggregateQuery';
+import { useApiBuffer } from './useApiBuffer';
+import { useImage360Query } from './useImage360Query';
 import { useInfinite3DModelsQuery } from './useInfinite3DModelsQuery';
 
 export const use3DResults = (
@@ -23,9 +21,7 @@ export const use3DResults = (
   sort?: TableSortBy[],
   limit: number = DEFAULT_SEARCH_RESULTS_PAGE_SIZE_3D
 ) => {
-  const image360Api = useInfinite360ImagesSiteIdAggregateQuery(query, filter, {
-    enabled: fileTypeVisibility.Images360,
-  });
+  const image360Api = useImage360Query();
 
   const threeDModelApi = useInfinite3DModelsQuery(
     DEFAULT_GLOBAL_TABLE_MAX_RESULT_LIMIT,

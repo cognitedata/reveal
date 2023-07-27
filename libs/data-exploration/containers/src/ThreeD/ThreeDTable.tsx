@@ -40,6 +40,7 @@ export const ThreeDTable = ({
     metadata: model.metadata,
     dataSetId: model.dataSetId,
     createdTime: model.createdTime,
+    lastUpdatedTime: model.lastUpdatedTime,
     type: model.type,
     siteId: model.siteId,
   }));
@@ -112,7 +113,7 @@ export const ThreeDTable = ({
           cell: ({ getValue, row }) => (
             <ThreeDModelLastUpdated
               modelId={getValue<number>()}
-              is360Image={row.original?.type === 'img360'}
+              lastUpdatedTime={row.original?.lastUpdatedTime}
             />
           ),
           enableSorting: false,

@@ -15,6 +15,7 @@ export type Model3DWithType = PartialBy<
   'metadata' | 'dataSetId' | 'createdTime' | 'id'
 > & {
   type: ThreeDResourceTypes;
+  lastUpdatedTime?: Date;
   siteId?: string;
 };
 
@@ -51,6 +52,7 @@ export type Image360SiteData = {
   siteId: string;
   siteName: string;
   lastUpdatedTime?: Date;
+  createdTime?: Date;
 };
 
 export type ModelWithRevisionId = Model3D & {

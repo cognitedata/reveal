@@ -9,7 +9,6 @@ import {
   Image360Data,
   use360ImageThumbnail,
   useFilesAggregateBySiteId,
-  useImage360SiteNameQuery,
 } from '@data-exploration-lib/domain-layer';
 
 import { ThreeDThumbnail } from './ThreeDThumbnail';
@@ -24,11 +23,6 @@ export const Image360Display = ({ model }: { model: Image360Data }) => {
     data: image360FileCount,
     isInitialLoading: isLoadingImage360FileCount,
   } = useFilesAggregateBySiteId(model.siteId, 'front');
-
-  const {
-    data: image360SiteName,
-    isInitialLoading: isLoadingImage360SiteName,
-  } = useImage360SiteNameQuery(model.siteId);
 
   const setImageBlob = useCallback((imageData: ArrayBuffer | undefined) => {
     if (!imageData) {
@@ -55,11 +49,7 @@ export const Image360Display = ({ model }: { model: Image360Data }) => {
     <Flex direction="row" gap={8} style={{ alignItems: 'center' }}>
       <ThreeDThumbnail imageUrl={imageUrl} isLoading={isLoadingThumbnail} />
       <Flex direction="column">
-        {isLoadingImage360SiteName ? (
-          <Icon type="Loader" />
-        ) : (
-          <HighlightCell text={image360SiteName} />
-        )}
+        <HighlightCell text={model.name} />
         {isLoadingImage360FileCount ? (
           <Icon type="Loader" />
         ) : (
