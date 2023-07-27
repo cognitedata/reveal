@@ -37,8 +37,8 @@ export type Reveal3DResourcesStyling = {
 
 export type Reveal3DResourcesProps = {
   resources: AddResourceOptions[];
-  styling?: Reveal3DResourcesStyling;
   fdmAssetMappingConfig?: FdmAssetMappingsConfig;
+  styling?: Reveal3DResourcesStyling;
 };
 
 export const Reveal3DResources = ({
@@ -59,7 +59,7 @@ export const Reveal3DResources = ({
     getTypedModels(resources, viewer).then(setReveal3DModels).catch(console.error);
   }, [resources, viewer]);
 
-  const modelsStyling = useCalculateModelsStyling(fdmAssetMappingConfig, reveal3DModels, styling);
+  const modelsStyling = useCalculateModelsStyling(reveal3DModels, styling, fdmAssetMappingConfig);
 
   useEffect(() => {
     setReveal3DModelsStyling(modelsStyling);
