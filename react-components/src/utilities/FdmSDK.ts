@@ -27,33 +27,33 @@ export type EdgeItem<PropertiesType> = {
 };
 
 export type InspectFilter = {
-  inspectionOperations: { involvedViewsAndContainers: {} };
-  items: { instanceType: InstanceType; externalId: string; space: string }[];
+  inspectionOperations: { involvedViewsAndContainers: Record<never, never> };
+  items: Array<{ instanceType: InstanceType; externalId: string; space: string }>;
 };
 
 export type InspectResult = {
   involvedViewsAndContainers: {
-    containers: {
+    containers: Array<{
       type: 'container';
       space: string;
       externalId: string;
-    }[];
-    views: {
+    }>;
+    views: Array<{
       type: 'view';
       space: string;
       externalId: string;
       version: string;
-    }[];
+    }>;
   };
 };
 
 export type InspectResultList = {
-  items: {
+  items: Array<{
     instanceType: InstanceType;
     externalId: string;
     space: string;
     inspectionResults: InspectResult;
-  }[];
+  }>;
 };
 
 export class FdmSDK {
@@ -97,9 +97,7 @@ export class FdmSDK {
     throw new Error(`Failed to fetch instances. Status: ${result.status}`);
   }
 
-  public async inspectInstances(
-    inspectFilter: InspectFilter
-  ): Promise<InspectResultList> {
+  public async inspectInstances(inspectFilter: InspectFilter): Promise<InspectResultList> {
     const data: any = inspectFilter;
     const result = await this._sdk.post(this._inspectEndpoint, { data });
 

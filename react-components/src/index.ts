@@ -38,4 +38,3 @@ export { FitModelsButton } from './components/RevealToolbar/FitModelsButton';
 export { useFdmAssetMappings } from './hooks/useFdmAssetMappings';
 export { type FdmAssetMappingsConfig } from './hooks/types';
 export { use3DModelName } from './hooks/use3DModelName';
-export { useReveal } from './components/RevealContainer/RevealContext';

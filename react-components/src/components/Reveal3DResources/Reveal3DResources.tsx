@@ -6,7 +6,7 @@ import {
   type NodeAppearance,
   type Cognite3DViewer,
   type PointCloudAppearance,
-  type PointerEventData,
+  type PointerEventData
 } from '@cognite/reveal';
 import { ModelsLoadingStateContext } from './ModelsLoadingContext';
 import { CadModelContainer, type CadModelStyling } from '../CadModelContainer/CadModelContainer';
@@ -74,16 +74,26 @@ export const Reveal3DResources = <NodeType,>({
   }, [modelsStyling]);
 
   useEffect(() => {
-    const callback = async (event: PointerEventData) => {
-      const data = await queryMappedData<NodeType>(viewer, client, fdmSdk, fdmAssetMappingConfig, event);
-      if (onNodeClick !== undefined && data !== undefined) {
-        onNodeClick?.(data);
-      }
-    }
+    const callback = (event: PointerEventData): void => {
+      void (async (event: PointerEventData): Promise<void> => {
+        const data = await queryMappedData<NodeType>(
+          viewer,
+          client,
+          fdmSdk,
+          fdmAssetMappingConfig,
+          event
+        );
+        if (onNodeClick !== undefined && data !== undefined) {
+          onNodeClick?.(data);
+        }
+      })(event);
+    };
 
     viewer.on('click', callback);
 
-    return () => viewer.off('click', callback);
+    return () => {
+      viewer.off('click', callback);
+    };
   }, [onNodeClick]);
 
   const image360CollectionAddOptions = resources.filter(
