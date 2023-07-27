@@ -37,8 +37,8 @@ export type Reveal3DResourcesStyling = {
 
 export type Reveal3DResourcesProps = {
   resources: AddResourceOptions[];
-  fdmAssetMappingConfig: FdmAssetMappingsConfig;
   styling?: Reveal3DResourcesStyling;
+  fdmAssetMappingConfig?: FdmAssetMappingsConfig;
 };
 
 export const Reveal3DResources = ({

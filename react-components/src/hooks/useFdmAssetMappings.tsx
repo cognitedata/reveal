@@ -12,24 +12,25 @@ import { DEFAULT_QUERY_STALE_TIME } from '../utilities/constants';
  */
 export const useFdmAssetMappings = (
   fdmAssetExternalIds: CogniteExternalId[],
-  fdmConfig: FdmAssetMappingsConfig
+  fdmConfig?: FdmAssetMappingsConfig
 ): UseQueryResult<ThreeDModelMappings[]> => {
   const fdmSdk = useFdmSdk();
-
-  const fdmAssetMappingFilter = {
-    in: {
-      property: ['edge', 'startNode'],
-      values: fdmAssetExternalIds.map((externalId) => ({
-        space: fdmConfig.assetFdmSpace,
-        externalId
-      }))
-    }
-  };
 
   return useQuery(
     ['reveal', 'react-components', fdmAssetExternalIds],
     async () => {
       if (fdmAssetExternalIds?.length === 0) return [];
+      if (fdmConfig === undefined) throw Error('FDM config must be defined when using FDM asset mappings');
+
+      const fdmAssetMappingFilter = {
+        in: {
+          property: ['edge', 'startNode'],
+          values: fdmAssetExternalIds.map((externalId) => ({
+            space: fdmConfig.assetFdmSpace,
+            externalId
+          }))
+        }
+      };
 
       const instances = await fdmSdk.filterInstances(
         fdmAssetMappingFilter,

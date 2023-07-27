@@ -20,9 +20,9 @@ import {
  * @returns
  */
 export const useCalculateModelsStyling = (
-  fdmAssetMappingConfig: FdmAssetMappingsConfig,
   models?: TypedReveal3DModel[],
-  styling?: Reveal3DResourcesStyling
+  styling?: Reveal3DResourcesStyling,
+  fdmAssetMappingConfig?: FdmAssetMappingsConfig,
 ): Array<PointCloudModelStyling | CadModelStyling> => {
   const stylingExternalIds = useMemo(
     () => styling?.groups?.flatMap((group) => group.fdmAssetExternalIds) ?? [],
