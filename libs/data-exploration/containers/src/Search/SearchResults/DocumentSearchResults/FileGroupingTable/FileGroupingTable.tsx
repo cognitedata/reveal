@@ -1,21 +1,13 @@
-import React from 'react';
-
-import { EmptyState } from '@data-exploration/components';
-
-import { Document, DocumentTable } from '@cognite/react-document-table';
-import { FileInfo, Document as SdkDocument } from '@cognite/sdk';
+import { useMemo } from 'react';
 
 import {
-  FileWithRelationshipLabels,
-  InternalDocumentFilter,
-  LOADING_RESULTS,
-  REFINE_FILTERS_OR_UPDATE_SEARCH,
-  useTranslation,
-} from '@data-exploration-lib/core';
-import {
-  WithDetailViewData,
-  useDocumentSearchResultQuery,
-} from '@data-exploration-lib/domain-layer';
+  Document as TableDocument,
+  DocumentTable,
+} from '@cognite/react-document-table';
+import { FileInfo, Document } from '@cognite/sdk';
+
+import { FileWithRelationshipLabels } from '@data-exploration-lib/core';
+import { WithDetailViewData } from '@data-exploration-lib/domain-layer';
 
 import { docTypes } from './docTypes';
 
@@ -23,16 +15,14 @@ type FileGroupingTableProps = {
   data?:
     | FileWithRelationshipLabels[]
     | WithDetailViewData<FileInfo>[]
-    | WithDetailViewData<SdkDocument>[];
-  query?: string;
-  filter?: InternalDocumentFilter;
+    | WithDetailViewData<Document>[];
   onItemClicked?: (file: any) => void;
 };
 const convertFilesToDocs = <
   T extends Pick<FileInfo, 'id' | 'name' | 'metadata' | 'directory' | 'source'>
 >(
   files: T[] = []
-): Document[] => {
+): TableDocument[] => {
   return files?.map((file) => {
     const { id, name: fileName, metadata, directory, source } = file;
     return {
@@ -46,49 +36,26 @@ const convertFilesToDocs = <
 };
 
 export const FileGroupingTable = ({
-  query,
-  filter,
-  data,
+  data = [],
   onItemClicked,
 }: FileGroupingTableProps) => {
-  const { t } = useTranslation();
+  const docs: TableDocument[] = useMemo(() => {
+    const files = data.map((document) => {
+      if ('metadata' in document) {
+        const { id, metadata, directory, source, name } = document;
+        return { id, metadata, directory, source, name };
+      }
 
-  const { results: documents, isInitialLoading } = useDocumentSearchResultQuery(
-    {
-      filter,
-      query,
-      limit: 1000,
-    },
-    {
-      enabled: !data,
-    }
-  );
+      const {
+        id,
+        sourceFile: { metadata, directory, source, name },
+      } = document as WithDetailViewData<Document>;
 
-  const files = documents.map((document) => {
-    const {
-      id,
-      sourceFile: { metadata, directory, source, name },
-    } = document;
-    return { id, metadata, directory, source, name };
-  });
-  const docs: Document[] = convertFilesToDocs(files || data);
+      return { id, metadata, directory, source, name };
+    });
 
-  if (isInitialLoading) {
-    return (
-      <EmptyState isLoading title={t('LOADING_RESULTS', LOADING_RESULTS)} />
-    );
-  }
-
-  if (docs.length === 0) {
-    return (
-      <EmptyState
-        body={t(
-          'REFINE_FILTERS_OR_UPDATE_SEARCH',
-          REFINE_FILTERS_OR_UPDATE_SEARCH
-        )}
-      />
-    );
-  }
+    return convertFilesToDocs(files);
+  }, [data]);
 
   return (
     <DocumentTable

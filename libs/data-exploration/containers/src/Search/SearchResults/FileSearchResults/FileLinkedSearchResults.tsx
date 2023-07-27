@@ -154,8 +154,7 @@ export const FileLinkedSearchResults: React.FC<Props> = ({
                 />
               ) : (
                 <FileGroupingTable
-                  query={debouncedQuery}
-                  filter={documentFilters}
+                  data={files}
                   onItemClicked={(file) => onClick(file)}
                 />
               )}

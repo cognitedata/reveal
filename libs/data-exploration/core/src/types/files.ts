@@ -1,4 +1,4 @@
-import { FileInfo, Document } from '@cognite/sdk';
+import { FileInfo } from '@cognite/sdk';
 
 import { RelationshipLabels } from './resource';
 

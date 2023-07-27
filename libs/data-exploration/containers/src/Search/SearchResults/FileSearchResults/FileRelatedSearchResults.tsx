@@ -154,11 +154,7 @@ export const FileRelatedSearchResults: React.FC<Props> = ({
 
         <GroupingTableWrapper>
           {isDocumentsApiEnabled ? (
-            <FileGroupingTable
-              query={debouncedQuery}
-              data={data}
-              onItemClicked={onClick}
-            />
+            <FileGroupingTable data={data} onItemClicked={onClick} />
           ) : (
             <OldFileGroupTable
               query={debouncedQuery}
