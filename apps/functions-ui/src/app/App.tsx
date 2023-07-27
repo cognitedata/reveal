@@ -13,6 +13,7 @@ import RootApp from './containers/RootApp';
 setupMixpanel();
 
 function App() {
+  const baseUrl = isUsingUnifiedSignin() ? '/cdf' : '';
   return (
     <>
       <ReactQueryDevtools initialIsOpen={false} />
@@ -25,9 +26,12 @@ function App() {
           remoteAddress={window.location.hostname}
           disableMetrics
         >
-          <BrowserRouter basename={isUsingUnifiedSignin() ? '/cdf' : ''}>
+          <BrowserRouter>
             <Routes>
-              <Route path="*" element={<RootApp />} />
+              <Route
+                path={`${baseUrl}/:project/:subAppPath/*`}
+                element={<RootApp />}
+              />
             </Routes>
           </BrowserRouter>
         </FlagProvider>

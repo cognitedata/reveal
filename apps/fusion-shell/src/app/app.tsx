@@ -16,6 +16,7 @@ import LandingPage from './components/LandingPage/LandingPage';
 import Navigation from './components/Navigation';
 import { UserProfilePage } from './components/UserProfilePage/UserProfilePage';
 import { DynamicRoutes } from './DynamicRoutes';
+import { readLoginHints } from '@cognite/auth-react/src/lib/base';
 
 const RoutesWrapper = styled.div`
   height: 100vh;
@@ -24,6 +25,9 @@ const RoutesWrapper = styled.div`
     height: 100%;
   }
 `;
+
+const loginHints = readLoginHints() ?? {};
+
 export function App() {
   const project = getProject();
   const cluster = getCluster();
@@ -50,9 +54,15 @@ export function App() {
         <RoutesWrapper>
           <Routes>
             <Route
-              path="/"
+              path={isUsingUnifiedSignin() ? '/cdf' : '/'}
               element={
-                <Navigate to={createLink(`/${getProject()}`)} replace={true} />
+                <Navigate
+                  to={createLink(
+                    `/${getProject() ?? loginHints?.project}`,
+                    isUsingUnifiedSignin() ? { ...loginHints } : {}
+                  )}
+                  replace={true}
+                />
               }
             />
             <Route

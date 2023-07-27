@@ -1,6 +1,6 @@
 import queryString from 'query-string';
 
-import { unifiedSignInAppName, unifiedSigninUrls } from '../common';
+import { unifiedSignInAppName } from '../common';
 
 export const getQueryParameter = (parameterKey: string) => {
   const parameters = queryString.parse(window.location.search) ?? {};
@@ -8,6 +8,12 @@ export const getQueryParameter = (parameterKey: string) => {
 };
 
 export const getProject = () => {
+  const project = getQueryParameter('project') as string;
+
+  if (project) {
+    return project;
+  }
+
   // if unified signin, the url is apps.cognite.com/cdf/project
   // otherwise is fusion.cognite.com/project
   // when splitting, for fusion index is 1, for /cdf is 2
