@@ -61,9 +61,11 @@ export class FdmSDK {
     const baseUrl = sdk.getBaseUrl();
     const project = sdk.project;
 
-    this._listEndpoint = `${baseUrl}/api/v1/projects/${project}/models/instances/list`;
-    this._byIdsEndpoint = `${baseUrl}/api/v1/projects/${project}/models/instances/byids`;
-    this._inspectEndpoint = `${baseUrl}/api/v1/projects/${project}/models/instances/inspect`;
+    const instancesBaseUrl = `${baseUrl}/api/v1/projects/${project}/models/instances`
+
+    this._listEndpoint = `${instancesBaseUrl}/list`;
+    this._byIdsEndpoint = `${instancesBaseUrl}/byids`;
+    this._inspectEndpoint = `${instancesBaseUrl}/inspect`;
 
     this._sdk = sdk;
   }
