@@ -4,7 +4,6 @@
 // in addition to updating the 'PROPECTION_APP_IDS' & 'PREVIEW_PACKAGE_NAMES'
 static final String[] APPLICATIONS = [
   'platypus',
-  'data-exploration',
   'vision',
   'data-catalog',
   'raw-explorer',
@@ -22,7 +21,6 @@ static final String[] APPLICATIONS = [
   'charts',
   'entity-matching',
   'access-management',
-  'business-shell',
   'notebook',
   'fusion-shell'
 ]
@@ -43,7 +41,6 @@ static final Map<String, String> NPM_PACKAGES = [
 // See https://github.com/cognitedata/terraform/blob/master/cognitedata-production/gcp_fusion_firebase_hosting/sites.tf
 static final Map<String, String> FIREBASE_APP_SITES = [
   'platypus': 'platypus',
-  'data-exploration': 'data-exploration',
   'vision': 'vision',
   'data-catalog': 'data-catalog',
   'raw-explorer': 'raw-explorer',
@@ -61,7 +58,6 @@ static final Map<String, String> FIREBASE_APP_SITES = [
   'charts': 'charts',
   'entity-matching': 'entity-matching',
   'access-management': 'access-management',
-  'business-shell': 'flexible-data-explorer', //The naming needs to be fixed at some later point
   'notebook': 'notebook',
   'fusion-shell': 'ui-host'
 ]
@@ -95,7 +91,6 @@ static final Map<String, String> PREVIEW_PACKAGE_NAMES = [
 // one (or do not have access to Sentry), stop by #frontend to ask for help. 
 static final Map<String, String> SENTRY_PROJECT_NAMES = [
   'platypus': "platypus",
-  'data-exploration': "data-explorer",
   'coding-conventions': "coding-conventions",
   'charts': 'cognite-charts'
 ]
@@ -166,7 +161,6 @@ static final Map<String, String> VERSIONING_STRATEGY = [
   'entity-matching': 'single-branch',
   'functions-ui' : 'single-branch',
   'access-management': 'multi-branch',
-  'business-shell': 'single-branch',
   'notebook': 'single-branch',
   'fusion-shell': 'mutli-branch'
 ]
@@ -518,7 +512,7 @@ pods {
                   firebaseJson: "dist/apps/${project}/firebase.json",
                   buildCommand: "NODE_OPTIONS=--max-old-space-size=8192 yarn build production ${project}",
                   buildFolder: "dist/apps/${project}",
-                  isFusionSubapp: project == 'business-shell' ? false : true,
+                  isFusionSubapp: true,
                 )
 
                 slack.send(
