@@ -286,6 +286,8 @@ const EventSidebar = memo(
                         eventFilter={eventFilter}
                         setFilters={handleUpdateFilterProps}
                         onShowEventResults={toggleShowSearchResults}
+                        dateFrom={chart.dateFrom}
+                        dateTo={chart.dateTo}
                         translations={t}
                       />
                       <SidebarFooterActions>
