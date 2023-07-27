@@ -94,6 +94,14 @@ jobs:
           head: ${{ env.NX_HEAD }}
           target: 'e2e'
 
+      - name: 'Get affected storybook projects to build'
+        id: affected-storybook
+        uses: './scripts/github-actions/nx-get-affected'
+        with:
+          base: ${{ env.NX_BASE }}
+          head: ${{ env.NX_HEAD }}
+          target: 'build-storybook'
+
     outputs:
       affected-libs: ${{ steps.affected-libs.outputs.projects }}
       affected-libs-string: ${{ steps.affected-libs.outputs.projectsString }}
@@ -104,6 +112,7 @@ jobs:
       affected-apps: ${{ steps.affected-apps.outputs.projects }}
       affected-shell-apps: ${{ steps.affected-shell-apps.outputs.projects }}
       affected-e2e: ${{ steps.affected-e2e.outputs.projects }}
+      affected-storybook: ${{ steps.affected-storybook.outputs.projects }}
 
   lint:
     name: 'Lint'
@@ -124,11 +133,6 @@ jobs:
           path: node_modules
           key: cache-node-modules-${{ hashFiles('yarn.lock') }}
 
-      - run: git fetch --no-tags --prune --depth=1 origin ${{ github.base_ref }}
-      - name: Derive appropriate SHAs for base and head for `nx affected` commands
-        uses: nrwl/nx-set-shas@v3
-        with:
-          main-branch-name: ${{ github.base_ref }}
       - name: Lint
         env:
           NODE_OPTIONS: '--max_old_space_size=8192'
@@ -153,11 +157,6 @@ jobs:
           path: node_modules
           key: cache-node-modules-${{ hashFiles('yarn.lock') }}
 
-      - run: git fetch --no-tags --prune --depth=1 origin ${{ github.base_ref }}
-      - name: Derive appropriate SHAs for base and head for `nx affected` commands
-        uses: nrwl/nx-set-shas@v3
-        with:
-          main-branch-name: ${{ github.base_ref }}
       - name: Test
         env:
           NODE_OPTIONS: '--max_old_space_size=8192'
@@ -182,11 +181,6 @@ jobs:
           path: node_modules
           key: cache-node-modules-${{ hashFiles('yarn.lock') }}
 
-      - run: git fetch --no-tags --prune --depth=1 origin ${{ github.base_ref }}
-      - name: Derive appropriate SHAs for base and head for `nx affected` commands
-        uses: nrwl/nx-set-shas@v3
-        with:
-          main-branch-name: ${{ github.base_ref }}
       - name: Build
         env:
           NODE_OPTIONS: '--max_old_space_size=8192'
@@ -217,7 +211,7 @@ jobs:
       - name: Build
         env:
           NODE_OPTIONS: '--max_old_space_size=8192'
-        run: npx nx build ${{ matrix.project }} --configuration=production
+        run: npx nx run ${{ matrix.project }}:build:production
 
   build-shell:
     name: 'Build shell apps'
@@ -244,11 +238,39 @@ jobs:
       - name: Build
         env:
           NODE_OPTIONS: '--max_old_space_size=8192'
-        run: npx nx build ${{ matrix.project }} --configuration=production
+        run: npx nx run ${{ matrix.project }}:build:production
+
+  build-storybook:
+    name: Build storybook
+    runs-on: ubuntu-20.04
+    if: ${{ needs.setup.outputs.affected-storybook != '' && toJson(fromJson(needs.setup.outputs.affected-storybook)) != '[]' }}
+    needs: setup
+    strategy:
+      matrix:
+        project: ${{ fromJson(needs.setup.outputs.affected-storybook)  }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Cache node modules
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: cache-node-modules-${{ hashFiles('yarn.lock') }}
+
+      - name: Build
+        env:
+          NODE_OPTIONS: '--max_old_space_size=8192'
+        run: npx nx run ${{ matrix.project }}:build-storybook
+
   ci-passed:
     # see https://github.community/t/status-check-for-a-matrix-jobs/127354/7
     name: CI Passed
-    needs: [setup, build-libs, build, build-shell, lint, test]
+    needs: [setup, build-libs, build, build-shell, lint, test, build-storybook]
     if: ${{ always() }}
     runs-on: ubuntu-20.04
     steps:

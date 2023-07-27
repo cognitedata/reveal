@@ -128,7 +128,7 @@ jobs:
       - name: Build
         env:
           NODE_OPTIONS: '--max_old_space_size=8192'
-        run: npx nx build ${{ matrix.project }} --configuration=production
+        run: npx nx run ${{ matrix.project }}:build:production
 
       - name: Get deploy environment
         id: deploy-environment
@@ -188,7 +188,7 @@ jobs:
       - name: Build
         env:
           NODE_OPTIONS: '--max_old_space_size=8192'
-        run: npx nx build ${{ matrix.project }} --configuration=production
+        run: npx nx run ${{ matrix.project }}:build:production
 
       - name: Get deploy environment
         id: deploy-environment
