@@ -2,9 +2,12 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { Body, Title, Detail } from '@cognite/cogs.js';
+import { Body, Title, Detail, IconType } from '@cognite/cogs.js';
+
+import { CategoryChip } from '../../chips/CategoryChip';
 
 interface Props {
+  icon?: IconType;
   name: string;
   description?: string;
   properties?: { key?: string; value?: any }[];
@@ -14,6 +17,7 @@ interface Props {
 const MAX_PROPERTIES = 3;
 
 export const SearchResultsItem: React.FC<Props> = ({
+  icon,
   name,
   description,
   properties,
@@ -33,6 +37,8 @@ export const SearchResultsItem: React.FC<Props> = ({
 
   return (
     <Container role="button" onClick={onClick}>
+      {icon && <CategoryChip icon={icon} />}
+
       <TitleContent>
         <NameText>{name}</NameText>
         <DescriptionText>{description}</DescriptionText>

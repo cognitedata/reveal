@@ -1,7 +1,7 @@
 import { merge } from 'lodash';
 
 import { FDMClientV2 } from './FDMClientV2';
-import { SearchResponse } from './types';
+import { DataType, SearchResponse } from './types';
 
 export class FDMComposer {
   private clients: FDMClientV2[] | undefined;
@@ -81,7 +81,7 @@ export class FDMComposer {
     variables: Record<string, unknown> = {}
   ) {
     if (!dataModel || !query) {
-      return Promise.resolve([]);
+      return Promise.resolve({} as Record<DataType, SearchResponse>);
     }
     return this.getClient(
       dataModel.externalId,

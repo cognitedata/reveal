@@ -39,8 +39,15 @@ export type DataModelByIdResponse = {
 };
 
 export type SearchResponse = {
-  items: any[];
+  items: SearchResponseItem[];
 };
+
+export interface SearchResponseItem extends Record<string, unknown> {
+  __typename: DataType;
+  externalId: string;
+  name: string;
+  description?: string;
+}
 
 export type SearchAggregateCountResponse = {
   items: [

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 
 import styled from 'styled-components';
 
@@ -7,21 +7,28 @@ import {
   sendToCopilotEvent,
   useFromCopilotEventHandler,
 } from '@fusion/copilot-core';
+import isString from 'lodash/isString';
 
 import { Icon } from '@cognite/cogs.js';
 import { useFlag } from '@cognite/react-feature-flags';
 
+import { SearchResults } from '../../../components/search/SearchResults';
+import { useNavigation } from '../../../hooks/useNavigation';
 import {
   useSearchFilterParams,
   useSearchQueryParams,
 } from '../../../hooks/useParams';
+import { useFDM } from '../../../providers/FDMProvider';
 import { useAIDataTypesQuery } from '../../../services/dataTypes/queries/useAIDataTypesQuery';
 import { useSelectedDataModels } from '../../../services/useSelectedDataModels';
+import { getIcon } from '../../../utils/getIcon';
 
 export const AIResults = () => {
   const [query] = useSearchQueryParams();
   const [filters] = useSearchFilterParams();
   const selectedDataModels = useSelectedDataModels();
+  const navigate = useNavigation();
+  const client = useFDM();
 
   const [gqlQuery, setGQLQuery] = useState('');
   const [variables, setVariables] = useState({});
@@ -30,7 +37,7 @@ export const AIResults = () => {
   >(undefined);
   const [isAILoading, setIsAILoading] = useState(false);
 
-  const { data, isLoading } = useAIDataTypesQuery(
+  const { data = {}, isLoading } = useAIDataTypesQuery(
     dataModel,
     gqlQuery,
     variables
@@ -87,6 +94,18 @@ export const AIResults = () => {
     });
   }, [query, filters, selectedDataModels, isCopilotEnabled]);
 
+  const handleRowClick = useCallback(
+    (row: any, dataType: string) => {
+      const clickedDataModel = client.getDataModelByDataType(dataType);
+      navigate.toInstancePage(dataType, row.space, row.externalId, {
+        dataModel: clickedDataModel?.externalId,
+        space: clickedDataModel?.space,
+        version: clickedDataModel?.version,
+      });
+    },
+    [navigate, client]
+  );
+
   if (!isCopilotEnabled) {
     return <></>;
   }
@@ -99,13 +118,42 @@ export const AIResults = () => {
     );
   }
 
-  console.log(data);
-
   return (
-    <Wrapper>
-      <h2>AI Results:</h2>
-      <pre>{JSON.stringify(data, null, 2)}</pre>
-    </Wrapper>
+    <>
+      {Object.values(data).map(({ items }) => {
+        return items.map(({ __typename, name, ...item }) => {
+          const properties = Object.entries(item).reduce(
+            (acc, [key, value]) => {
+              if (
+                key === 'externalId' ||
+                key === 'description' ||
+                key === 'space'
+              ) {
+                return acc;
+              }
+
+              if (value !== undefined && isString(value)) {
+                return [...acc, { key, value }];
+              }
+
+              return acc;
+            },
+            [] as { key: string; value: string }[]
+          );
+
+          return (
+            <SearchResults.Item
+              key={`${__typename}-${name}`}
+              icon={getIcon(__typename)}
+              name={__typename}
+              description={name}
+              properties={properties}
+              onClick={() => handleRowClick(item, __typename)}
+            />
+          );
+        });
+      })}
+    </>
   );
 };
 
