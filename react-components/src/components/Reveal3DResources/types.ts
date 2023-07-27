@@ -4,6 +4,7 @@
 
 import { type AddModelOptions, type SupportedModelTypes } from '@cognite/reveal';
 import { type Matrix4 } from 'three';
+import { type Source } from '../../utilities/FdmSDK';
 
 export type AddImageCollection360Options = {
   siteId: string;
@@ -14,14 +15,8 @@ export type AddResourceOptions = AddReveal3DModelOptions | AddImageCollection360
 export type AddReveal3DModelOptions = AddModelOptions & { transform?: Matrix4 };
 export type TypedReveal3DModel = AddReveal3DModelOptions & { type: SupportedModelTypes | '' };
 
-export type ViewInfo = {
-  type: 'view';
-  space: string;
-  externalId: string;
-  version: string;
-};
 
 export type NodeDataResult<NodeType> = {
   data: NodeType;
-  view: ViewInfo;
+  view: Source;
 };

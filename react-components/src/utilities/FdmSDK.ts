@@ -38,12 +38,7 @@ export type InspectResult = {
       space: string;
       externalId: string;
     }>;
-    views: Array<{
-      type: 'view';
-      space: string;
-      externalId: string;
-      version: string;
-    }>;
+    views: Array<Source>;
   };
 };
 
