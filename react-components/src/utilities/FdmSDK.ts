@@ -100,7 +100,7 @@ export class FdmSDK {
   public async filterAllInstances<PropertiesType = Record<string, any>>(
     filter: any,
     instanceType: InstanceType,
-    source?: Source,
+    source?: Source
   ): Promise<{ edges: Array<EdgeItem<PropertiesType>> }> {
     let mappings = await this.filterInstances<PropertiesType>(filter, instanceType, source);
 
