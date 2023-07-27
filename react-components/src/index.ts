@@ -3,6 +3,7 @@
  */
 import '@cognite/cogs.js/dist/cogs.css';
 export { RevealContainer } from './components/RevealContainer/RevealContainer';
+export { useReveal } from './components/RevealContainer/RevealContext';
 export {
   PointCloudContainer,
   type PointCloudModelStyling,
