@@ -94,7 +94,7 @@ export const Reveal3DResources = <NodeType,>({
     return () => {
       viewer.off('click', callback);
     };
-  }, [onNodeClick]);
+  }, [viewer, client, fdmSdk, fdmAssetMappingConfig, onNodeClick]);
 
   const image360CollectionAddOptions = resources.filter(
     (resource): resource is AddImageCollection360Options =>
