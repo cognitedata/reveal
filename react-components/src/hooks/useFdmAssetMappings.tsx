@@ -20,7 +20,8 @@ export const useFdmAssetMappings = (
     ['reveal', 'react-components', fdmAssetExternalIds],
     async () => {
       if (fdmAssetExternalIds?.length === 0) return [];
-      if (fdmConfig === undefined) throw Error('FDM config must be defined when using FDM asset mappings');
+      if (fdmConfig === undefined)
+        throw Error('FDM config must be defined when using FDM asset mappings');
 
       const fdmAssetMappingFilter = {
         in: {
