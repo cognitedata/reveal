@@ -90,7 +90,11 @@ export async function queryMappedData<NodeType>(
     ]
   });
 
-  const dataView = inspectionResult.items[0].inspectionResults.involvedViewsAndContainers.views[0];
+  const dataView = inspectionResult.items[0]?.inspectionResults.involvedViewsAndContainers?.views[0];
+
+  if (dataView === undefined) {
+    return undefined;
+  }
 
   const dataQueryResult = await fdmClient.filterAllInstances(
     {
@@ -109,9 +113,13 @@ export async function queryMappedData<NodeType>(
   );
 
   const nodeData =
-    dataQueryResult.edges[0].properties[dataView.space][
+    dataQueryResult.edges[0]?.properties[dataView.space]?.[
       `${dataView.externalId}/${dataView.version}`
     ];
+
+  if (nodeData === undefined) {
+    return undefined;
+  }
 
   return { data: nodeData as NodeType, view: dataView };
 }
