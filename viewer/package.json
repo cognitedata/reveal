@@ -107,7 +107,7 @@
     "eslint-plugin-jsdoc": "46.4.4",
     "eslint-plugin-lodash": "7.4.0",
     "eslint-plugin-prettier": "4.2.1",
-    "eslint-plugin-unused-imports": "2.0.0",
+    "eslint-plugin-unused-imports": "3.0.0",
     "file-loader": "6.2.0",
     "gl": "6.0.2",
     "glob": "10.3.3",
@@ -141,7 +141,7 @@
     "webpack-cli": "5.1.4",
     "webpack-dev-server": "4.15.1",
     "webpack-node-externals": "3.0.0",
-    "whatwg-fetch": "3.6.16",
+    "whatwg-fetch": "3.6.17",
     "workerize-loader": "2.0.2"
   },
   "peerDependencies": {
