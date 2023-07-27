@@ -101,7 +101,6 @@
   "implicitDependencies": ["data-exploration-e2e"],
   "tags": [],
   "pipeline": {
-    "releaseStrategy": "multi-branch",
-    "useGHActionsRelease": true
+    "releaseStrategy": "multi-branch"
   }
 }

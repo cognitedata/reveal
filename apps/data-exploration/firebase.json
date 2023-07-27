@@ -1,7 +1,7 @@
 {
   "hosting": [
     {
-      "site": "cognite-data-exploration-staging",
+      "site": "cdf-data-exploration-staging",
       "public": ".",
       "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
       "rewrites": [
@@ -23,7 +23,7 @@
       ]
     },
     {
-      "site": "cognite-data-exploration-preview",
+      "site": "cdf-data-exploration-preview",
       "public": ".",
       "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
       "rewrites": [
@@ -45,7 +45,7 @@
       ]
     },
     {
-      "site": "cognite-data-exploration-production",
+      "site": "cdf-data-exploration-production",
       "public": ".",
       "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
       "rewrites": [

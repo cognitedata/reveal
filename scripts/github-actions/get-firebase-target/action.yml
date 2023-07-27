@@ -7,9 +7,13 @@ inputs:
   project:
     description: 'NX project name'
     required: true
-  firebaseTarget:
-    description: 'firebase target. Defaults to cognite-${project}-${environment}'
-    required: false
   environment:
     description: 'The environment on firebase. Options: production, preview, staging'
     required: true
+  firebaseTarget:
+    description: 'firebase target. Defaults to cognite-${project}-${environment}'
+    required: false
+  firebaseProjectId:
+    description: 'firebase project ID'
+    required: false
+    default: 'fusion-217032465111'
