@@ -3,6 +3,8 @@ import { createLayers } from '@cognite/z-index';
 const LAYERS = [
   'MAXIMUM',
 
+  'POPOVER',
+
   'COPILOT',
 
   'SEARCH',

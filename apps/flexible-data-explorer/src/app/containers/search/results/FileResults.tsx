@@ -5,6 +5,7 @@ import { SearchResults } from '../../../components/search/SearchResults';
 import { useNavigation } from '../../../hooks/useNavigation';
 import { useTranslation } from '../../../hooks/useTranslation';
 import { useFilesSearchQuery } from '../../../services/instances/file/queries/useFilesSearchQuery';
+import { InstancePreview } from '../../preview/InstancePreview';
 
 import { PAGE_SIZE } from './constants';
 
@@ -26,25 +27,26 @@ export const FileResults: React.FC = () => {
 
       <SearchResults.Body>
         {data.map(({ item }) => (
-          <SearchResults.Item
-            key={item.id}
-            name={item.sourceFile.name}
-            description={item.truncatedContent}
-            // Sprinkle some AI magic to find the most relevant field here.
-            properties={[
-              {
-                key: 'File type',
-                value: item.type,
-              },
-              {
-                key: 'Created Time',
-                value: formatDate(item.createdTime),
-              },
-            ]}
-            onClick={() => {
-              navigate.toFilePage(item.externalId || item.id);
-            }}
-          />
+          <InstancePreview.File key={item.id} id={item.id}>
+            <SearchResults.Item
+              name={item.sourceFile.name}
+              description={item.truncatedContent}
+              // Sprinkle some AI magic to find the most relevant field here.
+              properties={[
+                {
+                  key: 'File type',
+                  value: item.type,
+                },
+                {
+                  key: 'Created Time',
+                  value: formatDate(item.createdTime),
+                },
+              ]}
+              onClick={() => {
+                navigate.toFilePage(item.externalId || item.id);
+              }}
+            />
+          </InstancePreview.File>
         ))}
       </SearchResults.Body>
 

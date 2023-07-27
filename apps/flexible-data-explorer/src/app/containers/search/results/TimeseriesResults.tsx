@@ -7,6 +7,7 @@ import { SearchResults } from '../../../components/search/SearchResults';
 import { useNavigation } from '../../../hooks/useNavigation';
 import { useTranslation } from '../../../hooks/useTranslation';
 import { useTimeseriesSearchQuery } from '../../../services/instances/timeseries';
+import { InstancePreview } from '../../preview/InstancePreview';
 
 import { PAGE_SIZE } from './constants';
 
@@ -27,42 +28,46 @@ export const TimeseriesResults = () => {
 
       <SearchResults.Body>
         {data.map((item) => (
-          <SearchResults.Item
+          <InstancePreview.Timeseries
             key={item.id}
-            name={
-              item.name ||
-              item.externalId ||
-              String(item.id) ||
-              'No description'
-            }
-            description={item.description}
-            properties={[
-              {
-                value: (
-                  <TimeseriesChart
-                    timeseries={{ id: item.id }}
-                    variant="small"
-                    numberOfPoints={100}
-                    height={55}
-                    styles={{
-                      width: 175,
-                    }}
-                    dataFetchOptions={{
-                      mode: 'aggregate',
-                    }}
-                    autoRange
-                  />
-                ),
-              },
-              {
-                key: 'Created Time',
-                value: formatDate(new Date(item.createdTime).getTime()),
-              },
-            ]}
-            onClick={() => {
-              navigate.toTimeseriesPage(item.externalId || item.id);
-            }}
-          />
+            id={item.externalId || item.id}
+          >
+            <SearchResults.Item
+              name={
+                item.name ||
+                item.externalId ||
+                String(item.id) ||
+                'No description'
+              }
+              description={item.description}
+              properties={[
+                {
+                  value: (
+                    <TimeseriesChart
+                      timeseries={{ id: item.id }}
+                      variant="small"
+                      numberOfPoints={100}
+                      height={55}
+                      styles={{
+                        width: 175,
+                      }}
+                      dataFetchOptions={{
+                        mode: 'aggregate',
+                      }}
+                      autoRange
+                    />
+                  ),
+                },
+                {
+                  key: 'Created Time',
+                  value: formatDate(new Date(item.createdTime).getTime()),
+                },
+              ]}
+              onClick={() => {
+                navigate.toTimeseriesPage(item.externalId || item.id);
+              }}
+            />
+          </InstancePreview.Timeseries>
         ))}
       </SearchResults.Body>
 

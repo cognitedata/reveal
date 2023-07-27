@@ -1,5 +1,6 @@
 {
   "GENERAL_OPEN_IN": "Open in",
+  "GENERAL_OPEN": "Open",
   "GENERAL_SHOW_MORE": "Show more",
   "GENERAL_COPY": "Copy",
   "GENERAL_COPIED": "Copied",
@@ -81,5 +82,8 @@
 
   "RELATIONSHIP_EDGES_WIDGET_TITLE": "Related {{type}}",
 
-  "RELATIONSHIP_DIRECT_WIDGET_TITLE": "Linked {{type}}"
+  "RELATIONSHIP_DIRECT_WIDGET_TITLE": "Linked {{type}}",
+
+  "PREVIEW_CARD_SHOW_ALL_PROPERTIES": "Show all properties",
+  "PREVIEW_CARD_PROPERTIES_TITLE": "Properties"
 }

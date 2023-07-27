@@ -10,7 +10,7 @@ import { BaseWidgetProps, Widget } from '../../../components/widget/Widget';
 import { useIsOverflow } from '../../../hooks/useIsOverflow';
 import { useNavigation } from '../../../hooks/useNavigation';
 import { useTranslation } from '../../../hooks/useTranslation';
-import { useInstanceRelationshipQuery } from '../../../services/instances/generic/queries/useInstanceDirectRelationshipQuery';
+import { useInstanceDirectRelationshipQuery } from '../../../services/instances/generic/queries/useInstanceDirectRelationshipQuery';
 
 interface Props extends BaseWidgetProps {
   type: {
@@ -27,7 +27,7 @@ export const RelationshipDirectWidget: React.FC<Props> = ({
 }) => {
   const { t } = useTranslation();
   const { instanceSpace, dataModel, space, version } = useParams();
-  const { data, status, isLoading } = useInstanceRelationshipQuery(type);
+  const { data, status, isLoading } = useInstanceDirectRelationshipQuery(type);
 
   const navigate = useNavigation();
 

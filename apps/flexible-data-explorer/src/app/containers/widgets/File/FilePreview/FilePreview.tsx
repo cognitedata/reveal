@@ -11,7 +11,7 @@ import { useTranslation } from '../../../../hooks/useTranslation';
 import { useFileContainerQuery } from '../../../../services/files/queries/useFileContainerQuery';
 import { useFileByIdQuery } from '../../../../services/instances/file/queries/useFileByIdQuery';
 
-type FilePreviewProps = {
+export type FilePreviewProps = {
   id: string;
   applicationId: string;
   fileId: number;

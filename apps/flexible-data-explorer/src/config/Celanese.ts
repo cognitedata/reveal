@@ -23,7 +23,7 @@ export const celaneseConfig: ProjectConfig[] = [
       },
       { externalId: 'MaterialDOM', space: 'EDG-COR-ALL-DMD', version: '1_0_0' },
     ],
-    instanceSpaces: ['SAP-COR-ALL-DAT', 'REF-COR-ALL-DAT'],
+    instanceSpaces: ['SAP-CLK-ALL-DAT', 'REF-COR-ALL-DAT'],
 
     threeDResources: [
       // Cad Models

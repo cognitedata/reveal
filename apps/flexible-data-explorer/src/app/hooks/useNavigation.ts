@@ -141,25 +141,22 @@ export const useNavigation = () => {
 
   const toTimeseriesPage = useCallback(
     (externalId: string | number) => {
-      const { space, dataModel, version } = params;
-
       navigate({
-        pathname: `${basename}/${dataModel}/${space}/${version}/timeseries/${externalId}`,
+        pathname: `${basename}/timeseries/${externalId}`,
         search,
       });
     },
-    [basename, navigate, params, search]
+    [basename, navigate, search]
   );
 
   const toFilePage = useCallback(
     (externalId: string | number) => {
-      const { space, dataModel, version } = params;
       navigate({
-        pathname: `${basename}/${dataModel}/${space}/${version}/file/${externalId}`,
+        pathname: `${basename}/file/${externalId}`,
         search,
       });
     },
-    [basename, navigate, params, search]
+    [basename, navigate, search]
   );
 
   const toLandingPage = useCallback(() => {

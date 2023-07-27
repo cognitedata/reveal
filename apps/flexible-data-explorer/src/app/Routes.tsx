@@ -37,10 +37,10 @@ const Routes = () => {
 
           <Route path="3d" element={<ThreeDPage />} />
 
-          <Route path=":dataModel/:space/:version/">
-            <Route path="timeseries/:externalId" element={<TimeseriesPage />} />
-            <Route path="file/:externalId" element={<FilePage />} />
+          <Route path="timeseries/:externalId" element={<TimeseriesPage />} />
+          <Route path="file/:externalId" element={<FilePage />} />
 
+          <Route path=":dataModel/:space/:version/">
             <Route
               path=":dataType/:instanceSpace/:externalId/overview?"
               element={<InstancesPage />}

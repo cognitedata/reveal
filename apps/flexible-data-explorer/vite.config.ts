@@ -25,6 +25,7 @@ export default defineConfig((configType) => {
       port: 3000,
       host: 'localhost',
       https: true,
+      usePulling: true,
       fs: {
         allow: [searchForWorkspaceRoot(process.cwd())],
       },

@@ -36,7 +36,7 @@ export const SearchResultsItem: React.FC<Props> = ({
   );
 
   return (
-    <Container role="button" onClick={onClick}>
+    <Container role="button" tabIndex={0} onClick={onClick}>
       {icon && <CategoryChip icon={icon} />}
 
       <TitleContent>

@@ -13,6 +13,7 @@ import { useNavigation } from '../../../hooks/useNavigation';
 import { useTranslation } from '../../../hooks/useTranslation';
 import { useFDM } from '../../../providers/FDMProvider';
 import { useSearchDataTypesQuery } from '../../../services/dataTypes/queries/useSearchDataTypesQuery';
+import { InstancePreview } from '../../preview/InstancePreview';
 
 import { PAGE_SIZE } from './constants';
 
@@ -68,6 +69,7 @@ const GenericResultItem: React.FC<Props> = ({ dataType, values, type }) => {
   const navigate = useNavigation();
   const { t } = useTranslation();
   const client = useFDM();
+  const dataModel = client.getDataModelByDataType(dataType);
 
   const [page, setPage] = useState<number>(PAGE_SIZE);
 
@@ -84,14 +86,13 @@ const GenericResultItem: React.FC<Props> = ({ dataType, values, type }) => {
 
   const handleRowClick = useCallback(
     (row: any) => {
-      const dataModel = client.getDataModelByDataType(dataType);
       navigate.toInstancePage(dataType, row.space, row.externalId, {
         dataModel: dataModel?.externalId,
         space: dataModel?.space,
         version: dataModel?.version,
       });
     },
-    [navigate, dataType, client]
+    [navigate, dataType, dataModel]
   );
 
   return (
@@ -127,13 +128,22 @@ const GenericResultItem: React.FC<Props> = ({ dataType, values, type }) => {
           }, [] as { key: string; value: string }[]);
 
           return (
-            <SearchResults.Item
+            <InstancePreview.Generic
               key={item.externalId}
-              name={item.name || item.externalId}
-              description={item.description}
-              properties={properties}
-              onClick={() => handleRowClick(item)}
-            />
+              dataModel={dataModel}
+              instance={{
+                dataType,
+                instanceSpace: item.space,
+                externalId: item.externalId,
+              }}
+            >
+              <SearchResults.Item
+                name={item.name || item.externalId}
+                description={item.description}
+                properties={properties}
+                onClick={() => handleRowClick(item)}
+              />
+            </InstancePreview.Generic>
           );
         })}
       </SearchResults.Body>

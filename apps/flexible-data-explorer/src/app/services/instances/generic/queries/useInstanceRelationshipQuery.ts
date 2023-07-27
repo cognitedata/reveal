@@ -5,9 +5,14 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 
 import { EMPTY_ARRAY } from '../../../../constants/object';
 import { ValueByField } from '../../../../containers/Filter';
+import {
+  useDataModelPathParams,
+  useInstancePathParams,
+} from '../../../../hooks/usePathParams';
 import { useFDM } from '../../../../providers/FDMProvider';
 import { buildFilterByField } from '../../../../utils/filterBuilder';
 import { queryKeys } from '../../../queryKeys';
+import { DataModelV2, Instance } from '../../../types';
 
 export const useInstanceRelationshipQuery = (
   {
@@ -17,11 +22,24 @@ export const useInstanceRelationshipQuery = (
     field: string;
     type: string;
   },
-  filters?: ValueByField
+  filters?: ValueByField,
+  {
+    instance,
+    model,
+  }: {
+    instance?: Instance;
+    model?: DataModelV2;
+  } = {}
 ) => {
   const client = useFDM();
-  const { dataType, instanceSpace, externalId, dataModel, version, space } =
-    useParams();
+
+  const dataModelPathParam = useDataModelPathParams();
+  const instancePathParam = useInstancePathParams();
+
+  const { dataType, instanceSpace, externalId } = instance || instancePathParam;
+  const { dataModel, version, space } = model
+    ? { ...model, dataModel: model.externalId }
+    : dataModelPathParam;
 
   const transformedFilter = useMemo(() => {
     return buildFilterByField(filters);
