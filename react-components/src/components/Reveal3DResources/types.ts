@@ -13,3 +13,15 @@ export type AddResourceOptions = AddReveal3DModelOptions | AddImageCollection360
 
 export type AddReveal3DModelOptions = AddModelOptions & { transform?: Matrix4 };
 export type TypedReveal3DModel = AddReveal3DModelOptions & { type: SupportedModelTypes | '' };
+
+export type ViewInfo = {
+  type: 'view',
+  space: string,
+  externalId: string,
+  version: string,
+};
+
+export type NodeDataResult<NodeType> = {
+  data: NodeType,
+  view: ViewInfo
+};

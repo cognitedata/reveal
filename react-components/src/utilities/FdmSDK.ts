@@ -26,10 +26,41 @@ export type EdgeItem<PropertiesType> = {
   properties: PropertiesType;
 };
 
+export type InspectFilter = {
+  inspectionOperations: { involvedViewsAndContainers: {} };
+  items: { instanceType: InstanceType; externalId: string; space: string }[];
+};
+
+export type InspectResult = {
+  involvedViewsAndContainers: {
+    containers: {
+      type: 'container';
+      space: string;
+      externalId: string;
+    }[];
+    views: {
+      type: 'view';
+      space: string;
+      externalId: string;
+      version: string;
+    }[];
+  };
+};
+
+export type InspectResultList = {
+  items: {
+    instanceType: InstanceType;
+    externalId: string;
+    space: string;
+    inspectionResults: InspectResult;
+  }[];
+};
+
 export class FdmSDK {
   private readonly _sdk: CogniteClient;
   private readonly _byIdsEndpoint: string;
   private readonly _listEndpoint: string;
+  private readonly _inspectEndpoint: string;
 
   constructor(sdk: CogniteClient) {
     const baseUrl = sdk.getBaseUrl();
@@ -37,6 +68,7 @@ export class FdmSDK {
 
     this._listEndpoint = `${baseUrl}/api/v1/projects/${project}/models/instances/list`;
     this._byIdsEndpoint = `${baseUrl}/api/v1/projects/${project}/models/instances/byids`;
+    this._inspectEndpoint = `${baseUrl}/api/v1/projects/${project}/models/instances/inspect`;
 
     this._sdk = sdk;
   }
@@ -62,6 +94,19 @@ export class FdmSDK {
         nextCursor: result.data.nextCursor
       };
     }
+    throw new Error(`Failed to fetch instances. Status: ${result.status}`);
+  }
+
+  public async inspectInstances(
+    inspectFilter: InspectFilter
+  ): Promise<InspectResultList> {
+    const data: any = inspectFilter;
+    const result = await this._sdk.post(this._inspectEndpoint, { data });
+
+    if (result.status === 200) {
+      return result.data as InspectResultList;
+    }
+
     throw new Error(`Failed to fetch instances. Status: ${result.status}`);
   }
 }
