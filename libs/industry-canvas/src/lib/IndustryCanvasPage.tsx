@@ -54,7 +54,8 @@ import {
 import { useDragAndDrop } from './hooks/useDragAndDrop';
 import useLocalStorage from './hooks/useLocalStorage';
 import useManagedState from './hooks/useManagedState';
-import useManagedTools from './hooks/useManagedTools';
+import useManagedTool from './hooks/useManagedTool';
+import useOnUpdateSelectedAnnotation from './hooks/useOnUpdateSelectedAnnotation';
 import { useQueryParameter } from './hooks/useQueryParameter';
 import { useResourceSelectorActions } from './hooks/useResourceSelectorActions';
 import { useSelectedAnnotationOrContainer } from './hooks/useSelectedAnnotationOrContainer';
@@ -77,7 +78,6 @@ import enforceTimeseriesApplyToAllIfEnabled from './utils/enforceTimeseriesApply
 import isSupportedResourceItem from './utils/isSupportedResourceItem';
 import resourceItemToContainerReference from './utils/resourceItemToContainerReference';
 import useMetrics from './utils/tracking/useMetrics';
-import useManagedTool from './utils/useManagedTool';
 import { zoomToFitAroundContainerIds } from './utils/zoomToFitAroundContainerIds';
 
 export type OnAddContainerReferences = (
@@ -97,9 +97,8 @@ export const IndustryCanvasPage = () => {
   const [currentZoomScale, setCurrentZoomScale] = useState<number>(1);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const { tooltipsOptions, onUpdateTooltipsOptions } = useTooltipsOptions();
-  const { toolType, setToolType } = useManagedTool(
-    IndustryCanvasToolType.SELECT
-  );
+  const { toolType, setToolType, tool, updateStyleForToolType } =
+    useManagedTool(IndustryCanvasToolType.SELECT);
   const toolBeforeSpacePress = useRef<IndustryCanvasToolType | undefined>(
     undefined
   );
@@ -179,8 +178,8 @@ export const IndustryCanvasPage = () => {
     initialTab,
   } = useResourceSelectorActions();
 
-  const { onUpdateAnnotationStyleByType, tool } = useManagedTools({
-    toolType,
+  const { onUpdateSelectedAnnotation } = useOnUpdateSelectedAnnotation({
+    updateStyleForToolType,
     selectedCanvasAnnotation,
     onUpdateRequest,
   });
@@ -657,7 +656,7 @@ export const IndustryCanvasPage = () => {
             tool={tool}
             toolType={toolType}
             setToolType={setToolType}
-            onUpdateAnnotationStyleByType={onUpdateAnnotationStyleByType}
+            onUpdateSelectedAnnotation={onUpdateSelectedAnnotation}
             isCanvasLocked={isCanvasLocked}
             onResourceSelectorOpen={onResourceSelectorOpen}
             commentAnnotations={commentAnnotations}

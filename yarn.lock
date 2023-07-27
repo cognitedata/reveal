@@ -2666,7 +2666,7 @@
   dependencies:
     commander "^2.15.1"
 
-"@codemirror/autocomplete@^6.0.0", "@codemirror/autocomplete@^6.8.0":
+"@codemirror/autocomplete@6.8.1", "@codemirror/autocomplete@^6.0.0", "@codemirror/autocomplete@^6.8.0":
   version "6.8.1"
   resolved "https://registry.yarnpkg.com/@codemirror/autocomplete/-/autocomplete-6.8.1.tgz#3f3daa9f591186901db07f58d17256656242e841"
   integrity sha512-HpphvDcTdOx+9R3eUw9hZK9JA77jlaBF0kOt2McbyfvY0rX9pnMoO8rkkZc0GzSbzhIY4m5xJ0uHHgjfqHNmXQ==
@@ -2676,7 +2676,7 @@
     "@codemirror/view" "^6.6.0"
     "@lezer/common" "^1.0.0"
 
-"@codemirror/commands@^6.0.0", "@codemirror/commands@^6.1.0":
+"@codemirror/commands@6.2.4", "@codemirror/commands@^6.0.0", "@codemirror/commands@^6.1.0":
   version "6.2.4"
   resolved "https://registry.yarnpkg.com/@codemirror/commands/-/commands-6.2.4.tgz#b8a0e5ce72448c092ba4c4b1d902e6f183948aec"
   integrity sha512-42lmDqVH0ttfilLShReLXsDfASKLXzfyC36bzwcqzox9PlHulMcsUOfHXNo2X2aFMVNUoQ7j+d4q5bnfseYoOA==
@@ -2705,7 +2705,7 @@
     "@lezer/highlight" "^1.0.0"
     "@lezer/lr" "^1.0.0"
 
-"@codemirror/language@^6.0.0", "@codemirror/language@^6.2.1":
+"@codemirror/language@6.8.0", "@codemirror/language@^6.0.0", "@codemirror/language@^6.2.1":
   version "6.8.0"
   resolved "https://registry.yarnpkg.com/@codemirror/language/-/language-6.8.0.tgz#f2d7eea6b338c25593d800f2293b062d9f9856db"
   integrity sha512-r1paAyWOZkfY0RaYEZj3Kul+MiQTEbDvYqf8gPGaRvNneHXCmfSaAVFjwRUPlgxS8yflMxw2CTu6uCMp8R8A2g==
@@ -2724,7 +2724,7 @@
   dependencies:
     "@codemirror/language" "^6.0.0"
 
-"@codemirror/lint@^6.0.0":
+"@codemirror/lint@6.3.0", "@codemirror/lint@^6.0.0":
   version "6.3.0"
   resolved "https://registry.yarnpkg.com/@codemirror/lint/-/lint-6.3.0.tgz#bd36fb85094cf5735e5426e48f1a8e575a7b70df"
   integrity sha512-tzxOVQNoDhhwFNfcTO2IB74wQoWarARcH6gv3YufPpiJ9yhcb7zD6JCkO5+FWARskqRFc8GFa6E+wUyOvADl5A==
@@ -2733,7 +2733,7 @@
     "@codemirror/view" "^6.0.0"
     crelt "^1.0.5"
 
-"@codemirror/search@^6.0.0":
+"@codemirror/search@6.5.0", "@codemirror/search@^6.0.0":
   version "6.5.0"
   resolved "https://registry.yarnpkg.com/@codemirror/search/-/search-6.5.0.tgz#308f9968434e0e6ed59c9ec36a0239eb1dfc5d92"
   integrity sha512-64/M40YeJPToKvGO6p3fijo2vwUEj4nACEAXElCaYQ50HrXSvRaK+NHEhSh73WFBGdvIdhrV+lL9PdJy2RfCYA==
@@ -2742,7 +2742,7 @@
     "@codemirror/view" "^6.0.0"
     crelt "^1.0.5"
 
-"@codemirror/state@^6.0.0", "@codemirror/state@^6.1.1", "@codemirror/state@^6.1.4", "@codemirror/state@^6.2.0":
+"@codemirror/state@6.2.1", "@codemirror/state@^6.0.0", "@codemirror/state@^6.1.1", "@codemirror/state@^6.1.4", "@codemirror/state@^6.2.0":
   version "6.2.1"
   resolved "https://registry.yarnpkg.com/@codemirror/state/-/state-6.2.1.tgz#6dc8d8e5abb26b875e3164191872d69a5e85bd73"
   integrity sha512-RupHSZ8+OjNT38zU9fKH2sv+Dnlr8Eb8sl4NOnnqz95mCFTZUaiRP8Xv5MeeaG0px2b8Bnfe7YGwCV3nsBhbuw==
@@ -2757,7 +2757,7 @@
     "@codemirror/view" "^6.0.0"
     "@lezer/highlight" "^1.0.0"
 
-"@codemirror/view@^6.0.0", "@codemirror/view@^6.6.0":
+"@codemirror/view@6.7.1", "@codemirror/view@^6.0.0", "@codemirror/view@^6.6.0":
   version "6.7.1"
   resolved "https://registry.yarnpkg.com/@codemirror/view/-/view-6.7.1.tgz#370e95d6f001e7f5cadc459807974b4f0a6eb225"
   integrity sha512-kYtS+uqYw/q/0ytYxpkqE1JVuK5NsbmBklWYhwLFTKO9gVuTdh/kDEeZPKorbqHcJ+P+ucrhcsS1czVweOpT2g==
@@ -2868,6 +2868,30 @@
     fs-extra "^9.0.1"
     mixpanel "^0.13.0"
 
+"@cognite/cdf-utilities@3.4.6":
+  version "3.4.6"
+  resolved "https://registry.yarnpkg.com/@cognite/cdf-utilities/-/cdf-utilities-3.4.6.tgz#e5f2b44122af05294bd24069643c732a0bf8cbf2"
+  integrity sha512-refEOc660qnvh7UzmCSYa2xgdy4AR/kHpCrqnv3TsA4d9hr+RrkQuo05zvFZDYadJPnKj1ZIleoGNCR3bwRMKw==
+  dependencies:
+    "@codemirror/autocomplete" "6.8.1"
+    "@codemirror/commands" "6.2.4"
+    "@codemirror/language" "6.8.0"
+    "@codemirror/lint" "6.3.0"
+    "@codemirror/search" "6.5.0"
+    "@codemirror/state" "6.2.1"
+    "@codemirror/view" "6.7.1"
+    "@cognite/cogs.js" "9.16.8"
+    "@lezer/highlight" "1.1.3"
+    "@uiw/codemirror-themes" "4.21.3"
+    "@uiw/react-codemirror" "4.19.5"
+    antd "4.24.10"
+    copy-to-clipboard "3.3.3"
+    lodash "4.17.21"
+    query-string "7.1.3"
+    react "18.2.0"
+    react-router-dom "6.6.1"
+    styled-components "5.3.6"
+
 "@cognite/cdf-utilities@^3.0.0":
   version "3.4.7"
   resolved "https://registry.yarnpkg.com/@cognite/cdf-utilities/-/cdf-utilities-3.4.7.tgz#1c7ee76f5f6d2445a3b7284a83400604233aa383"
@@ -2947,6 +2971,83 @@
     tippy.js "6.2.0"
     ts-dedent "^2.2.0"
 
+"@cognite/cogs.js@9.16.8":
+  version "9.16.8"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-9.16.8.tgz#a7ce19e512f57968f536e1f5657baac1e189b930"
+  integrity sha512-K0xD0Kf/F1NW9+6em11TgIxAvuXNXaWk0UlfeLg9wfECONpe5ReYgwtuZIcHVQzuGxG4Ck55QWVyc3zFsWTneQ==
+  dependencies:
+    "@emotion/react" "11.10.6"
+    "@emotion/styled" "11.10.6"
+    "@mui/base" "5.0.0-alpha.97"
+    "@mui/joy" "5.0.0-alpha.41"
+    "@mui/material" "5.9.2"
+    "@notionhq/client" "2.2.3"
+    "@react-hook/resize-observer" "1.2.6"
+    "@tippyjs/react" "4.2.6"
+    "@types/react-date-range" "1.4.4"
+    axios "0.27.2"
+    classnames "2.3.2"
+    color "3.2.1"
+    csstype "2.6.10"
+    dayjs "1.11.7"
+    deepdash "5.3.9"
+    dotenv-flow "3.2.0"
+    focus-visible "5.2.0"
+    framer-motion "6.5.1"
+    fuse.js "6.6.2"
+    match-sorter "6.3.1"
+    prompts "2.4.2"
+    rc-collapse "1.11.8"
+    rc-drawer "4.4.3"
+    rc-slider "9.5.4"
+    rc-tabs "11.16.1"
+    react-date-range "1.4.0"
+    react-select "3.2.0"
+    react-table "7.6.0"
+    react-toastify "6.2.0"
+    resize-observer-polyfill "1.5.1"
+    tippy.js "6.3.7"
+    ts-dedent "2.2.0"
+
+"@cognite/cogs.js@9.25.0", "@cognite/cogs.js@^9.24.2":
+  version "9.25.0"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-9.25.0.tgz#abcc57423e93b8a2604dc3822bffcf34028946ab"
+  integrity sha512-49B5RH2xVzvubr2ieCyswlORj/P2t1H3Ey3d7RQN72/ThUDuC3R4cpxmZ5QP3ClwvtQ+l8Yrqow8tHgM8L5TFQ==
+  dependencies:
+    "@emotion/react" "11.10.6"
+    "@emotion/styled" "11.10.6"
+    "@mui/base" "5.0.0-alpha.97"
+    "@mui/joy" "5.0.0-alpha.41"
+    "@mui/material" "5.9.2"
+    "@mui/x-date-pickers" "^6.5.0"
+    "@notionhq/client" "2.2.3"
+    "@react-hook/resize-observer" "1.2.6"
+    "@tippyjs/react" "4.2.6"
+    "@types/react-date-range" "1.4.4"
+    axios "0.27.2"
+    classnames "2.3.2"
+    color "3.2.1"
+    csstype "2.6.10"
+    dayjs "1.11.7"
+    deepdash "5.3.9"
+    dotenv-flow "3.2.0"
+    focus-visible "5.2.0"
+    framer-motion "6.5.1"
+    fuse.js "6.6.2"
+    match-sorter "6.3.1"
+    prompts "2.4.2"
+    rc-collapse "1.11.8"
+    rc-drawer "4.4.3"
+    rc-slider "9.5.4"
+    rc-tabs "11.16.1"
+    react-date-range "1.4.0"
+    react-select "3.2.0"
+    react-table "7.6.0"
+    react-toastify "6.2.0"
+    resize-observer-polyfill "1.5.1"
+    tippy.js "6.3.7"
+    ts-dedent "2.2.0"
+
 "@cognite/cogs.js@^5.3.1":
   version "5.19.5"
   resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-5.19.5.tgz#5fa025481b8711b90fea1b9b29bf38ebef773f29"
@@ -2985,83 +3086,6 @@
     "@mui/base" "5.0.0-alpha.97"
     "@mui/joy" "5.0.0-alpha.41"
     "@mui/material" "5.9.2"
-    "@notionhq/client" "2.2.3"
-    "@react-hook/resize-observer" "1.2.6"
-    "@tippyjs/react" "4.2.6"
-    "@types/react-date-range" "1.4.4"
-    axios "0.27.2"
-    classnames "2.3.2"
-    color "3.2.1"
-    csstype "2.6.10"
-    dayjs "1.11.7"
-    deepdash "5.3.9"
-    dotenv-flow "3.2.0"
-    focus-visible "5.2.0"
-    framer-motion "6.5.1"
-    fuse.js "6.6.2"
-    match-sorter "6.3.1"
-    prompts "2.4.2"
-    rc-collapse "1.11.8"
-    rc-drawer "4.4.3"
-    rc-slider "9.5.4"
-    rc-tabs "11.16.1"
-    react-date-range "1.4.0"
-    react-select "3.2.0"
-    react-table "7.6.0"
-    react-toastify "6.2.0"
-    resize-observer-polyfill "1.5.1"
-    tippy.js "6.3.7"
-    ts-dedent "2.2.0"
-
-"@cognite/cogs.js@^9.15.0":
-  version "9.15.0"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-9.15.0.tgz#4a502e6569dd97adb5cb8d59162e60b47d2b5b89"
-  integrity sha512-7yxOVJIHtQqSHju3rwBa6it4KZ7I1TFyvwFB5fRyS0kc4yHxPh2/HdY4cMNds7GnJ2F49pS0YNjYYh6S376SCw==
-  dependencies:
-    "@emotion/react" "11.10.6"
-    "@emotion/styled" "11.10.6"
-    "@mui/base" "5.0.0-alpha.97"
-    "@mui/joy" "5.0.0-alpha.41"
-    "@mui/material" "5.9.2"
-    "@notionhq/client" "2.2.3"
-    "@react-hook/resize-observer" "1.2.6"
-    "@tippyjs/react" "4.2.6"
-    "@types/react-date-range" "1.4.4"
-    axios "0.27.2"
-    classnames "2.3.2"
-    color "3.2.1"
-    csstype "2.6.10"
-    dayjs "1.11.7"
-    deepdash "5.3.9"
-    dotenv-flow "3.2.0"
-    focus-visible "5.2.0"
-    framer-motion "6.5.1"
-    fuse.js "6.6.2"
-    match-sorter "6.3.1"
-    prompts "2.4.2"
-    rc-collapse "1.11.8"
-    rc-drawer "4.4.3"
-    rc-slider "9.5.4"
-    rc-tabs "11.16.1"
-    react-date-range "1.4.0"
-    react-select "3.2.0"
-    react-table "7.6.0"
-    react-toastify "6.2.0"
-    resize-observer-polyfill "1.5.1"
-    tippy.js "6.3.7"
-    ts-dedent "2.2.0"
-
-"@cognite/cogs.js@^9.24.2":
-  version "9.25.0"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-9.25.0.tgz#abcc57423e93b8a2604dc3822bffcf34028946ab"
-  integrity sha512-49B5RH2xVzvubr2ieCyswlORj/P2t1H3Ey3d7RQN72/ThUDuC3R4cpxmZ5QP3ClwvtQ+l8Yrqow8tHgM8L5TFQ==
-  dependencies:
-    "@emotion/react" "11.10.6"
-    "@emotion/styled" "11.10.6"
-    "@mui/base" "5.0.0-alpha.97"
-    "@mui/joy" "5.0.0-alpha.41"
-    "@mui/material" "5.9.2"
-    "@mui/x-date-pickers" "^6.5.0"
     "@notionhq/client" "2.2.3"
     "@react-hook/resize-observer" "1.2.6"
     "@tippyjs/react" "4.2.6"
@@ -3165,24 +3189,23 @@
     lodash "4.17.21"
     mixpanel-browser "2.45.0"
 
-"@cognite/plotting-components@^0.0.10":
-  version "0.0.10"
-  resolved "https://registry.yarnpkg.com/@cognite/plotting-components/-/plotting-components-0.0.10.tgz#d6242d6b45492a6156babeda7344ff654fbd3bfc"
-  integrity sha512-tF1t40pDyM1qZQCY+p5E+AeMxZxNQyNkaGJopkqALedpMAAUT0DLcRqubdIHjauF77zDAKAUbKdARAxQQVSIlg==
+"@cognite/plotting-components@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@cognite/plotting-components/-/plotting-components-1.0.1.tgz#1f88c38b361acdc178cbb8d620d3937ab309bbf7"
+  integrity sha512-jRl7z1PGtrW2Xz9LSf6kqDPbA/d/39p96Vb1tX6joXVDzluXU84aoxH1ockk+jEkmd71f5MrexcxeuhSo5T/og==
   dependencies:
-    "@cognite/cogs.js" "^9.15.0"
-    "@cognite/sdk" "^7.19.1"
-    "@cognite/sdk-provider" "^2.0.6"
-    "@tanstack/react-query" "^4.6.1"
-    "@testing-library/jest-dom" "^5.16.5"
-    dayjs "^1.11.7"
-    html2canvas "^1.4.1"
-    lodash "^4.17.21"
-    plotly.js "^2.18.2"
-    query-string "^6.14.1"
+    "@cognite/cdf-utilities" "3.4.6"
+    "@cognite/cogs.js" "9.25.0"
+    "@cognite/sdk" "7.19.1"
+    "@cognite/sdk-provider" "2.0.6"
+    "@tanstack/react-query" "4.29.13"
+    dayjs "1.11.9"
+    html2canvas "1.4.1"
+    lodash "4.17.21"
+    plotly.js "2.18.2"
     rc-collapse "1.11.8"
-    react-datepicker "^3.3.0"
-    react-plotly.js "^2.6.0"
+    react-datepicker "3.8.0"
+    react-plotly.js "2.6.0"
     styled-components "5.3.6"
 
 "@cognite/react-container@^9.1.1":
@@ -3450,7 +3473,7 @@
     "@cognite/sdk" "^8.1.1"
     "@cognite/sdk-core" "^4.9.0"
 
-"@cognite/sdk-provider@^2.0.6":
+"@cognite/sdk-provider@2.0.6", "@cognite/sdk-provider@^2.0.6":
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/@cognite/sdk-provider/-/sdk-provider-2.0.6.tgz#170f6c8d6b78f5b8b9600be9b2e0bba1cf0f1a32"
   integrity sha512-virwJdy9NuthuS6UQ75hzIbeAtTp8mbxPFJsVehIm6DBXd0AwTggbG0TQVkPqO9OayImjEVk5HCv+9fXrjXM2Q==
@@ -3462,6 +3485,16 @@
   integrity sha512-AOi+sFiQoCcRFrb3v4s/GuLGyAlVTxFtug3743g8IJwBUyxUoka3D72pkI6wlBp8JFrijwfJ2gfsk6FfmvDr9Q==
   dependencies:
     "@cognite/sdk-core" "^3.4.1"
+    lodash "^4.17.11"
+
+"@cognite/sdk@7.19.1", "@cognite/sdk@^7.19.1":
+  version "7.19.1"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-7.19.1.tgz#9424286c508437eaa24125901e24971e04da809b"
+  integrity sha512-XlJbaLi/GTwuk9S4AkTdPhkUw+w8j3flcnqrEhtTS1eqI5AGdlKoyJ4TbZtedjeFxtfbPSC5O8uOzxEZQVpvgg==
+  dependencies:
+    "@cognite/sdk-core" "^4.8.2"
+    "@types/geojson" "^7946.0.8"
+    geojson "^0.5.0"
     lodash "^4.17.11"
 
 "@cognite/sdk@7.8.2":
@@ -3477,16 +3510,6 @@
   version "7.14.0"
   resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-7.14.0.tgz#febbbe4982686b9f1c85c1281a6e6cbf46d39d2a"
   integrity sha512-XW97u6Q+7Hi8JZ5fSwjqqhZ5s6sU56NJgUk1nZoh2mSNkxfVufgmab1thS6dWo70ihjOr7KVjYjSMr/UWUrlNQ==
-  dependencies:
-    "@cognite/sdk-core" "^4.8.2"
-    "@types/geojson" "^7946.0.8"
-    geojson "^0.5.0"
-    lodash "^4.17.11"
-
-"@cognite/sdk@^7.19.1":
-  version "7.19.1"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-7.19.1.tgz#9424286c508437eaa24125901e24971e04da809b"
-  integrity sha512-XlJbaLi/GTwuk9S4AkTdPhkUw+w8j3flcnqrEhtTS1eqI5AGdlKoyJ4TbZtedjeFxtfbPSC5O8uOzxEZQVpvgg==
   dependencies:
     "@cognite/sdk-core" "^4.8.2"
     "@types/geojson" "^7946.0.8"
@@ -3530,13 +3553,13 @@
   resolved "https://registry.yarnpkg.com/@cognite/testing/-/testing-0.1.1-rc.0.tgz#409bbac7e38c39892876d7a5c2667ccb76608435"
   integrity sha512-dcPCgmy64cQX0WgUerLKGwUhGSQw0S8iokFSeQ0jknexAJAjbkuQS5vyx1HOyHN1HJR1pQP5pQh5uiTUkZJuwg==
 
-"@cognite/unified-file-viewer@^15.0.1":
-  version "15.0.1"
-  resolved "https://registry.yarnpkg.com/@cognite/unified-file-viewer/-/unified-file-viewer-15.0.1.tgz#3c21b4333f8524668b0f6e1b72bfe3b50545d603"
-  integrity sha512-LGDjI8qcQdCEGRlQtRR4elDQHeKVgV/3sUgNd9QarfzlwANiwvKyojdNBiYLo0boGyKv3BXkH4SFMveTP1Zukg==
+"@cognite/unified-file-viewer@^15.0.5":
+  version "15.0.5"
+  resolved "https://registry.yarnpkg.com/@cognite/unified-file-viewer/-/unified-file-viewer-15.0.5.tgz#df84f637aee74812bc682018e80c6c816c0f72a0"
+  integrity sha512-apH9XHIbJefq0U/rB/f8jc09XjYFrDr0ImbYdKSDmB3q7lz5x0U1K7fhTtAbFjpHKrM8bKpz//umwJcvkAgX0w==
   dependencies:
     "@cognite/cogs.js" "^9.10.0"
-    "@cognite/plotting-components" "^0.0.10"
+    "@cognite/plotting-components" "^1.0.1"
     "@cognite/reveal" "^4.1.2"
     "@cognite/sdk" "^7.13.0"
     "@cognite/sdk-provider" "^2.0.6"
@@ -5808,7 +5831,7 @@
   resolved "https://registry.yarnpkg.com/@lezer/common/-/common-1.0.2.tgz#8fb9b86bdaa2ece57e7d59e5ffbcb37d71815087"
   integrity sha512-SVgiGtMnMnW3ActR8SXgsDhw7a0w0ChHSYAyAUxxrOiJ1OqYWEKk/xJd84tTSPo1mo6DXLObAJALNnd0Hrv7Ng==
 
-"@lezer/highlight@^1.0.0":
+"@lezer/highlight@1.1.3", "@lezer/highlight@^1.0.0":
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/@lezer/highlight/-/highlight-1.1.3.tgz#bf5a36c2ee227f526d74997ac91f7777e29bd25d"
   integrity sha512-3vLKLPThO4td43lYRBygmMY18JN3CPh9w+XS2j8WC30vR4yZeFG4z1iFe4jXE43NtGqe//zHW5q8ENLlHvz9gw==
@@ -7942,6 +7965,11 @@
     redux "^4.2.0"
     redux-thunk "^2.4.2"
     reselect "^4.1.7"
+
+"@remix-run/router@1.2.1":
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/@remix-run/router/-/router-1.2.1.tgz#812edd4104a15a493dda1ccac0b352270d7a188c"
+  integrity sha512-XiY0IsyHR+DXYS5vBxpoBe/8veTeoRpMHP+vDosLZxL5bnpetzI0igkxkLZS235ldLzyfkxF+2divEwWHP3vMQ==
 
 "@remix-run/router@1.6.2":
   version "1.6.2"
@@ -10692,11 +10720,6 @@
   resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-4.10.1.tgz#a587e39c28a905168bdf8a3906e36715c30ec083"
   integrity sha512-UZRYzjgQSfYhQ+cJX0CspAbzutf8p93gR1xFjQuH3OYcb/7t3WnHkdb/qC9mbqrfWXN/JAbBTJlTU/XQHc5HbA==
 
-"@tanstack/query-core@4.20.4":
-  version "4.20.4"
-  resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-4.20.4.tgz#1f7975a2db26a8bc2f382bad8a44cd422c846b17"
-  integrity sha512-lhLtGVNJDsJ/DyZXrLzekDEywQqRVykgBqTmkv0La32a/RleILXy6JMLBb7UmS3QCatg/F/0N9/5b0i5j6IKcA==
-
 "@tanstack/query-core@4.29.11":
   version "4.29.11"
   resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-4.29.11.tgz#fa338f7d6897c6be5de6d8dabd603d9b78ee48c7"
@@ -10733,7 +10756,7 @@
     "@tanstack/query-core" "4.10.1"
     use-sync-external-store "^1.2.0"
 
-"@tanstack/react-query@^4.29.13":
+"@tanstack/react-query@4.29.13", "@tanstack/react-query@^4.29.13":
   version "4.29.13"
   resolved "https://registry.yarnpkg.com/@tanstack/react-query/-/react-query-4.29.13.tgz#937ce9e8efcff0106817f7e1341c8a19d29f29df"
   integrity sha512-qF8SHosMU6SzxWa7Ivxp3Q07zXvH+8PBDAlH8CR9ywfT3Y7uOK3jclfwMLzqgoGgDnYCarY2Ra+qDV0+xm19JQ==
@@ -10747,14 +10770,6 @@
   integrity sha512-XiTIOHHQ5Cw1WUlHaD4fmVUMhoWjuNJlAeJGq7eM4BraI5z7y8WkZO+NR8PSuRnQGblpuVdjClQbDFtwxTtTUw==
   dependencies:
     "@tanstack/query-core" "4.29.19"
-    use-sync-external-store "^1.2.0"
-
-"@tanstack/react-query@^4.6.1":
-  version "4.20.4"
-  resolved "https://registry.yarnpkg.com/@tanstack/react-query/-/react-query-4.20.4.tgz#562b34fb919adea884eccaba2b5be50e8ba7fb16"
-  integrity sha512-SJRxx13k/csb9lXAJfycgVA1N/yU/h3bvRNWP0+aHMfMjmbyX82FdoAcckDBbOdEyAupvb0byelNHNeypCFSyA==
-  dependencies:
-    "@tanstack/query-core" "4.20.4"
     use-sync-external-store "^1.2.0"
 
 "@tanstack/react-table@^8.7.4":
@@ -12946,19 +12961,19 @@
     "@codemirror/state" "^6.0.0"
     "@codemirror/view" "^6.0.0"
 
-"@uiw/codemirror-themes@^4.11.4":
-  version "4.21.7"
-  resolved "https://registry.yarnpkg.com/@uiw/codemirror-themes/-/codemirror-themes-4.21.7.tgz#eafcdfdf1c3cb30beb8227702fa1985a8daae78a"
-  integrity sha512-IggpVo7R+GREBpmInhrGxYcmbcqMci/cbaBxMmjNtPILqDwlGgWNtc7F2gNQ+gfQ138l+KXtdamielrSEM1qeA==
+"@uiw/codemirror-themes@4.21.3", "@uiw/codemirror-themes@^4.21.3":
+  version "4.21.3"
+  resolved "https://registry.yarnpkg.com/@uiw/codemirror-themes/-/codemirror-themes-4.21.3.tgz#8a620eb136fe99537d3985522a48b3812995410e"
+  integrity sha512-gB7jUP1SqAkvwOGt0hTpyw7xHMJkgDu5ODy+1qPHMU27IT425+GXJAHPKLHBuRL2+InnWJPMz9JXVrrJU32lLg==
   dependencies:
     "@codemirror/language" "^6.0.0"
     "@codemirror/state" "^6.0.0"
     "@codemirror/view" "^6.0.0"
 
-"@uiw/codemirror-themes@^4.21.3":
-  version "4.21.3"
-  resolved "https://registry.yarnpkg.com/@uiw/codemirror-themes/-/codemirror-themes-4.21.3.tgz#8a620eb136fe99537d3985522a48b3812995410e"
-  integrity sha512-gB7jUP1SqAkvwOGt0hTpyw7xHMJkgDu5ODy+1qPHMU27IT425+GXJAHPKLHBuRL2+InnWJPMz9JXVrrJU32lLg==
+"@uiw/codemirror-themes@^4.11.4":
+  version "4.21.7"
+  resolved "https://registry.yarnpkg.com/@uiw/codemirror-themes/-/codemirror-themes-4.21.7.tgz#eafcdfdf1c3cb30beb8227702fa1985a8daae78a"
+  integrity sha512-IggpVo7R+GREBpmInhrGxYcmbcqMci/cbaBxMmjNtPILqDwlGgWNtc7F2gNQ+gfQ138l+KXtdamielrSEM1qeA==
   dependencies:
     "@codemirror/language" "^6.0.0"
     "@codemirror/state" "^6.0.0"
@@ -14218,10 +14233,10 @@ ansicolors@~0.3.2:
   resolved "https://registry.yarnpkg.com/ansicolors/-/ansicolors-0.3.2.tgz#665597de86a9ffe3aa9bfbe6cae5c6ea426b4979"
   integrity sha512-QXu7BPrP29VllRxH8GwB7x5iX5qWKAAMLqKQGWTeLWVlNHNOpVMJ91dsxQAIWXpjuW5wqvxu3Jd/nRjrJ+0pqg==
 
-antd@^4.22.4:
-  version "4.24.12"
-  resolved "https://registry.yarnpkg.com/antd/-/antd-4.24.12.tgz#ce95ae93a52ab44f1e0e2ef3467e936ac66e8f04"
-  integrity sha512-VOW9+ekutTuov2NxH9ReDoUmEtfyGPoXSVplUrP7jkYIvPREQsLi+825/nwf1WRBxagWZgJxzJwtl2i9fbvh9A==
+antd@4.24.10, antd@^4.24.7:
+  version "4.24.10"
+  resolved "https://registry.yarnpkg.com/antd/-/antd-4.24.10.tgz#9bf371c3b351b881c5b56049a410d5cf16f077ac"
+  integrity sha512-GihdwTGFW0dUaWjcvSIfejFcT63HjEp2EbYd+ojEXayldhey230KrHDJ+C53rkrkzLvymrPBfSxlLxJzyFIZsg==
   dependencies:
     "@ant-design/colors" "^6.0.0"
     "@ant-design/icons" "^4.7.0"
@@ -14236,9 +14251,9 @@ antd@^4.22.4:
     rc-checkbox "~3.0.0"
     rc-collapse "~3.4.2"
     rc-dialog "~9.0.2"
-    rc-drawer "~6.3.0"
+    rc-drawer "~6.1.0"
     rc-dropdown "~4.0.0"
-    rc-field-form "~1.34.0"
+    rc-field-form "~1.27.0"
     rc-image "~5.13.0"
     rc-input "~0.1.4"
     rc-input-number "~7.3.9"
@@ -14267,10 +14282,10 @@ antd@^4.22.4:
     rc-util "^5.22.5"
     scroll-into-view-if-needed "^2.2.25"
 
-antd@^4.24.7:
-  version "4.24.10"
-  resolved "https://registry.yarnpkg.com/antd/-/antd-4.24.10.tgz#9bf371c3b351b881c5b56049a410d5cf16f077ac"
-  integrity sha512-GihdwTGFW0dUaWjcvSIfejFcT63HjEp2EbYd+ojEXayldhey230KrHDJ+C53rkrkzLvymrPBfSxlLxJzyFIZsg==
+antd@^4.22.4:
+  version "4.24.12"
+  resolved "https://registry.yarnpkg.com/antd/-/antd-4.24.12.tgz#ce95ae93a52ab44f1e0e2ef3467e936ac66e8f04"
+  integrity sha512-VOW9+ekutTuov2NxH9ReDoUmEtfyGPoXSVplUrP7jkYIvPREQsLi+825/nwf1WRBxagWZgJxzJwtl2i9fbvh9A==
   dependencies:
     "@ant-design/colors" "^6.0.0"
     "@ant-design/icons" "^4.7.0"
@@ -14285,9 +14300,9 @@ antd@^4.24.7:
     rc-checkbox "~3.0.0"
     rc-collapse "~3.4.2"
     rc-dialog "~9.0.2"
-    rc-drawer "~6.1.0"
+    rc-drawer "~6.3.0"
     rc-dropdown "~4.0.0"
-    rc-field-form "~1.27.0"
+    rc-field-form "~1.34.0"
     rc-image "~5.13.0"
     rc-input "~0.1.4"
     rc-input-number "~7.3.9"
@@ -17526,7 +17541,7 @@ copy-descriptor@^0.1.0:
   resolved "https://registry.yarnpkg.com/copy-descriptor/-/copy-descriptor-0.1.1.tgz#676f6eb3c39997c2ee1ac3a924fd6124748f578d"
   integrity sha512-XgZ0pFcakEUlbwQEVNg3+QAis1FyTL3Qel9FYy8pSkQqoG3PNoT0bOCQtOXcOkur21r2Eq2kI+IE+gsmAEVlYw==
 
-copy-to-clipboard@^3.2.0, copy-to-clipboard@^3.3.1, copy-to-clipboard@^3.3.2, copy-to-clipboard@^3.3.3:
+copy-to-clipboard@3.3.3, copy-to-clipboard@^3.2.0, copy-to-clipboard@^3.3.1, copy-to-clipboard@^3.3.2, copy-to-clipboard@^3.3.3:
   version "3.3.3"
   resolved "https://registry.yarnpkg.com/copy-to-clipboard/-/copy-to-clipboard-3.3.3.tgz#55ac43a1db8ae639a4bd99511c148cdd1b83a1b0"
   integrity sha512-2KV8NhB5JqC3ky0r9PMCAZKbUHSwtEo4CwCs0KXgruG43gX5PMqDEBbVU4OUzw2MuAWUfsuFmWvEKG5QRfSnJA==
@@ -18774,7 +18789,7 @@ dayjs@1.11.7, dayjs@1.x, dayjs@^1.10.4, dayjs@^1.11.7, dayjs@^1.9.7:
   resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.11.7.tgz#4b296922642f70999544d1144a2c25730fce63e2"
   integrity sha512-+Yw9U6YO5TQohxLcIkrXBeY73WP3ejHWVvx8XCk3gxvQDCTEmS48ZrSZCKciI7Bhl/uCMyxYtE9UqRILmFphkQ==
 
-dayjs@^1.11.9:
+dayjs@1.11.9, dayjs@^1.11.9:
   version "1.11.9"
   resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.11.9.tgz#9ca491933fadd0a60a2c19f6c237c03517d71d1a"
   integrity sha512-QvzAURSbQ0pKdIye2txOzNaHmxtUBXerpY0FJsFXUMKbIZeFm5ht1LS/jFsrncjnmtv8HsG0W2g6c0zUjZWmpA==
@@ -23664,7 +23679,7 @@ html-webpack-plugin@^5.5.0:
     pretty-error "^4.0.0"
     tapable "^2.0.0"
 
-html2canvas@^1.4.1:
+html2canvas@1.4.1, html2canvas@^1.4.1:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/html2canvas/-/html2canvas-1.4.1.tgz#7cef1888311b5011d507794a066041b14669a543"
   integrity sha512-fPU6BHNpsyIhr8yyMpTLLxAbkaK8ArIBcmZIRiBLiDhjeqvXolaEmDGmELFuX9I4xDcaKKcJl+TKZLqruBbmWA==
@@ -31979,7 +31994,7 @@ plotly.js-basic-dist@^2.24.2:
   resolved "https://registry.yarnpkg.com/plotly.js-basic-dist/-/plotly.js-basic-dist-2.24.2.tgz#77a04f13c4a3718c95b5edc5a84e054a2b9d0e20"
   integrity sha512-+88/YCahrrTV1c2ytJi3XabPJSznRvVXX4IipwzfBQQ2jARfURHMU2T2Ef6V1s430BJa5Tk0b6oKg7ygsdwyKw==
 
-plotly.js@^2.18.2:
+plotly.js@2.18.2, plotly.js@^2.18.2:
   version "2.18.2"
   resolved "https://registry.yarnpkg.com/plotly.js/-/plotly.js-2.18.2.tgz#62c3396adac8e1dd6eb34aed4efd8982ed3f931a"
   integrity sha512-Z8ZgWNfjeIEYxt/PCfpKZoWMxWylGYiuz28W2frUwEeTEcnnspi+JveC3IWYGmlq6dS3AWlJiZOJWJgdrJjCmA==
@@ -33613,26 +33628,7 @@ query-string@*:
     filter-obj "^5.1.0"
     split-on-first "^3.0.0"
 
-query-string@^5.1.1:
-  version "5.1.1"
-  resolved "https://registry.yarnpkg.com/query-string/-/query-string-5.1.1.tgz#a78c012b71c17e05f2e3fa2319dd330682efb3cb"
-  integrity sha512-gjWOsm2SoGlgLEdAGt7a6slVOk9mGiXmPFMqrEhLQ68rhQuBnpfs3+EmlvqKyxnCo9/PPlF+9MtY02S1aFg+Jw==
-  dependencies:
-    decode-uri-component "^0.2.0"
-    object-assign "^4.1.0"
-    strict-uri-encode "^1.0.0"
-
-query-string@^6.14.1:
-  version "6.14.1"
-  resolved "https://registry.yarnpkg.com/query-string/-/query-string-6.14.1.tgz#7ac2dca46da7f309449ba0f86b1fd28255b0c86a"
-  integrity sha512-XDxAeVmpfu1/6IjyT/gXHOl+S0vQ9owggJ30hhWKdHAsNPOcasn5o9BW0eejZqL2e4vMjhAxoW3jVHcD6mbcYw==
-  dependencies:
-    decode-uri-component "^0.2.0"
-    filter-obj "^1.1.0"
-    split-on-first "^1.0.0"
-    strict-uri-encode "^2.0.0"
-
-query-string@^7.0.1, query-string@^7.1.0:
+query-string@7.1.3, query-string@^7.0.1, query-string@^7.1.0:
   version "7.1.3"
   resolved "https://registry.yarnpkg.com/query-string/-/query-string-7.1.3.tgz#a1cf90e994abb113a325804a972d98276fe02328"
   integrity sha512-hh2WYhq4fi8+b+/2Kg9CEge4fDPvHS534aOOvOZeQ3+Vf2mCFsaFBYj0i+iXcAq6I9Vzp5fjMFBlONvayDC1qg==
@@ -33641,6 +33637,15 @@ query-string@^7.0.1, query-string@^7.1.0:
     filter-obj "^1.1.0"
     split-on-first "^1.0.0"
     strict-uri-encode "^2.0.0"
+
+query-string@^5.1.1:
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/query-string/-/query-string-5.1.1.tgz#a78c012b71c17e05f2e3fa2319dd330682efb3cb"
+  integrity sha512-gjWOsm2SoGlgLEdAGt7a6slVOk9mGiXmPFMqrEhLQ68rhQuBnpfs3+EmlvqKyxnCo9/PPlF+9MtY02S1aFg+Jw==
+  dependencies:
+    decode-uri-component "^0.2.0"
+    object-assign "^4.1.0"
+    strict-uri-encode "^1.0.0"
 
 querystring-es3@^0.2.0:
   version "0.2.1"
@@ -34470,7 +34475,7 @@ react-date-range@1.4.0, react-date-range@^1.1.3:
     react-list "^0.8.13"
     shallow-equal "^1.2.1"
 
-react-datepicker@^3.3.0:
+react-datepicker@3.8.0, react-datepicker@^3.3.0:
   version "3.8.0"
   resolved "https://registry.yarnpkg.com/react-datepicker/-/react-datepicker-3.8.0.tgz#c3bccd3e3f47aa66864a2fa75651be097414430b"
   integrity sha512-iFVNEp8DJoX5yEvEiciM7sJKmLGrvE70U38KhpG13XrulNSijeHw1RZkhd/0UmuXR71dcZB/kdfjiidifstZjw==
@@ -34881,7 +34886,7 @@ react-player@^2.12.0:
     prop-types "^15.7.2"
     react-fast-compare "^3.0.1"
 
-react-plotly.js@^2.6.0:
+react-plotly.js@2.6.0, react-plotly.js@^2.6.0:
   version "2.6.0"
   resolved "https://registry.yarnpkg.com/react-plotly.js/-/react-plotly.js-2.6.0.tgz#ad6b68ee64f1b5cfa142ee92c59687f9c2c09209"
   integrity sha512-g93xcyhAVCSt9kV1svqG1clAEdL6k3U+jjuSzfTV7owaSU9Go6Ph8bl25J+jKfKvIGAEYpe4qj++WHJuc9IaeA==
@@ -35052,6 +35057,14 @@ react-router-dom@6.11.2:
     "@remix-run/router" "1.6.2"
     react-router "6.11.2"
 
+react-router-dom@6.6.1:
+  version "6.6.1"
+  resolved "https://registry.yarnpkg.com/react-router-dom/-/react-router-dom-6.6.1.tgz#1b96ec0b2cefa7319f1251383ea5b41295ee260d"
+  integrity sha512-u+8BKUtelStKbZD5UcY0NY90WOzktrkJJhyhNg7L0APn9t1qJNLowzrM9CHdpB6+rcPt6qQrlkIXsTvhuXP68g==
+  dependencies:
+    "@remix-run/router" "1.2.1"
+    react-router "6.6.1"
+
 react-router@5.3.4:
   version "5.3.4"
   resolved "https://registry.yarnpkg.com/react-router/-/react-router-5.3.4.tgz#8ca252d70fcc37841e31473c7a151cf777887bb5"
@@ -35073,6 +35086,13 @@ react-router@6.11.2:
   integrity sha512-74z9xUSaSX07t3LM+pS6Un0T55ibUE/79CzfZpy5wsPDZaea1F8QkrsiyRnA2YQ7LwE/umaydzXZV80iDCPkMg==
   dependencies:
     "@remix-run/router" "1.6.2"
+
+react-router@6.6.1:
+  version "6.6.1"
+  resolved "https://registry.yarnpkg.com/react-router/-/react-router-6.6.1.tgz#17de6cf285f2d1c9721a3afca999c984e5558854"
+  integrity sha512-YkvlYRusnI/IN0kDtosUCgxqHeulN5je+ew8W+iA1VvFhf86kA+JEI/X/8NqYcr11hCDDp906S+SGMpBheNeYQ==
+  dependencies:
+    "@remix-run/router" "1.2.1"
 
 react-scripts@5.0.1:
   version "5.0.1"

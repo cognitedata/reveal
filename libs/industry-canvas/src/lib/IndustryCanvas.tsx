@@ -23,7 +23,8 @@ import {
 import useEditOnSelect from './hooks/useEditOnSelect';
 import useIndustryCanvasTooltips from './hooks/useIndustryCanvasTooltips';
 import { UseManagedStateReturnType } from './hooks/useManagedState';
-import { UseManagedToolsReturnType } from './hooks/useManagedTools';
+import { UseManagedToolReturnType } from './hooks/useManagedTool';
+import { UseOnUpdateSelectedAnnotationReturnType } from './hooks/useOnUpdateSelectedAnnotation';
 import { UseResourceSelectorActionsReturnType } from './hooks/useResourceSelectorActions';
 import { UseTooltipsOptionsReturnType } from './hooks/useTooltipsOptions';
 import { OnAddContainerReferences } from './IndustryCanvasPage';
@@ -52,6 +53,7 @@ export type IndustryCanvasProps = {
   setToolType: Dispatch<SetStateAction<IndustryCanvasToolType>>;
   isCanvasLocked: boolean;
   onResourceSelectorOpen: UseResourceSelectorActionsReturnType['onResourceSelectorOpen'];
+  tool: UseManagedToolReturnType['tool'];
 } & Pick<
   UseManagedStateReturnType,
   | 'container'
@@ -65,7 +67,7 @@ export type IndustryCanvasProps = {
   | 'setInteractionState'
   | 'containerAnnotations'
 > &
-  Pick<UseManagedToolsReturnType, 'tool' | 'onUpdateAnnotationStyleByType'> &
+  UseOnUpdateSelectedAnnotationReturnType &
   Pick<
     UseTooltipsOptionsReturnType,
     'tooltipsOptions' | 'onUpdateTooltipsOptions'
@@ -92,7 +94,7 @@ export const IndustryCanvas = ({
   viewerRef,
   toolType,
   setToolType,
-  onUpdateAnnotationStyleByType,
+  onUpdateSelectedAnnotation,
   shouldShowConnectionAnnotations,
   tool,
   commentAnnotations,
@@ -152,7 +154,7 @@ export const IndustryCanvas = ({
     onAddContainerReferences,
     onAddSummarizationSticky,
     onDeleteSelectedCanvasAnnotation,
-    onUpdateAnnotationStyleByType,
+    onUpdateSelectedAnnotation,
     updateContainerById,
     removeContainerById,
     onResourceSelectorOpen,

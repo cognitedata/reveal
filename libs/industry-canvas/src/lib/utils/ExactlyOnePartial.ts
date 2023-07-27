@@ -1,6 +1,6 @@
-export type ExactlyOneKey<T> = {
+export type ExactlyOnePartial<T> = {
   [K in keyof T]: {
-    [P in K]: T[K];
+    [P in K]: Partial<T[K]>;
   } & {
     [P in keyof Omit<T, K>]?: never;
   };

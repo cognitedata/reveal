@@ -6,8 +6,8 @@ import {
   PolylineAnnotation,
   RectangleAnnotation,
   TextAnnotation,
+  StickyAnnotation,
 } from '@cognite/unified-file-viewer';
-import { StickyAnnotation } from '@cognite/unified-file-viewer/dist/core/annotations/types';
 
 import { CanvasAnnotation } from '../types';
 import assertNever from '../utils/assertNever';

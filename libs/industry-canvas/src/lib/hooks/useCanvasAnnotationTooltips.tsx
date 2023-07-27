@@ -15,18 +15,17 @@ import { StickyAnnotationTooltip } from '../components/tooltips/StickyAnnotation
 import { TextAnnotationTooltip } from '../components/tooltips/TextAnnotationTooltip';
 import { CanvasAnnotation, isShapeAnnotation } from '../types';
 
-import { OnUpdateAnnotationStyleByType } from './useManagedTools';
+import { UseOnUpdateSelectedAnnotationReturnType } from './useOnUpdateSelectedAnnotation';
 
 export type UseCanvasAnnotationTooltipsParams = {
   selectedCanvasAnnotation: CanvasAnnotation | undefined;
   onDeleteSelectedCanvasAnnotation: () => void;
-  onUpdateAnnotationStyleByType: OnUpdateAnnotationStyleByType;
-};
+} & UseOnUpdateSelectedAnnotationReturnType;
 
 const useCanvasAnnotationTooltips = ({
   selectedCanvasAnnotation,
   onDeleteSelectedCanvasAnnotation,
-  onUpdateAnnotationStyleByType,
+  onUpdateSelectedAnnotation,
 }: UseCanvasAnnotationTooltipsParams) => {
   return useMemo(() => {
     if (selectedCanvasAnnotation === undefined) {
@@ -44,7 +43,7 @@ const useCanvasAnnotationTooltips = ({
                 onDeleteSelectedCanvasAnnotation={
                   onDeleteSelectedCanvasAnnotation
                 }
-                onUpdateAnnotationStyleByType={onUpdateAnnotationStyleByType}
+                onUpdateSelectedAnnotation={onUpdateSelectedAnnotation}
               />
             </BottomMarginStyle>
           ),
@@ -64,7 +63,7 @@ const useCanvasAnnotationTooltips = ({
                 onDeleteSelectedCanvasAnnotation={
                   onDeleteSelectedCanvasAnnotation
                 }
-                onUpdateAnnotationStyleByType={onUpdateAnnotationStyleByType}
+                onUpdateSelectedAnnotation={onUpdateSelectedAnnotation}
                 textAnnotation={selectedCanvasAnnotation}
               />
             </BottomMarginStyle>
@@ -85,7 +84,7 @@ const useCanvasAnnotationTooltips = ({
                 onDeleteSelectedCanvasAnnotation={
                   onDeleteSelectedCanvasAnnotation
                 }
-                onUpdateAnnotationStyleByType={onUpdateAnnotationStyleByType}
+                onUpdateSelectedAnnotation={onUpdateSelectedAnnotation}
                 lineAnnotation={selectedCanvasAnnotation}
               />
             </BottomMarginStyle>
@@ -106,7 +105,7 @@ const useCanvasAnnotationTooltips = ({
                 onDeleteSelectedCanvasAnnotation={
                   onDeleteSelectedCanvasAnnotation
                 }
-                onUpdateAnnotationStyleByType={onUpdateAnnotationStyleByType}
+                onUpdateSelectedAnnotation={onUpdateSelectedAnnotation}
                 stickyAnnotation={selectedCanvasAnnotation}
               />
             </BottomMarginStyle>
@@ -122,7 +121,7 @@ const useCanvasAnnotationTooltips = ({
     );
   }, [
     selectedCanvasAnnotation,
-    onUpdateAnnotationStyleByType,
+    onUpdateSelectedAnnotation,
     onDeleteSelectedCanvasAnnotation,
   ]);
 };

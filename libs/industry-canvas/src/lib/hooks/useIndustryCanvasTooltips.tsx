@@ -15,7 +15,7 @@ import useIndustryCanvasAssetTooltips from './useIndustryCanvasAssetTooltips';
 import useIndustryCanvasContainerTooltips from './useIndustryCanvasContainerTooltips';
 import useIndustryCanvasFileLinkTooltips from './useIndustryCanvasFileLinkTooltips';
 import { UseManagedStateReturnType } from './useManagedState';
-import { OnUpdateAnnotationStyleByType } from './useManagedTools';
+import { UseOnUpdateSelectedAnnotationReturnType } from './useOnUpdateSelectedAnnotation';
 import { UseResourceSelectorActionsReturnType } from './useResourceSelectorActions';
 import { OnUpdateTooltipsOptions, TooltipsOptions } from './useTooltipsOptions';
 
@@ -35,10 +35,9 @@ export type UseTooltipsParams = {
   updateContainerById: UseManagedStateReturnType['updateContainerById'];
   removeContainerById: UseManagedStateReturnType['removeContainerById'];
   onDeleteSelectedCanvasAnnotation: () => void;
-  onUpdateAnnotationStyleByType: OnUpdateAnnotationStyleByType;
   onResourceSelectorOpen: UseResourceSelectorActionsReturnType['onResourceSelectorOpen'];
   commentAnnotations: CommentAnnotation[];
-};
+} & UseOnUpdateSelectedAnnotationReturnType;
 
 const useIndustryCanvasTooltips = ({
   containers,
@@ -52,7 +51,7 @@ const useIndustryCanvasTooltips = ({
   selectedContainer,
   updateContainerById,
   removeContainerById,
-  onUpdateAnnotationStyleByType,
+  onUpdateSelectedAnnotation,
   onResourceSelectorOpen,
   commentAnnotations,
 }: UseTooltipsParams) => {
@@ -68,7 +67,7 @@ const useIndustryCanvasTooltips = ({
   const canvasAnnotationTooltips = useCanvasAnnotationTooltips({
     selectedCanvasAnnotation,
     onDeleteSelectedCanvasAnnotation,
-    onUpdateAnnotationStyleByType,
+    onUpdateSelectedAnnotation,
   });
   const containerTooltips = useIndustryCanvasContainerTooltips({
     selectedContainer,

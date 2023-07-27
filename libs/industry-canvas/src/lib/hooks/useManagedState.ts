@@ -59,6 +59,7 @@ import {
   useHistory,
 } from './useCanvasStateHistory';
 import { useContainerAnnotations } from './useContainerAnnotations';
+import { UseManagedToolReturnType } from './useManagedTool';
 import resolveContainerConfig from './utils/resolveContainerConfig';
 
 export type InteractionState = {
@@ -333,8 +334,8 @@ const useManagedState = ({
   setToolType,
 }: {
   unifiedViewer: UnifiedViewer | null;
-  toolType: IndustryCanvasToolType;
-  setToolType: Dispatch<SetStateAction<IndustryCanvasToolType>>;
+  toolType: UseManagedToolReturnType['toolType'];
+  setToolType: UseManagedToolReturnType['setToolType'];
 }): UseManagedStateReturnType => {
   const sdk = useSDK();
   const trackUsage = useMetrics();

@@ -5,7 +5,7 @@ import { StickyAnnotation } from '@cognite/unified-file-viewer/dist/core/annotat
 
 import { STICKY_ANNOTATION_COLOR_MAP } from '../../colors';
 import { translationKeys } from '../../common';
-import { OnUpdateAnnotationStyleByType } from '../../hooks/useManagedTools';
+import { UseOnUpdateSelectedAnnotationReturnType } from '../../hooks/useOnUpdateSelectedAnnotation';
 import { useTranslation } from '../../hooks/useTranslation';
 import { CircleButton } from '../color-palettes/CircleButton';
 
@@ -13,15 +13,14 @@ import { RightAlignedColorPalettePosition } from './elements';
 
 export type StickyAnnotationTooltipProps = {
   stickyAnnotation: StickyAnnotation;
-  onUpdateAnnotationStyleByType: OnUpdateAnnotationStyleByType;
   onDeleteSelectedCanvasAnnotation: () => void;
-};
+} & UseOnUpdateSelectedAnnotationReturnType;
 
 export const StickyAnnotationTooltip: React.FC<
   StickyAnnotationTooltipProps
 > = ({
   stickyAnnotation,
-  onUpdateAnnotationStyleByType,
+  onUpdateSelectedAnnotation,
   onDeleteSelectedCanvasAnnotation,
 }) => {
   const [isInEditFillMode, setIsInEditFillMode] = useState(false);
@@ -39,7 +38,7 @@ export const StickyAnnotationTooltip: React.FC<
                   fill={color}
                   isToggled={stickyAnnotation.style?.backgroundColor === color}
                   onClick={() => {
-                    onUpdateAnnotationStyleByType({
+                    onUpdateSelectedAnnotation({
                       sticky: { backgroundColor: color },
                     });
                   }}

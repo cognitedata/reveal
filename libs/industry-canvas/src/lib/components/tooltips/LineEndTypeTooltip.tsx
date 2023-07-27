@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Button, ToolBar } from '@cognite/cogs.js';
-import { PolylineEndType } from '@cognite/unified-file-viewer/dist/core/annotations/types';
+import { PolylineEndType } from '@cognite/unified-file-viewer';
 
 export type LineEndTypeTooltipProps = {
   selectedStartEndType: PolylineEndType | undefined;
