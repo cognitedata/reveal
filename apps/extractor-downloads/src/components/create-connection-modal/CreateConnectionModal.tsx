@@ -84,12 +84,6 @@ export const CreateConnectionModal = ({
     if (!values.host) {
       errors.host = t('validation-error-field-required');
     }
-    if (!values.username) {
-      errors.username = t('validation-error-field-required');
-    }
-    if (!values.password) {
-      errors.password = t('validation-error-field-required');
-    }
 
     return errors;
   };
@@ -138,19 +132,26 @@ export const CreateConnectionModal = ({
           label={{
             required: true,
             info: undefined,
-            text: t('form-source-external-id'),
+            text: t('create-connection-form-source-external-id'),
           }}
           onChange={(e) => setFieldValue('externalId', e.target.value)}
-          placeholder={t('form-source-external-id-placeholder')}
+          placeholder={t(
+            'create-connection-form-source-external-id-placeholder'
+          )}
           status={errors.externalId ? 'critical' : undefined}
           statusText={errors.externalId}
           value={values.externalId}
         />
-        <FormFieldWrapper isRequired title={t('form-protocol-version')}>
+        <FormFieldWrapper
+          isRequired
+          title={t('create-connection-form-protocol-version')}
+        >
           <Select
             onChange={(e) => setFieldValue('type', e)}
             options={MQTT_SOURCE_TYPE_OPTIONS}
-            placeholder={t('form-protocol-version-placeholder')}
+            placeholder={t(
+              'create-connection-form-protocol-version-placeholder'
+            )}
             value={values.type}
           />
         </FormFieldWrapper>
@@ -160,10 +161,10 @@ export const CreateConnectionModal = ({
           label={{
             required: true,
             info: undefined,
-            text: t('form-host-name'),
+            text: t('create-connection-form-host-name'),
           }}
           onChange={(e) => setFieldValue('host', e.target.value)}
-          placeholder={t('form-host-name-placeholder')}
+          placeholder={t('create-connection-form-host-name-placeholder')}
           status={errors.host ? 'critical' : undefined}
           statusText={errors.host}
           value={values.host}
@@ -174,10 +175,10 @@ export const CreateConnectionModal = ({
           label={{
             required: false,
             info: undefined,
-            text: t('form-port'),
+            text: t('create-connection-form-port'),
           }}
           onChange={(e) => setFieldValue('port', e.target.value)}
-          placeholder={t('form-port-placeholder')}
+          placeholder={t('create-connection-form-port-placeholder')}
           status={errors.port ? 'critical' : undefined}
           statusText={errors.port}
           type="number"
@@ -187,28 +188,24 @@ export const CreateConnectionModal = ({
           clearable
           fullWidth
           label={{
-            required: true,
+            required: false,
             info: undefined,
-            text: t('form-username'),
+            text: t('create-connection-form-username'),
           }}
           onChange={(e) => setFieldValue('username', e.target.value)}
-          placeholder={t('form-username-placeholder')}
-          status={errors.username ? 'critical' : undefined}
-          statusText={errors.username}
+          placeholder={t('create-connection-form-username-placeholder')}
           value={values.username}
         />
         <InputExp
           clearable
           fullWidth
           label={{
-            required: true,
+            required: false,
             info: undefined,
-            text: t('form-password'),
+            text: t('create-connection-form-password'),
           }}
           onChange={(e) => setFieldValue('password', e.target.value)}
-          placeholder={t('form-password-placeholder')}
-          status={errors.password ? 'critical' : undefined}
-          statusText={errors.password}
+          placeholder={t('create-connection-form-password-placeholder')}
           type="password"
           value={values.password}
         />

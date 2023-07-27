@@ -10,7 +10,7 @@ export type BaseMQTTSource = {
   type: MQTTSourceType;
   host: string;
   port?: string;
-  username: string;
+  username?: string;
 };
 
 export type ReadMQTTSource = BaseMQTTSource & {
@@ -19,7 +19,7 @@ export type ReadMQTTSource = BaseMQTTSource & {
 };
 
 export type CreateMQTTSource = BaseMQTTSource & {
-  password: string;
+  password?: string;
 };
 
 type CreateMQTTSourceVariables = CreateMQTTSource;

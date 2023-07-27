@@ -10,7 +10,8 @@ import { FlagProvider } from '@cognite/react-feature-flags';
 import { SDKProvider } from '@cognite/sdk-provider';
 
 import { AuthContainer } from './AuthContainer';
-import { translations } from './common/i18n';
+import { translations } from './common';
+import { CreateConnection } from './components/CreateConnection';
 import { ExtractorDetails } from './components/ExtractorDetails';
 import { NewExtractor } from './components/NewExtractor';
 import SourceSystemDetails from './components/source-system-details/SourceSystemDetails';
@@ -57,6 +58,10 @@ const App = () => {
                     <Route
                       path={`${baseUrl}/:subAppPath/extractor/:extractorExternalId`}
                       element={<ExtractorDetails />}
+                    />
+                    <Route
+                      path={`${baseUrl}/:subAppPath/extractor/:extractorExternalId/create_new_connection`}
+                      element={<CreateConnection />}
                     />
                     <Route
                       path={`${baseUrl}/:subAppPath/source-system/:sourceSystemExternalId`}
