@@ -1,5 +1,7 @@
 import styled from 'styled-components';
 
+import { Flex } from '@cognite/cogs.js';
+
 import { DataExplorerLink } from '../components/links/DataExplorerLink';
 import { Categories } from '../containers/category/Categories';
 import { Page } from '../containers/page/Page';
@@ -10,15 +12,22 @@ export const HomePage = () => {
   return (
     <Page disableScrollbarGutter>
       <SearchContainer>
-        <SearchConfiguration header />
+        <Flex
+          direction="column"
+          justifyContent="center"
+          className="search-bar-container"
+          alignItems="center"
+        >
+          <SearchConfiguration header />
 
-        <SearchBarContainer>
-          <SearchBar width="774px" />
-          {/* Hide this for now. until we have flags */}
-          {/* <SearchBarSwitch /> */}
-        </SearchBarContainer>
+          <SearchBarContainer>
+            <SearchBar width="774px" />
+            {/* Hide this for now. until we have flags */}
+            {/* <SearchBarSwitch /> */}
+          </SearchBarContainer>
 
-        <DataExplorerLink />
+          <DataExplorerLink />
+        </Flex>
       </SearchContainer>
 
       <Page.Body>

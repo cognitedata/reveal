@@ -21,7 +21,7 @@ export const Categories = () => {
 
   return (
     <CategoriesContainer>
-      <CategoryContent>
+      <CategoryContent className="categories-container">
         {client.allDataTypes?.map((item, index) => (
           <CategoryCard
             key={index}

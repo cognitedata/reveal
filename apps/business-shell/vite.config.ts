@@ -1,6 +1,7 @@
 /// <reference types="vitest" />
 import basicSsl from '@vitejs/plugin-basic-ssl';
 import react from '@vitejs/plugin-react';
+import rollupNodePlugins from 'rollup-plugin-node-polyfills';
 import { defineConfig, loadEnv, searchForWorkspaceRoot } from 'vite';
 import macrosPlugin from 'vite-plugin-babel-macros';
 import svgr from 'vite-plugin-svgr';
@@ -32,13 +33,15 @@ export default defineConfig((configType) => {
     },
     // dont just blanket expose process.env, expose just the ones you need.
     // https://dev.to/whchi/how-to-use-processenv-in-vite-ho9
-    define: Object.entries(env).reduce(
-      (obj, [key, value]) => ({
-        ...obj,
-        [`process.env.${key}`]: JSON.stringify(value),
-      }),
-      {}
-    ),
+    define: {
+      ...Object.entries(env).reduce(
+        (obj, [key, value]) => ({
+          ...obj,
+          [`process.env.${key}`]: JSON.stringify(value),
+        }),
+        {}
+      ),
+    },
 
     preview: {
       port: 4300,

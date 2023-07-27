@@ -15,7 +15,8 @@ import { CarouselImage } from '@cognite/cogs.js/dist/esm/Components/Carousel/typ
 
 import { EMPTY_ARRAY } from '../../utils';
 
-export interface OnboardingModalProps extends Omit<ModalDefaultProps, 'title'> {
+export interface OnboardingModalProps
+  extends Omit<ModalDefaultProps, 'title' | 'children'> {
   title?: string;
   body?: React.ReactNode;
   logoType: ProductLogoProps['type'];
