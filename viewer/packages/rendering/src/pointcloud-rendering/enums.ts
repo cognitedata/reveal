@@ -17,9 +17,11 @@ export enum PointColorType {
   Rgb = 0,
   Depth = 2,
   Height = 3,
+  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
   Elevation = 3,
   Intensity = 4,
   Lod = 6,
+  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
   LevelOfDetail = 6,
   PointIndex = 7,
   Classification = 8
