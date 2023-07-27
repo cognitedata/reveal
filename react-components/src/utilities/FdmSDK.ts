@@ -97,6 +97,30 @@ export class FdmSDK {
     throw new Error(`Failed to fetch instances. Status: ${result.status}`);
   }
 
+  public async filterAllInstances<PropertiesType = Record<string, any>>(
+    filter: any,
+    instanceType: InstanceType,
+    source?: Source,
+  ): Promise<{ edges: Array<EdgeItem<PropertiesType>> }> {
+    let mappings = await this.filterInstances<PropertiesType>(filter, instanceType, source);
+
+    while (mappings.nextCursor !== undefined) {
+      const nextMappings = await this.filterInstances<PropertiesType>(
+        filter,
+        instanceType,
+        source,
+        mappings.nextCursor
+      );
+
+      mappings = {
+        edges: [...mappings.edges, ...nextMappings.edges],
+        nextCursor: nextMappings.nextCursor
+      };
+    }
+
+    return { edges: mappings.edges };
+  }
+
   public async inspectInstances(inspectFilter: InspectFilter): Promise<InspectResultList> {
     const data: any = inspectFilter;
     const result = await this._sdk.post(this._inspectEndpoint, { data });

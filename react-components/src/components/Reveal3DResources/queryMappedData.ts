@@ -71,21 +71,7 @@ export async function queryMappedData<NodeType>(
     ]
   };
 
-  let mappings = await fdmClient.filterInstances(filter, 'edge', fdmConfig.source);
-
-  while (mappings.nextCursor !== undefined) {
-    const nextMappings = await fdmClient.filterInstances(
-      filter,
-      'edge',
-      fdmConfig.source,
-      mappings.nextCursor
-    );
-
-    mappings = {
-      edges: [...mappings.edges, ...nextMappings.edges],
-      nextCursor: nextMappings.nextCursor
-    };
-  }
+  let mappings = await fdmClient.filterAllInstances(filter, 'edge', fdmConfig.source);
 
   if (mappings.edges.length === 0) {
     return;
@@ -106,7 +92,7 @@ export async function queryMappedData<NodeType>(
 
   const dataView = inspectionResult.items[0].inspectionResults.involvedViewsAndContainers.views[0];
 
-  const dataQueryResult = await fdmClient.filterInstances(
+  const dataQueryResult = await fdmClient.filterAllInstances(
     {
       and: [
         { equals: { property: ['node', 'space'], value: dataNode.space } },
