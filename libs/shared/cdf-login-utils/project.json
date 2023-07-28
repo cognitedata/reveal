@@ -41,6 +41,7 @@
         "rollupConfig": "libs/shared/cdf-login-utils/rollup-config.js",
         "compiler": "tsc",
         "updateBuildableProjectDepsInPackageJson": false,
+        "skipTypeField": true,
         "format": ["esm", "cjs"],
         "assets": [
           {

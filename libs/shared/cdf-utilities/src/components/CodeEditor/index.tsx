@@ -5,9 +5,9 @@ import styled from 'styled-components';
 import ReactCodeMirror from '@uiw/react-codemirror';
 
 import { CommandFunction, getExtensions } from './extensions';
-import { editorStyle, getTheme } from './theme';
+import { CodeEditorTheme, editorStyle, getTheme } from './theme';
 
-export type CodeEditorTheme = 'light' | 'dark';
+export { type CodeEditorTheme } from './theme';
 
 export type CodeEditorProps = {
   disabled?: boolean;

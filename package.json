@@ -50,6 +50,7 @@
     "@hookform/error-message": "^2.0.0",
     "@hookform/resolvers": "^2.6.0",
     "@keenondrums/singleton": "^1.0.0",
+    "@lezer/highlight": "^1.0.0",
     "@monaco-editor/react": "^4.4.6",
     "@openapi-codegen/cli": "^2.0.0",
     "@openapi-codegen/typescript": "^6.2.2",

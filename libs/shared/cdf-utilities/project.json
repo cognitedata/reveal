@@ -17,23 +17,26 @@
       "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["libs/shared/cdf-utilities/**/*.{ts,tsx,js,jsx}"]
+        "lintFilePatterns": [
+          "libs/shared/cdf-utilities/**/*.{ts,tsx,js,jsx}",
+          "libs/shared/cdf-utilities/package.json"
+        ]
       }
     },
     "build": {
       "executor": "@nx/rollup:rollup",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "format": ["esm"],
+        "format": ["esm", "cjs"],
         "outputPath": "dist/libs/shared/cdf-utilities",
         "tsConfig": "libs/shared/cdf-utilities/tsconfig.lib.json",
         "project": "libs/shared/cdf-utilities/package.json",
         "entryFile": "libs/shared/cdf-utilities/src/index.ts",
-        "external": ["react/jsx-runtime"],
-        "rollupConfig": "@nx/react/plugins/bundle-rollup",
-        "compiler": "babel",
-        "updateBuildableProjectDepsInPackageJson": true,
-        "buildableProjectDepsInPackageJsonType": "dependencies",
+        "external": "all",
+        "rollupConfig": "libs/shared/cdf-utilities/rollup-config.js",
+        "compiler": "tsc",
+        "updateBuildableProjectDepsInPackageJson": false,
+        "skipTypeField": true,
         "assets": [
           {
             "glob": "libs/shared/cdf-utilities/README.md",
