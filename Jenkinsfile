@@ -62,30 +62,6 @@ static final Map<String, String> FIREBASE_APP_SITES = [
   'fusion-shell': 'ui-host'
 ]
 
-static final Map<String, String> PREVIEW_PACKAGE_NAMES = [
-  'platypus': "@cognite/cdf-solutions-ui",
-  'data-exploration': "@cognite/cdf-data-exploration",
-  'vision': "@cognite/cdf-vision-subapp",
-  'data-catalog': "@cognite/cdf-data-catalog",
-  'raw-explorer': "@cognite/cdf-raw-explorer",
-  'coding-conventions': "@cognite/cdf-coding-conventions",
-  'copilot': "@cognite/cdf-copilot",
-  'industry-canvas-ui': "@cognite/cdf-industry-canvas-ui",
-  'interactive-diagrams': '@cognite/cdf-context-ui-pnid',
-  'iot-hub': "@cognite/cdf-iot-hub",
-  'functions-ui': "@cognite/cdf-functions-ui",
-  '3d-management': '@cognite/cdf-3d-management',
-  'transformations': "@cognite/cdf-transformations-2",
-  'cdf-document-search': '@cognite/cdf-document-search-ui',
-  'extraction-pipelines': '@cognite/cdf-integrations-ui',
-  'extractor-downloads': '@cognite/cdf-extractor-downloads',
-  'charts': '@cognite/cdf-charts-ui',
-  'entity-matching': '@cognite/cdf-ui-entity-matching',
-  'access-management': '@cognite/cdf-access-management',
-  'business-shell': '@cognite/business-shell',
-  'notebook': '@cognite/cdf-ui-notebook',
-  'fusion-shell': '@cognite/fusion-shell'
-]
 
 // Replace this with your app's ID on https://sentry.io/ -- if you do not have
 // one (or do not have access to Sentry), stop by #frontend to ask for help. 
@@ -95,14 +71,6 @@ static final Map<String, String> SENTRY_PROJECT_NAMES = [
   'charts': 'cognite-charts'
 ]
 
-// Add apps/libs name to the list where you want the storybook preview to build.
-static final String[] PREVIEW_STORYBOOK = [
-  'platypus',
-  'data-exploration-components-old',
-  'shared-plotting-components',
-  'user-profile-components',
-  'user-onboarding-components'
-]
   // '3d-management',
   // Should be added after monorepo storybook version is upgraded to v7.
 
@@ -397,31 +365,6 @@ pods {
 
 
       parallel(
-        'Storybook': {
-          container('apphosting') {
-            if (!isPullRequest) {
-              print 'No storybook reviews for release builds'
-              return;
-            }
-
-            for (int i = 0; i < projects.size(); i++) {
-              def project = projects[i];
-              if (!PREVIEW_STORYBOOK.contains(project)) {
-                continue;
-              }
-
-              stageWithNotify("Build and deploy Storybook for: ${project}") {
-                previewServer(
-                  prefix: "storybook-${project}",
-                  commentPrefix: "[storybook-server:${project}]\n",
-                  buildCommand: "yarn build-storybook ${project}",
-                  buildFolder: "storybook-static",
-                )
-              }
-            }
-          }
-        },
-
         'Preview': {
           container('apphosting') {
             if (!isPullRequest) {
@@ -429,38 +372,8 @@ pods {
               return
             }
 
+            //this can be deleted at the end, left it to delete comments in older PRs
             deleteComments('[FUSION_PREVIEW_URL]')
-
-            for (int i = 0; i < projects.size(); i++) {
-              def project = projects[i];
-              def packageName = PREVIEW_PACKAGE_NAMES[project]
-
-              if (packageName == null) {
-                print "No preview available for: ${project}"
-                continue
-              }
-
-              dir("apps/${project}") {
-                // Run the yarn install in the app in cases of local packages.json file
-                if (fileExists("yarn.lock")) {
-                  yarn.setup()
-                }
-              }
-
-              stageWithNotify("Build and deploy PR for: ${project}") {
-                def prefix = "${jenkinsHelpersUtil.determineRepoName()}-${project}"
-                def domain = 'fusion-preview'
-                previewServer(
-                  repo: domain,
-                  prefix: prefix,
-                  buildCommand: " NODE_OPTIONS=--max-old-space-size=8192 yarn build preview ${project}",
-                  buildFolder: "dist/apps/${project}",
-                )
-                deleteComments(PR_COMMENT_MARKER)
-                def url = project == 'business-shell' ? "https://${prefix}-${env.CHANGE_ID}.${domain}.preview.cogniteapp.com" : "https://fusion-pr-preview.cogniteapp.com/?externalOverride=${packageName}&overrideUrl=https://${prefix}-${env.CHANGE_ID}.${domain}.preview.cogniteapp.com/index.js"
-                pullRequest.comment("[FUSION_PREVIEW_URL] Use cog-appdev as domain. Click here to preview: [$url]($url) for application ${project}<br><br>![AppBadge](https://img.shields.io/static/v1?label=Application&message=${project}&color=orange)")
-              }
-            }
           }
         },
 

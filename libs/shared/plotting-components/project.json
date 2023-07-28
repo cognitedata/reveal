@@ -70,7 +70,7 @@
       "outputs": ["{options.outputDir}"],
       "options": {
         "configDir": "libs/shared/plotting-components/.storybook",
-        "outputDir": "storybook-static"
+        "outputDir": "dist/storybook/shared-plotting-components"
       },
       "configurations": {
         "ci": {

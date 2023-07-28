@@ -93,5 +93,8 @@
       }
     }
   },
-  "tags": []
+  "tags": [],
+  "pipeline": {
+    "previewPackageName": "@cognite/cdf-context-ui-pnid"
+  }
 }

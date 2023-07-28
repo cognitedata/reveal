@@ -213,6 +213,51 @@ jobs:
           NODE_OPTIONS: '--max_old_space_size=8192'
         run: npx nx run ${{ matrix.project }}:build:production
 
+      - name: 'Authenticate to google cloud'
+        id: 'google-auth'
+        uses: 'google-github-actions/auth@v1'
+        with:
+          credentials_json: '${{ secrets.GCS_JSON_KEY }}'
+
+      - name: 'Upload to preview server'
+        id: 'upload-preview'
+        uses: 'google-github-actions/upload-cloud-storage@v1'
+        with:
+          path: 'dist/apps/${{ matrix.project }}'
+          destination: 'opint-pr-server/fusion-preview/${{matrix.project}}-${{github.event.number}}'
+          parent: false
+
+      - name: Get project config
+        id: project-config
+        uses: ./scripts/github-actions/nx-get-project-config
+        with:
+          project: ${{ matrix.project }}
+
+      - name: Get comment message
+        id: get-comment
+        uses: './scripts/github-actions/get-pr-comment'
+        with:
+          project: ${{ matrix.project }}
+          prNumber: ${{ github.event.number }}
+          previewPackageName: ${{fromJson(steps.project-config.outputs.config).pipeline.previewPackageName}}
+
+      - name: Find previous comment
+        uses: peter-evans/find-comment@v2
+        id: storybook-comment
+        with:
+          issue-number: ${{ github.event.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: ${{ steps.get-comment.outputs.message }}
+
+      - name: Create or update comment
+        uses: peter-evans/create-or-update-comment@v3
+        with:
+          comment-id: ${{ steps.storybook-comment.outputs.comment-id }}
+          issue-number: ${{ github.event.number }}
+          body: ${{ steps.get-comment.outputs.message }}
+          edit-mode: replace
+          reactions: rocket
+
   build-shell:
     name: 'Build shell apps'
     runs-on: ubuntu-20.04
@@ -239,6 +284,51 @@ jobs:
         env:
           NODE_OPTIONS: '--max_old_space_size=8192'
         run: npx nx run ${{ matrix.project }}:build:production
+
+      - name: 'Authenticate to google cloud'
+        id: 'google-auth'
+        uses: 'google-github-actions/auth@v1'
+        with:
+          credentials_json: '${{ secrets.SAMIR_TEST_UPLOAD }}'
+
+      - name: 'Upload to preview server'
+        id: 'upload-preview'
+        uses: 'google-github-actions/upload-cloud-storage@v1'
+        with:
+          path: 'dist/apps/${{ matrix.project }}'
+          destination: 'opint-pr-server/fusion-preview/${{matrix.project}}-${{github.event.number}}'
+          parent: false
+
+      - name: Get project config
+        id: project-config
+        uses: ./scripts/github-actions/nx-get-project-config
+        with:
+          project: ${{ matrix.project }}
+
+      - name: Get comment message
+        id: get-comment
+        uses: './scripts/github-actions/get-pr-comment'
+        with:
+          project: ${{ matrix.project }}
+          prNumber: ${{ github.event.number }}
+          previewPackageName: ${{fromJson(steps.project-config.outputs.config).pipeline.previewPackageName}}
+
+      - name: Find previous comment
+        uses: peter-evans/find-comment@v2
+        id: storybook-comment
+        with:
+          issue-number: ${{ github.event.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: ${{ steps.get-comment.outputs.message }}
+
+      - name: Create or update comment
+        uses: peter-evans/create-or-update-comment@v3
+        with:
+          comment-id: ${{ steps.storybook-comment.outputs.comment-id }}
+          issue-number: ${{ github.event.number }}
+          body: ${{ steps.get-comment.outputs.message }}
+          edit-mode: replace
+          reactions: rocket
 
   build-storybook:
     name: Build storybook
@@ -267,6 +357,51 @@ jobs:
           NODE_OPTIONS: '--max_old_space_size=8192'
         run: npx nx run ${{ matrix.project }}:build-storybook
 
+      - name: 'Authenticate to google cloud'
+        id: 'google-auth'
+        uses: 'google-github-actions/auth@v1'
+        with:
+          credentials_json: '${{ secrets.SAMIR_TEST_UPLOAD }}'
+
+      - name: 'Upload to preview server'
+        id: 'upload-preview'
+        uses: 'google-github-actions/upload-cloud-storage@v1'
+        with:
+          path: 'dist/storybook/${{ matrix.project }}'
+          destination: 'opint-pr-server/fusion-preview/storybook-${{matrix.project}}-${{github.event.number}}'
+          parent: false
+
+      - name: Get project config
+        id: project-config
+        uses: ./scripts/github-actions/nx-get-project-config
+        with:
+          project: ${{ matrix.project }}
+
+      - name: Get comment message
+        id: get-comment
+        uses: './scripts/github-actions/get-pr-comment'
+        with:
+          project: ${{ matrix.project }}
+          prNumber: ${{ github.event.number }}
+          storybook: true
+
+      - name: Find previous comment
+        uses: peter-evans/find-comment@v2
+        id: storybook-comment
+        with:
+          issue-number: ${{ github.event.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: ${{ steps.get-comment.outputs.message }}
+
+      - name: Create or update comment
+        uses: peter-evans/create-or-update-comment@v3
+        with:
+          comment-id: ${{ steps.storybook-comment.outputs.comment-id }}
+          issue-number: ${{ github.event.number }}
+          body: ${{ steps.get-comment.outputs.message }}
+          edit-mode: replace
+          reactions: rocket
+
   ci-passed:
     # see https://github.community/t/status-check-for-a-matrix-jobs/127354/7
     name: CI Passed
@@ -283,6 +418,7 @@ jobs:
             || contains(needs.*.result, 'cancelled')
           }}
         run: exit 1
+
 #  e2e:
 #    runs-on: ubuntu-latest
 #    needs: distributed-task

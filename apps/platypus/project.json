@@ -205,7 +205,7 @@
       "outputs": ["{options.outputDir}"],
       "options": {
         "configDir": "apps/platypus/.storybook",
-        "outputDir": "storybook-static"
+        "outputDir": "dist/storybook/platypus"
       },
       "configurations": {
         "ci": {
@@ -214,5 +214,8 @@
       }
     }
   },
-  "tags": []
+  "tags": [],
+  "pipeline": {
+    "previewPackageName": "@cognite/cdf-solutions-ui"
+  }
 }

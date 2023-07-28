@@ -106,5 +106,8 @@
       }
     }
   },
-  "tags": []
+  "tags": [],
+  "pipeline": {
+    "previewPackageName": "@cognite/cdf-industry-canvas-ui"
+  }
 }

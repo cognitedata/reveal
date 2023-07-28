@@ -76,7 +76,7 @@
       "outputs": ["{options.outputDir}"],
       "options": {
         "configDir": "libs/shared/user-onboarding-components/.storybook",
-        "outputDir": "storybook-static"
+        "outputDir": "dist/storybook/user-onboarding-components"
       },
       "configurations": {
         "ci": {

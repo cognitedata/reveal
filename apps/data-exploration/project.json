@@ -101,6 +101,7 @@
   "implicitDependencies": ["data-exploration-e2e"],
   "tags": [],
   "pipeline": {
-    "releaseStrategy": "multi-branch"
+    "releaseStrategy": "multi-branch",
+    "previewPackageName": "@cognite/cdf-data-exploration"
   }
 }

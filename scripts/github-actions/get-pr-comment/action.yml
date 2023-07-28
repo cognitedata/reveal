@@ -1,0 +1,18 @@
+name: 'Get formatted PR comment'
+description: 'Get formatted PR comment'
+runs:
+  using: node16
+  main: index.js
+inputs:
+  project:
+    description: 'NX project name'
+    required: true
+  prNumber:
+    description: 'Number of current pull request'
+    required: true
+  previewPackageName:
+    description: 'Package name that is used for systemJS overrides'
+    required: false
+  storybook:
+    description: 'Get PR comment for storybook'
+    required: false

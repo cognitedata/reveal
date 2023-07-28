@@ -65,7 +65,7 @@
       "outputs": ["{options.outputDir}"],
       "options": {
         "configDir": "libs/data-exploration-components/.storybook",
-        "outputDir": "storybook-static"
+        "outputDir": "dist/storybook/data-exploration-components-old"
       },
       "configurations": {
         "ci": {

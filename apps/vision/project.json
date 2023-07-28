@@ -97,5 +97,8 @@
     }
   },
   "implicitDependencies": [],
-  "tags": []
+  "tags": [],
+  "pipeline": {
+    "previewPackageName": "@cognite/cdf-vision-subapp"
+  }
 }

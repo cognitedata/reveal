@@ -231,5 +231,8 @@
       }
     }
   },
-  "tags": []
+  "tags": [],
+  "pipeline": {
+    "previewPackageName": "@cognite/fusion-shell"
+  }
 }
