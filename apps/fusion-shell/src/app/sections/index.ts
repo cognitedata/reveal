@@ -1,5 +1,5 @@
 import { useTranslation } from '../../i18n';
-import { Section } from '../../types';
+import { Section } from '../types';
 
 import { getAllAppsData } from './sections';
 

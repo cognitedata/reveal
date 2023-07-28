@@ -7,7 +7,7 @@ import { getProject, isUsingUnifiedSignin } from '@cognite/cdf-utilities';
 import { TranslationKeys, useTranslation } from '../../../../../i18n';
 import Link from '../../../Link';
 import theme from '../../../../styles/theme';
-import { Section as SectionType, SectionColors } from '../../../../../types';
+import { Section as SectionType, SectionColors } from '../../../../types';
 
 interface SectionProps {
   section: SectionType;

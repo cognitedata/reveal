@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 import { Tooltip } from '@cognite/cogs.js';
 
-import { Tag as TagType } from '../../../../../../types';
+import { Tag as TagType } from '../../../../../types';
 
 const Tag = ({ title, description, color }: TagType) => (
   <Tooltip interactive content={description}>

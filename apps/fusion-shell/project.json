@@ -33,67 +33,6 @@
           "sourceMap": true,
           "vendorChunk": false
         },
-        "fusion-dev": {
-          "baseHref": "/",
-          "optimization": false,
-          "outputHashing": "all",
-          "sourceMap": true,
-          "extractCss": false,
-          "namedChunks": false,
-          "extractLicenses": false,
-          "vendorChunk": false,
-          "fileReplacements": [
-            {
-              "replace": "apps/fusion-shell/src/environments/environment.ts",
-              "with": "apps/fusion-shell/src/environments/fusion/dev/environment.dev.ts"
-            },
-            {
-              "replace": "apps/fusion-shell/src/import-map.json",
-              "with": "apps/fusion-shell/src/environments/fusion/import-map.json"
-            }
-          ]
-        },
-        "fusion-next-release": {
-          "baseHref": "/",
-          "optimization": false,
-          "outputHashing": "all",
-          "sourceMap": true,
-          "extractCss": false,
-          "namedChunks": false,
-          "extractLicenses": false,
-          "vendorChunk": false,
-          "fileReplacements": [
-            {
-              "replace": "apps/fusion-shell/src/environments/environment.ts",
-              "with": "apps/fusion-shell/src/environments/fusion/next-release/environment.next-release.ts"
-            },
-            {
-              "replace": "apps/fusion-shell/src/import-map.json",
-              "with": "apps/fusion-shell/src/environments/fusion/import-map.json"
-            }
-          ]
-        },
-        "fusion": {
-          "fileReplacements": [
-            {
-              "replace": "apps/fusion-shell/src/environments/environment.ts",
-              "with": "apps/fusion-shell/src/environments/fusion/production/environment.prod.ts"
-            },
-            {
-              "replace": "apps/fusion-shell/src/import-map.json",
-              "with": "apps/fusion-shell/src/environments/fusion/import-map.json"
-            }
-          ],
-          "baseHref": "/",
-          "optimization": false,
-          "outputHashing": "all",
-          "sourceMap": true,
-          "extractCss": false,
-          "namedChunks": false,
-          "extractLicenses": false,
-          "vendorChunk": false
-        },
-
         "staging": {
           "optimization": true,
           "outputHashing": "all",
@@ -201,15 +140,6 @@
         }
       ],
       "configurations": {
-        "fusion-dev": {
-          "args": "--configuration=fusion-dev --build_mode=fusion"
-        },
-        "fusion-next-release": {
-          "args": "--configuration=fusion-next-release --build_mode=fusion"
-        },
-        "fusion": {
-          "args": "--configuration=fusion --build_mode=fusion"
-        },
         "staging": {
           "args": "--configuration=staging --build_mode=cdf"
         },
@@ -222,10 +152,9 @@
         },
         "mock": {
           "args": "--configuration=mock --build_mode=cdf"
-        },
-
-        "defaultConfiguration": "staging"
-      }
+        }
+      },
+      "defaultConfiguration": "staging"
     },
     "serve": {
       "executor": "@nrwl/webpack:dev-server",
@@ -237,15 +166,6 @@
         "allowedHosts": ".dev.fusion.cogniteapp.com,apps-staging.cognite.com,all"
       },
       "configurations": {
-        "fusion-dev": {
-          "buildTarget": "fusion-shell:internal-build:fusion-dev"
-        },
-        "fusion-next-release": {
-          "buildTarget": "fusion-shell:internal-build:fusion-next-release"
-        },
-        "fusion": {
-          "buildTarget": "fusion-shell:internal-build:fusion"
-        },
         "staging": {
           "buildTarget": "fusion-shell:internal-build:staging",
           "hmr": true
@@ -273,18 +193,6 @@
         "forwardAllArgs": true
       },
       "configurations": {
-        "fusion-dev": {
-          "buildTarget": "fusion-shell:build:fusion-dev",
-          "args": "--port=8080 --ssl=true --configuration=fusion-dev --build_mode=fusion"
-        },
-        "fusion-next-release": {
-          "buildTarget": "fusion-shell:build:fusion-next-release",
-          "args": "--port=8080 --ssl=true --configuration=next-release --build_mode=fusion"
-        },
-        "fusion": {
-          "buildTarget": "fusion-shell:build:fusion",
-          "args": "--port=8080 --ssl=true  --configuration=fusion --build_mode=fusion"
-        },
         "staging": {
           "buildTarget": "fusion-shell:build:staging",
           "args": "--port=8080 --ssl=true --configuration=staging --build_mode=cdf"

@@ -10,7 +10,7 @@ import { useFlag } from '@cognite/react-feature-flags';
 import { useSearch } from '@cognite/sdk-react-query-hooks';
 
 import { SearchItem } from '../components/GlobalSearch/ResourcesMenuGroup';
-import { AppItem, Token } from '../../types';
+import { AppItem, Token } from '../types';
 
 const isAppServedFromUnifiedSignIn = isUsingUnifiedSignin();
 

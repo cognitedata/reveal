@@ -5,9 +5,8 @@ var path = require('path');
 var fs = require('fs');
 var { createProxyMiddleware } = require('http-proxy-middleware');
 
-var {
-  generateMiddlewares,
-} = require('../firebase-functions/proxy-config-utils');
+var { generateMiddlewares } = require('./scripts/proxy-config-utils');
+var { generateCSPHeader } = require('./scripts/lib/http-headers-utils');
 
 var app = express();
 
@@ -28,22 +27,20 @@ var basePath = appBuildMode === 'cdf' ? '/cdf/' : '/';
 var staticFilesLookupFolder = appBuildMode === 'cdf' ? '' : '/cdf';
 
 // We need the correct import map manifest folder for the sub-apps so we can generate the proxy config
-var importMapManifestFolder =
-  configuration === 'production' || configuration === 'fusion'
-    ? 'production'
-    : 'next-release';
+var importMapEnv = configuration === 'production' ? 'production' : 'staging';
 
-const subAppsImportManifest = JSON.parse(
-  fs.readFileSync(
-    path.resolve(
-      __dirname,
-      '../src/environments/fusion/' +
-        importMapManifestFolder +
-        '/sub-apps-import-map.json'
-    ),
-    'utf8'
-  )
+const subAppsConfig = JSON.parse(
+  fs.readFileSync(path.resolve(__dirname, '../src/apps-manifest.json'), 'utf8')
 );
+
+app.use(function (req, res, next) {
+  res.setHeader(
+    'Content-Security-Policy',
+    generateCSPHeader(subAppsConfig, importMapEnv)
+  );
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  next();
+});
 
 // After build, serve the static files from following dirs
 app.use(
@@ -67,7 +64,7 @@ app.use(
   express.static(rootPath + '/dist/apps/fusion-shell/cdf')
 );
 
-generateMiddlewares(app, subAppsImportManifest, basePath, true);
+generateMiddlewares(app);
 
 // Proxy _api/login_info calls to domain config service
 // we need to figure this out

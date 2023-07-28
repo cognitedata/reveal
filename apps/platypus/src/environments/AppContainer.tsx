@@ -1,25 +1,27 @@
-import { PlatypusSidecarConfig } from '@platypus-app/utils/sidecar';
+import { Provider as ReduxProvider } from 'react-redux';
+
+import GlobalStyles from '@platypus-app/GlobalStyles';
 import { Store } from 'redux';
 
-import { Container } from '@cognite/react-container';
+import { I18nWrapper } from '@cognite/cdf-i18n-utils';
+
+import '../set-public-path';
+import { translations } from '../i18n';
 
 import { AuthContainer } from './AuthContainer';
 
 type AppContainerProps = {
-  sidecar?: PlatypusSidecarConfig;
   store: Store;
   children: React.ReactNode;
 };
-export const AppContainer = ({
-  children,
-  store,
-  sidecar,
-}: AppContainerProps) => {
+export const AppContainer = ({ children, store }: AppContainerProps) => {
   return (
-    <Container store={store} sidecar={sidecar as PlatypusSidecarConfig}>
-      <div style={{ height: '100vh' }}>
-        <AuthContainer>{children}</AuthContainer>
-      </div>
-    </Container>
+    <I18nWrapper translations={translations} defaultNamespace="platypus">
+      <ReduxProvider store={store}>
+        <GlobalStyles>
+          <AuthContainer>{children}</AuthContainer>
+        </GlobalStyles>
+      </ReduxProvider>
+    </I18nWrapper>
   );
 };

@@ -10,7 +10,7 @@ import { useFlag } from '@cognite/react-feature-flags';
 
 import { useTranslation } from '../../../../i18n';
 import theme from '../../../styles/theme';
-import { Section, AppItem, Tag } from '../../../../types';
+import { Section, AppItem, Tag } from '../../../types';
 import {
   useExperimentalFeatures,
   useFeatureToggledItems,

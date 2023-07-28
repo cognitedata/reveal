@@ -9,7 +9,7 @@ import { Button, Colors, Flex, Menu } from '@cognite/cogs.js';
 
 import { useTranslation } from '../../../../../i18n';
 import { useSections } from '../../../../sections';
-import { Section } from '../../../../../types';
+import { Section } from '../../../../types';
 import { useSubApp } from '../../../../utils/hooks';
 import Link from '../../../Link';
 import { SectionWrapper } from '../../Menu/Menu';

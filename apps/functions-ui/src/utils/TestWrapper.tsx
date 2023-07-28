@@ -1,6 +1,3 @@
-import React from 'react';
-import { MemoryRouter } from 'react-router';
-
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 export default function TestWrapper({ children }: { children: any }) {
@@ -14,9 +11,5 @@ export default function TestWrapper({ children }: { children: any }) {
     },
   });
 
-  return (
-    <QueryClientProvider client={client}>
-      <MemoryRouter>{children}</MemoryRouter>
-    </QueryClientProvider>
-  );
+  return <QueryClientProvider client={client}>{children}</QueryClientProvider>;
 }

@@ -3,5 +3,5 @@
 
 export const environment = {
   production: false,
-  APP_ENV: 'development',
+  APP_ENV: 'fusion',
 };

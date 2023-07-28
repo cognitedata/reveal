@@ -6,7 +6,7 @@ const { withReact } = require('@nx/react');
 
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 
-const nodeEnv = process.env.NODE_ENV || 'production';
+let nodeEnv = process.env.NODE_ENV || 'production';
 const useMockEnv =
   nodeEnv === 'mock' ||
   nodeEnv === 'development' ||
@@ -18,6 +18,10 @@ module.exports = composePlugins(
   withReact(),
   withSingleSpa({ useMockEnv }),
   (config) => {
+    
+    if(process.env.NX_TASK_TARGET_CONFIGURATION === 'production') {
+      nodeEnv = 'production';
+    }
     // (config, { options, context }) - options and context are available here as well
     console.log(`Custom webpack config(${nodeEnv}) for Platypus was loaded...`);
 
@@ -60,6 +64,9 @@ module.exports = composePlugins(
       delete config.optimization;
     }
 
+    if(nodeEnv === 'production') {
+      config.optimization.minimize = true;
+    }
     config.mode = nodeEnv === 'production' ? 'production' : 'development';
     return config;
   }

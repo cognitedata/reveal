@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { Body, Colors, Icon } from '@cognite/cogs.js';
 
 import theme from '../../../../styles/theme';
-import { AppItem, Tag as TagType } from '../../../../../types';
+import { AppItem, Tag as TagType } from '../../../../types';
 
 import ItemLink from './ItemLink';
 import Tag from './Tag';

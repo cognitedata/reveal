@@ -78,3 +78,23 @@ export interface Project {
   projectUrlName: string;
   groups: BigInt64Array;
 }
+
+export interface AppConfig {
+  // ex: data-catalog
+  key: string;
+  // ex: @cognite/cdf-data-catalog
+  appName: string;
+  appType: 'module-federation' | 'single-spa';
+  // https://app-name.web.app
+  url: string;
+  routes: {
+    route: string;
+  }[];
+}
+export interface AppManifest {
+  apps: AppConfig[];
+}
+
+export interface ModuleFederationImportMap {
+  [key: string]: string;
+}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useHistory } from 'react-router';
+import { useNavigate } from 'react-router';
 import { useParams } from 'react-router-dom';
 
 import styled from 'styled-components';
@@ -27,7 +27,7 @@ const LegacyLoginFlowWarning = () => {
   const canLegacyLoginFlowBeDisabled =
     areGroupsFetched && !isLoggedInUsingLegacyLoginFlow && hasAnyValidGroup;
 
-  const history = useHistory();
+  const navigate = useNavigate();
   const params = useParams<{ tenant: string; path: string }>();
 
   const { mutate: disableLegacyLoginFlow } = useMutation(
@@ -56,7 +56,7 @@ const LegacyLoginFlowWarning = () => {
           message: t('legacy-login-flow-disable-success'),
         });
         if (params) {
-          history.push(`/${params.tenant}/${params.path}/oidc`);
+          navigate(`/${params.tenant}/${params.path}/oidc`, { replace: true });
         }
       },
       onError() {

@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { Colors, Icon } from '@cognite/cogs.js';
 
 import { colors } from '../../sections/colors';
-import { RawAppItem } from '../../../types';
+import { RawAppItem } from '../../types';
 
 type UserHistoryResourceIconProps = {
   app: RawAppItem | undefined;

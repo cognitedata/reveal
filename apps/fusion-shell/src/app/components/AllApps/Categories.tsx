@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Button, ButtonProps, Chip, Flex, Title } from '@cognite/cogs.js';
 
 import { useTranslation } from '../../../i18n';
-import { Section } from '../../../types';
+import { Section } from '../../types';
 import { trackUsage } from '../../utils/metrics';
 
 import { CategoryId, ItemWithSection } from './types';

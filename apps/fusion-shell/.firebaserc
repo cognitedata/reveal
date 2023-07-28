@@ -1,8 +1,0 @@
-{
-  "projects": {
-    "default": "fusion-217032465111-staging",
-    "staging": "fusion-217032465111-staging",
-    "preview": "fusion-217032465111-preview",
-    "prod": "fusion-217032465111"
-  }
-}

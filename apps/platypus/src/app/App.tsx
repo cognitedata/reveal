@@ -6,12 +6,12 @@ import styled from 'styled-components/macro';
 import { ToastContainer } from '@cognite/cogs.js';
 
 import { FeatureFlagProvider } from '../environments/FeatureFlagProvider';
-import { SubAppContainer } from '../environments/fusion/SubAppContainer';
 
 import NoAccessWrapper from './components/NoAccessPage/NoAccessWrapper';
 import { rootInjector } from './di';
 import { queryClient } from './queryClient';
 import Routes from './Routes';
+import { SubAppContainer } from './SubAppContainer';
 
 function App() {
   return (

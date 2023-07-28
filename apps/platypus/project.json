@@ -90,7 +90,7 @@
               "with": "apps/platypus/src/environments/mock/useFlag.ts"
             },
             {
-              "replace": "apps/platypus/src/environments/fusion/SubAppContainer.tsx",
+              "replace": "apps/platypus/src/app/SubAppContainer.tsx",
               "with": "apps/platypus/src/environments/mock/SubAppContainer.tsx"
             }
           ],
@@ -105,20 +105,8 @@
         "fusion": {
           "fileReplacements": [
             {
-              "replace": "apps/platypus/src/environments/environment.ts",
-              "with": "apps/platypus/src/environments/fusion/environment.fusion.ts"
-            },
-            {
-              "replace": "apps/platypus/src/environments/AppContainer.tsx",
-              "with": "apps/platypus/src/environments/fusion/AppContainer.tsx"
-            },
-            {
               "replace": "apps/platypus/src/environments/cogniteSdk.ts",
               "with": "apps/platypus/src/environments/fusion/cogniteSdk.ts"
-            },
-            {
-              "replace": "apps/platypus/src/environments/useTranslateProvider.tsx",
-              "with": "apps/platypus/src/environments/fusion/useTranslateProvider.tsx"
             }
           ],
           "optimization": false,
@@ -136,18 +124,6 @@
             {
               "replace": "apps/platypus/src/environments/environment.ts",
               "with": "apps/platypus/src/environments/environment.prod.ts"
-            },
-            {
-              "replace": "apps/platypus/src/environments/AppContainer.tsx",
-              "with": "apps/platypus/src/environments/fusion/AppContainer.tsx"
-            },
-            {
-              "replace": "apps/platypus/src/environments/cogniteSdk.ts",
-              "with": "apps/platypus/src/environments/fusion/cogniteSdk.ts"
-            },
-            {
-              "replace": "apps/platypus/src/environments/useTranslateProvider.tsx",
-              "with": "apps/platypus/src/environments/fusion/useTranslateProvider.tsx"
             }
           ],
           "optimization": false,
@@ -159,7 +135,8 @@
           "vendorChunk": false,
           "budgets": []
         }
-      }
+      },
+      "defaultConfiguration": "fusion"
     },
     "serve": {
       "executor": "@nx/webpack:dev-server",
@@ -200,7 +177,7 @@
       "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["apps/platypus/**/*.{ts,tsx,js,jsx}"]
+        "lintFilePatterns": ["apps/platypus/src/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {

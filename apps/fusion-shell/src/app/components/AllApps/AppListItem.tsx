@@ -17,7 +17,7 @@ import {
 import { useFlag } from '@cognite/react-feature-flags';
 
 import { TranslationKeys, useTranslation } from '../../../i18n';
-import { AppItem } from '../../../types';
+import { AppItem } from '../../types';
 import { useExperimentalFeatures } from '../../utils/hooks';
 import { trackUsage } from '../../utils/metrics';
 import { StyledAppResourceIconContainer } from '../LandingPage/UserHistoryResourceIcon';

@@ -9,7 +9,7 @@ configuration="${1:-staging}"
 build_mode="${2:-cdf}"
 
 VERSION_HASH=`date +%s`
-VERSION_HASH="v-$VERSION_HASH"
+VERSION_HASH=$(echo "v-$VERSION_HASH" | base64)
 
 
 # Clean the following folders

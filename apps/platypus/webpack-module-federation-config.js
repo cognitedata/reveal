@@ -41,7 +41,7 @@ module.exports = composePlugins(
     // );
     config.resolve.fallback = { path: require.resolve('path-browserify') };
     // config.optimization.sideEffects = true;
-    // config.optimization.minimize = false;
+    config.optimization.minimize = true;
 
     return {
       ...config,

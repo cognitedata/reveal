@@ -1,4 +1,4 @@
-import { AppItem, Section } from '../../../types';
+import { AppItem, Section } from '../../types';
 
 export type ItemWithSection = AppItem & {
   section: Section['internalId'];
