@@ -16,10 +16,8 @@ import { useMemo, useState } from 'react';
 import { Collapse } from 'antd';
 import RunHistoryItem from 'components/run-history-item/RunHistoryItem';
 import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
-import {
-  WorkflowExecution,
-  useWorkflowExecutionDetails,
-} from 'hooks/workflows';
+import { useWorkflowExecutionDetails } from 'hooks/workflows';
+import { WorkflowExecution } from 'types/workflows';
 
 type RunHistorySectionItemProps = {
   item: WorkflowExecution;

@@ -3,9 +3,9 @@ import styled from 'styled-components';
 
 import { useTranslation } from 'common';
 import TabHeader from 'components/tab-header/TabHeader';
-import { WorkflowExecution } from 'hooks/workflows';
 import { formatTime } from '@cognite/cdf-utilities';
 import { ColorStatus } from 'components/tab-header/TabHeader';
+import { WorkflowExecution } from 'types/workflows';
 
 interface RunHistoryItemProps {
   isExpanded?: boolean;

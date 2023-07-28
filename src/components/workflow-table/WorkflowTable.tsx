@@ -8,18 +8,19 @@ import {
 } from '@cognite/cdf-utilities';
 
 import { useTranslation } from 'common';
-import { WorkflowRead, useDeleteWorkflow } from 'hooks/workflows';
+import { useDeleteWorkflow } from 'hooks/workflows';
 import { getContainer } from 'utils';
 import Link from 'components/link/Link';
 import { Button, Dropdown, Menu } from '@cognite/cogs.js';
+import { WorkflowResponse } from 'types/workflows';
 
 type WorkflowTableProps = {
-  workflows: WorkflowRead[];
+  workflows: WorkflowResponse[];
 };
 
 type WorkflowTableRecord = {
   key: string;
-} & WorkflowRead;
+} & WorkflowResponse;
 
 type WorkflowTableColumn = ColumnType<WorkflowTableRecord> & {
   title: string;

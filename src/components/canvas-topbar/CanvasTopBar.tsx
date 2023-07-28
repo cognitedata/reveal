@@ -17,17 +17,16 @@ import { toPng } from 'html-to-image';
 import { ViewMode, useWorkflowBuilderContext } from 'contexts/WorkflowContext';
 import { useMemo, useState } from 'react';
 import EditWorkflowModal from 'components/workflow-modal/EditWorkflowModal';
-import {
-  WorkflowDefinitionCreate,
-  WorkflowWithVersions,
-  useCreateWorkflowDefinition,
-  useRunWorkflow,
-} from 'hooks/workflows';
+import { useCreateWorkflowDefinition, useRunWorkflow } from 'hooks/workflows';
 import {
   areWorkflowDefinitionsSame,
   convertCanvasToWorkflowDefinition,
   getLastWorkflowDefinition,
 } from 'utils/workflows';
+import {
+  WorkflowDefinitionCreate,
+  WorkflowWithVersions,
+} from 'types/workflows';
 
 type CanvasTopBarProps = {
   workflow: WorkflowWithVersions;

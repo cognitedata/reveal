@@ -8,24 +8,25 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 import { createSession } from './sessions';
-import { ProcessType } from 'types';
+import {
+  CreateWorkflowDefinitionVariables,
+  DeleteWorkflowVariables,
+  RunWorkflowVariables,
+  CreateWorkflowVariables,
+  WorkflowExecution,
+  WorkflowResponse,
+  WorkflowWithVersions,
+  UpdateTaskVariables,
+} from 'types/workflows';
 
 const getWorkflowsQueryKey = () => ['flows', 'workflow-list'];
-
-export type WorkflowRead = {
-  externalId: string;
-  description?: string;
-  createdTime: string;
-};
-
-type WorkflowCreate = Pick<WorkflowRead, 'externalId' | 'description'>;
 
 export const useWorkflows = () => {
   const sdk = useSDK();
 
-  return useQuery<WorkflowRead[]>(getWorkflowsQueryKey(), () =>
+  return useQuery<WorkflowResponse[]>(getWorkflowsQueryKey(), () =>
     sdk
-      .get<{ items: WorkflowRead[] }>(
+      .get<{ items: WorkflowResponse[] }>(
         `api/v1/projects/${getProject()}/workflows`
       )
       .then((res) => res.data.items)
@@ -36,56 +37,6 @@ const getWorkflowQueryKey = (externalId: string) => [
   ...getWorkflowsQueryKey(),
   externalId,
 ];
-
-type WorkflowTaskType = 'function' | 'transformation';
-
-type WorkflowTaskDependency = {
-  externalId: string;
-};
-
-type FunctionParameters = {
-  function: {
-    externalId: string;
-    data?: unknown;
-  };
-};
-
-type TransformationParameters = {
-  transformation: {
-    externalId: string;
-  };
-};
-
-type WorkflowTaskParameters = TransformationParameters | FunctionParameters;
-
-export type WorkflowTaskDefinition = {
-  externalId: string;
-  type: WorkflowTaskType;
-  name?: string;
-  description?: string;
-  parameters: WorkflowTaskParameters;
-  retries?: number;
-  timeout?: number;
-  dependsOn: WorkflowTaskDependency[];
-};
-
-export type WorkflowDefinitionRead = {
-  hash: string;
-  description?: string;
-  tasks: WorkflowTaskDefinition[];
-};
-
-export type WorkflowDefinitionCreate = Pick<
-  WorkflowDefinitionRead,
-  'description' | 'tasks'
->;
-
-export type WorkflowWithVersions = Pick<
-  WorkflowRead,
-  'externalId' | 'createdTime'
-> & {
-  versions: { [version: string]: WorkflowDefinitionRead };
-};
 
 export const useWorkflow = (externalId: string) => {
   const sdk = useSDK();
@@ -99,18 +50,20 @@ export const useWorkflow = (externalId: string) => {
   );
 };
 
-type CreateWorkflowVariables = WorkflowCreate;
-
 export const useCreateWorkflow = (
-  options?: UseMutationOptions<WorkflowRead, unknown, CreateWorkflowVariables>
+  options?: UseMutationOptions<
+    WorkflowResponse,
+    unknown,
+    CreateWorkflowVariables
+  >
 ) => {
   const sdk = useSDK();
   const queryClient = useQueryClient();
 
-  return useMutation<WorkflowRead, unknown, CreateWorkflowVariables>(
+  return useMutation<WorkflowResponse, unknown, CreateWorkflowVariables>(
     (workflow) =>
       sdk
-        .post<WorkflowRead>(`api/v1/projects/${getProject()}/workflows`, {
+        .post<WorkflowResponse>(`api/v1/projects/${getProject()}/workflows`, {
           data: {
             externalId: workflow.externalId,
             description: workflow.description,
@@ -125,12 +78,6 @@ export const useCreateWorkflow = (
       },
     }
   );
-};
-
-type CreateWorkflowDefinitionVariables = {
-  externalId: string;
-  version: string;
-  workflowDefinition: WorkflowDefinitionCreate;
 };
 
 export const useCreateWorkflowDefinition = () => {
@@ -162,70 +109,16 @@ export const useCreateWorkflowDefinition = () => {
   );
 };
 
-type RunWorkflowVariables = {
-  externalId: string;
-  version: string;
-};
+export const useWorkflowDefintion = (externalId: string, version: string) => {
+  const sdk = useSDK();
 
-type TaskExecutionStatus =
-  | 'IN_PROGRESS'
-  | 'CANCELED'
-  | 'FAILED'
-  | 'FAILED_WITH_TERMINAL_ERROR'
-  | 'COMPLETED'
-  | 'COMPLETED_WITH_ERRORS'
-  | 'SCHEDULED'
-  | 'TIMED_OUT'
-  | 'SKIPPED';
-
-type TaskExecution = {
-  id?: string;
-  externalId?: string;
-  status?: TaskExecutionStatus;
-  taskType?: ProcessType;
-  startTime?: number;
-  endTime?: number;
-  input?: unknown; // TODO
-  output?: unknown; // TODO
-};
-
-type WorkflowExecutionStatus =
-  | 'RUNNING'
-  | 'COMPLETED'
-  | 'FAILED'
-  | 'TIMED_OUT'
-  | 'TERMINATED'
-  | 'PAUSED';
-
-export type WorkflowExecution = {
-  id?: string;
-  workflowExternalId?: string;
-  engineExecutionId?: string;
-  version?: string;
-  status?: WorkflowExecutionStatus;
-  executedTasks?: TaskExecution[];
-  input?: unknown; // TODO
-  output?: unknown; // TODO
-  createdTime?: number;
-  startTime?: number;
-  endTime?: number;
-  reasonForIncompletion?: string;
-};
-
-export type WorkflowExecutionDetails = {
-  id?: string;
-  workflowExternalId?: string;
-  workflowDefinition?: WorkflowDefinitionRead;
-  engineExecutionId?: string;
-  version?: string;
-  status?: WorkflowExecutionStatus;
-  executedTasks?: TaskExecution[];
-  input?: unknown; // TODO
-  output?: unknown; // TODO
-  createdTime?: number;
-  startTime?: number;
-  endTime?: number;
-  reasonForIncompletion?: string;
+  return useQuery<WorkflowWithVersions>(getWorkflowQueryKey(externalId), () =>
+    sdk
+      .get<WorkflowWithVersions>(
+        `api/v1/projects/${getProject()}/workflows/${externalId}/versions/${version}`
+      )
+      .then((res) => res.data)
+  );
 };
 
 export const useRunWorkflow = () => {
@@ -246,6 +139,7 @@ export const useRunWorkflow = () => {
               authentication: {
                 nonce: session.nonce,
               },
+              input: variables?.input,
             },
           }
         )
@@ -304,24 +198,20 @@ const getWorkflowExecutionDetailsQueryKey = (executionId: string) => [
 
 export const useWorkflowExecutionDetails = (
   executionId: string,
-  options?: UseQueryOptions<WorkflowExecutionDetails>
+  options?: UseQueryOptions<WorkflowExecution>
 ) => {
   const sdk = useSDK();
 
-  return useQuery<WorkflowExecutionDetails>(
+  return useQuery<WorkflowExecution>(
     getWorkflowExecutionDetailsQueryKey(executionId),
     () =>
       sdk
-        .get<WorkflowExecutionDetails>(
+        .get<WorkflowExecution>(
           `api/v1/projects/${getProject()}/workflows/executions/${executionId}`
         )
         .then((res) => res.data),
     options
   );
-};
-
-type DeleteWorkflowVariables = {
-  externalId: string;
 };
 
 export const useDeleteWorkflow = () => {
@@ -344,6 +234,34 @@ export const useDeleteWorkflow = () => {
         queryClient.invalidateQueries(
           getWorkflowExecutionsQueryKey(externalId)
         );
+      },
+    }
+  );
+};
+
+export const useUpdateTask = () => {
+  const sdk = useSDK();
+  const queryClient = useQueryClient();
+
+  return useMutation<string, unknown, UpdateTaskVariables>(
+    async (variables) => {
+      return sdk
+        .post(
+          `api/v1/projects/${getProject()}/workflows/tasks/${
+            variables.taskId
+          }/update`,
+          {
+            data: {
+              status: variables.status,
+              output: variables?.output,
+            },
+          }
+        )
+        .then((res) => res.data);
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(['flows', 'workflow-execution']);
       },
     }
   );

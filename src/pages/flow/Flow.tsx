@@ -13,10 +13,11 @@ import { CanvasTopBar } from 'components/canvas-topbar/CanvasTopBar';
 import { useCreateFile, useFile } from 'hooks/files';
 import { FloatingHistoryPanel } from 'components/floating-history-panel';
 import PreviewFeedback from 'components/preview-feedback';
-import { WorkflowWithVersions, useWorkflow } from 'hooks/workflows';
+import { useWorkflow } from 'hooks/workflows';
 import { NodeConfigurationPanel } from 'components/node-configuration-panel/NodeConfigurationPanel';
 import { RunHistorySection } from 'components/run-history-section/RunHistorySection';
 import RunCanvas from 'components/run-canvas/RunCanvas';
+import { WorkflowWithVersions } from 'types/workflows';
 
 const Flow = (): JSX.Element => {
   const { externalId } = useParams<{ externalId: string }>();

@@ -1,15 +1,15 @@
-import {
-  WorkflowDefinitionRead,
-  WorkflowTaskDefinition,
-  WorkflowWithVersions,
-} from 'hooks/workflows';
 import { AFlow, ProcessNodeData, ProcessType } from 'types';
+import {
+  TaskDefinition,
+  WorkflowDefinitionResponse,
+  WorkflowWithVersions,
+} from 'types/workflows';
 
 const ALLOWED_PROCESS_TYPES: ProcessType[] = ['transformation', 'function'];
 
 export const getLastWorkflowDefinition = (
   workflowWithVersions: WorkflowWithVersions
-): { workflowDefinition?: WorkflowDefinitionRead; version?: string } => {
+): { workflowDefinition?: WorkflowDefinitionResponse; version?: string } => {
   const versions = Object.keys(workflowWithVersions.versions);
   if (versions.length === 0) {
     return {
@@ -28,8 +28,8 @@ export const getLastWorkflowDefinition = (
 
 export const convertCanvasToWorkflowDefinition = (
   flow: AFlow
-): WorkflowTaskDefinition[] => {
-  const tasks: WorkflowTaskDefinition[] = [];
+): TaskDefinition[] => {
+  const tasks: TaskDefinition[] = [];
 
   flow.canvas.nodes
     .filter(
@@ -39,7 +39,7 @@ export const convertCanvasToWorkflowDefinition = (
         ) && !!(n.data as ProcessNodeData).processExternalId
     )
     .forEach((n) => {
-      const task: WorkflowTaskDefinition = {
+      const task: TaskDefinition = {
         dependsOn: [],
         externalId: (n.data as ProcessNodeData).processExternalId!,
         parameters: {
@@ -61,7 +61,7 @@ export const convertCanvasToWorkflowDefinition = (
     const targetTask = tasks.find(({ name }) => name === target);
 
     if (sourceNode && sourceTask && targetNode && targetTask) {
-      targetTask.dependsOn.push({
+      targetTask.dependsOn?.push({
         externalId: sourceTask.externalId,
       });
     }
@@ -71,15 +71,15 @@ export const convertCanvasToWorkflowDefinition = (
 };
 
 export const areWorkflowTaskDefinitionsSame = (
-  d1: WorkflowTaskDefinition,
-  d2: WorkflowTaskDefinition
+  d1: TaskDefinition,
+  d2: TaskDefinition
 ): boolean => {
   return d1.externalId === d2.externalId && d1.type === d2.type;
 };
 
 export const areWorkflowDefinitionsSame = (
-  tasks1: WorkflowDefinitionRead['tasks'],
-  tasks2: WorkflowDefinitionRead['tasks']
+  tasks1: WorkflowDefinitionResponse['tasks'],
+  tasks2: WorkflowDefinitionResponse['tasks']
 ): boolean => {
   return (
     tasks1.length === tasks2.length &&

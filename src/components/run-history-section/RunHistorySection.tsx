@@ -1,9 +1,10 @@
 import { Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
-import { WorkflowWithVersions, useWorkflowExecutions } from 'hooks/workflows';
+import { useWorkflowExecutions } from 'hooks/workflows';
 import { StyledEmptyStateContainer } from 'components/run-canvas/RunCanvas';
 import { RunHistorySectionItem } from './RunHistorySectionItem';
+import { WorkflowWithVersions } from 'types/workflows';
 
 type RunHistorySectionProps = {
   workflow: WorkflowWithVersions;

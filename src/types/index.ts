@@ -18,15 +18,24 @@ type ParentNode = BaseWorkflowBuilderNode<'parent', ParentNodeData>;
 /* PROCESS NODE */
 /****************/
 
-export const PROCESS_TYPES = ['transformation', 'function'] as const;
+export const PROCESS_TYPES = [
+  'transformation',
+  'function',
+  // 'http',
+  // 'dynamic',
+] as const;
 export type ProcessType = typeof PROCESS_TYPES[number];
 export const PROCESS: Record<string, ProcessType> = {
   TRANSFORMATION: 'transformation',
   FUNCTION: 'function',
+  // HTTP: 'http',
+  // DYNAMIC: 'dynamic',
 };
 export const PROCESS_ICON: Record<ProcessType, IconType> = {
   transformation: 'Code',
   function: 'Function',
+  // http: 'CodeBraces',
+  // dynamic: 'Shapes',
 };
 
 export const isProcessType = (t?: string): t is ProcessType => {
@@ -63,7 +72,15 @@ type FunctionNodeData = BaseProcessNodeData<
   FunctionNodeProps
 >;
 
+// type HttpNodeProps = {};
+// type HttpNodeData = BaseProcessNodeData<'http', string, HttpNodeProps>;
+
+// type DynamicNodeProps = {};
+// type DynamicNodeData = BaseProcessNodeData<'dynamic', string, DynamicNodeProps>;
+
 export type ProcessNodeData = TransformationNodeData | FunctionNodeData;
+// | HttpNodeData
+// | DynamicNodeData;
 export type ProcessNode = BaseWorkflowBuilderNode<'process', ProcessNodeData>;
 
 /********************/
