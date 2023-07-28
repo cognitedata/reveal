@@ -27,7 +27,7 @@ var basePath = appBuildMode === 'cdf' ? '/cdf/' : '/';
 var staticFilesLookupFolder = appBuildMode === 'cdf' ? '' : '/cdf';
 
 // We need the correct import map manifest folder for the sub-apps so we can generate the proxy config
-var importMapEnv = configuration === 'production' ? 'production' : 'staging';
+var importMapEnv = configuration || 'staging';
 
 const subAppsConfig = JSON.parse(
   fs.readFileSync(path.resolve(__dirname, '../src/apps-manifest.json'), 'utf8')

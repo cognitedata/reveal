@@ -11,6 +11,7 @@ import { getArgs } from './cli/cli-args';
 // hardcoded for now, should be loaded from file
 import { loadConfig, loadMockData } from './cli/loader';
 import { loginInfoMockData } from './login-info-mock-data';
+import { projectsMockData } from './mock-projects-data';
 import { userTokenData } from './user-token-data';
 
 const TENANT = process.env.NODE_ENV || 'mock';
@@ -64,6 +65,15 @@ server.get('/login/status', (req, res) => {
       projectId: 123456789,
     },
   });
+});
+
+server.get('/api/v1/projects/platypus', (req, res) => {
+  res.set({
+    'content-type': 'application/json',
+    'access-control-allow-credentials': true,
+    'access-control-allow-origin': baseUrl,
+  });
+  res.json(projectsMockData);
 });
 
 server.get('/api/v1/token/inspect', (req, res) => {

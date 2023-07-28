@@ -12,5 +12,8 @@ fetch(basePath + 'apps-manifest.json')
   .then((appManifestJson) =>
     buildModuleFederationImportMap(appManifestJson as AppManifest)
   )
-  .then((definitions) => setRemoteDefinitions(definitions))
+  .then((definitions) => {
+    console.log('Loaded module federation definitions', definitions);
+    setRemoteDefinitions(definitions);
+  })
   .then(() => import('./bootstrap').catch((err) => console.error(err)));

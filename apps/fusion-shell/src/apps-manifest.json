@@ -2,6 +2,16 @@
   "versionSpec": "1.0.0",
   "apps": [
     {
+      "key": "cdf-hub-login-page",
+      "appName": "@cognite/login-page",
+      "appType": "single-spa",
+      "versionSpec": "~0.0.1",
+      "routes": [
+        { "route": "/:tenantName" },
+        { "route": "/:applicationName/:tenantName" }
+      ]
+    },
+    {
       "key": "cdf-3d-management",
       "appName": "@cognite/cdf-3d-management",
       "appType": "single-spa",
@@ -94,7 +104,10 @@
         "preview": "https://cdf-copilot-prod.web.app",
         "production": "https://cdf-copilot-prod.web.app"
       },
-      "routes": [{ "route": "/:tenantName" }]
+      "routes": [
+        { "route": "/:tenantName" },
+        { "route": "/:applicationName/:tenantName" }
+      ]
     },
     {
       "key": "cdf-dashboard-sessions-ui",

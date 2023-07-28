@@ -79,7 +79,6 @@
             }
           ]
         },
-
         "mock": {
           "fileReplacements": [
             {
@@ -111,13 +110,13 @@
             "forwardAllArgs": true
           },
           {
-            "command": "nx run cdf-sdk-singleton:build-single-spa",
-            "description": "Building cdf-sdk-singleton",
+            "command": "nx run cdf-route-tracker:build-single-spa",
+            "description": "Building cdf-route-tracker",
             "forwardAllArgs": true
           },
           {
-            "command": "nx run cdf-route-tracker:build-single-spa",
-            "description": "Building cdf-route-tracker",
+            "command": "nx run cdf-sdk-singleton:build-single-spa",
+            "description": "Building cdf-sdk-singleton",
             "forwardAllArgs": true
           },
           {
@@ -128,17 +127,7 @@
         ],
         "parallel": false
       },
-      "dependsOn": [
-        "^internal-build",
-        {
-          "projects": ["cdf-route-tracker"],
-          "target": "build-single-spa"
-        },
-        {
-          "projects": ["cdf-sdk-singleton"],
-          "target": "build-single-spa"
-        }
-      ],
+      "dependsOn": ["^internal-build"],
       "configurations": {
         "staging": {
           "args": "--configuration=staging --build_mode=cdf"
@@ -146,7 +135,6 @@
         "preview": {
           "args": "--configuration=preview --build_mode=cdf"
         },
-
         "production": {
           "args": "--configuration=production --build_mode=cdf"
         },
@@ -184,7 +172,6 @@
         }
       }
     },
-
     "serve-static": {
       "executor": "nx:run-commands",
       "defaultConfiguration": "staging",
@@ -201,7 +188,6 @@
           "buildTarget": "fusion-shell:build:preview",
           "args": "--port=8080 --ssl=true --configuration=preview --build_mode=cdf"
         },
-
         "production": {
           "buildTarget": "fusion-shell:build:production",
           "args": "--port=8080 --ssl=true --configuration=production --build_mode=cdf"

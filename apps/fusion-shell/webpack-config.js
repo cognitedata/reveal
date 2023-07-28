@@ -71,7 +71,7 @@ module.exports = composePlugins(
     // To make the build work with both fusion and /cdf/ we need to set the baseHref and publicPath
     config.output = {
       ...config.output,
-      publicPath,
+      // publicPath,
     };
 
     if (nodeEnv === 'production') {

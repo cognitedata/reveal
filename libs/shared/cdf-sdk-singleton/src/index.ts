@@ -59,7 +59,7 @@ export const createSdkClient = (
 const getSdkBaseUrl = () => {
   // temporary hack, needed to test app locally
   if (window.location.host === 'localhost:8080') {
-    return 'http://localhost:8080';
+    return 'https://localhost:8080';
   }
 
   return urlCluster ? getUrl(urlCluster) : undefined;

@@ -11,7 +11,7 @@ describe('SubApp Utils', () => {
         {
           key: 'cdf-access-management',
           appName: '@cognite/cdf-access-management',
-          appType: 'single-spa',
+          appType: 'module-federation',
           url: 'https://cdf-access-management-preview.web.app',
         },
         {
@@ -31,8 +31,6 @@ describe('SubApp Utils', () => {
       expect.objectContaining({
         'cdf-access-management':
           'https://cdf-access-management-preview.web.app',
-        'cdf-coding-conventions':
-          'https://cdf-coding-conventions-preview.web.app',
       })
     );
   });
