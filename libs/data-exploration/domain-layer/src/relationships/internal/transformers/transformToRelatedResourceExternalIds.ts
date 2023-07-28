@@ -2,19 +2,19 @@ import uniq from 'lodash/uniq';
 
 import { CogniteExternalId, Relationship } from '@cognite/sdk';
 
-import { ResourceType } from '@data-exploration-lib/core';
+import { ResourceType, ResourceTypes } from '@data-exploration-lib/core';
 
 export const transformToRelatedResourceExternalIds = (
   relationships: Relationship[],
   resourceExternalId?: string
 ) => {
   const result: Record<ResourceType, CogniteExternalId[]> = {
-    asset: [],
-    timeSeries: [],
-    file: [],
-    event: [],
-    sequence: [],
-    threeD: [],
+    [ResourceTypes.Asset]: [],
+    [ResourceTypes.Event]: [],
+    [ResourceTypes.TimeSeries]: [],
+    [ResourceTypes.Sequence]: [],
+    [ResourceTypes.File]: [],
+    [ResourceTypes.ThreeD]: [],
   };
 
   relationships.forEach(

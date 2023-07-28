@@ -1,6 +1,6 @@
 import { ResourceType } from '@data-exploration-lib/core';
 
-import { useFileAnnotationsQuery } from '../../../annotations';
+import { useFileAnnotationsResourceIds } from '../../../annotations';
 import { BaseResourceProps } from '../types';
 import { getResourceId } from '../utils';
 
@@ -12,14 +12,14 @@ export const useAnnotationsCount = ({
   resourceType: ResourceType;
 }) => {
   const resourceId = getResourceId(resource);
-  const enabled = resourceType === 'file';
+  const enabled = resource.type === 'file';
 
-  const { data = [], isInitialLoading } = useFileAnnotationsQuery(
+  const { data, isInitialLoading } = useFileAnnotationsResourceIds(
     resourceId,
     enabled
   );
 
-  const count = enabled ? data.length : 0;
+  const count = enabled ? data[resourceType].length : 0;
 
   return {
     data: count,
