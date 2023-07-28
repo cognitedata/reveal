@@ -1,12 +1,17 @@
 import { useMemo } from 'react';
 
+import { LoadMore, LoadMoreButtonWrapper } from '@data-exploration/components';
+
 import {
   Document as TableDocument,
   DocumentTable,
 } from '@cognite/react-document-table';
 import { FileInfo, Document } from '@cognite/sdk';
 
-import { FileWithRelationshipLabels } from '@data-exploration-lib/core';
+import {
+  FileWithRelationshipLabels,
+  InternalDocument,
+} from '@data-exploration-lib/core';
 import { WithDetailViewData } from '@data-exploration-lib/domain-layer';
 
 import { docTypes } from './docTypes';
@@ -15,8 +20,12 @@ type FileGroupingTableProps = {
   data?:
     | FileWithRelationshipLabels[]
     | WithDetailViewData<FileInfo>[]
-    | WithDetailViewData<Document>[];
+    | WithDetailViewData<Document>[]
+    | InternalDocument[];
   onItemClicked?: (file: any) => void;
+  hasNextPage?: boolean;
+  isLoadingMore?: boolean;
+  fetchMore?: (...args: any[]) => any;
 };
 const convertFilesToDocs = <
   T extends Pick<FileInfo, 'id' | 'name' | 'metadata' | 'directory' | 'source'>
@@ -38,6 +47,9 @@ const convertFilesToDocs = <
 export const FileGroupingTable = ({
   data = [],
   onItemClicked,
+  hasNextPage,
+  isLoadingMore,
+  fetchMore,
 }: FileGroupingTableProps) => {
   const docs: TableDocument[] = useMemo(() => {
     const files = data.map((document) => {
@@ -49,7 +61,7 @@ export const FileGroupingTable = ({
       const {
         id,
         sourceFile: { metadata, directory, source, name },
-      } = document as WithDetailViewData<Document>;
+      } = document as WithDetailViewData<Document> | InternalDocument;
 
       return { id, metadata, directory, source, name };
     });
@@ -58,10 +70,20 @@ export const FileGroupingTable = ({
   }, [data]);
 
   return (
-    <DocumentTable
-      docs={docs}
-      docTypes={docTypes}
-      handleDocumentClick={onItemClicked}
-    />
+    <>
+      <DocumentTable
+        docs={docs}
+        docTypes={docTypes}
+        handleDocumentClick={onItemClicked}
+      />
+
+      <LoadMoreButtonWrapper justifyContent="center" alignItems="center">
+        <LoadMore
+          hasNextPage={hasNextPage}
+          isLoadingMore={isLoadingMore}
+          fetchMore={fetchMore}
+        />
+      </LoadMoreButtonWrapper>
+    </>
   );
 };

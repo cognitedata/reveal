@@ -110,6 +110,7 @@ export const FileRelatedSearchResults: React.FC<Props> = ({
     query: debouncedQuery,
     sortBy,
     enabled: isDocumentsApiEnabled,
+    limit: 1000,
   });
 
   const { data, isLoading, hasNextPage, fetchNextPage } = isDocumentsApiEnabled

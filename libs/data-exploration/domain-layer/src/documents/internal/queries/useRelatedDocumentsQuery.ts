@@ -30,6 +30,7 @@ export const useRelatedDocumentsQuery = ({
   query,
   sortBy,
   enabled = true,
+  limit = 20,
 }: {
   resourceExternalId?: string;
   relationshipFilter?: RelationshipsFilterInternal;
@@ -37,6 +38,7 @@ export const useRelatedDocumentsQuery = ({
   query?: string;
   sortBy?: TableSortBy[];
   enabled?: boolean;
+  limit?: number;
 }) => {
   const { data: detailViewRelatedResourcesData } =
     useRelatedResourceDataForDetailView({
@@ -65,7 +67,7 @@ export const useRelatedDocumentsQuery = ({
     {
       filter,
       sort,
-      limit: 20,
+      limit,
     },
     { enabled: enabled && hasRelatedDocuments }
   );

@@ -80,10 +80,12 @@ export const FileLinkedSearchResults: React.FC<Props> = ({
     fetchNextPage,
     results: items,
     hasNextPage,
+    isLoading: isDocumentsLoading,
   } = useDocumentSearchResultQuery(
     {
       filter: documentFilters,
       query: debouncedQuery,
+      limit: 1000,
     },
     { enabled: isDocumentsApiEnabled }
   );
@@ -106,6 +108,7 @@ export const FileLinkedSearchResults: React.FC<Props> = ({
     canFetchMore,
     fetchMore,
     items: files,
+    isLoading: isFilesLoading,
   } = useResourceResults<FileInfo>(api, debouncedQuery, fileFilters);
 
   return (
@@ -154,8 +157,11 @@ export const FileLinkedSearchResults: React.FC<Props> = ({
                 />
               ) : (
                 <FileGroupingTable
-                  data={files}
+                  data={items}
                   onItemClicked={(file) => onClick(file)}
+                  hasNextPage={hasNextPage}
+                  fetchMore={fetchNextPage}
+                  isLoadingMore={isDocumentsLoading}
                 />
               )}
             </GroupingTableWrapper>
@@ -196,6 +202,7 @@ export const FileLinkedSearchResults: React.FC<Props> = ({
             }
             hasNextPage={canFetchMore}
             fetchMore={fetchMore}
+            isDataLoading={isFilesLoading}
           />
         ) : (
           <DocumentsTable
@@ -233,6 +240,7 @@ export const FileLinkedSearchResults: React.FC<Props> = ({
             }
             hasNextPage={hasNextPage}
             fetchMore={fetchNextPage}
+            isDataLoading={isDocumentsLoading}
           />
         ))}
     </>
