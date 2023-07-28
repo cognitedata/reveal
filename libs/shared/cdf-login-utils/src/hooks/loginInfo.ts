@@ -3,6 +3,9 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { useQueries, useQuery } from '@tanstack/react-query';
 
+import { getDlc, readLoginHints } from '@cognite/auth-react/src/lib/base';
+import { isUsingUnifiedSignin } from '@cognite/cdf-utilities';
+
 import { BASE_QUERY_KEY } from '../common';
 import {
   Auth0Response,
@@ -52,25 +55,37 @@ const getValidatedLegacyProjectKey = (projectName: string, cluster: string) => [
   cluster,
 ];
 
+const loginHints = readLoginHints();
+
+const loginInfoQueryFn = () => {
+  if (isUsingUnifiedSignin()) {
+    if (!loginHints?.organization) {
+      return Promise.reject(new Error('Missing organization'));
+    }
+    return getDlc(loginHints?.organization);
+  }
+
+  return fetch(`/_api/login_info`)
+    .then(async (r) => {
+      if (r.status < 400) {
+        return r.json();
+      } else {
+        const body = await r.json();
+        return Promise.reject({
+          status: r.status,
+          body,
+        });
+      }
+    })
+    .catch((e) =>
+      Promise.reject({ status: e.status, body: e.body || e.message })
+    );
+};
+
 export const useLoginInfo = () => {
   return useQuery<DomainResponse, LoginInfoError, DomainResponse>(
     getLoginInfoQueryKey(),
-    () =>
-      fetch(`/_api/login_info`)
-        .then(async (r) => {
-          if (r.status < 400) {
-            return r.json();
-          } else {
-            const body = await r.json();
-            return Promise.reject({
-              status: r.status,
-              body,
-            });
-          }
-        })
-        .catch((e) =>
-          Promise.reject({ status: e.status, body: e.body || e.message })
-        )
+    loginInfoQueryFn
   );
 };
 

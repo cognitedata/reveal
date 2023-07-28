@@ -1,6 +1,17 @@
 import queryString from 'query-string';
 
-import { readLoginHints } from '@cognite/auth-react/src/lib/base';
+import {
+  AadIdp,
+  Auth0Idp,
+  KeycloakIdp,
+  getDlc,
+  getIdp,
+  readLoginHints,
+} from '@cognite/auth-react/src/lib/base';
+import {
+  CogniteIdp,
+  SAuthIdp,
+} from '@cognite/auth-react/src/lib/base/domain-login-configuration';
 import {
   getSelectedIdpDetails,
   IDPResponse,
@@ -59,13 +70,19 @@ export const getUrl = (
 
 export async function getIDP(): Promise<IDPResponse | LegacyProject> {
   if (isUsingUnifiedSignin()) {
-    let loginHints = localStorage.getItem('@cognite/auth-react/login-hints');
+    let loginHints = readLoginHints();
     if (!loginHints) {
-      return Promise.reject(new Error('IDP not selected'));
+      return Promise.reject(new Error('Missing login hints'));
     }
-
-    loginHints = JSON.parse(loginHints);
-    return Promise.resolve((loginHints as any).idpInternalId);
+    if (!loginHints?.organization) {
+      return Promise.reject(new Error('Missing organization'));
+    }
+    const dlc = await getDlc(loginHints?.organization);
+    const idp = getIdp(dlc.idps, loginHints?.idpInternalId);
+    if (!idp) {
+      return Promise.reject(new Error('IDP not found'));
+    }
+    return idp as AadIdp | Auth0Idp | KeycloakIdp | CogniteIdp;
   }
   const { internalId } = getSelectedIdpDetails() ?? {};
 
