@@ -2,41 +2,40 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type Cognite3DViewer, type PointerEventData } from '@cognite/reveal';
-import { type CogniteClient } from '@cognite/sdk';
-import { type FdmSDK } from '../../utilities/FdmSDK';
+import { type Cognite3DViewer, type PointerEventData, type CogniteCadModel } from '@cognite/reveal';
+import { CogniteInternalId, type CogniteClient } from '@cognite/sdk';
+import {
+  EdgeItem,
+  InspectResultList,
+  type FdmSDK,
+  DmsUniqueIdentifier,
+  Source
+} from '../../utilities/FdmSDK';
 import { type FdmAssetMappingsConfig } from '../../hooks/types';
 import { type NodeDataResult } from './types';
 
-export async function queryMappedData<NodeType>(
-  viewer: Cognite3DViewer,
-  cdfClient: CogniteClient,
-  fdmClient: FdmSDK,
-  fdmConfig: FdmAssetMappingsConfig,
-  clickEvent: PointerEventData
-): Promise<NodeDataResult<NodeType> | undefined> {
-  const intersection = await viewer.getIntersectionFromPixel(
-    clickEvent.offsetX,
-    clickEvent.offsetY
-  );
+async function getAncestorNodeIdsForTreeIndex(
+  client: CogniteClient,
+  model: CogniteCadModel,
+  treeIndex: number
+): Promise<CogniteInternalId[]> {
+  const nodeId = await model.mapTreeIndexToNodeId(treeIndex);
 
-  if (intersection === null || intersection.type !== 'cad') {
-    return;
-  }
-
-  const cadIntersection = intersection;
-  const model = cadIntersection.model;
-
-  const nodeId = await cadIntersection.model.mapTreeIndexToNodeId(cadIntersection.treeIndex);
-
-  const ancestorNodes = await cdfClient.revisions3D.list3DNodeAncestors(
+  const ancestorNodes = await client.revisions3D.list3DNodeAncestors(
     model.modelId,
     model.revisionId,
     nodeId
   );
 
-  const ancestorIds = ancestorNodes.items.map((n) => n.id);
+  return ancestorNodes.items.map((n) => n.id);
+}
 
+async function getMappingEdges(
+  fdmClient: FdmSDK,
+  fdmConfig: FdmAssetMappingsConfig,
+  model: CogniteCadModel,
+  ancestorIds: CogniteInternalId[]
+): Promise<{ edges: EdgeItem<Record<string, any>>[] }> {
   const filter = {
     and: [
       {
@@ -71,14 +70,13 @@ export async function queryMappedData<NodeType>(
     ]
   };
 
-  const mappings = await fdmClient.filterAllInstances(filter, 'edge', fdmConfig.source);
+  return fdmClient.filterAllInstances(filter, 'edge', fdmConfig.source);
+}
 
-  if (mappings.edges.length === 0) {
-    return;
-  }
-
-  const dataNode = mappings.edges[0].startNode;
-
+async function inspectNode(
+  fdmClient: FdmSDK,
+  dataNode: DmsUniqueIdentifier
+): Promise<InspectResultList> {
   const inspectionResult = await fdmClient.inspectInstances({
     inspectionOperations: { involvedViewsAndContainers: {} },
     items: [
@@ -90,9 +88,14 @@ export async function queryMappedData<NodeType>(
     ]
   });
 
-  const dataView =
-    inspectionResult.items[0]?.inspectionResults.involvedViewsAndContainers?.views[0];
+  return inspectionResult;
+}
 
+async function filterNodeData<NodeType>(
+  fdmClient: FdmSDK,
+  dataNode: DmsUniqueIdentifier,
+  dataView: Source
+): Promise<NodeType | undefined> {
   if (dataView === undefined) {
     return undefined;
   }
@@ -113,10 +116,50 @@ export async function queryMappedData<NodeType>(
     dataView
   );
 
-  const nodeData =
-    dataQueryResult.edges[0]?.properties[dataView.space]?.[
-      `${dataView.externalId}/${dataView.version}`
-    ];
+  return dataQueryResult.edges[0]?.properties[dataView.space]?.[
+    `${dataView.externalId}/${dataView.version}`
+  ];
+}
+
+export async function queryMappedData<NodeType>(
+  viewer: Cognite3DViewer,
+  cdfClient: CogniteClient,
+  fdmClient: FdmSDK,
+  fdmConfig: FdmAssetMappingsConfig,
+  clickEvent: PointerEventData
+): Promise<NodeDataResult<NodeType> | undefined> {
+  const intersection = await viewer.getIntersectionFromPixel(
+    clickEvent.offsetX,
+    clickEvent.offsetY
+  );
+
+  if (intersection === null || intersection.type !== 'cad') {
+    return;
+  }
+
+  const cadIntersection = intersection;
+  const model = cadIntersection.model;
+
+  const ancestorIds = await getAncestorNodeIdsForTreeIndex(
+    cdfClient,
+    model,
+    cadIntersection.treeIndex
+  );
+
+  const mappings = await getMappingEdges(fdmClient, fdmConfig, model, ancestorIds);
+
+  if (mappings.edges.length === 0) {
+    return;
+  }
+
+  const dataNode = mappings.edges[0].startNode;
+
+  const inspectionResult = await inspectNode(fdmClient, dataNode);
+
+  const dataView =
+    inspectionResult.items[0]?.inspectionResults.involvedViewsAndContainers?.views[0];
+
+  const nodeData = await filterNodeData<NodeType>(fdmClient, dataNode, dataView);
 
   if (nodeData === undefined) {
     return undefined;
