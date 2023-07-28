@@ -3,42 +3,50 @@
  */
 
 import React, { JSX, useState, useEffect, useRef } from 'react';
-
 import { Vector3 } from 'three';
 
 import { useReveal } from '../RevealContainer/RevealContext';
 
 import { HtmlOverlayTool } from '@cognite/reveal/tools';
+import { useAuxillaryDivContext } from '../RevealContainer/AuxillaryDivProvider';
 
-import styled from 'styled-components';
-
-export type InfoCardProps = {
-  card: JSX.Element;
+export type InfoCardElementMapping = {
+  ref: React.RefObject<HTMLElement>;
   position: Vector3;
 };
 
-export const InfoCard = ({
-  card,
-  position
-}: InfoCardProps): JSX.Element => {
+export type InfoCardProps = {
+  position: Vector3;
+  children: React.ReactNode;
+};
+
+export const InfoCard = ({ position, children }: InfoCardProps): JSX.Element => {
   const viewer = useReveal();
 
-  const divReference = useRef<HTMLDivElement>(null);
+  const mods = useAuxillaryDivContext();
+
+  const htmlRef = useRef<HTMLDivElement>(null);
+  const element = (
+    <div id={'infoCardContent'} key={'info'} ref={htmlRef} style={{ position: 'absolute' }}>
+      {children}
+    </div>
+  );
+
   const [htmlTool, _setHtmlTool] = useState<HtmlOverlayTool>(new HtmlOverlayTool(viewer));
-  const htmlElement = (<div ref={divReference}> {card} </div>);
 
   useEffect(() => {
-    if (divReference.current === null) return;
-    const innerElement = divReference.current;
+    mods.addElement(element);
+    return () => mods.removeElement(element);
+  }, []);
 
-    htmlTool.add(innerElement, position);
+  useEffect(() => {
+    if (htmlRef.current === null) {
+      return;
+    }
 
-    return () => htmlTool.remove(innerElement);
-  }, [card, htmlTool, divReference.current]);
+    htmlTool.clear();
+    htmlTool.add(htmlRef.current, position);
+  }, [htmlTool, children, htmlRef.current]);
 
-  return htmlElement;
-}
-
-export const FloatingDiv = styled.div`
-  position: absolute;
-`
+  return <></>;
+};
