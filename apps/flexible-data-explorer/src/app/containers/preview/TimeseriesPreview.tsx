@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 import { TimeseriesChart } from '@cognite/plotting-components';
 
+import { Spinner } from '../../components/loader/Spinner';
 import { useNavigation } from '../../hooks/useNavigation';
 import { useTranslation } from '../../hooks/useTranslation';
 import { useTimeseriesByIdQuery } from '../../services/instances/timeseries/queries/useTimeseriesByIdQuery';
@@ -33,7 +34,7 @@ export const TimeseriesPreview: React.FC<Props> = ({ id }) => {
   const { t } = useTranslation();
   const { toTimeseriesPage } = useNavigation();
 
-  const { data } = useTimeseriesByIdQuery(id);
+  const { data, isLoading } = useTimeseriesByIdQuery(id);
 
   const [view, setView] = useState<PreviewView>();
 
@@ -42,13 +43,17 @@ export const TimeseriesPreview: React.FC<Props> = ({ id }) => {
   };
 
   const renderContent = () => {
+    if (isLoading) {
+      return <Spinner />;
+    }
+
     if (view === 'properties') {
       return <PropertiesView data={data} onClick={(item) => setView(item)} />;
     }
 
     return (
       <Overview
-        type="Timeseries"
+        type="Time series"
         title={data?.name || data?.externalId}
         description={data?.description}
         onClick={(item) => setView(item)}

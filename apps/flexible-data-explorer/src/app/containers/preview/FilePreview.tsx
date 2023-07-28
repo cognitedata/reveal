@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 import styled from 'styled-components';
 
+import { Spinner } from '../../components/loader/Spinner';
 import { useNavigation } from '../../hooks/useNavigation';
 import { useTranslation } from '../../hooks/useTranslation';
 import { useFileByIdQuery } from '../../services/instances/file/queries/useFileByIdQuery';
@@ -25,7 +26,7 @@ export const FilePreview: React.FC<Props> = ({ id }) => {
   const { t } = useTranslation();
   const { toFilePage } = useNavigation();
 
-  const { data } = useFileByIdQuery(id);
+  const { data, isLoading } = useFileByIdQuery(id);
 
   const [view, setView] = useState<PreviewView>();
 
@@ -34,6 +35,10 @@ export const FilePreview: React.FC<Props> = ({ id }) => {
   };
 
   const renderContent = () => {
+    if (isLoading) {
+      return <Spinner />;
+    }
+
     if (view === 'properties') {
       return <PropertiesView data={data} onClick={(item) => setView(item)} />;
     }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { Suspense, useState } from 'react';
 
 import { Spinner } from '../../components/loader/Spinner';
 import { useNavigation } from '../../hooks/useNavigation';
@@ -95,7 +95,9 @@ export const GenericInstancePreview: React.FC<InstancePreviewProps> = ({
   return (
     <>
       <InstancePreviewContainer>
-        <InstancePreviewContent>{renderContent()}</InstancePreviewContent>
+        <InstancePreviewContent>
+          <Suspense fallback={<Spinner />}>{renderContent()}</Suspense>
+        </InstancePreviewContent>
 
         <InstancePreviewFooter>
           <OpenButton type="primary" onClick={handleOpenClick}>

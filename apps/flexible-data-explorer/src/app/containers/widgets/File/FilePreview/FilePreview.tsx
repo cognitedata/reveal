@@ -2,11 +2,12 @@ import React, { useMemo } from 'react';
 
 import styled from 'styled-components';
 
-import { Flex, Loader } from '@cognite/cogs.js';
+import { Flex } from '@cognite/cogs.js';
 import ReactUnifiedViewer, {
   isSupportedFileInfo,
 } from '@cognite/unified-file-viewer';
 
+import { Spinner } from '../../../../components/loader/Spinner';
 import { useTranslation } from '../../../../hooks/useTranslation';
 import { useFileContainerQuery } from '../../../../services/files/queries/useFileContainerQuery';
 import { useFileByIdQuery } from '../../../../services/instances/file/queries/useFileByIdQuery';
@@ -54,7 +55,11 @@ export const FilePreview = ({
   }
 
   if (!isFileFetched || container === undefined || file === undefined) {
-    return <Loader />;
+    return (
+      <CenteredPlaceholder>
+        <Spinner />
+      </CenteredPlaceholder>
+    );
   }
 
   return (

@@ -4,7 +4,6 @@ import _isEmpty from 'lodash/isEmpty';
 
 import { Body, Icon, Title } from '@cognite/cogs.js';
 
-import { Spinner } from '../../../components/loader/Spinner';
 import { useNavigation } from '../../../hooks/useNavigation';
 import { useInstanceDirectRelationshipQuery } from '../../../services/instances/generic/queries/useInstanceDirectRelationshipQuery';
 import { InstancePreviewProps } from '../types';
@@ -14,11 +13,14 @@ export const DirectionRelationshipItem: React.FC<
 > = ({ dataModel, instance, type }) => {
   const { toInstancePage } = useNavigation();
 
-  const { data, isLoading, isFetched } = useInstanceDirectRelationshipQuery(
+  const { data, isFetched } = useInstanceDirectRelationshipQuery(
     type,
     {
       model: dataModel,
       instance,
+    },
+    {
+      suspense: true,
     }
   );
 
@@ -45,16 +47,10 @@ export const DirectionRelationshipItem: React.FC<
       }}
       tabIndex={0}
     >
-      {isLoading ? (
-        <Spinner />
-      ) : (
-        <>
-          <Icon type="ArrowUpRight" />
+      <Icon type="ArrowUpRight" />
 
-          <Text>{type.field}</Text>
-          <ValueText>{data?.name}</ValueText>
-        </>
-      )}
+      <Text>{type.field}</Text>
+      <ValueText>{data?.name}</ValueText>
     </Container>
   );
 };

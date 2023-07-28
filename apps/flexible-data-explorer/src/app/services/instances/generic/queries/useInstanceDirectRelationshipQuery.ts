@@ -22,6 +22,11 @@ export const useInstanceDirectRelationshipQuery = (
   }: {
     instance?: Instance;
     model?: DataModelV2;
+  } = {},
+  {
+    suspense,
+  }: {
+    suspense?: boolean;
   } = {}
 ) => {
   const client = useFDM();
@@ -66,6 +71,9 @@ export const useInstanceDirectRelationshipQuery = (
       );
 
       return instance[field];
+    },
+    {
+      suspense,
     }
   );
 };

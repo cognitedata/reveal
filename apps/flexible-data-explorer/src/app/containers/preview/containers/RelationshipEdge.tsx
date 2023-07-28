@@ -2,7 +2,6 @@ import styled from 'styled-components';
 
 import { Body, Button, Flex, Icon, Title } from '@cognite/cogs.js';
 
-import { Spinner } from '../../../components/loader/Spinner';
 import { useNavigation } from '../../../hooks/useNavigation';
 import { useInstanceRelationshipQuery } from '../../../services/instances/generic/queries/useInstanceRelationshipQuery';
 import { InstancePreviewHeader, TitleText } from '../elements';
@@ -53,12 +52,15 @@ export const RelationshipEdgeView: React.FC<
 export const RelationshipEdgeItem: React.FC<
   InstancePreviewProps & { type: { type: string; field: string } }
 > = ({ dataModel, instance, type, onClick }) => {
-  const { data, isLoading, isFetched } = useInstanceRelationshipQuery(
+  const { data, isFetched } = useInstanceRelationshipQuery(
     type,
     undefined,
     {
       model: dataModel,
       instance,
+    },
+    {
+      suspense: true,
     }
   );
 
@@ -70,17 +72,11 @@ export const RelationshipEdgeItem: React.FC<
 
   return (
     <Container tabIndex={0} onClick={() => onClick?.(type)}>
-      {isLoading ? (
-        <Spinner />
-      ) : (
-        <>
-          <Text>{type.field}</Text>
-          <Content>
-            <CountText>{data?.length}</CountText>
-            <Icon type="ArrowRight" />
-          </Content>
-        </>
-      )}
+      <Text>{type.field}</Text>
+      <Content>
+        <CountText>{data?.length}</CountText>
+        <Icon type="ArrowRight" />
+      </Content>
     </Container>
   );
 };

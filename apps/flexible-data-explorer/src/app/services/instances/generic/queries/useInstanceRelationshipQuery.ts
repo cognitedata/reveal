@@ -29,6 +29,11 @@ export const useInstanceRelationshipQuery = (
   }: {
     instance?: Instance;
     model?: DataModelV2;
+  } = {},
+  {
+    suspense,
+  }: {
+    suspense?: boolean;
   } = {}
 ) => {
   const client = useFDM();
@@ -89,6 +94,7 @@ export const useInstanceRelationshipQuery = (
     {
       getNextPageParam: (param) =>
         param.pageInfo.hasNextPage && param.pageInfo.endCursor,
+      suspense,
     }
   );
 
