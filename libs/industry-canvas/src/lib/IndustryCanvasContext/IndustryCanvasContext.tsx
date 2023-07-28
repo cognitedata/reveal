@@ -1,4 +1,10 @@
-import { createContext, useCallback, useContext, useMemo } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from 'react';
 
 import { useFlag } from '@cognite/react-feature-flags';
 import { useSDK } from '@cognite/sdk-provider';
@@ -11,7 +17,10 @@ import { useCanvasSaveMutation } from '../hooks/use-mutation/useCanvasSaveMutati
 import { useDeleteCanvasIdsByTypeMutation } from '../hooks/use-mutation/useDeleteCanvasIdsByTypeMutation';
 import { useGetCanvasByIdQuery } from '../hooks/use-query/useGetCanvasByIdQuery';
 import { useListCanvases } from '../hooks/use-query/useListCanvases';
-import { IndustryCanvasService } from '../services/IndustryCanvasService';
+import {
+  IndustryCanvasService,
+  CanvasVisibility,
+} from '../services/IndustryCanvasService';
 import { ContainerReference, SerializedCanvasDocument } from '../types';
 import { useUserProfile } from '../UserProfileProvider';
 import {
@@ -53,6 +62,9 @@ export type IndustryCanvasContextType = {
     nextHasConsumed: boolean
   ) => void;
   isCommentsEnabled: boolean;
+  // Filter for the ICHomePage
+  visibilityFilter: CanvasVisibility | undefined;
+  setVisibilityFilter: (visibility: CanvasVisibility | undefined) => void;
 };
 
 export const IndustryCanvasContext = createContext<IndustryCanvasContextType>({
@@ -91,6 +103,10 @@ export const IndustryCanvasContext = createContext<IndustryCanvasContextType>({
     );
   },
   isCommentsEnabled: false,
+  visibilityFilter: undefined,
+  setVisibilityFilter: () => {
+    throw new Error('setVisibilityFilter called before initialisation');
+  },
 });
 
 type IndustryCanvasProviderProps = {
@@ -106,6 +122,10 @@ export const IndustryCanvasProvider: React.FC<IndustryCanvasProviderProps> = ({
     () => new IndustryCanvasService(sdk, userProfile),
     [sdk, userProfile]
   );
+
+  const [visibilityFilter, setVisibilityFilter] = useState<
+    CanvasVisibility | undefined
+  >();
 
   const { isEnabled: isCommentsEnabled } = useFlag(CommentsFeatureFlagKey, {
     fallback: false,
@@ -133,7 +153,7 @@ export const IndustryCanvasProvider: React.FC<IndustryCanvasProviderProps> = ({
     data: canvases,
     isLoading: isListingCanvases,
     refetch: refetchCanvases,
-  } = useListCanvases(canvasService);
+  } = useListCanvases(canvasService, { visibility: visibilityFilter });
 
   const { isCanvasLocked } = useCanvasLocking(
     canvasId,
@@ -234,6 +254,8 @@ export const IndustryCanvasProvider: React.FC<IndustryCanvasProviderProps> = ({
         hasConsumedInitializeWithContainerReferences,
         setHasConsumedInitializeWithContainerReferences,
         isCommentsEnabled,
+        visibilityFilter,
+        setVisibilityFilter,
       }}
     >
       {children}

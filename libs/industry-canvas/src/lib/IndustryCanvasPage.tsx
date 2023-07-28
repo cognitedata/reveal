@@ -18,9 +18,10 @@ import {
   Button,
   Chip,
   Colors,
+  Divider,
   Dropdown,
   Flex,
-  Icon,
+  Infobox,
   Menu,
   toast,
   Tooltip,
@@ -40,6 +41,7 @@ import {
 import { translationKeys } from './common';
 import CanvasDropdown from './components/CanvasDropdown';
 import { CanvasTitle } from './components/CanvasTitle';
+import CanvasVisibilityModal from './components/CanvasVisibilityModal';
 import { CloseResourceSelectorButton } from './components/CloseResourceSelectorButton';
 import DragOverIndicator from './components/DragOverIndicator';
 import IndustryCanvasFileUploadModal from './components/IndustryCanvasFileUploadModal/IndustryCanvasFileUploadModal';
@@ -51,6 +53,7 @@ import {
   TOAST_POSITION,
   ZOOM_TO_FIT_MARGIN,
 } from './constants';
+import useCanvasVisibility from './hooks/useCanvasVisibility';
 import { useDragAndDrop } from './hooks/useDragAndDrop';
 import useLocalStorage from './hooks/useLocalStorage';
 import useManagedState from './hooks/useManagedState';
@@ -64,12 +67,14 @@ import useTrackCanvasViewed from './hooks/useTrackCanvasViewed';
 import { useTranslation } from './hooks/useTranslation';
 import { IndustryCanvas } from './IndustryCanvas';
 import { useIndustryCanvasContext } from './IndustryCanvasContext';
+import { CanvasVisibility } from './services/IndustryCanvasService';
 import {
   ContainerReference,
   ContainerReferenceType,
   IndustryCanvasToolType,
   isCommentAnnotation,
 } from './types';
+import { useUserProfile } from './UserProfileProvider';
 import {
   DEFAULT_CONTAINER_MAX_HEIGHT,
   DEFAULT_CONTAINER_MAX_WIDTH,
@@ -111,6 +116,7 @@ export const IndustryCanvasPage = () => {
   const [hasZoomedToFitOnInitialLoad, setHasZoomedToFitOnInitialLoad] =
     useState(false);
 
+  const { userProfile } = useUserProfile();
   const sdk = useSDK();
   const {
     activeCanvas,
@@ -147,6 +153,10 @@ export const IndustryCanvasPage = () => {
   });
 
   useTrackCanvasViewed(activeCanvas);
+  const canCurrentUserSeeCanvas = activeCanvas
+    ? activeCanvas.visibility === CanvasVisibility.PUBLIC ||
+      userProfile.userIdentifier === activeCanvas.createdBy
+    : true;
 
   // if comments is not enabled then return empty, hiding all comments for that project (even if canvas had comments before)
   const commentAnnotations = useMemo(
@@ -154,6 +164,20 @@ export const IndustryCanvasPage = () => {
       isCommentsEnabled ? canvasAnnotations.filter(isCommentAnnotation) : [],
     [isCommentsEnabled, canvasAnnotations]
   );
+
+  const {
+    selectedCanvas: selectedCanvasForVisibility,
+    setSelectedCanvas: setSelectedCanvasForVisibility,
+  } = useCanvasVisibility();
+
+  // Here we need an extra state to not show modal initally when go to canvas page.
+  const [visibilityModalOpen, setVisibilityModalOpen] = useState(false);
+  useEffect(() => {
+    // This is to update selected canvas for modal when the visibility is updated in the modal.
+    if (visibilityModalOpen) {
+      setSelectedCanvasForVisibility(activeCanvas);
+    }
+  }, [activeCanvas, setSelectedCanvasForVisibility, visibilityModalOpen]);
 
   useEffect(() => {
     if (isCanvasLocked && toolType !== IndustryCanvasToolType.PAN) {
@@ -483,6 +507,41 @@ export const IndustryCanvasPage = () => {
     );
   };
 
+  if (!canCurrentUserSeeCanvas) {
+    return (
+      <>
+        <PageTitle title="Industrial Canvas" />
+        <ErrorMessageWrapper>
+          <Infobox
+            type="danger"
+            title={t(
+              translationKeys.CANVAS_VISIBILITY_ERROR_TITLE,
+              'This canvas is not visible to you'
+            )}
+          >
+            {t(
+              translationKeys.CANVAS_VISIBILITY_ERROR_MESSAGE,
+              'This is a private canvas which is not shared with you.'
+            )}
+          </Infobox>
+          <Button
+            icon="ArrowLeft"
+            aria-label={t(
+              translationKeys.CANVAS_VISIBILITY_ERROR_BUTTON,
+              'Go to Industrial Canvas home page'
+            )}
+            onClick={handleGoBackToIndustryCanvasButtonClick}
+          >
+            {t(
+              translationKeys.CANVAS_VISIBILITY_ERROR_BUTTON,
+              'Go to Industrial Canvas home page'
+            )}
+          </Button>
+        </ErrorMessageWrapper>
+      </>
+    );
+  }
+
   return (
     <>
       <PageTitle title="Industrial Canvas" />
@@ -575,6 +634,8 @@ export const IndustryCanvasPage = () => {
             />
           </Tooltip>
 
+          <Divider direction="vertical" length="20px" endcap="round" />
+
           <Button
             type="primary"
             disabled={isCanvasLocked || isResourceSelectorOpen}
@@ -583,10 +644,26 @@ export const IndustryCanvasPage = () => {
               onResourceSelectorOpen();
               trackUsage(MetricEvent.ADD_DATA_BUTTON_CLICKED);
             }}
+            icon="Add"
           >
-            <Icon type="Plus" />
             {t(translationKeys.CANVAS_ADD_RESOURCE_BUTTON, 'Add data')}
           </Button>
+
+          <Divider direction="vertical" length="20px" endcap="round" />
+
+          <Button
+            type="secondary"
+            aria-label="Share canvas"
+            onClick={() => {
+              setSelectedCanvasForVisibility(activeCanvas);
+              setVisibilityModalOpen(true);
+            }}
+            icon="Share"
+          >
+            {t(translationKeys.CANVAS_SHARE_BUTTON, 'Share')}
+          </Button>
+
+          <Divider direction="vertical" length="20px" endcap="round" />
 
           <Dropdown
             content={
@@ -702,9 +779,36 @@ export const IndustryCanvasPage = () => {
           ]);
         }}
       />
+      <CanvasVisibilityModal
+        canvas={selectedCanvasForVisibility}
+        onCancel={() => {
+          setSelectedCanvasForVisibility(undefined);
+          setVisibilityModalOpen(false);
+        }}
+        saveCanvas={saveCanvas}
+        isSavingCanvas={isSavingCanvas}
+        userProfile={userProfile}
+      />
     </>
   );
 };
+
+const ErrorMessageWrapper = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  .cogs-infobox {
+    max-width: 500px;
+  }
+
+  .cogs.cogs-button {
+    margin-top: 8px;
+  }
+`;
 
 const TITlE_ROW_HEIGHT = 57;
 const TitleRowWrapper = styled.div`

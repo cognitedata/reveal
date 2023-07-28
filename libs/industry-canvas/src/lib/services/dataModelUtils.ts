@@ -256,6 +256,7 @@ export const upsertCanvas = async (
   const canvasNodeCreatedTime = upsertedNodes.find(
     (node) => node.externalId === canvas.externalId
   )?.createdTime;
+
   return {
     ...canvas,
     createdTime:

@@ -19,6 +19,7 @@
   "COMMON_CANVAS_RENAME": "Rename",
   "CANVAS_RESOURCES_ADDED": "Resource(s) added to your canvas",
   "CANVAS_ADD_RESOURCE_BUTTON": "Add data",
+  "CANVAS_SHARE_BUTTON": "Share",
   "CANVAS_ADD_RESOURCE_ERROR_TITLE": "Could not add resource(s) to your canvas",
   "CANVAS_ADD_RESOURCE_ERROR_MESSAGE": "At least one resource needs to be selected.",
   "CANVAS_DOWNLOAD_PDF": "Download as PDF",
@@ -88,5 +89,17 @@
   "MODAL_ADD_RESOURCE_TO_CANVAS_NEW_CANVAS_PLACEHOLDER": "New canvas...",
   "MODAL_ADD_RESOURCE_TO_CANVAS_CANVAS_NOT_FOUND": "Unable to find canvas with id {{id}}. Please refresh the page and try again",
   "EXISTING_CANVAS": "Existing canvas",
-  "NEW_CANVAS": "New canvas"
+  "NEW_CANVAS": "New canvas",
+  "VISIBILITY_ALL": "All",
+  "VISIBILITY_PUBLIC": "Public",
+  "VISIBILITY_PRIVATE": "Private",
+  "VISIBILITY_COPY_URL": "Copy URL",
+  "VISIBILITY_MODAL_TOGGLE_BUTTON": "Make {{visibilityToggleText}}",
+  "VISIBILITY_MODAL_TOGGLE_BUTTON_TOOLTIP": "Only the owner of the canvas can change the visibility setting.",
+  "VISIBILITY_MODAL_PUBLIC_TOGGLE_BODY": "This canvas is visible to everyone in this project.",
+  "VISIBILITY_MODAL_PRIVATE_TOGGLE_BODY": "This canvas is visible for you and everyone you have shared it with.",
+  "VISIBILITY_MODAL_TITLE": "Sharing canvas; \"{{canvasTitle}}\"",
+  "CANVAS_VISIBILITY_ERROR_TITLE": "This canvas is not visible to you",
+  "CANVAS_VISIBILITY_ERROR_MESSAGE": "This is a private canvas which is not shared with you.",
+  "CANVAS_VISIBILITY_ERROR_BUTTON": "Go to Industrial Canvas home page"
 }

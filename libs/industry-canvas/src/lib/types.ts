@@ -205,6 +205,7 @@ export type CanvasMetadata = {
   externalId: string;
   name: string;
   isArchived?: boolean;
+  visibility?: string;
 
   readonly createdTime: ISOString;
   createdBy: UserIdentifier;

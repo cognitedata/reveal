@@ -12,9 +12,11 @@ import {
   Table,
   InputExp,
   toast,
+  Icon,
   Tooltip,
   Body,
   Loader,
+  SegmentedControl,
 } from '@cognite/cogs.js';
 
 import { translationKeys } from './common';
@@ -34,11 +36,16 @@ import { useQueryParameter } from './hooks/useQueryParameter';
 import useTableState from './hooks/useTableState';
 import { useTranslation } from './hooks/useTranslation';
 import { useIndustryCanvasContext } from './IndustryCanvasContext';
+import { CanvasVisibility } from './services/IndustryCanvasService';
 import { isFdmInstanceContainerReference } from './types';
 import { UserProfile, useUserProfile } from './UserProfileProvider';
 import { addIdToContainerReference } from './utils/addIdToContainerReference';
 import { addDimensionsToContainerReferencesIfNotExists } from './utils/dimensions';
 import { getCanvasLink } from './utils/getCanvasLink';
+import {
+  getCanvasVisibilityIcon,
+  getCanvasVisibilityTooltipText,
+} from './utils/getCanvasVisibility';
 
 const SEARCH_DEBOUNCE_MS = 200;
 
@@ -48,6 +55,8 @@ export const IndustryCanvasHomePage = () => {
     isCreatingCanvas,
     isListingCanvases,
     createCanvas,
+    visibilityFilter,
+    setVisibilityFilter,
     saveCanvas,
     getCanvasById,
     initializeWithContainerReferences,
@@ -63,6 +72,7 @@ export const IndustryCanvasHomePage = () => {
   const { setQueryString } = useQueryParameter({ key: SEARCH_QUERY_PARAM_KEY });
   const [searchString, setSearchString] = useState<string>('');
   const [debouncedSearchString] = useDebounce(searchString, SEARCH_DEBOUNCE_MS);
+
   const { filteredCanvases } = useCanvasSearch({
     canvases: canvasesWithUserProfiles,
     searchString: debouncedSearchString,
@@ -190,7 +200,7 @@ export const IndustryCanvasHomePage = () => {
   const renderNewCanvasButton = () => (
     <div>
       <Button
-        icon="Plus"
+        icon="Add"
         iconPlacement="left"
         type="primary"
         disabled={isListingCanvases}
@@ -208,6 +218,23 @@ export const IndustryCanvasHomePage = () => {
       </Button>
     </div>
   );
+
+  const renderVisibilityIndicatorButton = (
+    row: CanvasDocumentWithUserProfile
+  ) => {
+    const { visibility } = row;
+    return (
+      <Tooltip
+        content={getCanvasVisibilityTooltipText(t, visibility)}
+        position="left"
+      >
+        <Icon
+          type={getCanvasVisibilityIcon(visibility)}
+          aria-label={getCanvasVisibilityTooltipText(t, visibility)}
+        />
+      </Tooltip>
+    );
+  };
 
   const renderCopyCanvasLinkButton = (row: CanvasDocumentWithUserProfile) => (
     <Tooltip
@@ -266,22 +293,6 @@ export const IndustryCanvasHomePage = () => {
 
   return (
     <>
-      <CanvasDeletionModal
-        canvas={canvasToDelete}
-        onCancel={() => setCanvasToDelete(undefined)}
-        onDeleteCanvas={onDeleteCanvasConfirmed}
-        isDeleting={isDeletingCanvas}
-      />
-      <AddResourceToCanvasModal
-        containerReferences={initializeWithContainerReferences}
-        canvases={canvases}
-        isVisible={
-          !hasConsumedInitializeWithContainerReferences &&
-          initializeWithContainerReferences !== undefined
-        }
-        onCancel={() => setHasConsumedInitializeWithContainerReferences(true)}
-        onOk={handleOnOk}
-      />
       <div>
         <HomeHeader>
           <div>
@@ -307,16 +318,41 @@ export const IndustryCanvasHomePage = () => {
           </LoaderWrapper>
         ) : (
           <CanvasListContainer>
-            <SearchCanvasInput
-              placeholder={t(
-                translationKeys.HOMEPAGE_TABLE_SEARCH_PLACEHOLDER,
-                'Browse canvases'
-              )}
-              fullWidth
-              value={searchString}
-              icon="Search"
-              onChange={(e) => setSearchString(e.target.value)}
-            />
+            <SearchAreaWrapper>
+              <SearchCanvasInput
+                placeholder={t(
+                  translationKeys.HOMEPAGE_TABLE_SEARCH_PLACEHOLDER,
+                  'Browse canvases'
+                )}
+                fullWidth
+                value={searchString}
+                icon="Search"
+                onChange={(e) => setSearchString(e.target.value)}
+              />
+              <SegmentedControl currentKey={visibilityFilter}>
+                <SegmentedControl.Button
+                  key="visibility-all"
+                  onClick={() => setVisibilityFilter(undefined)}
+                >
+                  {t(translationKeys.VISIBILITY_ALL, 'All')}
+                </SegmentedControl.Button>
+                <SegmentedControl.Button
+                  key={CanvasVisibility.PUBLIC}
+                  icon={getCanvasVisibilityIcon(CanvasVisibility.PUBLIC)}
+                  onClick={() => setVisibilityFilter(CanvasVisibility.PUBLIC)}
+                >
+                  {t(translationKeys.VISIBILITY_PUBLIC, 'Public')}
+                </SegmentedControl.Button>
+                {/* Here when 'private' is selected, we only show the canvases that are created/owned by me? */}
+                <SegmentedControl.Button
+                  key={CanvasVisibility.PRIVATE}
+                  icon={getCanvasVisibilityIcon(CanvasVisibility.PRIVATE)}
+                  onClick={() => setVisibilityFilter(CanvasVisibility.PRIVATE)}
+                >
+                  {t(translationKeys.VISIBILITY_PRIVATE, 'Private')}
+                </SegmentedControl.Button>
+              </SegmentedControl>
+            </SearchAreaWrapper>
             <Table<CanvasDocumentWithUserProfile>
               initialState={initialTableState}
               onStateChange={onTableStateChange}
@@ -328,6 +364,15 @@ export const IndustryCanvasHomePage = () => {
                 )
               }
               columns={[
+                {
+                  id: 'row-visibility',
+                  accessor: (row) => (
+                    <>{renderVisibilityIndicatorButton(row)}</>
+                  ),
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore - disableSortBy works just fine, but the type definition is wrong. Tracked by: https://cognitedata.atlassian.net/browse/CDS-1530
+                  disableSortBy: true,
+                },
                 {
                   Header: t(translationKeys.HOMEPAGE_TABLE_NAME_COLUMN, 'Name'),
                   accessor: 'name',
@@ -401,6 +446,22 @@ export const IndustryCanvasHomePage = () => {
           </CanvasListContainer>
         )}
       </div>
+      <CanvasDeletionModal
+        canvas={canvasToDelete}
+        onCancel={() => setCanvasToDelete(undefined)}
+        onDeleteCanvas={onDeleteCanvasConfirmed}
+        isDeleting={isDeletingCanvas}
+      />
+      <AddResourceToCanvasModal
+        containerReferences={initializeWithContainerReferences}
+        canvases={canvases}
+        isVisible={
+          !hasConsumedInitializeWithContainerReferences &&
+          initializeWithContainerReferences !== undefined
+        }
+        onCancel={() => setHasConsumedInitializeWithContainerReferences(true)}
+        onOk={handleOnOk}
+      />
     </>
   );
 };
@@ -439,7 +500,17 @@ const CanvasListContainer = styled.div`
   }
 `;
 
+const SearchAreaWrapper = styled.div`
+  display: flex;
+  width: 100%;
+  margin-bottom: 16px;
+
+  .cogs-inputexp-container {
+    flex: 1;
+    margin-right: 16px;
+  }
+`;
+
 const SearchCanvasInput = styled(InputExp)`
   background-color: rgba(83, 88, 127, 0.08);
-  margin-bottom: 16px;
 `;

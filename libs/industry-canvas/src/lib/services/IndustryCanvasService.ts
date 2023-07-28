@@ -14,6 +14,7 @@ import {
   upsertCanvas,
 } from './dataModelUtils';
 import { DTOCanvasState } from './types';
+import { getVisibilityFilter } from './utils';
 
 export const DEFAULT_CANVAS_NAME = 'Untitled canvas';
 
@@ -22,6 +23,11 @@ export enum ModelNames {
   CONTAINER_REFERENCE = 'ContainerReference',
   FDM_INSTANCE_CONTAINER_REFERENCE = 'FdmInstanceContainerReference',
   CANVAS_ANNOTATION = 'CanvasAnnotation',
+}
+
+export enum CanvasVisibility {
+  PRIVATE = 'private',
+  PUBLIC = 'public',
 }
 
 type PageInfo = {
@@ -42,7 +48,7 @@ export class IndustryCanvasService {
   public static readonly SYSTEM_SPACE = 'cdf_industrial_canvas';
   // Note: To simplify the code, we assume that the data models and
   // the views in the system space always have the same version.
-  public static readonly SYSTEM_SPACE_VERSION = 'v2';
+  public static readonly SYSTEM_SPACE_VERSION = 'v3';
   public static readonly INSTANCE_SPACE = 'IndustrialCanvasInstanceSpace';
   public static readonly DATA_MODEL_EXTERNAL_ID = 'IndustrialCanvas';
   private readonly LIST_LIMIT = 1000; // The max number of items to retrieve in one list request
@@ -94,6 +100,7 @@ export class IndustryCanvasService {
             items {
               externalId
               name
+              visibility
               isArchived
               createdTime
               createdBy
@@ -194,6 +201,7 @@ export class IndustryCanvasService {
               externalId
               name
               isArchived
+              visibility
               createdTime
               createdBy
               updatedAt
@@ -223,12 +231,26 @@ export class IndustryCanvasService {
     return res.canvases.items[0];
   }
 
+  public async listCanvases({
+    visibility,
+  }: {
+    visibility?: CanvasVisibility;
+  }): Promise<SerializedCanvasDocument[]> {
+    return this.getPaginatedCanvasData({ visibilityFilter: visibility });
+  }
+
   // TODO: This methods says that is returns a full SerializedCanvasDocument, but it doesn't doesn't include the `data` field.
-  private async getPaginatedCanvasData(
-    cursor: string | undefined = undefined,
-    paginatedData: SerializedCanvasDocument[] = [],
-    limit: number = this.LIST_LIMIT
-  ): Promise<SerializedCanvasDocument[]> {
+  private async getPaginatedCanvasData({
+    cursor = undefined,
+    paginatedData = [],
+    limit = this.LIST_LIMIT,
+    visibilityFilter = undefined,
+  }: {
+    cursor?: string;
+    paginatedData?: SerializedCanvasDocument[];
+    limit?: number;
+    visibilityFilter?: CanvasVisibility;
+  }): Promise<SerializedCanvasDocument[]> {
     // TODO: Check this. Data is fetching. How is serialisation happening here? We don't want to hydrate the configs.
     const res = await this.fdmClient.graphQL<{
       canvases: { items: SerializedCanvasDocument[]; pageInfo: PageInfo };
@@ -244,6 +266,7 @@ export class IndustryCanvasService {
             items {
               externalId
               name
+              visibility
               createdTime
               createdBy
               updatedAt
@@ -262,6 +285,10 @@ export class IndustryCanvasService {
       {
         filter: {
           and: [
+            getVisibilityFilter({
+              userProfile: this.userProfile,
+              visibilityFilter,
+            }),
             {
               or: [
                 { isArchived: { eq: false } },
@@ -277,23 +304,22 @@ export class IndustryCanvasService {
         },
       }
     );
+
     const { items, pageInfo } = res.canvases;
 
     paginatedData.push(...items);
     if (pageInfo.hasNextPage) {
-      return await this.getPaginatedCanvasData(
-        pageInfo.endCursor,
+      return await this.getPaginatedCanvasData({
+        cursor: pageInfo.endCursor,
         paginatedData,
-        limit
-      );
+        limit,
+        visibilityFilter,
+      });
     }
 
     return paginatedData;
   }
 
-  public async listCanvases(): Promise<SerializedCanvasDocument[]> {
-    return this.getPaginatedCanvasData();
-  }
   private async getPaginatedComments(
     cursor: string | undefined = undefined,
     paginatedData: Comment[] = [],
@@ -400,6 +426,7 @@ export class IndustryCanvasService {
     // This will induce an error because timestamps for instance will be incorrect
     return updatedCanvas;
   }
+
   public async saveComment(
     comment: Omit<Comment, 'lastUpdatedTime' | 'createdTime' | 'subComments'>
   ): Promise<Comment> {

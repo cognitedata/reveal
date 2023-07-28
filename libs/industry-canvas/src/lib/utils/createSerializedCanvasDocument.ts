@@ -1,7 +1,10 @@
 import { partition } from 'lodash';
 import { v4 as uuid } from 'uuid';
 
-import { DEFAULT_CANVAS_NAME } from '../services/IndustryCanvasService';
+import {
+  DEFAULT_CANVAS_NAME,
+  CanvasVisibility,
+} from '../services/IndustryCanvasService';
 import {
   SerializedCanvasDocument,
   SerializedIndustryCanvasState,
@@ -42,6 +45,7 @@ export const createSerializedCanvasDocument = (
   return {
     externalId: uuid(),
     name: options?.name || DEFAULT_CANVAS_NAME,
+    visibility: CanvasVisibility.PRIVATE, // Default visibility for a new canvas is 'private'.
     createdTime: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     updatedBy: userIdentifier,
