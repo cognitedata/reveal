@@ -175,11 +175,13 @@ function SearchPage() {
               tabKey={ViewType.Asset}
               query={debouncedQuery}
               filter={assetFilter}
+              label={t('ASSETS', 'Assets')}
             />
             <TimeseriesTab
               tabKey={ViewType.TimeSeries}
               query={debouncedQuery}
               filter={timeseriesFilter}
+              label={t('TIMESERIES', 'TIme series')}
             />
 
             <FilesTab
@@ -187,18 +189,25 @@ function SearchPage() {
               query={debouncedQuery}
               filter={isDocumentsApiEnabled ? documentFilter : fileFilter}
               isDocumentsApiEnabled={isDocumentsApiEnabled}
+              label={t('FILES', 'Files')}
             />
             <EventsTab
               tabKey={ViewType.Event}
               query={debouncedQuery}
               filter={eventFilter}
+              label={t('EVENTS', 'Events')}
             />
             <SequenceTab
               tabKey={ViewType.Sequence}
               query={debouncedQuery}
               filter={sequenceFilter}
+              label={t('SEQUENCE', 'Sequence')}
             />
-            <ThreeDTab tabKey={ViewType.ThreeD} query={debouncedQuery} />
+            <ThreeDTab
+              tabKey={ViewType.ThreeD}
+              query={debouncedQuery}
+              label={t('3D', '3D')}
+            />
           </ResourceTypeTabsV2>
         </TabsContainer>
 
