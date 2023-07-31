@@ -42,12 +42,10 @@ export const useAssetsOfResourceQuery = ({
     }
 
     return {
-      or: assetIds.map((assetId) => ({
-        equals: {
-          property: ['id'],
-          value: assetId,
-        },
-      })),
+      in: {
+        property: ['id'],
+        values: assetIds,
+      },
     };
   }, [assetIds]);
 
