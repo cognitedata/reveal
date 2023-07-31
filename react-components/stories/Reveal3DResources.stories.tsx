@@ -126,6 +126,7 @@ export const Main: Story = {
   },
   render: ({ resources, styling, fdmAssetMappingConfig }) => {
     const position = new Vector3(50, 30, 50);
+    const position2 = new Vector3(0, 0, 0);
 
     return (
       <RevealContainer
@@ -143,7 +144,7 @@ export const Main: Story = {
           styling={styling}
           fdmAssetMappingConfig={fdmAssetMappingConfig}
         />
-        <InfoCard position={position}>
+        <InfoCard position={position} uniqueKey="key2">
           <p
             style={{
               backgroundColor: 'turquoise',
@@ -151,9 +152,22 @@ export const Main: Story = {
               borderWidth: '10px',
               borderStyle: 'solid',
               maxWidth: '300px',
-              transform: 'translate(0px, calc(-100% - 50px))'
+              transform: 'translate(-50%, calc(-100% - 50px))'
             }}>
             This label is stuck at position {position.toArray().join(',')}
+          </p>
+        </InfoCard>
+        <InfoCard position={position2} uniqueKey="key1">
+          <p
+            style={{
+              backgroundColor: 'red',
+              borderColor: 'black',
+              borderWidth: '10px',
+              borderStyle: 'solid',
+              maxWidth: '300px',
+              transform: 'translate(0px, 0px)'
+            }}>
+            This label is stuck at position {position2.toArray().join(',')}
           </p>
         </InfoCard>
         <CameraController

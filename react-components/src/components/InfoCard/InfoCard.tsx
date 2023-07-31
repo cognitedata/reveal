@@ -2,8 +2,8 @@
  * Copyright 2023 Cognite AS
  */
 
-import React, { JSX, useState, useEffect, useRef } from 'react';
-import { Vector3 } from 'three';
+import React, { type JSX, useState, useEffect, useRef } from 'react';
+import { type Vector3 } from 'three';
 
 import { useReveal } from '../RevealContainer/RevealContext';
 
@@ -18,25 +18,28 @@ export type InfoCardElementMapping = {
 export type InfoCardProps = {
   position: Vector3;
   children: React.ReactNode;
+  uniqueKey: string;
 };
 
-export const InfoCard = ({ position, children }: InfoCardProps): JSX.Element => {
+export const InfoCard = ({ position, children, uniqueKey }: InfoCardProps): JSX.Element => {
   const viewer = useReveal();
 
-  const mods = useAuxillaryDivContext();
+  const [htmlTool, _setHtmlTool] = useState<HtmlOverlayTool>(new HtmlOverlayTool(viewer));
+
+  const auxContext = useAuxillaryDivContext();
 
   const htmlRef = useRef<HTMLDivElement>(null);
   const element = (
-    <div id={'infoCardContent'} key={'info'} ref={htmlRef} style={{ position: 'absolute' }}>
+    <div className="infocard" key={uniqueKey} ref={htmlRef} style={{ position: 'absolute' }}>
       {children}
     </div>
   );
 
-  const [htmlTool, _setHtmlTool] = useState<HtmlOverlayTool>(new HtmlOverlayTool(viewer));
-
   useEffect(() => {
-    mods.addElement(element);
-    return () => mods.removeElement(element);
+    auxContext.addElement(element);
+    return () => {
+      auxContext.removeElement(element);
+    };
   }, []);
 
   useEffect(() => {
@@ -44,9 +47,12 @@ export const InfoCard = ({ position, children }: InfoCardProps): JSX.Element => 
       return;
     }
 
-    htmlTool.clear();
-    htmlTool.add(htmlRef.current, position);
-  }, [htmlTool, children, htmlRef.current]);
+    const elementRef = htmlRef.current;
+
+    htmlTool.add(elementRef, position);
+
+    return () => htmlTool.remove(elementRef);
+  }, [auxContext, children, htmlRef.current]);
 
   return <></>;
 };
