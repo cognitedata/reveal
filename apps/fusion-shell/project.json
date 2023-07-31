@@ -105,18 +105,18 @@
       "options": {
         "commands": [
           {
-            "command": "nx internal-build fusion-shell --configuration={args.configuration}",
-            "description": "Building fusion-shell",
-            "forwardAllArgs": true
-          },
-          {
-            "command": "nx run cdf-route-tracker:build-single-spa",
+            "command": "nx run cdf-route-tracker:build-single-spa --skip-nx-cache",
             "description": "Building cdf-route-tracker",
             "forwardAllArgs": true
           },
           {
-            "command": "nx run cdf-sdk-singleton:build-single-spa",
+            "command": "nx run cdf-sdk-singleton:build-single-spa --skip-nx-cache",
             "description": "Building cdf-sdk-singleton",
+            "forwardAllArgs": true
+          },
+          {
+            "command": "nx internal-build fusion-shell --configuration={args.configuration}",
+            "description": "Building fusion-shell",
             "forwardAllArgs": true
           },
           {

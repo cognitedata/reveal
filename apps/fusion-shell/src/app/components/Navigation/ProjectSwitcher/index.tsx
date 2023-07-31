@@ -8,11 +8,8 @@ import { PROJECT_SWITCHER_WIDTH } from '../../../utils/constants';
 
 import { ProjectDropdown } from '../ProjectDropdown';
 import { StyledSectionDropdownButton } from '../TopBar/TopBarSections';
-import { useAuth } from '@cognite/auth-react';
 
 export const ProjectSwitcher = () => {
-  const { project } = useAuth();
-
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
 
   return (
@@ -28,7 +25,7 @@ export const ProjectSwitcher = () => {
         type="ghost"
         inverted
       >
-        <StyledProjectName>{project}</StyledProjectName>
+        <StyledProjectName>{getProject()}</StyledProjectName>
       </StyledSectionDropdownButton>
     </Dropdown>
   );
