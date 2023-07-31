@@ -1,0 +1,31 @@
+{
+  "simulators": [
+    {
+      "dataSetName": "ProcessSim-Dataset",
+      "dataSetWriteProtected": false,
+      "dataSetId": 630940901354785,
+      "heartbeat": 1649335753144,
+      "connectorVersion": "1.0.1",
+      "connectorName": "simconnect-e2e",
+      "simulator": "ProcessSim"
+    },
+    {
+      "dataSetName": "Prosper-Dataset",
+      "dataSetWriteProtected": false,
+      "dataSetId": 6973117096297290,
+      "heartbeat": 1649335753144,
+      "connectorVersion": "1.0.1",
+      "connectorName": "simconnect-e2e",
+      "simulator": "PROSPER"
+    },
+    {
+      "dataSetName": "ProcessSim-Dataset",
+      "dataSetWriteProtected": false,
+      "dataSetId": 630940901354785,
+      "heartbeat": 1649274722120,
+      "connectorVersion": "1.0.0",
+      "connectorName": "simint-dev-vm",
+      "simulator": "ProcessSim"
+    }
+  ]
+}

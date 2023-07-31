@@ -1,0 +1,5 @@
+exports_files([
+    "jest-reporter.js",
+    "jest.sh",
+    "react_scripts_test.sh",
+])

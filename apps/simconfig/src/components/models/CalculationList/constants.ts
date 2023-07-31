@@ -1,0 +1,1 @@
+export const STATUS_POLLING_INTERVAL = 2000;

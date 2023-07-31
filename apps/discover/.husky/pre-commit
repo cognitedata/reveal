@@ -1,0 +1,16 @@
+#!/bin/bash
+
+. "$(dirname "$0")/_/husky.sh"
+
+echo ' '
+echo 'Running pre-commit hook:'
+
+set -e
+
+cd "$(dirname "$0")"
+
+export CI=true
+
+echo ' '
+yarn lint:fast
+echo ' '

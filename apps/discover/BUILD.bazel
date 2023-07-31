@@ -1,0 +1,577 @@
+load("@bazel_skylib//rules:write_file.bzl", "write_file")
+load("@build_bazel_rules_nodejs//:index.bzl", "copy_to_bin")
+load("@npm//@storybook/react:index.bzl", "start_storybook")
+load("@npm//vite:index.bzl", "vite")
+load("//rules/vite:vite_build.bzl", "vite_build")
+load("//rules/test:jest.bzl", "jest_test")
+load("@npm//jest:index.bzl", "jest")
+load("//rules/lint:index.bzl", "eslint_config", "eslint_test", "prettier_test")
+load("//rules/package_json_helpers:generate.bzl", "generate_package_json_helpers")
+load("//rules/build_sed:build_sed.bzl", "build_sed")
+load("//rules/publish:publish_fas.bzl", "publish_fas")
+load("//apps:apps.bzl", "VITE_DEPENDENCIES")
+load("@npm//history-server:index.bzl", "history_server")
+
+# Filename conventions described at
+# https://create-react-app.dev/docs/running-tests#filename-conventions
+_TESTS = [
+    "src/**/*.test*.js*",
+    "src/**/*.test*.ts*",
+    "src/**/*.spec.js*",
+    "src/**/*.spec.ts*",
+    "src/**/__tests__/**/*.js*",
+    "src/**/__tests__/**/*.ts*",
+    "src/__mocks/*",
+    "src/**/__mocks/*",
+    "src/**/__fixtures/*",
+    "src/utils/test/*",
+    "src/__test-utils/**/*",
+    "src/**/__test-utils/**/*",
+]
+
+_STORYBOOK = [
+    "src/**/__stories__/*",
+    "src/**/*.stories.ts*",
+]
+
+TESTS_AND_STORYBOOK = glob(_TESTS + _STORYBOOK)
+
+_SOURCES = [
+    "src/**/*.ts*",
+    "src/**/*.js*",
+    "src/**/*.png",
+    "src/**/*.svg",
+    "src/**/*.css",
+]
+
+SOURCES = glob(
+    _SOURCES,
+    exclude = _TESTS + _STORYBOOK,
+)
+
+PUBLIC = glob([
+    "public/*",
+])
+
+# Generates the below helpers.
+#
+# Usage:
+#   bazel run :generate_package_json_helpers
+generate_package_json_helpers(
+    name = "generate_package_json_helpers",
+    out_dir = "build",
+    package_json = "//:package.json",
+    src_dir = "src",
+    tags = ["manual"],
+    workspace = "@npm",
+)
+
+### start of auto-generated helpers ###
+
+# Dependencies from package.json
+DEPENDENCIES = [
+    "@npm//@cognite/cogs.js",
+    "@npm//@cognite/discover-api-types",
+    "@npm//@cognite/sdk-wells",
+    "@npm//@cognite/sdk",
+    "@npm//@cognite/seismic-sdk-js",
+    "@npm//@cognite/videx-wellog",
+    "@npm//@cognite/user-management-service-types",
+    "@npm//@fontsource/inter",
+    "@npm//@reduxjs/toolkit",
+    "@npm//@tanstack/match-sorter-utils",
+    "@npm//@tanstack/react-table",
+    "@npm//@turf/centroid",
+    "@npm//@turf/clean-coords",
+    "@npm//@turf/helpers",
+    "@npm//@turf/nearest-point",
+    "@npm//@turf/simplify",
+    "@npm//classnames",
+    "@npm//convert-units",
+    "@npm//d3",
+    "@npm//file-saver",
+    "@npm//formik",
+    "@npm//fraction.js",
+    "@npm//html2canvas",
+    "@npm//jszip",
+    "@npm//immutable",
+    "@npm//lodash",
+    "@npm//maplibre-gl",
+    "@npm//msw",
+    "@npm//moment",
+    "@npm//url-parse",
+    "@npm//plotly.js",
+    "@npm//react-autosuggest",
+    "@npm//react-beautiful-dnd",
+    "@npm//react-copy-to-clipboard",
+    "@npm//react-custom-scrollbars",
+    "@npm//react-dom",
+    "@npm//react-i18next",
+    "@npm//react-modal",
+    "@npm//react-pdf",
+    "@npm//react-plotly.js",
+    "@npm//react-popper-tooltip",
+    "@npm//@tanstack/react-query",
+    "@npm//@tanstack/react-query-devtools",
+    "@npm//react-redux",
+    "@npm//react-resizable",
+    "@npm//react-router-dom-v5",
+    "@npm//react-sanitized-html",
+    "@npm//react-show-more-text",
+    "@npm//react-sizeme",
+    "@npm//react-table",
+    "@npm//react",
+    "@npm//redux-devtools-extension",
+    "@npm//redux-logger",
+    "@npm//redux-thunk",
+    "@npm//redux",
+    "@npm//reselect",
+    "@npm//styled-components",
+    "@npm//typeface-inter",
+    "@npm//uuid",
+    "@npm//web-vitals",
+    "//packages/fdm-sdk-alpha",
+    "//packages/metrics",
+    "//packages/node-visualizer",
+    "//packages/react-acl",
+    "//packages/react-tenant-selector",
+    "//packages/react-azure-telemetry",
+    "//packages/react-container",
+    "//packages/react-comments",
+    "//packages/react-feature-flags",
+    "//packages/react-i18n",
+    "//packages/react-errors",
+    "//packages/react-map",
+    "//packages/react-version",
+    "//packages/sidecar",
+    "//packages/z-index",
+]
+
+# Type dependencies from package.json
+TYPE_DEPENDENCIES = [
+    "@npm//@types/classnames",
+    "@npm//@types/convert-units",
+    "@npm//@types/d3",
+    "@npm//@types/fetch-mock",
+    "@npm//@types/file-saver",
+    "@npm//@types/lodash",
+    "@npm//@types/maplibre-gl",
+    "@npm//@types/react-autosuggest",
+    "@npm//@types/react-copy-to-clipboard",
+    "@npm//@types/react-custom-scrollbars",
+    "@npm//@types/react-dom",
+    "@npm//@types/react-i18next",
+    "@npm//@types/react-modal",
+    "@npm//@types/react-pdf",
+    "@npm//@types/react-plotly.js",
+    "@npm//@types/react-redux",
+    "@npm//@types/react-resizable",
+    "@npm//@types/react-router-dom-v5",
+    "@npm//@types/react-show-more-text",
+    "@npm//@types/react-table",
+    "@npm//@types/react",
+    "@npm//@types/redux-logger",
+    "@npm//@types/redux-mock-store",
+    "@npm//@types/styled-components",
+    "@npm//@types/url-parse",
+    "@npm//@types/uuid",
+    "@npm//@types/react-select",
+]
+
+# Dev dependencies from package.json
+DEV_DEPENDENCIES = [
+    "@npm//@testing-library/jest-dom",
+    "@npm//@testing-library/react-hooks",
+    "@npm//@testing-library/react",
+    "@npm//@testing-library/user-event",
+    "@npm//jest-fetch-mock",
+    "@npm//babel-eslint",
+    "@npm//@babel/runtime",
+    "@npm//@babel/plugin-transform-runtime",
+    "@npm//eslint-plugin-import",
+    "@npm//eslint-plugin-jsx-a11y",
+    "@npm//eslint-plugin-react-hooks",
+    "@npm//eslint-plugin-react",
+    "@npm//fetch-mock",
+    "@npm//jest-preview",
+    "@npm//redux-mock-store",
+]
+
+# Mappings for absolute imports from baseUrl @unused
+mappings_dict = {
+    "__mocks": "build/__mocks",
+    "__test-utils": "build/__test-utils",
+    "_helpers": "build/_helpers",
+    "components": "build/components",
+    "constants": "build/constants",
+    "core": "build/core",
+    "hooks": "build/hooks",
+    "icons": "build/icons",
+    "images": "build/images",
+    "index": "build/index",
+    "modules": "build/modules",
+    "pages": "build/pages",
+    "providers": "build/providers",
+    "react-app-env.d": "build/react-app-env.d",
+    "setupTests": "build/setupTests",
+    "storybook": "build/storybook",
+    "styles": "build/styles",
+    "tenants": "build/tenants",
+    "typings": "build/typings",
+}
+
+### end of auto-generated helpers ###
+
+eslint_config(
+    name = "eslint_config",
+    src = ":.eslintrc.js",
+    deps = [
+        ".eslintrc.production.js",
+        "//:eslint_config",
+    ],
+)
+
+eslint_test(
+    name = "eslint_test",
+    timeout = "long",
+    data = SOURCES + TESTS_AND_STORYBOOK + [
+        ":tsconfig.json",
+        "//:tsconfig.json",
+    ],
+    eslint_config = ":eslint_config",
+)
+
+prettier_test(
+    name = "prettier_test",
+    data = SOURCES + TESTS_AND_STORYBOOK,
+    prettier_config = "//:prettier_config",
+)
+
+# We don't want to teach react-scripts to include from multiple directories
+# So we copy everything it wants to read to the output "bin" directory
+copy_to_bin(
+    name = "copy_static_files",
+    srcs = SOURCES + PUBLIC + [
+        ":package.json",
+        ":tsconfig.json",
+        ":index.html",
+        ":.env.production",
+        ":.env.development",
+    ],
+)
+
+copy_to_bin(
+    name = "vite_config",
+    srcs = [":vite.config.ts"],
+)
+
+# react-scripts can only work if the working directory is the root of the application.
+# So we'll need to chdir before it runs.
+write_file(
+    name = "write_chdir_script",
+    out = "chdir.js",
+    content = ["process.chdir(__dirname)"],
+)
+
+# For ibazel run to properly pick the changes we need to run from the Workspace directory
+write_file(
+    name = "write_chdir_worspace_script",
+    out = "chdir-workspace.js",
+    content = ["process.chdir(require('path').join(process.env.BUILD_WORKSPACE_DIRECTORY, '" + package_name() + "'));"],
+    tags = ["manual"],
+)
+
+_RUNTIME_DEPS = [
+    "chdir.js",
+    "copy_static_files",
+    # ":random-id",
+    # root level rules:
+    "//:tsconfig",
+]
+
+### vite build ###
+
+vite_build(
+    name = "build",
+    args = [
+        "--node_options=--require=./$(execpath chdir.js)",
+        "build",
+    ],
+    data = _RUNTIME_DEPS + DEPENDENCIES + TYPE_DEPENDENCIES + VITE_DEPENDENCIES + [
+        "//apps:vite_config",
+        ":vite_config",
+    ],
+    env = {
+        "INLINE_RUNTIME_CHUNK": "false",
+        "NODE_OPTIONS": "--max_old_space_size=8192",
+    },
+    output_dir = True,
+)
+
+### vite start ###
+
+vite(
+    name = "start",
+    args = [
+        "--node_options=--require=./$(rootpath chdir-workspace.js)",
+        "--https",
+    ],
+    data = _RUNTIME_DEPS + [
+        "chdir-workspace.js",
+    ],
+    env = {
+        "NODE_OPTIONS": "--max_old_space_size=4096",
+    },
+    tags = ["manual"],
+)
+
+### vite test CI ###
+
+copy_to_bin(
+    name = "copy_test_files",
+    srcs = TESTS_AND_STORYBOOK,
+)
+
+jest_test(
+    name = "jest_test",
+    timeout = "long",
+    srcs = SOURCES + TESTS_AND_STORYBOOK + [
+        "//apps:jest.config.js",
+        "//apps:jest.react.config.js",
+        "//apps:babelTransform.js",
+        ":tsconfig.json",
+        "//:tsconfig.json",
+    ],
+    jest_args = [],
+    jest_config = "jest.config.js",
+    service_name = "discover",
+    deps = DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + ["@npm//babel-preset-react-app"],
+)
+
+### vite test Dev ###
+jest(
+    name = "jest",
+    args = [
+        "--node_options=--require=./$(rootpath chdir-workspace.js)",
+        "--config",
+        "jest.config.js",
+        "--runInBand",
+    ],
+    data = _RUNTIME_DEPS + [
+        "chdir-workspace.js",
+    ],
+    env = {
+        "DISABLE_ESLINT_PLUGIN": "true",
+    },
+    tags = [
+        # This tag instructs ibazel to pipe into stdin a event describing actions.
+        # ibazel send EOF to stdin by default and `react-scripts start` will stop when getting EOF in stdin.
+        # So use this to prevent EOF.
+        "ibazel_notify_changes",
+        "manual",
+    ],
+)
+
+sh_binary(
+    name = "build_sed_default",
+    srcs = ["//rules/build_sed:sed_linux.sh"],
+)
+
+sh_binary(
+    name = "build_sed_darwin",
+    srcs = ["//rules/build_sed:sed_darwin.sh"],
+)
+
+build_sed(
+    name = "build_sed",
+    app = "Discover",
+    binary = select({
+        "@bazel_tools//src/conditions:darwin": ":build_sed_darwin",
+        "//conditions:default": ":build_sed_default",
+    }),
+    out_dir = "build_bazel",
+    src_dir = ":build",
+)
+
+history_server(
+    name = "serve_build",
+    args = [
+        "-a",
+        "$(rootpath :build_sed)",
+    ],
+    data = [":build_sed"],
+    tags = ["manual"],
+)
+
+### Storybook ###
+
+start_storybook(
+    name = "start-storybook",
+    args = [
+        "--node_options=--require=./$(rootpath chdir-workspace.js)",
+        "-c",
+        ".storybook-dev",
+        "-p",
+        "6006",
+    ],
+    data = [
+        "chdir-workspace.js",
+        # Bazel needs to give access @tippyjs in cogs.js
+        "@npm//@cognite/cogs.js",
+    ],
+    tags = [
+        # This tag instructs ibazel to pipe into stdin a event describing actions.
+        # ibazel send EOF to stdin by default and target will stop when getting EOF in stdin.
+        # So use this to prevent EOF.
+        "ibazel_notify_changes",
+        "manual",
+    ],
+)
+
+### FAS ###
+
+publish_fas(
+    name = "publish_fas",
+    build = ":build",
+    package_json = ":package.json",
+    # Subdomain name used for the pull requests preview.
+    preview_subdomain = "discover",
+    # FAS production app id
+    production_app_id = "discover",
+    # FAS app identifier (repo) shared across both production and staging apps
+    repo_id = "discover",
+    # Sentry project name
+    sentry_project_name = "discover",
+    # FAS staging app id
+    staging_app_id = "discover-staging",
+    versioning_strategy = "multi-branch",
+    deps = [":build_tmp"],
+)
+
+### Cypress ###
+# NOTE: The tests are disabled as they're failing because of Fake IDP.
+
+# _CYPRESS_FILES = glob([
+#     "cypress/**/*.ts",
+# ])
+
+# CYPRESS_EXTERNAL_FILES = [
+#     "src/components/AddToFavoriteSetMenu/constants.ts",
+#     "src/components/EmptyState/constants.ts",
+#     "src/components/SearchUsers/constants.ts",
+#     "src/components/Charts/common/ResetToDefault/constants.ts",
+#     "src/constants/app.ts",
+#     "src/constants/units.ts",
+#     "src/core/constants.ts",
+#     "src/domain/documents/constants.ts",
+#     "src/domain/feedback/service/__fixtures/getDocumentFeedbackPostResponse.ts",
+#     "src/domain/feedback/service/__fixtures/getGeneralFeedbackPostResponse.ts",
+#     "src/modules/wellSearch/constantsSidebarFilters.ts",
+#     "src/pages/authorized/admin/feedback/constants.ts",
+#     "src/pages/authorized/favorites/tabs/savedSearches/constants.ts",
+#     "src/pages/authorized/search/map/constants.ts",
+#     "src/pages/authorized/search/well/content/constants.ts",
+#     "src/pages/authorized/search/well/inspect/constants.ts",
+#     "src/pages/authorized/search/well/inspect/modules/common/Events/types.ts",
+#     "src/pages/authorized/search/well/inspect/modules/measurements/wellCentricView/constants.ts",
+#     "src/pages/authorized/search/well/inspect/modules/ndsEvents/components/Filters/constants.ts",
+#     "src/pages/authorized/search/well/inspect/modules/wellLogs/constants.ts",
+#     "src/utils/isISODateRegex.ts",
+# ]
+
+# CYPRESS_FILES = _CYPRESS_FILES + CYPRESS_EXTERNAL_FILES
+
+# cypress_test(
+#     name = "cypress",
+#     app_name = "discover",
+#     batches = [
+#         glob([
+#             "cypress/integration/wells/inspect-view/**/*.smoke.spec.ts",
+#             "cypress/integration/feedback/*.smoke.spec.ts",
+#         ]),
+#         glob([
+#             "cypress/integration/wells/*.smoke.spec.ts",
+#         ]),
+#         glob([
+#             "cypress/integration/documents/*.smoke.spec.ts",
+#             "cypress/integration/favorites/*.smoke.spec.ts",
+#         ]),
+#         glob([
+#             "cypress/integration/saved-search/*.smoke.spec.ts",
+#             "cypress/integration/map/*.smoke.spec.ts",
+#             "cypress/integration/project-config/*.smoke.spec.ts",
+#             "cypress/integration/user-profile/*.smoke.spec.ts",
+#         ]),
+#     ],
+#     build_src = ":build_sed",
+#     cypress_files = CYPRESS_FILES,
+#     fixture_files = True,
+#     starting_port = 12211,
+#     support_files = True,
+#     ts_deps = DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + [
+#         "@npm//@testing-library/cypress",
+#         "@npm//cypress",
+#         "@npm//@types/node",
+#         "@npm//express",
+#         "@npm//@cypress/webpack-preprocessor",
+#         "@npm//@types/webpack-dev-server",
+#         "@npm//axios",
+#         "@npm//webpack",
+#         # Manual import of package files due to main js-library only exporting package.json
+#         "//packages/sidecar:sidecar-files",
+#         "//packages/intercom-helper:intercom-helper-files",
+#     ],
+#     web_test_deps = [
+#         "@npm//@testing-library/cypress",
+#         "@npm//babel-loader",
+#         "@npm//@babel/preset-env",
+#         "@npm//axios",
+#         "@npm//process",
+#         "//packages/sidecar:sidecar-files",
+#         "//packages/intercom-helper:intercom-helper-files",
+#     ],
+# )
+
+# cypress_web_test(
+#     name = "cypress.nightly_test",
+#     size = "enormous",
+#     timeout = "eternal",
+#     srcs = [
+#         "cypress.cypress_files",
+#     ],
+#     # A cypress config file is required
+#     config_file = "cypress.json",
+#     # Any runtime dependencies you need to boot your server or run your tests
+#     data = [
+#         ":build_sed",
+#         "//packages/intercom-helper:intercom-helper-files",
+#         "//packages/sidecar:sidecar-files",
+#         "@npm//@babel/preset-env",
+#         "@npm//@testing-library/cypress",
+#         "@npm//axios",
+#         "@npm//babel-loader",
+#         "@npm//process",
+#     ],
+#     env = {
+#         "PORT": "12211",
+#     },
+#     # Your cypress plugin used to configure cypress and boot your server
+#     plugin_file = "cypress.plugin_file",
+#     tags = [
+#         "ignore_test_in_cd",
+#         "nightly",
+#     ],
+#     templated_args = [
+#         "--record",
+#         "--key 57e436d7-0dbb-401d-ac07-7a1ec69e7a90",
+#         "--tag \"discover,staging,nightly\"",
+#         "--config " +
+#         "retries=1," +
+#         "integrationFolder=./apps/discover/cypress/integration," +
+#         "pluginsFile=./apps/discover/cypress/plugin.js," +
+#         "videosFolder=$TEST_UNDECLARED_OUTPUTS_DIR/test.outputs/discover/video," +
+#         "screenshotsFolder=$TEST_UNDECLARED_OUTPUTS_DIR/test.outputs/discover/screenshots" +
+#         ",supportFile=./apps/discover/cypress/support" +
+#         ",fixturesFolder=./apps/discover/cypress/fixtures",
+#     ],
+# )

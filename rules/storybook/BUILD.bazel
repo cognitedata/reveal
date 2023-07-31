@@ -1,0 +1,3 @@
+exports_files([
+    "move_assets.sh",
+])

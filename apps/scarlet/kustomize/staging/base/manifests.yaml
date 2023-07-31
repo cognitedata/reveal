@@ -1,0 +1,63 @@
+---
+apiVersion: getambassador.io/v2
+kind: Host
+metadata:
+  annotations:
+    external-dns.ambassador-service: ambassador-apps.apps
+  labels:
+    app: scarlet
+    team: apps
+  name: scarlet
+spec:
+  acmeProvider:
+    authority: none
+  ambassador_id: ambassador-apps
+  hostname: scarlet.app.staging.${account}.cogniteapp.com
+  tlsSecret:
+    name: apps-certificate-cogniteapp-com-secret
+---
+apiVersion: getambassador.io/v2
+kind: Mapping
+metadata:
+  labels:
+    app: scarlet
+    team: apps
+  name: scarlet
+spec:
+  add_response_headers:
+    Strict-Transport-Security: max-age=31536000
+  ambassador_id: ambassador-apps
+  host: scarlet.app.staging.${account}.cogniteapp.com
+  prefix: /
+  rewrite: ''
+  service: scarlet
+  timeout_ms: 30000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scarlet
+spec:
+  template:
+    spec:
+      containers:
+        - image: eu.gcr.io/cognitedata/apps/scarlet-staging
+          name: scarlet
+          env:
+            - name: URL_PREFIX
+              value: scarlet.app.staging.${account}
+          livenessProbe:
+            httpGet:
+              path: /scarlet/configMap.json
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /scarlet/configMap.json
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 10

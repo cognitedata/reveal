@@ -1,0 +1,18 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": "src",
+    "target": "es6",
+    "module": "es6",
+    "types": ["vite/client", "jest", "@testing-library/jest-dom"]
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    ".storybook-dev/**/*",
+    "public/sidecar.js",
+    ".eslintrc.js",
+    ".eslintrc.production.js"
+  ],
+  "exclude": ["node_modules", "build", "dist"]
+}

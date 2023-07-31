@@ -1,0 +1,38 @@
+{
+  "name": "@cognite/pid-tools",
+  "version": "0.0.1",
+  "source": "src/index.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "typings": "./dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cognitedata/applications.git",
+    "directory": "packages/pid-tools"
+  },
+  "homepage": "https://github.com/cognitedata/applications/tree/master/packages/pid-tools",
+  "license": "UNLICENSED",
+  "author": "Cognite AS",
+  "files": [
+    "dist"
+  ],
+  "devDependencies": {
+    "@azure/msal-node": "^1.8.0",
+    "open": "^8.4.0",
+    "ts-node": "^10.4.0"
+  },
+  "scripts": {
+    "cli": "ts-node cli/main.ts",
+    "build": "bazel build :pid-tools",
+    "test": "../../node_modules/.bin/jest --no-watchman",
+    "test:watch": "yarn test --watchAll",
+    "test:bazel": "bazel test :jest_test",
+    "test:bazel-run": "ibazel run :jest --",
+    "lint": "bazel test :eslint_test :prettier_test",
+    "eslint": "bazel test :eslint_test",
+    "eslint:fix": "bazel run :eslint_test -- --fix",
+    "prettier": "bazel test :prettier_test",
+    "prettier:fix": "bazel run :prettier_test -- --write",
+    "update-helpers": "bazel run :generate_package_json_helpers"
+  }
+}

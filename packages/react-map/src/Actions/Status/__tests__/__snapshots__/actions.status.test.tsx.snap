@@ -1,0 +1,179 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Action Status Stories Renders Editing story 1`] = `
+<body>
+  <div>
+    <div
+      class="styled0 styled1"
+      data-testid="shortcut-helper"
+    >
+      <i
+        class="cogs-icon cogs-icon-Info"
+        style="width: 16px;"
+      >
+        <svg
+          fill="none"
+          height="16"
+          role="img"
+          viewBox="0 0 16 16"
+          width="16"
+          xmlns="http://www.w3.org/2000/svg"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+        >
+          <path
+            clip-rule="evenodd"
+            d="M8 13.537A5.537 5.537 0 1 0 8 2.463a5.537 5.537 0 0 0 0 11.074ZM15 8A7 7 0 1 1 1 8a7 7 0 0 1 14 0Zm-7 3.97a.836.836 0 0 1-.836-.836V8a.836.836 0 0 1 1.672 0v3.134A.836.836 0 0 1 8 11.97Zm0-8.15a1.045 1.045 0 1 0 0 2.09 1.045 1.045 0 0 0 0-2.09Z"
+            fill="currentColor"
+            fill-rule="evenodd"
+          />
+        </svg>
+      </i>
+      <div
+        class="styled2"
+        data-testid="finish-info-message"
+      >
+        Press 
+        <div
+          class="styled3"
+        >
+          Enter
+        </div>
+         to finish editing
+         
+      </div>
+      <div
+        class="styled4"
+        data-testid="info-message-separator"
+      />
+      <div
+        class="styled2"
+        data-testid="cancel-info-message"
+      >
+        Press 
+        <div
+          class="styled3"
+        >
+          Esc
+        </div>
+         to cancel polygon search
+      </div>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`Action Status Stories Renders Exists story 1`] = `
+<body>
+  <div>
+    <div
+      class="styled0 styled1"
+      data-testid="shortcut-helper"
+    >
+      <i
+        class="cogs-icon cogs-icon-Info"
+        style="width: 16px;"
+      >
+        <svg
+          fill="none"
+          height="16"
+          role="img"
+          viewBox="0 0 16 16"
+          width="16"
+          xmlns="http://www.w3.org/2000/svg"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+        >
+          <path
+            clip-rule="evenodd"
+            d="M8 13.537A5.537 5.537 0 1 0 8 2.463a5.537 5.537 0 0 0 0 11.074ZM15 8A7 7 0 1 1 1 8a7 7 0 0 1 14 0Zm-7 3.97a.836.836 0 0 1-.836-.836V8a.836.836 0 0 1 1.672 0v3.134A.836.836 0 0 1 8 11.97Zm0-8.15a1.045 1.045 0 1 0 0 2.09 1.045 1.045 0 0 0 0-2.09Z"
+            fill="currentColor"
+            fill-rule="evenodd"
+          />
+        </svg>
+      </i>
+      <div
+        class="styled2"
+        data-testid="finish-info-message"
+      >
+        Press 
+        <div
+          class="styled3"
+        >
+          Enter
+        </div>
+         to finish editing
+         
+      </div>
+      <div
+        class="styled4"
+        data-testid="info-message-separator"
+      />
+      <div
+        class="styled2"
+        data-testid="cancel-info-message"
+      >
+        Press 
+        <div
+          class="styled3"
+        >
+          Esc
+        </div>
+         to cancel polygon search
+      </div>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`Action Status Stories Renders Nothing story 1`] = `
+<body>
+  <div />
+</body>
+`;
+
+exports[`Action Status Stories Renders WithMap story 1`] = `
+<body>
+  <div>
+    <div
+      class="styled0"
+    >
+      <div
+        class="styled1 maplibregl-map mapboxgl-map"
+        data-testid="map-container"
+      >
+        <div
+          class="styled2"
+        />
+        <div
+          class="maplibregl-canvas-container mapboxgl-canvas-container maplibregl-interactive mapboxgl-interactive"
+        >
+          <canvas
+            aria-label="Map"
+            class="maplibregl-canvas mapboxgl-canvas"
+            height="300"
+            role="region"
+            style="width: 400px; height: 300px;"
+            tabindex="0"
+            width="400"
+          />
+        </div>
+        <div
+          class="maplibregl-control-container mapboxgl-control-container"
+        >
+          <div
+            class="maplibregl-ctrl-top-left mapboxgl-ctrl-top-left"
+          />
+          <div
+            class="maplibregl-ctrl-top-right mapboxgl-ctrl-top-right"
+          />
+          <div
+            class="maplibregl-ctrl-bottom-left mapboxgl-ctrl-bottom-left"
+          />
+          <div
+            class="maplibregl-ctrl-bottom-right mapboxgl-ctrl-bottom-right"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;

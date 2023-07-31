@@ -1,0 +1,131 @@
+<!-- introduction.stories.mdx -->
+
+import { Canvas, Meta, Story } from '@storybook/addon-docs';
+
+<Meta title="Ornate/0. Introduction" />
+
+# Introduction
+
+Ornate is a tool to create rich, interactive work spaces built on top of CDF.
+
+## Features
+
+- Built with CDF, for CDF
+- Easy diagramming system based on shapes:
+  - Circles, Rectangles, Lines, Text
+  - Custom images (Stamps)
+  - PDF and Images (FileURLs) - with annotations on top
+- Connectors to CDF (for e.g. FileURLs)
+- Built in drawing tools to enable user interaction:
+  - Drawing primitives (Circles, Rectangles, Lines, Text)
+  - Stamp tool
+  - List tool
+- Ready to use React components
+  - Ornate wrapper
+  - Context menu
+  - Tool bar
+  - Color picker
+  - Stamp tool / List tool popups
+
+## Getting started
+
+```javascript
+yarn add @cognite/ornate
+```
+
+**Initialising the viewer**
+
+```javascript
+import { CogniteOrnate } from '@cognite/ornate';
+
+const ornateViewer = new CogniteOrnate({
+  container: '#cognite-ornate',
+});
+```
+
+**React container**
+
+Ornate comes with a React container out of the box.
+
+```jsx
+import { Ornate } from '@cognite/ornate/react';
+
+<Ornate
+  shapes={shapes}
+  activeTool={activeTool}
+  onReady={(instance) => {
+    ornate.current = instance;
+  }}
+>
+```
+
+## Basic interactions
+
+Ornate comes with predefined interactions out of the box.
+
+- Left Mouse Button: Tool action (See below)
+- Middle Mouse Button: Pan stage
+- Right Mouse Button: Pan stage
+- Holding Spacebar: Pan stage
+- Mouse wheel: Zoom
+- Touch pad: Pan & Zoom
+
+There are two tools that come as default with Ornate - Select and Hand. Here, the Select tool can be used to select one or more shapes, and transform them.
+
+## Shapes
+
+Shapes are used to add all visual elements to the Canvas. The stories show a selection of shapes, from primitives to more advanced CDF aware shapes.
+Adding these shapes are a simple function away.
+
+```javascript
+import { Circle } from '@cognite/ornate';
+
+const circle = new Circle(ornate.current, {
+  x: 300,
+  y: 300,
+  radius: 30,
+  fill: 'green',
+  groupId: 'group',
+  forceSelectGroup: true,
+});
+
+ornate.current.addShape([circle]);
+```
+
+In React, you can pass these shapes into the `shapes` prop.
+
+```jsx
+<Ornate
+  shapes={[circle]}
+>
+```
+
+## Tools
+
+Tools handle unique interactions with shapes and the stage. This can include simple movement around the stage, to drawing new shapes and creating lists of elements.
+
+You can view the available tools in the stories below. Switching to the tool is simple
+
+```javascript
+ornate.current.setActiveTool('HAND');
+```
+
+or
+
+```javascript
+<Ornate activeTool="HAND" />
+```
+
+## Saving and Loading
+
+Saving and loading a workspace can be done via the `export` and `import` methods.
+
+Some shapes can take in functions as data. Since these cannot be stored, the `import` method takes in these additional arguments.
+
+```javascript
+const data = ornate.current.export();
+
+// `.load` can also be used. This will wipe the whole workspace.
+ornate.current.import(data, { fileUrl: { ... }});
+
+```

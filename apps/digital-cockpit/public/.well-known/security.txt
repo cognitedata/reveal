@@ -1,0 +1,5 @@
+#Our security address
+Contact: mailto:ext-security-disclosure@cognite.com
+
+#Our vulnerability disclosure policy
+https://docs.cognite.com/cdf/trust/vulnerability-disclosure-policy

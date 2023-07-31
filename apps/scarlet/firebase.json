@@ -1,0 +1,26 @@
+{
+  "hosting": [
+    {
+      "site": "cognite-scarlet-staging",
+      "public": "./apps/scarlet/build",
+      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ]
+    },
+    {
+      "site": "cognite-scarlet-production",
+      "public": "./apps/scarlet/build",
+      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ]
+    }
+  ]
+}

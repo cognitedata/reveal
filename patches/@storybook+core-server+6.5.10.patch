@@ -1,0 +1,13 @@
+diff --git a/node_modules/@storybook/core-server/dist/cjs/build-static.js b/node_modules/@storybook/core-server/dist/cjs/build-static.js
+index 222c43d..7b1f123 100644
+--- a/node_modules/@storybook/core-server/dist/cjs/build-static.js
++++ b/node_modules/@storybook/core-server/dist/cjs/build-static.js
+@@ -101,7 +101,7 @@ async function buildStaticStandalone(options) {
+   }
+ 
+   await _fsExtra.default.emptyDir(options.outputDir);
+-  await (0, _cpy.default)(defaultFavIcon, options.outputDir);
++  // await (0, _cpy.default)(defaultFavIcon, options.outputDir);
+   var previewBuilder = await (0, _getPreviewBuilder.getPreviewBuilder)(options.configDir);
+   var managerBuilder = await (0, _getManagerBuilder.getManagerBuilder)(options.configDir);
+   var presets = (0, _coreCommon.loadAllPresets)(_objectSpread({

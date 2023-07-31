@@ -1,0 +1,16 @@
+# Configure remote caching
+build --remote_cache=grpc://bazel-build-cache.bazel-build-cache.svc.cluster.local:9092
+# Expands the --remote_download_minimal rule but change the download_outputs to toplevel
+build --nobuild_runfile_links
+build --remote_download_toplevel
+build --action_env=GOOGLE_APPLICATION_CREDENTIALS
+build --action_env=INVALIDATE_CACHE=INVALIDATE
+
+run --remote_download_toplevel
+
+# Limit the resources in CI to avoid getting OOM-killed
+build --local_ram_resources=12288
+build --local_cpu_resources=12
+build --jobs=8
+test --jobs=3
+startup --host_jvm_args="-Xmx12288M"

@@ -1,0 +1,39 @@
+{
+  "files": [
+    {
+      "path": "build/static/js/data-extract.*.chunk.js",
+      "maxSize": "13.8 mB",
+      "compression": "none"
+    },
+    {
+      "path": "build/static/js/main-content.*.chunk.js",
+      "maxSize": "2.6 mB",
+      "compression": "none"
+    },
+    {
+      "path": "build/static/js/authorized.*.chunk.js",
+      "maxSize": "210 kB",
+      "compression": "none"
+    },
+    {
+      "path": "build/static/js/seismic.*.chunk.js",
+      "maxSize": "32 kB",
+      "compression": "none"
+    },
+    {
+      "path": "build/static/js/map.*.chunk.js",
+      "maxSize": "110 kB",
+      "compression": "none"
+    },
+    {
+      "path": "build/static/js/main.*.chunk.js",
+      "maxSize": "120 kB",
+      "compression": "none"
+    },
+    {
+      "path": "build/static/js/runtime-main.*.js",
+      "maxSize": "10 kB",
+      "compression": "none"
+    }
+  ]
+}

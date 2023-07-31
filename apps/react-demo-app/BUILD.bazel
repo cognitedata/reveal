@@ -1,0 +1,429 @@
+load("@bazel_skylib//rules:write_file.bzl", "write_file")
+load("@build_bazel_rules_nodejs//:index.bzl", "copy_to_bin")
+load("@npm//@storybook/react:index.bzl", "build_storybook", "start_storybook")
+load("@npm//vite:index.bzl", "vite")
+load("//rules/vite:vite_build.bzl", "vite_build")
+load("//rules/test:jest.bzl", "jest_test")
+load("@npm//jest:index.bzl", "jest")
+load("//rules/lint:index.bzl", "eslint_config", "eslint_test", "prettier_test")
+load("//rules/package_json_helpers:generate.bzl", "generate_package_json_helpers")
+load("//rules/publish:publish_fas.bzl", "publish_fas")
+load("//rules/build_sed:build_sed.bzl", "build_sed")
+load("//rules/storybook:move_assets.bzl", "move_assets")
+load("//rules/publish:publish_chromatic.bzl", "publish_chromatic")
+load("//apps:apps.bzl", "STORYBOOK_DEPENDENCIES", "VITE_DEPENDENCIES")
+load("@npm//history-server:index.bzl", "history_server")
+
+# Filename conventions described at
+# https://create-react-app.dev/docs/running-tests#filename-conventions
+_TESTS = [
+    "src/**/*.test.js*",
+    "src/**/*.test.ts*",
+    "src/**/*.spec.js*",
+    "src/**/*.spec.ts*",
+    "src/**/__tests__/**/*.js*",
+    "src/**/__tests__/**/*.ts*",
+    "src/__mocks__/*",
+    "src/**/__mocks__/*",
+    "src/utils/test/*",
+]
+
+# _CYPRESS_FILES = [
+#     "cypress/**/*.ts",
+# ]
+
+_STORYBOOK = [
+    ".storybook/*",
+    "src/**/*.stories.ts*",
+]
+
+_SOURCES = [
+    "src/**/*.ts*",
+]
+
+TESTS = glob(_TESTS + _STORYBOOK)
+
+# CYPRESS_FILES = glob(_CYPRESS_FILES)
+
+STORYBOOK = glob(_STORYBOOK)
+
+SOURCES = glob(
+    _SOURCES,
+    exclude = _TESTS + _STORYBOOK,
+)
+
+PUBLIC = glob([
+    "public/*",
+])
+
+# Generates the below helpers.
+#
+# Usage:
+#   bazel run :generate_package_json_helpers
+generate_package_json_helpers(
+    name = "generate_package_json_helpers",
+    out_dir = "build",
+    package_json = "//:package.json",
+    src_dir = "src",
+    tags = ["manual"],
+    workspace = "@npm",
+)
+
+### start of auto-generated helpers ###
+
+# Dependencies from package.json
+DEPENDENCIES = [
+    "@npm//@cognite/cogs.js",
+    "@npm//@cognite/comment-service-types",
+    "@npm//@cognite/sdk",
+    "@npm//@sentry/browser",
+    "@npm//react",
+    "@npm//react-dom",
+    "@npm//react-i18next",
+    "@npm//@tanstack/react-query",
+    "@npm//@tanstack/react-query-devtools",
+    "@npm//react-router-dom-v5",
+    "@npm//styled-components",
+    "//packages/react-container",
+    "//packages/react-document-search",
+    "//packages/metrics",
+    "//packages/sidecar",
+    "//packages/z-index",
+    "//packages/react-i18n",
+    "//packages/react-version",
+    "//packages/react-comments",
+]
+
+# Type dependencies from package.json
+TYPE_DEPENDENCIES = [
+    "@npm//@types/react",
+    "@npm//@types/react-dom",
+    "@npm//@types/react-i18next",
+    "@npm//@types/react-router-dom-v5",
+    "@npm//@types/sinon",
+    "@npm//@types/styled-components",
+]
+
+# Dev dependencies from package.json
+DEV_DEPENDENCIES = [
+    "@npm//@storybook/addons",
+    "@npm//@testing-library/jest-dom",
+    "@npm//@testing-library/react",
+    "@npm//eslint-config-react-app",
+    "@npm//express",
+    "@npm//sinon",
+    "@npm//jest-preview",
+]
+
+# Mappings for absolute imports from baseUrl @unused
+mappings_dict = {
+    "App": "build/App",
+    "global-styles": "build/global-styles",
+    "index": "build/index",
+    "pages": "build/pages",
+    "queries": "build/queries",
+    "react-app-env.d": "build/react-app-env.d",
+    "serviceWorker": "build/serviceWorker",
+    "setupTests": "build/setupTests",
+    "styles": "build/styles",
+    "typings": "build/typings",
+    "utils": "build/utils",
+}
+
+### end of auto-generated helpers ###
+
+eslint_config(
+    name = "eslint_config",
+    src = ":.eslintrc.js",
+    deps = [
+        ".eslintrc.production.js",
+        "//:eslint_config",
+    ],
+)
+
+eslint_test(
+    name = "eslint_test",
+    data = SOURCES + TESTS + [
+        ":tsconfig.json",
+        "//:tsconfig.json",
+    ],
+    eslint_config = ":eslint_config",
+)
+
+prettier_test(
+    name = "prettier_test",
+    data = SOURCES + TESTS,
+    prettier_config = "//:prettier_config",
+)
+
+# We don't want to teach react-scripts to include from multiple directories
+# So we copy everything it wants to read to the output "bin" directory
+copy_to_bin(
+    name = "copy_static_files",
+    srcs = SOURCES + PUBLIC + [
+        ":package.json",
+        ":tsconfig.json",
+        ":index.html",
+        ":.env.production",
+        ":.env.development",
+    ],
+)
+
+copy_to_bin(
+    name = "vite_config",
+    srcs = [":vite.config.ts"],
+)
+
+# react-scripts can only work if the working directory is the root of the application.
+# So we'll need to chdir before it runs.
+write_file(
+    name = "write_chdir_script",
+    out = "chdir.js",
+    content = ["process.chdir(__dirname)"],
+)
+
+# For ibazel run to properly pick the changes we need to run from the Workspace directory
+write_file(
+    name = "write_chdir_worspace_script",
+    out = "chdir-workspace.js",
+    content = ["process.chdir(require('path').join(process.env.BUILD_WORKSPACE_DIRECTORY, '" + package_name() + "'));"],
+    tags = ["manual"],
+)
+
+_RUNTIME_DEPS = [
+    "chdir.js",
+    "copy_static_files",
+    "//:tsconfig",
+]
+
+### vite build ###
+
+vite_build(
+    name = "build",
+    args = [
+        "--node_options=--require=./$(execpath chdir.js)",
+        "build",
+    ],
+    data = _RUNTIME_DEPS + DEPENDENCIES + TYPE_DEPENDENCIES + VITE_DEPENDENCIES + [
+        "//apps:vite_config",
+        ":vite_config",
+    ],
+    env = {
+        "INLINE_RUNTIME_CHUNK": "false",
+    },
+    output_dir = True,
+)
+
+### vite start ###
+
+vite(
+    name = "start",
+    args = [
+        "--node_options=--require=./$(rootpath chdir-workspace.js)",
+        "--https",
+    ],
+    data = _RUNTIME_DEPS + [
+        "chdir-workspace.js",
+    ],
+    env = {
+        "NODE_OPTIONS": "--max_old_space_size=4096",
+    },
+    tags = ["manual"],
+)
+
+### vite test CI ###
+
+copy_to_bin(
+    name = "copy_test_files",
+    srcs = TESTS,
+)
+
+jest_test(
+    name = "jest_test",
+    srcs = SOURCES + TESTS + [
+        "//apps:jest.config.js",
+        "//apps:jest.react.config.js",
+        "//apps:babelTransform.js",
+        ":tsconfig.json",
+        "//:tsconfig.json",
+    ],
+    jest_args = [],
+    jest_config = "jest.config.js",
+    service_name = "react-demo-app",
+    deps = DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + ["@npm//babel-preset-react-app"],
+)
+
+### vite test Dev ###
+jest(
+    name = "jest",
+    args = [
+        "--node_options=--require=./$(rootpath chdir-workspace.js)",
+        "--config",
+        "jest.config.js",
+        "--runInBand",
+    ],
+    data = _RUNTIME_DEPS + [
+        "chdir-workspace.js",
+    ],
+    env = {
+        "DISABLE_ESLINT_PLUGIN": "true",
+    },
+    tags = [
+        # This tag instructs ibazel to pipe into stdin a event describing actions.
+        # ibazel send EOF to stdin by default and `react-scripts start` will stop when getting EOF in stdin.
+        # So use this to prevent EOF.
+        "ibazel_notify_changes",
+        "manual",
+    ],
+)
+
+### E2E Tests ###
+
+sh_binary(
+    name = "build_sed_default",
+    srcs = ["//rules/build_sed:sed_linux.sh"],
+)
+
+sh_binary(
+    name = "build_sed_darwin",
+    srcs = ["//rules/build_sed:sed_darwin.sh"],
+)
+
+# Replace PUBLIC_URL_VALUE placeholder with '' in order to run cypress
+# If you need additional env vars being set during cypress run add them into
+# :build target above and override here
+build_sed(
+    name = "build_sed",
+    app = "Demo App",
+    binary = select({
+        "@bazel_tools//src/conditions:darwin": ":build_sed_darwin",
+        "//conditions:default": ":build_sed_default",
+    }),
+    out_dir = "build_bazel",
+    src_dir = ":build",
+)
+
+history_server(
+    name = "serve_build",
+    args = [
+        "-a",
+        "$(rootpath :build_sed)",
+    ],
+    data = [":build_sed"],
+    tags = ["manual"],
+)
+
+### E2E Tests End ###
+
+### Cypress ###
+
+##
+# Exposes the following targets:
+# bazel build :cypress.cypress_files
+# bazel build :cypress.plugin_file
+# bazel build :cypress.batch_files_i (i represents the batch index in `batches` parameter)
+# bazel test :cypress.batch_i_test (i represents the batch index in `batches` parameter)
+# bazel test :cypress.nightly_test
+# bazel run :cypress.manual
+##
+# NOTE: The tests are disabled as they're failing because of Fake IDP.
+# cypress_test(
+#     name = "cypress",
+#     app_name = "react-demo-app",
+#     batches = [
+#         glob(["cypress/integration/*.spec.ts"]),
+#     ],
+#     build_src = ":build_sed",
+#     cypress_files = CYPRESS_FILES,
+#     starting_port = 12111,
+#     ts_deps = [
+#         "@npm//@types/node",
+#         "@npm//express",
+#         "@npm//cypress",
+#     ],
+#     web_test_deps = [],
+# )
+
+### Cypress End ###
+
+### Storybook ###
+
+copy_to_bin(
+    name = "copy_storybook_files",
+    srcs = STORYBOOK,
+)
+
+build_storybook(
+    # Note: If you want to change the name make sure you pass that value with -o into args
+    # https://storybook.js.org/docs/react/api/cli-options
+    name = "storybook-static-tmp",
+    args = [
+        # Suppress verbose build output
+        "--quiet",
+        "-o",
+        "storybook-static-tmp",
+    ],
+    chdir = "$(RULEDIR)",
+    data = _RUNTIME_DEPS + STORYBOOK_DEPENDENCIES + DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + [
+        "//apps:vite_config_storybook",
+        "copy_storybook_files",
+    ],
+    output_dir = True,
+)
+
+move_assets(
+    name = "storybook-static",
+    out_dir = "storybook-static",
+    src_dir = ":storybook-static-tmp",
+    tmp_dir = "tmp",
+)
+
+publish_chromatic(
+    name = "publish_chromatic",
+    project_name = "react-demo-app",
+    storybook_folder = ":storybook-static",
+    deps = [":storybook-static-tmp"],
+)
+
+start_storybook(
+    name = "start-storybook",
+    args = [
+        "--node_options=--require=./$(rootpath chdir-workspace.js)",
+        "-c",
+        ".storybook-dev",
+        "-p",
+        "6006",
+    ],
+    data = [
+        "chdir-workspace.js",
+        # Bazel needs to give access @tippyjs in cogs.js
+        "@npm//@cognite/cogs.js",
+    ],
+    tags = [
+        # This tag instructs ibazel to pipe into stdin a event describing actions.
+        # ibazel send EOF to stdin by default and target will stop when getting EOF in stdin.
+        # So use this to prevent EOF.
+        "ibazel_notify_changes",
+        "manual",
+    ],
+)
+
+### FAS ###
+
+publish_fas(
+    name = "publish_fas",
+    build = ":build",
+    package_json = ":package.json",
+    # Subdomain name used for the pull requests preview.
+    preview_subdomain = "react-demo",
+    # FAS production app id
+    production_app_id = "fas-demo-prod",
+    # FAS app identifier (repo) shared across both production and staging apps
+    repo_id = "fas-demo",
+    # Sentry project name
+    sentry_project_name = "react-demo-app",
+    # FAS staging app id
+    staging_app_id = "fas-demo",
+    versioning_strategy = "single-branch",
+    deps = [":build_tmp"],
+)

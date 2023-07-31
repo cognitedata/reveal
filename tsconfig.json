@@ -1,0 +1,41 @@
+{
+  "compilerOptions": {
+    "baseUrl": "src",
+    "target": "es6",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noFallthroughCasesInSwitch": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "sourceMap": true,
+    "paths": {
+      "@cognite/*": [
+        "../../../packages/*/dist",
+        "../../../packages/*/src",
+        "<rootDir>/../../packages/*/dist", // in bazel: package requiring another package
+        "<rootDir>/../../packages/*/src",
+
+        "../../../../packages/*/src",
+        "<rootDir>/../../../packages/*/src"
+      ],
+      "@cognite/metrics/dist/mocks": [
+        "../../../packages/metrics/src/mocks",
+        "<rootDir>/../../packages/metrics/src/mocks"
+      ],
+      "@cognite/react-i18n/dist/mocks": [
+        "../../../packages/react-i18n/src/mocks",
+        "<rootDir>/../../packages/react-i18n/src/mocks"
+      ]
+    }
+  },
+  "exclude": ["node_modules", "dist", "build", "scripts"]
+}

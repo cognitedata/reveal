@@ -1,0 +1,131 @@
+load("@io_bazel_rules_docker//docker/package_managers:install_pkgs.bzl", "install_pkgs")
+load("@io_bazel_rules_docker//docker/package_managers:download_pkgs.bzl", "download_pkgs")
+load("@io_bazel_rules_docker//docker/package_managers:apt_key.bzl", "add_apt_key")
+load("@io_bazel_rules_docker//container:container.bzl", "container_image", "container_layer")
+load("@com_github_cognitedata_bazel_tools//general/docker_smoke_test:docker_smoke_test.bzl", "docker_smoke_test")
+load("@build_bazel_rules_nodejs//:index.bzl", "copy_to_bin")
+
+exports_files(
+    [
+        "jest.config.js",
+        "jest.react.config.js",
+        "babelTransform.js",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+copy_to_bin(
+    name = "vite_config",
+    srcs = [":vite.config.js"],
+    visibility = ["//apps:__subpackages__"],
+)
+
+copy_to_bin(
+    name = "vite_config_storybook",
+    srcs = [":vite.storybook.config.js"],
+    visibility = ["//visibility:public"],
+)
+
+download_pkgs(
+    name = "buster_cert",
+    image_tar = "@buster_base//image",
+    packages = [
+        "ca-certificates",
+    ],
+    visibility = ["//visibility:private"],
+)
+
+install_pkgs(
+    name = "buster_cert_base",
+    image_tar = "@buster_base//image",
+    installables_tar = ":buster_cert.tar",
+    output_image_name = "buster_cert_base",
+    visibility = ["//visibility:private"],
+)
+
+add_apt_key(
+    name = "caddy_gpg_layer",
+    image = ":buster_cert_base.tar",
+    keys = [
+        "@caddy_gpg//file",
+    ],
+    visibility = ["//visibility:private"],
+)
+
+download_pkgs(
+    name = "caddy_package",
+    additional_repos = [
+        "deb https://dl.cloudsmith.io/public/caddy/stable/deb/debian buster main",
+    ],
+    image_tar = ":caddy_gpg_layer.tar",
+    packages = [
+        "caddy",
+        "curl",
+        "openssl",
+    ],
+    visibility = ["//visibility:private"],
+)
+
+install_pkgs(
+    name = "caddy_package_layer",
+    image_tar = "@buster_base//image",
+    installables_tar = ":caddy_package.tar",
+    output_image_name = "caddy_package_layer",
+    visibility = ["//apps:__subpackages__"],
+)
+
+container_layer(
+    name = "caddy_folders",
+    empty_dirs = [
+        "/data/caddy",
+        "/config/caddy",
+        "/var/www/html",
+    ],
+    visibility = ["//apps:__subpackages__"],
+)
+
+container_layer(
+    name = "caddy_config",
+    directory = "/etc/caddy",
+    files = [":Caddyfile"],
+    visibility = ["//apps:__subpackages__"],
+)
+
+container_layer(
+    name = "entrypoint",
+    directory = "/usr/share/bin",
+    files = [":entrypoint.sh"],
+    visibility = ["//apps:__subpackages__"],
+)
+
+container_image(
+    name = "caddy_image",
+    base = ":caddy_package_layer",
+    entrypoint = [
+        "/usr/share/bin/entrypoint.sh",
+    ],
+    layers = [
+        ":caddy_config",
+        ":entrypoint",
+        ":caddy_folders",
+    ],
+    ports = [
+        "8080/tcp",
+        "2019/tcp",
+    ],
+    visibility = ["//apps:__subpackages__"],
+)
+
+genrule(
+    name = "google_application_credentials",
+    outs = ["google_application_credentials.json"],
+    cmd_bash = "cat $$GOOGLE_APPLICATION_CREDENTIALS>$@",
+    tags = ["manual"],
+    visibility = ["//apps:__subpackages__"],
+)
+
+docker_smoke_test(
+    name = "docker_smoke_test",
+    image = ":caddy_image",
+    log_statement = "serving initial configuration",
+)

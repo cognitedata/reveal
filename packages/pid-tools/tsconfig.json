@@ -1,0 +1,10 @@
+{
+  "extends": "../tsconfig.json",
+  "include": ["src/*.ts"],
+  "compilerOptions": {
+    "rootDirs": ["src"],
+    "baseUrl": "src",
+    "esModuleInterop": true,
+    "lib": ["ES2019.Array", "DOM", "DOM.Iterable", "ES2020"]
+  }
+}
