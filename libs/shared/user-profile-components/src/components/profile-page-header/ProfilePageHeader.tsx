@@ -46,6 +46,7 @@ const Header = styled.div`
   gap: 16px;
   height: 100%;
   width: 960px;
+  padding: 0 12px;
 
   .cogs-squircle,
   .cogs-squircle__masked-container {

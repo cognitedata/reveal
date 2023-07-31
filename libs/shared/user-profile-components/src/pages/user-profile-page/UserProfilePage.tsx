@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 
 import styled from 'styled-components';
 
+import { RESPONSIVE_BREAKPOINT } from '../../common/constants';
 import { Language, UserInfo, VerticalTab } from '../../common/types';
 import { LanguageTab } from '../../components/language-tab/LanguageTab';
 import { PersonalInfoTab } from '../../components/personal-info-tab/PersonalInfoTab';
@@ -136,10 +137,17 @@ const ContentSection = styled.div`
 `;
 
 const Content = styled.div`
+  padding: 0 12px;
   display: grid;
   gap: 48px;
   grid-template-columns: [start] 264px [one] 1fr [end];
   width: 960px;
+
+  @media (max-width: ${RESPONSIVE_BREAKPOINT}px) {
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+  }
 `;
 
 const ProfileTabs = styled.div`
