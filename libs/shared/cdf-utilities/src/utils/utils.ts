@@ -183,5 +183,8 @@ export const isValidEmail = (email: string) => {
 };
 
 export const isUsingUnifiedSignin = () => {
-  return window.location.pathname.startsWith(`/${unifiedSignInAppName}`);
+  return (
+    window.location.pathname.split('/')?.filter(Boolean)?.at(0) ===
+    unifiedSignInAppName
+  );
 };

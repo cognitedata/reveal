@@ -16,6 +16,7 @@ export const unifiedSignInAppName = 'cdf';
 export const isUsingUnifiedSignin = () => {
   return (
     unifiedSigninUrls.includes(window.location.host) &&
-    window.location.pathname.startsWith(`/${unifiedSignInAppName}`)
+    window.location.pathname.split('/')?.filter(Boolean)?.at(0) ===
+      unifiedSignInAppName
   );
 };
