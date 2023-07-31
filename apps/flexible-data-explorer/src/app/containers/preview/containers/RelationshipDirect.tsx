@@ -2,8 +2,9 @@ import styled from 'styled-components';
 
 import _isEmpty from 'lodash/isEmpty';
 
-import { Body, Icon, Title } from '@cognite/cogs.js';
+import { Icon } from '@cognite/cogs.js';
 
+import { Typography } from '../../../components/Typography';
 import { useNavigation } from '../../../hooks/useNavigation';
 import { useInstanceDirectRelationshipQuery } from '../../../services/instances/generic/queries/useInstanceDirectRelationshipQuery';
 import { InstancePreviewProps } from '../types';
@@ -49,8 +50,10 @@ export const DirectionRelationshipItem: React.FC<
     >
       <Icon type="ArrowUpRight" />
 
-      <Text>{type.field}</Text>
-      <ValueText>{data?.name}</ValueText>
+      <Typography.Body size="xsmall" capitalize>
+        {type.field}
+      </Typography.Body>
+      <Typography.Title size="xsmall">{data?.name}</Typography.Title>
     </Container>
   );
 };
@@ -71,23 +74,4 @@ const Container = styled.div`
   &:hover {
     background: var(--surface-action-muted-hover, rgba(83, 88, 127, 0.12));
   }
-`;
-
-const Text = styled(Body)`
-  color: var(--text-icon-muted, rgba(0, 0, 0, 0.55));
-  font-size: 12px;
-  font-style: normal;
-  font-weight: 500;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  text-transform: capitalize;
-`;
-
-const ValueText = styled(Title).attrs({ level: 6, strong: true })`
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 `;

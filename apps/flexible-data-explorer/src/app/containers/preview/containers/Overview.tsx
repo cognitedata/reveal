@@ -4,14 +4,10 @@ import { isEmpty } from 'lodash';
 
 import { Button } from '@cognite/cogs.js';
 
+import { Typography } from '../../../components/Typography';
 import { useTranslation } from '../../../hooks/useTranslation';
 import { useFDM } from '../../../providers/FDMProvider';
-import {
-  DescriptionText,
-  InstancePreviewHeader,
-  HeaderText,
-  TitleText,
-} from '../elements';
+import { InstancePreviewHeader, HeaderText } from '../elements';
 import { InstancePreviewProps } from '../types';
 
 import { DirectionRelationshipItem } from './RelationshipDirect';
@@ -48,8 +44,10 @@ export const Overview: React.FC<Props> = ({
     <>
       <InstancePreviewHeader>
         <HeaderText>{type}</HeaderText>
-        <TitleText>{title}</TitleText>
-        <DescriptionText>{description}</DescriptionText>
+        <Typography.Title capitalize size="small">
+          {title}
+        </Typography.Title>
+        <Typography.Body size="xsmall">{description}</Typography.Body>
       </InstancePreviewHeader>
 
       <PropertiesButton onClick={() => onClick?.('properties')}>

@@ -37,15 +37,8 @@ export const InstancesPage = () => {
   }, [isFetched]);
 
   return (
-    <Page.Dashboard loading={isLoading}>
+    <Page.Dashboard customName={data?.name} loading={isLoading}>
       <Page.Widgets>
-        <PropertiesWidget
-          id="Properties"
-          state={status}
-          data={data}
-          columns={2}
-        />
-
         {directRelationships?.map((item) => (
           <RelationshipDirectWidget
             key={item.name}
@@ -54,12 +47,20 @@ export const InstancesPage = () => {
           />
         ))}
 
+        <PropertiesWidget
+          id="Properties"
+          state={status}
+          data={data}
+          columns={4}
+        />
+
         {edgeRelationships?.map((item) => {
           return (
             <RelationshipEdgesWidget
               key={item.name}
               id={item.name}
               type={{ field: item.name, type: item.type.name }}
+              columns={2}
             />
           );
         })}

@@ -8,10 +8,15 @@ import { InstancePreviewProps } from './types';
 
 const GenericPreview = ({
   children,
+  disabled,
   ...rest
 }: React.PropsWithChildren<InstancePreviewProps>) => {
   if (!children) {
     return <GenericInstancePreview {...rest} />;
+  }
+
+  if (disabled) {
+    return <>{children}</>;
   }
 
   return (
@@ -26,10 +31,15 @@ const GenericPreview = ({
 
 const TimeseriesInstancePreview = ({
   children,
+  disabled,
   ...rest
-}: React.PropsWithChildren<{ id: string | number }>) => {
+}: React.PropsWithChildren<{ id: string | number; disabled?: boolean }>) => {
   if (!children) {
     return <TimeseriesPreview {...rest} />;
+  }
+
+  if (disabled) {
+    return <>{children}</>;
   }
 
   return (
@@ -44,10 +54,15 @@ const TimeseriesInstancePreview = ({
 
 const FileInstancePreview = ({
   children,
+  disabled,
   ...rest
-}: React.PropsWithChildren<{ id: number }>) => {
+}: React.PropsWithChildren<{ id: number; disabled?: boolean }>) => {
   if (!children) {
     return <FilePreview {...rest} />;
+  }
+
+  if (disabled) {
+    return <>{children}</>;
   }
 
   return (

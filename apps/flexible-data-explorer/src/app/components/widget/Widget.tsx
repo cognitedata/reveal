@@ -16,7 +16,7 @@ export interface BaseWidgetProps {
   fullWidth?: boolean;
 
   /** Number of columns that the widgets spans */
-  columns?: 1 | 2;
+  columns?: 1 | 2 | 3 | 4;
 
   /** Number of rows that the widgets spans */
   rows?: number;

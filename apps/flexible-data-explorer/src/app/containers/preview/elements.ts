@@ -1,6 +1,8 @@
 import styled from 'styled-components';
 
-import { Body, Button, Title } from '@cognite/cogs.js';
+import { Button } from '@cognite/cogs.js';
+
+import { Typography } from '../../components/Typography';
 
 export const InstancePreviewHeader = styled.div`
   display: flex;
@@ -12,25 +14,11 @@ export const InstancePreviewHeader = styled.div`
   margin-bottom: 8px;
 `;
 
-export const TitleText = styled(Title).attrs({ level: 5, strong: true })`
-  text-transform: capitalize;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
-export const DescriptionText = styled(Body).attrs({ level: 4 })`
-  color: var(--text-icon-muted, rgba(0, 0, 0, 0.55));
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
-export const HeaderText = styled(Body).attrs({ strong: true })`
+export const HeaderText = styled(Typography.Body).attrs({
+  size: 'xsmall',
+  strong: true,
+})`
   color: var(--border-status-neutral-strong, #4078f0);
-  font-size: 12px;
 `;
 
 export const InstancePreviewContainer = styled.div`

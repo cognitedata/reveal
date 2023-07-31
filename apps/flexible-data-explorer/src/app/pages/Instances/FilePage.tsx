@@ -72,8 +72,8 @@ export const FilePage = () => {
       ]}
     >
       <Page.Widgets>
-        <PropertiesWidget id="Properties" data={data} columns={2} />
-        <FileWidget id="Preview" fileId={data?.id} rows={8} columns={2} />
+        <PropertiesWidget id="Properties" data={data} columns={4} />
+        <FileWidget id="Preview" fileId={data?.id} rows={8} columns={4} />
       </Page.Widgets>
     </Page.Dashboard>
   );

@@ -1,10 +1,11 @@
 import styled from 'styled-components';
 
-import { Body, Button, Flex, Icon, Title } from '@cognite/cogs.js';
+import { Body, Button, Flex, Icon } from '@cognite/cogs.js';
 
+import { Typography } from '../../../components/Typography';
 import { useNavigation } from '../../../hooks/useNavigation';
 import { useInstanceRelationshipQuery } from '../../../services/instances/generic/queries/useInstanceRelationshipQuery';
-import { InstancePreviewHeader, TitleText } from '../elements';
+import { InstancePreviewHeader } from '../elements';
 import { InstancePreviewProps } from '../types';
 
 export const RelationshipEdgeView: React.FC<
@@ -27,10 +28,12 @@ export const RelationshipEdgeView: React.FC<
   return (
     <>
       <InstancePreviewHeader>
-        <Flex alignItems="center" gap={8}>
-          <Button icon="ArrowLeft" onClick={() => onClick?.()} />
-          <TitleText>{type.field}</TitleText>
-          <CountText>{data?.length}</CountText>
+        <Flex alignItems="center" gap={4}>
+          <Button icon="ArrowLeft" type="ghost" onClick={() => onClick?.()} />
+          <Typography.Title capitalize size="small">
+            {type.field}
+          </Typography.Title>
+          <Typography.Title size="xsmall">{data?.length}</Typography.Title>
         </Flex>
       </InstancePreviewHeader>
 
@@ -74,7 +77,7 @@ export const RelationshipEdgeItem: React.FC<
     <Container tabIndex={0} onClick={() => onClick?.(type)}>
       <Text>{type.field}</Text>
       <Content>
-        <CountText>{data?.length}</CountText>
+        <Typography.Title size="xsmall">{data?.length}</Typography.Title>
         <Icon type="ArrowRight" />
       </Content>
     </Container>
@@ -87,6 +90,7 @@ const Link = styled(Button)`
   && {
     display: flex;
     justify-content: space-between;
+    text-align: left;
     padding-left: 4px;
     padding-right: 4px;
   }
@@ -126,5 +130,3 @@ const Content = styled.div`
   display: flex;
   justify-content: space-between;
 `;
-
-const CountText = styled(Title).attrs({ level: 6, strong: true })``;

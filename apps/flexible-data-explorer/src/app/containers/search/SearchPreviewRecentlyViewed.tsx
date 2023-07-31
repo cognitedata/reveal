@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { EmptyState } from '../../components/EmptyState';
+import { DASH } from '../../constants/common';
 import { useNavigation } from '../../hooks/useNavigation';
 import {
   RecentlyViewed,
@@ -54,7 +55,7 @@ export const SearchPreviewRecentlyViewed: React.FC<Props> = ({
             icon="History"
             subtitle={item.instance.dataType}
             title={item.name || item.instance.externalId}
-            description={item.description || '-'}
+            description={item.description || DASH}
             onClick={() => handleItemClick(item)}
             hideEnterIcon
           />
