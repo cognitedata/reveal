@@ -2,28 +2,34 @@
  * Copyright 2023 Cognite AS
  */
 
-import React, { type ReactElement, useState } from 'react';
+import React, { type ReactElement } from 'react';
 import { useReveal } from '../../RevealContainer/RevealContext';
 import { Checkbox, Flex, Menu } from '@cognite/cogs.js';
 import { StyledChipCount, StyledLabel, StyledSubMenu } from './elements';
 import { type Image360Collection } from '@cognite/reveal';
 import uniqueId from 'lodash/uniqueId';
 
-export const Image360CollectionLayerContainer = (): ReactElement => {
+type Image360CollectionLayerContainerProps = {
+  selectedImage360Collection: Array<{ image360: Image360Collection; isToggled: boolean }>;
+  setSelectedImage360Collection: (
+    value: Array<{ image360: Image360Collection; isToggled: boolean }>
+  ) => void;
+  allImages360Visible: boolean;
+  setAllImages360Visible: (value: boolean) => void;
+  indeterminate: boolean;
+  setIndeterminate: (value: boolean) => void;
+};
+
+export const Image360CollectionLayerContainer = ({
+  selectedImage360Collection,
+  setSelectedImage360Collection,
+  allImages360Visible,
+  setAllImages360Visible,
+  indeterminate,
+  setIndeterminate
+}: Image360CollectionLayerContainerProps): ReactElement => {
   const viewer = useReveal();
   const image360Collection = viewer.get360ImageCollections();
-
-  const [selectedImage360Collection, setSelectedImage360Collection] = useState<
-    Array<{ image360: Image360Collection; isToggled: boolean }>
-  >(
-    image360Collection.map((image360Collection) => ({
-      image360: image360Collection,
-      isToggled: true
-    }))
-  );
-
-  const [all360ImagesVisible, setAll360ImagesVisible] = useState(true);
-  const [indeterminate, setIndeterminate] = useState<boolean>(false);
 
   const count = image360Collection.length.toString();
 
@@ -38,7 +44,7 @@ export const Image360CollectionLayerContainer = (): ReactElement => {
     viewer.requestRedraw();
     setSelectedImage360Collection([...selectedImage360Collection]);
     setIndeterminate(selectedImage360Collection.some((data) => !data.isToggled));
-    setAll360ImagesVisible(!selectedImage360Collection.every((data) => !data.isToggled));
+    setAllImages360Visible(!selectedImage360Collection.every((data) => !data.isToggled));
   };
 
   const handleAll360ImagesVisibility = (visible: boolean): void => {
@@ -47,7 +53,7 @@ export const Image360CollectionLayerContainer = (): ReactElement => {
       data.image360.setIconsVisibility(data.isToggled);
     });
     viewer.requestRedraw();
-    setAll360ImagesVisible(visible);
+    setAllImages360Visible(visible);
     setIndeterminate(false);
     setSelectedImage360Collection([...selectedImage360Collection]);
   };
@@ -77,7 +83,7 @@ export const Image360CollectionLayerContainer = (): ReactElement => {
     <Menu.Submenu content={image360Content()} title="360 images">
       <Flex direction="row" justifyContent="space-between">
         <Checkbox
-          checked={all360ImagesVisible}
+          checked={allImages360Visible}
           indeterminate={indeterminate}
           onChange={(e, c) => {
             e.stopPropagation();

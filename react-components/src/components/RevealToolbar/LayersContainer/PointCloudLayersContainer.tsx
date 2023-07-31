@@ -2,36 +2,40 @@
  * Copyright 2023 Cognite AS
  */
 
-import React, { type ReactElement, useState } from 'react';
+import React, { type ReactElement } from 'react';
 
 import { useReveal } from '../../RevealContainer/RevealContext';
 import { Checkbox, Flex, Menu } from '@cognite/cogs.js';
 import { StyledChipCount, StyledLabel, StyledSubMenu } from './elements';
 import { type CognitePointCloudModel } from '@cognite/reveal';
-import { use3DModelName } from '../../../hooks/use3DModelName';
+// import { use3DModelName } from '../../../hooks/use3DModelName';
 import uniqueId from 'lodash/uniqueId';
 
-export const PointCloudLayersContainer = (): ReactElement => {
+type PointCloudLayersContainerProps = {
+  selectedPointCloudModels: Array<{
+    model: CognitePointCloudModel;
+    isToggled: boolean;
+    name?: string;
+  }>;
+  setSelectedPointCloudModels: (
+    value: Array<{ model: CognitePointCloudModel; isToggled: boolean; name?: string }>
+  ) => void;
+  allPointCloudModelVisible: boolean;
+  setAllPointCloudModelVisible: (value: boolean) => void;
+  indeterminate: boolean;
+  setIndeterminate: (value: boolean) => void;
+};
+
+export const PointCloudLayersContainer = ({
+  selectedPointCloudModels,
+  setSelectedPointCloudModels,
+  allPointCloudModelVisible,
+  setAllPointCloudModelVisible,
+  indeterminate,
+  setIndeterminate
+}: PointCloudLayersContainerProps): ReactElement => {
   const viewer = useReveal();
-  const pointCloudModels = viewer.models.filter((model) => model.type === 'pointcloud');
-  const pointCloudModelIds = pointCloudModels.map((model) => model.modelId);
-
-  const modelName = use3DModelName(pointCloudModelIds);
-
-  const [selectedPointCloudModels, setSelectedPointCloudModels] = useState<
-    Array<{ model: CognitePointCloudModel; isToggled: boolean; name: string }>
-  >(
-    pointCloudModels.map((model, index) => ({
-      model: model as CognitePointCloudModel,
-      isToggled: (model as CognitePointCloudModel).getDefaultPointCloudAppearance().visible ?? true,
-      name: modelName?.data?.[index] ?? 'No model name'
-    }))
-  );
-
-  const [allPointCloudModelVisible, setAllPointCloudModelVisible] = useState(true);
-  const [indeterminate, setIndeterminate] = useState<boolean>(false);
-
-  const count = pointCloudModels.length.toString();
+  const count = selectedPointCloudModels.length.toString();
 
   const handlePointCloudVisibility = (model: CognitePointCloudModel): void => {
     selectedPointCloudModels.map((data) => {
