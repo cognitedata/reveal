@@ -3,13 +3,13 @@
  */
 
 import { type Cognite3DViewer, type PointerEventData, type CogniteCadModel } from '@cognite/reveal';
-import { CogniteInternalId, type CogniteClient } from '@cognite/sdk';
+import { type CogniteInternalId, type CogniteClient } from '@cognite/sdk';
 import {
-  EdgeItem,
-  InspectResultList,
+  type EdgeItem,
+  type InspectResultList,
   type FdmSDK,
-  DmsUniqueIdentifier,
-  Source
+  type DmsUniqueIdentifier,
+  type Source
 } from '../../utilities/FdmSDK';
 import { type FdmAssetMappingsConfig } from '../../hooks/types';
 import { type NodeDataResult } from './types';
@@ -35,7 +35,7 @@ async function getMappingEdges(
   fdmConfig: FdmAssetMappingsConfig,
   model: CogniteCadModel,
   ancestorIds: CogniteInternalId[]
-): Promise<{ edges: EdgeItem<Record<string, any>>[] }> {
+): Promise<{ edges: Array<EdgeItem<Record<string, any>>> }> {
   const filter = {
     and: [
       {
@@ -70,7 +70,7 @@ async function getMappingEdges(
     ]
   };
 
-  return fdmClient.filterAllInstances(filter, 'edge', fdmConfig.source);
+  return await fdmClient.filterAllInstances(filter, 'edge', fdmConfig.source);
 }
 
 async function inspectNode(

@@ -30,9 +30,7 @@ export type {
   AddReveal3DModelOptions,
   NodeDataResult
 } from './components/Reveal3DResources/types';
-export type {
-  Source
-} from './utilities/FdmSDK';
+export type { Source } from './utilities/FdmSDK';
 export { RevealToolbar } from './components/RevealToolbar/RevealToolbar';
 export { LayersButton } from './components/RevealToolbar/LayersButton';
 export { SlicerButton } from './components/RevealToolbar/SlicerButton';

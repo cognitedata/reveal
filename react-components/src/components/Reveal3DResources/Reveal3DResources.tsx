@@ -46,7 +46,7 @@ export type Reveal3DResourcesProps<NodeType = any> = {
   onNodeClick?: (node: NodeDataResult<NodeType>) => void;
 };
 
-export const Reveal3DResources = <NodeType = any>({
+export const Reveal3DResources = <NodeType = any,>({
   resources,
   styling,
   fdmAssetMappingConfig,

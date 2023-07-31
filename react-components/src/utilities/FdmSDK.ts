@@ -38,7 +38,7 @@ export type InspectResult = {
       space: string;
       externalId: string;
     }>;
-    views: Array<Source>;
+    views: Source[];
   };
 };
 
@@ -61,7 +61,7 @@ export class FdmSDK {
     const baseUrl = sdk.getBaseUrl();
     const project = sdk.project;
 
-    const instancesBaseUrl = `${baseUrl}/api/v1/projects/${project}/models/instances`
+    const instancesBaseUrl = `${baseUrl}/api/v1/projects/${project}/models/instances`;
 
     this._listEndpoint = `${instancesBaseUrl}/list`;
     this._byIdsEndpoint = `${instancesBaseUrl}/byids`;
