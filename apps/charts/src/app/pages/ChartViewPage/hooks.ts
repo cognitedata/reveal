@@ -114,7 +114,14 @@ export const useInitializedChart = (chartId: string) => {
      * Add chart to local state atom
      */
     setChart(updatedChart);
-  }, [originalChart, chart, chartId, setChart, operations]);
+  }, [
+    originalChart,
+    chart,
+    chartId,
+    setChart,
+    operations,
+    isDuplicateIdMigrationEnabled,
+  ]);
 
   /**
    * Sync local chart atom to storage
@@ -372,6 +379,7 @@ export const useStatistics = (
     datesChanged,
     sourceChanged,
     enabled,
+    scheduledCalculationsData,
   ]);
 
   const status =

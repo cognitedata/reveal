@@ -30,7 +30,7 @@ export function EventResultEffects() {
   useEffect(() => {
     if (!eventFiltersElements?.length && eventResults.length)
       setChartEventResults([]);
-  }, [chart, setChartEventResults, eventFiltersElements]);
+  }, [chart, setChartEventResults, eventFiltersElements, eventResults]);
 
   return <>{eventFiltersElements}</>;
 }
@@ -47,8 +47,8 @@ function EventEffects({ eventFilter }: { eventFilter: ChartEventFilters }) {
 
   const query: EventFilter = {
     ...eventFilter.filters,
-    startTime: { min: getTime(new Date(debouncedRange.dateFrom)) },
-    endTime: { max: getTime(new Date(debouncedRange.dateTo)) },
+    startTime: { max: getTime(new Date(debouncedRange.dateTo)) },
+    endTime: { min: getTime(new Date(debouncedRange.dateFrom)) },
   };
 
   const { data, isFetching, isSuccess } = useQuery(
@@ -87,6 +87,7 @@ function EventEffects({ eventFilter }: { eventFilter: ChartEventFilters }) {
     chart,
     eventFilter.id,
     setChartEventResults,
+    eventFilter,
   ]);
 
   return null;
