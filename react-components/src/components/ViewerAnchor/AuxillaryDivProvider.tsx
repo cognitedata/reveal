@@ -2,17 +2,17 @@
  * Copyright 2023 Cognite AS
  */
 
-import React, { createContext, useContext, useState, useCallback, type JSX } from 'react';
+import { createContext, useContext, useState, useCallback, ReactElement } from 'react';
 
-export const AuxillaryDivProvider = ({ children }: { children: React.ReactNode }): JSX.Element => {
-  const [elements, setElements] = useState<JSX.Element[]>([]);
+export const AuxillaryDivProvider = ({ children }: { children: ReactElement }): ReactElement => {
+  const [elements, setElements] = useState<ReactElement[]>([]);
 
   // Maintain a local copy of the elements, needed for properly supporting multiple
   // `addElement` calls between rerenders
   let cachedElements = elements;
 
   const addElement = useCallback(
-    (element: JSX.Element) => {
+    (element: ReactElement) => {
       const newElementList = [...cachedElements, element];
 
       setElements(newElementList);
@@ -22,7 +22,7 @@ export const AuxillaryDivProvider = ({ children }: { children: React.ReactNode }
   );
 
   const removeElement = useCallback(
-    (element: JSX.Element) => {
+    (element: ReactElement) => {
       const newElementList = cachedElements.filter((e) => e !== element);
 
       setElements(newElementList);
@@ -42,8 +42,8 @@ export const AuxillaryDivProvider = ({ children }: { children: React.ReactNode }
 };
 
 type AuxillaryContextData = {
-  addElement: (element: JSX.Element) => void;
-  removeElement: (element: JSX.Element) => void;
+  addElement: (element: ReactElement) => void;
+  removeElement: (element: ReactElement) => void;
 };
 
 const AuxillaryDivContext = createContext<AuxillaryContextData | null>(null);

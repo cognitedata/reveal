@@ -2,26 +2,26 @@
  * Copyright 2023 Cognite AS
  */
 
-import React, { type JSX, useEffect, useRef } from 'react';
+import { useEffect, useRef, ReactElement } from 'react';
 import { type Vector3 } from 'three';
 
 import { useReveal } from '../RevealContainer/RevealContext';
 
 import { HtmlOverlayTool } from '@cognite/reveal/tools';
-import { useAuxillaryDivContext } from '../RevealContainer/AuxillaryDivProvider';
+import { useAuxillaryDivContext } from './AuxillaryDivProvider';
 
-export type InfoCardElementMapping = {
+export type ViewerAnchorElementMapping = {
   ref: React.RefObject<HTMLElement>;
   position: Vector3;
 };
 
-export type InfoCardProps = {
+export type ViewerAnchorProps = {
   position: Vector3;
-  children: React.ReactNode;
+  children: ReactElement;
   uniqueKey: string;
 };
 
-export const InfoCard = ({ position, children, uniqueKey }: InfoCardProps): JSX.Element => {
+export const ViewerAnchor = ({ position, children, uniqueKey }: ViewerAnchorProps): ReactElement => {
   const viewer = useReveal();
 
   const htmlTool = useRef<HtmlOverlayTool>(new HtmlOverlayTool(viewer));
@@ -30,7 +30,7 @@ export const InfoCard = ({ position, children, uniqueKey }: InfoCardProps): JSX.
 
   const htmlRef = useRef<HTMLDivElement>(null);
   const element = (
-    <div className="infocard" key={uniqueKey} ref={htmlRef} style={{ position: 'absolute' }}>
+    <div key={uniqueKey} ref={htmlRef} style={{ position: 'absolute' }}>
       {children}
     </div>
   );

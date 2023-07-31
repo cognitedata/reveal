@@ -4,10 +4,9 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Reveal3DResources, RevealContainer } from '../src';
 import { Color, Matrix4, Vector3 } from 'three';
-import { CameraController } from '../src/';
+import { CameraController, ViewerAnchor } from '../src/';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { InfoCard } from '../src/components/InfoCard/InfoCard';
 
 const meta = {
   title: 'Example/Reveal3DResources',
@@ -144,7 +143,7 @@ export const Main: Story = {
           styling={styling}
           fdmAssetMappingConfig={fdmAssetMappingConfig}
         />
-        <InfoCard position={position} uniqueKey="key2">
+        <ViewerAnchor position={position} uniqueKey="key2">
           <p
             style={{
               backgroundColor: 'turquoise',
@@ -156,8 +155,8 @@ export const Main: Story = {
             }}>
             This label is stuck at position {position.toArray().join(',')}
           </p>
-        </InfoCard>
-        <InfoCard position={position2} uniqueKey="key1">
+        </ViewerAnchor>
+        <ViewerAnchor position={position2} uniqueKey="key1">
           <p
             style={{
               backgroundColor: 'red',
@@ -169,7 +168,7 @@ export const Main: Story = {
             }}>
             This label is stuck at position {position2.toArray().join(',')}
           </p>
-        </InfoCard>
+        </ViewerAnchor>
         <CameraController
           initialFitCamera={{
             to: 'allModels'

@@ -9,7 +9,7 @@ import { type Color } from 'three';
 import { ModelsLoadingStateContext } from '../Reveal3DResources/ModelsLoadingContext';
 import { SDKProvider } from './SDKProvider';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
-import { AuxillaryDivProvider } from './AuxillaryDivProvider';
+import { AuxillaryDivProvider } from '../ViewerAnchor/AuxillaryDivProvider';
 
 type RevealContainerProps = {
   color?: Color;

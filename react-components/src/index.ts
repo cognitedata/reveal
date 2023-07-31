@@ -23,6 +23,7 @@ export {
   type Reveal3DResourcesStyling,
   type FdmAssetStylingGroup
 } from './components/Reveal3DResources/Reveal3DResources';
+export { ViewerAnchor } from './components/ViewerAnchor/ViewerAnchor';
 export { CameraController } from './components/CameraController/CameraController';
 export type {
   AddImageCollection360Options,
