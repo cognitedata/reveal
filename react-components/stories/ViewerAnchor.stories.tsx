@@ -13,8 +13,7 @@ const meta = {
   component: Reveal3DResources,
   tags: ['autodocs'],
   argTypes: {
-    styling: {
-    }
+    styling: {}
   }
 } satisfies Meta<typeof Reveal3DResources>;
 
@@ -38,9 +37,9 @@ export const Main: Story = {
         space: 'hf_3d_schema',
         version: '1',
         type: 'view',
-        externalId: 'cdf_3d_connection_data',
+        externalId: 'cdf_3d_connection_data'
       },
-      assetFdmSpace: 'hf_customer_a',
+      assetFdmSpace: 'hf_customer_a'
     }
   },
   render: ({ resources, styling, fdmAssetMappingConfig }) => {

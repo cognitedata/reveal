@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { createContext, useContext, useState, useCallback, ReactElement } from 'react';
+import { createContext, useContext, useState, useCallback, type ReactElement } from 'react';
 
 export const AuxillaryDivProvider = ({ children }: { children: ReactElement }): ReactElement => {
   const [elements, setElements] = useState<ReactElement[]>([]);

@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { useEffect, useRef, ReactElement } from 'react';
+import { useEffect, useRef, type ReactElement, type RefObject } from 'react';
 import { type Vector3 } from 'three';
 
 import { useReveal } from '../RevealContainer/RevealContext';
@@ -11,7 +11,7 @@ import { HtmlOverlayTool } from '@cognite/reveal/tools';
 import { useAuxillaryDivContext } from './AuxillaryDivProvider';
 
 export type ViewerAnchorElementMapping = {
-  ref: React.RefObject<HTMLElement>;
+  ref: RefObject<HTMLElement>;
   position: Vector3;
 };
 
@@ -21,7 +21,11 @@ export type ViewerAnchorProps = {
   uniqueKey: string;
 };
 
-export const ViewerAnchor = ({ position, children, uniqueKey }: ViewerAnchorProps): ReactElement => {
+export const ViewerAnchor = ({
+  position,
+  children,
+  uniqueKey
+}: ViewerAnchorProps): ReactElement => {
   const viewer = useReveal();
 
   const htmlTool = useRef<HtmlOverlayTool>(new HtmlOverlayTool(viewer));
