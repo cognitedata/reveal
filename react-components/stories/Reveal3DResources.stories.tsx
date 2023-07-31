@@ -3,8 +3,8 @@
  */
 import type { Meta, StoryObj } from '@storybook/react';
 import { Reveal3DResources, RevealContainer } from '../src';
-import { Color, Matrix4 } from 'three';
-import { CameraController } from '../src/';
+import { Color, Matrix4, Vector3 } from 'three';
+import { CameraController, ViewerAnchor } from '../src/';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
@@ -123,31 +123,62 @@ export const Main: Story = {
       assetFdmSpace: 'bark-corporation'
     }
   },
-  render: ({ resources, styling, fdmAssetMappingConfig }) => (
-    <RevealContainer
-      sdk={sdk}
-      color={new Color(0x4a4a4a)}
-      uiElements={<ReactQueryDevtools initialIsOpen={false} />}
-      viewerOptions={{
-        loadingIndicatorStyle: {
-          opacity: 1,
-          placement: 'topRight'
-        }
-      }}>
-      <Reveal3DResources
-        resources={resources}
-        styling={styling}
-        fdmAssetMappingConfig={fdmAssetMappingConfig}
-      />
-      <CameraController
-        initialFitCamera={{
-          to: 'allModels'
-        }}
-        cameraControlsOptions={{
-          changeCameraTargetOnClick: true,
-          mouseWheelAction: 'zoomToCursor'
-        }}
-      />
-    </RevealContainer>
-  )
+  render: ({ resources, styling, fdmAssetMappingConfig }) => {
+    const position = new Vector3(50, 30, 50);
+    const position2 = new Vector3(0, 0, 0);
+
+    return (
+      <RevealContainer
+        sdk={sdk}
+        color={new Color(0x4a4a4a)}
+        uiElements={<ReactQueryDevtools initialIsOpen={false} />}
+        viewerOptions={{
+          loadingIndicatorStyle: {
+            opacity: 1,
+            placement: 'topRight'
+          }
+        }}>
+        <Reveal3DResources
+          resources={resources}
+          styling={styling}
+          fdmAssetMappingConfig={fdmAssetMappingConfig}
+        />
+        <ViewerAnchor position={position} uniqueKey="key2">
+          <p
+            style={{
+              backgroundColor: 'turquoise',
+              borderColor: 'black',
+              borderWidth: '10px',
+              borderStyle: 'solid',
+              maxWidth: '300px',
+              transform: 'translate(-50%, calc(-100% - 50px))'
+            }}>
+            This label is stuck at position {position.toArray().join(',')}
+          </p>
+        </ViewerAnchor>
+        <ViewerAnchor position={position2} uniqueKey="key1">
+          <p
+            style={{
+              backgroundColor: 'red',
+              borderColor: 'black',
+              borderWidth: '10px',
+              borderStyle: 'solid',
+              maxWidth: '300px',
+              transform: 'translate(0px, 0px)'
+            }}>
+            This label is stuck at position {position2.toArray().join(',')}
+          </p>
+        </ViewerAnchor>
+        <CameraController
+          initialFitCamera={{
+            to: 'allModels'
+          }}
+          cameraControlsOptions={{
+            changeCameraTargetOnClick: true,
+            mouseWheelAction: 'zoomToCursor'
+          }}
+        />
+      </RevealContainer>
+    );
+  }
 };
