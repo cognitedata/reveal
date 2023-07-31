@@ -48,10 +48,11 @@ export const useCalculateModelsStyling = (
             styling.groups !== null ? [] : undefined;
 
           styling.groups?.forEach((group) => {
-            const connectedExternalIds = group.fdmAssetExternalIds.filter((externalId) =>
-              modelNodeMappings?.mappings.some(
-                (modelNodeMapping) => modelNodeMapping.externalId === externalId
-              )
+            const connectedExternalIds = group.fdmAssetExternalIds.filter(
+              (externalId) =>
+                modelNodeMappings?.mappings.some(
+                  (modelNodeMapping) => modelNodeMapping.externalId === externalId
+                )
             );
 
             const newGroup: NodeStylingGroup = {
