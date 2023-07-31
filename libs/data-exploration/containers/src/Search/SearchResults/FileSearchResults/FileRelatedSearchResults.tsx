@@ -44,7 +44,6 @@ const visibleColumns = [
   'relationshipLabels',
   'relation',
   'mimeType',
-  'uploadedTime',
   'lastUpdatedTime',
   'created',
 ];
@@ -82,6 +81,20 @@ export const FileRelatedSearchResults: React.FC<Props> = ({
     useDocumentsMetadataColumns();
 
   const columns = useMemo(() => {
+    if (isDocumentsApiEnabled) {
+      return [
+        { ...tableColumns.name(), accessorKey: 'sourceFile.name' },
+        tableColumns.relationshipLabels,
+        tableColumns.relation,
+        { ...tableColumns.mimeType, accessorKey: 'sourceFile.mimeType' },
+        { ...tableColumns.lastUpdatedTime, accessorKey: 'modifiedTime' },
+        tableColumns.created,
+        ...metadataColumns,
+      ] as ColumnDef<
+        WithDetailViewData<FileInfo> | WithDetailViewData<Document>
+      >[];
+    }
+
     return [
       tableColumns.name(),
       tableColumns.relationshipLabels,
@@ -95,7 +108,7 @@ export const FileRelatedSearchResults: React.FC<Props> = ({
       WithDetailViewData<FileInfo> | WithDetailViewData<Document>
     >[];
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [metadataColumns]);
+  }, [isDocumentsApiEnabled, metadataColumns]);
 
   const filesQuery = useRelatedFilesQuery({
     resourceExternalId,

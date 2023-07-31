@@ -339,15 +339,23 @@ export const getTableColumns = (t: TFunction): ResourceTableHashMap => ({
     accessorKey: 'relationshipLabels',
     header: t('RELATIONSHIP_LABELS', 'Relationship labels'),
     size: 250,
-    cell: ({ getValue }) => (
-      <Flex gap={2} wrap="wrap">
-        {getValue<string[]>()?.map((label: string) => (
-          <Tooltip content={label} key={uniqueId()}>
-            <StyledLabel size="x-small" label={label} />
-          </Tooltip>
-        ))}
-      </Flex>
-    ),
+    cell: ({ getValue }) => {
+      const labels = getValue<string[]>() || [];
+
+      if (labels.length === 0) {
+        return <Flex>{DASH}</Flex>;
+      }
+
+      return (
+        <Flex gap={2} wrap="wrap">
+          {getValue<string[]>()?.map((label: string) => (
+            <Tooltip content={label} key={uniqueId()}>
+              <StyledLabel size="x-small" label={label} />
+            </Tooltip>
+          ))}
+        </Flex>
+      );
+    },
   },
   metadata: (key: string, accessorFn?: (row: any) => string) => {
     return {
