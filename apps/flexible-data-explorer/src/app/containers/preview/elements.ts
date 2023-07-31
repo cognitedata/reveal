@@ -38,6 +38,8 @@ export const InstancePreviewContent = styled.div`
 `;
 
 export const InstancePreviewFooter = styled.div`
+  display: flex;
+  gap: 8px;
   padding: 8px;
   border-top: 1px solid
     var(--border-interactive-default, rgba(83, 88, 127, 0.16));

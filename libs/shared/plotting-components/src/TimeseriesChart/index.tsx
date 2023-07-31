@@ -4,6 +4,8 @@ import { TimeeriesChartProvider } from './provider';
 import { TimeseriesChart as TimeseriesChartComponent } from './TimeseriesChart';
 import { TimeseriesChartProps } from './types';
 
+export * from './constants';
+
 export const TimeseriesChart: React.FC<TimeseriesChartProps> = (props) => {
   return (
     <TimeeriesChartProvider>

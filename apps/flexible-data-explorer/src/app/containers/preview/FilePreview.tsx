@@ -2,8 +2,12 @@ import React, { useState } from 'react';
 
 import styled from 'styled-components';
 
+import { Button } from '@cognite/cogs.js';
+
+import { Dropdown } from '../../components/dropdown/Dropdown';
 import { Spinner } from '../../components/loader/Spinner';
 import { useNavigation } from '../../hooks/useNavigation';
+import { useOpenIn } from '../../hooks/useOpenIn';
 import { useTranslation } from '../../hooks/useTranslation';
 import { useFileByIdQuery } from '../../services/instances/file/queries/useFileByIdQuery';
 import { FDXFilePreview } from '../widgets/File/FilePreview';
@@ -26,12 +30,18 @@ export const FilePreview: React.FC<Props> = ({ id }) => {
   const { t } = useTranslation();
   const { toFilePage } = useNavigation();
 
+  const { openInCanvas } = useOpenIn();
+
   const { data, isLoading } = useFileByIdQuery(id);
 
   const [view, setView] = useState<PreviewView>();
 
   const handleOpenClick = () => {
     toFilePage(id);
+  };
+
+  const handleNavigateToCanvasClick = () => {
+    openInCanvas({ type: 'file', id: data?.id });
   };
 
   const renderContent = () => {
@@ -60,6 +70,14 @@ export const FilePreview: React.FC<Props> = ({ id }) => {
       <InstancePreviewContent>{renderContent()}</InstancePreviewContent>
 
       <InstancePreviewFooter>
+        <Dropdown.OpenIn
+          placement="top"
+          onCanvasClick={handleNavigateToCanvasClick}
+          disabled={isLoading}
+        >
+          <Button icon="EllipsisHorizontal" />
+        </Dropdown.OpenIn>
+
         <OpenButton type="primary" onClick={handleOpenClick}>
           {t('GENERAL_OPEN')}
         </OpenButton>

@@ -5,6 +5,8 @@
   "GENERAL_COPY": "Copy",
   "GENERAL_COPIED": "Copied",
   "GENERAL_NO_DESCRIPTION": "No description",
+  "GENERAL_APP_INDUSTRIAL_CANVAS": "Industrial canvas",
+  "GENERAL_APP_CHARTS": "Charts",
   "GENERAL_AND": "and",
 
   "HOMEPAGE_HEADER": "Search for data in {{site}}",
