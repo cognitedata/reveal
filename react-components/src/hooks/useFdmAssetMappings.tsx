@@ -7,39 +7,31 @@ import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { type FdmAssetMappingsConfig, type ThreeDModelMappings } from './types';
 import { DEFAULT_QUERY_STALE_TIME } from '../utilities/constants';
 
-const DefaultFdmConfig: FdmAssetMappingsConfig = {
-  source: {
-    space: 'fdm-3d-test-savelii',
-    version: '1',
-    type: 'view',
-    externalId: 'CDF_3D_Connection_Data'
-  },
-  assetFdmSpace: 'bark-corporation'
-};
-
 /**
  * This hook fetches the list of FDM asset mappings for the given external ids
  */
 export const useFdmAssetMappings = (
   fdmAssetExternalIds: CogniteExternalId[],
-  fdmConfig: FdmAssetMappingsConfig = DefaultFdmConfig
+  fdmConfig?: FdmAssetMappingsConfig
 ): UseQueryResult<ThreeDModelMappings[]> => {
   const fdmSdk = useFdmSdk();
-
-  const fdmAssetMappingFilter = {
-    in: {
-      property: ['edge', 'startNode'],
-      values: fdmAssetExternalIds.map((externalId) => ({
-        space: fdmConfig.assetFdmSpace,
-        externalId
-      }))
-    }
-  };
 
   return useQuery(
     ['reveal', 'react-components', fdmAssetExternalIds],
     async () => {
       if (fdmAssetExternalIds?.length === 0) return [];
+      if (fdmConfig === undefined)
+        throw Error('FDM config must be defined when using FDM asset mappings');
+
+      const fdmAssetMappingFilter = {
+        in: {
+          property: ['edge', 'startNode'],
+          values: fdmAssetExternalIds.map((externalId) => ({
+            space: fdmConfig.assetFdmSpace,
+            externalId
+          }))
+        }
+      };
 
       const instances = await fdmSdk.filterInstances(
         fdmAssetMappingFilter,
@@ -56,7 +48,7 @@ export const useFdmAssetMappings = (
           ];
 
         const modelId = Number.parseInt(instance.endNode.externalId.slice(9));
-        const revisionId = mappingProperty.RevisionId;
+        const revisionId = mappingProperty.revisionId;
 
         const isAdded = modelMappingsTemp.some(
           (mapping) => mapping.modelId === modelId && mapping.revisionId === revisionId
@@ -67,7 +59,7 @@ export const useFdmAssetMappings = (
             modelId,
             revisionId,
             mappings: [
-              { nodeId: mappingProperty.NodeId, externalId: instance.startNode.externalId }
+              { nodeId: mappingProperty.revisionNodeId, externalId: instance.startNode.externalId }
             ]
           });
         } else {
@@ -76,7 +68,7 @@ export const useFdmAssetMappings = (
           );
 
           modelMapping?.mappings.push({
-            nodeId: mappingProperty.NodeId,
+            nodeId: mappingProperty.revisionNodeId,
             externalId: instance.startNode.externalId
           });
         }
