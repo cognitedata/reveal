@@ -2,11 +2,15 @@ import styled from 'styled-components/macro';
 
 import { Chip } from '@cognite/cogs.js';
 
+import { useTranslation } from '../../../hooks/useTranslation';
+
 export const ExperimentalIndicator: React.FC = () => {
+  const { t } = useTranslation();
+
   return (
     <Container>
       <BetaIcon />
-      <Chip label="EXPERIMENTAL" size="x-small" />
+      <Chip label={t('SEARCH_BAR_EXPERIMENTAL')} size="x-small" />
     </Container>
   );
 };

@@ -5,12 +5,12 @@ import { isArray, isObject } from 'lodash';
 import isEmpty from 'lodash/isEmpty';
 import take from 'lodash/take';
 
-import { Button, Skeleton } from '@cognite/cogs.js';
+import { Skeleton } from '@cognite/cogs.js';
 
+import { Button } from '../../../components/buttons/Button';
 import { SearchResults } from '../../../components/search/SearchResults';
 import { EMPTY_ARRAY } from '../../../constants/object';
 import { useNavigation } from '../../../hooks/useNavigation';
-import { useTranslation } from '../../../hooks/useTranslation';
 import { useFDM } from '../../../providers/FDMProvider';
 import { useSearchDataTypesQuery } from '../../../services/dataTypes/queries/useSearchDataTypesQuery';
 import { InstancePreview } from '../../preview/InstancePreview';
@@ -67,7 +67,6 @@ interface Props {
 }
 const GenericResultItem: React.FC<Props> = ({ dataType, values, type }) => {
   const navigate = useNavigation();
-  const { t } = useTranslation();
   const client = useFDM();
   const dataModel = client.getDataModelByDataType(dataType);
 
@@ -149,15 +148,12 @@ const GenericResultItem: React.FC<Props> = ({ dataType, values, type }) => {
       </SearchResults.Body>
 
       <SearchResults.Footer>
-        <Button
+        <Button.ShowMore
           onClick={() => {
             setPage((prevState) => prevState + PAGE_SIZE);
           }}
-          type="secondary"
           hidden={normalizedValues.length <= page}
-        >
-          {t('GENERAL_SHOW_MORE')}
-        </Button>
+        />
       </SearchResults.Footer>
     </SearchResults>
   );

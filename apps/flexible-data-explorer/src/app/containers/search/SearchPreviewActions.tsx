@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import { matchSorter } from 'match-sorter';
 
 import { useKeyboardListener } from '../../hooks/listeners/useKeyboardListener';
+import { useIsCopilotEnabled } from '../../hooks/useFlag';
 import { useNavigation } from '../../hooks/useNavigation';
 import { useSearchFilterParams } from '../../hooks/useParams';
 import { useTranslation } from '../../hooks/useTranslation';
@@ -31,6 +32,8 @@ export const SearchPreviewActions = ({
 
   const client = useFDM();
 
+  const isCopilotEnabled = useIsCopilotEnabled();
+
   const types = useMemo(() => {
     const genericTypes = (client.allDataTypes || []).map(({ name }) => name);
 
@@ -55,7 +58,12 @@ export const SearchPreviewActions = ({
 
   const [active, setAction] = useReducer(
     (prev: number, next: 'UP' | 'DOWN') => {
-      const count = prev + (next === 'UP' ? -1 : 1);
+      const value = next === 'UP' ? -1 : 1;
+      let count = prev + value;
+
+      if (!isCopilotEnabled && count === SearchActions.SEARCH_IN_AI) {
+        count += value;
+      }
 
       if (count <= defaultSearchActionValue) {
         return defaultSearchActionValue;
@@ -86,7 +94,9 @@ export const SearchPreviewActions = ({
         if (active === SearchActions.SEARCH_IN_TYPE) {
           navigate.toSearchPage(query, filterParams);
         } else if (active === SearchActions.SEARCH_IN_ALL) {
-          navigate.toSearchPage(query, filterParams, true);
+          navigate.toSearchPage(query, filterParams, {
+            ignoreType: true,
+          });
         } else {
           navigate.toSearchCategoryPage(typesResults[active], true);
         }
@@ -114,21 +124,28 @@ export const SearchPreviewActions = ({
         title={t('SEARCH_BAR_SEARCH_FOR', { query })}
         icon="Search"
         onClick={() => {
-          navigate.toSearchPage(query, filterParams, true);
+          navigate.toSearchPage(query, filterParams, {
+            ignoreType: true,
+          });
           onSelectionClick?.();
         }}
       />
 
-      <SearchList.Item
-        focused={active === SearchActions.SEARCH_IN_AI}
-        title={t('SEARCH_BAR_SEARCH_IN_AI_FOR', { query })}
-        icon="AiSearch"
-        onClick={() => {
-          navigate.toSearchPage(query, filterParams, true, true);
-          onSelectionClick?.();
-        }}
-        experimental
-      />
+      {isCopilotEnabled && (
+        <SearchList.Item
+          focused={active === SearchActions.SEARCH_IN_AI}
+          title={t('SEARCH_BAR_SEARCH_IN_AI_FOR', { query })}
+          icon="AiSearch"
+          onClick={() => {
+            navigate.toSearchPage(query, filterParams, {
+              ignoreType: true,
+              enableAISearch: true,
+            });
+            onSelectionClick?.();
+          }}
+          experimental
+        />
+      )}
 
       {typesResults.map((item, index) => (
         <SearchList.Item

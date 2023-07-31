@@ -9,6 +9,7 @@ export enum ParamKeys {
   SearchQuery = 'searchQuery',
   Filters = 'filters',
   DataModels = 'models',
+  AISearch = 'aiSearch',
 }
 
 export const useExpandedIdParams = (): [
@@ -109,4 +110,20 @@ export const useDataModelsParams = (): [DataModelV2[] | undefined] => {
   }, [searchParams]);
 
   return [dataModelsParams];
+};
+
+export const useAISearchParams = (): [boolean, (value: boolean) => void] => {
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const setAISearchParams = useCallback(
+    (value: boolean) => {
+      setSearchParams((currentParams) => {
+        currentParams.set(ParamKeys.AISearch, String(value));
+        return currentParams;
+      });
+    },
+    [setSearchParams]
+  );
+
+  return [searchParams.get(ParamKeys.AISearch) === 'true', setAISearchParams];
 };

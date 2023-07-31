@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 
 import styled from 'styled-components';
 
@@ -7,28 +7,41 @@ import {
   sendToCopilotEvent,
   useFromCopilotEventHandler,
 } from '@fusion/copilot-core';
+import isEmpty from 'lodash/isEmpty';
 import isString from 'lodash/isString';
+import take from 'lodash/take';
 
 import { Icon } from '@cognite/cogs.js';
-import { useFlag } from '@cognite/react-feature-flags';
 
+import { ButtonShowMore } from '../../../components/buttons/ButtonShowMore';
 import { SearchResults } from '../../../components/search/SearchResults';
+import { useIsCopilotEnabled } from '../../../hooks/useFlag';
 import { useNavigation } from '../../../hooks/useNavigation';
 import {
+  useAISearchParams,
   useSearchFilterParams,
   useSearchQueryParams,
 } from '../../../hooks/useParams';
+import { useTranslation } from '../../../hooks/useTranslation';
 import { useFDM } from '../../../providers/FDMProvider';
 import { useAIDataTypesQuery } from '../../../services/dataTypes/queries/useAIDataTypesQuery';
+import { SearchResponseItem } from '../../../services/types';
 import { useSelectedDataModels } from '../../../services/useSelectedDataModels';
 import { getIcon } from '../../../utils/getIcon';
+import { getCountsString } from '../../../utils/string';
+import { CogPilotIcon } from '../components/CogPilotIcon';
+import { useAiResultsCounts } from '../hooks/useAiResultsCounts';
+
+import { PAGE_SIZE } from './constants';
 
 export const AIResults = () => {
+  const { t } = useTranslation();
   const [query] = useSearchQueryParams();
   const [filters] = useSearchFilterParams();
   const selectedDataModels = useSelectedDataModels();
   const navigate = useNavigation();
   const client = useFDM();
+  const [aiSearchEnabled] = useAISearchParams();
 
   const [gqlQuery, setGQLQuery] = useState('');
   const [variables, setVariables] = useState({});
@@ -36,16 +49,25 @@ export const AIResults = () => {
     { space: string; externalId: string; version: string } | undefined
   >(undefined);
   const [isAILoading, setIsAILoading] = useState(false);
+  const [page, setPage] = useState<number>(PAGE_SIZE);
 
-  const { data = {}, isLoading } = useAIDataTypesQuery(
+  const { data: results = {}, isLoading } = useAIDataTypesQuery(
     dataModel,
     gqlQuery,
     variables
   );
 
-  const { isEnabled: isCopilotEnabled } = useFlag('COGNITE_COPILOT', {
-    fallback: false,
-  });
+  const normalizedValues = useMemo(() => {
+    return Object.values(results).flatMap(({ items }) => items);
+  }, [results]);
+
+  const data = useMemo(() => {
+    return take<SearchResponseItem>(normalizedValues, page);
+  }, [normalizedValues, page]);
+
+  const counts = useAiResultsCounts(results);
+
+  const isCopilotEnabled = useIsCopilotEnabled();
 
   useFromCopilotEventHandler(
     'GQL_QUERY',
@@ -83,7 +105,7 @@ export const AIResults = () => {
       ]);
       setIsAILoading(true);
     };
-    if (query && selectedDataModels && isCopilotEnabled) {
+    if (aiSearchEnabled && query && selectedDataModels && isCopilotEnabled) {
       sendMessage();
     }
     const removeHandler = addFromCopilotEventListener('CHAT_READY', () => {
@@ -92,7 +114,7 @@ export const AIResults = () => {
       }
       removeHandler();
     });
-  }, [query, filters, selectedDataModels, isCopilotEnabled]);
+  }, [query, filters, selectedDataModels, isCopilotEnabled, aiSearchEnabled]);
 
   const handleRowClick = useCallback(
     (row: any, dataType: string) => {
@@ -106,22 +128,31 @@ export const AIResults = () => {
     [navigate, client]
   );
 
-  if (!isCopilotEnabled) {
-    return <></>;
+  if (!aiSearchEnabled || !isCopilotEnabled) {
+    return null;
   }
 
   if (isLoading || isAILoading) {
     return (
-      <Wrapper>
+      <Header>
         <Icon type="Loader" />
-      </Wrapper>
+      </Header>
     );
   }
 
   return (
-    <>
-      {Object.values(data).map(({ items }) => {
-        return items.map(({ __typename, name, ...item }) => {
+    <SearchResults key="ai-results" empty={isEmpty(normalizedValues)}>
+      <Header>
+        <CogPilotIcon />
+        <span>
+          {t('AI_SEARCH_RESULTS_HEADER', {
+            counts: getCountsString(counts, t),
+          })}
+        </span>
+      </Header>
+
+      <SearchResults.Body>
+        {data.map(({ __typename: dataType, name, ...item }) => {
           const properties = Object.entries(item).reduce(
             (acc, [key, value]) => {
               if (
@@ -143,23 +174,43 @@ export const AIResults = () => {
 
           return (
             <SearchResults.Item
-              key={`${__typename}-${name}`}
-              icon={getIcon(__typename)}
-              name={__typename}
+              key={`${dataType}-${name}`}
+              icon={getIcon(dataType)}
+              name={dataType}
               description={name}
               properties={properties}
-              onClick={() => handleRowClick(item, __typename)}
+              onClick={() => handleRowClick(item, dataType)}
             />
           );
-        });
-      })}
-    </>
+        })}
+      </SearchResults.Body>
+
+      <SearchResults.Footer>
+        <ButtonShowMore
+          onClick={() => {
+            setPage((prevState) => prevState + PAGE_SIZE);
+          }}
+          hidden={normalizedValues.length <= page}
+        />
+      </SearchResults.Footer>
+    </SearchResults>
   );
 };
 
-const Wrapper = styled.div`
-  width: 100%;
+const Header = styled.div`
+  display: flex;
   padding: 16px;
-  background: mediumpurple;
-  margin-bottom: 50px;
+  gap: 8px;
+  border-radius: 8px;
+  background: radial-gradient(
+    190.15% 190.15% at -12.5% 12.5%,
+    #8b5cf6 0%,
+    #5e28d9 100%
+  );
+  box-shadow: 0px 3px 4px 0px rgba(24, 24, 28, 0.03),
+    0px 1px 2px 0px rgba(24, 24, 28, 0.04);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 16px;
 `;
