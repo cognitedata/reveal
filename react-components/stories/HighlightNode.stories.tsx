@@ -5,15 +5,15 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import {
   CadModelContainer,
-  FdmAssetMappingsConfig,
+  type FdmAssetMappingsConfig,
   RevealContainer,
   RevealToolbar,
   useReveal
 } from '../src';
 import { CogniteClient } from '@cognite/sdk';
 import { Color, Matrix4 } from 'three';
-import { useEffect, useState } from 'react';
-import { PointerEventData } from '@cognite/reveal';
+import { type ReactElement, useEffect, useState } from 'react';
+import { type PointerEventData } from '@cognite/reveal';
 import { queryMappedData } from '../src/components/Reveal3DResources/queryMappedData';
 import { useFdmSdk, useSDK } from '../src/components/RevealContainer/SDKProvider';
 
@@ -62,7 +62,7 @@ export const Main: Story = {
   )
 };
 
-const Querier = ({ fdmConfig }: { fdmConfig: FdmAssetMappingsConfig }) => {
+const Querier = ({ fdmConfig }: { fdmConfig: FdmAssetMappingsConfig }): ReactElement => {
   const viewer = useReveal();
   const sdk = useSDK();
   const fdmClient = useFdmSdk();
@@ -70,14 +70,20 @@ const Querier = ({ fdmConfig }: { fdmConfig: FdmAssetMappingsConfig }) => {
   const [nodeData, setNodeData] = useState<any>(undefined);
 
   useEffect(() => {
-    const callback = async (e: PointerEventData) => {
-      const nodeData = await queryMappedData(viewer, sdk, fdmClient, fdmConfig, e);
-      setNodeData(nodeData);
+    const queryAndSetData = (e: PointerEventData): void => {
+      void (async (e: PointerEventData): Promise<void> => {
+        const nodeData = await queryMappedData(viewer, sdk, fdmClient, fdmConfig, e);
+        setNodeData(nodeData);
+      })(e);
     };
 
-    viewer.on('click', callback);
+    viewer.on('click', (e: PointerEventData) => {
+      queryAndSetData(e);
+    });
 
-    return () => viewer.off('click', callback);
+    return (): void => {
+      viewer.off('click', queryAndSetData);
+    };
   });
 
   return <>Clicked node content: {JSON.stringify(nodeData)}</>;
