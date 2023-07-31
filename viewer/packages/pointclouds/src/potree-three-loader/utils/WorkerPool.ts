@@ -5,7 +5,10 @@ export class AutoTerminatingWorker {
   private terminated: boolean = false;
   private _wrappedWorker: Worker | undefined;
 
-  constructor(wrappedWorker: Worker, private readonly maxIdle: number) {
+  constructor(
+    wrappedWorker: Worker,
+    private readonly maxIdle: number
+  ) {
     this._wrappedWorker = wrappedWorker;
   }
 
@@ -41,7 +44,10 @@ export class WorkerPool<T extends Worker> {
   private readonly pool = new AsyncBlockingQueue<AutoTerminatingWorker>();
   private poolSize = 0;
 
-  constructor(public maxWorkers: number, private readonly workerType: new () => T) {}
+  constructor(
+    public maxWorkers: number,
+    private readonly workerType: new () => T
+  ) {}
 
   /**
    * Returns a worker promise which is resolved when one is available.

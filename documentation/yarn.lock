@@ -182,12 +182,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@azure/msal-browser@npm:2.37.1":
-  version: 2.37.1
-  resolution: "@azure/msal-browser@npm:2.37.1"
+"@azure/msal-browser@npm:2.38.0":
+  version: 2.38.0
+  resolution: "@azure/msal-browser@npm:2.38.0"
   dependencies:
-    "@azure/msal-common": 13.1.0
-  checksum: 920b892bcdbc10f5e736e87363cb5964e48e8dcaf20f777f634308a5bc25550a7b02f62e826c1e3b50212e47e14435f9c3a4f72befc955392f0c4327e62518d0
+    "@azure/msal-common": 13.2.0
+  checksum: 44f5b6e238c29c9986bf4ef419b090b92532987f454ca2c10ecc95e9176f9f6efbafa819b5022bc3c0da38d97704526bb321f2317e30854802ae781ba3366ff1
   languageName: node
   linkType: hard
 
@@ -200,10 +200,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@azure/msal-common@npm:13.1.0":
-  version: 13.1.0
-  resolution: "@azure/msal-common@npm:13.1.0"
-  checksum: db21145f824f02f63a10fa7e1a356445e0c9e945bb1685a964416f1788a89fca165302d990cdfffb7e794b92dac1c90e4934ed018e92056682f863b0eec82587
+"@azure/msal-common@npm:13.2.0":
+  version: 13.2.0
+  resolution: "@azure/msal-common@npm:13.2.0"
+  checksum: 44f4e2c545cd47c7763502ce34bee89cd1c1d8378526606b6af675cfab6ae2254616245b1f0b1621b61697df0d35277398834ad7c44613d56f4a019dd9cd6431
   languageName: node
   linkType: hard
 
@@ -2137,15 +2137,15 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@cognite/reveal-documentation@workspace:."
   dependencies:
-    "@azure/msal-browser": 2.37.1
+    "@azure/msal-browser": 2.38.0
     "@codemirror/lang-javascript": 6.1.9
     "@docusaurus/core": 2.4.1
     "@docusaurus/preset-classic": 2.4.1
     "@docusaurus/remark-plugin-npm2yarn": 2.4.1
     "@types/react": 18.2.12
     "@types/styled-components": 5.1.26
-    "@uiw/codemirror-theme-material": 4.21.7
-    "@uiw/react-codemirror": 4.21.7
+    "@uiw/codemirror-theme-material": 4.21.8
+    "@uiw/react-codemirror": 4.21.8
     clsx: 1.2.1
     copyfiles: 2.4.1
     cross-env: 7.0.3
@@ -3892,9 +3892,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@uiw/codemirror-extensions-basic-setup@npm:4.21.7":
-  version: 4.21.7
-  resolution: "@uiw/codemirror-extensions-basic-setup@npm:4.21.7"
+"@uiw/codemirror-extensions-basic-setup@npm:4.21.8":
+  version: 4.21.8
+  resolution: "@uiw/codemirror-extensions-basic-setup@npm:4.21.8"
   dependencies:
     "@codemirror/autocomplete": ^6.0.0
     "@codemirror/commands": ^6.0.0
@@ -3911,22 +3911,22 @@ __metadata:
     "@codemirror/search": ">=6.0.0"
     "@codemirror/state": ">=6.0.0"
     "@codemirror/view": ">=6.0.0"
-  checksum: c81ccef43396c92049a7bd05fecf6e4f7e1adfaed330892ca472b0d65e1ab919dbdd28475baea833a387547fedbe9c7dcc19b92577e1e8bba42084ee86ab3944
+  checksum: 7e1f7d9bb54908527c6729a526eb942ec133723a60bae23d84fc37cafc153edf4b7935788088641160ed027920abf1b71a178a48a2c10dbdd1e055f5c535b617
   languageName: node
   linkType: hard
 
-"@uiw/codemirror-theme-material@npm:4.21.7":
-  version: 4.21.7
-  resolution: "@uiw/codemirror-theme-material@npm:4.21.7"
+"@uiw/codemirror-theme-material@npm:4.21.8":
+  version: 4.21.8
+  resolution: "@uiw/codemirror-theme-material@npm:4.21.8"
   dependencies:
-    "@uiw/codemirror-themes": 4.21.7
-  checksum: 038a0a9810a334742af7fb379f235eb32209d5992090f07621d488421ce6d7a72ce196c8cda6879f19a6f8dcfcb46a7f0aec69419f883cebc34643ab93dd6cff
+    "@uiw/codemirror-themes": 4.21.8
+  checksum: 5b6f15d39b94d9e31de00d9372e88bf36ff6476a1f1ebcd7398444dd722cb3cc670519aa37809a1fa0adb9df681f8ecdecf9cf441015e4a3c79522813ec51cb9
   languageName: node
   linkType: hard
 
-"@uiw/codemirror-themes@npm:4.21.7":
-  version: 4.21.7
-  resolution: "@uiw/codemirror-themes@npm:4.21.7"
+"@uiw/codemirror-themes@npm:4.21.8":
+  version: 4.21.8
+  resolution: "@uiw/codemirror-themes@npm:4.21.8"
   dependencies:
     "@codemirror/language": ^6.0.0
     "@codemirror/state": ^6.0.0
@@ -3935,19 +3935,19 @@ __metadata:
     "@codemirror/language": ">=6.0.0"
     "@codemirror/state": ">=6.0.0"
     "@codemirror/view": ">=6.0.0"
-  checksum: b6bf80fa0012f577037851c334bb029f8a1eff04146f729430214812abe1bbf480889cbb2e8eaf3829d01c7ffc78d2a9ee1ec67bf6a20e1f5eb286bfb9e81c47
+  checksum: 3dad26d0809e8fe4c5b53ccb2c0cc9366f75a680ba186cc8e16b5e3168295676fbe485c57353fcc76c6c6137bb060c9ee9e52e6952e6bde93e460902609b1fd1
   languageName: node
   linkType: hard
 
-"@uiw/react-codemirror@npm:4.21.7":
-  version: 4.21.7
-  resolution: "@uiw/react-codemirror@npm:4.21.7"
+"@uiw/react-codemirror@npm:4.21.8":
+  version: 4.21.8
+  resolution: "@uiw/react-codemirror@npm:4.21.8"
   dependencies:
     "@babel/runtime": ^7.18.6
     "@codemirror/commands": ^6.1.0
     "@codemirror/state": ^6.1.1
     "@codemirror/theme-one-dark": ^6.0.0
-    "@uiw/codemirror-extensions-basic-setup": 4.21.7
+    "@uiw/codemirror-extensions-basic-setup": 4.21.8
     codemirror: ^6.0.0
   peerDependencies:
     "@babel/runtime": ">=7.11.0"
@@ -3957,7 +3957,7 @@ __metadata:
     codemirror: ">=6.0.0"
     react: ">=16.8.0"
     react-dom: ">=16.8.0"
-  checksum: c4650957d77556f8c2c5b1b072d7b381c7cbec068ff2c744d2891a88d6fb425d520b7b70addc6c82e809326467dcfa913171d62977009faf41be733b079d3e1e
+  checksum: 6a7e8c31a566274af70b456fc7a02cda527e32700ace97375e4c5b942aaea1636cf7e7645e0430176939ed168c5fa38ed82ea944343196a1d304348657911a6e
   languageName: node
   linkType: hard
 
@@ -11442,11 +11442,11 @@ __metadata:
   linkType: hard
 
 "semver@npm:^5.4.1":
-  version: 5.7.1
-  resolution: "semver@npm:5.7.1"
+  version: 5.7.2
+  resolution: "semver@npm:5.7.2"
   bin:
-    semver: ./bin/semver
-  checksum: 57fd0acfd0bac382ee87cd52cd0aaa5af086a7dc8d60379dfe65fea491fb2489b6016400813930ecd61fd0952dae75c115287a1b16c234b1550887117744dfaf
+    semver: bin/semver
+  checksum: fb4ab5e0dd1c22ce0c937ea390b4a822147a9c53dbd2a9a0132f12fe382902beef4fbf12cf51bb955248d8d15874ce8cd89532569756384f994309825f10b686
   languageName: node
   linkType: hard
 
@@ -11459,7 +11459,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver@npm:^7.3.2, semver@npm:^7.3.7":
+"semver@npm:^7.3.2, semver@npm:^7.3.4, semver@npm:^7.3.5, semver@npm:^7.3.7":
   version: 7.3.7
   resolution: "semver@npm:7.3.7"
   dependencies:
@@ -11467,17 +11467,6 @@ __metadata:
   bin:
     semver: bin/semver.js
   checksum: 2fa3e877568cd6ce769c75c211beaed1f9fce80b28338cadd9d0b6c40f2e2862bafd62c19a6cff42f3d54292b7c623277bcab8816a2b5521cf15210d43e75232
-  languageName: node
-  linkType: hard
-
-"semver@npm:^7.3.4, semver@npm:^7.3.5":
-  version: 7.3.5
-  resolution: "semver@npm:7.3.5"
-  dependencies:
-    lru-cache: ^6.0.0
-  bin:
-    semver: bin/semver.js
-  checksum: 5eafe6102bea2a7439897c1856362e31cc348ccf96efd455c8b5bc2c61e6f7e7b8250dc26b8828c1d76a56f818a7ee907a36ae9fb37a599d3d24609207001d60
   languageName: node
   linkType: hard
 
@@ -13337,9 +13326,9 @@ __metadata:
   linkType: hard
 
 "word-wrap@npm:~1.2.3":
-  version: 1.2.3
-  resolution: "word-wrap@npm:1.2.3"
-  checksum: 30b48f91fcf12106ed3186ae4fa86a6a1842416df425be7b60485de14bec665a54a68e4b5156647dec3a70f25e84d270ca8bc8cd23182ed095f5c7206a938c1f
+  version: 1.2.4
+  resolution: "word-wrap@npm:1.2.4"
+  checksum: 8f1f2e0a397c0e074ca225ba9f67baa23f99293bc064e31355d426ae91b8b3f6b5f6c1fc9ae5e9141178bb362d563f55e62fd8d5c31f2a77e3ade56cb3e35bd1
   languageName: node
   linkType: hard
 

@@ -476,8 +476,11 @@ export function Viewer() {
                     new THREE.SphereGeometry(0.1),
                     new THREE.MeshBasicMaterial({ color: 'red' })
                   );
+
                   sphere.position.copy(point);
                   viewer.addObject3D(sphere);
+
+                  pointCloudObjectsUi.createModelAnnotation(point, model);
                 }
               }
               break;
