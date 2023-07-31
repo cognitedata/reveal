@@ -2,15 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { HtmlOverlayTool } from '@cognite/reveal/tools';
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useCallback,
-  useEffect,
-  type JSX
-} from 'react';
+import React, { createContext, useContext, useState, useCallback, type JSX } from 'react';
 
 export const AuxillaryDivProvider = ({ children }: { children: React.ReactNode }): JSX.Element => {
   const [elements, setElements] = useState<JSX.Element[]>([]);

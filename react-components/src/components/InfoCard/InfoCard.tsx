@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import React, { type JSX, useState, useEffect, useRef } from 'react';
+import React, { type JSX, useEffect, useRef } from 'react';
 import { type Vector3 } from 'three';
 
 import { useReveal } from '../RevealContainer/RevealContext';
@@ -24,7 +24,7 @@ export type InfoCardProps = {
 export const InfoCard = ({ position, children, uniqueKey }: InfoCardProps): JSX.Element => {
   const viewer = useReveal();
 
-  const [htmlTool, _setHtmlTool] = useState<HtmlOverlayTool>(new HtmlOverlayTool(viewer));
+  const htmlTool = useRef<HtmlOverlayTool>(new HtmlOverlayTool(viewer));
 
   const auxContext = useAuxillaryDivContext();
 
@@ -49,9 +49,11 @@ export const InfoCard = ({ position, children, uniqueKey }: InfoCardProps): JSX.
 
     const elementRef = htmlRef.current;
 
-    htmlTool.add(elementRef, position);
+    htmlTool.current.add(elementRef, position);
 
-    return () => htmlTool.remove(elementRef);
+    return () => {
+      htmlTool.current.remove(elementRef);
+    };
   }, [auxContext, children, htmlRef.current]);
 
   return <></>;
