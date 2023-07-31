@@ -59,7 +59,7 @@ export const useFdmAssetMappings = (
             modelId,
             revisionId,
             mappings: [
-              { nodeId: mappingProperty.nodeId, externalId: instance.startNode.externalId }
+              { nodeId: mappingProperty.revisionNodeId, externalId: instance.startNode.externalId }
             ]
           });
         } else {
@@ -68,7 +68,7 @@ export const useFdmAssetMappings = (
           );
 
           modelMapping?.mappings.push({
-            nodeId: mappingProperty.nodeId,
+            nodeId: mappingProperty.revisionNodeId,
             externalId: instance.startNode.externalId
           });
         }
