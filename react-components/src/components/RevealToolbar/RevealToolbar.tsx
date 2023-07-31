@@ -45,3 +45,5 @@ export const RevealToolbar = (
 };
 
 RevealToolbar.FitModelsButton = FitModelsButton;
+RevealToolbar.SlicerButton = SlicerButton;
+RevealToolbar.LayersButton = LayersButton;
