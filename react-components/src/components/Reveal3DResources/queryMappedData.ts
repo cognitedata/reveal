@@ -62,7 +62,7 @@ async function getMappingEdges(
           property: [
             fdmConfig.source.space,
             `${fdmConfig.source.externalId}/${fdmConfig.source.version}`,
-            'nodeId'
+            'revisionNodeId'
           ],
           values: ancestorIds
         }
