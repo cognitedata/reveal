@@ -26,23 +26,6 @@ export function useCapabilities<T extends KeysOfSCC>(
     isError: isTokenError,
   } = useQuery(QueryKeys.TOKEN, () => cdfClient.get('/api/v1/token/inspect'));
 
-  const {
-    data: groups,
-    isFetched: isGroupsFetched,
-    isError: isGroupError,
-  } = useQuery(QueryKeys.GROUPS, () => cdfClient.groups.list(), {
-    enabled: !isTokenError,
-  });
-
-  if (isGroupError && isTokenError) {
-    return {
-      isError: true,
-    };
-  }
-
-  const userGroupCapabilities = (groups?.flatMap((gr) => gr.capabilities) ??
-    []) as Combine<Capability>[];
-
   const platypusUserCapabilities = (token?.data.capabilities.filter(
     (cap: { projectScope: { projects: string | string[] } }) =>
       cap.projectScope.projects.includes(tenant)
@@ -52,7 +35,7 @@ export function useCapabilities<T extends KeysOfSCC>(
     checkPermissions(
       aclName,
       platypusUserCapabilities,
-      userGroupCapabilities,
+      [],
       el as CombinedSCC[T]['actions'][0],
       space,
       checkAll
@@ -60,8 +43,8 @@ export function useCapabilities<T extends KeysOfSCC>(
   );
 
   return {
-    isError: isGroupError && isTokenError,
-    isFetched: isTokenFetched && isGroupsFetched,
+    isError: isTokenError,
+    isFetched: isTokenFetched,
     isAclSupported: hasPermissions,
   };
 }

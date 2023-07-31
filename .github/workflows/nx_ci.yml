@@ -211,7 +211,7 @@ jobs:
       - name: Build
         env:
           NODE_OPTIONS: '--max_old_space_size=8192'
-        run: npx nx run ${{ matrix.project }}:build:production
+        run: npx nx run ${{ matrix.project }}:build:${{ matrix.project == 'platypus' && 'fusion' || 'production'}}
 
       - name: 'Authenticate to google cloud'
         id: 'google-auth'
