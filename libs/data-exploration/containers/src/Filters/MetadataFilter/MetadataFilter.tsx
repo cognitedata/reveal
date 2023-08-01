@@ -1,5 +1,6 @@
 import {
   CheckboxSelect,
+  CheckboxSelectProps,
   OptionType,
   CustomMetadataValue,
   OptionSelection,
@@ -42,6 +43,7 @@ export interface MetadataFilterProps<TFilter>
   options: OptionType[];
   onSearchInputChange?: (newValue: string) => void;
   useCustomMetadataValuesQuery?: CustomMetadataValue;
+  menuProps?: CheckboxSelectProps['menuProps'];
 }
 
 export const MetadataFilter = <TFilter,>({

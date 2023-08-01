@@ -5,7 +5,7 @@ import isEmpty from 'lodash/isEmpty';
 import noop from 'lodash/noop';
 import omit from 'lodash/omit';
 
-import { Body, Dropdown, Icon, Title } from '@cognite/cogs.js';
+import { Body, Dropdown, Icon, Title, DropdownProps } from '@cognite/cogs.js';
 
 import {
   EMPTY_ARRAY,
@@ -47,6 +47,7 @@ export interface OptionsMenuProps {
   onSearchInputChange?: (newValue: string) => void;
   disableOptionsMenu?: boolean;
   isLoading?: boolean;
+  placement?: DropdownProps['placement'];
 }
 
 export const OptionsMenu = ({
@@ -60,6 +61,7 @@ export const OptionsMenu = ({
   useCustomMetadataValuesQuery,
   disableOptionsMenu,
   isLoading,
+  placement = 'right-start',
 }: OptionsMenuProps) => {
   const { t } = useTranslation();
 
@@ -111,7 +113,7 @@ export const OptionsMenu = ({
       return (
         <Dropdown
           key={`${option.value}_${index}`}
-          placement="right-start"
+          placement={placement}
           visible={hoverOption && hoverOption?.value === option.value}
           onClickOutside={() => {
             setHoverOption(undefined);
