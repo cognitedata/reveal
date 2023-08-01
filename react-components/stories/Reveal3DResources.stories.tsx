@@ -3,8 +3,8 @@
  */
 import type { Meta, StoryObj } from '@storybook/react';
 import { Reveal3DResources, RevealContainer } from '../src';
-import { Color, Matrix4, Vector3 } from 'three';
-import { CameraController, ViewerAnchor } from '../src/';
+import { Color, Matrix4 } from 'three';
+import { CameraController } from '../src/';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
@@ -105,11 +105,6 @@ export const Main: Story = {
       {
         modelId: 3865289545346058,
         revisionId: 4160448151596909
-      },
-      {
-        modelId: 2551525377383868,
-        revisionId: 2143672450453400,
-        transform: new Matrix4().makeTranslation(-340, -480, 80)
       }
     ],
     styling: {},
@@ -124,9 +119,6 @@ export const Main: Story = {
     }
   },
   render: ({ resources, styling, fdmAssetMappingConfig }) => {
-    const position = new Vector3(50, 30, 50);
-    const position2 = new Vector3(0, 0, 0);
-
     return (
       <RevealContainer
         sdk={sdk}
@@ -143,32 +135,6 @@ export const Main: Story = {
           styling={styling}
           fdmAssetMappingConfig={fdmAssetMappingConfig}
         />
-        <ViewerAnchor position={position} uniqueKey="key2">
-          <p
-            style={{
-              backgroundColor: 'turquoise',
-              borderColor: 'black',
-              borderWidth: '10px',
-              borderStyle: 'solid',
-              maxWidth: '300px',
-              transform: 'translate(-50%, calc(-100% - 50px))'
-            }}>
-            This label is stuck at position {position.toArray().join(',')}
-          </p>
-        </ViewerAnchor>
-        <ViewerAnchor position={position2} uniqueKey="key1">
-          <p
-            style={{
-              backgroundColor: 'red',
-              borderColor: 'black',
-              borderWidth: '10px',
-              borderStyle: 'solid',
-              maxWidth: '300px',
-              transform: 'translate(0px, 0px)'
-            }}>
-            This label is stuck at position {position2.toArray().join(',')}
-          </p>
-        </ViewerAnchor>
         <CameraController
           initialFitCamera={{
             to: 'allModels'

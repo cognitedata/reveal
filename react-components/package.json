@@ -1,6 +1,6 @@
 {
   "name": "@cognite/reveal-react-components",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "exports": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "type": "module",
@@ -18,7 +18,7 @@
   },
   "peerDependencies": {
     "@cognite/cogs.js": ">=9",
-    "@cognite/reveal": "^4.3.1",
+    "@cognite/reveal": "4.4.0",
     "react": ">=18",
     "styled-components": ">=5"
   },
@@ -27,7 +27,7 @@
     "@babel/preset-react": "7.22.5",
     "@babel/preset-typescript": "7.22.5",
     "@cognite/cogs.js": "^9.17.0",
-    "@cognite/reveal": "4.3.4",
+    "@cognite/reveal": "4.4.0",
     "@cognite/sdk": "^8.2.0",
     "@storybook/addon-essentials": "7.1.1",
     "@storybook/addon-interactions": "7.1.1",
