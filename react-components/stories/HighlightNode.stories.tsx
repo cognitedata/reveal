@@ -84,7 +84,7 @@ const Querier = ({ fdmConfig }: { fdmConfig: FdmAssetMappingsConfig }): ReactEle
     return (): void => {
       viewer.off('click', queryAndSetData);
     };
-  });
+  }, [viewer, sdk, fdmClient, fdmConfig]);
 
   return <>Clicked node content: {JSON.stringify(nodeData)}</>;
 };
