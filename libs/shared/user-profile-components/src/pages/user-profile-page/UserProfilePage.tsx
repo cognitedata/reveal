@@ -134,10 +134,14 @@ const ContentSection = styled.div`
   width: 100%;
   display: flex;
   justify-content: center;
+
+  @media (max-width: ${RESPONSIVE_BREAKPOINT}px) {
+    padding: 0;
+    padding-bottom: 32px;
+  }
 `;
 
 const Content = styled.div`
-  padding: 0 12px;
   display: grid;
   gap: 48px;
   grid-template-columns: [start] 264px [one] 1fr [end];
@@ -146,7 +150,7 @@ const Content = styled.div`
   @media (max-width: ${RESPONSIVE_BREAKPOINT}px) {
     display: flex;
     flex-direction: column;
-    gap: 36px;
+    gap: 16px;
   }
 `;
 
@@ -156,4 +160,5 @@ const ProfileTabs = styled.div`
 
 const TabContent = styled.div`
   grid-column: one / end;
+  padding: 0 16px;
 `;

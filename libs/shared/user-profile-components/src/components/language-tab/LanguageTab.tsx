@@ -2,6 +2,7 @@ import { Flex, Select, Title } from '@cognite/cogs.js';
 
 import { DEFAULT_SUPPORTED_LANGUAGES } from '../../common/constants';
 import { Language } from '../../common/types';
+import { useIsScreenWideEnough } from '../../hooks/useIsScreenWideEnough';
 import { OnTrackEvent, languageChangeEvent } from '../../metrics';
 
 type LanguageTabProps = {
@@ -21,6 +22,7 @@ export const LanguageTab = ({
   languageFieldLabel = 'Language',
   onTrackEvent,
 }: LanguageTabProps): JSX.Element => {
+  const isScreenWideEnough = useIsScreenWideEnough();
   const options = supportedLanguages
     .map((language) => ({
       label: language.label,
@@ -30,9 +32,11 @@ export const LanguageTab = ({
 
   return (
     <Flex direction="column" gap={24}>
-      <Flex direction="column" gap={4}>
-        <Title level={4}>{title}</Title>
-      </Flex>
+      {isScreenWideEnough && (
+        <Flex direction="column" gap={4}>
+          <Title level={4}>{title}</Title>
+        </Flex>
+      )}
       <Flex direction="column" gap={24}>
         <Select
           label={languageFieldLabel}
