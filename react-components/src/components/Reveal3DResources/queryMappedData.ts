@@ -100,23 +100,12 @@ async function filterNodeData<NodeType>(
     return undefined;
   }
 
-  const dataQueryResult = await fdmClient.filterAllInstances(
-    {
-      and: [
-        { equals: { property: ['node', 'space'], value: dataNode.space } },
-        {
-          equals: {
-            property: ['node', 'externalId'],
-            value: dataNode.externalId
-          }
-        }
-      ]
-    },
-    'node',
+  const dataQueryResult = await fdmClient.getByExternalIds<NodeType>(
+    [{ instanceType: 'node', ...dataNode }],
     dataView
   );
 
-  return dataQueryResult.edges[0]?.properties[dataView.space]?.[
+  return dataQueryResult.items[0]?.properties[dataView.space]?.[
     `${dataView.externalId}/${dataView.version}`
   ];
 }

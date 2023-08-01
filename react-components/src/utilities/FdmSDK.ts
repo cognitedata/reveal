@@ -51,6 +51,36 @@ export type InspectResultList = {
   }>;
 };
 
+export type ExternalIdsResultList<PropertyType> = {
+  items: Array<{
+    instanceType: InstanceType;
+    version: number;
+    space: string;
+    externalId: string;
+    createdTime: number;
+    lastUpdatedTime: number;
+    deletedTime: number;
+    properties: Record<string, Record<string, PropertyType>>;
+  }>;
+  typing?: Record<
+    string,
+    Record<
+      string,
+      Record<
+        string,
+        {
+          nullable?: boolean;
+          autoIncrement?: boolean;
+          defaultValue?: any;
+          description?: string;
+          name?: string;
+          type: { type: string };
+        }
+      >
+    >
+  >;
+};
+
 export class FdmSDK {
   private readonly _sdk: CogniteClient;
   private readonly _byIdsEndpoint: string;
@@ -116,6 +146,22 @@ export class FdmSDK {
     }
 
     return { edges: mappings.edges };
+  }
+
+  public async getByExternalIds<PropertyType>(
+    queries: { instanceType: InstanceType; externalId: string; space: string }[],
+    source?: Source
+  ): Promise<ExternalIdsResultList<PropertyType>> {
+    const data: any = { items: queries, includeTyping: true };
+    if (source !== null) {
+      data.sources = [{ source }];
+    }
+
+    const result = await this._sdk.post(this._byIdsEndpoint, { data });
+    if (result.status === 200) {
+      return result.data;
+    }
+    throw new Error(`Failed to fetch instances. Status: ${result.status}`);
   }
 
   public async inspectInstances(inspectFilter: InspectFilter): Promise<InspectResultList> {
