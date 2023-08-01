@@ -23,16 +23,16 @@ export {
   type Reveal3DResourcesStyling,
   type FdmAssetStylingGroup
 } from './components/Reveal3DResources/Reveal3DResources';
+export { ViewerAnchor } from './components/ViewerAnchor/ViewerAnchor';
 export { CameraController } from './components/CameraController/CameraController';
 export type {
   AddImageCollection360Options,
   AddResourceOptions,
-  AddReveal3DModelOptions
+  AddReveal3DModelOptions,
+  NodeDataResult
 } from './components/Reveal3DResources/types';
+export type { Source } from './utilities/FdmSDK';
 export { RevealToolbar } from './components/RevealToolbar/RevealToolbar';
-export { LayersButton } from './components/RevealToolbar/LayersButton';
-export { SlicerButton } from './components/RevealToolbar/SlicerButton';
-export { FitModelsButton } from './components/RevealToolbar/FitModelsButton';
 export { useFdmAssetMappings } from './hooks/useFdmAssetMappings';
 export { type FdmAssetMappingsConfig } from './hooks/types';
 export { use3DModelName } from './hooks/use3DModelName';

@@ -1,6 +1,6 @@
 {
   "name": "@cognite/reveal-react-components",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "exports": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "type": "module",
@@ -18,7 +18,7 @@
   },
   "peerDependencies": {
     "@cognite/cogs.js": ">=9",
-    "@cognite/reveal": "^4.3.1",
+    "@cognite/reveal": "4.4.0",
     "react": ">=18",
     "styled-components": ">=5"
   },
@@ -27,14 +27,14 @@
     "@babel/preset-react": "7.22.5",
     "@babel/preset-typescript": "7.22.5",
     "@cognite/cogs.js": "^9.17.0",
-    "@cognite/reveal": "4.3.4",
+    "@cognite/reveal": "4.4.0",
     "@cognite/sdk": "^8.2.0",
-    "@storybook/addon-essentials": "7.1.0",
-    "@storybook/addon-interactions": "7.1.0",
-    "@storybook/addon-links": "7.1.0",
-    "@storybook/blocks": "7.1.0",
-    "@storybook/react": "7.1.0",
-    "@storybook/react-webpack5": "7.1.0",
+    "@storybook/addon-essentials": "7.1.1",
+    "@storybook/addon-interactions": "7.1.1",
+    "@storybook/addon-links": "7.1.1",
+    "@storybook/blocks": "7.1.1",
+    "@storybook/react": "7.1.1",
+    "@storybook/react-webpack5": "7.1.1",
     "@storybook/testing-library": "0.2.0",
     "@tanstack/react-query-devtools": "^4.29.19",
     "@types/lodash": "^4.14.190",
@@ -56,7 +56,8 @@
     "prop-types": "15.8.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "storybook": "7.1.0",
+    "storybook": "7.1.1",
+    "style-loader": "^3.3.3",
     "styled-components": "5.3.11",
     "three": "0.154.0",
     "ts-loader": "9.4.3",
@@ -71,7 +72,6 @@
   ],
   "dependencies": {
     "@tanstack/react-query": "^4.29.19",
-    "lodash": "^4.17.21",
-    "style-loader": "^3.3.3"
+    "lodash": "^4.17.21"
   }
 }

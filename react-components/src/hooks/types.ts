@@ -12,6 +12,11 @@ export type FdmAssetMappingsConfig = {
    * FDM space where model assets are located
    */
   assetFdmSpace: string;
+  /*
+   * Global FDM 3D space
+   * TODO: Remove when the system data model is functional
+   */
+  global3dSpace: string;
 };
 
 export type ThreeDModelMappings = {
