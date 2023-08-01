@@ -47,7 +47,7 @@ export const SearchResultsItem: React.FC<Props> = ({
       <PropertiesContainer>
         {normalizedProperties.map(({ key, value }, index) => (
           <PropertiesContent key={key || index}>
-            <Detail>{key}</Detail>
+            <KeyText>{key}</KeyText>
             <Body strong>{value}</Body>
           </PropertiesContent>
         ))}
@@ -110,4 +110,8 @@ const DescriptionText = styled(Body).attrs({ level: 6 })`
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+`;
+
+const KeyText = styled(Detail)`
+  text-transform: capitalize;
 `;

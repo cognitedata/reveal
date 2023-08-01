@@ -27,7 +27,7 @@ export const useInstancesQuery = ({
     ? { ...model, dataModel: model.externalId }
     : dataModelPathParam;
 
-  return useQuery(
+  const { data, ...rest } = useQuery(
     queryKeys.instance({ dataType, instanceSpace, externalId }),
     async () => {
       if (
@@ -53,4 +53,25 @@ export const useInstancesQuery = ({
       });
     }
   );
+
+  const transformedData = useMemo(() => {
+    if (!data) {
+      return undefined;
+    }
+
+    const fields = client.getTypesByDataType(dataType)?.fields || [];
+
+    return Object.keys(data).reduce((acc, key) => {
+      const field = fields.find(({ name }) => name === key);
+
+      const value = data[key];
+
+      return {
+        ...acc,
+        [field?.displayName || field?.name || key]: value,
+      };
+    }, {} as Record<string, any>);
+  }, [data, client, dataType]);
+
+  return { data: transformedData, rawData: data, ...rest };
 };

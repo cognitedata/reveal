@@ -34,7 +34,9 @@ export const PropertiesView: React.FC<Props> = ({ data, onClick }) => {
         {properties.map(({ key, value }) => {
           return (
             <ListItem key={key}>
-              <Typography.Body size="xsmall">{key}</Typography.Body>
+              <Typography.Body capitalize size="xsmall">
+                {key}
+              </Typography.Body>
               <Typography.Body strong size="medium">
                 {value}
               </Typography.Body>

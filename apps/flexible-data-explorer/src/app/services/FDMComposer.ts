@@ -28,6 +28,16 @@ export class FDMComposer {
     return schema;
   }
 
+  public getTypesByDataType(dataType?: string) {
+    if (!dataType) {
+      return undefined;
+    }
+
+    const types = this.allDataTypes.find((type) => type.name === dataType);
+
+    return types;
+  }
+
   public getDataModelByDataType(dataType: string) {
     const client = this.clients?.find((client) => {
       return client.schema.types.some((type) => type.name === dataType);

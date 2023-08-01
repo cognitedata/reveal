@@ -97,7 +97,9 @@ const Container = styled.div`
   grid-row-gap: 24px;
 `;
 
-const KeyText = styled(Body).attrs({ level: 3 })``;
+const KeyText = styled(Body).attrs({ level: 3 })`
+  text-transform: capitalize;
+`;
 
 // 'Cogs' does not have the option to pass in 'ref', use 'p' until it's fixed
 const ValueText = styled.p.attrs({ strong: true })`

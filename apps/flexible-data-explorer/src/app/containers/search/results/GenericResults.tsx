@@ -1,6 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
 
-import { DataModelTypeDefsType } from '@platypus/platypus-core';
 import { isArray, isObject } from 'lodash';
 import isEmpty from 'lodash/isEmpty';
 import take from 'lodash/take';
@@ -13,6 +12,7 @@ import { EMPTY_ARRAY } from '../../../constants/object';
 import { useNavigation } from '../../../hooks/useNavigation';
 import { useFDM } from '../../../providers/FDMProvider';
 import { useSearchDataTypesQuery } from '../../../services/dataTypes/queries/useSearchDataTypesQuery';
+import { DataModelTypeDefsType } from '../../../services/types';
 import { InstancePreview } from '../../preview/InstancePreview';
 
 import { PAGE_SIZE } from './constants';
@@ -123,7 +123,10 @@ const GenericResultItem: React.FC<Props> = ({ dataType, values, type }) => {
               return acc;
             }
 
-            return [...acc, { key: field.name, value: value }];
+            return [
+              ...acc,
+              { key: field.displayName || field.name, value: value },
+            ];
           }, [] as { key: string; value: string }[]);
 
           return (

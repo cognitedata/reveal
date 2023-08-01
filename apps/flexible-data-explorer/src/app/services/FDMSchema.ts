@@ -59,6 +59,16 @@ export class FDMSchema {
       return {
         ...type,
         ...descriptionTokens,
+        fields: type.fields?.map((field) => {
+          const fieldDescriptionTokens = extractDescriptionTokens(
+            field.description
+          );
+
+          return {
+            ...field,
+            ...fieldDescriptionTokens,
+          };
+        }),
       };
     });
   }
@@ -97,11 +107,12 @@ export class FDMSchema {
     return [
       'String',
       'Int',
+      'Int64',
       'Float',
       'Float32',
+      'Float64',
       'JSONObject',
       'Date',
-      'Float64',
       'Boolean',
       'Timestamp',
     ].includes(type);

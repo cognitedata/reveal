@@ -1,5 +1,4 @@
-import { DataModelTypeDefsType } from '@platypus/platypus-core';
-
+import { DataModelTypeDefsType } from '../../../../../services/types';
 import { DataTypeOption } from '../../../types';
 
 import { transformDefFieldsToFilterFields } from './transformDefFieldsToFilterFields';
