@@ -28,6 +28,7 @@ const getUserProfile = async (client: CogniteClient): Promise<UserProfile> => {
   return response.data;
 };
 
+const RETRY_DELAY_MS = 1000;
 const useUserProfileQuery = () => {
   const sdk = useSDK();
   return useQuery<UserProfile, HttpError>(
@@ -39,6 +40,7 @@ const useUserProfileQuery = () => {
         // we do have access to the Profiles API
         return error.status !== 403;
       },
+      retryDelay: () => RETRY_DELAY_MS,
     }
   );
 };
