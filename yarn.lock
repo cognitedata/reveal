@@ -169,6 +169,13 @@
   dependencies:
     default-browser-id "3.0.0"
 
+"@azure/msal-browser@2.22.0":
+  version "2.22.0"
+  resolved "https://registry.yarnpkg.com/@azure/msal-browser/-/msal-browser-2.22.0.tgz#acb3ef455d8ca7b143c7fde0a638097add11a218"
+  integrity sha512-ZpnbnzjYGRGHjWDPOLjSp47CQvhK927+W9avtLoNNCMudqs2dBfwj76lnJwObDE7TAKmCUueTiieglBiPb1mgQ==
+  dependencies:
+    "@azure/msal-common" "^6.1.0"
+
 "@azure/msal-browser@2.35.0":
   version "2.35.0"
   resolved "https://registry.yarnpkg.com/@azure/msal-browser/-/msal-browser-2.35.0.tgz#39b553f5da140d5d16bf90e0d92f1bcc6f0d61d3"
@@ -187,6 +194,11 @@
   version "12.1.0"
   resolved "https://registry.yarnpkg.com/@azure/msal-common/-/msal-common-12.1.0.tgz#e253a4912a359193c52c570a1e2585cfd0213bff"
   integrity sha512-9RUiv0evSHvYtvF7r9ksShw9FgCeT6Rf6JB/SOMbMzI0VySZDUBSE+0b9e7DgL2Ph8wSARIh3m8c5pCK9TRY3w==
+
+"@azure/msal-common@^6.1.0":
+  version "6.4.0"
+  resolved "https://registry.yarnpkg.com/@azure/msal-common/-/msal-common-6.4.0.tgz#434a55be9639cb5c7910c0cc1a46555ff0bc6c39"
+  integrity sha512-WZdgq9f9O8cbxGzdRwLLMM5xjmLJ2mdtuzgXeiGxIRkVVlJ9nZ6sWnDFKa2TX8j72UXD1IfL0p/RYNoTXYoGfg==
 
 "@azure/msal-common@^9.0.1":
   version "9.0.1"
