@@ -2,13 +2,10 @@
  * Copyright 2023 Cognite AS
  */
 
-import { useEffect, useRef, type ReactElement, type RefObject } from 'react';
-import { type Vector3 } from 'three';
+import { useEffect, useRef, type ReactElement, type RefObject, useState } from 'react';
+import { Vector2, type Vector3 } from 'three';
 
 import { useReveal } from '../RevealContainer/RevealContext';
-
-import { HtmlOverlayTool } from '@cognite/reveal/tools';
-import { useAuxillaryDivContext } from './AuxillaryDivProvider';
 
 export type ViewerAnchorElementMapping = {
   ref: RefObject<HTMLElement>;
@@ -27,38 +24,43 @@ export const ViewerAnchor = ({
   uniqueKey
 }: ViewerAnchorProps): ReactElement => {
   const viewer = useReveal();
+  const [divTranslation, setDivTranslation] = useState(new Vector2());
+  const [visible, setVisible] = useState(false);
 
-  const htmlTool = useRef<HtmlOverlayTool>(new HtmlOverlayTool(viewer));
+  const cameraChanged = (cameraPosition: Vector3, cameraTarget: Vector3): void => {
+    const cameraDirection = cameraTarget.clone().sub(cameraPosition).normalize();
+    const elementDirection = position.clone().sub(cameraPosition).normalize();
 
-  const auxContext = useAuxillaryDivContext();
+    setVisible(elementDirection.dot(cameraDirection) > 0);
+
+    const screenSpacePosition = viewer.worldToScreen(position.clone());
+    if (screenSpacePosition !== null) {
+      setDivTranslation(screenSpacePosition);
+    }
+  };
+
+  useEffect(() => {
+    viewer.cameraManager.on('cameraChange', cameraChanged);
+    return () => {
+      viewer.cameraManager.off('cameraChange', cameraChanged);
+    };
+  }, [cameraChanged]);
 
   const htmlRef = useRef<HTMLDivElement>(null);
-  const element = (
-    <div key={uniqueKey} ref={htmlRef} style={{ position: 'absolute' }}>
+
+  return visible ? (
+    <div
+      key={uniqueKey}
+      ref={htmlRef}
+      style={{
+        position: 'absolute',
+        left: '0px',
+        top: '0px',
+        transform: `translateX(${divTranslation.x}px) translateY(${divTranslation.y}px)`
+      }}>
       {children}
     </div>
+  ) : (
+    <></>
   );
-
-  useEffect(() => {
-    auxContext.addElement(element);
-    return () => {
-      auxContext.removeElement(element);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (htmlRef.current === null) {
-      return;
-    }
-
-    const elementRef = htmlRef.current;
-
-    htmlTool.current.add(elementRef, position);
-
-    return () => {
-      htmlTool.current.remove(elementRef);
-    };
-  }, [auxContext, children, htmlRef.current]);
-
-  return <></>;
 };
