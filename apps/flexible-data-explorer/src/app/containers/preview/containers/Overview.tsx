@@ -10,8 +10,8 @@ import { useFDM } from '../../../providers/FDMProvider';
 import { InstancePreviewHeader, HeaderText } from '../elements';
 import { InstancePreviewProps } from '../types';
 
-import { DirectionRelationshipItem } from './RelationshipDirect';
-import { RelationshipEdgeItem } from './RelationshipEdge';
+import { DirectionRelationshipItem } from './RelationshipDirectView';
+import { RelationshipEdgeItem } from './RelationshipEdgeView';
 
 interface Props extends InstancePreviewProps {
   type?: string;

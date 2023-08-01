@@ -1,9 +1,15 @@
 import React, { useState } from 'react';
 
-import { TimeseriesChart } from '@cognite/plotting-components';
+import { Button } from '@cognite/cogs.js';
+import {
+  TimeseriesChart,
+  DEFAULT_DATE_RANGE,
+} from '@cognite/plotting-components';
 
+import { Dropdown } from '../../components/dropdown/Dropdown';
 import { Spinner } from '../../components/loader/Spinner';
 import { useNavigation } from '../../hooks/useNavigation';
+import { useOpenIn } from '../../hooks/useOpenIn';
 import { useTranslation } from '../../hooks/useTranslation';
 import { useTimeseriesByIdQuery } from '../../services/instances/timeseries/queries/useTimeseriesByIdQuery';
 import { isNumeric } from '../../utils/number';
@@ -33,6 +39,7 @@ const getTimeseriesId = (id: string | number) => {
 export const TimeseriesPreview: React.FC<Props> = ({ id }) => {
   const { t } = useTranslation();
   const { toTimeseriesPage } = useNavigation();
+  const { openInCanvas, openInCharts } = useOpenIn();
 
   const { data, isLoading } = useTimeseriesByIdQuery(id);
 
@@ -40,6 +47,14 @@ export const TimeseriesPreview: React.FC<Props> = ({ id }) => {
 
   const handleOpenClick = () => {
     toTimeseriesPage(id);
+  };
+
+  const handleNavigateToCanvasClick = () => {
+    openInCanvas({ type: 'timeSeries', id: data?.id });
+  };
+
+  const handleNavigateToChartsClick = () => {
+    openInCharts(data?.id, DEFAULT_DATE_RANGE);
   };
 
   const renderContent = () => {
@@ -79,6 +94,15 @@ export const TimeseriesPreview: React.FC<Props> = ({ id }) => {
       <InstancePreviewContent>{renderContent()}</InstancePreviewContent>
 
       <InstancePreviewFooter>
+        <Dropdown.OpenIn
+          placement="top"
+          onChartsClick={handleNavigateToChartsClick}
+          onCanvasClick={handleNavigateToCanvasClick}
+          disabled={isLoading}
+        >
+          <Button icon="EllipsisHorizontal" />
+        </Dropdown.OpenIn>
+
         <OpenButton type="primary" onClick={handleOpenClick}>
           {t('GENERAL_OPEN')}
         </OpenButton>

@@ -239,7 +239,7 @@ const ChartViewPage = () => {
   >();
 
   const calledOnceEffect = useRef(false);
-  const [showSearch, setShowSearch] = useState(true);
+  const [showSearch, setShowSearch] = useState(false);
 
   const [workspaceMode, setWorkspaceMode] = useState<Modes>('workspace');
   const [stackedMode, setStackedMode] = useState<boolean>(false);
@@ -302,10 +302,10 @@ const ChartViewPage = () => {
       return;
     }
     if (isLoading === false) {
-      if (sources.length > 0) {
-        setShowSearch(false);
-        calledOnceEffect.current = true;
+      if (!sources.length) {
+        setShowSearch(true);
       }
+      calledOnceEffect.current = true;
     }
   }, [isLoading, sources]);
 
@@ -1026,27 +1026,29 @@ const ChartViewPage = () => {
         <Toolbar>
           {isMonitoringFeatureEnabled && (
             <div>
-              <Button
-                icon="Bell"
-                aria-label="Toggle alerting sidebar"
-                toggled={showAlertingSidebar}
-                onClick={() => {
-                  if (isAlertingAccessible) {
-                    trackUsage(
-                      `Sidebar.Alerting.${
-                        showAlertingSidebar ? 'Close' : 'Open'
-                      }`
-                    );
-                    if (showAlertingSidebar) {
-                      setAlertingFilter();
+              <Tooltip content={t['Alerting']} position="left">
+                <Button
+                  icon="Bell"
+                  aria-label="Toggle alerting sidebar"
+                  toggled={showAlertingSidebar}
+                  onClick={() => {
+                    if (isAlertingAccessible) {
+                      trackUsage(
+                        `Sidebar.Alerting.${
+                          showAlertingSidebar ? 'Close' : 'Open'
+                        }`
+                      );
+                      if (showAlertingSidebar) {
+                        setAlertingFilter();
+                      }
+                      handleAlertingSidebarToggle();
+                    } else {
+                      trackUsage('Sidebar.Alerting.AccessDenied');
+                      setAccessDeniedModal('alerting');
                     }
-                    handleAlertingSidebarToggle();
-                  } else {
-                    trackUsage('Sidebar.Alerting.AccessDenied');
-                    setAccessDeniedModal('alerting');
-                  }
-                }}
-              />
+                  }}
+                />
+              </Tooltip>
               <NotificationIndicator />
             </div>
           )}
@@ -1077,27 +1079,29 @@ const ChartViewPage = () => {
             />
           </Tooltip>
           {isMonitoringFeatureEnabled && (
-            <Button
-              icon="Alarm"
-              aria-label="Toggle monitoring sidebar"
-              toggled={showMonitoringSidebar}
-              onClick={() => {
-                if (isMonitoringAccessible) {
-                  trackUsage(
-                    `Sidebar.Monitoring.${
-                      showMonitoringSidebar ? 'Close' : 'Open'
-                    }`,
-                    {
-                      accessible: isMonitoringAccessible,
-                    }
-                  );
-                  handleMonitoringSidebarToggle();
-                } else {
-                  trackUsage('Sidebar.Monitoring.AccessDenied');
-                  setAccessDeniedModal('monitoring');
-                }
-              }}
-            />
+            <Tooltip content={t['Monitoring']} position="left">
+              <Button
+                icon="Alarm"
+                aria-label="Toggle monitoring sidebar"
+                toggled={showMonitoringSidebar}
+                onClick={() => {
+                  if (isMonitoringAccessible) {
+                    trackUsage(
+                      `Sidebar.Monitoring.${
+                        showMonitoringSidebar ? 'Close' : 'Open'
+                      }`,
+                      {
+                        accessible: isMonitoringAccessible,
+                      }
+                    );
+                    handleMonitoringSidebarToggle();
+                  } else {
+                    trackUsage('Sidebar.Monitoring.AccessDenied');
+                    setAccessDeniedModal('monitoring');
+                  }
+                }}
+              />
+            </Tooltip>
           )}
         </Toolbar>
       </ChartViewContainer>

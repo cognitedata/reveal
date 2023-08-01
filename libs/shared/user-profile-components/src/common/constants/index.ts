@@ -15,3 +15,5 @@ export const DEFAULT_SUPPORTED_LANGUAGES: Language[] = [
   { code: 'es', label: 'Español, Castellano | es' },
   { code: 'sv', label: 'svenska | sv' },
 ];
+
+export const RESPONSIVE_BREAKPOINT = 720;

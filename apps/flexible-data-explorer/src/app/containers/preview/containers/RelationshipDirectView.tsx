@@ -53,7 +53,9 @@ export const DirectionRelationshipItem: React.FC<
       <Typography.Body size="xsmall" capitalize>
         {type.field}
       </Typography.Body>
-      <Typography.Title size="xsmall">{data?.name}</Typography.Title>
+      <Typography.Title size="xsmall">
+        {data?.name || data?.externalId}
+      </Typography.Title>
     </Container>
   );
 };

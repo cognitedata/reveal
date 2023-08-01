@@ -1,3 +1,9 @@
+## 1.0.2 Jul 31 2023
+
+### Fixed
+
+- Export the 'constants.ts' file from the 'TimeseriesChart' component
+
 ## 1.0.1 Jul 24 2023
 
 ### Fixed

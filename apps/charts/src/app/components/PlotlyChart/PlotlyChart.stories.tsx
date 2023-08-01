@@ -4,6 +4,7 @@ import PlotlyChart from './PlotlyChart';
 import {
   plotExamplePropsWithAggregatedData,
   plotExamplePropsWithRawData,
+  plotExamplePropsWithEventsData,
 } from './PlotlyChart.mocks';
 
 type Props = React.ComponentProps<typeof PlotlyChart>;
@@ -29,3 +30,7 @@ AggregatedDataPlot.args = plotExamplePropsWithAggregatedData as Props;
 export const RawDataPlot = Template.bind({});
 
 RawDataPlot.args = plotExamplePropsWithRawData as Props;
+
+export const EventDataPlots = Template.bind({});
+
+EventDataPlots.args = plotExamplePropsWithEventsData as Props;

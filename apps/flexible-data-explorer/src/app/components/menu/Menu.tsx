@@ -11,3 +11,4 @@ export const Menu = (props: ComponentProps<typeof DefaultMenu>) => {
 
 Menu.OpenInCanvas = MenuItemOpenInCanvas;
 Menu.OpenInCharts = MenuItemOpenInCharts;
+Menu.Header = DefaultMenu.Header;

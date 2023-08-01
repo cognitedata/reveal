@@ -1,5 +1,4 @@
-import { DataModelTypeDefsFieldType } from '@platypus/platypus-core';
-
+import { DataModelTypeDefsFieldType } from '../../../../../services/types';
 import { FieldType } from '../../../types';
 
 export const getFieldType = ({

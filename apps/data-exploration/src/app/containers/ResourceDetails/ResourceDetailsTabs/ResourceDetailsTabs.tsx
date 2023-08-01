@@ -76,7 +76,7 @@ const ResourceDetailTabContent = ({
       type={type}
       parentResource={resource}
       onItemClicked={(id: number) => {
-        pushJourney({ id, type });
+        pushJourney({ id, type, initialTab: type });
       }}
       onParentAssetClick={handleParentAssetClicked}
       selectionMode={mode}

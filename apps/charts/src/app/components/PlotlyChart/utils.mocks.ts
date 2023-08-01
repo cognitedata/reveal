@@ -5,7 +5,9 @@ import {
   ChartWorkflow,
   Interpolation,
   LineStyle,
+  ScheduledCalculation,
 } from '@charts-app/models/chart/types';
+import { ScheduledCalculationsDataMap } from '@charts-app/models/scheduled-calculation-results/types';
 import { TimeseriesEntry } from '@charts-app/models/timeseries-results/types';
 
 import { SeriesData } from './utils';
@@ -196,6 +198,8 @@ export const calculateSeriesDataCase1: {
     thresholds: ChartThreshold[];
     timeseriesData: TimeseriesEntry[];
     calculationsData: WorkflowState[];
+    scheduledCalculations: ScheduledCalculation[];
+    scheduledCalculationsData: ScheduledCalculationsDataMap;
     mergeUnits: boolean;
   };
   result: SeriesData[];
@@ -3666,6 +3670,8 @@ export const calculateSeriesDataCase1: {
       },
     ],
     mergeUnits: false,
+    scheduledCalculations: [],
+    scheduledCalculationsData: {},
   },
   result: [
     {
@@ -7058,6 +7064,8 @@ export const calculateSeriesDataCase1: {
     thresholds: ChartThreshold[];
     timeseriesData: TimeseriesEntry[];
     calculationsData: WorkflowState[];
+    scheduledCalculations: ScheduledCalculation[];
+    scheduledCalculationsData: ScheduledCalculationsDataMap;
     mergeUnits: boolean;
   };
   result: SeriesData[];
@@ -7070,6 +7078,8 @@ export const calculateSeriesDataCase2: {
     thresholds: ChartThreshold[];
     timeseriesData: TimeseriesEntry[];
     calculationsData: WorkflowState[];
+    scheduledCalculations: ScheduledCalculation[];
+    scheduledCalculationsData: ScheduledCalculationsDataMap;
     mergeUnits: boolean;
   };
   result: SeriesData[];
@@ -9339,6 +9349,8 @@ export const calculateSeriesDataCase2: {
         isDownsampled: false,
       },
     ],
+    scheduledCalculations: [],
+    scheduledCalculationsData: {},
     mergeUnits: true,
   },
   result: [
@@ -11511,6 +11523,8 @@ export const calculateSeriesDataCase2: {
     thresholds: ChartThreshold[];
     timeseriesData: TimeseriesEntry[];
     calculationsData: WorkflowState[];
+    scheduledCalculations: ScheduledCalculation[];
+    scheduledCalculationsData: ScheduledCalculationsDataMap;
     mergeUnits: boolean;
   };
   result: SeriesData[];
@@ -11523,6 +11537,8 @@ export const calculateSeriesDataCase3: {
     thresholds: ChartThreshold[];
     timeseriesData: TimeseriesEntry[];
     calculationsData: WorkflowState[];
+    scheduledCalculations: ScheduledCalculation[];
+    scheduledCalculationsData: ScheduledCalculationsDataMap;
     mergeUnits: boolean;
   };
   result: SeriesData[];
@@ -13794,6 +13810,8 @@ export const calculateSeriesDataCase3: {
         isDownsampled: false,
       },
     ],
+    scheduledCalculations: [],
+    scheduledCalculationsData: {},
     mergeUnits: true,
   },
   result: [
@@ -15974,6 +15992,8 @@ export const calculateSeriesDataCase3: {
     thresholds: ChartThreshold[];
     timeseriesData: TimeseriesEntry[];
     calculationsData: WorkflowState[];
+    scheduledCalculations: ScheduledCalculation[];
+    scheduledCalculationsData: ScheduledCalculationsDataMap;
     mergeUnits: boolean;
   };
   result: SeriesData[];

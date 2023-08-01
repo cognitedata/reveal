@@ -39,9 +39,7 @@ export const DetailsItem = ({
   return (
     <Container>
       <DetailsItemContainer>
-        <Body level={2} strong>
-          {name}
-        </Body>
+        <KeyText>{name}</KeyText>
 
         <Spacer />
 
@@ -124,4 +122,8 @@ const ButtonWrapper = styled.div<{ visible?: boolean }>`
   justify-content: center;
   align-items: center;
   visibility: ${({ visible }) => (visible ? 'unset' : 'hidden')};
+`;
+
+const KeyText = styled(Body).attrs({ level: 2, strong: true })`
+  text-transform: capitalize;
 `;

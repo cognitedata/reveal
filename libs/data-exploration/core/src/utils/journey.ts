@@ -54,7 +54,10 @@ const getResourceTypeFromJourneyItemType = (
 
 export const getStringFromJourneyItem = (item: JourneyItem): string => {
   const itemType = getJourneyItemTypeFromResourceType(item.type);
-  return `${itemType}${JOURNEY_ITEM_SEPARATOR}${item.id}`;
+  const initialTab = item.initialTab
+    ? `${JOURNEY_ITEM_SEPARATOR}${item.initialTab}`
+    : '';
+  return `${itemType}${JOURNEY_ITEM_SEPARATOR}${item.id}${initialTab}`;
 };
 
 export const getJourneyItemFromString = (item: string): JourneyItem => {
@@ -62,6 +65,7 @@ export const getJourneyItemFromString = (item: string): JourneyItem => {
   return {
     type: getResourceTypeFromJourneyItemType(rawItem[0]),
     id: Number(rawItem[1]),
+    initialTab: rawItem.length > 1 ? rawItem[2] : undefined,
   };
 };
 

@@ -435,11 +435,7 @@ export const DataPreviewTable = forwardRef<
 
         const newSidebarData: DataPreviewSidebarData = {
           fieldName: field,
-          instanceExternalId:
-            fieldType.type.custom ||
-            nonPrimitiveTypes.includes(fieldType.type.name)
-              ? currValue.externalId
-              : externalId,
+          instanceExternalId: externalId,
           instanceSpace,
           isList: Boolean(fieldType.type.list),
           json: fieldType.type.name === 'JSONObject' ? currValue : undefined,

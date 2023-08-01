@@ -4,10 +4,8 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { resourceItemToContainerReference } from '@fusion/industry-canvas';
 import queryString from 'query-string';
 
-// TODO: move these in fdx?
-import { ResourceItem } from '@data-exploration-lib/core';
-
 import { DateRange, ValueByDataType } from '../containers/Filter';
+import { ResourceItem } from '../types';
 import { createSearchParams } from '../utils/router';
 
 import { useGetChartsUrl, useGetCanvasUrl } from './useUrl';
@@ -166,11 +164,11 @@ export const useNavigation = () => {
     navigate('/');
   }, [navigate]);
 
-  const toCharts = (timeseriesId: number, dateRange: DateRange) => {
+  const toCharts = (timeseriesId: number, dateRange?: DateRange) => {
     const queryObj = {
       timeserieIds: timeseriesId,
-      startTime: dateRange[0].getTime(),
-      endTime: dateRange[1].getTime(),
+      startTime: dateRange ? dateRange[0].getTime() : undefined,
+      endTime: dateRange ? dateRange[1].getTime() : undefined,
     };
     const query = queryString.stringify(queryObj);
 
@@ -178,8 +176,9 @@ export const useNavigation = () => {
   };
 
   const toCanvas = (item: ResourceItem) => {
+    // Fix the 'any'...
     const initializeWithContainerReferences = btoa(
-      JSON.stringify([resourceItemToContainerReference(item)])
+      JSON.stringify([resourceItemToContainerReference(item as any)])
     );
 
     const query = queryString.stringify({

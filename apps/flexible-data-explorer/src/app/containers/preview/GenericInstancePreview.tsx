@@ -7,7 +7,7 @@ import { useInstancesQuery } from '../../services/instances/generic/queries/useI
 
 import { Overview } from './containers/Overview';
 import { PropertiesView } from './containers/PropertiesView';
-import { RelationshipEdgeView } from './containers/RelationshipEdge';
+import { RelationshipEdgeView } from './containers/RelationshipEdgeView';
 import {
   InstancePreviewContainer,
   InstancePreviewContent,

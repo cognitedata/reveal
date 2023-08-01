@@ -780,19 +780,40 @@ export function generateLayout({
    * Display event shapes
    */
 
+  const chartRange = dayjs(dateTo).diff(dayjs(dateFrom), 'millisecond');
+  const dateFromMillis = new Date(dateFrom).getTime();
+  const dateToMillis = new Date(dateTo).getTime();
+  const PIXEL_RATIO_THRESHOLD = 0.003;
+
   if (eventData.length) {
     eventData.forEach((eventSet: ChartEventResults) => {
       const shapeColor = eventSet.color || DEFAULT_EVENT_COLOR;
       const isEventFilterValid = !!Object.keys(eventSet.filters).length;
       const { isLoading } = eventSet;
 
-      const showEvent = !isLoading && isEventFilterValid && eventSet.visible;
-
       (eventSet.results || []).forEach((eventItem: CogniteEvent) => {
-        const { startTime, endTime } = eventItem;
+        const { startTime } = eventItem;
+        if (!startTime) return;
+
+        const endTime = eventItem.endTime ? eventItem.endTime : startTime;
+
+        const startTimeMillis =
+          startTime instanceof Date ? startTime.getTime() : startTime;
+        const endTimeMillis =
+          endTime instanceof Date ? endTime.getTime() : endTime;
+
+        const showEvent =
+          !isLoading &&
+          isEventFilterValid &&
+          eventSet.visible &&
+          ((startTimeMillis >= dateFromMillis &&
+            startTimeMillis <= dateToMillis) ||
+            (endTimeMillis >= dateFromMillis && endTimeMillis <= dateToMillis));
 
         const eventSelected = isEventSelected(storedSelectedEvents, eventItem);
         const eventDuration = Number(endTime) - Number(startTime);
+        const screenPixelRatio = eventDuration / chartRange;
+
         const nonZeroDurationEvent = [
           {
             // Event rect left border
@@ -874,8 +895,8 @@ export function generateLayout({
             visible: showEvent,
             xref: 'x0',
             yref: `paper`,
-            x0: endTime,
-            x1: endTime,
+            x0: startTime,
+            x1: startTime,
             y0: 0,
             y1: 1,
             type: 'line',
@@ -885,9 +906,13 @@ export function generateLayout({
             },
           },
         ];
-        (layout.shapes as any[]).push(
-          ...(eventDuration >= 0 ? nonZeroDurationEvent : zeroDurationEvent)
-        );
+
+        const shape =
+          screenPixelRatio < PIXEL_RATIO_THRESHOLD
+            ? zeroDurationEvent
+            : nonZeroDurationEvent;
+
+        (layout.shapes as any[]).push(...shape);
       });
     });
   }
