@@ -26,7 +26,6 @@ import {
   Pagination,
   Skeleton,
 } from '@cognite/cogs.js';
-import { useSDK } from '@cognite/sdk-provider';
 import { useGetModelFileListV2Query } from '@cognite/simconfig-api-sdk/rtk';
 
 import { LabelsFilter } from './LabelsFilter';
