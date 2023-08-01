@@ -14,6 +14,7 @@ export type FdmAssetMappingsConfig = {
   assetFdmSpace: string;
   /*
    * Global FDM 3D space
+   * TODO: Remove when the system data model is functional
    */
   global3dSpace: string;
 };
