@@ -57,6 +57,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "storybook": "7.1.1",
+    "style-loader": "^3.3.3",
     "styled-components": "5.3.11",
     "three": "0.154.0",
     "ts-loader": "9.4.3",
@@ -71,7 +72,6 @@
   ],
   "dependencies": {
     "@tanstack/react-query": "^4.29.19",
-    "lodash": "^4.17.21",
-    "style-loader": "^3.3.3"
+    "lodash": "^4.17.21"
   }
 }
