@@ -3,7 +3,7 @@
  */
 
 import { type CogniteClient } from '@cognite/sdk';
-import { FdmPropertyType } from '../components/Reveal3DResources/types';
+import { type FdmPropertyType } from '../components/Reveal3DResources/types';
 
 type InstanceType = 'node' | 'edge';
 

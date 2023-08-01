@@ -10,10 +10,10 @@ import {
   type FdmSDK,
   type DmsUniqueIdentifier,
   type Source,
-  FdmNode
+  type FdmNode
 } from '../../utilities/FdmSDK';
 import { type FdmAssetMappingsConfig } from '../../hooks/types';
-import { type FdmPropertyType, type NodeDataResult } from './types';
+import { type NodeDataResult } from './types';
 import assert from 'assert';
 
 export async function queryMappedData<NodeType>(

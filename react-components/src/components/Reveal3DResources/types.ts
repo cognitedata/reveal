@@ -8,7 +8,7 @@ import {
   type SupportedModelTypes
 } from '@cognite/reveal';
 import { type Matrix4 } from 'three';
-import { FdmNode, type Source } from '../../utilities/FdmSDK';
+import { type FdmNode, type Source } from '../../utilities/FdmSDK';
 import { type Node3D } from '@cognite/sdk/dist/src';
 
 export type AddImageCollection360Options = {
