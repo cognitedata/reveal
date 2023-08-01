@@ -3,6 +3,7 @@
  */
 
 import { type CogniteClient } from '@cognite/sdk';
+import { FdmPropertyType } from '../components/Reveal3DResources/types';
 
 type InstanceType = 'node' | 'edge';
 
@@ -51,17 +52,19 @@ export type InspectResultList = {
   }>;
 };
 
+export type FdmNode<PropertyType> = {
+  instanceType: InstanceType;
+  version: number;
+  space: string;
+  externalId: string;
+  createdTime: number;
+  lastUpdatedTime: number;
+  deletedTime: number;
+  properties: FdmPropertyType<PropertyType>;
+};
+
 export type ExternalIdsResultList<PropertyType> = {
-  items: Array<{
-    instanceType: InstanceType;
-    version: number;
-    space: string;
-    externalId: string;
-    createdTime: number;
-    lastUpdatedTime: number;
-    deletedTime: number;
-    properties: Record<string, Record<string, PropertyType>>;
-  }>;
+  items: Array<FdmNode<PropertyType>>;
   typing?: Record<
     string,
     Record<

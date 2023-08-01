@@ -9,7 +9,8 @@ import {
   type InspectResultList,
   type FdmSDK,
   type DmsUniqueIdentifier,
-  type Source
+  type Source,
+  FdmNode
 } from '../../utilities/FdmSDK';
 import { type FdmAssetMappingsConfig } from '../../hooks/types';
 import { type FdmPropertyType, type NodeDataResult } from './types';
@@ -69,7 +70,7 @@ export async function queryMappedData<NodeType>(
   }
 
   return {
-    data: nodeData as FdmPropertyType<NodeType>,
+    data: nodeData,
     view: dataView,
     cadNode: selectedNode,
     model: cadIntersection.model
@@ -157,7 +158,7 @@ async function filterNodeData<NodeType>(
   fdmClient: FdmSDK,
   dataNode: DmsUniqueIdentifier,
   dataView: Source
-): Promise<NodeType | undefined> {
+): Promise<FdmNode<NodeType> | undefined> {
   if (dataView === undefined) {
     return undefined;
   }
@@ -167,7 +168,5 @@ async function filterNodeData<NodeType>(
     dataView
   );
 
-  return dataQueryResult.items[0]?.properties[dataView.space]?.[
-    `${dataView.externalId}/${dataView.version}`
-  ];
+  return dataQueryResult.items[0];
 }
