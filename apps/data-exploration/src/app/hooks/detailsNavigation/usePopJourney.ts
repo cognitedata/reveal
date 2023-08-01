@@ -12,6 +12,14 @@ export const usePopJourney = (): [Journey, () => JourneyItem | undefined] => {
   const popJourney = useCallback(() => {
     const lastItem = journey?.pop();
     if (lastItem !== undefined) {
+      if (lastItem.initialTab && journey) {
+        const lastJourneyItem = journey.pop();
+        lastJourneyItem &&
+          journey.push({
+            ...lastJourneyItem,
+            selectedTab: lastItem.initialTab,
+          });
+      }
       setJourneySearchParam(journey);
     }
 
