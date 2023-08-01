@@ -68,9 +68,12 @@ const StoryContent = ({
 }): ReactElement => {
   const [nodeData, setNodeData] = useState<any>();
 
+  const [highlightedId, setHighlightedId] = useState<string>('');
+
   const callback = (nodeData: NodeDataResult<any>): void => {
     setNodeData(nodeData.data);
 
+    setHighlightedId(nodeData.data.externalId);
     nodeData.model.assignStyledNodeCollection(
       new TreeIndexNodeCollection([nodeData.cadNode.treeIndex]),
       DefaultNodeAppearance.Highlighted
@@ -81,6 +84,17 @@ const StoryContent = ({
     <>
       <Reveal3DResources
         resources={resources}
+        styling={{
+          groups:
+            highlightedId.length === 0
+              ? undefined
+              : [
+                  {
+                    fdmAssetExternalIds: [highlightedId],
+                    style: { cad: DefaultNodeAppearance.Highlighted }
+                  }
+                ]
+        }}
         fdmAssetMappingConfig={fdmAssetMappingConfig}
         onNodeClick={callback}
       />
