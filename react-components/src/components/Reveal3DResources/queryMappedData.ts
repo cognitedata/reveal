@@ -3,7 +3,7 @@
  */
 
 import { type Cognite3DViewer, type PointerEventData, type CogniteCadModel } from '@cognite/reveal';
-import { type CogniteInternalId, type CogniteClient, Node3D } from '@cognite/sdk';
+import { type CogniteInternalId, type CogniteClient, type Node3D } from '@cognite/sdk';
 import {
   type EdgeItem,
   type InspectResultList,
@@ -12,7 +12,8 @@ import {
   type Source
 } from '../../utilities/FdmSDK';
 import { type FdmAssetMappingsConfig } from '../../hooks/types';
-import { FdmPropertyType, type NodeDataResult } from './types';
+import { type FdmPropertyType, type NodeDataResult } from './types';
+import assert from 'assert';
 
 export async function queryMappedData<NodeType>(
   viewer: Cognite3DViewer,
@@ -52,6 +53,8 @@ export async function queryMappedData<NodeType>(
       `${fdmConfig.source.externalId}/${fdmConfig.source.version}`
     ].revisionNodeId;
   const selectedNode = ancestors.find((n) => n.id === selectedNodeId);
+  assert(selectedNode !== undefined);
+
   const dataNode = selectedEdge.startNode;
 
   const inspectionResult = await inspectNode(fdmClient, dataNode);
@@ -68,7 +71,7 @@ export async function queryMappedData<NodeType>(
   return {
     data: nodeData as FdmPropertyType<NodeType>,
     view: dataView,
-    cadNode: selectedNode!,
+    cadNode: selectedNode,
     model: cadIntersection.model
   };
 }

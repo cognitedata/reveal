@@ -4,28 +4,16 @@
 
 import type { Meta, StoryObj } from '@storybook/react';
 import {
-  CadModelContainer,
   type FdmAssetMappingsConfig,
   RevealContainer,
   RevealToolbar,
-  useReveal,
   Reveal3DResources,
-  NodeDataResult,
-  Reveal3DResourcesProps,
-  AddResourceOptions
+  type NodeDataResult,
+  type AddResourceOptions
 } from '../src';
-import { CogniteClient } from '@cognite/sdk';
 import { Color, Matrix4 } from 'three';
-import { type ReactElement, useEffect, useState } from 'react';
-import {
-  CogniteCadModel,
-  DefaultNodeAppearance,
-  NodeIdNodeCollection,
-  TreeIndexNodeCollection,
-  type PointerEventData
-} from '@cognite/reveal';
-import { queryMappedData } from '../src/components/Reveal3DResources/queryMappedData';
-import { useFdmSdk, useSDK } from '../src/components/RevealContainer/SDKProvider';
+import { type ReactElement, useState } from 'react';
+import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@cognite/reveal';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 
 const DefaultFdmConfig: FdmAssetMappingsConfig = {
@@ -77,10 +65,10 @@ const StoryContent = ({
 }: {
   resources: AddResourceOptions[];
   fdmAssetMappingConfig: FdmAssetMappingsConfig;
-}) => {
+}): ReactElement => {
   const [nodeData, setNodeData] = useState<any>();
 
-  const callback = (nodeData: NodeDataResult<any>) => {
+  const callback = (nodeData: NodeDataResult<any>): void => {
     setNodeData(nodeData.data);
 
     nodeData.model.assignStyledNodeCollection(

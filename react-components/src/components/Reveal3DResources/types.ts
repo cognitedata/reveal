@@ -2,10 +2,14 @@
  * Copyright 2023 Cognite AS
  */
 
-import { CogniteCadModel, type AddModelOptions, type SupportedModelTypes } from '@cognite/reveal';
+import {
+  type CogniteCadModel,
+  type AddModelOptions,
+  type SupportedModelTypes
+} from '@cognite/reveal';
 import { type Matrix4 } from 'three';
 import { type Source } from '../../utilities/FdmSDK';
-import { Node3D } from '@cognite/sdk/dist/src';
+import { type Node3D } from '@cognite/sdk/dist/src';
 
 export type AddImageCollection360Options = {
   siteId: string;

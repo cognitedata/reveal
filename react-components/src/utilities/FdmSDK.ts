@@ -149,7 +149,7 @@ export class FdmSDK {
   }
 
   public async getByExternalIds<PropertyType>(
-    queries: { instanceType: InstanceType; externalId: string; space: string }[],
+    queries: Array<{ instanceType: InstanceType; externalId: string; space: string }>,
     source?: Source
   ): Promise<ExternalIdsResultList<PropertyType>> {
     const data: any = { items: queries, includeTyping: true };
