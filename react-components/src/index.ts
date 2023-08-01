@@ -28,8 +28,10 @@ export { CameraController } from './components/CameraController/CameraController
 export type {
   AddImageCollection360Options,
   AddResourceOptions,
-  AddReveal3DModelOptions
+  AddReveal3DModelOptions,
+  NodeDataResult
 } from './components/Reveal3DResources/types';
+export type { Source } from './utilities/FdmSDK';
 export { RevealToolbar } from './components/RevealToolbar/RevealToolbar';
 export { useFdmAssetMappings } from './hooks/useFdmAssetMappings';
 export { type FdmAssetMappingsConfig } from './hooks/types';
