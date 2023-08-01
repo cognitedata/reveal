@@ -49,8 +49,6 @@ export const retrieveContext = async (
   sdk: CogniteClient,
   model: string = 'ada' || 'vectorstore'
 ) => {
-  console.log('Retrieving context for query: ' + query);
-
   const response = await sdk.post(
     `/api/v1/projects/${sdk.project}/vectorstore/query`,
     {

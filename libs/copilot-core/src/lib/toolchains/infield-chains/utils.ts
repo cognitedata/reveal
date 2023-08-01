@@ -45,7 +45,7 @@ export function prepareSources(sourceList: sourceResponse[]) {
   for (let i = 0; i < sourceList.length; i++) {
     let page;
     try {
-      page = parseInt(sourceList[i].page) + 1;
+      page = parseInt(sourceList[i].page);
     } catch (e) {
       page = sourceList[i].page;
     }
@@ -72,7 +72,6 @@ export function prepareSources(sourceList: sourceResponse[]) {
     sourceString += `${i + 1}. ${sourceList[i].source} [Page: ${page}] \n`;
   }
 
-  console.log(sourceString);
   return { sourceString: sourceString, openDocActionList: openDocActionList };
 }
 
@@ -82,7 +81,7 @@ export const prepareRelevantSoruces = (queryContext: queryResponse) => {
     .map(
       (s, i) =>
         `${i + 1}. ${s.metadata.source} [Page: ${
-          (parseInt(s.metadata.page) || 0) + 1
+          parseInt(s.metadata.page) || 1
         }]`
     )
     .join('\n');
@@ -94,7 +93,7 @@ export const prepareRelevantSoruces = (queryContext: queryResponse) => {
           'PUSH_DOC_ID_AND_PAGE',
           {
             docId: s.metadata.fileId,
-            page: String((parseInt(s.metadata.page) || 0) + 1) || '1',
+            page: String(parseInt(s.metadata.page) || 1) || '1',
           },
         ],
       } as CopilotAction)
@@ -159,7 +158,6 @@ export const summarizeAssetProps = (chain: CogniteBaseChain, asset: Asset) => {
   } catch (error) {
     metadataString = '';
   }
-  console.log(metadataString);
 
   return (
     'Name: ' +

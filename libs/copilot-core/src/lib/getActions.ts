@@ -26,47 +26,7 @@ export const getActions = async (
         },
       ];
     case 'Infield':
-      return [
-        {
-          content: 'Test 1',
-          toCopilotEvent: [
-            'NEW_MESSAGES',
-            [
-              {
-                content: 'What is this asset?',
-                type: 'text',
-                source: 'user',
-              },
-            ],
-          ],
-        },
-        {
-          content: 'Test 2',
-          toCopilotEvent: [
-            'NEW_MESSAGES',
-            [
-              {
-                content: 'What is the weight?',
-                type: 'text',
-                source: 'user',
-              },
-            ],
-          ],
-        },
-        {
-          content: 'Test 3',
-          toCopilotEvent: [
-            'NEW_MESSAGES',
-            [
-              {
-                content: 'What is the x-3456-jdsfdsfsd of this asset?',
-                type: 'text',
-                source: 'user',
-              },
-            ],
-          ],
-        },
-      ];
+      return [];
     default: {
       return [];
     }

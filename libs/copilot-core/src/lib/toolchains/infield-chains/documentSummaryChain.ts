@@ -40,8 +40,6 @@ export class DocumentSummaryChain extends CogniteBaseChain {
         const language = langTrans.language;
         const input = langTrans.translation;
 
-        console.log({ language, input, message });
-
         sendToCopilotEvent('LOADING_STATUS', {
           status: 'Retrieving information...',
         });
@@ -52,7 +50,6 @@ export class DocumentSummaryChain extends CogniteBaseChain {
           sdk,
           'vectorstore' // 'ada' or 'vectorstore' embedding
         );
-        console.log(queryContext);
 
         sendToCopilotEvent('LOADING_STATUS', {
           status: 'Preparing an answer...',
@@ -71,7 +68,6 @@ export class DocumentSummaryChain extends CogniteBaseChain {
             },
           ])
         )[0];
-        console.log(`Refined response ${0}: ` + refinedResponse);
 
         // Safely determining number of documents to query
         const numDocuments = Math.min(queryContext.items.length, 5);
@@ -91,7 +87,6 @@ export class DocumentSummaryChain extends CogniteBaseChain {
               { timeout: 5000 }
             )
           )[0];
-          console.log(`Refined response ${i + 1}: ` + refinedResponse);
         }
 
         // Return a list of the top 3 sources used to find the answer
@@ -114,7 +109,9 @@ export class DocumentSummaryChain extends CogniteBaseChain {
           {
             source: 'bot',
             type: 'text',
-            content: refinedResponse,
+            content:
+              refinedResponse +
+              `\n &nbsp; \n*(Asset: ${externalAssetIdGlobal})*`,
             actions: [
               {
                 content: 'Source',
