@@ -49,7 +49,7 @@ export const useDataProfiling = (
     data: callStatus,
     error: callStatusError,
     isFetching: isFetchingCallStatus,
-    isLoading: isLoadingCallstatus,
+    isInitialLoading: isInitialLoadingCallstatus,
   } = useQuery({
     queryKey: ['data_profiling', 'status', dataProfilingCall?.callId],
     queryFn: async () => {
@@ -217,7 +217,7 @@ export const useDataProfiling = (
     results: dataProfilingData?.results,
     error: dataProfilingData?.error,
     status:
-      isFetchingCallStatus || isLoadingCallstatus
+      isInitialLoadingCallstatus || isFetchingCallStatus
         ? StatusStatusEnum.Running
         : callStatus?.status,
   };

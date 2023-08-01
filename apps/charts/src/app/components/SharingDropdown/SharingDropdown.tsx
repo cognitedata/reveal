@@ -91,6 +91,7 @@ const SharingDropdown = ({
             </SharingSwitchContainer>
             <ShareLinkContainer>
               <ShareLink
+                fullWidth
                 variant="default"
                 value={shareableLink}
                 disabled={!chart.public}
@@ -100,7 +101,12 @@ const SharingDropdown = ({
                 value={shareableLink}
                 type="primary"
                 iconPlacement="right"
-                style={{ color: Colors['text-icon--on-contrast--strong'] }}
+                style={{
+                  color: chart.public
+                    ? Colors['decorative--grayscale--white']
+                    : Colors['decorative--grayscale--600'],
+                  flexShrink: 0,
+                }}
                 disabled={!chart.public}
               >
                 {t['Copy link']}

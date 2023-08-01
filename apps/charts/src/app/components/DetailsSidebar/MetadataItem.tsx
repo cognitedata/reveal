@@ -3,7 +3,7 @@ import { useState } from 'react';
 import styled from 'styled-components/macro';
 
 import { createLink } from '@cognite/cdf-utilities';
-import { Body, Button } from '@cognite/cogs.js';
+import { Body, Button, Colors } from '@cognite/cogs.js';
 import { Asset, DataSet, Timeseries } from '@cognite/sdk';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 
@@ -139,8 +139,8 @@ const Value = styled(Body)`
 const CopyButton = styled(Button)`
   color: ${(props: { icon: 'Copy' | 'Checkmark' }) =>
     props.icon === 'Copy'
-      ? 'var(--cogs-link-primary-default)'
-      : 'var(--cogs-success)'};
+      ? Colors['surface--action--strong--default']
+      : Colors['text-icon--status-success']};
   margin: 0 5px;
   cursor: pointer;
 `;
