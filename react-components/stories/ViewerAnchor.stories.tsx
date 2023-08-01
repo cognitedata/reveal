@@ -3,7 +3,7 @@
  */
 import type { Meta, StoryObj } from '@storybook/react';
 import { Reveal3DResources, RevealContainer } from '../src';
-import { Color, Matrix4, Vector3 } from 'three';
+import { Color, Vector3 } from 'three';
 import { CameraController, ViewerAnchor } from '../src/';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 
@@ -26,14 +26,13 @@ export const Main: Story = {
     resources: [
       {
         modelId: 1791160622840317,
-        revisionId: 498427137020189,
-        transform: new Matrix4().makeTranslation(0, 0, 0)
+        revisionId: 498427137020189
       }
     ]
   },
   render: ({ resources, styling, fdmAssetMappingConfig }) => {
     const position = new Vector3(50, 30, 50);
-    const position2 = new Vector3(0, 0, 0);
+    const position2 = new Vector3();
 
     return (
       <RevealContainer
