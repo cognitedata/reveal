@@ -1,4 +1,4 @@
-import { toast } from '@cognite/cogs.js-v9';
+import { toast } from '@cognite/cogs.js';
 import type { HttpHeaders } from '@cognite/sdk';
 import type { Metadata } from '@cognite/simconfig-api-sdk/rtk';
 
@@ -19,7 +19,7 @@ export const downloadModelFile = async (
 
   const response = await fetch(url.toString(), {
     headers: new Headers({
-      'Accept': '*/*',
+      Accept: '*/*',
       'Content-Type': 'application/octet-stream',
       ...headers,
     }),

@@ -1,15 +1,13 @@
 import { useMemo } from 'react';
 
+import { getX, getY } from '@simint-app/components/charts/utils';
 import type { PatternOrientation } from '@visx/pattern';
 import { PatternLines } from '@visx/pattern';
 import { AreaClosed } from '@visx/shape';
-
 import Color from 'color';
 import { curveMonotoneX } from 'd3';
 
-import { Colors } from '@cognite/cogs.js-v9';
-
-import { getX, getY } from 'components/charts/utils';
+import { Colors } from '@cognite/cogs.js';
 
 import { SymbolLegendItem } from '..';
 import { usePortalTooltip } from '../usePortalTooltip';

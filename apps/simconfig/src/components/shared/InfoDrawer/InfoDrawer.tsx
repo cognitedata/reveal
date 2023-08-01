@@ -2,8 +2,8 @@ import { useState } from 'react';
 
 import styled from 'styled-components/macro';
 
-import type { DrawerProps } from '@cognite/cogs.js-v9';
-import { Button, CogniteLogo, Drawer, Flex } from '@cognite/cogs.js-v9';
+import type { DrawerProps } from '@cognite/cogs.js';
+import { Button, CogniteLogo, Drawer, Flex } from '@cognite/cogs.js';
 
 interface InfoDrawerProps extends React.PropsWithChildren<DrawerProps> {
   buttonTitle?: string;

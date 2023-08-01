@@ -1,11 +1,10 @@
 import { curveLinear, curveMonotoneX, curveStepAfter } from 'd3';
+import type { CurveFactory } from 'd3';
 
 import type { AggregateType } from '@cognite/simconfig-api-sdk/rtk';
 
 import type { ChartGeometry } from './BaseChart/types';
 import type { DatumType, OrdinalDatum, TemporalDatum } from './types';
-
-import type { CurveFactory } from 'd3';
 
 export function getExtents({ width, height, margin }: ChartGeometry) {
   return {

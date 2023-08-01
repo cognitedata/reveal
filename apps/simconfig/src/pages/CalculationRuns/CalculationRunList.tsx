@@ -3,6 +3,13 @@ import React from 'react';
 import { Link, useMatch } from 'react-location';
 import { useSelector } from 'react-redux';
 
+import { CalculationRunTypeIndicator } from '@simint-app/components/models/CalculationList/CalculationRunTypeIndicator';
+import { CalculationStatusIndicator } from '@simint-app/components/models/CalculationList/CalculationStatusIndicator';
+import { CalculationTimeLabel } from '@simint-app/components/models/CalculationList/CalculationTimeLabel';
+import type { AppLocationGenerics } from '@simint-app/routes';
+import { selectProject } from '@simint-app/store/simconfigApiProperties/selectors';
+import { createCdfLink } from '@simint-app/utils/createCdfLink';
+
 import {
   Button,
   Chip,
@@ -10,19 +17,11 @@ import {
   Dropdown,
   Menu,
   Skeleton,
-} from '@cognite/cogs.js-v9';
+} from '@cognite/cogs.js';
 import type { CalculationRun } from '@cognite/simconfig-api-sdk/rtk';
 import { useGetCalculationQuery } from '@cognite/simconfig-api-sdk/rtk';
 
-import { CalculationRunTypeIndicator } from 'components/models/CalculationList/CalculationRunTypeIndicator';
-import { CalculationStatusIndicator } from 'components/models/CalculationList/CalculationStatusIndicator';
-import { CalculationTimeLabel } from 'components/models/CalculationList/CalculationTimeLabel';
-import { selectProject } from 'store/simconfigApiProperties/selectors';
-import { createCdfLink } from 'utils/createCdfLink';
-
 import { CalculationRunsListContainer } from './styles';
-
-import type { AppLocationGenerics } from 'routes';
 
 interface CalculationRunListProps extends React.HTMLAttributes<HTMLDivElement> {
   calculationRuns: CalculationRun[];

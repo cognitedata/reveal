@@ -1,7 +1,7 @@
 import { isRejectedWithValue } from '@reduxjs/toolkit';
 import type { Dispatch, MiddlewareAPI, PayloadAction } from '@reduxjs/toolkit';
 
-import { toast } from '@cognite/cogs.js-v9';
+import { toast } from '@cognite/cogs.js';
 import type { CogniteApiError } from '@cognite/simconfig-api-sdk/rtk';
 
 export function errorNotificationMiddleware(_api: MiddlewareAPI) {

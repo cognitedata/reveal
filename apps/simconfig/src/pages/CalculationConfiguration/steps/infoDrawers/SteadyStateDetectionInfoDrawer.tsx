@@ -1,6 +1,6 @@
-import { Link } from '@cognite/cogs.js-v9';
+import { InfoDrawer } from '@simint-app/components/shared/InfoDrawer';
 
-import { InfoDrawer } from 'components/shared/InfoDrawer';
+import { Link } from '@cognite/cogs.js';
 
 export function SteadyStateDetectionInfoDrawer() {
   return (

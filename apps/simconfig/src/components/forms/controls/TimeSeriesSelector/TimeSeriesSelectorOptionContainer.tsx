@@ -2,8 +2,8 @@ import type { GroupTypeBase, Props } from 'react-select';
 
 import styled from 'styled-components/macro';
 
-import { Title } from '@cognite/cogs.js-v9';
-import type { OptionProps, OptionType } from '@cognite/cogs.js-v9';
+import { Title } from '@cognite/cogs.js';
+import type { OptionProps, OptionType } from '@cognite/cogs.js';
 
 import type { TimeseriesOption } from './types';
 
@@ -48,7 +48,7 @@ function TimeseriesSelectorOptionContainer({
       {...innerProps}
       className={cx(
         {
-          'option': true,
+          option: true,
           'option--is-disabled': isDisabled,
           'option--is-focused': isFocused,
           'option--is-selected': isSelected,

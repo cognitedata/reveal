@@ -1,19 +1,18 @@
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 
+import {
+  HEADER_VISIBLE_SIMULATORS_COUNT,
+  HEARTBEAT_POLL_INTERVAL,
+} from '@simint-app/components/simulator/constants';
+import { selectProject } from '@simint-app/store/simconfigApiProperties/selectors';
 import styled from 'styled-components/macro';
 
-import { Button, Skeleton, Tooltip } from '@cognite/cogs.js-v9';
+import { Button, Skeleton, Tooltip } from '@cognite/cogs.js';
 import {
   useGetDefinitionsQuery,
   useGetSimulatorsListV2Query,
 } from '@cognite/simconfig-api-sdk/rtk';
-
-import {
-  HEADER_VISIBLE_SIMULATORS_COUNT,
-  HEARTBEAT_POLL_INTERVAL,
-} from 'components/simulator/constants';
-import { selectProject } from 'store/simconfigApiProperties/selectors';
 
 import { SimulatorList } from './SimulatorList';
 import { SimulatorStatusLabel } from './SimulatorStatusLabel';

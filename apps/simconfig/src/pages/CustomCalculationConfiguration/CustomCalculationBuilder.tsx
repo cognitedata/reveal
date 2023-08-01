@@ -1,20 +1,19 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-location';
 
+import { Editor } from '@simint-app/components/shared/Editor';
+import { Wizard } from '@simint-app/components/shared/Wizard';
+import { useUserInfo } from '@simint-app/hooks/useUserInfo';
+import { DataSamplingStep } from '@simint-app/pages/CalculationConfiguration/steps/DataSamplingStep';
+import { ScheduleStep } from '@simint-app/pages/CalculationConfiguration/steps/ScheduleStep';
+import { SummaryStep } from '@simint-app/pages/CalculationConfiguration/steps/SummaryStep';
+import { createCdfLink } from '@simint-app/utils/createCdfLink';
 import { Form, Formik } from 'formik';
 import styled from 'styled-components/macro';
 
-import { Infobox, Switch, toast } from '@cognite/cogs.js-v9';
-import type { UserDefined } from '@cognite/simconfig-api-sdk/rtk';
+import { Infobox, Switch, toast } from '@cognite/cogs.js';
 import { useUpsertCalculationMutation } from '@cognite/simconfig-api-sdk/rtk';
-
-import { Editor } from 'components/shared/Editor';
-import { Wizard } from 'components/shared/Wizard';
-import { useUserInfo } from 'hooks/useUserInfo';
-import { DataSamplingStep } from 'pages/CalculationConfiguration/steps/DataSamplingStep';
-import { ScheduleStep } from 'pages/CalculationConfiguration/steps/ScheduleStep';
-import { SummaryStep } from 'pages/CalculationConfiguration/steps/SummaryStep';
-import { createCdfLink } from 'utils/createCdfLink';
+import type { UserDefined } from '@cognite/simconfig-api-sdk/rtk';
 
 import { CustomCalculationBuilderContainer } from './elements';
 import { Routine } from './Routine';
@@ -164,11 +163,6 @@ export function CustomCalculationBuilder({
                 validationErrors={getStepValidationErrors(values, 'routine')}
               >
                 <Switch
-                  label={
-                    !isEditorEnabled
-                      ? 'Switch to JSON editor'
-                      : 'Switch to routine builder'
-                  }
                   checked={isEditorEnabled}
                   className="routine-editor-switch"
                   name="routine-editor-switch"
@@ -179,8 +173,11 @@ export function CustomCalculationBuilder({
                   ) => {
                     setIsEditorEnabled(value);
                   }}
-                ></Switch>
-
+                >
+                  {!isEditorEnabled
+                    ? 'Switch to JSON editor'
+                    : 'Switch to routine builder'}
+                </Switch>
                 {isEditorEnabled ? (
                   <EditorContainer>
                     {!isCalculationFormatValid && (

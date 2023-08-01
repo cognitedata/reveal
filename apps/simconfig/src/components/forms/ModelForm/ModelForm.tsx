@@ -3,10 +3,22 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useMatch } from 'react-location';
 import { useSelector } from 'react-redux';
 
+import { FileInput } from '@simint-app/components/forms/controls/FileInput';
+import { HEARTBEAT_POLL_INTERVAL } from '@simint-app/components/simulator/constants';
+import { SimulatorStatusLabel } from '@simint-app/components/simulator/SimulatorStatusLabel';
+import { useUserInfo } from '@simint-app/hooks/useUserInfo';
+import type { AppLocationGenerics } from '@simint-app/routes';
+import { selectIsLabelsEnabled } from '@simint-app/store/capabilities/selectors';
+import { selectProject } from '@simint-app/store/simconfigApiProperties/selectors';
+import {
+  getFileExtensionFromFileName,
+  getSelectEntriesFromMap,
+} from '@simint-app/utils/formUtils';
+import { isSuccessResponse } from '@simint-app/utils/responseUtils';
 import { Field, Form, Formik } from 'formik';
 import styled from 'styled-components/macro';
 
-import { Button, Input, Select, toast } from '@cognite/cogs.js-v9';
+import { Button, Input, Select, toast } from '@cognite/cogs.js';
 import type { DataSet } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 import type {
@@ -25,25 +37,11 @@ import {
   useUpdateModelFileVersionMutation,
 } from '@cognite/simconfig-api-sdk/rtk';
 
-import { FileInput } from 'components/forms/controls/FileInput';
-import { HEARTBEAT_POLL_INTERVAL } from 'components/simulator/constants';
-import { SimulatorStatusLabel } from 'components/simulator/SimulatorStatusLabel';
-import { useUserInfo } from 'hooks/useUserInfo';
-import { selectIsLabelsEnabled } from 'store/capabilities/selectors';
-import { selectProject } from 'store/simconfigApiProperties/selectors';
-import {
-  getFileExtensionFromFileName,
-  getSelectEntriesFromMap,
-} from 'utils/formUtils';
-import { isSuccessResponse } from 'utils/responseUtils';
-
 import { LabelsInput } from '../controls/LabelsInput';
 
 import { DEFAULT_MODEL_SOURCE, UnitSystem } from './constants';
 import { InputRow } from './elements';
 import type { BoundaryConditionResponse, ModelFormState } from './types';
-
-import type { AppLocationGenerics } from 'routes';
 
 const getInitialModelFormState = (
   boundaryConditionsData: DefinitionMap['type']['boundaryCondition'] | undefined

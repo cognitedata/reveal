@@ -7,7 +7,7 @@ import { useDragControls } from 'framer-motion';
 import cloneDeep from 'lodash/cloneDeep';
 import styled from 'styled-components/macro';
 
-import { Chip, Icon } from '@cognite/cogs.js-v9';
+import { Chip, Icon } from '@cognite/cogs.js';
 import type { UserDefined } from '@cognite/simconfig-api-sdk/rtk';
 
 import { StepCommand } from '../Commands/StepCommand';

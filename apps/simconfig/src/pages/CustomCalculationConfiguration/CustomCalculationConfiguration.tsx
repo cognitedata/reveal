@@ -2,7 +2,11 @@ import { useEffect, useState } from 'react';
 import { useMatch, useSearch } from 'react-location';
 import { useSelector } from 'react-redux';
 
-import { Skeleton } from '@cognite/cogs.js-v9';
+import { useUserInfo } from '@simint-app/hooks/useUserInfo';
+import type { AppLocationGenerics } from '@simint-app/routes';
+import { selectProject } from '@simint-app/store/simconfigApiProperties/selectors';
+
+import { Skeleton } from '@cognite/cogs.js';
 import type { UserDefined } from '@cognite/simconfig-api-sdk/rtk';
 import {
   useGetModelCalculationQuery,
@@ -11,12 +15,7 @@ import {
   useGetSimulatorsListQuery,
 } from '@cognite/simconfig-api-sdk/rtk';
 
-import { useUserInfo } from 'hooks/useUserInfo';
-import { selectProject } from 'store/simconfigApiProperties/selectors';
-
 import { CustomCalculationBuilder } from './CustomCalculationBuilder';
-
-import type { AppLocationGenerics } from 'routes';
 
 export function CustomCalculationConfiguration() {
   const [calculation, setCalculation] = useState<UserDefined | null>();

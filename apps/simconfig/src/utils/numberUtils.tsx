@@ -34,7 +34,7 @@ const getSciNumber = (input: string) => {
 };
 
 export const formatSciValue = (input: number) => {
-  if (countDecimals(input) >= DECIMAL_LIMIT) {
+  if (Number(countDecimals(input)) >= DECIMAL_LIMIT) {
     return getSciNumber(input.toExponential(DECIMAL_LIMIT));
   }
   return getSciNumber(input.toFixed(DECIMAL_LIMIT));

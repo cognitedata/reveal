@@ -1,7 +1,9 @@
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider as ReduxProvider } from 'react-redux';
 
-import { store } from 'store';
+import App from '@simint-app/components/app/App';
+import { store } from '@simint-app/store';
+import GlobalStyles from '@simint-app/styles/GlobalStyles';
 
 import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
 import {
@@ -10,14 +12,11 @@ import {
   getEnv,
   getProject,
 } from '@cognite/cdf-utilities';
-import { Loader } from '@cognite/cogs.js-v9';
+import { Loader } from '@cognite/cogs.js';
 import { FlagProvider } from '@cognite/react-feature-flags';
 import { SDKProvider } from '@cognite/sdk-provider';
 
-import App from 'components/app/App';
-import GlobalStyles from 'styles/GlobalStyles';
-
-const env = getEnv();
+const env = getEnv() ?? undefined;
 const project = getProject();
 
 const queryClient = new QueryClient({

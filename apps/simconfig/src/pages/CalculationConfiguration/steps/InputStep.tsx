@@ -1,33 +1,30 @@
 import React, { useMemo } from 'react';
 import { useMatch } from 'react-location';
 
-import { ParentSizeModern } from '@visx/responsive';
-
-import classNames from 'classnames';
-import { Field, useFormikContext } from 'formik';
-
-import type { OptionType } from '@cognite/cogs.js-v9';
-import { Infobox, Select } from '@cognite/cogs.js-v9';
-import type { CalculationTemplate } from '@cognite/simconfig-api-sdk/rtk';
-
-import { TimeseriesChart } from 'components/charts/TimeseriesChart';
+import { TimeseriesChart } from '@simint-app/components/charts/TimeseriesChart';
 import {
   FormContainer,
   FormHeader,
   FormRow,
   TimeSeriesField,
-} from 'components/forms/elements';
+} from '@simint-app/components/forms/elements';
 import {
   getScheduleRepeat,
   useTimeseries,
-} from 'pages/CalculationConfiguration/utils';
+} from '@simint-app/pages/CalculationConfiguration/utils';
+import type { AppLocationGenerics } from '@simint-app/routes';
+import { ParentSizeModern } from '@visx/responsive';
+import classNames from 'classnames';
+import { Field, useFormikContext } from 'formik';
+
+import type { OptionType } from '@cognite/cogs.js';
+import { Infobox, Select } from '@cognite/cogs.js';
+import type { CalculationTemplate } from '@cognite/simconfig-api-sdk/rtk';
 
 import { ChartContainer, LoaderOverlay } from '../elements';
 import type { StepProps } from '../types';
 
 import { InputInfoDrawer } from './infoDrawers/InputInfoDrawer';
-
-import type { AppLocationGenerics } from 'routes';
 
 export function InputStep({ isDisabled }: StepProps) {
   const { values, setFieldValue } = useFormikContext<CalculationTemplate>();

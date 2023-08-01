@@ -1,4 +1,4 @@
-import type { StoreState } from 'store/types';
+import type { StoreState } from '@simint-app/store/types';
 
 export const selectCapabilities = (state: StoreState) => state.capabilities;
 

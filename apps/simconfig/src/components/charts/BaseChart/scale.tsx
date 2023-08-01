@@ -1,6 +1,5 @@
 import type { PickScaleConfigWithoutType } from '@visx/scale';
 import { scaleLinear, scaleTime } from '@visx/scale';
-
 import { extent, max, min } from 'd3';
 
 import type { ChartGeometry } from './types';

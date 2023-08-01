@@ -1,16 +1,14 @@
 import { curveMonotoneX } from '@visx/curve';
-
 import Color from 'color';
 import { max, min } from 'd3';
+import type { CurveFactory } from 'd3';
 
-import { Colors } from '@cognite/cogs.js-v9';
+import { Colors } from '@cognite/cogs.js';
 
 import { useBaseChart } from './BaseChart';
 import { linearScale } from './BaseChart/scale';
 import type { Margin } from './BaseChart/types';
 import { useMultiPlotTooltip } from './BaseChart/useMultiSeriesTooltip';
-
-import type { CurveFactory } from 'd3';
 
 export interface CalculationResultDatum {
   gasRate: number;

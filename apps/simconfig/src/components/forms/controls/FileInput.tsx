@@ -1,10 +1,9 @@
 import type { ChangeEvent, DragEvent } from 'react';
 
+import { getFileExtensionFromFileName } from '@simint-app/utils/formUtils';
 import styled from 'styled-components/macro';
 
-import { Flex, Icon } from '@cognite/cogs.js-v9';
-
-import { getFileExtensionFromFileName } from 'utils/formUtils';
+import { Flex, Icon } from '@cognite/cogs.js';
 
 interface ComponentProps {
   extensions?: string[];

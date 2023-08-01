@@ -1,6 +1,6 @@
-import { Button } from '@cognite/cogs.js-v9';
-
 import type { DragControls } from 'framer-motion';
+
+import { Button } from '@cognite/cogs.js';
 
 interface CollapseOptionsProps {
   controls: DragControls;

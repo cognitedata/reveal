@@ -1,4 +1,5 @@
-import * as Yup from 'yup';
+import * as Yup from 'yup-v1';
+import type { ValidationError } from 'yup-v1';
 
 import type {
   AggregateType,
@@ -7,8 +8,6 @@ import type {
 } from '@cognite/simconfig-api-sdk/rtk';
 
 import { getScheduleRepeat } from '../../../pages/CalculationConfiguration/utils';
-
-import type { ValidationError } from 'yup';
 
 type ValueOf<T> = T[keyof T];
 type StepTypes = ValueOf<Pick<CalculationStep, 'type'>>;
@@ -28,6 +27,7 @@ const stepMap: Record<StepTypes, Yup.ObjectSchema<StepArgument>> = {
     type: Yup.string().oneOf(['outputTimeSeries']).required(),
     value: Yup.string().required(),
   }),
+  // @ts-ignore
   Command: Yup.object({
     address: Yup.string().required(),
   }),

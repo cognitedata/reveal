@@ -36,7 +36,7 @@ export const calculationSchema: CalculationSchema = {
       unit: 'psig', // should come from the column metadata
     },
   },
-  'ChokeDp': {
+  ChokeDp: {
     calcType: 'ChokeDp',
     calcName: 'Rate by Choke Performance',
     xAxis: {
@@ -50,7 +50,7 @@ export const calculationSchema: CalculationSchema = {
       unit: 'MMscf/day',
     },
   },
-  'VLP': {
+  VLP: {
     calcType: 'VLP',
     calcName: 'Rate by Lift Curve Solution',
     xAxis: {
@@ -64,7 +64,7 @@ export const calculationSchema: CalculationSchema = {
       unit: 'psig',
     },
   },
-  'IPR': {
+  IPR: {
     calcType: 'IPR',
     calcName: 'Rate by Inflow Performance',
     xAxis: {

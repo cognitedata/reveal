@@ -1,9 +1,8 @@
+import { getNodeFromPath } from '@simint-app/utils/formUtils';
 import { Field, useFormikContext } from 'formik';
 import styled from 'styled-components/macro';
 
-import { Input, SegmentedControl, Slider } from '@cognite/cogs.js-v9';
-
-import { getNodeFromPath } from 'utils/formUtils';
+import { Input, SegmentedControl, Slider } from '@cognite/cogs.js';
 
 import TimeseriesSelector from './controls/TimeSeriesSelector/TimeSeriesSelector';
 import type { TimeseriesOption } from './controls/TimeSeriesSelector/types';

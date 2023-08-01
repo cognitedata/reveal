@@ -1,11 +1,10 @@
 import { useSelector } from 'react-redux';
 
+import { selectProject } from '@simint-app/store/simconfigApiProperties/selectors';
 import { Field } from 'formik';
 
-import { Select } from '@cognite/cogs.js-v9';
+import { Select } from '@cognite/cogs.js';
 import { useGetLabelsListQuery } from '@cognite/simconfig-api-sdk/rtk';
-
-import { selectProject } from 'store/simconfigApiProperties/selectors';
 
 import { InputRow } from '../ModelForm/elements';
 import { InputButton } from '../ModelForm/ModelForm';

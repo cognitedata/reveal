@@ -1,4 +1,4 @@
-import type { AclName } from 'hooks/useCheckAcl';
+import type { AclName } from '@simint-app/hooks/useCheckAcl';
 
 export const AUTOCLOSE_PERIOD = 7500;
 

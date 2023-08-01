@@ -2,12 +2,19 @@ import { useState } from 'react';
 import { useMatch } from 'react-location';
 import { useSelector } from 'react-redux';
 
+import { ModelVersionDetails } from '@simint-app/components/models';
+import { selectProject } from '@simint-app/store/simconfigApiProperties/selectors';
+import {
+  INITIAL_ITEMS_PER_PAGE,
+  getTotalPages,
+  paginateData,
+} from '@simint-app/utils/pagination';
 import formatDistance from 'date-fns/formatDistance';
 import formatISO9075 from 'date-fns/formatISO9075';
 import parseISO from 'date-fns/parseISO';
 import styled from 'styled-components/macro';
 
-import type { CollapsePanelProps } from '@cognite/cogs.js-v9';
+import type { CollapsePanelProps } from '@cognite/cogs.js';
 import {
   Chip,
   Collapse,
@@ -15,17 +22,9 @@ import {
   Pagination,
   Skeleton,
   Tooltip,
-} from '@cognite/cogs.js-v9';
+} from '@cognite/cogs.js';
 import type { Simulator } from '@cognite/simconfig-api-sdk/rtk';
 import { useGetModelFileVersionListQuery } from '@cognite/simconfig-api-sdk/rtk';
-
-import { ModelVersionDetails } from 'components/models';
-import { selectProject } from 'store/simconfigApiProperties/selectors';
-import {
-  INITIAL_ITEMS_PER_PAGE,
-  getTotalPages,
-  paginateData,
-} from 'utils/pagination';
 
 interface ModelVersionListProps {
   simulator: Simulator;

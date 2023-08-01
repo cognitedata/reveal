@@ -1,4 +1,4 @@
-import { Modal } from '@cognite/cogs.js-v9';
+import { Modal } from '@cognite/cogs.js';
 
 interface DeleteConfirmModalProps {
   isModelOpen: boolean;

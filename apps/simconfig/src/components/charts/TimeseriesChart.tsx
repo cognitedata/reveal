@@ -1,10 +1,9 @@
 import { rightTickLabelProps } from '@visx/axis/lib/axis/AxisRight';
 import { Text } from '@visx/text';
 import { Threshold } from '@visx/threshold';
-
 import { format as formatNumber, max, min } from 'd3';
 
-import { Colors } from '@cognite/cogs.js-v9';
+import { Colors } from '@cognite/cogs.js';
 import type { DatapointAggregate } from '@cognite/sdk';
 import type { AggregateType } from '@cognite/simconfig-api-sdk/rtk';
 

@@ -2,17 +2,16 @@ import { useState } from 'react';
 
 import classNames from 'classnames';
 import Tabs from 'rc-tabs';
+import type { TabsProps } from 'rc-tabs';
 import styled from 'styled-components/macro';
 
-import { Button } from '@cognite/cogs.js-v9';
+import { Button } from '@cognite/cogs.js';
 
 import { LAYER } from '../../../utils/zIndex';
 
 import type { WizardStepProps } from './WizardStep';
 import { WizardStep } from './WizardStep';
 import { WizardStepIcon } from './WizardStepIcon';
-
-import type { TabsProps } from 'rc-tabs';
 
 type WizardStepElement = React.ReactElement<WizardStepProps, typeof WizardStep>;
 

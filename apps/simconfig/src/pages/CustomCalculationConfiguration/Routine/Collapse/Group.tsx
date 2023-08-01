@@ -4,17 +4,16 @@ import { useEffect, useState } from 'react';
 
 import { Field, useFormikContext } from 'formik';
 import { useDragControls } from 'framer-motion';
+import type { DragControls } from 'framer-motion';
 import styled from 'styled-components/macro';
 
-import { Icon } from '@cognite/cogs.js-v9';
+import { Icon } from '@cognite/cogs.js';
 import type {
   CalculationProcedure,
   UserDefined,
 } from '@cognite/simconfig-api-sdk/rtk';
 
 import { CollapseOptions } from './CollapseOptions';
-
-import type { DragControls } from 'framer-motion';
 
 interface GroupProps {
   procedure: CalculationProcedure;

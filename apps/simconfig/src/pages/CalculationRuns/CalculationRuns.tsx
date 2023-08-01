@@ -4,18 +4,15 @@ import type { Range } from 'react-date-range';
 import { useMatch, useNavigate, useSearch } from 'react-location';
 import { useSelector } from 'react-redux';
 
+import type { AppLocationGenerics } from '@simint-app/routes';
+import { selectProject } from '@simint-app/store/simconfigApiProperties/selectors';
 import { formatISO, parseISO, sub } from 'date-fns';
 import capitalize from 'lodash/capitalize';
 import uniq from 'lodash/uniq';
 import styled from 'styled-components/macro';
 
-import type { OptionType } from '@cognite/cogs.js-v9';
-import {
-  DateRange,
-  Illustrations,
-  Select,
-  Skeleton,
-} from '@cognite/cogs.js-v9';
+import type { OptionType } from '@cognite/cogs.js';
+import { DateRange, Illustrations, Select, Skeleton } from '@cognite/cogs.js';
 import {
   useGetCalculationRunListV2Query,
   useGetModelFileListV2Query,
@@ -27,13 +24,9 @@ import type {
   SimulatorConfigDetails,
 } from '@cognite/simconfig-api-sdk/rtk';
 
-import { selectProject } from 'store/simconfigApiProperties/selectors';
-
 import { CalculationRunList } from './CalculationRunList';
 import { generateOptions } from './options';
 import type { OptionGroupValues } from './types';
-
-import type { AppLocationGenerics } from 'routes';
 
 const POLLING_INTERVAL = 2000;
 

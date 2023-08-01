@@ -1,7 +1,6 @@
 import type { SharedAxisProps, TickRendererProps } from '@visx/axis';
 import { AxisBottom, AxisLeft, AxisRight } from '@visx/axis';
 import { Text } from '@visx/text';
-
 import { format, isSameDay } from 'date-fns';
 
 import { getExtents } from '../utils';

@@ -1,12 +1,12 @@
-import type { OptionType } from '@cognite/cogs.js-v9';
+import type { DragControls } from 'framer-motion';
+
+import type { OptionType } from '@cognite/cogs.js';
 import type {
   CalculationStep,
   InputTimeSeries,
   OutputTimeSeries,
   UserDefined,
 } from '@cognite/simconfig-api-sdk/rtk';
-
-import type { DragControls } from 'framer-motion';
 
 export interface StepCommandProps {
   step: CalculationStep;

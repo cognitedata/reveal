@@ -1,9 +1,8 @@
+import { HEARTBEAT_TIMEOUT_SECONDS } from '@simint-app/components/simulator/constants';
 import { isAfter } from 'date-fns/esm';
 
-import { Chip } from '@cognite/cogs.js-v9';
+import { Chip } from '@cognite/cogs.js';
 import type { SimulatorInstance } from '@cognite/simconfig-api-sdk/rtk';
-
-import { HEARTBEAT_TIMEOUT_SECONDS } from 'components/simulator/constants';
 
 interface SimulatorStatusCellProps {
   simulator: SimulatorInstance;
@@ -22,15 +21,30 @@ export function SimulatorStatusLabel({
     new Date(simulator.heartbeat),
     new Date(Date.now() - HEARTBEAT_TIMEOUT_SECONDS)
   );
+  const isLicenseAvailable = simulator.licenseStatus !== 'Not available';
 
-  const statusDisplayTitle = isSimulatorAvailable ? 'Available' : 'Unavailable';
+  const statusDisplayTitle = isSimulatorAvailable
+    ? isLicenseAvailable
+      ? 'Available'
+      : 'License missing'
+    : 'Unavailable';
 
   return (
     <Chip
-      icon={isSimulatorAvailable ? 'CheckmarkAlternative' : 'Warning'}
+      icon={
+        isSimulatorAvailable && isLicenseAvailable
+          ? 'CheckmarkAlternative'
+          : 'Warning'
+      }
       label={onMenuBar ? title : statusDisplayTitle}
       size={!isMain ? 'x-small' : undefined}
-      type={isSimulatorAvailable ? 'success' : 'danger'}
+      type={
+        isSimulatorAvailable
+          ? isLicenseAvailable
+            ? 'success'
+            : 'warning'
+          : 'danger'
+      }
       hideTooltip
       {...(title && {
         onClick: () => {

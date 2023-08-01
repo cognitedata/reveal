@@ -1,7 +1,7 @@
-import type { OptionType } from '@cognite/cogs.js-v9';
-import type { CalculationTemplate } from '@cognite/simconfig-api-sdk/rtk';
-
 import type { FormikErrors } from 'formik';
+
+import type { OptionType } from '@cognite/cogs.js';
+import type { CalculationTemplate } from '@cognite/simconfig-api-sdk/rtk';
 
 export interface ConfigurationStepProps<T = Partial<CalculationTemplate>> {
   values: T;

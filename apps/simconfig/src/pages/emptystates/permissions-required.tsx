@@ -1,17 +1,10 @@
 /* eslint-disable @cognite/no-number-z-index */
 import { useNavigate } from 'react-location';
 
+import { createCdfLink } from '@simint-app/utils/createCdfLink';
 import styled from 'styled-components/macro';
 
-import {
-  Button,
-  Collapse,
-  Icon,
-  Illustrations,
-  Title,
-} from '@cognite/cogs.js-v9';
-
-import { createCdfLink } from 'utils/createCdfLink';
+import { Button, Collapse, Icon, Illustrations, Title } from '@cognite/cogs.js';
 
 function PermissionsRequired() {
   const { Panel } = Collapse;

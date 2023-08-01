@@ -1,6 +1,6 @@
 import styled from 'styled-components/macro';
 
-import { Colors } from '@cognite/cogs.js-v9';
+import { Colors } from '@cognite/cogs.js';
 
 interface HighlightMatchProps {
   text: string;

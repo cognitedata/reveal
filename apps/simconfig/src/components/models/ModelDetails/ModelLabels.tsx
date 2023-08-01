@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 
+import { selectProject } from '@simint-app/store/simconfigApiProperties/selectors';
 import styled from 'styled-components/macro';
 
 import {
@@ -12,15 +13,13 @@ import {
   Input,
   Menu,
   toast,
-} from '@cognite/cogs.js-v9';
+} from '@cognite/cogs.js';
 import type { LabelDetails, ModelFile } from '@cognite/simconfig-api-sdk/rtk';
 import {
   useCreateLabelMutation,
   useGetLabelsListQuery,
   useUpdateModelFileLabelsMutation,
 } from '@cognite/simconfig-api-sdk/rtk';
-
-import { selectProject } from 'store/simconfigApiProperties/selectors';
 
 import { LabelsModal } from '../../LabelsModal';
 

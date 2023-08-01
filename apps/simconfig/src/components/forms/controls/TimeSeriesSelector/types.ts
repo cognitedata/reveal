@@ -1,4 +1,4 @@
-import type { OptionType } from '@cognite/cogs.js-v9';
+import type { OptionType } from '@cognite/cogs.js';
 import type {
   DatapointAggregate,
   DatapointAggregates,

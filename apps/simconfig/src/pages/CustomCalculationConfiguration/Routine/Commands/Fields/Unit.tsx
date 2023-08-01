@@ -1,15 +1,15 @@
 import { useMatch } from 'react-location';
 
+import { InputRow } from '@simint-app/components/forms/ModelForm/elements';
+import type { AppLocationGenerics } from '@simint-app/routes';
+import { getTargetTimeseriesByPrefix } from '@simint-app/utils/routineUtils';
 import { Field, useFormikContext } from 'formik';
 
-import { Select } from '@cognite/cogs.js-v9';
+import { Select } from '@cognite/cogs.js';
 import type {
   DefinitionMap,
   UserDefined,
 } from '@cognite/simconfig-api-sdk/rtk';
-
-import { InputRow } from 'components/forms/ModelForm/elements';
-import { getTargetTimeseriesByPrefix } from 'utils/routineUtils';
 
 import { getOptionLabel, getTimeSerieIndexByType } from '../utils';
 import type {
@@ -17,8 +17,6 @@ import type {
   TimeSeriesPrefixProps,
   ValueOptionType,
 } from '../utils';
-
-import type { AppLocationGenerics } from 'routes';
 
 interface UnitFieldProps
   extends ConfigurationFieldProps,

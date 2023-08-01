@@ -2,8 +2,15 @@ import type { MakeGenerics, Route } from 'react-location';
 import { Navigate } from 'react-location';
 
 import type { ThunkDispatch } from '@reduxjs/toolkit';
-
-import { CalculationDetails, ModelLibrary } from 'pages';
+import { CalculationDetails, ModelLibrary } from '@simint-app/pages';
+import { CalculationConfiguration } from '@simint-app/pages/CalculationConfiguration/CalculationConfiguration';
+import { CalculationRunDetails } from '@simint-app/pages/CalculationRunDetails/CalculationRunDetails';
+import { CalculationRuns } from '@simint-app/pages/CalculationRuns/CalculationRuns';
+import { CustomCalculationConfiguration } from '@simint-app/pages/CustomCalculationConfiguration/CustomCalculationConfiguration';
+import { PermissionsRequired } from '@simint-app/pages/emptystates/permissions-required';
+import { NewModel } from '@simint-app/pages/ModelLibrary';
+import type { StoreState } from '@simint-app/store/types';
+import type { AnyAction } from 'redux';
 
 import type {
   CalculationType,
@@ -12,16 +19,6 @@ import type {
   Simulator,
 } from '@cognite/simconfig-api-sdk/rtk';
 import { api } from '@cognite/simconfig-api-sdk/rtk';
-
-import { CalculationConfiguration } from 'pages/CalculationConfiguration/CalculationConfiguration';
-import { CalculationRunDetails } from 'pages/CalculationRunDetails/CalculationRunDetails';
-import { CalculationRuns } from 'pages/CalculationRuns/CalculationRuns';
-import { CustomCalculationConfiguration } from 'pages/CustomCalculationConfiguration/CustomCalculationConfiguration';
-import { PermissionsRequired } from 'pages/emptystates/permissions-required';
-import { NewModel } from 'pages/ModelLibrary';
-import type { StoreState } from 'store/types';
-
-import type { AnyAction } from 'redux';
 
 export type AppLocationGenerics = MakeGenerics<{
   LoaderData: {

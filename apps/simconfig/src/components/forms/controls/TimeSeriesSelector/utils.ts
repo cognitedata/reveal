@@ -1,6 +1,6 @@
 import { sub } from 'date-fns';
 
-import type { OptionType } from '@cognite/cogs.js-v9';
+import type { OptionType } from '@cognite/cogs.js';
 import type { CogniteClient, TimeseriesFilter } from '@cognite/sdk';
 
 import type { TimeseriesOption } from './types';

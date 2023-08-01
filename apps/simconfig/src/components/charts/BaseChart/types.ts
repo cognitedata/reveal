@@ -1,6 +1,6 @@
-import type { ScaleProps } from './scale';
-
 import type { ScaleLinear, ScaleTime } from 'd3';
+
+import type { ScaleProps } from './scale';
 
 export interface Margin {
   top: number;

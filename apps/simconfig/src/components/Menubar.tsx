@@ -2,13 +2,13 @@ import { useState } from 'react';
 import { useMatchRoute, useNavigate } from 'react-location';
 import { useSelector } from 'react-redux';
 
-import { TopBar } from '@cognite/cogs.js-v9';
+import { SimulatorStatus } from '@simint-app/components/simulator/SimulatorStatus';
+import { selectIsLabelsEnabled } from '@simint-app/store/capabilities/selectors';
+import { createCdfLink } from '@simint-app/utils/createCdfLink';
+import { TRACKING_EVENTS } from '@simint-app/utils/metrics/constants';
+import { trackUsage } from '@simint-app/utils/metrics/tracking';
 
-import { SimulatorStatus } from 'components/simulator/SimulatorStatus';
-import { selectIsLabelsEnabled } from 'store/capabilities/selectors';
-import { createCdfLink } from 'utils/createCdfLink';
-import { TRACKING_EVENTS } from 'utils/metrics/constants';
-import { trackUsage } from 'utils/metrics/tracking';
+import { TopBar } from '@cognite/cogs.js';
 
 import { LabelsModal } from './LabelsModal';
 

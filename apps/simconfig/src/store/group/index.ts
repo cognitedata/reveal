@@ -1,7 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
-
-import { RequestStatus } from 'store/constants';
-import { partialUpdate } from 'store/utils';
+import { RequestStatus } from '@simint-app/store/constants';
+import { partialUpdate } from '@simint-app/store/utils';
 
 import { initialState } from './constants';
 import { fetchGroups } from './thunks';

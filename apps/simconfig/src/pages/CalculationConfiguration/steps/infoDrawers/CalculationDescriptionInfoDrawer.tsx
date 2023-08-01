@@ -14,13 +14,13 @@ export function CalculationDescriptionInfoDrawer({
   calculation: CalculationType;
 }) {
   const calculationInfoDrawer: Partial<Record<CalculationType, JSX.Element>> = {
-    'BhpFromRate': <BHPFromRateInfoDrawer />,
-    'ChokeDp': <ChokePerformanceInfoDrawer />,
-    'IPR': <InflowPerformanceInfoDrawer />,
+    BhpFromRate: <BHPFromRateInfoDrawer />,
+    ChokeDp: <ChokePerformanceInfoDrawer />,
+    IPR: <InflowPerformanceInfoDrawer />,
     'IPR/VLP': <NodalAnalysisInfoDrawer />,
-    'VLP': <LiftCurveSolutionInfoDrawer />,
-    'BhpFromGradientTraverse': <BHPfromGradientTraverseInfoDrawer />,
-    'BhpFromGaugeBhp': <BHPFromGaugeBHPInfoDrawer />,
+    VLP: <LiftCurveSolutionInfoDrawer />,
+    BhpFromGradientTraverse: <BHPfromGradientTraverseInfoDrawer />,
+    BhpFromGaugeBhp: <BHPFromGaugeBHPInfoDrawer />,
   };
   return calculationInfoDrawer[calculation] ?? null;
 }

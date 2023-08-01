@@ -12,8 +12,8 @@ import {
   Loader,
   Modal,
   Select,
-} from '@cognite/cogs.js-v9';
-import cogs9Styles from '@cognite/cogs.js-v9/dist/cogs.css';
+} from '@cognite/cogs.js';
+import cogs9Styles from '@cognite/cogs.js/dist/cogs.css';
 
 const STYLE_SCOPE = 'cdf-simint-ui-style-scope';
 

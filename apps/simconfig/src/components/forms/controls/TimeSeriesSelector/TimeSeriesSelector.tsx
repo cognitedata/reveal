@@ -9,8 +9,8 @@ import { useDebounce } from 'react-use';
 
 import styled from 'styled-components/macro';
 
-import type { AutoCompleteProps } from '@cognite/cogs.js-v9';
-import { AutoComplete, Button } from '@cognite/cogs.js-v9';
+import type { AutoCompleteProps } from '@cognite/cogs.js';
+import { AutoComplete, Button } from '@cognite/cogs.js';
 import { useSDK } from '@cognite/sdk-provider';
 
 import TimeseriesSelectorOption from './TimeSeriesSelectorOption';

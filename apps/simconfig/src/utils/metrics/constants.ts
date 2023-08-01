@@ -20,4 +20,4 @@ export const TRACKING_EVENTS = {
 };
 
 type TrackingEventKeys = keyof typeof TRACKING_EVENTS;
-export type TrackingEventNames = typeof TRACKING_EVENTS[TrackingEventKeys];
+export type TrackingEventNames = (typeof TRACKING_EVENTS)[TrackingEventKeys];

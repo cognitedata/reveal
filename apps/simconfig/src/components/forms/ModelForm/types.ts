@@ -1,4 +1,4 @@
-import type { OptionType } from '@cognite/cogs.js-v9';
+import type { OptionType } from '@cognite/cogs.js';
 // eslint-disable-next-line import/no-duplicates
 import type * as SimconfigApi from '@cognite/simconfig-api-sdk/rtk';
 // eslint-disable-next-line import/no-duplicates

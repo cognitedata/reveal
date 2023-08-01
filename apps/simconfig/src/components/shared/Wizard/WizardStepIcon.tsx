@@ -3,8 +3,8 @@ import type { MouseEventHandler } from 'react';
 import classnames from 'classnames';
 import styled from 'styled-components/macro';
 
-import type { IconType } from '@cognite/cogs.js-v9';
-import { Icon, NotificationDot } from '@cognite/cogs.js-v9';
+import type { IconType } from '@cognite/cogs.js';
+import { Icon, NotificationDot } from '@cognite/cogs.js';
 
 export interface WizardStepIconProps {
   active: boolean;

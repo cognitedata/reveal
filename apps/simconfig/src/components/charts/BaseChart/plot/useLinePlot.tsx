@@ -1,14 +1,12 @@
 import { useMemo } from 'react';
 
+import { getExtents, getX, getY } from '@simint-app/components/charts/utils';
 import { curveMonotoneX } from '@visx/curve';
 import { GridRows } from '@visx/grid';
 import { LinePath } from '@visx/shape';
-
 import Color from 'color';
 
-import { Colors } from '@cognite/cogs.js-v9';
-
-import { getExtents, getX, getY } from 'components/charts/utils';
+import { Colors } from '@cognite/cogs.js';
 
 import { SymbolLegendItem } from '..';
 import { usePortalTooltip } from '../usePortalTooltip';

@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react';
 
 import { useFormikContext } from 'formik';
 import { Reorder } from 'framer-motion';
+import type { DragControls } from 'framer-motion';
 import cloneDeep from 'lodash/cloneDeep';
 
-import { Button } from '@cognite/cogs.js-v9';
+import { Button } from '@cognite/cogs.js';
 import type {
   CalculationProcedure,
   CalculationStep,
@@ -13,8 +14,6 @@ import type {
 
 import { Group, Step } from './Collapse';
 import { getRoutineIndex } from './Commands/utils';
-
-import type { DragControls } from 'framer-motion';
 
 export function Routine({
   setCalculation,

@@ -1,27 +1,25 @@
 import React, { useMemo } from 'react';
 import { useMatch } from 'react-location';
 
-import { Field, useFormikContext } from 'formik';
-
-import type { OptionType } from '@cognite/cogs.js-v9';
-import { Select } from '@cognite/cogs.js-v9';
-import type {
-  CalculationTemplate,
-  TimeSeries,
-} from '@cognite/simconfig-api-sdk/rtk';
-
 import {
   FormContainer,
   FormHeader,
   FormRowStacked,
   StyledInput,
-} from 'components/forms/elements';
+} from '@simint-app/components/forms/elements';
+import type { AppLocationGenerics } from '@simint-app/routes';
+import { Field, useFormikContext } from 'formik';
+
+import type { OptionType } from '@cognite/cogs.js';
+import { Select } from '@cognite/cogs.js';
+import type {
+  CalculationTemplate,
+  TimeSeries,
+} from '@cognite/simconfig-api-sdk/rtk';
 
 import type { StepProps } from '../types';
 
 import { OutputInfoDrawer } from './infoDrawers/OutputInfoDrawer';
-
-import type { AppLocationGenerics } from 'routes';
 
 export function OutputStep({ isDisabled }: StepProps) {
   const { values, setFieldValue } = useFormikContext<CalculationTemplate>();

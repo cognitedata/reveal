@@ -3,12 +3,11 @@ import { useMemo } from 'react';
 import { Group } from '@visx/group';
 import { LegendItem, LegendLabel } from '@visx/legend';
 import { PatternLines } from '@visx/pattern';
-
 import classNames from 'classnames';
 import { curveMonotoneX } from 'd3';
 import styled from 'styled-components/macro';
 
-import { Colors } from '@cognite/cogs.js-v9';
+import { Colors } from '@cognite/cogs.js';
 
 import { getAxis } from './axis';
 import { getGrid } from './grid';

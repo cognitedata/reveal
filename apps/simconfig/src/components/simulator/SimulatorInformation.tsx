@@ -1,14 +1,13 @@
 import { useSelector } from 'react-redux';
 
+import { useSimulatorConfig } from '@simint-app/hooks/useSimulatorConfig';
+import { selectProject } from '@simint-app/store/simconfigApiProperties/selectors';
 import { formatDistanceToNow } from 'date-fns';
 import styled from 'styled-components/macro';
 
-import { Collapse, Skeleton } from '@cognite/cogs.js-v9';
+import { Collapse, Skeleton } from '@cognite/cogs.js';
 import type { SimulatorInstance } from '@cognite/simconfig-api-sdk/rtk';
 import { useGetSimulatorDetailsQuery } from '@cognite/simconfig-api-sdk/rtk';
-
-import { useSimulatorConfig } from 'hooks/useSimulatorConfig';
-import { selectProject } from 'store/simconfigApiProperties/selectors';
 
 import { SimulatorInformationList } from './elements';
 
@@ -24,6 +23,8 @@ export function SimulatorInformation({
     dataSetName,
     connectorVersion,
     simulatorVersion,
+    licenseLastCheckedTime,
+    licenseStatus,
   },
 }: SimulatorDetailsProps) {
   const project = useSelector(selectProject);
@@ -58,6 +59,18 @@ export function SimulatorInformation({
         <dd data-cy="connector-version">{connectorVersion}</dd>
         <dt>Simulator version</dt>
         <dd data-cy="simulator-version">{simulatorVersion}</dd>
+        <dt>License</dt>
+        <dd data-cy="license-info">
+          {licenseStatus}
+          {licenseLastCheckedTime
+            ? ` (Last check ${formatDistanceToNow(
+                new Date(licenseLastCheckedTime),
+                {
+                  addSuffix: true,
+                }
+              )})`
+            : ''}
+        </dd>
       </SimulatorInformationList>
 
       {isFetchingSimulatorDetails ? <Skeleton.Rectangle /> : null}

@@ -1,7 +1,7 @@
 import styled from 'styled-components/macro';
 
-import type { IconType } from '@cognite/cogs.js-v9';
-import { Colors, Icon } from '@cognite/cogs.js-v9';
+import type { IconType } from '@cognite/cogs.js';
+import { Colors, Icon } from '@cognite/cogs.js';
 
 const AlertContainer = styled.div`
   padding: 12px;

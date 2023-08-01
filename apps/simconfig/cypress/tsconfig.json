@@ -1,9 +1,0 @@
-{
-  "include": ["**/*.ts", "**/*.json"],
-  "compilerOptions": {
-    "lib": ["ES2015", "dom"],
-    "types": ["cypress", "node"],
-    "esModuleInterop": true,
-    "resolveJsonModule": true
-  }
-}

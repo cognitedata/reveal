@@ -1,6 +1,12 @@
 import { useMemo, useState } from 'react';
 import { Calendar } from 'react-date-range';
 
+import {
+  FormContainer,
+  FormHeader,
+  FormRow,
+  NumberField,
+} from '@simint-app/components/forms/elements';
 import { getDate, getMonth, getYear, set } from 'date-fns';
 import { Field, useFormikContext } from 'formik';
 
@@ -12,15 +18,8 @@ import {
   type OptionType,
   Select,
   Switch,
-} from '@cognite/cogs.js-v9';
+} from '@cognite/cogs.js';
 import type { CalculationTemplate } from '@cognite/simconfig-api-sdk/rtk';
-
-import {
-  FormContainer,
-  FormHeader,
-  FormRow,
-  NumberField,
-} from 'components/forms/elements';
 
 import type { ScheduleRepeat, ScheduleStart } from '../types';
 import {

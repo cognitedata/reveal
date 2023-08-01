@@ -1,11 +1,10 @@
 import { curveLinear } from '@visx/curve';
+import type { CurveFactory } from 'd3';
 
 import { useBaseChart } from './BaseChart';
 import { linearScale } from './BaseChart/scale';
 import type { OrdinalDatum } from './types';
 import { getX, getY } from './utils';
-
-import type { CurveFactory } from 'd3';
 
 interface ChokeCurveChartProps {
   data?: OrdinalDatum[];

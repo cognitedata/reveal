@@ -2,12 +2,20 @@ import React, { useMemo, useState } from 'react';
 import { useMatch } from 'react-location';
 import type { CellProps } from 'react-table';
 
+import { ChokeCurveChart } from '@simint-app/components/charts/ChokeCurveChart';
+import {
+  FormContainer,
+  FormHeader,
+  FormRowStacked,
+  NumberField,
+} from '@simint-app/components/forms/elements';
+import { Alert } from '@simint-app/components/molecules/Alert';
+import type { AppLocationGenerics } from '@simint-app/routes';
 import { ParentSizeModern } from '@visx/responsive';
-
 import { Field, useFormikContext } from 'formik';
 import styled from 'styled-components/macro';
 
-import type { ButtonProps, OptionType } from '@cognite/cogs.js-v9';
+import type { ButtonProps, OptionType } from '@cognite/cogs.js';
 import {
   Button,
   Input,
@@ -16,17 +24,8 @@ import {
   Table,
   Tooltip,
   toast,
-} from '@cognite/cogs.js-v9';
+} from '@cognite/cogs.js';
 import type { CalculationTemplate } from '@cognite/simconfig-api-sdk/rtk';
-
-import { ChokeCurveChart } from 'components/charts/ChokeCurveChart';
-import {
-  FormContainer,
-  FormHeader,
-  FormRowStacked,
-  NumberField,
-} from 'components/forms/elements';
-import { Alert } from 'components/molecules/Alert';
 
 import type { StepProps } from '../types';
 
@@ -35,8 +34,6 @@ import { ChokeCurveInfoDrawer } from './infoDrawers/ChokeCurveInfoDrawer';
 import { GaugeDepthInfoDrawer } from './infoDrawers/GaugeDepthInfoDrawer';
 import { GradientTraverseGaugeDepthInfoDrawer } from './infoDrawers/GradientTraverseGaugeDepthInfoDrawer';
 import { RootFindingInfoDrawer } from './infoDrawers/RootFindingInfoDrawer';
-
-import type { AppLocationGenerics } from 'routes';
 
 export function AdvancedStep({ isDisabled }: StepProps) {
   const { values, setFieldValue } = useFormikContext<CalculationTemplate>();

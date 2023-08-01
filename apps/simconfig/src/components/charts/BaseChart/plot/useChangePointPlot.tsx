@@ -1,12 +1,10 @@
 import { useMemo } from 'react';
 
+import { getX, getY } from '@simint-app/components/charts/utils';
 import { Group } from '@visx/group';
-
 import Color from 'color';
 
-import { Colors } from '@cognite/cogs.js-v9';
-
-import { getX, getY } from 'components/charts/utils';
+import { Colors } from '@cognite/cogs.js';
 
 import { SymbolLegendItem } from '..';
 import { usePortalTooltip } from '../usePortalTooltip';

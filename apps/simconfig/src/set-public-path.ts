@@ -1,6 +1,5 @@
+import pkg from '@simint-app/../package.json';
 import { setPublicPath } from 'systemjs-webpack-interop';
-
-import pkg from '../package.json';
 
 // This dynamically sets the webpack public path so that code splits work properly. See related:
 // https://github.com/joeldenning/systemjs-webpack-interop#what-is-this

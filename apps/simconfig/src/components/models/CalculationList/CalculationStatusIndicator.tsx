@@ -1,7 +1,7 @@
 import styled from 'styled-components/macro';
 
-import type { ChipType } from '@cognite/cogs.js-v9';
-import { Chip, Tooltip } from '@cognite/cogs.js-v9';
+import type { ChipType } from '@cognite/cogs.js';
+import { Chip, Tooltip } from '@cognite/cogs.js';
 import type { CalculationRunMetadata } from '@cognite/simconfig-api-sdk/rtk';
 
 export function CalculationStatusIndicator({
