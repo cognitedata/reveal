@@ -1,8 +1,0 @@
-{
-  "extends": "../tsconfig.json",
-  "compilerOptions": {
-    "rootDirs": ["src"],
-    "baseUrl": "src",
-    "target": "es6"
-  }
-}
