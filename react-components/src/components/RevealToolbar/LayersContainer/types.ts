@@ -1,24 +1,12 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-
+import type React from 'react';
 import {
   type CogniteCadModel,
   type CognitePointCloudModel,
   type Image360Collection
 } from '@cognite/reveal';
-
-export type LayerStates = {
-  allCadModelVisible: boolean;
-  cadIndeterminate: boolean;
-  allPointCloudModelVisible: boolean;
-  pointCloudIndeterminate: boolean;
-  allImages360Visible: boolean;
-  image360Indeterminate: boolean;
-  layersEnabled: boolean;
-};
-
-export type SetLayerStates = (layerStates: LayerStates) => void;
 
 export type Reveal3DResourcesStates = {
   cadModels: Array<{
@@ -37,4 +25,11 @@ export type Reveal3DResourcesStates = {
   }>;
 };
 
-export type SetReveal3DResourcesStates = (reveal3DResources: Reveal3DResourcesStates) => void;
+export type SetReveal3DResourcesStates = React.Dispatch<
+  React.SetStateAction<Reveal3DResourcesStates>
+>;
+
+export type Reveal3DResourcesLayersProps = {
+  reveal3DResourcesStates: Reveal3DResourcesStates;
+  setReveal3DResourcesStates: SetReveal3DResourcesStates;
+};

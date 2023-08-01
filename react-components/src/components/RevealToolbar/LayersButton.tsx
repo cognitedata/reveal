@@ -4,12 +4,11 @@
 
 import React, { type ReactElement, useState, useEffect, useMemo, useRef } from 'react';
 import { Button, Dropdown } from '@cognite/cogs.js';
-import { type Reveal3DResourcesStates, type LayerStates } from './LayersContainer/types';
+import { type Reveal3DResourcesStates } from './LayersContainer/types';
 import LayersContainer from './LayersContainer/LayersContainer';
 import {
   type CognitePointCloudModel,
   type CogniteCadModel,
-  type Image360Collection,
   type CogniteModel
 } from '@cognite/reveal';
 import { useReveal } from '../RevealContainer/RevealContext';
@@ -17,43 +16,24 @@ import { use3DModelName } from '../../hooks/use3DModelName';
 import isEqual from 'lodash/isEqual';
 
 export const LayersButton = (): ReactElement => {
-  const layerStatesInitialState: LayerStates = {
-    allCadModelVisible: true,
-    cadIndeterminate: false,
-    allPointCloudModelVisible: true,
-    pointCloudIndeterminate: false,
-    allImages360Visible: true,
-    image360Indeterminate: false,
-    layersEnabled: false
-  };
   const viewer = useReveal();
-  const [layerStates, setLayerStates] = useState<LayerStates>(layerStatesInitialState);
-
-  const [selectedCadModels] = useState<
-    Array<{ model: CogniteCadModel; isToggled: boolean; name?: string }>
-  >([]);
-  const [selectedPointCloudModels] = useState<
-    Array<{ model: CognitePointCloudModel; isToggled: boolean; name?: string }>
-  >([]);
-  const [selectedImage360Collection] = useState<
-    Array<{ image360: Image360Collection; isToggled: boolean }>
-  >([]);
+  const [layersEnabled, setLayersEnabled] = useState<boolean>(false);
 
   const [cadModelIds, setCadModelIds] = useState<number[]>([]);
   const [pointCloudModelIds, setPointCloudModelIds] = useState<number[]>([]);
   const prevModelsRef = useRef<CogniteModel[]>([]);
 
   const [reveal3DResources, setReveal3DResources] = useState<Reveal3DResourcesStates>({
-    cadModels: selectedCadModels,
-    pointCloudModels: selectedPointCloudModels,
-    image360Collections: selectedImage360Collection
+    cadModels: [],
+    pointCloudModels: [],
+    image360Collections: []
   });
 
+  const cadModelName = use3DModelName(cadModelIds);
+  const pointCloudModelName = use3DModelName(pointCloudModelIds);
+
   const showLayers = (): void => {
-    setLayerStates((prevLayerStates) => ({
-      ...prevLayerStates,
-      layersEnabled: !prevLayerStates.layersEnabled
-    }));
+    setLayersEnabled(!layersEnabled);
   };
 
   useEffect(() => {
@@ -78,9 +58,6 @@ export const LayersButton = (): ReactElement => {
       }
     }
   }, [viewer.models, cadModelIds, pointCloudModelIds]);
-
-  const cadModelName = use3DModelName(cadModelIds);
-  const pointCloudModelName = use3DModelName(pointCloudModelIds);
 
   const updatedReveal3DResources: Reveal3DResourcesStates = useMemo(() => {
     if (cadModelName.data === null && pointCloudModelName.data === null) {
@@ -132,21 +109,14 @@ export const LayersButton = (): ReactElement => {
       appendTo={document.body}
       content={
         <LayersContainer
-          layerStates={layerStates}
-          setLayerStates={setLayerStates}
-          reveal3DResources={reveal3DResources}
-          setReveal3DResources={setReveal3DResources}
+          props={{
+            reveal3DResourcesStates: reveal3DResources,
+            setReveal3DResourcesStates: setReveal3DResources
+          }}
         />
       }
-      visible={layerStates.layersEnabled}
       placement="auto">
-      <Button
-        type="ghost"
-        toggled={layerStates.layersEnabled}
-        icon="Layers"
-        aria-label="3D Resource layers"
-        onClick={showLayers}
-      />
+      <Button type="ghost" icon="Layers" aria-label="3D Resource layers" onClick={showLayers} />
     </Dropdown>
   );
 };

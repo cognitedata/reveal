@@ -8,60 +8,55 @@ import { Checkbox, Flex, Menu } from '@cognite/cogs.js';
 import { StyledChipCount, StyledLabel, StyledSubMenu } from './elements';
 import { type Image360Collection } from '@cognite/reveal';
 import uniqueId from 'lodash/uniqueId';
-
-type Image360CollectionLayerContainerProps = {
-  selectedImage360Collection: Array<{ image360: Image360Collection; isToggled: boolean }>;
-  setSelectedImage360Collection: (
-    value: Array<{ image360: Image360Collection; isToggled: boolean }>
-  ) => void;
-  allImages360Visible: boolean;
-  setAllImages360Visible: (value: boolean) => void;
-  indeterminate: boolean;
-  setIndeterminate: (value: boolean) => void;
-};
+import { type Reveal3DResourcesLayersProps } from './types';
 
 export const Image360CollectionLayerContainer = ({
-  selectedImage360Collection,
-  setSelectedImage360Collection,
-  allImages360Visible,
-  setAllImages360Visible,
-  indeterminate,
-  setIndeterminate
-}: Image360CollectionLayerContainerProps): ReactElement => {
+  layerProps
+}: {
+  layerProps: Reveal3DResourcesLayersProps;
+}): ReactElement => {
   const viewer = useReveal();
-  const image360Collection = viewer.get360ImageCollections();
+  const { image360Collections } = layerProps.reveal3DResourcesStates;
 
-  const count = image360Collection.length.toString();
+  const count = image360Collections.length.toString();
+  const allModelVisible = !image360Collections.every((data) => !data.isToggled);
+  const indeterminate = image360Collections.some((data) => !data.isToggled);
 
   const handle360ImagesVisibility = (image360: Image360Collection): void => {
-    selectedImage360Collection.map((data) => {
+    const updatedImage360Collection = image360Collections.map((data) => {
       if (data.image360 === image360) {
         data.isToggled = !data.isToggled;
+
         image360.setIconsVisibility(data.isToggled);
       }
       return data;
     });
     viewer.requestRedraw();
-    setSelectedImage360Collection([...selectedImage360Collection]);
-    setIndeterminate(selectedImage360Collection.some((data) => !data.isToggled));
-    setAllImages360Visible(!selectedImage360Collection.every((data) => !data.isToggled));
+    layerProps.setReveal3DResourcesStates((prevResourcesStates) => ({
+      ...prevResourcesStates,
+      image360Collections: updatedImage360Collection
+    }));
   };
 
   const handleAll360ImagesVisibility = (visible: boolean): void => {
-    [...selectedImage360Collection].forEach((data) => {
+    [...image360Collections].forEach((data) => {
       data.isToggled = visible;
       data.image360.setIconsVisibility(data.isToggled);
     });
+    if (!visible) {
+      viewer.exit360Image();
+    }
     viewer.requestRedraw();
-    setAllImages360Visible(visible);
-    setIndeterminate(false);
-    setSelectedImage360Collection([...selectedImage360Collection]);
+    layerProps.setReveal3DResourcesStates((prevResourcesStates) => ({
+      ...prevResourcesStates,
+      image360Collections
+    }));
   };
 
   const image360Content = (): React.JSX.Element => {
     return (
       <StyledSubMenu>
-        {selectedImage360Collection.map((data) => (
+        {image360Collections.map((data) => (
           <Menu.Item
             key={uniqueId()}
             hasCheckbox
@@ -80,19 +75,24 @@ export const Image360CollectionLayerContainer = ({
   };
 
   return (
-    <Menu.Submenu content={image360Content()} title="360 images">
-      <Flex direction="row" justifyContent="space-between">
-        <Checkbox
-          checked={allImages360Visible}
-          indeterminate={indeterminate}
-          onChange={(e, c) => {
-            e.stopPropagation();
-            handleAll360ImagesVisibility(c as boolean);
-          }}
-        />
-        <StyledLabel> 360 images </StyledLabel>
-        <StyledChipCount label={count} hideTooltip type="neutral" />
-      </Flex>
-    </Menu.Submenu>
+    <>
+      {image360Collections.length > 0 && (
+        <Menu.Submenu content={image360Content()} title="360 images">
+          <Flex direction="row" justifyContent="space-between">
+            <Checkbox
+              key={`all360ImagesCheckbox-${String(allModelVisible)}-${String(indeterminate)}`}
+              checked={allModelVisible}
+              indeterminate={indeterminate}
+              onChange={(e, c) => {
+                e.stopPropagation();
+                handleAll360ImagesVisibility(c as boolean);
+              }}
+            />
+            <StyledLabel> 360 images </StyledLabel>
+            <StyledChipCount label={count} hideTooltip type="neutral" />
+          </Flex>
+        </Menu.Submenu>
+      )}
+    </>
   );
 };
