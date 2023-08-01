@@ -49,8 +49,8 @@ export const TimeseriesPage = () => {
 
   return (
     <Page.Dashboard
-      customName={data?.name}
-      customDataType="Timeseries"
+      name={data?.name}
+      dataType="Timeseries"
       loading={isLoading}
       renderActions={() => [
         <Dropdown.OpenIn
@@ -69,7 +69,7 @@ export const TimeseriesPage = () => {
           timeseriesId={data?.id}
           dateRange={dateRange}
           onChangeDateRange={handleDateRangeChange}
-          rows={8}
+          rows={6}
           columns={4}
         />
       </Page.Widgets>

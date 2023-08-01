@@ -37,7 +37,12 @@ export const InstancesPage = () => {
   }, [isFetched]);
 
   return (
-    <Page.Dashboard customName={data?.name} loading={isLoading}>
+    <Page.Dashboard
+      dataType={dataType}
+      name={data?.name}
+      description={data?.description}
+      loading={isLoading}
+    >
       <Page.Widgets>
         {directRelationships?.map((item) => (
           <RelationshipDirectWidget

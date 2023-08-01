@@ -2,11 +2,13 @@ import React, { PropsWithChildren } from 'react';
 
 import styled from 'styled-components';
 
-import { Body, Button, Skeleton, Title } from '@cognite/cogs.js';
+import { Button, Skeleton, Title } from '@cognite/cogs.js';
 
+import { Typography } from '../../../components/Typography';
 import zIndex from '../../../utils/zIndex';
 
 interface Props {
+  header?: string;
   title?: string;
   subtitle?: string;
   onBackClick?: () => void;
@@ -16,13 +18,14 @@ interface Props {
 
 export const PageHeader: React.FC<PropsWithChildren<Props>> = ({
   children,
+  header,
   title,
   subtitle,
   onBackClick,
   loading,
   alignActions = 'right',
 }) => {
-  const hasContent = title || subtitle || loading;
+  const hasContent = title || subtitle || header || loading;
 
   return (
     <Header>
@@ -42,8 +45,9 @@ export const PageHeader: React.FC<PropsWithChildren<Props>> = ({
               <Skeleton.Paragraph lines={2} />
             ) : (
               <>
+                <HeaderText>{header}</HeaderText>
                 <Title level={4}>{title}</Title>
-                <Body>{subtitle}</Body>
+                <DescriptionText>{subtitle}</DescriptionText>
               </>
             )}
           </Wrapper>
@@ -63,7 +67,7 @@ export const PageHeader: React.FC<PropsWithChildren<Props>> = ({
 };
 
 const Header = styled.div`
-  min-height: 80px;
+  min-height: 90px;
   display: flex;
   justify-content: center;
   position: sticky;
@@ -84,7 +88,8 @@ const Actions = styled.div<{ align?: 'left' | 'right' }>`
 `;
 
 const Content = styled.div`
-  width: 1024px;
+  width: 100%;
+  max-width: 1024px;
   flex-direction: row;
   display: flex;
   align-items: center;
@@ -94,4 +99,18 @@ const Content = styled.div`
 
 const Wrapper = styled.span`
   min-width: 100px;
+  max-width: 80%;
+`;
+
+const HeaderText = styled(Typography.Body).attrs({
+  size: 'xsmall',
+  strong: true,
+})`
+  color: var(--border-status-neutral-strong, #4078f0);
+`;
+
+const DescriptionText = styled(Typography.Body).attrs({
+  size: 'xsmall',
+})`
+  width: 50%;
 `;
