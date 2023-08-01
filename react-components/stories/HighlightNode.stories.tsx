@@ -78,16 +78,12 @@ const StoryContent = ({
   resources: AddResourceOptions[];
   fdmAssetMappingConfig: FdmAssetMappingsConfig;
 }) => {
-  const viewer = useReveal();
-
   const [nodeData, setNodeData] = useState<any>();
 
   const callback = (nodeData: NodeDataResult<any>) => {
     setNodeData(nodeData.data);
 
-    if (!(viewer.models[0] instanceof CogniteCadModel)) return;
-
-    viewer.models[0].assignStyledNodeCollection(
+    nodeData.model.assignStyledNodeCollection(
       new TreeIndexNodeCollection([nodeData.cadNode.treeIndex]),
       DefaultNodeAppearance.Highlighted
     );
