@@ -791,7 +791,7 @@ __metadata:
     jest-canvas-mock: 2.5.2
     jest-environment-jsdom: 29.6.2
     jest-extended: 4.0.0
-    jest-image-snapshot: 6.1.0
+    jest-image-snapshot: 6.2.0
     jest-puppeteer: 9.0.0
     jsdom: 22.1.0
     lodash: 4.17.21
@@ -7678,22 +7678,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-image-snapshot@npm:6.1.0":
-  version: 6.1.0
-  resolution: "jest-image-snapshot@npm:6.1.0"
+"jest-image-snapshot@npm:6.2.0":
+  version: 6.2.0
+  resolution: "jest-image-snapshot@npm:6.2.0"
   dependencies:
     chalk: ^4.0.0
     get-stdin: ^5.0.1
     glur: ^1.1.2
     lodash: ^4.17.4
-    mkdirp: ^0.5.1
     pixelmatch: ^5.1.0
     pngjs: ^3.4.0
     rimraf: ^2.6.2
     ssim.js: ^3.1.1
   peerDependencies:
     jest: ">=20 <=29"
-  checksum: e04eb48947ce5184aa19afdd41fd2e809542fbf4e335d6302efe15cb04e8df46df40fc86c81b0dd4ef0dd2a35879c92160a7d507c7888ef477e799cbcc4255ae
+  peerDependenciesMeta:
+    jest:
+      optional: true
+  checksum: baf97e6329e8a77ff2c116ccced3e1949294fd2a08e9223ec7947effdd5670cdbbabfbb6a03439afabde51d66a32a8573545d512c47a68d9e4b3c5f1249ac6a1
   languageName: node
   linkType: hard
 
@@ -8913,17 +8915,6 @@ __metadata:
   version: 0.5.3
   resolution: "mkdirp-classic@npm:0.5.3"
   checksum: 3f4e088208270bbcc148d53b73e9a5bd9eef05ad2cbf3b3d0ff8795278d50dd1d11a8ef1875ff5aea3fa888931f95bfcb2ad5b7c1061cfefd6284d199e6776ac
-  languageName: node
-  linkType: hard
-
-"mkdirp@npm:^0.5.1":
-  version: 0.5.5
-  resolution: "mkdirp@npm:0.5.5"
-  dependencies:
-    minimist: ^1.2.5
-  bin:
-    mkdirp: bin/cmd.js
-  checksum: 3bce20ea525f9477befe458ab85284b0b66c8dc3812f94155af07c827175948cdd8114852ac6c6d82009b13c1048c37f6d98743eb019651ee25c39acc8aabe7d
   languageName: node
   linkType: hard
 
