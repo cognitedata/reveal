@@ -1,4 +1,4 @@
-import { generateRedirectUri } from '@cognite/auth-react';
+import { clearLoginHints, generateRedirectUri } from '@cognite/auth-react';
 import { isUsingUnifiedSignin } from '@cognite/cdf-utilities';
 
 import { ProjectList, TokenInspect } from '../types';
@@ -22,6 +22,7 @@ export const redirectToApp = (
 
 export const redirectToLogin = () => {
   if (isUsingUnifiedSignin()) {
+    clearLoginHints();
     window.location.href = generateRedirectUri();
   } else {
     const path = encodeURIComponent(

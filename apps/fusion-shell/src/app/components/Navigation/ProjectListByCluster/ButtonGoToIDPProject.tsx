@@ -2,10 +2,19 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { getCluster, getEnv, getProject } from '@cognite/cdf-utilities';
+import {
+  getCluster,
+  getEnv,
+  getProject,
+  isUsingUnifiedSignin,
+  unifiedSignInAppName,
+} from '@cognite/cdf-utilities';
 import { Button } from '@cognite/cogs.js';
 
 import CurrentProject from './CurrentProject';
+import { readLoginHints } from '@cognite/auth-react/src/lib/base';
+
+const { idpInternalId, organization } = readLoginHints() ?? {};
 
 type ButtonGoToIDPProjectProps = {
   cluster: string;
@@ -27,15 +36,30 @@ const ButtonGoToIDPProject = ({
     const urlSearchParams = new URLSearchParams();
     urlSearchParams.append('env', env ?? '');
     urlSearchParams.append('cluster', cluster);
+    if (isUsingUnifiedSignin()) {
+      urlSearchParams.append('project', projectName);
+      if (idpInternalId) {
+        urlSearchParams.append('idpInternalId', idpInternalId);
+      }
+      if (organization) {
+        urlSearchParams.append('organization', organization);
+      }
+    }
+    const baseUrl = isUsingUnifiedSignin()
+      ? `${unifiedSignInAppName}/${projectName}`
+      : `${projectName}`;
 
-    return `/${projectName}?${urlSearchParams.toString()}`;
+    return `/${baseUrl}?${urlSearchParams.toString()}`;
   };
 
   if (isCurrentProject) {
     return <CurrentProject projectName={projectName} />;
   }
 
-  const goToProjectHandler = () => (window.location.href = getHrefLink());
+  const goToProjectHandler = () => {
+    const href = getHrefLink();
+    window.location.href = href;
+  };
 
   return (
     <StyledGoToIDPProjectButton type="ghost" onClick={goToProjectHandler}>
