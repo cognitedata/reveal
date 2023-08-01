@@ -1,1 +1,0 @@
-export { FavoriteDropdown } from './FavoriteDropdown';

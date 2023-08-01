@@ -1,1 +1,0 @@
-export { NptTable } from './NptTable';

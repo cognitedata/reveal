@@ -1,1 +1,0 @@
-export { FileReaderComp } from './FileReaderComp';

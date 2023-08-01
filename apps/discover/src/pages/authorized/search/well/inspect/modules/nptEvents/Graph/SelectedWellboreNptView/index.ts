@@ -1,1 +1,0 @@
-export { SelectedWellboreNptView } from './SelectedWellboreNptView';

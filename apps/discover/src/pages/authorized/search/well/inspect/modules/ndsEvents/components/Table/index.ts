@@ -1,1 +1,0 @@
-export { NdsTable } from './NdsTable';

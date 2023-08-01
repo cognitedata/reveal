@@ -1,6 +1,0 @@
-export const WDL_PAGINATION_LIMITS = {
-  LIST: 1000,
-  LIST_DATA: 10000,
-};
-
-export const LIMIT_WELLBORES_NUMBER = 100;

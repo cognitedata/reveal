@@ -1,1 +1,0 @@
-export { WellResultTable } from './WellResultTable';
