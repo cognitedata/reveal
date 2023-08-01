@@ -43,6 +43,7 @@ type ToolConfigByType = {
     type: ToolType.RECTANGLE;
     fill: 'transparent';
     stroke: 'transparent';
+    isWorkspaceAnnotation: true;
   };
 };
 
@@ -102,6 +103,7 @@ const DEFAULT_TOOL_CONFIG_BY_TYPE: ToolConfigByType = {
     type: ToolType.RECTANGLE,
     fill: 'transparent',
     stroke: 'transparent',
+    isWorkspaceAnnotation: true,
   },
 };
 

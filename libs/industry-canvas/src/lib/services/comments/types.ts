@@ -14,14 +14,16 @@ export enum CommentTargetType {
 export enum CommentContextType {
   FOO = 'foo',
 }
+export type CommentContextDataType = { x: number; y: number };
 
-export type Comment<CommentContextDataType = any> = {
+export type Comment = {
   text: string;
   // It might be that, for a given user identifier, the corresponding user
   // profile may not exist (e.g., because the user has deleted their account).
   // To let the application developer handle this case themselves, we allow
   // createdBy to be undefined.
   createdBy: UserProfile | undefined;
+  createdById?: string;
   status?: CommentStatus;
   parentComment?: Pick<Comment, 'externalId'>;
 
@@ -38,10 +40,7 @@ export type Comment<CommentContextDataType = any> = {
   createdTime: Date;
 };
 
-export type SerializedComment<CommentContextDataType = any> = Omit<
-  Comment<CommentContextDataType>,
-  'createdBy' | 'taggedUsers'
-> & {
+export type SerializedComment = Omit<Comment, 'createdBy' | 'taggedUsers'> & {
   createdById: string;
   taggedUsers?: string[];
 };

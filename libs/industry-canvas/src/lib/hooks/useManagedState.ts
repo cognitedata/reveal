@@ -7,6 +7,7 @@ import {
   useRef,
   useState,
 } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
 import debounce from 'lodash/debounce';
 
@@ -16,6 +17,7 @@ import {
   ContainerConfig,
   ContainerType,
   IdsByType,
+  isRectangleAnnotation,
   UnifiedViewer,
   UnifiedViewerEventListenerMap,
   UnifiedViewerEventType,
@@ -31,6 +33,8 @@ import {
   MetricEvent,
 } from '../constants';
 import { useIndustryCanvasContext } from '../IndustryCanvasContext';
+import { useCommentsUpsertMutation } from '../services/comments/hooks';
+import { CommentTargetType } from '../services/comments/types';
 import {
   CanvasAnnotation,
   ContainerReference,
@@ -53,7 +57,6 @@ import {
   serializeCanvasState,
 } from '../utils/utils';
 
-import { useCommentSaveMutation } from './use-mutation/useCommentSaveMutation';
 import {
   UseCanvasStateHistoryReturnType,
   useHistory,
@@ -259,7 +262,13 @@ const useAutoSaveState = (
       return;
     }
 
-    const serializedData = serializeCanvasState(canvasState);
+    const filteredCanvasAnnotations = canvasState.canvasAnnotations.filter(
+      (annotation) => !isCommentAnnotation(annotation)
+    );
+    const serializedData = serializeCanvasState({
+      ...canvasState,
+      canvasAnnotations: filteredCanvasAnnotations,
+    });
     if (deepEqualWithMissingProperties(serializedData, activeCanvas.data)) {
       return;
     }
@@ -345,15 +354,11 @@ const useManagedState = ({
   });
   const { canvasState, undo, redo, pushState, replaceState } = useHistory();
   usePersistence(canvasState, replaceState);
-
-  const { mutate: saveComment } = useCommentSaveMutation();
-
+  const [searchParams, setSearchParams] = useSearchParams();
   const {
     userProfile: { userIdentifier },
   } = useUserProfile();
-
-  const { activeCanvas = { externalId: '' } } = useIndustryCanvasContext();
-  const { externalId: activeCanvasExternalId } = activeCanvas;
+  const { mutateAsync: upsertComments } = useCommentsUpsertMutation();
   const onUpdateRequest: UpdateHandlerFn = useCallback(
     ({ containers: updatedContainers, annotations: updatedAnnotations }) => {
       const validUpdatedContainers = updatedContainers.filter(
@@ -383,11 +388,30 @@ const useManagedState = ({
               ...updatedAnnotation.metadata,
               [COMMENT_METADATA_ID]: true,
             };
-            saveComment({
-              externalId: updatedAnnotation.id,
-              text: '',
-              author: userIdentifier,
-              canvas: { externalId: activeCanvasExternalId },
+
+            if (!isRectangleAnnotation(updatedAnnotation)) {
+              throw new Error(
+                'Provided annotation is not rectangle annotation'
+              );
+            }
+
+            upsertComments([
+              {
+                targetId: searchParams.get('canvasId') ?? undefined,
+                targetType: CommentTargetType.CANVAS,
+                createdById: userIdentifier,
+                text: '',
+                externalId: updatedAnnotation.id,
+                contextData: {
+                  x: updatedAnnotation.x,
+                  y: updatedAnnotation.y,
+                },
+              },
+            ]).then(() => {
+              setSearchParams((currentParams) => {
+                currentParams.set('commentTooltipId', updatedAnnotation.id);
+                return currentParams;
+              });
             });
           }
 
@@ -426,13 +450,14 @@ const useManagedState = ({
     },
     [
       pushState,
-      unifiedViewer,
       toolType,
       setToolType,
-      activeCanvasExternalId,
-      saveComment,
-      userIdentifier,
+      unifiedViewer,
       trackUsage,
+      upsertComments,
+      searchParams,
+      userIdentifier,
+      setSearchParams,
     ]
   );
 

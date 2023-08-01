@@ -11,28 +11,24 @@ import { QueryKeys, TOAST_POSITION } from '../../../../constants';
 import { CommentService } from '../../CommentService';
 import { SerializedComment } from '../../types';
 
-export const useCommentsUpsertMutation = <ContextDataType = any>() => {
+export const useCommentsUpsertMutation = () => {
   const queryClient = useQueryClient();
   const sdk = useSDK();
   const service = useMemo(() => new CommentService(sdk), [sdk]);
 
   return useMutation(
     [QueryKeys.UPSERT_COMMENTS],
-    (
-      comments: Omit<
-        SerializedComment<ContextDataType>,
-        'lastUpdatedTime' | 'createdTime'
-      >[]
-    ) => service.upsertComments(comments),
+    (comments: Omit<SerializedComment, 'lastUpdatedTime' | 'createdTime'>[]) =>
+      service.upsertComments(comments),
     {
       onMutate: async (comments) => {
         // Cancel any outgoing refetches
         await queryClient.cancelQueries([QueryKeys.LIST_COMMENTS]);
 
         // Optimistically update to the new value
-        queryClient.setQueriesData<SerializedComment<ContextDataType>[]>(
+        queryClient.setQueriesData<SerializedComment[]>(
           [QueryKeys.LIST_COMMENTS],
-          (previousComments: SerializedComment<ContextDataType>[] = []) =>
+          (previousComments: SerializedComment[] = []) =>
             uniqBy(
               [
                 ...comments.map((comment) => ({
