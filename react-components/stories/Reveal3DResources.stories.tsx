@@ -115,7 +115,8 @@ export const Main: Story = {
         type: 'view',
         externalId: 'CDF_3D_Connection_Data'
       },
-      assetFdmSpace: 'bark-corporation'
+      assetFdmSpace: 'bark-corporation',
+      global3dSpace: 'hf_3d_global_data'
     }
   },
   render: ({ resources, styling, fdmAssetMappingConfig }) => {
