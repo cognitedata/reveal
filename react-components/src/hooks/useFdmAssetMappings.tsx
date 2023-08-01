@@ -3,7 +3,7 @@
  */
 import { type CogniteExternalId } from '@cognite/sdk';
 import { useFdmSdk } from '../components/RevealContainer/SDKProvider';
-import { type UseQueryResult, useQuery } from '@tanstack/react-query';
+import { type UseQueryResult, useQuery, useInfiniteQuery, type UseInfiniteQueryResult } from '@tanstack/react-query';
 import { type FdmAssetMappingsConfig, type ThreeDModelMappings } from './types';
 import { DEFAULT_QUERY_STALE_TIME } from '../utilities/constants';
 
@@ -13,13 +13,13 @@ import { DEFAULT_QUERY_STALE_TIME } from '../utilities/constants';
 export const useFdmAssetMappings = (
   fdmAssetExternalIds: CogniteExternalId[],
   fdmConfig?: FdmAssetMappingsConfig
-): UseQueryResult<ThreeDModelMappings[]> => {
+): UseInfiniteQueryResult<{ items: ThreeDModelMappings[], nextCursor: string }> => {
   const fdmSdk = useFdmSdk();
 
-  return useQuery(
+  return useInfiniteQuery(
     ['reveal', 'react-components', fdmAssetExternalIds],
-    async () => {
-      if (fdmAssetExternalIds?.length === 0) return [];
+    async ({ pageParam }) => {
+      if (fdmAssetExternalIds?.length === 0) return { items: [], nextCursor: undefined };
       if (fdmConfig === undefined)
         throw Error('FDM config must be defined when using FDM asset mappings');
 
@@ -36,7 +36,8 @@ export const useFdmAssetMappings = (
       const instances = await fdmSdk.filterInstances(
         fdmAssetMappingFilter,
         'edge',
-        fdmConfig.source
+        fdmConfig.source,
+        pageParam
       );
 
       const modelMappingsTemp: ThreeDModelMappings[] = [];
@@ -74,8 +75,11 @@ export const useFdmAssetMappings = (
         }
       });
 
-      return modelMappingsTemp;
+      return { items: modelMappingsTemp, nextCursor: instances.nextCursor };
     },
-    { staleTime: DEFAULT_QUERY_STALE_TIME }
+    {
+      staleTime: DEFAULT_QUERY_STALE_TIME,
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
+    }
   );
 };

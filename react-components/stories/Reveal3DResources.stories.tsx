@@ -7,6 +7,7 @@ import { Color, Matrix4, Vector3 } from 'three';
 import { CameraController, ViewerAnchor } from '../src/';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { DefaultFdmConfig } from './utilities/fdmConfig';
 
 const meta = {
   title: 'Example/Reveal3DResources',
@@ -113,16 +114,7 @@ export const Main: Story = {
       }
     ],
     styling: {},
-    fdmAssetMappingConfig: {
-      source: {
-        space: 'fdm-3d-test-savelii',
-        version: '1',
-        type: 'view',
-        externalId: 'CDF_3D_Connection_Data'
-      },
-      assetFdmSpace: 'bark-corporation',
-      global3dSpace: 'hf_3d_global_data'
-    }
+    fdmAssetMappingConfig: DefaultFdmConfig
   },
   render: ({ resources, styling, fdmAssetMappingConfig }) => {
     const position = new Vector3(50, 30, 50);
