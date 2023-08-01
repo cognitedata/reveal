@@ -11,8 +11,7 @@ export type CreateWorkflowVariables = Pick<
   'externalId' | 'description'
 >;
 
-// TODO support http and dynamic in the UI
-type TaskType = 'function' | 'transformation'; // | 'http' | 'dynamic';
+type TaskType = 'function' | 'transformation' | 'http' | 'dynamic';
 
 type TaskDepends = {
   externalId: string;

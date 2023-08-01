@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { Colors, Elevations, Flex, Loader } from '@cognite/cogs.js';
 import styled from 'styled-components';
@@ -18,6 +18,8 @@ import { NodeConfigurationPanel } from 'components/node-configuration-panel/Node
 import { RunHistorySection } from 'components/run-history-section/RunHistorySection';
 import RunCanvas from 'components/run-canvas/RunCanvas';
 import { WorkflowWithVersions } from 'types/workflows';
+import { getLastWorkflowDefinition, isCanvasEmpty } from 'utils/workflows';
+import ViewOnlyCanvas from 'components/view-only-canvas/ViewOnlyCanvas';
 
 const Flow = (): JSX.Element => {
   const { externalId } = useParams<{ externalId: string }>();
@@ -89,6 +91,15 @@ function FlowContainer({ workflow }: FlowContainerProps) {
     previewHash,
   } = useWorkflowBuilderContext();
 
+  const { flow } = useWorkflowBuilderContext();
+
+  const { workflowDefinition: lastWorkflowDefinition } = useMemo(
+    () => getLastWorkflowDefinition(workflow),
+    [workflow]
+  );
+
+  const viewOnly = isCanvasEmpty(flow) && !!lastWorkflowDefinition;
+
   return (
     <StyledFlowContainer>
       <CanvasTopBar workflow={workflow} />
@@ -98,7 +109,7 @@ function FlowContainer({ workflow }: FlowContainerProps) {
             {previewHash && <PreviewFeedback />}
             {isHistoryVisible && <FloatingHistoryPanel />}
             {focusedProcessNodeId && <NodeConfigurationPanel />}
-            <Canvas />
+            {viewOnly ? <ViewOnlyCanvas /> : <Canvas />}
           </CanvasSection>
         ) : (
           <>

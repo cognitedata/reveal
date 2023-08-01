@@ -89,8 +89,10 @@
   "configure-process": "Configure process",
   "view-run": "View run",
   "edit-mode": "Edit mode",
+  "view-mode": "View mode",
   "run-history": "Run history",
   "run-is-selected": "Run is selected",
   "select-a-run-to-start": "Select a run to start",
-  "delete": "Delete"
+  "delete": "Delete",
+  "error-workflow": "Something went wrong. Could not load the workflow."
 }

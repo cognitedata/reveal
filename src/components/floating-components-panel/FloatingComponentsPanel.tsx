@@ -34,6 +34,9 @@ export const FloatingComponentsPanel = (): JSX.Element => {
     event.dataTransfer.effectAllowed = 'move';
   };
 
+  // Show only transformations and functions
+  const UIsupportedProccessTypes = PROCESS_TYPES.slice(0, 2);
+
   return (
     <FloatingPanel>
       <Flex alignItems="flex-start" justifyContent="space-between">
@@ -48,7 +51,7 @@ export const FloatingComponentsPanel = (): JSX.Element => {
         />
       </Flex>
       <Flex direction="column" gap={8}>
-        {PROCESS_TYPES.map((type) => (
+        {UIsupportedProccessTypes.map((type) => (
           <FloatingComponentsPanelItem
             key={type}
             onDragStart={(e) => onDragStart(e, type)}
