@@ -1,5 +1,0 @@
-resources:
-  - ../../basic/base
-patchesStrategicMerge:
-  - manifests.yaml
-namespace: apps-staging
