@@ -8,14 +8,25 @@ import {
   type FdmAssetMappingsConfig,
   RevealContainer,
   RevealToolbar,
-  useReveal
+  useReveal,
+  Reveal3DResources,
+  NodeDataResult,
+  Reveal3DResourcesProps,
+  AddResourceOptions
 } from '../src';
 import { CogniteClient } from '@cognite/sdk';
 import { Color, Matrix4 } from 'three';
 import { type ReactElement, useEffect, useState } from 'react';
-import { type PointerEventData } from '@cognite/reveal';
+import {
+  CogniteCadModel,
+  DefaultNodeAppearance,
+  NodeIdNodeCollection,
+  TreeIndexNodeCollection,
+  type PointerEventData
+} from '@cognite/reveal';
 import { queryMappedData } from '../src/components/Reveal3DResources/queryMappedData';
 import { useFdmSdk, useSDK } from '../src/components/RevealContainer/SDKProvider';
+import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 
 const DefaultFdmConfig: FdmAssetMappingsConfig = {
   source: {
@@ -30,61 +41,67 @@ const DefaultFdmConfig: FdmAssetMappingsConfig = {
 
 const meta = {
   title: 'Example/HighlightNode',
-  component: CadModelContainer,
+  component: Reveal3DResources,
   tags: ['autodocs']
-} satisfies Meta<typeof CadModelContainer>;
+} satisfies Meta<typeof Reveal3DResources>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const token = new URLSearchParams(window.location.search).get('token') ?? '';
-const sdk = new CogniteClient({
-  appId: 'reveal.example',
-  baseUrl: 'https://greenfield.cognitedata.com',
-  project: '3d-test',
-  getToken: async () => await Promise.resolve(token)
-});
+const sdk = createSdkByUrlToken();
 
 export const Main: Story = {
   args: {
-    addModelOptions: {
-      modelId: 2551525377383868,
-      revisionId: 2143672450453400
-    },
-    transform: new Matrix4().makeTranslation(0, 10, 0)
+    resources: [
+      {
+        modelId: 2551525377383868,
+        revisionId: 2143672450453400,
+        transform: new Matrix4().makeTranslation(-340, -480, 80)
+      }
+    ],
+    styling: {},
+    fdmAssetMappingConfig: DefaultFdmConfig
   },
-  render: ({ addModelOptions }) => (
-    <RevealContainer sdk={sdk} color={new Color(0x4a4a4a)}>
-      <CadModelContainer addModelOptions={addModelOptions} />
-      <RevealToolbar />
-      <Querier fdmConfig={DefaultFdmConfig} />
-    </RevealContainer>
-  )
+  render: ({ resources, fdmAssetMappingConfig }) => {
+    return (
+      <RevealContainer sdk={sdk} color={new Color(0x4a4a4a)}>
+        <StoryContent resources={resources} fdmAssetMappingConfig={fdmAssetMappingConfig} />
+      </RevealContainer>
+    );
+  }
 };
 
-const Querier = ({ fdmConfig }: { fdmConfig: FdmAssetMappingsConfig }): ReactElement => {
+const StoryContent = ({
+  resources,
+  fdmAssetMappingConfig
+}: {
+  resources: AddResourceOptions[];
+  fdmAssetMappingConfig: FdmAssetMappingsConfig;
+}) => {
   const viewer = useReveal();
-  const sdk = useSDK();
-  const fdmClient = useFdmSdk();
 
-  const [nodeData, setNodeData] = useState<any>(undefined);
+  const [nodeData, setNodeData] = useState<any>();
 
-  useEffect(() => {
-    const queryAndSetData = (e: PointerEventData): void => {
-      void (async (e: PointerEventData): Promise<void> => {
-        const nodeData = await queryMappedData(viewer, sdk, fdmClient, fdmConfig, e);
-        setNodeData(nodeData);
-      })(e);
-    };
+  const callback = (nodeData: NodeDataResult<any>) => {
+    setNodeData(nodeData.data);
 
-    viewer.on('click', (e: PointerEventData) => {
-      queryAndSetData(e);
-    });
+    if (!(viewer.models[0] instanceof CogniteCadModel)) return;
 
-    return (): void => {
-      viewer.off('click', queryAndSetData);
-    };
-  }, [viewer, sdk, fdmClient, fdmConfig]);
+    viewer.models[0].assignStyledNodeCollection(
+      new TreeIndexNodeCollection([nodeData.cadNode.treeIndex]),
+      DefaultNodeAppearance.Highlighted
+    );
+  };
 
-  return <>Clicked node content: {JSON.stringify(nodeData)}</>;
+  return (
+    <>
+      <Reveal3DResources
+        resources={resources}
+        fdmAssetMappingConfig={fdmAssetMappingConfig}
+        onNodeClick={callback}
+      />
+      <RevealToolbar />
+      NodeData is: {JSON.stringify(nodeData)}
+    </>
+  );
 };

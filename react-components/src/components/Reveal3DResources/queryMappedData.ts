@@ -3,7 +3,7 @@
  */
 
 import { type Cognite3DViewer, type PointerEventData, type CogniteCadModel } from '@cognite/reveal';
-import { type CogniteInternalId, type CogniteClient } from '@cognite/sdk';
+import { type CogniteInternalId, type CogniteClient, Node3D } from '@cognite/sdk';
 import {
   type EdgeItem,
   type InspectResultList,
@@ -12,13 +12,72 @@ import {
   type Source
 } from '../../utilities/FdmSDK';
 import { type FdmAssetMappingsConfig } from '../../hooks/types';
-import { type NodeDataResult } from './types';
+import { FdmPropertyType, type NodeDataResult } from './types';
 
-async function getAncestorNodeIdsForTreeIndex(
+export async function queryMappedData<NodeType>(
+  viewer: Cognite3DViewer,
+  cdfClient: CogniteClient,
+  fdmClient: FdmSDK,
+  fdmConfig: FdmAssetMappingsConfig,
+  clickEvent: PointerEventData
+): Promise<NodeDataResult<NodeType> | undefined> {
+  const intersection = await viewer.getIntersectionFromPixel(
+    clickEvent.offsetX,
+    clickEvent.offsetY
+  );
+
+  if (intersection === null || intersection.type !== 'cad') {
+    return;
+  }
+
+  const cadIntersection = intersection;
+  const model = cadIntersection.model;
+
+  const ancestors = await getAncestorNodesForTreeIndex(cdfClient, model, cadIntersection.treeIndex);
+
+  const mappings = await getMappingEdges(
+    fdmClient,
+    fdmConfig,
+    model,
+    ancestors.map((n) => n.id)
+  );
+
+  if (mappings.edges.length === 0) {
+    return;
+  }
+
+  const selectedEdge = mappings.edges[0];
+  const selectedNodeId =
+    selectedEdge.properties[fdmConfig.source.space][
+      `${fdmConfig.source.externalId}/${fdmConfig.source.version}`
+    ].revisionNodeId;
+  const selectedNode = ancestors.find((n) => n.id === selectedNodeId);
+  const dataNode = selectedEdge.startNode;
+
+  const inspectionResult = await inspectNode(fdmClient, dataNode);
+
+  const dataView =
+    inspectionResult.items[0]?.inspectionResults.involvedViewsAndContainers?.views[0];
+
+  const nodeData = await filterNodeData<NodeType>(fdmClient, dataNode, dataView);
+
+  if (nodeData === undefined) {
+    return undefined;
+  }
+
+  return {
+    data: nodeData as FdmPropertyType<NodeType>,
+    view: dataView,
+    cadNode: selectedNode!,
+    model: cadIntersection.model
+  };
+}
+
+async function getAncestorNodesForTreeIndex(
   client: CogniteClient,
   model: CogniteCadModel,
   treeIndex: number
-): Promise<CogniteInternalId[]> {
+): Promise<Node3D[]> {
   const nodeId = await model.mapTreeIndexToNodeId(treeIndex);
 
   const ancestorNodes = await client.revisions3D.list3DNodeAncestors(
@@ -27,7 +86,7 @@ async function getAncestorNodeIdsForTreeIndex(
     nodeId
   );
 
-  return ancestorNodes.items.map((n) => n.id);
+  return ancestorNodes.items;
 }
 
 async function getMappingEdges(
@@ -108,51 +167,4 @@ async function filterNodeData<NodeType>(
   return dataQueryResult.items[0]?.properties[dataView.space]?.[
     `${dataView.externalId}/${dataView.version}`
   ];
-}
-
-export async function queryMappedData<NodeType>(
-  viewer: Cognite3DViewer,
-  cdfClient: CogniteClient,
-  fdmClient: FdmSDK,
-  fdmConfig: FdmAssetMappingsConfig,
-  clickEvent: PointerEventData
-): Promise<NodeDataResult<NodeType> | undefined> {
-  const intersection = await viewer.getIntersectionFromPixel(
-    clickEvent.offsetX,
-    clickEvent.offsetY
-  );
-
-  if (intersection === null || intersection.type !== 'cad') {
-    return;
-  }
-
-  const cadIntersection = intersection;
-  const model = cadIntersection.model;
-
-  const ancestorIds = await getAncestorNodeIdsForTreeIndex(
-    cdfClient,
-    model,
-    cadIntersection.treeIndex
-  );
-
-  const mappings = await getMappingEdges(fdmClient, fdmConfig, model, ancestorIds);
-
-  if (mappings.edges.length === 0) {
-    return;
-  }
-
-  const dataNode = mappings.edges[0].startNode;
-
-  const inspectionResult = await inspectNode(fdmClient, dataNode);
-
-  const dataView =
-    inspectionResult.items[0]?.inspectionResults.involvedViewsAndContainers?.views[0];
-
-  const nodeData = await filterNodeData<NodeType>(fdmClient, dataNode, dataView);
-
-  if (nodeData === undefined) {
-    return undefined;
-  }
-
-  return { data: nodeData as NodeType, view: dataView };
 }
