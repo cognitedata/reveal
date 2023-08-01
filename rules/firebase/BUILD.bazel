@@ -1,3 +1,0 @@
-exports_files([
-    "publish_firebase.template.bash",
-])

@@ -1,5 +1,0 @@
-exports_files([
-    "spinnaker_deployment.template.bash",
-    "spinnaker_pipeline.template.bash",
-    "docker_push.template.bash",
-])
