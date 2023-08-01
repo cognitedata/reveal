@@ -1,7 +1,7 @@
 import { useCapabilities } from '@simint-app/hooks/useCapabilities';
 import type { AclName } from '@simint-app/hooks/useCheckAcl';
 import { useCheckAcl } from '@simint-app/hooks/useCheckAcl';
-import { renderHook } from '@testing-library/react-hooks';
+import { renderHook } from '@testing-library/react';
 
 jest.mock('@simint-app/hooks/useCapabilities', () => ({
   useCapabilities: jest.fn(),
