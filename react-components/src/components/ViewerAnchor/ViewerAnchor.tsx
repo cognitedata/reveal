@@ -24,24 +24,31 @@ export const ViewerAnchor = ({
   uniqueKey
 }: ViewerAnchorProps): ReactElement => {
   const viewer = useReveal();
-  const [vec, setVec] = useState(new Vector2());
+  const [divTranslation, setDivTranslation] = useState(new Vector2());
+  const [visible, setVisible] = useState(false);
 
-  const sceneRendered = (): void => {
-    const screenSpacePosition = viewer.worldToScreen(position);
+  const cameraChanged = (cameraPosition: Vector3, cameraTarget: Vector3): void => {
+    const cameraDirection = cameraTarget.clone().sub(cameraPosition).normalize();
+    const elementDirection = position.clone().sub(cameraPosition).normalize();
+
+    setVisible(elementDirection.dot(cameraDirection) > 0);
+
+    const screenSpacePosition = viewer.worldToScreen(position.clone());
     if (screenSpacePosition !== null) {
-      setVec(screenSpacePosition);
+      setDivTranslation(screenSpacePosition);
     }
   };
 
   useEffect(() => {
-    viewer.on('sceneRendered', sceneRendered);
+    viewer.cameraManager.on('cameraChange', cameraChanged);
     return () => {
-      viewer.off('sceneRendered', sceneRendered);
+      viewer.cameraManager.off('cameraChange', cameraChanged);
     };
-  }, [sceneRendered]);
+  }, [cameraChanged]);
 
   const htmlRef = useRef<HTMLDivElement>(null);
-  return (
+
+  return visible ? (
     <div
       key={uniqueKey}
       ref={htmlRef}
@@ -49,9 +56,11 @@ export const ViewerAnchor = ({
         position: 'absolute',
         left: '0px',
         top: '0px',
-        transform: `translateX(${vec.x}px) translateY(${vec.y}px)`
+        transform: `translateX(${divTranslation.x}px) translateY(${divTranslation.y}px)`
       }}>
       {children}
     </div>
+  ) : (
+    <></>
   );
 };
