@@ -39,6 +39,14 @@ export const Orientation = () => {
         },
       }}
       run={open}
+      floaterProps={{
+        styles: {
+          arrow: {
+            length: 8,
+            spread: 16,
+          },
+        },
+      }}
       callback={handleJoyrideCallback}
       tooltipComponent={OrientationTooltip}
     />
