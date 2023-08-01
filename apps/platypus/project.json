@@ -122,6 +122,10 @@
         "production": {
           "fileReplacements": [
             {
+              "replace": "apps/platypus/src/environments/cogniteSdk.ts",
+              "with": "apps/platypus/src/environments/fusion/cogniteSdk.ts"
+            },
+            {
               "replace": "apps/platypus/src/environments/environment.ts",
               "with": "apps/platypus/src/environments/environment.prod.ts"
             }
@@ -142,7 +146,8 @@
       "executor": "@nx/webpack:dev-server",
       "options": {
         "buildTarget": "platypus:build",
-        "hmr": true
+        "hmr": true,
+        "ssl": true
       },
       "configurations": {
         "development": {
