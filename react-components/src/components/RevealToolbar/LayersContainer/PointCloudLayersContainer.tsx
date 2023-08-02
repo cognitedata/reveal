@@ -19,7 +19,7 @@ export const PointCloudLayersContainer = ({
   const viewer = useReveal();
   const { pointCloudLayerData } = layerProps.reveal3DResourcesLayerData;
   const count = pointCloudLayerData.length.toString();
-  const someModelVisible = pointCloudLayerData.every((data) => data.isToggled);
+  const someModelVisible = !pointCloudLayerData.every((data) => !data.isToggled);
   const indeterminate = pointCloudLayerData.some((data) => !data.isToggled);
 
   const handlePointCloudVisibility = (model: CognitePointCloudModel): void => {
