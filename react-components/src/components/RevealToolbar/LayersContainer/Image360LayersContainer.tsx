@@ -84,9 +84,9 @@ export const Image360CollectionLayerContainer = ({
             <Checkbox
               checked={someImagesVisible}
               indeterminate={indeterminate}
-              onChange={(e, c) => {
+              onChange={(e) => {
                 e.stopPropagation();
-                handleAll360ImagesVisibility(c as boolean);
+                handleAll360ImagesVisibility(e.target.checked);
               }}
             />
             <StyledLabel> 360 images </StyledLabel>

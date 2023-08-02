@@ -79,9 +79,9 @@ export const PointCloudLayersContainer = ({
             <Checkbox
               checked={someModelVisible}
               indeterminate={indeterminate}
-              onChange={(e, c) => {
+              onChange={(e) => {
                 e.stopPropagation();
-                handleAllPointCloudModelsVisibility(c as boolean);
+                handleAllPointCloudModelsVisibility(e.target.checked);
               }}
             />
             <StyledLabel> Point clouds </StyledLabel>

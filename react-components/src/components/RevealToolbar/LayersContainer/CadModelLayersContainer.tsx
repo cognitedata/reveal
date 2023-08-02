@@ -86,9 +86,9 @@ export const CadModelLayersContainer = ({
             <Checkbox
               checked={someModelVisible}
               indeterminate={indeterminate}
-              onChange={(e, c) => {
+              onChange={(e) => {
                 e.stopPropagation();
-                handleAllCadModelsVisibility(c as boolean);
+                handleAllCadModelsVisibility(e.target.checked);
               }}
             />
             <StyledLabel> CAD models </StyledLabel>
