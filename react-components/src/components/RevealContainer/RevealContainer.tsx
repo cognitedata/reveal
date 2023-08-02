@@ -32,7 +32,6 @@ const queryClient = new QueryClient();
 export function RevealContainer({
   children,
   sdk,
-  uiElements,
   color,
   viewerOptions
 }: RevealContainerProps): ReactElement {
@@ -52,7 +51,6 @@ export function RevealContainer({
           ref={revealDomElementRef}>
           {mountChildren()}
         </div>
-        {uiElements}
       </QueryClientProvider>
     </SDKProvider>
   );

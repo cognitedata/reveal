@@ -2,6 +2,8 @@
  * Copyright 2023 Cognite AS
  */
 import '@cognite/cogs.js/dist/cogs.css';
+
+export { withSuppressRevealEvents } from './higher-order-components/withSuppressRevealEvents';
 export { RevealContainer } from './components/RevealContainer/RevealContainer';
 export { useReveal } from './components/RevealContainer/RevealContext';
 export {
