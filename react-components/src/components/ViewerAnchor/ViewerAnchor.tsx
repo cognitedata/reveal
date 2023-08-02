@@ -17,10 +17,7 @@ export type ViewerAnchorProps = {
   children: ReactElement;
 };
 
-export const ViewerAnchor = ({
-  position,
-  children
-}: ViewerAnchorProps): ReactElement => {
+export const ViewerAnchor = ({ position, children }: ViewerAnchorProps): ReactElement => {
   const viewer = useReveal();
   const [divTranslation, setDivTranslation] = useState(new Vector2());
   const [visible, setVisible] = useState(false);

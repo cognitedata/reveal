@@ -49,7 +49,7 @@ export const Main: Story = {
           styling={styling}
           fdmAssetMappingConfig={fdmAssetMappingConfig}
         />
-        <ViewerAnchor position={position} >
+        <ViewerAnchor position={position}>
           <p
             style={{
               backgroundColor: 'turquoise',
