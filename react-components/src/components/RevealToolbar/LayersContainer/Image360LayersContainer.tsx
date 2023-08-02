@@ -82,7 +82,6 @@ export const Image360CollectionLayerContainer = ({
         <Menu.Submenu content={image360Content()} title="360 images">
           <Flex direction="row" justifyContent="space-between">
             <Checkbox
-              key={`all360ImagesCheckbox-${String(someImagesVisible)}-${String(indeterminate)}`}
               checked={someImagesVisible}
               indeterminate={indeterminate}
               onChange={(e, c) => {

@@ -84,7 +84,6 @@ export const CadModelLayersContainer = ({
         <Menu.Submenu content={cadModelContent()} title="CAD models">
           <Flex direction="row" justifyContent="space-between" gap={4}>
             <Checkbox
-              key={`allCadModelCheckbox-${String(someModelVisible)}-${String(indeterminate)}`}
               checked={someModelVisible}
               indeterminate={indeterminate}
               onChange={(e, c) => {

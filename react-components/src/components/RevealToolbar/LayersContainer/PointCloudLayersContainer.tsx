@@ -77,9 +77,6 @@ export const PointCloudLayersContainer = ({
         <Menu.Submenu openOnHover={false} content={pointCloudModelContent()} title="Point clouds">
           <Flex direction="row" justifyContent="space-between">
             <Checkbox
-              key={`allPointCLoudModelCheckbox-${String(someModelVisible)}-${String(
-                indeterminate
-              )}`}
               checked={someModelVisible}
               indeterminate={indeterminate}
               onChange={(e, c) => {
