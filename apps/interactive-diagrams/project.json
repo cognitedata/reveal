@@ -42,6 +42,17 @@
           "runtimeChunk": false,
           "budgets": []
         },
+        "staging": {
+          "optimization": true,
+          "outputHashing": "all",
+          "sourceMap": true,
+          "extractCss": true,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "vendorChunk": false,
+          "runtimeChunk": false,
+          "budgets": []
+        },
         "production": {
           "optimization": true,
           "outputHashing": "all",

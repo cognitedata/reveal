@@ -423,7 +423,7 @@ pods {
                   appName: firebaseSiteName,
                   environment: releaseEnvironment,
                   firebaseJson: "dist/apps/${project}/firebase.json",
-                  buildCommand: "NODE_OPTIONS=--max-old-space-size=8192 yarn build production ${project}",
+                  buildCommand: "NODE_OPTIONS=--max-old-space-size=8192 yarn build ${releaseEnvironment} ${project}",
                   buildFolder: "dist/apps/${project}",
                   isFusionSubapp: true,
                 )
