@@ -3,9 +3,9 @@
  */
 
 import {
-  type CogniteCadModel,
   type AddModelOptions,
-  type SupportedModelTypes
+  type SupportedModelTypes,
+  type CadIntersection
 } from '@cognite/reveal';
 import { type Matrix4 } from 'three';
 import { type FdmNode, type Source } from '../../utilities/FdmSDK';
@@ -26,5 +26,5 @@ export type NodeDataResult<NodeType> = {
   data: FdmNode<NodeType>;
   view: Source;
   cadNode: Node3D;
-  model: CogniteCadModel;
+  intersection: CadIntersection;
 };
