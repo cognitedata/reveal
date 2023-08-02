@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import React, { type ReactElement } from 'react';
+import { type ReactElement } from 'react';
 
 import { useReveal } from '../../RevealContainer/RevealContext';
 import { Checkbox, Flex, Menu } from '@cognite/cogs.js';
@@ -17,13 +17,13 @@ export const PointCloudLayersContainer = ({
   layerProps: Reveal3DResourcesLayersProps;
 }): ReactElement => {
   const viewer = useReveal();
-  const { pointCloudModels } = layerProps.reveal3DResourcesStates;
-  const count = pointCloudModels.length.toString();
-  const allModelVisible = !pointCloudModels.every((data) => !data.isToggled);
-  const indeterminate = pointCloudModels.some((data) => !data.isToggled);
+  const { pointCloudLayerData } = layerProps.reveal3DResourcesLayerData;
+  const count = pointCloudLayerData.length.toString();
+  const allModelVisible = pointCloudLayerData.every((data) => data.isToggled);
+  const indeterminate = pointCloudLayerData.some((data) => !data.isToggled);
 
   const handlePointCloudVisibility = (model: CognitePointCloudModel): void => {
-    const updatedPointCloudModels = pointCloudModels.map((data) => {
+    const updatedPointCloudModels = pointCloudLayerData.map((data) => {
       if (data.model === model) {
         data.isToggled = !data.isToggled;
         model.setDefaultPointCloudAppearance({ visible: data.isToggled });
@@ -31,29 +31,29 @@ export const PointCloudLayersContainer = ({
       return data;
     });
     viewer.requestRedraw();
-    layerProps.setReveal3DResourcesStates((prevResourcesStates) => ({
+    layerProps.setReveal3DResourcesLayerData((prevResourcesStates) => ({
       ...prevResourcesStates,
-      pointCloudModels: updatedPointCloudModels
+      pointCloudLayerData: updatedPointCloudModels
     }));
   };
 
   const handleAllPointCloudModelsVisibility = (visible: boolean): void => {
-    pointCloudModels.forEach((data) => {
+    pointCloudLayerData.forEach((data) => {
       data.isToggled = visible;
       data.model.setDefaultPointCloudAppearance({ visible });
     });
     viewer.requestRedraw();
 
-    layerProps.setReveal3DResourcesStates((prevResourcesStates) => ({
+    layerProps.setReveal3DResourcesLayerData((prevResourcesStates) => ({
       ...prevResourcesStates,
-      pointCloudModels
+      pointCloudLayerData
     }));
   };
 
-  const pointCloudModelContent = (): React.JSX.Element => {
+  const pointCloudModelContent = (): ReactElement => {
     return (
       <StyledSubMenu>
-        {pointCloudModels.map((data) => (
+        {pointCloudLayerData.map((data) => (
           <Menu.Item
             key={uniqueId()}
             hasCheckbox
@@ -73,7 +73,7 @@ export const PointCloudLayersContainer = ({
 
   return (
     <>
-      {pointCloudModels.length > 0 && (
+      {pointCloudLayerData.length > 0 && (
         <Menu.Submenu openOnHover={false} content={pointCloudModelContent()} title="Point clouds">
           <Flex direction="row" justifyContent="space-between">
             <Checkbox

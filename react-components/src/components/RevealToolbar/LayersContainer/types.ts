@@ -8,28 +8,28 @@ import {
   type Image360Collection
 } from '@cognite/reveal';
 
-export type Reveal3DResourcesStates = {
-  cadModels: Array<{
+export type Reveal3DResourcesLayerStates = {
+  cadLayerData: Array<{
     model: CogniteCadModel;
     isToggled: boolean;
     name?: string | undefined;
   }>;
-  pointCloudModels: Array<{
+  pointCloudLayerData: Array<{
     model: CognitePointCloudModel;
     isToggled: boolean;
     name?: string | undefined;
   }>;
-  image360Collections: Array<{
+  image360LayerData: Array<{
     image360: Image360Collection;
     isToggled: boolean;
   }>;
 };
 
-export type SetReveal3DResourcesStates = React.Dispatch<
-  React.SetStateAction<Reveal3DResourcesStates>
+export type SetReveal3DResourcesLayerStates = React.Dispatch<
+  React.SetStateAction<Reveal3DResourcesLayerStates>
 >;
 
 export type Reveal3DResourcesLayersProps = {
-  reveal3DResourcesStates: Reveal3DResourcesStates;
-  setReveal3DResourcesStates: SetReveal3DResourcesStates;
+  reveal3DResourcesLayerData: Reveal3DResourcesLayerStates;
+  setReveal3DResourcesLayerData: SetReveal3DResourcesLayerStates;
 };

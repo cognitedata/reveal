@@ -2,14 +2,15 @@
  * Copyright 2023 Cognite AS
  */
 
-import React, { type ReactElement, useState, useEffect, useMemo, useRef } from 'react';
+import { type ReactElement, useState, useEffect, useMemo, useRef } from 'react';
 import { Button, Dropdown } from '@cognite/cogs.js';
-import { type Reveal3DResourcesStates } from './LayersContainer/types';
+import { type Reveal3DResourcesLayerStates } from './LayersContainer/types';
 import LayersContainer from './LayersContainer/LayersContainer';
 import {
   type CognitePointCloudModel,
   type CogniteCadModel,
-  type CogniteModel
+  type CogniteModel,
+  type Image360Collection
 } from '@cognite/reveal';
 import { useReveal } from '../RevealContainer/RevealContext';
 import { use3DModelName } from '../../hooks/use3DModelName';
@@ -23,11 +24,12 @@ export const LayersButton = (): ReactElement => {
   const [pointCloudModelIds, setPointCloudModelIds] = useState<number[]>([]);
   const prevModelsRef = useRef<CogniteModel[]>([]);
 
-  const [reveal3DResources, setReveal3DResources] = useState<Reveal3DResourcesStates>({
-    cadModels: [],
-    pointCloudModels: [],
-    image360Collections: []
-  });
+  const [reveal3DResourcesLayerData, setReveal3DResourcesLayerData] =
+    useState<Reveal3DResourcesLayerStates>({
+      cadLayerData: [],
+      pointCloudLayerData: [],
+      image360LayerData: []
+    });
 
   const cadModelName = use3DModelName(cadModelIds);
   const pointCloudModelName = use3DModelName(pointCloudModelIds);
@@ -59,39 +61,62 @@ export const LayersButton = (): ReactElement => {
     }
   }, [viewer.models, cadModelIds, pointCloudModelIds]);
 
-  const updatedReveal3DResources: Reveal3DResourcesStates = useMemo(() => {
+  const updated3DResourcesLayerData: Reveal3DResourcesLayerStates = useMemo(() => {
     if (cadModelName.data === null && pointCloudModelName.data === null) {
       return {
-        cadModels: [],
-        pointCloudModels: [],
-        image360Collections: []
+        cadLayerData: [],
+        pointCloudLayerData: [],
+        image360LayerData: []
       };
     }
-    const cadModels = viewer.models.filter((model) => model.type === 'cad');
-    const pointCloudModels = viewer.models.filter((model) => model.type === 'pointcloud');
-    const image360Collections = viewer.get360ImageCollections();
+    const updatedCadLayerData = viewer.models
+      .filter((model) => model.type === 'cad')
+      .map((model) => model as CogniteCadModel)
+      .map((model, index) => fillCadLayerData(model, index));
+    const updatedPointCloudLayerData = viewer.models
+      .filter((model) => model.type === 'pointcloud')
+      .map((model) => model as CognitePointCloudModel)
+      .map((model, index) => fillPointCloudLayerData(model, index));
+    const updatedImage360LayerData = viewer
+      .get360ImageCollections()
+      .map((image36Collection) => fillImage360LayerData(image36Collection));
 
-    const updatedSelectedCadModels = cadModels.map((model, index) => ({
-      model: model as CogniteCadModel,
-      isToggled: (model as CogniteCadModel).visible ?? true,
-      name: cadModelName?.data?.[index] ?? 'No model name'
-    }));
+    function fillCadLayerData(
+      cadModel: CogniteCadModel,
+      index: number
+    ): { model: CogniteCadModel; isToggled: boolean; name: string } {
+      return {
+        model: cadModel,
+        isToggled: cadModel.visible ?? true,
+        name: cadModelName?.data?.[index] ?? 'No model name'
+      };
+    }
 
-    const updatedSelectedPointCloudModel = pointCloudModels.map((model, index) => ({
-      model: model as CognitePointCloudModel,
-      isToggled: (model as CognitePointCloudModel).getDefaultPointCloudAppearance().visible ?? true,
-      name: pointCloudModelName?.data?.[index] ?? 'No model name'
-    }));
+    function fillPointCloudLayerData(
+      pointCloudModel: CognitePointCloudModel,
+      index: number
+    ): { model: CognitePointCloudModel; isToggled: boolean; name: string } {
+      return {
+        model: pointCloudModel,
+        isToggled: pointCloudModel.getDefaultPointCloudAppearance().visible ?? true,
+        name: pointCloudModelName?.data?.[index] ?? 'No model name'
+      };
+    }
 
-    const updatedSelectedImage360Collection = image360Collections.map((image360Collection) => ({
-      image360: image360Collection,
-      isToggled: true
-    }));
+    function fillImage360LayerData(image360Collection: Image360Collection): {
+      image360: Image360Collection;
+      isToggled: boolean;
+    } {
+      return {
+        image360: image360Collection,
+        isToggled: true
+      };
+    }
 
     return {
-      cadModels: updatedSelectedCadModels,
-      pointCloudModels: updatedSelectedPointCloudModel,
-      image360Collections: updatedSelectedImage360Collection
+      cadLayerData: updatedCadLayerData,
+      pointCloudLayerData: updatedPointCloudLayerData,
+      image360LayerData: updatedImage360LayerData
     };
   }, [
     viewer.models.length,
@@ -101,8 +126,8 @@ export const LayersButton = (): ReactElement => {
   ]);
 
   useEffect(() => {
-    setReveal3DResources(updatedReveal3DResources);
-  }, [updatedReveal3DResources]);
+    setReveal3DResourcesLayerData(updated3DResourcesLayerData);
+  }, [updated3DResourcesLayerData]);
 
   return (
     <Dropdown
@@ -110,8 +135,8 @@ export const LayersButton = (): ReactElement => {
       content={
         <LayersContainer
           props={{
-            reveal3DResourcesStates: reveal3DResources,
-            setReveal3DResourcesStates: setReveal3DResources
+            reveal3DResourcesLayerData,
+            setReveal3DResourcesLayerData
           }}
         />
       }

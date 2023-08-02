@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import React, { type ReactElement } from 'react';
+import { type ReactElement } from 'react';
 import { useReveal } from '../../RevealContainer/RevealContext';
 import { Checkbox, Flex, Menu } from '@cognite/cogs.js';
 import { StyledChipCount, StyledLabel, StyledSubMenu } from './elements';
@@ -16,14 +16,14 @@ export const Image360CollectionLayerContainer = ({
   layerProps: Reveal3DResourcesLayersProps;
 }): ReactElement => {
   const viewer = useReveal();
-  const { image360Collections } = layerProps.reveal3DResourcesStates;
+  const { image360LayerData } = layerProps.reveal3DResourcesLayerData;
 
-  const count = image360Collections.length.toString();
-  const allModelVisible = !image360Collections.every((data) => !data.isToggled);
-  const indeterminate = image360Collections.some((data) => !data.isToggled);
+  const count = image360LayerData.length.toString();
+  const allModelVisible = image360LayerData.every((data) => data.isToggled);
+  const indeterminate = image360LayerData.some((data) => !data.isToggled);
 
   const handle360ImagesVisibility = (image360: Image360Collection): void => {
-    const updatedImage360Collection = image360Collections.map((data) => {
+    const updatedImage360Collection = image360LayerData.map((data) => {
       if (data.image360 === image360) {
         data.isToggled = !data.isToggled;
 
@@ -32,31 +32,28 @@ export const Image360CollectionLayerContainer = ({
       return data;
     });
     viewer.requestRedraw();
-    layerProps.setReveal3DResourcesStates((prevResourcesStates) => ({
+    layerProps.setReveal3DResourcesLayerData((prevResourcesStates) => ({
       ...prevResourcesStates,
-      image360Collections: updatedImage360Collection
+      image360LayerData: updatedImage360Collection
     }));
   };
 
   const handleAll360ImagesVisibility = (visible: boolean): void => {
-    [...image360Collections].forEach((data) => {
+    [...image360LayerData].forEach((data) => {
       data.isToggled = visible;
       data.image360.setIconsVisibility(data.isToggled);
     });
-    if (!visible) {
-      viewer.exit360Image();
-    }
     viewer.requestRedraw();
-    layerProps.setReveal3DResourcesStates((prevResourcesStates) => ({
+    layerProps.setReveal3DResourcesLayerData((prevResourcesStates) => ({
       ...prevResourcesStates,
-      image360Collections
+      image360LayerData
     }));
   };
 
-  const image360Content = (): React.JSX.Element => {
+  const image360Content = (): ReactElement => {
     return (
       <StyledSubMenu>
-        {image360Collections.map((data) => (
+        {image360LayerData.map((data) => (
           <Menu.Item
             key={uniqueId()}
             hasCheckbox
@@ -76,7 +73,7 @@ export const Image360CollectionLayerContainer = ({
 
   return (
     <>
-      {image360Collections.length > 0 && (
+      {image360LayerData.length > 0 && (
         <Menu.Submenu content={image360Content()} title="360 images">
           <Flex direction="row" justifyContent="space-between">
             <Checkbox

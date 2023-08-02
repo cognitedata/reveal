@@ -14,7 +14,6 @@ export const StyledMenu = styled(Menu)`
 `;
 
 export const StyledSubMenu = styled(Menu)`
-  box-shadow: none;
   padding: 8px;
   overflow-y: auto;
   max-height: 300px;
