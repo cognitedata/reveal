@@ -19,7 +19,7 @@ import {
 import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
 
 import { FloatingComponentsPanelItem } from './FloatingComponentsPanelItem';
-import { PROCESS_TYPES, ProcessType } from 'types';
+import { ProcessType } from 'types';
 
 export const FloatingComponentsPanel = (): JSX.Element => {
   const { t } = useTranslation();
@@ -35,7 +35,10 @@ export const FloatingComponentsPanel = (): JSX.Element => {
   };
 
   // Show only transformations and functions
-  const UIsupportedProccessTypes = PROCESS_TYPES.slice(0, 2);
+  const UI_SUPPORTED_PROCESS_TYPES: ProcessType[] = [
+    'transformation',
+    'function',
+  ];
 
   return (
     <FloatingPanel>
@@ -51,7 +54,7 @@ export const FloatingComponentsPanel = (): JSX.Element => {
         />
       </Flex>
       <Flex direction="column" gap={8}>
-        {UIsupportedProccessTypes.map((type) => (
+        {UI_SUPPORTED_PROCESS_TYPES.map((type) => (
           <FloatingComponentsPanelItem
             key={type}
             onDragStart={(e) => onDragStart(e, type)}

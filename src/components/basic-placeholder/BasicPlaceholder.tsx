@@ -24,7 +24,11 @@ export const BasicPlaceholder = ({
     <StyledGraphic>
       <Illustrations.Solo type={type} style={{ width: size }} />
     </StyledGraphic>
-    {title && <StyledTitle level={5}>{title}</StyledTitle>}
+    {title && (
+      <StyledTitle level={5} muted>
+        {title}
+      </StyledTitle>
+    )}
     <StyledContent>{children}</StyledContent>
   </StyledContainer>
 );

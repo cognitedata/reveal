@@ -16,8 +16,6 @@ export const StyledGraphic = styled.div`
 
 export const StyledTitle = styled(Title)`
   margin: 0.5rem 0;
-  font-weight: normal;
-  color: var(--cogs-greyscale-grey6);
 `;
 
 export const StyledContent = styled.div`
