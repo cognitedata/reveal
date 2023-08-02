@@ -2,13 +2,19 @@
  * Copyright 2023 Cognite AS
  */
 import type { Meta, StoryObj } from '@storybook/react';
-import { AddReveal3DModelOptions, Reveal3DResources, Reveal3DResourcesProps, Reveal3DResourcesStyling, RevealContainer } from '../src';
-import { Color, Matrix4, Vector3 } from 'three';
-import { CameraController, ViewerAnchor } from '../src/';
+import {
+  type AddReveal3DModelOptions,
+  Reveal3DResources,
+  type Reveal3DResourcesProps,
+  type Reveal3DResourcesStyling,
+  RevealContainer
+} from '../src';
+import { Color, Matrix4 } from 'three';
+import { CameraController } from '../src/';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { DefaultFdmConfig } from './utilities/fdmConfig';
-import { ReactElement, useMemo } from 'react';
+import { type ReactElement, useMemo } from 'react';
 import { useMappedEquipmentBy3DModelsList } from '../src/hooks/useMappedEquipmentBy3DModelsList';
 import { is3DModelOption } from './utilities/utils';
 
@@ -16,7 +22,7 @@ const meta = {
   title: 'Example/ModelsStyling',
   component: Reveal3DResources,
   tags: ['autodocs'],
-    argTypes: {
+  argTypes: {
     styling: {
       description: 'Styling of all models',
       options: ['RedCad', 'BlueMapped', 'GreenRedAssetMapped', 'None'],
@@ -33,9 +39,7 @@ const meta = {
         BlueMapped: {
           groups: [
             {
-              fdmAssetExternalIds: [
-                'allMappings' 
-              ],
+              fdmAssetExternalIds: ['allMappings'],
               style: {
                 cad: {
                   color: new Color('blue')
@@ -50,15 +54,13 @@ const meta = {
           },
           groups: [
             {
-              fdmAssetExternalIds: [
-                'halfMappings', 
-              ],
+              fdmAssetExternalIds: ['halfMappings'],
               style: {
                 cad: {
                   color: new Color('green')
                 }
               }
-            },
+            }
           ]
         },
         None: {}
@@ -85,7 +87,6 @@ export const Main: Story = {
     fdmAssetMappingConfig: DefaultFdmConfig
   },
   render: ({ resources, styling, fdmAssetMappingConfig }) => {
-
     return (
       <RevealContainer
         sdk={sdk}
@@ -117,74 +118,76 @@ export const Main: Story = {
 };
 
 const StyledReveal3DResources = (props: Reveal3DResourcesProps): ReactElement => {
-    const filtered = props.resources?.filter<AddReveal3DModelOptions>((resource): resource is AddReveal3DModelOptions => is3DModelOption(resource));
+  const filtered = props.resources?.filter<AddReveal3DModelOptions>(
+    (resource): resource is AddReveal3DModelOptions => is3DModelOption(resource)
+  );
 
-    const { data } = useMappedEquipmentBy3DModelsList(props.fdmAssetMappingConfig, filtered);
+  const { data } = useMappedEquipmentBy3DModelsList(props.fdmAssetMappingConfig, filtered);
 
-    const styling = useMemo(() => {
-        const stylingMode = props?.styling?.groups?.[0].fdmAssetExternalIds[0]; 
+  const styling = useMemo(() => {
+    const stylingMode = props?.styling?.groups?.[0].fdmAssetExternalIds[0];
 
-        let newStyling: Reveal3DResourcesStyling = {};
+    let newStyling: Reveal3DResourcesStyling = {};
 
-        switch (stylingMode) {
-            case 'allMappings':
-                newStyling = {
-                    defaultStyle: {
-                        cad: {
-                            color: new Color('white')
-                        }
-                    },
-                    groups: [{
-                        style: {
-                            cad: {
-                                color: new Color('blue')
-                            }
-                        },
-                        fdmAssetExternalIds: data ?? [],
-                    }]
-                };
-                break;
-            case 'halfMappings':
-                newStyling = {
-                    defaultStyle: {
-                        cad: {
-                            color: new Color('white')
-                        }
-                    },
-                    groups: [{
-                        style: {
-                            cad: {
-                                color: new Color('red')
-                            }
-                        },
-                        fdmAssetExternalIds: data?.slice(0, Math.floor(data.length / 2)) ?? [],
-                    },
-                    {
-                        style: {
-                            cad: {
-                                color: new Color('green')
-                            }
-                        },
-                        fdmAssetExternalIds: data?.slice(Math.floor(data.length / 2)) ?? [],
-                    }]
-                };
-                break;
-            default:
-                newStyling = props.styling ?? {};
-        }
+    switch (stylingMode) {
+      case 'allMappings':
+        newStyling = {
+          defaultStyle: {
+            cad: {
+              color: new Color('white')
+            }
+          },
+          groups: [
+            {
+              style: {
+                cad: {
+                  color: new Color('blue')
+                }
+              },
+              fdmAssetExternalIds: data ?? []
+            }
+          ]
+        };
+        break;
+      case 'halfMappings':
+        newStyling = {
+          defaultStyle: {
+            cad: {
+              color: new Color('white')
+            }
+          },
+          groups: [
+            {
+              style: {
+                cad: {
+                  color: new Color('red')
+                }
+              },
+              fdmAssetExternalIds: data?.slice(0, Math.floor(data.length / 2)) ?? []
+            },
+            {
+              style: {
+                cad: {
+                  color: new Color('green')
+                }
+              },
+              fdmAssetExternalIds: data?.slice(Math.floor(data.length / 2)) ?? []
+            }
+          ]
+        };
+        break;
+      default:
+        newStyling = props.styling ?? {};
+    }
 
-        return newStyling;
+    return newStyling;
+  }, [props.styling, data]);
 
-    }, [props.styling, data])
-
-
-    return (
-        <Reveal3DResources
-          resources={props.resources}
-          styling={styling}
-          fdmAssetMappingConfig={props.fdmAssetMappingConfig}
-        />
-    )
-    
-}
-
+  return (
+    <Reveal3DResources
+      resources={props.resources}
+      styling={styling}
+      fdmAssetMappingConfig={props.fdmAssetMappingConfig}
+    />
+  );
+};

@@ -3,7 +3,7 @@
  */
 import { type CogniteExternalId } from '@cognite/sdk';
 import { useFdmSdk } from '../components/RevealContainer/SDKProvider';
-import { type UseQueryResult, useQuery, useInfiniteQuery, type UseInfiniteQueryResult } from '@tanstack/react-query';
+import { useInfiniteQuery, type UseInfiniteQueryResult } from '@tanstack/react-query';
 import { type FdmAssetMappingsConfig, type ThreeDModelMappings } from './types';
 import { DEFAULT_QUERY_STALE_TIME } from '../utilities/constants';
 
@@ -13,7 +13,7 @@ import { DEFAULT_QUERY_STALE_TIME } from '../utilities/constants';
 export const useFdmAssetMappings = (
   fdmAssetExternalIds: CogniteExternalId[],
   fdmConfig?: FdmAssetMappingsConfig
-): UseInfiniteQueryResult<{ items: ThreeDModelMappings[], nextCursor: string }> => {
+): UseInfiniteQueryResult<{ items: ThreeDModelMappings[]; nextCursor: string }> => {
   const fdmSdk = useFdmSdk();
 
   return useInfiniteQuery(
@@ -79,7 +79,7 @@ export const useFdmAssetMappings = (
     },
     {
       staleTime: DEFAULT_QUERY_STALE_TIME,
-      getNextPageParam: (lastPage) => lastPage.nextCursor,
+      getNextPageParam: (lastPage) => lastPage.nextCursor
     }
   );
 };
