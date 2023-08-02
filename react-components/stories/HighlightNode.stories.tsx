@@ -66,15 +66,17 @@ const StoryContent = ({
   resources: AddResourceOptions[];
   fdmAssetMappingConfig: FdmAssetMappingsConfig;
 }): ReactElement => {
-  const [nodeData, setNodeData] = useState<any>();
+  const [nodeData, setNodeData] = useState<any>(undefined);
 
-  const [highlightedId, setHighlightedId] = useState<string>('');
+  const [highlightedId, setHighlightedId] = useState<string | undefined>(undefined);
 
-  const callback = (nodeData: NodeDataResult<any>): void => {
-    setNodeData(nodeData.data);
+  const callback = (nodeData: NodeDataResult<any> | undefined): void => {
+    setNodeData(nodeData?.data);
+    setHighlightedId(nodeData?.data?.externalId);
 
-    setHighlightedId(nodeData.data.externalId);
-    nodeData.model.assignStyledNodeCollection(
+    if (nodeData === undefined) return;
+
+    nodeData.intersection.model.assignStyledNodeCollection(
       new TreeIndexNodeCollection([nodeData.cadNode.treeIndex]),
       DefaultNodeAppearance.Highlighted
     );
@@ -86,7 +88,7 @@ const StoryContent = ({
         resources={resources}
         styling={{
           groups:
-            highlightedId.length === 0
+            highlightedId === undefined
               ? undefined
               : [
                   {

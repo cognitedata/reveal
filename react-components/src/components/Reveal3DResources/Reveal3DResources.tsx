@@ -43,7 +43,7 @@ export type Reveal3DResourcesProps<NodeType = any> = {
   resources: AddResourceOptions[];
   fdmAssetMappingConfig: FdmAssetMappingsConfig;
   styling?: Reveal3DResourcesStyling;
-  onNodeClick?: (node: NodeDataResult<NodeType>) => void;
+  onNodeClick?: (node: NodeDataResult<NodeType> | undefined) => void;
 };
 
 export const Reveal3DResources = <NodeType = any,>({
@@ -76,6 +76,7 @@ export const Reveal3DResources = <NodeType = any,>({
   useEffect(() => {
     const callback = (event: PointerEventData): void => {
       void (async (event: PointerEventData): Promise<void> => {
+        if (onNodeClick === undefined) return;
         const data = await queryMappedData<NodeType>(
           viewer,
           client,
@@ -83,9 +84,8 @@ export const Reveal3DResources = <NodeType = any,>({
           fdmAssetMappingConfig,
           event
         );
-        if (onNodeClick !== undefined && data !== undefined) {
-          onNodeClick?.(data);
-        }
+
+        onNodeClick(data);
       })(event);
     };
 
