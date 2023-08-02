@@ -5,7 +5,8 @@ import { useRef, type ReactElement, useContext, useState, useEffect } from 'reac
 import {
   type NodeAppearance,
   type Cognite3DViewer,
-  type PointCloudAppearance
+  type PointCloudAppearance,
+  type PointerEventData
 } from '@cognite/reveal';
 import { ModelsLoadingStateContext } from './ModelsLoadingContext';
 import { CadModelContainer, type CadModelStyling } from '../CadModelContainer/CadModelContainer';
@@ -19,11 +20,14 @@ import {
   type AddReveal3DModelOptions,
   type AddImageCollection360Options,
   type TypedReveal3DModel,
-  type AddResourceOptions
+  type AddResourceOptions,
+  type NodeDataResult
 } from './types';
 import { type CogniteExternalId } from '@cognite/sdk';
 import { type FdmAssetMappingsConfig } from '../../hooks/types';
 import { useCalculateModelsStyling } from '../../hooks/useCalculateModelsStyling';
+import { queryMappedData } from './queryMappedData';
+import { useFdmSdk, useSDK } from '../RevealContainer/SDKProvider';
 
 export type FdmAssetStylingGroup = {
   fdmAssetExternalIds: CogniteExternalId[];
@@ -35,17 +39,19 @@ export type Reveal3DResourcesStyling = {
   groups?: FdmAssetStylingGroup[];
 };
 
-export type Reveal3DResourcesProps = {
+export type Reveal3DResourcesProps<NodeType = any> = {
   resources: AddResourceOptions[];
-  fdmAssetMappingConfig?: FdmAssetMappingsConfig;
+  fdmAssetMappingConfig: FdmAssetMappingsConfig;
   styling?: Reveal3DResourcesStyling;
+  onNodeClick?: (node: NodeDataResult<NodeType> | undefined) => void;
 };
 
-export const Reveal3DResources = ({
+export const Reveal3DResources = <NodeType = any,>({
   resources,
   styling,
-  fdmAssetMappingConfig
-}: Reveal3DResourcesProps): ReactElement => {
+  fdmAssetMappingConfig,
+  onNodeClick
+}: Reveal3DResourcesProps<NodeType>): ReactElement => {
   const [reveal3DModels, setReveal3DModels] = useState<TypedReveal3DModel[]>([]);
   const [reveal3DModelsStyling, setReveal3DModelsStyling] = useState<
     Array<PointCloudModelStyling | CadModelStyling>
@@ -53,6 +59,8 @@ export const Reveal3DResources = ({
 
   const { setModelsAdded } = useContext(ModelsLoadingStateContext);
   const viewer = useReveal();
+  const fdmSdk = useFdmSdk();
+  const client = useSDK();
   const numModelsLoaded = useRef(0);
 
   useEffect(() => {
@@ -64,6 +72,29 @@ export const Reveal3DResources = ({
   useEffect(() => {
     setReveal3DModelsStyling(modelsStyling);
   }, [modelsStyling]);
+
+  useEffect(() => {
+    const callback = (event: PointerEventData): void => {
+      void (async (event: PointerEventData): Promise<void> => {
+        if (onNodeClick === undefined) return;
+        const data = await queryMappedData<NodeType>(
+          viewer,
+          client,
+          fdmSdk,
+          fdmAssetMappingConfig,
+          event
+        );
+
+        onNodeClick(data);
+      })(event);
+    };
+
+    viewer.on('click', callback);
+
+    return () => {
+      viewer.off('click', callback);
+    };
+  }, [viewer, client, fdmSdk, fdmAssetMappingConfig, onNodeClick]);
 
   const image360CollectionAddOptions = resources.filter(
     (resource): resource is AddImageCollection360Options =>

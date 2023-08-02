@@ -43,7 +43,10 @@ export class Image360LoadingCache {
     });
   }
 
-  constructor(private readonly _imageCacheSize = 5, private readonly _downloadCacheSize = 3) {
+  constructor(
+    private readonly _imageCacheSize = 5,
+    private readonly _downloadCacheSize = 3
+  ) {
     this._loaded360Images = [];
     this._inProgressDownloads = [];
   }

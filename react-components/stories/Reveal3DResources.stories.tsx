@@ -105,11 +105,6 @@ export const Main: Story = {
       {
         modelId: 3865289545346058,
         revisionId: 4160448151596909
-      },
-      {
-        modelId: 2551525377383868,
-        revisionId: 2143672450453400,
-        transform: new Matrix4().makeTranslation(-340, -480, 80)
       }
     ],
     styling: {},
@@ -120,34 +115,37 @@ export const Main: Story = {
         type: 'view',
         externalId: 'CDF_3D_Connection_Data'
       },
-      assetFdmSpace: 'bark-corporation'
+      assetFdmSpace: 'bark-corporation',
+      global3dSpace: 'hf_3d_global_data'
     }
   },
-  render: ({ resources, styling, fdmAssetMappingConfig }) => (
-    <RevealContainer
-      sdk={sdk}
-      color={new Color(0x4a4a4a)}
-      uiElements={<ReactQueryDevtools initialIsOpen={false} />}
-      viewerOptions={{
-        loadingIndicatorStyle: {
-          opacity: 1,
-          placement: 'topRight'
-        }
-      }}>
-      <Reveal3DResources
-        resources={resources}
-        styling={styling}
-        fdmAssetMappingConfig={fdmAssetMappingConfig}
-      />
-      <CameraController
-        initialFitCamera={{
-          to: 'allModels'
-        }}
-        cameraControlsOptions={{
-          changeCameraTargetOnClick: true,
-          mouseWheelAction: 'zoomToCursor'
-        }}
-      />
-    </RevealContainer>
-  )
+  render: ({ resources, styling, fdmAssetMappingConfig }) => {
+    return (
+      <RevealContainer
+        sdk={sdk}
+        color={new Color(0x4a4a4a)}
+        uiElements={<ReactQueryDevtools initialIsOpen={false} />}
+        viewerOptions={{
+          loadingIndicatorStyle: {
+            opacity: 1,
+            placement: 'topRight'
+          }
+        }}>
+        <Reveal3DResources
+          resources={resources}
+          styling={styling}
+          fdmAssetMappingConfig={fdmAssetMappingConfig}
+        />
+        <CameraController
+          initialFitCamera={{
+            to: 'allModels'
+          }}
+          cameraControlsOptions={{
+            changeCameraTargetOnClick: true,
+            mouseWheelAction: 'zoomToCursor'
+          }}
+        />
+      </RevealContainer>
+    );
+  }
 };
