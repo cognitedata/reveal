@@ -8,8 +8,14 @@ import {
 const ALLOWED_PROCESS_TYPES: ProcessType[] = ['transformation', 'function'];
 
 export const getLastWorkflowDefinition = (
-  workflowWithVersions: WorkflowWithVersions
+  workflowWithVersions?: WorkflowWithVersions
 ): { workflowDefinition?: WorkflowDefinitionResponse; version?: string } => {
+  if (!workflowWithVersions)
+    return {
+      workflowDefinition: undefined,
+      version: undefined,
+    };
+
   const versions = Object.keys(workflowWithVersions.versions);
   if (versions.length === 0) {
     return {
@@ -87,4 +93,11 @@ export const areWorkflowDefinitionsSame = (
       tasks2.some((d2t) => areWorkflowTaskDefinitionsSame(d1t, d2t))
     )
   );
+};
+
+export const isCanvasEmpty = (flow: AFlow) => {
+  const noNodes = flow.canvas.nodes.length === 0;
+  const noEdges = flow.canvas.edges.length === 0;
+
+  return noNodes && noEdges;
 };

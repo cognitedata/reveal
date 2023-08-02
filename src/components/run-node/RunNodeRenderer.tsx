@@ -81,7 +81,7 @@ export const RunNodeRenderer = ({
               type={PROCESS_ICON[data.processType]}
             />
           </RunNodeIconContainer>
-          <Flex direction="column" style={{ flex: 1 }}>
+          <Flex direction="column" style={{ flex: 1, overflow: 'auto' }}>
             <RunNodeTitle $status={status} level={3}>
               {t(`component-title-${data.processType}`, {
                 postProcess: 'uppercase',

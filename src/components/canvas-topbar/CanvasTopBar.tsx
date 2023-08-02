@@ -22,6 +22,7 @@ import {
   areWorkflowDefinitionsSame,
   convertCanvasToWorkflowDefinition,
   getLastWorkflowDefinition,
+  isCanvasEmpty,
 } from 'utils/workflows';
 import {
   WorkflowDefinitionCreate,
@@ -48,15 +49,20 @@ export const CanvasTopBar = ({ workflow }: CanvasTopBarProps) => {
 
   const nextVersion = lastVersionAsNumber ? lastVersionAsNumber + 1 : 1;
 
-  const shouldPublish = useMemo(
-    () =>
+  const viewOnly = isCanvasEmpty(flow) && !!lastWorkflowDefinition;
+
+  const shouldPublish = useMemo(() => {
+    if (viewOnly) {
+      return false;
+    }
+    return (
       !lastWorkflowDefinition ||
       !areWorkflowDefinitionsSame(
         lastWorkflowDefinition.tasks,
         convertCanvasToWorkflowDefinition(flow)
-      ),
-    [flow, lastWorkflowDefinition]
-  );
+      )
+    );
+  }, [flow, lastWorkflowDefinition, viewOnly]);
 
   const { t } = useTranslation();
   const { subAppPath } = useParams<{
@@ -124,7 +130,7 @@ export const CanvasTopBar = ({ workflow }: CanvasTopBarProps) => {
               currentKey={activeViewMode}
             >
               <SegmentedControl.Button key="edit">
-                {t('edit-mode')}
+                {viewOnly ? t('view-mode') : t('edit-mode')}
               </SegmentedControl.Button>
               <SegmentedControl.Button key="runs">
                 {t('run-history')}
