@@ -8,22 +8,23 @@ import { Page } from '../Page';
 interface Props {
   loading?: boolean;
   /** Specify the data type (used for timeseries and files for now). Will be removed when those are in FDM */
-  customDataType?: string;
-  customName?: string;
+  dataType?: string;
+  name?: string;
+  description?: string;
   renderActions?: () => [JSX.Element, ...JSX.Element[]];
 }
 
 export const PageDashboard: React.FC<PropsWithChildren<Props>> = ({
   children,
   loading,
-  customDataType,
-  customName,
+  dataType,
+  name,
+  description,
   renderActions,
 }) => {
-  const { dataType, externalId } = useParams();
+  const { externalId } = useParams();
 
-  const name = customName || externalId;
-  const type = customDataType || dataType;
+  const customName = name || externalId;
 
   const [expandedId, setExpandedId] = useExpandedIdParams();
   const hasExpandedWidget = Boolean(expandedId);
@@ -35,8 +36,9 @@ export const PageDashboard: React.FC<PropsWithChildren<Props>> = ({
   return (
     <Page>
       <Page.Header
-        title={hasExpandedWidget ? expandedId : name}
-        subtitle={hasExpandedWidget ? `${type} · ${name}` : type}
+        header={hasExpandedWidget ? `${dataType} • ${expandedId}` : dataType}
+        title={customName}
+        subtitle={description}
         loading={loading}
       >
         {hasExpandedWidget ? (

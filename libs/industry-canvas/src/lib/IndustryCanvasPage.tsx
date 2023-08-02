@@ -39,6 +39,7 @@ import {
 } from '@cognite/unified-file-viewer';
 
 import { translationKeys } from './common';
+import { ToggleButton } from './components/buttons';
 import CanvasDropdown from './components/CanvasDropdown';
 import { CanvasTitle } from './components/CanvasTitle';
 import CanvasVisibilityModal from './components/CanvasVisibilityModal';
@@ -53,6 +54,8 @@ import {
   TOAST_POSITION,
   ZOOM_TO_FIT_MARGIN,
 } from './constants';
+import { CommentsPane } from './containers';
+import { useUsers } from './hooks/use-query/useUsers';
 import useCanvasVisibility from './hooks/useCanvasVisibility';
 import { useDragAndDrop } from './hooks/useDragAndDrop';
 import useLocalStorage from './hooks/useLocalStorage';
@@ -67,12 +70,14 @@ import useTrackCanvasViewed from './hooks/useTrackCanvasViewed';
 import { useTranslation } from './hooks/useTranslation';
 import { IndustryCanvas } from './IndustryCanvas';
 import { useIndustryCanvasContext } from './IndustryCanvasContext';
+import { useListCommentsQuery } from './services/comments/hooks';
+import { CommentTargetType } from './services/comments/types';
+import { createCommentAnnotation } from './services/comments/utils';
 import { CanvasVisibility } from './services/IndustryCanvasService';
 import {
   ContainerReference,
   ContainerReferenceType,
   IndustryCanvasToolType,
-  isCommentAnnotation,
 } from './types';
 import { useUserProfile } from './UserProfileProvider';
 import {
@@ -90,6 +95,7 @@ export type OnAddContainerReferences = (
 ) => void;
 
 const APPLICATION_ID_INDUSTRY_CANVAS = 'industryCanvas';
+const DEFAULT_RIGHT_SIDE_PANEL_WIDTH = 700;
 
 export const IndustryCanvasPage = () => {
   const trackUsage = useMetrics();
@@ -108,9 +114,10 @@ export const IndustryCanvasPage = () => {
     undefined
   );
   const { queryString } = useQueryParameter({ key: SEARCH_QUERY_PARAM_KEY });
-  const [resourceSelectorWidth, setResourceSelectorWidth] = useLocalStorage(
+
+  const [rightSidePanelWidth, setRightSidePanelWidth] = useLocalStorage(
     'COGNITE_INDUSTRIAL_CANVAS_RESOURCE_SELECTOR_WIDTH',
-    700
+    DEFAULT_RIGHT_SIDE_PANEL_WIDTH
   );
 
   const [hasZoomedToFitOnInitialLoad, setHasZoomedToFitOnInitialLoad] =
@@ -132,6 +139,13 @@ export const IndustryCanvasPage = () => {
     isCommentsEnabled,
   } = useIndustryCanvasContext();
 
+  const [isCommentsPaneOpen, setCommentsPaneOpen] = useState(false);
+
+  const { comments, isLoading: isCommentsLoading } = useListCommentsQuery({
+    targetId: activeCanvas?.externalId,
+    targetType: CommentTargetType.CANVAS,
+  });
+  const { data: users = [] } = useUsers();
   const {
     container,
     canvasAnnotations,
@@ -161,8 +175,12 @@ export const IndustryCanvasPage = () => {
   // if comments is not enabled then return empty, hiding all comments for that project (even if canvas had comments before)
   const commentAnnotations = useMemo(
     () =>
-      isCommentsEnabled ? canvasAnnotations.filter(isCommentAnnotation) : [],
-    [isCommentsEnabled, canvasAnnotations]
+      isCommentsEnabled
+        ? comments
+            .filter((comment) => comment.contextData !== undefined)
+            .map((comment) => createCommentAnnotation(comment))
+        : [],
+    [isCommentsEnabled, comments]
   );
 
   const {
@@ -541,6 +559,33 @@ export const IndustryCanvasPage = () => {
       </>
     );
   }
+  const handleOpenResourceSelector = () => {
+    if (isCommentsPaneOpen) {
+      setCommentsPaneOpen(false);
+    }
+    onResourceSelectorOpen();
+  };
+
+  const handleOpenCommentsPane = () => {
+    if (!isCommentsPaneOpen) {
+      setCommentsPaneOpen(true);
+    }
+    onResourceSelectorCloseWrapper();
+  };
+
+  const handleCloseCommentsPane = () => {
+    if (isCommentsPaneOpen) {
+      setCommentsPaneOpen(false);
+    }
+  };
+
+  const handleToggleCommentsPane = () => {
+    if (isCommentsPaneOpen) {
+      handleCloseCommentsPane();
+    } else {
+      handleOpenCommentsPane();
+    }
+  };
 
   return (
     <>
@@ -557,7 +602,6 @@ export const IndustryCanvasPage = () => {
             >
               <Button
                 icon="ArrowLeft"
-                aria-label="Go back to Industrial Canvas home page"
                 onClick={handleGoBackToIndustryCanvasButtonClick}
               />
             </Tooltip>
@@ -633,15 +677,13 @@ export const IndustryCanvasPage = () => {
               aria-label={t(translationKeys.CANVAS_REDO, 'Redo')}
             />
           </Tooltip>
-
           <Divider direction="vertical" length="20px" endcap="round" />
-
           <Button
             type="primary"
             disabled={isCanvasLocked || isResourceSelectorOpen}
             aria-label="Add data"
             onClick={() => {
-              onResourceSelectorOpen();
+              handleOpenResourceSelector();
               trackUsage(MetricEvent.ADD_DATA_BUTTON_CLICKED);
             }}
             icon="Add"
@@ -663,6 +705,20 @@ export const IndustryCanvasPage = () => {
             {t(translationKeys.CANVAS_SHARE_BUTTON, 'Share')}
           </Button>
 
+          <ToggleButton
+            toggled={isCommentsPaneOpen}
+            icon="Comments"
+            onClick={handleToggleCommentsPane}
+            aria-label={t(
+              translationKeys.CANVAS_OPEN_COMMENTS_PANE,
+              'Open comments pane'
+            )}
+            tooltipContent={t(
+              translationKeys.CANVAS_OPEN_COMMENTS_PANE,
+              'Open comments pane'
+            )}
+            tooltipPosition="bottom"
+          />
           <Divider direction="vertical" length="20px" endcap="round" />
 
           <Dropdown
@@ -701,8 +757,8 @@ export const IndustryCanvasPage = () => {
       </TitleRowWrapper>
       <StyledSplitter
         primaryMinSize={CANVAS_MIN_WIDTH}
-        secondaryInitialSize={resourceSelectorWidth}
-        onSecondaryPaneSizeChange={setResourceSelectorWidth}
+        secondaryInitialSize={rightSidePanelWidth}
+        onSecondaryPaneSizeChange={setRightSidePanelWidth}
         primaryIndex={0}
       >
         <IndustryCanvasWrapper
@@ -759,6 +815,14 @@ export const IndustryCanvasPage = () => {
             initialSelectedResource={initialSelectedResource}
             addButtonText="Add to canvas"
             shouldShowPreviews={false}
+          />
+        )}
+        {!isResourceSelectorOpen && isCommentsPaneOpen && (
+          <CommentsPane
+            users={users}
+            comments={comments}
+            isLoading={isCommentsLoading}
+            onCloseCommentsPane={handleCloseCommentsPane}
           />
         )}
       </StyledSplitter>
@@ -836,6 +900,7 @@ const StyledGoBackWrapper = styled.div`
   overflow: hidden;
   flex: 0 0 auto;
   display: flex;
+  height: 100%;
   gap: 8px;
 `;
 

@@ -59,6 +59,7 @@
   "CANVAS_LOCKED_FUTURE": "Real-time collaboration will be part of a future release.",
   "CANVAS_UNDO": "Undo",
   "CANVAS_REDO": "Redo",
+  "CANVAS_OPEN_COMMENTS_PANE": "Open comments pane",
   "TOOLTIP_ASSET_SHOW_MORE_ACTIONS": "Show additional asset actions",
   "OPEN_TIMESERIES_TOOLTIP": "Open time series",
   "OPEN_THREE_D_TOOLTIP": "Open 3D-model",

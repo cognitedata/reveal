@@ -18,6 +18,24 @@
             "value": "*"
           }
         ]
+      },
+      {
+        "source": "/index.js",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "max-age=0, no-cache, no-store, must-revalidate"
+          }
+        ]
+      },
+      {
+        "source": "/remoteEntry.js",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "max-age=0, no-cache, no-store, must-revalidate"
+          }
+        ]
       }
     ]
   }

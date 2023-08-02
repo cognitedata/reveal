@@ -42,8 +42,6 @@ export class DocumentQueryChain extends CogniteBaseChain {
         const language = langTrans.language;
         let input = langTrans.translation;
 
-        console.log({ language, input, message });
-
         sendToCopilotEvent('LOADING_STATUS', {
           status: 'Retrieving information...',
         });
@@ -54,7 +52,6 @@ export class DocumentQueryChain extends CogniteBaseChain {
           sdk,
           'vectorstore' // 'ada' or 'vectorstore' embedding
         );
-        console.log(queryContext);
 
         // Safely determining number of documents to query
         const numDocuments = Math.min(queryContext.items.length, 5);
@@ -76,10 +73,6 @@ export class DocumentQueryChain extends CogniteBaseChain {
         );
         const returnedAnswers = tempAnswers.slice(0, numDocuments);
         let propertiesAnswer = tempAnswers[numDocuments];
-
-        // Summarize answer prompt and chain initialization
-        console.log(returnedAnswers);
-        console.log(propertiesAnswer);
 
         // A list that can be used later on to find source of answers
         const sourceList: sourceResponse[] = [];
@@ -107,7 +100,6 @@ export class DocumentQueryChain extends CogniteBaseChain {
         stringOfAnswers = stringOfAnswers + propertiesAnswer;
 
         let context = stringOfAnswers;
-        console.log(sourceList);
 
         sendToCopilotEvent('LOADING_STATUS', {
           status: 'Preparing an answer...',
@@ -151,7 +143,7 @@ export class DocumentQueryChain extends CogniteBaseChain {
           {
             source: 'bot',
             type: 'text',
-            content: res,
+            content: res + `\n &nbsp; \n*(Asset: ${externalAssetIdGlobal})*`,
             actions: [
               {
                 content: !emptyAnswerCheck ? 'Source' : 'Relevant sources',

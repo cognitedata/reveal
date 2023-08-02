@@ -160,6 +160,7 @@ const EventFilterForm = ({
         <Collapse.Panel header={t['More filters']} key="panelFilterForm">
           <GhostMetadataFilter>
             <MetadataFilter.Events
+              menuProps={{ placement: 'left' }}
               filter={adaptedFiltersWithDateRange}
               values={adaptedFilters.metadata}
               onChange={(newMetadata) => {

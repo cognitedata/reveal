@@ -12,31 +12,29 @@ import { CommentService } from '../../CommentService';
 import { Comment, CommentFilter, SerializedComment } from '../../types';
 import { isNonEmptyString } from '../../utils';
 
-type UseListCommentsQueryReturnType<ContextDataType> = {
-  comments: Comment<ContextDataType>[];
+type UseListCommentsQueryReturnType = {
+  comments: Comment[];
   isLoading: boolean;
   isError: boolean;
 };
 
-const useListSerializedCommentsQuery = <ContextDataType = any>(
-  filter: CommentFilter
-) => {
+const useListSerializedCommentsQuery = (filter: CommentFilter) => {
   const sdk = useSDK();
   const service = useMemo(() => new CommentService(sdk), [sdk]);
-  return useQuery<SerializedComment<ContextDataType>[]>(
+  return useQuery<SerializedComment[]>(
     [QueryKeys.LIST_COMMENTS, filter],
     async () => service.listComments(filter)
   );
 };
 
-export const useListCommentsQuery = <ContextDataType = any>(
+export const useListCommentsQuery = (
   filter: CommentFilter = {}
-): UseListCommentsQueryReturnType<ContextDataType> => {
+): UseListCommentsQueryReturnType => {
   const {
     data: serializedComments = [],
     isLoading: isLoadingSerializedComments,
     isError: isErrorSerializedComments,
-  } = useListSerializedCommentsQuery<ContextDataType>(filter);
+  } = useListSerializedCommentsQuery(filter);
   const userIdentifiers = useMemo(
     () =>
       uniq(
@@ -53,12 +51,13 @@ export const useListCommentsQuery = <ContextDataType = any>(
     userProfiles,
     isLoading: isLoadingUserProfiles,
     isError: isErrorUserProfiles,
+    fetchStatus: userProfilesFetchStatus,
   } = useUserProfilesByIds({ userIdentifiers });
 
   const comments = useMemo(
     () =>
       serializedComments.map(
-        (comment): Comment<ContextDataType> => ({
+        (comment): Comment => ({
           ...comment,
           createdBy: userProfiles.find(
             (userProfile) => userProfile.userIdentifier === comment.createdById
@@ -76,7 +75,9 @@ export const useListCommentsQuery = <ContextDataType = any>(
   );
   return {
     comments,
-    isLoading: isLoadingSerializedComments || isLoadingUserProfiles,
+    isLoading:
+      isLoadingSerializedComments ||
+      (isLoadingUserProfiles && userProfilesFetchStatus !== 'idle'),
     isError: isErrorSerializedComments || isErrorUserProfiles,
   };
 };

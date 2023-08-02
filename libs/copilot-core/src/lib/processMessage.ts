@@ -3,7 +3,6 @@ import { BaseChain } from 'langchain/chains';
 import { greetingLangs } from './cogpilotGreeting';
 import { getPageLanguage } from './toolchains/infield-chains/utils';
 import { CopilotSupportedFeatureType, ProcessMessageFunc } from './types';
-import { unsupportedLangs } from './unsupportedMsg';
 import { sendToCopilotEvent } from './utils';
 
 export const processMessage = async (
@@ -15,45 +14,6 @@ export const processMessage = async (
   // based on their intent, make your best judgement on what tool is best suited for them and ask the user
   // switch case for the possibility to add specific functionality for each feature
   switch (feature) {
-    case 'Unsupported': {
-      let message = params[1];
-      if (message) {
-        sendToCopilotEvent('LOADING_STATUS', {
-          status: 'Reasoning next steps...',
-        });
-        message = inputCleaning(message);
-        try {
-          await chain.call({ input: message });
-        } catch (error) {
-          sendToCopilotEvent('NEW_MESSAGES', [
-            {
-              type: 'text',
-              content: 'ERROR: Please try again.',
-              source: 'bot',
-              chain: 'Error',
-            },
-          ]);
-        }
-      } else {
-        let msgContent = 'Sorry, this feature is currently not supported.';
-        try {
-          const pageLang = (await getPageLanguage()) as string;
-          msgContent = unsupportedLangs[pageLang];
-        } catch (e) {
-          console.log(e);
-        }
-
-        sendToCopilotEvent('NEW_MESSAGES', [
-          {
-            type: 'text',
-            content: msgContent,
-            source: 'bot',
-            chain: 'Unsupported',
-          },
-        ]);
-      }
-      return true;
-    }
     case 'Infield': {
       let message = params[1];
       if (message) {

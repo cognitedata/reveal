@@ -33,8 +33,8 @@ export const FilePage = () => {
 
   return (
     <Page.Dashboard
-      customName={data?.name}
-      customDataType="File"
+      name={data?.name}
+      dataType="File"
       loading={isLoading}
       renderActions={() => [
         <Dropdown.OpenIn
@@ -47,7 +47,7 @@ export const FilePage = () => {
     >
       <Page.Widgets>
         <PropertiesWidget id="Properties" data={data} columns={4} />
-        <FileWidget id="Preview" fileId={data?.id} rows={8} columns={4} />
+        <FileWidget id="Preview" fileId={data?.id} rows={6} columns={4} />
       </Page.Widgets>
     </Page.Dashboard>
   );

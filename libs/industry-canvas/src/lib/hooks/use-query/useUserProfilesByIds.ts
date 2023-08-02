@@ -41,6 +41,7 @@ export const useUserProfilesByIds = ({
     data: userProfiles = [],
     isLoading,
     isError,
+    fetchStatus,
   } = useQuery(
     [QueryKeys.USER_PROFILES_BY_IDS, userIdentifiers],
     () => getUserProfilesByIds(sdk, userIdentifiers),
@@ -49,5 +50,5 @@ export const useUserProfilesByIds = ({
     }
   );
 
-  return { userProfiles, isLoading, isError };
+  return { userProfiles, isLoading, isError, fetchStatus };
 };

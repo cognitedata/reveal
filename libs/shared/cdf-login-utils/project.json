@@ -31,13 +31,7 @@
         "tsConfig": "libs/shared/cdf-login-utils/tsconfig.lib.json",
         "project": "libs/shared/cdf-login-utils/package.json",
         "entryFile": "libs/shared/cdf-login-utils/src/index.ts",
-        "external": [
-          "react/jsx-runtime",
-          "react",
-          "react-dom",
-          "@tanstack/react-query",
-          "styled-components"
-        ],
+        "external": "all",
         "rollupConfig": "libs/shared/cdf-login-utils/rollup-config.js",
         "compiler": "tsc",
         "updateBuildableProjectDepsInPackageJson": false,

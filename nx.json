@@ -16,9 +16,7 @@
           "lint",
           "test",
           "e2e",
-          "build-storybook",
-          "internal-build",
-          "build-single-spa"
+          "build-storybook"
         ],
         "parallel": 2
       }

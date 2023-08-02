@@ -222,6 +222,7 @@ export const IndustryCanvas = ({
         shouldShowAllConnectionAnnotations: shouldShowConnectionAnnotations,
       }),
       ...containerAnnotations,
+      ...commentAnnotations,
       ...canvasAnnotationWithEventHandlers,
     ],
     [
@@ -230,8 +231,9 @@ export const IndustryCanvas = ({
       interactionState.hoverId,
       interactionState.clickedContainerAnnotationId,
       containerAnnotations,
-      canvasAnnotationWithEventHandlers,
       shouldShowConnectionAnnotations,
+      commentAnnotations,
+      canvasAnnotationWithEventHandlers,
     ]
   );
 
