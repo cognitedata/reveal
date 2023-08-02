@@ -19,7 +19,7 @@ export const PointCloudLayersContainer = ({
   const viewer = useReveal();
   const { pointCloudLayerData } = layerProps.reveal3DResourcesLayerData;
   const count = pointCloudLayerData.length.toString();
-  const allModelVisible = pointCloudLayerData.every((data) => data.isToggled);
+  const someModelVisible = pointCloudLayerData.every((data) => data.isToggled);
   const indeterminate = pointCloudLayerData.some((data) => !data.isToggled);
 
   const handlePointCloudVisibility = (model: CognitePointCloudModel): void => {
@@ -77,8 +77,10 @@ export const PointCloudLayersContainer = ({
         <Menu.Submenu openOnHover={false} content={pointCloudModelContent()} title="Point clouds">
           <Flex direction="row" justifyContent="space-between">
             <Checkbox
-              key={`allPointCLoudModelCheckbox-${String(allModelVisible)}-${String(indeterminate)}`}
-              checked={allModelVisible}
+              key={`allPointCLoudModelCheckbox-${String(someModelVisible)}-${String(
+                indeterminate
+              )}`}
+              checked={someModelVisible}
               indeterminate={indeterminate}
               onChange={(e, c) => {
                 e.stopPropagation();

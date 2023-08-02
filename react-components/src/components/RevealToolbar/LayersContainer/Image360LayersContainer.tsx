@@ -19,13 +19,17 @@ export const Image360CollectionLayerContainer = ({
   const { image360LayerData } = layerProps.reveal3DResourcesLayerData;
 
   const count = image360LayerData.length.toString();
-  const allModelVisible = image360LayerData.every((data) => data.isToggled);
+  const someImagesVisible = !image360LayerData.every((data) => !data.isToggled);
   const indeterminate = image360LayerData.some((data) => !data.isToggled);
 
   const handle360ImagesVisibility = (image360: Image360Collection): void => {
     const updatedImage360Collection = image360LayerData.map((data) => {
       if (data.image360 === image360) {
         data.isToggled = !data.isToggled;
+        // Exit 360 image if it is active
+        if (data.isActive) {
+          viewer.exit360Image();
+        }
 
         image360.setIconsVisibility(data.isToggled);
       }
@@ -43,6 +47,7 @@ export const Image360CollectionLayerContainer = ({
       data.isToggled = visible;
       data.image360.setIconsVisibility(data.isToggled);
     });
+    image360LayerData.some((data) => data.isActive) && viewer.exit360Image();
     viewer.requestRedraw();
     layerProps.setReveal3DResourcesLayerData((prevResourcesStates) => ({
       ...prevResourcesStates,
@@ -77,8 +82,8 @@ export const Image360CollectionLayerContainer = ({
         <Menu.Submenu content={image360Content()} title="360 images">
           <Flex direction="row" justifyContent="space-between">
             <Checkbox
-              key={`all360ImagesCheckbox-${String(allModelVisible)}-${String(indeterminate)}`}
-              checked={allModelVisible}
+              key={`all360ImagesCheckbox-${String(someImagesVisible)}-${String(indeterminate)}`}
+              checked={someImagesVisible}
               indeterminate={indeterminate}
               onChange={(e, c) => {
                 e.stopPropagation();

@@ -20,7 +20,7 @@ export const CadModelLayersContainer = ({
   const { cadLayerData } = layerProps.reveal3DResourcesLayerData;
 
   const count = cadLayerData.length.toString();
-  const allModelVisible = cadLayerData.every((data) => data.isToggled);
+  const someModelVisible = !cadLayerData.every((data) => !data.isToggled);
   const indeterminate = cadLayerData.some((data) => !data.isToggled);
 
   const handleCadModelVisibility = (model: CogniteCadModel): void => {
@@ -84,8 +84,8 @@ export const CadModelLayersContainer = ({
         <Menu.Submenu content={cadModelContent()} title="CAD models">
           <Flex direction="row" justifyContent="space-between" gap={4}>
             <Checkbox
-              key={`allCadModelCheckbox-${String(allModelVisible)}-${String(indeterminate)}`}
-              checked={allModelVisible}
+              key={`allCadModelCheckbox-${String(someModelVisible)}-${String(indeterminate)}`}
+              checked={someModelVisible}
               indeterminate={indeterminate}
               onChange={(e, c) => {
                 e.stopPropagation();

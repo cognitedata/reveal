@@ -81,6 +81,10 @@ export const LayersButton = (): ReactElement => {
       .get360ImageCollections()
       .map((image36Collection) => fillImage360LayerData(image36Collection));
 
+    updatedImage360LayerData.forEach((image360LayerData) => {
+      subcribe360ImageEnterExitMode(image360LayerData);
+    });
+
     function fillCadLayerData(
       cadModel: CogniteCadModel,
       index: number
@@ -106,11 +110,26 @@ export const LayersButton = (): ReactElement => {
     function fillImage360LayerData(image360Collection: Image360Collection): {
       image360: Image360Collection;
       isToggled: boolean;
+      isActive: boolean;
     } {
       return {
         image360: image360Collection,
-        isToggled: true
+        isToggled: true,
+        isActive: false
       };
+    }
+
+    function subcribe360ImageEnterExitMode(image360LayerData: {
+      image360: Image360Collection;
+      isToggled: boolean;
+      isActive: boolean;
+    }): void {
+      image360LayerData.image360.on('image360Entered', () => {
+        image360LayerData.isActive = true;
+      });
+      image360LayerData.image360.on('image360Exited', () => {
+        image360LayerData.isActive = false;
+      });
     }
 
     return {

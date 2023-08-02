@@ -22,6 +22,7 @@ export type Reveal3DResourcesLayerStates = {
   image360LayerData: Array<{
     image360: Image360Collection;
     isToggled: boolean;
+    isActive: boolean;
   }>;
 };
 
