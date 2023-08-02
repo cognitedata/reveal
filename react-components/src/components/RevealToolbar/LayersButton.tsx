@@ -70,12 +70,10 @@ export const LayersButton = (): ReactElement => {
       };
     }
     const updatedCadLayerData = viewer.models
-      .filter((model) => model.type === 'cad')
-      .map((model) => model as CogniteCadModel)
+      .filter((model): model is CogniteCadModel => model.type === 'cad')
       .map((model, index) => fillCadLayerData(model, index));
     const updatedPointCloudLayerData = viewer.models
-      .filter((model) => model.type === 'pointcloud')
-      .map((model) => model as CognitePointCloudModel)
+      .filter((model): model is CognitePointCloudModel => model.type === 'pointcloud')
       .map((model, index) => fillPointCloudLayerData(model, index));
     const updatedImage360LayerData = viewer
       .get360ImageCollections()
