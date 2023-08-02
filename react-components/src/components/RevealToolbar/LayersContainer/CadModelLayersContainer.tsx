@@ -59,7 +59,7 @@ export const CadModelLayersContainer = ({
 
   const cadModelContent = (): ReactElement => {
     return (
-      <StyledSubMenu autoFocus>
+      <StyledSubMenu>
         {cadLayerData.map((data) => (
           <Menu.Item
             key={uniqueId()}
@@ -81,7 +81,7 @@ export const CadModelLayersContainer = ({
   return (
     <>
       {cadLayerData.length > 0 && (
-        <Menu.Submenu openOnHover={false} content={cadModelContent()} title="CAD models">
+        <Menu.Submenu content={cadModelContent()} title="CAD models">
           <Flex direction="row" justifyContent="space-between" gap={4}>
             <Checkbox
               key={`allCadModelCheckbox-${String(allModelVisible)}-${String(indeterminate)}`}
