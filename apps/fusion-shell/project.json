@@ -31,7 +31,8 @@
           "extractLicenses": false,
           "optimization": false,
           "sourceMap": true,
-          "vendorChunk": false
+          "vendorChunk": false,
+          "scripts": ["apps/fusion-shell/src/dev-scripts.js"]
         },
         "staging": {
           "optimization": true,
@@ -40,6 +41,7 @@
           "namedChunks": false,
           "extractLicenses": true,
           "vendorChunk": false,
+          "scripts": ["apps/fusion-shell/src/dev-scripts.js"],
           "fileReplacements": [
             {
               "replace": "apps/fusion-shell/src/environments/environment.ts",
@@ -54,6 +56,7 @@
           "namedChunks": false,
           "extractLicenses": true,
           "vendorChunk": false,
+          "scripts": ["apps/fusion-shell/src/dev-scripts.js"],
           "fileReplacements": [
             {
               "replace": "apps/fusion-shell/src/environments/environment.ts",
