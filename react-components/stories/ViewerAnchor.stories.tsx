@@ -49,7 +49,7 @@ export const Main: Story = {
           styling={styling}
           fdmAssetMappingConfig={fdmAssetMappingConfig}
         />
-        <ViewerAnchor position={position} uniqueKey="key2">
+        <ViewerAnchor position={position} >
           <p
             style={{
               backgroundColor: 'turquoise',
@@ -62,7 +62,7 @@ export const Main: Story = {
             This label is stuck at position {position.toArray().join(',')}
           </p>
         </ViewerAnchor>
-        <ViewerAnchor position={position2} uniqueKey="key1">
+        <ViewerAnchor position={position2}>
           <p
             style={{
               backgroundColor: 'red',

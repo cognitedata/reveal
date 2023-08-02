@@ -15,13 +15,11 @@ export type ViewerAnchorElementMapping = {
 export type ViewerAnchorProps = {
   position: Vector3;
   children: ReactElement;
-  uniqueKey: string;
 };
 
 export const ViewerAnchor = ({
   position,
-  children,
-  uniqueKey
+  children
 }: ViewerAnchorProps): ReactElement => {
   const viewer = useReveal();
   const [divTranslation, setDivTranslation] = useState(new Vector2());
@@ -50,7 +48,6 @@ export const ViewerAnchor = ({
 
   return visible ? (
     <div
-      key={uniqueKey}
       ref={htmlRef}
       style={{
         position: 'absolute',
