@@ -1,9 +1,6 @@
 import '@testing-library/jest-dom/extend-expect';
-import { mockTFunction } from '@data-exploration-lib/core';
-import {
-  NIL_FILTER_LABEL,
-  NIL_FILTER_VALUE,
-} from '@data-exploration-lib/domain-layer';
+import { NOT_SET, mockTFunction } from '@data-exploration-lib/core';
+import { NIL_FILTER_VALUE } from '@data-exploration-lib/domain-layer';
 
 import { CUSTOM_FILTER_TITLE } from '../constants';
 import { formatValue, getTitle } from '../utils';
@@ -38,9 +35,7 @@ describe('utils', () => {
     });
 
     it('should return string filter value correctly', () => {
-      expect(formatValue(NIL_FILTER_VALUE, mockTFunction)).toEqual(
-        NIL_FILTER_LABEL
-      );
+      expect(formatValue(NIL_FILTER_VALUE, mockTFunction)).toEqual(NOT_SET);
       expect(formatValue('test-input', mockTFunction)).toEqual('test-input');
     });
 

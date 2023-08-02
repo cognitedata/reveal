@@ -58,6 +58,7 @@ export const TimeseriesFilters: React.FC<FilterProps> = ({
           onChange={(newUnit) =>
             onFilterChange('timeSeries', { unit: newUnit })
           }
+          addNilOption
         />
         <IsStepFilter
           value={timeSeriesFilter.isStep}
