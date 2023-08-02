@@ -73,7 +73,7 @@ export async function queryMappedData<NodeType>(
     data: nodeData,
     view: dataView,
     cadNode: selectedNode,
-    model: cadIntersection.model
+    intersection: cadIntersection
   };
 }
 
