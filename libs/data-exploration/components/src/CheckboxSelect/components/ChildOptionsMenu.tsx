@@ -3,10 +3,7 @@ import * as React from 'react';
 import isEmpty from 'lodash/isEmpty';
 import omit from 'lodash/omit';
 
-import {
-  NIL_FILTER_LABEL,
-  useDebouncedState,
-} from '@data-exploration-lib/core';
+import { EMPTY_LABEL, useDebouncedState } from '@data-exploration-lib/core';
 
 import {
   OptionSelection,
@@ -54,7 +51,7 @@ export const ChildOptionsMenu = ({
     return (
       data?.options.map((option) => {
         if (!option.value) {
-          return { ...option, value: NIL_FILTER_LABEL };
+          return { ...option, value: EMPTY_LABEL };
         }
         return option;
       }) || []

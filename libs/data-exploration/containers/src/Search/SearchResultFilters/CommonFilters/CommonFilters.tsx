@@ -38,6 +38,7 @@ export const CommonFilters: React.FC<FilterProps> = ({
           onChange={(newFilters) =>
             onFilterChange('common', { dataSetIds: newFilters })
           }
+          addNilOption
         />
 
         <AssetSelectFilter.Common
@@ -45,6 +46,7 @@ export const CommonFilters: React.FC<FilterProps> = ({
           onChange={(newFilters) =>
             onFilterChange('common', { assetSubtreeIds: newFilters })
           }
+          addNilOption
         />
 
         <DateFilter.Created

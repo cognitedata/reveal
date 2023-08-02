@@ -66,6 +66,7 @@ export const FileFilters: React.FC<FileFilterProps> = ({
           onChange={(newFilters) =>
             onFilterChange('document', { type: newFilters })
           }
+          addNilOption
         />
         {enableDocumentLabelsFilter && (
           <LabelFilter.File
@@ -75,6 +76,7 @@ export const FileFilters: React.FC<FileFilterProps> = ({
             onChange={(newFilters) =>
               onFilterChange('document', { labels: newFilters })
             }
+            addNilOption
           />
         )}
 
@@ -85,6 +87,7 @@ export const FileFilters: React.FC<FileFilterProps> = ({
           onChange={(newFilters) =>
             onFilterChange('document', { author: newFilters })
           }
+          addNilOption
         />
 
         <SourceFilter.File
@@ -96,6 +99,7 @@ export const FileFilters: React.FC<FileFilterProps> = ({
               source: newSources,
             })
           }
+          addNilOption
         />
       </TempMultiSelectFix>
     </BaseFilterCollapse.Panel>

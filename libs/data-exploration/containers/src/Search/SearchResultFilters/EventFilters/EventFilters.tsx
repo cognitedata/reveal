@@ -61,6 +61,7 @@ export const EventFilters: React.FC<FilterProps> = ({
           onChange={(newFilters) =>
             onFilterChange('event', { type: newFilters })
           }
+          addNilOption
         />
 
         <SubTypeFilter.Event
@@ -70,6 +71,7 @@ export const EventFilters: React.FC<FilterProps> = ({
           onChange={(newFilters) =>
             onFilterChange('event', { subtype: newFilters })
           }
+          addNilOption
         />
 
         <DateFilter.StartTime

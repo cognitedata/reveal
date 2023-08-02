@@ -1,5 +1,7 @@
 export const NIL_FILTER_VALUE = 'DATA_EXPLORATION_NO_VALUE_PLACEHOLDER';
 export const NIL_FILTER_LABEL = 'N/A';
+export const EMPTY_LABEL = 'Empty';
+export const NOT_SET = 'Not set';
 
 export const METADATA_ALL_VALUE = 'DATA_EXPLORATION_ALL_METADATA_VALUES';
 
