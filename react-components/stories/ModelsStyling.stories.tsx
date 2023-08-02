@@ -16,7 +16,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { DefaultFdmConfig } from './utilities/fdmConfig';
 import { type ReactElement, useMemo } from 'react';
 import { useMappedEquipmentBy3DModelsList } from '../src/hooks/useMappedEquipmentBy3DModelsList';
-import { is3DModelOption } from './utilities/utils';
+import { is3DModelOptions } from './utilities/is3DModelOptions';
 
 const meta = {
   title: 'Example/ModelsStyling',
@@ -119,7 +119,7 @@ export const Main: Story = {
 
 const StyledReveal3DResources = (props: Reveal3DResourcesProps): ReactElement => {
   const filtered = props.resources?.filter<AddReveal3DModelOptions>(
-    (resource): resource is AddReveal3DModelOptions => is3DModelOption(resource)
+    (resource): resource is AddReveal3DModelOptions => is3DModelOptions(resource)
   );
 
   const { data } = useMappedEquipmentBy3DModelsList(props.fdmAssetMappingConfig, filtered);
