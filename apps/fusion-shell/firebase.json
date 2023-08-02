@@ -1,6 +1,5 @@
 {
   "hosting": {
-    "site": "cdf-ui-host-staging",
     "public": ".",
     "trailingSlash": false,
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
