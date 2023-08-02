@@ -12,7 +12,7 @@ export const useMappedEquipmentBy3DModelsList = (
   const fdmClient = useFdmSdk();
 
   return useQuery(
-    ['reveal', 'react-components', ...modelsList],
+    ['reveal', 'react-components', ...modelsList.map(({ modelId }) => modelId.toString()).sort()],
     async () => {
       const filter = {
         in: {
