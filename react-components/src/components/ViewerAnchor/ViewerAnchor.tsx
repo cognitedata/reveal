@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { useEffect, useRef, type ReactElement, type RefObject, useState } from 'react';
+import { useEffect, useRef, type ReactElement, type RefObject, useState, useCallback } from 'react';
 import { Vector2, type Vector3 } from 'three';
 
 import { useReveal } from '../RevealContainer/RevealContext';
@@ -24,7 +24,7 @@ const ViewerAnchorContainer = ({ key, position, children, cssTranslation }: View
   const [divTranslation, setDivTranslation] = useState(new Vector2());
   const [visible, setVisible] = useState(false);
 
-  const cameraChanged = (cameraPosition: Vector3, cameraTarget: Vector3): void => {
+  const cameraChanged = useCallback((cameraPosition: Vector3, cameraTarget: Vector3): void => {
     const cameraDirection = cameraTarget.clone().sub(cameraPosition).normalize();
     const elementDirection = position.clone().sub(cameraPosition).normalize();
 
@@ -34,10 +34,14 @@ const ViewerAnchorContainer = ({ key, position, children, cssTranslation }: View
     if (screenSpacePosition !== null) {
       setDivTranslation(screenSpacePosition);
     }
-  };
+  }, [viewer, position]);
 
   useEffect(() => {
     viewer.cameraManager.on('cameraChange', cameraChanged);
+
+    cameraChanged(viewer.cameraManager.getCameraState().position,
+                  viewer.cameraManager.getCameraState().target);
+
     return () => {
       viewer.cameraManager.off('cameraChange', cameraChanged);
     };
