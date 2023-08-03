@@ -2,6 +2,7 @@ import React from 'react';
 
 import { ComponentStory } from '@storybook/react';
 
+import { UserProfile } from '../../../lib/UserProfileProvider';
 import { Comment } from '../../services/comments/types';
 
 import { CommentsPane } from './CommentsPane';
@@ -55,6 +56,15 @@ const comments: Comment[] = [
   },
 ];
 
+const users: UserProfile[] = [
+  {
+    displayName: 'Andreas Skonberg',
+    email: 'andreas.skonberg@cognitedata.com',
+    lastUpdatedTime: 1687867526989,
+    userIdentifier: 'zKAWBUFxXTOIP__mPKyCpg',
+  },
+];
+
 export const CommentsPaneLoadingStory: ComponentStory<
   typeof CommentsPane
 > = () => {
@@ -63,6 +73,7 @@ export const CommentsPaneLoadingStory: ComponentStory<
       comments={comments}
       isLoading={true}
       onCloseCommentsPane={() => console.log('comments pane closed')}
+      users={users}
     />
   );
 };
@@ -73,6 +84,7 @@ export const CommentsPaneStory: ComponentStory<typeof CommentsPane> = () => {
       comments={comments}
       isLoading={false}
       onCloseCommentsPane={() => console.log('comments pane closed')}
+      users={users}
     />
   );
 };
