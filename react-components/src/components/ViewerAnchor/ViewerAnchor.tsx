@@ -6,6 +6,7 @@ import { useEffect, useRef, type ReactElement, type RefObject, useState } from '
 import { Vector2, type Vector3 } from 'three';
 
 import { useReveal } from '../RevealContainer/RevealContext';
+import { withSuppressRevealEvents } from '../../higher-order-components/withSuppressRevealEvents';
 
 export type ViewerAnchorElementMapping = {
   ref: RefObject<HTMLElement>;
@@ -13,11 +14,12 @@ export type ViewerAnchorElementMapping = {
 };
 
 export type ViewerAnchorProps = {
+  key?: string;
   position: Vector3;
   children: ReactElement;
 };
 
-export const ViewerAnchor = ({ position, children }: ViewerAnchorProps): ReactElement => {
+const ViewerAnchorContainer = ({ key, position, children, cssTranslation }: ViewerAnchorProps): ReactElement => {
   const viewer = useReveal();
   const [divTranslation, setDivTranslation] = useState(new Vector2());
   const [visible, setVisible] = useState(false);
@@ -45,6 +47,7 @@ export const ViewerAnchor = ({ position, children }: ViewerAnchorProps): ReactEl
 
   return visible ? (
     <div
+    key={key}
       ref={htmlRef}
       style={{
         position: 'absolute',
@@ -58,3 +61,5 @@ export const ViewerAnchor = ({ position, children }: ViewerAnchorProps): ReactEl
     <></>
   );
 };
+
+export const ViewerAnchor = withSuppressRevealEvents<ViewerAnchorProps>(ViewerAnchorContainer);
