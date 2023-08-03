@@ -42,7 +42,10 @@ export default function FlowList() {
 
   if (error || !workflows)
     return (
-      <BasicPlaceholder type="EmptyStateFolderSad" title={t('error-workflows')}>
+      <BasicPlaceholder
+        type="EmptyStateFolderSad"
+        title={t('error-workflow', { count: 0 })}
+      >
         <Body level={5}>{JSON.stringify(error)}</Body>
       </BasicPlaceholder>
     );

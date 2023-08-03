@@ -41,7 +41,7 @@ export const RunHistorySection = ({
     return (
       <BasicPlaceholder
         type="EmptyStateFileSad"
-        title={t('error-workflow-executions')}
+        title={t('error-workflow-execution', { count: 0 })}
       >
         <Body level={5}>{JSON.stringify(error)}</Body>
       </BasicPlaceholder>
