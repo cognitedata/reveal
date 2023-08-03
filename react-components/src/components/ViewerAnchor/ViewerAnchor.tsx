@@ -6,7 +6,6 @@ import { useEffect, useRef, type ReactElement, type RefObject, useState, useCall
 import { Vector2, type Vector3 } from 'three';
 
 import { useReveal } from '../RevealContainer/RevealContext';
-import { withSuppressRevealEvents } from '../../higher-order-components/withSuppressRevealEvents';
 
 export type ViewerAnchorElementMapping = {
   ref: RefObject<HTMLElement>;
