@@ -13,6 +13,7 @@ import { getContainer } from 'utils';
 import Link from 'components/link/Link';
 import { Button, Dropdown, Menu } from '@cognite/cogs.js';
 import { WorkflowResponse } from 'types/workflows';
+import { BasicPlaceholder } from 'components/basic-placeholder/BasicPlaceholder';
 
 type WorkflowTableProps = {
   workflows: WorkflowResponse[];
@@ -76,7 +77,12 @@ const WorkflowTable = ({ workflows }: WorkflowTableProps): JSX.Element => {
               </Menu>
             }
           >
-            <Button icon="EllipsisHorizontal" size="small" type="ghost" />
+            <Button
+              aria-label="Open options menu for workflow"
+              icon="EllipsisHorizontal"
+              size="small"
+              type="ghost"
+            />
           </Dropdown>
         ),
       },
@@ -88,6 +94,14 @@ const WorkflowTable = ({ workflows }: WorkflowTableProps): JSX.Element => {
     () => workflows.map((w) => ({ ...w, key: w.externalId })),
     [workflows]
   );
+
+  if (workflows.length === 0)
+    return (
+      <BasicPlaceholder
+        type="EmptyStateSearchSad"
+        title={t('search-no-workflows')}
+      />
+    );
 
   return (
     <Table<WorkflowTableRecord>

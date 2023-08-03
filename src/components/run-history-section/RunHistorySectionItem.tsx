@@ -18,6 +18,7 @@ import RunHistoryItem from 'components/run-history-item/RunHistoryItem';
 import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
 import { useWorkflowExecutionDetails } from 'hooks/workflows';
 import { WorkflowExecution } from 'types/workflows';
+import { BasicPlaceholder } from 'components/basic-placeholder/BasicPlaceholder';
 
 type RunHistorySectionItemProps = {
   item: WorkflowExecution;
@@ -40,23 +41,36 @@ export const RunHistorySectionItem = ({
   const isSelected =
     !!selectedExecution?.id && selectedExecution.id === item.id;
 
-  const { data: execution, isInitialLoading } = useWorkflowExecutionDetails(
-    item?.id ?? '',
-    {
-      enabled: !!item?.id,
-    }
-  );
+  const {
+    data: execution,
+    isInitialLoading,
+    error,
+  } = useWorkflowExecutionDetails(item?.id ?? '', {
+    enabled: !!item?.id,
+  });
 
-  if (isInitialLoading) {
-    return <Icon type="Loader" />;
-  }
+  if (isInitialLoading)
+    return <Icon aria-label="Loading execution details" type="Loader" />;
+
+  if (error)
+    return (
+      <BasicPlaceholder
+        type="EmptyStateFileSad"
+        title={t('error-workflow-execution')}
+      >
+        <Body level={5}>{JSON.stringify(error)}</Body>
+      </BasicPlaceholder>
+    );
 
   return (
     <StyledCollapse
       $isSelected={isSelected}
       bordered={false}
       expandIcon={({ isActive }) => (
-        <Icon type={isActive ? 'ChevronUp' : 'ChevronDown'} />
+        <Icon
+          aria-label="Interact with the execution details"
+          type={isActive ? 'ChevronUp' : 'ChevronDown'}
+        />
       )}
       expandIconPosition="right"
       onChange={() => {

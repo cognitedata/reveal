@@ -107,6 +107,7 @@ const AddNodeButton = ({
         )}
       >
         <Button
+          aria-label="Add new node"
           onClick={() => setVisibleAddButton(!visibleAddButton)}
           type="primary"
           icon="AddLarge"

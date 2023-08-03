@@ -186,7 +186,7 @@ export const CanvasTopBar = ({ workflow }: CanvasTopBarProps) => {
                 iconPlacement="left"
                 onClick={() => setShowUpdateModal(true)}
               >
-                General info
+                {t('general-info')}
               </Menu.Item>
               <Menu.Item
                 icon="Download"

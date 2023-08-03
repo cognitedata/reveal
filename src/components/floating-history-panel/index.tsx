@@ -57,6 +57,7 @@ export const FloatingHistoryPanel = (): JSX.Element => {
           <Title level={6}>{t('history')}</Title>
         </Flex>
         <Button
+          aria-label="Close panel"
           icon="CloseLarge"
           onClick={() => {
             setHistoryVisible(false);

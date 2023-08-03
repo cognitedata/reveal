@@ -1,10 +1,19 @@
-import { Body, Button, Flex, Icon, Input, Title } from '@cognite/cogs.js';
+import {
+  Body,
+  Button,
+  Flex,
+  Icon,
+  Input,
+  Loader,
+  Title,
+} from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { useTranslation } from 'common';
 import { useMemo, useState } from 'react';
 import { CreateWorkflowModal } from 'components/workflow-modal/CreateWorkflowModal';
 import { useWorkflows } from 'hooks/workflows';
 import WorkflowTable from 'components/workflow-table/WorkflowTable';
+import { BasicPlaceholder } from 'components/basic-placeholder/BasicPlaceholder';
 
 export default function FlowList() {
   const { t } = useTranslation();
@@ -29,18 +38,14 @@ export default function FlowList() {
     [workflows, searchQuery]
   );
 
-  if (isInitialLoadingWorkflows || !workflows) {
-    return <Icon type="Loader" />;
-  }
+  if (isInitialLoadingWorkflows) return <Loader />;
 
-  if (error) {
+  if (error || !workflows)
     return (
-      <div>
-        <p>Error</p>
-        <pre>{JSON.stringify(error, null, 2)}</pre>
-      </div>
+      <BasicPlaceholder type="EmptyStateFolderSad" title={t('error-workflows')}>
+        <Body level={5}>{JSON.stringify(error)}</Body>
+      </BasicPlaceholder>
     );
-  }
 
   return (
     <>

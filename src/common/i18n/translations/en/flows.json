@@ -94,5 +94,11 @@
   "run-is-selected": "Run is selected",
   "select-a-run-to-start": "Select a run to start",
   "delete": "Delete",
-  "error-workflow": "Something went wrong. Could not load the workflow."
+  "search-no-workflows": "Could not find workflows",
+  "error-workflow": "Something went wrong. Could not load the workflow.",
+  "error-workflows": "Something went wrong. Could not load the workflows.",
+  "error-canvas-state": "Something went wrong. Could not load the canvas state.",
+  "error-missing-file": "Something went wrong. Could not load the canvas state file.",
+  "error-workflow-executions": "Something went wrong. Could not load the workflow executions.",
+  "error-workflow-execution": "Something went wrong. Could not load the workflow execution details."
 }

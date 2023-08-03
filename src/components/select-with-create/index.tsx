@@ -126,7 +126,7 @@ const SelectWithCreate = <V extends string | number = string>({
           value={`${FLOW_BUILDER_CREATE_OPTION_VALUE_PREFIX}${search}`}
         >
           <StyledCreateOption>
-            <Icon type="Add" />
+            <Icon aria-label="Create option" type="Add" />
             {t('select-with-create-option', {
               selectLabel: t(titleI18nKey, { postProcess: 'lowercase' }),
               optionLabel: search,

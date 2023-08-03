@@ -171,6 +171,7 @@ export const ProcessNodeRenderer = ({
             visible={isLeftDropdownVisible}
           >
             <Button
+              aria-label="Add source to node"
               onClick={() =>
                 setIsLeftDropdownVisible((prevState) => !prevState)
               }
@@ -209,6 +210,7 @@ export const ProcessNodeRenderer = ({
             visible={isRightDropdownVisible}
           >
             <Button
+              aria-label="Add target to node"
               onClick={() =>
                 setIsRightDropdownVisible((prevState) => !prevState)
               }

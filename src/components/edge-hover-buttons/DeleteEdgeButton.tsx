@@ -9,6 +9,7 @@ type Props = {
 const DeleteButton = ({ className, onDelete }: Props) => {
   return (
     <StyledButton
+      aria-label="Delete edge"
       icon="Delete"
       className={className}
       onClick={onDelete}
