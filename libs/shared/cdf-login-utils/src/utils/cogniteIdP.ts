@@ -8,7 +8,7 @@ export const getCogniteIdPUserManager = (params: {
     authority: params.authority,
     client_id: params.client_id,
     redirect_uri: window.location.href,
-    scope: `openid offline email profile`,
+    scope: `openid offline_access email profile`,
     automaticSilentRenew: true,
     userStore: new WebStorageStateStore({
       store: window.localStorage,

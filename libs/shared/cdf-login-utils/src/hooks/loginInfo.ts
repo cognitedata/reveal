@@ -209,7 +209,11 @@ export const useIdpProjectsFromAllClusters = (
       case 'KEYCLOAK':
         return getKeycloakQueryKey(cluster, idp, type);
       case 'COGNITE_IDP':
-        return getCogniteIdPQueryKey(idp, type);
+        return getCogniteIdPQueryKey(
+          idp,
+          type,
+          type === 'token' ? '' : cluster
+        );
     }
   };
 
