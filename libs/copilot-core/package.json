@@ -1,6 +1,6 @@
 {
   "name": "@cognite/copilot-core",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "dependencies": {
     "@botui/react": "^1.1.5",
     "@cognite/react-feature-flags": "^1.0.1",
@@ -38,12 +38,9 @@
     "react-markdown": "^8.0.7",
     "use-debounce": "^6.0.1",
     "localforage": "^1.10.0",
-    "@platypus/platypus-core": "*",
     "mixpanel-browser": "^2.45.0",
     "uuid": "9.0.0",
     "jsonrepair": "^3.2.0",
-    "@cognite/llm-hub": "^0.0.12",
-    "@platypus/platypus-common-utils": "*",
     "dayjs": "^1.11.9",
     "graphql": "^16.6.0",
     "zod": "3.21.4"

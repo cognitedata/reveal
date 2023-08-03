@@ -28,6 +28,7 @@ export enum ModelNames {
 export enum CanvasVisibility {
   PRIVATE = 'private',
   PUBLIC = 'public',
+  ALL = 'all',
 }
 
 type PageInfo = {
@@ -234,7 +235,7 @@ export class IndustryCanvasService {
   public async listCanvases({
     visibility,
   }: {
-    visibility?: CanvasVisibility;
+    visibility: CanvasVisibility;
   }): Promise<SerializedCanvasDocument[]> {
     return this.getPaginatedCanvasData({ visibilityFilter: visibility });
   }
@@ -244,12 +245,12 @@ export class IndustryCanvasService {
     cursor = undefined,
     paginatedData = [],
     limit = this.LIST_LIMIT,
-    visibilityFilter = undefined,
+    visibilityFilter,
   }: {
     cursor?: string;
     paginatedData?: SerializedCanvasDocument[];
     limit?: number;
-    visibilityFilter?: CanvasVisibility;
+    visibilityFilter: CanvasVisibility;
   }): Promise<SerializedCanvasDocument[]> {
     // TODO: Check this. Data is fetching. How is serialisation happening here? We don't want to hydrate the configs.
     const res = await this.fdmClient.graphQL<{

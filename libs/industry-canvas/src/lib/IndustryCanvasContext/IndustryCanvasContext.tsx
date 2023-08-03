@@ -63,8 +63,8 @@ export type IndustryCanvasContextType = {
   ) => void;
   isCommentsEnabled: boolean;
   // Filter for the ICHomePage
-  visibilityFilter: CanvasVisibility | undefined;
-  setVisibilityFilter: (visibility: CanvasVisibility | undefined) => void;
+  visibilityFilter: CanvasVisibility;
+  setVisibilityFilter: (visibility: CanvasVisibility) => void;
 };
 
 export const IndustryCanvasContext = createContext<IndustryCanvasContextType>({
@@ -103,7 +103,7 @@ export const IndustryCanvasContext = createContext<IndustryCanvasContextType>({
     );
   },
   isCommentsEnabled: false,
-  visibilityFilter: undefined,
+  visibilityFilter: CanvasVisibility.PRIVATE,
   setVisibilityFilter: () => {
     throw new Error('setVisibilityFilter called before initialisation');
   },
@@ -123,9 +123,9 @@ export const IndustryCanvasProvider: React.FC<IndustryCanvasProviderProps> = ({
     [sdk, userProfile]
   );
 
-  const [visibilityFilter, setVisibilityFilter] = useState<
-    CanvasVisibility | undefined
-  >();
+  const [visibilityFilter, setVisibilityFilter] = useState<CanvasVisibility>(
+    CanvasVisibility.PRIVATE
+  );
 
   const { isEnabled: isCommentsEnabled } = useFlag(CommentsFeatureFlagKey, {
     fallback: false,

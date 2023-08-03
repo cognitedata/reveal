@@ -9,10 +9,10 @@ import { SerializedCanvasDocument } from '../../types';
 
 export const useListCanvases = (
   service: IndustryCanvasService,
-  filter?: { visibility?: CanvasVisibility }
+  filter: { visibility: CanvasVisibility }
 ) => {
   return useQuery<SerializedCanvasDocument[]>(
     [QueryKeys.LIST_CANVASES, filter],
-    async () => service.listCanvases({ visibility: filter?.visibility })
+    async () => service.listCanvases({ visibility: filter.visibility })
   );
 };

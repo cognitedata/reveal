@@ -330,19 +330,6 @@ export const IndustryCanvasHomePage = () => {
                 onChange={(e) => setSearchString(e.target.value)}
               />
               <SegmentedControl currentKey={visibilityFilter}>
-                <SegmentedControl.Button
-                  key="visibility-all"
-                  onClick={() => setVisibilityFilter(undefined)}
-                >
-                  {t(translationKeys.VISIBILITY_ALL, 'All')}
-                </SegmentedControl.Button>
-                <SegmentedControl.Button
-                  key={CanvasVisibility.PUBLIC}
-                  icon={getCanvasVisibilityIcon(CanvasVisibility.PUBLIC)}
-                  onClick={() => setVisibilityFilter(CanvasVisibility.PUBLIC)}
-                >
-                  {t(translationKeys.VISIBILITY_PUBLIC, 'Public')}
-                </SegmentedControl.Button>
                 {/* Here when 'private' is selected, we only show the canvases that are created/owned by me? */}
                 <SegmentedControl.Button
                   key={CanvasVisibility.PRIVATE}
@@ -350,6 +337,21 @@ export const IndustryCanvasHomePage = () => {
                   onClick={() => setVisibilityFilter(CanvasVisibility.PRIVATE)}
                 >
                   {t(translationKeys.VISIBILITY_PRIVATE, 'Private')}
+                </SegmentedControl.Button>
+
+                <SegmentedControl.Button
+                  key={CanvasVisibility.PUBLIC}
+                  icon={getCanvasVisibilityIcon(CanvasVisibility.PUBLIC)}
+                  onClick={() => setVisibilityFilter(CanvasVisibility.PUBLIC)}
+                >
+                  {t(translationKeys.VISIBILITY_PUBLIC, 'Public')}
+                </SegmentedControl.Button>
+
+                <SegmentedControl.Button
+                  key={CanvasVisibility.ALL}
+                  onClick={() => setVisibilityFilter(CanvasVisibility.ALL)}
+                >
+                  {t(translationKeys.VISIBILITY_ALL, 'All')}
                 </SegmentedControl.Button>
               </SegmentedControl>
             </SearchAreaWrapper>
