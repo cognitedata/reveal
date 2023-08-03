@@ -1,25 +1,21 @@
 import { useCallback, useMemo, useState } from 'react';
 
-export const PROFILE_TAB_KEYS = ['info', 'language'] as const;
-export type ProfileTabKey = (typeof PROFILE_TAB_KEYS)[number];
-
-export const useActiveTabKey = (): [
-  ProfileTabKey,
-  (value: ProfileTabKey) => void
-] => {
+export const useActiveTabKey = (
+  keys: string[]
+): [string, (value: string) => void] => {
   const searchParams = useMemo(
     () => new URLSearchParams(window.location.search),
     []
   );
 
-  const [activeTabKey, setActiveTabKey] = useState<ProfileTabKey>(
-    PROFILE_TAB_KEYS.includes(searchParams.get('tab') as ProfileTabKey)
-      ? (searchParams.get('tab') as ProfileTabKey)
+  const [activeTabKey, setActiveTabKey] = useState<string>(
+    keys.includes(searchParams.get('tab') as string)
+      ? (searchParams.get('tab') as string)
       : 'info'
   );
 
   const setActiveTabKeyExtended = useCallback(
-    (value: ProfileTabKey) => {
+    (value: string) => {
       setActiveTabKey(value);
       searchParams.set('tab', value);
       const newUrl = new URL(window.location.href);

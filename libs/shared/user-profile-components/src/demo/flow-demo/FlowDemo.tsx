@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom';
 
 import { Avatar, Body, TopBar as CogsTopBar, Title } from '@cognite/cogs.js';
 
+import { TabContent } from '../../components/tab-content/TabContent';
 import { UserMenu } from '../../components/user-menu/UserMenu';
 import { UserProfilePage } from '../../pages/user-profile-page/UserProfilePage';
 
@@ -69,6 +70,20 @@ export const FlowDemo = (): JSX.Element => {
               selectedLanguage={{ code: 'en', label: 'English | en' }}
               supportedLanguages={[{ code: 'en', label: 'English | en' }]}
               onLanguageChange={() => null}
+              additionalTabs={[
+                {
+                  key: 'custom-tab',
+                  icon: 'Placeholder',
+                  title: 'Custom Tab',
+                  content: (
+                    <TabContent.Container>
+                      <TabContent.Title>Custom Tab</TabContent.Title>
+                      <TabContent.Body>Custom Tab Content</TabContent.Body>
+                    </TabContent.Container>
+                  ),
+                },
+              ]}
+              additionalTabsCategoryLabel="Custom Tabs"
             />
           }
         />
