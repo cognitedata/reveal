@@ -42,6 +42,34 @@
           "extractLicenses": true,
           "vendorChunk": false
         },
+        "staging": {
+          "fileReplacements": [
+            {
+              "replace": "apps/copilot/src/environments/environment.ts",
+              "with": "apps/copilot/src/environments/environment.prod.ts"
+            }
+          ],
+          "optimization": true,
+          "outputHashing": "all",
+          "sourceMap": false,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "vendorChunk": false
+        },
+        "preview": {
+          "fileReplacements": [
+            {
+              "replace": "apps/copilot/src/environments/environment.ts",
+              "with": "apps/copilot/src/environments/environment.prod.ts"
+            }
+          ],
+          "optimization": true,
+          "outputHashing": "all",
+          "sourceMap": false,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "vendorChunk": false
+        },
         "mock": {
           "fileReplacements": [
             {

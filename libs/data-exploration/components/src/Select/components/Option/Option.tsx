@@ -2,11 +2,12 @@ import { components, OptionProps, OptionTypeBase } from 'react-select';
 
 import isUndefined from 'lodash/isUndefined';
 
-import { Checkbox } from '@cognite/cogs.js';
+import { Checkbox, Divider } from '@cognite/cogs.js';
 
 import {
+  EMPTY_LABEL,
   formatBigNumbersWithSuffix,
-  NIL_FILTER_LABEL,
+  NOT_SET,
 } from '@data-exploration-lib/core';
 
 import { Ellipsis } from '../../../Ellipsis';
@@ -26,30 +27,41 @@ export const Option = <OptionType extends OptionTypeBase>({
 OptionProps<OptionType>) => {
   // eslint-disable-next-line prefer-const
   let { label, count } = data;
+  const { addNilOption } = props.selectProps;
   const isDisabled = count === 0;
 
-  if (!label) {
-    label = NIL_FILTER_LABEL;
+  if (label === '') {
+    label = EMPTY_LABEL;
+  }
+  if (isUndefined(label)) {
+    label = NOT_SET;
   }
   const OptionCountChip = isDisabled ? OptionCountDisabled : OptionCount;
 
+  const isDividerVisible = addNilOption && label === NOT_SET;
+
   return (
-    <components.Option
-      {...props}
-      data={data}
-      isSelected={isSelected}
-      isFocused={false}
-      isDisabled={isDisabled}
-    >
-      <OptionContentWrapper>
-        <Checkbox checked={isSelected} disabled={isDisabled} />
+    <>
+      <components.Option
+        {...props}
+        data={data}
+        isSelected={isSelected}
+        isFocused={false}
+        isDisabled={isDisabled}
+      >
+        <OptionContentWrapper>
+          <Checkbox checked={isSelected} disabled={isDisabled} />
 
-        <Ellipsis value={label} />
+          <Ellipsis value={label} />
 
-        {!isUndefined(count) && (
-          <OptionCountChip>{formatBigNumbersWithSuffix(count)}</OptionCountChip>
-        )}
-      </OptionContentWrapper>
-    </components.Option>
+          {!isUndefined(count) && (
+            <OptionCountChip>
+              {formatBigNumbersWithSuffix(count)}
+            </OptionCountChip>
+          )}
+        </OptionContentWrapper>
+      </components.Option>
+      {isDividerVisible && <Divider />}
+    </>
   );
 };

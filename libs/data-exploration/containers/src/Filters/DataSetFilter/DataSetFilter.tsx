@@ -27,6 +27,7 @@ export const DataSetFilter = <TFilter,>({
   value,
   isError,
   isLoading,
+  ...rest
 }: DataSetFilterProps<TFilter>) => {
   const trackUsage = useMetrics();
   const { t } = useTranslation();
@@ -61,6 +62,7 @@ export const DataSetFilter = <TFilter,>({
       }
     >
       <MultiSelectFilter<number>
+        {...rest}
         label={t('DATA_SET', 'Data set')}
         options={options || []}
         isLoading={isLoading}

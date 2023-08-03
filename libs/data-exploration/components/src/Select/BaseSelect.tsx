@@ -12,15 +12,15 @@ import {
 } from '@cognite/cogs.js';
 
 import {
-  NIL_FILTER_LABEL,
   NIL_FILTER_VALUE,
+  NOT_SET,
   useTranslation,
 } from '@data-exploration-lib/core';
 
 import { Option, MultiValue, MenuList } from './components';
 
-export const NIL_FILTER_OPTION: OptionType<string> = {
-  label: NIL_FILTER_LABEL,
+export const NOT_SET_OPTION: OptionType<string> = {
+  label: NOT_SET,
   value: NIL_FILTER_VALUE,
 };
 export interface BaseSelectProps<ValueType>
@@ -53,11 +53,7 @@ export const BaseSelect = <ValueType,>({
     if (!addNilOption) {
       return optionsOriginal;
     }
-    // If all options have a count of 0 and there is a nil option, move it to the beginning.
-    if (optionsOriginal.every((option) => option.count === 0)) {
-      return [NIL_FILTER_OPTION, ...optionsOriginal] as OptionType<ValueType>[];
-    }
-    return [...optionsOriginal, NIL_FILTER_OPTION] as OptionType<ValueType>[];
+    return [NOT_SET_OPTION, ...optionsOriginal] as OptionType<ValueType>[];
   }, [optionsOriginal, addNilOption]);
 
   const props: BaseSelectProps<ValueType> = {
@@ -161,6 +157,7 @@ export const BaseSelect = <ValueType,>({
           onMenuClose={() => setSelectIsFocused(false)}
           onMenuInputFocus={() => setMenuInputIsFocused(true)}
           onMenuInputBlur={() => setMenuInputIsFocused(false)}
+          addNilOption={addNilOption}
         />
       </CogsSelectWrapper>
     </Tooltip>

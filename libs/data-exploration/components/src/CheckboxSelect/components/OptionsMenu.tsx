@@ -9,7 +9,7 @@ import { Body, Dropdown, Icon, Title, DropdownProps } from '@cognite/cogs.js';
 
 import {
   EMPTY_ARRAY,
-  NIL_FILTER_LABEL,
+  EMPTY_LABEL,
   isEscapeButton,
   useDeepEffect,
   useTranslation,
@@ -107,7 +107,7 @@ export const OptionsMenu = ({
       let { value } = option;
 
       if (!value) {
-        value = NIL_FILTER_LABEL;
+        value = EMPTY_LABEL;
       }
 
       return (
