@@ -24,21 +24,11 @@ export const useMappedEquipmentBy3DModelsList = (
         }
       };
 
-      let mappings = await fdmClient.filterInstances(filter, 'edge', Default3DFdmConfig.source);
-
-      while (mappings.nextCursor !== undefined) {
-        const nextMappings = await fdmClient.filterInstances(
-          filter,
-          'edge',
-          Default3DFdmConfig.source,
-          mappings.nextCursor
-        );
-
-        mappings = {
-          edges: [...mappings.edges, ...nextMappings.edges],
-          nextCursor: nextMappings.nextCursor
-        };
-      }
+      const mappings = await fdmClient.filterAllInstances(
+        filter,
+        'edge',
+        Default3DFdmConfig.source
+      );
 
       return mappings.edges.map((edge) => edge.startNode.externalId);
     },

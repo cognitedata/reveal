@@ -7,10 +7,8 @@ import { type Reveal3DResourcesStyling } from '../components/Reveal3DResources/R
 import { type TypedReveal3DModel } from '../components/Reveal3DResources/types';
 import { useFdmAssetMappings } from './useFdmAssetMappings';
 import { type PointCloudModelStyling } from '../components/PointCloudContainer/PointCloudContainer';
-import {
-  type CadModelStyling,
-  type NodeStylingGroup
-} from '../components/CadModelContainer/CadModelContainer';
+import { type CadModelStyling } from '../components/CadModelContainer/CadModelContainer';
+import { type CogniteExternalId, type CogniteInternalId } from '@cognite/sdk';
 
 /**
  * Calculates the styling for the models based on the styling configuration and the mappings.
@@ -79,7 +77,7 @@ export const useCalculateModelsStyling = (
 function getModelMappings(
   mappings: ThreeDModelMappings[] | undefined,
   model: TypedReveal3DModel
-): ThreeDModelMappings | undefined {
+): Map<CogniteExternalId, CogniteInternalId> | undefined {
   return mappings
     ?.filter(
       (mapping) => mapping.modelId === model.modelId && mapping.revisionId === model.revisionId
@@ -87,11 +85,11 @@ function getModelMappings(
     .reduce(
       (acc, mapping) => {
         // reduce is added to avoid duplicate models from several pages.
-        acc.mappings = acc.mappings.concat(mapping.mappings);
+        mergeMaps(acc.mappings, mapping.mappings);
         return acc;
       },
-      { modelId: model.modelId, revisionId: model.revisionId, mappings: [] }
-    );
+      { modelId: model.modelId, revisionId: model.revisionId, mappings: new Map<string, number>() }
+    ).mappings;
 }
 
 function calculateCadModelStyling(
@@ -102,30 +100,36 @@ function calculateCadModelStyling(
   const modelMappings = getModelMappings(mappings, model);
 
   const resourcesStylingGroups = styling?.groups;
-  const modelStylingGroups: NodeStylingGroup[] | undefined =
-    resourcesStylingGroups !== null ? [] : undefined;
 
-  resourcesStylingGroups?.forEach((group) => {
-    const modelMappedNodeIds = group.fdmAssetExternalIds
-      .map((externalId) => {
-        const mapping = modelMappings?.mappings.find(
-          (mapping) => mapping.externalId === externalId
-        );
-
-        return mapping?.nodeId ?? -1;
-      })
-      .filter((nodeId) => nodeId !== -1);
-
-    const newGroup: NodeStylingGroup = {
-      style: group.style.cad,
-      nodeIds: modelMappedNodeIds
+  if (resourcesStylingGroups === undefined || modelMappings === undefined)
+    return {
+      defaultStyle: styling.defaultStyle?.cad
     };
 
-    if (modelMappedNodeIds.length > 0) modelStylingGroups?.push(newGroup);
-  });
+  const modelStylingGroups = resourcesStylingGroups
+    .map((resourcesGroup) => {
+      const modelMappedNodeIds = resourcesGroup.fdmAssetExternalIds
+        .map((externalId) => modelMappings.get(externalId))
+        .filter((nodeId): nodeId is number => nodeId !== undefined);
+
+      return {
+        style: resourcesGroup.style.cad,
+        nodeIds: modelMappedNodeIds
+      };
+    })
+    .filter((group) => group.nodeIds.length > 0);
 
   return {
     defaultStyle: styling.defaultStyle?.cad,
     groups: modelStylingGroups
   };
+}
+
+function mergeMaps(
+  targetMap: Map<string, number>,
+  addedMap: Map<string, number>
+): Map<string, number> {
+  addedMap.forEach((value, key) => targetMap.set(key, value));
+
+  return targetMap;
 }

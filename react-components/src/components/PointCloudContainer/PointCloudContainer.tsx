@@ -63,8 +63,6 @@ export function PointCloudContainer({
   async function addModel(modelId: number, revisionId: number, transform?: Matrix4): Promise<void> {
     const pointCloudModel = await viewer.addPointCloudModel({ modelId, revisionId });
 
-    viewer.fitCameraToModel(pointCloudModel);
-
     if (transform !== undefined) {
       pointCloudModel.setModelTransformation(transform);
     }

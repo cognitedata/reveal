@@ -4,7 +4,11 @@
 import { type CogniteExternalId } from '@cognite/sdk';
 import { useFdmSdk } from '../components/RevealContainer/SDKProvider';
 import { useInfiniteQuery, type UseInfiniteQueryResult } from '@tanstack/react-query';
-import { type FdmAssetMappingsConfig, type ThreeDModelMappings } from './types';
+import {
+  type Model3DEdgeProperties,
+  type FdmAssetMappingsConfig,
+  type ThreeDModelMappings
+} from './types';
 import { DEFAULT_QUERY_STALE_TIME } from '../utilities/constants';
 
 /**
@@ -43,10 +47,9 @@ export const useFdmAssetMappings = (
       const modelMappingsTemp: ThreeDModelMappings[] = [];
 
       instances.edges.forEach((instance) => {
-        const mappingProperty =
-          instance.properties[fdmConfig.source.space][
-            `${fdmConfig.source.externalId}/${fdmConfig.source.version}`
-          ];
+        const mappingProperty = instance.properties[fdmConfig.source.space][
+          `${fdmConfig.source.externalId}/${fdmConfig.source.version}`
+        ] as Model3DEdgeProperties;
 
         const modelId = Number.parseInt(instance.endNode.externalId.slice(9));
         const revisionId = mappingProperty.revisionId;
@@ -56,22 +59,20 @@ export const useFdmAssetMappings = (
         );
 
         if (!isAdded) {
+          const mappingsMap = new Map<string, number>();
+          mappingsMap.set(instance.startNode.externalId, mappingProperty.revisionNodeId);
+
           modelMappingsTemp.push({
             modelId,
             revisionId,
-            mappings: [
-              { nodeId: mappingProperty.revisionNodeId, externalId: instance.startNode.externalId }
-            ]
+            mappings: mappingsMap
           });
         } else {
           const modelMapping = modelMappingsTemp.find(
             (mapping) => mapping.modelId === modelId && mapping.revisionId === revisionId
           );
 
-          modelMapping?.mappings.push({
-            nodeId: mappingProperty.revisionNodeId,
-            externalId: instance.startNode.externalId
-          });
+          modelMapping?.mappings.set(instance.startNode.externalId, mappingProperty.revisionNodeId);
         }
       });
 
