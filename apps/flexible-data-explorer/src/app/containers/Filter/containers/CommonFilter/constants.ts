@@ -7,11 +7,9 @@ export const INPUT_TYPE_CONFIG: Record<
   [Operator.STARTS_WITH]: 'string',
   [Operator.NOT_STARTS_WITH]: 'string',
   [Operator.CONTAINS]: {
-    string: 'string',
     number: 'number',
   },
   [Operator.NOT_CONTAINS]: {
-    string: 'string',
     number: 'number',
   },
   [Operator.BETWEEN]: {
@@ -50,8 +48,6 @@ export const DEFAULT_OPERATORS: Record<FieldType, Operator[]> = {
   string: [
     Operator.STARTS_WITH,
     Operator.NOT_STARTS_WITH,
-    Operator.CONTAINS,
-    Operator.NOT_CONTAINS,
     ...EXISTANCE_OPERATORS,
   ],
   number: [

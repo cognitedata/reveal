@@ -1,18 +1,10 @@
 import * as React from 'react';
-import { useRef } from 'react';
 
 import { Icon, IconType } from '@cognite/cogs.js';
 
-import { useIsOverflow } from '../../../../hooks/useIsOverflow';
+import { Typography } from '../../../../components/Typography';
 
-import {
-  Content,
-  Subtitle,
-  TextContent,
-  Title,
-  SubtitleTooltipWrapper,
-  SubtitleTooltip,
-} from './elements';
+import { Content, TextContent, Title } from './elements';
 
 const TEXT_CONTENT_WIDTH = 200;
 const ICON_WIDTH = 24;
@@ -30,10 +22,6 @@ export const MenuItem: React.FC<MenuItemProps> = ({
   icon,
   onClick,
 }) => {
-  const subtitleWrapperRef = useRef<HTMLDivElement>(null);
-
-  const isSubtitleOverflow = useIsOverflow(subtitleWrapperRef);
-
   const textContentWidth = icon
     ? TEXT_CONTENT_WIDTH - ICON_WIDTH
     : TEXT_CONTENT_WIDTH;
@@ -46,18 +34,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({
         <Title>{title}</Title>
 
         {subtitle && (
-          <SubtitleTooltipWrapper ref={subtitleWrapperRef}>
-            <SubtitleTooltip
-              placement="top-start"
-              key={subtitle}
-              content={subtitle}
-              arrow={false}
-              disabled={!isSubtitleOverflow}
-              left={icon && -ICON_WIDTH}
-            >
-              <Subtitle>{subtitle}</Subtitle>
-            </SubtitleTooltip>
-          </SubtitleTooltipWrapper>
+          <Typography.Body size="xsmall">{subtitle}</Typography.Body>
         )}
       </TextContent>
 

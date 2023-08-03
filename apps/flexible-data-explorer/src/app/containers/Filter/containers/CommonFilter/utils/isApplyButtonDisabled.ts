@@ -1,5 +1,5 @@
 import isEmpty from 'lodash/isEmpty';
-import isUndefined from 'lodash/isUndefined';
+import isNil from 'lodash/isNil';
 
 import { InputType, ValueType } from '../../../types';
 
@@ -15,5 +15,5 @@ export const isApplyButtonDisabled = (
     return isEmpty(value);
   }
 
-  return isUndefined(value);
+  return isNil(value);
 };

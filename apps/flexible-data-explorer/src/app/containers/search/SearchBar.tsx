@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { CSSProperties, useCallback, useEffect, useRef, useState } from 'react';
 
 import styled, { css } from 'styled-components';
 
@@ -22,6 +22,9 @@ interface Props {
   inverted?: boolean;
   disablePreview?: boolean;
   autoFocus?: boolean;
+  options?: {
+    filterMenuMaxHeight?: CSSProperties['maxHeight'];
+  };
 }
 
 export const SearchBar: React.FC<Props> = ({
@@ -29,6 +32,7 @@ export const SearchBar: React.FC<Props> = ({
   inverted,
   autoFocus,
   disablePreview,
+  options,
 }) => {
   const { t } = useTranslation();
   const navigate = useNavigation();
@@ -105,6 +109,7 @@ export const SearchBar: React.FC<Props> = ({
           onChange={(newValue) => {
             navigate.toSearchPage(globalQuery, newValue);
           }}
+          filterMenuMaxHeight={options?.filterMenuMaxHeight}
         />
       </Content>
 
