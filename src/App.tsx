@@ -58,7 +58,7 @@ const App = () => {
                           <Route
                             path={ROOT_PATH}
                             element={
-                              <Suspense fallback={<div>Loading...</div>}>
+                              <Suspense fallback={<Loader />}>
                                 <FlowList />
                               </Suspense>
                             }
@@ -66,7 +66,7 @@ const App = () => {
                           <Route
                             path={`${ROOT_PATH}/:externalId`}
                             element={
-                              <Suspense fallback={<div>Loading...</div>}>
+                              <Suspense fallback={<Loader />}>
                                 <Flow />
                               </Suspense>
                             }
