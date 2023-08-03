@@ -303,7 +303,12 @@ const ReactFlowNodeEditor = ({
                 <>
                   {calculationResult.loading && (
                     <div style={{ display: 'flex' }}>
-                      <AlertIcon type="default" icon="Loader" value="Loading" />
+                      <AlertIcon
+                        type="default"
+                        icon="Loader"
+                        value="Loading"
+                        size="small"
+                      />
                     </div>
                   )}
                   {calculationResult.error &&
@@ -313,6 +318,7 @@ const ReactFlowNodeEditor = ({
                           icon="ErrorFilled"
                           type="danger"
                           value="Error"
+                          size="small"
                           onClick={() => onErrorIconClick(id)}
                         />
                       </div>
@@ -323,6 +329,7 @@ const ReactFlowNodeEditor = ({
                       <div style={{ display: 'flex' }}>
                         <AlertIcon
                           icon="WarningFilled"
+                          size="small"
                           type="warning"
                           value={`Warning${
                             calculationResult.warnings.length > 1

@@ -134,12 +134,11 @@ const EventResultsSidebar = memo(
                 style={{ marginBottom: '8px' }}
               >
                 <Col span={16}>
-                  <Body level={2}>
+                  <Body size="small">
                     Selected results:{' '}
                     <SidebarChip
                       icon="Events"
-                      size="medium"
-                      $small
+                      size="small"
                       label={`${selectedEventResults?.length}`}
                     />
                   </Body>
@@ -175,12 +174,11 @@ const EventResultsSidebar = memo(
           {activeEventFilterResults && remainingEventResults?.length ? (
             <>
               <Row align="middle" style={{ marginBottom: '8px' }}>
-                <Body level={2}>
+                <Body size="small">
                   Other results:{' '}
                   <SidebarChip
                     icon="Events"
-                    size="medium"
-                    $small
+                    size="small"
                     label={`${remainingEventResults?.length}`}
                   />
                 </Body>
