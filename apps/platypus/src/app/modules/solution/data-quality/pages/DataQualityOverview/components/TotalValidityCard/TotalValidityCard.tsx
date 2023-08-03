@@ -12,6 +12,7 @@ import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
 import { Body, Detail, Flex, Overline } from '@cognite/cogs.js';
 
+import { ValidationGraph } from './ValidationGraph';
 import { ValidationStatistics } from './ValidationStatistics';
 
 export const TotalValidityCard = () => {
@@ -59,9 +60,12 @@ export const TotalValidityCard = () => {
       );
 
     return (
-      <Flex direction="column">
+      <Flex direction="column" gap={8}>
         <ValidationStatistics dataSourceId={dataSource.externalId} />
-        {/* Add here the graph */}
+        <ValidationGraph
+          dataSourceId={dataSource.externalId}
+          dsTimeseries={datapoints}
+        />
       </Flex>
     );
   };
@@ -84,7 +88,7 @@ const Card = styled.div`
   box-shadow: var(--cogs-elevation--surface--interactive);
   overflow: auto;
   padding: 0.5rem 1.5rem 2rem 1.5rem;
-  width: min(40vw, 500px);
+  width: min(50vw, 600px);
 
   .cogs-overline-3 {
     margin-bottom: 1rem;

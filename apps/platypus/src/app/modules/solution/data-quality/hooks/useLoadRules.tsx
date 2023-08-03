@@ -4,6 +4,7 @@ import { useListAllRules } from '@data-quality/api/codegen';
 import { useLoadDataSource } from '@data-quality/hooks';
 import {
   TimeSeriesType,
+  formatTimeriesResponse,
   getTimeSeriesItemRequest,
 } from '@data-quality/utils/validationTimeseries';
 import { Notification } from '@platypus-app/components/Notification/Notification';
@@ -43,23 +44,26 @@ export const useLoadRules = () => {
 
       setLoadingDatapoints(true);
 
-      const timeseriesToRetrieve = rules.flatMap((rule) => [
-        getTimeSeriesItemRequest(
-          TimeSeriesType.SCORE,
-          dataSource.externalId,
-          rule.externalId
-        ),
-        getTimeSeriesItemRequest(
-          TimeSeriesType.TOTAL_ITEMS_COUNT,
-          dataSource.externalId,
-          rule.externalId
-        ),
-      ]);
+      const timeseriesToRetrieve = {
+        items: rules.flatMap((rule) => [
+          getTimeSeriesItemRequest(
+            TimeSeriesType.SCORE,
+            dataSource.externalId,
+            rule.externalId
+          ),
+          getTimeSeriesItemRequest(
+            TimeSeriesType.TOTAL_ITEMS_COUNT,
+            dataSource.externalId,
+            rule.externalId
+          ),
+        ]),
+      };
 
       try {
-        await sdk.datapoints
-          .retrieveLatest(timeseriesToRetrieve)
-          .then(setDataPoints);
+        await sdk.datapoints.retrieve(timeseriesToRetrieve).then((res) => {
+          const data = formatTimeriesResponse(res);
+          setDataPoints(data);
+        });
       } catch (err) {
         Notification({
           type: 'error',

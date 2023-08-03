@@ -37,20 +37,9 @@ import {
   CreateStatisticsParams,
   StatusStatusEnum,
 } from '@cognite/calculation-backend';
-import { useFlag } from '@cognite/react-feature-flags';
 import { useSDK } from '@cognite/sdk-provider';
 
 export const useInitializedChart = (chartId: string) => {
-  /**
-   * Get feature flag for duplicate id migration
-   */
-  const { isEnabled: isDuplicateIdMigrationEnabled } = useFlag(
-    'CHARTS_UI_CALC_DUPLICATE_ID_MIGRATION',
-    {
-      fallback: false,
-    }
-  );
-
   /**
    * Get stored chart
    */
@@ -106,22 +95,13 @@ export const useInitializedChart = (chartId: string) => {
       /**
        * Remove duplicate ids from workflows
        */
-      .map((_chart) =>
-        isDuplicateIdMigrationEnabled ? updateDuplicateIds(_chart) : _chart
-      )[0];
+      .map((_chart) => updateDuplicateIds(_chart))[0];
 
     /**
      * Add chart to local state atom
      */
     setChart(updatedChart);
-  }, [
-    originalChart,
-    chart,
-    chartId,
-    setChart,
-    operations,
-    isDuplicateIdMigrationEnabled,
-  ]);
+  }, [originalChart, chart, chartId, setChart, operations]);
 
   /**
    * Sync local chart atom to storage
@@ -247,32 +227,37 @@ export const useStatistics = (
           return undefined;
         }
 
+        function updateItemInCollection(
+          collection:
+            | ChartTimeSeries[]
+            | ScheduledCalculation[]
+            | ChartWorkflow[]
+            | undefined,
+
+          diff: Partial<ChartSource>,
+          sourceItem: ChartSource
+        ) {
+          return collection?.map((item) =>
+            item.id === sourceItem.id ? { ...item, ...diff } : item
+          );
+        }
+
         return {
           ...oldChart,
-          timeSeriesCollection: oldChart?.timeSeriesCollection?.map((ts) =>
-            ts.id === sourceItem.id
-              ? {
-                  ...ts,
-                  ...diff,
-                }
-              : ts
+          timeSeriesCollection: updateItemInCollection(
+            oldChart?.timeSeriesCollection,
+            diff,
+            sourceItem
           ),
-          scheduledCalculationCollection:
-            oldChart?.scheduledCalculationCollection?.map((sc) =>
-              sc.id === sourceItem.id
-                ? {
-                    ...sc,
-                    ...diff,
-                  }
-                : sc
-            ),
-          workflowCollection: oldChart?.workflowCollection?.map((wf) =>
-            wf.id === sourceItem.id
-              ? {
-                  ...wf,
-                  ...diff,
-                }
-              : wf
+          scheduledCalculationCollection: updateItemInCollection(
+            oldChart?.scheduledCalculationCollection,
+            diff,
+            sourceItem
+          ),
+          workflowCollection: updateItemInCollection(
+            oldChart?.workflowCollection,
+            diff,
+            sourceItem
           ),
         } as Chart;
       });
@@ -322,14 +307,22 @@ export const useStatistics = (
       return;
     }
 
+    let identifierOption;
+
+    if (
+      sourceItem.type === 'timeseries' ||
+      sourceItem.type === 'scheduledCalculation'
+    ) {
+      identifierOption = { tag: identifier };
+    } else {
+      identifierOption = { calculation_id: identifier };
+    }
+
     const statisticsParameters: CreateStatisticsParams = {
       start_time: new Date(dateFrom).getTime(),
       end_time: new Date(dateTo).getTime(),
       histogram_options: { num_boxes: 10 }, // (eiriklv): This should be chosen by user at some point
-      ...(sourceItem.type === 'timeseries' ||
-      sourceItem.type === 'scheduledCalculation'
-        ? { tag: identifier }
-        : { calculation_id: identifier }),
+      ...identifierOption,
     };
 
     const hashOfParams = getHash(statisticsParameters);

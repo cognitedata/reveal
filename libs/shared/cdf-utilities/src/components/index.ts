@@ -1,5 +1,6 @@
 import '../styles/index.less';
 
+export { AuthContainer } from './AuthContainer';
 export { default as AuthWrapper } from './AuthWrapper';
 export { Breadcrumb } from './Breadcrumb';
 export { default as Background } from './Background';

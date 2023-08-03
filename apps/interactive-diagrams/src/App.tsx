@@ -5,11 +5,15 @@ import { Route, Routes, BrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import debounce from 'lodash/debounce';
 
-import { getProject, isUsingUnifiedSignin } from '@cognite/cdf-utilities';
+import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
+import {
+  AuthContainer,
+  getProject,
+  isUsingUnifiedSignin,
+} from '@cognite/cdf-utilities';
 import { Icon } from '@cognite/cogs.js';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 
-import { AuthContainer } from './AuthContainer';
 import { AppStateProvider } from './context';
 import { setItemInStorage } from './hooks';
 import RootApp from './pages/App';
@@ -55,7 +59,11 @@ const App = () => {
     <GlobalStyles>
       <AntStyles>
         <QueryClientProvider client={queryClient}>
-          <AuthContainer>
+          <AuthContainer
+            title="Interactive Engineering Diagrams"
+            sdk={sdk}
+            login={loginAndAuthIfNeeded}
+          >
             <Suspense fallback={<Icon type="Loader" />}>
               <AppStateProvider>
                 <Provider store={store}>

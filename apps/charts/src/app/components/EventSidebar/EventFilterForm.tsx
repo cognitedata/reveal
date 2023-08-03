@@ -212,7 +212,7 @@ const EventFilterForm = ({
           <br />
           <SidebarChip
             icon="Events"
-            size="medium"
+            size="small"
             label={
               isEventFilterValid && results.length > 0
                 ? `${results.length}`

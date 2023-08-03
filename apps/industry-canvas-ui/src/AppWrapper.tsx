@@ -1,8 +1,11 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
+import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
+import { AuthContainer } from '@cognite/cdf-utilities';
+import { Loader } from '@cognite/cogs.js';
+
 import App from './app/App';
-import { AuthContainer } from './AuthContainer';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -16,7 +19,12 @@ const queryClient = new QueryClient({
 export const AppWrapper = () => {
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthContainer>
+      <AuthContainer
+        title="Industry Canvas"
+        sdk={sdk}
+        login={loginAndAuthIfNeeded}
+        loadingScreen={<Loader darkMode={false} />}
+      >
         <App />
       </AuthContainer>
       <ReactQueryDevtools initialIsOpen={false} />

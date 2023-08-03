@@ -11,11 +11,15 @@ import GlobalStyles from '@vision/styles/global-styles';
 import theme from '@vision/styles/theme';
 import datePickerStyle from 'react-datepicker/dist/react-datepicker.css';
 
-import { getProject, isUsingUnifiedSignin } from '@cognite/cdf-utilities';
+import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
+import {
+  AuthContainer,
+  getProject,
+  isUsingUnifiedSignin,
+} from '@cognite/cdf-utilities';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 import { FlagProvider } from '@cognite/react-feature-flags';
 
-import { AuthContainer } from './AuthContainer';
 import { DataExplorationWrapper } from './DataExplorationWrapper';
 import { AppRoutes } from './Routes';
 import rootStyles from './styles/index.css';
@@ -57,7 +61,11 @@ const App = () => {
           remoteAddress={window.location.hostname}
         >
           <QueryClientProvider client={queryClient}>
-            <AuthContainer>
+            <AuthContainer
+              title="Cognite Vision"
+              sdk={sdk}
+              login={loginAndAuthIfNeeded}
+            >
               <ReduxProvider store={store}>
                 <DataExplorationWrapper>
                   <BrowserRouter>

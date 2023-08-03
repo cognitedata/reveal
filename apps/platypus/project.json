@@ -146,8 +146,7 @@
       "executor": "@nx/webpack:dev-server",
       "options": {
         "buildTarget": "platypus:build",
-        "hmr": true,
-        "ssl": true
+        "hmr": true
       },
       "configurations": {
         "development": {
@@ -164,16 +163,19 @@
           "buildTarget": "platypus:build:fusion",
           "hmr": true,
           "proxyConfig": "apps/platypus/proxy.conf.json",
-          "allowedHosts": ".dev.fusion.cogniteapp.com,apps-staging.cognite.com,all"
+          "allowedHosts": ".dev.fusion.cogniteapp.com,apps-staging.cognite.com,all",
+          "ssl": true
         },
         "preview": {
           "buildTarget": "platypus:build:preview",
           "hmr": false,
-          "allowedHosts": ".dev.fusion.cogniteapp.com,apps-staging.cognite.com,localhost:*"
+          "allowedHosts": ".dev.fusion.cogniteapp.com,apps-staging.cognite.com,localhost:*",
+          "ssl": true
         },
         "production": {
           "buildTarget": "platypus:build:production",
-          "hmr": false
+          "hmr": false,
+          "ssl": true
         }
       },
       "defaultConfiguration": "development"
