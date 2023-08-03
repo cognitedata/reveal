@@ -8,11 +8,12 @@ import './set-public-path';
 import { useEffect } from 'react';
 
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
-import { AuthContainer } from './AuthContainer';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { CogniteError } from '@cognite/sdk';
 import { ToastContainer } from '@cognite/cogs.js';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
+import { AuthContainer } from '@cognite/cdf-utilities';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -43,7 +44,11 @@ export const AppWrapper = () => {
       <QueryClientProvider client={queryClient}>
         <I18nWrapper translations={translations} defaultNamespace={projectName}>
           <ToastContainer />
-          <AuthContainer>
+          <AuthContainer
+            title="Entity matching"
+            sdk={sdk}
+            login={loginAndAuthIfNeeded}
+          >
             <App />
           </AuthContainer>
         </I18nWrapper>

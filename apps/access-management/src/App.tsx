@@ -8,10 +8,13 @@ import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
-import { getProject, isUsingUnifiedSignin } from '@cognite/cdf-utilities';
+import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
+import {
+  AuthContainer,
+  getProject,
+  isUsingUnifiedSignin,
+} from '@cognite/cdf-utilities';
 import { FlagProvider } from '@cognite/react-feature-flags';
-
-import { AuthContainer } from './AuthContainer';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -40,7 +43,11 @@ const App = () => {
       >
         <QueryClientProvider client={queryClient}>
           <GlobalStyles>
-            <AuthContainer>
+            <AuthContainer
+              title="Access Management"
+              sdk={sdk}
+              login={loginAndAuthIfNeeded}
+            >
               <Router>
                 <Routes>
                   <Route path={`${baseUrl}/:path*`} element={<Home />} />

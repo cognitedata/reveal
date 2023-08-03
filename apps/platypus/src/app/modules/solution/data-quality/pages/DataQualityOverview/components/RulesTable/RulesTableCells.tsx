@@ -1,13 +1,18 @@
+import { PropsWithChildren } from 'react';
+
 import { RuleSeverity } from '@data-quality/api/codegen';
 import {
   TimeSeriesType,
+  getDatapointsById,
   getLastDatapointValue,
   getScoreValue,
   getTimeSeriesId,
 } from '@data-quality/utils/validationTimeseries';
 
-import { A, Body, Chip, Icon, Title } from '@cognite/cogs.js';
+import { A, Body, Chip, Flex, Icon, Title } from '@cognite/cogs.js';
 import { Datapoints } from '@cognite/sdk/dist/src';
+
+import { ValidationDifference } from '..';
 
 type NameCellProps = {
   onClick: VoidFunction;
@@ -35,7 +40,7 @@ type ItemsCheckedCellProps = {
 type CellProps = {
   isLoading?: boolean;
   value?: string | number;
-};
+} & PropsWithChildren;
 
 export const NameCell = ({ onClick, ruleName }: NameCellProps) => {
   return (
@@ -73,10 +78,16 @@ export const ValidityCell = ({
     dataSourceId,
     ruleId
   );
+
+  const scoreDatapoints = getDatapointsById(datapoints, timeSeriesId);
   const value = getLastDatapointValue(datapoints, timeSeriesId);
   const cellValue = getScoreValue(value);
 
-  return <Cell isLoading={loadingDatapoints} value={cellValue} />;
+  return (
+    <Cell isLoading={loadingDatapoints} value={cellValue}>
+      <ValidationDifference tsDatapoints={scoreDatapoints} showStaleState />
+    </Cell>
+  );
 };
 
 export const ItemsCheckedCell = ({
@@ -92,13 +103,18 @@ export const ItemsCheckedCell = ({
     dataSourceId,
     ruleId
   );
+  const totalInstancesDatapoints = getDatapointsById(datapoints, timeSeriesId);
   const cellValue = getLastDatapointValue(datapoints, timeSeriesId);
 
-  return <Cell isLoading={loadingDatapoints} value={cellValue} />;
+  return (
+    <Cell isLoading={loadingDatapoints} value={cellValue}>
+      <ValidationDifference tsDatapoints={totalInstancesDatapoints} />
+    </Cell>
+  );
 };
 
 /** General render cell with loading, error, and success cases. */
-const Cell = ({ isLoading, value }: CellProps) => {
+const Cell = ({ isLoading, value, children }: CellProps) => {
   if (isLoading) return <Icon aria-label="Loading cell data" type="Loader" />;
 
   if (value === undefined)
@@ -108,5 +124,10 @@ const Cell = ({ isLoading, value }: CellProps) => {
       </Body>
     );
 
-  return <Body level={2}>{value?.toLocaleString()}</Body>;
+  return (
+    <Flex alignItems="center" direction="row" gap={8}>
+      <Body level={2}>{value?.toLocaleString()}</Body>
+      {children}
+    </Flex>
+  );
 };

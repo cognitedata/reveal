@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useLoadDataSource } from '@data-quality/hooks';
 import {
   TimeSeriesType,
+  formatTimeriesResponse,
   getTimeSeriesItemRequest,
 } from '@data-quality/utils/validationTimeseries';
 import { Notification } from '@platypus-app/components/Notification/Notification';
@@ -16,7 +17,7 @@ export const useDataSourceValidity = () => {
   const { t } = useTranslation('useDataSourceValidity');
 
   const [datapoints, setDataPoints] = useState<Datapoints[]>([]);
-  const [loadingDatapoints, setLoadingDatapoints] = useState(false);
+  const [loadingDatapoints, setLoadingDatapoints] = useState(true);
 
   const { dataSource } = useLoadDataSource();
 
@@ -26,18 +27,21 @@ export const useDataSourceValidity = () => {
 
       setLoadingDatapoints(true);
 
-      const timeseriesToRetrieve = [
-        getTimeSeriesItemRequest(TimeSeriesType.SCORE, dataSource.externalId),
-        getTimeSeriesItemRequest(
-          TimeSeriesType.TOTAL_ITEMS_COUNT,
-          dataSource.externalId
-        ),
-      ];
+      const timeseriesToRetrieve = {
+        items: [
+          getTimeSeriesItemRequest(TimeSeriesType.SCORE, dataSource.externalId),
+          getTimeSeriesItemRequest(
+            TimeSeriesType.TOTAL_ITEMS_COUNT,
+            dataSource.externalId
+          ),
+        ],
+      };
 
       try {
-        await sdk.datapoints
-          .retrieveLatest(timeseriesToRetrieve)
-          .then(setDataPoints);
+        await sdk.datapoints.retrieve(timeseriesToRetrieve).then((res) => {
+          const data = formatTimeriesResponse(res);
+          setDataPoints(data);
+        });
       } catch (err) {
         setDataPoints([]);
         Notification({

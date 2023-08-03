@@ -22,7 +22,9 @@
     "antd": "^4.22.4",
     "copy-to-clipboard": "^3.3.2",
     "query-string": "^7.0.1",
-    "styled-components": "^5.3.3"
+    "styled-components": "^5.3.3",
+    "@cognite/sdk": "^7.19.1",
+    "@cognite/sdk-provider": "^2.0.6"
   },
   "peerDependencies": {
     "@cognite/cogs.js": "^9",

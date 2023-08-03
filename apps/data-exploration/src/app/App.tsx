@@ -12,8 +12,12 @@ import { RecoilDevTools } from 'recoil-gear';
 import { RecoilURLSyncJSON } from 'recoil-sync';
 
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
-import sdk from '@cognite/cdf-sdk-singleton';
-import { getProject, isUsingUnifiedSignin } from '@cognite/cdf-utilities';
+import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
+import {
+  AuthContainer,
+  getProject,
+  isUsingUnifiedSignin,
+} from '@cognite/cdf-utilities';
 import { ToastContainer } from '@cognite/cogs.js';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 import { ErrorBoundary } from '@cognite/react-errors';
@@ -26,7 +30,6 @@ import AntStyles from '@data-exploration-app/styles/Styles';
 
 import { translations } from '../i18n';
 
-import { AuthContainer } from './AuthContainer';
 import rootStyles from './styles/index.css';
 import theme from './styles/theme';
 
@@ -65,7 +68,11 @@ export default () => {
       <SDKProvider sdk={sdk}>
         <ErrorBoundary>
           <QueryClientProvider client={queryClient}>
-            <AuthContainer>
+            <AuthContainer
+              title="Data Exploration"
+              sdk={sdk}
+              login={loginAndAuthIfNeeded}
+            >
               <ThemeProvider theme={theme}>
                 <FlagProvider
                   apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
