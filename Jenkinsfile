@@ -22,7 +22,8 @@ static final String[] APPLICATIONS = [
   'entity-matching',
   'access-management',
   'notebook',
-  'fusion-shell'
+  'fusion-shell',
+  'simint'
 ]
 
 /*
