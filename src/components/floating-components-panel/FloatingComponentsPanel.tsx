@@ -48,6 +48,7 @@ export const FloatingComponentsPanel = (): JSX.Element => {
           <Detail muted>{t('floating-components-panel-description')}</Detail>
         </Flex>
         <Button
+          aria-label="Close floating panel"
           icon="CloseLarge"
           onClick={() => setIsComponentsPanelVisible(false)}
           type="ghost"

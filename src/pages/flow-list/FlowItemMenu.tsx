@@ -22,7 +22,11 @@ export default function FlowListItemMenu({
         </Menu>
       }
     >
-      <Button type="ghost" icon={'EllipsisVertical'} />
+      <Button
+        aria-label="Open options menu for flow"
+        type="ghost"
+        icon={'EllipsisVertical'}
+      />
     </Dropdown>
   );
 }

@@ -30,7 +30,10 @@ const ViewOnlyCanvas = () => {
 
   if (error)
     return (
-      <BasicPlaceholder type="EmptyStateFolderSad" title={t('error-workflow')}>
+      <BasicPlaceholder
+        type="EmptyStateFolderSad"
+        title={t('error-workflow', { count: 1 })}
+      >
         <Body level={5}>{JSON.stringify(error)}</Body>
       </BasicPlaceholder>
     );

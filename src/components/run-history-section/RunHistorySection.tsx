@@ -1,10 +1,12 @@
-import { Icon } from '@cognite/cogs.js';
+import { Body, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 import { useWorkflowExecutions } from 'hooks/workflows';
 import { StyledEmptyStateContainer } from 'components/run-canvas/RunCanvas';
 import { RunHistorySectionItem } from './RunHistorySectionItem';
 import { WorkflowWithVersions } from 'types/workflows';
+import { BasicPlaceholder } from 'components/basic-placeholder/BasicPlaceholder';
+import { useTranslation } from 'common';
 
 type RunHistorySectionProps = {
   workflow: WorkflowWithVersions;
@@ -13,9 +15,13 @@ type RunHistorySectionProps = {
 export const RunHistorySection = ({
   workflow,
 }: RunHistorySectionProps): JSX.Element => {
-  const { data: executions, isInitialLoading } = useWorkflowExecutions(
-    workflow.externalId
-  );
+  const { t } = useTranslation();
+
+  const {
+    data: executions,
+    isInitialLoading,
+    error,
+  } = useWorkflowExecutions(workflow.externalId);
 
   useWorkflowExecutions(workflow.externalId, {
     refetchInterval: executions?.some(({ endTime }) => !endTime)
@@ -30,6 +36,16 @@ export const RunHistorySection = ({
       </StyledEmptyStateContainer>
     );
   }
+
+  if (error)
+    return (
+      <BasicPlaceholder
+        type="EmptyStateFileSad"
+        title={t('error-workflow-execution', { count: 0 })}
+      >
+        <Body level={5}>{JSON.stringify(error)}</Body>
+      </BasicPlaceholder>
+    );
 
   return (
     <Container>

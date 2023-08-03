@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react';
 
-import { Colors, Elevations, Flex, Loader } from '@cognite/cogs.js';
+import { Body, Colors, Elevations, Flex, Loader } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
 
@@ -20,12 +20,18 @@ import RunCanvas from 'components/run-canvas/RunCanvas';
 import { WorkflowWithVersions } from 'types/workflows';
 import { getLastWorkflowDefinition, isCanvasEmpty } from 'utils/workflows';
 import ViewOnlyCanvas from 'components/view-only-canvas/ViewOnlyCanvas';
+import { BasicPlaceholder } from 'components/basic-placeholder/BasicPlaceholder';
+import { useTranslation } from 'common';
 
 const Flow = (): JSX.Element => {
   const { externalId } = useParams<{ externalId: string }>();
+  const { t } = useTranslation();
 
-  const { data: workflow, isInitialLoading: isInitialLoadingWorkflow } =
-    useWorkflow(externalId!);
+  const {
+    data: workflow,
+    isInitialLoading: isInitialLoadingWorkflow,
+    error: errorWorkflow,
+  } = useWorkflow(externalId!);
 
   const {
     data: file,
@@ -57,19 +63,38 @@ const Flow = (): JSX.Element => {
   }, [createFile, externalId, isIdle, isMissingError]);
 
   if (error && !isMissingError) {
-    return <>ERROR: {JSON.stringify(error)}</>;
+    return (
+      <BasicPlaceholder
+        type="EmptyStateFolderSad"
+        title={t('error-canvas-state')}
+      >
+        <Body level={5}>{JSON.stringify(error)}</Body>
+      </BasicPlaceholder>
+    );
   }
 
   if (isInitialLoadingFile || isInitialLoadingWorkflow || isLoading) {
     return <Loader />;
   }
 
-  if (!workflow) {
-    return <div>not found</div>;
+  if (errorWorkflow || !workflow) {
+    return (
+      <BasicPlaceholder
+        type="EmptyStateFolderSad"
+        title={t('error-workflow', { count: 1 })}
+      >
+        <Body level={5}>{JSON.stringify(errorWorkflow)}</Body>
+      </BasicPlaceholder>
+    );
   }
 
   if (!file) {
-    return <div>not found</div>;
+    return (
+      <BasicPlaceholder
+        type="EmptyStateFileSad"
+        title={t('error-missing-file')}
+      />
+    );
   }
 
   return (
