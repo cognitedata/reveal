@@ -19,28 +19,33 @@ export type ViewerAnchorProps = {
   children: ReactElement;
 };
 
-const ViewerAnchorContainer = ({ key, position, children }: ViewerAnchorProps): ReactElement => {
+export const ViewerAnchor = ({ key, position, children }: ViewerAnchorProps): ReactElement => {
   const viewer = useReveal();
   const [divTranslation, setDivTranslation] = useState(new Vector2());
   const [visible, setVisible] = useState(false);
 
-  const cameraChanged = useCallback((cameraPosition: Vector3, cameraTarget: Vector3): void => {
-    const cameraDirection = cameraTarget.clone().sub(cameraPosition).normalize();
-    const elementDirection = position.clone().sub(cameraPosition).normalize();
+  const cameraChanged = useCallback(
+    (cameraPosition: Vector3, cameraTarget: Vector3): void => {
+      const cameraDirection = cameraTarget.clone().sub(cameraPosition).normalize();
+      const elementDirection = position.clone().sub(cameraPosition).normalize();
 
-    setVisible(elementDirection.dot(cameraDirection) > 0);
+      setVisible(elementDirection.dot(cameraDirection) > 0);
 
-    const screenSpacePosition = viewer.worldToScreen(position.clone());
-    if (screenSpacePosition !== null) {
-      setDivTranslation(screenSpacePosition);
-    }
-  }, [viewer, position]);
+      const screenSpacePosition = viewer.worldToScreen(position.clone());
+      if (screenSpacePosition !== null) {
+        setDivTranslation(screenSpacePosition);
+      }
+    },
+    [viewer, position]
+  );
 
   useEffect(() => {
     viewer.cameraManager.on('cameraChange', cameraChanged);
 
-    cameraChanged(viewer.cameraManager.getCameraState().position,
-                  viewer.cameraManager.getCameraState().target);
+    cameraChanged(
+      viewer.cameraManager.getCameraState().position,
+      viewer.cameraManager.getCameraState().target
+    );
 
     return () => {
       viewer.cameraManager.off('cameraChange', cameraChanged);
@@ -51,7 +56,7 @@ const ViewerAnchorContainer = ({ key, position, children }: ViewerAnchorProps): 
 
   return visible ? (
     <div
-    key={key}
+      key={key}
       ref={htmlRef}
       style={{
         position: 'absolute',
@@ -65,5 +70,3 @@ const ViewerAnchorContainer = ({ key, position, children }: ViewerAnchorProps): 
     <></>
   );
 };
-
-export const ViewerAnchor = withSuppressRevealEvents<ViewerAnchorProps>(ViewerAnchorContainer);
