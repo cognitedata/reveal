@@ -14,10 +14,13 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
-import { getProject, isUsingUnifiedSignin } from '@cognite/cdf-utilities';
+import { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
+import {
+  AuthContainer,
+  getProject,
+  isUsingUnifiedSignin,
+} from '@cognite/cdf-utilities';
 import { SDKProvider } from '@cognite/sdk-provider';
-
-import { AuthContainer } from './AuthContainer';
 
 setupMixpanel();
 
@@ -52,7 +55,11 @@ const App = () => {
           <QueryClientProvider client={queryClient}>
             <GlobalStyles>
               <AntStyles>
-                <AuthContainer>
+                <AuthContainer
+                  title="RAW Explorer"
+                  sdk={sdk}
+                  login={loginAndAuthIfNeeded}
+                >
                   <Router
                     basename={`${tenant}/raw`}
                     children={

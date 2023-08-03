@@ -5,10 +5,14 @@ import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import styled from 'styled-components/macro';
 
-import { getProject, isUsingUnifiedSignin } from '@cognite/cdf-utilities';
+import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
+import {
+  AuthContainer,
+  getProject,
+  isUsingUnifiedSignin,
+} from '@cognite/cdf-utilities';
 import { ToastContainer } from '@cognite/cogs.js';
 
-import { AuthContainer } from './AuthContainer';
 import Routes from './Routes';
 
 function App() {
@@ -30,7 +34,11 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthContainer>
+      <AuthContainer
+        title="coding-conventions"
+        sdk={sdk}
+        login={loginAndAuthIfNeeded}
+      >
         <ReactQueryDevtools initialIsOpen={false} />
         <ToastContainer />
         <StyledWrapper>

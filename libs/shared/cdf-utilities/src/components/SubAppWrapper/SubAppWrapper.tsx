@@ -11,7 +11,7 @@ import PageTitle from '../PageTitle/PageTitle';
 import { SubAppProvider } from './context';
 
 interface SubAppWrapperProps {
-  title: string;
+  title?: string;
   breadcrumbItems?: { title: string; path: string }[];
   children: ReactNode;
   userId?: string;

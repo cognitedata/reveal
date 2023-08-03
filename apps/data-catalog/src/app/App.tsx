@@ -6,7 +6,9 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
+import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
 import {
+  AuthContainer,
   createLink,
   getProject,
   isUsingUnifiedSignin,
@@ -14,7 +16,6 @@ import {
 import { Loader, ToastContainer } from '@cognite/cogs.js';
 import { FlagProvider } from '@cognite/react-feature-flags';
 
-import { AuthContainer } from './AuthContainer';
 import { translations } from './common/i18n';
 import { DataSetsContextProvider } from './context';
 import GlobalStyles from './styles/GlobalStyles';
@@ -57,7 +58,11 @@ const App = () => {
         <QueryClientProvider client={queryClient}>
           <GlobalStyles>
             <ToastContainer style={{ zIndex: 99999 }} />
-            <AuthContainer>
+            <AuthContainer
+              title="Data catalog"
+              sdk={sdk}
+              login={loginAndAuthIfNeeded}
+            >
               <DataSetsContextProvider>
                 <BrowserRouter>
                   <Suspense fallback={<Loader />}>

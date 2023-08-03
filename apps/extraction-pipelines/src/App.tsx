@@ -9,7 +9,9 @@ import isObject from 'lodash/isObject';
 import collapseStyle from 'rc-collapse/assets/index.css';
 
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
+import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
 import {
+  AuthContainer,
   getEnv,
   getProject,
   isUsingUnifiedSignin,
@@ -18,7 +20,6 @@ import { Loader, ToastContainer } from '@cognite/cogs.js';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 import { FlagProvider } from '@cognite/react-feature-flags';
 
-import { AuthContainer } from './AuthContainer';
 import { translations } from './common/i18n';
 import { AppEnvProvider } from './hooks/useAppEnv';
 import CreateExtpipe from './pages/create/CreateExtpipe';
@@ -30,6 +31,7 @@ import antdTheme from './styles/antd-theme.less';
 import GlobalStyles from './styles/GlobalStyles';
 import rootStyles from './styles/index.css';
 import theme from './styles/theme';
+import { EXTRACTION_PIPELINES } from './utils/constants';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -86,7 +88,11 @@ const App = () => {
       >
         <QueryClientProvider client={queryClient}>
           <AppScopeStyles>
-            <AuthContainer>
+            <AuthContainer
+              title={EXTRACTION_PIPELINES}
+              sdk={sdk}
+              login={loginAndAuthIfNeeded}
+            >
               <ThemeProvider theme={theme}>
                 <AppEnvProvider
                   cdfEnv={env}

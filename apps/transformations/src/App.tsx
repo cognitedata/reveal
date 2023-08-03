@@ -9,11 +9,14 @@ import GlobalStyles from '@transformations/styles/GlobalStyles';
 import { MAX_NETWORK_RETRIES } from '@transformations/utils';
 
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
-import { getProject, isUsingUnifiedSignin } from '@cognite/cdf-utilities';
+import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
+import {
+  AuthContainer,
+  getProject,
+  isUsingUnifiedSignin,
+} from '@cognite/cdf-utilities';
 import { FlagProvider } from '@cognite/react-feature-flags';
 import { CogniteError } from '@cognite/sdk';
-
-import { AuthContainer } from './AuthContainer';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -57,7 +60,11 @@ const App = () => {
       >
         <QueryClientProvider client={queryClient}>
           <GlobalStyles>
-            <AuthContainer>
+            <AuthContainer
+              title="Transform Data"
+              sdk={sdk}
+              login={loginAndAuthIfNeeded}
+            >
               <Router>
                 <Routes>
                   <Route

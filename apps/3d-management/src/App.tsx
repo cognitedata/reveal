@@ -8,10 +8,14 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { createBrowserHistory } from 'history';
 
-import { isUsingUnifiedSignin, PageTitle } from '@cognite/cdf-utilities';
+import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
+import {
+  AuthContainer,
+  isUsingUnifiedSignin,
+  PageTitle,
+} from '@cognite/cdf-utilities';
 import { FlagProvider } from '@cognite/react-feature-flags';
 
-import { AuthContainer } from './AuthContainer';
 import ErrorBoundary from './components/ErrorBoundary';
 import { ModelRoutes } from './ModelRoutes';
 import configureStore from './store';
@@ -42,7 +46,11 @@ export const App = () => {
               apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
               projectName={projectName}
             >
-              <AuthContainer>
+              <AuthContainer
+                title={APP_TITLE}
+                sdk={sdk}
+                login={loginAndAuthIfNeeded}
+              >
                 <Provider store={store}>
                   <BrowserRouter basename={baseUrl}>
                     <ThreeDAppWrapper>

@@ -1,10 +1,10 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
-import { getProject } from '@cognite/cdf-utilities';
+import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
+import { AuthContainer, getProject } from '@cognite/cdf-utilities';
 import { FlagProvider } from '@cognite/react-feature-flags';
 
-import { AuthContainer } from './AuthContainer';
 import { MainRouter } from './pages/router';
 import GlobalStyles from './styles';
 import { setupMixpanel } from './utils/config';
@@ -32,7 +32,11 @@ const App = () => {
       {/* If styles are broken please check: .rescripts#PrefixWrap( */}
       <QueryClientProvider client={queryClient}>
         <GlobalStyles>
-          <AuthContainer>
+          <AuthContainer
+            title="Document classifiers"
+            sdk={sdk}
+            login={loginAndAuthIfNeeded}
+          >
             <MainRouter />
           </AuthContainer>
         </GlobalStyles>

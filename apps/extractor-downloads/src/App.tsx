@@ -4,12 +4,15 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
-import sdk from '@cognite/cdf-sdk-singleton';
-import { getProject, isUsingUnifiedSignin } from '@cognite/cdf-utilities';
+import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
+import {
+  AuthContainer,
+  getProject,
+  isUsingUnifiedSignin,
+} from '@cognite/cdf-utilities';
 import { FlagProvider } from '@cognite/react-feature-flags';
 import { SDKProvider } from '@cognite/sdk-provider';
 
-import { AuthContainer } from './AuthContainer';
 import { translations } from './common';
 import { CreateConnection } from './components/CreateConnection';
 import { ExtractorDetails } from './components/ExtractorDetails';
@@ -48,7 +51,11 @@ const App = () => {
         <QueryClientProvider client={queryClient}>
           <GlobalStyles>
             <SDKProvider sdk={sdk}>
-              <AuthContainer>
+              <AuthContainer
+                title="Extractor Downloads"
+                sdk={sdk}
+                login={loginAndAuthIfNeeded}
+              >
                 <Router>
                   <Routes>
                     <Route
