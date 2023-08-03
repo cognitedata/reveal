@@ -13,12 +13,11 @@ export type ViewerAnchorElementMapping = {
 };
 
 export type ViewerAnchorProps = {
-  key?: string;
   position: Vector3;
   children: ReactElement;
 };
 
-export const ViewerAnchor = ({ key, position, children }: ViewerAnchorProps): ReactElement => {
+export const ViewerAnchor = ({ position, children }: ViewerAnchorProps): ReactElement => {
   const viewer = useReveal();
   const [divTranslation, setDivTranslation] = useState(new Vector2());
   const [visible, setVisible] = useState(false);
@@ -55,7 +54,6 @@ export const ViewerAnchor = ({ key, position, children }: ViewerAnchorProps): Re
 
   return visible ? (
     <div
-      key={key}
       ref={htmlRef}
       style={{
         position: 'absolute',
