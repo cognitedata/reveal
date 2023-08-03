@@ -13,7 +13,6 @@ import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 type RevealContainerProps = {
   color?: Color;
   sdk: CogniteClient;
-  uiElements?: ReactNode;
   children?: ReactNode;
   viewerOptions?: Pick<
     Cognite3DViewerOptions,
