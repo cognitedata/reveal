@@ -14,10 +14,10 @@ import { GeneralDetails } from '@data-exploration/components';
 import { Col, Row } from 'antd';
 import dayjs from 'dayjs';
 
-import { Button, Micro } from '@cognite/cogs.js';
+import { Button, Body } from '@cognite/cogs.js';
 import { CogniteEvent } from '@cognite/sdk';
 
-import { EventDetails } from './elements';
+import { EventDetails, AssetDetailsWrapper } from './elements';
 
 export const defaultTranslations = makeDefaultTranslations(
   'Type',
@@ -77,16 +77,16 @@ const EventInfoBox = ({
         <>
           <Row>
             <Col span={12}>
-              <Micro as="div">{t.Type}:</Micro>
-              <Micro as="div" strong>
+              <Body size="xx-small">{t.Type}:</Body>
+              <Body size="xx-small" strong>
                 {event.type}
-              </Micro>
+              </Body>
             </Col>
             <Col span={12}>
-              <Micro as="div">{t['Sub type']}:</Micro>
-              <Micro as="div" strong>
+              <Body size="xx-small">{t['Sub type']}:</Body>
+              <Body size="xx-small" strong>
                 {event.subtype}
-              </Micro>
+              </Body>
             </Col>
           </Row>
           {diff <= 0 ? (
@@ -102,35 +102,36 @@ const EventInfoBox = ({
           )}
           <Row>
             <Col span={12}>
-              <Micro as="div">{t.Start}:</Micro>
-              <Micro as="div" strong>
+              <Body size="xx-small">{t.Start}:</Body>
+              <Body size="xx-small" strong>
                 {formatDate(event.startTime)}
-              </Micro>
+              </Body>
             </Col>
             <Col span={12}>
-              <Micro as="div">{t.End}:</Micro>
-              <Micro as="div" strong>
+              <Body size="xx-small">{t.End}:</Body>
+              <Body size="xx-small" strong>
                 {formatDate(event.endTime)}
-              </Micro>
+              </Body>
             </Col>
           </Row>
           <Row>
             <Col span={12}>
-              <Micro as="div">{t['External ID']}:</Micro>
-              <Micro as="div" strong title={event.externalId}>
+              <Body size="xx-small">{t['External ID']}:</Body>
+              <Body size="xx-small" strong title={event.externalId}>
                 {event.externalId}
-              </Micro>
+              </Body>
             </Col>
             <Col span={12}>
-              <Micro as="div">
+              <AssetDetailsWrapper as="div" className="cogs-micro">
                 {event.id && (
                   <GeneralDetails.AssetsItem
                     assetIds={event.assetIds}
                     type="event"
                     linkId={event.id}
+                    direction="column"
                   />
                 )}
-              </Micro>
+              </AssetDetailsWrapper>
             </Col>
           </Row>
           <Row justify="end">

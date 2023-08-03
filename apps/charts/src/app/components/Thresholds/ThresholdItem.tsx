@@ -403,7 +403,7 @@ const ThresholdItem = ({
             {t['Number of events']} <br />
             <SidebarChip
               icon="Events"
-              size="medium"
+              size="small"
               label={
                 isThresholdValid(threshold) ? `${result?.count}` ?? '-' : '-'
               }
@@ -413,7 +413,7 @@ const ThresholdItem = ({
             {t['Total time']} {threshold.type} {t.threshold} <br />
             <SidebarChip
               icon="Clock"
-              size="medium"
+              size="small"
               label={
                 isThresholdValid(threshold) &&
                 typeof result?.cumulative_duration === 'number'
@@ -447,9 +447,9 @@ const ThresholdItem = ({
           <ReverseSwitch
             name={`showThreshold_${threshold.id}`}
             checked={threshold.visible}
-            onChange={(val: boolean) => {
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
               if (!showBtnVisibility) return;
-              onToggleThreshold(threshold.id, val);
+              onToggleThreshold(threshold.id, event.target.checked);
             }}
             disabled={!showBtnVisibility}
           >
