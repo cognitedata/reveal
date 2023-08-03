@@ -3,7 +3,12 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { CadModelContainer, RevealContainer, RevealToolbar } from '../src';
+import {
+  CadModelContainer,
+  RevealContainer,
+  RevealToolbar,
+  withSuppressRevealEvents
+} from '../src';
 import { CogniteClient } from '@cognite/sdk';
 import { Color } from 'three';
 import styled from 'styled-components';
@@ -26,7 +31,7 @@ const sdk = new CogniteClient({
   getToken: async () => await Promise.resolve(token)
 });
 
-const MyCustomToolbar = styled(ToolBar)`
+const MyCustomToolbar = styled(withSuppressRevealEvents(ToolBar))`
   position: absolute;
   right: 20px;
   top: 70px;
@@ -55,6 +60,7 @@ export const Main: Story = {
       <MyCustomToolbar>
         <RevealToolbar.FitModelsButton />
         <ToolBar.ButtonGroup buttonGroup={exampleToolBarButtons} />
+        <RevealToolbar.SlicerButton />
       </MyCustomToolbar>
     </RevealContainer>
   )

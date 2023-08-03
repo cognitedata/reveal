@@ -8,6 +8,7 @@ import { FitModelsButton } from './FitModelsButton';
 import { LayersButton } from './LayersButton';
 import { SlicerButton } from './SlicerButton';
 import { SettingsButton } from './SettingsButton';
+import { withSuppressRevealEvents } from '../../higher-order-components/withSuppressRevealEvents';
 
 const defaultStyle: ToolBarProps = {
   style: {
@@ -36,13 +37,21 @@ const defaultContent = (
   </>
 );
 
-export const RevealToolbar = (
+const RevealToolbarContainer = (
   props: ToolBarProps & { toolBarContent?: JSX.Element }
 ): ReactElement => {
   if (props.className === undefined && props.style === undefined) {
     props = { ...props, ...defaultStyle };
   }
   return <ToolBar {...props}>{props.toolBarContent ?? defaultContent}</ToolBar>;
+};
+
+export const RevealToolbar = withSuppressRevealEvents(
+  RevealToolbarContainer
+) as typeof RevealToolbarContainer & {
+  FitModelsButton: typeof FitModelsButton;
+  SlicerButton: typeof SlicerButton;
+  LayersButton: typeof LayersButton;
 };
 
 RevealToolbar.FitModelsButton = FitModelsButton;
