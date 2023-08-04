@@ -8,21 +8,19 @@ import {
   type EdgeItem,
   type InspectResultList,
   type FdmSDK,
-  type DmsUniqueIdentifier,
-  type Source,
-  type FdmNode
+  type DmsUniqueIdentifier
 } from '../../utilities/FdmSDK';
 import { type FdmAssetMappingsConfig } from '../../hooks/types';
 import { type NodeDataResult } from './types';
 import assert from 'assert';
 
-export async function queryMappedData<NodeType>(
+export async function queryMappedData(
   viewer: Cognite3DViewer,
   cdfClient: CogniteClient,
   fdmClient: FdmSDK,
   fdmConfig: FdmAssetMappingsConfig,
   clickEvent: PointerEventData
-): Promise<NodeDataResult<NodeType> | undefined> {
+): Promise<NodeDataResult | undefined> {
   const intersection = await viewer.getIntersectionFromPixel(
     clickEvent.offsetX,
     clickEvent.offsetY

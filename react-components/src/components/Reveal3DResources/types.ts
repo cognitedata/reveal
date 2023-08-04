@@ -22,7 +22,7 @@ export type AddResourceOptions = AddReveal3DModelOptions | AddImageCollection360
 export type AddReveal3DModelOptions = AddModelOptions & { transform?: Matrix4 };
 export type TypedReveal3DModel = AddReveal3DModelOptions & { type: SupportedModelTypes | '' };
 
-export type NodeDataResult<NodeType> = {
+export type NodeDataResult = {
   nodeExternalId: string;
   view: Source;
   cadNode: Node3D;
