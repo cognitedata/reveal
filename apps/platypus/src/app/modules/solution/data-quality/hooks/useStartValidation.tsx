@@ -3,7 +3,12 @@ import {
   RuleDto,
   useDataSourceValidation,
 } from '@data-quality/api/codegen';
-import { useLoadDataSource, useLoadRules } from '@data-quality/hooks';
+import {
+  ActionType,
+  useAccessControl,
+  useLoadDataSource,
+  useLoadRules,
+} from '@data-quality/hooks';
 import { Notification } from '@platypus-app/components/Notification/Notification';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
@@ -19,10 +24,17 @@ export const useStartValidation = (): {
 } => {
   const { t } = useTranslation('useStartValidation');
 
+  const {
+    canTriggerValidation,
+    useErrorMessage,
+    isLoading: loadingAccess,
+  } = useAccessControl();
+
   const { dataSource } = useLoadDataSource();
   const { rules } = useLoadRules();
 
-  const { isLoading, mutate: validateDataSource } = useDataSourceValidation();
+  const { isLoading: loadingValidation, mutate: validateDataSource } =
+    useDataSourceValidation();
 
   const onSuccess = () => {
     Notification({
@@ -79,13 +91,27 @@ export const useStartValidation = (): {
     }
   };
 
-  const isDisabled = rules.length === 0 || !dataSource;
-  const disabledMessage = useDisabledMessage(rules, dataSource);
+  const accessErrorMessage = useErrorMessage(ActionType.TRIGGER_VALIDATION);
+
+  const isDisabled = rules.length === 0 || !dataSource || !canTriggerValidation;
+  const disabledMessage = useDisabledMessage(
+    rules,
+    canTriggerValidation,
+    accessErrorMessage,
+    dataSource
+  );
+
+  const isLoading = loadingValidation || loadingAccess;
 
   return { isDisabled, isLoading, disabledMessage, startValidation };
 };
 
-const useDisabledMessage = (rules: RuleDto[], dataSource?: DataSourceDto) => {
+const useDisabledMessage = (
+  rules: RuleDto[],
+  canTriggerValidation: boolean,
+  accessErrorMessage: string,
+  dataSource?: DataSourceDto
+) => {
   const { t } = useTranslation('useDisabledMessage');
 
   let disabledMessage = t(
@@ -103,6 +129,7 @@ const useDisabledMessage = (rules: RuleDto[], dataSource?: DataSourceDto) => {
       'data_quality_validation_disabled_rules',
       'Can not run validation without rules'
     );
+  if (!canTriggerValidation) disabledMessage = accessErrorMessage;
 
   return disabledMessage;
 };
