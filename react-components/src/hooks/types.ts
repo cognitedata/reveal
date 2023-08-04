@@ -1,6 +1,7 @@
 /*!
  * Copyright 2023 Cognite AS
  */
+import { type CogniteExternalId, type CogniteInternalId } from '@cognite/sdk';
 import { type Source } from '../utilities/FdmSDK';
 
 export type FdmAssetMappingsConfig = {
@@ -22,5 +23,10 @@ export type FdmAssetMappingsConfig = {
 export type ThreeDModelMappings = {
   modelId: number;
   revisionId: number;
-  mappings: Array<{ nodeId: number; externalId: string }>;
+  mappings: Map<CogniteExternalId, CogniteInternalId>;
+};
+
+export type Model3DEdgeProperties = {
+  revisionId: number;
+  revisionNodeId: number;
 };
