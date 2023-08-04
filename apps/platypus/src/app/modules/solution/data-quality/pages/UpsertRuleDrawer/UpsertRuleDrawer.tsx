@@ -36,6 +36,7 @@ export const UpsertRuleDrawer = ({
   onCancel,
 }: UpsertRuleDrawerProps) => {
   const { t } = useTranslation('UpsertRule');
+
   const { isLoading, upsertRule } = useUpsertRule();
   const { showUpsertSuccess } = useShowUpsertSuccess();
 

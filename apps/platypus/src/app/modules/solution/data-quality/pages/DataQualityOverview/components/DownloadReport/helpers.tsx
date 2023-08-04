@@ -77,7 +77,7 @@ export const downloadAsExcel = async (
   });
 
   /* Start writing to the excel workbook.
-    If neccessary, the rows will be batched to fit into multiple sheets. */
+    If necessary, the rows will be batched to fit into multiple sheets. */
 
   // Create one sheet for all data
   if (rows.length < batchSize) {
