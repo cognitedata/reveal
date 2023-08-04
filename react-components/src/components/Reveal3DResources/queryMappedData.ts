@@ -18,9 +18,13 @@ export async function queryMappedData(
   viewer: Cognite3DViewer,
   cdfClient: CogniteClient,
   fdmClient: FdmSDK,
-  fdmConfig: FdmAssetMappingsConfig,
-  clickEvent: PointerEventData
+  clickEvent: PointerEventData,
+  fdmConfig?: FdmAssetMappingsConfig
 ): Promise<NodeDataResult | undefined> {
+  if (fdmConfig === undefined) {
+    throw Error('Must supply fdmConfig when using FDM queries');
+  }
+
   const intersection = await viewer.getIntersectionFromPixel(
     clickEvent.offsetX,
     clickEvent.offsetY
