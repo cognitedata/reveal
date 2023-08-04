@@ -81,8 +81,8 @@ export const Reveal3DResources = <NodeType = any,>({
           viewer,
           client,
           fdmSdk,
-          fdmAssetMappingConfig,
-          event
+          event,
+          fdmAssetMappingConfig
         );
 
         onNodeClick(data);
