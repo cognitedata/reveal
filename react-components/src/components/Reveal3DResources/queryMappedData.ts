@@ -147,20 +147,3 @@ async function inspectNode(
 
   return inspectionResult;
 }
-
-async function filterNodeData<NodeType>(
-  fdmClient: FdmSDK,
-  dataNode: DmsUniqueIdentifier,
-  dataView: Source
-): Promise<FdmNode<NodeType> | undefined> {
-  if (dataView === undefined) {
-    return undefined;
-  }
-
-  const dataQueryResult = await fdmClient.getByExternalIds<NodeType>(
-    [{ instanceType: 'node', ...dataNode }],
-    dataView
-  );
-
-  return dataQueryResult.items[0];
-}
