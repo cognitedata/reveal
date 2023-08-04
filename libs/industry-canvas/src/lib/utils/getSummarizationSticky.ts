@@ -37,7 +37,6 @@ const getContainerSummarizationSticky = (
       borderColor: SHARED_STICKY_TOOL_OPTIONS.borderColor,
       borderWidth: SHARED_STICKY_TOOL_OPTIONS.borderWidth,
       borderRadius: SHARED_STICKY_TOOL_OPTIONS.borderRadius,
-      fontSize: SHARED_STICKY_TOOL_OPTIONS.fontSize,
     },
     text: `Summary${pageLabel}: ${summary}`,
   };
