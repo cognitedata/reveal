@@ -4,7 +4,6 @@
 import { useQueries, useQuery } from '@tanstack/react-query';
 
 import { getDlc, readLoginHints } from '@cognite/auth-react/src/lib/base';
-import { isUsingUnifiedSignin } from '@cognite/cdf-utilities';
 
 import { BASE_QUERY_KEY } from '../common';
 import {
@@ -33,6 +32,7 @@ import {
   groupLegacyProjectsByValidationStatus,
   validateLegacyProject,
 } from '../utils';
+import { isUsingUnifiedSignin } from '../utils/isUsingUnifiedSignin';
 
 import {
   getAADB2CQueryKey,
