@@ -22,13 +22,11 @@ export function withSuppressRevealEvents<T extends JSX.IntrinsicAttributes>(
       }
 
       div.addEventListener('pointerdown', stopPropagation);
-      div.addEventListener('pointerup', stopPropagation);
       div.addEventListener('pointermove', stopPropagation);
       div.addEventListener('wheel', stopPropagation);
 
       return () => {
         div.removeEventListener('pointerdown', stopPropagation);
-        div.removeEventListener('pointerup', stopPropagation);
         div.removeEventListener('pointermove', stopPropagation);
         div.removeEventListener('wheel', stopPropagation);
       };
