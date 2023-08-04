@@ -75,7 +75,9 @@ const SidePanelTableListContent = ({
             {t('explorer-side-panel-tables-no-results-title')}
           </Title>
           <StyledNoItemsDetail strong>
-            {t('explorer-side-panel-tables-no-results-detail')}
+            {t('explorer-side-panel-tables-no-results-detail', {
+              query: searchQuery,
+            })}
           </StyledNoItemsDetail>
         </StyledNoItemsWrapper>
       )}
