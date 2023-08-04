@@ -76,13 +76,7 @@ export const Reveal3DResources = <NodeType = any,>({
   useEffect(() => {
     const callback = (event: PointerEventData): void => {
       if (onNodeClick === undefined) return;
-      const data = queryMappedData<NodeType>(
-        viewer,
-        client,
-        fdmSdk,
-        event,
-        fdmAssetMappingConfig
-      );
+      const data = queryMappedData<NodeType>(viewer, client, fdmSdk, fdmAssetMappingConfig, event);
       onNodeClick(data);
     };
 
