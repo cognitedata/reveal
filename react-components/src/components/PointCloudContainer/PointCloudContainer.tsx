@@ -10,7 +10,7 @@ import {
 } from '@cognite/reveal';
 
 import { useEffect, type ReactElement, useState } from 'react';
-import { type Matrix4 } from 'three';
+import { Matrix4 } from 'three';
 import { useReveal } from '../RevealContainer/RevealContext';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 
@@ -74,7 +74,10 @@ export function PointCloudContainer({
 
     async function getOrAddModel(): Promise<CognitePointCloudModel> {
       const viewerModel = viewer.models.find(
-        (model) => model.modelId === modelId && model.revisionId === revisionId
+        (model) =>
+          model.modelId === modelId &&
+          model.revisionId === revisionId &&
+          model.getModelTransformation().equals(transform ?? new Matrix4())
       );
       if (viewerModel !== undefined) {
         return await Promise.resolve(viewerModel as CognitePointCloudModel);

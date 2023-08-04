@@ -75,6 +75,11 @@ const KeepAliveMockScenario = (): ReactElement => {
                       transform: new Matrix4().makeTranslation(40, 0, 0)
                     },
                     {
+                      modelId: 1791160622840317,
+                      revisionId: 498427137020189,
+                      transform: new Matrix4().makeTranslation(40, 10, 0)
+                    },
+                    {
                       siteId: 'c_RC_2'
                     },
                     {

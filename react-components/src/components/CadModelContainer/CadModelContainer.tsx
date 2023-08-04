@@ -11,7 +11,7 @@ import {
   DefaultNodeAppearance
 } from '@cognite/reveal';
 import { useReveal } from '../RevealContainer/RevealContext';
-import { type Matrix4 } from 'three';
+import { Matrix4 } from 'three';
 import { useSDK } from '../RevealContainer/SDKProvider';
 import { type CogniteClient } from '@cognite/sdk';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
@@ -92,7 +92,10 @@ export function CadModelContainer({
 
     async function getOrAddModel(): Promise<CogniteCadModel> {
       const viewerModel = viewer.models.find(
-        (model) => model.modelId === modelId && model.revisionId === revisionId
+        (model) =>
+          model.modelId === modelId &&
+          model.revisionId === revisionId &&
+          model.getModelTransformation().equals(transform ?? new Matrix4())
       );
       if (viewerModel !== undefined) {
         return await Promise.resolve(viewerModel as CogniteCadModel);
