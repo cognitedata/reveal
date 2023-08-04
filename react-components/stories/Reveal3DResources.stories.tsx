@@ -6,7 +6,6 @@ import { Reveal3DResources, RevealContainer } from '../src';
 import { Color, Matrix4 } from 'three';
 import { CameraController } from '../src/';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 const meta = {
   title: 'Example/Reveal3DResources',
@@ -124,7 +123,6 @@ export const Main: Story = {
       <RevealContainer
         sdk={sdk}
         color={new Color(0x4a4a4a)}
-        uiElements={<ReactQueryDevtools initialIsOpen={false} />}
         viewerOptions={{
           loadingIndicatorStyle: {
             opacity: 1,

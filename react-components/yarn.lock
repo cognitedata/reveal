@@ -1908,6 +1908,7 @@ __metadata:
     "@tanstack/react-query-devtools": ^4.29.19
     "@types/lodash": ^4.14.190
     "@types/react": 18.2.7
+    "@types/react-dom": ^18.2.7
     "@types/styled-components": 5.1.26
     "@types/three": 0.154.0
     "@typescript-eslint/eslint-plugin": ^5.50.0
@@ -1925,7 +1926,7 @@ __metadata:
     prettier: ^3.0.0
     prop-types: 15.8.1
     react: 18.2.0
-    react-dom: 18.2.0
+    react-dom: ^18.2.0
     storybook: 7.1.1
     style-loader: ^3.3.3
     styled-components: 5.3.11
@@ -1939,6 +1940,7 @@ __metadata:
     "@cognite/cogs.js": ">=9"
     "@cognite/reveal": 4.4.0
     react: ">=18"
+    react-dom: ">=18"
     styled-components: ">=5"
   languageName: unknown
   linkType: soft
@@ -4812,6 +4814,15 @@ __metadata:
     "@types/react": "*"
     date-fns: ^2.16.1
   checksum: 44c6bc43348a03cded5715e7abb344120a86e92f3d29a7f71b3089a270d5d685a52bc44856332e66decca121a9ac62978dfb1b485a130052fb1e608303ef4199
+  languageName: node
+  linkType: hard
+
+"@types/react-dom@npm:^18.2.7":
+  version: 18.2.7
+  resolution: "@types/react-dom@npm:18.2.7"
+  dependencies:
+    "@types/react": "*"
+  checksum: e02ea908289a7ad26053308248d2b87f6aeafd73d0e2de2a3d435947bcea0422599016ffd1c3e38ff36c42f5e1c87c7417f05b0a157e48649e4a02f21727d54f
   languageName: node
   linkType: hard
 
@@ -12273,7 +12284,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:18.2.0":
+"react-dom@npm:^18.2.0":
   version: 18.2.0
   resolution: "react-dom@npm:18.2.0"
   dependencies:
