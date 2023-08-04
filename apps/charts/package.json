@@ -1,6 +1,6 @@
 {
   "name": "@cognite/cdf-charts-ui",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "scripts": {
     "start": "../../scripts/start.sh dev charts",
     "build": "../../scripts/build.sh production charts",
