@@ -99,6 +99,7 @@ const Content = styled.div`
 
 const Wrapper = styled.span`
   min-width: 100px;
+  width: 100%;
   max-width: 80%;
 `;
 

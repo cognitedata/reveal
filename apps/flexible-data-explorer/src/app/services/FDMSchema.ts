@@ -119,7 +119,11 @@ export class FDMSchema {
   }
 
   public getPrimitiveFields(dataType: string) {
-    if (dataType === 'TimeSeries') {
+    if (
+      dataType === 'TimeSeries' ||
+      dataType === 'File' ||
+      dataType === 'Sequence'
+    ) {
       return ['externalId'];
     }
 

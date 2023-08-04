@@ -92,13 +92,15 @@ const Content = styled.div`
 
 const Container = styled.div`
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   grid-column-gap: 24px;
   grid-row-gap: 24px;
 `;
 
 const KeyText = styled(Body).attrs({ level: 3 })`
-  text-transform: capitalize;
+  &:first-letter {
+    text-transform: uppercase;
+  }
 `;
 
 // 'Cogs' does not have the option to pass in 'ref', use 'p' until it's fixed

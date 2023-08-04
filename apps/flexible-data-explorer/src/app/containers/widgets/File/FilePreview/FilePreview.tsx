@@ -15,7 +15,7 @@ import { useFileByIdQuery } from '../../../../services/instances/file/queries/us
 export type FilePreviewProps = {
   id: string;
   applicationId: string;
-  fileId: number;
+  fileId: number | string;
   creatable: boolean;
   contextualization: boolean;
   fileIcon?: React.ReactNode;

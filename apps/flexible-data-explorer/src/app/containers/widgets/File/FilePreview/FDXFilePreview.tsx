@@ -3,13 +3,14 @@ import { FilePreview } from './FilePreview';
 const UFV_APPLICATION_ID = 'FDX';
 
 export const FDXFilePreview: React.FC<{
-  fileId: number;
+  fileId: number | string;
+  id?: string;
   showControls?: boolean;
-}> = ({ fileId, showControls }) => {
+}> = ({ fileId, id, showControls }) => {
   return (
     <FilePreview
       key={fileId}
-      id={`${UFV_APPLICATION_ID}-${fileId}`}
+      id={`${UFV_APPLICATION_ID}-${fileId}-${id}`}
       applicationId={UFV_APPLICATION_ID}
       fileId={fileId}
       creatable={false}

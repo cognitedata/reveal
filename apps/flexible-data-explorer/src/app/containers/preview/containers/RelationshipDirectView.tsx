@@ -21,7 +21,7 @@ export const DirectionRelationshipItem: React.FC<
       instance,
     },
     {
-      suspense: true,
+      enabled: !_isEmpty(instance) && !_isEmpty(dataModel),
     }
   );
 

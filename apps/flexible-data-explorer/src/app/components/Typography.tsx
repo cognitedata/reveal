@@ -61,7 +61,14 @@ Typography.Title = TitleTypography;
 const BodyWrapper = styled.p<Props>`
   margin-bottom: 0;
 
-  ${({ capitalize }) => (capitalize ? 'text-transform: capitalize;' : '')}
+  ${({ capitalize }) =>
+    capitalize
+      ? css`
+          &:first-letter {
+            text-transform: uppercase;
+          }
+        `
+      : ''}
 
   overflow: hidden;
   font-feature-settings: 'ss04' on;
@@ -105,7 +112,14 @@ const TitleWrapper = styled.h1<Props>`
   color: var(--text-icon-strong, rgba(0, 0, 0, 0.9));
   font-weight: ${({ strong }) => (strong ? 700 : 600)};
 
-  ${({ capitalize }) => (capitalize ? 'text-transform: capitalize;' : '')}
+  ${({ capitalize }) =>
+    capitalize
+      ? css`
+          &:first-letter {
+            text-transform: uppercase;
+          }
+        `
+      : ''}
 
   ${({ size }) => {
     if (size === 'xsmall') {

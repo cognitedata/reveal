@@ -11,7 +11,7 @@ import { InstancePreviewHeader, HeaderText } from '../elements';
 import { InstancePreviewProps } from '../types';
 
 import { DirectionRelationshipItem } from './RelationshipDirectView';
-import { RelationshipEdgeItem } from './RelationshipEdgeView';
+import { RelationshipEdgeItem } from './RelationshipEdgeView/RelationshipEdgeView';
 
 interface Props extends InstancePreviewProps {
   type?: string;
@@ -56,28 +56,36 @@ export const Overview: React.FC<Props> = ({
 
       {!isEmpty(directRelationships) && (
         <Container>
-          {directRelationships?.map((item) => (
-            <DirectionRelationshipItem
-              key={item.name}
-              type={{ field: item.name, type: item.type.name }}
-              dataModel={dataModel}
-              instance={instance}
-            />
-          ))}
+          {directRelationships?.map((item) => {
+            if (item.type.name === 'Sequence') {
+              return null;
+            }
+
+            return (
+              <DirectionRelationshipItem
+                key={item.name}
+                type={{ field: item.name, type: item.type.name }}
+                dataModel={dataModel}
+                instance={instance}
+              />
+            );
+          })}
         </Container>
       )}
 
       {!isEmpty(edgeRelationships) && (
         <Container>
-          {edgeRelationships?.map((item) => (
-            <RelationshipEdgeItem
-              key={item.id}
-              type={{ field: item.name, type: item.type.name }}
-              dataModel={dataModel}
-              instance={instance}
-              onClick={(i) => onClick?.(i)}
-            />
-          ))}
+          {edgeRelationships?.map((item) => {
+            return (
+              <RelationshipEdgeItem
+                key={item.id}
+                type={{ field: item.name, type: item.type.name }}
+                dataModel={dataModel}
+                instance={instance}
+                onClick={(i) => onClick?.(i)}
+              />
+            );
+          })}
         </Container>
       )}
     </>

@@ -56,7 +56,7 @@ const FileInstancePreview = ({
   children,
   disabled,
   ...rest
-}: React.PropsWithChildren<{ id: number; disabled?: boolean }>) => {
+}: React.PropsWithChildren<{ id: number | string; disabled?: boolean }>) => {
   if (!children) {
     return <FilePreview {...rest} />;
   }

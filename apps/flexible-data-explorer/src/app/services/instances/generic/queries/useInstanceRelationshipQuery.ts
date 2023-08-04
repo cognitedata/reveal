@@ -32,8 +32,10 @@ export const useInstanceRelationshipQuery = (
   } = {},
   {
     suspense,
+    enabled,
   }: {
     suspense?: boolean;
+    enabled?: boolean;
   } = {}
 ) => {
   const client = useFDM();
@@ -53,6 +55,7 @@ export const useInstanceRelationshipQuery = (
   const { data, ...rest } = useInfiniteQuery(
     queryKeys.instanceRelationship(
       { dataType, instanceSpace, externalId },
+      { externalId: dataModel, space, version },
       type,
       transformedFilter
     ),
@@ -70,7 +73,7 @@ export const useInstanceRelationshipQuery = (
         return Promise.reject(new Error('Missing headers...'));
       }
 
-      const instance = await client.getEdgeRelationshipInstancesById(
+      const results = await client.getEdgeRelationshipInstancesById(
         transformedFilter,
         {
           relatedField: field,
@@ -89,12 +92,13 @@ export const useInstanceRelationshipQuery = (
         }
       );
 
-      return instance[field];
+      return results[field];
     },
     {
       getNextPageParam: (param) =>
         param.pageInfo.hasNextPage && param.pageInfo.endCursor,
       suspense,
+      enabled,
     }
   );
 

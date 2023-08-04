@@ -39,6 +39,14 @@ const Routes = () => {
 
           <Route path="timeseries/:externalId" element={<TimeseriesPage />} />
           <Route path="file/:externalId" element={<FilePage />} />
+          <Route
+            path="sequence/:externalId"
+            element={
+              <center>
+                <p>Work in progress...</p>
+              </center>
+            }
+          />
 
           <Route path=":dataModel/:space/:version/">
             <Route

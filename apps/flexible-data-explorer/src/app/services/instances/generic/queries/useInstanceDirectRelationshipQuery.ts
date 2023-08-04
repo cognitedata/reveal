@@ -8,7 +8,7 @@ import { useFDM } from '../../../../providers/FDMProvider';
 import { queryKeys } from '../../../queryKeys';
 import { DataModelV2, Instance } from '../../../types';
 
-export const useInstanceDirectRelationshipQuery = (
+export const useInstanceDirectRelationshipQuery = <T = any>(
   {
     type,
     field,
@@ -25,8 +25,10 @@ export const useInstanceDirectRelationshipQuery = (
   } = {},
   {
     suspense,
+    enabled,
   }: {
     suspense?: boolean;
+    enabled?: boolean;
   } = {}
 ) => {
   const client = useFDM();
@@ -40,7 +42,11 @@ export const useInstanceDirectRelationshipQuery = (
     : dataModelPathParam;
 
   return useQuery(
-    queryKeys.instanceDirect({ dataType, instanceSpace, externalId }, type),
+    queryKeys.instanceDirect(
+      { dataType, instanceSpace, externalId },
+      { externalId: dataModel, version, space },
+      { type, field }
+    ),
     async () => {
       if (
         !(
@@ -70,10 +76,11 @@ export const useInstanceDirectRelationshipQuery = (
         }
       );
 
-      return instance[field];
+      return instance[field] as T;
     },
     {
       suspense,
+      enabled,
     }
   );
 };

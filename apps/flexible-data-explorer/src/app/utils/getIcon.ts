@@ -26,6 +26,14 @@ export const getIcon = (value: string): IconType => {
     return 'Gauge';
   }
 
+  if (['workorder'].includes(type)) {
+    return 'WorkOrders';
+  }
+
+  if (['workitem'].includes(type)) {
+    return 'ReportList';
+  }
+
   // if (['manufacturer', 'supplier', 'facility', 'vendor'].includes(type)) {
   //   return 'AzureDataFactory';
   // }

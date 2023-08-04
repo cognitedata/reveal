@@ -43,15 +43,25 @@ export const queryKeys = {
       dataModel,
     ] as const,
 
-  instance: (instance: Instance) =>
-    [...queryKeys.all, 'instance', instance] as const,
-  instanceDirect: (instance: Instance, types?: any) =>
-    [...queryKeys.all, 'instance-direct', instance, types] as const,
-  instanceRelationship: (instance: Instance, type: string, filters: any) =>
+  instance: (instance: Instance, dataModel: Partial<DataModelV2>) =>
+    [...queryKeys.all, 'instance', instance, dataModel] as const,
+  instanceDirect: (
+    instance: Instance,
+    dataModel: Partial<DataModelV2>,
+    types?: any
+  ) =>
+    [...queryKeys.all, 'instance-direct', instance, dataModel, types] as const,
+  instanceRelationship: (
+    instance: Instance,
+    dataModel: Partial<DataModelV2>,
+    type: string,
+    filters: any
+  ) =>
     [
       ...queryKeys.all,
       'instance-relationship',
       instance,
+      dataModel,
       type,
       filters,
     ] as const,

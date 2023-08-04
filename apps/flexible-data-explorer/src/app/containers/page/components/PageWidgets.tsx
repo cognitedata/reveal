@@ -59,7 +59,7 @@ const Content = styled.div<{ hasExpandedWidget: boolean }>`
         width: 1024px;
         max-width: 1024px;
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(4, minmax(0, 1fr));
         padding: 16px 0;
         /* The height of the grid items is derived on the bases of the properties widget. Avoid changing the value here. */
         grid-auto-rows: 65px;

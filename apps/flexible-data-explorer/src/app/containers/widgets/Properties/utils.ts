@@ -1,8 +1,20 @@
+import { formatDate } from '@cognite/cogs.js';
+
+import { isValidDate } from '../../../utils/date';
 import { toFlatPropertyMap } from '../../../utils/object';
 
-const normalizePrimitives = (value?: any) => {
+const normalizePrimitives = (value?: unknown) => {
   if (value === null || value === undefined) {
     return undefined;
+  }
+
+  if (typeof value === 'number') {
+    return String(value);
+  }
+
+  // Fix me + need to build a "in-house" date formatter
+  if (isValidDate(value as any)) {
+    return formatDate(value as any);
   }
 
   if (typeof value === 'string') {
@@ -11,10 +23,6 @@ const normalizePrimitives = (value?: any) => {
 
   if (typeof value === 'boolean') {
     return value ? 'True' : 'False';
-  }
-
-  if (typeof value === 'number') {
-    return String(value);
   }
 
   if (

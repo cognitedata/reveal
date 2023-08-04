@@ -28,7 +28,14 @@ export const useInstancesQuery = ({
     : dataModelPathParam;
 
   const { data, ...rest } = useQuery(
-    queryKeys.instance({ dataType, instanceSpace, externalId }),
+    queryKeys.instance(
+      { dataType, instanceSpace, externalId },
+      {
+        externalId: dataModel,
+        version,
+        space,
+      }
+    ),
     async () => {
       if (
         !(

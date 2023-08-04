@@ -95,7 +95,7 @@ export const useNavigation = () => {
     [basename, navigate]
   );
 
-  const toInstancePage = useCallback(
+  const toGenericPage = useCallback(
     (
       dataType: string,
       instanceSpace: string | undefined,
@@ -110,14 +110,7 @@ export const useNavigation = () => {
         version?: string;
       } = {}
     ) => {
-      // const { space, dataModel, version } = params;
-
-      // TODO: Clean me up
       const queryParams = new URLSearchParams(search);
-
-      if (queryParams.has('expandedId')) {
-        queryParams.delete('expandedId');
-      }
 
       const pathname = [
         basename,
@@ -141,9 +134,15 @@ export const useNavigation = () => {
 
   const toTimeseriesPage = useCallback(
     (externalId: string | number) => {
+      const queryParams = new URLSearchParams(search);
+
+      if (queryParams.has('expandedId')) {
+        queryParams.delete('expandedId');
+      }
+
       navigate({
         pathname: `${basename}/timeseries/${externalId}`,
-        search,
+        search: queryParams.toString(),
       });
     },
     [basename, navigate, search]
@@ -151,12 +150,68 @@ export const useNavigation = () => {
 
   const toFilePage = useCallback(
     (externalId: string | number) => {
+      const queryParams = new URLSearchParams(search);
+
+      if (queryParams.has('expandedId')) {
+        queryParams.delete('expandedId');
+      }
+
       navigate({
         pathname: `${basename}/file/${externalId}`,
-        search,
+        search: queryParams.toString(),
       });
     },
     [basename, navigate, search]
+  );
+
+  const toSequencePage = useCallback(
+    (externalId: string | number) => {
+      const queryParams = new URLSearchParams(search);
+
+      if (queryParams.has('expandedId')) {
+        queryParams.delete('expandedId');
+      }
+
+      navigate({
+        pathname: `${basename}/sequence/${externalId}`,
+        search: queryParams.toString(),
+      });
+    },
+    [basename, navigate, search]
+  );
+
+  const toInstancePage = useCallback(
+    (
+      dataType: string,
+      instanceSpace: string | undefined,
+      externalId: string,
+      dataModel: {
+        dataModel?: string;
+        space?: string;
+        version?: string;
+      } = {}
+    ) => {
+      const queryParams = new URLSearchParams(search);
+
+      if (queryParams.has('expandedId')) {
+        queryParams.delete('expandedId');
+      }
+
+      if (dataType === 'File') {
+        return toFilePage(externalId);
+      }
+
+      if (dataType === 'TimeSeries') {
+        return toTimeseriesPage(externalId);
+      }
+
+      if (dataType === 'Sequence') {
+        return toSequencePage(externalId);
+      }
+
+      return toGenericPage(dataType, instanceSpace, externalId, dataModel);
+    },
+    [toFilePage, toGenericPage, toSequencePage, toTimeseriesPage]
   );
 
   const toLandingPage = useCallback(() => {
@@ -201,6 +256,7 @@ export const useNavigation = () => {
     toInstancePage,
     toTimeseriesPage,
     toFilePage,
+    toSequencePage,
 
     toCharts,
     toCanvas,

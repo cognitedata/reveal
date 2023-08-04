@@ -9,7 +9,7 @@ import { SearchBar } from '../containers/search/SearchBar';
 import { SearchConfiguration } from '../containers/search/SearchConfiguration';
 
 const SEARCH_BAR_OPTIONS = {
-  filterMenuMaxHeight: '25vh',
+  filterMenuMaxHeight: '50vh',
 };
 
 export const HomePage = () => {

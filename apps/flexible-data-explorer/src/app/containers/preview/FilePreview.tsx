@@ -23,7 +23,7 @@ import {
 import { PreviewView } from './types';
 
 interface Props {
-  id: number;
+  id: number | string;
 }
 
 export const FilePreview: React.FC<Props> = ({ id }) => {

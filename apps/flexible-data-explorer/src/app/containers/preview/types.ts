@@ -7,6 +7,10 @@ export interface InstancePreviewProps {
   disabled?: boolean;
 }
 
+export interface InstancePreviewRelationProps extends InstancePreviewProps {
+  type: { type: string; field: string };
+}
+
 export type PreviewView =
   | 'properties'
   | { type: string; field: string }

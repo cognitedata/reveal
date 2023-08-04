@@ -2,12 +2,14 @@ import { PropsWithChildren } from 'react';
 
 import styled from 'styled-components';
 
-import { Body, Title } from '@cognite/cogs.js';
+import { Body } from '@cognite/cogs.js';
+
+import { Typography } from '../../Typography';
 
 interface Props {
   header?: string;
   title?: string | React.ReactNode;
-  subtitle?: string;
+  subtitle?: string | React.ReactNode;
   alignActions?: 'left' | 'right';
 }
 
@@ -26,7 +28,7 @@ export const WidgetHeader: React.FC<PropsWithChildren<Props>> = ({
       {(header || title || subtitle) && (
         <Content>
           <HeaderText>{header}</HeaderText>
-          <Title level={6}>{title}</Title>
+          <Typography.Title size="xsmall">{title}</Typography.Title>
           <Body level={6}>{subtitle}</Body>
         </Content>
       )}
@@ -40,6 +42,7 @@ const Container = styled.div`
   min-height: 52px;
   display: flex;
   padding: 24px 16px;
+  width: 100%;
 
   flex-direction: row;
   align-items: center;
@@ -53,7 +56,9 @@ const Actions = styled.div<{ align: 'left' | 'right' }>`
   gap: 8px;
 `;
 
-const Content = styled.span``;
+const Content = styled.div`
+  width: 80%;
+`;
 
 const HeaderText = styled(Body)`
   font-size: 12px;

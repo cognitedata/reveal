@@ -125,5 +125,7 @@ const ButtonWrapper = styled.div<{ visible?: boolean }>`
 `;
 
 const KeyText = styled(Body).attrs({ level: 2, strong: true })`
-  text-transform: capitalize;
+  &:first-letter {
+    text-transform: uppercase;
+  }
 `;
