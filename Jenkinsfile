@@ -22,7 +22,8 @@ static final String[] APPLICATIONS = [
   'entity-matching',
   'access-management',
   'notebook',
-  'fusion-shell'
+  'fusion-shell',
+  'simint'
 ]
 
 /*
@@ -131,7 +132,8 @@ static final Map<String, String> VERSIONING_STRATEGY = [
   'functions-ui' : 'single-branch',
   'access-management': 'multi-branch',
   'notebook': 'single-branch',
-  'fusion-shell': 'mutli-branch'
+  'fusion-shell': 'mutli-branch',
+  'simint': 'multi-branch',
 ]
 
 // The config of which apps have i18n strings that need to be synced to and pulled from locize.io
