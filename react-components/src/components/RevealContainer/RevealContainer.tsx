@@ -95,14 +95,6 @@ export function RevealContainer({
     setViewer(viewer);
     return viewer;
   }
-
-  // function disposeViewer(): void {
-  //   console.log(viewer);
-  //   if (viewer === undefined) return;
-  //   console.log('asd');
-  //   viewer.dispose();
-  //   setViewer(undefined);
-  // }
 }
 
 function ModelsLoadingProvider({ children }: { children?: ReactNode }): ReactElement {
