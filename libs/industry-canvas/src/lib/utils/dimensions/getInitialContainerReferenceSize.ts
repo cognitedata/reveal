@@ -1,8 +1,8 @@
 import { ContainerReference, ContainerReferenceType } from '../../types';
 import assertNever from '../assertNever';
 
-export const DEFAULT_CONTAINER_MAX_WIDTH = 1000;
-export const DEFAULT_CONTAINER_MAX_HEIGHT = 1000;
+export const DEFAULT_CONTAINER_MAX_WIDTH = 3000;
+export const DEFAULT_CONTAINER_MAX_HEIGHT = 3000;
 export const DEFAULT_TIMESERIES_HEIGHT = 400;
 export const DEFAULT_TIMESERIES_WIDTH = 700;
 export const DEFAULT_ASSET_WIDTH = 600;
