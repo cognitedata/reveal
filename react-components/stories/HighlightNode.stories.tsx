@@ -60,9 +60,9 @@ const StoryContent = ({
 
   const [highlightedId, setHighlightedId] = useState<string | undefined>(undefined);
 
-  const callback = (nodeData: NodeDataResult<any> | undefined): void => {
-    setNodeData(nodeData?.data);
-    setHighlightedId(nodeData?.data?.externalId);
+  const callback = (nodeData: NodeDataResult | undefined): void => {
+    setNodeData(nodeData);
+    setHighlightedId(nodeData?.nodeExternalId);
 
     if (nodeData === undefined) return;
 
