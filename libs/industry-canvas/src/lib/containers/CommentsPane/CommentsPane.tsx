@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { useDebounce } from 'use-debounce';
 
-import { Button, Icon, Title, Input } from '@cognite/cogs.js';
+import { Button, Icon, Input, Heading } from '@cognite/cogs.js';
 
 import { useCommentsPaneSearch } from '../../../lib/hooks/useCommentsPaneSearch';
 import { UserProfile } from '../../../lib/UserProfileProvider';
@@ -60,9 +60,9 @@ export const CommentsPane: React.FC<Props> = ({
     <StyledCommentsPane>
       <HeaderWrapper>
         <TitleWrapper>
-          <Title level={4} style={{ flex: 1 }}>
+          <Heading level={4} style={{ flex: 1 }}>
             Comments {getCommentCountText()}
-          </Title>
+          </Heading>
           <Button
             onClick={onCloseCommentsPane}
             icon="CloseLarge"

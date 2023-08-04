@@ -160,6 +160,14 @@ export const IndustryCanvasPage = () => {
     interactionState,
     setInteractionState,
     containerAnnotations,
+    pinnedTimeseriesIdsByAnnotationId,
+    onPinTimeseriesClick,
+    liveSensorRulesByAnnotationIdByTimeseriesId,
+    onLiveSensorRulesChange,
+    isConditionalFormattingOpenAnnotationIdByTimeseriesId,
+    onCloseConditionalFormattingClick,
+    onOpenConditionalFormattingClick,
+    onToggleConditionalFormatting,
   } = useManagedState({
     unifiedViewer: unifiedViewerRef,
     toolType,
@@ -795,6 +803,22 @@ export const IndustryCanvasPage = () => {
             commentAnnotations={commentAnnotations}
             tooltipsOptions={tooltipsOptions}
             onUpdateTooltipsOptions={onUpdateTooltipsOptions}
+            pinnedTimeseriesIdsByAnnotationId={
+              pinnedTimeseriesIdsByAnnotationId
+            }
+            onPinTimeseriesClick={onPinTimeseriesClick}
+            liveSensorRulesByAnnotationIdByTimeseriesId={
+              liveSensorRulesByAnnotationIdByTimeseriesId
+            }
+            onLiveSensorRulesChange={onLiveSensorRulesChange}
+            isConditionalFormattingOpenAnnotationIdByTimeseriesId={
+              isConditionalFormattingOpenAnnotationIdByTimeseriesId
+            }
+            onToggleConditionalFormatting={onToggleConditionalFormatting}
+            onCloseConditionalFormattingClick={
+              onCloseConditionalFormattingClick
+            }
+            onOpenConditionalFormattingClick={onOpenConditionalFormattingClick}
           />
 
           <CloseResourceSelectorButton

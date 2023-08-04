@@ -35,6 +35,7 @@ export const TimeseriesChart: React.FC<TimeseriesChartProps> = ({
   onChangeDateRange,
   hideActions,
   styles,
+  inverted,
 }) => {
   const [selectedTimePeriod, setSelectedTimePeriod] = useState<TimePeriod>();
   const [dateRange, setDateRange] = useState<DateRange>(dateRangeProp);
@@ -125,6 +126,7 @@ export const TimeseriesChart: React.FC<TimeseriesChartProps> = ({
               />,
             ]
       }
+      inverted={inverted}
     />
   );
 };

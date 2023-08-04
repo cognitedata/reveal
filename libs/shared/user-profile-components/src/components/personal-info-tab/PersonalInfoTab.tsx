@@ -1,7 +1,7 @@
-import { Flex, InputExp, Title } from '@cognite/cogs.js';
+import { InputExp } from '@cognite/cogs.js';
 
 import { UserInfo } from '../../common/types';
-import { useIsScreenWideEnough } from '../../hooks/useIsScreenWideEnough';
+import { TabContent } from '../tab-content/TabContent';
 
 export type PersonalInfoTabProps = {
   userInfo?: UserInfo;
@@ -24,16 +24,11 @@ export const PersonalInfoTab = ({
 }: PersonalInfoTabProps): JSX.Element => {
   const name = userInfo?.name ?? '';
   const email = userInfo?.email ?? '';
-  const isScreenWideEnough = useIsScreenWideEnough();
 
   return (
-    <Flex direction="column" gap={24}>
-      {isScreenWideEnough && (
-        <Flex direction="column" gap={4}>
-          <Title level={4}>{title}</Title>
-        </Flex>
-      )}
-      <Flex direction="column" gap={24}>
+    <TabContent.Container>
+      <TabContent.Title>{title}</TabContent.Title>
+      <TabContent.Body>
         <InputExp
           disabled
           fullWidth
@@ -62,7 +57,7 @@ export const PersonalInfoTab = ({
             value={email}
           />
         )}
-      </Flex>
-    </Flex>
+      </TabContent.Body>
+    </TabContent.Container>
   );
 };

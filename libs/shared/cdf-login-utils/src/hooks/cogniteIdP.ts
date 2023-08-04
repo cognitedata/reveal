@@ -18,8 +18,14 @@ export const useCogniteIdPUserManager = (params: {
 
 export const getCogniteIdPQueryKey = (
   idp: IDPResponse,
-  type: 'token' | 'projects'
-) => ['cognite_idp', type, ...(idp?.internalId ? [idp?.internalId] : [])];
+  type: 'token' | 'projects',
+  cluster: string = '' // only needed to fetch projects across clusters
+) => [
+  'cognite_idp',
+  cluster,
+  type,
+  ...(idp?.internalId ? [idp?.internalId] : []),
+];
 
 export const useCogniteIdPProjects = (
   cluster: string,
@@ -34,7 +40,7 @@ export const useCogniteIdPProjects = (
   const { data: token, error, isFetched } = tokenResponse;
 
   const projectResponse = useQuery(
-    getCogniteIdPQueryKey(idp!, 'projects'),
+    getCogniteIdPQueryKey(idp!, 'projects', cluster),
     () => getProjects(cluster, token!),
     { ...options, enabled: isFetched && options.enabled }
   );

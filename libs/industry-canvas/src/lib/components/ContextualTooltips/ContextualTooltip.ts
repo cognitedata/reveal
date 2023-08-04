@@ -1,9 +1,17 @@
 import styled from 'styled-components';
 
-import { Body, Colors, Elevations, Icon, Menu, Title } from '@cognite/cogs.js';
+import {
+  Button,
+  Body,
+  Colors,
+  Elevations,
+  Icon,
+  Menu,
+  Title,
+} from '@cognite/cogs.js';
 
 export const Container = styled.div`
-  width: 296px;
+  width: 326px;
   background: ${Colors['surface--muted--inverted']};
   border: 1px solid ${Colors['border--muted--inverted']};
   box-shadow: ${Elevations['elevation--overlay']};
@@ -40,6 +48,10 @@ export const StyledIcon = styled(Icon)<{ color: string }>`
   color: ${(props) => props.color};
   margin-right: 8px;
   flex-shrink: 0;
+`;
+
+export const HeaderButton = styled(Button)`
+  margin-right: 8px;
 `;
 
 export const Label = styled(Title).attrs({

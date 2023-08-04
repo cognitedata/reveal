@@ -16,12 +16,16 @@ import { OnAddContainerReferences } from '../IndustryCanvasPage';
 import { ContainerReferenceType } from '../types';
 import useMetrics from '../utils/tracking/useMetrics';
 
+import { UseManagedStateReturnType } from './useManagedState';
 import { UseResourceSelectorActionsReturnType } from './useResourceSelectorActions';
 
 const useIndustryCanvasAssetTooltips = (
   selectedAnnotation: ExtendedAnnotation | undefined,
   onAddContainerReferences: OnAddContainerReferences,
-  onResourceSelectorOpen: UseResourceSelectorActionsReturnType['onResourceSelectorOpen']
+  onResourceSelectorOpen: UseResourceSelectorActionsReturnType['onResourceSelectorOpen'],
+  pinnedTimeseriesIdsByAnnotationId: UseManagedStateReturnType['pinnedTimeseriesIdsByAnnotationId'],
+  onPinTimeseriesClick: UseManagedStateReturnType['onPinTimeseriesClick'],
+  onOpenConditionalFormattingClick: UseManagedStateReturnType['onOpenConditionalFormattingClick']
 ) => {
   const trackUsage = useMetrics();
 
@@ -121,12 +125,35 @@ const useIndustryCanvasAssetTooltips = (
       });
     };
 
+    const hasPinnedTimeseries =
+      (pinnedTimeseriesIdsByAnnotationId[selectedAnnotation.id] ?? []).length >
+      0;
+
+    const onSetConditionalFormattingClick = hasPinnedTimeseries
+      ? () => {
+          onOpenConditionalFormattingClick({
+            annotationId: selectedAnnotation.id,
+            timeseriesId:
+              pinnedTimeseriesIdsByAnnotationId[selectedAnnotation.id][0],
+          });
+        }
+      : undefined;
+
     return [
       {
         targetId: String(selectedAnnotation?.id),
         content: (
           <AssetTooltip
             id={resourceId}
+            pinnedTimeseriesIds={
+              pinnedTimeseriesIdsByAnnotationId[selectedAnnotation.id] ?? []
+            }
+            onPinTimeseriesClick={(timeseriesId) =>
+              onPinTimeseriesClick({
+                annotationId: selectedAnnotation.id,
+                timeseriesId,
+              })
+            }
             onAddThreeD={onAddThreeD}
             onAddTimeseries={onAddTimeseries}
             onAddAsset={onAddAsset}
@@ -135,6 +162,7 @@ const useIndustryCanvasAssetTooltips = (
             onOpenTimeseriesTabInResourceSelector={
               onOpenTimeseriesTabInResourceSelector
             }
+            onSetConditionalFormattingClick={onSetConditionalFormattingClick}
           />
         ),
         anchorTo: ANNOTATION_TOOLTIP_POSITION,
@@ -142,6 +170,8 @@ const useIndustryCanvasAssetTooltips = (
       },
     ];
   }, [
+    pinnedTimeseriesIdsByAnnotationId,
+    onPinTimeseriesClick,
     selectedAnnotation,
     onAddContainerReferences,
     trackUsage,

@@ -36,6 +36,7 @@ const renderCommentText = (text: string, users: UserProfile[]) => (
         if (foundUser !== undefined) {
           return (
             <NameTag
+              key={`name-tag-${foundUser.userIdentifier}`}
               label={'@' + foundUser.displayName}
               hideTooltip
               size="small"
@@ -77,33 +78,39 @@ export const CommentDisplay = ({
         ? new Date(b.createdTime).getTime() - new Date(a.createdTime).getTime()
         : new Date(a.createdTime).getTime() - new Date(b.createdTime).getTime()
     );
-  return sortedList.map((el) => (
-    <Fragment key={el.externalId}>
-      <Flex className="comment-item" alignItems="center" gap={16}>
-        <Avatar
-          text={
-            getAuthorById(el.createdById || el.createdBy?.userIdentifier)
-              .displayName
-          }
-        />
-        <Flex direction="column" style={{ flex: 1 }} gap={8}>
-          <Flex gap={8}>
-            <Overline level={3} style={{ flex: 1 }}>
-              {
+
+  return (
+    <>
+      {sortedList.map((el) => (
+        <Fragment key={`comment-display-${el.externalId}-${el.createdTime}`}>
+          <Flex className="comment-item" alignItems="center" gap={16}>
+            <Avatar
+              text={
                 getAuthorById(el.createdById || el.createdBy?.userIdentifier)
                   .displayName
               }
-            </Overline>
-            <Overline level={3} muted>
-              {formatDistanceToNow(el.createdTime, { addSuffix: true })}
-            </Overline>
+            />
+            <Flex direction="column" style={{ flex: 1 }} gap={8}>
+              <Flex gap={8}>
+                <Overline level={3} style={{ flex: 1 }}>
+                  {
+                    getAuthorById(
+                      el.createdById || el.createdBy?.userIdentifier
+                    ).displayName
+                  }
+                </Overline>
+                <Overline level={3} muted>
+                  {formatDistanceToNow(el.createdTime, { addSuffix: true })}
+                </Overline>
+              </Flex>
+              {renderCommentText(el.text, users)}
+            </Flex>
           </Flex>
-          {renderCommentText(el.text, users)}
-        </Flex>
-      </Flex>
-      <Divider key={`${el.externalId}-divider`} />
-    </Fragment>
-  ));
+          <Divider />
+        </Fragment>
+      ))}
+    </>
+  );
 };
 
 const NameTag = styled(Chip)`

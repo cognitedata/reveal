@@ -8,7 +8,7 @@ import { LanguageTab } from '../../components/language-tab/LanguageTab';
 import { PersonalInfoTab } from '../../components/personal-info-tab/PersonalInfoTab';
 import { ProfilePageHeader } from '../../components/profile-page-header/ProfilePageHeader';
 import { VerticalTabs } from '../../components/vertical-tabs/VerticalTabs';
-import { ProfileTabKey, useActiveTabKey } from '../../hooks/useActiveTabKey';
+import { useActiveTabKey } from '../../hooks/useActiveTabKey';
 import { OnTrackEvent } from '../../metrics';
 
 export type SidebarLocale = {
@@ -42,6 +42,8 @@ export type UserProfilePageProps = {
   languageTabLocale?: LanguageTabLocale;
   personalInfoTabLocale?: PersonalInfoTabLocale;
   onTrackEvent?: OnTrackEvent;
+  additionalTabsCategoryLabel?: string;
+  additionalTabs?: VerticalTab[];
 };
 
 export const UserProfilePage = ({
@@ -54,34 +56,77 @@ export const UserProfilePage = ({
   languageTabLocale,
   personalInfoTabLocale,
   onTrackEvent,
+  additionalTabsCategoryLabel,
+  additionalTabs,
 }: UserProfilePageProps): JSX.Element => {
   const name = userInfo?.name ?? '';
   const email = userInfo?.email ?? '';
   const profilePicture = userInfo?.profilePicture ?? '';
 
-  const [activeTabKey, setActiveTabKey] = useActiveTabKey();
-
-  const handleChange = (key: ProfileTabKey) => {
-    setActiveTabKey(key);
-  };
-
-  const profileTabs: VerticalTab<ProfileTabKey>[] = useMemo(() => {
+  const builtinTabs: VerticalTab[] = useMemo(() => {
     return [
       {
         key: 'info',
         icon: 'User',
         title: sidebarLocale?.personalInfoTabBtnText || 'Personal info',
+        content: (
+          <PersonalInfoTab
+            userInfo={{ email, name }}
+            isUserInfoLoading={isUserInfoLoading}
+            title={personalInfoTabLocale?.title}
+            nameFieldLabel={personalInfoTabLocale?.nameFieldLabel}
+            nameFieldHelpText={personalInfoTabLocale?.nameFieldHelpText}
+            emailFieldLabel={personalInfoTabLocale?.emailFieldLabel}
+            emailFieldHelpText={personalInfoTabLocale?.emailFieldHelpText}
+          />
+        ),
       },
       {
         key: 'language',
         icon: 'Language',
         title: sidebarLocale?.languageTabBtnText || 'Language',
+        content: (
+          <LanguageTab
+            selectedLanguage={selectedLanguage}
+            supportedLanguages={supportedLanguages}
+            onLanguageChange={onLanguageChange}
+            title={languageTabLocale?.title}
+            languageFieldLabel={languageTabLocale?.languageFieldLabel}
+            onTrackEvent={onTrackEvent}
+          />
+        ),
       },
     ];
   }, [
+    email,
+    isUserInfoLoading,
+    languageTabLocale?.languageFieldLabel,
+    languageTabLocale?.title,
+    name,
+    onLanguageChange,
+    onTrackEvent,
+    personalInfoTabLocale?.emailFieldHelpText,
+    personalInfoTabLocale?.emailFieldLabel,
+    personalInfoTabLocale?.nameFieldHelpText,
+    personalInfoTabLocale?.nameFieldLabel,
+    personalInfoTabLocale?.title,
+    selectedLanguage,
     sidebarLocale?.languageTabBtnText,
     sidebarLocale?.personalInfoTabBtnText,
+    supportedLanguages,
   ]);
+
+  const profileTabs: VerticalTab[] = useMemo(() => {
+    return [...builtinTabs, ...(additionalTabs ?? [])];
+  }, [builtinTabs, additionalTabs]);
+
+  const [activeTabKey, setActiveTabKey] = useActiveTabKey(
+    profileTabs.map(({ key }) => key)
+  );
+
+  const handleChange = (key: string) => {
+    setActiveTabKey(key);
+  };
 
   return (
     <Page>
@@ -92,32 +137,16 @@ export const UserProfilePage = ({
             <VerticalTabs
               activeKey={activeTabKey}
               onChange={handleChange}
-              tabs={profileTabs}
+              builtinTabs={builtinTabs}
+              additionalTabs={additionalTabs}
+              additionalTabsCategoryLabel={additionalTabsCategoryLabel}
               onTrackEvent={onTrackEvent}
             />
           </ProfileTabs>
 
           <TabContent>
-            {activeTabKey === 'language' ? (
-              <LanguageTab
-                selectedLanguage={selectedLanguage}
-                supportedLanguages={supportedLanguages}
-                onLanguageChange={onLanguageChange}
-                title={languageTabLocale?.title}
-                languageFieldLabel={languageTabLocale?.languageFieldLabel}
-                onTrackEvent={onTrackEvent}
-              />
-            ) : (
-              <PersonalInfoTab
-                userInfo={{ email, name }}
-                isUserInfoLoading={isUserInfoLoading}
-                title={personalInfoTabLocale?.title}
-                nameFieldLabel={personalInfoTabLocale?.nameFieldLabel}
-                nameFieldHelpText={personalInfoTabLocale?.nameFieldHelpText}
-                emailFieldLabel={personalInfoTabLocale?.emailFieldLabel}
-                emailFieldHelpText={personalInfoTabLocale?.emailFieldHelpText}
-              />
-            )}
+            {profileTabs.find(({ key }) => key === activeTabKey)?.content ||
+              profileTabs[0].content}
           </TabContent>
         </Content>
       </ContentSection>

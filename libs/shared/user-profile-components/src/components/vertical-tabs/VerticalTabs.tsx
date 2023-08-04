@@ -1,44 +1,60 @@
 import styled from 'styled-components';
 
-import { Button, Colors, Flex, Select } from '@cognite/cogs.js';
+import { Button, Colors, Flex, Select, Title } from '@cognite/cogs.js';
 
 import { RESPONSIVE_BREAKPOINT } from '../../common/constants';
 import { VerticalTab } from '../../common/types';
 import { useIsScreenWideEnough } from '../../hooks/useIsScreenWideEnough';
 import { OnTrackEvent, tabChangeEvent } from '../../metrics';
 
-export type VerticalTabsProps<K extends string = string> = {
-  activeKey: K;
-  onChange: (key: K) => void;
-  tabs: VerticalTab<K>[];
+export type VerticalTabsProps = {
+  activeKey: string;
+  onChange: (key: string) => void;
+  builtinTabs: VerticalTab[];
+  additionalTabs?: VerticalTab[];
+  additionalTabsCategoryLabel?: string;
   onTrackEvent?: OnTrackEvent;
 };
 
-export const VerticalTabs = <K extends string = string>({
+export const VerticalTabs = ({
   activeKey,
   onChange,
-  tabs,
+  builtinTabs,
+  additionalTabs = [],
+  additionalTabsCategoryLabel,
   onTrackEvent,
-}: VerticalTabsProps<K>): JSX.Element => {
-  const handleChange = (key: K): void => {
+}: VerticalTabsProps): JSX.Element => {
+  const handleChange = (key: string): void => {
     onChange(key);
   };
   const isScreenWideEnough = useIsScreenWideEnough();
+  const builtinTabsOptions = builtinTabs.map(({ key, title }) => ({
+    label: title,
+    value: key,
+  }));
+  const additionalTabsOptions = additionalTabs.map(({ key, title }) => ({
+    label: title,
+    value: key,
+  }));
 
   if (!isScreenWideEnough) {
-    const options = tabs.map(({ key, title }) => ({
-      label: title,
-      value: key,
-    }));
     return (
       <Container direction="column">
         <StyledSelect
           onChange={(option: { label: string; value: string }) => {
             onTrackEvent?.(tabChangeEvent, { tabKey: option.value });
-            handleChange(option.value as K);
+            handleChange(option.value);
           }}
-          options={options}
-          value={options.find(({ value }) => value === activeKey)}
+          options={[
+            { options: builtinTabsOptions },
+            {
+              label: additionalTabsCategoryLabel,
+              options: additionalTabsOptions,
+            },
+          ]}
+          value={[...builtinTabsOptions, ...additionalTabsOptions].find(
+            ({ value }) => value === activeKey
+          )}
         />
       </Container>
     );
@@ -46,7 +62,26 @@ export const VerticalTabs = <K extends string = string>({
 
   return (
     <Container direction="column" gap={4}>
-      {tabs.map(({ key, icon, title }) => (
+      {builtinTabs.map(({ key, icon, title }) => (
+        <TabButton
+          key={key}
+          icon={icon}
+          onClick={() => {
+            onTrackEvent?.(tabChangeEvent, { tabKey: key });
+            handleChange(key);
+          }}
+          toggled={activeKey === key}
+          type="ghost"
+        >
+          {title}
+        </TabButton>
+      ))}
+      {additionalTabsCategoryLabel && (
+        <Title level={6} muted style={{ margin: '32px 0 12px 0' }}>
+          {additionalTabsCategoryLabel}
+        </Title>
+      )}
+      {additionalTabs.map(({ key, icon, title }) => (
         <TabButton
           key={key}
           icon={icon}

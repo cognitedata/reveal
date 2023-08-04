@@ -34,8 +34,11 @@ export type AssetTooltipProps = {
   onAddTimeseries: (timeseriesId: number) => void;
   onAddAsset: () => void;
   onViewAsset: () => void;
+  pinnedTimeseriesIds: number[];
+  onPinTimeseriesClick: (timeseriesId: number) => void;
   onOpenAssetInResourceSelector: () => void;
   onOpenTimeseriesTabInResourceSelector: () => void;
+  onSetConditionalFormattingClick: (() => void) | undefined;
 };
 
 const AssetTooltip: React.FC<AssetTooltipProps> = ({
@@ -44,8 +47,11 @@ const AssetTooltip: React.FC<AssetTooltipProps> = ({
   onViewAsset,
   onAddThreeD,
   onAddTimeseries,
+  pinnedTimeseriesIds,
+  onPinTimeseriesClick,
   onOpenAssetInResourceSelector,
   onOpenTimeseriesTabInResourceSelector,
+  onSetConditionalFormattingClick,
 }) => {
   const { data: asset, isLoading } = useAsset(id);
   const { t } = useTranslation();
@@ -126,6 +132,33 @@ const AssetTooltip: React.FC<AssetTooltipProps> = ({
                     'Find related resources'
                   )}
                 </Menu.Item>
+                <Tooltip
+                  content={
+                    onSetConditionalFormattingClick === undefined
+                      ? t(
+                          translationKeys.SET_CONDITIONAL_FORMATTING_DISABLED,
+                          'No pinned time series. Pin a time series to enable conditional formatting.'
+                        )
+                      : undefined
+                  }
+                  disabled={onSetConditionalFormattingClick !== undefined}
+                >
+                  <Menu.Item
+                    iconPlacement="left"
+                    icon="Lightning"
+                    onClick={onSetConditionalFormattingClick}
+                    aria-label={t(
+                      translationKeys.SET_CONDITIONAL_FORMATTING,
+                      'Set conditional formatting'
+                    )}
+                    disabled={onSetConditionalFormattingClick === undefined}
+                  >
+                    {t(
+                      translationKeys.SET_CONDITIONAL_FORMATTING,
+                      'Set conditional formatting'
+                    )}
+                  </Menu.Item>
+                </Tooltip>
               </ContextualTooltip.DropdownMenu>
             }
           >
@@ -150,6 +183,8 @@ const AssetTooltip: React.FC<AssetTooltipProps> = ({
       )}
       <TimeseriesList
         assetId={id}
+        pinnedTimeseriesIds={pinnedTimeseriesIds}
+        onPinTimeseriesClick={onPinTimeseriesClick}
         onAddTimeseries={onAddTimeseries}
         onFindRelatedTimeseries={onOpenTimeseriesTabInResourceSelector}
       />

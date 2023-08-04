@@ -66,12 +66,28 @@ export type IndustryCanvasProps = {
   | 'interactionState'
   | 'setInteractionState'
   | 'containerAnnotations'
+  | 'pinnedTimeseriesIdsByAnnotationId'
+  | 'onPinTimeseriesClick'
+  | 'liveSensorRulesByAnnotationIdByTimeseriesId'
+  | 'onLiveSensorRulesChange'
+  | 'isConditionalFormattingOpenAnnotationIdByTimeseriesId'
+  | 'onOpenConditionalFormattingClick'
+  | 'onCloseConditionalFormattingClick'
+  | 'onToggleConditionalFormatting'
 > &
   UseOnUpdateSelectedAnnotationReturnType &
   Pick<
     UseTooltipsOptionsReturnType,
     'tooltipsOptions' | 'onUpdateTooltipsOptions'
   >;
+
+export type OnOpenConditionalFormattingClick = ({
+  annotationId,
+  timeseriesId,
+}: {
+  annotationId: string;
+  timeseriesId: number;
+}) => void;
 
 export const IndustryCanvas = ({
   id,
@@ -102,6 +118,14 @@ export const IndustryCanvas = ({
   onResourceSelectorOpen,
   tooltipsOptions,
   onUpdateTooltipsOptions,
+  pinnedTimeseriesIdsByAnnotationId,
+  onPinTimeseriesClick,
+  liveSensorRulesByAnnotationIdByTimeseriesId,
+  onLiveSensorRulesChange,
+  isConditionalFormattingOpenAnnotationIdByTimeseriesId,
+  onOpenConditionalFormattingClick,
+  onCloseConditionalFormattingClick,
+  onToggleConditionalFormatting,
 }: IndustryCanvasProps) => {
   const sdk = useSDK();
 
@@ -159,6 +183,14 @@ export const IndustryCanvas = ({
     removeContainerById,
     onResourceSelectorOpen,
     commentAnnotations,
+    pinnedTimeseriesIdsByAnnotationId,
+    onPinTimeseriesClick,
+    isConditionalFormattingOpenAnnotationIdByTimeseriesId,
+    onOpenConditionalFormattingClick,
+    liveSensorRulesByAnnotationIdByTimeseriesId,
+    onLiveSensorRulesChange,
+    onCloseConditionalFormattingClick,
+    onToggleConditionalFormatting,
   });
 
   const onStageClick = useCallback(

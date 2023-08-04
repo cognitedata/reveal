@@ -71,6 +71,7 @@ export interface PlotProps
   onUnhover?: (event: PlotMouseEvent) => void;
   onSelecting?: (event?: PlotSelectionEvent) => void;
   onSelected?: (event?: PlotSelectionEvent) => void;
+  inverted?: boolean;
 }
 
 export const Plot = memo(
@@ -93,6 +94,7 @@ export const Plot = memo(
         onSelecting,
         onSelected,
         onRangeChange,
+        inverted,
       },
       ref
     ) => {
@@ -241,6 +243,7 @@ export const Plot = memo(
           showticks={showTicks}
           cursor={cursor}
           variant={variant}
+          inverted={inverted}
         >
           <PlotlyPlot
             data={plotData}

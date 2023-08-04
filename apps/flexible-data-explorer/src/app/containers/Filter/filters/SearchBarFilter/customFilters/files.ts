@@ -39,11 +39,7 @@ export const files: DataTypeOption = {
     {
       name: 'Label',
       type: 'string',
-      operators: [
-        Operator.CONTAINS,
-        Operator.NOT_CONTAINS,
-        ...EXISTANCE_OPERATORS,
-      ],
+      operators: [...EXISTANCE_OPERATORS],
     },
     {
       name: 'Type',

@@ -8,6 +8,10 @@ import { Page } from '../containers/page/Page';
 import { SearchBar } from '../containers/search/SearchBar';
 import { SearchConfiguration } from '../containers/search/SearchConfiguration';
 
+const SEARCH_BAR_OPTIONS = {
+  filterMenuMaxHeight: '25vh',
+};
+
 export const HomePage = () => {
   return (
     <Page disableScrollbarGutter>
@@ -21,7 +25,7 @@ export const HomePage = () => {
           <SearchConfiguration header />
 
           <SearchBarContainer>
-            <SearchBar width="774px" />
+            <SearchBar width="774px" options={SEARCH_BAR_OPTIONS} />
             {/* Hide this for now. until we have flags */}
             {/* <SearchBarSwitch /> */}
           </SearchBarContainer>

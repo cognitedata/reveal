@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import isDateLodash from 'lodash/isDate';
 
 export const getTimestamp = (date: Date) => {
   return dayjs(date).valueOf();
@@ -10,7 +11,7 @@ export const getLocalDate = (value: Date | string) => {
 };
 
 export const isDate = (value: unknown): value is Date => {
-  return dayjs(value as Date).isValid();
+  return isDateLodash(value) && dayjs(value as Date).isValid();
 };
 
 export const formatDate = (

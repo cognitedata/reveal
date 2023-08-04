@@ -21,21 +21,21 @@ export const buildFilterByDataType = (
 };
 
 export const buildFilterByField = (valueByField: ValueByField = {}) => {
-  const filters = Object.entries(valueByField).reduce(
-    (result, [field, { operator, value }]) => {
+  const filters = Object.entries(valueByField).map(
+    ([field, { operator, value }]) => {
       const builder = builders[operator];
       const build = builder(field, value);
 
-      return {
-        ...result,
-        ...build,
-      };
-    },
-    {} as Record<string, unknown>
+      return build;
+    }
   );
 
   if (isEmpty(filters)) {
     return undefined;
+  }
+
+  if (filters.length === 1) {
+    return filters[0];
   }
 
   return { and: filters };

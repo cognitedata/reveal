@@ -1,6 +1,6 @@
 {
   "name": "@cognite/login-utils",
-  "version": "5.2.0",
+  "version": "5.2.1",
   "license": "UNLICENSED",
   "sideEffects": false,
   "peerDependencies": {

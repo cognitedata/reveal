@@ -25,6 +25,7 @@ export interface TimeseriesChartProps {
    * English (en) by default.
    */
   language?: 'en';
+  inverted?: boolean;
 }
 
 export type TimeseriesItem = IdEither & {

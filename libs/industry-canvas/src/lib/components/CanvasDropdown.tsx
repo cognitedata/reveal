@@ -229,6 +229,7 @@ const CanvasDropdown: React.FC<CanvasDropdownProps> = ({
                     )
                     .map((canvas) => (
                       <CanvasSubmenu
+                        key={`canvas-dropdown-submenu-${canvas.externalId}`}
                         canvas={canvas}
                         isActiveCanvas={false}
                         isCanvasLocked={isCanvasLocked}
