@@ -63,14 +63,8 @@ export async function queryMappedData<NodeType>(
   const dataView =
     inspectionResult.items[0]?.inspectionResults.involvedViewsAndContainers?.views[0];
 
-  const nodeData = await filterNodeData<NodeType>(fdmClient, dataNode, dataView);
-
-  if (nodeData === undefined) {
-    return undefined;
-  }
-
   return {
-    data: nodeData,
+    nodeExternalId: dataNode.externalId,
     view: dataView,
     cadNode: selectedNode,
     intersection: cadIntersection
