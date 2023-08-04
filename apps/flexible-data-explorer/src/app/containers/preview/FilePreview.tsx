@@ -30,7 +30,7 @@ export const FilePreview: React.FC<Props> = ({ id }) => {
   const { t } = useTranslation();
   const { toFilePage } = useNavigation();
 
-  const { openInCanvas } = useOpenIn();
+  const { openAssetCentricResourceItemInCanvas } = useOpenIn();
 
   const { data, isLoading } = useFileByIdQuery(id);
 
@@ -41,7 +41,7 @@ export const FilePreview: React.FC<Props> = ({ id }) => {
   };
 
   const handleNavigateToCanvasClick = () => {
-    openInCanvas({ type: 'file', id: data?.id });
+    openAssetCentricResourceItemInCanvas({ id: data?.id, type: 'file' });
   };
 
   const renderContent = () => {

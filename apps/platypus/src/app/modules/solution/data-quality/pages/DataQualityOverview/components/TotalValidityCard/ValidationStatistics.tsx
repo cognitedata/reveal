@@ -10,7 +10,7 @@ import {
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
-import { Body, Divider, Flex, Micro, Title, Tooltip } from '@cognite/cogs.js';
+import { Body, Divider, Flex, Heading, Tooltip } from '@cognite/cogs.js';
 
 import { LastValidationTime, ValidationDifference } from '..';
 
@@ -67,7 +67,7 @@ export const ValidationStatistics = ({
     >
       <Flex direction="column" gap={4}>
         <Flex alignItems="center" direction="row" gap={8}>
-          <Title>{scoreValue}</Title>
+          <Heading>{scoreValue}</Heading>
           <ValidationDifference tsDatapoints={scoreDatapoints} showStaleState />
         </Flex>
         <LastValidationTime
@@ -89,18 +89,18 @@ export const ValidationStatistics = ({
               'items checked'
             )}`}
           >
-            <Title>{abbreviateNumber(totalInstancesValue)}</Title>
+            <Heading>{abbreviateNumber(totalInstancesValue)}</Heading>
           </Tooltip>
-          <Body level={6}>
+          <Body size="x-small">
             {t('data_quality_items_checked', 'items checked')}
           </Body>
           <ValidationDifference tsDatapoints={totalInstancesDatapoints} />
         </Flex>
 
         <Flex alignItems="center" direction="row" gap={8}>
-          <Micro muted level={5}>
+          <Body size="x-small" muted>
             {`${rulesCount} ${rulesText}`}
-          </Micro>
+          </Body>
         </Flex>
       </Flex>
     </Flex>

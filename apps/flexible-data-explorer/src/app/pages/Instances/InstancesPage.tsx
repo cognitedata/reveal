@@ -1,10 +1,15 @@
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { ContainerReferenceType } from '@fusion/industry-canvas';
+
+import { Button } from '../../components/buttons/Button';
+import { Dropdown } from '../../components/dropdown/Dropdown';
 import { Page } from '../../containers/page/Page';
 import { PropertiesWidget } from '../../containers/widgets/Properties/PropertiesWidget';
 import { RelationshipDirectWidget } from '../../containers/widgets/RelationshipDirect/RelationshipDirect';
 import { RelationshipEdgesWidget } from '../../containers/widgets/RelationshipEdges/RelationshipEdgesWidget';
+import { useOpenIn } from '../../hooks/useOpenIn';
 import { useRecentlyVisited } from '../../hooks/useRecentlyVisited';
 import { useFDM } from '../../providers/FDMProvider';
 import { useInstancesQuery } from '../../services/instances/generic/queries/useInstanceByIdQuery';
@@ -13,8 +18,31 @@ export const InstancesPage = () => {
   const { dataType, dataModel, space, version } = useParams();
   const client = useFDM();
   const { data, isLoading, isFetched, status } = useInstancesQuery();
+  const { openContainerReferenceInCanvas } = useOpenIn();
 
   const [, setRecentlyVisited] = useRecentlyVisited();
+
+  const handleNavigateToCanvasClick = () => {
+    if (!data?.externalId) {
+      console.error("Can't open instance in canvas without an external id");
+      return;
+    }
+    if (!data?.space || !space) {
+      console.error("Can't open in canvas without a space");
+      return;
+    }
+    if (!dataType) {
+      console.error("Can't open in canvas without a data type");
+      return;
+    }
+    openContainerReferenceInCanvas({
+      type: ContainerReferenceType.FDM_INSTANCE,
+      instanceExternalId: data.externalId,
+      instanceSpace: data.space,
+      viewExternalId: dataType,
+      viewSpace: space,
+    });
+  };
 
   const directRelationships = client.getDirectRelationships(dataType, {
     dataModel,
@@ -42,6 +70,14 @@ export const InstancesPage = () => {
       name={data?.name}
       description={data?.description}
       loading={isLoading}
+      renderActions={() => [
+        <Dropdown.OpenIn
+          onCanvasClick={handleNavigateToCanvasClick}
+          disabled={isLoading}
+        >
+          <Button.OpenIn loading={isLoading} />
+        </Dropdown.OpenIn>,
+      ]}
     >
       <Page.Widgets>
         {directRelationships?.map((item) => (

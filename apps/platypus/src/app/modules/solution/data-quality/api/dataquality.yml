@@ -965,6 +965,10 @@ components:
         name:
           description: "The name of the rule"
           type: string
+        rulesetId:
+          description: "The external-id of the ruleset connected to the rule"
+          allOf:
+          - $ref: "#/components/schemas/ExternalId"
         severity:
           description: "The severity of the rule"
           allOf:

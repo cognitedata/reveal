@@ -10,7 +10,7 @@ import { BasicPlaceholder } from '@platypus-app/components/BasicPlaceholder/Basi
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
-import { Body, Detail, Flex, Overline } from '@cognite/cogs.js';
+import { Body, Flex, Overline } from '@cognite/cogs.js';
 
 import { ValidationGraph } from './ValidationGraph';
 import { ValidationStatistics } from './ValidationStatistics';
@@ -43,20 +43,20 @@ export const TotalValidityCard = () => {
             'Something went wrong. The validity score of the data source could not be loaded.'
           )}
         >
-          <Body level={5}>{JSON.stringify(errorRules)}</Body>
+          <Body size="small">{JSON.stringify(errorRules)}</Body>
         </BasicPlaceholder>
       );
 
     if (noValidationScore)
       return (
-        <Detail muted>
+        <Body muted size="x-small">
           <i>
             {t(
               'data_quality_no_score',
               'No score yet. Validate now to get the quality of your data.'
             )}
           </i>
-        </Detail>
+        </Body>
       );
 
     return (
@@ -73,7 +73,7 @@ export const TotalValidityCard = () => {
   return (
     <Flex>
       <Card>
-        <Overline level={3}>
+        <Overline size="small">
           {t('data_quality_total_validity', 'Total validity')}
         </Overline>
 

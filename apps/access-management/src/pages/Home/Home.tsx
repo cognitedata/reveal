@@ -27,9 +27,18 @@ export default function () {
   const isFetching = useIsFetching();
   const isMutating = useIsMutating();
 
-  const { data: projectsRead } = usePermissions('projectsAcl', 'READ');
-  const { data: groupsRead } = usePermissions('groupsAcl', 'LIST');
-  const { data: secCatRead } = usePermissions('securityCategoriesAcl', 'LIST');
+  const { data: projectsRead, isFetched: isProjectsFetched } = usePermissions(
+    'projectsAcl',
+    'READ'
+  );
+  const { data: groupsRead, isFetched: isGroupsFetched } = usePermissions(
+    'groupsAcl',
+    'LIST'
+  );
+  const { data: secCatRead, isFetched: isSecCatReacFetched } = usePermissions(
+    'securityCategoriesAcl',
+    'LIST'
+  );
 
   const params = useParams<{
     tenant: string;
@@ -44,7 +53,7 @@ export default function () {
   const isUnsupportedCluster =
     env === 'sapc-01' || env === 'openfield' || env === 'okd-dev-01';
 
-  if (isFetching) {
+  if (!isProjectsFetched || !isGroupsFetched || !isSecCatReacFetched) {
     return <Loader />;
   }
 

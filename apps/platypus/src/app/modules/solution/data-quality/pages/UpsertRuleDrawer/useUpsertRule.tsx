@@ -6,6 +6,7 @@ import {
   useUpdateRules,
 } from '@data-quality/api/codegen';
 import { useLoadDataSource, useLoadRules } from '@data-quality/hooks';
+import { getDefaultRulesetId } from '@data-quality/utils/namingPatterns';
 import { Notification } from '@platypus-app/components/Notification/Notification';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { isEqual } from 'lodash';
@@ -31,7 +32,7 @@ export const useUpsertRule = () => {
   const { refetchRules } = useLoadRules();
 
   // Use a default ruleset for now
-  const rulesetId = `${dataSource?.externalId}_default`;
+  const rulesetId = getDefaultRulesetId(dataSource?.externalId);
   const { ruleset } = useLoadRuleset({ rulesetId: rulesetId });
 
   const { isLoading: createRulesLoading, mutateAsync: createRuleMutation } =

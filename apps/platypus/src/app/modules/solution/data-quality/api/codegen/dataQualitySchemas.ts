@@ -438,6 +438,14 @@ export type RuleDto = {
    */
   name: string;
   /**
+   * The external-id of the ruleset connected to the rule
+   *
+   * @pattern ^[a-zA-Z]([a-zA-Z0-9_]{0,253}[a-zA-Z0-9])?$
+   * @minLength 1
+   * @maxLength 255
+   */
+  rulesetId?: ExternalId;
+  /**
    * The severity of the rule
    */
   severity: RuleSeverity;
