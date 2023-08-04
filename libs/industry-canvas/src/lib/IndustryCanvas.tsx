@@ -315,6 +315,7 @@ export const IndustryCanvas = ({
         tooltips={tooltips}
         onClick={onStageClick}
         shouldShowZoomControls={false}
+        shouldUseAdaptiveRendering
         setRef={handleRef}
         tool={tool}
         onSelect={handleSelect}
