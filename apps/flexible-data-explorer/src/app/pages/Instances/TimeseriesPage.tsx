@@ -16,7 +16,7 @@ import { useTimeseriesByIdQuery } from '../../services/instances/timeseries/quer
 export const TimeseriesPage = () => {
   const { externalId } = useParams();
   const [, setRecentlyVisited] = useRecentlyVisited();
-  const { openInCanvas, openInCharts } = useOpenIn();
+  const { openAssetCentricResourceItemInCanvas, openInCharts } = useOpenIn();
 
   const { data, isLoading, isFetched } = useTimeseriesByIdQuery(externalId);
 
@@ -29,7 +29,7 @@ export const TimeseriesPage = () => {
   };
 
   const handleNavigateToCanvasClick = () => {
-    openInCanvas({ id: data?.id, type: 'timeSeries' });
+    openAssetCentricResourceItemInCanvas({ id: data?.id, type: 'timeSeries' });
   };
 
   const handleNavigateToChartsClick = () => {

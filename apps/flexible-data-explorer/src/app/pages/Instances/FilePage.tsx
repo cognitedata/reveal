@@ -12,12 +12,12 @@ import { useFileByIdQuery } from '../../services/instances/file/queries/useFileB
 export const FilePage = () => {
   const { externalId } = useParams();
   const [, setRecentlyVisited] = useRecentlyVisited();
-  const { openInCanvas } = useOpenIn();
+  const { openAssetCentricResourceItemInCanvas } = useOpenIn();
 
   const { data, isLoading, isFetched } = useFileByIdQuery(externalId);
 
   const handleNavigateToCanvasClick = () => {
-    openInCanvas({ id: data?.id, type: 'file' });
+    openAssetCentricResourceItemInCanvas({ id: data?.id, type: 'file' });
   };
 
   useEffect(() => {

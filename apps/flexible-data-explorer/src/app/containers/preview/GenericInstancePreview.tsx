@@ -1,7 +1,13 @@
 import React, { Suspense, useState } from 'react';
 
+import { ContainerReferenceType } from '@fusion/industry-canvas';
+
+import { Button } from '@cognite/cogs.js';
+
+import { Dropdown } from '../../components/dropdown/Dropdown';
 import { Spinner } from '../../components/loader/Spinner';
 import { useNavigation } from '../../hooks/useNavigation';
+import { useOpenIn } from '../../hooks/useOpenIn';
 import { useTranslation } from '../../hooks/useTranslation';
 import { useInstancesQuery } from '../../services/instances/generic/queries/useInstanceByIdQuery';
 
@@ -22,6 +28,7 @@ export const GenericInstancePreview: React.FC<InstancePreviewProps> = ({
 }) => {
   const { t } = useTranslation();
   const { toInstancePage } = useNavigation();
+  const { openContainerReferenceInCanvas } = useOpenIn();
 
   const [view, setView] = useState<
     'properties' | { type: string; field: string } | undefined
@@ -31,6 +38,26 @@ export const GenericInstancePreview: React.FC<InstancePreviewProps> = ({
     instance,
     model: dataModel,
   });
+
+  const handleOpenInCanvas = () => {
+    // ensure "instance" object is not empty
+    if (
+      instance?.dataType === undefined ||
+      instance?.externalId === undefined ||
+      instance?.instanceSpace === undefined ||
+      dataModel?.space === undefined
+    ) {
+      return;
+    }
+
+    openContainerReferenceInCanvas({
+      type: ContainerReferenceType.FDM_INSTANCE,
+      instanceExternalId: instance.externalId,
+      instanceSpace: instance.instanceSpace,
+      viewExternalId: instance.dataType,
+      viewSpace: dataModel.space,
+    });
+  };
 
   const handleOpenClick = () => {
     // ensure "instance" object is not empty
@@ -100,6 +127,13 @@ export const GenericInstancePreview: React.FC<InstancePreviewProps> = ({
         </InstancePreviewContent>
 
         <InstancePreviewFooter>
+          <Dropdown.OpenIn
+            placement="top"
+            onCanvasClick={handleOpenInCanvas}
+            disabled={isLoading}
+          >
+            <Button icon="EllipsisHorizontal" />
+          </Dropdown.OpenIn>
           <OpenButton type="primary" onClick={handleOpenClick}>
             {t('GENERAL_OPEN')}
           </OpenButton>

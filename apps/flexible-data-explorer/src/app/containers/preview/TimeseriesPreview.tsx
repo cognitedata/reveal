@@ -39,7 +39,7 @@ const getTimeseriesId = (id: string | number) => {
 export const TimeseriesPreview: React.FC<Props> = ({ id }) => {
   const { t } = useTranslation();
   const { toTimeseriesPage } = useNavigation();
-  const { openInCanvas, openInCharts } = useOpenIn();
+  const { openAssetCentricResourceItemInCanvas, openInCharts } = useOpenIn();
 
   const { data, isLoading } = useTimeseriesByIdQuery(id);
 
@@ -50,7 +50,7 @@ export const TimeseriesPreview: React.FC<Props> = ({ id }) => {
   };
 
   const handleNavigateToCanvasClick = () => {
-    openInCanvas({ type: 'timeSeries', id: data?.id });
+    openAssetCentricResourceItemInCanvas({ id: data?.id, type: 'timeSeries' });
   };
 
   const handleNavigateToChartsClick = () => {

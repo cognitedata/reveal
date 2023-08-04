@@ -1,5 +1,7 @@
 import { useCallback } from 'react';
 
+import { resourceItemToContainerReference } from '@fusion/industry-canvas';
+
 import { DateRange } from '../containers/Filter';
 import { ResourceItem } from '../types';
 
@@ -7,18 +9,6 @@ import { useNavigation } from './useNavigation';
 
 export const useOpenIn = () => {
   const { toCanvas, toCharts } = useNavigation();
-
-  const openInCanvas = useCallback(
-    (resource?: ResourceItem) => {
-      if (!resource?.id) {
-        console.error("Can't open in canvas without an id");
-        return;
-      }
-
-      toCanvas(resource);
-    },
-    [toCanvas]
-  );
 
   const openInCharts = useCallback(
     (id?: number, dateRange?: DateRange) => {
@@ -32,5 +22,22 @@ export const useOpenIn = () => {
     [toCharts]
   );
 
-  return { openInCanvas, openInCharts };
+  const openAssetCentricResourceItemInCanvas = useCallback(
+    (item: ResourceItem) => {
+      if (!item?.id) {
+        console.error("Can't open resource in canvas without an id");
+        return;
+      }
+      toCanvas(
+        resourceItemToContainerReference({ id: item.id, type: item.type })
+      );
+    },
+    [toCanvas]
+  );
+
+  return {
+    openContainerReferenceInCanvas: toCanvas,
+    openAssetCentricResourceItemInCanvas,
+    openInCharts,
+  };
 };

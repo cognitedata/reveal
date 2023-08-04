@@ -1,11 +1,10 @@
 import { useCallback, useMemo } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
-import { resourceItemToContainerReference } from '@fusion/industry-canvas';
+import { ContainerReference } from '@fusion/industry-canvas';
 import queryString from 'query-string';
 
 import { DateRange, ValueByDataType } from '../containers/Filter';
-import { ResourceItem } from '../types';
 import { createSearchParams } from '../utils/router';
 
 import { useGetChartsUrl, useGetCanvasUrl } from './useUrl';
@@ -175,10 +174,10 @@ export const useNavigation = () => {
     window.open(`${chartsUrl}&${query}`, '_blank');
   };
 
-  const toCanvas = (item: ResourceItem) => {
+  const toCanvas = (containerReference: ContainerReference) => {
     // Fix the 'any'...
     const initializeWithContainerReferences = btoa(
-      JSON.stringify([resourceItemToContainerReference(item as any)])
+      JSON.stringify([containerReference])
     );
 
     const query = queryString.stringify({

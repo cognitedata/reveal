@@ -35,5 +35,5 @@ export const useGetCanvasUrl = () => {
 
   const { cluster, organization, project } = useAuth();
 
-  return `https://${organization}.${FUSION_URL}/${project}/industrial-canvas/canvas?cluster=${cluster}&env=${env}`;
+  return `https://${organization}.${FUSION_URL}/${project}/industrial-canvas?cluster=${cluster}&env=${env}`;
 };
