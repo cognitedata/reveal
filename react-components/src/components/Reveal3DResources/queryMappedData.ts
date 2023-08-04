@@ -8,21 +8,19 @@ import {
   type EdgeItem,
   type InspectResultList,
   type FdmSDK,
-  type DmsUniqueIdentifier,
-  type Source,
-  type FdmNode
+  type DmsUniqueIdentifier
 } from '../../utilities/FdmSDK';
 import { type FdmAssetMappingsConfig } from '../../hooks/types';
 import { type NodeDataResult } from './types';
 import assert from 'assert';
 
-export async function queryMappedData<NodeType>(
+export async function queryMappedData(
   viewer: Cognite3DViewer,
   cdfClient: CogniteClient,
   fdmClient: FdmSDK,
   clickEvent: PointerEventData,
   fdmConfig?: FdmAssetMappingsConfig
-): Promise<NodeDataResult<NodeType> | undefined> {
+): Promise<NodeDataResult | undefined> {
   if (fdmConfig === undefined) {
     throw Error('Must supply fdmConfig when using FDM queries');
   }
@@ -67,14 +65,8 @@ export async function queryMappedData<NodeType>(
   const dataView =
     inspectionResult.items[0]?.inspectionResults.involvedViewsAndContainers?.views[0];
 
-  const nodeData = await filterNodeData<NodeType>(fdmClient, dataNode, dataView);
-
-  if (nodeData === undefined) {
-    return undefined;
-  }
-
   return {
-    data: nodeData,
+    nodeExternalId: dataNode.externalId,
     view: dataView,
     cadNode: selectedNode,
     intersection: cadIntersection
@@ -156,21 +148,4 @@ async function inspectNode(
   });
 
   return inspectionResult;
-}
-
-async function filterNodeData<NodeType>(
-  fdmClient: FdmSDK,
-  dataNode: DmsUniqueIdentifier,
-  dataView: Source
-): Promise<FdmNode<NodeType> | undefined> {
-  if (dataView === undefined) {
-    return undefined;
-  }
-
-  const dataQueryResult = await fdmClient.getByExternalIds<NodeType>(
-    [{ instanceType: 'node', ...dataNode }],
-    dataView
-  );
-
-  return dataQueryResult.items[0];
 }

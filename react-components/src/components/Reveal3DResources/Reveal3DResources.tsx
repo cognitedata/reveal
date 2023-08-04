@@ -39,19 +39,19 @@ export type Reveal3DResourcesStyling = {
   groups?: FdmAssetStylingGroup[];
 };
 
-export type Reveal3DResourcesProps<NodeType = any> = {
+export type Reveal3DResourcesProps = {
   resources: AddResourceOptions[];
   fdmAssetMappingConfig?: FdmAssetMappingsConfig;
   styling?: Reveal3DResourcesStyling;
-  onNodeClick?: (node: NodeDataResult<NodeType> | undefined) => void;
+  onNodeClick?: (node: NodeDataResult | undefined) => void;
 };
 
-export const Reveal3DResources = <NodeType = any,>({
+export const Reveal3DResources = ({
   resources,
   styling,
   fdmAssetMappingConfig,
   onNodeClick
-}: Reveal3DResourcesProps<NodeType>): ReactElement => {
+}: Reveal3DResourcesProps): ReactElement => {
   const [reveal3DModels, setReveal3DModels] = useState<TypedReveal3DModel[]>([]);
   const [reveal3DModelsStyling, setReveal3DModelsStyling] = useState<
     Array<PointCloudModelStyling | CadModelStyling>
@@ -77,13 +77,7 @@ export const Reveal3DResources = <NodeType = any,>({
     const callback = (event: PointerEventData): void => {
       void (async (event: PointerEventData): Promise<void> => {
         if (onNodeClick === undefined) return;
-        const data = await queryMappedData<NodeType>(
-          viewer,
-          client,
-          fdmSdk,
-          event,
-          fdmAssetMappingConfig
-        );
+        const data = await queryMappedData(viewer, client, fdmSdk, event, fdmAssetMappingConfig);
 
         onNodeClick(data);
       })(event);
