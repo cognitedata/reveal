@@ -1,7 +1,8 @@
 import { clearLoginHints, generateRedirectUri } from '@cognite/auth-react';
-import { isUsingUnifiedSignin } from '@cognite/cdf-utilities';
 
 import { ProjectList, TokenInspect } from '../types';
+
+import { isUsingUnifiedSignin } from './isUsingUnifiedSignin';
 
 export const redirectToApp = (
   projectName: string,
