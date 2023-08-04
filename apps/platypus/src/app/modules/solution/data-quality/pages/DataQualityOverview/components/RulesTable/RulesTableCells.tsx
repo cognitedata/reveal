@@ -9,7 +9,7 @@ import {
   getTimeSeriesId,
 } from '@data-quality/utils/validationTimeseries';
 
-import { A, Body, Chip, Flex, Icon, Title } from '@cognite/cogs.js';
+import { A, Body, Chip, Flex, Heading, Icon } from '@cognite/cogs.js';
 import { Datapoints } from '@cognite/sdk/dist/src';
 
 import { ValidationDifference } from '..';
@@ -44,9 +44,9 @@ type CellProps = {
 
 export const NameCell = ({ onClick, ruleName }: NameCellProps) => {
   return (
-    <Title level={5}>
+    <Heading level={5}>
       <A onClick={onClick}>{ruleName}</A>
-    </Title>
+    </Heading>
   );
 };
 
@@ -119,14 +119,14 @@ const Cell = ({ isLoading, value, children }: CellProps) => {
 
   if (value === undefined)
     return (
-      <Body level={2} muted>
+      <Body size="small" muted>
         <i>No data found</i>
       </Body>
     );
 
   return (
     <Flex alignItems="center" direction="row" gap={8}>
-      <Body level={2}>{value?.toLocaleString()}</Body>
+      <Body size="small">{value?.toLocaleString()}</Body>
       {children}
     </Flex>
   );

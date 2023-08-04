@@ -67,7 +67,7 @@ export const DataQualityHome = () => {
             'Something went wrong. The data source could not be loaded.'
           )}
         >
-          <Body level={5}>{JSON.stringify(error?.stack?.error)}</Body>
+          <Body size="small">{JSON.stringify(error?.stack?.error)}</Body>
         </BasicPlaceholder>
       );
 

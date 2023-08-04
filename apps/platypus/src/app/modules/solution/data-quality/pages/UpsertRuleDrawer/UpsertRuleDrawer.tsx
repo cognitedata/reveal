@@ -6,11 +6,11 @@ import {
   Divider,
   Drawer,
   Flex,
+  Heading,
   InputExp,
   OptionType,
   Select,
   Textarea,
-  Title,
 } from '@cognite/cogs.js';
 
 import {
@@ -91,9 +91,9 @@ export const UpsertRuleDrawer = ({
       <Flex direction="column" gap={24}>
         {/* Rule name, error message, severity, description */}
         <Flex direction="column" gap={16}>
-          <Title level={5}>
+          <Heading level={5}>
             {t('data_quality_general_information', 'General information')}
-          </Title>
+          </Heading>
           <Flex direction="column" gap={16}>
             <InputExp
               clearable
@@ -164,7 +164,9 @@ export const UpsertRuleDrawer = ({
 
         {/* Data type, rule conditions */}
         <Flex direction="column" gap={16}>
-          <Title level={5}>{t('data_quality_rule_setup', 'Rule setup')}</Title>
+          <Heading level={5}>
+            {t('data_quality_rule_setup', 'Rule setup')}
+          </Heading>
           <Flex direction="column" gap={16}>
             <InputExp
               clearable
