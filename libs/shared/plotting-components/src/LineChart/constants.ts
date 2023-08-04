@@ -1,11 +1,14 @@
 import { CSSProperties } from 'react';
 
+import { Colors } from '@cognite/cogs.js';
+
 export const PLOT_CLASSNAME = 'nsewdrag drag';
 
 export const DEFAULT_BACKGROUND_COLOR = 'var(--cogs-surface--medium)';
 
 export const TICK_COLOR = 'var(--cogs-border--muted)';
 export const LABEL_COLOR = 'var(--cogs-text-icon--muted)';
+export const INVERTED_LABEL_COLOR = Colors['text-icon--on-contrast--strong'];
 
 export const TITLE_COLOR = 'var(--cogs-text-icon--strong)';
 export const SUBTITLE_COLOR = 'var(--cogs-text-icon--medium)';

@@ -1,4 +1,4 @@
-import {
+import React, {
   Dispatch,
   SetStateAction,
   useCallback,
@@ -26,12 +26,14 @@ import {
 
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
 
+import { RuleType } from '../components/ContextualTooltips/AssetTooltip/types';
 import {
   SHAMEFUL_WAIT_TO_ENSURE_ANNOTATIONS_ARE_RENDERED_MS,
   ZOOM_TO_FIT_MARGIN,
   ZOOM_DURATION_SECONDS,
   MetricEvent,
 } from '../constants';
+import { OnOpenConditionalFormattingClick } from '../IndustryCanvas';
 import { useIndustryCanvasContext } from '../IndustryCanvasContext';
 import { useCommentsUpsertMutation } from '../services/comments/hooks';
 import { CommentTargetType } from '../services/comments/types';
@@ -76,6 +78,36 @@ type UpdateHandlerFn =
 type DeleteHandlerFn =
   UnifiedViewerEventListenerMap[UnifiedViewerEventType.ON_DELETE_REQUEST];
 
+export type OnLiveSensorRulesChange = ({
+  annotationId,
+  timeseriesId,
+  rules,
+}: {
+  annotationId: string;
+  timeseriesId: number;
+  rules: RuleType[];
+}) => void;
+
+export type IsConditionalFormattingOpenByAnnotationIdByTimeseriesId = Record<
+  string,
+  Record<number, boolean>
+>;
+
+export type OnCloseConditionalFormattingClick = () => void;
+
+export type LiveSensorRulesByAnnotationIdByTimeseriesId = Record<
+  string,
+  Record<number, RuleType[]>
+>;
+
+export type OnToggleConditionalFormatting = ({
+  annotationId,
+  timeseriesId,
+}: {
+  annotationId: string;
+  timeseriesId: number;
+}) => void;
+
 export type UseManagedStateReturnType = {
   container: IndustryCanvasContainerConfig;
   canvasAnnotations: CanvasAnnotation[];
@@ -95,6 +127,20 @@ export type UseManagedStateReturnType = {
   setInteractionState: Dispatch<SetStateAction<InteractionState>>;
   clickedContainerAnnotation: ExtendedAnnotation | undefined;
   containerAnnotations: ExtendedAnnotation[];
+  pinnedTimeseriesIdsByAnnotationId: Record<string, number[]>;
+  onPinTimeseriesClick: ({
+    annotationId,
+    timeseriesId,
+  }: {
+    annotationId: string;
+    timeseriesId: number;
+  }) => void;
+  liveSensorRulesByAnnotationIdByTimeseriesId: LiveSensorRulesByAnnotationIdByTimeseriesId;
+  onLiveSensorRulesChange: OnLiveSensorRulesChange;
+  isConditionalFormattingOpenAnnotationIdByTimeseriesId: IsConditionalFormattingOpenByAnnotationIdByTimeseriesId;
+  onOpenConditionalFormattingClick: OnOpenConditionalFormattingClick;
+  onCloseConditionalFormattingClick: OnCloseConditionalFormattingClick;
+  onToggleConditionalFormatting: OnToggleConditionalFormatting;
 };
 
 const transformRecursive = <T extends { children?: T[] }>(
@@ -664,6 +710,131 @@ const useManagedState = ({
     [containerAnnotations, interactionState.clickedContainerAnnotationId]
   );
 
+  const [
+    isConditionalFormattingOpenAnnotationIdByTimeseriesId,
+    setIsConditionalFormattingOpenByAnnotationIdByTimeseriesId,
+  ] = React.useState<IsConditionalFormattingOpenByAnnotationIdByTimeseriesId>(
+    {}
+  );
+
+  const onOpenConditionalFormattingClick: OnOpenConditionalFormattingClick =
+    useCallback(
+      ({ annotationId, timeseriesId }) => {
+        setIsConditionalFormattingOpenByAnnotationIdByTimeseriesId({
+          [annotationId]: { [timeseriesId]: true },
+        });
+
+        // Kind of hacky, but using this to close the other popover.
+        // Will get fixed in the near future when we refactor the state
+        setInteractionState({
+          hoverId: undefined,
+          clickedContainerAnnotationId: undefined,
+        });
+      },
+      [setInteractionState]
+    );
+
+  const onCloseConditionalFormattingClick: OnCloseConditionalFormattingClick =
+    useCallback(() => {
+      setIsConditionalFormattingOpenByAnnotationIdByTimeseriesId({});
+    }, []);
+
+  useEffect(() => {
+    if (interactionState.clickedContainerAnnotationId !== undefined) {
+      // Again hacky side-effect, will be fixed when refactoring the state
+      onCloseConditionalFormattingClick();
+    }
+  }, [interactionState]);
+
+  const [
+    pinnedTimeseriesIdsByAnnotationId,
+    setPinnedTimeseriesIdsByAnnotationId,
+  ] = useState<Record<string, number[]>>({});
+  const onPinTimeseriesClick = useCallback(
+    ({
+      annotationId,
+      timeseriesId,
+    }: {
+      annotationId: string;
+      timeseriesId: number;
+    }) => {
+      setPinnedTimeseriesIdsByAnnotationId(
+        (prevPinnedTimeseriesIdsByAnnotationId) => {
+          const wasPinned =
+            prevPinnedTimeseriesIdsByAnnotationId[annotationId]?.includes(
+              timeseriesId
+            );
+
+          if (!wasPinned) {
+            // Shameful, will also be fixed when refactoring the state.
+            // Essentially we want to modify two pieces of state in the same place
+            onOpenConditionalFormattingClick({
+              annotationId,
+              timeseriesId,
+            });
+          }
+
+          return {
+            ...prevPinnedTimeseriesIdsByAnnotationId,
+            [annotationId]: wasPinned ? [] : [timeseriesId],
+          };
+        }
+      );
+    },
+    []
+  );
+
+  const [
+    liveSensorRulesByAnnotationIdByTimeseriesId,
+    setLiveSensorRulesByAnnotationIdByTimeseriesId,
+  ] = useState<LiveSensorRulesByAnnotationIdByTimeseriesId>({});
+
+  const onLiveSensorRulesChange: OnLiveSensorRulesChange = useCallback(
+    ({
+      annotationId,
+      timeseriesId,
+      rules,
+    }: {
+      annotationId: string;
+      timeseriesId: number;
+      rules: RuleType[];
+    }) => {
+      setLiveSensorRulesByAnnotationIdByTimeseriesId(
+        (prevLiveSensorRulesByAnnotationIdByTimeseriesId) => ({
+          ...prevLiveSensorRulesByAnnotationIdByTimeseriesId,
+          [annotationId]: {
+            ...prevLiveSensorRulesByAnnotationIdByTimeseriesId[annotationId],
+            [timeseriesId]: rules,
+          },
+        })
+      );
+    },
+    []
+  );
+
+  const onToggleConditionalFormatting: OnToggleConditionalFormatting =
+    useCallback(
+      ({ annotationId, timeseriesId }) =>
+        setIsConditionalFormattingOpenByAnnotationIdByTimeseriesId(
+          (prevState) => {
+            if (prevState[annotationId]?.[timeseriesId] !== undefined) {
+              return {};
+            }
+
+            setInteractionState({
+              hoverId: undefined,
+              clickedContainerAnnotationId: undefined,
+            });
+
+            return {
+              // NOTE: Intentionally only one
+              [annotationId]: { [timeseriesId]: true },
+            };
+          }
+        ),
+      []
+    );
+
   return {
     container: containerWithClickHandlers,
     canvasAnnotations: canvasState.canvasAnnotations,
@@ -678,6 +849,14 @@ const useManagedState = ({
     setInteractionState,
     clickedContainerAnnotation,
     containerAnnotations,
+    pinnedTimeseriesIdsByAnnotationId,
+    onPinTimeseriesClick,
+    liveSensorRulesByAnnotationIdByTimeseriesId,
+    onLiveSensorRulesChange,
+    isConditionalFormattingOpenAnnotationIdByTimeseriesId,
+    onOpenConditionalFormattingClick,
+    onCloseConditionalFormattingClick,
+    onToggleConditionalFormatting,
   };
 };
 

@@ -10,12 +10,16 @@ import { useTranslation } from '../../../hooks/useTranslation';
 
 type TimeseriesListProps = {
   assetId: number;
+  pinnedTimeseriesIds: number[]; // Currently only supports one, but more might come
+  onPinTimeseriesClick: (timeseriesId: number) => void;
   onAddTimeseries: (timeseriesId: number) => void;
   onFindRelatedTimeseries: () => void;
 };
 
 const TimeseriesList: React.FC<TimeseriesListProps> = ({
   assetId,
+  pinnedTimeseriesIds,
+  onPinTimeseriesClick,
   onAddTimeseries,
   onFindRelatedTimeseries,
 }) => {
@@ -58,35 +62,73 @@ const TimeseriesList: React.FC<TimeseriesListProps> = ({
         </Tooltip>
       </TimeseriesHeadline>
       <TimeseriesContainer>
-        {timeseries.map((ts, index) => (
-          <TimeseriesRow key={index}>
-            <InnerWrapper>
-              <ChartChip>
-                <Icon type="LineChart" size={16} />
-              </ChartChip>
-              <Name level={3}>{ts.name}</Name>
-            </InnerWrapper>
-            <Tooltip
-              position="right"
-              content={t(
-                translationKeys.TOOLTIP_TIMESERIES_ADD_TO_CANVAS,
-                'Add timeseries'
-              )}
-            >
-              <Button
-                type="ghost"
-                inverted
-                icon="Add"
-                size="medium"
-                aria-label={t(
+        {timeseries.map((ts, index) => {
+          const isPinned = pinnedTimeseriesIds.includes(ts.id);
+          return (
+            <TimeseriesRow key={index}>
+              <InnerWrapper>
+                <ChartChip>
+                  <Icon type="LineChart" size={16} />
+                </ChartChip>
+                <Name level={3}>{ts.name}</Name>
+              </InnerWrapper>
+
+              <Tooltip
+                position="right"
+                content={
+                  isPinned
+                    ? t(
+                        translationKeys.TOOLTIP_TIMESERIES_UNPIN_FROM_CANVAS,
+                        'Unpin latest value from canvas'
+                      )
+                    : t(
+                        translationKeys.TOOLTIP_TIMESERIES_PIN_TO_CANVAS,
+                        'Pin latest value to canvas'
+                      )
+                }
+              >
+                <Button
+                  type="ghost"
+                  inverted
+                  icon={isPinned ? 'PinAlternativeOff' : 'PinAlternative'}
+                  size="medium"
+                  aria-label={
+                    isPinned
+                      ? t(
+                          translationKeys.TOOLTIP_TIMESERIES_UNPIN_FROM_CANVAS,
+                          'Unpin latest value from canvas'
+                        )
+                      : t(
+                          translationKeys.TOOLTIP_TIMESERIES_PIN_TO_CANVAS,
+                          'Pin latest value to canvas'
+                        )
+                  }
+                  onClick={() => onPinTimeseriesClick(ts.id)}
+                />
+              </Tooltip>
+
+              <Tooltip
+                position="right"
+                content={t(
                   translationKeys.TOOLTIP_TIMESERIES_ADD_TO_CANVAS,
                   'Add timeseries'
                 )}
-                onClick={() => onAddTimeseries(ts.id)}
-              />
-            </Tooltip>
-          </TimeseriesRow>
-        ))}
+              >
+                <Button
+                  type="ghost"
+                  inverted
+                  icon="Add"
+                  size="medium"
+                  aria-label={t(
+                    translationKeys.TOOLTIP_TIMESERIES_ADD_TO_CANVAS,
+                    'Add timeseries'
+                  )}
+                  onClick={() => onAddTimeseries(ts.id)}
+                />
+              </Tooltip>
+            </TimeseriesRow>
+          );
+        })}
       </TimeseriesContainer>
     </Container>
   );
@@ -132,7 +174,6 @@ const TimeseriesHeadline = styled.div`
   justify-content: space-between;
   .badge {
     background: ${Colors['surface--action--muted--default--inverted']};
-    background: Co;
     padding: 2px 4px;
     text-align: center;
     border-radius: 4px;
