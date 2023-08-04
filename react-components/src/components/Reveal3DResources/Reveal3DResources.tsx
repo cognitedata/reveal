@@ -41,7 +41,7 @@ export type Reveal3DResourcesStyling = {
 
 export type Reveal3DResourcesProps<NodeType = any> = {
   resources: AddResourceOptions[];
-  fdmAssetMappingConfig: FdmAssetMappingsConfig;
+  fdmAssetMappingConfig?: FdmAssetMappingsConfig;
   styling?: Reveal3DResourcesStyling;
   onNodeClick?: (node: NodeDataResult<NodeType> | undefined) => void;
 };
