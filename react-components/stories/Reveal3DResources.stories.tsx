@@ -6,6 +6,7 @@ import { Reveal3DResources, RevealContainer } from '../src';
 import { Color, Matrix4 } from 'three';
 import { CameraController } from '../src/';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
+import { DefaultFdmConfig } from './utilities/fdmConfig';
 
 const meta = {
   title: 'Example/Reveal3DResources',
@@ -107,16 +108,7 @@ export const Main: Story = {
       }
     ],
     styling: {},
-    fdmAssetMappingConfig: {
-      source: {
-        space: 'fdm-3d-test-savelii',
-        version: '1',
-        type: 'view',
-        externalId: 'CDF_3D_Connection_Data'
-      },
-      assetFdmSpace: 'bark-corporation',
-      global3dSpace: 'hf_3d_global_data'
-    }
+    fdmAssetMappingConfig: DefaultFdmConfig
   },
   render: ({ resources, styling, fdmAssetMappingConfig }) => {
     return (

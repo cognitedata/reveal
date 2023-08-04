@@ -15,17 +15,7 @@ import { Color, Matrix4 } from 'three';
 import { type ReactElement, useState } from 'react';
 import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@cognite/reveal';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
-
-const DefaultFdmConfig: FdmAssetMappingsConfig = {
-  source: {
-    space: 'hf_3d_schema',
-    version: '1',
-    type: 'view',
-    externalId: 'cdf_3d_connection_data'
-  },
-  global3dSpace: 'hf_3d_global_data',
-  assetFdmSpace: 'hf_customer_a'
-};
+import { DefaultFdmConfig } from './utilities/fdmConfig';
 
 const meta = {
   title: 'Example/HighlightNode',
