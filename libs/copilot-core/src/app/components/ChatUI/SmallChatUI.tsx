@@ -1,37 +1,54 @@
 import { ResizableBox } from 'react-resizable';
 
+import styled from 'styled-components';
+
 import { BotUIMessageList, BotUIAction } from '@botui/react';
-import styled from 'styled-components/macro';
 
 import { Button, Flex, Icon } from '@cognite/cogs.js';
 
 import { useFromCache, useSaveToCache } from '../../hooks/useCache';
+import { useCopilotContext } from '../../hooks/useCopilotContext';
+import { useMetrics } from '../../hooks/useMetrics';
 import zIndex from '../../utils/zIndex';
 import { actionRenderers } from '../ActionRenderer';
 import { messageRenderers } from '../MessageRenderer';
 
+import { ChatHeader } from './ChatHeader';
+import { HistoryList } from './HistoryList';
+import { LoadingMessage } from './LoadingMessage';
+
+const MAX_WIDTH = window.innerWidth - 120;
+const MAX_HEIGHT = window.innerHeight - 120;
+
 export const SmallChatUI = ({
-  setIsExpanded,
   setShowOverlay,
-  onClose,
-  onReset,
 }: {
   setShowOverlay: (visible: boolean) => void;
-  setIsExpanded: (visible: boolean) => void;
-  onClose: () => void;
-  onReset: () => void;
 }) => {
+  const { mode } = useCopilotContext();
+
   const { data: dimensions, isLoading } = useFromCache<{
     width: number;
     height: number;
   }>('SMALL_CHATBOT_DIMENTIONS');
 
-  const { width, height } = dimensions || { width: 320, height: 400 };
+  const { width, height } =
+    dimensions &&
+    // make sure the dimensions are not bigger than the screen
+    dimensions.width <= MAX_WIDTH &&
+    dimensions.height <= MAX_HEIGHT
+      ? dimensions
+      : {
+          width: 320,
+          height: 400,
+        };
 
   const { mutate: saveToCache } = useSaveToCache<{
     width: number;
     height: number;
   }>('SMALL_CHATBOT_DIMENTIONS');
+
+  const { track } = useMetrics();
 
   if (isLoading) {
     return <Icon type="Loader" />;
@@ -42,11 +59,14 @@ export const SmallChatUI = ({
       width={width}
       height={height}
       minConstraints={[320, 400]}
+      maxConstraints={[MAX_WIDTH, MAX_HEIGHT]}
       resizeHandles={['nw']}
       onResizeStart={() => setShowOverlay(true)}
       onResizeStop={(_e, data) => {
+        track('RESIZE', { size: [data.size.width, data.size.height] });
         setShowOverlay(false);
         saveToCache(data.size);
+        window.dispatchEvent(new Event('small-resize'));
       }}
       handle={
         <Button
@@ -57,44 +77,18 @@ export const SmallChatUI = ({
         />
       }
     >
-      <Button
-        icon="ScaleUp"
-        aria-label="full screen"
-        onClick={() => setIsExpanded(true)}
-        className="react-resizable-handle react-resizable-handle-nw"
-        style={{
-          left: 48,
-          transform: 'translate(-50%, -50%)',
-          cursor: 'pointer',
-        }}
-      />
-      <Button
-        icon="ClearAll"
-        aria-label="reset"
-        onClick={() => onReset()}
-        className="react-resizable-handle react-resizable-handle-nw"
-        style={{
-          left: 98,
-          transform: 'translate(-50%, -50%)',
-          cursor: 'pointer',
-        }}
-      />
-      <Flex className="header" gap={6} alignItems="center">
-        <div style={{ flex: 1 }} />
-        <Button
-          icon="Close"
-          type="ghost"
-          onClick={onClose}
-          aria-label="close"
-        />
-      </Flex>
-      <Flex
-        direction="column"
-        style={{ overflow: 'auto', marginBottom: 8, flex: 1 }}
-      >
-        <BotUIMessageList renderer={messageRenderers} />
-      </Flex>
-      <BotUIAction renderer={actionRenderers} />
+      <ChatHeader style={{ padding: 16 }} />
+      {mode === 'chat' ? (
+        <>
+          <Flex direction="column" style={{ overflow: 'auto', flex: 1 }}>
+            <BotUIMessageList renderer={messageRenderers} />
+            <LoadingMessage />
+          </Flex>
+          <BotUIAction renderer={actionRenderers} />
+        </>
+      ) : (
+        <HistoryList />
+      )}
     </SmallChatBotWrapper>
   );
 };
@@ -106,69 +100,12 @@ const SmallChatBotWrapper = styled(ResizableBox)`
   right: 10px;
   background: #fff;
   margin-top: 16px;
-  padding: 16px;
   border-radius: 10px;
   box-shadow: 0px 1px 16px 4px rgba(79, 82, 104, 0.1),
     0px 1px 8px rgba(79, 82, 104, 0.08), 0px 1px 2px rgba(79, 82, 104, 0.24);
   display: flex;
   flex-direction: column;
 
-  .botui_message {
-    margin: 0;
-    margin-bottom: 8px;
-  }
-  .botui_message_content {
-    overflow: auto;
-  }
-  .botui_app_container {
-    width: 100%;
-    overflow: hidden;
-    flex: 1;
-    position: relative;
-    display: flex;
-  }
-  .botui_container {
-    height: auto;
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-  }
-  .botui_message_list {
-    padding: 0;
-    width: 100%;
-    > div {
-      /* height: 100%;
-      overflow: auto; */
-    }
-  }
-  .botui_action_container {
-    padding: 0;
-    min-height: 104px;
-    .botui_action {
-      padding: 0;
-    }
-  }
-  .cogs-textarea {
-    flex: 1;
-    height: 100px;
-  }
-  .botui_message_content {
-    background: #dadffc;
-  }
-  .botui_message_content.human {
-    background: #f5f5f5;
-  }
-  .cogs-textarea {
-    width: 100%;
-    textarea {
-      color: black !important;
-    }
-  }
-  pre {
-    overflow: hidden;
-    margin-bottom: 0;
-  }
   .react-resizable-handle-nw {
     background-image: none;
     transform: translate(-50%, -50%) rotate(90deg);
@@ -182,9 +119,7 @@ const SmallChatBotWrapper = styled(ResizableBox)`
       0px 1px 8px rgba(79, 82, 104, 0.08), 0px 1px 2px rgba(79, 82, 104, 0.24);
     cursor: nw-resize;
   }
-  &&:hover {
-    .react-resizable-handle-nw {
-      opacity: 1;
-    }
+  .react-resizable-handle:hover {
+    opacity: 1;
   }
 `;

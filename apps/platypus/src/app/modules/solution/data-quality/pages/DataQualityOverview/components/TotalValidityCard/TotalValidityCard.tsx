@@ -1,14 +1,18 @@
 import styled from 'styled-components';
 
-import { useLoadDataSource, useLoadRules } from '@data-quality/hooks';
+import {
+  useDataSourceValidity,
+  useLoadDataSource,
+  useLoadRules,
+} from '@data-quality/hooks';
 import { emptyDatapoints } from '@data-quality/utils/validationTimeseries';
 import { BasicPlaceholder } from '@platypus-app/components/BasicPlaceholder/BasicPlaceholder';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
-import { Body, Detail, Flex, Overline } from '@cognite/cogs.js';
+import { Body, Flex, Overline } from '@cognite/cogs.js';
 
-import { useDataSourceValidity } from './useDataSourceValidity';
+import { ValidationGraph } from './ValidationGraph';
 import { ValidationStatistics } from './ValidationStatistics';
 
 export const TotalValidityCard = () => {
@@ -36,41 +40,46 @@ export const TotalValidityCard = () => {
           type="EmptyStateFolderSad"
           title={t(
             'data_quality_not_found_ds_validity',
-            "Something went wrong. We couldn't load the validity of the data source."
+            'Something went wrong. The validity score of the data source could not be loaded.'
           )}
         >
-          <Body level={5}>{JSON.stringify(errorRules)}</Body>
+          <Body size="small">{JSON.stringify(errorRules)}</Body>
         </BasicPlaceholder>
       );
 
     if (noValidationScore)
       return (
-        <Detail muted>
+        <Body muted size="x-small">
           <i>
             {t(
               'data_quality_no_score',
               'No score yet. Validate now to get the quality of your data.'
             )}
           </i>
-        </Detail>
+        </Body>
       );
 
     return (
-      <Flex direction="column">
+      <Flex direction="column" gap={8}>
         <ValidationStatistics dataSourceId={dataSource.externalId} />
-        {/* Add here the graph */}
+        <ValidationGraph
+          dataSourceId={dataSource.externalId}
+          dsTimeseries={datapoints}
+        />
       </Flex>
     );
   };
 
   return (
-    <Card>
-      <Overline level={3}>
-        {t('data_quality_total_validity', 'Total validity')}
-      </Overline>
+    <Flex>
+      <Card>
+        <Overline size="small">
+          {t('data_quality_total_validity', 'Total validity')}
+        </Overline>
 
-      {renderContent()}
-    </Card>
+        {renderContent()}
+      </Card>
+    </Flex>
   );
 };
 
@@ -79,7 +88,7 @@ const Card = styled.div`
   box-shadow: var(--cogs-elevation--surface--interactive);
   overflow: auto;
   padding: 0.5rem 1.5rem 2rem 1.5rem;
-  width: min(40vw, 600px);
+  width: min(50vw, 600px);
 
   .cogs-overline-3 {
     margin-bottom: 1rem;

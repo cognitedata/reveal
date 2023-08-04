@@ -20,6 +20,8 @@ import moment from 'moment';
 import { getProject } from '@cognite/cdf-utilities';
 import { IconType, Colors } from '@cognite/cogs.js';
 
+import { parseDataModelKey } from './fdm';
+
 export const SUPPORTED_ACTIONS_FOR_DESTINATION_TYPES: Record<
   ResourceType,
   ConflictMode[]
@@ -68,9 +70,11 @@ export const getFilteredTransformationList = (
   searchValue: string,
   lastRunFilter: string[],
   scheduleFilter: ScheduleStatus[],
-  dataSetFilter: string
+  dataSetFilter: string,
+  dataModelFilter: string
 ) => {
   const hasSearch = Boolean(searchValue);
+
   return transformationList.filter((transformation) => {
     if (hasSearch) {
       // Check if the search matches.
@@ -123,6 +127,16 @@ export const getFilteredTransformationList = (
         transformation.dataSetId == Number(dataSetFilter);
       if (!includesAppliedFilter) return false;
     }
+
+    if (dataModelFilter) {
+      // Check ig the dataModel matches the filter.
+      const { externalId } = parseDataModelKey(dataModelFilter);
+      return (
+        transformation.destination.type === 'instances' &&
+        transformation.destination.dataModel.externalId === externalId
+      );
+    }
+
     return true;
   });
 };

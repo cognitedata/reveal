@@ -1,7 +1,8 @@
 import App from './app/App';
 import store from './app/redux/store';
-import sidecar from './app/utils/sidecar';
 import { AppContainer } from './environments/AppContainer';
+
+import './app/utils/sentry';
 
 //
 // Globally defined global
@@ -12,7 +13,7 @@ import { AppContainer } from './environments/AppContainer';
 function AppWrapper() {
   return (
     <>
-      <AppContainer sidecar={sidecar} store={store}>
+      <AppContainer store={store}>
         <App />
       </AppContainer>
     </>

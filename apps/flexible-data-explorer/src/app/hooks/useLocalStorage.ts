@@ -3,26 +3,28 @@ import useLocalStorageState from 'use-local-storage-state';
 import { useSDK } from '@cognite/sdk-provider';
 
 import { localStorageKeys } from '../constants/localStorageKeys';
-import { DataModel } from '../services/types';
+import { DataModelV2 } from '../services/types';
 
 import { RecentlyViewed } from './useRecentlyVisited';
 
-export const useDataModelLocalStorage = () => {
+export const useRecentlyVisitedLocalStorage = () => {
   const { project } = useSDK();
 
-  return useLocalStorageState<Required<DataModel> | undefined>(
-    localStorageKeys.dataModel(project),
+  return useLocalStorageState<RecentlyViewed[]>(
+    localStorageKeys.recentlyVisited(project),
     {
-      defaultValue: undefined,
+      defaultValue: [],
     }
   );
 };
 
-export const useRecentlyVisitedLocalStorage = () => {
-  return useLocalStorageState<RecentlyViewed[]>(
-    localStorageKeys.recentlyVisited(),
+export const useDataModelsLocalStorage = () => {
+  const { project } = useSDK();
+
+  return useLocalStorageState<DataModelV2[] | undefined>(
+    localStorageKeys.dataModels(project),
     {
-      defaultValue: [],
+      defaultValue: undefined,
     }
   );
 };

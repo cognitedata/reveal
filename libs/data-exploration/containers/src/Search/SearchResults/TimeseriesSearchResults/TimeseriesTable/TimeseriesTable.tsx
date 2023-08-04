@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import {
+  getHighlightQuery,
   getTableColumns,
   SubCellMatchingLabels,
   Table,
@@ -17,6 +18,7 @@ import {
   getHiddenColumns,
   RelationshipLabels,
   TIME_SELECT,
+  useGetSearchConfigFromLocalStorage,
   useTranslation,
 } from '@data-exploration-lib/core';
 import {
@@ -61,6 +63,8 @@ export const TimeseriesTable = ({
   const startTime = dateRange[0].getTime();
   const endTime = dateRange[1].getTime();
   const tableColumns = getTableColumns(t);
+  const timeSeriesSearchConfig =
+    useGetSearchConfigFromLocalStorage('timeSeries');
 
   const sparkLineColumn: ColumnDef<Timeseries & { data: any }> = useMemo(
     () => ({
@@ -73,7 +77,7 @@ export const TimeseriesTable = ({
 
         return (
           <TimeseriesChart
-            timeseriesId={timeseries.id}
+            timeseries={{ id: timeseries.id }}
             variant="small"
             dateRange={dateRange}
             numberOfPoints={100}
@@ -93,13 +97,21 @@ export const TimeseriesTable = ({
   const columns = useMemo(() => {
     return [
       {
-        ...tableColumns.name(query),
+        ...tableColumns.name(
+          getHighlightQuery(timeSeriesSearchConfig?.name.enabled, query)
+        ),
         enableHiding: false,
       },
-      tableColumns.description(query),
-      tableColumns.externalId(query),
+      tableColumns.description(
+        getHighlightQuery(timeSeriesSearchConfig?.description.enabled, query)
+      ),
+      tableColumns.externalId(
+        getHighlightQuery(timeSeriesSearchConfig?.externalId.enabled, query)
+      ),
       {
-        ...tableColumns.unit(query),
+        ...tableColumns.unit(
+          getHighlightQuery(timeSeriesSearchConfig?.unit.enabled, query)
+        ),
         enableSorting: false,
       },
       sparkLineColumn,
@@ -117,7 +129,9 @@ export const TimeseriesTable = ({
       },
       tableColumns.created,
       {
-        ...tableColumns.id(query),
+        ...tableColumns.id(
+          getHighlightQuery(timeSeriesSearchConfig?.id.enabled, query)
+        ),
         enableSorting: false,
       },
       {

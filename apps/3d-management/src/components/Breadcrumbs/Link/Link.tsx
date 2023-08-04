@@ -3,7 +3,7 @@ import { Link as RouterLink } from 'react-router-dom';
 
 import PropTypes from 'prop-types';
 
-import { createLink } from '../../../utils/cdf-utilities';
+import { createLink } from '@cognite/cdf-utilities';
 
 const propTypes = {
   to: PropTypes.oneOfType([

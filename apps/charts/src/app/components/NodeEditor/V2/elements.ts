@@ -1,7 +1,7 @@
 import Layers from '@charts-app/utils/z-index';
 import styled from 'styled-components/macro';
 
-import { Collapse } from '@cognite/cogs.js';
+import { Collapse, Button } from '@cognite/cogs.js';
 
 export const NodeEditorContainer = styled.div`
   width: 100%;
@@ -50,5 +50,21 @@ export const StyledCollapse = styled(Collapse)`
         margin-top: 0;
       }
     }
+  }
+`;
+
+export const DeleteSourceButton = styled(Button)`
+  width: 28px;
+  height: 28px;
+  box-sizing: content-box;
+  i {
+    color: var(--cogs-text-icon--status-critical);
+  }
+  &&& {
+    svg {
+      width: 14px;
+      height: 14px;
+    }
+    padding: 0;
   }
 `;

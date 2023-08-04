@@ -4,7 +4,7 @@ import { DraggableProvided } from 'react-beautiful-dnd';
 import AppearanceDropdown from '@charts-app/components/AppearanceDropdown/AppearanceDropdown';
 import { StyleButton } from '@charts-app/components/StyleButton/StyleButton';
 import UnitDropdown from '@charts-app/components/UnitDropdown/UnitDropdown';
-import { useScheduledCalculationDeleteMutate } from '@charts-app/domain/scheduled-calculation/service/queries/useScheduledCalculationDeleteMutate';
+import { useScheduledCalculationDeleteMutate } from '@charts-app/domain/scheduled-calculation/internal/queries/useScheduledCalculationDeleteMutate';
 import {
   useComponentTranslations,
   useTranslations,
@@ -21,9 +21,8 @@ import {
 } from '@charts-app/utils/translations';
 import { DatapointsSummary } from '@charts-app/utils/units';
 
-import { Button, toast, Tooltip } from '@cognite/cogs.js';
+import { Button, Tooltip } from '@cognite/cogs.js';
 
-import { useTimeseriesDeleteMutate } from '../../domain/scheduled-calculation/service/queries/useTimeseriesDeleteMutate';
 import { ScheduledCalculationDeleteModal } from '../ScheduledCalculation/ScheduledCalculationDeleteModal';
 
 import {
@@ -85,7 +84,6 @@ export const ScheduledCalculationRow = ({
   isSelected = false,
   draggable = false,
   provided = undefined,
-  translations,
   scheduledCalculationResult,
   onOverrideUnitClick = () => {},
   onConversionUnitClick = () => {},
@@ -107,10 +105,8 @@ export const ScheduledCalculationRow = ({
     customUnitLabel,
   } = scheduledCalculation;
   const isWorkspaceMode = mode === 'workspace';
-  const t = { ...defaultTranslations, ...translations };
   const { mutateAsync: deleteScheduledCalculation } =
     useScheduledCalculationDeleteMutate();
-  const { mutateAsync: deleteTimeseries } = useTimeseriesDeleteMutate();
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
   /**
@@ -119,27 +115,11 @@ export const ScheduledCalculationRow = ({
   const unitDropdownTranslations = useComponentTranslations(UnitDropdown);
 
   const handleRemoveSource = async (shouldDeleteTimeseries: boolean) => {
-    try {
-      if (scheduledCalculationResult?.externalId) {
-        await deleteScheduledCalculation([
-          { externalId: scheduledCalculationResult?.externalId },
-        ]);
-      }
-      if (
-        shouldDeleteTimeseries &&
-        scheduledCalculationResult?.targetTimeseriesExternalId
-      ) {
-        await deleteTimeseries([
-          {
-            externalId: scheduledCalculationResult?.targetTimeseriesExternalId,
-          },
-        ]);
-      }
-      onRemoveSourceClick();
-      toast.success(t['Deleted scheduled calculation successfully.']);
-    } catch (e) {
-      toast.error(t['Unable to delete scheduled calculation.']);
-    }
+    await deleteScheduledCalculation({
+      scheduledCalculationResult,
+      shouldDeleteTimeseries,
+    });
+    onRemoveSourceClick();
   };
 
   const isVisible = enabled;

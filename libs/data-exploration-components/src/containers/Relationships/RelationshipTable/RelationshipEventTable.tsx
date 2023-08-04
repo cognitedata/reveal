@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 
 import {
   EmptyState,
@@ -7,24 +7,26 @@ import {
 } from '@data-exploration/components';
 import {
   EventWithRelationshipLabels,
-  ResultCount,
+  SearchResultCountLabel,
 } from '@data-exploration/containers';
-import {
-  useRelatedResourceResults,
-  useRelationshipCount,
-} from '@data-exploration-components/hooks';
 import { ColumnDef } from '@tanstack/react-table';
+import isEmpty from 'lodash/isEmpty';
 
-import { useTranslation } from '@data-exploration-lib/core';
+import { ResourceTypes, useTranslation } from '@data-exploration-lib/core';
+import {
+  addDetailViewData,
+  buildAdvancedFilterFromDetailViewData,
+  useEventsListQuery,
+  useRelatedResourceDataForDetailView,
+} from '@data-exploration-lib/domain-layer';
 
 import { RelationshipTableProps } from './RelationshipTable';
 
 export function RelationshipEventTable({
   parentResource,
+  labels,
   onItemClicked,
 }: Omit<RelationshipTableProps, 'type'>) {
-  const { data: count } = useRelationshipCount(parentResource, 'event');
-
   const { t } = useTranslation();
   const tableColumns = getTableColumns(t);
 
@@ -39,21 +41,49 @@ export function RelationshipEventTable({
     ] as ColumnDef<EventWithRelationshipLabels>[];
   }, []);
 
-  const { hasNextPage, fetchNextPage, isLoading, items } =
-    useRelatedResourceResults<EventWithRelationshipLabels>(
-      'relationship',
-      'event',
-      parentResource
-    );
-  if (isLoading) {
-    return <EmptyState isLoading={isLoading} />;
+  const { data: detailViewRelatedResourcesData } =
+    useRelatedResourceDataForDetailView({
+      resourceExternalId: parentResource.externalId,
+      relationshipResourceType: ResourceTypes.Event,
+      filter: { labels },
+    });
+
+  const hasRelationships = !isEmpty(detailViewRelatedResourcesData);
+
+  const {
+    data = [],
+    hasNextPage,
+    fetchNextPage,
+    isLoading,
+  } = useEventsListQuery(
+    {
+      advancedFilter: buildAdvancedFilterFromDetailViewData(
+        detailViewRelatedResourcesData
+      ),
+      limit: 20,
+    },
+    { enabled: hasRelationships }
+  );
+
+  const tableData = useMemo(() => {
+    return addDetailViewData(data, detailViewRelatedResourcesData);
+  }, [data, detailViewRelatedResourcesData]);
+
+  if (isEmpty(tableData)) {
+    return <EmptyState isLoading={hasRelationships && isLoading} />;
   }
   return (
     <Table
       id="relationship-event-table"
       columns={columns}
-      tableHeaders={<ResultCount api="list" type="event" count={count} />}
-      data={items}
+      tableHeaders={
+        <SearchResultCountLabel
+          loadedCount={tableData.length}
+          totalCount={detailViewRelatedResourcesData.length}
+          resourceType={ResourceTypes.Event}
+        />
+      }
+      data={tableData}
       hideColumnToggle
       showLoadButton
       fetchMore={fetchNextPage}

@@ -128,7 +128,12 @@ module.exports = {
     return function configure(config, execContext) {
       const projectName = execContext.context.projectName;
 
-      const nodeEnv = process.env.NODE_ENV || 'production';
+      let nodeEnv = process.env.NODE_ENV || 'production';
+      if (process.env.NX_TASK_TARGET_CONFIGURATION === 'production') {
+        nodeEnv = 'production';
+      }
+
+      
       console.log(
         `SingleSpa webpack config(${nodeEnv}) for ${projectName} was loaded...`
       );
@@ -157,6 +162,11 @@ module.exports = {
       config.output.filename = ({ chunk: { name } }) => {
         return name === 'main' ? 'index.js' : '[name].[contenthash:8].js';
       };
+
+      if(nodeEnv === 'production') {
+        config.mode = 'production';
+        config.optimization.minimize = true;
+      }
 
       config.plugins.push(
         new webpack.ProvidePlugin({

@@ -7,5 +7,8 @@ import pkg from '../package.json';
  * https://webpack.js.org/guides/public-path/#on-the-fly
  * https://single-spa.js.org/docs/faq/#code-splits
  */
-
-setPublicPath(pkg.name);
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+if (typeof System !== 'undefined') {
+  setPublicPath(pkg.name);
+}

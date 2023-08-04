@@ -17,7 +17,10 @@ export class DataModelValidationErrorDataMapper {
     // Mixer API does not return errors in same format
     // Also Line numbers does not match ours
     // What we are doing here is finding the correct line number in AST
-    const locations = [];
+    const locations: {
+      line: number;
+      column: number;
+    }[] = [];
 
     const typeFieldNames = this.getTypeAndFieldNames(validationError);
 

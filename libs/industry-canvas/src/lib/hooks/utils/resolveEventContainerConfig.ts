@@ -1,6 +1,7 @@
 import { v4 as uuid } from 'uuid';
 
-import { CogniteClient } from '@cognite/sdk';
+import { CogniteClient, CogniteEvent } from '@cognite/sdk';
+import { ContainerType } from '@cognite/unified-file-viewer';
 
 import {
   EventContainerReference,
@@ -9,11 +10,21 @@ import {
 import {
   DEFAULT_EVENT_HEIGHT,
   DEFAULT_EVENT_WIDTH,
-} from '../../utils/addDimensionsToContainerReference';
+} from '../../utils/dimensions';
 
-import getEventTableContainerConfig, {
-  getEventTableTitle,
-} from './getEventTableContainerConfig';
+const getEventTableTitle = (event: CogniteEvent): string => {
+  let title = '';
+  if (event.type) {
+    title += event.type;
+    if (event.externalId) {
+      title += ': ';
+    }
+  }
+  if (event.externalId) {
+    title += event.externalId;
+  }
+  return title;
+};
 
 const resolveEventContainerConfig = async (
   sdk: CogniteClient,
@@ -29,27 +40,21 @@ const resolveEventContainerConfig = async (
   const eventTitle = getEventTableTitle(event);
 
   return {
-    ...(await getEventTableContainerConfig(
-      sdk as any,
-      {
-        id: id || uuid(),
-        label: label ?? eventTitle,
-        x: x,
-        y: y,
-        width: width ?? DEFAULT_EVENT_WIDTH,
-        height: height ?? DEFAULT_EVENT_HEIGHT,
-      },
-      {
-        eventId: resourceId,
-      }
-    )),
+    id: id || uuid(),
+    type: ContainerType.EVENT,
+    label: label ?? eventTitle,
+    x: x,
+    y: y,
+    width: width ?? DEFAULT_EVENT_WIDTH,
+    height: height ?? DEFAULT_EVENT_HEIGHT,
+    eventId: resourceId,
     metadata: {
       resourceId,
       resourceType: 'event',
       name: eventTitle,
       externalId: event.externalId,
     },
-  } as IndustryCanvasContainerConfig;
+  };
 };
 
 export default resolveEventContainerConfig;

@@ -143,6 +143,8 @@ Cypress.Commands.add(
           .find(`[col-id="nonNull"]`);
         const input = col.find('input');
 
+        // eslint-disable-next-line
+        // @ts-ignore
         if (input.checked !== required) {
           col.click();
         }

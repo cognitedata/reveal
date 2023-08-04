@@ -2,7 +2,6 @@ import { useCallback } from 'react';
 
 import { KeyValueMap, StorageProviderType } from '@platypus/platypus-core';
 import { TOKENS } from '@platypus-app/di';
-import { isFDMv3 } from '@platypus-app/flags';
 import { useInjection } from '@platypus-app/hooks/useInjection';
 import { useViewForDataModelType } from '@platypus-app/hooks/useViewForDataModelType';
 import { QueryKeys } from '@platypus-app/utils/queryKeys';
@@ -32,8 +31,7 @@ export const useSuggestions = ({
     viewExternalId: dataModelType.name,
   });
 
-  const viewVersion =
-    isFDMv3() && viewForDataModel ? viewForDataModel.version : version;
+  const viewVersion = viewForDataModel ? viewForDataModel.version : version;
 
   const acceptMatches = useCallback(
     async (data: KeyValueMap[]) => {

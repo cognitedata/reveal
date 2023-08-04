@@ -4,14 +4,13 @@ import { OptionsType, OptionTypeBase } from 'react-select';
 import styled from 'styled-components';
 
 import { MultiSelect } from '@data-exploration/components';
-import { RelationshipTypeLabels } from '@data-exploration-components/hooks';
 
 import { useTranslation } from '@data-exploration-lib/core';
 
 interface RelationshipFiltersProps {
   options: string[];
   onChange: (labels?: string[]) => void;
-  value?: RelationshipTypeLabels;
+  value?: string[];
 }
 export function RelationshipFilters({
   options,
@@ -36,8 +35,8 @@ export function RelationshipFilters({
           );
         }}
         value={value?.map((el) => ({
-          label: el.externalId,
-          value: el.externalId,
+          label: el,
+          value: el,
         }))}
         isMulti
         isSearchable

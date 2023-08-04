@@ -1,55 +1,71 @@
-import { useParams } from 'react-router-dom';
-
 import { useQuery } from '@tanstack/react-query';
 
+import {
+  useDataModelPathParams,
+  useInstancePathParams,
+} from '../../../../hooks/usePathParams';
 import { useFDM } from '../../../../providers/FDMProvider';
-import { useTypesDataModelQuery } from '../../../dataModels/query/useTypesDataModelQuery';
-import { extractFieldsFromSchema } from '../../../extractors';
 import { queryKeys } from '../../../queryKeys';
+import { DataModelV2, Instance } from '../../../types';
 
-export const useInstanceRelationshipQuery = ({
-  type,
-  field,
-}: {
-  field: string;
-  type: string;
-}) => {
+export const useInstanceDirectRelationshipQuery = (
+  {
+    type,
+    field,
+  }: {
+    field: string;
+    type: string;
+  },
+  {
+    instance,
+    model,
+  }: {
+    instance?: Instance;
+    model?: DataModelV2;
+  } = {},
+  {
+    suspense,
+  }: {
+    suspense?: boolean;
+  } = {}
+) => {
   const client = useFDM();
-  const { dataType, instanceSpace, externalId } = useParams();
-  const { data: types } = useTypesDataModelQuery();
+
+  const dataModelPathParam = useDataModelPathParams();
+  const instancePathParam = useInstancePathParams();
+
+  const { dataType, instanceSpace, externalId } = instance || instancePathParam;
+  const { dataModel, version, space } = model
+    ? { ...model, dataModel: model.externalId }
+    : dataModelPathParam;
 
   return useQuery(
-    queryKeys.instanceDirect(
-      { dataType, instanceSpace, externalId },
-      client.getHeaders,
-      type
-    ),
+    queryKeys.instanceDirect({ dataType, instanceSpace, externalId }, type),
     async () => {
-      if (!(dataType && externalId && instanceSpace && types)) {
+      if (
+        !(
+          dataType &&
+          externalId &&
+          instanceSpace &&
+          dataModel &&
+          version &&
+          space
+        )
+      ) {
         return Promise.reject(new Error('Missing headers...'));
       }
 
-      const extractedFields = extractFieldsFromSchema(types, type);
-
-      // Fix me!
-      const fields = extractedFields
-        ?.filter((item) => client.isPrimitive(item.type.name))
-        .map((item) => item.name);
-
-      if (!fields) {
-        return Promise.reject(new Error('Missing fields...'));
-      }
-
-      // TOTALLY FIX THIS!
-      const instance = await client.getInstanceById<any>(
-        [
-          {
-            [field]: [...fields, 'externalId'],
-          },
-        ],
+      const instance = await client.getDirectRelationshipInstancesById(
         {
-          instanceSpace,
+          relatedType: type,
+          relatedField: field,
+        },
+        {
+          dataModel,
+          version,
+          space,
           dataType,
+          instanceSpace,
           externalId,
         }
       );
@@ -57,7 +73,7 @@ export const useInstanceRelationshipQuery = ({
       return instance[field];
     },
     {
-      enabled: !!types,
+      suspense,
     }
   );
 };

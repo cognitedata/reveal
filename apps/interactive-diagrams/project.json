@@ -1,10 +1,11 @@
 {
   "name": "interactive-diagrams",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/interactive-diagrams/src",
   "projectType": "application",
   "targets": {
     "build": {
-      "executor": "@nrwl/webpack:webpack",
+      "executor": "@nx/webpack:webpack",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/interactive-diagrams",
@@ -41,6 +42,17 @@
           "runtimeChunk": false,
           "budgets": []
         },
+        "staging": {
+          "optimization": true,
+          "outputHashing": "all",
+          "sourceMap": true,
+          "extractCss": true,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "vendorChunk": false,
+          "runtimeChunk": false,
+          "budgets": []
+        },
         "production": {
           "optimization": true,
           "outputHashing": "all",
@@ -54,7 +66,7 @@
       }
     },
     "serve": {
-      "executor": "@nrwl/webpack:dev-server",
+      "executor": "@nx/webpack:dev-server",
       "options": {
         "buildTarget": "interactive-diagrams:build",
         "hmr": true
@@ -65,7 +77,6 @@
           "hmr": true,
           "liveReload": true
         },
-
         "preview": {
           "buildTarget": "interactive-diagrams:build:preview",
           "hmr": false
@@ -78,14 +89,14 @@
       "defaultConfiguration": "development"
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["apps/interactive-diagrams/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/platypus"],
       "options": {
         "jestConfig": "apps/interactive-diagrams/jest.config.ts",
@@ -93,5 +104,8 @@
       }
     }
   },
-  "tags": []
+  "tags": [],
+  "pipeline": {
+    "previewPackageName": "@cognite/cdf-context-ui-pnid"
+  }
 }

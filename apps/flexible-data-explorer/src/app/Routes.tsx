@@ -7,8 +7,6 @@ import { HomePage } from './pages/HomePage';
 import { FilePage } from './pages/Instances/FilePage';
 import { InstancesPage } from './pages/Instances/InstancesPage';
 import { TimeseriesPage } from './pages/Instances/TimeseriesPage';
-import { ListPage } from './pages/ListPage';
-import { OnboardingPage } from './pages/OnboardingPage';
 import { SearchPage } from './pages/SearchPage';
 import { ThreeDPage } from './pages/ThreeDPage';
 import { FDMProvider } from './providers/FDMProvider';
@@ -16,10 +14,7 @@ import { FDMProvider } from './providers/FDMProvider';
 const Routes = () => {
   return (
     <ReactRoutes>
-      <Route index element={<OnboardingPage />} />
-
       <Route
-        path="/:dataModel/:space/:version/"
         element={
           <FDMProvider>
             <Outlet />
@@ -32,28 +27,25 @@ const Routes = () => {
           element={
             <Container>
               <Content>
-                <SearchBar width="1036px" inverted />
+                <SearchBar width="1026px" inverted />
               </Content>
               <Outlet />
             </Container>
           }
         >
-          <Route path="search/:dataType?" element={<SearchPage />} />
+          <Route path="search/:type?" element={<SearchPage />} />
 
-          <Route path="list/:dataType" element={<ListPage />} />
+          <Route path="3d" element={<ThreeDPage />} />
 
           <Route path="timeseries/:externalId" element={<TimeseriesPage />} />
           <Route path="file/:externalId" element={<FilePage />} />
 
-          <Route path="3d" element={<ThreeDPage />} />
-          <Route
-            path=":dataType/:instanceSpace/:externalId/overview?"
-            element={<InstancesPage />}
-          />
-          <Route
-            path=":dataType/:instanceSpace/:externalId/map"
-            element={<p>Map</p>}
-          />
+          <Route path=":dataModel/:space/:version/">
+            <Route
+              path=":dataType/:instanceSpace/:externalId/overview?"
+              element={<InstancesPage />}
+            />
+          </Route>
         </Route>
       </Route>
 

@@ -199,7 +199,7 @@ export const Keypoints = ({
         <Collapse
           bordered={false}
           defaultActiveKey={['new']}
-          expandIconPosition="left"
+          expandIconPosition="start"
           expandIcon={({ isActive }) => (
             <CaretRightOutlined
               style={{ color: '#595959' }}

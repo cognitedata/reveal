@@ -6,8 +6,10 @@ import styled from 'styled-components';
 import { message, Card, Modal } from 'antd';
 
 import { getFlow } from '@cognite/cdf-sdk-singleton';
+import { createLink } from '@cognite/cdf-utilities';
 import { Button, Colors, Flex, Icon, Input } from '@cognite/cogs.js';
 import { Model3D } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 
 import PermissioningHintWrapper from '../../../../components/PermissioningHintWrapper';
@@ -22,7 +24,6 @@ import {
 } from '../../../../hooks/revisions';
 import { useMetrics } from '../../../../hooks/useMetrics';
 import { DEFAULT_MARGIN_V, getContainer } from '../../../../utils';
-import { createLink } from '../../../../utils/cdf-utilities';
 import FileUploader from '../FileUploader';
 
 import { RevisionsTable } from './RevisionsTable';
@@ -58,6 +59,7 @@ type Props = {
 export default function ModelRevisions({ model }: Props) {
   const metrics = useMetrics('3D');
   const navigate = useNavigate();
+  const sdk = useSDK();
 
   const [uploadModalVisible, setUploadModalVisible] = useState(false);
   const [deletionModalVisible, setDeletionModalVisible] = useState(false);
@@ -196,6 +198,7 @@ export default function ModelRevisions({ model }: Props) {
         getContainer={getContainer}
       >
         <FileUploader
+          sdk={sdk}
           onUploadSuccess={async (fileId) => {
             await createRevision({
               fileId,

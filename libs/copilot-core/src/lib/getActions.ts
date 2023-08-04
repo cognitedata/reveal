@@ -1,24 +1,32 @@
-import { CopilotSupportedFeatureType, GetActionsFunc } from './types';
+import {
+  CopilotAction,
+  CopilotSupportedFeatureType,
+  GetActionsFunc,
+} from './types';
 
 export const getActions = async (
   feature: CopilotSupportedFeatureType | undefined,
-  ...params: Parameters<GetActionsFunc>
-) => {
+  ..._params: Parameters<GetActionsFunc>
+): Promise<CopilotAction[]> => {
   switch (feature) {
     case 'Streamlit':
       return [
         {
-          type: 'GENERATE_APP',
-          name: 'Generate App',
           content: 'Generate App',
-          onClick: async () => {
-            params[2]({
-              content: 'I want to generate a new Streamlit app',
-              type: 'text',
-            });
-          },
+          toCopilotEvent: [
+            'NEW_MESSAGES',
+            [
+              {
+                content: 'I want to generate a new Streamlit app',
+                type: 'text',
+                source: 'user',
+              },
+            ],
+          ],
         },
       ];
+    case 'Infield':
+      return [];
     default: {
       return [];
     }

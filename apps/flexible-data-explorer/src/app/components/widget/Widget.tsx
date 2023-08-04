@@ -16,7 +16,7 @@ export interface BaseWidgetProps {
   fullWidth?: boolean;
 
   /** Number of columns that the widgets spans */
-  columns?: 1 | 2;
+  columns?: 1 | 2 | 3 | 4;
 
   /** Number of rows that the widgets spans */
   rows?: number;
@@ -71,7 +71,9 @@ const Container = styled.div<BaseWidgetProps>`
     if (props.expanded) {
       return css`
         align-self: flex-start;
-        width: 1024px;
+        max-width: 1024px;
+        width: 100%;
+        margin-top: 16px;
       `;
     }
 

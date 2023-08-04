@@ -1,11 +1,14 @@
 import { useParams } from 'react-router-dom';
 
+import isEmpty from 'lodash/isEmpty';
+
 import { Button } from '../../../components/buttons/Button';
 import { SearchResults } from '../../../components/search/SearchResults';
 import { Widget } from '../../../components/widget/Widget';
 import { useNavigation } from '../../../hooks/useNavigation';
 import { useTranslation } from '../../../hooks/useTranslation';
 import { useInstanceRelationshipQuery } from '../../../services/instances/generic/queries/useInstanceRelationshipQuery';
+import { InstancePreview } from '../../preview/InstancePreview';
 
 import { RelationshipEdgesProps } from './RelationshipEdgesWidget';
 
@@ -17,17 +20,24 @@ export const RelationshipEdgesCollapsed: React.FC<RelationshipEdgesProps> = ({
   type,
 }) => {
   const { t } = useTranslation();
-  const { instanceSpace } = useParams();
+  const { dataModel, version, space } = useParams();
   const navigate = useNavigation();
-  const { data, isLoading, status } = useInstanceRelationshipQuery(type);
+  const { data, isLoading, status, isFetched } =
+    useInstanceRelationshipQuery(type);
+
+  const isDisabled = isFetched && isEmpty(data);
+
+  if (!dataModel || !space || !version) {
+    console.error('Missing dataModel, space or version in params');
+    return null;
+  }
 
   return (
     <Widget rows={rows || 4} columns={columns} id={id}>
       <Widget.Header title={t('RELATIONSHIP_EDGES_WIDGET_TITLE', { type: id })}>
         <Button.Fullscreen
           onClick={() => onExpandClick?.(id)}
-          loading={isLoading}
-          disabled={!isLoading && data.length === 0}
+          disabled={isDisabled}
         />
       </Widget.Header>
 
@@ -38,17 +48,37 @@ export const RelationshipEdgesCollapsed: React.FC<RelationshipEdgesProps> = ({
         <SearchResults.Body noShadow>
           {data.map((item) => {
             return (
-              <SearchResults.Item
+              <InstancePreview.Generic
                 key={item.externalId}
-                name={item.name || item.externalId}
-                onClick={() => {
-                  navigate.toInstancePage(
-                    type.type,
-                    instanceSpace,
-                    item.externalId
-                  );
+                instance={{
+                  instanceSpace: item.space,
+                  dataType: type.type,
+                  externalId: item.externalId,
                 }}
-              />
+                dataModel={{
+                  externalId: dataModel,
+                  space,
+                  version,
+                }}
+                disabled={isDisabled}
+              >
+                <SearchResults.Item
+                  key={item.externalId}
+                  name={item.name || item.externalId}
+                  onClick={() => {
+                    navigate.toInstancePage(
+                      type.type,
+                      item.space,
+                      item.externalId,
+                      {
+                        dataModel,
+                        space,
+                        version,
+                      }
+                    );
+                  }}
+                />
+              </InstancePreview.Generic>
             );
           })}
         </SearchResults.Body>

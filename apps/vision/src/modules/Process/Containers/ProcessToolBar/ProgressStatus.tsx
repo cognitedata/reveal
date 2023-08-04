@@ -1,6 +1,6 @@
 /* eslint-disable no-nested-ternary */
 import React, { useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import styled from 'styled-components';
 
@@ -16,14 +16,14 @@ import {
   selectPageCount,
 } from '@vision/modules/Process/store/selectors';
 import { setSummaryModalVisibility } from '@vision/modules/Process/store/slice';
-import { AppDispatch } from '@vision/store';
+import { useThunkDispatch } from '@vision/store';
 import { RootState } from '@vision/store/rootReducer';
 import { Progress } from 'antd';
 
 import { Body, Button, Col, Icon, Micro, Row, Title } from '@cognite/cogs.js';
 
 export default function ProgressStatus() {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useThunkDispatch();
 
   const processFileIds = useSelector(
     (state: RootState) => state.processSlice.fileIds
@@ -196,7 +196,7 @@ export default function ProgressStatus() {
               strokeLinecap="round"
               style={{
                 display: 'flex',
-                justifyContent: 'end',
+                gap: '8px',
                 alignItems: 'center',
               }}
             />
@@ -217,11 +217,7 @@ const Container = styled.div`
   min-width: 300px;
 
   .ant-progress-outer {
-    width: 75%;
-    padding-right: 10px;
-    .ant-progress-inner {
-      width: 100%;
-    }
+    width: 80%;
   }
 `;
 

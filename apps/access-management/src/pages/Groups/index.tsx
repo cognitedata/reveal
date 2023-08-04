@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
 
 import { useTranslation } from '@access-management/common/i18n';
 import {
-  useAuthConfiguration,
   useGroups,
   usePermissions,
   useListServiceAccounts,
@@ -28,6 +26,7 @@ import {
 import { ColumnType } from 'antd/lib/table';
 
 import { getFlow } from '@cognite/cdf-sdk-singleton';
+import { getProject } from '@cognite/cdf-utilities';
 import { Button, Icon } from '@cognite/cogs.js';
 import { Group } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
@@ -49,7 +48,7 @@ export default function Groups() {
   const [showEditGroupDrawer, setShowEdit] = useState<Group | undefined>();
 
   const [searchValue, setSearchValue] = useState('');
-  const { tenant } = useParams();
+  const tenant = getProject();
   const { data: readPermission, isFetched: readPermFetched } = usePermissions(
     'groupsAcl',
     'LIST'
@@ -69,7 +68,7 @@ export default function Groups() {
       refetchInterval: localDefaultGroup ? 1000 : false,
     }
   );
-  const { data: authSettings } = useAuthConfiguration();
+
   const { data: groups, isFetched: groupsFetched } = useGroups(true);
   const { data: serviceAccounts } = useListServiceAccounts(legacyFlow);
 
@@ -159,10 +158,7 @@ export default function Groups() {
       },
       render(id: number) {
         let extra;
-        if (
-          id === project?.defaultGroupId &&
-          authSettings?.isLegacyLoginFlowAndApiKeysEnabled
-        ) {
+        if (id === project?.defaultGroupId) {
           extra = (
             <Tooltip
               key={id}
@@ -292,8 +288,7 @@ export default function Groups() {
   return (
     <>
       <AccessConfigurationWarning />
-      {!authSettings?.isLegacyLoginFlowAndApiKeysEnabled &&
-      serviceAccounts?.length ? (
+      {serviceAccounts?.length ? (
         <LegacyServiceAccountsWarning accounts={serviceAccounts} />
       ) : null}
       <Row justify="space-between">

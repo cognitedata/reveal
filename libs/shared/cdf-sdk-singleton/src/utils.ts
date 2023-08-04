@@ -1,21 +1,54 @@
 import queryString from 'query-string';
 
 import {
+  AadIdp,
+  Auth0Idp,
+  KeycloakIdp,
+  getDlc,
+  getIdp,
+  readLoginHints,
+} from '@cognite/auth-react/src/lib/base';
+import {
+  CogniteIdp,
+  SAuthIdp,
+} from '@cognite/auth-react/src/lib/base/domain-login-configuration';
+import {
   getSelectedIdpDetails,
   IDPResponse,
   LegacyProject,
 } from '@cognite/login-utils';
+import { CogniteClient } from '@cognite/sdk';
 
-export const getQueryParameter = (parameterKey: string) => {
+import { isUsingUnifiedSignin } from './unified-signin';
+
+const loginHints = readLoginHints();
+
+export const getQueryParameter = (parameterKey: string): string => {
   const parameters = queryString.parse(window.location.search) ?? {};
-  return parameters[parameterKey] ?? '';
+  return (parameters[parameterKey] ?? '') as string;
 };
 
-export const getProject = () =>
-  new URL(window.location.href).pathname.split('/')[1];
+export const getProject = (): string => {
+  if (isUsingUnifiedSignin()) {
+    const project = getQueryParameter('project') || loginHints?.project;
+    // If we're able to find the project return it, otherwise default to the previous behaviour.
+    if (project) {
+      return project;
+    }
+  }
+
+  // if unified signin, the url is apps.cognite.com/cdf/project
+  // otherwise is fusion.cognite.com/project
+  // when splitting, for fusion index is 1, for /cdf is 2
+  const projectPathParamLocation = isUsingUnifiedSignin() ? 2 : 1;
+
+  return new URL(window.location.href).pathname.split('/')[
+    projectPathParamLocation
+  ];
+};
 
 export const getCluster = () => {
-  const cluster = getQueryParameter('cluster');
+  const cluster = getQueryParameter('cluster') || loginHints?.cluster;
   return Array.isArray(cluster) ? cluster[0] : cluster;
 };
 
@@ -32,18 +65,29 @@ export const getUrl = (
   if (hostname.substr(0, protocol.length) !== protocol) {
     url = `${protocol}://${hostname}`;
   }
-
   return url;
 };
 
 export async function getIDP(): Promise<IDPResponse | LegacyProject> {
+  if (isUsingUnifiedSignin()) {
+    let loginHints = readLoginHints();
+    if (!loginHints) {
+      return Promise.reject(new Error('Missing login hints'));
+    }
+    if (!loginHints?.organization) {
+      return Promise.reject(new Error('Missing organization'));
+    }
+    const dlc = await getDlc(loginHints?.organization);
+    const idp = getIdp(dlc.idps, loginHints?.idpInternalId);
+    if (!idp) {
+      return Promise.reject(new Error('IDP not found'));
+    }
+    return idp as AadIdp | Auth0Idp | KeycloakIdp | CogniteIdp;
+  }
   const { internalId } = getSelectedIdpDetails() ?? {};
 
-  if (!internalId) {
-    return Promise.reject(new Error('IDP not selected'));
-  }
   const { idps = [], legacyProjects = [] } = await fetch(
-    `https://app-login-configuration-lookup.cognite.ai/fusion/cog-demo`
+    `/_api/login_info`
   ).then(
     (r: Response) =>
       r.json() as Promise<{
@@ -51,6 +95,13 @@ export async function getIDP(): Promise<IDPResponse | LegacyProject> {
         legacyProjects: LegacyProject[];
       }>
   );
+
+  if (!internalId && idps.length === 1) {
+    return idps[0];
+  }
+  if (!internalId) {
+    return Promise.reject(new Error('IDP not selected'));
+  }
 
   const idp =
     idps.find((i) => i.internalId === internalId) ||
@@ -86,7 +137,34 @@ export const getBaseUrl = async (): Promise<string | undefined> => {
   if (domainServiceCluster) {
     return getUrl(domainServiceCluster);
   }
-  // TODO
-  return 'cluster';
   return Promise.reject(new Error('cluster not found'));
 };
+
+/* eslint-disable */
+export function convertToProxy(originalInstance: CogniteClient) {
+  originalInstance = Object(originalInstance);
+  let proxy = new Proxy(new WrappedSdkClient(originalInstance), {
+    get: function (originalObj, key, proxy) {
+      switch (key) {
+        case 'overrideInstance':
+          return originalObj.overrideInstance;
+        default:
+          // @ts-ignore
+          return originalObj.instance[key];
+      }
+    },
+  });
+  return proxy;
+}
+
+export class WrappedSdkClient {
+  instance: CogniteClient;
+
+  constructor(sdkInstance: CogniteClient) {
+    this.instance = sdkInstance;
+  }
+
+  overrideInstance(newSdk: CogniteClient) {
+    this.instance = newSdk;
+  }
+}

@@ -3,6 +3,7 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -17,9 +18,10 @@ import {
   Button,
   Chip,
   Colors,
+  Divider,
   Dropdown,
   Flex,
-  Icon,
+  Infobox,
   Menu,
   toast,
   Tooltip,
@@ -37,8 +39,10 @@ import {
 } from '@cognite/unified-file-viewer';
 
 import { translationKeys } from './common';
+import { ToggleButton } from './components/buttons';
 import CanvasDropdown from './components/CanvasDropdown';
 import { CanvasTitle } from './components/CanvasTitle';
+import CanvasVisibilityModal from './components/CanvasVisibilityModal';
 import { CloseResourceSelectorButton } from './components/CloseResourceSelectorButton';
 import DragOverIndicator from './components/DragOverIndicator';
 import IndustryCanvasFileUploadModal from './components/IndustryCanvasFileUploadModal/IndustryCanvasFileUploadModal';
@@ -50,10 +54,14 @@ import {
   TOAST_POSITION,
   ZOOM_TO_FIT_MARGIN,
 } from './constants';
+import { CommentsPane } from './containers';
+import { useUsers } from './hooks/use-query/useUsers';
+import useCanvasVisibility from './hooks/useCanvasVisibility';
 import { useDragAndDrop } from './hooks/useDragAndDrop';
 import useLocalStorage from './hooks/useLocalStorage';
 import useManagedState from './hooks/useManagedState';
-import useManagedTools from './hooks/useManagedTools';
+import useManagedTool from './hooks/useManagedTool';
+import useOnUpdateSelectedAnnotation from './hooks/useOnUpdateSelectedAnnotation';
 import { useQueryParameter } from './hooks/useQueryParameter';
 import { useResourceSelectorActions } from './hooks/useResourceSelectorActions';
 import { useSelectedAnnotationOrContainer } from './hooks/useSelectedAnnotationOrContainer';
@@ -62,21 +70,24 @@ import useTrackCanvasViewed from './hooks/useTrackCanvasViewed';
 import { useTranslation } from './hooks/useTranslation';
 import { IndustryCanvas } from './IndustryCanvas';
 import { useIndustryCanvasContext } from './IndustryCanvasContext';
+import { useListCommentsQuery } from './services/comments/hooks';
+import { CommentTargetType } from './services/comments/types';
+import { createCommentAnnotation } from './services/comments/utils';
+import { CanvasVisibility } from './services/IndustryCanvasService';
 import {
   ContainerReference,
   ContainerReferenceType,
   IndustryCanvasToolType,
-  isCommentAnnotation,
 } from './types';
+import { useUserProfile } from './UserProfileProvider';
 import {
   DEFAULT_CONTAINER_MAX_HEIGHT,
   DEFAULT_CONTAINER_MAX_WIDTH,
-} from './utils/addDimensionsToContainerReference';
+} from './utils/dimensions';
 import enforceTimeseriesApplyToAllIfEnabled from './utils/enforceTimeseriesApplyToAllIfEnabled';
 import isSupportedResourceItem from './utils/isSupportedResourceItem';
 import resourceItemToContainerReference from './utils/resourceItemToContainerReference';
 import useMetrics from './utils/tracking/useMetrics';
-import useManagedTool from './utils/useManagedTool';
 import { zoomToFitAroundContainerIds } from './utils/zoomToFitAroundContainerIds';
 
 export type OnAddContainerReferences = (
@@ -84,6 +95,7 @@ export type OnAddContainerReferences = (
 ) => void;
 
 const APPLICATION_ID_INDUSTRY_CANVAS = 'industryCanvas';
+const DEFAULT_RIGHT_SIDE_PANEL_WIDTH = 700;
 
 export const IndustryCanvasPage = () => {
   const trackUsage = useMetrics();
@@ -96,16 +108,22 @@ export const IndustryCanvasPage = () => {
   const [currentZoomScale, setCurrentZoomScale] = useState<number>(1);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const { tooltipsOptions, onUpdateTooltipsOptions } = useTooltipsOptions();
-  const { tool, setTool } = useManagedTool(IndustryCanvasToolType.SELECT);
+  const { toolType, setToolType, tool, updateStyleForToolType } =
+    useManagedTool(IndustryCanvasToolType.SELECT);
+  const toolBeforeSpacePress = useRef<IndustryCanvasToolType | undefined>(
+    undefined
+  );
   const { queryString } = useQueryParameter({ key: SEARCH_QUERY_PARAM_KEY });
-  const [resourceSelectorWidth, setResourceSelectorWidth] = useLocalStorage(
+
+  const [rightSidePanelWidth, setRightSidePanelWidth] = useLocalStorage(
     'COGNITE_INDUSTRIAL_CANVAS_RESOURCE_SELECTOR_WIDTH',
-    700
+    DEFAULT_RIGHT_SIDE_PANEL_WIDTH
   );
 
   const [hasZoomedToFitOnInitialLoad, setHasZoomedToFitOnInitialLoad] =
     useState(false);
 
+  const { userProfile } = useUserProfile();
   const sdk = useSDK();
   const {
     activeCanvas,
@@ -116,15 +134,18 @@ export const IndustryCanvasPage = () => {
     isListingCanvases,
     saveCanvas,
     createCanvas,
-    initializeWithContainerReferences,
     setCanvasId,
     isCanvasLocked,
-    createInitialCanvas,
-    hasConsumedInitializeWithContainerReferences,
-    setHasConsumedInitializeWithContainerReferences,
     isCommentsEnabled,
   } = useIndustryCanvasContext();
 
+  const [isCommentsPaneOpen, setCommentsPaneOpen] = useState(false);
+
+  const { comments, isLoading: isCommentsLoading } = useListCommentsQuery({
+    targetId: activeCanvas?.externalId,
+    targetType: CommentTargetType.CANVAS,
+  });
+  const { data: users = [] } = useUsers();
   const {
     container,
     canvasAnnotations,
@@ -139,32 +160,61 @@ export const IndustryCanvasPage = () => {
     interactionState,
     setInteractionState,
     containerAnnotations,
+    pinnedTimeseriesIdsByAnnotationId,
+    onPinTimeseriesClick,
+    liveSensorRulesByAnnotationIdByTimeseriesId,
+    onLiveSensorRulesChange,
+    isConditionalFormattingOpenAnnotationIdByTimeseriesId,
+    onCloseConditionalFormattingClick,
+    onOpenConditionalFormattingClick,
+    onToggleConditionalFormatting,
   } = useManagedState({
     unifiedViewer: unifiedViewerRef,
-    setTool,
-    tool,
-    tooltipsOptions,
+    toolType,
+    setToolType,
   });
 
   useTrackCanvasViewed(activeCanvas);
+  const canCurrentUserSeeCanvas = activeCanvas
+    ? activeCanvas.visibility === CanvasVisibility.PUBLIC ||
+      userProfile.userIdentifier === activeCanvas.createdBy
+    : true;
 
   // if comments is not enabled then return empty, hiding all comments for that project (even if canvas had comments before)
   const commentAnnotations = useMemo(
     () =>
-      isCommentsEnabled ? canvasAnnotations.filter(isCommentAnnotation) : [],
-    [isCommentsEnabled, canvasAnnotations]
+      isCommentsEnabled
+        ? comments
+            .filter((comment) => comment.contextData !== undefined)
+            .map((comment) => createCommentAnnotation(comment))
+        : [],
+    [isCommentsEnabled, comments]
   );
 
+  const {
+    selectedCanvas: selectedCanvasForVisibility,
+    setSelectedCanvas: setSelectedCanvasForVisibility,
+  } = useCanvasVisibility();
+
+  // Here we need an extra state to not show modal initally when go to canvas page.
+  const [visibilityModalOpen, setVisibilityModalOpen] = useState(false);
   useEffect(() => {
-    if (isCanvasLocked && tool !== IndustryCanvasToolType.PAN) {
-      setTool(IndustryCanvasToolType.PAN);
+    // This is to update selected canvas for modal when the visibility is updated in the modal.
+    if (visibilityModalOpen) {
+      setSelectedCanvasForVisibility(activeCanvas);
     }
-  }, [isCanvasLocked, setTool, tool]);
+  }, [activeCanvas, setSelectedCanvasForVisibility, visibilityModalOpen]);
+
+  useEffect(() => {
+    if (isCanvasLocked && toolType !== IndustryCanvasToolType.PAN) {
+      setToolType(IndustryCanvasToolType.PAN);
+    }
+  }, [isCanvasLocked, setToolType, toolType]);
 
   const { selectedCanvasAnnotation, selectedContainer } =
     useSelectedAnnotationOrContainer({
       unifiedViewerRef,
-      tool,
+      toolType,
       canvasAnnotations,
       container,
     });
@@ -175,10 +225,11 @@ export const IndustryCanvasPage = () => {
     isResourceSelectorOpen,
     resourceSelectorFilter,
     initialSelectedResource,
+    initialTab,
   } = useResourceSelectorActions();
 
-  const { onUpdateAnnotationStyleByType, toolOptions } = useManagedTools({
-    tool,
+  const { onUpdateSelectedAnnotation } = useOnUpdateSelectedAnnotation({
+    updateStyleForToolType,
     selectedCanvasAnnotation,
     onUpdateRequest,
   });
@@ -386,45 +437,6 @@ export const IndustryCanvasPage = () => {
   };
 
   useEffect(() => {
-    if (unifiedViewerRef === null) {
-      return;
-    }
-
-    if (
-      activeCanvas?.externalId === undefined &&
-      !isCreatingCanvas &&
-      !hasConsumedInitializeWithContainerReferences &&
-      initializeWithContainerReferences !== undefined
-    ) {
-      createInitialCanvas();
-      return;
-    }
-
-    if (activeCanvas?.externalId === undefined) {
-      return;
-    }
-
-    if (hasConsumedInitializeWithContainerReferences) {
-      return;
-    }
-
-    if (initializeWithContainerReferences !== undefined) {
-      onAddContainerReferences(initializeWithContainerReferences);
-    }
-
-    setHasConsumedInitializeWithContainerReferences(true);
-  }, [
-    initializeWithContainerReferences,
-    isCreatingCanvas,
-    activeCanvas?.externalId,
-    unifiedViewerRef,
-    hasConsumedInitializeWithContainerReferences,
-    onAddContainerReferences,
-    createInitialCanvas,
-    setHasConsumedInitializeWithContainerReferences,
-  ]);
-
-  useEffect(() => {
     if (unifiedViewerRef === null || hasZoomedToFitOnInitialLoad) {
       return;
     }
@@ -495,6 +507,22 @@ export const IndustryCanvasPage = () => {
       });
       return;
     }
+
+    if (event.key === ' ') {
+      // Only record the previous tool *before* the space key was pressed.
+      // Otherwise, we will record the tool while space is being pressed
+      if (toolBeforeSpacePress.current === undefined) {
+        toolBeforeSpacePress.current = toolType;
+      }
+      setToolType(IndustryCanvasToolType.PAN);
+    }
+  };
+
+  const onKeyUp: KeyboardEventHandler<HTMLElement> = (event) => {
+    if (event.key === ' ' && toolBeforeSpacePress.current !== undefined) {
+      setToolType(toolBeforeSpacePress.current);
+      toolBeforeSpacePress.current = undefined;
+    }
   };
 
   const handleGoBackToIndustryCanvasButtonClick = () => {
@@ -503,6 +531,68 @@ export const IndustryCanvasPage = () => {
         [SEARCH_QUERY_PARAM_KEY]: queryString,
       })
     );
+  };
+
+  if (!canCurrentUserSeeCanvas) {
+    return (
+      <>
+        <PageTitle title="Industrial Canvas" />
+        <ErrorMessageWrapper>
+          <Infobox
+            type="danger"
+            title={t(
+              translationKeys.CANVAS_VISIBILITY_ERROR_TITLE,
+              'This canvas is not visible to you'
+            )}
+          >
+            {t(
+              translationKeys.CANVAS_VISIBILITY_ERROR_MESSAGE,
+              'This is a private canvas which is not shared with you.'
+            )}
+          </Infobox>
+          <Button
+            icon="ArrowLeft"
+            aria-label={t(
+              translationKeys.CANVAS_VISIBILITY_ERROR_BUTTON,
+              'Go to Industrial Canvas home page'
+            )}
+            onClick={handleGoBackToIndustryCanvasButtonClick}
+          >
+            {t(
+              translationKeys.CANVAS_VISIBILITY_ERROR_BUTTON,
+              'Go to Industrial Canvas home page'
+            )}
+          </Button>
+        </ErrorMessageWrapper>
+      </>
+    );
+  }
+  const handleOpenResourceSelector = () => {
+    if (isCommentsPaneOpen) {
+      setCommentsPaneOpen(false);
+    }
+    onResourceSelectorOpen();
+  };
+
+  const handleOpenCommentsPane = () => {
+    if (!isCommentsPaneOpen) {
+      setCommentsPaneOpen(true);
+    }
+    onResourceSelectorCloseWrapper();
+  };
+
+  const handleCloseCommentsPane = () => {
+    if (isCommentsPaneOpen) {
+      setCommentsPaneOpen(false);
+    }
+  };
+
+  const handleToggleCommentsPane = () => {
+    if (isCommentsPaneOpen) {
+      handleCloseCommentsPane();
+    } else {
+      handleOpenCommentsPane();
+    }
   };
 
   return (
@@ -595,19 +685,49 @@ export const IndustryCanvasPage = () => {
               aria-label={t(translationKeys.CANVAS_REDO, 'Redo')}
             />
           </Tooltip>
-
+          <Divider direction="vertical" length="20px" endcap="round" />
           <Button
             type="primary"
             disabled={isCanvasLocked || isResourceSelectorOpen}
             aria-label="Add data"
             onClick={() => {
-              onResourceSelectorOpen();
+              handleOpenResourceSelector();
               trackUsage(MetricEvent.ADD_DATA_BUTTON_CLICKED);
             }}
+            icon="Add"
           >
-            <Icon type="Plus" />
             {t(translationKeys.CANVAS_ADD_RESOURCE_BUTTON, 'Add data')}
           </Button>
+
+          <Divider direction="vertical" length="20px" endcap="round" />
+
+          <Button
+            type="secondary"
+            aria-label="Share canvas"
+            onClick={() => {
+              setSelectedCanvasForVisibility(activeCanvas);
+              setVisibilityModalOpen(true);
+            }}
+            icon="Share"
+          >
+            {t(translationKeys.CANVAS_SHARE_BUTTON, 'Share')}
+          </Button>
+
+          <ToggleButton
+            toggled={isCommentsPaneOpen}
+            icon="Comments"
+            onClick={handleToggleCommentsPane}
+            aria-label={t(
+              translationKeys.CANVAS_OPEN_COMMENTS_PANE,
+              'Open comments pane'
+            )}
+            tooltipContent={t(
+              translationKeys.CANVAS_OPEN_COMMENTS_PANE,
+              'Open comments pane'
+            )}
+            tooltipPosition="bottom"
+          />
+          <Divider direction="vertical" length="20px" endcap="round" />
 
           <Dropdown
             content={
@@ -639,17 +759,21 @@ export const IndustryCanvasPage = () => {
               </Menu>
             }
           >
-            <Button icon="EllipsisHorizontal" />
+            <Button icon="EllipsisHorizontal" aria-label="More options" />
           </Dropdown>
         </StyledGoBackWrapper>
       </TitleRowWrapper>
       <StyledSplitter
         primaryMinSize={CANVAS_MIN_WIDTH}
-        secondaryInitialSize={resourceSelectorWidth}
-        onSecondaryPaneSizeChange={setResourceSelectorWidth}
+        secondaryInitialSize={rightSidePanelWidth}
+        onSecondaryPaneSizeChange={setRightSidePanelWidth}
         primaryIndex={0}
       >
-        <IndustryCanvasWrapper onKeyDown={onKeyDown} onDrop={onDrop}>
+        <IndustryCanvasWrapper
+          onKeyDown={onKeyDown}
+          onKeyUp={onKeyUp}
+          onDrop={onDrop}
+        >
           <IndustryCanvas
             id={APPLICATION_ID_INDUSTRY_CANVAS}
             viewerRef={unifiedViewerRef}
@@ -671,14 +795,30 @@ export const IndustryCanvasPage = () => {
             canvasAnnotations={canvasAnnotations}
             selectedCanvasAnnotation={selectedCanvasAnnotation}
             tool={tool}
-            setTool={setTool}
-            onUpdateAnnotationStyleByType={onUpdateAnnotationStyleByType}
-            toolOptions={toolOptions}
+            toolType={toolType}
+            setToolType={setToolType}
+            onUpdateSelectedAnnotation={onUpdateSelectedAnnotation}
             isCanvasLocked={isCanvasLocked}
             onResourceSelectorOpen={onResourceSelectorOpen}
             commentAnnotations={commentAnnotations}
             tooltipsOptions={tooltipsOptions}
             onUpdateTooltipsOptions={onUpdateTooltipsOptions}
+            pinnedTimeseriesIdsByAnnotationId={
+              pinnedTimeseriesIdsByAnnotationId
+            }
+            onPinTimeseriesClick={onPinTimeseriesClick}
+            liveSensorRulesByAnnotationIdByTimeseriesId={
+              liveSensorRulesByAnnotationIdByTimeseriesId
+            }
+            onLiveSensorRulesChange={onLiveSensorRulesChange}
+            isConditionalFormattingOpenAnnotationIdByTimeseriesId={
+              isConditionalFormattingOpenAnnotationIdByTimeseriesId
+            }
+            onToggleConditionalFormatting={onToggleConditionalFormatting}
+            onCloseConditionalFormattingClick={
+              onCloseConditionalFormattingClick
+            }
+            onOpenConditionalFormattingClick={onOpenConditionalFormattingClick}
           />
 
           <CloseResourceSelectorButton
@@ -695,9 +835,18 @@ export const IndustryCanvasPage = () => {
             visibleResourceTabs={['file', 'timeSeries', 'asset', 'event']}
             selectionMode="multiple"
             initialFilter={resourceSelectorFilter}
+            initialTab={initialTab}
             initialSelectedResource={initialSelectedResource}
             addButtonText="Add to canvas"
             shouldShowPreviews={false}
+          />
+        )}
+        {!isResourceSelectorOpen && isCommentsPaneOpen && (
+          <CommentsPane
+            users={users}
+            comments={comments}
+            isLoading={isCommentsLoading}
+            onCloseCommentsPane={handleCloseCommentsPane}
           />
         )}
       </StyledSplitter>
@@ -718,9 +867,36 @@ export const IndustryCanvasPage = () => {
           ]);
         }}
       />
+      <CanvasVisibilityModal
+        canvas={selectedCanvasForVisibility}
+        onCancel={() => {
+          setSelectedCanvasForVisibility(undefined);
+          setVisibilityModalOpen(false);
+        }}
+        saveCanvas={saveCanvas}
+        isSavingCanvas={isSavingCanvas}
+        userProfile={userProfile}
+      />
     </>
   );
 };
+
+const ErrorMessageWrapper = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  .cogs-infobox {
+    max-width: 500px;
+  }
+
+  .cogs.cogs-button {
+    margin-top: 8px;
+  }
+`;
 
 const TITlE_ROW_HEIGHT = 57;
 const TitleRowWrapper = styled.div`
@@ -748,6 +924,7 @@ const StyledGoBackWrapper = styled.div`
   overflow: hidden;
   flex: 0 0 auto;
   display: flex;
+  height: 100%;
   gap: 8px;
 `;
 

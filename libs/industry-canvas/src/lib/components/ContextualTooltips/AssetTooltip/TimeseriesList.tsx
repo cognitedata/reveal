@@ -2,7 +2,7 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { Button, Icon, Body, Colors, Tooltip } from '@cognite/cogs.js';
+import { Button, Icon, Body, Colors, Tooltip, Flex } from '@cognite/cogs.js';
 
 import { translationKeys } from '../../../common';
 import { useAssetTimeseries } from '../../../hooks/useAssetTimeseries';
@@ -10,12 +10,18 @@ import { useTranslation } from '../../../hooks/useTranslation';
 
 type TimeseriesListProps = {
   assetId: number;
+  pinnedTimeseriesIds: number[]; // Currently only supports one, but more might come
+  onPinTimeseriesClick: (timeseriesId: number) => void;
   onAddTimeseries: (timeseriesId: number) => void;
+  onFindRelatedTimeseries: () => void;
 };
 
 const TimeseriesList: React.FC<TimeseriesListProps> = ({
   assetId,
+  pinnedTimeseriesIds,
+  onPinTimeseriesClick,
   onAddTimeseries,
+  onFindRelatedTimeseries,
 }) => {
   const { data: timeseries = [], isLoading } = useAssetTimeseries(assetId);
   const { t } = useTranslation();
@@ -31,38 +37,98 @@ const TimeseriesList: React.FC<TimeseriesListProps> = ({
   return (
     <Container>
       <TimeseriesHeadline>
-        Time series
-        <div className="badge">{timeseries.length}</div>
+        <Flex alignItems="center">
+          Time series
+          <div className="badge">{timeseries.length}</div>
+        </Flex>
+        <Tooltip
+          position="right"
+          content={t(
+            translationKeys.FIND_RELATED_TIMESERIES,
+            'Find related time series'
+          )}
+        >
+          <Button
+            onClick={onFindRelatedTimeseries}
+            type="ghost"
+            inverted
+            size="medium"
+            icon="ListSearch"
+            aria-label={t(
+              translationKeys.FIND_RELATED_TIMESERIES,
+              'Find related time series'
+            )}
+          />
+        </Tooltip>
       </TimeseriesHeadline>
       <TimeseriesContainer>
-        {timeseries.map((ts, index) => (
-          <TimeseriesRow key={index}>
-            <InnerWrapper>
-              <ChartChip>
-                <Icon type="LineChart" size={16} />
-              </ChartChip>
-              <Name level={3}>{ts.name}</Name>
-            </InnerWrapper>
-            <Tooltip
-              content={t(
-                translationKeys.TOOLTIP_TIMESERIES_ADD_TO_CANVAS,
-                'Add timeseries'
-              )}
-            >
-              <Button
-                type="ghost"
-                inverted
-                icon="Add"
-                size="medium"
-                aria-label={t(
+        {timeseries.map((ts, index) => {
+          const isPinned = pinnedTimeseriesIds.includes(ts.id);
+          return (
+            <TimeseriesRow key={index}>
+              <InnerWrapper>
+                <ChartChip>
+                  <Icon type="LineChart" size={16} />
+                </ChartChip>
+                <Name level={3}>{ts.name}</Name>
+              </InnerWrapper>
+
+              <Tooltip
+                position="right"
+                content={
+                  isPinned
+                    ? t(
+                        translationKeys.TOOLTIP_TIMESERIES_UNPIN_FROM_CANVAS,
+                        'Unpin latest value from canvas'
+                      )
+                    : t(
+                        translationKeys.TOOLTIP_TIMESERIES_PIN_TO_CANVAS,
+                        'Pin latest value to canvas'
+                      )
+                }
+              >
+                <Button
+                  type="ghost"
+                  inverted
+                  icon={isPinned ? 'PinAlternativeOff' : 'PinAlternative'}
+                  size="medium"
+                  aria-label={
+                    isPinned
+                      ? t(
+                          translationKeys.TOOLTIP_TIMESERIES_UNPIN_FROM_CANVAS,
+                          'Unpin latest value from canvas'
+                        )
+                      : t(
+                          translationKeys.TOOLTIP_TIMESERIES_PIN_TO_CANVAS,
+                          'Pin latest value to canvas'
+                        )
+                  }
+                  onClick={() => onPinTimeseriesClick(ts.id)}
+                />
+              </Tooltip>
+
+              <Tooltip
+                position="right"
+                content={t(
                   translationKeys.TOOLTIP_TIMESERIES_ADD_TO_CANVAS,
                   'Add timeseries'
                 )}
-                onClick={() => onAddTimeseries(ts.id)}
-              />
-            </Tooltip>
-          </TimeseriesRow>
-        ))}
+              >
+                <Button
+                  type="ghost"
+                  inverted
+                  icon="Add"
+                  size="medium"
+                  aria-label={t(
+                    translationKeys.TOOLTIP_TIMESERIES_ADD_TO_CANVAS,
+                    'Add timeseries'
+                  )}
+                  onClick={() => onAddTimeseries(ts.id)}
+                />
+              </Tooltip>
+            </TimeseriesRow>
+          );
+        })}
       </TimeseriesContainer>
     </Container>
   );
@@ -105,9 +171,9 @@ const TimeseriesHeadline = styled.div`
   font-size: 12px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   .badge {
     background: ${Colors['surface--action--muted--default--inverted']};
-    background: Co;
     padding: 2px 4px;
     text-align: center;
     border-radius: 4px;

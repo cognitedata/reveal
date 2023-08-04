@@ -19,7 +19,7 @@ import { trackUsage } from '@charts-app/services/metrics';
 import { compareVersions } from 'compare-versions';
 
 import { Operation } from '@cognite/calculation-backend';
-import { Chip } from '@cognite/cogs.js';
+import { Chip, Flex } from '@cognite/cogs.js';
 import { useFlag } from '@cognite/react-feature-flags';
 
 import { ScheduledCalculationButton } from '../../ScheduledCalculation/ScheduledCalculationButton';
@@ -29,7 +29,12 @@ import AddButton, { AddMenu } from './AddButton';
 import { CanvasContext } from './CanvasContext';
 import EditorControls from './EditorControls/EditorControls';
 import EditorToolbar from './EditorToolbar/EditorToolbar';
-import { NodeEditorContainer, ContextMenu, ScheduleToolbar } from './elements';
+import {
+  NodeEditorContainer,
+  ContextMenu,
+  ScheduleToolbar,
+  DeleteSourceButton,
+} from './elements';
 import ConstantNode from './Nodes/ConstantNode';
 import FunctionNode from './Nodes/FunctionNode/FunctionNode';
 import OutputNode from './Nodes/OutputNode';
@@ -68,11 +73,11 @@ type Props = {
   ) => void;
   onAddOutputNode: (position: XYPosition) => void;
   onMove: (transform: FlowTransform) => void;
+  onDeleteSource?: () => void;
   translations: typeof defaultTranslations;
   onErrorIconClick: (id: string) => void;
 };
 
-// todo(DEGR-2397) check if this is working fine
 const NODE_TYPES: NodeTypesType = {
   [NodeTypes.SOURCE]: SourceNode as unknown as ReactNode,
   [NodeTypes.FUNCTION]: FunctionNode as unknown as ReactNode,
@@ -102,6 +107,7 @@ const ReactFlowNodeEditor = ({
   onAddFunctionNode,
   onAddOutputNode,
   onMove,
+  onDeleteSource,
   translations: t,
   onErrorIconClick,
 }: Props) => {
@@ -150,7 +156,6 @@ const ReactFlowNodeEditor = ({
    */
   const handleMove = useCallback(
     (transform: FlowTransform | undefined) => {
-      // todo(DEGR-2397) check if this is working fine
       transform && onMove(transform);
     },
     [onMove]
@@ -282,11 +287,28 @@ const ReactFlowNodeEditor = ({
                 translations={t}
                 horizontal
               />
+              {isPersistenceCalcEnabled &&
+              sourceType === 'scheduledCalculation' ? (
+                <Flex>
+                  <DeleteSourceButton
+                    type="ghost"
+                    size="small"
+                    icon="Delete"
+                    onClick={onDeleteSource}
+                  />
+                </Flex>
+              ) : null}
+
               {calculationResult ? (
                 <>
                   {calculationResult.loading && (
                     <div style={{ display: 'flex' }}>
-                      <AlertIcon type="default" icon="Loader" value="Loading" />
+                      <AlertIcon
+                        type="default"
+                        icon="Loader"
+                        value="Loading"
+                        size="small"
+                      />
                     </div>
                   )}
                   {calculationResult.error &&
@@ -296,6 +318,7 @@ const ReactFlowNodeEditor = ({
                           icon="ErrorFilled"
                           type="danger"
                           value="Error"
+                          size="small"
                           onClick={() => onErrorIconClick(id)}
                         />
                       </div>
@@ -306,6 +329,7 @@ const ReactFlowNodeEditor = ({
                       <div style={{ display: 'flex' }}>
                         <AlertIcon
                           icon="WarningFilled"
+                          size="small"
                           type="warning"
                           value={`Warning${
                             calculationResult.warnings.length > 1
@@ -330,8 +354,8 @@ const ReactFlowNodeEditor = ({
             sourceType === 'scheduledCalculation' ? (
               <ScheduleToolbar>
                 <Chip
-                  size="medium"
-                  type="default"
+                  size="small"
+                  type="neutral"
                   label={t['Running on Schedule']}
                 />
               </ScheduleToolbar>

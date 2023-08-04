@@ -1,4 +1,4 @@
-import { renderHook } from '@testing-library/react-hooks';
+import { renderHook, waitFor } from '@testing-library/react';
 import { setupServer } from 'msw/node';
 
 import { testQueryClientWrapper as wrapper } from '@data-exploration-lib/core';
@@ -15,20 +15,17 @@ describe('useInfinite360Images', () => {
     mockServer.close();
   });
   it('should be okay', async () => {
-    const { result, waitForNextUpdate } = renderHook(
-      () => useInfinite360Images(),
-      { wrapper }
-    );
+    const { result } = renderHook(() => useInfinite360Images(), { wrapper });
 
-    await waitForNextUpdate();
-
-    expect(result.current.images360Data).toStrictEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          siteId: 'helideck-site-2',
-          siteName: 'Helideck Q4 2015',
-        }),
-      ])
+    await waitFor(() =>
+      expect(result.current.images360Data).toStrictEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            siteId: 'helideck-site-2',
+            siteName: 'Helideck Q4 2015',
+          }),
+        ])
+      )
     );
   });
 });

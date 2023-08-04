@@ -8,6 +8,7 @@ import { Body, Tooltip } from '@cognite/cogs.js';
 
 import { Button } from '../../../components/buttons/Button';
 import { Widget } from '../../../components/widget/Widget';
+import { DASH } from '../../../constants/common';
 import { useIsOverflow } from '../../../hooks/useIsOverflow';
 import { useTranslation } from '../../../hooks/useTranslation';
 
@@ -29,6 +30,9 @@ export const PropertiesCollapsed: React.FC<PropertiesProps> = ({
   const properties = useMemo(() => flattenProperties(data), [data]);
 
   const getAdaptiveGridRows = () => {
+    if (state === 'loading') {
+      return 4;
+    }
     // Bit of magic values below; 4 is the number of items per row in the grid. If we have less than 4 items, we want
     // to show rows in the size of 2, otherwise in the size of 3.
     // TODO: Move the grid numbers to a more central place.
@@ -38,7 +42,10 @@ export const PropertiesCollapsed: React.FC<PropertiesProps> = ({
   return (
     <Widget rows={rows || getAdaptiveGridRows()} columns={columns} id={id}>
       <Widget.Header title={t('PROPERTIES_WIDGET_NAME')}>
-        <Button.Fullscreen onClick={() => onExpandClick?.(id)} />
+        <Button.Fullscreen
+          disabled={state === 'loading'}
+          onClick={() => onExpandClick?.(id)}
+        />
       </Widget.Header>
 
       <Widget.Body state={state}>
@@ -67,7 +74,7 @@ const PropertiesItem = ({ pair }: { pair: Record<string, any> }) => {
       <Tooltip wrapped content={pair.value} disabled={!isOverflowing}>
         <>
           <KeyText>{pair.key}</KeyText>
-          <ValueText ref={ref}>{pair.value || '-'}</ValueText>
+          <ValueText ref={ref}>{pair.value || DASH}</ValueText>
         </>
       </Tooltip>
     </Content>
@@ -90,7 +97,9 @@ const Container = styled.div`
   grid-row-gap: 24px;
 `;
 
-const KeyText = styled(Body).attrs({ level: 3 })``;
+const KeyText = styled(Body).attrs({ level: 3 })`
+  text-transform: capitalize;
+`;
 
 // 'Cogs' does not have the option to pass in 'ref', use 'p' until it's fixed
 const ValueText = styled.p.attrs({ strong: true })`

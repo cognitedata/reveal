@@ -9,13 +9,14 @@ import GlobalStyles from '@transformations/styles/GlobalStyles';
 import { MAX_NETWORK_RETRIES } from '@transformations/utils';
 
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
-import sdk from '@cognite/cdf-sdk-singleton';
-import { getProject } from '@cognite/cdf-utilities';
+import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
+import {
+  AuthContainer,
+  getProject,
+  isUsingUnifiedSignin,
+} from '@cognite/cdf-utilities';
 import { FlagProvider } from '@cognite/react-feature-flags';
 import { CogniteError } from '@cognite/sdk';
-import { SDKProvider } from '@cognite/sdk-provider';
-
-import { AuthContainer } from './components/auth-container/AuthContainer';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -46,6 +47,10 @@ const queryClient = new QueryClient({
 
 const App = () => {
   const project = getProject();
+  const baseUrl = isUsingUnifiedSignin()
+    ? `/cdf/:projectName`
+    : '/:projectName';
+
   return (
     <I18nWrapper translations={translations} defaultNamespace="transformations">
       <FlagProvider
@@ -53,31 +58,32 @@ const App = () => {
         appName="transformations"
         projectName={project}
       >
-        <SDKProvider sdk={sdk}>
-          <QueryClientProvider client={queryClient}>
-            <GlobalStyles>
-              <AuthContainer>
-                <Router>
-                  <Routes>
-                    <Route
-                      path="/:projectName/:subAppPath/:transformationId"
-                      element={<TransformationDetails />}
-                    />
+        <QueryClientProvider client={queryClient}>
+          <GlobalStyles>
+            <AuthContainer
+              title="Transform Data"
+              sdk={sdk}
+              login={loginAndAuthIfNeeded}
+            >
+              <Router>
+                <Routes>
+                  <Route
+                    path={`${baseUrl}/:subAppPath/:transformationId`}
+                    element={<TransformationDetails />}
+                  />
 
-                    <Route
-                      path="/:projectName/:subAppPath"
-                      element={<TransformationList />}
-                    />
-                  </Routes>
-                </Router>
-              </AuthContainer>
-            </GlobalStyles>
-            <ReactQueryDevtools initialIsOpen={false} />
-          </QueryClientProvider>
-        </SDKProvider>
+                  <Route
+                    path={`${baseUrl}/:subAppPath`}
+                    element={<TransformationList />}
+                  />
+                </Routes>
+              </Router>
+            </AuthContainer>
+          </GlobalStyles>
+          <ReactQueryDevtools initialIsOpen={false} />
+        </QueryClientProvider>
       </FlagProvider>
     </I18nWrapper>
   );
 };
-
 export default App;

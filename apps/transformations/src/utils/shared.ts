@@ -7,11 +7,14 @@ import {
   RELEASE_BANNER_SESSION_STORAGE_KEY,
 } from '@transformations/common';
 import { JobMetricsGroup, Warning } from '@transformations/hooks';
-import { styleScope } from '@transformations/styles/styleScope';
 import { Items, Job, Schema, TransformationRead } from '@transformations/types';
 
 import { getFlow } from '@cognite/cdf-sdk-singleton';
-import { CodeEditorTheme, createLink } from '@cognite/cdf-utilities';
+import {
+  CodeEditorTheme,
+  createLink,
+  isUsingUnifiedSignin,
+} from '@cognite/cdf-utilities';
 import { IconType } from '@cognite/cogs.js';
 import { IDPType } from '@cognite/login-utils';
 
@@ -35,9 +38,7 @@ export const shouldUseApiKeysAsDestinationCredentials = (
 };
 
 export const getContainer = () => {
-  const els = document.getElementsByClassName(styleScope);
-  const el = els.item(0)! as HTMLElement;
-  return el;
+  return document.body;
 };
 
 export const capitalizeEveryWord = (
@@ -77,7 +78,9 @@ export const trimFileExtension = (fullName: string): string => {
 };
 
 export const createInternalLink = (path?: string | number) => {
-  const mountPoint = window.location.pathname.split('/')[2];
+  const mountPoint = isUsingUnifiedSignin()
+    ? window.location.pathname.split('/')[3]
+    : window.location.pathname.split('/')[2];
   return createLink(`/${mountPoint}/${path || ''}`);
 };
 

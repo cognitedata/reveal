@@ -2,27 +2,36 @@ import isEmpty from 'lodash/isEmpty';
 
 import { CogniteClient } from '@cognite/sdk';
 
-import { TimeseriesDatapoint, TimeseriesDatapointsQuery } from '../types';
+import {
+  TimeseriesDatapointsResponse,
+  TimeseriesDatapointsQuery,
+} from '../types';
 
 export const getTimeseriesDatapoints = (
   sdk: CogniteClient,
   query: TimeseriesDatapointsQuery
-): Promise<TimeseriesDatapoint[]> => {
-  const { id, ...rest } = query;
+): Promise<TimeseriesDatapointsResponse | undefined> => {
+  const { item, ...rest } = query;
 
   return sdk.datapoints
     .retrieve({
-      items: [{ id }],
+      items: [item],
       ...rest,
     })
     .then((items) => {
       if (isEmpty(items)) {
-        return [];
+        return undefined;
       }
 
-      return items[0].datapoints;
+      const { id, externalId, datapoints } = items[0];
+
+      return {
+        id,
+        externalId,
+        datapoints,
+      };
     })
     .catch(() => {
-      return [];
+      return undefined;
     });
 };

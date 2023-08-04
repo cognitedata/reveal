@@ -1,9 +1,6 @@
 import React, { useMemo, useState } from 'react';
 
-import {
-  DefaultPreviewFilter,
-  PreviewFilterDropdown,
-} from '@data-exploration/components';
+import { DefaultPreviewFilter } from '@data-exploration/components';
 import { useDebounce } from 'use-debounce';
 
 import { Timeseries } from '@cognite/sdk';
@@ -18,50 +15,16 @@ import {
   useTimeseriesSearchResultQuery,
 } from '@data-exploration-lib/domain-layer';
 
-import { UnitFilter, DateFilter, MetadataFilter } from '../../../Filters';
 import { AppliedFiltersTags } from '../AppliedFiltersTags';
 
 import { TimeseriesTable } from './TimeseriesTable';
+import { TimeseriesTableFilters } from './TimeseriesTableFilters';
 
 interface Props {
   defaultFilter: InternalCommonFilters;
   onClick: (item: Timeseries) => void;
   onParentAssetClick: (assetId: number) => void;
 }
-
-const LinkedAssetFilter = ({
-  filter,
-  onFilterChange,
-}: {
-  filter: InternalTimeseriesFilters;
-  onFilterChange: (newValue: InternalTimeseriesFilters) => void;
-}) => {
-  return (
-    <PreviewFilterDropdown>
-      <UnitFilter.Timeseries
-        filter={filter}
-        value={filter.unit}
-        onChange={(newUnit) => onFilterChange({ unit: newUnit })}
-      />
-
-      <DateFilter.Updated
-        value={filter.lastUpdatedTime}
-        onChange={(newValue) =>
-          onFilterChange({
-            lastUpdatedTime: newValue || undefined,
-          })
-        }
-      />
-      <MetadataFilter.Timeseries
-        filter={filter}
-        values={filter.metadata}
-        onChange={(newMetadata) => {
-          onFilterChange({ metadata: newMetadata });
-        }}
-      />
-    </PreviewFilterDropdown>
-  );
-};
 
 export const TimeseriesLinkedSearchResults: React.FC<Props> = ({
   defaultFilter,
@@ -120,7 +83,7 @@ export const TimeseriesLinkedSearchResults: React.FC<Props> = ({
       }
       tableHeaders={
         <DefaultPreviewFilter query={query} onQueryChange={setQuery}>
-          <LinkedAssetFilter
+          <TimeseriesTableFilters
             filter={timeseriesFilters}
             onFilterChange={handleFilterChange}
           />

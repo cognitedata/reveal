@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import {
   EmptyState,
@@ -9,17 +9,28 @@ import {
   FileGroupingTable,
   FileViewSwitcher,
   ResultCount,
+  SearchResultCountLabel,
 } from '@data-exploration/containers';
 import {
   useRelatedResourceResults,
   useRelationshipCount,
 } from '@data-exploration-components/hooks';
 import { ColumnDef } from '@tanstack/react-table';
+import isEmpty from 'lodash/isEmpty';
+
+import { DocumentSearchItem } from '@cognite/sdk';
 
 import {
   FileWithRelationshipLabels,
+  ResourceTypes,
   useTranslation,
 } from '@data-exploration-lib/core';
+import {
+  addDetailViewData,
+  buildAdvancedFilterFromDetailViewData,
+  useDocumentSearchQuery,
+  useRelatedResourceDataForDetailView,
+} from '@data-exploration-lib/domain-layer';
 
 import {
   GroupingTableContainer,
@@ -31,8 +42,10 @@ import { RelationshipTableProps } from './RelationshipTable';
 
 export function RelationshipFileTable({
   parentResource,
+  labels,
   onItemClicked,
   isGroupingFilesEnabled,
+  isDocumentsApiEnabled,
 }: Omit<RelationshipTableProps, 'type'>) {
   const [currentView, setCurrentView] = useState<string>(
     isGroupingFilesEnabled ? 'tree' : 'list'
@@ -53,18 +66,61 @@ export function RelationshipFileTable({
     ] as ColumnDef<FileWithRelationshipLabels>[];
   }, []);
 
+  const { data: detailViewRelatedResourcesData } =
+    useRelatedResourceDataForDetailView({
+      resourceExternalId: parentResource.externalId,
+      relationshipResourceType: ResourceTypes.File,
+      filter: { labels },
+    });
+
+  const hasRelationships = !isEmpty(detailViewRelatedResourcesData);
+
+  const documentsQuery = useDocumentSearchQuery(
+    {
+      filter: buildAdvancedFilterFromDetailViewData(
+        detailViewRelatedResourcesData
+      ),
+      limit: 20,
+    },
+    { enabled: hasRelationships && isDocumentsApiEnabled }
+  );
+
+  const filesQuery = useRelatedResourceResults<FileWithRelationshipLabels>(
+    'relationship',
+    'file',
+    parentResource,
+    isGroupingFilesEnabled ? 1000 : 20
+  );
+
+  const { fetchNextPage, hasNextPage, isLoading } = isDocumentsApiEnabled
+    ? documentsQuery
+    : filesQuery;
+
+  const tableData = useMemo(() => {
+    if (!isDocumentsApiEnabled) {
+      return filesQuery.items;
+    }
+
+    const documents = documentsQuery.data
+      ? documentsQuery.data?.pages
+          .reduce((result, page) => {
+            return [...result, ...page.items];
+          }, [] as DocumentSearchItem[])
+          .map(({ item }) => item)
+      : [];
+
+    return addDetailViewData(documents, detailViewRelatedResourcesData);
+  }, [
+    detailViewRelatedResourcesData,
+    documentsQuery.data,
+    filesQuery.items,
+    isDocumentsApiEnabled,
+  ]);
+
   const { data: count } = useRelationshipCount(parentResource, 'file');
 
-  const { hasNextPage, fetchNextPage, isLoading, items } =
-    useRelatedResourceResults<FileWithRelationshipLabels>(
-      'relationship',
-      'file',
-      parentResource,
-      isGroupingFilesEnabled ? 1000 : 20
-    );
-
-  if (isLoading) {
-    return <EmptyState isLoading={isLoading} />;
+  if (isEmpty(tableData)) {
+    return <EmptyState isLoading={hasRelationships && isLoading} />;
   }
 
   return (
@@ -78,7 +134,7 @@ export function RelationshipFileTable({
             />
           </GroupingTableHeader>
           <FileGroupingTable
-            data={items}
+            data={tableData as FileWithRelationshipLabels[]}
             onItemClicked={(file) => onItemClicked(file.id)}
           />
         </GroupingTableContainer>
@@ -90,7 +146,15 @@ export function RelationshipFileTable({
           columns={columns}
           tableHeaders={
             <>
-              <ResultCount api="list" type="file" count={count} />
+              {isDocumentsApiEnabled ? (
+                <SearchResultCountLabel
+                  loadedCount={tableData.length}
+                  totalCount={detailViewRelatedResourcesData.length}
+                  resourceType={ResourceTypes.File}
+                />
+              ) : (
+                <ResultCount api="list" type="file" count={count} />
+              )}
               <FileSwitcherWrapper>
                 {isGroupingFilesEnabled && (
                   <FileViewSwitcher
@@ -101,7 +165,7 @@ export function RelationshipFileTable({
               </FileSwitcherWrapper>
             </>
           }
-          data={items}
+          data={tableData as FileWithRelationshipLabels[]}
           showLoadButton
           fetchMore={fetchNextPage}
           hasNextPage={hasNextPage}

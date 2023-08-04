@@ -31,6 +31,7 @@ jest.mock('@platypus-app/hooks/useMixpanel', () => ({
   }),
 }));
 
+jest.mock('@cognite/cdf-sdk-singleton');
 jest.mock('@platypus-app/hooks/useDataModelActions');
 jest.mock('@platypus-app/hooks/useSelectedDataModelVersion');
 

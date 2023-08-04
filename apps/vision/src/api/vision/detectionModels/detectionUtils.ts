@@ -8,20 +8,19 @@ import {
 import { DetectionModelTypeFeatureMapping } from '@vision/constants/DetectionModelTypeApiFieldMapping';
 
 import sdk from '@cognite/cdf-sdk-singleton';
+import { getProject } from '@cognite/cdf-utilities';
 
 export function getDetectionModelEndpoint(modelType: VisionDetectionModelType) {
   if (
     modelType === VisionDetectionModelType.CustomModel ||
     modelType === VisionDetectionModelType.GaugeReader
   ) {
-    return `${sdk.getBaseUrl()}/api/playground/projects/${
-      sdk.project
-    }/context/vision/${DetectionModelTypeFeatureMapping[modelType]}`;
+    return `${sdk.getBaseUrl()}/api/playground/projects/${getProject()}/context/vision/${
+      DetectionModelTypeFeatureMapping[modelType]
+    }`;
   }
 
-  return `${sdk.getBaseUrl()}/api/v1/projects/${
-    sdk.project
-  }/context/vision/extract`;
+  return `${sdk.getBaseUrl()}/api/v1/projects/${getProject()}/context/vision/extract`;
 }
 
 export function getFakeQueuedJob(

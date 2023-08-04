@@ -5,4 +5,8 @@ import { setPublicPath } from 'systemjs-webpack-interop';
  * https://single-spa.js.org/docs/faq/#code-splits
  */
 
-setPublicPath('@cognite/cdf-solutions-ui');
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+if (typeof System !== 'undefined') {
+  setPublicPath('@cognite/cdf-solutions-ui');
+}

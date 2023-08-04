@@ -12,7 +12,10 @@ import { ColumnDef } from '@tanstack/react-table';
 import { Icon } from '@cognite/cogs.js';
 
 import { useTranslation } from '@data-exploration-lib/core';
-import { InternalThreeDModelData } from '@data-exploration-lib/domain-layer';
+import {
+  Image360Data,
+  InternalThreeDModelData,
+} from '@data-exploration-lib/domain-layer';
 
 import { Image360Display } from './Image360Display';
 import { ThreeDModelDisplay } from './ThreeDModelDisplay';
@@ -37,6 +40,7 @@ export const ThreeDTable = ({
     metadata: model.metadata,
     dataSetId: model.dataSetId,
     createdTime: model.createdTime,
+    lastUpdatedTime: model.lastUpdatedTime,
     type: model.type,
     siteId: model.siteId,
   }));
@@ -78,7 +82,7 @@ export const ThreeDTable = ({
                 />
               )}
               {row.original?.type === 'img360' ? (
-                <Image360Display model={row.original} />
+                <Image360Display model={row.original as Image360Data} />
               ) : (
                 <ThreeDModelDisplay model={row.original} />
               )}
@@ -109,7 +113,7 @@ export const ThreeDTable = ({
           cell: ({ getValue, row }) => (
             <ThreeDModelLastUpdated
               modelId={getValue<number>()}
-              is360Image={row.original?.type === 'img360'}
+              lastUpdatedTime={row.original?.lastUpdatedTime}
             />
           ),
           enableSorting: false,

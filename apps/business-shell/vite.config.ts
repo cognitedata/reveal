@@ -1,0 +1,61 @@
+/// <reference types="vitest" />
+import basicSsl from '@vitejs/plugin-basic-ssl';
+import react from '@vitejs/plugin-react';
+import rollupNodePlugins from 'rollup-plugin-node-polyfills';
+import { defineConfig, loadEnv, searchForWorkspaceRoot } from 'vite';
+import macrosPlugin from 'vite-plugin-babel-macros';
+import svgr from 'vite-plugin-svgr';
+import viteTsConfigPaths from 'vite-tsconfig-paths';
+
+export default defineConfig((configType) => {
+  const NODE_ENV = configType.mode.toLowerCase();
+
+  const env = {
+    NODE_ENV: NODE_ENV,
+    ...loadEnv(NODE_ENV, process.cwd(), 'REACT_APP_'),
+    ...loadEnv(NODE_ENV, process.cwd(), 'PUBLIC_URL'),
+  };
+
+  return {
+    cacheDir: '../../node_modules/.vite/business-shell',
+
+    resolve: {
+      dedupe: ['@cognite/plotting-components'],
+    },
+
+    server: {
+      port: 3000,
+      host: 'localhost',
+      https: true,
+      fs: {
+        allow: [searchForWorkspaceRoot(process.cwd())],
+      },
+    },
+    // dont just blanket expose process.env, expose just the ones you need.
+    // https://dev.to/whchi/how-to-use-processenv-in-vite-ho9
+    define: {
+      ...Object.entries(env).reduce(
+        (obj, [key, value]) => ({
+          ...obj,
+          [`process.env.${key}`]: JSON.stringify(value),
+        }),
+        {}
+      ),
+    },
+
+    preview: {
+      port: 4300,
+      host: 'localhost',
+    },
+
+    plugins: [
+      basicSsl(),
+      svgr(),
+      react(),
+      viteTsConfigPaths({
+        projects: ['../../tsconfig.base.json', './tsconfig.json'],
+      }),
+      macrosPlugin(),
+    ],
+  };
+});

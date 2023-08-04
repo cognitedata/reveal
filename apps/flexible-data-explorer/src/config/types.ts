@@ -1,26 +1,11 @@
+import { type AddResourceOptions } from '@cognite/reveal-react-components';
+
+import { DataModelV2 } from '../app/services/types';
+
 export type DataModelConfig = {
   name: string;
   space: string;
   version: string;
-};
-
-export type ModelTranslation = {
-  x: number;
-  y: number;
-  z: number;
-};
-
-export type ModelIdentifier = {
-  type: 'cad' | 'pointcloud';
-  modelId: number;
-  revisionId: number;
-  transform?: ModelTranslation;
-};
-
-export type ThreeDResource = ModelIdentifier | Collection360;
-
-export type Collection360 = {
-  siteId: string;
 };
 
 export type ProjectConfig = {
@@ -28,17 +13,17 @@ export type ProjectConfig = {
   site: string;
   imageUrl?: string;
   description?: string;
-  dataModels: DataModelConfig[];
-  nodeSpaces?: string[];
-  threeDResources?: ThreeDResource[];
+  dataModels?: DataModelV2[];
+  instanceSpaces?: string[];
+  threeDResources?: AddResourceOptions[];
 
   // Files and ts are fetched from the Cognite API, users might have
   // different data sets for each site, so we need to specify which
 
   fileConfig?: {
-    dataSetIds: string[];
+    dataSetIds: number[];
   };
   timeseriesConfig?: {
-    dataSetIds: string[];
+    dataSetIds: number[];
   };
 };

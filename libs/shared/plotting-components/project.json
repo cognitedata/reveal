@@ -7,21 +7,15 @@
   "targets": {
     "npm": {
       "executor": "nx:run-commands",
-      "dependsOn": [
-        "build"
-      ],
+      "dependsOn": ["build"],
       "options": {
         "outputPath": "dist/libs/shared/plotting-components",
-        "commands": [
-          "./scripts/npm.sh"
-        ]
+        "commands": ["./scripts/npm.sh"]
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
-      "outputs": [
-        "{options.outputFile}"
-      ],
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
           "libs/shared/plotting-components/**/*.{ts,tsx,js,jsx}"
@@ -29,17 +23,11 @@
       }
     },
     "build": {
-      "executor": "@nrwl/rollup:rollup",
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "executor": "@nx/rollup:rollup",
+      "outputs": ["{options.outputPath}"],
       "options": {
-        "format": [
-          "esm"
-        ],
-        "external": [
-          "react/jsx-runtime"
-        ],
+        "format": ["esm"],
+        "external": ["react/jsx-runtime"],
         "outputPath": "dist/libs/shared/plotting-components",
         "tsConfig": "libs/shared/plotting-components/tsconfig.lib.json",
         "project": "libs/shared/plotting-components/package.json",
@@ -58,19 +46,16 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": [
-        "{workspaceRoot}/coverage/{projectRoot}"
-      ],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
         "jestConfig": "libs/shared/plotting-components/jest.config.ts",
         "passWithNoTests": true
       }
     },
     "storybook": {
-      "executor": "@nrwl/storybook:storybook",
+      "executor": "@nx/storybook:storybook",
       "options": {
-        "uiFramework": "@storybook/react",
         "port": 4400,
         "configDir": "libs/shared/plotting-components/.storybook"
       },
@@ -81,14 +66,11 @@
       }
     },
     "build-storybook": {
-      "executor": "@nrwl/storybook:build",
-      "outputs": [
-        "{options.outputDir}"
-      ],
+      "executor": "@nx/storybook:build",
+      "outputs": ["{options.outputDir}"],
       "options": {
-        "uiFramework": "@storybook/react",
         "configDir": "libs/shared/plotting-components/.storybook",
-        "outputDir": "storybook-static"
+        "outputDir": "dist/storybook/shared-plotting-components"
       },
       "configurations": {
         "ci": {

@@ -41,6 +41,25 @@ export const TimeseriesFilters: React.FC<FilterProps> = ({
       {...rest}
     >
       <TempMultiSelectFix>
+        <MetadataFilter.Timeseries
+          query={query}
+          filter={timeSeriesFilter}
+          values={timeSeriesFilter.metadata}
+          onChange={(newMetadata) => {
+            onFilterChange('timeSeries', {
+              metadata: newMetadata,
+            });
+          }}
+        />
+        <UnitFilter.Timeseries
+          query={query}
+          filter={timeSeriesFilter}
+          value={timeSeriesFilter.unit}
+          onChange={(newUnit) =>
+            onFilterChange('timeSeries', { unit: newUnit })
+          }
+          addNilOption
+        />
         <IsStepFilter
           value={timeSeriesFilter.isStep}
           onChange={(newValue) =>
@@ -53,26 +72,6 @@ export const TimeseriesFilters: React.FC<FilterProps> = ({
           onChange={(newValue) =>
             onFilterChange('timeSeries', { isString: newValue })
           }
-        />
-
-        <UnitFilter.Timeseries
-          query={query}
-          filter={timeSeriesFilter}
-          value={timeSeriesFilter.unit}
-          onChange={(newUnit) =>
-            onFilterChange('timeSeries', { unit: newUnit })
-          }
-        />
-
-        <MetadataFilter.Timeseries
-          query={query}
-          filter={timeSeriesFilter}
-          values={timeSeriesFilter.metadata}
-          onChange={(newMetadata) => {
-            onFilterChange('timeSeries', {
-              metadata: newMetadata,
-            });
-          }}
         />
       </TempMultiSelectFix>
     </BaseFilterCollapse.Panel>

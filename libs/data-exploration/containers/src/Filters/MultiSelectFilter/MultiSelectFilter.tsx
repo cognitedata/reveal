@@ -15,8 +15,7 @@ import isEmpty from 'lodash/isEmpty';
 
 import { OptionType } from '@cognite/cogs.js';
 
-import { zIndex } from '@data-exploration-lib/core';
-import { NIL_FILTER_LABEL } from '@data-exploration-lib/domain-layer';
+import { NOT_SET, zIndex } from '@data-exploration-lib/core';
 
 import { MultiSelectOptionType } from '../types';
 
@@ -60,7 +59,7 @@ export const MultiSelectFilter = <ValueType,>({
         }
 
         return {
-          label: isNilOption(option) ? NIL_FILTER_LABEL : option.label,
+          label: isNilOption(option) ? NOT_SET : option.label,
           value: option.value as ValueType,
         };
       })
@@ -89,7 +88,7 @@ export const MultiSelectFilter = <ValueType,>({
         isLoading={isLoading}
         isError={isError}
         options={options}
-        data-testid="multi-select-filter"
+        data-testid={`multi-select-filter-${label}`}
         value={formatValue(value)}
         onChange={handleChange}
         isSearchable

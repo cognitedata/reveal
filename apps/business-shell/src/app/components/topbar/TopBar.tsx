@@ -26,32 +26,34 @@ export const TopBar: FC<Props> = () => {
     <CogsTopBar>
       <CogsTopBar.Left>
         <CogsTopBar.Logo title="Cognite" />
-        <CogsTopBar.Navigation
-          links={
-            isEnabled
-              ? [
-                  {
-                    name: t('LABEL_EXPLORE'),
-                    onClick: () => {
-                      navigate('/explore');
+        <div className="navigation-bar">
+          <CogsTopBar.Navigation
+            links={
+              isEnabled
+                ? [
+                    {
+                      name: t('LABEL_EXPLORE'),
+                      onClick: () => {
+                        navigate('/explore');
+                      },
                     },
-                  },
-                  {
-                    name: t('LABEL_CANVAS'),
-                    onClick: () => {
-                      navigate('/canvas');
+                    {
+                      name: t('LABEL_CANVAS'),
+                      onClick: () => {
+                        navigate('/canvas');
+                      },
                     },
-                  },
-                  {
-                    name: t('LABEL_CHARTS'),
-                    onClick: () => {
-                      navigate('/charts');
+                    {
+                      name: t('LABEL_CHARTS'),
+                      onClick: () => {
+                        navigate('/charts');
+                      },
                     },
-                  },
-                ]
-              : []
-          }
-        />
+                  ]
+                : []
+            }
+          />
+        </div>
         <Dropdown maxWidth={800} content={<AppSelector />}>
           <Tabs size="xlarge" activeKey="never">
             <></>
@@ -63,7 +65,9 @@ export const TopBar: FC<Props> = () => {
       </CogsTopBar.Left>
 
       <CogsTopBar.Right>
-        <UserMenu />
+        <div className="user-menu">
+          <UserMenu />
+        </div>
       </CogsTopBar.Right>
     </CogsTopBar>
   );

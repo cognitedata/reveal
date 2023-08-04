@@ -1,10 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { VerticalContainer } from '@vision/modules/Common/Components/VerticalContainer';
 import { useContextMenu } from '@vision/modules/Common/hooks/useContextMenu';
 import { TableDataItem } from '@vision/modules/Common/types';
@@ -27,7 +26,7 @@ import { cancelFileDetailsEdit } from '@vision/modules/FileDetails/slice';
 import FilterToggleButton from '@vision/modules/FilterSidePanel/Components/FilterToggleButton';
 import { FilterSidePanel } from '@vision/modules/FilterSidePanel/Containers/FilterSidePanel';
 import { StatusToolBar } from '@vision/modules/Process/Containers/StatusToolBar';
-import { AppDispatch } from '@vision/store';
+import { useThunkDispatch } from '@vision/store';
 import { RootState } from '@vision/store/rootReducer';
 import { ClearExplorerStateOnTransition } from '@vision/store/thunks/Explorer/ClearExplorerStateOnTransition';
 import { FetchFilesById } from '@vision/store/thunks/Files/FetchFilesById';
@@ -50,9 +49,7 @@ const Explorer = () => {
   } = useContextMenu();
 
   const navigate = useNavigate();
-  const dispatch = useDispatch<AppDispatch>();
-
-  const queryClient = new QueryClient();
+  const dispatch = useThunkDispatch();
 
   const [reFetchProp, setReFetchProp] = useState(false);
   const reFetch = useCallback(() => setReFetchProp((i) => !i), []);
@@ -146,70 +143,66 @@ const Explorer = () => {
       <ExplorerFileUploadModalContainer refetch={reFetch} />
       <ExplorerFileDownloadModalContainer />
       <Wrapper>
-        <QueryClientProvider client={queryClient}>
-          {showFilter && (
-            <FilterPanel>
-              <FilterSidePanel />
-            </FilterPanel>
-          )}
+        {showFilter && (
+          <FilterPanel>
+            <FilterSidePanel />
+          </FilterPanel>
+        )}
 
-          <TablePanel showDrawer={showMetadata} showFilter={showFilter}>
-            {!showFilter ? (
-              <div
-                style={{
-                  borderRight: `1px solid ${Colors['border--muted']}`,
-                  padding: '10px',
-                  zIndex: 1,
-                }}
-              >
-                <FilterToggleButton
-                  toggleOpen={() => dispatch(toggleExplorerFilterView())}
-                />
-              </div>
-            ) : undefined}
+        <TablePanel showDrawer={showMetadata} showFilter={showFilter}>
+          {!showFilter ? (
+            <div
+              style={{
+                borderRight: `1px solid ${Colors['border--muted']}`,
+                padding: '10px',
+                zIndex: 1,
+              }}
+            >
+              <FilterToggleButton
+                toggleOpen={() => dispatch(toggleExplorerFilterView())}
+              />
+            </div>
+          ) : undefined}
 
-            <ViewContainer>
-              <ExplorerToolbarContainer
-                query={query}
-                selectedCount={selectedFileIds.length}
-                isLoading={isLoading}
-                currentView={currentView}
-                reFetch={reFetch}
-              />
-              <ExplorerSearchResults
-                reFetchProp={reFetchProp}
-                currentView={currentView}
-                filter={filter}
-                query={query}
-                focusedId={focusedFileId}
-                selectedIds={selectedFileIds}
-                isLoading={isLoading}
-                onItemClick={handleItemClick}
-                onItemRightClick={handleContextMenuOpen}
-                onItemSelect={handleRowSelect}
-              />
-            </ViewContainer>
-          </TablePanel>
-          {showMetadata && focusedFileId && (
-            <DrawerContainer style={{ zIndex: 2 }}>
-              <QueryClientProvider client={queryClient}>
-                <FileDetails
-                  fileId={focusedFileId}
-                  onClose={handleMetadataClose}
-                  onReview={onFileDetailReview}
-                />
-              </QueryClientProvider>
-            </DrawerContainer>
-          )}
-          {showContextMenu && contextMenuDataItem && (
-            <ContextMenuContainer
-              rowData={contextMenuDataItem}
-              position={contextMenuAnchorPoint}
+          <ViewContainer>
+            <ExplorerToolbarContainer
+              query={query}
+              selectedCount={selectedFileIds.length}
+              isLoading={isLoading}
+              currentView={currentView}
+              reFetch={reFetch}
             />
-          )}
-          <ExplorerBulkEditModalContainer />
-          <ExplorerModelTrainingModalContainer />
-        </QueryClientProvider>
+            <ExplorerSearchResults
+              reFetchProp={reFetchProp}
+              currentView={currentView}
+              filter={filter}
+              query={query}
+              focusedId={focusedFileId}
+              selectedIds={selectedFileIds}
+              isLoading={isLoading}
+              onItemClick={handleItemClick}
+              onItemRightClick={handleContextMenuOpen}
+              onItemSelect={handleRowSelect}
+            />
+          </ViewContainer>
+        </TablePanel>
+        {showMetadata && focusedFileId && (
+          <DrawerContainer style={{ zIndex: 2 }}>
+            <FileDetails
+              fileId={focusedFileId}
+              onClose={handleMetadataClose}
+              onReview={onFileDetailReview}
+            />
+          </DrawerContainer>
+        )}
+        {showContextMenu && contextMenuDataItem && (
+          <ContextMenuContainer
+            rowData={contextMenuDataItem}
+            position={contextMenuAnchorPoint}
+          />
+        )}
+        <ExplorerBulkEditModalContainer />
+        <ExplorerModelTrainingModalContainer />
       </Wrapper>
     </VerticalContainer>
   );
@@ -280,7 +273,7 @@ const DeselectContainer = styled.div`
 `;
 
 const Deselect = () => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useThunkDispatch();
   const focusedFileId = useSelector(
     ({ explorerReducer }: RootState) => explorerReducer.focusedFileId
   );

@@ -1,10 +1,6 @@
-import isArray from 'lodash/isArray';
-import mergeWith from 'lodash/mergeWith';
+import { isEmpty } from 'lodash';
 
-import {
-  ValueByDataType,
-  ValueByField,
-} from '../../containers/search/Filter/types';
+import { ValueByDataType, ValueByField } from '../../containers/Filter/types';
 
 import { builders } from './builders';
 
@@ -34,20 +30,13 @@ export const buildFilterByField = (valueByField: ValueByField = {}) => {
     }
   );
 
-  if (filters.length === 0) {
+  if (isEmpty(filters)) {
     return undefined;
   }
 
-  return { and: filters };
-};
+  if (filters.length === 1) {
+    return filters[0];
+  }
 
-export const mergeBuildWithResult = (
-  result: Record<string, unknown>,
-  build: Record<string, unknown>
-) => {
-  return mergeWith(result, build, (obj, src) => {
-    if (isArray(obj)) {
-      obj.concat(src);
-    }
-  });
+  return { and: filters };
 };

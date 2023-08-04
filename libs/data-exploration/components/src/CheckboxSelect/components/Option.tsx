@@ -57,6 +57,7 @@ export const Option: React.FC<OptionProps> = ({
           name={label || value}
           checked={checked}
           indeterminate={indeterminate}
+          disabled={isDisabled}
         />
         <OptionLabel>
           <Ellipsis value={label || value} />

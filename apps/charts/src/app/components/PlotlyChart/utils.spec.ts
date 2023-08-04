@@ -1,3 +1,7 @@
+/**
+ * npx jest ./src/components/PlotlyChart/utils.spec.ts
+ */
+
 import { ChartTimeSeries, ChartWorkflow } from '@charts-app/models/chart/types';
 import { addMinutes } from 'date-fns';
 
@@ -211,7 +215,8 @@ describe('formatPlotlyData', () => {
   it('should generate correct result for timeseries and calculations as inputs using raw data (show min/max)', () => {
     const result = formatPlotlyData(
       formatSeriesDataCase1.input.seriesData,
-      false
+      false,
+      undefined
     );
 
     expect(result).toEqual(formatSeriesDataCase1.output);
@@ -220,7 +225,8 @@ describe('formatPlotlyData', () => {
   it('should generate correct result for timeseries and calculations as inputs using aggregated data (show min/max)', () => {
     const result = formatPlotlyData(
       formatSeriesDataCase2.input.seriesData,
-      false
+      false,
+      undefined
     );
 
     expect(result).toEqual(formatSeriesDataCase2.output);
@@ -275,7 +281,7 @@ describe('generateLayout', () => {
             width: 1.5,
           },
           type: 'line',
-          visible: true,
+          visible: false,
           x0: 1668580371000,
           x1: 1668580371000,
           xref: 'x0',
@@ -289,7 +295,7 @@ describe('generateLayout', () => {
             width: 1.5,
           },
           type: 'line',
-          visible: true,
+          visible: false,
           x0: 1668580749000,
           x1: 1668580749000,
           xref: 'x0',
@@ -303,7 +309,7 @@ describe('generateLayout', () => {
             width: 0,
           },
           type: 'rect',
-          visible: true,
+          visible: false,
           x0: 1668580371000,
           x1: 1668580749000,
           xref: 'x0',
@@ -317,7 +323,7 @@ describe('generateLayout', () => {
             width: 0,
           },
           type: 'rect',
-          visible: true,
+          visible: false,
           x0: 1668580371000,
           x1: 1668580749000,
           xref: 'x0',
@@ -338,9 +344,12 @@ describe('generateLayout', () => {
         tickwidth: 1,
         side: 'left',
         anchor: 'free',
+        overlaying: undefined,
         position: 0.019,
         range: [1459.8294756630028, 1491.8053766553744],
         showgrid: false,
+        tickvals: undefined,
+        ticktext: undefined,
       },
       yaxis2: {
         hoverformat: '.3g',
@@ -358,6 +367,8 @@ describe('generateLayout', () => {
         position: 0.069,
         range: [1456.247265175954, 1488.6541100613447],
         showgrid: false,
+        tickvals: undefined,
+        ticktext: undefined,
       },
       yaxis3: {
         hoverformat: '.3g',

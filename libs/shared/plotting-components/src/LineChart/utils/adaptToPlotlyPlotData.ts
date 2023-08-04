@@ -12,6 +12,7 @@ import { LineChartProps, Variant } from '../types';
 import { getDataAsArray } from './getDataAsArray';
 import { getLineName } from './getLineName';
 import { mapInterolationToPlotlyLineShape } from './mapInterolationToPlotlyLineShape';
+import { shouldShowMarkers } from './shouldShowMarkers';
 
 interface Props {
   data: LineChartProps['data'];
@@ -21,21 +22,37 @@ interface Props {
 
 export const adaptToPlotlyPlotData = ({
   data,
-  showMarkers,
+  showMarkers: showMarkersForAll,
   variant,
 }: Props): Partial<PlotData>[] => {
-  const mode = showMarkers ? 'lines+markers' : 'lines';
-
-  let markerSize = showMarkers ? MARKER_SIZE : 0;
-  let markerOutlineWidth = HOVER_MARKER_BORDER_WIDTH;
-
-  if (variant === 'small') {
-    markerSize /= 2;
-    markerOutlineWidth /= 2;
-  }
-
   return getDataAsArray(data).map(
-    ({ x, y, color, name, customData, interpolation }, index) => {
+    (
+      {
+        x,
+        y,
+        color,
+        name,
+        customData,
+        interpolation,
+        showMarkers: showMarkersForLine,
+      },
+      index
+    ) => {
+      const showMarkers = shouldShowMarkers({
+        numberOfPoints: x.length,
+        showMarkers: showMarkersForLine ?? showMarkersForAll,
+      });
+
+      const mode = showMarkers ? 'lines+markers' : 'lines';
+
+      let markerSize = showMarkers ? MARKER_SIZE : 0;
+      let markerOutlineWidth = HOVER_MARKER_BORDER_WIDTH;
+
+      if (variant === 'small') {
+        markerSize /= 2;
+        markerOutlineWidth /= 2;
+      }
+
       const lineColor = color || DEFAULT_LINE_COLOR;
       const markerSizes = times(x.length).map(() => markerSize);
       const markerLineColors = times(x.length).map(() => 'transparent');

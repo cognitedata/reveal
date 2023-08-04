@@ -6,9 +6,9 @@ import {
   names,
   Tree,
   updateJson,
-} from '@nrwl/devkit';
-import { Linter } from '@nrwl/linter';
-import { applicationGenerator } from '@nrwl/react';
+} from '@nx/devkit';
+import { Linter } from '@nx/linter';
+import { applicationGenerator } from '@nx/react';
 
 import { FusionSubappGeneratorSchema } from './schema';
 
@@ -52,7 +52,7 @@ export default async function (
   // run the original generator
   await applicationGenerator(tree, {
     ...generatorOptions,
-    standaloneConfig: true,
+    // standaloneConfig: true,
     style: 'styled-components',
     e2eTestRunner: generatorOptions.e2eTestRunner || 'cypress',
     linter: Linter.EsLint,

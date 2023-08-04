@@ -1,4 +1,41 @@
 {
   "name": "@cognite/cdf-utilities",
-  "version": "0.0.6"
+  "version": "3.4.7",
+  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cognitedata/fusion.git",
+    "directory": "libs/shared/cdf-utilities"
+  },
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@codemirror/autocomplete": "^6.0.0",
+    "@codemirror/commands": "^6.0.0",
+    "@codemirror/language": "^6.0.0",
+    "@codemirror/lint": "^6.0.0",
+    "@codemirror/search": "^6.0.0",
+    "@codemirror/state": "^6.0.0",
+    "@codemirror/view": "^6.0.0",
+    "@lezer/highlight": "^1.0.0",
+    "@uiw/codemirror-themes": "^4.11.4",
+    "@uiw/react-codemirror": "^4.11.4",
+    "antd": "^4.22.4",
+    "copy-to-clipboard": "^3.3.2",
+    "query-string": "^7.0.1",
+    "styled-components": "^5.3.3",
+    "@cognite/sdk": "^7.19.1",
+    "@cognite/sdk-provider": "^2.0.6"
+  },
+  "peerDependencies": {
+    "@cognite/cogs.js": "^9",
+    "react": ">=16",
+    "react-router-dom": "^6",
+    "styled-components": "^5.1.1"
+  },
+  "devDependencies": {
+    "@nx/react": "16.5.2",
+    "@testing-library/jest-dom": "^5.16.5",
+    "jest-preview": "^0.3.1",
+    "lodash": "^4.17.21"
+  }
 }

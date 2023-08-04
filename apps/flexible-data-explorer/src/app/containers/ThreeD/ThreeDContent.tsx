@@ -1,44 +1,53 @@
-import { Color, Matrix4 } from 'three';
+import { ComponentProps } from 'react';
+
+import { Color } from 'three';
 
 import {
-  CogniteCadModelContainer,
   RevealContainer,
+  Reveal3DResources,
+  CameraController,
 } from '@cognite/reveal-react-components';
 import { useSDK } from '@cognite/sdk-provider';
 
-import { type ModelIdentifier } from '../../../config/types';
+import { EmptyState } from '../../components/EmptyState';
 import { useProjectConfig } from '../../hooks/useProjectConfig';
+
+import { StyledRevealToolBar } from './components/ToolBar/StyledRevealToolBar';
+
+const defaultViewerOptions: ComponentProps<
+  typeof RevealContainer
+>['viewerOptions'] = {
+  loadingIndicatorStyle: {
+    placement: 'topRight',
+    opacity: 0.2,
+  },
+};
 
 export const ThreeDContent = () => {
   const sdk = useSDK();
-  return (
-    <RevealContainer sdk={sdk} color={new Color(0x4a4a4b)}>
-      <CadModels />
-    </RevealContainer>
-  );
-};
 
-const CadModels: React.FC = () => {
   const projectConfigs = useProjectConfig();
 
-  const modelIdentifiers = projectConfigs?.threeDResources as ModelIdentifier[];
+  const modelIdentifiers = projectConfigs?.threeDResources;
 
   if (!modelIdentifiers) {
-    return null;
+    return (
+      <EmptyState
+        title="No 3D models found"
+        body="Please contact your administrator to configure 3D models"
+      />
+    );
   }
 
   return (
-    <>
-      {modelIdentifiers.map(({ modelId, revisionId, transform }) => (
-        <CogniteCadModelContainer
-          addModelOptions={{ modelId, revisionId }}
-          transform={new Matrix4().makeTranslation(
-            transform?.x ?? 0,
-            transform?.y ?? 0,
-            transform?.z ?? 0
-          )}
-        />
-      ))}
-    </>
+    <RevealContainer
+      sdk={sdk}
+      color={new Color(0x4a4a4b)}
+      viewerOptions={defaultViewerOptions}
+    >
+      <StyledRevealToolBar />
+      <Reveal3DResources resources={modelIdentifiers} />
+      <CameraController initialFitCamera={{ to: 'allModels' }} />
+    </RevealContainer>
   );
 };

@@ -6,26 +6,26 @@
   "tags": [],
   "targets": {
     "build": {
-      "executor": "@nrwl/rollup:rollup",
+      "executor": "@nx/rollup:rollup",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/libs/data-exploration-components",
         "tsConfig": "libs/data-exploration-components/tsconfig.lib.json",
-        "project": "libs/data-exploration-components/package.json",
         "entryFile": "libs/data-exploration-components/src/index.ts",
         "external": ["react/jsx-runtime"],
-        "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
+        "rollupConfig": "@nx/react/plugins/bundle-rollup",
         "assets": [
           {
             "glob": "libs/data-exploration-components/README.md",
             "input": ".",
             "output": "."
           }
-        ]
+        ],
+        "babelUpwardRootMode": true
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
@@ -34,7 +34,7 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/data-exploration-components"],
       "options": {
         "jestConfig": "libs/data-exploration-components/jest.config.ts",
@@ -42,9 +42,8 @@
       }
     },
     "storybook": {
-      "executor": "@nrwl/storybook:storybook",
+      "executor": "@nx/storybook:storybook",
       "options": {
-        "uiFramework": "@storybook/react",
         "port": 4400,
         "configDir": "libs/data-exploration-components/.storybook"
       },
@@ -62,12 +61,11 @@
       "dependsOn": ["build"]
     },
     "build-storybook": {
-      "executor": "@nrwl/storybook:build",
+      "executor": "@nx/storybook:build",
       "outputs": ["{options.outputDir}"],
       "options": {
-        "uiFramework": "@storybook/react",
         "configDir": "libs/data-exploration-components/.storybook",
-        "outputDir": "storybook-static"
+        "outputDir": "dist/storybook/data-exploration-components-old"
       },
       "configurations": {
         "ci": {

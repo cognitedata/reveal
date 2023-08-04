@@ -1,19 +1,21 @@
-import React from 'react';
+import React, { CSSProperties } from 'react';
+
+import styled from 'styled-components';
 
 import { Button, Dropdown } from '@cognite/cogs.js';
 
 import { useTranslation } from '../../hooks/useTranslation';
-
-import { SearchBarFilter, ValueByDataType, AppliedFilters } from './Filter';
+import { SearchBarFilter, ValueByDataType, AppliedFilters } from '../Filter';
 
 export interface SearchFiltersProps {
   value?: ValueByDataType;
   onChange: (value: ValueByDataType) => void;
   onClick?: () => void;
+  filterMenuMaxHeight?: CSSProperties['maxHeight'];
 }
 
 export const SearchFilters: React.FC<SearchFiltersProps> = React.memo(
-  ({ value, onChange, onClick }) => {
+  ({ value, onChange, onClick, filterMenuMaxHeight }) => {
     const { t } = useTranslation();
 
     return (
@@ -22,7 +24,11 @@ export const SearchFilters: React.FC<SearchFiltersProps> = React.memo(
 
         <Dropdown
           placement="bottom-end"
-          content={<SearchBarFilter value={value} onChange={onChange} />}
+          content={
+            <SearchBarFilterWrapper filterMenuMaxHeight={filterMenuMaxHeight}>
+              <SearchBarFilter value={value} onChange={onChange} />
+            </SearchBarFilterWrapper>
+          }
         >
           <Button
             icon="Filter"
@@ -39,3 +45,11 @@ export const SearchFilters: React.FC<SearchFiltersProps> = React.memo(
     );
   }
 );
+
+const SearchBarFilterWrapper = styled.div<{
+  filterMenuMaxHeight?: CSSProperties['maxHeight'];
+}>`
+  .cogs-menu {
+    max-height: ${({ filterMenuMaxHeight }) => filterMenuMaxHeight};
+  }
+`;

@@ -1,10 +1,11 @@
 {
   "name": "transformations",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/transformations/src",
   "projectType": "application",
   "targets": {
     "build": {
-      "executor": "@nrwl/webpack:webpack",
+      "executor": "@nx/webpack:webpack",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/transformations",
@@ -27,6 +28,17 @@
           "extractCss": false,
           "namedChunks": false,
           "extractLicenses": false,
+          "vendorChunk": false,
+          "runtimeChunk": false,
+          "budgets": []
+        },
+        "staging": {
+          "optimization": false,
+          "outputHashing": "all",
+          "sourceMap": true,
+          "extractCss": true,
+          "namedChunks": false,
+          "extractLicenses": true,
           "vendorChunk": false,
           "runtimeChunk": false,
           "budgets": []
@@ -55,7 +67,7 @@
       }
     },
     "serve": {
-      "executor": "@nrwl/webpack:dev-server",
+      "executor": "@nx/webpack:dev-server",
       "options": {
         "buildTarget": "transformations:build",
         "hmr": true
@@ -66,7 +78,6 @@
           "hmr": true,
           "liveReload": true
         },
-
         "preview": {
           "buildTarget": "transformations:build:preview",
           "hmr": false
@@ -78,15 +89,34 @@
       },
       "defaultConfiguration": "development"
     },
+    "serve-static": {
+      "executor": "@nrwl/web:file-server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "transformations:build",
+        "port": 3010
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "transformations:build:development"
+        },
+        "preview": {
+          "buildTarget": "transformations:build:preview"
+        },
+        "production": {
+          "buildTarget": "transformations:build:production"
+        }
+      }
+    },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["apps/transformations/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/transformations"],
       "options": {
         "jestConfig": "apps/transformations/jest.config.ts",
@@ -94,5 +124,8 @@
       }
     }
   },
-  "tags": []
+  "tags": [],
+  "pipeline": {
+    "previewPackageName": "@cognite/cdf-transformations-2"
+  }
 }

@@ -2,7 +2,7 @@ import { DateFormat } from '@platypus/platypus-core';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { DateUtilsImpl } from '@platypus-app/utils/data';
 
-import { Body, Flex, Icon, Micro, Title } from '@cognite/cogs.js';
+import { Body, Flex, Heading, Icon } from '@cognite/cogs.js';
 import { Datapoints } from '@cognite/sdk/dist/src';
 
 type LastValidationTimeProps = {
@@ -35,11 +35,14 @@ export const LastValidationTime = ({
   return (
     <Flex alignItems="center" direction="row" gap={6}>
       {displayType === 'muted' ? (
-        <Micro muted>{`${lastValidation}: ${formattedLastRunTime}`}</Micro>
+        <Body
+          size="xx-small"
+          muted
+        >{`${lastValidation}: ${formattedLastRunTime}`}</Body>
       ) : (
         <>
-          <Body level={6}>{lastValidation}:</Body>
-          <Title level={5}>{formattedLastRunTime}</Title>
+          <Body size="small">{lastValidation}:</Body>
+          <Heading level={5}>{formattedLastRunTime}</Heading>
         </>
       )}
     </Flex>

@@ -1,9 +1,6 @@
 import React, { useMemo, useState } from 'react';
 
-import {
-  DefaultPreviewFilter,
-  PreviewFilterDropdown,
-} from '@data-exploration/components';
+import { DefaultPreviewFilter } from '@data-exploration/components';
 import { useDebounce } from 'use-debounce';
 
 import { Asset } from '@cognite/sdk';
@@ -17,50 +14,15 @@ import {
   useAssetsSearchResultQuery,
 } from '@data-exploration-lib/domain-layer';
 
-import { LabelFilter, MetadataFilter, SourceFilter } from '../../../Filters';
 import { AppliedFiltersTags } from '../AppliedFiltersTags';
 
 import { AssetTable } from './AssetTable';
+import { AssetTableFilters } from './AssetTableFilters';
 
 interface Props {
   defaultFilter: InternalCommonFilters;
   onClick: (item: Asset) => void;
 }
-
-const LinkedAssetFilter = ({
-  filter,
-  onFilterChange,
-}: {
-  filter: InternalAssetFilters;
-  onFilterChange: (newValue: InternalAssetFilters) => void;
-}) => {
-  return (
-    <PreviewFilterDropdown>
-      <LabelFilter.Asset
-        filter={filter}
-        value={filter.labels}
-        onChange={(newFilters) => onFilterChange({ labels: newFilters })}
-        addNilOption
-      />
-      <SourceFilter.Asset
-        filter={filter}
-        value={filter.sources}
-        onChange={(newSources) =>
-          onFilterChange({
-            sources: newSources,
-          })
-        }
-      />
-      <MetadataFilter.Assets
-        filter={filter}
-        values={filter.metadata}
-        onChange={(newMetadata) => {
-          onFilterChange({ metadata: newMetadata });
-        }}
-      />
-    </PreviewFilterDropdown>
-  );
-};
 
 export const AssetLinkedSearchResults: React.FC<Props> = ({
   defaultFilter,
@@ -93,13 +55,15 @@ export const AssetLinkedSearchResults: React.FC<Props> = ({
   return (
     <AssetTable
       id="asset-linked-search-results"
-      query={debouncedQuery}
-      onRowClick={(asset) => onClick(asset)}
-      data={data}
       enableSorting
-      sorting={sortBy}
-      onSort={(props) => setSortBy(props)}
       showLoadButton
+      query={debouncedQuery}
+      onRowClick={onClick}
+      sorting={sortBy}
+      onSort={setSortBy}
+      data={data}
+      hasNextPage={hasNextPage}
+      fetchMore={fetchNextPage}
       tableSubHeaders={
         <AppliedFiltersTags
           filter={appliedFilters}
@@ -108,14 +72,12 @@ export const AssetLinkedSearchResults: React.FC<Props> = ({
       }
       tableHeaders={
         <DefaultPreviewFilter query={query} onQueryChange={setQuery}>
-          <LinkedAssetFilter
+          <AssetTableFilters
             filter={assetFilter}
             onFilterChange={handleFilterChange}
           />
         </DefaultPreviewFilter>
       }
-      hasNextPage={hasNextPage}
-      fetchMore={fetchNextPage}
     />
   );
 };

@@ -35,6 +35,7 @@ export const LineChart: React.FC<LineChartProps> = ({
   renderActions,
   formatHoverLineInfo,
   onRangeChange,
+  inverted,
 }) => {
   const chartRef = useRef<HTMLDivElement>(null);
   const plotRef = useRef<PlotElement>(null);
@@ -113,6 +114,7 @@ export const LineChart: React.FC<LineChartProps> = ({
         onSelecting={handlePlotSelecting}
         onSelected={handlePlotSelected}
         onRangeChange={onRangeChange}
+        inverted={inverted}
       />
 
       <HoverLayer

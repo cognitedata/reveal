@@ -5,7 +5,7 @@
   "projectType": "application",
   "targets": {
     "build": {
-      "executor": "@nrwl/webpack:webpack",
+      "executor": "@nx/webpack:webpack",
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
@@ -46,6 +46,34 @@
           "extractLicenses": true,
           "vendorChunk": false
         },
+        "preview": {
+          "fileReplacements": [
+            {
+              "replace": "apps/data-catalog/src/environments/environment.ts",
+              "with": "apps/data-catalog/src/environments/environment.prod.ts"
+            }
+          ],
+          "optimization": true,
+          "outputHashing": "all",
+          "sourceMap": false,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "vendorChunk": false
+        },
+        "staging": {
+          "fileReplacements": [
+            {
+              "replace": "apps/data-catalog/src/environments/environment.ts",
+              "with": "apps/data-catalog/src/environments/environment.prod.ts"
+            }
+          ],
+          "optimization": true,
+          "outputHashing": "all",
+          "sourceMap": false,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "vendorChunk": false
+        },
         "mock": {
           "fileReplacements": [
             {
@@ -72,16 +100,18 @@
       }
     },
     "serve": {
-      "executor": "@nrwl/webpack:dev-server",
+      "executor": "@nx/webpack:dev-server",
       "defaultConfiguration": "development",
       "options": {
         "buildTarget": "data-catalog:build",
-        "hmr": true
+        "hmr": true,
+        "port": 3001,
+        "ssl": true,
+        "allowedHosts": ".dev.fusion.cogniteapp.com,apps-staging.cognite.com"
       },
       "configurations": {
         "development": {
-          "buildTarget": "data-catalog:build:development",
-          "allowedHosts": ".dev.fusion.cogniteapp.com"
+          "buildTarget": "data-catalog:build:development"
         },
         "production": {
           "buildTarget": "data-catalog:build:production",
@@ -89,22 +119,19 @@
         },
         "mock": {
           "buildTarget": "data-catalog:build:mock",
-          "hmr": true,
-          "port": 3001,
-          "ssl": true,
           "proxyConfig": "apps/data-catalog/proxy.conf.json"
         }
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["apps/data-catalog/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
         "jestConfig": "apps/data-catalog/jest.config.ts",
@@ -118,5 +145,8 @@
       }
     }
   },
-  "tags": []
+  "tags": [],
+  "pipeline": {
+    "previewPackageName": "@cognite/cdf-data-catalog"
+  }
 }

@@ -41,7 +41,7 @@ export const Select = (props: CustomSelectProps) => {
         icon="Search"
         styles={selectStyles}
         isClearable={false}
-        isSearchable={false}
+        isSearchable={true}
         tabSelectsValue={false}
         escapeClearsValue={false}
         backspaceRemovesValue={false} // if true, then search input in dropdown cannot be backspaced

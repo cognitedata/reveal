@@ -3,11 +3,11 @@ import { useQuery } from '@tanstack/react-query';
 import { useSDK } from '@cognite/sdk-provider';
 
 import { queryKeys } from '../../queryKeys';
-import { getTimeseriesSingleAggregate } from '../network';
-import { TimeseriesSingleAggregateQuery } from '../types';
+import { getTimeseriesSingleAggregateMulti } from '../network';
+import { TimeseriesSingleAggregateMultiQuery } from '../types';
 
 interface Props {
-  query: TimeseriesSingleAggregateQuery;
+  query: TimeseriesSingleAggregateMultiQuery;
 }
 
 export const useTimeseriesSingleAggregateQuery = ({ query }: Props) => {
@@ -16,16 +16,10 @@ export const useTimeseriesSingleAggregateQuery = ({ query }: Props) => {
   return useQuery(
     queryKeys.timeseriesSingleAggregate(query),
     () => {
-      return getTimeseriesSingleAggregate(sdk, query);
+      return getTimeseriesSingleAggregateMulti(sdk, query);
     },
     {
       keepPreviousData: true,
-      onError: () => {
-        return {
-          id: query.id,
-          data: {},
-        };
-      },
     }
   );
 };

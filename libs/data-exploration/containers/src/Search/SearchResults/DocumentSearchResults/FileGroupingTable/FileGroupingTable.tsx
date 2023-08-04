@@ -1,31 +1,37 @@
-import React from 'react';
+import { useMemo } from 'react';
 
-import { EmptyState } from '@data-exploration/components';
-
-import { Document, DocumentTable } from '@cognite/react-document-table';
-import { FileInfo } from '@cognite/sdk/dist/src';
+import { LoadMore, LoadMoreButtonWrapper } from '@data-exploration/components';
 
 import {
-  InternalDocumentFilter,
-  LOADING_RESULTS,
-  REFINE_FILTERS_OR_UPDATE_SEARCH,
-  useTranslation,
+  Document as TableDocument,
+  DocumentTable,
+} from '@cognite/react-document-table';
+import { FileInfo, Document } from '@cognite/sdk';
+
+import {
+  FileWithRelationshipLabels,
+  InternalDocument,
 } from '@data-exploration-lib/core';
-import { useDocumentSearchResultQuery } from '@data-exploration-lib/domain-layer';
+import { WithDetailViewData } from '@data-exploration-lib/domain-layer';
 
 import { docTypes } from './docTypes';
 
 type FileGroupingTableProps = {
-  data?: FileInfo[];
-  query?: string;
-  filter?: InternalDocumentFilter;
-  onItemClicked: (file: any) => void;
+  data?:
+    | FileWithRelationshipLabels[]
+    | WithDetailViewData<FileInfo>[]
+    | WithDetailViewData<Document>[]
+    | InternalDocument[];
+  onItemClicked?: (file: any) => void;
+  hasNextPage?: boolean;
+  isLoadingMore?: boolean;
+  fetchMore?: (...args: any[]) => any;
 };
 const convertFilesToDocs = <
   T extends Pick<FileInfo, 'id' | 'name' | 'metadata' | 'directory' | 'source'>
 >(
   files: T[] = []
-): Document[] => {
+): TableDocument[] => {
   return files?.map((file) => {
     const { id, name: fileName, metadata, directory, source } = file;
     return {
@@ -39,55 +45,45 @@ const convertFilesToDocs = <
 };
 
 export const FileGroupingTable = ({
-  query,
-  filter,
-  data,
+  data = [],
   onItemClicked,
+  hasNextPage,
+  isLoadingMore,
+  fetchMore,
 }: FileGroupingTableProps) => {
-  const { t } = useTranslation();
+  const docs: TableDocument[] = useMemo(() => {
+    const files = data.map((document) => {
+      if ('metadata' in document) {
+        const { id, metadata, directory, source, name } = document;
+        return { id, metadata, directory, source, name };
+      }
 
-  const { results: documents, isInitialLoading } = useDocumentSearchResultQuery(
-    {
-      filter,
-      query,
-      limit: 1000,
-    },
-    {
-      enabled: !data,
-    }
-  );
+      const {
+        id,
+        sourceFile: { metadata, directory, source, name },
+      } = document as WithDetailViewData<Document> | InternalDocument;
 
-  const files = documents.map((document) => {
-    const {
-      id,
-      sourceFile: { metadata, directory, source, name },
-    } = document;
-    return { id, metadata, directory, source, name };
-  });
-  const docs: Document[] = convertFilesToDocs(files || data);
+      return { id, metadata, directory, source, name };
+    });
 
-  if (isInitialLoading) {
-    return (
-      <EmptyState isLoading title={t('LOADING_RESULTS', LOADING_RESULTS)} />
-    );
-  }
-
-  if (docs.length === 0) {
-    return (
-      <EmptyState
-        body={t(
-          'REFINE_FILTERS_OR_UPDATE_SEARCH',
-          REFINE_FILTERS_OR_UPDATE_SEARCH
-        )}
-      />
-    );
-  }
+    return convertFilesToDocs(files);
+  }, [data]);
 
   return (
-    <DocumentTable
-      docs={docs}
-      docTypes={docTypes}
-      handleDocumentClick={onItemClicked}
-    />
+    <>
+      <DocumentTable
+        docs={docs}
+        docTypes={docTypes}
+        handleDocumentClick={onItemClicked}
+      />
+
+      <LoadMoreButtonWrapper justifyContent="center" alignItems="center">
+        <LoadMore
+          hasNextPage={hasNextPage}
+          isLoadingMore={isLoadingMore}
+          fetchMore={fetchMore}
+        />
+      </LoadMoreButtonWrapper>
+    </>
   );
 };

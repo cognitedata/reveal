@@ -10,13 +10,11 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
 import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
 import {
-  AuthWrapper,
-  getEnv,
+  AuthContainer,
   getProject,
-  SubAppWrapper,
+  isUsingUnifiedSignin,
 } from '@cognite/cdf-utilities';
-import { Loader } from '@cognite/cogs.js';
-import { SDKProvider } from '@cognite/sdk-provider';
+import { FlagProvider } from '@cognite/react-feature-flags';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -28,41 +26,38 @@ const queryClient = new QueryClient({
 });
 
 const App = () => {
-  // const appName = 'cdf-access-management';
+  const appName = 'cdf-access-management';
   const projectName = getProject();
-  const env = getEnv();
-  // const flagProviderApiToken = 'v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE';
+  const flagProviderApiToken = 'v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE';
+  const baseUrl = isUsingUnifiedSignin() ? `/cdf/:tenant` : `/:tenant`;
 
   return (
     <I18nWrapper
-      // flagProviderProps={{
-      //   apiToken: flagProviderApiToken,
-      //   appName,
-      //   projectName,
-      // }}
       translations={translations}
       defaultNamespace="access-management"
     >
-      <QueryClientProvider client={queryClient}>
-        <GlobalStyles>
-          <SubAppWrapper title="Access Management">
-            <AuthWrapper
-              loadingScreen={<Loader />}
-              login={() => loginAndAuthIfNeeded(projectName, env)}
+      <FlagProvider
+        apiToken={flagProviderApiToken}
+        appName={appName}
+        projectName={projectName}
+      >
+        <QueryClientProvider client={queryClient}>
+          <GlobalStyles>
+            <AuthContainer
+              title="Access Management"
+              sdk={sdk}
+              login={loginAndAuthIfNeeded}
             >
-              <SDKProvider sdk={sdk}>
-                <Router>
-                  <Routes>
-                    <Route path="/:tenant/:path/*" element={<Home />} />
-                    {/* <Route path="/:tenant/:path/:page/*" element={<Home />} /> */}
-                  </Routes>
-                </Router>
-              </SDKProvider>
-            </AuthWrapper>
-          </SubAppWrapper>
-        </GlobalStyles>
-        <ReactQueryDevtools initialIsOpen={false} />
-      </QueryClientProvider>
+              <Router>
+                <Routes>
+                  <Route path={`${baseUrl}/:path*`} element={<Home />} />
+                </Routes>
+              </Router>
+            </AuthContainer>
+          </GlobalStyles>
+          <ReactQueryDevtools initialIsOpen={false} />
+        </QueryClientProvider>
+      </FlagProvider>
     </I18nWrapper>
   );
 };

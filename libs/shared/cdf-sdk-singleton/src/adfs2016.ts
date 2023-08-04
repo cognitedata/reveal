@@ -47,7 +47,7 @@ async function getADFSAccessToken(authority: string, clientId: string) {
     authority,
     requestParams: {
       clientId,
-      resource: baseUrl || '',
+      resource: baseUrl as string,
     },
   });
   const token = await adfs.getCDFToken();

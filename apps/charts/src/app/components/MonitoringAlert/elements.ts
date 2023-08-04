@@ -10,6 +10,7 @@ export const AlertContainer = styled.div`
 export const AlertText = styled(Col)`
   position: relative;
   top: 7px;
+  font-size: 13px;
 `;
 
 export const AlertAction = styled(Button)<{ resolved?: boolean }>`

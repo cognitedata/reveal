@@ -49,6 +49,25 @@ export const FileFilters: React.FC<FileFilterProps> = ({
       {...rest}
     >
       <TempMultiSelectFix>
+        <MetadataFilter.Files
+          query={query}
+          filter={documentFilter}
+          values={documentFilter.metadata}
+          onChange={(newMetadata) => {
+            onFilterChange('document', {
+              metadata: newMetadata,
+            });
+          }}
+        />
+        <TypeFilter.File
+          query={query}
+          filter={documentFilter}
+          value={documentFilter.type}
+          onChange={(newFilters) =>
+            onFilterChange('document', { type: newFilters })
+          }
+          addNilOption
+        />
         {enableDocumentLabelsFilter && (
           <LabelFilter.File
             query={query}
@@ -57,17 +76,9 @@ export const FileFilters: React.FC<FileFilterProps> = ({
             onChange={(newFilters) =>
               onFilterChange('document', { labels: newFilters })
             }
+            addNilOption
           />
         )}
-
-        <TypeFilter.File
-          query={query}
-          filter={documentFilter}
-          value={documentFilter.type}
-          onChange={(newFilters) =>
-            onFilterChange('document', { type: newFilters })
-          }
-        />
 
         <AuthorFilter.File
           query={query}
@@ -76,6 +87,7 @@ export const FileFilters: React.FC<FileFilterProps> = ({
           onChange={(newFilters) =>
             onFilterChange('document', { author: newFilters })
           }
+          addNilOption
         />
 
         <SourceFilter.File
@@ -87,17 +99,7 @@ export const FileFilters: React.FC<FileFilterProps> = ({
               source: newSources,
             })
           }
-        />
-
-        <MetadataFilter.Files
-          query={query}
-          filter={documentFilter}
-          values={documentFilter.metadata}
-          onChange={(newMetadata) => {
-            onFilterChange('document', {
-              metadata: newMetadata,
-            });
-          }}
+          addNilOption
         />
       </TempMultiSelectFix>
     </BaseFilterCollapse.Panel>

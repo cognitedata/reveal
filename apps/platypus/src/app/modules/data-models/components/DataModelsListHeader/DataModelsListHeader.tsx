@@ -1,5 +1,4 @@
 import config from '@platypus-app/config/config';
-import { isFDMv3 } from '@platypus-app/flags';
 import { useCapabilities } from '@platypus-app/hooks/useCapabilities';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
@@ -15,8 +14,6 @@ export interface DataModelsListHeaderProps {
 export const DataModelsListHeader = (props: DataModelsListHeaderProps) => {
   const { t } = useTranslation('data-models');
 
-  const isFDMV3 = isFDMv3();
-
   const dataModelsWriteAcl = useCapabilities('dataModelsAcl', ['WRITE'], {
     checkAll: false,
   });
@@ -25,8 +22,7 @@ export const DataModelsListHeader = (props: DataModelsListHeaderProps) => {
     <Flex justifyContent="space-between" className="header">
       <Title level={3} data-cy="data-models-title">
         {t('data_models_title', 'Data Models')}
-        {isFDMV3 ? ' ' : '(deprecated) '}
-        {`(${props.dataModelsCount})`}
+        {` (${props.dataModelsCount})`}
       </Title>
       <div style={{ display: 'inline-flex' }}>
         <Input

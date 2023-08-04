@@ -4,7 +4,6 @@ import styled from 'styled-components';
 
 import { ExpandIcon } from '@charts-app/components/Common/SidebarElements';
 import CopyButton from '@charts-app/components/CopyButton/CopyButton';
-import { StyledModal } from '@charts-app/components/Modal/StyledModal';
 import { HorizontalDivider } from '@charts-app/components/TopBar/elements';
 import {
   formatDate,
@@ -12,7 +11,7 @@ import {
 } from '@charts-app/utils/date';
 import Layers from '@charts-app/utils/z-index';
 
-import { Body, Flex, Collapse, Button } from '@cognite/cogs.js';
+import { Body, Flex, Collapse, Button, Modal } from '@cognite/cogs.js';
 
 import { useScheduledCalculationDataValue } from '../../../models/scheduled-calculation-results/atom';
 
@@ -24,7 +23,7 @@ const SummaryWrapper = styled.div`
   background-color: white;
   position: absolute;
   top: 5px;
-  left: 140px;
+  left: 178px;
   z-index: ${Layers.MINIMUM};
   display: flex;
   flex-direction: column;
@@ -102,7 +101,7 @@ export const ScheduledCalculationSummary = ({
       <DescriptionButtonContainer>
         <Button
           size="small"
-          type="ghost"
+          type="ghost-accent"
           icon="Document"
           onClick={() => setIsDescriptionModalOpen(true)}
         >
@@ -111,24 +110,15 @@ export const ScheduledCalculationSummary = ({
       </DescriptionButtonContainer>
 
       {isDescriptionModalOpen && (
-        <StyledModal
+        <Modal
           visible
           onCancel={() => setIsDescriptionModalOpen(false)}
-          hideFooter
-          // todo(DEGR-2397)
-          // footer={
-          //   <Button
-          //     type="ghost"
-          //     onClick={() => setIsDescriptionModalOpen(false)}
-          //   >
-          //     Cancel
-          //   </Button>
-          // }
+          onOk={() => setIsDescriptionModalOpen(false)}
           icon="Document"
           title="Description"
         >
           {scheduledCalculationData?.description}
-        </StyledModal>
+        </Modal>
       )}
     </SummaryWrapper>
   );

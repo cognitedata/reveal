@@ -3,7 +3,6 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Editor, { Monaco } from '@monaco-editor/react';
 import { DataModelTypeDefs } from '@platypus/platypus-core';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
-import { isFDMv3 } from '@platypus-app/flags';
 import debounce from 'lodash/debounce';
 import noop from 'lodash/noop';
 import {
@@ -14,8 +13,8 @@ import {
 
 import { setupGraphql } from '../../web-workers';
 // web workers stuff
-import GraphQlWorker from '../../web-workers/worker-loaders/graphqlWorkerLoader';
-import MonacoEditorWorker from '../../web-workers/worker-loaders/monacoLanguageServiceWorkerLoader';
+import { getGraphQlWorker } from '../../web-workers/worker-loaders/graphqlWorkerLoader';
+import { getMonacoEditorWorker } from '../../web-workers/worker-loaders/monacoLanguageServiceWorkerLoader';
 
 import { StyledEditor } from './elements';
 import { ErrorsByGroup } from './Model';
@@ -66,16 +65,15 @@ const getSampleDataModel = (
 
 // point here so the context can be used
 declare const self: any;
-
 (self as any).MonacoEnvironment = {
   getWorker(_: string, label: string) {
-    // // when graphql, load our custom web worker
+    // when graphql, load our custom web worker
     if (label === 'graphql') {
-      return new GraphQlWorker();
+      return getGraphQlWorker();
     }
 
     // otherwise, load the default web worker from monaco
-    return new MonacoEditorWorker();
+    return getMonacoEditorWorker();
   },
 } as MonacoEditorEnvironment;
 
@@ -112,7 +110,7 @@ export const GraphqlCodeEditor = React.memo(
 
     const editorWillMount = (monacoInstance: Monaco) => {
       langProviders.current = setupGraphql(monacoInstance, {
-        useExtendedSdl: isFDMv3(),
+        useExtendedSdl: true,
       });
     };
 

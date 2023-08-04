@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
-import sdk from '@cognite/cdf-sdk-singleton';
+import { useSDK } from '@cognite/sdk-provider';
 
 import { QueryKeys } from '../../constants';
 import { IndustryCanvasService } from '../../services/IndustryCanvasService';
@@ -12,6 +12,7 @@ import { useUserProfile } from '../../UserProfileProvider';
 export const useListComments = () => {
   const { userProfile } = useUserProfile();
   const queryClient = useQueryClient();
+  const sdk = useSDK();
   const canvasService = useMemo(
     () => new IndustryCanvasService(sdk, userProfile),
     [userProfile]

@@ -19,14 +19,10 @@ import { Allotment, LayoutPriority } from 'allotment';
 
 import { Colors, Loader } from '@cognite/cogs.js';
 
-import RawExplorerFirstTimeUser from './RawExplorerFirstTimeUser';
-
 export type RawExplorerSideMenuItem = 'raw';
 
 const RawExplorer = (): JSX.Element => {
-  const { data, error, isLoading } = useDatabases();
-
-  const databases = data?.pages[0]?.items || [];
+  const { error, isLoading } = useDatabases();
 
   const { isSidePanelOpen, setIsSidePanelOpen } =
     useContext(RawExplorerContext);
@@ -62,14 +58,10 @@ const RawExplorer = (): JSX.Element => {
           </Allotment.Pane>
           <Allotment.Pane key="content" priority={LayoutPriority.High}>
             <StyledRawExplorerTableContentWrapper>
-              {databases.length === 0 ? (
-                <RawExplorerFirstTimeUser />
-              ) : (
-                <ActiveTableProvider>
-                  <TableTabList />
-                  <TableContent />
-                </ActiveTableProvider>
-              )}
+              <ActiveTableProvider>
+                <TableTabList />
+                <TableContent />
+              </ActiveTableProvider>
             </StyledRawExplorerTableContentWrapper>
           </Allotment.Pane>
         </Allotment>

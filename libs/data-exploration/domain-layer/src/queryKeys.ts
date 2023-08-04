@@ -84,8 +84,8 @@ export const queryKeys = {
       advancedFilter,
     ] as const,
 
-  timeseriesDatapoints: (items: IdEither[], filter?: any) =>
-    [...queryKeys.timeseries(), 'datapoints', items, filter] as const,
+  timeseriesDatapoints: (items: IdEither[], filter?: any, limit?: number) =>
+    [...queryKeys.timeseries(), 'datapoints', items, filter, limit] as const,
   timeseriesLatestDatapoints: (
     items: LatestDataBeforeRequest[],
     filter?: any
@@ -265,12 +265,55 @@ export const queryKeys = {
     fileId,
     'previewURL',
   ],
+  relatedFiles: (input?: any[]) =>
+    [...queryKeys.files(), 'related-files', ...(input || [])] as const,
+
+  // Relationships
+  relationships: () => [...queryKeys.all, 'relationships'] as const,
+  resourceRelationships: (
+    resourceExternalIds: string[],
+    relationshipResourceTypes: string[],
+    filter: any = {}
+  ) =>
+    [
+      ...queryKeys.relationships(),
+      ...resourceExternalIds,
+      ...relationshipResourceTypes,
+      filter,
+    ] as const,
 
   // Annotations
   annotations: () => [...queryKeys.all, 'annotations'] as const,
+  fileAnnotations: (fileId: unknown) =>
+    [...queryKeys.annotations(), 'file', fileId] as const,
   annotationsPagedFileReferences: (
     pagedFileReferences: { id: number; page: number | undefined }[]
   ) => [...queryKeys.annotations(), pagedFileReferences] as const,
+
+  // Counts
+  counts: () => [...queryKeys.all, 'counts'] as const,
+  linkedResourcesCount: (
+    resourceType: string,
+    resourceId: unknown,
+    linkedResourceIds?: unknown[]
+  ) =>
+    [
+      ...queryKeys.counts(),
+      'linked-resources',
+      resourceType,
+      resourceId,
+      ...(linkedResourceIds || []),
+    ] as const,
+  assetIdsCount: (resourceType: string, resourceId: unknown) =>
+    [...queryKeys.counts(), 'assets-ids', resourceType, resourceId] as const,
+  validResourcesCount: (resourceType: string, resourceIds: unknown[]) =>
+    [
+      ...queryKeys.counts(),
+      'valid-resources-count',
+      resourceType,
+      ...(resourceIds || []),
+    ] as const,
+
   // Industry Canvas
   canvas: () => [...queryKeys.all, 'canvas'] as const,
   supportedResourceItem: (item: { id: number; type: string }) =>
@@ -295,8 +338,13 @@ export const queryKeys = {
     [...queryKeys.all, '360Image', 'icon', file?.id] as const,
   filesAggregateBySiteId: (siteId: string | undefined) =>
     [...queryKeys.files(), 'aggregate', siteId] as const,
-  siteNameBySiteId: (...input: any[]) => [
+  eventsBySiteId: (...input: any[]) => [
     ...queryKeys.listEvents(),
     ...(input || []),
+  ],
+  image360DataBySiteId: (siteId: string) => [
+    ...queryKeys.threeD(),
+    'image360',
+    siteId,
   ],
 } as const;

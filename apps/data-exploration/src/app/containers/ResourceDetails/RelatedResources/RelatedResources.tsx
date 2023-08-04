@@ -2,30 +2,36 @@ import { useState, useEffect } from 'react';
 
 import styled from 'styled-components';
 
+import { AssetsOfResourceSearchResults } from '@data-exploration/containers';
+
 import { Select } from '@cognite/cogs.js';
 import {
-  RelationshipTable,
   RelationshipTableProps,
   SelectableItemsProps,
   convertResourceType,
-  AssetIdTable,
   RelatedResourceType,
   LinkedResourceTable,
-  useRelatedResourceCount,
   AnnotationTable,
   AnnotatedWithTable,
   RelationshipFilters,
-  useRelatedResourceResults,
+  useRelatedResourceCount,
+  RelationshipTableV2,
 } from '@cognite/data-exploration';
+import { RelationshipResourceType } from '@cognite/sdk';
 
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 import {
   useFlagDocumentsApiEnabled,
   useFlagFileCategorization,
+  useFlagNewCounts,
 } from '@data-exploration-app/hooks/flags';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { addPlusSignToCount } from '@data-exploration-app/utils/stringUtils';
-import { RelationshipLabels, useTranslation } from '@data-exploration-lib/core';
+import { useTranslation } from '@data-exploration-lib/core';
+import {
+  useRelatedResourcesCount,
+  useRelationshipLabels,
+} from '@data-exploration-lib/domain-layer';
 
 type TypeOption = {
   label: string;
@@ -45,6 +51,7 @@ export const RelatedResources = ({
   const [selectedType, setSelectedType] = useState<TypeOption>();
   const isGroupingFilesEnabled = useFlagFileCategorization();
   const isDocumentsApiEnabled = useFlagDocumentsApiEnabled();
+  const isNewCountsEnabled = useFlagNewCounts();
 
   const {
     relationshipCount = 0,
@@ -55,26 +62,46 @@ export const RelatedResources = ({
     isFetched,
   } = useRelatedResourceCount(parentResource, type, isDocumentsApiEnabled);
 
+  const { data: newCount, isLoading } = useRelatedResourcesCount({
+    resource: parentResource,
+    resourceType: type,
+    isDocumentsApiEnabled,
+  });
+
+  const relationshipsCount = isNewCountsEnabled
+    ? newCount.relationshipsCount
+    : relationshipCount;
+  const assetIdsCount = isNewCountsEnabled
+    ? newCount.assetIdsCount
+    : assetIdCount;
+  const linkedResourcesCount = isNewCountsEnabled
+    ? newCount.linkedResourcesCount
+    : linkedResourceCount;
+  const annotationsCount = isNewCountsEnabled
+    ? newCount.annotationsCount
+    : annotationCount;
+
   const resourceType = convertResourceType(type);
 
   const getRelatedResourceType = () => {
     let types: TypeOption[] = [
       {
-        label: `${t('RELATIONSHIPS', 'Relationships')} (${addPlusSignToCount(
-          relationshipCount,
-          hasMoreRelationships
-        )})`,
+        label: `${t('RELATIONSHIPS', 'Relationships')} (${
+          isNewCountsEnabled
+            ? relationshipsCount
+            : addPlusSignToCount(relationshipCount, hasMoreRelationships)
+        })`,
         value: 'relationship',
-        count: relationshipCount,
+        count: relationshipsCount,
       },
     ];
 
     if (type === 'asset') {
       types = [
         {
-          label: `${t('ASSET_ID', 'Asset ID')} (${assetIdCount})`,
+          label: `${t('ASSET_ID', 'Asset ID')} (${assetIdsCount})`,
           value: 'assetId',
-          count: assetIdCount,
+          count: assetIdsCount,
         },
         ...types,
       ];
@@ -85,11 +112,11 @@ export const RelatedResources = ({
         {
           label: t(
             'LINKED_RESOURCE_TYPE',
-            `Linked ${resourceType} (${linkedResourceCount})`,
-            { resourceType, count: linkedResourceCount }
+            `Linked ${resourceType} (${linkedResourcesCount})`,
+            { resourceType, count: linkedResourcesCount }
           ),
           value: 'linkedResource',
-          count: linkedResourceCount,
+          count: linkedResourcesCount,
         },
         ...types,
       ];
@@ -98,9 +125,9 @@ export const RelatedResources = ({
     if (parentResource.type === 'file') {
       types = [
         {
-          label: `${t('ANNOTATIONS', 'Annotations')} (${annotationCount})`,
+          label: `${t('ANNOTATIONS', 'Annotations')} (${annotationsCount})`,
           value: 'annotation',
-          count: annotationCount,
+          count: annotationsCount,
         },
         ...types,
       ];
@@ -127,14 +154,16 @@ export const RelatedResources = ({
 
     // Should NOT set state when relatedResourceTypes changes!
     // eslint-disable-next-line
-    [isFetched, linkedResourceCount]
+    [isLoading, isFetched, linkedResourcesCount]
   );
-  const { relationshipLabelOptions, onChangeLabelValue, labelValue } =
-    useRelatedResourceResults<RelationshipLabels>(
-      selectedType?.value || 'linkedResource',
-      type,
-      parentResource
-    );
+
+  const [selectedRelationshipLabels, setSelectedRelationshipLabels] =
+    useState<string[]>();
+
+  const { data: relationshipLabels } = useRelationshipLabels({
+    resourceExternalId: parentResource.externalId,
+    relationshipResourceTypes: [type as RelationshipResourceType],
+  });
 
   return (
     <RelatedResourcesContainer>
@@ -155,27 +184,29 @@ export const RelatedResources = ({
         </SelectWrapper>
         {selectedType?.value === 'relationship' && (
           <RelationshipFilters
-            options={relationshipLabelOptions}
+            options={relationshipLabels}
             onChange={(labels) => {
-              onChangeLabelValue(labels);
+              setSelectedRelationshipLabels(labels);
               trackUsage(EXPLORATION.SELECT.RELATIONSHIP_LABEL, {
                 labels,
                 type,
               });
             }}
-            value={labelValue}
+            value={selectedRelationshipLabels}
           />
         )}
       </FilterWrapper>
       <TableOffsetHeightWrapper>
         {selectedType?.value === 'relationship' && (
           <>
-            <RelationshipTable
+            <RelationshipTableV2
               parentResource={parentResource}
               type={type}
               isGroupingFilesEnabled={isGroupingFilesEnabled}
               onItemClicked={onItemClicked}
               onParentAssetClick={onParentAssetClick}
+              labels={selectedRelationshipLabels}
+              isDocumentsApiEnabled={isDocumentsApiEnabled}
               {...props}
             />
           </>
@@ -194,9 +225,10 @@ export const RelatedResources = ({
         )}
 
         {selectedType?.value === 'assetId' && (
-          <AssetIdTable
+          <AssetsOfResourceSearchResults
             resource={parentResource}
             onItemClicked={onItemClicked}
+            isDocumentsApiEnabled={isDocumentsApiEnabled}
             {...props}
           />
         )}

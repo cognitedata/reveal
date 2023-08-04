@@ -1,17 +1,12 @@
 import { useCallback, useMemo } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
-import { resourceItemToContainerReference } from '@fusion/industry-canvas';
+import { ContainerReference } from '@fusion/industry-canvas';
 import queryString from 'query-string';
 
-// TODO: move these in fdx?
-import { ResourceItem } from '@data-exploration-lib/core';
-
-import { DateRange, ValueByDataType } from '../containers/search/Filter';
+import { DateRange, ValueByDataType } from '../containers/Filter';
 import { createSearchParams } from '../utils/router';
 
-import { useDataModelParams } from './useDataModelParams';
-import { useSearchFilterParams, useSearchQueryParams } from './useParams';
 import { useGetChartsUrl, useGetCanvasUrl } from './useUrl';
 
 // TODO: rename this could help, react-router also has a 'useNavigation'.
@@ -19,9 +14,7 @@ export const useNavigation = () => {
   const navigate = useNavigate();
   const { search, pathname } = useLocation(); // <-- current location being accessed
   const params = useParams();
-  const dataModelParams = useDataModelParams();
-  const [_, setQueryParams] = useSearchQueryParams();
-  const [__, setFilterParams] = useSearchFilterParams();
+  // const dataModelParams = useDataModelParams();
   const chartsUrl = useGetChartsUrl();
   const canvasUrl = useGetCanvasUrl();
 
@@ -32,39 +25,49 @@ export const useNavigation = () => {
     [pathname]
   );
 
-  const basePath = useMemo(() => {
-    const { space, dataModel, version } = params;
-    return `${basename}/${dataModel}/${space}/${version}`;
-  }, [basename, params]);
+  // const basePath = useMemo(() => {
+  //   const { space, dataModel, version } = params;
+  //   return `${basename}/${dataModel}/${space}/${version}`;
+  // }, [basename, params]);
 
   const toSearchPage = useCallback(
-    (searchQuery: string = '', filters: ValueByDataType = {}) => {
-      const params = createSearchParams({
+    (
+      searchQuery: string = '',
+      filters: ValueByDataType = {},
+      options: {
+        ignoreType?: boolean;
+        enableAISearch?: boolean;
+      } = {}
+    ) => {
+      const { type } = params;
+      const { ignoreType = false, enableAISearch = false } = options;
+
+      const queryParams = createSearchParams({
         searchQuery,
         filters,
+        aiSearch: String(enableAISearch),
       });
-
-      setQueryParams(searchQuery);
-      setFilterParams(filters);
 
       navigate({
-        pathname: `search`,
-        search: `?${params.toString()}`,
+        pathname: [basename, 'search', !ignoreType ? type : undefined]
+          .filter((item) => item !== undefined)
+          .join('/'),
+        search: queryParams.toString(),
       });
     },
-    [basename, navigate]
+    [basename, params, navigate]
   );
 
-  const redirectSearchPage = useCallback(
-    (dataType?: string) => {
+  const toSearchCategoryPage = useCallback(
+    (dataType?: string, cleanSearch?: boolean) => {
       navigate({
-        pathname: [`${basePath}/search`, dataType && `/${dataType}`]
-          .filter(Boolean)
-          .join(''),
-        search,
+        pathname: [basename, `search`, dataType ? `${dataType}` : undefined]
+          .filter((item) => item !== undefined)
+          .join('/'),
+        search: cleanSearch ? undefined : search,
       });
     },
-    [basePath, navigate, search]
+    [basename, navigate, search]
   );
 
   // NOTE: this is gonna be removed, there will be no list pages, only search results.
@@ -118,14 +121,14 @@ export const useNavigation = () => {
 
       const pathname = [
         basename,
-        dataModel || dataModelParams?.dataModel,
-        space || dataModelParams?.space,
-        version || dataModelParams?.version,
+        dataModel,
+        space,
+        version,
         dataType,
         instanceSpace,
         externalId,
       ]
-        .filter(Boolean)
+        .filter((item) => item !== undefined)
         .join('/');
 
       navigate({
@@ -133,49 +136,48 @@ export const useNavigation = () => {
         search: queryParams.toString(),
       });
     },
-    [basename, navigate, dataModelParams, search]
+    [basename, navigate, search]
   );
 
   const toTimeseriesPage = useCallback(
     (externalId: string | number) => {
-      const { space, dataModel, version } = params;
       navigate({
-        pathname: `${basename}/${dataModel}/${space}/${version}/timeseries/${externalId}`,
+        pathname: `${basename}/timeseries/${externalId}`,
         search,
       });
     },
-    [basename, navigate, params, search]
+    [basename, navigate, search]
   );
 
   const toFilePage = useCallback(
     (externalId: string | number) => {
-      const { space, dataModel, version } = params;
       navigate({
-        pathname: `${basename}/${dataModel}/${space}/${version}/file/${externalId}`,
+        pathname: `${basename}/file/${externalId}`,
         search,
       });
     },
-    [basename, navigate, params, search]
+    [basename, navigate, search]
   );
 
   const toLandingPage = useCallback(() => {
     navigate('/');
   }, [navigate]);
 
-  const toCharts = (timeseriesId: number, dateRange: DateRange) => {
+  const toCharts = (timeseriesId: number, dateRange?: DateRange) => {
     const queryObj = {
       timeserieIds: timeseriesId,
-      startTime: dateRange[0].getTime(),
-      endTime: dateRange[1].getTime(),
+      startTime: dateRange ? dateRange[0].getTime() : undefined,
+      endTime: dateRange ? dateRange[1].getTime() : undefined,
     };
     const query = queryString.stringify(queryObj);
 
     window.open(`${chartsUrl}&${query}`, '_blank');
   };
 
-  const toCanvas = (item: ResourceItem) => {
+  const toCanvas = (containerReference: ContainerReference) => {
+    // Fix the 'any'...
     const initializeWithContainerReferences = btoa(
-      JSON.stringify([resourceItemToContainerReference(item)])
+      JSON.stringify([containerReference])
     );
 
     const query = queryString.stringify({
@@ -192,7 +194,7 @@ export const useNavigation = () => {
   return {
     toLandingPage,
     toSearchPage,
-    redirectSearchPage,
+    toSearchCategoryPage,
     toListPage,
     toHomePage,
 

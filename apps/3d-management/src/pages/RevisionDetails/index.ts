@@ -1,1 +1,1 @@
-export { default } from './RevisionDetails';
+export { RevisionDetails as default } from './RevisionDetails';

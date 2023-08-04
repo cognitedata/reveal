@@ -1,10 +1,11 @@
 {
   "name": "3d-management",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/3d-management/src",
   "projectType": "application",
   "targets": {
     "build": {
-      "executor": "@nrwl/webpack:webpack",
+      "executor": "@nx/webpack:webpack",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/3d-management",
@@ -42,6 +43,16 @@
           "runtimeChunk": false,
           "budgets": []
         },
+        "staging": {
+          "optimization": true,
+          "outputHashing": "all",
+          "sourceMap": true,
+          "extractCss": true,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "vendorChunk": false,
+          "budgets": []
+        },
         "production": {
           "optimization": true,
           "outputHashing": "all",
@@ -55,7 +66,7 @@
       }
     },
     "serve": {
-      "executor": "@nrwl/webpack:dev-server",
+      "executor": "@nx/webpack:dev-server",
       "options": {
         "buildTarget": "3d-management:build",
         "hmr": true
@@ -64,9 +75,10 @@
         "development": {
           "buildTarget": "3d-management:build:development",
           "hmr": true,
-          "liveReload": true
+          "liveReload": true,
+          "allowedHosts": "*.dev.fusion.cogniteapp.com,apps-staging.cognite.com",
+          "ssl": true
         },
-
         "preview": {
           "buildTarget": "3d-management:build:preview",
           "hmr": false
@@ -79,14 +91,14 @@
       "defaultConfiguration": "development"
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["apps/3d-management/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/3d-management"],
       "options": {
         "jestConfig": "apps/3d-management/jest.config.ts",
@@ -94,5 +106,8 @@
       }
     }
   },
-  "tags": []
+  "tags": [],
+  "pipeline": {
+    "previewPackageName": "@cognite/cdf-3d-management"
+  }
 }

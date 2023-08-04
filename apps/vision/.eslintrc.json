@@ -1,12 +1,12 @@
 {
-  "extends": ["plugin:@nrwl/nx/react", "../../.eslintrc.json"],
+  "extends": ["plugin:@nx/react", "../../.eslintrc.json"],
   "ignorePatterns": ["!**/*", "node_modules"],
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
       "rules": {
         "@cognite/no-number-z-index": "off",
-        "@nrwl/nx/enforce-module-boundaries": "off",
+        "@nx/enforce-module-boundaries": "off",
         "lodash/prefer-noop": "warn",
         "@typescript-eslint/no-empty-function": "warn",
         "testing-library/no-node-access": "warn",

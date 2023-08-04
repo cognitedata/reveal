@@ -1,5 +1,5 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import styled from 'styled-components';
@@ -9,7 +9,7 @@ import {
   setProcessViewFileUploadModalVisibility,
   setSummaryModalVisibility,
 } from '@vision/modules/Process/store/slice';
-import { AppDispatch } from '@vision/store';
+import { useThunkDispatch } from '@vision/store';
 import { RootState } from '@vision/store/rootReducer';
 import { PopulateProcessFiles } from '@vision/store/thunks/Process/PopulateProcessFiles';
 import { getContainer } from '@vision/utils';
@@ -21,7 +21,7 @@ import { Button } from '@cognite/cogs.js';
 
 export const SummaryModal = () => {
   const navigate = useNavigate();
-  const dispatch: AppDispatch = useDispatch<AppDispatch>();
+  const dispatch = useThunkDispatch();
 
   const showSummaryModal = useSelector(
     ({ processSlice }: RootState) => processSlice.showSummaryModal
@@ -70,7 +70,7 @@ export const SummaryModal = () => {
             </Button>
           </FooterContainer>
         }
-        visible={showSummaryModal}
+        open={showSummaryModal}
         width={800}
         closable={false}
         onCancel={onCancel}

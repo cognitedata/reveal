@@ -17,18 +17,25 @@ import {
   makeDefaultTranslations,
   translationKeys,
 } from '@charts-app/utils/translations';
-import { AggregatedEventFilter } from '@data-exploration-components/components/Search/Filters/AggregatedEventFilter/AggregatedEventFilter';
-import { AggregatedFilter } from '@data-exploration-components/components/Search/Filters/AggregatedFilter/AggregatedFilter';
-import { ByAssetFilter } from '@data-exploration-components/components/Search/Filters/ByAssetFilter/ByAssetFilter';
-import { DataSetFilter } from '@data-exploration-components/components/Search/Filters/DataSetFilter/DataSetFilter';
-import { MetadataFilter } from '@data-exploration-components/components/Search/Filters/MetadataFilter/MetadataFilter';
-import { StringFilter } from '@data-exploration-components/components/Search/Filters/StringFilter/StringFilter';
+import {
+  TypeFilter,
+  SubTypeFilter,
+  MetadataFilter,
+  SourceFilter,
+  DataSetFilter,
+  ExternalIdFilter,
+  AssetSelectFilter,
+} from '@data-exploration/containers';
 import { omit } from 'lodash';
 
 import { Button, Collapse, Icon } from '@cognite/cogs.js';
-import { InternalId } from '@cognite/sdk';
+import { Metadata } from '@cognite/sdk';
+
+import { InternalEventsFilters } from '@data-exploration-lib/core';
 
 import { GhostMetadataFilter } from './elements';
+import { useDebouncedDateRange } from './useDebouncedDateRange';
+import { useDecoratedFilters } from './useDecoratedFilters';
 
 const defaultTranslations = makeDefaultTranslations(
   'Equipment tag (asset ID)',
@@ -51,6 +58,8 @@ type Props = {
   setFilters: (id: string, diff: any) => void;
   onShowEventResults: (id: string) => void;
   translations?: typeof defaultTranslations;
+  dateFrom: string;
+  dateTo: string;
 };
 
 const EventFilterForm = ({
@@ -59,8 +68,22 @@ const EventFilterForm = ({
   setFilters,
   onShowEventResults,
   translations,
+  dateFrom,
+  dateTo,
 }: Props) => {
   const { filters } = useMemo(() => eventFilter, [eventFilter]);
+  const { isLoading, isError, adaptedFilters } = useDecoratedFilters(filters);
+  const [debouncedTimeFrom, debouncedTimeTo] = useDebouncedDateRange(
+    dateFrom,
+    dateTo
+  );
+  const adaptedFiltersWithDateRange: InternalEventsFilters = useMemo(() => {
+    return {
+      ...adaptedFilters,
+      startTime: { max: debouncedTimeTo },
+      endTime: { min: debouncedTimeFrom },
+    };
+  }, [adaptedFilters, debouncedTimeFrom, debouncedTimeTo]);
 
   const t = {
     ...defaultTranslations,
@@ -76,7 +99,8 @@ const EventFilterForm = ({
 
   const isEventFilterValid = !!Object.keys(filters).length;
 
-  if (!eventData || eventData?.isLoading) return <LoadingRow lines={20} />;
+  if (!eventData || eventData?.isLoading || isLoading || isError)
+    return <LoadingRow lines={20} />;
 
   const { results } = eventData;
 
@@ -84,37 +108,47 @@ const EventFilterForm = ({
 
   return (
     <>
-      <ByAssetFilter
-        title={t['Equipment tag (asset ID)']}
-        value={filters.assetSubtreeIds?.map((el) => (el as InternalId).id)}
-        setValue={(newValue) =>
+      <DataSetFilter.Common
+        value={adaptedFilters.dataSetIds}
+        onChange={(newFilters) => {
+          const formatIds = newFilters?.map(({ value }) => ({
+            id: value,
+          }));
           handleUpdateFilters({
             ...filters,
-            assetSubtreeIds: newValue?.map((id) => ({ id })),
-          })
-        }
-      />
-      <AggregatedEventFilter
-        field="type"
-        // eslint-disable-next-line
-        // @ts-ignore todo(DEGR-2397) fix dataSetIds & assetSubtreeIds filters
-        filter={filters}
-        setValue={(newValue) => {
-          handleUpdateFilters({ ...filters, type: newValue });
+            dataSetIds: formatIds,
+          });
         }}
-        title={t.Type}
-        value={filters.type}
       />
-      <AggregatedEventFilter
-        field="subtype"
-        // eslint-disable-next-line
-        // @ts-ignore todo(DEGR-2397) fix dataSetIds & assetSubtreeIds filters
-        filter={filters}
-        setValue={(newValue) => {
-          handleUpdateFilters({ ...filters, subtype: newValue });
+      <AssetSelectFilter.Common
+        value={adaptedFilters.assetSubtreeIds}
+        onChange={(newFilters) => {
+          handleUpdateFilters({
+            ...filters,
+            assetSubtreeIds: newFilters?.map(({ value }) => ({ id: value })),
+          });
         }}
-        title={t['Sub-type']}
-        value={filters.subtype}
+      />
+      <TypeFilter.Event
+        filter={adaptedFiltersWithDateRange}
+        value={adaptedFilters.type}
+        onChange={(newValue) => {
+          handleUpdateFilters({
+            ...filters,
+            type: typeof newValue === 'string' ? newValue : newValue[0],
+          });
+        }}
+      />
+
+      <SubTypeFilter.Event
+        filter={adaptedFiltersWithDateRange}
+        value={adaptedFilters.subtype}
+        onChange={(newValue) => {
+          handleUpdateFilters({
+            ...filters,
+            subtype: typeof newValue === 'string' ? newValue : newValue[0],
+          });
+        }}
       />
 
       <SidebarInnerCollapse
@@ -125,14 +159,21 @@ const EventFilterForm = ({
       >
         <Collapse.Panel header={t['More filters']} key="panelFilterForm">
           <GhostMetadataFilter>
-            <MetadataFilter
-              items={results}
-              value={filters.metadata}
-              setValue={(newMetadata) => {
-                if (Object.keys(newMetadata || {}).length) {
+            <MetadataFilter.Events
+              menuProps={{ placement: 'left' }}
+              filter={adaptedFiltersWithDateRange}
+              values={adaptedFilters.metadata}
+              onChange={(newMetadata) => {
+                if (newMetadata.length) {
                   handleUpdateFilters({
                     ...filters,
-                    metadata: newMetadata,
+                    metadata: newMetadata.reduce<Metadata>(
+                      (acc, { key, value }) => {
+                        acc[key] = value;
+                        return acc;
+                      },
+                      {}
+                    ),
                   });
                 } else {
                   handleUpdateFilters({
@@ -143,38 +184,23 @@ const EventFilterForm = ({
             />
           </GhostMetadataFilter>
 
-          <AggregatedFilter
-            title={t.Source}
-            items={results}
-            aggregator="source"
-            value={filters.source}
-            setValue={(newSource) =>
+          <SourceFilter.Event
+            filter={adaptedFilters}
+            value={adaptedFilters.sources}
+            onChange={(newSources) =>
               handleUpdateFilters({
                 ...filters,
-                source: newSource,
+                source: newSources?.[0]?.value,
               })
             }
           />
 
-          <DataSetFilter
-            resourceType="event"
-            value={filters.dataSetIds?.map((id) => id)}
-            setValue={(newIds) => {
-              const formatIds = newIds?.map(({ id }: any) => ({ id }));
+          <ExternalIdFilter
+            value={adaptedFilters.externalIdPrefix}
+            onChange={(idPrefix) => {
               handleUpdateFilters({
                 ...filters,
-                dataSetIds: formatIds,
-              });
-            }}
-          />
-
-          <StringFilter
-            title={t['External ID']}
-            value={filters.externalIdPrefix}
-            setValue={(newExternalId) => {
-              handleUpdateFilters({
-                ...filters,
-                externalIdPrefix: newExternalId,
+                externalIdPrefix: idPrefix,
               });
             }}
           />
@@ -186,7 +212,7 @@ const EventFilterForm = ({
           <br />
           <SidebarChip
             icon="Events"
-            size="medium"
+            size="small"
             label={
               isEventFilterValid && results.length > 0
                 ? `${results.length}`

@@ -118,7 +118,7 @@
   "FILE": "File",
   "FILES": "Files",
   "FILE_EDITING_MODE_NOTIFY_TEXT": "You are in editing mode.",
-  "FILE_ID_NOT_FOUND": "File {fileId} not found!",
+  "FILE_ID_NOT_FOUND": "File {{fileId}} not found!",
   "FILE_NOT_SEARCHABLE": "This document is not searchable",
   "FILE_NO_PREVIEW_TEXT": "No preview for this file type",
   "FILE_NO_WRITE_ACCESS": "You do not have the necessary permissions to edit this file. You need both annotations:write and files:write capabilities.",

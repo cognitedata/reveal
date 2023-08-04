@@ -6,24 +6,43 @@
   "tags": [],
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["libs/copilot-core/**/*.{ts,tsx,js,jsx}"]
       }
     },
-    "build": {
-      "executor": "@nrwl/rollup:rollup",
+    "dev": {
+      "executor": "@nx/webpack:webpack",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "rootDir": ".",
-        "outputPath": "dist/libs/copilot-core",
+        "outputPath": "dist/libs/@fusion/copilot-core",
+        "main": "libs/copilot-core/src/index.ts",
         "tsConfig": "libs/copilot-core/tsconfig.lib.json",
-        "project": "libs/copilot-core/package.json",
+        "assets": ["libs/copilot-core/src/assets"],
+        "generatePackageJson": true,
+        "extractLicenses": true,
+        "sourceMap": true,
+        "target": "node",
+        "compiler": "tsc",
+        "watch": true,
+        "webpackConfig": "libs/copilot-core/webpack-config.js"
+      }
+    },
+    "build": {
+      "executor": "@nx/rollup:rollup",
+      "outputs": ["{options.outputPath}"],
+      "configurations": {
+        "development": {}
+      },
+      "options": {
+        "format": ["esm"],
+        "outputPath": "dist/libs/@fusion/copilot-core",
+        "tsConfig": "libs/copilot-core/tsconfig.lib.json",
         "entryFile": "libs/copilot-core/src/index.ts",
-        "external": ["react/jsx-runtime"],
-        "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
-        "compiler": "babel",
+        "compiler": "tsc",
+        "project": "libs/copilot-core/package.json",
+        "rollupConfig": "libs/copilot-core/rollup.config.js",
         "assets": [
           {
             "glob": "libs/copilot-core/README.md",
@@ -31,11 +50,11 @@
             "output": "."
           }
         ],
-        "updateBuildableProjectDepsInPackageJson": true
+        "updateBuildableProjectDepsInPackageJson": false
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
         "jestConfig": "libs/copilot-core/jest.config.ts",
@@ -45,6 +64,43 @@
         "ci": {
           "ci": true,
           "codeCoverage": true
+        }
+      }
+    },
+    "storybook": {
+      "executor": "@nx/storybook:storybook",
+      "options": {
+        "port": 4400,
+        "configDir": "libs/copilot-core/.storybook"
+      },
+      "configurations": {
+        "ci": {
+          "quiet": true
+        }
+      }
+    },
+    "build-storybook": {
+      "executor": "@nx/storybook:build",
+      "outputs": ["{options.outputDir}"],
+      "options": {
+        "outputDir": "dist/storybook/copilot-core",
+        "configDir": "libs/copilot-core/.storybook"
+      },
+      "configurations": {
+        "ci": {
+          "quiet": true
+        }
+      }
+    },
+    "static-storybook": {
+      "executor": "@nx/web:file-server",
+      "options": {
+        "buildTarget": "copilot-core:build-storybook",
+        "staticFilePath": "dist/storybook/copilot-core"
+      },
+      "configurations": {
+        "ci": {
+          "buildTarget": "copilot-core:build-storybook:ci"
         }
       }
     }

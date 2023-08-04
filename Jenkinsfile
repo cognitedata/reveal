@@ -4,7 +4,6 @@
 // in addition to updating the 'PROPECTION_APP_IDS' & 'PREVIEW_PACKAGE_NAMES'
 static final String[] APPLICATIONS = [
   'platypus',
-  'data-exploration',
   'vision',
   'data-catalog',
   'raw-explorer',
@@ -21,6 +20,9 @@ static final String[] APPLICATIONS = [
   'extractor-downloads',
   'charts',
   'entity-matching',
+  'access-management',
+  'notebook',
+  'fusion-shell'
 ]
 
 /*
@@ -30,14 +32,16 @@ static final String[] APPLICATIONS = [
 static final Map<String, String> NPM_PACKAGES = [
   'shared-plotting-components': "dist/libs/shared/plotting-components",
   'user-profile-components': "dist/libs/shared/user-profile-components",
-  'cdf-ui-i18n-utils': "dist/libs/shared/cdf-ui-i18n-utils"
+  'user-onboarding-components': "dist/libs/shared/user-onboarding-components",
+  'cdf-ui-i18n-utils': "dist/libs/shared/cdf-ui-i18n-utils",
+  'cdf-utilities': 'dist/libs/shared/cdf-utilities',
+  'cdf-login-utils': 'dist/libs/shared/cdf-login-utils',
 ]
 
 // This is the Firebase site mapping.
 // See https://github.com/cognitedata/terraform/blob/master/cognitedata-production/gcp_fusion_firebase_hosting/sites.tf
 static final Map<String, String> FIREBASE_APP_SITES = [
   'platypus': 'platypus',
-  'data-exploration': 'data-exploration',
   'vision': 'vision',
   'data-catalog': 'data-catalog',
   'raw-explorer': 'raw-explorer',
@@ -54,44 +58,20 @@ static final Map<String, String> FIREBASE_APP_SITES = [
   'extractor-downloads': 'extractor-downloads',
   'charts': 'charts',
   'entity-matching': 'entity-matching',
+  'access-management': 'access-management',
+  'notebook': 'notebook',
+  'fusion-shell': 'ui-host'
 ]
 
-static final Map<String, String> PREVIEW_PACKAGE_NAMES = [
-  'platypus': "@cognite/cdf-solutions-ui",
-  'data-exploration': "@cognite/cdf-data-exploration",
-  'vision': "@cognite/cdf-vision-subapp",
-  'data-catalog': "@cognite/cdf-data-catalog",
-  'raw-explorer': "@cognite/cdf-raw-explorer",
-  'coding-conventions': "@cognite/cdf-coding-conventions",
-  'copilot': "@cognite/cdf-copilot",
-  'industry-canvas-ui': "@cognite/cdf-industry-canvas-ui",
-  'interactive-diagrams': '@cognite/cdf-context-ui-pnid',
-  'iot-hub': "@cognite/cdf-iot-hub",
-  'functions-ui': "@cognite/cdf-functions-ui",
-  '3d-management': '@cognite/cdf-3d-management',
-  'transformations': "@cognite/cdf-transformations-2",
-  'cdf-document-search': '@cognite/cdf-document-search-ui',
-  'extraction-pipelines': '@cognite/cdf-integrations-ui',
-  'extractor-downloads': '@cognite/cdf-extractor-downloads',
-  'charts': '@cognite/cdf-charts-ui',
-  'entity-matching': '@cognite/cdf-ui-entity-matching',
-]
 
 // Replace this with your app's ID on https://sentry.io/ -- if you do not have
-// one (or do not have access to Sentry), stop by #frontend to ask for help. :)
+// one (or do not have access to Sentry), stop by #frontend to ask for help. 
 static final Map<String, String> SENTRY_PROJECT_NAMES = [
   'platypus': "platypus",
-  'data-exploration': "data-explorer",
   'coding-conventions': "coding-conventions",
   'charts': 'cognite-charts'
 ]
 
-// Add apps/libs name to the list where you want the storybook preview to build.
-static final String[] PREVIEW_STORYBOOK = [
-  'platypus',
-  'data-exploration-components-old',
-  'shared-plotting-components',
-]
   // '3d-management',
   // Should be added after monorepo storybook version is upgraded to v7.
 
@@ -137,9 +117,9 @@ static final Map<String, String> VERSIONING_STRATEGY = [
   'data-exploration': 'multi-branch',
   'vision': 'single-branch',
   'data-catalog': 'multi-branch',
-  'raw-explorer': 'single-branch',
+  'raw-explorer': 'multi-branch',
   '3d-management': 'single-branch',
-  'transformations': 'single-branch',
+  'transformations': 'multi-branch',
   'copilot': 'single-branch',
   'iot-hub': 'single-branch',
   'interactive-diagrams': 'multi-branch',
@@ -149,6 +129,9 @@ static final Map<String, String> VERSIONING_STRATEGY = [
   'charts': 'multi-branch',
   'entity-matching': 'single-branch',
   'functions-ui' : 'single-branch',
+  'access-management': 'multi-branch',
+  'notebook': 'single-branch',
+  'fusion-shell': 'mutli-branch'
 ]
 
 // The config of which apps have i18n strings that need to be synced to and pulled from locize.io
@@ -237,6 +220,8 @@ def shouldDeployPackage(String packageName, Map<String, String> NPM_PACKAGES, bo
     return false;
   }
 
+  sh(script: "./node_modules/.bin/nx build ${packageName}", returnStdout: true); 
+
   def packageJson = "${NPM_PACKAGES[packageName]}/package.json";
 
   def packageJsonString = sh(
@@ -313,7 +298,8 @@ def pods = { body ->
 pods {
   app.safeRun(
     slackChannel: SLACK_CHANNEL,
-    logErrors: isMaster || isRelease
+    logErrors: isMaster || isRelease,
+    timeout: 150
   ) {
     dir('main') {
       stage('Checkout code') {
@@ -380,31 +366,6 @@ pods {
 
 
       parallel(
-        'Storybook': {
-          container('apphosting') {
-            if (!isPullRequest) {
-              print 'No storybook reviews for release builds'
-              return;
-            }
-
-            for (int i = 0; i < projects.size(); i++) {
-              def project = projects[i];
-              if (!PREVIEW_STORYBOOK.contains(project)) {
-                continue;
-              }
-
-              stageWithNotify("Build and deploy Storybook for: ${project}") {
-                previewServer(
-                  prefix: "storybook-${project}",
-                  commentPrefix: "[storybook-server:${project}]\n",
-                  buildCommand: "yarn build-storybook ${project}",
-                  buildFolder: "storybook-static",
-                )
-              }
-            }
-          }
-        },
-
         'Preview': {
           container('apphosting') {
             if (!isPullRequest) {
@@ -412,38 +373,8 @@ pods {
               return
             }
 
+            //this can be deleted at the end, left it to delete comments in older PRs
             deleteComments('[FUSION_PREVIEW_URL]')
-
-            for (int i = 0; i < projects.size(); i++) {
-              def project = projects[i];
-              def packageName = PREVIEW_PACKAGE_NAMES[project]
-
-              if (packageName == null) {
-                print "No preview available for: ${project}"
-                continue
-              }
-
-              dir("apps/${project}") {
-                // Run the yarn install in the app in cases of local packages.json file
-                if (fileExists("yarn.lock")) {
-                  yarn.setup()
-                }
-              }
-
-              stageWithNotify("Build and deploy PR for: ${project}") {
-                def prefix = "${jenkinsHelpersUtil.determineRepoName()}-${project}"
-                def domain = 'fusion-preview'
-                previewServer(
-                  repo: domain,
-                  prefix: prefix,
-                  buildCommand: "yarn build preview ${project}",
-                  buildFolder: "dist/apps/${project}",
-                )
-                deleteComments(PR_COMMENT_MARKER)
-                def url = "https://fusion-pr-preview.cogniteapp.com/?externalOverride=${packageName}&overrideUrl=https://${prefix}-${env.CHANGE_ID}.${domain}.preview.cogniteapp.com/index.js"
-                pullRequest.comment("[FUSION_PREVIEW_URL] Use cog-appdev as domain. Click here to preview: [$url]($url) for application ${project}<br><br>![AppBadge](https://img.shields.io/static/v1?label=Application&message=${project}&color=orange)")
-              }
-            }
           }
         },
 
@@ -493,7 +424,7 @@ pods {
                   appName: firebaseSiteName,
                   environment: releaseEnvironment,
                   firebaseJson: "dist/apps/${project}/firebase.json",
-                  buildCommand: "yarn build production ${project}",
+                  buildCommand: "NODE_OPTIONS=--max-old-space-size=8192 yarn build ${releaseEnvironment} ${project}",
                   buildFolder: "dist/apps/${project}",
                   isFusionSubapp: true,
                 )

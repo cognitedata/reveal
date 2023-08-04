@@ -36,7 +36,6 @@ import { ThreeDSearchContextProvider } from '@data-exploration-app/context/Three
 import {
   useFlagDocumentGPT,
   useFlagDocumentLabelsFilter,
-  useFlagOverlayNavigation,
 } from '@data-exploration-app/hooks';
 import {
   useQueryString,
@@ -101,8 +100,6 @@ function SearchPage() {
 
   const isDocumentGPTEnabled = useFlagDocumentGPT();
   const [showGPTInfo, setShowGPTInfo] = useState<boolean>(true);
-
-  const isDetailsOverlayEnabled = useFlagOverlayNavigation();
 
   const { t } = useTranslation();
   const isDocumentsApiEnabled = useFlagDocumentsApiEnabled();
@@ -178,11 +175,13 @@ function SearchPage() {
               tabKey={ViewType.Asset}
               query={debouncedQuery}
               filter={assetFilter}
+              label={t('ASSETS', 'Assets')}
             />
             <TimeseriesTab
               tabKey={ViewType.TimeSeries}
               query={debouncedQuery}
               filter={timeseriesFilter}
+              label={t('TIMESERIES', 'TIme series')}
             />
 
             <FilesTab
@@ -190,18 +189,25 @@ function SearchPage() {
               query={debouncedQuery}
               filter={isDocumentsApiEnabled ? documentFilter : fileFilter}
               isDocumentsApiEnabled={isDocumentsApiEnabled}
+              label={t('FILES', 'Files')}
             />
             <EventsTab
               tabKey={ViewType.Event}
               query={debouncedQuery}
               filter={eventFilter}
+              label={t('EVENTS', 'Events')}
             />
             <SequenceTab
               tabKey={ViewType.Sequence}
               query={debouncedQuery}
               filter={sequenceFilter}
+              label={t('SEQUENCE', 'Sequence')}
             />
-            <ThreeDTab tabKey={ViewType.ThreeD} query={debouncedQuery} />
+            <ThreeDTab
+              tabKey={ViewType.ThreeD}
+              query={debouncedQuery}
+              label={t('3D', '3D')}
+            />
           </ResourceTypeTabsV2>
         </TabsContainer>
 
@@ -237,8 +243,8 @@ function SearchPage() {
           </Wrapper>
         </MainContainer>
       </MainSearchContainer>
-      {isDetailsOverlayEnabled && <DetailsOverlay />}
-      {isDetailsOverlayEnabled && <BreakJourneyPrompt />}
+      <DetailsOverlay />
+      <BreakJourneyPrompt />
     </RootHeightWrapper>
   );
 }

@@ -54,17 +54,17 @@ const main = () => {
     if (target === 'test') {
       runCmd(`yarn test ${projectNames}`);
 
-      projects.forEach(({ project, outputs }) => {
-        const basePath = outputs[0];
-        const files = `${basePath}/coverage-final.json,${basePath}/cobertura-coverage.xml`;
-
-        console.log(`Uploading codecov for ${project} (path: ${basePath})`);
-
-        // Upload codecov with specific flags, see: https://docs.codecov.com/docs/flags
-        runCmd(
-          `./bin/codecov-linux -F ${project} -f ${files} -t ${codecovToken}`
-        );
-      });
+      // projects.forEach(({ project, outputs }) => {
+      //   const basePath = outputs[0];
+      //   const files = `${basePath}/coverage-final.json,${basePath}/cobertura-coverage.xml`;
+      //
+      //   console.log(`Uploading codecov for ${project} (path: ${basePath})`);
+      //
+      //   // Upload codecov with specific flags, see: https://docs.codecov.com/docs/flags
+      //   runCmd(
+      //     `./bin/codecov-linux -F ${project} -f ${files} -t ${codecovToken}`
+      //   );
+      // });
     } else if (target === 'e2e') {
       runCmd(
         `yarn nx run-many --configuration=production --target=${target} --projects=${projectNames} --verbose=true --parallel --exclude="platypus*" --exclude="cdf-nx-plugin-e2e"  --env.DATA_EXPLORER_CLIENT_ID=${process.env.DATA_EXPLORER_CLIENT_ID} --env.DATA_EXPLORER_CLIENT_SECRET=${process.env.DATA_EXPLORER_CLIENT_SECRET}`

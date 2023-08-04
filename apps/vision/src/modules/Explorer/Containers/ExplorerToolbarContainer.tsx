@@ -18,7 +18,7 @@ import {
   setExplorerQueryString,
 } from '@vision/modules/Explorer/store/slice';
 import { cancelFileDetailsEdit } from '@vision/modules/FileDetails/slice';
-import { AppDispatch } from '@vision/store';
+import { useThunkDispatch } from '@vision/store';
 import { RootState } from '@vision/store/rootReducer';
 import { DeleteFilesById } from '@vision/store/thunks/Files/DeleteFilesById';
 import { PopulateProcessFiles } from '@vision/store/thunks/Process/PopulateProcessFiles';
@@ -40,7 +40,7 @@ export type ExplorerToolbarContainerProps = {
 export const ExplorerToolbarContainer = (
   props: ExplorerToolbarContainerProps
 ) => {
-  const dispatch: AppDispatch = useDispatch<AppDispatch>();
+  const dispatch = useThunkDispatch();
   const navigate = useNavigate();
 
   const percentageScanned = useSelector(

@@ -1,9 +1,6 @@
 import React, { useMemo, useState } from 'react';
 
-import {
-  DefaultPreviewFilter,
-  PreviewFilterDropdown,
-} from '@data-exploration/components';
+import { DefaultPreviewFilter } from '@data-exploration/components';
 import { useDebounce } from 'use-debounce';
 
 import { Sequence } from '@cognite/sdk';
@@ -19,36 +16,16 @@ import {
   useSequenceSearchResultQuery,
 } from '@data-exploration-lib/domain-layer';
 
-import { MetadataFilter } from '../../../Filters';
 import { AppliedFiltersTags } from '../AppliedFiltersTags';
 
 import { SequenceTable } from './SequenceTable';
+import { SequenceTableFilters } from './SequenceTableFilters';
 
 interface Props {
   defaultFilter: InternalCommonFilters;
   onClick: (item: Sequence | SequenceWithRelationshipLabels) => void;
   onParentAssetClick: (assetId: number) => void;
 }
-
-const LinkedSequenceFilter = ({
-  filter,
-  onFilterChange,
-}: {
-  filter: InternalSequenceFilters;
-  onFilterChange: (newValue: InternalSequenceFilters) => void;
-}) => {
-  return (
-    <PreviewFilterDropdown>
-      <MetadataFilter.Sequences
-        filter={filter}
-        values={filter.metadata}
-        onChange={(newMetadata) => {
-          onFilterChange({ metadata: newMetadata });
-        }}
-      />
-    </PreviewFilterDropdown>
-  );
-};
 
 export const SequenceLinkedSearchResults: React.FC<Props> = ({
   defaultFilter,
@@ -104,7 +81,7 @@ export const SequenceLinkedSearchResults: React.FC<Props> = ({
       }
       tableHeaders={
         <DefaultPreviewFilter query={query} onQueryChange={setQuery}>
-          <LinkedSequenceFilter
+          <SequenceTableFilters
             filter={sequenceFilter}
             onFilterChange={handleFilterChange}
           />

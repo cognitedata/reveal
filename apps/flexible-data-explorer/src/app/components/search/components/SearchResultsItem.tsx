@@ -2,9 +2,12 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { Body, Title, Detail } from '@cognite/cogs.js';
+import { Body, Title, Detail, IconType } from '@cognite/cogs.js';
+
+import { CategoryChip } from '../../chips/CategoryChip';
 
 interface Props {
+  icon?: IconType;
   name: string;
   description?: string;
   properties?: { key?: string; value?: any }[];
@@ -14,6 +17,7 @@ interface Props {
 const MAX_PROPERTIES = 3;
 
 export const SearchResultsItem: React.FC<Props> = ({
+  icon,
   name,
   description,
   properties,
@@ -32,7 +36,9 @@ export const SearchResultsItem: React.FC<Props> = ({
   );
 
   return (
-    <Container role="button" onClick={onClick}>
+    <Container role="button" tabIndex={0} onClick={onClick}>
+      {icon && <CategoryChip icon={icon} />}
+
       <TitleContent>
         <NameText>{name}</NameText>
         <DescriptionText>{description}</DescriptionText>
@@ -41,7 +47,7 @@ export const SearchResultsItem: React.FC<Props> = ({
       <PropertiesContainer>
         {normalizedProperties.map(({ key, value }, index) => (
           <PropertiesContent key={key || index}>
-            <Detail>{key}</Detail>
+            <KeyText>{key}</KeyText>
             <Body strong>{value}</Body>
           </PropertiesContent>
         ))}
@@ -104,4 +110,8 @@ const DescriptionText = styled(Body).attrs({ level: 6 })`
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+`;
+
+const KeyText = styled(Detail)`
+  text-transform: capitalize;
 `;

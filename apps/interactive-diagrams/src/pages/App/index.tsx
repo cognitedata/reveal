@@ -15,6 +15,7 @@ import { Icon } from '@cognite/cogs.js';
 import {
   FileContextualizationContextProvider,
   DataExplorationProvider,
+  Flow,
 } from '@cognite/data-exploration';
 
 import { ids } from '../../cogs-variables';
@@ -81,7 +82,7 @@ export default function App() {
         <ResourceSelectionProvider allowEdit mode="multiple">
           <ResourceActionsProvider>
             <DataExplorationProvider
-              flow={flow}
+              flow={flow as Flow}
               userInfo={userInfo}
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-ignore:next-line

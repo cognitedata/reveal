@@ -14,9 +14,9 @@ import { CogniteError, Sequence } from '@cognite/sdk';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 
 import { BreadcrumbsV2 } from '@data-exploration-app/components/Breadcrumbs/BreadcrumbsV2';
-import ResourceTitleRowV2 from '@data-exploration-app/components/ResourceTitleRowV2';
+import ResourceTitleRow from '@data-exploration-app/components/ResourceTitleRow';
 import { DetailsTabWrapper } from '@data-exploration-app/containers/Common/element';
-import { ResourceDetailsTabsV2 } from '@data-exploration-app/containers/ResourceDetails';
+import { ResourceDetailsTabs } from '@data-exploration-app/containers/ResourceDetails';
 import {
   useEndJourney,
   useResourceDetailSelectedTab,
@@ -112,12 +112,12 @@ export const SequenceDetail = ({
   return (
     <>
       <BreadcrumbsV2 />
-      <ResourceTitleRowV2
+      <ResourceTitleRow
         item={{ id: sequenceId, type: 'sequence' }}
         title={sequence.name}
         afterDefaultActions={actions}
       />
-      <ResourceDetailsTabsV2
+      <ResourceDetailsTabs
         parentResource={{
           type: 'sequence',
           id: sequence.id,

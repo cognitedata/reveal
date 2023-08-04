@@ -109,7 +109,7 @@ const RunHistorySection = ({
                 expandIcon={({ isActive }) => (
                   <Icon type={isActive ? 'ChevronUp' : 'ChevronDown'} />
                 )}
-                expandIconPosition="right"
+                expandIconPosition="end"
                 key={item.id}
                 onChange={(key) => {
                   const isExpanded = typeof key === 'string' || key.length > 0;

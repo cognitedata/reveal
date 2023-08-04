@@ -1,4 +1,4 @@
-import { CalculationTaskSchedule } from '@charts-app/domain/scheduled-calculation/service/types';
+import { ScheduledCalculationTask } from '@charts-app/domain/scheduled-calculation/service/types';
 import {
   ChartWorkflowV2,
   ScheduledCalculation,
@@ -11,7 +11,7 @@ import { Timeseries } from '@cognite/sdk';
 export const adaptCalculationForClonedScheduledCalculation = (
   workflow: ChartWorkflowV2,
   chartId: string,
-  scheduledCalculationTask: CalculationTaskSchedule,
+  scheduledCalculationTask: ScheduledCalculationTask,
   timeseries: Timeseries
 ): ScheduledCalculation => {
   const scheduledCalculation = omit(

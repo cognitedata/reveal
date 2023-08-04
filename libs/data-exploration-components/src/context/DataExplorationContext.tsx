@@ -70,8 +70,8 @@ export const DataExplorationProvider = ({
     dragDropPortal.classList.add(DRAG_DROP_PORTAL_CLASS);
     document
       .getElementsByClassName(styleScopeId)
-      .item(0)!
-      .appendChild(dragDropPortal);
+      .item(0)
+      ?.appendChild(dragDropPortal);
   }, [styleScopeId]);
 
   return (

@@ -17,7 +17,7 @@ export const useDataManagementPageUI = () => {
   ]).isAclSupported;
 
   const getMissingPermissions = () => {
-    const missingPermissions = [];
+    const missingPermissions: string[] = [];
     if (!doesSupportRead) {
       missingPermissions.push('READ');
     }
@@ -33,21 +33,9 @@ export const useDataManagementPageUI = () => {
   const toggleShouldShowPublishedRows = () =>
     dispatch(dataManagementActions.toggleShouldShowPublishedRows());
 
-  const setIsTransformationModalOpen = (
-    value: boolean,
-    transformationId: number | null
-  ) => {
-    dispatch(
-      dataManagementActions.setIsTransformationModalOpen({
-        transformationId,
-        isTransformationModalOpen: value,
-      })
-    );
-  };
   return {
     toggleShouldShowDraftRows,
     toggleShouldShowPublishedRows,
-    setIsTransformationModalOpen,
     getMissingPermissions,
     onShowNoRowsOverlay,
     onHideOverlay,

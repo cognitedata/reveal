@@ -33,7 +33,6 @@ export function fetchAndQueryData(
     filterParams,
     parsedSchema,
   } = props;
-  // const storeKey = isBuiltInType ? config.builtInTypes[schemaType] : schemaType;
   const storeKey = schemaType;
 
   const dataStore = isBuiltInType

@@ -139,9 +139,6 @@ const Ul = styled.ul`
 const StyledFlex = styled(Flex)`
   max-width: 80%;
 
-  .cogs-tooltip__content {
-    width: 100%;
-  }
   .cogs-chip {
     width: 100%;
   }

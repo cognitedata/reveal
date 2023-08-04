@@ -12,7 +12,7 @@ import {
   MAX_FONT_SIZE,
   MIN_FONT_SIZE,
 } from '../../constants';
-import { OnUpdateAnnotationStyleByType } from '../../hooks/useManagedTools';
+import { UseOnUpdateSelectedAnnotationReturnType } from '../../hooks/useOnUpdateSelectedAnnotation';
 import { useTranslation } from '../../hooks/useTranslation';
 import { FillColorPalette } from '../color-palettes/FillColorPalette';
 
@@ -27,14 +27,13 @@ enum EditMode {
 
 export type TextAnnotationTooltipProps = {
   textAnnotation: TextAnnotation;
-  onUpdateAnnotationStyleByType: OnUpdateAnnotationStyleByType;
   onDeleteSelectedCanvasAnnotation: () => void;
-};
+} & UseOnUpdateSelectedAnnotationReturnType;
 
 export const TextAnnotationTooltip: React.FC<TextAnnotationTooltipProps> = ({
   textAnnotation,
   onDeleteSelectedCanvasAnnotation,
-  onUpdateAnnotationStyleByType,
+  onUpdateSelectedAnnotation,
 }) => {
   const [editMode, setEditMode] = useState(EditMode.IDLE);
   const [fontSizeValue, setFontSizeValue] = useState<number | undefined>(
@@ -57,7 +56,7 @@ export const TextAnnotationTooltip: React.FC<TextAnnotationTooltipProps> = ({
     if (fontSizeValue < MIN_FONT_SIZE || fontSizeValue > MAX_FONT_SIZE) {
       return;
     }
-    onUpdateAnnotationStyleByType({
+    onUpdateSelectedAnnotation({
       text: { fontSize: `${fontSizeValue}px` },
     });
     // We ignore `onUpdateAnnotationStyleByType` as dependency since if we add
@@ -73,7 +72,7 @@ export const TextAnnotationTooltip: React.FC<TextAnnotationTooltipProps> = ({
             colors={Object.values(TEXT_ANNOTATION_COLOR_MAP)}
             selectedColor={textAnnotation.style?.fill}
             onUpdateColor={(color) => {
-              onUpdateAnnotationStyleByType({
+              onUpdateSelectedAnnotation({
                 text: { fill: color },
               });
             }}

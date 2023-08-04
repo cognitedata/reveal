@@ -3,14 +3,12 @@ import { Fragment } from 'react';
 import styled from 'styled-components';
 
 import { groupTransformationsByTypes } from '@platypus/platypus-core';
-import { isFDMv3 } from '@platypus-app/flags';
 import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
 import { createLink } from '@cognite/cdf-utilities';
 import { Dropdown, Menu, Button } from '@cognite/cogs.js';
 
-import { useDataManagementPageUI } from '../../hooks/useDataManagemenPageUI';
 import useTransformations from '../../hooks/useTransformations';
 
 type Props = {
@@ -27,9 +25,7 @@ export function TransformationDropdown({
   viewVersion,
 }: Props) {
   const { t } = useTranslation('BulkPopulation');
-  const { setIsTransformationModalOpen } = useDataManagementPageUI();
   const { track } = useMixpanel();
-  const isFDMV3 = isFDMv3();
 
   const { data: transformations } = useTransformations({
     space,
@@ -66,21 +62,12 @@ export function TransformationDropdown({
                             target: groupedTransformations[key].displayName,
                             version: viewVersion,
                           });
-                          if (isFDMV3) {
-                            window.open(
-                              createLink(
-                                `/transformations/${transformation.id}`
-                              ),
-                              '_blank'
-                            );
-                          } else {
-                            setIsTransformationModalOpen(
-                              true,
-                              transformation.id
-                            );
-                          }
+                          window.open(
+                            createLink(`/transformations/${transformation.id}`),
+                            '_blank'
+                          );
                         }}
-                        icon={isFDMV3 ? 'Link' : 'ExternalLink'}
+                        icon="Link"
                         iconPlacement="right"
                         style={{ width: 240 }}
                       >

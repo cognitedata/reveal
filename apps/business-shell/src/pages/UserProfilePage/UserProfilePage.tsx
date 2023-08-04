@@ -1,178 +1,70 @@
-import React, { useMemo } from 'react';
-import { useSearchParams } from 'react-router-dom';
-
-import styled from 'styled-components';
-
 import {
   useTypedTranslation as useTranslation,
   getLanguage,
   selectLanguage,
 } from '@cognite/cdf-i18n-utils';
-import { Colors, Title } from '@cognite/cogs.js';
 import {
-  LanguageTab,
-  PersonalInfoTab,
-  VerticalTab,
-  VerticalTabs,
+  Language,
+  UserProfilePage as SharedUserProfilePage,
 } from '@cognite/user-profile-components';
 
+import { useTracker } from '../../app/common/metrics';
 import { useUserInfo } from '../../hooks/useUserInfo';
 
-const PROFILE_TAB_KEYS = ['info', 'language'] as const;
-type ProfileTabKey = (typeof PROFILE_TAB_KEYS)[number];
-
-const getActiveTabKey = (tabParam?: string): ProfileTabKey => {
-  if (PROFILE_TAB_KEYS.includes(tabParam as any)) {
-    return tabParam as ProfileTabKey;
-  }
-
-  return 'info';
-};
+const SUPPORTED_LANGUAGES: Language[] = [
+  { code: 'en', label: 'English | en' },
+  { code: 'zh', label: '中文 (Zhōngwén), 汉语, 漢語 | zh' },
+  { code: 'nl', label: 'Nederlands, Vlaams | nl' },
+  { code: 'fr', label: 'Français, langue française | fr' },
+  { code: 'de', label: 'Deutsch | de' },
+  { code: 'de-AT', label: 'Deutsch AT | de-AT' },
+  { code: 'it', label: 'Italiano | it' },
+  { code: 'ja', label: '日本語 (にほんご／にっぽんご) | ja' },
+  { code: 'ko', label: '한국어 (韓國語), 조선말 (朝鮮語) | ko' },
+  { code: 'pt', label: 'Português | pt' },
+  { code: 'ro', label: 'română | ro' },
+  { code: 'es', label: 'Español, Castellano | es' },
+  { code: 'sv', label: 'svenska | sv' },
+];
+const selectedLanguage =
+  SUPPORTED_LANGUAGES.find((language) => language.code === getLanguage()) ||
+  SUPPORTED_LANGUAGES[0];
 
 export const UserProfilePage = (): JSX.Element => {
-  const { data = {}, isLoading } = useUserInfo();
-  const { name, email } = data;
-
   const { t } = useTranslation();
+  const { data = {}, isLoading } = useUserInfo();
+  const { name, email, picture: profilePicture } = data;
+  const { track } = useTracker();
 
-  const [searchParams, setSearchParams] = useSearchParams();
-
-  const activeTabKey = getActiveTabKey(searchParams.get('tab') ?? '');
-
-  const handleChange = (key: ProfileTabKey) => {
-    setSearchParams(
-      (prev) => {
-        prev.set('tab', key);
-        return prev;
-      },
-      {
-        replace: true,
-      }
-    );
+  const handleLanguageChange = (language: Language | undefined) => {
+    selectLanguage(language?.code || 'en');
   };
 
-  const profileTabs: VerticalTab<ProfileTabKey>[] = useMemo(() => {
-    return [
-      {
-        key: 'info',
-        icon: 'User',
-        title: t('PERSONAL_INFO_TAB_BTN_TEXT'),
-      },
-      {
-        key: 'language',
-        icon: 'Language',
-        title: t('LANGUAGE_TAB_BTN_TEXT'),
-      },
-    ];
-  }, [t]);
-
   return (
-    <Page>
-      <HeaderSection>
-        <Header>
-          <Title level={3}>{name}</Title>
-        </Header>
-      </HeaderSection>
-      <ContentSection>
-        <Content>
-          <ProfileTabs>
-            <VerticalTabs
-              activeKey={activeTabKey}
-              onChange={handleChange}
-              tabs={profileTabs}
-            />
-          </ProfileTabs>
-          <TabContent>
-            {activeTabKey === 'language' ? (
-              <LanguageTab
-                language={getLanguage() ?? 'en'}
-                selectLanguage={selectLanguage}
-                locale={{
-                  translations: {
-                    'language-tab-title': t('LANGUAGE_TAB_TITLE'),
-                    'language-tab-subtitle': t('LANGUAGE_TAB_SUBTITLE'),
-                    'language-field-label': t('LANGUAGE_FIELD_LABEL'),
-                    'language-chinese-label':
-                      '中文 (Zhōngwén), 汉语, 漢語 | zh',
-                    'language-dutch-label': 'Nederlands, Vlaams | nl',
-                    'language-english-label': 'English | en',
-                    'language-french-label': 'Français, langue française | fr',
-                    'language-german-label': 'Deutsch | de',
-                    'language-italian-label': 'Italiano | it',
-                    'language-japanese-label':
-                      '日本語 (にほんご／にっぽんご) | ja',
-                    'language-korean-label':
-                      '한국어 (韓國語), 조선말 (朝鮮語) | ko',
-                    'language-portuguese-label': 'Português | pt',
-                    'language-spanish-label': 'Español, Castellano | es',
-                    'language-swedish-label': 'svenska | sv',
-                  },
-                }}
-              />
-            ) : (
-              <PersonalInfoTab
-                loading={isLoading}
-                userInfo={{ email, name }}
-                locale={{
-                  translations: {
-                    'personal-info-tab-title': t('PERSONAL_INFO_TAB_TITLE'),
-                    'personal-info-tab-subtitle': t(
-                      'PERSONAL_INFO_TAB_SUBTITLE'
-                    ),
-                    'name-field-label': t('NAME_FIELD_LABEL'),
-                    'email-field-label': t('EMAIL_FIELD_LABEL'),
-                    'email-field-help-text': t('EMAIL_FIELD_HELP_TEXT'),
-                  },
-                }}
-              />
-            )}
-          </TabContent>
-        </Content>
-      </ContentSection>
-    </Page>
+    <SharedUserProfilePage
+      userInfo={{ name, email, profilePicture }}
+      isUserInfoLoading={isLoading}
+      selectedLanguage={selectedLanguage}
+      supportedLanguages={SUPPORTED_LANGUAGES}
+      onLanguageChange={handleLanguageChange}
+      sidebarLocale={{
+        personalInfoTabBtnText: t('PERSONAL_INFO_TAB_BTN_TEXT'),
+        languageTabBtnText: t('LANGUAGE_TAB_BTN_TEXT'),
+      }}
+      personalInfoTabLocale={{
+        title: t('PERSONAL_INFO_TAB_TITLE'),
+        nameFieldLabel: t('NAME_FIELD_LABEL'),
+        nameFieldHelpText: t('NAME_FIELD_HELP_TEXT'),
+        emailFieldLabel: t('EMAIL_FIELD_LABEL'),
+        emailFieldHelpText: t('EMAIL_FIELD_HELP_TEXT'),
+      }}
+      languageTabLocale={{
+        title: t('LANGUAGE_TAB_TITLE'),
+        languageFieldLabel: t('LANGUAGE_FIELD_LABEL'),
+      }}
+      onTrackEvent={(eventName, metaData) => {
+        track(`BusinessShell.UserProfilePage.${eventName}`, metaData);
+      }}
+    />
   );
 };
-
-const Page = styled.div`
-  height: 100%;
-`;
-
-const HeaderSection = styled.div`
-  /* TODO: set a constant */
-  height: 108px;
-  width: 100%;
-
-  background-color: ${Colors['surface--strong']};
-  display: flex;
-  justify-content: center;
-`;
-
-const Header = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  height: 100%;
-  width: 960px;
-`;
-
-const ContentSection = styled.div`
-  padding: 32px 0;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-`;
-
-const Content = styled.div`
-  display: grid;
-  gap: 48px;
-  grid-template-columns: [start] 264px [one] 1fr [end];
-  width: 960px;
-`;
-
-const ProfileTabs = styled.div`
-  grid-column: start / one;
-`;
-
-const TabContent = styled.div`
-  grid-column: one / end;
-`;

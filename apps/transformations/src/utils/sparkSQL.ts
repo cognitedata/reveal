@@ -95,6 +95,8 @@ export const getSparkSQLSupport = (
         const completionSource = schemaCompletionSource(sqlConfig);
 
         const unknownCompletion = completionSource(context);
+        const uneditedContext = context.matchBefore(/\w*/);
+
         if (
           !(unknownCompletion as CompletionResult)?.options ||
           !Array.isArray((unknownCompletion as CompletionResult)?.options)
@@ -102,7 +104,13 @@ export const getSparkSQLSupport = (
           return unknownCompletion;
         }
 
-        const completion = unknownCompletion as CompletionResult;
+        const completion =
+          uneditedContext?.text?.[0] === '_'
+            ? ({
+                ...unknownCompletion,
+                from: (unknownCompletion as CompletionResult).from - 1,
+              } as CompletionResult)
+            : (unknownCompletion as CompletionResult);
 
         if (
           completion.options[0]?.type === SPARK_SQL_SCHEMA_DUMMY_COLUMN_TYPE
@@ -139,7 +147,6 @@ export const getSparkSQLSupport = (
           ...completion,
           options: completion.options.map((option) => {
             const label = removeSurroundingBackticks(option.label);
-
             if (dbNames.includes(label)) {
               return {
                 ...option,

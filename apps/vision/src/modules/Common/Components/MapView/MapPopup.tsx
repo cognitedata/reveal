@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import styled from 'styled-components';
 
@@ -12,7 +12,7 @@ import { TableDataItem } from '@vision/modules/Common/types';
 import { selectUpdatedFileDetails } from '@vision/modules/FileDetails/selectors';
 import { makeSelectJobStatusForFile } from '@vision/modules/Process/store/selectors';
 import { isProcessingFile } from '@vision/modules/Process/store/utils';
-import { AppDispatch } from '@vision/store';
+import { useThunkDispatch } from '@vision/store';
 import { RootState } from '@vision/store/rootReducer';
 import { DeleteFilesById } from '@vision/store/thunks/Files/DeleteFilesById';
 
@@ -30,7 +30,7 @@ export const MapPopup = ({
   actionDisabled: boolean;
   onClose: () => void;
 }) => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useThunkDispatch();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { menuActions, rowKey, ...fileInfo } = item;
 

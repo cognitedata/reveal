@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 
 import styled from 'styled-components';
 
-import sdk from '@cognite/cdf-sdk-singleton';
 import {
   CogniteCadModel,
   Cognite3DViewer,
@@ -11,6 +10,7 @@ import {
   DefaultCameraManager,
   AxisViewTool,
 } from '@cognite/reveal';
+import { useSDK } from '@cognite/sdk-provider';
 
 import { OverlayToolbar } from '../OverlayToolbar/OverlayToolbar';
 import ThreeDViewerSidebar from '../ThreeDViewerSidebar';
@@ -59,6 +59,7 @@ export default function ThreeDViewer(props: ThreeDViewerProps) {
 
   const [nodesClickable, setNodesClickable] = useState<boolean>(true);
   const [highQualityRender, setHighQualityRender] = useState<boolean>(true);
+  const sdk = useSDK();
 
   useEffect(() => {
     if (canvasWrapperRef.current) {

@@ -8,12 +8,21 @@ import { InternalEventsData } from '../../events';
 
 export type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 
+export type ThreeDResourceTypes = 'threeD' | 'img360';
+
 export type Model3DWithType = PartialBy<
   Model3D,
   'metadata' | 'dataSetId' | 'createdTime' | 'id'
 > & {
-  type: ResourceType | 'img360';
+  type: ThreeDResourceTypes;
+  lastUpdatedTime?: Date;
   siteId?: string;
+};
+
+export type Image360Data = {
+  type: 'img360';
+  name: string;
+  siteId: string;
 };
 
 export type RevisionOpts<T> = UseQueryOptions<
@@ -43,6 +52,7 @@ export type Image360SiteData = {
   siteId: string;
   siteName: string;
   lastUpdatedTime?: Date;
+  createdTime?: Date;
 };
 
 export type ModelWithRevisionId = Model3D & {

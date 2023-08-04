@@ -1,10 +1,11 @@
 {
   "name": "extraction-pipelines",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/extraction-pipelines/src",
   "projectType": "application",
   "targets": {
     "build": {
-      "executor": "@nrwl/webpack:webpack",
+      "executor": "@nx/webpack:webpack",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/extraction-pipelines",
@@ -42,6 +43,16 @@
           "runtimeChunk": false,
           "budgets": []
         },
+        "staging": {
+          "optimization": true,
+          "outputHashing": "all",
+          "sourceMap": true,
+          "extractCss": true,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "vendorChunk": false,
+          "budgets": []
+        },
         "production": {
           "optimization": true,
           "outputHashing": "all",
@@ -55,7 +66,7 @@
       }
     },
     "serve": {
-      "executor": "@nrwl/webpack:dev-server",
+      "executor": "@nx/webpack:dev-server",
       "options": {
         "buildTarget": "extraction-pipelines:build",
         "hmr": true
@@ -66,7 +77,6 @@
           "hmr": true,
           "liveReload": true
         },
-
         "preview": {
           "buildTarget": "extraction-pipelines:build:preview",
           "hmr": false
@@ -79,14 +89,14 @@
       "defaultConfiguration": "development"
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["apps/extraction-pipelines/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/extraction-pipelines"],
       "options": {
         "jestConfig": "apps/extraction-pipelines/jest.config.ts",
@@ -94,5 +104,8 @@
       }
     }
   },
-  "tags": []
+  "tags": [],
+  "pipeline": {
+    "previewPackageName": "@cognite/cdf-integrations-ui"
+  }
 }

@@ -12,6 +12,7 @@ import {
   AuthProvider as UnifiedSigninAuthProvider,
   useAuth,
 } from '@cognite/auth-react';
+import { Icon } from '@cognite/cogs.js';
 import { CogniteClient } from '@cognite/sdk';
 
 import { AuthStateAuthenticated, AuthStateUser } from './types';
@@ -119,7 +120,7 @@ const InnerAuthProvider: FC<PropsWithChildren<Props>> = ({
 
 export const AuthProvider: FC<PropsWithChildren<Props>> = (props) => {
   return (
-    <UnifiedSigninAuthProvider>
+    <UnifiedSigninAuthProvider loader={<Icon type="Loader" />}>
       <InnerAuthProvider {...props}>{props.children}</InnerAuthProvider>
     </UnifiedSigninAuthProvider>
   );

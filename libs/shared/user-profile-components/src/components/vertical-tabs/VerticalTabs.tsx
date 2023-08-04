@@ -1,45 +1,117 @@
 import styled from 'styled-components';
 
-import { Button, Flex, IconType } from '@cognite/cogs.js';
+import { Button, Colors, Flex, Select, Title } from '@cognite/cogs.js';
 
-export type VerticalTab<K extends string = string> = {
-  key: K;
-  icon: IconType;
-  title: string;
+import { RESPONSIVE_BREAKPOINT } from '../../common/constants';
+import { VerticalTab } from '../../common/types';
+import { useIsScreenWideEnough } from '../../hooks/useIsScreenWideEnough';
+import { OnTrackEvent, tabChangeEvent } from '../../metrics';
+
+export type VerticalTabsProps = {
+  activeKey: string;
+  onChange: (key: string) => void;
+  builtinTabs: VerticalTab[];
+  additionalTabs?: VerticalTab[];
+  additionalTabsCategoryLabel?: string;
+  onTrackEvent?: OnTrackEvent;
 };
 
-export type VerticalTabsProps<K extends string = string> = {
-  activeKey: K;
-  onChange: (key: K) => void;
-  tabs: VerticalTab<K>[];
-};
-
-export const VerticalTabs = <K extends string = string>({
+export const VerticalTabs = ({
   activeKey,
   onChange,
-  tabs,
-}: VerticalTabsProps<K>): JSX.Element => {
-  const handleChange = (key: K): void => {
+  builtinTabs,
+  additionalTabs = [],
+  additionalTabsCategoryLabel,
+  onTrackEvent,
+}: VerticalTabsProps): JSX.Element => {
+  const handleChange = (key: string): void => {
     onChange(key);
   };
+  const isScreenWideEnough = useIsScreenWideEnough();
+  const builtinTabsOptions = builtinTabs.map(({ key, title }) => ({
+    label: title,
+    value: key,
+  }));
+  const additionalTabsOptions = additionalTabs.map(({ key, title }) => ({
+    label: title,
+    value: key,
+  }));
+
+  if (!isScreenWideEnough) {
+    return (
+      <Container direction="column">
+        <StyledSelect
+          onChange={(option: { label: string; value: string }) => {
+            onTrackEvent?.(tabChangeEvent, { tabKey: option.value });
+            handleChange(option.value);
+          }}
+          options={[
+            { options: builtinTabsOptions },
+            {
+              label: additionalTabsCategoryLabel,
+              options: additionalTabsOptions,
+            },
+          ]}
+          value={[...builtinTabsOptions, ...additionalTabsOptions].find(
+            ({ value }) => value === activeKey
+          )}
+        />
+      </Container>
+    );
+  }
 
   return (
-    <Flex direction="column" gap={4}>
-      {tabs.map(({ key, icon, title }) => (
+    <Container direction="column" gap={4}>
+      {builtinTabs.map(({ key, icon, title }) => (
         <TabButton
           key={key}
           icon={icon}
-          onClick={() => handleChange(key)}
+          onClick={() => {
+            onTrackEvent?.(tabChangeEvent, { tabKey: key });
+            handleChange(key);
+          }}
           toggled={activeKey === key}
           type="ghost"
         >
           {title}
         </TabButton>
       ))}
-    </Flex>
+      {additionalTabsCategoryLabel && (
+        <Title level={6} muted style={{ margin: '32px 0 12px 0' }}>
+          {additionalTabsCategoryLabel}
+        </Title>
+      )}
+      {additionalTabs.map(({ key, icon, title }) => (
+        <TabButton
+          key={key}
+          icon={icon}
+          onClick={() => {
+            onTrackEvent?.(tabChangeEvent, { tabKey: key });
+            handleChange(key);
+          }}
+          toggled={activeKey === key}
+          type="ghost"
+        >
+          {title}
+        </TabButton>
+      ))}
+    </Container>
   );
 };
 
+const Container = styled(Flex)`
+  padding: 0 0 16px 16px;
+
+  @media (max-width: ${RESPONSIVE_BREAKPOINT}px) {
+    background-color: ${Colors['surface--strong']};
+    padding: 0 16px 16px 16px;
+  }
+`;
+
 const TabButton = styled(Button)`
   justify-content: flex-start !important;
+`;
+
+const StyledSelect = styled(Select)`
+  background-color: ${Colors['surface--muted']};
 `;

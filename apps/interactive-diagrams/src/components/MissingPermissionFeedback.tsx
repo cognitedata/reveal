@@ -6,6 +6,8 @@ import { notification } from 'antd';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 
+import { getUrlWithQueryParams } from '../utils/config';
+
 type Props = {
   acl: string;
   type: string;
@@ -22,7 +24,7 @@ export default function MissingPermissionFeedback(props: Props) {
   const nav = useMemo(
     () => (event: SyntheticEvent) => {
       event.preventDefault();
-      navigate(`/${project}/access-management`);
+      navigate(getUrlWithQueryParams(`/${project}/access-management`));
     },
     [navigate, project]
   );
@@ -35,7 +37,10 @@ export default function MissingPermissionFeedback(props: Props) {
         description: (
           <p>
             Go to{' '}
-            <a onClick={nav} href={`/${project}/access-management`}>
+            <a
+              onClick={nav}
+              href={getUrlWithQueryParams(`/${project}/access-management`)}
+            >
               Access Management
             </a>{' '}
             and set up any missing permissions or contact your administrator!
@@ -52,7 +57,10 @@ export default function MissingPermissionFeedback(props: Props) {
         description: (
           <p>
             Go to{' '}
-            <a onClick={nav} href={`/${project}/access-management`}>
+            <a
+              onClick={nav}
+              href={getUrlWithQueryParams(`/${project}/access-management`)}
+            >
               Access Management
             </a>{' '}
             and set up any missing permissions or contact your administrator!

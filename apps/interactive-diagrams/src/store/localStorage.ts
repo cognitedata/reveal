@@ -24,6 +24,7 @@ export function loadLocalStorage(key: string, store: Store<any, AnyAction>) {
       localStorage.getItem(key) || '{}'
     ) as LSStorage;
     store.dispatch(selectionLSImport(localStorageContent.selection));
+    // @ts-ignore
   } catch ({ message }) {
     store.dispatch({ type: 'global/localStorage/error', message });
   }

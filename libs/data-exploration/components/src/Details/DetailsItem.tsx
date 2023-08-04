@@ -39,6 +39,8 @@ type DetailsItemProps = {
   value?: React.ReactNode;
   copyable?: boolean;
   link?: string;
+  hideCopyButton?: boolean; // keep this true if a copy button is included with the value
+  direction?: 'row' | 'column';
 };
 // If you enable the copyable props, Make sure to add the Unique key props  to the component wherever it is being used
 export const DetailsItem = ({
@@ -46,6 +48,8 @@ export const DetailsItem = ({
   value,
   copyable = false,
   link,
+  hideCopyButton = false,
+  direction = 'row',
 }: DetailsItemProps) => {
   const { t } = useTranslation();
 
@@ -65,7 +69,7 @@ export const DetailsItem = ({
 
   return (
     <Flex>
-      <DetailsItemContainer>
+      <DetailsItemContainer $direction={direction}>
         <Body level={2} strong>
           {name}
         </Body>
@@ -88,8 +92,8 @@ export const DetailsItem = ({
           ))}
         {!value && <MutedBody level={2}>{DASH}</MutedBody>}
       </DetailsItemContainer>
-      {copyable && Boolean(value) && (
-        <ButtonWrapper visible={true}>
+      {!hideCopyButton && (
+        <ButtonWrapper visible={copyable && Boolean(value)}>
           <CopyButton onClick={handleOnClickCopy} hasCopied={hasCopied} />
         </ButtonWrapper>
       )}
@@ -137,7 +141,13 @@ export const DataSetItem = ({
   return null;
 };
 
-export const AssetItem = ({ id }: { id: number }) => {
+export const AssetItem = ({
+  id,
+  direction,
+}: {
+  id: number;
+  direction?: 'row' | 'column';
+}) => {
   const { t } = useTranslation();
 
   const { data: item, isFetched } = useCdfItem<{ name?: string }>('assets', {
@@ -150,6 +160,7 @@ export const AssetItem = ({ id }: { id: number }) => {
         name={t('LINKED_ASSETS', 'Linked asset(s)')}
         value={item.name}
         link={createLink(`/explore/asset/${id}`)}
+        direction={direction}
         copyable
       />
     );
@@ -162,19 +173,26 @@ export const AssetsItem = ({
   assetIds = [],
   linkId,
   type,
+  direction,
 }: {
   assetIds?: number[];
   linkId: number;
   type: ResourceType;
+  direction?: 'row' | 'column';
 }) => {
   const { t } = useTranslation();
 
   if (!assetIds || assetIds?.length === 0) {
-    return <DetailsItem name={t('LINKED_ASSETS', 'Linked asset(s)')} />;
+    return (
+      <DetailsItem
+        name={t('LINKED_ASSETS', 'Linked asset(s)')}
+        direction={direction}
+      />
+    );
   }
 
   if (assetIds.length === 1) {
-    return <AssetItem id={assetIds[0]} />;
+    return <AssetItem id={assetIds[0]} direction={direction} />;
   }
 
   const searchParams = getSearchParamsWithJourneyAndSelectedTab(
@@ -194,6 +212,7 @@ export const AssetsItem = ({
       name={t('LINKED_ASSETS', 'Linked asset(s)')}
       value={assetsLinkText}
       link={assetsLink}
+      direction={direction}
     />
   );
 };
@@ -230,6 +249,7 @@ export const RootAssetItem = ({
           <CopyButton onClick={handleCopy} hasCopied={hasCopied} />
         </Flex>
       }
+      hideCopyButton
     />
   );
 };
@@ -303,9 +323,9 @@ export const ThreeDModelItem = ({
   );
 };
 
-const DetailsItemContainer = styled.div`
+const DetailsItemContainer = styled.div<{ $direction?: 'row' | 'column' }>`
   display: flex;
-  flex-direction: row;
+  flex-direction: ${({ $direction = 'row' }) => $direction};
   flex: 1;
   margin-bottom: 8px;
   padding-top: 5px;

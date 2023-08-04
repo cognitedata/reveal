@@ -4,7 +4,6 @@ import {
   InfiniteQueryObserverResult,
   UseInfiniteQueryResult,
 } from '@tanstack/react-query';
-import sortBy from 'lodash/sortBy';
 
 import { useThreeDSearchContext } from '@data-exploration-lib/core';
 
@@ -97,7 +96,14 @@ export const useApiBuffer = (
 
     if (sort && sort.length) {
       for (const key of sort) {
-        apiResults = sortBy(apiResults, [key.id]);
+        apiResults = apiResults.sort((m1, m2) => {
+          if (m1[key.id] instanceof Date) {
+            return m1[key.id].getTime() - m2[key.id].getTime();
+          }
+          return m1[key.id]
+            .toLocaleLowerCase()
+            .localeCompare(m2[key.id].toLocaleLowerCase());
+        });
 
         if (key.desc) {
           apiResults = apiResults.reverse();

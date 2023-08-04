@@ -1,10 +1,11 @@
 {
   "name": "data-exploration",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/data-exploration/src",
   "projectType": "application",
   "targets": {
     "build": {
-      "executor": "@nrwl/webpack:webpack",
+      "executor": "@nx/webpack:webpack",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/data-exploration",
@@ -27,6 +28,17 @@
           "extractCss": false,
           "namedChunks": false,
           "extractLicenses": false,
+          "vendorChunk": false,
+          "runtimeChunk": false,
+          "budgets": []
+        },
+        "staging": {
+          "optimization": false,
+          "outputHashing": "all",
+          "sourceMap": true,
+          "extractCss": true,
+          "namedChunks": false,
+          "extractLicenses": true,
           "vendorChunk": false,
           "runtimeChunk": false,
           "budgets": []
@@ -55,7 +67,7 @@
       }
     },
     "serve": {
-      "executor": "@nrwl/webpack:dev-server",
+      "executor": "@nx/webpack:dev-server",
       "options": {
         "buildTarget": "data-exploration:build",
         "hmr": true,
@@ -70,7 +82,6 @@
         "development": {
           "buildTarget": "data-exploration:build:development"
         },
-
         "preview": {
           "buildTarget": "data-exploration:build:preview",
           "hmr": false
@@ -83,14 +94,14 @@
       "defaultConfiguration": "development"
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["apps/data-exploration/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/data-exploration"],
       "options": {
         "jestConfig": "apps/data-exploration/jest.config.ts",
@@ -99,5 +110,9 @@
     }
   },
   "implicitDependencies": ["data-exploration-e2e"],
-  "tags": []
+  "tags": [],
+  "pipeline": {
+    "releaseStrategy": "multi-branch",
+    "previewPackageName": "@cognite/cdf-data-exploration"
+  }
 }

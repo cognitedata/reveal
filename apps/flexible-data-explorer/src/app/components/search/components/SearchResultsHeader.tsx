@@ -1,9 +1,10 @@
 import styled from 'styled-components';
 
-import { Body, Chip, Title } from '@cognite/cogs.js';
+import { Body, Title } from '@cognite/cogs.js';
 
 import { getIcon } from '../../../utils/getIcon';
 import zIndex from '../../../utils/zIndex';
+import { CategoryChip } from '../../chips/CategoryChip';
 
 interface Props {
   title: string;
@@ -16,7 +17,7 @@ export const SearchResultsHeader: React.FC<Props> = ({
 }) => {
   return (
     <Container>
-      <Chip icon={getIcon(title)} />
+      <CategoryChip icon={getIcon(title)} />
       <span>
         <Title level={6}>{title}</Title>
         {description && <Body>{description}</Body>}
@@ -33,7 +34,7 @@ const Container = styled.div`
 
   position: sticky;
   top: 0;
-  background: linear-gradient(180deg, #fafafa 0%, rgba(243, 244, 248, 0) 100%);
+  background: linear-gradient(180deg, #f8f9fc 0%, rgba(243, 244, 248, 0) 100%);
   backdrop-filter: blur(8px);
   z-index: ${zIndex.PAGE_HEADER};
 `;

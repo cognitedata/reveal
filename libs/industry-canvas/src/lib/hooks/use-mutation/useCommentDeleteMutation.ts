@@ -3,8 +3,8 @@ import { useMemo } from 'react';
 import { captureException } from '@sentry/react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import sdk from '@cognite/cdf-sdk-singleton';
 import { toast } from '@cognite/cogs.js';
+import { useSDK } from '@cognite/sdk-provider';
 
 import { QueryKeys, TOAST_POSITION } from '../../constants';
 import { IndustryCanvasService } from '../../services/IndustryCanvasService';
@@ -15,6 +15,7 @@ export const useCommentDeleteMutation = () => {
   const queryClient = useQueryClient();
 
   const { userProfile } = useUserProfile();
+  const sdk = useSDK();
   const service = useMemo(
     () => new IndustryCanvasService(sdk, userProfile),
     [userProfile]

@@ -18,7 +18,7 @@ export const ModelTrainingModal = ({
   return (
     <Modal
       getContainer={getContainer}
-      visible={showModal}
+      open={showModal}
       onCancel={onCancel}
       width={780}
       footer={null} // to remove default ok and cancel buttons

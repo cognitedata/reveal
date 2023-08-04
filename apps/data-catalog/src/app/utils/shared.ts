@@ -6,7 +6,11 @@ import moment from 'moment';
 import queryString from 'query-string';
 
 import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
-import { createLink } from '@cognite/cdf-utilities';
+import {
+  createLink,
+  getCluster,
+  isUsingUnifiedSignin,
+} from '@cognite/cdf-utilities';
 
 import { TranslationKeys } from '../common/i18n';
 
@@ -56,9 +60,8 @@ export const parseDataSetsList = (dataSets: APIDataSet[]): Array<DataSet> => {
 };
 
 export const getJetfireUrl = () => {
-  return `https://${
-    getStringCdfEnv() || 'api'
-  }.cognitedata.com/api/v1/projects/${sdk.project}/transformations`;
+  const cluster = getCluster();
+  return `https://${cluster}/api/v1/projects/${sdk.project}/transformations`;
 };
 
 const hasDataSetWriteAction = (group: { capabilities: any }) => {
@@ -434,7 +437,9 @@ export const getReadableCapabilities = (capabilities: any[]) =>
   }, []);
 
 export const createInternalLink = (path?: string | number) => {
-  const mountPoint = window.location.pathname.split('/')[2];
+  const mountPoint = isUsingUnifiedSignin()
+    ? window.location.pathname.split('/')[3]
+    : window.location.pathname.split('/')[2];
   return createLink(`/${mountPoint}/${path || ''}`);
 };
 

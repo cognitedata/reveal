@@ -1,7 +1,9 @@
+import { IdEither } from '@cognite/sdk';
+
 import { Style, Variant } from '../LineChart';
 
 export interface TimeseriesChartProps {
-  timeseriesId: number;
+  timeseries: TimeseriesItem | TimeseriesItem[];
   variant?: Variant;
   numberOfPoints?: number;
   quickTimePeriodOptions?: TimePeriod[];
@@ -23,7 +25,12 @@ export interface TimeseriesChartProps {
    * English (en) by default.
    */
   language?: 'en';
+  inverted?: boolean;
 }
+
+export type TimeseriesItem = IdEither & {
+  color?: string;
+};
 
 export type DateRange = [Date, Date];
 

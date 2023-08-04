@@ -1,0 +1,3 @@
+div[data-tippy-root] div.tippy-box:has(.cogs.cogs-menu) {
+  max-width: unset !important; /* tippy styles are inline so !important is necessary to override */
+}

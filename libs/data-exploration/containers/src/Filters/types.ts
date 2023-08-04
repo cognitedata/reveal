@@ -1,5 +1,7 @@
 import { InputActionMeta } from 'react-select';
 
+import { CheckboxSelectProps } from '@data-exploration/components';
+
 import {
   InternalAssetFilters,
   InternalDocumentFilter,
@@ -39,6 +41,7 @@ export interface BaseNestedFilterProps<TFilter>
     CommonFilterProps {
   values?: { key: string; value: string }[];
   onChange?: (selection: { key: string; value: string }[]) => void;
+  menuProps?: CheckboxSelectProps['menuProps'];
 }
 
 export interface MultiSelectOptionType<TValue> {

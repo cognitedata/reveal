@@ -28,7 +28,6 @@ import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
 import { getProject } from '@cognite/cdf-utilities';
 import { ToastContainer } from '@cognite/cogs.js';
 import { FlagProvider } from '@cognite/react-feature-flags';
-import { SDKProvider } from '@cognite/sdk-provider';
 
 import GlobalStyles from './GlobalStyles';
 
@@ -73,37 +72,35 @@ export const RootApp = () => {
       appName="cdf-charts-ui"
       projectName={getProject()}
     >
-      <SDKProvider sdk={sdk}>
-        <GlobalStyles>
-          <DataExplorationProvider
-            flow={flow.flow}
-            userInfo={userInfo}
-            sdk={sdk}
-            overrideURLMap={{
-              pdfjsWorkerSrc:
-                '/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.min.js',
-            }}
+      <GlobalStyles>
+        <DataExplorationProvider
+          flow={flow.flow}
+          userInfo={userInfo}
+          sdk={sdk}
+          overrideURLMap={{
+            pdfjsWorkerSrc:
+              '/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.min.js',
+          }}
+        >
+          <Sentry.ErrorBoundary
+            // Todo(DEGR-2403) Add a better error placeholder
+            fallback={<p>An error has occurred</p>}
+            showDialog
           >
-            <Sentry.ErrorBoundary
-              // Todo(DEGR-2403) Add a better error placeholder
-              fallback={<p>An error has occurred</p>}
-              showDialog
-            >
-              <RecoilRoot>
-                <Router>
-                  <ToastContainer style={{ top: '5em' }} />
-                  {/* need root for png screenshot when we download chart  */}
-                  {/* https://github.com/fayeed/use-screenshot/issues/9#issuecomment-1245094413  */}
-                  <div id="root">
-                    <Routes />
-                  </div>
-                </Router>
-              </RecoilRoot>
-            </Sentry.ErrorBoundary>
-          </DataExplorationProvider>
-        </GlobalStyles>
-        <ReactQueryDevtools initialIsOpen={false} />
-      </SDKProvider>
+            <RecoilRoot>
+              <Router>
+                <ToastContainer style={{ top: '5em' }} />
+                {/* need root for png screenshot when we download chart  */}
+                {/* https://github.com/fayeed/use-screenshot/issues/9#issuecomment-1245094413  */}
+                <div id="root">
+                  <Routes />
+                </div>
+              </Router>
+            </RecoilRoot>
+          </Sentry.ErrorBoundary>
+        </DataExplorationProvider>
+      </GlobalStyles>
+      <ReactQueryDevtools initialIsOpen={false} />
     </FlagProvider>
   );
 };

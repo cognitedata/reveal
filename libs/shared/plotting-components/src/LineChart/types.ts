@@ -22,6 +22,7 @@ export interface LineChartProps {
   renderActions?: () => [JSX.Element, ...JSX.Element[]];
   formatHoverLineInfo?: (props: HoverLineData) => string;
   onRangeChange?: (range: PlotRange) => void;
+  inverted?: boolean;
 }
 
 export interface Data {
@@ -31,6 +32,7 @@ export interface Data {
   color?: string;
   customData?: CustomDataType | CustomDataType[];
   interpolation?: Interpolation;
+  showMarkers?: boolean;
 }
 
 export interface Layout {

@@ -1,34 +1,59 @@
 import { useState } from 'react';
 import Highlight from 'react-highlight';
 
-import { Body, Button, Flex, Icon, Modal } from '@cognite/cogs.js';
+import styled from 'styled-components';
 
-import { CopilotCodeMessage } from '../../../lib/types';
+import { Body, Flex, Icon, Modal } from '@cognite/cogs.js';
+
+import {
+  CopilotCodeMessage,
+  CopilotDataModelQueryMessage,
+} from '../../../lib/types';
 import { sendFromCopilotEvent } from '../../../lib/utils';
 import { getContainer } from '../../utils/getContainer';
 import { Editor } from '../Editor/Editor';
 
+import { ResponsiveActions } from './components/ResponsiveActions';
+
 export const CodeMessage = ({
-  message: {
-    data: { content, language, prevContent },
-  },
+  message: { data },
 }: {
-  message: { data: CopilotCodeMessage };
+  message: { data: CopilotCodeMessage | CopilotDataModelQueryMessage };
 }) => {
-  const actions = [
-    {
-      content: 'Use code',
-      onClick: () => {
-        sendFromCopilotEvent('USE_CODE', {
-          content,
-        });
-      },
-    },
-  ];
+  const { actions: prevActions } = data;
+  const content =
+    data.type === 'data-model-query' ? data.graphql.query : data.content;
+  const language = data.type === 'data-model-query' ? 'graphql' : data.language;
+  const prevContent = data.type === 'data-model-query' ? '' : data.prevContent;
+  // handle breaking change in message format
+  const actions =
+    data.type === 'data-model-query'
+      ? [
+          {
+            content: 'View results',
+            onClick: () => {
+              sendFromCopilotEvent('USE_CODE', {
+                content,
+              });
+            },
+          },
+          ...(prevActions || []),
+        ]
+      : [
+          {
+            content: 'Use code',
+            onClick: () => {
+              sendFromCopilotEvent('USE_CODE', {
+                content,
+              });
+            },
+          },
+          ...(prevActions || []),
+        ];
   const [open, setOpen] = useState(false);
   const [showDiff, setShowDiff] = useState(false);
   return (
-    <Flex direction="column" gap={4}>
+    <Wrapper direction="column" gap={4}>
       <Body level={2}>Click to view the follow code in full screen</Body>
       <Flex
         style={{
@@ -40,7 +65,7 @@ export const CodeMessage = ({
         onClick={() => setOpen(true)}
       >
         <Flex
-          style={{ position: 'absolute', width: '100%', height: '100%' }}
+          className="hover-code"
           justifyContent="center"
           alignItems="center"
         >
@@ -48,15 +73,6 @@ export const CodeMessage = ({
         </Flex>
         <Highlight className={language}>{content}</Highlight>
       </Flex>
-      {actions && (
-        <Flex gap={4}>
-          {actions.map((el) => (
-            <Button onClick={el.onClick} key={el.content}>
-              {el.content}
-            </Button>
-          ))}
-        </Flex>
-      )}
       <Modal
         visible={open}
         title="Code preview"
@@ -79,20 +95,37 @@ export const CodeMessage = ({
               prevCode={showDiff ? prevContent : undefined}
             />
           </Flex>
-          <Flex gap={4}>
-            {prevContent && (
-              <Button onClick={() => setShowDiff(!showDiff)}>
-                {showDiff ? 'Hide Diff' : 'Show Diff'}
-              </Button>
-            )}
-            {actions?.map((el) => (
-              <Button onClick={el.onClick} key={el.content}>
-                {el.content}
-              </Button>
-            ))}
-          </Flex>
+          <ResponsiveActions
+            actions={[
+              ...(prevContent
+                ? [
+                    {
+                      content: showDiff ? 'Hide Diff' : 'Show Diff',
+                      onClick: () => setShowDiff(!showDiff),
+                    },
+                  ]
+                : []),
+              ...actions,
+            ]}
+          />
         </Flex>
       </Modal>
-    </Flex>
+    </Wrapper>
   );
 };
+
+const Wrapper = styled(Flex)`
+  width: 100%;
+  pre {
+    width: 100%;
+  }
+  .hover-code {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+
+    i {
+      color: white;
+    }
+  }
+`;

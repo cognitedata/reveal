@@ -1,12 +1,15 @@
 import { useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
-import { ValueByDataType, ValueByField } from '../containers/search/Filter';
+import { ValueByDataType, ValueByField } from '../containers/Filter';
+import { DataModelV2 } from '../services/types';
 
 export enum ParamKeys {
   ExpandedId = 'expandedId',
   SearchQuery = 'searchQuery',
   Filters = 'filters',
+  DataModels = 'models',
+  AISearch = 'aiSearch',
 }
 
 export const useExpandedIdParams = (): [
@@ -91,4 +94,36 @@ export const useDataTypeFilterParams = (
   }, [dataType, filterParams]);
 
   return [dataTypeParams];
+};
+
+export const useDataModelsParams = (): [DataModelV2[] | undefined] => {
+  const [searchParams] = useSearchParams();
+
+  const dataModelsParams = useMemo(() => {
+    const filters = searchParams.get(ParamKeys.DataModels);
+
+    if (filters) {
+      return JSON.parse(filters) as DataModelV2[];
+    }
+
+    return undefined;
+  }, [searchParams]);
+
+  return [dataModelsParams];
+};
+
+export const useAISearchParams = (): [boolean, (value: boolean) => void] => {
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const setAISearchParams = useCallback(
+    (value: boolean) => {
+      setSearchParams((currentParams) => {
+        currentParams.set(ParamKeys.AISearch, String(value));
+        return currentParams;
+      });
+    },
+    [setSearchParams]
+  );
+
+  return [searchParams.get(ParamKeys.AISearch) === 'true', setAISearchParams];
 };

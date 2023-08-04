@@ -18,7 +18,9 @@ const ParameterCheckbox = ({
       <Switch
         name={`${nodeId}-${param}`}
         value={parameterValues[param]}
-        onChange={(value: unknown) => onInputValueChange(param, type, value)}
+        onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+          onInputValueChange(param, type, event.target.checked)
+        }
       >
         <FunctionParameterFormLabel label={name} description={description} />
       </Switch>

@@ -40,7 +40,7 @@ jobs:
         run: yarn build production platypus-cdf-cli
 
       - name: Start mock-server
-      # Start mock server and wait until port 4002 is open (mock server has started)
+        # Start mock server and wait until port 4002 is open (mock server has started)
         run: |
           yarn nx serve mock-server &
           until nc -w 10 localhost 4002; do sleep 1; done

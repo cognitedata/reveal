@@ -4,10 +4,12 @@ declare module '@cognite/cdf-sdk-singleton' {
 
   export declare function logout(): void;
 
-  export declare function loginAndAuthIfNeeded(
-    project: string,
-    env?: string
-  ): Promise<void>;
+  export declare function loginAndAuthIfNeeded(): Promise<void>;
+
+  export declare function createSdkClient(
+    clientOptions: ClientOptions,
+    tokenProvider?: SdkClientTokenProvider
+  ): CogniteClient;
 
   export declare function getToken(): Promise<string>;
 

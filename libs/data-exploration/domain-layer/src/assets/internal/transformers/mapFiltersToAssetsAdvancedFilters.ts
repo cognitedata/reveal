@@ -15,7 +15,7 @@ export type AssetsProperties = {
   assetSubtreeIds: number[];
   dataSetId: number[];
   source: string[];
-  externalId: string;
+  externalId: string | string[];
   labels: string[];
   description: string;
   name: string;

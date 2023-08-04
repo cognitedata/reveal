@@ -27,7 +27,6 @@ import {
   useSuggestionsFeatureFlag,
   useFilterBuilderFeatureFlag,
   useColumnSelectionFeatureFlag,
-  isFDMv3,
 } from '@platypus-app/flags';
 import { useInjection } from '@platypus-app/hooks/useInjection';
 import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
@@ -203,8 +202,7 @@ export const DataPreviewTable = forwardRef<
       viewExternalId: dataModelType.name,
     });
 
-    const viewVersion =
-      isFDMv3() && viewForDataModel ? viewForDataModel.version : version;
+    const viewVersion = viewForDataModel ? viewForDataModel.version : version;
 
     const [sidebarData, setSidebarData] = useState<DataPreviewSidebarData>();
 
@@ -259,7 +257,7 @@ export const DataPreviewTable = forwardRef<
         isDeletionEnabled,
         isManualPopulationEnabled,
         columnOrder.filter((el) => el.visible).map((el) => el.value),
-        !isFilterBuilderEnabled
+        true
       )
     );
 
@@ -437,11 +435,7 @@ export const DataPreviewTable = forwardRef<
 
         const newSidebarData: DataPreviewSidebarData = {
           fieldName: field,
-          instanceExternalId:
-            fieldType.type.custom ||
-            nonPrimitiveTypes.includes(fieldType.type.name)
-              ? currValue.externalId
-              : externalId,
+          instanceExternalId: externalId,
           instanceSpace,
           isList: Boolean(fieldType.type.list),
           json: fieldType.type.name === 'JSONObject' ? currValue : undefined,

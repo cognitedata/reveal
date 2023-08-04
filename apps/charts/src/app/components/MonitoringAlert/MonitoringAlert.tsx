@@ -7,7 +7,7 @@ import { durationFormatter } from '@charts-app/utils/date';
 import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import { format, formatDistance } from 'date-fns';
 
-import { Row, Col, Dropdown, Menu, Icon, Modal, Title } from '@cognite/cogs.js';
+import { Row, Col, Dropdown, Menu, Icon, Modal } from '@cognite/cogs.js';
 
 import { AlertAction, AlertText, ModalBody } from './elements';
 import { useAlertsResolveCreate } from './hooks';
@@ -20,7 +20,8 @@ const defaultTranslations = makeDefaultTranslations(
   'Inactive',
   'Resolved',
   'Change status to resolved',
-  'You want to change status of alert. You cannot undo this action and it will affect all subscribers.'
+  'You want to change status of alert. You cannot undo this action and it will affect all subscribers.',
+  'Yes, I understand'
 );
 
 type Props = {
@@ -69,11 +70,12 @@ const MonitoringAlertRow = ({ alert, translations, jobId }: Props) => {
 
                     <Menu.Item
                       key="alert-row-inactive"
+                      icon="CheckmarkAlternative"
+                      iconPlacement="left"
                       onClick={() => {
                         setIsModalVisible(true);
                       }}
                     >
-                      <Icon type="CheckmarkAlternative" />
                       {t['Mark as resolved']}
                     </Menu.Item>
                   </Menu>
@@ -92,8 +94,9 @@ const MonitoringAlertRow = ({ alert, translations, jobId }: Props) => {
       </Col>
 
       <Modal
+        title={t['Change status to resolved']}
         visible={isModalVisible}
-        okText="Yes, I understand"
+        okText={t['Yes, I understand']}
         onOk={() => {
           resolveAlert({
             items: [
@@ -112,7 +115,6 @@ const MonitoringAlertRow = ({ alert, translations, jobId }: Props) => {
           setIsModalVisible(false);
         }}
       >
-        <Title level={4}>{t['Change status to resolved']}</Title>
         <ModalBody>
           {
             t[

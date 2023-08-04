@@ -128,7 +128,7 @@ export const SourceTag = styled.div`
 `;
 
 export const StyledVisibilityIcon = styled(Icon)`
-  margin-left: 7px;
+  margin-left: 10px;
   margin-right: 20px;
   vertical-align: middle;
 `;
@@ -143,7 +143,7 @@ export const StyledStatusIcon = styled(Icon)`
 `;
 
 export const DropdownWithoutMaxWidth = styled(Dropdown)`
-  &.tippy-box {
+  .tippy-box {
     max-width: none !important;
   }
 `;

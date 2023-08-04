@@ -4,14 +4,13 @@ module.exports = {
   ...rootMain,
 
   stories: [
-    ...rootMain.stories,
     '../src/app/**/*.stories.mdx',
     '../src/app/**/*.stories.@(js|jsx|ts|tsx)',
   ],
   addons: [
     ...rootMain.addons,
     '@storybook/addon-essentials',
-    '@nrwl/react/plugins/storybook',
+    '@nx/react/plugins/storybook',
   ],
   features: {
     babelModeV7: true,

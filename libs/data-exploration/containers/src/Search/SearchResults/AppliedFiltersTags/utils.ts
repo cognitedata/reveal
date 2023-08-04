@@ -4,11 +4,13 @@ import startCase from 'lodash/startCase';
 import { formatDate } from '@cognite/cogs.js';
 import { DateRange, Metadata } from '@cognite/sdk';
 
-import { METADATA_ALL_VALUE, TFunction } from '@data-exploration-lib/core';
 import {
+  EMPTY_LABEL,
+  METADATA_ALL_VALUE,
   NIL_FILTER_VALUE,
-  NIL_FILTER_LABEL,
-} from '@data-exploration-lib/domain-layer';
+  NOT_SET,
+  TFunction,
+} from '@data-exploration-lib/core';
 
 import { CUSTOM_FILTER_TITLE } from './constants';
 
@@ -43,7 +45,11 @@ export const formatValue = (
 
   if (typeof input === 'string') {
     if (input === NIL_FILTER_VALUE) {
-      return t('NOT_AVAILABLE', NIL_FILTER_LABEL);
+      return t('NOT_SET', NOT_SET);
+    }
+
+    if (input === '') {
+      return t('EMPTY', EMPTY_LABEL);
     }
 
     return input;

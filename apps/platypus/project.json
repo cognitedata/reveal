@@ -5,12 +5,12 @@
   "projectType": "application",
   "targets": {
     "build": {
-      "executor": "@nrwl/webpack:webpack",
+      "executor": "@nx/webpack:webpack",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/platypus",
         "index": "apps/platypus/src/index.html",
-        "main": "apps/platypus/src/main.tsx",
+        "main": "apps/platypus/src/bootstrap.tsx",
         "runtimeChunk": false,
         "vendorChunk": false,
         "commonChunk": false,
@@ -18,7 +18,7 @@
         "assets": ["apps/platypus/src/favicon.ico", "apps/platypus/src/assets"],
         "styles": [],
         "scripts": [],
-        "webpackConfig": "apps/platypus/webpack-config.js"
+        "webpackConfig": "apps/platypus/webpack-single-spa-config.js"
       },
       "configurations": {
         "development": {
@@ -36,30 +36,40 @@
           "fileReplacements": [
             {
               "replace": "apps/platypus/src/environments/environment.ts",
-              "with": "apps/platypus/src/environments/environment.preview.ts"
+              "with": "apps/platypus/src/environments/preview/environment.preview.ts"
+            },
+            {
+              "replace": "apps/platypus/src/bootstrap.tsx",
+              "with": "apps/platypus/src/environments/preview/bootstrap.tsx"
             },
             {
               "replace": "apps/platypus/src/environments/AppContainer.tsx",
-              "with": "apps/platypus/src/environments/fusion/AppContainer.tsx"
+              "with": "apps/platypus/src/environments/preview/AppContainer.tsx"
             },
             {
               "replace": "apps/platypus/src/environments/cogniteSdk.ts",
-              "with": "apps/platypus/src/environments/fusion/cogniteSdk.ts"
+              "with": "apps/platypus/src/environments/preview/cogniteSdk.ts"
+            },
+            {
+              "replace": "apps/platypus/src/app/Routes.tsx",
+              "with": "apps/platypus/src/environments/preview/Routes.tsx"
             },
             {
               "replace": "apps/platypus/src/environments/useTranslateProvider.tsx",
-              "with": "apps/platypus/src/environments/fusion/useTranslateProvider.tsx"
+              "with": "apps/platypus/src/environments/preview/useTranslateProvider.tsx"
             }
           ],
           "optimization": false,
           "outputHashing": "all",
           "sourceMap": true,
           "extractCss": true,
-          "namedChunks": false,
+          "namedChunks": true,
           "extractLicenses": true,
           "vendorChunk": false,
           "runtimeChunk": false,
-          "budgets": []
+          "main": "apps/platypus/src/main.tsx",
+          "budgets": [],
+          "webpackConfig": "apps/platypus/webpack-module-federation-config.js"
         },
         "mock": {
           "fileReplacements": [
@@ -78,6 +88,10 @@
             {
               "replace": "apps/platypus/src/environments/useFlag.ts",
               "with": "apps/platypus/src/environments/mock/useFlag.ts"
+            },
+            {
+              "replace": "apps/platypus/src/app/SubAppContainer.tsx",
+              "with": "apps/platypus/src/environments/mock/SubAppContainer.tsx"
             }
           ],
           "optimization": false,
@@ -91,20 +105,8 @@
         "fusion": {
           "fileReplacements": [
             {
-              "replace": "apps/platypus/src/environments/environment.ts",
-              "with": "apps/platypus/src/environments/fusion/environment.fusion.ts"
-            },
-            {
-              "replace": "apps/platypus/src/environments/AppContainer.tsx",
-              "with": "apps/platypus/src/environments/fusion/AppContainer.tsx"
-            },
-            {
               "replace": "apps/platypus/src/environments/cogniteSdk.ts",
               "with": "apps/platypus/src/environments/fusion/cogniteSdk.ts"
-            },
-            {
-              "replace": "apps/platypus/src/environments/useTranslateProvider.tsx",
-              "with": "apps/platypus/src/environments/fusion/useTranslateProvider.tsx"
             }
           ],
           "optimization": false,
@@ -120,20 +122,12 @@
         "production": {
           "fileReplacements": [
             {
-              "replace": "apps/platypus/src/environments/environment.ts",
-              "with": "apps/platypus/src/environments/environment.prod.ts"
-            },
-            {
-              "replace": "apps/platypus/src/environments/AppContainer.tsx",
-              "with": "apps/platypus/src/environments/fusion/AppContainer.tsx"
-            },
-            {
               "replace": "apps/platypus/src/environments/cogniteSdk.ts",
               "with": "apps/platypus/src/environments/fusion/cogniteSdk.ts"
             },
             {
-              "replace": "apps/platypus/src/environments/useTranslateProvider.tsx",
-              "with": "apps/platypus/src/environments/fusion/useTranslateProvider.tsx"
+              "replace": "apps/platypus/src/environments/environment.ts",
+              "with": "apps/platypus/src/environments/environment.prod.ts"
             }
           ],
           "optimization": false,
@@ -145,10 +139,11 @@
           "vendorChunk": false,
           "budgets": []
         }
-      }
+      },
+      "defaultConfiguration": "fusion"
     },
     "serve": {
-      "executor": "@nrwl/webpack:dev-server",
+      "executor": "@nx/webpack:dev-server",
       "options": {
         "buildTarget": "platypus:build",
         "hmr": true
@@ -161,34 +156,39 @@
         "mock": {
           "buildTarget": "platypus:build:mock",
           "hmr": true,
-          "proxyConfig": "apps/platypus/proxy.conf.json"
+          "proxyConfig": "apps/platypus/proxy.conf.json",
+          "allowedHosts": ".dev.fusion.cogniteapp.com,apps-staging.cognite.com,localhost:*"
         },
         "fusion": {
           "buildTarget": "platypus:build:fusion",
           "hmr": true,
           "proxyConfig": "apps/platypus/proxy.conf.json",
-          "allowedHosts": ".dev.fusion.cogniteapp.com,apps-staging.cognite.com"
+          "allowedHosts": ".dev.fusion.cogniteapp.com,apps-staging.cognite.com,all",
+          "ssl": true
         },
         "preview": {
           "buildTarget": "platypus:build:preview",
-          "hmr": false
+          "hmr": false,
+          "allowedHosts": ".dev.fusion.cogniteapp.com,apps-staging.cognite.com,localhost:*",
+          "ssl": true
         },
         "production": {
           "buildTarget": "platypus:build:production",
-          "hmr": false
+          "hmr": false,
+          "ssl": true
         }
       },
       "defaultConfiguration": "development"
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["apps/platypus/**/*.{ts,tsx,js,jsx}"]
+        "lintFilePatterns": ["apps/platypus/src/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/platypus"],
       "options": {
         "jestConfig": "apps/platypus/jest.config.ts",
@@ -196,9 +196,8 @@
       }
     },
     "storybook": {
-      "executor": "@nrwl/storybook:storybook",
+      "executor": "@nx/storybook:storybook",
       "options": {
-        "uiFramework": "@storybook/react",
         "port": 4400,
         "configDir": "apps/platypus/.storybook"
       },
@@ -209,12 +208,11 @@
       }
     },
     "build-storybook": {
-      "executor": "@nrwl/storybook:build",
+      "executor": "@nx/storybook:build",
       "outputs": ["{options.outputDir}"],
       "options": {
-        "uiFramework": "@storybook/react",
         "configDir": "apps/platypus/.storybook",
-        "outputDir": "storybook-static"
+        "outputDir": "dist/storybook/platypus"
       },
       "configurations": {
         "ci": {
@@ -223,5 +221,8 @@
       }
     }
   },
-  "tags": []
+  "tags": [],
+  "pipeline": {
+    "previewPackageName": "@cognite/cdf-solutions-ui"
+  }
 }

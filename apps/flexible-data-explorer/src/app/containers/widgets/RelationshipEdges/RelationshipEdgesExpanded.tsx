@@ -8,9 +8,9 @@ import { Button } from '@cognite/cogs.js';
 import { Table } from '../../../components/table/Table';
 import { Widget } from '../../../components/widget/Widget';
 import { useNavigation } from '../../../hooks/useNavigation';
-import { useTypesDataModelQuery } from '../../../services/dataModels/query/useTypesDataModelQuery';
+import { useFDM } from '../../../providers/FDMProvider';
 import { useInstanceRelationshipQuery } from '../../../services/instances/generic/queries/useInstanceRelationshipQuery';
-import { ValueByField } from '../../search/Filter';
+import { ValueByField } from '../../Filter';
 
 import { RelationshipFilter } from './Filters';
 import { RelationshipEdgesProps } from './RelationshipEdgesWidget';
@@ -18,8 +18,8 @@ import { RelationshipEdgesProps } from './RelationshipEdgesWidget';
 export const RelationshipEdgesExpanded: React.FC<RelationshipEdgesProps> = ({
   type,
 }) => {
-  const { instanceSpace } = useParams();
-  const { data: types } = useTypesDataModelQuery();
+  const client = useFDM();
+  const { instanceSpace, dataModel, version, space } = useParams();
 
   const navigate = useNavigation();
 
@@ -31,13 +31,15 @@ export const RelationshipEdgesExpanded: React.FC<RelationshipEdgesProps> = ({
     useInstanceRelationshipQuery(type, filterState);
 
   const tableColumns = useMemo(() => {
-    const fields = types?.find((item) => item.name === type.type)?.fields || [];
+    const fields = client.allDataTypes?.find(
+      (item) => item.name === type.type
+    )?.fields;
 
-    return fields.map((field) => ({
+    return (fields || []).map((field) => ({
       header: field.name,
       accessorKey: field.id,
     }));
-  }, [types, type.type]);
+  }, [client.allDataTypes, type.type]);
 
   return (
     <Widget expanded>
@@ -55,7 +57,11 @@ export const RelationshipEdgesExpanded: React.FC<RelationshipEdgesProps> = ({
           data={data}
           columns={tableColumns}
           onRowClick={(row) => {
-            navigate.toInstancePage(type.type, instanceSpace, row.externalId);
+            navigate.toInstancePage(type.type, instanceSpace, row.externalId, {
+              dataModel,
+              space,
+              version,
+            });
           }}
         />
 

@@ -9,12 +9,12 @@
       "executor": "nx:run-commands",
       "dependsOn": ["build"],
       "options": {
-        "outputPath": "dist/libs/shared/cdf-sdk-singleton",
         "commands": ["./scripts/npm.sh"]
-      }
+      },
+      "outputs": ["{workspaceRoot}/dist/libs/shared/cdf-sdk-singleton"]
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
@@ -23,7 +23,7 @@
       }
     },
     "build": {
-      "executor": "@nrwl/rollup:rollup",
+      "executor": "@nx/rollup:rollup",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/libs/shared/cdf-sdk-singleton",
@@ -31,7 +31,7 @@
         "project": "libs/shared/cdf-sdk-singleton/package.json",
         "entryFile": "libs/shared/cdf-sdk-singleton/src/index.ts",
         "external": ["react/jsx-runtime"],
-        "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
+        "rollupConfig": "@nx/react/plugins/bundle-rollup",
         "compiler": "babel",
         "updateBuildableProjectDepsInPackageJson": true,
         "buildableProjectDepsInPackageJsonType": "dependencies",
@@ -41,42 +41,56 @@
             "input": ".",
             "output": "."
           }
-        ]
+        ],
+        "babelUpwardRootMode": true
+      }
+    },
+    "build-single-spa": {
+      "executor": "@nx/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/shared/cdf-sdk-singleton",
+        "tsConfig": "libs/shared/cdf-sdk-singleton/tsconfig.lib.json",
+        "project": "libs/shared/cdf-sdk-singleton/package.json",
+        "main": "libs/shared/cdf-sdk-singleton/src/index.ts",
+        "generatePackageJson": false,
+        "extractLicenses": true,
+        "sourceMap": false,
+        "vendorChunk": false,
+        "optimization": true,
+        "commonChunk": false,
+        "runtimeChunk": false,
+        "compiler": "tsc",
+        "assets": [],
+        "fileReplacements": [
+          {
+            "replace": "libs/shared/cdf-sdk-singleton/src/set-public-path.ts",
+            "with": "libs/shared/cdf-sdk-singleton/src/environments/single-spa/set-public-path.ts"
+          }
+        ],
+        "webpackConfig": "libs/shared/cdf-sdk-singleton/webpack-config.js"
+      }
+    },
+    "serve-static": {
+      "executor": "@nrwl/web:file-server",
+      "defaultConfiguration": "development",
+      "options": {
+        "staticFilePath": "dist/libs/shared/cdf-sdk-singleton",
+        "buildTarget": "cdf-sdk-singleton:build-single-spa",
+        "port": 3005
+      },
+      "configurations": {
+        "production": {
+          "buildTarget": "cdf-sdk-singleton:build-single-spa:production"
+        }
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
         "jestConfig": "libs/shared/cdf-sdk-singleton/jest.config.ts",
         "passWithNoTests": true
-      }
-    },
-    "storybook": {
-      "executor": "@nrwl/storybook:storybook",
-      "options": {
-        "uiFramework": "@storybook/react",
-        "port": 4400,
-        "configDir": "libs/shared/cdf-sdk-singleton/.storybook"
-      },
-      "configurations": {
-        "ci": {
-          "quiet": true
-        }
-      }
-    },
-    "build-storybook": {
-      "executor": "@nrwl/storybook:build",
-      "outputs": ["{options.outputDir}"],
-      "options": {
-        "uiFramework": "@storybook/react",
-        "configDir": "libs/shared/cdf-sdk-singleton/.storybook",
-        "outputDir": "storybook-static"
-      },
-      "configurations": {
-        "ci": {
-          "quiet": true
-        }
       }
     }
   }

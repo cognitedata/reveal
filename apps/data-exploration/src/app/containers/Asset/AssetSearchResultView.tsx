@@ -1,37 +1,27 @@
-import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
-
 import {
   AssetSearchResults,
   AssetViewMode,
 } from '@data-exploration/containers';
 import { useDebounce } from 'use-debounce';
 
-import { createLink } from '@cognite/cdf-utilities';
 import { ResourceItem } from '@cognite/data-exploration';
 import { Asset } from '@cognite/sdk';
 
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
-import { routes } from '@data-exploration-app/containers/App';
-import { AssetPreview } from '@data-exploration-app/containers/Asset/AssetPreview';
 import {
   StyledSplitter,
   SearchResultWrapper,
 } from '@data-exploration-app/containers/elements';
-import {
-  useCurrentResourceId,
-  useQueryString,
-} from '@data-exploration-app/hooks/hooks';
+import { useQueryString } from '@data-exploration-app/hooks/hooks';
 import {
   useAssetFilters,
   useAssetViewState,
 } from '@data-exploration-app/store';
 import { SEARCH_KEY } from '@data-exploration-app/utils/constants';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
-import { getSearchParams } from '@data-exploration-app/utils/URLUtils';
 import { getSelectedResourceId } from '@data-exploration-lib/core';
 
 import {
-  useFlagOverlayNavigation,
   useGetJourney,
   useJourneyLength,
   usePushJourney,
@@ -39,14 +29,10 @@ import {
 } from '../../hooks';
 
 export const AssetSearchResultView = () => {
-  const isDetailsOverlayEnabled = useFlagOverlayNavigation();
   const [assetView, setAssetView] = useAssetViewState();
-  const [, openPreview] = useCurrentResourceId();
   const [query] = useQueryString(SEARCH_KEY);
   const [debouncedQuery] = useDebounce(query, 100);
   const [assetFilter, setAssetFilter] = useAssetFilters();
-  const navigate = useNavigate();
-  const location = useLocation();
   const [pushJourney] = usePushJourney();
   const [firstJourney] = useGetJourney();
   const [journeyLength] = useJourneyLength();
@@ -61,39 +47,27 @@ export const AssetSearchResultView = () => {
   };
 
   const handleRowClick = <T extends Omit<ResourceItem, 'type'>>(item: T) => {
-    // TODO: move this logic in a function out!
-    if (isDetailsOverlayEnabled) {
-      if (journeyLength > 1) {
-        // If there is a journey going on (i.e. journey length is more than 1), then show the prompt modal.
-        setPromptOpen(true, { id: item.id, type: 'asset' });
-      } else {
-        pushJourney({ id: item.id, type: 'asset' }, true);
-      }
+    if (journeyLength > 1) {
+      // If there is a journey going on (i.e. journey length is more than 1), then show the prompt modal.
+      setPromptOpen(true, { id: item.id, type: 'asset' });
     } else {
-      openPreview(item.id !== selectedAssetId ? item.id : undefined);
+      pushJourney({ id: item.id, type: 'asset' }, true);
     }
   };
 
   const handleShowAllAssetsClick = (item: Asset) => {
     if (item.parentId) {
-      if (isDetailsOverlayEnabled) {
-        if (journeyLength > 1) {
-          // If there is a journey going on (i.e. journey length is more than 1), then show the prompt modal.
-          setPromptOpen(true, {
-            id: item.parentId,
-            type: 'asset',
-            selectedTab: 'children',
-          });
-        } else {
-          pushJourney(
-            { id: item.parentId, type: 'asset', selectedTab: 'children' },
-            true
-          );
-        }
+      if (journeyLength > 1) {
+        // If there is a journey going on (i.e. journey length is more than 1), then show the prompt modal.
+        setPromptOpen(true, {
+          id: item.parentId,
+          type: 'asset',
+          selectedTab: 'children',
+        });
       } else {
-        const search = getSearchParams(location.search);
-        navigate(
-          createLink(`/explore/search/asset/${item.parentId}/children`, search)
+        pushJourney(
+          { id: item.parentId, type: 'asset', selectedTab: 'children' },
+          true
         );
       }
     }
@@ -121,21 +95,6 @@ export const AssetSearchResultView = () => {
           activeIds={selectedAssetId ? [selectedAssetId] : []}
         />
       </SearchResultWrapper>
-
-      {!isDetailsOverlayEnabled && Boolean(selectedAssetId) && (
-        <SearchResultWrapper>
-          <Routes>
-            <Route
-              path={routes.viewDetail.path}
-              element={<AssetPreview assetId={selectedAssetId!} />}
-            />
-            <Route
-              path={routes.viewDetailTab.path}
-              element={<AssetPreview assetId={selectedAssetId!} />}
-            />
-          </Routes>
-        </SearchResultWrapper>
-      )}
     </StyledSplitter>
   );
 };

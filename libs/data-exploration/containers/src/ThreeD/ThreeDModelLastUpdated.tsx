@@ -9,13 +9,13 @@ import { use3DRevisionsQuery } from '@data-exploration-lib/domain-layer';
 
 export const ThreeDModelLastUpdated = ({
   modelId,
-  is360Image,
+  lastUpdatedTime,
 }: {
   modelId: number;
-  is360Image: boolean;
+  lastUpdatedTime?: Date;
 }) => {
   const { data: lastUpdatedRevision } = use3DRevisionsQuery(modelId, {
-    enabled: !is360Image,
+    enabled: !lastUpdatedTime,
     select: (revisionArr = []) =>
       revisionArr.length > 0
         ? revisionArr.reduce((prev, current) =>
@@ -26,8 +26,10 @@ export const ThreeDModelLastUpdated = ({
 
   return (
     <Body level={2}>
-      {lastUpdatedRevision ? (
-        <TimeDisplay value={lastUpdatedRevision.createdTime} />
+      {lastUpdatedTime || lastUpdatedRevision?.createdTime ? (
+        <TimeDisplay
+          value={lastUpdatedTime ?? lastUpdatedRevision?.createdTime}
+        />
       ) : (
         DASH
       )}

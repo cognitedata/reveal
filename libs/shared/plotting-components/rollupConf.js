@@ -1,4 +1,4 @@
-const nrwlConfig = require('@nrwl/react/plugins/bundle-rollup');
+const nrwlConfig = require('@nx/react/plugins/bundle-rollup');
 const resolver = require('@rollup/plugin-node-resolve');
 
 module.exports = (config) => {

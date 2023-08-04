@@ -8,12 +8,12 @@ import { Skeleton } from 'antd';
 
 import {
   A,
-  Detail,
   Flex,
   formatDate,
   formatDateTime,
-  Title,
   Tooltip,
+  Body,
+  Heading,
 } from '@cognite/cogs.js';
 
 import ChartListDropdown from '../ChartListDropdown/ChartListDropdown';
@@ -50,27 +50,41 @@ const ChartListGridItem = ({
 
   return (
     <Wrapper className="z-4">
-      <A onClick={onClick}>
-        <ImageWrapper>
-          <ImageContent>
-            <RenderWhenOnScreen
-              containerStyles={{
-                height: 200,
-                border: '1px solid var(--cogs-greyscale-grey2)',
-              }}
-              loaderComponent={
-                <Skeleton.Image style={{ height: 200, width: 286 }} />
-              }
-            >
-              <PreviewPlotContainer chart={chart} />
-            </RenderWhenOnScreen>
-          </ImageContent>
-        </ImageWrapper>
-      </A>
+      <div
+        // eslint-disable-next-line
+        // @ts-ignore
+        onClick={onClick}
+        style={{
+          cursor: 'pointer',
+          height: 200,
+          border: '1px solid var(--cogs-greyscale-grey2)',
+        }}
+      >
+        <RenderWhenOnScreen
+          containerStyles={{
+            height: 200,
+            border: '1px solid var(--cogs-greyscale-grey2)',
+          }}
+          loaderComponent={
+            <Skeleton.Image style={{ height: 200, width: 286 }} />
+          }
+        >
+          <PreviewPlotContainer chart={chart} />
+        </RenderWhenOnScreen>
+      </div>
       <Flex style={{ marginTop: 16 }}>
         <div style={{ flexGrow: 1 }}>
-          <A onClick={onClick}>
-            <Detail
+          <A
+            onClick={onClick}
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              textAlign: 'left',
+              textDecoration: 'none',
+            }}
+          >
+            <Body
+              size="x-small"
               strong
               style={{
                 textTransform: 'uppercase',
@@ -84,9 +98,9 @@ const ChartListGridItem = ({
                 <>{formatDate(new Date(updatedAt).getTime(), true)}</>
               </Tooltip>{' '}
               &middot; {formatOwner(owner)}
-            </Detail>
+            </Body>
             <Tooltip content={name}>
-              <Title
+              <Heading
                 level={4}
                 style={{
                   width: 248,
@@ -96,7 +110,7 @@ const ChartListGridItem = ({
                 }}
               >
                 {name}
-              </Title>
+              </Heading>
             </Tooltip>
           </A>
         </div>
@@ -135,14 +149,6 @@ const ImageWrapper = styled.div`
   height: 200px;
   flex-grow: 0;
   border: 1px solid #dedede;
-`;
-
-const ImageContent = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
 `;
 
 export default ChartListGridItem;

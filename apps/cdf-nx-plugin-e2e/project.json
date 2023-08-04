@@ -5,11 +5,12 @@
   "sourceRoot": "apps/cdf-nx-plugin-e2e/src",
   "targets": {
     "e2e": {
-      "executor": "@nrwl/nx-plugin:e2e",
+      "executor": "@nx/jest:jest",
       "options": {
-        "target": "cdf-nx-plugin:build",
-        "jestConfig": "apps/cdf-nx-plugin-e2e/jest.config.ts"
-      }
+        "jestConfig": "apps/cdf-nx-plugin-e2e/jest.config.ts",
+        "runInBand": true
+      },
+      "dependsOn": ["cdf-nx-plugin:build"]
     }
   },
   "tags": [],

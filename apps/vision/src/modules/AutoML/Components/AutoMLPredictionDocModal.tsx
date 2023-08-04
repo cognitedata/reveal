@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { getContainer } from '@vision/utils';
 import { Modal } from 'antd';
 
-import sdk from '@cognite/cdf-sdk-singleton';
+import { getProject } from '@cognite/cdf-utilities';
 import { Body, Title } from '@cognite/cogs.js';
 
 export const AutoMLPredictionDocModal = (props: {
@@ -14,8 +14,8 @@ export const AutoMLPredictionDocModal = (props: {
   onCancel: () => void;
 }) => {
   const renderContent = () => {
-    const postURL = `POST /api/playground/projects/${sdk.project}/context/vision/automl/prediction`;
-    const getURL = `GET /api/playground/projects/${sdk.project}/context/vision/automl/prediction/{jobId}`;
+    const postURL = `POST /api/playground/projects/${getProject()}/context/vision/automl/prediction`;
+    const getURL = `GET /api/playground/projects/${getProject()}/context/vision/automl/prediction/{jobId}`;
 
     const postBody = JSON.stringify(
       {
@@ -58,7 +58,7 @@ export const AutoMLPredictionDocModal = (props: {
   return (
     <Modal
       getContainer={getContainer}
-      visible={props.showModal}
+      open={props.showModal}
       onCancel={props.onCancel}
       width={780}
       footer={null} // to remove default ok and cancel buttons

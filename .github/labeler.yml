@@ -49,7 +49,20 @@ extraction-pipelines:
 
 design-system:
   - libs/shared/user-profile-components/**/*
+  - libs/shared/user-onboarding-components/**/*
 
 charts:
   - apps/charts/*
   - apps/charts/**/*
+
+asset-health:
+  - apps/industry-canvas-ui/* 
+  - apps/industry-canvas-ui/**/*
+  - apps/charts/*
+  - apps/charts/**/*
+  - libs/industry-canvas/*
+  - libs/industry-canvas/**/*
+
+access-management:
+  - apps/access-management/*
+  - apps/access-management/**/*

@@ -44,31 +44,33 @@ libs/contextualization              @davidlky @cognitedata/contextualization
 apps/copilot              @davidlky @andeplane @miladh @trygveu
 
 # IoT Hub
-
-apps/raw-explorer @cognitedata/team-hebe
 apps/iot-hub              @davidlky @geircognite @muradsater
-
-# Entity matching
-apps/entity-matching                @cognitedata/cdf-user-experience
 
 # Vision
 apps/vision              @cognitedata/cdf-user-experience
 
-# Interactive Diagrams
-apps/interactive-diagrams @cognitedata/team-hebe
+# matchmakers
+apps/entity-matching              @cognitedata/matchmakers
+apps/interactive-diagrams         @cognitedata/matchmakers
 
 # 3D / Reveal
 apps/3d-management                @cognitedata/3d-reveal-viewer-team
 
 # Migrated CDF-UX Subapps
 apps/data-catalog                 @cognitedata/cdf-user-experience
-apps/extraction-pipelines         @cognitedata/cdf-user-experience
-apps/extractor-downloads          @cognitedata/cdf-user-experience
+apps/access-management            @cognitedata/cdf-user-experience
+
+# data onboarding
+apps/extraction-pipelines         @cognitedata/data-management
+apps/extractor-downloads          @cognitedata/data-management
 
 libs/shared/cdf-utilities         @cognitedata/cdf-user-experience
 
-
-libs/shared/user-profile-components   @cognitedata/cogs-team
+# cogs-team
+apps/raw-explorer                       @cognitedata/cogs-team
+apps/transformations                    @cognitedata/cogs-team
+libs/shared/user-profile-components     @cognitedata/cogs-team
+libs/shared/user-onboarding-components  @cognitedata/cogs-team
 
 # Functions UI
-apps/functions-ui             @abdullah-cognite @shubhsk88 
+apps/functions-ui             @abdullah-cognite @shubhsk88

@@ -1,11 +1,14 @@
 import { CSSProperties } from 'react';
 
+import { Colors } from '@cognite/cogs.js';
+
 export const PLOT_CLASSNAME = 'nsewdrag drag';
 
 export const DEFAULT_BACKGROUND_COLOR = 'var(--cogs-surface--medium)';
 
 export const TICK_COLOR = 'var(--cogs-border--muted)';
 export const LABEL_COLOR = 'var(--cogs-text-icon--muted)';
+export const INVERTED_LABEL_COLOR = Colors['text-icon--on-contrast--strong'];
 
 export const TITLE_COLOR = 'var(--cogs-text-icon--strong)';
 export const SUBTITLE_COLOR = 'var(--cogs-text-icon--medium)';
@@ -27,7 +30,7 @@ export const DEFAULT_LINE_NAME = 'Line';
 export const BUTTON_ZOOM_STEP_SIZE = 5; // Percentage
 
 export const AXIS_TITLE_MARGIN = 20;
-export const TICK_LABEL_PADDING = 10;
+export const TICK_LABEL_PADDING = 20;
 
 export const DEFAULT_STYLE_PROPERTIES: CSSProperties = {
   backgroundColor: DEFAULT_BACKGROUND_COLOR,

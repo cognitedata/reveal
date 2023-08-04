@@ -5,6 +5,7 @@ import { ComponentProps, useState } from 'react';
 
 import Dropdown from '@charts-app/components/Dropdown/Dropdown';
 import { makeDefaultTranslations } from '@charts-app/utils/translations';
+import styled from 'styled-components/macro';
 
 import { Button } from '@cognite/cogs.js';
 
@@ -53,7 +54,7 @@ const DownloadDropdown = ({
     });
   }
   return (
-    <Dropdown
+    <StyledDropdown
       style={{ width: '14rem' }}
       title={t.Download}
       open={isMenuOpen}
@@ -68,9 +69,13 @@ const DownloadDropdown = ({
       >
         {label}
       </Button>
-    </Dropdown>
+    </StyledDropdown>
   );
 };
+
+const StyledDropdown = styled(Dropdown)`
+  width: 100%;
+`;
 
 DownloadDropdown.translationKeys = Object.keys(defaultTranslations);
 

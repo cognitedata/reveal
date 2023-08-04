@@ -17,7 +17,7 @@ import {
   FilterPanelConfigItem,
   getFilterPanelItems,
 } from '@vision/modules/FilterSidePanel/Components/getFilterPanelItems';
-import { AppDispatch } from '@vision/store';
+import { useThunkDispatch } from '@vision/store';
 import { RootState } from '@vision/store/rootReducer';
 import { Collapse } from 'antd';
 
@@ -28,7 +28,7 @@ const { Panel } = Collapse;
 
 export const FilterSidePanel = () => {
   const [totalCount, setTotalCount] = useState<number>(0);
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useThunkDispatch();
   const filter = useSelector(
     ({ explorerReducer }: RootState) => explorerReducer.filter
   );
@@ -90,7 +90,7 @@ export const FilterSidePanel = () => {
         <Collapse
           bordered={false}
           defaultActiveKey={[]}
-          expandIconPosition="right"
+          expandIconPosition="end"
           expandIcon={({ isActive }) => (
             <CaretRightOutlined
               style={{ color: '#595959' }}

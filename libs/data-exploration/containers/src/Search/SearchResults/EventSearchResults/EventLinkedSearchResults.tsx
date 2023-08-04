@@ -1,9 +1,6 @@
 import React, { useMemo, useState } from 'react';
 
-import {
-  DefaultPreviewFilter,
-  PreviewFilterDropdown,
-} from '@data-exploration/components';
+import { DefaultPreviewFilter } from '@data-exploration/components';
 import { useDebounce } from 'use-debounce';
 
 import { CogniteEvent } from '@cognite/sdk';
@@ -18,61 +15,16 @@ import {
   useEventsSearchResultQuery,
 } from '@data-exploration-lib/domain-layer';
 
-import {
-  MetadataFilter,
-  SourceFilter,
-  SubTypeFilter,
-  TypeFilter,
-} from '../../../Filters';
 import { AppliedFiltersTags } from '../AppliedFiltersTags';
 
 import { EventTable } from './EventTable';
+import { EventTableFilters } from './EventTableFilters';
 
 interface Props {
   defaultFilter: InternalCommonFilters;
   onClick: (item: CogniteEvent) => void;
   onParentAssetClick: (assetId: number) => void;
 }
-
-const LinkedEventFilter = ({
-  filter,
-  onFilterChange,
-}: {
-  filter: InternalEventsFilters;
-  onFilterChange: (newValue: InternalEventsFilters) => void;
-}) => {
-  return (
-    <PreviewFilterDropdown>
-      <SourceFilter.Event
-        filter={filter}
-        value={filter.sources}
-        onChange={(newSources) =>
-          onFilterChange({
-            sources: newSources,
-          })
-        }
-      />
-      <TypeFilter.Event
-        filter={filter}
-        value={filter.type}
-        onChange={(newFilters) => onFilterChange({ type: newFilters })}
-      />
-
-      <SubTypeFilter.Event
-        filter={filter}
-        value={filter.subtype}
-        onChange={(newFilters) => onFilterChange({ subtype: newFilters })}
-      />
-      <MetadataFilter.Events
-        filter={filter}
-        values={filter.metadata}
-        onChange={(newMetadata) => {
-          onFilterChange({ metadata: newMetadata });
-        }}
-      />
-    </PreviewFilterDropdown>
-  );
-};
 
 export const EventLinkedSearchResults: React.FC<Props> = ({
   defaultFilter,
@@ -127,7 +79,7 @@ export const EventLinkedSearchResults: React.FC<Props> = ({
       }
       tableHeaders={
         <DefaultPreviewFilter query={query} onQueryChange={setQuery}>
-          <LinkedEventFilter
+          <EventTableFilters
             filter={eventsFilters}
             onFilterChange={handleFilterChange}
           />

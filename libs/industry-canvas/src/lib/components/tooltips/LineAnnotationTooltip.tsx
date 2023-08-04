@@ -10,7 +10,7 @@ import { PolylineAnnotation } from '@cognite/unified-file-viewer';
 import { TEXT_ANNOTATION_COLOR_MAP } from '../../colors';
 import { translationKeys } from '../../common';
 import { MIN_STROKE_WIDTH, MAX_STROKE_WIDTH } from '../../constants';
-import { OnUpdateAnnotationStyleByType } from '../../hooks/useManagedTools';
+import { UseOnUpdateSelectedAnnotationReturnType } from '../../hooks/useOnUpdateSelectedAnnotation';
 import { useTranslation } from '../../hooks/useTranslation';
 import { FillColorPalette } from '../color-palettes/FillColorPalette';
 
@@ -34,15 +34,14 @@ enum EditMode {
 
 export type PolylineAnnotationTooltipProps = {
   lineAnnotation: PolylineAnnotation;
-  onUpdateAnnotationStyleByType: OnUpdateAnnotationStyleByType;
   onDeleteSelectedCanvasAnnotation: () => void;
-};
+} & UseOnUpdateSelectedAnnotationReturnType;
 
 export const LineAnnotationTooltip: React.FC<
   PolylineAnnotationTooltipProps
 > = ({
   lineAnnotation,
-  onUpdateAnnotationStyleByType,
+  onUpdateSelectedAnnotation,
   onDeleteSelectedCanvasAnnotation,
 }) => {
   const [strokeWidth, setStrokeWidth] = useState<number | undefined>(
@@ -53,7 +52,7 @@ export const LineAnnotationTooltip: React.FC<
 
   const debouncedUpdateLineAnnotationStrokeWidth = debounce(
     (value: number) =>
-      onUpdateAnnotationStyleByType({ line: { strokeWidth: value } }),
+      onUpdateSelectedAnnotation({ line: { strokeWidth: value } }),
     UPDATE_STROKE_WIDTH_DEBOUNCE_MS
   );
 
@@ -89,7 +88,7 @@ export const LineAnnotationTooltip: React.FC<
             colors={Object.values(TEXT_ANNOTATION_COLOR_MAP)}
             selectedColor={lineAnnotation.style?.stroke}
             onUpdateColor={(color) => {
-              onUpdateAnnotationStyleByType({
+              onUpdateSelectedAnnotation({
                 line: { stroke: color },
               });
             }}
@@ -102,7 +101,7 @@ export const LineAnnotationTooltip: React.FC<
             selectedStartEndType={lineAnnotation.startEndType}
             selectedEndEndType={lineAnnotation.endEndType}
             onUpdateEndType={({ startEndType, endEndType }) => {
-              onUpdateAnnotationStyleByType({
+              onUpdateSelectedAnnotation({
                 line: { startEndType, endEndType },
               });
             }}
@@ -128,7 +127,7 @@ export const LineAnnotationTooltip: React.FC<
               <LineDashTooltip
                 dash={lineAnnotation.style?.dash}
                 onUpdateDash={(dash) =>
-                  onUpdateAnnotationStyleByType({ line: { dash } })
+                  onUpdateSelectedAnnotation({ line: { dash } })
                 }
               />
             </ToolBar>

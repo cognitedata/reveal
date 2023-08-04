@@ -1,9 +1,11 @@
 {
+  "name": "mock-server",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/mock-server/src",
   "projectType": "application",
   "targets": {
     "build": {
-      "executor": "@nrwl/webpack:webpack",
+      "executor": "@nx/webpack:webpack",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/mock-server",
@@ -40,9 +42,12 @@
       }
     },
     "serve": {
-      "executor": "@nrwl/node:node",
+      "executor": "@nx/js:node",
       "options": {
-        "buildTarget": "mock-server:build"
+        "buildTarget": "mock-server:build",
+        "inspect": false,
+        "debounce": 0,
+        "watch": false
       },
       "configurations": {
         "production": {
@@ -51,14 +56,14 @@
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["apps/mock-server/**/*.ts"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/mock-server"],
       "options": {
         "jestConfig": "apps/mock-server/jest.config.ts",

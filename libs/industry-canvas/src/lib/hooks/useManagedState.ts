@@ -1,4 +1,4 @@
-import {
+import React, {
   Dispatch,
   SetStateAction,
   useCallback,
@@ -7,8 +7,9 @@ import {
   useRef,
   useState,
 } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
-import { debounce, isEqual } from 'lodash';
+import debounce from 'lodash/debounce';
 
 import { useSDK } from '@cognite/sdk-provider';
 import {
@@ -16,6 +17,7 @@ import {
   ContainerConfig,
   ContainerType,
   IdsByType,
+  isRectangleAnnotation,
   UnifiedViewer,
   UnifiedViewerEventListenerMap,
   UnifiedViewerEventType,
@@ -24,13 +26,17 @@ import {
 
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
 
+import { RuleType } from '../components/ContextualTooltips/AssetTooltip/types';
 import {
   SHAMEFUL_WAIT_TO_ENSURE_ANNOTATIONS_ARE_RENDERED_MS,
   ZOOM_TO_FIT_MARGIN,
   ZOOM_DURATION_SECONDS,
   MetricEvent,
 } from '../constants';
+import { OnOpenConditionalFormattingClick } from '../IndustryCanvas';
 import { useIndustryCanvasContext } from '../IndustryCanvasContext';
+import { useCommentsUpsertMutation } from '../services/comments/hooks';
+import { CommentTargetType } from '../services/comments/types';
 import {
   CanvasAnnotation,
   ContainerReference,
@@ -44,7 +50,8 @@ import {
   isIndustryCanvasContainerConfig,
 } from '../types';
 import { useUserProfile } from '../UserProfileProvider';
-import addDimensionsIfNotExists from '../utils/addDimensionsIfNotExists';
+import { deepEqualWithMissingProperties } from '../utils/deepEqualWithMissingProperties';
+import { addDimensionsToContainerReferencesIfNotExists } from '../utils/dimensions';
 import useMetrics from '../utils/tracking/useMetrics';
 import {
   deserializeCanvasDocument,
@@ -52,13 +59,12 @@ import {
   serializeCanvasState,
 } from '../utils/utils';
 
-import { useCommentSaveMutation } from './use-mutation/useCommentSaveMutation';
 import {
   UseCanvasStateHistoryReturnType,
   useHistory,
 } from './useCanvasStateHistory';
 import { useContainerAnnotations } from './useContainerAnnotations';
-import { TooltipsOptions } from './useTooltipsOptions';
+import { UseManagedToolReturnType } from './useManagedTool';
 import resolveContainerConfig from './utils/resolveContainerConfig';
 
 export type InteractionState = {
@@ -71,6 +77,36 @@ type UpdateHandlerFn =
 
 type DeleteHandlerFn =
   UnifiedViewerEventListenerMap[UnifiedViewerEventType.ON_DELETE_REQUEST];
+
+export type OnLiveSensorRulesChange = ({
+  annotationId,
+  timeseriesId,
+  rules,
+}: {
+  annotationId: string;
+  timeseriesId: number;
+  rules: RuleType[];
+}) => void;
+
+export type IsConditionalFormattingOpenByAnnotationIdByTimeseriesId = Record<
+  string,
+  Record<number, boolean>
+>;
+
+export type OnCloseConditionalFormattingClick = () => void;
+
+export type LiveSensorRulesByAnnotationIdByTimeseriesId = Record<
+  string,
+  Record<number, RuleType[]>
+>;
+
+export type OnToggleConditionalFormatting = ({
+  annotationId,
+  timeseriesId,
+}: {
+  annotationId: string;
+  timeseriesId: number;
+}) => void;
 
 export type UseManagedStateReturnType = {
   container: IndustryCanvasContainerConfig;
@@ -91,6 +127,20 @@ export type UseManagedStateReturnType = {
   setInteractionState: Dispatch<SetStateAction<InteractionState>>;
   clickedContainerAnnotation: ExtendedAnnotation | undefined;
   containerAnnotations: ExtendedAnnotation[];
+  pinnedTimeseriesIdsByAnnotationId: Record<string, number[]>;
+  onPinTimeseriesClick: ({
+    annotationId,
+    timeseriesId,
+  }: {
+    annotationId: string;
+    timeseriesId: number;
+  }) => void;
+  liveSensorRulesByAnnotationIdByTimeseriesId: LiveSensorRulesByAnnotationIdByTimeseriesId;
+  onLiveSensorRulesChange: OnLiveSensorRulesChange;
+  isConditionalFormattingOpenAnnotationIdByTimeseriesId: IsConditionalFormattingOpenByAnnotationIdByTimeseriesId;
+  onOpenConditionalFormattingClick: OnOpenConditionalFormattingClick;
+  onCloseConditionalFormattingClick: OnCloseConditionalFormattingClick;
+  onToggleConditionalFormatting: OnToggleConditionalFormatting;
 };
 
 const transformRecursive = <T extends { children?: T[] }>(
@@ -258,8 +308,14 @@ const useAutoSaveState = (
       return;
     }
 
-    const serializedData = serializeCanvasState(canvasState);
-    if (isEqual(serializedData, activeCanvas.data)) {
+    const filteredCanvasAnnotations = canvasState.canvasAnnotations.filter(
+      (annotation) => !isCommentAnnotation(annotation)
+    );
+    const serializedData = serializeCanvasState({
+      ...canvasState,
+      canvasAnnotations: filteredCanvasAnnotations,
+    });
+    if (deepEqualWithMissingProperties(serializedData, activeCanvas.data)) {
       return;
     }
 
@@ -329,14 +385,12 @@ const usePersistence = (
 
 const useManagedState = ({
   unifiedViewer,
-  setTool,
-  tool,
-  tooltipsOptions,
+  toolType,
+  setToolType,
 }: {
   unifiedViewer: UnifiedViewer | null;
-  tool: IndustryCanvasToolType;
-  setTool: Dispatch<SetStateAction<IndustryCanvasToolType>>;
-  tooltipsOptions: TooltipsOptions;
+  toolType: UseManagedToolReturnType['toolType'];
+  setToolType: UseManagedToolReturnType['setToolType'];
 }): UseManagedStateReturnType => {
   const sdk = useSDK();
   const trackUsage = useMetrics();
@@ -346,15 +400,11 @@ const useManagedState = ({
   });
   const { canvasState, undo, redo, pushState, replaceState } = useHistory();
   usePersistence(canvasState, replaceState);
-
-  const { mutate: saveComment } = useCommentSaveMutation();
-
+  const [searchParams, setSearchParams] = useSearchParams();
   const {
     userProfile: { userIdentifier },
   } = useUserProfile();
-
-  const { activeCanvas = { externalId: '' } } = useIndustryCanvasContext();
-  const { externalId: activeCanvasExternalId } = activeCanvas;
+  const { mutateAsync: upsertComments } = useCommentsUpsertMutation();
   const onUpdateRequest: UpdateHandlerFn = useCallback(
     ({ containers: updatedContainers, annotations: updatedAnnotations }) => {
       const validUpdatedContainers = updatedContainers.filter(
@@ -378,17 +428,36 @@ const useManagedState = ({
 
         if (hasAnnotationBeenCreated) {
           // Augment the annotation with the comment metadata if the tool is comment
-          if (tool === IndustryCanvasToolType.COMMENT) {
+          if (toolType === IndustryCanvasToolType.COMMENT) {
             updatedAnnotation.isSelectable = false;
             updatedAnnotation.metadata = {
               ...updatedAnnotation.metadata,
               [COMMENT_METADATA_ID]: true,
             };
-            saveComment({
-              externalId: updatedAnnotation.id,
-              text: '',
-              author: userIdentifier,
-              canvas: { externalId: activeCanvasExternalId },
+
+            if (!isRectangleAnnotation(updatedAnnotation)) {
+              throw new Error(
+                'Provided annotation is not rectangle annotation'
+              );
+            }
+
+            upsertComments([
+              {
+                targetId: searchParams.get('canvasId') ?? undefined,
+                targetType: CommentTargetType.CANVAS,
+                createdById: userIdentifier,
+                text: '',
+                externalId: updatedAnnotation.id,
+                contextData: {
+                  x: updatedAnnotation.x,
+                  y: updatedAnnotation.y,
+                },
+              },
+            ]).then(() => {
+              setSearchParams((currentParams) => {
+                currentParams.set('commentTooltipId', updatedAnnotation.id);
+                return currentParams;
+              });
             });
           }
 
@@ -396,7 +465,7 @@ const useManagedState = ({
             hoverId: undefined,
             clickedContainerAnnotationId: updatedAnnotation.id,
           });
-          setTool(IndustryCanvasToolType.SELECT);
+          setToolType(IndustryCanvasToolType.SELECT);
 
           unifiedViewer?.once(UnifiedViewerEventType.ON_TOOL_CHANGE, () => {
             // It takes a little bit of time before the annotation is added, hence the timeout.
@@ -427,13 +496,14 @@ const useManagedState = ({
     },
     [
       pushState,
-      setTool,
+      toolType,
+      setToolType,
       unifiedViewer,
-      tool,
-      activeCanvasExternalId,
-      saveComment,
-      userIdentifier,
       trackUsage,
+      upsertComments,
+      searchParams,
+      userIdentifier,
+      setSearchParams,
     ]
   );
 
@@ -501,10 +571,9 @@ const useManagedState = ({
       }
 
       return Promise.all(
-        addDimensionsIfNotExists(
-          unifiedViewer,
+        addDimensionsToContainerReferencesIfNotExists(
           containerReferences,
-          canvasState.canvasAnnotations
+          serializeCanvasState(canvasState)
         ).map(async (containerReference) => {
           const containerConfig = await resolveContainerConfig(
             sdk,
@@ -528,13 +597,7 @@ const useManagedState = ({
         })
       );
     },
-    [
-      unifiedViewer,
-      sdk,
-      pushState,
-      canvasState.canvasAnnotations,
-      tooltipsOptions,
-    ]
+    [unifiedViewer, sdk, pushState, canvasState]
   );
 
   const removeContainerById = useCallback(
@@ -647,6 +710,131 @@ const useManagedState = ({
     [containerAnnotations, interactionState.clickedContainerAnnotationId]
   );
 
+  const [
+    isConditionalFormattingOpenAnnotationIdByTimeseriesId,
+    setIsConditionalFormattingOpenByAnnotationIdByTimeseriesId,
+  ] = React.useState<IsConditionalFormattingOpenByAnnotationIdByTimeseriesId>(
+    {}
+  );
+
+  const onOpenConditionalFormattingClick: OnOpenConditionalFormattingClick =
+    useCallback(
+      ({ annotationId, timeseriesId }) => {
+        setIsConditionalFormattingOpenByAnnotationIdByTimeseriesId({
+          [annotationId]: { [timeseriesId]: true },
+        });
+
+        // Kind of hacky, but using this to close the other popover.
+        // Will get fixed in the near future when we refactor the state
+        setInteractionState({
+          hoverId: undefined,
+          clickedContainerAnnotationId: undefined,
+        });
+      },
+      [setInteractionState]
+    );
+
+  const onCloseConditionalFormattingClick: OnCloseConditionalFormattingClick =
+    useCallback(() => {
+      setIsConditionalFormattingOpenByAnnotationIdByTimeseriesId({});
+    }, []);
+
+  useEffect(() => {
+    if (interactionState.clickedContainerAnnotationId !== undefined) {
+      // Again hacky side-effect, will be fixed when refactoring the state
+      onCloseConditionalFormattingClick();
+    }
+  }, [interactionState]);
+
+  const [
+    pinnedTimeseriesIdsByAnnotationId,
+    setPinnedTimeseriesIdsByAnnotationId,
+  ] = useState<Record<string, number[]>>({});
+  const onPinTimeseriesClick = useCallback(
+    ({
+      annotationId,
+      timeseriesId,
+    }: {
+      annotationId: string;
+      timeseriesId: number;
+    }) => {
+      setPinnedTimeseriesIdsByAnnotationId(
+        (prevPinnedTimeseriesIdsByAnnotationId) => {
+          const wasPinned =
+            prevPinnedTimeseriesIdsByAnnotationId[annotationId]?.includes(
+              timeseriesId
+            );
+
+          if (!wasPinned) {
+            // Shameful, will also be fixed when refactoring the state.
+            // Essentially we want to modify two pieces of state in the same place
+            onOpenConditionalFormattingClick({
+              annotationId,
+              timeseriesId,
+            });
+          }
+
+          return {
+            ...prevPinnedTimeseriesIdsByAnnotationId,
+            [annotationId]: wasPinned ? [] : [timeseriesId],
+          };
+        }
+      );
+    },
+    []
+  );
+
+  const [
+    liveSensorRulesByAnnotationIdByTimeseriesId,
+    setLiveSensorRulesByAnnotationIdByTimeseriesId,
+  ] = useState<LiveSensorRulesByAnnotationIdByTimeseriesId>({});
+
+  const onLiveSensorRulesChange: OnLiveSensorRulesChange = useCallback(
+    ({
+      annotationId,
+      timeseriesId,
+      rules,
+    }: {
+      annotationId: string;
+      timeseriesId: number;
+      rules: RuleType[];
+    }) => {
+      setLiveSensorRulesByAnnotationIdByTimeseriesId(
+        (prevLiveSensorRulesByAnnotationIdByTimeseriesId) => ({
+          ...prevLiveSensorRulesByAnnotationIdByTimeseriesId,
+          [annotationId]: {
+            ...prevLiveSensorRulesByAnnotationIdByTimeseriesId[annotationId],
+            [timeseriesId]: rules,
+          },
+        })
+      );
+    },
+    []
+  );
+
+  const onToggleConditionalFormatting: OnToggleConditionalFormatting =
+    useCallback(
+      ({ annotationId, timeseriesId }) =>
+        setIsConditionalFormattingOpenByAnnotationIdByTimeseriesId(
+          (prevState) => {
+            if (prevState[annotationId]?.[timeseriesId] !== undefined) {
+              return {};
+            }
+
+            setInteractionState({
+              hoverId: undefined,
+              clickedContainerAnnotationId: undefined,
+            });
+
+            return {
+              // NOTE: Intentionally only one
+              [annotationId]: { [timeseriesId]: true },
+            };
+          }
+        ),
+      []
+    );
+
   return {
     container: containerWithClickHandlers,
     canvasAnnotations: canvasState.canvasAnnotations,
@@ -661,6 +849,14 @@ const useManagedState = ({
     setInteractionState,
     clickedContainerAnnotation,
     containerAnnotations,
+    pinnedTimeseriesIdsByAnnotationId,
+    onPinTimeseriesClick,
+    liveSensorRulesByAnnotationIdByTimeseriesId,
+    onLiveSensorRulesChange,
+    isConditionalFormattingOpenAnnotationIdByTimeseriesId,
+    onOpenConditionalFormattingClick,
+    onCloseConditionalFormattingClick,
+    onToggleConditionalFormatting,
   };
 };
 

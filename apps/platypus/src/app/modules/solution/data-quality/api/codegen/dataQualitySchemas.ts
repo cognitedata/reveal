@@ -92,6 +92,8 @@ export type DataModelVersion = string;
  */
 export type ExternalId = string;
 
+export type Nonce = string;
+
 export type DataSourceDraft = {
   /**
    * Id of the data model that the data source belongs to
@@ -287,7 +289,7 @@ export type RulesetListIdsRequest = {
  */
 export type RuleSeverity = 'Critical' | 'High' | 'Medium' | 'Low';
 
-export type RuleDraft = {
+export type RuleCreateDraft = {
   /**
    * Conditions used to perform validation
    */
@@ -325,9 +327,75 @@ export type RuleDraft = {
    */
   name: string;
   /**
+   * External-id of the ruleset connected to the rule
+   *
+   * @pattern ^[a-zA-Z]([a-zA-Z0-9_]{0,253}[a-zA-Z0-9])?$
+   * @minLength 1
+   * @maxLength 255
+   */
+  rulesetId?: ExternalId;
+  /**
    * The severity of the rule
    */
   severity: RuleSeverity;
+};
+
+export type RuleUpdateItem = {
+  /**
+   * The external-id of the rule
+   *
+   * @pattern ^[a-zA-Z]([a-zA-Z0-9_]{0,253}[a-zA-Z0-9])?$
+   * @minLength 1
+   * @maxLength 255
+   */
+  externalId: ExternalId;
+  /**
+   * The properties to be updated
+   */
+  update: RuleUpdateDraft;
+};
+
+export type RuleUpdateDraft = {
+  /**
+   * Conditions used to perform validation
+   */
+  conditions?: string;
+  /**
+   * External-id of the data scope connected to the rule
+   *
+   * @pattern ^[a-zA-Z]([a-zA-Z0-9_]{0,253}[a-zA-Z0-9])?$
+   * @minLength 1
+   * @maxLength 255
+   */
+  dataScopeId?: ExternalId;
+  /**
+   * The reference to a view in FDM
+   */
+  dataType?: string;
+  /**
+   * The description of the rule
+   */
+  description?: string;
+  /**
+   * The error message of the rule
+   */
+  errorMessage?: string;
+  /**
+   * The name of the rule
+   */
+  name?: string;
+  /**
+   * External-id of the ruleset connected to the rule
+   *
+   * @pattern ^[a-zA-Z]([a-zA-Z0-9_]{0,253}[a-zA-Z0-9])?$
+   * @minLength 1
+   * @maxLength 255
+   */
+  rulesetId?: ExternalId;
+  /**
+   * The severity of the rule
+   */
+  severity?: RuleSeverity;
 };
 
 export type RuleDto = {
@@ -370,13 +438,21 @@ export type RuleDto = {
    */
   name: string;
   /**
+   * The external-id of the ruleset connected to the rule
+   *
+   * @pattern ^[a-zA-Z]([a-zA-Z0-9_]{0,253}[a-zA-Z0-9])?$
+   * @minLength 1
+   * @maxLength 255
+   */
+  rulesetId?: ExternalId;
+  /**
    * The severity of the rule
    */
   severity: RuleSeverity;
 };
 
 /**
- * List of rules to create/update
+ * List of rules to create
  *
  * @minItems 1
  * @maxItems 100
@@ -386,7 +462,21 @@ export type RuleCreateRequest = {
    * @minItems 1
    * @maxItems 100
    */
-  items: RuleDraft[];
+  items: RuleCreateDraft[];
+};
+
+/**
+ * List of rules to update
+ *
+ * @minItems 1
+ * @maxItems 100
+ */
+export type RuleUpdateRequest = {
+  /**
+   * @minItems 1
+   * @maxItems 100
+   */
+  items: RuleUpdateItem[];
 };
 
 export type RuleListIdsRequest = {
@@ -401,3 +491,5 @@ export type RuleListIdsRequest = {
     externalId: ExternalId;
   }[];
 };
+
+export type DataSourceValidationRequest = Record<string, any>;

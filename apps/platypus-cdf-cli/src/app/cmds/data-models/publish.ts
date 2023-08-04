@@ -2,6 +2,7 @@ import { readFileSync } from 'fs';
 
 import {
   CreateDataModelVersionDTO,
+  DataModel,
   DataModelsHandler,
   DataModelVersionHandler,
   DataModelVersionValidator,
@@ -125,18 +126,20 @@ export class PublishCmd extends CLICommand {
       return;
     }
 
-    const dataModelResponse = await this.dataModelsHandler.fetchVersions({
-      dataModelId: args['external-id'],
-      space: args.space,
-    });
-    if (!dataModelResponse.isSuccess) {
+    const dataModelVersionsResponse =
+      await this.dataModelsHandler.fetchVersions({
+        dataModelId: args['external-id'],
+        space: args.space,
+      });
+    if (!dataModelVersionsResponse.isSuccess) {
       Response.error(
         'The data model specified does not exist. Create a data model first before publishing a new version.'
       );
       return;
     }
 
-    const versions = dataModelResponse.getValue();
+    let dataModelResponse: DataModel;
+    const versions = dataModelVersionsResponse.getValue();
     let previousVersion = versions
       .sort(
         // latest first
@@ -156,6 +159,13 @@ export class PublishCmd extends CLICommand {
         );
         return;
       }
+
+      dataModelResponse = (
+        await this.dataModelsHandler.fetch({
+          dataModelId: args['external-id'],
+          space: args.space,
+        })
+      ).getValue();
     }
 
     const {
@@ -165,10 +175,11 @@ export class PublishCmd extends CLICommand {
       description: currentVersionDesc,
     } = previousVersion || {
       version: undefined,
-      schema: '',
-      name: undefined,
-      description: undefined,
+      schema: dataModelResponse.graphQlDml || '',
+      name: dataModelResponse.name,
+      description: dataModelResponse.description,
     };
+
     // if no changes in DML
     if (currentVersionDML.trim() === graphqlSchema.trim()) {
       Response.success(
@@ -181,7 +192,7 @@ export class PublishCmd extends CLICommand {
       if (args['auto-increment']) {
         args['version'] = autoIncrementVersion(
           // use the most recent version
-          versions[0].version
+          versions[0]?.version ?? dataModelResponse?.version
         );
       } else {
         Response.error('You must specify a version or use `--auto-increment`.');

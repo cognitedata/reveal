@@ -2,7 +2,10 @@ import { FilePreview } from './FilePreview';
 
 const UFV_APPLICATION_ID = 'FDX';
 
-export const FDXFilePreview: React.FC<{ fileId: number }> = ({ fileId }) => {
+export const FDXFilePreview: React.FC<{
+  fileId: number;
+  showControls?: boolean;
+}> = ({ fileId, showControls }) => {
   return (
     <FilePreview
       key={fileId}
@@ -11,6 +14,7 @@ export const FDXFilePreview: React.FC<{ fileId: number }> = ({ fileId }) => {
       fileId={fileId}
       creatable={false}
       contextualization={false}
+      showControls={showControls}
     />
   );
 };

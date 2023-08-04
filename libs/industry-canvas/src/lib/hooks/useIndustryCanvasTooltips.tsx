@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
 
+import { OnOpenConditionalFormattingClick } from '../IndustryCanvas';
 import { OnAddContainerReferences } from '../IndustryCanvasPage';
 import {
   CanvasAnnotation,
@@ -11,11 +12,13 @@ import {
 
 import useCanvasAnnotationTooltips from './useCanvasAnnotationTooltips';
 import useCommentTooltips from './useCommentTooltips';
+import useConditionalFormattingTooltips from './useConditionalFormattingTooltips';
 import useIndustryCanvasAssetTooltips from './useIndustryCanvasAssetTooltips';
 import useIndustryCanvasContainerTooltips from './useIndustryCanvasContainerTooltips';
 import useIndustryCanvasFileLinkTooltips from './useIndustryCanvasFileLinkTooltips';
+import useLiveSensorValuesTooltips from './useLiveSensorValues';
 import { UseManagedStateReturnType } from './useManagedState';
-import { OnUpdateAnnotationStyleByType } from './useManagedTools';
+import { UseOnUpdateSelectedAnnotationReturnType } from './useOnUpdateSelectedAnnotation';
 import { UseResourceSelectorActionsReturnType } from './useResourceSelectorActions';
 import { OnUpdateTooltipsOptions, TooltipsOptions } from './useTooltipsOptions';
 
@@ -35,10 +38,17 @@ export type UseTooltipsParams = {
   updateContainerById: UseManagedStateReturnType['updateContainerById'];
   removeContainerById: UseManagedStateReturnType['removeContainerById'];
   onDeleteSelectedCanvasAnnotation: () => void;
-  onUpdateAnnotationStyleByType: OnUpdateAnnotationStyleByType;
   onResourceSelectorOpen: UseResourceSelectorActionsReturnType['onResourceSelectorOpen'];
   commentAnnotations: CommentAnnotation[];
-};
+  pinnedTimeseriesIdsByAnnotationId: Record<string, number[]>;
+  onPinTimeseriesClick: UseManagedStateReturnType['onPinTimeseriesClick'];
+  onOpenConditionalFormattingClick: OnOpenConditionalFormattingClick;
+  liveSensorRulesByAnnotationIdByTimeseriesId: UseManagedStateReturnType['liveSensorRulesByAnnotationIdByTimeseriesId'];
+  onLiveSensorRulesChange: UseManagedStateReturnType['onLiveSensorRulesChange'];
+  isConditionalFormattingOpenAnnotationIdByTimeseriesId: UseManagedStateReturnType['isConditionalFormattingOpenAnnotationIdByTimeseriesId'];
+  onCloseConditionalFormattingClick: UseManagedStateReturnType['onCloseConditionalFormattingClick'];
+  onToggleConditionalFormatting: UseManagedStateReturnType['onToggleConditionalFormatting'];
+} & UseOnUpdateSelectedAnnotationReturnType;
 
 const useIndustryCanvasTooltips = ({
   containers,
@@ -52,14 +62,25 @@ const useIndustryCanvasTooltips = ({
   selectedContainer,
   updateContainerById,
   removeContainerById,
-  onUpdateAnnotationStyleByType,
+  onUpdateSelectedAnnotation,
   onResourceSelectorOpen,
   commentAnnotations,
+  pinnedTimeseriesIdsByAnnotationId,
+  onPinTimeseriesClick,
+  onOpenConditionalFormattingClick,
+  isConditionalFormattingOpenAnnotationIdByTimeseriesId,
+  onLiveSensorRulesChange,
+  liveSensorRulesByAnnotationIdByTimeseriesId,
+  onCloseConditionalFormattingClick,
+  onToggleConditionalFormatting,
 }: UseTooltipsParams) => {
   const assetTooltips = useIndustryCanvasAssetTooltips(
     clickedContainerAnnotation,
     onAddContainerReferences,
-    onResourceSelectorOpen
+    onResourceSelectorOpen,
+    pinnedTimeseriesIdsByAnnotationId,
+    onPinTimeseriesClick,
+    onOpenConditionalFormattingClick
   );
   const fileLinkTooltips = useIndustryCanvasFileLinkTooltips({
     clickedContainerAnnotation,
@@ -68,7 +89,7 @@ const useIndustryCanvasTooltips = ({
   const canvasAnnotationTooltips = useCanvasAnnotationTooltips({
     selectedCanvasAnnotation,
     onDeleteSelectedCanvasAnnotation,
-    onUpdateAnnotationStyleByType,
+    onUpdateSelectedAnnotation,
   });
   const containerTooltips = useIndustryCanvasContainerTooltips({
     selectedContainer,
@@ -83,9 +104,23 @@ const useIndustryCanvasTooltips = ({
   const commentTooltips = useCommentTooltips({
     commentAnnotations,
   });
+  const liveSensorValuesTooltips = useLiveSensorValuesTooltips({
+    timeseriesIdsByAnnotationId: pinnedTimeseriesIdsByAnnotationId,
+    onToggleConditionalFormatting,
+    liveSensorRulesByAnnotationIdByTimeseriesId,
+  });
+
+  const conditionalFormattingTooltips = useConditionalFormattingTooltips({
+    isConditionalFormattingOpenAnnotationIdByTimeseriesId,
+    onCloseConditionalFormattingClick,
+    liveSensorRulesByAnnotationIdByTimeseriesId,
+    onLiveSensorRulesChange,
+  });
 
   return useMemo(() => {
     return [
+      ...liveSensorValuesTooltips,
+      ...conditionalFormattingTooltips,
       ...containerTooltips,
       ...assetTooltips,
       ...canvasAnnotationTooltips,
@@ -98,6 +133,7 @@ const useIndustryCanvasTooltips = ({
     fileLinkTooltips,
     containerTooltips,
     commentTooltips,
+    liveSensorValuesTooltips,
   ]);
 };
 

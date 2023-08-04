@@ -1,3 +1,4 @@
+export * from './useRelatedSequenceQuery';
 export * from './useSequenceMetadataFilterOptions';
 export * from './useSequenceMetadataValuesOptionsQuery';
 export * from './useSequenceSearchAggregateQuery';

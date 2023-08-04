@@ -1,19 +1,21 @@
 /* eslint-disable testing-library/await-async-utils */
-import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 
 import styled from 'styled-components';
 
 import { useBotUI } from '@botui/react';
 import { BotuiInterface } from 'botui';
 import { BufferMemory, ChatMessageHistory } from 'langchain/memory';
-import { AIChatMessage, HumanChatMessage } from 'langchain/schema';
+import { AIMessage, HumanMessage } from 'langchain/schema';
+import noop from 'lodash/noop';
 
 import { Flex } from '@cognite/cogs.js';
+import { useFlag } from '@cognite/react-feature-flags';
 import { useSDK } from '@cognite/sdk-provider';
 
 import { CogniteChatGPT } from '../../../lib/chatModels';
 import { processMessage } from '../../../lib/processMessage';
-import { newChain } from '../../../lib/toolchains';
+import { CogniteChainName, newChain } from '../../../lib/toolchains';
 import {
   CopilotBotMessage,
   CopilotMessage,
@@ -22,40 +24,55 @@ import {
 import {
   addToCopilotEventListener,
   cachedListeners,
+  sendFromCopilotEvent,
   sendToCopilotEvent,
 } from '../../../lib/utils';
-import {
-  getFromCache,
-  useFromCache,
-  useSaveToCache,
-} from '../../hooks/useCache';
+import { getChatHistory, useSaveChat } from '../../hooks/useChatHistory';
+import { useCopilotContext } from '../../hooks/useCopilotContext';
+import { useMetrics } from '../../hooks/useMetrics';
 import zIndex from '../../utils/zIndex';
 
 import { LargeChatUI } from './LargeChatUI';
 import { SmallChatUI } from './SmallChatUI';
 
+const scrollToBottom = () => {
+  const messagesDiv = document.querySelector('.botui_message_list');
+  if (messagesDiv) {
+    if (messagesDiv.parentElement) {
+      messagesDiv.parentElement.scrollTop = messagesDiv.scrollHeight;
+    }
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  }
+};
+
 export const ChatUI = ({
   visible,
-  onClose,
   feature,
+  excludeChains,
 }: {
   visible: boolean;
-  onClose: () => void;
   feature?: CopilotSupportedFeatureType;
+  excludeChains: CogniteChainName[];
 }) => {
+  const { isEnabled } = useFlag('COGNITE_COPILOT', {
+    fallback: false,
+    forceRerender: true,
+  });
   const bot = useBotUI();
   const sdk = useSDK();
-  const messages = useRef<CopilotMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const { mutate: setChatHistory } =
-    useSaveToCache<CopilotMessage[]>('CHAT_HISTORY');
+  const { currentChatId, setLoadingStatus, messages } = useCopilotContext();
+
+  const { mutate: setChatHistory } = useSaveChat(currentChatId);
+
+  const { track } = useMetrics();
 
   const model = useMemo(() => new CogniteChatGPT(sdk), [sdk]);
 
   const conversationChain = useMemo(() => {
-    return newChain(sdk, model, messages);
-  }, [sdk, model, messages]);
+    return newChain(sdk, model, messages, excludeChains);
+  }, [sdk, model, messages, excludeChains]);
 
   const updateMessage = useCallback(
     async (key: number, result: CopilotBotMessage) => {
@@ -66,47 +83,132 @@ export const ChatUI = ({
     []
   );
 
-  const addMessageForBot = useCallback(
-    async (chatBot: BotuiInterface, result: CopilotBotMessage) => {
-      messages.current.push({ ...result, source: 'bot' });
+  const addMessage = useCallback(
+    async (chatBot: BotuiInterface, message: CopilotMessage) => {
+      messages.current.push(message);
       await setChatHistory(messages.current);
-      await chatBot.message.add(result, {
-        messageType: result.type,
+      const messageCount = messages.current.length;
+      await chatBot.message.add(message, {
+        ...(message.source === 'user' && {
+          previous: {
+            key: messageCount - 1,
+            type: 'action',
+            data: {},
+            meta: {},
+          },
+        }),
+        messageType: message.type,
         updateMessage,
       });
     },
-    [setChatHistory, updateMessage]
+    [setChatHistory, updateMessage, messages]
   );
 
+  const promptUser = useCallback(() => {
+    setLoadingStatus('');
+    bot.action
+      .set({ feature }, { actionType: 'text', feature })
+      .then(async ({ content }: { content: string }) => {
+        track('USER_PROMPT', undefined);
+        messages.current.push({
+          content: content,
+          type: 'text',
+          source: 'user',
+        });
+        setChatHistory(messages.current);
+        processMessage(
+          feature,
+          conversationChain,
+          sdk,
+          content,
+          messages.current
+        ).then((shouldPrompt) => {
+          if (shouldPrompt) {
+            promptUser();
+          }
+        });
+        setTimeout(() => {
+          scrollToBottom();
+        }, 100);
+        if (messages.current.length > 0) {
+          await bot.wait();
+        }
+      });
+  }, [
+    bot,
+    track,
+    conversationChain,
+    feature,
+    sdk,
+    setChatHistory,
+    setLoadingStatus,
+    messages,
+  ]);
+
   useEffect(() => {
-    const removeListener = addToCopilotEventListener(
-      'NEW_MESSAGES',
-      async (newMessages) => {
-        for (const message of newMessages) {
-          if (message.key === undefined) {
-            await addMessageForBot(bot, message);
-          } else {
-            messages.current[message.key] = message;
-            setChatHistory(messages.current);
-            await bot.message.update(message.key, message);
+    if (isEnabled) {
+      const removeListener = addToCopilotEventListener(
+        'NEW_MESSAGES',
+        async (newMessages) => {
+          if (newMessages.length > 0) {
+            for (const message of newMessages) {
+              if (message.key === undefined) {
+                await addMessage(bot, message);
+              } else {
+                messages.current[message.key] = message;
+                setChatHistory(messages.current);
+                await bot.message.update(message.key, message);
+              }
+            }
+            const lastMessage = newMessages[newMessages.length - 1];
+            if (lastMessage.source === 'user') {
+              let message = lastMessage.content;
+              if (lastMessage.context) {
+                if (lastMessage.context.includes('Explorer')) {
+                  message = `${lastMessage.content} ${
+                    lastMessage.context ? ' via graphql' : ''
+                  }`;
+                }
+              }
+              bot.wait();
+              processMessage(
+                feature,
+                conversationChain,
+                sdk,
+                message,
+                messages.current
+              ).then((shouldPrompt) => {
+                if (shouldPrompt) {
+                  promptUser();
+                }
+              });
+            }
           }
         }
-      }
-    );
-    return () => {
-      removeListener();
-      for (const listener of cachedListeners) {
-        window.removeEventListener(listener.event, listener.listener);
-      }
-    };
-  }, [bot, addMessageForBot, setChatHistory]);
+      );
+      return () => {
+        removeListener();
+        for (const listener of cachedListeners) {
+          window.removeEventListener(listener.event, listener.listener);
+        }
+      };
+    }
+    return noop;
+  }, [
+    isEnabled,
+    bot,
+    addMessage,
+    setChatHistory,
+    promptUser,
+    feature,
+    sdk,
+    conversationChain,
+    messages,
+  ]);
 
   const setupMessages = useCallback(
-    async (newMessages?: CopilotMessage[]) => {
-      setIsLoading(true);
-      const cachedMessages =
-        newMessages ||
-        (await getFromCache<CopilotMessage[]>(sdk.project, 'CHAT_HISTORY'));
+    async (newMessages: CopilotMessage[]) => {
+      const cachedMessages = newMessages;
       messages.current = [];
       messages.current.push(...(cachedMessages || []));
       await bot.message.removeAll();
@@ -130,50 +232,30 @@ export const ChatUI = ({
           data: el,
         }))
       );
-      conversationChain.defaultChain.memory = new BufferMemory({
+      const memory = new BufferMemory({
+        inputKey: 'input',
         chatHistory: new ChatMessageHistory(
           cachedMessages?.map((el) =>
             el.source === 'user'
-              ? new HumanChatMessage(el.content)
-              : new AIChatMessage(el.content)
+              ? new HumanMessage(el.content)
+              : new AIMessage(el.content)
           )
         ),
       });
-      const promptUser = () => {
-        bot.action
-          .set({ feature }, { actionType: 'text', feature })
-          .then(async ({ content }: { content: string }) => {
-            messages.current.push({
-              content: content,
-              type: 'text',
-              source: 'user',
-            });
-            setChatHistory(messages.current);
-            processMessage(
-              feature,
-              conversationChain,
-              sdk,
-              content,
-              messages.current,
-              (message) => addMessageForBot(bot, message)
-            ).then((shouldPrompt) => {
-              if (shouldPrompt) {
-                promptUser();
-              }
-            });
-            if (messages.current.length > 0) {
-              await bot.wait();
-            }
-          });
-      };
+      [
+        ...Object.values(conversationChain.destinationChains),
+        conversationChain.defaultChain,
+        conversationChain,
+      ].forEach((el) => {
+        el.memory = memory;
+      });
       if (messages.current.length === 0) {
         processMessage(
           feature,
           conversationChain,
           sdk,
           '',
-          messages.current,
-          (message) => addMessageForBot(bot, message)
+          messages.current
         ).then((shouldPrompt) => {
           if (shouldPrompt) {
             promptUser();
@@ -182,87 +264,160 @@ export const ChatUI = ({
       } else {
         promptUser();
       }
-      setIsLoading(false);
     },
-    [
-      setChatHistory,
-      feature,
-      bot,
-      conversationChain,
-      addMessageForBot,
-      sdk,
-      updateMessage,
-    ]
+    [promptUser, feature, conversationChain, sdk, bot, updateMessage, messages]
   );
 
   useEffect(() => {
-    setupMessages();
-  }, [setupMessages]);
+    (async () => {
+      setIsLoading(true);
+      setupMessages(
+        (await getChatHistory(sdk.project, currentChatId))?.history || []
+      );
+      setTimeout(() => {
+        setIsLoading(false);
+        sendFromCopilotEvent('CHAT_READY', undefined);
+      }, 100);
+    })();
+  }, [currentChatId, sdk.project, setupMessages]);
 
   if (!visible || isLoading) {
     return <></>;
   }
-  return <ChatUIInner onClose={onClose} setupMessages={setupMessages} />;
+  return <ChatUIInner />;
 };
 
-const ChatUIInner = ({
-  onClose,
-  setupMessages,
-}: {
-  onClose: () => void;
-  chains?: string[];
-  setupMessages: (messages: CopilotMessage[]) => void;
-}) => {
+export const ChatUIInner = () => {
   const [showOverlay, setShowOverlay] = useState(false);
-  const { data: isExpanded = false } =
-    useFromCache<boolean>('CHATBOT_EXPANDED');
 
-  const { mutate: setIsExpanded } = useSaveToCache<boolean>('CHATBOT_EXPANDED');
-
-  const { mutate: setChatHistory } =
-    useSaveToCache<CopilotMessage[]>('CHAT_HISTORY');
-
-  const onReset = useCallback(async () => {
-    await setChatHistory([]);
-    await setupMessages([]);
-  }, [setupMessages, setChatHistory]);
+  const { setIsExpanded, isExpanded } = useCopilotContext();
 
   return (
-    <>
+    <Wrapper>
       <Overlay
         $showOverlay={showOverlay}
         $isExpanded={!!isExpanded}
         onClick={() => setIsExpanded(false)}
       />
       {isExpanded ? (
-        <LargeChatUI
-          onClose={onClose}
-          setIsExpanded={setIsExpanded}
-          onReset={onReset}
-        />
+        <LargeChatUI />
       ) : (
-        <SmallChatUI
-          setShowOverlay={setShowOverlay}
-          onReset={onReset}
-          onClose={onClose}
-          setIsExpanded={setIsExpanded}
-        />
+        <SmallChatUI setShowOverlay={setShowOverlay} />
       )}
-    </>
+    </Wrapper>
   );
 };
+
+const Wrapper = styled.div`
+  .botui_action {
+    width: 100%;
+    max-width: 100%;
+    padding: 7px 14px;
+    display: inline-block;
+
+    &.action_input {
+      form {
+        display: flex;
+        justify-content: flex-end;
+      }
+    }
+  }
+
+  .botui_message_container {
+    width: 100%;
+  }
+
+  .botui_message {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .botui_message_content {
+    padding: 16px;
+    width: 100%;
+    overflow: scroll;
+    display: inline-block;
+    overflow: auto;
+    background: rgba(153, 137, 250, 0.08);
+    overflow: auto;
+
+    &.human {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    iframe {
+      border: 0;
+      width: 100%;
+    }
+  }
+
+  .botui_app_container {
+    width: 100%; // mobile-first
+    height: 100%;
+    line-height: 1;
+
+    @media (min-width: $botui-width) {
+      height: 500px;
+      margin: 0 auto;
+      width: $botui-width;
+    }
+  }
+
+  .botui_container {
+    width: 100%;
+    height: auto;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .botui_app_container {
+    width: 100%;
+    overflow: hidden;
+    flex: 1;
+    position: relative;
+    display: flex;
+  }
+  .botui_message_list {
+    padding: 0;
+    width: 100%;
+  }
+
+  .botui_action_container {
+    padding: 0;
+    .botui_action {
+      padding: 0;
+    }
+  }
+  pre {
+    overflow: hidden;
+    margin-bottom: 0;
+  }
+
+  .slide-fade-enter-done {
+    transition: all 0.3s ease;
+  }
+
+  .slide-fade-enter,
+  .slide-fade-exit-done {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+`;
 
 const Overlay = styled(Flex)<{ $showOverlay: boolean; $isExpanded: boolean }>`
   position: fixed;
   height: 100vh;
   width: 100vw;
   left: 0;
-  transition: 0.3s backdrop-filter;
+  transition: 0.3s all;
   backdrop-filter: ${(props) =>
     props.$showOverlay || props.$isExpanded
       ? 'blur(10px) opacity(1)'
       : 'blur(10px) opacity(0)'};
 
+  background: ${(props) =>
+    props.$showOverlay || props.$isExpanded ? 'rgba(255, 255, 255, 0.9)' : ''};
   z-index: ${zIndex.OVERLAY};
   display: block;
   pointer-events: ${(props) =>

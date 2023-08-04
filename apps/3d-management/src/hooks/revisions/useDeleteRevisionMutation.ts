@@ -1,20 +1,21 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import sdk from '@cognite/cdf-sdk-singleton';
 import { HttpError, Revision3D } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
 
 import { fireErrorNotification, QUERY_KEY } from '../../utils';
 import { RevisionIds } from '../../utils/types';
 
-const deleteRevision = async ({
-  modelId,
-  revisionId,
-}: RevisionIds): Promise<void> => {
-  await sdk.revisions3D.delete(modelId, [{ id: revisionId }]);
-};
-
 export function useDeleteRevisionMutation() {
   const queryClient = useQueryClient();
+  const sdk = useSDK();
+
+  const deleteRevision = async ({
+    modelId,
+    revisionId,
+  }: RevisionIds): Promise<void> => {
+    await sdk.revisions3D.delete(modelId, [{ id: revisionId }]);
+  };
 
   return useMutation<void, HttpError, RevisionIds, Revision3D[]>(
     deleteRevision,

@@ -69,7 +69,7 @@ export const onError = (error: any) => {
 /* MUTATIONS */
 export const useCreateDataSetMutation = () => {
   const client = useQueryClient();
-  const { appPath } = useParams<{ appPath?: string }>();
+  const { subAppPath: appPath } = useParams<{ subAppPath?: string }>();
   const userHistoryService = useCdfUserHistoryService();
 
   const {

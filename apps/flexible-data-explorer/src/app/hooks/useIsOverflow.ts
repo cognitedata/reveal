@@ -17,7 +17,8 @@ export const useIsOverflow = (ref: React.RefObject<HTMLElement>) => {
     ) {
       if (
         ref.current?.clientWidth < ref.current?.scrollWidth ||
-        ref.current?.clientHeight < ref.current?.scrollHeight
+        ref.current?.clientHeight < ref.current?.scrollHeight ||
+        ref.current?.offsetWidth < ref.current?.scrollWidth
       ) {
         setIsOverflow(true);
       } else {

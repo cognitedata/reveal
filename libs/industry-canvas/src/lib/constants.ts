@@ -27,6 +27,7 @@ export enum MetricEvent {
   ASSET_TOOLTIP_ADD_THREE_D = 'IC.AssetTooltip.AddThreeD',
   ASSET_TOOLTIP_ADD_TIMESERIES = 'IC.AssetTooltip.AddTimeseries',
   ASSET_TOOLTIP_OPEN_IN_RESOURCE_SELECTOR = 'IC.AssetTooltip.OpenInResourceSelector',
+  ASSET_TOOLTIP_OPEN_TIMESERIES_TAB_IN_RESOURCE_SELECTOR = 'IC.AssetTooltip.OpenTimeseriesTabInResourceSelector',
   ASSET_TOOLTIP_ADD_ASSET = 'IC.AssetTooltip.AddAsset',
   ASSET_TOOLTIP_OPEN_IN_DATA_EXPLORER = 'IC.AssetTooltip.OpenInDataExplorer',
   FILE_TOOLTIP_ADD_FILE = 'IC.FileTooltip.AddFile',
@@ -42,6 +43,7 @@ export enum QueryKeys {
   GET_CANVAS = 'canvas.get',
   SAVE_CANVAS = 'canvas.save',
   SAVE_COMMENT = 'comment.save',
+  UPSERT_COMMENTS = 'comment.upsert',
   DELETE_COMMENT = 'comment.delete',
   CREATE_CANVAS = 'canvas.create',
   ARCHIVE_CANVAS = 'canvas.archive',
@@ -80,11 +82,6 @@ export const DEFAULT_FONT_SIZE = '18px';
 export const MIN_FONT_SIZE = 1;
 export const MAX_FONT_SIZE = 999;
 
-export const LINE_STROKE_WIDTH = {
-  SMALL: 2,
-  MEDIUM: 6,
-  LARGE: 10,
-};
 export const MIN_STROKE_WIDTH = 1;
 export const MAX_STROKE_WIDTH = 50;
 export const LINE_DASH_ARRAY = [10, 10];
@@ -96,4 +93,4 @@ export const SHAMEFUL_WAIT_TO_ENSURE_CONTAINERS_ARE_RENDERED_MS = 100;
 export const CommentsFeatureFlagKey = 'UFV_INDUSTRY_CANVAS_COMMENTS';
 
 export const CANVAS_FLOATING_ELEMENT_MARGIN = 15;
-export const CANVAS_MIN_WIDTH = 420;
+export const CANVAS_MIN_WIDTH = 40 + 2 * CANVAS_FLOATING_ELEMENT_MARGIN; // close button width + left&right margin

@@ -1,3 +1,4 @@
+export * from './useRelatedTimeseriesQuery';
 export * from './useTimeseriesFilterOptions';
 export * from './useTimeseriesMetadataFilterOptions';
 export * from './useTimeseriesMetadataValuesOptionsQuery';

@@ -1,6 +1,14 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 
-import { Button, Chip, Flex, Icon, Title, formatDate } from '@cognite/cogs.js';
+import {
+  Button,
+  Chip,
+  Flex,
+  Icon,
+  formatDate,
+  Heading,
+} from '@cognite/cogs.js';
 
 import { useTranslation } from '../../common';
 import { ExtractorWithReleases } from '../../service/extractors';
@@ -26,6 +34,8 @@ export const HostedExtractorDetails = ({
   extractor,
 }: HostedExtractorDetailsProps): JSX.Element => {
   const { t } = useTranslation();
+  const { search } = useLocation();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const latestRelease = extractor?.releases?.at(0);
   const createdAt =
@@ -63,7 +73,9 @@ export const HostedExtractorDetails = ({
               />
               {externalLinks?.length > 0 && (
                 <Flex direction="column" gap={16}>
-                  <Title level={5}>{t('user-guide-from-cognite-docs')}</Title>
+                  <Heading level={5}>
+                    {t('user-guide-from-cognite-docs')}
+                  </Heading>
                   <DocsLinkGrid>
                     {externalLinks?.map((link) => (
                       <DocsLinkGridItem
@@ -88,23 +100,19 @@ export const HostedExtractorDetails = ({
             <aside>
               <Flex direction="column" gap={24}>
                 <Flex direction="column" gap={16}>
-                  <Title level="5">{t('set-up-hosted-extractor')}</Title>
-                  <Button
-                    key={extractor.externalId}
-                    type="primary"
-                    onClick={() => {
-                      setIsModalOpen(true);
-                    }}
-                  >
-                    {t('connect-to-hosted-extractor', {
-                      extractor: extractor?.name,
-                    })}
-                  </Button>
+                  <Heading level={5}>{t('set-up-hosted-extractor')}</Heading>
+                  <Link to={`create_new_connection${search}`}>
+                    <Button key={extractor.externalId} type="primary">
+                      {t('connect-to-hosted-extractor', {
+                        extractor: extractor?.name,
+                      })}
+                    </Button>
+                  </Link>
                 </Flex>
                 {genericLinks?.length > 0 && (
                   <>
                     <StyledDivider />
-                    <Title level="5">{t('links')}</Title>
+                    <Heading level={5}>{t('links')}</Heading>
                     <Flex direction="column" gap={12}>
                       {genericLinks?.map((link) => (
                         <StyledLink
@@ -126,7 +134,7 @@ export const HostedExtractorDetails = ({
                 {tags?.length > 0 && (
                   <>
                     <StyledDivider />
-                    <Title level="5">{t('tags')}</Title>
+                    <Heading level={5}>{t('tags')}</Heading>
                     <StyledTagsContainer>
                       {tags?.map((tag) => (
                         <Chip selectable size="x-small" label={tag} key={tag} />

@@ -14,6 +14,7 @@ import JSZip from 'jszip';
 import moment from 'moment';
 
 import sdk from '@cognite/cdf-sdk-singleton';
+import { getProject } from '@cognite/cdf-utilities';
 import { Title, Body, Radio, Select } from '@cognite/cogs.js';
 import { FileLink, IdEither } from '@cognite/sdk';
 
@@ -122,7 +123,7 @@ export const FileDownloaderModalContent = ({
         const data = await sdk
           .post(
             // call post directly since getDownloadUrls() does not support extendedExpiration
-            `/api/v1/projects/${sdk.project}/files/downloadlink`,
+            `/api/v1/projects/${getProject()}/files/downloadlink`,
             {
               data: { items: req },
               params: { extendedExpiration: true },

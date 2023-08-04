@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components';
 
-import { Select } from '@cognite/cogs.js';
+import { Select, Micro } from '@cognite/cogs.js';
 
 export const SourceSelect = styled(Select)`
   width: 100%;
@@ -78,4 +78,20 @@ export const EventDetailBox = styled.section`
 
 export const MetadataWrapItem = styled.p`
   word-break: break-word;
+  margin-bottom: 1rem;
+`;
+
+export const MetadataRowWrapper = styled.p`
+  margin-bottom: 1rem;
+`;
+
+export const AssetDetailsWrapper = styled(Micro)`
+  &&& {
+    button {
+      font-size: 10px;
+    }
+    i {
+      width: 10px !important;
+    }
+  }
 `;

@@ -26,6 +26,7 @@ import {
   CollectionType,
   StorableNode,
 } from '@charts-app/models/chart/types';
+import { calcDeepCloneAndReplaceNodeElementsId } from '@charts-app/utils/calculations';
 import { getEntryColor } from '@charts-app/utils/colors';
 import { compareVersions } from 'compare-versions';
 import dayjs from 'dayjs';
@@ -162,11 +163,13 @@ export function removeSource(chart: Chart, sourceId: string): Chart {
 export function duplicateWorkflow(chart: Chart, wfId: string): Chart {
   const wf = chart.workflowCollection?.find((w) => w.id === wfId);
   if (wf) {
+    const clonedWf = calcDeepCloneAndReplaceNodeElementsId(wf);
+
     const newWf = {
-      ...wf,
+      ...clonedWf,
       id: uuidv4(),
-      name: `${wf.name} Copy`,
-      color: getEntryColor(chart.id, wf.id),
+      name: `${clonedWf.name} Copy`,
+      color: getEntryColor(chart.id, clonedWf.id),
     };
     return addWorkflow(chart, newWf);
   }

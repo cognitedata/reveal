@@ -4,7 +4,9 @@
     "allowJs": false,
     "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
-    "strict": true
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
   },
   "files": [],
   "include": [],
@@ -14,9 +16,6 @@
     },
     {
       "path": "./tsconfig.spec.json"
-    },
-    {
-      "path": "./.storybook/tsconfig.json"
     }
   ],
   "extends": "../../../tsconfig.base.json"

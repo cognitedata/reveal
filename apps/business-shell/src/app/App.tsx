@@ -3,6 +3,10 @@ import { BrowserRouter as Router } from 'react-router-dom';
 
 import { AppContextProvider } from '@data-exploration-components/context/AppContext';
 import {
+  Orientation,
+  OrientationProvider,
+} from '@fusion/shared/user-onboarding-components';
+import {
   QueryErrorResetBoundary,
   QueryClientProvider,
 } from '@tanstack/react-query';
@@ -15,6 +19,7 @@ import { SDKProvider } from '@cognite/sdk-provider';
 
 import { translations } from './common';
 import { useAuthContext } from './common/auth/AuthProvider';
+import { Onboarding } from './components/Onboarding';
 import { TopBar } from './components/topbar/TopBar';
 import { queryClient } from './queryClient';
 import { CoreRoutes } from './Routes';
@@ -30,43 +35,47 @@ function App() {
       defaultNamespace={LOCIZE_NAME_SPACE}
     >
       <SDKProvider sdk={client}>
-        <QueryClientProvider client={queryClient}>
-          <ReactQueryDevtools initialIsOpen={false} />
-          <ToastContainer />
-          <QueryErrorResetBoundary>
-            {({ reset }) => (
-              <ErrorBoundary
-                onReset={reset}
-                fallbackRender={({ resetErrorBoundary }) => (
-                  <div>
-                    There was an error!
-                    <Button onClick={() => resetErrorBoundary()}>
-                      Try again
-                    </Button>
-                  </div>
-                )}
-              >
-                <FlagProvider
-                  appName="business-portal"
-                  projectName={`${client.project}`}
-                  apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
-                  remoteAddress={window.location.hostname}
+        <OrientationProvider>
+          <Orientation />
+          <QueryClientProvider client={queryClient}>
+            <ReactQueryDevtools initialIsOpen={false} />
+            <ToastContainer />
+            <QueryErrorResetBoundary>
+              {({ reset }) => (
+                <ErrorBoundary
+                  onReset={reset}
+                  fallbackRender={({ resetErrorBoundary }) => (
+                    <div>
+                      There was an error!
+                      <Button onClick={() => resetErrorBoundary()}>
+                        Try again
+                      </Button>
+                    </div>
+                  )}
                 >
-                  <AppContextProvider
-                    flow="AZURE_AD"
-                    userInfo={<div />}
-                    isAdvancedFiltersEnabled
+                  <FlagProvider
+                    appName="business-portal"
+                    projectName={`${client.project}`}
+                    apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
+                    remoteAddress={window.location.hostname}
                   >
-                    <Router window={window}>
-                      <TopBar />
-                      <CoreRoutes />
-                    </Router>
-                  </AppContextProvider>
-                </FlagProvider>
-              </ErrorBoundary>
-            )}
-          </QueryErrorResetBoundary>
-        </QueryClientProvider>
+                    <AppContextProvider
+                      flow="AZURE_AD"
+                      userInfo={<div />}
+                      isAdvancedFiltersEnabled
+                    >
+                      <Router window={window}>
+                        <TopBar />
+                        <Onboarding />
+                        <CoreRoutes />
+                      </Router>
+                    </AppContextProvider>
+                  </FlagProvider>
+                </ErrorBoundary>
+              )}
+            </QueryErrorResetBoundary>
+          </QueryClientProvider>
+        </OrientationProvider>
       </SDKProvider>
     </I18nWrapper>
   );

@@ -1,10 +1,11 @@
 {
   "name": "access-management",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/access-management/src",
   "projectType": "application",
   "targets": {
     "build": {
-      "executor": "@nrwl/webpack:webpack",
+      "executor": "@nx/webpack:webpack",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/access-management",
@@ -42,6 +43,16 @@
           "runtimeChunk": false,
           "budgets": []
         },
+        "staging": {
+          "optimization": false,
+          "outputHashing": "all",
+          "sourceMap": true,
+          "extractCss": true,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "vendorChunk": false,
+          "budgets": []
+        },
         "production": {
           "optimization": false,
           "outputHashing": "all",
@@ -55,7 +66,7 @@
       }
     },
     "serve": {
-      "executor": "@nrwl/webpack:dev-server",
+      "executor": "@nx/webpack:dev-server",
       "options": {
         "buildTarget": "access-management:build",
         "hmr": true
@@ -66,7 +77,6 @@
           "hmr": true,
           "liveReload": true
         },
-
         "preview": {
           "buildTarget": "access-management:build:preview",
           "hmr": false
@@ -78,15 +88,34 @@
       },
       "defaultConfiguration": "development"
     },
+    "serve-static": {
+      "executor": "@nrwl/web:file-server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "access-management:build",
+        "port": 3010
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "access-management:build:development"
+        },
+        "preview": {
+          "buildTarget": "access-management:build:preview"
+        },
+        "production": {
+          "buildTarget": "access-management:build:production"
+        }
+      }
+    },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["apps/access-management/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/access-management"],
       "options": {
         "jestConfig": "apps/access-management/jest.config.ts",
@@ -94,5 +123,8 @@
       }
     }
   },
-  "tags": []
+  "tags": [],
+  "pipeline": {
+    "previewPackageName": "@cognite/cdf-access-management"
+  }
 }

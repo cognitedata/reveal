@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { Tooltip, Button } from '@cognite/cogs.js';
 
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
+// This could be replaced with AssetDetail.
 import { AssetPreview } from '@data-exploration-app/containers/Asset/AssetPreview';
 import { ResourceTabType } from '@data-exploration-app/containers/ThreeD/NodePreview';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';

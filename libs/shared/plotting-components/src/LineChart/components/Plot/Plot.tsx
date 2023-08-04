@@ -71,6 +71,7 @@ export interface PlotProps
   onUnhover?: (event: PlotMouseEvent) => void;
   onSelecting?: (event?: PlotSelectionEvent) => void;
   onSelected?: (event?: PlotSelectionEvent) => void;
+  inverted?: boolean;
 }
 
 export const Plot = memo(
@@ -93,6 +94,7 @@ export const Plot = memo(
         onSelecting,
         onSelected,
         onRangeChange,
+        inverted,
       },
       ref
     ) => {
@@ -163,11 +165,13 @@ export const Plot = memo(
             nticks: tickCount.y,
             range: presetRange?.y || range?.y,
             fixedrange: fixedRange.y,
+            automargin: true,
           },
           ...fixedRangeLayoutConfig,
           margin,
-          hovermode: getPlotlyHoverMode(config.hoverMode),
+          hovermode: getPlotlyHoverMode(config.hoverMode, plotData.length),
           autosize: responsive,
+          showlegend: false,
         }),
         [
           tickCount,
@@ -176,6 +180,7 @@ export const Plot = memo(
           fixedRange,
           fixedRangeLayoutConfig,
           margin,
+          plotData.length,
         ]
       );
 
@@ -238,6 +243,7 @@ export const Plot = memo(
           showticks={showTicks}
           cursor={cursor}
           variant={variant}
+          inverted={inverted}
         >
           <PlotlyPlot
             data={plotData}

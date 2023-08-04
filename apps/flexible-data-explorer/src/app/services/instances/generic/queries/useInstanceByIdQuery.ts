@@ -1,52 +1,77 @@
-import { useParams } from 'react-router-dom';
+import { useMemo } from 'react';
 
 import { useQuery } from '@tanstack/react-query';
 
+import {
+  useDataModelPathParams,
+  useInstancePathParams,
+} from '../../../../hooks/usePathParams';
 import { useFDM } from '../../../../providers/FDMProvider';
-import { useTypesDataModelQuery } from '../../../dataModels/query/useTypesDataModelQuery';
-import { extractFieldsFromSchema } from '../../../extractors';
 import { queryKeys } from '../../../queryKeys';
+import { DataModelV2, Instance } from '../../../types';
 
-export const useInstancesQuery = () => {
+export const useInstancesQuery = ({
+  instance,
+  model,
+}: {
+  instance?: Instance;
+  model?: DataModelV2;
+} = {}) => {
   const client = useFDM();
 
-  const { dataType, instanceSpace, externalId } = useParams();
+  const dataModelPathParam = useDataModelPathParams();
+  const instancePathParam = useInstancePathParams();
 
-  const { data: types } = useTypesDataModelQuery();
+  const { dataType, instanceSpace, externalId } = instance || instancePathParam;
+  const { dataModel, version, space } = model
+    ? { ...model, dataModel: model.externalId }
+    : dataModelPathParam;
 
-  return useQuery(
-    queryKeys.instance(
-      { dataType, instanceSpace, externalId },
-      types,
-      client.getHeaders
-    ),
+  const { data, ...rest } = useQuery(
+    queryKeys.instance({ dataType, instanceSpace, externalId }),
     async () => {
-      if (!(dataType && externalId && instanceSpace)) {
+      if (
+        !(
+          dataType &&
+          externalId &&
+          instanceSpace &&
+          dataModel &&
+          version &&
+          space
+        )
+      ) {
         return Promise.reject(new Error('Missing headers...'));
       }
 
-      const extractedFields = extractFieldsFromSchema(types, dataType);
-
-      // Fix me!
-      const fields = extractedFields
-        ?.filter(
-          (item) =>
-            client.isPrimitive(item.type.name) ||
-            item.type.name === 'JSONObject'
-        )
-        .map((item) => item.name);
-
-      if (!fields) {
-        return Promise.resolve();
-      }
-
-      const instance = await client.getInstanceById<any>(fields, {
-        instanceSpace,
+      return client.getInstancesById({
+        dataModel,
+        version,
+        space,
         dataType,
+        instanceSpace,
         externalId,
       });
-
-      return instance;
     }
   );
+
+  const transformedData = useMemo(() => {
+    if (!data) {
+      return undefined;
+    }
+
+    const fields = client.getTypesByDataType(dataType)?.fields || [];
+
+    return Object.keys(data).reduce((acc, key) => {
+      const field = fields.find(({ name }) => name === key);
+
+      const value = data[key];
+
+      return {
+        ...acc,
+        [field?.displayName || field?.name || key]: value,
+      };
+    }, {} as Record<string, any>);
+  }, [data, client, dataType]);
+
+  return { data: transformedData, rawData: data, ...rest };
 };

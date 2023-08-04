@@ -1,33 +1,36 @@
 import { useCallback, useMemo, useState } from 'react';
 
-import { DataModelTypeDefsType } from '@platypus/platypus-core';
+import { isArray, isObject } from 'lodash';
 import isEmpty from 'lodash/isEmpty';
 import take from 'lodash/take';
 
-import { Button, Skeleton } from '@cognite/cogs.js';
+import { Skeleton } from '@cognite/cogs.js';
 
+import { Button } from '../../../components/buttons/Button';
 import { SearchResults } from '../../../components/search/SearchResults';
 import { EMPTY_ARRAY } from '../../../constants/object';
 import { useNavigation } from '../../../hooks/useNavigation';
-import { useTranslation } from '../../../hooks/useTranslation';
-import { useTypesDataModelQuery } from '../../../services/dataModels/query/useTypesDataModelQuery';
+import { useFDM } from '../../../providers/FDMProvider';
 import { useSearchDataTypesQuery } from '../../../services/dataTypes/queries/useSearchDataTypesQuery';
+import { DataModelTypeDefsType } from '../../../services/types';
+import { InstancePreview } from '../../preview/InstancePreview';
 
 import { PAGE_SIZE } from './constants';
 
 export const GenericResults: React.FC<{ selectedDataType?: string }> = ({
   selectedDataType,
 }) => {
+  const client = useFDM();
   const { data: hits, isLoading } = useSearchDataTypesQuery();
-  const { data: types } = useTypesDataModelQuery();
 
   if (isLoading) {
     return <Skeleton.List lines={3} />;
   }
 
   if (selectedDataType) {
-    const type = types?.find((item) => item.name === selectedDataType);
-
+    const type = client.allDataTypes?.find(
+      (item) => item.name === selectedDataType
+    );
     return (
       <GenericResultItem
         dataType={selectedDataType}
@@ -40,7 +43,9 @@ export const GenericResults: React.FC<{ selectedDataType?: string }> = ({
   return (
     <>
       {Object.keys(hits || {}).map((dataType) => {
-        const type = types?.find((item) => item.name === dataType);
+        const type = client.allDataTypes?.find(
+          (item) => item.name === dataType
+        );
 
         return (
           <GenericResultItem
@@ -62,7 +67,8 @@ interface Props {
 }
 const GenericResultItem: React.FC<Props> = ({ dataType, values, type }) => {
   const navigate = useNavigation();
-  const { t } = useTranslation();
+  const client = useFDM();
+  const dataModel = client.getDataModelByDataType(dataType);
 
   const [page, setPage] = useState<number>(PAGE_SIZE);
 
@@ -79,9 +85,13 @@ const GenericResultItem: React.FC<Props> = ({ dataType, values, type }) => {
 
   const handleRowClick = useCallback(
     (row: any) => {
-      navigate.toInstancePage(dataType, row.space, row.externalId);
+      navigate.toInstancePage(dataType, row.space, row.externalId, {
+        dataModel: dataModel?.externalId,
+        space: dataModel?.space,
+        version: dataModel?.version,
+      });
     },
-    [navigate, dataType]
+    [navigate, dataType, dataModel]
   );
 
   return (
@@ -103,35 +113,50 @@ const GenericResultItem: React.FC<Props> = ({ dataType, values, type }) => {
               return acc;
             }
 
-            if (item[field.name] === undefined || item[field.name] === null) {
+            const value = item[field.name];
+
+            if (value === undefined || value === null) {
               return acc;
             }
 
-            return [...acc, { key: field.name, value: item[field.name] }];
+            if (isObject(value) || isArray(value)) {
+              return acc;
+            }
+
+            return [
+              ...acc,
+              { key: field.displayName || field.name, value: value },
+            ];
           }, [] as { key: string; value: string }[]);
 
           return (
-            <SearchResults.Item
+            <InstancePreview.Generic
               key={item.externalId}
-              name={item.name}
-              description={item.description}
-              properties={properties}
-              onClick={() => handleRowClick(item)}
-            />
+              dataModel={dataModel}
+              instance={{
+                dataType,
+                instanceSpace: item.space,
+                externalId: item.externalId,
+              }}
+            >
+              <SearchResults.Item
+                name={item.name || item.externalId}
+                description={item.description}
+                properties={properties}
+                onClick={() => handleRowClick(item)}
+              />
+            </InstancePreview.Generic>
           );
         })}
       </SearchResults.Body>
 
       <SearchResults.Footer>
-        <Button
+        <Button.ShowMore
           onClick={() => {
             setPage((prevState) => prevState + PAGE_SIZE);
           }}
-          type="secondary"
           hidden={normalizedValues.length <= page}
-        >
-          {t('GENERAL_SHOW_MORE')}
-        </Button>
+        />
       </SearchResults.Footer>
     </SearchResults>
   );

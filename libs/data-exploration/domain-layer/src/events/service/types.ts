@@ -1,6 +1,7 @@
 import { AggregateResponse, EventFilter } from '@cognite/sdk';
 
 import { AdvancedFilter } from '../../builders';
+import { Image360Data } from '../../threeD';
 import { AggregateFilters } from '../../types';
 import { EventsProperties } from '../internal';
 
@@ -53,7 +54,7 @@ export interface EventsMetadataAggregateResponse extends AggregateResponse {
 }
 
 export interface EventsMetadataAggregateResponseItems {
-  items: EventsMetadataAggregateResponse[];
+  items: Image360Data[];
 }
 
 export type EventProperty = 'type' | 'subtype' | 'dataSetId' | 'source';

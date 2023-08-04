@@ -1,13 +1,12 @@
 {
   "name": "industry-canvas-ui",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/industry-canvas-ui/src",
   "projectType": "application",
   "targets": {
     "build": {
-      "executor": "@nrwl/webpack:webpack",
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "executor": "@nx/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/industry-canvas-ui",
         "index": "apps/industry-canvas-ui/src/index.html",
@@ -16,9 +15,7 @@
         "vendorChunk": false,
         "commonChunk": false,
         "tsConfig": "apps/industry-canvas-ui/tsconfig.app.json",
-        "assets": [
-          "apps/industry-canvas-ui/src/assets"
-        ],
+        "assets": ["apps/industry-canvas-ui/src/assets"],
         "styles": [],
         "scripts": [],
         "webpackConfig": "apps/industry-canvas-ui/webpack-config.js"
@@ -46,6 +43,17 @@
           "runtimeChunk": false,
           "budgets": []
         },
+        "staging": {
+          "optimization": false,
+          "outputHashing": "all",
+          "sourceMap": true,
+          "extractCss": true,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "vendorChunk": false,
+          "runtimeChunk": false,
+          "budgets": []
+        },
         "production": {
           "optimization": false,
           "outputHashing": "all",
@@ -59,7 +67,7 @@
       }
     },
     "serve": {
-      "executor": "@nrwl/webpack:dev-server",
+      "executor": "@nx/webpack:dev-server",
       "options": {
         "buildTarget": "industry-canvas-ui:build",
         "hmr": true
@@ -68,7 +76,8 @@
         "development": {
           "buildTarget": "industry-canvas-ui:build:development",
           "hmr": true,
-          "liveReload": true
+          "liveReload": true,
+          "allowedHosts": ".dev.fusion.cogniteapp.com,apps-staging.cognite.com"
         },
         "preview": {
           "buildTarget": "industry-canvas-ui:build:preview",
@@ -81,17 +90,35 @@
       },
       "defaultConfiguration": "development"
     },
-    "lint": {
-      "executor": "@nrwl/linter:eslint",
-      "outputs": [
-        "{options.outputFile}"
-      ],
+    "serve-static": {
+      "executor": "@nrwl/web:file-server",
+      "defaultConfiguration": "development",
       "options": {
-        "lintFilePatterns": [
-          "apps/industry-canvas-ui/**/*.{ts,tsx,js,jsx}"
-        ]
+        "buildTarget": "industry-canvas-ui:build",
+        "port": 3010
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "industry-canvas-ui:build:development"
+        },
+        "preview": {
+          "buildTarget": "industry-canvas-ui:build:preview"
+        },
+        "production": {
+          "buildTarget": "industry-canvas-ui:build:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/industry-canvas-ui/**/*.{ts,tsx,js,jsx}"]
       }
     }
   },
-  "tags": []
+  "tags": [],
+  "pipeline": {
+    "previewPackageName": "@cognite/cdf-industry-canvas-ui"
+  }
 }

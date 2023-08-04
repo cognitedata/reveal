@@ -13,6 +13,12 @@ type AppContainerProps = {
 export function AppContainer({ children, store }: AppContainerProps) {
   return (
     <ReduxProvider store={store}>
+      {/* This is a hack to make the UI work in mock mode */}
+      <style>{`
+      :root {
+        --cdf-ui-navigation-height: 0px;
+        }
+      `}</style>
       <AuthContainerMock>{children}</AuthContainerMock>
     </ReduxProvider>
   );

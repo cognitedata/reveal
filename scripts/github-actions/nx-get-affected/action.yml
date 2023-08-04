@@ -1,5 +1,24 @@
-name: 'Get affected'
-description: 'Fetch changes based on nx'
+name: 'Get affected projects'
+description: 'Get affected projects'
 runs:
   using: node16
   main: index.js
+inputs:
+  base:
+    description: 'Base commit'
+    default: 'origin/master'
+  head:
+    description: 'Head commit'
+    default: 'HEAD'
+  target:
+    description: 'Target'
+    default: 'build'
+  projects:
+    description: 'Projects filter. ref:https://nx.dev/packages/nx/documents/show#projects'
+  exclude:
+    description: 'Which projects to exclude. ref: https://nx.dev/packages/nx/documents/show#exclude'
+  isRelease:
+    description: 'Is the action running in a release branch? [OPTIONAL]'
+    default: 'false'
+  branchName:
+    description: 'Branch name where the action is running [OPTIONAL]'

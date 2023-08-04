@@ -1,15 +1,9 @@
-import {
-  Routes,
-  Route,
-  useParams,
-  useNavigate,
-  useMatch,
-} from 'react-router-dom';
+import { Routes, Route, useParams, useNavigate } from 'react-router-dom';
 
 import styled from 'styled-components';
 
 import { useTranslation } from '@access-management/common/i18n';
-import { useAuthConfiguration, usePermissions } from '@access-management/hooks';
+import { usePermissions } from '@access-management/hooks';
 import APIKeys from '@access-management/pages/APIKeys';
 import Groups from '@access-management/pages/Groups';
 import IDP from '@access-management/pages/IDP';
@@ -33,26 +27,33 @@ export default function () {
   const isFetching = useIsFetching();
   const isMutating = useIsMutating();
 
-  const { data: projectsRead } = usePermissions('projectsAcl', 'READ');
-  const { data: groupsRead } = usePermissions('groupsAcl', 'LIST');
-  const { data: usersRead } = usePermissions('usersAcl', 'LIST');
-  const { data: secCatRead } = usePermissions('securityCategoriesAcl', 'LIST');
-  const { data: keysRead } = usePermissions('apikeysAcl', 'LIST');
+  const { data: projectsRead, isFetched: isProjectsFetched } = usePermissions(
+    'projectsAcl',
+    'READ'
+  );
+  const { data: groupsRead, isFetched: isGroupsFetched } = usePermissions(
+    'groupsAcl',
+    'LIST'
+  );
+  const { data: secCatRead, isFetched: isSecCatReacFetched } = usePermissions(
+    'securityCategoriesAcl',
+    'LIST'
+  );
 
   const params = useParams<{
     tenant: string;
     path: string;
+    '*': string;
   }>();
-  const page = useMatch(`/${params.tenant}/${params.path}/:page`)?.params.page;
-  const navigate = useNavigate();
 
-  const { data: authConfiguration, isFetched } = useAuthConfiguration();
+  const page = params?.['*'] || 'groups';
+  const navigate = useNavigate();
 
   const env = getCluster()?.split('.')[0];
   const isUnsupportedCluster =
     env === 'sapc-01' || env === 'openfield' || env === 'okd-dev-01';
 
-  if (!isFetched) {
+  if (!isProjectsFetched || !isGroupsFetched || !isSecCatReacFetched) {
     return <Loader />;
   }
 
@@ -82,16 +83,6 @@ export default function () {
         <Menu.Item disabled={!groupsRead} key="groups">
           {t('groups')}
         </Menu.Item>
-        {authConfiguration?.isLegacyLoginFlowAndApiKeysEnabled && (
-          <Menu.Item key="service-accounts" disabled={!usersRead}>
-            {t('service-accounts')}
-          </Menu.Item>
-        )}
-        {authConfiguration?.isLegacyLoginFlowAndApiKeysEnabled && (
-          <Menu.Item key="api-keys" disabled={!keysRead}>
-            {t('api-keys')}
-          </Menu.Item>
-        )}
         <Menu.Item key="security-categories" disabled={!secCatRead}>
           {t('security-categories')}
         </Menu.Item>
@@ -101,21 +92,16 @@ export default function () {
         {!isUnsupportedCluster && (
           <Menu.Item key="user-profiles">{t('user-profiles')}</Menu.Item>
         )}
-        {authConfiguration?.isLegacyLoginFlowAndApiKeysEnabled && (
-          <Menu.Item key="idp" disabled={!projectsRead}>
-            {t('identity-provider-configuration')}
-          </Menu.Item>
-        )}
       </Menu>
       <Routes>
-        <Route path="" element={<Groups />} />
-        <Route path="groups" element={<Groups />} />
-        <Route path="api-keys" element={<APIKeys />} />
-        <Route path="idp" element={<IDP />} />
-        <Route path="oidc" element={<OIDC />} />
-        <Route path="user-profiles" element={<UserProfiles />} />
-        <Route path="security-categories" element={<SecurityCategories />} />
-        <Route path="service-accounts" element={<ServiceAccounts />} />
+        <Route index element={<Groups />} />
+        <Route path="/groups" element={<Groups />} />
+        <Route path="/api-keys" element={<APIKeys />} />
+        <Route path="/idp" element={<IDP />} />
+        <Route path="/oidc" element={<OIDC />} />
+        <Route path="/user-profiles" element={<UserProfiles />} />
+        <Route path="/security-categories" element={<SecurityCategories />} />
+        <Route path="/service-accounts" element={<ServiceAccounts />} />
       </Routes>
     </StyledAppContainerDiv>
   );

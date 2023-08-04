@@ -35,6 +35,7 @@ export const AssetSelectFilter = <TFilter,>({
   options,
   isError,
   isLoading,
+  ...rest
 }: ByAssetFilterProps<TFilter>) => {
   const { t } = useTranslation();
   const trackUsage = useMetrics();
@@ -66,6 +67,7 @@ export const AssetSelectFilter = <TFilter,>({
       })}
     >
       <MultiSelectFilter<number>
+        {...rest}
         label={t('ASSET', 'Asset')}
         isMulti
         isClearable

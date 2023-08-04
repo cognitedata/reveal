@@ -3,20 +3,23 @@ import {
   Outlet,
   Routes as ReactRoutes,
   Route,
-  useLocation,
+  BrowserRouter,
 } from 'react-router-dom';
 
 import { DRAG_DROP_PORTAL_CLASS } from '@data-exploration/components';
 
+import { getProject, isUsingUnifiedSignin } from '@cognite/cdf-utilities';
+
 import { Spinner } from './components/Spinner/Spinner';
-import { TOKENS } from './di';
-import { isFDMv3 } from './flags';
 import { getContainer } from './GlobalStyles';
 import { useFusionQuery } from './hooks/useFusionQuery';
-import { useInjection } from './hooks/useInjection';
 import { DataModelsPage } from './modules/data-models/DataModelsPage';
 import { DataModel } from './modules/solution/DataModel';
 import zIndex from './utils/zIndex';
+
+// Globally defined global
+// GraphiQL package needs this to be run correctly
+(window as any).global = window;
 
 const DataModelSubRoutes = () => (
   <ReactRoutes>
@@ -41,21 +44,11 @@ const DataModelSubRoutes = () => (
   </ReactRoutes>
 );
 
-const Routes = () => {
+interface RoutesWrapperProps {
+  children: React.ReactNode;
+}
+const RoutesWrapper = ({ children }: RoutesWrapperProps) => {
   useFusionQuery();
-
-  const location = useLocation();
-  const fdmClient = useInjection(TOKENS.fdmClient);
-
-  useEffect(() => {
-    if (
-      (fdmClient.version === 'beta' && isFDMv3()) ||
-      (fdmClient.version === 'stable' && !isFDMv3())
-    ) {
-      window.location.reload();
-    }
-  }, [location.pathname, fdmClient]);
-
   useEffect(() => {
     const dragDropPortal: HTMLElement = document.createElement('div');
     dragDropPortal.classList.add(DRAG_DROP_PORTAL_CLASS);
@@ -63,20 +56,28 @@ const Routes = () => {
     dragDropPortal.style.position = 'absolute';
     (getContainer() || document.body).appendChild(dragDropPortal);
   }, []);
+  return <>{children}</>;
+};
+const Routes = () => {
+  const tenant = isUsingUnifiedSignin() ? `/cdf/${getProject()}` : getProject();
 
   return (
-    <React.Suspense fallback={<Spinner />}>
-      <ReactRoutes>
-        <Route path="/" element={<Outlet />}>
-          <Route index element={<DataModelsPage />} />
-          <Route path="data-models/*" element={<DataModelSubRoutes />} />
-          <Route
-            path="data-models-previous/*"
-            element={<DataModelSubRoutes />}
-          />
-        </Route>
-      </ReactRoutes>
-    </React.Suspense>
+    <BrowserRouter
+      basename={tenant}
+      window={window}
+      children={
+        <RoutesWrapper>
+          <React.Suspense fallback={<Spinner />}>
+            <ReactRoutes>
+              <Route path="/" element={<Outlet />}>
+                <Route index element={<DataModelsPage />} />
+                <Route path="data-models/*" element={<DataModelSubRoutes />} />
+              </Route>
+            </ReactRoutes>
+          </React.Suspense>
+        </RoutesWrapper>
+      }
+    />
   );
 };
 

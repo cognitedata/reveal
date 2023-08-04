@@ -5,12 +5,14 @@ import styled from 'styled-components';
 import { Body, Title } from '@cognite/cogs.js';
 
 interface Props {
-  title?: string;
+  header?: string;
+  title?: string | React.ReactNode;
   subtitle?: string;
   alignActions?: 'left' | 'right';
 }
 
 export const WidgetHeader: React.FC<PropsWithChildren<Props>> = ({
+  header,
   title,
   subtitle,
   children,
@@ -21,8 +23,9 @@ export const WidgetHeader: React.FC<PropsWithChildren<Props>> = ({
 
   return (
     <Container>
-      {(title || subtitle) && (
+      {(header || title || subtitle) && (
         <Content>
+          <HeaderText>{header}</HeaderText>
           <Title level={6}>{title}</Title>
           <Body level={6}>{subtitle}</Body>
         </Content>
@@ -51,3 +54,7 @@ const Actions = styled.div<{ align: 'left' | 'right' }>`
 `;
 
 const Content = styled.span``;
+
+const HeaderText = styled(Body)`
+  font-size: 12px;
+`;

@@ -1,15 +1,9 @@
-import React, {
-  useCallback,
-  useState,
-  useEffect,
-  useRef,
-  useMemo,
-} from 'react';
+import { useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import moment from 'moment';
+import { LexicalEditor, $getRoot } from 'lexical';
 import { v4 as uuid } from 'uuid';
 
 import {
@@ -19,121 +13,94 @@ import {
   Divider,
   Flex,
   Icon,
-  Textarea,
-  Overline,
   Title,
-  Tooltip,
-  Chip,
-  Input,
 } from '@cognite/cogs.js';
 
-import { useCommentDeleteMutation } from '../../hooks/use-mutation/useCommentDeleteMutation';
-import { useCommentSaveMutation } from '../../hooks/use-mutation/useCommentSaveMutation';
-import { useGetCommentByIdQuery } from '../../hooks/use-query/useGetCommentByIdQuery';
 import { useUsers } from '../../hooks/use-query/useUsers';
-import { Comment, CommentAnnotation } from '../../types';
+import {
+  useCommentsDeleteMutation,
+  useCommentsUpsertMutation,
+  useListCommentsQuery,
+} from '../../services/comments/hooks';
+import {
+  Comment,
+  CommentTargetType,
+  SerializedComment,
+} from '../../services/comments/types';
+import { getTextContentFromEditorState } from '../../services/comments/utils';
+import { CommentAnnotation } from '../../types';
 import { UserProfile, useUserProfile } from '../../UserProfileProvider';
-// match alphanumeric and "." and break on spaces since an "@" character
-const UserTagRegex = /(@\w+(?:\.\w+)+)+(?!\w)/g;
+import { CommentDisplay } from '../comment/CommentDisplay';
+import { CommentEditor } from '../comment/CommentEditor';
 
-// match an @ with no text after it closest to the end of the text.
-const ReplaceUserRegex = /@(?!\w)( |$)/;
-
-export const CommentTooltipCore: React.FC<{
-  comment: Comment;
+type CommentTooltipCoreProps = {
+  comments: Comment[];
+  commentExternalId: string;
   users: UserProfile[];
   userIdentifier: string;
   onCreate: (
-    comment: Omit<Comment, 'createdTime' | 'lastUpdatedTime' | 'subComments'>
+    comment: Omit<SerializedComment, 'lastUpdatedTime' | 'createdTime'>[]
   ) => void;
-  onDelete: (comment: Comment) => void;
-}> = ({ comment, onCreate, userIdentifier, onDelete, users }) => {
+  onDelete: (commentId: string) => void;
+};
+export const CommentTooltipCore = ({
+  comments,
+  onCreate,
+  userIdentifier,
+  commentExternalId,
+  // onDelete,
+  users,
+}: CommentTooltipCoreProps) => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [userSearch, setUserSearch] = useState('');
+  const { userProfile } = useUserProfile();
   const commentsContainerRef = useRef<HTMLDivElement>(null);
-  const commentFieldRef = useRef<HTMLTextAreaElement>(null);
+  const canvasId = searchParams.get('canvasId');
+  const commentTooltipId = searchParams.get('commentTooltipId');
+  const setOpen = (id: string | null) =>
+    setSearchParams((currentParams) => {
+      if (id !== null) {
+        currentParams.set('commentTooltipId', id);
+      } else {
+        currentParams.delete('commentTooltipId');
+      }
+      return currentParams;
+    });
 
-  const setOpen = useCallback(
-    (state: boolean) => {
-      setSearchParams((currentParams) => {
-        currentParams.set('openedComment', state ? comment.externalId : '');
-        return currentParams;
-      });
-    },
-    [setSearchParams, comment]
-  );
-
-  const getAuthorById = useCallback(
-    (userId: string) => {
-      return (
-        users?.find((el) => el.userIdentifier === userId) || {
-          displayName: 'Unknown user',
-        }
-      );
-    },
-    [users]
-  );
-
-  const threadAuthors = useMemo(
-    () => [
-      ...new Set(
-        (comment.subComments || []).map((el) => getAuthorById(el.author))
-      ),
-    ],
-    [comment, getAuthorById]
-  );
-
-  const currentUser = useMemo(
-    () => getAuthorById(userIdentifier),
-    [getAuthorById, userIdentifier]
-  );
-
-  const visibleUsers = useMemo(() => {
-    return userSearch.trim().length > 0
-      ? users.filter((el) =>
-          (el.displayName || '')
-            .toLowerCase()
-            .includes(userSearch.toLowerCase())
-        )
-      : users;
-  }, [users, userSearch]);
-
-  const open =
-    searchParams.get('openedComment') === comment.externalId ||
-    (comment.subComments || []).length === 0;
-
-  const [isUsersTooltipOpen, setIsUsersTooltipOpen] = useState(false);
-  const [newComment, setNewComment] = useState('');
-
+  const isTooltipOpen =
+    searchParams.get('commentTooltipId') === commentExternalId;
+  const editorRef = useRef<LexicalEditor>(null);
   useEffect(() => {
-    if (open && commentsContainerRef.current) {
+    if (isTooltipOpen && commentsContainerRef.current) {
       commentsContainerRef.current.scrollTop =
         commentsContainerRef.current.scrollHeight;
     }
-  }, [open, newComment]);
+  }, [isTooltipOpen]);
 
   const createNewComment = () => {
-    setOpen(true);
-    onCreate({
-      text: newComment,
-      author: userIdentifier,
-      externalId: uuid(),
-      thread: comment ? { externalId: comment.externalId } : undefined,
-      canvas: comment.canvas
-        ? { externalId: comment.canvas.externalId }
-        : undefined,
-      x: comment.x,
-      y: comment.y,
-    });
+    if (editorRef.current !== null) {
+      const editorState = editorRef.current?.getEditorState();
 
-    setNewComment('');
-    commentFieldRef.current?.focus();
+      onCreate([
+        {
+          text: getTextContentFromEditorState(editorState),
+          createdById: userIdentifier,
+          externalId: uuid(),
+          targetType: CommentTargetType.CANVAS,
+          targetId: canvasId ?? undefined,
+          parentComment: { externalId: commentTooltipId ?? '' },
+        },
+      ]);
+
+      editorRef.current?.update(() => {
+        $getRoot().clear();
+      });
+    }
   };
 
-  if (open) {
+  if (isTooltipOpen) {
     return (
       <CommentWrapper>
-        <div className="indicator" onClick={() => setOpen(false)} />
+        <div className="indicator" onClick={() => setOpen(null)} />
         <div className="line" />
         <Flex className="comment" direction="column">
           <Flex gap={16} alignItems="center" className="comment-header">
@@ -143,10 +110,7 @@ export const CommentTooltipCore: React.FC<{
             </Title>
             <Button
               onClick={() => {
-                setOpen(false);
-                if (!comment.subComments || comment.subComments.length === 0) {
-                  onDelete(comment);
-                }
+                setOpen(null);
               }}
               icon="CloseLarge"
               type="ghost"
@@ -154,120 +118,31 @@ export const CommentTooltipCore: React.FC<{
             />
           </Flex>
           <Divider />
-          <CommentsContainer ref={commentsContainerRef}>
-            {comment &&
-              (comment?.subComments || []).map((el) => (
-                <>
-                  <Flex className="comment-item" key={el.externalId} gap={16}>
-                    <Avatar text={getAuthorById(el.author).displayName} />
-                    <Flex direction="column" style={{ flex: 1 }} gap={8}>
-                      <Flex gap={8}>
-                        <Overline level={3} style={{ flex: 1 }}>
-                          {getAuthorById(el.author).displayName}
-                        </Overline>
-                        <Overline level={3} muted>
-                          {moment(el.createdTime).fromNow()}
-                        </Overline>
-                      </Flex>
-                      {renderCommentText(el.text, users)}
-                    </Flex>
-                  </Flex>
-                  <Divider key={`${el.externalId}-divider`} />
-                </>
-              ))}
+          <CommentsContainer>
+            <CommentDisplay
+              commentList={comments}
+              users={users}
+              sortOrder="ASC"
+            />
           </CommentsContainer>
           <Flex className="comment-input" gap={16}>
-            <Avatar text={currentUser?.displayName} />
+            <Avatar text={userProfile.displayName} />
             <Flex style={{ flex: 1 }} gap={8} direction="column">
-              <Tooltip
-                inverted
-                interactive
-                elevated
-                disabled={!users || users.length === 0}
-                visible={isUsersTooltipOpen}
-                content={
-                  <Flex direction="column" gap={8}>
-                    <Input
-                      onChange={(ev) => setUserSearch(ev.target.value)}
-                      value={userSearch}
-                      placeholder="Search for user..."
-                    />
-                    <UsersTooltip direction="column" gap={4}>
-                      {(visibleUsers || [])
-                        .filter((el) => el.displayName)
-                        .map((el) => (
-                          <Flex
-                            style={{ width: '100%', cursor: 'pointer' }}
-                            gap={4}
-                            alignItems="center"
-                            onClick={() => {
-                              // replace @ with correct username
-                              setNewComment((currComment) =>
-                                currComment.replace(
-                                  ReplaceUserRegex,
-                                  `@${convertDisplayNameToTaggableName(
-                                    el.displayName!
-                                  )} `
-                                )
-                              );
-                              setIsUsersTooltipOpen(false);
-                            }}
-                          >
-                            <Avatar text={el.displayName} />
-                            <Body level={2}>
-                              {convertDisplayNameToTaggableName(
-                                el.displayName!
-                              )}
-                            </Body>
-                          </Flex>
-                        ))}
-                    </UsersTooltip>
-                  </Flex>
-                }
-              >
-                <Textarea
-                  placeholder="Write a comment..."
-                  ref={commentFieldRef}
-                  fullWidth
-                  value={newComment}
-                  onKeyDown={(ev) => {
-                    // TODO this is all a hack!
-                    if (ev.key === '@') {
-                      setIsUsersTooltipOpen(true);
-                      return;
-                    }
-
-                    if (
-                      ev.key === 'Enter' &&
-                      !ev.shiftKey &&
-                      newComment.trim().length > 0
-                    ) {
-                      createNewComment();
-                      return;
-                    }
-                    setIsUsersTooltipOpen(false);
-                  }}
-                  onChange={(ev) => setNewComment(ev.target.value)}
-                />
-              </Tooltip>
+              <CommentEditor users={users} ref={editorRef} />
               <Flex gap={8} direction="row-reverse">
-                <Button
-                  type="primary"
-                  disabled={newComment.trim().length === 0}
-                  onClick={() => createNewComment()}
-                >
+                <Button type="primary" onClick={() => createNewComment()}>
                   Send
                 </Button>
-                <Button onClick={() => setNewComment('')}>Cancel</Button>
+                <Button onClick={() => setOpen(null)}>Cancel</Button>
                 <div style={{ flex: 1 }} />
-                {comment.author === userIdentifier && (
+                {/* {comment.createdBy?.userIdentifier === userIdentifier && (
                   <Button
                     type="ghost-destructive"
-                    onClick={() => onDelete(comment)}
+                    onClick={() => onDelete(comment.externalId)}
                   >
                     Delete
                   </Button>
-                )}
+                )} */}
               </Flex>
             </Flex>
           </Flex>
@@ -278,46 +153,51 @@ export const CommentTooltipCore: React.FC<{
   return (
     <CommentMarker
       alignItems="center"
-      onClick={() => setOpen(true)}
+      onClick={() => setOpen(commentExternalId)}
       justifyContent="center"
     >
       <Body strong level={3} style={{ color: 'white', textAlign: 'center' }}>
-        {threadAuthors.length === 1
-          ? getInitials(threadAuthors[0].displayName || '')
-          : threadAuthors.length || ''}
+        {comments.length &&
+          getInitials(comments[0].createdBy?.displayName || '')}
       </Body>
     </CommentMarker>
   );
 };
-export const CommentTooltip: React.FC<{ comment: CommentAnnotation }> = ({
+export const CommentTooltip = ({
   comment: { id: commentExternalId },
+}: {
+  comment: CommentAnnotation;
 }) => {
   const {
     userProfile: { userIdentifier },
   } = useUserProfile();
+  const [searchParams] = useSearchParams();
+  const canvasId = searchParams.get('canvasId');
 
-  const { data: comment } = useGetCommentByIdQuery(commentExternalId);
+  const { comments } = useListCommentsQuery({
+    targetType: CommentTargetType.CANVAS,
+    targetId: canvasId ?? undefined,
+    parentComment: { externalId: commentExternalId },
+  });
 
-  const { mutate: saveComment } = useCommentSaveMutation();
-  const { mutate: deleteComment } = useCommentDeleteMutation();
+  const { mutate: upsertComment } = useCommentsUpsertMutation();
+  const { mutate: deleteComment } = useCommentsDeleteMutation();
 
   const { data: users = [] } = useUsers();
 
   // if someone else's draft ignore!
-  if (
-    comment === undefined ||
-    (comment.subComments.length === 0 && comment.author !== userIdentifier)
-  ) {
+  if (commentExternalId === undefined) {
     return <></>;
   }
 
   return (
     <CommentTooltipCore
-      comment={comment}
-      users={users || []}
-      userIdentifier={userIdentifier || ''}
-      onCreate={(newComment) => saveComment(newComment)}
-      onDelete={(toDeleteComment) => deleteComment(toDeleteComment)}
+      comments={comments}
+      commentExternalId={commentExternalId}
+      users={users}
+      userIdentifier={userIdentifier}
+      onCreate={(newComment) => upsertComment(newComment)}
+      onDelete={(toDeleteComment) => deleteComment([toDeleteComment])}
     />
   );
 };
@@ -333,11 +213,6 @@ const CommentMarker = styled(Flex)`
   height: 30px;
   color: white;
   padding: 5px 6px;
-`;
-
-const CommentsContainer = styled.div`
-  max-height: 350px;
-  overflow-x: scroll;
 `;
 
 const CommentWrapper = styled(Flex)`
@@ -379,24 +254,9 @@ const CommentWrapper = styled(Flex)`
   }
 `;
 
-const UsersTooltip = styled(Flex)`
-  overflow: auto;
-  max-height: 200px;
-  flex: 1;
-
-  && > div {
-    transition: all 0.2s;
-    padding: 6px;
-    border-radius: 4px;
-    width: 100%;
-    flex: 1;
-  }
-  && > div:hover {
-    background: rgba(83, 88, 127, 0.12);
-  }
-`;
-const NameTag = styled(Chip)`
-  margin-top: -2px;
+const CommentsContainer = styled.div`
+  max-height: 350px;
+  overflow-x: scroll;
 `;
 
 const getInitials = (name: string) =>
@@ -406,41 +266,3 @@ const getInitials = (name: string) =>
     .map((el) => el.charAt(0))
     .join('')
     .toUpperCase();
-
-const wrapRegexTextWithComponent = (
-  text: string,
-  regex: RegExp,
-  renderer: (text: string) => React.ReactNode
-) => {
-  const textArray = text.split(regex);
-  return textArray.map((str) => {
-    if (regex.test(str)) {
-      return renderer(str);
-    }
-    return str;
-  });
-};
-
-const convertDisplayNameToTaggableName = (text: string) => {
-  return text?.replaceAll(' ', '.');
-};
-
-const renderCommentText = (text: string, users: UserProfile[]) => (
-  <Body style={{ lineHeight: 1.6 }} level={2}>
-    {/** Convert parts of the text into a <Chip> for tagged users */}
-    {wrapRegexTextWithComponent(text, UserTagRegex, (match) => {
-      if (
-        users?.some(
-          (user) =>
-            convertDisplayNameToTaggableName(user.displayName || '') ===
-            match.substring(1)
-        )
-      ) {
-        return (
-          <NameTag label={match} hideTooltip size="small" type="neutral" />
-        );
-      }
-      return match;
-    })}
-  </Body>
-);

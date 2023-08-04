@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 
 import difference from 'lodash/difference';
+import isArray from 'lodash/isArray';
 
 import { PlotRange } from '../LineChart';
 
@@ -19,9 +20,10 @@ import {
 } from './types';
 import { formatDateRangeForAxis } from './utils/formatDateRangeForAxis';
 import { getChartByVariant } from './utils/getChartByVariant';
+import { getDataRevision } from './utils/getDataRevision';
 
 export const TimeseriesChart: React.FC<TimeseriesChartProps> = ({
-  timeseriesId,
+  timeseries: timeseriesItems,
   variant = 'large',
   numberOfPoints,
   quickTimePeriodOptions = [],
@@ -33,13 +35,21 @@ export const TimeseriesChart: React.FC<TimeseriesChartProps> = ({
   onChangeDateRange,
   hideActions,
   styles,
+  inverted,
 }) => {
   const [selectedTimePeriod, setSelectedTimePeriod] = useState<TimePeriod>();
   const [dateRange, setDateRange] = useState<DateRange>(dateRangeProp);
 
+  const timeseries = useMemo(() => {
+    if (isArray(timeseriesItems)) {
+      return timeseriesItems;
+    }
+    return [timeseriesItems];
+  }, [timeseriesItems]);
+
   const { data, metadata, isLoading } = useTimeseriesChartData({
     query: {
-      timeseriesId,
+      timeseries,
       dateRange,
       numberOfPoints,
     },
@@ -80,7 +90,7 @@ export const TimeseriesChart: React.FC<TimeseriesChartProps> = ({
   useEffect(() => {
     setSelectedTimePeriod(undefined);
     setDateRange(dateRangeProp);
-  }, [dateRangeProp, timeseriesId]);
+  }, [dateRangeProp, timeseries]);
 
   const Chart = getChartByVariant(variant);
 
@@ -88,7 +98,7 @@ export const TimeseriesChart: React.FC<TimeseriesChartProps> = ({
     <Chart
       data={data}
       metadata={metadata}
-      dataRevision={timeseriesId}
+      dataRevision={getDataRevision(timeseries)}
       isLoading={isLoading}
       range={chartRange}
       style={{ height, ...styles }}
@@ -111,11 +121,12 @@ export const TimeseriesChart: React.FC<TimeseriesChartProps> = ({
           ? undefined
           : () => [
               <OpenInChartsButton
-                timeseriesId={timeseriesId}
+                timeseries={timeseries}
                 dateRange={dateRange}
               />,
             ]
       }
+      inverted={inverted}
     />
   );
 };

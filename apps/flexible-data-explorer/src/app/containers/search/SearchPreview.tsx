@@ -2,16 +2,29 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { RecentlyViewedList } from '../lists/recentlyViewed/RecentlyViewedList';
+import { SearchPreviewActions } from './SearchPreviewActions';
+import { SearchPreviewRecentlyViewed } from './SearchPreviewRecentlyViewed';
 
 interface Props {
+  query?: string;
   onSelectionClick?: () => void;
 }
 export const SearchPreview: React.FC<Props> = React.memo(
-  ({ onSelectionClick }) => {
+  ({ query, onSelectionClick }) => {
+    if (query) {
+      return (
+        <Container>
+          <SearchPreviewActions
+            query={query}
+            onSelectionClick={onSelectionClick}
+          />
+        </Container>
+      );
+    }
+
     return (
       <Container>
-        <RecentlyViewedList onSelectionClick={onSelectionClick} hideShadow />
+        <SearchPreviewRecentlyViewed onSelectionClick={onSelectionClick} />
       </Container>
     );
   }

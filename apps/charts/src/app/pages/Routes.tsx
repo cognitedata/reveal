@@ -10,7 +10,11 @@ import { identifyUserForMetrics } from '@charts-app/services/metrics';
 import * as Sentry from '@sentry/react';
 
 import { getFlow } from '@cognite/auth-utils';
-import { getProject, getCluster } from '@cognite/cdf-utilities';
+import {
+  getProject,
+  getCluster,
+  isUsingUnifiedSignin,
+} from '@cognite/cdf-utilities';
 import { Loader, toast } from '@cognite/cogs.js';
 import { parseEnvFromCluster } from '@cognite/login-utils';
 
@@ -19,16 +23,6 @@ import ChartViewPage from './ChartViewPage/ChartViewPage';
 import FileViewPage from './FileViewPage/FileViewPage';
 import TenantSelectorView from './TenantSelector/TenantSelector';
 import UserProfile from './UserProfile/UserProfile';
-
-/**
- * Fusion and Legacy Charts have slightly different paths.
- * Fusion includes :subAppPath because it needs to be aware which subapp is active.
- * Legacy Charts is only Charts so it does not have this param.
- */
-const getPath = (basePath = '') => {
-  const newPath = `/:project/:subAppPath/${basePath}`;
-  return newPath;
-};
 
 type PropsRouteWithFirebase = {
   element: () => JSX.Element;
@@ -76,7 +70,7 @@ const RouteWithFirebase = ({
   }
   return (
     <PageLayout className="PageLayout">
-      {enableSecondaryNavBar && <SecondaryTopBar />}
+      {enableSecondaryNavBar ? <SecondaryTopBar /> : null}
       <main>
         <Component />
       </main>
@@ -87,25 +81,31 @@ const RouteWithFirebase = ({
 const RouteWithSentry = Sentry.withSentryReactRouterV6Routing(Route);
 
 const Routes = () => {
+  const baseUrl = isUsingUnifiedSignin()
+    ? `/cdf/:project/:subAppPath`
+    : '/:project/:subAppPath';
   return (
     <ReactRoutes>
-      <RouteWithSentry path="/" element={<TenantSelectorView />} />
       <RouteWithSentry
-        path={getPath()}
+        path="/"
+        element={isUsingUnifiedSignin() ? null : <TenantSelectorView />}
+      />
+      <RouteWithSentry
+        path={`${baseUrl}`}
         element={<RouteWithFirebase element={ChartListPage} />}
       />
       <RouteWithSentry
-        path={getPath('user')}
+        path={`${baseUrl}/user}`}
         element={<RouteWithFirebase element={UserProfile} />}
       />
       <RouteWithSentry
-        path={getPath(':chartId')}
+        path={`${baseUrl}/:chartId`}
         element={
           <RouteWithFirebase element={ChartViewPage} enableSecondaryNavBar />
         }
       />
       <RouteWithSentry
-        path={getPath(':chartId/files/:assetId')}
+        path={`${baseUrl}/:chartId/files/:assetId`}
         element={<RouteWithFirebase element={FileViewPage} />}
       />
     </ReactRoutes>

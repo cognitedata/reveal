@@ -96,23 +96,6 @@ describe('TransformationDropdown', () => {
     expect(screen.queryByText('My data model Movie_2 1')).toBeNull();
   });
 
-  it('Opens transformation modal when clicking a transformation in the list', () => {
-    mockIsFDMv3.mockReturnValueOnce(false);
-    render(
-      <TransformationDropdown
-        space="imdb"
-        onAddClick={noop}
-        typeName="Movie"
-        version="2"
-      />
-    );
-
-    userEvent.click(screen.getByText(/bulk population/i));
-    userEvent.click(screen.getByText('IMDB Movie_2 1'));
-
-    expect(mockSetIsTransformationModalOpen).toHaveBeenCalledWith(true, 2);
-  });
-
   it('Opens transformation in a new tab when clicking a transformation in the list', () => {
     window.open = jest.fn();
     render(

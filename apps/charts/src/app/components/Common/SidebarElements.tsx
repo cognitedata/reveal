@@ -92,6 +92,11 @@ export const OverlayContentOverflowWrapper = styled.article`
 
 export const ContentContainer = styled.div`
   height: 100%;
+  .cogs-infobox__content {
+    p {
+      word-break: break-word;
+    }
+  }
   &&& {
     padding: 20px;
   }

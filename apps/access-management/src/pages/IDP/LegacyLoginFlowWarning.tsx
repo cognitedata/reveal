@@ -1,48 +1,39 @@
 import React from 'react';
-import { useHistory } from 'react-router';
+import { useNavigate } from 'react-router';
 import { useParams } from 'react-router-dom';
 
 import styled from 'styled-components';
 
 import { useTranslation } from '@access-management/common/i18n';
-import {
-  useAuthConfiguration,
-  useGroups,
-  usePermissions,
-} from '@access-management/hooks';
+import { useGroups, usePermissions } from '@access-management/hooks';
 import CustomInfo from '@access-management/pages/components/CustomInfo';
 import { hasAnyValidGroupForOIDC } from '@access-management/pages/Groups/utils';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { notification } from 'antd';
 
 import { getFlow } from '@cognite/cdf-sdk-singleton';
+import { getProject } from '@cognite/cdf-utilities';
 import { Icon } from '@cognite/cogs.js';
 import { useSDK } from '@cognite/sdk-provider';
 
 const LegacyLoginFlowWarning = () => {
   const { t } = useTranslation();
   const sdk = useSDK();
-  const client = useQueryClient();
   const { flow } = getFlow();
   const { data: writeOk } = usePermissions('projectsAcl', 'UPDATE');
   const isLoggedInUsingLegacyLoginFlow = flow === 'COGNITE_AUTH';
-  const { data: authConfiguration, isFetched: isAuthConfigurationFetched } =
-    useAuthConfiguration();
-  const isOIDCConfigured = authConfiguration?.isOidcEnabled;
   const { data: groups, isFetched: areGroupsFetched } = useGroups(true);
   const hasAnyValidGroup = hasAnyValidGroupForOIDC(groups);
   const canLegacyLoginFlowBeDisabled =
-    isAuthConfigurationFetched &&
-    areGroupsFetched &&
-    !isLoggedInUsingLegacyLoginFlow &&
-    hasAnyValidGroup;
+    areGroupsFetched && !isLoggedInUsingLegacyLoginFlow && hasAnyValidGroup;
 
-  const history = useHistory();
+  const navigate = useNavigate();
   const params = useParams<{ tenant: string; path: string }>();
 
   const { mutate: disableLegacyLoginFlow } = useMutation(
-    () =>
-      sdk.post(`/api/v1/projects/${sdk.project}/update`, {
+    () => {
+      const project = getProject();
+      return sdk.post(`/api/v1/projects/${project}/update`, {
         data: {
           update: {
             isLegacyLoginFlowAndApiKeysEnabled: {
@@ -50,7 +41,8 @@ const LegacyLoginFlowWarning = () => {
             },
           },
         },
-      }),
+      });
+    },
     {
       onMutate() {
         notification.info({
@@ -63,9 +55,8 @@ const LegacyLoginFlowWarning = () => {
           key: 'disable-legacy-login-flow',
           message: t('legacy-login-flow-disable-success'),
         });
-        client.invalidateQueries(['auth-configuration']);
         if (params) {
-          history.push(`/${params.tenant}/${params.path}/oidc`);
+          navigate(`/${params.tenant}/${params.path}/oidc`, { replace: true });
         }
       },
       onError() {
@@ -82,7 +73,7 @@ const LegacyLoginFlowWarning = () => {
     disableLegacyLoginFlow();
   };
 
-  if (!writeOk || !isAuthConfigurationFetched || !areGroupsFetched) {
+  if (!writeOk || !areGroupsFetched) {
     return <></>;
   }
 
@@ -109,9 +100,6 @@ const LegacyLoginFlowWarning = () => {
       helpTooltipMessage={
         <p>
           {t('legacy-login-flow-desc')}
-          <br />
-          <StyledIcon $success={isOIDCConfigured} />
-          {t('legacy-login-flow-configure-oidc')}
           <br />
           <StyledIcon $success={!isLoggedInUsingLegacyLoginFlow} />
           {t('legacy-login-flow-login-using-oidc')}

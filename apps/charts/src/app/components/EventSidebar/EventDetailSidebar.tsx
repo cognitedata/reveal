@@ -18,17 +18,24 @@ import { formatDate } from '@charts-app/utils/date';
 import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import { useRecoilState } from 'recoil';
 
-import { Body, Button, Title, Row, Col, Input } from '@cognite/cogs.js';
+import { Body, Button, Heading, Row, Col, Input } from '@cognite/cogs.js';
 
-import { EventDetailBox, MetadataWrapItem } from './elements';
+import {
+  EventDetailBox,
+  MetadataWrapItem,
+  MetadataRowWrapper,
+} from './elements';
 
 const MetadataRow = ({ label, value }: { label: string; value: any }) => (
-  <p>
-    {label}:{' '}
-    <Body level={2} style={{ wordBreak: 'break-word' }} strong>
+  <MetadataRowWrapper>
+    <Body size="x-small" as="span">
+      {label}
+    </Body>
+    :{' '}
+    <Body size="x-small" as="span" style={{ wordBreak: 'break-word' }} strong>
       {value}
     </Body>
-  </p>
+  </MetadataRowWrapper>
 );
 
 const MetadataItemWithMore = memo(
@@ -129,7 +136,7 @@ const EventDetailsSidebar = memo(
             </Button>
           </SidebarHeaderActions>
           <EventDetailBox>
-            <Title level={5}>{t.General}</Title>
+            <Heading level={5}>{t.General}</Heading>
             {isFetching && <LoadingRow lines={9} />}
             {data ? (
               <article>
@@ -162,7 +169,7 @@ const EventDetailsSidebar = memo(
             ) : null}
           </EventDetailBox>
           <EventDetailBox>
-            <Title level={5}>{t.Metadata}</Title>
+            <Heading level={5}>{t.Metadata}</Heading>
 
             <article>
               {data && data.metadata ? (
@@ -213,11 +220,13 @@ const EventDetailsSidebar = memo(
                     .map((metaKey) => (
                       <Row key={metaKey} cols={2}>
                         <Col span={1}>
-                          <MetadataWrapItem>{metaKey}</MetadataWrapItem>
+                          <Body size="x-small">
+                            <MetadataWrapItem>{metaKey}</MetadataWrapItem>
+                          </Body>
                         </Col>
                         <Col span={1}>
                           <MetadataWrapItem>
-                            <Body level={2} as="div" strong>
+                            <Body size="x-small" strong>
                               {data.metadata &&
                               data.metadata[metaKey] !== '' ? (
                                 <MetadataItemWithMore

@@ -8,10 +8,9 @@ import { StoreType } from '@platypus-app/redux/store';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ContainerProvider } from 'brandi-react';
 
-import { I18nContainer } from '@cognite/react-i18n';
 import { CogniteClient } from '@cognite/sdk';
 
-import { setCogniteSDKClient } from '../../../src/environments/cogniteSdk';
+import { setCogniteSDKClient } from '../../environments/cogniteSdk';
 
 export type Props = {
   store: StoreType;
@@ -38,9 +37,7 @@ const AppProviders = ({ store, children, tenant }: Props) => {
     <ReduxProvider store={store}>
       <QueryClientProvider client={queryClient}>
         <ContainerProvider container={rootInjector}>
-          <I18nContainer>
-            <BrowserRouter basename={`/${tenant}`}>{children}</BrowserRouter>
-          </I18nContainer>
+          <BrowserRouter basename={`/${tenant}`}>{children}</BrowserRouter>
         </ContainerProvider>
       </QueryClientProvider>
     </ReduxProvider>

@@ -52,6 +52,10 @@ export const ResourceColumns: React.FC<Props> = ({
                   // @ts-ignore Property does not exist on type
                   const config = searchConfigData[resource][filterId];
                   const label = config.label || '';
+
+                  const disableCheckboxWithFuzzySearchConfig =
+                    config.label === 'Content' && !config.enabledFuzzySearch;
+
                   return (
                     <React.Fragment key={`${resource}_${filterId}`}>
                       <ModalCheckbox
@@ -59,9 +63,13 @@ export const ResourceColumns: React.FC<Props> = ({
                           onChange(!!isChecked, resource, filterId)
                         }
                         name={config?.label}
-                        checked={config?.enabled}
+                        checked={
+                          config?.enabled &&
+                          !disableCheckboxWithFuzzySearchConfig
+                        }
                         data-testid={`modal-checkbox-${resource}-${filterId}`}
                         id={`modal-checkbox-${resource}-${filterId}`}
+                        disabled={disableCheckboxWithFuzzySearchConfig}
                       >
                         {t(
                           `${label.split(' ').join('_').toUpperCase()}`,

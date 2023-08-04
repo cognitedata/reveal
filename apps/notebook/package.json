@@ -1,0 +1,23 @@
+{
+  "name": "@cognite/cdf-notebook",
+  "version": "0.1.0",
+  "scripts": {
+    "start": "../../scripts/start.sh dev notebook",
+    "build": "../../scripts/build.sh production notebook",
+    "test": "../../scripts/test.sh notebook",
+    "lint": "../../scripts/lint.sh notebook",
+    "lint:fix": "../../scripts/lint.sh --fix notebook"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

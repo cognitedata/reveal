@@ -105,7 +105,7 @@ const FDMDestinationForm = ({
         }}
         placeholder={t('fdm-space-placeholder')}
         showSearch
-        title={t('fdm-space')}
+        title={t('fdm-instance-space')}
         value={values.instanceSpace}
         infoTooltip={
           <span>

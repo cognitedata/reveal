@@ -1,16 +1,19 @@
 #!/usr/bin/env node
 import * as fs from 'fs';
-import * as path from 'path';
+import * as http from 'http';
+import * as https from 'https';
 
 import * as cors from 'cors';
-import * as spdy from 'spdy';
 
 import cdfMiddleware from './app/middlewares/cdf-middleware';
 import { createMockServer } from './app/mock-server';
 import { getArgs } from './cli/cli-args';
 // hardcoded for now, should be loaded from file
 import { loadConfig, loadMockData } from './cli/loader';
+import { loginInfoMockData } from './login-info-mock-data';
+import { projectsMockData } from './mock-projects-data';
 import { userTokenData } from './user-token-data';
+
 const TENANT = process.env.NODE_ENV || 'mock';
 const server = createMockServer();
 
@@ -64,6 +67,15 @@ server.get('/login/status', (req, res) => {
   });
 });
 
+server.get('/api/v1/projects/platypus', (req, res) => {
+  res.set({
+    'content-type': 'application/json',
+    'access-control-allow-credentials': true,
+    'access-control-allow-origin': baseUrl,
+  });
+  res.json(projectsMockData);
+});
+
 server.get('/api/v1/token/inspect', (req, res) => {
   res.set({
     'content-type': 'application/json',
@@ -71,6 +83,14 @@ server.get('/api/v1/token/inspect', (req, res) => {
     'access-control-allow-origin': baseUrl,
   });
   res.jsonp(mockTokenData);
+});
+server.get('/_api/login_info', (req, res) => {
+  res.set({
+    'content-type': 'application/json',
+    'access-control-allow-credentials': true,
+    'access-control-allow-origin': baseUrl,
+  });
+  res.jsonp(loginInfoMockData);
 });
 
 // updates the JSON token at runtime
@@ -81,21 +101,18 @@ server.post('/api/v1/token/inspect', (req, res) => {
 
 server.use(cdfMiddlewares);
 
-const spdyServer = spdy.createServer(
-  {
-    cert: secure
-      ? fs.readFileSync(path.join(__dirname, './cert/server.crt'))
-      : undefined,
-    key: secure
-      ? fs.readFileSync(path.join(__dirname, './cert/server.key'))
-      : undefined,
-    spdy: {
-      plain: !secure,
-      protocols: ['h2', 'http/1.1'],
-    },
-  },
-  server
-);
+const spdyServer = secure
+  ? https.createServer(
+      {
+        // eslint-disable-next-line
+        // @ts-ignore
+        key: fs.readFileSync(__dirname + '/cert/server.key') as any,
+        cert: fs.readFileSync(__dirname + '/cert/server.crt'),
+      },
+      server
+    )
+  : http.createServer(server);
+
 spdyServer.listen(PORT, () => {
   console.log(
     `JSON Server is running for tenant - ${TENANT} on baseURL: ${baseUrl}`

@@ -1,5 +1,7 @@
 export { default as resourceItemToContainerReference } from './lib/utils/resourceItemToContainerReference';
 export { default as isSupportedResourceItem } from './lib/utils/isSupportedResourceItem';
+export { ContainerReferenceType } from './lib/types';
+export type { ContainerReference } from './lib/types';
 export * from './lib/IndustryCanvasPage';
 export * from './lib/IndustryCanvasHomePage';
 export * from './lib/common';

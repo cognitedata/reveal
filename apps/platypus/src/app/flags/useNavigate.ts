@@ -6,29 +6,41 @@ import {
 
 import queryString from 'query-string';
 
-import { isFDMv3 } from './isFDMv3';
+import { createLink, getProject } from '@cognite/cdf-utilities';
+
+import { environment } from '../../environments/environment';
 
 export const useNavigate = () => {
   const origNavigate = origUseNavigate();
+  const project = getProject();
+
   return (to: To, options?: NavigateOptions) => {
-    const fdmV3Path = isFDMv3() ? 'data-models' : 'data-models-previous';
+    const fdmV3Path = 'data-models';
     let newToUrl = typeof to === 'string' ? to : to.pathname;
     if (newToUrl) {
       newToUrl = `/${fdmV3Path}${
         newToUrl.startsWith('/') ? '' : '/'
       }${newToUrl}`;
     }
+
     const { url, query: params } = queryString.parseUrl(newToUrl || '/');
-    if (typeof to === 'string') {
-      origNavigate(
-        `${url}?${queryString.stringify({
-          ...queryString.parse(window.location.search),
-          ...params,
-        })}`,
-        options
-      );
-    } else {
-      origNavigate({ ...to, pathname: newToUrl }, options);
+
+    let generatedLink = createLink(
+      url,
+      {
+        ...queryString.parse(window.location.search),
+        ...params,
+      },
+      undefined,
+      environment.APP_ENV === 'preview'
+    );
+
+    if (
+      environment.APP_ENV !== 'preview' &&
+      generatedLink.includes('/' + project)
+    ) {
+      generatedLink = generatedLink.replace('/' + project, '');
     }
+    origNavigate(generatedLink, options);
   };
 };

@@ -1,9 +1,40 @@
-import { postsGraphQlSchema } from '@fusion/mock-data';
 import { DataModelTypeDefsField } from '@platypus/platypus-core';
 
 import { GraphQlUtilsService } from './graphql-utils-service';
 
-const schemaMock = postsGraphQlSchema;
+const schemaMock = `
+type Post @view {
+  id: Int!
+  title: String!
+  views: Int!
+  user: User
+  tags: [String]
+  metadata: PostMetadata
+  colors: [PostColor]
+  comments: [Comment]
+}
+type User @view {
+  id: Int!
+  name: String!
+}
+type Comment @view {
+  id: Int!
+  body: String!
+  date: Int!
+  post: Post
+}
+type PostMetadata {
+  slug: String
+}
+type PostColor {
+  name: String
+}
+type Like {
+  id: Int
+  user: User
+  comment: Comment
+}
+`;
 
 describe('GraphQlUtilsServiceTest', () => {
   const createInstance = () => {
@@ -20,7 +51,7 @@ describe('GraphQlUtilsServiceTest', () => {
     expect(postType).toBeTruthy();
     expect(postType?.name).toEqual('Post');
     expect(postType?.directives?.length).toEqual(1);
-    expect(postType?.directives[0].name).toEqual('template');
+    expect(postType?.directives[0].name).toEqual('view');
 
     const idField = postType?.fields.find(
       (field) => field.name === 'id'
@@ -74,7 +105,9 @@ describe('GraphQlUtilsServiceTest', () => {
     service.parseSchema(schemaMock);
 
     const generatedGraphQlSchema = service.generateSdl();
-    expect(generatedGraphQlSchema.trim()).toEqual(schemaMock.trim());
+    expect(generatedGraphQlSchema.trim().replace(/\n/gm, '')).toEqual(
+      schemaMock.trim().replace(/\n/gm, '')
+    );
   });
 
   it('should add new type into existing SolutionDataModel', () => {
@@ -109,18 +142,18 @@ describe('GraphQlUtilsServiceTest', () => {
     const type = service.getType('User');
 
     expect(type.description).toBe('test');
-    expect(service.generateSdl()).toContain('"test"\ntype User @template {');
+    expect(service.generateSdl()).toContain('"test"\ntype User @view {');
   });
 
   it('can add type directive', () => {
     const service = createInstance();
     service.parseSchema(schemaMock);
 
-    service.updateType('Like', { directives: [{ name: 'template' }] });
+    service.updateType('Like', { directives: [{ name: 'view' }] });
     const type = service.getType('Like');
 
-    expect(type.directives).toContainEqual({ name: 'template', arguments: [] });
-    expect(service.generateSdl()).toContain('type Like @template {');
+    expect(type.directives).toContainEqual({ name: 'view', arguments: [] });
+    expect(service.generateSdl()).toContain('type Like @view {');
   });
 
   it('can remove type directive', () => {

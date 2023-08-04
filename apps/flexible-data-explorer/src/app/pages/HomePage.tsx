@@ -1,50 +1,41 @@
 import styled from 'styled-components';
 
-import { Title } from '@cognite/cogs.js';
+import { Flex } from '@cognite/cogs.js';
 
-import { RecentlyViewedList } from '../containers/lists/recentlyViewed/RecentlyViewedList';
+import { DataExplorerLink } from '../components/links/DataExplorerLink';
+import { Categories } from '../containers/category/Categories';
 import { Page } from '../containers/page/Page';
-import { DataExplorerLink } from '../containers/search/DataExplorerLink';
 import { SearchBar } from '../containers/search/SearchBar';
-// import { SearchBarSwitch } from '../containers/search/SearchBarSwitch';
 import { SearchConfiguration } from '../containers/search/SearchConfiguration';
-import { useRecentlyVisited } from '../hooks/useRecentlyVisited';
-import { useTranslation } from '../hooks/useTranslation';
+
+const SEARCH_BAR_OPTIONS = {
+  filterMenuMaxHeight: '25vh',
+};
 
 export const HomePage = () => {
-  const { t } = useTranslation();
-
-  const [recentlyViewed] = useRecentlyVisited();
-
   return (
-    <Page>
+    <Page disableScrollbarGutter>
       <SearchContainer>
-        <SearchConfiguration header />
+        <Flex
+          direction="column"
+          justifyContent="center"
+          className="search-bar-container"
+          alignItems="center"
+        >
+          <SearchConfiguration header />
 
-        <SearchBarContainer>
-          <SearchBar width="774px" disablePreview autoFocus />
-          {/* Hide this for now. until we have flags */}
-          {/* <SearchBarSwitch /> */}
-        </SearchBarContainer>
+          <SearchBarContainer>
+            <SearchBar width="774px" options={SEARCH_BAR_OPTIONS} />
+            {/* Hide this for now. until we have flags */}
+            {/* <SearchBarSwitch /> */}
+          </SearchBarContainer>
 
-        <DataExplorerLink />
+          <DataExplorerLink />
+        </Flex>
       </SearchContainer>
 
       <Page.Body>
-        <RecentlyViewedContainer>
-          {/* Code-smell... find a better way of handling this. */}
-          {recentlyViewed.length > 0 && (
-            <TitleContent>
-              <Title level={6}>
-                {t('RECENTLY_VIEWED_TITLE', {
-                  count: recentlyViewed.length,
-                })}
-              </Title>
-            </TitleContent>
-          )}
-
-          <RecentlyViewedList />
-        </RecentlyViewedContainer>
+        <Categories />
       </Page.Body>
     </Page>
   );
@@ -73,20 +64,6 @@ const SearchContainer = styled.div`
     #ffffff;
 
   border-bottom: 1px solid rgba(83, 88, 127, 0.16);
-`;
-
-const RecentlyViewedContainer = styled.div`
-  height: 10%;
-  padding-top: 24px;
-  padding-bottom: 24px;
-  width: 774px;
-  max-width: 774px;
-  align-self: center;
-`;
-
-const TitleContent = styled.div`
-  padding-left: 8px;
-  padding-bottom: 16px;
 `;
 
 const SearchBarContainer = styled.div`

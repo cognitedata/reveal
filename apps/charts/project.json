@@ -46,6 +46,34 @@
           "extractLicenses": true,
           "vendorChunk": false
         },
+        "preview": {
+          "fileReplacements": [
+            {
+              "replace": "apps/charts/src/environments/environment.ts",
+              "with": "apps/charts/src/environments/environment.prod.ts"
+            }
+          ],
+          "optimization": true,
+          "outputHashing": "all",
+          "sourceMap": false,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "vendorChunk": false
+        },
+        "staging": {
+          "fileReplacements": [
+            {
+              "replace": "apps/charts/src/environments/environment.ts",
+              "with": "apps/charts/src/environments/environment.prod.ts"
+            }
+          ],
+          "optimization": true,
+          "outputHashing": "all",
+          "sourceMap": false,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "vendorChunk": false
+        },
         "mock": {
           "fileReplacements": [
             {
@@ -79,7 +107,7 @@
         "hmr": true,
         "port": 3000,
         "ssl": true,
-        "allowedHosts": ".dev.fusion.cogniteapp.com"
+        "allowedHosts": "*.dev.fusion.cogniteapp.com,apps-staging.cognite.com"
       },
       "configurations": {
         "development": {
@@ -120,5 +148,8 @@
       }
     }
   },
-  "tags": []
+  "tags": [],
+  "pipeline": {
+    "previewPackageName": "@cognite/cdf-charts-ui"
+  }
 }

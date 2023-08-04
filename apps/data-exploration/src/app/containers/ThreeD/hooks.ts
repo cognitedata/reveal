@@ -11,6 +11,7 @@ import keyBy from 'lodash/keyBy';
 import uniqBy from 'lodash/uniqBy';
 import THREE, { Vector3, Color } from 'three';
 
+import { getProject } from '@cognite/cdf-utilities';
 import {
   CogniteModel,
   CogniteCadModel,
@@ -238,7 +239,7 @@ export const useImage360 = (siteId?: string): Image360SiteData | undefined => {
 
 export const useAPMConfig = () => {
   const sdk = useSDK();
-  const project = sdk.project;
+  const project = getProject();
   const baseUrl = sdk.getBaseUrl();
 
   return useQuery<APMConfigNode>(
@@ -247,7 +248,6 @@ export const useAPMConfig = () => {
       // Find correct version and space for the APM_Config
       const listDataModelsUrl = `${baseUrl}/api/v1/projects/${project}/models/datamodels`;
       const listDataModelsResponse = await sdk.get(listDataModelsUrl);
-
       const dataModelsList =
         listDataModelsResponse.data as ListFDMDataModelsResponse;
 
@@ -302,10 +302,11 @@ export const useAPMConfig = () => {
 };
 
 export const useInfiniteChecklistItems = (
-  apmConfig?: APMConfigNode,
-  config?: UseInfiniteQueryOptions<FDMChecklistResponse, CogniteError>
+  configProp?: UseInfiniteQueryOptions<FDMChecklistResponse, CogniteError>
 ) => {
   const sdk = useSDK();
+
+  const { data: apmConfig } = useAPMConfig();
 
   return useInfiniteQuery<FDMChecklistResponse, CogniteError>(
     ['cdf', 'infinite', '3d', '3d-points-of-interest'],
@@ -324,13 +325,12 @@ export const useInfiniteChecklistItems = (
         },
       };
 
-      const project = sdk.project;
+      const project = getProject();
       const baseUrl = sdk.getBaseUrl();
 
       if (!apmConfig) {
         return emptyResponse;
       }
-
       // Get checklist data
       const fdmGetChecklistItemsQueryEndpoint = `${baseUrl}/api/v1/projects/${project}/userapis/spaces/${apmConfig.appDataSpaceId}/datamodels/${apmConfig.appDataSpaceId}/versions/${apmConfig.appDataSpaceVersion}/graphql`;
 
@@ -412,7 +412,8 @@ export const useInfiniteChecklistItems = (
           ? prevPage.data.listAPM_Checklist.pageInfo.endCursor
           : undefined;
       },
-      ...config,
+      ...configProp,
+      enabled: !!apmConfig,
     }
   );
 };
@@ -568,7 +569,7 @@ export const getAssetMappingsQueryFn = async (
 
   const { nextCursor, items } = (
     await sdk.get<MappingResponse>(
-      `/api/v1/projects/${sdk.project}/3d/models/${modelId}/revisions/${revisionId}/mappings`,
+      `/api/v1/projects/${getProject()}/3d/models/${modelId}/revisions/${revisionId}/mappings`,
       { params: opts }
     )
   ).data;
@@ -954,7 +955,11 @@ export const getPointsOfInterestsQueryFn = (
     if (!overlayTool) return;
 
     const shouldAddPointsOfInterest = pointsOfInterestCollection.applied;
-    if (shouldAddPointsOfInterest) {
+    const hasAdded = pointsOfInterestOverlayCollection.some(
+      ({ externalId: tmId }) => pointsOfInterestCollection.externalId === tmId
+    );
+
+    if (shouldAddPointsOfInterest && !hasAdded) {
       const labels:
         | OverlayInfo<PointsOfInterestOverlayCollectionType>[]
         | undefined = pointsOfInterestCollection.pointsOfInterest?.map(
@@ -980,7 +985,7 @@ export const getPointsOfInterestsQueryFn = (
         externalId: pointsOfInterestCollection.externalId,
         overlays: collection,
       });
-    } else {
+    } else if (!shouldAddPointsOfInterest && hasAdded) {
       const collectionToRemove = pointsOfInterestOverlayCollection.find(
         (collection) =>
           collection.externalId === pointsOfInterestCollection.externalId

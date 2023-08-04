@@ -13,15 +13,12 @@ import datePickerStyle from 'react-datepicker/dist/react-datepicker.css';
 
 import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
 import {
-  AuthWrapper,
-  SubAppWrapper,
+  AuthContainer,
   getProject,
-  getEnv,
+  isUsingUnifiedSignin,
 } from '@cognite/cdf-utilities';
-import { Loader } from '@cognite/cogs.js';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 import { FlagProvider } from '@cognite/react-feature-flags';
-import { SDKProvider } from '@cognite/sdk-provider';
 
 import { DataExplorationWrapper } from './DataExplorationWrapper';
 import { AppRoutes } from './Routes';
@@ -51,39 +48,38 @@ const App = () => {
   });
 
   const project = getProject();
-  const env = getEnv();
+
+  const baseUrl = isUsingUnifiedSignin() ? '/cdf' : '';
+
   return (
     <AntStyles>
-      <AuthWrapper
-        loadingScreen={<Loader />}
-        login={() => loginAndAuthIfNeeded(project, env)}
-      >
-        <ThemeProvider theme={theme}>
-          <SDKProvider sdk={sdk}>
-            <FlagProvider // https://cog.link/cdf-frontend-wiki
-              apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
-              appName={subAppName}
-              projectName={project}
-              remoteAddress={window.location.hostname}
+      <ThemeProvider theme={theme}>
+        <FlagProvider // https://cog.link/cdf-frontend-wiki
+          apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
+          appName={subAppName}
+          projectName={project}
+          remoteAddress={window.location.hostname}
+        >
+          <QueryClientProvider client={queryClient}>
+            <AuthContainer
+              title="Cognite Vision"
+              sdk={sdk}
+              login={loginAndAuthIfNeeded}
             >
-              <QueryClientProvider client={queryClient}>
-                <ReduxProvider store={store}>
-                  <DataExplorationWrapper>
-                    <SubAppWrapper title="Cognite Vision">
-                      <BrowserRouter>
-                        <Routes>
-                          <Route path="/*" element={<AppRoutes />} />
-                        </Routes>
-                      </BrowserRouter>
-                    </SubAppWrapper>
-                  </DataExplorationWrapper>
-                </ReduxProvider>
-              </QueryClientProvider>
-            </FlagProvider>
-          </SDKProvider>
-        </ThemeProvider>
-        <GlobalStyles theme={theme} />
-      </AuthWrapper>
+              <ReduxProvider store={store}>
+                <DataExplorationWrapper>
+                  <BrowserRouter>
+                    <Routes>
+                      <Route path={`${baseUrl}/*`} element={<AppRoutes />} />
+                    </Routes>
+                  </BrowserRouter>
+                </DataExplorationWrapper>
+              </ReduxProvider>
+            </AuthContainer>
+          </QueryClientProvider>
+        </FlagProvider>
+      </ThemeProvider>
+      <GlobalStyles theme={theme} />
     </AntStyles>
   );
 };

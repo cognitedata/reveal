@@ -16,7 +16,7 @@ import {
   setFocusedFileId,
   showFileMetadata,
 } from '@vision/modules/Explorer/store/slice';
-import { AppDispatch } from '@vision/store';
+import { useThunkDispatch } from '@vision/store';
 import { RootState } from '@vision/store/rootReducer';
 import { RetrieveAnnotations } from '@vision/store/thunks/Annotation/RetrieveAnnotations';
 import { DeleteFilesById } from '@vision/store/thunks/Files/DeleteFilesById';
@@ -53,7 +53,7 @@ export const ResultTableLoader = ({
 } & Partial<SelectableItemsProps> &
   TableStateProps) => {
   const navigate = useNavigate();
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useThunkDispatch();
   const [totalCount, setTotalCount] = useState<number>(0);
 
   const explorerFiles = useSelector((rootState: RootState) =>

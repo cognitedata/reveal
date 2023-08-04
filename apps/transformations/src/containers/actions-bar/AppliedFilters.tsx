@@ -7,6 +7,8 @@ import {
 
 import { Flex, Chip } from '@cognite/cogs.js';
 
+import { parseDataModelKey } from '../../utils/fdm';
+
 type AppliedFiltersProps = {
   filterState: FiltersState['applied'];
   onFilterChange: (action: FiltersAction) => void;
@@ -23,6 +25,9 @@ export const AppliedFilters = ({
   const { data: dataSet } = useDataSet(Number(dataSetId), {
     enabled: !!dataSetId,
   });
+
+  const { externalId, space } = parseDataModelKey(filterState.dataModel);
+
   return (
     <Flex gap={8}>
       {lastRun.length > 0 && (
@@ -66,6 +71,21 @@ export const AppliedFilters = ({
           type="neutral"
           label={t('clear-all')}
           onClick={() => onFilterChange({ type: 'reset' })}
+        />
+      )}
+      {externalId && space && (
+        <Chip
+          size="small"
+          type="neutral"
+          label={`${externalId} (${space})`}
+          onRemove={() => {
+            onFilterChange({
+              type: 'change',
+              field: 'dataModel',
+              payload: '',
+            });
+            onFilterChange({ type: 'submit' });
+          }}
         />
       )}
     </Flex>

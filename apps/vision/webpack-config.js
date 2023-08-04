@@ -1,7 +1,7 @@
 const {
   withSingleSpa,
 } = require('../../tools/webpack/single-spa-webpack-config');
-const { composePlugins, withNx } = require('@nrwl/webpack');
+const { composePlugins, withNx } = require('@nx/webpack');
 
 module.exports = composePlugins(
   withNx({
@@ -11,6 +11,7 @@ module.exports = composePlugins(
   }),
   withSingleSpa({ useMockEnv: false }),
   (config) => {
+    config.output.publicPath = '/';
     const nodeEnv = process.env.NODE_ENV || 'production';
     console.log(
       `Custom webpack config(${nodeEnv}) for Data Exploration was loaded...`

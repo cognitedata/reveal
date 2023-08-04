@@ -1,24 +1,32 @@
-import { useMemo } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import styled from 'styled-components';
 
 import { formatDistance, format } from 'date-fns';
-import { sortBy } from 'lodash';
+import { partition } from 'lodash';
+import { useDebounce } from 'use-debounce';
 
 import {
   Button,
   Table,
   InputExp,
   toast,
+  Icon,
   Tooltip,
   Body,
+  Loader,
+  SegmentedControl,
 } from '@cognite/cogs.js';
 
 import { translationKeys } from './common';
+import {
+  AddResourceToCanvasModal,
+  AddResourcesToCanvasType,
+  AddResourcesToCanvasOnOkArgs,
+} from './components/AddResourceToCanvasModal';
 import CanvasDeletionModal from './components/CanvasDeletionModal';
 import { SEARCH_QUERY_PARAM_KEY, TOAST_POSITION } from './constants';
-import { EMPTY_FLEXIBLE_LAYOUT } from './hooks/constants';
 import useCanvasDeletion from './hooks/useCanvasDeletion';
 import useCanvasesWithUserProfiles, {
   CanvasDocumentWithUserProfile,
@@ -28,30 +36,50 @@ import { useQueryParameter } from './hooks/useQueryParameter';
 import useTableState from './hooks/useTableState';
 import { useTranslation } from './hooks/useTranslation';
 import { useIndustryCanvasContext } from './IndustryCanvasContext';
+import { CanvasVisibility } from './services/IndustryCanvasService';
+import { isFdmInstanceContainerReference } from './types';
 import { UserProfile, useUserProfile } from './UserProfileProvider';
+import { addIdToContainerReference } from './utils/addIdToContainerReference';
+import { addDimensionsToContainerReferencesIfNotExists } from './utils/dimensions';
 import { getCanvasLink } from './utils/getCanvasLink';
+import {
+  getCanvasVisibilityIcon,
+  getCanvasVisibilityTooltipText,
+} from './utils/getCanvasVisibility';
+
+const SEARCH_DEBOUNCE_MS = 200;
 
 export const IndustryCanvasHomePage = () => {
-  const { canvases, isCreatingCanvas, createCanvas } =
-    useIndustryCanvasContext();
+  const {
+    canvases,
+    isCreatingCanvas,
+    isListingCanvases,
+    createCanvas,
+    visibilityFilter,
+    setVisibilityFilter,
+    saveCanvas,
+    getCanvasById,
+    initializeWithContainerReferences,
+    hasConsumedInitializeWithContainerReferences,
+    setHasConsumedInitializeWithContainerReferences,
+  } = useIndustryCanvasContext();
   const { userProfile } = useUserProfile();
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { canvasesWithUserProfiles } = useCanvasesWithUserProfiles({
     canvases,
   });
-  const { queryString: searchString, setQueryString: setSearchString } =
-    useQueryParameter({
-      key: SEARCH_QUERY_PARAM_KEY,
-    });
+  const { setQueryString } = useQueryParameter({ key: SEARCH_QUERY_PARAM_KEY });
+  const [searchString, setSearchString] = useState<string>('');
+  const [debouncedSearchString] = useDebounce(searchString, SEARCH_DEBOUNCE_MS);
+
   const { filteredCanvases } = useCanvasSearch({
     canvases: canvasesWithUserProfiles,
-    searchString,
+    searchString: debouncedSearchString,
   });
-  const sortedCanvases = useMemo(
-    () => sortBy(filteredCanvases, 'updatedAtDate').reverse(),
-    [filteredCanvases]
-  );
+  useEffect(() => {
+    setQueryString(debouncedSearchString);
+  }, [debouncedSearchString, setQueryString]);
   const {
     canvasToDelete,
     setCanvasToDelete,
@@ -95,28 +123,118 @@ export const IndustryCanvasHomePage = () => {
     return createdByUserProfile.displayName;
   };
 
+  const handleOnOk = useCallback(
+    async (args: AddResourcesToCanvasOnOkArgs) => {
+      const containerReferencesWithIds = args.containerReferences.map(
+        addIdToContainerReference
+      );
+
+      if (args.type === AddResourcesToCanvasType.NEW_CANVAS) {
+        const [fdmInstanceContainerReferences, containerReferences] = partition(
+          containerReferencesWithIds,
+          isFdmInstanceContainerReference
+        );
+        const { externalId } = await createCanvas({
+          name: args.name,
+          containerReferences,
+          fdmInstanceContainerReferences,
+        });
+        navigate(getCanvasLink(externalId));
+        setHasConsumedInitializeWithContainerReferences(true);
+        return;
+      }
+
+      if (args.type === AddResourcesToCanvasType.EXISTING_CANVAS) {
+        const existingCanvas = await getCanvasById(args.externalId);
+
+        if (existingCanvas === undefined) {
+          toast.error(
+            t(
+              translationKeys.MODAL_ADD_RESOURCE_TO_CANVAS_CANVAS_NOT_FOUND,
+              'Unable to find canvas with id {{id}}. Please refresh the page and try again.'
+            ),
+            {
+              position: TOAST_POSITION,
+            }
+          );
+          return;
+        }
+
+        const [fdmInstanceContainerReferences, containerReferences] = partition(
+          addDimensionsToContainerReferencesIfNotExists(
+            containerReferencesWithIds,
+            existingCanvas.data
+          ),
+          isFdmInstanceContainerReference
+        );
+
+        await saveCanvas({
+          ...existingCanvas,
+          data: {
+            ...existingCanvas.data,
+            containerReferences: [
+              ...existingCanvas.data.containerReferences,
+              ...containerReferences,
+            ],
+            fdmInstanceContainerReferences: [
+              ...existingCanvas.data.fdmInstanceContainerReferences,
+              ...fdmInstanceContainerReferences,
+            ],
+          },
+        });
+        navigate(getCanvasLink(existingCanvas.externalId));
+        setHasConsumedInitializeWithContainerReferences(true);
+        return;
+      }
+    },
+    [
+      createCanvas,
+      getCanvasById,
+      navigate,
+      saveCanvas,
+      setHasConsumedInitializeWithContainerReferences,
+      t,
+    ]
+  );
+
   const renderNewCanvasButton = () => (
     <div>
       <Button
-        icon="Plus"
+        icon="Add"
         iconPlacement="left"
         type="primary"
+        disabled={isListingCanvases}
         loading={isCreatingCanvas}
         aria-label={t(
           translationKeys.COMMON_CREATE_CANVAS,
           'Create new canvas'
         )}
-        onClick={() => {
-          createCanvas({
-            canvasAnnotations: [],
-            container: EMPTY_FLEXIBLE_LAYOUT,
-          }).then(({ externalId }) => navigate(getCanvasLink(externalId)));
+        onClick={async () => {
+          const { externalId } = await createCanvas();
+          navigate(getCanvasLink(externalId));
         }}
       >
         {t(translationKeys.COMMON_CREATE_CANVAS, 'Create new canvas')}
       </Button>
     </div>
   );
+
+  const renderVisibilityIndicatorButton = (
+    row: CanvasDocumentWithUserProfile
+  ) => {
+    const { visibility } = row;
+    return (
+      <Tooltip
+        content={getCanvasVisibilityTooltipText(t, visibility)}
+        position="left"
+      >
+        <Icon
+          type={getCanvasVisibilityIcon(visibility)}
+          aria-label={getCanvasVisibilityTooltipText(t, visibility)}
+        />
+      </Tooltip>
+    );
+  };
 
   const renderCopyCanvasLinkButton = (row: CanvasDocumentWithUserProfile) => (
     <Tooltip
@@ -175,12 +293,6 @@ export const IndustryCanvasHomePage = () => {
 
   return (
     <>
-      <CanvasDeletionModal
-        canvas={canvasToDelete}
-        onCancel={() => setCanvasToDelete(undefined)}
-        onDeleteCanvas={onDeleteCanvasConfirmed}
-        isDeleting={isDeletingCanvas}
-      />
       <div>
         <HomeHeader>
           <div>
@@ -194,103 +306,177 @@ export const IndustryCanvasHomePage = () => {
           </div>
           {renderNewCanvasButton()}
         </HomeHeader>
-        <CanvasListContainer>
-          <SearchCanvasInput
-            placeholder={t(
-              translationKeys.HOMEPAGE_TABLE_SEARCH_PLACEHOLDER,
-              'Browse canvases'
-            )}
-            fullWidth
-            value={searchString}
-            icon="Search"
-            onChange={(e) => setSearchString(e.target.value)}
-          />
-          <Table<CanvasDocumentWithUserProfile>
-            initialState={initialTableState}
-            onStateChange={onTableStateChange}
-            onRowClick={(row) =>
-              navigate(
-                getCanvasLink(row.original.externalId, {
-                  [SEARCH_QUERY_PARAM_KEY]: searchString,
-                })
-              )
-            }
-            columns={[
-              {
-                Header: t(translationKeys.HOMEPAGE_TABLE_NAME_COLUMN, 'Name'),
-                accessor: 'name',
-              },
-              {
-                Header: t(
-                  translationKeys.HOMEPAGE_TABLE_UPDATED_AT_COLUMN,
-                  'Updated at'
-                ),
-                accessor: 'updatedAtDate',
-                Cell: ({ row }): JSX.Element => {
-                  const rowData = row.original;
+        {isListingCanvases ? (
+          <LoaderWrapper>
+            <Loader
+              darkMode={false}
+              infoTitle={t(
+                translationKeys.LOADING_CANVASES,
+                'Loading canvases...'
+              )}
+            />
+          </LoaderWrapper>
+        ) : (
+          <CanvasListContainer>
+            <SearchAreaWrapper>
+              <SearchCanvasInput
+                placeholder={t(
+                  translationKeys.HOMEPAGE_TABLE_SEARCH_PLACEHOLDER,
+                  'Browse canvases'
+                )}
+                fullWidth
+                value={searchString}
+                icon="Search"
+                onChange={(e) => setSearchString(e.target.value)}
+              />
+              <SegmentedControl currentKey={visibilityFilter}>
+                {/* Here when 'private' is selected, we only show the canvases that are created/owned by me? */}
+                <SegmentedControl.Button
+                  key={CanvasVisibility.PRIVATE}
+                  icon={getCanvasVisibilityIcon(CanvasVisibility.PRIVATE)}
+                  onClick={() => setVisibilityFilter(CanvasVisibility.PRIVATE)}
+                >
+                  {t(translationKeys.VISIBILITY_PRIVATE, 'Private')}
+                </SegmentedControl.Button>
 
-                  const lastUpdatedString = formatDistance(
-                    rowData.updatedAtDate,
-                    new Date(),
-                    {
-                      addSuffix: true,
-                    }
-                  );
+                <SegmentedControl.Button
+                  key={CanvasVisibility.PUBLIC}
+                  icon={getCanvasVisibilityIcon(CanvasVisibility.PUBLIC)}
+                  onClick={() => setVisibilityFilter(CanvasVisibility.PUBLIC)}
+                >
+                  {t(translationKeys.VISIBILITY_PUBLIC, 'Public')}
+                </SegmentedControl.Button>
 
-                  return (
-                    <div style={{ display: 'flex', flexDirection: 'column' }}>
-                      <span>{lastUpdatedString}</span>
-                      <Body level={3} muted>
-                        {getUpdatedByUserString(rowData.updatedByUserProfile)}
-                      </Body>
-                    </div>
-                  );
+                <SegmentedControl.Button
+                  key={CanvasVisibility.ALL}
+                  onClick={() => setVisibilityFilter(CanvasVisibility.ALL)}
+                >
+                  {t(translationKeys.VISIBILITY_ALL, 'All')}
+                </SegmentedControl.Button>
+              </SegmentedControl>
+            </SearchAreaWrapper>
+            <Table<CanvasDocumentWithUserProfile>
+              initialState={initialTableState}
+              onStateChange={onTableStateChange}
+              onRowClick={(row) =>
+                navigate(
+                  getCanvasLink(row.original.externalId, {
+                    [SEARCH_QUERY_PARAM_KEY]: debouncedSearchString,
+                  })
+                )
+              }
+              columns={[
+                {
+                  id: 'row-visibility',
+                  accessor: (row) => (
+                    <>{renderVisibilityIndicatorButton(row)}</>
+                  ),
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore - disableSortBy works just fine, but the type definition is wrong. Tracked by: https://cognitedata.atlassian.net/browse/CDS-1530
+                  disableSortBy: true,
                 },
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore - sortType is not defined in the Cogs table types, but works just fine. Tracked by: https://cognitedata.atlassian.net/browse/CDS-1530
-                sortType: 'datetime',
-              },
-              {
-                Header: t(
-                  translationKeys.HOMEPAGE_TABLE_CREATED_AT_COLUMN,
-                  'Created at'
-                ),
-                accessor: 'createdAtDate',
-                Cell: ({ value }: { value: Date }): JSX.Element => (
-                  <span>{format(value, 'yyyy-MM-dd')}</span>
-                ),
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore - sortType is not defined in the Cogs table types, but works just fine. Tracked by: https://cognitedata.atlassian.net/browse/CDS-1530
-                sortType: 'datetime',
-              },
-              {
-                Header: t(
-                  translationKeys.HOMEPAGE_TABLE_CREATED_BY_COLUMN,
-                  'Created by'
-                ),
-                accessor: (row) => getCreatedByName(row.createdByUserProfile),
-              },
-              {
-                id: 'row-options',
-                accessor: (row) => (
-                  <>
-                    {renderCopyCanvasLinkButton(row)}
-                    {renderDeleteCanvasButton(row)}
-                  </>
-                ),
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore - disableSortBy works just fine, but the type definition is wrong. Tracked by: https://cognitedata.atlassian.net/browse/CDS-1530
-                disableSortBy: true,
-              },
-            ]}
-            rowKey={(canvas) => canvas.externalId}
-            dataSource={sortedCanvases}
-          />
-        </CanvasListContainer>
+                {
+                  Header: t(translationKeys.HOMEPAGE_TABLE_NAME_COLUMN, 'Name'),
+                  accessor: 'name',
+                },
+                {
+                  Header: t(
+                    translationKeys.HOMEPAGE_TABLE_UPDATED_AT_COLUMN,
+                    'Updated at'
+                  ),
+                  accessor: 'updatedAtDate',
+                  Cell: ({ row }): JSX.Element => {
+                    const rowData = row.original;
+
+                    const lastUpdatedString = formatDistance(
+                      rowData.updatedAtDate,
+                      new Date(),
+                      {
+                        addSuffix: true,
+                      }
+                    );
+
+                    return (
+                      <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <span>{lastUpdatedString}</span>
+                        <Body level={3} muted>
+                          {getUpdatedByUserString(rowData.updatedByUserProfile)}
+                        </Body>
+                      </div>
+                    );
+                  },
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore - sortType is not defined in the Cogs table types, but works just fine. Tracked by: https://cognitedata.atlassian.net/browse/CDS-1530
+                  sortType: 'datetime',
+                },
+                {
+                  Header: t(
+                    translationKeys.HOMEPAGE_TABLE_CREATED_AT_COLUMN,
+                    'Created at'
+                  ),
+                  accessor: 'createdAtDate',
+                  Cell: ({ value }: { value: Date }): JSX.Element => (
+                    <span>{format(value, 'yyyy-MM-dd')}</span>
+                  ),
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore - sortType is not defined in the Cogs table types, but works just fine. Tracked by: https://cognitedata.atlassian.net/browse/CDS-1530
+                  sortType: 'datetime',
+                },
+                {
+                  Header: t(
+                    translationKeys.HOMEPAGE_TABLE_CREATED_BY_COLUMN,
+                    'Created by'
+                  ),
+                  accessor: (row) => getCreatedByName(row.createdByUserProfile),
+                },
+                {
+                  id: 'row-options',
+                  accessor: (row) => (
+                    <>
+                      {renderCopyCanvasLinkButton(row)}
+                      {renderDeleteCanvasButton(row)}
+                    </>
+                  ),
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore - disableSortBy works just fine, but the type definition is wrong. Tracked by: https://cognitedata.atlassian.net/browse/CDS-1530
+                  disableSortBy: true,
+                },
+              ]}
+              rowKey={(canvas) => canvas.externalId}
+              dataSource={filteredCanvases}
+            />
+          </CanvasListContainer>
+        )}
       </div>
+      <CanvasDeletionModal
+        canvas={canvasToDelete}
+        onCancel={() => setCanvasToDelete(undefined)}
+        onDeleteCanvas={onDeleteCanvasConfirmed}
+        isDeleting={isDeletingCanvas}
+      />
+      <AddResourceToCanvasModal
+        containerReferences={initializeWithContainerReferences}
+        canvases={canvases}
+        isVisible={
+          !hasConsumedInitializeWithContainerReferences &&
+          initializeWithContainerReferences !== undefined
+        }
+        onCancel={() => setHasConsumedInitializeWithContainerReferences(true)}
+        onOk={handleOnOk}
+      />
     </>
   );
 };
+
+const LoaderWrapper = styled.div`
+  background: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+`;
 
 const HomeHeader = styled.div`
   align-items: center;
@@ -316,7 +502,17 @@ const CanvasListContainer = styled.div`
   }
 `;
 
+const SearchAreaWrapper = styled.div`
+  display: flex;
+  width: 100%;
+  margin-bottom: 16px;
+
+  .cogs-inputexp-container {
+    flex: 1;
+    margin-right: 16px;
+  }
+`;
+
 const SearchCanvasInput = styled(InputExp)`
   background-color: rgba(83, 88, 127, 0.08);
-  margin-bottom: 16px;
 `;

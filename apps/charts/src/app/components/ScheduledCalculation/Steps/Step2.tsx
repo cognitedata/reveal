@@ -1,7 +1,6 @@
 import { useFormContext } from 'react-hook-form';
 
 import FormError from '@charts-app/components/Form/FormError';
-import { ScheduleClock } from '@charts-app/components/Icons/ScheduleClock';
 import { useTranslations } from '@charts-app/hooks/translations';
 import { makeDefaultTranslations } from '@charts-app/utils/translations';
 
@@ -14,7 +13,6 @@ import { CalculationPreview } from './CalculationPreview';
 import { FlexGrow, Steps2Column } from './elements';
 
 const defaultTranslations = makeDefaultTranslations(
-  'Save result and schedule the calculation',
   'Cancel',
   'Start schedule',
   'Name',
@@ -30,21 +28,6 @@ const defaultTranslations = makeDefaultTranslations(
   'Settings',
   'Result preview'
 );
-
-export const Step2Header = () => {
-  const t = {
-    ...defaultTranslations,
-    ...useTranslations(Object.keys(defaultTranslations), 'ScheduledCalculation')
-      .t,
-  };
-
-  return (
-    <Flex gap={8} alignItems="center">
-      <ScheduleClock />
-      <Title level={5}>{t['Save result and schedule the calculation']}</Title>
-    </Flex>
-  );
-};
 
 export const Step2Body = ({ workflowId }: { workflowId: string }) => {
   const t = {

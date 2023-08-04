@@ -5,7 +5,7 @@ import {
   RELATIVE_TIME_THRESHOLD_IN_HOURS,
 } from '../common';
 
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+// eslint-disable-next-line @nx/enforce-module-boundaries
 
 export const formatTime = (timestamp: number, absolute?: boolean) => {
   const shouldUseAbsolute =

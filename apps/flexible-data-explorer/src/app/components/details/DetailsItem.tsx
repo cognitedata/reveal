@@ -13,12 +13,14 @@ type DetailsItemProps = {
   value?: React.ReactNode;
   copyable?: boolean;
   link?: string;
+  hideCopyButton?: boolean;
 };
 // If you enable the copyable props, Make sure to add the Unique key props  to the component wherever it is being used
 export const DetailsItem = ({
   name,
   value,
   copyable = true,
+  hideCopyButton,
   link,
 }: DetailsItemProps) => {
   const { t } = useTranslation();
@@ -37,9 +39,7 @@ export const DetailsItem = ({
   return (
     <Container>
       <DetailsItemContainer>
-        <Body level={2} strong>
-          {name}
-        </Body>
+        <KeyText>{name}</KeyText>
 
         <Spacer />
 
@@ -61,18 +61,22 @@ export const DetailsItem = ({
         {!value && <MutedBody level={2}>-</MutedBody>}
       </DetailsItemContainer>
 
-      <ButtonWrapper visible={copyable && Boolean(value)}>
-        <Tooltip content={hasCopied ? t('GENERAL_COPIED') : t('GENERAL_COPY')}>
-          <Button
-            type="ghost"
-            size="small"
-            icon={hasCopied ? 'Checkmark' : 'Copy'}
-            disabled={hasCopied}
-            onClick={handleOnClickCopy}
-            aria-label="Copy"
-          />
-        </Tooltip>
-      </ButtonWrapper>
+      {!hideCopyButton && (
+        <ButtonWrapper visible={copyable && Boolean(value)}>
+          <Tooltip
+            content={hasCopied ? t('GENERAL_COPIED') : t('GENERAL_COPY')}
+          >
+            <Button
+              type="ghost"
+              size="small"
+              icon={hasCopied ? 'Checkmark' : 'Copy'}
+              disabled={hasCopied}
+              onClick={handleOnClickCopy}
+              aria-label="Copy"
+            />
+          </Tooltip>
+        </ButtonWrapper>
+      )}
     </Container>
   );
 };
@@ -118,4 +122,8 @@ const ButtonWrapper = styled.div<{ visible?: boolean }>`
   justify-content: center;
   align-items: center;
   visibility: ${({ visible }) => (visible ? 'unset' : 'hidden')};
+`;
+
+const KeyText = styled(Body).attrs({ level: 2, strong: true })`
+  text-transform: capitalize;
 `;

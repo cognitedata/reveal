@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import styled from 'styled-components';
 
-import { Button, Dropdown } from '@cognite/cogs.js';
+import { Button, Dropdown, DropdownProps } from '@cognite/cogs.js';
 
 import {
   EMPTY_OBJECT,
@@ -23,6 +23,10 @@ import {
 } from './types';
 import { getFilterButtonText } from './utils/getFilterButtonText';
 
+type MenuProps = {
+  placement?: DropdownProps['placement'];
+};
+
 export type CheckboxSelectProps = {
   selection?: OptionSelection;
   options: Array<OptionType>;
@@ -33,19 +37,21 @@ export type CheckboxSelectProps = {
   useCustomMetadataValuesQuery?: CustomMetadataValue;
   onSearchInputChange?: (newValue: string) => void;
   isLoading?: boolean;
+  menuProps?: MenuProps;
 } & WidthProps;
 
 export const CheckboxSelect = ({
-  selection: customSelection,
-  options,
+  enableSorting = false,
+  isLoading,
   label,
+  menuProps,
   onChange,
   onClickApply,
-  useCustomMetadataValuesQuery,
-  enableSorting = false,
-  width,
   onSearchInputChange,
-  isLoading,
+  options,
+  selection: customSelection,
+  useCustomMetadataValuesQuery,
+  width,
 }: CheckboxSelectProps) => {
   const { t } = useTranslation();
 
@@ -97,6 +103,7 @@ export const CheckboxSelect = ({
             )
           }
           enableSorting={enableSorting}
+          {...menuProps}
         />
       }
     >

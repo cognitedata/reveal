@@ -28,13 +28,22 @@ export const useInfinite360ImagesSiteIdAggregateQuery = (
             pages: data.pages.map((page: EventsMetadataAggregateResponse[]) => {
               return {
                 ...page,
-                items: page.filter((eventAggregate) =>
-                  !!query
-                    ? eventAggregate.value
-                        .toLowerCase()
-                        .includes(query.toLowerCase())
-                    : eventAggregate
-                ),
+                items: page
+                  .map((eventAggregate) => {
+                    const value = eventAggregate.values[0].trim();
+                    return {
+                      type: 'img360',
+                      siteId: value,
+                      name: value,
+                    };
+                  })
+                  .filter((image360) =>
+                    !!query
+                      ? image360.name
+                          .toLowerCase()
+                          .includes(query.toLowerCase())
+                      : image360
+                  ),
               };
             }),
           };

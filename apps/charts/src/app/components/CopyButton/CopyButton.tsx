@@ -1,6 +1,6 @@
 import { ComponentProps, MouseEventHandler, useState } from 'react';
 
-import { Button } from '@cognite/cogs.js';
+import { Button, Colors } from '@cognite/cogs.js';
 
 type Props = ComponentProps<typeof Button> & {
   value: string;
@@ -26,8 +26,8 @@ const CopyButton = ({ value, ...rest }: Props) => {
         transition: 'color 500ms ease-in ease-out',
         color:
           iconType === 'Copy'
-            ? 'var(--cogs-link-primary-default)'
-            : 'var(--cogs-success)',
+            ? Colors['surface--action--strong--default']
+            : Colors['text-icon--status-success'],
         ...rest.style,
       }}
     />

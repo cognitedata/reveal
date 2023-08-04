@@ -188,6 +188,9 @@ export function Table<T extends TableData>({
             disabled: !row.getCanSelect(),
             indeterminate: row.getIsSomeSelected(),
             onChange: row.getToggleSelectedHandler(),
+            onClick: (event: React.MouseEvent<HTMLInputElement>) => {
+              event.stopPropagation();
+            },
           }}
         />
       );
@@ -529,7 +532,11 @@ export function Table<T extends TableData>({
         </ColumnSelectorWrapper>
       ) : null}
 
-      {tableSubHeaders && <SubTableWrapper>{tableSubHeaders}</SubTableWrapper>}
+      {tableSubHeaders && (
+        <SubTableWrapper data-testid="sub-table-wrapper">
+          {tableSubHeaders}
+        </SubTableWrapper>
+      )}
 
       {renderTableContent()}
     </TableContainer>

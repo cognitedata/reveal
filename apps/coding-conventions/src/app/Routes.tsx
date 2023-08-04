@@ -1,11 +1,16 @@
+import { useEffect } from 'react';
 import { Outlet, Routes as ReactRoutes, Route } from 'react-router-dom';
 
 import { useFusionQuery } from './hooks/useFusionQuery';
 import { ConventionsPage } from './pages/ConventionsPage';
 import { EditPage } from './pages/edit/EditPage';
+import { Database } from './service/storage/Database';
 
 const Routes = () => {
   useFusionQuery();
+  useEffect(() => {
+    Database.init();
+  }, []);
 
   return (
     <ReactRoutes>

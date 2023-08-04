@@ -84,7 +84,7 @@ export const CollapsiblePanelContainer: React.FC<
           <SDKProvider sdk={getCogniteSDKClient()}>
             <p>{ts.externalId}</p>
             <TimeseriesChart
-              timeseriesId={ts.id}
+              timeseries={{ id: ts.id }}
               variant="small"
               height={200}
               dateRange={[

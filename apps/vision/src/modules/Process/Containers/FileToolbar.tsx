@@ -1,5 +1,5 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import styled from 'styled-components';
 
@@ -14,7 +14,7 @@ import {
   selectAllProcessFiles,
   selectIsPollingComplete,
 } from '@vision/modules/Process/store/selectors';
-import { AppDispatch } from '@vision/store';
+import { useThunkDispatch } from '@vision/store';
 import { RootState } from '@vision/store/rootReducer';
 import { DeleteFilesById } from '@vision/store/thunks/Files/DeleteFilesById';
 import { zIndex } from '@vision/utils/zIndex';
@@ -28,7 +28,7 @@ export const FileToolbar = ({
   onViewChange?: (view: string) => void;
   currentView?: string;
 }) => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useThunkDispatch();
 
   const selectedFileIds = useSelector((state: RootState) =>
     selectAllSelectedIds(state.fileReducer)

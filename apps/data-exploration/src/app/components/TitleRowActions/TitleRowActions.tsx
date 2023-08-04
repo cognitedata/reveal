@@ -2,13 +2,11 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { ResourceItem } from '@cognite/data-exploration';
-
 import { DateFilter } from '@data-exploration-app/components/ResourceTitleRow';
 import CanvasButton from '@data-exploration-app/components/TitleRowActions/CanvasButton';
 import { FullscreenButton } from '@data-exploration-app/components/TitleRowActions/FullscreenButton';
 import { PreviewCloseButton } from '@data-exploration-app/components/TitleRowActions/PreviewCloseButton';
-import { useCurrentResourceId } from '@data-exploration-app/hooks/hooks';
+import { ResourceItem } from '@data-exploration-lib/core';
 
 import DownloadButton from './DownloadButton';
 
@@ -27,8 +25,7 @@ export const TitleRowActions = ({
   beforeDefaultActions,
   hideDefaultCloseActions,
 }: TitleRowActionsProps) => {
-  // Instead we could do just =>> const activeId = item.id;
-  const [activeId] = useCurrentResourceId();
+  const activeId = item.id;
 
   if (item.type === 'threeD') {
     return <StyledSpace>{afterDefaultActions}</StyledSpace>;
@@ -44,8 +41,8 @@ export const TitleRowActions = ({
         <>
           <Divider />
 
-          <FullscreenButton item={item} />
-          <PreviewCloseButton item={item} />
+          <FullscreenButton />
+          <PreviewCloseButton />
         </>
       )}
     </StyledSpace>

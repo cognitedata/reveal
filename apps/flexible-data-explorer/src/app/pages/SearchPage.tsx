@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { Page } from '../containers/page/Page';
+import { AIResults } from '../containers/search/results/AIResults';
 import { FileResults } from '../containers/search/results/FileResults';
 import { GenericResults } from '../containers/search/results/GenericResults';
 import { TimeseriesResults } from '../containers/search/results/TimeseriesResults';
@@ -11,23 +12,24 @@ import { SearchCategories } from '../containers/search/SearchCategories';
 import { SearchConfiguration } from '../containers/search/SearchConfiguration';
 
 export const SearchPage = () => {
-  const { dataType } = useParams();
+  const { type } = useParams();
 
   const renderResults = () => {
-    if (dataType === 'Files') {
+    if (type === 'Files') {
       return <FileResults />;
     }
 
-    if (dataType === 'Timeseries') {
+    if (type === 'Timeseries') {
       return <TimeseriesResults />;
     }
 
-    if (dataType !== undefined) {
-      return <GenericResults selectedDataType={dataType} />;
+    if (type !== undefined) {
+      return <GenericResults selectedDataType={type} />;
     }
 
     return (
       <>
+        <AIResults />
         <GenericResults />
         <TimeseriesResults />
         <FileResults />

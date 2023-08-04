@@ -1,24 +1,25 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import sdk from '@cognite/cdf-sdk-singleton';
 import { HttpError, Model3D } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
 
 import { fireErrorNotification, QUERY_KEY } from '../../utils';
 
 type UpdateArgs = { id: number; name: string };
 
-const updateModel = async ({ id, name }: UpdateArgs): Promise<Model3D> => {
-  const items = await sdk.models3D.update([
-    {
-      id,
-      update: { name: { set: name } },
-    },
-  ]);
-  return items[0];
-};
-
 export function useUpdateModelMutation() {
   const queryClient = useQueryClient();
+  const sdk = useSDK();
+  const updateModel = async ({ id, name }: UpdateArgs): Promise<Model3D> => {
+    const items = await sdk.models3D.update([
+      {
+        id,
+        update: { name: { set: name } },
+      },
+    ]);
+    return items[0];
+  };
+
   return useMutation<Model3D, HttpError, UpdateArgs, Model3D[]>(updateModel, {
     onMutate: ({ id, name }: UpdateArgs) => {
       const snapshot = queryClient.getQueryData<Model3D[]>(QUERY_KEY.MODELS);

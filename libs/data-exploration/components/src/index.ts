@@ -1,4 +1,3 @@
-export * from './__test-utils';
 export * from './Buttons';
 export * from './Checkboxes';
 export * from './CheckboxSelect';
@@ -31,8 +30,9 @@ export * from './EmpyState';
 export * from './DragDropContainer';
 export * from './Graphics';
 export * from './Drawer';
-export * from './BulkActionBar';
+export * from './ActionBar';
 export * from './Divider';
 export * from './KeepMounted';
 export * from './PreviewFilter';
 export * from './UploadButton';
+export * from './Splitter';

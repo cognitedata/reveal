@@ -1,4 +1,4 @@
 # cdf-login-utils
 
-This library was generated with [Nx](https://nx.dev).
+This library is ported from https://github.com/cognitedata/login-utils/.
 

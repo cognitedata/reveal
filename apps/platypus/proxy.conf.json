@@ -5,6 +5,12 @@
 	  "changeOrigin": true,
 	  "logLevel": "error"
 	},
+	"/_api/login_info": {
+	  "target": "http://localhost:4002",
+	  "secure": false,
+	  "changeOrigin": true,
+	  "logLevel": "error"
+	},
 	"/api": {
 	  "target": "http://localhost:4002",
 	  "secure": false,

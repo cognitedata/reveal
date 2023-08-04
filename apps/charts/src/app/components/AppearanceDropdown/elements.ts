@@ -4,6 +4,8 @@
 
 import styled from 'styled-components/macro';
 
+import { Menu } from '@cognite/cogs.js';
+
 export const DropdownWrapper = styled.div`
   display: flex;
   flex-direction: row;
@@ -46,4 +48,8 @@ export const TypeLine = styled.div`
   height: 10px;
   border-bottom: 3px ${(props: { type: string }) => props.type} black;
   position: absolute;
+`;
+
+export const StyledMenu = styled(Menu)`
+  max-width: 600px;
 `;

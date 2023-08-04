@@ -1,12 +1,13 @@
 import styled from 'styled-components/macro';
 
-import { LABEL_COLOR, TICK_COLOR } from '../../constants';
+import { INVERTED_LABEL_COLOR, LABEL_COLOR, TICK_COLOR } from '../../constants';
 import { Variant } from '../../types';
 
 interface PlotWrapperProps {
   showticks: boolean;
   cursor: string;
   variant?: Variant;
+  inverted?: boolean;
 }
 
 export const PlotWrapper = styled.div`
@@ -29,7 +30,8 @@ export const PlotWrapper = styled.div`
   > * .xtick,
   .ytick {
     text {
-      fill: ${LABEL_COLOR} !important;
+      fill: ${({ inverted }) =>
+        inverted ? INVERTED_LABEL_COLOR : LABEL_COLOR} !important;
       font-family: Inter !important;
       font-weight: 400 !important;
       font-size: ${({ variant }: PlotWrapperProps) =>

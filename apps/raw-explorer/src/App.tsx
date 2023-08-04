@@ -16,12 +16,10 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
 import { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
 import {
-  AuthWrapper,
-  getEnv,
+  AuthContainer,
   getProject,
-  SubAppWrapper,
+  isUsingUnifiedSignin,
 } from '@cognite/cdf-utilities';
-import { Loader } from '@cognite/cogs.js';
 import { SDKProvider } from '@cognite/sdk-provider';
 
 setupMixpanel();
@@ -38,7 +36,7 @@ const App = () => {
 
   // const appName = 'cdf-raw-explorer';
   const projectName = getProject();
-  const env = getEnv();
+  const tenant = isUsingUnifiedSignin() ? `/cdf/${projectName}` : projectName;
 
   return (
     <I18nWrapper
@@ -57,21 +55,20 @@ const App = () => {
           <QueryClientProvider client={queryClient}>
             <GlobalStyles>
               <AntStyles>
-                <SubAppWrapper title="RAW Explorer">
-                  <AuthWrapper
-                    loadingScreen={<Loader />}
-                    login={() => loginAndAuthIfNeeded(projectName, env)}
-                  >
-                    <Router
-                      basename={`${projectName}/raw`}
-                      children={
-                        <RawExplorerProvider>
-                          <RawExplorer />
-                        </RawExplorerProvider>
-                      }
-                    />
-                  </AuthWrapper>
-                </SubAppWrapper>
+                <AuthContainer
+                  title="RAW Explorer"
+                  sdk={sdk}
+                  login={loginAndAuthIfNeeded}
+                >
+                  <Router
+                    basename={`${tenant}/raw`}
+                    children={
+                      <RawExplorerProvider>
+                        <RawExplorer />
+                      </RawExplorerProvider>
+                    }
+                  />
+                </AuthContainer>
               </AntStyles>
             </GlobalStyles>
             <ReactQueryDevtools initialIsOpen={false} />

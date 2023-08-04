@@ -3,13 +3,10 @@ import { useMemo } from 'react';
 import { Button, Dropdown } from '@cognite/cogs.js';
 
 import { useTranslation } from '../../../hooks/useTranslation';
-import { useTypesDataModelQuery } from '../../../services/dataModels/query/useTypesDataModelQuery';
-import { ValueByField } from '../../search/Filter';
-import {
-  AppliedFilters,
-  FilterBuilderByField,
-} from '../../search/Filter/containers';
-import { transformDefFieldsToFilterFields } from '../../search/Filter/filters/SearchBarFilter/utils';
+import { useFDM } from '../../../providers/FDMProvider';
+import { ValueByField } from '../../Filter';
+import { AppliedFilters, FilterBuilderByField } from '../../Filter/containers';
+import { transformDefFieldsToFilterFields } from '../../Filter/filters/SearchBarFilter/utils';
 
 export interface SearchBarFilterProps {
   value?: ValueByField;
@@ -23,18 +20,17 @@ export const RelationshipFilter: React.FC<SearchBarFilterProps> = ({
   onChange,
 }) => {
   const { t } = useTranslation();
-  const { data: types } = useTypesDataModelQuery();
+  const client = useFDM();
 
   const fields = useMemo(() => {
-    const result = types?.find((item) => item.name === dataType)?.fields || [];
+    const result =
+      client.allDataTypes?.find((item) => item.name === dataType)?.fields || [];
 
     return transformDefFieldsToFilterFields(result);
-  }, [types, dataType]);
+  }, [client.allDataTypes, dataType]);
 
   return (
     <>
-      <AppliedFilters value={value} onRemove={onChange} />
-
       <Dropdown
         placement="bottom-end"
         content={
@@ -57,6 +53,7 @@ export const RelationshipFilter: React.FC<SearchBarFilterProps> = ({
           {t('FILTER_BUTTON')}
         </Button>
       </Dropdown>
+      <AppliedFilters value={value} onRemove={onChange} />
     </>
   );
 };

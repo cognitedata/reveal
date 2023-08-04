@@ -1,4 +1,4 @@
-import { ComponentProps, useState } from 'react';
+import { ComponentProps, useState, useMemo } from 'react';
 import { DraggableProvided } from 'react-beautiful-dnd';
 
 import AlertIcon from '@charts-app/components/AlertIcon/AlertIcon';
@@ -24,6 +24,7 @@ import {
 import { DatapointsSummary } from '@charts-app/utils/units';
 
 import { Button, Popconfirm, Tooltip } from '@cognite/cogs.js';
+import { useFlag } from '@cognite/react-feature-flags';
 
 import {
   DropdownWithoutMaxWidth,
@@ -65,6 +66,8 @@ type Props = {
   onUpdateName?: (value: string) => void;
   onDuplicateCalculation?: () => void;
 };
+
+type WorkflowRowOptions = ComponentProps<typeof Dropdown>['options'];
 
 /**
  * Workflow translations
@@ -126,12 +129,53 @@ function WorkflowRow({
    */
   const unitDropdownTranslations = useComponentTranslations(UnitDropdown);
 
+  /**
+   * Persistence calculation flag
+   */
+  const { isEnabled: isPersistenceCalcEnabled } = useFlag(
+    'CHARTS_PERSISTENCE_CALC',
+    {
+      fallback: false,
+      forceRerender: true,
+    }
+  );
+
   const resultError = calculationResult?.error;
   const hasError = !!resultError;
   const resultWarning = calculationResult?.warnings;
   const hasWarning = resultWarning && resultWarning.length > 0;
   const isVisible = enabled;
   const status = calculationResult?.status;
+  const workflowRowOptions = useMemo<WorkflowRowOptions>(() => {
+    const menuOptions: WorkflowRowOptions = [
+      {
+        label: t['Edit calculation'],
+        icon: 'Function' as const,
+        onClick: openNodeEditor,
+      },
+      {
+        label: t.Duplicate,
+        icon: 'Duplicate' as const,
+        /**
+         * TODO: Move this logic out and pass back in as prop
+         */
+        onClick: () => {
+          onDuplicateCalculation();
+          trackUsage('ChartView.DuplicateCalculation');
+        },
+      },
+    ];
+    if (isPersistenceCalcEnabled) {
+      menuOptions.push({
+        label: t['Save & Schedule'],
+        icon: 'Clock' as const,
+        onClick: () => {
+          setSCModalVisible(true);
+        },
+      });
+    }
+    return menuOptions;
+  }, [t, openNodeEditor, onDuplicateCalculation, isPersistenceCalcEnabled]);
 
   return (
     <>
@@ -306,33 +350,7 @@ function WorkflowRow({
               style={{ textAlign: 'center', paddingLeft: 0 }}
               className="downloadChartHide col-action"
             >
-              <Dropdown.Uncontrolled
-                options={[
-                  {
-                    label: t['Edit calculation'],
-                    icon: 'Function',
-                    onClick: openNodeEditor,
-                  },
-                  {
-                    label: t.Duplicate,
-                    icon: 'Duplicate',
-                    /**
-                     * TODO: Move this logic out and pass back in as prop
-                     */
-                    onClick: () => {
-                      onDuplicateCalculation();
-                      trackUsage('ChartView.DuplicateCalculation');
-                    },
-                  },
-                  {
-                    label: t['Save & Schedule'],
-                    icon: 'Clock',
-                    onClick: () => {
-                      setSCModalVisible(true);
-                    },
-                  },
-                ]}
-              />
+              <Dropdown.Uncontrolled options={workflowRowOptions} />
             </td>
           </>
         )}

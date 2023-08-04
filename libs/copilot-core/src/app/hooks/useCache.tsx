@@ -9,7 +9,7 @@ export const CACHE_KEY = {
   CHAT_HISTORY: 'CHAT_HISTORY',
 } as const;
 
-const getKey = (project: string, key: string) =>
+export const getCacheKey = (project: string, key: string) =>
   `cdf-copilot-${project}-${key}`;
 
 export const useFromCache = <T,>(key: keyof typeof CACHE_KEY) => {
@@ -31,18 +31,18 @@ export const useSaveToCache = <T,>(key: keyof typeof CACHE_KEY) => {
   );
 };
 
-export const saveToCache = async <T,>(
+const saveToCache = async <T,>(
   project: string,
   key: keyof typeof CACHE_KEY,
   value: T
 ) => {
-  return localForage.setItem(getKey(project, key), value);
+  return localForage.setItem(getCacheKey(project, key), value);
 };
 
-export const getFromCache = async <T,>(
+const getFromCache = async <T,>(
   project: string,
   key: keyof typeof CACHE_KEY
 ) => {
-  return ((await localForage.getItem(getKey(project, key))) ||
+  return ((await localForage.getItem(getCacheKey(project, key))) ||
     null) as T | null;
 };

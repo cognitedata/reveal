@@ -26,7 +26,7 @@ export const AnnotationSettingsModal = (
   return (
     <StyledModal
       getContainer={getContainer}
-      visible={props.showModal}
+      open={props.showModal}
       onCancel={props.onCancel}
       width={580}
       footer={null} // to remove default ok and cancel buttons

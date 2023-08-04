@@ -1,10 +1,11 @@
 {
   "name": "raw-explorer",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/raw-explorer/src",
   "projectType": "application",
   "targets": {
     "build": {
-      "executor": "@nrwl/webpack:webpack",
+      "executor": "@nx/webpack:webpack",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/raw-explorer",
@@ -27,6 +28,17 @@
           "extractCss": false,
           "namedChunks": false,
           "extractLicenses": false,
+          "vendorChunk": false,
+          "runtimeChunk": false,
+          "budgets": []
+        },
+        "staging": {
+          "optimization": false,
+          "outputHashing": "all",
+          "sourceMap": true,
+          "extractCss": true,
+          "namedChunks": false,
+          "extractLicenses": true,
           "vendorChunk": false,
           "runtimeChunk": false,
           "budgets": []
@@ -55,7 +67,7 @@
       }
     },
     "serve": {
-      "executor": "@nrwl/webpack:dev-server",
+      "executor": "@nx/webpack:dev-server",
       "options": {
         "buildTarget": "raw-explorer:build",
         "hmr": true
@@ -66,7 +78,6 @@
           "hmr": true,
           "liveReload": true
         },
-
         "preview": {
           "buildTarget": "raw-explorer:build:preview",
           "hmr": false
@@ -79,14 +90,14 @@
       "defaultConfiguration": "development"
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["apps/raw-explorer/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/raw-explorer"],
       "options": {
         "jestConfig": "apps/raw-explorer/jest.config.ts",
@@ -94,5 +105,8 @@
       }
     }
   },
-  "tags": []
+  "tags": [],
+  "pipeline": {
+    "previewPackageName": "@cognite/cdf-raw-explorer"
+  }
 }

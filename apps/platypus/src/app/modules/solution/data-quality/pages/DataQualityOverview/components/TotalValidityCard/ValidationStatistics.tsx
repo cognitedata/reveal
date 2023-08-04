@@ -1,17 +1,18 @@
-import { useLoadRules } from '@data-quality/hooks';
+import { useDataSourceValidity, useLoadRules } from '@data-quality/hooks';
+import { abbreviateNumber } from '@data-quality/utils/numbers';
 import {
   TimeSeriesType,
+  getDatapointsById,
   getLastDatapointValue,
   getScoreValue,
   getTimeSeriesId,
 } from '@data-quality/utils/validationTimeseries';
+import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
-import { Body, Detail, Divider, Flex, Title } from '@cognite/cogs.js';
+import { Body, Divider, Flex, Heading, Tooltip } from '@cognite/cogs.js';
 
-import { LastValidationTime } from '..';
-
-import { useDataSourceValidity } from './useDataSourceValidity';
+import { LastValidationTime, ValidationDifference } from '..';
 
 type ValidationStatisticsProps = {
   dataSourceId: string;
@@ -39,12 +40,41 @@ export const ValidationStatistics = ({
     getLastDatapointValue(datapoints, timeSeriesIdInstances) || 0;
 
   const rulesCount = rules.length;
+  const rulesText =
+    rules.length === 1
+      ? t('data_quality_rule', 'rule')
+      : t('data_quality_rules', 'rules');
+
+  const scoreDatapoints = getDatapointsById(datapoints, timeSeriesIdScore);
+  const totalInstancesDatapoints = getDatapointsById(
+    datapoints,
+    timeSeriesIdInstances
+  );
+
+  if (loadingDatapoints)
+    return (
+      <div>
+        <Spinner size={14} />
+      </div>
+    );
 
   return (
-    <Flex direction="row" gap={16} justifyContent="space-between">
-      <Flex direction="row">
-        <Title>{scoreValue}</Title>
-        {/* Add here the difference between runs */}
+    <Flex
+      direction="row"
+      gap={16}
+      justifyContent="space-between"
+      style={{ width: '95%' }}
+    >
+      <Flex direction="column" gap={4}>
+        <Flex alignItems="center" direction="row" gap={8}>
+          <Heading>{scoreValue}</Heading>
+          <ValidationDifference tsDatapoints={scoreDatapoints} showStaleState />
+        </Flex>
+        <LastValidationTime
+          datapoints={datapoints}
+          displayType="muted"
+          loading={loadingDatapoints}
+        />
       </Flex>
 
       <div>
@@ -52,20 +82,25 @@ export const ValidationStatistics = ({
       </div>
 
       <Flex direction="column" gap={4}>
-        <Flex direction="row" gap={8} alignItems="center">
-          <Title>{rulesCount}</Title>
-          <Detail>{t('data_quality_rules', 'rules')}</Detail>
+        <Flex alignItems="center" direction="row" gap={8}>
+          <Tooltip
+            content={`${totalInstancesValue.toLocaleString()} ${t(
+              'data_quality_items_checked',
+              'items checked'
+            )}`}
+          >
+            <Heading>{abbreviateNumber(totalInstancesValue)}</Heading>
+          </Tooltip>
+          <Body size="x-small">
+            {t('data_quality_items_checked', 'items checked')}
+          </Body>
+          <ValidationDifference tsDatapoints={totalInstancesDatapoints} />
         </Flex>
-        <Flex direction="column">
-          <Body level={6}>{`${totalInstancesValue.toLocaleString()} ${t(
-            'data_quality_data_checks',
-            'data_checks'
-          )}`}</Body>
-          <LastValidationTime
-            datapoints={datapoints}
-            displayType="muted"
-            loading={loadingDatapoints}
-          />
+
+        <Flex alignItems="center" direction="row" gap={8}>
+          <Body size="x-small" muted>
+            {`${rulesCount} ${rulesText}`}
+          </Body>
         </Flex>
       </Flex>
     </Flex>

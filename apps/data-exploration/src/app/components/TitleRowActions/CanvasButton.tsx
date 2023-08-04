@@ -48,7 +48,7 @@ const CanvasButton: React.FC<CanvasButtonProps> = ({ item }) => {
       content={t('OPEN_IN_INDUSTRIAL_CANVAS', 'Open in Industrial Canvas')}
     >
       <Link
-        to={createLink(`/industrial-canvas/canvas`, {
+        to={createLink(`/industrial-canvas`, {
           ...getSearchParams(window.location.search),
           initializeWithContainerReferences,
         })}

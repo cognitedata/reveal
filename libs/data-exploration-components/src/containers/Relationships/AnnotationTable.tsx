@@ -1,5 +1,3 @@
-import React, { useMemo } from 'react';
-
 import { Loader } from '@data-exploration/components';
 import {
   AssetTable,
@@ -9,23 +7,15 @@ import {
   TimeseriesTable,
 } from '@data-exploration/containers';
 import { useUniqueCdfItems } from '@data-exploration-components/hooks';
-import { useTaggedAnnotationsByResourceType } from '@data-exploration-components/hooks/RelationshipHooks';
 import {
   SelectableItemsProps,
   ResourceType,
   convertResourceType,
 } from '@data-exploration-components/types';
 import { Alert } from 'antd';
-import uniqBy from 'lodash/uniqBy';
-
-import { IdEither } from '@cognite/sdk';
 
 import { useTranslation } from '@data-exploration-lib/core';
-
-import {
-  getResourceExternalIdFromTaggedAnnotation,
-  getResourceIdFromTaggedAnnotation,
-} from '../Files';
+import { useFileAnnotationsResourceIds } from '@data-exploration-lib/domain-layer';
 
 type Props = {
   fileId: number;
@@ -42,51 +32,26 @@ export function AnnotationTable({
   const { t } = useTranslation();
 
   const {
-    data: taggedAnnotations,
+    data,
     isInitialLoading: isTaggedAnnotationsInitialLoading,
     isError,
-  } = useTaggedAnnotationsByResourceType(fileId, resourceType);
-
-  const ids = useMemo(
-    () =>
-      uniqBy(
-        taggedAnnotations.map((taggedAnnotation) => {
-          const resourceExternalId =
-            getResourceExternalIdFromTaggedAnnotation(taggedAnnotation);
-          if (resourceExternalId) {
-            return {
-              externalId: resourceExternalId,
-            };
-          }
-
-          const resourceId =
-            getResourceIdFromTaggedAnnotation(taggedAnnotation);
-          if (resourceId) {
-            return { id: resourceId };
-          }
-
-          return undefined;
-        }),
-        (
-          i:
-            | { id: number; externalId: undefined }
-            | { id: undefined; externalId: string }
-            | undefined
-        ) => i?.externalId || i?.id
-      ).filter(Boolean) as IdEither[],
-    [taggedAnnotations]
-  );
+  } = useFileAnnotationsResourceIds({ id: fileId });
 
   function onRowClick<T extends { id: number }>({ id }: T) {
     onItemClicked(id);
   }
 
+  const ids = data[resourceType];
   const itemsEnabled = ids && ids.length > 0;
   const {
     data: items = [],
     isInitialLoading: isUniqueCdfItemsInitialLoading,
     isError: itemsError,
-  } = useUniqueCdfItems<any>(convertResourceType(resourceType), ids, true);
+  } = useUniqueCdfItems<any>(
+    convertResourceType(resourceType),
+    ids.map((id) => ({ id })),
+    true
+  );
 
   if (isError || itemsError) {
     return (

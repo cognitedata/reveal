@@ -1,31 +1,33 @@
 import React, { useContext } from 'react';
-import { useLocation } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import { getTabCountLabel } from '@data-exploration-components/utils';
+import { getChipRightPropsForResourceCounter } from '@data-exploration/containers';
 
-import { createLink } from '@cognite/cdf-utilities';
 import { Tabs, TabProps } from '@cognite/cogs.js';
 import {
-  useRelatedResourceCounts,
   ResourceType,
   ResourceItem,
-  getTitle,
+  useRelatedResourceCounts,
+  getTabCountLabel,
 } from '@cognite/data-exploration';
 
 import { RelatedResources } from '@data-exploration-app/containers/ResourceDetails/RelatedResources/RelatedResources';
 import ResourceSelectionContext from '@data-exploration-app/context/ResourceSelectionContext';
-import { useFlagAdvancedFilters } from '@data-exploration-app/hooks';
-import { useNavigateWithHistory } from '@data-exploration-app/hooks/hooks';
+import {
+  useFlagDocumentsApiEnabled,
+  useFlagNewCounts,
+  usePushJourney,
+} from '@data-exploration-app/hooks';
 import { addPlusSignToCount } from '@data-exploration-app/utils/stringUtils';
-import { getSearchParams } from '@data-exploration-app/utils/URLUtils';
 import {
   formatNumber,
+  getTitle,
   getTranslationEntry,
   useTranslation,
   withThousandSeparator,
 } from '@data-exploration-lib/core';
+import { useTotalRelatedResourcesCounts } from '@data-exploration-lib/domain-layer';
 
 type ResouceDetailsTabsProps = {
   parentResource: ResourceItem & { title: string };
@@ -51,14 +53,12 @@ const ResourceDetailTabContent = ({
   resource: ResourceItem & { title: string };
   type: ResourceType;
 }) => {
-  const navigateWithHistory = useNavigateWithHistory(resource);
-  const location = useLocation();
+  const [pushJourney] = usePushJourney();
 
   const { mode, onSelect, resourcesState } = useContext(
     ResourceSelectionContext
   );
 
-  // TODO: is this used?
   const isSelected = (item: ResourceItem) => {
     return resourcesState.some(
       (el) =>
@@ -67,10 +67,8 @@ const ResourceDetailTabContent = ({
     );
   };
 
-  const search = getSearchParams(location.search);
-
   const handleParentAssetClicked = (assetId: number) => {
-    navigateWithHistory(createLink(`/explore/asset/${assetId}`, search));
+    pushJourney({ id: assetId, type: 'asset' });
   };
 
   return (
@@ -78,7 +76,7 @@ const ResourceDetailTabContent = ({
       type={type}
       parentResource={resource}
       onItemClicked={(id: number) => {
-        navigateWithHistory(createLink(`/explore/${type}/${id}`, search));
+        pushJourney({ id, type, initialTab: type });
       }}
       onParentAssetClick={handleParentAssetClicked}
       selectionMode={mode}
@@ -88,7 +86,6 @@ const ResourceDetailTabContent = ({
   );
 };
 
-// TODO: We have a new version `ResourceDetailsTabsV2`, can remove this file after new navigation adoption.
 export const ResourceDetailsTabs = ({
   parentResource,
   tab,
@@ -97,42 +94,65 @@ export const ResourceDetailsTabs = ({
   onTabChange,
   style = {},
 }: ResouceDetailsTabsProps) => {
+  const isDocumentsApiEnabled = useFlagDocumentsApiEnabled();
+  const isNewCountsEnabled = useFlagNewCounts();
+
+  const {
+    counts: oldCounts,
+    hasMoreRelationships,
+    isLoading: isOldCountsLoading,
+  } = useRelatedResourceCounts(parentResource, isDocumentsApiEnabled);
+
+  const { data: newCounts, isLoading: isNewCountsLoading } =
+    useTotalRelatedResourcesCounts({
+      resource: parentResource,
+      isDocumentsApiEnabled,
+    });
+
   const { t } = useTranslation();
-  const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
-  const { counts, hasMoreRelationships } = useRelatedResourceCounts(
-    parentResource,
-    isAdvancedFiltersEnabled
-  );
+
+  const counts = isNewCountsEnabled ? newCounts : oldCounts;
+  const isLoading = isNewCountsEnabled
+    ? isNewCountsLoading
+    : isOldCountsLoading;
+
+  const getChipRightProps = (count: number, key: ResourceType) => {
+    if (isNewCountsEnabled) {
+      return getChipRightPropsForResourceCounter(
+        count,
+        isLoading[key] || false
+      );
+    }
+
+    return {
+      chipRight: {
+        label: isDocumentsApiEnabled
+          ? getTabCountLabel(count)
+          : addPlusSignToCount(formatNumber(count), hasMoreRelationships[key]!),
+        size: 'x-small',
+        tooltipProps: { content: withThousandSeparator(count, ',') },
+      },
+    };
+  };
 
   const filteredTabs = defaultRelationshipTabs.filter(
     (type) => !excludedTypes.includes(type)
   );
 
-  const getCountLabel = (count: number, key: ResourceType) => {
-    return isAdvancedFiltersEnabled
-      ? getTabCountLabel(count)
-      : addPlusSignToCount(formatNumber(count), hasMoreRelationships[key]!);
-  };
-
   const relationshipTabs = filteredTabs.map((key) => {
-    const totalCount = counts[key] || 0;
-    const titleTranslationKey = `${key}_${getTranslationEntry(totalCount)}`;
+    const count = counts[key] || 0;
+    const isCountLoading = isLoading[key] || false;
+    const titleTranslationKey = `${key}_${getTranslationEntry(count)}`;
 
-    const title = getTitle(key, totalCount !== 1);
-    const titleTranslated = t(titleTranslationKey, title, {
-      count: totalCount,
-    });
+    const title = getTitle(key, isCountLoading || count !== 1);
+    const titleTranslated = t(titleTranslationKey, title, { count });
 
     return (
       <Tabs.Tab
+        {...getChipRightProps(count, key)}
         tabKey={key}
         key={key}
         label={titleTranslated}
-        chipRight={{
-          label: getCountLabel(counts[key] || 0, key),
-          size: 'x-small',
-          tooltipProps: { content: withThousandSeparator(counts[key], ',') },
-        }}
       >
         <ResourceDetailTabContent
           resource={parentResource}
@@ -141,6 +161,7 @@ export const ResourceDetailsTabs = ({
       </Tabs.Tab>
     );
   });
+
   const tabs = [...additionalTabs, ...relationshipTabs];
 
   return (
@@ -170,5 +191,3 @@ const StyledTabs = styled(Tabs)`
   flex: 1;
   height: 100%;
 `;
-
-export const TabTitle = styled.span``;

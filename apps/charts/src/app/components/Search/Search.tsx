@@ -198,14 +198,13 @@ const Search = ({
           </Tooltip>
         </SearchBar>
       </SearchTooltip>
-      <Flex style={{ marginTop: 16, marginRight: 10 }}>
+      <StyledFlex>
         <SegmentedControl
           currentKey={searchType}
           fullWidth
           onButtonClicked={(type) =>
             setSearchType(type as 'assets' | 'timeseries')
           }
-          style={{ marginRight: 10 }}
         >
           <SegmentedControl.Button key="assets">
             {t['Equipment tag']}
@@ -241,7 +240,7 @@ const Search = ({
         >
           <Button icon="Filter" aria-label="Filter" toggled={!isEmpty} />
         </Dropdown>
-      </Flex>
+      </StyledFlex>
       {isEmpty ? (
         <EmptyResult itemType="assets" translations={emptyResultTranslations} />
       ) : (
@@ -264,6 +263,15 @@ const Search = ({
     </>
   );
 };
+
+const StyledFlex = styled(Flex)`
+  margin-top: 16px;
+  margin-right: 10px;
+  .cogs-segmented-control {
+    margin-right: 10px;
+    width: 100%;
+  }
+`;
 
 const SearchBar = styled.div`
   display: flex;

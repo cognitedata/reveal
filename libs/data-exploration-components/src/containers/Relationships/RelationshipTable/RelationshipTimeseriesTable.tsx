@@ -5,20 +5,24 @@ import {
   getTableColumns,
   Table,
 } from '@data-exploration/components';
-import { ResultCount } from '@data-exploration/containers';
-import {
-  useRelatedResourceResults,
-  useRelationshipCount,
-} from '@data-exploration-components/hooks';
+import { SearchResultCountLabel } from '@data-exploration/containers';
 import { ColumnDef } from '@tanstack/react-table';
+import isEmpty from 'lodash/isEmpty';
 
-import { useTranslation } from '@data-exploration-lib/core';
-import { TimeseriesWithRelationshipLabels } from '@data-exploration-lib/domain-layer';
+import { ResourceTypes, useTranslation } from '@data-exploration-lib/core';
+import {
+  addDetailViewData,
+  buildAdvancedFilterFromDetailViewData,
+  TimeseriesWithRelationshipLabels,
+  useRelatedResourceDataForDetailView,
+  useTimeseriesListQuery,
+} from '@data-exploration-lib/domain-layer';
 
 import { RelationshipTableProps } from './RelationshipTable';
 
 export function RelationshipTimeseriesTable({
   parentResource,
+  labels,
   onItemClicked,
   onParentAssetClick,
 }: Omit<RelationshipTableProps, 'type'> & {
@@ -40,25 +44,50 @@ export function RelationshipTimeseriesTable({
     ] as ColumnDef<TimeseriesWithRelationshipLabels>[];
   }, []);
 
-  const { data: count } = useRelationshipCount(parentResource, 'timeSeries');
+  const { data: detailViewRelatedResourcesData } =
+    useRelatedResourceDataForDetailView({
+      resourceExternalId: parentResource.externalId,
+      relationshipResourceType: ResourceTypes.TimeSeries,
+      filter: { labels },
+    });
 
-  const { hasNextPage, fetchNextPage, isLoading, items } =
-    useRelatedResourceResults<TimeseriesWithRelationshipLabels>(
-      'relationship',
-      'timeSeries',
-      parentResource
-    );
+  const hasRelationships = !isEmpty(detailViewRelatedResourcesData);
 
-  if (isLoading) {
-    return <EmptyState isLoading={isLoading} />;
+  const {
+    data = [],
+    hasNextPage,
+    fetchNextPage,
+    isLoading,
+  } = useTimeseriesListQuery(
+    {
+      advancedFilter: buildAdvancedFilterFromDetailViewData(
+        detailViewRelatedResourcesData
+      ),
+      limit: 20,
+    },
+    { enabled: hasRelationships }
+  );
+
+  const tableData = useMemo(() => {
+    return addDetailViewData(data, detailViewRelatedResourcesData);
+  }, [data, detailViewRelatedResourcesData]);
+
+  if (isEmpty(tableData)) {
+    return <EmptyState isLoading={hasRelationships && isLoading} />;
   }
 
   return (
     <Table
       id="relationship-timeseries-table"
       columns={columns}
-      tableHeaders={<ResultCount api="list" type="timeSeries" count={count} />}
-      data={items}
+      tableHeaders={
+        <SearchResultCountLabel
+          loadedCount={tableData.length}
+          totalCount={detailViewRelatedResourcesData.length}
+          resourceType={ResourceTypes.TimeSeries}
+        />
+      }
+      data={tableData}
       showLoadButton
       fetchMore={fetchNextPage}
       hasNextPage={hasNextPage}

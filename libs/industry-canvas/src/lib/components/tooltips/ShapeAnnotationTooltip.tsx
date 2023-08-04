@@ -7,7 +7,7 @@ import {
   SHAPE_ANNOTATION_STROKE_COLOR_MAP,
 } from '../../colors';
 import { translationKeys } from '../../common';
-import { OnUpdateAnnotationStyleByType } from '../../hooks/useManagedTools';
+import { UseOnUpdateSelectedAnnotationReturnType } from '../../hooks/useOnUpdateSelectedAnnotation';
 import { useTranslation } from '../../hooks/useTranslation';
 import { ShapeAnnotation } from '../../types';
 import { FillButton } from '../color-palettes/FillButton';
@@ -19,9 +19,8 @@ import { RightAlignedColorPalettePosition } from './elements';
 
 export type ShapeAnnotationTooltipProps = {
   shapeAnnotation: ShapeAnnotation;
-  onUpdateAnnotationStyleByType: OnUpdateAnnotationStyleByType;
   onDeleteSelectedCanvasAnnotation: () => void;
-};
+} & UseOnUpdateSelectedAnnotationReturnType;
 
 enum EditMode {
   FILL = 'fill',
@@ -30,7 +29,7 @@ enum EditMode {
 
 export const ShapeAnnotationTooltip: React.FC<ShapeAnnotationTooltipProps> = ({
   shapeAnnotation,
-  onUpdateAnnotationStyleByType,
+  onUpdateSelectedAnnotation,
   onDeleteSelectedCanvasAnnotation,
 }) => {
   const [editMode, setEditMode] = useState<EditMode | undefined>(undefined);
@@ -47,7 +46,7 @@ export const ShapeAnnotationTooltip: React.FC<ShapeAnnotationTooltipProps> = ({
             colors={Object.values(SHAPE_ANNOTATION_STROKE_COLOR_MAP)}
             selectedColor={shapeAnnotation.style?.stroke}
             onUpdateColor={(color) => {
-              onUpdateAnnotationStyleByType({
+              onUpdateSelectedAnnotation({
                 shape: { stroke: color },
               });
             }}
@@ -61,7 +60,7 @@ export const ShapeAnnotationTooltip: React.FC<ShapeAnnotationTooltipProps> = ({
             colors={Object.values(SHAPE_ANNOTATION_FILL_COLOR_MAP)}
             selectedColor={shapeAnnotation.style?.fill}
             onUpdateColor={(color) => {
-              onUpdateAnnotationStyleByType({
+              onUpdateSelectedAnnotation({
                 shape: { fill: color },
               });
             }}

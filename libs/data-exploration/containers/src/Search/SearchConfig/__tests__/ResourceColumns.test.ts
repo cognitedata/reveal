@@ -1,16 +1,16 @@
-import { renderComponent } from '@data-exploration/components';
 import { fireEvent, screen } from '@testing-library/react';
 
 import {
   getMockSearchConfig,
   getTitle,
+  renderComponent,
   ResourceTypes,
   SearchConfigDataType,
 } from '@data-exploration-lib/core';
 
 import { ResourceColumns } from '../ResourceColumns';
 
-const totalNumberOfCheckboxes = 32;
+const totalNumberOfCheckboxes = 31;
 
 const mockData = getMockSearchConfig();
 

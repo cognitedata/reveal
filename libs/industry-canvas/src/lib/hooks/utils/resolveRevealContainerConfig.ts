@@ -10,7 +10,7 @@ import {
 import {
   DEFAULT_THREE_D_HEIGHT,
   DEFAULT_THREE_D_WIDTH,
-} from '../../utils/addDimensionsToContainerReference';
+} from '../../utils/dimensions';
 
 const getAssetProperties = async (
   sdk: CogniteClient,

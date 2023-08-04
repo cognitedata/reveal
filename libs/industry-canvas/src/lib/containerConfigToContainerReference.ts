@@ -38,14 +38,10 @@ const containerConfigToContainerReference = (
   }
 
   if (containerType === ContainerType.TIMESERIES) {
-    if (containerConfig.metadata.resourceId === undefined) {
-      throw new Error('resourceId is undefined');
-    }
-
     return {
       type: ContainerReferenceType.TIMESERIES,
       id: containerConfig.id,
-      resourceId: containerConfig.metadata.resourceId,
+      resourceId: containerConfig.timeseriesId,
       x: containerConfig.x,
       y: containerConfig.y,
       width: containerConfig.width,
@@ -72,29 +68,46 @@ const containerConfigToContainerReference = (
     };
   }
 
-  if (containerType === ContainerType.TABLE) {
-    if (containerConfig.metadata.resourceId === undefined) {
-      throw new Error('resourceId is undefined');
-    }
-    if (
-      containerConfig.metadata.resourceType !== 'event' &&
-      containerConfig.metadata.resourceType !== 'asset'
-    ) {
-      throw new Error('resourceType must be one of asset and event');
-    }
-
+  if (containerType === ContainerType.EVENT) {
     return {
-      type:
-        containerConfig.metadata.resourceType === 'asset'
-          ? ContainerReferenceType.ASSET
-          : ContainerReferenceType.EVENT,
+      type: ContainerReferenceType.EVENT,
       id: containerConfig.id,
       x: containerConfig.x,
       y: containerConfig.y,
       width: containerConfig.width,
       height: containerConfig.height,
-      resourceId: containerConfig.metadata.resourceId,
+      resourceId: containerConfig.eventId,
       label: containerConfig.label,
+    };
+  }
+
+  if (containerType === ContainerType.ASSET) {
+    return {
+      type: ContainerReferenceType.ASSET,
+      id: containerConfig.id,
+      x: containerConfig.x,
+      y: containerConfig.y,
+      width: containerConfig.width,
+      height: containerConfig.height,
+      resourceId: containerConfig.assetId,
+      label: containerConfig.label,
+    };
+  }
+
+  if (containerConfig.type === ContainerType.FDM_INSTANCE) {
+    return {
+      type: ContainerReferenceType.FDM_INSTANCE,
+      id: containerConfig.id,
+      x: containerConfig.x,
+      y: containerConfig.y,
+      width: containerConfig.width,
+      height: containerConfig.height,
+      label: containerConfig.label,
+      instanceExternalId: containerConfig.instanceExternalId,
+      instanceSpace: containerConfig.instanceSpace,
+      viewExternalId: containerConfig.viewExternalId,
+      viewSpace: containerConfig.viewSpace,
+      viewVersion: containerConfig.viewVersion,
     };
   }
 
