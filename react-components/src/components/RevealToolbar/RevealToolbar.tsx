@@ -8,6 +8,7 @@ import { FitModelsButton } from './FitModelsButton';
 import { LayersButton } from './LayersButton';
 import { SlicerButton } from './SlicerButton';
 import { withSuppressRevealEvents } from '../../higher-order-components/withSuppressRevealEvents';
+import { HelpButton } from './HelpButton';
 
 const defaultStyle: ToolBarProps = {
   style: {
@@ -32,7 +33,7 @@ const defaultContent = (
     <div className="cogs-toolbar-divider" />
 
     <Button type="ghost" icon="Settings" aria-label="Show settings" />
-    <Button type="ghost" icon="Help" aria-label="Display help" />
+    <HelpButton />
   </>
 );
 
