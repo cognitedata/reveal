@@ -98,7 +98,7 @@ export const Main: Story = {
       {
         modelId: 1791160622840317,
         revisionId: 498427137020189,
-        transform: new Matrix4().makeTranslation(40, 10, 0)
+        transform: new Matrix4().makeTranslation(40, 9, 0)
       },
       {
         siteId: 'c_RC_2'
