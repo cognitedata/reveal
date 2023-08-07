@@ -54,20 +54,21 @@ const StoryContent = ({
   fdmAssetMappingConfig
 }: {
   resources: AddResourceOptions[];
-  fdmAssetMappingConfig: FdmAssetMappingsConfig;
+  fdmAssetMappingConfig?: FdmAssetMappingsConfig;
 }): ReactElement => {
   const [nodeData, setNodeData] = useState<any>(undefined);
 
   const [highlightedId, setHighlightedId] = useState<string | undefined>(undefined);
 
-  const callback = (nodeData: NodeDataResult | undefined): void => {
-    setNodeData(nodeData);
-    setHighlightedId(nodeData?.nodeExternalId);
+  const callback = async (nodeData: Promise<NodeDataResult | undefined>): Promise<void> => {
+    const nodeDataResult = await nodeData;
+    setNodeData(nodeDataResult);
+    setHighlightedId(nodeDataResult?.nodeExternalId);
 
-    if (nodeData === undefined) return;
+    if (nodeDataResult === undefined) return;
 
-    nodeData.intersection.model.assignStyledNodeCollection(
-      new TreeIndexNodeCollection([nodeData.cadNode.treeIndex]),
+    nodeDataResult.intersection.model.assignStyledNodeCollection(
+      new TreeIndexNodeCollection([nodeDataResult.cadNode.treeIndex]),
       DefaultNodeAppearance.Highlighted
     );
   };
@@ -88,7 +89,9 @@ const StoryContent = ({
                 ]
         }}
         fdmAssetMappingConfig={fdmAssetMappingConfig}
-        onNodeClick={callback}
+        onNodeClick={(nodeData) => {
+          void callback(nodeData);
+        }}
       />
       <RevealToolbar />
       NodeData is: {JSON.stringify(nodeData)}

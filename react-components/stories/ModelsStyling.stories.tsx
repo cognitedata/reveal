@@ -12,7 +12,6 @@ import {
 import { Color, Matrix4 } from 'three';
 import { CameraController } from '../src/';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { DefaultFdmConfig } from './utilities/fdmConfig';
 import { type ReactElement, useMemo } from 'react';
 import { useMappedEquipmentBy3DModelsList } from '../src/hooks/useMappedEquipmentBy3DModelsList';
@@ -91,7 +90,6 @@ export const Main: Story = {
       <RevealContainer
         sdk={sdk}
         color={new Color(0x4a4a4a)}
-        uiElements={<ReactQueryDevtools initialIsOpen={false} />}
         viewerOptions={{
           loadingIndicatorStyle: {
             opacity: 1,
@@ -121,6 +119,10 @@ const StyledReveal3DResources = (props: Reveal3DResourcesProps): ReactElement =>
   const filtered = props.resources?.filter<AddReveal3DModelOptions>(
     (resource): resource is AddReveal3DModelOptions => is3DModelOptions(resource)
   );
+
+  if (props.fdmAssetMappingConfig === undefined) {
+    throw new Error('fdmAssetMappingConfig is undefined');
+  }
 
   const { data } = useMappedEquipmentBy3DModelsList(props.fdmAssetMappingConfig, filtered);
 
