@@ -3,14 +3,14 @@
  */
 
 import { PointerEventData } from '@cognite/reveal';
-import { ReactElement, createContext, useContext, useEffect, useState } from 'react';
+import { ReactNode, createContext, useContext, useEffect, useState } from 'react';
 import { FdmAssetMappingsConfig, NodeDataResult, useReveal } from '..';
 import { queryMappedData } from '../components/Reveal3DResources/queryMappedData';
 import { useFdmSdk, useSDK } from '../components/RevealContainer/SDKProvider';
 
 
 type ClickedNodeProps = {
-  children?: ReactElement;
+  children?: ReactNode;
   fdmConfig?: FdmAssetMappingsConfig;
 };
 

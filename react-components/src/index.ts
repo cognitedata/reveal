@@ -21,6 +21,7 @@ export { useFdmAssetMappings } from './hooks/useFdmAssetMappings';
 
 // Higher order components
 export { withSuppressRevealEvents } from './higher-order-components/withSuppressRevealEvents';
+export { useClickedNode } from './higher-order-components/ClickedNode';
 
 // Types
 export {
