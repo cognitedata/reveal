@@ -96,7 +96,7 @@ function useAncestorNodesForTreeIndex(
   const cogniteClient = useSDK();
 
   const queryResult = useQuery(
-    ['cdf', '3d', 'tree-index-to-ancestors', `${model?.modelId}-${model?.revisionId}-treeIndex`],
+    ['cdf', '3d', 'tree-index-to-ancestors', `${model?.modelId}-${model?.revisionId}-${treeIndex}`],
     async () => {
       assert(model !== undefined && treeIndex !== undefined);
 
@@ -178,8 +178,7 @@ function useInspectNode(
   const fdmClient = useFdmSdk();
 
   const inspectionResult = useQuery(
-    ['fdm', '3d', `inspect-${dataNode?.space}-${dataNode?.space}`],
-
+    ['fdm', '3d', `inspect-${dataNode?.space}-${dataNode?.externalId}`],
     () => {
       assert(dataNode !== undefined);
 
