@@ -2,25 +2,29 @@
  * Copyright 2023 Cognite AS
  */
 
-import { PointerEventData } from '@cognite/reveal';
-import { FdmAssetMappingsConfig, useReveal } from '../';
+import { type PointerEventData } from '@cognite/reveal';
+import { type FdmAssetMappingsConfig, useReveal, type NodeDataResult } from '../';
 import { useEffect, useState } from 'react';
-import { useNodeMappedData } from '../components/Reveal3DResources/useNodeMappedData';
+import { useNodeMappedData } from './useNodeMappedData';
 
-export const useClickedNode = (fdmConfig?: FdmAssetMappingsConfig) => {
+export const useClickedNode = (
+  fdmConfig?: FdmAssetMappingsConfig | undefined
+): NodeDataResult | undefined => {
   const viewer = useReveal();
 
   const [lastClickEvent, setLastClickEvent] = useState<PointerEventData | undefined>(undefined);
 
   useEffect(() => {
-    const callback = (event: PointerEventData) => {
+    const callback = (event: PointerEventData): void => {
       setLastClickEvent(event);
     };
 
     viewer.on('click', callback);
 
-    return () => viewer.off('click', callback);
+    return () => {
+      viewer.off('click', callback);
+    };
   }, [viewer]);
 
   return useNodeMappedData(lastClickEvent, fdmConfig);
-}
+};

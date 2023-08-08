@@ -3,7 +3,13 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { FdmAssetMappingsConfig, Reveal3DResources, RevealContainer, RevealToolbar, useClickedNode, /* useClickedNode */ } from '../src';
+import {
+  type FdmAssetMappingsConfig,
+  Reveal3DResources,
+  RevealContainer,
+  RevealToolbar,
+  useClickedNode /* useClickedNode */
+} from '../src';
 import { CogniteClient } from '@cognite/sdk';
 import { Color } from 'three';
 // import { ClickedNode } from '../src/higher-order-components/ClickedNode';
@@ -43,14 +49,18 @@ export const Main: Story = {
     return (
       <RevealContainer sdk={sdk} color={new Color(0x4a4a4a)}>
         <Reveal3DResources resources={resources} fdmAssetMappingConfig={fdmAssetMappingConfig} />
-        <ClickedNodePrinter fdmConfig={fdmAssetMappingConfig}/>
+        <ClickedNodePrinter fdmConfig={fdmAssetMappingConfig} />
         <RevealToolbar />
       </RevealContainer>
     );
   }
 };
 
-const ClickedNodePrinter = ({ fdmConfig }: { fdmConfig: FdmAssetMappingsConfig | undefined } ): ReactElement => {
+const ClickedNodePrinter = ({
+  fdmConfig
+}: {
+  fdmConfig: FdmAssetMappingsConfig | undefined;
+}): ReactElement => {
   const clickedNode = useClickedNode(fdmConfig);
   useEffect(() => {
     console.log('Clicked node is ', clickedNode);

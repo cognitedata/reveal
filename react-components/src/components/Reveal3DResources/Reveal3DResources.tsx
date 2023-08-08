@@ -26,8 +26,7 @@ import {
 import { type CogniteExternalId } from '@cognite/sdk';
 import { type FdmAssetMappingsConfig } from '../../hooks/types';
 import { useCalculateModelsStyling } from '../../hooks/useCalculateModelsStyling';
-import { useNodeMappedData } from './useNodeMappedData';
-import { useFdmSdk, useSDK } from '../RevealContainer/SDKProvider';
+import { useNodeMappedData } from '../../hooks/useNodeMappedData';
 
 export type FdmAssetStylingGroup = {
   fdmAssetExternalIds: CogniteExternalId[];

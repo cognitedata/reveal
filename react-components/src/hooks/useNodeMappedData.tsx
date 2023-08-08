@@ -6,31 +6,28 @@ import { useQuery } from '@tanstack/react-query';
 
 import { type PointerEventData, type CogniteCadModel, type CadIntersection } from '@cognite/reveal';
 import { type CogniteInternalId, type Node3D } from '@cognite/sdk';
-import {
-  type EdgeItem,
-  type InspectResultList,
-  type DmsUniqueIdentifier
-} from '../../utilities/FdmSDK';
-import { type FdmAssetMappingsConfig } from '../../hooks/types';
-import { type NodeDataResult } from './types';
-import { useFdmSdk, useSDK } from '../RevealContainer/SDKProvider';
+import { type NodeDataResult } from '../components/Reveal3DResources/types';
+import { useFdmSdk, useSDK } from '../components/RevealContainer/SDKProvider';
 import { useEffect, useState } from 'react';
-import { useReveal } from '../..';
+import { type FdmAssetMappingsConfig, useReveal } from '..';
 
 import assert from 'assert';
+import {
+  type DmsUniqueIdentifier,
+  type EdgeItem,
+  type InspectResultList
+} from '../utilities/FdmSDK';
 
 export const useNodeMappedData = (
   clickEvent: PointerEventData | undefined,
-  fdmConfig?: FdmAssetMappingsConfig
+  fdmConfig: FdmAssetMappingsConfig | undefined
 ): NodeDataResult | undefined => {
-
   const viewer = useReveal();
 
   const [cadIntersection, setCadIntersection] = useState<CadIntersection | undefined>(undefined);
 
   useEffect(() => {
-    (async () => {
-
+    void (async () => {
       if (clickEvent === undefined) {
         return;
       }
@@ -49,20 +46,25 @@ export const useNodeMappedData = (
     })();
   }, [clickEvent]);
 
-  const ancestors = useAncestorNodesForTreeIndex(cadIntersection?.model, cadIntersection?.treeIndex);
+  const ancestors = useAncestorNodesForTreeIndex(
+    cadIntersection?.model,
+    cadIntersection?.treeIndex
+  );
 
   const mappings = useNodeMappingEdges(
     fdmConfig,
     cadIntersection?.model,
-    ancestors?.map(n => n.id)
+    ancestors?.map((n) => n.id)
   );
 
-  const selectedEdge = mappings !== undefined && mappings.edges.length > 0 ? mappings.edges[0] : undefined;
+  const selectedEdge =
+    mappings !== undefined && mappings.edges.length > 0 ? mappings.edges[0] : undefined;
   const selectedNodeId =
-    fdmConfig === undefined ? undefined :
-    selectedEdge?.properties[fdmConfig.source.space][
-      `${fdmConfig?.source.externalId}/${fdmConfig.source.version}`
-    ].revisionNodeId;
+    fdmConfig === undefined
+      ? undefined
+      : selectedEdge?.properties[fdmConfig.source.space][
+          `${fdmConfig?.source.externalId}/${fdmConfig.source.version}`
+        ].revisionNodeId;
 
   const dataNode = selectedEdge?.startNode;
 
@@ -73,10 +75,12 @@ export const useNodeMappedData = (
 
   const selectedNode = ancestors?.find((n) => n.id === selectedNodeId);
 
-  if (selectedNode === undefined ||
+  if (
+    selectedNode === undefined ||
     dataView === undefined ||
     dataNode === undefined ||
-    cadIntersection === undefined) {
+    cadIntersection === undefined
+  ) {
     return undefined;
   }
 
@@ -86,17 +90,18 @@ export const useNodeMappedData = (
     cadNode: selectedNode,
     intersection: cadIntersection
   };
-}
+};
 
 function useAncestorNodesForTreeIndex(
   model: CogniteCadModel | undefined,
   treeIndex: number | undefined
 ): Node3D[] | undefined {
-
   const cogniteClient = useSDK();
 
+  const nodeHashKey = `${model?.modelId ?? 0}-${model?.revisionId ?? 0}-${treeIndex ?? 0}`;
+
   const queryResult = useQuery(
-    ['cdf', '3d', 'tree-index-to-ancestors', `${model?.modelId}-${model?.revisionId}-${treeIndex}`],
+    ['cdf', '3d', 'tree-index-to-ancestors', nodeHashKey],
     async () => {
       assert(model !== undefined && treeIndex !== undefined);
 
@@ -110,7 +115,8 @@ function useAncestorNodesForTreeIndex(
 
       return ancestorNodes.items;
     },
-    { enabled: model !== undefined && treeIndex !== undefined });
+    { enabled: model !== undefined && treeIndex !== undefined }
+  );
 
   return queryResult.data;
 }
@@ -120,14 +126,17 @@ function useNodeMappingEdges(
   model: CogniteCadModel | undefined,
   ancestorIds: CogniteInternalId[] | undefined
 ): { edges: Array<EdgeItem<Record<string, any>>> } | undefined {
-
   const fdmClient = useFdmSdk();
 
   const queryResult = useQuery(
     ['fdm', '3d', 'node-mapping-edges', ancestorIds],
     async () => {
-
-      assert(fdmConfig !== undefined && model !== undefined && ancestorIds !== undefined && ancestorIds.length !== 0);
+      assert(
+        fdmConfig !== undefined &&
+          model !== undefined &&
+          ancestorIds !== undefined &&
+          ancestorIds.length !== 0
+      );
 
       const filter = {
         and: [
@@ -163,26 +172,31 @@ function useNodeMappingEdges(
         ]
       };
 
-      return fdmClient.filterAllInstances(filter, 'edge', fdmConfig.source);
-    }, {
-      enabled: fdmConfig !== undefined && model !== undefined && ancestorIds !== undefined && ancestorIds.length !== 0
-    });
+      return await fdmClient.filterAllInstances(filter, 'edge', fdmConfig.source);
+    },
+    {
+      enabled:
+        fdmConfig !== undefined &&
+        model !== undefined &&
+        ancestorIds !== undefined &&
+        ancestorIds.length !== 0
+    }
+  );
 
   return queryResult.data;
 }
 
-function useInspectNode(
-  dataNode: DmsUniqueIdentifier | undefined
-): InspectResultList | undefined  {
-
+function useInspectNode(dataNode: DmsUniqueIdentifier | undefined): InspectResultList | undefined {
   const fdmClient = useFdmSdk();
 
+  const nodeHashKey = `${dataNode?.space ?? ''}-${dataNode?.externalId ?? ''}`;
+
   const inspectionResult = useQuery(
-    ['fdm', '3d', `inspect-${dataNode?.space}-${dataNode?.externalId}`],
-    () => {
+    ['fdm', '3d', 'inspect', nodeHashKey],
+    async () => {
       assert(dataNode !== undefined);
 
-      return fdmClient.inspectInstances({
+      return await fdmClient.inspectInstances({
         inspectionOperations: { involvedViewsAndContainers: {} },
         items: [
           {
@@ -191,10 +205,12 @@ function useInspectNode(
             space: dataNode.space
           }
         ]
-      })
-    }, {
+      });
+    },
+    {
       enabled: dataNode !== undefined
-    });
+    }
+  );
 
   return inspectionResult.data;
 }
