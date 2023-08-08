@@ -20,6 +20,7 @@
     "@cognite/cogs.js": ">=9",
     "@cognite/reveal": "4.4.0",
     "react": ">=18",
+    "react-dom": ">=18",
     "styled-components": ">=5"
   },
   "devDependencies": {
@@ -39,6 +40,7 @@
     "@tanstack/react-query-devtools": "^4.29.19",
     "@types/lodash": "^4.14.190",
     "@types/react": "18.2.7",
+    "@types/react-dom": "^18.2.7",
     "@types/styled-components": "5.1.26",
     "@types/three": "0.155.0",
     "@typescript-eslint/eslint-plugin": "^5.50.0",
