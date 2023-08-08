@@ -172,6 +172,9 @@
       ],
       "@fusion/load-remote-module": [
         "libs/shared/load-remote-module/src/index.ts"
+      ],
+      "@flows/*": [
+        "apps/flows/src/*"
       ]
     }
   },
