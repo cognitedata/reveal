@@ -266,7 +266,7 @@ export class FdmClient implements FlexibleDataModelingClient {
       throw 'version required to update data model with FDM V3';
     }
 
-    const upsertDto: GraphQlDmlVersionDTO = {
+    const upsertDto = {
       description: dto.description,
       externalId: dto.externalId,
       name: dto.name,

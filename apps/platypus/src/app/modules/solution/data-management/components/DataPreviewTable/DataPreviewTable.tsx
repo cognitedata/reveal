@@ -33,7 +33,6 @@ import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
 import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
 import useSelector from '@platypus-app/hooks/useSelector';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { useViewForDataModelType } from '@platypus-app/hooks/useViewForDataModelType';
 import { DraftRowData } from '@platypus-app/redux/reducers/global/dataManagementReducer';
 import {
   CellDoubleClickedEvent,
@@ -194,19 +193,21 @@ export const DataPreviewTable = forwardRef<
       dataModelType,
       space,
     });
-
-    const { data: viewForDataModel } = useViewForDataModelType({
-      dataModelExternalId,
-      dataModelVersion: version,
-      space,
-      viewExternalId: dataModelType.name,
-    });
-
-    const viewVersion = viewForDataModel ? viewForDataModel.version : version;
+    const viewVersion = dataModelType.version;
 
     const [sidebarData, setSidebarData] = useState<DataPreviewSidebarData>();
 
     const handleRowPublish = (row: KeyValueMap) => {
+      if (!viewVersion) {
+        Notification({
+          type: 'error',
+          message: t(
+            'ingest_failed_title',
+            `Unable to create ${dataModelType.name}`
+          ),
+        });
+        return;
+      }
       dataManagementHandler
         .ingestNodes({
           space,
@@ -498,6 +499,16 @@ export const DataPreviewTable = forwardRef<
   Technique borrowed from https://stackoverflow.com/a/64294316
   */
     const handleCellValueChanged = (e: ValueSetterParams) => {
+      if (!viewVersion) {
+        Notification({
+          type: 'error',
+          message: t(
+            'update_failed_title',
+            `Unable to update ${dataModelType.name}`
+          ),
+        });
+        return false;
+      }
       if (!e.colDef.field || !isManualPopulationEnabled) {
         return false;
       }
@@ -665,7 +676,7 @@ export const DataPreviewTable = forwardRef<
       track,
     ]);
 
-    if (!isPublishedRowsCountMapFetched || !viewForDataModel) {
+    if (!isPublishedRowsCountMapFetched) {
       return <Spinner />;
     }
 
@@ -680,14 +691,14 @@ export const DataPreviewTable = forwardRef<
             onDelete={handleDeleteRows}
           />
         )}
-        {isTransformationModalVisible && (
+        {dataModelType.version && isTransformationModalVisible && (
           <CreateTransformationModal
             dataModelExternalId={dataModelExternalId}
             dataModelType={dataModelType}
             dataModelVersion={version}
             onRequestClose={() => setIsTransformationModalVisible(false)}
             space={space}
-            viewVersion={viewVersion}
+            viewVersion={dataModelType.version}
           />
         )}
         {isSuggestionsModalVisible && isSuggestionsEnabled && (
@@ -778,7 +789,7 @@ export const DataPreviewTable = forwardRef<
           }}
           suggestionsAvailable={suggestionsAvailable}
           typeName={dataModelType.name}
-          viewVersion={viewVersion}
+          viewVersion={dataModelType.version}
         >
           <>
             {isFilterBuilderEnabled && (
@@ -860,7 +871,7 @@ export const DataPreviewTable = forwardRef<
                       setIsTransformationModalVisible(true)
                     }
                     typeName={dataModelType.name}
-                    viewVersion={viewVersion}
+                    viewVersion={dataModelType.version}
                   />
                 ),
                 context: {
