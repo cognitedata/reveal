@@ -6,7 +6,6 @@ import { DataExplorerLink } from '../components/links/DataExplorerLink';
 import { Categories } from '../containers/category/Categories';
 import { Page } from '../containers/page/Page';
 import { SearchBar } from '../containers/search/SearchBar';
-import { SearchBarSwitch } from '../containers/search/SearchBarSwitch';
 import { SearchConfiguration } from '../containers/search/SearchConfiguration';
 
 const SEARCH_BAR_OPTIONS = {
@@ -27,7 +26,6 @@ export const HomePage = () => {
 
           <SearchBarContainer>
             <SearchBar width="774px" options={SEARCH_BAR_OPTIONS} />
-            <SearchBarSwitch />
           </SearchBarContainer>
 
           <DataExplorerLink />
