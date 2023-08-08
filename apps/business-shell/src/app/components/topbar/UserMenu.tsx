@@ -23,18 +23,11 @@ const UserMenu = (): JSX.Element => {
     logout();
   };
 
-  const handleManageAccountClick = () => {
-    const { origin, search, hash } = window.location;
-    const url = `${origin}/profile${search}${hash}`;
-    window.open(url, '_blank');
-  };
-
   return (
     <Dropdown
       content={
         <SharedUserMenu
           userInfo={userInfo}
-          onManageAccountClick={handleManageAccountClick}
           onLogoutClick={handleLogout}
           menuTitle={t('LABEL_ACCOUNT')}
           menuItemManageAccountBtnText={t('LABEL_MANAGE_ACCOUNT')}
