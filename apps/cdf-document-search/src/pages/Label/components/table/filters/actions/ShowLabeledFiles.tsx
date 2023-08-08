@@ -8,8 +8,10 @@ interface Props {
 
 export const ShowLabeledFilesFilter: React.FC<Props> = ({ onChange }) => {
   return (
-    <Switch name="showLabeledFilesFilter" onChange={onChange}>
-      Show already labeled files
-    </Switch>
+    <Switch
+      label="Show already labeled files"
+      name="showLabeledFilesFilter"
+      onChange={(_, nextValue) => onChange(!!nextValue)}
+    />
   );
 };

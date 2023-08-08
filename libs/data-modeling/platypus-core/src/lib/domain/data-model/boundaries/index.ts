@@ -16,6 +16,7 @@ export interface IGraphQlUtilsService {
    */
   parseSchema(
     graphQlSchema: string,
+    views?: { externalId: string; version: string }[],
     includeBuiltInTypes?: boolean
   ): DataModelTypeDefs;
 

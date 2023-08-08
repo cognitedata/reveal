@@ -65,22 +65,24 @@ const CanvasSubmenu: React.FC<CanvasSubmenuProps> = ({
         </StyledMenu>
       }
     >
-      <div onClick={() => onCanvasItemClick(canvas)}>{canvas.name}</div>
-      <LastTimeText onClick={() => onCanvasItemClick(canvas)} level={2}>
-        {isActiveCanvas === true ? (
-          t(
-            translationKeys.CANVAS_DROPDOWN_CURRENTLY_VIEWING,
-            'Currently viewing'
-          )
-        ) : (
-          <LastTimeText level={2}>
-            Updated{' '}
-            {formatDistanceToNow(new Date(canvas.updatedAt), {
-              addSuffix: true,
-            })}
-          </LastTimeText>
-        )}
-      </LastTimeText>
+      <>
+        <div onClick={() => onCanvasItemClick(canvas)}>{canvas.name}</div>
+        <LastTimeText onClick={() => onCanvasItemClick(canvas)} level={2}>
+          {isActiveCanvas === true ? (
+            t(
+              translationKeys.CANVAS_DROPDOWN_CURRENTLY_VIEWING,
+              'Currently viewing'
+            )
+          ) : (
+            <LastTimeText level={2}>
+              Updated{' '}
+              {formatDistanceToNow(new Date(canvas.updatedAt), {
+                addSuffix: true,
+              })}
+            </LastTimeText>
+          )}
+        </LastTimeText>
+      </>
     </Menu.Submenu>
   );
 };

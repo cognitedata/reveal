@@ -89,7 +89,11 @@ const dataModelSlice = createSlice({
       state.hasError = hasError;
 
       try {
-        const parsedTypeDefs = typeDefsBuilder.parseSchema(graphQlSchemaString);
+        const parsedTypeDefs = typeDefsBuilder.parseSchema(
+          graphQlSchemaString,
+          // creating a new data model, there is no view info yet
+          []
+        );
         state.typeDefs = parsedTypeDefs;
       } catch (err) {
         state.hasError = !!err;
@@ -201,7 +205,10 @@ const dataModelSlice = createSlice({
       state.hasError = hasError;
 
       try {
-        const parsedTypeDefs = typeDefsBuilder.parseSchema(graphQlSchemaString);
+        const parsedTypeDefs = typeDefsBuilder.parseSchema(
+          graphQlSchemaString,
+          action.payload.views
+        );
         state.typeDefs = parsedTypeDefs;
       } catch (err) {
         state.hasError = !!err;

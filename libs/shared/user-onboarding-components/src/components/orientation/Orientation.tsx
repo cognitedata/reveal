@@ -1,6 +1,8 @@
 import React, { useMemo } from 'react';
 import Joyride, { CallBackProps, STATUS } from 'react-joyride';
 
+import { zIndex } from '../../utils/zIndex';
+
 import { useOrientation } from './OrientationContext';
 import { OrientationTooltip } from './OrientationTooltip';
 import { convertSteps } from './utils';
@@ -36,6 +38,7 @@ export const Orientation = () => {
       styles={{
         options: {
           arrowColor: 'var(--cogs-decorative--blue--500)',
+          zIndex: zIndex.MAXIMUM,
         },
       }}
       run={open}
