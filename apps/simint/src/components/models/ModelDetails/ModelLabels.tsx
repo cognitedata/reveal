@@ -124,9 +124,11 @@ export function ModelLabels({
         <ChipGroup
           overflow={3}
           size="medium"
-          onRemoveChip={(chipName: string) => {
-            removeLabelFromModel(chipName);
-            toast.success('Label is removed');
+          onRemoveChip={(chipName) => {
+            if (chipName) {
+              removeLabelFromModel(chipName);
+              toast.success('Label is removed');
+            }
           }}
         >
           {selectedLabels.map((label) => (

@@ -2464,7 +2464,7 @@
   dependencies:
     regenerator-runtime "^0.13.11"
 
-"@babel/runtime@^7.13.10", "@babel/runtime@^7.21.5", "@babel/runtime@^7.22.3":
+"@babel/runtime@^7.13.10", "@babel/runtime@^7.21.5", "@babel/runtime@^7.22.3", "@babel/runtime@^7.22.6":
   version "7.22.6"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.22.6.tgz#57d64b9ae3cff1d67eb067ae117dac087f5bd438"
   integrity sha512-wDb5pWm4WDdF6LFUde3Jl8WzPA+3ZbxYqkC6xAXuD3irdEHN1k0NfTRrJD8ZD378SJ61miMLCqIOXYhd8x+AJQ==
@@ -2979,7 +2979,7 @@
     tippy.js "6.3.7"
     ts-dedent "2.2.0"
 
-"@cognite/cogs.js@9.25.0", "@cognite/cogs.js@^9.24.2":
+"@cognite/cogs.js@9.25.0":
   version "9.25.0"
   resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-9.25.0.tgz#abcc57423e93b8a2604dc3822bffcf34028946ab"
   integrity sha512-49B5RH2xVzvubr2ieCyswlORj/P2t1H3Ey3d7RQN72/ThUDuC3R4cpxmZ5QP3ClwvtQ+l8Yrqow8tHgM8L5TFQ==
@@ -2990,6 +2990,45 @@
     "@mui/joy" "5.0.0-alpha.41"
     "@mui/material" "5.9.2"
     "@mui/x-date-pickers" "^6.5.0"
+    "@notionhq/client" "2.2.3"
+    "@react-hook/resize-observer" "1.2.6"
+    "@tippyjs/react" "4.2.6"
+    "@types/react-date-range" "1.4.4"
+    axios "0.27.2"
+    classnames "2.3.2"
+    color "3.2.1"
+    csstype "2.6.10"
+    dayjs "1.11.7"
+    deepdash "5.3.9"
+    dotenv-flow "3.2.0"
+    focus-visible "5.2.0"
+    framer-motion "6.5.1"
+    fuse.js "6.6.2"
+    match-sorter "6.3.1"
+    prompts "2.4.2"
+    rc-collapse "1.11.8"
+    rc-drawer "4.4.3"
+    rc-slider "9.5.4"
+    rc-tabs "11.16.1"
+    react-date-range "1.4.0"
+    react-select "3.2.0"
+    react-table "7.6.0"
+    react-toastify "6.2.0"
+    resize-observer-polyfill "1.5.1"
+    tippy.js "6.3.7"
+    ts-dedent "2.2.0"
+
+"@cognite/cogs.js@9.31.3":
+  version "9.31.3"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-9.31.3.tgz#25743901b1748312ae1c5fc55c63353d29664b9a"
+  integrity sha512-So4IoF/pA5ToOVWCYZPfEZzmRyM2pybtzKf8kl8LjFmn51mIABVppWx9sHJ7WO+3elIUAhhAbsPwJm1yElvMQw==
+  dependencies:
+    "@emotion/react" "11.10.6"
+    "@emotion/styled" "11.10.6"
+    "@mui/base" "5.0.0-alpha.97"
+    "@mui/joy" "5.0.0-alpha.41"
+    "@mui/material" "5.9.2"
+    "@mui/x-date-pickers" "6.10.1"
     "@notionhq/client" "2.2.3"
     "@react-hook/resize-observer" "1.2.6"
     "@tippyjs/react" "4.2.6"
@@ -6534,6 +6573,29 @@
     "@types/react-is" "^18.2.1"
     prop-types "^15.8.1"
     react-is "^18.2.0"
+
+"@mui/utils@^5.13.7":
+  version "5.14.1"
+  resolved "https://registry.yarnpkg.com/@mui/utils/-/utils-5.14.1.tgz#29696371016552a6eb3af975bc7af429ec88b29a"
+  integrity sha512-39KHKK2JeqRmuUcLDLwM+c2XfVC136C5/yUyQXmO2PVbOb2Bol4KxtkssEqCbTwg87PSCG3f1Tb0keRsK7cVGw==
+  dependencies:
+    "@babel/runtime" "^7.22.6"
+    "@types/prop-types" "^15.7.5"
+    "@types/react-is" "^18.2.1"
+    prop-types "^15.8.1"
+    react-is "^18.2.0"
+
+"@mui/x-date-pickers@6.10.1":
+  version "6.10.1"
+  resolved "https://registry.yarnpkg.com/@mui/x-date-pickers/-/x-date-pickers-6.10.1.tgz#a2a2767c82ad6cc070498ad1c6532fa655cf632d"
+  integrity sha512-806zxZkLgK2FYTptzy+x880RVDkHi9TcjMq9fTQwqx9DujEZ/YuGIu0wE97mhzNeqdTO02gnH96yHSo3EWu2VQ==
+  dependencies:
+    "@babel/runtime" "^7.22.6"
+    "@mui/utils" "^5.13.7"
+    "@types/react-transition-group" "^4.4.6"
+    clsx "^1.2.1"
+    prop-types "^15.8.1"
+    react-transition-group "^4.4.5"
 
 "@mui/x-date-pickers@^6.5.0":
   version "6.9.2"

@@ -94,7 +94,11 @@ const WalkthroughInner = () => {
         <Button
           type="primary"
           onClick={() =>
-            handleState((prev) => ({ ...prev, open: true, steps }))
+            handleState((prev) => ({
+              ...prev,
+              open: true,
+              steps,
+            }))
           }
         >
           Click here to start the demo

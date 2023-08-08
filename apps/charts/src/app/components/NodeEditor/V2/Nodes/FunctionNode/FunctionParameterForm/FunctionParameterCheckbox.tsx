@@ -2,7 +2,6 @@ import styled from 'styled-components/macro';
 
 import { Switch } from '@cognite/cogs.js';
 
-import FunctionParameterFormLabel from './FunctionParameterFormLabel';
 import { ParameterFormElementProps } from './types';
 
 const ParameterCheckbox = ({
@@ -11,19 +10,18 @@ const ParameterCheckbox = ({
   parameterValues,
   onInputValueChange,
 }: ParameterFormElementProps) => {
-  const { description, name, param, type } = parameter;
+  const { name, param, type } = parameter;
 
   return (
     <CheckboxContainer>
       <Switch
         name={`${nodeId}-${param}`}
-        value={parameterValues[param]}
+        label={name}
+        checked={parameterValues[param]}
         onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
           onInputValueChange(param, type, event.target.checked)
         }
-      >
-        <FunctionParameterFormLabel label={name} description={description} />
-      </Switch>
+      />
     </CheckboxContainer>
   );
 };

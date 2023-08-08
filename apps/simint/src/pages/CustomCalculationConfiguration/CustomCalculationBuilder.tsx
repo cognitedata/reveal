@@ -163,21 +163,20 @@ export function CustomCalculationBuilder({
                 validationErrors={getStepValidationErrors(values, 'routine')}
               >
                 <Switch
+                  label={
+                    !isEditorEnabled
+                      ? 'Switch to JSON editor'
+                      : 'Switch to routine builder'
+                  }
                   checked={isEditorEnabled}
                   className="routine-editor-switch"
                   name="routine-editor-switch"
                   style={{ marginBottom: '1em' }}
-                  onChange={(
-                    _e: React.ChangeEvent<HTMLInputElement>,
-                    value: boolean
-                  ) => {
-                    setIsEditorEnabled(value);
+                  onChange={(_e, value) => {
+                    setIsEditorEnabled(!!value);
                   }}
-                >
-                  {!isEditorEnabled
-                    ? 'Switch to JSON editor'
-                    : 'Switch to routine builder'}
-                </Switch>
+                />
+
                 {isEditorEnabled ? (
                   <EditorContainer>
                     {!isCalculationFormatValid && (

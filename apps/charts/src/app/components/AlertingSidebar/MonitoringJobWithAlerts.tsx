@@ -70,9 +70,7 @@ const MonitoringJobWithAlerts = ({ job, translations }: Props) => {
     false
   );
 
-  const handleAddSourceToChart = (
-    event: React.MouseEvent<HTMLButtonElement>
-  ) => {
+  const handleAddSourceToChart = (event: React.MouseEvent<HTMLElement>) => {
     event.stopPropagation();
     if (timeseriesDef) {
       addTimeseries(timeseriesDef[0]);

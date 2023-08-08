@@ -63,14 +63,13 @@ export function CalculationDetails() {
         <strong>{modelCalculation.configuration.calculationName}</strong>
         <span>{modelFile.metadata.modelName}</span>
         <Switch
+          label="JSON Preview"
           checked={isJsonModeEnabled}
           name="json-preview"
           onChange={() => {
             setJsonModeEnabled(!isJsonModeEnabled);
           }}
-        >
-          <span className="editor-text">JSON Preview</span>
-        </Switch>
+        />
         <Link to={createCdfLink('configuration')}>
           <Button icon="Settings">Edit configuration</Button>
         </Link>
