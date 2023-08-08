@@ -2,21 +2,40 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type PointerEventData } from '@cognite/reveal';
+import { CadIntersection, type PointerEventData } from '@cognite/reveal';
 import { type FdmAssetMappingsConfig, useReveal, type NodeDataResult } from '../';
 import { useEffect, useState } from 'react';
 import { useNodeMappedData } from './useNodeMappedData';
 
+export type ClickedNodeData = NodeDataResult & {
+  intersection: CadIntersection;
+}
+
 export const useClickedNode = (
   fdmConfig?: FdmAssetMappingsConfig | undefined
-): NodeDataResult | undefined => {
+): ClickedNodeData | undefined => {
   const viewer = useReveal();
 
-  const [lastClickEvent, setLastClickEvent] = useState<PointerEventData | undefined>(undefined);
+  const [cadIntersection, setCadIntersection] = useState<CadIntersection | undefined>(undefined);
 
   useEffect(() => {
     const callback = (event: PointerEventData): void => {
-      setLastClickEvent(event);
+      void (async () => {
+        if (event === undefined) {
+          return;
+        }
+
+        const intersection = await viewer.getIntersectionFromPixel(
+          event.offsetX,
+          event.offsetY
+        );
+
+        if (intersection === null || intersection.type !== 'cad') {
+          return;
+        }
+
+        setCadIntersection(intersection);
+      })();
     };
 
     viewer.on('click', callback);
@@ -26,5 +45,10 @@ export const useClickedNode = (
     };
   }, [viewer]);
 
-  return useNodeMappedData(lastClickEvent, fdmConfig);
+  const nodeData = useNodeMappedData(cadIntersection?.treeIndex, cadIntersection?.model, fdmConfig);
+
+  if (nodeData === undefined || cadIntersection === undefined) {
+    return undefined;
+  }
+  return { intersection: cadIntersection, ...nodeData };
 };

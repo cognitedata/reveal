@@ -26,5 +26,4 @@ export type NodeDataResult = {
   nodeExternalId: string;
   view: Source;
   cadNode: Node3D;
-  intersection: CadIntersection;
 };

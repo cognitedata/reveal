@@ -19,41 +19,19 @@ import {
 } from '../utilities/FdmSDK';
 
 export const useNodeMappedData = (
-  clickEvent: PointerEventData | undefined,
+  treeIndex: number | undefined,
+  model: CogniteCadModel | undefined,
   fdmConfig: FdmAssetMappingsConfig | undefined
 ): NodeDataResult | undefined => {
-  const viewer = useReveal();
-
-  const [cadIntersection, setCadIntersection] = useState<CadIntersection | undefined>(undefined);
-
-  useEffect(() => {
-    void (async () => {
-      if (clickEvent === undefined) {
-        return;
-      }
-
-      const intersection = await viewer.getIntersectionFromPixel(
-        clickEvent.offsetX,
-        clickEvent.offsetY
-      );
-
-      if (intersection === null || intersection.type !== 'cad') {
-        return;
-      }
-
-      const cadIntersection = intersection;
-      setCadIntersection(cadIntersection);
-    })();
-  }, [clickEvent]);
 
   const ancestors = useAncestorNodesForTreeIndex(
-    cadIntersection?.model,
-    cadIntersection?.treeIndex
+    model,
+    treeIndex
   );
 
   const mappings = useNodeMappingEdges(
     fdmConfig,
-    cadIntersection?.model,
+    model,
     ancestors?.map((n) => n.id)
   );
 
@@ -79,7 +57,8 @@ export const useNodeMappedData = (
     selectedNode === undefined ||
     dataView === undefined ||
     dataNode === undefined ||
-    cadIntersection === undefined
+      model === undefined ||
+      treeIndex === undefined
   ) {
     return undefined;
   }
