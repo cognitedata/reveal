@@ -52,8 +52,10 @@ export const RevealToolbar = withSuppressRevealEvents(
   FitModelsButton: typeof FitModelsButton;
   SlicerButton: typeof SlicerButton;
   LayersButton: typeof LayersButton;
+  HelpButton: typeof HelpButton;
 };
 
 RevealToolbar.FitModelsButton = FitModelsButton;
 RevealToolbar.SlicerButton = SlicerButton;
 RevealToolbar.LayersButton = LayersButton;
+RevealToolbar.HelpButton = HelpButton;
