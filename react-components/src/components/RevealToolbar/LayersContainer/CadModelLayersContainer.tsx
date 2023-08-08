@@ -7,7 +7,7 @@ import { useReveal } from '../../RevealContainer/RevealContext';
 import { type CogniteCadModel } from '@cognite/reveal';
 import { Checkbox, Flex, Menu } from '@cognite/cogs.js';
 import { StyledChipCount, StyledLabel, StyledSubMenu } from './elements';
-import uniqueId from 'lodash/uniqueId';
+import { uniqueId } from 'lodash';
 import { type Reveal3DResourcesLayersProps } from './types';
 
 export const CadModelLayersContainer = ({
