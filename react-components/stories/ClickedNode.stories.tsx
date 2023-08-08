@@ -54,7 +54,7 @@ const ClickedNodePrinter = ({ fdmConfig }: { fdmConfig: FdmAssetMappingsConfig |
   const clickedNode = useClickedNode(fdmConfig);
   useEffect(() => {
     console.log('Clicked node is ', clickedNode);
-  }, [clickedNode]);
+  }, [clickedNode?.nodeExternalId]);
 
   return <></>;
 };
