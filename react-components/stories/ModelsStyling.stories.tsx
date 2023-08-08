@@ -120,6 +120,10 @@ const StyledReveal3DResources = (props: Reveal3DResourcesProps): ReactElement =>
     (resource): resource is AddReveal3DModelOptions => is3DModelOptions(resource)
   );
 
+  if (props.fdmAssetMappingConfig === undefined) {
+    throw new Error('fdmAssetMappingConfig is undefined');
+  }
+
   const { data } = useMappedEquipmentBy3DModelsList(props.fdmAssetMappingConfig, filtered);
 
   const styling = useMemo(() => {
