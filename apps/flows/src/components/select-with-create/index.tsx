@@ -1,10 +1,11 @@
 import { useMemo, useState } from 'react';
 
-import { Colors, Icon } from '@cognite/cogs.js';
-import { Select, SelectProps } from 'antd';
 import styled from 'styled-components';
 
+import { Select, SelectProps } from 'antd';
 import { Trans, TranslationKeys, useTranslation } from 'common';
+
+import { Colors, Icon } from '@cognite/cogs.js';
 
 const { Option } = Select;
 

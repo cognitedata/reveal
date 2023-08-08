@@ -1,9 +1,13 @@
+import { Link } from 'react-router-dom';
+
+import styled from 'styled-components';
+
+import { CANVAS_PATH } from 'common';
+
 import { createLink } from '@cognite/cdf-utilities';
 import { Body, Colors, Flex } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk/dist/src';
-import { CANVAS_PATH } from 'common';
-import { Link } from 'react-router-dom';
-import styled from 'styled-components';
+
 import FlowListItemMenu from './FlowItemMenu';
 
 const format = new Intl.DateTimeFormat(undefined, {

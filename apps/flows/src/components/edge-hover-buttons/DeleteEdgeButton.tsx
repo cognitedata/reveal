@@ -1,5 +1,6 @@
-import { Button } from '@cognite/cogs.js';
 import styled from 'styled-components';
+
+import { Button } from '@cognite/cogs.js';
 
 type Props = {
   className: string;

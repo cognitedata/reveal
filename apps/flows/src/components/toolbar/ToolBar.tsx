@@ -1,5 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, MouseEventHandler } from 'react';
+
 import styled from 'styled-components';
+
+import {
+  TOOLBAR_IS_HISTORY_VISIBLE_WIDTH,
+  TOOLBAR_MARGIN,
+  Z_INDEXES,
+} from 'common/constants';
+import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
+
 import {
   Button,
   Colors,
@@ -8,13 +17,6 @@ import {
   IconType,
   Tooltip,
 } from '@cognite/cogs.js';
-import {
-  TOOLBAR_IS_HISTORY_VISIBLE_WIDTH,
-  TOOLBAR_MARGIN,
-  Z_INDEXES,
-} from 'common/constants';
-import { MouseEventHandler } from 'react';
-import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
 
 export type ToolbarButtonProps = {
   children?: string | React.ReactNode;

@@ -1,13 +1,16 @@
+import { useMemo } from 'react';
+import { useParams } from 'react-router-dom';
+
+import styled from 'styled-components';
+
 import { json } from '@codemirror/lang-json';
-import { CodeSnippet } from '@cognite/cdf-utilities';
-import { Body, Loader } from '@cognite/cogs.js';
 import { useTranslation } from 'common';
 import { BasicPlaceholder } from 'components/basic-placeholder/BasicPlaceholder';
 import { useWorkflow } from 'hooks/workflows';
-import { useMemo } from 'react';
-import { useParams } from 'react-router-dom';
-import styled from 'styled-components';
 import { getLastWorkflowDefinition } from 'utils/workflows';
+
+import { CodeSnippet } from '@cognite/cdf-utilities';
+import { Body, Loader } from '@cognite/cogs.js';
 
 const ViewOnlyCanvas = () => {
   const { t } = useTranslation();

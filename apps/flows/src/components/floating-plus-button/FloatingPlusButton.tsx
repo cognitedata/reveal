@@ -1,9 +1,10 @@
 import { MouseEventHandler } from 'react';
 
-import { Colors, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 import { FLOATING_ELEMENT_MARGIN, Z_INDEXES } from 'common';
+
+import { Colors, Icon } from '@cognite/cogs.js';
 
 type FloatingPlusButtonProps = {
   onClick?: MouseEventHandler<HTMLButtonElement>;

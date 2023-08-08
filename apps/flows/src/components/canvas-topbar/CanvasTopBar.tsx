@@ -1,3 +1,26 @@
+import { useMemo, useState } from 'react';
+import { useParams } from 'react-router-dom';
+
+import styled from 'styled-components';
+
+import { useTranslation } from 'common';
+import EditWorkflowModal from 'components/workflow-modal/EditWorkflowModal';
+import { ViewMode, useWorkflowBuilderContext } from 'contexts/WorkflowContext';
+import { useCreateWorkflowDefinition, useRunWorkflow } from 'hooks/workflows';
+import { toPng } from 'html-to-image';
+import {
+  WorkflowDefinitionCreate,
+  WorkflowWithVersions,
+} from 'types/workflows';
+import { getContainer } from 'utils';
+import {
+  areWorkflowDefinitionsSame,
+  convertCanvasToWorkflowDefinition,
+  getLastWorkflowDefinition,
+  isCanvasEmpty,
+} from 'utils/workflows';
+
+import { createLink, SecondaryTopbar } from '@cognite/cdf-utilities';
 import {
   Button,
   Chip,
@@ -7,27 +30,8 @@ import {
   Menu,
   SegmentedControl,
 } from '@cognite/cogs.js';
-import { useParams } from 'react-router-dom';
-import { createLink, SecondaryTopbar } from '@cognite/cdf-utilities';
-import styled from 'styled-components';
-import { getContainer } from 'utils';
-import { useTranslation } from 'common';
+
 import FlowSaveIndicator from '../../pages/flow/FlowSaveIndicator';
-import { toPng } from 'html-to-image';
-import { ViewMode, useWorkflowBuilderContext } from 'contexts/WorkflowContext';
-import { useMemo, useState } from 'react';
-import EditWorkflowModal from 'components/workflow-modal/EditWorkflowModal';
-import { useCreateWorkflowDefinition, useRunWorkflow } from 'hooks/workflows';
-import {
-  areWorkflowDefinitionsSame,
-  convertCanvasToWorkflowDefinition,
-  getLastWorkflowDefinition,
-  isCanvasEmpty,
-} from 'utils/workflows';
-import {
-  WorkflowDefinitionCreate,
-  WorkflowWithVersions,
-} from 'types/workflows';
 
 type CanvasTopBarProps = {
   workflow: WorkflowWithVersions;

@@ -1,6 +1,4 @@
 import { ComponentType, useCallback, useMemo, useRef, useState } from 'react';
-import { Extend as AutomergeExtend } from '@automerge/automerge';
-import { Colors } from '@cognite/cogs.js';
 import ReactFlow, {
   Background,
   MarkerType,
@@ -18,8 +16,10 @@ import ReactFlow, {
   NodePositionChange,
   NodeMouseHandler,
 } from 'reactflow';
+
 import styled from 'styled-components';
 
+import { Extend as AutomergeExtend } from '@automerge/automerge';
 import {
   CANVAS_DRAG_AND_DROP_DATA_TRANSFER_IDENTIFIER,
   DELETE_KEY_CODES,
@@ -27,13 +27,15 @@ import {
   MIN_ZOOM,
   Z_INDEXES,
 } from 'common';
-import { ProcessNodeRenderer } from 'components/process-node/ProcessNodeRenderer';
-import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
-import { v4 } from 'uuid';
+import { CanvasToolbar } from 'components/canvas-toolbar/CanvasToolbar';
 import ContextMenu, {
   WorkflowContextMenu,
 } from 'components/context-menu/ContextMenu';
+import { Controls } from 'components/controls';
+import { CustomEdge } from 'components/custom-edge';
 import { ParentNodeRenderer } from 'components/parent-node/ParentNodeRenderer';
+import { ProcessNodeRenderer } from 'components/process-node/ProcessNodeRenderer';
+import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
 import {
   CanvasNode,
   ProcessNode,
@@ -41,10 +43,10 @@ import {
   WorkflowBuilderNodeType,
   isProcessType,
 } from 'types';
-import { Controls } from 'components/controls';
-import { CustomEdge } from 'components/custom-edge';
-import { CanvasToolbar } from 'components/canvas-toolbar/CanvasToolbar';
 import { useUserInfo } from 'utils/user';
+import { v4 } from 'uuid';
+
+import { Colors } from '@cognite/cogs.js';
 
 const NODE_TYPES: Record<WorkflowBuilderNodeType, ComponentType<NodeProps>> = {
   process: ProcessNodeRenderer,
@@ -124,7 +126,7 @@ export const FlowBuilder = (): JSX.Element => {
   };
 
   const onNodeDoubleClick: NodeMouseHandler = (_, node) => {
-    if (!!node.data?.processType) {
+    if (node.data?.processType) {
       setFocusedProcessNodeId(node.id);
     }
   };

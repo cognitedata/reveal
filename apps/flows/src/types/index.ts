@@ -1,9 +1,11 @@
+import { Edge, Node } from 'reactflow';
+
 import {
   List as AutomergeList,
   Extend as AutomergeExtend,
 } from '@automerge/automerge';
+
 import { IconType } from '@cognite/cogs.js';
-import { Edge, Node } from 'reactflow';
 
 /***************/
 /* PARENT NODE */
@@ -24,7 +26,7 @@ export const PROCESS_TYPES = [
   'http',
   'dynamic',
 ] as const;
-export type ProcessType = typeof PROCESS_TYPES[number];
+export type ProcessType = (typeof PROCESS_TYPES)[number];
 export const PROCESS: Record<string, ProcessType> = {
   TRANSFORMATION: 'transformation',
   FUNCTION: 'function',
@@ -91,7 +93,7 @@ export type ProcessNode = BaseWorkflowBuilderNode<'process', ProcessNodeData>;
 
 export const WORKFLOW_BUILDER_NODE_TYPES = ['process', 'parent'] as const;
 export type WorkflowBuilderNodeType =
-  typeof WORKFLOW_BUILDER_NODE_TYPES[number];
+  (typeof WORKFLOW_BUILDER_NODE_TYPES)[number];
 export const WORFKLOW_BUILDER_NODE: Record<string, WorkflowBuilderNodeType> = {
   PROCESS: 'process',
   PARENT: 'parent',

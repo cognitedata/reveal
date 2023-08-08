@@ -1,3 +1,13 @@
+import { useMemo, useState } from 'react';
+
+import styled from 'styled-components';
+
+import { useTranslation } from 'common';
+import { BasicPlaceholder } from 'components/basic-placeholder/BasicPlaceholder';
+import { CreateWorkflowModal } from 'components/workflow-modal/CreateWorkflowModal';
+import WorkflowTable from 'components/workflow-table/WorkflowTable';
+import { useWorkflows } from 'hooks/workflows';
+
 import {
   Body,
   Button,
@@ -7,13 +17,6 @@ import {
   Loader,
   Title,
 } from '@cognite/cogs.js';
-import styled from 'styled-components';
-import { useTranslation } from 'common';
-import { useMemo, useState } from 'react';
-import { CreateWorkflowModal } from 'components/workflow-modal/CreateWorkflowModal';
-import { useWorkflows } from 'hooks/workflows';
-import WorkflowTable from 'components/workflow-table/WorkflowTable';
-import { BasicPlaceholder } from 'components/basic-placeholder/BasicPlaceholder';
 
 export default function FlowList() {
   const { t } = useTranslation();

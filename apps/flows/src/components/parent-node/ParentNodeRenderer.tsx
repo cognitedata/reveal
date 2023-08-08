@@ -1,11 +1,12 @@
 import { ChangeEventHandler, FocusEventHandler, useState } from 'react';
-
-import { Colors } from '@cognite/cogs.js';
-import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
 import { NodeProps } from 'reactflow';
+
 import styled from 'styled-components';
 
 import { DEFAULT_GROUP_NAME } from 'common';
+import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
+
+import { Colors } from '@cognite/cogs.js';
 
 export const ParentNodeRenderer = ({
   data,

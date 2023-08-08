@@ -1,7 +1,8 @@
+import { useCallback, useEffect, useState } from 'react';
+
 import { FloatingComponentsPanel } from 'components/floating-components-panel/FloatingComponentsPanel';
 import ToolBar, { ToolbarButtonProps } from 'components/toolbar/ToolBar';
 import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
-import { useCallback, useEffect, useState } from 'react';
 
 export const CanvasToolbar = () => {
   const [active, setActive] = useState(false);

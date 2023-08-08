@@ -1,3 +1,15 @@
+import React, { Suspense } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
+import { Route, BrowserRouter, Routes } from 'react-router-dom';
+import { ReactFlowProvider } from 'reactflow';
+
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { CANVAS_PATH } from 'common';
+import ErrorFeedback from 'common/ErrorFeedback';
+import { translations } from 'common/i18n';
+import GlobalStyles from 'styles/GlobalStyles';
+
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
 import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
 import {
@@ -7,19 +19,8 @@ import {
   SubAppWrapper,
 } from '@cognite/cdf-utilities';
 import { Loader } from '@cognite/cogs.js';
-import { SDKProvider } from '@cognite/sdk-provider';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-
-import { translations } from 'common/i18n';
-import GlobalStyles from 'styles/GlobalStyles';
 import { FlagProvider } from '@cognite/react-feature-flags';
-import { Route, BrowserRouter, Routes } from 'react-router-dom';
-import { CANVAS_PATH } from 'common';
-import { ErrorBoundary } from 'react-error-boundary';
-import ErrorFeedback from 'common/ErrorFeedback';
-import React, { Suspense } from 'react';
-import { ReactFlowProvider } from 'reactflow';
+import { SDKProvider } from '@cognite/sdk-provider';
 
 const queryClient = new QueryClient({
   defaultOptions: {

@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+
 import { FlowBuilder } from '../flow-builder';
 
 export const Canvas = (): JSX.Element => {

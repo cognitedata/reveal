@@ -1,6 +1,8 @@
-import { Flex, Infobox } from '@cognite/cogs.js';
-import { useTranslation, Z_INDEXES } from 'common';
 import styled from 'styled-components';
+
+import { useTranslation, Z_INDEXES } from 'common';
+
+import { Flex, Infobox } from '@cognite/cogs.js';
 
 export default function PreviewFeedback() {
   const { t } = useTranslation();

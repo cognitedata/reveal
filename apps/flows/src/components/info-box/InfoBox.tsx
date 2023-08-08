@@ -1,8 +1,10 @@
 import React from 'react';
 
-import { Body, Colors, Flex, Icon, IconType } from '@cognite/cogs.js';
 import styled from 'styled-components';
+
 import { ColorStatus } from 'components/tab-header/TabHeader';
+
+import { Body, Colors, Flex, Icon, IconType } from '@cognite/cogs.js';
 
 type InfoBoxProps = {
   children: React.ReactNode;

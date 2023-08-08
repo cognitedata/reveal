@@ -1,7 +1,6 @@
 import { ChangeEvent, ChangeEventHandler } from 'react';
 
 import { Input, InputProps } from 'antd';
-
 import FormFieldWrapper, {
   FormFieldWrapperProps,
 } from 'components/form-field-wrapper';

@@ -1,12 +1,14 @@
-import { Body, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
-import { useWorkflowExecutions } from 'hooks/workflows';
-import { StyledEmptyStateContainer } from 'components/run-canvas/RunCanvas';
-import { RunHistorySectionItem } from './RunHistorySectionItem';
-import { WorkflowWithVersions } from 'types/workflows';
-import { BasicPlaceholder } from 'components/basic-placeholder/BasicPlaceholder';
 import { useTranslation } from 'common';
+import { BasicPlaceholder } from 'components/basic-placeholder/BasicPlaceholder';
+import { StyledEmptyStateContainer } from 'components/run-canvas/RunCanvas';
+import { useWorkflowExecutions } from 'hooks/workflows';
+import { WorkflowWithVersions } from 'types/workflows';
+
+import { Body, Icon } from '@cognite/cogs.js';
+
+import { RunHistorySectionItem } from './RunHistorySectionItem';
 
 type RunHistorySectionProps = {
   workflow: WorkflowWithVersions;

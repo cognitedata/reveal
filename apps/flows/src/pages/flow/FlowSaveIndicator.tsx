@@ -1,9 +1,11 @@
-import { Body, Colors, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
+
 import { useIsMutating } from '@tanstack/react-query';
 import { useTranslation } from 'common';
-import { formatTime, Timestamp } from '@cognite/cdf-utilities';
 import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
+
+import { formatTime, Timestamp } from '@cognite/cdf-utilities';
+import { Body, Colors, Icon } from '@cognite/cogs.js';
 
 const FlowSaveIndicator = () => {
   const { t } = useTranslation();

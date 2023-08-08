@@ -1,3 +1,13 @@
+import { Handle, NodeProps, Position } from 'reactflow';
+
+import styled from 'styled-components';
+
+import { useTranslation } from 'common';
+import { ColorStatus } from 'components/tab-header/TabHeader';
+import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
+import { useWorkflowExecutionDetails } from 'hooks/workflows';
+import { PROCESS_ICON, ProcessNodeData } from 'types';
+
 import {
   Body,
   Colors,
@@ -7,14 +17,6 @@ import {
   IconType,
   Overline,
 } from '@cognite/cogs.js';
-import styled from 'styled-components';
-import { Handle, NodeProps, Position } from 'reactflow';
-
-import { useTranslation } from 'common';
-import { PROCESS_ICON, ProcessNodeData } from 'types';
-import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
-import { ColorStatus } from 'components/tab-header/TabHeader';
-import { useWorkflowExecutionDetails } from 'hooks/workflows';
 
 const BASE_NODE_HANDLE_SIZE = 16;
 

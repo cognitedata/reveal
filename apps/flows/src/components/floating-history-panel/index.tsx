@@ -1,11 +1,13 @@
+import { useMemo } from 'react';
+
+import styled from 'styled-components';
+
 import * as Automerge from '@automerge/automerge';
-import { Button, Colors, Flex, Title } from '@cognite/cogs.js';
 import { useTranslation } from 'common';
+import { FloatingPanel } from 'components/floating-components-panel/FloatingComponentsPanel';
 import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
 
-import { FloatingPanel } from 'components/floating-components-panel/FloatingComponentsPanel';
-import { useMemo } from 'react';
-import styled from 'styled-components';
+import { Button, Colors, Flex, Title } from '@cognite/cogs.js';
 
 type ChangeMessage = {
   hash: string;

@@ -1,5 +1,6 @@
-import { Button, Colors, Detail } from '@cognite/cogs.js';
 import styled from 'styled-components';
+
+import { Button, Colors, Detail } from '@cognite/cogs.js';
 
 type ContextMenuItemProps = {
   disabled?: boolean;

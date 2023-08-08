@@ -1,6 +1,7 @@
-import { Button, Dropdown, Menu } from '@cognite/cogs.js';
 import { useTranslation } from 'common';
 import { useDeleteFlow } from 'hooks/files';
+
+import { Button, Dropdown, Menu } from '@cognite/cogs.js';
 
 export default function FlowListItemMenu({
   externalId,
@@ -25,7 +26,7 @@ export default function FlowListItemMenu({
       <Button
         aria-label="Open options menu for flow"
         type="ghost"
-        icon={'EllipsisVertical'}
+        icon="EllipsisVertical"
       />
     </Dropdown>
   );

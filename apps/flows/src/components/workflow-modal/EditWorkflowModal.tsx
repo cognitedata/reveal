@@ -5,11 +5,13 @@ import {
   useCallback,
   useState,
 } from 'react';
-import { Flex, InputExp, Modal } from '@cognite/cogs.js';
-import { useTranslation } from 'common';
-import { useFlow, useUpdateFlow } from 'hooks/files';
 import { useParams } from 'react-router-dom';
+
+import { useTranslation } from 'common';
 import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
+import { useFlow, useUpdateFlow } from 'hooks/files';
+
+import { Flex, InputExp, Modal } from '@cognite/cogs.js';
 
 type Props = {
   showWorkflowModal: boolean;

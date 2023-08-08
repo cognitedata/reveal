@@ -1,10 +1,11 @@
-import { createLink } from '@cognite/cdf-utilities';
-import { Flex, Modal, InputExp } from '@cognite/cogs.js';
-import { FormikErrors, useFormik } from 'formik';
 import { useNavigate } from 'react-router-dom';
 
 import { useTranslation } from 'common';
+import { FormikErrors, useFormik } from 'formik';
 import { useCreateWorkflow } from 'hooks/workflows';
+
+import { createLink } from '@cognite/cdf-utilities';
+import { Flex, Modal, InputExp } from '@cognite/cogs.js';
 
 type Props = {
   onCancel: () => void;
@@ -30,7 +31,7 @@ export const CreateWorkflowModal = ({ onCancel, visible }: Props) => {
     useFormik<CreateWorkflowFormValues>({
       initialValues: {},
       onSubmit: (values) => {
-        if (!!values.externalId) {
+        if (values.externalId) {
           mutate({
             externalId: values.externalId,
             description: values.description,

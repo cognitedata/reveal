@@ -1,9 +1,12 @@
-import { Dropdown, Menu } from '@cognite/cogs.js';
 import { useCallback, useState } from 'react';
 import { useReactFlow, useStore } from 'reactflow';
+
 import styled from 'styled-components';
-import ToolBar, { ToolbarButtonProps } from 'components/toolbar/ToolBar';
+
 import { CANVAS_ZOOM_DURATION } from 'common';
+import ToolBar, { ToolbarButtonProps } from 'components/toolbar/ToolBar';
+
+import { Dropdown, Menu } from '@cognite/cogs.js';
 
 export const Controls = () => {
   const [dropdownVisible, setZoomDropdownVisible] = useState(false);

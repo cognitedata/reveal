@@ -1,10 +1,11 @@
 import { DragEventHandler } from 'react';
 
-import { Body, Colors, Flex, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 import { useTranslation } from 'common';
 import { PROCESS_ICON, ProcessType } from 'types';
+
+import { Body, Colors, Flex, Icon } from '@cognite/cogs.js';
 
 type FloatingComponentsPanelItemProps = {
   onDragStart: DragEventHandler;

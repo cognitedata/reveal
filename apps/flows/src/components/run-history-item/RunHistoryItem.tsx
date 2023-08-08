@@ -1,11 +1,11 @@
-import { IconType, SegmentedControl } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 import { useTranslation } from 'common';
-import TabHeader from 'components/tab-header/TabHeader';
-import { formatTime } from '@cognite/cdf-utilities';
-import { ColorStatus } from 'components/tab-header/TabHeader';
+import TabHeader, { ColorStatus } from 'components/tab-header/TabHeader';
 import { WorkflowExecution } from 'types/workflows';
+
+import { formatTime } from '@cognite/cdf-utilities';
+import { IconType, SegmentedControl } from '@cognite/cogs.js';
 
 interface RunHistoryItemProps {
   isExpanded?: boolean;

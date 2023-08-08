@@ -1,3 +1,17 @@
+import { useMemo } from 'react';
+
+import styled from 'styled-components';
+
+import { AutoComplete, Select } from 'antd';
+import { DefaultOptionType } from 'antd/lib/select';
+import { useTranslation } from 'common';
+import FormFieldWrapper from 'components/form-field-wrapper';
+import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
+import { useFunctions } from 'hooks/functions';
+import { useTransformationList } from 'hooks/transformation';
+import { ProcessNodeData, ProcessType, ProcessNode } from 'types';
+import { collectPages } from 'utils';
+
 import {
   Flex,
   InputExp,
@@ -7,19 +21,6 @@ import {
   Button,
   Modal,
 } from '@cognite/cogs.js';
-import styled from 'styled-components';
-import { AutoComplete, Select } from 'antd';
-import { useMemo } from 'react';
-
-import { useTranslation } from 'common';
-import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
-import { useTransformationList } from 'hooks/transformation';
-import { useFunctions } from 'hooks/functions';
-import { collectPages } from 'utils';
-import { ProcessNodeData, ProcessType } from 'types';
-import { ProcessNode } from 'types';
-import { DefaultOptionType } from 'antd/lib/select';
-import FormFieldWrapper from 'components/form-field-wrapper';
 
 const { Option } = Select;
 

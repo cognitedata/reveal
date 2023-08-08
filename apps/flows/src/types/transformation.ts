@@ -197,7 +197,7 @@ export type Status = 'Running' | 'Created' | 'Completed' | 'Failed';
 
 export const JOB_ACTIONS = ['created', 'read', 'updated', 'deleted'] as const;
 
-export type JobAction = typeof JOB_ACTIONS[number];
+export type JobAction = (typeof JOB_ACTIONS)[number];
 
 export type MetricNameActions = {
   [key in ConflictMode]: JobAction;

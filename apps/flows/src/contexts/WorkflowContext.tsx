@@ -13,14 +13,13 @@ import {
 } from 'react';
 
 import * as Automerge from '@automerge/automerge';
-import { debounce, isEqual } from 'lodash';
-
-import { useUpdateFlow } from 'hooks/files';
-import { AFlow, CanvasEdges, CanvasNodes } from 'types';
 import { ChangeOptions } from '@automerge/automerge';
+import { useUpdateFlow } from 'hooks/files';
+import { debounce, isEqual } from 'lodash';
+import { AFlow, CanvasEdges, CanvasNodes } from 'types';
+import { WorkflowExecution } from 'types/workflows';
 import { useUserInfo } from 'utils/user';
 import { v4 } from 'uuid';
-import { WorkflowExecution } from 'types/workflows';
 
 type Logger = (oldDoc: AFlow) => ChangeOptions<AFlow> | undefined;
 type FlowContextT = {

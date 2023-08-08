@@ -1,11 +1,13 @@
-import { Button, Menu } from '@cognite/cogs.js';
-import { ProcessNode, ProcessType } from 'types';
-import { Extend as AutomergeExtend, uuid } from '@automerge/automerge';
-import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
 import { Edge } from 'reactflow';
+
+import { Extend as AutomergeExtend, uuid } from '@automerge/automerge';
 import { Dropdown, Space } from 'antd';
 import { useTranslation } from 'common';
+import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
+import { ProcessNode, ProcessType } from 'types';
 import { useUserInfo } from 'utils/user';
+
+import { Button, Menu } from '@cognite/cogs.js';
 
 type Props = {
   className: string;

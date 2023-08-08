@@ -1,11 +1,14 @@
-import { Flex } from '@cognite/cogs.js';
+import { useState } from 'react';
+import { EdgeProps, getBezierPath } from 'reactflow';
+
+import styled from 'styled-components';
+
 import { FOREIGN_OBJECT_HEIGHT, FOREIGN_OBJECT_WIDTH } from 'common';
 import AddNodeButton from 'components/edge-hover-buttons/AddNodeButton';
 import DeleteEdgeButton from 'components/edge-hover-buttons/DeleteEdgeButton';
 import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
-import { useState } from 'react';
-import { EdgeProps, getBezierPath } from 'reactflow';
-import styled from 'styled-components';
+
+import { Flex } from '@cognite/cogs.js';
 export const CustomEdge = ({
   id,
   sourceX,

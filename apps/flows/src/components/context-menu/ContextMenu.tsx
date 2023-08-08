@@ -1,18 +1,19 @@
 import { RefObject } from 'react';
-
-import { Colors, Elevations } from '@cognite/cogs.js';
-import { Dropdown } from 'antd';
 import { Edge } from 'reactflow';
+
 import styled from 'styled-components';
 
+import { Dropdown } from 'antd';
 import { Z_INDEXES } from 'common';
+import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
 import { CanvasNode } from 'types';
+import { useUserInfo } from 'utils/user';
+
+import { Colors, Elevations } from '@cognite/cogs.js';
 
 import { ContextMenuItem } from './ContextMenuItem';
 import { GroupNodes } from './GroupNodes';
 import { UngroupNodes } from './UngroupNodes';
-import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
-import { useUserInfo } from 'utils/user';
 
 type WorkflowContextMenuPosition = {
   x: number;

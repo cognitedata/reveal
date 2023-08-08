@@ -1,5 +1,4 @@
 import { uuid } from '@automerge/automerge';
-
 import { DEFAULT_GROUP_NAME, GROUP_PADDING } from 'common';
 import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
 import { CanvasNode } from 'types';

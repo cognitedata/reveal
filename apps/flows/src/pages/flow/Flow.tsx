@@ -1,27 +1,28 @@
 import { useEffect, useMemo } from 'react';
-
-import { Body, Colors, Elevations, Flex, Loader } from '@cognite/cogs.js';
-import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
 
+import styled from 'styled-components';
+
+import { useTranslation } from 'common';
+import { BasicPlaceholder } from 'components/basic-placeholder/BasicPlaceholder';
 import { Canvas } from 'components/canvas';
+import { CanvasTopBar } from 'components/canvas-topbar/CanvasTopBar';
+import { FloatingHistoryPanel } from 'components/floating-history-panel';
+import { NodeConfigurationPanel } from 'components/node-configuration-panel/NodeConfigurationPanel';
+import PreviewFeedback from 'components/preview-feedback';
+import RunCanvas from 'components/run-canvas/RunCanvas';
+import { RunHistorySection } from 'components/run-history-section/RunHistorySection';
+import ViewOnlyCanvas from 'components/view-only-canvas/ViewOnlyCanvas';
 import {
   FlowContextProvider,
   useWorkflowBuilderContext,
 } from 'contexts/WorkflowContext';
-import { CanvasTopBar } from 'components/canvas-topbar/CanvasTopBar';
 import { useCreateFile, useFile } from 'hooks/files';
-import { FloatingHistoryPanel } from 'components/floating-history-panel';
-import PreviewFeedback from 'components/preview-feedback';
 import { useWorkflow } from 'hooks/workflows';
-import { NodeConfigurationPanel } from 'components/node-configuration-panel/NodeConfigurationPanel';
-import { RunHistorySection } from 'components/run-history-section/RunHistorySection';
-import RunCanvas from 'components/run-canvas/RunCanvas';
 import { WorkflowWithVersions } from 'types/workflows';
 import { getLastWorkflowDefinition, isCanvasEmpty } from 'utils/workflows';
-import ViewOnlyCanvas from 'components/view-only-canvas/ViewOnlyCanvas';
-import { BasicPlaceholder } from 'components/basic-placeholder/BasicPlaceholder';
-import { useTranslation } from 'common';
+
+import { Body, Colors, Elevations, Flex, Loader } from '@cognite/cogs.js';
 
 const Flow = (): JSX.Element => {
   const { externalId } = useParams<{ externalId: string }>();

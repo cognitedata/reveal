@@ -1,11 +1,3 @@
-import { Body, Colors, Flex } from '@cognite/cogs.js';
-import { useQuery } from '@tanstack/react-query';
-import { DELETE_KEY_CODES, MAX_ZOOM, MIN_ZOOM, useTranslation } from 'common';
-import { Controls } from 'components/controls';
-import { CustomRunEdge } from 'components/custom-run-edge/CustomRunEdge';
-import { FlowBuilderContainer } from 'components/flow-builder';
-import { RunNodeRenderer } from 'components/run-node/RunNodeRenderer';
-import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
 import { ComponentType, useMemo } from 'react';
 import {
   Background,
@@ -16,9 +8,20 @@ import {
   ReactFlow,
   SelectionMode,
 } from 'reactflow';
+
 import styled from 'styled-components';
+
+import { useQuery } from '@tanstack/react-query';
+import { DELETE_KEY_CODES, MAX_ZOOM, MIN_ZOOM, useTranslation } from 'common';
+import { Controls } from 'components/controls';
+import { CustomRunEdge } from 'components/custom-run-edge/CustomRunEdge';
+import { FlowBuilderContainer } from 'components/flow-builder';
+import { RunNodeRenderer } from 'components/run-node/RunNodeRenderer';
+import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
 import { ProcessNode, WorkflowBuilderNodeType } from 'types';
 import { computeLayout } from 'utils/layout';
+
+import { Body, Colors, Flex } from '@cognite/cogs.js';
 
 type RunCanvasProps = {};
 

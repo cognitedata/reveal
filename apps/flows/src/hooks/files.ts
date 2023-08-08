@@ -1,16 +1,17 @@
-import { useSDK } from '@cognite/sdk-provider';
-import { CogniteClient, CogniteError, FileInfo } from '@cognite/sdk';
-import { BASE_QUERY_KEY } from 'common/constants';
+import * as Automerge from '@automerge/automerge';
 import {
   useMutation,
   useQuery,
   useQueryClient,
   UseQueryOptions,
 } from '@tanstack/react-query';
-import { AFlow, Flow } from 'types';
-import * as Automerge from '@automerge/automerge';
+import { BASE_QUERY_KEY } from 'common/constants';
 import { isEqual } from 'lodash';
+import { AFlow, Flow } from 'types';
 import { getUserInfo } from 'utils/user';
+
+import { CogniteClient, CogniteError, FileInfo } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
 export const dbKey = (db: string) => [BASE_QUERY_KEY, db];
 export const databaseListKey = [BASE_QUERY_KEY, 'database-list'];
 export const tableListKey = (db: string) => [...dbKey(db), 'table-list'];

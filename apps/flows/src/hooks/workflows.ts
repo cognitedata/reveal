@@ -1,5 +1,3 @@
-import { getProject } from '@cognite/cdf-utilities';
-import { useSDK } from '@cognite/sdk-provider';
 import {
   UseMutationOptions,
   UseQueryOptions,
@@ -7,7 +5,6 @@ import {
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
-import { createSession } from './sessions';
 import {
   CreateWorkflowDefinitionVariables,
   DeleteWorkflowVariables,
@@ -18,6 +15,11 @@ import {
   WorkflowWithVersions,
   UpdateTaskVariables,
 } from 'types/workflows';
+
+import { getProject } from '@cognite/cdf-utilities';
+import { useSDK } from '@cognite/sdk-provider';
+
+import { createSession } from './sessions';
 
 const getWorkflowsQueryKey = () => ['flows', 'workflow-list'];
 

@@ -1,5 +1,6 @@
-import { Body, Colors, Flex, Icon, IconType, A } from '@cognite/cogs.js';
 import styled from 'styled-components';
+
+import { Body, Colors, Flex, Icon, IconType, A } from '@cognite/cogs.js';
 
 export type TabHeaderProps = {
   className?: string;

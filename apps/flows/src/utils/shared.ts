@@ -1,10 +1,12 @@
-import { getProject } from '@cognite/cdf-utilities';
-import { FileInfo } from '@cognite/sdk/dist/src';
 import { useMemo } from 'react';
-import { InfiniteData } from '@tanstack/react-query';
 import { useLocation, useNavigate } from 'react-router-dom';
+
+import { InfiniteData } from '@tanstack/react-query';
 import { styleScope } from 'styles/styleScope';
 import { Items } from 'types';
+
+import { getProject } from '@cognite/cdf-utilities';
+import { FileInfo } from '@cognite/sdk/dist/src';
 
 export const getContainer = () => {
   const els = document.getElementsByClassName(styleScope);

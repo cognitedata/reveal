@@ -1,4 +1,17 @@
+import { useMemo, useState } from 'react';
+
+import styled from 'styled-components';
+
 import { json } from '@codemirror/lang-json';
+import { Collapse } from 'antd';
+import { useTranslation } from 'common';
+import { BasicPlaceholder } from 'components/basic-placeholder/BasicPlaceholder';
+import InfoBox from 'components/info-box/InfoBox';
+import RunHistoryItem from 'components/run-history-item/RunHistoryItem';
+import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
+import { useWorkflowExecutionDetails } from 'hooks/workflows';
+import { WorkflowExecution } from 'types/workflows';
+
 import { CodeSnippet, Timestamp } from '@cognite/cdf-utilities';
 import {
   Body,
@@ -9,16 +22,6 @@ import {
   Icon,
   Overline,
 } from '@cognite/cogs.js';
-import { useTranslation } from 'common';
-import InfoBox from 'components/info-box/InfoBox';
-import styled from 'styled-components';
-import { useMemo, useState } from 'react';
-import { Collapse } from 'antd';
-import RunHistoryItem from 'components/run-history-item/RunHistoryItem';
-import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
-import { useWorkflowExecutionDetails } from 'hooks/workflows';
-import { WorkflowExecution } from 'types/workflows';
-import { BasicPlaceholder } from 'components/basic-placeholder/BasicPlaceholder';
 
 type RunHistorySectionItemProps = {
   item: WorkflowExecution;

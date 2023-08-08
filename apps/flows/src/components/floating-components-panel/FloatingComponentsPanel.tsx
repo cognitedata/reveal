@@ -1,11 +1,3 @@
-import {
-  Button,
-  Colors,
-  Detail,
-  Elevations,
-  Flex,
-  Title,
-} from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 import {
@@ -17,9 +9,18 @@ import {
   FLOATING_PANEL_MARGIN,
 } from 'common';
 import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
+import { ProcessType } from 'types';
+
+import {
+  Button,
+  Colors,
+  Detail,
+  Elevations,
+  Flex,
+  Title,
+} from '@cognite/cogs.js';
 
 import { FloatingComponentsPanelItem } from './FloatingComponentsPanelItem';
-import { ProcessType } from 'types';
 
 export const FloatingComponentsPanel = (): JSX.Element => {
   const { t } = useTranslation();
