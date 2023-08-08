@@ -61,7 +61,8 @@ static final Map<String, String> FIREBASE_APP_SITES = [
   'entity-matching': 'entity-matching',
   'access-management': 'access-management',
   'notebook': 'notebook',
-  'fusion-shell': 'ui-host'
+  'fusion-shell': 'ui-host',
+  'simint': 'cdf-simint-ui'
 ]
 
 
@@ -132,7 +133,7 @@ static final Map<String, String> VERSIONING_STRATEGY = [
   'functions-ui' : 'single-branch',
   'access-management': 'multi-branch',
   'notebook': 'single-branch',
-  'fusion-shell': 'mutli-branch',
+  'fusion-shell': 'multi-branch',
   'simint': 'multi-branch',
 ]
 
