@@ -16,6 +16,7 @@ import {
   DataType,
   Instance,
   SearchAggregateCountResponse,
+  SearchAggregateValuesResponse,
   SearchResponse,
 } from './types';
 
@@ -280,6 +281,51 @@ export class FDMClientV2 extends BaseFDMClient {
         };
       },
       {} as Record<DataType, number>
+    );
+
+    return normalizeResult;
+  }
+
+  public async searchAggregateValues(
+    data: { dataType: string; field: string },
+    queryString: string,
+    filters: unknown
+  ) {
+    const { dataType, field } = data;
+
+    const constructPayload = {
+      operation: { name: `aggregate${dataType}`, alias: dataType },
+      fields: [
+        {
+          items: [
+            {
+              count: ['externalId'],
+            },
+            'group',
+          ],
+        },
+      ],
+      variables: {
+        query: { value: queryString, required: true },
+        filter: {
+          value: filters,
+          type: `_Search${dataType}Filter`,
+        },
+        groupBy: {
+          value: field,
+          type: `[_Search${dataType}Fields!]`,
+        },
+      },
+    };
+
+    const payload = query(constructPayload);
+
+    const result = await this.gqlRequest<
+      Record<DataType, SearchAggregateValuesResponse>
+    >(payload);
+
+    const normalizeResult = result[dataType]?.items.map(
+      ({ group }) => group[field]
     );
 
     return normalizeResult;

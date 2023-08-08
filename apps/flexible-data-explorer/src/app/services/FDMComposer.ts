@@ -1,4 +1,4 @@
-import { merge } from 'lodash';
+import { concat, merge } from 'lodash';
 
 import { FDMClientV2 } from './FDMClientV2';
 import { DataType, SearchResponse } from './types';
@@ -83,6 +83,32 @@ export class FDMComposer {
 
       return merge(acc, item.value);
     }, {} as Record<string, number>);
+  }
+
+  public async searchAggregateValues(
+    data: { dataType: string; field: string },
+    query: string,
+    filters: unknown
+  ) {
+    const dataModel = this.getDataModelByDataType(data.dataType);
+
+    if (!dataModel) {
+      return Promise.resolve([] as string[]);
+    }
+
+    const client = this.getClient(
+      dataModel.externalId,
+      dataModel.version,
+      dataModel.space
+    );
+
+    if (!client) {
+      return Promise.resolve([] as string[]);
+    }
+
+    const results = await client.searchAggregateValues(data, query, filters);
+
+    return results;
   }
 
   public aiSearch(
