@@ -75,7 +75,7 @@ export const Reveal3DResources = ({
 
   useEffect(() => {
     if (clickedNodeData !== undefined) {
-      onNodeClick?.(clickedNodeData);
+      onNodeClick?.(Promise.resolve(clickedNodeData));
     }
   }, [lastClickEvent, clickedNodeData]);
 
