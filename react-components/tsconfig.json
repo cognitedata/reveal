@@ -3,7 +3,7 @@
     "target": "ES6",
     "forceConsistentCasingInFileNames": true,
     "strict": true,
-    "skipLibCheck": false,
+    "skipLibCheck": true,
     "jsx": "react-jsx",
     "module": "ES2020",
     "declaration": true,

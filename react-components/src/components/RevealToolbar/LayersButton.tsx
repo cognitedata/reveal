@@ -14,7 +14,7 @@ import {
 } from '@cognite/reveal';
 import { useReveal } from '../RevealContainer/RevealContext';
 import { use3DModelName } from '../../hooks/use3DModelName';
-import isEqual from 'lodash/isEqual';
+import { isEqual } from 'lodash';
 
 export const LayersButton = (): ReactElement => {
   const viewer = useReveal();

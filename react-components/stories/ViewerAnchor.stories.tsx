@@ -7,14 +7,12 @@ import { Color, Vector3 } from 'three';
 import { CameraController, ViewerAnchor } from '../src/';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import styled from 'styled-components';
+import { DefaultFdmConfig } from './utilities/fdmConfig';
 
 const meta = {
   title: 'Example/ViewerAnchor',
   component: Reveal3DResources,
-  tags: ['autodocs'],
-  argTypes: {
-    styling: {}
-  }
+  tags: ['autodocs']
 } satisfies Meta<typeof Reveal3DResources>;
 
 export default meta;
@@ -29,9 +27,10 @@ export const Main: Story = {
         modelId: 1791160622840317,
         revisionId: 498427137020189
       }
-    ]
+    ],
+    fdmAssetMappingConfig: DefaultFdmConfig
   },
-  render: ({ resources, styling, fdmAssetMappingConfig }) => {
+  render: ({ resources, fdmAssetMappingConfig }) => {
     const position = new Vector3(25, 0, -25);
     const position2 = new Vector3();
     const SuppressedDiv = withSuppressRevealEvents(styled.div``);
@@ -46,11 +45,7 @@ export const Main: Story = {
             placement: 'topRight'
           }
         }}>
-        <Reveal3DResources
-          resources={resources}
-          styling={styling}
-          fdmAssetMappingConfig={fdmAssetMappingConfig}
-        />
+        <Reveal3DResources resources={resources} fdmAssetMappingConfig={fdmAssetMappingConfig} />
         <ViewerAnchor position={position}>
           <div
             style={{
