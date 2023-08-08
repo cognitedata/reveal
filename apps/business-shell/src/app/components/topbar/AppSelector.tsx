@@ -7,13 +7,13 @@ import { useTranslation } from '../../common';
 const AppSelectorWrapper = styled.div`
   display: grid;
   grid-template-rows: 1fr;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   background: white;
   padding: 16px;
   border-radius: 8px;
   box-shadow: var(--cogs-elevation--overlay);
   gap: 8px;
-  width: 800px;
+
   margin-right: 16px;
   @media screen and (max-width: 800px) {
     grid-template-columns: 1fr 1fr;
