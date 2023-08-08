@@ -4,7 +4,6 @@
 
 import type { Meta, StoryObj } from '@storybook/react';
 import {
-  type FdmAssetMappingsConfig,
   RevealContainer,
   RevealToolbar,
   Reveal3DResources,
@@ -15,7 +14,6 @@ import { Color, Matrix4 } from 'three';
 import { type ReactElement, useState } from 'react';
 import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@cognite/reveal';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
-import { DefaultFdmConfig } from './utilities/fdmConfig';
 
 const meta = {
   title: 'Example/HighlightNode',
@@ -36,26 +34,18 @@ export const Main: Story = {
         revisionId: 2143672450453400,
         transform: new Matrix4().makeTranslation(-340, -480, 80)
       }
-    ],
-    styling: {},
-    fdmAssetMappingConfig: DefaultFdmConfig
+    ]
   },
-  render: ({ resources, fdmAssetMappingConfig }) => {
+  render: ({ resources }) => {
     return (
       <RevealContainer sdk={sdk} color={new Color(0x4a4a4a)}>
-        <StoryContent resources={resources} fdmAssetMappingConfig={fdmAssetMappingConfig} />
+        <StoryContent resources={resources} />
       </RevealContainer>
     );
   }
 };
 
-const StoryContent = ({
-  resources,
-  fdmAssetMappingConfig
-}: {
-  resources: AddResourceOptions[];
-  fdmAssetMappingConfig?: FdmAssetMappingsConfig;
-}): ReactElement => {
+const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): ReactElement => {
   const [nodeData, setNodeData] = useState<any>(undefined);
 
   const [highlightedId, setHighlightedId] = useState<string | undefined>(undefined);
@@ -88,7 +78,6 @@ const StoryContent = ({
                   }
                 ]
         }}
-        fdmAssetMappingConfig={fdmAssetMappingConfig}
         onNodeClick={(nodeData) => {
           void callback(nodeData);
         }}

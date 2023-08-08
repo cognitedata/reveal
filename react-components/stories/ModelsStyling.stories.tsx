@@ -12,7 +12,6 @@ import {
 import { Color, Matrix4 } from 'three';
 import { CameraController } from '../src/';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
-import { DefaultFdmConfig } from './utilities/fdmConfig';
 import { type ReactElement, useMemo } from 'react';
 import { useMappedEquipmentBy3DModelsList } from '../src/hooks/useMappedEquipmentBy3DModelsList';
 import { is3DModelOptions } from './utilities/is3DModelOptions';
@@ -82,10 +81,9 @@ export const Main: Story = {
         transform: new Matrix4().makeTranslation(-340, -480, 80)
       }
     ],
-    styling: {},
-    fdmAssetMappingConfig: DefaultFdmConfig
+    styling: {}
   },
-  render: ({ resources, styling, fdmAssetMappingConfig }) => {
+  render: ({ resources, styling }) => {
     return (
       <RevealContainer
         sdk={sdk}
@@ -96,11 +94,7 @@ export const Main: Story = {
             placement: 'topRight'
           }
         }}>
-        <StyledReveal3DResources
-          resources={resources}
-          styling={styling}
-          fdmAssetMappingConfig={fdmAssetMappingConfig}
-        />
+        <StyledReveal3DResources resources={resources} styling={styling} />
         <CameraController
           initialFitCamera={{
             to: 'allModels'
@@ -119,10 +113,6 @@ const StyledReveal3DResources = (props: Reveal3DResourcesProps): ReactElement =>
   const filtered = props.resources?.filter<AddReveal3DModelOptions>(
     (resource): resource is AddReveal3DModelOptions => is3DModelOptions(resource)
   );
-
-  if (props.fdmAssetMappingConfig === undefined) {
-    throw new Error('fdmAssetMappingConfig is undefined');
-  }
 
   const { data } = useMappedEquipmentBy3DModelsList(filtered);
 
@@ -185,11 +175,5 @@ const StyledReveal3DResources = (props: Reveal3DResourcesProps): ReactElement =>
     return newStyling;
   }, [props.styling, data]);
 
-  return (
-    <Reveal3DResources
-      resources={props.resources}
-      styling={styling}
-      fdmAssetMappingConfig={props.fdmAssetMappingConfig}
-    />
-  );
+  return <Reveal3DResources resources={props.resources} styling={styling} />;
 };

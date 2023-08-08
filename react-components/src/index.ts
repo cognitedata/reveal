@@ -45,4 +45,3 @@ export type {
   NodeDataResult
 } from './components/Reveal3DResources/types';
 export type { Source } from './utilities/FdmSDK';
-export { type FdmAssetMappingsConfig } from './hooks/types';

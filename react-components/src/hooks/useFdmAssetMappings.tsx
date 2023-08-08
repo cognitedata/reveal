@@ -1,22 +1,17 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-import { type CogniteExternalId } from '@cognite/sdk';
 import { useFdmSdk } from '../components/RevealContainer/SDKProvider';
 import { useInfiniteQuery, type UseInfiniteQueryResult } from '@tanstack/react-query';
-import {
-  type Model3DEdgeProperties,
-  type FdmAssetMappingsConfig,
-  type ThreeDModelMappings
-} from './types';
-import { DEFAULT_QUERY_STALE_TIME } from '../utilities/constants';
+import { type Model3DEdgeProperties, type ThreeDModelMappings } from './types';
+import { DEFAULT_QUERY_STALE_TIME, SYSTEM_3D_EDGE_SOURCE } from '../utilities/constants';
+import { type DmsUniqueIdentifier } from '../utilities/FdmSDK';
 
 /**
  * This hook fetches the list of FDM asset mappings for the given external ids
  */
 export const useFdmAssetMappings = (
-  fdmAssetExternalIds: CogniteExternalId[],
-  fdmConfig?: FdmAssetMappingsConfig
+  fdmAssetExternalIds: DmsUniqueIdentifier[]
 ): UseInfiniteQueryResult<{ items: ThreeDModelMappings[]; nextCursor: string }> => {
   const fdmSdk = useFdmSdk();
 
@@ -24,14 +19,11 @@ export const useFdmAssetMappings = (
     ['reveal', 'react-components', fdmAssetExternalIds],
     async ({ pageParam }) => {
       if (fdmAssetExternalIds?.length === 0) return { items: [], nextCursor: undefined };
-      if (fdmConfig === undefined)
-        throw Error('FDM config must be defined when using FDM asset mappings');
-
       const fdmAssetMappingFilter = {
         in: {
           property: ['edge', 'startNode'],
-          values: fdmAssetExternalIds.map((externalId) => ({
-            space: fdmConfig.assetFdmSpace,
+          values: fdmAssetExternalIds.map(({ externalId, space }) => ({
+            space,
             externalId
           }))
         }
@@ -40,15 +32,15 @@ export const useFdmAssetMappings = (
       const instances = await fdmSdk.filterInstances(
         fdmAssetMappingFilter,
         'edge',
-        fdmConfig.source,
+        SYSTEM_3D_EDGE_SOURCE,
         pageParam
       );
 
       const modelMappingsTemp: ThreeDModelMappings[] = [];
 
       instances.edges.forEach((instance) => {
-        const mappingProperty = instance.properties[fdmConfig.source.space][
-          `${fdmConfig.source.externalId}/${fdmConfig.source.version}`
+        const mappingProperty = instance.properties[SYSTEM_3D_EDGE_SOURCE.space][
+          `${SYSTEM_3D_EDGE_SOURCE.externalId}/${SYSTEM_3D_EDGE_SOURCE.version}`
         ] as Model3DEdgeProperties;
 
         const modelId = Number.parseInt(instance.endNode.externalId.slice(9));

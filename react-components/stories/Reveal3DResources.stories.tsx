@@ -6,7 +6,6 @@ import { Reveal3DResources, RevealContainer } from '../src';
 import { Color, Matrix4 } from 'three';
 import { CameraController } from '../src/';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
-import { DefaultFdmConfig } from './utilities/fdmConfig';
 
 const meta = {
   title: 'Example/Reveal3DResources',
@@ -106,11 +105,9 @@ export const Main: Story = {
         modelId: 3865289545346058,
         revisionId: 4160448151596909
       }
-    ],
-    styling: {},
-    fdmAssetMappingConfig: DefaultFdmConfig
+    ]
   },
-  render: ({ resources, styling, fdmAssetMappingConfig }) => {
+  render: ({ resources }) => {
     return (
       <RevealContainer
         sdk={sdk}
@@ -121,11 +118,7 @@ export const Main: Story = {
             placement: 'topRight'
           }
         }}>
-        <Reveal3DResources
-          resources={resources}
-          styling={styling}
-          fdmAssetMappingConfig={fdmAssetMappingConfig}
-        />
+        <Reveal3DResources resources={resources} />
         <CameraController
           initialFitCamera={{
             to: 'allModels'

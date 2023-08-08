@@ -10,21 +10,16 @@ import {
   type FdmSDK,
   type DmsUniqueIdentifier
 } from '../../utilities/FdmSDK';
-import { type FdmAssetMappingsConfig } from '../../hooks/types';
 import { type NodeDataResult } from './types';
 import assert from 'assert';
+import { INSTANCE_SPACE_3D_DATA, SYSTEM_3D_EDGE_SOURCE } from '../../utilities/constants';
 
 export async function queryMappedData(
   viewer: Cognite3DViewer,
   cdfClient: CogniteClient,
   fdmClient: FdmSDK,
-  clickEvent: PointerEventData,
-  fdmConfig?: FdmAssetMappingsConfig
+  clickEvent: PointerEventData
 ): Promise<NodeDataResult | undefined> {
-  if (fdmConfig === undefined) {
-    throw Error('Must supply fdmConfig when using FDM queries');
-  }
-
   const intersection = await viewer.getIntersectionFromPixel(
     clickEvent.offsetX,
     clickEvent.offsetY
@@ -41,7 +36,6 @@ export async function queryMappedData(
 
   const mappings = await getMappingEdges(
     fdmClient,
-    fdmConfig,
     model,
     ancestors.map((n) => n.id)
   );
@@ -52,8 +46,8 @@ export async function queryMappedData(
 
   const selectedEdge = mappings.edges[0];
   const selectedNodeId =
-    selectedEdge.properties[fdmConfig.source.space][
-      `${fdmConfig.source.externalId}/${fdmConfig.source.version}`
+    selectedEdge.properties[SYSTEM_3D_EDGE_SOURCE.space][
+      `${SYSTEM_3D_EDGE_SOURCE.externalId}/${SYSTEM_3D_EDGE_SOURCE.version}`
     ].revisionNodeId;
   const selectedNode = ancestors.find((n) => n.id === selectedNodeId);
   assert(selectedNode !== undefined);
@@ -91,7 +85,6 @@ async function getAncestorNodesForTreeIndex(
 
 async function getMappingEdges(
   fdmClient: FdmSDK,
-  fdmConfig: FdmAssetMappingsConfig,
   model: CogniteCadModel,
   ancestorIds: CogniteInternalId[]
 ): Promise<{ edges: Array<EdgeItem<Record<string, any>>> }> {
@@ -101,7 +94,7 @@ async function getMappingEdges(
         equals: {
           property: ['edge', 'endNode'],
           value: {
-            space: fdmConfig.global3dSpace,
+            space: INSTANCE_SPACE_3D_DATA,
             externalId: `model_3d_${model.modelId}`
           }
         }
@@ -109,8 +102,8 @@ async function getMappingEdges(
       {
         equals: {
           property: [
-            fdmConfig.source.space,
-            `${fdmConfig.source.externalId}/${fdmConfig.source.version}`,
+            SYSTEM_3D_EDGE_SOURCE.space,
+            `${SYSTEM_3D_EDGE_SOURCE.externalId}/${SYSTEM_3D_EDGE_SOURCE.version}`,
             'revisionId'
           ],
           value: model.revisionId
@@ -119,8 +112,8 @@ async function getMappingEdges(
       {
         in: {
           property: [
-            fdmConfig.source.space,
-            `${fdmConfig.source.externalId}/${fdmConfig.source.version}`,
+            SYSTEM_3D_EDGE_SOURCE.space,
+            `${SYSTEM_3D_EDGE_SOURCE.externalId}/${SYSTEM_3D_EDGE_SOURCE.version}`,
             'revisionNodeId'
           ],
           values: ancestorIds
@@ -129,7 +122,7 @@ async function getMappingEdges(
     ]
   };
 
-  return await fdmClient.filterAllInstances(filter, 'edge', fdmConfig.source);
+  return await fdmClient.filterAllInstances(filter, 'edge', SYSTEM_3D_EDGE_SOURCE);
 }
 
 async function inspectNode(

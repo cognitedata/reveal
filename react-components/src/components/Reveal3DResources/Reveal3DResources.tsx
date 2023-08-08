@@ -24,7 +24,6 @@ import {
   type NodeDataResult
 } from './types';
 import { type CogniteExternalId } from '@cognite/sdk';
-import { type FdmAssetMappingsConfig } from '../../hooks/types';
 import { useCalculateModelsStyling } from '../../hooks/useCalculateModelsStyling';
 import { queryMappedData } from './queryMappedData';
 import { useFdmSdk, useSDK } from '../RevealContainer/SDKProvider';
@@ -41,7 +40,6 @@ export type Reveal3DResourcesStyling = {
 
 export type Reveal3DResourcesProps = {
   resources: AddResourceOptions[];
-  fdmAssetMappingConfig?: FdmAssetMappingsConfig;
   styling?: Reveal3DResourcesStyling;
   onNodeClick?: (node: Promise<NodeDataResult | undefined>) => void;
 };
@@ -49,7 +47,6 @@ export type Reveal3DResourcesProps = {
 export const Reveal3DResources = ({
   resources,
   styling,
-  fdmAssetMappingConfig,
   onNodeClick
 }: Reveal3DResourcesProps): ReactElement => {
   const [reveal3DModels, setReveal3DModels] = useState<TypedReveal3DModel[]>([]);
@@ -67,7 +64,7 @@ export const Reveal3DResources = ({
     getTypedModels(resources, viewer).then(setReveal3DModels).catch(console.error);
   }, [resources, viewer]);
 
-  const modelsStyling = useCalculateModelsStyling(reveal3DModels, styling, fdmAssetMappingConfig);
+  const modelsStyling = useCalculateModelsStyling(reveal3DModels, styling);
 
   useEffect(() => {
     setReveal3DModelsStyling(modelsStyling);
@@ -76,7 +73,7 @@ export const Reveal3DResources = ({
   useEffect(() => {
     const callback = (event: PointerEventData): void => {
       if (onNodeClick === undefined) return;
-      const data = queryMappedData(viewer, client, fdmSdk, event, fdmAssetMappingConfig);
+      const data = queryMappedData(viewer, client, fdmSdk, event);
       onNodeClick(data);
     };
 
@@ -85,7 +82,7 @@ export const Reveal3DResources = ({
     return () => {
       viewer.off('click', callback);
     };
-  }, [viewer, client, fdmSdk, fdmAssetMappingConfig, onNodeClick]);
+  }, [viewer, client, fdmSdk, onNodeClick]);
 
   const image360CollectionAddOptions = resources.filter(
     (resource): resource is AddImageCollection360Options =>

@@ -2,13 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 import type { Meta, StoryObj } from '@storybook/react';
-import {
-  CameraController,
-  type FdmAssetMappingsConfig,
-  Reveal3DResources,
-  RevealContainer,
-  RevealKeepAlive
-} from '../src';
+import { CameraController, Reveal3DResources, RevealContainer, RevealKeepAlive } from '../src';
 import { Color, Matrix4, Vector3 } from 'three';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import { useState, type ReactElement } from 'react';
@@ -23,16 +17,6 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 const sdk = createSdkByUrlToken();
-const fdmAssetMappingConfig: FdmAssetMappingsConfig = {
-  source: {
-    space: 'fdm-3d-test-savelii',
-    version: '1',
-    type: 'view',
-    externalId: 'CDF_3D_Connection_Data'
-  },
-  assetFdmSpace: 'bark-corporation',
-  global3dSpace: 'hf_3d_global_data'
-};
 
 export const Main: Story = {
   render: () => <KeepAliveMockScenario />
@@ -87,7 +71,6 @@ const KeepAliveMockScenario = (): ReactElement => {
                       revisionId: 4160448151596909
                     }
                   ]}
-                  fdmAssetMappingConfig={fdmAssetMappingConfig}
                 />
               )}
               <CameraController

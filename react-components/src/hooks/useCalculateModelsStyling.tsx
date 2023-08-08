@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 import { useEffect, useMemo } from 'react';
-import { type ThreeDModelMappings, type FdmAssetMappingsConfig } from './types';
+import { type ThreeDModelMappings } from './types';
 import { type Reveal3DResourcesStyling } from '../components/Reveal3DResources/Reveal3DResources';
 import { type TypedReveal3DModel } from '../components/Reveal3DResources/types';
 import { useFdmAssetMappings } from './useFdmAssetMappings';
@@ -19,8 +19,7 @@ import { type CogniteExternalId, type CogniteInternalId } from '@cognite/sdk';
  */
 export const useCalculateModelsStyling = (
   models?: TypedReveal3DModel[],
-  styling?: Reveal3DResourcesStyling,
-  fdmAssetMappingConfig?: FdmAssetMappingsConfig
+  styling?: Reveal3DResourcesStyling
 ): Array<PointCloudModelStyling | CadModelStyling> => {
   const stylingExternalIds = useMemo(
     () => styling?.groups?.flatMap((group) => group.fdmAssetExternalIds) ?? [],
@@ -32,7 +31,9 @@ export const useCalculateModelsStyling = (
     hasNextPage,
     fetchNextPage,
     isFetchingNextPage
-  } = useFdmAssetMappings(stylingExternalIds, fdmAssetMappingConfig);
+  } = useFdmAssetMappings(
+    stylingExternalIds.map((externalId) => ({ externalId, space: 'FIX ME' }))
+  );
 
   useEffect(() => {
     if (hasNextPage !== undefined && !isFetchingNextPage) {
