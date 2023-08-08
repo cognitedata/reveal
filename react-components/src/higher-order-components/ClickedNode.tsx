@@ -12,8 +12,7 @@ import {
   type ReactElement
 } from 'react';
 import { type FdmAssetMappingsConfig, type NodeDataResult, useReveal } from '..';
-import { queryMappedData } from '../components/Reveal3DResources/queryMappedData';
-import { useFdmSdk, useSDK } from '../components/RevealContainer/SDKProvider';
+import { useNodeMappedData } from '../components/Reveal3DResources/useNodeMappedData';
 
 type ClickedNodeProps = {
   children?: ReactNode;
@@ -24,15 +23,13 @@ const ClickedNodeContext = createContext<NodeDataResult | undefined | null>(unde
 
 export const ClickedNode = ({ fdmConfig, children }: ClickedNodeProps): ReactElement => {
   const viewer = useReveal();
-  const sdk = useSDK();
-  const fdmClient = useFdmSdk();
 
-  const [clickedNode, setClickedNode] = useState<NodeDataResult | null>(null);
+  const [lastClickEvent, setLastClickEvent] = useState<PointerEventData | undefined>(undefined);
+  const nodeData = useNodeMappedData(lastClickEvent, fdmConfig);
 
   useEffect(() => {
     const callback = async (pointerEvent: PointerEventData): Promise<void> => {
-      const nodeData = await queryMappedData(viewer, sdk, fdmClient, pointerEvent, fdmConfig);
-      setClickedNode(nodeData ?? null);
+      setLastClickEvent(pointerEvent);
     };
 
     viewer.on('click', (event: PointerEventData) => {
@@ -40,7 +37,7 @@ export const ClickedNode = ({ fdmConfig, children }: ClickedNodeProps): ReactEle
     });
   }, [viewer]);
 
-  return <ClickedNodeContext.Provider value={clickedNode}>{children}</ClickedNodeContext.Provider>;
+  return <ClickedNodeContext.Provider value={nodeData ?? null}>{children}</ClickedNodeContext.Provider>;
 };
 
 export const useClickedNode = (): NodeDataResult | null => {

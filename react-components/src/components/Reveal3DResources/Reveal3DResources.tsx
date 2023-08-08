@@ -26,7 +26,7 @@ import {
 import { type CogniteExternalId } from '@cognite/sdk';
 import { type FdmAssetMappingsConfig } from '../../hooks/types';
 import { useCalculateModelsStyling } from '../../hooks/useCalculateModelsStyling';
-import { queryMappedData } from './queryMappedData';
+import { useNodeMappedData } from './useNodeMappedData';
 import { useFdmSdk, useSDK } from '../RevealContainer/SDKProvider';
 
 export type FdmAssetStylingGroup = {
@@ -59,28 +59,30 @@ export const Reveal3DResources = ({
 
   const { setModelsAdded } = useContext(ModelsLoadingStateContext);
   const viewer = useReveal();
-  const fdmSdk = useFdmSdk();
-  const client = useSDK();
   const numModelsLoaded = useRef(0);
+
+  const [lastClickEvent, setLastClickEvent] = useState<PointerEventData | undefined>(undefined);
 
   useEffect(() => {
     getTypedModels(resources, viewer).then(setReveal3DModels).catch(console.error);
   }, [resources, viewer]);
 
   const modelsStyling = useCalculateModelsStyling(reveal3DModels, styling, fdmAssetMappingConfig);
+  const clickedNodeData = useNodeMappedData(lastClickEvent, fdmAssetMappingConfig);
 
   useEffect(() => {
     setReveal3DModelsStyling(modelsStyling);
   }, [modelsStyling]);
 
   useEffect(() => {
-    const callback = (event: PointerEventData): void => {
-      void (async (event: PointerEventData): Promise<void> => {
-        if (onNodeClick === undefined) return;
-        const data = await queryMappedData(viewer, client, fdmSdk, event, fdmAssetMappingConfig);
+    if (clickedNodeData !== undefined) {
+      onNodeClick?.(clickedNodeData);
+    }
+  }, [lastClickEvent, clickedNodeData]);
 
-        onNodeClick(data);
-      })(event);
+  useEffect(() => {
+    const callback = (event: PointerEventData): void => {
+      setLastClickEvent(event);
     };
 
     viewer.on('click', callback);
@@ -88,7 +90,7 @@ export const Reveal3DResources = ({
     return () => {
       viewer.off('click', callback);
     };
-  }, [viewer, client, fdmSdk, fdmAssetMappingConfig, onNodeClick]);
+  }, [viewer, onNodeClick]);
 
   const image360CollectionAddOptions = resources.filter(
     (resource): resource is AddImageCollection360Options =>
