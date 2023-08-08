@@ -18,10 +18,10 @@ export { RevealToolbar } from './components/RevealToolbar/RevealToolbar';
 export { useReveal } from './components/RevealContainer/RevealContext';
 export { use3DModelName } from './hooks/use3DModelName';
 export { useFdmAssetMappings } from './hooks/useFdmAssetMappings';
+export { useClickedNode } from './hooks/useClickedNode';
 
 // Higher order components
 export { withSuppressRevealEvents } from './higher-order-components/withSuppressRevealEvents';
-export { useClickedNode } from './higher-order-components/ClickedNode';
 
 // Types
 export {
