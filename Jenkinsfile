@@ -62,7 +62,7 @@ static final Map<String, String> FIREBASE_APP_SITES = [
   'access-management': 'access-management',
   'notebook': 'notebook',
   'fusion-shell': 'ui-host',
-  'simint': 'cdf-simint-ui'
+  'simint': 'simint'
 ]
 
 
