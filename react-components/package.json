@@ -62,7 +62,7 @@
     "style-loader": "^3.3.3",
     "styled-components": "5.3.11",
     "three": "0.155.0",
-    "ts-loader": "9.4.3",
+    "ts-loader": "9.4.4",
     "typescript": "5.1.6",
     "webpack": "5.88.2",
     "webpack-cli": "5.1.4",
