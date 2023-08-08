@@ -3241,19 +3241,18 @@
     use-event-callback "^0.1.0"
     use-key-hook "^1.3.0"
 
-"@cognite/reveal-react-components@0.5.0":
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/@cognite/reveal-react-components/-/reveal-react-components-0.5.0.tgz#8309dc1c4f37ec7f45036774bd7fda378bb4ec11"
-  integrity sha512-ZE7VU94jWKTdRlhQNDqBHi5IMbsGgoAVghJM6/08Xqwqr6dYZrLz3oMwY8l+zIJe0hzBpmebVfBx83DDP8Dh1A==
+"@cognite/reveal-react-components@0.7.0":
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/@cognite/reveal-react-components/-/reveal-react-components-0.7.0.tgz#23f61f7429394f665bbe203c1d368306bbe7df24"
+  integrity sha512-Yn3W8fwUnlNlOppFixtYmdjQCl/e3vpmwjsx5S5mrRPxurxsB19XpK33TYcvB7eAkf2V1jEMGlYXF3+nmAch6Q==
   dependencies:
     "@tanstack/react-query" "^4.29.19"
     lodash "^4.17.21"
-    style-loader "^3.3.3"
 
-"@cognite/reveal@4.3.2":
-  version "4.3.2"
-  resolved "https://registry.yarnpkg.com/@cognite/reveal/-/reveal-4.3.2.tgz#d4de493465993ce492986c39fea6724aaf099568"
-  integrity sha512-x/Fi16RdQZmGvMmlg7Lz2li+ChBogQxhbu3jRAvP2nzAMHIG0KSQr/HUNGpJ6xB62mOR9B+ChHeRMzfAfMgJ+g==
+"@cognite/reveal@4.4.0":
+  version "4.4.0"
+  resolved "https://registry.yarnpkg.com/@cognite/reveal/-/reveal-4.4.0.tgz#5259cbc55f69fe053a7947a976f0d27beef9ecd0"
+  integrity sha512-ZfJQg84YLo37Cdcl8W/coAYbdnAgzelzNMgJsgrDgk76WxLFawSeAfCb/qN7jDBZPlkkstCPE6RmyBov9gPTCw==
   dependencies:
     "@tweenjs/tween.js" "19.0.0"
     assert "2.0.0"
@@ -3269,7 +3268,6 @@
     rxjs "7.8.1"
     skmeans "0.11.3"
     sparse-octree "7.1.8"
-    three-stdlib "2.23.7"
 
 "@cognite/reveal@^4.1.2":
   version "4.2.0"
@@ -11333,11 +11331,6 @@
   resolved "https://registry.yarnpkg.com/@types/doctrine/-/doctrine-0.0.3.tgz#e892d293c92c9c1d3f9af72c15a554fbc7e0895a"
   integrity sha512-w5jZ0ee+HaPOaX25X2/2oGR/7rgAQSYII7X7pp0m9KgBfMP7uKfMfTvcpl5Dj+eDBbpxKGiqE+flqDr6XTd2RA==
 
-"@types/draco3d@^1.4.0":
-  version "1.4.2"
-  resolved "https://registry.yarnpkg.com/@types/draco3d/-/draco3d-1.4.2.tgz#7faccb809db2a5e19b9efb97c5f2eb9d64d527ea"
-  integrity sha512-goh23EGr6CLV6aKPwN1p8kBD/7tT5V/bLpToSbarKrwVejqNrspVrv8DhliteYkkhZYrlq/fwKZRRUzH4XN88w==
-
 "@types/duplexify@^3.6.0":
   version "3.6.1"
   resolved "https://registry.yarnpkg.com/@types/duplexify/-/duplexify-3.6.1.tgz#5685721cf7dc4a21b6f0e8a8efbec6b4d2fbafad"
@@ -12459,11 +12452,6 @@
   version "0.5.1"
   resolved "https://registry.yarnpkg.com/@types/webxr/-/webxr-0.5.1.tgz#4908349419104bd476a4252d04e4c3abb496748d"
   integrity sha512-xlFXPfgJR5vIuDefhaHuUM9uUgvPaXB6GKdXy2gdEh8gBWQZ2ul24AJz3foUd8NNKlSTQuWYJpCb1/pL81m1KQ==
-
-"@types/webxr@^0.5.2":
-  version "0.5.2"
-  resolved "https://registry.yarnpkg.com/@types/webxr/-/webxr-0.5.2.tgz#5d9627b0ffe223aa3b166de7112ac8a9460dc54f"
-  integrity sha512-szL74BnIcok9m7QwYtVmQ+EdIKwbjPANudfuvDrAF8Cljg9MKUlIoc1w5tjj9PMpeSH3U1Xnx//czQybJ0EfSw==
 
 "@types/ws@^8.5.1":
   version "8.5.4"
@@ -34683,7 +34671,7 @@ react-element-to-jsx-string@^15.0.0:
     is-plain-object "5.0.0"
     react-is "18.1.0"
 
-react-error-boundary@^3.1.4:
+react-error-boundary@^3.1.0, react-error-boundary@^3.1.4:
   version "3.1.4"
   resolved "https://registry.yarnpkg.com/react-error-boundary/-/react-error-boundary-3.1.4.tgz#255db92b23197108757a888b01e5b729919abde0"
   integrity sha512-uM9uPzZJTF6wRQORmSrvOIgt4lJ9MC1sNgEOj2XGsDTRE4kmpWxg7ENK9EWNKJRMAOY9z0MuF4yIfl6gp4sotA==
@@ -38721,11 +38709,6 @@ style-loader@^3.3.0, style-loader@^3.3.1:
   resolved "https://registry.yarnpkg.com/style-loader/-/style-loader-3.3.1.tgz#057dfa6b3d4d7c7064462830f9113ed417d38575"
   integrity sha512-GPcQ+LDJbrcxHORTRes6Jy2sfvK2kS6hpSfI/fXhPt+spVzxF6LJ1dHLN9zIGmVaaP044YKaIatFaufENRiDoQ==
 
-style-loader@^3.3.3:
-  version "3.3.3"
-  resolved "https://registry.yarnpkg.com/style-loader/-/style-loader-3.3.3.tgz#bba8daac19930169c0c9c96706749a597ae3acff"
-  integrity sha512-53BiGLXAcll9maCYtZi2RCQZKa8NQQai5C4horqKyRmHj9H7QmcUyucrH+4KW/gBQbXM2AsB0axoEcFZPlfPcw==
-
 style-mod@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/style-mod/-/style-mod-4.0.0.tgz#97e7c2d68b592975f2ca7a63d0dd6fcacfe35a01"
@@ -39576,23 +39559,6 @@ three-stdlib@2.21.8:
     "@babel/runtime" "^7.16.7"
     "@types/offscreencanvas" "^2019.6.4"
     "@webgpu/glslang" "^0.0.15"
-    chevrotain "^10.1.2"
-    draco3d "^1.4.1"
-    fflate "^0.6.9"
-    ktx-parse "^0.4.5"
-    mmd-parser "^1.0.4"
-    opentype.js "^1.3.3"
-    potpack "^1.0.1"
-    zstddec "^0.0.2"
-
-three-stdlib@2.23.7:
-  version "2.23.7"
-  resolved "https://registry.yarnpkg.com/three-stdlib/-/three-stdlib-2.23.7.tgz#18b4a1a00d79737006622c9a2301232c3f4fa9e9"
-  integrity sha512-nxs0z6OthtN+Qy6N1Ee0ztR87IcaCEOF+WHCJCzjpu+37c+/IFDzI9igg7xgw4qWM05vETxUAkrXnLRxSZlgcw==
-  dependencies:
-    "@types/draco3d" "^1.4.0"
-    "@types/offscreencanvas" "^2019.6.4"
-    "@types/webxr" "^0.5.2"
     chevrotain "^10.1.2"
     draco3d "^1.4.1"
     fflate "^0.6.9"
