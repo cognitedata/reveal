@@ -8,7 +8,7 @@ import { useReveal } from '../../RevealContainer/RevealContext';
 import { Checkbox, Flex, Menu } from '@cognite/cogs.js';
 import { StyledChipCount, StyledLabel, StyledSubMenu } from './elements';
 import { type CognitePointCloudModel } from '@cognite/reveal';
-import uniqueId from 'lodash/uniqueId';
+import { uniqueId } from 'lodash';
 import { type Reveal3DResourcesLayersProps } from './types';
 
 export const PointCloudLayersContainer = ({
