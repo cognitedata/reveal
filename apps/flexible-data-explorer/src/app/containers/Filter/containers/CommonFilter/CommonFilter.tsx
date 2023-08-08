@@ -1,6 +1,10 @@
 import * as React from 'react';
 import { useMemo, useState } from 'react';
 
+import isString from 'lodash/isString';
+import { useDebounce } from 'use-debounce';
+
+import { useSearchAggregateValuesQuery } from '../../../../services/dataTypes/queries/useSearchAggregatesQuery';
 import { ApplyButton, Menu, MenuHeader, Select } from '../../components';
 import { Field, FieldValue, Operator, ValueType } from '../../types';
 import { isNoInputOperator } from '../../utils';
@@ -37,6 +41,7 @@ export const CommonFilter: React.FC<CommonFilterProps> = ({
   );
 
   const [value, setValue] = useState<ValueType | undefined>(fieldValue?.value);
+  const [debouncedValue] = useDebounce(value, 300);
 
   const inputType = useMemo(() => {
     return getInputType(field.type, operator);
@@ -64,6 +69,12 @@ export const CommonFilter: React.FC<CommonFilterProps> = ({
     }
   };
 
+  const { data: suggestions = [] } = useSearchAggregateValuesQuery({
+    dataType,
+    field: field.name,
+    query: isString(debouncedValue) ? debouncedValue : '',
+  });
+
   return (
     <div onKeyUp={handleEnterPress}>
       <Menu>
@@ -79,7 +90,12 @@ export const CommonFilter: React.FC<CommonFilterProps> = ({
           onChange={handleChangeOperator}
         />
 
-        <CommonFilterInput type={inputType} value={value} onChange={setValue} />
+        <CommonFilterInput
+          type={inputType}
+          value={value}
+          onChange={setValue}
+          suggestions={suggestions}
+        />
 
         <ApplyButton
           disabled={applyButtonDisabled}
