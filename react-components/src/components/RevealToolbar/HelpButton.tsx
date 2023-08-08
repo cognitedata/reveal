@@ -8,6 +8,7 @@ import { Button, Dropdown, Menu } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { MouseNavigation } from './Help/MouseNavigation';
 import { TouchNavigation } from './Help/TouchNavigation';
+import { KeyboardNavigation } from './Help/KeyboardNavigation';
 
 export const HelpButton = (): ReactElement => {
   const [helpEnabled, setHelpEnabled] = useState<boolean>(false);
@@ -22,8 +23,8 @@ export const HelpButton = (): ReactElement => {
       content={
         <StyledMenu>
           <MouseNavigation />
+          <KeyboardNavigation />
           <TouchNavigation />
-          {/* <KeyboardNavigation /> */}
         </StyledMenu>
       }
       placement="right-end">
@@ -40,4 +41,5 @@ const StyledMenu = styled(Menu)`
   gap: 24px;
   padding: 16px;
   width: fit-content;
+  max-width: fit-content;
 `;

@@ -2,31 +2,26 @@
  * Copyright 2023 Cognite AS
  */
 
-import { Flex } from '@cognite/cogs.js';
 import { type ReactElement } from 'react';
 import { MenuSection } from './MenuSection';
-import { InstructionDetail, InstructionText, MouseNavigationGrid } from './elements';
-import { Touch } from '../../Graphics/Touch';
+import { InstructionText, MouseNavigationGrid } from './elements';
+import { TouchZoom, TouchPan, TouchSelect } from '../../Graphics/Touch';
 
 export const TouchNavigation = (): ReactElement => {
   return (
-    <MenuSection title={'Touch'}>
+    <MenuSection
+      title={'Touch'}
+      subTitle={'Navigate and select'}
+      description={'Use gestures to zoom, pan and select'}>
       <MouseNavigationGrid>
-        <Flex direction="column" gap={4}>
-          <InstructionText>
-            {'Rotate'}
-            <br />
-            <InstructionDetail>{'click'}</InstructionDetail>
-          </InstructionText>
-          <Touch />
-        </Flex>
-        <Flex direction="column" gap={4}>
-          <InstructionText>
-            {'Zoom'}
-            <br />
-            <InstructionDetail>{'pinch'}</InstructionDetail>
-          </InstructionText>
-        </Flex>
+        <TouchPan />
+        <InstructionText>{'Pan'}</InstructionText>
+        {/* <br /> */}
+        <TouchZoom />
+        <InstructionText>{'Zoom'}</InstructionText>
+        {/* <br /> */}
+        <TouchSelect />
+        <InstructionText>{'Tap to select'}</InstructionText>
       </MouseNavigationGrid>
     </MenuSection>
   );
