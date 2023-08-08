@@ -2,7 +2,7 @@ import React from 'react';
 
 import { useAuth } from '@cognite/auth-react';
 import { useTypedTranslation as useTranslation } from '@cognite/cdf-i18n-utils';
-import { Avatar, TopBar as CogsTopBar } from '@cognite/cogs.js';
+import { Avatar, Dropdown } from '@cognite/cogs.js';
 import { UserMenu as SharedUserMenu } from '@cognite/user-profile-components';
 
 import { useUserInfo } from '../../../hooks/useUserInfo';
@@ -30,31 +30,23 @@ const UserMenu = (): JSX.Element => {
   };
 
   return (
-    <CogsTopBar.Actions
-      actions={[
-        {
-          key: 'help',
-          icon: 'Help',
-        },
-        {
-          key: 'avatar',
-          component: <Avatar text={name} />,
-          menu: (
-            <SharedUserMenu
-              userInfo={userInfo}
-              onManageAccountClick={handleManageAccountClick}
-              onLogoutClick={handleLogout}
-              menuTitle={t('LABEL_ACCOUNT')}
-              menuItemManageAccountBtnText={t('LABEL_MANAGE_ACCOUNT')}
-              menuItemLogoutBtnText={t('SIGN_OUT_BTN_TEXT')}
-              onTrackEvent={(eventName, metaData) => {
-                track(`BusinessShell.UserMenu.${eventName}`, metaData);
-              }}
-            />
-          ),
-        },
-      ]}
-    />
+    <Dropdown
+      content={
+        <SharedUserMenu
+          userInfo={userInfo}
+          onManageAccountClick={handleManageAccountClick}
+          onLogoutClick={handleLogout}
+          menuTitle={t('LABEL_ACCOUNT')}
+          menuItemManageAccountBtnText={t('LABEL_MANAGE_ACCOUNT')}
+          menuItemLogoutBtnText={t('SIGN_OUT_BTN_TEXT')}
+          onTrackEvent={(eventName, metaData) => {
+            track(`BusinessShell.UserMenu.${eventName}`, metaData);
+          }}
+        />
+      }
+    >
+      <Avatar tooltip={false} text={name} />
+    </Dropdown>
   );
 };
 
