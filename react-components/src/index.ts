@@ -13,6 +13,7 @@ export { Image360HistoricalDetails } from './components/Image360HistoricalDetail
 export { ViewerAnchor } from './components/ViewerAnchor/ViewerAnchor';
 export { CameraController } from './components/CameraController/CameraController';
 export { RevealToolbar } from './components/RevealToolbar/RevealToolbar';
+export { RevealKeepAlive } from './components/RevealKeepAlive/RevealKeepAlive';
 
 // Hooks
 export { useReveal } from './components/RevealContainer/RevealContext';

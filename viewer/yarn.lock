@@ -597,11 +597,11 @@ __metadata:
     "@types/jsdom": 21.1.1
     "@types/lodash": 4.14.196
     "@types/mixpanel-browser": 2.47.1
-    "@types/node": 18.17.1
+    "@types/node": 18.17.2
     "@types/random-seed": 0.3.3
     "@types/skmeans": 0.11.4
     "@types/stats": 0.16.30
-    "@types/three": 0.154.0
+    "@types/three": 0.155.0
     "@types/tween.js": 18.5.1
     "@typescript-eslint/eslint-plugin": 5.62.0
     "@typescript-eslint/parser": 5.62.0
@@ -628,7 +628,7 @@ __metadata:
     jest: 29.6.2
     jest-canvas-mock: 2.5.2
     jest-environment-jsdom: 29.6.2
-    jest-extended: 4.0.0
+    jest-extended: 4.0.1
     jest-image-snapshot: 6.2.0
     jest-puppeteer: 9.0.0
     jsdom: 22.1.0
@@ -650,7 +650,7 @@ __metadata:
     skmeans: 0.11.3
     sparse-octree: 7.1.8
     stats.js: 0.17.0
-    three: 0.154.0
+    three: 0.155.0
     ts-jest: 29.1.1
     ts-loader: 9.4.3
     tsc-alias: 1.8.7
@@ -664,7 +664,7 @@ __metadata:
     workerize-loader: 2.0.2
   peerDependencies:
     "@cognite/sdk": ^7.16.0 || ^8.0.0
-    three: 0.154.0
+    three: 0.155.0
   languageName: unknown
   linkType: soft
 
@@ -2212,10 +2212,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:18.17.1":
-  version: 18.17.1
-  resolution: "@types/node@npm:18.17.1"
-  checksum: 56201bda9a2d05d68602df63b4e67b0545ac8c6d0280bd5fb31701350a978a577a027501fbf49db99bf177f2242ebd1244896bfd35e89042d5bd7dfebff28d4e
+"@types/node@npm:18.17.2":
+  version: 18.17.2
+  resolution: "@types/node@npm:18.17.2"
+  checksum: 2e08acaeb30e05f96fbf3d974fc2203bf10ed9020cafd511018dbba8023044bb8758f9d5a2a8e68da3bca827ccef7628202de9b7ca3b515374a7b094b128930a
   languageName: node
   linkType: hard
 
@@ -2328,9 +2328,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/three@npm:0.154.0":
-  version: 0.154.0
-  resolution: "@types/three@npm:0.154.0"
+"@types/three@npm:0.155.0":
+  version: 0.155.0
+  resolution: "@types/three@npm:0.155.0"
   dependencies:
     "@tweenjs/tween.js": ~18.6.4
     "@types/stats.js": "*"
@@ -2338,7 +2338,7 @@ __metadata:
     fflate: ~0.6.9
     lil-gui: ~0.17.0
     meshoptimizer: ~0.18.1
-  checksum: 623067f84e342afc2641b4e547a95d25882b01a108abd8987df6e3c9af5d83d710e13cc974174867c0298573c93b4e0f1b2233d9bab650a7c2ef3cbb73a5e842
+  checksum: decd966b198ad0f24febcbd16a2c3ff584e7b0f7f89e70c2ecb8c1a7842598a51f79cd0965220aa74d216ab4474ca2f6e4023904aa7ca0f38c93fc8b99e2a0d6
   languageName: node
   linkType: hard
 
@@ -7443,9 +7443,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-extended@npm:4.0.0":
-  version: 4.0.0
-  resolution: "jest-extended@npm:4.0.0"
+"jest-extended@npm:4.0.1":
+  version: 4.0.1
+  resolution: "jest-extended@npm:4.0.1"
   dependencies:
     jest-diff: ^29.0.0
     jest-get-type: ^29.0.0
@@ -7454,7 +7454,7 @@ __metadata:
   peerDependenciesMeta:
     jest:
       optional: true
-  checksum: 2fd77a4fcda131a93c6f4a60a955c81fa332abad73d68f58d82fd9548672aa2c4f4ff64d4b44ae561caca3d592707eb0cc237d5da3138d8c568f40a1d8f81751
+  checksum: a5d6a9153c7b7fe48602bb3381f46bbbbb034bc2722497d0fde6b0eac81b8fbda1e69fb59ca72ec545fea7959e065a96500620a1cf0aba77a719455ff5f93da8
   languageName: node
   linkType: hard
 
@@ -11490,10 +11490,10 @@ resolve@~1.19.0:
   languageName: node
   linkType: hard
 
-"three@npm:0.154.0":
-  version: 0.154.0
-  resolution: "three@npm:0.154.0"
-  checksum: 90ad3cafef8b866641366977ab7189d56f7352c6cdc014cbab946544e42782ec4ea7e56b959b43590433a0fcdc4bd8f8029b18a75074ba10005182c5a73bcc88
+"three@npm:0.155.0":
+  version: 0.155.0
+  resolution: "three@npm:0.155.0"
+  checksum: 55de8af716686be2159b2ff407501ce2e6418b7d16a8dc57f3dcf9f08c4a6bedf0623fa8ddb67c1ae6f679d7ca53cfa0c64bab6b0577d6c467618389d5561211
   languageName: node
   linkType: hard
 

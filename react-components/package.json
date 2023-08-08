@@ -1,6 +1,6 @@
 {
   "name": "@cognite/reveal-react-components",
-  "version": "0.6.1",
+  "version": "0.7.0",
   "exports": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "type": "module",
@@ -20,6 +20,7 @@
     "@cognite/cogs.js": ">=9",
     "@cognite/reveal": "4.4.0",
     "react": ">=18",
+    "react-dom": ">=18",
     "styled-components": ">=5"
   },
   "devDependencies": {
@@ -39,8 +40,9 @@
     "@tanstack/react-query-devtools": "^4.29.19",
     "@types/lodash": "^4.14.190",
     "@types/react": "18.2.7",
+    "@types/react-dom": "^18.2.7",
     "@types/styled-components": "5.1.26",
-    "@types/three": "0.154.0",
+    "@types/three": "0.155.0",
     "@typescript-eslint/eslint-plugin": "^5.50.0",
     "eslint": "^8.0.1",
     "eslint-config-prettier": "^8.8.0",
@@ -59,7 +61,7 @@
     "storybook": "7.2.0",
     "style-loader": "^3.3.3",
     "styled-components": "5.3.11",
-    "three": "0.154.0",
+    "three": "0.155.0",
     "ts-loader": "9.4.3",
     "typescript": "5.1.6",
     "webpack": "5.88.2",
