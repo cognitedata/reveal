@@ -104,9 +104,3 @@ export const StyledMouse = styled(Mouse)`
     border-top: 1px solid white;
   }
 `;
-
-export const TouchNavigationContainer = styled.div`
-  display: flex;
-  gap: 16px;
-  width: 176px;
-`;
