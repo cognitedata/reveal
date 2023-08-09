@@ -59,9 +59,8 @@ export function SimulatorList({
                 />
               </div>
             }
-            key={`${
-              simulator.connectorName ?? Math.random()
-            }-simulator-list-entry-collapse`}
+            key={`${simulator.connectorName ?? Math.random()
+              }-simulator-list-entry-collapse`}
           >
             <SimulatorInformation
               // eslint-disable-next-line react/no-array-index-key
@@ -77,6 +76,8 @@ export function SimulatorList({
 
 export const SimulatorListContainer = styled.div`
   min-width: 480px;
+  height: 375px;
+  overflow: auto;
   .simulator-header {
     display: flex;
     width: 100%;
