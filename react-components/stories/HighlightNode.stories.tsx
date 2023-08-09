@@ -8,12 +8,12 @@ import {
   RevealContainer,
   RevealToolbar,
   Reveal3DResources,
-  type NodeDataResult,
-  type AddResourceOptions
+  type AddResourceOptions,
+  useClickedNode
 } from '../src';
 import { Color, Matrix4 } from 'three';
-import { type ReactElement, useState } from 'react';
-import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@cognite/reveal';
+import { type ReactElement, useState, useEffect } from 'react';
+import { DefaultNodeAppearance } from '@cognite/reveal';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import { DefaultFdmConfig } from './utilities/fdmConfig';
 
@@ -56,22 +56,13 @@ const StoryContent = ({
   resources: AddResourceOptions[];
   fdmAssetMappingConfig?: FdmAssetMappingsConfig;
 }): ReactElement => {
-  const [nodeData, setNodeData] = useState<any>(undefined);
-
   const [highlightedId, setHighlightedId] = useState<string | undefined>(undefined);
 
-  const callback = async (nodeData: Promise<NodeDataResult | undefined>): Promise<void> => {
-    const nodeDataResult = await nodeData;
-    setNodeData(nodeDataResult);
-    setHighlightedId(nodeDataResult?.nodeExternalId);
+  const nodeData = useClickedNode(fdmAssetMappingConfig);
 
-    if (nodeDataResult === undefined) return;
-
-    nodeDataResult.intersection.model.assignStyledNodeCollection(
-      new TreeIndexNodeCollection([nodeDataResult.cadNode.treeIndex]),
-      DefaultNodeAppearance.Highlighted
-    );
-  };
+  useEffect(() => {
+    setHighlightedId(nodeData?.nodeExternalId);
+  }, [nodeData?.nodeExternalId]);
 
   return (
     <>
@@ -89,9 +80,6 @@ const StoryContent = ({
                 ]
         }}
         fdmAssetMappingConfig={fdmAssetMappingConfig}
-        onNodeClick={(nodeData) => {
-          void callback(nodeData);
-        }}
       />
       <RevealToolbar />
       NodeData is: {JSON.stringify(nodeData)}
