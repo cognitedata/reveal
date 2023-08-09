@@ -49,7 +49,7 @@ export const InstructionDetail = styled(Body).attrs({
   white-space: pre-line;
 `;
 
-export const NavigationInstructionGrid = styled.div`
+export const MouseNavigationInstructionGrid = styled.div`
   display: grid;
   grid-template-columns: 2fr 1fr 1.5fr;
   gap: 8px;
@@ -63,8 +63,28 @@ export const NavigationInstructionGrid = styled.div`
     text-align: right;
   }
 
-  ${InstructionText}:nth-of-type(-n+4) {
+  ${InstructionText}:last-of-type {
     text-align: left;
+  }
+`;
+
+export const MouseNavigationCombinedGridItem = styled.div`
+  grid-column: 2 / 3;
+  grid-row: 2 / 3;
+`;
+
+export const KeyboardNavigationInstructionGrid = styled.div`
+  display: grid;
+  grid-template-columns: 2fr 1fr 1.5fr;
+  gap: 8px;
+  width: fit-content;
+  justify-items: center;
+  align-items: center;
+
+  ${InstructionText}:first-of-type {
+    padding-left: 10px;
+    grid-column: 1/-1;
+    text-align: right;
   }
 
   ${InstructionText}:last-of-type {

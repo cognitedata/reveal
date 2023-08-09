@@ -7,7 +7,8 @@ import {
   InstructionDetail,
   InstructionText,
   StyledMouse,
-  NavigationInstructionGrid
+  MouseNavigationInstructionGrid,
+  MouseNavigationCombinedGridItem
 } from './elements';
 import { Section } from './Section';
 
@@ -19,27 +20,24 @@ export const MouseNavigation = (): ReactElement => {
       description={
         'Click and drag to rotate, and pan the view. Use mouse wheel to zoom the view. Left click to select'
       }>
-      <NavigationInstructionGrid>
+      <MouseNavigationInstructionGrid>
         <InstructionText>Zoom / scroll</InstructionText>
-        <InstructionText>
+        <InstructionText style={{ marginBottom: 30, marginRight: 10, textAlign: 'right' }}>
           Rotate
-          <br />
           <InstructionDetail>Click+drag</InstructionDetail>
-          <br />
-          <br />
-          <InstructionText>
-            Select Objects
-            <br />
-            <InstructionDetail>Click on interactive objects</InstructionDetail>
-          </InstructionText>
         </InstructionText>
-        <StyledMouse />
-        <InstructionText>
+        <MouseNavigationCombinedGridItem>
+          <StyledMouse />
+        </MouseNavigationCombinedGridItem>
+        <InstructionText style={{ marginBottom: 30, marginLeft: 10, textAlign: 'left' }}>
           Pan
-          <br />
           <InstructionDetail>Click+drag</InstructionDetail>
         </InstructionText>
-      </NavigationInstructionGrid>
+        <InstructionText style={{ marginTop: -70, marginRight: 10, textAlign: 'right' }}>
+          Select Objects
+          <InstructionDetail>Click on interactive objects</InstructionDetail>
+        </InstructionText>
+      </MouseNavigationInstructionGrid>
     </Section>
   );
 };

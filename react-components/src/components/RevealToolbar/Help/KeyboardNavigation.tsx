@@ -6,7 +6,7 @@ import { type ReactElement } from 'react';
 import { Section } from './Section';
 import { Flex } from '@cognite/cogs.js';
 import { QWEKeysNavigation, ArrowKeysNavigation, ASDKeysNavigation } from './Graphics/Keyboard';
-import { InstructionText, NavigationInstructionGrid } from './elements';
+import { InstructionText, KeyboardNavigationInstructionGrid } from './elements';
 
 export const KeyboardNavigation = (): ReactElement => {
   return (
@@ -15,7 +15,7 @@ export const KeyboardNavigation = (): ReactElement => {
       subTitle={'Move and look around'}
       description={'Click and hold to move.\nYou can also use mouse in conjunction with keys.'}>
       <Flex gap={16}>
-        <NavigationInstructionGrid>
+        <KeyboardNavigationInstructionGrid>
           <InstructionText>Forward</InstructionText>
           <InstructionText style={{ marginRight: -30 }}>Down</InstructionText>
           <QWEKeysNavigation style={{ width: 150 }} />
@@ -26,15 +26,15 @@ export const KeyboardNavigation = (): ReactElement => {
           <InstructionText style={{ marginLeft: -10 }}>Right</InstructionText>
           <br />
           <InstructionText style={{ marginLeft: 33 }}>Back</InstructionText>
-        </NavigationInstructionGrid>
-        <NavigationInstructionGrid>
+        </KeyboardNavigationInstructionGrid>
+        <KeyboardNavigationInstructionGrid>
           <InstructionText>Look Up</InstructionText>
           <InstructionText style={{ marginTop: 45 }}>Look Left</InstructionText>
           <ArrowKeysNavigation style={{ width: 135 }} />
           <InstructionText style={{ marginTop: 45 }}>Look Right</InstructionText>
           <br />
           <InstructionText>Look Down</InstructionText>
-        </NavigationInstructionGrid>
+        </KeyboardNavigationInstructionGrid>
       </Flex>
     </Section>
   );
