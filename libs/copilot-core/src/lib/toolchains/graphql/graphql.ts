@@ -140,7 +140,6 @@ export class GraphQlChain extends CogniteBaseChain {
           }
 
           // Chain 2: Identify correct operation and type
-          console.log('// Chain 2: Identify correct operation and type');
           const [{ queryType, type }] = await callPromptChain(
             this,
             'operation and type',
@@ -299,7 +298,6 @@ export class GraphQlChain extends CogniteBaseChain {
           }
 
           // Chain 4: Indentify relevant filter
-          console.log('// Chain 4: Indentify relevant filter');
           const [filterResponse] = await callPromptChain(
             this,
             'filter',
