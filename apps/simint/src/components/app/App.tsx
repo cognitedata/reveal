@@ -33,10 +33,9 @@ export default function App() {
   const { data: user } = useUserInfo();
   const isInitialized = useSelector(selectIsInitialized);
   const project = useSelector(selectProject);
-
-  const BASE_URL = process.env.REACT_APP_LOCAL_SERVICE
-    ? `https://localhost:8810`
-    : client.getBaseUrl();
+  const useLocal = true;
+  //const BASE_URL = process.env.REACT_APP_LOCAL_SERVICE
+  const BASE_URL = useLocal ? `https://localhost:8810` : client.getBaseUrl();
 
   simconfigApiPropertiesSlice.actions.setProperties({
     baseUrl: BASE_URL,

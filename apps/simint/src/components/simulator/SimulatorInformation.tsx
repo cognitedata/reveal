@@ -5,7 +5,7 @@ import { selectProject } from '@simint-app/store/simconfigApiProperties/selector
 import { formatDistanceToNow } from 'date-fns';
 import styled from 'styled-components/macro';
 
-import { Collapse, Skeleton } from '@cognite/cogs.js';
+import { Collapse, Loader, Skeleton } from '@cognite/cogs.js';
 import type { SimulatorInstance } from '@cognite/simconfig-api-sdk/rtk';
 import { useGetSimulatorDetailsQuery } from '@cognite/simconfig-api-sdk/rtk';
 
@@ -25,6 +25,8 @@ export function SimulatorInformation({
     simulatorVersion,
     licenseLastCheckedTime,
     licenseStatus,
+    connectorStatus,
+    connectorStatusUpdatedTime,
   },
 }: SimulatorDetailsProps) {
   const project = useSelector(selectProject);
@@ -70,6 +72,36 @@ export function SimulatorInformation({
                 }
               )})`
             : ''}
+        </dd>
+        <dt>Connector Status</dt>
+        <dd data-cy="connector-status">
+          {connectorStatus === 'RUNNING_CALCULATION' ? (
+            <div>
+              <Loader />
+              Running calculation
+            </div>
+          ) : connectorStatus === 'PARSING_MODEL' ? (
+            <div>
+              <Loader />
+              Parsing model
+            </div>
+          ) : connectorStatus === 'CHECKING_LICENSE' ? (
+            <div>
+              <Loader />
+              Checking license
+            </div>
+          ) : connectorStatus === 'NONE_REPORTED' ? (
+            <div>-</div>
+          ) : (
+            <div>Default content</div>
+          )}
+          {connectorStatus !== 'NONE_REPORTED' &&
+            `(Since ${formatDistanceToNow(
+              new Date(connectorStatusUpdatedTime),
+              {
+                addSuffix: true,
+              }
+            )})`}
         </dd>
       </SimulatorInformationList>
 
