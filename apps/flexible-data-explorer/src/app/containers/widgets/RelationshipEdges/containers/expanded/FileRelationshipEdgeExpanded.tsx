@@ -18,7 +18,7 @@ export const FileRelationshipEdgesExpanded: React.FC<
   const scrollRef = useHorizontalScroll();
   const navigate = useNavigation();
 
-  const { data, isLoading } = useInstanceDirectRelationshipQuery<
+  const { data, isLoading, status } = useInstanceDirectRelationshipQuery<
     ({
       externalId: string;
     } | null)[]
@@ -45,7 +45,7 @@ export const FileRelationshipEdgesExpanded: React.FC<
                 </Button>
               </InstancePreview.File>
             </Widget.Header>
-            <Widget.Body noPadding>
+            <Widget.Body noPadding state={status}>
               <Content>
                 <FDXFilePreview id="relationship" fileId={item.externalId} />
               </Content>

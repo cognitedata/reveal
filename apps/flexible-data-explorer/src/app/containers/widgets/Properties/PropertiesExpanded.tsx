@@ -6,13 +6,17 @@ import { InputExp } from '@cognite/cogs.js';
 
 import { GeneralDetails } from '../../../components/details';
 import { EmptyState } from '../../../components/EmptyState';
+import { ErrorState } from '../../../components/ErrorState';
 import { Widget } from '../../../components/widget/Widget';
 import { useTranslation } from '../../../hooks/useTranslation';
 
 import { PropertiesProps } from './PropertiesWidget';
 import { flattenProperties } from './utils';
 
-export const PropertiesExpanded: React.FC<PropertiesProps> = ({ data }) => {
+export const PropertiesExpanded: React.FC<PropertiesProps> = ({
+  data,
+  state,
+}) => {
   const { t } = useTranslation();
 
   const [inputValue, setInputValue] = useState<string | undefined>(undefined);
@@ -26,6 +30,15 @@ export const PropertiesExpanded: React.FC<PropertiesProps> = ({ data }) => {
   }, [properties, inputValue]);
 
   const renderContent = () => {
+    if (state === 'error') {
+      return (
+        <ErrorState
+          title={t('WIDGET_ERROR_TITLE')}
+          body={t('WIDGET_ERROR_BODY')}
+        />
+      );
+    }
+
     if (results.length === 0) {
       return (
         <EmptyState

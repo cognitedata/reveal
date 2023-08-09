@@ -33,6 +33,15 @@ const GlobalStyle = createGlobalStyle`
   * {
     box-sizing: border-box;
   }
+
+  .cdf-login-page-style-scope {
+      z-index: 99;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+  }
 `;
 
 // src: url(${SourceCodeProVariable}) format('truetype');

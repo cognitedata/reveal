@@ -18,6 +18,7 @@ var port = process.argv[2] || 8080;
 var useSSL = process.argv[3] === 'true';
 var appBuildMode = process.argv[4] || 'cdf';
 var configuration = (process.argv[5] || 'staging').replace('fusion-', '');
+var organizationName = process.argv[6] || 'cog-appdev';
 
 var rootPath = path.resolve(__dirname, '../../../');
 var basePath = appBuildMode === 'cdf' ? '/cdf/' : '/';
@@ -42,6 +43,24 @@ app.use(function (req, res, next) {
   next();
 });
 
+// Proxy _api/login_info calls to domain config service
+// we need to figure this out
+app.use(
+  '/_api/login_info',
+  createProxyMiddleware({
+    target: 'https://app-login-configuration-lookup.cognite.ai/fusion-dev/',
+    secure: false,
+    changeOrigin: true,
+    logLevel: 'error',
+    pathRewrite: function (path, req) {
+      var organization = req.headers['host'].match(/[\w\-]+.fusion/)
+        ? req.headers['host'].split('.')[0]
+        : organizationName;
+      return path.replace('/_api/login_info', '') + organization;
+    },
+  })
+);
+
 // After build, serve the static files from following dirs
 app.use(
   express.static(
@@ -64,25 +83,9 @@ app.use(
   express.static(rootPath + '/dist/apps/fusion-shell/cdf')
 );
 
-generateMiddlewares(app);
-
-// Proxy _api/login_info calls to domain config service
-// we need to figure this out
-app.use(
-  '/_api/login_info',
-  createProxyMiddleware({
-    target: 'https://app-login-configuration-lookup.cognite.ai/fusion/',
-    secure: false,
-    changeOrigin: true,
-    logLevel: 'error',
-    pathRewrite: function (path, req) {
-      var organization = req.headers['host'].match(/[\w\-]+.fusion/)
-        ? req.headers['host'].split('.')[0]
-        : 'cog-appdev';
-      return path.replace('/_api/login_info', '') + organization;
-    },
-  })
-);
+if (configuration === 'mock') {
+  generateMiddlewares(app);
+}
 
 var server = useSSL
   ? https.createServer(
@@ -99,6 +102,7 @@ server.listen(port, function () {
   console.log(
     (useSSL ? 'https://localhost:' + port : 'http://localhost:' + port) +
       basePath +
-      'platypus?cluster=greenfield.cognitedata.com&organization=cog-appdev'
+      'platypus?cluster=greenfield.cognitedata.com&organization=' +
+      organizationName
   );
 });

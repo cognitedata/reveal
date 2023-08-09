@@ -7,6 +7,7 @@ import {
   SubAppProvider,
   createLink,
   getCluster,
+  getEnv,
   getProject,
   isUsingUnifiedSignin,
 } from '@cognite/cdf-utilities';
@@ -20,7 +21,6 @@ import { readLoginHints } from '@cognite/auth-react/src/lib/base';
 
 const RoutesWrapper = styled.div`
   height: 100vh;
-  padding-top: var(--cdf-ui-navigation-height);
   [class$='style-scope'] {
     height: 100%;
   }
@@ -28,10 +28,34 @@ const RoutesWrapper = styled.div`
 
 const loginHints = readLoginHints() ?? {};
 
+const RootPage = () => {
+  const env = getEnv() || '';
+  const cluster = getCluster() || '';
+
+  if (!isUsingUnifiedSignin()) {
+    // show empty page, the login app is single-spa, it will be loaded dynamically
+    return null;
+  }
+  return (
+    <Navigate
+      to={createLink(
+        `/${getProject() ?? loginHints?.project}`,
+        isUsingUnifiedSignin()
+          ? { ...loginHints }
+          : {
+              env,
+              cluster,
+            }
+      )}
+      replace={true}
+    />
+  );
+};
+
 export function App() {
   const project = getProject();
   const cluster = getCluster();
-  const routerBasename = isUsingUnifiedSignin() ? `/cdf/:project` : '/';
+  const routerBasename = isUsingUnifiedSignin() ? `/cdf/:project` : '/:project';
 
   const [isReleaseBanner, setReleaseBanner] = useState<string>(
     () => localStorage.getItem(`isCDFReleaseBanner`) || 'true'
@@ -55,16 +79,9 @@ export function App() {
           <Routes>
             <Route
               path={isUsingUnifiedSignin() ? '/cdf' : '/'}
-              element={
-                <Navigate
-                  to={createLink(
-                    `/${getProject() ?? loginHints?.project}`,
-                    isUsingUnifiedSignin() ? { ...loginHints } : {}
-                  )}
-                  replace={true}
-                />
-              }
+              element={<RootPage />}
             />
+            <Route path="/select-project" element={<></>} />
             <Route
               path={routerBasename}
               element={<LandingPage isReleaseBanner={isReleaseBanner} />}

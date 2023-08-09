@@ -19,6 +19,7 @@ import {
   getUrl,
 } from './utils';
 
+export { getIDP } from './utils';
 // import { isProduction } from '../environment';
 
 export { isUsingUnifiedSignin, unifiedSignInAppName } from './unified-signin';
@@ -57,11 +58,6 @@ export const createSdkClient = (
 };
 
 const getSdkBaseUrl = () => {
-  // temporary hack, needed to test app locally
-  if (window.location.host === 'localhost:8080') {
-    return 'https://localhost:8080';
-  }
-
   return urlCluster ? getUrl(urlCluster) : undefined;
 };
 

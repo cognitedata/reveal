@@ -15,9 +15,10 @@ export const TimeseriesRelationshipDirect: React.FC<
 > = ({ id, rows, columns, type }) => {
   const navigate = useNavigation();
 
-  const { data, isLoading, isFetched } = useInstanceDirectRelationshipQuery<{
-    externalId: string;
-  } | null>(type);
+  const { data, isLoading, isFetched, isError } =
+    useInstanceDirectRelationshipQuery<{
+      externalId: string;
+    } | null>(type);
 
   const handleRedirectClick = () => {
     if (!data?.externalId) {
@@ -27,7 +28,7 @@ export const TimeseriesRelationshipDirect: React.FC<
     navigate.toTimeseriesPage(data?.externalId);
   };
 
-  const isDisabled = isFetched && !data;
+  const isDisabled = (isFetched && !data) || isError;
 
   const renderValueTitle = () => {
     if (isLoading) {

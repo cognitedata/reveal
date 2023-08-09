@@ -18,7 +18,7 @@ export const TimeseriesRelationshipEdgesExpanded: React.FC<
   const scrollRef = useHorizontalScroll();
   const navigate = useNavigation();
 
-  const { data, isLoading } = useInstanceDirectRelationshipQuery<
+  const { data, isLoading, status } = useInstanceDirectRelationshipQuery<
     ({
       externalId: string;
     } | null)[]
@@ -45,7 +45,7 @@ export const TimeseriesRelationshipEdgesExpanded: React.FC<
                 </Button>
               </InstancePreview.Timeseries>
             </Widget.Header>
-            <Widget.Body noPadding>
+            <Widget.Body state={status} noPadding>
               <Content>
                 <TimeseriesChart
                   // Come back and fix this

@@ -12,14 +12,17 @@ import {
   InputType,
   NumericRange,
   ValueType,
+  Operator,
 } from '../../types';
 
 export interface CommonFilterInputProps extends BaseInputProps<ValueType> {
   type: InputType;
+  operator: Operator;
 }
 
 export const CommonFilterInput: React.FC<CommonFilterInputProps> = ({
   type,
+  operator,
   ...props
 }) => {
   if (type === 'string') {
@@ -27,7 +30,18 @@ export const CommonFilterInput: React.FC<CommonFilterInputProps> = ({
   }
 
   if (type === 'number') {
-    return <NumberInput {...(props as BaseInputProps<number>)} />;
+    const { suggestions } = props;
+
+    return (
+      <NumberInput
+        {...(props as BaseInputProps<number>)}
+        suggestions={
+          operator === Operator.GREATER_THAN || operator === Operator.LESS_THAN
+            ? undefined
+            : suggestions
+        }
+      />
+    );
   }
 
   if (type === 'numeric-range') {

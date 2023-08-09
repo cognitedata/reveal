@@ -7,6 +7,7 @@ declare module '@cognite/cdf-sdk-singleton' {
     AclScopeAll,
     ClientOptions,
   } from '@cognite/sdk';
+  import { IDPType, IDPResponse, LegacyProject } from '@cognite/login-utils';
 
   export interface SdkClientTokenProvider {
     getAppId: () => string;
@@ -36,6 +37,7 @@ declare module '@cognite/cdf-sdk-singleton' {
     clientOptions: ClientOptions,
     tokenProvider?: SdkClientTokenProvider
   ): CogniteClient;
+  export declare function getIDP(): Promise<IDPResponse | LegacyProject>;
 
   declare const sdk: CogniteClient;
   export default sdk;

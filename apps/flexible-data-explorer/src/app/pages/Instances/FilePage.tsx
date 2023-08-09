@@ -14,7 +14,7 @@ export const FilePage = () => {
   const [, setRecentlyVisited] = useRecentlyVisited();
   const { openAssetCentricResourceItemInCanvas } = useOpenIn();
 
-  const { data, isLoading, isFetched } = useFileByIdQuery(externalId);
+  const { data, isLoading, isFetched, status } = useFileByIdQuery(externalId);
 
   const handleNavigateToCanvasClick = () => {
     openAssetCentricResourceItemInCanvas({ id: data?.id, type: 'file' });
@@ -46,7 +46,12 @@ export const FilePage = () => {
       ]}
     >
       <Page.Widgets>
-        <PropertiesWidget id="Properties" data={data} columns={4} />
+        <PropertiesWidget
+          id="Properties"
+          state={status}
+          data={data}
+          columns={4}
+        />
         <FileWidget id="Preview" fileId={data?.id} rows={6} columns={4} />
       </Page.Widgets>
     </Page.Dashboard>
