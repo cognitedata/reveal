@@ -77,6 +77,8 @@
   "WIDGET_EMPTY_BODY": "We could not find any results for your query",
   "WIDGET_LOADING_TITLE": "Loading...",
   "WIDGET_LOADING_BODY": "Please wait while we are loading your data",
+  "WIDGET_ERROR_TITLE": "Oops, something went wrong",
+  "WIDGET_ERROR_BODY": "There were some struggles to fetch data",
 
   "PROPERTIES_WIDGET_NAME": "Properties",
   "PROPERTIES_WIDGET_SEARCH_INPUT_PLACEHOLDER": "Filter by name...",

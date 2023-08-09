@@ -28,7 +28,7 @@ export const GenericRelationshipEdgesExpanded: React.FC<
     undefined
   );
 
-  const { data, isFetchingNextPage, hasNextPage, fetchNextPage } =
+  const { data, status, isFetchingNextPage, hasNextPage, fetchNextPage } =
     useInstanceRelationshipQuery(type, filterState);
 
   const tableColumns = useMemo(() => {
@@ -57,7 +57,7 @@ export const GenericRelationshipEdgesExpanded: React.FC<
         />
       </Widget.Header>
 
-      <Widget.Body noPadding>
+      <Widget.Body state={status} noPadding>
         <Table
           id="relationship-table"
           data={data}

@@ -30,7 +30,7 @@ export const PropertiesCollapsed: React.FC<PropertiesProps> = ({
   const properties = useMemo(() => flattenProperties(data), [data]);
 
   const getAdaptiveGridRows = () => {
-    if (state === 'loading') {
+    if (state !== 'success') {
       return 4;
     }
     // Bit of magic values below; 4 is the number of items per row in the grid. If we have less than 4 items, we want
