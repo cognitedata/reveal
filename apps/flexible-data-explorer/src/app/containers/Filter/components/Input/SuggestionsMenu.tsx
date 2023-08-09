@@ -3,8 +3,10 @@ import styled from 'styled-components/macro';
 
 import { Menu as CogsMenu } from '@cognite/cogs.js';
 
+import { Suggestion } from '../../types';
+
 export interface SuggestionsMenuProps {
-  suggestions?: string[];
+  suggestions?: Suggestion[];
   onSelectSuggestion?: (suggestion: string) => void;
 }
 
@@ -35,7 +37,6 @@ export const SuggestionsMenu: React.FC<SuggestionsMenuProps> = ({
 const Menu = styled(CogsMenu)`
   width: 240px;
   max-height: 160px;
-  margin-left: -8px;
   margin-top: -4px;
   overflow-y: auto;
 `;

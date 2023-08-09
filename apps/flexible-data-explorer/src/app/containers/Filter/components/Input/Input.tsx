@@ -2,6 +2,8 @@ import * as React from 'react';
 
 import { Input as CogsInput, Dropdown, InputVariant } from '@cognite/cogs.js';
 
+import { Suggestion } from '../../types';
+
 import { InputWrapper } from './elements';
 import { SuggestionsMenu } from './SuggestionsMenu';
 
@@ -10,7 +12,8 @@ export interface InputProps {
   variant?: InputVariant;
   placeholder?: string;
   value?: string | number;
-  suggestions?: string[];
+  suggestions?: Suggestion[];
+  isSuggestionsLoading?: boolean;
   helpText?: string;
   onChange: (value: string) => void;
 }
@@ -18,12 +21,15 @@ export interface InputProps {
 export const Input: React.FC<InputProps> = ({
   value = '',
   onChange,
-  suggestions,
+  suggestions = [],
+  isSuggestionsLoading,
   ...rest
 }) => {
   return (
     <InputWrapper>
       <Dropdown
+        appendTo="parent"
+        hideOnSelect
         content={
           <SuggestionsMenu
             suggestions={suggestions}
@@ -35,6 +41,8 @@ export const Input: React.FC<InputProps> = ({
           {...rest}
           value={value}
           onChange={(event) => onChange(event.target.value)}
+          icon={isSuggestionsLoading && 'Loader'}
+          iconPlacement="right"
         />
       </Dropdown>
     </InputWrapper>

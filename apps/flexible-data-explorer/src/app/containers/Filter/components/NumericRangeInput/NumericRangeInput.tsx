@@ -21,6 +21,7 @@ export const NumericRangeInput: React.FC<NumericRangeInputProps> = ({
   value,
   onChange,
   suggestions = [],
+  ...rest
 }) => {
   const { t } = useTranslation();
 
@@ -34,6 +35,7 @@ export const NumericRangeInput: React.FC<NumericRangeInputProps> = ({
   return (
     <Container>
       <NumberInput
+        {...rest}
         placeholder={PLACEHOLDER}
         value={min}
         helpText={dataMin && t('FILTER_INPUT_MIN', { value: dataMin })}
@@ -52,6 +54,7 @@ export const NumericRangeInput: React.FC<NumericRangeInputProps> = ({
       />
 
       <NumberInput
+        {...rest}
         placeholder={PLACEHOLDER}
         value={max}
         helpText={dataMax && t('FILTER_INPUT_MAX', { value: dataMax })}

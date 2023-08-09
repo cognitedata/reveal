@@ -76,7 +76,6 @@ export const useSearchAggregateValuesQuery = ({
     {
       // suspense is a broke atm, I will fix the underlying issue later - deep
       suspense: false,
-      keepPreviousData: true,
     }
   );
 };
