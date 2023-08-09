@@ -29,7 +29,7 @@ const CustomChip = ({
       <Lable level={2}>{label}</Lable>
       <Switch
         checked={checked}
-        onChange={(_e: any, nextState: boolean) => onChange(nextState)}
+        onChange={(_e, nextState) => onChange(!!nextState)}
         disabled={disabled}
       />
     </ChipContent>

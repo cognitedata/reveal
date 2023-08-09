@@ -12,21 +12,22 @@ export default function useTransformations({
   space: string;
   isEnabled: boolean;
   typeName: string;
-  viewVersion: string;
+  viewVersion?: string;
 }) {
   const dataManagementHandler = useInjection(TOKENS.DataManagementHandler);
   const query = useQuery(
-    QueryKeys.TRANSFORMATION(space, typeName, viewVersion),
+    QueryKeys.TRANSFORMATION(space, typeName, viewVersion || ''),
     async () => {
       return dataManagementHandler.getTransformations({
         spaceExternalId: space,
         instanceSpaceExternalId: space,
         typeName,
-        viewVersion,
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        viewVersion: viewVersion!,
       });
     },
     {
-      enabled: !typeName.includes('undefined') && isEnabled,
+      enabled: !typeName.includes('undefined') && isEnabled && !!viewVersion,
     }
   );
 

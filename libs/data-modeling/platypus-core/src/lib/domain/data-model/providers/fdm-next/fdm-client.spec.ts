@@ -191,6 +191,7 @@ const mixerApiMock = {
               graphQlDml: undefined,
               createdTime: undefined,
               lastUpdatedTime: undefined,
+              views: [],
             },
           ]);
         } else {
@@ -480,6 +481,7 @@ describe('FDM v3 Client', () => {
           space: 'testSpace',
           schema: '',
           status: DataModelVersionStatus.PUBLISHED,
+          views: [],
         },
         limit: 10,
         nestedLimit: 10,

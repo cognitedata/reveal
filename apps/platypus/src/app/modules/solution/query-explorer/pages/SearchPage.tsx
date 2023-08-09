@@ -319,8 +319,8 @@ export const SearchPage = ({
                 space={space}
                 dataModelExternalId={dataModelExternalId}
                 schemaVersion={selectedDataModelVersion.version}
-                defaultVariables={graphQLQuery?.query}
-                defaultQuery={graphQLQuery?.variables}
+                defaultVariables={graphQLQuery?.variables}
+                defaultQuery={graphQLQuery?.query}
                 onQueryChange={(query) => {
                   setQueryExplorerQuery(query);
                   setGraphQLQuery(undefined);

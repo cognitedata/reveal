@@ -23,7 +23,7 @@ import {
   getAccessToken as getCogniteAccessToken,
   getUserInfo as getCogniteUserInfo,
   logout as cogniteLogout,
-} from './cogniteIdp';
+} from './cogIdp';
 import {
   getAccessToken as getKeycloakAccessToken,
   getUserInfo as getKeycloakUserInfo,
@@ -45,7 +45,7 @@ export class FusionTokenProvider implements SdkClientTokenProvider {
   }
 
   async getToken(): Promise<string> {
-    const idp = (await getIDP()) as any;
+    const idp = await getIDP();
     switch (idp.type) {
       case 'AZURE_AD': {
         return getAADAccessToken(idp.authority, idp.appConfiguration.clientId);
@@ -79,7 +79,7 @@ export class FusionTokenProvider implements SdkClientTokenProvider {
         return token;
       }
       case 'COGNITE_IDP': {
-        const cogniteIdPResponse = idp as any;
+        const cogniteIdPResponse = idp as CogniteIdPResponse;
         const token = await getCogniteAccessToken({
           authority: cogniteIdPResponse.authority,
           clientId: cogniteIdPResponse.appConfiguration.clientId,
@@ -116,7 +116,6 @@ export class FusionTokenProvider implements SdkClientTokenProvider {
           audience: keycloakResponse.appConfiguration.audience,
         });
       }
-      // @ts-ignore
       case 'COGNITE_IDP': {
         const cogniteIdPResponse = idp as CogniteIdPResponse;
         return getCogniteUserInfo({
@@ -136,7 +135,7 @@ export class FusionTokenProvider implements SdkClientTokenProvider {
   }
 
   async logout(): Promise<void> {
-    const idp = (await getIDP()) as any;
+    const idp = await getIDP();
     switch (idp.type) {
       case 'AZURE_AD': {
         await aadLogout(idp.authority, idp.appConfiguration.clientId);

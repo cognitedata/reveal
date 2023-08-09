@@ -4,12 +4,12 @@ import { useState } from 'react';
 import isUndefined from 'lodash/isUndefined';
 
 import { useTranslation } from '../../../../hooks/useTranslation';
-import { DateRange, InputControlProps } from '../../types';
+import { DateRange, BaseInputProps } from '../../types';
 import { DateTimeInput } from '../DateTimeInput';
 
 import { Chip, Container } from './elements';
 
-export type DateTimeRangeInputProps = InputControlProps<DateRange>;
+export type DateTimeRangeInputProps = BaseInputProps<DateRange>;
 
 export const DateTimeRangeInput: React.FC<DateTimeRangeInputProps> = ({
   value,

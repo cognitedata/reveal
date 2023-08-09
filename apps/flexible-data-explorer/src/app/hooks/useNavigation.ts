@@ -1,5 +1,10 @@
 import { useCallback, useMemo } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import {
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from 'react-router-dom';
 
 import { ContainerReference } from '@fusion/industry-canvas';
 import queryString from 'query-string';
@@ -7,6 +12,7 @@ import queryString from 'query-string';
 import { DateRange, ValueByDataType } from '../containers/Filter';
 import { createSearchParams } from '../utils/router';
 
+import { useViewModeParams } from './useParams';
 import { useGetChartsUrl, useGetCanvasUrl } from './useUrl';
 
 // TODO: rename this could help, react-router also has a 'useNavigation'.
@@ -14,6 +20,7 @@ export const useNavigation = () => {
   const navigate = useNavigate();
   const { search, pathname } = useLocation(); // <-- current location being accessed
   const params = useParams();
+  const [viewMode] = useViewModeParams();
   // const dataModelParams = useDataModelParams();
   const chartsUrl = useGetChartsUrl();
   const canvasUrl = useGetCanvasUrl();
@@ -46,6 +53,7 @@ export const useNavigation = () => {
         searchQuery,
         filters,
         aiSearch: String(enableAISearch),
+        viewMode: viewMode,
       });
 
       navigate({

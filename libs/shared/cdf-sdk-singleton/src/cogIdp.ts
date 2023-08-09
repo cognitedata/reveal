@@ -1,18 +1,42 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { getCogniteIdPUserManager } from '@cognite/login-utils';
 
 import { UserInfo } from './types';
 
+/**
+ * This is set up to avoid parallel token refresh requests.
+ * See the keycloak implementation for more details.
+ */
+let getAccessTokenPromise: Promise<string> | undefined;
 export const getAccessToken = async (params: {
   authority: string;
   clientId: string;
 }) => {
-  const userManager = getCogniteIdPUserManager({
-    authority: params.authority,
-    client_id: params.clientId,
+  if (getAccessTokenPromise) {
+    return getAccessTokenPromise;
+  }
+  getAccessTokenPromise = new Promise<string>((resolve, reject) => {
+    const userManager = getCogniteIdPUserManager({
+      authority: params.authority,
+      client_id: params.clientId,
+    });
+    userManager
+      .getUser()
+      .then((user) => {
+        if (user?.expired) {
+          return userManager.signinSilent();
+        }
+        return user;
+      })
+      .then((user) => resolve(user!.access_token))
+      .catch(reject)
+      .finally(() => userManager.clearStaleState());
   });
 
-  const user = await userManager.signinSilent();
-  return user!.access_token;
+  getAccessTokenPromise.then(() => {
+    getAccessTokenPromise = undefined;
+  });
+  return getAccessTokenPromise;
 };
 
 export const getUserInfo = async (params: {

@@ -175,6 +175,7 @@ const DataSetsList = (): JSX.Element => {
         }}
       >
         <RowActions
+          loading={isUpdatingDataSetVisibility || loading}
           actions={[
             {
               children: t('edit'),
@@ -186,7 +187,7 @@ const DataSetsList = (): JSX.Element => {
                 editDataSet(record.key);
               },
               disabled: !hasWritePermissions,
-              loading: isUpdatingDataSetVisibility || loading,
+
               icon: 'Edit',
             },
             {
@@ -206,7 +207,6 @@ const DataSetsList = (): JSX.Element => {
                 return archiveDataSet(record.key);
               },
               disabled: !hasWritePermissions,
-              loading: isUpdatingDataSetVisibility || loading,
               icon: record.archived ? 'Restore' : 'Archive',
             },
           ]}

@@ -5,4 +5,9 @@ export const InputWrapper = styled.div`
   .input-wrapper {
     width: 100%;
   }
+
+  .error-space {
+    margin-left: 2px;
+    font-size: 12px;
+  }
 `;

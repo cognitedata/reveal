@@ -39,6 +39,10 @@ export interface DataModelVersion {
   lastUpdatedTime?: number;
   /** DMS v3 requires space externalId */
   space: string;
+  views: {
+    externalId: string;
+    version: string;
+  }[];
 }
 
 export type BuiltInType = {

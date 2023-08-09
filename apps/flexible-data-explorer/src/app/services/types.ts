@@ -59,6 +59,17 @@ export type SearchAggregateCountResponse = {
   ];
 };
 
+export type SearchAggregateValuesResponse = {
+  items: [
+    {
+      count: {
+        externalId: number;
+      };
+      group: Record<string, string>;
+    }
+  ];
+};
+
 export type IntrospectionResponse = {
   allFields: {
     fields: {

@@ -322,6 +322,7 @@ describe('groupTransformationsByTypes', () => {
           version: 'three',
           createdTime: 1666341041026,
           schema: '',
+          views: [],
         },
         {
           externalId: 'foo',
@@ -329,6 +330,7 @@ describe('groupTransformationsByTypes', () => {
           status: DataModelVersionStatus.PUBLISHED,
           version: 'no time',
           schema: '',
+          views: [],
         },
         {
           externalId: 'foo',
@@ -337,6 +339,7 @@ describe('groupTransformationsByTypes', () => {
           version: 'four',
           createdTime: 1666787116635,
           schema: '',
+          views: [],
         },
         {
           externalId: 'foo',
@@ -345,6 +348,7 @@ describe('groupTransformationsByTypes', () => {
           version: 'two',
           createdTime: 1666250631722,
           schema: '',
+          views: [],
         },
         {
           externalId: 'foo',
@@ -353,6 +357,7 @@ describe('groupTransformationsByTypes', () => {
           version: 'one',
           createdTime: 1666171691371,
           schema: '',
+          views: [],
         },
       ];
 

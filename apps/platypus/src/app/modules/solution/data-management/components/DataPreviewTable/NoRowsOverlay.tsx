@@ -16,7 +16,7 @@ export type NoRowsOverlayProps = {
   space: string;
   onLoadDataClick: () => void;
   typeName: string;
-  viewVersion: string;
+  viewVersion?: string;
 };
 
 export const NoRowsOverlay = ({

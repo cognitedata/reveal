@@ -90,7 +90,8 @@ export class GraphQlChain extends CogniteBaseChain {
             continue;
           }
           const dataModelTypes = new GraphQlUtilsService().parseSchema(
-            dataModel.graphQlDml
+            dataModel.graphQlDml,
+            dataModel.views
           );
           // Chain 1: Extract relevant types
           typeNames += `\n\n[${dataModel.externalId}_${dataModel.space}]\n`;
@@ -127,7 +128,8 @@ export class GraphQlChain extends CogniteBaseChain {
           const { externalId: dataModel, version, space } = selectedDataModel;
 
           const dataModelTypes = new GraphQlUtilsService().parseSchema(
-            selectedDataModel.graphQlDml
+            selectedDataModel.graphQlDml,
+            selectedDataModel.views
           );
 
           const filteredTypes = relevantTypes.filter((el) =>
@@ -324,38 +326,15 @@ export class GraphQlChain extends CogniteBaseChain {
             {
               source: 'bot',
               type: 'data-model-query',
+              dataModel: dataModel,
               version,
               space,
-              dataModel,
               content: `Found ${summary} results for ${type}`,
               graphql: { query, variables },
               chain: this.constructor.name,
-              actions: [
-                {
-                  content: 'Debug',
-                  onClick: () => {
-                    console.log('query', query);
-                    console.log('variables', variables);
-                    navigator.clipboard.writeText(
-                      JSON.stringify({
-                        query,
-                        variables,
-                      })
-                    );
-                  },
-                },
-              ],
+              actions: [],
             },
           ]);
-          sendFromCopilotEvent('GQL_QUERY', {
-            query: query,
-            variables,
-            dataModel: {
-              externalId: dataModel,
-              version,
-              space,
-            },
-          });
 
           return {
             data: {

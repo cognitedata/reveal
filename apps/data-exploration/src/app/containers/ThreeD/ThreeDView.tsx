@@ -268,7 +268,6 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
   useEffect(() => {
     if (
       viewer === undefined ||
-      clickedModel === undefined ||
       model === undefined ||
       overlayTool === undefined
     ) {

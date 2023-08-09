@@ -179,7 +179,7 @@ export const ContactsDialogView = ({
                     <Switch
                       name={`notification-switch-${index}`}
                       checked={contact.sendNotification}
-                      onChange={(_: any, checked: boolean) =>
+                      onChange={(_, checked) =>
                         onEdit(index, 'sendNotification', checked)
                       }
                     />

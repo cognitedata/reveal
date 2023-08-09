@@ -10,7 +10,10 @@ export enum ParamKeys {
   Filters = 'filters',
   DataModels = 'models',
   AISearch = 'aiSearch',
+  ViewMode = 'viewMode',
 }
+
+type ViewMode = '3d' | 'list';
 
 export const useExpandedIdParams = (): [
   string | undefined,
@@ -27,10 +30,9 @@ export const useExpandedIdParams = (): [
           return currentParams;
         }
 
-        return {
-          ...currentParams,
-          [ParamKeys.ExpandedId]: id,
-        };
+        currentParams.set(ParamKeys.ExpandedId, id);
+
+        return currentParams;
       });
     },
     [setSearchParams]
@@ -53,6 +55,35 @@ export const useSearchQueryParams = (): [string, (query?: string) => void] => {
   );
 
   return [searchParams.get(ParamKeys.SearchQuery) || '', setSearchQueryParams];
+};
+
+export const useViewModeParams = (): [
+  ViewMode,
+  (viewMode?: ViewMode) => void
+] => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const DefaultViewMode = 'list';
+
+  const viewMode = (searchParams.get(ParamKeys.ViewMode) ??
+    DefaultViewMode) as ViewMode;
+
+  const setViewMode = useCallback(
+    (mode?: ViewMode) => {
+      setSearchParams((currentParams) => {
+        if (mode === undefined) {
+          currentParams.delete(ParamKeys.ViewMode);
+          return currentParams;
+        }
+
+        currentParams.set(ParamKeys.ViewMode, mode);
+
+        return currentParams;
+      });
+    },
+    [setSearchParams]
+  );
+
+  return [viewMode, setViewMode];
 };
 
 export const useSearchFilterParams = (): [

@@ -324,15 +324,14 @@ const EventSidebar = memo(
                             <ReverseSwitch
                               name={`showEvents_${eventFilter.id}`}
                               checked={eventFilter.visible}
+                              label={t['Show / hide']}
                               onChange={() => {
                                 handleToggleEventFilter(
                                   eventFilter.id,
                                   !eventFilter.visible
                                 );
                               }}
-                            >
-                              {t['Show / hide']}
-                            </ReverseSwitch>
+                            />
                           </Col>
                         </Row>
                       </SidebarFooterActions>

@@ -25,7 +25,7 @@ export const FuzzySearchToggle: React.FC<FuzzySearchToggleProps> = ({
         <Switch
           size="tiny"
           checked={enabled}
-          onChange={(_: unknown, nextState: boolean) => onChange(nextState)}
+          onChange={(_: unknown, nextState) => onChange(!!nextState)}
         />
       </Tooltip>
     </ModalSwitchContainer>

@@ -105,7 +105,7 @@ describe('PreviewPageHeader', () => {
         shouldShowPublishedRows
         title="Lorem"
         typeName="Movie"
-        version="2"
+        viewVersion="2"
       />
     );
 
@@ -136,7 +136,7 @@ describe('PreviewPageHeader', () => {
         shouldShowPublishedRows
         title="Lorem"
         typeName="Movie"
-        version="2"
+        viewVersion="2"
       />
     );
 
