@@ -1,5 +1,7 @@
 import styled from 'styled-components';
 
+import noop from 'lodash/noop';
+
 import { Button, Dropdown, Menu } from '@cognite/cogs.js';
 import { Asset, FileInfo, IdEither, Sequence, Timeseries } from '@cognite/sdk';
 
@@ -53,6 +55,7 @@ export const DirectAssets = ({
               key={item.id}
               action={{
                 icon: 'ArrowRight',
+                onClick: noop,
               }}
               onClick={(evt) => {
                 evt.stopPropagation();

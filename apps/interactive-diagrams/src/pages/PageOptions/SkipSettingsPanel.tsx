@@ -19,10 +19,10 @@ export default function SkipSettingsPanel() {
       </Body>
       <Switch
         name="skipSettingsOption"
-        value={skipSettings}
-        onChange={(_e: any, nextState: boolean) => {
+        checked={skipSettings}
+        onChange={(_e, nextState) => {
           trackUsage(PNID_METRICS.configPage.skipSettings, { skip: nextState });
-          setSkipSettings(nextState);
+          setSkipSettings(!!nextState);
         }}
         style={{ margin: '20px 0 0' }}
       />

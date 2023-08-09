@@ -87,7 +87,8 @@ export const useDataModelTypeDefs = (
   const memoizedDataModelTypeDefs = useMemo(() => {
     try {
       const dataModelTypeDefs = dataModelTypeDefsBuilder.parseSchema(
-        selectedDataModelVersion.schema
+        selectedDataModelVersion.schema,
+        selectedDataModelVersion.views
       );
 
       return dataModelTypeDefs;

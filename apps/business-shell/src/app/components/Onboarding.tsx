@@ -8,6 +8,7 @@ import {
 } from '@fusion/shared/user-onboarding-components';
 import useLocalStorageState from 'use-local-storage-state';
 
+import { ModalCloseReason } from '@cognite/cogs.js';
 import { useFlag } from '@cognite/react-feature-flags';
 
 import image1 from '../../images/carousel-image_1.png';
@@ -72,7 +73,8 @@ export const Onboarding = () => {
 
   const { handleState } = useOrientation();
 
-  const onCancel = () => {
+  const onCancel = (reason: ModalCloseReason) => {
+    if (reason === 'backdropClick') return;
     setOnboardingModalPopup(false);
   };
   const onOk = () => {

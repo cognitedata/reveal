@@ -41,6 +41,7 @@ export const useSelectedDataModelVersion = (
       description: dataModel?.description,
       createdTime: Date.now(),
       lastUpdatedTime: Date.now(),
+      views: [],
     };
   } else if (selectedVersionNumber === DEFAULT_VERSION_PATH) {
     // if version number is "latest"

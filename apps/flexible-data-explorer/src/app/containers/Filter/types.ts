@@ -54,9 +54,11 @@ export type ValueType =
   | boolean
   | never;
 
-export interface InputControlProps<T extends ValueType> {
+export interface BaseInputProps<T extends ValueType> {
   value?: T;
   onChange: (value?: T) => void;
+  suggestions?: string[];
+  helpText?: string;
 }
 
 export interface DataType {

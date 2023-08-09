@@ -186,7 +186,8 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
 
   parseSchema(
     graphQlSchema: string,
-    includeBuiltInTypes?: boolean
+    views: { externalId: string; version: string }[] = [],
+    includeBuiltInTypes: boolean = false
   ): DataModelTypeDefs {
     const dataModelTypeDefs: DataModelTypeDefs = {
       types: [],
@@ -237,6 +238,9 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
         const typeDef = type as ObjectTypeDefinitionNode;
         const typeApi = objectTypeApi(typeDef);
         const mappedType = this.toSolutionDataModelType(typeApi, typeNames);
+        mappedType.version = views.find(
+          (el) => el.externalId === mappedType.name
+        )?.version;
         if (typeDef.fields && typeDef.fields.length) {
           mappedType.fields = typeDef.fields.map((field) =>
             this.toSolutionDataModelField(fieldDefinitionApi(field), typeNames)

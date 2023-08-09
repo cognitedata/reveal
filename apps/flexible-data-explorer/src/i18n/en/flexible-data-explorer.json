@@ -70,6 +70,8 @@
   "FILTER_OPERATOR_FALSE": "Is false",
   "FILTER_OPERATOR_SET": "Is set",
   "FILTER_OPERATOR_NOT_SET": "Is not set",
+  "FILTER_INPUT_MIN": "Min: {{value}}",
+  "FILTER_INPUT_MAX": "Max: {{value}}",
 
   "WIDGET_EMPTY_TITLE": "No results",
   "WIDGET_EMPTY_BODY": "We could not find any results for your query",

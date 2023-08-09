@@ -136,11 +136,10 @@ const Calculations: FunctionComponent<Props> = ({
   return (
     <Switch
       name="show-gaps"
+      label={t['Show gaps']}
       checked={showGaps}
       onChange={() => onSwitchToggle()}
-    >
-      {t['Show gaps']}
-    </Switch>
+    />
   );
 };
 

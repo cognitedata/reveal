@@ -1,16 +1,20 @@
 import Dropdown from '@data-catalog-app/components/dropdown/Dropdown';
 
-import { Button, ButtonProps, Menu } from '@cognite/cogs.js';
+import { Button, Menu, MenuItemProps } from '@cognite/cogs.js';
 
 type RowActionsProps = {
-  actions: Omit<ButtonProps, 'type'>[];
+  actions: MenuItemProps[];
+  loading?: boolean;
 };
 
-const RowActions = ({ actions }: RowActionsProps): JSX.Element => {
+const RowActions = ({
+  actions,
+  loading = false,
+}: RowActionsProps): JSX.Element => {
   return (
     <Dropdown
       content={
-        <Menu>
+        <Menu loading={loading}>
           {actions.map((buttonProps, idx) => (
             <Menu.Item key={idx} iconPlacement="left" {...buttonProps} />
           ))}

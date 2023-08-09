@@ -80,6 +80,7 @@ describe('DataManagementHandlerTest', () => {
         space: 'testSpace',
         schema: '',
         status: DataModelVersionStatus.PUBLISHED,
+        views: [],
       },
     });
 
@@ -107,6 +108,7 @@ describe('DataManagementHandlerTest', () => {
         space: 'testSpace',
         schema: '',
         status: DataModelVersionStatus.PUBLISHED,
+        views: [],
       },
       limit: 100,
       searchTerm: 'lorem',
@@ -163,6 +165,7 @@ describe('DataManagementHandlerTest', () => {
           space: 'testSpace',
           schema: '',
           status: DataModelVersionStatus.PUBLISHED,
+          views: [],
         },
         limit: 100,
         searchTerm: 'lorem',

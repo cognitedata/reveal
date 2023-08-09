@@ -3,7 +3,6 @@ import { useCallback } from 'react';
 import { KeyValueMap, StorageProviderType } from '@platypus/platypus-core';
 import { TOKENS } from '@platypus-app/di';
 import { useInjection } from '@platypus-app/hooks/useInjection';
-import { useViewForDataModelType } from '@platypus-app/hooks/useViewForDataModelType';
 import { QueryKeys } from '@platypus-app/utils/queryKeys';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -24,23 +23,17 @@ export const useSuggestions = ({
   ).getProvider(StorageProviderType.sessionStorage);
   const dataManagementHandler = useInjection(TOKENS.DataManagementHandler);
 
-  const { data: viewForDataModel } = useViewForDataModelType({
-    dataModelExternalId,
-    dataModelVersion: version,
-    space,
-    viewExternalId: dataModelType.name,
-  });
-
-  const viewVersion = viewForDataModel ? viewForDataModel.version : version;
-
   const acceptMatches = useCallback(
     async (data: KeyValueMap[]) => {
-      if (data.length !== 0) {
+      if (data.length !== 0 && dataModelType.version) {
         await dataManagementHandler.ingestNodes({
           space,
-          model: [dataModelExternalId, `${dataModelType.name}_${viewVersion}`],
+          model: [
+            dataModelExternalId,
+            `${dataModelType.name}_${dataModelType.version}`,
+          ],
           items: data,
-          version: viewVersion,
+          version: dataModelType.version,
           dataModelExternalId,
           dataModelType,
           dataModelTypeDefs,
@@ -63,7 +56,6 @@ export const useSuggestions = ({
       version,
       dataModelTypeDefs,
       space,
-      viewVersion,
     ]
   );
 

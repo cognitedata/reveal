@@ -169,7 +169,7 @@ describe('DataModelTypeDefsBuilderService Test', () => {
 
   it('should parse schema', () => {
     const service = createInstance();
-    service.parseSchema('');
+    service.parseSchema('', []);
     expect(graphqlUtilsMock.parseSchema).toBeCalled();
   });
 

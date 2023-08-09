@@ -83,11 +83,10 @@ const SharingDropdown = ({
             <SharingSwitchContainer>
               <Switch
                 name="toggleChartAccess"
+                label={chart.public ? t['Sharing on'] : t['Sharing off']}
                 checked={chart.public}
                 onChange={onToggleChartAccess}
-              >
-                {chart.public ? t['Sharing on'] : t['Sharing off']}
-              </Switch>
+              />
             </SharingSwitchContainer>
             <ShareLinkContainer>
               <ShareLink

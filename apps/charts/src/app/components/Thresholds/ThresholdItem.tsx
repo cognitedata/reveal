@@ -452,9 +452,8 @@ const ThresholdItem = ({
               onToggleThreshold(threshold.id, event.target.checked);
             }}
             disabled={!showBtnVisibility}
-          >
-            {t.Show}
-          </ReverseSwitch>
+            label={t.Show}
+          />
         </Flex>
       </footer>
     </>

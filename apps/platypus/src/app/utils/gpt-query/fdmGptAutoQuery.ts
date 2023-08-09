@@ -1,5 +1,5 @@
 import {
-  addFromCopilotEventListener,
+  addToCopilotEventListener,
   sendToCopilotEvent,
 } from '@fusion/copilot-core';
 
@@ -13,10 +13,17 @@ export async function fetchGptAutoQuery(
     query: string;
     variables: any;
   }>((resolve) => {
-    const removeListener = addFromCopilotEventListener('GQL_QUERY', (data) => {
-      resolve(data);
-      removeListener();
-    });
+    const removeListener = addToCopilotEventListener(
+      'NEW_MESSAGES',
+      (messages) => {
+        for (const message of messages) {
+          if (message.source === 'bot' && message.type === 'data-model-query') {
+            resolve(message.graphql);
+            removeListener();
+          }
+        }
+      }
+    );
 
     sendToCopilotEvent('NEW_MESSAGES', [
       {

@@ -8,7 +8,7 @@ import { Dropdown } from '../../components/dropdown/Dropdown';
 import { DateRange } from '../../containers/Filter/types';
 import { Page } from '../../containers/page/Page';
 import { PropertiesWidget } from '../../containers/widgets';
-import { TimeseriesWidget } from '../../containers/widgets/TimeseriesWidget';
+import { TimeseriesWidget } from '../../containers/widgets/Timeseries/TimeseriesWidget';
 import { useOpenIn } from '../../hooks/useOpenIn';
 import { useRecentlyVisited } from '../../hooks/useRecentlyVisited';
 import { useTimeseriesByIdQuery } from '../../services/instances/timeseries/queries/useTimeseriesByIdQuery';

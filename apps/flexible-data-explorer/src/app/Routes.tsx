@@ -3,6 +3,8 @@ import { Outlet, Routes as ReactRoutes, Route } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { SearchBar } from './containers/search/SearchBar';
+import { SearchBarSwitch } from './containers/search/SearchBarSwitch';
+import { useViewModeParams } from './hooks/useParams';
 import { HomePage } from './pages/HomePage';
 import { FilePage } from './pages/Instances/FilePage';
 import { InstancesPage } from './pages/Instances/InstancesPage';
@@ -10,6 +12,16 @@ import { TimeseriesPage } from './pages/Instances/TimeseriesPage';
 import { SearchPage } from './pages/SearchPage';
 import { ThreeDPage } from './pages/ThreeDPage';
 import { FDMProvider } from './providers/FDMProvider';
+
+const ViewContainer = () => {
+  const [viewMode] = useViewModeParams();
+
+  if (viewMode === '3d') {
+    return <ThreeDPage />;
+  }
+
+  return <Outlet />;
+};
 
 const Routes = () => {
   return (
@@ -28,14 +40,13 @@ const Routes = () => {
             <Container>
               <Content>
                 <SearchBar width="1026px" inverted />
+                <SearchBarSwitch inverted />
               </Content>
-              <Outlet />
+              <ViewContainer />
             </Container>
           }
         >
           <Route path="search/:type?" element={<SearchPage />} />
-
-          <Route path="3d" element={<ThreeDPage />} />
 
           <Route path="timeseries/:externalId" element={<TimeseriesPage />} />
           <Route path="file/:externalId" element={<FilePage />} />

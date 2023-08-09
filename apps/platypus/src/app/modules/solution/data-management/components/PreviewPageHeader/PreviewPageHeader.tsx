@@ -38,7 +38,7 @@ type Props = {
   suggestionsAvailable?: boolean;
   title: string;
   typeName: string;
-  viewVersion: string;
+  viewVersion?: string;
 };
 
 export function PreviewPageHeader({
@@ -82,7 +82,7 @@ export function PreviewPageHeader({
     (transformations && transformations.length > 0) || tableHasRows;
 
   const renderTransformations = () => {
-    if (!isTransformationsEnabled) {
+    if (!isTransformationsEnabled || !viewVersion) {
       return false;
     }
 

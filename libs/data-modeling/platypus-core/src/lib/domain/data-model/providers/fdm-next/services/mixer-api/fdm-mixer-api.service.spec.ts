@@ -26,6 +26,7 @@ describe('fdm-mixer-api-service test', () => {
       externalId: 'test-external-id',
       version: '1',
       graphQl: 'type Test { name }',
+      views: [],
     };
     const { space, ...DmlVersionResult } = DmlVersion;
 

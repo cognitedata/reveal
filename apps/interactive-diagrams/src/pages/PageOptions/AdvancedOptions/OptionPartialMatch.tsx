@@ -22,8 +22,8 @@ export const OptionPartialMatch = ({ workflowId }: { workflowId: number }) => {
         <Switch
           label="Allow partial matches"
           name="partialMatchOption"
-          value={partialMatch}
-          onChange={(_e: any, nextState: boolean) => {
+          checked={partialMatch}
+          onChange={(_e, nextState) => {
             dispatch(changeOptions({ partialMatch: nextState }));
             setJobStarted(false);
           }}

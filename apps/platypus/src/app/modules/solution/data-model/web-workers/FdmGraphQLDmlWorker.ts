@@ -120,7 +120,11 @@ export class FdmGraphQLDmlWorker {
   public async setGraphQlSchema(graphQlString: string) {
     try {
       const graphQlUtils = new GraphQlUtilsService();
-      this.dataModelTypeDefs = graphQlUtils.parseSchema(graphQlString, true);
+      this.dataModelTypeDefs = graphQlUtils.parseSchema(
+        graphQlString,
+        [],
+        true
+      );
 
       const parsedLocationTypeDefMap = {} as Record<
         string,
