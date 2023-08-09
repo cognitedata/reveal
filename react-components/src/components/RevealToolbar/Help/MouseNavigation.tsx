@@ -9,37 +9,37 @@ import {
   StyledMouse,
   NavigationInstructionGrid
 } from './elements';
-import { MenuSection } from './MenuSection';
+import { Section } from './Section';
 
 export const MouseNavigation = (): ReactElement => {
   return (
-    <MenuSection
+    <Section
       title={'Mouse'}
       subTitle={'Navigate and select'}
       description={
         'Click and drag to rotate, and pan the view. Use mouse wheel to zoom the view. Left click to select'
       }>
       <NavigationInstructionGrid>
-        <InstructionText>{'Zoom / scroll'}</InstructionText>
+        <InstructionText>Zoom / scroll</InstructionText>
         <InstructionText>
-          {'Rotate'}
+          Rotate
           <br />
-          <InstructionDetail>{'Click+drag'}</InstructionDetail>
+          <InstructionDetail>Click+drag</InstructionDetail>
           <br />
           <br />
           <InstructionText>
-            {'Select Objects'}
+            Select Objects
             <br />
-            <InstructionDetail>{'Click on interactive objects'}</InstructionDetail>
+            <InstructionDetail>Click on interactive objects</InstructionDetail>
           </InstructionText>
         </InstructionText>
         <StyledMouse />
         <InstructionText>
-          {'Pan'}
+          Pan
           <br />
-          <InstructionDetail>{'Click+drag'}</InstructionDetail>
+          <InstructionDetail>Click+drag</InstructionDetail>
         </InstructionText>
       </NavigationInstructionGrid>
-    </MenuSection>
+    </Section>
   );
 };

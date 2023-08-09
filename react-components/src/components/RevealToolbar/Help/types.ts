@@ -4,7 +4,7 @@
 
 import { type ReactElement } from 'react';
 
-export type HelpMenuSectionProps = {
+export type HelpSectionProps = {
   children: ReactElement;
   title: string;
   description?: string | undefined;

@@ -3,7 +3,7 @@
  */
 
 import { type ReactElement } from 'react';
-import { type HelpMenuSectionProps } from './types';
+import { type HelpSectionProps } from './types';
 import {
   SectionContainer,
   SectionTitle,
@@ -12,12 +12,12 @@ import {
   SectionContent
 } from './elements';
 
-export const MenuSection = ({
+export const Section = ({
   children,
   title,
   description,
   subTitle
-}: HelpMenuSectionProps): ReactElement => (
+}: HelpSectionProps): ReactElement => (
   <SectionContainer>
     <SectionTitle>{title}</SectionTitle>
     <SectionSubTitle>{subTitle}</SectionSubTitle>

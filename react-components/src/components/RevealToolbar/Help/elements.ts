@@ -1,9 +1,9 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-import { Body, Colors, Detail, Title } from '@cognite/cogs.js';
+import { Body, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { Mouse } from '../../Graphics/Mouse';
+import { Mouse } from './Graphics/Mouse';
 
 export const SectionContainer = styled.div`
   display: flex;
@@ -39,14 +39,13 @@ export const InstructionText = styled(Body).attrs({
   line-height: 20px;
 `;
 
-export const InstructionDetail = styled(Detail)`
-  font-family: Inter;
+export const InstructionDetail = styled(Body).attrs({
+  level: 3
+})`
+  color: rgba(255, 255, 255, 0.7);
   font-size: 14px;
-  font-weight: 400;
   line-height: 20px;
-  letter-spacing: -0.006em;
-  text-align: left;
-  color: ${Colors['text-icon--interactive--disabled--inverted']};
+  letter-spacing: 0.006em;
   white-space: pre-line;
 `;
 
@@ -56,11 +55,16 @@ export const NavigationInstructionGrid = styled.div`
   gap: 8px;
   width: fit-content;
   justify-items: center;
+  align-items: center;
 
   ${InstructionText}:first-of-type {
     padding-left: 10px;
     grid-column: 1/-1;
     text-align: right;
+  }
+
+  ${InstructionText}:nth-of-type(-n+4) {
+    text-align: left;
   }
 
   ${InstructionText}:last-of-type {

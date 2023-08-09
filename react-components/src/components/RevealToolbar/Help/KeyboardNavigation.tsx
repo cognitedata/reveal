@@ -3,43 +3,39 @@
  */
 
 import { type ReactElement } from 'react';
-import { MenuSection } from './MenuSection';
+import { Section } from './Section';
 import { Flex } from '@cognite/cogs.js';
-import { WASDKeysNavigation, ArrowKeysNavigation } from '../../Graphics/Keyboard';
+import { QWEKeysNavigation, ArrowKeysNavigation, ASDKeysNavigation } from './Graphics/Keyboard';
 import { InstructionText, NavigationInstructionGrid } from './elements';
 
 export const KeyboardNavigation = (): ReactElement => {
   return (
-    <MenuSection
+    <Section
       title={'Keyboard'}
       subTitle={'Move and look around'}
       description={'Click and hold to move.\nYou can also use mouse in conjunction with keys.'}>
       <Flex gap={16}>
         <NavigationInstructionGrid>
-          <InstructionText>{'Forward'}</InstructionText>
-          <InstructionText>
-            <br /> {'Down'} <br /> <br /> <br /> <InstructionText>{'Left'}</InstructionText>
-          </InstructionText>
-          <WASDKeysNavigation style={{ width: 150 }} />
-          <InstructionText>
-            <br /> {'Up'} <br /> <br /> <br /> <InstructionText>{'Right'}</InstructionText>
-          </InstructionText>
-          <wbr />
-          <InstructionText>{'Back'}</InstructionText>
+          <InstructionText>Forward</InstructionText>
+          <InstructionText style={{ marginRight: -30 }}>Down</InstructionText>
+          <QWEKeysNavigation style={{ width: 150 }} />
+          <InstructionText style={{ marginLeft: -60 }}>Up</InstructionText>
+
+          <InstructionText style={{ marginRight: -60 }}>Left</InstructionText>
+          <ASDKeysNavigation style={{ width: 180, marginLeft: 30 }} />
+          <InstructionText style={{ marginLeft: -10 }}>Right</InstructionText>
+          <br />
+          <InstructionText style={{ marginLeft: 33 }}>Back</InstructionText>
         </NavigationInstructionGrid>
         <NavigationInstructionGrid>
-          <InstructionText>{'Look Up'}</InstructionText>
-          <InstructionText>
-            <br /> <br /> <br /> {'Look Right'}
-          </InstructionText>
+          <InstructionText>Look Up</InstructionText>
+          <InstructionText style={{ marginTop: 45 }}>Look Left</InstructionText>
           <ArrowKeysNavigation style={{ width: 135 }} />
-          <InstructionText>
-            <br /> <br /> <br /> {'Look Left'}
-          </InstructionText>
-          <wbr />
-          <InstructionText>{'Look Down'}</InstructionText>
+          <InstructionText style={{ marginTop: 45 }}>Look Right</InstructionText>
+          <br />
+          <InstructionText>Look Down</InstructionText>
         </NavigationInstructionGrid>
       </Flex>
-    </MenuSection>
+    </Section>
   );
 };
