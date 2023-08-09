@@ -93,7 +93,7 @@ export function SimulatorInformation({
           ) : connectorStatus === 'NONE_REPORTED' ? (
             <div>-</div>
           ) : (
-            <div>Default content</div>
+            <></>
           )}
           {connectorStatus !== 'NONE_REPORTED' &&
             `(Since ${formatDistanceToNow(
