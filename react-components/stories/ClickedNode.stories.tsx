@@ -8,11 +8,10 @@ import {
   Reveal3DResources,
   RevealContainer,
   RevealToolbar,
-  useClickedNode /* useClickedNode */
+  useClickedNode
 } from '../src';
 import { CogniteClient } from '@cognite/sdk';
 import { Color } from 'three';
-// import { ClickedNode } from '../src/higher-order-components/ClickedNode';
 import { type ReactElement, useEffect } from 'react';
 
 import { DefaultFdmConfig } from './utilities/fdmConfig';
