@@ -21,10 +21,6 @@ export const useClickedNode = (
   useEffect(() => {
     const callback = (event: PointerEventData): void => {
       void (async () => {
-        if (event === undefined) {
-          return;
-        }
-
         const intersection = await viewer.getIntersectionFromPixel(event.offsetX, event.offsetY);
 
         if (intersection === null || intersection.type !== 'cad') {
