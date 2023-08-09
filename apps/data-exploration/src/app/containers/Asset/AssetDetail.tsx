@@ -26,6 +26,8 @@ import {
   createInternalLink,
 } from '@data-exploration-lib/core';
 
+import { AllTab } from '../All';
+
 import { AssetHierarchyTab } from './AssetHierarchyTab';
 
 // Asset details tabs;
@@ -155,6 +157,16 @@ export const AssetDetail = ({
               />
               <Metadata metadata={asset.metadata} />
             </DetailsTabWrapper>
+          </Tabs.Tab>,
+          <Tabs.Tab
+            label={t('ALL_RESOURCES', 'All resources')}
+            key="all-resources"
+            tabKey="all-resources"
+          >
+            <AllTab
+              commonFilters={{ assetSubtreeIds: [{ value: asset.id }] }}
+              setCurrentResourceType={(type) => type && setSelectedTab(type)}
+            />
           </Tabs.Tab>,
           <Tabs.Tab
             label={t('HIERARCHY_TAB_LABEL', 'Hierarchy')}

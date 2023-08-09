@@ -41,7 +41,10 @@ import {
   useQueryString,
   useCurrentResourceType,
 } from '@data-exploration-app/hooks/hooks';
-import { useFilterSidebarState } from '@data-exploration-app/store';
+import {
+  useFilterSidebarState,
+  useCommonFilters,
+} from '@data-exploration-app/store';
 import {
   useAssetFilters,
   useEventsFilters,
@@ -97,6 +100,7 @@ function SearchPage() {
   const [eventFilter] = useEventsFilters();
   const [timeseriesFilter] = useTimeseriesFilters();
   const [sequenceFilter] = useSequenceFilters();
+  const [commonFilters] = useCommonFilters();
 
   const isDocumentGPTEnabled = useFlagDocumentGPT();
   const [showGPTInfo, setShowGPTInfo] = useState<boolean>(true);
@@ -214,7 +218,15 @@ function SearchPage() {
         <MainContainer $isFilterFeatureEnabled>
           <Wrapper>
             <Routes>
-              <Route path={routes.root.path} element={<AllTab />} />
+              <Route
+                path={routes.root.path}
+                element={
+                  <AllTab
+                    commonFilters={commonFilters}
+                    setCurrentResourceType={setCurrentResourceType}
+                  />
+                }
+              />
               <Route
                 path={routes.assetView.path}
                 element={<AssetSearchResultView />}
