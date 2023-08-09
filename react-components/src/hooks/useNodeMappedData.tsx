@@ -4,12 +4,11 @@
 
 import { useQuery } from '@tanstack/react-query';
 
-import { type PointerEventData, type CogniteCadModel, type CadIntersection } from '@cognite/reveal';
+import { type CogniteCadModel } from '@cognite/reveal';
 import { type CogniteInternalId, type Node3D } from '@cognite/sdk';
 import { type NodeDataResult } from '../components/Reveal3DResources/types';
 import { useFdmSdk, useSDK } from '../components/RevealContainer/SDKProvider';
-import { useEffect, useState } from 'react';
-import { type FdmAssetMappingsConfig, useReveal } from '..';
+import { type FdmAssetMappingsConfig } from '..';
 
 import assert from 'assert';
 import {
@@ -23,17 +22,9 @@ export const useNodeMappedData = (
   model: CogniteCadModel | undefined,
   fdmConfig: FdmAssetMappingsConfig | undefined
 ): NodeDataResult | undefined => {
+  const ancestors = useAncestorNodesForTreeIndex(model, treeIndex);
 
-  const ancestors = useAncestorNodesForTreeIndex(
-    model,
-    treeIndex
-  );
-
-  const mappings = useNodeMappingEdges(
-    fdmConfig,
-    model,
-    ancestors?.map((n) => n.id)
-  );
+  const mappings = useNodeMappingEdges(fdmConfig, model, ancestors?.map((n) => n.id));
 
   const selectedEdge =
     mappings !== undefined && mappings.edges.length > 0 ? mappings.edges[0] : undefined;
@@ -57,8 +48,8 @@ export const useNodeMappedData = (
     selectedNode === undefined ||
     dataView === undefined ||
     dataNode === undefined ||
-      model === undefined ||
-      treeIndex === undefined
+    model === undefined ||
+    treeIndex === undefined
   ) {
     return undefined;
   }
@@ -66,8 +57,7 @@ export const useNodeMappedData = (
   return {
     nodeExternalId: dataNode.externalId,
     view: dataView,
-    cadNode: selectedNode,
-    intersection: cadIntersection
+    cadNode: selectedNode
   };
 };
 

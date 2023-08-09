@@ -2,11 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import {
-  type AddModelOptions,
-  type SupportedModelTypes,
-  type CadIntersection
-} from '@cognite/reveal';
+import { type AddModelOptions, type SupportedModelTypes } from '@cognite/reveal';
 import { type Matrix4 } from 'three';
 import { type Source } from '../../utilities/FdmSDK';
 import { type Node3D } from '@cognite/sdk/dist/src';

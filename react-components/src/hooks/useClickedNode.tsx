@@ -2,14 +2,14 @@
  * Copyright 2023 Cognite AS
  */
 
-import { CadIntersection, type PointerEventData } from '@cognite/reveal';
+import { type CadIntersection, type PointerEventData } from '@cognite/reveal';
 import { type FdmAssetMappingsConfig, useReveal, type NodeDataResult } from '../';
 import { useEffect, useState } from 'react';
 import { useNodeMappedData } from './useNodeMappedData';
 
 export type ClickedNodeData = NodeDataResult & {
   intersection: CadIntersection;
-}
+};
 
 export const useClickedNode = (
   fdmConfig?: FdmAssetMappingsConfig | undefined
@@ -25,10 +25,7 @@ export const useClickedNode = (
           return;
         }
 
-        const intersection = await viewer.getIntersectionFromPixel(
-          event.offsetX,
-          event.offsetY
-        );
+        const intersection = await viewer.getIntersectionFromPixel(event.offsetX, event.offsetY);
 
         if (intersection === null || intersection.type !== 'cad') {
           return;
