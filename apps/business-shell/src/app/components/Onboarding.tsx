@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import {
@@ -14,6 +14,7 @@ import { useFlag } from '@cognite/react-feature-flags';
 import image1 from '../../images/carousel-image_1.png';
 import image2 from '../../images/carousel-image_2.png';
 import image3 from '../../images/carousel-image_3.png';
+import { useTracker } from '../common/metrics';
 
 export const Onboarding = () => {
   const { isEnabled: isOnboardingEnabled } = useFlag('ONBOARDING_GUIDE', {
@@ -72,13 +73,21 @@ export const Onboarding = () => {
     });
 
   const { handleState } = useOrientation();
+  const { track } = useTracker();
+
+  const onTrackEvent = useCallback(
+    (eventName: string, metaData: any) => {
+      track(`BusinessShell.Onboarding.${eventName}`, metaData);
+    },
+    [track]
+  );
 
   const onCancel = (reason: ModalCloseReason) => {
     if (reason === 'backdropClick') return;
     setOnboardingModalPopup(false);
   };
   const onOk = () => {
-    handleState({ open: true, steps });
+    handleState({ open: true, steps, onTrackEvent });
     setOnboardingModalPopup(false);
   };
   const modalTextProps = {
