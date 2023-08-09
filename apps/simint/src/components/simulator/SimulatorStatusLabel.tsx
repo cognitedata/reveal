@@ -22,11 +22,11 @@ export function SimulatorStatusLabel({
     new Date(Date.now() - HEARTBEAT_TIMEOUT_SECONDS)
   );
   const isLicenseAvailable = simulator.licenseStatus !== 'Not available';
-  const isRunningTask = simulator.connectorStatus.includes([
+  const isRunningTask = [
     'RUNNING_CALCULATION',
     'PARSING_MODEL',
     'CHECKING_LICENSE',
-  ]);
+  ].includes(simulator.connectorStatus);
 
   const statusDisplayTitle = isSimulatorAvailable
     ? isLicenseAvailable

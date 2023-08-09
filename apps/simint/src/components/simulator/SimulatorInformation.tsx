@@ -5,7 +5,7 @@ import { selectProject } from '@simint-app/store/simconfigApiProperties/selector
 import { formatDistanceToNow } from 'date-fns';
 import styled from 'styled-components/macro';
 
-import { Collapse, Loader, Skeleton } from '@cognite/cogs.js';
+import { Collapse, Icon, Skeleton } from '@cognite/cogs.js';
 import type { SimulatorInstance } from '@cognite/simconfig-api-sdk/rtk';
 import { useGetSimulatorDetailsQuery } from '@cognite/simconfig-api-sdk/rtk';
 
@@ -77,17 +77,17 @@ export function SimulatorInformation({
         <dd data-cy="connector-status">
           {connectorStatus === 'RUNNING_CALCULATION' ? (
             <div>
-              <Loader />
+              <StyledLoader type="Loader" />
               Running calculation
             </div>
           ) : connectorStatus === 'PARSING_MODEL' ? (
             <div>
-              <Loader />
+              <StyledLoader type="Loader" />
               Parsing model
             </div>
           ) : connectorStatus === 'CHECKING_LICENSE' ? (
             <div>
-              <Loader />
+              <StyledLoader type="Loader" />
               Checking license
             </div>
           ) : connectorStatus === 'NONE_REPORTED' ? (
@@ -96,10 +96,10 @@ export function SimulatorInformation({
             <></>
           )}
           {connectorStatus !== 'NONE_REPORTED' &&
-            `(Since ${formatDistanceToNow(
+            `(Elapsed time: ${formatDistanceToNow(
               new Date(connectorStatusUpdatedTime),
               {
-                addSuffix: true,
+                addSuffix: false,
               }
             )})`}
         </dd>
@@ -131,6 +131,12 @@ export function SimulatorInformation({
     </SimulatorInformationContainer>
   );
 }
+
+const StyledLoader = styled(Icon)`
+  position: relative;
+  top: 2px;
+  margin-right: 5px;
+`;
 
 export const SimulatorInformationContainer = styled.div`
   .simulator-collapse {
