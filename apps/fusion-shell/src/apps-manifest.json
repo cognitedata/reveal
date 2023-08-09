@@ -7,8 +7,7 @@
       "appType": "single-spa",
       "versionSpec": "~0.0.1",
       "routes": [
-        { "route": "/:tenantName" },
-        { "route": "/:applicationName/:tenantName" }
+        { "route": "/", "exactMatch": true }
       ]
     },
     {
