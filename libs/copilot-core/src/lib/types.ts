@@ -1,10 +1,8 @@
-import { ChainInputs } from 'langchain/chains';
-import { BaseChatModel } from 'langchain/chat_models/base';
-
 import { IconType } from '@cognite/cogs.js';
 import { CogniteClient } from '@cognite/sdk';
 
 import { sendFromCopilotEvent, sendToCopilotEvent } from './utils';
+export type CopilotLogContent = { key: string; content: string };
 export type CopilotSupportedFeatureType =
   | 'Streamlit'
   | 'IndustryCanvas'
@@ -53,9 +51,13 @@ export type CopilotDataModelSelectionMessage = {
 
 export type CopilotDataModelQueryMessage = {
   type: 'data-model-query';
-  space: string;
-  dataModel: string;
-  version: string;
+  dataModel: {
+    externalId: string;
+    version: string;
+    space: string;
+    view: string;
+    viewVersion: string;
+  };
   graphql: {
     query: string;
     variables: any;
@@ -76,6 +78,7 @@ export type CopilotMessage =
   | (CopilotUserMessage & { source: 'user' })
   | (CopilotBotMessage & {
       source: 'bot';
+      logs?: CopilotLogContent[];
     });
 
 export type CopilotAction = {
@@ -84,7 +87,8 @@ export type CopilotAction = {
 } & (
   | {
       // THIS IS NOT CACHED, MEANING IF CHAT IS EVER RELOADED, THIS WILL BE LOST
-      onClick?: () => void;
+      onClick?: (option?: string) => void;
+      options?: { label: string; value: string }[];
     }
   | {
       fromCopilotEvent: Parameters<typeof sendFromCopilotEvent>;
@@ -136,7 +140,13 @@ export type CopilotEvents = {
     GQL_QUERY: {
       query: string;
       variables: any;
-      dataModel: { externalId: string; space: string; version: string };
+      dataModel: {
+        externalId: string;
+        space: string;
+        version: string;
+        view: string;
+        viewVersion: string;
+      };
     };
     GET_LANGUAGE: undefined;
     GET_ACTIVITIES: undefined;

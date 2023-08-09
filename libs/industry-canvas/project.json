@@ -16,7 +16,7 @@
       "executor": "@nx/rollup:rollup",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/libs/industry-canvas",
+        "outputPath": "dist/libs/@industry-canvas",
         "tsConfig": "libs/industry-canvas/tsconfig.lib.json",
         "entryFile": "libs/industry-canvas/src/index.ts",
         "external": ["react/jsx-runtime"],

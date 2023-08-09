@@ -5,9 +5,11 @@ export type { ContainerReference } from './lib/types';
 export * from './lib/IndustryCanvasPage';
 export * from './lib/IndustryCanvasHomePage';
 export * from './lib/common';
+export * from './lib/hooks/use-query/useListCanvases';
+export * from './lib/services/IndustryCanvasService';
 
 export { IndustryCanvasProvider } from './lib/IndustryCanvasContext';
-export { UserProfileProvider } from './lib/UserProfileProvider';
+export * from './lib/UserProfileProvider';
 export { SpaceProvider } from './lib/SpaceProvider';
 
 export { default as TrackingContextProvider } from './lib/utils/tracking/TrackingContextProvider';

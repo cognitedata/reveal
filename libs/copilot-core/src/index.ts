@@ -6,3 +6,4 @@ export * from './lib/toolchains';
 export * from './lib/hooks';
 export * from './lib/chatModels';
 export * from './app/Copilot';
+export * from './app/components';

@@ -14,6 +14,7 @@ import { getContainer } from '../../utils/getContainer';
 import { Editor } from '../Editor/Editor';
 
 import { ResponsiveActions } from './components/ResponsiveActions';
+import { MessageBase } from './MessageBase';
 
 export const CodeMessage = ({
   message: { data },
@@ -53,64 +54,66 @@ export const CodeMessage = ({
   const [open, setOpen] = useState(false);
   const [showDiff, setShowDiff] = useState(false);
   return (
-    <Wrapper direction="column" gap={4}>
-      <Body level={2}>Click to view the follow code in full screen</Body>
-      <Flex
-        style={{
-          overflow: 'hidden',
-          cursor: 'pointer',
-          position: 'relative',
-          maxHeight: 200,
-        }}
-        onClick={() => setOpen(true)}
-      >
+    <MessageBase message={{ data: { ...data, source: 'bot' } }}>
+      <Wrapper direction="column" gap={4}>
+        <Body level={2}>Click to view the follow code in full screen</Body>
         <Flex
-          className="hover-code"
-          justifyContent="center"
-          alignItems="center"
+          style={{
+            overflow: 'hidden',
+            cursor: 'pointer',
+            position: 'relative',
+            maxHeight: 200,
+          }}
+          onClick={() => setOpen(true)}
         >
-          <Icon type="Expand" />
+          <Flex
+            className="hover-code"
+            justifyContent="center"
+            alignItems="center"
+          >
+            <Icon type="Expand" />
+          </Flex>
+          <Highlight className={language}>{content}</Highlight>
         </Flex>
-        <Highlight className={language}>{content}</Highlight>
-      </Flex>
-      <Modal
-        visible={open}
-        title="Code preview"
-        size="full-screen"
-        onCancel={() => setOpen(false)}
-        hideFooter
-        hidePaddings
-        getContainer={getContainer()}
-        className="full-height"
-      >
-        <Flex
-          direction="column"
-          gap={16}
-          style={{ padding: 16, height: '100%' }}
+        <Modal
+          visible={open}
+          title="Code preview"
+          size="full-screen"
+          onCancel={() => setOpen(false)}
+          hideFooter
+          hidePaddings
+          getContainer={getContainer()}
+          className="full-height"
         >
-          <Flex style={{ flex: 1 }}>
-            <Editor
-              language={language}
-              code={content}
-              prevCode={showDiff ? prevContent : undefined}
+          <Flex
+            direction="column"
+            gap={16}
+            style={{ padding: 16, height: '100%' }}
+          >
+            <Flex style={{ flex: 1 }}>
+              <Editor
+                language={language}
+                code={content}
+                prevCode={showDiff ? prevContent : undefined}
+              />
+            </Flex>
+            <ResponsiveActions
+              actions={[
+                ...(prevContent
+                  ? [
+                      {
+                        content: showDiff ? 'Hide Diff' : 'Show Diff',
+                        onClick: () => setShowDiff(!showDiff),
+                      },
+                    ]
+                  : []),
+                ...actions,
+              ]}
             />
           </Flex>
-          <ResponsiveActions
-            actions={[
-              ...(prevContent
-                ? [
-                    {
-                      content: showDiff ? 'Hide Diff' : 'Show Diff',
-                      onClick: () => setShowDiff(!showDiff),
-                    },
-                  ]
-                : []),
-              ...actions,
-            ]}
-          />
-        </Flex>
-      </Modal>
-    </Wrapper>
+        </Modal>
+      </Wrapper>
+    </MessageBase>
   );
 };
 

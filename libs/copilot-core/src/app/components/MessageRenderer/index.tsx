@@ -1,32 +1,17 @@
-import React from 'react';
-
-import { Renderer } from '@botui/react/dist/types';
-
 import { CodeMessage } from './CodeMessage';
 import { DataModelMessage } from './DataModelMessage';
+import { DataQueryMessage } from './DataQueryMessage';
 import { HumanApprovalMessage } from './HumanApprovalMessage';
-import { MessageBase } from './MessageBase';
 import { TextMessage } from './TextMessage';
 
-const renderers = {
+export const messageRenderers = {
   text: TextMessage,
   code: CodeMessage,
-  'data-model-query': TextMessage,
+  'data-model-query': DataQueryMessage,
   'data-model': DataModelMessage,
   'data-models': DataModelMessage,
   'human-approval': HumanApprovalMessage,
 };
 
-export const messageRenderers = Object.entries(renderers).reduce(
-  (prev, [key, Value]) => {
-    return {
-      ...prev,
-      [key]: (props) => (
-        <MessageBase {...props}>
-          <Value {...props} />
-        </MessageBase>
-      ),
-    };
-  },
-  {} as Renderer
-);
+export * from './MessageBase';
+export * from './components/ResponsiveActions';
