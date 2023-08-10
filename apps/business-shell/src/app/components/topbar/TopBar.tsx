@@ -29,26 +29,26 @@ const apps = [
     icon: 'InField',
     name: 'InField',
     description: 'Plan and perform field operations',
-    link: '/infield',
+    link: 'https://infield.cogniteapp.com/',
   },
 
   {
     icon: 'Maintain',
     name: 'Maintain',
     description: 'Optimize and analyze maintenance plans',
-    link: '/maintain',
+    link: 'https://maintain.cogniteapp.com/',
   },
   {
     icon: 'BestDay',
     name: 'InRobot',
     description: 'Deploy and manage robots',
-    link: '/inrobot',
+    link: 'https://inrobot.cogniteapp.com/',
   },
   {
     icon: 'CDF',
     name: 'Fusion',
     description: 'Integrate and manage data',
-    link: '/',
+    link: 'https://fusion.cognite.com/',
   },
 ] as {
   icon: ProductLogoProps['type'];
@@ -138,37 +138,39 @@ export const TopBar: FC<Props> = () => {
             <Divider spacing="8px" direction="vertical" length="20px" />
           </>
         )}
-        {navButtons.map((navButton) => (
-          <TopbarExp.Button
-            key={navButton.label}
-            toggled={location.pathname === navButton.link}
-            onClick={() => {
-              navigate(navButton.link);
-            }}
-          >
-            {navButton.label}
-          </TopbarExp.Button>
-        ))}
+        <Flex className="navigation-bar" gap={12}>
+          {navButtons.map((navButton) => (
+            <TopbarExp.Button
+              key={navButton.label}
+              toggled={location.pathname === navButton.link}
+              onClick={() => {
+                navigate(navButton.link);
+              }}
+            >
+              {navButton.label}
+            </TopbarExp.Button>
+          ))}
 
-        <Dropdown
-          visible={isAppSelectorVisible}
-          onClickOutside={setFalse}
-          offset={[0, 18]}
-          maxWidth={1000}
-          content={<AppSelector />}
-        >
-          <TopbarExp.Button
-            onClick={toggle}
-            toggled={isAppSelectorVisible}
-            icon="ChevronDown"
-            iconPlacement="right"
+          <Dropdown
+            visible={isAppSelectorVisible}
+            onClickOutside={setFalse}
+            offset={[0, 18]}
+            maxWidth={1000}
+            content={<AppSelector />}
           >
-            {t('LABEL_APPS')}
-          </TopbarExp.Button>
-        </Dropdown>
+            <TopbarExp.Button
+              onClick={toggle}
+              toggled={isAppSelectorVisible}
+              icon="ChevronDown"
+              iconPlacement="right"
+            >
+              {t('LABEL_APPS')}
+            </TopbarExp.Button>
+          </Dropdown>
+        </Flex>
       </TopbarExp.Left>
       <TopbarExp.Right>
-        <Flex alignItems="center" gap={8}>
+        <Flex alignItems="center" className="user-menu" gap={8}>
           <HelpCenter />
           <UserMenu />
         </Flex>

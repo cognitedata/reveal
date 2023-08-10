@@ -43,7 +43,7 @@ export const AppSelector = () => {
 
   return (
     <AppSelectorWrapper>
-      <AppSelectorItem onClick={navigate('/infield')}>
+      <AppSelectorItem onClick={navigate('https://infield.cogniteapp.com/')}>
         <LogoWrapper>
           <ProductLogo type="InField" />
         </LogoWrapper>
@@ -52,7 +52,7 @@ export const AppSelector = () => {
           <p>{t('INFIELD_APP_SUBTITLE')}</p>
         </div>
       </AppSelectorItem>
-      <AppSelectorItem onClick={navigate('/maintain')}>
+      <AppSelectorItem onClick={navigate('https://maintain.cogniteapp.com/')}>
         <LogoWrapper>
           <ProductLogo type="Maintain" />
         </LogoWrapper>
@@ -61,7 +61,7 @@ export const AppSelector = () => {
           <p>{t('MAINTAIN_APP_SUBTITLE')}</p>
         </div>
       </AppSelectorItem>
-      <AppSelectorItem onClick={navigate('/inrobot')}>
+      <AppSelectorItem onClick={navigate('https://inrobot.cogniteapp.com/')}>
         <LogoWrapper>
           <ProductLogo type="BestDay" />
         </LogoWrapper>
