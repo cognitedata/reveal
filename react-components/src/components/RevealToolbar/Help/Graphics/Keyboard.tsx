@@ -79,7 +79,7 @@ const DownArrowKey = (props: SVGProps<SVGSVGElement>): ReactElement => (
   </svg>
 );
 
-const LeftArrowKey= (props: SVGProps<SVGSVGElement>): ReactElement => (
+const LeftArrowKey = (props: SVGProps<SVGSVGElement>): ReactElement => (
   <svg
     width="46"
     height="46"
