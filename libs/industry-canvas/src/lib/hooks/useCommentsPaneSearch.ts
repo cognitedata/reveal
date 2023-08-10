@@ -2,7 +2,6 @@ import { useMemo } from 'react';
 
 import { UserProfile } from '../UserProfileProvider';
 import caseInsensitiveIncludes from '../utils/caseInsensitiveIncludes';
-import caseInsensitiveStartsWith from '../utils/caseInsensitiveStartsWith';
 
 type UseCommentsPaneSearchProps<T> = {
   comments: T[];
@@ -30,18 +29,11 @@ export const useCommentsPaneSearch = <
       comments
         .filter(
           (comment) =>
-            caseInsensitiveStartsWith(
+            caseInsensitiveIncludes(
               comment.createdBy?.displayName,
               searchString
             ) ||
-            caseInsensitiveStartsWith(
-              comment.createdBy?.givenName,
-              searchString
-            ) ||
-            caseInsensitiveStartsWith(
-              comment.createdBy?.surname,
-              searchString
-            ) ||
+            caseInsensitiveIncludes(comment.createdBy?.email, searchString) ||
             caseInsensitiveIncludes(comment.text, searchString)
         )
         .reverse(), // We reverse the array to show the most recent message first in the list.

@@ -8,6 +8,8 @@ import {
   useState,
 } from 'react';
 
+import * as Sentry from '@sentry/browser';
+
 import {
   AuthProvider as UnifiedSigninAuthProvider,
   useAuth,
@@ -70,6 +72,12 @@ const InnerAuthProvider: FC<PropsWithChildren<Props>> = ({
     if (!user.preferred_username || !user.name) {
       throw new Error('User does not have a name');
     }
+
+    Sentry.setUser({
+      id: user.id,
+      username: user.preferred_username || user.name,
+      email: user.email,
+    });
 
     return {
       status: 'AUTHENTICATED',

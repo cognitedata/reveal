@@ -1,4 +1,4 @@
-import { useCallback, Fragment } from 'react';
+import { Fragment } from 'react';
 
 import styled from 'styled-components';
 
@@ -61,16 +61,6 @@ export const CommentDisplay = ({
   users,
   sortOrder = 'ASC',
 }: CommentDisplayProps) => {
-  const getAuthorById = useCallback(
-    (userId: string | undefined) => {
-      return (
-        users?.find((user) => user.userIdentifier === userId) ?? {
-          displayName: 'Unknown user',
-        }
-      );
-    },
-    [users]
-  );
   const sortedList = commentList
     .filter((comment) => isNonEmptyString(comment.text))
     .sort((a, b) =>
@@ -84,21 +74,12 @@ export const CommentDisplay = ({
       {sortedList.map((el) => (
         <Fragment key={`comment-display-${el.externalId}-${el.createdTime}`}>
           <Flex className="comment-item" alignItems="center" gap={16}>
-            <Avatar
-              text={
-                getAuthorById(el.createdById || el.createdBy?.userIdentifier)
-                  .displayName
-              }
-            />
+            <Avatar text={el.createdBy?.displayName} />
             <Flex direction="column" style={{ flex: 1 }} gap={8}>
               <Flex gap={8}>
-                <Overline level={3} style={{ flex: 1 }}>
-                  {
-                    getAuthorById(
-                      el.createdById || el.createdBy?.userIdentifier
-                    ).displayName
-                  }
-                </Overline>
+                <StyledOverline level={3} style={{ flex: 1 }}>
+                  {el.createdBy?.displayName}
+                </StyledOverline>
                 <Overline level={3} muted>
                   {formatDistanceToNow(el.createdTime, { addSuffix: true })}
                 </Overline>
@@ -116,4 +97,8 @@ export const CommentDisplay = ({
 const NameTag = styled(Chip)`
   margin-right: 2px;
   margin-left: 2px;
+`;
+
+const StyledOverline = styled(Overline)`
+  color: var(--cogs-text-icon--medium);
 `;

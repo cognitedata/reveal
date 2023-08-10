@@ -9,9 +9,9 @@ import GlobalStyle from './app/utils/globalStyles';
 import GlobalStyles from './GlobalStyles';
 import { translations } from './i18n';
 
-export const AppWrapper = () => {
-  const projectName = 'flexible-data-explorer';
+const projectName = 'flexible-data-explorer';
 
+export const AppWrapper = () => {
   return (
     <GlobalStyles>
       <I18nWrapper translations={translations} defaultNamespace={projectName}>
