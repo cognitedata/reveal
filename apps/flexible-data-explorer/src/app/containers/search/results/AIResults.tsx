@@ -76,16 +76,10 @@ export const AIResults = () => {
         const {
           graphql: { query: newGqlQuery, variables: newVariables },
           dataModel: newDataModel,
-          version: newVersion,
-          space: newSpace,
         } = message;
         setGQLQuery(newGqlQuery);
         setVariables(newVariables);
-        setDataModel({
-          externalId: newDataModel,
-          version: newVersion,
-          space: newSpace,
-        });
+        setDataModel(newDataModel);
         setIsAILoading(false);
       }
     }

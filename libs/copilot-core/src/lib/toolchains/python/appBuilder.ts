@@ -9,6 +9,7 @@ import {
   sendFromCopilotEvent,
   sendToCopilotEvent,
 } from '../../utils';
+import { getCopilotLogs } from '../../utils/logging';
 
 import { APP_BUILDER_PROMPT } from './prompts';
 
@@ -32,6 +33,7 @@ export class AppBuilderChain extends CogniteBaseChain {
 
         const [code] = await callPromptChain(
           this,
+          'build app',
           {
             template: APP_BUILDER_PROMPT,
             input_variables: ['input'] as const,
@@ -47,6 +49,7 @@ export class AppBuilderChain extends CogniteBaseChain {
             content: code,
             prevContent,
             chain: this.constructor.name,
+            logs: getCopilotLogs(this.messageKey),
           },
         ]);
 

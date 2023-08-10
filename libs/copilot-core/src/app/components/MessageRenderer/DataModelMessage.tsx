@@ -18,6 +18,8 @@ import {
 } from '../../../lib/types';
 import { useDataModels } from '../../hooks/useDataModels';
 
+import { MessageBase } from './MessageBase';
+
 const CustomOption = ({
   innerRef,
   innerProps,
@@ -94,70 +96,75 @@ export const DataModelMessage = ({
   }, [message]);
 
   return (
-    <Wrapper direction="column" gap={6}>
-      <Body level={2}>{message.content}</Body>
-      <Select
-        placeholder="Select data models"
-        isMulti
-        menuPortalTarget={document.body}
-        components={{ ...SelectComponents, Option: CustomOption }}
-        disabled={!message.pending}
-        value={
-          selectedDataModels
-            ? dataModelOptions.filter((el) =>
-                selectedDataModels.some(
-                  (selected) =>
-                    selected.dataModel === el.dataModel &&
-                    selected.space === el.space
+    <MessageBase
+      message={{ data: { ...message, source: 'bot' } as any }}
+      hideActions
+    >
+      <Wrapper direction="column" gap={6}>
+        <Body level={2}>{message.content}</Body>
+        <Select
+          placeholder="Select data models"
+          isMulti
+          menuPortalTarget={document.body}
+          components={{ ...SelectComponents, Option: CustomOption }}
+          disabled={!message.pending}
+          value={
+            selectedDataModels
+              ? dataModelOptions.filter((el) =>
+                  selectedDataModels.some(
+                    (selected) =>
+                      selected.dataModel === el.dataModel &&
+                      selected.space === el.space
+                  )
                 )
-              )
-            : undefined
-        }
-        options={dataModelOptions}
-        onChange={(
-          values: {
-            dataModel: string;
-            space: string;
-            version: string;
-          }[]
-        ) => {
-          if (!values) {
+              : undefined
+          }
+          options={dataModelOptions}
+          onChange={(
+            values: {
+              dataModel: string;
+              space: string;
+              version: string;
+            }[]
+          ) => {
+            if (!values) {
+              if (message.type === 'data-model') {
+                return;
+              } else {
+                updateMessage(key, {
+                  ...message,
+                  dataModels: values || [],
+                });
+              }
+              return;
+            }
             if (message.type === 'data-model') {
               return;
             } else {
               updateMessage(key, {
                 ...message,
-                dataModels: values || [],
+                dataModels: values,
               });
             }
-            return;
-          }
-          if (message.type === 'data-model') {
-            return;
-          } else {
-            updateMessage(key, {
-              ...message,
-              dataModels: values,
-            });
-          }
-        }}
-      />
-      {message.pending && (
-        <Button
-          id="confirm"
-          type="primary"
-          onClick={() => {
-            updateMessage(key, {
-              ...message,
-              pending: false,
-            } as CopilotDataModelSelectionMessage);
           }}
-          disabled={!(selectedDataModels.length > 0)}
-        >
-          Confirm
-        </Button>
-      )}
-    </Wrapper>
+        />
+        {message.pending && (
+          <Button
+            id="confirm"
+            type="primary"
+            onClick={() => {
+              updateMessage(key, {
+                ...message,
+                pending: false,
+              } as CopilotDataModelSelectionMessage);
+            }}
+            disabled={!(selectedDataModels.length > 0)}
+          >
+            Confirm
+          </Button>
+        )}
+      </Wrapper>
+    </MessageBase>
   );
 };
 

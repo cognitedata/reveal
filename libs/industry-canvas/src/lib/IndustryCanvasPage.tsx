@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { ResourceSelector } from '@data-exploration/containers';
+import { useFromCopilotEventHandler } from '@fusion/copilot-core';
 import { v4 as uuid } from 'uuid';
 
 import { createLink, PageTitle } from '@cognite/cdf-utilities';
@@ -31,6 +32,7 @@ import {
   ResourceItem,
   Splitter,
 } from '@cognite/data-exploration';
+import { CogniteClient } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 import {
   UnifiedViewer,
@@ -68,6 +70,7 @@ import { useSelectedAnnotationOrContainer } from './hooks/useSelectedAnnotationO
 import { useTooltipsOptions } from './hooks/useTooltipsOptions';
 import useTrackCanvasViewed from './hooks/useTrackCanvasViewed';
 import { useTranslation } from './hooks/useTranslation';
+import resolveGqlToFdmInstanceContainerReferences from './hooks/utils/resolveGqlToFdmInstanceContainerReferences';
 import { IndustryCanvas } from './IndustryCanvas';
 import { useIndustryCanvasContext } from './IndustryCanvasContext';
 import { useListCommentsQuery } from './services/comments/hooks';
@@ -96,6 +99,21 @@ export type OnAddContainerReferences = (
 
 const APPLICATION_ID_INDUSTRY_CANVAS = 'industryCanvas';
 const DEFAULT_RIGHT_SIDE_PANEL_WIDTH = 700;
+
+const useCopilotGqlResolver = (
+  sdk: CogniteClient,
+  onAddContainerReferences: OnAddContainerReferences
+) => {
+  useFromCopilotEventHandler('GQL_QUERY', ({ query, variables, dataModel }) => {
+    resolveGqlToFdmInstanceContainerReferences(sdk, {
+      query,
+      variables,
+      dataModel,
+    }).then((containerReferences) =>
+      onAddContainerReferences(containerReferences)
+    );
+  });
+};
 
 export const IndustryCanvasPage = () => {
   const trackUsage = useMetrics();
@@ -435,6 +453,8 @@ export const IndustryCanvasPage = () => {
       });
     }
   };
+
+  useCopilotGqlResolver(sdk, onAddContainerReferences);
 
   useEffect(() => {
     if (unifiedViewerRef === null || hasZoomedToFitOnInitialLoad) {
