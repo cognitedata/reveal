@@ -91,7 +91,7 @@ export const DataHistoryChart = ({
         <XAxis>
           <Detail muted>
             {aggregationInterval === 'daily'
-              ? t('thirthy-days-ago')
+              ? t('thirty-days-ago')
               : t('seventy-two-hours-ago')}
           </Detail>
           <Detail muted>{t('now')}</Detail>

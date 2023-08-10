@@ -35,7 +35,7 @@ export const SourceAuthentication = ({
           <Button
             onClick={() => setIsEditModalOpen(true)}
             size="small"
-            type="ghost"
+            type="ghost-accent"
           >
             {t('edit')}
           </Button>
