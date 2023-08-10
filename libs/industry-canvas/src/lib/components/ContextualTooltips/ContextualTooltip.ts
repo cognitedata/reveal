@@ -72,6 +72,10 @@ export const Description = styled(Body).attrs({
 `;
 
 export const ButtonsContainer = styled.div`
+  button.cogs-menu-item {
+    color: ${Colors['text-icon--muted--inverted']};
+  }
+
   display: flex;
   flex-direction: row;
   align-items: center;
