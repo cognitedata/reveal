@@ -22,18 +22,18 @@ export const MouseNavigation = (): ReactElement => {
       }>
       <MouseNavigationInstructionGrid>
         <InstructionText>Zoom / scroll</InstructionText>
-        <InstructionText style={{ marginBottom: 30, marginRight: 10, textAlign: 'right' }}>
+        <InstructionText style={{ marginBottom: 30, textAlign: 'right' }}>
           Rotate
           <InstructionDetail>Click+drag</InstructionDetail>
         </InstructionText>
         <MouseNavigationCombinedGridItem>
           <StyledMouse />
         </MouseNavigationCombinedGridItem>
-        <InstructionText style={{ marginBottom: 30, marginLeft: 10, textAlign: 'left' }}>
+        <InstructionText style={{ marginBottom: 30, textAlign: 'left' }}>
           Pan
           <InstructionDetail>Click+drag</InstructionDetail>
         </InstructionText>
-        <InstructionText style={{ marginTop: -70, marginRight: 10, textAlign: 'right' }}>
+        <InstructionText style={{ marginTop: -50, textAlign: 'right' }}>
           Select Objects
           <InstructionDetail>Click on interactive objects</InstructionDetail>
         </InstructionText>

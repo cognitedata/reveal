@@ -5,8 +5,12 @@
 import { type ReactElement } from 'react';
 import { Section } from './Section';
 import { Flex } from '@cognite/cogs.js';
-import { QWEKeysNavigation, ArrowKeysNavigation, ASDKeysNavigation } from './Graphics/Keyboard';
-import { InstructionText, KeyboardNavigationInstructionGrid } from './elements';
+import { ArrowKeysNavigation, QWEASDKeysNavigation } from './Graphics/Keyboard';
+import {
+  InstructionText,
+  KeyboardNavigationInstructionGrid,
+  ArrowKeyboardNavigationInstructionGrid
+} from './elements';
 
 export const KeyboardNavigation = (): ReactElement => {
   return (
@@ -14,27 +18,36 @@ export const KeyboardNavigation = (): ReactElement => {
       title={'Keyboard'}
       subTitle={'Move and look around'}
       description={'Click and hold to move.\nYou can also use mouse in conjunction with keys.'}>
-      <Flex gap={16}>
-        <KeyboardNavigationInstructionGrid>
-          <InstructionText>Forward</InstructionText>
-          <InstructionText style={{ marginRight: -30 }}>Down</InstructionText>
-          <QWEKeysNavigation style={{ width: 150 }} />
-          <InstructionText style={{ marginLeft: -60 }}>Up</InstructionText>
-
-          <InstructionText style={{ marginRight: -60 }}>Left</InstructionText>
-          <ASDKeysNavigation style={{ width: 180, marginLeft: 30 }} />
-          <InstructionText style={{ marginLeft: -10 }}>Right</InstructionText>
-          <br />
-          <InstructionText style={{ marginLeft: 33 }}>Back</InstructionText>
-        </KeyboardNavigationInstructionGrid>
-        <KeyboardNavigationInstructionGrid>
+      <Flex gap={8} style={{ paddingTop: 12 }}>
+        <Flex direction="column">
+          <KeyboardNavigationInstructionGrid>
+            <InstructionText>Down</InstructionText>
+            <InstructionText>Forward</InstructionText>
+            <InstructionText>Up</InstructionText>
+            <QWEASDKeysNavigation.Q />
+            <QWEASDKeysNavigation.W />
+            <QWEASDKeysNavigation.E />
+          </KeyboardNavigationInstructionGrid>
+          <KeyboardNavigationInstructionGrid style={{ paddingLeft: 15, paddingTop: 8 }}>
+            <QWEASDKeysNavigation.A />
+            <QWEASDKeysNavigation.S style={{ marginLeft: 6 }} />
+            <QWEASDKeysNavigation.D style={{ marginLeft: 6 }} />
+            <InstructionText>Left</InstructionText>
+            <InstructionText>Back</InstructionText>
+            <InstructionText>Right</InstructionText>
+          </KeyboardNavigationInstructionGrid>
+        </Flex>
+        <ArrowKeyboardNavigationInstructionGrid>
           <InstructionText>Look Up</InstructionText>
-          <InstructionText style={{ marginTop: 45 }}>Look Left</InstructionText>
-          <ArrowKeysNavigation style={{ width: 135 }} />
-          <InstructionText style={{ marginTop: 45 }}>Look Right</InstructionText>
+          <InstructionText>Look Left</InstructionText>
+          <ArrowKeysNavigation.Up />
+          <InstructionText>Look Right</InstructionText>
+          <ArrowKeysNavigation.Left />
+          <ArrowKeysNavigation.Down />
+          <ArrowKeysNavigation.Right />
           <br />
           <InstructionText>Look Down</InstructionText>
-        </KeyboardNavigationInstructionGrid>
+        </ArrowKeyboardNavigationInstructionGrid>
       </Flex>
     </Section>
   );

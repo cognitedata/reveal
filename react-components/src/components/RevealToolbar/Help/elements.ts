@@ -56,6 +56,7 @@ export const MouseNavigationInstructionGrid = styled.div`
   width: fit-content;
   justify-items: center;
   align-items: center;
+  padding-top: 12px;
 
   ${InstructionText}:first-of-type {
     padding-left: 10px;
@@ -75,8 +76,19 @@ export const MouseNavigationCombinedGridItem = styled.div`
 
 export const KeyboardNavigationInstructionGrid = styled.div`
   display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  width: fit-content;
+  justify-items: center;
+  align-items: center;
+  text-align: center;
+`;
+
+export const ArrowKeyboardNavigationInstructionGrid = styled.div`
+  display: grid;
   grid-template-columns: 2fr 1fr 1.5fr;
   gap: 8px;
+  padding-left: 12px;
   width: fit-content;
   justify-items: center;
   align-items: center;
@@ -88,7 +100,7 @@ export const KeyboardNavigationInstructionGrid = styled.div`
   }
 
   ${InstructionText}:last-of-type {
-    text-align: left;
+    text-align: center;
   }
 `;
 
@@ -97,6 +109,7 @@ export const TouchNavigationInstructionGrid = styled.div`
   grid-template-columns: 2fr 1fr 1.5fr;
   width: fit-content;
   justify-items: center;
+  padding-top: 12px;
 
   ${InstructionText}:first-of-type {
     padding-left: 10px;
