@@ -3,7 +3,7 @@ import { ComponentProps } from 'react';
 import { defaultTranslations } from '@charts-app/components/NodeEditor/translations';
 import styled from 'styled-components/macro';
 
-import { Icon, Menu, SegmentedControl, Title, Tooltip } from '@cognite/cogs.js';
+import { Menu, SegmentedControl, Title } from '@cognite/cogs.js';
 
 import ReactFlowNodeEditor from '../ReactFlowNodeEditor';
 
@@ -25,12 +25,10 @@ const WorkflowSettings = ({
       <DropdownContainer>
         <ATitleWrapper>
           <Title level={6}>{t['Automatic data alignment']}</Title>
-          <Tooltip
-            content={t['Automatically align time stamp of input time series']}
-          >
-            <Icon type="Info" />
-          </Tooltip>
         </ATitleWrapper>
+        <ATextWrapper>
+          {t['Automatically align time stamp of input time series']}
+        </ATextWrapper>
         {readOnly && (settings.autoAlign ? t.On : t.Off)}
         {!readOnly && (
           <FormWrapper>
@@ -53,7 +51,7 @@ const WorkflowSettings = ({
 };
 
 const DropdownContainer = styled.div`
-  width: 220px;
+  width: 270px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -65,7 +63,20 @@ const ATitleWrapper = styled.div`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 4px;
+
+  h6 {
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+  }
+`;
+
+const ATextWrapper = styled.p`
+  margin-bottom: 16px;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
 `;
 
 const FormWrapper = styled.div`
