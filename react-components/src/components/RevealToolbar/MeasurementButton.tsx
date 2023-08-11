@@ -11,8 +11,7 @@ const distancesInFeetAndMeters = (distanceInMeters: number): string => {
   const distanceInFeet = distanceInMeters * 3.281;
   const distanceInFeetInt = Math.floor(distanceInFeet);
   const distanceInches = Math.round(12 * (distanceInFeet - distanceInFeetInt));
-  const distances = `${distanceInMeters.toFixed(2)} m\n ${distanceInFeetInt}' ${distanceInches}''`;
-  return distances;
+  return  `${distanceInMeters.toFixed(2)} m\n ${distanceInFeetInt}' ${distanceInches}''`;
 };
 
 export const MeasurementButton = (): ReactElement => {
