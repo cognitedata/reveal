@@ -2,16 +2,17 @@
  * Copyright 2023 Cognite AS
  */
 
-import { useMemo, type ReactElement, useState } from 'react';
+import { useMemo, type ReactElement, useState, useEffect } from 'react';
 import { useReveal } from '../RevealContainer/RevealContext';
 import { Button } from '@cognite/cogs.js';
 import { MeasurementTool } from '@cognite/reveal/tools';
+import { FEET_TO_INCHES, METERS_TO_FEET } from '../../utilities/constants';
 
 const distancesInFeetAndMeters = (distanceInMeters: number): string => {
-  const distanceInFeet = distanceInMeters * 3.281;
+  const distanceInFeet = distanceInMeters * METERS_TO_FEET;
   const distanceInFeetInt = Math.floor(distanceInFeet);
-  const distanceInches = Math.round(12 * (distanceInFeet - distanceInFeetInt));
-  return  `${distanceInMeters.toFixed(2)} m\n ${distanceInFeetInt}' ${distanceInches}''`;
+  const distanceInches = Math.round(FEET_TO_INCHES * (distanceInFeet - distanceInFeetInt));
+  return `${distanceInMeters.toFixed(2)} m\n ${distanceInFeetInt}' ${distanceInches}''`;
 };
 
 export const MeasurementButton = (): ReactElement => {
@@ -49,6 +50,14 @@ export const MeasurementButton = (): ReactElement => {
       exitMeasurement();
     }
   };
+
+  useEffect(() => {
+    return () => {
+      if (measurementEnabled) {
+        exitMeasurement();
+      }
+    };
+  }, []);
 
   return (
     <Button
