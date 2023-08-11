@@ -89,6 +89,23 @@ const TopBarSections = ({ onClickHome }: TopBarSectionsProps): JSX.Element => {
 const StyledSectionDropdownMenu = styled(Menu)`
   max-width: 400px;
   min-width: 300px;
+
+  @media (min-height: 630px) {
+    max-height: 524px;
+    overflow: scroll;
+  }
+  @media (min-height: 647px) {
+    max-height: 544px;
+    overflow: scroll;
+  }
+  @media (min-height: 527px) {
+    max-height: 424px;
+    overflow: scroll;
+  }
+  @media (min-height: 695px) {
+    max-height: 608px;
+    overflow: scroll;
+  }
 `;
 
 export const StyledSectionDropdownButton = styled(Button)<{
