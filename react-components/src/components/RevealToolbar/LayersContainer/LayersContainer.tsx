@@ -7,11 +7,14 @@ import styled from 'styled-components';
 import { CadModelLayersContainer } from './CadModelLayersContainer';
 import { Image360CollectionLayerContainer } from './Image360LayersContainer';
 import { PointCloudLayersContainer } from './PointCloudLayersContainer';
-import { type ReactElement } from 'react';
+import { type Dispatch, type SetStateAction, type ReactElement } from 'react';
 import { type Reveal3DResourcesLayersProps } from './types';
 import { useReveal } from '../../RevealContainer/RevealContext';
 
-const LayersContainer = ({ props }: { props: Reveal3DResourcesLayersProps }): ReactElement => {
+const LayersContainer = (
+  { props }: { props: Reveal3DResourcesLayersProps },
+  setVisible: Dispatch<SetStateAction<boolean>>
+): ReactElement => {
   const viewer = useReveal();
   return (
     <>

@@ -59,7 +59,10 @@ export function RevealContainer({
   return (
     <SDKProvider sdk={sdk}>
       <QueryClientProvider client={queryClient}>
-        <div style={{ width: '100%', height: '100%', overflow: 'hidden' }} ref={wrapperDomElement}>
+        <div
+          style={{ width: '100%', height: '100%', overflow: 'hidden' }}
+          ref={wrapperDomElement}
+          id="reveal-canvas-dom-element">
           {mountChildren()}
         </div>
       </QueryClientProvider>
