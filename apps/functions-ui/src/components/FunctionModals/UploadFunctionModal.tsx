@@ -23,7 +23,6 @@ import {
   checkFile,
   checkFloat,
 } from '@functions-ui/utils/formValidations';
-import { useLimits } from '@functions-ui/utils/hooks';
 import { allFunctionsKey } from '@functions-ui/utils/queryKeys';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
@@ -51,6 +50,7 @@ export interface Secret {
 
 type Props = {
   onCancel: () => void;
+  limits: CogFunctionLimit | undefined;
 };
 
 const StyledForm = styled(Form)`
@@ -84,9 +84,11 @@ const limitDefaults: CogFunctionLimit = {
   responseSizeMb: 1,
 };
 
-export default function UploadFunctionModal({ onCancel }: Props) {
+export default function UploadFunctionModal({
+  onCancel,
+  limits = limitDefaults,
+}: Props) {
   const client = useQueryClient();
-  const { data: limits = limitDefaults } = useLimits();
   const {
     mutate: doUploadFunction,
     isLoading,
