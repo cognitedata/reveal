@@ -20,7 +20,7 @@ import {
 } from './types';
 import { queryMappedData } from './queryMappedData';
 import { useFdmSdk, useSDK } from '../RevealContainer/SDKProvider';
-import { useCalculateModelsStyling2 } from '../../hooks/useCalculateModelsStyling';
+import { useCalculateModelsStyling } from '../../hooks/useCalculateModelsStyling';
 import { type DmsUniqueIdentifier } from '../../utilities/FdmSDK';
 
 export type FdmAssetStylingGroup = {
@@ -51,7 +51,7 @@ export const Reveal3DResources = ({
     getTypedModels(resources, viewer).then(setReveal3DModels).catch(console.error);
   }, [resources, viewer]);
 
-  const reveal3DModelsStyling = useCalculateModelsStyling2(reveal3DModels, instanceStyling ?? []);
+  const reveal3DModelsStyling = useCalculateModelsStyling(reveal3DModels, instanceStyling ?? []);
 
   useEffect(() => {
     const callback = (event: PointerEventData): void => {

@@ -17,7 +17,7 @@ import { type CogniteExternalId, type CogniteInternalId } from '@cognite/sdk';
 import { useFdmAssetMappings } from './useFdmAssetMappings';
 import { useEffect } from 'react';
 
-export const useCalculateModelsStyling2 = (
+export const useCalculateModelsStyling = (
   models: TypedReveal3DModel[],
   instanceGroups: FdmAssetStylingGroup[]
 ): Array<PointCloudModelStyling | CadModelStyling> => {
