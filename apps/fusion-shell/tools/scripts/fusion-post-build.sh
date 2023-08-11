@@ -27,10 +27,5 @@ mkdir $build_folder/assets/dependencies/@cognite/$VERSION_HASH/cdf-sdk-singleton
 cp -r  $packages_build_folder/cdf-sdk-singleton/* $build_folder/assets/dependencies/@cognite/$VERSION_HASH/cdf-sdk-singleton;
 cp -r  $packages_build_folder/cdf-route-tracker/* $build_folder/assets/dependencies/@cognite/$VERSION_HASH/cdf-route-tracker;
 
-if [ $configuration = "production" ]
-then
-  cp apps/fusion-shell/src/environments/unified-signin/production/index.html $build_folder
-fi
-
 # Generate Import Map Configs
 node ./apps/fusion-shell/tools/scripts/import-map-generator.js $configuration $build_mode $VERSION_HASH

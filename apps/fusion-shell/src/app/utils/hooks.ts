@@ -133,7 +133,7 @@ export const useExperimentalFeatures = () => {
     'iot-hub': isIoTHubEnabled,
     workflows: isWorkflowsEnabled,
     'dashboard-sessions': isDashboardSessionsEnabled,
-    template: isDomainsEnabled,
+    templates: isDomainsEnabled,
     vision: isVisionMLEnabled,
     dqm: isDQMEnabled,
     'document-search': isDocumentClassifiersEnabled,
