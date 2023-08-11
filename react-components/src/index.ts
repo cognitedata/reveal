@@ -35,7 +35,6 @@ export {
 } from './components/CadModelContainer/CadModelContainer';
 export {
   type Reveal3DResourcesProps,
-  type Reveal3DResourcesStyling,
   type FdmAssetStylingGroup
 } from './components/Reveal3DResources/Reveal3DResources';
 export type {

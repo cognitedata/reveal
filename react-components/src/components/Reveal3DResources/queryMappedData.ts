@@ -12,7 +12,11 @@ import {
 } from '../../utilities/FdmSDK';
 import { type NodeDataResult } from './types';
 import assert from 'assert';
-import { INSTANCE_SPACE_3D_DATA, SYSTEM_3D_EDGE_SOURCE } from '../../utilities/constants';
+import {
+  INSTANCE_SPACE_3D_DATA,
+  type InModel3dEdgeProperties,
+  SYSTEM_3D_EDGE_SOURCE
+} from '../../utilities/globalDataModels';
 
 export async function queryMappedData(
   viewer: Cognite3DViewer,
@@ -45,10 +49,7 @@ export async function queryMappedData(
   }
 
   const selectedEdge = mappings.edges[0];
-  const selectedNodeId =
-    selectedEdge.properties[SYSTEM_3D_EDGE_SOURCE.space][
-      `${SYSTEM_3D_EDGE_SOURCE.externalId}/${SYSTEM_3D_EDGE_SOURCE.version}`
-    ].revisionNodeId;
+  const selectedNodeId = selectedEdge.properties.revisionNodeId;
   const selectedNode = ancestors.find((n) => n.id === selectedNodeId);
   assert(selectedNode !== undefined);
 
@@ -87,7 +88,7 @@ async function getMappingEdges(
   fdmClient: FdmSDK,
   model: CogniteCadModel,
   ancestorIds: CogniteInternalId[]
-): Promise<{ edges: Array<EdgeItem<Record<string, any>>> }> {
+): Promise<{ edges: Array<EdgeItem<InModel3dEdgeProperties>> }> {
   const filter = {
     and: [
       {
@@ -95,7 +96,7 @@ async function getMappingEdges(
           property: ['edge', 'endNode'],
           value: {
             space: INSTANCE_SPACE_3D_DATA,
-            externalId: `model_3d_${model.modelId}`
+            externalId: `${model.modelId}`
           }
         }
       },
@@ -122,7 +123,11 @@ async function getMappingEdges(
     ]
   };
 
-  return await fdmClient.filterAllInstances(filter, 'edge', SYSTEM_3D_EDGE_SOURCE);
+  return await fdmClient.filterAllInstances<InModel3dEdgeProperties>(
+    filter,
+    'edge',
+    SYSTEM_3D_EDGE_SOURCE
+  );
 }
 
 async function inspectNode(
