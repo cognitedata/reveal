@@ -3,7 +3,7 @@
  */
 
 import { type CadIntersection, type PointerEventData } from '@cognite/reveal';
-import { type FdmAssetMappingsConfig, useReveal, type NodeDataResult } from '../';
+import { useReveal, type NodeDataResult } from '../';
 import { useEffect, useState } from 'react';
 import { useNodeMappedData } from './useNodeMappedData';
 
@@ -11,9 +11,7 @@ export type ClickedNodeData = NodeDataResult & {
   intersection: CadIntersection;
 };
 
-export const useClickedNodeData = (
-  fdmConfig?: FdmAssetMappingsConfig | undefined
-): ClickedNodeData | undefined => {
+export const useClickedNodeData = (): ClickedNodeData | undefined => {
   const viewer = useReveal();
 
   const [cadIntersection, setCadIntersection] = useState<CadIntersection | undefined>(undefined);
@@ -38,7 +36,7 @@ export const useClickedNodeData = (
     };
   }, [viewer]);
 
-  const nodeData = useNodeMappedData(cadIntersection?.treeIndex, cadIntersection?.model, fdmConfig);
+  const nodeData = useNodeMappedData(cadIntersection?.treeIndex, cadIntersection?.model);
 
   if (nodeData === undefined || cadIntersection === undefined) {
     return undefined;

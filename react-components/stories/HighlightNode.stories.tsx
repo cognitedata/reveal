@@ -4,18 +4,19 @@
 
 import type { Meta, StoryObj } from '@storybook/react';
 import {
-  type FdmAssetMappingsConfig,
   RevealContainer,
   RevealToolbar,
   Reveal3DResources,
   type AddResourceOptions,
-  useClickedNodeData
+  CameraController,
+  useClickedNodeData,
+  FdmAssetStylingGroup,
 } from '../src';
-import { Color, Matrix4 } from 'three';
-import { type ReactElement, useState, useEffect } from 'react';
+import { Color } from 'three';
+import { type ReactElement, useState, useEffect, useRef } from 'react';
 import { DefaultNodeAppearance } from '@cognite/reveal';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
-import { DefaultFdmConfig } from './utilities/fdmConfig';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 const meta = {
   title: 'Example/HighlightNode',
@@ -32,57 +33,65 @@ export const Main: Story = {
   args: {
     resources: [
       {
-        modelId: 2551525377383868,
-        revisionId: 2143672450453400,
-        transform: new Matrix4().makeTranslation(-340, -480, 80)
+        modelId: 2231774635735416,
+        revisionId: 912809199849811,
+        styling: {
+          default: {
+            color: new Color('#efefef')
+          },
+          mapped: {
+            color: new Color('#c5cbff')
+          }
+        }
       }
-    ],
-    styling: {},
-    fdmAssetMappingConfig: DefaultFdmConfig
+    ]
   },
-  render: ({ resources, fdmAssetMappingConfig }) => {
+  render: ({ resources }) => {
     return (
       <RevealContainer sdk={sdk} color={new Color(0x4a4a4a)}>
-        <StoryContent resources={resources} fdmAssetMappingConfig={fdmAssetMappingConfig} />
+        <StoryContent resources={resources} />
+        <CameraController
+      initialFitCamera={{
+        to: 'allModels'
+      }}
+      cameraControlsOptions={{
+        changeCameraTargetOnClick: true,
+        mouseWheelAction: 'zoomToCursor'
+      }}
+        />
+        <ReactQueryDevtools />
       </RevealContainer>
     );
   }
 };
 
-const StoryContent = ({
-  resources,
-  fdmAssetMappingConfig
-}: {
-  resources: AddResourceOptions[];
-  fdmAssetMappingConfig?: FdmAssetMappingsConfig;
-}): ReactElement => {
+const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): ReactElement => {
   const [highlightedId, setHighlightedId] = useState<string | undefined>(undefined);
-
-  const nodeData = useClickedNodeData(fdmAssetMappingConfig);
+  const stylingGroupsRef = useRef<FdmAssetStylingGroup[]>([]);
+  const nodeData = useClickedNodeData();
 
   useEffect(() => {
     setHighlightedId(nodeData?.nodeExternalId);
   }, [nodeData?.nodeExternalId]);
 
+  if (stylingGroupsRef.current.length === 1) {
+    stylingGroupsRef.current.pop();
+  }
+
+  if (highlightedId !== undefined) {
+    stylingGroupsRef.current.push({
+      fdmAssetExternalIds: [{ externalId: highlightedId, space: 'pdms-mapping' }],
+      style: { cad: DefaultNodeAppearance.Highlighted }
+    });
+  }
+
   return (
     <>
       <Reveal3DResources
-        resources={resources}
-        styling={{
-          groups:
-            highlightedId === undefined
-              ? undefined
-              : [
-                  {
-                    fdmAssetExternalIds: [highlightedId],
-                    style: { cad: DefaultNodeAppearance.Highlighted }
-                  }
-                ]
-        }}
-        fdmAssetMappingConfig={fdmAssetMappingConfig}
+    resources={resources}
+    instanceStyling={stylingGroupsRef.current}
       />
       <RevealToolbar />
-      NodeData is: {JSON.stringify(nodeData?.nodeExternalId)}
-    </>
+      </>
   );
 };

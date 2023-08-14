@@ -3,7 +3,10 @@
  */
 import { CogniteClient } from '@cognite/sdk';
 
-export function createSdkByUrlToken(): CogniteClient {
+export function createSdkByUrlToken(
+  baseUrl = 'https://greenfield.cognitedata.com',
+  project = '3d-test'
+): CogniteClient {
   const token = new URLSearchParams(window.location.search).get('token') ?? '';
   if (token === '') {
     console.warn(
@@ -12,8 +15,8 @@ export function createSdkByUrlToken(): CogniteClient {
   }
   return new CogniteClient({
     appId: 'reveal.example',
-    baseUrl: 'https://greenfield.cognitedata.com',
-    project: '3d-test',
+    baseUrl,
+    project,
     getToken: async () => await Promise.resolve(token)
   });
 }

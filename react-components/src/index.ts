@@ -13,6 +13,7 @@ export { Image360HistoricalDetails } from './components/Image360HistoricalDetail
 export { ViewerAnchor } from './components/ViewerAnchor/ViewerAnchor';
 export { CameraController } from './components/CameraController/CameraController';
 export { RevealToolbar } from './components/RevealToolbar/RevealToolbar';
+export { RevealKeepAlive } from './components/RevealKeepAlive/RevealKeepAlive';
 
 // Hooks
 export { useReveal } from './components/RevealContainer/RevealContext';
@@ -35,7 +36,6 @@ export {
 } from './components/CadModelContainer/CadModelContainer';
 export {
   type Reveal3DResourcesProps,
-  type Reveal3DResourcesStyling,
   type FdmAssetStylingGroup
 } from './components/Reveal3DResources/Reveal3DResources';
 export type {
@@ -45,4 +45,3 @@ export type {
   NodeDataResult
 } from './components/Reveal3DResources/types';
 export type { Source } from './utilities/FdmSDK';
-export { type FdmAssetMappingsConfig } from './hooks/types';

@@ -21,10 +21,17 @@ export type DmsUniqueIdentifier = {
   externalId: string;
 };
 
-export type EdgeItem<PropertiesType> = {
+export type EdgeItem<EdgeProperties = Record<string, unknown>> = {
+  instanceType: string;
+  version: number;
+  type: DmsUniqueIdentifier;
+  space: string;
+  externalId: string;
+  createdTime: number;
+  lastUpdatedTime: number;
   startNode: DmsUniqueIdentifier;
   endNode: DmsUniqueIdentifier;
-  properties: PropertiesType;
+  properties: EdgeProperties;
 };
 
 export type InspectFilter = {
@@ -118,13 +125,31 @@ export class FdmSDK {
     }
 
     const result = await this._sdk.post(this._listEndpoint, { data });
-    if (result.status === 200) {
-      return {
-        edges: result.data.items as Array<EdgeItem<PropertiesType>>,
-        nextCursor: result.data.nextCursor
-      };
+
+    if (result.status !== 200) {
+      throw new Error(`Failed to fetch instances. Status: ${result.status}`);
     }
-    throw new Error(`Failed to fetch instances. Status: ${result.status}`);
+
+    const edgeResult = result.data.items as Array<EdgeItem<Record<string, any>>>;
+
+    hoistEdgeProperties();
+
+    return {
+      edges: result.data.items as Array<EdgeItem<PropertiesType>>,
+      nextCursor: result.data.nextCursor
+    };
+
+    function hoistEdgeProperties(): void {
+      if (source === undefined) {
+        return;
+      }
+      const propertyKey = `${source.externalId}/${source.version}`;
+      edgeResult.forEach((edge) => {
+        if (edge.properties[source.space][propertyKey] !== undefined) {
+          edge.properties = edge.properties[source.space][propertyKey];
+        }
+      });
+    }
   }
 
   public async filterAllInstances<PropertiesType = Record<string, any>>(
