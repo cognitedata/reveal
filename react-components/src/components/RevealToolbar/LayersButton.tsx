@@ -15,10 +15,13 @@ import {
 import { useReveal } from '../RevealContainer/RevealContext';
 import { use3DModelName } from '../../hooks/use3DModelName';
 import { isEqual } from 'lodash';
+import { useRevealContainerElement } from '../RevealContainer/RevealContainerElementContext';
 
 export const LayersButton = (): ReactElement => {
   const viewer = useReveal();
+  const revealContainerElement = useRevealContainerElement();
   const [layersEnabled, setLayersEnabled] = useState<boolean>(false);
+  const [visible, setVisible] = useState<boolean>(false);
 
   const [cadModelIds, setCadModelIds] = useState<number[]>([]);
   const [pointCloudModelIds, setPointCloudModelIds] = useState<number[]>([]);
@@ -36,6 +39,7 @@ export const LayersButton = (): ReactElement => {
 
   const showLayers = (): void => {
     setLayersEnabled(!layersEnabled);
+    setVisible((prevState) => !prevState);
   };
 
   useEffect(() => {
@@ -146,9 +150,15 @@ export const LayersButton = (): ReactElement => {
     setReveal3DResourcesLayerData(updated3DResourcesLayerData);
   }, [updated3DResourcesLayerData]);
 
+  useEffect(() => {
+    viewer.on('click', () => {
+      setVisible(false);
+    });
+  }, [viewer]);
+
   return (
     <Dropdown
-      appendTo={document.body}
+      appendTo={revealContainerElement ?? document.body}
       content={
         <LayersContainer
           props={{
@@ -157,6 +167,7 @@ export const LayersButton = (): ReactElement => {
           }}
         />
       }
+      visible={visible}
       placement="auto">
       <Button type="ghost" icon="Layers" aria-label="3D Resource layers" onClick={showLayers} />
     </Dropdown>
