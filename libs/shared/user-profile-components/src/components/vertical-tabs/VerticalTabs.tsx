@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { Button, Colors, Flex, Select, Title } from '@cognite/cogs.js';
+import { Body, Button, Colors, Flex, Select, Title } from '@cognite/cogs.js';
 
 import { RESPONSIVE_BREAKPOINT } from '../../common/constants';
 import { VerticalTab } from '../../common/types';
@@ -29,7 +29,7 @@ export const VerticalTabs = ({
   };
   const isScreenWideEnough = useIsScreenWideEnough();
   const builtinTabsOptions = builtinTabs.map(({ key, title }) => ({
-    label: title,
+    label: `${title}${key === 'language' ? ' (Beta)' : ''}`,
     value: key,
   }));
   const additionalTabsOptions = additionalTabs.map(({ key, title }) => ({
@@ -73,7 +73,7 @@ export const VerticalTabs = ({
           toggled={activeKey === key}
           type="ghost"
         >
-          {title}
+          {title} {key === 'language' && <BetaLabel />}
         </TabButton>
       ))}
       {additionalTabsCategoryLabel && (
@@ -114,4 +114,17 @@ const TabButton = styled(Button)`
 
 const StyledSelect = styled(Select)`
   background-color: ${Colors['surface--muted']};
+`;
+
+const BetaLabel = () => (
+  <StyledBetaLabel size="x-small" strong inverted>
+    Beta
+  </StyledBetaLabel>
+);
+
+const StyledBetaLabel = styled(Body)`
+  background-color: ${Colors['surface--muted--inverted']};
+  padding: 2px 8px;
+  border-radius: 10000px;
+  margin-left: 8px;
 `;
