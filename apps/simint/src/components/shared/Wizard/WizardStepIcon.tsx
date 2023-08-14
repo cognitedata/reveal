@@ -35,17 +35,28 @@ export function WizardStepIcon({
       className={classnames({ completed, active, disabled })}
       iconSize={iconSize}
     >
-      <NotificationDot
-        hidden={!validationErrorCount}
-        value={validationErrorCount.toString()}
-      >
-        <button aria-labelledby={labeledBy} type="button" onClick={onClick}>
-          <Icon type={icon} />
-        </button>
-      </NotificationDot>
+      <NotificationDotContainer>
+        <NotificationDot
+          hidden={!validationErrorCount}
+          value={validationErrorCount.toString()}
+        >
+          <button aria-labelledby={labeledBy} type="button" onClick={onClick}>
+            <Icon type={icon} />
+          </button>
+        </NotificationDot>
+      </NotificationDotContainer>
     </WizardStepIconContainer>
   );
 }
+
+export const NotificationDotContainer = styled.span`
+  && {
+    .cogs-notification-dot > .cogs-notification-dot__bubble {
+      padding: 2px 3px;
+      border-radius: 10px;
+    }
+  }
+`;
 
 export const WizardStepIconContainer = styled.div<{
   iconSize: number;
