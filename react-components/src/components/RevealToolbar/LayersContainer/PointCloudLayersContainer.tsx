@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type ReactElement } from 'react';
+import { useState, type ReactElement } from 'react';
 
 import { useReveal } from '../../RevealContainer/RevealContext';
 import { Checkbox, Flex, Menu } from '@cognite/cogs.js';
@@ -10,6 +10,7 @@ import { StyledChipCount, StyledLabel, StyledSubMenu } from './elements';
 import { type CognitePointCloudModel } from '@cognite/reveal';
 import { uniqueId } from 'lodash';
 import { type Reveal3DResourcesLayersProps } from './types';
+import { useRevealContainerElement } from '../../RevealContainer/RevealContainerElementContext';
 
 export const PointCloudLayersContainer = ({
   layerProps
@@ -17,6 +18,8 @@ export const PointCloudLayersContainer = ({
   layerProps: Reveal3DResourcesLayersProps;
 }): ReactElement => {
   const viewer = useReveal();
+  const revealContainerElement = useRevealContainerElement();
+  const [visible, setVisible] = useState(false);
   const { pointCloudLayerData } = layerProps.reveal3DResourcesLayerData;
   const count = pointCloudLayerData.length.toString();
   const someModelVisible = !pointCloudLayerData.every((data) => !data.isToggled);
@@ -74,14 +77,27 @@ export const PointCloudLayersContainer = ({
   return (
     <>
       {pointCloudLayerData.length > 0 && (
-        <Menu.Submenu openOnHover={false} content={pointCloudModelContent()} title="Point clouds">
-          <Flex direction="row" justifyContent="space-between">
+        <Menu.Submenu
+          appendTo={revealContainerElement ?? document.body}
+          visible={visible}
+          onClickOutside={() => {
+            setVisible(false);
+          }}
+          content={pointCloudModelContent()}
+          title="Point clouds">
+          <Flex
+            direction="row"
+            justifyContent="space-between"
+            onClick={() => {
+              setVisible((prevState) => !prevState);
+            }}>
             <Checkbox
               checked={someModelVisible}
               indeterminate={indeterminate}
               onChange={(e) => {
                 e.stopPropagation();
                 handleAllPointCloudModelsVisibility(e.target.checked);
+                setVisible(true);
               }}
             />
             <StyledLabel> Point clouds </StyledLabel>
