@@ -21,7 +21,7 @@ export const useAssetIdsQuery = ({
   const sdk = useSDK();
 
   return useQuery(
-    queryKeys.assetIdsCount(resourceType, resourceId),
+    queryKeys.assetIdsCount(resourceType, resourceId, isDocumentsApiEnabled),
     () => {
       if (!resourceId) {
         return undefined;
