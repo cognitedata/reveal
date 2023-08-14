@@ -171,7 +171,7 @@ const PaginationStyled = styled(Pagination)`
   & {
     position: absolute;
     bottom: 0;
-    left: calc(50% - 0px);
+    left: 50%;
     padding-bottom: 10px;
     padding-top: 10px;
     scale: 0.9;
