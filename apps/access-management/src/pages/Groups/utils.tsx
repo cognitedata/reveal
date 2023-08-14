@@ -57,6 +57,7 @@ const nameToAclTypeMap = {
   wells: 'wellsAcl',
   datamodels: 'dataModelsAcl',
   datamodelinstances: 'dataModelInstancesAcl',
+  hostedextractors: 'hostedExtractorsAcl',
 };
 
 const getCapabilityNameTranslationKey = {
@@ -83,6 +84,7 @@ const getCapabilityNameTranslationKey = {
   geospatialcrs: 'geospatial-crs',
   datamodels: 'data-models',
   datamodelinstances: 'data-model-instances',
+  hostedextractors: 'hosted-extractors',
 };
 
 const prepareCapabilityTypeGroups = (_t: (key: TranslationKeys) => string) => {
@@ -133,6 +135,7 @@ const prepareCapabilityTypeGroups = (_t: (key: TranslationKeys) => string) => {
         'wells',
         'visionmodel',
         'robotics',
+        'hostedextractors',
       ],
     },
   ];
@@ -171,6 +174,7 @@ export const capabilityDescriptions = {
   visionmodel: 'capability-desc-visionmodel',
   datamodels: 'capability-desc-data-models',
   datamodelinstances: 'capability-desc-data-model-instances',
+  hostedextractors: 'capability-desc-hosted-extractors',
 };
 
 const deprecatedAclTypes = ['genericsAcl', 'modelHostingAcl', 'typesAcl'];
@@ -240,6 +244,9 @@ const getCapabilityKey = (
   }
   if (capabilityName === 'geospatialcrs') {
     capabilityName = 'geospatial_crs';
+  }
+  if (capabilityName === 'hostedextractors') {
+    capabilityName = 'hosted_extractors';
   }
   if (capabilityName) {
     capabilityKey = `${capabilityName}_acl`;
