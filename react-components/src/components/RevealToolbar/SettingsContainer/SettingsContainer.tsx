@@ -5,13 +5,20 @@
 import { Menu } from '@cognite/cogs.js';
 import { type ReactElement } from 'react';
 import { HighFidelityContainer } from './HighFidelityContainer';
-import { OriginalCadColorContainer } from './OriginalCadColorContainer';
+import { type SettingsContainerProps } from './types';
 
-export const SettingsContainer = (): ReactElement => {
+export const SettingsContainer = ({
+  isHighFidelityMode,
+  setHighFidelityMode,
+  customSettingsContent
+}: SettingsContainerProps): ReactElement => {
   return (
     <Menu>
-      <OriginalCadColorContainer />
-      <HighFidelityContainer />
+      <HighFidelityContainer
+        isHighFidelityMode={isHighFidelityMode}
+        setHighFidelityMode={setHighFidelityMode}
+      />
+      {customSettingsContent ?? <></>}
     </Menu>
   );
 };

@@ -2,13 +2,16 @@
  * Copyright 2023 Cognite AS
  */
 import { Menu } from '@cognite/cogs.js';
-import { type ReactElement, useEffect, useMemo, useState } from 'react';
+import { type ReactElement, useEffect, useMemo } from 'react';
 import { useReveal } from '../../RevealContainer/RevealContext';
 import { type ResolutionOptions } from '@cognite/reveal';
+import { type HighFidelityProps } from './types';
 
-export const HighFidelityContainer = (): ReactElement => {
+export const HighFidelityContainer = ({
+  isHighFidelityMode,
+  setHighFidelityMode
+}: HighFidelityProps): ReactElement => {
   const viewer = useReveal();
-  const [isHighQualityMode, setHighQualityMode] = useState(false);
 
   const defaultsQualityConfig = useMemo(() => {
     return {
@@ -22,7 +25,7 @@ export const HighFidelityContainer = (): ReactElement => {
   }, [viewer]);
 
   const qualityConfig = useMemo(() => {
-    if (isHighQualityMode) {
+    if (isHighFidelityMode) {
       return {
         pointCloudBudget: {
           numberOfPoints: 3 * defaultsQualityConfig.pointCloudBudget.numberOfPoints
@@ -44,7 +47,7 @@ export const HighFidelityContainer = (): ReactElement => {
         }
       };
     }
-  }, [isHighQualityMode, viewer]);
+  }, [isHighFidelityMode, viewer]);
 
   useEffect(() => {
     viewer.cadBudget = qualityConfig.cadBudget;
@@ -55,9 +58,9 @@ export const HighFidelityContainer = (): ReactElement => {
   return (
     <Menu.Item
       hasSwitch
-      toggled={isHighQualityMode}
+      toggled={isHighFidelityMode}
       onChange={() => {
-        setHighQualityMode((prevMode) => !prevMode);
+        setHighFidelityMode((prevState) => !prevState);
       }}>
       High fidelity
     </Menu.Item>

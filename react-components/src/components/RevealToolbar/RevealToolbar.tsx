@@ -20,32 +20,38 @@ const defaultStyle: ToolBarProps = {
   }
 };
 
-const defaultContent = (
-  <>
-    <LayersButton />
+const DefaultContentWrapper = (
+  props: ToolBarProps & { customSettingsContent?: JSX.Element }
+): ReactElement => {
+  return (
+    <>
+      <LayersButton />
 
-    <FitModelsButton />
-    <Button type="ghost" icon="Collapse" aria-label="Focus asset" />
+      <FitModelsButton />
+      <Button type="ghost" icon="Collapse" aria-label="Focus asset" />
 
-    <div className="cogs-toolbar-divider" />
+      <div className="cogs-toolbar-divider" />
 
-    <SlicerButton />
-    <MeasurementButton />
+      <SlicerButton />
+      <MeasurementButton />
 
-    <div className="cogs-toolbar-divider" />
+      <div className="cogs-toolbar-divider" />
 
-    <SettingsButton />
-    <HelpButton />
-  </>
-);
+      <SettingsButton customSettingsContent={props.customSettingsContent ?? undefined} />
+      <HelpButton />
+    </>
+  );
+};
 
 const RevealToolbarContainer = (
-  props: ToolBarProps & { toolBarContent?: JSX.Element }
+  props: ToolBarProps & { toolBarContent?: JSX.Element } & { customSettingsContent?: JSX.Element }
 ): ReactElement => {
   if (props.className === undefined && props.style === undefined) {
     props = { ...props, ...defaultStyle };
   }
-  return <ToolBar {...props}>{props.toolBarContent ?? defaultContent}</ToolBar>;
+  return (
+    <ToolBar {...props}>{props.toolBarContent ?? <DefaultContentWrapper {...props} />}</ToolBar>
+  );
 };
 
 export const RevealToolbar = withSuppressRevealEvents(
@@ -55,6 +61,7 @@ export const RevealToolbar = withSuppressRevealEvents(
   SlicerButton: typeof SlicerButton;
   LayersButton: typeof LayersButton;
   MeasurementButton: typeof MeasurementButton;
+  SettingsButton: typeof SettingsButton;
   HelpButton: typeof HelpButton;
 };
 
@@ -62,4 +69,5 @@ RevealToolbar.FitModelsButton = FitModelsButton;
 RevealToolbar.SlicerButton = SlicerButton;
 RevealToolbar.LayersButton = LayersButton;
 RevealToolbar.MeasurementButton = MeasurementButton;
+RevealToolbar.SettingsButton = SettingsButton;
 RevealToolbar.HelpButton = HelpButton;
