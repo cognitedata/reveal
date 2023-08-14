@@ -2,12 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 import { useRef, type ReactElement, useContext, useState, useEffect } from 'react';
-import {
-  type NodeAppearance,
-  type Cognite3DViewer,
-  type PointCloudAppearance,
-  type PointerEventData
-} from '@cognite/reveal';
+import { type NodeAppearance, type Cognite3DViewer, type PointerEventData } from '@cognite/reveal';
 import { ModelsLoadingStateContext } from './ModelsLoadingContext';
 import { CadModelContainer, type CadModelStyling } from '../CadModelContainer/CadModelContainer';
 import {
@@ -23,39 +18,28 @@ import {
   type AddResourceOptions,
   type NodeDataResult
 } from './types';
-import { type CogniteExternalId } from '@cognite/sdk';
-import { type FdmAssetMappingsConfig } from '../../hooks/types';
-import { useCalculateModelsStyling } from '../../hooks/useCalculateModelsStyling';
 import { queryMappedData } from './queryMappedData';
 import { useFdmSdk, useSDK } from '../RevealContainer/SDKProvider';
+import { useCalculateModelsStyling } from '../../hooks/useCalculateModelsStyling';
+import { type DmsUniqueIdentifier } from '../../utilities/FdmSDK';
 
 export type FdmAssetStylingGroup = {
-  fdmAssetExternalIds: CogniteExternalId[];
-  style: { cad?: NodeAppearance; pointcloud?: PointCloudAppearance };
-};
-
-export type Reveal3DResourcesStyling = {
-  defaultStyle?: { cad?: NodeAppearance; pointcloud?: PointCloudAppearance };
-  groups?: FdmAssetStylingGroup[];
+  fdmAssetExternalIds: DmsUniqueIdentifier[];
+  style: { cad: NodeAppearance };
 };
 
 export type Reveal3DResourcesProps = {
   resources: AddResourceOptions[];
-  fdmAssetMappingConfig?: FdmAssetMappingsConfig;
-  styling?: Reveal3DResourcesStyling;
+  instanceStyling?: FdmAssetStylingGroup[];
   onNodeClick?: (node: Promise<NodeDataResult | undefined>) => void;
 };
 
 export const Reveal3DResources = ({
   resources,
-  styling,
-  fdmAssetMappingConfig,
+  instanceStyling,
   onNodeClick
 }: Reveal3DResourcesProps): ReactElement => {
   const [reveal3DModels, setReveal3DModels] = useState<TypedReveal3DModel[]>([]);
-  const [reveal3DModelsStyling, setReveal3DModelsStyling] = useState<
-    Array<PointCloudModelStyling | CadModelStyling>
-  >([]);
 
   const { setModelsAdded } = useContext(ModelsLoadingStateContext);
   const viewer = useReveal();
@@ -67,16 +51,12 @@ export const Reveal3DResources = ({
     getTypedModels(resources, viewer).then(setReveal3DModels).catch(console.error);
   }, [resources, viewer]);
 
-  const modelsStyling = useCalculateModelsStyling(reveal3DModels, styling, fdmAssetMappingConfig);
-
-  useEffect(() => {
-    setReveal3DModelsStyling(modelsStyling);
-  }, [modelsStyling]);
+  const reveal3DModelsStyling = useCalculateModelsStyling(reveal3DModels, instanceStyling ?? []);
 
   useEffect(() => {
     const callback = (event: PointerEventData): void => {
       if (onNodeClick === undefined) return;
-      const data = queryMappedData(viewer, client, fdmSdk, event, fdmAssetMappingConfig);
+      const data = queryMappedData(viewer, client, fdmSdk, event);
       onNodeClick(data);
     };
 
@@ -85,7 +65,7 @@ export const Reveal3DResources = ({
     return () => {
       viewer.off('click', callback);
     };
-  }, [viewer, client, fdmSdk, fdmAssetMappingConfig, onNodeClick]);
+  }, [viewer, client, fdmSdk, onNodeClick]);
 
   const image360CollectionAddOptions = resources.filter(
     (resource): resource is AddImageCollection360Options =>
@@ -165,6 +145,11 @@ async function getTypedModels(
           addModelOptions.modelId,
           addModelOptions.revisionId
         );
+        if (type === '') {
+          throw new Error(
+            `Could not determine model type for modelId: ${addModelOptions.modelId} and revisionId: ${addModelOptions.revisionId}`
+          );
+        }
         const typedModel: TypedReveal3DModel = { ...addModelOptions, type };
         return typedModel;
       })
