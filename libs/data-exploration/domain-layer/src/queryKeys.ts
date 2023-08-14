@@ -304,8 +304,18 @@ export const queryKeys = {
       resourceId,
       ...(linkedResourceIds || []),
     ] as const,
-  assetIdsCount: (resourceType: string, resourceId: unknown) =>
-    [...queryKeys.counts(), 'assets-ids', resourceType, resourceId] as const,
+  assetIdsCount: (
+    resourceType: string,
+    resourceId: unknown,
+    isDocumentsApiEnabled: boolean
+  ) =>
+    [
+      ...queryKeys.counts(),
+      'assets-ids',
+      resourceType,
+      resourceId,
+      isDocumentsApiEnabled,
+    ] as const,
   validResourcesCount: (resourceType: string, resourceIds: unknown[]) =>
     [
       ...queryKeys.counts(),
