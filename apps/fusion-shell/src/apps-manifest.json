@@ -117,6 +117,16 @@
       ]
     },
     {
+      "key": "cdf-contextualization-ui",
+      "appName": "@cognite/cdf-contextualization-ui",
+      "appType": "single-spa",
+      "versionSpec": "^0.1.0",
+      "routes": [
+        { "route": "/:tenantName/contextualization" },
+        { "route": "/:applicationName/:tenantName/contextualization" }
+      ]
+    },
+    {
       "key": "cdf-copilot",
       "appName": "@cognite/cdf-copilot",
       "appType": "single-spa",
