@@ -11,7 +11,7 @@ export type ClickedNodeData = NodeDataResult & {
   intersection: CadIntersection;
 };
 
-export const useClickedNode = (
+export const useClickedNodeData = (
   fdmConfig?: FdmAssetMappingsConfig | undefined
 ): ClickedNodeData | undefined => {
   const viewer = useReveal();

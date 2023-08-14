@@ -25,7 +25,7 @@ import {
 import { type CogniteExternalId } from '@cognite/sdk';
 import { type FdmAssetMappingsConfig } from '../../hooks/types';
 import { useCalculateModelsStyling } from '../../hooks/useCalculateModelsStyling';
-import { useClickedNode } from '../..';
+import { useClickedNodeData } from '../..';
 
 export type FdmAssetStylingGroup = {
   fdmAssetExternalIds: CogniteExternalId[];
@@ -64,7 +64,7 @@ export const Reveal3DResources = ({
   }, [resources, viewer]);
 
   const modelsStyling = useCalculateModelsStyling(reveal3DModels, styling, fdmAssetMappingConfig);
-  const clickedNodeData = useClickedNode(fdmAssetMappingConfig);
+  const clickedNodeData = useClickedNodeData(fdmAssetMappingConfig);
 
   useEffect(() => {
     setReveal3DModelsStyling(modelsStyling);

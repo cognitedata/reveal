@@ -8,7 +8,7 @@ import {
   Reveal3DResources,
   RevealContainer,
   RevealToolbar,
-  useClickedNode
+  useClickedNodeData
 } from '../src';
 import { CogniteClient } from '@cognite/sdk';
 import { Color } from 'three';
@@ -60,7 +60,7 @@ const ClickedNodePrinter = ({
 }: {
   fdmConfig: FdmAssetMappingsConfig | undefined;
 }): ReactElement => {
-  const clickedNode = useClickedNode(fdmConfig);
+  const clickedNode = useClickedNodeData(fdmConfig);
   useEffect(() => {
     console.log('Clicked node is ', clickedNode);
   }, [clickedNode?.nodeExternalId]);

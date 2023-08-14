@@ -9,7 +9,7 @@ import {
   RevealToolbar,
   Reveal3DResources,
   type AddResourceOptions,
-  useClickedNode
+  useClickedNodeData
 } from '../src';
 import { Color, Matrix4 } from 'three';
 import { type ReactElement, useState, useEffect } from 'react';
@@ -58,7 +58,7 @@ const StoryContent = ({
 }): ReactElement => {
   const [highlightedId, setHighlightedId] = useState<string | undefined>(undefined);
 
-  const nodeData = useClickedNode(fdmAssetMappingConfig);
+  const nodeData = useClickedNodeData(fdmAssetMappingConfig);
 
   useEffect(() => {
     setHighlightedId(nodeData?.nodeExternalId);
