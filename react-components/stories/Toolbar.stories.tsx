@@ -12,7 +12,8 @@ import {
 import { CogniteClient } from '@cognite/sdk';
 import { Color } from 'three';
 import styled from 'styled-components';
-import { ToolBar, type ToolBarButton } from '@cognite/cogs.js';
+import { Button, Menu, ToolBar, type ToolBarButton } from '@cognite/cogs.js';
+import { type ReactElement, useState } from 'react';
 
 const meta = {
   title: 'Example/Toolbar',
@@ -46,6 +47,24 @@ const exampleToolBarButtons: ToolBarButton[] = [
   }
 ];
 
+const exampleCustomSettingElements = (): ReactElement => {
+  const [originalCadColor, setOriginalCadColor] = useState(false);
+
+  return (
+    <>
+      <Menu.Item
+        hasSwitch
+        toggled={originalCadColor}
+        onChange={() => {
+          setOriginalCadColor((prevMode) => !prevMode);
+        }}>
+        Original CAD coloring
+      </Menu.Item>
+      <Button>Custom Button</Button>
+    </>
+  );
+};
+
 export const Main: Story = {
   args: {
     addModelOptions: {
@@ -56,7 +75,7 @@ export const Main: Story = {
   render: ({ addModelOptions }) => (
     <RevealContainer sdk={sdk} color={new Color(0x4a4a4a)}>
       <CadModelContainer addModelOptions={addModelOptions} />
-      <RevealToolbar />
+      <RevealToolbar customSettingsContent={exampleCustomSettingElements()} />
       <MyCustomToolbar>
         <RevealToolbar.FitModelsButton />
         <ToolBar.ButtonGroup buttonGroup={exampleToolBarButtons} />
