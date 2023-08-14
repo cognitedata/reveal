@@ -100,6 +100,10 @@ scalar Int64
 
 ${mixerApiV3CustomDirectives}
 
+type Views {
+  externalId: String!
+  version: String
+}
 
 type UpsertGraphQlDmlVersionResult {
   errors: [Error!]
@@ -118,6 +122,7 @@ type GraphQlDmlVersion {
 
   createdTime: Timestamp
   lastUpdatedTime: Timestamp
+  views: [Views]
 }
 
 type GraphQlDmlVersionConnection {
