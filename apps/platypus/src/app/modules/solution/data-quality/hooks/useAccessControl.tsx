@@ -1,131 +1,115 @@
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
-import { getFlow } from '@cognite/cdf-sdk-singleton';
-import { IDPType } from '@cognite/login-utils';
-import { usePermissions } from '@cognite/sdk-react-query-hooks';
+import { AclName, CapabilityActions, useCapabilities } from './useCapabilities';
+import { getProject } from '@cognite/cdf-utilities';
 
-export enum ActionType {
-  READ_DATA_VALIDATION,
-  WRITE_DATA_VALIDATION,
-  TRIGGER_VALIDATION,
-  DOWNLOAD_REPORT,
+export enum AccessAction {
+  READ_DATA_VALIDATION = 'canReadDataValidation',
+  WRITE_DATA_VALIDATION = 'canWriteDataValidation',
+  TRIGGER_VALIDATION = 'canTriggerValidation',
+  DOWNLOAD_REPORT = 'canDownloadReport',
 }
+
 export const useAccessControl = () => {
-  const { flow } = getFlow();
-  const flowIDTP = flow as IDPType;
+  const project = getProject();
 
-  // Get Files capabilities
-  const { data: hasFilesReadCapability, isLoading: isLoadingFilesRead } =
-    usePermissions(flowIDTP, 'filesAcl', 'READ');
-  const { data: hasFilesWriteCapability, isLoading: isLoadingFilesWrite } =
-    usePermissions(flowIDTP, 'filesAcl', 'WRITE');
+  const { capabilities, isLoading } = useCapabilities([project], {
+    spaceIds: ['star-wars'],
+  });
 
-  // Get Timeseries capabilities
-  const {
-    data: hasTimeseriesReadCapability,
-    isLoading: isLoadingTimeseriesRead,
-  } = usePermissions(flowIDTP, 'timeSeriesAcl', 'READ');
-  const {
-    data: hasTimeseriesWriteCapability,
-    isLoading: isLoadingTimeseriesWrite,
-  } = usePermissions(flowIDTP, 'timeSeriesAcl', 'WRITE');
-
-  // Get Sessions capabilities
-  const {
-    data: hasSessionsWriteCapability,
-    isLoading: isLoadingSessionsWrite,
-  } = usePermissions(flowIDTP, 'sessionsAcl', 'CREATE');
-
-  // Get Datasets capabilities
-  const { data: hasDataSetsReadCapability, isLoading: isLoadingDataSetsRead } =
-    usePermissions(flowIDTP, 'datasetsAcl', 'READ');
-
-  // Get Datamodels capabilities
-  const {
-    data: hasDataModelsReadCapability,
-    isLoading: isLoadingDataModelsRead,
-  } = usePermissions(flowIDTP, 'dataModelsAcl', 'READ');
-  const {
-    data: hasDataModelsWriteCapability,
-    isLoading: isLoadingDataModelsWrite,
-  } = usePermissions(flowIDTP, 'dataModelsAcl', 'WRITE');
-  const {
-    data: hasDataModelInstancesReadCapability,
-    isLoading: isLoadingDataModelInstancesRead,
-  } = usePermissions(flowIDTP, 'dataModelInstancesAcl', 'READ');
-
-  const isLoadingFilesAcl = isLoadingFilesRead || isLoadingFilesWrite;
-  const isLoadingTimeseriesAcl =
-    isLoadingTimeseriesRead || isLoadingTimeseriesWrite;
-  const isLoadingDataModelsAcl =
-    isLoadingDataModelsRead ||
-    isLoadingDataModelsWrite ||
-    isLoadingDataModelInstancesRead;
-
-  const isLoading =
-    isLoadingFilesAcl ||
-    isLoadingTimeseriesAcl ||
-    isLoadingDataModelsAcl ||
-    isLoadingSessionsWrite ||
-    isLoadingDataSetsRead;
-
-  // Can read already exisiting components (data source, rules) in Data Validation
-  const canReadDataValidation =
-    hasDataModelsReadCapability &&
-    hasTimeseriesReadCapability &&
-    hasDataSetsReadCapability;
-
-  // Can create components (data source, rules) in Data Validation
-  const canWriteDataValidation =
-    canReadDataValidation &&
-    hasDataModelsWriteCapability &&
-    hasTimeseriesWriteCapability;
-
-  const canTriggerValidation =
-    canWriteDataValidation &&
-    hasFilesWriteCapability &&
-    hasDataModelInstancesReadCapability &&
-    hasSessionsWriteCapability;
-
-  const canDownloadReport =
-    canReadDataValidation &&
-    hasDataModelInstancesReadCapability &&
-    hasFilesReadCapability;
+  const accesses = resolveAccess(capabilities);
 
   return {
-    canReadDataValidation,
-    canWriteDataValidation,
-    canTriggerValidation,
-    canDownloadReport,
+    ...accesses,
     isLoading,
     useErrorMessage,
   };
 };
 
+/** Defines what capability and actions each Data Validation operation requires. */
+const accessMatrix: Record<AccessAction, Partial<CapabilityActions>> = {
+  canReadDataValidation: {
+    dataModelsAcl: ['READ'],
+    datasetsAcl: ['READ'],
+    timeSeriesAcl: ['READ'],
+  },
+  canWriteDataValidation: {
+    dataModelsAcl: ['READ', 'WRITE'],
+    datasetsAcl: ['READ'],
+    timeSeriesAcl: ['WRITE'],
+  },
+  canTriggerValidation: {
+    dataModelInstancesAcl: ['READ'],
+    dataModelsAcl: ['READ', 'WRITE'],
+    datasetsAcl: ['READ'],
+    filesAcl: ['WRITE'],
+    sessionsAcl: ['CREATE'],
+    timeSeriesAcl: ['WRITE'],
+  },
+  canDownloadReport: {
+    dataModelInstancesAcl: ['READ'],
+    dataModelsAcl: ['READ'],
+    datasetsAcl: ['READ'],
+    filesAcl: ['READ'],
+  },
+};
+
+/**
+ * For each action defined in access matrix, every required actions of every required capability
+ * should exist in user's available capabilities.
+ */
+const resolveAccess = (capabilities?: CapabilityActions) => {
+  return Object.entries(accessMatrix).reduce(
+    (accesses, [accessAction, requiredCapabilities]) => {
+      const hasMatchingAccess = Object.entries(requiredCapabilities).every(
+        ([aclName, actions]) => {
+          const acl = aclName as AclName;
+
+          if (!capabilities?.[acl]) return false;
+
+          return actions.every((action) => capabilities[acl].includes(action));
+        }
+      );
+
+      accesses[accessAction as AccessAction] = hasMatchingAccess;
+      return accesses;
+    },
+    {} as Record<AccessAction, boolean>
+  );
+};
+
 /** Get the error message specific to an permission/action type. */
-const useErrorMessage = (action: ActionType) => {
+const useErrorMessage = (action: AccessAction) => {
   const { t } = useTranslation('useErrorMessage');
 
+  const requiredCapabilities = Object.entries(accessMatrix[action]).reduce(
+    (text, [capability, actions]) => {
+      text += `\n${capability}: [${actions.join(', ')}],`;
+      return text;
+    },
+    ''
+  );
+
   switch (action) {
-    case ActionType.READ_DATA_VALIDATION:
+    case AccessAction.READ_DATA_VALIDATION:
       return t(
         'data_quality_access_error_read',
-        'To view Data Validation, the following capabilities are required:\ndatasetsAcl: [READ],\ndataModelsAcl: [READ],\ntimeSeriesAcl: [READ]'
+        `To view Data Validation, the following capabilities are required:${requiredCapabilities}`
       );
-    case ActionType.WRITE_DATA_VALIDATION:
+    case AccessAction.WRITE_DATA_VALIDATION:
       return t(
         'data_quality_access_error_write',
-        'To use Data Validation, the following capabilities are required:\ndatasetsAcl: [READ],\ndataModelsAcl: [READ],\ntimeSeriesAcl: [READ, WRITE]'
+        `To use Data Validation, the following capabilities are required:${requiredCapabilities}`
       );
-    case ActionType.TRIGGER_VALIDATION:
+    case AccessAction.TRIGGER_VALIDATION:
       return t(
         'data_quality_access_error_trigger',
-        'To start a Data Validation job, the following capabilities are required:\ndatasetsAcl: [READ],\ndataModelsAcl: [READ],\ndataModelInstancesAcl: [READ],\nfilesAcl: [WRITE],\nsessionsAcl: [CREATE],\ntimeSeriesAcl: [READ, WRITE]'
+        `To start a Data Validation job, the following capabilities are required:${requiredCapabilities}`
       );
-    case ActionType.DOWNLOAD_REPORT:
+    case AccessAction.DOWNLOAD_REPORT:
       return t(
         'data_quality_access_error_download',
-        'To download a Data Validation report, the following capabilities are required:\ndatasetsAcl: [READ],\ndataModelsAcl: [READ],\ndataModelInstancesAcl: [READ],\nfilesAcl: [READ],\ntimeSeriesAcl: [READ]'
+        `To download a Data Validation report, the following capabilities are required:${requiredCapabilities}`
       );
     default:
       return t(

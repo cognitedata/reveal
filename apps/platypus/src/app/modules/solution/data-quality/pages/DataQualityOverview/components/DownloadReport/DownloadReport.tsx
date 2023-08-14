@@ -1,4 +1,4 @@
-import { ActionType, useAccessControl } from '@data-quality/hooks';
+import { AccessAction, useAccessControl } from '@data-quality/hooks';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
 import { Button, Dropdown, Flex, Icon, Menu, Tooltip } from '@cognite/cogs.js';
@@ -23,7 +23,7 @@ export const DownloadReport = () => {
 
   const isLoading = downloadingReport || loadingReport || loadingAccess;
 
-  const accessErrorMessage = useErrorMessage(ActionType.DOWNLOAD_REPORT);
+  const accessErrorMessage = useErrorMessage(AccessAction.DOWNLOAD_REPORT);
 
   return (
     <Flex alignItems="center" direction="row" gap={8}>

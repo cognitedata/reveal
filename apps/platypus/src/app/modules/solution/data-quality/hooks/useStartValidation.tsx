@@ -4,7 +4,7 @@ import {
   useDataSourceValidation,
 } from '@data-quality/api/codegen';
 import {
-  ActionType,
+  AccessAction,
   useAccessControl,
   useLoadDataSource,
   useLoadRules,
@@ -91,7 +91,7 @@ export const useStartValidation = (): {
     }
   };
 
-  const accessErrorMessage = useErrorMessage(ActionType.TRIGGER_VALIDATION);
+  const accessErrorMessage = useErrorMessage(AccessAction.TRIGGER_VALIDATION);
 
   const isDisabled = rules.length === 0 || !dataSource || !canTriggerValidation;
   const disabledMessage = useDisabledMessage(
