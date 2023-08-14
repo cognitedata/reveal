@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 import type { AppLocationGenerics } from '@simint-app/routes';
 import { selectProject } from '@simint-app/store/simconfigApiProperties/selectors';
 import { formatISO, parseISO, sub } from 'date-fns';
+import { head } from 'lodash';
 import capitalize from 'lodash/capitalize';
 import uniq from 'lodash/uniq';
 import styled from 'styled-components/macro';
@@ -394,6 +395,7 @@ function Filter({
   setSearchParams,
   isClearable = true,
 }: FilterProps) {
+  console.log(JSON.stringify(options));
   return (
     <div className="cogs-input-container">
       <label className="title">{label}</label>
@@ -407,7 +409,26 @@ function Filter({
         onChange={(option: OptionType<OptionGroupValues> | null) => {
           setSearchParams({ [filterKey]: option?.value?.value });
         }}
+        dropdownRender={(menu) => {
+          const firstItem = head(options);
+          const optionsLength = firstItem && (firstItem?.options || []).length;
+          return (
+            <>
+              <FilterWrapper>({optionsLength} Items)</FilterWrapper>
+              {menu}
+            </>
+          );
+        }}
       />
     </div>
   );
 }
+
+const FilterWrapper = styled.div`
+  && {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    font-size: 10px;
+  }
+`;
