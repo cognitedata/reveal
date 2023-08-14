@@ -1,58 +1,51 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-import { type CogniteExternalId } from '@cognite/sdk';
 import { useFdmSdk } from '../components/RevealContainer/SDKProvider';
 import { useInfiniteQuery, type UseInfiniteQueryResult } from '@tanstack/react-query';
-import {
-  type Model3DEdgeProperties,
-  type FdmAssetMappingsConfig,
-  type ThreeDModelMappings
-} from './types';
+import { type ThreeDModelMappings } from './types';
 import { DEFAULT_QUERY_STALE_TIME } from '../utilities/constants';
+import { type DmsUniqueIdentifier } from '../utilities/FdmSDK';
+import { SYSTEM_3D_EDGE_SOURCE, type InModel3dEdgeProperties } from '../utilities/globalDataModels';
+import { type TypedReveal3DModel } from '../components/Reveal3DResources/types';
 
 /**
  * This hook fetches the list of FDM asset mappings for the given external ids
  */
 export const useFdmAssetMappings = (
-  fdmAssetExternalIds: CogniteExternalId[],
-  fdmConfig?: FdmAssetMappingsConfig
+  fdmAssetExternalIds: DmsUniqueIdentifier[],
+  models: TypedReveal3DModel[]
 ): UseInfiniteQueryResult<{ items: ThreeDModelMappings[]; nextCursor: string }> => {
   const fdmSdk = useFdmSdk();
 
   return useInfiniteQuery(
     ['reveal', 'react-components', fdmAssetExternalIds],
     async ({ pageParam }) => {
-      if (fdmAssetExternalIds?.length === 0) return { items: [], nextCursor: undefined };
-      if (fdmConfig === undefined)
-        throw Error('FDM config must be defined when using FDM asset mappings');
-
+      if (fdmAssetExternalIds.length === 0) return { items: [], nextCursor: undefined };
       const fdmAssetMappingFilter = {
         in: {
           property: ['edge', 'startNode'],
-          values: fdmAssetExternalIds.map((externalId) => ({
-            space: fdmConfig.assetFdmSpace,
+          values: fdmAssetExternalIds.map(({ externalId, space }) => ({
+            space,
             externalId
           }))
         }
       };
 
-      const instances = await fdmSdk.filterInstances(
+      const instances = await fdmSdk.filterInstances<InModel3dEdgeProperties>(
         fdmAssetMappingFilter,
         'edge',
-        fdmConfig.source,
+        SYSTEM_3D_EDGE_SOURCE,
         pageParam
       );
 
       const modelMappingsTemp: ThreeDModelMappings[] = [];
 
       instances.edges.forEach((instance) => {
-        const mappingProperty = instance.properties[fdmConfig.source.space][
-          `${fdmConfig.source.externalId}/${fdmConfig.source.version}`
-        ] as Model3DEdgeProperties;
+        const { revisionId, revisionNodeId } = instance.properties;
+        const modelId = models.find((model) => model.revisionId === revisionId)?.modelId;
 
-        const modelId = Number.parseInt(instance.endNode.externalId.slice(9));
-        const revisionId = mappingProperty.revisionId;
+        if (modelId === undefined) return;
 
         const isAdded = modelMappingsTemp.some(
           (mapping) => mapping.modelId === modelId && mapping.revisionId === revisionId
@@ -60,7 +53,7 @@ export const useFdmAssetMappings = (
 
         if (!isAdded) {
           const mappingsMap = new Map<string, number>();
-          mappingsMap.set(instance.startNode.externalId, mappingProperty.revisionNodeId);
+          mappingsMap.set(instance.startNode.externalId, revisionNodeId);
 
           modelMappingsTemp.push({
             modelId,
@@ -72,7 +65,7 @@ export const useFdmAssetMappings = (
             (mapping) => mapping.modelId === modelId && mapping.revisionId === revisionId
           );
 
-          modelMapping?.mappings.set(instance.startNode.externalId, mappingProperty.revisionNodeId);
+          modelMapping?.mappings.set(instance.startNode.externalId, revisionNodeId);
         }
       });
 
@@ -80,7 +73,8 @@ export const useFdmAssetMappings = (
     },
     {
       staleTime: DEFAULT_QUERY_STALE_TIME,
-      getNextPageParam: (lastPage) => lastPage.nextCursor
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
+      enabled: fdmAssetExternalIds.length > 0 && models.length > 0
     }
   );
 };

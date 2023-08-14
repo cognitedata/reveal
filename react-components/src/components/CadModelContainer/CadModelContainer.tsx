@@ -8,7 +8,8 @@ import {
   type CogniteCadModel,
   TreeIndexNodeCollection,
   NodeIdNodeCollection,
-  DefaultNodeAppearance
+  DefaultNodeAppearance,
+  type NodeCollection
 } from '@cognite/reveal';
 import { useReveal } from '../RevealContainer/RevealContext';
 import { Matrix4 } from 'three';
@@ -46,8 +47,12 @@ export function CadModelContainer({
 }: CogniteCadModelProps): ReactElement {
   const cachedViewerRef = useRevealKeepAlive();
   const [model, setModel] = useState<CogniteCadModel>();
+
   const viewer = useReveal();
   const sdk = useSDK();
+
+  const defaultStyle = styling?.defaultStyle ?? DefaultNodeAppearance.Default;
+  const styleGroups = styling?.groups;
 
   const { modelId, revisionId, geometryFilter } = addModelOptions;
 
@@ -61,15 +66,28 @@ export function CadModelContainer({
   }, [transform, model]);
 
   useEffect(() => {
-    if (model === undefined || styling === undefined) return;
-
-    applyStyling(sdk, model, styling).catch(console.error);
+    if (model === undefined || styleGroups === undefined) return;
+    const stylingCollections = applyStyling(sdk, model, styleGroups);
 
     return () => {
-      model.removeAllStyledNodeCollections();
-      model.setDefaultNodeAppearance(DefaultNodeAppearance.Default);
+      if (model === undefined) return;
+      void stylingCollections.then((nodeCollections) => {
+        nodeCollections.forEach((nodeCollection) => {
+          model.unassignStyledNodeCollection(nodeCollection);
+        });
+      });
     };
-  }, [styling, model]);
+  }, [styleGroups, model]);
+
+  useEffect(() => {
+    if (model === undefined) return;
+    model.setDefaultNodeAppearance(defaultStyle);
+    return () => {
+      if (model !== undefined) {
+        model.setDefaultNodeAppearance(DefaultNodeAppearance.Default);
+      }
+    };
+  }, [defaultStyle, model]);
 
   useEffect(() => removeModel, [model]);
 
@@ -118,24 +136,20 @@ export function CadModelContainer({
 async function applyStyling(
   sdk: CogniteClient,
   model: CogniteCadModel,
-  styling?: CadModelStyling
-): Promise<void> {
-  if (styling === undefined) return;
-
-  if (styling.defaultStyle !== undefined) {
-    model.setDefaultNodeAppearance(styling.defaultStyle);
-  }
-
-  if (styling.groups !== undefined) {
-    for (const group of styling.groups) {
-      if ('treeIndices' in group && group.style !== undefined) {
-        const nodes = new TreeIndexNodeCollection(group.treeIndices);
-        model.assignStyledNodeCollection(nodes, group.style);
-      } else if ('nodeIds' in group && group.style !== undefined) {
-        const nodes = new NodeIdNodeCollection(sdk, model);
-        await nodes.executeFilter(group.nodeIds);
-        model.assignStyledNodeCollection(nodes, group.style);
-      }
+  stylingGroups: Array<NodeStylingGroup | TreeIndexStylingGroup>
+): Promise<NodeCollection[]> {
+  const collections: NodeCollection[] = [];
+  for (const group of stylingGroups) {
+    if ('treeIndices' in group && group.style !== undefined) {
+      const nodes = new TreeIndexNodeCollection(group.treeIndices);
+      model.assignStyledNodeCollection(nodes, group.style);
+      collections.push(nodes);
+    } else if ('nodeIds' in group && group.style !== undefined) {
+      const nodes = new NodeIdNodeCollection(sdk, model);
+      await nodes.executeFilter(group.nodeIds);
+      model.assignStyledNodeCollection(nodes, group.style);
+      collections.push(nodes);
     }
   }
+  return collections;
 }
