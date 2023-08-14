@@ -2,7 +2,7 @@ import { OptionSelection, OptionType } from '@data-exploration/components';
 import head from 'lodash/head';
 import isEmpty from 'lodash/isEmpty';
 
-import { METADATA_ALL_VALUE } from '@data-exploration-lib/core';
+import { EMPTY_LABEL, METADATA_ALL_VALUE } from '@data-exploration-lib/core';
 
 export const transformMetadataKeysToOptions = (
   data?: {
@@ -28,7 +28,10 @@ export const transformMetadataSelectionChange = (
       return [...acc, { key, value: METADATA_ALL_VALUE }];
     }
 
-    const pairs = values.map((item) => ({ key, value: item }));
+    const pairs = values.map((item) => {
+      if (item === EMPTY_LABEL) return { key, value: '' };
+      return { key, value: item };
+    });
 
     return [...acc, ...pairs];
   }, [] as { key: string; value: string }[]);
@@ -41,6 +44,13 @@ export const transformMetadataValues = (
     if (value === METADATA_ALL_VALUE) {
       return { ...acc, [key]: [] };
     }
+    if (value === '') {
+      return {
+        ...acc,
+        [key]: acc[key] ? [...acc[key], EMPTY_LABEL] : [EMPTY_LABEL],
+      };
+    }
+
     return { ...acc, [key]: acc[key] ? [...acc[key], value] : [value] };
   }, {} as OptionSelection);
 };
