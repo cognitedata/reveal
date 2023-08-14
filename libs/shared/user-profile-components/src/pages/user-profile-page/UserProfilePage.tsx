@@ -32,6 +32,11 @@ export type PersonalInfoTabLocale = {
   emailFieldHelpText: string;
 };
 
+export type ProfileHeaderLocale = {
+  // TODO: provide detailed descriptions
+  backBtnText?: string;
+};
+
 export type UserProfilePageProps = {
   userInfo?: UserInfo;
   isUserInfoLoading?: boolean;
@@ -41,6 +46,7 @@ export type UserProfilePageProps = {
   sidebarLocale?: SidebarLocale;
   languageTabLocale?: LanguageTabLocale;
   personalInfoTabLocale?: PersonalInfoTabLocale;
+  profileHeaderLocale?: ProfileHeaderLocale;
   onTrackEvent?: OnTrackEvent;
   additionalTabsCategoryLabel?: string;
   additionalTabs?: VerticalTab[];
@@ -55,6 +61,7 @@ export const UserProfilePage = ({
   sidebarLocale,
   languageTabLocale,
   personalInfoTabLocale,
+  profileHeaderLocale,
   onTrackEvent,
   additionalTabsCategoryLabel,
   additionalTabs,
@@ -130,7 +137,10 @@ export const UserProfilePage = ({
 
   return (
     <Page>
-      <ProfilePageHeader userInfo={{ name, profilePicture }} />
+      <ProfilePageHeader
+        userInfo={{ name, profilePicture }}
+        backBtnText={profileHeaderLocale?.backBtnText}
+      />
       <ContentSection>
         <Content>
           <ProfileTabs>
