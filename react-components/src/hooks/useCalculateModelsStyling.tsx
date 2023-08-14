@@ -1,8 +1,10 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-import { type FdmAssetStylingGroup } from '../components/Reveal3DResources/Reveal3DResources';
-import { type TypedReveal3DModel } from '../components/Reveal3DResources/types';
+import {
+  type FdmAssetStylingGroup,
+  type TypedReveal3DModel
+} from '../components/Reveal3DResources/types';
 import { type PointCloudModelStyling } from '../components/PointCloudContainer/PointCloudContainer';
 import {
   type NodeStylingGroup,
