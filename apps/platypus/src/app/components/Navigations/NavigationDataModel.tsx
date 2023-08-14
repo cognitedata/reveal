@@ -17,6 +17,7 @@ import useSelector from '@platypus-app/hooks/useSelector';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { useDraftRows } from '@platypus-app/modules/solution/data-management/hooks/useDraftRows';
 import { EndpointModal } from '@platypus-app/modules/solution/data-model/components/EndpointModal';
+import { PowerBIModal } from '@platypus-app/modules/solution/data-model/components/PowerBIModal';
 import { useLocalDraft } from '@platypus-app/modules/solution/data-model/hooks/useLocalDraft';
 import { SchemaEditorMode } from '@platypus-app/modules/solution/data-model/types';
 import { useDataModelState } from '@platypus-app/modules/solution/hooks/useDataModelState';
@@ -144,6 +145,7 @@ export const NavigationDataModel = () => {
   };
 
   const [showEndpointModal, setShowEndpointModal] = useState(false);
+  const [showPowerBIModal, setShowPowerBIModal] = useState(false);
 
   const docsLinkUrl =
     currentPage === 'preview' ? DOCS_LINKS.QUERYING : DOCS_LINKS.CREATION;
@@ -151,6 +153,18 @@ export const NavigationDataModel = () => {
   const renderTopBarRight = () => {
     return (
       <StyledTopBarRight style={{ gap: 8 }}>
+        <Tooltip content={t('cli_PowerBI_tooltip', 'PowerBI Connection Info')}>
+          <Button
+            icon="Link"
+            data-cy="btn-endpoint-modal"
+            onClick={() => {
+              track('DataModel.Links.PowerBI');
+              setShowPowerBIModal(true);
+            }}
+          >
+            {t('powerbi_link_button', 'PowerBI')}
+          </Button>
+        </Tooltip>
         <Tooltip content={t('cli_URL_tooltip', 'GraphQL URL')}>
           <Button
             icon="Link"
@@ -280,6 +294,12 @@ export const NavigationDataModel = () => {
 
   return (
     <StyledTopBar>
+      {showPowerBIModal && (
+        <PowerBIModal
+          dataModel={selectedDataModelVersion}
+          onRequestClose={() => setShowPowerBIModal(false)}
+        />
+      )}
       {showEndpointModal && (
         <EndpointModal
           endpoint={fdmClient.getQueryEndpointUrl(selectedDataModelVersion)}

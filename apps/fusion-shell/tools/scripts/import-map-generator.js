@@ -85,3 +85,26 @@ fs.writeFileSync(
   './dist/apps/fusion-shell/firebase.json',
   JSON.stringify(firebaseConfig, null, 2)
 );
+
+console.log(`Injecting dev scripts in index.html for evn: ${configuration}`);
+if (configuration !== 'production') {
+  var indexHtml = `./dist/apps/fusion-shell/cdf/index.html`;
+  fs.readFile(indexHtml, 'utf8', function (err, data) {
+    if (err) {
+      return console.log(err);
+    }
+
+    const devScripts = `
+<script src="assets/dependencies/import-map-overrides@1.14.6/dist/import-map-overrides.js"></script>
+<script src="assets/dependencies/query-string@7.1.1/dist/query-string.js"></script>
+<import-map-overrides-full show-when-local-storage="devtools" dev-libs></import-map-overrides-full>
+<script src="assets/dependencies/dev-setup.js"></script>`;
+
+    const regex = /<!-- DEV Scripts -->/gm;
+    var result = data.replace(regex, devScripts);
+
+    fs.writeFile(indexHtml, result, 'utf8', function (err) {
+      if (err) return console.log(err);
+    });
+  });
+}

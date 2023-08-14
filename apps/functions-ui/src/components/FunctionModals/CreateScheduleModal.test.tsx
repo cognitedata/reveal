@@ -54,7 +54,9 @@ describe('CreateScheduleModal', () => {
       const allFormItemsLabels = allFormItems.map((i) => i.text());
       expect(allFormItemsLabels).toContain('Schedule Name');
       expect(allFormItemsLabels).toContain('Description');
-      expect(allFormItemsLabels).toContain('Cron Expression');
+      expect(allFormItemsLabels).toContain(
+        'Cron ExpressionThe time zone for the cron expression is UTC'
+      );
       expect(allFormItemsLabels).toContain('Data');
       wrapper.unmount();
     });

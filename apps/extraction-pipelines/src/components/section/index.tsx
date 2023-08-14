@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import isString from 'lodash/isString';
 
-import { Colors, Flex, Icon, IconType, Title } from '@cognite/cogs.js';
+import { Colors, Flex, Heading, Icon, IconType } from '@cognite/cogs.js';
 
 import { Box } from '../box/Box';
 
@@ -43,7 +43,11 @@ const Section = ({
       >
         <Flex alignItems="center" gap={8}>
           {icon && <Icon type={icon} />}
-          {isString(title) ? <Title level={6}>{title}</Title> : title}
+          {isString(title) ? (
+            <StyledHeading level={6}>{title}</StyledHeading>
+          ) : (
+            title
+          )}
         </Flex>
         {extra}
       </StyledSectionHeader>
@@ -74,10 +78,15 @@ const StyledSectionHeader = styled.div<{ $hasBorder?: boolean }>`
   justify-content: space-between;
   min-height: 53px;
   padding: 12px 16px;
+  color: ${Colors['text-icon--medium']};
+`;
+
+const StyledHeading = styled(Heading)`
+  color: ${Colors['text-icon--medium']};
 `;
 
 const StyledSectionContent = styled.div`
-  padding: 16px;
+  padding: 16px 24px;
 `;
 
 export default Section;

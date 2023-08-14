@@ -40,6 +40,15 @@ module.exports = composePlugins(
       };
     }
 
+    config.module.rules = [
+      {
+        test: /\.svg$/i,
+        issuer: /\.[jt]sx?$/,
+        use: ['@svgr/webpack'],
+      },
+      ...config.module.rules,
+    ];
+
     config.mode = nodeEnv === 'production' ? 'production' : 'development';
     return config;
   }

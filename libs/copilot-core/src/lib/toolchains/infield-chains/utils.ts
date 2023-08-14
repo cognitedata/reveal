@@ -130,11 +130,16 @@ export const translateInputToEnglish = async (
 ) => {
   try {
     return (
-      await callPromptChain(chain, generalLanguageDetectTranslationPrompt, [
-        {
-          input: input,
-        },
-      ]).then(safeConvertToJson<translationResponse>)
+      await callPromptChain(
+        chain,
+        'translating text',
+        generalLanguageDetectTranslationPrompt,
+        [
+          {
+            input: input,
+          },
+        ]
+      ).then(safeConvertToJson<translationResponse>)
     )[0];
   } catch (error) {
     return { language: 'english', translation: input } as translationResponse;

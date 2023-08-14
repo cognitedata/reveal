@@ -36,7 +36,6 @@ const destinationChains = (
     sdk,
     messages,
     returnAll: true,
-    verbose: true,
     humanApproval: false,
   }),
   AppBuilderChain: new AppBuilderChain({
@@ -44,35 +43,30 @@ const destinationChains = (
     sdk,
     messages,
     returnAll: true,
-    verbose: true,
   }),
   DocumentQueryChain: new DocumentQueryChain({
     llm: model,
     sdk,
     messages,
     returnAll: true,
-    verbose: false,
   }),
   FusionQAChain: new FusionQAChain({
     llm: model,
     sdk,
     messages,
     returnAll: true,
-    verbose: true,
   }),
   DocumentSummaryChain: new DocumentSummaryChain({
     llm: model,
     sdk,
     messages,
     returnAll: true,
-    verbose: false,
   }),
   WorkorderChain: new WorkorderChain({
     llm: model,
     sdk,
     messages,
     returnAll: true,
-    verbose: true,
   }),
 });
 
@@ -99,6 +93,15 @@ export const newChain = (
     routerChain,
     destinationChains: chains,
     defaultChain,
-    verbose: true,
+    callbacks: [
+      {
+        handleChainStart(chain) {
+          console.log('chain started', chain);
+        },
+        handleChainEnd(chain, output) {
+          console.log('chain ended', chain, output);
+        },
+      },
+    ],
   });
 };

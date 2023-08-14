@@ -26,7 +26,9 @@ export const CommentsPane: React.FC<Props> = ({
   onCloseCommentsPane,
   users,
 }) => {
-  const commentCount = comments.length;
+  const textIsNotEmpty = (comment: Comment) => comment.text !== '';
+
+  const commentCount = comments.filter(textIsNotEmpty).length;
   const [searchString, setSearchString] = useState<string>('');
 
   const [debouncedSearchString] = useDebounce(searchString, SEARCH_DEBOUNCE_MS);
@@ -34,7 +36,7 @@ export const CommentsPane: React.FC<Props> = ({
     comments,
     searchString: debouncedSearchString,
   });
-  const filteredCommentCount = filteredComments.length;
+  const filteredCommentCount = filteredComments.filter(textIsNotEmpty).length;
 
   const getCommentCountText = () => {
     if (isLoading) {

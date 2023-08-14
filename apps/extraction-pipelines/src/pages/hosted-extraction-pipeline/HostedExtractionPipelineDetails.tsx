@@ -1,24 +1,31 @@
 import React, { useState } from 'react';
-import { Navigate, useParams, useSearchParams } from 'react-router-dom';
+import {
+  Navigate,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import { SecondaryTopbar, createLink } from '@cognite/cdf-utilities';
+import { createLink } from '@cognite/cdf-utilities';
 import { Loader, Menu, Tabs } from '@cognite/cogs.js';
 import { useFlag } from '@cognite/react-feature-flags';
 
 import { useTranslation } from '../../common';
 import DeleteSourceModal from '../../components/delete-source-modal/DeleteSourceModal';
-import { StyledHeadingContainer } from '../../components/extpipe/ExtpipeHeading';
+import { ExtractionPipelineDetailsTopBar } from '../../components/ExtractionPiplelineDetailsTopBar';
 import { StyledPageContainer } from '../../components/styled';
 import { useMQTTSourceWithMetrics } from '../../hooks/hostedExtractors';
+import { PAGE_WIDTH } from '../../utils/constants';
 import { getContainer } from '../../utils/utils';
 
 import { HostedExtractionPipelineInsight } from './HostedExtractionPipelineInsight';
-import { HostedExtractionPipelineOverview } from './HostedExtractionPipelineOverview';
+import { HostedExtractionPipelineOverviewNew } from './HostedExtractionPipelineOverviewNew';
 
 export const HostedExtractionPipelineDetails = (): JSX.Element => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const { externalId = '' } = useParams<{
     externalId: string;
@@ -49,54 +56,62 @@ export const HostedExtractionPipelineDetails = (): JSX.Element => {
 
   return (
     <StyledPageContainer>
-      <StyledHeadingContainer>
-        <SecondaryTopbar
-          optionsDropdownProps={{
-            appendTo: getContainer(),
-            hideOnSelect: {
-              hideOnContentClick: true,
-              hideOnOutsideClick: true,
-            },
-            content: (
-              <Menu>
-                <Menu.Item
-                  destructive
-                  icon="Delete"
-                  iconPlacement="left"
-                  onClick={() => setIsDeleteModalVisible(true)}
-                >
-                  {t('delete')}
-                </Menu.Item>
-              </Menu>
-            ),
-          }}
-          extraContent={
-            <TabsContainer>
-              <Tabs
-                activeKey={detailsTab}
-                onTabClick={(key) => {
-                  setSearchParams(
-                    (prev) => {
-                      prev.set('detailsTab', key);
-                      return prev;
-                    },
-                    { replace: true }
-                  );
-                }}
+      <ExtractionPipelineDetailsTopBar
+        source={source}
+        onGoBack={() => navigate(-1)}
+        optionsDropdownProps={{
+          appendTo: getContainer(),
+          hideOnSelect: {
+            hideOnContentClick: true,
+            hideOnOutsideClick: true,
+          },
+          content: (
+            <Menu>
+              <Menu.Item
+                destructive
+                icon="Delete"
+                iconPlacement="left"
+                onClick={() => setIsDeleteModalVisible(true)}
               >
-                <Tabs.Tab tabKey="overview" label={t('overview')} />
-                <Tabs.Tab tabKey="insight" label={t('insight')} />
-              </Tabs>
-            </TabsContainer>
-          }
-          title={externalId}
-        />
-      </StyledHeadingContainer>
+                {t('delete')}
+              </Menu.Item>
+            </Menu>
+          ),
+        }}
+        extraContent={
+          <TabsContainer>
+            <Tabs
+              activeKey={detailsTab}
+              onTabClick={(key) => {
+                setSearchParams(
+                  (prev) => {
+                    prev.set('detailsTab', key);
+                    return prev;
+                  },
+                  { replace: true }
+                );
+              }}
+            >
+              <Tabs.Tab
+                tabKey="overview"
+                label={t('overview')}
+                iconLeft="Home"
+              />
+              <Tabs.Tab
+                tabKey="insight"
+                label={t('insight')}
+                iconLeft="Profiling"
+              />
+            </Tabs>
+          </TabsContainer>
+        }
+        title={externalId}
+      />
       <Content>
         {detailsTab === 'insight' ? (
           <HostedExtractionPipelineInsight source={source} />
         ) : (
-          <HostedExtractionPipelineOverview source={source} />
+          <HostedExtractionPipelineOverviewNew source={source} />
         )}
       </Content>
       {isDeleteModalVisible && (
@@ -111,13 +126,16 @@ export const HostedExtractionPipelineDetails = (): JSX.Element => {
 };
 
 const TabsContainer = styled.div`
-  .cogs-tabs__list {
-    height: 56px;
+  .cogs.cogs-tabs .cogs-tabs__list > :not(:last-child) {
+    margin-right: 24px;
   }
 `;
 
 const Content = styled.div`
   display: flex;
-  justify-content: center;
-  padding: 24px;
+  justify-content: start;
+  padding: 48px 134px;
+  width: ${PAGE_WIDTH}px;
+  margin: 0 auto;
+  box-sizing: content-box;
 `;

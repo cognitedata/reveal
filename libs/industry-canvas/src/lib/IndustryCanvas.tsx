@@ -3,6 +3,7 @@ import React, { Dispatch, SetStateAction, useCallback, useMemo } from 'react';
 import styled from 'styled-components';
 
 import { isDevelopment } from '@cognite/cdf-utilities';
+import { useFlag } from '@cognite/react-feature-flags';
 import { useSDK } from '@cognite/sdk-provider';
 import ReactUnifiedViewer, {
   Annotation,
@@ -19,6 +20,7 @@ import {
   ZOOM_TO_FIT_MARGIN,
   ZOOM_LEVELS,
   CANVAS_FLOATING_ELEMENT_MARGIN,
+  ZOOM_CONTROLS_COGPILOT_ENABLED_RIGHT_MARGIN,
 } from './constants';
 import useEditOnSelect from './hooks/useEditOnSelect';
 import useIndustryCanvasTooltips from './hooks/useIndustryCanvasTooltips';
@@ -305,6 +307,11 @@ export const IndustryCanvas = ({
     });
   }, [viewerRef]);
 
+  const { isEnabled: isCogPilotEnabled } = useFlag('COGNITE_COPILOT', {
+    fallback: false,
+    forceRerender: true,
+  });
+
   return (
     <FullHeightWrapper>
       <ReactUnifiedViewer
@@ -339,7 +346,7 @@ export const IndustryCanvas = ({
           isCanvasLocked={isCanvasLocked}
         />
       </ToolbarWrapper>
-      <ZoomControlsWrapper>
+      <ZoomControlsWrapper isCogPilotEnabled={isCogPilotEnabled}>
         <ZoomControls
           currentZoomScale={currentZoomScale}
           zoomIn={zoomIn}
@@ -365,10 +372,14 @@ const FullHeightWrapper = styled.div`
   position: relative;
 `;
 
-const ZoomControlsWrapper = styled.div`
+// TODO right: ${isDevelopment() ? 70 : CANVAS_FLOATING_ELEMENT_MARGIN}px;
+const ZoomControlsWrapper = styled.div<{ isCogPilotEnabled: boolean }>`
   position: absolute;
   bottom: ${CANVAS_FLOATING_ELEMENT_MARGIN}px;
-  right: ${isDevelopment() ? 70 : CANVAS_FLOATING_ELEMENT_MARGIN}px;
+  right: ${({ isCogPilotEnabled }) =>
+    isCogPilotEnabled
+      ? ZOOM_CONTROLS_COGPILOT_ENABLED_RIGHT_MARGIN
+      : CANVAS_FLOATING_ELEMENT_MARGIN}px;
 `;
 
 const ToolbarWrapper = styled.div`

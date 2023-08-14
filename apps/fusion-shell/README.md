@@ -31,8 +31,42 @@ The current solution is developed to support deployments to both `fusion.cognite
 If you need to work on a part of the app that is using single-spa, here are the most important files for single-spa:
 
 - `src/app/single-spa` - folder that contains everything related for single-spa
+- `src/apps-manigest.json` - JSON file that contains all information about apps, routes, app name...etc.
 - `src/import-map.json` - JSON file that contains import map for core libs like react, sdk-singleton...etc.
 - `src/sub-apps-import-map.json` - JSON file that contains import map for sub-apps. This is a manifest file, the actual file is generated on compile time/on fly. It points to a virtual file paths that are resolved by a proxy server.
+
+### Where can I find the configs from cdf-hub in fusion-shell?
+
+For fusion-shell, we combined several apps into one (navigation, root-config, root-page...etc.).
+
+**To add a new sub-app**
+Now everything is on one place, just edit `apps-manifest.json` file and append/edit your app.
+
+For example:
+
+```JSON
+{
+  "key": "cdf-vision-subapp",
+  "appName": "@cognite/cdf-vision-subapp",
+  "appType": "single-spa",
+  "hosting": {
+    "staging": "https://cdf-vision-staging.web.app",
+    "preview": "https://cdf-vision-preview.web.app",
+    "production": "https://cdf-vision-prod.web.app"
+  },
+  "routes": [
+    {
+      "route": "/:tenantName/vision"
+    }
+  ]
+}
+```
+
+**key** - your app name key, used for registering your app, naming folders...etc.
+**appName** - your app name/package name or previously `resolveToKey` that is used to reference and load the app on runtime
+**appType** - should be either `single-spa` or `module-federation`
+**hosting** - control for which env you will load which app. Example for single branch strategy it will always point to `prod`
+**routes** - register the routes you want to use to load your app.
 
 ### Build host app
 

@@ -174,6 +174,16 @@ export const rawAppsData: RawAppItem[] = [
   },
   {
     category: 'explore',
+    internalId: 'charts',
+    icon: 'LineChart',
+    linkTo: '/charts',
+    importMapApp: '@cognite/cdf-charts-ui',
+    hideInCluster: openshiftClusters,
+    img: images.ChartsAppImg,
+    ariaLabel: 'Go to Charts',
+  },
+  {
+    category: 'explore',
     internalId: 'industry-canvas',
     icon: 'Polygon',
     linkTo: '/industrial-canvas',
@@ -238,16 +248,6 @@ export const rawAppsData: RawAppItem[] = [
     hideInCluster: openshiftClusters,
     img: images.ImageAndVideoManagementAppImg,
     ariaLabel: 'Go to Vision explorer',
-  },
-  {
-    category: 'explore',
-    internalId: 'charts',
-    icon: 'LineChart',
-    linkTo: '/charts',
-    importMapApp: '@cognite/cdf-charts-ui',
-    hideInCluster: openshiftClusters,
-    img: images.ChartsAppImg,
-    ariaLabel: 'Go to Charts',
   },
   {
     category: 'explore',

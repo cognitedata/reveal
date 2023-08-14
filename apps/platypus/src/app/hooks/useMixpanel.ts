@@ -30,6 +30,7 @@ export type TRACKING_TOKENS =
   | 'DataModel.ImportTypes'
   | 'DataModel.ImportTypesCopied'
   | 'DataModel.ErrorMessage'
+  | 'DataModel.Links.PowerBI'
   | 'DataModel.Links.GraphQL'
   | 'DataModel.Links.CLI'
   | 'DataModel.Links.Documentation'

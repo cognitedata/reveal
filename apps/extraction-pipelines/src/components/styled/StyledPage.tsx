@@ -12,7 +12,7 @@ export const PageWrapperColumn = styled(Flex)`
 `;
 
 export const StyledPageContainer = styled.div`
-  background-color: ${Colors['surface--strong']};
+  background-color: ${Colors['surface--muted']};
   min-height: calc(100vh - 56px);
   height: 100%;
 `;

@@ -52,8 +52,6 @@ You can find the code under `apps/platypus`.
 
 ## Running Platypus locally
 
-_Note: make sure to use Node v14! There's a bug with the `cdf-utilities` requirement._
-
 For development, you can use either `development` or `fusion` environments. The default environment is `development`, which runs the app standalone outside of the CDF Fusion platform app. To use this environment, run:
 
 ```

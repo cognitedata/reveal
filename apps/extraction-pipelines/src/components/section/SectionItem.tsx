@@ -20,11 +20,11 @@ const SectionItem = ({
     <StyledItemContainer>
       <StyledItemContent>
         {title && (
-          <Body level={3} strong>
+          <Body size="medium" strong>
             {title}
           </Body>
         )}
-        <StyledItemValue>{value ?? '-'}</StyledItemValue>
+        <StyledItemValue size="medium">{value ?? '-'}</StyledItemValue>
       </StyledItemContent>
       {extraContent && <div>{extraContent}</div>}
     </StyledItemContainer>
@@ -45,9 +45,7 @@ const StyledItemContent = styled.div`
   flex: 1;
 `;
 
-const StyledItemValue = styled(Body).attrs({
-  level: 3,
-})`
+const StyledItemValue = styled(Body)`
   color: ${Colors['text-icon--medium']};
 `;
 

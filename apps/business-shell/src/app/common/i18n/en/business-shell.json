@@ -49,5 +49,20 @@
   "ONBOARDING_MODAL_BODY": "Let us show you around to get you started or explore the possibilities at your own pace",
   "ONBOARDING_MODAL_TITLE": "Welcome to Cognite Data Fusion®",
   "ONBOARDING_MODAL_ACTION_TEXT": "Show me around",
-  "ONBOARDING_MODAL_CANCEL_TEXT": "Close"
+  "ONBOARDING_MODAL_CANCEL_TEXT": "Close",
+
+  "ERROR_TITLE": "Something went wrong",
+  "ERROR_BACK_TO_HOME": "Back to home",
+  "ERROR_RETRY": "Refresh page",
+  "ERROR_FEEDBACK_BUTTON": "Let us know what happened",
+  "ERROR_FEEDBACK_TITLE": "It looks like we are having issues",
+  "ERROR_FEEDBACK_SUBTITLE": "The team has been notified.",
+  "ERROR_FEEDBACK_SUBTITLE2": " If you'd like to help, tell us what happened below",
+  "ERROR_FEEDBACK_LABEL_NAME": "Name",
+  "ERROR_FEEDBACK_LABEL_EMAIL": "Email",
+  "ERROR_FEEDBACK_LABEL_COMMENTS": "What happened?",
+  "ERROR_FEEDBACK_LABEL_SUBMIT": "Submit",
+  "ERROR_FEEDBACK_LABEL_CLOSE": "Close",
+  "ERROR_FEEDBACK_FORM_ENTRY_ERROR": "Some fields were invalid. Please correct the errors and try again.",
+  "ERROR_FEEDBACK_SUCCESS_MESSAGE": "Your feedback has been sent. Thank you!"
 }
