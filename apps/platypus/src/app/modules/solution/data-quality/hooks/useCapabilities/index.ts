@@ -1,14 +1,15 @@
-import { useSDK } from '@cognite/sdk-provider';
 import { UseQueryOptions, useQuery } from '@tanstack/react-query';
 
-export * from './types';
+import { useSDK } from '@cognite/sdk-provider';
 
-import { Capability, RequiredScope } from './types';
 import {
   groupCapabilities,
   isInCapabilityScope,
   isInProjectScope,
 } from './helpers';
+import { Capability, RequiredScope } from './types';
+
+export * from './types';
 
 /**
  * Query returning a dictionary of capabilities and actions based on user's token.

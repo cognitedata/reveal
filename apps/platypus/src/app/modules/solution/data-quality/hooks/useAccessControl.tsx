@@ -1,7 +1,8 @@
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
-import { AclName, CapabilityActions, useCapabilities } from './useCapabilities';
 import { getProject } from '@cognite/cdf-utilities';
+
+import { AclName, CapabilityActions, useCapabilities } from './useCapabilities';
 
 export enum AccessAction {
   READ_DATA_VALIDATION = 'canReadDataValidation',
@@ -83,10 +84,8 @@ const useErrorMessage = (action: AccessAction) => {
   const { t } = useTranslation('useErrorMessage');
 
   const requiredCapabilities = Object.entries(accessMatrix[action]).reduce(
-    (text, [capability, actions]) => {
-      text += `\n${capability}: [${actions.join(', ')}],`;
-      return text;
-    },
+    (text, [capability, actions]) =>
+      text + `\n${capability}: [${actions.join(', ')}],`,
     ''
   );
 
