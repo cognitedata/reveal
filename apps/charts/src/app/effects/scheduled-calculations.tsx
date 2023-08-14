@@ -25,11 +25,11 @@ export const ScheduledCalculationCollectionEffects = () => {
     taskExternalIds?.map((externalId) => ({ externalId })) || []
   );
 
-  const timeseriesEffectElements = tasks?.map((task) => (
+  const scheduledCalculationElements = tasks?.map((task) => (
     <ScheduledCalculationEffects key={task.externalId} task={task} />
   ));
 
-  return <>{timeseriesEffectElements}</>;
+  return <>{scheduledCalculationElements}</>;
 };
 
 export const ScheduledCalculationEffects = ({

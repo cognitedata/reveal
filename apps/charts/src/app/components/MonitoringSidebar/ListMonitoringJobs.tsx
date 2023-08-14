@@ -5,9 +5,12 @@ import {
   ExpandIcon,
   LoadingRow,
 } from '@charts-app/components/Common/SidebarElements';
+import {
+  useGetTsIdsFromTimeseriesCollection,
+  useGetTsExternalIdsFromScheduledCalculations,
+} from '@charts-app/domain/chart/internal/queries/useGetTSIds';
 import { CHARTS_FOLDER_PREFIX } from '@charts-app/domain/monitoring/constants';
 import { useSearchParam } from '@charts-app/hooks/navigation';
-import { useChartAtom } from '@charts-app/models/chart/atom';
 import { trackUsage } from '@charts-app/services/metrics';
 import {
   MONITORING_SIDEBAR_HIGHLIGHTED_JOB,
@@ -19,8 +22,6 @@ import difference from 'lodash/difference';
 import head from 'lodash/head';
 
 import { Collapse, Chip } from '@cognite/cogs.js';
-
-import { getTsIds } from '../../domain/chart/internal/transformers/getTsIds';
 
 import { SidebarCollapseWrapped, ExpandTitle } from './elements';
 import EmptyState from './EmptyState';
@@ -37,8 +38,9 @@ const removePrefixFromFolder = (folderName = '') =>
   folderName.replace(CHARTS_FOLDER_PREFIX, '');
 
 const ListMonitoringJobs = memo(() => {
-  const [chart] = useChartAtom();
-
+  const timeseriesCollectionTsIds = useGetTsIdsFromTimeseriesCollection();
+  const scheduledCalculationTsExternalIds =
+    useGetTsExternalIdsFromScheduledCalculations();
   const [monitoringFolderParam, setMonitoringFolderParam] = useSearchParam(
     MONITORING_SIDEBAR_SELECTED_FOLDER
   );
@@ -86,7 +88,12 @@ const ListMonitoringJobs = memo(() => {
     'monitoring-sidebar',
     {
       subscribed: filterOption === 'subscribed',
-      timeseriesIds: filterOption === 'current' ? getTsIds(chart) : undefined,
+      timeseriesIds:
+        filterOption === 'current' ? timeseriesCollectionTsIds : undefined,
+      timeseriesExternalIds:
+        filterOption === 'current'
+          ? scheduledCalculationTsExternalIds
+          : undefined,
       currentChart: filterOption === 'current',
     }
   );
