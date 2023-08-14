@@ -35,16 +35,14 @@ export function WizardStepIcon({
       className={classnames({ completed, active, disabled })}
       iconSize={iconSize}
     >
-      <span>
-        <NotificationDot
-          hidden={!validationErrorCount}
-          value={validationErrorCount.toString()}
-        >
-          <button aria-labelledby={labeledBy} type="button" onClick={onClick}>
-            <Icon type={icon} />
-          </button>
-        </NotificationDot>
-      </span>
+      <NotificationDot
+        hidden={!validationErrorCount}
+        value={validationErrorCount.toString()}
+      >
+        <button aria-labelledby={labeledBy} type="button" onClick={onClick}>
+          <Icon type={icon} />
+        </button>
+      </NotificationDot>
     </WizardStepIconContainer>
   );
 }
