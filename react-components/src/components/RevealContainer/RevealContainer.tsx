@@ -11,6 +11,7 @@ import { ModelsLoadingStateContext } from '../Reveal3DResources/ModelsLoadingCon
 import { SDKProvider } from './SDKProvider';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
+import { RevealContainerElementContext } from './RevealContainerElementContext';
 
 type RevealContainerProps = {
   color?: Color;
@@ -67,14 +68,21 @@ export function RevealContainer({
   );
 
   function mountChildren(): ReactElement {
-    if (viewer === undefined || viewerDomElement.current === null) return <></>;
+    if (
+      viewer === undefined ||
+      viewerDomElement.current === null ||
+      wrapperDomElement.current === null
+    )
+      return <></>;
     return (
       <>
-        <RevealContext.Provider value={viewer}>
-          <ModelsLoadingProvider>
-            {createPortal(children, viewerDomElement.current)}
-          </ModelsLoadingProvider>
-        </RevealContext.Provider>
+        <RevealContainerElementContext.Provider value={wrapperDomElement.current}>
+          <RevealContext.Provider value={viewer}>
+            <ModelsLoadingProvider>
+              {createPortal(children, viewerDomElement.current)}
+            </ModelsLoadingProvider>
+          </RevealContext.Provider>
+        </RevealContainerElementContext.Provider>
       </>
     );
   }
