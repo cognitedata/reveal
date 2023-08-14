@@ -16,7 +16,7 @@ import {
   type EdgeItem,
   type InspectResultList
 } from '../utilities/FdmSDK';
-import { INSTANCE_SPACE_3D_DATA, SYSTEM_3D_EDGE_SOURCE } from '../utilities/globalDataModels';
+import { INSTANCE_SPACE_3D_DATA, SYSTEM_3D_EDGE_SOURCE, SYSTEM_SPACE_3D_SCHEMA } from '../utilities/globalDataModels';
 
 export const useNodeMappedData = (
   treeIndex: number | undefined,
@@ -47,11 +47,7 @@ export const useNodeMappedData = (
       const selectedEdge =
         mappings !== undefined && mappings.edges.length > 0 ? mappings.edges[0] : undefined;
 
-
-
-      const selectedNodeId = selectedEdge?.properties[SYSTEM_3D_EDGE_SOURCE.space][
-          `${SYSTEM_3D_EDGE_SOURCE.externalId}/${SYSTEM_3D_EDGE_SOURCE.version}`
-        ].revisionNodeId;
+      const selectedNodeId = selectedEdge?.properties.revisionNodeId;
 
       const dataNode = selectedEdge?.startNode;
 
@@ -112,14 +108,14 @@ async function fetchNodeMappingEdges(
           property: ['edge', 'endNode'],
           value: {
             space: INSTANCE_SPACE_3D_DATA,
-            externalId: `model_3d_${model.modelId}`
+            externalId: `${model.modelId}`
           }
         }
       },
       {
         equals: {
           property: [
-            SYSTEM_3D_EDGE_SOURCE.space,
+            SYSTEM_SPACE_3D_SCHEMA,
             `${SYSTEM_3D_EDGE_SOURCE.externalId}/${SYSTEM_3D_EDGE_SOURCE.version}`,
             'revisionId'
           ],
@@ -129,7 +125,7 @@ async function fetchNodeMappingEdges(
       {
         in: {
           property: [
-            SYSTEM_3D_EDGE_SOURCE.space,
+            SYSTEM_SPACE_3D_SCHEMA,
             `${SYSTEM_3D_EDGE_SOURCE.externalId}/${SYSTEM_3D_EDGE_SOURCE.version}`,
             'revisionNodeId'
           ],
