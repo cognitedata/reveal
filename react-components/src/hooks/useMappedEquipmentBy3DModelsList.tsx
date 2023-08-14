@@ -46,9 +46,9 @@ function groupToModelRevision(
     const edgesForModel = map.get(modelRevisionIdKey);
     if (edgesForModel === undefined) {
       map.set(modelRevisionIdKey, [edge]);
-      return map;
+    } else {
+      edgesForModel.push(edge);
     }
-    edgesForModel.push(edge);
 
     return map;
   }, new Map<ModelRevisionId, Array<EdgeItem<InModel3dEdgeProperties>>>());

@@ -3,10 +3,9 @@
  */
 import type { Meta, StoryObj } from '@storybook/react';
 import { Reveal3DResources, RevealContainer } from '../src';
-import { Color } from 'three';
+import { Color, Matrix4 } from 'three';
 import { CameraController } from '../src/';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 const meta = {
   title: 'Example/Reveal3DResources',
@@ -23,16 +22,21 @@ export const Main: Story = {
   args: {
     resources: [
       {
-        modelId: 2231774635735416,
-        revisionId: 912809199849811,
-        styling: {
-          default: {
-            color: new Color('#efefef')
-          },
-          mapped: {
-            color: new Color('#c5cbff')
-          }
-        }
+        modelId: 1791160622840317,
+        revisionId: 498427137020189,
+        transform: new Matrix4().makeTranslation(40, 0, 0)
+      },
+      {
+        modelId: 1791160622840317,
+        revisionId: 498427137020189,
+        transform: new Matrix4().makeTranslation(40, 10, 0)
+      },
+      {
+        siteId: 'c_RC_2'
+      },
+      {
+        modelId: 3865289545346058,
+        revisionId: 4160448151596909
       }
     ]
   },
@@ -47,28 +51,7 @@ export const Main: Story = {
             placement: 'topRight'
           }
         }}>
-        <ReactQueryDevtools />
-        <Reveal3DResources
-          resources={resources}
-          instanceStyling={[
-            {
-              fdmAssetExternalIds: [
-                { space: 'pdms-mapping', externalId: 'EQ-l-2231774635735416-2232218418169407' },
-                { space: 'pdms-mapping', externalId: 'EQ-l-2231774635735416-5658577936769408' },
-                { space: 'pdms-mapping', externalId: 'EQ-l-2231774635735416-850382017588429' },
-                { space: 'pdms-mapping', externalId: 'EQ-l-2231774635735416-3070761313703702' },
-                { space: 'pdms-mapping', externalId: 'EQ-l-2231774635735416-3951638513367021' },
-                { space: 'pdms-mapping', externalId: 'EQ-l-2231774635735416-7062796113231733' },
-                { space: 'pdms-mapping', externalId: 'EQ-l-2231774635735416-2890847372912846' },
-                { space: 'pdms-mapping', externalId: 'EQ-l-2231774635735416-329414570333157' },
-                { space: 'pdms-mapping', externalId: 'EQ-l-2231774635735416-3629108135100276' },
-                { space: 'pdms-mapping', externalId: 'EQ-l-2231774635735416-6317623811412748' },
-                { space: 'pdms-mapping', externalId: 'EQ-l-2231774635735416-3132072649556228' }
-              ],
-              style: { cad: { color: new Color('#ff0000') } }
-            }
-          ]}
-        />
+        <Reveal3DResources resources={resources} />
         <CameraController
           initialFitCamera={{
             to: 'allModels'

@@ -179,8 +179,8 @@ function getModelMappings(
       (mapping) => mapping.modelId === model.modelId && mapping.revisionId === model.revisionId
     )
     .reduce(
+      // reduce is added to avoid duplication of a models that span several pages.
       (acc, mapping) => {
-        // reduce is added to avoid duplicate models from several pages.
         mergeMaps(acc.mappings, mapping.mappings);
         return acc;
       },

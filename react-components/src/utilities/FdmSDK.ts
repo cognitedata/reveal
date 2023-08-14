@@ -132,7 +132,17 @@ export class FdmSDK {
 
     const edgeResult = result.data.items as Array<EdgeItem<Record<string, any>>>;
 
-    if (source !== undefined) {
+    hoistEdgeProperties();
+
+    return {
+      edges: result.data.items as Array<EdgeItem<PropertiesType>>,
+      nextCursor: result.data.nextCursor
+    };
+
+    function hoistEdgeProperties(): void {
+      if (source === undefined) {
+        return;
+      }
       const propertyKey = `${source.externalId}/${source.version}`;
       edgeResult.forEach((edge) => {
         if (edge.properties[source.space][propertyKey] !== undefined) {
@@ -140,11 +150,6 @@ export class FdmSDK {
         }
       });
     }
-
-    return {
-      edges: result.data.items as Array<EdgeItem<PropertiesType>>,
-      nextCursor: result.data.nextCursor
-    };
   }
 
   public async filterAllInstances<PropertiesType = Record<string, any>>(
