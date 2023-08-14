@@ -20,7 +20,7 @@ const meta = {
   argTypes: {
     resources: {
       description: 'Styling of all models',
-      options: ['RedDefaultGreenMapped', 'GrayDefaultBlueMapped', 'None'],
+      options: ['RedDefaultGreenMapped', 'GreenDefaultRedMapped', 'None'],
       control: {
         type: 'radio'
       },
@@ -32,12 +32,12 @@ const meta = {
             styling: { default: { color: new Color('red') }, mapped: { color: new Color('green') } }
           }
         ],
-        GrayDefaultBlueMapped: [
+        GreenDefaultRedMapped: [
           {
             ...model,
             styling: {
-              default: { color: new Color('#efefef') },
-              mapped: { color: new Color('#c5cbff') }
+              default: { color: new Color('green') },
+              mapped: { color: new Color('red') }
             }
           }
         ],
@@ -63,9 +63,14 @@ export const Main: Story = {
         ...model
       }
     ],
-    instanceStyling: []
+    defaultResourceStyling: {
+      cad: {
+        default: { color: new Color('#efefef') },
+        mapped: { color: new Color('#c5cbff') }
+      }
+    }
   },
-  render: ({ resources }) => {
+  render: ({ resources, defaultResourceStyling }) => {
     return (
       <RevealContainer
         sdk={sdk}
@@ -76,7 +81,7 @@ export const Main: Story = {
             placement: 'topRight'
           }
         }}>
-        <Reveal3DResources resources={resources} />
+        <Reveal3DResources resources={resources} defaultResourceStyling={defaultResourceStyling} />
         <CameraController
           initialFitCamera={{
             to: 'allModels'

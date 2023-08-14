@@ -35,8 +35,9 @@ export {
 } from './components/CadModelContainer/CadModelContainer';
 export {
   type Reveal3DResourcesProps,
-  type FdmAssetStylingGroup
-} from './components/Reveal3DResources/Reveal3DResources';
+  type FdmAssetStylingGroup,
+  type DefaultResourceStyling
+} from './components/Reveal3DResources/types';
 export type {
   AddImageCollection360Options,
   AddResourceOptions,
