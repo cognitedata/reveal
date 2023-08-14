@@ -35,7 +35,7 @@ export function WizardStepIcon({
       className={classnames({ completed, active, disabled })}
       iconSize={iconSize}
     >
-      <NotificationDotContainer>
+      <span>
         <NotificationDot
           hidden={!validationErrorCount}
           value={validationErrorCount.toString()}
@@ -44,19 +44,10 @@ export function WizardStepIcon({
             <Icon type={icon} />
           </button>
         </NotificationDot>
-      </NotificationDotContainer>
+      </span>
     </WizardStepIconContainer>
   );
 }
-
-export const NotificationDotContainer = styled.span`
-  && {
-    .cogs-notification-dot > .cogs-notification-dot__bubble {
-      padding: 2px 3px;
-      border-radius: 10px;
-    }
-  }
-`;
 
 export const WizardStepIconContainer = styled.div<{
   iconSize: number;
