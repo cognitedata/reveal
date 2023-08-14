@@ -15,26 +15,70 @@ import { type NodeAppearance } from '@cognite/reveal';
 import { type ThreeDModelMappings } from './types';
 import { type CogniteExternalId, type CogniteInternalId } from '@cognite/sdk';
 import { useFdmAssetMappings } from './useFdmAssetMappings';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
+
+type ModelStyleGroup = {
+  model: TypedReveal3DModel;
+  styleGroup: NodeStylingGroup[];
+};
 
 export const useCalculateModelsStyling = (
   models: TypedReveal3DModel[],
   instanceGroups: FdmAssetStylingGroup[]
 ): Array<PointCloudModelStyling | CadModelStyling> => {
-  const modelsRevisionsWithMappedEquipment = models.filter((p) => p.styling?.mapped !== undefined);
+  const modelsMappedStyleGroups = useCalculateMappedStyling(models);
+  const modelInstanceStyleGroups = useCalculateInstanceStyling(models, instanceGroups);
+  const joinedStyleGroups = useJoinStylingGroups(
+    models,
+    modelsMappedStyleGroups,
+    modelInstanceStyleGroups
+  );
+  return joinedStyleGroups;
+};
+
+function useCalculateMappedStyling(models: TypedReveal3DModel[]): ModelStyleGroup[] {
+  const modelsRevisionsWithMappedEquipment = models.filter(
+    (model) => model.styling?.mapped !== undefined
+  );
   const shouldFetchAllMappedEquipment = modelsRevisionsWithMappedEquipment.length > 0;
-  const { data } = useMappedEquipmentByRevisionList(
+  const { data: mappedEquipmentEdges } = useMappedEquipmentByRevisionList(
     modelsRevisionsWithMappedEquipment,
     shouldFetchAllMappedEquipment
   );
 
+  const modelsMappedStyleGroups = useMemo(() => {
+    if (
+      models.length === 0 ||
+      mappedEquipmentEdges === undefined ||
+      mappedEquipmentEdges.size === 0
+    ) {
+      return [];
+    }
+    return models.map((model) => {
+      const edges = mappedEquipmentEdges?.get(`${model.modelId}-${model.revisionId}`) ?? [];
+
+      const styleGroup =
+        model.styling?.mapped !== undefined
+          ? [getMappedStyleGroup(edges, model.styling.mapped)]
+          : [];
+      return { model, styleGroup };
+    });
+  }, [models, mappedEquipmentEdges]);
+
+  return modelsMappedStyleGroups;
+}
+
+function useCalculateInstanceStyling(
+  models: TypedReveal3DModel[],
+  instanceGroups: FdmAssetStylingGroup[]
+): ModelStyleGroup[] {
   const {
     data: fdmAssetMappingsData,
     hasNextPage,
     isFetchingNextPage,
     fetchNextPage
   } = useFdmAssetMappings(
-    instanceGroups.flatMap((p) => p.fdmAssetExternalIds),
+    instanceGroups.flatMap((instanceGroup) => instanceGroup.fdmAssetExternalIds),
     models
   );
 
@@ -44,29 +88,47 @@ export const useCalculateModelsStyling = (
     }
   }, [hasNextPage, fetchNextPage]);
 
-  if (data === undefined && fdmAssetMappingsData?.pages === undefined) {
-    return extractDefaultStyles(models);
-  }
-  const fdmAssetMappings = fdmAssetMappingsData?.pages.flatMap((page) => page.items);
-  return models.map((p) => {
-    const edges = data?.get(`${p.modelId}-${p.revisionId}`) ?? [];
+  const modelInstanceStyleGroups = useMemo(() => {
+    if (models.length === 0 || fdmAssetMappingsData?.pages === undefined) {
+      return [];
+    }
+    const fdmAssetMappings = fdmAssetMappingsData.pages.flatMap((page) => page.items);
+    return models.map((model) => {
+      const styleGroup =
+        fdmAssetMappings !== undefined
+          ? calculateCadModelStyling(instanceGroups, fdmAssetMappings, model)
+          : [];
+      return { model, styleGroup };
+    });
+  }, [models, instanceGroups, fdmAssetMappingsData]);
 
-    const mappedStyleGroup =
-      p.styling?.mapped !== undefined ? [getMappedStyleGroup(edges, p.styling.mapped)] : [];
+  return modelInstanceStyleGroups;
+}
 
-    const instanceStyleGroups =
-      fdmAssetMappings !== undefined
-        ? calculateCadModelStyling(instanceGroups, fdmAssetMappings, p)
-        : [];
+function useJoinStylingGroups(
+  models: TypedReveal3DModel[],
+  modelsMappedStyleGroups: ModelStyleGroup[],
+  modelInstanceStyleGroups: ModelStyleGroup[]
+): Array<PointCloudModelStyling | CadModelStyling> {
+  const modelsStyling = useMemo(() => {
+    if (modelInstanceStyleGroups.length === 0 && modelsMappedStyleGroups.length === 0) {
+      return extractDefaultStyles(models);
+    }
+    return models.map((model) => {
+      const mappedStyleGroup =
+        modelsMappedStyleGroups.find((typedModel) => typedModel.model === model)?.styleGroup ?? [];
+      const instanceStyleGroups = modelInstanceStyleGroups
+        .filter((typedModel) => typedModel.model === model)
+        .flatMap((typedModel) => typedModel.styleGroup);
+      return {
+        defaultStyle: model.styling?.default,
+        groups: [...mappedStyleGroup, ...instanceStyleGroups]
+      };
+    });
+  }, [models, modelInstanceStyleGroups, modelsMappedStyleGroups]);
 
-    const groups = mappedStyleGroup.concat(instanceStyleGroups);
-
-    return {
-      defaultStyle: p.styling?.default,
-      groups
-    };
-  });
-};
+  return modelsStyling;
+}
 
 function extractDefaultStyles(
   typedModels: TypedReveal3DModel[]
