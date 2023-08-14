@@ -9,6 +9,7 @@ import { Checkbox, Flex, Menu } from '@cognite/cogs.js';
 import { StyledChipCount, StyledLabel, StyledSubMenu } from './elements';
 import { uniqueId } from 'lodash';
 import { type Reveal3DResourcesLayersProps } from './types';
+import { useRevealContainerElement } from '../../RevealContainer/RevealContainerElementContext';
 
 export const CadModelLayersContainer = ({
   layerProps
@@ -16,6 +17,7 @@ export const CadModelLayersContainer = ({
   layerProps: Reveal3DResourcesLayersProps;
 }): ReactElement => {
   const viewer = useReveal();
+  const revealContainerElement = useRevealContainerElement();
   const [visible, setVisible] = useState(false);
 
   const { cadLayerData } = layerProps.reveal3DResourcesLayerData;
@@ -84,7 +86,7 @@ export const CadModelLayersContainer = ({
     <>
       {cadLayerData.length > 0 && (
         <Menu.Submenu
-          appendTo={document.getElementById('reveal-canvas-dom-element') ?? document.body}
+          appendTo={revealContainerElement ?? document.body}
           visible={visible}
           onClickOutside={() => {
             setVisible(false);

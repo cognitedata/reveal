@@ -10,6 +10,7 @@ import { StyledChipCount, StyledLabel, StyledSubMenu } from './elements';
 import { type CognitePointCloudModel } from '@cognite/reveal';
 import { uniqueId } from 'lodash';
 import { type Reveal3DResourcesLayersProps } from './types';
+import { useRevealContainerElement } from '../../RevealContainer/RevealContainerElementContext';
 
 export const PointCloudLayersContainer = ({
   layerProps
@@ -17,6 +18,7 @@ export const PointCloudLayersContainer = ({
   layerProps: Reveal3DResourcesLayersProps;
 }): ReactElement => {
   const viewer = useReveal();
+  const revealContainerElement = useRevealContainerElement();
   const [visible, setVisible] = useState(false);
   const { pointCloudLayerData } = layerProps.reveal3DResourcesLayerData;
   const count = pointCloudLayerData.length.toString();
@@ -76,7 +78,7 @@ export const PointCloudLayersContainer = ({
     <>
       {pointCloudLayerData.length > 0 && (
         <Menu.Submenu
-          appendTo={document.getElementById('reveal-canvas-dom-element') ?? document.body}
+          appendTo={revealContainerElement ?? document.body}
           visible={visible}
           onClickOutside={() => {
             setVisible(false);

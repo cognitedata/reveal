@@ -15,9 +15,11 @@ import {
 import { useReveal } from '../RevealContainer/RevealContext';
 import { use3DModelName } from '../../hooks/use3DModelName';
 import { isEqual } from 'lodash';
+import { useRevealContainerElement } from '../RevealContainer/RevealContainerElementContext';
 
 export const LayersButton = (): ReactElement => {
   const viewer = useReveal();
+  const revealContainerElement = useRevealContainerElement();
   const [layersEnabled, setLayersEnabled] = useState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
 
@@ -156,7 +158,7 @@ export const LayersButton = (): ReactElement => {
 
   return (
     <Dropdown
-      appendTo={document.getElementById('reveal-canvas-dom-element') ?? document.body}
+      appendTo={revealContainerElement ?? document.body}
       content={
         <LayersContainer
           props={{

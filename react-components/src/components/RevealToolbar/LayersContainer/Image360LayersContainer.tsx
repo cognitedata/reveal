@@ -9,6 +9,7 @@ import { StyledChipCount, StyledLabel, StyledSubMenu } from './elements';
 import { type Image360Collection } from '@cognite/reveal';
 import { uniqueId } from 'lodash';
 import { type Reveal3DResourcesLayersProps } from './types';
+import { useRevealContainerElement } from '../../RevealContainer/RevealContainerElementContext';
 
 export const Image360CollectionLayerContainer = ({
   layerProps
@@ -16,6 +17,7 @@ export const Image360CollectionLayerContainer = ({
   layerProps: Reveal3DResourcesLayersProps;
 }): ReactElement => {
   const viewer = useReveal();
+  const revealContainerElement = useRevealContainerElement();
   const [visible, setVisible] = useState(false);
   const { image360LayerData } = layerProps.reveal3DResourcesLayerData;
 
@@ -81,7 +83,7 @@ export const Image360CollectionLayerContainer = ({
     <>
       {image360LayerData.length > 0 && (
         <Menu.Submenu
-          appendTo={document.getElementById('reveal-canvas-dom-element') ?? document.body}
+          appendTo={revealContainerElement ?? document.body}
           visible={visible}
           onClickOutside={() => {
             setVisible(false);
