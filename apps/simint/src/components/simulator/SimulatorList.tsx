@@ -77,7 +77,7 @@ export function SimulatorList({
 
 export const SimulatorListContainer = styled.div`
   min-width: 480px;
-  height: 375px;
+  max-height: 375px;
   overflow: auto;
   .simulator-header {
     display: flex;
