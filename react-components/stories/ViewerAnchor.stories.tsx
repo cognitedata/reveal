@@ -7,7 +7,6 @@ import { Color, Vector3 } from 'three';
 import { CameraController, ViewerAnchor } from '../src/';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import styled from 'styled-components';
-import { DefaultFdmConfig } from './utilities/fdmConfig';
 
 const meta = {
   title: 'Example/ViewerAnchor',
@@ -27,10 +26,9 @@ export const Main: Story = {
         modelId: 1791160622840317,
         revisionId: 498427137020189
       }
-    ],
-    fdmAssetMappingConfig: DefaultFdmConfig
+    ]
   },
-  render: ({ resources, fdmAssetMappingConfig }) => {
+  render: ({ resources }) => {
     const position = new Vector3(25, 0, -25);
     const position2 = new Vector3();
     const SuppressedDiv = withSuppressRevealEvents(styled.div``);
@@ -45,7 +43,7 @@ export const Main: Story = {
             placement: 'topRight'
           }
         }}>
-        <Reveal3DResources resources={resources} fdmAssetMappingConfig={fdmAssetMappingConfig} />
+        <Reveal3DResources resources={resources} />
         <ViewerAnchor position={position}>
           <div
             style={{
