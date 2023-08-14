@@ -82,7 +82,7 @@ const StoryContent = ({
         fdmAssetMappingConfig={fdmAssetMappingConfig}
       />
       <RevealToolbar />
-      NodeData is: {JSON.stringify(nodeData)}
+      NodeData is: {JSON.stringify(nodeData?.nodeExternalId)}
     </>
   );
 };
