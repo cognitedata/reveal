@@ -15,7 +15,7 @@
     "@codemirror/lang-sql": "^6.5.2",
     "@codemirror/language": "^6.2.1",
     "@codemirror/legacy-modes": "^6.1.0",
-    "@cognite/acl-protos": "^0.19.2",
+    "@cognite/acl-protos": "^0.20.0",
     "@cognite/annotations": "^1.1.0",
     "@cognite/auth-react": "^0.0.28-beta",
     "@cognite/calculation-backend": "^4.1.0-alpha.3",
