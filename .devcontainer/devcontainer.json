@@ -28,7 +28,8 @@
 				"dbaeumer.vscode-eslint",
 				"nrwl.angular-console",
 				"esbenp.prettier-vscode",
-				"firsttris.vscode-jest-runner"
+				"firsttris.vscode-jest-runner",
+				"mutantdino.resourcemonitor"
 			]
 		}
 	},
