@@ -5,6 +5,7 @@ import {
   InternalStep,
   OnboardingModal,
   useOrientation,
+  ONBOARDING_MODAL_ACTIONS,
 } from '@fusion/shared/user-onboarding-components';
 import useLocalStorageState from 'use-local-storage-state';
 
@@ -83,10 +84,23 @@ export const Onboarding = () => {
   );
 
   const onCancel = (reason: ModalCloseReason) => {
+    if (reason === 'closeClick')
+      track('BusinessShell.Onboarding.Modal', {
+        action: ONBOARDING_MODAL_ACTIONS.CLOSED,
+      });
+
+    if (reason === 'cancelClick')
+      track('BusinessShell.Onboarding.Modal', {
+        action: ONBOARDING_MODAL_ACTIONS.CANCELLED,
+      });
+
     if (reason === 'backdropClick') return;
     setOnboardingModalPopup(false);
   };
   const onOk = () => {
+    track('BusinessShell.Onboarding.Modal', {
+      action: ONBOARDING_MODAL_ACTIONS.SUCCESS,
+    });
     handleState({ open: true, steps, onTrackEvent });
     setOnboardingModalPopup(false);
   };
@@ -99,8 +113,9 @@ export const Onboarding = () => {
 
   return onboardingModalPopup && isOnboardingEnabled ? (
     <OnboardingModal
+      onTrackEvent={onTrackEvent}
       images={images}
-      visible={onboardingModalPopup}
+      visible={onboardingModalPopup && isOnboardingEnabled}
       onCancel={onCancel}
       onOk={onOk}
       logoType="CDF"
