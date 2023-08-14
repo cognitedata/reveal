@@ -395,7 +395,6 @@ function Filter({
   setSearchParams,
   isClearable = true,
 }: FilterProps) {
-  console.log(JSON.stringify(options));
   return (
     <div className="cogs-input-container">
       <label className="title">{label}</label>
