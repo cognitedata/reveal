@@ -8,7 +8,7 @@ import {
   type CadIntersection
 } from '@cognite/reveal';
 import { type Matrix4 } from 'three';
-import { type FdmNode, type Source } from '../../utilities/FdmSDK';
+import { type Source } from '../../utilities/FdmSDK';
 import { type Node3D } from '@cognite/sdk/dist/src';
 
 export type AddImageCollection360Options = {
@@ -22,8 +22,8 @@ export type AddResourceOptions = AddReveal3DModelOptions | AddImageCollection360
 export type AddReveal3DModelOptions = AddModelOptions & { transform?: Matrix4 };
 export type TypedReveal3DModel = AddReveal3DModelOptions & { type: SupportedModelTypes | '' };
 
-export type NodeDataResult<NodeType> = {
-  data: FdmNode<NodeType>;
+export type NodeDataResult = {
+  nodeExternalId: string;
   view: Source;
   cadNode: Node3D;
   intersection: CadIntersection;

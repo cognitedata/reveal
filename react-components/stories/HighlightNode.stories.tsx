@@ -15,17 +15,7 @@ import { Color, Matrix4 } from 'three';
 import { type ReactElement, useState } from 'react';
 import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@cognite/reveal';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
-
-const DefaultFdmConfig: FdmAssetMappingsConfig = {
-  source: {
-    space: 'hf_3d_schema',
-    version: '1',
-    type: 'view',
-    externalId: 'cdf_3d_connection_data'
-  },
-  global3dSpace: 'hf_3d_global_data',
-  assetFdmSpace: 'hf_customer_a'
-};
+import { DefaultFdmConfig } from './utilities/fdmConfig';
 
 const meta = {
   title: 'Example/HighlightNode',
@@ -64,20 +54,21 @@ const StoryContent = ({
   fdmAssetMappingConfig
 }: {
   resources: AddResourceOptions[];
-  fdmAssetMappingConfig: FdmAssetMappingsConfig;
+  fdmAssetMappingConfig?: FdmAssetMappingsConfig;
 }): ReactElement => {
   const [nodeData, setNodeData] = useState<any>(undefined);
 
   const [highlightedId, setHighlightedId] = useState<string | undefined>(undefined);
 
-  const callback = (nodeData: NodeDataResult<any> | undefined): void => {
-    setNodeData(nodeData?.data);
-    setHighlightedId(nodeData?.data?.externalId);
+  const callback = async (nodeData: Promise<NodeDataResult | undefined>): Promise<void> => {
+    const nodeDataResult = await nodeData;
+    setNodeData(nodeDataResult);
+    setHighlightedId(nodeDataResult?.nodeExternalId);
 
-    if (nodeData === undefined) return;
+    if (nodeDataResult === undefined) return;
 
-    nodeData.intersection.model.assignStyledNodeCollection(
-      new TreeIndexNodeCollection([nodeData.cadNode.treeIndex]),
+    nodeDataResult.intersection.model.assignStyledNodeCollection(
+      new TreeIndexNodeCollection([nodeDataResult.cadNode.treeIndex]),
       DefaultNodeAppearance.Highlighted
     );
   };
@@ -98,7 +89,9 @@ const StoryContent = ({
                 ]
         }}
         fdmAssetMappingConfig={fdmAssetMappingConfig}
-        onNodeClick={callback}
+        onNodeClick={(nodeData) => {
+          void callback(nodeData);
+        }}
       />
       <RevealToolbar />
       NodeData is: {JSON.stringify(nodeData)}

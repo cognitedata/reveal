@@ -2,18 +2,17 @@
  * Copyright 2023 Cognite AS
  */
 import type { Meta, StoryObj } from '@storybook/react';
-import { Reveal3DResources, RevealContainer } from '../src';
+import { Reveal3DResources, RevealContainer, withSuppressRevealEvents } from '../src';
 import { Color, Vector3 } from 'three';
 import { CameraController, ViewerAnchor } from '../src/';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
+import styled from 'styled-components';
+import { DefaultFdmConfig } from './utilities/fdmConfig';
 
 const meta = {
   title: 'Example/ViewerAnchor',
   component: Reveal3DResources,
-  tags: ['autodocs'],
-  argTypes: {
-    styling: {}
-  }
+  tags: ['autodocs']
 } satisfies Meta<typeof Reveal3DResources>;
 
 export default meta;
@@ -28,11 +27,13 @@ export const Main: Story = {
         modelId: 1791160622840317,
         revisionId: 498427137020189
       }
-    ]
+    ],
+    fdmAssetMappingConfig: DefaultFdmConfig
   },
-  render: ({ resources, styling, fdmAssetMappingConfig }) => {
-    const position = new Vector3(50, 30, 50);
+  render: ({ resources, fdmAssetMappingConfig }) => {
+    const position = new Vector3(25, 0, -25);
     const position2 = new Vector3();
+    const SuppressedDiv = withSuppressRevealEvents(styled.div``);
 
     return (
       <RevealContainer
@@ -44,13 +45,9 @@ export const Main: Story = {
             placement: 'topRight'
           }
         }}>
-        <Reveal3DResources
-          resources={resources}
-          styling={styling}
-          fdmAssetMappingConfig={fdmAssetMappingConfig}
-        />
+        <Reveal3DResources resources={resources} fdmAssetMappingConfig={fdmAssetMappingConfig} />
         <ViewerAnchor position={position}>
-          <p
+          <div
             style={{
               backgroundColor: 'turquoise',
               padding: '10px',
@@ -59,8 +56,10 @@ export const Main: Story = {
               maxWidth: '300px',
               transform: 'translate(-50%, calc(-100% - 50px))'
             }}>
-            This label is stuck at position {position.toArray().join(',')}
-          </p>
+            <SuppressedDiv>
+              <p>This label is stuck at position {position.toArray().join(',')}</p>
+            </SuppressedDiv>
+          </div>
         </ViewerAnchor>
         <ViewerAnchor position={position2}>
           <p

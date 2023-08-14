@@ -9,6 +9,8 @@ import { LayersButton } from './LayersButton';
 import { SlicerButton } from './SlicerButton';
 import { SettingsButton } from './SettingsButton';
 import { withSuppressRevealEvents } from '../../higher-order-components/withSuppressRevealEvents';
+import { MeasurementButton } from './MeasurementButton';
+import { HelpButton } from './HelpButton';
 
 const defaultStyle: ToolBarProps = {
   style: {
@@ -28,12 +30,12 @@ const defaultContent = (
     <div className="cogs-toolbar-divider" />
 
     <SlicerButton />
-    <Button type="ghost" icon="Ruler" aria-label="Make measurements" />
+    <MeasurementButton />
 
     <div className="cogs-toolbar-divider" />
 
     <SettingsButton />
-    <Button type="ghost" icon="Help" aria-label="Display help" />
+    <HelpButton />
   </>
 );
 
@@ -52,8 +54,12 @@ export const RevealToolbar = withSuppressRevealEvents(
   FitModelsButton: typeof FitModelsButton;
   SlicerButton: typeof SlicerButton;
   LayersButton: typeof LayersButton;
+  MeasurementButton: typeof MeasurementButton;
+  HelpButton: typeof HelpButton;
 };
 
 RevealToolbar.FitModelsButton = FitModelsButton;
 RevealToolbar.SlicerButton = SlicerButton;
 RevealToolbar.LayersButton = LayersButton;
+RevealToolbar.MeasurementButton = MeasurementButton;
+RevealToolbar.HelpButton = HelpButton;
