@@ -133,6 +133,16 @@ const Wrapper = styled(Flex)`
     top: 14px;
     color: rgba(83, 88, 127, 0.8);
   }
+  .cogs-textarea--disabled {
+    background-color: var(--cogs-surface--interactive--disabled);
+    border-color: var(--cogs-surface--misc-transparent);
+    resize: none;
+    cursor: not-allowed;
+
+    textarea {
+      background-color: transparent !important;
+    }
+  }
 
   .cogs-textarea {
     width: 100%;

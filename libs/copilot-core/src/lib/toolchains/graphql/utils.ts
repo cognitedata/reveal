@@ -204,44 +204,92 @@ export type GptGQLFilter = {
   }[];
 };
 
-export const constructFilter = (filter: GptGQLFilter) => {
+export const constructFilter = (
+  filter: GptGQLFilter,
+  type: string,
+  dataModelTypeDefs: DataModelTypeDefs
+) => {
   const baseLevelOp = Object.keys(filter)[0];
 
-  return {
-    [baseLevelOp === 'or' ? 'or' : 'and']: filter[baseLevelOp]
-      .filter((el) =>
-        ['prefix', 'eq', 'gt', 'gte', 'lt', 'lte', 'isNull'].includes(
+  const omitted: { key: string; reason: string }[] = [];
+
+  const filterContent = filter[baseLevelOp]
+    .filter((el) => {
+      if (
+        !['prefix', 'eq', 'gt', 'gte', 'lt', 'lte', 'isNull'].includes(
           el.operator
         )
-      )
-      .map((el) => {
-        // TODO last year
-        // TODO add validation of valid property
-        let value = `${el.value}`;
-        if (typeof el.value === 'string') {
-          switch (el.value.toLowerCase().trim()) {
-            case '${lastyear}$':
-              value = dayjs().subtract(1, 'year').toISOString();
-              break;
-            case '${lastweek}$':
-              value = dayjs().subtract(1, 'week').toISOString();
-              break;
-            case '${yearstart}$':
-              value = dayjs().set('date', 1).set('month', 1).toISOString();
-              break;
-            case '${today}$':
-              value = dayjs().toISOString();
-              break;
-          }
+      ) {
+        omitted.push({ key: el.property, reason: 'invalid filter' });
+        return false;
+      }
+      const path = el.property.split('.');
+      let typeDef = dataModelTypeDefs.types.find((el) => el.name === type);
+      for (let i = 0; i < path.length; i += 1) {
+        const currField = typeDef?.fields.find((el) => el.name === path[i]);
+        if (!currField) {
+          omitted.push({ key: el.property, reason: 'invalid field' });
+          return false;
         }
-        const path = el.property.split('.');
-        return path.reduceRight((prev, currPath, i) => {
-          if (i === path.length - 1) {
-            return { [currPath.trim()]: { [el.operator]: value } };
+        if (i !== path.length - 1) {
+          if (!currField.type.custom) {
+            // no support for timeseries
+            omitted.push({
+              key: el.property,
+              reason: 'invalid filter on primitive field',
+            });
+            return false;
           }
-          return { [currPath.trim()]: prev };
-        }, {} as any);
-      }),
+          if (currField.type.list) {
+            omitted.push({
+              key: el.property,
+              reason: '1-m relationship filtering not supported',
+            });
+            return false;
+          }
+          typeDef = dataModelTypeDefs.types.find(
+            (el) => el.name === currField.type.name
+          );
+        }
+      }
+      return true;
+    })
+    .map((el) => {
+      // TODO add validation of valid property
+      let value = `${el.value}`;
+      if (typeof el.value === 'string') {
+        switch (el.value.toLowerCase().trim()) {
+          case '${lastyear}$':
+            value = dayjs().subtract(1, 'year').toISOString();
+            break;
+          case '${lastweek}$':
+            value = dayjs().subtract(1, 'week').toISOString();
+            break;
+          case '${yearstart}$':
+            value = dayjs().set('date', 1).set('month', 1).toISOString();
+            break;
+          case '${today}$':
+            value = dayjs().toISOString();
+            break;
+        }
+      }
+      const path = el.property.split('.');
+      return path.reduceRight((prev, currPath, i) => {
+        if (i === path.length - 1) {
+          return { [currPath.trim()]: { [el.operator]: value } };
+        }
+        return { [currPath.trim()]: prev };
+      }, {} as any);
+    });
+
+  return {
+    filter:
+      filterContent.length > 0
+        ? {
+            [baseLevelOp === 'or' ? 'or' : 'and']: filterContent,
+          }
+        : null,
+    omitted,
   };
 };
 

@@ -13,7 +13,7 @@ type HostedExtractionPipelineInsightProps = {
 
 export const HostedExtractionPipelineInsight = ({
   source,
-}: HostedExtractionPipelineInsightProps): JSX.Element => {
+}: HostedExtractionPipelineInsightProps): React.JSX.Element => {
   return (
     <InsightGrid>
       <MessageHistorySection jobs={source.jobs} />

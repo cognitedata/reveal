@@ -2,6 +2,8 @@ import { Outlet, Routes as ReactRoutes, Route } from 'react-router-dom';
 
 import styled from 'styled-components';
 
+import { RevealKeepAlive } from '@cognite/reveal-react-components';
+
 import { SearchBar } from './containers/search/SearchBar';
 import { SearchBarSwitch } from './containers/search/SearchBarSwitch';
 import { useViewModeParams } from './hooks/useParams';
@@ -25,51 +27,53 @@ const ViewContainer = () => {
 
 const Routes = () => {
   return (
-    <ReactRoutes>
-      <Route
-        element={
-          <FDMProvider>
-            <Outlet />
-          </FDMProvider>
-        }
-      >
-        <Route index element={<HomePage />} />
-
+    <RevealKeepAlive>
+      <ReactRoutes>
         <Route
           element={
-            <Container>
-              <Content>
-                <SearchBar width="1026px" inverted />
-                <SearchBarSwitch inverted />
-              </Content>
-              <ViewContainer />
-            </Container>
+            <FDMProvider>
+              <Outlet />
+            </FDMProvider>
           }
         >
-          <Route path="search/:type?" element={<SearchPage />} />
+          <Route index element={<HomePage />} />
 
-          <Route path="timeseries/:externalId" element={<TimeseriesPage />} />
-          <Route path="file/:externalId" element={<FilePage />} />
           <Route
-            path="sequence/:externalId"
             element={
-              <center>
-                <p>Work in progress...</p>
-              </center>
+              <Container>
+                <Content>
+                  <SearchBar width="1026px" inverted />
+                  <SearchBarSwitch inverted />
+                </Content>
+                <ViewContainer />
+              </Container>
             }
-          />
+          >
+            <Route path="search/:type?" element={<SearchPage />} />
 
-          <Route path=":dataModel/:space/:version/">
+            <Route path="timeseries/:externalId" element={<TimeseriesPage />} />
+            <Route path="file/:externalId" element={<FilePage />} />
             <Route
-              path=":dataType/:instanceSpace/:externalId/overview?"
-              element={<InstancesPage />}
+              path="sequence/:externalId"
+              element={
+                <center>
+                  <p>Work in progress...</p>
+                </center>
+              }
             />
+
+            <Route path=":dataModel/:space/:version/">
+              <Route
+                path=":dataType/:instanceSpace/:externalId/overview?"
+                element={<InstancesPage />}
+              />
+            </Route>
           </Route>
         </Route>
-      </Route>
 
-      <Route path="*" element={<p>404, page not found</p>} />
-    </ReactRoutes>
+        <Route path="*" element={<p>404, page not found</p>} />
+      </ReactRoutes>
+    </RevealKeepAlive>
   );
 };
 

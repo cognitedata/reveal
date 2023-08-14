@@ -32,13 +32,13 @@ export const TopicFilters = ({
           <Button
             size="small"
             onClick={() => setIsCreateModalOpen(true)}
-            type="ghost"
+            type="ghost-accent"
           >
             {t('add-topic-filters')}
           </Button>
         )
       }
-      icon="List"
+      icon="BarChart"
       title={t('topic-filter', { count: 2 })}
     >
       {isCreateModalOpen && (

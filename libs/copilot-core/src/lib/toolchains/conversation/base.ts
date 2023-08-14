@@ -19,6 +19,7 @@ export const createDefaultChain = (model: BaseLanguageModel) =>
     callbacks: [
       {
         handleChainEnd(outputs) {
+          console.log(outputs);
           sendToCopilotEvent('NEW_MESSAGES', [
             {
               source: 'bot',

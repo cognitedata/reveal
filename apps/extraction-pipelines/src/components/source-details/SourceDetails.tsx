@@ -34,9 +34,9 @@ export const SourceDetails = ({
         className={className}
         extra={
           <Button
+            type="ghost-accent"
             onClick={() => setIsEditModalOpen(true)}
             size="small"
-            type="ghost"
           >
             {t('edit')}
           </Button>
@@ -45,7 +45,7 @@ export const SourceDetails = ({
         items={[
           {
             key: 'externalId',
-            title: t('external-id'),
+            title: t('form-source-external-id'),
             value: source.externalId,
           },
           {
@@ -60,7 +60,7 @@ export const SourceDetails = ({
           },
           { key: 'port', title: t('form-port'), value: source.port },
         ]}
-        title={t('details')}
+        title={t('source-details')}
       />
     </>
   );

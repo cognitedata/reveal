@@ -1,11 +1,14 @@
-import { ErrorBoundary } from 'react-error-boundary';
 import { BrowserRouter as Router } from 'react-router-dom';
 
+import styled from 'styled-components';
+
 import { AppContextProvider } from '@data-exploration-components/context/AppContext';
+import { Copilot } from '@fusion/copilot-core';
 import {
   Orientation,
   OrientationProvider,
 } from '@fusion/shared/user-onboarding-components';
+import * as Sentry from '@sentry/react';
 import {
   QueryErrorResetBoundary,
   QueryClientProvider,
@@ -13,51 +16,56 @@ import {
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
-import { Button, ToastContainer } from '@cognite/cogs.js';
+import { ToastContainer } from '@cognite/cogs.js';
 import { FlagProvider } from '@cognite/react-feature-flags';
 import { SDKProvider } from '@cognite/sdk-provider';
 
+import zIndex from '../utils/zIndex';
+
 import { translations } from './common';
 import { useAuthContext } from './common/auth/AuthProvider';
+import { ErrorFallback } from './components/ErrorFallback';
 import { Onboarding } from './components/Onboarding';
 import { TopBar } from './components/topbar/TopBar';
 import { queryClient } from './queryClient';
 import { CoreRoutes } from './Routes';
 
 const LOCIZE_NAME_SPACE = 'business-shell';
+const FLAG_TOKEN = 'v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE';
 
 function App() {
   const { client } = useAuthContext();
 
   return (
-    <I18nWrapper
-      translations={translations}
-      defaultNamespace={LOCIZE_NAME_SPACE}
+    <FlagProvider
+      appName="business-portal"
+      projectName={client.project}
+      apiToken={FLAG_TOKEN}
+      remoteAddress={window.location.hostname}
     >
-      <SDKProvider sdk={client}>
-        <OrientationProvider>
-          <Orientation />
-          <QueryClientProvider client={queryClient}>
-            <ReactQueryDevtools initialIsOpen={false} />
-            <ToastContainer />
-            <QueryErrorResetBoundary>
-              {({ reset }) => (
-                <ErrorBoundary
-                  onReset={reset}
-                  fallbackRender={({ resetErrorBoundary }) => (
-                    <div>
-                      There was an error!
-                      <Button onClick={() => resetErrorBoundary()}>
-                        Try again
-                      </Button>
-                    </div>
-                  )}
-                >
-                  <FlagProvider
-                    appName="business-portal"
-                    projectName={`${client.project}`}
-                    apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
-                    remoteAddress={window.location.hostname}
+      <I18nWrapper
+        translations={translations}
+        defaultNamespace={LOCIZE_NAME_SPACE}
+      >
+        <SDKProvider sdk={client}>
+          <OrientationProvider>
+            <Orientation />
+            <QueryClientProvider client={queryClient}>
+              <ReactQueryDevtools initialIsOpen={false} />
+              <ToastContainer />
+              <QueryErrorResetBoundary>
+                {({ reset }) => (
+                  <Sentry.ErrorBoundary
+                    fallback={({ error, eventId, resetError }) => (
+                      <ErrorFallback
+                        error={error}
+                        eventId={eventId}
+                        onResetClick={() => {
+                          reset();
+                          resetError();
+                        }}
+                      />
+                    )}
                   >
                     <AppContextProvider
                       flow="AZURE_AD"
@@ -68,17 +76,25 @@ function App() {
                         <TopBar />
                         <Onboarding />
                         <CoreRoutes />
+                        <CopilotWrapper>
+                          <Copilot sdk={client} />
+                        </CopilotWrapper>
                       </Router>
                     </AppContextProvider>
-                  </FlagProvider>
-                </ErrorBoundary>
-              )}
-            </QueryErrorResetBoundary>
-          </QueryClientProvider>
-        </OrientationProvider>
-      </SDKProvider>
-    </I18nWrapper>
+                  </Sentry.ErrorBoundary>
+                )}
+              </QueryErrorResetBoundary>
+            </QueryClientProvider>
+          </OrientationProvider>
+        </SDKProvider>
+      </I18nWrapper>
+    </FlagProvider>
   );
 }
 
 export default App;
+
+const CopilotWrapper = styled.div`
+  z-index: ${zIndex.COPILOT};
+  position: absolute;
+`;

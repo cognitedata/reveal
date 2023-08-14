@@ -43,6 +43,9 @@
       "@cognite/cdf-utilities": [
         "libs/shared/cdf-utilities/src/index.ts"
       ],
+      "@cognite/cdf-contextualization-ui": [
+        "apps/contextualization-ui/src/*"
+      ],
       "@cognite/cog-data-grid": [
         "libs/data-modeling/cog-data-grid/src/index.ts"
       ],

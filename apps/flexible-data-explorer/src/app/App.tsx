@@ -12,7 +12,6 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import { Button, ToastContainer } from '@cognite/cogs.js';
 import { FlagProvider } from '@cognite/react-feature-flags';
-import { RevealKeepAlive } from '@cognite/reveal-react-components';
 import { SDKProvider } from '@cognite/sdk-provider';
 
 import { useAuthContext } from './common/auth/AuthProvider';
@@ -41,17 +40,19 @@ function App() {
               <ErrorBoundary
                 onReset={reset}
                 fallbackRender={({ resetErrorBoundary }) => (
-                  <div>
+                  <center>
                     There was an error!
-                    <Button onClick={() => resetErrorBoundary()}>
+                    <Button
+                      onClick={() => {
+                        resetErrorBoundary();
+                      }}
+                    >
                       Try again!
                     </Button>
-                  </div>
+                  </center>
                 )}
               >
-                <RevealKeepAlive>
-                  <Router window={window} children={<Routes />} />
-                </RevealKeepAlive>
+                <Router window={window} children={<Routes />} />
               </ErrorBoundary>
             )}
           </QueryErrorResetBoundary>
