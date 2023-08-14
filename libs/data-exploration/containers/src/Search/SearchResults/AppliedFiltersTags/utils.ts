@@ -83,6 +83,9 @@ export const formatValue = (
     if (input.value === METADATA_ALL_VALUE) {
       return `${input.key}`;
     }
+    if (input.value === '') {
+      return `${input.key}=${EMPTY_LABEL}`;
+    }
     return `${input.key}=${input.value}`;
   }
 

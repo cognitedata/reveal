@@ -6,9 +6,7 @@
       "appName": "@cognite/login-page",
       "appType": "single-spa",
       "versionSpec": "~0.0.1",
-      "routes": [
-        { "route": "/", "exactMatch": true }
-      ]
+      "routes": [{ "route": "/", "exactMatch": true }]
     },
     {
       "key": "cdf-3d-management",
@@ -20,8 +18,12 @@
         "production": "https://cdf-3d-management-prod.web.app"
       },
       "routes": [
-        { "route": "/:tenantName/3d-models" },
-        { "route": "/:applicationName/:tenantName/3d-models" }
+        {
+          "route": "/:tenantName/3d-models"
+        },
+        {
+          "route": "/:applicationName/:tenantName/3d-models"
+        }
       ]
     },
     {
@@ -34,8 +36,12 @@
         "production": "https://cdf-access-management-prod.web.app"
       },
       "routes": [
-        { "route": "/:tenantName/access-management" },
-        { "route": "/:applicationName/:tenantName/access-management" }
+        {
+          "route": "/:tenantName/access-management"
+        },
+        {
+          "route": "/:applicationName/:tenantName/access-management"
+        }
       ]
     },
     {
@@ -48,8 +54,12 @@
         "production": "https://cdf-charts-prod.web.app"
       },
       "routes": [
-        { "route": "/:tenantName/charts" },
-        { "route": "/:applicationName/:tenantName/charts" }
+        {
+          "route": "/:tenantName/charts"
+        },
+        {
+          "route": "/:applicationName/:tenantName/charts"
+        }
       ]
     },
     {
@@ -62,8 +72,12 @@
         "production": "https://cdf-coding-conventions-prod.web.app"
       },
       "routes": [
-        { "route": "/:tenantName/coding-conventions" },
-        { "route": "/:applicationName/:tenantName/coding-conventions" }
+        {
+          "route": "/:tenantName/coding-conventions"
+        },
+        {
+          "route": "/:applicationName/:tenantName/coding-conventions"
+        }
       ]
     },
     {
@@ -76,8 +90,12 @@
         "production": "https://cognite-onboard-infield-production.web.app"
       },
       "routes": [
-        { "route": "/:tenantName/infield" },
-        { "route": "/:applicationName/:tenantName/infield" }
+        {
+          "route": "/:tenantName/infield"
+        },
+        {
+          "route": "/:applicationName/:tenantName/infield"
+        }
       ]
     },
     {
@@ -90,8 +108,22 @@
         "production": "https://cdf-pnid-contextualization-prod.web.app"
       },
       "routes": [
-        { "route": "/:tenantName/interactive-diagrams" },
-        { "route": "/:applicationName/:tenantName/interactive-diagrams" }
+        {
+          "route": "/:tenantName/interactive-diagrams"
+        },
+        {
+          "route": "/:applicationName/:tenantName/interactive-diagrams"
+        }
+      ]
+    },
+    {
+      "key": "cdf-contextualization-ui",
+      "appName": "@cognite/cdf-contextualization-ui",
+      "appType": "single-spa",
+      "versionSpec": "^0.1.0",
+      "routes": [
+        { "route": "/:tenantName/contextualization" },
+        { "route": "/:applicationName/:tenantName/contextualization" }
       ]
     },
     {
@@ -104,8 +136,12 @@
         "production": "https://cdf-copilot-prod.web.app"
       },
       "routes": [
-        { "route": "/:tenantName" },
-        { "route": "/:applicationName/:tenantName" }
+        {
+          "route": "/:tenantName"
+        },
+        {
+          "route": "/:applicationName/:tenantName"
+        }
       ]
     },
     {
@@ -114,8 +150,12 @@
       "appType": "single-spa",
       "versionSpec": "~0.2.6",
       "routes": [
-        { "route": "/:tenantName/dashboard-sessions" },
-        { "route": "/:applicationName/:tenantName/dashboard-sessions" }
+        {
+          "route": "/:tenantName/dashboard-sessions"
+        },
+        {
+          "route": "/:applicationName/:tenantName/dashboard-sessions"
+        }
       ]
     },
     {
@@ -128,13 +168,27 @@
         "production": "https://cdf-data-catalog-prod.web.app"
       },
       "routes": [
-        { "route": "/:tenantName/new-data-sets" },
-        { "route": "/:tenantName/data-sets" },
-        { "route": "/:tenantName/data-catalog" },
-        { "route": "/:tenantName/data-catalog/data-set/:dataSetId" },
-        { "route": "/:applicationName/:tenantName/data-catalog" },
-        { "route": "/:applicationName/:tenantName/data-sets" },
-        { "route": "/:applicationName/:tenantName/new-data-sets" },
+        {
+          "route": "/:tenantName/new-data-sets"
+        },
+        {
+          "route": "/:tenantName/data-sets"
+        },
+        {
+          "route": "/:tenantName/data-catalog"
+        },
+        {
+          "route": "/:tenantName/data-catalog/data-set/:dataSetId"
+        },
+        {
+          "route": "/:applicationName/:tenantName/data-catalog"
+        },
+        {
+          "route": "/:applicationName/:tenantName/data-sets"
+        },
+        {
+          "route": "/:applicationName/:tenantName/new-data-sets"
+        },
         {
           "route": "/:applicationName/:tenantName/data-catalog/data-set/:dataSetId"
         }
@@ -150,8 +204,12 @@
         "production": "https://cdf-data-exploration-prod.web.app"
       },
       "routes": [
-        { "route": "/:tenantName/explore" },
-        { "route": "/:applicationName/:tenantName/explore" }
+        {
+          "route": "/:tenantName/explore"
+        },
+        {
+          "route": "/:applicationName/:tenantName/explore"
+        }
       ]
     },
     {
@@ -164,8 +222,12 @@
         "production": "https://cdf-document-search-prod.web.app"
       },
       "routes": [
-        { "route": "/:tenantName/documents" },
-        { "route": "/:applicationName/:tenantName/documents" }
+        {
+          "route": "/:tenantName/documents"
+        },
+        {
+          "route": "/:applicationName/:tenantName/documents"
+        }
       ]
     },
     {
@@ -178,8 +240,12 @@
         "production": "https://cdf-extractor-downloads-prod.web.app"
       },
       "routes": [
-        { "route": "/:tenantName/extractors" },
-        { "route": "/:applicationName/:tenantName/extractors" }
+        {
+          "route": "/:tenantName/extractors"
+        },
+        {
+          "route": "/:applicationName/:tenantName/extractors"
+        }
       ]
     },
     {
@@ -192,8 +258,12 @@
         "production": "https://cognite-orchestration-staging.web.app"
       },
       "routes": [
-        { "route": "/:tenantName/flows" },
-        { "route": "/:applicationName/:tenantName/flows" }
+        {
+          "route": "/:tenantName/flows"
+        },
+        {
+          "route": "/:applicationName/:tenantName/flows"
+        }
       ]
     },
     {
@@ -206,8 +276,12 @@
         "production": "https://cdf-functions-prod.web.app"
       },
       "routes": [
-        { "route": "/:tenantName/functions" },
-        { "route": "/:applicationName/:tenantName/functions" }
+        {
+          "route": "/:tenantName/functions"
+        },
+        {
+          "route": "/:applicationName/:tenantName/functions"
+        }
       ]
     },
     {
@@ -220,8 +294,12 @@
         "production": "https://cdf-industry-canvas-ui-prod.web.app"
       },
       "routes": [
-        { "route": "/:tenantName/industrial-canvas" },
-        { "route": "/:applicationName/:tenantName/industrial-canvas" }
+        {
+          "route": "/:tenantName/industrial-canvas"
+        },
+        {
+          "route": "/:applicationName/:tenantName/industrial-canvas"
+        }
       ]
     },
     {
@@ -234,8 +312,12 @@
         "production": "https://cdf-extraction-pipelines-prod.web.app"
       },
       "routes": [
-        { "route": "/:tenantName/extpipes" },
-        { "route": "/:applicationName/:tenantName/extpipes" }
+        {
+          "route": "/:tenantName/extpipes"
+        },
+        {
+          "route": "/:applicationName/:tenantName/extpipes"
+        }
       ]
     },
     {
@@ -248,8 +330,12 @@
         "production": "https://cdf-iot-hub-prod.web.app"
       },
       "routes": [
-        { "route": "/:tenantName/iot" },
-        { "route": "/:applicationName/:tenantName/iot" }
+        {
+          "route": "/:tenantName/iot"
+        },
+        {
+          "route": "/:applicationName/:tenantName/iot"
+        }
       ]
     },
     {
@@ -257,15 +343,23 @@
       "appName": "@cognite/cdf-raw-explorer",
       "appType": "single-spa",
       "hosting": {
-        "staging": "https://cdf-iot-hub-prod.web.app",
-        "preview": "https://cdf-iot-hub-preview.web.app",
+        "staging": "https://cdf-raw-explorer-prod.web.app",
+        "preview": "https://cdf-raw-explorer-preview.web.app",
         "production": "https://cdf-raw-explorer-prod.web.app"
       },
       "routes": [
-        { "route": "/:tenantName/raw-explorer" },
-        { "route": "/:tenantName/raw" },
-        { "route": "/:applicationName/:tenantName/raw" },
-        { "route": "/:applicationName/:tenantName/raw-explorer" }
+        {
+          "route": "/:tenantName/raw-explorer"
+        },
+        {
+          "route": "/:tenantName/raw"
+        },
+        {
+          "route": "/:applicationName/:tenantName/raw"
+        },
+        {
+          "route": "/:applicationName/:tenantName/raw-explorer"
+        }
       ]
     },
     {
@@ -278,8 +372,12 @@
         "production": "https://cdf-simint-prod.web.app"
       },
       "routes": [
-        { "route": "/:tenantName/simint" },
-        { "route": "/:applicationName/:tenantName/simint" }
+        {
+          "route": "/:tenantName/simint"
+        },
+        {
+          "route": "/:applicationName/:tenantName/simint"
+        }
       ]
     },
     {
@@ -288,17 +386,16 @@
       "appType": "single-spa",
       "hosting": {
         "staging": "https://cdf-platypus-staging.web.app",
-        "preview": "https://cdf-platypus-preview.web.app",
+        "preview": "https://cdf-platypus-staging.web.app",
         "production": "https://cdf-platypus-prod.web.app"
       },
-      "overrides": {
-        "preview": {
-          "appType": "module-federation"
-        }
-      },
       "routes": [
-        { "route": "/:tenantName/data-models" },
-        { "route": "/:applicationName/:tenantName/data-models" }
+        {
+          "route": "/:tenantName/data-models"
+        },
+        {
+          "route": "/:applicationName/:tenantName/data-models"
+        }
       ]
     },
     {
@@ -311,8 +408,12 @@
         "production": "https://cdf-templates-prod.web.app"
       },
       "routes": [
-        { "route": "/:tenantName/template-management" },
-        { "route": "/:applicationName/:tenantName/template-management" }
+        {
+          "route": "/:tenantName/template-management"
+        },
+        {
+          "route": "/:applicationName/:tenantName/template-management"
+        }
       ]
     },
     {
@@ -321,8 +422,12 @@
       "appType": "single-spa",
       "versionSpec": "^0.3.0",
       "routes": [
-        { "route": "/:tenantName/transformations-previous" },
-        { "route": "/:applicationName/:tenantName/transformations-previous" }
+        {
+          "route": "/:tenantName/transformations-previous"
+        },
+        {
+          "route": "/:applicationName/:tenantName/transformations-previous"
+        }
       ]
     },
     {
@@ -335,8 +440,12 @@
         "production": "https://cdf-transformations-prod.web.app"
       },
       "routes": [
-        { "route": "/:tenantName/transformations" },
-        { "route": "/:applicationName/:tenantName/transformations" }
+        {
+          "route": "/:tenantName/transformations"
+        },
+        {
+          "route": "/:applicationName/:tenantName/transformations"
+        }
       ]
     },
     {
@@ -345,10 +454,18 @@
       "appType": "single-spa",
       "versionSpec": "^1.0.0",
       "routes": [
-        { "route": "/:tenantName/quality-monitoring" },
-        { "route": "/:tenantName/dqm" },
-        { "route": "/:applicationName/:tenantName/quality-monitoring" },
-        { "route": "/:applicationName/:tenantName/dqm" }
+        {
+          "route": "/:tenantName/quality-monitoring"
+        },
+        {
+          "route": "/:tenantName/dqm"
+        },
+        {
+          "route": "/:applicationName/:tenantName/quality-monitoring"
+        },
+        {
+          "route": "/:applicationName/:tenantName/dqm"
+        }
       ]
     },
     {
@@ -361,10 +478,18 @@
         "production": "https://cdf-entity-matching-prod.web.app"
       },
       "routes": [
-        { "route": "/:tenantName/entity-matching" },
-        { "route": "/:applicationName/:tenantName/entity-matching" },
-        { "route": "/:tenantName/entity-matching-new" },
-        { "route": "/:applicationName/:tenantName/entity-matching-new" }
+        {
+          "route": "/:tenantName/entity-matching"
+        },
+        {
+          "route": "/:applicationName/:tenantName/entity-matching"
+        },
+        {
+          "route": "/:tenantName/entity-matching-new"
+        },
+        {
+          "route": "/:applicationName/:tenantName/entity-matching-new"
+        }
       ]
     },
     {
@@ -377,10 +502,18 @@
         "production": "https://cdf-notebook-prod.web.app"
       },
       "routes": [
-        { "route": "/:tenantName/notebook" },
-        { "route": "/:tenantName/streamlit-apps" },
-        { "route": "/:applicationName/:tenantName/notebook" },
-        { "route": "/:applicationName/:tenantName/streamlit-apps" }
+        {
+          "route": "/:tenantName/notebook"
+        },
+        {
+          "route": "/:tenantName/streamlit-apps"
+        },
+        {
+          "route": "/:applicationName/:tenantName/notebook"
+        },
+        {
+          "route": "/:applicationName/:tenantName/streamlit-apps"
+        }
       ]
     },
     {
@@ -393,8 +526,12 @@
         "production": "https://cdf-vision-prod.web.app"
       },
       "routes": [
-        { "route": "/:tenantName/vision" },
-        { "route": "/:applicationName/:tenantName/vision" }
+        {
+          "route": "/:tenantName/vision"
+        },
+        {
+          "route": "/:applicationName/:tenantName/vision"
+        }
       ]
     }
   ]

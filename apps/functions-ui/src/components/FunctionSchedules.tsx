@@ -34,7 +34,18 @@ const scheduleTableColumns = [
     },
   },
   {
-    title: 'Occurs',
+    title: (
+      <span>
+        Occurs{' '}
+        <a
+          href="https://docs.cognite.com/cdf/functions/#schedule-a-function"
+          target="_blank"
+          rel="noreferrer"
+        >
+          (UTC)
+        </a>
+      </span>
+    ),
     key: 'cronExpressionDescription',
     render: (s: Schedule) => {
       return cronstrue.toString(s.cronExpression);

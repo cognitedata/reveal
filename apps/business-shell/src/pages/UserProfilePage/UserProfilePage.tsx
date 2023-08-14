@@ -58,6 +58,9 @@ export const UserProfilePage = (): JSX.Element => {
         emailFieldLabel: t('EMAIL_FIELD_LABEL'),
         emailFieldHelpText: t('EMAIL_FIELD_HELP_TEXT'),
       }}
+      profileHeaderLocale={{
+        backBtnText: t('BACK_TO_PREV_BTN_TEXT'),
+      }}
       languageTabLocale={{
         title: t('LANGUAGE_TAB_TITLE'),
         languageFieldLabel: t('LANGUAGE_FIELD_LABEL'),

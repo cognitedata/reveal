@@ -6,73 +6,29 @@ import {
 
 import { useTranslation } from '../../../i18n';
 import { useUserInformation } from '../../utils/hooks';
+import { trackEvent } from '@cognite/cdf-route-tracker';
 
 export const UserProfilePage = (): JSX.Element => {
   const { data: userInfo, isInitialLoading } = useUserInformation();
+  const name = userInfo?.displayName ?? userInfo?.user ?? '';
+  const email = userInfo?.mail ?? userInfo?.email ?? '';
+  const profilePicture = userInfo?.profilePicture;
 
   const { t } = useTranslation();
-
-  const selectedLanguage = getLanguage() ?? 'en';
-  const supportedLanguages = [
-    {
-      code: 'en',
-      label: 'English | en',
-    },
-    {
-      code: 'de',
-      label: 'Deutsch | de',
-    },
-    {
-      code: 'es',
-      label: 'Español, Castellano | es',
-    },
-    {
-      code: 'fr',
-      label: 'Français, langue française | fr',
-    },
-    {
-      code: 'it',
-      label: 'Italiano | it',
-    },
-    {
-      code: 'ja',
-      label: '日本語 (にほんご／にっぽんご) | ja',
-    },
-    {
-      code: 'ko',
-      label: '한국어 (韓國語), 조선말 (朝鮮語) | ko',
-    },
-    {
-      code: 'nl',
-      label: 'Nederlands, Vlaams | nl',
-    },
-    {
-      code: 'pt',
-      label: 'Português | pt',
-    },
-    {
-      code: 'sv',
-      label: 'svenska | sv',
-    },
-    {
-      code: 'zh',
-      label: '中文 (Zhōngwén), 汉语, 漢語 | zh',
-    },
-  ];
 
   return (
     <UserProfilePageComponent
       isUserInfoLoading={isInitialLoading}
-      userInfo={userInfo}
+      userInfo={{ name, email, profilePicture }}
       onLanguageChange={(language) => {
-        selectLanguage(language!.code);
+        selectLanguage(language?.code || 'en');
       }}
       selectedLanguage={
-        supportedLanguages.find(
-          (lang) => lang.code === selectedLanguage
-        ) as Language
+        SUPPORTED_LANGUAGES.find(
+          (language) => language.code === getLanguage()
+        ) || SUPPORTED_LANGUAGES[0]
       }
-      supportedLanguages={supportedLanguages as Language[]}
+      supportedLanguages={SUPPORTED_LANGUAGES as Language[]}
       languageTabLocale={{
         languageFieldLabel: t('language-field-label'),
         title: t('language-tab-title'),
@@ -88,6 +44,24 @@ export const UserProfilePage = (): JSX.Element => {
         nameFieldLabel: t('name-field-label'),
         title: t('personal-info-tab-title'),
       }}
+      onTrackEvent={(eventName, metaData) => {
+        trackEvent(`CdfHubNavigation.UserMenu.${eventName}`, metaData);
+      }}
     />
   );
 };
+
+const SUPPORTED_LANGUAGES: Language[] = [
+  { code: 'de', label: 'Deutsch' },
+  { code: 'en', label: 'English' },
+  { code: 'es', label: 'Español' },
+  { code: 'fr', label: 'Français' },
+  { code: 'it', label: 'Italiano' },
+  { code: 'nl', label: 'Nederlands' },
+  { code: 'nb', label: 'Norsk' },
+  { code: 'pt', label: 'Português' },
+  { code: 'sv', label: 'Svenska' },
+  { code: 'ko', label: '한국어' },
+  { code: 'zh', label: '中文' },
+  { code: 'ja', label: '日本語' },
+];

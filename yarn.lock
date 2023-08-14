@@ -2771,10 +2771,10 @@
     style-mod "^4.0.0"
     w3c-keyname "^2.2.4"
 
-"@cognite/acl-protos@^0.19.2":
-  version "0.19.2"
-  resolved "https://registry.yarnpkg.com/@cognite/acl-protos/-/acl-protos-0.19.2.tgz#66784509636ffc4ac9d25645dae19da4fb8b355a"
-  integrity sha512-UkSXkMY9aq7GjDkoM8jTLMot2b9wIIUAN1slfaYPN5o1Fo21zbdN8PSguBZEQBhiLXwM8oKa10jTzLYKuqZvuw==
+"@cognite/acl-protos@^0.20.0":
+  version "0.20.0"
+  resolved "https://registry.yarnpkg.com/@cognite/acl-protos/-/acl-protos-0.20.0.tgz#db4156adeeca26e635e92160afa0500c236bb8c5"
+  integrity sha512-FJT8+GoUtHOKhjUuvYwlpg3bYsmf+ay+SmIk5Adl9jD7Aod62XF5dq82Gy8P9rIfsRxjj+vpzay8qeOltJ7hcw==
   dependencies:
     protobufjs "^6.10.3"
 
@@ -3091,10 +3091,10 @@
     tippy.js "6.3.7"
     ts-dedent "2.2.0"
 
-"@cognite/cogs.js@^9.31.6":
-  version "9.31.6"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-9.31.6.tgz#142e9f694cc93bbaeb05099f6ffc9a6406328b61"
-  integrity sha512-WEt03js8+pt45QhQ1RjgxuFKtGiiG8342WORLhD7hJdm2QnD7X6vADcUmFyNTEPrT3bNsCO2dNUhdKXKXCrJfQ==
+"@cognite/cogs.js@^9.32.1":
+  version "9.32.1"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-9.32.1.tgz#feb17ab233e1f7ecdbeba42371add09dad275e0d"
+  integrity sha512-9YAvEexhgxBIMixDdI5YG0R+xn9Bl7+SR+UEoml9AEYCu4DY3q4JaSV7Cp91BVdT/oO9IbWjrGeLhqa7Wx51dg==
   dependencies:
     "@emotion/react" "11.10.6"
     "@emotion/styled" "11.10.6"
@@ -3287,10 +3287,10 @@
     use-event-callback "^0.1.0"
     use-key-hook "^1.3.0"
 
-"@cognite/reveal-react-components@0.7.0":
-  version "0.7.0"
-  resolved "https://registry.yarnpkg.com/@cognite/reveal-react-components/-/reveal-react-components-0.7.0.tgz#23f61f7429394f665bbe203c1d368306bbe7df24"
-  integrity sha512-Yn3W8fwUnlNlOppFixtYmdjQCl/e3vpmwjsx5S5mrRPxurxsB19XpK33TYcvB7eAkf2V1jEMGlYXF3+nmAch6Q==
+"@cognite/reveal-react-components@0.9.0":
+  version "0.9.0"
+  resolved "https://registry.yarnpkg.com/@cognite/reveal-react-components/-/reveal-react-components-0.9.0.tgz#65b1e7283c8b5502cb0ba10719ee58e908d17acf"
+  integrity sha512-dQ58fEQsLwAfUj0zyo+Qazxs5aMIPli0H1fzeSgoQEzXRe9I7qSS9KMyNbDLu4iQAh1spXoOn0DjNY8amur1Sg==
   dependencies:
     "@tanstack/react-query" "^4.29.19"
     lodash "^4.17.21"
