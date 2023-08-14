@@ -2,7 +2,11 @@
  * Copyright 2023 Cognite AS
  */
 
-import { NodeAppearance, type AddModelOptions, type SupportedModelTypes } from '@cognite/reveal';
+import {
+  type NodeAppearance,
+  type AddModelOptions,
+  type SupportedModelTypes
+} from '@cognite/reveal';
 
 import { type Matrix4 } from 'three';
 import { type Source } from '../../utilities/FdmSDK';

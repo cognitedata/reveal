@@ -2,11 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 import { useRef, type ReactElement, useContext, useState, useEffect } from 'react';
-import {
-  type NodeAppearance,
-  type Cognite3DViewer,
-  type PointCloudAppearance
-} from '@cognite/reveal';
+import { type NodeAppearance, type Cognite3DViewer } from '@cognite/reveal';
 import { ModelsLoadingStateContext } from './ModelsLoadingContext';
 import { CadModelContainer, type CadModelStyling } from '../CadModelContainer/CadModelContainer';
 import {
@@ -22,8 +18,6 @@ import {
   type AddResourceOptions,
   type NodeDataResult
 } from './types';
-import { queryMappedData } from './queryMappedData';
-import { useFdmSdk, useSDK } from '../RevealContainer/SDKProvider';
 import { useCalculateModelsStyling } from '../../hooks/useCalculateModelsStyling';
 import { type DmsUniqueIdentifier } from '../../utilities/FdmSDK';
 import { useClickedNodeData } from '../..';

@@ -10,7 +10,7 @@ import {
   type AddResourceOptions,
   CameraController,
   useClickedNodeData,
-  FdmAssetStylingGroup,
+  type FdmAssetStylingGroup
 } from '../src';
 import { Color } from 'three';
 import { type ReactElement, useState, useEffect, useRef } from 'react';
@@ -51,13 +51,13 @@ export const Main: Story = {
       <RevealContainer sdk={sdk} color={new Color(0x4a4a4a)}>
         <StoryContent resources={resources} />
         <CameraController
-      initialFitCamera={{
-        to: 'allModels'
-      }}
-      cameraControlsOptions={{
-        changeCameraTargetOnClick: true,
-        mouseWheelAction: 'zoomToCursor'
-      }}
+          initialFitCamera={{
+            to: 'allModels'
+          }}
+          cameraControlsOptions={{
+            changeCameraTargetOnClick: true,
+            mouseWheelAction: 'zoomToCursor'
+          }}
         />
         <ReactQueryDevtools />
       </RevealContainer>
@@ -87,11 +87,8 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
 
   return (
     <>
-      <Reveal3DResources
-    resources={resources}
-    instanceStyling={stylingGroupsRef.current}
-      />
+      <Reveal3DResources resources={resources} instanceStyling={stylingGroupsRef.current} />
       <RevealToolbar />
-      </>
+    </>
   );
 };
