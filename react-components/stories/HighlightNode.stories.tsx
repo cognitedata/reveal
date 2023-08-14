@@ -9,7 +9,6 @@ import {
   Reveal3DResources,
   type NodeDataResult,
   type AddResourceOptions,
-  CameraController,
   type FdmAssetStylingGroup
 } from '../src';
 import { Color } from 'three';
@@ -50,15 +49,6 @@ export const Main: Story = {
     return (
       <RevealContainer sdk={sdk} color={new Color(0x4a4a4a)}>
         <StoryContent resources={resources} />
-        <CameraController
-          initialFitCamera={{
-            to: 'allModels'
-          }}
-          cameraControlsOptions={{
-            changeCameraTargetOnClick: true,
-            mouseWheelAction: 'zoomToCursor'
-          }}
-        />
         <ReactQueryDevtools />
       </RevealContainer>
     );

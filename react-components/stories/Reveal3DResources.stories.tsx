@@ -2,10 +2,15 @@
  * Copyright 2023 Cognite AS
  */
 import type { Meta, StoryObj } from '@storybook/react';
-import { Reveal3DResources, RevealContainer } from '../src';
+import {
+  type AddResourceOptions,
+  Reveal3DResources,
+  RevealContainer,
+  useCameraNavigation
+} from '../src';
 import { Color, Matrix4 } from 'three';
-import { CameraController } from '../src/';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
+import { type ReactElement } from 'react';
 
 const meta = {
   title: 'Example/Reveal3DResources',
@@ -51,17 +56,17 @@ export const Main: Story = {
             placement: 'topRight'
           }
         }}>
-        <Reveal3DResources resources={resources} />
-        <CameraController
-          initialFitCamera={{
-            to: 'allModels'
-          }}
-          cameraControlsOptions={{
-            changeCameraTargetOnClick: true,
-            mouseWheelAction: 'zoomToCursor'
-          }}
-        />
+        <AppContent resources={resources} />
       </RevealContainer>
     );
   }
 };
+
+function AppContent({ resources }: { resources: AddResourceOptions[] }): ReactElement {
+  const cameraNavigation = useCameraNavigation();
+  const onLoad = (): void => {
+    cameraNavigation.fitCameraToAllModels();
+  };
+
+  return <Reveal3DResources resources={resources} onResourcesAdded={onLoad} />;
+}

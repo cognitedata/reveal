@@ -4,7 +4,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Reveal3DResources, RevealContainer, withSuppressRevealEvents } from '../src';
 import { Color, Vector3 } from 'three';
-import { CameraController, ViewerAnchor } from '../src/';
+import { ViewerAnchor } from '../src/';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import styled from 'styled-components';
 
@@ -72,15 +72,6 @@ export const Main: Story = {
             This label is stuck at position {position2.toArray().join(',')}
           </p>
         </ViewerAnchor>
-        <CameraController
-          initialFitCamera={{
-            to: 'allModels'
-          }}
-          cameraControlsOptions={{
-            changeCameraTargetOnClick: true,
-            mouseWheelAction: 'zoomToCursor'
-          }}
-        />
       </RevealContainer>
     );
   }

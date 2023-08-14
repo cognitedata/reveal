@@ -4,7 +4,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Reveal3DResources, RevealContainer } from '../src';
 import { Color, Matrix4 } from 'three';
-import { CameraController } from '../src/';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 
 const model = {
@@ -82,15 +81,6 @@ export const Main: Story = {
           }
         }}>
         <Reveal3DResources resources={resources} defaultResourceStyling={defaultResourceStyling} />
-        <CameraController
-          initialFitCamera={{
-            to: 'allModels'
-          }}
-          cameraControlsOptions={{
-            changeCameraTargetOnClick: true,
-            mouseWheelAction: 'zoomToCursor'
-          }}
-        />
       </RevealContainer>
     );
   }
