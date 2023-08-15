@@ -69,7 +69,7 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
 
     if (nodeData === undefined) return;
 
-    cameraNavigation.fitCameraToInstance(nodeData.nodeExternalId, 'pdms-mapping');
+    void cameraNavigation.fitCameraToInstance(nodeData.nodeExternalId, 'pdms-mapping');
   }, [nodeData?.nodeExternalId]);
 
   if (stylingGroupsRef.current.length === 1) {
