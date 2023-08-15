@@ -7,7 +7,6 @@ import { useSelector } from 'react-redux';
 import type { AppLocationGenerics } from '@simint-app/routes';
 import { selectProject } from '@simint-app/store/simconfigApiProperties/selectors';
 import { formatISO, parseISO, sub } from 'date-fns';
-import { head } from 'lodash';
 import capitalize from 'lodash/capitalize';
 import uniq from 'lodash/uniq';
 import styled from 'styled-components/macro';
@@ -409,7 +408,7 @@ function Filter({
           setSearchParams({ [filterKey]: option?.value?.value });
         }}
         dropdownRender={(menu) => {
-          const firstItem = head(options);
+          const firstItem = options[0];
           const optionsLength = firstItem && (firstItem?.options || []).length;
           return (
             <>
