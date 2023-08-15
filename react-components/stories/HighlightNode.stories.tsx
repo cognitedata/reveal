@@ -58,42 +58,28 @@ export const Main: Story = {
 };
 
 const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): ReactElement => {
-  const [highlightedId, setHighlightedId] = useState<string | undefined>(undefined);
-  const stylingGroupsRef = useRef<FdmAssetStylingGroup[]>([]);
+  const [stylingGroups, setStylingGroups] = useState<FdmAssetStylingGroup[]>([]);
   const cameraNavigation = useCameraNavigation();
   const onClick = useCallback(
     async (nodeData: Promise<NodeDataResult | undefined>): Promise<void> => {
       const nodeDataResult = await nodeData;
-      setHighlightedId(nodeDataResult?.nodeExternalId);
 
       if (nodeDataResult === undefined) return;
 
       await cameraNavigation.fitCameraToInstance(nodeDataResult.nodeExternalId, 'pdms-mapping');
 
-      nodeDataResult.intersection.model.assignStyledNodeCollection(
-        new TreeIndexNodeCollection([nodeDataResult.cadNode.treeIndex]),
-        DefaultNodeAppearance.Highlighted
-      );
-    },
-    []
-  );
-
-  if (stylingGroupsRef.current.length === 1) {
-    stylingGroupsRef.current.pop();
-  }
-
-  if (highlightedId !== undefined) {
-    stylingGroupsRef.current.push({
-      fdmAssetExternalIds: [{ externalId: highlightedId, space: 'pdms-mapping' }],
-      style: { cad: DefaultNodeAppearance.Highlighted }
-    });
-  }
+      setStylingGroups([{
+        fdmAssetExternalIds: [{ externalId: nodeDataResult.nodeExternalId, space: 'pdms-mapping' }],
+        style: { cad: DefaultNodeAppearance.Highlighted }
+      }]);
+      
+    }, []);
 
   return (
     <>
       <RevealResourcesFitCameraOnLoad
         resources={resources}
-        instanceStyling={stylingGroupsRef.current}
+        instanceStyling={stylingGroups}
         onNodeClick={onClick}
       />
       <RevealToolbar />
