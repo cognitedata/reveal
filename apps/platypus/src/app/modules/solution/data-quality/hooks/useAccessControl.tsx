@@ -1,3 +1,5 @@
+import { useParams } from 'react-router-dom';
+
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
 import { getProject } from '@cognite/cdf-utilities';
@@ -13,9 +15,12 @@ export enum AccessAction {
 
 export const useAccessControl = () => {
   const project = getProject();
+  const { space } = useParams() as {
+    space: string;
+  };
 
   const { capabilities, isLoading } = useCapabilities([project], {
-    spaceIds: ['star-wars'],
+    spaceIds: [space],
   });
 
   const accesses = resolveAccess(capabilities);

@@ -1,6 +1,3 @@
-import { isEqual } from 'lodash';
-
-import { acls } from './consts';
 import { AclName, Capability, CapabilityActions, RequiredScope } from './types';
 
 /** Extracts acl name from a valid capability object. */
@@ -50,49 +47,23 @@ export const isInCapabilityScope = (
   capability: Capability,
   requiredScope: RequiredScope
 ) => {
-  const {
-    assetRootIds = [],
-    dataSetIds = [],
-    dbsToTables = {},
-    extractionPipelineIds = [],
-    securityCategoryIds = [],
-    spaceIds = [],
-    timeSeriesIds = [],
-  } = requiredScope;
+  const { dataSetIds = [], spaceIds = [], timeSeriesIds = [] } = requiredScope;
   const acl = getCapabilityAcl(capability);
 
   if (!acl) return false;
 
   const { scope } = capability[acl];
 
-  if ('all' in scope || 'currentuserscope' in scope) return true;
+  if ('all' in scope) return true;
 
   if ('datasetScope' in scope)
     return hasRequiredIds(dataSetIds, scope.datasetScope?.ids);
 
-  if ('assetRootIdScope' in scope)
-    return hasRequiredIds(assetRootIds, scope.assetRootIdScope?.rootIds);
-
   if ('spaceIdScope' in scope)
     return hasRequiredIds(spaceIds, scope.spaceIdScope?.spaceIds);
 
-  if ('extractionPipelineScope' in scope)
-    return hasRequiredIds(
-      extractionPipelineIds,
-      scope.extractionPipelineScope?.ids
-    );
-
-  if ('tableScope' in scope)
-    return isEqual(dbsToTables, scope.tableScope?.dbsToTables);
-
   if (acl === 'datasetsAcl' && 'idScope' in scope)
     return hasRequiredIds(dataSetIds, scope.idScope?.ids);
-
-  if (acl === 'securityCategoriesAcl' && 'idscope' in scope)
-    return hasRequiredIds(securityCategoryIds, scope.idscope?.ids);
-
-  if (acl === 'extractionPipelinesAcl' && 'idScope' in scope)
-    return hasRequiredIds(extractionPipelineIds, scope.idScope?.ids);
 
   if (acl === 'timeSeriesAcl' && 'idscope' in scope)
     return hasRequiredIds(timeSeriesIds, scope.idscope?.ids);
@@ -109,9 +80,4 @@ export const isInProjectScope = (
     'allProjects' in capability.projectScope ||
     hasRequiredIds(requiredProjects, capability.projectScope.projects)
   );
-};
-
-/** Checks if the given string is a valid acl name. */
-export const isValidAcl = (acl: string): acl is AclName => {
-  return acls.includes(acl as AclName);
 };
