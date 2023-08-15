@@ -1,4 +1,4 @@
-import { ActionType, useAccessControl } from '@data-quality/hooks';
+import { AccessAction, useAccessControl } from '@data-quality/hooks';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
 import { Body, Button, Flex } from '@cognite/cogs.js';
@@ -20,7 +20,9 @@ export const UpsertRuleFooter = ({
 
   const { canWriteDataValidation, useErrorMessage } = useAccessControl();
 
-  const accessErrorMessage = useErrorMessage(ActionType.WRITE_DATA_VALIDATION);
+  const accessErrorMessage = useErrorMessage(
+    AccessAction.WRITE_DATA_VALIDATION
+  );
 
   return (
     <Flex alignItems="flex-end" direction="column" gap={4}>
