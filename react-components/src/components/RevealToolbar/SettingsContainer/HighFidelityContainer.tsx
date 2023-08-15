@@ -1,41 +1,40 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-import { Menu } from '@cognite/cogs.js';
+
 import { type ReactElement, useEffect, useMemo } from 'react';
+import { Menu } from '@cognite/cogs.js';
 import { useReveal } from '../../RevealContainer/RevealContext';
-import { type ResolutionOptions } from '@cognite/reveal';
 import { type HighFidelityProps } from './types';
+import { FIDELITY_MULTIPLIER } from '../../../utilities/constants';
 
 export const HighFidelityContainer = ({
   isHighFidelityMode,
-  setHighFidelityMode
+  setHighFidelityMode,
+  defaultsQualityConfig,
+  highFidelityConfig
 }: HighFidelityProps): ReactElement => {
   const viewer = useReveal();
-
-  const defaultsQualityConfig = useMemo(() => {
-    return {
-      cadBudget: { ...viewer.cadBudget },
-      pointCloudBudget: { ...viewer.pointCloudBudget },
-      resolutionOptions: {
-        maxRenderResolution: 1.4e6,
-        movingCameraResolutionFactor: 1
-      } satisfies ResolutionOptions
-    };
-  }, [viewer]);
 
   const qualityConfig = useMemo(() => {
     if (isHighFidelityMode) {
       return {
         pointCloudBudget: {
-          numberOfPoints: 3 * defaultsQualityConfig.pointCloudBudget.numberOfPoints
+          numberOfPoints:
+            highFidelityConfig?.pointCloudBudget?.numberOfPoints ??
+            defaultsQualityConfig.pointCloudBudget.numberOfPoints * FIDELITY_MULTIPLIER
         },
         cadBudget: {
-          maximumRenderCost: 3 * defaultsQualityConfig.cadBudget.maximumRenderCost,
-          highDetailProximityThreshold: defaultsQualityConfig.cadBudget.highDetailProximityThreshold
+          maximumRenderCost:
+            highFidelityConfig?.cadBudget?.maximumRenderCost ??
+            defaultsQualityConfig.cadBudget.maximumRenderCost * FIDELITY_MULTIPLIER,
+          highDetailProximityThreshold:
+            highFidelityConfig?.cadBudget?.highDetailProximityThreshold ??
+            defaultsQualityConfig.cadBudget.highDetailProximityThreshold * FIDELITY_MULTIPLIER
         },
         resolutionOptions: {
-          maxRenderResolution: Infinity
+          maxRenderResolution:
+            highFidelityConfig?.resolutionOptions?.maxRenderResolution ?? Infinity
         }
       };
     } else {
@@ -47,7 +46,7 @@ export const HighFidelityContainer = ({
         }
       };
     }
-  }, [isHighFidelityMode, viewer]);
+  }, [isHighFidelityMode, defaultsQualityConfig, highFidelityConfig]);
 
   useEffect(() => {
     viewer.cadBudget = qualityConfig.cadBudget;

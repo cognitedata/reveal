@@ -11,6 +11,8 @@ import { SettingsButton } from './SettingsButton';
 import { withSuppressRevealEvents } from '../../higher-order-components/withSuppressRevealEvents';
 import { MeasurementButton } from './MeasurementButton';
 import { HelpButton } from './HelpButton';
+import { type QualityConfig } from './SettingsContainer/types';
+import { type DeepPartial } from '../../utilities/DeepPartial';
 
 const defaultStyle: ToolBarProps = {
   style: {
@@ -20,13 +22,15 @@ const defaultStyle: ToolBarProps = {
   }
 };
 
-const DefaultContentWrapper = (
-  props: ToolBarProps & { customSettingsContent?: JSX.Element }
-): ReactElement => {
+type RevealToolbarProps = ToolBarProps & {
+  customSettingsContent?: JSX.Element;
+  highFidelityConfig?: DeepPartial<QualityConfig>;
+};
+
+const DefaultContentWrapper = (props: RevealToolbarProps): ReactElement => {
   return (
     <>
       <LayersButton />
-
       <FitModelsButton />
       <Button type="ghost" icon="Collapse" aria-label="Focus asset" />
 
@@ -37,14 +41,17 @@ const DefaultContentWrapper = (
 
       <div className="cogs-toolbar-divider" />
 
-      <SettingsButton customSettingsContent={props.customSettingsContent ?? undefined} />
+      <SettingsButton
+        customSettingsContent={props.customSettingsContent ?? undefined}
+        highFidelityConfig={props.highFidelityConfig ?? undefined}
+      />
       <HelpButton />
     </>
   );
 };
 
 const RevealToolbarContainer = (
-  props: ToolBarProps & { toolBarContent?: JSX.Element } & { customSettingsContent?: JSX.Element }
+  props: RevealToolbarProps & { toolBarContent?: JSX.Element }
 ): ReactElement => {
   if (props.className === undefined && props.style === undefined) {
     props = { ...props, ...defaultStyle };

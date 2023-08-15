@@ -65,6 +65,26 @@ const exampleCustomSettingElements = (): ReactElement => {
   );
 };
 
+type CustomHighFidelitySettings = {
+  cadBudget: {
+    maximumRenderCost: number;
+  };
+  pointCloudBudget: {
+    numberOfPoints: number;
+  };
+};
+
+const exampleHighFedilitySettings = (): CustomHighFidelitySettings => {
+  return {
+    cadBudget: {
+      maximumRenderCost: 95000000
+    },
+    pointCloudBudget: {
+      numberOfPoints: 12000000
+    }
+  };
+};
+
 export const Main: Story = {
   args: {
     addModelOptions: {
@@ -75,7 +95,10 @@ export const Main: Story = {
   render: ({ addModelOptions }) => (
     <RevealContainer sdk={sdk} color={new Color(0x4a4a4a)}>
       <CadModelContainer addModelOptions={addModelOptions} />
-      <RevealToolbar customSettingsContent={exampleCustomSettingElements()} />
+      <RevealToolbar
+        customSettingsContent={exampleCustomSettingElements()}
+        highFidelityConfig={exampleHighFedilitySettings()}
+      />
       <MyCustomToolbar>
         <RevealToolbar.FitModelsButton />
         <ToolBar.ButtonGroup buttonGroup={exampleToolBarButtons} />

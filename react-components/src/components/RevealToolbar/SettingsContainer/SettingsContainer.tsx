@@ -10,6 +10,8 @@ import { type SettingsContainerProps } from './types';
 export const SettingsContainer = ({
   isHighFidelityMode,
   setHighFidelityMode,
+  defaultsQualityConfig,
+  highFidelityConfig,
   customSettingsContent
 }: SettingsContainerProps): ReactElement => {
   return (
@@ -17,6 +19,8 @@ export const SettingsContainer = ({
       <HighFidelityContainer
         isHighFidelityMode={isHighFidelityMode}
         setHighFidelityMode={setHighFidelityMode}
+        defaultsQualityConfig={defaultsQualityConfig}
+        highFidelityConfig={highFidelityConfig}
       />
       {customSettingsContent ?? <></>}
     </Menu>
