@@ -9,6 +9,7 @@ import {
   SYSTEM_SPACE_3D_SCHEMA
 } from '../utilities/globalDataModels';
 import { type FdmSDK, type EdgeItem } from '../utilities/FdmSDK';
+import { useGetAllExternalIds } from '../components/NodeCacheProvider/NodeCacheProvider';
 
 export type ModelRevisionId = `${number}-${number}`;
 export type ModelRevisionToEdgeMap = Map<ModelRevisionId, Array<EdgeItem<InModel3dEdgeProperties>>>;
@@ -17,21 +18,7 @@ export const useMappedEquipmentByRevisionList = (
   modelRevisionIds: Array<{ modelId: number; revisionId: number }>,
   enabled = true
 ): UseQueryResult<ModelRevisionToEdgeMap> => {
-  const fdmClient = useFdmSdk();
-  return useQuery(
-    [
-      'reveal',
-      'react-components',
-      ...modelRevisionIds.map((modelRevisionId) => modelRevisionId.revisionId.toString()).sort()
-    ],
-    async () => {
-      const revisionIds = modelRevisionIds.map((modelRevisionId) => modelRevisionId.revisionId);
-      const edges = await getEdgesForRevisions(revisionIds, fdmClient);
-      const groupToModels = groupToModelRevision(edges, modelRevisionIds);
-      return groupToModels;
-    },
-    { staleTime: Infinity, enabled: enabled && modelRevisionIds.length > 0 }
-  );
+  return useGetAllExternalIds(modelRevisionIds, enabled);
 };
 
 function groupToModelRevision(

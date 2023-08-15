@@ -11,6 +11,7 @@ import { ModelsLoadingStateContext } from '../Reveal3DResources/ModelsLoadingCon
 import { SDKProvider } from './SDKProvider';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
+import { FdmNodeCacheContext, NodeCacheProvider } from '../NodeCacheProvider/NodeCacheProvider';
 
 type RevealContainerProps = {
   color?: Color;
@@ -71,8 +72,10 @@ export function RevealContainer({
     return (
       <>
         <RevealContext.Provider value={viewer}>
-          <ModelsLoadingProvider>
-            {createPortal(children, viewerDomElement.current)}
+        <ModelsLoadingProvider>
+        <NodeCacheProvider >
+        {createPortal(children, viewerDomElement.current)}
+         </ NodeCacheProvider>
           </ModelsLoadingProvider>
         </RevealContext.Provider>
       </>
