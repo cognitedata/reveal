@@ -2,13 +2,14 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type ReactElement } from 'react';
+import { useState, type ReactElement } from 'react';
 import { useReveal } from '../../RevealContainer/RevealContext';
 import { type CogniteCadModel } from '@cognite/reveal';
 import { Checkbox, Flex, Menu } from '@cognite/cogs.js';
 import { StyledChipCount, StyledLabel, StyledSubMenu } from './elements';
 import { uniqueId } from 'lodash';
 import { type Reveal3DResourcesLayersProps } from './types';
+import { useRevealContainerElement } from '../../RevealContainer/RevealContainerElementContext';
 
 export const CadModelLayersContainer = ({
   layerProps
@@ -16,6 +17,8 @@ export const CadModelLayersContainer = ({
   layerProps: Reveal3DResourcesLayersProps;
 }): ReactElement => {
   const viewer = useReveal();
+  const revealContainerElement = useRevealContainerElement();
+  const [visible, setVisible] = useState(false);
 
   const { cadLayerData } = layerProps.reveal3DResourcesLayerData;
 
@@ -63,6 +66,7 @@ export const CadModelLayersContainer = ({
         {cadLayerData.map((data) => (
           <Menu.Item
             key={uniqueId()}
+            hideTooltip={true}
             hasCheckbox
             checkboxProps={{
               checked: data.isToggled,
@@ -81,14 +85,28 @@ export const CadModelLayersContainer = ({
   return (
     <>
       {cadLayerData.length > 0 && (
-        <Menu.Submenu content={cadModelContent()} title="CAD models">
-          <Flex direction="row" justifyContent="space-between" gap={4}>
+        <Menu.Submenu
+          appendTo={revealContainerElement ?? document.body}
+          visible={visible}
+          onClickOutside={() => {
+            setVisible(false);
+          }}
+          content={cadModelContent()}
+          title="CAD models">
+          <Flex
+            direction="row"
+            justifyContent="space-between"
+            gap={4}
+            onClick={() => {
+              setVisible((prevState) => !prevState);
+            }}>
             <Checkbox
               checked={someModelVisible}
               indeterminate={indeterminate}
               onChange={(e) => {
                 e.stopPropagation();
                 handleAllCadModelsVisibility(e.target.checked);
+                setVisible(true);
               }}
             />
             <StyledLabel> CAD models </StyledLabel>

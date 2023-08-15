@@ -2,13 +2,14 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type ReactElement } from 'react';
+import { useState, type ReactElement } from 'react';
 import { useReveal } from '../../RevealContainer/RevealContext';
 import { Checkbox, Flex, Menu } from '@cognite/cogs.js';
 import { StyledChipCount, StyledLabel, StyledSubMenu } from './elements';
 import { type Image360Collection } from '@cognite/reveal';
 import { uniqueId } from 'lodash';
 import { type Reveal3DResourcesLayersProps } from './types';
+import { useRevealContainerElement } from '../../RevealContainer/RevealContainerElementContext';
 
 export const Image360CollectionLayerContainer = ({
   layerProps
@@ -16,6 +17,8 @@ export const Image360CollectionLayerContainer = ({
   layerProps: Reveal3DResourcesLayersProps;
 }): ReactElement => {
   const viewer = useReveal();
+  const revealContainerElement = useRevealContainerElement();
+  const [visible, setVisible] = useState(false);
   const { image360LayerData } = layerProps.reveal3DResourcesLayerData;
 
   const count = image360LayerData.length.toString();
@@ -79,14 +82,27 @@ export const Image360CollectionLayerContainer = ({
   return (
     <>
       {image360LayerData.length > 0 && (
-        <Menu.Submenu content={image360Content()} title="360 images">
-          <Flex direction="row" justifyContent="space-between">
+        <Menu.Submenu
+          appendTo={revealContainerElement ?? document.body}
+          visible={visible}
+          onClickOutside={() => {
+            setVisible(false);
+          }}
+          content={image360Content()}
+          title="360 images">
+          <Flex
+            direction="row"
+            justifyContent="space-between"
+            onClick={() => {
+              setVisible((prevState) => !prevState);
+            }}>
             <Checkbox
               checked={someImagesVisible}
               indeterminate={indeterminate}
               onChange={(e) => {
                 e.stopPropagation();
                 handleAll360ImagesVisibility(e.target.checked);
+                setVisible(true);
               }}
             />
             <StyledLabel> 360 images </StyledLabel>

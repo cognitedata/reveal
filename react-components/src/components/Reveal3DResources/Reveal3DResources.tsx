@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 import { useRef, type ReactElement, useContext, useState, useEffect } from 'react';
-import { type NodeAppearance, type Cognite3DViewer, type PointerEventData } from '@cognite/reveal';
+import { type Cognite3DViewer, type PointerEventData } from '@cognite/reveal';
 import { ModelsLoadingStateContext } from './ModelsLoadingContext';
 import { CadModelContainer, type CadModelStyling } from '../CadModelContainer/CadModelContainer';
 import {
@@ -16,26 +16,16 @@ import {
   type AddImageCollection360Options,
   type TypedReveal3DModel,
   type AddResourceOptions,
-  type NodeDataResult
+  type Reveal3DResourcesProps,
+  type DefaultResourceStyling
 } from './types';
 import { queryMappedData } from './queryMappedData';
 import { useFdmSdk, useSDK } from '../RevealContainer/SDKProvider';
 import { useCalculateModelsStyling } from '../../hooks/useCalculateModelsStyling';
-import { type DmsUniqueIdentifier } from '../../utilities/FdmSDK';
-
-export type FdmAssetStylingGroup = {
-  fdmAssetExternalIds: DmsUniqueIdentifier[];
-  style: { cad: NodeAppearance };
-};
-
-export type Reveal3DResourcesProps = {
-  resources: AddResourceOptions[];
-  instanceStyling?: FdmAssetStylingGroup[];
-  onNodeClick?: (node: Promise<NodeDataResult | undefined>) => void;
-};
 
 export const Reveal3DResources = ({
   resources,
+  defaultResourceStyling,
   instanceStyling,
   onNodeClick
 }: Reveal3DResourcesProps): ReactElement => {
@@ -48,7 +38,15 @@ export const Reveal3DResources = ({
   const numModelsLoaded = useRef(0);
 
   useEffect(() => {
-    getTypedModels(resources, viewer).then(setReveal3DModels).catch(console.error);
+    getTypedModels(resources, viewer)
+      .then((models) => {
+        models.forEach((model) => {
+          setDefaultResourceStyling(model, defaultResourceStyling);
+        });
+        return models;
+      })
+      .then(setReveal3DModels)
+      .catch(console.error);
   }, [resources, viewer]);
 
   const reveal3DModelsStyling = useCalculateModelsStyling(reveal3DModels, instanceStyling ?? []);
@@ -154,4 +152,19 @@ async function getTypedModels(
         return typedModel;
       })
   );
+}
+
+function setDefaultResourceStyling(
+  model: TypedReveal3DModel,
+  defaultResourceStyling?: DefaultResourceStyling
+): void {
+  if (model.styling !== undefined || defaultResourceStyling === undefined) {
+    return;
+  }
+
+  if (model.type === 'cad') {
+    model.styling = defaultResourceStyling.cad;
+  } else if (model.type === 'pointcloud') {
+    model.styling = defaultResourceStyling.pointcloud;
+  }
 }
