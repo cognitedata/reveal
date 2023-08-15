@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { useState, type ReactElement } from 'react';
+import { type ReactElement } from 'react';
 
 import { Button, Dropdown } from '@cognite/cogs.js';
 import styled from 'styled-components';
@@ -11,12 +11,6 @@ import { TouchNavigation } from './Help/TouchNavigation';
 import { KeyboardNavigation } from './Help/KeyboardNavigation';
 
 export const HelpButton = (): ReactElement => {
-  const [, setHelpEnabled] = useState<boolean>(false);
-
-  const showHelp = (): void => {
-    setHelpEnabled((prevState) => !prevState);
-  };
-
   return (
     <Dropdown
       appendTo={document.body}
@@ -28,7 +22,7 @@ export const HelpButton = (): ReactElement => {
         </StyledMenu>
       }
       placement="right">
-      <Button type="ghost" icon="Help" aria-label="help-button" onClick={showHelp} />
+      <Button type="ghost" icon="Help" aria-label="help-button" />
     </Dropdown>
   );
 };

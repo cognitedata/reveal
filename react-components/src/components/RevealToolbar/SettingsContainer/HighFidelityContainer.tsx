@@ -11,8 +11,8 @@ import { FIDELITY_MULTIPLIER } from '../../../utilities/constants';
 export const HighFidelityContainer = ({
   isHighFidelityMode,
   setHighFidelityMode,
-  defaultsQualityConfig,
-  highFidelityConfig
+  defaultsFidelityConfig,
+  customHighFidelityConfig
 }: HighFidelityProps): ReactElement => {
   const viewer = useReveal();
 
@@ -21,32 +21,26 @@ export const HighFidelityContainer = ({
       return {
         pointCloudBudget: {
           numberOfPoints:
-            highFidelityConfig?.pointCloudBudget?.numberOfPoints ??
-            defaultsQualityConfig.pointCloudBudget.numberOfPoints * FIDELITY_MULTIPLIER
+            customHighFidelityConfig?.pointCloudBudget?.numberOfPoints ??
+            defaultsFidelityConfig.pointCloudBudget.numberOfPoints * FIDELITY_MULTIPLIER
         },
         cadBudget: {
           maximumRenderCost:
-            highFidelityConfig?.cadBudget?.maximumRenderCost ??
-            defaultsQualityConfig.cadBudget.maximumRenderCost * FIDELITY_MULTIPLIER,
+            customHighFidelityConfig?.cadBudget?.maximumRenderCost ??
+            defaultsFidelityConfig.cadBudget.maximumRenderCost * FIDELITY_MULTIPLIER,
           highDetailProximityThreshold:
-            highFidelityConfig?.cadBudget?.highDetailProximityThreshold ??
-            defaultsQualityConfig.cadBudget.highDetailProximityThreshold * FIDELITY_MULTIPLIER
+            customHighFidelityConfig?.cadBudget?.highDetailProximityThreshold ??
+            defaultsFidelityConfig.cadBudget.highDetailProximityThreshold * FIDELITY_MULTIPLIER
         },
         resolutionOptions: {
           maxRenderResolution:
-            highFidelityConfig?.resolutionOptions?.maxRenderResolution ?? Infinity
+            customHighFidelityConfig?.resolutionOptions?.maxRenderResolution ?? Infinity
         }
       };
     } else {
-      return {
-        pointCloudBudget: { ...defaultsQualityConfig.pointCloudBudget },
-        cadBudget: { ...defaultsQualityConfig.cadBudget },
-        resolutionOptions: {
-          maxRenderResolution: 1.4e6
-        }
-      };
+      return { ...defaultsFidelityConfig };
     }
-  }, [isHighFidelityMode, defaultsQualityConfig, highFidelityConfig]);
+  }, [isHighFidelityMode, defaultsFidelityConfig, customHighFidelityConfig]);
 
   useEffect(() => {
     viewer.cadBudget = qualityConfig.cadBudget;

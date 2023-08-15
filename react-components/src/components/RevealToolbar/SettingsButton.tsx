@@ -12,21 +12,17 @@ import { type QualityConfig } from './SettingsContainer/types';
 
 type CustomSettingsProps = {
   customSettingsContent?: ReactElement;
-  highFidelityConfig?: DeepPartial<QualityConfig>;
+  customHighFidelityConfig?: DeepPartial<QualityConfig>;
 };
 
 export const SettingsButton = ({
   customSettingsContent,
-  highFidelityConfig
+  customHighFidelityConfig
 }: CustomSettingsProps): ReactElement => {
   const viewer = useReveal();
-  const [, setSettingsEnabled] = useState(false);
   const [isHighQualityMode, setHighQualityMode] = useState(false);
-  const SettingsButton = (): void => {
-    setSettingsEnabled((prevState) => !prevState);
-  };
 
-  const defaultsQualityConfig = useMemo(() => {
+  const defaultsFidelityConfig = useMemo(() => {
     return {
       pointCloudBudget: { ...viewer.pointCloudBudget },
       cadBudget: { ...viewer.cadBudget },
@@ -45,14 +41,18 @@ export const SettingsButton = ({
           customSettingsContent={customSettingsContent}
           isHighFidelityMode={isHighQualityMode}
           setHighFidelityMode={setHighQualityMode}
-          defaultsQualityConfig={defaultsQualityConfig}
-          highFidelityConfig={
-            highFidelityConfig ?? { pointCloudBudget: {}, cadBudget: {}, resolutionOptions: {} }
+          defaultsFidelityConfig={defaultsFidelityConfig}
+          customHighFidelityConfig={
+            customHighFidelityConfig ?? {
+              pointCloudBudget: {},
+              cadBudget: {},
+              resolutionOptions: {}
+            }
           }
         />
       }
       placement="auto">
-      <Button onClick={SettingsButton} icon="Settings" type="ghost" aria-label="Show settings" />
+      <Button icon="Settings" type="ghost" aria-label="Show settings" />
     </Dropdown>
   );
 };

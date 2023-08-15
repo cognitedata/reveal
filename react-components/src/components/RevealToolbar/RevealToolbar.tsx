@@ -24,7 +24,7 @@ const defaultStyle: ToolBarProps = {
 
 type RevealToolbarProps = ToolBarProps & {
   customSettingsContent?: JSX.Element;
-  highFidelityConfig?: DeepPartial<QualityConfig>;
+  customHighFidelityConfig?: DeepPartial<QualityConfig>;
 };
 
 const DefaultContentWrapper = (props: RevealToolbarProps): ReactElement => {
@@ -43,7 +43,7 @@ const DefaultContentWrapper = (props: RevealToolbarProps): ReactElement => {
 
       <SettingsButton
         customSettingsContent={props.customSettingsContent ?? undefined}
-        highFidelityConfig={props.highFidelityConfig ?? undefined}
+        customHighFidelityConfig={props.customHighFidelityConfig ?? undefined}
       />
       <HelpButton />
     </>

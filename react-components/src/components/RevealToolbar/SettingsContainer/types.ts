@@ -8,8 +8,8 @@ import { type DeepPartial } from '../../../utilities/DeepPartial';
 export type HighFidelityProps = {
   isHighFidelityMode: boolean;
   setHighFidelityMode: Dispatch<SetStateAction<boolean>>;
-  defaultsQualityConfig: QualityConfig;
-  highFidelityConfig?: DeepPartial<QualityConfig>;
+  defaultsFidelityConfig: QualityConfig;
+  customHighFidelityConfig?: DeepPartial<QualityConfig>;
 };
 
 export type SettingsContainerProps = HighFidelityProps & {
