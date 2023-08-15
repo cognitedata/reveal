@@ -2,10 +2,11 @@
  * Copyright 2023 Cognite AS
  */
 import type { Meta, StoryObj } from '@storybook/react';
-import { Reveal3DResources, RevealContainer, RevealKeepAlive } from '../src';
+import { RevealContainer, RevealKeepAlive } from '../src';
 import { Color, Matrix4 } from 'three';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import { useState, type ReactElement } from 'react';
+import { RevealResourcesFitCameraOnLoad } from './utilities/with3dResoursesFitCameraOnLoad';
 
 const meta = {
   title: 'Example/RevealKeepAlive',
@@ -51,7 +52,7 @@ const KeepAliveMockScenario = (): ReactElement => {
           {isRevealContainerMounted && (
             <RevealContainer sdk={sdk} color={new Color(0x4a4a4a)}>
               {isResourcesMounted && (
-                <Reveal3DResources
+                <RevealResourcesFitCameraOnLoad
                   resources={[
                     {
                       modelId: 1791160622840317,

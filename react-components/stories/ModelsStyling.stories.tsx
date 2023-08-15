@@ -5,6 +5,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { Reveal3DResources, RevealContainer } from '../src';
 import { Color, Matrix4 } from 'three';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
+import { RevealResourcesFitCameraOnLoad } from './utilities/with3dResoursesFitCameraOnLoad';
 
 const model = {
   modelId: 2231774635735416,
@@ -80,7 +81,10 @@ export const Main: Story = {
             placement: 'topRight'
           }
         }}>
-        <Reveal3DResources resources={resources} defaultResourceStyling={defaultResourceStyling} />
+        <RevealResourcesFitCameraOnLoad
+          resources={resources}
+          defaultResourceStyling={defaultResourceStyling}
+        />
       </RevealContainer>
     );
   }

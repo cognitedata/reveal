@@ -7,6 +7,7 @@ import { Color, Vector3 } from 'three';
 import { ViewerAnchor } from '../src/';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import styled from 'styled-components';
+import { RevealResourcesFitCameraOnLoad } from './utilities/with3dResoursesFitCameraOnLoad';
 
 const meta = {
   title: 'Example/ViewerAnchor',
@@ -43,7 +44,7 @@ export const Main: Story = {
             placement: 'topRight'
           }
         }}>
-        <Reveal3DResources resources={resources} />
+        <RevealResourcesFitCameraOnLoad resources={resources} />
         <ViewerAnchor position={position}>
           <div
             style={{
