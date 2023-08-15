@@ -2,8 +2,8 @@
  * Copyright 2023 Cognite AS
  */
 import type { Meta, StoryObj } from '@storybook/react';
-import { CameraController, PointCloudContainer, RevealContainer } from '../src';
-import { Color, Matrix4, Vector3 } from 'three';
+import { PointCloudContainer, RevealContainer } from '../src';
+import { Color, Matrix4 } from 'three';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 
 const meta = {
@@ -55,15 +55,6 @@ export const Main: Story = {
         addModelOptions={addModelOptions}
         transform={transform}
         styling={styling}
-      />
-      <CameraController
-        initialFitCamera={{
-          to: 'cameraState',
-          state: {
-            position: new Vector3(-10, 10, 22),
-            target: new Vector3(-10, -1, 10)
-          }
-        }}
       />
     </RevealContainer>
   )

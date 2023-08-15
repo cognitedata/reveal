@@ -1,9 +1,8 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-import { useRef, type ReactElement, useContext, useState, useEffect } from 'react';
+import { useRef, type ReactElement, useState, useEffect } from 'react';
 import { type Cognite3DViewer, type PointerEventData } from '@cognite/reveal';
-import { ModelsLoadingStateContext } from './ModelsLoadingContext';
 import { CadModelContainer, type CadModelStyling } from '../CadModelContainer/CadModelContainer';
 import {
   PointCloudContainer,
@@ -27,11 +26,11 @@ export const Reveal3DResources = ({
   resources,
   defaultResourceStyling,
   instanceStyling,
-  onNodeClick
+  onNodeClick,
+  onResourcesAdded
 }: Reveal3DResourcesProps): ReactElement => {
   const [reveal3DModels, setReveal3DModels] = useState<TypedReveal3DModel[]>([]);
 
-  const { setModelsAdded } = useContext(ModelsLoadingStateContext);
   const viewer = useReveal();
   const fdmSdk = useFdmSdk();
   const client = useSDK();
@@ -73,8 +72,8 @@ export const Reveal3DResources = ({
   const onModelLoaded = (): void => {
     numModelsLoaded.current += 1;
 
-    if (numModelsLoaded.current === resources.length) {
-      setModelsAdded(true);
+    if (numModelsLoaded.current === resources.length && onResourcesAdded !== undefined) {
+      onResourcesAdded();
     }
   };
 

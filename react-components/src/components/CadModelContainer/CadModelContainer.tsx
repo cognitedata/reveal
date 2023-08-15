@@ -9,7 +9,8 @@ import {
   TreeIndexNodeCollection,
   NodeIdNodeCollection,
   DefaultNodeAppearance,
-  type NodeCollection
+  type NodeCollection,
+  type Cognite3DViewer
 } from '@cognite/reveal';
 import { useReveal } from '../RevealContainer/RevealContext';
 import { Matrix4 } from 'three';
@@ -61,16 +62,16 @@ export function CadModelContainer({
   }, [modelId, revisionId, geometryFilter]);
 
   useEffect(() => {
-    if (model === undefined || transform === undefined) return;
+    if (!modelExists(model, viewer) || transform === undefined) return;
     model.setModelTransformation(transform);
   }, [transform, model]);
 
   useEffect(() => {
-    if (model === undefined || styleGroups === undefined) return;
+    if (!modelExists(model, viewer) || styleGroups === undefined) return;
     const stylingCollections = applyStyling(sdk, model, styleGroups);
 
     return () => {
-      if (model === undefined) return;
+      if (!modelExists(model, viewer)) return;
       void stylingCollections.then((nodeCollections) => {
         nodeCollections.forEach((nodeCollection) => {
           model.unassignStyledNodeCollection(nodeCollection);
@@ -80,12 +81,13 @@ export function CadModelContainer({
   }, [styleGroups, model]);
 
   useEffect(() => {
-    if (model === undefined) return;
+    if (!modelExists(model, viewer)) return;
     model.setDefaultNodeAppearance(defaultStyle);
     return () => {
-      if (model !== undefined) {
-        model.setDefaultNodeAppearance(DefaultNodeAppearance.Default);
+      if (!modelExists(model, viewer)) {
+        return;
       }
+      model.setDefaultNodeAppearance(DefaultNodeAppearance.Default);
     };
   }, [defaultStyle, model]);
 
@@ -123,7 +125,7 @@ export function CadModelContainer({
   }
 
   function removeModel(): void {
-    if (model === undefined || !viewer.models.includes(model)) return;
+    if (!modelExists(model, viewer)) return;
 
     if (cachedViewerRef !== undefined && !cachedViewerRef.isRevealContainerMountedRef.current)
       return;
@@ -152,4 +154,11 @@ async function applyStyling(
     }
   }
   return collections;
+}
+
+function modelExists(
+  model: CogniteCadModel | undefined,
+  viewer: Cognite3DViewer
+): model is CogniteCadModel {
+  return model !== undefined && viewer.models.includes(model);
 }

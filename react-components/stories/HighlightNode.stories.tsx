@@ -9,14 +9,15 @@ import {
   Reveal3DResources,
   type NodeDataResult,
   type AddResourceOptions,
-  CameraController,
-  type FdmAssetStylingGroup
+  type FdmAssetStylingGroup,
+  useCameraNavigation
 } from '../src';
 import { Color } from 'three';
 import { type ReactElement, useState, useCallback, useRef } from 'react';
 import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@cognite/reveal';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { RevealResourcesFitCameraOnLoad } from './utilities/with3dResoursesFitCameraOnLoad';
 
 const meta = {
   title: 'Example/HighlightNode',
@@ -50,15 +51,6 @@ export const Main: Story = {
     return (
       <RevealContainer sdk={sdk} color={new Color(0x4a4a4a)}>
         <StoryContent resources={resources} />
-        <CameraController
-          initialFitCamera={{
-            to: 'allModels'
-          }}
-          cameraControlsOptions={{
-            changeCameraTargetOnClick: true,
-            mouseWheelAction: 'zoomToCursor'
-          }}
-        />
         <ReactQueryDevtools />
       </RevealContainer>
     );
@@ -68,21 +60,23 @@ export const Main: Story = {
 const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): ReactElement => {
   const [highlightedId, setHighlightedId] = useState<string | undefined>(undefined);
   const stylingGroupsRef = useRef<FdmAssetStylingGroup[]>([]);
-  const callback = async (nodeData: Promise<NodeDataResult | undefined>): Promise<void> => {
-    const nodeDataResult = await nodeData;
-    setHighlightedId(nodeDataResult?.nodeExternalId);
+  const cameraNavigation = useCameraNavigation();
+  const onClick = useCallback(
+    async (nodeData: Promise<NodeDataResult | undefined>): Promise<void> => {
+      const nodeDataResult = await nodeData;
+      setHighlightedId(nodeDataResult?.nodeExternalId);
 
-    if (nodeDataResult === undefined) return;
+      if (nodeDataResult === undefined) return;
 
-    nodeDataResult.intersection.model.assignStyledNodeCollection(
-      new TreeIndexNodeCollection([nodeDataResult.cadNode.treeIndex]),
-      DefaultNodeAppearance.Highlighted
-    );
-  };
+      await cameraNavigation.fitCameraToInstance(nodeDataResult.nodeExternalId, 'pdms-mapping');
 
-  const onClick = useCallback((nodeData: Promise<NodeDataResult | undefined>) => {
-    void callback(nodeData);
-  }, []);
+      nodeDataResult.intersection.model.assignStyledNodeCollection(
+        new TreeIndexNodeCollection([nodeDataResult.cadNode.treeIndex]),
+        DefaultNodeAppearance.Highlighted
+      );
+    },
+    []
+  );
 
   if (stylingGroupsRef.current.length === 1) {
     stylingGroupsRef.current.pop();
@@ -97,7 +91,7 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
 
   return (
     <>
-      <Reveal3DResources
+      <RevealResourcesFitCameraOnLoad
         resources={resources}
         instanceStyling={stylingGroupsRef.current}
         onNodeClick={onClick}
