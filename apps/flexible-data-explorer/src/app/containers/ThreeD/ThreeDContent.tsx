@@ -1,11 +1,12 @@
-import { ComponentProps } from 'react';
+import { ComponentProps, useCallback } from 'react';
 
 import { Color } from 'three';
 
 import {
   RevealContainer,
   Reveal3DResources,
-  CameraController,
+  useCameraNavigation,
+  AddResourceOptions,
 } from '@cognite/reveal-react-components';
 import { useSDK } from '@cognite/sdk-provider';
 
@@ -52,12 +53,30 @@ export const ThreeDContent = () => {
       color={new Color(0x4a4a4b)}
       viewerOptions={defaultViewerOptions}
     >
+      <RevealContent modelIdentifiers={modelIdentifiers} />
+    </RevealContainer>
+  );
+};
+
+const RevealContent = ({
+  modelIdentifiers,
+}: {
+  modelIdentifiers: AddResourceOptions[];
+}) => {
+  const cameraNavigation = useCameraNavigation();
+
+  const handleResourcesAdded = useCallback(() => {
+    cameraNavigation.fitCameraToAllModels();
+  }, [cameraNavigation]);
+
+  return (
+    <>
       <StyledRevealToolBar />
       <Reveal3DResources
         resources={modelIdentifiers}
         defaultResourceStyling={defaultResourceStyling}
+        onResourcesAdded={handleResourcesAdded}
       />
-      <CameraController initialFitCamera={{ to: 'allModels' }} />
-    </RevealContainer>
+    </>
   );
 };
