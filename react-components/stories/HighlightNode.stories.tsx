@@ -62,12 +62,15 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
   const stylingGroupsRef = useRef<FdmAssetStylingGroup[]>([]);
 
   const nodeData = useClickedNodeData();
+  const cameraNavigation = useCameraNavigation();
 
   useEffect(() => {
     setHighlightedId(nodeData?.nodeExternalId);
-  }, [nodeData?.nodeExternalId]);
 
-  const cameraNavigation = useCameraNavigation();
+    if (nodeData === undefined) return;
+
+    cameraNavigation.fitCameraToInstance(nodeData.nodeExternalId, 'pdms-mapping');
+  }, [nodeData?.nodeExternalId]);
 
   if (stylingGroupsRef.current.length === 1) {
     stylingGroupsRef.current.pop();

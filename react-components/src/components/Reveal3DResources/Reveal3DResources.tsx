@@ -21,7 +21,6 @@ import {
 import { useCalculateModelsStyling } from '../../hooks/useCalculateModelsStyling';
 import { useClickedNodeData } from '../..';
 
-
 export const Reveal3DResources = ({
   resources,
   defaultResourceStyling,
