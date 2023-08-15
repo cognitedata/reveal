@@ -8,7 +8,7 @@ import { CogniteClient } from '@cognite/sdk/dist/src';
 
 import { CopilotMessage } from './types';
 import { addToCopilotEventListener, sendToCopilotEvent } from './utils';
-import { addToCopilotLogs } from './utils/logging';
+import { addToCopilotLogs, getCopilotLogs } from './utils/logging';
 
 export type CogniteChainInput = {
   /** LLM Wrapper to use */
@@ -25,7 +25,10 @@ export type CogniteChainInput = {
 } & ChainInputs;
 
 export type ChainType = 'llm' | 'sequential_chain';
-export type ChainStage = {
+export type ChainStage<
+  I extends Record<string, any> = any,
+  O extends Record<string, any> = any
+> = {
   // the name (unique) of the stage
   name: string;
   // the loading message to show
@@ -36,8 +39,12 @@ export type ChainStage = {
       chainDescription: string;
       message: string;
     },
-    prevChainOutput: { [key: string]: any }
-  ) => Promise<{ abort?: boolean; data: any; log?: string }>;
+    prevChainOutput: I
+  ) => Promise<{
+    abort?: boolean;
+    data: Omit<O, keyof I> & Partial<I>;
+    log?: string;
+  }>;
 };
 
 export abstract class CogniteBaseChain extends BaseChain {
@@ -91,39 +98,68 @@ export abstract class CogniteBaseChain extends BaseChain {
       chainDescription: this.description,
       chainName: name,
     };
-    const outputs: { [key: string]: any } = {};
+    let outputs: { [key: string]: any } = {};
     if (this.fields?.humanApproval) {
       const shouldContinue = await humanValidationStage(name);
       if (!shouldContinue) {
         return { value: 'emptyvalue' };
       }
     }
-    for (const stage of this.stages) {
-      addToCopilotLogs(this.messageKey, {
-        key: stage.name,
-        content: 'start',
-      });
-      sendToCopilotEvent('LOADING_STATUS', { status: stage.loadingMessage });
-      const {
-        abort,
-        data,
-        log = `${stage.name} completed`,
-      } = await stage.run(params, outputs);
-      addToCopilotLogs(this.messageKey, { key: stage.name, content: log });
-      if (abort) {
+    try {
+      for (const stage of this.stages) {
         addToCopilotLogs(this.messageKey, {
-          key: this.constructor.name,
-          content: 'Finished tool chain...',
+          key: stage.name,
+          content: 'start',
         });
-        return { value: 'emptyvalue' };
+        sendToCopilotEvent('LOADING_STATUS', { status: stage.loadingMessage });
+        const {
+          abort,
+          data,
+          log = `${stage.name} completed \n\n \`\`\`json\n${JSON.stringify(
+            Object.fromEntries(
+              Object.entries(data).filter(
+                ([_key, value]) => typeof value !== 'object'
+              )
+            ),
+            null,
+            2
+          )}\n\`\`\``,
+        } = await stage.run(params, outputs);
+        addToCopilotLogs(this.messageKey, { key: stage.name, content: log });
+        if (abort) {
+          addToCopilotLogs(this.messageKey, {
+            key: this.constructor.name,
+            content: 'Finished tool chain...',
+          });
+          return { value: 'emptyvalue' };
+        }
+        outputs = { ...outputs, ...data };
       }
-      outputs[stage.name] = data;
+      addToCopilotLogs(this.messageKey, {
+        key: this.constructor.name,
+        content: 'Finished tool chain...',
+      });
+    } catch (e: any) {
+      this.onCatch(e);
     }
-    addToCopilotLogs(this.messageKey, {
-      key: this.constructor.name,
-      content: 'Finished tool chain...',
-    });
     return { value: 'emptyvalue' };
+  };
+
+  onCatch = (error: Error) => {
+    console.error(error);
+    addToCopilotLogs(this.messageKey, {
+      content: error.message,
+      key: this.constructor.name,
+    });
+    sendToCopilotEvent('NEW_MESSAGES', [
+      {
+        source: 'bot',
+        type: 'text',
+        content: 'Unable to process message',
+        chain: this.constructor.name,
+        logs: getCopilotLogs(this.messageKey),
+      },
+    ]);
   };
 }
 

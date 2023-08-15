@@ -166,7 +166,7 @@ export class DocumentQueryChain extends CogniteBaseChain {
           },
         ]);
 
-        return { data: res };
+        return { data: { res } };
       },
     },
   ];
