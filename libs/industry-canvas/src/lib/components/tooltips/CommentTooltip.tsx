@@ -20,13 +20,8 @@ import { useUsers } from '../../hooks/use-query/useUsers';
 import {
   useCommentsDeleteMutation,
   useCommentsUpsertMutation,
-  useListCommentsQuery,
 } from '../../services/comments/hooks';
-import {
-  Comment,
-  CommentTargetType,
-  SerializedComment,
-} from '../../services/comments/types';
+import { Comment, CommentTargetType } from '../../services/comments/types';
 import { getTextContentFromEditorState } from '../../services/comments/utils';
 import { CommentAnnotation } from '../../types';
 import { UserProfile, useUserProfile } from '../../UserProfileProvider';
@@ -34,62 +29,39 @@ import { CommentDisplay } from '../comment/CommentDisplay';
 import { CommentEditor } from '../comment/CommentEditor';
 
 type CommentTooltipCoreProps = {
+  isTooltipOpen: boolean;
+  onOpen: () => void;
+  onClose: () => void;
   comments: Comment[];
-  commentExternalId: string;
   users: UserProfile[];
-  userIdentifier: string;
-  onCreate: (
-    comment: Omit<SerializedComment, 'lastUpdatedTime' | 'createdTime'>[]
-  ) => void;
+  onCreate: (content: string) => void;
   onDelete: (commentId: string) => void;
 };
 export const CommentTooltipCore = ({
+  isTooltipOpen,
+  onOpen,
+  onClose,
   comments,
   onCreate,
-  userIdentifier,
-  commentExternalId,
   // onDelete,
   users,
 }: CommentTooltipCoreProps) => {
-  const [searchParams, setSearchParams] = useSearchParams();
   const { userProfile } = useUserProfile();
   const commentsContainerRef = useRef<HTMLDivElement>(null);
-  const canvasId = searchParams.get('canvasId');
-  const commentTooltipId = searchParams.get('commentTooltipId');
-  const setOpen = (id: string | null) =>
-    setSearchParams((currentParams) => {
-      if (id !== null) {
-        currentParams.set('commentTooltipId', id);
-      } else {
-        currentParams.delete('commentTooltipId');
-      }
-      return currentParams;
-    });
 
-  const isTooltipOpen =
-    searchParams.get('commentTooltipId') === commentExternalId;
   const editorRef = useRef<LexicalEditor>(null);
   useEffect(() => {
     if (isTooltipOpen && commentsContainerRef.current) {
       commentsContainerRef.current.scrollTop =
         commentsContainerRef.current.scrollHeight;
     }
-  }, [isTooltipOpen]);
+  }, [comments, isTooltipOpen]);
 
   const createNewComment = () => {
     if (editorRef.current !== null) {
-      const editorState = editorRef.current?.getEditorState();
-
-      onCreate([
-        {
-          text: getTextContentFromEditorState(editorState),
-          createdById: userIdentifier,
-          externalId: uuid(),
-          targetType: CommentTargetType.CANVAS,
-          targetId: canvasId ?? undefined,
-          parentComment: { externalId: commentTooltipId ?? '' },
-        },
-      ]);
+      onCreate(
+        getTextContentFromEditorState(editorRef.current?.getEditorState())
+      );
 
       editorRef.current?.update(() => {
         $getRoot().clear();
@@ -100,7 +72,7 @@ export const CommentTooltipCore = ({
   if (isTooltipOpen) {
     return (
       <CommentWrapper>
-        <div className="indicator" onClick={() => setOpen(null)} />
+        <div className="indicator" onClick={onClose} />
         <div className="line" />
         <Flex className="comment" direction="column">
           <Flex gap={16} alignItems="center" className="comment-header">
@@ -109,16 +81,14 @@ export const CommentTooltipCore = ({
               Comments
             </Title>
             <Button
-              onClick={() => {
-                setOpen(null);
-              }}
+              onClick={onClose}
               icon="CloseLarge"
               type="ghost"
               aria-label="close"
             />
           </Flex>
           <Divider />
-          <CommentsContainer>
+          <CommentsContainer ref={commentsContainerRef}>
             <CommentDisplay
               commentList={comments}
               users={users}
@@ -133,7 +103,7 @@ export const CommentTooltipCore = ({
                 <Button type="primary" onClick={() => createNewComment()}>
                   Send
                 </Button>
-                <Button onClick={() => setOpen(null)}>Cancel</Button>
+                <Button onClick={onClose}>Cancel</Button>
                 <div style={{ flex: 1 }} />
                 {/* {comment.createdBy?.userIdentifier === userIdentifier && (
                   <Button
@@ -151,11 +121,7 @@ export const CommentTooltipCore = ({
     );
   }
   return (
-    <CommentMarker
-      alignItems="center"
-      onClick={() => setOpen(commentExternalId)}
-      justifyContent="center"
-    >
+    <CommentMarker alignItems="center" onClick={onOpen} justifyContent="center">
       <Body strong level={3} style={{ color: 'white', textAlign: 'center' }}>
         {comments.length &&
           getInitials(comments[0].createdBy?.displayName || '')}
@@ -164,23 +130,53 @@ export const CommentTooltipCore = ({
   );
 };
 export const CommentTooltip = ({
+  comments,
   comment: { id: commentExternalId },
 }: {
+  comments: Comment[];
   comment: CommentAnnotation;
 }) => {
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const isTooltipOpen =
+    searchParams.get('commentTooltipId') === commentExternalId;
+  const canvasId = searchParams.get('canvasId');
+  const commentTooltipId = searchParams.get('commentTooltipId');
+
+  const setOpen = (id: string | null) =>
+    setSearchParams((currentParams) => {
+      if (id !== null) {
+        currentParams.set('commentTooltipId', id);
+      } else {
+        currentParams.delete('commentTooltipId');
+      }
+      return currentParams;
+    });
+
   const {
     userProfile: { userIdentifier },
   } = useUserProfile();
-  const [searchParams] = useSearchParams();
-  const canvasId = searchParams.get('canvasId');
-
-  const { comments } = useListCommentsQuery({
-    targetType: CommentTargetType.CANVAS,
-    targetId: canvasId ?? undefined,
-    parentComment: { externalId: commentExternalId },
-  });
 
   const { mutate: upsertComment } = useCommentsUpsertMutation();
+
+  const onCreate = (content: string) => {
+    if (canvasId === null) {
+      console.warn('targetId was undefined, will not post comment');
+      return;
+    }
+
+    upsertComment([
+      {
+        text: content,
+        createdById: userIdentifier,
+        externalId: uuid(),
+        targetType: CommentTargetType.CANVAS,
+        targetId: canvasId,
+        parentComment: { externalId: commentTooltipId ?? '' },
+      },
+    ]);
+  };
+
   const { mutate: deleteComment } = useCommentsDeleteMutation();
 
   const { data: users = [] } = useUsers();
@@ -192,11 +188,12 @@ export const CommentTooltip = ({
 
   return (
     <CommentTooltipCore
+      isTooltipOpen={isTooltipOpen}
+      onOpen={() => setOpen(commentExternalId)}
+      onClose={() => setOpen(null)}
       comments={comments}
-      commentExternalId={commentExternalId}
       users={users}
-      userIdentifier={userIdentifier}
-      onCreate={(newComment) => upsertComment(newComment)}
+      onCreate={onCreate}
       onDelete={(toDeleteComment) => deleteComment([toDeleteComment])}
     />
   );

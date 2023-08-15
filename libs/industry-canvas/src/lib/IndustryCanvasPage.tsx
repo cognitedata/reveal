@@ -163,6 +163,7 @@ export const IndustryCanvasPage = () => {
     targetId: activeCanvas?.externalId,
     targetType: CommentTargetType.CANVAS,
   });
+
   const { data: users = [] } = useUsers();
   const {
     container,
@@ -820,6 +821,7 @@ export const IndustryCanvasPage = () => {
             onUpdateSelectedAnnotation={onUpdateSelectedAnnotation}
             isCanvasLocked={isCanvasLocked}
             onResourceSelectorOpen={onResourceSelectorOpen}
+            comments={comments}
             commentAnnotations={commentAnnotations}
             tooltipsOptions={tooltipsOptions}
             onUpdateTooltipsOptions={onUpdateTooltipsOptions}
