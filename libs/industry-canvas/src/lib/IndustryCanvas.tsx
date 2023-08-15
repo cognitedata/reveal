@@ -30,6 +30,7 @@ import { UseOnUpdateSelectedAnnotationReturnType } from './hooks/useOnUpdateSele
 import { UseResourceSelectorActionsReturnType } from './hooks/useResourceSelectorActions';
 import { UseTooltipsOptionsReturnType } from './hooks/useTooltipsOptions';
 import { OnAddContainerReferences } from './IndustryCanvasPage';
+import type { Comment } from './services/comments/types';
 import {
   CanvasAnnotation,
   CommentAnnotation,
@@ -56,6 +57,7 @@ export type IndustryCanvasProps = {
   isCanvasLocked: boolean;
   onResourceSelectorOpen: UseResourceSelectorActionsReturnType['onResourceSelectorOpen'];
   tool: UseManagedToolReturnType['tool'];
+  comments: Comment[];
 } & Pick<
   UseManagedStateReturnType,
   | 'container'
@@ -115,6 +117,7 @@ export const IndustryCanvas = ({
   onUpdateSelectedAnnotation,
   shouldShowConnectionAnnotations,
   tool,
+  comments,
   commentAnnotations,
   isCanvasLocked,
   onResourceSelectorOpen,
@@ -184,6 +187,7 @@ export const IndustryCanvas = ({
     updateContainerById,
     removeContainerById,
     onResourceSelectorOpen,
+    comments,
     commentAnnotations,
     pinnedTimeseriesIdsByAnnotationId,
     onPinTimeseriesClick,
