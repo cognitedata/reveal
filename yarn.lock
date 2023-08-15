@@ -2785,6 +2785,11 @@
   dependencies:
     lodash "^4.17.20"
 
+"@cognite/apm-auth@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@cognite/apm-auth/-/apm-auth-1.0.1.tgz#d7078150a0fca94dc66636c3f27c1e7c273b2486"
+  integrity sha512-HN5a43w2JbSjFYJJkuRJCWx5P8j74IKzCcEUkh0QKAKVQBNX/oy03+49igHKDu42hr8/kigUUom/4k1T86t4Xw==
+
 "@cognite/auth-react@^0.0.28-beta":
   version "0.0.28-beta"
   resolved "https://registry.yarnpkg.com/@cognite/auth-react/-/auth-react-0.0.28-beta.tgz#0e48960a654612ad853a97d8bf95e3df3022f84f"

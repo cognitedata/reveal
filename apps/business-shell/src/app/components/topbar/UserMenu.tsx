@@ -1,18 +1,18 @@
 import React from 'react';
 
-import { useAuth } from '@cognite/auth-react';
 import { useTypedTranslation as useTranslation } from '@cognite/cdf-i18n-utils';
 import { Avatar, Dropdown } from '@cognite/cogs.js';
 import { UserMenu as SharedUserMenu } from '@cognite/user-profile-components';
 
 import { useUserInfo } from '../../../hooks/useUserInfo';
+import { useAuthContext } from '../../common/auth/AuthProvider';
 import { useTracker } from '../../common/metrics';
 
 import './UserMenu.css';
 
 const UserMenu = (): JSX.Element => {
   const { t } = useTranslation();
-  const { logout } = useAuth();
+  const { logout } = useAuthContext();
 
   const { data = {} } = useUserInfo();
   const { name, email, picture: profilePicture } = data;
