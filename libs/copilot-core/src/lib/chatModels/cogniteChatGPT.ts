@@ -56,7 +56,7 @@ export class CogniteChatGPT
   implements CogniteChatGPTInput
 {
   temperature = 0;
-  model = 'gpt-3.5-turbo';
+  model = 'gpt-35-turbo';
   maxTokens = 2024;
   sdk: CogniteClient;
 
@@ -146,7 +146,7 @@ export class CogniteChatGPT
   ) {
     const url = `${this.sdk.getBaseUrl()}/api/v1/projects/${
       this.sdk.project
-    }/context/gpt/chat/completions`;
+    }/gpt/chat/completions`;
     const res = await fetch(url, {
       signal,
       method: 'POST',

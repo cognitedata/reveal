@@ -138,7 +138,7 @@ export class DocumentSummaryChain extends CogniteBaseChain {
           },
         ]);
 
-        return { data: refinedResponse };
+        return { data: { refinedResponse } };
       },
     },
   ];

@@ -128,7 +128,7 @@ export class WorkorderChain extends CogniteBaseChain {
           },
         ]);
 
-        return { data: res };
+        return { data: { res } };
       },
     },
   ];

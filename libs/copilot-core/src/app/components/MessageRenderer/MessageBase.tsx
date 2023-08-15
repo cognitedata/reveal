@@ -160,7 +160,7 @@ const LogsModal = ({
     <Modal visible onCancel={onClose} hideFooter>
       {logs.map((el, i) => {
         return (
-          <Flex direction="column" gap={4}>
+          <Flex direction="column" gap={4} key={i}>
             <Overline size="small">
               {i} - {el.key}
             </Overline>
