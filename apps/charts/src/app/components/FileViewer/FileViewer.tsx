@@ -6,7 +6,6 @@ import {
 } from '@charts-app/components/FileList/utils';
 import { useTranslations } from '@charts-app/hooks/translations';
 import { makeDefaultTranslations } from '@charts-app/utils/translations';
-import * as pdfjs from 'pdfjs-dist';
 import styled from 'styled-components/macro';
 
 import { FileInfo } from '@cognite/sdk';
@@ -30,8 +29,6 @@ import { useExtractedAnnotations } from './hooks/useExtractedAnnotations';
 import { useOCRSearchResults } from './hooks/useOCRSearchResults';
 import { useUnifiedFileViewerState } from './hooks/useUnifiedFileViewerState';
 import { getContainerId } from './utils/getContainerId';
-
-pdfjs.GlobalWorkerOptions.workerSrc = `https://cdf-hub-bundles.cogniteapp.com/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.js`;
 
 const CHARTS_APPLICATION_ID = 'cognite-charts';
 

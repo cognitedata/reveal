@@ -23,6 +23,13 @@ const defaultViewerOptions: ComponentProps<
   },
 };
 
+const defaultResourceStyling = {
+  cad: {
+    default: { color: new Color('#efefef') },
+    mapped: { color: new Color('#c5cbff') },
+  },
+};
+
 export const ThreeDContent = () => {
   const sdk = useSDK();
 
@@ -46,7 +53,10 @@ export const ThreeDContent = () => {
       viewerOptions={defaultViewerOptions}
     >
       <StyledRevealToolBar />
-      <Reveal3DResources resources={modelIdentifiers} />
+      <Reveal3DResources
+        resources={modelIdentifiers}
+        defaultResourceStyling={defaultResourceStyling}
+      />
       <CameraController initialFitCamera={{ to: 'allModels' }} />
     </RevealContainer>
   );

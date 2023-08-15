@@ -28,6 +28,7 @@ import {
   useFilterBuilderFeatureFlag,
   useColumnSelectionFeatureFlag,
 } from '@platypus-app/flags';
+import { useDataModelVersions } from '@platypus-app/hooks/useDataModelActions';
 import { useInjection } from '@platypus-app/hooks/useInjection';
 import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
 import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
@@ -134,6 +135,11 @@ export const DataPreviewTable = forwardRef<
         shouldShowDraftRows: state.dataManagement.shouldShowDraftRows,
         shouldShowPublishedRows: state.dataManagement.shouldShowPublishedRows,
       })
+    );
+
+    const { data: dataModelVersions = [] } = useDataModelVersions(
+      dataModelExternalId,
+      space
     );
 
     const {
@@ -258,7 +264,8 @@ export const DataPreviewTable = forwardRef<
         isDeletionEnabled,
         isManualPopulationEnabled,
         columnOrder.filter((el) => el.visible).map((el) => el.value),
-        true
+        true,
+        dataModelVersions
       )
     );
 
@@ -816,7 +823,8 @@ export const DataPreviewTable = forwardRef<
                       isDeletionEnabled,
                       isManualPopulationEnabled,
                       order.filter((el) => el.visible).map((el) => el.value),
-                      isFilterBuilderEnabled
+                      isFilterBuilderEnabled,
+                      dataModelVersions
                     )
                   );
                 }}
