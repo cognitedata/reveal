@@ -8,15 +8,16 @@ import {
   RevealToolbar,
   Reveal3DResources,
   type AddResourceOptions,
-  CameraController,
   useClickedNodeData,
-  type FdmAssetStylingGroup
+  type FdmAssetStylingGroup,
+  useCameraNavigation
 } from '../src';
 import { Color } from 'three';
 import { type ReactElement, useState, useEffect, useRef } from 'react';
 import { DefaultNodeAppearance } from '@cognite/reveal';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { RevealResourcesFitCameraOnLoad } from './utilities/with3dResoursesFitCameraOnLoad';
 
 const meta = {
   title: 'Example/HighlightNode',
@@ -50,15 +51,6 @@ export const Main: Story = {
     return (
       <RevealContainer sdk={sdk} color={new Color(0x4a4a4a)}>
         <StoryContent resources={resources} />
-        <CameraController
-          initialFitCamera={{
-            to: 'allModels'
-          }}
-          cameraControlsOptions={{
-            changeCameraTargetOnClick: true,
-            mouseWheelAction: 'zoomToCursor'
-          }}
-        />
         <ReactQueryDevtools />
       </RevealContainer>
     );
@@ -68,11 +60,14 @@ export const Main: Story = {
 const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): ReactElement => {
   const [highlightedId, setHighlightedId] = useState<string | undefined>(undefined);
   const stylingGroupsRef = useRef<FdmAssetStylingGroup[]>([]);
+
   const nodeData = useClickedNodeData();
 
   useEffect(() => {
     setHighlightedId(nodeData?.nodeExternalId);
   }, [nodeData?.nodeExternalId]);
+
+  const cameraNavigation = useCameraNavigation();
 
   if (stylingGroupsRef.current.length === 1) {
     stylingGroupsRef.current.pop();
@@ -87,7 +82,10 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
 
   return (
     <>
-      <Reveal3DResources resources={resources} instanceStyling={stylingGroupsRef.current} />
+      <RevealResourcesFitCameraOnLoad
+        resources={resources}
+        instanceStyling={stylingGroupsRef.current}
+      />
       <RevealToolbar />
     </>
   );

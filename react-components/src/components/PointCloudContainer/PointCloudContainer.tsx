@@ -97,7 +97,7 @@ export function PointCloudContainer({
   }
 
   function cleanStyling(): void {
-    if (model === undefined) return;
+    if (model === undefined || !viewer.models.includes(model)) return;
 
     model.setDefaultPointCloudAppearance(DefaultPointCloudAppearance);
     model.removeAllStyledObjectCollections();

@@ -7,10 +7,10 @@ import { createPortal } from 'react-dom';
 import { Cognite3DViewer, type Cognite3DViewerOptions } from '@cognite/reveal';
 import { RevealContext } from './RevealContext';
 import { type Color } from 'three';
-import { ModelsLoadingStateContext } from '../Reveal3DResources/ModelsLoadingContext';
 import { SDKProvider } from './SDKProvider';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
+import { RevealContainerElementContext } from './RevealContainerElementContext';
 
 type RevealContainerProps = {
   color?: Color;
@@ -67,14 +67,19 @@ export function RevealContainer({
   );
 
   function mountChildren(): ReactElement {
-    if (viewer === undefined || viewerDomElement.current === null) return <></>;
+    if (
+      viewer === undefined ||
+      viewerDomElement.current === null ||
+      wrapperDomElement.current === null
+    )
+      return <></>;
     return (
       <>
-        <RevealContext.Provider value={viewer}>
-          <ModelsLoadingProvider>
+        <RevealContainerElementContext.Provider value={wrapperDomElement.current}>
+          <RevealContext.Provider value={viewer}>
             {createPortal(children, viewerDomElement.current)}
-          </ModelsLoadingProvider>
-        </RevealContext.Provider>
+          </RevealContext.Provider>
+        </RevealContainerElementContext.Provider>
       </>
     );
   }
@@ -95,14 +100,4 @@ export function RevealContainer({
     setViewer(viewer);
     return viewer;
   }
-}
-
-function ModelsLoadingProvider({ children }: { children?: ReactNode }): ReactElement {
-  const [modelsLoading, setModelsLoading] = useState(false);
-  return (
-    <ModelsLoadingStateContext.Provider
-      value={{ modelsAdded: modelsLoading, setModelsAdded: setModelsLoading }}>
-      {children}
-    </ModelsLoadingStateContext.Provider>
-  );
 }

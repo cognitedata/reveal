@@ -4,8 +4,8 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Reveal3DResources, RevealContainer } from '../src';
 import { Color, Matrix4 } from 'three';
-import { CameraController } from '../src/';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
+import { RevealResourcesFitCameraOnLoad } from './utilities/with3dResoursesFitCameraOnLoad';
 
 const model = {
   modelId: 2231774635735416,
@@ -20,7 +20,7 @@ const meta = {
   argTypes: {
     resources: {
       description: 'Styling of all models',
-      options: ['RedDefaultGreenMapped', 'GrayDefaultBlueMapped', 'None'],
+      options: ['RedDefaultGreenMapped', 'GreenDefaultRedMapped', 'None'],
       control: {
         type: 'radio'
       },
@@ -32,12 +32,12 @@ const meta = {
             styling: { default: { color: new Color('red') }, mapped: { color: new Color('green') } }
           }
         ],
-        GrayDefaultBlueMapped: [
+        GreenDefaultRedMapped: [
           {
             ...model,
             styling: {
-              default: { color: new Color('#efefef') },
-              mapped: { color: new Color('#c5cbff') }
+              default: { color: new Color('green') },
+              mapped: { color: new Color('red') }
             }
           }
         ],
@@ -63,9 +63,14 @@ export const Main: Story = {
         ...model
       }
     ],
-    instanceStyling: []
+    defaultResourceStyling: {
+      cad: {
+        default: { color: new Color('#efefef') },
+        mapped: { color: new Color('#c5cbff') }
+      }
+    }
   },
-  render: ({ resources }) => {
+  render: ({ resources, defaultResourceStyling }) => {
     return (
       <RevealContainer
         sdk={sdk}
@@ -76,15 +81,9 @@ export const Main: Story = {
             placement: 'topRight'
           }
         }}>
-        <Reveal3DResources resources={resources} />
-        <CameraController
-          initialFitCamera={{
-            to: 'allModels'
-          }}
-          cameraControlsOptions={{
-            changeCameraTargetOnClick: true,
-            mouseWheelAction: 'zoomToCursor'
-          }}
+        <RevealResourcesFitCameraOnLoad
+          resources={resources}
+          defaultResourceStyling={defaultResourceStyling}
         />
       </RevealContainer>
     );

@@ -1,9 +1,8 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-import { useRef, type ReactElement, useContext, useState, useEffect } from 'react';
-import { type NodeAppearance, type Cognite3DViewer } from '@cognite/reveal';
-import { ModelsLoadingStateContext } from './ModelsLoadingContext';
+import { useRef, type ReactElement, useState, useEffect } from 'react';
+import { type Cognite3DViewer } from '@cognite/reveal';
 import { CadModelContainer, type CadModelStyling } from '../CadModelContainer/CadModelContainer';
 import {
   PointCloudContainer,
@@ -16,36 +15,35 @@ import {
   type AddImageCollection360Options,
   type TypedReveal3DModel,
   type AddResourceOptions,
-  type NodeDataResult
+  type Reveal3DResourcesProps,
+  type DefaultResourceStyling
 } from './types';
 import { useCalculateModelsStyling } from '../../hooks/useCalculateModelsStyling';
-import { type DmsUniqueIdentifier } from '../../utilities/FdmSDK';
 import { useClickedNodeData } from '../..';
 
-export type FdmAssetStylingGroup = {
-  fdmAssetExternalIds: DmsUniqueIdentifier[];
-  style: { cad: NodeAppearance };
-};
-
-export type Reveal3DResourcesProps = {
-  resources: AddResourceOptions[];
-  instanceStyling?: FdmAssetStylingGroup[];
-  onNodeClick?: (node: Promise<NodeDataResult | undefined>) => void;
-};
 
 export const Reveal3DResources = ({
   resources,
+  defaultResourceStyling,
   instanceStyling,
-  onNodeClick
+  onNodeClick,
+  onResourcesAdded
 }: Reveal3DResourcesProps): ReactElement => {
   const [reveal3DModels, setReveal3DModels] = useState<TypedReveal3DModel[]>([]);
 
-  const { setModelsAdded } = useContext(ModelsLoadingStateContext);
   const viewer = useReveal();
   const numModelsLoaded = useRef(0);
 
   useEffect(() => {
-    getTypedModels(resources, viewer).then(setReveal3DModels).catch(console.error);
+    getTypedModels(resources, viewer)
+      .then((models) => {
+        models.forEach((model) => {
+          setDefaultResourceStyling(model, defaultResourceStyling);
+        });
+        return models;
+      })
+      .then(setReveal3DModels)
+      .catch(console.error);
   }, [resources, viewer]);
 
   const reveal3DModelsStyling = useCalculateModelsStyling(reveal3DModels, instanceStyling ?? []);
@@ -65,8 +63,8 @@ export const Reveal3DResources = ({
   const onModelLoaded = (): void => {
     numModelsLoaded.current += 1;
 
-    if (numModelsLoaded.current === resources.length) {
-      setModelsAdded(true);
+    if (numModelsLoaded.current === resources.length && onResourcesAdded !== undefined) {
+      onResourcesAdded();
     }
   };
 
@@ -144,4 +142,19 @@ async function getTypedModels(
         return typedModel;
       })
   );
+}
+
+function setDefaultResourceStyling(
+  model: TypedReveal3DModel,
+  defaultResourceStyling?: DefaultResourceStyling
+): void {
+  if (model.styling !== undefined || defaultResourceStyling === undefined) {
+    return;
+  }
+
+  if (model.type === 'cad') {
+    model.styling = defaultResourceStyling.cad;
+  } else if (model.type === 'pointcloud') {
+    model.styling = defaultResourceStyling.pointcloud;
+  }
 }
