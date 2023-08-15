@@ -2,8 +2,8 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type CogniteClient, type Node3D } from '@cognite/sdk';
-import { type EdgeItem, type FdmSDK } from '../../utilities/FdmSDK';
+import { CogniteInternalId, type CogniteClient, type Node3D } from '@cognite/sdk';
+import { DmsUniqueIdentifier, Source, type EdgeItem, type FdmSDK, InspectResultList } from '../../utilities/FdmSDK';
 import {
   type FdmId,
   type FdmKey,
@@ -11,13 +11,15 @@ import {
   createFdmKey,
   createRevisionTreeIndex,
   fdmKeyToId,
-  insertIntoSetMap
+  insertIntoSetMap,
+  TreeIndex
 } from './NodeCache';
 
 import { maxBy } from 'lodash';
 import { type CogniteCadModel } from '@cognite/reveal';
+import { INSTANCE_SPACE_3D_DATA, InModel3dEdgeProperties, SYSTEM_3D_EDGE_SOURCE } from '../../utilities/globalDataModels';
 
-export type CursorType = any;
+export type FdmNodeWithView = { fdmId: DmsUniqueIdentifier, view: Source };
 
 type MappingsResponse = {
   results: Array<FdmId & { treeIndex: number }>;
@@ -31,124 +33,76 @@ export class RevisionNodeCache {
   private readonly _modelId: number;
   private readonly _revisionId: number;
 
-  private readonly _globalCdfToFdmMap: Map<
-    RevisionTreeIndex,
-    { values: FdmKey[]; complete: boolean }
-  >;
+  /* private readonly _globalCdfToFdmMap: Map<
+    RevisionTreeIndex, Array<EdgeItem<InModel3dEdgeProperties>>>;
 
-  private readonly _cursorToIdsCache = new Map<
-    CursorType | undefined,
-    { results: FdmId[]; nextCursor: CursorType | undefined }
-  >();
+  private readonly _treeIndexToNodeMap: Map<
+  RevisionTreeIndex, FdmNodeWithView> = new Map(); */
 
-  private readonly _mappedTreeIndexKeys = new Set<RevisionTreeIndex>();
-  private readonly _mappedFdmKeys = new Set<FdmKey>();
+  private readonly _treeIndexToFdmId: Map<
+    TreeIndex, Array<EdgeItem<InModel3dEdgeProperties>>> = new Map();
+
+  private readonly _treeIndexToFdmData: Map<
+    TreeIndex, Array<FdmNodeWithView>> = new Map();
 
   constructor(
     cogniteClient: CogniteClient,
     fdmClient: FdmSDK,
     modelId: number,
-    revisionId: number,
-    globalCdfToFdmMap: Map<RevisionTreeIndex, { values: FdmKey[]; complete: boolean }>
+    revisionId: number
   ) {
     this._cogniteClient = cogniteClient;
     this._fdmClient = fdmClient;
-
-    this._globalCdfToFdmMap = globalCdfToFdmMap;
 
     this._modelId = modelId;
     this._revisionId = revisionId;
   }
 
-  public hasMappingData(): boolean {
-    re
-  }
+  public async getClosestParentFdmData(searchTreeIndex: number): Promise<FdmNodeWithView[]> {
 
-  public async getAllMappingExternalIds(
-    cursor: any | undefined
-  ): Promise<{ results: FdmId[]; nextCursor: CursorType | undefined }> {
-    if (this._cursorToIdsCache.has(cursor)) {
-      return this._cursorToIdsCache.get(cursor)!;
+    let nodeEdges: EdgeItem<InModel3dEdgeProperties>[];
+    let equallyMappedAncestors: Node3D[] = [];
+
+    if (this._treeIndexToFdmData.has(searchTreeIndex)) {
+      console.log('Cache hit in first cache during tree index lookup');
+      return this._treeIndexToFdmData.get(searchTreeIndex)!;
     }
 
-    const response: MappingsResponse = await fetchAllMappingExternalIdsWithTreeIndex(
-      this._modelId,
-      this._revisionId,
-      cursor
-    );
+    if (this._treeIndexToFdmId.has(searchTreeIndex)) {
+      nodeEdges = this._treeIndexToFdmId.get(searchTreeIndex)!;
+      console.log('Cache hit in second cache during tree index lookup');
+    } else {
+      const { edges, lowestAncestors, firstMappedTreeIndex } =
+        await this.getClosestParentExternalIds(searchTreeIndex);
 
-    this.accumulateDataInCache(response, cursor);
+      // If mapped parent exists in end-to-end-map...
+      if (this._treeIndexToFdmData.has(firstMappedTreeIndex)) {
+        // Fill treeIndex cache for all nodes on path
+        lowestAncestors.forEach(a => {
+          this._treeIndexToFdmData.set(a.treeIndex, this._treeIndexToFdmData.get(firstMappedTreeIndex)!);
+        });
 
-    if (this.isLastData(response)) {
-      this.markMappedDataAsComplete();
+        // And return cached
+        return this._treeIndexToFdmData.get(firstMappedTreeIndex)!;
+      }
+
+      nodeEdges = edges;
+      equallyMappedAncestors = lowestAncestors;
     }
 
-    return response;
+    const nodeInspectionResults = await inspectNodes(this._fdmClient, nodeEdges.map(edge => edge.startNode));
+
+    const dataWithViews = nodeEdges.map((edge, ind) => ({ fdmId: edge.startNode,
+                                                          view: nodeInspectionResults.items[ind].inspectionResults.involvedViewsAndContainers.views[0] }));
+
+    equallyMappedAncestors.forEach(ancestor => this._treeIndexToFdmData.set(ancestor.treeIndex, dataWithViews));
+
+    return dataWithViews;
   }
 
-  private accumulateDataInCache(data: MappingsResponse, cursor: CursorType | undefined): void {
-    data.results.forEach((e) => {
-      const treeIndexKey = createRevisionTreeIndex(
-        this._modelId,
-        this._revisionId,
-        e.treeIndex
-      );
-      const fdmKey = createFdmKey(e.space, e.externalId);
-
-      insertIntoSetMap(treeIndexKey, fdmKey, this._globalCdfToFdmMap);
-      insertIntoSetMap(fdmKey, treeIndexKey, this._globalFdmToCdfMap);
-
-      this._mappedTreeIndexKeys.add(treeIndexKey);
-      this._mappedFdmKeys.add(fdmKey);
-    });
-
-    this._cursorToIdsCache.set(cursor, data);
-  }
-
-  private isLastData(data: MappingsResponse): boolean {
-    return data.nextCursor === undefined;
-  }
-
-  private markMappedDataAsComplete(): void {
-    this._mappedFdmKeys.forEach((key) => {
-      this._globalFdmToCdfMap.get(key)!.complete = true;
-    });
-
-    this._mappedTreeIndexKeys.forEach((key) => {
-      this._globalCdfToFdmMap.get(key)!.complete = true;
-    });
-  }
-
-  public async getClosestParentExternalIds(treeIndex: number): Promise<FdmId[]> {
-    const firstTreeIndexKey: RevisionTreeIndex = createRevisionTreeIndex(this._modelId, this._revisionId, treeIndex);
-
-    if (this._globalCdfToFdmMap.get(firstTreeIndexKey)?.complete) {
-      const values = this._globalCdfToFdmMap.get(firstTreeIndexKey)!.values;
-      return values.map((key) => fdmKeyToId(key));
-    }
-
-    const { fdmIds, lowestAncestors, firstMappedTreeIndex } =
-      await this.queryClosestParentExternalIds(treeIndex);
-
-    const fdmKeys = fdmIds.map((id) => createFdmKey(id.space, id.externalId));
-    const firstMappedTreeIndexKey = createRevisionTreeIndex(this._modelId, this._revisionId, firstMappedTreeIndex);
-
-    lowestAncestors.forEach((node) => {
-      const treeIndexKey = createRevisionTreeIndex(this._modelId, this._revisionId, node.treeIndex);
-      this._globalCdfToFdmMap.set(treeIndexKey, { complete: true, values: fdmKeys });
-    });
-
-    fdmKeys.forEach((fdmKey) => {
-      insertIntoSetMap(fdmKey, firstMappedTreeIndexKey, this._globalFdmToCdfMap);
-      this._globalFdmToCdfMap.get(fdmKey)!.complete = true;
-    });
-
-    return fdmIds;
-  }
-
-  private async queryClosestParentExternalIds(
+  private async getClosestParentExternalIds(
     treeIndex: number
-  ): Promise<{ fdmIds: FdmId[]; lowestAncestors: Node3D[]; firstMappedTreeIndex: number }> {
+  ): Promise<{ edges: Array<EdgeItem<InModel3dEdgeProperties>>; lowestAncestors: Node3D[]; firstMappedTreeIndex: number }> {
     const ancestors: Node3D[] = await fetchAncestorNodesForTreeIndex(
       this._modelId,
       this._revisionId,
@@ -156,30 +110,44 @@ export class RevisionNodeCache {
       this._cogniteClient
     );
 
-    const ancestorMappings: { edges: Array<EdgeItem<Record<string, any>>> } =
-      await getEdgesForNodes(
+    const ancestorMappings: { edges: Array<EdgeItem<InModel3dEdgeProperties>> } =
+      await getMappingEdges(
+        this._modelId,
         this._revisionId,
+        this._fdmClient,
         ancestors.map((a) => a.id)
       );
 
     if (ancestorMappings.edges.length === 0) {
-      return { fdmIds: [], lowestAncestors: [], firstMappedTreeIndex: 0 };
+      return { edges: [], lowestAncestors: [], firstMappedTreeIndex: 0 };
     }
 
     const mappings = ancestorMappings.edges.map((e) => ({
-      externalId: e.startNode.externalId,
-      space: e.startNode.space,
-      treeIndex: ancestors.find((a) => a.id === e.properties.nodeId)!.treeIndex
+      edge: e,
+      treeIndex: ancestors.find((a) => a.id === e.properties.revisionNodeId)!.treeIndex
     }));
 
     const firstMappedTreeIndex = maxBy(mappings, (mapping) => mapping.treeIndex)!.treeIndex;
     const resultsInLowerTree = mappings.filter((a) => a.treeIndex === firstMappedTreeIndex);
 
     return {
-      fdmIds: resultsInLowerTree,
+      edges: resultsInLowerTree.map(result => result.edge),
       lowestAncestors: ancestors.filter((a) => a.treeIndex >= firstMappedTreeIndex),
       firstMappedTreeIndex
     };
+  }
+
+  public insertTreeIndexMappings(treeIndex: TreeIndex, edge: EdgeItem<InModel3dEdgeProperties>): void {
+    let edgeArray = this._treeIndexToFdmId.get(treeIndex);
+    if (edgeArray === undefined) {
+      this._treeIndexToFdmId.set(treeIndex, [edge]);
+    } else {
+      edgeArray.push(edge);
+    }
+  }
+
+  public getAllEdges(): Array<EdgeItem<InModel3dEdgeProperties>> {
+    return [...this._treeIndexToFdmId.values()].flat();
   }
 
   getIds(): { modelId: number; revisionId: number } {
@@ -207,13 +175,70 @@ async function fetchAncestorNodesForTreeIndex(
   return ancestorNodes.items;
 }
 
-async function fetchAllMappingExternalIdsWithTreeIndex(
+
+async function getMappingEdges(
   modelId: number,
   revisionId: number,
-  cursor: CursorType
-): Promise<MappingsResponse> {
+  fdmClient: FdmSDK,
+  ancestorIds: CogniteInternalId[]
+): Promise<{ edges: Array<EdgeItem<InModel3dEdgeProperties>> }> {
+  const filter = {
+    and: [
+      {
+        equals: {
+          property: ['edge', 'endNode'],
+          value: {
+            space: INSTANCE_SPACE_3D_DATA,
+            externalId: `${modelId}`
+          }
+        }
+      },
+      {
+        equals: {
+          property: [
+            SYSTEM_3D_EDGE_SOURCE.space,
+            `${SYSTEM_3D_EDGE_SOURCE.externalId}/${SYSTEM_3D_EDGE_SOURCE.version}`,
+            'revisionId'
+          ],
+          value: revisionId
+        }
+      },
+      {
+        in: {
+          property: [
+            SYSTEM_3D_EDGE_SOURCE.space,
+            `${SYSTEM_3D_EDGE_SOURCE.externalId}/${SYSTEM_3D_EDGE_SOURCE.version}`,
+            'revisionNodeId'
+          ],
+          values: ancestorIds
+        }
+      }
+    ]
+  };
 
+  return await fdmClient.filterAllInstances<InModel3dEdgeProperties>(
+    filter,
+    'edge',
+    SYSTEM_3D_EDGE_SOURCE
+  );
 }
+
+async function inspectNodes(
+  fdmClient: FdmSDK,
+  dataNodes: DmsUniqueIdentifier[]
+): Promise<InspectResultList> {
+  const inspectionResult = await fdmClient.inspectInstances({
+    inspectionOperations: { involvedViewsAndContainers: {} },
+    items: dataNodes.map(node => ({
+        instanceType: 'node',
+        externalId: node.externalId,
+        space: node.space
+    }))
+  });
+
+  return inspectionResult;
+}
+
 
 export async function treeIndexesToNodeIds(modelId: number, revisionId: number, treeIndexes: number[], cogniteClient: CogniteClient): Promise<number[]> {
     const outputsUrl = `${cogniteClient.getBaseUrl()}/api/v1/projects/${

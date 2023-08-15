@@ -83,7 +83,7 @@ export function RevealContainer({
         <ModelsLoadingProvider>
         {createPortal(children, viewerDomElement.current)}
       </ModelsLoadingProvider>
-        </ NodeCacheProvider>
+        </NodeCacheProvider>
         </RevealContext.Provider>
         </RevealContainerElementContext.Provider>
       </>
