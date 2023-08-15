@@ -1,7 +1,9 @@
 /* eslint-disable no-prototype-builtins */
+import { ContextualizationScoreHeader } from '@fusion/contextualization';
 import {
   DataModelTypeDefsField,
   DataModelTypeDefsType,
+  DataModelVersion,
   KeyValueMap,
 } from '@platypus/platypus-core';
 import { IFilterDef } from 'ag-grid-community';
@@ -67,7 +69,8 @@ export const buildGridConfig = (
   isDeletionEnabled: boolean,
   isManualPopulationEnabled: boolean,
   columnOrder: string[],
-  nativeFilter: boolean
+  nativeFilter: boolean,
+  dataModelVersions: DataModelVersion[]
 ): GridConfig => {
   const columns: ColumnConfig[] = isDeletionEnabled
     ? [
@@ -144,6 +147,13 @@ export const buildGridConfig = (
             headerName: `${field.name}${field.type.nonNull ? '*' : ''}`,
             headerComponentParams: {
               headerIcon: customIcon,
+              extras: field.type.custom ? (
+                <ContextualizationScoreHeader
+                  dataModelVersions={dataModelVersions}
+                  headerName={field.name}
+                  dataModelType={dataModelType.name}
+                />
+              ) : null,
             },
             suppressMovable: true,
             // Mixer API supports sorting only on primitives (not array and not custom types)

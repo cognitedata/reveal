@@ -23,7 +23,10 @@ const useListSerializedCommentsQuery = (filter: CommentFilter) => {
   const service = useMemo(() => new CommentService(sdk), [sdk]);
   return useQuery<SerializedComment[]>(
     [QueryKeys.LIST_COMMENTS, filter],
-    async () => service.listComments(filter)
+    async () => service.listComments(filter),
+    {
+      enabled: filter.targetId !== undefined && filter.targetType !== undefined,
+    }
   );
 };
 

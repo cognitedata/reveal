@@ -4,6 +4,7 @@ import { ExtendedAnnotation } from '@data-exploration-lib/core';
 
 import { OnOpenConditionalFormattingClick } from '../IndustryCanvas';
 import { OnAddContainerReferences } from '../IndustryCanvasPage';
+import type { Comment } from '../services/comments/types';
 import {
   CanvasAnnotation,
   CommentAnnotation,
@@ -39,6 +40,7 @@ export type UseTooltipsParams = {
   removeContainerById: UseManagedStateReturnType['removeContainerById'];
   onDeleteSelectedCanvasAnnotation: () => void;
   onResourceSelectorOpen: UseResourceSelectorActionsReturnType['onResourceSelectorOpen'];
+  comments: Comment[];
   commentAnnotations: CommentAnnotation[];
   pinnedTimeseriesIdsByAnnotationId: Record<string, number[]>;
   onPinTimeseriesClick: UseManagedStateReturnType['onPinTimeseriesClick'];
@@ -64,6 +66,7 @@ const useIndustryCanvasTooltips = ({
   removeContainerById,
   onUpdateSelectedAnnotation,
   onResourceSelectorOpen,
+  comments,
   commentAnnotations,
   pinnedTimeseriesIdsByAnnotationId,
   onPinTimeseriesClick,
@@ -103,6 +106,7 @@ const useIndustryCanvasTooltips = ({
   });
   const commentTooltips = useCommentTooltips({
     commentAnnotations,
+    comments,
   });
   const liveSensorValuesTooltips = useLiveSensorValuesTooltips({
     timeseriesIdsByAnnotationId: pinnedTimeseriesIdsByAnnotationId,
