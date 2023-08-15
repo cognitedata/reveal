@@ -5,6 +5,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import {
   CadModelContainer,
+  type QualitySettings,
   RevealContainer,
   RevealToolbar,
   withSuppressRevealEvents
@@ -65,24 +66,32 @@ const exampleCustomSettingElements = (): ReactElement => {
   );
 };
 
-type CustomHighFidelitySettings = {
+const exampleHighQualitySettings: QualitySettings = {
   cadBudget: {
-    maximumRenderCost: number;
-  };
+    maximumRenderCost: 95000000,
+    highDetailProximityThreshold: 100
+  },
   pointCloudBudget: {
-    numberOfPoints: number;
-  };
+    numberOfPoints: 12000000
+  },
+  resolutionOptions: {
+    maxRenderResolution: Infinity,
+    movingCameraResolutionFactor: 1
+  }
 };
 
-const exampleHighFedilitySettings = (): CustomHighFidelitySettings => {
-  return {
-    cadBudget: {
-      maximumRenderCost: 95000000
-    },
-    pointCloudBudget: {
-      numberOfPoints: 12000000
-    }
-  };
+const exampleLowQualitySettings: QualitySettings = {
+  cadBudget: {
+    maximumRenderCost: 95000000,
+    highDetailProximityThreshold: 100
+  },
+  pointCloudBudget: {
+    numberOfPoints: 12000000
+  },
+  resolutionOptions: {
+    maxRenderResolution: 1e5,
+    movingCameraResolutionFactor: 1
+  }
 };
 
 export const Main: Story = {
@@ -97,7 +106,8 @@ export const Main: Story = {
       <CadModelContainer addModelOptions={addModelOptions} />
       <RevealToolbar
         customSettingsContent={exampleCustomSettingElements()}
-        highFidelityConfig={exampleHighFedilitySettings()}
+        lowFidelitySettings={exampleLowQualitySettings}
+        highFidelitySettings={exampleHighQualitySettings}
       />
       <MyCustomToolbar>
         <RevealToolbar.FitModelsButton />

@@ -2,30 +2,24 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type Dispatch, type SetStateAction, type ReactElement } from 'react';
-import { type DeepPartial } from '../../../utilities/DeepPartial';
+import {
+  type CadModelBudget,
+  type PointCloudBudget,
+  type ResolutionOptions
+} from '@cognite/reveal';
+import { type ReactElement } from 'react';
 
 export type HighFidelityProps = {
-  isHighFidelityMode: boolean;
-  setHighFidelityMode: Dispatch<SetStateAction<boolean>>;
-  defaultsQualityConfig: QualityConfig;
-  highFidelityConfig?: DeepPartial<QualityConfig>;
+  lowQualitySettings?: Partial<QualitySettings>;
+  highQualitySettings?: Partial<QualitySettings>;
 };
 
 export type SettingsContainerProps = HighFidelityProps & {
   customSettingsContent?: ReactElement;
 };
 
-export type QualityConfig = {
-  cadBudget: {
-    highDetailProximityThreshold: number;
-    maximumRenderCost: number;
-  };
-  pointCloudBudget: {
-    numberOfPoints: number;
-  };
-  resolutionOptions: {
-    maxRenderResolution: number;
-    movingCameraResolutionFactor: number;
-  };
+export type QualitySettings = {
+  cadBudget: CadModelBudget;
+  pointCloudBudget: PointCloudBudget;
+  resolutionOptions: ResolutionOptions;
 };

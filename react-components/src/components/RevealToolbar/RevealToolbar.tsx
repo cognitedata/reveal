@@ -11,8 +11,7 @@ import { SettingsButton } from './SettingsButton';
 import { withSuppressRevealEvents } from '../../higher-order-components/withSuppressRevealEvents';
 import { MeasurementButton } from './MeasurementButton';
 import { HelpButton } from './HelpButton';
-import { type QualityConfig } from './SettingsContainer/types';
-import { type DeepPartial } from '../../utilities/DeepPartial';
+import { type QualitySettings } from './SettingsContainer/types';
 
 const defaultStyle: ToolBarProps = {
   style: {
@@ -24,7 +23,8 @@ const defaultStyle: ToolBarProps = {
 
 type RevealToolbarProps = ToolBarProps & {
   customSettingsContent?: JSX.Element;
-  highFidelityConfig?: DeepPartial<QualityConfig>;
+  lowFidelitySettings?: Partial<QualitySettings>;
+  highFidelitySettings?: Partial<QualitySettings>;
 };
 
 const DefaultContentWrapper = (props: RevealToolbarProps): ReactElement => {
@@ -42,8 +42,9 @@ const DefaultContentWrapper = (props: RevealToolbarProps): ReactElement => {
       <div className="cogs-toolbar-divider" />
 
       <SettingsButton
-        customSettingsContent={props.customSettingsContent ?? undefined}
-        highFidelityConfig={props.highFidelityConfig ?? undefined}
+        customSettingsContent={props.customSettingsContent}
+        lowQualitySettings={props.lowFidelitySettings}
+        highQualitySettings={props.highFidelitySettings}
       />
       <HelpButton />
     </>

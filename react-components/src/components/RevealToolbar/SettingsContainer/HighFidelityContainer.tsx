@@ -2,66 +2,75 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type ReactElement, useEffect, useMemo } from 'react';
+import { type ReactElement, useState } from 'react';
 import { Menu } from '@cognite/cogs.js';
 import { useReveal } from '../../RevealContainer/RevealContext';
-import { type HighFidelityProps } from './types';
-import { FIDELITY_MULTIPLIER } from '../../../utilities/constants';
+import { type QualitySettings, type HighFidelityProps } from './types';
+import { type Cognite3DViewer } from '@cognite/reveal';
+
+const defaultLowFidelitySettings: QualitySettings = {
+  cadBudget: {
+    maximumRenderCost: 15_000_000,
+    highDetailProximityThreshold: 10
+  },
+  pointCloudBudget: {
+    numberOfPoints: 3_000_000
+  },
+  resolutionOptions: {
+    maxRenderResolution: 1.4e6,
+    movingCameraResolutionFactor: 1
+  }
+};
+
+const defaultHighFidelitySettings: QualitySettings = {
+  cadBudget: {
+    maximumRenderCost: 45_000_000,
+    highDetailProximityThreshold: 30
+  },
+  pointCloudBudget: {
+    numberOfPoints: 12_000_000
+  },
+  resolutionOptions: {
+    maxRenderResolution: Infinity,
+    movingCameraResolutionFactor: 1
+  }
+};
 
 export const HighFidelityContainer = ({
-  isHighFidelityMode,
-  setHighFidelityMode,
-  defaultsQualityConfig,
-  highFidelityConfig
+  lowQualitySettings,
+  highQualitySettings
 }: HighFidelityProps): ReactElement => {
   const viewer = useReveal();
+  const [active, setActive] = useState(!isLowFidelity(viewer));
 
-  const qualityConfig = useMemo(() => {
-    if (isHighFidelityMode) {
-      return {
-        pointCloudBudget: {
-          numberOfPoints:
-            highFidelityConfig?.pointCloudBudget?.numberOfPoints ??
-            defaultsQualityConfig.pointCloudBudget.numberOfPoints * FIDELITY_MULTIPLIER
-        },
-        cadBudget: {
-          maximumRenderCost:
-            highFidelityConfig?.cadBudget?.maximumRenderCost ??
-            defaultsQualityConfig.cadBudget.maximumRenderCost * FIDELITY_MULTIPLIER,
-          highDetailProximityThreshold:
-            highFidelityConfig?.cadBudget?.highDetailProximityThreshold ??
-            defaultsQualityConfig.cadBudget.highDetailProximityThreshold * FIDELITY_MULTIPLIER
-        },
-        resolutionOptions: {
-          maxRenderResolution:
-            highFidelityConfig?.resolutionOptions?.maxRenderResolution ?? Infinity
-        }
-      };
-    } else {
-      return {
-        pointCloudBudget: { ...defaultsQualityConfig.pointCloudBudget },
-        cadBudget: { ...defaultsQualityConfig.cadBudget },
-        resolutionOptions: {
-          maxRenderResolution: 1.4e6
-        }
-      };
-    }
-  }, [isHighFidelityMode, defaultsQualityConfig, highFidelityConfig]);
+  const lowFidelityOptions: QualitySettings = {
+    ...defaultLowFidelitySettings,
+    ...lowQualitySettings
+  };
+  const highFidelityOptions: QualitySettings = {
+    ...defaultHighFidelitySettings,
+    ...highQualitySettings
+  };
 
-  useEffect(() => {
-    viewer.cadBudget = qualityConfig.cadBudget;
-    viewer.pointCloudBudget = qualityConfig.pointCloudBudget;
-    viewer.setResolutionOptions(qualityConfig.resolutionOptions);
-  }, [viewer, qualityConfig]);
+  const onClick = (): void => {
+    const config = active ? lowFidelityOptions : highFidelityOptions;
+    viewer.cadBudget = config.cadBudget;
+    viewer.pointCloudBudget = config.pointCloudBudget;
+    viewer.setResolutionOptions(config.resolutionOptions);
+    setActive((prevState) => !prevState);
+  };
 
   return (
-    <Menu.Item
-      hasSwitch
-      toggled={isHighFidelityMode}
-      onChange={() => {
-        setHighFidelityMode((prevState) => !prevState);
-      }}>
+    <Menu.Item hasSwitch toggled={active} onChange={onClick}>
       High fidelity
     </Menu.Item>
   );
 };
+
+function isLowFidelity(viewer: Cognite3DViewer): boolean {
+  return (
+    viewer.cadBudget.maximumRenderCost <= defaultLowFidelitySettings.cadBudget.maximumRenderCost &&
+    viewer.pointCloudBudget.numberOfPoints <=
+      defaultLowFidelitySettings.pointCloudBudget.numberOfPoints
+  );
+}
