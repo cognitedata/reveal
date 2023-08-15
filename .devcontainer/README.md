@@ -6,20 +6,32 @@ This devcontainer allow you to develop Fusion using VSCode, in a container.
 
 You can run the dev container remotely on Github CodeSpaces (option A), or locally in Docker Desktop or Podman (option B).
 
+Prerequisite: When using VSCode locally, make sure you are logged in to your Cognite Github account in VSCode. Check this in the profile icon in the lower left of the VSCode menu.
+
 ### A. Github Codespaces
+
+This is the option where the devcontainer runs in the cloud, and you connect to it from your local VSCode installation, or from a browser.
+
+To change the default setting for whether to open VSCode in the browser or in your host OS, go to settings in your github profile, and search for "codespaces", scroll to the Editor preference section. There you can change the default setting for opening codespaces. I.e. at https://github.com/settings/codespaces.
 
 Click this link to open this repository in a codespace:
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/cognitedata/fusion?quickstart=1)
 
-If you do not have access to Github Codespaces, reach out on the
+Or from the github web UI, in the fusion repo URL, https://github.com/cognitedata/fusion, select the `master` (or other) branch and click on the green button on the right. Choose the `Codespaces` pane and then the `+` sign (or ... to change the default configurations for the new instance). The instance should have at last 4 cores (and with 16 GB RAM, 32 GB disk).
 
-Alternatively, in a new VSCode session start the devcontainer from the command palette with `Remote-Containers: Open Repository in Container...` and select the cognitedata/fusion repository.
-Or from the github web UI, select the `main` (or other) branch and click on the green button. Choose `Codespaces` and then the `+` sign (or ... to change the default configurations for the instance). The instance should have at last 4 cores (and with 16 GB RAM, 32 GB disk)
+All Cognite engineers should have access to Github Codespaces.
+But if you do not have access to Github Codespaces, reach out on the #topic-github-codespaces channel on Slack.
+
+The first time you open the devcontainer, it will take a while to build the container image. Subsequent starts will be faster.
+
+Alternatively to clicking the link above, in a new (empty) local VSCode window start the devcontainer from the command palette (Ctrl+Shift+P) with `Codespaces: Create new codespace` and select the cognitedata/fusion repository. Select branch, and instance type.
+
+You can check for existing codespaces in your github profile settings, under "Codespaces", at https://github.com/codespaces.
 
 ### B. Local Docker desktop / Podman
 
-This option is to run the development environment fully locally, with VSCode running locally on your host OS, but the Fusion code cloned and running in a container.
+This option is to run the development environment fully locally, with VSCode running locally on your host OS, and the Fusion code cloned and running in a container in your local docker instance.
 
 To run this devcontainer in Docker locally, you need to have [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and running.
 
