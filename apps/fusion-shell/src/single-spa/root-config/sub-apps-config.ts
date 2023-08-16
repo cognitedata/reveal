@@ -27,7 +27,7 @@ const applications: RegisterApplicationConfig<any>[] = appManifest.apps
       name: appConfig.appName,
       app: () => System.import(appConfig.appName),
       activeWhen: (location) => {
-        if(appConfig.routes.length === 1 && appConfig.routes[0].exactMatch) {
+        if (appConfig.routes.length === 1 && appConfig.routes[0].exactMatch) {
           return location.pathname === appConfig.routes[0].route;
         }
         return matchesAny(location, appConfig.routes.map(matcher));
