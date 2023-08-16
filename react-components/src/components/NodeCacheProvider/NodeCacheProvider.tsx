@@ -7,7 +7,7 @@ import { FdmNodeCache } from './NodeCache';
 import { type ModelRevisionToEdgeMap } from '../../hooks/useMappedEquipmentBy3DModelsList';
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useFdmSdk, useSDK } from '../RevealContainer/SDKProvider';
-import { type Fdm3dNodeData } from './Fdm3dNodeData';
+import { type Fdm3dNodeData } from './types';
 
 import assert from 'assert';
 
@@ -45,23 +45,20 @@ export const useFdm3dNodeData = (
 ): UseQueryResult<Fdm3dNodeData[]> => {
   const content = useContext(FdmNodeCacheContext);
 
+  const enableQuery =
+    content !== undefined &&
+    modelId !== undefined &&
+    revisionId !== undefined &&
+    treeIndex !== undefined;
+
   const result = useQuery(
     ['reveal', 'react-components', 'tree-index-to-external-id', modelId, revisionId, treeIndex],
     async () => {
-      assert(
-        content !== undefined &&
-          modelId !== undefined &&
-          revisionId !== undefined &&
-          treeIndex !== undefined
-      );
+      assert(enableQuery);
       return await content.cache.getClosestParentExternalId(modelId, revisionId, treeIndex);
     },
     {
-      enabled:
-        content !== undefined &&
-        modelId !== undefined &&
-        revisionId !== undefined &&
-        treeIndex !== undefined
+      enabled: enableQuery
     }
   );
 
