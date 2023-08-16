@@ -54,7 +54,7 @@ export class FdmNodeCache {
 
     const revisionToEdgesMap = await this.getRevisionToEdgesMap(nonCachedRevisionIds);
 
-    this.cacheRevisionData(revisionToEdgesMap);
+    this.writeRevisionDataToCache(revisionToEdgesMap);
 
     cachedEdges.forEach(([revisionKey, edges]) => {
       revisionToEdgesMap.set(revisionKey, edges);
@@ -73,7 +73,7 @@ export class FdmNodeCache {
     return [revisionKey, cachedRevisionEdges];
   }
 
-  private cacheRevisionData(modelMap: Map<RevisionKey, FdmEdgeWithNode[]>): void {
+  private writeRevisionDataToCache(modelMap: Map<RevisionKey, FdmEdgeWithNode[]>): void {
     for (const [revisionKey, data] of modelMap.entries()) {
       const [modelId, revisionId] = revisionKeyToIds(revisionKey);
       const revisionCache = this.getOrCreateRevisionCache(modelId, revisionId);
