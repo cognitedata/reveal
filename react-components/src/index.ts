@@ -46,3 +46,4 @@ export type {
 } from './components/Reveal3DResources/types';
 export type { CameraNavigationActions } from './hooks/useCameraNavigation';
 export type { Source } from './utilities/FdmSDK';
+export type { QualitySettings } from './components/RevealToolbar/SettingsContainer/types';
