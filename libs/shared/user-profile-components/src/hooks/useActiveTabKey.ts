@@ -18,7 +18,7 @@ export const useActiveTabKey = (
           prev.set('tab', keys.includes(tabKeyValue) ? tabKeyValue : 'info');
           return prev;
         },
-        { replace: false }
+        { replace: true }
       );
     },
     [setSearchParams, keys]
