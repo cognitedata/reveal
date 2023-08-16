@@ -2,10 +2,18 @@
  * Copyright 2023 Cognite AS
  */
 
-import { CogniteClient, CogniteInternalId, Node3D } from '@cognite/sdk';
-import { DmsUniqueIdentifier, FdmSDK, InspectResultList } from '../../utilities/FdmSDK';
-import { FdmCadEdge } from './types';
-import { INSTANCE_SPACE_3D_DATA, InModel3dEdgeProperties, SYSTEM_3D_EDGE_SOURCE } from '../../utilities/globalDataModels';
+import { type CogniteClient, type CogniteInternalId, type Node3D } from '@cognite/sdk';
+import {
+  type DmsUniqueIdentifier,
+  type FdmSDK,
+  type InspectResultList
+} from '../../utilities/FdmSDK';
+import { type FdmCadEdge } from './types';
+import {
+  INSTANCE_SPACE_3D_DATA,
+  type InModel3dEdgeProperties,
+  SYSTEM_3D_EDGE_SOURCE
+} from '../../utilities/globalDataModels';
 
 export async function fetchAncestorNodesForTreeIndex(
   modelId: number,
