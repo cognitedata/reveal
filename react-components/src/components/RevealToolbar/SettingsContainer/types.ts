@@ -9,12 +9,12 @@ import {
 } from '@cognite/reveal';
 import { type ReactElement } from 'react';
 
-export type HighFidelityProps = {
+export type QualityProps = {
   lowQualitySettings?: Partial<QualitySettings>;
   highQualitySettings?: Partial<QualitySettings>;
 };
 
-export type SettingsContainerProps = HighFidelityProps & {
+export type SettingsContainerProps = QualityProps & {
   customSettingsContent?: ReactElement;
 };
 

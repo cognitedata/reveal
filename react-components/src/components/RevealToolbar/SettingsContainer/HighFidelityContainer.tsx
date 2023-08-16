@@ -5,7 +5,7 @@
 import { type ReactElement, useState } from 'react';
 import { Menu } from '@cognite/cogs.js';
 import { useReveal } from '../../RevealContainer/RevealContext';
-import { type QualitySettings, type HighFidelityProps } from './types';
+import { type QualitySettings, type QualityProps } from './types';
 import { type Cognite3DViewer } from '@cognite/reveal';
 
 const defaultLowFidelitySettings: QualitySettings = {
@@ -39,7 +39,7 @@ const defaultHighFidelitySettings: QualitySettings = {
 export const HighFidelityContainer = ({
   lowQualitySettings,
   highQualitySettings
-}: HighFidelityProps): ReactElement => {
+}: QualityProps): ReactElement => {
   const viewer = useReveal();
   const [active, setActive] = useState(!isLowFidelity(viewer));
 
