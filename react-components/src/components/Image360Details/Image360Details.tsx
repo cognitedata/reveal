@@ -51,7 +51,7 @@ export function Image360Details(): ReactElement {
               onExpand={handleExpand}
             />
           </Image360HistoricalPanel>
-          <StyledButton icon="CloseLarge" type="primary" onClick={exitImage360Image} />
+          <StyledButton icon="CloseLarge" type="tertiary" onClick={exitImage360Image} />
         </>
       )}
     </>
