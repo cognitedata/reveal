@@ -48,24 +48,25 @@ export class FdmNodeCache {
           return this._completeRevisions.has(key);
         });
 
-    // Get cached data
-    const cachedEdges = cachedRevisionIds.map(id => {
+    const cachedEdges = cachedRevisionIds.map(id => this.getCachedEdgesForRevision(id));
+
+    const revisionToEdgesMap = await this.getRevisionToEdgesMap(nonCachedRevisionIds);
+
+    this.cacheRevisionData(revisionToEdgesMap);
+
+    cachedEdges.forEach(([revisionKey, edges]) => {
+      revisionToEdgesMap.set(revisionKey, edges);
+    });
+
+    return revisionToEdgesMap;
+  }
+
+  private getCachedEdgesForRevision(id: { modelId: number, revisionId: number }): [RevisionKey, FdmEdgeWithNode[]] {
       const revisionCache = this.getOrCreateRevisionCache(id.modelId, id.revisionId);
       const revisionKey = createRevisionKey(id.modelId, id.revisionId);
       const cachedRevisionEdges = revisionCache.getAllEdges();
-      return [revisionKey, cachedRevisionEdges] as const;
-    });
-
-    const groupToModels = await this.getRevisionToEdgesMap(nonCachedRevisionIds);
-
-    this.cacheRevisionData(groupToModels);
-
-    cachedEdges.forEach(([revisionKey, edges]) => {
-      groupToModels.set(revisionKey, edges);
-    });
-
-    return groupToModels;
-  }
+      return [revisionKey, cachedRevisionEdges];
+    }
 
   private cacheRevisionData(modelMap: Map<RevisionKey, FdmEdgeWithNode[]>): void {
     for (const [revisionKey, data] of modelMap.entries()) {
@@ -82,7 +83,6 @@ export class FdmNodeCache {
   }
 
   private async getRevisionToEdgesMap(modelRevisionIds: { modelId: number, revisionId: number }[]): Promise<Map<RevisionKey, FdmEdgeWithNode[]>> {
-    // Fetched non-cached data
     const revisionIds = modelRevisionIds.map((modelRevisionId) => modelRevisionId.revisionId);
     const edges = await this.getEdgesForRevisions(revisionIds, this._fdmClient);
     return await groupToModelRevision(edges, modelRevisionIds, this._cdfClient);
