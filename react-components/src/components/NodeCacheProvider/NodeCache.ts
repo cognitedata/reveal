@@ -9,6 +9,8 @@ import { type CogniteCadModel } from '@cognite/reveal';
 import { InModel3dEdgeProperties, SYSTEM_3D_EDGE_SOURCE, SYSTEM_SPACE_3D_SCHEMA } from '../../utilities/globalDataModels';
 import { ModelRevisionId, ModelRevisionToEdgeMap } from '../../hooks/useMappedEquipmentBy3DModelsList';
 
+import { partition } from 'lodash';
+
 import assert from 'assert';
 
 
@@ -38,15 +40,13 @@ export class FdmNodeCache {
     modelRevisionIds: Array<{ modelId: number; revisionId: number }>
   ): Promise<ModelRevisionToEdgeMap> {
 
-    const nonCachedRevisions = modelRevisionIds.filter(ids => {
-      const key = createRevisionKey(ids.modelId, ids.revisionId);
-      return !this._completeRevisions.has(key);
-    });
-
-    const cachedRevisionIds = modelRevisionIds.filter(ids => {
-      const key = createRevisionKey(ids.modelId, ids.revisionId);
-      return this._completeRevisions.has(key);
-    });
+    const [cachedRevisionIds, nonCachedRevisionIds] =
+      partition(
+        modelRevisionIds,
+        ids => {
+          const key = createRevisionKey(ids.modelId, ids.revisionId);
+          return this._completeRevisions.has(key);
+        });
 
     // Get cached data
     const cachedEdges = cachedRevisionIds.map(id => {
@@ -56,15 +56,21 @@ export class FdmNodeCache {
       return [revisionKey, cachedRevisionEdges] as const;
     });
 
-    // Fetched non-cached data
-    const revisionIds = nonCachedRevisions.map((modelRevisionId) => modelRevisionId.revisionId);
-    const edges = await this.getEdgesForRevisions(revisionIds, this._fdmClient);
-    const groupToModels = await groupToModelRevision(edges, modelRevisionIds, this._cdfClient);
+    const groupToModels = await this.getRevisionToEdgesMap(nonCachedRevisionIds);
 
-    // Cache newly fetched data
-    for (const [revisionKey, data] of groupToModels.entries()) {
+    this.cacheRevisionData(groupToModels);
+
+    cachedEdges.forEach(([revisionKey, edges]) => {
+      groupToModels.set(revisionKey, edges);
+    });
+
+    return groupToModels;
+  }
+
+  private cacheRevisionData(modelMap: Map<RevisionKey, FdmEdgeWithNode[]>): void {
+    for (const [revisionKey, data] of modelMap.entries()) {
       const [modelId, revisionId] = revisionKeyToIds(revisionKey);
-        const revisionCache = this.getOrCreateRevisionCache(modelId, revisionId);
+      const revisionCache = this.getOrCreateRevisionCache(modelId, revisionId);
 
       console.log("Inserting mappings - ", data.length, 'of them');
       data.forEach(edgeAndNode => {
@@ -73,15 +79,13 @@ export class FdmNodeCache {
 
       this._completeRevisions.add(revisionKey);
     }
+  }
 
-    const truncatedGroupToModels = groupToModels;
-
-    // Merge with new with previously cached data
-    cachedEdges.forEach(([revisionKey, edges]) => {
-      truncatedGroupToModels.set(revisionKey, edges);
-    });
-
-    return truncatedGroupToModels
+  private async getRevisionToEdgesMap(modelRevisionIds: { modelId: number, revisionId: number }[]): Promise<Map<RevisionKey, FdmEdgeWithNode[]>> {
+    // Fetched non-cached data
+    const revisionIds = modelRevisionIds.map((modelRevisionId) => modelRevisionId.revisionId);
+    const edges = await this.getEdgesForRevisions(revisionIds, this._fdmClient);
+    return await groupToModelRevision(edges, modelRevisionIds, this._cdfClient);
   }
 
   public async getClosestParentExternalId(
