@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import { Image360HistoricalDetails } from '../Image360HistoricalDetails/Image360HistoricalDetails';
 import { useReveal } from '../..';
 import { type Image360 } from '@cognite/reveal';
+import { Button } from '@cognite/cogs.js';
 
 export function Image360Details(): ReactElement {
   const viewer = useReveal();
@@ -18,6 +19,10 @@ export function Image360Details(): ReactElement {
 
   const clearEnteredImage360 = (): void => {
     setEnteredEntity(undefined);
+  };
+
+  const exitImage360Image = (): void => {
+    viewer.exit360Image();
   };
 
   const collections = viewer.get360ImageCollections();
@@ -38,17 +43,27 @@ export function Image360Details(): ReactElement {
   return (
     <>
       {enteredEntity !== undefined && (
-        <Image360HistoricalPanel isExpanded={is360HistoricalPanelExpanded}>
-          <Image360HistoricalDetails
-            viewer={viewer}
-            image360Entity={enteredEntity}
-            onExpand={handleExpand}
-          />
-        </Image360HistoricalPanel>
+        <>
+          <Image360HistoricalPanel isExpanded={is360HistoricalPanelExpanded}>
+            <Image360HistoricalDetails
+              viewer={viewer}
+              image360Entity={enteredEntity}
+              onExpand={handleExpand}
+            />
+          </Image360HistoricalPanel>
+          <StyledButton icon="CloseLarge" type="primary" onClick={exitImage360Image} />
+        </>
       )}
     </>
   );
 }
+
+const StyledButton = styled(Button)`
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  border-radius: 50%;
+`;
 
 const Image360HistoricalPanel = styled.div<{ isExpanded: boolean }>`
   position: absolute;
