@@ -2,12 +2,14 @@
  * Copyright 2023 Cognite AS
  */
 
-import { ReactElement, ReactNode, createContext, useContext, useMemo } from 'react';
+import { type ReactElement, type ReactNode, createContext, useContext, useMemo } from 'react';
 import { FdmNodeCache } from './NodeCache';
-import { ModelRevisionToEdgeMap } from '../../hooks/useMappedEquipmentBy3DModelsList';
-import { UseQueryResult, useQuery } from '@tanstack/react-query';
+import { type ModelRevisionToEdgeMap } from '../../hooks/useMappedEquipmentBy3DModelsList';
+import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useFdmSdk, useSDK } from '../RevealContainer/SDKProvider';
-import { Fdm3dNodeData } from './RevisionNodeCache';
+import { type Fdm3dNodeData } from './Fdm3dNodeData';
+
+import assert from 'assert';
 
 export type FdmNodeCacheContent = {
   cache: FdmNodeCache;
@@ -17,7 +19,8 @@ export const FdmNodeCacheContext = createContext<FdmNodeCacheContent | undefined
 
 export const useGetAllExternalIds = (
   modelRevisionIds: Array<{ modelId: number; revisionId: number }>,
-  enabled: boolean): UseQueryResult<ModelRevisionToEdgeMap> => {
+  enabled: boolean
+): UseQueryResult<ModelRevisionToEdgeMap> => {
   const content = useContext(FdmNodeCacheContext);
 
   if (content === undefined) {
@@ -43,17 +46,22 @@ export const useFdm3dNodeData = (
   const content = useContext(FdmNodeCacheContext);
 
   const result = useQuery(
-    [
-      'reveal',
-      'react-components',
-      'tree-index-to-external-id',
-      modelId,
-      revisionId,
-      treeIndex
-    ],
-    () => content!.cache.getClosestParentExternalId(modelId!, revisionId!, treeIndex!),
+    ['reveal', 'react-components', 'tree-index-to-external-id', modelId, revisionId, treeIndex],
+    async () => {
+      assert(
+        content !== undefined &&
+          modelId !== undefined &&
+          revisionId !== undefined &&
+          treeIndex !== undefined
+      );
+      return await content.cache.getClosestParentExternalId(modelId, revisionId, treeIndex);
+    },
     {
-      enabled: content !== undefined && modelId !== undefined && revisionId !== undefined && treeIndex !== undefined
+      enabled:
+        content !== undefined &&
+        modelId !== undefined &&
+        revisionId !== undefined &&
+        treeIndex !== undefined
     }
   );
 
@@ -62,17 +70,17 @@ export const useFdm3dNodeData = (
   }
 
   return result;
-}
+};
 
 export function NodeCacheProvider({ children }: { children?: ReactNode }): ReactElement {
   const fdmClient = useFdmSdk();
   const cdfClient = useSDK();
 
-  const fdmCache = useMemo(() => new FdmNodeCache(cdfClient, fdmClient)
-  , []);
+  const fdmCache = useMemo(() => new FdmNodeCache(cdfClient, fdmClient), []);
 
-
-  return <FdmNodeCacheContext.Provider value={{ cache: fdmCache }}>
-    {children}
+  return (
+    <FdmNodeCacheContext.Provider value={{ cache: fdmCache }}>
+      {children}
     </FdmNodeCacheContext.Provider>
+  );
 }

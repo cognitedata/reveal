@@ -4,7 +4,7 @@
 
 import { type CogniteCadModel } from '@cognite/reveal';
 import { useFdm3dNodeData } from '../components/NodeCacheProvider/NodeCacheProvider';
-import { Fdm3dNodeData } from '../components/NodeCacheProvider/RevisionNodeCache';
+import { type Fdm3dNodeData } from '../components/NodeCacheProvider/Fdm3dNodeData';
 
 export const useNodeMappedData = (
   treeIndex: number | undefined,
