@@ -10,7 +10,6 @@ import {
   type NodeStylingGroup,
   type CadModelStyling
 } from '../components/CadModelContainer/CadModelContainer';
-import { useMappedEquipmentByRevisionList } from './useMappedEquipmentBy3DModelsList';
 import { type InModel3dEdgeProperties } from '../utilities/globalDataModels';
 import { type EdgeItem } from '../utilities/FdmSDK';
 import { type NodeAppearance } from '@cognite/reveal';
@@ -18,6 +17,7 @@ import { type ThreeDModelMappings } from './types';
 import { type CogniteExternalId, type CogniteInternalId } from '@cognite/sdk';
 import { useFdmAssetMappings } from './useFdmAssetMappings';
 import { useEffect, useMemo } from 'react';
+import { useMappedEdgesForRevisions } from '../components/NodeCacheProvider/NodeCacheProvider';
 
 type ModelStyleGroup = {
   model: TypedReveal3DModel;
@@ -43,7 +43,7 @@ function useCalculateMappedStyling(models: TypedReveal3DModel[]): ModelStyleGrou
     (model) => model.styling?.mapped !== undefined
   );
   const shouldFetchAllMappedEquipment = modelsRevisionsWithMappedEquipment.length > 0;
-  const { data: mappedEquipmentEdges } = useMappedEquipmentByRevisionList(
+  const { data: mappedEquipmentEdges } = useMappedEdgesForRevisions(
     modelsRevisionsWithMappedEquipment,
     shouldFetchAllMappedEquipment
   );

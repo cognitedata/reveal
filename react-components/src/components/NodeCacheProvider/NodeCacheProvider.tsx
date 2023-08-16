@@ -3,8 +3,7 @@
  */
 
 import { type ReactElement, type ReactNode, createContext, useContext, useMemo } from 'react';
-import { FdmNodeCache } from './FdmNodeCache';
-import { type ModelRevisionToEdgeMap } from '../../hooks/useMappedEquipmentBy3DModelsList';
+import { FdmNodeCache, ModelRevisionToEdgeMap } from './FdmNodeCache';
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useFdmSdk, useSDK } from '../RevealContainer/SDKProvider';
 import { type Fdm3dNodeData } from './types';
@@ -17,7 +16,7 @@ export type FdmNodeCacheContent = {
 
 export const FdmNodeCacheContext = createContext<FdmNodeCacheContent | undefined>(undefined);
 
-export const useGetAllExternalIds = (
+export const useMappedEdgesForRevisions = (
   modelRevisionIds: Array<{ modelId: number; revisionId: number }>,
   enabled: boolean
 ): UseQueryResult<ModelRevisionToEdgeMap> => {

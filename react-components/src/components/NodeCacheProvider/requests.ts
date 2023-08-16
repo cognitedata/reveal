@@ -113,3 +113,16 @@ export async function treeIndexesToNodeIds(
     throw Error(`treeIndex-nodeId translation failed for treeIndexes ${treeIndexes.join(',')}`);
   }
 }
+
+export async function fetchNodesForNodeIds(
+  modelId: number,
+  revisionId: number,
+  nodeIds: number[],
+  cogniteClient: CogniteClient
+): Promise<Node3D[]> {
+  return await cogniteClient.revisions3D.retrieve3DNodes(
+    modelId,
+    revisionId,
+    nodeIds.map((id) => ({ id }))
+  );
+}

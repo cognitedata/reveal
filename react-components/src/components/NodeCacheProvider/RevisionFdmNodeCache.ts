@@ -4,7 +4,7 @@
 
 import { type CogniteClient, type Node3D } from '@cognite/sdk';
 import { type FdmSDK } from '../../utilities/FdmSDK';
-import { type TreeIndex } from './FdmNodeCache';
+import { type TreeIndex } from './types';
 
 import {
   fetchAncestorNodesForTreeIndex,

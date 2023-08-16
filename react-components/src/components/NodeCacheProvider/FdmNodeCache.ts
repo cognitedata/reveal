@@ -11,14 +11,14 @@ import {
   SYSTEM_3D_EDGE_SOURCE,
   SYSTEM_SPACE_3D_SCHEMA
 } from '../../utilities/globalDataModels';
-import {
-  type ModelRevisionKey,
-  type ModelRevisionToEdgeMap
-} from '../../hooks/useMappedEquipmentBy3DModelsList';
+
+export type ModelRevisionKey = `${number}-${number}`;
+export type ModelRevisionToEdgeMap = Map<ModelRevisionKey, FdmEdgeWithNode[]>;
 
 import { partition } from 'lodash';
 
 import assert from 'assert';
+import { fetchNodesForNodeIds } from './requests';
 
 export class FdmNodeCache {
   private readonly _revisionNodeCaches = new Map<RevisionKey, RevisionFdmNodeCache>();
@@ -235,7 +235,7 @@ async function createModelNodeIdToNodeMap(revisionToNodeIdsMap: Map<RevisionId, 
       const modelId = modelRevisionIds.find((p) => p.revisionId === revisionId)?.modelId;
       assert(modelId !== undefined);
 
-      const nodes = await nodeIdsToNodes(modelId, revisionId, nodeIds, cdfClient);
+      const nodes = await fetchNodesForNodeIds(modelId, revisionId, nodeIds, cdfClient);
       nodeIds.forEach((e, ind) => {
         const modelNodeIdKey = `${modelId}-${revisionId}-${e}` as const;
         revisionNodeIdToNode.set(modelNodeIdKey, nodes[ind]);
@@ -261,17 +261,4 @@ function createRevisionToNodeIdMap(edges: Array<FdmCadEdge>): Map<RevisionId, No
 
     return revisionNodeIdMap;
   }, new Map<RevisionId, NodeId[]>());
-}
-
-async function nodeIdsToNodes(
-  modelId: number,
-  revisionId: number,
-  nodeIds: number[],
-  cogniteClient: CogniteClient
-): Promise<Node3D[]> {
-  return await cogniteClient.revisions3D.retrieve3DNodes(
-    modelId,
-    revisionId,
-    nodeIds.map((id) => ({ id }))
-  );
 }
