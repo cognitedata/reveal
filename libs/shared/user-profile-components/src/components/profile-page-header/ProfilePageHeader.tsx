@@ -1,3 +1,4 @@
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import styled from 'styled-components';
@@ -11,11 +12,13 @@ import { useIsScreenWideEnough } from '../../hooks/useIsScreenWideEnough';
 export type ProfilePageHeaderProps = {
   userInfo?: UserInfo;
   backBtnText?: string;
+  onBackBtnClick?: React.MouseEventHandler<HTMLButtonElement>;
 };
 
 export const ProfilePageHeader = ({
   userInfo,
   backBtnText = 'Back to previous page',
+  onBackBtnClick,
 }: ProfilePageHeaderProps): JSX.Element => {
   const name = userInfo?.name ?? '';
   const profilePicture = userInfo?.profilePicture ?? '';
@@ -29,7 +32,7 @@ export const ProfilePageHeader = ({
           type="ghost"
           icon="ArrowLeft"
           style={{ marginLeft: '-12px' }}
-          onClick={() => navigate(-1)}
+          onClick={(e) => (onBackBtnClick ? onBackBtnClick(e) : navigate(-1))}
         >
           {backBtnText}
         </Button>

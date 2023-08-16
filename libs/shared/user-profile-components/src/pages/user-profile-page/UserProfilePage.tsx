@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 
 import styled from 'styled-components';
 
@@ -50,6 +50,7 @@ export type UserProfilePageProps = {
   onTrackEvent?: OnTrackEvent;
   additionalTabsCategoryLabel?: string;
   additionalTabs?: VerticalTab[];
+  onBackBtnClick?: React.MouseEventHandler<HTMLButtonElement>;
 };
 
 export const UserProfilePage = ({
@@ -65,6 +66,7 @@ export const UserProfilePage = ({
   onTrackEvent,
   additionalTabsCategoryLabel,
   additionalTabs,
+  onBackBtnClick,
 }: UserProfilePageProps): JSX.Element => {
   const name = userInfo?.name ?? '';
   const email = userInfo?.email ?? '';
@@ -140,6 +142,7 @@ export const UserProfilePage = ({
       <ProfilePageHeader
         userInfo={{ name, profilePicture }}
         backBtnText={profileHeaderLocale?.backBtnText}
+        onBackBtnClick={onBackBtnClick}
       />
       <ContentSection>
         <Content>
