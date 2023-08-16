@@ -57,11 +57,11 @@ function useCalculateMappedStyling(models: TypedReveal3DModel[]): ModelStyleGrou
       return [];
     }
     return models.map((model) => {
-      const edges = mappedEquipmentEdges?.get(`${model.modelId}-${model.revisionId}`) ?? [];
+      const fdmData = mappedEquipmentEdges?.get(`${model.modelId}-${model.revisionId}`) ?? [];
 
       const styleGroup =
         model.styling?.mapped !== undefined
-          ? [getMappedStyleGroup(edges, model.styling.mapped)]
+        ? [getMappedStyleGroup(fdmData.map(data => data.edge), model.styling.mapped)]
           : [];
       return { model, styleGroup };
     });

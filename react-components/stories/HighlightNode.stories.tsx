@@ -65,12 +65,12 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
   const cameraNavigation = useCameraNavigation();
 
   useEffect(() => {
-    setHighlightedId(nodeData?.nodeExternalId);
+    setHighlightedId(nodeData?.fdmNode.externalId);
 
     if (nodeData === undefined) return;
 
-    void cameraNavigation.fitCameraToInstance(nodeData.nodeExternalId, 'pdms-mapping');
-  }, [nodeData?.nodeExternalId]);
+    void cameraNavigation.fitCameraToInstance(nodeData.fdmNode.externalId, 'pdms-mapping');
+  }, [nodeData?.fdmNode.externalId]);
 
   if (stylingGroupsRef.current.length === 1) {
     stylingGroupsRef.current.pop();

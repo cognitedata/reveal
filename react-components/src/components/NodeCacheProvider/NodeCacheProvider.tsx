@@ -7,7 +7,7 @@ import { FdmNodeCache } from './NodeCache';
 import { ModelRevisionToEdgeMap } from '../../hooks/useMappedEquipmentBy3DModelsList';
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useFdmSdk, useSDK } from '../RevealContainer/SDKProvider';
-import { FdmNodeWithView } from './RevisionNodeCache';
+import { Fdm3dNodeData } from './RevisionNodeCache';
 
 export type FdmNodeCacheContent = {
   cache: FdmNodeCache;
@@ -35,18 +35,14 @@ export const useGetAllExternalIds = (
   );
 };
 
-export const useGetExternalId = (
-  modelId: number,
-  revisionId: number,
-  treeIndex: number
-): UseQueryResult<FdmNodeWithView[]> => {
+export const useFdm3dNodeData = (
+  modelId: number | undefined,
+  revisionId: number | undefined,
+  treeIndex: number | undefined
+): UseQueryResult<Fdm3dNodeData[]> => {
   const content = useContext(FdmNodeCacheContext);
 
-  if (content === undefined) {
-    throw Error('Must use useNodeCache inside a NodeCacheContext');
-  }
-
-  return useQuery(
+  const result = useQuery(
     [
       'reveal',
       'react-components',
@@ -55,8 +51,17 @@ export const useGetExternalId = (
       revisionId,
       treeIndex
     ],
-    () => content.cache.getClosestParentExternalId(modelId, revisionId, treeIndex)
+    () => content!.cache.getClosestParentExternalId(modelId!, revisionId!, treeIndex!),
+    {
+      enabled: content !== undefined && modelId !== undefined && revisionId !== undefined && treeIndex !== undefined
+    }
   );
+
+  if (content === undefined) {
+    throw Error('Must use useNodeCache inside a NodeCacheContext');
+  }
+
+  return result;
 }
 
 export function NodeCacheProvider({ children }: { children?: ReactNode }): ReactElement {

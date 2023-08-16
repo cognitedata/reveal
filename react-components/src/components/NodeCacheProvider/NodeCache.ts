@@ -2,9 +2,9 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type CogniteClient } from '@cognite/sdk';
+import { Node3D, type CogniteClient } from '@cognite/sdk';
 import { EdgeItem, type DmsUniqueIdentifier, type FdmSDK } from '../../utilities/FdmSDK';
-import { FdmNodeWithView, RevisionNodeCache, nodeIdsToTreeIndexes } from './RevisionNodeCache';
+import { Fdm3dNodeData, FdmCadEdge, FdmEdgeWithNode, RevisionNodeCache, nodeIdsToNodes } from './RevisionNodeCache';
 import { type CogniteCadModel } from '@cognite/reveal';
 import { InModel3dEdgeProperties, SYSTEM_3D_EDGE_SOURCE, SYSTEM_SPACE_3D_SCHEMA } from '../../utilities/globalDataModels';
 import { ModelRevisionId, ModelRevisionToEdgeMap } from '../../hooks/useMappedEquipmentBy3DModelsList';
@@ -66,14 +66,15 @@ export class FdmNodeCache {
       const [modelId, revisionId] = revisionKeyToIds(revisionKey);
         const revisionCache = this.getOrCreateRevisionCache(modelId, revisionId);
 
-      data.forEach(edge => {
-        revisionCache.insertTreeIndexMappings(edge.treeIndex, edge);
+      console.log("Inserting mappings - ", data.length, 'of them');
+      data.forEach(edgeAndNode => {
+        revisionCache.insertTreeIndexMappings(edgeAndNode.node.treeIndex, edgeAndNode);
       });
 
       this._completeRevisions.add(revisionKey);
     }
 
-    const truncatedGroupToModels = groupToModels as Map<RevisionKey, Array<EdgeItem<InModel3dEdgeProperties>>>;
+    const truncatedGroupToModels = groupToModels;
 
     // Merge with new with previously cached data
     cachedEdges.forEach(([revisionKey, edges]) => {
@@ -87,8 +88,10 @@ export class FdmNodeCache {
     modelId: number,
     revisionId: number,
     treeIndex: number
-  ): Promise<FdmNodeWithView[]> {
+  ): Promise<Fdm3dNodeData[]> {
     const revisionCache = this.getOrCreateRevisionCache(modelId, revisionId);
+
+    console.log('In `getClosestParentExternalId`');
 
     return await revisionCache.getClosestParentFdmData(treeIndex);
   }
@@ -194,7 +197,7 @@ async function groupToModelRevision(
   edges: Array<EdgeItem<InModel3dEdgeProperties>>,
   modelRevisionIds: Array<{ modelId: number; revisionId: number }>,
   cdfClient: CogniteClient
-): Promise<Map<RevisionKey, Array<EdgeItem<InModel3dEdgeProperties> & { treeIndex: TreeIndex }>>> {
+): Promise<Map<RevisionKey, Array<FdmEdgeWithNode>>> {
   const nodeIdsPerRevision = edges.reduce(
     (revisionNodeIdMap, edge) => {
       const nodeIdsInRevision = revisionNodeIdMap.get(edge.properties.revisionId);
@@ -209,16 +212,16 @@ async function groupToModelRevision(
     new Map<RevisionId, number[]>());
 
   type RevisionNodeId = `${RevisionId}-${number}`;
-  const revisionNodeIdToTreeIndexList = new Map<RevisionNodeId, TreeIndex>();
+  const revisionNodeIdToNode = new Map<RevisionNodeId, Node3D>();
 
   const treeIndexesPromises = [...nodeIdsPerRevision.entries()].map(async ([revisionId, nodeIds]) => {
     const modelId = modelRevisionIds.find(p => p.revisionId === revisionId)?.modelId;
     assert(modelId !== undefined);
 
-    const treeIndexes = await nodeIdsToTreeIndexes(modelId, revisionId, nodeIds, cdfClient);
+    const nodes = await nodeIdsToNodes(modelId, revisionId, nodeIds, cdfClient);
     nodeIds.forEach((e, ind) => {
       const revisionNodeIdKey = `${revisionId}-${e}` as const;
-      revisionNodeIdToTreeIndexList.set(revisionNodeIdKey, treeIndexes[ind]);
+      revisionNodeIdToNode.set(revisionNodeIdKey, nodes[ind]);
     });
   });
 
@@ -231,7 +234,7 @@ async function groupToModelRevision(
     const modelRevisionIdKey: ModelRevisionId = createRevisionKey(modelRevisionId.modelId, modelRevisionId.revisionId);
     const edgesForModel = map.get(modelRevisionIdKey);
     const revisionNodeIdKey = `${modelRevisionId.revisionId}-${edge.properties.revisionNodeId}` as const;
-    const value = { ...edge, treeIndex: revisionNodeIdToTreeIndexList.get(revisionNodeIdKey)! };
+    const value = { edge, node: revisionNodeIdToNode.get(revisionNodeIdKey)! };
     if (edgesForModel === undefined) {
       map.set(modelRevisionIdKey, [value]);
     } else {
@@ -239,5 +242,5 @@ async function groupToModelRevision(
     }
 
     return map;
-  }, new Map<ModelRevisionId, Array<EdgeItem<InModel3dEdgeProperties> & { treeIndex: TreeIndex }>>());
+  }, new Map<ModelRevisionId, Array<FdmEdgeWithNode>>());
 }

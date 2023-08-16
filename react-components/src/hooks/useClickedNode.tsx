@@ -38,8 +38,16 @@ export const useClickedNodeData = (): ClickedNodeData | undefined => {
 
   const nodeData = useNodeMappedData(cadIntersection?.treeIndex, cadIntersection?.model);
 
-  if (nodeData === undefined || cadIntersection === undefined) {
+  if (cadIntersection === undefined || nodeData.length === 0) {
     return undefined;
   }
-  return { intersection: cadIntersection, ...nodeData };
+
+  const chosenNode = nodeData[0];
+
+  return {
+    intersection: cadIntersection,
+    fdmNode: chosenNode.fdmId,
+    view: chosenNode.view,
+    cadNode: chosenNode.cadNode
+  };
 };

@@ -19,12 +19,9 @@ import { maxBy } from 'lodash';
 import { type CogniteCadModel } from '@cognite/reveal';
 import { INSTANCE_SPACE_3D_DATA, InModel3dEdgeProperties, SYSTEM_3D_EDGE_SOURCE } from '../../utilities/globalDataModels';
 
-export type FdmNodeWithView = { fdmId: DmsUniqueIdentifier, view: Source };
-
-type MappingsResponse = {
-  results: Array<FdmId & { treeIndex: number }>;
-  nextCursor: any | undefined;
-};
+export type Fdm3dNodeData = { fdmId: DmsUniqueIdentifier, view: Source, cadNode: Node3D };
+export type FdmCadEdge = EdgeItem<InModel3dEdgeProperties>;
+export type FdmEdgeWithNode = { edge: FdmCadEdge, node: Node3D };
 
 export class RevisionNodeCache {
   private readonly _cogniteClient: CogniteClient;
@@ -33,17 +30,11 @@ export class RevisionNodeCache {
   private readonly _modelId: number;
   private readonly _revisionId: number;
 
-  /* private readonly _globalCdfToFdmMap: Map<
-    RevisionTreeIndex, Array<EdgeItem<InModel3dEdgeProperties>>>;
-
-  private readonly _treeIndexToNodeMap: Map<
-  RevisionTreeIndex, FdmNodeWithView> = new Map(); */
-
   private readonly _treeIndexToFdmId: Map<
-    TreeIndex, Array<EdgeItem<InModel3dEdgeProperties>>> = new Map();
+    TreeIndex, Array<FdmEdgeWithNode>> = new Map();
 
   private readonly _treeIndexToFdmData: Map<
-    TreeIndex, Array<FdmNodeWithView>> = new Map();
+    TreeIndex, Array<Fdm3dNodeData>> = new Map();
 
   constructor(
     cogniteClient: CogniteClient,
@@ -58,9 +49,9 @@ export class RevisionNodeCache {
     this._revisionId = revisionId;
   }
 
-  public async getClosestParentFdmData(searchTreeIndex: number): Promise<FdmNodeWithView[]> {
+  public async getClosestParentFdmData(searchTreeIndex: number): Promise<Fdm3dNodeData[]> {
 
-    let nodeEdges: EdgeItem<InModel3dEdgeProperties>[];
+    let nodeEdges: FdmEdgeWithNode[];
     let equallyMappedAncestors: Node3D[] = [];
 
     if (this._treeIndexToFdmData.has(searchTreeIndex)) {
@@ -86,16 +77,26 @@ export class RevisionNodeCache {
         return this._treeIndexToFdmData.get(firstMappedTreeIndex)!;
       }
 
-      nodeEdges = edges;
+      console.log('Lowest ancestors: ', lowestAncestors);
+
+      const firstMappedAncestor = lowestAncestors.find(a => a.treeIndex === firstMappedTreeIndex)!;
+
+      nodeEdges = edges.map(e => ({ edge: e, node: firstMappedAncestor }));
       equallyMappedAncestors = lowestAncestors;
     }
 
-    const nodeInspectionResults = await inspectNodes(this._fdmClient, nodeEdges.map(edge => edge.startNode));
+    const nodeInspectionResults = await inspectNodes(this._fdmClient, nodeEdges.map(edge => edge.edge.startNode));
+    console.log('Inspection results = ', nodeInspectionResults);
 
-    const dataWithViews = nodeEdges.map((edge, ind) => ({ fdmId: edge.startNode,
-                                                          view: nodeInspectionResults.items[ind].inspectionResults.involvedViewsAndContainers.views[0] }));
+    const dataWithViews = nodeEdges.map((fdmEdgeWithNode, ind) => ({
+      fdmId: fdmEdgeWithNode.edge.startNode,
+      view: nodeInspectionResults.items[ind].inspectionResults.involvedViewsAndContainers.views[0],
+      cadNode: fdmEdgeWithNode.node
+    }));
 
     equallyMappedAncestors.forEach(ancestor => this._treeIndexToFdmData.set(ancestor.treeIndex, dataWithViews));
+
+    console.log('Data with views = ', dataWithViews);
 
     return dataWithViews;
   }
@@ -137,7 +138,7 @@ export class RevisionNodeCache {
     };
   }
 
-  public insertTreeIndexMappings(treeIndex: TreeIndex, edge: EdgeItem<InModel3dEdgeProperties>): void {
+  public insertTreeIndexMappings(treeIndex: TreeIndex, edge: FdmEdgeWithNode): void {
     let edgeArray = this._treeIndexToFdmId.get(treeIndex);
     if (edgeArray === undefined) {
       this._treeIndexToFdmId.set(treeIndex, [edge]);
@@ -146,7 +147,7 @@ export class RevisionNodeCache {
     }
   }
 
-  public getAllEdges(): Array<EdgeItem<InModel3dEdgeProperties>> {
+  public getAllEdges(): Array<FdmEdgeWithNode> {
     return [...this._treeIndexToFdmId.values()].flat();
   }
 
@@ -164,12 +165,12 @@ async function fetchAncestorNodesForTreeIndex(
   treeIndex: number,
   cogniteClient: CogniteClient
 ): Promise<Node3D[]> {
-  const nodeId = await treeIndexToNodeId(modelId, revisionId, treeIndex, cogniteClient);
+  const nodeId = await treeIndexesToNodeIds(modelId, revisionId, [treeIndex], cogniteClient);
 
   const ancestorNodes = await cogniteClient.revisions3D.list3DNodeAncestors(
     modelId,
     revisionId,
-    nodeId
+    nodeId[0]
   );
 
   return ancestorNodes.items;
@@ -252,14 +253,6 @@ export async function treeIndexesToNodeIds(modelId: number, revisionId: number, 
     }
 }
 
-export async function nodeIdsToTreeIndexes(modelId: number, revisionId: number, nodeIds: number[], cogniteClient: CogniteClient): Promise<number[]> {
-    const outputsUrl = `${cogniteClient.getBaseUrl()}/api/v1/projects/${
-      cogniteClient.project
-    }/3d/models/${modelId}/revisions/${revisionId}/nodes/treeindices/byinternalids`;
-  const response = await cogniteClient.post<{ items: number[] }>(outputsUrl, { data: { items: nodeIds } });
-    if (response.status === 200) {
-      return response.data.items;
-    } else {
-      throw Error(`nodeId-treeIndex translation failed for nodeIds ${nodeIds}`);
-    }
+export async function nodeIdsToNodes(modelId: number, revisionId: number, nodeIds: number[], cogniteClient: CogniteClient): Promise<Node3D[]> {
+  return cogniteClient.revisions3D.retrieve3DNodes(modelId, revisionId, nodeIds.map(id => ({ id })));
 }
