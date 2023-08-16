@@ -3,31 +3,22 @@
  */
 
 import { type Node3D, type CogniteClient } from '@cognite/sdk';
-import { type EdgeItem, type DmsUniqueIdentifier, type FdmSDK } from '../../utilities/FdmSDK';
+import { type EdgeItem, type FdmSDK } from '../../utilities/FdmSDK';
 import { RevisionFdmNodeCache } from './RevisionFdmNodeCache';
-import { type FdmEdgeWithNode, type Fdm3dNodeData } from './types';
+import { type FdmEdgeWithNode, type Fdm3dNodeData, FdmCadEdge, RevisionKey, RevisionTreeIndex, FdmKey, FdmId, RevisionId, NodeId, ModelNodeIdKey, ModelId } from './types';
 import {
   type InModel3dEdgeProperties,
   SYSTEM_3D_EDGE_SOURCE,
   SYSTEM_SPACE_3D_SCHEMA
 } from '../../utilities/globalDataModels';
 import {
-  type ModelRevisionId,
+  type ModelRevisionKey,
   type ModelRevisionToEdgeMap
 } from '../../hooks/useMappedEquipmentBy3DModelsList';
 
 import { partition } from 'lodash';
 
 import assert from 'assert';
-
-export type ModelId = number;
-export type RevisionId = number;
-export type TreeIndex = number;
-
-export type RevisionKey = `${ModelId}-${RevisionId}`;
-export type FdmKey = `${string}-${string}`;
-export type RevisionTreeIndex = `${ModelId}-${RevisionId}-${TreeIndex}`;
-export type FdmId = DmsUniqueIdentifier;
 
 export class FdmNodeCache {
   private readonly _revisionNodeCaches = new Map<RevisionKey, RevisionFdmNodeCache>();
@@ -184,12 +175,84 @@ export function insertIntoSetMap<T, U>(key: T, value: U, globalMap: Map<T, U[]>)
 }
 
 async function groupToModelRevision(
-  edges: Array<EdgeItem<InModel3dEdgeProperties>>,
+  edges: Array<FdmCadEdge>,
   modelRevisionIds: Array<{ modelId: number; revisionId: number }>,
   cdfClient: CogniteClient
 ): Promise<Map<RevisionKey, FdmEdgeWithNode[]>> {
-  const nodeIdsPerRevision = edges.reduce((revisionNodeIdMap, edge) => {
+  const revisionToNodeIdsMap = createRevisionToNodeIdMap(edges);
+  const modelNodeIdToNodeMap = await createModelNodeIdToNodeMap(revisionToNodeIdsMap, modelRevisionIds, cdfClient);
+
+  return edges.reduce((map, edge) => {
+    const edgeRevisionId = edge.properties.revisionId;
+    const modelRevisionId = modelRevisionIds.find((p) => p.revisionId === edgeRevisionId);
+
+    if (modelRevisionId === undefined) return map;
+
+    const value = createFdmEdgeWithNode(modelRevisionId, edge, modelNodeIdToNodeMap);
+
+    insertEdgeIntoMapList(value, map, modelRevisionId);
+
+    return map;
+  }, new Map<ModelRevisionKey, FdmEdgeWithNode[]>());
+}
+
+function createFdmEdgeWithNode(modelRevisionId: { modelId: number, revisionId: number },
+                               edge: FdmCadEdge,
+                               modelNodeIdToNodeMap: Map<ModelNodeIdKey, Node3D>): FdmEdgeWithNode {
+
+  const revisionNodeIdKey =
+    `${modelRevisionId.modelId}-${modelRevisionId.revisionId}-${edge.properties.revisionNodeId}` as const;
+
+  const node = modelNodeIdToNodeMap.get(revisionNodeIdKey);
+  assert(node !== undefined);
+
+  return { edge, node };
+}
+
+function insertEdgeIntoMapList(value: FdmEdgeWithNode, map: Map<ModelRevisionKey, FdmEdgeWithNode[]>, modelRevisionId: { modelId: number, revisionId: number }): void {
+
+
+  const modelRevisionIdKey: ModelRevisionKey = createRevisionKey(
+    modelRevisionId.modelId,
+    modelRevisionId.revisionId
+  );
+
+  const edgesForModel = map.get(modelRevisionIdKey);
+
+  if (edgesForModel === undefined) {
+    map.set(modelRevisionIdKey, [value]);
+  } else {
+    edgesForModel.push(value);
+  }
+}
+
+async function createModelNodeIdToNodeMap(revisionToNodeIdsMap: Map<RevisionId, NodeId[]>, modelRevisionIds: Array<{ modelId: ModelId; revisionId: RevisionId }>, cdfClient: CogniteClient): Promise<Map<ModelNodeIdKey, Node3D>> {
+
+  const revisionNodeIdToNode = new Map<ModelNodeIdKey, Node3D>();
+
+  const nodePromises = [...revisionToNodeIdsMap.entries()].map(
+    async ([revisionId, nodeIds]) => {
+      const modelId = modelRevisionIds.find((p) => p.revisionId === revisionId)?.modelId;
+      assert(modelId !== undefined);
+
+      const nodes = await nodeIdsToNodes(modelId, revisionId, nodeIds, cdfClient);
+      nodeIds.forEach((e, ind) => {
+        const modelNodeIdKey = `${modelId}-${revisionId}-${e}` as const;
+        revisionNodeIdToNode.set(modelNodeIdKey, nodes[ind]);
+      });
+    }
+  );
+
+  await Promise.all(nodePromises);
+
+  return revisionNodeIdToNode;
+}
+
+function createRevisionToNodeIdMap(edges: Array<FdmCadEdge>): Map<RevisionId, NodeId[]> {
+  return edges.reduce((revisionNodeIdMap, edge) => {
+
     const nodeIdsInRevision = revisionNodeIdMap.get(edge.properties.revisionId);
+
     if (nodeIdsInRevision !== undefined) {
       nodeIdsInRevision.push(edge.properties.revisionNodeId);
     } else {
@@ -197,51 +260,7 @@ async function groupToModelRevision(
     }
 
     return revisionNodeIdMap;
-  }, new Map<RevisionId, number[]>());
-
-  type RevisionNodeId = `${RevisionId}-${number}`;
-  const revisionNodeIdToNode = new Map<RevisionNodeId, Node3D>();
-
-  const treeIndexesPromises = [...nodeIdsPerRevision.entries()].map(
-    async ([revisionId, nodeIds]) => {
-      const modelId = modelRevisionIds.find((p) => p.revisionId === revisionId)?.modelId;
-      assert(modelId !== undefined);
-
-      const nodes = await nodeIdsToNodes(modelId, revisionId, nodeIds, cdfClient);
-      nodeIds.forEach((e, ind) => {
-        const revisionNodeIdKey = `${revisionId}-${e}` as const;
-        revisionNodeIdToNode.set(revisionNodeIdKey, nodes[ind]);
-      });
-    }
-  );
-
-  await Promise.all(treeIndexesPromises);
-
-  return edges.reduce((map, edge) => {
-    const edgeRevisionId = edge.properties.revisionId;
-    const modelRevisionId = modelRevisionIds.find((p) => p.revisionId === edgeRevisionId);
-    if (modelRevisionId === undefined) return map;
-    const modelRevisionIdKey: ModelRevisionId = createRevisionKey(
-      modelRevisionId.modelId,
-      modelRevisionId.revisionId
-    );
-    const edgesForModel = map.get(modelRevisionIdKey);
-    const revisionNodeIdKey =
-      `${modelRevisionId.revisionId}-${edge.properties.revisionNodeId}` as const;
-
-    const node = revisionNodeIdToNode.get(revisionNodeIdKey);
-    assert(node !== undefined);
-
-    const value = { edge, node };
-
-    if (edgesForModel === undefined) {
-      map.set(modelRevisionIdKey, [value]);
-    } else {
-      edgesForModel.push(value);
-    }
-
-    return map;
-  }, new Map<ModelRevisionId, FdmEdgeWithNode[]>());
+  }, new Map<RevisionId, NodeId[]>());
 }
 
 async function nodeIdsToNodes(
