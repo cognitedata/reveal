@@ -3,39 +3,15 @@
     "public": ".",
     "trailingSlash": false,
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
-    "redirects": [
-      {
-        "source": "/",
-        "destination": "/cdf",
-        "type": 302
-      }
-    ],
     "rewrites": [
       {
-        "source": "/cdf/apps/**",
-        "function": "cdfProxy"
-      },
-      {
-        "source": "/cdf/**",
-        "destination": "/cdf/index.html"
+        "source": "/**",
+        "destination": "/index.html"
       }
     ],
     "headers": [
       {
-        "source": "/cdf/apps-manifest.json",
-        "headers": [
-          {
-            "key": "Cache-Control",
-            "value": "max-age=0, no-cache, no-store, must-revalidate"
-          },
-          {
-            "key": "x-app",
-            "value": "cdf-host"
-          }
-        ]
-      },
-      {
-        "source": "/cdf/import-map.json",
+        "source": "/apps-manifest.json",
         "headers": [
           {
             "key": "Cache-Control",
@@ -44,7 +20,16 @@
         ]
       },
       {
-        "source": "/cdf/sub-apps-import-map.json",
+        "source": "/import-map.json",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "max-age=0, no-cache, no-store, must-revalidate"
+          }
+        ]
+      },
+      {
+        "source": "/sub-apps-import-map.json",
         "headers": [
           {
             "key": "Cache-Control",

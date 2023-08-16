@@ -10,7 +10,7 @@ const {
 const { generateCSPHeader } = require('./lib/http-headers-utils');
 
 // for mock or dev, use staging, otherwise use the one from nx_task_target_configuration
-var configuration = (process.argv[2] || 'staging').replace('fusion-', '');
+var configuration = process.argv[2] || 'staging';
 const importMapsEnv =
   configuration === 'mock' || configuration === 'development'
     ? 'staging'
@@ -18,16 +18,15 @@ const importMapsEnv =
 
 // Create Base64 hash
 var versionHash =
-  process.argv[4] || Buffer.from(Date.now().toString()).toString('base64');
-var target = process.argv[3] || 'cdf';
-var basePath = target === 'cdf' ? '/cdf/' : '/';
+  process.argv[3] || Buffer.from(Date.now().toString()).toString('base64');
+var basePath = '/';
 
 // Generate import map config for core libraires
 var importMap = JSON.parse(
   fs.readFileSync('./apps/fusion-shell/src/import-map.json', 'utf8')
 );
 
-console.log(`Generating import map for ${target}(${versionHash})...`);
+console.log(`Generating import map for (${versionHash})...`);
 importMap = generateImportMapOverridesDependenciesPaths(
   importMap,
   versionHash,
@@ -35,7 +34,7 @@ importMap = generateImportMapOverridesDependenciesPaths(
 );
 
 fs.writeFileSync(
-  './dist/apps/fusion-shell/cdf/import-map.json',
+  './dist/apps/fusion-shell/import-map.json',
   JSON.stringify(importMap, null, 2)
 );
 
@@ -44,16 +43,16 @@ const subAppsConfig = JSON.parse(
   fs.readFileSync('./apps/fusion-shell/src/apps-manifest.json', 'utf8')
 );
 
-console.log(`Generating sub-apps import map for ${target}(${versionHash})...`);
+console.log(`Generating sub-apps import map for (${versionHash})...`);
 const subAppsImportMap = generateSubAppsImportMap(subAppsConfig, importMapsEnv);
 
 fs.writeFileSync(
-  './dist/apps/fusion-shell/cdf/sub-apps-import-map.json',
+  './dist/apps/fusion-shell/sub-apps-import-map.json',
   JSON.stringify(subAppsImportMap, null, 2)
 );
 
 console.log(
-  `Generating sub-apps module federation map for ${target}(${versionHash})...`
+  `Generating sub-apps module federation map for (${versionHash})...`
 );
 
 const subAppsModuleFederationMap = generateAppsRuntimeManifest(
@@ -62,38 +61,25 @@ const subAppsModuleFederationMap = generateAppsRuntimeManifest(
 );
 
 fs.writeFileSync(
-  './dist/apps/fusion-shell/cdf/apps-manifest.json',
+  './dist/apps/fusion-shell/apps-manifest.json',
   JSON.stringify(subAppsModuleFederationMap, null, 2)
 );
 
-console.log(`Updating firebase.json with the appropriate http headers...`);
-const firebaseConfig = JSON.parse(
-  fs.readFileSync('./dist/apps/fusion-shell/firebase.json', 'utf8')
+console.log(
+  `Injecting dev scripts and Content-Security-Policy meta tag in index.html for env: ${configuration}`
 );
+var indexHtml = `./dist/apps/fusion-shell/index.html`;
 
-firebaseConfig.hosting.headers.push({
-  source: '/**',
-  headers: [
-    {
-      key: 'Content-Security-Policy',
-      value: generateCSPHeader(subAppsConfig, importMapsEnv),
-    },
-  ],
-});
+fs.readFile(indexHtml, 'utf8', function (err, data) {
+  if (err) {
+    return console.log(err);
+  }
 
-fs.writeFileSync(
-  './dist/apps/fusion-shell/firebase.json',
-  JSON.stringify(firebaseConfig, null, 2)
-);
+  const cspHeader = generateCSPHeader(subAppsConfig, importMapsEnv);
+  const cspRegex = /<!-- CSP Header -->/gim;
+  var result = data.replace(cspRegex, `<meta http-equiv="Content-Security-Policy" content="${cspHeader}" >`);
 
-console.log(`Injecting dev scripts in index.html for evn: ${configuration}`);
-if (configuration !== 'production') {
-  var indexHtml = `./dist/apps/fusion-shell/cdf/index.html`;
-  fs.readFile(indexHtml, 'utf8', function (err, data) {
-    if (err) {
-      return console.log(err);
-    }
-
+  if (configuration !== 'production') {
     const devScripts = `
 <script src="assets/dependencies/import-map-overrides@1.14.6/dist/import-map-overrides.js"></script>
 <script src="assets/dependencies/query-string@7.1.1/dist/query-string.js"></script>
@@ -101,10 +87,10 @@ if (configuration !== 'production') {
 <script src="assets/dependencies/dev-setup.js"></script>`;
 
     const regex = /<!-- DEV Scripts -->/gm;
-    var result = data.replace(regex, devScripts);
+    result = result.replace(regex, devScripts);
+  }
 
-    fs.writeFile(indexHtml, result, 'utf8', function (err) {
-      if (err) return console.log(err);
-    });
+  fs.writeFile(indexHtml, result, 'utf8', function (err) {
+    if (err) return console.log(err);
   });
-}
+});

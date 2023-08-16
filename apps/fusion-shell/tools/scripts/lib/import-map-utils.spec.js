@@ -7,8 +7,7 @@ const {
 describe('ImportMap Utils', () => {
   const importMapJson = {
     imports: {
-      react:
-        '/cdf/assets/dependencies/react@16.12.0/umd/react.production.min.js',
+      react: '/assets/dependencies/react@16.12.0/umd/react.production.min.js',
     },
   };
 
@@ -68,9 +67,9 @@ describe('ImportMap Utils', () => {
         imports: {
           ...importMapJson.imports,
           '@cognite/cdf-sdk-singleton':
-            '/cdf/assets/dependencies/@cognite/1234567890/cdf-sdk-singleton/index.js',
+            '/assets/dependencies/@cognite/1234567890/cdf-sdk-singleton/index.js',
           '@cognite/cdf-route-tracker':
-            '/cdf/assets/dependencies/@cognite/1234567890/cdf-route-tracker/index.js',
+            '/assets/dependencies/@cognite/1234567890/cdf-route-tracker/index.js',
         },
       })
     );
@@ -105,6 +104,13 @@ describe('ImportMap Utils', () => {
           ],
         },
         {
+          key: 'cdf-dashboard-sessions-ui',
+          appName: '@cognite/cdf-dashboard-sessions-ui',
+          appType: 'single-spa',
+          versionSpec: '~0.2.6',
+          routes: [{ route: '/:tenantName/dashboard-sessions' }],
+        },
+        {
           key: 'cdf-data-catalog',
           appName: '@cognite/cdf-data-catalog',
           appType: 'module-federation',
@@ -117,7 +123,7 @@ describe('ImportMap Utils', () => {
       ],
     };
 
-    expect(result.apps.length).toBe(2);
+    expect(result.apps.length).toBe(3);
     result.apps.forEach((el, idx) => {
       // check each element of the array, individually
       expect(el).toEqual(expect.objectContaining(expected.apps[idx]));
