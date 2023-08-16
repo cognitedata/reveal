@@ -45,7 +45,7 @@
     "@types/three": "0.155.0",
     "@typescript-eslint/eslint-plugin": "^5.50.0",
     "eslint": "^8.0.1",
-    "eslint-config-prettier": "^8.8.0",
+    "eslint-config-prettier": "^9.0.0",
     "eslint-config-standard-with-typescript": "latest",
     "eslint-plugin-header": "^3.1.1",
     "eslint-plugin-import": "^2.25.2",
