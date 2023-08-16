@@ -3,11 +3,11 @@
  */
 
 import {
+  type NodeAppearance,
   type AddModelOptions,
-  type SupportedModelTypes,
-  type CadIntersection,
-  type NodeAppearance
+  type SupportedModelTypes
 } from '@cognite/reveal';
+
 import { type Matrix4 } from 'three';
 import { type DmsUniqueIdentifier, type Source } from '../../utilities/FdmSDK';
 import { type Node3D } from '@cognite/sdk/dist/src';
@@ -29,7 +29,6 @@ export type NodeDataResult = {
   nodeExternalId: string;
   view: Source;
   cadNode: Node3D;
-  intersection: CadIntersection;
 };
 
 export type FdmAssetStylingGroup = {
@@ -47,4 +46,5 @@ export type Reveal3DResourcesProps = {
   defaultResourceStyling?: DefaultResourceStyling;
   instanceStyling?: FdmAssetStylingGroup[];
   onNodeClick?: (node: Promise<NodeDataResult | undefined>) => void;
+  onResourcesAdded?: () => void;
 };

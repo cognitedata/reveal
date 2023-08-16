@@ -4,9 +4,10 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Reveal3DResources, RevealContainer, withSuppressRevealEvents } from '../src';
 import { Color, Vector3 } from 'three';
-import { CameraController, ViewerAnchor } from '../src/';
+import { ViewerAnchor } from '../src/';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import styled from 'styled-components';
+import { RevealResourcesFitCameraOnLoad } from './utilities/with3dResoursesFitCameraOnLoad';
 
 const meta = {
   title: 'Example/ViewerAnchor',
@@ -43,7 +44,7 @@ export const Main: Story = {
             placement: 'topRight'
           }
         }}>
-        <Reveal3DResources resources={resources} />
+        <RevealResourcesFitCameraOnLoad resources={resources} />
         <ViewerAnchor position={position}>
           <div
             style={{
@@ -72,15 +73,6 @@ export const Main: Story = {
             This label is stuck at position {position2.toArray().join(',')}
           </p>
         </ViewerAnchor>
-        <CameraController
-          initialFitCamera={{
-            to: 'allModels'
-          }}
-          cameraControlsOptions={{
-            changeCameraTargetOnClick: true,
-            mouseWheelAction: 'zoomToCursor'
-          }}
-        />
       </RevealContainer>
     );
   }
