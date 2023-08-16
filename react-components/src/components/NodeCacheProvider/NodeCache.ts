@@ -78,7 +78,6 @@ export class FdmNodeCache {
       const [modelId, revisionId] = revisionKeyToIds(revisionKey);
       const revisionCache = this.getOrCreateRevisionCache(modelId, revisionId);
 
-      console.log('Inserting mappings - ', data.length, 'of them');
       data.forEach((edgeAndNode) => {
         revisionCache.insertTreeIndexMappings(edgeAndNode.node.treeIndex, edgeAndNode);
       });
@@ -101,8 +100,6 @@ export class FdmNodeCache {
     treeIndex: number
   ): Promise<Fdm3dNodeData[]> {
     const revisionCache = this.getOrCreateRevisionCache(modelId, revisionId);
-
-    console.log('In `getClosestParentExternalId`');
 
     return await revisionCache.getClosestParentFdmData(treeIndex);
   }
