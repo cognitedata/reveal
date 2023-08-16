@@ -97,7 +97,7 @@ export const Main: Story = {
       <CadModelContainer addModelOptions={addModelOptions} />
       <RevealToolbar
         customSettingsContent={exampleCustomSettingElements()}
-        highFidelityConfig={exampleHighFedilitySettings()}
+        customHighFidelityConfig={exampleHighFedilitySettings()}
       />
       <MyCustomToolbar>
         <RevealToolbar.FitModelsButton />
