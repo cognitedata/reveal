@@ -1,6 +1,6 @@
 import {
   getODataFDMProjectField,
-  getODataFDMEnvironmentField
+  getODataFDMEnvironmentField,
 } from './PowerBIModal';
 
 jest.mock('@cognite/cdf-utilities', () => {
@@ -24,8 +24,6 @@ describe('PowerBI Modal', () => {
 
   it('Should generate odata fdm enviroment field for PowerBI', () => {
     const result = getODataFDMEnvironmentField();
-    expect(result).toBe(
-      'https://mock-cluster/20230821'
-    );
+    expect(result).toBe('https://mock-cluster/20230821');
   });
 });

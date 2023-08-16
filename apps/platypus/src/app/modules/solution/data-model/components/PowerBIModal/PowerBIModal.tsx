@@ -2,7 +2,7 @@ import { FormLabel } from '@platypus-app/components/FormLabel/FormLabel';
 import { Notification } from '@platypus-app/components/Notification/Notification';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
-import { getCluster, getProject, getEnv } from '@cognite/cdf-utilities';
+import { getCluster, getProject } from '@cognite/cdf-utilities';
 import { Button, Flex, Modal } from '@cognite/cogs.js';
 
 import { StyledEndpoint, StyledWrapper } from './elements';
@@ -18,10 +18,12 @@ export interface PowerBIModalProps {
   onRequestClose: () => void;
 }
 
-export const getODataFDMProjectField = (dataModel: DataModelMetadata): string => {
-  return `${getProject()}/models/spaces/${
-    dataModel.space
-  }/datamodels/${dataModel.externalId}/versions/${dataModel.version}`;
+export const getODataFDMProjectField = (
+  dataModel: DataModelMetadata
+): string => {
+  return `${getProject()}/models/spaces/${dataModel.space}/datamodels/${
+    dataModel.externalId
+  }/versions/${dataModel.version}`;
 };
 
 export const getODataFDMEnvironmentField = (): string => {
@@ -45,7 +47,6 @@ const odataVersion = '20230821';
  * Component uses {@link @cognite/cdf-utilities} functions
  * - getCluster()
  * - getProject()
- * - getEnv()
  */
 export const PowerBIModal: React.FC<PowerBIModalProps> = (props) => {
   const { t } = useTranslation('DataModelPowerBIModal');
@@ -101,7 +102,9 @@ export const PowerBIModal: React.FC<PowerBIModalProps> = (props) => {
             {t('data_model_powerbi_modal_enviroment', 'CDF: Enviroment')}
           </FormLabel>
           <Flex>
-            <StyledEndpoint data-cy="powerbi-env">{enviromentField}</StyledEndpoint>
+            <StyledEndpoint data-cy="powerbi-env">
+              {enviromentField}
+            </StyledEndpoint>
             <Button onClick={handleCopyEnviromentClick} icon="Copy">
               {t('data_model_powerbi_modal_copy_button_text', 'Copy')}
             </Button>
