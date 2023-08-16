@@ -3,7 +3,7 @@
  */
 
 import { type ReactElement, type ReactNode, createContext, useContext, useMemo } from 'react';
-import { FdmNodeCache } from './NodeCache';
+import { FdmNodeCache } from './FdmNodeCache';
 import { type ModelRevisionToEdgeMap } from '../../hooks/useMappedEquipmentBy3DModelsList';
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useFdmSdk, useSDK } from '../RevealContainer/SDKProvider';

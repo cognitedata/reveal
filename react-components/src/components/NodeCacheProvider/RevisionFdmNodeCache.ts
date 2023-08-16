@@ -4,7 +4,7 @@
 
 import { type CogniteClient, type Node3D } from '@cognite/sdk';
 import { type FdmSDK } from '../../utilities/FdmSDK';
-import { type TreeIndex } from './NodeCache';
+import { type TreeIndex } from './FdmNodeCache';
 
 import {
   fetchAncestorNodesForTreeIndex,
@@ -17,7 +17,7 @@ import { max } from 'lodash';
 import assert from 'assert';
 import { type Fdm3dNodeData, type FdmEdgeWithNode, type FdmCadEdge } from './types';
 
-export class RevisionNodeCache {
+export class RevisionFdmNodeCache {
   private readonly _cogniteClient: CogniteClient;
   private readonly _fdmClient: FdmSDK;
 

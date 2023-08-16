@@ -4,7 +4,7 @@
 
 import { type Node3D, type CogniteClient } from '@cognite/sdk';
 import { type EdgeItem, type DmsUniqueIdentifier, type FdmSDK } from '../../utilities/FdmSDK';
-import { RevisionNodeCache } from './RevisionNodeCache';
+import { RevisionFdmNodeCache } from './RevisionFdmNodeCache';
 import { type FdmEdgeWithNode, type Fdm3dNodeData } from './types';
 import {
   type InModel3dEdgeProperties,
@@ -30,7 +30,7 @@ export type RevisionTreeIndex = `${ModelId}-${RevisionId}-${TreeIndex}`;
 export type FdmId = DmsUniqueIdentifier;
 
 export class FdmNodeCache {
-  private readonly _revisionNodeCaches = new Map<RevisionKey, RevisionNodeCache>();
+  private readonly _revisionNodeCaches = new Map<RevisionKey, RevisionFdmNodeCache>();
 
   private readonly _cdfClient: CogniteClient;
   private readonly _fdmClient: FdmSDK;
@@ -123,7 +123,7 @@ export class FdmNodeCache {
     return mappings.edges;
   }
 
-  private getOrCreateRevisionCache(modelId: number, revisionId: number): RevisionNodeCache {
+  private getOrCreateRevisionCache(modelId: number, revisionId: number): RevisionFdmNodeCache {
     const revisionKey = createRevisionKey(modelId, revisionId);
 
     const revisionCache = this._revisionNodeCaches.get(revisionKey);
@@ -132,7 +132,7 @@ export class FdmNodeCache {
       return revisionCache;
     }
 
-    const newRevisionCache = new RevisionNodeCache(
+    const newRevisionCache = new RevisionFdmNodeCache(
       this._cdfClient,
       this._fdmClient,
       modelId,
