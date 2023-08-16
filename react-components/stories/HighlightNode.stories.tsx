@@ -7,14 +7,14 @@ import {
   RevealContainer,
   RevealToolbar,
   Reveal3DResources,
-  type NodeDataResult,
   type AddResourceOptions,
+  useClickedNodeData,
   type FdmAssetStylingGroup,
   useCameraNavigation
 } from '../src';
 import { Color } from 'three';
-import { type ReactElement, useState, useCallback, useRef } from 'react';
-import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@cognite/reveal';
+import { type ReactElement, useState, useEffect, useRef } from 'react';
+import { DefaultNodeAppearance } from '@cognite/reveal';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { RevealResourcesFitCameraOnLoad } from './utilities/with3dResoursesFitCameraOnLoad';
@@ -60,23 +60,17 @@ export const Main: Story = {
 const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): ReactElement => {
   const [highlightedId, setHighlightedId] = useState<string | undefined>(undefined);
   const stylingGroupsRef = useRef<FdmAssetStylingGroup[]>([]);
+
+  const nodeData = useClickedNodeData();
   const cameraNavigation = useCameraNavigation();
-  const onClick = useCallback(
-    async (nodeData: Promise<NodeDataResult | undefined>): Promise<void> => {
-      const nodeDataResult = await nodeData;
-      setHighlightedId(nodeDataResult?.nodeExternalId);
 
-      if (nodeDataResult === undefined) return;
+  useEffect(() => {
+    setHighlightedId(nodeData?.nodeExternalId);
 
-      await cameraNavigation.fitCameraToInstance(nodeDataResult.nodeExternalId, 'pdms-mapping');
+    if (nodeData === undefined) return;
 
-      nodeDataResult.intersection.model.assignStyledNodeCollection(
-        new TreeIndexNodeCollection([nodeDataResult.cadNode.treeIndex]),
-        DefaultNodeAppearance.Highlighted
-      );
-    },
-    []
-  );
+    void cameraNavigation.fitCameraToInstance(nodeData.nodeExternalId, 'pdms-mapping');
+  }, [nodeData?.nodeExternalId]);
 
   if (stylingGroupsRef.current.length === 1) {
     stylingGroupsRef.current.pop();
@@ -94,7 +88,6 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
       <RevealResourcesFitCameraOnLoad
         resources={resources}
         instanceStyling={stylingGroupsRef.current}
-        onNodeClick={onClick}
       />
       <RevealToolbar />
     </>

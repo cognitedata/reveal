@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 import { useRef, type ReactElement, useState, useEffect } from 'react';
-import { type Cognite3DViewer, type PointerEventData } from '@cognite/reveal';
+import { type Cognite3DViewer } from '@cognite/reveal';
 import { CadModelContainer, type CadModelStyling } from '../CadModelContainer/CadModelContainer';
 import {
   PointCloudContainer,
@@ -18,9 +18,8 @@ import {
   type Reveal3DResourcesProps,
   type DefaultResourceStyling
 } from './types';
-import { queryMappedData } from './queryMappedData';
-import { useFdmSdk, useSDK } from '../RevealContainer/SDKProvider';
 import { useCalculateModelsStyling } from '../../hooks/useCalculateModelsStyling';
+import { useClickedNodeData } from '../..';
 
 export const Reveal3DResources = ({
   resources,
@@ -32,8 +31,6 @@ export const Reveal3DResources = ({
   const [reveal3DModels, setReveal3DModels] = useState<TypedReveal3DModel[]>([]);
 
   const viewer = useReveal();
-  const fdmSdk = useFdmSdk();
-  const client = useSDK();
   const numModelsLoaded = useRef(0);
 
   useEffect(() => {
@@ -49,20 +46,13 @@ export const Reveal3DResources = ({
   }, [resources, viewer]);
 
   const reveal3DModelsStyling = useCalculateModelsStyling(reveal3DModels, instanceStyling ?? []);
+  const clickedNodeData = useClickedNodeData();
 
   useEffect(() => {
-    const callback = (event: PointerEventData): void => {
-      if (onNodeClick === undefined) return;
-      const data = queryMappedData(viewer, client, fdmSdk, event);
-      onNodeClick(data);
-    };
-
-    viewer.on('click', callback);
-
-    return () => {
-      viewer.off('click', callback);
-    };
-  }, [viewer, client, fdmSdk, onNodeClick]);
+    if (clickedNodeData !== undefined) {
+      onNodeClick?.(Promise.resolve(clickedNodeData));
+    }
+  }, [clickedNodeData, onNodeClick]);
 
   const image360CollectionAddOptions = resources.filter(
     (resource): resource is AddImageCollection360Options =>
