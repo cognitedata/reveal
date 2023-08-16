@@ -62,6 +62,10 @@ export class RevisionNodeCache {
     const { edges, ancestorsWithSameMapping, firstMappedAncestorTreeIndex } =
       await this.getClosestParentMapping(treeIndex);
 
+    if (edges.length === 0) {
+      return [];
+    }
+
     const cachedFdmData = this._treeIndexToFdmData.get(firstMappedAncestorTreeIndex);
 
     if (cachedFdmData !== undefined) {
