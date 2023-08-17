@@ -31,7 +31,8 @@ export {
 export {
   type CadModelStyling,
   type TreeIndexStylingGroup,
-  type NodeStylingGroup
+  type NodeStylingGroup,
+  type CogniteCadModelProps,
 } from './components/CadModelContainer/CadModelContainer';
 export {
   type Reveal3DResourcesProps,

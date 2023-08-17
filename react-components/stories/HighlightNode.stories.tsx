@@ -60,6 +60,8 @@ export const Main: Story = {
 const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): ReactElement => {
   const [stylingGroups, setStylingGroups] = useState<FdmAssetStylingGroup[]>([]);
   const cameraNavigation = useCameraNavigation();
+  const [state, setState] = useState(false);
+  
   const onClick = useCallback(
     async (nodeData: Promise<NodeDataResult | undefined>): Promise<void> => {
       const nodeDataResult = await nodeData;
@@ -72,8 +74,10 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
         fdmAssetExternalIds: [{ externalId: nodeDataResult.nodeExternalId, space: 'pdms-mapping' }],
         style: { cad: DefaultNodeAppearance.Highlighted }
       }]);
-      
+
     }, []);
+  
+  console.log('Story re-rendered with groups', stylingGroups);
 
   return (
     <>
@@ -83,6 +87,7 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
         onNodeClick={onClick}
       />
       <RevealToolbar />
+      <button onClick={() => setState(!state)}>Re-render resources</button>
     </>
   );
 };
