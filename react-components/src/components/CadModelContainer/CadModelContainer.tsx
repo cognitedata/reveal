@@ -17,6 +17,7 @@ import { Matrix4 } from 'three';
 import { useSDK } from '../RevealContainer/SDKProvider';
 import { type CogniteClient } from '@cognite/sdk';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
+import { isEqual } from 'lodash';
 
 export type NodeStylingGroup = {
   nodeIds: number[];
@@ -68,16 +69,7 @@ export function CadModelContainer({
 
   useEffect(() => {
     if (!modelExists(model, viewer) || styleGroups === undefined) return;
-    const stylingCollections = applyStyling(sdk, model, styleGroups);
-
-    return () => {
-      if (!modelExists(model, viewer)) return;
-      void stylingCollections.then((nodeCollections) => {
-        nodeCollections.forEach((nodeCollection) => {
-          model.unassignStyledNodeCollection(nodeCollection);
-        });
-      });
-    };
+    void applyStyling(sdk, model, styleGroups);
   }, [styleGroups, model]);
 
   useEffect(() => {
@@ -141,19 +133,40 @@ async function applyStyling(
   stylingGroups: Array<NodeStylingGroup | TreeIndexStylingGroup>
 ): Promise<NodeCollection[]> {
   const collections: NodeCollection[] = [];
-  for (const group of stylingGroups) {
-    if ('treeIndices' in group && group.style !== undefined) {
-      const nodes = new TreeIndexNodeCollection(group.treeIndices);
-      model.assignStyledNodeCollection(nodes, group.style);
+
+  const dirtyIndex = await getDirtyIndex();
+
+  for (let i = dirtyIndex; i < model.styledNodeCollections.length; i++) {
+    const viewerStyledNodeCollection = model.styledNodeCollections[i];
+    model.unassignStyledNodeCollection(viewerStyledNodeCollection.nodeCollection);
+  }
+
+  for (let i = dirtyIndex; i < stylingGroups.length; i++) {
+    const stylingGroup = stylingGroups[i];
+    if ('treeIndices' in stylingGroup && stylingGroup.style !== undefined) {
+      const nodes = new TreeIndexNodeCollection(stylingGroup.treeIndices);
+      model.assignStyledNodeCollection(nodes, stylingGroup.style);
       collections.push(nodes);
-    } else if ('nodeIds' in group && group.style !== undefined) {
+    } else if ('nodeIds' in stylingGroup && stylingGroup.style !== undefined) {
       const nodes = new NodeIdNodeCollection(sdk, model);
-      await nodes.executeFilter(group.nodeIds);
-      model.assignStyledNodeCollection(nodes, group.style);
+      await nodes.executeFilter(stylingGroup.nodeIds);
+      model.assignStyledNodeCollection(nodes, stylingGroup.style);
       collections.push(nodes);
     }
   }
   return collections;
+
+  async function getDirtyIndex(): Promise<number> {
+    for (let i = 0; i < model.styledNodeCollections.length; i++) {
+      const stylingGroup = stylingGroups[i];
+      const viewerStyledNodeCollection = model.styledNodeCollections[i];
+      const areEqual = await areStylesEqual(viewerStyledNodeCollection, stylingGroup);
+      if (!areEqual) {
+        return i;
+      }
+    }
+    return model.styledNodeCollections.length;
+  }
 }
 
 function modelExists(
@@ -161,4 +174,40 @@ function modelExists(
   viewer: Cognite3DViewer
 ): model is CogniteCadModel {
   return model !== undefined && viewer.models.includes(model);
+}
+
+async function areStylesEqual(
+  styledNodeCollection: {
+    nodeCollection: NodeCollection;
+    appearance: NodeAppearance;
+  },
+  stylingGroup: NodeStylingGroup | TreeIndexStylingGroup
+): Promise<boolean> {
+  const groupStyle = stylingGroup?.style;
+  if (groupStyle === undefined) return false;
+
+  const viewerStyle = styledNodeCollection.appearance;
+
+  if (!isEqual(viewerStyle, groupStyle)) {
+    return false;
+  }
+
+  const viewerCollection = styledNodeCollection.nodeCollection;
+
+  if (isNodeStylingGroup(stylingGroup) && viewerCollection instanceof NodeIdNodeCollection) {
+    return isEqual(stylingGroup.nodeIds, viewerCollection.serialize().state.nodeIds);
+  } else if (
+    !isNodeStylingGroup(stylingGroup) &&
+    viewerCollection instanceof TreeIndexNodeCollection
+  ) {
+    return isEqual(stylingGroup.treeIndices, viewerCollection.getIndexSet());
+  }
+
+  return false;
+
+  function isNodeStylingGroup(
+    stylingGroup: NodeStylingGroup | TreeIndexStylingGroup
+  ): stylingGroup is NodeStylingGroup {
+    return 'nodeIds' in stylingGroup;
+  }
 }
