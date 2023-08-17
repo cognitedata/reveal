@@ -14,7 +14,9 @@ import {
 } from '@data-exploration/containers';
 import { SummaryHeader } from '@data-exploration-components/components/SummaryHeader/SummaryHeader';
 import { getSummaryCardItems } from '@data-exploration-components/components/SummaryHeader/utils';
+import { useUniqueCdfItems } from '@data-exploration-components/hooks';
 import { ColumnDef, Row } from '@tanstack/react-table';
+import uniqBy from 'lodash/uniqBy';
 
 import { Body } from '@cognite/cogs.js';
 import { Asset } from '@cognite/sdk';
@@ -23,6 +25,9 @@ import {
   DASH,
   getHiddenColumns,
   InternalDocumentFilter,
+  isObjectEmpty,
+  isSummaryCardDataCountExceed,
+  useDeepMemo,
   useGetSearchConfigFromLocalStorage,
   useTranslation,
 } from '@data-exploration-lib/core';
@@ -30,6 +35,7 @@ import {
   InternalDocument,
   InternalDocumentWithMatchingLabels,
   useDocumentSearchResultWithMatchingLabelsQuery,
+  useRelatedDocumentsQuery,
 } from '@data-exploration-lib/domain-layer';
 
 export const DocumentSummary = ({
@@ -38,6 +44,9 @@ export const DocumentSummary = ({
   onAllResultsClick,
   onRowClick,
   onRootAssetClick,
+  showAllResultsWithEmptyFilters = false,
+  selectedResourceExternalId: resourceExternalId,
+  annotationIds = [],
 }: {
   query?: string;
   filter?: InternalDocumentFilter;
@@ -46,19 +55,52 @@ export const DocumentSummary = ({
   ) => void;
   onRowClick?: (row: InternalDocument) => void;
   onRootAssetClick?: (rootAsset: Asset, resourceId?: number) => void;
+  showAllResultsWithEmptyFilters?: boolean;
+  selectedResourceExternalId?: string;
+  annotationIds?: number[];
 }) => {
+  const isQueryEnable = isObjectEmpty(filter as any)
+    ? showAllResultsWithEmptyFilters
+    : true;
+
+  const { data: annotationList = [] } = useUniqueCdfItems<InternalDocument>(
+    'files',
+    annotationIds.map((id) => ({ id })),
+    true
+  );
+  const isAnnotationCountExceed = isSummaryCardDataCountExceed(
+    annotationList.length
+  );
+
   const documentSearchConfig = useGetSearchConfigFromLocalStorage('file');
 
-  const { results, isLoading } = useDocumentSearchResultWithMatchingLabelsQuery(
-    {
-      query,
-      filter,
-    },
-    undefined,
-    documentSearchConfig
-  );
+  const { results: documents, isLoading } =
+    useDocumentSearchResultWithMatchingLabelsQuery(
+      {
+        query,
+        filter,
+      },
+      { enabled: isQueryEnable && !isAnnotationCountExceed },
+      documentSearchConfig
+    );
   const { metadataColumns, setMetadataKeyQuery } =
     useDocumentsMetadataColumns();
+
+  const isDocumentsCountExceed = isSummaryCardDataCountExceed(
+    documents.length + annotationList.length
+  );
+
+  const { data: relatedDocuments, isLoading: isRelatedDocumentsLoading } =
+    useRelatedDocumentsQuery({
+      resourceExternalId,
+      limit: 5,
+      enabled: !isDocumentsCountExceed,
+    });
+
+  const mergeData = useDeepMemo(
+    () => uniqBy([...annotationList, ...documents, ...relatedDocuments], 'id'),
+    [annotationList, documents, relatedDocuments]
+  );
 
   const { t } = useTranslation();
   const tableColumns = getTableColumns(t);
@@ -136,15 +178,20 @@ export const DocumentSummary = ({
     [query, metadataColumns]
   );
   const hiddenColumns = getHiddenColumns(columns, ['name', 'content']);
+
+  const isDataLoading = isLoading && isQueryEnable && !isAnnotationCountExceed;
+  const isRelatedDataLoading =
+    isRelatedDocumentsLoading && !isDocumentsCountExceed;
+
   return (
     <SummaryCardWrapper>
       <Table<InternalDocumentWithMatchingLabels>
         id="document-summary-table"
         columns={columns}
         hiddenColumns={hiddenColumns}
-        data={getSummaryCardItems(results)}
+        data={getSummaryCardItems(mergeData)}
         columnSelectionLimit={2}
-        isDataLoading={isLoading}
+        isDataLoading={isDataLoading || isRelatedDataLoading}
         tableHeaders={
           <SummaryHeader
             icon="Document"

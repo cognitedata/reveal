@@ -27,18 +27,21 @@ export const useRelatedSequenceQuery = ({
   sequenceFilter = {},
   query,
   sortBy,
+  enabled = true,
 }: {
   resourceExternalId?: string;
   relationshipFilter?: RelationshipsFilterInternal;
   sequenceFilter?: InternalSequenceFilters;
   query?: string;
   sortBy?: TableSortBy[];
+  enabled?: boolean;
 }) => {
   const { data: detailViewRelatedResourcesData } =
     useRelatedResourceDataForDetailView({
       resourceExternalId: resourceExternalId,
       relationshipResourceType: ResourceTypes.Sequence,
       filter: relationshipFilter,
+      options: { enabled },
     });
 
   const advancedFilter = useMemo(() => {

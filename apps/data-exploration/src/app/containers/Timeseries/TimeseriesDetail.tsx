@@ -29,6 +29,8 @@ import {
   createInternalLink,
 } from '@data-exploration-lib/core';
 
+import { AllTab } from '../All';
+
 // TimeseriesPreviewTabType;
 // - details
 // - assets
@@ -117,6 +119,10 @@ export const TimeseriesDetail = ({
     );
   }
 
+  const filter = {
+    assetIds: timeseries.assetId ? [{ value: timeseries.assetId }] : [],
+  };
+
   return (
     <>
       <BreadcrumbsV2 />
@@ -161,6 +167,21 @@ export const TimeseriesDetail = ({
                   <TimeseriesInfo timeseries={timeseries} />
                   <Metadata metadata={timeseries.metadata} />
                 </DetailsTabWrapper>
+              </Tabs.Tab>,
+              <Tabs.Tab
+                label={t('ALL_RESOURCES', 'All resources')}
+                key="all-resources"
+                tabKey="all-resources"
+              >
+                <AllTab
+                  filters={{
+                    asset: filter,
+                  }}
+                  setCurrentResourceType={(type) =>
+                    type && setSelectedTab(type)
+                  }
+                  selectedResourceExternalId={timeseries.externalId}
+                />
               </Tabs.Tab>,
             ]}
           />

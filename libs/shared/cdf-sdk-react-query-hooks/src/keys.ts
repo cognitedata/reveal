@@ -47,10 +47,11 @@ export const byIdKey = (type: SdkResourceType, id: IdEither) => [
   id,
 ];
 
-export const infiniteListCacheKey = (type: SdkResourceType, filter?: any) => [
-  ...infiniteBaseListCacheKey(type),
-  { filter },
-];
+export const infiniteListCacheKey = (
+  type: SdkResourceType,
+  filter?: any,
+  config?: any
+) => [...infiniteBaseListCacheKey(type), { filter }, { config }];
 
 export const listKey = (type: SdkResourceType, body: any) => [
   ...listBaseCacheKey(type),
@@ -73,8 +74,9 @@ export const searchCacheKey = (
 export const infiniteSearchCacheKey = (
   type: SdkResourceType,
   query: string,
-  filter?: any
-) => [...infiniteBaseSearchCacheKey(type), { query }, { filter }];
+  filter?: any,
+  config?: any
+) => [...infiniteBaseSearchCacheKey(type), { query }, { filter }, { config }];
 
 export const listGroupsKey = (scope?: ListGroups) => [
   ...baseCacheKey('groups'),

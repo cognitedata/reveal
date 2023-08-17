@@ -29,7 +29,7 @@ export const useDocumentSearchQuery = (
   const localLimit = limit || DEFAULT_GLOBAL_TABLE_RESULT_LIMIT;
 
   return useInfiniteQuery(
-    queryKeys.documentsSearch(filter, localLimit, sort),
+    queryKeys.documentsSearch(filter, localLimit, sort, options),
     ({ pageParam }) =>
       search(
         {

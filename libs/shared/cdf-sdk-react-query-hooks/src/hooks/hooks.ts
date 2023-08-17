@@ -193,7 +193,7 @@ export const useInfiniteSearch = <T>(
   const sdk = useSDK();
 
   return useInfiniteQuery<T[]>(
-    infiniteSearchCacheKey(type, query, filter),
+    infiniteSearchCacheKey(type, query, filter, config),
     async ({ pageParam: offset }) => {
       const offsetLimit = offset ? limit + offset : limit;
       const body = filter
@@ -234,7 +234,7 @@ export const useInfiniteList = <T>(
   const sdk = useSDK();
 
   return useInfiniteQuery<{ items: T[]; nextCursor?: string }>(
-    infiniteListCacheKey(type, filter),
+    infiniteListCacheKey(type, filter, config),
     ({ pageParam }) =>
       post(
         sdk,

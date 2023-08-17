@@ -27,18 +27,21 @@ export const useRelatedEventsQuery = ({
   eventFilter = {},
   query,
   sortBy,
+  enabled = true,
 }: {
   resourceExternalId?: string;
   relationshipFilter?: RelationshipsFilterInternal;
   eventFilter?: InternalEventsFilters;
   query?: string;
   sortBy?: TableSortBy[];
+  enabled?: boolean;
 }) => {
   const { data: detailViewRelatedResourcesData } =
     useRelatedResourceDataForDetailView({
       resourceExternalId: resourceExternalId,
       relationshipResourceType: ResourceTypes.Event,
       filter: relationshipFilter,
+      options: { enabled },
     });
 
   const advancedFilter = useMemo(() => {
