@@ -58,6 +58,7 @@ export type MonitoringJob = {
     granularity: string;
     threshold?: number;
     timeseriesId: number;
+    timeseriesExternalId: string;
     upperThreshold?: number;
     lowerThreshold?: number;
   };

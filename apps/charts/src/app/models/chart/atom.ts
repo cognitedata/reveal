@@ -8,7 +8,7 @@ const chartAtom = atom<Chart | undefined>({
 });
 
 export const useChartAtom = () => {
-  return useRecoilState(chartAtom);
+  return useRecoilState<Chart | undefined>(chartAtom);
 };
 
 export default chartAtom;
