@@ -53,7 +53,7 @@ export class AppBuilderChain extends CogniteBaseChain {
           },
         ]);
 
-        return { data: code };
+        return { data: { code } };
       },
     },
   ];

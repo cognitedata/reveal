@@ -11,7 +11,6 @@ import {
   sendFromCopilotEvent,
   sendToCopilotEvent,
 } from '../../../../lib/utils';
-import { getContainer } from '../../../utils/getContainer';
 
 const getButtonWidth = (text: string) => text.length * 8 + 20;
 
@@ -97,7 +96,6 @@ export const ResponsiveActions = ({ actions }: { actions: Action[] }) => {
       ))}
       {moreItems.length > 0 && (
         <Dropdown
-          appendTo={getContainer() || document.body}
           content={
             <Menu>
               {moreItems.map((item) => (

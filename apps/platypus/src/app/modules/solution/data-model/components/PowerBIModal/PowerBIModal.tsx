@@ -2,7 +2,7 @@ import { FormLabel } from '@platypus-app/components/FormLabel/FormLabel';
 import { Notification } from '@platypus-app/components/Notification/Notification';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
-import { getCluster, getProject, getEnv } from '@cognite/cdf-utilities';
+import { getCluster, getProject } from '@cognite/cdf-utilities';
 import { Button, Flex, Modal } from '@cognite/cogs.js';
 
 import { StyledEndpoint, StyledWrapper } from './elements';
@@ -18,16 +18,22 @@ export interface PowerBIModalProps {
   onRequestClose: () => void;
 }
 
-export const getODataFDMServiceURL = (dataModel: DataModelMetadata): string => {
-  return `https://${getCluster()}/odata/${odataVersion}/projects/${getProject()}/models/spaces/${
-    dataModel.space
-  }/datamodels/${dataModel.externalId}/versions/${dataModel.version}`;
+export const getODataFDMProjectField = (
+  dataModel: DataModelMetadata
+): string => {
+  return `${getProject()}/models/spaces/${dataModel.space}/datamodels/${
+    dataModel.externalId
+  }/versions/${dataModel.version}`;
+};
+
+export const getODataFDMEnvironmentField = (): string => {
+  return `https://${getCluster()}/${odataVersion}`;
 };
 
 /**
  * Last released version of 'OData for fdm service' https://cognitedata.atlassian.net/l/cp/vrMSNwoR
  */
-const odataVersion = '21082023';
+const odataVersion = '20230821';
 
 /**
  * PowerBI modal generates configuration for 'CDF Power BI connector'
@@ -41,15 +47,14 @@ const odataVersion = '21082023';
  * Component uses {@link @cognite/cdf-utilities} functions
  * - getCluster()
  * - getProject()
- * - getEnv()
  */
 export const PowerBIModal: React.FC<PowerBIModalProps> = (props) => {
   const { t } = useTranslation('DataModelPowerBIModal');
-  const powerBIUrl = getODataFDMServiceURL(props.dataModel);
-  const enviroment = getEnv();
+  const projectField = getODataFDMProjectField(props.dataModel);
+  const enviromentField = getODataFDMEnvironmentField();
 
   const handleCopyProjectClick = () => {
-    navigator.clipboard.writeText(powerBIUrl);
+    navigator.clipboard.writeText(projectField);
     Notification({
       type: 'success',
       message: t(
@@ -60,7 +65,7 @@ export const PowerBIModal: React.FC<PowerBIModalProps> = (props) => {
   };
 
   const handleCopyEnviromentClick = () => {
-    navigator.clipboard.writeText(enviroment || '');
+    navigator.clipboard.writeText(enviromentField || '');
     Notification({
       type: 'success',
       message: t(
@@ -85,7 +90,7 @@ export const PowerBIModal: React.FC<PowerBIModalProps> = (props) => {
           </FormLabel>
           <Flex>
             <StyledEndpoint data-cy="powerbi-project-name">
-              {powerBIUrl}
+              {projectField}
             </StyledEndpoint>
             <Button onClick={handleCopyProjectClick} icon="Copy">
               {t('data_model_powerbi_modal_copy_button_text', 'Copy')}
@@ -97,7 +102,9 @@ export const PowerBIModal: React.FC<PowerBIModalProps> = (props) => {
             {t('data_model_powerbi_modal_enviroment', 'CDF: Enviroment')}
           </FormLabel>
           <Flex>
-            <StyledEndpoint data-cy="powerbi-env">{enviroment}</StyledEndpoint>
+            <StyledEndpoint data-cy="powerbi-env">
+              {enviromentField}
+            </StyledEndpoint>
             <Button onClick={handleCopyEnviromentClick} icon="Copy">
               {t('data_model_powerbi_modal_copy_button_text', 'Copy')}
             </Button>

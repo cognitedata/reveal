@@ -5,7 +5,7 @@ import { useTranslations } from '@charts-app/hooks/translations';
 import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import styled from 'styled-components/macro';
 
-import { Body, DocumentIcon, Icon, Overline } from '@cognite/cogs.js';
+import { Body, DocumentIcon, Icon, Overline, Flex } from '@cognite/cogs.js';
 import { Asset, FileInfo as File } from '@cognite/sdk';
 
 import { useFileIcon, useFilesAssetAppearsIn } from './hooks';
@@ -22,7 +22,7 @@ const FileListItem = ({
   onFileClick: () => void;
   errorText: string;
 }) => {
-  const { data: imageUrl, isLoading, isError } = useFileIcon(file);
+  const { data: imageUrl, isFetching: isLoading, isError } = useFileIcon(file);
 
   const image = useMemo(() => {
     if (isFilePreviewable(file)) {
@@ -63,23 +63,32 @@ export const FileList = ({
   selectedFileId?: number;
   onFileClick: (file: File) => void;
 }) => {
-  const { data = [], isLoading } = useFilesAssetAppearsIn(asset);
+  const { data = [], isFetching: isLoading } = useFilesAssetAppearsIn(asset);
   const t = {
     ...defaultTranslations,
     ...useTranslations(Object.keys(defaultTranslations), 'FileList').t,
   };
   // Select first file on default
   useEffect(() => {
-    if (!selectedFileId && data.length > 0) {
+    if (!selectedFileId && data && data.length > 0) {
       onFileClick(data[0]);
     }
   }, [selectedFileId, data, onFileClick]);
 
   if (isLoading) {
-    return <Icon type="Loader" />;
+    return (
+      <Flex
+        direction="column"
+        justifyContent="center"
+        alignItems="center"
+        style={{ height: '100%' }}
+      >
+        <Icon type="Loader" />
+      </Flex>
+    );
   }
 
-  if (data.length === 0) {
+  if (!data || data.length === 0) {
     return <ErrorFeedback>{t['No files found']}</ErrorFeedback>;
   }
 

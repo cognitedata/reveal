@@ -282,11 +282,18 @@ jobs:
           path: node_modules
           key: cache-node-modules-${{ hashFiles('yarn.lock') }}
 
+      - name: Get deploy environment
+        id: deploy-environment
+        uses: ./scripts/github-actions/get-deploy-environment
+        with:
+          project: ${{ matrix.project }}
+          branch: ${{ github.ref_name }}
+
       - name: Build
         env:
           NODE_OPTIONS: '--max_old_space_size=8192'
           NODE_ENV: production
-        run: npx nx run ${{ matrix.project }}:build:production
+        run: npx nx run ${{ matrix.project }}:build:${{ steps.deploy-environment.outputs.environment }}
 
       - name: 'Authenticate to google cloud'
         id: 'google-auth'

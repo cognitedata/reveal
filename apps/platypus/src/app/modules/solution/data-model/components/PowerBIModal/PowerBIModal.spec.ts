@@ -1,4 +1,7 @@
-import { getODataFDMServiceURL } from './PowerBIModal';
+import {
+  getODataFDMProjectField,
+  getODataFDMEnvironmentField,
+} from './PowerBIModal';
 
 jest.mock('@cognite/cdf-utilities', () => {
   return {
@@ -8,14 +11,19 @@ jest.mock('@cognite/cdf-utilities', () => {
 });
 
 describe('PowerBI Modal', () => {
-  it('Should generate odata fdm service url', () => {
-    const srvURL = getODataFDMServiceURL({
+  it('Should generate odata fdm project field for PowerBI', () => {
+    const result = getODataFDMProjectField({
       space: 'myspace',
       externalId: 'myid',
       version: '1',
     });
-    expect(srvURL).toBe(
-      'https://mock-cluster/odata/21082023/projects/mock-project/models/spaces/myspace/datamodels/myid/versions/1'
+    expect(result).toBe(
+      'mock-project/models/spaces/myspace/datamodels/myid/versions/1'
     );
+  });
+
+  it('Should generate odata fdm enviroment field for PowerBI', () => {
+    const result = getODataFDMEnvironmentField();
+    expect(result).toBe('https://mock-cluster/20230821');
   });
 });
