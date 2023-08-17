@@ -2,11 +2,11 @@ import { Handle, NodeProps, Position } from 'reactflow';
 
 import styled from 'styled-components';
 
-import { useTranslation } from 'common';
-import { ColorStatus } from 'components/tab-header/TabHeader';
-import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
-import { useWorkflowExecutionDetails } from 'hooks/workflows';
-import { PROCESS_ICON, ProcessNodeData } from 'types';
+import { useTranslation } from '@flows/common';
+import { ColorStatus } from '@flows/components/tab-header/TabHeader';
+import { useWorkflowBuilderContext } from '@flows/contexts/WorkflowContext';
+import { useWorkflowExecutionDetails } from '@flows/hooks/workflows';
+import { PROCESS_ICON, ProcessNodeData } from '@flows/types';
 
 import {
   Body,

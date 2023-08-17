@@ -4,13 +4,13 @@ import styled from 'styled-components';
 
 import { json } from '@codemirror/lang-json';
 import { Collapse } from 'antd';
-import { useTranslation } from 'common';
-import { BasicPlaceholder } from 'components/basic-placeholder/BasicPlaceholder';
-import InfoBox from 'components/info-box/InfoBox';
-import RunHistoryItem from 'components/run-history-item/RunHistoryItem';
-import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
-import { useWorkflowExecutionDetails } from 'hooks/workflows';
-import { WorkflowExecution } from 'types/workflows';
+import { useTranslation } from '@flows/common';
+import { BasicPlaceholder } from '@flows/components/basic-placeholder/BasicPlaceholder';
+import InfoBox from '@flows/components/info-box/InfoBox';
+import RunHistoryItem from '@flows/components/run-history-item/RunHistoryItem';
+import { useWorkflowBuilderContext } from '@flows/contexts/WorkflowContext';
+import { useWorkflowExecutionDetails } from '@flows/hooks/workflows';
+import { WorkflowExecution } from '@flows/types/workflows';
 
 import { CodeSnippet, Timestamp } from '@cognite/cdf-utilities';
 import {

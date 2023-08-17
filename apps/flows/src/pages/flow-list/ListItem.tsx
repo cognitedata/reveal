@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import { CANVAS_PATH } from 'common';
+import { CANVAS_PATH } from '@flows/common';
 
 import { createLink } from '@cognite/cdf-utilities';
 import { Body, Colors, Flex } from '@cognite/cogs.js';

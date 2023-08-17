@@ -1,5 +1,5 @@
 import Elk from 'elkjs/lib/elk.bundled';
-import { WorkflowExecution } from 'types/workflows';
+import { WorkflowExecution } from '@flows/types/workflows';
 
 type ElkNode = {
   id: string;

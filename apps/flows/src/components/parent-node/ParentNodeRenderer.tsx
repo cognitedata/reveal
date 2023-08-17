@@ -3,8 +3,8 @@ import { NodeProps } from 'reactflow';
 
 import styled from 'styled-components';
 
-import { DEFAULT_GROUP_NAME } from 'common';
-import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
+import { DEFAULT_GROUP_NAME } from '@flows/common';
+import { useWorkflowBuilderContext } from '@flows/contexts/WorkflowContext';
 
 import { Colors } from '@cognite/cogs.js';
 

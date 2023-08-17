@@ -5,7 +5,7 @@ import {
   render as testingLibraryRender,
   RenderOptions,
 } from '@testing-library/react';
-import { styleScope } from 'styles/styleScope';
+import { styleScope } from '@flows/styles/styleScope';
 
 import sdk from '@cognite/cdf-sdk-singleton';
 import { SDKProvider } from '@cognite/sdk-provider';

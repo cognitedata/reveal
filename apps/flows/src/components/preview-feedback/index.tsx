@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { useTranslation, Z_INDEXES } from 'common';
+import { useTranslation, Z_INDEXES } from '@flows/common';
 
 import { Flex, Infobox } from '@cognite/cogs.js';
 

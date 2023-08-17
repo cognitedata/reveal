@@ -1,5 +1,5 @@
-import { useTranslation } from 'common';
-import { useDeleteFlow } from 'hooks/files';
+import { useTranslation } from '@flows/common';
+import { useDeleteFlow } from '@flows/hooks/files';
 
 import { Button, Dropdown, Menu } from '@cognite/cogs.js';
 

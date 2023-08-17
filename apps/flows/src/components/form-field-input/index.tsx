@@ -3,7 +3,7 @@ import { ChangeEvent, ChangeEventHandler } from 'react';
 import { Input, InputProps } from 'antd';
 import FormFieldWrapper, {
   FormFieldWrapperProps,
-} from 'components/form-field-wrapper';
+} from '@flows/components/form-field-wrapper';
 
 type FormFieldInputProps = Omit<FormFieldWrapperProps, 'children'> &
   Pick<InputProps, 'name' | 'onBlur' | 'placeholder' | 'value' | 'disabled'> & {

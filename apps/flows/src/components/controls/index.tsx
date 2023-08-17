@@ -3,8 +3,8 @@ import { useReactFlow, useStore } from 'reactflow';
 
 import styled from 'styled-components';
 
-import { CANVAS_ZOOM_DURATION } from 'common';
-import ToolBar, { ToolbarButtonProps } from 'components/toolbar/ToolBar';
+import { CANVAS_ZOOM_DURATION } from '@flows/common';
+import ToolBar, { ToolbarButtonProps } from '@flows/components/toolbar/ToolBar';
 
 import { Dropdown, Menu } from '@cognite/cogs.js';
 

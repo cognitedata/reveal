@@ -2,7 +2,7 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { ColorStatus } from 'components/tab-header/TabHeader';
+import { ColorStatus } from '@flows/components/tab-header/TabHeader';
 
 import { Body, Colors, Flex, Icon, IconType } from '@cognite/cogs.js';
 

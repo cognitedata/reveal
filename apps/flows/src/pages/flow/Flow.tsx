@@ -3,24 +3,24 @@ import { useParams } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import { useTranslation } from 'common';
-import { BasicPlaceholder } from 'components/basic-placeholder/BasicPlaceholder';
-import { Canvas } from 'components/canvas';
-import { CanvasTopBar } from 'components/canvas-topbar/CanvasTopBar';
-import { FloatingHistoryPanel } from 'components/floating-history-panel';
-import { NodeConfigurationPanel } from 'components/node-configuration-panel/NodeConfigurationPanel';
-import PreviewFeedback from 'components/preview-feedback';
-import RunCanvas from 'components/run-canvas/RunCanvas';
-import { RunHistorySection } from 'components/run-history-section/RunHistorySection';
-import ViewOnlyCanvas from 'components/view-only-canvas/ViewOnlyCanvas';
+import { useTranslation } from '@flows/common';
+import { BasicPlaceholder } from '@flows/components/basic-placeholder/BasicPlaceholder';
+import { Canvas } from '@flows/components/canvas';
+import { CanvasTopBar } from '@flows/components/canvas-topbar/CanvasTopBar';
+import { FloatingHistoryPanel } from '@flows/components/floating-history-panel';
+import { NodeConfigurationPanel } from '@flows/components/node-configuration-panel/NodeConfigurationPanel';
+import PreviewFeedback from '@flows/components/preview-feedback';
+import RunCanvas from '@flows/components/run-canvas/RunCanvas';
+import { RunHistorySection } from '@flows/components/run-history-section/RunHistorySection';
+import ViewOnlyCanvas from '@flows/components/view-only-canvas/ViewOnlyCanvas';
 import {
   FlowContextProvider,
   useWorkflowBuilderContext,
-} from 'contexts/WorkflowContext';
-import { useCreateFile, useFile } from 'hooks/files';
-import { useWorkflow } from 'hooks/workflows';
-import { WorkflowWithVersions } from 'types/workflows';
-import { getLastWorkflowDefinition, isCanvasEmpty } from 'utils/workflows';
+} from '@flows/contexts/WorkflowContext';
+import { useCreateFile, useFile } from '@flows/hooks/files';
+import { useWorkflow } from '@flows/hooks/workflows';
+import { WorkflowWithVersions } from '@flows/types/workflows';
+import { getLastWorkflowDefinition, isCanvasEmpty } from '@flows/utils/workflows';
 
 import { Body, Colors, Elevations, Flex, Loader } from '@cognite/cogs.js';
 

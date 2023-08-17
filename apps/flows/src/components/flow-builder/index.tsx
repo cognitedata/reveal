@@ -26,24 +26,24 @@ import {
   MAX_ZOOM,
   MIN_ZOOM,
   Z_INDEXES,
-} from 'common';
-import { CanvasToolbar } from 'components/canvas-toolbar/CanvasToolbar';
+} from '@flows/common';
+import { CanvasToolbar } from '@flows/components/canvas-toolbar/CanvasToolbar';
 import ContextMenu, {
   WorkflowContextMenu,
-} from 'components/context-menu/ContextMenu';
-import { Controls } from 'components/controls';
-import { CustomEdge } from 'components/custom-edge';
-import { ParentNodeRenderer } from 'components/parent-node/ParentNodeRenderer';
-import { ProcessNodeRenderer } from 'components/process-node/ProcessNodeRenderer';
-import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
+} from '@flows/components/context-menu/ContextMenu';
+import { Controls } from '@flows/components/controls';
+import { CustomEdge } from '@flows/components/custom-edge';
+import { ParentNodeRenderer } from '@flows/components/parent-node/ParentNodeRenderer';
+import { ProcessNodeRenderer } from '@flows/components/process-node/ProcessNodeRenderer';
+import { useWorkflowBuilderContext } from '@flows/contexts/WorkflowContext';
 import {
   CanvasNode,
   ProcessNode,
   WorkflowBuilderNode,
   WorkflowBuilderNodeType,
   isProcessType,
-} from 'types';
-import { useUserInfo } from 'utils/user';
+} from '@flows/types';
+import { useUserInfo } from '@flows/utils/user';
 import { v4 } from 'uuid';
 
 import { Colors } from '@cognite/cogs.js';

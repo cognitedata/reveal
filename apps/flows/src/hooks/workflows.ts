@@ -14,7 +14,7 @@ import {
   WorkflowResponse,
   WorkflowWithVersions,
   UpdateTaskVariables,
-} from 'types/workflows';
+} from '@flows/types/workflows';
 
 import { getProject } from '@cognite/cdf-utilities';
 import { useSDK } from '@cognite/sdk-provider';

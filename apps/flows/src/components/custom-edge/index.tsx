@@ -3,10 +3,10 @@ import { EdgeProps, getBezierPath } from 'reactflow';
 
 import styled from 'styled-components';
 
-import { FOREIGN_OBJECT_HEIGHT, FOREIGN_OBJECT_WIDTH } from 'common';
-import AddNodeButton from 'components/edge-hover-buttons/AddNodeButton';
-import DeleteEdgeButton from 'components/edge-hover-buttons/DeleteEdgeButton';
-import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
+import { FOREIGN_OBJECT_HEIGHT, FOREIGN_OBJECT_WIDTH } from '@flows/common';
+import AddNodeButton from '@flows/components/edge-hover-buttons/AddNodeButton';
+import DeleteEdgeButton from '@flows/components/edge-hover-buttons/DeleteEdgeButton';
+import { useWorkflowBuilderContext } from '@flows/contexts/WorkflowContext';
 
 import { Flex } from '@cognite/cogs.js';
 export const CustomEdge = ({

@@ -14,11 +14,11 @@ import {
 
 import * as Automerge from '@automerge/automerge';
 import { ChangeOptions } from '@automerge/automerge';
-import { useUpdateFlow } from 'hooks/files';
+import { useUpdateFlow } from '@flows/hooks/files';
 import { debounce, isEqual } from 'lodash';
-import { AFlow, CanvasEdges, CanvasNodes } from 'types';
-import { WorkflowExecution } from 'types/workflows';
-import { useUserInfo } from 'utils/user';
+import { AFlow, CanvasEdges, CanvasNodes } from '@flows/types';
+import { WorkflowExecution } from '@flows/types/workflows';
+import { useUserInfo } from '@flows/utils/user';
 import { v4 } from 'uuid';
 
 type Logger = (oldDoc: AFlow) => ChangeOptions<AFlow> | undefined;

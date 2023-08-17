@@ -1,9 +1,9 @@
-import { AFlow, ProcessNodeData, ProcessType } from 'types';
+import { AFlow, ProcessNodeData, ProcessType } from '@flows/types';
 import {
   TaskDefinition,
   WorkflowDefinitionResponse,
   WorkflowWithVersions,
-} from 'types/workflows';
+} from '@flows/types/workflows';
 
 const ALLOWED_PROCESS_TYPES: ProcessType[] = ['transformation', 'function'];
 

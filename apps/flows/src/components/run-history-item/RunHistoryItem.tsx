@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 
-import { useTranslation } from 'common';
-import TabHeader, { ColorStatus } from 'components/tab-header/TabHeader';
-import { WorkflowExecution } from 'types/workflows';
+import { useTranslation } from '@flows/common';
+import TabHeader, { ColorStatus } from '@flows/components/tab-header/TabHeader';
+import { WorkflowExecution } from '@flows/types/workflows';
 
 import { formatTime } from '@cognite/cdf-utilities';
 import { IconType, SegmentedControl } from '@cognite/cogs.js';
@@ -67,7 +67,7 @@ const RunHistoryItem = ({
             <StyledSegmentedControl
               currentKey={tabView}
               size="small"
-              onButtonClicked={updateTabView}
+              onButtonClicked={(key) => typeof(key) === 'string' ? updateTabView(key) : null}
             >
               <SegmentedControl.Button key="results">
                 {t('results')}

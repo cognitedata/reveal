@@ -3,22 +3,22 @@ import { useParams } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import { useTranslation } from 'common';
-import EditWorkflowModal from 'components/workflow-modal/EditWorkflowModal';
-import { ViewMode, useWorkflowBuilderContext } from 'contexts/WorkflowContext';
-import { useCreateWorkflowDefinition, useRunWorkflow } from 'hooks/workflows';
+import { useTranslation } from '@flows/common';
+import EditWorkflowModal from '@flows/components/workflow-modal/EditWorkflowModal';
+import { ViewMode, useWorkflowBuilderContext } from '@flows/contexts/WorkflowContext';
+import { useCreateWorkflowDefinition, useRunWorkflow } from '@flows/hooks/workflows';
 import { toPng } from 'html-to-image';
 import {
   WorkflowDefinitionCreate,
   WorkflowWithVersions,
-} from 'types/workflows';
-import { getContainer } from 'utils';
+} from '@flows/types/workflows';
+import { getContainer } from '@flows/utils';
 import {
   areWorkflowDefinitionsSame,
   convertCanvasToWorkflowDefinition,
   getLastWorkflowDefinition,
   isCanvasEmpty,
-} from 'utils/workflows';
+} from '@flows/utils/workflows';
 
 import { createLink, SecondaryTopbar } from '@cognite/cdf-utilities';
 import {

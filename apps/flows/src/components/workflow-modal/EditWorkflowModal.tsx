@@ -7,9 +7,9 @@ import {
 } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { useTranslation } from 'common';
-import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
-import { useFlow, useUpdateFlow } from 'hooks/files';
+import { useTranslation } from '@flows/common';
+import { useWorkflowBuilderContext } from '@flows/contexts/WorkflowContext';
+import { useFlow, useUpdateFlow } from '@flows/hooks/files';
 
 import { Flex, InputExp, Modal } from '@cognite/cogs.js';
 

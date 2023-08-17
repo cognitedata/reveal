@@ -1,11 +1,11 @@
 import { useCallback, useMemo } from 'react';
 
-import { useTranslation } from 'common';
-import { BasicPlaceholder } from 'components/basic-placeholder/BasicPlaceholder';
-import Link from 'components/link/Link';
-import { useDeleteWorkflow } from 'hooks/workflows';
-import { WorkflowResponse } from 'types/workflows';
-import { getContainer } from 'utils';
+import { useTranslation } from '@flows/common';
+import { BasicPlaceholder } from '@flows/components/basic-placeholder/BasicPlaceholder';
+import Link from '@flows/components/link/Link';
+import { useDeleteWorkflow } from '@flows/hooks/workflows';
+import { WorkflowResponse } from '@flows/types/workflows';
+import { getContainer } from '@flows/utils';
 
 import {
   ColumnType,

@@ -1,4 +1,4 @@
-import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
+import { useWorkflowBuilderContext } from '@flows/contexts/WorkflowContext';
 
 import { WorkflowContextMenu } from './ContextMenu';
 import { ContextMenuItem } from './ContextMenuItem';

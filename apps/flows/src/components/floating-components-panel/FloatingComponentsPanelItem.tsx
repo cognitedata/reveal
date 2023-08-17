@@ -2,8 +2,8 @@ import { DragEventHandler } from 'react';
 
 import styled from 'styled-components';
 
-import { useTranslation } from 'common';
-import { PROCESS_ICON, ProcessType } from 'types';
+import { useTranslation } from '@flows/common';
+import { PROCESS_ICON, ProcessType } from '@flows/types';
 
 import { Body, Colors, Flex, Icon } from '@cognite/cogs.js';
 

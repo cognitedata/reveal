@@ -5,10 +5,10 @@ import { ReactFlowProvider } from 'reactflow';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { CANVAS_PATH } from 'common';
-import ErrorFeedback from 'common/ErrorFeedback';
-import { translations } from 'common/i18n';
-import GlobalStyles from 'styles/GlobalStyles';
+import { CANVAS_PATH } from '@flows/common';
+import ErrorFeedback from '@flows/common/ErrorFeedback';
+import { translations } from '@flows/common/i18n';
+import GlobalStyles from '@flows/styles/GlobalStyles';
 
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
 import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
@@ -33,8 +33,8 @@ const env = getEnv();
 const project = getProject();
 const ROOT_PATH = `/:tenant/${CANVAS_PATH}`;
 
-const Flow = React.lazy(() => import('pages/flow/Flow'));
-const FlowList = React.lazy(() => import('pages/flow-list'));
+const Flow = React.lazy(() => import('@flows/pages/flow/Flow'));
+const FlowList = React.lazy(() => import('@flows/pages/flow-list'));
 
 const App = () => {
   return (

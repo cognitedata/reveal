@@ -3,9 +3,9 @@ import { useMemo } from 'react';
 import styled from 'styled-components';
 
 import * as Automerge from '@automerge/automerge';
-import { useTranslation } from 'common';
-import { FloatingPanel } from 'components/floating-components-panel/FloatingComponentsPanel';
-import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
+import { useTranslation } from '@flows/common';
+import { FloatingPanel } from '@flows/components/floating-components-panel/FloatingComponentsPanel';
+import { useWorkflowBuilderContext } from '@flows/contexts/WorkflowContext';
 
 import { Button, Colors, Flex, Title } from '@cognite/cogs.js';
 

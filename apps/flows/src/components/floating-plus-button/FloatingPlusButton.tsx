@@ -2,7 +2,7 @@ import { MouseEventHandler } from 'react';
 
 import styled from 'styled-components';
 
-import { FLOATING_ELEMENT_MARGIN, Z_INDEXES } from 'common';
+import { FLOATING_ELEMENT_MARGIN, Z_INDEXES } from '@flows/common';
 
 import { Colors, Icon } from '@cognite/cogs.js';
 

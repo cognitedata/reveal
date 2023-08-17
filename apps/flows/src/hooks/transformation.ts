@@ -4,14 +4,14 @@ import {
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
-import { BASE_QUERY_KEY } from 'common';
-import { SdkListData } from 'types';
+import { BASE_QUERY_KEY } from '@flows/common';
+import { SdkListData } from '@flows/types';
 import {
   TransformationCreate,
   TransformationCreateError,
   TransformationRead,
-} from 'types/transformation';
-import { getTransformationsApiUrl } from 'utils';
+} from '@flows/types/transformation';
+import { getTransformationsApiUrl } from '@flows/utils';
 
 import { CogniteError } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';

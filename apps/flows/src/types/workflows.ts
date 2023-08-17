@@ -1,4 +1,4 @@
-import { ProcessType } from 'types';
+import { ProcessType } from '@flows/types';
 
 export type WorkflowResponse = {
   externalId: string;

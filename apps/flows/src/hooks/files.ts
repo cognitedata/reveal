@@ -5,10 +5,10 @@ import {
   useQueryClient,
   UseQueryOptions,
 } from '@tanstack/react-query';
-import { BASE_QUERY_KEY } from 'common/constants';
+import { BASE_QUERY_KEY } from '@flows/common/constants';
 import { isEqual } from 'lodash';
-import { AFlow, Flow } from 'types';
-import { getUserInfo } from 'utils/user';
+import { AFlow, Flow } from '@flows/types';
+import { getUserInfo } from '@flows/utils/user';
 
 import { CogniteClient, CogniteError, FileInfo } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';

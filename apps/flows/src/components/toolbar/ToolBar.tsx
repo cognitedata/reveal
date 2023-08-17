@@ -6,8 +6,8 @@ import {
   TOOLBAR_IS_HISTORY_VISIBLE_WIDTH,
   TOOLBAR_MARGIN,
   Z_INDEXES,
-} from 'common/constants';
-import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
+} from '@flows/common/constants';
+import { useWorkflowBuilderContext } from '@flows/contexts/WorkflowContext';
 
 import {
   Button,

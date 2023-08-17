@@ -2,10 +2,10 @@ import { Edge } from 'reactflow';
 
 import { Extend as AutomergeExtend, uuid } from '@automerge/automerge';
 import { Dropdown, Space } from 'antd';
-import { useTranslation } from 'common';
-import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
-import { ProcessNode, ProcessType } from 'types';
-import { useUserInfo } from 'utils/user';
+import { useTranslation } from '@flows/common';
+import { useWorkflowBuilderContext } from '@flows/contexts/WorkflowContext';
+import { ProcessNode, ProcessType } from '@flows/types';
+import { useUserInfo } from '@flows/utils/user';
 
 import { Button, Menu } from '@cognite/cogs.js';
 

@@ -1,5 +1,5 @@
-import en from 'common/i18n/translations/en/flows.json';
-import ja from 'common/i18n/translations/ja/flows.json';
+import en from '@flows/common/i18n/translations/en/flows.json';
+import ja from '@flows/common/i18n/translations/ja/flows.json';
 
 import { TypedTrans, useTypedTranslation } from '@cognite/cdf-i18n-utils';
 

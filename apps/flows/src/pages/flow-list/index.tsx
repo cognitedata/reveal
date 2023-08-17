@@ -2,11 +2,11 @@ import { useMemo, useState } from 'react';
 
 import styled from 'styled-components';
 
-import { useTranslation } from 'common';
-import { BasicPlaceholder } from 'components/basic-placeholder/BasicPlaceholder';
-import { CreateWorkflowModal } from 'components/workflow-modal/CreateWorkflowModal';
-import WorkflowTable from 'components/workflow-table/WorkflowTable';
-import { useWorkflows } from 'hooks/workflows';
+import { useTranslation } from '@flows/common';
+import { BasicPlaceholder } from '@flows/components/basic-placeholder/BasicPlaceholder';
+import { CreateWorkflowModal } from '@flows/components/workflow-modal/CreateWorkflowModal';
+import WorkflowTable from '@flows/components/workflow-table/WorkflowTable';
+import { useWorkflows } from '@flows/hooks/workflows';
 
 import {
   Body,

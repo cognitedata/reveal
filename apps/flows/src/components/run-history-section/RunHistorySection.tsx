@@ -1,10 +1,10 @@
 import styled from 'styled-components';
 
-import { useTranslation } from 'common';
-import { BasicPlaceholder } from 'components/basic-placeholder/BasicPlaceholder';
-import { StyledEmptyStateContainer } from 'components/run-canvas/RunCanvas';
-import { useWorkflowExecutions } from 'hooks/workflows';
-import { WorkflowWithVersions } from 'types/workflows';
+import { useTranslation } from '@flows/common';
+import { BasicPlaceholder } from '@flows/components/basic-placeholder/BasicPlaceholder';
+import { StyledEmptyStateContainer } from '@flows/components/run-canvas/RunCanvas';
+import { useWorkflowExecutions } from '@flows/hooks/workflows';
+import { WorkflowWithVersions } from '@flows/types/workflows';
 
 import { Body, Icon } from '@cognite/cogs.js';
 

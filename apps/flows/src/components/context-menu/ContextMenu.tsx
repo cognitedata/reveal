@@ -4,10 +4,10 @@ import { Edge } from 'reactflow';
 import styled from 'styled-components';
 
 import { Dropdown } from 'antd';
-import { Z_INDEXES } from 'common';
-import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
-import { CanvasNode } from 'types';
-import { useUserInfo } from 'utils/user';
+import { Z_INDEXES } from '@flows/common';
+import { useWorkflowBuilderContext } from '@flows/contexts/WorkflowContext';
+import { CanvasNode } from '@flows/types';
+import { useUserInfo } from '@flows/utils/user';
 
 import { Colors, Elevations } from '@cognite/cogs.js';
 

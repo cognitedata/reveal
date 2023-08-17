@@ -4,10 +4,10 @@ import { Edge, Handle, NodeProps, Position } from 'reactflow';
 import styled from 'styled-components';
 
 import { Extend as AutomergeExtend, uuid } from '@automerge/automerge';
-import { useTranslation } from 'common';
-import { UserState, useWorkflowBuilderContext } from 'contexts/WorkflowContext';
-import { PROCESS_ICON, ProcessNode, ProcessNodeData, ProcessType } from 'types';
-import { useUserInfo } from 'utils/user';
+import { useTranslation } from '@flows/common';
+import { UserState, useWorkflowBuilderContext } from '@flows/contexts/WorkflowContext';
+import { PROCESS_ICON, ProcessNode, ProcessNodeData, ProcessType } from '@flows/types';
+import { useUserInfo } from '@flows/utils/user';
 
 import {
   Body,

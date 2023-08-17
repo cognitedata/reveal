@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { Select, SelectProps } from 'antd';
-import { Trans, TranslationKeys, useTranslation } from 'common';
+import { Trans, TranslationKeys, useTranslation } from '@flows/common';
 
 import { Colors, Icon } from '@cognite/cogs.js';
 

@@ -4,10 +4,10 @@ import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { json } from '@codemirror/lang-json';
-import { useTranslation } from 'common';
-import { BasicPlaceholder } from 'components/basic-placeholder/BasicPlaceholder';
-import { useWorkflow } from 'hooks/workflows';
-import { getLastWorkflowDefinition } from 'utils/workflows';
+import { useTranslation } from '@flows/common';
+import { BasicPlaceholder } from '@flows/components/basic-placeholder/BasicPlaceholder';
+import { useWorkflow } from '@flows/hooks/workflows';
+import { getLastWorkflowDefinition } from '@flows/utils/workflows';
 
 import { CodeSnippet } from '@cognite/cdf-utilities';
 import { Body, Loader } from '@cognite/cogs.js';

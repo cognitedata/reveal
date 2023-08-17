@@ -7,9 +7,9 @@ import {
   Z_INDEXES,
   useTranslation,
   FLOATING_PANEL_MARGIN,
-} from 'common';
-import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
-import { ProcessType } from 'types';
+} from '@flows/common';
+import { useWorkflowBuilderContext } from '@flows/contexts/WorkflowContext';
+import { ProcessType } from '@flows/types';
 
 import {
   Button,

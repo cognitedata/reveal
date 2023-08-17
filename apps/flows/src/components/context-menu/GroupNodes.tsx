@@ -1,7 +1,7 @@
 import { uuid } from '@automerge/automerge';
-import { DEFAULT_GROUP_NAME, GROUP_PADDING } from 'common';
-import { useWorkflowBuilderContext } from 'contexts/WorkflowContext';
-import { CanvasNode } from 'types';
+import { DEFAULT_GROUP_NAME, GROUP_PADDING } from '@flows/common';
+import { useWorkflowBuilderContext } from '@flows/contexts/WorkflowContext';
+import { CanvasNode } from '@flows/types';
 
 import { WorkflowContextMenu } from './ContextMenu';
 import { ContextMenuItem } from './ContextMenuItem';
