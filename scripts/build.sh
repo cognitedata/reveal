@@ -51,5 +51,3 @@ export NX_SENTRY_PROJECT_NAME="${SENTRY_PROJECT_NAME:-}"
 export NX_SENTRY_DSN="${SENTRY_DSN:-}"
 
 nx build ${project} ${configuration} --deployUrl=${baseHref}
-
-read -p "Press any key to continue" x

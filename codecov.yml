@@ -15,6 +15,7 @@ coverage:
           - extraction-pipelines
           - entity-matching
           - access-management
+          - flows
       libs:
         flags:
           - cog-data-grid
