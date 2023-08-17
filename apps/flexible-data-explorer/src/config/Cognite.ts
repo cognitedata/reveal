@@ -42,6 +42,7 @@ export const cogniteConfig: ProjectConfig[] = [
   {
     project: 'lervik-industries',
     site: ' ',
+
     threeDResources: [
       {
         modelId: 7848789582129513,

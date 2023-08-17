@@ -32,8 +32,8 @@ const selectedLanguage =
 
 export const UserProfilePage = (): JSX.Element => {
   const { t } = useTranslation();
-  const { data = {}, isLoading } = useUserInfo();
-  const { name, email, picture: profilePicture } = data;
+  const { data, isLoading } = useUserInfo();
+  const { name, email } = data || {};
   const { track } = useTracker();
 
   const handleLanguageChange = (language: Language | undefined) => {
@@ -42,7 +42,7 @@ export const UserProfilePage = (): JSX.Element => {
 
   return (
     <SharedUserProfilePage
-      userInfo={{ name, email, profilePicture }}
+      userInfo={{ name, email }}
       isUserInfoLoading={isLoading}
       selectedLanguage={selectedLanguage}
       supportedLanguages={SUPPORTED_LANGUAGES}

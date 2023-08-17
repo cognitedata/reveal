@@ -1,6 +1,11 @@
 import { useCallback } from 'react';
 
-import { resourceItemToContainerReference } from '@fusion/industry-canvas';
+import {
+  ContainerReference,
+  resourceItemToContainerReference,
+} from '@fusion/industry-canvas';
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { FdmInstanceContainerReference } from 'libs/industry-canvas/src/lib/types';
 
 import { DateRange } from '../containers/Filter';
 import { ResourceItem } from '../types';
@@ -35,8 +40,26 @@ export const useOpenIn = () => {
     [toCanvas]
   );
 
+  const openContainerReferenceInCanvas = useCallback(
+    (container: Partial<FdmInstanceContainerReference>) => {
+      if (
+        container?.viewExternalId === undefined ||
+        container?.instanceExternalId === undefined ||
+        container?.instanceSpace === undefined ||
+        container?.viewSpace === undefined ||
+        container?.type === undefined
+      ) {
+        console.error("Can't open container in canvas without all fields");
+        return;
+      }
+
+      toCanvas(container as ContainerReference);
+    },
+    [toCanvas]
+  );
+
   return {
-    openContainerReferenceInCanvas: toCanvas,
+    openContainerReferenceInCanvas,
     openAssetCentricResourceItemInCanvas,
     openInCharts,
   };

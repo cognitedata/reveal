@@ -14,9 +14,8 @@ const UserMenu = (): JSX.Element => {
   const { t } = useTranslation();
   const { logout } = useAuthContext();
 
-  const { data = {} } = useUserInfo();
-  const { name, email, picture: profilePicture } = data;
-  const userInfo = { name, email, profilePicture };
+  const { data } = useUserInfo();
+  const { name, email } = data || {};
   const { track } = useTracker();
 
   const handleLogout = async () => {
@@ -27,7 +26,7 @@ const UserMenu = (): JSX.Element => {
     <Dropdown
       content={
         <SharedUserMenu
-          userInfo={userInfo}
+          userInfo={{ name, email }}
           onLogoutClick={handleLogout}
           menuTitle={t('LABEL_ACCOUNT')}
           menuItemManageAccountBtnText={t('LABEL_MANAGE_ACCOUNT')}

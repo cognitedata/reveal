@@ -47,11 +47,13 @@ export const GenericRelationshipEdgeView: React.FC<
           <Typography.Title capitalize size="small">
             {type.field}
           </Typography.Title>
-          <Typography.Title size="xsmall">{data?.length}</Typography.Title>
+          <Typography.Title size="xsmall">
+            {data?.items?.length}
+          </Typography.Title>
         </Flex>
       </InstancePreviewHeader>
 
-      {data?.map((item: any) => (
+      {data?.items?.map((item: any) => (
         <Link
           key={item.externalId}
           type="ghost-accent"
@@ -69,7 +71,10 @@ export const GenericRelationshipEdgeView: React.FC<
 export const GenericRelationshipEdgeItem: React.FC<
   InstancePreviewProps & { type: { type: string; field: string } }
 > = ({ dataModel, instance, type, onClick }) => {
-  const { data, isFetched } = useInstanceRelationshipQuery(
+  const {
+    data: { items },
+    isFetched,
+  } = useInstanceRelationshipQuery(
     type,
     undefined,
     {
@@ -81,7 +86,7 @@ export const GenericRelationshipEdgeItem: React.FC<
     }
   );
 
-  const isEmpty = isFetched && empty(data);
+  const isEmpty = isFetched && empty(items);
 
   if (isEmpty) {
     return null;
@@ -91,7 +96,7 @@ export const GenericRelationshipEdgeItem: React.FC<
     <RelationshipEdgeContainer tabIndex={0} onClick={() => onClick?.(type)}>
       <TypeText>{type.field}</TypeText>
       <RelationshipEdgeContent>
-        <Typography.Title size="xsmall">{data?.length}</Typography.Title>
+        <Typography.Title size="xsmall">{items.length}</Typography.Title>
         <Icon type="ArrowRight" />
       </RelationshipEdgeContent>
     </RelationshipEdgeContainer>
