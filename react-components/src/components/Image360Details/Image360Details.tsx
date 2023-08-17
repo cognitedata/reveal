@@ -51,18 +51,24 @@ export function Image360Details(): ReactElement {
               onExpand={handleExpand}
             />
           </Image360HistoricalPanel>
-          <StyledButton icon="CloseLarge" type="tertiary" onClick={exitImage360Image} />
+          <ExitButtonContainer>
+            <Button icon="CloseLarge" type="tertiary" onClick={exitImage360Image} />
+          </ExitButtonContainer>
         </>
       )}
     </>
   );
 }
 
-const StyledButton = styled(Button)`
+const ExitButtonContainer = styled.div`
   position: absolute;
   right: 20px;
   top: 20px;
-  border-radius: 50%;
+  background-color: #ffffff;
+  height: 35px;
+  width: 35px;
+  border-radius: 6px;
+  outline: none;
 `;
 
 const Image360HistoricalPanel = styled.div<{ isExpanded: boolean }>`
