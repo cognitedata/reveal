@@ -28,6 +28,8 @@ import {
   createInternalLink,
 } from '@data-exploration-lib/core';
 
+import { AllTab } from '../All';
+
 // SequencePreviewType;
 // - details
 // - columns
@@ -108,7 +110,9 @@ export const SequenceDetail = ({
       </>
     );
   }
-
+  const filter = {
+    assetIds: sequence.assetId ? [{ value: sequence.assetId }] : [],
+  };
   return (
     <>
       <BreadcrumbsV2 />
@@ -143,6 +147,21 @@ export const SequenceDetail = ({
               <SequenceInfo sequence={sequence} />
               <Metadata metadata={sequence.metadata} />
             </DetailsTabWrapper>
+          </Tabs.Tab>,
+          <Tabs.Tab
+            label={t('ALL_RESOURCES', 'All resources')}
+            key="all-resources"
+            tabKey="all-resources"
+          >
+            <AllTab
+              filters={{
+                asset: filter,
+                file: filter,
+                sequence: filter,
+              }}
+              selectedResourceExternalId={sequence.externalId}
+              setCurrentResourceType={(type) => type && setSelectedTab(type)}
+            />
           </Tabs.Tab>,
         ]}
       />

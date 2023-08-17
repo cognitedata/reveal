@@ -86,6 +86,15 @@ export type IntrospectionResponse = {
   };
 };
 
+export type EdgeRelationshipResponse = Record<
+  string,
+  {
+    items: any[];
+    edges?: any[];
+    pageInfo: { hasNextPage: boolean; endCursor: string };
+  }
+>;
+
 // ----
 
 /* DATA MODEL TYPES */
@@ -143,6 +152,7 @@ export type DataModelTypeDefsField = {
   nonNull?: boolean;
   list?: string;
   location?: { line: number; column: number };
+  isThreeD?: boolean;
 };
 
 export type DataModelTypeDefsType = {

@@ -27,6 +27,7 @@ export type EventsProperties = {
 
 export const mapFiltersToEventsAdvancedFilters = (
   {
+    assetIds,
     dataSetIds,
     createdTime,
     lastUpdatedTime,
@@ -60,6 +61,7 @@ export const mapFiltersToEventsAdvancedFilters = (
       }
       return type;
     })
+    .containsAny('assetIds', () => assetIds?.map(({ value }) => value))
     .in('subtype', () => {
       // this condition need to be removed when remove the legacy implementation
       if (subtype && !isArray(subtype)) {

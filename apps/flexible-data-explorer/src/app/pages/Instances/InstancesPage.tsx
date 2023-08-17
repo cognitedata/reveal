@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { ContainerReferenceType } from '@fusion/industry-canvas';
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { ContainerReferenceType } from 'libs/industry-canvas/src/lib/types';
 
 import { Button } from '../../components/buttons/Button';
 import { Dropdown } from '../../components/dropdown/Dropdown';
@@ -9,6 +10,7 @@ import { Page } from '../../containers/page/Page';
 import { PropertiesWidget } from '../../containers/widgets/Properties/PropertiesWidget';
 import { RelationshipDirectWidget } from '../../containers/widgets/RelationshipDirect/RelationshipDirect';
 import { RelationshipEdgesWidget } from '../../containers/widgets/RelationshipEdges/RelationshipEdgesWidget';
+import { ThreeDWidget } from '../../containers/widgets/ThreeD/ThreeDWidget';
 import { useOpenIn } from '../../hooks/useOpenIn';
 import { useRecentlyVisited } from '../../hooks/useRecentlyVisited';
 import { useFDM } from '../../providers/FDMProvider';
@@ -96,6 +98,10 @@ export const InstancesPage = () => {
         />
 
         {edgeRelationships?.map((item) => {
+          if (item.isThreeD) {
+            return <ThreeDWidget id="3d" />;
+          }
+
           return (
             <RelationshipEdgesWidget
               key={item.name}

@@ -9,7 +9,9 @@ import {
 import { useSequencesMetadataColumns } from '@data-exploration/containers';
 import { SummaryHeader } from '@data-exploration-components/components/SummaryHeader/SummaryHeader';
 import { getSummaryCardItems } from '@data-exploration-components/components/SummaryHeader/utils';
+import { useUniqueCdfItems } from '@data-exploration-components/hooks';
 import { ColumnDef } from '@tanstack/react-table';
+import uniqBy from 'lodash/uniqBy';
 
 import { Asset, Sequence } from '@cognite/sdk';
 
@@ -17,12 +19,16 @@ import {
   EMPTY_OBJECT,
   getHiddenColumns,
   InternalSequenceFilters,
+  isObjectEmpty,
+  isSummaryCardDataCountExceed,
+  useDeepMemo,
   useGetSearchConfigFromLocalStorage,
   useTranslation,
 } from '@data-exploration-lib/core';
 import {
   useSequenceSearchResultWithMatchingLabelsQuery,
   InternalSequenceDataWithMatchingLabels,
+  useRelatedSequenceQuery,
 } from '@data-exploration-lib/domain-layer';
 
 export const SequenceSummary = ({
@@ -32,24 +38,61 @@ export const SequenceSummary = ({
   onRowClick,
   onRootAssetClick,
   isAdvancedFiltersEnabled = false,
+  showAllResultsWithEmptyFilters = false,
+  selectedResourceExternalId: resourceExternalId,
+  annotationIds = [],
 }: {
   query?: string;
-  filter: InternalSequenceFilters;
+  filter?: InternalSequenceFilters;
   onAllResultsClick?: (
     event?: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => void;
   onRowClick?: (row: Sequence) => void;
   onRootAssetClick?: (rootAsset: Asset, resourceId?: number) => void;
   isAdvancedFiltersEnabled?: boolean;
+  showAllResultsWithEmptyFilters?: boolean;
+  selectedResourceExternalId?: string;
+  annotationIds?: number[];
 }) => {
+  const isQueryEnable = isObjectEmpty(filter as any)
+    ? showAllResultsWithEmptyFilters
+    : true;
+
+  const { data: annotationList = [] } = useUniqueCdfItems<Sequence>(
+    'sequences',
+    annotationIds.map((id) => ({ id })),
+    true
+  );
+
+  const isAnnotationCountExceed = isSummaryCardDataCountExceed(
+    annotationList.length
+  );
+
   const sequenceSearchConfig = useGetSearchConfigFromLocalStorage('sequence');
 
-  const { isLoading, data } = useSequenceSearchResultWithMatchingLabelsQuery(
-    {
-      filter,
-      query,
-    },
-    sequenceSearchConfig
+  const { isLoading, data: sequences } =
+    useSequenceSearchResultWithMatchingLabelsQuery(
+      {
+        filter,
+        query,
+      },
+      sequenceSearchConfig,
+      { enabled: isQueryEnable && !isAnnotationCountExceed }
+    );
+
+  const isSequencesCountExceed = isSummaryCardDataCountExceed(
+    sequences.length + annotationList.length
+  );
+
+  const { data: relatedSequence, isLoading: isRelatedSequenceLoading } =
+    useRelatedSequenceQuery({
+      resourceExternalId,
+      enabled: !isSequencesCountExceed,
+    });
+
+  const mergeData = useDeepMemo(
+    () => uniqBy([...annotationList, ...sequences, ...relatedSequence], 'id'),
+    [annotationList, sequences, relatedSequence]
   );
   const { t } = useTranslation();
   const tableColumns = getTableColumns(t);
@@ -77,15 +120,19 @@ export const SequenceSummary = ({
 
   const hiddenColumns = getHiddenColumns(columns, ['name', 'description']);
 
+  const isDataLoading = isLoading && isQueryEnable && !isAnnotationCountExceed;
+  const isRelatedDataLoading =
+    isRelatedSequenceLoading && !isSequencesCountExceed;
+
   return (
     <SummaryCardWrapper>
       <Table<InternalSequenceDataWithMatchingLabels>
         columns={columns}
         hiddenColumns={hiddenColumns}
-        data={getSummaryCardItems(data)}
+        data={getSummaryCardItems(mergeData)}
         columnSelectionLimit={2}
         id="sequence-summary-table"
-        isDataLoading={isLoading}
+        isDataLoading={isDataLoading || isRelatedDataLoading}
         tableHeaders={
           <SummaryHeader
             icon="Sequences"

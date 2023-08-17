@@ -23,6 +23,7 @@ export const celaneseConfig: ProjectConfig[] = [
       },
       { externalId: 'MaterialDOM', space: 'EDG-COR-ALL-DMD', version: '1_0_0' },
     ],
+
     instanceSpaces: ['SAP-CLK-ALL-DAT', 'REF-COR-ALL-DAT'],
 
     threeDResources: [
@@ -140,5 +141,14 @@ export const celaneseConfig: ProjectConfig[] = [
         6756242956839926 /* INFIELD_CL_VAM */,
       ],
     },
+  },
+  {
+    project: 'celanese-dev',
+    site: ' ',
+
+    threeDResources: [
+      // Cad Models
+      { modelId: 4506281922007984, revisionId: 1335075792330770 }, // CL-VAM 3D
+    ],
   },
 ];

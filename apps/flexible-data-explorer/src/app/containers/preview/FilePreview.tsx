@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 
-import styled from 'styled-components';
-
 import { Button } from '@cognite/cogs.js';
 
 import { Dropdown } from '../../components/dropdown/Dropdown';
@@ -10,10 +8,10 @@ import { useNavigation } from '../../hooks/useNavigation';
 import { useOpenIn } from '../../hooks/useOpenIn';
 import { useTranslation } from '../../hooks/useTranslation';
 import { useFileByIdQuery } from '../../services/instances/file/queries/useFileByIdQuery';
-import { FDXFilePreview } from '../widgets/File/FilePreview';
 
 import { Overview } from './containers/Overview';
 import { PropertiesView } from './containers/PropertiesView';
+import { FileViewer } from './containers/Viewers/FileViewer';
 import {
   InstancePreviewContainer,
   InstancePreviewContent,
@@ -64,9 +62,8 @@ export const FilePreview: React.FC<Props> = ({ id }) => {
 
   return (
     <InstancePreviewContainer>
-      <FileContainer>
-        <FDXFilePreview fileId={id} showControls={false} />
-      </FileContainer>
+      <FileViewer id={id} />
+
       <InstancePreviewContent>{renderContent()}</InstancePreviewContent>
 
       <InstancePreviewFooter>
@@ -85,8 +82,3 @@ export const FilePreview: React.FC<Props> = ({ id }) => {
     </InstancePreviewContainer>
   );
 };
-
-const FileContainer = styled.div`
-  height: 140px;
-  width: 300px;
-`;

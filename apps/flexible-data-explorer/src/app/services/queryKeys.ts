@@ -69,7 +69,7 @@ export const queryKeys = {
   instanceRelationship: (
     instance: Instance,
     dataModel: Partial<DataModelV2>,
-    type: string,
+    entry: Record<string, unknown>,
     filters: any
   ) =>
     [
@@ -77,7 +77,7 @@ export const queryKeys = {
       'instance-relationship',
       instance,
       dataModel,
-      type,
+      entry,
       filters,
     ] as const,
 

@@ -27,18 +27,21 @@ export const useRelatedAssetsQuery = ({
   assetFilter = {},
   query,
   sortBy,
+  enabled = true,
 }: {
   resourceExternalId?: string;
   relationshipFilter?: RelationshipsFilterInternal;
   assetFilter?: InternalAssetFilters;
   query?: string;
   sortBy?: TableSortBy[];
+  enabled?: boolean;
 }) => {
   const { data: detailViewRelatedResourcesData } =
     useRelatedResourceDataForDetailView({
       resourceExternalId: resourceExternalId,
       relationshipResourceType: ResourceTypes.Asset,
       filter: relationshipFilter,
+      options: { enabled },
     });
 
   const advancedFilter = useMemo(() => {
@@ -64,7 +67,7 @@ export const useRelatedAssetsQuery = ({
       sort,
       limit: 20,
     },
-    { enabled: hasRelatedAssets }
+    { enabled: hasRelatedAssets && enabled }
   );
 
   const transformedData = useMemo(() => {

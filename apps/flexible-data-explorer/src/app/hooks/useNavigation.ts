@@ -190,15 +190,24 @@ export const useNavigation = () => {
 
   const toInstancePage = useCallback(
     (
-      dataType: string,
-      instanceSpace: string | undefined,
-      externalId: string,
+      dataType?: string,
+      instanceSpace?: string | undefined,
+      externalId?: string,
       dataModel: {
         dataModel?: string;
         space?: string;
         version?: string;
       } = {}
     ) => {
+      if (
+        dataType === undefined ||
+        externalId === undefined ||
+        instanceSpace === undefined
+      ) {
+        console.error('Missing parameters to navigate to instance page');
+        return;
+      }
+
       const queryParams = new URLSearchParams(search);
 
       if (queryParams.has('expandedId')) {
@@ -219,7 +228,7 @@ export const useNavigation = () => {
 
       return toGenericPage(dataType, instanceSpace, externalId, dataModel);
     },
-    [toFilePage, toGenericPage, toSequencePage, toTimeseriesPage]
+    [toFilePage, toGenericPage, toSequencePage, toTimeseriesPage, search]
   );
 
   const toLandingPage = useCallback(() => {
