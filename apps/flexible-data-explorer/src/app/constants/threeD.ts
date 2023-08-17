@@ -18,6 +18,8 @@ export const defaultViewerOptions: ComponentProps<
     placement: 'topRight',
     opacity: 0.2,
   },
+  antiAliasingHint: 'msaa2+fxaa',
+  ssaoQualityHint: 'medium',
 };
 
 export const defaultRevealColor = new Color(0x4a4a4b);
