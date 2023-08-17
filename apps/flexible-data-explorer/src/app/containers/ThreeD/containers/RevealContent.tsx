@@ -1,13 +1,18 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 
+import { DefaultNodeAppearance } from '@cognite/reveal';
 import {
   AddResourceOptions,
+  FdmAssetStylingGroup,
   Reveal3DResources,
   useCameraNavigation,
+  useClickedNodeData,
 } from '@cognite/reveal-react-components';
 
 import { defaultResourceStyling } from '../../../constants/threeD';
 import { StyledRevealToolBar } from '../components/ToolBar/StyledRevealToolBar';
+
+import { PreviewCard } from './PreviewCard';
 
 interface Props {
   modelIdentifiers: AddResourceOptions[];
@@ -24,6 +29,20 @@ export const RevealContent = ({
   hideToolbar,
 }: Props) => {
   const cameraNavigation = useCameraNavigation();
+  const clickedNodeData = useClickedNodeData();
+
+  const instanceStyling = useMemo(() => {
+    const styling: FdmAssetStylingGroup[] = [];
+
+    if (clickedNodeData !== undefined) {
+      styling.push({
+        fdmAssetExternalIds: [clickedNodeData.fdmNode],
+        style: { cad: DefaultNodeAppearance.Highlighted },
+      });
+    }
+
+    return styling;
+  }, [clickedNodeData?.fdmNode]);
 
   const handleResourcesAdded = useCallback(() => {
     if (fitCamera === 'models') {
@@ -43,8 +62,10 @@ export const RevealContent = ({
       <Reveal3DResources
         resources={modelIdentifiers}
         defaultResourceStyling={defaultResourceStyling}
+        instanceStyling={instanceStyling}
         onResourcesAdded={handleResourcesAdded}
       />
+      <PreviewCard nodeData={clickedNodeData} />
     </>
   );
 };
