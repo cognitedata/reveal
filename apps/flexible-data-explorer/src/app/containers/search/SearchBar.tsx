@@ -18,6 +18,7 @@ import zIndex from '../../utils/zIndex';
 import { AISearchPreview } from './AISearchPreview';
 import { AISearchCategoryDropdown } from './components/AISearchCategoryDropdown';
 import { AiSearchIcon } from './components/AiSearchIcon';
+import { SearchBarSwitch } from './SearchBarSwitch';
 import { SearchFilters } from './SearchFilters';
 import { SearchPreview } from './SearchPreview';
 
@@ -64,74 +65,83 @@ export const SearchBar: React.FC<Props> = ({
   }, [globalQuery]);
 
   return (
-    <Container
-      ref={ref}
-      focused={isAIEnabled ? !localQuery && isPreviewFocused : isPreviewFocused}
-      width={width}
-      inverted={inverted}
-      $isAIEnabled={isAIEnabled}
-    >
-      <Content>
-        {isAIEnabled ? <AiSearchIcon /> : <StyledIcon type="Search" />}
-        {isAIEnabled && <AISearchCategoryDropdown />}
-        <StyledInput
-          onKeyUp={(e) => {
-            if (e.key === 'Enter' || e.keyCode === 13) {
-              e.preventDefault();
-              (e.target as any).blur();
+    <>
+      <Container
+        ref={ref}
+        focused={
+          isAIEnabled ? !localQuery && isPreviewFocused : isPreviewFocused
+        }
+        width={width}
+        inverted={inverted}
+        $isAIEnabled={isAIEnabled}
+      >
+        <Content>
+          {isAIEnabled ? <AiSearchIcon /> : <StyledIcon type="Search" />}
+          {isAIEnabled && <AISearchCategoryDropdown />}
+          <StyledInput
+            onKeyUp={(e) => {
+              if (e.key === 'Enter' || e.keyCode === 13) {
+                e.preventDefault();
+                (e.target as any).blur();
 
-              // Rest of the search logic is handled inside @{SearchPreviewActions}
-              if (!localQuery) {
-                closePreview();
+                // Rest of the search logic is handled inside @{SearchPreviewActions}
+                if (!localQuery) {
+                  closePreview();
 
-                navigate.toSearchPage(localQuery, filters);
+                  navigate.toSearchPage(localQuery, filters);
+                }
               }
-            }
-          }}
-          // Do not add onBlur to input, it messes with the search preview.
-          // onBlur={() => {
-          //   if (!disablePreview) {
-          //     closePreview();
-          //   }
-          // }}
-          onFocus={() => {
-            if (!disablePreview) {
-              setPreviewFocus(true);
-            }
-          }}
-          value={localQuery ?? ''}
-          autoFocus={autoFocus}
-          placeholder={t(
-            isAIEnabled ? 'AI_SEARCH_PLACEHOLDER' : 'SEARCH_PLACEHOLDER'
-          )}
-          onChange={(e) => {
-            e.preventDefault();
-
-            setLocalQuery(e.target.value);
-          }}
-        />
-
-        {!isAIEnabled && (
-          <SearchFilters
-            value={filters}
-            onClick={() => {
-              closePreview();
             }}
-            onChange={(newValue) => {
-              navigate.toSearchPage(globalQuery, newValue);
+            // Do not add onBlur to input, it messes with the search preview.
+            // onBlur={() => {
+            //   if (!disablePreview) {
+            //     closePreview();
+            //   }
+            // }}
+            onFocus={() => {
+              if (!disablePreview) {
+                setPreviewFocus(true);
+              }
             }}
-            filterMenuMaxHeight={options?.filterMenuMaxHeight}
+            value={localQuery ?? ''}
+            autoFocus={autoFocus}
+            placeholder={t(
+              isAIEnabled ? 'AI_SEARCH_PLACEHOLDER' : 'SEARCH_PLACEHOLDER'
+            )}
+            onChange={(e) => {
+              e.preventDefault();
+
+              setLocalQuery(e.target.value);
+            }}
           />
-        )}
-      </Content>
 
-      {isPreviewFocused &&
-        (isAIEnabled ? (
-          <AISearchPreview query={localQuery} onSelectionClick={closePreview} />
-        ) : (
-          <SearchPreview query={localQuery} onSelectionClick={closePreview} />
-        ))}
-    </Container>
+          {!isAIEnabled && (
+            <SearchFilters
+              value={filters}
+              onClick={() => {
+                closePreview();
+              }}
+              onChange={(newValue) => {
+                navigate.toSearchPage(globalQuery, newValue);
+              }}
+              filterMenuMaxHeight={options?.filterMenuMaxHeight}
+            />
+          )}
+        </Content>
+
+        {isPreviewFocused &&
+          (isAIEnabled ? (
+            <AISearchPreview
+              query={localQuery}
+              onSelectionClick={closePreview}
+            />
+          ) : (
+            <SearchPreview query={localQuery} onSelectionClick={closePreview} />
+          ))}
+      </Container>
+
+      {!isAIEnabled && <SearchBarSwitch inverted={inverted} />}
+    </>
   );
 };
 
@@ -145,6 +155,8 @@ const Container = styled.div<{
   background-color: white;
   height: 52px;
   margin: 24px;
+  margin-left: 0;
+  margin-right: 0;
   border-bottom: none;
   /* border-bottom-left: none; */
   z-index: ${zIndex.SEARCH};

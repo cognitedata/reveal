@@ -5,8 +5,7 @@ import styled from 'styled-components';
 import { RevealKeepAlive } from '@cognite/reveal-react-components';
 
 import { SearchBar } from './containers/search/SearchBar';
-import { SearchBarSwitch } from './containers/search/SearchBarSwitch';
-import { useAISearchParams, useViewModeParams } from './hooks/useParams';
+import { useViewModeParams } from './hooks/useParams';
 import { HomePage } from './pages/HomePage';
 import { FilePage } from './pages/Instances/FilePage';
 import { InstancesPage } from './pages/Instances/InstancesPage';
@@ -26,7 +25,6 @@ const ViewContainer = () => {
 };
 
 const Routes = () => {
-  const [isAIEnabled] = useAISearchParams();
   return (
     <RevealKeepAlive>
       <ReactRoutes>
@@ -43,8 +41,7 @@ const Routes = () => {
             element={
               <Container>
                 <Content>
-                  <SearchBar width="1026px" inverted />
-                  {!isAIEnabled && <SearchBarSwitch inverted />}
+                  <SearchBar inverted />
                 </Content>
                 <ViewContainer />
               </Container>
@@ -87,8 +84,10 @@ const Container = styled.div`
 `;
 
 const Content = styled.div`
-  width: 100%;
+  width: 1026px;
   display: flex;
   align-items: center;
   justify-content: center;
+  align-self: center;
+  gap: 16px;
 `;

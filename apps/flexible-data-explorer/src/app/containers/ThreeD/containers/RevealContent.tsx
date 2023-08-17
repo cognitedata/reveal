@@ -34,7 +34,7 @@ export const RevealContent = ({
   const instanceStyling = useMemo(() => {
     const styling: FdmAssetStylingGroup[] = [];
 
-    if (clickedNodeData !== undefined) {
+    if (clickedNodeData?.fdmNode !== undefined) {
       styling.push({
         fdmAssetExternalIds: [clickedNodeData.fdmNode],
         style: { cad: DefaultNodeAppearance.Highlighted },

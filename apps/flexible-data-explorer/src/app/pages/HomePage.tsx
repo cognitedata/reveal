@@ -2,8 +2,6 @@ import { useEffect } from 'react';
 
 import styled from 'styled-components';
 
-import { Flex } from '@cognite/cogs.js';
-
 import { AIDisclaimer } from '../components/links/AIDisclaimer';
 import { DataExplorerLink } from '../components/links/DataExplorerLink';
 import { Categories } from '../containers/category/Categories';
@@ -28,24 +26,24 @@ export const HomePage = () => {
       setIsAIEnabled(false);
     }
   }, [setIsAIEnabled, isAIEnabled, isCopilotEnabled]);
+
   return (
     <Page disableScrollbarGutter>
-      <SearchContainer $isAIEnabled={isAIEnabled}>
-        <Flex
-          direction="column"
-          justifyContent="center"
-          className="search-bar-container"
-          alignItems="center"
-        >
-          <AILabelsContainer $isAIEnabled={isAIEnabled}>
-            <AILabels />
-          </AILabelsContainer>
-          <SearchConfiguration header />
-          <SearchBarContainer>
-            <SearchBar width="774px" options={SEARCH_BAR_OPTIONS} />
-          </SearchBarContainer>
-          {isAIEnabled ? <AIDisclaimer /> : <DataExplorerLink />}
-        </Flex>
+      <SearchContainer
+        className="search-bar-container"
+        $isAIEnabled={isAIEnabled}
+      >
+        <AILabelsContainer $isAIEnabled={isAIEnabled}>
+          <AILabels />
+        </AILabelsContainer>
+
+        <SearchConfiguration header />
+        <SearchBarContainer>
+          <SearchBar options={SEARCH_BAR_OPTIONS} />
+        </SearchBarContainer>
+
+        {isAIEnabled ? <AIDisclaimer /> : <DataExplorerLink />}
+
         {isCopilotEnabled && (
           <AISwitchContainer>
             <AISwitch />
@@ -64,10 +62,11 @@ const SearchContainer = styled.div<{ $isAIEnabled: boolean }>`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-
+  padding-bottom: 64px;
   min-height: ${(props) => (props.$isAIEnabled ? '100%' : '60vh')};
-
   box-sizing: border-box;
+  transition: 0.3s all;
+  border-bottom: 1px solid rgba(83, 88, 127, 0.16);
 
   &&:before {
     content: '';
@@ -94,6 +93,7 @@ const SearchContainer = styled.div<{ $isAIEnabled: boolean }>`
     transition: 0.3s all;
     z-index: -1;
   }
+
   &&:after {
     content: '';
     background: radial-gradient(
@@ -114,27 +114,21 @@ const SearchContainer = styled.div<{ $isAIEnabled: boolean }>`
     left: 0;
     z-index: -2;
   }
-
-  transition: 0.3s all;
-
-  border-bottom: 1px solid rgba(83, 88, 127, 0.16);
-
-  .search-bar-container {
-    margin-top: auto;
-    margin-bottom: 12px;
-  }
 `;
 
 const SearchBarContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 775px;
+  gap: 16px;
 `;
 
 const AISwitchContainer = styled.div`
   justify-self: flex-end;
-  margin-top: auto;
   margin-bottom: 24px;
+  position: absolute;
+  bottom: 0;
 `;
 
 const AILabelsContainer = styled.div<{ $isAIEnabled: boolean }>`

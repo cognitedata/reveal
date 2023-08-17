@@ -12,7 +12,7 @@ import queryString from 'query-string';
 import { DateRange, ValueByDataType } from '../containers/Filter';
 import { createSearchParams } from '../utils/router';
 
-import { useViewModeParams } from './useParams';
+import { ViewMode, useViewModeParams } from './useParams';
 import { useGetChartsUrl, useGetCanvasUrl } from './useUrl';
 
 // TODO: rename this could help, react-router also has a 'useNavigation'.
@@ -44,6 +44,7 @@ export const useNavigation = () => {
       options: {
         ignoreType?: boolean;
         enableAISearch?: boolean;
+        viewMode?: ViewMode;
       } = {}
     ) => {
       const { type } = params;
@@ -53,7 +54,7 @@ export const useNavigation = () => {
         searchQuery,
         filters,
         aiSearch: String(enableAISearch),
-        viewMode: viewMode,
+        viewMode: options.viewMode || viewMode,
       });
 
       navigate({
@@ -63,7 +64,7 @@ export const useNavigation = () => {
         search: queryParams.toString(),
       });
     },
-    [basename, params, navigate]
+    [basename, params, navigate, viewMode]
   );
 
   const toSearchCategoryPage = useCallback(
@@ -119,6 +120,8 @@ export const useNavigation = () => {
       } = {}
     ) => {
       const queryParams = new URLSearchParams(search);
+      // Assure that we are looking at the dashboard of the instance
+      queryParams.set('viewMode', 'list');
 
       const pathname = [
         basename,
