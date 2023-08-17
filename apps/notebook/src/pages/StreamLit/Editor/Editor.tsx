@@ -16,6 +16,7 @@ import { Body, Button, Flex, Icon, Overline, Tooltip } from '@cognite/cogs.js';
 
 import { AddFileModal } from '../components/AddFileModal';
 import { DeleteFileModal } from '../components/DeleteFileModal';
+import { EditFilenameModal } from '../components/EditFilenameModal';
 import { FileTemplate } from '../fileTemplates';
 import { AppData } from '../types';
 
@@ -66,6 +67,7 @@ export const Editor = ({
   const [currentFileName, setCurrentFileName] = useState<string>();
   const [showAddFileModal, setShowAddFileModal] = useState(false);
   const [showDeleteFileModal, setShowDeleteFileModal] = useState(false);
+  const [showEditFilenameModal, setShowEditFilenameModal] = useState(false);
 
   useEffect(() => {
     const newFileNames = Object.keys(appData.files).sort((a, b) => {
@@ -168,6 +170,42 @@ export const Editor = ({
     setShowDeleteFileModal(false);
   }, [appData, currentFileName, fileNames, onAppFilesChange]);
 
+  const handleEditFilename = useCallback(
+    (newFileName: string) => {
+      if (!currentFileName) {
+        return;
+      }
+
+      const fullNewFileName = currentFileName.startsWith('pages/')
+        ? `pages/${newFileName}`
+        : newFileName;
+
+      const buf = appData.files[currentFileName];
+      delete appData.files[currentFileName];
+      appData.files[fullNewFileName] = buf;
+
+      const currentIndex = fileNames.indexOf(currentFileName);
+      fileNames[currentIndex] = fullNewFileName;
+
+      const isEntryPoint = appData.entrypoint === currentFileName;
+      trackEvent('StreamlitApps.EditFilenName', {
+        oldFileName: currentFileName,
+        newFileName: fullNewFileName,
+        isEntryPoint,
+      });
+
+      if (isEntryPoint) {
+        appData.entrypoint = fullNewFileName;
+      }
+
+      onAppFilesChange(appData);
+      setCurrentFileName(fullNewFileName);
+      setFileNames([...fileNames]);
+      setShowEditFilenameModal(false);
+    },
+    [appData, currentFileName, fileNames, onAppFilesChange]
+  );
+
   useEffect(() => {
     return () => {
       if (monacoRef) {
@@ -261,6 +299,7 @@ export const Editor = ({
               fileName={fileName}
               isEntryPoint={appData.entrypoint === fileName}
               onDelete={() => setShowDeleteFileModal(true)}
+              onEditFilename={() => setShowEditFilenameModal(true)}
               hasChanges={filesWithChanges.includes(fileName)}
             />
           ))}
@@ -277,6 +316,7 @@ export const Editor = ({
               isEntryPoint={appData.entrypoint === fileName}
               active={currentFileName === fileName}
               onDelete={() => setShowDeleteFileModal(true)}
+              onEditFilename={() => setShowEditFilenameModal(true)}
               hasChanges={filesWithChanges.includes(fileName)}
               onClick={() => setCurrentFileName(fileName)}
             />
@@ -361,6 +401,13 @@ export const Editor = ({
           fileName={currentFileName}
         />
       )}
+      {showEditFilenameModal && currentFileName && (
+        <EditFilenameModal
+          onCancel={() => setShowEditFilenameModal(false)}
+          onOk={handleEditFilename}
+          fileName={currentFileName}
+        />
+      )}
     </>
   );
 };
@@ -370,6 +417,7 @@ const PageItem = ({
   isEntryPoint,
   hasChanges,
   onDelete,
+  onEditFilename,
   disabled,
   active,
   onClick,
@@ -380,6 +428,7 @@ const PageItem = ({
   disabled?: boolean;
   active?: boolean;
   onDelete: () => void;
+  onEditFilename: () => void;
   onClick: () => void;
 }) => {
   return (
@@ -420,12 +469,23 @@ const PageItem = ({
       </div>
       <Button
         disabled={disabled}
+        id="edit-button"
+        type="ghost-destructive"
+        icon="Edit"
+        size="small"
+        style={{ alignSelf: 'flex-end' }}
+        onClick={onEditFilename}
+        aria-label="Edit Name"
+      />
+      <Button
+        disabled={disabled}
         id="delete-button"
         type="ghost-destructive"
         icon="Delete"
         size="small"
         style={{ alignSelf: 'flex-end' }}
         onClick={onDelete}
+        aria-label="Delete"
       />
     </ListItem>
   );
@@ -441,14 +501,16 @@ const ListItem = styled(Flex)<{ $active?: boolean }>`
   color: ${(props) =>
     props.$active ? 'var(--cogs-surface--action--strong--default)' : 'inherit'};
 
-  #delete-button {
+  #delete-button,
+  #edit-button {
     transition: 0.3s all;
     opacity: 0;
   }
 
   &&:hover {
     background: #fff;
-    #delete-button {
+    #delete-button,
+    #edit-button {
       opacity: 1;
     }
   }
