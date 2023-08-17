@@ -41,7 +41,9 @@ export const FloatingHistoryPanel = (): JSX.Element => {
                 message: JSON.parse(h.change.message!),
                 time: h.change.time,
               };
-            } catch {}
+            } catch {
+              return;
+            }
             {
               return false;
             }
