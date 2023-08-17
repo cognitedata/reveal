@@ -12,6 +12,7 @@ import {
   datamodelQueryTypePrompt,
   datamodelRelevantPropertiesPrompt,
   datamodelRelevantTypeMultiModelsPrompt,
+  datamodelResultSummaryPrompt,
 } from '@cognite/llm-hub';
 
 import {
@@ -304,6 +305,7 @@ export class GraphQlChain extends CogniteBaseChain {
               type,
               new Map(Object.entries(fields)),
               dataModelTypes,
+              true,
               true
             )}
           }`,
@@ -385,8 +387,17 @@ export class GraphQlChain extends CogniteBaseChain {
       name: 'retrive results',
       loadingMessage: 'Gathering answer...',
       run: async (
-        { sdk },
-        { omitted, query, queryType, variables, type, selectedDataModel }
+        { sdk, message },
+        {
+          omitted,
+          query,
+          queryType,
+          variables,
+          type,
+          selectedDataModel,
+          filteredTypes,
+          dataModelTypes,
+        }
       ) => {
         const operationName = getOperationName(queryType, type);
         // Get summary
@@ -402,12 +413,42 @@ export class GraphQlChain extends CogniteBaseChain {
               variables,
             },
           });
+          const relevantTypesDml = constructGraphQLTypes(
+            filteredTypes,
+            dataModelTypes
+          );
+
+          const [summaryResults] = await callPromptChain(
+            this,
+            'summarize',
+            datamodelResultSummaryPrompt,
+            [
+              {
+                query,
+              },
+            ]
+          )
+            .then(
+              safeConvertToJson<{
+                groupBy?: string;
+                aggregateProperties: { [key in string]: string[] };
+              }>
+            )
+            .catch(() => {
+              return [];
+            });
+
+          console.log(summaryResults);
 
           // assume no aggregate atm
           const summary =
             queryType === 'list'
               ? // todo: add support for pagination
-                `${response.data[operationName]['items'].length}+`
+                `${response.data[operationName]['items'].length}${
+                  response.data[operationName]['pageInfo']?.hasNextPage
+                    ? '+'
+                    : ''
+                }`
               : JSON.stringify(response.data[operationName]['items']);
 
           sendToCopilotEvent('NEW_MESSAGES', [
@@ -423,11 +464,9 @@ export class GraphQlChain extends CogniteBaseChain {
                   selectedDataModel.views.find((el) => el.externalId === type)
                     ?.version || '',
               },
-              content: `Found ${summary} results for ${type}${
+              content: `I found ${summary} results. ${
                 omitted.length > 0
-                  ? `\n\nNote: We had to omit these filters:\n${omitted
-                      .map((el) => `- ${el.key}: ${el.reason}`)
-                      .join('\n')}`
+                  ? "I wasn't able to process the entire question. "
                   : ''
               }`,
               graphql: { query, variables },
@@ -467,7 +506,7 @@ export class GraphQlChain extends CogniteBaseChain {
                   selectedDataModel.views.find((el) => el.externalId === type)
                     ?.version || '',
               },
-              content: `We were not able to process your query, omitting all filters, we found ${summary} items`,
+              content: `I found ${summary} results. I wasn't able to process the entire question. `,
               graphql: { query, variables: {} },
               chain: this.constructor.name,
               actions: [],

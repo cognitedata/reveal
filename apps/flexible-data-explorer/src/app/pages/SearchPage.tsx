@@ -10,10 +10,12 @@ import { GenericResults } from '../containers/search/results/GenericResults';
 import { TimeseriesResults } from '../containers/search/results/TimeseriesResults';
 import { SearchCategories } from '../containers/search/SearchCategories';
 import { SearchConfiguration } from '../containers/search/SearchConfiguration';
+import { useAISearchParams } from '../hooks/useParams';
 
 export const SearchPage = () => {
   const { type } = useParams();
 
+  const [isAIEnabled] = useAISearchParams();
   const renderResults = () => {
     if (type === 'Files') {
       return <FileResults />;
@@ -27,9 +29,11 @@ export const SearchPage = () => {
       return <GenericResults selectedDataType={type} />;
     }
 
+    if (isAIEnabled) {
+      return <AIResults />;
+    }
     return (
       <>
-        <AIResults />
         <GenericResults />
         <TimeseriesResults />
         <FileResults />
@@ -47,7 +51,7 @@ export const SearchPage = () => {
               {renderResults()}
             </Content>
 
-            <SearchCategories />
+            {!isAIEnabled && <SearchCategories />}
           </Suspense>
         </Container>
       </Page.Body>

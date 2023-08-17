@@ -156,6 +156,7 @@ export type CopilotEvents = {
     NEW_MESSAGES: CopilotMessage[];
     LOADING_STATUS: {
       status: string;
+      stage?: number;
     };
     // get code from selected area
     GET_CODE_FOR_SELECTION: {

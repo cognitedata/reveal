@@ -20,12 +20,10 @@ import {
 } from '@cognite/cogs.js';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 
-import styleScope from '../styleScope';
-
 import zIndex from './utils/zIndex';
 
 export const getContainer = () => {
-  const els = document.getElementsByClassName(styleScope.styleScope);
+  const els = document.getElementsByClassName('cdf-solutions-ui-style-scope');
   const el = els.item(0)! as HTMLElement;
   return el || document.body;
 };
@@ -63,7 +61,9 @@ export default function GlobalStyles(props: { children: React.ReactNode }) {
     return <Loader />;
   }
 
-  return <Wrapper className={styleScope.styleScope}>{props.children}</Wrapper>;
+  return (
+    <Wrapper className="cdf-solutions-ui-style-scope">{props.children}</Wrapper>
+  );
 }
 
 // Cogs fix

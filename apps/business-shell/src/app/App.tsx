@@ -97,4 +97,5 @@ export default App;
 const CopilotWrapper = styled.div`
   z-index: ${zIndex.COPILOT};
   position: absolute;
+  display: none;
 `;

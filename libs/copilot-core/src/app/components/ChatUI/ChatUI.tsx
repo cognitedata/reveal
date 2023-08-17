@@ -1,7 +1,7 @@
 /* eslint-disable testing-library/await-async-utils */
 import { useState, useEffect, useCallback, useMemo } from 'react';
 
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { useBotUI } from '@botui/react';
 import { BotuiInterface } from 'botui';
@@ -308,6 +308,31 @@ export const ChatUIInner = () => {
   );
 };
 
+export const CopilotPurpleOverride = css`
+  .cogs-button.ai {
+    background: rgba(111, 59, 228, 0.08);
+    color: #6f3be4;
+  }
+  .cogs-button.ai.cogs-button--disabled {
+    background: transparent;
+    color: #6f3be4;
+    opacity: 0.5;
+  }
+  .cogs-button.ai.cogs-button--disabled.selected {
+    opacity: 1;
+  }
+  .cogs-button.ai.cogs-button--disabled:hover {
+    background: none;
+  }
+  .cogs-button.ai:hover {
+    background: rgba(111, 59, 228, 0.18);
+    color: #6f3be4;
+  }
+
+  --cogs-surface--action--strong--hover: #632cd4;
+  --cogs-surface--action--strong--default: #6f3be4;
+`;
+
 const Wrapper = styled.div`
   .botui_action {
     width: 100%;
@@ -403,6 +428,7 @@ const Wrapper = styled.div`
     opacity: 0;
     transform: translateX(-10px);
   }
+  ${CopilotPurpleOverride}
 `;
 
 const Overlay = styled(Flex)<{ $showOverlay: boolean; $isExpanded: boolean }>`
