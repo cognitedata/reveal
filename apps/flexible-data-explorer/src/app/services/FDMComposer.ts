@@ -1,7 +1,7 @@
-import { concat, merge } from 'lodash';
+import { merge } from 'lodash';
 
 import { FDMClientV2 } from './FDMClientV2';
-import { DataType, SearchResponse } from './types';
+import { DataType, EdgeRelationshipResponse, SearchResponse } from './types';
 
 export class FDMComposer {
   private clients: FDMClientV2[] | undefined;
@@ -253,9 +253,11 @@ export class FDMComposer {
 
   public async getEdgeRelationshipInstancesById(
     filters: Record<string, any> | undefined,
-    relationship: {
+    entry: {
       relatedType: string;
       relatedField: string;
+      fields?: any[];
+      edges?: any[];
     },
     instance: {
       dataType: string;
@@ -280,35 +282,39 @@ export class FDMComposer {
     }
 
     const primitiveFields = client.schema.getPrimitiveFields(
-      relationship?.relatedType
+      entry?.relatedType
     );
 
     const fields = [
       {
-        operation: relationship.relatedField,
+        operation: entry.relatedField,
         variables: {
           first: 100,
           after: context.cursor,
           filter: {
             value: filters || {},
             name: 'filter',
-            type: `_List${relationship.relatedType}Filter`,
+            type: `_List${entry.relatedType}Filter`,
           },
         },
         fields: [
           {
-            items: primitiveFields,
+            items: [...(entry.fields || []), ...primitiveFields],
           },
+          entry.edges ? { edges: entry.edges } : undefined,
           { pageInfo: ['hasNextPage', 'endCursor'] },
-        ],
+        ].filter(Boolean),
       },
     ];
 
-    const result = await client.getInstanceById<any>(fields, {
-      instanceSpace: instance.instanceSpace,
-      dataType: instance.dataType,
-      externalId: instance.externalId,
-    });
+    const result = await client.getInstanceById<EdgeRelationshipResponse>(
+      fields,
+      {
+        instanceSpace: instance.instanceSpace,
+        dataType: instance.dataType,
+        externalId: instance.externalId,
+      }
+    );
 
     return result;
   }
