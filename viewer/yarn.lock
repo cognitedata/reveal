@@ -640,7 +640,7 @@ __metadata:
     path-browserify: 1.0.1
     prettier: 3.0.1
     process: 0.11.10
-    puppeteer: 21.0.1
+    puppeteer: 21.0.3
     random-seed: 0.3.0
     raw-loader: 4.0.2
     remove-files-webpack-plugin: 1.5.0
@@ -1442,9 +1442,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@puppeteer/browsers@npm:1.5.0":
-  version: 1.5.0
-  resolution: "@puppeteer/browsers@npm:1.5.0"
+"@puppeteer/browsers@npm:1.6.0":
+  version: 1.6.0
+  resolution: "@puppeteer/browsers@npm:1.6.0"
   dependencies:
     debug: 4.3.4
     extract-zip: 2.0.1
@@ -1455,7 +1455,7 @@ __metadata:
     yargs: 17.7.1
   bin:
     browsers: lib/cjs/main-cli.js
-  checksum: d6cf17eb0803f27ae6bbfa97e1dbcff5bc1b41299722084c61815c3d50119976e03db25959fae2ab64b417945b026182729b166e60356c69cb388e62eeba3c79
+  checksum: 588ad09a340ae1abdb7e2a095b7e46cf8dc98a68cc6a92fdbf6cd9f91bc8a69957a9da6a144bc485f3b1e55fef187a7523185cf2ffa15c47addff6eb1a854bdc
   languageName: node
   linkType: hard
 
@@ -9912,28 +9912,28 @@ __metadata:
   languageName: node
   linkType: hard
 
-"puppeteer-core@npm:21.0.1":
-  version: 21.0.1
-  resolution: "puppeteer-core@npm:21.0.1"
+"puppeteer-core@npm:21.0.3":
+  version: 21.0.3
+  resolution: "puppeteer-core@npm:21.0.3"
   dependencies:
-    "@puppeteer/browsers": 1.5.0
+    "@puppeteer/browsers": 1.6.0
     chromium-bidi: 0.4.20
     cross-fetch: 4.0.0
     debug: 4.3.4
     devtools-protocol: 0.0.1147663
     ws: 8.13.0
-  checksum: 56e04c88b7e1f1f2ff42e4f2191160c512971852ffdfc4733fdd8b6de8d7dc5c9b8ebd4b5d9359aadba761c66fa8e4bad02525c5030ab989adec62cd4fd22308
+  checksum: 5665ebb6f917388643d04a8ba3f69582ed4dfb3c2c35ffcf04a024f368fcbcf114e43c81910f01f781490f303976ebf7179772f6a44bcb740370f6b135c658ae
   languageName: node
   linkType: hard
 
-"puppeteer@npm:21.0.1":
-  version: 21.0.1
-  resolution: "puppeteer@npm:21.0.1"
+"puppeteer@npm:21.0.3":
+  version: 21.0.3
+  resolution: "puppeteer@npm:21.0.3"
   dependencies:
-    "@puppeteer/browsers": 1.5.0
+    "@puppeteer/browsers": 1.6.0
     cosmiconfig: 8.2.0
-    puppeteer-core: 21.0.1
-  checksum: 241c937d32b72ecdb40ffe9a14bf912f24ff7070791cd9914064f0a69fc0f7e831177bf3686b65b49b508b2ddcab2de5793e79a2117d4b2b39de9b0f5c29383e
+    puppeteer-core: 21.0.3
+  checksum: e8cdb11b5739cc3cbf0ad2a5e1dd492771279bc662a71da97673942e7631cab2762022712ace7b80cbe68dddb7f584e2ace01200362823a08b4f665e9ca5402c
   languageName: node
   linkType: hard
 
