@@ -26,6 +26,7 @@ import { InstancePreviewProps } from './types';
 export const GenericInstancePreview: React.FC<InstancePreviewProps> = ({
   dataModel,
   instance,
+  disableViewer,
 }) => {
   const { t } = useTranslation();
   const { toInstancePage } = useNavigation();
@@ -105,7 +106,9 @@ export const GenericInstancePreview: React.FC<InstancePreviewProps> = ({
   return (
     <>
       <InstancePreviewContainer>
-        <ThreeDViewer instance={instance} dataModel={dataModel} />
+        {!disableViewer && (
+          <ThreeDViewer instance={instance} dataModel={dataModel} />
+        )}
 
         <InstancePreviewContent>
           <Suspense fallback={<Spinner />}>{renderContent()}</Suspense>

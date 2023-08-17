@@ -30,7 +30,7 @@ export const useTimeseriesListQuery = (
 ) => {
   const sdk = useSDK();
   const { data, ...rest } = useInfiniteQuery(
-    queryKeys.listTimeseries([advancedFilter, filter, limit, sort]),
+    queryKeys.listTimeseries([advancedFilter, filter, limit, sort, options]),
     ({ pageParam }) => {
       return getTimeseriesList(sdk, {
         cursor: pageParam,

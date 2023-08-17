@@ -19,3 +19,5 @@ export enum ViewType {
 
 // sub-app name configured in cdf-hu > cdf-navigation > sections - app.linkTo i.e. fusion sub apps configuration
 export const SUB_APP_PATH = 'explore';
+
+export const SUMMERY_CARD_DATA_ROWS = 5;

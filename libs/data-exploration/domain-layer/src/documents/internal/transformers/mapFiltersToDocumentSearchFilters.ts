@@ -37,6 +37,7 @@ export const mapFiltersToDocumentSearchFilters = (
     internalId,
     metadata,
     labels,
+    assetIds,
   }: InternalDocumentFilter,
   query?: string,
   searchConfig: FileConfigType = getSearchConfig().file
@@ -69,6 +70,7 @@ export const mapFiltersToDocumentSearchFilters = (
         return acc;
       }, [] as number[]);
     })
+    .containsAny('assetIds', () => assetIds?.map(({ value }) => value))
     .prefix('externalId', externalIdPrefix)
     .range('createdTime', {
       lte: createdTime?.max as number,

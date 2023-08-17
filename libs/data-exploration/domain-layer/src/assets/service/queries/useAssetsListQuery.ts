@@ -31,7 +31,7 @@ export const useAssetsListQuery = (
   const sdk = useSDK();
 
   const { data, ...rest } = useInfiniteQuery(
-    queryKeys.listAssets([advancedFilter, filter, limit, sort]),
+    queryKeys.listAssets([advancedFilter, filter, limit, sort, options]),
     ({ pageParam }) => {
       return getAssetsList(sdk, {
         cursor: pageParam,

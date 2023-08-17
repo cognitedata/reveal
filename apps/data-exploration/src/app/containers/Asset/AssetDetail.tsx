@@ -164,8 +164,9 @@ export const AssetDetail = ({
             tabKey="all-resources"
           >
             <AllTab
-              commonFilters={{ assetSubtreeIds: [{ value: asset.id }] }}
+              filters={{ common: { assetSubtreeIds: [{ value: asset.id }] } }}
               setCurrentResourceType={(type) => type && setSelectedTab(type)}
+              selectedResourceExternalId={asset.externalId}
             />
           </Tabs.Tab>,
           <Tabs.Tab

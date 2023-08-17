@@ -267,6 +267,8 @@ export const getModelTypes = async (
     throw new Error('Data model does not exist');
   }
 
+  DEBUG(apisResponse);
+
   const data = apisResponse.find((el) => el.version === version);
   if (!data) {
     throw new Error('Version does not exist');
