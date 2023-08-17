@@ -2,32 +2,53 @@ import React, { useState } from 'react';
 
 import styled from 'styled-components';
 
-import { Avatar, Body, Button, Flex, Icon, toast } from '@cognite/cogs.js';
+import {
+  Avatar,
+  Dropdown,
+  Body,
+  Button,
+  Flex,
+  Icon,
+  Menu,
+  toast,
+  Modal,
+  Overline,
+} from '@cognite/cogs.js';
 
 import { ReactComponent as CopilotIcon } from '../../../assets/CopilotIcon.svg';
-import { CopilotMessage } from '../../../lib/types';
+import { CopilotLogContent, CopilotMessage } from '../../../lib/types';
 import { useMetrics } from '../../hooks/useMetrics';
 import { useUserProfile } from '../../hooks/useUserProfile';
 
+import { Markdown } from './components/Markdown';
 import { ResponsiveActions } from './components/ResponsiveActions';
 
 export const MessageBase = ({
   message: { data },
   children,
+  hideActions = false,
 }: {
   message: {
     data: CopilotMessage;
   };
   children: React.ReactNode;
+  hideActions?: boolean;
 }) => {
-  const { content, source, actions = [], type } = data;
+  const { content, source, actions = [] } = data;
   const { data: user, isLoading } = useUserProfile();
 
   const [selectedFeedback, setSelectedFeedback] = useState('');
+  const [showLogs, setShowLogs] = useState(false);
 
   const { track } = useMetrics();
   return (
     <Wrapper gap={10}>
+      {showLogs && (
+        <LogsModal
+          logs={data.source === 'bot' ? data.logs || [] : []}
+          onClose={() => setShowLogs(false)}
+        />
+      )}
       {source === 'bot' ? (
         <CopilotIconWrapper alignItems="center" justifyContent="center">
           <CopilotIcon style={{ width: 16, height: 16, fill: 'white' }} />
@@ -48,16 +69,29 @@ export const MessageBase = ({
           <ErrorBoundary>
             <Flex style={{ flex: 1 }}>{children}</Flex>
           </ErrorBoundary>
-          {source === 'bot' && type !== 'data-models' && (
-            <Button
-              icon="EllipsisVertical"
-              type="ghost"
-              className="hover"
-              aria-label="overflow menu"
-            />
+          {source === 'bot' && !hideActions && (
+            <Dropdown
+              disabled={data.source !== 'bot' || !data.logs}
+              content={
+                <Menu>
+                  {data.source === 'bot' && data.logs ? (
+                    <Menu.Item onClick={() => setShowLogs(true)}>
+                      Logs
+                    </Menu.Item>
+                  ) : null}
+                </Menu>
+              }
+            >
+              <Button
+                icon="EllipsisVertical"
+                type="ghost"
+                className="hover"
+                aria-label="overflow menu"
+              />
+            </Dropdown>
           )}
         </Flex>
-        {source === 'bot' && type !== 'data-models' && (
+        {source === 'bot' && !hideActions && (
           <Flex gap={4}>
             <div style={{ flex: 1 }}>
               <ResponsiveActions
@@ -112,6 +146,29 @@ export const MessageBase = ({
         )}
       </Flex>
     </Wrapper>
+  );
+};
+
+const LogsModal = ({
+  logs,
+  onClose,
+}: {
+  logs: CopilotLogContent[];
+  onClose: () => void;
+}) => {
+  return (
+    <Modal visible onCancel={onClose} hideFooter>
+      {logs.map((el, i) => {
+        return (
+          <Flex direction="column" gap={4} key={i}>
+            <Overline size="small">
+              {i} - {el.key}
+            </Overline>
+            <Markdown content={el.content} />
+          </Flex>
+        );
+      })}
+    </Modal>
   );
 };
 

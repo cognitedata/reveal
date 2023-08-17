@@ -1,9 +1,8 @@
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 
 import { IHeaderParams } from 'ag-grid-community';
 
 import { Button, Icon, IconType } from '@cognite/cogs.js';
-
 interface CustomHeaderState {
   sortDirection: string;
   sortable: boolean;
@@ -12,6 +11,7 @@ interface CustomHeaderState {
 }
 export interface CustomHeaderProps extends IHeaderParams {
   headerIcon: IconType;
+  extras?: React.ReactNode;
 }
 
 /**
@@ -54,8 +54,10 @@ export class CustomHeader extends PureComponent<
 
   render() {
     const sortIndex = this.props.column.getSortIndex();
+
     return (
       <div className="ag-cell-label-container ag-header-cell-sorted-none">
+        {this.props.extras}
         {this.state.enableMenu && (
           <span
             data-ref="eMenu"
@@ -70,9 +72,8 @@ export class CustomHeader extends PureComponent<
               aria-label="Filter"
               size="small"
               className="menu-button"
-              icon="EllipsisVertical"
+              icon="Filter"
             />
-
             <Button
               aria-label="Filter"
               icon="Filter"

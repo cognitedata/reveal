@@ -36,7 +36,7 @@ export const PersonalInfoTab = ({
           icon={isUserInfoLoading ? 'Loader' : undefined}
           label={{
             info: undefined,
-            required: true,
+            required: false,
             text: nameFieldLabel,
           }}
           size="large"
@@ -50,7 +50,7 @@ export const PersonalInfoTab = ({
             icon={isUserInfoLoading ? 'Loader' : undefined}
             label={{
               info: undefined,
-              required: true,
+              required: false,
               text: emailFieldLabel,
             }}
             size="large"

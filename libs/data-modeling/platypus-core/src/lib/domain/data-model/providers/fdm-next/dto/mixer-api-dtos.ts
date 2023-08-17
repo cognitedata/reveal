@@ -8,6 +8,10 @@ export interface GraphQlDmlVersionDTO {
   graphQlDml?: string;
   createdTime?: string | number;
   lastUpdatedTime?: string | number;
+  views: {
+    externalId: string;
+    version: string;
+  }[];
 }
 
 export interface UpsertDataModelResult {

@@ -67,6 +67,7 @@ export class DocumentQueryChain extends CogniteBaseChain {
 
         const tempAnswers = await callPromptChain(
           this,
+          'extract text',
           infieldDocumentSingleContextQueryPrompt,
           inputList,
           { timeout: 4000 }
@@ -126,6 +127,7 @@ export class DocumentQueryChain extends CogniteBaseChain {
           res = (
             await callPromptChain(
               this,
+              'summarize text',
               infieldDocumentMultipleContextQueryPrompt,
               [
                 {
@@ -164,7 +166,7 @@ export class DocumentQueryChain extends CogniteBaseChain {
           },
         ]);
 
-        return { data: res };
+        return { data: { res } };
       },
     },
   ];

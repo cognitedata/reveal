@@ -75,5 +75,9 @@ libs/shared/user-onboarding-components  @cognitedata/cogs-team
 # Functions UI
 apps/functions-ui             @abdullah-cognite @shubhsk88
 
+# Simulator Integration
+apps/simint                   @cognitedata/deg-code-owners
+
+
 # FLows (Orchestration)
 apps/flows                         @cognitedata/data-onboarding

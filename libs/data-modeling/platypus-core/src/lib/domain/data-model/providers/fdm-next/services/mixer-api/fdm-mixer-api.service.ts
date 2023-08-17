@@ -36,6 +36,7 @@ export class FdmMixerApiService {
       listGraphQlDmlVersions(limit: $limit) {
         items {
           ${this.dataModelVersionFields}
+          views { externalId version }
         }
       }
     }
@@ -64,6 +65,7 @@ export class FdmMixerApiService {
       graphQlDmlVersionsById(space: $space, externalId: $externalId) {
         items {
           ${this.dataModelVersionFields}
+          views { externalId version }
         }
       }
     }
@@ -85,7 +87,7 @@ export class FdmMixerApiService {
   }
 
   upsertVersion(
-    dataModelVersion: GraphQlDmlVersionDTO
+    dataModelVersion: Omit<GraphQlDmlVersionDTO, 'views'>
   ): Promise<UpsertDataModelResult> {
     const dto = {
       query: `

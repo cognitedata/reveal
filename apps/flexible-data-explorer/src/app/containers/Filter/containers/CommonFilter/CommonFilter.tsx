@@ -1,6 +1,13 @@
 import * as React from 'react';
 import { useMemo, useState } from 'react';
 
+import isString from 'lodash/isString';
+import max from 'lodash/max';
+import min from 'lodash/min';
+import { useDebounce } from 'use-debounce';
+
+import { useTranslation } from '../../../../hooks/useTranslation';
+import { useSearchAggregateValuesQuery } from '../../../../services/dataTypes/queries/useSearchAggregatesQuery';
 import { ApplyButton, Menu, MenuHeader, Select } from '../../components';
 import { Field, FieldValue, Operator, ValueType } from '../../types';
 import { isNoInputOperator } from '../../utils';
@@ -28,6 +35,8 @@ export const CommonFilter: React.FC<CommonFilterProps> = ({
   onBackClick,
   onApplyClick,
 }) => {
+  const { t } = useTranslation();
+
   const operators = useMemo(() => {
     return getOperators(field);
   }, [field]);
@@ -37,6 +46,7 @@ export const CommonFilter: React.FC<CommonFilterProps> = ({
   );
 
   const [value, setValue] = useState<ValueType | undefined>(fieldValue?.value);
+  const [debouncedValue] = useDebounce(value, 300);
 
   const inputType = useMemo(() => {
     return getInputType(field.type, operator);
@@ -64,6 +74,33 @@ export const CommonFilter: React.FC<CommonFilterProps> = ({
     }
   };
 
+  const { data: suggestions = [], isLoading: isSuggestionsLoading } =
+    useSearchAggregateValuesQuery({
+      dataType,
+      field: field.name,
+      query: isString(debouncedValue) ? debouncedValue : '',
+    });
+
+  const helpText = useMemo(() => {
+    if (operator === Operator.GREATER_THAN) {
+      const dataMax = max(suggestions);
+      if (dataMax) {
+        return t('FILTER_INPUT_MAX', { value: dataMax });
+      }
+      return undefined;
+    }
+
+    if (operator === Operator.LESS_THAN) {
+      const dataMin = min(suggestions);
+      if (dataMin) {
+        return t('FILTER_INPUT_MIN', { value: dataMin });
+      }
+      return undefined;
+    }
+
+    return undefined;
+  }, [operator, suggestions, t]);
+
   return (
     <div onKeyUp={handleEnterPress}>
       <Menu>
@@ -79,7 +116,15 @@ export const CommonFilter: React.FC<CommonFilterProps> = ({
           onChange={handleChangeOperator}
         />
 
-        <CommonFilterInput type={inputType} value={value} onChange={setValue} />
+        <CommonFilterInput
+          type={inputType}
+          operator={operator}
+          value={value}
+          onChange={setValue}
+          suggestions={suggestions}
+          isSuggestionsLoading={isSuggestionsLoading}
+          helpText={helpText}
+        />
 
         <ApplyButton
           disabled={applyButtonDisabled}

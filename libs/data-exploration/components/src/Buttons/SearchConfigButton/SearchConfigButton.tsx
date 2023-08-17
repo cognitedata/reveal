@@ -28,10 +28,7 @@ export const SearchConfigButton: React.FC<Props> = ({
       <ButtonWrapper>
         <Button {...buttonProps}>
           <NotificationDot hidden={!showNotificationDot}>
-            {
-              // @ts-expect-error remove this when cogs is enabled for styles.
-              <BaseIcon type="Configure" style={{ verticalAlign: 'middle' }} />
-            }
+            <BaseIcon type="Configure" style={{ verticalAlign: 'middle' }} />
           </NotificationDot>
           <StyledSpan>{t('CONFIG', 'Config')}</StyledSpan>
         </Button>

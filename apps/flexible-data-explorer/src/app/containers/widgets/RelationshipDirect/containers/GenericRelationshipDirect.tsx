@@ -21,7 +21,7 @@ export const GenericRelationshipDirect: React.FC<RelationshipDirectProps> = ({
   const { dataModel, space, version } = useParams();
   const navigate = useNavigation();
 
-  const { data, isLoading, isFetched } =
+  const { data, isLoading, isFetched, isError } =
     useInstanceDirectRelationshipQuery(type);
 
   const handleRedirectClick = () => {
@@ -32,7 +32,7 @@ export const GenericRelationshipDirect: React.FC<RelationshipDirectProps> = ({
     });
   };
 
-  const isDisabled = isFetched && data === null;
+  const isDisabled = (isFetched && data === null) || isError;
 
   const renderValueTitle = () => {
     if (isLoading) {

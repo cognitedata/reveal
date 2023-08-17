@@ -60,6 +60,7 @@ export type DataModelTypeDefsType = {
   interfaces?: string[];
   directives?: DirectiveProps[];
   fields: DataModelTypeDefsField[];
+  version?: string;
   location?: { line: number; column: number };
 };
 export type DataModelTypeDefs = {

@@ -8,6 +8,7 @@ static final String[] APPLICATIONS = [
   'data-catalog',
   'raw-explorer',
   'coding-conventions',
+  'contextualization-ui',
   'copilot',
   'industry-canvas-ui',
   'interactive-diagrams',
@@ -48,6 +49,7 @@ static final Map<String, String> FIREBASE_APP_SITES = [
   'data-catalog': 'data-catalog',
   'raw-explorer': 'raw-explorer',
   'coding-conventions': 'coding-conventions',
+  'contextualization-ui': 'contextualization-ui',
   'copilot': 'copilot',
   'industry-canvas-ui': 'industry-canvas-ui',
   'interactive-diagrams': 'pnid-contextualization',
@@ -62,13 +64,14 @@ static final Map<String, String> FIREBASE_APP_SITES = [
   'entity-matching': 'entity-matching',
   'access-management': 'access-management',
   'notebook': 'notebook',
-  'fusion-shell': 'ui-host'
-  'flo'
+  'fusion-shell': 'ui-host',
+  'simint': 'simint',
+  'flows': 'flows'
 ]
 
 
 // Replace this with your app's ID on https://sentry.io/ -- if you do not have
-// one (or do not have access to Sentry), stop by #frontend to ask for help. 
+// one (or do not have access to Sentry), stop by #frontend to ask for help.
 static final Map<String, String> SENTRY_PROJECT_NAMES = [
   'platypus': "platypus",
   'coding-conventions': "coding-conventions",
@@ -117,6 +120,7 @@ static final String SLACK_CHANNEL = 'alerts-platypus'
 static final Map<String, String> VERSIONING_STRATEGY = [
   'platypus': 'multi-branch',
   'coding-conventions': 'multi-branch',
+  'contextualization-ui': 'single-branch',
   'data-exploration': 'multi-branch',
   'vision': 'single-branch',
   'data-catalog': 'multi-branch',
@@ -134,7 +138,7 @@ static final Map<String, String> VERSIONING_STRATEGY = [
   'functions-ui' : 'single-branch',
   'access-management': 'multi-branch',
   'notebook': 'single-branch',
-  'fusion-shell': 'mutli-branch',
+  'fusion-shell': 'multi-branch',
   'simint': 'multi-branch',
   'flows': 'multi-branch'
 ]
@@ -225,7 +229,7 @@ def shouldDeployPackage(String packageName, Map<String, String> NPM_PACKAGES, bo
     return false;
   }
 
-  sh(script: "./node_modules/.bin/nx build ${packageName}", returnStdout: true); 
+  sh(script: "./node_modules/.bin/nx build ${packageName}", returnStdout: true);
 
   def packageJson = "${NPM_PACKAGES[packageName]}/package.json";
 

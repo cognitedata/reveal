@@ -4,14 +4,13 @@ import styled from 'styled-components';
 
 import { useDebounce } from 'use-debounce';
 
-import { Button, Dropdown, Menu } from '@cognite/cogs.js';
+import { Button, Dropdown, InputExp, Menu } from '@cognite/cogs.js';
 
 import { CopilotAction } from '../../../../lib/types';
 import {
   sendFromCopilotEvent,
   sendToCopilotEvent,
 } from '../../../../lib/utils';
-import { getContainer } from '../../../utils/getContainer';
 
 const getButtonWidth = (text: string) => text.length * 8 + 20;
 
@@ -70,27 +69,33 @@ export const ResponsiveActions = ({ actions }: { actions: Action[] }) => {
   return (
     <Wrapper ref={navigationOuter}>
       {priorityItems.map((item) => (
-        <Button
-          size="small"
-          key={item.content}
-          icon={item.icon}
-          onClick={() => {
-            if ('onClick' in item && item.onClick) {
-              item.onClick();
-            } else if ('fromCopilotEvent' in item) {
-              sendFromCopilotEvent(...item.fromCopilotEvent);
-            } else if ('toCopilotEvent' in item) {
-              sendToCopilotEvent(...item.toCopilotEvent);
-            }
-          }}
-          className="ai"
+        <Dropdown
+          disabled={!('options' in item)}
+          hideOnSelect={{ hideOnContentClick: true, hideOnOutsideClick: true }}
+          content={<DropdownContent item={item} />}
         >
-          {item.content}
-        </Button>
+          <Button
+            size="small"
+            key={item.content}
+            icon={'options' in item ? 'ChevronDown' : item.icon}
+            iconPlacement={'options' in item ? 'right' : 'left'}
+            onClick={() => {
+              if ('onClick' in item && item.onClick) {
+                item.onClick();
+              } else if ('fromCopilotEvent' in item) {
+                sendFromCopilotEvent(...item.fromCopilotEvent);
+              } else if ('toCopilotEvent' in item) {
+                sendToCopilotEvent(...item.toCopilotEvent);
+              }
+            }}
+            className="ai"
+          >
+            {item.content}
+          </Button>
+        </Dropdown>
       ))}
       {moreItems.length > 0 && (
         <Dropdown
-          appendTo={getContainer() || document.body}
           content={
             <Menu>
               {moreItems.map((item) => (
@@ -123,6 +128,61 @@ export const ResponsiveActions = ({ actions }: { actions: Action[] }) => {
         </Dropdown>
       )}
     </Wrapper>
+  );
+};
+
+const DropdownContent = ({ item }: { item: CopilotAction }) => {
+  const [search, setSearch] = useState('');
+  const ref = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    // todo cogs override stuff
+    setTimeout(() => {
+      ref.current?.focus();
+    }, 100);
+  }, [search]);
+  return (
+    <Menu style={{ background: '#6f3be4' }}>
+      <Menu.Header style={{ padding: 0 }}>
+        <InputExp
+          ref={ref}
+          placeholder="Search"
+          inverted
+          variant="solid"
+          style={{ marginBottom: 4 }}
+          onClick={(e) => e.stopPropagation()}
+          onChange={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setSearch(e.target.value);
+          }}
+        />
+      </Menu.Header>
+      {'options' in item &&
+        (item.options || [])
+          .filter((el) =>
+            `${el.label} ${el.value}`
+              .toLowerCase()
+              .includes(search.toLowerCase().trim())
+          )
+          .map((el) => (
+            <Menu.Item
+              key={el.value}
+              onClick={() => {
+                if (item.onClick) {
+                  item.onClick(el.value);
+                }
+              }}
+              style={{
+                padding: '8px 6px',
+                cursor: 'pointer',
+                color: '#fff',
+              }}
+            >
+              {el.label}
+            </Menu.Item>
+          ))}
+    </Menu>
   );
 };
 

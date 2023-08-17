@@ -140,29 +140,19 @@ export class FDMClient {
     }
     const upsertedNodes = await this.chunkedPostRequest(
       this.baseUrlDms,
-      nodes.map(({ externalId, modelName, viewVersion, ...properties }) => ({
+      nodes.map(({ externalId, modelName, ...properties }) => ({
         instanceType: 'node',
         space: this.INSTANCE_SPACE,
         externalId,
         sources: [
-          viewVersion !== undefined
-            ? {
-                source: {
-                  type: 'view',
-                  space: this.SYSTEM_SPACE,
-                  externalId: modelName,
-                  version: viewVersion,
-                },
-                properties,
-              }
-            : {
-                source: {
-                  type: 'container',
-                  space: this.SYSTEM_SPACE,
-                  externalId: modelName,
-                },
-                properties,
-              },
+          {
+            source: {
+              type: 'container',
+              space: this.SYSTEM_SPACE,
+              externalId: modelName,
+            },
+            properties,
+          },
         ],
       })),
       UPSERT_CHUNK_SIZE

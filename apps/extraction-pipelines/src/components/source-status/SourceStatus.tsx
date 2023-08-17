@@ -3,7 +3,13 @@ import { useSearchParams } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import { Body, Colors, Flex, SegmentedControl, Title } from '@cognite/cogs.js';
+import {
+  Body,
+  Colors,
+  Flex,
+  Heading,
+  SegmentedControl,
+} from '@cognite/cogs.js';
 
 import { useTranslation } from '../../common';
 import {
@@ -27,7 +33,7 @@ type SourceStatusProps = {
 export const SourceStatus = ({
   className,
   source,
-}: SourceStatusProps): JSX.Element => {
+}: SourceStatusProps): React.JSX.Element => {
   const { t } = useTranslation();
 
   const { data: logs } = useMQTTJobLogs(source.externalId);
@@ -73,8 +79,8 @@ export const SourceStatus = ({
       }
       title={
         <Flex direction="column">
-          <Title level={6}>{t('topic-filters-status')}</Title>
-          <Body muted level={3}>
+          <StyledHeading level={6}>{t('topic-filters-status')}</StyledHeading>
+          <Body muted size="x-small">
             {t('uptime-with-percentage', {
               percentage: formatUptime(averageUptime),
             })}
@@ -89,12 +95,12 @@ export const SourceStatus = ({
           ))}
         </Flex>
         <DateAxis>
-          <Body level={3} muted>
+          <Body size="x-small" muted>
             {aggregationInterval === 'daily'
-              ? t('thirthy-days-ago')
+              ? t('thirty-days-ago')
               : t('seventy-two-hours-ago')}
           </Body>
-          <Body level={3} muted>
+          <Body size="x-small" muted>
             {t('now')}
           </Body>
           <InsightTabLinkContainer>
@@ -109,7 +115,7 @@ export const SourceStatus = ({
                 );
               }}
             >
-              <InsightTabLinkContent level={3}>
+              <InsightTabLinkContent size="x-small">
                 {t('view-full-insight')}
               </InsightTabLinkContent>
             </InsightTabLink>
@@ -119,6 +125,10 @@ export const SourceStatus = ({
     </Section>
   );
 };
+
+const StyledHeading = styled(Heading)`
+  color: ${Colors['text-icon--medium']};
+`;
 
 const Content = styled.div`
   display: flex;

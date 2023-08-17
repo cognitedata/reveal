@@ -7,13 +7,13 @@ import { useTranslation } from '../../common';
 const AppSelectorWrapper = styled.div`
   display: grid;
   grid-template-rows: 1fr;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   background: white;
   padding: 16px;
   border-radius: 8px;
   box-shadow: var(--cogs-elevation--overlay);
   gap: 8px;
-  width: 800px;
+
   margin-right: 16px;
   @media screen and (max-width: 800px) {
     grid-template-columns: 1fr 1fr;
@@ -43,7 +43,7 @@ export const AppSelector = () => {
 
   return (
     <AppSelectorWrapper>
-      <AppSelectorItem onClick={navigate('/infield')}>
+      <AppSelectorItem onClick={navigate('https://infield.cogniteapp.com/')}>
         <LogoWrapper>
           <ProductLogo type="InField" />
         </LogoWrapper>
@@ -52,7 +52,7 @@ export const AppSelector = () => {
           <p>{t('INFIELD_APP_SUBTITLE')}</p>
         </div>
       </AppSelectorItem>
-      <AppSelectorItem onClick={navigate('/maintain')}>
+      <AppSelectorItem onClick={navigate('https://maintain.cogniteapp.com/')}>
         <LogoWrapper>
           <ProductLogo type="Maintain" />
         </LogoWrapper>
@@ -61,7 +61,7 @@ export const AppSelector = () => {
           <p>{t('MAINTAIN_APP_SUBTITLE')}</p>
         </div>
       </AppSelectorItem>
-      <AppSelectorItem onClick={navigate('/inrobot')}>
+      <AppSelectorItem onClick={navigate('https://inrobot.cogniteapp.com/')}>
         <LogoWrapper>
           <ProductLogo type="BestDay" />
         </LogoWrapper>

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
+import styled from 'styled-components';
+
 import {
   createSchedule as createScheduleApi,
   isOIDCFlow,
@@ -178,6 +180,16 @@ export default function CreateScheduleModal({
             }
             help={getCronExpressionHelpMessage()}
           >
+            <HelperText>
+              The time zone for the{' '}
+              <a
+                href="https://docs.cognite.com/cdf/functions/#schedule-a-function"
+                target="_blank"
+                rel="noreferrer"
+              >
+                cron expression is UTC
+              </a>
+            </HelperText>
             <Input
               name="cronExpression"
               value={cronExpression.value}
@@ -289,6 +301,11 @@ export default function CreateScheduleModal({
     </Modal>
   );
 }
+
+const HelperText = styled.div`
+  font-weight: 400;
+  font-size: 85%;
+`;
 
 export const stuffForUnitTests = {
   isValidScheduleName,

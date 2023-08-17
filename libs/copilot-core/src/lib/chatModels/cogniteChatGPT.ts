@@ -56,7 +56,7 @@ export class CogniteChatGPT
   implements CogniteChatGPTInput
 {
   temperature = 0;
-  model = 'gpt-3.5-turbo';
+  model = 'gpt-35-turbo';
   maxTokens = 2024;
   sdk: CogniteClient;
 
@@ -116,10 +116,13 @@ export class CogniteChatGPT
       })
     );
 
-    const data = await this.completionWithRetry({
-      ...params,
-      messages: messagesMapped,
-    });
+    const data = await this.completionWithRetry(
+      {
+        ...params,
+        messages: messagesMapped,
+      },
+      _options?.signal
+    );
 
     const generations: ChatGeneration[] = [];
     for (const part of data.choices) {
@@ -137,14 +140,24 @@ export class CogniteChatGPT
   }
 
   /** @ignore */
-  async completionWithRetry(request: CreateChatCompletionRequest) {
-    const url = `/api/v1/projects/${this.sdk.project}/context/gpt/chat/completions`;
-    const res = await this.sdk.post(url, {
-      data: request,
-      withCredentials: true,
-      retryValidator: (_, res, counter) => res?.status === 504 && counter < 3,
+  async completionWithRetry(
+    request: CreateChatCompletionRequest,
+    signal?: AbortSignal | null
+  ) {
+    const url = `${this.sdk.getBaseUrl()}/api/v1/projects/${
+      this.sdk.project
+    }/gpt/chat/completions`;
+    const res = await fetch(url, {
+      signal,
+      method: 'POST',
+      headers: {
+        ...this.sdk.getDefaultRequestHeaders(),
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify(request),
     });
-    return res.data;
+    return res.json();
   }
 
   /** @ignore */

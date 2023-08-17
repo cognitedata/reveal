@@ -2,20 +2,43 @@ import styled, { css } from 'styled-components';
 
 import { Button } from '@cognite/cogs.js';
 
-import { AppliedThree3DData } from '../ThreeD/containers/AppliedThree3DData';
+import { useViewModeParams } from '../../hooks/useParams';
 
 interface Props {
   inverted?: boolean;
 }
 
 export const SearchBarSwitch: React.FC<Props> = ({ inverted }) => {
+  const [viewMode, setViewMode] = useViewModeParams();
+
+  const handle3DViewClick = () => {
+    setViewMode('3d');
+  };
+  const handleListViewClick = () => {
+    setViewMode('list');
+  };
+
   return (
     <Container inverted={inverted}>
-      <Button type="secondary" icon="List" disabled={false} />
-      <AppliedThree3DData />
+      <StyledButton
+        type={viewMode === 'list' ? 'secondary' : 'ghost'}
+        icon="List"
+        onClick={handleListViewClick}
+      />
+      <StyledButton
+        type={viewMode === '3d' ? 'secondary' : 'ghost'}
+        icon="Cube"
+        onClick={handle3DViewClick}
+      />
     </Container>
   );
 };
+
+const StyledButton = styled(Button)`
+  &&& {
+    border-radius: 10px;
+  }
+`;
 
 const Container = styled.div<{
   width?: string;
@@ -42,5 +65,4 @@ const Container = styled.div<{
         drop-shadow(0px 1px 1px rgba(79, 82, 104, 0.1));
     `;
   }};
-  border-radius: 10px;
 `;

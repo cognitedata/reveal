@@ -5,6 +5,8 @@ import {
   CopilotHumanApprovalMessage,
 } from '../../../lib/types';
 
+import { MessageBase } from './MessageBase';
+
 export const HumanApprovalMessage = ({
   message: {
     key,
@@ -19,34 +21,36 @@ export const HumanApprovalMessage = ({
   };
 }) => {
   return (
-    <Flex direction="column" gap={4}>
-      <Body level={2}>{message.content}</Body>
-      <Flex gap={2}>
-        <Button
-          type="ghost"
-          icon="Checkmark"
-          disabled={!message.pending}
-          onClick={() => {
-            updateMessage(key, {
-              ...message,
-              approved: true,
-              pending: false,
-            });
-          }}
-        />
-        <Button
-          type="ghost"
-          icon="Close"
-          disabled={!message.pending}
-          onClick={() => {
-            updateMessage(key, {
-              ...message,
-              approved: false,
-              pending: false,
-            });
-          }}
-        />
+    <MessageBase message={{ data: { ...message, source: 'bot' } }}>
+      <Flex direction="column" gap={4}>
+        <Body level={2}>{message.content}</Body>
+        <Flex gap={2}>
+          <Button
+            type="ghost"
+            icon="Checkmark"
+            disabled={!message.pending}
+            onClick={() => {
+              updateMessage(key, {
+                ...message,
+                approved: true,
+                pending: false,
+              });
+            }}
+          />
+          <Button
+            type="ghost"
+            icon="Close"
+            disabled={!message.pending}
+            onClick={() => {
+              updateMessage(key, {
+                ...message,
+                approved: false,
+                pending: false,
+              });
+            }}
+          />
+        </Flex>
       </Flex>
-    </Flex>
+    </MessageBase>
   );
 };

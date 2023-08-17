@@ -1,4 +1,5 @@
 import { PropsWithChildren } from 'react';
+import { Link } from 'react-router-dom';
 
 import styled from 'styled-components';
 
@@ -10,7 +11,8 @@ import { OnTrackEvent, manageAccountClickEvent } from '../../metrics';
 export type UserMenuProps = PropsWithChildren & {
   userInfo?: UserInfo;
   isUserInfoLoading?: boolean;
-  onManageAccountClick: () => void;
+  profilePageRelativePath?: string;
+  onManageAccountClick?: () => void;
   onLogoutClick: () => void;
   menuTitle?: string;
   menuItemManageAccountBtnText?: string;
@@ -28,6 +30,7 @@ export const UserMenu = ({
   menuItemLogoutBtnText = 'Sign out',
   onTrackEvent,
   children,
+  profilePageRelativePath = '/profile',
 }: UserMenuProps): JSX.Element => {
   const { name = '', email = '', profilePicture = '' } = userInfo || {};
 
@@ -51,13 +54,18 @@ export const UserMenu = ({
         )}
       </UserDetailsMenuItem>
       <Menu.Item
-        icon="ExternalLink"
         onClick={() => {
           onTrackEvent?.(manageAccountClickEvent);
-          onManageAccountClick();
+          onManageAccountClick?.();
         }}
+        style={{ padding: '0px' }}
       >
-        {menuItemManageAccountBtnText}
+        <Link
+          to={profilePageRelativePath}
+          style={{ color: 'inherit', display: 'block', padding: '8px' }}
+        >
+          {menuItemManageAccountBtnText}
+        </Link>
       </Menu.Item>
       <Divider />
       {children && <>{children}</>}

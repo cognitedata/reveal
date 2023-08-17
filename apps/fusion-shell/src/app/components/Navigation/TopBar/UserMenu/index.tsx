@@ -1,5 +1,4 @@
 import { useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import styled from 'styled-components';
 
@@ -8,25 +7,16 @@ import { json } from '@codemirror/lang-json';
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import { logout } from '@cognite/cdf-sdk-singleton';
 import { CodeSnippet, createLink } from '@cognite/cdf-utilities';
-import {
-  Avatar,
-  Body,
-  Button,
-  Divider,
-  Dropdown,
-  Flex,
-  Menu,
-} from '@cognite/cogs.js';
+import { Avatar, Button, Dropdown, Menu } from '@cognite/cogs.js';
 
+import { UserMenu as SharedUserMenu } from '@cognite/user-profile-components';
 import { useTranslation } from '../../../../../i18n';
-import Modal from '../../../Modal';
 import { LARGE_MODAL_WIDTH } from '../../../../utils/constants';
 import { useTokenInspect, useUserInformation } from '../../../../utils/hooks';
+import Modal from '../../../Modal';
 
 const UserMenu = (): JSX.Element => {
   const { t } = useTranslation();
-
-  const navigate = useNavigate();
 
   const { data: userInfo } = useUserInformation();
 
@@ -54,31 +44,24 @@ const UserMenu = (): JSX.Element => {
 
   return (
     <>
-      <Dropdown
+      <StyledDropdown
+        appendTo={document.body}
         hideOnSelect={{
           hideOnContentClick: true,
           hideOnOutsideClick: true,
         }}
         content={
-          <StyledUserMenu>
-            <Menu.Header>{t('title-account')}</Menu.Header>
-            <UserDetailsMenuItem>
-              {avatar}
-              <Flex direction="column">
-                <Body level={2}>{name}</Body>
-                <Body level={2} muted>
-                  {email}
-                </Body>
-              </Flex>
-            </UserDetailsMenuItem>
-            <Menu.Item
-              onClick={() => {
-                navigate(createLink('/profile'));
-              }}
-            >
-              {t('manage-account')}
-            </Menu.Item>
-            <Divider />
+          <SharedUserMenu
+            userInfo={{ name, email, profilePicture }}
+            onLogoutClick={handleLogout}
+            menuTitle={t('title-account')}
+            menuItemManageAccountBtnText={t('manage-account')}
+            menuItemLogoutBtnText={t('button-sign-out')}
+            onTrackEvent={(eventName, metaData) => {
+              trackEvent(`CdfHubNavigation.UserMenu.${eventName}`, metaData);
+            }}
+            profilePageRelativePath={createLink('/profile')}
+          >
             <Menu.Item onClick={() => setIsAccessInfoModalOpen(true)}>
               {t('label-access-info')}
             </Menu.Item>
@@ -96,15 +79,11 @@ const UserMenu = (): JSX.Element => {
             >
               {t('button-privacy-policy')}
             </Menu.Item>
-            <Divider />
-            <Menu.Item icon="Logout" onClick={handleLogout}>
-              {t('button-sign-out')}
-            </Menu.Item>
-          </StyledUserMenu>
+          </SharedUserMenu>
         }
       >
         {avatar}
-      </Dropdown>
+      </StyledDropdown>
       <Modal
         footer={
           <Button onClick={() => setIsAccessInfoModalOpen(false)}>
@@ -128,9 +107,9 @@ const UserMenu = (): JSX.Element => {
   );
 };
 
-const StyledUserMenu = styled(Menu)`
-  .cogs-menu-divider {
-    margin: 8px -8px;
+const StyledDropdown = styled(Dropdown)`
+  .tippy-box {
+    max-width: unset !important; /* tippy styles are inline so !important is necessary to override */
   }
 `;
 
@@ -144,12 +123,6 @@ const StyledAccessInfoModalContent = styled.div`
   .cm-editor {
     height: 100%;
   }
-`;
-
-const UserDetailsMenuItem = styled.div`
-  display: flex;
-  gap: 8px;
-  padding: 8px;
 `;
 
 export default UserMenu;

@@ -26,8 +26,6 @@ export const HomePage = () => {
 
           <SearchBarContainer>
             <SearchBar width="774px" options={SEARCH_BAR_OPTIONS} />
-            {/* Hide this for now. until we have flags */}
-            {/* <SearchBarSwitch /> */}
           </SearchBarContainer>
 
           <DataExplorerLink />

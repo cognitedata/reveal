@@ -16,6 +16,6 @@ export const getDocumentAssetIds = (sdk: CogniteClient, payload: Payload) => {
       filter: convertIdEither('equals', resourceId),
     })
     .then(({ items }) => {
-      return head(items)?.assetIds || [];
+      return head(items)?.sourceFile.assetIds || [];
     });
 };

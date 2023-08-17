@@ -39,6 +39,7 @@ export interface CreateDataModelVersionDTO {
   description?: string;
 }
 
-export interface PublishDataModelVersionDTO extends DataModelVersion {
+export interface PublishDataModelVersionDTO
+  extends Omit<DataModelVersion, 'views'> {
   previousVersion?: string;
 }

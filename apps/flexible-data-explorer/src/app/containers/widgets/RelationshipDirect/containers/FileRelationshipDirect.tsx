@@ -18,9 +18,10 @@ export const FileRelationshipDirect: React.FC<RelationshipDirectProps> = ({
 }) => {
   const navigate = useNavigation();
 
-  const { data, isLoading, isFetched } = useInstanceDirectRelationshipQuery<{
-    externalId: string;
-  } | null>(type);
+  const { data, isLoading, isFetched, isError } =
+    useInstanceDirectRelationshipQuery<{
+      externalId: string;
+    } | null>(type);
 
   const handleRedirectClick = () => {
     if (!data?.externalId) {
@@ -30,7 +31,7 @@ export const FileRelationshipDirect: React.FC<RelationshipDirectProps> = ({
     navigate.toFilePage(data?.externalId);
   };
 
-  const isDisabled = isFetched && !data;
+  const isDisabled = (isFetched && !data) || isError;
 
   const renderValueTitle = () => {
     if (isLoading) {

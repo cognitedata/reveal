@@ -272,7 +272,7 @@ export const getModelTypes = async (
     throw new Error('Version does not exist');
   }
 
-  return new GraphQlUtilsService().parseSchema(data.graphQlDml);
+  return new GraphQlUtilsService().parseSchema(data.graphQlDml, data.views);
 };
 
 const getTypeString = (types: DataModelTypeDefsType[]) => {

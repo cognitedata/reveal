@@ -1,6 +1,6 @@
 import { useDisclosure } from '@data-exploration-components/hooks';
 import {
-  ActionType,
+  AccessAction,
   useAccessControl,
   useLoadDataSource,
   useStartValidation,
@@ -49,10 +49,10 @@ export const DataQualityHome = () => {
   } = useAccessControl();
 
   const accessErrorMessageRead = useErrorMessage(
-    ActionType.READ_DATA_VALIDATION
+    AccessAction.READ_DATA_VALIDATION
   );
   const accessErrorMessageWrite = useErrorMessage(
-    ActionType.WRITE_DATA_VALIDATION
+    AccessAction.WRITE_DATA_VALIDATION
   );
 
   const renderContent = () => {

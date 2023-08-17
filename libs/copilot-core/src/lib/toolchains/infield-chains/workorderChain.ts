@@ -77,6 +77,7 @@ export class WorkorderChain extends CogniteBaseChain {
 
         const res = await callPromptChain(
           this,
+          'identify workorders',
           infieldWorkorderPrompt,
           inputList,
           {
@@ -127,7 +128,7 @@ export class WorkorderChain extends CogniteBaseChain {
           },
         ]);
 
-        return { data: res };
+        return { data: { res } };
       },
     },
   ];

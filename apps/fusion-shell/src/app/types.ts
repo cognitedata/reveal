@@ -89,6 +89,7 @@ export interface AppConfig {
   url: string;
   routes: {
     route: string;
+    exactMatch?: boolean
   }[];
 }
 export interface AppManifest {

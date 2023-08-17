@@ -4,6 +4,7 @@ import styled, { css } from 'styled-components';
 
 import { useTranslation } from '../../../hooks/useTranslation';
 import { EmptyState } from '../../EmptyState';
+import { ErrorState } from '../../ErrorState';
 import { BaseWidgetProps } from '../Widget';
 
 export const WidgetBody = ({
@@ -34,6 +35,16 @@ export const WidgetBody = ({
         />
       );
     }
+
+    if (state === 'error') {
+      return (
+        <ErrorState
+          title={t('WIDGET_ERROR_TITLE')}
+          body={t('WIDGET_ERROR_BODY')}
+        />
+      );
+    }
+
     return children;
   };
 

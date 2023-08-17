@@ -11,28 +11,39 @@ import dayjs from 'dayjs';
 import { useRecoilState } from 'recoil';
 import styled from 'styled-components/macro';
 
-import { Body, Checkbox, Icon, Menu, Overline, Title } from '@cognite/cogs.js';
+import {
+  Body,
+  Checkbox,
+  Icon,
+  Menu,
+  Overline,
+  Heading,
+  Colors,
+} from '@cognite/cogs.js';
 
 export const AnnotationPopover = ({
   resourceId,
   label,
   annotationTitle = 'Time series',
   fallbackText = 'Asset not found!',
+  noResourceLabelText = 'No resource id or name present',
 }: {
   resourceId?: number;
   label?: string;
   annotationTitle?: string;
   fallbackText?: string;
+  noResourceLabelText?: string;
 }) => {
-  const { data: selectedAsset, isLoading: isLoadingAsset } =
+  const { data: selectedAsset, isFetching: isLoadingAsset } =
     useAsset(resourceId);
 
-  const { data: assets, isLoading: isLoadingListAsset } = useAssetList(label);
+  const { data: assets, isFetching: isLoadingListAsset } = useAssetList(label);
+
   if (!resourceId && !label) {
-    return <></>;
+    return <NoAssetErrorWrapper>{noResourceLabelText}</NoAssetErrorWrapper>;
   }
 
-  const asset = selectedAsset || assets?.items[0];
+  const asset = selectedAsset || assets?.[0];
   const isLoading = isLoadingAsset || isLoadingListAsset;
 
   if (isLoading) {
@@ -40,7 +51,7 @@ export const AnnotationPopover = ({
   }
 
   if (!asset) {
-    return <>{fallbackText}</>;
+    return <NoAssetErrorWrapper>{fallbackText}</NoAssetErrorWrapper>;
   }
 
   return (
@@ -50,12 +61,15 @@ export const AnnotationPopover = ({
           <Icon type="Assets" />
         </IconBackground>
         <AssetInfoContainer>
-          <Title level={5}>{asset.name || label}</Title>
-          <Body level={2}>{asset.description}</Body>
+          <Heading level={5}>{asset.name || label}</Heading>
+          <Body size="small">{asset.description}</Body>
         </AssetInfoContainer>
       </TitleContainer>
       <TimeseriesTitle>
-        <Overline level={2} style={{ color: 'var(--cogs-greyscale-grey6)' }}>
+        <Overline
+          size="medium"
+          style={{ color: 'var(--cogs-greyscale-grey6)' }}
+        >
           {`${annotationTitle}:`}
         </Overline>
       </TimeseriesTitle>
@@ -90,10 +104,10 @@ const TimeseriesList = ({ assetId }: { assetId: number }) => {
       {timeseries.map((ts) => (
         <TimeseriesItem key={ts.id}>
           <TimeseriesInfo>
-            <Title level={6} style={{ width: 290, wordBreak: 'break-all' }}>
+            <Heading level={5} style={{ width: 290, wordBreak: 'break-all' }}>
               {ts.name}
-            </Title>
-            <Body level={2}>{ts.description}</Body>
+            </Heading>
+            <Body size="small">{ts.description}</Body>
             <TimeseriesChart
               height={55}
               showSmallerTicks
@@ -151,6 +165,7 @@ const AssetInfoContainer = styled.div`
 const TimeseriesTitle = styled(Menu.Header)`
   border-top: 1px solid var(--cogs-greyscale-grey4);
   border-bottom: 1px solid var(--cogs-greyscale-grey4);
+  padding: 8px;
 `;
 
 const IconBackground = styled.div`
@@ -175,4 +190,11 @@ const TimeseriesInfo = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+`;
+
+const NoAssetErrorWrapper = styled.div`
+  background-color: ${Colors['decorative--grayscale--white']};
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: 1px solid ${Colors['border--muted']};
 `;

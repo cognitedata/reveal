@@ -63,7 +63,6 @@ export const CommentTooltipStory: ComponentStory<
     <BrowserRouter>
       <Flex style={{ marginTop: 200, marginLeft: 200, position: 'relative' }}>
         <CommentTooltipCore
-          userIdentifier="some name"
           users={[
             {
               displayName: 'some name',
@@ -101,7 +100,13 @@ export const CommentTooltipStory: ComponentStory<
               lastUpdatedTime: 1,
             },
           ]}
-          commentExternalId="359d1a53-afc2-4b42-a8d0-27a70cfc8f65"
+          isTooltipOpen
+          onOpen={() => {
+            console.log('onOpen');
+          }}
+          onClose={() => {
+            console.log('onClose');
+          }}
           comments={commentList}
           onDelete={() => {
             console.log('onDelete');

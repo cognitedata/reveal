@@ -60,7 +60,7 @@ export const processMessage = async (
         sendToCopilotEvent('LOADING_STATUS', {
           status: 'Reasoning next steps...',
         });
-        await chain.call({ input: message });
+        await chain.call({ input: message, key: `${params[2].length - 1}` });
       } else {
         sendToCopilotEvent('NEW_MESSAGES', [
           {

@@ -9,6 +9,9 @@ const config = {
   },
   stories: ['../src/**/*.stories.@(mdx|js|jsx|ts|tsx)'],
   addons: ['@storybook/addon-essentials', '@nx/react/plugins/storybook'],
+  docs: {
+    autodocs: true,
+  },
   async viteFinal(config, { configType }) {
     const NODE_ENV = configType.toLowerCase();
     const env = {

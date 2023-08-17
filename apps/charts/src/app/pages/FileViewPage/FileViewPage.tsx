@@ -19,7 +19,7 @@ import Layers from '@charts-app/utils/z-index';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components/macro';
 
-import { Body, Button, Loader, Title, Icon } from '@cognite/cogs.js';
+import { Body, Button, Loader, Heading, Icon } from '@cognite/cogs.js';
 import { Asset, FileInfo as File } from '@cognite/sdk';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 
@@ -110,8 +110,8 @@ const FileViewPage = () => {
           >
             {t['Back to chart']}
           </Button>
-          <Title level={4}>{asset.name}</Title>
-          <Body level={2}>{asset.description}</Body>
+          <Heading level={4}>{asset.name}</Heading>
+          <Body size="medium">{asset.description}</Body>
         </Header>
         <FileList
           asset={asset}

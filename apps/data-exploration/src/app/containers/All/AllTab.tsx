@@ -1,5 +1,7 @@
 import styled from 'styled-components';
 
+import noop from 'lodash/noop';
+
 import {
   SequenceSummary,
   AssetSummary,
@@ -14,13 +16,13 @@ import { Asset } from '@cognite/sdk';
 
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 import { SearchResultWrapper } from '@data-exploration-app/containers/elements';
-import {
-  useCurrentResourceType,
-  useQueryString,
-} from '@data-exploration-app/hooks/hooks';
-import { useCommonFilters } from '@data-exploration-app/store';
+import { useQueryString } from '@data-exploration-app/hooks/hooks';
 import { SEARCH_KEY } from '@data-exploration-app/utils/constants';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
+import {
+  EMPTY_OBJECT,
+  InternalCommonFilters,
+} from '@data-exploration-lib/core';
 
 import {
   useJourneyLength,
@@ -30,12 +32,19 @@ import {
   useBreakJourneyPromptState,
 } from '../../hooks';
 
-export const AllTab = () => {
+export const AllTab = ({
+  commonFilters = EMPTY_OBJECT,
+  setCurrentResourceType = noop,
+}: {
+  commonFilters?: InternalCommonFilters;
+  setCurrentResourceType?: (
+    type?: ResourceType | undefined,
+    resourceId?: number | undefined
+  ) => void;
+}) => {
   const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
   const isDocumentsApiEnabled = useFlagDocumentsApiEnabled();
-  const [commonFilters] = useCommonFilters();
   const [query] = useQueryString(SEARCH_KEY);
-  const [_, setCurrentResourceType] = useCurrentResourceType();
   const [pushJourney] = usePushJourney();
   const [journeyLength] = useJourneyLength();
   const [, setPromptOpen] = useBreakJourneyPromptState();

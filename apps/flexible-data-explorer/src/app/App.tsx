@@ -40,12 +40,16 @@ function App() {
               <ErrorBoundary
                 onReset={reset}
                 fallbackRender={({ resetErrorBoundary }) => (
-                  <div>
+                  <center>
                     There was an error!
-                    <Button onClick={() => resetErrorBoundary()}>
+                    <Button
+                      onClick={() => {
+                        resetErrorBoundary();
+                      }}
+                    >
                       Try again!
                     </Button>
-                  </div>
+                  </center>
                 )}
               >
                 <Router window={window} children={<Routes />} />

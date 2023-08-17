@@ -22,6 +22,11 @@ export function SimulatorStatusLabel({
     new Date(Date.now() - HEARTBEAT_TIMEOUT_SECONDS)
   );
   const isLicenseAvailable = simulator.licenseStatus !== 'Not available';
+  const isRunningTask = [
+    'RUNNING_CALCULATION',
+    'PARSING_MODEL',
+    'CHECKING_LICENSE',
+  ].includes(simulator.connectorStatus);
 
   const statusDisplayTitle = isSimulatorAvailable
     ? isLicenseAvailable
@@ -33,7 +38,9 @@ export function SimulatorStatusLabel({
     <Chip
       icon={
         isSimulatorAvailable && isLicenseAvailable
-          ? 'CheckmarkAlternative'
+          ? isRunningTask
+            ? 'Loader'
+            : 'CheckmarkAlternative'
           : 'Warning'
       }
       label={onMenuBar ? title : statusDisplayTitle}

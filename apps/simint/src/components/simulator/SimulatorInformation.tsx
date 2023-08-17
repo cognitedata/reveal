@@ -5,7 +5,7 @@ import { selectProject } from '@simint-app/store/simconfigApiProperties/selector
 import { formatDistanceToNow } from 'date-fns';
 import styled from 'styled-components/macro';
 
-import { Collapse, Skeleton } from '@cognite/cogs.js';
+import { Collapse, Icon, Skeleton } from '@cognite/cogs.js';
 import type { SimulatorInstance } from '@cognite/simconfig-api-sdk/rtk';
 import { useGetSimulatorDetailsQuery } from '@cognite/simconfig-api-sdk/rtk';
 
@@ -25,6 +25,8 @@ export function SimulatorInformation({
     simulatorVersion,
     licenseLastCheckedTime,
     licenseStatus,
+    connectorStatus,
+    connectorStatusUpdatedTime,
   },
 }: SimulatorDetailsProps) {
   const project = useSelector(selectProject);
@@ -71,6 +73,36 @@ export function SimulatorInformation({
               )})`
             : ''}
         </dd>
+        <dt>Connector Status</dt>
+        <dd data-cy="connector-status">
+          {connectorStatus === 'RUNNING_CALCULATION' ? (
+            <div>
+              <StyledLoader type="Loader" />
+              Running calculation
+            </div>
+          ) : connectorStatus === 'PARSING_MODEL' ? (
+            <div>
+              <StyledLoader type="Loader" />
+              Parsing model
+            </div>
+          ) : connectorStatus === 'CHECKING_LICENSE' ? (
+            <div>
+              <StyledLoader type="Loader" />
+              Checking license
+            </div>
+          ) : connectorStatus === 'NONE_REPORTED' ? (
+            <div>-</div>
+          ) : (
+            <></>
+          )}
+          {connectorStatus !== 'NONE_REPORTED' &&
+            `(Elapsed time: ${formatDistanceToNow(
+              new Date(connectorStatusUpdatedTime),
+              {
+                addSuffix: false,
+              }
+            )})`}
+        </dd>
       </SimulatorInformationList>
 
       {isFetchingSimulatorDetails ? <Skeleton.Rectangle /> : null}
@@ -99,6 +131,12 @@ export function SimulatorInformation({
     </SimulatorInformationContainer>
   );
 }
+
+const StyledLoader = styled(Icon)`
+  position: relative;
+  top: 2px;
+  margin-right: 5px;
+`;
 
 export const SimulatorInformationContainer = styled.div`
   .simulator-collapse {

@@ -10,8 +10,11 @@ import {
 export class DataModelTypeDefsBuilderService {
   constructor(private graphqlService: IGraphQlUtilsService) {}
 
-  parseSchema(graphQlSchema: string): DataModelTypeDefs {
-    return this.graphqlService.parseSchema(graphQlSchema);
+  parseSchema(
+    graphQlSchema: string,
+    views: { externalId: string; version: string }[]
+  ): DataModelTypeDefs {
+    return this.graphqlService.parseSchema(graphQlSchema, views);
   }
 
   buildSchemaString(): string {

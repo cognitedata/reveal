@@ -4,12 +4,12 @@ import isEmpty from 'lodash/isEmpty';
 
 import { Input } from '@cognite/cogs.js';
 
-import { InputControlProps } from '../../types';
+import { BaseInputProps } from '../../types';
 
 import { InputWrapper } from './elements';
 import { getDateTimeInputValue } from './utils';
 
-export type DateTimeInputProps = InputControlProps<Date>;
+export type DateTimeInputProps = BaseInputProps<Date>;
 
 export const DateTimeInput: React.FC<DateTimeInputProps> = ({
   value,

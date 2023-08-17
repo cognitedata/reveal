@@ -8,7 +8,7 @@ import { Dropdown } from '../../components/dropdown/Dropdown';
 import { DateRange } from '../../containers/Filter/types';
 import { Page } from '../../containers/page/Page';
 import { PropertiesWidget } from '../../containers/widgets';
-import { TimeseriesWidget } from '../../containers/widgets/TimeseriesWidget';
+import { TimeseriesWidget } from '../../containers/widgets/Timeseries/TimeseriesWidget';
 import { useOpenIn } from '../../hooks/useOpenIn';
 import { useRecentlyVisited } from '../../hooks/useRecentlyVisited';
 import { useTimeseriesByIdQuery } from '../../services/instances/timeseries/queries/useTimeseriesByIdQuery';
@@ -18,7 +18,8 @@ export const TimeseriesPage = () => {
   const [, setRecentlyVisited] = useRecentlyVisited();
   const { openAssetCentricResourceItemInCanvas, openInCharts } = useOpenIn();
 
-  const { data, isLoading, isFetched } = useTimeseriesByIdQuery(externalId);
+  const { data, isLoading, isFetched, status } =
+    useTimeseriesByIdQuery(externalId);
 
   const [dateRange, setDateRange] = useState<DateRange | undefined>(
     DEFAULT_DATE_RANGE
@@ -63,7 +64,12 @@ export const TimeseriesPage = () => {
       ]}
     >
       <Page.Widgets>
-        <PropertiesWidget id="Properties" data={data} columns={4} />
+        <PropertiesWidget
+          id="Properties"
+          data={data}
+          state={status}
+          columns={4}
+        />
         <TimeseriesWidget
           id="Timeseries"
           timeseriesId={data?.id}

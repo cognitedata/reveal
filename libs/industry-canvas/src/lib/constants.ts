@@ -94,3 +94,4 @@ export const CommentsFeatureFlagKey = 'UFV_INDUSTRY_CANVAS_COMMENTS';
 
 export const CANVAS_FLOATING_ELEMENT_MARGIN = 15;
 export const CANVAS_MIN_WIDTH = 40 + 2 * CANVAS_FLOATING_ELEMENT_MARGIN; // close button width + left&right margin
+export const ZOOM_CONTROLS_COGPILOT_ENABLED_RIGHT_MARGIN = 130;

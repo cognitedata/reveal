@@ -6,7 +6,6 @@ import {
 } from '@charts-app/components/FileList/utils';
 import { useTranslations } from '@charts-app/hooks/translations';
 import { makeDefaultTranslations } from '@charts-app/utils/translations';
-import * as pdfjs from 'pdfjs-dist';
 import styled from 'styled-components/macro';
 
 import { FileInfo } from '@cognite/sdk';
@@ -31,16 +30,15 @@ import { useOCRSearchResults } from './hooks/useOCRSearchResults';
 import { useUnifiedFileViewerState } from './hooks/useUnifiedFileViewerState';
 import { getContainerId } from './utils/getContainerId';
 
-pdfjs.GlobalWorkerOptions.workerSrc = `https://cdf-hub-bundles.cogniteapp.com/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.js`;
-
 const CHARTS_APPLICATION_ID = 'cognite-charts';
 
-const defaultTranslations = makeDefaultTranslations(
+export const defaultTranslations = makeDefaultTranslations(
   'Select a file to preview it',
   'No preview',
   'File types that can be previewed are',
   'Time series',
-  'Asset not found'
+  'Asset not found',
+  'No resource id or name present'
 );
 
 export const FileViewer = ({ file }: { file?: FileInfo }) => {
@@ -65,6 +63,7 @@ export const FileViewer = ({ file }: { file?: FileInfo }) => {
     extractedAnnotations,
     ocrSearchResultAnnotations,
     currentPage,
+    translations: t,
   });
 
   // reset when new file is loaded
@@ -141,6 +140,8 @@ export const FileViewer = ({ file }: { file?: FileInfo }) => {
     </FileViewerWrapper>
   );
 };
+
+FileViewer.defaultTranslations = defaultTranslations;
 
 export const FileViewerWrapper = styled.div`
   display: flex;

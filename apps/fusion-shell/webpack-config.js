@@ -55,9 +55,13 @@ module.exports = composePlugins(
         ? 'staging'
         : webpackConfigTarget;
 
-    const publicPath = '/cdf/';
+    const publicPath = '/';
     const subAppsConfig = JSON.parse(
       fs.readFileSync('./apps/fusion-shell/src/apps-manifest.json', 'utf8')
+    );
+
+    const importMaps = JSON.parse(
+      fs.readFileSync('./apps/fusion-shell/src/import-map.json', 'utf8')
     );
 
     console.log(
@@ -107,8 +111,10 @@ module.exports = composePlugins(
       generateWebpackDevServerConfig(
         config,
         subAppsConfig,
+        importMaps,
         importMapsEnv,
-        publicPath
+        publicPath,
+        webpackConfigTarget === 'mock'
       );
       return config;
     }

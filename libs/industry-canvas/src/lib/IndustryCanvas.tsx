@@ -3,6 +3,7 @@ import React, { Dispatch, SetStateAction, useCallback, useMemo } from 'react';
 import styled from 'styled-components';
 
 import { isDevelopment } from '@cognite/cdf-utilities';
+import { useFlag } from '@cognite/react-feature-flags';
 import { useSDK } from '@cognite/sdk-provider';
 import ReactUnifiedViewer, {
   Annotation,
@@ -19,6 +20,7 @@ import {
   ZOOM_TO_FIT_MARGIN,
   ZOOM_LEVELS,
   CANVAS_FLOATING_ELEMENT_MARGIN,
+  ZOOM_CONTROLS_COGPILOT_ENABLED_RIGHT_MARGIN,
 } from './constants';
 import useEditOnSelect from './hooks/useEditOnSelect';
 import useIndustryCanvasTooltips from './hooks/useIndustryCanvasTooltips';
@@ -28,6 +30,7 @@ import { UseOnUpdateSelectedAnnotationReturnType } from './hooks/useOnUpdateSele
 import { UseResourceSelectorActionsReturnType } from './hooks/useResourceSelectorActions';
 import { UseTooltipsOptionsReturnType } from './hooks/useTooltipsOptions';
 import { OnAddContainerReferences } from './IndustryCanvasPage';
+import type { Comment } from './services/comments/types';
 import {
   CanvasAnnotation,
   CommentAnnotation,
@@ -54,6 +57,7 @@ export type IndustryCanvasProps = {
   isCanvasLocked: boolean;
   onResourceSelectorOpen: UseResourceSelectorActionsReturnType['onResourceSelectorOpen'];
   tool: UseManagedToolReturnType['tool'];
+  comments: Comment[];
 } & Pick<
   UseManagedStateReturnType,
   | 'container'
@@ -113,6 +117,7 @@ export const IndustryCanvas = ({
   onUpdateSelectedAnnotation,
   shouldShowConnectionAnnotations,
   tool,
+  comments,
   commentAnnotations,
   isCanvasLocked,
   onResourceSelectorOpen,
@@ -182,6 +187,7 @@ export const IndustryCanvas = ({
     updateContainerById,
     removeContainerById,
     onResourceSelectorOpen,
+    comments,
     commentAnnotations,
     pinnedTimeseriesIdsByAnnotationId,
     onPinTimeseriesClick,
@@ -305,6 +311,11 @@ export const IndustryCanvas = ({
     });
   }, [viewerRef]);
 
+  const { isEnabled: isCogPilotEnabled } = useFlag('COGNITE_COPILOT', {
+    fallback: false,
+    forceRerender: true,
+  });
+
   return (
     <FullHeightWrapper>
       <ReactUnifiedViewer
@@ -339,7 +350,7 @@ export const IndustryCanvas = ({
           isCanvasLocked={isCanvasLocked}
         />
       </ToolbarWrapper>
-      <ZoomControlsWrapper>
+      <ZoomControlsWrapper isCogPilotEnabled={isCogPilotEnabled}>
         <ZoomControls
           currentZoomScale={currentZoomScale}
           zoomIn={zoomIn}
@@ -365,10 +376,14 @@ const FullHeightWrapper = styled.div`
   position: relative;
 `;
 
-const ZoomControlsWrapper = styled.div`
+// TODO right: ${isDevelopment() ? 70 : CANVAS_FLOATING_ELEMENT_MARGIN}px;
+const ZoomControlsWrapper = styled.div<{ isCogPilotEnabled: boolean }>`
   position: absolute;
   bottom: ${CANVAS_FLOATING_ELEMENT_MARGIN}px;
-  right: ${isDevelopment() ? 70 : CANVAS_FLOATING_ELEMENT_MARGIN}px;
+  right: ${({ isCogPilotEnabled }) =>
+    isCogPilotEnabled
+      ? ZOOM_CONTROLS_COGPILOT_ENABLED_RIGHT_MARGIN
+      : CANVAS_FLOATING_ELEMENT_MARGIN}px;
 `;
 
 const ToolbarWrapper = styled.div`

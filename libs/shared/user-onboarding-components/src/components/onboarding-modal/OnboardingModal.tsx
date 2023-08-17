@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import styled from 'styled-components';
 
@@ -13,6 +13,7 @@ import {
 } from '@cognite/cogs.js';
 import { CarouselImage } from '@cognite/cogs.js/dist/esm/Components/Carousel/types';
 
+import { ONBOARDING_MODAL_ACTIONS } from '../../metrics';
 import { EMPTY_ARRAY } from '../../utils';
 
 export interface OnboardingModalProps
@@ -21,6 +22,14 @@ export interface OnboardingModalProps
   body?: React.ReactNode;
   logoType: ProductLogoProps['type'];
   images: CarouselImage[];
+  /**
+
+  * onTrackEvent
+  * =======
+  * The function to call when a step is tracked. The function should be used as callback.
+
+   */
+  onTrackEvent?: (eventName: string, metadata: Record<string, any>) => void;
 }
 
 export const OnboardingModal = ({
@@ -28,16 +37,41 @@ export const OnboardingModal = ({
   body,
   logoType,
   images = EMPTY_ARRAY,
+  onTrackEvent,
+  visible,
   ...rest
 }: OnboardingModalProps) => {
+  useEffect(() => {
+    if (onTrackEvent && visible) {
+      onTrackEvent('Modal', {
+        action: ONBOARDING_MODAL_ACTIONS.STARTED,
+      });
+    }
+  }, [onTrackEvent, visible]);
   return (
-    <StyledModal title="" visible okText="Start tour" size="large" {...rest}>
+    <StyledModal
+      title=""
+      okText="Start tour"
+      size="large"
+      visible={visible}
+      {...rest}
+    >
       <Wrapper direction="column" gap={8} alignItems="center">
         <ProductLogo type={logoType} />
         <Title level={4}>{title || 'Welcome to Cognite Data Fusion®'}</Title>
         {body}
         <CarouselWrapper>
-          <Carousel images={images} enableStepper enableSwipe />
+          <Carousel
+            onStepChange={(currentStep) =>
+              onTrackEvent?.('Modal', {
+                action: 'Carousel',
+                'Current Step': `${currentStep + 1}`,
+              })
+            }
+            images={images}
+            enableStepper
+            enableSwipe
+          />
         </CarouselWrapper>
       </Wrapper>
     </StyledModal>

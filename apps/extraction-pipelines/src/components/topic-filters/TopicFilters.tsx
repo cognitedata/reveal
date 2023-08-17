@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 import styled from 'styled-components';
 
-import { Body, Button, Flex, Icon, Title } from '@cognite/cogs.js';
+import { Body, Button, Flex, Heading, Icon } from '@cognite/cogs.js';
 
 import { useTranslation } from '../../common';
 import { MQTTSourceWithJobMetrics } from '../../hooks/hostedExtractors';
@@ -19,7 +19,7 @@ type TopicFiltersProps = {
 export const TopicFilters = ({
   className,
   source,
-}: TopicFiltersProps): JSX.Element => {
+}: TopicFiltersProps): React.JSX.Element => {
   const { t } = useTranslation();
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -32,13 +32,13 @@ export const TopicFilters = ({
           <Button
             size="small"
             onClick={() => setIsCreateModalOpen(true)}
-            type="ghost"
+            type="ghost-accent"
           >
             {t('add-topic-filters')}
           </Button>
         )
       }
-      icon="List"
+      icon="BarChart"
       title={t('topic-filter', { count: 2 })}
     >
       {isCreateModalOpen && (
@@ -58,18 +58,14 @@ export const TopicFilters = ({
             <Flex alignItems="center" direction="column" gap={8}>
               <Icon size={24} type="ListSearch" />
               <Flex alignItems="center" direction="column" gap={2}>
-                <Title level={5}>{t('no-topic-filters')}</Title>
-                <Body level={2} muted>
-                  {t('add-topic-filters-to-get-data-in')}
+                <Heading level={5}>{t('no-data-topic-filters')}</Heading>
+                <Body size="medium" muted>
+                  {t('setup-stream-to-get-data-in')}
                 </Body>
               </Flex>
             </Flex>
-            <Button
-              onClick={() => setIsCreateModalOpen(true)}
-              icon="AddLarge"
-              type="primary"
-            >
-              {t('add-topic-filters')}
+            <Button onClick={() => setIsCreateModalOpen(true)} type="primary">
+              {t('setup-stream')}
             </Button>
           </EmptyContent>
         )}

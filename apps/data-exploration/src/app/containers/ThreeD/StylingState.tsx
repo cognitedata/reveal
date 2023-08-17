@@ -115,7 +115,7 @@ export class StylingState {
 
     if (threeDModel instanceof CognitePointCloudModel) {
       threeDModel.setDefaultPointCloudAppearance({
-        color: new THREE.Color('#111111'),
+        color: new THREE.Color(0.067, 0.067, 0.067),
       });
 
       if (assetId !== undefined) {
@@ -199,7 +199,7 @@ export class StylingState {
         [annotationId]
       );
 
-      const colorAppearance = { color: new THREE.Color('rgb(77, 106, 242)') };
+      const colorAppearance = { color: new THREE.Color(0.3, 0.42, 0.95) };
       threeDModel.assignStyledObjectCollection(
         colorBoundingBoxObject,
         colorAppearance

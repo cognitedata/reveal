@@ -2,7 +2,7 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { Colors, Elevations } from '@cognite/cogs.js';
+import { Colors } from '@cognite/cogs.js';
 
 type BoxProps = {
   children: React.ReactNode;
@@ -14,7 +14,7 @@ export const Box = ({ children, className }: BoxProps): JSX.Element => {
 };
 
 const Container = styled.div`
-  background-color: ${Colors['surface--muted']};
-  border-radius: 6px;
-  box-shadow: ${Elevations['elevation--surface--interactive']};
+  border-radius: 8px;
+  border: 1px solid #e6e6e6;
+  background: ${Colors['surface--muted']};
 `;

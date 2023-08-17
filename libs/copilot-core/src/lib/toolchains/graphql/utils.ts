@@ -1,10 +1,14 @@
 /* eslint-disable no-template-curly-in-string */
+import { GraphQlUtilsService } from '@platypus/platypus-common-utils';
 import {
   DataModelTypeDefs,
   DataModelTypeDefsType,
+  GraphQlDmlVersionDTO,
 } from '@platypus/platypus-core';
 import dayjs from 'dayjs';
 import { FieldNode, Kind, parse, print, visit } from 'graphql';
+
+import { addToCopilotLogs } from '../../utils/logging';
 
 const additionalFields: FieldNode[] = [
   {
@@ -196,53 +200,237 @@ export const getFields = (
   }`;
 };
 
-export type GptGQLFilter = {
-  [key in string]: {
-    property: string;
-    operator: 'eq' | 'in' | 'prefix' | 'lt' | 'lte' | 'gt' | 'gte';
-    value: string;
-  }[];
+type FilterItem = {
+  property: string;
+  operator: 'eq' | 'in' | 'prefix' | 'lt' | 'lte' | 'gt' | 'gte';
+  value: string;
 };
 
-export const constructFilter = (filter: GptGQLFilter) => {
+export type GptGQLFilter = {
+  [key in string]: FilterItem[];
+};
+
+export const constructFilterForTypes = (
+  key: string,
+  filter: GptGQLFilter,
+  types: string[],
+  dataModelTypeDefs: DataModelTypeDefs
+) => {
+  if (types.length === 0) {
+    throw new Error('Must have more than 1 type to build filter on');
+  }
+  const maps = getFilterMap(types, dataModelTypeDefs);
+  let result = types.reduce(
+    (
+      prev: null | (ReturnType<typeof constructFilter> & { type: string }),
+      el
+    ) => {
+      const currFilter = constructFilter(filter, el, dataModelTypeDefs, maps);
+      addToCopilotLogs(key, {
+        key: 'construct filter',
+        content: `trying ${el} as primary\n\`\`\`json\n${JSON.stringify(
+          currFilter,
+          null,
+          2
+        )}\n\`\`\``,
+      });
+      if (prev === null) {
+        return { type: el, ...currFilter };
+      }
+      if (prev.omitted.length > currFilter.omitted.length) {
+        return { type: el, ...currFilter };
+      }
+      if (
+        prev.omitted.length === currFilter.omitted.length &&
+        currFilter.wildGuess > prev.wildGuess
+      ) {
+        return { type: el, ...currFilter };
+      }
+      return prev;
+    },
+    null
+  );
+  return result as ReturnType<typeof constructFilter> & { type: string };
+};
+
+const constructFilter = (
+  filter: GptGQLFilter,
+  type: string,
+  dataModelTypeDefs: DataModelTypeDefs,
+  { propertyLookup, relationLookup }: ReturnType<typeof getFilterMap>
+) => {
   const baseLevelOp = Object.keys(filter)[0];
 
-  return {
-    [baseLevelOp === 'or' ? 'or' : 'and']: filter[baseLevelOp]
-      .filter((el) =>
-        ['prefix', 'eq', 'gt', 'gte', 'lt', 'lte', 'isNull'].includes(
-          el.operator
-        )
+  const omitted: { key: string; reason: string }[] = [];
+
+  let wildGuess = 0;
+
+  const filterContent: any[] = [];
+
+  filter[baseLevelOp].forEach((el) => {
+    if (
+      !['prefix', 'eq', 'gt', 'gte', 'lt', 'lte', 'isNull'].includes(
+        el.operator
       )
-      .map((el) => {
-        // TODO last year
-        // TODO add validation of valid property
-        let value = `${el.value}`;
-        if (typeof el.value === 'string') {
-          switch (el.value.toLowerCase().trim()) {
-            case '${lastyear}$':
-              value = dayjs().subtract(1, 'year').toISOString();
-              break;
-            case '${lastweek}$':
-              value = dayjs().subtract(1, 'week').toISOString();
-              break;
-            case '${yearstart}$':
-              value = dayjs().set('date', 1).set('month', 1).toISOString();
-              break;
-            case '${today}$':
-              value = dayjs().toISOString();
-              break;
+    ) {
+      omitted.push({ key: el.property, reason: 'invalid filter' });
+      return;
+    }
+    const path = el.property.split('.');
+    const filterPath = [];
+    let typeDef = dataModelTypeDefs.types.find((el) => el.name === type);
+    for (let i = 0; i < path.length; i += 1) {
+      // all the types that this property can belong to
+      const typeForProperty = propertyLookup.get(path[i]);
+      // if it is a relationship, the possible start / end type for this relatioship
+      const relationshipForProperty = relationLookup.get(path[i]);
+
+      let currField = typeDef?.fields.find((el) => el.name === path[i]);
+      // if the current field insnt a valid field for the given type
+      if (!currField) {
+        // look for potential target in case GPT gave us inconclusive property name (missing relationship)
+        if (typeDef && typeForProperty) {
+          const typeName = typeDef?.name;
+          const potentialTarget = [...relationLookup.values()].find((el) =>
+            el.some(
+              ({ sourceType, destinationType, list }) =>
+                // fdm limitation for the list check
+                !list &&
+                sourceType === typeName &&
+                typeForProperty.includes(destinationType)
+            )
+          );
+          if (potentialTarget) {
+            // greedy guess, take the first possible relationship
+            filterPath.push(potentialTarget[0].property);
+            typeDef = dataModelTypeDefs.types.find(
+              (el) => el.name === potentialTarget[0].destinationType
+            );
+            currField = typeDef?.fields.find(
+              (el) => el.name === potentialTarget[0].property
+            );
+            wildGuess += 1;
           }
         }
-        const path = el.property.split('.');
-        return path.reduceRight((prev, currPath, i) => {
-          if (i === path.length - 1) {
-            return { [currPath.trim()]: { [el.operator]: value } };
+      }
+      const sourceType = relationshipForProperty?.find(
+        (el) => el.destinationType === type
+      )?.sourceType;
+      if (sourceType) {
+        // skip the extra specifier
+        continue;
+      }
+      if (!currField) {
+        omitted.push({ key: el.property, reason: 'invalid field' });
+        return;
+      }
+      if (i !== path.length - 1) {
+        if (!currField.type.custom) {
+          // no support for timeseries
+          omitted.push({
+            key: el.property,
+            reason: 'invalid filter on primitive field',
+          });
+          return;
+        }
+        if (currField.type.list) {
+          omitted.push({
+            key: el.property,
+            reason: '1-m relationship filtering not supported',
+          });
+          return;
+        }
+      }
+      filterPath.push(path[i]);
+    }
+    // TODO add validation of valid property
+    let value = `${el.value}`;
+    if (typeof el.value === 'string') {
+      switch (el.value.toLowerCase().trim()) {
+        case '${lastyear}$':
+          value = dayjs().subtract(1, 'year').toISOString();
+          break;
+        case '${lastweek}$':
+          value = dayjs().subtract(1, 'week').toISOString();
+          break;
+        case '${yearstart}$':
+          value = dayjs().set('date', 1).set('month', 1).toISOString();
+          break;
+        case '${today}$':
+          value = dayjs().toISOString();
+          break;
+      }
+    }
+    filterContent.push(
+      filterPath.reduceRight((prev, currPath, i) => {
+        if (i === filterPath.length - 1) {
+          return { [currPath.trim()]: { [el.operator]: value } };
+        }
+        return { [currPath.trim()]: prev };
+      }, {} as any)
+    );
+  });
+  return {
+    filter:
+      filterContent.length > 0
+        ? {
+            [baseLevelOp === 'or' ? 'or' : 'and']: filterContent,
           }
-          return { [currPath.trim()]: prev };
-        }, {} as any);
-      }),
+        : null,
+    omitted,
+    wildGuess,
   };
+};
+const getFilterMap = (
+  types: string[],
+  dataModelTypeDefs: DataModelTypeDefs
+) => {
+  const relevantTypes = dataModelTypeDefs.types.filter((el) =>
+    types.includes(el.name)
+  );
+  const propertyLookup = new Map<string, string[]>();
+  const relationLookup = new Map<
+    string,
+    {
+      key: string;
+      sourceType: string;
+      destinationType: string;
+      property: string;
+      list: boolean;
+    }[]
+  >();
+
+  for (const type of relevantTypes) {
+    for (const field of type.fields) {
+      propertyLookup.set(field.name, [
+        ...(propertyLookup.get(field.name) || []),
+        type.name,
+      ]);
+      if (!relationLookup.has(field.name) && field.type.custom) {
+        const directiveDetails = field.directives
+          // find relation directive if exist
+          ?.find((el) => el.name === 'relation')
+          // find the `type` argument
+          ?.arguments?.find((el) => el.name === 'type')
+          ?.value.fields.filter(
+            // find the specific relation externalId
+            (el: { name: { value: string } }) => el.name.value === 'externalId'
+          )?.value?.value;
+        // for each 'relation' field, we need to know the source and destination type
+        relationLookup.set(field.name, [
+          ...(relationLookup.get(field.name) || []),
+          {
+            sourceType: type.name,
+            destinationType: field.type.name,
+            key: directiveDetails || `${type.name}.${field.name}`,
+            property: field.name,
+            list: field.type.list || false,
+          },
+        ]);
+      }
+    }
+  }
+  return { propertyLookup, relationLookup };
 };
 
 export const constructGraphQLTypes = (
@@ -266,4 +454,23 @@ ${dataModelTypes.types
   )
   .join('\n')}
 \`\`\``;
+};
+
+export const getTypeString = (dataModels: GraphQlDmlVersionDTO[]) => {
+  let typeNames = '';
+  for (const dataModel of dataModels) {
+    if (!dataModel.graphQlDml) {
+      continue;
+    }
+    const dataModelTypes = new GraphQlUtilsService().parseSchema(
+      dataModel.graphQlDml,
+      dataModel.views
+    );
+    // Chain 1: Extract relevant types
+    typeNames += `\n\n[${dataModel.externalId}_${dataModel.space}]\n`;
+    typeNames += `\`\`\`graphql\n${dataModelTypes.types
+      .map((el) => el.name)
+      .join('\n')}\n\`\`\``;
+  }
+  return typeNames;
 };

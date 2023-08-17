@@ -8,6 +8,7 @@ import { CogniteClient } from '@cognite/sdk/dist/src';
 
 import { CopilotMessage } from './types';
 import { addToCopilotEventListener, sendToCopilotEvent } from './utils';
+import { addToCopilotLogs, getCopilotLogs } from './utils/logging';
 
 export type CogniteChainInput = {
   /** LLM Wrapper to use */
@@ -24,7 +25,10 @@ export type CogniteChainInput = {
 } & ChainInputs;
 
 export type ChainType = 'llm' | 'sequential_chain';
-export type ChainStage = {
+export type ChainStage<
+  I extends Record<string, any> = any,
+  O extends Record<string, any> = any
+> = {
   // the name (unique) of the stage
   name: string;
   // the loading message to show
@@ -35,8 +39,12 @@ export type ChainStage = {
       chainDescription: string;
       message: string;
     },
-    prevChainOutput: { [key: string]: any }
-  ) => Promise<{ abort?: boolean; data: any }>;
+    prevChainOutput: I
+  ) => Promise<{
+    abort?: boolean;
+    data: Omit<O, keyof I> & Partial<I>;
+    log?: string;
+  }>;
 };
 
 export abstract class CogniteBaseChain extends BaseChain {
@@ -64,7 +72,18 @@ export abstract class CogniteBaseChain extends BaseChain {
     return this.fields.llm;
   }
 
+  get messageKey() {
+    const messageKey = `${[
+      ...(this.fields['messages'].current || []),
+    ].findLastIndex((el) => el.source === 'user')}`;
+    return messageKey;
+  }
+
   _call = async (values: ChainValues): Promise<ChainValues> => {
+    addToCopilotLogs(this.messageKey, {
+      key: this.constructor.name,
+      content: 'Starting tool chain...',
+    });
     const validKeys = this.inputKeys.every((k) => k in values);
 
     if (!validKeys) {
@@ -79,22 +98,68 @@ export abstract class CogniteBaseChain extends BaseChain {
       chainDescription: this.description,
       chainName: name,
     };
-    const outputs: { [key: string]: any } = {};
+    let outputs: { [key: string]: any } = {};
     if (this.fields?.humanApproval) {
       const shouldContinue = await humanValidationStage(name);
       if (!shouldContinue) {
         return { value: 'emptyvalue' };
       }
     }
-    for (const stage of this.stages) {
-      sendToCopilotEvent('LOADING_STATUS', { status: stage.loadingMessage });
-      const { abort, data } = await stage.run(params, outputs);
-      if (abort) {
-        return { value: 'emptyvalue' };
+    try {
+      for (const stage of this.stages) {
+        addToCopilotLogs(this.messageKey, {
+          key: stage.name,
+          content: 'start',
+        });
+        sendToCopilotEvent('LOADING_STATUS', { status: stage.loadingMessage });
+        const {
+          abort,
+          data,
+          log = `${stage.name} completed \n\n \`\`\`json\n${JSON.stringify(
+            Object.fromEntries(
+              Object.entries(data).filter(
+                ([_key, value]) => typeof value !== 'object'
+              )
+            ),
+            null,
+            2
+          )}\n\`\`\``,
+        } = await stage.run(params, outputs);
+        addToCopilotLogs(this.messageKey, { key: stage.name, content: log });
+        if (abort) {
+          addToCopilotLogs(this.messageKey, {
+            key: this.constructor.name,
+            content: 'Finished tool chain...',
+          });
+          return { value: 'emptyvalue' };
+        }
+        outputs = { ...outputs, ...data };
       }
-      outputs[stage.name] = data;
+      addToCopilotLogs(this.messageKey, {
+        key: this.constructor.name,
+        content: 'Finished tool chain...',
+      });
+    } catch (e: any) {
+      this.onCatch(e);
     }
     return { value: 'emptyvalue' };
+  };
+
+  onCatch = (error: Error) => {
+    console.error(error);
+    addToCopilotLogs(this.messageKey, {
+      content: error.message,
+      key: this.constructor.name,
+    });
+    sendToCopilotEvent('NEW_MESSAGES', [
+      {
+        source: 'bot',
+        type: 'text',
+        content: 'Unable to process message',
+        chain: this.constructor.name,
+        logs: getCopilotLogs(this.messageKey),
+      },
+    ]);
   };
 }
 
@@ -134,6 +199,7 @@ export const callPromptChain = async <
   T extends { template: string; input_variables: any }
 >(
   chain: CogniteBaseChain,
+  key: string,
   prompt: T,
   inputVariables: {
     [key in T['input_variables'][number]]: any;
@@ -143,9 +209,10 @@ export const callPromptChain = async <
     timeout?: number;
   } = {
     maxRetries: 3,
-    timeout: 15000,
+    timeout: 6000,
   }
 ) => {
+  const currentRuns: Map<string, string> = new Map();
   const newChain = new LLMChain({
     llm: chain.llm,
     prompt: new PromptTemplate({
@@ -155,6 +222,27 @@ export const callPromptChain = async <
     // memory: chain.memory,
     outputKey: 'output',
     verbose: false,
+    callbacks: [
+      {
+        handleChainStart(_chain, value, runId, _pid, tags) {
+          currentRuns.set(value.key, runId);
+          tags?.push(value.key);
+          addToCopilotLogs(chain.messageKey, {
+            key,
+            content: 'getting results',
+          });
+        },
+        handleChainEnd(output, runId, _pid, tags = []) {
+          if (currentRuns.get(tags[0]) !== runId) {
+            throw new Error('Skip');
+          }
+          addToCopilotLogs(chain.messageKey, {
+            key,
+            content: `recieved results \n\`\`\`json\n${output.output}\n\`\`\``,
+          });
+        },
+      },
+    ],
   });
 
   const outputs = (await parallelGPTCalls(
@@ -185,46 +273,56 @@ export const safeConvertToJson = <T,>(outputs: string[]): T[] => {
 // Retries the call if it times out, up to maxRetries times.
 // If after maxRetries the call still times out, the result is just an {text:''} object, therefore the chain implementing this should never fail.
 // Returns a list of results, where the index of each result corresponds to the index of the input.
-export async function parallelGPTCalls(
+export async function parallelGPTCalls<T extends BaseChain>(
   inputList: ChainValues[],
-  chain: LLMChain,
+  chain: T,
   maxRetries = 3,
-  timeout = 8000
-): Promise<ChainValues[]> {
-  const results: ChainValues[] = [];
-  const retries: number[] = Array(inputList.length).fill(maxRetries);
-
-  const executeCall = async (index: number): Promise<void> => {
+  timeout = 3000,
+  call: (chain: T, value: ChainValues) => any = (item, value) =>
+    item.call(value)
+): Promise<any[]> {
+  const executeCall = async (
+    index: number,
+    retryCount = 1
+  ): Promise<ChainValues> => {
     const input = inputList[index];
     let timeoutId: NodeJS.Timeout | null = null;
 
-    const timeoutPromise = new Promise<never>((_, reject) => {
+    const timeoutPromise = new Promise<ChainValues>((_, reject) => {
       timeoutId = setTimeout(() => {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         clearTimeout(timeoutId!);
         reject(new Error('Request timed out'));
       }, timeout);
     });
+    const controller = new AbortController();
 
     try {
-      const response = await Promise.race([chain.call(input), timeoutPromise]);
+      const response = await Promise.race([
+        call(chain, { ...input, signal: controller.signal }),
+        timeoutPromise,
+      ]);
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       clearTimeout(timeoutId!);
-      results[index] = response;
-    } catch (error) {
+      return response;
+    } catch (error: any) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       clearTimeout(timeoutId!);
-      if (retries[index] > 0) {
-        retries[index]--;
-        console.log(`Retrying call ${index}...`);
-        await executeCall(index); // Retry the call
+      controller.abort();
+      if (retryCount < maxRetries && error.message === 'Request timed out') {
+        if (chain instanceof CogniteBaseChain) {
+          addToCopilotLogs(chain.messageKey, {
+            key: 'timeout retry',
+            content: `Attempt ${retryCount + 1} after timeout of ${timeout}ms`,
+          });
+        }
+        console.log(`Retrying call ${index} - ${retryCount}...`);
+        return await executeCall(index, retryCount + 1); // Retry the call
       } else {
-        results[index] = { output: '', text: '' }; // Max retries reached or timed out, return empty result
+        return { output: '', text: '' }; // Max retries reached or timed out, return empty result
       }
     }
   };
 
-  await Promise.all(inputList.map((_, index) => executeCall(index)));
-
-  return results;
+  return await Promise.all(inputList.map((_, index) => executeCall(index)));
 }

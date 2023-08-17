@@ -2,10 +2,11 @@ import { useEffect, useState, useCallback, useMemo } from 'react';
 
 import styled from 'styled-components';
 
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import {
   addFromCopilotEventListener,
   sendToCopilotEvent,
-  useFromCopilotEventHandler,
+  useToCopilotEventHandler,
 } from '@fusion/copilot-core';
 import isEmpty from 'lodash/isEmpty';
 import isString from 'lodash/isString';
@@ -69,19 +70,20 @@ export const AIResults = () => {
 
   const isCopilotEnabled = useIsCopilotEnabled();
 
-  useFromCopilotEventHandler(
-    'GQL_QUERY',
-    ({
-      query: newGqlQuery,
-      variables: newVariables,
-      dataModel: newDataModel,
-    }) => {
-      setGQLQuery(newGqlQuery);
-      setVariables(newVariables);
-      setDataModel(newDataModel);
-      setIsAILoading(false);
+  useToCopilotEventHandler('NEW_MESSAGES', (messages) => {
+    for (const message of messages) {
+      if (message.type === 'data-model-query') {
+        const {
+          graphql: { query: newGqlQuery, variables: newVariables },
+          dataModel: newDataModel,
+        } = message;
+        setGQLQuery(newGqlQuery);
+        setVariables(newVariables);
+        setDataModel(newDataModel);
+        setIsAILoading(false);
+      }
     }
-  );
+  });
 
   useEffect(() => {
     const sendMessage = () => {

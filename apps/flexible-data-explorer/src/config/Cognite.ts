@@ -34,12 +34,8 @@ export const cogniteConfig: ProjectConfig[] = [
 
     threeDResources: [
       {
-        modelId: 7617970672125413,
-        revisionId: 8633577232574048,
-      },
-      {
-        modelId: 3556440842981678,
-        revisionId: 6686136028338439,
+        modelId: 5365953234046511,
+        revisionId: 8757902535696137,
       },
     ],
   },

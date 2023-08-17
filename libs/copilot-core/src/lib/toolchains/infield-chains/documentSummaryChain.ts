@@ -59,14 +59,19 @@ export class DocumentSummaryChain extends CogniteBaseChain {
 
         // Starts of the refining from properties of the asset
         refinedResponse = (
-          await callPromptChain(this, infieldDocumentSummaryPrompt, [
-            {
-              input: input,
-              context: assetDescriptionGlobal,
-              prevAnswer: refinedResponse,
-              language: 'English',
-            },
-          ])
+          await callPromptChain(
+            this,
+            'summarize document',
+            infieldDocumentSummaryPrompt,
+            [
+              {
+                input: input,
+                context: assetDescriptionGlobal,
+                prevAnswer: refinedResponse,
+                language: 'English',
+              },
+            ]
+          )
         )[0];
 
         // Safely determining number of documents to query
@@ -75,6 +80,7 @@ export class DocumentSummaryChain extends CogniteBaseChain {
           refinedResponse = (
             await callPromptChain(
               this,
+              `summarize document - ${i + 1}`,
               infieldDocumentSummaryPrompt,
               [
                 {
@@ -132,7 +138,7 @@ export class DocumentSummaryChain extends CogniteBaseChain {
           },
         ]);
 
-        return { data: refinedResponse };
+        return { data: { refinedResponse } };
       },
     },
   ];

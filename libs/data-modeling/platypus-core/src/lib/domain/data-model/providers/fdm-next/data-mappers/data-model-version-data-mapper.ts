@@ -15,6 +15,7 @@ export class DataModelVersionDataMapper {
     graphQlDml,
     createdTime,
     lastUpdatedTime,
+    views,
   }: GraphQlDmlVersionDTO): DataModelVersion {
     return {
       name,
@@ -24,6 +25,7 @@ export class DataModelVersionDataMapper {
       version,
       status: DataModelVersionStatus.PUBLISHED,
       schema: graphQlDml || '',
+      views,
       createdTime: new Date(createdTime || '').getTime(),
       lastUpdatedTime: new Date(lastUpdatedTime || '').getTime(),
     };

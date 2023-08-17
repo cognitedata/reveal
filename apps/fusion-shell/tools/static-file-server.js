@@ -3,10 +3,11 @@ var http = require('http');
 var https = require('https');
 var path = require('path');
 var fs = require('fs');
+var fetch = require('node-fetch');
 var { createProxyMiddleware } = require('http-proxy-middleware');
 
 var { generateMiddlewares } = require('./scripts/proxy-config-utils');
-var { generateCSPHeader } = require('./scripts/lib/http-headers-utils');
+var { appendLoginAppRoutes } = require('./scripts/webpack-dev-server');
 
 var app = express();
 
@@ -16,31 +17,47 @@ var app = express();
  */
 var port = process.argv[2] || 8080;
 var useSSL = process.argv[3] === 'true';
-var appBuildMode = process.argv[4] || 'cdf';
-var configuration = (process.argv[5] || 'staging').replace('fusion-', '');
+var configuration = (process.argv[4] || 'staging').replace('fusion-', '');
+var organizationName = process.argv[5] || 'cog-appdev';
 
 var rootPath = path.resolve(__dirname, '../../../');
-var basePath = appBuildMode === 'cdf' ? '/cdf/' : '/';
+var basePath = '/';
 
 // For serving static files is the opposite case
 // for cdf, we are providing /cdf in the path, for fusion, we are serving from root
-var staticFilesLookupFolder = appBuildMode === 'cdf' ? '' : '/cdf';
+var staticFilesLookupFolder = '';
 
 // We need the correct import map manifest folder for the sub-apps so we can generate the proxy config
 var importMapEnv = configuration || 'staging';
 
-const subAppsConfig = JSON.parse(
-  fs.readFileSync(path.resolve(__dirname, '../src/apps-manifest.json'), 'utf8')
+const importMapsConfig = JSON.parse(
+  fs.readFileSync(rootPath + '/dist/apps/fusion-shell/import-map.json', 'utf8')
 );
 
 app.use(function (req, res, next) {
-  res.setHeader(
-    'Content-Security-Policy',
-    generateCSPHeader(subAppsConfig, importMapEnv)
-  );
   res.setHeader('Access-Control-Allow-Origin', '*');
   next();
 });
+
+appendLoginAppRoutes(app, importMapsConfig);
+
+// Proxy _api/login_info calls to domain config service
+// we need to figure this out
+app.use(
+  '/_api/login_info',
+  createProxyMiddleware({
+    target: 'https://app-login-configuration-lookup.cognite.ai/fusion-dev/',
+    secure: false,
+    changeOrigin: true,
+    logLevel: 'error',
+    pathRewrite: function (path, req) {
+      var organization = req.headers['host'].match(/[\w\-]+.fusion/)
+        ? req.headers['host'].split('.')[0]
+        : organizationName;
+      return path.replace('/_api/login_info', '') + organization;
+    },
+  })
+);
 
 // After build, serve the static files from following dirs
 app.use(
@@ -61,28 +78,12 @@ app.use(
 // Load fusion also when /cdf/ is used with unified signin
 app.use(
   basePath + ':tenant/:subApp?',
-  express.static(rootPath + '/dist/apps/fusion-shell/cdf')
+  express.static(rootPath + '/dist/apps/fusion-shell')
 );
 
-generateMiddlewares(app);
-
-// Proxy _api/login_info calls to domain config service
-// we need to figure this out
-app.use(
-  '/_api/login_info',
-  createProxyMiddleware({
-    target: 'https://app-login-configuration-lookup.cognite.ai/fusion/',
-    secure: false,
-    changeOrigin: true,
-    logLevel: 'error',
-    pathRewrite: function (path, req) {
-      var organization = req.headers['host'].match(/[\w\-]+.fusion/)
-        ? req.headers['host'].split('.')[0]
-        : 'cog-appdev';
-      return path.replace('/_api/login_info', '') + organization;
-    },
-  })
-);
+if (configuration === 'mock') {
+  generateMiddlewares(app);
+}
 
 var server = useSSL
   ? https.createServer(
@@ -99,6 +100,7 @@ server.listen(port, function () {
   console.log(
     (useSSL ? 'https://localhost:' + port : 'http://localhost:' + port) +
       basePath +
-      'platypus?cluster=greenfield.cognitedata.com&organization=cog-appdev'
+      'platypus?cluster=greenfield.cognitedata.com&organization=' +
+      organizationName
   );
 });

@@ -407,7 +407,26 @@ function Filter({
         onChange={(option: OptionType<OptionGroupValues> | null) => {
           setSearchParams({ [filterKey]: option?.value?.value });
         }}
+        dropdownRender={(menu) => {
+          const firstItem = options[0];
+          const optionsLength = firstItem && (firstItem?.options || []).length;
+          return (
+            <>
+              <FilterWrapper>({optionsLength} Items)</FilterWrapper>
+              {menu}
+            </>
+          );
+        }}
       />
     </div>
   );
 }
+
+const FilterWrapper = styled.div`
+  && {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    font-size: 10px;
+  }
+`;

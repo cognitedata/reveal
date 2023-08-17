@@ -1,33 +1,28 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
 export const useActiveTabKey = (
   keys: string[]
 ): [string, (value: string) => void] => {
-  const searchParams = useMemo(
-    () => new URLSearchParams(window.location.search),
-    []
-  );
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const [activeTabKey, setActiveTabKey] = useState<string>(
-    keys.includes(searchParams.get('tab') as string)
-      ? (searchParams.get('tab') as string)
-      : 'info'
-  );
+  const activeTabKey = useMemo(() => {
+    const tabKeyValue = searchParams.get('tab') ?? 'info';
+    return keys.includes(tabKeyValue) ? tabKeyValue : 'info';
+  }, [searchParams, keys]);
 
-  const setActiveTabKeyExtended = useCallback(
-    (value: string) => {
-      setActiveTabKey(value);
-      searchParams.set('tab', value);
-      const newUrl = new URL(window.location.href);
-      newUrl.search = searchParams.toString();
-      window.history.pushState(
-        { path: newUrl.toString() },
-        '',
-        newUrl.toString()
+  const setActiveTabKey = useCallback(
+    (tabKeyValue: string) => {
+      setSearchParams(
+        (prev) => {
+          prev.set('tab', keys.includes(tabKeyValue) ? tabKeyValue : 'info');
+          return prev;
+        },
+        { replace: true }
       );
     },
-    [setActiveTabKey, searchParams]
+    [setSearchParams, keys]
   );
 
-  return [activeTabKey, setActiveTabKeyExtended];
+  return [activeTabKey, setActiveTabKey];
 };
