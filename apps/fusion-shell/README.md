@@ -184,3 +184,46 @@ The map can be found in the Jenkins file on root.
 
 The host app uses virtual paths to resolve the sub-app files. They are served directly from Firebase.
 To revert, go to firebase console and revert the deployment directly from there.
+
+# E2E tests
+
+E2E tests are running on CI where we have the clientId and clientSecret as repository secrets available so that we can get access token.
+The token is fetched before cypress tests are started and is valid for the whole session. The code is here:
+`apps/fusion-shell/cypress.config.ts`
+
+After we get the access token, we are injecting a global function (testAuthOverrides) to the window object. This function later is used by the `cdf-sdk-sigleton` and it is returning the token mentioned from above.
+The code for that is here:
+`apps/fusion-shell/cypress/support/injectToken.ts`
+
+Finally, on the application side, the app is running with `mock` environemnt, which is not using the AuthWrapper that does the authentication, but rather the one from `apps/fusion-shell/src/environments/mock/AuthContainer.tsx`.
+Here, we are skipping the login screen and simulating that the user is authenticated. Under the hood it uses the `window.testAuthOverrides` mentioned above and is initializing the CogniteSdk client.
+
+If you want to run cypress test locally, or run mock env with mocked access token, you will need to generate clientId/ClientSecret.
+
+Get the clientId/ClientSecret from `cog-dss` (data science team, ask someone from data-exploration to send you an invite). use [this guide](../platypus-cdf-cli/LOGIN.md) to create clientId/ClientSecret
+
+After this step, you can run cypress. This is the command that is executed on CI
+`PROJECT=dss-dev TENANT=dssbycognite.onmicrosoft.com CLUSTER=greenfield DATA_EXPLORER_CLIENT_ID=<your-client-id> DATA_EXPLORER_CLIENT_SECRET=<your-client-secret> USE_MOCK_API=false yarn nx run fusion-shell:e2e:e2e --watch`
+
+If you want to debug and run fusion-shell using `mock` env with your clientId/ClientSecret, do the following:
+
+- run cypress using the command above and console log the token [here](apps/fusion-shell/cypress.config.ts)
+- Modify `bootstrap.tsx` and add the following code
+
+```ts
+window.testAuthOverrides = {
+  getToken: async () => {
+    return '<the-access-token-from-console-log>';
+  },
+};
+
+window.localStorage.setItem(
+  '@cognite/auth-react/login-hints',
+  '{"organization":"cog-appdev","idpInternalId":"a5bc6507-2644-4004-87eb-efdb3124e3e2","cluster":"greenfield.cognitedata.com","project":"platypus"}'
+);
+```
+
+Finally run mock-server and fusion-shell
+
+- `nx serve mock-server`
+- `PROJECT=dss-dev TENANT=dssbycognite.onmicrosoft.com CLUSTER=greenfield DATA_EXPLORER_CLIENT_ID=<your-client-id> DATA_EXPLORER_CLIENT_SECRET=<your-client-secret> USE_MOCK_API=false yarn nx run fusion-shell:serve:e2e`

@@ -12,7 +12,7 @@ function generateWebpackDevServerConfig(
   importMaps,
   importMapsEnv,
   publicPath,
-  useMockApi
+  useMockApis = true
 ) {
   const subAppsImportMap = generateSubAppsImportMap(
     subAppsConfig,
@@ -31,10 +31,8 @@ function generateWebpackDevServerConfig(
     'Content-Security-Policy': generateCSPHeader(subAppsConfig, importMapsEnv),
   };
 
-  // The idea is to configure the proxy to load the sub-apps from firebase
-  // https://webpack.js.org/configuration/dev-server/#devserverproxy
   config.devServer.proxy = {
-    ...(useMockApi ? mockEnvProxyConfig : {}),
+    ...(useMockApis ? mockEnvProxyConfig : {}),
     '/_api/login_info': {
       target:
         'https://app-login-configuration-lookup.cognite.ai/fusion-dev/cog-appdev',
