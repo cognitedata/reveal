@@ -213,14 +213,12 @@ export const getCogniteClient = async ({
   environment: string | null;
   overrideToken: string | null;
 }): Promise<CogniteClient> => {
-  if (project !== null) {
-    if (overrideToken !== null) {
-      return createSDKFromToken('reveal.example.example', project, overrideToken);
-    }
+  if (project !== null && overrideToken !== null) {
+    return createSDKFromToken('reveal.example.example', project, overrideToken);
+  }
 
-    if (environment !== null) {
-      return await createSDKFromEnvironment('reveal.example.example', project, environment);
-    }
+  if (project !== null && environment !== null) {
+    return await createSDKFromEnvironment('reveal.example.example', project, environment);
   }
 
   return new CogniteClient({
