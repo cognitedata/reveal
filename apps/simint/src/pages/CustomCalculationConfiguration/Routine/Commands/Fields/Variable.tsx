@@ -13,7 +13,7 @@ import type {
   UserDefined,
 } from '@cognite/simconfig-api-sdk/rtk';
 
-import { getOptionLabel, getTimeSerieIndexByType } from '../utils';
+import { getTimeSerieIndexByType } from '../utils';
 import type {
   ConfigurationFieldProps,
   TimeSeriesPrefixProps,
@@ -60,7 +60,7 @@ export function Variable({
     step.arguments.value ?? ''
   );
   //  If the time serie is not in the routine, we add it at the end
-  const timeSerieIndex =
+  const timeSeriesIndex =
     timeSerieIndexInRoutine !== -1
       ? timeSerieIndexInRoutine
       : timeSeriesTarget.length;
@@ -79,7 +79,7 @@ export function Variable({
           type="text"
           validate={() => {
             // Find the name of the current variable
-            const { name } = timeSeriesTarget[timeSerieIndex];
+            const name = timeSeriesTarget[timeSeriesIndex]?.name;
 
             if (!name) {
               return undefined;
@@ -111,13 +111,7 @@ export function Variable({
 
             return undefined;
           }}
-          value={{
-            value: step.arguments.value,
-            label: getOptionLabel(
-              TIMESERIES_VARIABLE_OPTIONS,
-              step.arguments.value ?? ''
-            ),
-          }}
+          value={timeSeriesTarget[timeSeriesIndex]?.name ?? ''}
           fullWidth
           onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
             const { value } = event.currentTarget;
@@ -125,11 +119,11 @@ export function Variable({
               .trim()
               .split(' ')
               .map((word) => word.charAt(0).toUpperCase())
-              .join('')}${timeSerieIndex}`;
+              .join('')}${timeSeriesIndex}`;
             setFieldValue(formikPath, type);
-            setFieldValue(`${timeSeriesPrefix}.${timeSerieIndex}.type`, type);
+            setFieldValue(`${timeSeriesPrefix}.${timeSeriesIndex}.type`, type);
             setFieldValue(
-              `${timeSeriesPrefix}.${timeSerieIndex}.name`,
+              `${timeSeriesPrefix}.${timeSeriesIndex}.name`,
               value.trim()
             );
           }}

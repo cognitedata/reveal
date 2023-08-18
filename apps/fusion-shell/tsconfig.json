@@ -7,8 +7,7 @@
     "strict": true,
     "resolveJsonModule": true,
     "forceConsistentCasingInFileNames": true,
-    // Remove this and fix the issues
-    "noImplicitAny": false,
+    "noImplicitAny": false
   },
   "files": [],
   "include": [],
@@ -18,6 +17,9 @@
     },
     {
       "path": "./tsconfig.spec.json"
+    },
+    {
+      "path": "./cypress/tsconfig.json"
     }
   ],
   "extends": "../../tsconfig.base.json"

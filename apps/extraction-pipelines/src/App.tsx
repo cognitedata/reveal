@@ -22,6 +22,7 @@ import { FlagProvider } from '@cognite/react-feature-flags';
 
 import { translations } from './common/i18n';
 import { AppEnvProvider } from './hooks/useAppEnv';
+import { AddTopicFilter } from './pages/AddTopicFilter';
 import CreateExtpipe from './pages/create/CreateExtpipe';
 import ExtpipePage from './pages/Extpipe/ExtpipePage';
 import Extpipes from './pages/Extpipes/Extpipes';
@@ -114,6 +115,10 @@ const App = () => {
                         <Route
                           path={`${baseUrl}/:subAppPath/hosted-extraction-pipeline/:externalId`}
                           element={<HostedExtractionPipelineDetails />}
+                        />
+                        <Route
+                          path={`${baseUrl}/:subAppPath/hosted-extraction-pipeline/:externalId/add-topic-filters`}
+                          element={<AddTopicFilter />}
                         />
                         <Route
                           path={`${baseUrl}/:subAppPath`}

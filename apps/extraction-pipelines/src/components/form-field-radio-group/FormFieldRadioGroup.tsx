@@ -11,7 +11,7 @@ import FormFieldWrapper, {
 type FormFieldRadioGroupProps<V> = Omit<FormFieldWrapperProps, 'children'> & {
   direction?: FlexProps['direction'];
   onChange: (value: V) => void;
-  options: FormFieldRadioOption<V>[];
+  options: (FormFieldRadioOption<V> & { content?: React.JSX.Element })[];
   value: V;
 };
 
@@ -31,16 +31,20 @@ const FormFieldRadioGroup = <V extends string>({
 }: FormFieldRadioGroupProps<V>): JSX.Element => {
   return (
     <FormFieldWrapper isRequired={isRequired} title={title}>
-      <Flex direction={direction} gap={8}>
-        {options.map(({ details, label, value }) => (
-          <StyledRadio
-            checked={selectedValue === value}
-            key={JSON.stringify(value)}
-            label={`${label}${details ? ` ${details}` : ''}`}
-            name={label}
-            onChange={() => onChange(value)}
-            value={value}
-          />
+      <Flex direction={direction} gap={24}>
+        {options.map(({ details, label, value, content }) => (
+          <Flex direction="column" gap={16} alignItems="stretch">
+            <StyledRadio
+              checked={selectedValue === value}
+              key={JSON.stringify(value)}
+              label={`${label}${details ? ` ${details}` : ''}`}
+              name={label}
+              onChange={() => onChange(value)}
+              value={value}
+              className="cogs-body-medium strong"
+            />
+            {value === selectedValue && content}
+          </Flex>
         ))}
       </Flex>
     </FormFieldWrapper>
@@ -48,18 +52,12 @@ const FormFieldRadioGroup = <V extends string>({
 };
 
 const StyledRadio = styled(Radio)<{ checked: boolean }>`
-  background-color: ${({ checked }) =>
-    checked
-      ? Colors['surface--interactive--toggled-default']
-      : Colors['surface--muted']};
-  border: 2px solid
-    ${({ checked }) =>
-      checked
-        ? Colors['border--interactive--toggled-default']
-        : Colors['border--interactive--default']};
-  border-radius: 6px;
-  flex: 1;
-  padding: 10px 14px;
+  .cogs-radio__label {
+    color: ${Colors['text-icon--strong']};
+    font-feature-settings: 'ss04' on;
+    font-weight: 500;
+    letter-spacing: -0.084px;
+  }
 `;
 
 export default FormFieldRadioGroup;

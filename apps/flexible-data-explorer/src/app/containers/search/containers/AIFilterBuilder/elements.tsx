@@ -4,7 +4,6 @@ import {
   components as ReactSelectComponents,
 } from 'react-select';
 
-import { getContainer } from '@platypus-app/GlobalStyles';
 import {
   ButtonProps,
   ConjsProps,
@@ -26,6 +25,8 @@ import {
   SegmentedControl,
   Select,
 } from '@cognite/cogs.js';
+
+import { getContainer } from '../../../../../GlobalStyles';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore

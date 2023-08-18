@@ -381,7 +381,7 @@ type MQTTFormatPrefixConfig = {
 };
 
 export type MQTTFormat = {
-  type: 'cognite' | 'siemens' | 'tmc' | 'rockwell' | 'value';
+  type: 'cognite' | 'siemens' | 'tmc' | 'rockwell' | 'value' | 'custom';
   prefix?: MQTTFormatPrefixConfig;
 };
 

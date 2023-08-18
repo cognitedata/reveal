@@ -175,7 +175,13 @@
         },
         "mock": {
           "buildTarget": "fusion-shell:internal-build:mock",
-          "hmr": true
+          "hmr": true,
+          "ssl": true
+        },
+        "e2e": {
+          "buildTarget": "fusion-shell:internal-build:mock",
+          "hmr": true,
+          "ssl": true
         }
       }
     },
@@ -222,6 +228,29 @@
           "codeCoverage": true
         }
       }
+    },
+    "e2e": {
+      "executor": "@nx/cypress:cypress",
+      "options": {
+        "cypressConfig": "apps/fusion-shell/cypress.config.ts",
+        "testingType": "e2e",
+        "devServerTarget": "fusion-shell:serve:e2e"
+      },
+      "configurations": {
+        "staging": {
+          "devServerTarget": "fusion-shell:serve:e2e",
+          "env": {
+            "USE_MOCK_API": false
+          }
+        },
+        "e2e": {
+          "devServerTarget": "fusion-shell:serve:e2e",
+          "env": {
+            "USE_MOCK_API": false
+          }
+        }
+      },
+      "defaultConfiguration": "staging"
     }
   },
   "tags": [],

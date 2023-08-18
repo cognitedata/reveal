@@ -27,8 +27,18 @@ export const queryKeys = {
   aiSearchDataTypes: (
     query: string,
     dataModels: DataModelV2[],
-    gql?: { query: string; variables: any }
-  ) => [...queryKeys.all, 'ai', 'search', query, dataModels, gql] as const,
+    gql?: string,
+    variables?: any
+  ) =>
+    [
+      ...queryKeys.all,
+      'ai',
+      'search',
+      query,
+      dataModels,
+      gql,
+      variables,
+    ] as const,
   searchAggregates: (
     query: string,
     filter: Record<string, unknown>,

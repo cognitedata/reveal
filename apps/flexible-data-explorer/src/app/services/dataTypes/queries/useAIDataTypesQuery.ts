@@ -15,7 +15,12 @@ export const useAIDataTypesQuery = (
 
   const [_, setQueryResults] = useAIQueryLocalStorage();
   return useQuery(
-    queryKeys.aiSearchDataTypes(search, selectedDataModels, message?.graphql),
+    queryKeys.aiSearchDataTypes(
+      search,
+      selectedDataModels,
+      message?.graphql.query,
+      message?.graphql.variables
+    ),
     async () => {
       if (!message) {
         return undefined;

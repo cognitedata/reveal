@@ -1,41 +1,29 @@
 {
   "extends": [
+    "plugin:cypress/recommended",
     "plugin:@nx/react",
     "../../.eslintrc.json"
   ],
-  "ignorePatterns": [
-    "!**/*",
-    "firebase-functions/**/*",
-    "tools/**/*"
-  ],
+  "ignorePatterns": ["!**/*", "firebase-functions/**/*", "tools/**/*"],
   "overrides": [
     {
-      "files": [
-        "*.ts",
-        "*.tsx",
-        "*.js",
-        "*.jsx"
-      ],
+      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
       "rules": {}
     },
     {
-      "files": [
-        "*.ts",
-        "*.tsx"
-      ],
+      "files": ["*.ts", "*.tsx"],
       "rules": {
         "no-console": "warn",
-        "import/order": [
-          "off"
-        ],
+        "import/order": ["off"],
         "@typescript-eslint/no-explicit-any": "off"
       }
     },
     {
-      "files": [
-        "*.js",
-        "*.jsx"
-      ],
+      "files": ["*.js", "*.jsx"],
+      "rules": {}
+    },
+    {
+      "files": ["*.cy.{ts,js,tsx,jsx}", "cypress/**/*.{ts,js,tsx,jsx}"],
       "rules": {}
     }
   ]
