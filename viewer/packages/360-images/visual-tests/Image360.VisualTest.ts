@@ -47,7 +47,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
 
     this.setupMouseMoveEventHandler(renderer, entities, facade, camera);
 
-    this.setupMouseClickEvenetHandler(renderer, facade, camera, cameraControls);
+    this.setupMouseClickEventHandler(renderer, facade, camera, cameraControls);
   }
 
   private getOctreeVisualizationObject(icons: Overlay3DIcon[]) {
@@ -73,7 +73,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     }
   }
 
-  private setupMouseClickEvenetHandler(
+  private setupMouseClickEventHandler(
     renderer: THREE.WebGLRenderer,
     facade: CdfImage360Facade | LocalImage360Facade,
     camera: THREE.PerspectiveCamera,
