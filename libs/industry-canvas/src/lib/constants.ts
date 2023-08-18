@@ -1,5 +1,7 @@
 import { TooltipAnchorPosition } from '@cognite/unified-file-viewer';
 
+export const AUTH2_API_URL = 'https://auth.cognite.com';
+
 export const TOAST_POSITION = 'top-left' as const;
 export const ANNOTATION_TOOLTIP_POSITION = TooltipAnchorPosition.BOTTOM_LEFT;
 
@@ -54,9 +56,14 @@ export enum QueryKeys {
   USER_PROFILE = 'user-profile',
   USERS = 'users',
   USER_PROFILES_BY_IDS = 'user-profiles-by-ids',
+  USER_PROFILES_SEARCH = 'user-profiles-search',
   LOCKING = 'canvas.locking',
   CREATE_SPACE = 'create-space',
   LIST_SPACES = 'list-spaces',
+  AUTH2_USERS = 'org-users',
+  AUTH2_USERS_BY_RESOURCE = 'org-user-invitations-by-resource',
+  AUTH2_INVITATIONS = 'org-user-invitations',
+  AUTH2_REVOKE_INVITATIONS = 'org-user-revoke-invitations',
 }
 
 export const SEARCH_QUERY_PARAM_KEY = 'search';

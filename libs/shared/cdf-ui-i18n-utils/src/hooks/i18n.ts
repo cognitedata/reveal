@@ -5,6 +5,10 @@ import { UseTranslationOptions, useTranslation } from 'react-i18next';
 import { ExtendedTranslationKeys } from '../types';
 
 export type StringMap = { [key: string]: any };
+export type TFunction<K extends string> = (
+  key: ExtendedTranslationKeys<K>,
+  options?: TOptions<StringMap> | string
+) => string;
 
 export const useTypedTranslation = <K extends string>(
   ns?: string,
