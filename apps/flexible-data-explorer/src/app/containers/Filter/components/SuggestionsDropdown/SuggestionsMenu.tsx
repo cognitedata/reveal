@@ -6,15 +6,17 @@ import { Menu as CogsMenu } from '@cognite/cogs.js';
 import { Suggestion } from '../../types';
 
 export interface SuggestionsMenuProps {
+  showSuggestions?: boolean;
   suggestions?: Suggestion[];
-  onSelectSuggestion?: (suggestion: string) => void;
+  onSelectSuggestion?: (suggestion: Suggestion) => void;
 }
 
 export const SuggestionsMenu: React.FC<SuggestionsMenuProps> = ({
+  showSuggestions = true,
   suggestions,
   onSelectSuggestion,
 }) => {
-  if (!suggestions || isEmpty(suggestions)) {
+  if (!showSuggestions || !suggestions || isEmpty(suggestions)) {
     return null;
   }
 

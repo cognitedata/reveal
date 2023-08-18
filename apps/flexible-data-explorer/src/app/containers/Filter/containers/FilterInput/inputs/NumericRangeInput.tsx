@@ -1,26 +1,22 @@
-import * as React from 'react';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 
 import isUndefined from 'lodash/isUndefined';
-import lodashMax from 'lodash/max';
-import lodashMin from 'lodash/min';
+import styled from 'styled-components/macro';
 
 import { Chip } from '@cognite/cogs.js';
 
-import { useTranslation } from '../../../../hooks/useTranslation';
-import { BaseInputProps, NumericRange } from '../../types';
-import { NumberInput } from '../NumberInput';
-
-import { Container } from './elements';
+import { useTranslation } from '../../../../../hooks/useTranslation';
+import { BaseFilterInput } from '../../../components';
+import { NumericRange } from '../../../types';
+import { FilterInputProps } from '../FilterInput';
 
 const PLACEHOLDER = '...';
 
-export type NumericRangeInputProps = BaseInputProps<NumericRange>;
+export type NumericRangeInputProps = FilterInputProps<NumericRange>;
 
 export const NumericRangeInput: React.FC<NumericRangeInputProps> = ({
   value,
   onChange,
-  suggestions = [],
   ...rest
 }) => {
   const { t } = useTranslation();
@@ -28,17 +24,14 @@ export const NumericRangeInput: React.FC<NumericRangeInputProps> = ({
   const [min, setMin] = useState<number | undefined>(value?.[0]);
   const [max, setMax] = useState<number | undefined>(value?.[1]);
 
-  const [dataMin, dataMax] = useMemo(() => {
-    return [lodashMin(suggestions), lodashMax(suggestions)];
-  }, [suggestions]);
-
   return (
     <Container>
-      <NumberInput
+      <BaseFilterInput
         {...rest}
+        type="number"
         placeholder={PLACEHOLDER}
         value={min}
-        helpText={dataMin && t('FILTER_INPUT_MIN', { value: dataMin })}
+        // helpText={dataMin && t('FILTER_INPUT_MIN', { value: dataMin })}
         onChange={(newMin) => {
           setMin(newMin);
 
@@ -53,11 +46,12 @@ export const NumericRangeInput: React.FC<NumericRangeInputProps> = ({
         tooltipProps={{ disabled: true }}
       />
 
-      <NumberInput
+      <BaseFilterInput
         {...rest}
+        type="number"
         placeholder={PLACEHOLDER}
         value={max}
-        helpText={dataMax && t('FILTER_INPUT_MAX', { value: dataMax })}
+        // helpText={dataMax && t('FILTER_INPUT_MAX', { value: dataMax })}
         onChange={(newMax) => {
           setMax(newMax);
 
@@ -69,3 +63,13 @@ export const NumericRangeInput: React.FC<NumericRangeInputProps> = ({
     </Container>
   );
 };
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+
+  .cogs-input {
+    width: 84.5px;
+  }
+`;
