@@ -123,7 +123,11 @@ const Extractors = () => {
       return filteredSourceSystems;
     }
 
-    return [...filteredExtractors, ...filteredSourceSystems];
+    return [
+      ...filteredExtractors,
+      ...filteredHostedExtractors,
+      ...filteredSourceSystems,
+    ];
   }, [
     category,
     filteredExtractors,
