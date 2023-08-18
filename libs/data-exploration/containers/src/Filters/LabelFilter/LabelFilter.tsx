@@ -9,6 +9,7 @@ import {
 import {
   useAssetsFilterOptions,
   useDocumentsLabelsFilterOptions,
+  useOptionsWithLabelName,
 } from '@data-exploration-lib/domain-layer';
 
 import { MultiSelectFilter } from '../MultiSelectFilter';
@@ -73,13 +74,15 @@ const AssetLabelFilter = (
     query,
   });
 
+  const optionsWithLabelName = useOptionsWithLabelName(options);
+
   return (
     <LabelFilter
       {...props}
       onInputChange={setQuery}
       isError={isError}
       isLoading={isLoading}
-      options={options}
+      options={optionsWithLabelName}
     />
   );
 };
@@ -95,11 +98,13 @@ export const DocumentLabelFilter = (
     query,
   });
 
+  const optionsWithLabelName = useOptionsWithLabelName(options);
+
   return (
     <LabelFilter
       {...props}
       onInputChange={setQuery}
-      options={options}
+      options={optionsWithLabelName}
       isError={isError}
       isLoading={isLoading}
     />
