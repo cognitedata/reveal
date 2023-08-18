@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { DefaultNodeAppearance } from '@cognite/reveal';
 import {
@@ -7,6 +7,7 @@ import {
   Reveal3DResources,
   useCameraNavigation,
   useClickedNodeData,
+  Image360Details,
 } from '@cognite/reveal-react-components';
 
 import { defaultResourceStyling } from '../../../constants/threeD';
@@ -30,6 +31,7 @@ export const RevealContent = ({
 }: Props) => {
   const cameraNavigation = useCameraNavigation();
   const clickedNodeData = useClickedNodeData();
+  const [resourceMounted, setResourcesMounted] = useState(false);
 
   const instanceStyling = useMemo(() => {
     const styling: FdmAssetStylingGroup[] = [];
@@ -45,6 +47,7 @@ export const RevealContent = ({
   }, [clickedNodeData?.fdmNode]);
 
   const handleResourcesAdded = useCallback(() => {
+    setResourcesMounted(true);
     if (fitCamera === 'models') {
       return cameraNavigation.fitCameraToAllModels();
     }
@@ -65,6 +68,7 @@ export const RevealContent = ({
         instanceStyling={instanceStyling}
         onResourcesAdded={handleResourcesAdded}
       />
+      {resourceMounted && <Image360Details />}
       <PreviewCard nodeData={clickedNodeData} />
     </>
   );
