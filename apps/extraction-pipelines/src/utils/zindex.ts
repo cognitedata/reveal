@@ -5,6 +5,7 @@ const LAYERS = [
 
   // Insert your other levels here, ordered how they should be ordered in the
   // z-order hierarchy.
+  'TOP_BAR',
   'ALERT_POPUP',
   'TOOLTIP',
   'DROPDOWN',

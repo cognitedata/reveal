@@ -20,9 +20,9 @@ const FormFieldWrapper = ({
   infoTooltip,
 }: FormFieldWrapperProps): JSX.Element => {
   return (
-    <Flex direction="column">
+    <Flex direction="column" style={{ width: '100%' }}>
       {title && (
-        <StyledFormFieldTitle level={2} strong>
+        <StyledFormFieldTitle size="medium" strong>
           {title}
           {isRequired && <StyledFormFieldRequired>*</StyledFormFieldRequired>}
           {infoTooltip && (
