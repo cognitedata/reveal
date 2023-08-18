@@ -167,7 +167,8 @@ export const getFields = (
   typeName: string,
   relevantFields: Map<string, string[]>,
   dataModelTypes: DataModelTypeDefs,
-  isList?: boolean
+  isList?: boolean,
+  includePageInfo?: boolean
 ) => {
   const typeDef = dataModelTypes.types.find((el) => el.name === typeName);
   if (!typeDef) {
@@ -179,7 +180,14 @@ export const getFields = (
   return `{
     ${isList ? 'items { externalId \n' : 'externalId\n'}
       ${typeDef?.fields
-        .filter((field) => fields?.includes(field.name))
+        .filter(
+          (field) =>
+            fields?.includes(field.name) ||
+            // always include externalId, name, description
+            field.name === 'externalId' ||
+            field.name === 'name' ||
+            field.name === 'description'
+        )
         .map((field): string => {
           if (field.type.custom) {
             if (nestedSet.has(field.type.name)) {
@@ -197,6 +205,14 @@ export const getFields = (
         })
         .join('\n')}
     ${isList ? '}' : ''}
+    ${
+      includePageInfo
+        ? `
+    pageInfo {
+      hasNextPage
+    }`
+        : ''
+    }
   }`;
 };
 

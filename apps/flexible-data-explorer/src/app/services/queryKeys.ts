@@ -26,9 +26,9 @@ export const queryKeys = {
     ] as const,
   aiSearchDataTypes: (
     query: string,
-    filter: Record<string, unknown>,
-    dataModel?: DataModel
-  ) => [...queryKeys.all, 'ai', 'search', query, filter, dataModel] as const,
+    dataModels: DataModelV2[],
+    gql?: { query: string; variables: any }
+  ) => [...queryKeys.all, 'ai', 'search', query, dataModels, gql] as const,
   searchAggregates: (
     query: string,
     filter: Record<string, unknown>,
@@ -69,7 +69,7 @@ export const queryKeys = {
   instanceRelationship: (
     instance: Instance,
     dataModel: Partial<DataModelV2>,
-    type: string,
+    entry: Record<string, unknown>,
     filters: any
   ) =>
     [
@@ -77,7 +77,7 @@ export const queryKeys = {
       'instance-relationship',
       instance,
       dataModel,
-      type,
+      entry,
       filters,
     ] as const,
 

@@ -31,7 +31,7 @@ export const useEventsListQuery = (
   const sdk = useSDK();
 
   const { data, ...rest } = useInfiniteQuery(
-    queryKeys.listEvents([advancedFilter, filter, limit, sort]),
+    queryKeys.listEvents([advancedFilter, filter, limit, sort, options]),
     ({ pageParam }) => {
       return getEventsList(sdk, {
         cursor: pageParam,

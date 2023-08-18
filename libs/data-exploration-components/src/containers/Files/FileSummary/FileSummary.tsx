@@ -9,17 +9,25 @@ import { FileNamePreview } from '@data-exploration/containers';
 import { SummaryHeader } from '@data-exploration-components/components/SummaryHeader/SummaryHeader';
 import { getSummaryCardItems } from '@data-exploration-components/components/SummaryHeader/utils';
 import { useResourceResults } from '@data-exploration-components/containers';
+import { useUniqueCdfItems } from '@data-exploration-components/hooks';
 import { convertResourceType } from '@data-exploration-components/types';
 import { ColumnDef } from '@tanstack/react-table';
+import uniqBy from 'lodash/uniqBy';
 
 import { Asset, FileInfo } from '@cognite/sdk';
 
 import {
   getHiddenColumns,
   InternalFilesFilters,
+  isObjectEmpty,
+  isSummaryCardDataCountExceed,
+  useDeepMemo,
   useTranslation,
 } from '@data-exploration-lib/core';
-import { useDocumentsMetadataKeys } from '@data-exploration-lib/domain-layer';
+import {
+  useDocumentsMetadataKeys,
+  useRelatedFilesQuery,
+} from '@data-exploration-lib/domain-layer';
 
 export const FileSummary = ({
   query = '',
@@ -27,6 +35,9 @@ export const FileSummary = ({
   onAllResultsClick,
   onRowClick,
   onDirectAssetClick,
+  showAllResultsWithEmptyFilters = false,
+  selectedResourceExternalId: resourceExternalId,
+  annotationIds = [],
 }: {
   query?: string;
   filter?: InternalFilesFilters;
@@ -35,10 +46,49 @@ export const FileSummary = ({
   ) => void;
   onRowClick?: (row: FileInfo) => void;
   onDirectAssetClick?: (directAsset: Asset, resourceId?: number) => void;
+  showAllResultsWithEmptyFilters?: boolean;
+  selectedResourceExternalId?: string;
+  annotationIds?: number[];
 }) => {
+  const isQueryEnable = isObjectEmpty(filter as any)
+    ? showAllResultsWithEmptyFilters
+    : true;
+
+  const { data: annotationList = [] } = useUniqueCdfItems<FileInfo>(
+    'files',
+    annotationIds.map((id) => ({ id })),
+    true
+  );
+
+  const isAnnotationCountExceed = isSummaryCardDataCountExceed(
+    annotationList.length
+  );
   const api = convertResourceType('file');
-  const { items: results, isFetching: isLoading } =
-    useResourceResults<FileInfo>(api, query, filter);
+
+  const { items: files, isFetching: isLoading } = useResourceResults<FileInfo>(
+    api,
+    query,
+    filter,
+    undefined,
+    undefined,
+    isQueryEnable && !isAnnotationCountExceed
+  );
+
+  const isFilesCountExceed = isSummaryCardDataCountExceed(
+    files.length + annotationList.length
+  );
+
+  const { data: relatedFiles, isLoading: isRelatedFilesLoading } =
+    useRelatedFilesQuery({
+      resourceExternalId,
+      enabled: !isFilesCountExceed,
+    });
+
+  const mergeData = useDeepMemo(
+    () => uniqBy([...annotationList, ...files, ...relatedFiles], 'id'),
+    [annotationList, files, relatedFiles]
+  );
+
   const { t } = useTranslation();
   const tableColumns = getTableColumns(t);
   const { data: metadataKeys } = useDocumentsMetadataKeys();
@@ -81,13 +131,16 @@ export const FileSummary = ({
   );
   const hiddenColumns = getHiddenColumns(columns, ['name', 'content']);
 
+  const isDataLoading = isLoading && isQueryEnable && !isAnnotationCountExceed;
+  const isRelatedDataLoading = isRelatedFilesLoading && !isFilesCountExceed;
+
   return (
     <SummaryCardWrapper>
       <Table
         columns={columns}
         hiddenColumns={hiddenColumns}
-        data={getSummaryCardItems(results)}
-        isDataLoading={isLoading}
+        data={getSummaryCardItems(mergeData)}
+        isDataLoading={isDataLoading || isRelatedDataLoading}
         id="file-summary-table"
         onRowClick={onRowClick}
         columnSelectionLimit={2}

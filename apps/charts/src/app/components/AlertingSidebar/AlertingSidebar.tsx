@@ -11,8 +11,11 @@ import {
   FilterOption,
   ALERTING_FILTER_OPTIONS,
 } from '@charts-app/components/MonitoringSidebar/JobAndAlertsFilter';
+import {
+  useGetTsExternalIdsFromScheduledCalculations,
+  useGetTsIdsFromTimeseriesCollection,
+} from '@charts-app/domain/chart/internal/queries/useGetTSIds';
 import { useSearchParam } from '@charts-app/hooks/navigation';
-import { useChartAtom } from '@charts-app/models/chart/atom';
 import { jobsToAlerts } from '@charts-app/pages/ChartViewPage/NotificationIndicator';
 import { trackUsage } from '@charts-app/services/metrics';
 import { MONITORING_SIDEBAR_ALERT_COUNT_KEY } from '@charts-app/utils/constants';
@@ -22,7 +25,6 @@ import { useQueryClient } from '@tanstack/react-query';
 import { Button, Icon, toast, Tooltip } from '@cognite/cogs.js';
 import { saveToLocalStorage } from '@cognite/storage';
 
-import { getTsIds } from '../../domain/chart/internal/transformers/getTsIds';
 import { ALERTING_FILTER } from '../../utils/constants';
 
 import { DisplayAlerts } from './DisplayAlerts';
@@ -49,7 +51,9 @@ export const AlertingSidebar = ({
     ...defaultTranslations,
     ...translations,
   };
-  const [chart] = useChartAtom();
+  const timeseriesCollectionTsIds = useGetTsIdsFromTimeseriesCollection();
+  const scheduledCalculationTsExternalIds =
+    useGetTsExternalIdsFromScheduledCalculations();
   const [filterOption = ALERTING_FILTER_OPTIONS[0].value, setFilterOption] =
     useSearchParam(ALERTING_FILTER);
 
@@ -66,7 +70,12 @@ export const AlertingSidebar = ({
     data: taskData,
   } = useMonitoringFoldersWithJobs('alerting-sidebar', {
     subscribed: filterOption === 'subscribed',
-    timeseriesIds: filterOption === 'current' ? getTsIds(chart) : undefined,
+    timeseriesIds:
+      filterOption === 'current' ? timeseriesCollectionTsIds : undefined,
+    timeseriesExternalIds:
+      filterOption === 'current'
+        ? scheduledCalculationTsExternalIds
+        : undefined,
     currentChart: filterOption === 'current',
   });
 

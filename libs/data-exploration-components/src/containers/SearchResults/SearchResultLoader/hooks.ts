@@ -32,7 +32,8 @@ export const useResourceResults = <T extends ResourceType>(
   query?: string,
   filter?: any,
   limit: number = PAGE_SIZE,
-  dateRange?: [Date, Date]
+  dateRange?: [Date, Date],
+  enabled: boolean = true
 ) => {
   const searchEnabled = !!query && query.length > 0;
 
@@ -47,7 +48,7 @@ export const useResourceResults = <T extends ResourceType>(
     fetchNextPage: listFetchMore,
     isFetching: isFetchingList,
   } = useInfiniteList<T>(api, limit, filter, {
-    enabled: !searchEnabled,
+    enabled: !searchEnabled && enabled,
   });
   const listItems = useMemo(
     () => listData?.pages?.reduce((accl, t) => accl.concat(t.items), [] as T[]),
@@ -68,7 +69,7 @@ export const useResourceResults = <T extends ResourceType>(
     limit,
     Object.keys(filter).length > 0 ? filter : undefined,
     {
-      enabled: searchEnabled,
+      enabled: searchEnabled && enabled,
     }
   );
   const searchItems = useMemo(() => flatten(searchData?.pages), [searchData]);

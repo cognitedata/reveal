@@ -6,6 +6,7 @@ import { Body, Title, Tooltip } from '@cognite/cogs.js';
 
 import { ModalConfirm } from '../../components/confirm/ModalConfirm';
 import { useDataModelsLocalStorage } from '../../hooks/useLocalStorage';
+import { useAISearchParams } from '../../hooks/useParams';
 import { useProjectConfig } from '../../hooks/useProjectConfig';
 import { useTranslation } from '../../hooks/useTranslation';
 import { useSelectedDataModels } from '../../services/useSelectedDataModels';
@@ -27,11 +28,15 @@ export const SearchConfiguration: React.FC<Props> = ({ header }) => {
 
   const Wrapper: any = header ? Title : Body;
 
+  const [isAIEnabled] = useAISearchParams();
+
   return (
     <Container>
       <Wrapper level={header ? 3 : 6}>
         {header
-          ? t('HOMEPAGE_HEADER', { site: config?.site })
+          ? t(isAIEnabled ? 'AI_HOMEPAGE_HEADER' : 'HOMEPAGE_HEADER', {
+              site: config?.site,
+            })
           : t('SEARCH_RESULTS_HEADER', { site: config?.site })}
 
         {!config?.dataModels && (
@@ -69,6 +74,7 @@ const StyledBody = styled.p<{ $isHeader?: boolean }>`
   align-items: center;
   color: rgba(51, 51, 51, 0.6);
   font-size: ${({ $isHeader }) => ($isHeader ? '24px' : '14px')};
+  margin-bottom: 0px;
 
   &:hover {
     cursor: pointer;

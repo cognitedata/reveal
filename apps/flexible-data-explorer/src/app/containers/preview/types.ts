@@ -5,6 +5,7 @@ export interface InstancePreviewProps {
   instance?: Instance;
   dataModel?: DataModelV2;
   disabled?: boolean;
+  disableViewer?: boolean;
 }
 
 export interface InstancePreviewRelationProps extends InstancePreviewProps {

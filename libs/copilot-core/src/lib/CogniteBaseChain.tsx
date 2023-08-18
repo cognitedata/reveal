@@ -106,12 +106,15 @@ export abstract class CogniteBaseChain extends BaseChain {
       }
     }
     try {
-      for (const stage of this.stages) {
+      for (const [i, stage] of this.stages.entries()) {
         addToCopilotLogs(this.messageKey, {
           key: stage.name,
           content: 'start',
         });
-        sendToCopilotEvent('LOADING_STATUS', { status: stage.loadingMessage });
+        sendToCopilotEvent('LOADING_STATUS', {
+          status: stage.loadingMessage,
+          stage: (i + 1) / this.stages.length,
+        });
         const {
           abort,
           data,

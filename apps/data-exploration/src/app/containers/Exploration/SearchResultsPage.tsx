@@ -222,7 +222,8 @@ function SearchPage() {
                 path={routes.root.path}
                 element={
                   <AllTab
-                    commonFilters={commonFilters}
+                    filters={{ common: commonFilters }}
+                    showAllResultsWithEmptyFilters
                     setCurrentResourceType={setCurrentResourceType}
                   />
                 }

@@ -47,7 +47,7 @@ export const Categories = () => {
 
 const CategoriesContainer = styled.div`
   height: 10%;
-  padding-top: 24px;
+  padding-top: 16px;
   width: 774px;
   align-self: center;
 `;
