@@ -38,7 +38,11 @@ export function Image360CollectionContainer({
         return collection;
       }
 
-      return await viewer.add360ImageSet('events', { site_id: siteId });
+      return await viewer.add360ImageSet(
+        'events',
+        { site_id: siteId },
+        { preMultipliedRotation: false }
+      );
     }
   }
 
