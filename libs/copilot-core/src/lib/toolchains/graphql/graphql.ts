@@ -387,17 +387,8 @@ export class GraphQlChain extends CogniteBaseChain {
       name: 'retrive results',
       loadingMessage: 'Gathering answer...',
       run: async (
-        { sdk, message },
-        {
-          omitted,
-          query,
-          queryType,
-          variables,
-          type,
-          selectedDataModel,
-          filteredTypes,
-          dataModelTypes,
-        }
+        { sdk },
+        { omitted, query, queryType, variables, type, selectedDataModel }
       ) => {
         const operationName = getOperationName(queryType, type);
         // Get summary
@@ -413,35 +404,27 @@ export class GraphQlChain extends CogniteBaseChain {
               variables,
             },
           });
-          const relevantTypesDml = constructGraphQLTypes(
-            filteredTypes,
-            dataModelTypes
-          );
 
-          const [summaryResults] = await callPromptChain(
+          const [{ summary }] = await callPromptChain(
             this,
-            'summarize',
+            'summarize filter',
             datamodelResultSummaryPrompt,
             [
               {
-                query,
+                query: JSON.stringify({
+                  query: query,
+                  variables,
+                }),
               },
             ]
-          )
-            .then(
-              safeConvertToJson<{
-                groupBy?: string;
-                aggregateProperties: { [key in string]: string[] };
-              }>
-            )
-            .catch(() => {
-              return [];
-            });
-
-          console.log(summaryResults);
+          ).then(
+            safeConvertToJson<{
+              summary: string;
+            }>
+          );
 
           // assume no aggregate atm
-          const summary =
+          const resultAggregate =
             queryType === 'list'
               ? // todo: add support for pagination
                 `${response.data[operationName]['items'].length}${
@@ -464,11 +447,12 @@ export class GraphQlChain extends CogniteBaseChain {
                   selectedDataModel.views.find((el) => el.externalId === type)
                     ?.version || '',
               },
-              content: `I found ${summary} results. ${
+              content: `I found ${resultAggregate} results. ${
                 omitted.length > 0
                   ? "I wasn't able to process the entire question. "
                   : ''
               }`,
+              summary,
               graphql: { query, variables },
               chain: this.constructor.name,
               actions: [],
@@ -487,7 +471,7 @@ export class GraphQlChain extends CogniteBaseChain {
           });
 
           // assume no aggregate atm
-          const summary =
+          const resultAggregate =
             queryType === 'list'
               ? // todo: add support for pagination
                 `${response.data[operationName]['items'].length}+`
@@ -506,7 +490,7 @@ export class GraphQlChain extends CogniteBaseChain {
                   selectedDataModel.views.find((el) => el.externalId === type)
                     ?.version || '',
               },
-              content: `I found ${summary} results. I wasn't able to process the entire question. `,
+              content: `I found ${resultAggregate} results. I wasn't able to process the entire question. `,
               graphql: { query, variables: {} },
               chain: this.constructor.name,
               actions: [],

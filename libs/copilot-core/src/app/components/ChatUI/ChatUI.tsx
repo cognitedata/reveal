@@ -10,10 +10,15 @@ import { AIMessage, HumanMessage } from 'langchain/schema';
 import noop from 'lodash/noop';
 
 import { Flex } from '@cognite/cogs.js';
+import { datamodelResultSummaryPrompt } from '@cognite/llm-hub';
 import { useFlag } from '@cognite/react-feature-flags';
 import { useSDK } from '@cognite/sdk-provider';
 
 import { CogniteChatGPT } from '../../../lib/chatModels';
+import {
+  callPromptChain,
+  safeConvertToJson,
+} from '../../../lib/CogniteBaseChain';
 import { processMessage } from '../../../lib/processMessage';
 import { CogniteChainName, newChain } from '../../../lib/toolchains';
 import {
@@ -70,7 +75,7 @@ export const ChatUI = ({
 
   const model = useMemo(() => new CogniteChatGPT(sdk), [sdk]);
 
-  const conversationChain = useMemo(() => {
+  const { base: conversationChain, chains } = useMemo(() => {
     return newChain(sdk, model, messages, excludeChains);
   }, [sdk, model, messages, excludeChains]);
 
@@ -186,8 +191,29 @@ export const ChatUI = ({
           }
         }
       );
+      const removeListener2 = addToCopilotEventListener(
+        'SUMMARIZE_QUERY',
+        async (graphql) => {
+          const [{ summary }] = await callPromptChain(
+            chains.GraphQlChain,
+            'summarize filter',
+            datamodelResultSummaryPrompt,
+            [
+              {
+                query: JSON.stringify(graphql),
+              },
+            ]
+          ).then(
+            safeConvertToJson<{
+              summary: string;
+            }>
+          );
+          sendFromCopilotEvent('SUMMARIZE_QUERY', { summary });
+        }
+      );
       return () => {
         removeListener();
+        removeListener2();
         for (const listener of cachedListeners) {
           window.removeEventListener(listener.event, listener.listener);
         }
@@ -204,6 +230,7 @@ export const ChatUI = ({
     sdk,
     conversationChain,
     messages,
+    chains,
   ]);
 
   const setupMessages = useCallback(

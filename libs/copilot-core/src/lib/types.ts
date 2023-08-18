@@ -150,6 +150,7 @@ export type CopilotEvents = {
     };
     GET_LANGUAGE: undefined;
     GET_ACTIVITIES: undefined;
+    SUMMARIZE_QUERY: { summary: string };
   };
   ToCopilot: {
     // only the last message will be processed
@@ -181,6 +182,10 @@ export type CopilotEvents = {
     // get the activities from infield
     GET_ACTIVITIES: {
       content: any;
+    };
+    SUMMARIZE_QUERY: {
+      query: string;
+      variables: any;
     };
   };
 };
