@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 
 import styled from 'styled-components';
 
@@ -42,12 +42,31 @@ export const AIResultSummary = ({
       }
     | undefined
   >(undefined);
+  const [showLongStatusMessage, setShowLongStatusMessage] = useState(false);
 
   const { isLoading } = useAIDataTypesQuery(
     query,
     selectedDataModels || [],
     copilotMessage
   );
+
+  useEffect(() => {
+    // Show the long status message after 10 seconds
+    let timer: NodeJS.Timeout;
+
+    if (isLoading) {
+      timer = setTimeout(() => {
+        setShowLongStatusMessage(true);
+      }, 10000);
+    } else {
+      setShowLongStatusMessage(false);
+    }
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [isLoading]);
+
   const results = useAICachedResults(copilotMessage);
 
   useToCopilotEventHandler('NEW_MESSAGES', (messages) => {
@@ -83,9 +102,14 @@ export const AIResultSummary = ({
         <Flex gap={8} alignItems="center" style={{ width: '100%' }}>
           <CogPilotIcon />
           <Body strong inverted size="medium">
-            {t('AI_LOADING_TEXT', {
-              status: loadingProgress?.status || t('AI_LOADING_SEARCH'),
-            })}
+            {t(
+              showLongStatusMessage
+                ? 'AI_LOADING_TEXT_LONG'
+                : 'AI_LOADING_TEXT',
+              {
+                status: loadingProgress?.status || t('AI_LOADING_SEARCH'),
+              }
+            )}
           </Body>
         </Flex>
         <Loader
