@@ -186,6 +186,7 @@ export const getFields = (
             // always include externalId, name, description
             field.name === 'externalId' ||
             field.name === 'name' ||
+            field.name === 'title' ||
             field.name === 'description'
         )
         .map((field): string => {
