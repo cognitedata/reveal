@@ -183,6 +183,11 @@ const SPACE="${args['space']}"`
         path.resolve(generatedPath, './schema.ts'),
         typesString
       );
+      const typesVersionString = getTypeVersionString(types);
+      fs.appendFileSync(
+        path.resolve(generatedPath, './schema.ts'),
+        typesVersionString
+      );
 
       const relationshipsString = getRelationshipString(types);
       fs.appendFileSync(
@@ -284,6 +289,9 @@ const getTypeString = (types: DataModelTypeDefsType[]) => {
   const dateProperties: string[] = [];
   types.forEach((el) => {
     const relationships = el.fields.filter((el) => el.type.custom);
+    const customFields = el.fields.filter((el) =>
+      ['TimeSeries', 'File', 'Sequence'].includes(el.type.name)
+    );
     const dates = el.fields.filter((el) => el.type.name === 'Date');
     const singleRelationships = relationships.filter((el) => !el.type.list);
     typeItems.push(
@@ -295,11 +303,25 @@ const getTypeString = (types: DataModelTypeDefsType[]) => {
         relationships.length > 0
           ? `|"${relationships.map((field) => `${field.name}`).join('"|"')}"`
           : ''
+      }${
+        // then omit all the relationships
+        customFields.length > 0
+          ? `|"${customFields.map((field) => `${field.name}`).join('"|"')}"`
+          : ''
       }>${
         // then all direction relationships should be NodeRef
         singleRelationships.length > 0
           ? ` & {${singleRelationships
               .map((el) => `"${el.name}"?: {externalId:string, space?:string}`)
+              .join(';\n')} }`
+          : ''
+      }${
+        // then all direction relationships should be NodeRef
+        customFields.length > 0
+          ? ` & {${customFields
+              .map(
+                (el) => `"${el.name}"?: ${el.type.list ? 'string[]' : 'string'}`
+              )
               .join(';\n')} }`
           : ''
       }`
@@ -328,6 +350,12 @@ const getTypeString = (types: DataModelTypeDefsType[]) => {
   };
   export const DateProperties: { [key in string]: string[] } = {
     ${dateProperties.join(',\n')}
+  };`;
+};
+const getTypeVersionString = (types: DataModelTypeDefsType[]) => {
+  return `
+  export const TypeVersions: { [key in string]: string } = {
+    ${types.map((el) => `"${el.name}": "${el.version}"`).join(',\n')}
   };`;
 };
 

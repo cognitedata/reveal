@@ -130,8 +130,14 @@ export const buildGridConfig = (
           ? COL_TYPES_MAP[field.type.name]
           : ColumnDataType.Custom;
         let customIcon: IconType | undefined = undefined;
-        if (field.type.name === 'TimeSeries') {
+        if (
+          field.type.name === 'TimeSeries' ||
+          field.type.name === 'Sequence'
+        ) {
           customIcon = 'Timeseries';
+        }
+        if (field.type.name === 'File') {
+          customIcon = 'Document';
         }
 
         const colConfig = {
