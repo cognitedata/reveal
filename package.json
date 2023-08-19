@@ -26,7 +26,7 @@
     "@cognite/cogs.js": "^9.32.1",
     "@cognite/connect": "^0.0.8",
     "@cognite/gcs-browser-upload": "cognitedata/gcs-browser-upload#mn/temporary-azure-fix",
-    "@cognite/llm-hub": "^0.0.14",
+    "@cognite/llm-hub": "^0.0.15",
     "@cognite/metrics": "^2.0.0",
     "@cognite/react-document-table": "^1.22.2",
     "@cognite/react-errors": "^1.0.4",
