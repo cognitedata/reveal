@@ -193,7 +193,7 @@ export class GraphQlChain extends CogniteBaseChain {
           filteredTypes,
           dataModelTypes
         );
-        // Chain 4: Indentify relevant filter
+        // Chain 4: Identify relevant filter
         const [filterResponse] = await callPromptChain(
           this,
           'filter',

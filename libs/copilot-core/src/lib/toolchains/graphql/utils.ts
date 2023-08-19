@@ -302,7 +302,7 @@ const constructFilter = (
 
   const filterContent: any[] = [];
 
-  filter[baseLevelOp].forEach((el) => {
+  (filter[baseLevelOp] || []).forEach((el) => {
     if (
       !['prefix', 'eq', 'gt', 'gte', 'lt', 'lte', 'isNull'].includes(
         el.operator
