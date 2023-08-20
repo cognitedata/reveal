@@ -204,7 +204,7 @@ export class GraphQlChain extends CogniteBaseChain {
               relevantTypes: relevantTypesDml,
             },
           ],
-          { timeout: 10000 }
+          { timeout: 30000 }
         ).then(safeConvertToJson<GptGQLFilter>);
         const {
           filter,
