@@ -116,9 +116,6 @@ export class FdmNodeCache {
 
     const fdmKeySet = new Set(uniqueIds.map((id) => createFdmKey(id.space, id.externalId)));
 
-    const revisionToModelRevisionId = new Map<RevisionId, ModelRevisionId>();
-    modelRevisions.forEach((id) => revisionToModelRevisionId.set(id.revisionId, id));
-
     const revisionToEdgesMap = await this.getAndCacheRevisionToEdgesMap(modelRevisions);
 
     const modelDataPromises = modelRevisions.map(async ({ modelId, revisionId }) => {
