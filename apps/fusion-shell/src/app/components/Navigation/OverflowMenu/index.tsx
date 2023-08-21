@@ -77,7 +77,7 @@ const MenuWrapper = styled.div`
   max-width: 90vw;
   width: 480px;
   max-height: 85vh;
-  overflow: scroll;
+  overflow-y: auto;
 `;
 
 const StyledSectionTitle = styled(Detail)`

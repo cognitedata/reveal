@@ -90,7 +90,7 @@ const StyledSectionDropdownMenu = styled(Menu)`
   max-width: 400px;
   min-width: 300px;
   max-height: 85vh;
-  overflow: scroll;
+  overflow-y: auto;
 `;
 
 export const StyledSectionDropdownButton = styled(Button)<{
