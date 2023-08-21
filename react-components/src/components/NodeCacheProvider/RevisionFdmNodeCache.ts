@@ -2,12 +2,13 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type CogniteClient, type Node3D } from '@cognite/sdk';
+import { CogniteInternalId, type CogniteClient, type Node3D, CogniteExternalId } from '@cognite/sdk';
 import { type FdmSDK } from '../../utilities/FdmSDK';
-import { type TreeIndex, type Fdm3dNodeData, type FdmEdgeWithNode, type FdmCadEdge } from './types';
+import { type TreeIndex, type Fdm3dNodeData, type FdmEdgeWithNode, type FdmCadEdge, ModelRevisionId } from './types';
 
 import {
   fetchAncestorNodesForTreeIndex,
+  fetchNodesForNodeIds,
   getMappingEdgesForNodeIds,
   inspectNodes
 } from './requests';
@@ -15,6 +16,7 @@ import {
 import { max } from 'lodash';
 
 import assert from 'assert';
+import { ThreeDModelMappings } from '../../hooks/types';
 
 export class RevisionFdmNodeCache {
   private readonly _cogniteClient: CogniteClient;
@@ -37,6 +39,27 @@ export class RevisionFdmNodeCache {
 
     this._modelId = modelId;
     this._revisionId = revisionId;
+  }
+
+  public async createExternalIdToNodeMapping(modelRevisionId: ModelRevisionId, externalIdToNodeMapping: Map<CogniteExternalId, CogniteInternalId>, edgeMap: Map<CogniteExternalId, FdmCadEdge>): Promise<ThreeDModelMappings> {
+    const nodeIds = [...externalIdToNodeMapping.values()];
+    const nodes = await fetchNodesForNodeIds(modelRevisionId.modelId, modelRevisionId.revisionId, nodeIds, this._cogniteClient);
+
+    const externalIds = [...externalIdToNodeMapping.keys()];
+
+    const externalIdToNode = new Map<CogniteExternalId, Node3D>();
+
+    externalIds.forEach((externalId, ind) => {
+      externalIdToNode.set(externalId, nodes[ind]);
+
+      const edge = edgeMap.get(externalId);
+      assert(edge !== undefined);
+    });
+
+    return {
+      ...modelRevisionId,
+      mappings: externalIdToNode
+    };
   }
 
   public async getClosestParentFdmData(searchTreeIndex: number): Promise<Fdm3dNodeData[]> {
@@ -195,7 +218,7 @@ export class RevisionFdmNodeCache {
     return [...this._treeIndexToFdmEdges.values()].flat();
   }
 
-  getIds(): { modelId: number; revisionId: number } {
+  getIds(): ModelRevisionId {
     return {
       modelId: this._modelId,
       revisionId: this._revisionId
@@ -220,16 +243,16 @@ function getAncestorDataForTreeIndex(
   ancestorsWithSameMapping: Node3D[];
   firstMappedAncestorTreeIndex: number;
 } {
-  const edgesForFirstMappedAncestor = edgesWithTreeIndex.filter(
+  const edgesForTreeIndex = edgesWithTreeIndex.filter(
     (edgeAndTreeIndex) => edgeAndTreeIndex.treeIndex === treeIndex
   );
-  const ancestorsBetweenSearchNodeAndFirstMappedAncestor = ancestors.filter(
+  const ancestorsBelowTreeIndex = ancestors.filter(
     (ancestor) => ancestor.treeIndex >= treeIndex
   );
 
   return {
-    edges: edgesForFirstMappedAncestor.map((result) => result.edge),
-    ancestorsWithSameMapping: ancestorsBetweenSearchNodeAndFirstMappedAncestor,
+    edges: edgesForTreeIndex.map((result) => result.edge),
+    ancestorsWithSameMapping: ancestorsBelowTreeIndex,
     firstMappedAncestorTreeIndex: treeIndex
   };
 }

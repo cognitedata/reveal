@@ -15,7 +15,33 @@ export type TreeIndex = number;
 export type NodeId = number;
 export type FdmId = DmsUniqueIdentifier;
 
-export type RevisionKey = `${ModelId}-${RevisionId}`;
-export type FdmKey = `${string}-${string}`;
-export type RevisionTreeIndex = `${ModelId}-${RevisionId}-${TreeIndex}`;
-export type ModelNodeIdKey = `${ModelId}-${RevisionId}-${NodeId}`;
+export type ModelRevisionId = { modelId: number, revisionId: number };
+
+export type ModelRevisionKey = `${ModelId}/${RevisionId}`;
+export type FdmKey = `${string}/${string}`;
+export type ModelNodeIdKey = `${ModelId}/${RevisionId}/${NodeId}`;
+
+export type ModelRevisionToEdgeMap = Map<ModelRevisionKey, FdmEdgeWithNode[]>;
+
+import { split } from 'lodash';
+
+export function createModelRevisionKey(modelId: number, revisionId: number): ModelRevisionKey {
+  return `${modelId}/${revisionId}`;
+}
+
+export function revisionKeyToIds(revisionKey: ModelRevisionKey): [number, number] {
+  const components = split(revisionKey, '/');
+  return [Number(components[0]), Number(components[1])];
+}
+
+export function createModelNodeId(
+  modelId: number,
+  revisionId: number,
+  nodeId: number
+): ModelNodeIdKey {
+  return `${modelId}/${revisionId}/${nodeId}`;
+}
+
+export function createFdmKey(spaceId: string, externalId: string): FdmKey {
+  return `${spaceId}/${externalId}`;
+}
