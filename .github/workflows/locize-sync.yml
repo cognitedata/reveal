@@ -12,16 +12,37 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: actions/setup-node@v3
+      - name: Setup Node
+        uses: actions/setup-node@v3
         with:
           node-version: 16
-          cache: 'yarn'
           registry-url: 'https://registry.npmjs.org'
+          always-auth: true
 
-      - name: Install
-        run: yarn --network-timeout 1000000 --frozen-lockfile
+      - name: Setup Cognite CICD NPM
+        run: |
+          echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> .npmrc
+          npm whoami
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_READONLY_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
+
+      - name: Setup Cognite CICD Yarn
+        run: |
+          echo "
+          npmScopes:
+            cognite:
+              npmAlwaysAuth: true
+              npmAuthToken: \"\${NPM_TOKEN}\"
+              npmRegistryServer: "https://registry.npmjs.org"
+          " >> .yarnrc.yml
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
+
+      - name: Install NPM dependencies
+        working-directory: react-components
+        run: yarn install --immutable
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
 
       - name: 'Save added keys to locize'
         working-directory: react-components
