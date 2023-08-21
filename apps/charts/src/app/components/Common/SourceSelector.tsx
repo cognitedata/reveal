@@ -19,6 +19,12 @@ type SourceSelectorType = Omit<SelectProps<ChartSource>, 'options'> & {
   selectableSourceTypes?: SourceType[];
 };
 
+// TODO (AH-1653): Group styles is not working properly, keeping the commented code for now
+// type GroupedOptionType = {
+//   label: SourceType;
+//   options: ChartSource[];
+// };
+
 const Option = (props: SourceOptionType) => {
   return (
     <components.Option {...props}>
@@ -36,6 +42,7 @@ export const SourceSelector = ({
   ...rest
 }: SourceSelectorType) => {
   const sources = useChartSourcesValue();
+
   const options = useMemo<ChartSource[]>(
     () =>
       sources.filter((source) =>
@@ -43,6 +50,30 @@ export const SourceSelector = ({
       ),
     [sources, selectableSourceTypes]
   );
+
+  // TODO (AH-1653): Group styles is not working properly, keeping the commented code for now
+  // const groupedOptions: GroupedOptionType[] = useMemo<
+  //   GroupedOptionType[]
+  // >(() => {
+  //   const grouped: Record<string, ChartSource[]> = {};
+
+  //   sources.forEach((source) => {
+  //     if (source.type && selectableSourceTypes.includes(source.type)) {
+  //       if (!grouped[source.type]) {
+  //         grouped[source.type] = [];
+  //       }
+
+  //       grouped[source.type].push(source);
+  //     }
+  //   });
+
+  //   return Object.keys(grouped).map((type) => ({
+  //     label: type as SourceType,
+  //     options: grouped[type as SourceType],
+  //   }));
+  // }, [sources, selectableSourceTypes]);
+
+  // const formatGroupLabel = (data: GroupedOptionType) => data.label;
 
   return (
     <SourceSelect

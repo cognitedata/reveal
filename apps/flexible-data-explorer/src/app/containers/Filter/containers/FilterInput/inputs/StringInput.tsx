@@ -1,5 +1,5 @@
 import { useTranslation } from '../../../../../hooks/useTranslation';
-import { useSearchAggregateValuesQuery } from '../../../../../services/dataTypes/queries/useSearchAggregatesQuery';
+import { useSearchAggregateValuesQuery } from '../../../../../services/instances/generic/queries/useInstanceSearchAggregatesQuery';
 import { BaseFilterInput } from '../../../components';
 import { FilterInputProps } from '../FilterInput';
 import { useDeboucedValue } from '../useDeboucedValue';

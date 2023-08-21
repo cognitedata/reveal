@@ -41,11 +41,15 @@ export const AIResultsList = ({
     [navigate, client]
   );
 
+  if (data.length === 0 || !data[0].externalId) {
+    return null;
+  }
+
   return (
     <>
       {copilotMessage && data.length > 0 && (
         <SearchResults.Body>
-          {data.map(({ __typename: dataType, name, ...item }) => {
+          {data.map(({ __typename: dataType, name, title, ...item }) => {
             const properties = extractProperties(item);
 
             return (
@@ -53,7 +57,7 @@ export const AIResultsList = ({
                 key={`${dataType}-${name}`}
                 icon={getIcon(dataType)}
                 name={dataType}
-                description={name}
+                description={name || (title as string) || undefined}
                 properties={properties}
                 onClick={() => handleRowClick(item, dataType)}
               />

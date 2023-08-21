@@ -334,7 +334,7 @@ export const AIFilterBuilder = ({
 
   return (
     <Modal
-      title={t('AI_FILTER')}
+      title={`${t('AI_FILTER')} ${type}`}
       size="large"
       visible={visible}
       className="filter-builder"

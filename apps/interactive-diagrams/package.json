@@ -1,6 +1,6 @@
 {
   "name": "@cognite/cdf-context-ui-pnid",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "scripts": {
     "start": "../../scripts/start.sh dev interactive-diagrams",
     "build": "../../scripts/build.sh production interactive-diagrams",

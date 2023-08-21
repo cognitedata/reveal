@@ -6,18 +6,16 @@ import {
   useDataTypeFilterParams,
   useSearchFilterParams,
   useSearchQueryParams,
-} from '../../../hooks/useParams';
-import { useFDM } from '../../../providers/FDMProvider';
+} from '../../../../hooks/useParams';
+import { useFDM } from '../../../../providers/FDMProvider';
 import {
   buildFilterByDataType,
   buildFilterByField,
-} from '../../../utils/filterBuilder';
-import { queryKeys } from '../../queryKeys';
+} from '../../../../utils/filterBuilder';
+import { queryKeys } from '../../../queryKeys';
 
-export const useSearchAggregateQuery = () => {
+export const useInstanceSearchAggregateQuery = () => {
   const client = useFDM();
-
-  // const { data: types } = useTypesDataModelQuery();
 
   const [query] = useSearchQueryParams();
   const [filters] = useSearchFilterParams();
@@ -54,8 +52,6 @@ export const useSearchAggregateValuesQuery = ({
 }) => {
   const client = useFDM();
 
-  // const { data: types } = useTypesDataModelQuery();
-
   const [filters] = useDataTypeFilterParams(dataType);
 
   const transformedFilter = useMemo(() => {
@@ -72,6 +68,48 @@ export const useSearchAggregateValuesQuery = ({
       );
 
       return results;
+    }
+  );
+};
+
+export const useSearchAggregateValueByPropertyQuery = <T>({
+  dataType,
+  field,
+  query = '',
+  property,
+}: {
+  dataType: string;
+  field: string;
+  query?: string;
+  property: string;
+}) => {
+  const client = useFDM();
+
+  // const { data: types } = useTypesDataModelQuery();
+
+  const [filters] = useDataTypeFilterParams(dataType);
+
+  const transformedFilter = useMemo(() => {
+    return buildFilterByField(filters);
+  }, [filters]);
+
+  return useQuery(
+    queryKeys.searchAggregateValueByProperty(
+      dataType,
+      field,
+      query,
+      transformedFilter,
+      property
+    ),
+    async () => {
+      const result = await client.searchAggregateValueByProperty<T>(
+        { dataType, field },
+        query,
+        transformedFilter,
+        property
+      );
+
+      return result;
     },
     {
       // suspense is a broke atm, I will fix the underlying issue later - deep

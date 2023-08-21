@@ -34,7 +34,7 @@ export const Sidebar = styled.aside<{ visible?: boolean }>`
     min-width: ${(props) => (props.visible ? '354px' : 0)};
     transition: 0s linear 200ms, width 200ms ease;
     position: relative;
-    height: calc(100vh - 110px);
+    height: calc(100vh - 114px);
   }
 `;
 
@@ -74,7 +74,7 @@ export const TopContainerAside = styled.div`
 export const ContentOverflowWrapper = styled.article`
   &&& {
     /* height of header */
-    height: calc(100% - 56px);
+    height: calc(100% - 76px);
     overflow: auto;
   }
 `;
@@ -233,6 +233,8 @@ export const SidebarChip = styled(Chip)<{ $small?: boolean }>`
 export const SourceSelect = styled(Select)`
   &&& {
     width: 100%;
+    margin-bottom: 1em;
+
     .cogs-select--title {
       padding-left: 6px;
       > .cogs-icon {
@@ -284,9 +286,18 @@ export const ExpandIcon = styled(Icon)<{ $active: boolean }>`
   transform: ${(props) => `rotate(${props.$active ? -180 : 0}deg)`};
 `;
 
-export const SidebarFormLabel = styled.p`
+export const FormTitle = styled.h2`
+  &&& {
+    font-size: 18px;
+    font-weight: 600;
+    margin-top: 1em;
+  }
+`;
+
+export const SidebarFormLabel = styled.p<{ $first?: boolean }>`
   font-weight: 400;
   margin: 1rem 0 0.5rem;
+  margin: ${(props) => `${props.$first ? '0 0 0.5rem' : '1rem 0 0.5rem'}`};
 `;
 
 export const LoadingWrap = styled.div`

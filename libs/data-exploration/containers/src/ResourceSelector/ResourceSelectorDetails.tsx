@@ -23,18 +23,19 @@ import { ResourceSelection } from './ResourceSelector';
 
 type Props = {
   item?: ResourceItem;
-  closable?: boolean;
   placeholder?: React.ReactNode;
   header?: React.ReactNode;
   footer?: React.ReactNode;
   content?: React.ReactNode;
   actions?: React.ReactNode[];
+  closable?: boolean;
   onClose?: () => void;
   hideTitle?: boolean;
   hideContent?: boolean;
   selectedRows?: ResourceSelection;
   visibleResources?: ResourceType[];
   isDocumentsApiEnabled?: boolean;
+  showSelectButton?: boolean;
 } & Partial<SelectableItemsProps>;
 
 const Centered = styled.div`
@@ -59,6 +60,7 @@ export const ResourceSelectorDetails = ({
   header,
   footer,
   content: propContent,
+  closable,
   onClose = noop,
   selectedRows,
   selectionMode = 'single',
@@ -67,12 +69,15 @@ export const ResourceSelectorDetails = ({
   hideContent = false,
   visibleResources = [],
   isDocumentsApiEnabled = true,
+  showSelectButton,
 }: Props) => {
   const commonProps = {
+    closable,
     onSelect,
     selectedRows,
     selectionMode,
     visibleResources,
+    showSelectButton,
   };
   let content: React.ReactNode = placeholder || <Loader />;
   if (item) {
@@ -147,5 +152,4 @@ export const ResourceSelectorDetails = ({
 
 const ResourcePreviewSidebarContainer = styled.div`
   min-width: 360px;
-  height: 100%;
 `;

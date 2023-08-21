@@ -4,68 +4,22 @@ import { isArray, isObject } from 'lodash';
 import isEmpty from 'lodash/isEmpty';
 import take from 'lodash/take';
 
-import { Skeleton } from '@cognite/cogs.js';
-
 import { Button } from '../../../components/buttons/Button';
 import { SearchResults } from '../../../components/search/SearchResults';
 import { EMPTY_ARRAY } from '../../../constants/object';
 import { useNavigation } from '../../../hooks/useNavigation';
 import { useFDM } from '../../../providers/FDMProvider';
-import { useSearchDataTypesQuery } from '../../../services/dataTypes/queries/useSearchDataTypesQuery';
 import { DataModelTypeDefsType } from '../../../services/types';
 import { InstancePreview } from '../../preview/InstancePreview';
 
 import { PAGE_SIZE } from './constants';
-
-export const GenericResults: React.FC<{ selectedDataType?: string }> = ({
-  selectedDataType,
-}) => {
-  const client = useFDM();
-  const { data: hits, isLoading } = useSearchDataTypesQuery();
-
-  if (isLoading) {
-    return <Skeleton.List lines={3} />;
-  }
-
-  if (selectedDataType) {
-    const type = client.allDataTypes?.find(
-      (item) => item.name === selectedDataType
-    );
-    return (
-      <GenericResultItem
-        dataType={selectedDataType}
-        type={type}
-        values={hits?.[selectedDataType]}
-      />
-    );
-  }
-
-  return (
-    <>
-      {Object.keys(hits || {}).map((dataType) => {
-        const type = client.allDataTypes?.find(
-          (item) => item.name === dataType
-        );
-
-        return (
-          <GenericResultItem
-            key={dataType}
-            dataType={dataType}
-            type={type}
-            values={hits?.[dataType]}
-          />
-        );
-      })}
-    </>
-  );
-};
 
 interface Props {
   dataType: string;
   values?: { items: any[] };
   type?: DataModelTypeDefsType;
 }
-const GenericResultItem: React.FC<Props> = ({ dataType, values, type }) => {
+export const GenericResults: React.FC<Props> = ({ dataType, values, type }) => {
   const navigate = useNavigation();
   const client = useFDM();
   const dataModel = client.getDataModelByDataType(dataType);

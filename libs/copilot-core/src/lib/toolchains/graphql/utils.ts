@@ -186,6 +186,7 @@ export const getFields = (
             // always include externalId, name, description
             field.name === 'externalId' ||
             field.name === 'name' ||
+            field.name === 'title' ||
             field.name === 'description'
         )
         .map((field): string => {
@@ -200,6 +201,24 @@ export const getFields = (
             }
             // skip, knowing we need to add dependecy checks later
             return '';
+          }
+          if (field.type.name === 'TimeSeries') {
+            return `${field.name} {
+              id
+              externalId
+              __typename
+              dataPoints {
+                timestamp
+                value
+              }
+            }`;
+          }
+          if (field.type.name === 'File' || field.type.name === 'Sequence') {
+            return `${field.name} {
+              id
+              externalId
+              __typename
+            }`;
           }
           return field.name;
         })
@@ -283,7 +302,7 @@ const constructFilter = (
 
   const filterContent: any[] = [];
 
-  filter[baseLevelOp].forEach((el) => {
+  (filter[baseLevelOp] || []).forEach((el) => {
     if (
       !['prefix', 'eq', 'gt', 'gte', 'lt', 'lte', 'isNull'].includes(
         el.operator
@@ -295,13 +314,14 @@ const constructFilter = (
     const path = el.property.split('.');
     const filterPath = [];
     let typeDef = dataModelTypeDefs.types.find((el) => el.name === type);
+    let currField = typeDef?.fields.find((el) => el.name === path[0]);
     for (let i = 0; i < path.length; i += 1) {
       // all the types that this property can belong to
       const typeForProperty = propertyLookup.get(path[i]);
       // if it is a relationship, the possible start / end type for this relatioship
       const relationshipForProperty = relationLookup.get(path[i]);
 
-      let currField = typeDef?.fields.find((el) => el.name === path[i]);
+      currField = typeDef?.fields.find((el) => el.name === path[i]);
       // if the current field insnt a valid field for the given type
       if (!currField) {
         // look for potential target in case GPT gave us inconclusive property name (missing relationship)
@@ -340,27 +360,38 @@ const constructFilter = (
         omitted.push({ key: el.property, reason: 'invalid field' });
         return;
       }
-      if (i !== path.length - 1) {
-        if (!currField.type.custom) {
-          // no support for timeseries
-          omitted.push({
-            key: el.property,
-            reason: 'invalid filter on primitive field',
-          });
-          return;
-        }
-        if (currField.type.list) {
-          omitted.push({
-            key: el.property,
-            reason: '1-m relationship filtering not supported',
-          });
-          return;
-        }
+      if (currField.type.list) {
+        omitted.push({
+          key: el.property,
+          reason: '1-m relationship filtering not supported',
+        });
+        return;
+      }
+      if (['TimeSeries', 'File', 'Sequence'].includes(currField.type.name)) {
+        omitted.push({
+          key: el.property,
+          reason: `filtering on ${currField.type.name} not supported`,
+        });
+        return;
       }
       filterPath.push(path[i]);
     }
+
     // TODO add validation of valid property
-    let value = `${el.value}`;
+    let value: string | number = `${el.value}`;
+    if (
+      currField?.type.name.includes('Int') ||
+      currField?.type.name.includes('Float')
+    ) {
+      value = Number(el.value);
+      if (Number.isNaN(value)) {
+        omitted.push({
+          key: el.property,
+          reason: `filters on ${currField.type.name} must be a valid number`,
+        });
+        return;
+      }
+    }
     if (typeof el.value === 'string') {
       switch (el.value.toLowerCase().trim()) {
         case '${lastyear}$':
@@ -489,4 +520,53 @@ export const getTypeString = (dataModels: GraphQlDmlVersionDTO[]) => {
       .join('\n')}\n\`\`\``;
   }
   return typeNames;
+};
+
+export const constructListResultSummary = (
+  length: number,
+  hasNextPage: boolean
+) => {
+  return `${length}${hasNextPage ? '+' : ''}`;
+};
+
+export const constructAggregateResultSummary = (
+  items: ({
+    group?: { [key in string]: string };
+  } & {
+    [key in 'sum' | 'count' | 'max' | 'min' | 'avg']?: {
+      [key in string]: number | string;
+    };
+  })[]
+) => {
+  const summarizeData = (item: {
+    [key in 'sum' | 'count' | 'max' | 'min' | 'avg']?: {
+      [key in string]: number | string;
+    };
+  }) => {
+    return Object.entries(item)
+      .map(([key, entry]) => {
+        if (key === 'group') {
+          return '';
+        }
+        return Object.entries(entry)
+          .map(([field, value]) => {
+            return `${key} - "${field}": ${value}`;
+          })
+          .join(', ')
+          .concat(' ');
+      })
+      .join('');
+  };
+  return `\n${items
+    .map((item) => {
+      return `- ${summarizeData(item)} in ${
+        item.group
+          ? Object.entries(item.group)
+              .map(([key, value]) => `${key} of ${value}`)
+              .join('\n')
+          : ''
+      }`;
+    })
+    .join('\n')
+    .concat('\n')}`;
 };

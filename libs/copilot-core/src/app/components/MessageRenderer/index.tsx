@@ -6,6 +6,7 @@ import { TextMessage } from './TextMessage';
 
 export const messageRenderers = {
   text: TextMessage,
+  error: TextMessage,
   code: CodeMessage,
   'data-model-query': DataQueryMessage,
   'data-model': DataModelMessage,

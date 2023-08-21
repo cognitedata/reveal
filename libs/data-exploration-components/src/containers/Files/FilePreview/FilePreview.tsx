@@ -504,10 +504,10 @@ const FullHeightWrapper = styled(Flex)`
 
 const SidebarWrapper = styled.div`
   box-sizing: content-box;
-  height: 100%;
-  max-width: 360px;
+  max-width: 380px;
   border-left: 1px solid ${lightGrey};
   background-color: white;
+  overflow-y: auto;
 `;
 
 const CenteredPlaceholder = styled.div`

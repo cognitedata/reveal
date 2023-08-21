@@ -35,7 +35,7 @@ export const SearchPreviewActions = ({
     const genericTypes = (client.allDataTypes || []).map(({ name }) => name);
 
     // TODO: Fix hardcoded types
-    return [...genericTypes, 'Timeseries', 'Files'];
+    return [...genericTypes, 'TimeSeries', 'File'];
   }, [client]);
 
   const typesResults = useMemo(

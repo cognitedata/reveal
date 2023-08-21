@@ -256,6 +256,7 @@ export const IndustryCanvasPage = () => {
     resourceSelectorFilter,
     initialSelectedResource,
     initialTab,
+    shouldOnlyShowPreviewPane,
   } = useResourceSelectorActions();
 
   const { onUpdateSelectedAnnotation } = useOnUpdateSelectedAnnotation({
@@ -872,6 +873,7 @@ export const IndustryCanvasPage = () => {
             initialSelectedResource={initialSelectedResource}
             addButtonText="Add to canvas"
             shouldShowPreviews={false}
+            shouldOnlyShowPreviewPane={shouldOnlyShowPreviewPane}
           />
         )}
         {!isResourceSelectorOpen && isCommentsPaneOpen && (

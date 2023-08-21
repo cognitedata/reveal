@@ -38,14 +38,6 @@ export const ExpandTitle = styled(Body)`
   line-height: 20px;
 `;
 
-export const FormTitle = styled.h2`
-  &&& {
-    font-size: 18px;
-    font-weight: 600;
-    margin-top: 1em;
-  }
-`;
-
 export const NotificationBox = styled.div`
   &&& {
     margin: 0.8em 0em;

@@ -863,7 +863,7 @@ const normalizeIngestionItem = (
 ) => {
   return Object.fromEntries(
     Object.entries(item)
-      .map(([key, value]) => {
+      .map(([key, value]: [string, any]) => {
         const fieldType = dataModelType.fields.find(
           (field) => field.name === key
         );
@@ -885,13 +885,26 @@ const normalizeIngestionItem = (
             }
           }
         } else if (
-          // special case for timeseries type
-          fieldType?.type.name === 'TimeSeries' &&
-          typeof value === 'object' &&
-          value !== null &&
-          'externalId' in value
+          // special case for custom type
+          ['TimeSeries', 'File', 'Sequence'].includes(
+            fieldType?.type.name || ''
+          )
         ) {
-          return [key, value.externalId];
+          if (
+            !fieldType?.type.list &&
+            typeof value === 'object' &&
+            value !== null &&
+            'externalId' in value
+          ) {
+            return [key, value.externalId];
+          } else if (
+            fieldType?.type.list &&
+            typeof value === 'object' &&
+            value !== null &&
+            Array.isArray(value)
+          ) {
+            return [key, value.map((el: any) => el.externalId)];
+          }
         }
         if (value === '' && fieldType?.type.name !== 'String') {
           return [key, null];

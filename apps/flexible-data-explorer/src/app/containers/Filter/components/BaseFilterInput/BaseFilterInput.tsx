@@ -64,6 +64,7 @@ export const BaseFilterInput = <T extends string | number | Date>({
 
     if (isEmpty(inputValue)) {
       onChange?.(undefined);
+      return;
     }
 
     if (type === 'number') {

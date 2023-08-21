@@ -50,11 +50,13 @@ interface Props {
   documentId: number;
   isSelected: boolean;
   onSelectClicked?: () => void;
+  closable?: boolean;
   onClose?: () => void;
   selectedRows?: ResourceSelection;
   selectionMode?: 'single' | 'multiple';
   visibleResources?: ResourceType[];
   isDocumentsApiEnabled?: boolean;
+  showSelectButton?: boolean;
 }
 export const DocumentDetails: FC<
   Props & Partial<Pick<SelectableItemsProps, 'onSelect'>>
@@ -62,11 +64,13 @@ export const DocumentDetails: FC<
   documentId,
   isSelected,
   onSelect,
+  closable,
   onClose,
   selectionMode,
   selectedRows,
   visibleResources = [],
   isDocumentsApiEnabled = true,
+  showSelectButton,
 }) => {
   const {
     data: parentDocument,
@@ -155,8 +159,10 @@ export const DocumentDetails: FC<
       title={parentDocument?.name || ''}
       icon="Documents"
       isSelected={isSelected}
+      closable={closable}
       onClose={onClose}
       onSelectClicked={onSelect}
+      showSelectButton={showSelectButton}
     >
       <StyledCollapse accordion ghost defaultActiveKey="document-preview">
         <Collapse.Panel
