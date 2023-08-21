@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useCreateSessionNonce } from '@charts-app/domain/chart';
 import { useSearchParam } from '@charts-app/hooks/navigation';
 import { useUserInfo } from '@charts-app/hooks/useUserInfo';
+import { useScheduledCalculationDataValue } from '@charts-app/models/scheduled-calculation-results/atom';
 import { trackUsage, stopTimer } from '@charts-app/services/metrics';
 import { MONITORING_SIDEBAR_HIGHLIGHTED_JOB } from '@charts-app/utils/constants';
 import { makeDefaultTranslations } from '@charts-app/utils/translations';
@@ -13,10 +14,11 @@ import { v4 as uuidv4 } from 'uuid';
 import { toast } from '@cognite/cogs.js';
 import { CogniteError } from '@cognite/sdk';
 
+import { FormTitle } from '../Common/SidebarElements';
+
 import CreateMonitoringJobStep1 from './CreateMonitoringJobStep1';
 import CreateMonitoringJobStep2 from './CreateMonitoringJobStep2';
 import CreateMonitoringJobStep3 from './CreateMonitoringJobStep3';
-import { FormTitle } from './elements';
 import { useCreateMonitoringJob } from './hooks';
 import {
   CreateMonitoringJobStates,
@@ -69,6 +71,8 @@ const CreateMonitoringJob = ({ translations, onCancel }: Props) => {
   const [, setMonitoringJobIdParam] = useSearchParam(
     MONITORING_SIDEBAR_HIGHLIGHTED_JOB
   );
+
+  const scCalcData = useScheduledCalculationDataValue();
 
   const [steppedFormValues, setSteppedFormValues] =
     useState<CreateMonitoringJobFormData>({
@@ -173,6 +177,18 @@ const CreateMonitoringJob = ({ translations, onCancel }: Props) => {
       folder &&
       userAuthId
     ) {
+      let tsExtId: string;
+
+      if (
+        source.type === 'scheduledCalculation' &&
+        scCalcData &&
+        scCalcData[source.id]
+      ) {
+        tsExtId = scCalcData[source.id].targetTimeseriesExternalId;
+      } else if ('tsExternalId' in source) {
+        tsExtId = source.tsExternalId!;
+      }
+
       const dataToSend: CreateMonitoringJobPayload = {
         monitoringTaskName: transformName(name),
         FolderId: folder.value,
@@ -181,7 +197,7 @@ const CreateMonitoringJob = ({ translations, onCancel }: Props) => {
         activationInterval,
         nonce: createdNonce,
         threshold: +alertThreshold,
-        timeSeriesExternalId: source.tsExternalId!,
+        timeSeriesExternalId: tsExtId!,
         userEmail: notificationEmail,
         subscriptionExternalId: uuidv4(),
         userAuthId,
