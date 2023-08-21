@@ -1,3 +1,5 @@
+import { getOrganization } from '@cognite/cdf-utilities';
+
 import {
   DomainResponse,
   IDPResponse,
@@ -174,4 +176,88 @@ export const sortIDPsByLabel = (idps?: IDPResponse[]) => {
     if (idpLabelA > idpLabelB) return 1;
     return 0;
   });
+};
+
+const fusionAppHosts = [
+  'fusion.cognite.com',
+  'staging.fusion.cognite.com',
+  'next-release.fusion.cognite.com',
+  // TODO: handle SAPC cluster deployment. The current solution for SAPC & Openfield
+  // is by using hard-coded responses for the /_api/login_info endpoint in nginx serving Fusion.
+  // See https://github.com/cognitedata/cdf-ui-hub/blob/6fdb54a8d595284a7a209b2c86da9187e8a8263d/config/kubecfg/overlays.jsonnet#L221-L249
+];
+
+const fusionDevAppHosts = [
+  'dev.fusion.cogniteapp.com',
+  // TODO: we likely need others here, but we default to fusion-dev
+  'fusion-pr-preview.cogniteapp.com',
+  'localhost:8080',
+];
+
+const whitelistedHosts = [...fusionAppHosts, ...fusionDevAppHosts];
+
+const getApp = () => {
+  const host = window.location.host;
+
+  for (const _host of fusionAppHosts) {
+    const matches = host.includes(_host);
+    if (matches) {
+      return 'fusion';
+    }
+  }
+
+  for (const _host of fusionDevAppHosts) {
+    const matches = host.includes(_host);
+    if (matches) {
+      return 'fusion-dev';
+    }
+  }
+
+  return 'fusion-dev';
+};
+
+// Make apps explicitly require to be specified in order to use the
+// dlc-service api directly instead of the proxied _api/login_info
+// requests. This way we can temporarily take control of where we want
+// to enforce the new logic, and default to the old logic everywhere else.
+export const isWhitelistedHost = () => {
+  const host = window.location.host;
+
+  for (const _host of whitelistedHosts) {
+    const matches = host.includes(_host);
+    if (matches) {
+      return true;
+    }
+  }
+
+  return false;
+};
+
+export const getDlc = async () => {
+  const organization = getOrganization();
+  const app = getApp();
+
+  const url = new URL(
+    `https://app-login-configuration-lookup.cognite.ai/${app}/${organization}`
+  );
+
+  const request = new Request(url);
+
+  try {
+    const response = await fetch(request);
+    const dlc = await response.json();
+    if (!dlc) {
+      return Promise.reject({
+        status: response.status,
+        body: response,
+        message: 'Failed to fetch DLC',
+      });
+    }
+    return dlc;
+  } catch (error: any) {
+    return Promise.reject({
+      status: error?.status,
+      body: error?.message || error?.body,
+    });
+  }
 };
