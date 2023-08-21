@@ -16,7 +16,7 @@ import {
   createModelRevisionKey,
   revisionKeyToIds,
   type ModelRevisionToEdgeMap,
-  createModelNodeId,
+  createModelNodeIdKey,
   type ModelRevisionId,
   type FdmKey,
   createFdmKey
@@ -294,7 +294,7 @@ function createFdmEdgeWithNode(
   edge: FdmCadEdge,
   modelNodeIdToNodeMap: Map<ModelNodeIdKey, Node3D>
 ): FdmEdgeWithNode {
-  const revisionNodeIdKey = createModelNodeId(
+  const revisionNodeIdKey = createModelNodeIdKey(
     modelRevisionId.modelId,
     modelRevisionId.revisionId,
     edge.properties.revisionNodeId
@@ -337,8 +337,8 @@ async function createModelNodeIdToNodeMap(
     assert(modelId !== undefined);
 
     const nodes = await fetchNodesForNodeIds(modelId, revisionId, nodeIds, cdfClient);
-    nodeIds.forEach((e, ind) => {
-      const modelNodeIdKey = createModelNodeId(modelId, revisionId, e);
+    nodeIds.forEach((nodeId, ind) => {
+      const modelNodeIdKey = createModelNodeIdKey(modelId, revisionId, nodeId);
       revisionNodeIdToNode.set(modelNodeIdKey, nodes[ind]);
     });
   });
