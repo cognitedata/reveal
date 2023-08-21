@@ -117,7 +117,7 @@ static final String SLACK_CHANNEL = 'alerts-platypus'
 // No other options are supported at this time.
 static final Map<String, String> VERSIONING_STRATEGY = [
   'platypus': 'multi-branch',
-  'coding-conventions': 'multi-branch',
+  'coding-conventions': 'single-branch',
   'contextualization-ui': 'single-branch',
   'data-exploration': 'multi-branch',
   'vision': 'single-branch',
