@@ -14,7 +14,7 @@ import { Color, Matrix4, Vector3 } from 'three';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import { type CogniteCadModel, DefaultNodeAppearance } from '@cognite/reveal';
 import { useEffect, useMemo, useState, type JSX } from 'react';
-import { useMappedEquipmentByRevisionList } from '../src/hooks/useMappedEquipmentBy3DModelsList';
+import { useMappedEdgesForRevisions } from '../src/components/NodeCacheProvider/NodeCacheProvider';
 
 const meta = {
   title: 'Example/CadStylingCache',
@@ -50,13 +50,13 @@ const Models = ({ addModelOptions }: CogniteCadModelProps): JSX.Element => {
 
   const [platformStyling, setPlatformStyling] = useState<CadModelStyling>();
 
-  const { data } = useMappedEquipmentByRevisionList([platformModelOptions]);
+  const { data } = useMappedEdgesForRevisions([platformModelOptions], true);
 
   const nodeIds = useMemo(
     () =>
       data
         ?.get(`${platformModelOptions.modelId}-${platformModelOptions.revisionId}`)
-        ?.map((edge) => edge.properties.revisionNodeId),
+        ?.map((edgeWithNode) => edgeWithNode.edge.properties.revisionNodeId),
     [data]
   );
 

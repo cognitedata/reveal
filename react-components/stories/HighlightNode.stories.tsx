@@ -75,7 +75,7 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
         }
       ]);
     void cameraNavigation.fitCameraToInstance(nodeData.fdmNode.externalId, 'pdms-mapping');
-  }, [nodeData]);
+  }, [nodeData?.fdmNode]);
 
   return (
     <>
@@ -84,12 +84,6 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
         instanceStyling={stylingGroups}
       />
       <RevealToolbar />
-      <button
-        onClick={() => {
-          setState(!state);
-        }}>
-        Re-render resources
-      </button>
     </>
   );
 };

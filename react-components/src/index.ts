@@ -21,7 +21,7 @@ export { use3DModelName } from './hooks/use3DModelName';
 export { useFdmAssetMappings } from './hooks/useFdmAssetMappings';
 export { useClickedNodeData } from './hooks/useClickedNode';
 export { useCameraNavigation } from './hooks/useCameraNavigation';
-export { useMappedEquipmentByRevisionList } from './hooks/useMappedEquipmentBy3DModelsList';
+export { useMappedEdgesForRevisions } from './components/NodeCacheProvider/NodeCacheProvider';
 
 // Higher order components
 export { withSuppressRevealEvents } from './higher-order-components/withSuppressRevealEvents';
