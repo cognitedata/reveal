@@ -97,7 +97,7 @@ export class FdmNodeCache {
     );
 
     const mappings = new Map(
-      relevantCachedEdgeData.map(data => [data.edge.startNode.externalId, data.node])
+      relevantCachedEdgeData.map((data) => [data.edge.startNode.externalId, data.node])
     );
 
     return {
@@ -125,7 +125,11 @@ export class FdmNodeCache {
       const revisionKey = createModelRevisionKey(modelId, revisionId);
       const edges = revisionToEdgesMap.get(revisionKey);
 
-      return this.getRelevantExternalIdToNodeMapForRevision({ modelId, revisionId }, edges, fdmKeySet);
+      return this.getRelevantExternalIdToNodeMapForRevision(
+        { modelId, revisionId },
+        edges,
+        fdmKeySet
+      );
     });
 
     return await Promise.all(modelDataPromises);
