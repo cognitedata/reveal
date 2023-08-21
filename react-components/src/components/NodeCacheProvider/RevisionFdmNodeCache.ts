@@ -57,7 +57,10 @@ export class RevisionFdmNodeCache {
     externalIdToNodeMapping: Map<CogniteExternalId, CogniteInternalId>,
     edgeMap: Map<CogniteExternalId, FdmCadEdge>
   ): Promise<ThreeDModelMappings> {
+
+    const externalIds = [...externalIdToNodeMapping.keys()];
     const nodeIds = [...externalIdToNodeMapping.values()];
+
     const nodes = await fetchNodesForNodeIds(
       modelRevisionId.modelId,
       modelRevisionId.revisionId,
@@ -65,16 +68,9 @@ export class RevisionFdmNodeCache {
       this._cogniteClient
     );
 
-    const externalIds = [...externalIdToNodeMapping.keys()];
-
-    const externalIdToNode = new Map<CogniteExternalId, Node3D>();
-
-    externalIds.forEach((externalId, ind) => {
-      externalIdToNode.set(externalId, nodes[ind]);
-
-      const edge = edgeMap.get(externalId);
-      assert(edge !== undefined);
-    });
+    const externalIdToNode = new Map<CogniteExternalId, Node3D>(
+      externalIds.map((externalId, ind) => [externalId, nodes[ind]])
+    );
 
     return {
       ...modelRevisionId,
