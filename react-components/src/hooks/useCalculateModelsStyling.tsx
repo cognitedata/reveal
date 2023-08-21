@@ -159,7 +159,7 @@ function calculateCadModelStyling(
         .filter((node): node is Node3D => node !== undefined);
       return {
         style: resourcesGroup.style.cad,
-        treeIndices: modelMappedNodes.map((n) => getNodeSubtreeIndices(n)).flat()
+        treeIndices: modelMappedNodes.flatMap((n) => getNodeSubtreeIndices(n))
       };
     })
     .filter((group) => group.treeIndices.length > 0);
