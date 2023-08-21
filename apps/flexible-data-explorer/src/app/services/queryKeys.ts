@@ -67,6 +67,23 @@ export const queryKeys = {
       query,
       filter,
     ] as const,
+  searchAggregateValueByProperty: (
+    dataType: string,
+    field: string,
+    query: string,
+    filter: unknown,
+    property: string
+  ) =>
+    [
+      ...queryKeys.all,
+      'dataTypes',
+      'search-aggregate-value-by-property',
+      dataType,
+      field,
+      query,
+      filter,
+      property,
+    ] as const,
 
   instance: (instance: Instance, dataModel: Partial<DataModelV2>) =>
     [...queryKeys.all, 'instance', instance, dataModel] as const,

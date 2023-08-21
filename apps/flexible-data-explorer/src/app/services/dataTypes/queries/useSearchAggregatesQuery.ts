@@ -79,3 +79,49 @@ export const useSearchAggregateValuesQuery = ({
     }
   );
 };
+
+export const useSearchAggregateValueByPropertyQuery = <T>({
+  dataType,
+  field,
+  query = '',
+  property,
+}: {
+  dataType: string;
+  field: string;
+  query?: string;
+  property: string;
+}) => {
+  const client = useFDM();
+
+  // const { data: types } = useTypesDataModelQuery();
+
+  const [filters] = useDataTypeFilterParams(dataType);
+
+  const transformedFilter = useMemo(() => {
+    return buildFilterByField(filters);
+  }, [filters]);
+
+  return useQuery(
+    queryKeys.searchAggregateValueByProperty(
+      dataType,
+      field,
+      query,
+      transformedFilter,
+      property
+    ),
+    async () => {
+      const result = await client.searchAggregateValueByProperty<T>(
+        { dataType, field },
+        query,
+        transformedFilter,
+        property
+      );
+
+      return result;
+    },
+    {
+      // suspense is a broke atm, I will fix the underlying issue later - deep
+      suspense: false,
+    }
+  );
+};
