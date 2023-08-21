@@ -63,6 +63,7 @@ apps/access-management            @cognitedata/cdf-user-experience
 # data onboarding
 apps/extraction-pipelines         @cognitedata/data-management
 apps/extractor-downloads          @cognitedata/data-management
+apps/flows                        @cognitedata/data-management
 
 libs/shared/cdf-utilities         @cognitedata/cdf-user-experience
 
@@ -77,7 +78,3 @@ apps/functions-ui             @abdullah-cognite @shubhsk88
 
 # Simulator Integration
 apps/simint                   @cognitedata/deg-code-owners
-
-
-# FLows (Orchestration)
-apps/flows                         @cognitedata/data-onboarding
