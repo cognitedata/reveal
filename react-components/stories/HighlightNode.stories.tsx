@@ -13,8 +13,8 @@ import {
   useCameraNavigation
 } from '../src';
 import { Color } from 'three';
-import { type ReactElement, useState, useCallback, useRef } from 'react';
-import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@cognite/reveal';
+import { type ReactElement, useState, useCallback } from 'react';
+import { DefaultNodeAppearance } from '@cognite/reveal';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { RevealResourcesFitCameraOnLoad } from './utilities/with3dResoursesFitCameraOnLoad';
@@ -61,7 +61,7 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
   const [stylingGroups, setStylingGroups] = useState<FdmAssetStylingGroup[]>([]);
   const cameraNavigation = useCameraNavigation();
   const [state, setState] = useState(false);
-  
+
   const onClick = useCallback(
     async (nodeData: Promise<NodeDataResult | undefined>): Promise<void> => {
       const nodeDataResult = await nodeData;
@@ -70,14 +70,17 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
 
       await cameraNavigation.fitCameraToInstance(nodeDataResult.nodeExternalId, 'pdms-mapping');
 
-      setStylingGroups([{
-        fdmAssetExternalIds: [{ externalId: nodeDataResult.nodeExternalId, space: 'pdms-mapping' }],
-        style: { cad: DefaultNodeAppearance.Highlighted }
-      }]);
-
-    }, []);
-  
-  console.log('Story re-rendered with groups', stylingGroups);
+      setStylingGroups([
+        {
+          fdmAssetExternalIds: [
+            { externalId: nodeDataResult.nodeExternalId, space: 'pdms-mapping' }
+          ],
+          style: { cad: DefaultNodeAppearance.Highlighted }
+        }
+      ]);
+    },
+    []
+  );
 
   return (
     <>
@@ -87,7 +90,12 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
         onNodeClick={onClick}
       />
       <RevealToolbar />
-      <button onClick={() => setState(!state)}>Re-render resources</button>
+      <button
+        onClick={() => {
+          setState(!state);
+        }}>
+        Re-render resources
+      </button>
     </>
   );
 };

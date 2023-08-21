@@ -19,6 +19,7 @@ export { useReveal } from './components/RevealContainer/RevealContext';
 export { use3DModelName } from './hooks/use3DModelName';
 export { useFdmAssetMappings } from './hooks/useFdmAssetMappings';
 export { useCameraNavigation } from './hooks/useCameraNavigation';
+export { useMappedEquipmentByRevisionList } from './hooks/useMappedEquipmentBy3DModelsList';
 
 // Higher order components
 export { withSuppressRevealEvents } from './higher-order-components/withSuppressRevealEvents';
@@ -32,7 +33,7 @@ export {
   type CadModelStyling,
   type TreeIndexStylingGroup,
   type NodeStylingGroup,
-  type CogniteCadModelProps,
+  type CogniteCadModelProps
 } from './components/CadModelContainer/CadModelContainer';
 export {
   type Reveal3DResourcesProps,

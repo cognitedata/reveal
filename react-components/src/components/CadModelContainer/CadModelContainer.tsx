@@ -1,7 +1,7 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-import { type ReactElement, useEffect, useState, useRef } from 'react';
+import { type ReactElement, useEffect, useState } from 'react';
 import {
   type NodeAppearance,
   type AddModelOptions,
@@ -44,8 +44,12 @@ export function CadModelContainer({
   const cachedViewerRef = useRevealKeepAlive();
   const viewer = useReveal();
 
-  const [model, setModel] = useState<CogniteCadModel | undefined>(viewer.models.find((m) => m.modelId === addModelOptions.modelId && m.revisionId === addModelOptions.revisionId) as CogniteCadModel);
- 
+  const [model, setModel] = useState<CogniteCadModel | undefined>(
+    viewer.models.find(
+      (m) => m.modelId === addModelOptions.modelId && m.revisionId === addModelOptions.revisionId
+    ) as CogniteCadModel
+  );
+
   const { modelId, revisionId, geometryFilter } = addModelOptions;
 
   useEffect(() => {
