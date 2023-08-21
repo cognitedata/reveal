@@ -57,7 +57,6 @@ export class RevisionFdmNodeCache {
     externalIdToNodeMapping: Map<CogniteExternalId, CogniteInternalId>,
     edgeMap: Map<CogniteExternalId, FdmCadEdge>
   ): Promise<ThreeDModelMappings> {
-
     const externalIds = [...externalIdToNodeMapping.keys()];
     const nodeIds = [...externalIdToNodeMapping.values()];
 
