@@ -72,14 +72,14 @@ export const useFdm3dNodeData = (
   return result;
 };
 
-export const useSpecificMappings = (
+export const useFdmAssetMappings = (
   fdmAssetExternalIds: DmsUniqueIdentifier[],
   models: TypedReveal3DModel[]
 ): UseQueryResult<ThreeDModelMappings[]> => {
   const nodeCacheContent = useContext(FdmNodeCacheContext);
 
   return useQuery(
-    ['reveal', 'react-components', fdmAssetExternalIds],
+    ['reveal', 'react-components', 'fdm-asset-mappings', fdmAssetExternalIds],
     async () => {
       return await nodeCacheContent?.cache.getMappingsForFdmIds(fdmAssetExternalIds, models);
     },

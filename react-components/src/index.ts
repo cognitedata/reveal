@@ -18,7 +18,7 @@ export { RevealKeepAlive } from './components/RevealKeepAlive/RevealKeepAlive';
 // Hooks
 export { useReveal } from './components/RevealContainer/RevealContext';
 export { use3DModelName } from './hooks/use3DModelName';
-export { useFdmAssetMappings } from './hooks/useFdmAssetMappings';
+export { useFdmAssetMappings } from './components/NodeCacheProvider/NodeCacheProvider';
 export { useClickedNodeData } from './hooks/useClickedNode';
 export { useCameraNavigation } from './hooks/useCameraNavigation';
 
