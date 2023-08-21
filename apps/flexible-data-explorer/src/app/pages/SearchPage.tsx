@@ -1,45 +1,16 @@
 import { Suspense } from 'react';
-import { useParams } from 'react-router-dom';
 
 import styled from 'styled-components';
 
 import { Page } from '../containers/page/Page';
 import { AIResults } from '../containers/search/results/AIResults';
-import { FileResults } from '../containers/search/results/FileResults';
-import { GenericResults } from '../containers/search/results/GenericResults';
-import { TimeseriesResults } from '../containers/search/results/TimeseriesResults';
+import { SearchResults } from '../containers/search/results/SearchResults';
 import { SearchCategories } from '../containers/search/SearchCategories';
 import { SearchConfiguration } from '../containers/search/SearchConfiguration';
 import { useAISearchParams } from '../hooks/useParams';
 
 export const SearchPage = () => {
-  const { type } = useParams();
-
   const [isAIEnabled] = useAISearchParams();
-  const renderResults = () => {
-    if (type === 'Files') {
-      return <FileResults />;
-    }
-
-    if (type === 'Timeseries') {
-      return <TimeseriesResults />;
-    }
-
-    if (type !== undefined) {
-      return <GenericResults selectedDataType={type} />;
-    }
-
-    if (isAIEnabled) {
-      return <AIResults />;
-    }
-    return (
-      <>
-        <GenericResults />
-        <TimeseriesResults />
-        <FileResults />
-      </>
-    );
-  };
 
   return (
     <Page>
@@ -48,7 +19,7 @@ export const SearchPage = () => {
           <Suspense fallback="Loading">
             <Content>
               <SearchConfiguration />
-              {renderResults()}
+              {isAIEnabled ? <AIResults /> : <SearchResults />}
             </Content>
 
             {!isAIEnabled && <SearchCategories />}
