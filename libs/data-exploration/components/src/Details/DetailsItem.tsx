@@ -23,6 +23,7 @@ import {
 } from '@data-exploration-lib/core';
 import {
   DetailedMapping,
+  useGetLabelName,
   useRootAssetQuery,
 } from '@data-exploration-lib/domain-layer';
 
@@ -257,6 +258,7 @@ export const RootAssetItem = ({
 export const LabelsItem = ({ labels = [] }: { labels?: string[] }) => {
   const { t } = useTranslation();
   const { onCopy } = useClipboard();
+  const getLabelName = useGetLabelName();
 
   const handleCopy = (value: string) => {
     onCopy(value);
@@ -269,15 +271,22 @@ export const LabelsItem = ({ labels = [] }: { labels?: string[] }) => {
         name={t('LABELS', 'Labels')}
         value={
           <Flex wrap="wrap" gap={8} justifyContent="flex-end">
-            {labels.map((label) => (
-              <Chip
-                type="default"
-                label={label}
-                action={{ onClick: () => handleCopy(label), icon: 'Copy' }}
-                size="small"
-                key={label}
-              />
-            ))}
+            {labels.map((label) => {
+              const labelName = getLabelName(label);
+
+              return (
+                <Chip
+                  type="default"
+                  label={labelName}
+                  action={{
+                    onClick: () => handleCopy(labelName),
+                    icon: 'Copy',
+                  }}
+                  size="small"
+                  key={label}
+                />
+              );
+            })}
           </Flex>
         }
       />

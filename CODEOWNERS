@@ -38,7 +38,8 @@ apps/industry-canvas-ui              @cognitedata/unified-file-viewer
 apps/coding-conventions           @deep-cognite @CimStordal
 
 # Contextualization
-libs/contextualization              @davidlky @cognitedata/contextualization
+app/contextualization-ui            @gayanDeegala @tommythorsen @cognitedata/matchmakers
+libs/contextualization              @gayanDeegala @tommythorsen @cognitedata/matchmakers
 
 # Copilot
 apps/copilot              @davidlky @andeplane @miladh @trygveu

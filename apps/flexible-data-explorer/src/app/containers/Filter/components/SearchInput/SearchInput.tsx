@@ -1,7 +1,6 @@
-import * as React from 'react';
+import { Input } from '@cognite/cogs.js';
 
 import { useTranslation } from '../../../../hooks/useTranslation';
-import { Input } from '../Input';
 
 export interface SearchInputProps {
   value?: string;
@@ -20,7 +19,7 @@ export const SearchInput: React.FC<SearchInputProps> = ({
       variant="noBorder"
       placeholder={t('FILTER_SEARCH_INPUT_PLACEHOLDER')}
       value={value}
-      onChange={onChange}
+      onChange={(event) => onChange(event.target.value)}
     />
   );
 };

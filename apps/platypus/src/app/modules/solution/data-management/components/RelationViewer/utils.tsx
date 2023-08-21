@@ -24,7 +24,10 @@ export const getRelationshipsForData = async ({
   );
   if (currentType) {
     const fields = currentType.fields.filter(
-      (field) => field.type.custom || field.type.name === 'TimeSeries'
+      (field) =>
+        field.type.custom ||
+        field.type.name === 'TimeSeries' ||
+        field.type.name === 'File'
     );
     const mixerAPI = new FdmMixerApiService(getCogniteSDKClient());
     return mixerAPI
@@ -51,34 +54,66 @@ export const getRelationshipsForData = async ({
                   .map((el) => {
                     switch (el.type.name) {
                       case 'TimeSeries':
+                      case 'File':
+                      case 'Sequence':
                         // no need for datapoints in nested level
-                        return `${el.name} { __typename externalId }`;
+                        return `${el.name} { __typename name id externalId }`;
                       default:
                         return el.name;
                     }
                   })
                   .join('\n');
-                if (field.type.list) {
-                  return `${field.name} { 
-                    items { 
-                      __typename
-                      externalId
-                      space
-                      ${subFields}
-                    }
-                  }`;
-                }
                 switch (field.type.name) {
                   case 'TimeSeries':
                     return `${field.name} {
                       __typename
                       externalId
+                      id
+                      name
                       dataPoints(limit: 10) {
                         timestamp
                         value
                       }
                     }`;
+                  case 'Sequence':
+                    return `${field.name} {
+                      __typename
+                      externalId
+                      id
+                      latest {
+                        rows {
+                          rowNumber
+                          values
+                        }
+                        externalId
+                        columns {
+                          externalId
+                          name
+                          valueType
+                        }
+                      }
+                    }`;
+                  case 'File':
+                    return `${field.name} {
+                      __typename
+                      externalId
+                      id
+                      name
+                      downloadLink {
+                        downloadUrl
+                      }
+                    }`;
                   default:
+                    if (field.type.list) {
+                      return `${field.name} { 
+                        items { 
+                          __typename
+                          externalId
+                          space
+                          ${subFields}
+                        }
+                      }`;
+                    }
                     return `${field.name} { 
                       __typename
                       externalId

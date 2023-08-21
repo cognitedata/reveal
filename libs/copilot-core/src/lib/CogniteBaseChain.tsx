@@ -211,8 +211,8 @@ export const callPromptChain = async <
     maxRetries?: number;
     timeout?: number;
   } = {
-    maxRetries: 3,
-    timeout: 6000,
+    maxRetries: 1,
+    timeout: 30000,
   }
 ) => {
   const currentRuns: Map<string, string> = new Map();

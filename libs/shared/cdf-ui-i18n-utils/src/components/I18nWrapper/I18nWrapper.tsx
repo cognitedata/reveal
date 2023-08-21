@@ -14,6 +14,9 @@ import {
   lowercasePostProcessor,
   uppercasePostProcessor,
 } from '../../utils';
+import { overrideFontFamily } from '../../utils/overrideFontFamily';
+
+overrideFontFamily();
 
 type I18nWrapperProps = {
   children: React.ReactNode;

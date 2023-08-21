@@ -48,10 +48,11 @@ interface Props {
   assetId: number;
   isSelected: boolean;
   selectionMode?: 'single' | 'multiple';
-
+  closable?: boolean;
   onClose?: () => void;
   selectedRows?: ResourceSelection;
   visibleResources?: ResourceType[];
+  showSelectButton?: boolean;
 }
 export const AssetDetails: FC<
   Props & Pick<SelectableItemsProps, 'onSelect'>
@@ -60,9 +61,11 @@ export const AssetDetails: FC<
   isSelected,
   onSelect,
   selectionMode,
+  closable,
   onClose,
   selectedRows,
   visibleResources = [],
+  showSelectButton,
 }) => {
   const { data } = useAssetsByIdQuery([{ id: assetId }]);
   const asset = useMemo(() => {
@@ -155,8 +158,10 @@ export const AssetDetails: FC<
       title={asset ? asset.name : ''}
       icon="Assets"
       isSelected={isSelected}
+      closable={closable}
       onClose={onClose}
       onSelectClicked={onSelect}
+      showSelectButton={showSelectButton}
     >
       <StyledCollapse accordion ghost defaultActiveKey="details">
         <Collapse.Panel key="details" header={<h4>{t('DETAILS', DETAILS)}</h4>}>

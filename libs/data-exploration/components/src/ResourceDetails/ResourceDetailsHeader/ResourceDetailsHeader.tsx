@@ -15,6 +15,7 @@ interface Props {
   showSelectButton?: boolean;
   onSelectClicked?: () => void;
   onClose?: () => void;
+  closable?: boolean;
 }
 export const ResourceDetailsHeader: React.FC<Props> = ({
   title,
@@ -23,6 +24,7 @@ export const ResourceDetailsHeader: React.FC<Props> = ({
   isSelected,
   onSelectClicked,
   onClose,
+  closable = true,
 }) => {
   const { t } = useTranslation();
   return (
@@ -44,12 +46,14 @@ export const ResourceDetailsHeader: React.FC<Props> = ({
             {isSelected ? t('SELECTED', 'Selected') : t('SELECT', 'Select')}
           </Button>
         )}
-        <Button
-          data-testid="close-button"
-          icon="Close"
-          type="ghost"
-          onClick={onClose}
-        ></Button>
+        {closable && (
+          <Button
+            data-testid="close-button"
+            icon="Close"
+            type="ghost"
+            onClick={onClose}
+          ></Button>
+        )}
       </ActionsContainer>
     </Container>
   );

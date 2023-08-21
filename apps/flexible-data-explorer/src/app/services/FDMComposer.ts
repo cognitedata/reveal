@@ -85,6 +85,38 @@ export class FDMComposer {
     }, {} as Record<string, number>);
   }
 
+  public async searchAggregateValueByProperty<T>(
+    data: { dataType: string; field: string },
+    query: string,
+    filters: unknown,
+    property: string
+  ) {
+    const dataModel = this.getDataModelByDataType(data.dataType);
+
+    if (!dataModel) {
+      return undefined;
+    }
+
+    const client = this.getClient(
+      dataModel.externalId,
+      dataModel.version,
+      dataModel.space
+    );
+
+    if (!client) {
+      return undefined;
+    }
+
+    const result = await client.searchAggregateValueByProperty<T>(
+      data,
+      query,
+      filters,
+      property
+    );
+
+    return result;
+  }
+
   public async searchAggregateValues(
     data: { dataType: string; field: string },
     query: string,

@@ -15,6 +15,7 @@ import {
   mapFileType,
   TFunction,
 } from '@data-exploration-lib/core';
+import { useGetLabelName } from '@data-exploration-lib/domain-layer';
 
 import { RootAsset } from '../RootAsset';
 import { TimeDisplay } from '../TimeDisplay';
@@ -209,15 +210,24 @@ export const getTableColumns = (t: TFunction): ResourceTableHashMap => ({
   labels: {
     header: t('LABELS', 'Labels'),
     accessorKey: 'labels',
-    cell: ({ getValue }) => (
-      <Flex gap={2} wrap="wrap">
-        {getValue<{ externalId: string }[]>()?.map((label) => (
-          <Tooltip content={label.externalId} key={uniqueId()}>
-            <StyledLabel size="small" label={label.externalId} />
-          </Tooltip>
-        ))}
-      </Flex>
-    ),
+    cell: ({ getValue }) => {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const getLabelName = useGetLabelName();
+
+      return (
+        <Flex gap={2} wrap="wrap">
+          {getValue<{ externalId: string }[]>()?.map((label) => {
+            const labelName = getLabelName(label.externalId);
+
+            return (
+              <Tooltip content={labelName} key={uniqueId()}>
+                <StyledLabel size="small" label={labelName} />
+              </Tooltip>
+            );
+          })}
+        </Flex>
+      );
+    },
     size: 200,
   },
   lastUpdatedTime: {

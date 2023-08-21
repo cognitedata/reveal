@@ -10,6 +10,7 @@ export * from './events';
 export * from './files';
 export * from './filters';
 export * from './gpt';
+export * from './labels';
 export * from './pnids';
 export * from './queryKeys';
 export * from './relationships';

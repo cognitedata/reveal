@@ -13,6 +13,7 @@ interface Props {
   showSelectButton?: boolean;
   onSelectClicked?: () => void;
   onClose?: () => void;
+  closable?: boolean;
 }
 export const ResourceDetailsTemplate: React.FC<
   React.PropsWithChildren<Props>
@@ -23,6 +24,7 @@ export const ResourceDetailsTemplate: React.FC<
   showSelectButton = true,
   onSelectClicked,
   onClose,
+  closable,
   children,
 }) => {
   return (
@@ -35,6 +37,7 @@ export const ResourceDetailsTemplate: React.FC<
           showSelectButton={showSelectButton}
           onClose={onClose}
           onSelectClicked={onSelectClicked}
+          closable={closable}
         ></ResourceDetailsHeader>
       </HeaderWrapper>
       {children}

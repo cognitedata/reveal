@@ -70,6 +70,10 @@ export type SearchAggregateValuesResponse = {
   ];
 };
 
+export type SearchAggregateValueResponseByProperty<T> = {
+  items: [Record<string, Record<string, T>>];
+};
+
 export type IntrospectionResponse = {
   allFields: {
     fields: {

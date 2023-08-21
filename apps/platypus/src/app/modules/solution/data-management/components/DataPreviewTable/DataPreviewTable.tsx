@@ -64,6 +64,7 @@ import { SuggestionsModal } from '../SuggestionsModal/SuggestionsModal';
 
 import {
   CollapsiblePanelContainer,
+  CustomDataTypes,
   DataPreviewSidebarData,
 } from './collapsible-panel-container';
 import { StyledDataPreviewTable } from './elements';
@@ -423,11 +424,9 @@ export const DataPreviewTable = forwardRef<
           return;
         }
 
-        const nonPrimitiveTypes = ['TimeSeries', 'File', 'Sequence'];
-
         const doesDataRequireSidebar =
           (fieldType.type.list && currValue.length > 0) ||
-          ['JSONObject', ...nonPrimitiveTypes].includes(fieldType.type.name) ||
+          ['JSONObject', ...CustomDataTypes].includes(fieldType.type.name) ||
           fieldType.type.custom;
 
         // if there's no data, an empty list, or the data is not a type we display in the sidebar

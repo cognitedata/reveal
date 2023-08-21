@@ -371,7 +371,11 @@ const recurseAndCreateNodesAndEdges = <
     const relationalFields =
       currentType?.fields
         .filter(
-          (field) => field.type.custom || field.type.name === 'TimeSeries'
+          (field) =>
+            field.type.custom ||
+            field.type.name === 'TimeSeries' ||
+            field.type.name === 'Sequence' ||
+            field.type.name === 'File'
         )
         .map((field) => ({ ...field.type, field: field.name })) || [];
     for (const field of relationalFields) {
