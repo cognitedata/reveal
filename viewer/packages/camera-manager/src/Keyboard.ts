@@ -50,14 +50,6 @@ export default class Keyboard {
     return this.keys[key] >= 1;
   }
 
-  public comsumePressed(key: string): boolean {
-    const p = this.keys[key] === 2;
-    if (p) {
-      this.keys[key] = 1;
-    }
-    return p;
-  }
-
   public dispose(): void {
     this.clearPressedKeys();
     this.removeEventListeners();
