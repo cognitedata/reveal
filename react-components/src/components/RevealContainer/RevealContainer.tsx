@@ -10,6 +10,7 @@ import { type Color } from 'three';
 import { SDKProvider } from './SDKProvider';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
+import { NodeCacheProvider } from '../NodeCacheProvider/NodeCacheProvider';
 import { RevealContainerElementContext } from './RevealContainerElementContext';
 
 type RevealContainerProps = {
@@ -77,7 +78,9 @@ export function RevealContainer({
       <>
         <RevealContainerElementContext.Provider value={wrapperDomElement.current}>
           <RevealContext.Provider value={viewer}>
-            {createPortal(children, viewerDomElement.current)}
+            <NodeCacheProvider>
+              {createPortal(children, viewerDomElement.current)}
+            </NodeCacheProvider>
           </RevealContext.Provider>
         </RevealContainerElementContext.Provider>
       </>
