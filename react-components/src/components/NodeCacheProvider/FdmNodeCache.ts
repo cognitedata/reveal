@@ -96,16 +96,14 @@ export class FdmNodeCache {
       relevantFdmKeySet
     );
 
-    const modelMappings: ThreeDModelMappings = {
+    const mappings = new Map(
+      relevantCachedEdgeData.map(data => [data.edge.startNode.externalId, data.node])
+    );
+
+    return {
       ...modelRevisionId,
-      mappings: new Map()
+      mappings
     };
-
-    relevantCachedEdgeData.forEach((edgeData) => {
-      modelMappings.mappings.set(edgeData.edge.startNode.externalId, edgeData.node);
-    });
-
-    return modelMappings;
   }
 
   private async getNonCachedModelMappings(
@@ -116,7 +114,7 @@ export class FdmNodeCache {
       return [];
     }
 
-    const fdmSet = new Set(uniqueIds.map((id) => createFdmKey(id.space, id.externalId)));
+    const fdmKeySet = new Set(uniqueIds.map((id) => createFdmKey(id.space, id.externalId)));
 
     const revisionToModelRevisionId = new Map<RevisionId, ModelRevisionId>();
     modelRevisions.forEach((id) => revisionToModelRevisionId.set(id.revisionId, id));
@@ -127,7 +125,7 @@ export class FdmNodeCache {
       const revisionKey = createModelRevisionKey(modelId, revisionId);
       const edges = revisionToEdgesMap.get(revisionKey);
 
-      return this.getRelevantExternalIdToNodeMapForRevision({ modelId, revisionId }, edges, fdmSet);
+      return this.getRelevantExternalIdToNodeMapForRevision({ modelId, revisionId }, edges, fdmKeySet);
     });
 
     return await Promise.all(modelDataPromises);
