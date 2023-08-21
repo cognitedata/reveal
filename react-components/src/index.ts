@@ -21,6 +21,7 @@ export { use3DModelName } from './hooks/use3DModelName';
 export { useFdmAssetMappings } from './components/NodeCacheProvider/NodeCacheProvider';
 export { useClickedNodeData, type ClickedNodeData } from './hooks/useClickedNode';
 export { useCameraNavigation } from './hooks/useCameraNavigation';
+export { useMappedEdgesForRevisions } from './components/NodeCacheProvider/NodeCacheProvider';
 
 // Higher order components
 export { withSuppressRevealEvents } from './higher-order-components/withSuppressRevealEvents';
@@ -30,11 +31,12 @@ export {
   type PointCloudModelStyling,
   type AnnotationIdStylingGroup
 } from './components/PointCloudContainer/PointCloudContainer';
+export { type CogniteCadModelProps } from './components/CadModelContainer/CadModelContainer';
 export {
   type CadModelStyling,
   type TreeIndexStylingGroup,
   type NodeStylingGroup
-} from './components/CadModelContainer/CadModelContainer';
+} from './components/CadModelContainer/useApplyCadModelStyling';
 export {
   type Reveal3DResourcesProps,
   type FdmAssetStylingGroup,

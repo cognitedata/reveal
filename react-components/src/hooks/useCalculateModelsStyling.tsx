@@ -11,6 +11,8 @@ import {
   type CadModelStyling,
   type TreeIndexStylingGroup
 } from '../components/CadModelContainer/CadModelContainer';
+import { type InModel3dEdgeProperties } from '../utilities/globalDataModels';
+import { type EdgeItem } from '../utilities/FdmSDK';
 import { type NodeAppearance } from '@cognite/reveal';
 import { type ThreeDModelMappings } from './types';
 import { type Node3D, type CogniteExternalId } from '@cognite/sdk';
