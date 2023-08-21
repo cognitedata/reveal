@@ -793,11 +793,11 @@ export class Cognite3DViewer {
     add360ImageOptions?: AddImage360Options
   ): Promise<Image360Collection> {
     if (datasource !== 'events') {
-      throw new Error(`${datasource} is an unknown datasource from 360 images`);
+      throw new Error(`'${datasource}' is an unknown datasource for 360 images`);
     }
 
     if (this._cdfSdkClient === undefined || this._image360ApiHelper === undefined) {
-      throw new Error(`Adding 360 image sets is only supported when connecting to Cognite Data Fusion`);
+      throw new Error('Adding 360 image sets is only supported when connecting to Cognite Data Fusion');
     }
 
     const collectionTransform = add360ImageOptions?.collectionTransform ?? new THREE.Matrix4();

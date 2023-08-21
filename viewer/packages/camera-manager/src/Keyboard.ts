@@ -50,6 +50,7 @@ export default class Keyboard {
     return this.keys[key] >= 1;
   }
 
+  // This method has a typo (comsume -> consume). Can we just delete is since it's not used in this repo? Can it be used in other apps?
   public comsumePressed(key: string): boolean {
     const p = this.keys[key] === 2;
     if (p) {

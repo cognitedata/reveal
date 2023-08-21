@@ -230,7 +230,7 @@ export class ComboControls extends EventDispatcher {
     this.dispose = () => {
       this.removeEventListeners();
 
-      // dipose all keyboard events registered. REV-461!
+      // Dispose all keyboard events registered. REV-461!
       this._keyboard.dispose();
     };
   }
@@ -807,7 +807,7 @@ export class ComboControls extends EventDispatcher {
     return { targetOffset, radius };
   };
 
-  // Function almost equal to mapLinear except it is behaving the same as clamp outside of specifed range
+  // Function almost equal to mapLinear except it is behaving the same as clamp outside of specified range
   private readonly clampedMap = (value: number, xStart: number, xEnd: number, yStart: number, yEnd: number) => {
     if (value < xStart) value = yStart;
     else if (value > xEnd) value = yEnd;
