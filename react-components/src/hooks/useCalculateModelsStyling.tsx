@@ -6,7 +6,6 @@ import {
   type TypedReveal3DModel
 } from '../components/Reveal3DResources/types';
 import { type PointCloudModelStyling } from '../components/PointCloudContainer/PointCloudContainer';
-import {} from '../components/CadModelContainer/CadModelContainer';
 import { type InModel3dEdgeProperties } from '../utilities/globalDataModels';
 import { type EdgeItem } from '../utilities/FdmSDK';
 import { type NodeAppearance } from '@cognite/reveal';
