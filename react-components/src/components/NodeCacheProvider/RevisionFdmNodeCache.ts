@@ -2,9 +2,20 @@
  * Copyright 2023 Cognite AS
  */
 
-import { CogniteInternalId, type CogniteClient, type Node3D, CogniteExternalId } from '@cognite/sdk';
+import {
+  type CogniteInternalId,
+  type CogniteClient,
+  type Node3D,
+  type CogniteExternalId
+} from '@cognite/sdk';
 import { type FdmSDK } from '../../utilities/FdmSDK';
-import { type TreeIndex, type Fdm3dNodeData, type FdmEdgeWithNode, type FdmCadEdge, ModelRevisionId } from './types';
+import {
+  type TreeIndex,
+  type Fdm3dNodeData,
+  type FdmEdgeWithNode,
+  type FdmCadEdge,
+  type ModelRevisionId
+} from './types';
 
 import {
   fetchAncestorNodesForTreeIndex,
@@ -16,7 +27,7 @@ import {
 import { max } from 'lodash';
 
 import assert from 'assert';
-import { ThreeDModelMappings } from '../../hooks/types';
+import { type ThreeDModelMappings } from '../../hooks/types';
 
 export class RevisionFdmNodeCache {
   private readonly _cogniteClient: CogniteClient;
@@ -41,9 +52,18 @@ export class RevisionFdmNodeCache {
     this._revisionId = revisionId;
   }
 
-  public async createExternalIdToNodeMapping(modelRevisionId: ModelRevisionId, externalIdToNodeMapping: Map<CogniteExternalId, CogniteInternalId>, edgeMap: Map<CogniteExternalId, FdmCadEdge>): Promise<ThreeDModelMappings> {
+  public async createExternalIdToNodeMapping(
+    modelRevisionId: ModelRevisionId,
+    externalIdToNodeMapping: Map<CogniteExternalId, CogniteInternalId>,
+    edgeMap: Map<CogniteExternalId, FdmCadEdge>
+  ): Promise<ThreeDModelMappings> {
     const nodeIds = [...externalIdToNodeMapping.values()];
-    const nodes = await fetchNodesForNodeIds(modelRevisionId.modelId, modelRevisionId.revisionId, nodeIds, this._cogniteClient);
+    const nodes = await fetchNodesForNodeIds(
+      modelRevisionId.modelId,
+      modelRevisionId.revisionId,
+      nodeIds,
+      this._cogniteClient
+    );
 
     const externalIds = [...externalIdToNodeMapping.keys()];
 
@@ -246,9 +266,7 @@ function getAncestorDataForTreeIndex(
   const edgesForTreeIndex = edgesWithTreeIndex.filter(
     (edgeAndTreeIndex) => edgeAndTreeIndex.treeIndex === treeIndex
   );
-  const ancestorsBelowTreeIndex = ancestors.filter(
-    (ancestor) => ancestor.treeIndex >= treeIndex
-  );
+  const ancestorsBelowTreeIndex = ancestors.filter((ancestor) => ancestor.treeIndex >= treeIndex);
 
   return {
     edges: edgesForTreeIndex.map((result) => result.edge),

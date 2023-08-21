@@ -9,21 +9,19 @@ import { type PointCloudModelStyling } from '../components/PointCloudContainer/P
 import {
   type NodeStylingGroup,
   type CadModelStyling,
-  TreeIndexStylingGroup
+  type TreeIndexStylingGroup
 } from '../components/CadModelContainer/CadModelContainer';
-import { type InModel3dEdgeProperties } from '../utilities/globalDataModels';
-import { type EdgeItem } from '../utilities/FdmSDK';
 import { type NodeAppearance } from '@cognite/reveal';
 import { type ThreeDModelMappings } from './types';
-import { Node3D, type CogniteExternalId, type CogniteInternalId } from '@cognite/sdk';
+import { type Node3D, type CogniteExternalId } from '@cognite/sdk';
 import { useFdmAssetMappings } from './useFdmAssetMappings';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useMappedEdgesForRevisions } from '../components/NodeCacheProvider/NodeCacheProvider';
-import { FdmEdgeWithNode, TreeIndex } from '../components/NodeCacheProvider/types';
+import { type FdmEdgeWithNode, type TreeIndex } from '../components/NodeCacheProvider/types';
 
 type ModelStyleGroup = {
   model: TypedReveal3DModel;
-  styleGroup: (NodeStylingGroup | TreeIndexStylingGroup)[];
+  styleGroup: Array<NodeStylingGroup | TreeIndexStylingGroup>;
 };
 
 export const useCalculateModelsStyling = (
@@ -65,12 +63,7 @@ function useCalculateMappedStyling(models: TypedReveal3DModel[]): ModelStyleGrou
 
       const styleGroup =
         model.styling?.mapped !== undefined
-          ? [
-              getMappedStyleGroup(
-                fdmData,
-                model.styling.mapped
-              )
-            ]
+          ? [getMappedStyleGroup(fdmData, model.styling.mapped)]
           : [];
       return { model, styleGroup };
     });
@@ -83,9 +76,7 @@ function useCalculateInstanceStyling(
   models: TypedReveal3DModel[],
   instanceGroups: FdmAssetStylingGroup[]
 ): ModelStyleGroup[] {
-  const {
-    data: fdmAssetMappings
-  } = useFdmAssetMappings(
+  const { data: fdmAssetMappings } = useFdmAssetMappings(
     instanceGroups.flatMap((instanceGroup) => instanceGroup.fdmAssetExternalIds),
     models
   );
@@ -142,11 +133,11 @@ function extractDefaultStyles(
 }
 
 function getMappedStyleGroup(
-  edges: Array<FdmEdgeWithNode>,
+  edges: FdmEdgeWithNode[],
   mapped: NodeAppearance
 ): TreeIndexStylingGroup {
   const treeIndices = edges.flatMap((edge) => {
-    const treeIndices =  getNodeSubtreeIndices(edge.node);
+    const treeIndices = getNodeSubtreeIndices(edge.node);
     return treeIndices;
   });
   return { treeIndices, style: mapped };
@@ -168,14 +159,14 @@ function calculateCadModelStyling(
         .filter((node): node is Node3D => node !== undefined);
       return {
         style: resourcesGroup.style.cad,
-        treeIndices: modelMappedNodes.map(n => getNodeSubtreeIndices(n)).flat()
+        treeIndices: modelMappedNodes.map((n) => getNodeSubtreeIndices(n)).flat()
       };
     })
     .filter((group) => group.treeIndices.length > 0);
 }
 
 function getNodeSubtreeIndices(node: Node3D): TreeIndex[] {
-  return [...Array(node.subtreeSize).keys()].map(i => i + node.treeIndex);
+  return [...Array(node.subtreeSize).keys()].map((i) => i + node.treeIndex);
 }
 
 function getModelMappings(

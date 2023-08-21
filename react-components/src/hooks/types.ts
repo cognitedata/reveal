@@ -1,7 +1,7 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-import { Node3D, type CogniteExternalId } from '@cognite/sdk';
+import { type Node3D, type CogniteExternalId } from '@cognite/sdk';
 
 export type ThreeDModelMappings = {
   modelId: number;

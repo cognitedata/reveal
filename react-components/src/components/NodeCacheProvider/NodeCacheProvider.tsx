@@ -6,12 +6,12 @@ import { type ReactElement, type ReactNode, createContext, useContext, useMemo }
 import { FdmNodeCache } from './FdmNodeCache';
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useFdmSdk, useSDK } from '../RevealContainer/SDKProvider';
-import { ModelRevisionToEdgeMap, type Fdm3dNodeData } from './types';
+import { type ModelRevisionToEdgeMap, type Fdm3dNodeData } from './types';
 
 import assert from 'assert';
-import { DmsUniqueIdentifier } from '../../utilities/FdmSDK';
-import { TypedReveal3DModel } from '../Reveal3DResources/types';
-import { ThreeDModelMappings } from '../../hooks/types';
+import { type DmsUniqueIdentifier } from '../../utilities/FdmSDK';
+import { type TypedReveal3DModel } from '../Reveal3DResources/types';
+import { type ThreeDModelMappings } from '../../hooks/types';
 import { DEFAULT_QUERY_STALE_TIME } from '../../utilities/constants';
 
 export type FdmNodeCacheContent = {
@@ -74,20 +74,21 @@ export const useFdm3dNodeData = (
 
 export const useSpecificMappings = (
   fdmAssetExternalIds: DmsUniqueIdentifier[],
-  models: TypedReveal3DModel[]): UseQueryResult<ThreeDModelMappings[]> => {
-
+  models: TypedReveal3DModel[]
+): UseQueryResult<ThreeDModelMappings[]> => {
   const nodeCacheContent = useContext(FdmNodeCacheContext);
 
   return useQuery(
     ['reveal', 'react-components', fdmAssetExternalIds],
     async () => {
-      return nodeCacheContent?.cache.getMappingsForFdmIds(fdmAssetExternalIds, models);
+      return await nodeCacheContent?.cache.getMappingsForFdmIds(fdmAssetExternalIds, models);
     },
     {
       enabled: fdmAssetExternalIds.length > 0 && models.length > 0,
-      staleTime: DEFAULT_QUERY_STALE_TIME,
-    });
-}
+      staleTime: DEFAULT_QUERY_STALE_TIME
+    }
+  );
+};
 
 export function NodeCacheProvider({ children }: { children?: ReactNode }): ReactElement {
   const fdmClient = useFdmSdk();
