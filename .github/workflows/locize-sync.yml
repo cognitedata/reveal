@@ -4,9 +4,6 @@ on:
     branches:
       - pramodcog/UX-1220
 
-env:
-  NODE_OPTIONS: '--max_old_space_size=4096'
-
 jobs:
   locize-sync:
     runs-on: ubuntu-latest
@@ -48,11 +45,13 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
 
       - name: 'Save added keys to locize'
+        working-directory: react-components
         run: yarn save-missing
         env:
           LOCIZE_API_KEY: ${{ secrets.LOCIZE_API_KEY }}
 
       - name: 'Remove deleted keys from locize'
+        working-directory: react-components
         run: yarn remove-deleted
         env:
           LOCIZE_API_KEY: ${{ secrets.LOCIZE_API_KEY }}
