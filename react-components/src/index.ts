@@ -19,7 +19,7 @@ export { RevealKeepAlive } from './components/RevealKeepAlive/RevealKeepAlive';
 export { useReveal } from './components/RevealContainer/RevealContext';
 export { use3DModelName } from './hooks/use3DModelName';
 export { useFdmAssetMappings } from './hooks/useFdmAssetMappings';
-export { useClickedNodeData } from './hooks/useClickedNode';
+export { useClickedNodeData, type ClickedNodeData } from './hooks/useClickedNode';
 export { useCameraNavigation } from './hooks/useCameraNavigation';
 
 // Higher order components
@@ -47,5 +47,5 @@ export type {
   NodeDataResult
 } from './components/Reveal3DResources/types';
 export type { CameraNavigationActions } from './hooks/useCameraNavigation';
-export type { Source } from './utilities/FdmSDK';
+export type { Source, DmsUniqueIdentifier } from './utilities/FdmSDK';
 export type { QualitySettings } from './components/RevealToolbar/SettingsContainer/types';
