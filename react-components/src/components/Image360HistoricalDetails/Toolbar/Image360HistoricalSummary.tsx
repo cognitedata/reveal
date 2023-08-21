@@ -9,6 +9,7 @@ import { Thumbnail } from '../utils/Thumbnail';
 import { type Cognite3DViewer, type Image360 } from '@cognite/reveal';
 // Using named import to avoid react component creation error when default import is used.
 import { uniqueId } from 'lodash';
+import { useTranslation } from '../../../common/i18n';
 
 export type Image360RevisionDetails = {
   date?: string;
@@ -38,6 +39,7 @@ export const Image360HistoricalSummary = forwardRef(
     }: Image360HistoricalSummaryProps,
     ref: React.ForwardedRef<number>
   ) => {
+    const { t } = useTranslation();
     const gridContainerRef = useRef<HTMLDivElement>(null);
 
     const onRevisionChanged = async (
@@ -74,7 +76,9 @@ export const Image360HistoricalSummary = forwardRef(
       <OverviewContainer>
         <StyledFlex direction="column">
           <StyledSubFlex>{stationName}</StyledSubFlex>
-          <StyledDetail>Station: {stationId}</StyledDetail>
+          <StyledDetail>
+            {t('360_IMAGES_STATION')} {stationId}
+          </StyledDetail>
         </StyledFlex>
 
         <StyledLayoutGridContainer onScroll={onScroll} ref={gridContainerRef}>

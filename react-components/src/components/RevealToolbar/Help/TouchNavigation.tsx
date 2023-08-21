@@ -10,25 +10,27 @@ import {
   TouchNavigationInstructionGrid
 } from './elements';
 import { TouchZoom, TouchPan, TouchSelect } from './Graphics/Touch';
+import { useTranslation } from '../../../common/i18n';
 
 export const TouchNavigation = (): ReactElement => {
+  const { t } = useTranslation();
   return (
     <Section
-      title={'Touch'}
-      subTitle={'Navigate and select'}
-      description={'Use gestures to zoom, pan and select'}>
+      title={t('TOUCH_NAVIGATION_TITLE')}
+      subTitle={t('MOUSE_TOUCH_NAVIGATION_SUBTITLE')}
+      description={t('TOUCH_NAVIGATION_DESCRIPTION')}>
       <TouchNavigationInstructionGrid>
         <div>
           <TouchPan />
-          <InstructionText>Pan</InstructionText>
+          <InstructionText>{t('PAN')}</InstructionText>
         </div>
         <TouchNavigationCombinedGridItem>
           <TouchSelect />
-          <InstructionText>Tap to select</InstructionText>
+          <InstructionText>{t('TOUCH_SELECT')}</InstructionText>
         </TouchNavigationCombinedGridItem>
         <div>
           <TouchZoom />
-          <InstructionText>Zoom</InstructionText>
+          <InstructionText>{t('TOUCH_ZOOM')}</InstructionText>
         </div>
       </TouchNavigationInstructionGrid>
     </Section>

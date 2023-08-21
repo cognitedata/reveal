@@ -73,6 +73,7 @@
     "dist"
   ],
   "dependencies": {
+    "@cognite/cdf-i18n-utils": "^0.7.3",
     "@tanstack/react-query": "^4.29.19",
     "lodash": "^4.17.21"
   }
