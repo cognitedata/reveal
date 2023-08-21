@@ -134,7 +134,13 @@ const Models = ({ addModelOptions, styling, transform }: CogniteCadModelProps) =
 
         return {
           groups: [...prev.groups,
-            { nodeIds: newNodeIds.slice(0, newNodeIds.length / 2), style: { color: new Color().setFromVector3(new Vector3(Math.random(), Math.random(), Math.random())) } }
+            {
+              nodeIds: newNodeIds.slice(0, newNodeIds.length / 2),
+              style: {
+                color: new Color().setFromVector3(new Vector3(Math.random(), Math.random(), Math.random())),
+                prioritizedForLoadingHint: true
+              }
+            }
           ],
           defaultStyle: prev.defaultStyle
         }

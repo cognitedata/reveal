@@ -6,16 +6,10 @@ import {
   type NodeAppearance,
   type AddModelOptions,
   type CogniteCadModel,
-  TreeIndexNodeCollection,
-  NodeIdNodeCollection,
-  DefaultNodeAppearance,
-  type NodeCollection,
   type Cognite3DViewer
 } from '@cognite/reveal';
 import { useReveal } from '../RevealContainer/RevealContext';
 import { Matrix4 } from 'three';
-import { useSDK } from '../RevealContainer/SDKProvider';
-import { type CogniteClient } from '@cognite/sdk';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import { useApplyCadModelStyling } from './useApplyCadModelStyling';
 
@@ -66,7 +60,7 @@ export function CadModelContainer({
 
   useApplyCadModelStyling(model, styling);
 
-  // useEffect(() => removeModel, [model]);
+  useEffect(() => removeModel, [model]);
 
   return <></>;
 
