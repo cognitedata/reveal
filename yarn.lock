@@ -2785,11 +2785,6 @@
   dependencies:
     lodash "^4.17.20"
 
-"@cognite/apm-auth-container@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@cognite/apm-auth-container/-/apm-auth-container-1.0.0.tgz#b0bfdfd90d328c02985ac8efb4bb73fbd50300ab"
-  integrity sha512-lzLLisQcNN65XYCy6S+6K69zUAjhRi/Frihw8+PQSosxGbt4FoZXd2Ajo3h+s4piugh8byfnQQry2vef1eH49w==
-
 "@cognite/auth-react@^0.0.28-beta":
   version "0.0.28-beta"
   resolved "https://registry.yarnpkg.com/@cognite/auth-react/-/auth-react-0.0.28-beta.tgz#0e48960a654612ad853a97d8bf95e3df3022f84f"
@@ -3141,6 +3136,11 @@
   integrity sha512-spdkg1KfhKdhzoZwDIADT46KFXfeiFGB798zTxC/sX5iT8eYOGmaWjcSpWQr8d5YJdkmJVHZvMW76gNcOVGOSg==
   dependencies:
     nanoid "^3.1.16"
+
+"@cognite/e2e-auth@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@cognite/e2e-auth/-/e2e-auth-1.0.1.tgz#cc4ac413c1bbf19ce38caa087ff43216034c93ab"
+  integrity sha512-L0ydt+RWdazXv6bTOU4UBKFV69EEAIu6491SOc3K7GW0tjdbSMmJ5UZYwXu7Mhikvjiyyt8hk/1YuM0YfOjXqw==
 
 "@cognite/eslint-config@^3.2.0":
   version "3.2.0"
