@@ -121,7 +121,7 @@ static final Map<String, String> VERSIONING_STRATEGY = [
   'contextualization-ui': 'single-branch',
   'data-exploration': 'multi-branch',
   'vision': 'single-branch',
-  'data-catalog': 'single-branch',
+  'data-catalog': 'multi-branch',
   'raw-explorer': 'multi-branch',
   '3d-management': 'single-branch',
   'transformations': 'multi-branch',
