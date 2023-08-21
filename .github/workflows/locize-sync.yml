@@ -47,12 +47,6 @@ jobs:
         env:
           NPM_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
 
-      - name: Build production version
-        working-directory: react-components
-        run: yarn run build:prod
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
-
       - name: 'Save added keys to locize'
         run: yarn save-missing
         env:
