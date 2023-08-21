@@ -10,6 +10,7 @@ export { PointCloudContainer } from './components/PointCloudContainer/PointCloud
 export { CadModelContainer } from './components/CadModelContainer/CadModelContainer';
 export { Image360CollectionContainer } from './components/Image360CollectionContainer/Image360CollectionContainer';
 export { Image360HistoricalDetails } from './components/Image360HistoricalDetails/Image360HistoricalDetails';
+export { Image360Details } from './components/Image360Details/Image360Details';
 export { ViewerAnchor } from './components/ViewerAnchor/ViewerAnchor';
 export { RevealToolbar } from './components/RevealToolbar/RevealToolbar';
 export { RevealKeepAlive } from './components/RevealKeepAlive/RevealKeepAlive';

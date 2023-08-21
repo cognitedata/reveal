@@ -203,3 +203,27 @@ export async function createSDKFromEnvironment(
   await client.authenticate();
   return client;
 }
+
+export const getCogniteClient = async ({
+  project,
+  environment,
+  overrideToken
+}: {
+  project: string | null;
+  environment: string | null;
+  overrideToken: string | null;
+}): Promise<CogniteClient> => {
+  if (project !== null && overrideToken !== null) {
+    return createSDKFromToken('reveal.example.example', project, overrideToken);
+  }
+
+  if (project !== null && environment !== null) {
+    return await createSDKFromEnvironment('reveal.example.example', project, environment);
+  }
+
+  return new CogniteClient({
+    appId: 'reveal.example.example',
+    project: 'dummy',
+    getToken: async () => 'dummy'
+  });
+};
