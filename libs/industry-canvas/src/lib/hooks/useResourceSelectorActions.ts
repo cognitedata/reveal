@@ -16,6 +16,8 @@ export type OnResourceSelectorOpenPropsType = {
 
   // Opens the resource selector with the given tab selected.
   initialTab?: ResourceType;
+
+  shouldOnlyShowPreviewPane?: boolean;
 };
 
 export type UseResourceSelectorActionsReturnType = {
@@ -25,6 +27,7 @@ export type UseResourceSelectorActionsReturnType = {
   resourceSelectorFilter: ResourceSelectorFilter | undefined;
   initialSelectedResource: ResourceItem | undefined;
   initialTab: ResourceType | undefined;
+  shouldOnlyShowPreviewPane: boolean | undefined;
 };
 
 export const useResourceSelectorActions =
@@ -49,5 +52,7 @@ export const useResourceSelectorActions =
       initialSelectedResource:
         resourceSelectorOpenProps?.initialSelectedResourceItem,
       initialTab: resourceSelectorOpenProps?.initialTab,
+      shouldOnlyShowPreviewPane:
+        resourceSelectorOpenProps?.shouldOnlyShowPreviewPane,
     };
   };

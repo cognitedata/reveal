@@ -127,6 +127,7 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
               internalId: resourceId,
             },
           },
+          shouldOnlyShowPreviewPane: true,
         });
         return;
       }
@@ -139,7 +140,7 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
         container.type === ContainerType.TABLE
       ) {
         throw new Error(
-          'Find related resources not implemented for container type: ' +
+          'Find related data not implemented for container type: ' +
             container.type
         );
       }
@@ -191,8 +192,8 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
             </Tooltip>
             <Tooltip
               content={t(
-                translationKeys.FIND_RELATED_RESOURCES,
-                'Find related resources'
+                translationKeys.FIND_RELATED_DATA,
+                'Find related data'
               )}
             >
               <Button
@@ -200,8 +201,8 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
                 onClick={onOpenInResourceSelectorClick}
                 type="ghost"
                 aria-label={t(
-                  translationKeys.FIND_RELATED_RESOURCES,
-                  'Find related resources'
+                  translationKeys.FIND_RELATED_DATA,
+                  'Find related data'
                 )}
               />
             </Tooltip>
@@ -437,8 +438,8 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
             </Tooltip>
             <Tooltip
               content={t(
-                translationKeys.FIND_RELATED_RESOURCES,
-                'Find related resources'
+                translationKeys.FIND_RELATED_DATA,
+                'Find related data'
               )}
             >
               <Button
@@ -446,8 +447,8 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
                 onClick={onOpenInResourceSelectorClick}
                 type="ghost"
                 aria-label={t(
-                  translationKeys.FIND_RELATED_RESOURCES,
-                  'Find related resources'
+                  translationKeys.FIND_RELATED_DATA,
+                  'Find related data'
                 )}
               />
             </Tooltip>
@@ -655,8 +656,8 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
 
             <Tooltip
               content={t(
-                translationKeys.FIND_RELATED_RESOURCES,
-                'Find related resources'
+                translationKeys.FIND_RELATED_DATA,
+                'Find related data'
               )}
             >
               <Button
@@ -664,8 +665,8 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
                 onClick={onOpenInResourceSelectorClick}
                 type="ghost"
                 aria-label={t(
-                  translationKeys.FIND_RELATED_RESOURCES,
-                  'Find related resources'
+                  translationKeys.FIND_RELATED_DATA,
+                  'Find related data'
                 )}
               />
             </Tooltip>

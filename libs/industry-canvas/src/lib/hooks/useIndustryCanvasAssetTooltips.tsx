@@ -104,6 +104,7 @@ const useIndustryCanvasAssetTooltips = (
             internalId: resourceId,
           },
         },
+        shouldOnlyShowPreviewPane: true,
       });
     };
 

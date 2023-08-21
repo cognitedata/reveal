@@ -44,21 +44,25 @@ import { getResourcesVisibility } from '../utils';
 interface Props {
   sequenceId: number;
   isSelected: boolean;
+  closable?: boolean;
   onClose?: () => void;
   selectedRows?: ResourceSelection;
   selectionMode?: SelectionType;
   visibleResources?: ResourceType[];
+  showSelectButton?: boolean;
 }
 export const SequenceDetails: FC<
   Props & Pick<SelectableItemsProps, 'onSelect'>
 > = ({
   sequenceId,
   isSelected,
+  closable,
   onClose,
   onSelect,
   selectedRows,
   selectionMode,
   visibleResources = [],
+  showSelectButton,
 }) => {
   const {
     isLoading: isParentSequenceLoading,
@@ -151,8 +155,10 @@ export const SequenceDetails: FC<
       title={parentSequence?.name || ''}
       icon="Sequences"
       isSelected={isSelected}
+      closable={closable}
       onClose={onClose}
       onSelectClicked={onSelect}
+      showSelectButton={showSelectButton}
     >
       <StyledCollapse accordion ghost defaultActiveKey="sequence-details">
         <Collapse.Panel

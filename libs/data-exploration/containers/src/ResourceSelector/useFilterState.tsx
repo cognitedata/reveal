@@ -18,57 +18,75 @@ const EMPTY_FILTER_STATE: FilterState = {
   threeD: {},
 };
 
-type Action = {
-  type: keyof FilterState;
-  clear?: boolean;
-  value: FilterState[keyof FilterState];
+type FilterStateKey = keyof FilterState;
+
+type UpdateFilterAction = {
+  type: 'UPDATE_FILTER';
+  filterStateKey: FilterStateKey;
+  value: FilterState[FilterStateKey];
 };
+
+type ResetFilterAction = {
+  type: 'RESET_FILTER';
+  filterStateKey: FilterStateKey;
+  value?: FilterState[FilterStateKey];
+};
+
+type ResetAllFiltersAction = {
+  type: 'RESET_ALL_FILTERS';
+};
+
+type Action = UpdateFilterAction | ResetFilterAction | ResetAllFiltersAction;
 
 function updateFilters<T>(
   currentFilter: FilterState,
-  key: keyof FilterState,
+  filterStateKey: FilterStateKey,
   newValue: T
 ) {
   return {
     ...currentFilter,
-    [key]: {
-      ...currentFilter[key],
+    [filterStateKey]: {
+      ...currentFilter[filterStateKey],
       ...newValue,
     },
   };
 }
 
-function clearFilter(
-  currentFilter: FilterState,
-  key: keyof FilterState,
-  value?: FilterState[keyof FilterState]
-) {
-  return {
-    ...currentFilter,
-    [key]: value ?? {},
-  };
-}
-
 function reducer(state: FilterState, action: Action) {
-  const { value: nextValue, type, clear } = action;
+  switch (action.type) {
+    case 'UPDATE_FILTER': {
+      const { common, specific } = getCategoryValues(action.value);
+      if (common) {
+        return updateFilters(state, 'common', common);
+      }
 
-  if (clear) return clearFilter(state, type, nextValue);
+      return updateFilters(state, action.filterStateKey, specific);
+    }
 
-  const { common, specific } = getCategoryValues(nextValue);
+    case 'RESET_FILTER': {
+      return {
+        ...state,
+        [action.filterStateKey]: action.value ?? {},
+      };
+    }
 
-  if (common) return updateFilters(state, 'common', common);
-  else return updateFilters(state, type, specific);
+    case 'RESET_ALL_FILTERS': {
+      return {
+        ...EMPTY_FILTER_STATE,
+      };
+    }
+  }
 }
 
 export type UseFilterReturnType = {
   filterState: FilterState;
   updateFilterType: (
-    resourceType: keyof FilterState,
-    value: FilterState[keyof FilterState]
+    filterStateKey: FilterStateKey,
+    value: FilterState[FilterStateKey]
   ) => void;
   resetFilterType: (
-    resourceType: keyof FilterState,
-    value?: FilterState[keyof FilterState]
+    filterStateKey: FilterStateKey,
+    value?: FilterState[FilterStateKey]
   ) => void;
 };
 
@@ -80,10 +98,11 @@ export const useFilterState = (
   });
 
   const updateFilterType: UseFilterReturnType['updateFilterType'] = useCallback(
-    (resourceType, nextValue) => {
+    (filterStateKey, nextValue) => {
       return dispatch({
+        type: 'UPDATE_FILTER',
         value: nextValue,
-        type: resourceType,
+        filterStateKey: filterStateKey,
       });
     },
     [dispatch]
@@ -91,19 +110,23 @@ export const useFilterState = (
 
   // Update the filter state when the initial filter changes
   useEffect(() => {
+    dispatch({
+      type: 'RESET_ALL_FILTERS',
+    });
+
     Object.entries(initialFilter).forEach(([key, value]) => {
-      updateFilterType(key as keyof FilterState, value);
+      updateFilterType(key as FilterStateKey, value);
     });
   }, [initialFilter, updateFilterType]);
 
   const resetFilterType = useCallback(
     (
-      resourceType: FilterResourceType,
-      value?: FilterState[keyof FilterState]
+      filterStateKey: FilterResourceType,
+      value?: FilterState[FilterStateKey]
     ) => {
       dispatch({
-        clear: true,
-        type: resourceType,
+        type: 'RESET_FILTER',
+        filterStateKey: filterStateKey,
         value: value || {},
       });
     },

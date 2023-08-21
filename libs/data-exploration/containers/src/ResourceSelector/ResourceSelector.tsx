@@ -75,6 +75,7 @@ export type ResourceSelectorProps = {
   addButtonText?: string;
   isDocumentsApiEnabled?: boolean;
   shouldShowPreviews?: boolean;
+  shouldOnlyShowPreviewPane?: boolean;
 } & SelectionProps;
 
 export const ResourceSelector = ({
@@ -87,6 +88,7 @@ export const ResourceSelector = ({
   isDocumentsApiEnabled = true,
   addButtonText,
   shouldShowPreviews = true,
+  shouldOnlyShowPreviewPane = false,
 }: ResourceSelectorProps) => {
   const { filterState, updateFilterType, resetFilterType } =
     useFilterState(initialFilter);
@@ -101,6 +103,7 @@ export const ResourceSelector = ({
 
   useEffect(() => {
     if (initialSelectedResource === undefined) {
+      setPreviewItem(undefined);
       return;
     }
 
@@ -186,145 +189,148 @@ export const ResourceSelector = ({
 
   return (
     <ResourceSelectorWrapper>
-      <FilterWrapper visible={showFilter}>
-        <SidebarFilters
-          query={query}
-          enableDocumentLabelsFilter
-          isDocumentsApiEnabled={isDocumentsApiEnabled}
-          filter={filterState}
-          onFilterChange={(resourceType, currentFilter) => {
-            updateFilterType(resourceType, currentFilter);
-          }}
-          resourceType={activeKey}
-          onResetFilterClick={resetFilterType}
-        />
-      </FilterWrapper>
-
-      <MainSearchContainer>
-        <SearchInputContainer>
-          <>
-            <ExplorationFilterToggle
-              filterState={showFilter}
-              onClick={onToggleFilter}
-            />
-            <Divider direction="vertical" />
-          </>
-          <InputWrapper>
-            <Input
-              size="large"
-              variant="noBorder"
-              autoFocus
-              fullWidth
-              icon="Search"
-              placeholder={t('SEARCH_PLACEHOLDER', 'Search...')}
-              onChange={(ev) => setQuery(ev.target.value)}
-              value={query}
-            />
-          </InputWrapper>
-        </SearchInputContainer>
-
-        <ResourceTypeTabs
-          currentResourceType={activeKey}
-          setCurrentResourceType={(tab) => setActiveKey(tab as ResourceType)}
-        >
-          {visibleResourceTabs.map((tab) => {
-            if (tab === 'asset')
-              return (
-                <AssetsTab
-                  key={tab}
-                  tabKey={ViewType.Asset}
-                  label={t('ASSETS', 'Assets')}
-                  query={debouncedQuery}
-                  filter={{ ...filterState.common, ...filterState.asset }}
-                />
-              );
-            if (tab === 'event')
-              return (
-                <EventsTab
-                  key={tab}
-                  tabKey={ViewType.Event}
-                  query={debouncedQuery}
-                  filter={{ ...filterState.common, ...filterState.event }}
-                  label={t('EVENTS', 'Events')}
-                />
-              );
-            if (tab === 'file')
-              return (
-                <FilesTab
-                  key={tab}
-                  tabKey={ViewType.File}
-                  query={debouncedQuery}
-                  filter={{
-                    ...filterState.common,
-                    ...(isDocumentsApiEnabled
-                      ? filterState.document
-                      : filterState.file),
-                  }}
-                  isDocumentsApiEnabled={isDocumentsApiEnabled}
-                  label={t('FILES', 'Files')}
-                />
-              );
-            if (tab === 'timeSeries')
-              return (
-                <TimeseriesTab
-                  key={tab}
-                  tabKey={ViewType.TimeSeries}
-                  query={debouncedQuery}
-                  filter={{
-                    ...filterState.common,
-                    ...filterState.timeSeries,
-                  }}
-                  label={t('TIMESERIES', 'Time series')}
-                />
-              );
-            if (tab === 'sequence')
-              return (
-                <SequenceTab
-                  tabKey={ViewType.Sequence}
-                  query={debouncedQuery}
-                  filter={{
-                    ...filterState.common,
-                    ...filterState.sequence,
-                  }}
-                  label={t('SEQUENCES', 'Sequences')}
-                />
-              );
-            return (
-              <ThreeDTab tabKey={ViewType.ThreeD} query={debouncedQuery} />
-            );
-          })}
-        </ResourceTypeTabs>
-        <MainContainer>
-          <ResourceSelectorTable
-            selectedRows={selectedRows}
-            setSelectedRows={setSelectedRows}
-            filter={filterState}
-            selectionMode={selectionMode}
-            query={debouncedQuery}
-            resourceType={activeKey}
+      {!shouldOnlyShowPreviewPane && (
+        <FilterWrapper visible={showFilter}>
+          <SidebarFilters
+            query={query}
+            enableDocumentLabelsFilter
             isDocumentsApiEnabled={isDocumentsApiEnabled}
-            shouldShowPreviews={shouldShowPreviews}
-            onFilterChange={(nextState) => {
-              if (isDocumentsApiEnabled) {
-                updateFilterType(
-                  activeKey === 'file' ? 'document' : activeKey,
-                  nextState
-                );
-              } else {
-                updateFilterType(activeKey, nextState);
-              }
+            filter={filterState}
+            onFilterChange={(resourceType, currentFilter) => {
+              updateFilterType(resourceType, currentFilter);
             }}
-            onClick={({ id, externalId }) => {
-              setPreviewItem({ id, externalId, type: activeKey });
-            }}
+            resourceType={activeKey}
+            onResetFilterClick={resetFilterType}
           />
-        </MainContainer>
-      </MainSearchContainer>
+        </FilterWrapper>
+      )}
+      {!shouldOnlyShowPreviewPane && (
+        <MainSearchContainer>
+          <SearchInputContainer>
+            <>
+              <ExplorationFilterToggle
+                filterState={showFilter}
+                onClick={onToggleFilter}
+              />
+              <Divider direction="vertical" />
+            </>
+            <InputWrapper>
+              <Input
+                size="large"
+                variant="noBorder"
+                autoFocus
+                fullWidth
+                icon="Search"
+                placeholder={t('SEARCH_PLACEHOLDER', 'Search...')}
+                onChange={(ev) => setQuery(ev.target.value)}
+                value={query}
+              />
+            </InputWrapper>
+          </SearchInputContainer>
+
+          <ResourceTypeTabs
+            currentResourceType={activeKey}
+            setCurrentResourceType={(tab) => setActiveKey(tab as ResourceType)}
+          >
+            {visibleResourceTabs.map((tab) => {
+              if (tab === 'asset')
+                return (
+                  <AssetsTab
+                    key={tab}
+                    tabKey={ViewType.Asset}
+                    label={t('ASSETS', 'Assets')}
+                    query={debouncedQuery}
+                    filter={{ ...filterState.common, ...filterState.asset }}
+                  />
+                );
+              if (tab === 'event')
+                return (
+                  <EventsTab
+                    key={tab}
+                    tabKey={ViewType.Event}
+                    query={debouncedQuery}
+                    filter={{ ...filterState.common, ...filterState.event }}
+                    label={t('EVENTS', 'Events')}
+                  />
+                );
+              if (tab === 'file')
+                return (
+                  <FilesTab
+                    key={tab}
+                    tabKey={ViewType.File}
+                    query={debouncedQuery}
+                    filter={{
+                      ...filterState.common,
+                      ...(isDocumentsApiEnabled
+                        ? filterState.document
+                        : filterState.file),
+                    }}
+                    isDocumentsApiEnabled={isDocumentsApiEnabled}
+                    label={t('FILES', 'Files')}
+                  />
+                );
+              if (tab === 'timeSeries')
+                return (
+                  <TimeseriesTab
+                    key={tab}
+                    tabKey={ViewType.TimeSeries}
+                    query={debouncedQuery}
+                    filter={{
+                      ...filterState.common,
+                      ...filterState.timeSeries,
+                    }}
+                    label={t('TIMESERIES', 'Time series')}
+                  />
+                );
+              if (tab === 'sequence')
+                return (
+                  <SequenceTab
+                    tabKey={ViewType.Sequence}
+                    query={debouncedQuery}
+                    filter={{
+                      ...filterState.common,
+                      ...filterState.sequence,
+                    }}
+                    label={t('SEQUENCES', 'Sequences')}
+                  />
+                );
+              return (
+                <ThreeDTab tabKey={ViewType.ThreeD} query={debouncedQuery} />
+              );
+            })}
+          </ResourceTypeTabs>
+          <MainContainer>
+            <ResourceSelectorTable
+              selectedRows={selectedRows}
+              setSelectedRows={setSelectedRows}
+              filter={filterState}
+              selectionMode={selectionMode}
+              query={debouncedQuery}
+              resourceType={activeKey}
+              isDocumentsApiEnabled={isDocumentsApiEnabled}
+              shouldShowPreviews={shouldShowPreviews}
+              onFilterChange={(nextState) => {
+                if (isDocumentsApiEnabled) {
+                  updateFilterType(
+                    activeKey === 'file' ? 'document' : activeKey,
+                    nextState
+                  );
+                } else {
+                  updateFilterType(activeKey, nextState);
+                }
+              }}
+              onClick={({ id, externalId }) => {
+                setPreviewItem({ id, externalId, type: activeKey });
+              }}
+            />
+          </MainContainer>
+        </MainSearchContainer>
+      )}
       {previewItem && (
-        <ResourcePreviewSidebarWrapper>
+        <ResourcePreviewSidebarWrapper isOnlyPane={shouldOnlyShowPreviewPane}>
           <ResourceSelectorDetails
             item={previewItem}
-            closable={true}
+            closable={!shouldOnlyShowPreviewPane}
             onClose={() => setPreviewItem(undefined)}
             selectionMode={selectionMode}
             selectedRows={selectedRows}
@@ -332,6 +338,7 @@ export const ResourceSelector = ({
             isSelected={Boolean(selectedRows[previewItem.type][previewItem.id])}
             visibleResources={visibleResourceTabs}
             isDocumentsApiEnabled={isDocumentsApiEnabled}
+            showSelectButton={shouldOnlyShowPreviewPane ? false : undefined}
           />
         </ResourcePreviewSidebarWrapper>
       )}
@@ -409,9 +416,10 @@ const MainContainer = styled(Flex)<{ isFilterFeatureEnabled?: boolean }>`
   overflow: auto;
 `;
 
-const ResourcePreviewSidebarWrapper = styled.div`
+const ResourcePreviewSidebarWrapper = styled.div<{ isOnlyPane?: boolean }>`
   width: 360px;
   margin: 12px;
   flex: 1;
-  border-left: 1px solid var(--cogs-border--muted);
+  border-left: ${({ isOnlyPane }) =>
+    isOnlyPane ? '' : '1px solid var(--cogs-border--muted)'};
 `;
