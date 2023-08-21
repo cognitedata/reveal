@@ -2,31 +2,15 @@
  * Copyright 2023 Cognite AS
  */
 import { type ReactElement, useEffect, useState } from 'react';
-import {
-  type NodeAppearance,
-  type AddModelOptions,
-  type CogniteCadModel,
-  type Cognite3DViewer
-} from '@cognite/reveal';
+import { type AddModelOptions, type CogniteCadModel } from '@cognite/reveal';
 import { useReveal } from '../RevealContainer/RevealContext';
 import { Matrix4 } from 'three';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
-import { useApplyCadModelStyling } from './useApplyCadModelStyling';
-
-export type NodeStylingGroup = {
-  nodeIds: number[];
-  style?: NodeAppearance;
-};
-
-export type TreeIndexStylingGroup = {
-  treeIndices: number[];
-  style?: NodeAppearance;
-};
-
-export type CadModelStyling = {
-  defaultStyle?: NodeAppearance;
-  groups?: Array<NodeStylingGroup | TreeIndexStylingGroup>;
-};
+import {
+  type CadModelStyling,
+  useApplyCadModelStyling,
+  modelExists
+} from './useApplyCadModelStyling';
 
 export type CogniteCadModelProps = {
   addModelOptions: AddModelOptions;
@@ -47,7 +31,7 @@ export function CadModelContainer({
   const [model, setModel] = useState<CogniteCadModel | undefined>(
     viewer.models.find(
       (m) => m.modelId === addModelOptions.modelId && m.revisionId === addModelOptions.revisionId
-    ) as CogniteCadModel
+    ) as CogniteCadModel | undefined
   );
 
   const { modelId, revisionId, geometryFilter } = addModelOptions;
@@ -106,11 +90,4 @@ export function CadModelContainer({
     viewer.removeModel(model);
     setModel(undefined);
   }
-}
-
-export function modelExists(
-  model: CogniteCadModel | undefined,
-  viewer: Cognite3DViewer
-): model is CogniteCadModel {
-  return model !== undefined && viewer.models.includes(model);
 }

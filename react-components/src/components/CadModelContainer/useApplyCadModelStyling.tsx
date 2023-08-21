@@ -7,18 +7,29 @@ import {
   type NodeAppearance,
   type NodeCollection,
   NodeIdNodeCollection,
-  TreeIndexNodeCollection
+  TreeIndexNodeCollection,
+  type Cognite3DViewer
 } from '@cognite/reveal';
 import { useEffect } from 'react';
-import { type CadModelStyling, useReveal } from '../..';
-import {
-  type NodeStylingGroup,
-  type TreeIndexStylingGroup,
-  modelExists
-} from './CadModelContainer';
 import { useSDK } from '../RevealContainer/SDKProvider';
 import { type CogniteClient } from '@cognite/sdk';
 import { isEqual } from 'lodash';
+import { useReveal } from '../RevealContainer/RevealContext';
+
+export type NodeStylingGroup = {
+  nodeIds: number[];
+  style?: NodeAppearance;
+};
+
+export type TreeIndexStylingGroup = {
+  treeIndices: number[];
+  style?: NodeAppearance;
+};
+
+export type CadModelStyling = {
+  defaultStyle?: NodeAppearance;
+  groups?: Array<NodeStylingGroup | TreeIndexStylingGroup>;
+};
 
 export const useApplyCadModelStyling = (
   model?: CogniteCadModel,
@@ -40,14 +51,6 @@ export const useApplyCadModelStyling = (
     if (!modelExists(model, viewer)) return;
 
     model.setDefaultNodeAppearance(defaultStyle);
-
-    return () => {
-      if (!modelExists(model, viewer)) {
-        return;
-      }
-
-      model.setDefaultNodeAppearance(DefaultNodeAppearance.Default);
-    };
   }, [defaultStyle, model]);
 };
 
@@ -129,24 +132,25 @@ function isEqualTreeIndex(
   collectionB: TreeIndexNodeCollection
 ): boolean {
   const isEqualContent =
-    collectionA.getIndexSet().intersectWith(collectionB.getIndexSet()).count ===
-    collectionA.getIndexSet().count;
+    collectionA.getIndexSet().differenceWith(collectionB.getIndexSet()).count === 0;
   return isEqualContent;
 }
 
 function isEqualStyle(styleA: NodeAppearance, styleB: NodeAppearance): boolean {
-  const color =
-    styleA.color === undefined || styleB.color === undefined
-      ? Boolean(styleA.color ?? styleB.color)
-      : styleA.color.equals(styleB.color);
-  const visible = styleA.visible === styleB.visible;
-  const renderInFront = styleA.renderInFront === styleB.renderInFront;
-  const renderGhosted = styleA.renderGhosted === styleB.renderGhosted;
-  const outlineColor = styleA.outlineColor === styleB.outlineColor;
-  const prioritizedForLoadingHint =
-    styleA.prioritizedForLoadingHint === styleB.prioritizedForLoadingHint;
+  const { color: colorA, ...restA } = styleA;
+  const { color: colorB, ...restB } = styleB;
 
-  return (
-    color && visible && renderInFront && renderGhosted && outlineColor && prioritizedForLoadingHint
-  );
+  const color =
+    colorA === undefined || colorB === undefined
+      ? Boolean(colorA ?? colorB)
+      : colorA.equals(colorB);
+
+  return color && isEqual(restA, restB);
+}
+
+export function modelExists(
+  model: CogniteCadModel | undefined,
+  viewer: Cognite3DViewer
+): model is CogniteCadModel {
+  return model !== undefined && viewer.models.includes(model);
 }

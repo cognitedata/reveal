@@ -3,7 +3,8 @@
  */
 import { useRef, type ReactElement, useState, useEffect } from 'react';
 import { type Cognite3DViewer } from '@cognite/reveal';
-import { CadModelContainer, type CadModelStyling } from '../CadModelContainer/CadModelContainer';
+import { CadModelContainer } from '../CadModelContainer/CadModelContainer';
+import { type CadModelStyling } from '../CadModelContainer/useApplyCadModelStyling';
 import {
   PointCloudContainer,
   type PointCloudModelStyling

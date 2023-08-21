@@ -60,29 +60,23 @@ export const Main: Story = {
 const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): ReactElement => {
   const [stylingGroups, setStylingGroups] = useState<FdmAssetStylingGroup[]>([]);
   const cameraNavigation = useCameraNavigation();
-  const [state, setState] = useState(false);
   const nodeData = useClickedNodeData();
 
   useEffect(() => {
     if (nodeData === undefined) return;
 
-      setStylingGroups([
-        {
-          fdmAssetExternalIds: [
-            { externalId: nodeData.fdmNode.externalId, space: 'pdms-mapping' }
-          ],
-          style: { cad: DefaultNodeAppearance.Highlighted }
-        }
-      ]);
+    setStylingGroups([
+      {
+        fdmAssetExternalIds: [{ externalId: nodeData.fdmNode.externalId, space: 'pdms-mapping' }],
+        style: { cad: DefaultNodeAppearance.Highlighted }
+      }
+    ]);
     void cameraNavigation.fitCameraToInstance(nodeData.fdmNode.externalId, 'pdms-mapping');
   }, [nodeData?.fdmNode]);
 
   return (
     <>
-      <RevealResourcesFitCameraOnLoad
-        resources={resources}
-        instanceStyling={stylingGroups}
-      />
+      <RevealResourcesFitCameraOnLoad resources={resources} instanceStyling={stylingGroups} />
       <RevealToolbar />
     </>
   );

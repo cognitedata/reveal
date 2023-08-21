@@ -31,12 +31,12 @@ export {
   type PointCloudModelStyling,
   type AnnotationIdStylingGroup
 } from './components/PointCloudContainer/PointCloudContainer';
+export { type CogniteCadModelProps } from './components/CadModelContainer/CadModelContainer';
 export {
   type CadModelStyling,
   type TreeIndexStylingGroup,
-  type NodeStylingGroup,
-  type CogniteCadModelProps
-} from './components/CadModelContainer/CadModelContainer';
+  type NodeStylingGroup
+} from './components/CadModelContainer/useApplyCadModelStyling';
 export {
   type Reveal3DResourcesProps,
   type FdmAssetStylingGroup,
