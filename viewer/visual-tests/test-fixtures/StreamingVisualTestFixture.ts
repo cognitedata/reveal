@@ -129,7 +129,6 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
   /*
    * Overridable field creation methods
    */
-
   createPointCloudFactory(): PointCloudFactory {
     return new PointCloudFactory(
       this.potreeInstance,
@@ -337,8 +336,8 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
       const subscriber = pointCloudManager.getLoadingStateObserver().subscribe(onLoadingStateChange);
       modelLoadedPromise.then(() => subscriber.unsubscribe());
 
-      // TODO: This is a workaround to deal with point cloud loading state currently not working as intended
-      // remove this in the future
+      // TODO: This is a workaround to deal with point cloud loading state currently not working as intended.
+      // Remove this in the future.
       setTimeout(() => modelLoadedPromise.resolve(), 1000);
     }
 
@@ -366,7 +365,7 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
     } else if (model instanceof PointCloudNode) {
       return model.getBoundingBox().clone();
     } else {
-      throw new Error(`Unkown type of model(${model})`);
+      throw new Error(`Unknown type of model(${model})`);
     }
   }
 
