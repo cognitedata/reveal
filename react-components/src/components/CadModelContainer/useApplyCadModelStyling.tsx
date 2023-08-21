@@ -132,7 +132,7 @@ function isEqualTreeIndex(
   collectionB: TreeIndexNodeCollection
 ): boolean {
   const isEqualContent =
-    collectionA.getIndexSet().differenceWith(collectionB.getIndexSet()).count === 0;
+    collectionA.getIndexSet().clone().differenceWith(collectionB.getIndexSet()).count === 0;
   return isEqualContent;
 }
 
