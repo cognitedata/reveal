@@ -14,7 +14,7 @@ import {
 import { type NodeAppearance } from '@cognite/reveal';
 import { type ThreeDModelMappings } from './types';
 import { type Node3D, type CogniteExternalId } from '@cognite/sdk';
-import { useFdmAssetMappings } from './useFdmAssetMappings';
+import { useFdmAssetMappings } from '../components/NodeCacheProvider/NodeCacheProvider';
 import { useMemo } from 'react';
 import { useMappedEdgesForRevisions } from '../components/NodeCacheProvider/NodeCacheProvider';
 import { type FdmEdgeWithNode, type TreeIndex } from '../components/NodeCacheProvider/types';
