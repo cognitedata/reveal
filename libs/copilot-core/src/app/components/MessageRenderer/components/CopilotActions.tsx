@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Button, Flex, toast } from '@cognite/cogs.js';
 
 import { CopilotBotMessage } from '../../../../lib/types';
+import { useCopilotContext } from '../../../hooks/useCopilotContext';
 import { useMetrics } from '../../../hooks/useMetrics';
 
 import { ResponsiveActions } from './ResponsiveActions';
@@ -15,6 +16,7 @@ export const CopilotActions = ({
   const [selectedFeedback, setSelectedFeedback] = useState('');
 
   const { track } = useMetrics();
+  const { messages } = useCopilotContext();
   return (
     <Flex gap={4} className="actions">
       <div style={{ flex: 1 }}>
@@ -42,6 +44,9 @@ export const CopilotActions = ({
         onClick={() => {
           setSelectedFeedback('positive');
           track('FEEDBACK_POSITIVE', {
+            prompt:
+              messages.current.findLast((el) => el.source === 'user')
+                ?.content || '',
             content: content,
             chain: chain,
           });
@@ -59,6 +64,9 @@ export const CopilotActions = ({
         onClick={() => {
           setSelectedFeedback('negative');
           track('FEEDBACK_NEGATIVE', {
+            prompt:
+              messages.current.findLast((el) => el.source === 'user')
+                ?.content || '',
             content: content,
             chain: chain,
           });

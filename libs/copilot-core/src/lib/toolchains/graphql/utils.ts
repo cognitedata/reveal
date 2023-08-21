@@ -314,13 +314,14 @@ const constructFilter = (
     const path = el.property.split('.');
     const filterPath = [];
     let typeDef = dataModelTypeDefs.types.find((el) => el.name === type);
+    let currField = typeDef?.fields.find((el) => el.name === path[0]);
     for (let i = 0; i < path.length; i += 1) {
       // all the types that this property can belong to
       const typeForProperty = propertyLookup.get(path[i]);
       // if it is a relationship, the possible start / end type for this relatioship
       const relationshipForProperty = relationLookup.get(path[i]);
 
-      let currField = typeDef?.fields.find((el) => el.name === path[i]);
+      currField = typeDef?.fields.find((el) => el.name === path[i]);
       // if the current field insnt a valid field for the given type
       if (!currField) {
         // look for potential target in case GPT gave us inconclusive property name (missing relationship)
@@ -359,7 +360,6 @@ const constructFilter = (
         omitted.push({ key: el.property, reason: 'invalid field' });
         return;
       }
-      console.log(currField.type.name, i, path.length - 1);
       if (currField.type.list) {
         omitted.push({
           key: el.property,
@@ -376,8 +376,22 @@ const constructFilter = (
       }
       filterPath.push(path[i]);
     }
+
     // TODO add validation of valid property
-    let value = `${el.value}`;
+    let value: string | number = `${el.value}`;
+    if (
+      currField?.type.name.includes('Int') ||
+      currField?.type.name.includes('Float')
+    ) {
+      value = Number(el.value);
+      if (Number.isNaN(value)) {
+        omitted.push({
+          key: el.property,
+          reason: `filters on ${currField.type.name} must be a valid number`,
+        });
+        return;
+      }
+    }
     if (typeof el.value === 'string') {
       switch (el.value.toLowerCase().trim()) {
         case '${lastyear}$':
@@ -506,4 +520,53 @@ export const getTypeString = (dataModels: GraphQlDmlVersionDTO[]) => {
       .join('\n')}\n\`\`\``;
   }
   return typeNames;
+};
+
+export const constructListResultSummary = (
+  length: number,
+  hasNextPage: boolean
+) => {
+  return `${length}${hasNextPage ? '+' : ''}`;
+};
+
+export const constructAggregateResultSummary = (
+  items: ({
+    group?: { [key in string]: string };
+  } & {
+    [key in 'sum' | 'count' | 'max' | 'min' | 'avg']?: {
+      [key in string]: number | string;
+    };
+  })[]
+) => {
+  const summarizeData = (item: {
+    [key in 'sum' | 'count' | 'max' | 'min' | 'avg']?: {
+      [key in string]: number | string;
+    };
+  }) => {
+    return Object.entries(item)
+      .map(([key, entry]) => {
+        if (key === 'group') {
+          return '';
+        }
+        return Object.entries(entry)
+          .map(([field, value]) => {
+            return `${key} - "${field}": ${value}`;
+          })
+          .join(', ')
+          .concat(' ');
+      })
+      .join('');
+  };
+  return `\n${items
+    .map((item) => {
+      return `- ${summarizeData(item)} in ${
+        item.group
+          ? Object.entries(item.group)
+              .map(([key, value]) => `${key} of ${value}`)
+              .join('\n')
+          : ''
+      }`;
+    })
+    .join('\n')
+    .concat('\n')}`;
 };
