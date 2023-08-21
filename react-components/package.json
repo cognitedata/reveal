@@ -15,10 +15,10 @@
     "build-storybook": "storybook build",
     "tsc": "tsc",
     "lint": "eslint . --cache",
-    "pull-keys": "cdf-i18n-utils-cli pull-keys-from-remote --namespace reveal-react-components",
-    "remove-deleted": "cdf-i18n-utils-cli remove-deleted-keys-from-remote --namespace reveal-react-components",
-    "save-missing": "cdf-i18n-utils-cli save-missing-keys-to-remote --namespace reveal-react-components",
-    "sort-keys": "cdf-i18n-utils-cli sort-local-keys --namespace reveal-react-components"
+    "pull-keys": "cdf-i18n-utils-cli pull-keys-from-remote --namespace reveal-react-components --path ./react-components/src/common/i18n",
+    "remove-deleted": "cdf-i18n-utils-cli remove-deleted-keys-from-remote --namespace reveal-react-components --path ./react-components/src/common/i18n",
+    "save-missing": "cdf-i18n-utils-cli save-missing-keys-to-remote --namespace reveal-react-components --path ./react-components/src/common/i18n",
+    "sort-keys": "cdf-i18n-utils-cli sort-local-keys --namespace reveal-react-components --path ./react-components/src/common/i18n"
   },
   "peerDependencies": {
     "@cognite/cogs.js": ">=9",
