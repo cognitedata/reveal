@@ -1,5 +1,8 @@
 name: Sync added and deleted keys to locize
-on: workflow_dispatch
+on:
+  push:
+    branches:
+      - pramodcog/UX-1220
 
 env:
   NODE_OPTIONS: '--max_old_space_size=4096'
