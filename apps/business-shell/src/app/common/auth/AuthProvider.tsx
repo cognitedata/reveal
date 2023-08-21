@@ -1,6 +1,6 @@
 import type { FC, PropsWithChildren } from 'react';
 
-import * as AuthPackage from '@cognite/apm-auth-container';
+import * as AuthPackage from '@cognite/e2e-auth';
 import { CogniteClient } from '@cognite/sdk';
 
 import { AuthStateAuthenticated, AuthStateUser } from './types';
