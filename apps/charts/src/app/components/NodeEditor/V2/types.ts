@@ -27,7 +27,7 @@ export enum NodeTypes {
 }
 
 export type SourceOption = {
-  type: 'timeseries' | 'workflow';
+  type: 'timeseries' | 'workflow' | 'scheduledCalculation';
   color: string;
   label: string;
   value: string;

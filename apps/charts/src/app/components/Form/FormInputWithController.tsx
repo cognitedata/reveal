@@ -131,7 +131,7 @@ export const FormInputWithController: FC<Props> = ({
                   onBlur={onBlur} // notify when input is touched
                   onChange={onChange} // send value to hook form
                   value={value}
-                  selectableSourceTypes={['timeseries']}
+                  selectableSourceTypes={['timeseries', 'scheduledCalculation']}
                 />
               </>
             )}
