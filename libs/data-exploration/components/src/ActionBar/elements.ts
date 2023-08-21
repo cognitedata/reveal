@@ -16,6 +16,14 @@ export const Wrapper = styled.div<BarProps>`
 
   .cogs-menu {
     background: var(--cogs-surface--muted--inverted);
+    color: var(--cogs-text-icon--on-contrast--strong);
+  }
+
+  .cogs-menu-header {
+    color: var(--cogs-text-icon--on-contrast--strong);
+  }
+  .cogs-menu-item:hover {
+    color: var(--cogs-text-icon--on-contrast--strong);
   }
 
   position: absolute;

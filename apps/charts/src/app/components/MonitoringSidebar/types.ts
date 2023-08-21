@@ -1,5 +1,8 @@
 import { AlertResponse } from '@charts-app/components/MonitoringAlert/types';
-import { ChartTimeSeries } from '@charts-app/models/chart/types';
+import {
+  ChartTimeSeries,
+  ScheduledCalculation,
+} from '@charts-app/models/chart/types';
 
 import { CogniteExternalId, CogniteInternalId, Metadata } from '@cognite/sdk';
 
@@ -30,16 +33,19 @@ export type CreateMonitoringJobPayload = {
   userEmail: string;
 };
 
+export type ScheduleDurationType = { label: string; value: string };
+type AlertThresholdType =
+  | undefined
+  | { label: 'Above'; value: 'upper_threshold' }
+  | { label: 'Below'; value: 'lower_threshold' };
+
 export type CreateMonitoringJobFormData = {
   name: string;
-  source: ChartTimeSeries | undefined;
+  source: ChartTimeSeries | ScheduledCalculation | undefined;
   alertThreshold: number;
-  alertThresholdType:
-    | undefined
-    | { label: 'Above'; value: 'upper_threshold' }
-    | { label: 'Below'; value: 'lower_threshold' };
+  alertThresholdType: AlertThresholdType;
   schedule: undefined | { label: string; value: number };
-  scheduleDurationType: { label: string; value: string };
+  scheduleDurationType: ScheduleDurationType;
   minimumDuration: number;
   cdfCredsMode: 'USER_CREDS' | 'CLIENT_SECRET';
   clientSecret: string;

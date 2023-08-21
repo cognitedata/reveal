@@ -85,6 +85,7 @@ import {
   ALERTING_SIDEBAR_KEY,
   THRESHOLD_SIDEBAR_KEY,
   ALERTING_FILTER,
+  DATAPROFILING_SIDEBAR_KEY,
 } from '@charts-app/utils/constants';
 import {
   makeDefaultTranslations,
@@ -163,8 +164,9 @@ const ChartViewPage = () => {
   const [accessDeniedModal, setAccessDeniedModal] = useState<
     'monitoring' | 'alerting' | undefined
   >();
-  const [showDataProfilingSidebar, setShowDataProfilingSidebar] =
-    useState(false);
+  const [showDataProfilingSidebar, setShowDataProfilingSidebar] = useState(
+    activeSidebar === DATAPROFILING_SIDEBAR_KEY
+  );
   const [showThresholdSidebar, setShowThresholdSidebar] = useState(
     activeSidebar === THRESHOLD_SIDEBAR_KEY
   );
@@ -345,11 +347,16 @@ const ChartViewPage = () => {
     if (showMonitoringSidebar) {
       setActiveSidebarQuery(MONITORING_SIDEBAR_KEY);
     }
+    if (showDataProfilingSidebar) {
+      setActiveSidebarQuery(DATAPROFILING_SIDEBAR_KEY);
+    }
   }, [
     showEventSidebar,
     showThresholdSidebar,
     showMonitoringSidebar,
     showAlertingSidebar,
+    showDataProfilingSidebar,
+    // setActiveSidebarQuery, // don't add this here, it will cause infinite loop
   ]);
 
   const openNodeEditor = useCallback(() => {

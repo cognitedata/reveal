@@ -61,9 +61,7 @@ const CreateMonitoringJobStep2 = ({
                 onBack(formValues);
               }}
             >
-              <Icon type="ArrowLeft" css={{ marginRight: 8 }} />
-
-              {t.Back}
+              <Icon type="ArrowLeft" css={{ marginRight: 8 }} /> {t.Back}
             </Button>
           </Col>
           <Col span={16}>

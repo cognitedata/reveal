@@ -6,7 +6,7 @@ import styled from 'styled-components/macro';
 import { Chip } from '@cognite/cogs.js';
 
 import { useTranslation } from '../../../../../hooks/useTranslation';
-import { useSearchAggregateValueByPropertyQuery } from '../../../../../services/dataTypes/queries/useSearchAggregatesQuery';
+import { useSearchAggregateValueByPropertyQuery } from '../../../../../services/instances/generic/queries/useInstanceSearchAggregatesQuery';
 import { BaseFilterInput } from '../../../components';
 import { NumericRange } from '../../../types';
 import { FilterInputProps } from '../FilterInput';
