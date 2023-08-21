@@ -39,7 +39,7 @@ that can be explored in the browser.
 
 ### Building on Macbook M1
 
-Building Reveal on Macbook M1 migth require some special care.
+Building Reveal on Macbook M1 might require some special care.
 
 If you experience issues during the `yarn`-stage in `viewer/`, e.g.
 ```

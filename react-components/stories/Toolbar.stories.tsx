@@ -3,11 +3,18 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { CadModelContainer, RevealContainer, RevealToolbar } from '../src';
+import {
+  CadModelContainer,
+  type QualitySettings,
+  RevealContainer,
+  RevealToolbar,
+  withSuppressRevealEvents
+} from '../src';
 import { CogniteClient } from '@cognite/sdk';
 import { Color } from 'three';
 import styled from 'styled-components';
-import { ToolBar, type ToolBarButton } from '@cognite/cogs.js';
+import { Button, Menu, ToolBar, type ToolBarButton } from '@cognite/cogs.js';
+import { type ReactElement, useState } from 'react';
 
 const meta = {
   title: 'Example/Toolbar',
@@ -26,7 +33,7 @@ const sdk = new CogniteClient({
   getToken: async () => await Promise.resolve(token)
 });
 
-const MyCustomToolbar = styled(ToolBar)`
+const MyCustomToolbar = styled(withSuppressRevealEvents(ToolBar))`
   position: absolute;
   right: 20px;
   top: 70px;
@@ -41,6 +48,52 @@ const exampleToolBarButtons: ToolBarButton[] = [
   }
 ];
 
+const exampleCustomSettingElements = (): ReactElement => {
+  const [originalCadColor, setOriginalCadColor] = useState(false);
+
+  return (
+    <>
+      <Menu.Item
+        hasSwitch
+        toggled={originalCadColor}
+        onChange={() => {
+          setOriginalCadColor((prevMode) => !prevMode);
+        }}>
+        Original CAD coloring
+      </Menu.Item>
+      <Button>Custom Button</Button>
+    </>
+  );
+};
+
+const exampleHighQualitySettings: QualitySettings = {
+  cadBudget: {
+    maximumRenderCost: 95000000,
+    highDetailProximityThreshold: 100
+  },
+  pointCloudBudget: {
+    numberOfPoints: 12000000
+  },
+  resolutionOptions: {
+    maxRenderResolution: Infinity,
+    movingCameraResolutionFactor: 1
+  }
+};
+
+const exampleLowQualitySettings: QualitySettings = {
+  cadBudget: {
+    maximumRenderCost: 95000000,
+    highDetailProximityThreshold: 100
+  },
+  pointCloudBudget: {
+    numberOfPoints: 12000000
+  },
+  resolutionOptions: {
+    maxRenderResolution: 1e5,
+    movingCameraResolutionFactor: 1
+  }
+};
+
 export const Main: Story = {
   args: {
     addModelOptions: {
@@ -51,10 +104,15 @@ export const Main: Story = {
   render: ({ addModelOptions }) => (
     <RevealContainer sdk={sdk} color={new Color(0x4a4a4a)}>
       <CadModelContainer addModelOptions={addModelOptions} />
-      <RevealToolbar />
+      <RevealToolbar
+        customSettingsContent={exampleCustomSettingElements()}
+        lowFidelitySettings={exampleLowQualitySettings}
+        highFidelitySettings={exampleHighQualitySettings}
+      />
       <MyCustomToolbar>
         <RevealToolbar.FitModelsButton />
         <ToolBar.ButtonGroup buttonGroup={exampleToolBarButtons} />
+        <RevealToolbar.SlicerButton />
       </MyCustomToolbar>
     </RevealContainer>
   )

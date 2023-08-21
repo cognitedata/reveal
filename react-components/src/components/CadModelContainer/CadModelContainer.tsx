@@ -8,12 +8,15 @@ import {
   type CogniteCadModel,
   TreeIndexNodeCollection,
   NodeIdNodeCollection,
-  DefaultNodeAppearance
+  DefaultNodeAppearance,
+  type NodeCollection,
+  type Cognite3DViewer
 } from '@cognite/reveal';
 import { useReveal } from '../RevealContainer/RevealContext';
-import { type Matrix4 } from 'three';
+import { Matrix4 } from 'three';
 import { useSDK } from '../RevealContainer/SDKProvider';
 import { type CogniteClient } from '@cognite/sdk';
+import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 
 export type NodeStylingGroup = {
   nodeIds: number[];
@@ -43,32 +46,52 @@ export function CadModelContainer({
   styling,
   onLoad
 }: CogniteCadModelProps): ReactElement {
+  const cachedViewerRef = useRevealKeepAlive();
   const [model, setModel] = useState<CogniteCadModel>();
+
   const viewer = useReveal();
   const sdk = useSDK();
+
+  const defaultStyle = styling?.defaultStyle ?? DefaultNodeAppearance.Default;
+  const styleGroups = styling?.groups;
 
   const { modelId, revisionId, geometryFilter } = addModelOptions;
 
   useEffect(() => {
     addModel(modelId, revisionId, transform, onLoad).catch(console.error);
-    return removeModel;
   }, [modelId, revisionId, geometryFilter]);
 
   useEffect(() => {
-    if (model === undefined || transform === undefined) return;
+    if (!modelExists(model, viewer) || transform === undefined) return;
     model.setModelTransformation(transform);
   }, [transform, model]);
 
   useEffect(() => {
-    if (model === undefined || styling === undefined) return;
-
-    applyStyling(sdk, model, styling).catch(console.error);
+    if (!modelExists(model, viewer) || styleGroups === undefined) return;
+    const stylingCollections = applyStyling(sdk, model, styleGroups);
 
     return () => {
-      model.removeAllStyledNodeCollections();
+      if (!modelExists(model, viewer)) return;
+      void stylingCollections.then((nodeCollections) => {
+        nodeCollections.forEach((nodeCollection) => {
+          model.unassignStyledNodeCollection(nodeCollection);
+        });
+      });
+    };
+  }, [styleGroups, model]);
+
+  useEffect(() => {
+    if (!modelExists(model, viewer)) return;
+    model.setDefaultNodeAppearance(defaultStyle);
+    return () => {
+      if (!modelExists(model, viewer)) {
+        return;
+      }
       model.setDefaultNodeAppearance(DefaultNodeAppearance.Default);
     };
-  }, [styling, model]);
+  }, [defaultStyle, model]);
+
+  useEffect(() => removeModel, [model]);
 
   return <></>;
 
@@ -78,7 +101,7 @@ export function CadModelContainer({
     transform?: Matrix4,
     onLoad?: (model: CogniteCadModel) => void
   ): Promise<CogniteCadModel> {
-    const cadModel = await viewer.addCadModel({ modelId, revisionId });
+    const cadModel = await getOrAddModel();
     if (transform !== undefined) {
       cadModel.setModelTransformation(transform);
     }
@@ -86,10 +109,27 @@ export function CadModelContainer({
     onLoad?.(cadModel);
 
     return cadModel;
+
+    async function getOrAddModel(): Promise<CogniteCadModel> {
+      const viewerModel = viewer.models.find(
+        (model) =>
+          model.modelId === modelId &&
+          model.revisionId === revisionId &&
+          model.getModelTransformation().equals(transform ?? new Matrix4())
+      );
+      if (viewerModel !== undefined) {
+        return await Promise.resolve(viewerModel as CogniteCadModel);
+      }
+      return await viewer.addCadModel({ modelId, revisionId });
+    }
   }
 
   function removeModel(): void {
-    if (model === undefined || !viewer.models.includes(model)) return;
+    if (!modelExists(model, viewer)) return;
+
+    if (cachedViewerRef !== undefined && !cachedViewerRef.isRevealContainerMountedRef.current)
+      return;
+
     viewer.removeModel(model);
     setModel(undefined);
   }
@@ -98,24 +138,27 @@ export function CadModelContainer({
 async function applyStyling(
   sdk: CogniteClient,
   model: CogniteCadModel,
-  styling?: CadModelStyling
-): Promise<void> {
-  if (styling === undefined) return;
-
-  if (styling.defaultStyle !== undefined) {
-    model.setDefaultNodeAppearance(styling.defaultStyle);
-  }
-
-  if (styling.groups !== undefined) {
-    for (const group of styling.groups) {
-      if ('treeIndices' in group && group.style !== undefined) {
-        const nodes = new TreeIndexNodeCollection(group.treeIndices);
-        model.assignStyledNodeCollection(nodes, group.style);
-      } else if ('nodeIds' in group && group.style !== undefined) {
-        const nodes = new NodeIdNodeCollection(sdk, model);
-        await nodes.executeFilter(group.nodeIds);
-        model.assignStyledNodeCollection(nodes, group.style);
-      }
+  stylingGroups: Array<NodeStylingGroup | TreeIndexStylingGroup>
+): Promise<NodeCollection[]> {
+  const collections: NodeCollection[] = [];
+  for (const group of stylingGroups) {
+    if ('treeIndices' in group && group.style !== undefined) {
+      const nodes = new TreeIndexNodeCollection(group.treeIndices);
+      model.assignStyledNodeCollection(nodes, group.style);
+      collections.push(nodes);
+    } else if ('nodeIds' in group && group.style !== undefined) {
+      const nodes = new NodeIdNodeCollection(sdk, model);
+      await nodes.executeFilter(group.nodeIds);
+      model.assignStyledNodeCollection(nodes, group.style);
+      collections.push(nodes);
     }
   }
+  return collections;
+}
+
+function modelExists(
+  model: CogniteCadModel | undefined,
+  viewer: Cognite3DViewer
+): model is CogniteCadModel {
+  return model !== undefined && viewer.models.includes(model);
 }

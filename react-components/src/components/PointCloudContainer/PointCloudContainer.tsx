@@ -10,8 +10,9 @@ import {
 } from '@cognite/reveal';
 
 import { useEffect, type ReactElement, useState } from 'react';
-import { type Matrix4 } from 'three';
+import { Matrix4 } from 'three';
 import { useReveal } from '../RevealContainer/RevealContext';
+import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 
 export type AnnotationIdStylingGroup = {
   annotationIds: number[];
@@ -36,13 +37,13 @@ export function PointCloudContainer({
   transform,
   onLoad
 }: CognitePointCloudModelProps): ReactElement {
+  const cachedViewerRef = useRevealKeepAlive();
   const [model, setModel] = useState<CognitePointCloudModel>();
   const viewer = useReveal();
   const { modelId, revisionId } = addModelOptions;
 
   useEffect(() => {
     addModel(modelId, revisionId, transform).catch(console.error);
-    return removeModel;
   }, [modelId, revisionId]);
 
   useEffect(() => {
@@ -58,29 +59,45 @@ export function PointCloudContainer({
     return cleanStyling;
   }, [styling, model]);
 
+  useEffect(() => removeModel, [model]);
+
   return <></>;
 
   async function addModel(modelId: number, revisionId: number, transform?: Matrix4): Promise<void> {
-    const pointCloudModel = await viewer.addPointCloudModel({ modelId, revisionId });
-
-    viewer.fitCameraToModel(pointCloudModel);
+    const pointCloudModel = await getOrAddModel();
 
     if (transform !== undefined) {
       pointCloudModel.setModelTransformation(transform);
     }
     setModel(pointCloudModel);
     onLoad?.(pointCloudModel);
+
+    async function getOrAddModel(): Promise<CognitePointCloudModel> {
+      const viewerModel = viewer.models.find(
+        (model) =>
+          model.modelId === modelId &&
+          model.revisionId === revisionId &&
+          model.getModelTransformation().equals(transform ?? new Matrix4())
+      );
+      if (viewerModel !== undefined) {
+        return await Promise.resolve(viewerModel as CognitePointCloudModel);
+      }
+      return await viewer.addPointCloudModel({ modelId, revisionId });
+    }
   }
 
   function removeModel(): void {
     if (model === undefined || !viewer.models.includes(model)) return;
+
+    if (cachedViewerRef !== undefined && !cachedViewerRef.isRevealContainerMountedRef.current)
+      return;
 
     viewer.removeModel(model);
     setModel(undefined);
   }
 
   function cleanStyling(): void {
-    if (model === undefined) return;
+    if (model === undefined || !viewer.models.includes(model)) return;
 
     model.setDefaultPointCloudAppearance(DefaultPointCloudAppearance);
     model.removeAllStyledObjectCollections();

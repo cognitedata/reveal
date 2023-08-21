@@ -56,6 +56,13 @@ jobs:
         env:
           NPM_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
 
+      - name: Check types
+        working-directory: react-components
+        continue-on-error: false
+        run: yarn run tsc --noEmit
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
+
       - name: Build components
         working-directory: react-components
         continue-on-error: false

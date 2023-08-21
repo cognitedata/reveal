@@ -1214,13 +1214,15 @@ export class Cognite3DViewer {
       worldToViewportCoordinates(this.canvas, camera, point, screenPosition);
     }
 
+    //TODO: Remove this for Reveal 5.0, getting the position "outside" of the frustum is relevant UI elements that partially clips the frustum.
     if (
-      screenPosition.x < 0 ||
-      screenPosition.x > 1 ||
-      screenPosition.y < 0 ||
-      screenPosition.y > 1 ||
-      screenPosition.z < 0 ||
-      screenPosition.z > 1
+      normalize &&
+      (screenPosition.x < 0 ||
+        screenPosition.x > 1 ||
+        screenPosition.y < 0 ||
+        screenPosition.y > 1 ||
+        screenPosition.z < -1 ||
+        screenPosition.z > 1)
     ) {
       // Return null if point is outside camera frustum.
       return null;

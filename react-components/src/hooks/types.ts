@@ -1,21 +1,15 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-import { type Source } from '../utilities/FdmSDK';
-
-export type FdmAssetMappingsConfig = {
-  /**
-   * 3D Data model source
-   */
-  source: Source;
-  /*
-   * FDM space where model assets are located
-   */
-  assetFdmSpace: string;
-};
+import { type CogniteExternalId, type CogniteInternalId } from '@cognite/sdk';
 
 export type ThreeDModelMappings = {
   modelId: number;
   revisionId: number;
-  mappings: Array<{ nodeId: number; externalId: string }>;
+  mappings: Map<CogniteExternalId, CogniteInternalId>;
+};
+
+export type Model3DEdgeProperties = {
+  revisionId: number;
+  revisionNodeId: number;
 };
