@@ -13,7 +13,7 @@ import {
   useCameraNavigation
 } from '../src';
 import { Color } from 'three';
-import { type ReactElement, useState, useEffect, useRef } from 'react';
+import { type ReactElement, useState, useEffect } from 'react';
 import { DefaultNodeAppearance } from '@cognite/reveal';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
@@ -58,37 +58,25 @@ export const Main: Story = {
 };
 
 const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): ReactElement => {
-  const [highlightedId, setHighlightedId] = useState<string | undefined>(undefined);
-  const stylingGroupsRef = useRef<FdmAssetStylingGroup[]>([]);
-
-  const nodeData = useClickedNodeData();
+  const [stylingGroups, setStylingGroups] = useState<FdmAssetStylingGroup[]>([]);
   const cameraNavigation = useCameraNavigation();
+  const nodeData = useClickedNodeData();
 
   useEffect(() => {
-    setHighlightedId(nodeData?.fdmNode.externalId);
-
     if (nodeData === undefined) return;
 
+    setStylingGroups([
+      {
+        fdmAssetExternalIds: [{ externalId: nodeData.fdmNode.externalId, space: 'pdms-mapping' }],
+        style: { cad: DefaultNodeAppearance.Highlighted }
+      }
+    ]);
     void cameraNavigation.fitCameraToInstance(nodeData.fdmNode.externalId, 'pdms-mapping');
-  }, [nodeData?.fdmNode.externalId]);
-
-  if (stylingGroupsRef.current.length === 1) {
-    stylingGroupsRef.current.pop();
-  }
-
-  if (highlightedId !== undefined) {
-    stylingGroupsRef.current.push({
-      fdmAssetExternalIds: [{ externalId: highlightedId, space: 'pdms-mapping' }],
-      style: { cad: DefaultNodeAppearance.Highlighted }
-    });
-  }
+  }, [nodeData?.fdmNode]);
 
   return (
     <>
-      <RevealResourcesFitCameraOnLoad
-        resources={resources}
-        instanceStyling={stylingGroupsRef.current}
-      />
+      <RevealResourcesFitCameraOnLoad resources={resources} instanceStyling={stylingGroups} />
       <RevealToolbar />
     </>
   );
