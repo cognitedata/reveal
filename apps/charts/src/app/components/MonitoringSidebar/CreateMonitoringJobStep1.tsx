@@ -55,7 +55,7 @@ const defaultTranslations = makeDefaultTranslations(
   'Schedule',
   'How often the monitoring job runs',
   'Save to',
-  'Notifications will be sent to :',
+  'Notifications will be sent to: ',
   'Cancel',
   'Next',
   'Alert threshold is required',
@@ -83,10 +83,11 @@ const CreateMonitoringJobStep1 = ({
     ...defaultTranslations,
     ...translations,
   };
-  const { control, watch, formState, trigger, setValue } = useForm({
-    mode: 'all',
-    defaultValues: existingFormData,
-  });
+  const { control, watch, formState, trigger, setValue } =
+    useForm<CreateMonitoringJobFormData>({
+      mode: 'all',
+      defaultValues: existingFormData,
+    });
 
   const { isDirty, isValid, errors } = formState;
 
@@ -97,11 +98,13 @@ const CreateMonitoringJobStep1 = ({
   const userInfo = useUserInfo();
   const notificationEmail = userInfo.data?.mail;
   const formValues = watch();
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   const scheduleDurationType = watch('scheduleDurationType');
 
   useEffect(() => {
     delay(trigger, 1000);
-  }, [JSON.stringify(formValues)]);
+  }, [JSON.stringify(formValues), trigger]);
 
   const hasMonitoringThreshold = Boolean(
     chart?.thresholdCollection?.find(
@@ -127,7 +130,7 @@ const CreateMonitoringJobStep1 = ({
     if (!hasMonitoringThreshold) {
       setChart((oldChart) => addChartThreshold(oldChart!, thresholdData));
     }
-  }, [hasMonitoringThreshold]);
+  }, [hasMonitoringThreshold, setChart]);
 
   useEffect(() => {
     return () => {
@@ -150,11 +153,13 @@ const CreateMonitoringJobStep1 = ({
         +formValues.alertThreshold
       )
     );
-  }, [formValues.alertThreshold]);
+  }, [formValues.alertThreshold, setChart]);
 
   useEffect(() => {
-    const tsSource = timeseries.find((ts) => {
-      return ts.tsExternalId === formValues.source?.tsExternalId;
+    const tsSource = timeseries.find((ts: ChartTimeSeries) => {
+      return (
+        ts.tsExternalId === (formValues.source as ChartTimeSeries)?.tsExternalId
+      );
     });
     if (tsSource) {
       setChart((oldChart) =>
@@ -166,7 +171,10 @@ const CreateMonitoringJobStep1 = ({
       );
       const selectedTs = chart?.timeSeriesCollection?.find(
         (currentTs: ChartTimeSeries) => {
-          return currentTs.tsExternalId === formValues.source?.tsExternalId;
+          return (
+            currentTs.tsExternalId ===
+            (formValues.source as ChartTimeSeries)?.tsExternalId
+          );
         }
       );
       setInteractionsState({
@@ -174,7 +182,9 @@ const CreateMonitoringJobStep1 = ({
       });
     }
   }, [
-    formValues.source?.tsExternalId,
+    setChart,
+    setInteractionsState,
+    (formValues.source as ChartTimeSeries)?.tsExternalId,
     JSON.stringify(timeseries.map((ts) => ts.tsExternalId)),
   ]);
 
@@ -185,7 +195,7 @@ const CreateMonitoringJobStep1 = ({
     if (scheduleDurationType?.value === 'h') {
       setValue('schedule', SCHEDULE_HOUR_OPTIONS[0]);
     }
-  }, [scheduleDurationType]);
+  }, [scheduleDurationType, setValue]);
 
   return (
     <form>
@@ -308,7 +318,7 @@ const CreateMonitoringJobStep1 = ({
       />
 
       <NotificationBox>
-        {t['Notifications will be sent to :']}
+        {t['Notifications will be sent to: ']}{' '}
         <NotificationEmail>{notificationEmail}</NotificationEmail>
       </NotificationBox>
 

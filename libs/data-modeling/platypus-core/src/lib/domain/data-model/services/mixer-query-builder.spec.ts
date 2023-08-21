@@ -330,7 +330,7 @@ user { name }
           lastUpdatedTime
           createdTime
           __typename
-          myTimeSeries { externalId }
+          myTimeSeries { id externalId }
         }
         pageInfo {
           startCursor
@@ -394,8 +394,8 @@ user { name }
           lastUpdatedTime
           createdTime
           __typename
-          ts { externalId }
-          tsList { externalId }
+          ts { id externalId }
+          tsList { id externalId }
         }
         pageInfo {
           startCursor

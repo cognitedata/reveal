@@ -288,6 +288,7 @@
   "SHOW_ME_DATA_FROM": "Show me data from",
   "SLICE": "Slice",
   "SOURCE": "Source",
+  "SOURCES": "Sources",
   "SOURCE_CREATED_TIME": "Source Created Time",
   "SOURCE_MODIFIED_TIME": "Source Modified Time",
   "SPECIFIC_INFO_CONTENT": "The filters in this section are only applicable for the currently selected resource type",

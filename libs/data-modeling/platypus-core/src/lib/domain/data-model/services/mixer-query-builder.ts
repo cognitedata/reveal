@@ -241,7 +241,7 @@ export class MixerQueryBuilder {
         field.type.name === 'File' ||
         field.type.name === 'Sequence'
       ) {
-        return `${field.name} { externalId }`;
+        return `${field.name} { id externalId }`;
       }
       return field.name;
     }

@@ -33,13 +33,10 @@ export const Categories = () => {
 
         <CategoryCard
           type="Time series"
-          onClick={() => handleCategoryClick('Timeseries')}
+          onClick={() => handleCategoryClick('TimeSeries')}
         />
 
-        <CategoryCard
-          type="File"
-          onClick={() => handleCategoryClick('Files')}
-        />
+        <CategoryCard type="File" onClick={() => handleCategoryClick('File')} />
       </CategoryContent>
     </CategoriesContainer>
   );

@@ -47,21 +47,25 @@ import { getResourcesVisibility } from '../utils';
 interface Props {
   timeseriesId: number;
   isSelected: boolean;
+  closable?: boolean;
   onClose?: () => void;
   selectionMode?: 'single' | 'multiple';
   selectedRows?: ResourceSelection;
   visibleResources?: ResourceType[];
+  showSelectButton?: boolean;
 }
 export const TimeseriesDetails: FC<
   Props & Pick<SelectableItemsProps, 'onSelect'>
 > = ({
   timeseriesId,
   isSelected,
+  closable,
   onClose,
   onSelect,
   selectedRows,
   selectionMode,
   visibleResources = [],
+  showSelectButton,
 }) => {
   const {
     data,
@@ -146,8 +150,10 @@ export const TimeseriesDetails: FC<
       title={timeseries ? timeseries.name || '' : ''}
       icon="Timeseries"
       isSelected={isSelected}
+      closable={closable}
       onClose={onClose}
       onSelectClicked={onSelect}
+      showSelectButton={showSelectButton}
     >
       <StyledCollapse accordion ghost defaultActiveKey="preview">
         {timeseries ? (

@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { BaseFilterCollapse } from '@data-exploration/components';
 
 import { FilterProps, ResourceType } from '@data-exploration-lib/core';
+import { usePrefetchAllLabelsQuery } from '@data-exploration-lib/domain-layer';
 
 import { OldFileFilters as OldFilesFilter } from '../../Temp/';
 
@@ -30,6 +31,8 @@ export const SidebarFilters: React.FC<Props> = ({
   query,
   isDocumentsApiEnabled = true,
 }) => {
+  usePrefetchAllLabelsQuery();
+
   const renderCustomResourceTypeFilter = () => {
     switch (resourceType) {
       case 'asset': {

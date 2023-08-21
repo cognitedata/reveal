@@ -1,5 +1,5 @@
-import { useSearchAggregateQuery } from '../../../services/dataTypes/queries/useSearchAggregatesQuery';
 import { useFilesSearchAggregateCountQuery } from '../../../services/instances/file/queries/useFilesSearchAggregateCountQuery';
+import { useInstanceSearchAggregateQuery } from '../../../services/instances/generic/queries/useInstanceSearchAggregatesQuery';
 import { useTimeseriesSearchAggregateCountQuery } from '../../../services/instances/timeseries/queries/useTimeseriesSearchAggregateCountQuery';
 
 type SearchTotalCount = {
@@ -9,7 +9,7 @@ type SearchTotalCount = {
 
 export const useSearchTotalCount = () => {
   const { data: genericResults, isLoading: isGenericLoading } =
-    useSearchAggregateQuery();
+    useInstanceSearchAggregateQuery();
   const { data: filesResults, isLoading: isFilesLoading } =
     useFilesSearchAggregateCountQuery();
   const { data: timeseriesResults, isLoading: isTimeseriesLoading } =

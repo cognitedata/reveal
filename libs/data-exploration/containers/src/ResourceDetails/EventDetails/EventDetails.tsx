@@ -43,10 +43,12 @@ import { getResourcesVisibility } from '../utils';
 interface Props {
   eventId: number;
   isSelected: boolean;
+  closable?: boolean;
   onClose?: () => void;
   selectedRows?: ResourceSelection;
   selectionMode?: 'single' | 'multiple';
   visibleResources?: ResourceType[];
+  showSelectButton?: boolean;
 }
 export const EventDetails: FC<
   Props & Pick<SelectableItemsProps, 'onSelect'>
@@ -56,8 +58,10 @@ export const EventDetails: FC<
   onSelect,
   selectionMode,
   selectedRows,
+  closable,
   onClose,
   visibleResources = [],
+  showSelectButton,
 }) => {
   const {
     isLoading: isParentEventLoading,
@@ -145,8 +149,10 @@ export const EventDetails: FC<
       title={parentEvent?.type || ''}
       icon="Events"
       isSelected={isSelected}
+      closable={closable}
       onClose={onClose}
       onSelectClicked={onSelect}
+      showSelectButton={showSelectButton}
     >
       <StyledCollapse accordion ghost defaultActiveKey="event-details">
         <Collapse.Panel

@@ -6,26 +6,20 @@ import { Body, Chip } from '@cognite/cogs.js';
 
 import { useNavigation } from '../../hooks/useNavigation';
 import { useTranslation } from '../../hooks/useTranslation';
-import { useFDM } from '../../providers/FDMProvider';
-import { useSearchAggregateQuery } from '../../services/dataTypes/queries/useSearchAggregatesQuery';
-import { useFilesSearchAggregateCountQuery } from '../../services/instances/file/queries/useFilesSearchAggregateCountQuery';
-import { useTimeseriesSearchAggregateCountQuery } from '../../services/instances/timeseries/queries/useTimeseriesSearchAggregateCountQuery';
 
+import { useSearchDataTypeSortedByKeys } from './hooks/useSearchDataTypeSortedByKeys';
 import { useSearchTotalCount } from './hooks/useSearchTotalCount';
 
 export const SearchCategories = () => {
   const { t } = useTranslation();
   const navigate = useNavigation();
-
   const { type } = useParams();
-  const client = useFDM();
 
-  const { data: genericCount, isLoading: isGenericLoading } =
-    useSearchAggregateQuery();
-  const { data: fileCount, isLoading: isFilesLoading } =
-    useFilesSearchAggregateCountQuery();
-  const { data: timeseriesCount, isLoading: isTimeseriesLoading } =
-    useTimeseriesSearchAggregateCountQuery();
+  const {
+    counts,
+    keys,
+    isLoading: isCountsLoading,
+  } = useSearchDataTypeSortedByKeys();
 
   const { totalCount, isLoading: isTotalCountLoading } = useSearchTotalCount();
 
@@ -35,7 +29,7 @@ export const SearchCategories = () => {
     navigate.toSearchCategoryPage(name);
   };
 
-  if (isGenericLoading || isFilesLoading || isTimeseriesLoading) {
+  if (isCountsLoading || isTotalCountLoading) {
     return null;
   }
 
@@ -54,54 +48,59 @@ export const SearchCategories = () => {
         />
       </Content>
 
-      {client.allDataTypes?.map((item, index) => {
-        const dataType = item.name;
-        const count = genericCount?.[dataType];
+      {keys?.map((key, index) => {
+        // const dataType = item.name;
+        const count = counts?.[key];
         const isDisabled = !count;
+
+        if (key === 'File') {
+          <Content
+            selected={isSelected('File')}
+            onClick={() => !!count && handleSelectionClick('File')}
+            disabled={!count}
+          >
+            <NameText>File</NameText>
+            <Chip
+              size="x-small"
+              type={isSelected('Files') ? 'neutral' : undefined}
+              label={String(count ?? '?')}
+            />
+          </Content>;
+        }
+
+        if (key === 'TimeSeries') {
+          return (
+            <Content
+              selected={isSelected('TimeSeries')}
+              onClick={() => !!count && handleSelectionClick('TimeSeries')}
+              disabled={!count}
+            >
+              <NameText>Time series</NameText>
+              <Chip
+                size="x-small"
+                type={isSelected('TimeSeries') ? 'neutral' : undefined}
+                label={String(count ?? '?')}
+              />
+            </Content>
+          );
+        }
 
         return (
           <Content
-            key={`${dataType}-${index}`}
-            selected={isSelected(dataType)}
+            key={`${key}-${index}`}
+            selected={isSelected(key)}
             disabled={isDisabled}
-            onClick={() => !isDisabled && handleSelectionClick(dataType)}
+            onClick={() => !isDisabled && handleSelectionClick(key)}
           >
-            <NameText>{item.displayName || dataType}</NameText>
+            <NameText>{key}</NameText>
             <Chip
               size="x-small"
-              type={isSelected(dataType) ? 'neutral' : undefined}
+              type={isSelected(key) ? 'neutral' : undefined}
               label={String(count ?? '?')}
             />
           </Content>
         );
       })}
-
-      {/* TODO: Find a better way of managing the built in (CDF) data types */}
-      <Content
-        selected={isSelected('Timeseries')}
-        onClick={() => !!timeseriesCount && handleSelectionClick('Timeseries')}
-        disabled={!timeseriesCount}
-      >
-        <NameText>Time series</NameText>
-        <Chip
-          size="x-small"
-          type={isSelected('Timeseries') ? 'neutral' : undefined}
-          label={String(timeseriesCount ?? '?')}
-        />
-      </Content>
-
-      <Content
-        selected={isSelected('Files')}
-        onClick={() => !!fileCount && handleSelectionClick('Files')}
-        disabled={!fileCount}
-      >
-        <NameText>File</NameText>
-        <Chip
-          size="x-small"
-          type={isSelected('Files') ? 'neutral' : undefined}
-          label={String(fileCount ?? '?')}
-        />
-      </Content>
     </Container>
   );
 };
@@ -121,7 +120,6 @@ const Content = styled.div<{ selected?: boolean; disabled?: boolean }>`
   padding: 8px 12px;
   margin-bottom: 4px;
   cursor: pointer;
-  user-selection: none;
   justify-content: space-between;
 
   &:hover {

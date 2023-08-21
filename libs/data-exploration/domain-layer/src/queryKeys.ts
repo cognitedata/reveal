@@ -333,6 +333,9 @@ export const queryKeys = {
       ...(resourceIds || []),
     ] as const,
 
+  labels: () => [...queryKeys.all, 'labels'] as const,
+  allLabels: () => [...queryKeys.labels(), 'all'] as const,
+
   // Industry Canvas
   canvas: () => [...queryKeys.all, 'canvas'] as const,
   supportedResourceItem: (item: { id: number; type: string }) =>

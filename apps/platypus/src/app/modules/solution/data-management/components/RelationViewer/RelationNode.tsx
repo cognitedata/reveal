@@ -3,6 +3,7 @@ import uniqolor from 'uniqolor';
 import { Body, Flex } from '@cognite/cogs.js';
 
 import { NodeChip, NodeVisibleIcon, NodeWrapper } from './common';
+import { FileNode } from './FileNode';
 import { TimeSeriesNode } from './TimeSeriesNode';
 
 const getColor = (key: string) => uniqolor(key);
@@ -21,7 +22,11 @@ export const RelationNode = <T extends { externalId: string; id: string }>({
       key={node.id}
       __typename={node.__typename}
       onClick={() => {
-        if (node.__typename !== 'TimeSeries') {
+        if (
+          node.__typename !== 'TimeSeries' &&
+          node.__typename !== 'File' &&
+          node.__typename !== 'Sequence'
+        ) {
           onClick(node);
         }
       }}
@@ -45,6 +50,9 @@ export const RelationNode = <T extends { externalId: string; id: string }>({
           externalId={node.externalId}
           dataPoints={node.dataPoints}
         />
+      )}
+      {node.__typename === 'File' && (
+        <FileNode key={node.id} externalId={node.externalId} />
       )}
     </NodeWrapper>
   );

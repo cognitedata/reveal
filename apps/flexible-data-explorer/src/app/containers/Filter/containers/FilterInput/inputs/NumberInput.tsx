@@ -1,5 +1,10 @@
+import isUndefined from 'lodash/isUndefined';
+
 import { useTranslation } from '../../../../../hooks/useTranslation';
-import { useSearchAggregateValuesQuery } from '../../../../../services/dataTypes/queries/useSearchAggregatesQuery';
+import {
+  useSearchAggregateValueByPropertyQuery,
+  useSearchAggregateValuesQuery,
+} from '../../../../../services/instances/generic/queries/useInstanceSearchAggregatesQuery';
 import { BaseFilterInput } from '../../../components';
 import { FilterInputProps } from '../FilterInput';
 import { useDeboucedValue } from '../useDeboucedValue';
@@ -35,28 +40,58 @@ export const NumberInput: React.FC<NumberInputProps> = ({
   );
 };
 
-export const NumberInputLessThan: React.FC<NumberInputProps> = (props) => {
-  // const { t } = useTranslation();
+export const NumberInputLessThan: React.FC<NumberInputProps> = ({
+  dataType,
+  field,
+  ...rest
+}) => {
+  const { t } = useTranslation();
+
+  const { data: min, isLoading: isMinLoading } =
+    useSearchAggregateValueByPropertyQuery<number>({
+      dataType,
+      field,
+      property: 'min',
+    });
 
   return (
     <BaseFilterInput
-      {...props}
+      {...rest}
       type="number"
-      // helpText={t('FILTER_INPUT_MIN', { value: 0 })}
+      placeholder={t('FILTER_NUMBER_INPUT_PLACEHOLDER')}
       showSuggestions={false}
+      helpText={
+        !isUndefined(min) ? t('FILTER_INPUT_MIN', { value: min }) : undefined
+      }
+      isLoading={isMinLoading}
     />
   );
 };
 
-export const NumberInputGreaterThan: React.FC<NumberInputProps> = (props) => {
-  // const { t } = useTranslation();
+export const NumberInputGreaterThan: React.FC<NumberInputProps> = ({
+  dataType,
+  field,
+  ...rest
+}) => {
+  const { t } = useTranslation();
+
+  const { data: max, isLoading: isMaxLoading } =
+    useSearchAggregateValueByPropertyQuery<number>({
+      dataType,
+      field,
+      property: 'max',
+    });
 
   return (
     <BaseFilterInput
-      {...props}
+      {...rest}
       type="number"
-      // helpText={t('FILTER_INPUT_MAX', { value: 0 })}
+      placeholder={t('FILTER_NUMBER_INPUT_PLACEHOLDER')}
       showSuggestions={false}
+      helpText={
+        !isUndefined(max) ? t('FILTER_INPUT_MAX', { value: max }) : undefined
+      }
+      isLoading={isMaxLoading}
     />
   );
 };

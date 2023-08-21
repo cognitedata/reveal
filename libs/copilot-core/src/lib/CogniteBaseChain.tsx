@@ -6,6 +6,9 @@ import { ChainValues } from 'langchain/schema';
 
 import { CogniteClient } from '@cognite/sdk/dist/src';
 
+import { trackUsage } from '../app/hooks/useMetrics';
+import { useTranslation } from '../app/hooks/useTranslation';
+
 import { CopilotMessage } from './types';
 import { addToCopilotEventListener, sendToCopilotEvent } from './utils';
 import { addToCopilotLogs, getCopilotLogs } from './utils/logging';
@@ -22,6 +25,7 @@ export type CogniteChainInput = {
 
   messages: React.RefObject<CopilotMessage[]>;
   humanApproval?: boolean;
+  i18nFn: ReturnType<typeof useTranslation>['t'];
 } & ChainInputs;
 
 export type ChainType = 'llm' | 'sequential_chain';
@@ -80,6 +84,7 @@ export abstract class CogniteBaseChain extends BaseChain {
   }
 
   _call = async (values: ChainValues): Promise<ChainValues> => {
+    const startTime = new Date();
     addToCopilotLogs(this.messageKey, {
       key: this.constructor.name,
       content: 'Starting tool chain...',
@@ -87,9 +92,14 @@ export abstract class CogniteBaseChain extends BaseChain {
     const validKeys = this.inputKeys.every((k) => k in values);
 
     if (!validKeys) {
-      throw new Error(
-        `The following values must be provided: ${this.inputKeys}`
+      this.onCatch(
+        new Error(
+          this.fields.i18nFn('ERROR_MISSING_TYPE', {
+            types: JSON.stringify(this.inputKeys),
+          })
+        )
       );
+      return { value: 'emptyvalue' };
     }
     const name = this.constructor.name;
     const params = {
@@ -145,11 +155,22 @@ export abstract class CogniteBaseChain extends BaseChain {
     } catch (e: any) {
       this.onCatch(e);
     }
+    const endTime = new Date();
+    trackUsage('TIME_TO_RESULT', {
+      seconds: `${(endTime.getTime() - startTime.getTime()) / 1000}`,
+      chain: this.constructor.name,
+      prompt: params.message,
+    });
     return { value: 'emptyvalue' };
   };
 
   onCatch = (error: Error) => {
     console.error(error);
+    trackUsage('FAILED', {
+      chain: this.constructor.name,
+      message: error.message,
+      details: error,
+    });
     addToCopilotLogs(this.messageKey, {
       content: error.message,
       key: this.constructor.name,
@@ -157,8 +178,8 @@ export abstract class CogniteBaseChain extends BaseChain {
     sendToCopilotEvent('NEW_MESSAGES', [
       {
         source: 'bot',
-        type: 'text',
-        content: 'Unable to process message',
+        type: 'error',
+        content: error.message || this.fields.i18nFn('ERROR_DEFAULT'),
         chain: this.constructor.name,
         logs: getCopilotLogs(this.messageKey),
       },
@@ -211,8 +232,8 @@ export const callPromptChain = async <
     maxRetries?: number;
     timeout?: number;
   } = {
-    maxRetries: 3,
-    timeout: 6000,
+    maxRetries: 1,
+    timeout: 30000,
   }
 ) => {
   const currentRuns: Map<string, string> = new Map();
@@ -322,7 +343,7 @@ export async function parallelGPTCalls<T extends BaseChain>(
         console.log(`Retrying call ${index} - ${retryCount}...`);
         return await executeCall(index, retryCount + 1); // Retry the call
       } else {
-        return { output: '', text: '' }; // Max retries reached or timed out, return empty result
+        throw new Error('Failed to fetch results within reasonable time');
       }
     }
   };
