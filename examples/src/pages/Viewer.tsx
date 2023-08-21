@@ -6,7 +6,6 @@ import Stats from 'stats.js';
 import { useEffect, useRef } from 'react';
 import { CanvasWrapper } from '../components/styled';
 import * as THREE from 'three';
-import { CogniteClient } from '@cognite/sdk';
 import dat from 'dat.gui';
 import {
   Cognite3DViewer,
@@ -29,7 +28,6 @@ import { CameraUI } from '../utils/CameraUI';
 import { PointCloudUi } from '../utils/PointCloudUi';
 import { ModelUi } from '../utils/ModelUi';
 import { NodeTransformUI } from '../utils/NodeTransformUI';
-import { createSDKFromEnvironment, createSDKFromToken } from '../utils/example-helpers';
 import { PointCloudClassificationFilterUI } from '../utils/PointCloudClassificationFilterUI';
 import { PointCloudObjectStylingUI } from '../utils/PointCloudObjectStylingUI';
 import { CustomCameraManager } from '../utils/CustomCameraManager';
@@ -38,6 +36,7 @@ import { Image360UI } from '../utils/Image360UI';
 import { Image360StylingUI } from '../utils/Image360StylingUI';
 import { LoadGltfUi } from '../utils/LoadGltfUi';
 import { createFunnyButton } from '../utils/PageVariationUtils';
+import { getCogniteClient } from '../utils/example-helpers';
 
 window.THREE = THREE;
 (window as any).reveal = reveal;
@@ -51,7 +50,7 @@ export function Viewer() {
     // Check in order to avoid double initialization of everything, especially dat.gui.
     // See https://reactjs.org/docs/strict-mode.html#detecting-unexpected-side-effects for why its called twice.
     if (!canvasWrapperRef.current) {
-      return () => {};
+      return;
     }
 
     const gui = new dat.GUI({ width: Math.min(500, 0.8 * window.innerWidth) });
@@ -76,18 +75,7 @@ export function Viewer() {
         window.history.pushState({}, '', url.toString());
       }
 
-      let client: CogniteClient;
-      if (project && overrideToken) {
-        client = createSDKFromToken('reveal.example.example', project, overrideToken);
-      } else if (project && environment) {
-        client = await createSDKFromEnvironment('reveal.example.example', project, environment);
-      } else {
-        client = new CogniteClient({
-          appId: 'reveal.example.example',
-          project: 'dummy',
-          getToken: async () => 'dummy'
-        });
-      }
+      let client = await getCogniteClient({ project, environment, overrideToken });
 
       const edlEnabled = (urlParams.get('edl') ?? 'true') === 'true';
       const progress = (itemsLoaded: number, itemsRequested: number, itemsCulled: number) => {
@@ -502,5 +490,6 @@ export function Viewer() {
       viewer?.dispose();
     };
   }, []);
+
   return <CanvasWrapper ref={canvasWrapperRef} />;
 }

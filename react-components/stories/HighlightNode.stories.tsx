@@ -7,13 +7,13 @@ import {
   RevealContainer,
   RevealToolbar,
   Reveal3DResources,
-  type NodeDataResult,
   type AddResourceOptions,
+  useClickedNodeData,
   type FdmAssetStylingGroup,
   useCameraNavigation
 } from '../src';
 import { Color } from 'three';
-import { type ReactElement, useState, useCallback } from 'react';
+import { type ReactElement, useState, useEffect } from 'react';
 import { DefaultNodeAppearance } from '@cognite/reveal';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
@@ -61,33 +61,27 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
   const [stylingGroups, setStylingGroups] = useState<FdmAssetStylingGroup[]>([]);
   const cameraNavigation = useCameraNavigation();
   const [state, setState] = useState(false);
+  const nodeData = useClickedNodeData();
 
-  const onClick = useCallback(
-    async (nodeData: Promise<NodeDataResult | undefined>): Promise<void> => {
-      const nodeDataResult = await nodeData;
-
-      if (nodeDataResult === undefined) return;
-
-      await cameraNavigation.fitCameraToInstance(nodeDataResult.nodeExternalId, 'pdms-mapping');
+  useEffect(() => {
+    if (nodeData === undefined) return;
 
       setStylingGroups([
         {
           fdmAssetExternalIds: [
-            { externalId: nodeDataResult.nodeExternalId, space: 'pdms-mapping' }
+            { externalId: nodeData.fdmNode.externalId, space: 'pdms-mapping' }
           ],
           style: { cad: DefaultNodeAppearance.Highlighted }
         }
       ]);
-    },
-    []
-  );
+    void cameraNavigation.fitCameraToInstance(nodeData.fdmNode.externalId, 'pdms-mapping');
+  }, [nodeData]);
 
   return (
     <>
       <RevealResourcesFitCameraOnLoad
         resources={resources}
         instanceStyling={stylingGroups}
-        onNodeClick={onClick}
       />
       <RevealToolbar />
       <button

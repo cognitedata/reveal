@@ -20,7 +20,6 @@ import { useRevealContainerElement } from '../RevealContainer/RevealContainerEle
 export const LayersButton = (): ReactElement => {
   const viewer = useReveal();
   const revealContainerElement = useRevealContainerElement();
-  const [layersEnabled, setLayersEnabled] = useState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
 
   const [cadModelIds, setCadModelIds] = useState<number[]>([]);
@@ -38,7 +37,6 @@ export const LayersButton = (): ReactElement => {
   const pointCloudModelName = use3DModelName(pointCloudModelIds);
 
   const showLayers = (): void => {
-    setLayersEnabled(!layersEnabled);
     setVisible((prevState) => !prevState);
   };
 

@@ -10,6 +10,7 @@ export { PointCloudContainer } from './components/PointCloudContainer/PointCloud
 export { CadModelContainer } from './components/CadModelContainer/CadModelContainer';
 export { Image360CollectionContainer } from './components/Image360CollectionContainer/Image360CollectionContainer';
 export { Image360HistoricalDetails } from './components/Image360HistoricalDetails/Image360HistoricalDetails';
+export { Image360Details } from './components/Image360Details/Image360Details';
 export { ViewerAnchor } from './components/ViewerAnchor/ViewerAnchor';
 export { RevealToolbar } from './components/RevealToolbar/RevealToolbar';
 export { RevealKeepAlive } from './components/RevealKeepAlive/RevealKeepAlive';
@@ -18,6 +19,7 @@ export { RevealKeepAlive } from './components/RevealKeepAlive/RevealKeepAlive';
 export { useReveal } from './components/RevealContainer/RevealContext';
 export { use3DModelName } from './hooks/use3DModelName';
 export { useFdmAssetMappings } from './hooks/useFdmAssetMappings';
+export { useClickedNodeData } from './hooks/useClickedNode';
 export { useCameraNavigation } from './hooks/useCameraNavigation';
 export { useMappedEquipmentByRevisionList } from './hooks/useMappedEquipmentBy3DModelsList';
 
@@ -48,3 +50,4 @@ export type {
 } from './components/Reveal3DResources/types';
 export type { CameraNavigationActions } from './hooks/useCameraNavigation';
 export type { Source } from './utilities/FdmSDK';
+export type { QualitySettings } from './components/RevealToolbar/SettingsContainer/types';

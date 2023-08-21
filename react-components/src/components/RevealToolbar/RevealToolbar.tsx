@@ -7,9 +7,11 @@ import { Button, ToolBar, type ToolBarProps } from '@cognite/cogs.js';
 import { FitModelsButton } from './FitModelsButton';
 import { LayersButton } from './LayersButton';
 import { SlicerButton } from './SlicerButton';
+import { SettingsButton } from './SettingsButton';
 import { withSuppressRevealEvents } from '../../higher-order-components/withSuppressRevealEvents';
 import { MeasurementButton } from './MeasurementButton';
 import { HelpButton } from './HelpButton';
+import { type QualitySettings } from './SettingsContainer/types';
 
 const defaultStyle: ToolBarProps = {
   style: {
@@ -19,32 +21,45 @@ const defaultStyle: ToolBarProps = {
   }
 };
 
-const defaultContent = (
-  <>
-    <LayersButton />
+type RevealToolbarProps = ToolBarProps & {
+  customSettingsContent?: JSX.Element;
+  lowFidelitySettings?: Partial<QualitySettings>;
+  highFidelitySettings?: Partial<QualitySettings>;
+};
 
-    <FitModelsButton />
-    <Button type="ghost" icon="Collapse" aria-label="Focus asset" />
+const DefaultContentWrapper = (props: RevealToolbarProps): ReactElement => {
+  return (
+    <>
+      <LayersButton />
+      <FitModelsButton />
+      <Button type="ghost" icon="Collapse" aria-label="Focus asset" />
 
-    <div className="cogs-toolbar-divider" />
+      <div className="cogs-toolbar-divider" />
 
-    <SlicerButton />
-    <MeasurementButton />
+      <SlicerButton />
+      <MeasurementButton />
 
-    <div className="cogs-toolbar-divider" />
+      <div className="cogs-toolbar-divider" />
 
-    <Button type="ghost" icon="Settings" aria-label="Show settings" />
-    <HelpButton />
-  </>
-);
+      <SettingsButton
+        customSettingsContent={props.customSettingsContent}
+        lowQualitySettings={props.lowFidelitySettings}
+        highQualitySettings={props.highFidelitySettings}
+      />
+      <HelpButton />
+    </>
+  );
+};
 
 const RevealToolbarContainer = (
-  props: ToolBarProps & { toolBarContent?: JSX.Element }
+  props: RevealToolbarProps & { toolBarContent?: JSX.Element }
 ): ReactElement => {
   if (props.className === undefined && props.style === undefined) {
     props = { ...props, ...defaultStyle };
   }
-  return <ToolBar {...props}>{props.toolBarContent ?? defaultContent}</ToolBar>;
+  return (
+    <ToolBar {...props}>{props.toolBarContent ?? <DefaultContentWrapper {...props} />}</ToolBar>
+  );
 };
 
 export const RevealToolbar = withSuppressRevealEvents(
@@ -54,6 +69,7 @@ export const RevealToolbar = withSuppressRevealEvents(
   SlicerButton: typeof SlicerButton;
   LayersButton: typeof LayersButton;
   MeasurementButton: typeof MeasurementButton;
+  SettingsButton: typeof SettingsButton;
   HelpButton: typeof HelpButton;
 };
 
@@ -61,4 +77,5 @@ RevealToolbar.FitModelsButton = FitModelsButton;
 RevealToolbar.SlicerButton = SlicerButton;
 RevealToolbar.LayersButton = LayersButton;
 RevealToolbar.MeasurementButton = MeasurementButton;
+RevealToolbar.SettingsButton = SettingsButton;
 RevealToolbar.HelpButton = HelpButton;
