@@ -1,9 +1,7 @@
 import { useMemo } from 'react';
-import { useParams } from 'react-router-dom';
 
 import { useInfiniteQuery } from '@tanstack/react-query';
 
-import { EMPTY_ARRAY } from '../../../../constants/object';
 import { ValueByField } from '../../../../containers/Filter';
 import {
   useDataModelPathParams,
@@ -15,12 +13,11 @@ import { queryKeys } from '../../../queryKeys';
 import { DataModelV2, Instance } from '../../../types';
 
 export const useInstanceRelationshipQuery = (
-  {
-    type,
-    field,
-  }: {
+  entry: {
     field: string;
     type: string;
+    fields?: any[];
+    edges?: any[];
   },
   filters?: ValueByField,
   {
@@ -56,7 +53,7 @@ export const useInstanceRelationshipQuery = (
     queryKeys.instanceRelationship(
       { dataType, instanceSpace, externalId },
       { externalId: dataModel, space, version },
-      type,
+      entry,
       transformedFilter
     ),
     async ({ pageParam }) => {
@@ -76,8 +73,10 @@ export const useInstanceRelationshipQuery = (
       const results = await client.getEdgeRelationshipInstancesById(
         transformedFilter,
         {
-          relatedField: field,
-          relatedType: type,
+          relatedField: entry.field,
+          relatedType: entry.type,
+          fields: entry.fields,
+          edges: entry.edges,
         },
         {
           dataModel,
@@ -92,20 +91,37 @@ export const useInstanceRelationshipQuery = (
         }
       );
 
-      return results[field];
+      return results?.[entry.field];
     },
     {
       getNextPageParam: (param) =>
-        param.pageInfo.hasNextPage && param.pageInfo.endCursor,
+        param?.pageInfo.hasNextPage && param?.pageInfo.endCursor,
       suspense,
       enabled,
     }
   );
 
-  const flattenResults = useMemo(
-    () => data?.pages.flatMap((page) => page.items) || EMPTY_ARRAY,
-    [data]
-  );
+  const flattenResults = useMemo(() => {
+    if (!data) {
+      return {
+        items: [],
+        edges: [],
+      };
+    }
+
+    return data?.pages.reduce(
+      (acc, page) => {
+        if (!page) {
+          return acc;
+        }
+        return {
+          items: [...acc.items, ...page?.items],
+          edges: [...acc.edges, ...(page?.edges || [])],
+        };
+      },
+      { items: [], edges: [] } as { items: any[]; edges: any[] }
+    );
+  }, [data]);
 
   return { data: flattenResults, ...rest };
 };

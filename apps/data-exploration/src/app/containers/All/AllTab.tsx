@@ -20,8 +20,13 @@ import { useQueryString } from '@data-exploration-app/hooks/hooks';
 import { SEARCH_KEY } from '@data-exploration-app/utils/constants';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import {
-  EMPTY_OBJECT,
+  InternalAssetFilters,
   InternalCommonFilters,
+  InternalDocumentFilter,
+  InternalEventsFilters,
+  InternalFilesFilters,
+  InternalSequenceFilters,
+  InternalTimeseriesFilters,
 } from '@data-exploration-lib/core';
 
 import {
@@ -32,16 +37,41 @@ import {
   useBreakJourneyPromptState,
 } from '../../hooks';
 
-export const AllTab = ({
-  commonFilters = EMPTY_OBJECT,
-  setCurrentResourceType = noop,
-}: {
-  commonFilters?: InternalCommonFilters;
+export type Filters = {
+  common?: InternalCommonFilters;
+  asset?: InternalAssetFilters;
+  timeSeries?: InternalTimeseriesFilters;
+  sequence?: InternalSequenceFilters;
+  file?: InternalFilesFilters;
+  event?: InternalEventsFilters;
+  document?: InternalDocumentFilter;
+};
+
+type Props = {
+  filters?: Filters;
   setCurrentResourceType?: (
     type?: ResourceType | undefined,
     resourceId?: number | undefined
   ) => void;
-}) => {
+  showAllResultsWithEmptyFilters?: boolean;
+  selectedResourceExternalId?: string; // use for get relationships of selected assets
+  resourceAnnotationList?: Record<ResourceType, number[]>;
+};
+
+export const AllTab = ({
+  filters = {},
+  setCurrentResourceType = noop,
+  showAllResultsWithEmptyFilters = false,
+  selectedResourceExternalId,
+  resourceAnnotationList = {
+    asset: [],
+    event: [],
+    file: [],
+    sequence: [],
+    threeD: [],
+    timeSeries: [],
+  },
+}: Props) => {
   const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
   const isDocumentsApiEnabled = useFlagDocumentsApiEnabled();
   const [query] = useQueryString(SEARCH_KEY);
@@ -78,17 +108,21 @@ export const AllTab = ({
     <SearchResultWrapper>
       <AllTabContainer>
         <AssetSummary
+          showAllResultsWithEmptyFilters={showAllResultsWithEmptyFilters}
           isAdvancedFiltersEnabled={isAdvancedFiltersEnabled}
-          filter={commonFilters}
+          filter={filters.asset || filters.common}
           query={query}
           onRowClick={(row) =>
             handleSummaryRowClick(ResourceTypes.Asset, row.id)
           }
           onAllResultsClick={() => handleAllResultsClick(ResourceTypes.Asset)}
+          selectedResourceExternalId={selectedResourceExternalId}
+          annotationIds={resourceAnnotationList['asset']}
         />
         <TimeseriesSummary
+          showAllResultsWithEmptyFilters={showAllResultsWithEmptyFilters}
           isAdvancedFiltersEnabled={isAdvancedFiltersEnabled}
-          filter={commonFilters}
+          filter={filters.timeSeries || filters.common}
           query={query}
           onRowClick={(row) =>
             handleSummaryRowClick(ResourceTypes.TimeSeries, row.id)
@@ -97,20 +131,26 @@ export const AllTab = ({
             handleAllResultsClick(ResourceTypes.TimeSeries)
           }
           onRootAssetClick={(rootAsset) => handleParentAssetClick(rootAsset)}
+          selectedResourceExternalId={selectedResourceExternalId}
+          annotationIds={resourceAnnotationList['timeSeries']}
         />
         {isDocumentsApiEnabled ? (
           <DocumentSummary
-            filter={commonFilters}
+            showAllResultsWithEmptyFilters={showAllResultsWithEmptyFilters}
+            filter={filters.document || filters.common}
             query={query}
             onRowClick={(row) =>
               handleSummaryRowClick(ResourceTypes.File, row.id)
             }
             onAllResultsClick={() => handleAllResultsClick(ResourceTypes.File)}
             onRootAssetClick={(rootAsset) => handleParentAssetClick(rootAsset)}
+            selectedResourceExternalId={selectedResourceExternalId}
+            annotationIds={resourceAnnotationList['file']}
           />
         ) : (
           <FileSummary
-            filter={commonFilters}
+            showAllResultsWithEmptyFilters={showAllResultsWithEmptyFilters}
+            filter={filters.file || filters.common}
             query={query}
             onRowClick={(row) =>
               handleSummaryRowClick(ResourceTypes.File, row.id)
@@ -119,11 +159,14 @@ export const AllTab = ({
             onDirectAssetClick={(directAsset) =>
               handleParentAssetClick(directAsset)
             }
+            selectedResourceExternalId={selectedResourceExternalId}
+            annotationIds={resourceAnnotationList['file']}
           />
         )}
         <EventSummary
+          showAllResultsWithEmptyFilters={showAllResultsWithEmptyFilters}
           isAdvancedFiltersEnabled={isAdvancedFiltersEnabled}
-          filter={commonFilters}
+          filter={filters.event || filters.common}
           query={query}
           onRowClick={(row) =>
             handleSummaryRowClick(ResourceTypes.Event, row.id)
@@ -132,9 +175,12 @@ export const AllTab = ({
           onDirectAssetClick={(directAsset) =>
             handleParentAssetClick(directAsset)
           }
+          selectedResourceExternalId={selectedResourceExternalId}
+          annotationIds={resourceAnnotationList['event']}
         />
         <SequenceSummary
-          filter={commonFilters}
+          showAllResultsWithEmptyFilters={showAllResultsWithEmptyFilters}
+          filter={filters.sequence || filters.common}
           query={query}
           isAdvancedFiltersEnabled={isAdvancedFiltersEnabled}
           onRowClick={(row) =>
@@ -144,6 +190,8 @@ export const AllTab = ({
             handleAllResultsClick(ResourceTypes.Sequence)
           }
           onRootAssetClick={(rootAsset) => handleParentAssetClick(rootAsset)}
+          selectedResourceExternalId={selectedResourceExternalId}
+          annotationIds={resourceAnnotationList['sequence']}
         />
       </AllTabContainer>
     </SearchResultWrapper>

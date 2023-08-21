@@ -1,6 +1,6 @@
 {
   "name": "@cognite/user-profile-components",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "license": "UNLICENSED",
   "sideEffects": false,
   "peerDependencies": {

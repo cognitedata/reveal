@@ -42,16 +42,12 @@ export const cogniteConfig: ProjectConfig[] = [
   {
     project: 'lervik-industries',
     site: ' ',
+
     threeDResources: [
       {
         modelId: 7848789582129513,
         revisionId: 1871031176419082,
-        transform: new Matrix4().makeTranslation(0, -100, 0),
-      },
-      {
-        modelId: 7057331773813316,
-        revisionId: 7500476061325509,
-        transform: new Matrix4().makeScale(300, 300, 300),
+        transform: new Matrix4().makeScale(0.01, 0.01, 0.01),
       },
     ],
   },

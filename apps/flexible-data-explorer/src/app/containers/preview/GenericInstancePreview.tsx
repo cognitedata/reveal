@@ -14,6 +14,7 @@ import { useInstancesQuery } from '../../services/instances/generic/queries/useI
 import { Overview } from './containers/Overview';
 import { PropertiesView } from './containers/PropertiesView';
 import { RelationshipEdgeView } from './containers/RelationshipEdgeView/RelationshipEdgeView';
+import { ThreeDViewer } from './containers/Viewers/ThreeDViewer';
 import {
   InstancePreviewContainer,
   InstancePreviewContent,
@@ -25,6 +26,7 @@ import { InstancePreviewProps } from './types';
 export const GenericInstancePreview: React.FC<InstancePreviewProps> = ({
   dataModel,
   instance,
+  disableViewer,
 }) => {
   const { t } = useTranslation();
   const { toInstancePage } = useNavigation();
@@ -40,35 +42,17 @@ export const GenericInstancePreview: React.FC<InstancePreviewProps> = ({
   });
 
   const handleOpenInCanvas = () => {
-    // ensure "instance" object is not empty
-    if (
-      instance?.dataType === undefined ||
-      instance?.externalId === undefined ||
-      instance?.instanceSpace === undefined ||
-      dataModel?.space === undefined
-    ) {
-      return;
-    }
-
     openContainerReferenceInCanvas({
       type: ContainerReferenceType.FDM_INSTANCE,
-      instanceExternalId: instance.externalId,
-      instanceSpace: instance.instanceSpace,
-      viewExternalId: instance.dataType,
-      viewSpace: dataModel.space,
+      instanceExternalId: instance?.externalId,
+      instanceSpace: instance?.instanceSpace,
+      viewExternalId: instance?.dataType,
+      viewSpace: dataModel?.space,
     });
   };
 
   const handleOpenClick = () => {
     // ensure "instance" object is not empty
-    if (
-      instance?.dataType === undefined ||
-      instance?.externalId === undefined ||
-      instance?.instanceSpace === undefined
-    ) {
-      return;
-    }
-
     toInstancePage(
       instance?.dataType,
       instance?.instanceSpace,
@@ -122,6 +106,10 @@ export const GenericInstancePreview: React.FC<InstancePreviewProps> = ({
   return (
     <>
       <InstancePreviewContainer>
+        {!disableViewer && (
+          <ThreeDViewer instance={instance} dataModel={dataModel} />
+        )}
+
         <InstancePreviewContent>
           <Suspense fallback={<Spinner />}>{renderContent()}</Suspense>
         </InstancePreviewContent>

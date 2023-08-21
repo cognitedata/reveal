@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { UseInfiniteQueryOptions, useQuery } from '@tanstack/react-query';
 import isEmpty from 'lodash/isEmpty';
 
 import { CogniteExternalId, RelationshipResourceType } from '@cognite/sdk';
@@ -13,12 +13,14 @@ interface Props {
   resourceExternalIds: CogniteExternalId[];
   relationshipResourceTypes: RelationshipResourceType[];
   filter?: RelationshipsFilterInternal;
+  options?: UseInfiniteQueryOptions;
 }
 
 export const useRelationshipsQuery = ({
   resourceExternalIds,
   relationshipResourceTypes,
   filter,
+  options = { enabled: true },
 }: Props) => {
   const sdk = useSDK();
 
@@ -36,8 +38,11 @@ export const useRelationshipsQuery = ({
       });
     },
     {
+      ...(options as any),
       enabled:
-        !isEmpty(resourceExternalIds) && !isEmpty(relationshipResourceTypes),
+        !isEmpty(resourceExternalIds) &&
+        !isEmpty(relationshipResourceTypes) &&
+        options?.enabled,
       keepPreviousData: true,
     }
   );

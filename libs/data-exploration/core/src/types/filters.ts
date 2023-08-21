@@ -36,6 +36,7 @@ export interface FilterProps {
 
 export type InternalCommonFilters = {
   assetSubtreeIds?: { label?: string; value: number }[];
+  assetIds?: { label?: string; value: number }[];
   dataSetIds?: { label?: string; value: number }[];
   createdTime?: DateRange;
   lastUpdatedTime?: DateRange;
@@ -101,9 +102,10 @@ export interface OldSequenceFilters
 // TODO: Remove the 'file filter props' and convert to internal types
 export type InternalFilesFilters = Omit<
   FileFilterProps,
-  'assetSubtreeIds' | 'dataSetIds' | 'labels' | 'metadata'
+  'assetSubtreeIds' | 'dataSetIds' | 'labels' | 'metadata' | 'assetIds'
 > & {
   assetSubtreeIds?: { label?: string; value: number }[];
+  assetIds?: { label?: string; value: number }[];
   dataSetIds?: { label?: string; value: number }[];
   labels?: { label?: string; value: string }[];
   metadata?: { key: string; value: string }[];
@@ -121,6 +123,7 @@ export interface OldFilesFilters
 }
 
 export const COMMON_FILTER_KEYS: readonly (keyof InternalCommonFilters)[] = [
+  'assetIds',
   'assetSubtreeIds',
   'dataSetIds',
   'createdTime',
@@ -128,3 +131,12 @@ export const COMMON_FILTER_KEYS: readonly (keyof InternalCommonFilters)[] = [
   'externalIdPrefix',
   'internalId',
 ] as const;
+
+export type Filters = {
+  asset: InternalAssetFilters;
+  timeSeries: InternalTimeseriesFilters;
+  sequence: InternalSequenceFilters;
+  file: InternalFilesFilters;
+  event: InternalEventsFilters;
+  document: InternalDocumentFilter;
+};

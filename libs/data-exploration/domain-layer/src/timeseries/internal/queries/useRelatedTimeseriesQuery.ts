@@ -27,18 +27,21 @@ export const useRelatedTimeseriesQuery = ({
   timeseriesFilter = {},
   query,
   sortBy,
+  enabled = true,
 }: {
   resourceExternalId?: string;
   relationshipFilter?: RelationshipsFilterInternal;
   timeseriesFilter?: InternalTimeseriesFilters;
   query?: string;
   sortBy?: TableSortBy[];
+  enabled?: boolean;
 }) => {
   const { data: detailViewRelatedResourcesData } =
     useRelatedResourceDataForDetailView({
       resourceExternalId: resourceExternalId,
       relationshipResourceType: ResourceTypes.TimeSeries,
       filter: relationshipFilter,
+      options: { enabled },
     });
 
   const advancedFilter = useMemo(() => {

@@ -375,6 +375,7 @@ const StreamLitApp = React.forwardRef(
                   <Tooltip content="Go back to app list page">
                     <Button
                       icon="ArrowLeft"
+                      aria-label="ArrowLeft"
                       onClick={() => {
                         if (filesWithChanges.length > 0) {
                           Modal.confirm({

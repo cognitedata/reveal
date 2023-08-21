@@ -37,6 +37,7 @@ export const useDecoratedFilters = (
     sources: filters.source
       ? [{ label: filters.source, value: filters.source }]
       : undefined,
+    assetIds: undefined,
   };
   const {
     data: datasets = [],

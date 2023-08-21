@@ -12,28 +12,28 @@ import { useTracker } from '../../app/common/metrics';
 import { useUserInfo } from '../../hooks/useUserInfo';
 
 const SUPPORTED_LANGUAGES: Language[] = [
-  { code: 'en', label: 'English | en' },
-  { code: 'zh', label: '中文 (Zhōngwén), 汉语, 漢語 | zh' },
-  { code: 'nl', label: 'Nederlands, Vlaams | nl' },
-  { code: 'fr', label: 'Français, langue française | fr' },
-  { code: 'de', label: 'Deutsch | de' },
-  { code: 'de-AT', label: 'Deutsch AT | de-AT' },
-  { code: 'it', label: 'Italiano | it' },
-  { code: 'ja', label: '日本語 (にほんご／にっぽんご) | ja' },
-  { code: 'ko', label: '한국어 (韓國語), 조선말 (朝鮮語) | ko' },
-  { code: 'pt', label: 'Português | pt' },
-  { code: 'ro', label: 'română | ro' },
-  { code: 'es', label: 'Español, Castellano | es' },
-  { code: 'sv', label: 'svenska | sv' },
+  { code: 'de', label: 'Deutsch' },
+  { code: 'en', label: 'English' },
+  { code: 'es', label: 'Español' },
+  { code: 'fr', label: 'Français' },
+  { code: 'it', label: 'Italiano' },
+  { code: 'nl', label: 'Nederlands' },
+  { code: 'nb', label: 'Norsk' },
+  { code: 'pt', label: 'Português' },
+  { code: 'sv', label: 'Svenska' },
+  { code: 'ko', label: '한국어' },
+  { code: 'zh', label: '中文' },
+  { code: 'ja', label: '日本語' },
 ];
+
 const selectedLanguage =
   SUPPORTED_LANGUAGES.find((language) => language.code === getLanguage()) ||
   SUPPORTED_LANGUAGES[0];
 
 export const UserProfilePage = (): JSX.Element => {
   const { t } = useTranslation();
-  const { data = {}, isLoading } = useUserInfo();
-  const { name, email, picture: profilePicture } = data;
+  const { data, isLoading } = useUserInfo();
+  const { name, email } = data || {};
   const { track } = useTracker();
 
   const handleLanguageChange = (language: Language | undefined) => {
@@ -42,7 +42,7 @@ export const UserProfilePage = (): JSX.Element => {
 
   return (
     <SharedUserProfilePage
-      userInfo={{ name, email, profilePicture }}
+      userInfo={{ name, email }}
       isUserInfoLoading={isLoading}
       selectedLanguage={selectedLanguage}
       supportedLanguages={SUPPORTED_LANGUAGES}

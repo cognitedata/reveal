@@ -71,6 +71,7 @@ export const useMonitoringFoldersWithJobs = (
   hookId: string,
   filters?: {
     timeseriesIds?: number[];
+    timeseriesExternalIds?: string[];
     subscribed?: boolean;
     currentChart?: boolean;
   }
@@ -78,11 +79,13 @@ export const useMonitoringFoldersWithJobs = (
   const sdk = useSDK();
   const userInfo = useUserInfo();
   const userAuthId = userInfo.data?.id;
-  const { subscribed, timeseriesIds, currentChart } = filters || {};
+  const { subscribed, timeseriesIds, timeseriesExternalIds, currentChart } =
+    filters || {};
   const hookConfig: any = {
     enabled:
       userAuthId !== undefined &&
-      (!currentChart || Boolean(timeseriesIds?.length)),
+      (!currentChart ||
+        Boolean(timeseriesIds?.length || timeseriesExternalIds?.length)),
   };
   if (hookId === 'indicator') {
     hookConfig.refetchInterval = 10000;
@@ -94,6 +97,7 @@ export const useMonitoringFoldersWithJobs = (
       Boolean(subscribed),
       Boolean(currentChart),
       timeseriesIds || EMPTY_ARRAY,
+      timeseriesExternalIds || EMPTY_ARRAY,
     ],
     () =>
       sdk
@@ -102,6 +106,7 @@ export const useMonitoringFoldersWithJobs = (
           {
             data: {
               timeseriesIds: timeseriesIds || EMPTY_ARRAY,
+              timeseriesExternalIds: timeseriesExternalIds || EMPTY_ARRAY,
               subscribed,
             },
             params: {

@@ -10,6 +10,7 @@ export const THRESHOLD_SIDEBAR_KEY = 'threshold';
 export const EVENT_SIDEBAR_KEY = 'events';
 export const MONITORING_SIDEBAR_KEY = 'monitoring';
 export const ALERTING_SIDEBAR_KEY = 'alerting';
+export const DATAPROFILING_SIDEBAR_KEY = 'data-profiling';
 export const MONITORING_SIDEBAR_SHOW_ALERTS = 'monitoringShowAlerts';
 export const MONITORING_SIDEBAR_SELECTED_FOLDER = 'monitoringFolder';
 export const MONITORING_SIDEBAR_HIGHLIGHTED_JOB = 'monitoringJobId';

@@ -1,31 +1,28 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { Asset, ListResponse, Timeseries } from '@cognite/sdk';
+import { Asset, Timeseries } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
+import { useCdfItem, useList } from '@cognite/sdk-react-query-hooks';
 
 export const useAsset = (id?: number) => {
-  const sdk = useSDK();
-
-  return useQuery<Asset>(
-    ['asset', id],
-    async () => {
-      const assets = await sdk.assets.retrieve([{ id: id! }]);
-      return assets[0];
-    },
-    { enabled: !!id }
+  return useCdfItem<Asset>(
+    'assets',
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore will not be undefined as this query is enabled only when id is Finite Number
+    { id },
+    {
+      enabled: Number.isFinite(id),
+    }
   );
 };
 
 export const useAssetList = (name?: string) => {
-  const sdk = useSDK();
-
-  return useQuery<ListResponse<Asset[]>>(
-    ['assets', name],
-    async () => {
-      const assets = await sdk.assets.list({ filter: { name } });
-      return assets;
-    },
-    { enabled: !!name }
+  return useList<Asset>(
+    'assets',
+    { filter: { name } },
+    {
+      enabled: Boolean(name),
+    }
   );
 };
 
@@ -60,18 +57,14 @@ export const useRootTimeseries = () => {
 };
 
 export const useAssetTimeseries = (assetId?: number) => {
-  const sdk = useSDK();
-
-  return useQuery<Timeseries[]>(
-    ['timeseries', 'assetIds', assetId],
-    async () => {
-      const timeseries = await sdk.timeseries.list({
-        filter: { assetIds: [assetId!] },
-      });
-
-      return timeseries.items;
+  return useList<Timeseries>(
+    'timeseries',
+    {
+      filter: { assetIds: [assetId!] },
     },
-    { enabled: !!assetId }
+    {
+      enabled: Boolean(assetId),
+    }
   );
 };
 

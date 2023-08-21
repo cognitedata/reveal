@@ -253,3 +253,11 @@ export type Comment = {
   // additive, not from api
   subComments: Comment[];
 };
+
+// New user type introduced by Auth2.0 team
+export type OrganizationUserProfile = {
+  id: string;
+  email: string;
+  name: string;
+  pictureUrl: string;
+};

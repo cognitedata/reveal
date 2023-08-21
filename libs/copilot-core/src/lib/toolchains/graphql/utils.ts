@@ -167,7 +167,8 @@ export const getFields = (
   typeName: string,
   relevantFields: Map<string, string[]>,
   dataModelTypes: DataModelTypeDefs,
-  isList?: boolean
+  isList?: boolean,
+  includePageInfo?: boolean
 ) => {
   const typeDef = dataModelTypes.types.find((el) => el.name === typeName);
   if (!typeDef) {
@@ -179,7 +180,15 @@ export const getFields = (
   return `{
     ${isList ? 'items { externalId \n' : 'externalId\n'}
       ${typeDef?.fields
-        .filter((field) => fields?.includes(field.name))
+        .filter(
+          (field) =>
+            fields?.includes(field.name) ||
+            // always include externalId, name, description
+            field.name === 'externalId' ||
+            field.name === 'name' ||
+            field.name === 'title' ||
+            field.name === 'description'
+        )
         .map((field): string => {
           if (field.type.custom) {
             if (nestedSet.has(field.type.name)) {
@@ -193,10 +202,36 @@ export const getFields = (
             // skip, knowing we need to add dependecy checks later
             return '';
           }
+          if (field.type.name === 'TimeSeries') {
+            return `${field.name} {
+              id
+              externalId
+              __typename
+              dataPoints {
+                timestamp
+                value
+              }
+            }`;
+          }
+          if (field.type.name === 'File' || field.type.name === 'Sequence') {
+            return `${field.name} {
+              id
+              externalId
+              __typename
+            }`;
+          }
           return field.name;
         })
         .join('\n')}
     ${isList ? '}' : ''}
+    ${
+      includePageInfo
+        ? `
+    pageInfo {
+      hasNextPage
+    }`
+        : ''
+    }
   }`;
 };
 
@@ -267,7 +302,7 @@ const constructFilter = (
 
   const filterContent: any[] = [];
 
-  filter[baseLevelOp].forEach((el) => {
+  (filter[baseLevelOp] || []).forEach((el) => {
     if (
       !['prefix', 'eq', 'gt', 'gte', 'lt', 'lte', 'isNull'].includes(
         el.operator
@@ -324,22 +359,20 @@ const constructFilter = (
         omitted.push({ key: el.property, reason: 'invalid field' });
         return;
       }
-      if (i !== path.length - 1) {
-        if (!currField.type.custom) {
-          // no support for timeseries
-          omitted.push({
-            key: el.property,
-            reason: 'invalid filter on primitive field',
-          });
-          return;
-        }
-        if (currField.type.list) {
-          omitted.push({
-            key: el.property,
-            reason: '1-m relationship filtering not supported',
-          });
-          return;
-        }
+      console.log(currField.type.name, i, path.length - 1);
+      if (currField.type.list) {
+        omitted.push({
+          key: el.property,
+          reason: '1-m relationship filtering not supported',
+        });
+        return;
+      }
+      if (['TimeSeries', 'File', 'Sequence'].includes(currField.type.name)) {
+        omitted.push({
+          key: el.property,
+          reason: `filtering on ${currField.type.name} not supported`,
+        });
+        return;
       }
       filterPath.push(path[i]);
     }

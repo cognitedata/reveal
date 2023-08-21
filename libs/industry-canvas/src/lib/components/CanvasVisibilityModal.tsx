@@ -1,13 +1,18 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import styled from 'styled-components';
 
+import differenceWith from 'lodash/differenceWith';
 import { v4 as uuid } from 'uuid';
 
 import { Body, Icon, Modal, Button, Tooltip, toast } from '@cognite/cogs.js';
 
 import { translationKeys } from '../common';
 import { TOAST_POSITION } from '../constants';
+import { UserSearch } from '../containers';
+import { useAuth2InvitationsMutation } from '../hooks/use-mutation/useAuth2InvitationsMutation';
+import { useAuth2RevokeInvitationsMutation } from '../hooks/use-mutation/useAuth2RevokeInvitationsMutation';
+import { useAuth2InvitationsByResource } from '../hooks/use-query/useAuth2InvitationsByResource';
 import { useTranslation } from '../hooks/useTranslation';
 import { IndustryCanvasContextType } from '../IndustryCanvasContext';
 import { CanvasVisibility } from '../services/IndustryCanvasService';
@@ -19,6 +24,7 @@ import {
   getCanvasVisibilityBodyText,
   getCanvasVisibilityToggleText,
 } from '../utils/getCanvasVisibility';
+import { isCogniteIdPUsedToSignIn } from '../utils/isCogniteIdPUsedToSignIn';
 
 type CanvasVisibilityModalProps = Pick<
   IndustryCanvasContextType,
@@ -36,7 +42,30 @@ const CanvasVisibilityModal: React.FC<CanvasVisibilityModalProps> = ({
   isSavingCanvas,
   userProfile,
 }) => {
+  const isCogniteIdP = isCogniteIdPUsedToSignIn();
+
   const { t } = useTranslation();
+
+  const [selectedUsers, setSelectedUsers] = useState<UserProfile[]>([]);
+
+  const { invitationsByResource, isFetched } = useAuth2InvitationsByResource({
+    externalId: canvas?.externalId,
+  });
+
+  const { mutate: revokeInvitation } = useAuth2RevokeInvitationsMutation({
+    externalId: canvas?.externalId,
+  });
+  const { mutate: sendInvitation } = useAuth2InvitationsMutation({
+    externalId: canvas?.externalId,
+  });
+
+  useEffect(() => {
+    if (isFetched) {
+      setSelectedUsers(invitationsByResource);
+    }
+    // We can not put 'invitationsByResource' in dep array here, it creates an update loop.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isFetched]);
 
   const handleToggleVisibilityClick = useCallback(
     async (visibility?: string) => {
@@ -55,12 +84,109 @@ const CanvasVisibilityModal: React.FC<CanvasVisibilityModalProps> = ({
 
   // Here check if canvas exists.
   if (canvas === undefined) return null;
+
+  // If canvas is passed to the modal it means modal should be visible.
   const isCanvasVisible = canvas !== undefined;
   const isCurrentUserCanvasOwner =
     userProfile.userIdentifier === canvas.createdBy;
 
   // Here we are sure that canvas exists.
   const { visibility } = canvas;
+
+  const handleUserSelected = (user: UserProfile) => {
+    // Here doesn't allow to add the same user or the canvas owner again.
+    if (
+      (selectedUsers !== undefined &&
+        selectedUsers.findIndex(
+          (selectedUser) => selectedUser.userIdentifier === user.userIdentifier
+        ) >= 0) ||
+      user.userIdentifier === canvas.createdBy
+    ) {
+      toast.warning(
+        <div>
+          <b>
+            {t(
+              translationKeys.VISIBILITY_MODAL_DUPLICATE_USER_TOAST_TITLE,
+              'User is already selected'
+            )}
+          </b>
+          <p>
+            {t(
+              translationKeys.VISIBILITY_MODAL_DUPLICATE_USER_TOAST_SUBTITLE,
+              'You can not select a user multiple times for share.'
+            )}
+          </p>
+        </div>,
+        {
+          toastId: `add-share-user-${user.userIdentifier}`,
+          position: TOAST_POSITION,
+        }
+      );
+      return;
+    }
+
+    if (selectedUsers !== undefined) {
+      setSelectedUsers([...selectedUsers, user]);
+    } else {
+      setSelectedUsers([user]);
+    }
+  };
+
+  const handleUserRemoved = (userId: string) => {
+    if (selectedUsers === undefined) {
+      return;
+    }
+
+    // For now, only the canvas owner can remove/uninvite users.
+    // Later we can add that users can uninvite themselves from the canvases that they are shared with.
+    if (!isCurrentUserCanvasOwner) {
+      // Maybe add a toast message here.
+      return;
+    }
+
+    const removedUserIndex = selectedUsers.findIndex(
+      (user) => user.userIdentifier === userId
+    );
+
+    selectedUsers.splice(removedUserIndex, 1);
+    setSelectedUsers([...selectedUsers]);
+  };
+
+  const handleOkClick = () => {
+    // Here find the diffs for invite/uninvite flows
+    if (isCogniteIdP) {
+      const removedUsers = differenceWith(
+        invitationsByResource,
+        selectedUsers,
+        (baseUser, comparedUser) =>
+          baseUser.userIdentifier === comparedUser.userIdentifier
+      );
+      if (removedUsers.length > 0) {
+        revokeInvitation({
+          externalId: canvas.externalId,
+          userIdsToUninvite: removedUsers.map((user) => user.userIdentifier),
+        });
+      }
+
+      const newUsers = differenceWith(
+        selectedUsers,
+        invitationsByResource,
+        (baseUser, comparedUser) =>
+          baseUser.userIdentifier === comparedUser.userIdentifier
+      );
+      if (newUsers.length > 0) {
+        sendInvitation({
+          externalId: canvas.externalId,
+          title: canvas.name,
+          canvasUrl: window.location.href,
+          userIdsToInvite: newUsers.map((user) => user.userIdentifier),
+          sendEmail: true, //this should be 'true' if we want to send emails to the users.
+        });
+      }
+    }
+
+    onCancel();
+  };
 
   const renderVisibilityToggleButton = () => {
     if (isSavingCanvas) {
@@ -109,11 +235,12 @@ const CanvasVisibilityModal: React.FC<CanvasVisibilityModalProps> = ({
       visible={isCanvasVisible}
       title={t(translationKeys.VISIBILITY_MODAL_TITLE, {
         canvasTitle: canvas?.name,
-        defaultValue: 'Sharing canvas; "{{canvasTitle}}"',
+        defaultValue: 'Sharing "{{canvasTitle}}"',
       })}
       onCancel={onCancel}
-      onOk={onCancel}
+      onOk={handleOkClick}
       okText="Done"
+      size="small"
       additionalActions={
         // Here we can not disable Copy URL button for private canvases, limited by cogs.
         // We need to write a custom footer for the action buttons to do that.
@@ -156,18 +283,31 @@ const CanvasVisibilityModal: React.FC<CanvasVisibilityModalProps> = ({
           : undefined
       }
     >
+      {isCogniteIdP && (
+        <UserSearch
+          key={canvas.externalId}
+          activeCanvas={canvas}
+          selectedUsers={selectedUsers}
+          onUserRemoved={handleUserRemoved}
+          onUserSelected={handleUserSelected}
+        />
+      )}
       <VisibilityToggleWrapper>
         <VisibilityToggleTextWrapper>
           {!isSavingCanvas && (
             <>
-              <Icon type={getCanvasVisibilityIcon(visibility)} />
+              <div className="icon-wrapper">
+                <Icon type={getCanvasVisibilityIcon(visibility)} />
+              </div>
               <Body level={2}>
                 {getCanvasVisibilityBodyText(t, visibility)}
               </Body>
             </>
           )}
         </VisibilityToggleTextWrapper>
-        {renderVisibilityToggleButton()}
+        <div className="toggle-button-wrapper">
+          {renderVisibilityToggleButton()}
+        </div>
       </VisibilityToggleWrapper>
     </StyledModal>
   );
@@ -193,11 +333,14 @@ const StyledModal = styled(Modal)`
 
 const VisibilityToggleWrapper = styled.div`
   width: 100%;
+  height: 40px;
   display: flex;
   justify-content: space-between;
   margin-bottom: 16px;
 
-  .cogs.cogs-button {
+  .toggle-button-wrapper {
+    margin: auto 0;
+    margin-left: 10px;
     flex-shrink: 0;
   }
 `;
@@ -205,6 +348,11 @@ const VisibilityToggleWrapper = styled.div`
 const VisibilityToggleTextWrapper = styled.div`
   display: flex;
   align-items: center;
+
+  .icon-wrapper {
+    width: 16px;
+    margin-right: 5px;
+  }
 
   i {
     margin-right: 5px;

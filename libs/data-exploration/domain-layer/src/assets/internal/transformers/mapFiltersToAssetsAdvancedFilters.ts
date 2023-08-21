@@ -22,6 +22,7 @@ export type AssetsProperties = {
   id: number;
   metadata: string;
   [key: `metadata|${string}`]: string;
+  assetIds: number[];
 };
 
 export const mapFiltersToAssetsAdvancedFilters = (
@@ -34,6 +35,7 @@ export const mapFiltersToAssetsAdvancedFilters = (
     labels,
     metadata,
     internalId,
+    assetIds,
   }: InternalAssetFilters,
   query?: string,
   searchConfig: AssetConfigType = getSearchConfig().asset
@@ -101,6 +103,14 @@ export const mapFiltersToAssetsAdvancedFilters = (
         metadataBuilder.equals(`metadata|${key}`, value);
       }
     }
+    filterBuilder.or(metadataBuilder);
+  }
+
+  if (assetIds && assetIds.length > 0) {
+    const metadataBuilder = new AdvancedFilterBuilder<AssetsProperties>();
+    assetIds.forEach((id) => {
+      metadataBuilder.equals('id', id.value);
+    });
     filterBuilder.or(metadataBuilder);
   }
 

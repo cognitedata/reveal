@@ -1,18 +1,30 @@
 import styled, { css } from 'styled-components';
 
-import { Button } from '@cognite/cogs.js';
+import { Button, Tooltip } from '@cognite/cogs.js';
 
+import { useLocation } from '../../hooks/useLocation';
+import { useNavigation } from '../../hooks/useNavigation';
 import { useViewModeParams } from '../../hooks/useParams';
+import { useTranslation } from '../../hooks/useTranslation';
 
 interface Props {
   inverted?: boolean;
 }
 
 export const SearchBarSwitch: React.FC<Props> = ({ inverted }) => {
+  const { t } = useTranslation();
   const [viewMode, setViewMode] = useViewModeParams();
+  const location = useLocation();
+  const navigate = useNavigation();
 
   const handle3DViewClick = () => {
-    setViewMode('3d');
+    if (location.isHomePage) {
+      navigate.toSearchPage(undefined, undefined, {
+        viewMode: '3d',
+      });
+    } else {
+      setViewMode('3d');
+    }
   };
   const handleListViewClick = () => {
     setViewMode('list');
@@ -20,16 +32,23 @@ export const SearchBarSwitch: React.FC<Props> = ({ inverted }) => {
 
   return (
     <Container inverted={inverted}>
-      <StyledButton
-        type={viewMode === 'list' ? 'secondary' : 'ghost'}
-        icon="List"
-        onClick={handleListViewClick}
-      />
-      <StyledButton
-        type={viewMode === '3d' ? 'secondary' : 'ghost'}
-        icon="Cube"
-        onClick={handle3DViewClick}
-      />
+      <Tooltip content={t('SEARCH_BAR_SWITCH_LIST_VIEW')}>
+        <StyledButton
+          type={viewMode === 'list' ? 'secondary' : 'ghost'}
+          icon="List"
+          onClick={handleListViewClick}
+          aria-label="List view"
+        />
+      </Tooltip>
+
+      <Tooltip content={t('SEARCH_BAR_SWITCH_3D_VIEW')}>
+        <StyledButton
+          type={viewMode === '3d' ? 'secondary' : 'ghost'}
+          icon="Cube"
+          onClick={handle3DViewClick}
+          aria-label="3D view"
+        />
+      </Tooltip>
     </Container>
   );
 };
@@ -46,7 +65,9 @@ const Container = styled.div<{
 }>`
   width: 92px;
   height: 52px;
-  background-color: #ffffff;
+  && {
+    background-color: #ffffff;
+  }
   border-radius: 10px;
   padding: 8px;
   gap: 4px;
@@ -55,7 +76,7 @@ const Container = styled.div<{
   ${(props) => {
     if (props.inverted) {
       return css`
-        background-color: #f3f4f8;
+        background-color: #f3f4f8 !important;
         outline: 1px solid rgba(210, 212, 218, 0.56);
       `;
     }

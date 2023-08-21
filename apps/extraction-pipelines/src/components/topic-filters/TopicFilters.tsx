@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import styled from 'styled-components';
 
+import { createLink } from '@cognite/cdf-utilities';
 import { Body, Button, Flex, Heading, Icon } from '@cognite/cogs.js';
 
 import { useTranslation } from '../../common';
@@ -21,6 +23,7 @@ export const TopicFilters = ({
   source,
 }: TopicFiltersProps): React.JSX.Element => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
@@ -31,7 +34,13 @@ export const TopicFilters = ({
         source.jobs.length !== 0 && (
           <Button
             size="small"
-            onClick={() => setIsCreateModalOpen(true)}
+            onClick={() =>
+              navigate(
+                createLink(
+                  `/extpipes/hosted-extraction-pipeline/${source.externalId}/add-topic-filters`
+                )
+              )
+            }
             type="ghost-accent"
           >
             {t('add-topic-filters')}

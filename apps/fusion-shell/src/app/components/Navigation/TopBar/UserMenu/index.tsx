@@ -6,7 +6,7 @@ import { json } from '@codemirror/lang-json';
 
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import { logout } from '@cognite/cdf-sdk-singleton';
-import { CodeSnippet } from '@cognite/cdf-utilities';
+import { CodeSnippet, createLink } from '@cognite/cdf-utilities';
 import { Avatar, Button, Dropdown, Menu } from '@cognite/cogs.js';
 
 import { UserMenu as SharedUserMenu } from '@cognite/user-profile-components';
@@ -42,13 +42,6 @@ const UserMenu = (): JSX.Element => {
     logout();
   };
 
-  const handleManageAccountClick = () => {
-    const { pathname, search } = window.location;
-    const project = pathname.split('/')[1];
-    const url = `${project}/profile${search}`;
-    window.open(url, '_blank');
-  };
-
   return (
     <>
       <StyledDropdown
@@ -60,7 +53,6 @@ const UserMenu = (): JSX.Element => {
         content={
           <SharedUserMenu
             userInfo={{ name, email, profilePicture }}
-            onManageAccountClick={handleManageAccountClick}
             onLogoutClick={handleLogout}
             menuTitle={t('title-account')}
             menuItemManageAccountBtnText={t('manage-account')}
@@ -68,6 +60,7 @@ const UserMenu = (): JSX.Element => {
             onTrackEvent={(eventName, metaData) => {
               trackEvent(`CdfHubNavigation.UserMenu.${eventName}`, metaData);
             }}
+            profilePageRelativePath={createLink('/profile')}
           >
             <Menu.Item onClick={() => setIsAccessInfoModalOpen(true)}>
               {t('label-access-info')}

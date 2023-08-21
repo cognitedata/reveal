@@ -61,6 +61,10 @@ export const Overview: React.FC<Props> = ({
               return null;
             }
 
+            if (item.isThreeD) {
+              return null;
+            }
+
             return (
               <DirectionRelationshipItem
                 key={item.name}
@@ -76,6 +80,10 @@ export const Overview: React.FC<Props> = ({
       {!isEmpty(edgeRelationships) && (
         <Container>
           {edgeRelationships?.map((item) => {
+            if (item.isThreeD) {
+              return null;
+            }
+
             return (
               <RelationshipEdgeItem
                 key={item.id}

@@ -53,24 +53,31 @@ export class FDMSchema {
   public get types() {
     const types = this.schema?.types || [];
 
-    return types?.map((type) => {
-      const descriptionTokens = extractDescriptionTokens(type.description);
+    return types
+      ?.filter((type) => {
+        // Remove system data model imports from the type list.
+        return !type.directives?.some((item) => item.name === 'import');
+      })
+      .map((type) => {
+        const descriptionTokens = extractDescriptionTokens(type.description);
 
-      return {
-        ...type,
-        ...descriptionTokens,
-        fields: type.fields?.map((field) => {
-          const fieldDescriptionTokens = extractDescriptionTokens(
-            field.description
-          );
+        return {
+          ...type,
+          ...descriptionTokens,
+          fields: type.fields?.map((field) => {
+            const fieldDescriptionTokens = extractDescriptionTokens(
+              field.description
+            );
 
-          return {
-            ...field,
-            ...fieldDescriptionTokens,
-          };
-        }),
-      };
-    });
+            return {
+              ...field,
+              ...fieldDescriptionTokens,
+              isThreeD:
+                field.name === 'inModel3d' && field.type.name === 'Cdf3dModel',
+            };
+          }),
+        };
+      });
   }
 
   public get directives() {

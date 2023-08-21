@@ -6,10 +6,14 @@ import {
   useSetRecoilState,
 } from 'recoil';
 
-import { FilterResourceType, FilterState } from '@data-exploration-lib/core';
+import {
+  FilterResourceType,
+  FilterState,
+  Filters,
+} from '@data-exploration-lib/core';
 
 import { globalFilterAtom } from '../atoms';
-import { Filters, GlobalFilterKeys } from '../types';
+import { GlobalFilterKeys } from '../types';
 import { defaultFilterSetter } from '../utils';
 
 const globalAllFilters = selectorFamily<any, GlobalFilterKeys | undefined>({

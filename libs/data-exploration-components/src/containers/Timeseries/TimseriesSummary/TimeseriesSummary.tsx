@@ -9,19 +9,25 @@ import {
 import { useTimeseriesMetadataColumns } from '@data-exploration/containers';
 import { SummaryHeader } from '@data-exploration-components/components/SummaryHeader/SummaryHeader';
 import { getSummaryCardItems } from '@data-exploration-components/components/SummaryHeader/utils';
+import { useUniqueCdfItems } from '@data-exploration-components/hooks';
 import { ColumnDef } from '@tanstack/react-table';
+import uniqBy from 'lodash/uniqBy';
 
 import { Asset, Timeseries } from '@cognite/sdk';
 
 import {
   getHiddenColumns,
   InternalTimeseriesFilters,
+  isObjectEmpty,
+  isSummaryCardDataCountExceed,
+  useDeepMemo,
   useGetSearchConfigFromLocalStorage,
   useTranslation,
 } from '@data-exploration-lib/core';
 import {
   useTimeseriesSearchResultWithLabelsQuery,
   InternalTimeseriesDataWithMatchingLabels,
+  useRelatedTimeseriesQuery,
 } from '@data-exploration-lib/domain-layer';
 
 import { TimeseriesLastReading } from '../TimeseriesLastReading/TimeseriesLastReading';
@@ -33,26 +39,64 @@ export const TimeseriesSummary = ({
   onRowClick,
   onRootAssetClick,
   isAdvancedFiltersEnabled = false,
+  showAllResultsWithEmptyFilters = false,
+  selectedResourceExternalId: resourceExternalId,
+  annotationIds = [],
 }: {
   query?: string;
-  filter: InternalTimeseriesFilters;
+  filter?: InternalTimeseriesFilters;
   onAllResultsClick?: (
     event?: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => void;
   onRowClick?: (row: Timeseries) => void;
   onRootAssetClick?: (rootAsset: Asset, resourceId?: number) => void;
   isAdvancedFiltersEnabled?: boolean;
+  showAllResultsWithEmptyFilters?: boolean;
+  selectedResourceExternalId?: string;
+  annotationIds?: number[];
 }) => {
+  const isQueryEnable = isObjectEmpty(filter as any)
+    ? showAllResultsWithEmptyFilters
+    : true;
+
+  const { data: annotationList = [] } = useUniqueCdfItems<Timeseries>(
+    'timeseries',
+    annotationIds.map((id) => ({ id })),
+    true
+  );
+
+  const isAnnotationCountExceed = isSummaryCardDataCountExceed(
+    annotationList.length
+  );
+
   const timeseriesSearchConfig =
     useGetSearchConfigFromLocalStorage('timeSeries');
-  const { isLoading, data } = useTimeseriesSearchResultWithLabelsQuery(
-    {
-      query,
-      filter,
-    },
-    undefined,
-    timeseriesSearchConfig
+  const { isLoading, data: timeseries } =
+    useTimeseriesSearchResultWithLabelsQuery(
+      {
+        query,
+        filter,
+      },
+      { enabled: isQueryEnable && !isAnnotationCountExceed },
+      timeseriesSearchConfig
+    );
+
+  const isTimeseriesCountExceed = isSummaryCardDataCountExceed(
+    timeseries.length + annotationList.length
   );
+
+  const { data: relatedTimeseries, isLoading: isRelatedTimeseriesLoading } =
+    useRelatedTimeseriesQuery({
+      resourceExternalId,
+      enabled: !isTimeseriesCountExceed,
+    });
+
+  const mergeData = useDeepMemo(
+    () =>
+      uniqBy([...annotationList, ...timeseries, ...relatedTimeseries], 'id'),
+    [annotationList, timeseries, relatedTimeseries]
+  );
+
   const { t } = useTranslation();
   const tableColumns = getTableColumns(t);
 
@@ -84,6 +128,10 @@ export const TimeseriesSummary = ({
   }, [metadataColumns]);
   const hiddenColumns = getHiddenColumns(columns, ['name', 'description']);
 
+  const isDataLoading = isLoading && isQueryEnable && isAnnotationCountExceed;
+  const isRelatedDataLoading =
+    isRelatedTimeseriesLoading && !isTimeseriesCountExceed;
+
   return (
     <SummaryCardWrapper>
       <Table<InternalTimeseriesDataWithMatchingLabels>
@@ -91,8 +139,8 @@ export const TimeseriesSummary = ({
         columns={columns}
         hiddenColumns={hiddenColumns}
         columnSelectionLimit={2}
-        data={getSummaryCardItems(data)}
-        isDataLoading={isLoading}
+        data={getSummaryCardItems(mergeData)}
+        isDataLoading={isDataLoading || isRelatedDataLoading}
         tableHeaders={
           <SummaryHeader
             icon="Timeseries"

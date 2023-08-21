@@ -2785,6 +2785,11 @@
   dependencies:
     lodash "^4.17.20"
 
+"@cognite/apm-auth-container@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@cognite/apm-auth-container/-/apm-auth-container-1.0.0.tgz#b0bfdfd90d328c02985ac8efb4bb73fbd50300ab"
+  integrity sha512-lzLLisQcNN65XYCy6S+6K69zUAjhRi/Frihw8+PQSosxGbt4FoZXd2Ajo3h+s4piugh8byfnQQry2vef1eH49w==
+
 "@cognite/auth-react@^0.0.28-beta":
   version "0.0.28-beta"
   resolved "https://registry.yarnpkg.com/@cognite/auth-react/-/auth-react-0.0.28-beta.tgz#0e48960a654612ad853a97d8bf95e3df3022f84f"
@@ -3173,10 +3178,10 @@
   dependencies:
     axios "0.25.0"
 
-"@cognite/llm-hub@^0.0.12":
-  version "0.0.12"
-  resolved "https://registry.yarnpkg.com/@cognite/llm-hub/-/llm-hub-0.0.12.tgz#69c6bd4f366bae92595dab92e068a683858e846b"
-  integrity sha512-VfyJYMjT5GKC1xfVWjtEzyInAFrTwX7Wqedutz/AA8dQBfIM77pju6XS1baRcaPqH0bps3MNWZZoseaf+N7jPw==
+"@cognite/llm-hub@^0.0.15":
+  version "0.0.15"
+  resolved "https://registry.yarnpkg.com/@cognite/llm-hub/-/llm-hub-0.0.15.tgz#988f731d1a79f7d39f8374b69d4ce70d470a71ed"
+  integrity sha512-qzQWJiNz+hVERHK9JTFcmqJdXZFz+H6Czc+pgN8N8B4+k+qxmxw4KowpPSmOomrC5PdE3OGCfOOfGWGkleB7Fg==
 
 "@cognite/metrics@1.2.2":
   version "1.2.2"
@@ -3292,10 +3297,10 @@
     use-event-callback "^0.1.0"
     use-key-hook "^1.3.0"
 
-"@cognite/reveal-react-components@0.10.0":
-  version "0.10.0"
-  resolved "https://registry.yarnpkg.com/@cognite/reveal-react-components/-/reveal-react-components-0.10.0.tgz#7a7cf5388630a3855289acce871563e6d76290cf"
-  integrity sha512-udVXz9mJIfnW3Y/SYgWIZaSp9X5npOn99+4GuEecY55D3I6zNXFd3+d6vG0vjbT/SX433MqLAzTfVsskKbxl/w==
+"@cognite/reveal-react-components@0.12.0":
+  version "0.12.0"
+  resolved "https://registry.yarnpkg.com/@cognite/reveal-react-components/-/reveal-react-components-0.12.0.tgz#e512c5814e2a50cb9beb65710d96f533e2d39855"
+  integrity sha512-UTvzqmkGM9fhJ8EZuLViTo/liKIRVXIJtzIq2wJRRjhqPfwX0pnBQ3neP4WJ/1AQlroLcyQ3Vt5xdodHFCI/Rw==
   dependencies:
     "@tanstack/react-query" "^4.29.19"
     lodash "^4.17.21"
@@ -11929,6 +11934,11 @@
   version "2.12.18"
   resolved "https://registry.yarnpkg.com/@types/plotly.js/-/plotly.js-2.12.18.tgz#7a231ce72a73fafe4842096b8c99d10a41b60962"
   integrity sha512-ff+CIEWnqZNjZqHtQZvkEAVuLs9fkm1f54QnPVmgoET7wMHdSqUka2hasVN4e5yfHD05YwGjsAtCseewJh/BMw==
+
+"@types/pluralize@^0.0.30":
+  version "0.0.30"
+  resolved "https://registry.yarnpkg.com/@types/pluralize/-/pluralize-0.0.30.tgz#cddb9923240c20d15e6d5f98fd576ec856b9b3db"
+  integrity sha512-kVww6xZrW/db5BR9OqiT71J9huRdQ+z/r+LbDuT7/EK50mCmj5FoaIARnVv0rvjUS/YpDox0cDU9lpQT011VBA==
 
 "@types/prettier@^2.1.5":
   version "2.7.2"

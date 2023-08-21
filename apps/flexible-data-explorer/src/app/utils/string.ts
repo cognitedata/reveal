@@ -1,3 +1,5 @@
+import pluralize from 'pluralize';
+
 import { TFunction } from '../hooks/useTranslation';
 
 export const getCountsString = (
@@ -5,8 +7,12 @@ export const getCountsString = (
   t: TFunction
 ) => {
   const countStrings = Object.entries(counts).map(
-    ([dataType, count]) => `${count} ${dataType}`
+    ([dataType, count]) => `${count} ${pluralize(dataType)}`
   );
   const last = countStrings.pop();
-  return countStrings.join(', ') + ` ${t('GENERAL_AND')} ` + last;
+  return (
+    countStrings.join(', ') +
+    ` ${countStrings.length > 0 ? t('GENERAL_AND') : ''} ` +
+    last
+  );
 };

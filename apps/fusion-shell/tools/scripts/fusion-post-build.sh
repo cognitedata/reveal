@@ -3,10 +3,9 @@ set -e
 # Script that modifies the build for fusion-shell to include sdk-singleton, route-tracker
 # Generates import-map.json and sub-apps-import-map.json
 
-build_folder="dist/apps/fusion-shell/cdf"
+build_folder="dist/apps/fusion-shell"
 packages_build_folder="dist/libs/shared";
 configuration="${1:-staging}"
-build_mode="${2:-cdf}"
 
 VERSION_HASH=`date +%s`
 VERSION_HASH=$(echo "v-$VERSION_HASH" | base64)
@@ -28,4 +27,4 @@ cp -r  $packages_build_folder/cdf-sdk-singleton/* $build_folder/assets/dependenc
 cp -r  $packages_build_folder/cdf-route-tracker/* $build_folder/assets/dependencies/@cognite/$VERSION_HASH/cdf-route-tracker;
 
 # Generate Import Map Configs
-node ./apps/fusion-shell/tools/scripts/import-map-generator.js $configuration $build_mode $VERSION_HASH
+node ./apps/fusion-shell/tools/scripts/import-map-generator.js $configuration $VERSION_HASH

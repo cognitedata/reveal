@@ -10,6 +10,7 @@ import {
 
 import { AnnotationPopover } from '../components/AnnotationPopover';
 import { styleForSelected } from '../constants';
+import { defaultTranslations as FileViewerDefaultTranslations } from '../FileViewer';
 import { ExtendedAnnotation } from '../types';
 import { getContainerId } from '../utils/getContainerId';
 import getExtendedAnnotationsFromAnnotationsApi from '../utils/getExtendedAnnotationsFromAnnotationsApi';
@@ -29,6 +30,7 @@ type UnifiedFileViewerStateProps = {
   extractedAnnotations?: Annotation[];
   ocrSearchResultAnnotations: OCRAnnotation[];
   currentPage?: number;
+  translations: typeof FileViewerDefaultTranslations;
 };
 
 export const useUnifiedFileViewerState = ({
@@ -37,6 +39,7 @@ export const useUnifiedFileViewerState = ({
   extractedAnnotations,
   ocrSearchResultAnnotations,
   currentPage = 1,
+  translations: t,
 }: UnifiedFileViewerStateProps): {
   annotations: Annotation[];
   popovers: TooltipConfig[] | undefined;
@@ -113,6 +116,9 @@ export const useUnifiedFileViewerState = ({
             <AnnotationPopover
               resourceId={focusedAnnotation.metadata.resourceId}
               label={focusedAnnotation.metadata.label}
+              annotationTitle={t['Time series']}
+              fallbackText={t['Asset not found']}
+              noResourceLabelText={t['No resource id or name present']}
             />
           ),
           anchorTo: TooltipAnchorPosition.BOTTOM_CENTER,

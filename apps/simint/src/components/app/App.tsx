@@ -34,7 +34,7 @@ export default function App() {
   const isInitialized = useSelector(selectIsInitialized);
   const project = useSelector(selectProject);
 
-  const BASE_URL = process.env.REACT_APP_LOCAL_SERVICE
+  const BASE_URL = process.env.NX_REACT_APP_LOCAL_SERVICE
     ? `https://localhost:8810`
     : client.getBaseUrl();
 

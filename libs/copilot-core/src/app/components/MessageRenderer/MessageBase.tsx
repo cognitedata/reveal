@@ -10,18 +10,16 @@ import {
   Flex,
   Icon,
   Menu,
-  toast,
   Modal,
   Overline,
 } from '@cognite/cogs.js';
 
 import { ReactComponent as CopilotIcon } from '../../../assets/CopilotIcon.svg';
 import { CopilotLogContent, CopilotMessage } from '../../../lib/types';
-import { useMetrics } from '../../hooks/useMetrics';
 import { useUserProfile } from '../../hooks/useUserProfile';
 
+import { CopilotActions } from './components/CopilotActions';
 import { Markdown } from './components/Markdown';
-import { ResponsiveActions } from './components/ResponsiveActions';
 
 export const MessageBase = ({
   message: { data },
@@ -34,13 +32,11 @@ export const MessageBase = ({
   children: React.ReactNode;
   hideActions?: boolean;
 }) => {
-  const { content, source, actions = [] } = data;
+  const { source } = data;
   const { data: user, isLoading } = useUserProfile();
 
-  const [selectedFeedback, setSelectedFeedback] = useState('');
   const [showLogs, setShowLogs] = useState(false);
 
-  const { track } = useMetrics();
   return (
     <Wrapper gap={10}>
       {showLogs && (
@@ -91,59 +87,7 @@ export const MessageBase = ({
             </Dropdown>
           )}
         </Flex>
-        {source === 'bot' && !hideActions && (
-          <Flex gap={4}>
-            <div style={{ flex: 1 }}>
-              <ResponsiveActions
-                actions={[
-                  ...actions,
-                  {
-                    content: 'Copy',
-                    icon: 'ReportCopy',
-                    onClick: () => {
-                      navigator.clipboard.writeText(content);
-                      toast.success('Copied to clipboard');
-                    },
-                  },
-                ]}
-              />
-            </div>
-            <Button
-              icon="ThumbUp"
-              aria-label="Give positive feedback"
-              type="ghost"
-              disabled={!!selectedFeedback}
-              size="small"
-              className={`ai ${
-                selectedFeedback === 'positive' ? 'selected' : ''
-              }`}
-              onClick={() => {
-                setSelectedFeedback('positive');
-                track('FEEDBACK_POSITIVE', {
-                  content: content,
-                  chain: data.chain,
-                });
-              }}
-            />
-            <Button
-              icon="ThumbDown"
-              aria-label="Give negative feedback"
-              type="ghost"
-              disabled={!!selectedFeedback}
-              size="small"
-              className={`ai thumbsdown ${
-                selectedFeedback === 'negative' ? 'selected' : ''
-              }`}
-              onClick={() => {
-                setSelectedFeedback('negative');
-                track('FEEDBACK_NEGATIVE', {
-                  content: content,
-                  chain: data.chain,
-                });
-              }}
-            />
-          </Flex>
-        )}
+        {source === 'bot' && !hideActions && <CopilotActions message={data} />}
       </Flex>
     </Wrapper>
   );
@@ -185,25 +129,6 @@ const Wrapper = styled(Flex)`
   &&:hover .cogs-button.hover {
     opacity: 1;
   }
-  .cogs-button.ai {
-    background: rgba(111, 59, 228, 0.08);
-    color: #6f3be4;
-  }
-  .cogs-button.ai.cogs-button--disabled {
-    background: transparent;
-    color: #6f3be4;
-    opacity: 0.5;
-  }
-  .cogs-button.ai.cogs-button--disabled.selected {
-    opacity: 1;
-  }
-  .cogs-button.ai.cogs-button--disabled:hover {
-    background: none;
-  }
-  .cogs-button.ai:hover {
-    background: rgba(111, 59, 228, 0.18);
-    color: #6f3be4;
-  }
 
   .thumbsdown svg {
     transform: scaleX(-1);
@@ -223,9 +148,6 @@ const Wrapper = styled(Flex)`
     border: 1px solid #6f3be4;
     background: #fff;
   }
-
-  --cogs-surface--action--strong--hover: #632cd4;
-  --cogs-surface--action--strong--default: #6f3be4;
 `;
 
 const CopilotIconWrapper = styled(Flex)`

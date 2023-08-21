@@ -33,13 +33,10 @@ export const Categories = () => {
 
         <CategoryCard
           type="Time series"
-          onClick={() => handleCategoryClick('Timeseries')}
+          onClick={() => handleCategoryClick('TimeSeries')}
         />
 
-        <CategoryCard
-          type="File"
-          onClick={() => handleCategoryClick('Files')}
-        />
+        <CategoryCard type="File" onClick={() => handleCategoryClick('File')} />
       </CategoryContent>
     </CategoriesContainer>
   );
@@ -47,7 +44,7 @@ export const Categories = () => {
 
 const CategoriesContainer = styled.div`
   height: 10%;
-  padding-top: 24px;
+  padding-top: 16px;
   width: 774px;
   align-self: center;
 `;

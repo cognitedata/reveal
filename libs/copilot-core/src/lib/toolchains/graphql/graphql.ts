@@ -12,6 +12,7 @@ import {
   datamodelQueryTypePrompt,
   datamodelRelevantPropertiesPrompt,
   datamodelRelevantTypeMultiModelsPrompt,
+  datamodelResultSummaryPrompt,
 } from '@cognite/llm-hub';
 
 import {
@@ -192,7 +193,7 @@ export class GraphQlChain extends CogniteBaseChain {
           filteredTypes,
           dataModelTypes
         );
-        // Chain 4: Indentify relevant filter
+        // Chain 4: Identify relevant filter
         const [filterResponse] = await callPromptChain(
           this,
           'filter',
@@ -203,7 +204,7 @@ export class GraphQlChain extends CogniteBaseChain {
               relevantTypes: relevantTypesDml,
             },
           ],
-          { timeout: 10000 }
+          { timeout: 30000 }
         ).then(safeConvertToJson<GptGQLFilter>);
         const {
           filter,
@@ -304,6 +305,7 @@ export class GraphQlChain extends CogniteBaseChain {
               type,
               new Map(Object.entries(fields)),
               dataModelTypes,
+              true,
               true
             )}
           }`,
@@ -403,11 +405,33 @@ export class GraphQlChain extends CogniteBaseChain {
             },
           });
 
+          const [{ summary }] = await callPromptChain(
+            this,
+            'summarize filter',
+            datamodelResultSummaryPrompt,
+            [
+              {
+                query: JSON.stringify({
+                  query: query,
+                  variables,
+                }),
+              },
+            ]
+          ).then(
+            safeConvertToJson<{
+              summary: string;
+            }>
+          );
+
           // assume no aggregate atm
-          const summary =
+          const resultAggregate =
             queryType === 'list'
               ? // todo: add support for pagination
-                `${response.data[operationName]['items'].length}+`
+                `${response.data[operationName]['items'].length}${
+                  response.data[operationName]['pageInfo']?.hasNextPage
+                    ? '+'
+                    : ''
+                }`
               : JSON.stringify(response.data[operationName]['items']);
 
           sendToCopilotEvent('NEW_MESSAGES', [
@@ -423,13 +447,12 @@ export class GraphQlChain extends CogniteBaseChain {
                   selectedDataModel.views.find((el) => el.externalId === type)
                     ?.version || '',
               },
-              content: `Found ${summary} results for ${type}${
+              content: `I found ${resultAggregate} results. ${
                 omitted.length > 0
-                  ? `\n\nNote: We had to omit these filters:\n${omitted
-                      .map((el) => `- ${el.key}: ${el.reason}`)
-                      .join('\n')}`
+                  ? "I wasn't able to process the entire question. "
                   : ''
               }`,
+              summary,
               graphql: { query, variables },
               chain: this.constructor.name,
               actions: [],
@@ -448,7 +471,7 @@ export class GraphQlChain extends CogniteBaseChain {
           });
 
           // assume no aggregate atm
-          const summary =
+          const resultAggregate =
             queryType === 'list'
               ? // todo: add support for pagination
                 `${response.data[operationName]['items'].length}+`
@@ -467,7 +490,7 @@ export class GraphQlChain extends CogniteBaseChain {
                   selectedDataModel.views.find((el) => el.externalId === type)
                     ?.version || '',
               },
-              content: `We were not able to process your query, omitting all filters, we found ${summary} items`,
+              content: `I found ${resultAggregate} results. I wasn't able to process the entire question. `,
               graphql: { query, variables: {} },
               chain: this.constructor.name,
               actions: [],

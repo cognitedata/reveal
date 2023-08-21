@@ -34,6 +34,11 @@ type TableFilterProps = {
   totalCount?: number;
 };
 
+type filterQuery = {
+  governance?: GovernanceStatus[] | undefined;
+  labels?: string[] | undefined;
+};
+
 const TableFilter = ({
   filteredCount,
   labelOptions,
@@ -56,11 +61,12 @@ const TableFilter = ({
   const [searchQuery, setSearchQuery] = useState<string | undefined>(
     searchFilter
   );
+  const [filterQuery, setFilterQuery] = useState<filterQuery>({});
   const debouncedSearchQuery = useDebounce(searchQuery);
 
   useEffect(() => {
-    updateSearchParamState({ search: debouncedSearchQuery });
-  }, [debouncedSearchQuery, updateSearchParamState]);
+    updateSearchParamState({ search: debouncedSearchQuery, ...filterQuery });
+  }, [debouncedSearchQuery, filterQuery]);
 
   const [tempSelectedLabels, setTempSelectedLabels] = useState<
     string[] | undefined
@@ -70,7 +76,7 @@ const TableFilter = ({
   >(governanceFilter);
 
   const handleApply = () => {
-    updateSearchParamState({
+    setFilterQuery({
       governance: tempGovernanceStatus,
       labels: tempSelectedLabels,
     });
@@ -85,25 +91,18 @@ const TableFilter = ({
   const handleClear = () => {
     setTempGovernanceStatus(undefined);
     setTempSelectedLabels(undefined);
-    updateSearchParamState({
-      governance: undefined,
-      labels: undefined,
-    });
+    setFilterQuery({ governance: undefined, labels: undefined });
     setIsVisible(false);
   };
 
   const handleClearLabelFilter = () => {
     setTempSelectedLabels(undefined);
-    updateSearchParamState({
-      labels: undefined,
-    });
+    setFilterQuery({ ...filterQuery, labels: undefined });
   };
 
   const handleClearGovernanceFilter = () => {
     setTempGovernanceStatus(undefined);
-    updateSearchParamState({
-      governance: undefined,
-    });
+    setFilterQuery({ ...filterQuery, governance: undefined });
   };
 
   const handleSelectedLabelChange = (updatedValue: OptionType<string[]>[]) => {
@@ -140,7 +139,7 @@ const TableFilter = ({
               setSearchQuery(searchText);
               trackUsage({ e: 'data.sets.filter', searchText });
             }}
-            value={searchQuery}
+            value={searchQuery || ''}
             fullWidth
             clearable={{ callback: () => setSearchQuery('') }}
           />

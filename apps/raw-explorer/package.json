@@ -1,6 +1,6 @@
 {
   "name": "@cognite/cdf-raw-explorer",
-  "version": "2.4.0",
+  "version": "2.4.1",
   "scripts": {
     "start": "../../scripts/start.sh dev raw-explorer",
     "build": "../../scripts/build.sh production raw-explorer",

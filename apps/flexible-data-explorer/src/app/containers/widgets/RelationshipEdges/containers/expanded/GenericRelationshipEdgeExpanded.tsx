@@ -7,6 +7,7 @@ import { Button } from '@cognite/cogs.js';
 
 import { Table } from '../../../../../components/table/Table';
 import { Widget } from '../../../../../components/widget/Widget';
+import { EMPTY_ARRAY } from '../../../../../constants/object';
 import { useNavigation } from '../../../../../hooks/useNavigation';
 import { useTranslation } from '../../../../../hooks/useTranslation';
 import { useFDM } from '../../../../../providers/FDMProvider';
@@ -60,7 +61,7 @@ export const GenericRelationshipEdgesExpanded: React.FC<
       <Widget.Body state={status} noPadding>
         <Table
           id="relationship-table"
-          data={data}
+          data={data?.items || EMPTY_ARRAY}
           columns={tableColumns}
           onRowClick={(row) => {
             navigate.toInstancePage(type.type, instanceSpace, row.externalId, {

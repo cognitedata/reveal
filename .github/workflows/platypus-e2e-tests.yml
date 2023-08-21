@@ -79,7 +79,7 @@ jobs:
         continue-on-error: false
         env:
           NODE_ENV: mock
-          NODE_OPTIONS: '--max_old_space_size=8192'
+          NODE_OPTIONS: '--max_old_space_size=4096'
         # execute Cypress using a custom test command
         with:
           # let's make sure our tests pass on Chrome browser

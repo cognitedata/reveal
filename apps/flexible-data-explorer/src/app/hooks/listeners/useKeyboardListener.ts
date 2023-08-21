@@ -1,9 +1,11 @@
 import { useEffect } from 'react';
 
-export const useKeyboardListener = (callback?: (event: string) => void) => {
+export const useKeyboardListener = (
+  callback?: (code: string, event: KeyboardEvent) => void
+) => {
   useEffect(() => {
     const handleButton = (event: KeyboardEvent) => {
-      callback?.(event.code);
+      callback?.(event.code, event);
     };
 
     window.addEventListener('keydown', handleButton);

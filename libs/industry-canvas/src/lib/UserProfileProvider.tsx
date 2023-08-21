@@ -19,6 +19,7 @@ export type UserProfile = {
   email?: string;
   displayName?: string;
   jobTitle?: string;
+  pictureUrl?: string;
 };
 
 const getUserProfile = async (client: CogniteClient): Promise<UserProfile> => {

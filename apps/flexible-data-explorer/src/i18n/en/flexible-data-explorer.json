@@ -10,7 +10,8 @@
   "GENERAL_AND": "and",
   "GENERAL_LOAD_MORE": "Load more",
 
-  "HOMEPAGE_HEADER": "Search for data in {{site}}",
+  "HOMEPAGE_HEADER": "Search for data  in {{site}}",
+  "AI_HOMEPAGE_HEADER": "Search for data using AI in {{site}}",
 
   "SEARCH_PLACEHOLDER": "Search...",
   "SEARCH_BAR_SEARCH_FOR": "Search for \"{{query}}\"",
@@ -18,11 +19,12 @@
   "SEARCH_BAR_LIST_ALL": "List all {{type}}",
   "SEARCH_BAR_SEARCH_IN_AI_FOR": "Ask CogPilot about \"{{query}}\"",
   "SEARCH_BAR_EXPERIMENTAL": "EXPERIMENTAL",
+  "SEARCH_BAR_SWITCH_LIST_VIEW": "List view",
+  "SEARCH_BAR_SWITCH_3D_VIEW": "3D view",
 
   "SEARCH_RESULTS_HEADER": "Search results from data in {{site}}",
   "SEARCH_CATEGORIES_HEADER": "Categories",
   "SEARCH_CATEGORIES_ALL_OPTION": "All",
-  "AI_SEARCH_RESULTS_HEADER": "CogPilot has found {{counts}}",
 
   "ONBOARDING_PAGE_TOGGLE_DATA_MODEL_BUTTON": "Please select a Data Model to explore",
 
@@ -95,5 +97,33 @@
   "RELATIONSHIP_DIRECT_WIDGET_TITLE": "Linked {{type}}",
 
   "PREVIEW_CARD_SHOW_ALL_PROPERTIES": "Show all properties",
-  "PREVIEW_CARD_PROPERTIES_TITLE": "Properties"
+  "PREVIEW_CARD_PROPERTIES_TITLE": "Properties",
+
+  "AI_DISCLAIMER": "AI responses can be inaccurate or misleading.",
+  "AI_LABEL_AI_POWERED": "AI Powered",
+  "AI_LABEL_ALPHA": "Alpha",
+  "AI_HELP_ME_FIND": "Help me find",
+  "AI_FIND_IN_FILES": "Find in files",
+  "AI_FIND_IN_FILES_DESC": "AI scans documents to look for answer",
+  "AI_COMING_SOON": "coming soon",
+  "AI_HELP_ME_FIND_DESC": "AI generates filters to find data",
+  "AI_SEARCH_PLACEHOLDER": "Ask your question...",
+  "AI_SEARCH_BAR_SEARCH_FOR": "Help me find \"{{query}}\"",
+  "AI_SUGGESTION_SEARCH_1": "{{prefix}} all {{type}}",
+  "AI_SUGGESTION_SEARCH_2": "{{prefix}} all {{type}} where {{field}} starts with A",
+  "AI_SUGGESTION_SEARCH_3": "{{prefix}} all {{type}} where {{field}} is greater than 0",
+  "AI_EXAMPLES": "Example questions",
+  "AI_FILTER": "Filter",
+  "AI_SEARCH_RESULTS_EMPTY": "I'm sorry, I couldn't find any {{type}}. Could you please provide me with some more info? You can also open the filter to see and edit the search criteria.",
+  "AI_INSPECT_FILTER": "Inspect applied filter",
+  "AI_FILTER_APPLIED": "Filter applied: {{filter}}",
+  "AI_FILTER_ERROR": "Unable to create filter",
+  "AI_SEARCH_RESULTS_GENERATED_DISCLAIMER": "You can inspect and adjust the applied filter or try another search.",
+  "AI_FILTER_CONFIRM_UPDATE": "Update filters and response",
+  "AI_NORMAL_SEARCH_SWITCH": "Search",
+  "AI_AI_SEARCH_SWITCH": "Search using AI",
+  "AI_LOADING_SEARCH": "Searching results...",
+  "AI_LOADING_TEXT_LONG": "{{status}} this may take a while. You can use the standard search if this takes too long.",
+  "AI_LOADING_TEXT": "{{status}} this may take a while.",
+  "AI_LEARN_MORE": "Learn more"
 }

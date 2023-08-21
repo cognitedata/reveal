@@ -1,14 +1,12 @@
 import React from 'react';
 
-import { ComponentStory } from '@storybook/react';
-
 import { UserProfile } from '../../../lib/UserProfileProvider';
 import { Comment } from '../../services/comments/types';
 
 import { CommentsPane } from './CommentsPane';
 
 export default {
-  title: 'Containers/Comments Pane Story',
+  title: 'Containers/Comments Pane',
   component: CommentsPane,
 };
 
@@ -65,24 +63,22 @@ const users: UserProfile[] = [
   },
 ];
 
-export const CommentsPaneLoadingStory: ComponentStory<
-  typeof CommentsPane
-> = () => {
+export const Default = () => {
   return (
     <CommentsPane
       comments={comments}
-      isLoading={true}
+      isLoading={false}
       onCloseCommentsPane={() => console.log('comments pane closed')}
       users={users}
     />
   );
 };
 
-export const CommentsPaneStory: ComponentStory<typeof CommentsPane> = () => {
+export const Loading = () => {
   return (
     <CommentsPane
       comments={comments}
-      isLoading={false}
+      isLoading={true}
       onCloseCommentsPane={() => console.log('comments pane closed')}
       users={users}
     />

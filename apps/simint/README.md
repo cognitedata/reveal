@@ -17,14 +17,13 @@ https://cognitedata.atlassian.net/wiki/spaces/CE/pages/3682697292/...create+a+ne
 6. Override using `https://localhost:3010/index.js` (port might differ depending on your local settings)
 7. Click `Apply override` and refresh ✨
 
-## Running application against mock server
+## Running application against local simconfig-api
 
-1. Start your app by passing the configuration parameter
+1. Start your app with the NX_REACT_APP_LOCAL_SERVICE environment variable
    ```
-   NODE_ENV=mock nx serve simint --configuration mock
+   NX_REACT_APP_LOCAL_SERVICE=true yarn nx run simint:start
    ```
-2. Start the mock server `nx serve mock-server`
-3. Open browser on `https://localhost:3001/test-app`
+2. [Start the simconfig-api](https://github.com/cognitedata/application-services/tree/master/services/simconfig-api#how-do-i-run-this-service-using-https) in a separate terminal window and be sure to use https
 
 ## Troubleshooting
 

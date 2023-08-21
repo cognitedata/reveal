@@ -20,7 +20,8 @@ export const AuthContainer = (props: AppWrapperProps) => {
   const sdkClient = createSdkClient(
     {
       appId: tokenProvider.getAppId(),
-      getToken: async () => 'mock',
+      getToken: async () =>
+        window.testAuthOverrides ? (window as any).testAuthOverrides() : 'mock',
       baseUrl: window.location.origin,
       project: 'platypus',
     },

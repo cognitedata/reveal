@@ -18,6 +18,7 @@ import { Chip, Menu } from '@cognite/cogs.js';
 import { SDKProvider } from '@cognite/sdk-provider';
 
 import { getCogniteSDKClient } from '../../../../../../environments/cogniteSdk';
+import { CustomDataTypes } from '../DataPreviewTable/collapsible-panel-container';
 
 import { RelationNode } from './RelationNode';
 import { getNodeId, getRelationLinkId, getRelationshipsForData } from './utils';
@@ -100,7 +101,11 @@ export const RelationViewer = <
               );
               const fields =
                 itemType?.fields.filter(
-                  (el) => el.type.custom || el.type.name === 'TimeSeries'
+                  (el) =>
+                    el.type.custom ||
+                    el.type.name === 'TimeSeries' ||
+                    el.type.name === 'Sequence' ||
+                    el.type.name === 'File'
                 ) || [];
               const newNodes = new Map<
                 string,
@@ -108,10 +113,17 @@ export const RelationViewer = <
               >();
               const newLinks = new Map();
               for (const field of fields) {
-                (field.type.list
-                  ? item[field.name].items
-                  : [item[field.name]]
-                ).forEach((el: T) => {
+                let items: any[] = [];
+                if (field.type.list) {
+                  if (CustomDataTypes.includes(field.type.name)) {
+                    items = item[field.name] || [];
+                  } else {
+                    items = (item[field.name] || { items: [] }).items;
+                  }
+                } else {
+                  items = [item[field.name]];
+                }
+                items.forEach((el: T) => {
                   if (!el) {
                     return;
                   }

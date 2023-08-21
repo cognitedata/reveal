@@ -24,14 +24,12 @@ A good starting point to understand how the current solution works is to read th
 You can read more here:
 https://cognitedata.atlassian.net/wiki/spaces/CE/pages/3613917310/Fusion+as+a+unified+Platform+UI
 
-The current solution is developed to support deployments to both `fusion.cognite.com` and `apps.cognite.com/cdf`. Fusion one is deprecated and will be removed in near future.
-
 ## Working on the host application
 
 If you need to work on a part of the app that is using single-spa, here are the most important files for single-spa:
 
 - `src/app/single-spa` - folder that contains everything related for single-spa
-- `src/apps-manigest.json` - JSON file that contains all information about apps, routes, app name...etc.
+- `src/apps-manifest.json` - JSON file that contains information about all sub-apps, routes and the type of app.
 - `src/import-map.json` - JSON file that contains import map for core libs like react, sdk-singleton...etc.
 - `src/sub-apps-import-map.json` - JSON file that contains import map for sub-apps. This is a manifest file, the actual file is generated on compile time/on fly. It points to a virtual file paths that are resolved by a proxy server.
 
@@ -115,32 +113,30 @@ You can also serve the app against mock environment.
 
 1. Start the mock server `nx serve mock-server`
 2. Start the app using mock env `nx serve fusion-shell --configuration=mock`
-3. Navigate to `https://localhost:8080/cdf/platypus?cluster=greenfield.cognitedata.com&organization=cog-appdev`
+3. Navigate to `http://localhost:8080/platypus?cluster=greenfield.cognitedata.com&organization=cog-appdev`
 
-`Note: When running locally, we are configuring the proxy for the sub-apps in the webpack-dev-server. This is the same proxy for firebase functions when app is deplyed on prod/staging`
+**Caveats**
+When running serve command, it will use `cog-appdev` org as default. Additionally, because the login app is not in the monorepo it is pulled from production (cog-demo.fusion.com) and it is missing some of the images as well as you will get an error from React about missing cluster info. This is fine, just close the error and you should be able to login. We will fix this soon and get rid of `_api/login_info` call which will enable us to run the app everywhere.
 
 ## Serving the build
 
 If you want preview and test the build from `staging, preview, prod` environments
 
-1. Run `nx run fusion-shell:serve-static` - this will build the app first and then run local server
-2. Navigate to `http://localhost:8080/cdf/platypus?cluster=greenfield.cognitedata.com&organization=cog-appdev`
+1. Build the app `nx build fusion-shell --configuration=staging`
+2. Run `nx run fusion-shell:serve-static:staging` - this will build the app first and then run local server
+3. Navigate to `http://localhost:8080/platypus?cluster=greenfield.cognitedata.com&organization=cog-appdev`
 
-`Note: API requests will be forwarded to mock server or you need to login to test the API calls`
+**Caveats**
+When serving the static files, it will use `cog-appdev` org as default.
+Additionally, because the login app is not in the monorepo it is pulled from production (cog-demo.fusion.com) and it is missing some of the images as well as you will get an error from React about missing cluster info. This is fine, just close the error and you should be able to login.
 
-## Firebase functions and emulators
+If you want to test with another org, pass additional arg.
+Here is an example how to do that
 
-For fusion-shell, we are using firebase functions (cdfProxy) for proxying the calls to sub-apps.
-The goal that we want to achieve is to be able to deploy sub-apps without redeploying host-app and serve them from firebase.
-The proxy is needed because we need to serve the scripts and static files from same domain and also we don't want to expose the firebase domain for sub-apps.
+`nx run fusion-shell:serve-static:staging --args='--configuration=staging --organization=cog-demo'`
 
-To test locally how the app is going to work in firebase follow this steps:
-
-- Install `firebase-tools` globally
-- Build fusion shell `nx build fusion-shell`
-- Login to firebase `firebase login` (optional)
-- Edit firebase.json and change "hosting->site" to `"public": "../../dist/apps/fusion-shell",`
-- Run `firebase emulators:start` and open http://localhost:8080/cdf/platypus in browser
+Here is the code where this is being assigned.
+`apps/fusion-shell/tools/static-file-server.js`
 
 # Deployments
 
@@ -156,14 +152,7 @@ We are supporting fusion and unified sign-in environments.
 | next-release | `apps/fusion-shell/src/environments/fusion/next-release/environment.next-release.ts` | [next-release.cognite.com](https://next-release.fusion.cognite.com) |
 | staging      | `apps/fusion-shell/src/environments/fusion/next-release/environment.next-release.ts` | [staging.fusion.cognite.com](https://staging.fusion.cognite.com)    |
 | production   | `apps/fusion-shell/src/environments/fusion/production/environment.prod.ts`           | [fusion.cognite.com](https://fusion.cognite.com)                    |
-
-**Unifed Signin environments**
-
-| Env Name   | Env file location                                                                       | URL                                                              |
-| ---------- | --------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
-| staging    | `apps/fusion-shell/src/environments/unified-signin/next-release/environment.staging.ts` | [apps-staging.cognite.com](https://apps-staging.cognite.com/cdf) |
-| preview    | `apps/fusion-shell/src/environments/unified-signin/preview/environment.preview.ts`      | [apps-preview.cognite.com](https://apps-preview.cognite.com/cdf) |
-| production | `apps/fusion-shell/src/environments/unified-signin/production/environment.prod.ts`      | [apps.cognite.com](https://apps.cognite.com/cdf)                 |
+|              |
 
 ## Sub-Applications
 
@@ -195,3 +184,46 @@ The map can be found in the Jenkins file on root.
 
 The host app uses virtual paths to resolve the sub-app files. They are served directly from Firebase.
 To revert, go to firebase console and revert the deployment directly from there.
+
+# E2E tests
+
+E2E tests are running on CI where we have the clientId and clientSecret as repository secrets available so that we can get access token.
+The token is fetched before cypress tests are started and is valid for the whole session. The code is here:
+`apps/fusion-shell/cypress.config.ts`
+
+After we get the access token, we are injecting a global function (testAuthOverrides) to the window object. This function later is used by the `cdf-sdk-sigleton` and it is returning the token mentioned from above.
+The code for that is here:
+`apps/fusion-shell/cypress/support/injectToken.ts`
+
+Finally, on the application side, the app is running with `mock` environemnt, which is not using the AuthWrapper that does the authentication, but rather the one from `apps/fusion-shell/src/environments/mock/AuthContainer.tsx`.
+Here, we are skipping the login screen and simulating that the user is authenticated. Under the hood it uses the `window.testAuthOverrides` mentioned above and is initializing the CogniteSdk client.
+
+If you want to run cypress test locally, or run mock env with mocked access token, you will need to generate clientId/ClientSecret.
+
+Get the clientId/ClientSecret from `cog-dss` (data science team, ask someone from data-exploration to send you an invite). use [this guide](../platypus-cdf-cli/LOGIN.md) to create clientId/ClientSecret
+
+After this step, you can run cypress. This is the command that is executed on CI
+`PROJECT=dss-dev TENANT=dssbycognite.onmicrosoft.com CLUSTER=greenfield DATA_EXPLORER_CLIENT_ID=<your-client-id> DATA_EXPLORER_CLIENT_SECRET=<your-client-secret> USE_MOCK_API=false yarn nx run fusion-shell:e2e:e2e --watch`
+
+If you want to debug and run fusion-shell using `mock` env with your clientId/ClientSecret, do the following:
+
+- run cypress using the command above and console log the token [here](apps/fusion-shell/cypress.config.ts)
+- Modify `bootstrap.tsx` and add the following code
+
+```ts
+window.testAuthOverrides = {
+  getToken: async () => {
+    return '<the-access-token-from-console-log>';
+  },
+};
+
+window.localStorage.setItem(
+  '@cognite/auth-react/login-hints',
+  '{"organization":"cog-appdev","idpInternalId":"a5bc6507-2644-4004-87eb-efdb3124e3e2","cluster":"greenfield.cognitedata.com","project":"platypus"}'
+);
+```
+
+Finally run mock-server and fusion-shell
+
+- `nx serve mock-server`
+- `PROJECT=dss-dev TENANT=dssbycognite.onmicrosoft.com CLUSTER=greenfield DATA_EXPLORER_CLIENT_ID=<your-client-id> DATA_EXPLORER_CLIENT_SECRET=<your-client-secret> USE_MOCK_API=false yarn nx run fusion-shell:serve:e2e`

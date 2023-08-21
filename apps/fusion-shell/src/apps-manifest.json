@@ -120,7 +120,11 @@
       "key": "cdf-contextualization-ui",
       "appName": "@cognite/cdf-contextualization-ui",
       "appType": "single-spa",
-      "versionSpec": "^0.1.0",
+      "hosting": {
+        "staging": "https://cdf-contextualization-ui-staging.web.app",
+        "preview": "https://cdf-contextualization-ui-preview.web.app",
+        "production": "https://cdf-contextualization-ui-prod.web.app"
+      },
       "routes": [
         { "route": "/:tenantName/contextualization" },
         { "route": "/:applicationName/:tenantName/contextualization" }
@@ -343,7 +347,7 @@
       "appName": "@cognite/cdf-raw-explorer",
       "appType": "single-spa",
       "hosting": {
-        "staging": "https://cdf-raw-explorer-prod.web.app",
+        "staging": "https://cdf-raw-explorer-staging.web.app",
         "preview": "https://cdf-raw-explorer-preview.web.app",
         "production": "https://cdf-raw-explorer-prod.web.app"
       },

@@ -1,4 +1,6 @@
 const { mockEnvProxyConfig } = require('./proxy-config-utils');
+var fetch = require('node-fetch');
+
 const {
   generateSubAppsImportMap,
   generateAppsRuntimeManifest,
@@ -7,8 +9,10 @@ const {
 function generateWebpackDevServerConfig(
   config,
   subAppsConfig,
+  importMaps,
   importMapsEnv,
-  publicPath
+  publicPath,
+  useMockApis = true
 ) {
   const subAppsImportMap = generateSubAppsImportMap(
     subAppsConfig,
@@ -27,10 +31,8 @@ function generateWebpackDevServerConfig(
     'Content-Security-Policy': generateCSPHeader(subAppsConfig, importMapsEnv),
   };
 
-  // The idea is to configure the proxy to load the sub-apps from firebase
-  // https://webpack.js.org/configuration/dev-server/#devserverproxy
   config.devServer.proxy = {
-    ...mockEnvProxyConfig,
+    ...(useMockApis ? mockEnvProxyConfig : {}),
     '/_api/login_info': {
       target:
         'https://app-login-configuration-lookup.cognite.ai/fusion-dev/cog-appdev',
@@ -63,10 +65,41 @@ function generateWebpackDevServerConfig(
     devServer.app.get(`${publicPath}apps-manifest.json`, (_, response) => {
       response.json(subAppsRuntimeManifest);
     });
+
+    appendLoginAppRoutes(devServer.app, importMaps);
+
     return middlewares;
   };
 }
 
+function appendLoginAppRoutes(app, importMaps) {
+  // inject the login app in the import-map.json
+  app.get(`/import-map.json`, function (req, res) {
+    importMaps.imports[
+      '@cognite/login-page'
+    ] = `https://localhost:8080/apps/cdf-hub-login-page/index.js`;
+    res.json(importMaps);
+  });
+
+  // download the script for login page from prod
+  // we don't have the login app locally
+  app.get('/apps/cdf-hub-login-page/index.js', function (req, res) {
+    fetch('https://cog-demo.fusion.cognite.com/import-map.json')
+      .then((res) => res.json())
+      .then((fusionImportMaps) =>
+        fetch(
+          `https://cog-demo.fusion.cognite.com${fusionImportMaps.imports['@cognite/login-page']}`
+        )
+      )
+      .then((res) => res.text())
+      .then((text) => {
+        res.set('Content-Type', 'application/javascript');
+        res.send(text);
+      });
+  });
+}
+
 module.exports = {
   generateWebpackDevServerConfig,
+  appendLoginAppRoutes,
 };

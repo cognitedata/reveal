@@ -11,6 +11,7 @@ import {
   TypeProperties,
   DirectProperties,
   DateProperties,
+  TypeVersions,
 } from './schema';
 
 import types from './types';
@@ -58,7 +59,7 @@ export class FDMQueryClient {
               type: 'view',
               space: SPACE,
               externalId: type,
-              version: DM_VERSION,
+              version: TypeVersions[type as string],
             },
             properties: DateProperties[type].reduce(
               (prev, curKey) => {

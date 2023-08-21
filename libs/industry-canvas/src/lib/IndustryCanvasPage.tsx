@@ -57,6 +57,7 @@ import {
   ZOOM_TO_FIT_MARGIN,
 } from './constants';
 import { CommentsPane } from './containers';
+import { useAuth2InvitationsByResource } from './hooks/use-query/useAuth2InvitationsByResource';
 import { useUsers } from './hooks/use-query/useUsers';
 import useCanvasVisibility from './hooks/useCanvasVisibility';
 import { useDragAndDrop } from './hooks/useDragAndDrop';
@@ -194,10 +195,20 @@ export const IndustryCanvasPage = () => {
   });
 
   useTrackCanvasViewed(activeCanvas);
-  const canCurrentUserSeeCanvas = activeCanvas
-    ? activeCanvas.visibility === CanvasVisibility.PUBLIC ||
-      userProfile.userIdentifier === activeCanvas.createdBy
-    : true;
+
+  const { invitationsByResource, isFetched: isInvitationsByResourceFetched } =
+    useAuth2InvitationsByResource({
+      externalId: activeCanvas?.externalId,
+    });
+  const isUserProfileInvitedToCanvas = invitationsByResource.some(
+    (invitedUser) => invitedUser.userIdentifier === userProfile.userIdentifier
+  );
+  const canCurrentUserSeeCanvas =
+    activeCanvas && isInvitationsByResourceFetched
+      ? activeCanvas.visibility === CanvasVisibility.PUBLIC ||
+        userProfile.userIdentifier === activeCanvas.createdBy ||
+        isUserProfileInvitedToCanvas
+      : true;
 
   // if comments is not enabled then return empty, hiding all comments for that project (even if canvas had comments before)
   const commentAnnotations = useMemo(
@@ -245,6 +256,7 @@ export const IndustryCanvasPage = () => {
     resourceSelectorFilter,
     initialSelectedResource,
     initialTab,
+    shouldOnlyShowPreviewPane,
   } = useResourceSelectorActions();
 
   const { onUpdateSelectedAnnotation } = useOnUpdateSelectedAnnotation({
@@ -861,6 +873,7 @@ export const IndustryCanvasPage = () => {
             initialSelectedResource={initialSelectedResource}
             addButtonText="Add to canvas"
             shouldShowPreviews={false}
+            shouldOnlyShowPreviewPane={shouldOnlyShowPreviewPane}
           />
         )}
         {!isResourceSelectorOpen && isCommentsPaneOpen && (

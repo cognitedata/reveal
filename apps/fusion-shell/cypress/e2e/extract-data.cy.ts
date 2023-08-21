@@ -1,0 +1,9 @@
+describe('Extract data page', () => {
+  beforeEach(() => {
+    cy.navigate('extractors');
+  });
+
+  it('Should open Extract data page', () => {
+    cy.get('h2.cogs-title-2', { timeout: 20000 }).contains(/Extract data/);
+  });
+});

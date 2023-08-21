@@ -89,19 +89,22 @@ export const newChain = (
 
   const defaultChain = createDefaultChain(model);
 
-  return new MultiPromptChain({
-    routerChain,
-    destinationChains: chains,
-    defaultChain,
-    callbacks: [
-      {
-        handleChainStart(chain) {
-          console.log('chain started', chain);
+  return {
+    base: new MultiPromptChain({
+      routerChain,
+      destinationChains: chains,
+      defaultChain,
+      callbacks: [
+        {
+          handleChainStart(chain) {
+            console.log('chain started', chain);
+          },
+          handleChainEnd(chain, output) {
+            console.log('chain ended', chain, output);
+          },
         },
-        handleChainEnd(chain, output) {
-          console.log('chain ended', chain, output);
-        },
-      },
-    ],
-  });
+      ],
+    }),
+    chains,
+  };
 };

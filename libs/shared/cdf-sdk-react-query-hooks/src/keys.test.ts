@@ -98,6 +98,7 @@ describe('CDF SDK Cache keys', () => {
       'list',
       'infinite',
       { filter },
+      { config: undefined },
     ]);
     expect(Keys.infiniteListCacheKey('assets')).toEqual([
       'sdk-react-query-hooks',
@@ -106,6 +107,7 @@ describe('CDF SDK Cache keys', () => {
       'list',
       'infinite',
       { filter: undefined },
+      { config: undefined },
     ]);
   });
   test('byIdKey', () => {
@@ -206,6 +208,7 @@ describe('CDF SDK Cache keys', () => {
       'infinite',
       { query: 'PT' },
       { filter: undefined },
+      { config: undefined },
     ]);
     expect(Keys.infiniteSearchCacheKey('assets', 'PT', filter)).toEqual([
       'sdk-react-query-hooks',
@@ -215,6 +218,7 @@ describe('CDF SDK Cache keys', () => {
       'infinite',
       { query: 'PT' },
       { filter },
+      { config: undefined },
     ]);
 
     expect(Keys.infiniteSearchCacheKey('sequences', 'PT')).toEqual([
@@ -225,6 +229,7 @@ describe('CDF SDK Cache keys', () => {
       'infinite',
       { query: 'PT' },
       { filter: undefined },
+      { config: undefined },
     ]);
     expect(Keys.infiniteSearchCacheKey('sequences', 'PT', filter)).toEqual([
       'sdk-react-query-hooks',
@@ -234,6 +239,7 @@ describe('CDF SDK Cache keys', () => {
       'infinite',
       { query: 'PT' },
       { filter },
+      { config: undefined },
     ]);
   });
 });

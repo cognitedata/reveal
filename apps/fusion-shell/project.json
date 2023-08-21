@@ -10,9 +10,9 @@
       "defaultConfiguration": "production",
       "options": {
         "compiler": "babel",
-        "outputPath": "dist/apps/fusion-shell/cdf",
+        "outputPath": "dist/apps/fusion-shell",
         "index": "apps/fusion-shell/src/index.html",
-        "baseHref": "/cdf/",
+        "baseHref": "/",
         "main": "apps/fusion-shell/src/main.tsx",
         "polyfills": "apps/fusion-shell/src/polyfills.ts",
         "tsConfig": "apps/fusion-shell/tsconfig.app.json",
@@ -45,7 +45,7 @@
           "fileReplacements": [
             {
               "replace": "apps/fusion-shell/src/environments/environment.ts",
-              "with": "apps/fusion-shell/src/environments/unified-signin/staging/environment.staging.ts"
+              "with": "apps/fusion-shell/src/environments/staging/environment.staging.ts"
             }
           ]
         },
@@ -60,11 +60,11 @@
           "fileReplacements": [
             {
               "replace": "apps/fusion-shell/src/environments/environment.ts",
-              "with": "apps/fusion-shell/src/environments/unified-signin/preview/environment.preview.ts"
+              "with": "apps/fusion-shell/src/environments/preview/environment.preview.ts"
             },
             {
               "replace": "apps/fusion-shell/src/app/DynamicRoutes.tsx",
-              "with": "apps/fusion-shell/src/environments/unified-signin/preview/DynamicRoutes.tsx"
+              "with": "apps/fusion-shell/src/environments/preview/DynamicRoutes.tsx"
             }
           ]
         },
@@ -78,11 +78,11 @@
           "fileReplacements": [
             {
               "replace": "apps/fusion-shell/src/environments/environment.ts",
-              "with": "apps/fusion-shell/src/environments/unified-signin/production/environment.prod.ts"
+              "with": "apps/fusion-shell/src/environments/production/environment.prod.ts"
             },
             {
               "replace": "apps/fusion-shell/src/index.html",
-              "with": "apps/fusion-shell/src/environments/unified-signin/production/index.html"
+              "with": "apps/fusion-shell/src/environments/production/index.html"
             }
           ]
         },
@@ -127,7 +127,7 @@
             "forwardAllArgs": true
           },
           {
-            "command": "./apps/fusion-shell/tools/scripts/fusion-post-build.sh {args.configuration} {args.build_mode}",
+            "command": "./apps/fusion-shell/tools/scripts/fusion-post-build.sh {args.configuration}",
             "description": "Running post build script",
             "forwardAllArgs": true
           }
@@ -137,16 +137,16 @@
       "dependsOn": ["^internal-build"],
       "configurations": {
         "staging": {
-          "args": "--configuration=staging --build_mode=cdf"
+          "args": "--configuration=staging"
         },
         "preview": {
-          "args": "--configuration=preview --build_mode=cdf"
+          "args": "--configuration=preview"
         },
         "production": {
-          "args": "--configuration=production --build_mode=cdf"
+          "args": "--configuration=production"
         },
         "mock": {
-          "args": "--configuration=mock --build_mode=cdf"
+          "args": "--configuration=mock"
         }
       },
       "defaultConfiguration": "staging"
@@ -158,7 +158,7 @@
         "buildTarget": "fusion-shell:build",
         "port": 8080,
         "ssl": true,
-        "allowedHosts": ".dev.fusion.cogniteapp.com,apps-staging.cognite.com,all"
+        "allowedHosts": ".dev.fusion.cogniteapp.com,all"
       },
       "configurations": {
         "staging": {
@@ -175,7 +175,13 @@
         },
         "mock": {
           "buildTarget": "fusion-shell:internal-build:mock",
-          "hmr": true
+          "hmr": true,
+          "ssl": true
+        },
+        "e2e": {
+          "buildTarget": "fusion-shell:internal-build:mock",
+          "hmr": true,
+          "ssl": true
         }
       }
     },
@@ -183,21 +189,21 @@
       "executor": "nx:run-commands",
       "defaultConfiguration": "staging",
       "options": {
-        "command": "node apps/fusion-shell/tools/static-file-server.js {args.port} {args.ssl} {args.build_mode} {args.configuration}",
+        "command": "node apps/fusion-shell/tools/static-file-server.js 8080 true {args.configuration} {args.organization}",
         "forwardAllArgs": true
       },
       "configurations": {
         "staging": {
           "buildTarget": "fusion-shell:build:staging",
-          "args": "--port=8080 --ssl=true --configuration=staging --build_mode=cdf"
+          "args": "--configuration=staging --organization=cog-appdev"
         },
         "preview": {
           "buildTarget": "fusion-shell:build:preview",
-          "args": "--port=8080 --ssl=true --configuration=preview --build_mode=cdf"
+          "args": "--configuration=preview --organization=cog-appdev"
         },
         "production": {
           "buildTarget": "fusion-shell:build:production",
-          "args": "--port=8080 --ssl=true --configuration=production --build_mode=cdf"
+          "args": "--configuration=production --organization=cog-appdev"
         }
       }
     },
@@ -222,6 +228,29 @@
           "codeCoverage": true
         }
       }
+    },
+    "e2e": {
+      "executor": "@nx/cypress:cypress",
+      "options": {
+        "cypressConfig": "apps/fusion-shell/cypress.config.ts",
+        "testingType": "e2e",
+        "devServerTarget": "fusion-shell:serve:e2e"
+      },
+      "configurations": {
+        "staging": {
+          "devServerTarget": "fusion-shell:serve:e2e",
+          "env": {
+            "USE_MOCK_API": false
+          }
+        },
+        "e2e": {
+          "devServerTarget": "fusion-shell:serve:e2e",
+          "env": {
+            "USE_MOCK_API": false
+          }
+        }
+      },
+      "defaultConfiguration": "staging"
     }
   },
   "tags": [],

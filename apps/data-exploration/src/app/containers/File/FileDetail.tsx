@@ -34,6 +34,9 @@ import {
   SUB_APP_PATH,
   createInternalLink,
 } from '@data-exploration-lib/core';
+import { useFileAnnotationsResourceIds } from '@data-exploration-lib/domain-layer';
+
+import { AllTab } from '../All';
 
 // FilePreviewTabType;
 // - preview
@@ -99,6 +102,10 @@ export const FileDetail = ({
     }
   }, [isActive, resourcesState, fileId, setResourcesState]);
 
+  const { data: annotationList } = useFileAnnotationsResourceIds({
+    id: fileId,
+  });
+
   useEffect(() => {
     trackUsage('Exploration.Preview.File', { fileId });
     setEditMode(false);
@@ -147,6 +154,12 @@ export const FileDetail = ({
       <>{t('FILE_ID_NOT_FOUND', `File ${fileId} not found!`, { fileId })}</>
     );
   }
+
+  const filter = {
+    assetSubtreeIds: fileInfo.assetIds
+      ? fileInfo.assetIds.map((id) => ({ value: id }))
+      : [],
+  };
 
   return (
     <>
@@ -205,6 +218,20 @@ export const FileDetail = ({
               <FileInfo file={fileInfo} />
               <Metadata metadata={fileInfo.metadata} />
             </DetailsTabWrapper>
+          </Tabs.Tab>,
+          <Tabs.Tab
+            label={t('ALL_RESOURCES', 'All resources')}
+            key="all-resources"
+            tabKey="all-resources"
+          >
+            <AllTab
+              filters={{
+                asset: filter,
+              }}
+              selectedResourceExternalId={fileInfo.externalId}
+              setCurrentResourceType={(type) => type && setSelectedTab(type)}
+              resourceAnnotationList={annotationList}
+            />
           </Tabs.Tab>,
         ]}
       />

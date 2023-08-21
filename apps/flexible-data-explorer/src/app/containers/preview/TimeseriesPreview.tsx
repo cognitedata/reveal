@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
 
 import { Button } from '@cognite/cogs.js';
-import {
-  TimeseriesChart,
-  DEFAULT_DATE_RANGE,
-} from '@cognite/plotting-components';
+import { DEFAULT_DATE_RANGE } from '@cognite/plotting-components';
 
 import { Dropdown } from '../../components/dropdown/Dropdown';
 import { Spinner } from '../../components/loader/Spinner';
@@ -12,10 +9,10 @@ import { useNavigation } from '../../hooks/useNavigation';
 import { useOpenIn } from '../../hooks/useOpenIn';
 import { useTranslation } from '../../hooks/useTranslation';
 import { useTimeseriesByIdQuery } from '../../services/instances/timeseries/queries/useTimeseriesByIdQuery';
-import { isNumeric } from '../../utils/number';
 
 import { Overview } from './containers/Overview';
 import { PropertiesView } from './containers/PropertiesView';
+import { TimeSeriesViewer } from './containers/Viewers/TimeSeriesViewer';
 import {
   InstancePreviewContainer,
   InstancePreviewContent,
@@ -27,14 +24,6 @@ import { PreviewView } from './types';
 interface Props {
   id: string | number;
 }
-
-const getTimeseriesId = (id: string | number) => {
-  if (typeof id === 'number' || isNumeric(id)) {
-    return { id: Number(id) };
-  }
-
-  return { externalId: id };
-};
 
 export const TimeseriesPreview: React.FC<Props> = ({ id }) => {
   const { t } = useTranslation();
@@ -78,19 +67,8 @@ export const TimeseriesPreview: React.FC<Props> = ({ id }) => {
 
   return (
     <InstancePreviewContainer>
-      <TimeseriesChart
-        timeseries={getTimeseriesId(id)}
-        variant="small"
-        numberOfPoints={100}
-        height={140}
-        styles={{
-          width: 300,
-        }}
-        dataFetchOptions={{
-          mode: 'aggregate',
-        }}
-        autoRange
-      />
+      <TimeSeriesViewer id={id} />
+
       <InstancePreviewContent>{renderContent()}</InstancePreviewContent>
 
       <InstancePreviewFooter>

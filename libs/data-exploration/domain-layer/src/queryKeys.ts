@@ -211,8 +211,17 @@ export const queryKeys = {
   documentsSearch: (
     filter?: any,
     localLimit?: number,
-    sort?: DocumentSortItem[]
-  ) => [...queryKeys.documents(), 'search', filter, localLimit, sort] as const,
+    sort?: DocumentSortItem[],
+    options?: any
+  ) =>
+    [
+      ...queryKeys.documents(),
+      'search',
+      filter,
+      localLimit,
+      sort,
+      options,
+    ] as const,
   documentsAggregate: () => [...queryKeys.documents(), 'aggregates'] as const,
   documentsAggregateCount: () =>
     [...queryKeys.documentsAggregate(), 'count'] as const,
@@ -323,6 +332,9 @@ export const queryKeys = {
       resourceType,
       ...(resourceIds || []),
     ] as const,
+
+  labels: () => [...queryKeys.all, 'labels'] as const,
+  allLabels: () => [...queryKeys.labels(), 'all'] as const,
 
   // Industry Canvas
   canvas: () => [...queryKeys.all, 'canvas'] as const,

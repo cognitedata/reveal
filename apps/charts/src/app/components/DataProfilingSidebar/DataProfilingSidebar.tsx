@@ -203,7 +203,7 @@ const DataProfilingSidebar: FunctionComponent<Props> = ({
       <ContentOverflowWrapper>
         <ContentContainer>
           {/* Source selector */}
-          <SidebarFormLabel>
+          <SidebarFormLabel $first>
             <b>{t.Source}</b>
           </SidebarFormLabel>
           <SourceSelector onChange={setSelectedSource} value={selectedSource} />
@@ -254,9 +254,9 @@ const DataProfilingSidebar: FunctionComponent<Props> = ({
             <>
               {/* Details block to display the profiling data */}
               <BlockSpacer>
-                <p>
+                <SidebarFormLabel>
                   <b>{t.Gaps}</b>
-                </p>
+                </SidebarFormLabel>
                 <Metrics
                   dataSource={[
                     {
@@ -299,9 +299,9 @@ const DataProfilingSidebar: FunctionComponent<Props> = ({
               </BlockSpacer>
 
               <BlockSpacer>
-                <p>
+                <SidebarFormLabel>
                   <b>{t['Time Delta']}</b>
-                </p>
+                </SidebarFormLabel>
                 <Metrics
                   dataSource={[
                     {
@@ -331,9 +331,9 @@ const DataProfilingSidebar: FunctionComponent<Props> = ({
               </BlockSpacer>
 
               <BlockSpacer>
-                <p>
+                <SidebarFormLabel>
                   <b>{t['Data Points']}</b>
-                </p>
+                </SidebarFormLabel>
                 <Metrics
                   dataSource={[
                     {

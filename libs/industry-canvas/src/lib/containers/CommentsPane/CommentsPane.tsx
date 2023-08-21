@@ -8,7 +8,9 @@ import { Button, Icon, Input, Heading } from '@cognite/cogs.js';
 
 import { useCommentsPaneSearch } from '../../../lib/hooks/useCommentsPaneSearch';
 import { UserProfile } from '../../../lib/UserProfileProvider';
+import { translationKeys } from '../../common';
 import { CommentDisplay } from '../../components/comment/CommentDisplay';
+import { useTranslation } from '../../hooks/useTranslation';
 import { Comment } from '../../services/comments/types';
 
 const SEARCH_DEBOUNCE_MS = 200;
@@ -26,6 +28,8 @@ export const CommentsPane: React.FC<Props> = ({
   onCloseCommentsPane,
   users,
 }) => {
+  const { t } = useTranslation();
+
   const textIsNotEmpty = (comment: Comment) => comment.text !== '';
 
   const commentCount = comments.filter(textIsNotEmpty).length;
@@ -77,7 +81,10 @@ export const CommentsPane: React.FC<Props> = ({
           <StyledInput
             onChange={(ev) => setSearchString(ev.target.value)}
             value={searchString}
-            placeholder="Search..."
+            placeholder={t(
+              translationKeys.SEARCH_INPUT_PLACEHOLDER,
+              'Search...'
+            )}
           />
         </InputWrapper>
       </HeaderWrapper>

@@ -4,19 +4,9 @@
 function generateImportMapOverridesDependenciesPaths(
   importMapJson,
   versionHash,
-  basePath = '/cdf/'
+  basePath = '/'
 ) {
   const importMap = importMapJson;
-
-  // if fusion, remove /cdf/ prefix
-  if (basePath === '/') {
-    for (var key in importMap.imports) {
-      importMap.imports[key] = importMap.imports[key].replace(
-        /^\/cdf\//gim,
-        '/'
-      );
-    }
-  }
 
   // Replace our internal dependencies with the latest version that we built
   importMap.imports[
@@ -90,9 +80,10 @@ function generateSubAppsImportMap(subAppsConfig, hostingEnv = 'staging') {
 function generateAppsRuntimeManifest(subAppsConfig, hostingEnv = 'staging') {
   const subAppsImportMap = [];
 
-  subAppsConfig.apps
-    .filter((subAppConfig) => subAppConfig.hosting)
-    .forEach((subAppConfig) => {
+  subAppsConfig.apps.forEach((subAppConfig) => {
+    if (subAppConfig.versionSpec) {
+      subAppsImportMap.push(subAppConfig);
+    } else {
       // Map to the proxy url for each sub-app.
       subAppsImportMap[
         subAppConfig.key
@@ -108,7 +99,8 @@ function generateAppsRuntimeManifest(subAppsConfig, hostingEnv = 'staging') {
         url: subAppConfig.hosting[hostingEnv],
         routes: subAppConfig.routes,
       });
-    });
+    }
+  });
 
   return {
     apps: subAppsImportMap,

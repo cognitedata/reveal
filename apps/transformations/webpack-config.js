@@ -15,7 +15,9 @@ module.exports = composePlugins(
     config.resolve.mainFields = ['browser', 'module', 'main'];
     config.resolve.fallback = { path: require.resolve('path-browserify') };
 
-    config.optimization.minimize = true;
+    if (nodeEnv !== 'development') {
+      config.optimization.minimize = true;
+    }
 
     if (
       nodeEnv === 'mock' ||

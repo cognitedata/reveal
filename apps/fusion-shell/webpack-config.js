@@ -51,13 +51,19 @@ module.exports = composePlugins(
 
     // for mock or dev, use staging, otherwise use the one from nx_task_target_configuration
     const importMapsEnv =
-      webpackConfigTarget === 'mock' || webpackConfigTarget === 'development'
+      webpackConfigTarget === 'mock' ||
+      webpackConfigTarget === 'e2e' ||
+      webpackConfigTarget === 'development'
         ? 'staging'
         : webpackConfigTarget;
 
-    const publicPath = '/cdf/';
+    const publicPath = '/';
     const subAppsConfig = JSON.parse(
       fs.readFileSync('./apps/fusion-shell/src/apps-manifest.json', 'utf8')
+    );
+
+    const importMaps = JSON.parse(
+      fs.readFileSync('./apps/fusion-shell/src/import-map.json', 'utf8')
     );
 
     console.log(
@@ -104,11 +110,20 @@ module.exports = composePlugins(
 
     // For dev server, generate them on fly
     if (config.devServer) {
+      let useMockApis = process.env.USE_MOCK_API === 'false' ? false : true;
+      if (process.env.NX_TASK_TARGET_CONFIGURATION === 'e2e') {
+        useMockApis = false;
+      }
+
+      console.log(`Using mock apis: ${useMockApis}`);
+
       generateWebpackDevServerConfig(
         config,
         subAppsConfig,
+        importMaps,
         importMapsEnv,
-        publicPath
+        publicPath,
+        useMockApis
       );
       return config;
     }

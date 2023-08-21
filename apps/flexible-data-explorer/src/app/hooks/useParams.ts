@@ -13,7 +13,7 @@ export enum ParamKeys {
   ViewMode = 'viewMode',
 }
 
-type ViewMode = '3d' | 'list';
+export type ViewMode = '3d' | 'list';
 
 export const useExpandedIdParams = (): [
   string | undefined,

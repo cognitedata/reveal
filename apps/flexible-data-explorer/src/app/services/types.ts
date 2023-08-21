@@ -70,6 +70,10 @@ export type SearchAggregateValuesResponse = {
   ];
 };
 
+export type SearchAggregateValueResponseByProperty<T> = {
+  items: [Record<string, Record<string, T>>];
+};
+
 export type IntrospectionResponse = {
   allFields: {
     fields: {
@@ -85,6 +89,15 @@ export type IntrospectionResponse = {
     }[];
   };
 };
+
+export type EdgeRelationshipResponse = Record<
+  string,
+  {
+    items: any[];
+    edges?: any[];
+    pageInfo: { hasNextPage: boolean; endCursor: string };
+  }
+>;
 
 // ----
 
@@ -143,6 +156,7 @@ export type DataModelTypeDefsField = {
   nonNull?: boolean;
   list?: string;
   location?: { line: number; column: number };
+  isThreeD?: boolean;
 };
 
 export type DataModelTypeDefsType = {

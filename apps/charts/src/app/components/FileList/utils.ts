@@ -7,7 +7,7 @@ import { FileInfo as File } from '@cognite/sdk';
 
 const isFileOfType = (file?: File, type?: string[]) => {
   const { mimeType = '', name = '' } = file || {};
-  const query = mimeType + name.substr(name.lastIndexOf('.'));
+  const query = mimeType + name.substring(name.lastIndexOf('.'), name.length);
   return (type || []).some((el) => query.includes(el));
 };
 

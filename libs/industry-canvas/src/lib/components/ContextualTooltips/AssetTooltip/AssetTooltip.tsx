@@ -123,14 +123,11 @@ const AssetTooltip: React.FC<AssetTooltipProps> = ({
                   icon="ListSearch"
                   onClick={onOpenAssetInResourceSelector}
                   aria-label={t(
-                    translationKeys.FIND_RELATED_RESOURCES,
-                    'Find related resources'
+                    translationKeys.FIND_RELATED_DATA,
+                    'Find related data'
                   )}
                 >
-                  {t(
-                    translationKeys.FIND_RELATED_RESOURCES,
-                    'Find related resources'
-                  )}
+                  {t(translationKeys.FIND_RELATED_DATA, 'Find related data')}
                 </Menu.Item>
                 <Tooltip
                   content={

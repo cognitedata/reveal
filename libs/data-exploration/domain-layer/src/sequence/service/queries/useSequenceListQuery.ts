@@ -30,7 +30,7 @@ export const useSequenceListQuery = (
 ) => {
   const sdk = useSDK();
   const { data, ...rest } = useInfiniteQuery(
-    queryKeys.listSequence([advancedFilter, filter, limit, sort]),
+    queryKeys.listSequence([advancedFilter, filter, limit, sort, options]),
     ({ pageParam }) => {
       return getSequenceList(sdk, {
         cursor: pageParam,

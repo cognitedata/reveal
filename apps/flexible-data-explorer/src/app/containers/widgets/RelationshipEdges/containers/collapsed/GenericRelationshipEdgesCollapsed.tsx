@@ -26,10 +26,12 @@ export const GenericRelationshipEdgesCollapsed: React.FC<
   const [query, setQuery] = useState('');
 
   const isDisabled = isFetched && empty(data);
-  const isEmpty = isFetched && data.length === 0;
+  const isEmpty = isFetched && data?.items.length === 0;
 
   const results = useMemo(() => {
-    return matchSorter(data || [], query, { keys: ['externalId', 'name'] });
+    return matchSorter(data?.items || [], query, {
+      keys: ['externalId', 'name'],
+    });
   }, [data, query]);
 
   if (!dataModel || !space || !version) {

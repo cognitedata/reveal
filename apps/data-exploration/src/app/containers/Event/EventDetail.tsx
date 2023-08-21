@@ -26,6 +26,8 @@ import {
   createInternalLink,
 } from '@data-exploration-lib/core';
 
+import { AllTab } from '../All';
+
 // EventPreviewTabType;
 // - details
 // - assets
@@ -116,6 +118,10 @@ export const EventDetail = ({
     );
   }
 
+  const filter = {
+    assetIds: event.assetIds ? event.assetIds.map((id) => ({ value: id })) : [],
+  };
+
   return (
     <>
       <BreadcrumbsV2 />
@@ -143,6 +149,21 @@ export const EventDetail = ({
               <EventInfo event={event} />
               <Metadata metadata={event.metadata} />
             </DetailsTabWrapper>
+          </Tabs.Tab>,
+          <Tabs.Tab
+            label={t('ALL_RESOURCES', 'All resources')}
+            key="all-resources"
+            tabKey="all-resources"
+          >
+            <AllTab
+              filters={{
+                asset: filter,
+                file: filter,
+                sequence: filter,
+              }}
+              selectedResourceExternalId={event.externalId}
+              setCurrentResourceType={(type) => type && setSelectedTab(type)}
+            />
           </Tabs.Tab>,
         ]}
       />

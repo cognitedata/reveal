@@ -18,6 +18,7 @@ import {
   Menu,
   Overline,
   Heading,
+  Colors,
 } from '@cognite/cogs.js';
 
 export const AnnotationPopover = ({
@@ -25,21 +26,24 @@ export const AnnotationPopover = ({
   label,
   annotationTitle = 'Time series',
   fallbackText = 'Asset not found!',
+  noResourceLabelText = 'No resource id or name present',
 }: {
   resourceId?: number;
   label?: string;
   annotationTitle?: string;
   fallbackText?: string;
+  noResourceLabelText?: string;
 }) => {
-  const { data: selectedAsset, isLoading: isLoadingAsset } =
+  const { data: selectedAsset, isFetching: isLoadingAsset } =
     useAsset(resourceId);
 
-  const { data: assets, isLoading: isLoadingListAsset } = useAssetList(label);
+  const { data: assets, isFetching: isLoadingListAsset } = useAssetList(label);
+
   if (!resourceId && !label) {
-    return <></>;
+    return <NoAssetErrorWrapper>{noResourceLabelText}</NoAssetErrorWrapper>;
   }
 
-  const asset = selectedAsset || assets?.items[0];
+  const asset = selectedAsset || assets?.[0];
   const isLoading = isLoadingAsset || isLoadingListAsset;
 
   if (isLoading) {
@@ -47,7 +51,7 @@ export const AnnotationPopover = ({
   }
 
   if (!asset) {
-    return <>{fallbackText}</>;
+    return <NoAssetErrorWrapper>{fallbackText}</NoAssetErrorWrapper>;
   }
 
   return (
@@ -186,4 +190,11 @@ const TimeseriesInfo = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+`;
+
+const NoAssetErrorWrapper = styled.div`
+  background-color: ${Colors['decorative--grayscale--white']};
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: 1px solid ${Colors['border--muted']};
 `;

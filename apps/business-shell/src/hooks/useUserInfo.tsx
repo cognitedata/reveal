@@ -1,9 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { User, useAuth } from '@cognite/auth-react';
+import { useAuthContext } from '../app/common/auth/AuthProvider';
+import { AuthStateUser } from '../app/common/auth/types';
 
 export const useUserInfo = () => {
-  const { getUser } = useAuth();
+  const auth = useAuthContext();
 
-  return useQuery<User>(['user-info'], () => getUser());
+  return useQuery<AuthStateUser>(
+    ['user-info', auth.authState.user],
+    () => auth.authState.user
+  );
 };

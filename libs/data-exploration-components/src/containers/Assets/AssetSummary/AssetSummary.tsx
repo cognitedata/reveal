@@ -10,20 +10,26 @@ import {
 import { useAssetsMetadataColumns } from '@data-exploration/containers';
 import { SummaryHeader } from '@data-exploration-components/components/SummaryHeader/SummaryHeader';
 import { getSummaryCardItems } from '@data-exploration-components/components/SummaryHeader/utils';
+import { useUniqueCdfItems } from '@data-exploration-components/hooks';
 import { ColumnDef } from '@tanstack/react-table';
 import noop from 'lodash/noop';
+import uniqBy from 'lodash/uniqBy';
 
 import { Asset } from '@cognite/sdk';
 
 import {
   getHiddenColumns,
   InternalSequenceFilters,
+  isObjectEmpty,
+  isSummaryCardDataCountExceed,
+  useDeepMemo,
   useTranslation,
 } from '@data-exploration-lib/core';
 import {
   AssetWithRelationshipLabels,
   InternalAssetDataWithMatchingLabels,
   useAssetsSearchResultWithLabelsQuery,
+  useRelatedAssetsQuery,
 } from '@data-exploration-lib/domain-layer';
 
 export const AssetSummary = ({
@@ -32,19 +38,59 @@ export const AssetSummary = ({
   onAllResultsClick,
   onRowClick = noop,
   isAdvancedFiltersEnabled = false,
+  showAllResultsWithEmptyFilters = false,
+  selectedResourceExternalId: resourceExternalId,
+  annotationIds = [],
 }: {
   query?: string;
   onRowClick?: (row: Asset) => void;
-  filter: InternalSequenceFilters;
+  filter?: InternalSequenceFilters;
   onAllResultsClick?: (
     event?: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => void;
   isAdvancedFiltersEnabled?: boolean;
+  showAllResultsWithEmptyFilters?: boolean;
+  selectedResourceExternalId?: string;
+  annotationIds?: number[];
 }) => {
-  const { data, isLoading } = useAssetsSearchResultWithLabelsQuery({
-    query,
-    assetFilter: filter,
-  });
+  const isQueryEnable = isObjectEmpty(filter as any)
+    ? showAllResultsWithEmptyFilters
+    : true;
+
+  const { data: annotationList = [] } = useUniqueCdfItems<Asset>(
+    'assets',
+    annotationIds.map((id) => ({ id })),
+    true
+  );
+
+  const isAnnotationCountExceed = isSummaryCardDataCountExceed(
+    annotationList.length
+  );
+
+  const { data: assets, isLoading } = useAssetsSearchResultWithLabelsQuery(
+    {
+      query,
+      assetFilter: filter,
+    },
+    {
+      enabled: isQueryEnable && !isAnnotationCountExceed,
+    }
+  );
+
+  const isAssetsCountExceed = isSummaryCardDataCountExceed(
+    assets.length + annotationList.length
+  );
+
+  const { data: relatedData, isLoading: isRelatedDataLoading } =
+    useRelatedAssetsQuery({
+      resourceExternalId,
+      enabled: !isAssetsCountExceed,
+    });
+
+  const mergeData = useDeepMemo(
+    () => uniqBy([...annotationList, ...assets, ...relatedData], 'id'),
+    [annotationList, assets, relatedData]
+  );
 
   const { metadataColumns, setMetadataKeyQuery } = useAssetsMetadataColumns();
   const { t } = useTranslation();
@@ -81,15 +127,19 @@ export const AssetSummary = ({
 
   const hiddenColumns = getHiddenColumns(columns, ['name', 'description']);
 
+  const isAssetsLoading =
+    isLoading && isQueryEnable && !isAnnotationCountExceed;
+  const isRelatedAssetsLoading = isRelatedDataLoading && !isAssetsCountExceed;
+
   return (
     <SummaryCardWrapper>
       <Table<InternalAssetDataWithMatchingLabels>
         id="asset-summary-table"
         columns={columns}
         hiddenColumns={hiddenColumns}
-        data={getSummaryCardItems(data)}
+        data={getSummaryCardItems(mergeData)}
         columnSelectionLimit={2}
-        isDataLoading={isLoading}
+        isDataLoading={isAssetsLoading || isRelatedAssetsLoading}
         tableHeaders={
           <SummaryHeader
             icon="Assets"

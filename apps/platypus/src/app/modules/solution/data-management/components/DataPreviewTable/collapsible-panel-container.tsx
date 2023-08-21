@@ -1,6 +1,10 @@
 import { ReactElement, useEffect, useState } from 'react';
 
 import {
+  FilePreview,
+  SequencePreview,
+} from '@data-exploration-components/containers';
+import {
   BultinFieldTypeNames,
   DataModelTypeDefs,
   DataModelTypeDefsType,
@@ -12,10 +16,11 @@ import { createLink } from '@cognite/cdf-utilities';
 import { CogDataList } from '@cognite/cog-data-grid';
 import { Button, CollapsablePanel, Icon } from '@cognite/cogs.js';
 import { TimeseriesChart } from '@cognite/plotting-components';
-import { Timeseries } from '@cognite/sdk/dist/src';
+import { FileInfo, Timeseries, Sequence } from '@cognite/sdk';
 import { SDKProvider } from '@cognite/sdk-provider';
 
 import { getCogniteSDKClient } from '../../../../../../environments/cogniteSdk';
+import { usePreviewData } from '../../hooks/usePreviewData';
 
 import { SidePanelTitle } from './data-preview-side-panel-title';
 import * as S from './elements';
@@ -43,6 +48,13 @@ export type CollapsiblePanelContainerProps = {
   dataModelVersion: DataModelVersion;
 };
 
+type SidebarCustomData =
+  | { type: 'timeseries'; data: Timeseries[] }
+  | { type: 'files'; data: FileInfo[] }
+  | { type: 'sequences'; data: Sequence[] };
+
+export const CustomDataTypes = ['TimeSeries', 'File', 'Sequence'];
+
 export const CollapsiblePanelContainer: React.FC<
   CollapsiblePanelContainerProps
 > = ({
@@ -53,63 +65,149 @@ export const CollapsiblePanelContainer: React.FC<
   dataModelVersion,
   dataModelType,
 }) => {
-  const [timeSeriesIds, setTimeSeriesIds] = useState<
-    Timeseries[] | undefined
-  >();
+  const [resources, setResources] = useState<SidebarCustomData | undefined>();
+
+  const { data: previewData } = usePreviewData(
+    {
+      dataModelExternalId: dataModelVersion.externalId,
+      dataModelSpace: dataModelVersion.space,
+      dataModelType: dataModelType,
+      externalId: data?.instanceExternalId || '',
+      instanceSpace: data?.instanceSpace || '',
+      nestedLimit: 0,
+    },
+    { enabled: !!data }
+  );
 
   useEffect(() => {
     // if no data or not timeseries
-    if (!data || data.type !== 'TimeSeries') {
-      setTimeSeriesIds(undefined);
+    if (!data || !previewData || !CustomDataTypes.includes(data.type)) {
+      setResources(undefined);
       return;
     }
 
     const externalIds = data.isList
-      ? data.listValues!
-      : [{ externalId: data.instanceExternalId }];
+      ? ((previewData[data.fieldName] as { externalId: string }[]) || []).map(
+          ({ externalId }) => ({
+            externalId,
+          })
+        )
+      : [
+          {
+            externalId: (previewData[data.fieldName] as { externalId: string })
+              .externalId,
+          },
+        ];
 
-    getCogniteSDKClient()
-      .timeseries.retrieve(externalIds)
-      .then((timeseries) => setTimeSeriesIds(timeseries));
-  }, [data]);
+    const dataType: SidebarCustomData['type'] =
+      data.type === 'TimeSeries'
+        ? 'timeseries'
+        : data.type === 'File'
+        ? 'files'
+        : 'sequences';
+
+    switch (dataType) {
+      case 'timeseries':
+        getCogniteSDKClient()
+          .timeseries.retrieve(externalIds)
+          .then((response) => setResources({ type: dataType, data: response }));
+        break;
+      case 'files':
+        getCogniteSDKClient()
+          .files.retrieve(externalIds)
+          .then((response) => setResources({ type: dataType, data: response }));
+        break;
+      case 'sequences':
+        getCogniteSDKClient()
+          .sequences.retrieve(externalIds)
+          .then((response) => setResources({ type: dataType, data: response }));
+        break;
+    }
+  }, [data, previewData]);
 
   const getSidebarContent = () => {
     if (!data) {
       return null;
     }
 
-    if (data.type === 'TimeSeries') {
-      return timeSeriesIds ? (
-        timeSeriesIds.map((ts) => (
-          <SDKProvider sdk={getCogniteSDKClient()}>
-            <p>{ts.externalId}</p>
-            <TimeseriesChart
-              timeseries={{ id: ts.id }}
-              variant="small"
-              height={200}
-              dateRange={[
-                new Date(
-                  `${
-                    new Date().getFullYear() - 1
-                  }-${new Date().getMonth()}-${new Date().getDay()}`
-                ),
-                new Date(),
-              ]}
-            />
-            <a
-              href={createLink(
-                `/explore/timeSeries/${ts.id}${window.location.search}`
-              )}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <Button style={{ marginTop: 12 }}>Open in data explorer</Button>
-            </a>
-          </SDKProvider>
-        ))
-      ) : (
-        <Icon type="Loader" />
-      );
+    if (CustomDataTypes.includes(data.type)) {
+      if (!resources) {
+        return <Icon type="Loader" />;
+      }
+      switch (resources.type) {
+        case 'timeseries':
+          return resources.data.map((ts) => (
+            <SDKProvider sdk={getCogniteSDKClient()} key={ts.id}>
+              <p>{ts.externalId}</p>
+              <TimeseriesChart
+                timeseries={{ id: ts.id }}
+                variant="small"
+                height={200}
+                dateRange={[
+                  new Date(
+                    `${
+                      new Date().getFullYear() - 1
+                    }-${new Date().getMonth()}-${new Date().getDay()}`
+                  ),
+                  new Date(),
+                ]}
+              />
+              <a
+                href={createLink(
+                  `/explore/timeSeries/${ts.id}${window.location.search}`
+                )}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <Button style={{ marginTop: 12 }}>Open in data explorer</Button>
+              </a>
+            </SDKProvider>
+          ));
+        case 'files':
+          return resources.data.map((file) => (
+            <SDKProvider sdk={getCogniteSDKClient()} key={file.id}>
+              <p>{file.name}</p>
+              <div style={{ height: 200 }}>
+                <FilePreview
+                  fileId={file.id}
+                  id={file.externalId || 'N/A'}
+                  applicationId="platypus"
+                  creatable={false}
+                  contextualization={false}
+                />
+              </div>
+              <a
+                href={createLink(
+                  `/explore/file/${file.id}${window.location.search}`
+                )}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <Button style={{ marginTop: 12 }}>Open in data explorer</Button>
+              </a>
+            </SDKProvider>
+          ));
+        case 'sequences':
+          return resources.data.map((sequence) => (
+            <SDKProvider sdk={getCogniteSDKClient()} key={sequence.id}>
+              <p>{sequence.externalId}</p>
+              <div style={{ height: 200 }}>
+                <SequencePreview sequence={sequence} />
+              </div>
+              <a
+                href={createLink(
+                  `/explore/sequence/${sequence.id}${window.location.search}`
+                )}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <Button style={{ marginTop: 12 }}>Open in data explorer</Button>
+              </a>
+            </SDKProvider>
+          ));
+        default:
+          return <Icon type="Loader" />;
+      }
     } else if (data.type === 'File' || data.type === 'Sequence') {
       // Temporary until we have suitable preview implementations
       const listData = data.isList

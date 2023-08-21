@@ -1,35 +1,14 @@
-import { ComponentProps, useCallback } from 'react';
-
-import { Color } from 'three';
-
-import {
-  RevealContainer,
-  Reveal3DResources,
-  useCameraNavigation,
-  AddResourceOptions,
-} from '@cognite/reveal-react-components';
+import { RevealContainer } from '@cognite/reveal-react-components';
 import { useSDK } from '@cognite/sdk-provider';
 
 import { EmptyState } from '../../components/EmptyState';
+import {
+  defaultRevealColor,
+  defaultViewerOptions,
+} from '../../constants/threeD';
 import { useProjectConfig } from '../../hooks/useProjectConfig';
 
-import { StyledRevealToolBar } from './components/ToolBar/StyledRevealToolBar';
-
-const defaultViewerOptions: ComponentProps<
-  typeof RevealContainer
->['viewerOptions'] = {
-  loadingIndicatorStyle: {
-    placement: 'topRight',
-    opacity: 0.2,
-  },
-};
-
-const defaultResourceStyling = {
-  cad: {
-    default: { color: new Color('#efefef') },
-    mapped: { color: new Color('#c5cbff') },
-  },
-};
+import { RevealContent } from './containers/RevealContent';
 
 export const ThreeDContent = () => {
   const sdk = useSDK();
@@ -50,33 +29,10 @@ export const ThreeDContent = () => {
   return (
     <RevealContainer
       sdk={sdk}
-      color={new Color(0x4a4a4b)}
+      color={defaultRevealColor}
       viewerOptions={defaultViewerOptions}
     >
-      <RevealContent modelIdentifiers={modelIdentifiers} />
+      <RevealContent modelIdentifiers={modelIdentifiers} fitCamera="models" />
     </RevealContainer>
-  );
-};
-
-const RevealContent = ({
-  modelIdentifiers,
-}: {
-  modelIdentifiers: AddResourceOptions[];
-}) => {
-  const cameraNavigation = useCameraNavigation();
-
-  const handleResourcesAdded = useCallback(() => {
-    cameraNavigation.fitCameraToAllModels();
-  }, [cameraNavigation]);
-
-  return (
-    <>
-      <StyledRevealToolBar />
-      <Reveal3DResources
-        resources={modelIdentifiers}
-        defaultResourceStyling={defaultResourceStyling}
-        onResourcesAdded={handleResourcesAdded}
-      />
-    </>
   );
 };
