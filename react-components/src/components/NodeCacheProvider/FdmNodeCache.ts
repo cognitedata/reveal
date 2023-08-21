@@ -78,30 +78,34 @@ export class FdmNodeCache {
     );
 
     return modelRevisionIds.map((modelRevisionId) => {
-      const revisionCache = this.getOrCreateRevisionCache(
-        modelRevisionId.modelId,
-        modelRevisionId.revisionId
-      );
-
-      const relevantCachedEdgeData = revisionCache.getAllEdges().filter((edgeData) => {
-        const fdmKey = createFdmKey(
-          edgeData.edge.startNode.space,
-          edgeData.edge.startNode.externalId
-        );
-        return inputExternalIdSet.has(fdmKey);
-      });
-
-      const modelMappings: ThreeDModelMappings = {
-        ...modelRevisionId,
-        mappings: new Map()
-      };
-
-      relevantCachedEdgeData.forEach((edgeData) => {
-        modelMappings.mappings.set(edgeData.edge.startNode.externalId, edgeData.node);
-      });
-
-      return modelMappings;
+      return this.getCachedModelMappingForRevision(modelRevisionId, inputExternalIdSet);
     });
+  }
+
+  private getCachedModelMappingForRevision(
+    modelRevisionId: ModelRevisionId,
+    relevantFdmKeySet: Set<FdmKey>
+  ): ThreeDModelMappings {
+    const revisionCache = this.getOrCreateRevisionCache(
+      modelRevisionId.modelId,
+      modelRevisionId.revisionId
+    );
+
+    const relevantCachedEdgeData = intersectWithStartNodeIdSet(
+      revisionCache.getAllEdges(),
+      relevantFdmKeySet
+    );
+
+    const modelMappings: ThreeDModelMappings = {
+      ...modelRevisionId,
+      mappings: new Map()
+    };
+
+    relevantCachedEdgeData.forEach((edgeData) => {
+      modelMappings.mappings.set(edgeData.edge.startNode.externalId, edgeData.node);
+    });
+
+    return modelMappings;
   }
 
   private async getNonCachedModelMappings(
@@ -137,10 +141,7 @@ export class FdmNodeCache {
     if (edges === undefined || edges.length === 0)
       return { modelId, revisionId, mappings: new Map<CogniteExternalId, Node3D>() };
 
-    const relevantEdges = edges.filter((edge) => {
-      const startNodeKey = createFdmKey(edge.edge.startNode.space, edge.edge.startNode.externalId);
-      return relevantFdmKeySet.has(startNodeKey);
-    });
+    const relevantEdges = intersectWithStartNodeIdSet(edges, relevantFdmKeySet);
 
     const externalIdToNodeMap = new Map<CogniteExternalId, Node3D>(
       relevantEdges.map((edge) => [edge.edge.startNode.externalId, edge.node])
@@ -360,4 +361,14 @@ function createRevisionToNodeIdMap(edges: FdmCadEdge[]): Map<RevisionId, NodeId[
 
     return revisionNodeIdMap;
   }, new Map<RevisionId, NodeId[]>());
+}
+
+function intersectWithStartNodeIdSet(
+  edges: FdmEdgeWithNode[],
+  relevantFdmKeySet: Set<FdmKey>
+): FdmEdgeWithNode[] {
+  return edges.filter((edgeData) => {
+    const fdmKey = createFdmKey(edgeData.edge.startNode.space, edgeData.edge.startNode.externalId);
+    return relevantFdmKeySet.has(fdmKey);
+  });
 }
