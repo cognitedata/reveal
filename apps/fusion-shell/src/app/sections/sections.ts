@@ -203,15 +203,6 @@ export const rawAppsData: RawAppItem[] = [
   },
   {
     category: 'explore',
-    internalId: 'templates',
-    icon: 'Duplicate',
-    linkTo: '/template-management',
-    importMapApp: '@cognite/cdf-templates',
-    img: images.TemplateManagementAppImg,
-    ariaLabel: 'Go to Template Management',
-  },
-  {
-    category: 'explore',
     internalId: 'functions',
     icon: 'Upload',
     linkTo: '/functions',
@@ -259,6 +250,15 @@ export const rawAppsData: RawAppItem[] = [
     ariaLabel: 'Go to SimInt',
   },
   {
+    category: 'explore',
+    internalId: 'templates',
+    icon: 'Duplicate',
+    linkTo: '/template-management',
+    importMapApp: '@cognite/cdf-templates',
+    img: images.TemplateManagementAppImg,
+    ariaLabel: 'Go to Template Management',
+  },
+  {
     category: 'configure',
     internalId: 'access-management',
     icon: 'Users',
@@ -278,6 +278,15 @@ export const rawAppsData: RawAppItem[] = [
   },
   {
     category: 'configure',
+    internalId: 'dashboard-sessions',
+    icon: 'Integrations',
+    linkTo: '/dashboard-sessions',
+    importMapApp: '@cognite/cdf-dashboard-sessions-ui',
+    img: images.DashboardSessionsAppImg,
+    ariaLabel: 'Go to Dashboard Sessions',
+  },
+  {
+    category: 'configure',
     internalId: 'infield',
     icon: 'Mobile',
     linkTo: '/infield',
@@ -289,15 +298,6 @@ export const rawAppsData: RawAppItem[] = [
     ],
     img: images.ConfigureInfieldAppImg,
     ariaLabel: 'Go to InField',
-  },
-  {
-    category: 'configure',
-    internalId: 'dashboard-sessions',
-    icon: 'Integrations',
-    linkTo: '/dashboard-sessions',
-    importMapApp: '@cognite/cdf-dashboard-sessions-ui',
-    img: images.DashboardSessionsAppImg,
-    ariaLabel: 'Go to Dashboard Sessions',
   },
 ];
 
