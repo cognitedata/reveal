@@ -3,7 +3,7 @@ import { DraggableCore, DraggableEvent } from 'react-draggable';
 
 import styled from 'styled-components';
 
-import { zIndex } from '@data-exploration-lib/core';
+import { PREVIEW_SIDEBAR_MIN_WIDTH, zIndex } from '@data-exploration-lib/core';
 
 import handleSvg from './handle';
 
@@ -137,7 +137,7 @@ interface DetailsOverlayWrapperProps {
 export const DetailsOverlayWrapper = styled.div<DetailsOverlayWrapperProps>`
   height: 100%;
   width: 60%;
-  min-width: 620px;
+  min-width: ${PREVIEW_SIDEBAR_MIN_WIDTH}px;
   background-color: var(--cogs-surface--muted);
   display: ${(props) => (props.showOverlay ? 'flex' : 'none')};
   z-index: ${zIndex.MAXIMUM};
