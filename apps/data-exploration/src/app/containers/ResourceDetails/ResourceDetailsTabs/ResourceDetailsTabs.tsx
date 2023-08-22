@@ -142,7 +142,9 @@ export const ResourceDetailsTabs = ({
   const relationshipTabs = filteredTabs.map((key) => {
     const count = counts[key] || 0;
     const isCountLoading = isLoading[key] || false;
-    const titleTranslationKey = `${key}_${getTranslationEntry(count)}`;
+    const titleTranslationKey = `${key.toUpperCase()}_${getTranslationEntry(
+      count
+    )}`;
 
     const title = getTitle(key, isCountLoading || count !== 1);
     const titleTranslated = t(titleTranslationKey, title, { count });
