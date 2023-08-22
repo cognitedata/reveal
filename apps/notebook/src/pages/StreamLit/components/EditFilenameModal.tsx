@@ -1,37 +1,60 @@
-import { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import { Modal, Input, Flex } from '@cognite/cogs.js';
 
+import { validStreamlitFilename } from '../common';
+
 type EditFilenameProps = {
   onCancel: () => void;
-  fileName: string;
   onOk: (newFilename: string) => void;
+  fileName: string;
+  existingFileNames: string[];
 };
 
 export const EditFilenameModal = ({
   onCancel,
   onOk,
   fileName,
+  existingFileNames,
 }: EditFilenameProps) => {
   const [input, setInput] = useState('');
+
+  const validInput = useCallback(() => {
+    const fullInputFilename = fileName.startsWith('pages/')
+      ? `pages/${input}`
+      : input;
+    return (
+      validStreamlitFilename(input) &&
+      !existingFileNames.includes(fullInputFilename)
+    );
+  }, [input, fileName, existingFileNames]);
+
+  const handleSubmit = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+      validInput() && onOk(input);
+    },
+    [input, validInput, onOk]
+  );
 
   return (
     <Modal
       visible
-      okDisabled={!input || !input.endsWith('.py')}
+      okDisabled={!validInput()}
       onCancel={() => onCancel()}
       onOk={() => onOk(input)}
-      okText="OK"
       title="Enter new filename:"
     >
       <Flex direction="column" gap={8}>
-        <Input
-          autoFocus
-          onFocus={(e) => e.target.select()}
-          fullWidth
-          defaultValue={fileName.replace('pages/', '')}
-          onChange={(event) => setInput(event.target.value)}
-        />
+        <form onSubmit={handleSubmit}>
+          <Input
+            autoFocus
+            onFocus={(e) => e.target.select()}
+            fullWidth
+            defaultValue={fileName.replace('pages/', '')}
+            onChange={(event) => setInput(event.target.value)}
+          />
+        </form>
       </Flex>
     </Modal>
   );

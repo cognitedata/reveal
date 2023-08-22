@@ -406,6 +406,7 @@ export const Editor = ({
           onCancel={() => setShowEditFilenameModal(false)}
           onOk={handleEditFilename}
           fileName={currentFileName}
+          existingFileNames={fileNames}
         />
       )}
     </>

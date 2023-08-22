@@ -27,3 +27,8 @@ export const saveApp = async (app: StreamLitAppSpec, sdk: CogniteClient) => {
 export const sleep = (ms: number) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
 };
+
+export const validStreamlitFilename = (filename: string) => {
+  const [name, ext] = filename.split('.');
+  return name && ext === 'py';
+};
