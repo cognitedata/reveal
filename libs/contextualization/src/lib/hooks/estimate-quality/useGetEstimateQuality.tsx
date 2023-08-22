@@ -5,7 +5,7 @@ export const useGetEstimateQuality = (jobId: string | undefined) => {
     queryKey: ['context', 'advancedjoins', 'estimatequality', jobId],
     queryFn: async () => {
       const response = await fetch(
-        `https://localhost:8443/api/v1/projects/contextualization/context/advancedjoins/estimatequality/${jobId}`,
+        `https://localhost:8443/api/v1/projects/contextualization/advancedjoins/estimatequality/${jobId}`,
         {
           headers: {
             'Content-Type': 'application/json',

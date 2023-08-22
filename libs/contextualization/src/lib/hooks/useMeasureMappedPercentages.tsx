@@ -21,7 +21,7 @@ const useCreateMeasureMappedPercentages = (
     ],
     queryFn: async () => {
       const response = await fetch(
-        `https://localhost:8443/api/v1/projects/contextualization/context/advancedjoins/measuremappedpercentage`,
+        `https://localhost:8443/api/v1/projects/contextualization/advancedjoins/measuremappedpercentage`,
         {
           method: 'POST',
           headers: {
@@ -45,7 +45,7 @@ const useGetMeasureMappedPercentages = (jobId: string | undefined) => {
     queryKey: ['context', 'advancedjoins', 'measuremappedpercentage', jobId],
     queryFn: async () => {
       const response = await fetch(
-        `https://localhost:8443/api/v1/projects/contextualization/context/advancedjoins/measuremappedpercentage/${jobId}`,
+        `https://localhost:8443/api/v1/projects/contextualization/advancedjoins/measuremappedpercentage/${jobId}`,
         {
           headers: {
             'Content-Type': 'application/json',

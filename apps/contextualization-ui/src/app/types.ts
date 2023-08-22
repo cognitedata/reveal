@@ -12,10 +12,9 @@ export interface Table {
 }
 
 export type EstimateJobPercentages = {
-  qualityScorePercentage: number | undefined;
-  mappedPercentage: number | undefined;
-  confidencePercentage: number | undefined;
-  contextualizationScorePercentage: number | undefined;
+  contextualizationScorePercent: number | undefined;
+  estimatedCorrectnessScorePercent: number | undefined;
+  confidencePercent: number | undefined;
 };
 
 export type MatchData = {

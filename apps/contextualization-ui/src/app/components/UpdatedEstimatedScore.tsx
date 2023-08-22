@@ -3,7 +3,6 @@ import { Dispatch, SetStateAction, useEffect } from 'react';
 import {
   getUrlParameters,
   useEstimateQuality,
-  useMeasureMappedPercentages,
 } from '@fusion/contextualization';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 
@@ -38,22 +37,15 @@ export const UpdatedEstimatedScore = ({
 
   const {
     estimateQualityJobStatus: status,
-    qualityScorePercent: contextualizationScorePercentage,
-    confidencePercent: confidencePercentage,
-    contextualizationScorePercent: qualityScorePercentage,
+    contextualizationScorePercent: contextualizationScorePercent,
+    estimatedCorrectnessScorePercent: estimatedCorrectnessScorePercent,
+    confidencePercent: confidencePercent,
   } = useEstimateQuality(
     advancedJoinExternalId,
     selectedDatabase,
     selectedTable,
     fromColumn,
     toColumn
-  );
-
-  const { mappedPercentage } = useMeasureMappedPercentages(
-    type,
-    space,
-    versionNumber,
-    headerName
   );
 
   // Update estimateArray with the new job response
@@ -73,11 +65,11 @@ export const UpdatedEstimatedScore = ({
               tableName: selectedTable,
               databaseName: selectedDatabase,
               jobResponse: {
-                contextualizationScorePercentage:
-                  contextualizationScorePercentage,
-                mappedPercentage: mappedPercentage,
-                confidencePercentage: confidencePercentage,
-                qualityScorePercentage: qualityScorePercentage,
+                contextualizationScorePercent:
+                  contextualizationScorePercent,
+                estimatedCorrectnessScorePercent:
+                  estimatedCorrectnessScorePercent,
+                confidencePercent: confidencePercent,
               },
             },
           ];
@@ -89,11 +81,11 @@ export const UpdatedEstimatedScore = ({
               tableName: selectedTable,
               databaseName: selectedDatabase,
               jobResponse: {
-                contextualizationScorePercentage:
-                  contextualizationScorePercentage,
-                mappedPercentage: mappedPercentage,
-                confidencePercentage: confidencePercentage,
-                qualityScorePercentage: qualityScorePercentage,
+                contextualizationScorePercent:
+                  contextualizationScorePercent,
+                estimatedCorrectnessScorePercent:
+                  estimatedCorrectnessScorePercent,
+                confidencePercent: confidencePercent,
               },
             };
           }
@@ -102,10 +94,9 @@ export const UpdatedEstimatedScore = ({
       });
     }
   }, [
-    confidencePercentage,
-    contextualizationScorePercentage,
-    mappedPercentage,
-    qualityScorePercentage,
+    contextualizationScorePercent,
+    estimatedCorrectnessScorePercent,
+    confidencePercent,
     selectedDatabase,
     selectedTable,
     setEstimateArray,
@@ -132,10 +123,9 @@ export const UpdatedEstimatedScore = ({
     }
   }, [
     status,
-    confidencePercentage,
-    contextualizationScorePercentage,
-    mappedPercentage,
-    qualityScorePercentage,
+    contextualizationScorePercent,
+    estimatedCorrectnessScorePercent,
+    confidencePercent,
     selectedTable,
     setEstimateArray,
     selectedDatabase,
