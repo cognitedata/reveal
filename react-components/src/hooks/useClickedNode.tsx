@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { Intersection, type CadIntersection, type PointerEventData } from '@cognite/reveal';
+import { type CadIntersection, type PointerEventData } from '@cognite/reveal';
 import { useReveal, type NodeDataResult } from '../';
 import { useEffect, useState } from 'react';
 import { useFdm3dNodeData } from '../components/NodeCacheProvider/NodeCacheProvider';
@@ -14,16 +14,19 @@ export type ClickedNodeData = NodeDataResult & {
 export const useClickedNodeData = (): ClickedNodeData | undefined => {
   const viewer = useReveal();
 
-  const [nodeData, setNodeData] = useState<ClickedNodeData | undefined>(undefined);
+  const [cadIntersection, setCadIntersection] = useState<CadIntersection | undefined>(undefined);
+  const [clickedNodeData, setClickedNodeData] = useState<ClickedNodeData | undefined>(undefined);
 
   useEffect(() => {
     const callback = (event: PointerEventData): void => {
       void (async () => {
         const intersection = await viewer.getIntersectionFromPixel(event.offsetX, event.offsetY);
-        const nodeData = computeNodeDataFromIntersection(intersection);
 
-        setNodeData(nodeData);
+        if (intersection === null || intersection.type !== 'cad') {
+          return;
+        }
 
+        setCadIntersection(intersection);
       })();
     };
 
@@ -34,31 +37,28 @@ export const useClickedNodeData = (): ClickedNodeData | undefined => {
     };
   }, [viewer]);
 
-  return nodeData;
-};
-
-function computeNodeDataFromIntersection(intersection: Intersection | null): ClickedNodeData | undefined {
-  if (intersection === null || intersection.type !== 'cad') {
-    return undefined;
-  }
-
   const nodeData =
     useFdm3dNodeData(
-      intersection?.model.modelId,
-      intersection?.model.revisionId,
-      intersection?.treeIndex
+      cadIntersection?.model.modelId,
+      cadIntersection?.model.revisionId,
+      cadIntersection?.treeIndex
     ).data ?? [];
 
-  if (intersection === undefined || nodeData.length === 0) {
-    return undefined;
-  }
+  useEffect(() => {
+    if (cadIntersection === undefined || nodeData.length === 0) {
+      setClickedNodeData(undefined);
+      return;
+    }
 
-  const chosenNode = nodeData[0];
+    const chosenNode = nodeData[0];
 
-  return {
-    intersection,
-    fdmNode: chosenNode.fdmId,
-    view: chosenNode.view,
-    cadNode: chosenNode.cadNode
-  };
-}
+    setClickedNodeData({
+      intersection: cadIntersection,
+      fdmNode: chosenNode.fdmId,
+      view: chosenNode.view,
+      cadNode: chosenNode.cadNode
+    });
+  }, [nodeData]);
+
+  return clickedNodeData;
+};
