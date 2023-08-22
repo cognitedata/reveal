@@ -83,7 +83,9 @@ const CanvasVisibilityModal: React.FC<CanvasVisibilityModalProps> = ({
   );
 
   // Here check if canvas exists.
-  if (canvas === undefined) return null;
+  if (canvas === undefined) {
+    return null;
+  }
 
   // If canvas is passed to the modal it means modal should be visible.
   const isCanvasVisible = canvas !== undefined;

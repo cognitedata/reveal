@@ -21,6 +21,8 @@ module.exports = composePlugins(
       `Custom webpack config(${nodeEnv}) for contextualization-ui was loaded...`
     );
 
+    config.resolve.fallback = { path: require.resolve('path-browserify') };
+
     if (useMockEnv) {
       return config;
     }

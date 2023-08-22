@@ -417,7 +417,7 @@ const MainContainer = styled(Flex)<{ isFilterFeatureEnabled?: boolean }>`
 `;
 
 const ResourcePreviewSidebarWrapper = styled.div<{ isOnlyPane?: boolean }>`
-  width: 360px;
+  width: 370px;
   margin: 12px;
   flex: 1;
   border-left: ${({ isOnlyPane }) =>

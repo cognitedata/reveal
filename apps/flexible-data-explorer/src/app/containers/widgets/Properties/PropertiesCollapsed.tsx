@@ -11,9 +11,9 @@ import { Widget } from '../../../components/widget/Widget';
 import { DASH } from '../../../constants/common';
 import { useIsOverflow } from '../../../hooks/useIsOverflow';
 import { useTranslation } from '../../../hooks/useTranslation';
+import { flattenProperties } from '../../search/utils';
 
 import { PropertiesProps } from './PropertiesWidget';
-import { flattenProperties } from './utils';
 
 const MAX_PROPERTIES = 8;
 

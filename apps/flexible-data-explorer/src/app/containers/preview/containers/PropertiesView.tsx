@@ -6,7 +6,7 @@ import { Button, Flex } from '@cognite/cogs.js';
 
 import { Typography } from '../../../components/Typography';
 import { useTranslation } from '../../../hooks/useTranslation';
-import { flattenProperties } from '../../widgets/Properties/utils';
+import { flattenProperties } from '../../search/utils';
 import { InstancePreviewHeader } from '../elements';
 import { InstancePreviewProps } from '../types';
 
