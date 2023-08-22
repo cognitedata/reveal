@@ -1,7 +1,7 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react';
 
-import Provider from '@flows/components/Extractors/.storybook/boilerplate';
+import Provider from 'components/Extractors/.storybook/boilerplate';
 
 import Extractors from './Extractors';
 
