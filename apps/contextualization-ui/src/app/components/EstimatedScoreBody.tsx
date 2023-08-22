@@ -1,13 +1,11 @@
 import styled from 'styled-components';
 
-import { ScoreComponent, getUrlParameters } from '@fusion/contextualization';
+import { ScoreComponent } from '@fusion/contextualization';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 
 import { Body, Icon } from '@cognite/cogs.js';
 
 import { EstimateArray, EstimateJobPercentages, JobStatus } from '../types';
-
-import { PropertyInfo } from './PropertyInfo';
 
 export const EstimatedScoreBody = ({
   savedManualMatchesCount,
@@ -16,11 +14,8 @@ export const EstimatedScoreBody = ({
 }: {
   savedManualMatchesCount: number;
   jobState: JobStatus | undefined;
-  headerName: string;
   estimateArray: EstimateArray | undefined;
 }) => {
-  const { headerName } = getUrlParameters();
-
   if (savedManualMatchesCount === 0 || !estimateArray) {
     return <EmptyPanel>Estimated score will appear here</EmptyPanel>;
   }
@@ -41,7 +36,10 @@ export const EstimatedScoreBody = ({
         <>
           <>
             <Body level={2}>Contextualization score:</Body>
-            <ScoreComponent score={contextualizationScorePercent} percentageText="" />
+            <ScoreComponent
+              score={contextualizationScorePercent}
+              percentageText=""
+            />
           </>
           <>
             <Body level={2}>Estimated correctness:</Body>

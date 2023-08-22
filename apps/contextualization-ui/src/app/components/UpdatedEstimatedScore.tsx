@@ -1,9 +1,6 @@
 import { Dispatch, SetStateAction, useEffect } from 'react';
 
-import {
-  getUrlParameters,
-  useEstimateQuality,
-} from '@fusion/contextualization';
+import { useEstimateQuality } from '@fusion/contextualization';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 
 import { EstimateArray, JobStatus, SelectedColumns } from '../types';
@@ -28,7 +25,6 @@ export const UpdatedEstimatedScore = ({
   setEstimateArray: Dispatch<SetStateAction<EstimateArray[]>>;
   getColumnsForTable: (tableId: string | null) => SelectedColumns;
 }) => {
-  const { headerName, type, space, versionNumber } = getUrlParameters();
   const { fromColumn, toColumn } = getColumnsForTable(selectedTable) || {};
 
   const existingEstimate = estimateArray.find(
@@ -37,9 +33,9 @@ export const UpdatedEstimatedScore = ({
 
   const {
     estimateQualityJobStatus: status,
-    contextualizationScorePercent: contextualizationScorePercent,
-    estimatedCorrectnessScorePercent: estimatedCorrectnessScorePercent,
-    confidencePercent: confidencePercent,
+    contextualizationScorePercent,
+    estimatedCorrectnessScorePercent,
+    confidencePercent,
   } = useEstimateQuality(
     advancedJoinExternalId,
     selectedDatabase,
@@ -65,8 +61,7 @@ export const UpdatedEstimatedScore = ({
               tableName: selectedTable,
               databaseName: selectedDatabase,
               jobResponse: {
-                contextualizationScorePercent:
-                  contextualizationScorePercent,
+                contextualizationScorePercent: contextualizationScorePercent,
                 estimatedCorrectnessScorePercent:
                   estimatedCorrectnessScorePercent,
                 confidencePercent: confidencePercent,
@@ -81,8 +76,7 @@ export const UpdatedEstimatedScore = ({
               tableName: selectedTable,
               databaseName: selectedDatabase,
               jobResponse: {
-                contextualizationScorePercent:
-                  contextualizationScorePercent,
+                contextualizationScorePercent: contextualizationScorePercent,
                 estimatedCorrectnessScorePercent:
                   estimatedCorrectnessScorePercent,
                 confidencePercent: confidencePercent,
@@ -139,7 +133,6 @@ export const UpdatedEstimatedScore = ({
         <EstimatedScoreBody
           savedManualMatchesCount={savedManualMatchesCount}
           jobState={status}
-          headerName={headerName}
           estimateArray={existingEstimate}
         />
       ) : estimateArray.find(
@@ -149,7 +142,6 @@ export const UpdatedEstimatedScore = ({
         <EstimatedScoreBody
           savedManualMatchesCount={savedManualMatchesCount}
           jobState={status}
-          headerName={headerName}
           estimateArray={estimateArray.find(
             (e) =>
               e.tableName === selectedTable &&
