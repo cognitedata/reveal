@@ -68,6 +68,8 @@ export const AssetSearchResults = ({
   const { t } = useTranslation();
 
   const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
+  const [treeViewAssetsCount, setTreeViewAssetsCount] = useState(0);
+
   const { data, isLoading, isPreviousData, hasNextPage, fetchNextPage } =
     useAssetsSearchResultWithLabelsQuery({
       query,
@@ -85,10 +87,11 @@ export const AssetSearchResults = ({
     assetSearchConfig
   );
 
-  const loadedDataCount = data.length;
-  const totalDataCount = aggregateData.count;
-
   const currentView = isTreeEnabled ? view : 'list';
+
+  const loadedDataCount =
+    currentView === 'list' ? data.length : treeViewAssetsCount;
+  const totalDataCount = aggregateData.count;
 
   const selectedRows = useMemo(() => {
     if (activeIds) {
@@ -176,7 +179,7 @@ export const AssetSearchResults = ({
         />
       </KeepMounted>
 
-      <KeepMounted isVisible={currentView !== 'list'}>
+      <KeepMounted isVisible={currentView === 'tree'}>
         <AssetTreeTable
           filter={filter}
           query={query}
@@ -198,6 +201,9 @@ export const AssetSearchResults = ({
               ? activeIds[0]
               : undefined
           }
+          onDataChanged={(treeViewAssets) => {
+            setTreeViewAssetsCount(treeViewAssets.length);
+          }}
         />
       </KeepMounted>
     </>
