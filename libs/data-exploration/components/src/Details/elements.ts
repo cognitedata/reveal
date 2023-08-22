@@ -9,10 +9,10 @@ export const MetadataCard = styled.div`
 
 export const MetadataHeader = styled.div`
   padding: 16px 12px;
-  max-height: 53px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  align-items: center;
   border-bottom: 1px solid var(--cogs-border--muted);
 `;
 
@@ -36,12 +36,10 @@ export const MetadataTableContainer = styled.div`
 
 export const FilterContainer = styled.div`
   display: flex;
-  height: 100%;
-  margin-bottom: 16px;
-
-  .cogs-input {
-    margin-right: 8px;
-  }
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  overflow: hidden;
+  gap: 8px;
 `;
 
 export const FilterInput = styled(Input)`

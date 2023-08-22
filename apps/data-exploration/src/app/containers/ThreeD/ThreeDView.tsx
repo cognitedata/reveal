@@ -35,6 +35,7 @@ import {
   useFlagPointsOfInterestFeature,
 } from '@data-exploration-app/hooks/flags';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
+import { PREVIEW_SIDEBAR_MIN_WIDTH } from '@data-exploration-lib/core';
 
 import zIndex from '../../utils/zIndex';
 import { StyledSplitter } from '../elements';
@@ -318,7 +319,7 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
         <StyledSplitter
           secondaryInitialSize={splitterColumnWidth}
           onSecondaryPaneSizeChange={setSplitterColumnWidth}
-          secondaryMinSize={200}
+          secondaryMinSize={PREVIEW_SIDEBAR_MIN_WIDTH}
         >
           <Reveal
             key={`${modelId}.${revisionId}`}
