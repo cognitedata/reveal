@@ -30,7 +30,7 @@
   "list-search-filtered-count_one": "{{filteredCount}}/{{count}} flow",
   "list-search-filtered-count_other": "{{filteredCount}}/{{count}} flows",
   "list-search-placeholder": "Search",
-  "list-title": "Flows",
+  "list-title": "Workflows",
   "name": "Name",
   "no-configuration": "No configuration",
   "node-configuration-panel-component": "Component",

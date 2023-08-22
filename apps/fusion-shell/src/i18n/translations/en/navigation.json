@@ -42,7 +42,7 @@
   "app-fdm-title": "Model your data",
   "app-flows-subtitle": "Start building your flow",
   "app-flows-tagname": "Workflow orchestration",
-  "app-flows-title": "Flows",
+  "app-flows-title": "Workflows",
   "app-functions-subtitle": "Deploy Python code, call the code on-demand, or schedule it to run at regular intervals",
   "app-functions-tagname": "Cognite Functions",
   "app-functions-title": "Use Cognite Functions",

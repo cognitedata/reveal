@@ -47,7 +47,7 @@ const App = () => {
         <QueryClientProvider client={queryClient}>
           <ReactFlowProvider>
             <GlobalStyles>
-              <SubAppWrapper title="Flows">
+              <SubAppWrapper title="Workflows">
                 <AuthWrapper
                   loadingScreen={<Loader />}
                   login={() => loginAndAuthIfNeeded(project, env)}
