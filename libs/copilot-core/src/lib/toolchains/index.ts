@@ -3,6 +3,7 @@ import { BaseChatModel } from 'langchain/chat_models/base';
 
 import { CogniteClient } from '@cognite/sdk';
 
+import { useTranslation } from '../../app/hooks/useTranslation';
 import { CogniteBaseChain } from '../CogniteBaseChain';
 import { CopilotMessage } from '../types';
 
@@ -26,57 +27,43 @@ export type CogniteChainName =
 const destinationChains = (
   sdk: CogniteClient,
   model: BaseChatModel,
-  messages: React.RefObject<CopilotMessage[]>
+  messages: React.RefObject<CopilotMessage[]>,
+  i18nFn: ReturnType<typeof useTranslation>['t']
 ): {
   [key in CogniteChainName]: CogniteBaseChain;
-} => ({
-  // TODO: pass in messages and sdk at _call level, not at constructore
-  GraphQlChain: new GraphQlChain({
-    llm: model,
-    sdk,
-    messages,
-    returnAll: true,
-    humanApproval: false,
-  }),
-  AppBuilderChain: new AppBuilderChain({
-    llm: model,
-    sdk,
-    messages,
-    returnAll: true,
-  }),
-  DocumentQueryChain: new DocumentQueryChain({
-    llm: model,
-    sdk,
-    messages,
-    returnAll: true,
-  }),
-  FusionQAChain: new FusionQAChain({
-    llm: model,
-    sdk,
-    messages,
-    returnAll: true,
-  }),
-  DocumentSummaryChain: new DocumentSummaryChain({
-    llm: model,
-    sdk,
-    messages,
-    returnAll: true,
-  }),
-  WorkorderChain: new WorkorderChain({
-    llm: model,
-    sdk,
-    messages,
-    returnAll: true,
-  }),
-});
+} =>
+  [
+    GraphQlChain,
+    AppBuilderChain,
+    DocumentQueryChain,
+    FusionQAChain,
+    DocumentSummaryChain,
+    WorkorderChain,
+  ].reduce(
+    (prev, chain) => ({
+      ...prev,
+      [chain.name]: new chain({
+        llm: model,
+        sdk,
+        messages,
+        returnAll: true,
+        humanApproval: false,
+        i18nFn,
+      }),
+    }),
+    {} as {
+      [key in CogniteChainName]: CogniteBaseChain;
+    }
+  );
 
 export const newChain = (
   sdk: CogniteClient, // TODO: remove this
   model: BaseChatModel,
   ref: React.RefObject<CopilotMessage[]>,
-  excludeChains: CogniteChainName[] = []
+  excludeChains: CogniteChainName[] = [],
+  i18nFn: ReturnType<typeof useTranslation>['t'] = (key: string) => key
 ) => {
-  const chains = destinationChains(sdk, model, ref);
+  const chains = destinationChains(sdk, model, ref, i18nFn);
   const templates = Object.entries(chains)
     // make sure the key is not excluded in the `chains` that the user wants
     .filter(([key]) => !excludeChains.includes(key as CogniteChainName))

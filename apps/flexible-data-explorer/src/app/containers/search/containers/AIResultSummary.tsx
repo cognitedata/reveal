@@ -5,7 +5,9 @@ import styled from 'styled-components';
 import {
   CopilotActions,
   CopilotDataModelQueryMessage,
+  Markdown,
   sendToCopilotEvent,
+  trackCopilotUsage,
   useToCopilotEventHandler,
 } from '@fusion/copilot-core';
 import pluralize from 'pluralize';
@@ -43,6 +45,7 @@ export const AIResultSummary = ({
     | undefined
   >(undefined);
   const [showLongStatusMessage, setShowLongStatusMessage] = useState(false);
+  const [error, setError] = useState<string | undefined>();
 
   const { isLoading } = useAIDataTypesQuery(
     query,
@@ -74,6 +77,13 @@ export const AIResultSummary = ({
       if (message.type === 'data-model-query') {
         setLoadingProgress(undefined);
       }
+      if (message.type === 'error') {
+        setLoadingProgress(undefined);
+        setError(message.content);
+      }
+      if (message.source === 'user') {
+        setError(undefined);
+      }
     }
   });
 
@@ -95,6 +105,19 @@ export const AIResultSummary = ({
     }
     return text;
   }, [results, t, copilotMessage]);
+
+  if (error) {
+    return (
+      <Header>
+        <Flex gap={8} alignItems="center" style={{ width: '100%' }}>
+          <CogPilotIcon />
+          <Body strong inverted size="medium">
+            {`${t('AI_FAILED')}: ${error}`}
+          </Body>
+        </Flex>
+      </Header>
+    );
+  }
 
   if ((results === undefined && isLoading) || loadingProgress) {
     return (
@@ -124,9 +147,12 @@ export const AIResultSummary = ({
       <Header>
         <CogPilotIcon />
         <Flex direction="column" gap={8} style={{ width: '100%' }}>
-          <Body size="medium" inverted strong>
+          <MarkdownWrapper>
+            <Markdown content={resultText} inverted />
+          </MarkdownWrapper>
+          {/* <Body size="medium" inverted strong>
             {resultText}
-          </Body>
+          </Body> */}
           <Flex alignItems="center">
             <Body size="medium" muted inverted style={{ flex: 1 }}>
               {t('AI_FILTER_APPLIED', {
@@ -140,6 +166,9 @@ export const AIResultSummary = ({
                 icon="Filter"
                 onClick={() => {
                   setFilterBuilderVisible(true);
+                  trackCopilotUsage('GQL_VIEW_FILTER', {
+                    filter: copilotMessage?.graphql.variables.filter,
+                  });
                 }}
               >
                 {t('AI_INSPECT_FILTER')}
@@ -175,6 +204,10 @@ export const AIResultSummary = ({
                 ...copilotMessage.graphql.variables,
                 filter: newFilter,
               },
+            });
+            trackCopilotUsage('GQL_EDIT_FILTER', {
+              oldFilter: copilotMessage?.graphql.variables.filter,
+              filter: newFilter,
             });
             setFilterBuilderVisible(false);
           }}
@@ -228,4 +261,10 @@ const Loader = styled.div<{ $progress: string }>`
     0px 1px 2px 0px rgba(24, 24, 28, 0.04);
   color: #fff;
   z-index: -1;
+`;
+
+const MarkdownWrapper = styled.div`
+  font-weight: 600;
+  color: white;
+  flex: 1;
 `;
