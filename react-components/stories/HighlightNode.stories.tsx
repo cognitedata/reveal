@@ -63,7 +63,10 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
   const nodeData = useClickedNodeData();
 
   useEffect(() => {
-    if (nodeData === undefined) return;
+    if (nodeData === undefined) {
+      setStylingGroups([]);
+      return;
+    }
 
     setStylingGroups([
       {
