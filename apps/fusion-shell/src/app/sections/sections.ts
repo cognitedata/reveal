@@ -1,9 +1,8 @@
-import images from '../../assets/images';
-import { TranslationKeys } from '../../i18n';
-import { AppItem, RawAppItem } from '../types';
-
+import { TranslationKeys } from 'common/i18n';
 import { colors } from './colors';
 import { RawSection } from './types';
+import images from 'assets/images';
+import { AppItem, RawAppItem } from 'types';
 
 const ARAMCO_CLUSTER_URL = 'api-cdf.sapublichosting.com';
 const openshiftClusters = [
@@ -165,12 +164,13 @@ export const rawAppsData: RawAppItem[] = [
   },
   {
     category: 'explore',
-    internalId: 'data-catalog',
-    icon: 'Grid',
-    linkTo: '/data-catalog',
-    importMapApp: '@cognite/cdf-data-catalog',
-    img: images.DataCatalogAppImg,
-    ariaLabel: 'Go to Data Catalog',
+    internalId: 'industry-canvas',
+    icon: 'Polygon',
+    linkTo: '/industrial-canvas',
+    importMapApp: '@cognite/cdf-industry-canvas-ui',
+    hideInCluster: openshiftClusters,
+    img: images.IndustryCanvasAppImg,
+    ariaLabel: 'Go to Industrial Canvas',
   },
   {
     category: 'explore',
@@ -184,13 +184,12 @@ export const rawAppsData: RawAppItem[] = [
   },
   {
     category: 'explore',
-    internalId: 'industry-canvas',
-    icon: 'Polygon',
-    linkTo: '/industrial-canvas',
-    importMapApp: '@cognite/cdf-industry-canvas-ui',
-    hideInCluster: openshiftClusters,
-    img: images.IndustryCanvasAppImg,
-    ariaLabel: 'Go to Industrial Canvas',
+    internalId: 'data-catalog',
+    icon: 'Grid',
+    linkTo: '/data-catalog',
+    importMapApp: '@cognite/cdf-data-catalog',
+    img: images.DataCatalogAppImg,
+    ariaLabel: 'Go to Data Catalog',
   },
   {
     category: 'explore',
