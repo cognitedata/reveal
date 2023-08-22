@@ -2479,6 +2479,7 @@ __metadata:
     eslint-plugin-prettier: ^5.0.0
     eslint-plugin-promise: ^6.0.0
     eslint-plugin-react: latest
+    locize-cli: ^7.14.6
     lodash: ^4.17.21
     moq.ts: ^10.0.6
     prettier: ^3.0.0
