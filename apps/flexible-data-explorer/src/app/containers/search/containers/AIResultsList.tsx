@@ -8,10 +8,10 @@ import { SearchResults } from '../../../components/search/SearchResults';
 import { useNavigation } from '../../../hooks/useNavigation';
 import { useFDM } from '../../../providers/FDMProvider';
 import { SearchResponseItem } from '../../../services/types';
-import { extractProperties } from '../../../utils/ai/results';
 import { getIcon } from '../../../utils/getIcon';
 import { useAICachedResults } from '../hooks/useAICachedResults';
 import { PAGE_SIZE } from '../results/constants';
+import { extractProperties } from '../utils';
 
 export const AIResultsList = ({
   copilotMessage,

@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import styled from 'styled-components';
 
 import { Body, Title, Detail, IconType } from '@cognite/cogs.js';
 
+import { flattenProperties } from '../../../containers/search/utils';
 import { CategoryChip } from '../../chips/CategoryChip';
 
 interface Props {
@@ -23,17 +24,34 @@ export const SearchResultsItem: React.FC<Props> = ({
   properties,
   onClick,
 }) => {
-  // Mainly a guide to prevent the UI from breaking
-  const normalizedProperties = (properties || []).reduce(
-    (acc, { key, value }) => {
-      if (acc.length >= MAX_PROPERTIES) {
-        return acc;
-      }
+  const normalizedProperties = useMemo(() => {
+    // Some of the properties may be time series charts etc, so we need to filter out those
+    const propertiesWithKey = properties?.filter(({ key }) => !!key);
 
-      return [...acc, { key, value }];
-    },
-    [] as { key?: string; value?: any }[]
-  );
+    // First limit number of properties, mainly a guide to prevent the UI from breaking
+    const cappedProperties = (propertiesWithKey || []).reduce(
+      (acc, { key, value }) => {
+        if (acc.length >= MAX_PROPERTIES) {
+          return acc;
+        }
+
+        return [...acc, { key, value }];
+      },
+      [] as { key?: string; value?: any }[]
+    );
+
+    // Convert to object to be able to use flattenProperties function
+    const propertiesObject: { [key: string]: unknown } = {};
+    cappedProperties?.forEach(({ key, value }) => {
+      propertiesObject[key!] = value;
+    });
+
+    // Return back list of objects { key, value } object
+    return flattenProperties(propertiesObject).map(({ key, value }) => ({
+      key,
+      value,
+    }));
+  }, [properties]);
 
   return (
     <Container role="button" tabIndex={0} onClick={onClick}>

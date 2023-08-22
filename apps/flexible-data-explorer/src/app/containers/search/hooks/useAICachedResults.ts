@@ -4,7 +4,7 @@ import { useAIQueryLocalStorage } from '../../../hooks/useLocalStorage';
 import { useSearchQueryParams } from '../../../hooks/useParams';
 import { useAIDataTypesQuery } from '../../../services/dataTypes/queries/useAIDataTypesQuery';
 import { useSelectedDataModels } from '../../../services/useSelectedDataModels';
-import { recursiveConcatItems } from '../../../utils/ai/results';
+import { recursiveConcatItems } from '../utils';
 
 export const useAICachedResults = (
   copilotMessage?: CopilotDataModelQueryMessage
