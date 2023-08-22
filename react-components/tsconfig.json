@@ -14,5 +14,5 @@
     "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true
   },
-  "include": ["src/**/*", "stories/**/*, webpack.config.js"]
+  "include": ["src/**/*", "stories/**/*"]
 }
