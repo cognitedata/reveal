@@ -3,8 +3,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { useQueries, useQuery } from '@tanstack/react-query';
 
-import { getDlc, readLoginHints } from '@cognite/auth-react/src/lib/base';
-
 import { BASE_QUERY_KEY } from '../common';
 import {
   Auth0Response,
@@ -31,8 +29,9 @@ import {
   getUserManager,
   groupLegacyProjectsByValidationStatus,
   validateLegacyProject,
+  getDlc,
+  isWhitelistedHost,
 } from '../utils';
-import { isUsingUnifiedSignin } from '../utils/isUsingUnifiedSignin';
 
 import {
   getAADB2CQueryKey,
@@ -55,14 +54,9 @@ const getValidatedLegacyProjectKey = (projectName: string, cluster: string) => [
   cluster,
 ];
 
-const loginHints = readLoginHints();
-
-const loginInfoQueryFn = () => {
-  if (isUsingUnifiedSignin()) {
-    if (!loginHints?.organization) {
-      return Promise.reject(new Error('Missing organization'));
-    }
-    return getDlc(loginHints?.organization);
+const loginInfoQueryFn = async () => {
+  if (isWhitelistedHost()) {
+    return await getDlc();
   }
 
   return fetch(`/_api/login_info`)

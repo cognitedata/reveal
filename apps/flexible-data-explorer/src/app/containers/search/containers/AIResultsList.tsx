@@ -41,6 +41,10 @@ export const AIResultsList = ({
     [navigate, client]
   );
 
+  if (data.length === 0 || !data[0].externalId) {
+    return null;
+  }
+
   return (
     <>
       {copilotMessage && data.length > 0 && (

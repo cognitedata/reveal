@@ -88,7 +88,7 @@
         "mock": {
           "buildTarget": "contextualization-ui:build:mock",
           "hmr": true,
-          "port": 3001,
+          "port": 3020,
           "ssl": true,
           "proxyConfig": "apps/contextualization-ui/proxy.conf.json"
         }

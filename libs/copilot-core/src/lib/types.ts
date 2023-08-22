@@ -25,6 +25,11 @@ export type CopilotTextMessage = {
   context?: string;
 } & DefaultMessage;
 
+export type CopilotErrorMessage = {
+  type: 'error';
+  context?: string;
+} & DefaultBotMessage;
+
 export type CopilotHumanApprovalMessage = {
   type: 'human-approval';
   approved?: boolean;
@@ -70,6 +75,7 @@ export type CopilotUserMessage = CopilotTextMessage;
 export type CopilotBotMessage =
   | (CopilotTextMessage & DefaultBotMessage)
   | CopilotCodeMessage
+  | CopilotErrorMessage
   | CopilotDataModelSelectionMessage
   | CopilotHumanApprovalMessage
   | CopilotDataModelQueryMessage;

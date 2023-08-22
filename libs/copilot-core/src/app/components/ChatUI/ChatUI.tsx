@@ -35,6 +35,7 @@ import {
 import { getChatHistory, useSaveChat } from '../../hooks/useChatHistory';
 import { useCopilotContext } from '../../hooks/useCopilotContext';
 import { useMetrics } from '../../hooks/useMetrics';
+import { useTranslation } from '../../hooks/useTranslation';
 import zIndex from '../../utils/zIndex';
 
 import { LargeChatUI } from './LargeChatUI';
@@ -73,11 +74,13 @@ export const ChatUI = ({
 
   const { track } = useMetrics();
 
+  const { t } = useTranslation();
+
   const model = useMemo(() => new CogniteChatGPT(sdk), [sdk]);
 
   const { base: conversationChain, chains } = useMemo(() => {
-    return newChain(sdk, model, messages, excludeChains);
-  }, [sdk, model, messages, excludeChains]);
+    return newChain(sdk, model, messages, excludeChains, t);
+  }, [sdk, model, messages, excludeChains, t]);
 
   const updateMessage = useCallback(
     async (key: number, result: CopilotBotMessage) => {

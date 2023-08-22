@@ -125,5 +125,6 @@
   "AI_LOADING_SEARCH": "Searching results...",
   "AI_LOADING_TEXT_LONG": "{{status}} this may take a while. You can use the standard search if this takes too long.",
   "AI_LOADING_TEXT": "{{status}} this may take a while.",
+  "AI_FAILED": "Failed to find results",
   "AI_LEARN_MORE": "Learn more"
 }

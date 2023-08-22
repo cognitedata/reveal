@@ -64,6 +64,16 @@ export function Metadata({ metadata }: { metadata?: { [k: string]: string } }) {
 
             return <TooltipCell text={value} />;
           },
+          sortingFn: (rowA, rowB, columnId) => {
+            const valueA = rowA.getValue(columnId);
+            const valueB = rowB.getValue(columnId);
+
+            if (!Number.isNaN(valueA) && !Number.isNaN(valueB)) {
+              return Number(valueA) - Number(valueB);
+            }
+
+            return String(valueA).localeCompare(String(valueB));
+          },
         },
       ] as ColumnDef<DataSource>[],
     []

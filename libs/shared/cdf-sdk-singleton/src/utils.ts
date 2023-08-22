@@ -1,27 +1,15 @@
 import queryString from 'query-string';
 
 import {
-  AadIdp,
-  Auth0Idp,
-  KeycloakIdp,
-  getDlc,
-  getIdp,
-  readLoginHints,
-} from '@cognite/auth-react/src/lib/base';
-import {
-  CogniteIdp,
-  SAuthIdp,
-} from '@cognite/auth-react/src/lib/base/domain-login-configuration';
-import {
   getSelectedIdpDetails,
   IDPResponse,
+  getDlc,
   LegacyProject,
+  isWhitelistedHost,
 } from '@cognite/login-utils';
 import { CogniteClient } from '@cognite/sdk';
 
 import { isUsingUnifiedSignin } from './unified-signin';
-
-const loginHints = readLoginHints();
 
 export const getQueryParameter = (parameterKey: string): string => {
   const parameters = queryString.parse(window.location.search) ?? {};
@@ -30,7 +18,7 @@ export const getQueryParameter = (parameterKey: string): string => {
 
 export const getProject = (): string => {
   if (isUsingUnifiedSignin()) {
-    const project = getQueryParameter('project') || loginHints?.project;
+    const project = getQueryParameter('project');
     // If we're able to find the project return it, otherwise default to the previous behaviour.
     if (project) {
       return project;
@@ -48,7 +36,7 @@ export const getProject = (): string => {
 };
 
 export const getCluster = () => {
-  const cluster = getQueryParameter('cluster') || loginHints?.cluster;
+  const cluster = getQueryParameter('cluster');
   return Array.isArray(cluster) ? cluster[0] : cluster;
 };
 
@@ -69,22 +57,18 @@ export const getUrl = (
 };
 
 export async function getIDP(): Promise<IDPResponse | LegacyProject> {
-  if (isUsingUnifiedSignin()) {
-    let loginHints = readLoginHints();
-    if (!loginHints) {
-      return Promise.reject(new Error('Missing login hints'));
-    }
-    if (!loginHints?.organization) {
-      return Promise.reject(new Error('Missing organization'));
-    }
-    const dlc = await getDlc(loginHints?.organization);
-    const idp = getIdp(dlc.idps, loginHints?.idpInternalId);
+  const { internalId } = getSelectedIdpDetails() ?? {};
+
+  if (isWhitelistedHost()) {
+    const dlc = await getDlc();
+    const idp = dlc?.idps?.find(
+      (idp: IDPResponse) => idp.internalId === internalId
+    );
     if (!idp) {
       return Promise.reject(new Error('IDP not found'));
     }
-    return idp as AadIdp | Auth0Idp | KeycloakIdp | CogniteIdp;
+    return idp;
   }
-  const { internalId } = getSelectedIdpDetails() ?? {};
 
   const { idps = [], legacyProjects = [] } = await fetch(
     `/_api/login_info`
