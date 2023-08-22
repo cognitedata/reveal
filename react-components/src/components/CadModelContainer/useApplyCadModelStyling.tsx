@@ -131,9 +131,12 @@ function isEqualTreeIndex(
   collectionA: TreeIndexNodeCollection,
   collectionB: TreeIndexNodeCollection
 ): boolean {
+  const setA = collectionA.getIndexSet();
+  const setB = collectionB.getIndexSet();
+
   const isEqualContent =
-    collectionA.getIndexSet().clone().differenceWith(collectionB.getIndexSet()).count === 0;
-  return isEqualContent;
+    setA.clone().differenceWith(setB).count === 0;
+  return isEqualContent && setA.count === setB.count;
 }
 
 function isEqualStyle(styleA: NodeAppearance, styleB: NodeAppearance): boolean {
