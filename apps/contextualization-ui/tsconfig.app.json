@@ -19,5 +19,5 @@
     "src/**/*.spec.jsx",
     "src/**/*.test.jsx"
   ],
-  "include": ["src/**/*.js", "src/**/*.jsx", "src/**/*.ts", "src/**/*.tsx"]
+  "include": ["src/**/*.js", "src/**/*.jsx", "src/**/*.ts", "src/**/*.tsx", "../../libs/contextualization/src/lib/hooks/matches/useListMatches.ts", "../../libs/contextualization/src/lib/utils/getUrlParameters.ts"]
 }

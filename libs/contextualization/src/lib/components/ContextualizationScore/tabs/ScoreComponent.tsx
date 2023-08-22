@@ -2,7 +2,8 @@ import styled from 'styled-components';
 
 import { Chip } from '@cognite/cogs.js';
 
-const ScoreComponent = ({
+// ToDo(CXT-1307): move this to app
+export const ScoreComponent = ({
   outputUncertainty,
   uncertainty,
   score = 0,
@@ -36,8 +37,6 @@ const ScoreComponent = ({
     </ScoreContainer>
   );
 };
-
-export default ScoreComponent;
 
 const ScoreContainer = styled.div`
   display: flex;

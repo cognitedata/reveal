@@ -1,0 +1,1 @@
+export { getUrlParameters } from './getUrlParameters';

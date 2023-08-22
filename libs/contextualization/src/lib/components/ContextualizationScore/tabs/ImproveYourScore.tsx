@@ -1,7 +1,9 @@
 import { useLocation, useParams } from 'react-router-dom';
 
+import { getProject } from '@cognite/cdf-utilities';
 import { Button } from '@cognite/cogs.js';
 
+import { CONTEXTUALIZATION_MAIN_ROUTE } from '../../../constants';
 import { useSelectedDataModelVersion } from '../../../hooks/data-model-version/useSelectedDataModelVersion';
 import { extractPropertiesFromURL } from '../../../utils/extractPropertiesFromURL';
 
@@ -15,6 +17,7 @@ export const ImproveYourScore = ({
   const currentURL = window.location.href;
   const baseUrl = new URL(currentURL).origin;
   const { type } = extractPropertiesFromURL();
+  const project = getProject();
   const { dataModelExternalId = '', space = '', version = '' } = useParams();
 
   const {
@@ -31,13 +34,13 @@ export const ImproveYourScore = ({
     env: env,
     dataModelExternalId: dataModelExternalId,
     space: space,
-    version: versionNumber,
+    versionNumber: versionNumber,
     type: type,
     headerName: headerName,
     dataModelType: dataModelType,
   });
 
-  const AdvancedJoinsURL = `${baseUrl}/contextualization/explore/advancedJoins?${queryParams.toString()}`;
+  const AdvancedJoinsURL = `${baseUrl}/${project}/${CONTEXTUALIZATION_MAIN_ROUTE}?${queryParams.toString()}`;
 
   return (
     <Button

@@ -1,6 +1,6 @@
 {
   "name": "@cognite/cdf-contextualization-ui",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "scripts": {
     "start": "../../scripts/start.sh dev contextualization-ui",
     "build": "../../scripts/build.sh production contextualization-ui",
@@ -24,7 +24,6 @@
     "@cognite/cdf-i18n-utils": "^0.7.3",
     "@cognite/cdf-sdk-singleton": "*",
     "@cognite/cdf-utilities": "*",
-    "@cognite/cogs.js": "^9.31.4",
     "@cognite/sdk": "^7.19.1",
     "@nx/react": "16.5.2",
     "@nx/webpack": "16.5.2",
@@ -35,6 +34,11 @@
     "react-router-dom": "6.11.2",
     "single-spa-react": "^5.0.0",
     "styled-components": "5.3.6",
-    "systemjs-webpack-interop": "^2.3.7"
+    "systemjs-webpack-interop": "^2.3.7",
+    "@cognite/cdf-solutions-ui": "*",
+    "antd": "^4.24.7",
+    "@data-exploration/components": "*",
+    "@tanstack/react-table": "^8.7.4",
+    "lodash": "^4.17.21"
   }
 }
