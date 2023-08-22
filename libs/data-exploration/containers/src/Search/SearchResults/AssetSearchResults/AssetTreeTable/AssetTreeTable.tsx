@@ -45,6 +45,7 @@ export const AssetTreeTable = ({
   tableHeaders,
   scrollIntoViewRow,
   tableSubHeaders,
+  onDataChanged,
 }: {
   filter: InternalAssetFilters;
   query?: string;
@@ -56,6 +57,7 @@ export const AssetTreeTable = ({
   selectedRows?: Record<string, boolean>;
   scrollIntoViewRow?: string | number; //Scroll into center row when the selectedRows changes
   tableSubHeaders?: React.ReactElement;
+  onDataChanged?: (data: InternalAssetTreeData[]) => void;
 }) => {
   const { t } = useTranslation();
 
@@ -72,12 +74,8 @@ export const AssetTreeTable = ({
 
   const assetSearchConfig = useGetSearchConfigFromLocalStorage('asset');
 
-  const rootAssetTree = useRootAssetsQuery(rootExpandedKeys);
-  const {
-    data: searchAssetTree,
-    fetchNextPage,
-    hasNextPage,
-  } = useSearchAssetTree(
+  const rootAssets = useRootAssetsQuery(rootExpandedKeys);
+  const searchAsset = useSearchAssetTree(
     {
       query,
       assetFilter: filter,
@@ -93,6 +91,10 @@ export const AssetTreeTable = ({
     );
   }, [query, filter]);
 
+  const { data, hasNextPage, fetchNextPage } = startFromRoot
+    ? rootAssets
+    : searchAsset;
+
   const assetId = useMemo(() => {
     if (selectedRows && Object.keys(selectedRows).length === 1) {
       return Number(Object.keys(selectedRows)[0]);
@@ -102,6 +104,11 @@ export const AssetTreeTable = ({
   }, [selectedRows]);
 
   const { data: rootPath, isFetched: rootPathFetched } = useRootPath(assetId);
+
+  useEffect(() => {
+    onDataChanged?.(data);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
 
   useEffect(() => {
     if (startFromRoot && rootPath && rootPathFetched) {
@@ -216,26 +223,18 @@ export const AssetTreeTable = ({
     [query, startFromRoot, metadataColumns]
   );
 
-  const getData = () => {
-    if (startFromRoot) {
-      return rootAssetTree || [];
-    }
-
-    return searchAssetTree;
-  };
-
   const hiddenColumns = getHiddenColumns(columns, visibleColumns);
 
   return (
     <Suspense fallback={<EmptyState isLoading={true} />}>
       <Table<InternalAssetTreeData>
         id="asset-tree-table"
-        data={getData()}
+        data={data}
         columns={columns}
         tableHeaders={tableHeaders}
         enableExpanding
         selectedRows={selectedRows}
-        showLoadButton={!startFromRoot}
+        showLoadButton={hasNextPage}
         scrollIntoViewRow={scrollIntoViewRow}
         hasNextPage={hasNextPage}
         fetchMore={fetchNextPage}
