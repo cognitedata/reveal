@@ -1,9 +1,9 @@
+import { BASE_QUERY_KEY } from '@flows/common/constants';
 import {
   useInfiniteQuery,
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
-import { BASE_QUERY_KEY } from '@flows/common/constants';
 
 import { RawDB } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';

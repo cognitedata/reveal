@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 
 import { useTranslation } from '@flows/common';
-import { FormikErrors, useFormik } from 'formik';
 import { useCreateWorkflow } from '@flows/hooks/workflows';
+import { FormikErrors, useFormik } from 'formik';
 
 import { createLink } from '@cognite/cdf-utilities';
 import { Flex, Modal, InputExp } from '@cognite/cogs.js';

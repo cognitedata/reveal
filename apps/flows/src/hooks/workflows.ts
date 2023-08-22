@@ -1,11 +1,4 @@
 import {
-  UseMutationOptions,
-  UseQueryOptions,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from '@tanstack/react-query';
-import {
   CreateWorkflowDefinitionVariables,
   DeleteWorkflowVariables,
   RunWorkflowVariables,
@@ -15,6 +8,13 @@ import {
   WorkflowWithVersions,
   UpdateTaskVariables,
 } from '@flows/types/workflows';
+import {
+  UseMutationOptions,
+  UseQueryOptions,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 
 import { getProject } from '@cognite/cdf-utilities';
 import { useSDK } from '@cognite/sdk-provider';

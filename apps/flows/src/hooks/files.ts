@@ -1,14 +1,14 @@
 import * as Automerge from '@automerge/automerge';
+import { BASE_QUERY_KEY } from '@flows/common/constants';
+import { AFlow, Flow } from '@flows/types';
+import { getUserInfo } from '@flows/utils/user';
 import {
   useMutation,
   useQuery,
   useQueryClient,
   UseQueryOptions,
 } from '@tanstack/react-query';
-import { BASE_QUERY_KEY } from '@flows/common/constants';
 import { isEqual } from 'lodash';
-import { AFlow, Flow } from '@flows/types';
-import { getUserInfo } from '@flows/utils/user';
 
 import { CogniteClient, CogniteError, FileInfo } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';

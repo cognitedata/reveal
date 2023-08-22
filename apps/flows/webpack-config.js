@@ -37,8 +37,8 @@ module.exports = composePlugins(
 
     config.experiments = {
       asyncWebAssembly: true,
-      syncWebAssembly: true
-    }
+      syncWebAssembly: true,
+    };
 
     return config;
   }

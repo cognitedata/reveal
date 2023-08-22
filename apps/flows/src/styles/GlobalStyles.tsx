@@ -1,7 +1,7 @@
-import { ConfigProvider } from 'antd';
-import reactFlowStyles from 'reactflow/dist/style.css';
 import { styleScope } from '@flows/styles/styleScope';
 import { getContainer } from '@flows/utils';
+import { ConfigProvider } from 'antd';
+import reactFlowStyles from 'reactflow/dist/style.css';
 
 import { useGlobalStyles } from '@cognite/cdf-utilities';
 import { Loader, Tooltip as CogsTooltip, Modal } from '@cognite/cogs.js';

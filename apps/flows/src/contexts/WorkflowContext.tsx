@@ -15,10 +15,10 @@ import {
 import * as Automerge from '@automerge/automerge';
 import { ChangeOptions } from '@automerge/automerge';
 import { useUpdateFlow } from '@flows/hooks/files';
-import { debounce, isEqual } from 'lodash';
 import { AFlow, CanvasEdges, CanvasNodes } from '@flows/types';
 import { WorkflowExecution } from '@flows/types/workflows';
 import { useUserInfo } from '@flows/utils/user';
+import { debounce, isEqual } from 'lodash';
 import { v4 } from 'uuid';
 
 type Logger = (oldDoc: AFlow) => ChangeOptions<AFlow> | undefined;

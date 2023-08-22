@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 
-import { useIsMutating } from '@tanstack/react-query';
 import { useTranslation } from '@flows/common';
 import { useWorkflowBuilderContext } from '@flows/contexts/WorkflowContext';
+import { useIsMutating } from '@tanstack/react-query';
 
 import { formatTime, Timestamp } from '@cognite/cdf-utilities';
 import { Body, Colors, Icon } from '@cognite/cogs.js';

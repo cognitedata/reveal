@@ -1,5 +1,5 @@
-import { useQuery } from '@tanstack/react-query';
 import { CogFunction } from '@flows/types';
+import { useQuery } from '@tanstack/react-query';
 
 import sdk from '@cognite/cdf-sdk-singleton';
 import { getProject } from '@cognite/cdf-utilities';

@@ -2,8 +2,6 @@ import { useMemo } from 'react';
 
 import styled from 'styled-components';
 
-import { AutoComplete, Select } from 'antd';
-import { DefaultOptionType } from 'antd/lib/select';
 import { useTranslation } from '@flows/common';
 import FormFieldWrapper from '@flows/components/form-field-wrapper';
 import { useWorkflowBuilderContext } from '@flows/contexts/WorkflowContext';
@@ -11,6 +9,8 @@ import { useFunctions } from '@flows/hooks/functions';
 import { useTransformationList } from '@flows/hooks/transformation';
 import { ProcessNodeData, ProcessType, ProcessNode } from '@flows/types';
 import { collectPages } from '@flows/utils';
+import { AutoComplete, Select } from 'antd';
+import { DefaultOptionType } from 'antd/lib/select';
 
 import {
   Flex,

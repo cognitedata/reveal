@@ -3,12 +3,12 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { Route, BrowserRouter, Routes } from 'react-router-dom';
 import { ReactFlowProvider } from 'reactflow';
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { CANVAS_PATH } from '@flows/common';
 import ErrorFeedback from '@flows/common/ErrorFeedback';
 import { translations } from '@flows/common/i18n';
 import GlobalStyles from '@flows/styles/GlobalStyles';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
 import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';

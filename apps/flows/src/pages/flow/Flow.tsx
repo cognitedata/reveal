@@ -20,7 +20,10 @@ import {
 import { useCreateFile, useFile } from '@flows/hooks/files';
 import { useWorkflow } from '@flows/hooks/workflows';
 import { WorkflowWithVersions } from '@flows/types/workflows';
-import { getLastWorkflowDefinition, isCanvasEmpty } from '@flows/utils/workflows';
+import {
+  getLastWorkflowDefinition,
+  isCanvasEmpty,
+} from '@flows/utils/workflows';
 
 import { Body, Colors, Elevations, Flex, Loader } from '@cognite/cogs.js';
 

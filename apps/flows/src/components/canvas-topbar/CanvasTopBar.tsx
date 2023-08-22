@@ -5,9 +5,14 @@ import styled from 'styled-components';
 
 import { useTranslation } from '@flows/common';
 import EditWorkflowModal from '@flows/components/workflow-modal/EditWorkflowModal';
-import { ViewMode, useWorkflowBuilderContext } from '@flows/contexts/WorkflowContext';
-import { useCreateWorkflowDefinition, useRunWorkflow } from '@flows/hooks/workflows';
-import { toPng } from 'html-to-image';
+import {
+  ViewMode,
+  useWorkflowBuilderContext,
+} from '@flows/contexts/WorkflowContext';
+import {
+  useCreateWorkflowDefinition,
+  useRunWorkflow,
+} from '@flows/hooks/workflows';
 import {
   WorkflowDefinitionCreate,
   WorkflowWithVersions,
@@ -19,6 +24,7 @@ import {
   getLastWorkflowDefinition,
   isCanvasEmpty,
 } from '@flows/utils/workflows';
+import { toPng } from 'html-to-image';
 
 import { createLink, SecondaryTopbar } from '@cognite/cdf-utilities';
 import {

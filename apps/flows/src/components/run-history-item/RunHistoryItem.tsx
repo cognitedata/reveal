@@ -67,7 +67,9 @@ const RunHistoryItem = ({
             <StyledSegmentedControl
               currentKey={tabView}
               size="small"
-              onButtonClicked={(key) => typeof(key) === 'string' ? updateTabView(key) : null}
+              onButtonClicked={(key) =>
+                typeof key === 'string' ? updateTabView(key) : null
+              }
             >
               <SegmentedControl.Button key="results">
                 {t('results')}

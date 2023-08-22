@@ -11,8 +11,12 @@ import {
 
 import styled from 'styled-components';
 
-import { useQuery } from '@tanstack/react-query';
-import { DELETE_KEY_CODES, MAX_ZOOM, MIN_ZOOM, useTranslation } from '@flows/common';
+import {
+  DELETE_KEY_CODES,
+  MAX_ZOOM,
+  MIN_ZOOM,
+  useTranslation,
+} from '@flows/common';
 import { Controls } from '@flows/components/controls';
 import { CustomRunEdge } from '@flows/components/custom-run-edge/CustomRunEdge';
 import { FlowBuilderContainer } from '@flows/components/flow-builder';
@@ -20,6 +24,7 @@ import { RunNodeRenderer } from '@flows/components/run-node/RunNodeRenderer';
 import { useWorkflowBuilderContext } from '@flows/contexts/WorkflowContext';
 import { ProcessNode, WorkflowBuilderNodeType } from '@flows/types';
 import { computeLayout } from '@flows/utils/layout';
+import { useQuery } from '@tanstack/react-query';
 
 import { Body, Colors, Flex } from '@cognite/cogs.js';
 

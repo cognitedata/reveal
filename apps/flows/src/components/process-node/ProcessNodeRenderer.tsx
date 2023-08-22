@@ -5,8 +5,16 @@ import styled from 'styled-components';
 
 import { Extend as AutomergeExtend, uuid } from '@automerge/automerge';
 import { useTranslation } from '@flows/common';
-import { UserState, useWorkflowBuilderContext } from '@flows/contexts/WorkflowContext';
-import { PROCESS_ICON, ProcessNode, ProcessNodeData, ProcessType } from '@flows/types';
+import {
+  UserState,
+  useWorkflowBuilderContext,
+} from '@flows/contexts/WorkflowContext';
+import {
+  PROCESS_ICON,
+  ProcessNode,
+  ProcessNodeData,
+  ProcessType,
+} from '@flows/types';
 import { useUserInfo } from '@flows/utils/user';
 
 import {
