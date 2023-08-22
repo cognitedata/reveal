@@ -11,7 +11,7 @@ export const RunAdvancedJoinButton = ({
   savedManualMatchesCount: number;
   handleRunAdvancedJoin: () => void;
 }) => {
-  const _tooltipContent = (
+  const tooltipContent = (
     <>
       {isAdvancedJoinRunnable && (
         <>
@@ -24,12 +24,11 @@ export const RunAdvancedJoinButton = ({
     </>
   );
   return (
-    <Tooltip content="not implemented" position="bottom">
+    <Tooltip content={tooltipContent} position="bottom">
       <Button
         icon="Play"
         type="primary"
-        // disabled={!isAdvancedJoinRunnable}
-        disabled={true}
+        disabled={!isAdvancedJoinRunnable}
         style={{
           whiteSpace: 'nowrap',
           textAlign: 'center',

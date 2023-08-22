@@ -55,3 +55,17 @@ export type InternalModelInstance = {
 } & Record<string, string>;
 
 export type ObjectProperty = { space: string; externalId: string };
+
+export interface EstimateArray extends Table {
+  status?: JobStatus;
+  jobResponse?: EstimateJobPercentages;
+}
+
+export type SelectedColumns = {
+  fromColumn: string | undefined;
+  toColumn: string | undefined;
+};
+
+export interface RawTableProps {
+  name: string;
+}

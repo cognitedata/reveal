@@ -10,14 +10,17 @@ import {
   useQueryParameter,
 } from '@fusion/contextualization';
 
+import { FormattedContainer } from '../components/FormattedContainer';
 import { InitialContextualizationScore } from '../components/InitialContextualizationScore';
+import { UpdatedEstimatedScore } from '../components/UpdatedEstimatedScore';
 import {
   MAX_COMPLETED_PERCENTAGE,
   NUM_MANUAL_MATCHES_TO_STATISTICALLY_SIGNIFICANT,
 } from '../constants';
 import { AdvancedJoinsTopBar } from '../containers/AdvancedJoinsTopBar';
 import { Labeling } from '../containers/Labeling';
-import { ManualMatch } from '../types';
+import { RunAdvancedJoin } from '../containers/RunAdvancedJoin';
+import { EstimateArray, ManualMatch, SelectedColumns } from '../types';
 import { filterOnAdvancedJoinsExternalId } from '../utils/filterOnAdvancedJoinsExternalId';
 
 export const ManualMatchesContext = createContext<{
@@ -45,50 +48,50 @@ export const AdvancedJoinsPage = () => {
   const [advancedJoinExternalId, setAdvancedJoinExternalId] =
     useQueryParameter('AdvancedJoinId');
 
-  // const [selectedDatabase, setSelectedDatabase] = useState<string | null>(null);
-  // const [selectedTable, setSelectedTable] = useState<string | null>(null);
-  // const [estimateArray, setEstimateArray] = useState<EstimateArray[]>([]);
-  // const [selectedColumns, setSelectedColumns] = useState<
-  //   Record<string, SelectedColumns>
-  // >({});
+  const [selectedDatabase, setSelectedDatabase] = useState<string | null>(null);
+  const [selectedTable, setSelectedTable] = useState<string | null>(null);
+  const [estimateArray, setEstimateArray] = useState<EstimateArray[]>([]);
+  const [selectedColumns, setSelectedColumns] = useState<
+    Record<string, SelectedColumns>
+  >({});
 
   // column managing utils
-  // const setFromColumn = (tableId: string, fromColumnNew: string) => {
-  //   setSelectedColumns((prevSelectedColumns) => {
-  //     return {
-  //       ...prevSelectedColumns,
-  //       [tableId]: {
-  //         fromColumn: fromColumnNew,
-  //         toColumn: prevSelectedColumns[tableId]?.toColumn || undefined,
-  //       },
-  //     };
-  //   });
-  // };
+  const setFromColumn = (tableId: string, fromColumnNew: string) => {
+    setSelectedColumns((prevSelectedColumns) => {
+      return {
+        ...prevSelectedColumns,
+        [tableId]: {
+          fromColumn: fromColumnNew,
+          toColumn: prevSelectedColumns[tableId]?.toColumn || undefined,
+        },
+      };
+    });
+  };
 
-  // const setToColumn = (tableId: string, toColumnNew: string) => {
-  //   setSelectedColumns((prevSelectedColumns) => {
-  //     return {
-  //       ...prevSelectedColumns,
-  //       [tableId]: {
-  //         fromColumn: prevSelectedColumns[tableId]?.fromColumn || undefined,
-  //         toColumn: toColumnNew,
-  //       },
-  //     };
-  //   });
-  // };
+  const setToColumn = (tableId: string, toColumnNew: string) => {
+    setSelectedColumns((prevSelectedColumns) => {
+      return {
+        ...prevSelectedColumns,
+        [tableId]: {
+          fromColumn: prevSelectedColumns[tableId]?.fromColumn || undefined,
+          toColumn: toColumnNew,
+        },
+      };
+    });
+  };
 
-  // const resetState = () => {
-  //   setSelectedTable(null);
-  //   setEstimateArray([]);
-  //   setSelectedColumns({});
-  // };
+  const resetState = () => {
+    setSelectedTable(null);
+    setEstimateArray([]);
+    setSelectedColumns({});
+  };
 
-  // const getColumnsForTable = (tableId: string | null): SelectedColumns => {
-  //   if (tableId === null) {
-  //     return { fromColumn: undefined, toColumn: undefined };
-  //   }
-  //   return selectedColumns[tableId];
-  // };
+  const getColumnsForTable = (tableId: string | null): SelectedColumns => {
+    if (tableId === null) {
+      return { fromColumn: undefined, toColumn: undefined };
+    }
+    return selectedColumns[tableId];
+  };
 
   const { data: { items } = {} } = useCreateAdvancedJoinProcess(
     !advancedJoinExternalId
@@ -153,7 +156,7 @@ export const AdvancedJoinsPage = () => {
 
             {runStage ? (
               <>
-                {/* <Column2>
+                <Column2>
                   <RunAdvancedJoin
                     advancedJoinExternalId={advancedJoinExternalId}
                     estimateArray={estimateArray}
@@ -185,7 +188,7 @@ export const AdvancedJoinsPage = () => {
                       footer={<></>}
                     />
                   )}
-                </Column1> */}
+                </Column1>
               </>
             ) : (
               <Column2>
