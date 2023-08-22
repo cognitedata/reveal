@@ -49,7 +49,9 @@ export const MeasurementButton = (): ReactElement => {
   useEffect(() => {
     if (measurementEnabled) {
       enterMeasurement();
-      return () => exitMeasurement();
+      return () => {
+        exitMeasurement();
+      };
     }
   }, [measurementEnabled]);
 
