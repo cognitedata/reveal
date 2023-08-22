@@ -29,9 +29,7 @@ export const SearchInput: React.FC<SearchInputProps> = ({
       <Input
         {...rest}
         variant="noBorder"
-        placeholder={t('FILTER_BY_PROPERTY', 'Filter by name', {
-          property: 'name',
-        })}
+        placeholder={t('FILTER_BY_NAME', 'Filter by name')}
         value={value}
         onChange={(event) =>
           onChange(event.target.value, {
