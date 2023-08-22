@@ -1,8 +1,5 @@
-name: Sync added and deleted keys to locize
-on:
-  push:
-    branches:
-      - pramodcog/UX-1220
+name: Translation sync added and deleted keys to locize
+on: workflow_dispatch
 
 jobs:
   locize-sync:
