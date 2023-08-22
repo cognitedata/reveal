@@ -188,7 +188,7 @@ export const FileDetail = ({
               {editMode && (
                 <Infobar
                   type="neutral"
-                  buttonText={t('DONE_EDITION', 'Done editing')}
+                  buttonText={t('DONE_EDITING', 'Done editing')}
                   onButtonClick={() => setEditMode(false)}
                 >
                   {t(
