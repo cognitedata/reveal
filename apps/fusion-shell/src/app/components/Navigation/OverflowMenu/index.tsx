@@ -76,23 +76,8 @@ const MenuWrapper = styled.div`
   background-color: white;
   max-width: 90vw;
   width: 480px;
-
-  @media (min-height: 630px) {
-    max-height: 524px;
-    overflow: scroll;
-  }
-  @media (min-height: 647px) {
-    max-height: 544px;
-    overflow: scroll;
-  }
-  @media (min-height: 527px) {
-    max-height: 424px;
-    overflow: scroll;
-  }
-  @media (min-height: 695px) {
-    max-height: 608px;
-    overflow: scroll;
-  }
+  max-height: 85vh;
+  overflow-y: auto;
 `;
 
 const StyledSectionTitle = styled(Detail)`
