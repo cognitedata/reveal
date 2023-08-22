@@ -6,20 +6,16 @@ import {
   type TypedReveal3DModel
 } from '../components/Reveal3DResources/types';
 import { type PointCloudModelStyling } from '../components/PointCloudContainer/PointCloudContainer';
-import {
-  type NodeStylingGroup,
-  type CadModelStyling,
-  type TreeIndexStylingGroup
-} from '../components/CadModelContainer/CadModelContainer';
-import { type InModel3dEdgeProperties } from '../utilities/globalDataModels';
-import { type EdgeItem } from '../utilities/FdmSDK';
 import { type NodeAppearance } from '@cognite/reveal';
 import { type ThreeDModelMappings } from './types';
 import { type Node3D, type CogniteExternalId } from '@cognite/sdk';
-import { useFdmAssetMappings } from '../components/NodeCacheProvider/NodeCacheProvider';
+import {
+  useFdmAssetMappings,
+  useMappedEdgesForRevisions
+} from '../components/NodeCacheProvider/NodeCacheProvider';
 import { useMemo } from 'react';
-import { useMappedEdgesForRevisions } from '../components/NodeCacheProvider/NodeCacheProvider';
 import { type FdmEdgeWithNode, type TreeIndex } from '../components/NodeCacheProvider/types';
+import { type CadModelStyling, type NodeStylingGroup, type TreeIndexStylingGroup } from '..';
 
 type ModelStyleGroup = {
   model: TypedReveal3DModel;
