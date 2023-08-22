@@ -20,13 +20,14 @@ export const useClickedNodeData = (): ClickedNodeData | undefined => {
   useEffect(() => {
     const callback = (event: PointerEventData): void => {
       void (async () => {
+
         const intersection = await viewer.getIntersectionFromPixel(event.offsetX, event.offsetY);
 
-        if (intersection === null || intersection.type !== 'cad') {
-          return;
+        if (intersection?.type === 'cad') {
+          setCadIntersection(intersection);
+        } else {
+          setCadIntersection(undefined);
         }
-
-        setCadIntersection(intersection);
       })();
     };
 
