@@ -39,25 +39,19 @@ export const MeasurementButton = (): ReactElement => {
     measurementTool.exitMeasurementMode();
   };
 
-  const handleMeasurement = (enable: boolean): void => {
+  const handleMeasurement = (_enable: boolean): void => {
     if (viewer.models.length <= 0) {
       return;
     }
     setMeasurementEnabled((prevState) => !prevState);
-    if (enable) {
-      enterMeasurement();
-    } else {
-      exitMeasurement();
-    }
   };
 
   useEffect(() => {
-    return () => {
-      if (measurementEnabled) {
-        exitMeasurement();
-      }
-    };
-  }, []);
+    if (measurementEnabled) {
+      enterMeasurement();
+      return () => exitMeasurement();
+    }
+  }, [measurementEnabled]);
 
   return (
     <Button
