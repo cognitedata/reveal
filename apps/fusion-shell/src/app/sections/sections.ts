@@ -1,7 +1,6 @@
 import images from '../../assets/images';
 import { TranslationKeys } from '../../i18n';
 import { AppItem, RawAppItem } from '../types';
-
 import { colors } from './colors';
 import { RawSection } from './types';
 
@@ -165,12 +164,13 @@ export const rawAppsData: RawAppItem[] = [
   },
   {
     category: 'explore',
-    internalId: 'data-catalog',
-    icon: 'Grid',
-    linkTo: '/data-catalog',
-    importMapApp: '@cognite/cdf-data-catalog',
-    img: images.DataCatalogAppImg,
-    ariaLabel: 'Go to Data Catalog',
+    internalId: 'industry-canvas',
+    icon: 'Polygon',
+    linkTo: '/industrial-canvas',
+    importMapApp: '@cognite/cdf-industry-canvas-ui',
+    hideInCluster: openshiftClusters,
+    img: images.IndustryCanvasAppImg,
+    ariaLabel: 'Go to Industrial Canvas',
   },
   {
     category: 'explore',
@@ -184,13 +184,12 @@ export const rawAppsData: RawAppItem[] = [
   },
   {
     category: 'explore',
-    internalId: 'industry-canvas',
-    icon: 'Polygon',
-    linkTo: '/industrial-canvas',
-    importMapApp: '@cognite/cdf-industry-canvas-ui',
-    hideInCluster: openshiftClusters,
-    img: images.IndustryCanvasAppImg,
-    ariaLabel: 'Go to Industrial Canvas',
+    internalId: 'data-catalog',
+    icon: 'Grid',
+    linkTo: '/data-catalog',
+    importMapApp: '@cognite/cdf-data-catalog',
+    img: images.DataCatalogAppImg,
+    ariaLabel: 'Go to Data Catalog',
   },
   {
     category: 'explore',
@@ -201,15 +200,6 @@ export const rawAppsData: RawAppItem[] = [
     hideInCluster: openshiftClusters,
     img: images.DataModelingAppImg,
     ariaLabel: 'Go to Data Models',
-  },
-  {
-    category: 'explore',
-    internalId: 'templates',
-    icon: 'Duplicate',
-    linkTo: '/template-management',
-    importMapApp: '@cognite/cdf-templates',
-    img: images.TemplateManagementAppImg,
-    ariaLabel: 'Go to Template Management',
   },
   {
     category: 'explore',
@@ -260,6 +250,15 @@ export const rawAppsData: RawAppItem[] = [
     ariaLabel: 'Go to SimInt',
   },
   {
+    category: 'explore',
+    internalId: 'templates',
+    icon: 'Duplicate',
+    linkTo: '/template-management',
+    importMapApp: '@cognite/cdf-templates',
+    img: images.TemplateManagementAppImg,
+    ariaLabel: 'Go to Template Management',
+  },
+  {
     category: 'configure',
     internalId: 'access-management',
     icon: 'Users',
@@ -279,6 +278,15 @@ export const rawAppsData: RawAppItem[] = [
   },
   {
     category: 'configure',
+    internalId: 'dashboard-sessions',
+    icon: 'Integrations',
+    linkTo: '/dashboard-sessions',
+    importMapApp: '@cognite/cdf-dashboard-sessions-ui',
+    img: images.DashboardSessionsAppImg,
+    ariaLabel: 'Go to Dashboard Sessions',
+  },
+  {
+    category: 'configure',
     internalId: 'infield',
     icon: 'Mobile',
     linkTo: '/infield',
@@ -290,15 +298,6 @@ export const rawAppsData: RawAppItem[] = [
     ],
     img: images.ConfigureInfieldAppImg,
     ariaLabel: 'Go to InField',
-  },
-  {
-    category: 'configure',
-    internalId: 'dashboard-sessions',
-    icon: 'Integrations',
-    linkTo: '/dashboard-sessions',
-    importMapApp: '@cognite/cdf-dashboard-sessions-ui',
-    img: images.DashboardSessionsAppImg,
-    ariaLabel: 'Go to Dashboard Sessions',
   },
 ];
 

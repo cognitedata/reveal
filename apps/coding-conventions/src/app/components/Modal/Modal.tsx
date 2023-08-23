@@ -37,6 +37,15 @@ const CustomModal = styled(CogsModal)<{
     font-weight: 600;
     color: var(--cogs-greyscale-grey9);
     border-bottom: none;
+    overflow: inherit;
+
+    .cogs-modal-title-container {
+      overflow: inherit;
+
+      .cogs-modal-title {
+        overflow: inherit;
+      }
+    }
   }
 
   .cogs-modal-content {

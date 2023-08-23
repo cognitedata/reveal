@@ -82,6 +82,8 @@ export const RelatedResources = ({
     : annotationCount;
 
   const resourceType = convertResourceType(type);
+  const resourceTypeTranslationKey = `RESOURCE_TYPE_${resourceType.toUpperCase()}`;
+  const resourceTypeTranslated = t(resourceTypeTranslationKey, resourceType);
 
   const getRelatedResourceType = () => {
     let types: TypeOption[] = [
@@ -112,7 +114,7 @@ export const RelatedResources = ({
         {
           label: t(
             'LINKED_RESOURCE_TYPE',
-            `Linked ${resourceType} (${linkedResourcesCount})`,
+            `Linked ${resourceTypeTranslated} (${linkedResourcesCount})`,
             { resourceType, count: linkedResourcesCount }
           ),
           value: 'linkedResource',

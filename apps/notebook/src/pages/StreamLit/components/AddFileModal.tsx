@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import {
   Modal,
@@ -11,6 +11,7 @@ import {
   RadioGroup,
 } from '@cognite/cogs.js';
 
+import { validStreamlitFilename } from '../common';
 import { fileTemplates, FileTemplate } from '../fileTemplates';
 
 import { Selector } from './Selector';
@@ -32,28 +33,35 @@ export const AddFileModal = ({
     'Empty file with Cognite SDK'
   );
 
-  const pressCreateDisabled =
-    fileName.trim() === '' ||
-    existingFileNames.includes(fileName) ||
-    (['Page', 'Library'].includes(fileType) &&
-      (!fileName.endsWith('.py') || fileName.trim() === '.py'));
+  // A page is placed in the pages folder
+  const fullFileName = fileType === 'Page' ? `pages/${fileName}` : fileName;
+
+  const validInput =
+    !existingFileNames.includes(fullFileName) &&
+    (!['Page', 'Library'].includes(fileType) ||
+      validStreamlitFilename(fileName));
+
+  const handleOK = useCallback(() => {
+    onCreate(
+      fullFileName,
+      fileTemplates.filter((template) => template.title === selectedTemplate)[0]
+    );
+  }, [fullFileName, selectedTemplate, onCreate]);
+
+  const handleSubmit = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+      validInput && handleOK();
+    },
+    [validInput, handleOK]
+  );
 
   return (
     <Modal
       visible
-      okDisabled={pressCreateDisabled}
+      okDisabled={!validInput}
       onCancel={() => onCancel()}
-      onOk={() => {
-        // A page is placed in the pages folder
-        const fullFileName =
-          fileType === 'Page' ? `pages/${fileName}` : fileName;
-        onCreate(
-          fullFileName,
-          fileTemplates.filter(
-            (template) => template.title === selectedTemplate
-          )[0]
-        );
-      }}
+      onOk={handleOK}
       okText="Create"
       title="Add file"
     >
@@ -65,13 +73,15 @@ export const AddFileModal = ({
             : ''}{' '}
           *
         </Body>
-        <Input
-          autoFocus
-          fullWidth
-          value={fileName}
-          onChange={(event) => setFileName(event.target.value)}
-          placeholder="Enter file name"
-        />
+        <form onSubmit={handleSubmit}>
+          <Input
+            autoFocus
+            fullWidth
+            value={fileName}
+            onChange={(event) => setFileName(event.target.value)}
+            placeholder="Enter file name"
+          />
+        </form>
         <RadioGroup label="File type" value={fileType} name="">
           <Radio
             name="Page"

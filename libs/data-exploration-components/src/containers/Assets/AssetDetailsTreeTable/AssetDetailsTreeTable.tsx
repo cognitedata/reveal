@@ -59,7 +59,10 @@ export const AssetDetailsTreeTable = ({
     }, [] as number[]);
   }, [rootExpanded]);
 
-  const rootAssetTree = useRootAssetsQuery(rootExpandedKeys, rootAssetId);
+  const { data: rootAssetTree } = useRootAssetsQuery(
+    rootExpandedKeys,
+    rootAssetId
+  );
 
   const { t } = useTranslation();
   const tableColumns = getTableColumns(t);
