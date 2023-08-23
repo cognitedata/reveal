@@ -20,7 +20,6 @@ import Routes from '@charts-app/pages/Routes';
 import { isDevelopment } from '@charts-app/utils/environment';
 import { DataExplorationProvider } from '@data-exploration-components/context/DataExplorationContext';
 import * as Sentry from '@sentry/react';
-import SentryRRWeb from '@sentry/rrweb';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { RecoilRoot } from 'recoil';
 
@@ -52,11 +51,9 @@ if (config.sentryDSN && !isDevelopment) {
           matchRoutes
         ),
       }),
-      new SentryRRWeb(),
     ],
     tracesSampleRate: 1,
   });
-  Sentry.setTag('rrweb.active', 'yes');
 }
 
 // END SENTRY CODE
