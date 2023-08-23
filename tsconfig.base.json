@@ -140,6 +140,9 @@
       ],
       "@vision/*": [
         "apps/vision/src/*"
+      ],
+      "@flows/": [
+        "apps/flows/src/*"
       ]
     }
   },
