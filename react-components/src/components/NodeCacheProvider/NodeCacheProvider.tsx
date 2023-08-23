@@ -18,7 +18,7 @@ export const FdmNodeCacheContext = createContext<FdmNodeCacheContent | undefined
 
 export const useMappedEdgesForRevisions = (
   modelRevisionIds: Array<{ modelId: number; revisionId: number }>,
-  enabled: boolean
+  enabled = true
 ): UseQueryResult<ModelRevisionToEdgeMap> => {
   const content = useContext(FdmNodeCacheContext);
 

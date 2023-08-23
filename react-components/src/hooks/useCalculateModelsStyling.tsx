@@ -2,10 +2,10 @@
  * Copyright 2023 Cognite AS
  */
 import {
-  type FdmAssetStylingGroup,
-  type TypedReveal3DModel
+  type CadModelOptions,
+  type DefaultResourceStyling,
+  type FdmAssetStylingGroup
 } from '../components/Reveal3DResources/types';
-import { type PointCloudModelStyling } from '../components/PointCloudContainer/PointCloudContainer';
 import { type InModel3dEdgeProperties } from '../utilities/globalDataModels';
 import { type EdgeItem } from '../utilities/FdmSDK';
 import { type NodeAppearance } from '@cognite/reveal';
@@ -15,20 +15,31 @@ import { useFdmAssetMappings } from './useFdmAssetMappings';
 import { useEffect, useMemo } from 'react';
 import { useMappedEdgesForRevisions } from '../components/NodeCacheProvider/NodeCacheProvider';
 import {
-  type CadModelStyling,
+  type TreeIndexStylingGroup,
   type NodeStylingGroup
 } from '../components/CadModelContainer/useApplyCadModelStyling';
 
 type ModelStyleGroup = {
-  model: TypedReveal3DModel;
+  model: CadModelOptions;
   styleGroup: NodeStylingGroup[];
 };
 
-export const useCalculateModelsStyling = (
-  models: TypedReveal3DModel[],
-  instanceGroups: FdmAssetStylingGroup[]
-): Array<PointCloudModelStyling | CadModelStyling> => {
-  const modelsMappedStyleGroups = useCalculateMappedStyling(models);
+export type CadStyleGroup = NodeStylingGroup | TreeIndexStylingGroup;
+
+export type StyledModel = {
+  model: CadModelOptions;
+  styleGroups: CadStyleGroup[];
+};
+
+export const useCalculateCadStyling = (
+  models: CadModelOptions[],
+  instanceGroups: FdmAssetStylingGroup[],
+  defaultResourceStyling?: DefaultResourceStyling
+): StyledModel[] => {
+  const modelsMappedStyleGroups = useCalculateMappedStyling(
+    models,
+    defaultResourceStyling?.cad?.mapped
+  );
   const modelInstanceStyleGroups = useCalculateInstanceStyling(models, instanceGroups);
   const joinedStyleGroups = useJoinStylingGroups(
     models,
@@ -38,14 +49,13 @@ export const useCalculateModelsStyling = (
   return joinedStyleGroups;
 };
 
-function useCalculateMappedStyling(models: TypedReveal3DModel[]): ModelStyleGroup[] {
-  const modelsRevisionsWithMappedEquipment = models.filter(
-    (model) => model.styling?.mapped !== undefined
-  );
-  const shouldFetchAllMappedEquipment = modelsRevisionsWithMappedEquipment.length > 0;
+function useCalculateMappedStyling(
+  models: CadModelOptions[],
+  defaultMappedNodeAppearance?: NodeAppearance
+): ModelStyleGroup[] {
+  const modelsRevisionsWithMappedEquipment = getMappedCadModelsOptions();
   const { data: mappedEquipmentEdges } = useMappedEdgesForRevisions(
-    modelsRevisionsWithMappedEquipment,
-    shouldFetchAllMappedEquipment
+    modelsRevisionsWithMappedEquipment
   );
 
   const modelsMappedStyleGroups = useMemo(() => {
@@ -58,25 +68,34 @@ function useCalculateMappedStyling(models: TypedReveal3DModel[]): ModelStyleGrou
     }
     return models.map((model) => {
       const fdmData = mappedEquipmentEdges?.get(`${model.modelId}-${model.revisionId}`) ?? [];
+      const modelStyle = model.styling?.mapped ?? defaultMappedNodeAppearance;
 
       const styleGroup =
-        model.styling?.mapped !== undefined
+        modelStyle !== undefined
           ? [
               getMappedStyleGroup(
                 fdmData.map((data) => data.edge),
-                model.styling.mapped
+                modelStyle
               )
             ]
           : [];
       return { model, styleGroup };
     });
-  }, [models, mappedEquipmentEdges]);
+  }, [models, mappedEquipmentEdges, defaultMappedNodeAppearance]);
 
   return modelsMappedStyleGroups;
+
+  function getMappedCadModelsOptions(): CadModelOptions[] {
+    if (defaultMappedNodeAppearance !== undefined) {
+      return models;
+    }
+
+    return models.filter((model) => model.styling?.mapped !== undefined);
+  }
 }
 
 function useCalculateInstanceStyling(
-  models: TypedReveal3DModel[],
+  models: CadModelOptions[],
   instanceGroups: FdmAssetStylingGroup[]
 ): ModelStyleGroup[] {
   const {
@@ -113,10 +132,10 @@ function useCalculateInstanceStyling(
 }
 
 function useJoinStylingGroups(
-  models: TypedReveal3DModel[],
+  models: CadModelOptions[],
   modelsMappedStyleGroups: ModelStyleGroup[],
   modelInstanceStyleGroups: ModelStyleGroup[]
-): Array<PointCloudModelStyling | CadModelStyling> {
+): StyledModel[] {
   const modelsStyling = useMemo(() => {
     if (modelInstanceStyleGroups.length === 0 && modelsMappedStyleGroups.length === 0) {
       return extractDefaultStyles(models);
@@ -128,8 +147,8 @@ function useJoinStylingGroups(
         .filter((typedModel) => typedModel.model === model)
         .flatMap((typedModel) => typedModel.styleGroup);
       return {
-        defaultStyle: model.styling?.default,
-        groups: [...mappedStyleGroup, ...instanceStyleGroups]
+        model,
+        styleGroups: [...mappedStyleGroup, ...instanceStyleGroups]
       };
     });
   }, [models, modelInstanceStyleGroups, modelsMappedStyleGroups]);
@@ -137,12 +156,11 @@ function useJoinStylingGroups(
   return modelsStyling;
 }
 
-function extractDefaultStyles(
-  typedModels: TypedReveal3DModel[]
-): Array<PointCloudModelStyling | CadModelStyling> {
+function extractDefaultStyles(typedModels: CadModelOptions[]): StyledModel[] {
   return typedModels.map((model) => {
     return {
-      defaultStyle: model.styling?.default
+      model,
+      styleGroups: []
     };
   });
 }
@@ -158,7 +176,7 @@ function getMappedStyleGroup(
 function calculateCadModelStyling(
   stylingGroups: FdmAssetStylingGroup[],
   mappings: ThreeDModelMappings[],
-  model: TypedReveal3DModel
+  model: CadModelOptions
 ): NodeStylingGroup[] {
   const modelMappings = getModelMappings(mappings, model);
 
@@ -179,7 +197,7 @@ function calculateCadModelStyling(
 
 function getModelMappings(
   mappings: ThreeDModelMappings[],
-  model: TypedReveal3DModel
+  model: CadModelOptions
 ): Map<CogniteExternalId, CogniteInternalId> {
   return mappings
     .filter(
