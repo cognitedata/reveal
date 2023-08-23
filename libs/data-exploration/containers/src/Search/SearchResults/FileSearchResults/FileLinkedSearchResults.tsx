@@ -13,6 +13,7 @@ import {
 } from '@data-exploration-lib/core';
 import {
   InternalDocument,
+  TableSortBy,
   useDocumentSearchResultQuery,
 } from '@data-exploration-lib/domain-layer';
 
@@ -60,7 +61,7 @@ export const FileLinkedSearchResults: React.FC<Props> = ({
   const [currentView, setCurrentView] = useState<string>(
     isGroupingFilesEnabled ? 'tree' : 'list'
   );
-  // const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
+  const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
 
   const documentFilters = useMemo(() => {
     return {
@@ -85,6 +86,7 @@ export const FileLinkedSearchResults: React.FC<Props> = ({
     {
       filter: documentFilters,
       query: debouncedQuery,
+      sortBy,
       limit: 1000,
     },
     { enabled: isDocumentsApiEnabled }
@@ -213,8 +215,9 @@ export const FileLinkedSearchResults: React.FC<Props> = ({
               onParentAssetClick(directAsset.id);
             }}
             data={items}
-            // enableSorting
-            // onSort={props => setSortBy(props)}
+            enableSorting
+            sorting={sortBy}
+            onSort={setSortBy}
             showLoadButton
             tableSubHeaders={
               <AppliedFiltersTags
