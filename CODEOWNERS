@@ -38,8 +38,7 @@ apps/industry-canvas-ui              @cognitedata/unified-file-viewer
 apps/coding-conventions           @deep-cognite @CimStordal
 
 # Contextualization
-app/contextualization-ui            @gayanDeegala @tommythorsen @cognitedata/matchmakers
-libs/contextualization              @gayanDeegala @tommythorsen @cognitedata/matchmakers
+libs/contextualization              @davidlky @cognitedata/contextualization
 
 # Copilot
 apps/copilot              @davidlky @andeplane @miladh @trygveu
@@ -64,6 +63,7 @@ apps/access-management            @cognitedata/cdf-user-experience
 # data onboarding
 apps/extraction-pipelines         @cognitedata/data-management
 apps/extractor-downloads          @cognitedata/data-management
+apps/flows                        @cognitedata/data-onboarding
 
 libs/shared/cdf-utilities         @cognitedata/cdf-user-experience
 
