@@ -3,13 +3,7 @@ import { Chip } from '@cognite/cogs.js';
 import { getScoreColor } from '../../utils/getScoreColor';
 
 export interface ContextualizationScoreChipProps
-  extends Omit<
-    React.DetailedHTMLProps<
-      React.HTMLAttributes<HTMLDivElement>,
-      HTMLDivElement
-    >,
-    'onChange'
-  > {
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {
   className?: string;
   errorMessage?: string;
   isLocked?: boolean;
