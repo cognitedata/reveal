@@ -47,6 +47,7 @@ export function Metadata({ metadata }: { metadata?: { [k: string]: string } }) {
           cell: ({ getValue }) => {
             return <TooltipCell text={getValue<string>() || DASH} />;
           },
+          sortingFn: 'alphanumeric',
         },
         {
           header: t('VALUE', 'Value'),
