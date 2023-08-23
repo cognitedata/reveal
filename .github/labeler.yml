@@ -66,6 +66,3 @@ asset-health:
 access-management:
   - apps/access-management/*
   - apps/access-management/**/*
-
-flows:
-  - apps/flows/*

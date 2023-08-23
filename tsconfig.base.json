@@ -138,9 +138,6 @@
       "@transformations/*": [
         "apps/transformations/src/*"
       ],
-      "@flows/*": [
-        "apps/flows/src/*"
-      ],
       "@vision/*": [
         "apps/vision/src/*"
       ]
