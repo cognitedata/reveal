@@ -142,7 +142,7 @@
         "apps/vision/src/*"
       ],
       "@flows/": [
-        "apps/flows/src/*"
+        "apps/flows/src/index.ts"
       ]
     }
   },
