@@ -65,7 +65,7 @@ export const useClickedNodeData = (): ClickedNodeData | undefined => {
       view: chosenNode.view,
       cadNode: chosenNode.cadNode
     });
-  }, [nodeData, cadIntersection]);
+  }, [nodeData]);
 
   return clickedNodeData;
 };
