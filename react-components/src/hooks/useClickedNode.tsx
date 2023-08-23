@@ -42,22 +42,23 @@ export const useClickedNodeData = (): ClickedNodeData | undefined => {
       cadIntersection?.model.modelId,
       cadIntersection?.model.revisionId,
       cadIntersection?.treeIndex
-    ).data ?? [];
+    ).data;
 
   useEffect(() => {
+    const nodeDataList = nodeData ?? [];
     if (cadIntersection === undefined) {
       setClickedNodeData(undefined);
       return;
     }
 
-    if (nodeData.length === 0) {
+    if (nodeDataList.length === 0) {
       setClickedNodeData({
         intersection: cadIntersection
       });
       return;
     }
 
-    const chosenNode = nodeData[0];
+    const chosenNode = nodeDataList[0];
 
     setClickedNodeData({
       intersection: cadIntersection,
@@ -65,7 +66,7 @@ export const useClickedNodeData = (): ClickedNodeData | undefined => {
       view: chosenNode.view,
       cadNode: chosenNode.cadNode
     });
-  }, [nodeData]);
+  }, [nodeData, cadIntersection]);
 
   return clickedNodeData;
 };
