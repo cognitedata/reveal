@@ -24,7 +24,8 @@ static final String[] APPLICATIONS = [
   'access-management',
   'notebook',
   'fusion-shell',
-  'simint'
+  'simint',
+  'flows'
 ]
 
 /*
@@ -64,7 +65,8 @@ static final Map<String, String> FIREBASE_APP_SITES = [
   'access-management': 'access-management',
   'notebook': 'notebook',
   'fusion-shell': 'ui-host',
-  'simint': 'simint'
+  'simint': 'simint',
+  'flows': 'orchestration'
 ]
 
 
@@ -138,6 +140,7 @@ static final Map<String, String> VERSIONING_STRATEGY = [
   'notebook': 'single-branch',
   'fusion-shell': 'multi-branch',
   'simint': 'multi-branch',
+  'flows': 'multi-branch'
 ]
 
 // The config of which apps have i18n strings that need to be synced to and pulled from locize.io
