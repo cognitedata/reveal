@@ -7,7 +7,7 @@ import en from './en/reveal-react-components.json';
 import { type ReactElement } from 'react';
 
 export const translations = {
-  en: { 'reveal-react-components.json': en }
+  en: { 'reveal-react-components': en }
 };
 
 export type TranslationKeys = keyof typeof en;
