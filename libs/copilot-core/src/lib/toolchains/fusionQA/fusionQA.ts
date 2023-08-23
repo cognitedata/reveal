@@ -14,6 +14,7 @@ import {
 import { sendToCopilotEvent } from '../../utils';
 
 export class FusionQAChain extends CogniteBaseChain {
+  name = 'Inquire about CDF';
   description = copilotDestinationFusionQaPrompt.template;
 
   chain: ChainType = 'llm';

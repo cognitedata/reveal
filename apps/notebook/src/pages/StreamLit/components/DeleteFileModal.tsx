@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { Modal, Input, Body, Flex } from '@cognite/cogs.js';
 
@@ -15,10 +15,20 @@ export const DeleteFileModal = ({
 }: DeleteFileProps) => {
   const [input, setInput] = useState('');
 
+  const validInput = useCallback(() => input === 'DELETE', [input]);
+
+  const handleSubmit = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+      validInput() && onOk();
+    },
+    [onOk, validInput]
+  );
+
   return (
     <Modal
       visible
-      okDisabled={input !== 'DELETE'}
+      okDisabled={!validInput()}
       onCancel={() => onCancel()}
       onOk={onOk}
       okText="Delete"
@@ -30,11 +40,13 @@ export const DeleteFileModal = ({
           reversible.
         </Body>
         <Body level={2}>Type &apos;DELETE&apos; to confirm</Body>
-        <Input
-          autoFocus
-          fullWidth
-          onChange={(event) => setInput(event.target.value)}
-        />
+        <form onSubmit={handleSubmit}>
+          <Input
+            autoFocus
+            fullWidth
+            onChange={(event) => setInput(event.target.value)}
+          />
+        </form>
       </Flex>
     </Modal>
   );

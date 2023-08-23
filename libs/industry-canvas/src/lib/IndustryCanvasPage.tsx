@@ -48,6 +48,7 @@ import CanvasVisibilityModal from './components/CanvasVisibilityModal';
 import { CloseResourceSelectorButton } from './components/CloseResourceSelectorButton';
 import DragOverIndicator from './components/DragOverIndicator';
 import IndustryCanvasFileUploadModal from './components/IndustryCanvasFileUploadModal/IndustryCanvasFileUploadModal';
+import SharedUsersAvatars from './components/SharedUsersAvatars/index';
 import {
   CANVAS_MIN_WIDTH,
   MetricEvent,
@@ -734,6 +735,8 @@ export const IndustryCanvasPage = () => {
 
           <Divider direction="vertical" length="20px" endcap="round" />
 
+          <SharedUsersAvatars users={[userProfile, ...invitationsByResource]} />
+
           <Button
             type="secondary"
             aria-label="Share canvas"
@@ -745,6 +748,8 @@ export const IndustryCanvasPage = () => {
           >
             {t(translationKeys.CANVAS_SHARE_BUTTON, 'Share')}
           </Button>
+
+          <Divider direction="vertical" length="20px" endcap="round" />
 
           <ToggleButton
             toggled={isCommentsPaneOpen}

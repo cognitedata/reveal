@@ -24,6 +24,7 @@ import {
 } from './utils';
 
 export class DocumentQueryChain extends CogniteBaseChain {
+  name = 'Search documents';
   description = copilotDestinationInfieldDocumentQueryPrompt.template;
   chain = 'llm' as const;
 

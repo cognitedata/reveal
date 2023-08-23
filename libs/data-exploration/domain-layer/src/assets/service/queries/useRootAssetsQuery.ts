@@ -1,13 +1,13 @@
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import {
   QueryClient,
+  useInfiniteQuery,
   useQueries,
-  useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
 
-import { Asset, ListResponse } from '@cognite/sdk';
+import { Asset } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 
 import { queryKeys } from '../../../queryKeys';
@@ -35,19 +35,6 @@ export const useRootAssetsQuery = (
 ) => {
   const sdk = useSDK();
   const queryClient = useQueryClient();
-  const selectCallback = useCallback(
-    (data: ListResponse<Asset[]>) => {
-      if (rootAssetId) {
-        return {
-          ...data,
-          items: data.items.filter((item) => item.id === rootAssetId),
-        };
-      }
-
-      return data;
-    },
-    [rootAssetId]
-  );
 
   const childAssets = useQueries({
     queries: expandedRootIds.map((assetId) => {
@@ -68,13 +55,15 @@ export const useRootAssetsQuery = (
     }),
   });
 
-  const rootAssets = useQuery(
+  const rootAssets = useInfiniteQuery(
     queryKeys.rootAssets(),
-    () => {
+    ({ pageParam }) => {
       return sdk.assets
         .list({
           filter: { root: true },
           aggregatedProperties: ['childCount'],
+          limit: 20,
+          cursor: pageParam,
         })
         .then((res) => {
           return {
@@ -86,12 +75,23 @@ export const useRootAssetsQuery = (
         });
     },
     {
-      select: selectCallback,
+      getNextPageParam: (param) => param.nextCursor,
     }
   );
 
-  return useMemo(() => {
-    return rootAssets.data?.items.map((rootAsset) => {
+  const rootAssetsData = useMemo(() => {
+    return rootAssets.data?.pages.flatMap((page) => page.items) || [];
+  }, [rootAssets.data?.pages]);
+
+  const rootAssetsSelected = useMemo(() => {
+    if (rootAssetId) {
+      return rootAssetsData.filter((item) => item.id === rootAssetId);
+    }
+    return rootAssetsData;
+  }, [rootAssetId, rootAssetsData]);
+
+  const transformedData = useMemo(() => {
+    return rootAssetsSelected.map((rootAsset) => {
       return {
         ...rootAsset,
         children: rootAsset.aggregates?.childCount
@@ -100,5 +100,10 @@ export const useRootAssetsQuery = (
       };
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [childAssets, rootAssets]);
+  }, [childAssets, rootAssetsSelected]);
+
+  return {
+    ...rootAssets,
+    data: transformedData,
+  };
 };

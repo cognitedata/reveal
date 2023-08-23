@@ -1,3 +1,5 @@
+import { getCluster } from '@cognite/cdf-utilities';
+
 import {
   getODataFDMProjectField,
   getODataFDMEnvironmentField,
@@ -5,7 +7,7 @@ import {
 
 jest.mock('@cognite/cdf-utilities', () => {
   return {
-    getCluster: () => 'mock-cluster',
+    getCluster: jest.fn(),
     getProject: () => 'mock-project',
   };
 });
@@ -23,7 +25,17 @@ describe('PowerBI Modal', () => {
   });
 
   it('Should generate odata fdm enviroment field for PowerBI', () => {
+    getCluster.mockImplementation(() => {
+      return 'mock-cluster';
+    });
     const result = getODataFDMEnvironmentField();
     expect(result).toBe('https://mock-cluster/20230821');
+  });
+  it('Should generate odata fdm enviroment when cluster is empty', () => {
+    getCluster.mockImplementation(() => {
+      return undefined;
+    });
+    const result = getODataFDMEnvironmentField();
+    expect(result).toBe('https://api.cognitedata.com/20230821');
   });
 });

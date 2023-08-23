@@ -2,6 +2,8 @@ import * as React from 'react';
 
 import { Switch, Tooltip } from '@cognite/cogs.js';
 
+import { useTranslation } from '@data-exploration-lib/core';
+
 import { ModalSwitchContainer } from './elements';
 
 export interface FuzzySearchToggleProps {
@@ -15,13 +17,14 @@ export const FuzzySearchToggle: React.FC<FuzzySearchToggleProps> = ({
   enabled,
   onChange,
 }) => {
+  const { t } = useTranslation();
   if (!visible) {
     return null;
   }
 
   return (
     <ModalSwitchContainer data-testid="fuzzy-search-toggle">
-      <Tooltip content="Fuzzy search" placement="right">
+      <Tooltip content={t('FUZZY_SEARCH', 'Fuzzy search')} placement="right">
         <Switch
           size="tiny"
           checked={enabled}

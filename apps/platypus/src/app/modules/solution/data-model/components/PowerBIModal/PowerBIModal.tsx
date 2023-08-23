@@ -27,7 +27,8 @@ export const getODataFDMProjectField = (
 };
 
 export const getODataFDMEnvironmentField = (): string => {
-  return `https://${getCluster()}/${odataVersion}`;
+  const cluster = getCluster() || 'api.cognitedata.com';
+  return `https://${cluster}/${odataVersion}`;
 };
 
 /**

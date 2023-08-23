@@ -64,24 +64,27 @@ export const AIResults = () => {
       if (cachedQuery?.search !== query) {
         setMessage(undefined);
         setIsSearching(true);
-        sendToCopilotEvent('NEW_MESSAGES', [
-          {
-            source: 'bot',
-            type: 'data-models',
-            dataModels: (selectedDataModels || []).map((model) => ({
-              dataModel: model.externalId,
-              space: model.space,
-              version: model.version,
-            })),
-            content: 'I am looking at data in this data model',
-          },
-          {
-            source: 'user',
-            content: query,
-            type: 'text',
-            context: 'Searched in Explorer',
-          },
-        ]);
+        sendToCopilotEvent('NEW_CHAT_WITH_MESSAGES', {
+          chain: 'GraphQlChain',
+          messages: [
+            {
+              source: 'bot',
+              type: 'data-models',
+              dataModels: (selectedDataModels || []).map((model) => ({
+                dataModel: model.externalId,
+                space: model.space,
+                version: model.version,
+              })),
+              content: 'I am looking at data in this data model',
+            },
+            {
+              source: 'user',
+              content: query,
+              type: 'text',
+              context: 'Searched in Explorer',
+            },
+          ],
+        });
       }
     };
     if (aiSearchEnabled && query && selectedDataModels && isCopilotEnabled) {

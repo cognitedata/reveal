@@ -8,10 +8,11 @@ import { SearchResults } from '../../../components/search/SearchResults';
 import { useNavigation } from '../../../hooks/useNavigation';
 import { useFDM } from '../../../providers/FDMProvider';
 import { SearchResponseItem } from '../../../services/types';
-import { extractProperties } from '../../../utils/ai/results';
 import { getIcon } from '../../../utils/getIcon';
+import { InstancePreview } from '../../preview/InstancePreview';
 import { useAICachedResults } from '../hooks/useAICachedResults';
 import { PAGE_SIZE } from '../results/constants';
+import { extractProperties } from '../utils';
 
 export const AIResultsList = ({
   copilotMessage,
@@ -53,14 +54,24 @@ export const AIResultsList = ({
             const properties = extractProperties(item);
 
             return (
-              <SearchResults.Item
-                key={`${dataType}-${name}`}
-                icon={getIcon(dataType)}
-                name={dataType}
-                description={name || (title as string) || undefined}
-                properties={properties}
-                onClick={() => handleRowClick(item, dataType)}
-              />
+              <InstancePreview.Generic
+                key={item.externalId}
+                dataModel={copilotMessage.dataModel}
+                instance={{
+                  dataType,
+                  instanceSpace: item.space as string,
+                  externalId: item.externalId,
+                }}
+              >
+                <SearchResults.Item
+                  key={`${dataType}-${name}`}
+                  icon={getIcon(dataType)}
+                  name={dataType}
+                  description={name || (title as string) || undefined}
+                  properties={properties}
+                  onClick={() => handleRowClick(item, dataType)}
+                />
+              </InstancePreview.Generic>
             );
           })}
         </SearchResults.Body>

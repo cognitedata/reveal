@@ -9,9 +9,9 @@ import { EmptyState } from '../../../components/EmptyState';
 import { ErrorState } from '../../../components/ErrorState';
 import { Widget } from '../../../components/widget/Widget';
 import { useTranslation } from '../../../hooks/useTranslation';
+import { flattenProperties } from '../../search/utils';
 
 import { PropertiesProps } from './PropertiesWidget';
-import { flattenProperties } from './utils';
 
 export const PropertiesExpanded: React.FC<PropertiesProps> = ({
   data,
