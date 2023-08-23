@@ -7,7 +7,7 @@ import { useReveal, type NodeDataResult } from '../';
 import { useEffect, useState } from 'react';
 import { useFdm3dNodeData } from '../components/NodeCacheProvider/NodeCacheProvider';
 
-export type ClickedNodeData = NodeDataResult & {
+export type ClickedNodeData = Partial<NodeDataResult> & {
   intersection: CadIntersection;
 };
 
@@ -45,8 +45,15 @@ export const useClickedNodeData = (): ClickedNodeData | undefined => {
     ).data ?? [];
 
   useEffect(() => {
-    if (cadIntersection === undefined || nodeData.length === 0) {
+    if (cadIntersection === undefined) {
       setClickedNodeData(undefined);
+      return;
+    }
+
+    if (nodeData.length === 0) {
+      setClickedNodeData({
+        intersection: cadIntersection
+      });
       return;
     }
 
