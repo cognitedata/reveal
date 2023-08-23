@@ -53,6 +53,7 @@ export type ChainStage<
 
 export abstract class CogniteBaseChain extends BaseChain {
   public abstract description: string;
+  public abstract name: string;
   public abstract chain: ChainType;
 
   abstract stages: ChainStage[];

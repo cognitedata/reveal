@@ -19,6 +19,7 @@ import {
 } from './utils';
 
 export class WorkorderChain extends CogniteBaseChain {
+  name = 'Find workorders';
   description = copilotDestinationInfieldWorkorderPrompt.template;
   chain = 'llm' as const;
 

@@ -15,7 +15,7 @@ import {
 } from '../../../lib/types';
 import { ResponsiveActions } from '../MessageRenderer/components/ResponsiveActions';
 
-export const TextAction = () => {
+export const TextAction = ({ disabled }: { disabled?: boolean }) => {
   const textActionProps = useBotUIAction();
 
   const {
@@ -79,14 +79,14 @@ export const TextAction = () => {
       direction="column"
       style={{ position: 'relative', width: '100%' }}
     >
-      {!waiting && actions?.length > 0 && (
+      {!waiting && !disabled && actions?.length > 0 && (
         <ResponsiveActions actions={actions} />
       )}
       <div style={{ position: 'relative', width: '100%' }}>
         <Textarea
           ref={ref}
           value={value}
-          disabled={!!waiting}
+          disabled={!!waiting || disabled}
           onChange={(e) => {
             handleInputChange();
             setValue(e.target.value);
@@ -111,7 +111,7 @@ export const TextAction = () => {
           disabled={!!waiting}
           onClick={() => {
             if (value) {
-              bot.next({ content: value, type: 'text' });
+              bot.next({ content: value });
             }
           }}
           type="ghost"

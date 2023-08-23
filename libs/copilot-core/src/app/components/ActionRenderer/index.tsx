@@ -1,6 +1,9 @@
+import { ChainSelectionAction } from './ChainSelectionAction';
 import { TextAction } from './TextAction';
 
 export const actionRenderers = {
-  text: TextAction,
+  None: () => <TextAction disabled />,
+  Message: TextAction,
   wait: TextAction,
+  ChainSelection: ChainSelectionAction,
 };
