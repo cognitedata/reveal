@@ -37,12 +37,11 @@ export const useClickedNodeData = (): ClickedNodeData | undefined => {
     };
   }, [viewer]);
 
-  const nodeData =
-    useFdm3dNodeData(
-      cadIntersection?.model.modelId,
-      cadIntersection?.model.revisionId,
-      cadIntersection?.treeIndex
-    ).data;
+  const nodeData = useFdm3dNodeData(
+    cadIntersection?.model.modelId,
+    cadIntersection?.model.revisionId,
+    cadIntersection?.treeIndex
+  ).data;
 
   useEffect(() => {
     const nodeDataList = nodeData ?? [];
