@@ -1,11 +1,15 @@
-import { HtmlElementProps } from '@platypus-app/types';
-
 import { Chip } from '@cognite/cogs.js';
 
 import { getScoreColor } from '../../utils/getScoreColor';
 
 export interface ContextualizationScoreChipProps
-  extends Omit<HtmlElementProps<HTMLDivElement>, 'onChange'> {
+  extends Omit<
+    React.DetailedHTMLProps<
+      React.HTMLAttributes<HTMLDivElement>,
+      HTMLDivElement
+    >,
+    'onChange'
+  > {
   className?: string;
   errorMessage?: string;
   isLocked?: boolean;

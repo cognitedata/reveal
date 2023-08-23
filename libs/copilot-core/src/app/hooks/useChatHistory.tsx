@@ -9,7 +9,9 @@ import { getCacheKey } from './useCache';
 import { useCopilotContext } from './useCopilotContext';
 import { useMetrics } from './useMetrics';
 
-const CHAT_PREFIX = 'chats-1';
+const VERSION = '2';
+
+const CHAT_PREFIX = `chats-${VERSION}`;
 
 export const CACHE_KEY = {
   SMALL_CHATBOT_DIMENTIONS: 'SMALL_CHATBOT_DIMENTIONS',
@@ -89,7 +91,7 @@ export const useDeleteChat = () => {
   const { track } = useMetrics();
   const { currentChatId, setCurrentChatId } = useCopilotContext();
   return useMutation(
-    [getCacheKey(sdk.project, `delete-1`)],
+    [getCacheKey(sdk.project, `delete-${VERSION}`)],
     async (id: string) => {
       track('DELETE_CHAT', undefined);
       await localForage.removeItem(
@@ -129,21 +131,27 @@ export const useDeleteChat = () => {
 export const useCreateChat = () => {
   const sdk = useSDK();
   const queryClient = useQueryClient();
-  const key = getCacheKey(sdk.project, `new-chats-1`);
+  const key = getCacheKey(sdk.project, `new-chats-${VERSION}`);
   return useMutation(
     [key],
-    (id: string) =>
-      id
+    ({ id, messages }: { id: string; messages: CopilotMessage[] }) => {
+      return id
         ? localForage.setItem<Chat>(
             getCacheKey(sdk.project, `${CHAT_PREFIX}-${id}`),
             {
               id,
               dateUpdated: new Date(),
               dateCreated: new Date(),
-              history: [],
+              history: messages.map(({ actions = [], ...el }) => ({
+                ...el,
+                pending: el.source === 'user' ? true : false,
+                // we cannot store custom onclick in localforage
+                actions: actions.filter((action) => !('onClick' in action)),
+              })),
             }
           )
-        : Promise.resolve(null),
+        : Promise.resolve(null);
+    },
     {
       onSuccess: (chat) => {
         if (chat) {

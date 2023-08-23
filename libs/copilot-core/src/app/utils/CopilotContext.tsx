@@ -8,7 +8,11 @@ import { v4 as uuid } from 'uuid';
 import { useToCopilotEventHandler } from '../../lib/hooks';
 import { CopilotEvents, CopilotMessage } from '../../lib/types';
 import { useFromCache, useSaveToCache } from '../hooks/useCache';
-import { useChats, useCreateChat } from '../hooks/useChatHistory';
+import {
+  getChatHistory,
+  useChats,
+  useCreateChat,
+} from '../hooks/useChatHistory';
 import { CopilotContext, CopilotMode } from '../hooks/useCopilotContext';
 import { useMetrics } from '../hooks/useMetrics';
 export const CopilotContextProvider = ({
@@ -31,16 +35,23 @@ export const CopilotContextProvider = ({
   const { mutate: setIsExpanded } = useSaveToCache<boolean>('CHATBOT_EXPANDED');
   const { mutate: createChat } = useCreateChat();
 
-  const createNewChat = useCallback(async () => {
-    const id = uuid();
-    await createChat(id);
-    setCurrentChatId((currentId) => {
-      if (!currentId) {
-        track('NEW_CHAT', undefined);
-      }
-      return id;
-    });
-  }, [createChat, track]);
+  const messages = useRef<CopilotMessage[]>([]);
+
+  const createNewChat = useCallback(
+    async (newMessages?: CopilotMessage[]) => {
+      const id = uuid();
+      await createChat({ id, messages: newMessages || [] });
+      await getChatHistory('david', id);
+      setCurrentChatId((currentId) => {
+        if (!currentId) {
+          track('NEW_CHAT', undefined);
+        }
+
+        return id;
+      });
+    },
+    [createChat, track]
+  );
 
   const onModeChange = useCallback(
     async (newMode: CopilotMode) => {
@@ -72,8 +83,6 @@ export const CopilotContextProvider = ({
   );
 
   useToCopilotEventHandler('LOADING_STATUS', handleLoadingStatus);
-
-  const messages = useRef<CopilotMessage[]>([]);
 
   if (!isReady) {
     return <></>;

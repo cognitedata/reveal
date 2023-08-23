@@ -1,6 +1,7 @@
 import { IconType } from '@cognite/cogs.js';
 import { CogniteClient } from '@cognite/sdk';
 
+import { CogniteChainName } from './toolchains';
 import { sendFromCopilotEvent, sendToCopilotEvent } from './utils';
 export type CopilotLogContent = { key: string; content: string };
 export type CopilotSupportedFeatureType =
@@ -8,6 +9,8 @@ export type CopilotSupportedFeatureType =
   | 'IndustryCanvas'
   | 'Infield'
   | 'Unsupported';
+
+export type ActionType = 'Message' | 'ChainSelection' | 'None';
 
 type DefaultMessage = {
   key?: number;
@@ -23,6 +26,11 @@ type DefaultBotMessage = {
 export type CopilotTextMessage = {
   type: 'text';
   context?: string;
+} & DefaultMessage;
+
+export type CopilotChainSelectionMessage = {
+  type: 'chain';
+  chain: CogniteChainName;
 } & DefaultMessage;
 
 export type CopilotErrorMessage = {
@@ -71,7 +79,9 @@ export type CopilotDataModelQueryMessage = {
   data?: any;
 } & DefaultBotMessage;
 
-export type CopilotUserMessage = CopilotTextMessage;
+export type CopilotUserMessage =
+  | CopilotTextMessage
+  | CopilotChainSelectionMessage;
 export type CopilotBotMessage =
   | (CopilotTextMessage & DefaultBotMessage)
   | CopilotCodeMessage
@@ -161,6 +171,10 @@ export type CopilotEvents = {
   ToCopilot: {
     // only the last message will be processed
     NEW_MESSAGES: CopilotMessage[];
+    NEW_CHAT_WITH_MESSAGES: {
+      chain: CogniteChainName;
+      messages: CopilotMessage[];
+    };
     LOADING_STATUS: {
       status: string;
       stage?: number;

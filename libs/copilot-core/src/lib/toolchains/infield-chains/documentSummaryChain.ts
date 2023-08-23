@@ -22,6 +22,7 @@ import {
 } from './utils';
 
 export class DocumentSummaryChain extends CogniteBaseChain {
+  name = 'Summarize documents';
   description = copilotDestinationInfieldSummaryPrompt.template;
   chain = 'llm' as const;
 

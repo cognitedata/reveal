@@ -70,6 +70,7 @@ export const ResponsiveActions = ({ actions }: { actions: Action[] }) => {
     <Wrapper ref={navigationOuter}>
       {priorityItems.map((item) => (
         <Dropdown
+          key={item.content}
           disabled={!('options' in item)}
           hideOnSelect={{ hideOnContentClick: true, hideOnOutsideClick: true }}
           content={<DropdownContent item={item} />}

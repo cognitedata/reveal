@@ -87,6 +87,7 @@ type QueryOutput = {
   query: string;
 } & FilterOutput;
 export class GraphQlChain extends CogniteBaseChain {
+  name = 'Find data';
   description = copilotDestinationGraphqlPrompt.template;
   chain: ChainType = 'sequential_chain';
 

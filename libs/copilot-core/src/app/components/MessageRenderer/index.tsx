@@ -1,3 +1,4 @@
+import { ChainMessage } from './ChainMessage';
 import { CodeMessage } from './CodeMessage';
 import { DataModelMessage } from './DataModelMessage';
 import { DataQueryMessage } from './DataQueryMessage';
@@ -6,6 +7,7 @@ import { TextMessage } from './TextMessage';
 
 export const messageRenderers = {
   text: TextMessage,
+  chain: ChainMessage,
   error: TextMessage,
   code: CodeMessage,
   'data-model-query': DataQueryMessage,

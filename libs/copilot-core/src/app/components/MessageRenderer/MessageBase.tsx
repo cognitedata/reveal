@@ -25,17 +25,21 @@ export const MessageBase = ({
   message: { data },
   children,
   hideActions = false,
+  isBot: propsIsBot = false,
 }: {
   message: {
     data: CopilotMessage;
   };
   children: React.ReactNode;
   hideActions?: boolean;
+  isBot?: boolean;
 }) => {
   const { source } = data;
   const { data: user, isLoading } = useUserProfile();
 
   const [showLogs, setShowLogs] = useState(false);
+
+  const isBot = propsIsBot || source === 'bot';
 
   return (
     <Wrapper gap={10}>
@@ -45,7 +49,7 @@ export const MessageBase = ({
           onClose={() => setShowLogs(false)}
         />
       )}
-      {source === 'bot' ? (
+      {isBot ? (
         <CopilotIconWrapper alignItems="center" justifyContent="center">
           <CopilotIcon style={{ width: 16, height: 16, fill: 'white' }} />
         </CopilotIconWrapper>
@@ -65,7 +69,7 @@ export const MessageBase = ({
           <ErrorBoundary>
             <Flex style={{ flex: 1 }}>{children}</Flex>
           </ErrorBoundary>
-          {source === 'bot' && !hideActions && (
+          {isBot && !hideActions && (
             <Dropdown
               disabled={data.source !== 'bot' || !data.logs}
               content={

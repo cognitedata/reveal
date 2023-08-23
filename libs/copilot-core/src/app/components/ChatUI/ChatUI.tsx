@@ -22,6 +22,7 @@ import {
 import { processMessage } from '../../../lib/processMessage';
 import { CogniteChainName, newChain } from '../../../lib/toolchains';
 import {
+  ActionType,
   CopilotBotMessage,
   CopilotMessage,
   CopilotSupportedFeatureType,
@@ -79,8 +80,8 @@ export const ChatUI = ({
   const model = useMemo(() => new CogniteChatGPT(sdk), [sdk]);
 
   const { base: conversationChain, chains } = useMemo(() => {
-    return newChain(sdk, model, messages, excludeChains, t);
-  }, [sdk, model, messages, excludeChains, t]);
+    return newChain(sdk, model, messages, t);
+  }, [sdk, model, messages, t]);
 
   const updateMessage = useCallback(
     async (key: number, result: CopilotBotMessage) => {
@@ -112,46 +113,69 @@ export const ChatUI = ({
     [setChatHistory, updateMessage, messages]
   );
 
-  const promptUser = useCallback(() => {
-    setLoadingStatus('');
-    bot.action
-      .set({ feature }, { actionType: 'text', feature })
-      .then(async ({ content }: { content: string }) => {
-        track('USER_PROMPT', undefined);
-        messages.current.push({
-          content: content,
-          type: 'text',
-          source: 'user',
-        });
-        setChatHistory(messages.current);
-        processMessage(
-          feature,
-          conversationChain,
-          sdk,
-          content,
-          messages.current
-        ).then((shouldPrompt) => {
-          if (shouldPrompt) {
-            promptUser();
+  const promptUser = useCallback(
+    (nextActionType: ActionType) => {
+      if (nextActionType === 'None') {
+        bot.action.set({}, { actionType: 'None' });
+        return;
+      }
+      setLoadingStatus('');
+      bot.action
+        .set(
+          { feature },
+          { actionType: nextActionType, feature, chains, excludeChains }
+        )
+        .then(async ({ content }: { content: string }) => {
+          track('USER_PROMPT', undefined);
+          if (nextActionType === 'Message') {
+            messages.current.push({
+              content: content,
+              type: 'text',
+              source: 'user',
+            });
+            setChatHistory(messages.current);
+            processMessage(
+              feature,
+              conversationChain,
+              sdk,
+              content,
+              messages.current
+            ).then((newActionType) => {
+              promptUser(newActionType);
+            });
+            setTimeout(() => {
+              scrollToBottom();
+            }, 100);
+            if (messages.current.length > 0) {
+              await bot.wait();
+            }
+          } else {
+            messages.current.push({
+              chain: content as CogniteChainName,
+              content,
+              type: 'chain',
+              source: 'user',
+            });
+            setChatHistory(messages.current);
+            promptUser('Message');
           }
         });
-        setTimeout(() => {
-          scrollToBottom();
-        }, 100);
-        if (messages.current.length > 0) {
-          await bot.wait();
-        }
-      });
-  }, [
-    bot,
-    track,
-    conversationChain,
-    feature,
-    sdk,
-    setChatHistory,
-    setLoadingStatus,
-    messages,
-  ]);
+    },
+    [
+      bot,
+      track,
+      conversationChain,
+      feature,
+      sdk,
+      setChatHistory,
+      setLoadingStatus,
+      messages,
+      chains,
+      excludeChains,
+    ]
+  );
+
+  const { createNewChat } = useCopilotContext();
 
   useEffect(() => {
     if (isEnabled) {
@@ -169,15 +193,8 @@ export const ChatUI = ({
               }
             }
             const lastMessage = newMessages[newMessages.length - 1];
-            if (lastMessage.source === 'user') {
-              let message = lastMessage.content;
-              if (lastMessage.context) {
-                if (lastMessage.context.includes('Explorer')) {
-                  message = `${lastMessage.content} ${
-                    lastMessage.context ? ' via graphql' : ''
-                  }`;
-                }
-              }
+            if (lastMessage.source === 'user' && lastMessage.pending) {
+              const message = lastMessage.content;
               bot.wait();
               processMessage(
                 feature,
@@ -185,10 +202,8 @@ export const ChatUI = ({
                 sdk,
                 message,
                 messages.current
-              ).then((shouldPrompt) => {
-                if (shouldPrompt) {
-                  promptUser();
-                }
+              ).then((nextActionType) => {
+                promptUser(nextActionType);
               });
             }
           }
@@ -214,9 +229,24 @@ export const ChatUI = ({
           sendFromCopilotEvent('SUMMARIZE_QUERY', { summary });
         }
       );
+      const removeListener3 = addToCopilotEventListener(
+        'NEW_CHAT_WITH_MESSAGES',
+        async ({ chain, messages: newMessages }) => {
+          await createNewChat([
+            {
+              type: 'chain',
+              source: 'user',
+              chain: chain,
+              content: chain,
+            },
+            ...newMessages,
+          ]);
+        }
+      );
       return () => {
         removeListener();
         removeListener2();
+        removeListener3();
         for (const listener of cachedListeners) {
           window.removeEventListener(listener.event, listener.listener);
         }
@@ -234,6 +264,7 @@ export const ChatUI = ({
     conversationChain,
     messages,
     chains,
+    createNewChat,
   ]);
 
   const setupMessages = useCallback(
@@ -272,30 +303,61 @@ export const ChatUI = ({
           )
         ),
       });
-      [
-        ...Object.values(conversationChain.destinationChains),
-        conversationChain.defaultChain,
-        conversationChain,
-      ].forEach((el) => {
+      [...Object.values(chains), conversationChain].forEach((el) => {
         el.memory = memory;
       });
       if (messages.current.length === 0) {
+        // new chat
         processMessage(
           feature,
           conversationChain,
           sdk,
           '',
           messages.current
-        ).then((shouldPrompt) => {
-          if (shouldPrompt) {
-            promptUser();
-          }
+        ).then((nextActionType) => {
+          promptUser(nextActionType);
         });
       } else {
-        promptUser();
+        // if this is not a brand new chat
+        const firstUserMessage = messages.current?.find(
+          (el) => el.source === 'user'
+        );
+        // if theres already a welcome message, then do chain selection
+        if (!firstUserMessage) {
+          promptUser('ChainSelection');
+          return;
+        }
+        const lastUserMessage = messages.current?.findLast(
+          (el) => el.source === 'user'
+        );
+        // if theres a set of messages, and one needs to be processed, then run it
+        if (lastUserMessage && lastUserMessage.pending) {
+          bot.wait();
+          processMessage(
+            feature,
+            conversationChain,
+            sdk,
+            lastUserMessage.content,
+            messages.current
+          ).then((nextActionType) => {
+            promptUser(nextActionType);
+          });
+        } else {
+          // if missing "chain" selection, default to None, other wise allow for messages.
+          promptUser(firstUserMessage?.type === 'chain' ? 'Message' : 'None');
+        }
       }
     },
-    [promptUser, feature, conversationChain, sdk, bot, updateMessage, messages]
+    [
+      promptUser,
+      feature,
+      conversationChain,
+      chains,
+      sdk,
+      bot,
+      updateMessage,
+      messages,
+    ]
   );
 
   useEffect(() => {
