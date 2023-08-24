@@ -6,7 +6,7 @@ import dayjs from 'dayjs';
 
 import { Body, Input } from '@cognite/cogs.js';
 
-import { useTranslation } from '../../../i18n/useTranslation';
+import { useTranslation } from '../../../../useTranslation';
 
 import { DatePickerInput, PivotRange, renderCustomHeader } from './Common';
 import {

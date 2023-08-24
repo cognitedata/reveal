@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 
-import { Tooltip } from 'antd';
-
 import { Chip, ChipType, ChipProps } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
@@ -89,8 +87,11 @@ export default function DiagramReviewStatus({ fileId }: Props) {
     ? { label: fileStatus.label }
     : { icon: 'Loader' };
   return (
-    <Tooltip title={fileStatus.tooltip}>
-      <Chip size="small" type={fileStatus.variant} {...chipProps} />
-    </Tooltip>
+    <Chip
+      size="small"
+      type={fileStatus.variant}
+      tooltipProps={{ content: fileStatus.tooltip }}
+      {...chipProps}
+    />
   );
 }

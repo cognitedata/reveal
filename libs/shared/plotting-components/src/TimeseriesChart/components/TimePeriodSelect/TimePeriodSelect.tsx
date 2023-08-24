@@ -5,7 +5,7 @@ import isEmpty from 'lodash/isEmpty';
 
 import { OptionType, Select } from '@cognite/cogs.js';
 
-import { useTranslation } from '../../i18n/useTranslation';
+import { useTranslation } from '../../../useTranslation';
 import { TimePeriod, UpdateTimePeriodProps } from '../../types';
 import {
   getDateRangeForTimePeriod,

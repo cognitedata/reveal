@@ -1,6 +1,6 @@
 import { TooltipRendererProps } from '../../../../LineChart';
+import { TFunction } from '../../../../useTranslation';
 import { TimeseriesDatapoint } from '../../../domain/service/types';
-import { TFunction } from '../../../i18n/useTranslation';
 import { getFormattedDateWithTimezone } from '../../../utils/getFormattedDateWithTimezone';
 import { getTooltipNumericValue } from '../../../utils/getTooltipNumericValue';
 import { getTooltipRawDatapointValue } from '../../../utils/getTooltipRawDatapointValue';
