@@ -1,16 +1,17 @@
 import {
-  getUrlParameters,
+  useCurrentView,
   useModelInstancesList,
 } from '@fusion/contextualization';
 
 import { MatchData, MatchInputOptions } from '../types';
 
 export const useGetMatchInputOptions = () => {
-  const { space, versionNumber, dataModelType } = getUrlParameters();
+  const view = useCurrentView();
+
   const { data: instances } = useModelInstancesList(
-    space,
-    dataModelType,
-    versionNumber
+    view?.space,
+    view?.externalId,
+    view?.version
   );
 
   const mappedResult: MatchInputOptions[] = instances?.map(

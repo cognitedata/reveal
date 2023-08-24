@@ -1,5 +1,5 @@
 import {
-  getUrlParameters,
+  useCurrentView,
   useGetSuggestImprovementsJob,
   useRetrieveInstances,
 } from '@fusion/contextualization';
@@ -7,25 +7,25 @@ import {
 import { convertToInternalModelInstance } from '../utils/convertToInternalModelInstance';
 
 export const useImprovementSuggestions = (jobId: string) => {
-  const { space, type, versionNumber } = getUrlParameters();
+  const view = useCurrentView();
 
-  const SuggestImprovementsJobResults = useGetSuggestImprovementsJob(jobId);
+  const suggestImprovementsJobResults = useGetSuggestImprovementsJob(jobId);
   const { data: { improvementSuggestions: suggestions } = {} } =
-    SuggestImprovementsJobResults;
+    suggestImprovementsJobResults;
 
   const { data } = useRetrieveInstances(
-    space,
-    type,
-    versionNumber,
+    view?.space,
+    view?.externalId,
+    view?.version,
     suggestions
   );
 
   const originInstances = convertToInternalModelInstance(
     data,
-    space,
-    type,
-    versionNumber
+    view?.space,
+    view?.externalId,
+    view?.version
   );
 
-  return { SuggestImprovementsJobResults, originInstances };
+  return { suggestImprovementsJobResults, originInstances };
 };

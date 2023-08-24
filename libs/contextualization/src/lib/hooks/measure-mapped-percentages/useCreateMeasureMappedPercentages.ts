@@ -2,8 +2,8 @@ import { useQuery } from '@tanstack/react-query';
 
 export const useCreateMeasureMappedPercentages = (
   space: string,
-  viewExternalId: string,
-  viewVersion: string
+  viewExternalId?: string,
+  viewVersion?: string
 ) => {
   return useQuery({
     queryKey: [
@@ -32,5 +32,6 @@ export const useCreateMeasureMappedPercentages = (
 
       return response.json();
     },
+    enabled: !!viewExternalId && !!viewVersion,
   });
 };

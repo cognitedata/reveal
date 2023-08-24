@@ -4,12 +4,12 @@ export const convertToInternalModelInstance = (
   data: ModelInstance[],
   space: string,
   type: string,
-  versionNumber: string
+  version: string
 ): InternalModelInstance[] => {
   return data?.reduce((acc: InternalModelInstance[], item: ModelInstance) => {
     const { externalId, properties } = item;
 
-    const instantsProperties = properties[space][`${type}/${versionNumber}`];
+    const instantsProperties = properties[space][`${type}/${version}`];
 
     Object.keys(instantsProperties).forEach((key: string) => {
       if (

@@ -2,22 +2,22 @@ import { useQuery } from '@tanstack/react-query';
 
 import { getUrlParameters } from '../utils';
 
-// import { useSDK } from '@cognite/sdk-provider';
-// import { getUrlParameters } from '../utils/getUrlParameters';
+import { useCurrentView } from './models/useCurrentView';
 
 const currentDate = new Date().toISOString();
 
 export const useCreateAdvancedJoinProcess = (enabled: boolean | undefined) => {
-  // const sdk = useSDK();
-  const { space, headerName, versionNumber, type } = getUrlParameters();
+  const view = useCurrentView();
+  const { headerName } = getUrlParameters();
+
   const body = JSON.stringify({
     items: [
       {
         externalId: `advanced-join-process-${currentDate}`, //random uid?
         type: 'direct',
-        space: space,
-        viewExternalId: type,
-        viewVersion: versionNumber,
+        space: view?.space,
+        viewExternalId: view?.externalId,
+        viewVersion: view?.version,
         propertyName: headerName,
       },
     ],
@@ -40,6 +40,6 @@ export const useCreateAdvancedJoinProcess = (enabled: boolean | undefined) => {
 
       return response.json();
     },
-    enabled: enabled,
+    enabled: enabled && !!view,
   });
 };
