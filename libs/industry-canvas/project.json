@@ -21,7 +21,7 @@
         "entryFile": "libs/industry-canvas/src/index.ts",
         "external": ["react/jsx-runtime"],
         "rollupConfig": "@nx/react/plugins/bundle-rollup",
-        "compiler": "babel",
+        "compiler": "swc",
         "assets": [
           {
             "glob": "libs/industry-canvas/README.md",

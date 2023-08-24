@@ -55,7 +55,7 @@ export const Copilot = ({
 
   return (
     <SDKProvider sdk={sdk}>
-      <I18nWrapper translations={translations} defaultNamespace="copilot">
+      <I18nWrapper translations={translations} addNamespace="copilot">
         <QueryClientProvider client={queryClient}>
           <ToastContainer />
           <StyledWrapper id="copilot-wrapper">

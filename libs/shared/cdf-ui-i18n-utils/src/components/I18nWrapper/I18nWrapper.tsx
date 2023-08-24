@@ -23,7 +23,8 @@ type I18nWrapperProps = {
   errorScreen?: (e: Error) => React.ReactElement | null;
   loadingScreen?: React.ReactElement | null;
   translations: Resource;
-  defaultNamespace: string;
+  defaultNamespace?: string;
+  addNamespace?: string;
   /**
    * When present, it determines whether the locize backend will be used for
    * translations. You can either pass a boolean, or a list of environments
@@ -38,8 +39,9 @@ type I18nWrapperProps = {
 const initializeTranslations = (
   currentLanguage: string,
   translations: Resource,
-  defaultNamespace: string,
   useLocizeBackend: boolean | string[],
+  defaultNamespace?: string,
+  addNamespace?: string,
   locizeProjectId = LOCIZE_PROJECT_ID
 ) => {
   let shouldUseLocizeBackend = false;
@@ -93,19 +95,48 @@ const initializeTranslations = (
       });
   }
 
+  if (i18next.isInitialized) {
+    // if initialized, then dont change default, but add new name space with resources.
+    Object.entries(translations).forEach(([language, resource]) => {
+      i18next.addResourceBundle(
+        language,
+        defaultNamespace || addNamespace || '',
+        resource[defaultNamespace || addNamespace || ''],
+        true,
+        true
+      );
+    });
+    if (defaultNamespace) {
+      i18next.setDefaultNamespace(defaultNamespace);
+    }
+    return Promise.resolve();
+  }
+
   return i18next
     .use(initReactI18next)
     .use(lowercasePostProcessor)
     .use(uppercasePostProcessor)
     .init({
       ...commonI18nOptions,
-      resources: translations,
+      resources: i18next.options.resources,
+    })
+    .then(() => {
+      Object.entries(translations).forEach(([language, resource]) => {
+        i18next.addResourceBundle(
+          language,
+          defaultNamespace || addNamespace || '',
+          resource[defaultNamespace || addNamespace || ''],
+          true,
+          true
+        );
+      });
     });
 };
 
 const I18nWrapper = ({
   children,
   defaultNamespace,
+  addNamespace,
   useLocizeBackend = ['next-release'],
   errorScreen,
   loadingScreen,
@@ -119,24 +150,23 @@ const I18nWrapper = ({
   const [error, setError] = useState<Error | undefined>();
 
   useEffect(() => {
-    if (!didInitializedTranslations) {
-      initializeTranslations(
-        language as string,
-        translations,
-        defaultNamespace,
-        useLocizeBackend,
-        locizeProjectId
-      )
-        .then(() => {
-          setDidInitializedTranslations(true);
-        })
-        .catch((e) => {
-          setError(e);
-        });
-    }
+    initializeTranslations(
+      language as string,
+      translations,
+      useLocizeBackend,
+      defaultNamespace,
+      addNamespace,
+      locizeProjectId
+    )
+      .then(() => {
+        setDidInitializedTranslations(true);
+      })
+      .catch((e) => {
+        setError(e);
+      });
   }, [
     defaultNamespace,
-    didInitializedTranslations,
+    addNamespace,
     useLocizeBackend,
     language,
     translations,

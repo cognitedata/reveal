@@ -1,24 +1,21 @@
 {
+  "ERROR_DEFAULT": "Unable to process message",
   "ERROR_MISSING_TYPE": "Something went wrong with our copilot, the following values must be provided: {{types}}",
-
-  "GQL_STAGE_RELEVANT_TYPES": "Identifying relevant data...",
-  "GQL_STAGE_PROCESSING_RELEVANT_TYPES": "Processing relevant data...",
-  "GQL_STAGE_QUERY_TYPE": "Identifying query type...",
-  "GQL_STAGE_FILTER": "Creating filter...",
-  "GQL_STAGE_CREATE_QUERY": "Creating query...",
-  "GQL_STAGE_RUNNING_QUERY": "Gathering answer...",
-  "GQL_STAGE_FIND_DATA_MODEL": "Confirming data model...",
-
   "GQL_CHAIN_CHOOSE_DM": "Which data model are you referring to?",
   "GQL_CHAIN_FAILED_TO_PROCESS_ENTIRE_QUESTION": "I wasn't able to process the entire question.",
   "GQL_CHAIN_FOUND_RESULTS": "I found {{resultAggregate}} results.",
-
   "GQL_ERROR_DATA_MODEL_MISSING": "Data model not specified",
-  "GQL_ERROR_RELEVANT_TYPES": "Unable to find relevant types",
-  "GQL_ERROR_MISSING_DEFINITION": "Unable to find data in specified data models",
-  "GQL_ERROR_INVALID_QUERY_TYPE": "Unable to identify type of query to perform",
+  "GQL_ERROR_FILTER": "Failed to identify a filter",
   "GQL_ERROR_INVALID_FIELDS": "Unable to identify relevant fields",
   "GQL_ERROR_INVALID_FIELDS_AGGREGATE": "Cannot aggregate on this field - {{groupBy}} for {{type}}",
-  "GQL_ERROR_FILTER": "Failed to identify a filter",
-  "ERROR_DEFAULT": "Unable to process message"
+  "GQL_ERROR_INVALID_QUERY_TYPE": "Unable to identify type of query to perform",
+  "GQL_ERROR_MISSING_DEFINITION": "Unable to find data in specified data models",
+  "GQL_ERROR_RELEVANT_TYPES": "Unable to find relevant types",
+  "GQL_STAGE_CREATE_QUERY": "Creating query...",
+  "GQL_STAGE_FILTER": "Creating filter...",
+  "GQL_STAGE_FIND_DATA_MODEL": "Confirming data model...",
+  "GQL_STAGE_PROCESSING_RELEVANT_TYPES": "Processing relevant data...",
+  "GQL_STAGE_QUERY_TYPE": "Identifying query type...",
+  "GQL_STAGE_RELEVANT_TYPES": "Identifying relevant data...",
+  "GQL_STAGE_RUNNING_QUERY": "Gathering answer..."
 }

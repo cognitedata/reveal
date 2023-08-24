@@ -34,6 +34,7 @@ export const createSerializedCanvasDocument = (
         containerReferences: [],
         canvasAnnotations,
         fdmInstanceContainerReferences: [],
+        context: [],
       }
     );
 
@@ -54,6 +55,7 @@ export const createSerializedCanvasDocument = (
       containerReferences,
       canvasAnnotations,
       fdmInstanceContainerReferences,
+      context: [],
     },
   };
 };

@@ -20,7 +20,7 @@ export const useUpdateAdvancedJoins = () => {
       toColumnKey: string | undefined;
     }) => {
       const response = await sdk.post(
-        `/v1/projects/${sdk.project}/advancedjoins/update`,
+        `/api/v1/projects/${sdk.project}/advancedjoins/update`,
         {
           headers: {
             'cdf-version': 'alpha',

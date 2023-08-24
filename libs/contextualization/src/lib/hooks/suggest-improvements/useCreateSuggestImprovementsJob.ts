@@ -12,7 +12,7 @@ export const useCreateSuggestImprovementsJob = (
     queryKey: ['advancedjoins', 'suggestimprovements', advancedJoinExternalId],
     queryFn: async () => {
       const response = await sdk.post(
-        `/v1/projects/${sdk.project}/advancedjoins/suggestimprovements`,
+        `/api/v1/projects/${sdk.project}/advancedjoins/suggestimprovements`,
         {
           headers: {
             'cdf-version': 'alpha',

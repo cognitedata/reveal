@@ -5,6 +5,7 @@ import {
   CanvasAnnotation,
   ContainerReferenceType,
   FdmInstanceContainerReference,
+  CanvasContext,
 } from '../types';
 
 // The type utilities below are stolen from https://stackoverflow.com/a/75113990
@@ -102,6 +103,7 @@ export type DTOFdmInstanceContainerReference = Pick<
 };
 
 export type DTOCanvasState = {
+  context: CanvasContext;
   canvasAnnotations: { items: DTOCanvasAnnotation[] } | null;
   containerReferences: { items: DTOAssetCentricContainerReference[] } | null;
   fdmInstanceContainerReferences: {
