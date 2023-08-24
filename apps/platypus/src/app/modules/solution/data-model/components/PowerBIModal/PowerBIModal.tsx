@@ -2,8 +2,9 @@ import { FormLabel } from '@platypus-app/components/FormLabel/FormLabel';
 import { Notification } from '@platypus-app/components/Notification/Notification';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
-import { getCluster, getProject } from '@cognite/cdf-utilities';
+import { getProject } from '@cognite/cdf-utilities';
 import { Button, Flex, Modal } from '@cognite/cogs.js';
+import { useSDK } from '@cognite/sdk-provider';
 
 import { StyledEndpoint, StyledWrapper } from './elements';
 
@@ -26,9 +27,8 @@ export const getODataFDMProjectField = (
   }/versions/${dataModel.version}`;
 };
 
-export const getODataFDMEnvironmentField = (): string => {
-  const cluster = getCluster() || 'api.cognitedata.com';
-  return `https://${cluster}/${odataVersion}`;
+export const getODataFDMEnvironmentField = (baseUrl: string): string => {
+  return `${baseUrl}/${odataVersion}`;
 };
 
 /**
@@ -46,13 +46,16 @@ const odataVersion = '20230821';
  *
  * @remarks
  * Component uses {@link @cognite/cdf-utilities} functions
- * - getCluster()
  * - getProject()
+ * Component uses {@link @cognite/sdk-provider} functions
+ * - useSDK().getBaseUrl()
  */
 export const PowerBIModal: React.FC<PowerBIModalProps> = (props) => {
   const { t } = useTranslation('DataModelPowerBIModal');
   const projectField = getODataFDMProjectField(props.dataModel);
-  const enviromentField = getODataFDMEnvironmentField();
+
+  const sdk = useSDK();
+  const enviromentField = getODataFDMEnvironmentField(sdk.getBaseUrl());
 
   const handleCopyProjectClick = () => {
     navigator.clipboard.writeText(projectField);
