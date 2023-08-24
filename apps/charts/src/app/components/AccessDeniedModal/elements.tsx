@@ -1,21 +1,9 @@
 import styled from 'styled-components';
 
-import { Icon, Modal, Flex, Title } from '@cognite/cogs.js';
+import { Icon, Flex, Heading } from '@cognite/cogs.js';
 
 export const StyledIcon = styled(Icon)`
   color: var(--cogs-text-icon--status-neutral);
-`;
-
-export const StyledModal = styled(Modal)`
-  && {
-    .cogs-modal-header {
-      border-bottom: none;
-    }
-    .cogs-modal-footer {
-      border-top: none;
-      padding: 0;
-    }
-  }
 `;
 
 export const StyledUl = styled.ul`
@@ -26,7 +14,7 @@ export const ModalHeader = ({ title }: { title: string }) => {
   return (
     <Flex gap={12} alignItems="center">
       <StyledIcon type="InfoFilled" />
-      <Title level={5}>{title}</Title>
+      <Heading level={5}>{title}</Heading>
     </Flex>
   );
 };

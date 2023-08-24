@@ -13,7 +13,6 @@ import {
   MONITORING_THRESHOLD_ID,
   MINIMUM_DURATION_LIMIT,
 } from '@charts-app/domain/monitoring/constants';
-import { useUserInfo } from '@charts-app/hooks/useUserInfo';
 import { useChartAtom } from '@charts-app/models/chart/atom';
 import {
   ChartThreshold,
@@ -35,11 +34,8 @@ import { Button, Icon, Row, Col, Chip } from '@cognite/cogs.js';
 import { FormError } from '../Form/FormError';
 import { FormInputWithController } from '../Form/FormInputWithController';
 
-import {
-  NotificationBox,
-  NotificationEmail,
-  FullWidthButton,
-} from './elements';
+import { FullWidthButton } from './elements';
+import { SubscribeJob } from './SubscribeJob';
 import { CreateMonitoringJobFormData } from './types';
 
 const defaultTranslations = makeDefaultTranslations(
@@ -95,8 +91,6 @@ const CreateMonitoringJobStep1 = ({
   const [, setInteractionsState] = useChartInteractionsAtom();
   const timeseries = (chart && chart?.timeSeriesCollection) || [];
 
-  const userInfo = useUserInfo();
-  const notificationEmail = userInfo.data?.mail;
   const formValues = watch();
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
@@ -317,10 +311,10 @@ const CreateMonitoringJobStep1 = ({
         inputName="folder"
       />
 
-      <NotificationBox>
-        {t['Notifications will be sent to: ']}{' '}
-        <NotificationEmail>{notificationEmail}</NotificationEmail>
-      </NotificationBox>
+      <SubscribeJob
+        title={t['Notifications will be sent to: ']}
+        control={control}
+      />
 
       {isDirty && !isValid && (
         <FormError<CreateMonitoringJobFormData> errors={errors} />

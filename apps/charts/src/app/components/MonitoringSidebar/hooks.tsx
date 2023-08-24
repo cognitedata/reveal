@@ -1,4 +1,5 @@
 import { useUserInfo } from '@charts-app/hooks/useUserInfo';
+import { UserProfile, useUserProfile } from '@fusion/industry-canvas';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { useSDK } from '@cognite/sdk-provider';
@@ -78,12 +79,15 @@ export const useMonitoringFoldersWithJobs = (
 ) => {
   const sdk = useSDK();
   const userInfo = useUserInfo();
-  const userAuthId = userInfo.data?.id;
+  const { userProfile } = useUserProfile();
+  const userAuthId_deprecated = userInfo.data?.id;
+  const userIdentifier = userProfile.userIdentifier;
   const { subscribed, timeseriesIds, timeseriesExternalIds, currentChart } =
     filters || {};
   const hookConfig: any = {
     enabled:
-      userAuthId !== undefined &&
+      userAuthId_deprecated !== undefined &&
+      userIdentifier !== undefined &&
       (!currentChart ||
         Boolean(timeseriesIds?.length || timeseriesExternalIds?.length)),
   };
@@ -108,10 +112,11 @@ export const useMonitoringFoldersWithJobs = (
               timeseriesIds: timeseriesIds || EMPTY_ARRAY,
               timeseriesExternalIds: timeseriesExternalIds || EMPTY_ARRAY,
               subscribed,
+              subscribers: [{ userIdentifier }],
             },
             params: {
               listJobs: true,
-              userAuthId,
+              userAuthId_deprecated,
             },
           }
         )
@@ -272,7 +277,8 @@ export const useMonitoringSubscriptionDelete = () => {
 export const useMonitoringSubscripitionList = (
   monitoringTaskIds: number[],
   channelIds: number[], // used for query cache invalidation
-  userAuthId: string
+  userAuthId_deprecated: string,
+  subscribers: UserProfile[]
 ) => {
   const sdk = useSDK();
   const ids = channelIds.join(',');
@@ -283,7 +289,10 @@ export const useMonitoringSubscripitionList = (
         {
           data: {
             monitoringTaskIDs: monitoringTaskIds,
-            userAuthId,
+            userAuthId_deprecated,
+            subscribers: subscribers.map((subscriber) => ({
+              userIdentifier: subscriber.userIdentifier,
+            })),
           },
         }
       )

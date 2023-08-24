@@ -19,6 +19,7 @@ import { useUserInfo } from '@charts-app/hooks/useUserInfo';
 import Routes from '@charts-app/pages/Routes';
 import { isDevelopment } from '@charts-app/utils/environment';
 import { DataExplorationProvider } from '@data-exploration-components/context/DataExplorationContext';
+import { UserProfileProvider } from '@fusion/industry-canvas';
 import * as Sentry from '@sentry/react';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { RecoilRoot } from 'recoil';
@@ -70,32 +71,34 @@ export const RootApp = () => {
       projectName={getProject()}
     >
       <GlobalStyles>
-        <DataExplorationProvider
-          flow={flow.flow}
-          userInfo={userInfo}
-          sdk={sdk}
-          overrideURLMap={{
-            pdfjsWorkerSrc:
-              '/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.min.js',
-          }}
-        >
-          <Sentry.ErrorBoundary
-            // Todo(DEGR-2403) Add a better error placeholder
-            fallback={<p>An error has occurred</p>}
-            showDialog
+        <UserProfileProvider>
+          <DataExplorationProvider
+            flow={flow.flow}
+            userInfo={userInfo}
+            sdk={sdk}
+            overrideURLMap={{
+              pdfjsWorkerSrc:
+                '/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.min.js',
+            }}
           >
-            <RecoilRoot>
-              <Router>
-                <ToastContainer style={{ top: '5em' }} />
-                {/* need root for png screenshot when we download chart  */}
-                {/* https://github.com/fayeed/use-screenshot/issues/9#issuecomment-1245094413  */}
-                <div id="root">
-                  <Routes />
-                </div>
-              </Router>
-            </RecoilRoot>
-          </Sentry.ErrorBoundary>
-        </DataExplorationProvider>
+            <Sentry.ErrorBoundary
+              // Todo(DEGR-2403) Add a better error placeholder
+              fallback={<p>An error has occurred</p>}
+              showDialog
+            >
+              <RecoilRoot>
+                <Router>
+                  <ToastContainer style={{ top: '5em' }} />
+                  {/* need root for png screenshot when we download chart  */}
+                  {/* https://github.com/fayeed/use-screenshot/issues/9#issuecomment-1245094413  */}
+                  <div id="root">
+                    <Routes />
+                  </div>
+                </Router>
+              </RecoilRoot>
+            </Sentry.ErrorBoundary>
+          </DataExplorationProvider>
+        </UserProfileProvider>
       </GlobalStyles>
       <ReactQueryDevtools initialIsOpen={false} />
     </FlagProvider>
