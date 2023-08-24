@@ -44,7 +44,12 @@ export const useClickedNodeData = (): ClickedNodeData | undefined => {
   ).data;
 
   useEffect(() => {
+    if (isWaitingForQueryResult()) {
+      return;
+    }
+
     const nodeDataList = nodeData ?? [];
+
     if (cadIntersection === undefined) {
       setClickedNodeData(undefined);
       return;
@@ -65,6 +70,11 @@ export const useClickedNodeData = (): ClickedNodeData | undefined => {
       view: chosenNode.view,
       cadNode: chosenNode.cadNode
     });
+
+    function isWaitingForQueryResult() {
+      return nodeData === undefined && cadIntersection !== undefined;
+    }
+
   }, [nodeData]);
 
   return clickedNodeData;
