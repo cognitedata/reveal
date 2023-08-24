@@ -6,6 +6,8 @@ import { UploadFile } from 'antd/lib/upload/interface';
 import noop from 'lodash/noop';
 
 import { Body, Icon, Button } from '@cognite/cogs.js';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+//@ts-ignore
 import UploadGCS from '@cognite/gcs-browser-upload';
 import { FileUploadResponse } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
