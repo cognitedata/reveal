@@ -83,7 +83,7 @@
         "apps/flexible-data-explorer/src/*"
       ],
       "@flows/*": [
-        "apps/flows/src/*"
+        "apps/transformations/src/*"
       ],
       "@functions-ui/*": [
         "apps/functions-ui/src/*"
