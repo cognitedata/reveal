@@ -15,8 +15,8 @@ export const useCreateSuggestImprovementsJob = (
     ],
     queryFn: async () => {
       const response = await fetch(
-        // `https://localhost:8443/api/v1/projects/${sdk.project}/context/advancedjoins/suggestimprovements`,
-        `https://localhost:8443/api/v1/projects/contextualization/context/advancedjoins/suggestimprovements`,
+        // `https://localhost:8443/api/v1/projects/${sdk.project}/advancedjoins/suggestimprovements`,
+        `https://localhost:8443/api/v1/projects/contextualization/advancedjoins/suggestimprovements`,
         {
           method: 'POST',
           headers: {

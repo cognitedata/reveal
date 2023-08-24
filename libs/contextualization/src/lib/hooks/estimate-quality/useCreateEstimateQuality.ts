@@ -20,7 +20,7 @@ export const useCreateEstimateQuality = (
     ],
     queryFn: async () => {
       const response = await fetch(
-        `https://localhost:8443/api/v1/projects/contextualization/context/advancedjoins/estimatequality`,
+        `https://localhost:8443/api/v1/projects/contextualization/advancedjoins/estimatequality`,
         {
           method: 'POST',
           headers: {

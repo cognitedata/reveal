@@ -3,7 +3,7 @@ import { useMutation } from '@tanstack/react-query';
 export const useCreateRunAdvancedJoin = () => {
   return useMutation(async (advancedJoinExternalId: string) => {
     const response = await fetch(
-      `https://localhost:8443/api/v1/projects/contextualization/context/advancedjoins/run`,
+      `https://localhost:8443/api/v1/projects/contextualization/advancedjoins/run`,
       {
         method: 'POST',
         headers: {

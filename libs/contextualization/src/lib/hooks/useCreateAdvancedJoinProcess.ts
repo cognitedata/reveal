@@ -27,8 +27,8 @@ export const useCreateAdvancedJoinProcess = (enabled: boolean | undefined) => {
     queryKey: ['context', 'advancedjoins', 'create'],
     queryFn: async () => {
       const response = await fetch(
-        // `https://localhost:8443/api/v1/projects/${sdk.project}/context/advancedjoins`,
-        `https://localhost:8443/api/v1/projects/contextualization/context/advancedjoins`,
+        // `https://localhost:8443/api/v1/projects/${sdk.project}/advancedjoins`,
+        `https://localhost:8443/api/v1/projects/contextualization/advancedjoins`,
         {
           method: 'POST',
           headers: {

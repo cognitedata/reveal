@@ -9,7 +9,7 @@ export const useCreateAdvancedJoinMatches = () => {
     });
 
     const response = await fetch(
-      `https://localhost:8443/api/v1/projects/contextualization/context/advancedjoins/matches`,
+      `https://localhost:8443/api/v1/projects/contextualization/advancedjoins/matches`,
       {
         method: 'POST',
         headers: {

@@ -24,9 +24,9 @@ export const useEstimateQuality = (
   const {
     data: {
       status,
-      qualityScorePercent,
-      confidencePercent,
       contextualizationScorePercent,
+      estimatedCorrectnessScorePercent,
+      confidencePercent,
     } = {},
     refetch: refetchMappedPercentages,
   } = useGetEstimateQuality(jobId);
@@ -52,9 +52,8 @@ export const useEstimateQuality = (
 
   return {
     estimateQualityJobStatus: status || JobStatus.Queued,
-    qualityScorePercent,
-    mappedPercentage: 50,
-    confidencePercent,
     contextualizationScorePercent,
+    estimatedCorrectnessScorePercent,
+    confidencePercent,
   };
 };

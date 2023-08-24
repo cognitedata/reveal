@@ -16,7 +16,7 @@ export const useCreateMeasureMappedPercentages = (
     ],
     queryFn: async () => {
       const response = await fetch(
-        `https://localhost:8443/api/v1/projects/contextualization/context/advancedjoins/measuremappedpercentage`,
+        `https://localhost:8443/api/v1/projects/contextualization/advancedjoins/measuremappedpercentage`,
         {
           method: 'POST',
           headers: {

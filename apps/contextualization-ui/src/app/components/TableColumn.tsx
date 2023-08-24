@@ -41,7 +41,7 @@ export const TableColumn = ({
 
   const getTableEstimate = (tableName: string) =>
     estimateArray.find((t) => t.tableName === tableName)?.jobResponse
-      ?.qualityScorePercentage;
+      ?.contextualizationScorePercent;
 
   return (
     <Column>
