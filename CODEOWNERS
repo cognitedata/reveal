@@ -64,7 +64,7 @@ apps/access-management            @cognitedata/cdf-user-experience
 # data onboarding
 apps/extraction-pipelines         @cognitedata/data-management
 apps/extractor-downloads          @cognitedata/data-management
-apps/flows                        @cognitedata/data-onboarding
+apps/flows                        @cognitedata/data-management
 
 libs/shared/cdf-utilities         @cognitedata/cdf-user-experience
 
