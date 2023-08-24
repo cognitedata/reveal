@@ -113,6 +113,8 @@
   "tags": [],
   "pipeline": {
     "releaseStrategy": "multi-branch",
-    "previewPackageName": "@cognite/cdf-data-exploration"
+    "previewPackageName": "@cognite/cdf-data-exploration",
+    "i18n": true,
+    "trigger": true
   }
 }

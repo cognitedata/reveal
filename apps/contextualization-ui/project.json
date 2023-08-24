@@ -122,5 +122,9 @@
       }
     }
   },
-  "tags": []
+  "tags": [],
+  "pipeline": {
+    "releaseStrategy": "single-branch",
+    "previewPackageName": "@cognite/cdf-contextualization-ui"
+  }
 }

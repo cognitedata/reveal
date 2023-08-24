@@ -110,6 +110,7 @@
   "implicitDependencies": [],
   "tags": [],
   "pipeline": {
+    "releaseStrategy": "single-branch",
     "previewPackageName": "@cognite/cdf-vision-subapp"
   }
 }

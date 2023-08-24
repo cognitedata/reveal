@@ -121,6 +121,7 @@
   },
   "tags": [],
   "pipeline": {
+    "releaseStrategy": "multi-branch",
     "previewPackageName": "@cognite/cdf-simint-ui"
   }
 }

@@ -1,4 +1,4 @@
-name: NX CD pipeline
+name: NX - CD
 on:
   push:
     branches:
@@ -163,6 +163,18 @@ jobs:
           target: ${{ steps.firebase-target.outputs.site }}
           entryPoint: dist/apps/${{ matrix.project }}/
 
+      - name: Save missing keys to locize
+        if: ${{ fromJson(steps.project-config.outputs.config).pipeline.i18n }}
+        run: yarn i18n-push ${{ matrix.project }}
+        env:
+          LOCIZE_API_KEY: ${{ secrets.LOCIZE_API_KEY }}
+
+      - name: Remove deleted keys from locize
+        if: ${{ fromJson(steps.project-config.outputs.config).pipeline.i18n }}
+        run: yarn i18n-remove-deleted ${{ matrix.project }}
+        env:
+          LOCIZE_API_KEY: ${{ secrets.LOCIZE_API_KEY }}
+
   build-shell:
     name: 'Build shell apps'
     runs-on: ubuntu-20.04
@@ -222,6 +234,18 @@ jobs:
           projectId: ${{ steps.firebase-target.outputs.projectId }}
           target: ${{ steps.firebase-target.outputs.site }}
           entryPoint: dist/apps/${{ matrix.project }}/
+
+      - name: Save missing keys to locize
+        if: ${{ fromJson(steps.project-config.outputs.config).pipeline.i18n }}
+        run: yarn i18n-push ${{ matrix.project }}
+        env:
+          LOCIZE_API_KEY: ${{ secrets.LOCIZE_API_KEY }}
+
+      - name: Remove deleted keys from locize
+        if: ${{ fromJson(steps.project-config.outputs.config).pipeline.i18n }}
+        run: yarn i18n-remove-deleted ${{ matrix.project }}
+        env:
+          LOCIZE_API_KEY: ${{ secrets.LOCIZE_API_KEY }}
 
   ci-passed:
     # see https://github.community/t/status-check-for-a-matrix-jobs/127354/7

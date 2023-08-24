@@ -21,6 +21,53 @@ yarn
 
 _Note: If you're on an Apple M1 machine, make sure your Node version is >= 16_
 
+## CI/CD
+
+_We use GitHub Actions for our CI and CD_
+
+### Deployment
+
+To deploy the application from CD pipeline to firebase hosting, you need to add the following to the project.json file:
+
+```
+"release": {
+  "releaseStrategy": "multi-branch" // or "single-branch"
+}
+```
+
+By default this will deploy the app to the `fusion-217032465111` firebase project and `cdf-${app-name}-${environment}` firebase site.
+
+If you want to deploy to a different firebase project or site, you can add the following to the project.json file:
+
+```
+"release": {
+  "firebaseProjectId": "fbhosting-217032465111",
+  "firebaseSite": "cognite-flexible-data-explorer"
+}
+```
+
+### Preview
+
+By default the CI pipeline will _`lint`_, _`test`_ and _`build`_ **app** and **storybook**. Preview links will be created for the app and storybook build.
+
+If tour app is a fusion subapp you need to add the following to the project.json file:
+
+```
+"pipeline": {
+  "previewPackageName": "{the package name needed to override systemjs import map}"
+}
+```
+
+### i18n
+
+To enable pushing i18n keys to `locize` you need to add the following to the project.json file:
+
+```
+"pipeline": {
+  "i18n": true,
+}
+```
+
 ## NX CLI
 
 NX provides CLI for developing different types of applications and different tools. These capabilities include generating applications, libraries, etc as well as the devtools to test, and build projects as well.
