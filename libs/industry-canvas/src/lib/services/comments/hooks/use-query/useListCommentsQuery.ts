@@ -43,8 +43,8 @@ export const useListCommentsQuery = (
       uniq(
         serializedComments
           .flatMap((comment) => [
-            comment.createdById,
-            ...(comment.taggedUsers ?? []),
+            comment.createdBy.externalId,
+            ...(comment.taggedUsers?.map(({ externalId }) => externalId) ?? []),
           ])
           .filter(isNonEmptyString)
       ),
@@ -63,12 +63,14 @@ export const useListCommentsQuery = (
         (comment): Comment => ({
           ...comment,
           createdBy: userProfiles.find(
-            (userProfile) => userProfile.userIdentifier === comment.createdById
+            (userProfile) =>
+              userProfile.userIdentifier === comment.createdBy.externalId
           ),
           taggedUsers: comment.taggedUsers
             ?.map((taggedUser) =>
               userProfiles.find(
-                (userProfile) => userProfile.userIdentifier === taggedUser
+                (userProfile) =>
+                  userProfile.userIdentifier === taggedUser.externalId
               )
             )
             .filter(isNotUndefined),

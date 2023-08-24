@@ -13,6 +13,8 @@ import {
 
 import { ResourceType } from '@data-exploration-lib/core';
 
+import { RuleType } from './components/ContextualTooltips/AssetTooltip/types';
+
 export enum ContainerReferenceType {
   FILE = 'file',
   TIMESERIES = 'timeseries',
@@ -186,16 +188,37 @@ export const isIndustryCanvasTimeSeriesContainer = (
 ): container is IndustryCanvasTimeSeriesContainerConfig =>
   container.type === ContainerType.TIMESERIES;
 
+export type LiveSensorRulesByAnnotationIdByTimeseriesId = Record<
+  string,
+  Record<number, RuleType[]>
+>;
+
 // NOTE: `CanvasState` is a global interface, hence the `Industry` prefix (https://microsoft.github.io/PowerBI-JavaScript/interfaces/_node_modules_typedoc_node_modules_typescript_lib_lib_dom_d_.canvasstate.html)
 export type IndustryCanvasState = {
   container: IndustryCanvasContainerConfig;
   canvasAnnotations: CanvasAnnotation[];
+
+  pinnedTimeseriesIdsByAnnotationId: Record<string, number[]>;
+  liveSensorRulesByAnnotationIdByTimeseriesId: LiveSensorRulesByAnnotationIdByTimeseriesId;
 };
+
+export type PinnedSensorValueContext = {
+  type: 'PINNED_SENSOR_VALUE';
+  payload: {
+    targetId: string;
+    resourceId: string;
+    rules: LiveSensorRulesByAnnotationIdByTimeseriesId;
+    version: 1;
+  }[];
+};
+
+export type CanvasContext = PinnedSensorValueContext[];
 
 export type SerializedIndustryCanvasState = {
   containerReferences: AssetCentricContainerReference[];
   fdmInstanceContainerReferences: FdmInstanceContainerReference[];
   canvasAnnotations: CanvasAnnotation[];
+  context: CanvasContext;
 };
 
 export type UserIdentifier = string;

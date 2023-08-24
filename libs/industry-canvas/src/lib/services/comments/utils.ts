@@ -7,9 +7,10 @@ import {
   RectangleAnnotation,
 } from '@cognite/unified-file-viewer';
 
+import { UserProfile } from '../../UserProfileProvider';
 import { isNotUndefined } from '../../utils/isNotUndefined';
 
-import { CommentFilter, Comment } from './types';
+import { CommentFilter, Comment, CdfUser } from './types';
 
 export const composeFilter = (filter: CommentFilter) =>
   Object.entries(filter)
@@ -38,29 +39,37 @@ export const composeFilter = (filter: CommentFilter) =>
 export const removeNullEntries = <T extends object>(obj: T): T =>
   pickBy(obj, (value) => value !== null) as T;
 
-export const isNonEmptyString = (str: string | undefined) => {
+export const isNonEmptyString = (str: string | undefined): str is string => {
   if (str !== undefined) {
     return str.trim().length > 0;
   }
   return false;
 };
 
+export const getCdfUserFromUserProfile = ({
+  userIdentifier,
+  email,
+}: UserProfile): CdfUser => ({
+  externalId: userIdentifier,
+  email: email,
+});
+
 export const createCommentAnnotation = (
-  // this function is only used after we filter out comments => contextData property which is why
+  // this function is only used after we filter out comments => targetContext property which is why
   // we add ?? after we know that these property won't be undefined
   comment: Comment
 ): RectangleAnnotation => {
   if (
-    comment.contextData?.x === undefined ||
-    comment.contextData.y === undefined
+    comment.targetContext?.x === undefined ||
+    comment.targetContext?.y === undefined
   ) {
     throw new Error(
       'Cannot create comment annotation without x & y properties'
     );
   }
   return {
-    x: comment.contextData.x,
-    y: comment.contextData.y,
+    x: comment.targetContext.x,
+    y: comment.targetContext.y,
     id: comment.externalId,
     type: AnnotationType.RECTANGLE,
     width: 1,

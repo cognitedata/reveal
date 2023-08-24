@@ -3,23 +3,54 @@ import { createContext, useContext } from 'react';
 import styled from 'styled-components';
 
 import { Colors, Icon } from '@cognite/cogs.js';
-import { usePermissions } from '@cognite/sdk-react-query-hooks';
 
 import { AppContext } from '@data-exploration-lib/core';
 
 import { NoAccessPage } from './components/NoAccessPage';
 import { SetupIndustrialCanvasPage } from './components/SetupIndustrialCanvasPage';
-import { useCreateSpaceMutation } from './hooks/use-mutation/useCreateSpace';
+import {
+  SpaceCreateDefinition,
+  useCreateSpaceMutation,
+} from './hooks/use-mutation/useCreateSpace';
 import { useListSpaces } from './hooks/use-query/useListSpaces';
+import { usePermissions } from './hooks/usePermissions';
+import { CommentService } from './services/comments/CommentService';
 import { IndustryCanvasService } from './services/IndustryCanvasService';
 
 const SpaceContext = createContext({});
 
-export const SpaceProvider = ({ children }: { children: JSX.Element }) => {
+export const ALL_REQUIRED_SCOPES = [
+  IndustryCanvasService.SYSTEM_SPACE,
+  CommentService.SYSTEM_SPACE,
+  IndustryCanvasService.INSTANCE_SPACE,
+  CommentService.INSTANCE_SPACE,
+];
+
+type SpaceProviderProps = {
+  spaceDefinition: SpaceCreateDefinition;
+  requiredReadScopes?: string[]; // If requiredScopes is undefined then 'all' scope is used
+  requiredDatamodelWriteScopes?: string[];
+  children?: React.ReactNode;
+};
+
+export const SpaceProvider: React.FC<SpaceProviderProps> = ({
+  children,
+  spaceDefinition,
+  requiredReadScopes,
+  requiredDatamodelWriteScopes,
+}) => {
   const context = useContext(AppContext);
+  const scope =
+    requiredReadScopes !== undefined
+      ? { spaceIdScope: { spaceIds: requiredReadScopes } }
+      : undefined;
+  const writeDataModelScope =
+    requiredDatamodelWriteScopes !== undefined
+      ? { spaceIdScope: { spaceIds: requiredDatamodelWriteScopes } }
+      : undefined;
 
   const { data: hasDataModelReadAcl, isLoading: isLoadingHasDataModelReadAcl } =
-    usePermissions(context?.flow as any, 'dataModelsAcl', 'READ', undefined, {
+    usePermissions(context?.flow as any, 'dataModelsAcl', 'READ', scope, {
       enabled: !!context?.flow,
     });
 
@@ -30,10 +61,8 @@ export const SpaceProvider = ({ children }: { children: JSX.Element }) => {
     context?.flow as any,
     'dataModelsAcl',
     'WRITE',
-    undefined,
-    {
-      enabled: !!context?.flow,
-    }
+    writeDataModelScope,
+    { enabled: !!context?.flow }
   );
 
   const {
@@ -43,7 +72,7 @@ export const SpaceProvider = ({ children }: { children: JSX.Element }) => {
     context?.flow as any,
     'dataModelInstancesAcl',
     'READ',
-    undefined,
+    scope,
     { enabled: !!context?.flow }
   );
 
@@ -54,7 +83,7 @@ export const SpaceProvider = ({ children }: { children: JSX.Element }) => {
     context?.flow as any,
     'dataModelInstancesAcl',
     'WRITE',
-    undefined,
+    scope,
     { enabled: !!context?.flow }
   );
 
@@ -89,24 +118,20 @@ export const SpaceProvider = ({ children }: { children: JSX.Element }) => {
         hasDataModelReadAcl={hasDataModelReadAcl}
         hasDataModelInstancesReadAcl={hasDataModelInstancesReadAcl}
         hasDataModelInstancesWrite={hasDataModelInstancesWriteAcl}
+        requiredScopes={ALL_REQUIRED_SCOPES}
       />
     );
   }
 
   const instanceSpace = spaces?.find(
-    ({ space }) => space === IndustryCanvasService.INSTANCE_SPACE
+    ({ space }) => space === spaceDefinition.space
   );
   if (instanceSpace === undefined || isCreatingSpace) {
     return (
       <SetupIndustrialCanvasPage
         hasDataModelWriteAcl={hasDataModelWriteAcl}
-        onCreateSpace={() =>
-          createSpace({
-            space: IndustryCanvasService.INSTANCE_SPACE,
-            description: 'The Industrial Canvas instance space',
-            name: 'Industrial Canvas instance space',
-          })
-        }
+        createSpace={createSpace}
+        spaceDefinition={spaceDefinition}
         isCreatingSpace={isCreatingSpace}
       />
     );

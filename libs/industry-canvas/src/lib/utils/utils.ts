@@ -16,6 +16,21 @@ import {
 
 import { isNotUndefined } from './isNotUndefined';
 
+const serializeCanvasContext = (
+  state: IndustryCanvasState
+): SerializedIndustryCanvasState['context'] =>
+  Object.keys(state.pinnedTimeseriesIdsByAnnotationId).map((annotationId) => ({
+    type: 'PINNED_SENSOR_VALUE',
+    payload: state.pinnedTimeseriesIdsByAnnotationId[annotationId].map(
+      (timeseriesId) => ({
+        targetId: annotationId,
+        resourceId: timeseriesId.toString(),
+        rules: state.liveSensorRulesByAnnotationIdByTimeseriesId ?? [],
+        version: 1,
+      })
+    ),
+  }));
+
 export const serializeCanvasState = (
   state: IndustryCanvasState
 ): SerializedIndustryCanvasState => {
@@ -28,7 +43,37 @@ export const serializeCanvasState = (
     canvasAnnotations: state.canvasAnnotations,
     containerReferences: assetCentricContainerReferences,
     fdmInstanceContainerReferences: fdmInstanceContainerReferences,
+    context: serializeCanvasContext(state),
   };
+};
+
+const deserializePinnedTimeseries = (
+  context: SerializedIndustryCanvasState['context']
+): IndustryCanvasState['pinnedTimeseriesIdsByAnnotationId'] => {
+  return context.reduce((acc, curr) => {
+    if (curr.type === 'PINNED_SENSOR_VALUE') {
+      curr.payload.forEach((payload) => {
+        if (!acc[payload.targetId]) {
+          acc[payload.targetId] = [];
+        }
+        acc[payload.targetId].push(Number(payload.resourceId));
+      });
+    }
+    return acc;
+  }, {} as IndustryCanvasState['pinnedTimeseriesIdsByAnnotationId']);
+};
+
+const deserializeLiveSensorRules = (
+  context: SerializedIndustryCanvasState['context']
+): IndustryCanvasState['liveSensorRulesByAnnotationIdByTimeseriesId'] => {
+  return context.reduce((acc, curr) => {
+    if (curr.type === 'PINNED_SENSOR_VALUE') {
+      curr.payload.forEach((payload) => {
+        acc = { ...acc, ...payload.rules };
+      });
+    }
+    return acc;
+  }, {});
 };
 
 export const deserializeCanvasState = async (
@@ -49,12 +94,20 @@ export const deserializeCanvasState = async (
           )
         ),
       },
+      pinnedTimeseriesIdsByAnnotationId: deserializePinnedTimeseries(
+        state.context
+      ),
+      liveSensorRulesByAnnotationIdByTimeseriesId: deserializeLiveSensorRules(
+        state.context
+      ),
     };
   } catch (error) {
     console.error('Error deserializing canvas container', error);
     return {
       container: EMPTY_FLEXIBLE_LAYOUT,
       canvasAnnotations: [],
+      pinnedTimeseriesIdsByAnnotationId: {},
+      liveSensorRulesByAnnotationIdByTimeseriesId: {},
     };
   }
 };

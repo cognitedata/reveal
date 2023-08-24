@@ -27,6 +27,8 @@ const INITIAL_HISTORY_STATE: HistoryState = {
     {
       container: EMPTY_FLEXIBLE_LAYOUT,
       canvasAnnotations: [],
+      pinnedTimeseriesIdsByAnnotationId: {},
+      liveSensorRulesByAnnotationIdByTimeseriesId: {},
     },
   ],
   index: 0,

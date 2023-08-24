@@ -8,6 +8,8 @@ export * from './lib/common';
 export * from './lib/hooks/use-query/useListCanvases';
 export * from './lib/services/IndustryCanvasService';
 
+export * from './lib/services/comments/CommentService';
+
 export { IndustryCanvasProvider } from './lib/IndustryCanvasContext';
 export * from './lib/UserProfileProvider';
 export { SpaceProvider } from './lib/SpaceProvider';

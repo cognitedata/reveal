@@ -49,7 +49,7 @@ export class IndustryCanvasService {
   public static readonly SYSTEM_SPACE = 'cdf_industrial_canvas';
   // Note: To simplify the code, we assume that the data models and
   // the views in the system space always have the same version.
-  public static readonly SYSTEM_SPACE_VERSION = 'v3';
+  public static readonly SYSTEM_SPACE_VERSION = 'v4';
   public static readonly INSTANCE_SPACE = 'IndustrialCanvasInstanceSpace';
   public static readonly DATA_MODEL_EXTERNAL_ID = 'IndustrialCanvas';
   private readonly LIST_LIMIT = 1000; // The max number of items to retrieve in one list request
@@ -107,6 +107,7 @@ export class IndustryCanvasService {
               createdBy
               updatedAt
               updatedBy
+              context
               containerReferences (first: ${this.LIST_LIMIT}) {
                 items {
                   id
@@ -177,8 +178,10 @@ export class IndustryCanvasService {
         'canvasAnnotations',
         'containerReferences',
         'fdmInstanceContainerReferences',
+        'context',
       ]),
       data: getSerializedCanvasStateFromDTOCanvasState({
+        context: dtoCanvas.context,
         containerReferences: dtoCanvas.containerReferences,
         canvasAnnotations: dtoCanvas.canvasAnnotations,
         fdmInstanceContainerReferences:

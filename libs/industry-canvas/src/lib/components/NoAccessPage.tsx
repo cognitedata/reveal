@@ -2,20 +2,23 @@ import styled from 'styled-components';
 
 import { Icon } from '@cognite/cogs.js';
 
-import { IndustryCanvasService } from '../services/IndustryCanvasService';
-
 type NoAccessPageProps = {
   hasDataModelReadAcl?: boolean;
   hasDataModelInstancesReadAcl?: boolean;
   hasDataModelInstancesWrite?: boolean;
   isUserProfileApiActivated?: boolean;
+  requiredScopes?: string[];
 };
+
+const getRequiredScopesString = (scopes: string[] | undefined): string =>
+  scopes?.join(', ') ?? '';
 
 export const NoAccessPage: React.FC<NoAccessPageProps> = ({
   hasDataModelInstancesReadAcl,
   hasDataModelInstancesWrite,
   hasDataModelReadAcl,
   isUserProfileApiActivated,
+  requiredScopes,
 }) => (
   <NoAccessContent>
     <Warning>
@@ -30,10 +33,10 @@ export const NoAccessPage: React.FC<NoAccessPageProps> = ({
     </Instructions>
     <AccessInfo className="z-4">
       <p>
-        To use Industry Canvas, <strong>User Profiles</strong> must be activated
-        for your project, and you will need capabilities the Access Control
-        Lists (ACLs) listed below. Please ask your IT admin to help you with
-        this.
+        To use Industrial Canvas, <strong>User Profiles</strong> must be
+        activated for your project, and you will need capabilities the{' '}
+        <strong>Access Control Lists (ACLs) </strong> listed below. Please ask
+        your IT admin to help you with this.
       </p>
       <ul>
         <li style={{ marginBottom: 5, marginTop: 5 }}>
@@ -41,10 +44,7 @@ export const NoAccessPage: React.FC<NoAccessPageProps> = ({
           <ul>
             <li>
               Required scopes:{' '}
-              <samp>
-                [{IndustryCanvasService.INSTANCE_SPACE},{' '}
-                {IndustryCanvasService.SYSTEM_SPACE}]
-              </samp>
+              <samp>[{getRequiredScopesString(requiredScopes)}]</samp>
             </li>
           </ul>
         </li>
@@ -54,10 +54,7 @@ export const NoAccessPage: React.FC<NoAccessPageProps> = ({
           <ul>
             <li>
               Required scopes:{' '}
-              <samp>
-                [{IndustryCanvasService.INSTANCE_SPACE},{' '}
-                {IndustryCanvasService.SYSTEM_SPACE}]
-              </samp>
+              <samp>[{getRequiredScopesString(requiredScopes)}]</samp>
             </li>
           </ul>
         </li>
@@ -67,10 +64,7 @@ export const NoAccessPage: React.FC<NoAccessPageProps> = ({
           <ul>
             <li>
               Required scopes:{' '}
-              <samp>
-                [{IndustryCanvasService.INSTANCE_SPACE},{' '}
-                {IndustryCanvasService.SYSTEM_SPACE}]
-              </samp>
+              <samp>[{getRequiredScopesString(requiredScopes)}]</samp>
             </li>
           </ul>
         </li>

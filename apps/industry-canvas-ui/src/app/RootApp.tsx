@@ -10,6 +10,8 @@ import {
   IndustryCanvasProvider,
   TrackingContextProvider,
   createTrackUsage,
+  IndustryCanvasService,
+  CommentService,
 } from '@fusion/industry-canvas';
 
 import { getFlow } from '@cognite/cdf-sdk-singleton';
@@ -34,21 +36,47 @@ export default function App() {
     <Suspense fallback={<Spinner />}>
       <TrackingContextProvider trackUsage={trackUsage}>
         <ICProvider flow={flow} sdk={sdk} userInfo={userInfo}>
-          <SpaceProvider>
-            <UserProfileProvider>
-              <IndustryCanvasProvider>
-                <Routes>
-                  <Route
-                    path="/industrial-canvas"
-                    element={<IndustryCanvasHomePage />}
-                  />
-                  <Route
-                    path="/industrial-canvas/canvas"
-                    element={<IndustryCanvasPage />}
-                  />
-                </Routes>
-              </IndustryCanvasProvider>
-            </UserProfileProvider>
+          <SpaceProvider
+            spaceDefinition={{
+              space: IndustryCanvasService.INSTANCE_SPACE,
+              name: 'Industrial Canvas instance space',
+              description: 'The Industrial Canvas instance space',
+            }}
+            requiredReadScopes={[
+              IndustryCanvasService.SYSTEM_SPACE,
+              IndustryCanvasService.INSTANCE_SPACE,
+            ]}
+            requiredDatamodelWriteScopes={[
+              IndustryCanvasService.INSTANCE_SPACE,
+            ]}
+          >
+            <SpaceProvider
+              spaceDefinition={{
+                space: CommentService.INSTANCE_SPACE,
+                name: 'Comment instance space',
+                description: 'The comment instance space',
+              }}
+              requiredReadScopes={[
+                CommentService.SYSTEM_SPACE,
+                CommentService.INSTANCE_SPACE,
+              ]}
+              requiredDatamodelWriteScopes={[CommentService.INSTANCE_SPACE]}
+            >
+              <UserProfileProvider>
+                <IndustryCanvasProvider>
+                  <Routes>
+                    <Route
+                      path="/industrial-canvas"
+                      element={<IndustryCanvasHomePage />}
+                    />
+                    <Route
+                      path="/industrial-canvas/canvas"
+                      element={<IndustryCanvasPage />}
+                    />
+                  </Routes>
+                </IndustryCanvasProvider>
+              </UserProfileProvider>
+            </SpaceProvider>
           </SpaceProvider>
         </ICProvider>
       </TrackingContextProvider>
