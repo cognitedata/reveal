@@ -142,6 +142,7 @@ export const FormInputWithController: FC<Props> = ({
                 onChange={onChange} // send value to hook form
                 value={value}
                 options={options}
+                size="small"
               />
             )}
             {type === 'radio' && (

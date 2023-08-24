@@ -2,17 +2,23 @@ import styled from 'styled-components';
 
 import { Button, Tooltip } from '@cognite/cogs.js';
 
-import { IndustryCanvasService } from '../services/IndustryCanvasService';
+import { SpaceCreateDefinition } from '../hooks/use-mutation/useCreateSpace';
 
 type SetupIndustrialCanvasPageProps = {
+  spaceDefinition: SpaceCreateDefinition;
   hasDataModelWriteAcl: boolean;
   isCreatingSpace: boolean;
-  onCreateSpace: () => void;
+  createSpace: (space: SpaceCreateDefinition) => void;
 };
 
 export const SetupIndustrialCanvasPage: React.FC<
   SetupIndustrialCanvasPageProps
-> = ({ hasDataModelWriteAcl, onCreateSpace, isCreatingSpace }) => (
+> = ({
+  hasDataModelWriteAcl,
+  spaceDefinition,
+  createSpace,
+  isCreatingSpace,
+}) => (
   <SetupIndustrialCanvasContent>
     <InfoContainer>
       <h3> Industrial Canvas has not been set up yet</h3>
@@ -20,23 +26,23 @@ export const SetupIndustrialCanvasPage: React.FC<
     <div>
       <strong>
         Before you can start using Industrial Canvas, the space '
-        <samp>{IndustryCanvasService.INSTANCE_SPACE}</samp>' needs to be
-        created. Please contact your IT admin to do this, or use the button
-        below if you have the necessary capabilities.
+        <samp>{spaceDefinition.space}</samp>' needs to be created. Please
+        contact your IT admin to do this, or use the button below if you have
+        the necessary capabilities.
       </strong>
     </div>
     <CreateSpaceButtonWrapper>
       <Tooltip
         disabled={hasDataModelWriteAcl}
-        content="datamodels:write is required to set up Industrial Canvas"
+        content={`datamodels:write is required to create the space "${spaceDefinition.space}"`}
       >
         <StyledButton
           disabled={!hasDataModelWriteAcl}
-          onClick={onCreateSpace}
+          onClick={() => createSpace(spaceDefinition)}
           type="primary"
           loading={isCreatingSpace}
         >
-          Set up Industrial Canvas
+          Create space {spaceDefinition.space}
         </StyledButton>
       </Tooltip>
     </CreateSpaceButtonWrapper>

@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { Button } from '@cognite/cogs.js';
 
-import { useTranslation } from '../../i18n/useTranslation';
+import { useTranslation } from '../../../useTranslation';
 import { DateRange, TimeseriesItem } from '../../types';
 import { openInCharts } from '../../utils/openInCharts';
 

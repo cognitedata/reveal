@@ -31,7 +31,13 @@ case "$commandArg": in
     exit 1
 esac
 
-path=apps/${project}/src/i18n
+if [ -d "libs/${project}/src/i18n" ]; then
+  path=libs/${project}/src/i18n
+elif [ -d "libs/shared/${project}/src/i18n" ]; then
+  path=libs/shared/${project}/src/i18n
+else
+  path=apps/${project}/src/i18n
+fi
 
 # if industy-canvas, use different path
 if [ "$project" = "industry-canvas" ]; then

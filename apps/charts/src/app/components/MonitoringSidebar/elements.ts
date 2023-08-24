@@ -38,18 +38,6 @@ export const ExpandTitle = styled(Body)`
   line-height: 20px;
 `;
 
-export const NotificationBox = styled.div`
-  &&& {
-    margin: 0.8em 0em;
-  }
-`;
-
-export const NotificationEmail = styled.span`
-  &&& {
-    font-weight: 600;
-  }
-`;
-
 export const FullWidthButton = styled(Button)`
   &&& {
     width: 100%;

@@ -119,6 +119,7 @@
   },
   "tags": [],
   "pipeline": {
+    "releaseStrategy": "multi-branch",
     "previewPackageName": "@cognite/cdf-industry-canvas-ui"
   }
 }

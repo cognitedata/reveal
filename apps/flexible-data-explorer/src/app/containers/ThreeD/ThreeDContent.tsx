@@ -1,3 +1,5 @@
+import { useParams } from 'react-router-dom';
+
 import { RevealContainer } from '@cognite/reveal-react-components';
 import { useSDK } from '@cognite/sdk-provider';
 
@@ -17,6 +19,8 @@ export const ThreeDContent = () => {
 
   const modelIdentifiers = projectConfigs?.threeDResources;
 
+  const { instanceSpace, externalId } = useParams();
+
   if (!modelIdentifiers) {
     return (
       <EmptyState
@@ -26,13 +30,22 @@ export const ThreeDContent = () => {
     );
   }
 
+  const hasSpecifiedInstance =
+    instanceSpace !== undefined && externalId !== undefined;
+  const fitCameraMode = hasSpecifiedInstance ? 'instance' : 'models';
+
   return (
     <RevealContainer
       sdk={sdk}
       color={defaultRevealColor}
       viewerOptions={defaultViewerOptions}
     >
-      <RevealContent modelIdentifiers={modelIdentifiers} fitCamera="models" />
+      <RevealContent
+        modelIdentifiers={modelIdentifiers}
+        externalId={externalId}
+        instanceSpace={instanceSpace}
+        fitCamera={fitCameraMode}
+      />
     </RevealContainer>
   );
 };

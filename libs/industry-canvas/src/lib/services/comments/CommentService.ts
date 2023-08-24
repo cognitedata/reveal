@@ -3,7 +3,7 @@ import { CogniteClient } from '@cognite/sdk';
 import { FDMClient, gql } from '../../utils/FDMClient';
 import { isNotUndefined } from '../../utils/isNotUndefined';
 
-import { CommentFilter, SerializedComment } from './types';
+import { CdfUser, CommentFilter, SerializedComment } from './types';
 import { composeFilter, removeNullEntries } from './utils';
 
 type PageInfo = {
@@ -13,14 +13,17 @@ type PageInfo = {
   endCursor: string;
 };
 
+enum ModelNames {
+  USER = 'CDF_User',
+  COMMENT = 'CDF_Comment',
+}
 export class CommentService {
-  public static readonly SYSTEM_SPACE = 'apps_comments_local'; // TODO: replace with system space
+  public static readonly SYSTEM_SPACE = 'cdf_apps_shared';
   // Note: To simplify the code, we assume that the data models and
   // the views in the system space always have the same version.
-  public static readonly SYSTEM_SPACE_VERSION = '1';
-  public static readonly INSTANCE_SPACE = CommentService.SYSTEM_SPACE; // TODO: should the comments perhaps live in their own space?
+  public static readonly SYSTEM_SPACE_VERSION = 'v1';
+  public static readonly INSTANCE_SPACE = 'CommentInstanceSpace';
   public static readonly DATA_MODEL_EXTERNAL_ID = 'SharedCogniteApps';
-  public static readonly COMMENT_MODEL_NAME = 'Comment';
   private readonly LIST_LIMIT = 1000; // The max number of items to retrieve in one list request
 
   private fdmClient: FDMClient;
@@ -38,10 +41,25 @@ export class CommentService {
   public async upsertComments(
     comments: Omit<SerializedComment, 'lastUpdatedTime' | 'createdTime'>[]
   ): Promise<SerializedComment[]> {
+    // First, we upsert the User Profile proxy nodes – just to make sure that
+    // they actually exist. This is a short term hack/fix while the user
+    // profiles nodes do not natively live in FDM.
+    await this.fdmClient.upsertNodes(
+      comments.map(({ createdBy }) => ({
+        modelName: ModelNames.USER,
+        externalId: createdBy.externalId,
+        email: createdBy.email,
+      }))
+    );
+
     const updatedComments = await this.fdmClient.upsertNodes(
       comments.map((comment) => ({
         ...comment,
-        modelName: CommentService.COMMENT_MODEL_NAME,
+        createdBy: {
+          externalId: comment.createdBy.externalId,
+          space: CommentService.INSTANCE_SPACE,
+        },
+        modelName: ModelNames.COMMENT,
         ...(comment.parentComment
           ? {
               parentComment: {
@@ -98,37 +116,41 @@ export class CommentService {
   ): Promise<SerializedComment[]> {
     const res = await this.fdmClient.graphQL<{
       comments: {
-        items: (Omit<SerializedComment, 'createdTime' | 'lastUpdatedTime'> & {
+        items: (Omit<
+          SerializedComment,
+          'createdTime' | 'lastUpdatedTime' | 'taggedUsers'
+        > & {
           createdTime: string;
           lastUpdatedTime: string;
+          taggedUsers: { items: CdfUser[] } | null;
         })[];
         pageInfo: PageInfo;
       };
     }>(
       gql`
-        query ListComments($filter: _List${
-          CommentService.COMMENT_MODEL_NAME
-        }Filter) {
-          comments: listComment(
+        query ListComments($filter: _List${ModelNames.COMMENT}Filter) {
+          comments: list${ModelNames.COMMENT}(
             filter: $filter,
             first: ${limit},
             after: ${cursor === undefined ? null : `"${cursor}"`}
           ) {
             items {
               text
-              createdById
+              createdBy
               status
-              parentComment {
-                externalId
-              }
+              parentComment
 
               targetId
               targetType
-              contextId
-              contextType
-              contextData
+              targetSubType
+              targetContext
 
-              taggedUsers
+              taggedUsers {
+                items {
+                  externalId
+                  email
+                }
+              }
 
               externalId
               lastUpdatedTime
@@ -162,6 +184,7 @@ export class CommentService {
     paginatedData.push(
       ...items.map((item) => ({
         ...item,
+        taggedUsers: item.taggedUsers?.items,
         // Note: The dates we get from FDM are given as strings, we
         // therefore need to manually convert them to Date objects
         createdTime: new Date(item.createdTime),

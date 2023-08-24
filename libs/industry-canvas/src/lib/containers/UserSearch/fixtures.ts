@@ -51,6 +51,7 @@ export const canvas: SerializedCanvasDocument = {
     canvasAnnotations: [],
     containerReferences: [],
     fdmInstanceContainerReferences: [],
+    context: [],
   },
   externalId: '7a9539e3-785a-4999-9d4b-bbf8e99e45e2',
   name: "Mustafa's public canvas",

@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { Avatar, Button } from '@cognite/cogs.js';
+import { Avatar, Button, Body } from '@cognite/cogs.js';
 
 import { translationKeys } from '../../common';
 import { useTranslation } from '../../hooks/useTranslation';
@@ -29,10 +29,10 @@ export const SharedUsersList = ({
         <UserItemWrapper>
           <UserInfo>
             <Avatar size={size ?? 'medium'} text={ownerProfile.displayName} />
-            <span>
+            <Body as="span" size={size ? 'small' : 'medium'}>
               {ownerProfile.displayName} (
               {t(translationKeys.CANVAS_OWNER_LABEL, 'Owner')})
-            </span>
+            </Body>
           </UserInfo>
         </UserItemWrapper>
       )}
@@ -42,7 +42,9 @@ export const SharedUsersList = ({
             <UserItemWrapper key={`shared-user-${user.userIdentifier}`}>
               <UserInfo>
                 <Avatar size={size ?? 'medium'} text={user.displayName} />
-                <span>{user.displayName}</span>
+                <Body as="span" size={size ? 'small' : 'medium'}>
+                  {user.displayName}
+                </Body>
               </UserInfo>
               {enableUserRemoval && (
                 <UserActions>

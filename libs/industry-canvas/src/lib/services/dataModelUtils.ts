@@ -22,6 +22,7 @@ import {
 } from './types';
 
 export const getSerializedCanvasStateFromDTOCanvasState = ({
+  context: dtoContext,
   canvasAnnotations: dtoAnnotations,
   containerReferences: dtoContainerReferences,
   fdmInstanceContainerReferences: dtoFdmInstanceContainerReferences,
@@ -36,6 +37,7 @@ export const getSerializedCanvasStateFromDTOCanvasState = ({
     dtoFdmInstanceContainerReferences?.items.map(
       dtoFdmInstanceContainerReferenceToFdmInstanceContainerReference
     ) ?? [],
+  context: dtoContext ?? [],
 });
 
 export const getAnnotationOrContainerExternalId = (
@@ -204,6 +206,7 @@ export const upsertCanvas = async (
       canvasAnnotations,
       containerReferences,
       fdmInstanceContainerReferences,
+      context,
     },
     ...canvasProps
   } = canvas;
@@ -226,7 +229,7 @@ export const upsertCanvas = async (
   // We first ingest the nodes, and then the edges, since the start/end
   // nodes must exist *before* the edges can be ingested
   const upsertedNodes = await client.upsertNodes([
-    { ...canvasProps, modelName: ModelNames.CANVAS },
+    { ...canvasProps, context, modelName: ModelNames.CANVAS },
     ...dtoCanvasAnnotations.map((annotation) => ({
       ...annotation,
       modelName: ModelNames.CANVAS_ANNOTATION,

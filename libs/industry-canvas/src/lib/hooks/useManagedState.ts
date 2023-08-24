@@ -37,6 +37,7 @@ import { OnOpenConditionalFormattingClick } from '../IndustryCanvas';
 import { useIndustryCanvasContext } from '../IndustryCanvasContext';
 import { useCommentsUpsertMutation } from '../services/comments/hooks';
 import { CommentTargetType } from '../services/comments/types';
+import { getCdfUserFromUserProfile } from '../services/comments/utils';
 import {
   CanvasAnnotation,
   ContainerReference,
@@ -307,7 +308,6 @@ const useAutoSaveState = (
     if (!hasFinishedInitialLoad || activeCanvas === undefined) {
       return;
     }
-
     const filteredCanvasAnnotations = canvasState.canvasAnnotations.filter(
       (annotation) => !isCommentAnnotation(annotation)
     );
@@ -394,6 +394,7 @@ const useManagedState = ({
 }): UseManagedStateReturnType => {
   const sdk = useSDK();
   const trackUsage = useMetrics();
+
   const [interactionState, setInteractionState] = useState<InteractionState>({
     hoverId: undefined,
     clickedContainerAnnotationId: undefined,
@@ -401,9 +402,7 @@ const useManagedState = ({
   const { canvasState, undo, redo, pushState, replaceState } = useHistory();
   usePersistence(canvasState, replaceState);
   const [searchParams, setSearchParams] = useSearchParams();
-  const {
-    userProfile: { userIdentifier },
-  } = useUserProfile();
+  const { userProfile } = useUserProfile();
   const { mutateAsync: upsertComments } = useCommentsUpsertMutation();
   const onUpdateRequest: UpdateHandlerFn = useCallback(
     ({ containers: updatedContainers, annotations: updatedAnnotations }) => {
@@ -417,82 +416,94 @@ const useManagedState = ({
         return;
       }
 
-      pushState(({ container, canvasAnnotations }) => {
-        const updatedAnnotation = updatedAnnotations[0];
-        const hasAnnotationBeenCreated =
-          updatedAnnotation !== undefined &&
-          updatedAnnotations.length === 1 &&
-          !canvasAnnotations.some(
-            (canvasAnnotation) => canvasAnnotation.id === updatedAnnotation.id
-          );
+      pushState(
+        ({
+          container,
+          canvasAnnotations,
+          pinnedTimeseriesIdsByAnnotationId,
+          liveSensorRulesByAnnotationIdByTimeseriesId,
+        }) => {
+          const updatedAnnotation = updatedAnnotations[0];
+          const hasAnnotationBeenCreated =
+            updatedAnnotation !== undefined &&
+            updatedAnnotations.length === 1 &&
+            !canvasAnnotations.some(
+              (canvasAnnotation) => canvasAnnotation.id === updatedAnnotation.id
+            );
 
-        if (hasAnnotationBeenCreated) {
-          // Augment the annotation with the comment metadata if the tool is comment
-          if (toolType === IndustryCanvasToolType.COMMENT) {
-            updatedAnnotation.isSelectable = false;
-            updatedAnnotation.metadata = {
-              ...updatedAnnotation.metadata,
-              [COMMENT_METADATA_ID]: true,
-            };
+          if (hasAnnotationBeenCreated) {
+            // Augment the annotation with the comment metadata if the tool is comment
+            if (toolType === IndustryCanvasToolType.COMMENT) {
+              updatedAnnotation.isSelectable = false;
+              updatedAnnotation.metadata = {
+                ...updatedAnnotation.metadata,
+                [COMMENT_METADATA_ID]: true,
+              };
 
-            if (!isRectangleAnnotation(updatedAnnotation)) {
-              throw new Error(
-                'Provided annotation is not rectangle annotation'
-              );
+              if (!isRectangleAnnotation(updatedAnnotation)) {
+                throw new Error(
+                  'Provided annotation is not rectangle annotation'
+                );
+              }
+
+              upsertComments([
+                {
+                  targetId: searchParams.get('canvasId') ?? undefined,
+                  targetType: CommentTargetType.CANVAS,
+                  createdBy: getCdfUserFromUserProfile(userProfile),
+                  text: '',
+                  externalId: updatedAnnotation.id,
+                  targetContext: {
+                    x: updatedAnnotation.x,
+                    y: updatedAnnotation.y,
+                  },
+                },
+              ]).then(() => {
+                setSearchParams((currentParams) => {
+                  currentParams.set('commentTooltipId', updatedAnnotation.id);
+                  return currentParams;
+                });
+              });
             }
 
-            upsertComments([
-              {
-                targetId: searchParams.get('canvasId') ?? undefined,
-                targetType: CommentTargetType.CANVAS,
-                createdById: userIdentifier,
-                text: '',
-                externalId: updatedAnnotation.id,
-                contextData: {
-                  x: updatedAnnotation.x,
-                  y: updatedAnnotation.y,
-                },
-              },
-            ]).then(() => {
-              setSearchParams((currentParams) => {
-                currentParams.set('commentTooltipId', updatedAnnotation.id);
-                return currentParams;
-              });
+            setInteractionState({
+              hoverId: undefined,
+              clickedContainerAnnotationId: updatedAnnotation.id,
+            });
+            setToolType(IndustryCanvasToolType.SELECT);
+
+            unifiedViewer?.once(UnifiedViewerEventType.ON_TOOL_CHANGE, () => {
+              // It takes a little bit of time before the annotation is added, hence the timeout.
+              // TODO: This is somewhat brittle and hacky. We should find a better way to do this.
+              if (!isCommentAnnotation(updatedAnnotation)) {
+                setTimeout(() => {
+                  unifiedViewer?.selectByIds({
+                    annotationIds: [updatedAnnotation.id],
+                    containerIds: [],
+                  });
+                }, SHAMEFUL_WAIT_TO_ENSURE_ANNOTATIONS_ARE_RENDERED_MS);
+              }
+            });
+
+            trackUsage(MetricEvent.ANNOTATION_CREATED, {
+              annotationType: updatedAnnotation.type,
             });
           }
 
-          setInteractionState({
-            hoverId: undefined,
-            clickedContainerAnnotationId: updatedAnnotation.id,
-          });
-          setToolType(IndustryCanvasToolType.SELECT);
-
-          unifiedViewer?.once(UnifiedViewerEventType.ON_TOOL_CHANGE, () => {
-            // It takes a little bit of time before the annotation is added, hence the timeout.
-            // TODO: This is somewhat brittle and hacky. We should find a better way to do this.
-            if (!isCommentAnnotation(updatedAnnotation)) {
-              setTimeout(() => {
-                unifiedViewer?.selectByIds({
-                  annotationIds: [updatedAnnotation.id],
-                  containerIds: [],
-                });
-              }, SHAMEFUL_WAIT_TO_ENSURE_ANNOTATIONS_ARE_RENDERED_MS);
-            }
-          });
-
-          trackUsage(MetricEvent.ANNOTATION_CREATED, {
-            annotationType: updatedAnnotation.type,
-          });
+          return {
+            container: getNextUpdatedContainer(
+              container,
+              validUpdatedContainers
+            ),
+            canvasAnnotations: getNextUpdatedAnnotations(
+              canvasAnnotations,
+              updatedAnnotations
+            ),
+            pinnedTimeseriesIdsByAnnotationId,
+            liveSensorRulesByAnnotationIdByTimeseriesId,
+          };
         }
-
-        return {
-          container: getNextUpdatedContainer(container, validUpdatedContainers),
-          canvasAnnotations: getNextUpdatedAnnotations(
-            canvasAnnotations,
-            updatedAnnotations
-          ),
-        };
-      });
+      );
     },
     [
       pushState,
@@ -502,7 +513,7 @@ const useManagedState = ({
       trackUsage,
       upsertComments,
       searchParams,
-      userIdentifier,
+      userProfile,
       setSearchParams,
     ]
   );
@@ -531,6 +542,7 @@ const useManagedState = ({
       );
 
       pushState({
+        ...canvasState,
         container: nextContainer,
         canvasAnnotations: nextCanvasAnnotations,
       });
@@ -746,10 +758,6 @@ const useManagedState = ({
     }
   }, [interactionState]);
 
-  const [
-    pinnedTimeseriesIdsByAnnotationId,
-    setPinnedTimeseriesIdsByAnnotationId,
-  ] = useState<Record<string, number[]>>({});
   const onPinTimeseriesClick = useCallback(
     ({
       annotationId,
@@ -758,36 +766,30 @@ const useManagedState = ({
       annotationId: string;
       timeseriesId: number;
     }) => {
-      setPinnedTimeseriesIdsByAnnotationId(
-        (prevPinnedTimeseriesIdsByAnnotationId) => {
-          const wasPinned =
-            prevPinnedTimeseriesIdsByAnnotationId[annotationId]?.includes(
-              timeseriesId
-            );
+      const wasPinned =
+        canvasState.pinnedTimeseriesIdsByAnnotationId[annotationId]?.includes(
+          timeseriesId
+        );
 
-          if (!wasPinned) {
-            // Shameful, will also be fixed when refactoring the state.
-            // Essentially we want to modify two pieces of state in the same place
-            onOpenConditionalFormattingClick({
-              annotationId,
-              timeseriesId,
-            });
-          }
+      if (!wasPinned) {
+        // Shameful, will also be fixed when refactoring the state.
+        // Essentially we want to modify two pieces of state in the same place
+        onOpenConditionalFormattingClick({
+          annotationId,
+          timeseriesId,
+        });
+      }
 
-          return {
-            ...prevPinnedTimeseriesIdsByAnnotationId,
-            [annotationId]: wasPinned ? [] : [timeseriesId],
-          };
-        }
-      );
+      pushState((prevState) => ({
+        ...prevState,
+        pinnedTimeseriesIdsByAnnotationId: {
+          ...prevState.pinnedTimeseriesIdsByAnnotationId,
+          [annotationId]: wasPinned ? [] : [timeseriesId],
+        },
+      }));
     },
-    []
+    [canvasState.pinnedTimeseriesIdsByAnnotationId, pushState]
   );
-
-  const [
-    liveSensorRulesByAnnotationIdByTimeseriesId,
-    setLiveSensorRulesByAnnotationIdByTimeseriesId,
-  ] = useState<LiveSensorRulesByAnnotationIdByTimeseriesId>({});
 
   const onLiveSensorRulesChange: OnLiveSensorRulesChange = useCallback(
     ({
@@ -799,17 +801,20 @@ const useManagedState = ({
       timeseriesId: number;
       rules: RuleType[];
     }) => {
-      setLiveSensorRulesByAnnotationIdByTimeseriesId(
-        (prevLiveSensorRulesByAnnotationIdByTimeseriesId) => ({
-          ...prevLiveSensorRulesByAnnotationIdByTimeseriesId,
+      pushState((prevState) => ({
+        ...prevState,
+        liveSensorRulesByAnnotationIdByTimeseriesId: {
+          ...prevState.liveSensorRulesByAnnotationIdByTimeseriesId,
           [annotationId]: {
-            ...prevLiveSensorRulesByAnnotationIdByTimeseriesId[annotationId],
+            ...prevState.liveSensorRulesByAnnotationIdByTimeseriesId[
+              annotationId
+            ],
             [timeseriesId]: rules,
           },
-        })
-      );
+        },
+      }));
     },
-    []
+    [pushState]
   );
 
   const onToggleConditionalFormatting: OnToggleConditionalFormatting =
@@ -849,9 +854,11 @@ const useManagedState = ({
     setInteractionState,
     clickedContainerAnnotation,
     containerAnnotations,
-    pinnedTimeseriesIdsByAnnotationId,
+    pinnedTimeseriesIdsByAnnotationId:
+      canvasState.pinnedTimeseriesIdsByAnnotationId,
     onPinTimeseriesClick,
-    liveSensorRulesByAnnotationIdByTimeseriesId,
+    liveSensorRulesByAnnotationIdByTimeseriesId:
+      canvasState.liveSensorRulesByAnnotationIdByTimeseriesId,
     onLiveSensorRulesChange,
     isConditionalFormattingOpenAnnotationIdByTimeseriesId,
     onOpenConditionalFormattingClick,

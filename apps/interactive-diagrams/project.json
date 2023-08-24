@@ -106,6 +106,8 @@
   },
   "tags": [],
   "pipeline": {
+    "releaseStrategy": "multi-branch",
+    "firebaseSite": "pnid-contextualization",
     "previewPackageName": "@cognite/cdf-context-ui-pnid"
   }
 }

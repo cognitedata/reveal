@@ -1,10 +1,12 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { getToken } from '@cognite/cdf-sdk-singleton';
-import { getOrganization, getProject } from '@cognite/cdf-utilities';
+import sdk from '@cognite/cdf-sdk-singleton';
+import { getOrganization } from '@cognite/cdf-utilities';
 import { toast } from '@cognite/cogs.js';
 
 import { QueryKeys, TOAST_POSITION, AUTH2_API_URL } from '../../constants';
+
+type Organisation = { id: string };
 
 export const getOrgUserInvitations = async ({
   resourceType = 'Canvas',
@@ -20,16 +22,12 @@ export const getOrgUserInvitations = async ({
   canvasUrl?: string;
   userIdsToInvite?: string[];
   sendEmail?: boolean;
-}): Promise<{ id: string }[]> => {
+}) => {
   const organization = getOrganization();
-  const project = getProject();
+  const url = `${AUTH2_API_URL}/api/v0/orgs/${organization}/projects/${sdk.project}/invitations`;
 
-  const url = `${AUTH2_API_URL}/api/v0/orgs/${organization}/projects/${project}/invitations`;
-  const token = await getToken();
-
-  const response = await fetch(url, {
-    method: 'POST',
-    body: JSON.stringify({
+  const response = await sdk.post<Organisation[]>(url, {
+    data: JSON.stringify({
       resource: {
         kind: resourceType,
         externalId,
@@ -41,13 +39,9 @@ export const getOrgUserInvitations = async ({
       })),
       sendEmail,
     }),
-    headers: {
-      'content-type': 'application/json',
-      authorization: `Bearer ${token}`,
-    },
-  }).then((r) => r.json());
+  });
 
-  return response.items;
+  return response.data;
 };
 
 type Props = {

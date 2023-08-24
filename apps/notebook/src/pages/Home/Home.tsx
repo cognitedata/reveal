@@ -12,7 +12,12 @@ import { trackEvent } from '@cognite/cdf-route-tracker';
 import sdk, { getToken, getUserInformation } from '@cognite/cdf-sdk-singleton';
 import { Flex } from '@cognite/cogs.js';
 
-export const NOTEBOOK_ORIGIN = 'https://notebook-standalone.cogniteapp.com';
+let notebook_origin = 'https://notebook-standalone.cogniteapp.com';
+if ((window as any).CDF_NOTEBOOK_ORIGIN_OVERRIDE) {
+  notebook_origin = (window as any).CDF_NOTEBOOK_ORIGIN_OVERRIDE;
+}
+
+export const NOTEBOOK_ORIGIN = notebook_origin;
 
 // Every 2 minutes
 const INTERVAL = 2 * 60 * 1000;
@@ -86,7 +91,7 @@ const Home = React.forwardRef(
         <IFrame
           data-testid="iframe-for-notebook"
           ref={myIframe}
-          src={`${NOTEBOOK_ORIGIN}/lab/index.html`}
+          src={`${NOTEBOOK_ORIGIN}/lab/index.html?nocache=${Date.now()}`}
         ></IFrame>
       </Flex>
     );

@@ -216,7 +216,7 @@ export const IndustryCanvasPage = () => {
     () =>
       isCommentsEnabled
         ? comments
-            .filter((comment) => comment.contextData !== undefined)
+            .filter((comment) => comment.targetContext !== undefined)
             .map((comment) => createCommentAnnotation(comment))
         : [],
     [isCommentsEnabled, comments]

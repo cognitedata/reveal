@@ -8,14 +8,21 @@ export enum CommentStatus {
 
 export enum CommentTargetType {
   CANVAS = 'canvas',
+  ACTIVITY = 'activity',
+  CHECKLIS = 'checklist',
 }
 
-// TODO: What entries should this enum have?
-export enum CommentContextType {
-  FOO = 'foo',
+export enum CommentTargetSubType {
+  THREE_D = 'threeD',
+  DOCUMENT = 'document',
+  TIMESERIES = 'timeSeries',
+  ASSET = 'asset',
+  EVENT = 'event',
 }
-export type CommentContextDataType = { x: number; y: number };
 
+export type CommentTargetContextDataType = { x: number; y: number };
+
+// Based on https://github.com/cognitedata/ark/blob/master/services/datamodelstorage/system-space-definitions/src/main/resources/system-spaces/apps_system_shared.yml
 export type Comment = {
   text: string;
   // It might be that, for a given user identifier, the corresponding user
@@ -23,39 +30,45 @@ export type Comment = {
   // To let the application developer handle this case themselves, we allow
   // createdBy to be undefined.
   createdBy: UserProfile | undefined;
-  createdById?: string;
   status?: CommentStatus;
   parentComment?: Pick<Comment, 'externalId'>;
 
   targetId?: string;
   targetType?: CommentTargetType;
-  contextId?: string;
-  contextType?: CommentContextType;
-  contextData?: CommentContextDataType;
+  targetSubType?: CommentTargetSubType;
+  targetContext?: CommentTargetContextDataType;
 
   taggedUsers?: UserProfile[];
 
+  // Built-in (non-modifiable) FDM properties
   externalId: string;
   lastUpdatedTime: Date;
   createdTime: Date;
 };
 
+// NOTE: This type is a proxy against the UserProfile type container via the
+// `/profiles/me` endpoint. The userIdentifier of a UserProfile is expected to
+// be identical to the externalId of its corresponding CdfUser
+export type CdfUser = {
+  externalId: string;
+  email?: string;
+};
+
 export type SerializedComment = Omit<Comment, 'createdBy' | 'taggedUsers'> & {
-  createdById: string;
-  taggedUsers?: string[];
+  createdBy: CdfUser;
+  taggedUsers?: CdfUser[];
 };
 
 export type CommentFilter = Partial<
   Pick<
     SerializedComment,
     | 'externalId'
-    | 'createdById'
+    | 'createdBy'
     | 'status'
     | 'parentComment'
     | 'targetId'
     | 'targetType'
-    | 'contextId'
-    | 'contextType'
+    | 'targetSubType'
     | 'taggedUsers'
   >
 >;

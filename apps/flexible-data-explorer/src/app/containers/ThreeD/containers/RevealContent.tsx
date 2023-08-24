@@ -3,7 +3,6 @@ import { useCallback, useMemo, useState } from 'react';
 import { DefaultNodeAppearance } from '@cognite/reveal';
 import {
   AddResourceOptions,
-  FdmAssetStylingGroup,
   Reveal3DResources,
   useCameraNavigation,
   useClickedNodeData,
@@ -21,6 +20,7 @@ interface Props {
   instanceSpace?: string;
   fitCamera?: 'models' | 'instance';
   hideToolbar?: boolean;
+  nonInteractible?: boolean;
 }
 export const RevealContent = ({
   modelIdentifiers,
@@ -28,23 +28,27 @@ export const RevealContent = ({
   instanceSpace,
   fitCamera,
   hideToolbar,
+  nonInteractible,
 }: Props) => {
   const cameraNavigation = useCameraNavigation();
   const clickedNodeData = useClickedNodeData();
   const [resourceMounted, setResourcesMounted] = useState(false);
 
+  const highlightingInstance =
+    nonInteractible === true ? undefined : clickedNodeData?.fdmNode;
+
   const instanceStyling = useMemo(() => {
-    const styling: FdmAssetStylingGroup[] = [];
-
-    if (clickedNodeData?.fdmNode !== undefined) {
-      styling.push({
-        fdmAssetExternalIds: [clickedNodeData.fdmNode],
-        style: { cad: DefaultNodeAppearance.Highlighted },
-      });
+    if (highlightingInstance === undefined) {
+      return [];
+    } else {
+      return [
+        {
+          fdmAssetExternalIds: [highlightingInstance],
+          style: { cad: DefaultNodeAppearance.Highlighted },
+        },
+      ];
     }
-
-    return styling;
-  }, [clickedNodeData?.fdmNode]);
+  }, [highlightingInstance]);
 
   const handleResourcesAdded = useCallback(() => {
     setResourcesMounted(true);
@@ -69,7 +73,7 @@ export const RevealContent = ({
         onResourcesAdded={handleResourcesAdded}
       />
       {resourceMounted && <Image360Details />}
-      <PreviewCard nodeData={clickedNodeData} />
+      {!nonInteractible && <PreviewCard nodeData={clickedNodeData} />}
     </>
   );
 };

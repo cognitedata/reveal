@@ -5,11 +5,9 @@ import {
 
 jest.mock('@cognite/cdf-utilities', () => {
   return {
-    getCluster: () => 'mock-cluster',
     getProject: () => 'mock-project',
   };
 });
-
 describe('PowerBI Modal', () => {
   it('Should generate odata fdm project field for PowerBI', () => {
     const result = getODataFDMProjectField({
@@ -23,7 +21,7 @@ describe('PowerBI Modal', () => {
   });
 
   it('Should generate odata fdm enviroment field for PowerBI', () => {
-    const result = getODataFDMEnvironmentField();
-    expect(result).toBe('https://mock-cluster/20230821');
+    const result = getODataFDMEnvironmentField('https://mock-cluster.com');
+    expect(result).toBe('https://mock-cluster.com/20230821');
   });
 });

@@ -22,7 +22,10 @@ import {
   useCommentsUpsertMutation,
 } from '../../services/comments/hooks';
 import { Comment, CommentTargetType } from '../../services/comments/types';
-import { getTextContentFromEditorState } from '../../services/comments/utils';
+import {
+  getCdfUserFromUserProfile,
+  getTextContentFromEditorState,
+} from '../../services/comments/utils';
 import { CommentAnnotation } from '../../types';
 import { UserProfile, useUserProfile } from '../../UserProfileProvider';
 import { CommentDisplay } from '../comment/CommentDisplay';
@@ -153,9 +156,7 @@ export const CommentTooltip = ({
       return currentParams;
     });
 
-  const {
-    userProfile: { userIdentifier },
-  } = useUserProfile();
+  const { userProfile } = useUserProfile();
 
   const { mutate: upsertComment } = useCommentsUpsertMutation();
 
@@ -168,7 +169,7 @@ export const CommentTooltip = ({
     upsertComment([
       {
         text: content,
-        createdById: userIdentifier,
+        createdBy: getCdfUserFromUserProfile(userProfile),
         externalId: uuid(),
         targetType: CommentTargetType.CANVAS,
         targetId: canvasId,

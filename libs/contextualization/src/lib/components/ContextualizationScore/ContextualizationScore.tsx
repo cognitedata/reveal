@@ -1,13 +1,13 @@
 import { useState } from 'react';
-import { useParams } from 'react-router-dom';
 
 import styled from 'styled-components';
 
+import sdk from '@cognite/cdf-sdk-singleton';
 import { Tooltip, Dropdown } from '@cognite/cogs.js';
+import { SDKProvider } from '@cognite/sdk-provider';
 
-import { useSelectedDataModelVersion } from '../../hooks/data-model-version/useSelectedDataModelVersion';
+import { useCurrentView } from '../../hooks/models/useCurrentView';
 import { useMeasureMappedPercentages } from '../../hooks/useMeasureMappedPercentages';
-import { extractPropertiesFromURL } from '../../utils/extractPropertiesFromURL';
 
 import { ContextualizationScoreInfoPanel } from './ContextualizationScoreInfoPanel';
 import { PercentageChip } from './tabs/PercentageChip';
@@ -19,16 +19,34 @@ export const ContextualizationScore = ({
   headerName: string;
   dataModelType: string;
 }) => {
+  return (
+    <SDKProvider sdk={sdk}>
+      <ContextualizationScoreWrapper
+        headerName={headerName}
+        dataModelType={dataModelType}
+      />
+    </SDKProvider>
+  );
+};
+
+const ContextualizationScoreWrapper = ({
+  headerName,
+  dataModelType,
+}: {
+  headerName: string;
+  dataModelType: string;
+}) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
-  const { type } = extractPropertiesFromURL();
-  const { dataModelExternalId = '', space = '', version = '' } = useParams();
-  const {
-    dataModelVersion: { version: versionNumber },
-  } = useSelectedDataModelVersion(version, dataModelExternalId, space);
+  const view = useCurrentView();
 
   const { mappedPercentageJobStatus, mappedPercentage } =
-    useMeasureMappedPercentages(type, space, versionNumber, headerName);
+    useMeasureMappedPercentages(
+      view?.externalId,
+      view?.space,
+      view?.version,
+      headerName
+    );
 
   const handleOpen = () => {
     setIsOpen(true);
