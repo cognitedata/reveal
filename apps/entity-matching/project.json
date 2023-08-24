@@ -149,6 +149,7 @@
   },
   "tags": [],
   "pipeline": {
+    "releaseStrategy": "single-branch",
     "previewPackageName": "@cognite/cdf-ui-entity-matching"
   }
 }

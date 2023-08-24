@@ -126,6 +126,7 @@
   },
   "tags": [],
   "pipeline": {
+    "releaseStrategy": "multi-branch",
     "previewPackageName": "@cognite/cdf-transformations-2"
   }
 }

@@ -25,7 +25,7 @@ export const ChatHeader = ({
             size="small"
             icon="ListAdd"
             type="tertiary"
-            onClick={createNewChat}
+            onClick={() => createNewChat()}
           >
             New chat
           </Button>

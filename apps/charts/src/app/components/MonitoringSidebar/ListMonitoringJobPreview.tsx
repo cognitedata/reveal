@@ -11,10 +11,10 @@ import {
   MONITORING_SIDEBAR_SHOW_ALERTS,
 } from '@charts-app/utils/constants';
 import { makeDefaultTranslations } from '@charts-app/utils/translations';
+import { useUserProfile } from '@fusion/industry-canvas';
 import { Col, Row } from 'antd';
 import { format } from 'date-fns';
 import { head } from 'lodash';
-import { nanoid } from 'nanoid';
 
 import { Button, Icon, toast, Body, Colors } from '@cognite/cogs.js';
 import { Timeseries } from '@cognite/sdk';
@@ -67,6 +67,7 @@ const ListMonitoringJobPreview = ({
     false,
     { enabled: timeseriesName === undefined }
   );
+  const { userProfile } = useUserProfile();
 
   const [monitoringJobIdParam, setMonitoringJobIdParam] = useSearchParam(
     MONITORING_SIDEBAR_HIGHLIGHTED_JOB
@@ -78,7 +79,7 @@ const ListMonitoringJobPreview = ({
   };
 
   const userInfo = useUserInfo();
-  const userAuthId = userInfo.data?.id;
+  const userAuthId_deprecated = userInfo.data?.id;
 
   let notificationEmail =
     userInfo.data?.mail && validateEmail(userInfo.data.mail)
@@ -142,7 +143,8 @@ const ListMonitoringJobPreview = ({
     useMonitoringSubscripitionList(
       [monitoringJob.id],
       [monitoringJob.channelId],
-      userAuthId || ''
+      userAuthId_deprecated || '',
+      [userProfile]
     );
 
   useEffect(() => {
@@ -159,7 +161,7 @@ const ListMonitoringJobPreview = ({
   ]);
 
   const isSubscribed =
-    false || (subscriptionResponse && subscriptionResponse[monitoringJob.id]);
+    subscriptionResponse && subscriptionResponse[monitoringJob.id];
 
   const name = timeseriesName || (timeseriesDef && head(timeseriesDef)?.name);
   const { id, externalId } = monitoringJob;
@@ -167,14 +169,12 @@ const ListMonitoringJobPreview = ({
   const handleSubscribe = () => {
     if (!notificationEmail) {
       toast.error(t['Email not found']);
-    } else if (!userAuthId) {
+    } else if (!userAuthId_deprecated) {
       toast.error(t['User ID not found']);
     } else {
       createSubscription({
         channelID: monitoringJob.channelId,
-        userAuthId: userAuthId || '',
-        userEmail: notificationEmail,
-        subscriptionExternalId: nanoid(15),
+        subscribers: [userProfile],
       });
       trackUsage('Sidebar.Monitoring.Subscribe', {
         monitoringJob: externalId,
@@ -187,13 +187,13 @@ const ListMonitoringJobPreview = ({
   const handleUnsubscribe = () => {
     if (!notificationEmail) {
       toast.error(t['Email not found']);
-    } else if (!userAuthId) {
+    } else if (!userAuthId_deprecated) {
       toast.error(t['User ID not found']);
     } else {
       deleteSubscription({
-        userAuthId: userAuthId || '',
+        userAuthId_deprecated: userAuthId_deprecated || '',
         channelID: monitoringJob.channelId,
-        userEmail: notificationEmail || '',
+        subscribers: [userProfile],
       });
       trackUsage('Sidebar.Monitoring.Unsubscribe', {
         monitoringJob: externalId,

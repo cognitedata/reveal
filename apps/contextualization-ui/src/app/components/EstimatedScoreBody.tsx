@@ -1,13 +1,11 @@
 import styled from 'styled-components';
 
-import { ScoreComponent, getUrlParameters } from '@fusion/contextualization';
+import { ScoreComponent } from '@fusion/contextualization';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 
 import { Body, Icon } from '@cognite/cogs.js';
 
 import { EstimateArray, EstimateJobPercentages, JobStatus } from '../types';
-
-import { PropertyInfo } from './PropertyInfo';
 
 export const EstimatedScoreBody = ({
   savedManualMatchesCount,
@@ -16,19 +14,15 @@ export const EstimatedScoreBody = ({
 }: {
   savedManualMatchesCount: number;
   jobState: JobStatus | undefined;
-  headerName: string;
   estimateArray: EstimateArray | undefined;
 }) => {
-  const { headerName } = getUrlParameters();
-
   if (savedManualMatchesCount === 0 || !estimateArray) {
     return <EmptyPanel>Estimated score will appear here</EmptyPanel>;
   }
   const {
-    qualityScorePercentage,
-    mappedPercentage,
-    confidencePercentage,
-    contextualizationScorePercentage,
+    contextualizationScorePercent,
+    estimatedCorrectnessScorePercent,
+    confidencePercent,
   } = estimateArray.jobResponse as EstimateJobPercentages;
   switch (jobState) {
     case JobStatus.Failed:
@@ -40,24 +34,23 @@ export const EstimatedScoreBody = ({
     case JobStatus.Completed:
       return (
         <>
-          <PropertyInfo
-            columnName={headerName}
-            contextualizationScore={qualityScorePercentage}
-          />
           <>
-            <Body level={2}>Percentage filled:</Body>
-            <ScoreComponent score={mappedPercentage} percentageText="" />
+            <Body level={2}>Contextualization score:</Body>
+            <ScoreComponent
+              score={contextualizationScorePercent}
+              percentageText=""
+            />
+          </>
+          <>
+            <Body level={2}>Estimated correctness:</Body>
+            <ScoreComponent
+              score={estimatedCorrectnessScorePercent}
+              percentageText=""
+            />
           </>
           <>
             <Body level={2}>Confidence:</Body>
-            <ScoreComponent score={confidencePercentage} percentageText="" />
-          </>
-          <>
-            <Body level={2}>Contextualization Score:</Body>
-            <ScoreComponent
-              score={contextualizationScorePercentage}
-              percentageText=""
-            />
+            <ScoreComponent score={confidencePercent} percentageText="" />
           </>
         </>
       );

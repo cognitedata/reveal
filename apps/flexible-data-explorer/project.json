@@ -116,5 +116,8 @@
   "namedInputs": {
     "pipeline": ["{workspaceRoot}/.github/workflows/deploy_fdx.yml"]
   },
-  "tags": []
+  "tags": [],
+  "pipeline": {
+    "i18n": true
+  }
 }

@@ -1,5 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
+import { useSDK } from '@cognite/sdk-provider';
+
 export const useCreateEstimateQuality = (
   advancedJoinExternalId: string,
   selectedDatabase: string,
@@ -7,9 +9,10 @@ export const useCreateEstimateQuality = (
   fromColumn: string | undefined,
   toColumn: string | undefined
 ) => {
+  const sdk = useSDK();
+
   return useQuery({
     queryKey: [
-      'context',
       'advancedjoins',
       'estimatequality',
       advancedJoinExternalId,
@@ -19,14 +22,14 @@ export const useCreateEstimateQuality = (
       toColumn,
     ],
     queryFn: async () => {
-      const response = await fetch(
-        `https://localhost:8443/api/v1/projects/contextualization/context/advancedjoins/estimatequality`,
+      const response = await sdk.post(
+        `/api/v1/projects/${sdk.project}/advancedjoins/estimatequality`,
         {
-          method: 'POST',
           headers: {
+            'cdf-version': 'alpha',
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
+          data: {
             advancedJoinExternalId: advancedJoinExternalId,
             matcher: {
               type: 'raw',
@@ -35,10 +38,10 @@ export const useCreateEstimateQuality = (
               fromColumnKey: fromColumn,
               toColumnKey: toColumn,
             },
-          }),
+          },
         }
       );
-      return response.json();
+      return response.data;
     },
     enabled: !!fromColumn && !!toColumn,
   });

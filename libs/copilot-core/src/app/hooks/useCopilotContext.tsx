@@ -12,7 +12,7 @@ export type CopilotContext = {
   setCurrentChatId: (chatId: string) => void;
   mode: CopilotMode;
   setMode: (newMode: CopilotMode) => void;
-  createNewChat: () => void;
+  createNewChat: (newMessages?: CopilotMessage[]) => void;
   isExpanded: boolean;
   setIsExpanded: (newVal: boolean) => void;
   loadingStatus: string;

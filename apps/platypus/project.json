@@ -223,6 +223,8 @@
   },
   "tags": [],
   "pipeline": {
-    "previewPackageName": "@cognite/cdf-solutions-ui"
+    "releaseStrategy": "multi-branch",
+    "previewPackageName": "@cognite/cdf-solutions-ui",
+    "i18n": true
   }
 }

@@ -4,7 +4,9 @@ import { ContainerProvider } from 'brandi-react';
 import styled from 'styled-components/macro';
 
 import { ToastContainer } from '@cognite/cogs.js';
+import { SDKProvider } from '@cognite/sdk-provider';
 
+import { getCogniteSDKClient } from '../environments/cogniteSdk';
 import { FeatureFlagProvider } from '../environments/FeatureFlagProvider';
 
 import NoAccessWrapper from './components/NoAccessPage/NoAccessWrapper';
@@ -15,23 +17,25 @@ import { SubAppContainer } from './SubAppContainer';
 
 function App() {
   return (
-    <FeatureFlagProvider>
-      <QueryClientProvider client={queryClient}>
-        <SubAppContainer>
-          <ReactQueryDevtools initialIsOpen={false} />
-          <ContainerProvider container={rootInjector}>
-            <ToastContainer />
-            <StyledWrapper>
-              <NoAccessWrapper>
-                <StyledPage>
-                  <Routes />
-                </StyledPage>
-              </NoAccessWrapper>
-            </StyledWrapper>
-          </ContainerProvider>
-        </SubAppContainer>
-      </QueryClientProvider>
-    </FeatureFlagProvider>
+    <SDKProvider sdk={getCogniteSDKClient()}>
+      <FeatureFlagProvider>
+        <QueryClientProvider client={queryClient}>
+          <SubAppContainer>
+            <ReactQueryDevtools initialIsOpen={false} />
+            <ContainerProvider container={rootInjector}>
+              <ToastContainer />
+              <StyledWrapper>
+                <NoAccessWrapper>
+                  <StyledPage>
+                    <Routes />
+                  </StyledPage>
+                </NoAccessWrapper>
+              </StyledWrapper>
+            </ContainerProvider>
+          </SubAppContainer>
+        </QueryClientProvider>
+      </FeatureFlagProvider>
+    </SDKProvider>
   );
 }
 

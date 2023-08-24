@@ -15,7 +15,7 @@ import {
   Flex,
 } from '@cognite/cogs.js';
 
-import { useTranslation } from '../../../i18n/useTranslation';
+import { useTranslation } from '../../../../useTranslation';
 
 import { CalendarPicker } from './CalendarPicker';
 import {

@@ -2,8 +2,8 @@ import * as React from 'react';
 import { useMemo } from 'react';
 
 import { LineChart, LineChartProps } from '../../../LineChart';
+import { useTranslation } from '../../../useTranslation';
 import { TimeseriesChartMetadata } from '../../domain/internal/types';
-import { useTranslation } from '../../i18n/useTranslation';
 import { getChartAxisDisplayUnit } from '../../utils/getChartAxisDisplayUnit';
 
 import { CONFIG, LAYOUT } from './constants';

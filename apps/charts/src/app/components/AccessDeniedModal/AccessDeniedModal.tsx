@@ -1,9 +1,9 @@
 import { useTranslations } from '@charts-app/hooks/translations';
 import { makeDefaultTranslations } from '@charts-app/utils/translations';
 
-import { Flex, Body } from '@cognite/cogs.js';
+import { Flex, Body, Modal } from '@cognite/cogs.js';
 
-import { StyledModal, StyledUl } from './elements';
+import { StyledUl } from './elements';
 
 type Props = {
   capabilities: string[];
@@ -22,15 +22,16 @@ export const AccessDeniedModal = ({ capabilities, visible, onOk }: Props) => {
     'AccessDeniedModal'
   );
   return (
-    <StyledModal
+    <Modal
       visible={visible}
       title={t['Capabilities Required']}
       onCancel={onOk}
+      onOk={onOk}
       size="medium"
       icon="InfoFilled"
     >
       <Flex direction="column">
-        <Body level={2}>
+        <Body size="small">
           {
             t[
               'Contact your CDF administrator to request the following capabilities:'
@@ -43,6 +44,6 @@ export const AccessDeniedModal = ({ capabilities, visible, onOk }: Props) => {
           ))}
         </StyledUl>
       </Flex>
-    </StyledModal>
+    </Modal>
   );
 };

@@ -1,13 +1,16 @@
 import { useQuery } from '@tanstack/react-query';
 
+import { useSDK } from '@cognite/sdk-provider';
+
 export const useCreateMeasureMappedPercentages = (
   space: string,
-  viewExternalId: string,
-  viewVersion: string
+  viewExternalId?: string,
+  viewVersion?: string
 ) => {
+  const sdk = useSDK();
+
   return useQuery({
     queryKey: [
-      'context',
       'advancedjoins',
       'measuremappedpercentage',
       space,
@@ -15,22 +18,23 @@ export const useCreateMeasureMappedPercentages = (
       viewVersion,
     ],
     queryFn: async () => {
-      const response = await fetch(
-        `https://localhost:8443/api/v1/projects/contextualization/context/advancedjoins/measuremappedpercentage`,
+      const response = await sdk.post(
+        `/api/v1/projects/${sdk.project}/advancedjoins/measuremappedpercentage`,
         {
-          method: 'POST',
           headers: {
+            'cdf-version': 'alpha',
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
+          data: {
             space: space,
             viewExternalId: viewExternalId,
             viewVersion: viewVersion,
-          }),
+          },
         }
       );
 
-      return response.json();
+      return response.data;
     },
+    enabled: !!viewExternalId && !!viewVersion,
   });
 };

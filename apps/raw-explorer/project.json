@@ -107,6 +107,7 @@
   },
   "tags": [],
   "pipeline": {
+    "releaseStrategy": "multi-branch",
     "previewPackageName": "@cognite/cdf-raw-explorer"
   }
 }

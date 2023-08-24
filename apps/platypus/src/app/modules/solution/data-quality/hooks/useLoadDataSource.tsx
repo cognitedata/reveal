@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
 
 import {
   DataSourceDto,
@@ -7,22 +6,14 @@ import {
   useCreateDataSources,
   useListDataSources,
 } from '@data-quality/api/codegen';
+import { DataModelVersion } from '@fusion/data-modeling';
 import { Notification } from '@platypus-app/components/Notification/Notification';
-import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedDataModelVersion';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { useQueryClient } from '@tanstack/react-query';
 import { v4 as uuidv4 } from 'uuid';
 
-/** Encapsulate data model id, data model space and data model version. */
-type DataModelOptions = {
-  dataModelId: string;
-  dataModelSpace: string;
-  dataModelVersion: string;
-};
-
-type CreateDataSourceOptions = {
-  onError: (error: any) => void;
-};
+import { useAccessControl } from './useAccessControl';
+import { useDataModel } from './useDataModel';
 
 /** Load a data source by using the data model id, data model space and data model version.
  *
@@ -33,77 +24,52 @@ export const useLoadDataSource = (): {
   isLoading: boolean;
 } => {
   const queryClient = useQueryClient();
-
   const { t } = useTranslation('useLoadDataSource');
+
+  const { dataModel, isLoading: isLoadingDataModel } = useDataModel();
+
+  const { canWriteDataValidation, isLoading: isLoadingAccess } =
+    useAccessControl();
 
   const {
     data: dataSourcesData,
     error: dataSourcesError,
-    isLoading: dataSourcesLoading,
-    isRefetching: dataSourcesRefetching,
+    isLoading: isLoadingDataSources,
+    isRefetching: isRefetchingDataSources,
     refetch,
   } = useListDataSources({});
 
   const {
-    isLoading: createDataSourceLoading,
+    isLoading: isLoadingCreateDataSource,
     mutateAsync: createDataSourceMutation,
     status: createDataSourceStatus,
   } = useCreateDataSources({ mutationKey: ['createDataSource'] });
 
-  const { dataModelExternalId, space, version } = useParams() as {
-    dataModelExternalId: string;
-    space: string;
-    version: string;
-  };
-  const { dataModelVersion: selectedDataModelVersion } =
-    useSelectedDataModelVersion(version, dataModelExternalId, space);
+  const isLoading =
+    isLoadingDataModel ||
+    isLoadingAccess ||
+    isLoadingDataSources ||
+    isRefetchingDataSources ||
+    isLoadingCreateDataSource;
 
-  const dataModelOptions: DataModelOptions = {
-    dataModelId: dataModelExternalId,
-    dataModelSpace: space,
-    dataModelVersion: selectedDataModelVersion.version,
-  };
+  const dataSource = findDataSource(dataSourcesData?.items, dataModel);
 
-  const isLoading = dataSourcesLoading || createDataSourceLoading;
-
+  // This effect can be triggered concurrently by multiple components using 'useLoadDataSource' hook.
+  // Therefore, it requires unconventional handling without using a dependency array.
   useEffect(() => {
-    const createDataSource = async ({ onError }: CreateDataSourceOptions) => {
-      try {
-        const { dataModelId, dataModelSpace, dataModelVersion } =
-          dataModelOptions;
-
-        // No existing data source found. Create a new one with the given params
-        if (createDataSourceStatus === 'idle') {
-          const externalId = uuidv4();
-
-          const newDataSource: DataSourceDraft = {
-            externalId,
-            dataModelId: dataModelId,
-            dataModelSpaceId: dataModelSpace,
-            dataModelVersion,
-          };
-
-          await createDataSourceMutation(
-            {
-              body: {
-                items: [newDataSource],
-              },
-            },
-            { onSuccess: () => refetch() }
-          );
-        }
-      } catch (err: unknown) {
-        onError(err);
-      }
-    };
-
     // Start looking for a data source when we have the list of all datasources
-    if (dataSourcesLoading || dataSourcesError || dataSourcesRefetching) return;
+    if (
+      isLoadingAccess ||
+      isLoadingDataSources ||
+      dataSourcesError ||
+      isRefetchingDataSources
+    )
+      return;
 
     // Try to find an existing data source in the fetched list
     const existingDataSource = findDataSource(
-      dataModelOptions,
-      dataSourcesData?.items
+      dataSourcesData?.items,
+      dataModel
     );
     if (existingDataSource) return;
 
@@ -113,37 +79,55 @@ export const useLoadDataSource = (): {
     });
     if (creatingDataSource) return;
 
-    // No data source found, try to create it
-    createDataSource({
-      onError: (err) => {
-        Notification({
-          type: 'error',
-          message: t(
-            'data_quality_not_found_ds',
-            'Something went wrong. The data source could not be loaded.'
-          ),
-          errors: JSON.stringify(err?.stack?.error),
-        });
-      },
-    });
-  });
+    // User needs all necessary capabilities to create a data source
+    // DQ main page displays an error if user has no access to create a data source
+    if (!canWriteDataValidation) return;
 
-  const dataSource = findDataSource(dataModelOptions, dataSourcesData?.items);
+    // No data source found, try to create it
+    try {
+      if (createDataSourceStatus === 'idle') {
+        const newDataSource: DataSourceDraft = {
+          externalId: uuidv4(),
+          dataModelId: dataModel.externalId,
+          dataModelSpaceId: dataModel.space,
+          dataModelVersion: dataModel.version,
+        };
+
+        createDataSourceMutation(
+          {
+            body: {
+              items: [newDataSource],
+            },
+          },
+          { onSuccess: () => refetch() }
+        );
+      }
+    } catch (err: any) {
+      Notification({
+        type: 'error',
+        message: t(
+          'data_quality_not_found_ds',
+          'Something went wrong. The data source could not be loaded.'
+        ),
+        errors: JSON.stringify(err?.stack?.error),
+      });
+    }
+  });
 
   return { dataSource, error: dataSourcesError, isLoading };
 };
 
 /** Looks for a data source that matches the given data model id, data mode space and data model version in a list of data sources. */
 const findDataSource = (
-  dataModelOptions: DataModelOptions,
-  dataSources?: DataSourceDto[]
+  dataSources: DataSourceDto[] = [],
+  dataModel: DataModelVersion
 ) => {
-  const { dataModelId, dataModelSpace, dataModelVersion } = dataModelOptions;
+  const { externalId, space, version } = dataModel;
 
-  return dataSources?.find(
+  return dataSources.find(
     (ds) =>
-      ds.dataModelId === dataModelId &&
-      ds.dataModelSpaceId === dataModelSpace &&
-      ds.dataModelVersion === dataModelVersion
+      ds.dataModelId === externalId &&
+      ds.dataModelSpaceId === space &&
+      ds.dataModelVersion === version
   );
 };

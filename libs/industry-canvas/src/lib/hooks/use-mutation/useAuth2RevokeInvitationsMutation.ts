@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { getToken } from '@cognite/cdf-sdk-singleton';
-import { getOrganization, getProject } from '@cognite/cdf-utilities';
+import sdk from '@cognite/cdf-sdk-singleton';
+import { getOrganization } from '@cognite/cdf-utilities';
 import { toast } from '@cognite/cogs.js';
 
 import { QueryKeys, TOAST_POSITION, AUTH2_API_URL } from '../../constants';
@@ -16,14 +16,10 @@ export const getOrgUserRevokeInvitations = async ({
   userIdsToUninvite?: string[];
 }): Promise<{}> => {
   const organization = getOrganization();
-  const project = getProject();
+  const url = `${AUTH2_API_URL}/api/v0/orgs/${organization}/projects/${sdk.project}/invitations/delete`;
 
-  const url = `${AUTH2_API_URL}/api/v0/orgs/${organization}/projects/${project}/invitations/delete`;
-  const token = await getToken();
-
-  const response = await fetch(url, {
-    method: 'POST',
-    body: JSON.stringify({
+  const response = await sdk.post<{}>(url, {
+    data: JSON.stringify({
       resource: {
         kind: resourceType,
         externalId,
@@ -32,13 +28,9 @@ export const getOrgUserRevokeInvitations = async ({
         id: userId,
       })),
     }),
-    headers: {
-      'content-type': 'application/json',
-      authorization: `Bearer ${token}`,
-    },
-  }).then((r) => r.json());
+  });
 
-  return response;
+  return response.data;
 };
 
 type Props = {

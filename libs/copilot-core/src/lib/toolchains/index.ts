@@ -1,20 +1,22 @@
-import { MultiPromptChain } from 'langchain/chains';
 import { BaseChatModel } from 'langchain/chat_models/base';
 
 import { CogniteClient } from '@cognite/sdk';
 
 import { useTranslation } from '../../app/hooks/useTranslation';
-import { CogniteBaseChain } from '../CogniteBaseChain';
+import {
+  ChainStage,
+  ChainType,
+  CogniteBaseChain,
+  CogniteChainInput,
+} from '../CogniteBaseChain';
 import { CopilotMessage } from '../types';
 
-import { createDefaultChain } from './conversation/base';
 import { FusionQAChain } from './fusionQA/fusionQA';
 import { GraphQlChain } from './graphql/graphql';
 import { DocumentQueryChain } from './infield-chains/documentQueryChain';
 import { DocumentSummaryChain } from './infield-chains/documentSummaryChain';
 import { WorkorderChain } from './infield-chains/workorderChain';
 import { AppBuilderChain } from './python/appBuilder';
-import { getRouterChain } from './router/router';
 
 export type CogniteChainName =
   | 'GraphQlChain'
@@ -60,38 +62,57 @@ export const newChain = (
   sdk: CogniteClient, // TODO: remove this
   model: BaseChatModel,
   ref: React.RefObject<CopilotMessage[]>,
-  excludeChains: CogniteChainName[] = [],
   i18nFn: ReturnType<typeof useTranslation>['t'] = (key: string) => key
 ) => {
   const chains = destinationChains(sdk, model, ref, i18nFn);
-  const templates = Object.entries(chains)
-    // make sure the key is not excluded in the `chains` that the user wants
-    .filter(([key]) => !excludeChains.includes(key as CogniteChainName))
-    // map to the correct format that the router expects
-    .map(([key, chain]) => {
-      return { name: key, description: chain.description };
-    });
-
-  const routerChain = getRouterChain(model, templates);
-
-  const defaultChain = createDefaultChain(model);
 
   return {
-    base: new MultiPromptChain({
-      routerChain,
-      destinationChains: chains,
-      defaultChain,
-      callbacks: [
-        {
-          handleChainStart(chain) {
-            console.log('chain started', chain);
-          },
-          handleChainEnd(chain, output) {
-            console.log('chain ended', chain, output);
-          },
-        },
-      ],
+    base: new RouterChain({
+      llm: model,
+      sdk,
+      messages: ref,
+      returnAll: true,
+      humanApproval: false,
+      i18nFn,
+      chains,
     }),
     chains,
   };
 };
+
+class RouterChain extends CogniteBaseChain {
+  constructor(
+    protected fields: CogniteChainInput & {
+      chains: ReturnType<typeof destinationChains>;
+    }
+  ) {
+    super(fields);
+  }
+  name = 'Routes users';
+  description = 'Chain to decide what to call';
+  chain: ChainType = 'sequential_chain';
+
+  stages: ChainStage<any, any>[] = [
+    {
+      loadingMessage: 'Deciding what to call...',
+      name: 'router',
+      run: async ({ message, messages }) => {
+        if (messages.current?.length === 0) {
+          throw new Error('Should not be here');
+        }
+        const firstUserMessage = messages.current?.find(
+          (el) => el.source === 'user'
+        );
+
+        if (firstUserMessage?.type !== 'chain') {
+          throw new Error('Old chat');
+        }
+        return {
+          data: await this.fields.chains[firstUserMessage.chain].call({
+            input: message,
+          }),
+        };
+      },
+    },
+  ];
+}

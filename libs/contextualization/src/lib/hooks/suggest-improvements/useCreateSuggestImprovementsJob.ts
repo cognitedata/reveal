@@ -1,34 +1,30 @@
 import { useQuery } from '@tanstack/react-query';
-// import { useSDK } from '@cognite/sdk-provider';
+
+import { useSDK } from '@cognite/sdk-provider';
 
 export const useCreateSuggestImprovementsJob = (
   advancedJoinExternalId: string | undefined,
   enabled: boolean | undefined
 ) => {
-  // const sdk = useSDK();
+  const sdk = useSDK();
+
   return useQuery({
-    queryKey: [
-      'context',
-      'advancedjoins',
-      'suggestimprovements',
-      advancedJoinExternalId,
-    ],
+    queryKey: ['advancedjoins', 'suggestimprovements', advancedJoinExternalId],
     queryFn: async () => {
-      const response = await fetch(
-        // `https://localhost:8443/api/v1/projects/${sdk.project}/context/advancedjoins/suggestimprovements`,
-        `https://localhost:8443/api/v1/projects/contextualization/context/advancedjoins/suggestimprovements`,
+      const response = await sdk.post(
+        `/v1/projects/${sdk.project}/advancedjoins/suggestimprovements`,
         {
-          method: 'POST',
           headers: {
+            'cdf-version': 'alpha',
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
+          data: {
             advancedJoinExternalId: advancedJoinExternalId,
-          }),
+          },
         }
       );
 
-      return response.json();
+      return response.data;
     },
     enabled: enabled,
   });

@@ -14,6 +14,7 @@ import { getCopilotLogs } from '../../utils/logging';
 import { APP_BUILDER_PROMPT } from './prompts';
 
 export class AppBuilderChain extends CogniteBaseChain {
+  name = 'Build streamlit app';
   description = 'Allow a user to build a Streamlit python app.';
   chain: ChainType = 'sequential_chain';
 

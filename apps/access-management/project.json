@@ -125,6 +125,7 @@
   },
   "tags": [],
   "pipeline": {
+    "releaseStrategy": "multi-branch",
     "previewPackageName": "@cognite/cdf-access-management"
   }
 }

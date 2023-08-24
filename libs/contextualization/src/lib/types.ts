@@ -12,3 +12,10 @@ export type MatchItem = {
   originExternalId: string;
   linkedExternalId: string;
 };
+
+export type View = {
+  space: string;
+  externalId: string;
+  version: string;
+  createdTime: number;
+};

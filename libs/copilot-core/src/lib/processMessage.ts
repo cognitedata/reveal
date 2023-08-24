@@ -2,14 +2,18 @@ import { BaseChain } from 'langchain/chains';
 
 import { greetingLangs } from './cogpilotGreeting';
 import { getPageLanguage } from './toolchains/infield-chains/utils';
-import { CopilotSupportedFeatureType, ProcessMessageFunc } from './types';
+import {
+  CopilotSupportedFeatureType,
+  ProcessMessageFunc,
+  ActionType,
+} from './types';
 import { sendToCopilotEvent } from './utils';
 
 export const processMessage = async (
   feature: CopilotSupportedFeatureType | undefined,
   chain: BaseChain,
   ...params: Parameters<ProcessMessageFunc>
-) => {
+): Promise<ActionType> => {
   //  when the user indicates an intention to do something, we have these tools available for the user.
   // based on their intent, make your best judgement on what tool is best suited for them and ask the user
   // switch case for the possibility to add specific functionality for each feature
@@ -33,6 +37,7 @@ export const processMessage = async (
             },
           ]);
         }
+        return 'Message';
       } else {
         let msgContent =
           'Hello from CogPilot! How can I assist you with your Infield work today?';
@@ -51,16 +56,25 @@ export const processMessage = async (
             chain: 'Welcome',
           },
         ]);
+        return 'ChainSelection';
       }
-      return true;
     }
     default: {
       const message = params[1];
+      const messageIndex = params[2].length - 1;
       if (message) {
         sendToCopilotEvent('LOADING_STATUS', {
           status: 'Reasoning next steps...',
         });
         await chain.call({ input: message, key: `${params[2].length - 1}` });
+        sendToCopilotEvent('NEW_MESSAGES', [
+          {
+            ...params[2][messageIndex],
+            key: messageIndex,
+            pending: false,
+          },
+        ]);
+        return 'Message';
       } else {
         sendToCopilotEvent('NEW_MESSAGES', [
           {
@@ -70,8 +84,8 @@ export const processMessage = async (
             chain: 'Welcome',
           },
         ]);
+        return 'ChainSelection';
       }
-      return true;
     }
   }
 };

@@ -82,6 +82,8 @@
   "data_quality_last_validation": "Last Validation",
   "data_quality_name": "Name",
   "data_quality_new_rule": "New rule",
+  "data_quality_no_access": "Missing access to perform an operation.",
+  "data_quality_no_access_initiate_data_source": "Missing access to initialize a data source.",
   "data_quality_no_score": "No score yet. Validate now to get the quality of your data.",
   "data_quality_not_found_ds": "Something went wrong. The data source could not be loaded.",
   "data_quality_not_found_ds_validity": "Something went wrong. The validity score of the data source could not be loaded.",

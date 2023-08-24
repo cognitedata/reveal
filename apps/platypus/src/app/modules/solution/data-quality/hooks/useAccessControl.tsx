@@ -103,7 +103,7 @@ const useErrorMessage = (action: AccessAction) => {
     case AccessAction.WRITE_DATA_VALIDATION:
       return t(
         'data_quality_access_error_write',
-        `To use Data Validation, the following capabilities are required:${requiredCapabilities}`
+        `To create Data Validation entities, the following capabilities are required:${requiredCapabilities}`
       );
     case AccessAction.TRIGGER_VALIDATION:
       return t(

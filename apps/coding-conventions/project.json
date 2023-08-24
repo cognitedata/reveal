@@ -109,6 +109,7 @@
   },
   "tags": [],
   "pipeline": {
+    "releaseStrategy": "multi-branch",
     "previewPackageName": "@cognite/cdf-coding-conventions"
   }
 }

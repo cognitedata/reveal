@@ -37,7 +37,7 @@ export const Labeling = ({
     );
 
   const {
-    SuggestImprovementsJobResults: {
+    suggestImprovementsJobResults: {
       data: { status, improvementSuggestions: suggestions } = {},
       refetch: refetchJobStatus,
     },

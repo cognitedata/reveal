@@ -3,9 +3,9 @@ import { useQuery } from '@tanstack/react-query';
 import { useSDK } from '@cognite/sdk-provider';
 
 export const useModelInstancesList = (
-  space: string,
-  type: string,
-  version: string
+  space?: string,
+  type?: string,
+  version?: string
 ) => {
   const sdk = useSDK();
 
@@ -34,5 +34,6 @@ export const useModelInstancesList = (
       );
       return response.data.items;
     },
+    enabled: !!space && !!type && !!version,
   });
 };

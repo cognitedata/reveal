@@ -25,19 +25,22 @@ export async function fetchGptAutoQuery(
       }
     );
 
-    sendToCopilotEvent('NEW_MESSAGES', [
-      {
-        type: 'data-models',
-        source: 'bot',
-        dataModels: [{ dataModel, version, space }],
-        pending: false,
-        content: 'I am searching on this data model',
-      },
-      {
-        type: 'text',
-        source: 'user',
-        content: `I want the graphql for ${naturalLanguageQuery}`,
-      },
-    ]);
+    sendToCopilotEvent('NEW_CHAT_WITH_MESSAGES', {
+      chain: 'GraphQlChain',
+      messages: [
+        {
+          type: 'data-models',
+          source: 'bot',
+          dataModels: [{ dataModel, version, space }],
+          pending: false,
+          content: 'I am searching on this data model',
+        },
+        {
+          type: 'text',
+          source: 'user',
+          content: `I want the graphql for ${naturalLanguageQuery}`,
+        },
+      ],
+    });
   });
 }

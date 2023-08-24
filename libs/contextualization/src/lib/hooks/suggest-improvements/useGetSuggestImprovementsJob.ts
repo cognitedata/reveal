@@ -1,25 +1,26 @@
-// import { useSDK } from '@cognite/sdk-provider';
 import { useQuery } from '@tanstack/react-query';
 
+import { useSDK } from '@cognite/sdk-provider';
+
 export const useGetSuggestImprovementsJob = (jobId: string | undefined) => {
-  // const sdk = useSDK();
+  const sdk = useSDK();
 
   const fetchJob = async () => {
-    const response = await fetch(
-      // `https://localhost:8443/api/v1/projects/${sdk.project}/context/advancedjoins/suggestimprovements/${jobId}`,
-      `https://localhost:8443/api/v1/projects/contextualization/context/advancedjoins/suggestimprovements/${jobId}`,
+    const response = await sdk.get(
+      `/api/v1/projects/${sdk.project}/advancedjoins/suggestimprovements/${jobId}`,
       {
         headers: {
+          'cdf-version': 'alpha',
           'Content-Type': 'application/json',
         },
       }
     );
 
-    return response.json();
+    return response.data;
   };
 
   return useQuery({
-    queryKey: ['context', 'advancedjoins', 'suggestimprovements', jobId],
+    queryKey: ['advancedjoins', 'suggestimprovements', jobId],
     queryFn: fetchJob,
     enabled: !!jobId && jobId !== '',
     cacheTime: 0,

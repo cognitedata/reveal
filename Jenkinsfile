@@ -370,6 +370,11 @@ pods {
         }
       }
 
+     /**
+      ---------------------------------------------------
+      UNCOMMENT THIS IF SOMETHING IS WRONG WITH GITHUB CD
+      ---------------------------------------------------
+      */
 
       parallel(
         'Preview': {

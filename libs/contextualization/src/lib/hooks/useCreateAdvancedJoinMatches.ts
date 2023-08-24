@@ -1,24 +1,26 @@
 import { useMutation } from '@tanstack/react-query';
 
+import { useSDK } from '@cognite/sdk-provider';
+
 import { MatchItem } from '../types';
 
 export const useCreateAdvancedJoinMatches = () => {
-  return useMutation(async (items: MatchItem[]) => {
-    const body = JSON.stringify({
-      items: items,
-    });
+  const sdk = useSDK();
 
-    const response = await fetch(
-      `https://localhost:8443/api/v1/projects/contextualization/context/advancedjoins/matches`,
+  return useMutation(async (items: MatchItem[]) => {
+    const response = await sdk.post(
+      `/api/v1/projects/${sdk.project}/advancedjoins/matches`,
       {
-        method: 'POST',
         headers: {
+          'cdf-version': 'alpha',
           'Content-Type': 'application/json',
         },
-        body: body,
+        data: {
+          items: items,
+        },
       }
     );
 
-    return response.json();
+    return response.data;
   });
 };

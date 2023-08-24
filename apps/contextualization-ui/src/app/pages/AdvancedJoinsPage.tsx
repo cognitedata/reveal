@@ -8,6 +8,7 @@ import {
   useListMatches,
   useMeasureMappedPercentages,
   useQueryParameter,
+  useCurrentView,
 } from '@fusion/contextualization';
 
 import { FormattedContainer } from '../components/FormattedContainer';
@@ -35,7 +36,7 @@ export const ManualMatchesContext = createContext<{
 });
 
 export const AdvancedJoinsPage = () => {
-  const { headerName, type, space, versionNumber } = getUrlParameters();
+  const { headerName } = getUrlParameters();
 
   const [isAdvancedJoinRunnable, setAdvancedJoinRunnable] =
     useState<boolean>(false);
@@ -104,8 +105,15 @@ export const AdvancedJoinsPage = () => {
   const savedManualMatchesCount =
     +filterOnAdvancedJoinsExternalId(savedManualMatches).length;
 
+  const view = useCurrentView();
+
   const { mappedPercentageJobStatus, mappedPercentage } =
-    useMeasureMappedPercentages(type, space, versionNumber, headerName);
+    useMeasureMappedPercentages(
+      view?.externalId,
+      view?.space,
+      view?.version,
+      headerName
+    );
 
   const onClickStartLabeling = () => {
     if (items && items.length !== 0) {

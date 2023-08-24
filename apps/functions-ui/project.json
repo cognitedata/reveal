@@ -149,6 +149,8 @@
   },
   "tags": [],
   "pipeline": {
+    "releaseStrategy": "single-branch",
+    "firebaseSite": "functions",
     "previewPackageName": "@cognite/cdf-functions-ui"
   }
 }

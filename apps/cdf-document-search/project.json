@@ -122,6 +122,8 @@
   },
   "tags": [],
   "pipeline": {
+    "releaseStrategy": "single-branch",
+    "firebaseSite": "document-search",
     "previewPackageName": "@cognite/cdf-document-search-ui"
   }
 }

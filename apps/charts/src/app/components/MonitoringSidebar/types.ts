@@ -3,6 +3,7 @@ import {
   ChartTimeSeries,
   ScheduledCalculation,
 } from '@charts-app/models/chart/types';
+import { UserProfile } from '@fusion/industry-canvas';
 
 import { CogniteExternalId, CogniteInternalId, Metadata } from '@cognite/sdk';
 
@@ -28,9 +29,11 @@ export type CreateMonitoringJobPayload = {
   threshold: number;
   timeSeriesExternalId: string;
   nonce: string;
-  subscriptionExternalId: string;
-  userAuthId: string;
-  userEmail: string;
+  subscribers: Pick<UserProfile, 'userIdentifier' | 'email'>[];
+  // @deprecated in favor of subscribers from user profiles
+  userAuthId_deprecated: string;
+  // @deprecated in favor of subscribers from user profiles
+  userEmail_deprecated: string;
 };
 
 export type ScheduleDurationType = { label: string; value: string };
@@ -51,6 +54,7 @@ export type CreateMonitoringJobFormData = {
   clientSecret: string;
   clientId: string;
   folder: undefined | { label: string; value: string };
+  subscribers: UserProfile[];
 };
 
 export type MonitoringJob = {
@@ -109,9 +113,8 @@ export type MonitoringSubscriptionResponse = {
 
 export type MonitoringSubscriptionPayload = {
   channelID: number;
-  userAuthId: string;
-  userEmail: string;
-  subscriptionExternalId?: string;
+  subscribers: Pick<UserProfile, 'userIdentifier' | 'email'>[];
+  userAuthId_deprecated?: string;
 };
 
 export type MonitoringSubscriptionsListResponse = { [key: string]: boolean };

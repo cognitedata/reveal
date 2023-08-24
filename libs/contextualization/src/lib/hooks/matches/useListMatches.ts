@@ -1,19 +1,23 @@
 import { useQuery } from '@tanstack/react-query';
 
+import { useSDK } from '@cognite/sdk-provider';
+
 export const useListMatches = () => {
+  const sdk = useSDK();
+
   return useQuery({
-    queryKey: ['context', 'advancedjoins', 'matches'],
+    queryKey: ['advancedjoins', 'matches'],
     queryFn: async () => {
-      const response = await fetch(
-        `https://localhost:8443/api/v1/projects/contextualization/context/advancedjoins/matches`,
+      const response = await sdk.get(
+        `/api/v1/projects/${sdk.project}/advancedjoins/matches`,
         {
-          method: 'GET',
           headers: {
+            'cdf-version': 'alpha',
             'Content-Type': 'application/json',
           },
         }
       );
-      return response.json();
+      return response.data;
     },
   });
 };
