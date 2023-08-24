@@ -1,10 +1,11 @@
 {
   "name": "flows",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/flows/src",
   "projectType": "application",
   "targets": {
     "build": {
-      "executor": "@nrwl/webpack:webpack",
+      "executor": "@nx/webpack:webpack",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/flows",
@@ -27,6 +28,17 @@
           "extractCss": false,
           "namedChunks": false,
           "extractLicenses": false,
+          "vendorChunk": false,
+          "runtimeChunk": false,
+          "budgets": []
+        },
+        "staging": {
+          "optimization": false,
+          "outputHashing": "all",
+          "sourceMap": true,
+          "extractCss": true,
+          "namedChunks": false,
+          "extractLicenses": true,
           "vendorChunk": false,
           "runtimeChunk": false,
           "budgets": []
@@ -55,7 +67,7 @@
       }
     },
     "serve": {
-      "executor": "@nrwl/webpack:dev-server",
+      "executor": "@nx/webpack:dev-server",
       "options": {
         "buildTarget": "flows:build",
         "hmr": true
@@ -79,14 +91,14 @@
       "defaultConfiguration": "development"
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["apps/flows/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/flows"],
       "options": {
         "jestConfig": "apps/flows/jest.config.ts",
@@ -96,6 +108,7 @@
   },
   "tags": [],
   "pipeline": {
+    "releaseStrategy": "multi-branch",
     "previewPackageName": "@cognite/cdf-flows"
   }
 }
