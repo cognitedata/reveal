@@ -4,6 +4,8 @@ import { ProductLogo } from '@cognite/cogs.js';
 
 import { useTranslation } from '../../common';
 
+import { getAppsInfo } from './TopBar';
+
 const AppSelectorWrapper = styled.div`
   display: grid;
   grid-template-rows: 1fr;
@@ -40,45 +42,23 @@ export const AppSelector = () => {
   const navigate = (url: string) => () => {
     window.open(url, '_blank');
   };
+  const apps = getAppsInfo(t);
 
   return (
     <AppSelectorWrapper>
-      <AppSelectorItem onClick={navigate('https://infield.cogniteapp.com/')}>
-        <LogoWrapper>
-          <ProductLogo type="InField" />
-        </LogoWrapper>
-        <div>
-          <h3>{t('INFIELD_APP_TITLE')}</h3>
-          <p>{t('INFIELD_APP_SUBTITLE')}</p>
-        </div>
-      </AppSelectorItem>
-      <AppSelectorItem onClick={navigate('https://maintain.cogniteapp.com/')}>
-        <LogoWrapper>
-          <ProductLogo type="Maintain" />
-        </LogoWrapper>
-        <div>
-          <h3>{t('MAINTAIN_APP_TITLE')}</h3>
-          <p>{t('MAINTAIN_APP_SUBTITLE')}</p>
-        </div>
-      </AppSelectorItem>
-      <AppSelectorItem onClick={navigate('https://inrobot.cogniteapp.com/')}>
-        <LogoWrapper>
-          <ProductLogo type="BestDay" />
-        </LogoWrapper>
-        <div>
-          <h3>{t('INROBOT_APP_TITLE')}</h3>
-          <p>{t('INROBOT_APP_SUBTITLE')}</p>
-        </div>
-      </AppSelectorItem>
-      <AppSelectorItem onClick={navigate('https://fusion.cognite.com')}>
-        <LogoWrapper>
-          <ProductLogo type="CDF" />
-        </LogoWrapper>
-        <div>
-          <h3>{t('DATA_OPS_APP_TITLE')}</h3>
-          <p>{t('DATA_OPS_APP_SUBTITLE')}</p>
-        </div>
-      </AppSelectorItem>
+      {apps.map((app) => {
+        return (
+          <AppSelectorItem onClick={navigate(app?.link)}>
+            <LogoWrapper>
+              <ProductLogo type={app?.icon} />
+            </LogoWrapper>
+            <div>
+              <h3>{app?.name}</h3>
+              <p>{app?.description}</p>
+            </div>
+          </AppSelectorItem>
+        );
+      })}
     </AppSelectorWrapper>
   );
 };
