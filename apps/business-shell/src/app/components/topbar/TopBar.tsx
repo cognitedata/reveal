@@ -11,7 +11,7 @@ import {
 } from '@cognite/cogs.js';
 import { useFlag } from '@cognite/react-feature-flags';
 
-import { useTranslation } from '../../common';
+import { TranslationKeys, useTranslation } from '../../common';
 
 import { AppSelector } from './AppSelector';
 import { HelpCenter } from './HelpCenter';
@@ -24,38 +24,40 @@ type Props = {
   appSwitchedEnabled?: boolean;
 };
 
-const apps = [
-  {
-    icon: 'InField',
-    name: 'InField',
-    description: 'Plan and perform field operations',
-    link: 'https://infield.cogniteapp.com/',
-  },
+export const getAppsInfo = (_t: (key: TranslationKeys) => string) => {
+  return [
+    {
+      icon: 'InField',
+      name: _t('INFIELD_APP_TITLE'),
+      description: _t('INFIELD_APP_SUBTITLE'),
+      link: 'https://infield.cogniteapp.com/',
+    },
 
-  {
-    icon: 'Maintain',
-    name: 'Maintain',
-    description: 'Optimize and analyze maintenance plans',
-    link: 'https://maintain.cogniteapp.com/',
-  },
-  {
-    icon: 'BestDay',
-    name: 'InRobot',
-    description: 'Deploy and manage robots',
-    link: 'https://inrobot.cogniteapp.com/',
-  },
-  {
-    icon: 'CDF',
-    name: 'Fusion',
-    description: 'Integrate and manage data',
-    link: 'https://fusion.cognite.com/',
-  },
-] as {
-  icon: ProductLogoProps['type'];
-  name: string;
-  description?: string;
-  link?: string;
-}[];
+    {
+      icon: 'Maintain',
+      name: _t('MAINTAIN_APP_TITLE'),
+      description: _t('MAINTAIN_APP_SUBTITLE'),
+      link: 'https://maintain.cogniteapp.com/',
+    },
+    {
+      icon: 'BestDay',
+      name: _t('INROBOT_APP_TITLE'),
+      description: _t('INROBOT_APP_SUBTITLE'),
+      link: 'https://inrobot.cogniteapp.com/',
+    },
+    {
+      icon: 'CDF',
+      name: _t('DATA_OPS_APP_TITLE'),
+      description: _t('DATA_OPS_APP_SUBTITLE'),
+      link: 'https://fusion.cognite.com/',
+    },
+  ] as {
+    icon: ProductLogoProps['type'];
+    name: string;
+    description: string;
+    link: string;
+  }[];
+};
 
 export const TopBar: FC<Props> = () => {
   const { t } = useTranslation();
@@ -104,6 +106,7 @@ export const TopBar: FC<Props> = () => {
     },
   ];
   const { value: isAppSelectorVisible, toggle, setFalse } = useBoolean(false);
+  const apps = getAppsInfo(t);
 
   return (
     <TopbarExp>
@@ -122,12 +125,8 @@ export const TopBar: FC<Props> = () => {
             ))}
           </TopbarExp.AppSwitcher>
 
-          <TopbarExp.Logo
-            size="32"
-            onClick={() => navigate('/')}
-            type={apps[3].icon}
-          >
-            {apps[3].name}
+          <TopbarExp.Logo size="32" onClick={() => navigate('/')} type="CDF">
+            Fusion
           </TopbarExp.Logo>
         </Flex>
 
