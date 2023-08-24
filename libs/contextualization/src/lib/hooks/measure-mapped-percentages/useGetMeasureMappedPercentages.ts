@@ -1,18 +1,23 @@
 import { useQuery } from '@tanstack/react-query';
 
+import { useSDK } from '@cognite/sdk-provider';
+
 export const useGetMeasureMappedPercentages = (jobId: string | undefined) => {
+  const sdk = useSDK();
+
   return useQuery({
-    queryKey: ['context', 'advancedjoins', 'measuremappedpercentage', jobId],
+    queryKey: ['advancedjoins', 'measuremappedpercentage', jobId],
     queryFn: async () => {
-      const response = await fetch(
-        `https://localhost:8443/api/v1/projects/contextualization/advancedjoins/measuremappedpercentage/${jobId}`,
+      const response = await sdk.get(
+        `/api/v1/projects/${sdk.project}/advancedjoins/measuremappedpercentage/${jobId}`,
         {
           headers: {
+            'cdf-version': 'alpha',
             'Content-Type': 'application/json',
           },
         }
       );
-      return response.json();
+      return response.data;
     },
     enabled: !!jobId,
   });

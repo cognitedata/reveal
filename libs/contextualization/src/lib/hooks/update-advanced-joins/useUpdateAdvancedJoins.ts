@@ -1,6 +1,10 @@
 import { useMutation } from '@tanstack/react-query';
 
+import { useSDK } from '@cognite/sdk-provider';
+
 export const useUpdateAdvancedJoins = () => {
+  const sdk = useSDK();
+
   return useMutation(
     async ({
       externalId,
@@ -15,14 +19,14 @@ export const useUpdateAdvancedJoins = () => {
       fromColumnKey: string | undefined;
       toColumnKey: string | undefined;
     }) => {
-      const response = await fetch(
-        `https://localhost:8443/api/v1/projects/contextualization/advancedjoins/update`,
+      const response = await sdk.post(
+        `/v1/projects/${sdk.project}/advancedjoins/update`,
         {
-          method: 'POST',
           headers: {
+            'cdf-version': 'alpha',
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
+          data: {
             items: [
               {
                 externalId: externalId,
@@ -41,10 +45,10 @@ export const useUpdateAdvancedJoins = () => {
                 },
               },
             ],
-          }),
+          },
         }
       );
-      return response.json();
+      return response.data;
     }
   );
 };

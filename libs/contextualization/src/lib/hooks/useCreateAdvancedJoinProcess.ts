@@ -1,5 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
+import { useSDK } from '@cognite/sdk-provider';
+
 import { getUrlParameters } from '../utils';
 
 import { useCurrentView } from './models/useCurrentView';
@@ -7,10 +9,11 @@ import { useCurrentView } from './models/useCurrentView';
 const currentDate = new Date().toISOString();
 
 export const useCreateAdvancedJoinProcess = (enabled: boolean | undefined) => {
+  const sdk = useSDK();
   const view = useCurrentView();
   const { headerName } = getUrlParameters();
 
-  const body = JSON.stringify({
+  const body = {
     items: [
       {
         externalId: `advanced-join-process-${currentDate}`, //random uid?
@@ -21,24 +24,23 @@ export const useCreateAdvancedJoinProcess = (enabled: boolean | undefined) => {
         propertyName: headerName,
       },
     ],
-  });
+  };
 
   return useQuery({
-    queryKey: ['context', 'advancedjoins', 'create'],
+    queryKey: ['advancedjoins', 'create'],
     queryFn: async () => {
-      const response = await fetch(
-        // `https://localhost:8443/api/v1/projects/${sdk.project}/advancedjoins`,
-        `https://localhost:8443/api/v1/projects/contextualization/advancedjoins`,
+      const response = await sdk.post(
+        `/api/v1/projects/${sdk.project}/advancedjoins`,
         {
-          method: 'POST',
           headers: {
+            'cdf-version': 'alpha',
             'Content-Type': 'application/json',
           },
-          body: body,
+          data: body,
         }
       );
 
-      return response.json();
+      return response.data;
     },
     enabled: enabled && !!view,
   });
