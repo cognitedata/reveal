@@ -142,6 +142,7 @@ static final Map<String, String> VERSIONING_STRATEGY = [
 
 // The config of which apps have i18n strings that need to be synced to and pulled from locize.io
 static final String[] I18N_APPLICATIONS = [
+  'copilot-core',
   'platypus',
   'data-exploration',
   'flexible-data-explorer'
