@@ -13,14 +13,16 @@ import {
   type RevisionId,
   type NodeId,
   type ModelNodeIdKey,
-  createModelRevisionKey,
-  revisionKeyToIds,
   type ModelRevisionToEdgeMap,
-  createModelNodeIdKey,
   type ModelRevisionId,
-  type FdmKey,
-  createFdmKey
+  type FdmKey
 } from './types';
+import {
+  createFdmKey,
+  createModelNodeIdKey,
+  createModelRevisionKey,
+  revisionKeyToIds
+} from './idAndKeyTranslation';
 import {
   type InModel3dEdgeProperties,
   SYSTEM_3D_EDGE_SOURCE,
