@@ -15,6 +15,7 @@ export const ColumnKeys = [
   'uploadedTime',
   'columns',
   'relationshipLabels',
+  'availabilityThreeD',
 ] as const;
 
 export const MAX_COLUMN_SELECTION = 20;

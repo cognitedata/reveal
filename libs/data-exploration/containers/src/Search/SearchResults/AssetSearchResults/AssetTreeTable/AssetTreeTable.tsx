@@ -6,7 +6,6 @@ import {
   HierarchyExtraRow,
   SubCellMatchingLabels,
   Table,
-  ThreeDModelCell,
   getTableColumns,
   getHighlightQuery,
 } from '@data-exploration/components';
@@ -207,12 +206,7 @@ export const AssetTreeTable = ({
           },
           size: 300,
         },
-        {
-          id: 'threeDModels',
-          header: t('3D_AVAILABILITY', '3D availability'),
-          cell: ({ row }) => <ThreeDModelCell assetId={row.original.id} />,
-          size: 300,
-        },
+        tableColumns.availabilityThreeD,
         tableColumns.source(
           getHighlightQuery(assetSearchConfig?.source.enabled, query)
         ),
