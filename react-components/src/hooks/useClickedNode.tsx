@@ -71,10 +71,9 @@ export const useClickedNodeData = (): ClickedNodeData | undefined => {
       cadNode: chosenNode.cadNode
     });
 
-    function isWaitingForQueryResult() {
+    function isWaitingForQueryResult(): boolean {
       return nodeData === undefined && cadIntersection !== undefined;
     }
-
   }, [nodeData]);
 
   return clickedNodeData;
