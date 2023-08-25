@@ -79,7 +79,16 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
 
   return (
     <>
-      <RevealResourcesFitCameraOnLoad resources={resources} instanceStyling={stylingGroups} />
+      <RevealResourcesFitCameraOnLoad
+        resources={resources}
+        defaultResourceStyling={{
+          cad: {
+            default: { color: new Color('#efefef') },
+            mapped: { color: new Color('#c5cbff') }
+          }
+        }}
+        instanceStyling={stylingGroups}
+      />
       <RevealToolbar />
     </>
   );
