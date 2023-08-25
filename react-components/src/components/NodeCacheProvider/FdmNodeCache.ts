@@ -112,7 +112,7 @@ export class FdmNodeCache {
     uniqueIds: DmsUniqueIdentifier[],
     modelRevisions: ModelRevisionId[]
   ): Promise<ThreeDModelMappings[]> {
-    if (modelRevisions.length === 0) {
+    if (modelRevisions.length === 0 || uniqueIds.length === 0) {
       return [];
     }
 
