@@ -238,6 +238,7 @@ jobs:
           environment: ${{ steps.deploy-environment.outputs.environment }}
           firebaseSite: ${{ fromJson(steps.project-config.outputs.config).pipeline.firebaseSite }}
           firebaseProjectId: ${{ fromJson(steps.project-config.outputs.config).pipeline.firebaseProjectId }}
+          firebaseProdExtension: ${{ fromJson(steps.project-config.outputs.config).pipeline.firebaseProdExtension }}
 
       - name: Get firebase.json content
         id: firebase-json-content
