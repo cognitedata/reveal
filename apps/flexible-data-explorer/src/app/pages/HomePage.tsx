@@ -10,7 +10,7 @@ import { AILabels } from '../containers/search/components/AILabels';
 import { AISwitch } from '../containers/search/components/AISwitch';
 import { SearchBar } from '../containers/search/SearchBar';
 import { SearchConfiguration } from '../containers/search/SearchConfiguration';
-import { useIsCopilotEnabled } from '../hooks/useFlag';
+import { useIsCogpilotEnabled } from '../hooks/useFlag';
 import { useAISearchParams } from '../hooks/useParams';
 
 const SEARCH_BAR_OPTIONS = {
@@ -19,7 +19,7 @@ const SEARCH_BAR_OPTIONS = {
 
 export const HomePage = () => {
   const [isAIEnabled, setIsAIEnabled] = useAISearchParams();
-  const isCopilotEnabled = useIsCopilotEnabled();
+  const isCopilotEnabled = useIsCogpilotEnabled();
 
   useEffect(() => {
     if (!isCopilotEnabled && isAIEnabled) {

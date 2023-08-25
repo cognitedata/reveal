@@ -11,7 +11,11 @@ import { useTranslation } from '../app/hooks/useTranslation';
 
 import { CopilotMessage } from './types';
 import { addToCopilotEventListener, sendToCopilotEvent } from './utils';
-import { addToCopilotLogs, getCopilotLogs } from './utils/logging';
+import {
+  addToCopilotLogs,
+  clearCopilotLog,
+  getCopilotLogs,
+} from './utils/logging';
 
 export type CogniteChainInput = {
   /** LLM Wrapper to use */
@@ -162,6 +166,7 @@ export abstract class CogniteBaseChain extends BaseChain {
       chain: this.constructor.name,
       prompt: params.message,
     });
+    clearCopilotLog(this.messageKey);
     return { value: 'emptyvalue' };
   };
 

@@ -1,9 +1,6 @@
 import { BrowserRouter as Router } from 'react-router-dom';
 
-import styled from 'styled-components';
-
 import { AppContextProvider } from '@data-exploration-components/context/AppContext';
-import { Copilot } from '@fusion/copilot-core';
 import {
   Orientation,
   OrientationProvider,
@@ -20,10 +17,9 @@ import { ToastContainer } from '@cognite/cogs.js';
 import { FlagProvider } from '@cognite/react-feature-flags';
 import { SDKProvider } from '@cognite/sdk-provider';
 
-import zIndex from '../utils/zIndex';
-
 import { translations } from './common';
 import { useAuthContext } from './common/auth/AuthProvider';
+import { AI } from './components/AI';
 import { ErrorFallback } from './components/ErrorFallback';
 import { Onboarding } from './components/Onboarding';
 import { TopBar } from './components/topbar/TopBar';
@@ -76,9 +72,7 @@ function App() {
                         <TopBar />
                         <Onboarding />
                         <CoreRoutes />
-                        <CopilotWrapper>
-                          <Copilot sdk={client} />
-                        </CopilotWrapper>
+                        <AI />
                       </Router>
                     </AppContextProvider>
                   </Sentry.ErrorBoundary>
@@ -93,9 +87,3 @@ function App() {
 }
 
 export default App;
-
-const CopilotWrapper = styled.div`
-  z-index: ${zIndex.COPILOT};
-  position: absolute;
-  display: none;
-`;

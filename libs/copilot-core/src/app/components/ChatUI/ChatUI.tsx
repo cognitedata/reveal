@@ -7,11 +7,9 @@ import { useBotUI } from '@botui/react';
 import { BotuiInterface } from 'botui';
 import { BufferMemory, ChatMessageHistory } from 'langchain/memory';
 import { AIMessage, HumanMessage } from 'langchain/schema';
-import noop from 'lodash/noop';
 
 import { Flex } from '@cognite/cogs.js';
 import { datamodelResultSummaryPrompt } from '@cognite/llm-hub';
-import { useFlag } from '@cognite/react-feature-flags';
 import { useSDK } from '@cognite/sdk-provider';
 
 import { CogniteChatGPT } from '../../../lib/chatModels';
@@ -61,10 +59,6 @@ export const ChatUI = ({
   feature?: CopilotSupportedFeatureType;
   excludeChains: CogniteChainName[];
 }) => {
-  const { isEnabled } = useFlag('COGNITE_COPILOT', {
-    fallback: false,
-    forceRerender: true,
-  });
   const bot = useBotUI();
   const sdk = useSDK();
   const [isLoading, setIsLoading] = useState(false);
@@ -178,83 +172,79 @@ export const ChatUI = ({
   const { createNewChat } = useCopilotContext();
 
   useEffect(() => {
-    if (isEnabled) {
-      const removeListener = addToCopilotEventListener(
-        'NEW_MESSAGES',
-        async (newMessages) => {
-          if (newMessages.length > 0) {
-            for (const message of newMessages) {
-              if (message.key === undefined) {
-                await addMessage(bot, message);
-              } else {
-                messages.current[message.key] = message;
-                setChatHistory(messages.current);
-                await bot.message.update(message.key, message);
-              }
-            }
-            const lastMessage = newMessages[newMessages.length - 1];
-            if (lastMessage.source === 'user' && lastMessage.pending) {
-              const message = lastMessage.content;
-              bot.wait();
-              processMessage(
-                feature,
-                conversationChain,
-                sdk,
-                message,
-                messages.current
-              ).then((nextActionType) => {
-                promptUser(nextActionType);
-              });
+    const removeListener = addToCopilotEventListener(
+      'NEW_MESSAGES',
+      async (newMessages) => {
+        if (newMessages.length > 0) {
+          for (const message of newMessages) {
+            if (message.key === undefined) {
+              await addMessage(bot, message);
+            } else {
+              messages.current[message.key] = message;
+              setChatHistory(messages.current);
+              await bot.message.update(message.key, message);
             }
           }
+          const lastMessage = newMessages[newMessages.length - 1];
+          if (lastMessage.source === 'user' && lastMessage.pending) {
+            const message = lastMessage.content;
+            bot.wait();
+            processMessage(
+              feature,
+              conversationChain,
+              sdk,
+              message,
+              messages.current
+            ).then((nextActionType) => {
+              promptUser(nextActionType);
+            });
+          }
         }
-      );
-      const removeListener2 = addToCopilotEventListener(
-        'SUMMARIZE_QUERY',
-        async (graphql) => {
-          const [{ summary }] = await callPromptChain(
-            chains.GraphQlChain,
-            'summarize filter',
-            datamodelResultSummaryPrompt,
-            [
-              {
-                query: JSON.stringify(graphql),
-              },
-            ]
-          ).then(
-            safeConvertToJson<{
-              summary: string;
-            }>
-          );
-          sendFromCopilotEvent('SUMMARIZE_QUERY', { summary });
-        }
-      );
-      const removeListener3 = addToCopilotEventListener(
-        'NEW_CHAT_WITH_MESSAGES',
-        async ({ chain, messages: newMessages }) => {
-          await createNewChat([
+      }
+    );
+    const removeListener2 = addToCopilotEventListener(
+      'SUMMARIZE_QUERY',
+      async (graphql) => {
+        const [{ summary }] = await callPromptChain(
+          chains.GraphQlChain,
+          'summarize filter',
+          datamodelResultSummaryPrompt,
+          [
             {
-              type: 'chain',
-              source: 'user',
-              chain: chain,
-              content: chain,
+              query: JSON.stringify(graphql),
             },
-            ...newMessages,
-          ]);
-        }
-      );
-      return () => {
-        removeListener();
-        removeListener2();
-        removeListener3();
-        for (const listener of cachedListeners) {
-          window.removeEventListener(listener.event, listener.listener);
-        }
-      };
-    }
-    return noop;
+          ]
+        ).then(
+          safeConvertToJson<{
+            summary: string;
+          }>
+        );
+        sendFromCopilotEvent('SUMMARIZE_QUERY', { summary });
+      }
+    );
+    const removeListener3 = addToCopilotEventListener(
+      'NEW_CHAT_WITH_MESSAGES',
+      async ({ chain, messages: newMessages }) => {
+        await createNewChat([
+          {
+            type: 'chain',
+            source: 'user',
+            chain: chain,
+            content: chain,
+          },
+          ...newMessages,
+        ]);
+      }
+    );
+    return () => {
+      removeListener();
+      removeListener2();
+      removeListener3();
+      for (const listener of cachedListeners) {
+        window.removeEventListener(listener.event, listener.listener);
+      }
+    };
   }, [
-    isEnabled,
     bot,
     addMessage,
     setChatHistory,
@@ -368,10 +358,12 @@ export const ChatUI = ({
       );
       setTimeout(() => {
         setIsLoading(false);
-        sendFromCopilotEvent('CHAT_READY', undefined);
       }, 100);
     })();
   }, [currentChatId, sdk.project, setupMessages]);
+  useEffect(() => {
+    sendFromCopilotEvent('CHAT_READY', undefined);
+  }, []);
 
   if (!visible || isLoading) {
     return <></>;

@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
 
 import { Body, Flex, Icon } from '@cognite/cogs.js';
-import { useFlag } from '@cognite/react-feature-flags';
 
 import { ReactComponent as CopilotIcon } from '../../assets/CopilotIcon.svg';
 import zIndex from '../utils/zIndex';
@@ -31,15 +30,6 @@ export const CopilotButton = (): JSX.Element => {
   useEffect(() => {
     setHasImportMap(!!document.querySelector('import-map-overrides-full'));
   }, []);
-
-  const { isEnabled } = useFlag('COGNITE_COPILOT', {
-    fallback: false,
-    forceRerender: true,
-  });
-
-  if (!isEnabled) {
-    return <></>;
-  }
 
   return (
     <ButtonWrapper
