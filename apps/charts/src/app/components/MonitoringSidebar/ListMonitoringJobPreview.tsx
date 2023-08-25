@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 import Dropdown from '@charts-app/components/Dropdown/Dropdown';
 import { useSearchParam } from '@charts-app/hooks/navigation';
+import { useTranslations } from '@charts-app/hooks/translations';
 import { useUserInfo } from '@charts-app/hooks/useUserInfo';
 import { trackUsage } from '@charts-app/services/metrics';
 import {
@@ -32,7 +33,7 @@ import JobCondition from './JobCondition';
 import { MonitoringJob } from './types';
 import { validateEmail } from './utils';
 
-const defaultTranslations = makeDefaultTranslations(
+const defaultTranslation = makeDefaultTranslations(
   'Delete',
   'Unable to delete monitoring job',
   'Monitoring Job deleted succesfully',
@@ -46,7 +47,6 @@ const defaultTranslations = makeDefaultTranslations(
 );
 
 type Props = {
-  translations?: typeof defaultTranslations;
   monitoringJob: MonitoringJob;
   timeseriesName?: string;
   showHighlightedBorder?: boolean;
@@ -56,7 +56,6 @@ type Props = {
 const ListMonitoringJobPreview = ({
   monitoringJob,
   timeseriesName,
-  translations,
   showHighlightedBorder = true,
   showLastAlert = true,
   trackingInfo,
@@ -74,8 +73,8 @@ const ListMonitoringJobPreview = ({
   );
 
   const t = {
-    ...defaultTranslations,
-    ...translations,
+    ...defaultTranslation,
+    ...useTranslations(Object.keys(defaultTranslation), 'MonitoringSidebar').t,
   };
 
   const userInfo = useUserInfo();
@@ -265,7 +264,7 @@ const ListMonitoringJobPreview = ({
             open={isOpen}
             options={[
               {
-                label: 'Delete',
+                label: t.Delete,
                 onClick: () => {
                   deleteMonitoringJob(`${id}`);
                   trackUsage('Sidebar.Monitoring.Delete', {

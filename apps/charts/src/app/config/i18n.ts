@@ -8,15 +8,19 @@ import {
 } from '@charts-app/utils/environment';
 import i18n from 'i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
-import ChainedBackend from 'i18next-chained-backend';
+import ChainedBackend, { ChainedBackendOptions } from 'i18next-chained-backend';
 import LocalStorageBackend from 'i18next-localstorage-backend';
-import LocizeBackend from 'i18next-locize-backend';
+import LocizeBackend, { LocizeBackendOptions } from 'i18next-locize-backend';
 import { locizePlugin } from 'locize';
-import LastUsed from 'locize-lastused';
+import LocizeLastusedPlugin, { LocizeLastusedOptions } from 'locize-lastused';
 
 import { SELECTED_LANGUAGE_LS_KEY } from '@cognite/cdf-utilities';
 
 if (!config.locizeProjectId) throw new Error('Locize is not configured!');
+
+type CombinedInitOptions = LocizeBackendOptions &
+  ChainedBackendOptions &
+  LocizeLastusedOptions;
 
 const reactOptions = {
   bindI18n: 'languageChanged editorSaved',
@@ -34,10 +38,9 @@ const fallbacks = {
 
 const locizeOptions = {
   projectId: config.locizeProjectId,
-  apiKey: isDevelopment || isPR ? config.locizeApiKey : undefined,
+  apiKey: isDevelopment || isPR ? config.locizeApiKey : '',
   referenceLng: 'en',
   version: isProduction ? 'production' : 'latest',
-  allowedAddOrUpdateHosts: ['localhost'],
 };
 
 i18n.options.react = reactOptions;
@@ -45,11 +48,11 @@ setI18n(i18n);
 
 i18n
   .use(ChainedBackend)
-  .use(LastUsed)
+  .use(LocizeLastusedPlugin)
   .use(locizePlugin)
   .use(LanguageDetector)
   .use(initReactI18next)
-  .init({
+  .init<CombinedInitOptions>({
     debug: isDevelopment || isPR,
     updateMissing: isDevelopment,
     saveMissing: isDevelopment,
@@ -58,6 +61,7 @@ i18n
       escapeValue: false,
     },
     backend: {
+      ...locizeOptions,
       backends: isProduction
         ? [LocalStorageBackend, LocizeBackend]
         : [LocizeBackend],

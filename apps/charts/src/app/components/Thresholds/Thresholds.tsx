@@ -26,6 +26,7 @@ const Thresholds = ({
   sources,
   onUpdateThresholdName,
   onAddThreshold,
+  translations,
   ...thresholdItemProps
 }: Props) => {
   const [activeKey, setActiveKey] = useState(['1']);
@@ -50,7 +51,7 @@ const Thresholds = ({
             ]);
           }}
         >
-          Add new
+          {translations?.['Add new'] || 'Add new'}
         </Button>
       </SidebarHeaderActions>
       <SidebarCollapse
@@ -76,6 +77,7 @@ const Thresholds = ({
             <ThresholdItem
               threshold={threshold}
               sources={sources}
+              translations={translations}
               {...thresholdItemProps}
             />
           </Collapse.Panel>

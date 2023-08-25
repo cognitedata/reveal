@@ -34,7 +34,7 @@ const config = {
   privacyPolicyUrl: 'https://www.cognite.com/en/policy',
   cogniteHubGroupUrl: 'https://hub.cognite.com/groups/charts-164',
   locizeProjectId: '1610fa5f-c8df-4aa8-9049-c08d8055d8ac',
-  locizeApiKey: REACT_APP_LOCIZE_API_KEY || NX_REACT_APP_LOCIZE_API_KEY,
+  locizeApiKey: REACT_APP_LOCIZE_API_KEY || NX_REACT_APP_LOCIZE_API_KEY || '',
   mixpanelToken: REACT_APP_MIXPANEL_TOKEN || MIXPANEL_TOKEN,
   sentryDSN:
     'https://b35f7e3635d34e44bd24a354dfc4f13a@o124058.ingest.sentry.io/5509609',

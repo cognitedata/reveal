@@ -22,6 +22,7 @@ import {
   toggleDownloadChartElements,
 } from '@charts-app/utils/charts';
 import { createInternalLink } from '@charts-app/utils/link';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import { useRecoilState } from 'recoil';
 import useScreenshot from 'use-screenshot-hook';
 
@@ -31,22 +32,24 @@ import { DeleteModal } from '../DeleteModal/DeleteModal';
 
 import { StyledMenu, StyledMenuButton } from './elements';
 
+const defaultTranslations = makeDefaultTranslations(
+  'Actions',
+  'Chart could not be deleted!',
+  'Chart could not be saved!',
+  'There was a problem deleting the chart. Try again!',
+  'Share',
+  'Download Chart',
+  'Duplicate',
+  'Delete',
+  'Delete chart',
+  'Are you sure you want to delete this chart?'
+);
+
 export const ChartActions = () => {
-  const { t } = useTranslations(
-    [
-      'Actions',
-      'Chart could not be deleted!',
-      'Chart could not be saved!',
-      'There was a problem deleting the chart. Try again!',
-      'Share',
-      'Download Chart',
-      'Duplicate',
-      'Delete',
-      'Delete chart',
-      'Are you sure you want to delete this chart?',
-    ],
-    'ChartActions'
-  );
+  const t = {
+    ...defaultTranslations,
+    ...useTranslations(Object.keys(defaultTranslations), 'ChartActions').t,
+  };
   const { t: dropdownTranslations } = useTranslations(
     DownloadDropdown.translationKeys,
     'DownloadDropdown'

@@ -14,6 +14,7 @@ import {
   SidebarFormLabel,
   SourceSelect,
 } from '@charts-app/components/Common/SidebarElements';
+import { useTranslations } from '@charts-app/hooks/translations';
 import { Chart, ChartSource } from '@charts-app/models/chart/types';
 import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import styled from 'styled-components/macro';
@@ -106,6 +107,7 @@ const DataProfilingSidebar: FunctionComponent<Props> = ({
 }: Props) => {
   const t = {
     ...defaultTranslations,
+    ...useTranslations(Object.keys(defaultTranslations), 'DataProfiling').t,
   };
 
   const sources = useMemo(() => {

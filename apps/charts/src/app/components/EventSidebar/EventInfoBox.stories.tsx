@@ -88,5 +88,11 @@ Translated.args = {
     Updated: '更新しました',
     Back: '戻る',
     'View details': '詳細を見る',
+    'Other results': 'その他の結果',
+    'Selected results': '選択された結果',
+    'Clear all': 'すべてクリア',
+    Sort: '並べ替え',
+    Oldest: '最も古い',
+    Newest: '最新の',
   },
 };

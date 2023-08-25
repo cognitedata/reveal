@@ -16,6 +16,7 @@ import {
   useGetTsIdsFromTimeseriesCollection,
 } from '@charts-app/domain/chart/internal/queries/useGetTSIds';
 import { useSearchParam } from '@charts-app/hooks/navigation';
+import { useTranslations } from '@charts-app/hooks/translations';
 import { jobsToAlerts } from '@charts-app/pages/ChartViewPage/NotificationIndicator';
 import { trackUsage } from '@charts-app/services/metrics';
 import { MONITORING_SIDEBAR_ALERT_COUNT_KEY } from '@charts-app/utils/constants';
@@ -30,27 +31,24 @@ import { ALERTING_FILTER } from '../../utils/constants';
 import { DisplayAlerts } from './DisplayAlerts';
 import { JobsWithAlertsContainer, SidebarWithScroll } from './elements';
 
-const defaultTranslations = makeDefaultTranslations(
+const defaultTranslation = makeDefaultTranslations(
   'Alerts',
   'Hide',
-  'Unable to load alerts'
+  'Unable to load alerts',
+  'Show'
 );
 
 type Props = {
   onViewMonitoringJobs: () => void;
-  translations?: typeof defaultTranslations;
   onClose: () => void;
 };
 
-export const AlertingSidebar = ({
-  onViewMonitoringJobs,
-  translations,
-  onClose,
-}: Props) => {
+export const AlertingSidebar = ({ onViewMonitoringJobs, onClose }: Props) => {
   const t = {
-    ...defaultTranslations,
-    ...translations,
+    ...defaultTranslation,
+    ...useTranslations(Object.keys(defaultTranslation), 'AlertingSidebar').t,
   };
+
   const timeseriesCollectionTsIds = useGetTsIdsFromTimeseriesCollection();
   const scheduledCalculationTsExternalIds =
     useGetTsExternalIdsFromScheduledCalculations();

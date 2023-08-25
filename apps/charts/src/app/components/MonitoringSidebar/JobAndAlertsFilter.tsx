@@ -1,5 +1,8 @@
 import styled from 'styled-components';
 
+import { useTranslations } from '@charts-app/hooks/translations';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
+
 import { Select, OptionType } from '@cognite/cogs.js';
 
 export type FilterOption = OptionType<'all' | 'current' | 'subscribed'>;
@@ -7,6 +10,14 @@ export type FilterOption = OptionType<'all' | 'current' | 'subscribed'>;
 const FilterSelect = styled(Select)`
   margin-bottom: 12px;
 `;
+
+const defaultTranslation = makeDefaultTranslations(
+  'All folders',
+  'Subscribed to',
+  'In current chart',
+  'All',
+  'Show'
+);
 
 export const MONITORING_FILTER_OPTIONS: FilterOption[] = [
   { label: 'All folders', value: 'all' },
@@ -29,16 +40,31 @@ export const JobAndAlertsFilter = ({
   value: FilterOption;
   mode: 'alerting' | 'monitoring';
 }) => {
+  const t = {
+    ...defaultTranslation,
+    ...useTranslations(Object.keys(defaultTranslation), 'AlertingSidebar').t,
+  };
+
+  const transformOptionsWithTranslation = (
+    options: FilterOption[],
+    ts: typeof defaultTranslation
+  ): FilterOption[] => {
+    return options.map((option) => ({
+      ...option,
+      label: ts[option.label as keyof typeof ts],
+    }));
+  };
+
   return (
     <FilterSelect
       value={value}
       onChange={onChange}
       options={
         mode === 'alerting'
-          ? ALERTING_FILTER_OPTIONS
-          : MONITORING_FILTER_OPTIONS
+          ? transformOptionsWithTranslation(ALERTING_FILTER_OPTIONS, t)
+          : transformOptionsWithTranslation(MONITORING_FILTER_OPTIONS, t)
       }
-      title="Show:"
+      title={`${t['Show']}:`}
     />
   );
 };

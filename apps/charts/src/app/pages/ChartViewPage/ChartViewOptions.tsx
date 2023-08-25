@@ -1,3 +1,4 @@
+import { useTranslations } from '@charts-app/hooks/translations';
 import { makeDefaultTranslations } from '@charts-app/utils/translations';
 
 import {
@@ -49,10 +50,12 @@ const ChartViewOptions = ({
   showGridlines,
   mergeUnits,
   handleSettingsToggle,
-  translations,
   setStackedMode,
 }: Props) => {
-  const t = { ...defaultTranslations, ...translations };
+  const t = {
+    ...defaultTranslations,
+    ...useTranslations(Object.keys(defaultTranslations), 'ChartView').t,
+  };
 
   return (
     <>

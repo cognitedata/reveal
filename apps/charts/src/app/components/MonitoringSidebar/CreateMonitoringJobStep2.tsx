@@ -3,6 +3,7 @@ import { useForm, FormProvider } from 'react-hook-form';
 
 import { CredentialsForm } from '@charts-app/components/CredentialsForm/CredentialsForm';
 import PortalWait from '@charts-app/components/PortalWait/PortalWait';
+import { useTranslations } from '@charts-app/hooks/translations';
 import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import { Col, Row } from 'antd';
 
@@ -11,10 +12,9 @@ import { Button, Icon } from '@cognite/cogs.js';
 import { FullWidthButton } from './elements';
 import { CreateMonitoringJobFormData } from './types';
 
-const defaultTranslations = makeDefaultTranslations('Start monitoring', 'Back');
+const defaultTranslation = makeDefaultTranslations('Start monitoring', 'Back');
 
 type Props = {
-  translations?: typeof defaultTranslations;
   isFormSubmitting: boolean;
   onNext: (data: any) => void;
   onBack: (data: CreateMonitoringJobFormData) => void;
@@ -22,15 +22,14 @@ type Props = {
 };
 
 const CreateMonitoringJobStep2 = ({
-  translations,
   isFormSubmitting,
   onNext,
   onBack,
   existingFormData,
 }: Props) => {
   const t = {
-    ...defaultTranslations,
-    ...translations,
+    ...defaultTranslation,
+    ...useTranslations(Object.keys(defaultTranslation), 'MonitoringSidebar').t,
   };
 
   const formMethods = useForm({

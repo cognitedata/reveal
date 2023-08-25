@@ -1,5 +1,8 @@
 import styled from 'styled-components';
 
+import { useTranslations } from '@charts-app/hooks/translations';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
+
 import { Select, OptionType } from '@cognite/cogs.js';
 
 import { relativeTimeOptions } from './constants';
@@ -12,14 +15,26 @@ const StyledSelect = styled(Select)`
   width: 80px;
 `;
 
+// Extract labels from relativeTimeOptions
+const getLabels = (options: typeof relativeTimeOptions) =>
+  options.map((option) => option.label);
+
+const defaultTranslations = makeDefaultTranslations(
+  ...getLabels(relativeTimeOptions)
+);
+
 export const TimePeriodMenu = (props: TimePeriodProps) => {
   const { onPeriodChange, optionSelected } = props;
+  const t = {
+    ...defaultTranslations,
+    ...useTranslations(Object.keys(defaultTranslations), 'TimePicker').t,
+  };
 
   return (
     <StyledSelect
       options={relativeTimeOptions.map(
         ({ label }): TimePeriodOption => ({
-          label: label.toUpperCase(),
+          label: t[label],
           value: label,
         })
       )}
