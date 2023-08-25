@@ -7,7 +7,7 @@ import { useReveal, type NodeDataResult } from '../';
 import { useEffect, useState } from 'react';
 import { useFdm3dNodeData } from '../components/NodeCacheProvider/NodeCacheProvider';
 
-export type ClickedNodeData = NodeDataResult & {
+export type ClickedNodeData = Partial<NodeDataResult> & {
   intersection: CadIntersection;
 };
 
@@ -15,17 +15,18 @@ export const useClickedNodeData = (): ClickedNodeData | undefined => {
   const viewer = useReveal();
 
   const [cadIntersection, setCadIntersection] = useState<CadIntersection | undefined>(undefined);
+  const [clickedNodeData, setClickedNodeData] = useState<ClickedNodeData | undefined>(undefined);
 
   useEffect(() => {
     const callback = (event: PointerEventData): void => {
       void (async () => {
         const intersection = await viewer.getIntersectionFromPixel(event.offsetX, event.offsetY);
 
-        if (intersection === null || intersection.type !== 'cad') {
-          return;
+        if (intersection?.type === 'cad') {
+          setCadIntersection(intersection);
+        } else {
+          setCadIntersection(undefined);
         }
-
-        setCadIntersection(intersection);
       })();
     };
 
@@ -36,23 +37,44 @@ export const useClickedNodeData = (): ClickedNodeData | undefined => {
     };
   }, [viewer]);
 
-  const nodeData =
-    useFdm3dNodeData(
-      cadIntersection?.model.modelId,
-      cadIntersection?.model.revisionId,
-      cadIntersection?.treeIndex
-    ).data ?? [];
+  const nodeData = useFdm3dNodeData(
+    cadIntersection?.model.modelId,
+    cadIntersection?.model.revisionId,
+    cadIntersection?.treeIndex
+  ).data;
 
-  if (cadIntersection === undefined || nodeData.length === 0) {
-    return undefined;
-  }
+  useEffect(() => {
+    if (isWaitingForQueryResult()) {
+      return;
+    }
 
-  const chosenNode = nodeData[0];
+    const nodeDataList = nodeData ?? [];
 
-  return {
-    intersection: cadIntersection,
-    fdmNode: chosenNode.fdmId,
-    view: chosenNode.view,
-    cadNode: chosenNode.cadNode
-  };
+    if (cadIntersection === undefined) {
+      setClickedNodeData(undefined);
+      return;
+    }
+
+    if (nodeDataList.length === 0) {
+      setClickedNodeData({
+        intersection: cadIntersection
+      });
+      return;
+    }
+
+    const chosenNode = nodeDataList[0];
+
+    setClickedNodeData({
+      intersection: cadIntersection,
+      fdmNode: chosenNode.fdmId,
+      view: chosenNode.view,
+      cadNode: chosenNode.cadNode
+    });
+
+    function isWaitingForQueryResult(): boolean {
+      return nodeData === undefined && cadIntersection !== undefined;
+    }
+  }, [nodeData]);
+
+  return clickedNodeData;
 };
