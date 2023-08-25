@@ -5,7 +5,7 @@ const run = async () => {
     const environment = getInput('environment');
     const project = getInput('project');
     const firebaseSite = getInput('firebaseSite');
-    const firebaseProdExtension = getInput('firebaseSite') || 'prod';
+    const firebaseProdExtension = getInput('firebaseProdExtension') || 'prod';
     const firebaseProjectId =
       getInput('firebaseProjectId') || 'fusion-217032465111'; // default firebase project id
 
