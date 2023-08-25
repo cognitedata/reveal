@@ -53,7 +53,7 @@ function useCalculateMappedStyling(
   models: CadModelOptions[],
   defaultMappedNodeAppearance?: NodeAppearance
 ): ModelStyleGroup[] {
-  const modelsRevisionsWithMappedEquipment = getMappedCadModelsOptions();
+  const modelsRevisionsWithMappedEquipment = useMemo(() => getMappedCadModelsOptions(), [models]);
   const { data: mappedEquipmentEdges } = useMappedEdgesForRevisions(
     modelsRevisionsWithMappedEquipment
   );
@@ -66,7 +66,7 @@ function useCalculateMappedStyling(
     ) {
       return [];
     }
-    return models.map((model) => {
+    return modelsRevisionsWithMappedEquipment.map((model) => {
       const fdmData = mappedEquipmentEdges?.get(`${model.modelId}-${model.revisionId}`) ?? [];
       const modelStyle = model.styling?.mapped ?? defaultMappedNodeAppearance;
 
@@ -81,7 +81,7 @@ function useCalculateMappedStyling(
           : [];
       return { model, styleGroup };
     });
-  }, [models, mappedEquipmentEdges, defaultMappedNodeAppearance]);
+  }, [modelsRevisionsWithMappedEquipment, mappedEquipmentEdges, defaultMappedNodeAppearance]);
 
   return modelsMappedStyleGroups;
 
