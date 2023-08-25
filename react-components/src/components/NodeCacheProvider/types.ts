@@ -15,7 +15,10 @@ export type TreeIndex = number;
 export type NodeId = number;
 export type FdmId = DmsUniqueIdentifier;
 
-export type RevisionKey = `${ModelId}-${RevisionId}`;
-export type FdmKey = `${string}-${string}`;
-export type RevisionTreeIndex = `${ModelId}-${RevisionId}-${TreeIndex}`;
-export type ModelNodeIdKey = `${ModelId}-${RevisionId}-${NodeId}`;
+export type ModelRevisionId = { modelId: number; revisionId: number };
+
+export type ModelRevisionKey = `${ModelId}/${RevisionId}`;
+export type FdmKey = `${string}/${string}`;
+export type ModelNodeIdKey = `${ModelId}/${RevisionId}/${NodeId}`;
+
+export type ModelRevisionToEdgeMap = Map<ModelRevisionKey, FdmEdgeWithNode[]>;
