@@ -17,3 +17,6 @@ inputs:
     description: 'firebase project ID'
     required: false
     default: 'fusion-217032465111'
+  firebaseProdExtension:
+    description: 'extenstion for firebase production site, defaults to "prod"'
+    required: false

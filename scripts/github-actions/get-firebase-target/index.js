@@ -5,12 +5,16 @@ const run = async () => {
     const environment = getInput('environment');
     const project = getInput('project');
     const firebaseSite = getInput('firebaseSite');
+    const firebaseProdExtension = getInput('firebaseSite') || 'prod';
     const firebaseProjectId =
       getInput('firebaseProjectId') || 'fusion-217032465111'; // default firebase project id
 
+    const extension =
+      environment === 'production' ? firebaseProdExtension : environment;
+
     const site = firebaseSite
-      ? `${firebaseSite}-${environment}`
-      : `cdf-${project}-${environment}`;
+      ? `${firebaseSite}-${extension}`
+      : `cdf-${project}-${extension}`;
 
     const projectId = `${firebaseProjectId}${
       environment === 'production' ? '' : `-${environment}`
