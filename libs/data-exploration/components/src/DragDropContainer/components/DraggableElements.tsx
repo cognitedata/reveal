@@ -6,6 +6,14 @@ import { Flex } from '@data-exploration-lib/core';
 
 import { DRAG_DROP_PORTAL_CLASS } from '../constants';
 
+/**
+ * If the draggable items are rendered inside a tippy component,
+ * the items get disappeared while dragging since,
+ * the z-index of tippy has been hard-coded to 9999.
+ * Hence, setting this to a far higher value to prevent such issues.
+ */
+const DRAGGABLE_ITEM_Z_INDEX = 999999;
+
 const getDraggableElement = (
   element: JSX.Element,
   index: number,
@@ -15,7 +23,9 @@ const getDraggableElement = (
 
   const getItemStyle = (isDragging: boolean, draggableStyle: any) => ({
     ...draggableStyle,
+    zIndex: DRAGGABLE_ITEM_Z_INDEX,
   });
+
   return (
     <Draggable key={id} draggableId={id} index={index}>
       {(provided, snapshot) => {
