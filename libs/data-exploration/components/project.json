@@ -24,7 +24,7 @@
         "entryFile": "libs/data-exploration/components/src/index.ts",
         "external": ["react/jsx-runtime"],
         "rollupConfig": "@nx/react/plugins/bundle-rollup",
-        "compiler": "babel",
+        "compiler": "swc",
         "assets": [
           {
             "glob": "libs/data-exploration/components/README.md",
