@@ -22,7 +22,7 @@ export const FdmNodeCacheContext = createContext<FdmNodeCacheContent | undefined
 
 export const useMappedEdgesForRevisions = (
   modelRevisionIds: Array<{ modelId: number; revisionId: number }>,
-  enabled: boolean
+  enabled = true
 ): UseQueryResult<ModelRevisionToEdgeMap> => {
   const content = useContext(FdmNodeCacheContext);
 
@@ -81,7 +81,9 @@ export const useFdmAssetMappings = (
   return useQuery(
     ['reveal', 'react-components', 'fdm-asset-mappings', fdmAssetExternalIds],
     async () => {
-      return await nodeCacheContent?.cache.getMappingsForFdmIds(fdmAssetExternalIds, models);
+      return (
+        (await nodeCacheContent?.cache.getMappingsForFdmIds(fdmAssetExternalIds, models)) ?? []
+      );
     },
     {
       enabled: fdmAssetExternalIds.length > 0 && models.length > 0,
