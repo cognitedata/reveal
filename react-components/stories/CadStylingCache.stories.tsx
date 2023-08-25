@@ -55,7 +55,7 @@ const Models = ({ addModelOptions }: CogniteCadModelProps): JSX.Element => {
   const nodeIds = useMemo(
     () =>
       data
-        ?.get(`${platformModelOptions.modelId}-${platformModelOptions.revisionId}`)
+        ?.get(`${platformModelOptions.modelId}/${platformModelOptions.revisionId}`)
         ?.map((edgeWithNode) => edgeWithNode.edge.properties.revisionNodeId),
     [data]
   );

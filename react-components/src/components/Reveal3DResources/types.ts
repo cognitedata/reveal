@@ -51,6 +51,5 @@ export type Reveal3DResourcesProps = {
   resources: AddResourceOptions[];
   defaultResourceStyling?: DefaultResourceStyling;
   instanceStyling?: FdmAssetStylingGroup[];
-  onNodeClick?: (node: Promise<NodeDataResult | undefined>) => void;
   onResourcesAdded?: () => void;
 };

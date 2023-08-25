@@ -21,13 +21,11 @@ import {
   type PointCloudModelOptions
 } from './types';
 import { useCalculateCadStyling } from '../../hooks/useCalculateModelsStyling';
-import { useClickedNodeData } from '../..';
 
 export const Reveal3DResources = ({
   resources,
   defaultResourceStyling,
   instanceStyling,
-  onNodeClick,
   onResourcesAdded
 }: Reveal3DResourcesProps): ReactElement => {
   const [reveal3DModels, setReveal3DModels] = useState<TypedReveal3DModel[]>([]);
@@ -57,13 +55,6 @@ export const Reveal3DResources = ({
     instanceStyling ?? [],
     defaultResourceStyling
   );
-  const clickedNodeData = useClickedNodeData();
-
-  useEffect(() => {
-    if (clickedNodeData !== undefined) {
-      onNodeClick?.(Promise.resolve(clickedNodeData));
-    }
-  }, [clickedNodeData, onNodeClick]);
 
   const image360CollectionAddOptions = resources.filter(
     (resource): resource is AddImageCollection360Options =>
