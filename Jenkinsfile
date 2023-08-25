@@ -377,88 +377,88 @@ pods {
       ---------------------------------------------------
       */
 
-      parallel(
-        'Preview': {
-          container('apphosting') {
-            if (!isPullRequest) {
-              print 'No PR previews for release builds'
-              return
-            }
-
-            //this can be deleted at the end, left it to delete comments in older PRs
-            deleteComments('[FUSION_PREVIEW_URL]')
-          }
-        },
-
-        'Release': {
-          container('apphosting') {
-            print "branch name: ${env.BRANCH_NAME}";
-            print "change id: ${env.CHANGE_ID}";
-            print "isMaster: ${isMaster}";
-            print "isRelease: ${isRelease}";
-
-            if (isPullRequest) {
-              print 'No deployment on PR branch'
-              return;
-            }
-
-            for (int i = 0; i < projects.size(); i++) {
-              def project = projects[i];
-              def firebaseSiteName = FIREBASE_APP_SITES[project];
-
-              if (firebaseSiteName == null) {
-                print "No release available for: ${project}"
-                continue;
-              }
-
-              final boolean isPreviewBranch = env.BRANCH_NAME.startsWith("release-preview-${project}")
-              final boolean isReleaseBranch = !isPreviewBranch && env.BRANCH_NAME.startsWith("release-${project}")
-              final boolean isUsingSingleBranchStrategy = VERSIONING_STRATEGY[project] == 'single-branch';
-              final boolean releaseToProd = isUsingSingleBranchStrategy || isReleaseBranch;
-
-               if (releaseToProd) {
-                   releaseEnvironment = 'production'
-               } else if (isPreviewBranch) {
-                   releaseEnvironment = 'preview'
-               } else {
-                   releaseEnvironment = 'staging'
-               }
-
-              // Run the yarn install in the app in cases of local packages.json
-              dir("apps/${project}") {
-                if (fileExists("yarn.lock")) {
-                  yarn.setup()
-                }
-              }
-
-              stageWithNotify("Publish production build: ${project}") {
-                appHosting(
-                  appName: firebaseSiteName,
-                  environment: releaseEnvironment,
-                  firebaseJson: "dist/apps/${project}/firebase.json",
-                  buildCommand: "NODE_OPTIONS=--max-old-space-size=8192 yarn build ${releaseEnvironment} ${project}",
-                  buildFolder: "dist/apps/${project}",
-                  isFusionSubapp: true,
-                )
-
-                slack.send(
-                  channel: SLACK_CHANNEL,
-                  message: "Deployment of ${env.BRANCH_NAME} complete for: ${project}!"
-                )
-              }
-
-              if(I18N_APPLICATIONS.contains(project)){
-                stageWithNotify('Save missing keys to locize') {
-                  sh("yarn i18n-push ${project}")
-                }
-                stageWithNotify('Remove deleted keys from locize') {
-                  sh("yarn i18n-remove-deleted ${project}")
-                }
-              }
-            }
-          }
-        }
-      )
+//       parallel(
+//         'Preview': {
+//           container('apphosting') {
+//             if (!isPullRequest) {
+//               print 'No PR previews for release builds'
+//               return
+//             }
+//
+//             //this can be deleted at the end, left it to delete comments in older PRs
+//             deleteComments('[FUSION_PREVIEW_URL]')
+//           }
+//         },
+//
+//         'Release': {
+//           container('apphosting') {
+//             print "branch name: ${env.BRANCH_NAME}";
+//             print "change id: ${env.CHANGE_ID}";
+//             print "isMaster: ${isMaster}";
+//             print "isRelease: ${isRelease}";
+//
+//             if (isPullRequest) {
+//               print 'No deployment on PR branch'
+//               return;
+//             }
+//
+//             for (int i = 0; i < projects.size(); i++) {
+//               def project = projects[i];
+//               def firebaseSiteName = FIREBASE_APP_SITES[project];
+//
+//               if (firebaseSiteName == null) {
+//                 print "No release available for: ${project}"
+//                 continue;
+//               }
+//
+//               final boolean isPreviewBranch = env.BRANCH_NAME.startsWith("release-preview-${project}")
+//               final boolean isReleaseBranch = !isPreviewBranch && env.BRANCH_NAME.startsWith("release-${project}")
+//               final boolean isUsingSingleBranchStrategy = VERSIONING_STRATEGY[project] == 'single-branch';
+//               final boolean releaseToProd = isUsingSingleBranchStrategy || isReleaseBranch;
+//
+//                if (releaseToProd) {
+//                    releaseEnvironment = 'production'
+//                } else if (isPreviewBranch) {
+//                    releaseEnvironment = 'preview'
+//                } else {
+//                    releaseEnvironment = 'staging'
+//                }
+//
+//               // Run the yarn install in the app in cases of local packages.json
+//               dir("apps/${project}") {
+//                 if (fileExists("yarn.lock")) {
+//                   yarn.setup()
+//                 }
+//               }
+//
+//               stageWithNotify("Publish production build: ${project}") {
+//                 appHosting(
+//                   appName: firebaseSiteName,
+//                   environment: releaseEnvironment,
+//                   firebaseJson: "dist/apps/${project}/firebase.json",
+//                   buildCommand: "NODE_OPTIONS=--max-old-space-size=8192 yarn build ${releaseEnvironment} ${project}",
+//                   buildFolder: "dist/apps/${project}",
+//                   isFusionSubapp: true,
+//                 )
+//
+//                 slack.send(
+//                   channel: SLACK_CHANNEL,
+//                   message: "Deployment of ${env.BRANCH_NAME} complete for: ${project}!"
+//                 )
+//               }
+//
+//               if(I18N_APPLICATIONS.contains(project)){
+//                 stageWithNotify('Save missing keys to locize') {
+//                   sh("yarn i18n-push ${project}")
+//                 }
+//                 stageWithNotify('Remove deleted keys from locize') {
+//                   sh("yarn i18n-remove-deleted ${project}")
+//                 }
+//               }
+//             }
+//           }
+//         }
+//       )
     }
   }
 }

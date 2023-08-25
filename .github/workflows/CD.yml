@@ -152,6 +152,20 @@ jobs:
           firebaseSite: ${{ fromJson(steps.project-config.outputs.config).pipeline.firebaseSite }}
           firebaseProjectId: ${{ fromJson(steps.project-config.outputs.config).pipeline.firebaseProjectId }}
 
+      - name: Get firebase.json content
+        id: firebase-json-content
+        uses: ./scripts/github-actions/get-firebase-json-content
+        with:
+          firebaseSite: ${{ steps.firebase-target.outputs.site }}
+
+      - name: Create firebase.json file
+        id: create-json
+        uses: jsdaniell/create-json@v1.2.2
+        with:
+          name: 'firebase.json'
+          json: ${{ steps.firebase-json-content.outputs.content }}
+          dir: 'dist/apps/${{ matrix.project }}/'
+
       - name: Deploy to firebase hosting (${{ steps.deploy-environment.outputs.environment }})
         uses: FirebaseExtended/action-hosting-deploy@v0
         if: ${{ fromJson(steps.project-config.outputs.config).pipeline.releaseStrategy }}
@@ -223,6 +237,20 @@ jobs:
           environment: ${{ steps.deploy-environment.outputs.environment }}
           firebaseSite: ${{ fromJson(steps.project-config.outputs.config).pipeline.firebaseSite }}
           firebaseProjectId: ${{ fromJson(steps.project-config.outputs.config).pipeline.firebaseProjectId }}
+
+      - name: Get firebase.json content
+        id: firebase-json-content
+        uses: ./scripts/github-actions/get-firebase-json-content
+        with:
+          firebaseSite: ${{ steps.firebase-target.outputs.site }}
+
+      - name: Create firebase.json file
+        id: create-json
+        uses: jsdaniell/create-json@v1.2.2
+        with:
+          name: 'firebase.json'
+          json: ${{ steps.firebase-json-content.outputs.content }}
+          dir: 'dist/apps/${{ matrix.project }}/'
 
       - name: Deploy to firebase hosting (${{ steps.deploy-environment.outputs.environment }})
         uses: FirebaseExtended/action-hosting-deploy@v0
