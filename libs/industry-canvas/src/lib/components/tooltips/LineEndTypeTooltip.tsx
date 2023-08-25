@@ -3,6 +3,9 @@ import React from 'react';
 import { Button, ToolBar } from '@cognite/cogs.js';
 import { PolylineEndType } from '@cognite/unified-file-viewer';
 
+import { translationKeys } from '../../common';
+import { useTranslation } from '../../hooks/useTranslation';
+
 export type LineEndTypeTooltipProps = {
   selectedStartEndType: PolylineEndType | undefined;
   selectedEndEndType: PolylineEndType | undefined;
@@ -17,13 +20,15 @@ export const LineEndTypeTooltip: React.FC<LineEndTypeTooltipProps> = ({
   selectedEndEndType = PolylineEndType.NONE,
   onUpdateEndType,
 }) => {
+  const { t } = useTranslation();
+
   return (
     <ToolBar direction="horizontal">
       <>
         <Button
           key="left-arrow"
           className="cogs-button--icon-only"
-          aria-label="left-arrow"
+          aria-label={t(translationKeys.ARROW_LEFT_ICON, 'arrow left')}
           type="ghost"
           icon="ArrowLeft"
           toggled={selectedStartEndType === PolylineEndType.ARROW}
