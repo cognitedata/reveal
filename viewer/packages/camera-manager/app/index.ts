@@ -44,7 +44,7 @@ function init() {
 
   keyboard = new Keyboard(renderer.domElement);
 
-  controls = new ComboControls(camera, renderer.domElement);
+  controls = new ComboControls(camera, renderer.domElement, { scene });
 
   controls.options = {
     dynamicTarget: true,

@@ -1,5 +1,5 @@
 /*!
- * Copyright 2021 Cognite AS
+ * Copyright 2021-2023 Cognite AS
  */
 
 import * as THREE from 'three';
@@ -109,7 +109,10 @@ export class DefaultCameraManager implements CameraManager {
     domElement: HTMLElement,
     inputHandler: InputHandler,
     raycastFunction: (x: number, y: number) => Promise<CameraManagerCallbackData>,
-    camera?: THREE.PerspectiveCamera
+    camera?: THREE.PerspectiveCamera,
+    options?: {
+      scene?: THREE.Scene;
+    }
   ) {
     this._camera = camera ?? new THREE.PerspectiveCamera(60, undefined, 0.1, 10000);
 
@@ -118,7 +121,7 @@ export class DefaultCameraManager implements CameraManager {
     this._modelRaycastCallback = raycastFunction;
 
     this.setCameraControlsOptions(this._cameraControlsOptions);
-    this._controls = new ComboControls(this._camera, domElement);
+    this._controls = new ComboControls(this._camera, domElement, options);
     this.setComboControlsOptions({ minZoomDistance: DefaultCameraManager.MinZoomDistance });
 
     this._controls.addEventListener('cameraChange', event => {

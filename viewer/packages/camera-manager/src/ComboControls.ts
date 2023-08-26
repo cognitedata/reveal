@@ -16,7 +16,11 @@ import {
   Raycaster,
   Spherical,
   Vector2,
-  Vector3
+  Vector3,
+  Scene,
+  Mesh,
+  SphereGeometry,
+  MeshBasicMaterial
 } from 'three';
 import Keyboard from './Keyboard';
 
@@ -139,6 +143,17 @@ export class ComboControls extends EventDispatcher {
 
   private readonly _pointEventCache: Array<PointerEvent> = [];
 
+  private readonly _scene: Scene | null = null;
+  // color 147 160 246 = #93A0F6
+  private readonly _rotationIndicator: Mesh = new Mesh(
+    new SphereGeometry(2),
+    new MeshBasicMaterial({
+      color: '#93A0F6', // --cogs-primary-inverted (dark)
+      transparent: true,
+      opacity: 0.6
+    })
+  );
+
   private _enabled: boolean = true;
   private _options: ComboControlsOptions = ComboControls.DefaultControlsOptions;
   private static readonly DefaultControlsOptions: Readonly<Required<ComboControlsOptions>> = {
@@ -215,12 +230,19 @@ export class ComboControls extends EventDispatcher {
     this._enabled = newEnabledValue;
   }
 
-  constructor(camera: PerspectiveCamera | OrthographicCamera, domElement: HTMLElement) {
+  constructor(
+    camera: PerspectiveCamera | OrthographicCamera,
+    domElement: HTMLElement,
+    options?: {
+      scene?: THREE.Scene;
+    }
+  ) {
     super();
     this._camera = camera;
     this._reusableCamera = camera.clone() as typeof camera;
     this._domElement = domElement;
     this._keyboard = new Keyboard(this._domElement);
+    this._scene = options?.scene ?? null;
 
     // rotation
     this._spherical.setFromVector3(camera.position);
@@ -402,6 +424,15 @@ export class ComboControls extends EventDispatcher {
     this._sphericalEnd.copy(this._spherical);
     switch (event.button) {
       case MOUSE.LEFT: {
+        this._rotationIndicator.position.copy(this._target);
+        // For some reason, the position is not updated correctly without the lookAt call.
+        // TODO: Investigate why before merging.
+        this._rotationIndicator.lookAt(this._camera.position);
+        // Reset rotation so that the indicator is always aligned with the scene.
+        this._rotationIndicator.rotation.set(0, 0, 0);
+
+        this._scene?.add(this._rotationIndicator);
+
         this.startMouseRotation(event);
         break;
       }
@@ -432,6 +463,7 @@ export class ComboControls extends EventDispatcher {
 
   private readonly onMouseUp = () => {
     this._accumulatedMouseMove.set(0, 0);
+    this._scene?.remove(this._rotationIndicator);
   };
 
   private readonly onMouseWheel = (event: WheelEvent) => {
