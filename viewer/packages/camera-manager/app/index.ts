@@ -1,5 +1,5 @@
 /*!
- * Copyright 2021 Cognite AS
+ * Copyright 2021-2023 Cognite AS
  */
 import * as THREE from 'three';
 import { ComboControls } from '../src/ComboControls';
@@ -61,7 +61,7 @@ function init() {
   document.body.appendChild(renderer.domElement);
 }
 
-function render(time: number) {
+function render(deltaTimeS: number) {
   currentControlsState = controls.getState();
 
   if (keyboard.isPressed('KeyC')) {
@@ -74,7 +74,7 @@ function render(time: number) {
     controls.setState(currentControlsState.position, currentControlsState.target.copy(new THREE.Vector3(3, 2, 0)));
   }
 
-  controls.update(time);
+  controls.update(deltaTimeS);
   sphere.position.copy(controls.getState().target);
   renderer.render(scene, camera);
 }

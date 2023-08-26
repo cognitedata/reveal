@@ -235,7 +235,7 @@ export class ComboControls extends EventDispatcher {
     };
   }
 
-  public update = (deltaTime: number, forceUpdate = false): boolean => {
+  public update = (deltaTimeS: number, forceUpdate = false): boolean => {
     const { _camera, _target, _targetEnd, _spherical, _sphericalEnd, _deltaTarget, handleKeyboard, _targetFPS } = this;
 
     if (!forceUpdate && !this._enabled) {
@@ -243,10 +243,11 @@ export class ComboControls extends EventDispatcher {
     }
 
     // the target framerate
-    const actualFPS = Math.min(1 / deltaTime, _targetFPS);
+    // TODO: This value seems to be calculated incorrectly. Investigate and fix.
+    const actualFPS = Math.min(1 / deltaTimeS, _targetFPS);
     this._targetFPSOverActualFPS = _targetFPS / actualFPS;
 
-    handleKeyboard();
+    handleKeyboard(deltaTimeS);
 
     if (this._accumulatedMouseMove.lengthSq() > 0) {
       this.rotate(this._accumulatedMouseMove.x, this._accumulatedMouseMove.y);
@@ -653,11 +654,28 @@ export class ComboControls extends EventDispatcher {
     document.addEventListener('pointerup', onTouchEnd);
   };
 
-  private handleRotation(): void {
+  /**
+   * Converts deltaTimeS to a time scale based on the target frames per second (FPS).
+   *
+   * @param deltaTimeS - The elapsed time since the last frame in seconds.
+   * @returns The time scale, which is a factor representing the relationship of deltaTimeS to the target FPS.
+   */
+  private getTimeScale(deltaTimeS: number): number {
+    return deltaTimeS / (1 / this._targetFPS);
+  }
+
+  private handleRotation(timeScale: number): void {
     const azimuthAngle =
-      this._options.keyboardRotationSpeedAzimuth * this._keyboard.getKeyboardMovementValue('ArrowLeft', 'ArrowRight');
+      this._options.keyboardRotationSpeedAzimuth *
+      this._keyboard.getKeyboardMovementValue('ArrowLeft', 'ArrowRight') *
+      timeScale;
+
+    // TODO: This values is reassigned below and that makes it difficult to understand this function
+    //       Refactor before merge or open a ticket to fix it later.
     let polarAngle =
-      this._options.keyboardRotationSpeedPolar * this._keyboard.getKeyboardMovementValue('ArrowUp', 'ArrowDown');
+      this._options.keyboardRotationSpeedPolar *
+      this._keyboard.getKeyboardMovementValue('ArrowUp', 'ArrowDown') *
+      timeScale;
 
     if (azimuthAngle === 0 && polarAngle === 0) {
       return;
@@ -675,7 +693,7 @@ export class ComboControls extends EventDispatcher {
     this.rotateFirstPersonMode(azimuthAngle * compensationForPolarAngleFactor, polarAngle);
   }
 
-  private handleDolly(): void {
+  private handleDolly(timeScale: number): void {
     const speedFactor = this._keyboard.isShiftPressed() ? this._options.keyboardSpeedFactor : 1;
     const moveDirection = this._keyboard.getKeyboardMovementValue('KeyW', 'KeyS');
     if (moveDirection === 0) {
@@ -685,13 +703,13 @@ export class ComboControls extends EventDispatcher {
     const booleanMoveDirection = moveDirection === 1;
     const dollyDeltaDistance = this.getDollyDeltaDistance(
       booleanMoveDirection,
-      speedFactor * this._options.keyboardDollySpeed
+      speedFactor * this._options.keyboardDollySpeed * timeScale
     );
     this.dolly(0, 0, dollyDeltaDistance, true);
     this._firstPersonMode = true;
   }
 
-  private handlePan(): void {
+  private handlePan(timeScale: number): void {
     const horizontalMovement = this._keyboard.getKeyboardMovementValue('KeyA', 'KeyD');
     const verticalMovement = this._keyboard.getKeyboardMovementValue('KeyE', 'KeyQ');
 
@@ -702,19 +720,21 @@ export class ComboControls extends EventDispatcher {
     this._firstPersonMode = true;
     const speedFactor = this._keyboard.isShiftPressed() ? this._options.keyboardSpeedFactor : 1;
     this.pan(
-      speedFactor * this._options.keyboardPanSpeed * horizontalMovement,
-      speedFactor * this._options.keyboardPanSpeed * verticalMovement
+      timeScale * speedFactor * this._options.keyboardPanSpeed * horizontalMovement,
+      timeScale * speedFactor * this._options.keyboardPanSpeed * verticalMovement
     );
   }
 
-  private readonly handleKeyboard = () => {
+  private readonly handleKeyboard = (deltaTimeS: number) => {
     if (!this._enabled || !this._options.enableKeyboardNavigation) {
       return;
     }
 
-    this.handleRotation();
-    this.handleDolly();
-    this.handlePan();
+    const timeScale = this.getTimeScale(deltaTimeS);
+
+    this.handleRotation(timeScale);
+    this.handleDolly(timeScale);
+    this.handlePan(timeScale);
   };
 
   private readonly rotateSpherical = (azimuthAngle: number, polarAngle: number) => {
