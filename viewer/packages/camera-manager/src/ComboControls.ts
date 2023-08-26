@@ -683,12 +683,11 @@ export class ComboControls extends EventDispatcher {
     }
 
     const booleanMoveDirection = moveDirection === 1;
-    this.dolly(
-      0,
-      0,
-      this.getDollyDeltaDistance(booleanMoveDirection, speedFactor * this._options.keyboardDollySpeed),
-      true
+    const dollyDeltaDistance = this.getDollyDeltaDistance(
+      booleanMoveDirection,
+      speedFactor * this._options.keyboardDollySpeed
     );
+    this.dolly(0, 0, dollyDeltaDistance, true);
     this._firstPersonMode = true;
   }
 
