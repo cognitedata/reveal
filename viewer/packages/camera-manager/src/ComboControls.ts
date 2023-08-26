@@ -244,7 +244,6 @@ export class ComboControls extends EventDispatcher {
     }
 
     // the target framerate
-    // TODO: This value seems to be calculated incorrectly. Investigate and fix.
     const actualFPS = Math.min(1 / deltaTimeS, _targetFPS);
     this._targetFPSOverActualFPS = _targetFPS / actualFPS;
 
