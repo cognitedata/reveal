@@ -18,7 +18,7 @@ import {
   Vector2,
   Vector3
 } from 'three';
-import Keyboard, { EventCode } from './Keyboard';
+import Keyboard from './Keyboard';
 
 const isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') !== -1;
 
@@ -653,28 +653,11 @@ export class ComboControls extends EventDispatcher {
     document.addEventListener('pointerup', onTouchEnd);
   };
 
-  private isKeyPressed(key: EventCode): boolean {
-    return this._keyboard.isPressed(key);
-  }
-
-  /**
-   * Calculates the movement direction based on keyboard input.
-   *
-   * Given two keys representing positive and negative directions (e.g., left and right, or up and down),
-   * this method returns 1 for the positive key, -1 for the negative key, or 0 if neither or both is pressed.
-   *
-   * @param positiveKey - Key representing the positive movement direction.
-   * @param negativeKey - Key representing the negative movement direction.
-   * @returns A value indicating the direction of movement: 1 (positive), -1 (negative), or 0 (none).
-   */
-  private getKeyboardMovementValue(positiveKey: EventCode, negativeKey: EventCode): number {
-    return (this.isKeyPressed(positiveKey) ? 1 : 0) - (this.isKeyPressed(negativeKey) ? 1 : 0);
-  }
-
   private handleRotation(): void {
     const azimuthAngle =
-      this._options.keyboardRotationSpeedAzimuth * this.getKeyboardMovementValue('ArrowLeft', 'ArrowRight');
-    let polarAngle = this._options.keyboardRotationSpeedPolar * this.getKeyboardMovementValue('ArrowUp', 'ArrowDown');
+      this._options.keyboardRotationSpeedAzimuth * this._keyboard.getKeyboardMovementValue('ArrowLeft', 'ArrowRight');
+    let polarAngle =
+      this._options.keyboardRotationSpeedPolar * this._keyboard.getKeyboardMovementValue('ArrowUp', 'ArrowDown');
 
     if (azimuthAngle === 0 && polarAngle === 0) {
       return;
@@ -694,7 +677,7 @@ export class ComboControls extends EventDispatcher {
 
   private handleDolly(): void {
     const speedFactor = this._keyboard.isShiftPressed() ? this._options.keyboardSpeedFactor : 1;
-    const moveDirection = this.getKeyboardMovementValue('KeyW', 'KeyS');
+    const moveDirection = this._keyboard.getKeyboardMovementValue('KeyW', 'KeyS');
     if (moveDirection === 0) {
       return;
     }
@@ -710,8 +693,8 @@ export class ComboControls extends EventDispatcher {
   }
 
   private handlePan(): void {
-    const horizontalMovement = this.getKeyboardMovementValue('KeyA', 'KeyD');
-    const verticalMovement = this.getKeyboardMovementValue('KeyE', 'KeyQ');
+    const horizontalMovement = this._keyboard.getKeyboardMovementValue('KeyA', 'KeyD');
+    const verticalMovement = this._keyboard.getKeyboardMovementValue('KeyE', 'KeyQ');
 
     if (horizontalMovement === 0 && verticalMovement === 0) {
       return;

@@ -30,7 +30,7 @@ const EVENT_CODES = [
   'KeyW'
 ] as const;
 
-export type EventCode = (typeof EVENT_CODES)[number];
+type EventCode = (typeof EVENT_CODES)[number];
 
 export default class Keyboard {
   private readonly _keys = new Set<string>();
@@ -78,6 +78,20 @@ export default class Keyboard {
   public dispose(): void {
     this.clearPressedKeys();
     this.removeEventListeners();
+  }
+
+  /**
+   * Calculates the movement direction based on keyboard input.
+   *
+   * Given two keys representing positive and negative directions (e.g., left and right, or up and down),
+   * this method returns 1 for the positive key, -1 for the negative key, or 0 if neither or both is pressed.
+   *
+   * @param positiveKey - Key representing the positive movement direction.
+   * @param negativeKey - Key representing the negative movement direction.
+   * @returns A value indicating the direction of movement: 1 (positive), -1 (negative), or 0 (none).
+   */
+  public getKeyboardMovementValue(positiveKey: EventCode, negativeKey: EventCode): number {
+    return (this.isPressed(positiveKey) ? 1 : 0) - (this.isPressed(negativeKey) ? 1 : 0);
   }
 
   private readonly addEventListeners = () => {
