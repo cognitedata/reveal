@@ -4,24 +4,24 @@ import { useQuery } from '@tanstack/react-query';
 
 import { useSDK } from '@cognite/sdk-provider';
 
+import { useSiteConfig } from '../../../../hooks/useConfig';
 import {
   useDataTypeFilterParams,
   useSearchQueryParams,
 } from '../../../../hooks/useParams';
-import { useProjectConfig } from '../../../../hooks/useProjectConfig';
 import { buildFilesFilter } from '../../../../utils/filterBuilder';
 import { queryKeys } from '../../../queryKeys';
 
 export const useFilesSearchAggregateCountQuery = () => {
   const sdk = useSDK();
-  const config = useProjectConfig();
+  const siteConfig = useSiteConfig();
 
   const [query] = useSearchQueryParams();
 
   const [filesFilterParams] = useDataTypeFilterParams('Files');
   const filter = useMemo(
-    () => buildFilesFilter(filesFilterParams, config),
-    [filesFilterParams, config]
+    () => buildFilesFilter(filesFilterParams, siteConfig),
+    [filesFilterParams, siteConfig]
   );
 
   return useQuery(queryKeys.aggregateFiles(query, filter as any), async () => {

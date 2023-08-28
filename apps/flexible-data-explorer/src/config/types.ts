@@ -9,8 +9,15 @@ export type DataModelConfig = {
 };
 
 export type ProjectConfig = {
+  company: 'Cognite' | 'Celanese';
   project: string;
-  site: string;
+  sites?: SiteConfig[];
+  /** Enable this if you want to be able to select data models under the 'custom' site (development projects only!) */
+  showCustomSite?: boolean;
+};
+
+export type SiteConfig = {
+  name: string;
   imageUrl?: string;
   description?: string;
   dataModels?: DataModelV2[];

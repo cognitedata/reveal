@@ -21,13 +21,16 @@ const run = async () => {
 
     if (releaseToProd) {
       if (project === 'platypus') {
-        setOutput('environment', 'fusion');
+        setOutput('build', 'fusion');
       } else {
-        setOutput('environment', 'production');
+        setOutput('build', 'production');
       }
+      setOutput('environment', 'production');
     } else if (isPreviewBranch) {
+      setOutput('build', 'preview');
       setOutput('environment', 'preview');
     } else {
+      setOutput('build', 'staging');
       setOutput('environment', 'staging');
     }
   } catch (error) {

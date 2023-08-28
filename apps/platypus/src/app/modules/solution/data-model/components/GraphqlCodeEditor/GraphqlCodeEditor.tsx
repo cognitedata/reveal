@@ -25,7 +25,7 @@ const getSampleDataModel = (
 # Using GraphQL you can easily create a data model
 # You can start with the example below or delete everything and 
 # start from scratch
-# Documentation: https://docs.cognite.com/cdf/data_modeling/references/graphql_datamodeling_language_spec
+# Documentation: https://developer.cognite.com/dm/graphql/modeling
 
 # Useful shortcuts:
 # "CTRL + /" or "CMD + /" to comment in/out code
@@ -52,7 +52,7 @@ const getSampleDataModel = (
 #     name: String!
 #     desc: String!
 #     # CDF has additional relations to make defining more complex cases easier
-#     # https://docs.cognite.com/cdf/data_modeling/concepts/bidirectional_relation
+#     # https://developer.cognite.com/dm/concepts/bidirectional_relation/
 #     # in this case, we want a bi-directional relationship of
 #     # Pump.livesIn <-> Facility.hasPumps
 #     hasPumps: [Pump] @relation(

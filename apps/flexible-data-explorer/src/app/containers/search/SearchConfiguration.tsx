@@ -5,9 +5,9 @@ import styled from 'styled-components';
 import { Body, Title, Tooltip } from '@cognite/cogs.js';
 
 import { ModalConfirm } from '../../components/confirm/ModalConfirm';
+import { useSiteConfig } from '../../hooks/useConfig';
 import { useDataModelsLocalStorage } from '../../hooks/useLocalStorage';
 import { useAISearchParams } from '../../hooks/useParams';
-import { useProjectConfig } from '../../hooks/useProjectConfig';
 import { useTranslation } from '../../hooks/useTranslation';
 import { useSelectedDataModels } from '../../services/useSelectedDataModels';
 
@@ -18,7 +18,7 @@ interface Props {
 // NOTE: This component is, with a lack of a better word, a mess!! Align it better with design
 export const SearchConfiguration: React.FC<Props> = ({ header }) => {
   const { t } = useTranslation();
-  const config = useProjectConfig();
+  const siteConfig = useSiteConfig();
 
   const selectedDataModels = useSelectedDataModels();
 
@@ -35,11 +35,11 @@ export const SearchConfiguration: React.FC<Props> = ({ header }) => {
       <Wrapper level={header ? 3 : 6}>
         {header
           ? t(isAIEnabled ? 'AI_HOMEPAGE_HEADER' : 'HOMEPAGE_HEADER', {
-              site: config?.site,
+              site: siteConfig?.name,
             })
-          : t('SEARCH_RESULTS_HEADER', { site: config?.site })}
+          : t('SEARCH_RESULTS_HEADER', { site: siteConfig?.name })}
 
-        {!config?.dataModels && (
+        {!siteConfig?.dataModels && (
           <ModalConfirm
             title="Are you sure you want to change the data models?"
             content="By confirming, you will lose all your current selections!"
