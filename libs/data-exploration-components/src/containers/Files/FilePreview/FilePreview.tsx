@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 
 import styled from 'styled-components';
 
@@ -106,7 +107,18 @@ export const FilePreview = ({
   const { t } = useTranslation();
   const trackUsage = useDebouncedMetrics();
   const [unifiedViewerRef, setUnifiedViewerRef] = useState<UnifiedViewer>();
-  const [page, setPage] = useState(1);
+
+  const location = useLocation();
+  const query = new URLSearchParams(location.search);
+  const pageFromUrl = query.get('page');
+
+  const [page, setPage] = useState(pageFromUrl ? parseInt(pageFromUrl) : 1);
+  useEffect(() => {
+    if (pageFromUrl) {
+      setPage(parseInt(pageFromUrl));
+    }
+  }, [pageFromUrl]);
+
   const [container, setContainer] = useState<FileContainerProps>();
   const [hoverId, setHoverId] = useState<string | undefined>(undefined);
   const [pendingAnnotations, setPendingAnnotations] = useState<
