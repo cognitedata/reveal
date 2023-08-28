@@ -22,7 +22,7 @@ export default class HighlightedVisualTest extends StreamingVisualTestFixture {
       .getModelNodeAppearanceProvider(modelIdentifier)
       .assignStyledNodeCollection(nodes, DefaultNodeAppearance.Highlighted);
 
-    // Styles are not applied immidiatly, so wait a little for styling to take effect
+    // Styles are not applied immediately, so wait a little for styling to take effect
     await new Promise(resolve => setTimeout(resolve, 100));
 
     model.geometryNode.position.set(25, 0, -15);
