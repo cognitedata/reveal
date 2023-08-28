@@ -3,9 +3,8 @@ import { useMemo, useState } from 'react';
 import empty from 'lodash/isEmpty';
 import { matchSorter } from 'match-sorter';
 
-import { Input } from '@cognite/cogs.js';
-
 import { Button } from '../../../../../components/buttons/Button';
+import { SearchInput } from '../../../../../components/input/SearchInput';
 import { SearchResults } from '../../../../../components/search/SearchResults';
 import { Widget } from '../../../../../components/widget/Widget';
 import { useNavigation } from '../../../../../hooks/useNavigation';
@@ -36,15 +35,7 @@ export const FileRelationshipEdgesCollapsed: React.FC<
         header="File"
         title={t('RELATIONSHIP_EDGES_WIDGET_TITLE', { type: id })}
       >
-        {!isEmpty && (
-          <Input
-            placeholder="Search..."
-            value={query}
-            onChange={(e) => {
-              setQuery(e.target.value);
-            }}
-          />
-        )}
+        {!isEmpty && <SearchInput query={query} onChange={setQuery} />}
 
         <Button.Fullscreen
           onClick={() => onExpandClick?.(id)}
