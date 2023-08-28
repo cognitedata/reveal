@@ -1,4 +1,4 @@
-import * as en from './en/copilot.json';
+import * as en from './en/copilot-core.json';
 
 /**
  * copilot app translations
