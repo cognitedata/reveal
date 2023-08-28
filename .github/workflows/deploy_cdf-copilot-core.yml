@@ -16,7 +16,7 @@ jobs:
 
       - name: Set NPMKEY variable
         run: |
-          export NPMKEY=$(echo "//registry.npmjs.org/:_authToken=${{secrets.NPM_READONLY_TOKEN}}")
+          export NPMKEY=$(echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_READONLY_TOKEN }}")
           echo "::set-output name=NPMKEY::$NPMKEY"
         id: npm_auth_key
 
@@ -27,7 +27,19 @@ jobs:
         run: |
           yarn install --frozen-lockfile
           rm .npmrc
-          yarn build production copilot-core
+
+      - name: Save missing keys to locize
+        run: yarn i18n-push copilot-core
+        env:
+          LOCIZE_API_KEY: ${{ secrets.LOCIZE_API_KEY }}
+
+      - name: Remove deleted keys from locize
+        run: yarn i18n-remove-deleted copilot-core
+        env:
+          LOCIZE_API_KEY: ${{ secrets.LOCIZE_API_KEY }}
+
+      - name: Build
+        run: yarn build production copilot-core
 
       - name: Deploy Copilot Core to npm 🚀
         id: publish

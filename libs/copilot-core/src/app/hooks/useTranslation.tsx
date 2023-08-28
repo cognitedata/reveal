@@ -5,7 +5,7 @@ import { TOptions } from 'i18next';
 import { useTypedTranslation } from '@cognite/cdf-i18n-utils';
 
 // ENGLISH is the default language and source of truth.
-import english from '../../i18n/en/copilot.json';
+import english from '../../i18n/en/copilot-core.json';
 
 export type TFunction = (
   key: keyof typeof english,
