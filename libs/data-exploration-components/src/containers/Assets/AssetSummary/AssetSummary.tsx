@@ -5,7 +5,6 @@ import {
   SubCellMatchingLabels,
   SummaryCardWrapper,
   Table,
-  ThreeDModelCell,
 } from '@data-exploration/components';
 import { useAssetsMetadataColumns } from '@data-exploration/containers';
 import { SummaryHeader } from '@data-exploration-components/components/SummaryHeader/SummaryHeader';
@@ -103,15 +102,7 @@ export const AssetSummary = ({
         tableColumns.description(),
         tableColumns.externalId(),
         tableColumns.rootAsset(onRowClick),
-        {
-          accessorKey: 'id',
-          header: t('3D_AVAILABILITY', '3D availability'),
-          cell: ({ getValue }) => (
-            <ThreeDModelCell assetId={getValue<number>()} />
-          ),
-          size: 300,
-          enableSorting: false,
-        },
+        tableColumns.availabilityThreeD,
         tableColumns.created,
         {
           ...tableColumns.labels,

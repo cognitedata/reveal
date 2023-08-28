@@ -54,7 +54,15 @@ const defaultTranslations = makeDefaultTranslations(
   'Show',
   'Hide',
   'Value',
-  'Do you want to delete'
+  'Do you want to delete',
+  'Add new',
+  'Cancel',
+  'Confirm',
+  'seconds',
+  'minutes',
+  'hours',
+  'New threshold',
+  'Duplicate'
 );
 
 type OptionType = {
@@ -78,36 +86,6 @@ type Props = {
   expandFilters?: boolean;
 };
 
-const typeOptions: OptionType[] = [
-  {
-    value: 'between',
-    label: 'Between',
-  },
-  {
-    value: 'over',
-    label: 'Over',
-  },
-  {
-    value: 'under',
-    label: 'Under',
-  },
-];
-
-const filterLengthOptions: OptionType[] = [
-  {
-    value: 'seconds',
-    label: 's',
-  },
-  {
-    value: 'minutes',
-    label: 'm',
-  },
-  {
-    value: 'hours',
-    label: 'h',
-  },
-];
-
 const ThresholdItem = ({
   threshold,
   sources,
@@ -127,6 +105,36 @@ const ThresholdItem = ({
     ...defaultTranslations,
     ...translations,
   };
+
+  const typeOptions: OptionType[] = [
+    {
+      value: 'between',
+      label: t.Between,
+    },
+    {
+      value: 'over',
+      label: t.Over,
+    },
+    {
+      value: 'under',
+      label: t.Under,
+    },
+  ];
+
+  const filterLengthOptions: OptionType[] = [
+    {
+      value: 'seconds',
+      label: t.seconds,
+    },
+    {
+      value: 'minutes',
+      label: t.minutes,
+    },
+    {
+      value: 'hours',
+      label: t.hours,
+    },
+  ];
 
   const selectedTypeOption = typeOptions.find(
     (item) => item.value === threshold.type
@@ -430,6 +438,8 @@ const ThresholdItem = ({
             <Popconfirm
               content={`${t['Do you want to delete']} "${threshold.name}"?`}
               onConfirm={() => onRemoveThreshold(threshold.id)}
+              okText={t.Confirm}
+              cancelText={t.Cancel}
             >
               <Button
                 type="ghost-destructive"

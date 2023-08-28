@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import styled from 'styled-components';
 
@@ -12,22 +12,18 @@ import {
 } from '@fusion/copilot-core';
 
 import { SearchResults } from '../../../components/search/SearchResults';
-import { useIsCopilotEnabled } from '../../../hooks/useFlag';
+import { useIsCogpilotEnabled } from '../../../hooks/useFlag';
 import { useAIQueryLocalStorage } from '../../../hooks/useLocalStorage';
 import {
   useAISearchParams,
-  useSearchFilterParams,
   useSearchQueryParams,
 } from '../../../hooks/useParams';
-import { useTranslation } from '../../../hooks/useTranslation';
 import { useSelectedDataModels } from '../../../services/useSelectedDataModels';
 import { AIResultsList } from '../containers/AIResultsList';
 import { AIResultSummary } from '../containers/AIResultSummary';
 
 export const AIResults = () => {
-  const { t } = useTranslation();
   const [query] = useSearchQueryParams();
-  const [filters] = useSearchFilterParams();
   const selectedDataModels = useSelectedDataModels();
   const [aiSearchEnabled] = useAISearchParams();
   const [isSearching, setIsSearching] = useState(false);
@@ -40,11 +36,13 @@ export const AIResults = () => {
 
   useEffect(() => {
     if (cachedQuery && !isSearching) {
-      setMessage((currMessage) => currMessage || cachedQuery.message);
+      if (query === cachedQuery.search) {
+        setMessage((currMessage) => currMessage || cachedQuery.message);
+      }
     }
-  }, [cachedQuery, isSearching]);
+  }, [cachedQuery, isSearching, query]);
 
-  const isCopilotEnabled = useIsCopilotEnabled();
+  const isCopilotEnabled = useIsCogpilotEnabled();
 
   useToCopilotEventHandler('NEW_MESSAGES', (messages) => {
     for (const message of messages) {
@@ -59,52 +57,54 @@ export const AIResults = () => {
     setMessage((curr) => (curr ? { ...curr, summary } : undefined));
   });
 
+  const sendMessage = useCallback(() => {
+    if (cachedQuery?.search !== query) {
+      setMessage(undefined);
+      setIsSearching(true);
+      sendToCopilotEvent('NEW_CHAT_WITH_MESSAGES', {
+        chain: 'GraphQlChain',
+        messages: [
+          {
+            source: 'bot',
+            type: 'data-models',
+            dataModels: (selectedDataModels || []).map((model) => ({
+              dataModel: model.externalId,
+              space: model.space,
+              version: model.version,
+            })),
+            content: 'I am looking at data in this data model',
+          },
+          {
+            source: 'user',
+            content: query,
+            type: 'text',
+            context: 'Searched in Explorer',
+          },
+        ],
+      });
+    }
+  }, [query, selectedDataModels, cachedQuery]);
+
   useEffect(() => {
-    const sendMessage = () => {
-      if (cachedQuery?.search !== query) {
-        setMessage(undefined);
-        setIsSearching(true);
-        sendToCopilotEvent('NEW_CHAT_WITH_MESSAGES', {
-          chain: 'GraphQlChain',
-          messages: [
-            {
-              source: 'bot',
-              type: 'data-models',
-              dataModels: (selectedDataModels || []).map((model) => ({
-                dataModel: model.externalId,
-                space: model.space,
-                version: model.version,
-              })),
-              content: 'I am looking at data in this data model',
-            },
-            {
-              source: 'user',
-              content: query,
-              type: 'text',
-              context: 'Searched in Explorer',
-            },
-          ],
-        });
-      }
-    };
     if (aiSearchEnabled && query && selectedDataModels && isCopilotEnabled) {
       sendMessage();
     }
+  }, [
+    query,
+    isCopilotEnabled,
+    aiSearchEnabled,
+    selectedDataModels,
+    sendMessage,
+  ]);
+
+  useEffect(() => {
     const removeHandler = addFromCopilotEventListener('CHAT_READY', () => {
       if (query && selectedDataModels) {
         sendMessage();
       }
       removeHandler();
     });
-  }, [
-    query,
-    filters,
-    selectedDataModels,
-    isCopilotEnabled,
-    aiSearchEnabled,
-    cachedQuery,
-    t,
-  ]);
+  }, [query, selectedDataModels, sendMessage]);
 
   if (!aiSearchEnabled || !isCopilotEnabled) {
     return null;

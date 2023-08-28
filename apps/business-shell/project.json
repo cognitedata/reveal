@@ -118,6 +118,7 @@
   "pipeline": {
     "releaseStrategy": "single-branch",
     "firebaseProjectId": "fbhosting-217032465111",
-    "firebaseSite": "cognite-flexible-data-explorer"
+    "firebaseSite": "cognite-flexible-data-explorer",
+    "firebaseProdExtension": "production"
   }
 }

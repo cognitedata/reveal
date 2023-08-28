@@ -6,7 +6,6 @@ import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
 import { ToastContainer } from '@cognite/cogs.js';
-import { FlagProvider } from '@cognite/react-feature-flags';
 import { CogniteClient } from '@cognite/sdk';
 import { SDKProvider } from '@cognite/sdk-provider';
 
@@ -59,24 +58,16 @@ export const Copilot = ({
         <QueryClientProvider client={queryClient}>
           <ToastContainer />
           <StyledWrapper id="copilot-wrapper">
-            <FlagProvider
-              apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
-              appName="copilot"
-              projectName={sdk.project}
-              remoteAddress={window.location.hostname}
-              disableMetrics
-            >
-              <CopilotContextProvider>
-                <>
-                  <ChatUI
-                    visible={isVisible}
-                    excludeChains={memoizedExcludeChains}
-                    feature={feature}
-                  />
-                  <CopilotButton />
-                </>
-              </CopilotContextProvider>
-            </FlagProvider>
+            <CopilotContextProvider>
+              <>
+                <ChatUI
+                  visible={isVisible}
+                  excludeChains={memoizedExcludeChains}
+                  feature={feature}
+                />
+                <CopilotButton />
+              </>
+            </CopilotContextProvider>
           </StyledWrapper>
         </QueryClientProvider>
       </I18nWrapper>

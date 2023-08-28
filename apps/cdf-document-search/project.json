@@ -123,7 +123,7 @@
   "tags": [],
   "pipeline": {
     "releaseStrategy": "single-branch",
-    "firebaseSite": "document-search",
+    "firebaseSite": "cdf-document-search",
     "previewPackageName": "@cognite/cdf-document-search-ui"
   }
 }

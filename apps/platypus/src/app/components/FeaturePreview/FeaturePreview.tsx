@@ -13,6 +13,9 @@ import {
   useUpdateSuggestionsFeatureFlag,
   useGraphViewerFeatureFlag,
   useUpdateGraphViewerFeatureFlag,
+  useGPTSearch,
+  useUpdateGPTSearch,
+  useGPTSearchForProject,
 } from '@platypus-app/flags';
 import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
@@ -21,6 +24,7 @@ import { Body, Flex, Icon, Modal, Switch } from '@cognite/cogs.js';
 
 import COLUMNS_IMG from '../../../assets/images/columns.gif';
 import FILTER_BUILDER_IMG from '../../../assets/images/filter_builder.gif';
+import GPT_SEARCH_IMG from '../../../assets/images/gpt_search.gif';
 import GRAPH_IMG from '../../../assets/images/graph.gif';
 import MANUAL_POP_IMG from '../../../assets/images/manual_population.gif';
 import SUGGESTIONS_IMG from '../../../assets/images/suggestions.gif';
@@ -30,7 +34,8 @@ type FeatureKey =
   | 'suggestions'
   | 'columns'
   | 'filters'
-  | 'graph';
+  | 'graph'
+  | 'gpt_search';
 
 export const FeaturePreview = ({
   onRequestClose,
@@ -50,6 +55,7 @@ export const FeaturePreview = ({
     columns: useColumnSelectionFeatureFlag().isEnabled,
     filters: useFilterBuilderFeatureFlag().isEnabled,
     graph: useGraphViewerFeatureFlag().isEnabled,
+    gpt_search: useGPTSearch().isEnabled,
   });
 
   const setManualPopulation = useUpdateManualPopulationFeatureFlag();
@@ -57,6 +63,7 @@ export const FeaturePreview = ({
   const setColumnSelection = useUpdateColumnSelectionFeatureFlag();
   const setFilterBuilder = useUpdateFilterBuilderFeatureFlag();
   const setGraphViewer = useUpdateGraphViewerFeatureFlag();
+  const setGPTSearch = useUpdateGPTSearch();
 
   const updateStatusState = (key: FeatureKey, status: boolean) => {
     track('FeatureFlag.Toggle', { key, status });
@@ -81,6 +88,10 @@ export const FeaturePreview = ({
         setGraphViewer(status);
         break;
       }
+      case 'gpt_search': {
+        setGPTSearch(status);
+        break;
+      }
     }
     setHasChanged(true);
     setFeatureStatus((currValue) => ({
@@ -88,6 +99,7 @@ export const FeaturePreview = ({
       [key]: status,
     }));
   };
+  const { isEnabled: isGPTSearchEnabledForProject } = useGPTSearchForProject();
 
   const features: { [key in FeatureKey]: string } = useMemo(
     () => ({
@@ -96,6 +108,7 @@ export const FeaturePreview = ({
       columns: t('feature_preview_columns_header', 'Column Selection'),
       filters: t('feature_preview_filters_header', 'Advanced Filters'),
       graph: t('feature_preview_graph_header', 'Knowledge Graph'),
+      gpt_search: t('feature_preview_gpt_search_header', 'Copilot Search'),
     }),
     [t]
   );
@@ -185,6 +198,21 @@ Start from an instance and explore connected instances.`
             ))}
         </>
       ),
+      gpt_search: (
+        <>
+          <img src={GPT_SEARCH_IMG} alt="GPT demo" />
+          {t(
+            'feature_preview_gpt_search',
+            'Leveraging AI, get the ability to ask a question around data within your data model, and visualize it in graph, tabular and JSON format.'
+          )
+            .split('\n')
+            .map((el, i) => (
+              <Body level="2" key={i}>
+                {el}
+              </Body>
+            ))}
+        </>
+      ),
     }),
     [t]
   );
@@ -220,6 +248,12 @@ Start from an instance and explore connected instances.`
               onClick={() => setFeature(key as FeatureKey)}
               gap={8}
               alignItems="center"
+              style={{
+                display:
+                  key === 'gpt_search' && !isGPTSearchEnabledForProject
+                    ? 'none'
+                    : 'flex',
+              }}
             >
               {featureStatus[key as FeatureKey] ? (
                 <Icon type="EyeShow" />

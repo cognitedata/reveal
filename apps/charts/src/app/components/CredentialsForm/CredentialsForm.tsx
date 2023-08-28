@@ -16,6 +16,7 @@ import {
   ClientCredentialsOptionMessage,
 } from '@charts-app/components/Form/elements';
 import { useCreateSessionNonce } from '@charts-app/domain/chart';
+import { useTranslations } from '@charts-app/hooks/translations';
 import { trackUsage } from '@charts-app/services/metrics';
 import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import debounce from 'lodash/debounce';
@@ -26,7 +27,7 @@ import { Tooltip, Flex } from '@cognite/cogs.js';
 import { FormError } from '../Form/FormError';
 import { FormInputWithController } from '../Form/FormInputWithController';
 
-const defaultTranslations = makeDefaultTranslations(
+const defaultTranslation = makeDefaultTranslations(
   'Client ID',
   'Example: 2340-234-234-456-5332',
   'Client secret',
@@ -41,7 +42,6 @@ const defaultTranslations = makeDefaultTranslations(
 );
 
 type Props = {
-  translations?: typeof defaultTranslations;
   onUpdateCredsValidated: (validted: boolean) => void;
   uniqueFormId: string;
   trackingId?: string;
@@ -56,7 +56,6 @@ type CredentialsFormValues = {
 type SessionCreationStatus = 'NONE' | 'CREATING' | 'CREATED' | 'ERROR';
 
 export const CredentialsForm = <TFieldValues extends CredentialsFormValues>({
-  translations,
   onUpdateCredsValidated,
   uniqueFormId,
   trackingId = 'CredentialsForm.LoginMethod',
@@ -64,8 +63,8 @@ export const CredentialsForm = <TFieldValues extends CredentialsFormValues>({
   const { control, watch, formState, setValue } =
     useFormContext<TFieldValues>();
   const t = {
-    ...defaultTranslations,
-    ...translations,
+    ...defaultTranslation,
+    ...useTranslations(Object.keys(defaultTranslation), 'CredentialForm').t,
   };
   const { isDirty, isValid, errors } = formState;
   const values = watch();

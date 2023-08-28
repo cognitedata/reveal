@@ -17,7 +17,6 @@ export const useAICachedResults = (
     copilotMessage
   );
   const [cachedQuery] = useAIQueryLocalStorage();
-  // console.log(results, query, cachedQuery);
   if (results) {
     return recursiveConcatItems(results);
   }

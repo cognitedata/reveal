@@ -133,7 +133,6 @@ module.exports = {
         nodeEnv = 'production';
       }
 
-      
       console.log(
         `SingleSpa webpack config(${nodeEnv}) for ${projectName} was loaded...`
       );
@@ -141,12 +140,7 @@ module.exports = {
       if (pluginOptions.useMockEnv) {
         return {
           ...config,
-          plugins: [
-            ...config.plugins,
-            new CopyPlugin({
-              patterns: ['./firebase.json'],
-            }),
-          ],
+          plugins: [...config.plugins],
           // react scripts are causing a lot of errors to be throw in console (Failed to parse source map from...)
           // https://github.com/facebook/create-react-app/discussions/11767
           ignoreWarnings: [/Failed to parse source map/],
@@ -163,7 +157,7 @@ module.exports = {
         return name === 'main' ? 'index.js' : '[name].[contenthash:8].js';
       };
 
-      if(nodeEnv === 'production') {
+      if (nodeEnv === 'production') {
         config.mode = 'production';
         config.optimization.minimize = true;
       }
@@ -171,9 +165,6 @@ module.exports = {
       config.plugins.push(
         new webpack.ProvidePlugin({
           React: 'react',
-        }),
-        new CopyPlugin({
-          patterns: ['./firebase.json'],
         })
       );
 

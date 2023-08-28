@@ -17,6 +17,7 @@ import {
 } from '@data-exploration-lib/core';
 import { useGetLabelName } from '@data-exploration-lib/domain-layer';
 
+import { ThreeDModelCell } from '../Details/ThreeDModelCell';
 import { RootAsset } from '../RootAsset';
 import { TimeDisplay } from '../TimeDisplay';
 
@@ -190,6 +191,14 @@ export const getTableColumns = (t: TFunction): ResourceTableHashMap => ({
         );
       },
     };
+  },
+  availabilityThreeD: {
+    id: 'threeDModels',
+    accessorKey: 'id',
+    header: t('3D_AVAILABILITY', '3D availability'),
+    cell: ({ getValue }) => <ThreeDModelCell assetId={getValue<number>()} />,
+    size: 300,
+    enableSorting: false,
   },
   created: {
     header: t('CREATED_TIME', 'Created'),

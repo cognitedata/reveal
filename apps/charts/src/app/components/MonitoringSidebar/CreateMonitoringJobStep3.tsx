@@ -2,13 +2,14 @@ import React from 'react';
 
 import styled from 'styled-components';
 
+import { useTranslations } from '@charts-app/hooks/translations';
 import { makeDefaultTranslations } from '@charts-app/utils/translations';
 
 import { Button } from '@cognite/cogs.js';
 
 import { Step3Container, Step3IconContainer } from './elements';
 
-const defaultTranslations = makeDefaultTranslations(
+const defaultTranslation = makeDefaultTranslations(
   'Your monitoring job is succesfully added',
   'View monitoring job',
   'Something went wrong',
@@ -17,22 +18,19 @@ const defaultTranslations = makeDefaultTranslations(
 );
 
 type Props = {
-  translations?: typeof defaultTranslations;
   hasError: boolean;
   onViewMonitoringJob: () => void;
   onBack: () => void;
 };
 const CreateMonitoringJobStep3 = ({
-  translations,
   hasError,
   onViewMonitoringJob,
   onBack,
 }: Props) => {
   const t = {
-    ...defaultTranslations,
-    ...translations,
+    ...defaultTranslation,
+    ...useTranslations(Object.keys(defaultTranslation), 'MonitoringSidebar').t,
   };
-
   if (hasError) {
     return (
       <Step3Container>

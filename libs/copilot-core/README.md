@@ -4,10 +4,6 @@ This is the core logic part of copilot, where both the UI and business logic liv
 
 We will go over how the business logic works first, and UI second.
 
-## Feature Flag
-
-To have the copilot feature enabled on your project, you would also need to have this feature flag enabled for your project here https://unleash-apps.cognite.ai/projects/default/features/COGNITE_COPILOT.
-
 # Business logic part
 
 For the Copilot, there are 3 categories of logic, both living in `src/lib`:

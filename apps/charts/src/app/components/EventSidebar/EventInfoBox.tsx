@@ -30,7 +30,13 @@ export const defaultTranslations = makeDefaultTranslations(
   'External ID',
   'Root asset',
   'Back',
-  'View details'
+  'View details',
+  'Selected results',
+  'Other results',
+  'Clear all',
+  'Sort',
+  'Oldest',
+  'Newest'
 );
 
 type Props = {

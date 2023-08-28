@@ -60,7 +60,7 @@ const ThresholdSidebar: FunctionComponent<Props> = ({
     const thresholdCount = chart.thresholdCollection?.length || 0;
     const emptyThreshold: ChartThreshold = {
       id: uuidv4(),
-      name: `New threshold ${thresholdCount + 1}`,
+      name: `${t['New threshold']} ${thresholdCount + 1}`,
       type: 'under',
       visible: true,
       filter: {
@@ -125,7 +125,7 @@ const ThresholdSidebar: FunctionComponent<Props> = ({
     const clonedThreshold = {
       ...omit(selectedThreshold, ['name', 'id']),
       id: uuidv4(),
-      name: `${selectedThreshold.name} (Duplicate)`,
+      name: `${selectedThreshold.name} (${t.Duplicate})`,
     };
 
     updateChart((oldChart) => addChartThreshold(oldChart!, clonedThreshold));

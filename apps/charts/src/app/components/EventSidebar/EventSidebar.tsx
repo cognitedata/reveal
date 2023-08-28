@@ -69,7 +69,9 @@ const defaultTranslation = makeDefaultTranslations(
   'Hide',
   'New event filter',
   'Event results',
-  'Add new filter'
+  'Add new filter',
+  'Confirm',
+  'Cancel'
 );
 
 const EventSidebar = memo(
@@ -299,6 +301,8 @@ const EventSidebar = memo(
                               onConfirm={() =>
                                 handleDeleteEventFilter(eventFilter.id)
                               }
+                              okText={t.Confirm}
+                              cancelText={t.Cancel}
                             >
                               <Button
                                 type="ghost-destructive"
@@ -312,6 +316,8 @@ const EventSidebar = memo(
                               onConfirm={() =>
                                 handleDuplicateEventFilter(eventFilter.id)
                               }
+                              okText={t.Confirm}
+                              cancelText={t.Cancel}
                             >
                               <Button
                                 type="ghost"

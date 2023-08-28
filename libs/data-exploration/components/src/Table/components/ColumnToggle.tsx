@@ -100,9 +100,7 @@ export function ColumnToggle<T extends TableData = any>({
     return tab === 'All' ? filteredColumns : selectedColumns;
   }, [tab, filteredColumns, selectedColumns]);
 
-  const selectedColumnsCount = allColumns().reduce((accumulator, item) => {
-    return item.getIsVisible() ? accumulator + 1 : accumulator;
-  }, 0);
+  const selectedColumnsCount = selectedColumns.length;
   const isSelectedCountLimitExceedingMaxValue =
     selectedColumnsCount >= columnSelectionLimit;
 

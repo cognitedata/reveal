@@ -10,10 +10,13 @@ inputs:
   environment:
     description: 'The environment on firebase. Options: production, preview, staging'
     required: true
-  firebaseTarget:
-    description: 'firebase target. Defaults to cognite-${project}-${environment}'
+  firebaseSite:
+    description: 'firebase site. Defaults to cognite-${project}-${environment}'
     required: false
   firebaseProjectId:
     description: 'firebase project ID'
     required: false
     default: 'fusion-217032465111'
+  firebaseProdExtension:
+    description: 'extenstion for firebase production site, defaults to "prod"'
+    required: false

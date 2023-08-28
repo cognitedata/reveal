@@ -1,5 +1,8 @@
 import * as React from 'react';
 
+import { useTranslations } from '@charts-app/hooks/translations';
+import { makeDefaultTranslations } from '@charts-app/utils/translations';
+
 import { Dropdown, Divider, Menu } from '@cognite/cogs.js';
 
 import {
@@ -15,6 +18,12 @@ type ChartActionProps = {
   handleImportCalculationsClick: () => void;
 };
 
+const defaultTranslations = makeDefaultTranslations(
+  'Add time series',
+  'Add calculation',
+  'Import calculation'
+);
+
 // need it for Dropdown
 const ChartActionButtonRef = React.forwardRef<HTMLButtonElement, any>(
   (props, ref) => <ChartActionStyledButton ref={ref} {...props} />
@@ -25,6 +34,11 @@ export const ChartActionButton = ({
   handleClickNewWorkflow,
   handleImportCalculationsClick,
 }: ChartActionProps) => {
+  const t = {
+    ...defaultTranslations,
+    ...useTranslations(Object.keys(defaultTranslations), 'ChartActions').t,
+  };
+
   return (
     <ChartActionContainer>
       <Dropdown
@@ -36,7 +50,7 @@ export const ChartActionButton = ({
               icon="Timeseries"
               iconPlacement="left"
             >
-              Add time series
+              {t['Add time series']}
             </Menu.Item>
             <Divider />
             <Menu.Item
@@ -45,7 +59,7 @@ export const ChartActionButton = ({
               icon="Function"
               iconPlacement="left"
             >
-              Add calculation
+              {t['Add calculation']}
             </Menu.Item>
             <Menu.Item
               icon="Download"
@@ -53,7 +67,7 @@ export const ChartActionButton = ({
               key="import-calculation"
               onClick={handleImportCalculationsClick}
             >
-              Import calculation
+              {t['Import calculation']}
             </Menu.Item>
           </ChartActionMenu>
         }

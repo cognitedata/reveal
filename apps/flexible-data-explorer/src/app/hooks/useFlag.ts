@@ -1,7 +1,7 @@
 import { useFlag } from '@cognite/react-feature-flags';
 
-export const useIsCopilotEnabled = () => {
-  const { isEnabled } = useFlag('COGNITE_COPILOT', {
+export const useIsCogpilotEnabled = () => {
+  const { isEnabled } = useFlag('FDX_AI_SEARCH', {
     fallback: false,
   });
 

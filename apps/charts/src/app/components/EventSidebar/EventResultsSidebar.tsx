@@ -36,17 +36,17 @@ type Props = {
   translations?: ComponentProps<typeof EventInfoBox>['translations'];
 };
 
-const sortOptions = [
-  { value: 'desc' as const, label: 'Newest' },
-  { value: 'asc' as const, label: 'Oldest' },
-];
-
 const EventResultsSidebar = memo(
   ({ onCloseEventResults, onShowEventDetail, translations }: Props) => {
     // Get results
     const activeEventFilterResults = useRecoilValue(
       activeEventFilterResultsSelector
     );
+
+    const sortOptions = [
+      { value: 'desc' as const, label: translations?.Newest || 'Newest' },
+      { value: 'asc' as const, label: translations?.Oldest || 'Oldest' },
+    ];
 
     const [sortOption, setSortOption] = useState<(typeof sortOptions)[number]>(
       sortOptions[1]
@@ -118,7 +118,7 @@ const EventResultsSidebar = memo(
               {translations?.Back || 'Back'}
             </Button>
             <SmallSelect
-              title="Sort:"
+              title={`${translations?.Sort || 'Sort'}:`}
               value={sortOption}
               onChange={handleSortList}
               options={sortOptions}
@@ -135,7 +135,7 @@ const EventResultsSidebar = memo(
               >
                 <Col span={16}>
                   <Body size="small">
-                    Selected results:{' '}
+                    {translations?.['Selected results'] || 'Selected results'}:{' '}
                     <SidebarChip
                       icon="Events"
                       size="small"
@@ -149,7 +149,7 @@ const EventResultsSidebar = memo(
                     type="ghost-destructive"
                     onClick={handleClearAllSelection}
                   >
-                    Clear all
+                    {translations?.['Clear all'] || 'Clear all'}
                   </Button>
                 </Col>
               </Row>
@@ -175,7 +175,7 @@ const EventResultsSidebar = memo(
             <>
               <Row align="middle" style={{ marginBottom: '8px' }}>
                 <Body size="small">
-                  Other results:{' '}
+                  {translations?.['Other results'] || 'Other results'} :{' '}
                   <SidebarChip
                     icon="Events"
                     size="small"

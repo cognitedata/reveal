@@ -4,6 +4,7 @@ import { I18nWrapper } from '@cognite/cdf-i18n-utils';
 import { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
 import { AuthWrapper, getEnv, getProject } from '@cognite/cdf-utilities';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
+import { FlagProvider } from '@cognite/react-feature-flags';
 
 import './set-public-path';
 
@@ -24,12 +25,20 @@ export const AppWrapper = () => {
   }, []);
 
   return (
-    <GlobalStyles>
-      <I18nWrapper translations={translations} defaultNamespace={projectName}>
-        <AuthWrapper login={() => loginAndAuthIfNeeded(project, env)}>
-          <App />
-        </AuthWrapper>
-      </I18nWrapper>
-    </GlobalStyles>
+    <FlagProvider
+      apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
+      appName="copilot"
+      projectName={project}
+      remoteAddress={window.location.hostname}
+      disableMetrics
+    >
+      <GlobalStyles>
+        <I18nWrapper translations={translations} defaultNamespace={projectName}>
+          <AuthWrapper login={() => loginAndAuthIfNeeded(project, env)}>
+            <App />
+          </AuthWrapper>
+        </I18nWrapper>
+      </GlobalStyles>
+    </FlagProvider>
   );
 };

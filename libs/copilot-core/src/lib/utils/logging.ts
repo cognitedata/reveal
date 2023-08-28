@@ -14,3 +14,6 @@ export const addToCopilotLogs = (
 export const getCopilotLogs = (messageKey: string) => {
   return CopilotLogs.get(messageKey) || [];
 };
+export const clearCopilotLog = (messageKey: string) => {
+  return CopilotLogs.delete(messageKey);
+};

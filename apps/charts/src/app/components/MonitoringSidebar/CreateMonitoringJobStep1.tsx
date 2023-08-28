@@ -13,6 +13,7 @@ import {
   MONITORING_THRESHOLD_ID,
   MINIMUM_DURATION_LIMIT,
 } from '@charts-app/domain/monitoring/constants';
+import { useTranslations } from '@charts-app/hooks/translations';
 import { useChartAtom } from '@charts-app/models/chart/atom';
 import {
   ChartThreshold,
@@ -38,7 +39,7 @@ import { FullWidthButton } from './elements';
 import { SubscribeJob } from './SubscribeJob';
 import { CreateMonitoringJobFormData } from './types';
 
-const defaultTranslations = makeDefaultTranslations(
+const defaultTranslation = makeDefaultTranslations(
   'Name',
   'Source',
   'Describe monitoring job',
@@ -64,21 +65,20 @@ const defaultTranslations = makeDefaultTranslations(
 );
 
 type Props = {
-  translations?: typeof defaultTranslations;
   onCancel: () => void;
   onNext: (data: any) => void;
   existingFormData: CreateMonitoringJobFormData;
 };
 const CreateMonitoringJobStep1 = ({
-  translations,
   onCancel,
   onNext,
   existingFormData,
 }: Props) => {
   const t = {
-    ...defaultTranslations,
-    ...translations,
+    ...defaultTranslation,
+    ...useTranslations(Object.keys(defaultTranslation), 'MonitoringSidebar').t,
   };
+
   const { control, watch, formState, trigger, setValue } =
     useForm<CreateMonitoringJobFormData>({
       mode: 'all',
@@ -322,10 +322,10 @@ const CreateMonitoringJobStep1 = ({
 
       <PortalWait elementId="monitoring-job-stepper">
         <Row>
-          <Col span={8}>
+          <Col span={10}>
             <Button onClick={handleCancel}>{t.Cancel}</Button>
           </Col>
-          <Col span={16}>
+          <Col span={14}>
             <FullWidthButton
               disabled={!isValid}
               type="primary"

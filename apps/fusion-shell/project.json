@@ -256,7 +256,7 @@
   "tags": [],
   "pipeline": {
     "releaseStrategy": "multi-branch",
-    "firebaseSite": "ui-host",
+    "firebaseSite": "cdf-ui-host",
     "previewPackageName": "@cognite/fusion-shell"
   }
 }

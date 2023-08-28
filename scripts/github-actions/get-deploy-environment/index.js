@@ -20,7 +20,11 @@ const run = async () => {
     const releaseToProd = isUsingSingleBranchStrategy || isReleaseBranch;
 
     if (releaseToProd) {
-      setOutput('environment', 'production');
+      if (project === 'platypus') {
+        setOutput('environment', 'fusion');
+      } else {
+        setOutput('environment', 'production');
+      }
     } else if (isPreviewBranch) {
       setOutput('environment', 'preview');
     } else {

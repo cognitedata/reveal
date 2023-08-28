@@ -3,6 +3,7 @@ import { Controller } from 'react-hook-form';
 
 import styled from 'styled-components';
 
+import { useTranslations } from '@charts-app/hooks/translations';
 import { trackUsage } from '@charts-app/services/metrics';
 import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import { Divider, Row } from 'antd';
@@ -13,7 +14,7 @@ import { CogniteError } from '@cognite/sdk';
 
 import { useCreateMonitoringFolder, useMonitoringFolders } from './hooks';
 
-const defaultTranslations = makeDefaultTranslations(
+const defaultTranslation = makeDefaultTranslations(
   'Unable to create monitoring job',
   'Folder is required',
   'Create folder:',
@@ -21,20 +22,18 @@ const defaultTranslations = makeDefaultTranslations(
 );
 
 type Props = {
-  translations?: typeof defaultTranslations;
   control: any;
   inputName: string;
   setValue: any;
 };
 const MonitoringFolderSelect: React.FC<Props> = ({
-  translations,
   control,
   inputName,
   setValue,
 }) => {
   const t = {
-    ...defaultTranslations,
-    ...translations,
+    ...defaultTranslation,
+    ...useTranslations(Object.keys(defaultTranslation), 'MonitoringSidebar').t,
   };
   const { data: folderList, isLoading: loadingFolders } =
     useMonitoringFolders();

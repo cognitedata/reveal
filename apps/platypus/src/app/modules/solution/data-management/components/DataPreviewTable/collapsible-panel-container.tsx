@@ -234,9 +234,14 @@ export const CollapsiblePanelContainer: React.FC<
 
       return <CogDataList data-cy="instance-values" listData={listData} />;
     } else {
+      if (!previewData) {
+        return <Icon type="Loader" />;
+      }
       return (
         <InstancePreview
-          externalId={data.instanceExternalId}
+          externalId={
+            (previewData?.[data.fieldName] as { externalId: string }).externalId
+          }
           dataModelType={data.fieldType!}
           dataModelExternalId={dataModelVersion.externalId}
           dataModelSpace={dataModelVersion.space}

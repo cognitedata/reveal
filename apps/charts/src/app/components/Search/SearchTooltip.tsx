@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 
+import { useTranslations } from '@charts-app/hooks/translations';
 import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import styled from 'styled-components/macro';
 
@@ -13,11 +14,13 @@ const defaultTranslations = makeDefaultTranslations(
 
 type Props = {
   onHide: () => void;
-  translations?: typeof defaultTranslations;
 };
 
-const TooltipContent = ({ onHide, translations }: Props) => {
-  const t = { ...defaultTranslations, ...translations };
+const TooltipContent = ({ onHide }: Props) => {
+  const t = {
+    ...defaultTranslations,
+    ...useTranslations(Object.keys(defaultTranslations), 'SearchTooltip').t,
+  };
   return (
     <Contents>
       <TooltipText>

@@ -196,6 +196,7 @@ const EventFilterForm = ({
           />
 
           <ExternalIdFilter
+            label={t['External ID']}
             value={adaptedFilters.externalIdPrefix}
             onChange={(idPrefix) => {
               handleUpdateFilters({

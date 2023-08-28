@@ -5,7 +5,6 @@ import {
   SubCellMatchingLabels,
   Table,
   TableProps,
-  ThreeDModelCell,
   getHighlightQuery,
 } from '@data-exploration/components';
 import { ColumnDef } from '@tanstack/react-table';
@@ -51,15 +50,7 @@ export const AssetTable = ({
           getHighlightQuery(assetSearchConfig?.externalId.enabled, query)
         ),
         tableColumns.rootAsset((rootAsset) => onRowClick(rootAsset)),
-        {
-          accessorKey: 'id',
-          header: t('3D_AVAILABILITY', '3D availability'),
-          cell: ({ getValue }) => (
-            <ThreeDModelCell assetId={getValue<number>()} />
-          ),
-          size: 300,
-          enableSorting: false,
-        },
+        tableColumns.availabilityThreeD,
         tableColumns.created,
         {
           ...tableColumns.labels,

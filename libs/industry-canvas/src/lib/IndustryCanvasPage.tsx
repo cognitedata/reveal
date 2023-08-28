@@ -644,6 +644,10 @@ export const IndustryCanvasPage = () => {
             >
               <Button
                 icon="ArrowLeft"
+                aria-label={t(
+                  translationKeys.CANVAS_VISIBILITY_ERROR_BUTTON,
+                  'Go to Industrial Canvas home page'
+                )}
                 onClick={handleGoBackToIndustryCanvasButtonClick}
               />
             </Tooltip>

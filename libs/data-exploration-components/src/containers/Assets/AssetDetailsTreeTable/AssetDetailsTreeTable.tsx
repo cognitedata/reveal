@@ -4,7 +4,6 @@ import {
   HighlightCell,
   getTableColumns,
   Table,
-  ThreeDModelCell,
 } from '@data-exploration/components';
 import {
   useAssetsMetadataColumns,
@@ -120,12 +119,7 @@ export const AssetDetailsTreeTable = ({
           },
           size: 300,
         },
-        {
-          id: 'threeDModels',
-          header: t('3D_AVAILABILITY', '3D availability'),
-          cell: ({ row }) => <ThreeDModelCell assetId={row.original.id} />,
-          size: 300,
-        },
+        tableColumns.availabilityThreeD,
         tableColumns.source(),
         ...metadataColumns,
       ] as ColumnDef<InternalAssetTreeData>[],

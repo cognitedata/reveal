@@ -94,20 +94,6 @@ module.exports = composePlugins(
       /The code generator has deoptimised the styling/gim,
     ];
 
-    // We need to generate this files when building the app
-    if (!config.devServer) {
-      config.plugins.push(
-        new CopyPlugin({
-          patterns: [
-            {
-              from: './firebase.json',
-              to: path.resolve(__dirname, '../../dist/apps/fusion-shell'),
-            },
-          ],
-        })
-      );
-    }
-
     // For dev server, generate them on fly
     if (config.devServer) {
       let useMockApis = process.env.USE_MOCK_API === 'false' ? false : true;

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import { useCreateSessionNonce } from '@charts-app/domain/chart';
 import { useSearchParam } from '@charts-app/hooks/navigation';
+import { useTranslations } from '@charts-app/hooks/translations';
 import { useUserInfo } from '@charts-app/hooks/useUserInfo';
 import { useScheduledCalculationDataValue } from '@charts-app/models/scheduled-calculation-results/atom';
 import { trackUsage, stopTimer } from '@charts-app/services/metrics';
@@ -27,7 +28,7 @@ import {
 } from './types';
 import { validateEmail } from './utils';
 
-const defaultTranslations = makeDefaultTranslations(
+const defaultTranslation = makeDefaultTranslations(
   'Create monitoring job',
   'Start monitoring',
   'Cancel',
@@ -42,13 +43,12 @@ const defaultTranslations = makeDefaultTranslations(
 );
 
 type Props = {
-  translations?: typeof defaultTranslations;
   onCancel: () => void;
 };
-const CreateMonitoringJob = ({ translations, onCancel }: Props) => {
+const CreateMonitoringJob = ({ onCancel }: Props) => {
   const t = {
-    ...defaultTranslations,
-    ...translations,
+    ...defaultTranslation,
+    ...useTranslations(Object.keys(defaultTranslation), 'MonitoringSidebar').t,
   };
 
   const { userProfile } = useUserProfile();

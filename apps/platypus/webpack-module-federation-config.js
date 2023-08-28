@@ -51,9 +51,6 @@ module.exports = composePlugins(
           publicPath: '/',
           languages: ['graphql'],
         }),
-        new CopyPlugin({
-          patterns: ['./firebase.json'],
-        }),
       ],
       // react scripts are causing a lot of errors to be throw in console (Failed to parse source map from...)
       // https://github.com/facebook/create-react-app/discussions/11767
