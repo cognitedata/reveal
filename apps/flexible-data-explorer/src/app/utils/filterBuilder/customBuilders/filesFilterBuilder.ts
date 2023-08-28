@@ -3,7 +3,7 @@ import isEmpty from 'lodash/isEmpty';
 
 import { DocumentFilter } from '@cognite/sdk';
 
-import { ProjectConfig } from '../../../../config/types';
+import { SiteConfig } from '../../../../config/types';
 import {
   DateRange,
   NumericRange,
@@ -17,7 +17,7 @@ type Builders = Record<Operator, Builder>;
 
 export const buildFilesFilter = (
   params?: ValueByField,
-  config?: ProjectConfig
+  config?: SiteConfig
 ): DocumentFilter | undefined => {
   const filters = Object.entries(params ?? {}).reduce(
     (result, [field, { operator, value }]) => {

@@ -55,6 +55,7 @@ export const SearchCategories = () => {
 
         if (key === 'File') {
           <Content
+            key={key}
             selected={isSelected('File')}
             onClick={() => !!count && handleSelectionClick('File')}
             disabled={!count}
@@ -71,6 +72,7 @@ export const SearchCategories = () => {
         if (key === 'TimeSeries') {
           return (
             <Content
+              key={key}
               selected={isSelected('TimeSeries')}
               onClick={() => !!count && handleSelectionClick('TimeSeries')}
               disabled={!count}

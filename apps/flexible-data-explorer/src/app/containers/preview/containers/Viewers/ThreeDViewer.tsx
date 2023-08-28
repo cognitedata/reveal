@@ -9,7 +9,7 @@ import {
   defaultRevealColor,
   defaultViewerOptions,
 } from '../../../../constants/threeD';
-import { useProjectConfig } from '../../../../hooks/useProjectConfig';
+import { useSiteConfig } from '../../../../hooks/useConfig';
 import { useInstanceThreeDEntryQuery } from '../../../../services/instances/generic/hooks/useInstanceThreeD';
 import { DataModelV2, Instance } from '../../../../services/types';
 import { RevealContent } from '../../../ThreeD/containers/RevealContent';
@@ -22,14 +22,14 @@ interface Props {
 }
 export const ThreeDViewer: React.FC<Props> = ({ instance, dataModel }) => {
   const sdk = useSDK();
-  const projectConfigs = useProjectConfig();
+  const siteConfig = useSiteConfig();
 
   const { data, isLoading, isFetched } = useInstanceThreeDEntryQuery(
     instance,
     dataModel
   );
 
-  const modelIdentifiers = projectConfigs?.threeDResources;
+  const modelIdentifiers = siteConfig?.threeDResources;
 
   if (
     !modelIdentifiers ||

@@ -4,24 +4,24 @@ import { useQuery } from '@tanstack/react-query';
 
 import { useSDK } from '@cognite/sdk-provider';
 
+import { useSiteConfig } from '../../../../hooks/useConfig';
 import {
   useDataTypeFilterParams,
   useSearchQueryParams,
 } from '../../../../hooks/useParams';
-import { useProjectConfig } from '../../../../hooks/useProjectConfig';
 import { buildTimeseriesFilter } from '../../../../utils/filterBuilder';
 import { queryKeys } from '../../../queryKeys';
 import { getTimeseriesAggregate } from '../network/getTimeseriesAggregate';
 
 export const useTimeseriesSearchAggregateCountQuery = () => {
   const sdk = useSDK();
-  const config = useProjectConfig();
+  const siteConfig = useSiteConfig();
 
   const [query] = useSearchQueryParams();
   const [timeseriesFilterParams] = useDataTypeFilterParams('Timeseries');
   const filter = useMemo(
-    () => buildTimeseriesFilter(timeseriesFilterParams, config),
-    [timeseriesFilterParams, config]
+    () => buildTimeseriesFilter(timeseriesFilterParams, siteConfig),
+    [timeseriesFilterParams, siteConfig]
   );
 
   return useQuery(queryKeys.aggregateTimeseries(query, filter), async () => {

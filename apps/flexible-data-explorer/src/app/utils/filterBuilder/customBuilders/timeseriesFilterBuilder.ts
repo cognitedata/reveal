@@ -6,12 +6,12 @@ import omitBy from 'lodash/omitBy';
 
 import { DateRange, TimeseriesFilter } from '@cognite/sdk';
 
-import { ProjectConfig } from '../../../../config/types';
+import { ProjectConfig, SiteConfig } from '../../../../config/types';
 import { Operator, ValueByField, ValueType } from '../../../containers/Filter';
 
 export const buildTimeseriesFilter = (
   params?: ValueByField,
-  config?: ProjectConfig
+  config?: SiteConfig
 ): TimeseriesFilter | undefined => {
   if (!params) {
     return undefined;

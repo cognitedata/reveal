@@ -6,6 +6,7 @@ import { useSDK } from '@cognite/sdk-provider';
 import { localStorageKeys } from '../constants/localStorageKeys';
 import { DataModelV2, SearchResponse } from '../services/types';
 
+import { useProjectConfig } from './useConfig';
 import { RecentlyViewed } from './useRecentlyVisited';
 
 export const useRecentlyVisitedLocalStorage = () => {
@@ -29,6 +30,19 @@ export const useDataModelsLocalStorage = () => {
     }
   );
 };
+
+export const useSelectedSiteLocalStorage = () => {
+  const { project } = useSDK();
+  const config = useProjectConfig();
+
+  return useLocalStorageState<string | undefined>(
+    localStorageKeys.selectedSite(project),
+    {
+      defaultValue: config?.sites?.[0]?.name,
+    }
+  );
+};
+
 export const useAIQueryLocalStorage = () => {
   const { project } = useSDK();
 

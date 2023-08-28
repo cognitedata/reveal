@@ -8,16 +8,16 @@ import {
   defaultRevealColor,
   defaultViewerOptions,
 } from '../../constants/threeD';
-import { useProjectConfig } from '../../hooks/useProjectConfig';
+import { useSiteConfig } from '../../hooks/useConfig';
 
 import { RevealContent } from './containers/RevealContent';
 
 export const ThreeDContent = () => {
   const sdk = useSDK();
 
-  const projectConfigs = useProjectConfig();
+  const siteConfig = useSiteConfig();
 
-  const modelIdentifiers = projectConfigs?.threeDResources;
+  const modelIdentifiers = siteConfig?.threeDResources;
 
   const { instanceSpace, externalId } = useParams();
 

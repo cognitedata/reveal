@@ -83,10 +83,10 @@ export const TopBar: FC<Props> = () => {
     }
   );
 
-  const { isEnabled: isSiteSelectionEnabled } = useFlag('CDF_SITE_SELECTION', {
-    forceRerender: true,
-    fallback: false,
-  });
+  // const { isEnabled: isSiteSelectionEnabled } = useFlag('CDF_SITE_SELECTION', {
+  //   forceRerender: true,
+  //   fallback: false,
+  // });
 
   const navButtons = [
     {
@@ -131,17 +131,14 @@ export const TopBar: FC<Props> = () => {
         </Flex>
 
         <Divider spacing="8px" direction="vertical" length="20px" />
-        {isSiteSelectionEnabled && (
-          <>
-            <SiteSelection />
-            <Divider spacing="8px" direction="vertical" length="20px" />
-          </>
-        )}
+
+        <SiteSelection />
+
         <Flex className="navigation-bar" gap={12}>
           {navButtons.map((navButton) => (
             <TopbarExp.Button
               key={navButton.label}
-              toggled={location.pathname === navButton.link}
+              toggled={location.pathname.startsWith(navButton.link)}
               onClick={() => {
                 navigate(navButton.link);
               }}

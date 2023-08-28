@@ -45,11 +45,11 @@ export const SearchResults: React.FC = () => {
     <>
       {keys.map((dataType) => {
         if (dataType === 'File') {
-          return <FileResults />;
+          return <FileResults key={dataType} />;
         }
 
         if (dataType === 'TimeSeries') {
-          return <TimeseriesResults />;
+          return <TimeseriesResults key={dataType} />;
         }
 
         const type = client.allDataTypes?.find(
