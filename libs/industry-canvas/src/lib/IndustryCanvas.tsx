@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
 import styled from 'styled-components';
 
@@ -8,9 +8,13 @@ import { useSDK } from '@cognite/sdk-provider';
 import ReactUnifiedViewer, {
   Annotation,
   UnifiedViewer,
+  UnifiedViewerEventListenerMap,
+  UnifiedViewerEventType,
   ZoomToFitMode,
 } from '@cognite/unified-file-viewer';
 import { UnifiedViewerPointerEvent } from '@cognite/unified-file-viewer/dist/core/UnifiedViewerRenderer/UnifiedEventHandler';
+
+import { ExtendedAnnotation } from '@data-exploration-lib/core';
 
 import ToolbarComponent from './components/ToolbarComponent';
 import ZoomControls from './components/ZoomControls';
@@ -24,17 +28,23 @@ import {
 } from './constants';
 import useEditOnSelect from './hooks/useEditOnSelect';
 import useIndustryCanvasTooltips from './hooks/useIndustryCanvasTooltips';
-import { UseManagedStateReturnType } from './hooks/useManagedState';
 import { UseManagedToolReturnType } from './hooks/useManagedTool';
 import { UseOnUpdateSelectedAnnotationReturnType } from './hooks/useOnUpdateSelectedAnnotation';
-import { UseResourceSelectorActionsReturnType } from './hooks/useResourceSelectorActions';
 import { UseTooltipsOptionsReturnType } from './hooks/useTooltipsOptions';
 import { OnAddContainerReferences } from './IndustryCanvasPage';
 import type { Comment } from './services/comments/types';
 import {
+  onDeleteRequest,
+  selectors,
+  setInteractionState,
+  setToolType,
+  useIndustrialCanvasStore,
+} from './state/useIndustrialCanvasStore';
+import {
   CanvasAnnotation,
   CommentAnnotation,
   IndustryCanvasContainerConfig,
+  IndustryCanvasState,
   IndustryCanvasToolType,
 } from './types';
 import { getIndustryCanvasConnectionAnnotations } from './utils/getIndustryCanvasConnectionAnnotations';
@@ -45,7 +55,6 @@ export type IndustryCanvasProps = {
   id: string;
   applicationId: string;
   shouldShowConnectionAnnotations: boolean;
-  currentZoomScale: number;
   onAddContainerReferences: OnAddContainerReferences;
   onRef?: (ref: UnifiedViewer | null) => void;
   viewerRef: UnifiedViewer | null;
@@ -53,58 +62,26 @@ export type IndustryCanvasProps = {
   selectedCanvasAnnotation: CanvasAnnotation | undefined;
   commentAnnotations: CommentAnnotation[];
   toolType: IndustryCanvasToolType;
-  setToolType: Dispatch<SetStateAction<IndustryCanvasToolType>>;
   isCanvasLocked: boolean;
-  onResourceSelectorOpen: UseResourceSelectorActionsReturnType['onResourceSelectorOpen'];
   tool: UseManagedToolReturnType['tool'];
+  container: IndustryCanvasState['container'];
+  canvasAnnotations: IndustryCanvasState['canvasAnnotations'];
+  onUpdateRequest: UnifiedViewerEventListenerMap[UnifiedViewerEventType.ON_UPDATE_REQUEST];
+  clickedContainerAnnotation: ExtendedAnnotation | undefined;
+  containerAnnotations: ExtendedAnnotation[];
   comments: Comment[];
-} & Pick<
-  UseManagedStateReturnType,
-  | 'container'
-  | 'canvasAnnotations'
-  | 'onDeleteRequest'
-  | 'onUpdateRequest'
-  | 'updateContainerById'
-  | 'removeContainerById'
-  | 'clickedContainerAnnotation'
-  | 'interactionState'
-  | 'setInteractionState'
-  | 'containerAnnotations'
-  | 'pinnedTimeseriesIdsByAnnotationId'
-  | 'onPinTimeseriesClick'
-  | 'liveSensorRulesByAnnotationIdByTimeseriesId'
-  | 'onLiveSensorRulesChange'
-  | 'isConditionalFormattingOpenAnnotationIdByTimeseriesId'
-  | 'onOpenConditionalFormattingClick'
-  | 'onCloseConditionalFormattingClick'
-  | 'onToggleConditionalFormatting'
-> &
-  UseOnUpdateSelectedAnnotationReturnType &
+} & UseOnUpdateSelectedAnnotationReturnType &
   Pick<
     UseTooltipsOptionsReturnType,
     'tooltipsOptions' | 'onUpdateTooltipsOptions'
   >;
-
-export type OnOpenConditionalFormattingClick = ({
-  annotationId,
-  timeseriesId,
-}: {
-  annotationId: string;
-  timeseriesId: number;
-}) => void;
 
 export const IndustryCanvas = ({
   id,
   applicationId,
   container,
   canvasAnnotations,
-  currentZoomScale,
-  onDeleteRequest,
   onUpdateRequest,
-  updateContainerById,
-  removeContainerById,
-  interactionState,
-  setInteractionState,
   containerAnnotations,
   clickedContainerAnnotation,
   selectedContainer,
@@ -113,42 +90,34 @@ export const IndustryCanvas = ({
   onRef,
   viewerRef,
   toolType,
-  setToolType,
   onUpdateSelectedAnnotation,
   shouldShowConnectionAnnotations,
   tool,
   comments,
   commentAnnotations,
   isCanvasLocked,
-  onResourceSelectorOpen,
   tooltipsOptions,
   onUpdateTooltipsOptions,
-  pinnedTimeseriesIdsByAnnotationId,
-  onPinTimeseriesClick,
-  liveSensorRulesByAnnotationIdByTimeseriesId,
-  onLiveSensorRulesChange,
-  isConditionalFormattingOpenAnnotationIdByTimeseriesId,
-  onOpenConditionalFormattingClick,
-  onCloseConditionalFormattingClick,
-  onToggleConditionalFormatting,
 }: IndustryCanvasProps) => {
   const sdk = useSDK();
 
+  const {
+    interactionState,
+    currentZoomScale,
+    pinnedTimeseriesIdsByAnnotationId,
+    isConditionalFormattingOpenAnnotationIdByTimeseriesId,
+    liveSensorRulesByAnnotationIdByTimeseriesId,
+  } = useIndustrialCanvasStore((state) => ({
+    interactionState: state.interactionState,
+    currentZoomScale: state.currentZoomScale,
+    pinnedTimeseriesIdsByAnnotationId:
+      selectors.canvasState(state).pinnedTimeseriesIdsByAnnotationId,
+    liveSensorRulesByAnnotationIdByTimeseriesId:
+      selectors.canvasState(state).liveSensorRulesByAnnotationIdByTimeseriesId,
+    isConditionalFormattingOpenAnnotationIdByTimeseriesId:
+      state.isConditionalFormattingOpenAnnotationIdByTimeseriesId,
+  }));
   const unifiedViewerRef = React.useRef<UnifiedViewer | null>(null);
-
-  const onDeleteSelectedCanvasAnnotation = useCallback(() => {
-    setInteractionState({
-      hoverId: undefined,
-      clickedContainerAnnotationId: undefined,
-    });
-    onDeleteRequest({
-      annotationIds:
-        selectedCanvasAnnotation === undefined
-          ? []
-          : [selectedCanvasAnnotation.id],
-      containerIds: [],
-    });
-  }, [selectedCanvasAnnotation, onDeleteRequest, setInteractionState]);
 
   const onAddSummarizationSticky = async (
     containerConfig: IndustryCanvasContainerConfig,
@@ -182,21 +151,12 @@ export const IndustryCanvas = ({
     onUpdateTooltipsOptions,
     onAddContainerReferences,
     onAddSummarizationSticky,
-    onDeleteSelectedCanvasAnnotation,
     onUpdateSelectedAnnotation,
-    updateContainerById,
-    removeContainerById,
-    onResourceSelectorOpen,
     comments,
     commentAnnotations,
     pinnedTimeseriesIdsByAnnotationId,
-    onPinTimeseriesClick,
     isConditionalFormattingOpenAnnotationIdByTimeseriesId,
-    onOpenConditionalFormattingClick,
     liveSensorRulesByAnnotationIdByTimeseriesId,
-    onLiveSensorRulesChange,
-    onCloseConditionalFormattingClick,
-    onToggleConditionalFormatting,
   });
 
   const onStageClick = useCallback(
@@ -222,13 +182,12 @@ export const IndustryCanvas = ({
         hoverId: undefined,
       });
     },
-    [setInteractionState, toolType]
+    [toolType]
   );
 
   const { handleSelect, getAnnotationEditHandlers } = useEditOnSelect(
     unifiedViewerRef,
-    toolType,
-    setToolType
+    toolType
   );
 
   const canvasAnnotationWithEventHandlers = useMemo(
@@ -244,7 +203,7 @@ export const IndustryCanvas = ({
           });
         },
       })),
-    [canvasAnnotations, setInteractionState, getAnnotationEditHandlers]
+    [canvasAnnotations, getAnnotationEditHandlers]
   );
 
   const enhancedAnnotations: Annotation[] = useMemo(

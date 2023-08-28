@@ -14,8 +14,8 @@ import { CanvasAnnotation, IndustryCanvasToolType } from '../types';
 import assertNever from '../utils/assertNever';
 import { ExactlyOnePartial } from '../utils/ExactlyOnePartial';
 
-import { UseManagedStateReturnType } from './useManagedState';
 import { UseManagedToolReturnType } from './useManagedTool';
+import { UpdateHandlerFn } from './useOnUpdateRequest';
 
 type ShapeAnnotationStyle = {
   fill?: string;
@@ -51,7 +51,7 @@ type AnnotationStyleByType = {
 type UseOnUpdateSelectedAnnotationProps = {
   updateStyleForToolType: UseManagedToolReturnType['updateStyleForToolType'];
   selectedCanvasAnnotation: CanvasAnnotation | undefined;
-  onUpdateRequest: UseManagedStateReturnType['onUpdateRequest'];
+  onUpdateRequest: UpdateHandlerFn;
 };
 
 export type UseOnUpdateSelectedAnnotationReturnType = {

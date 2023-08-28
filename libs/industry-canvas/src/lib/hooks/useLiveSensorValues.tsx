@@ -6,11 +6,9 @@ import {
 } from '@cognite/unified-file-viewer';
 
 import ConditionalLiveSensorValue from '../components/ContextualTooltips/AssetTooltip/ConditionalLiveSensorValue';
+import { onToggleConditionalFormattingClick } from '../state/useIndustrialCanvasStore';
 
-import {
-  LiveSensorRulesByAnnotationIdByTimeseriesId,
-  OnToggleConditionalFormatting,
-} from './useManagedState';
+import { LiveSensorRulesByAnnotationIdByTimeseriesId } from './useOnUpdateRequest';
 import useTimeseriesLatestValues from './useTimeseriesLatestValue';
 import { useTimeseriesPlural } from './useTimeseriesPlural';
 
@@ -22,11 +20,9 @@ const getTimeseriesIdsFlat = (
 
 const useLiveSensorValuesTooltips = ({
   timeseriesIdsByAnnotationId,
-  onToggleConditionalFormatting,
   liveSensorRulesByAnnotationIdByTimeseriesId,
 }: {
   timeseriesIdsByAnnotationId: Record<string, number[]>;
-  onToggleConditionalFormatting: OnToggleConditionalFormatting;
   liveSensorRulesByAnnotationIdByTimeseriesId: LiveSensorRulesByAnnotationIdByTimeseriesId;
 }): TooltipConfig[] => {
   const { data: timeseriesByTsId } = useTimeseriesPlural(
@@ -72,7 +68,7 @@ const useLiveSensorValuesTooltips = ({
                   value={value}
                   unit={unit}
                   onClick={() =>
-                    onToggleConditionalFormatting({
+                    onToggleConditionalFormattingClick({
                       annotationId,
                       timeseriesId: tsId,
                     })
@@ -88,7 +84,6 @@ const useLiveSensorValuesTooltips = ({
     timeseriesByTsId,
     valueByTsId,
     timeseriesIdsByAnnotationId,
-    onToggleConditionalFormatting,
     liveSensorRulesByAnnotationIdByTimeseriesId,
   ]);
 

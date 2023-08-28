@@ -13,21 +13,30 @@ import { LineAnnotationTooltip } from '../components/tooltips/LineAnnotationTool
 import { ShapeAnnotationTooltip } from '../components/tooltips/ShapeAnnotationTooltip';
 import { StickyAnnotationTooltip } from '../components/tooltips/StickyAnnotationTooltip';
 import { TextAnnotationTooltip } from '../components/tooltips/TextAnnotationTooltip';
+import { onDeleteRequest } from '../state/useIndustrialCanvasStore';
 import { CanvasAnnotation, isShapeAnnotation } from '../types';
 
 import { UseOnUpdateSelectedAnnotationReturnType } from './useOnUpdateSelectedAnnotation';
 
 export type UseCanvasAnnotationTooltipsParams = {
   selectedCanvasAnnotation: CanvasAnnotation | undefined;
-  onDeleteSelectedCanvasAnnotation: () => void;
 } & UseOnUpdateSelectedAnnotationReturnType;
 
 const useCanvasAnnotationTooltips = ({
   selectedCanvasAnnotation,
-  onDeleteSelectedCanvasAnnotation,
   onUpdateSelectedAnnotation,
 }: UseCanvasAnnotationTooltipsParams) => {
   return useMemo(() => {
+    const onDeleteClick = () => {
+      if (selectedCanvasAnnotation === undefined) {
+        return;
+      }
+
+      onDeleteRequest({
+        annotationIds: [selectedCanvasAnnotation.id],
+        containerIds: [],
+      });
+    };
     if (selectedCanvasAnnotation === undefined) {
       return [];
     }
@@ -40,9 +49,7 @@ const useCanvasAnnotationTooltips = ({
             <BottomMarginStyle>
               <ShapeAnnotationTooltip
                 shapeAnnotation={selectedCanvasAnnotation}
-                onDeleteSelectedCanvasAnnotation={
-                  onDeleteSelectedCanvasAnnotation
-                }
+                onDeleteSelectedCanvasAnnotation={onDeleteClick}
                 onUpdateSelectedAnnotation={onUpdateSelectedAnnotation}
               />
             </BottomMarginStyle>
@@ -60,9 +67,7 @@ const useCanvasAnnotationTooltips = ({
           content: (
             <BottomMarginStyle>
               <TextAnnotationTooltip
-                onDeleteSelectedCanvasAnnotation={
-                  onDeleteSelectedCanvasAnnotation
-                }
+                onDeleteSelectedCanvasAnnotation={onDeleteClick}
                 onUpdateSelectedAnnotation={onUpdateSelectedAnnotation}
                 textAnnotation={selectedCanvasAnnotation}
               />
@@ -81,9 +86,7 @@ const useCanvasAnnotationTooltips = ({
           content: (
             <BottomMarginStyle>
               <LineAnnotationTooltip
-                onDeleteSelectedCanvasAnnotation={
-                  onDeleteSelectedCanvasAnnotation
-                }
+                onDeleteSelectedCanvasAnnotation={onDeleteClick}
                 onUpdateSelectedAnnotation={onUpdateSelectedAnnotation}
                 lineAnnotation={selectedCanvasAnnotation}
               />
@@ -102,9 +105,7 @@ const useCanvasAnnotationTooltips = ({
           content: (
             <BottomMarginStyle>
               <StickyAnnotationTooltip
-                onDeleteSelectedCanvasAnnotation={
-                  onDeleteSelectedCanvasAnnotation
-                }
+                onDeleteSelectedCanvasAnnotation={onDeleteClick}
                 onUpdateSelectedAnnotation={onUpdateSelectedAnnotation}
                 stickyAnnotation={selectedCanvasAnnotation}
               />
@@ -119,11 +120,7 @@ const useCanvasAnnotationTooltips = ({
     throw new Error(
       `Unsupported annotation type: ${selectedCanvasAnnotation.type}`
     );
-  }, [
-    selectedCanvasAnnotation,
-    onUpdateSelectedAnnotation,
-    onDeleteSelectedCanvasAnnotation,
-  ]);
+  }, [selectedCanvasAnnotation, onUpdateSelectedAnnotation]);
 };
 
 const BottomMarginStyle = styled.div`

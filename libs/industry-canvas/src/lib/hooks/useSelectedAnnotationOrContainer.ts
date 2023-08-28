@@ -1,30 +1,21 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import {
-  IdsByType,
   UnifiedViewer,
   UnifiedViewerEventType,
 } from '@cognite/unified-file-viewer';
 
 import {
-  CanvasAnnotation,
-  IndustryCanvasContainerConfig,
-  IndustryCanvasToolType,
-} from '../types';
-
-import { EMPTY_IDS_BY_TYPE } from './constants';
-import { UseManagedStateReturnType } from './useManagedState';
+  setSelectedIdsByType,
+  useIndustrialCanvasStore,
+} from '../state/useIndustrialCanvasStore';
+import { IndustryCanvasState, IndustryCanvasToolType } from '../types';
 
 type UseSelectedAnnotationOrContainerProps = {
   unifiedViewerRef: UnifiedViewer | null;
   toolType: IndustryCanvasToolType;
-  canvasAnnotations: UseManagedStateReturnType['canvasAnnotations'];
-  container: UseManagedStateReturnType['container'];
-};
-
-export type UseSelectedAnnotationOrContainerReturnType = {
-  selectedCanvasAnnotation: CanvasAnnotation | undefined;
-  selectedContainer: IndustryCanvasContainerConfig | undefined;
+  canvasAnnotations: IndustryCanvasState['canvasAnnotations'];
+  container: IndustryCanvasState['container'];
 };
 
 export const useSelectedAnnotationOrContainer = ({
@@ -33,14 +24,21 @@ export const useSelectedAnnotationOrContainer = ({
   canvasAnnotations,
   container,
 }: UseSelectedAnnotationOrContainerProps) => {
-  const [selectedIdsByType, setSelectedIdsByType] =
-    useState<IdsByType>(EMPTY_IDS_BY_TYPE);
+  const { selectedIdsByType } = useIndustrialCanvasStore((state) => ({
+    selectedIdsByType: state.selectedIdsByType,
+  }));
 
   useEffect(() => {
-    return unifiedViewerRef?.addEventListener(
+    unifiedViewerRef?.addEventListener(
       UnifiedViewerEventType.ON_SELECT,
       setSelectedIdsByType
     );
+    return () => {
+      unifiedViewerRef?.removeEventListener(
+        UnifiedViewerEventType.ON_SELECT,
+        setSelectedIdsByType
+      );
+    };
   }, [unifiedViewerRef]);
 
   const selectedCanvasAnnotation = useMemo(() => {

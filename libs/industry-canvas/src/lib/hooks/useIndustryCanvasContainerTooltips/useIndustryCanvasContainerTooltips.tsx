@@ -7,9 +7,11 @@ import {
   TooltipConfig,
 } from '@cognite/unified-file-viewer';
 
+import {
+  removeContainerById,
+  updateContainerById,
+} from '../../state/useIndustrialCanvasStore';
 import { IndustryCanvasContainerConfig } from '../../types';
-import { UseManagedStateReturnType } from '../useManagedState';
-import { UseResourceSelectorActionsReturnType } from '../useResourceSelectorActions';
 import {
   OnUpdateTooltipsOptions,
   TooltipsOptions,
@@ -23,14 +25,11 @@ type UseIndustryCanvasContainerTooltipsProps = {
   containers: IndustryCanvasContainerConfig[];
   tooltipsOptions: TooltipsOptions;
   onUpdateTooltipsOptions: OnUpdateTooltipsOptions;
-  updateContainerById: UseManagedStateReturnType['updateContainerById'];
-  removeContainerById: UseManagedStateReturnType['removeContainerById'];
   onAddSummarizationSticky: (
     container: IndustryCanvasContainerConfig,
     text: string,
     isMultiPageDocument: boolean
   ) => void;
-  onResourceSelectorOpen: UseResourceSelectorActionsReturnType['onResourceSelectorOpen'];
 };
 
 const useIndustryCanvasContainerTooltips = ({
@@ -38,10 +37,7 @@ const useIndustryCanvasContainerTooltips = ({
   containers,
   tooltipsOptions,
   onUpdateTooltipsOptions,
-  updateContainerById,
-  removeContainerById,
   onAddSummarizationSticky,
-  onResourceSelectorOpen,
 }: UseIndustryCanvasContainerTooltipsProps): TooltipConfig[] => {
   const [numberOfPages, setNumberOfPages] = useState<number | undefined>(
     undefined
@@ -90,14 +86,18 @@ const useIndustryCanvasContainerTooltips = ({
             onUpdateTooltipsOptions={onUpdateTooltipsOptions}
             onUpdateContainer={(
               containerConfig: IndustryCanvasContainerConfig
-            ) => updateContainerById(containerConfig.id, containerConfig)}
+            ) =>
+              updateContainerById({
+                containerId: containerConfig.id,
+                containerConfig,
+              })
+            }
             onRemoveContainer={() => removeContainerById(selectedContainer.id)}
             shamefulNumPages={numberOfPages}
             isLoadingSummary={isLoadingSummary}
             setIsLoadingSummary={setIsLoadingSummary}
             isOcrDataLoading={isOcrDataLoading}
             ocrData={ocrData}
-            onResourceSelectorOpen={onResourceSelectorOpen}
           />
         ),
         anchorTo: TooltipAnchorPosition.TOP_RIGHT,
@@ -108,16 +108,13 @@ const useIndustryCanvasContainerTooltips = ({
   }, [
     containers,
     selectedContainer,
-    removeContainerById,
     onAddSummarizationSticky,
-    updateContainerById,
     numberOfPages,
     isLoadingSummary,
     isOcrDataLoading,
     ocrData,
     tooltipsOptions,
     onUpdateTooltipsOptions,
-    onResourceSelectorOpen,
   ]);
 };
 

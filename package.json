@@ -286,7 +286,8 @@
     "yargs": "^17.7.1",
     "yargs-parser": "^21.1.1",
     "yup": "^0.32.9",
-    "yup-v1": "npm:yup@1.0.2"
+    "yup-v1": "npm:yup@1.0.2",
+    "zustand": "^4.4.1"
   },
   "scripts": {
     "start": "./scripts/start.sh",

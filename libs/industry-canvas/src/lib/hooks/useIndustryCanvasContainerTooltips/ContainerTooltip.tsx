@@ -13,6 +13,7 @@ import type { OCRAnnotationPageResult } from '@data-exploration-lib/domain-layer
 import { translationKeys } from '../../common';
 import DateRangePrompt from '../../components/DateRangePrompt';
 import { MetricEvent } from '../../constants';
+import { openResourceSelector } from '../../state/useIndustrialCanvasStore';
 import {
   IndustryCanvasContainerConfig,
   isIndustryCanvasTimeSeriesContainer,
@@ -20,7 +21,6 @@ import {
 import assertNever from '../../utils/assertNever';
 import getDefaultContainerLabel from '../../utils/getDefaultContainerLabel';
 import useMetrics from '../../utils/tracking/useMetrics';
-import { UseResourceSelectorActionsReturnType } from '../useResourceSelectorActions';
 import {
   OnUpdateTooltipsOptions,
   TooltipsOptions,
@@ -56,7 +56,6 @@ type ContainerTooltipProps = {
   ocrData: OCRAnnotationPageResult[] | undefined;
   isLoadingSummary: boolean;
   setIsLoadingSummary: (isLoading: boolean) => void;
-  onResourceSelectorOpen: UseResourceSelectorActionsReturnType['onResourceSelectorOpen'];
 };
 
 const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
@@ -72,7 +71,6 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
   ocrData,
   isLoadingSummary,
   setIsLoadingSummary,
-  onResourceSelectorOpen,
 }) => {
   const trackUsage = useMetrics();
   const [isInEditLabelMode, setIsInEditLabelMode] = useState(false);
@@ -117,7 +115,7 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
         container.type === ContainerType.IMAGE ||
         container.type === ContainerType.TEXT
       ) {
-        onResourceSelectorOpen({
+        openResourceSelector({
           initialSelectedResourceItem: {
             type: resourceType,
             id: resourceId,
@@ -147,7 +145,7 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
 
       assertNever(container);
     },
-    [onResourceSelectorOpen, resourceId, resourceType]
+    [resourceId, resourceType]
   );
 
   const onOpenInResourceSelectorClick = useCallback(() => {

@@ -13,19 +13,18 @@ import { ExtendedAnnotation } from '@data-exploration-lib/core';
 import AssetTooltip from '../components/ContextualTooltips/AssetTooltip';
 import { ANNOTATION_TOOLTIP_POSITION, MetricEvent } from '../constants';
 import { OnAddContainerReferences } from '../IndustryCanvasPage';
-import { ContainerReferenceType } from '../types';
+import {
+  onPinTimeseriesClick,
+  openConditionalFormattingClick,
+  openResourceSelector,
+} from '../state/useIndustrialCanvasStore';
+import { ContainerReferenceType, IndustryCanvasState } from '../types';
 import useMetrics from '../utils/tracking/useMetrics';
-
-import { UseManagedStateReturnType } from './useManagedState';
-import { UseResourceSelectorActionsReturnType } from './useResourceSelectorActions';
 
 const useIndustryCanvasAssetTooltips = (
   selectedAnnotation: ExtendedAnnotation | undefined,
   onAddContainerReferences: OnAddContainerReferences,
-  onResourceSelectorOpen: UseResourceSelectorActionsReturnType['onResourceSelectorOpen'],
-  pinnedTimeseriesIdsByAnnotationId: UseManagedStateReturnType['pinnedTimeseriesIdsByAnnotationId'],
-  onPinTimeseriesClick: UseManagedStateReturnType['onPinTimeseriesClick'],
-  onOpenConditionalFormattingClick: UseManagedStateReturnType['onOpenConditionalFormattingClick']
+  pinnedTimeseriesIdsByAnnotationId: IndustryCanvasState['pinnedTimeseriesIdsByAnnotationId']
 ) => {
   const trackUsage = useMetrics();
 
@@ -94,7 +93,7 @@ const useIndustryCanvasAssetTooltips = (
         containerType: 'file',
         resourceType: 'asset',
       });
-      onResourceSelectorOpen({
+      openResourceSelector({
         initialSelectedResourceItem: {
           type: 'asset',
           id: resourceId,
@@ -116,7 +115,7 @@ const useIndustryCanvasAssetTooltips = (
           resourceType: 'timeseries',
         }
       );
-      onResourceSelectorOpen({
+      openResourceSelector({
         initialFilter: {
           common: {
             assetSubtreeIds: [{ value: resourceId }],
@@ -132,7 +131,7 @@ const useIndustryCanvasAssetTooltips = (
 
     const onSetConditionalFormattingClick = hasPinnedTimeseries
       ? () => {
-          onOpenConditionalFormattingClick({
+          openConditionalFormattingClick({
             annotationId: selectedAnnotation.id,
             timeseriesId:
               pinnedTimeseriesIdsByAnnotationId[selectedAnnotation.id][0],
@@ -172,11 +171,9 @@ const useIndustryCanvasAssetTooltips = (
     ];
   }, [
     pinnedTimeseriesIdsByAnnotationId,
-    onPinTimeseriesClick,
     selectedAnnotation,
     onAddContainerReferences,
     trackUsage,
-    onResourceSelectorOpen,
   ]);
 };
 
