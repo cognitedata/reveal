@@ -30,6 +30,8 @@ export const MatchTable = ({
     }>
   >;
 }) => {
+  console.log(originInstances);
+  console.log(matchInputInstances);
   const data = originInstances?.map(
     (originInstance: InternalModelInstance) => ({
       ...originInstance,

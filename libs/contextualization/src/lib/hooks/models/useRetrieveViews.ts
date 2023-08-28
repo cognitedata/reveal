@@ -2,7 +2,10 @@ import { useQuery } from '@tanstack/react-query';
 
 import { useSDK } from '@cognite/sdk-provider';
 
-export const useRetrieveViews = (space: string, viewExternalIds: string[]) => {
+export const useRetrieveViews = (
+  space?: string,
+  viewExternalIds?: string[]
+) => {
   const sdk = useSDK();
   const queryKeys = ['models', 'views', 'byIds', space, viewExternalIds];
 
@@ -12,7 +15,7 @@ export const useRetrieveViews = (space: string, viewExternalIds: string[]) => {
       {
         headers: { 'Content-Type': 'application/json' },
         data: {
-          items: viewExternalIds.map((externalId) => ({
+          items: viewExternalIds?.map((externalId) => ({
             space: space,
             externalId: externalId,
           })),
@@ -25,6 +28,6 @@ export const useRetrieveViews = (space: string, viewExternalIds: string[]) => {
   return useQuery({
     queryKey: queryKeys,
     queryFn: fetchJob,
-    enabled: !!viewExternalIds,
+    enabled: !!space && !!viewExternalIds,
   });
 };
