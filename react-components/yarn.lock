@@ -2142,7 +2142,7 @@ __metadata:
     "@babel/preset-react": 7.22.5
     "@babel/preset-typescript": 7.22.5
     "@cognite/cogs.js": ^9.17.0
-    "@cognite/reveal": 4.4.0
+    "@cognite/reveal": 4.4.1
     "@cognite/sdk": ^8.2.0
     "@storybook/addon-essentials": 7.3.2
     "@storybook/addon-interactions": 7.3.2
@@ -2185,16 +2185,16 @@ __metadata:
     webpack-node-externals: 3.0.0
   peerDependencies:
     "@cognite/cogs.js": ">=9"
-    "@cognite/reveal": 4.4.0
+    "@cognite/reveal": 4.4.1
     react: ">=18"
     react-dom: ">=18"
     styled-components: ">=5"
   languageName: unknown
   linkType: soft
 
-"@cognite/reveal@npm:4.4.0":
-  version: 4.4.0
-  resolution: "@cognite/reveal@npm:4.4.0"
+"@cognite/reveal@npm:4.4.1":
+  version: 4.4.1
+  resolution: "@cognite/reveal@npm:4.4.1"
   dependencies:
     "@tweenjs/tween.js": 19.0.0
     assert: 2.0.0
@@ -2212,8 +2212,8 @@ __metadata:
     sparse-octree: 7.1.8
   peerDependencies:
     "@cognite/sdk": ^7.16.0 || ^8.0.0
-    three: 0.154.0
-  checksum: 37818f3b3cf3a0af7221f97db9b96b1fb9c31ba0056375afbe7f7c7b940f345bc64521dcc9fc4d5de110d38ae92a22df2f2f2bd850f94aee8be5229ac016ebaf
+    three: 0.155.0
+  checksum: 8747719e2296c2c7e6968560b55924cc9465110fc1bc7f444afb63b8bcf1d9d60fc15fffa7a0622de2b4a2230d9d5b874d05a2c5f495ff7a0a85186a5e4e7801
   languageName: node
   linkType: hard
 
