@@ -169,7 +169,7 @@ export const SideBarMenu = ({ items }: SideBarProps) => {
         <NotificationDot>
           {renderIcon({
             icon: 'Lightning',
-            slug: '',
+            slug: '#preview',
             disabled: false,
             onClick: () => {
               setShowFeatureToggle(true);

@@ -11,6 +11,7 @@ import {
 } from '../CogniteBaseChain';
 import { CopilotMessage } from '../types';
 
+import { DocumentQAQueryChain } from './documentQA/documentQueryChain';
 import { FusionQAChain } from './fusionQA/fusionQA';
 import { GraphQlChain } from './graphql/graphql';
 import { DocumentQueryChain } from './infield-chains/documentQueryChain';
@@ -24,6 +25,7 @@ export type CogniteChainName =
   | 'DocumentQueryChain'
   | 'WorkorderChain'
   | 'DocumentSummaryChain'
+  | 'DocumentQAQueryChain'
   | 'FusionQAChain';
 
 const destinationChains = (
@@ -39,6 +41,7 @@ const destinationChains = (
     AppBuilderChain,
     DocumentQueryChain,
     FusionQAChain,
+    DocumentQAQueryChain,
     DocumentSummaryChain,
     WorkorderChain,
   ].reduce(
