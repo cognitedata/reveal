@@ -8,12 +8,12 @@ import {
 } from '@cognite/unified-file-viewer';
 import { UnifiedViewerPointerEvent } from '@cognite/unified-file-viewer/dist/core/UnifiedViewerRenderer/UnifiedEventHandler';
 
+import { setToolType } from '../state/useIndustrialCanvasStore';
 import { IndustryCanvasToolType } from '../types';
 
 const useEditOnSelect = (
   unifiedViewerRef: MutableRefObject<UnifiedViewer | null>,
-  tool: IndustryCanvasToolType,
-  setTool: (tool: IndustryCanvasToolType) => void
+  tool: IndustryCanvasToolType
 ) => {
   const [selected, setSelected] = useState<IdsByType>({
     annotationIds: [],
@@ -58,14 +58,14 @@ const useEditOnSelect = (
       }
 
       if (annotation.type === AnnotationType.STICKY) {
-        setTool(IndustryCanvasToolType.STICKY);
+        setToolType(IndustryCanvasToolType.STICKY);
         setTimeout(() => {
           unifiedViewerRef.current?.editAnnotationById(annotation.id);
         }, 0);
       }
 
       if (annotation.type === AnnotationType.TEXT) {
-        setTool(IndustryCanvasToolType.TEXT);
+        setToolType(IndustryCanvasToolType.TEXT);
         setTimeout(() => {
           unifiedViewerRef.current?.editAnnotationById(annotation.id);
         }, 0);
@@ -73,7 +73,7 @@ const useEditOnSelect = (
 
       return;
     },
-    [editableAnnotationIds, setTool, unifiedViewerRef]
+    [editableAnnotationIds, unifiedViewerRef]
   );
 
   const getAnnotationEditHandlers = useCallback(

@@ -197,7 +197,6 @@ export type LiveSensorRulesByAnnotationIdByTimeseriesId = Record<
 export type IndustryCanvasState = {
   container: IndustryCanvasContainerConfig;
   canvasAnnotations: CanvasAnnotation[];
-
   pinnedTimeseriesIdsByAnnotationId: Record<string, number[]>;
   liveSensorRulesByAnnotationIdByTimeseriesId: LiveSensorRulesByAnnotationIdByTimeseriesId;
 };

@@ -6,24 +6,22 @@ import {
 } from '@cognite/unified-file-viewer';
 
 import ConditionalFormattingTooltip from '../components/ContextualTooltips/AssetTooltip/ConditionalFormattingTooltip';
+import {
+  closeConditionalFormattingClick,
+  onLiveSensorRulesChangeByAnnotationIdByTimeseriesIds,
+} from '../state/useIndustrialCanvasStore';
 
 import {
   IsConditionalFormattingOpenByAnnotationIdByTimeseriesId,
   LiveSensorRulesByAnnotationIdByTimeseriesId,
-  OnCloseConditionalFormattingClick,
-  OnLiveSensorRulesChange,
-} from './useManagedState';
+} from './useOnUpdateRequest';
 
 const useConditionalFormattingTooltips = ({
   isConditionalFormattingOpenAnnotationIdByTimeseriesId,
   liveSensorRulesByAnnotationIdByTimeseriesId,
-  onLiveSensorRulesChange,
-  onCloseConditionalFormattingClick,
 }: {
   liveSensorRulesByAnnotationIdByTimeseriesId: LiveSensorRulesByAnnotationIdByTimeseriesId;
   isConditionalFormattingOpenAnnotationIdByTimeseriesId: IsConditionalFormattingOpenByAnnotationIdByTimeseriesId;
-  onLiveSensorRulesChange: OnLiveSensorRulesChange;
-  onCloseConditionalFormattingClick: OnCloseConditionalFormattingClick;
 }): TooltipConfig[] => {
   const conditionalFormattingTooltips: TooltipConfig[] = useMemo(() => {
     return Object.entries(
@@ -39,20 +37,20 @@ const useConditionalFormattingTooltips = ({
             <ConditionalFormattingTooltip
               id={Number(timeseriesId)}
               onSaveClick={(nextRules) => {
-                onLiveSensorRulesChange({
+                onLiveSensorRulesChangeByAnnotationIdByTimeseriesIds({
                   annotationId,
                   timeseriesId: Number(timeseriesId),
                   rules: nextRules,
                 });
 
-                onCloseConditionalFormattingClick();
+                closeConditionalFormattingClick();
               }}
               initialRules={
                 liveSensorRulesByAnnotationIdByTimeseriesId[annotationId]?.[
                   Number(timeseriesId)
                 ] ?? []
               }
-              onBackClick={onCloseConditionalFormattingClick}
+              onBackClick={closeConditionalFormattingClick}
             />
           ),
         }))
@@ -60,8 +58,6 @@ const useConditionalFormattingTooltips = ({
   }, [
     liveSensorRulesByAnnotationIdByTimeseriesId,
     isConditionalFormattingOpenAnnotationIdByTimeseriesId,
-    onCloseConditionalFormattingClick,
-    onLiveSensorRulesChange,
   ]);
 
   return conditionalFormattingTooltips;

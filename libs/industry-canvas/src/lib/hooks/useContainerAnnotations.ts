@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import zip from 'lodash/zip';
 
@@ -9,33 +9,72 @@ import {
 
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
 
+import { MetricEvent } from '../constants';
+import {
+  setInteractionState,
+  useIndustrialCanvasStore,
+} from '../state/useIndustrialCanvasStore';
 import { IndustryCanvasContainerConfig } from '../types';
 import { isNotUndefined } from '../utils/isNotUndefined';
 import { isNotUndefinedTuple } from '../utils/isNotUndefinedTuple';
+import useMetrics from '../utils/tracking/useMetrics';
 
 import { EMPTY_ARRAY } from './constants';
 import { useAnnotationsMultiple } from './useAnnotationsMultiple';
 
 type useContainerAnnotationsParams = {
   container: IndustryCanvasContainerConfig;
-  selectedAnnotationId: string | undefined;
-  hoverId: string | undefined;
-  onMouseOver?: (annotation: ExtendedAnnotation) => void;
-  onMouseOut?: (annotation: ExtendedAnnotation) => void;
-  onClick?: (annotation: ExtendedAnnotation) => void;
 };
 
 export const useContainerAnnotations = ({
   container,
-  selectedAnnotationId,
-  hoverId,
-  onClick,
-  onMouseOver,
-  onMouseOut,
 }: useContainerAnnotationsParams): ExtendedAnnotation[] => {
+  const trackUsage = useMetrics();
   const containerConfigs = container.children ?? EMPTY_ARRAY;
   const { data: annotationsApiAnnotations } =
     useAnnotationsMultiple(containerConfigs);
+  const { hoverId, clickedContainerAnnotationId } = useIndustrialCanvasStore(
+    (state) => ({
+      hoverId: state.interactionState.hoverId,
+      clickedContainerAnnotationId:
+        state.interactionState.clickedContainerAnnotationId,
+    })
+  );
+
+  const onClick = useCallback(
+    (annotation: ExtendedAnnotation) => {
+      setInteractionState((prevInteractionState) => {
+        const wasAlreadyClicked =
+          prevInteractionState.clickedContainerAnnotationId === annotation.id;
+        trackUsage(MetricEvent.CONTAINER_ANNOTATION_CLICKED, {
+          annotatedResourceType: annotation.metadata.annotationType,
+          wasAlreadyClicked,
+        });
+        return {
+          clickedContainerId: undefined,
+          hoverId: undefined,
+          clickedContainerAnnotationId: wasAlreadyClicked
+            ? undefined
+            : annotation.id,
+        };
+      });
+    },
+    [trackUsage]
+  );
+
+  const onMouseOver = useCallback((annotation: ExtendedAnnotation) => {
+    setInteractionState((prevInteractionState) => ({
+      ...prevInteractionState,
+      hoverId: annotation.id,
+    }));
+  }, []);
+
+  const onMouseOut = useCallback(() => {
+    setInteractionState((prevInteractionState) => ({
+      ...prevInteractionState,
+      hoverId: undefined,
+    }));
+  }, []);
 
   return useMemo(() => {
     if (annotationsApiAnnotations === undefined) {
@@ -52,7 +91,7 @@ export const useContainerAnnotations = ({
       )
       .filter(isNotUndefined)
       .map((annotation) => {
-        const isSelected = selectedAnnotationId === annotation.id;
+        const isSelected = clickedContainerAnnotationId === annotation.id;
         const isOnHover = hoverId === String(annotation.id);
         return getStyledAnnotationFromAnnotation(
           annotation,
@@ -77,10 +116,10 @@ export const useContainerAnnotations = ({
                 onMouseOver(annotation);
               }
             },
-            onMouseOut: (e: any, annotation: ExtendedAnnotation) => {
+            onMouseOut: (e: any) => {
               e.cancelBubble = true;
               if (onMouseOut) {
-                onMouseOut(annotation);
+                onMouseOut();
               }
             },
           } as ExtendedAnnotation)
@@ -89,9 +128,7 @@ export const useContainerAnnotations = ({
     return extendedAnnotations;
   }, [
     onClick,
-    onMouseOver,
-    onMouseOut,
-    selectedAnnotationId,
+    clickedContainerAnnotationId,
     hoverId,
     annotationsApiAnnotations,
     containerConfigs,

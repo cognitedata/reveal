@@ -5,7 +5,7 @@ import {
 } from '@cognite/unified-file-viewer';
 
 import { STICKY_ANNOTATION_COLOR_MAP } from '../colors';
-import { SHARED_STICKY_TOOL_OPTIONS } from '../hooks/useManagedTool';
+import { SHARED_STICKY_TOOL_OPTIONS } from '../state/useIndustrialCanvasStore';
 import { IndustryCanvasContainerConfig } from '../types';
 
 const STICKY_SIZE = 300;
