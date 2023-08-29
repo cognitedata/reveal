@@ -514,11 +514,14 @@ export const constructGraphQLFilterGroup = (tree: JsonTree) => {
             case 'group':
               return constructGraphQLFilterGroup(item);
             case 'rule':
+              if (!item.properties.field) {
+                throw new Error('Unable to build filter');
+              }
               // check for nested, this should be fixed later
               if (item.properties.operator === 'isNotNull') {
                 return setWith(
                   {},
-                  item.properties.field!,
+                  item.properties.field,
                   {
                     isNull: false,
                   },
@@ -528,7 +531,7 @@ export const constructGraphQLFilterGroup = (tree: JsonTree) => {
               if (item.properties.operator === 'isNull') {
                 return setWith(
                   {},
-                  item.properties.field!,
+                  item.properties.field,
                   {
                     isNull: true,
                   },
@@ -537,7 +540,7 @@ export const constructGraphQLFilterGroup = (tree: JsonTree) => {
               }
               return setWith(
                 {},
-                item.properties.field!,
+                item.properties.field,
                 {
                   [item.properties.operator!]:
                     item.properties.value.length === 1
