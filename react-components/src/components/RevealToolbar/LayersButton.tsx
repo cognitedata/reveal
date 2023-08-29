@@ -3,7 +3,7 @@
  */
 
 import { type ReactElement, useState, useEffect, useMemo, useRef } from 'react';
-import { Button, Dropdown } from '@cognite/cogs.js';
+import { Button, Dropdown, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import { type Reveal3DResourcesLayerStates } from './LayersContainer/types';
 import LayersContainer from './LayersContainer/LayersContainer';
 import {
@@ -155,19 +155,21 @@ export const LayersButton = (): ReactElement => {
   }, [viewer]);
 
   return (
-    <Dropdown
-      appendTo={revealContainerElement ?? document.body}
-      content={
-        <LayersContainer
-          props={{
-            reveal3DResourcesLayerData,
-            setReveal3DResourcesLayerData
-          }}
-        />
-      }
-      visible={visible}
-      placement="auto">
-      <Button type="ghost" icon="Layers" aria-label="3D Resource layers" onClick={showLayers} />
-    </Dropdown>
+    <CogsTooltip content={'Filter 3D resource layers'} placement="right" appendTo={document.body}>
+      <Dropdown
+        appendTo={revealContainerElement ?? document.body}
+        content={
+          <LayersContainer
+            props={{
+              reveal3DResourcesLayerData,
+              setReveal3DResourcesLayerData
+            }}
+          />
+        }
+        visible={visible}
+        placement="auto">
+        <Button type="ghost" icon="Layers" aria-label="3D Resource layers" onClick={showLayers} />
+      </Dropdown>
+    </CogsTooltip>
   );
 };
