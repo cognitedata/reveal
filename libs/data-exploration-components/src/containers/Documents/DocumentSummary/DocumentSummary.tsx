@@ -184,7 +184,7 @@ export const DocumentSummary = ({
     isRelatedDocumentsLoading && !isDocumentsCountExceed;
 
   return (
-    <SummaryCardWrapper>
+    <SummaryCardWrapper data-testid="document-summary">
       <Table<InternalDocumentWithMatchingLabels>
         id="document-summary-table"
         columns={columns}

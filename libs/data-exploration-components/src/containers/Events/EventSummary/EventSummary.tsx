@@ -126,7 +126,7 @@ export const EventSummary = ({
   const isRelatedDataLoading = isRelatedEventsLoading && !isEventsCountExceed;
 
   return (
-    <SummaryCardWrapper>
+    <SummaryCardWrapper data-testid="event-summary">
       <Table<InternalEventDataWithMatchingLabels>
         columns={columns}
         hiddenColumns={hiddenColumns}
