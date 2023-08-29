@@ -39,6 +39,7 @@ export const SearchConfigButton: React.FC<Props> = ({
 
 const StyledSpan = styled.span`
   margin-left: 8px;
+  width: max-content;
 `;
 
 const ButtonWrapper = styled.div`
