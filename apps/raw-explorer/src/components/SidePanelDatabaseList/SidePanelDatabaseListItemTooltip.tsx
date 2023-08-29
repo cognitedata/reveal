@@ -124,7 +124,6 @@ const SidePanelDatabaseListItemTooltip = ({
         </StyledTooltipContent>
       }
       placement="right-start"
-      visible={name === 'emre-is-finally-learning-fdm'}
     >
       {children}
     </StyledDatabaseListItemTooltipWrapper>
