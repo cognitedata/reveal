@@ -2142,7 +2142,7 @@ __metadata:
     "@babel/preset-react": 7.22.5
     "@babel/preset-typescript": 7.22.5
     "@cognite/cogs.js": ^9.17.0
-    "@cognite/reveal": 4.4.0
+    "@cognite/reveal": 4.4.1
     "@cognite/sdk": ^8.2.0
     "@storybook/addon-essentials": 7.3.2
     "@storybook/addon-interactions": 7.3.2
@@ -2157,7 +2157,7 @@ __metadata:
     "@types/react": 18.2.7
     "@types/react-dom": ^18.2.7
     "@types/styled-components": 5.1.26
-    "@types/three": 0.155.0
+    "@types/three": 0.155.1
     "@typescript-eslint/eslint-plugin": ^5.50.0
     eslint: ^8.0.1
     eslint-config-prettier: ^9.0.0
@@ -2185,16 +2185,16 @@ __metadata:
     webpack-node-externals: 3.0.0
   peerDependencies:
     "@cognite/cogs.js": ">=9"
-    "@cognite/reveal": 4.4.0
+    "@cognite/reveal": 4.4.1
     react: ">=18"
     react-dom: ">=18"
     styled-components: ">=5"
   languageName: unknown
   linkType: soft
 
-"@cognite/reveal@npm:4.4.0":
-  version: 4.4.0
-  resolution: "@cognite/reveal@npm:4.4.0"
+"@cognite/reveal@npm:4.4.1":
+  version: 4.4.1
+  resolution: "@cognite/reveal@npm:4.4.1"
   dependencies:
     "@tweenjs/tween.js": 19.0.0
     assert: 2.0.0
@@ -2212,8 +2212,8 @@ __metadata:
     sparse-octree: 7.1.8
   peerDependencies:
     "@cognite/sdk": ^7.16.0 || ^8.0.0
-    three: 0.154.0
-  checksum: 37818f3b3cf3a0af7221f97db9b96b1fb9c31ba0056375afbe7f7c7b940f345bc64521dcc9fc4d5de110d38ae92a22df2f2f2bd850f94aee8be5229ac016ebaf
+    three: 0.155.0
+  checksum: 8747719e2296c2c7e6968560b55924cc9465110fc1bc7f444afb63b8bcf1d9d60fc15fffa7a0622de2b4a2230d9d5b874d05a2c5f495ff7a0a85186a5e4e7801
   languageName: node
   linkType: hard
 
@@ -5756,9 +5756,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/three@npm:0.155.0":
-  version: 0.155.0
-  resolution: "@types/three@npm:0.155.0"
+"@types/three@npm:0.155.1":
+  version: 0.155.1
+  resolution: "@types/three@npm:0.155.1"
   dependencies:
     "@tweenjs/tween.js": ~18.6.4
     "@types/stats.js": "*"
@@ -5766,7 +5766,7 @@ __metadata:
     fflate: ~0.6.9
     lil-gui: ~0.17.0
     meshoptimizer: ~0.18.1
-  checksum: decd966b198ad0f24febcbd16a2c3ff584e7b0f7f89e70c2ecb8c1a7842598a51f79cd0965220aa74d216ab4474ca2f6e4023904aa7ca0f38c93fc8b99e2a0d6
+  checksum: dbe682fed53b59776d09140eec755677aedb49df6a16333a507f87a4ade2cbd4ea0fa46984e28425f3c3026d5eb9a8568e75a1a362fb4f1889427e4c6df4b640
   languageName: node
   linkType: hard
 
