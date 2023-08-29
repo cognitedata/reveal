@@ -50,4 +50,4 @@ fi
 # https://github.com/cognitedata/cdf-ui-i18n-utils/blob/main/bin/README.md
 
 # The script is in the monorepo, run locally
-./libs/shared/cdf-ui-i18n-utils/src/cdf-i18n-utils-cli.cjs ${cliCommand} --namespace=${project} --path=${path}
+./libs/shared/cdf-ui-i18n-utils/bin/cdf-i18n-utils-cli.cjs ${cliCommand} --namespace=${project} --path=${path}
