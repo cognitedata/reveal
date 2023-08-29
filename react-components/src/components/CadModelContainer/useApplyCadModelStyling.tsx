@@ -88,12 +88,9 @@ async function applyStyling(
       const stylingGroup = stylingGroups[i];
       const viewerStyledNodeCollection = model.styledNodeCollections[i];
 
-      const areEqual = await isEqualStylingGroupAndCollection(
-        stylingGroup,
-        viewerStyledNodeCollection
-      );
+      const updated = await tryUpdateStylingGroup(stylingGroup, viewerStyledNodeCollection);
 
-      if (!areEqual) {
+      if (!updated) {
         return i;
       }
     }
@@ -102,7 +99,7 @@ async function applyStyling(
   }
 }
 
-async function isEqualStylingGroupAndCollection(
+async function tryUpdateStylingGroup(
   group: NodeStylingGroup | TreeIndexStylingGroup,
   collection: {
     nodeCollection: NodeCollection;
@@ -115,29 +112,41 @@ async function isEqualStylingGroupAndCollection(
 
   if (!isEqualGroupStyle) return false;
 
-  if (collection.nodeCollection instanceof TreeIndexNodeCollection && 'treeIndices' in group) {
-    const compareCollection = new TreeIndexNodeCollection(group.treeIndices);
-    const isEqualContent = isEqualTreeIndex(collection.nodeCollection, compareCollection);
+  updateIfTreeIndexCollection();
 
-    if (!isEqualContent) {
-      collection.nodeCollection.updateSet(group.treeIndices);
+  await updateIfNodeIdCollection();
+
+  return true;
+
+  async function updateIfNodeIdCollection(): Promise<void> {
+    if (!(collection.nodeCollection instanceof NodeIdNodeCollection) || !('nodeIds' in group)) {
+      return;
     }
-
-    return true;
-  }
-
-  if (collection.nodeCollection instanceof NodeIdNodeCollection && 'nodeIds' in group) {
     const collectionNodeIds = collection.nodeCollection.serialize().state.nodeIds as number[];
     const isEqualContent = isEqual(collectionNodeIds, group.nodeIds);
 
     if (!isEqualContent) {
-      await collection.nodeCollection.executeFilter(group.nodeIds);
+      return;
     }
 
-    return true;
+    await collection.nodeCollection.executeFilter(group.nodeIds);
   }
 
-  return false;
+  function updateIfTreeIndexCollection(): void {
+    if (
+      !(collection.nodeCollection instanceof TreeIndexNodeCollection) ||
+      !('treeIndices' in group)
+    ) {
+      return;
+    }
+    const compareCollection = new TreeIndexNodeCollection(group.treeIndices);
+    const isEqualContent = isEqualTreeIndex(collection.nodeCollection, compareCollection);
+
+    if (isEqualContent) {
+      return;
+    }
+    collection.nodeCollection.updateSet(group.treeIndices);
+  }
 }
 
 function isEqualTreeIndex(
