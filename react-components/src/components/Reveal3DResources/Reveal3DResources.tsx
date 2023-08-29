@@ -26,7 +26,8 @@ export const Reveal3DResources = ({
   resources,
   defaultResourceStyling,
   instanceStyling,
-  onResourcesAdded
+  onResourcesAdded,
+  onResourceLoadError
 }: Reveal3DResourcesProps): ReactElement => {
   const [reveal3DModels, setReveal3DModels] = useState<TypedReveal3DModel[]>([]);
 
@@ -34,7 +35,7 @@ export const Reveal3DResources = ({
   const numModelsLoaded = useRef(0);
 
   useEffect(() => {
-    getTypedModels(resources, viewer).then(setReveal3DModels).catch(console.error);
+    void getTypedModels(resources, viewer, onResourceLoadError).then(setReveal3DModels);
   }, [resources, viewer]);
 
   const cadModelOptions = useMemo(
@@ -62,9 +63,20 @@ export const Reveal3DResources = ({
   );
 
   const onModelLoaded = (): void => {
+    onModelFailOrSucceed();
+  };
+
+  const onModelLoadedError = (addOptions: AddResourceOptions, error: any): void => {
+    onResourceLoadError?.(addOptions, error);
+    onModelFailOrSucceed();
+  };
+
+  const onModelFailOrSucceed = (): void => {
     numModelsLoaded.current += 1;
 
-    if (numModelsLoaded.current === resources.length && onResourcesAdded !== undefined) {
+    const expectedTotalLoadCount = reveal3DModels.length + image360CollectionAddOptions.length;
+
+    if (numModelsLoaded.current === expectedTotalLoadCount && onResourcesAdded !== undefined) {
       onResourcesAdded();
     }
   };
@@ -84,6 +96,7 @@ export const Reveal3DResources = ({
             styling={cadStyling}
             transform={model.transform}
             onLoad={onModelLoaded}
+            onLoadError={onResourceLoadError}
           />
         );
       })}
@@ -100,6 +113,7 @@ export const Reveal3DResources = ({
             styling={pcStyling}
             transform={transform}
             onLoad={onModelLoaded}
+            onLoadError={onModelLoadedError}
           />
         );
       })}
@@ -109,6 +123,7 @@ export const Reveal3DResources = ({
             key={`${addModelOption.siteId}`}
             siteId={addModelOption.siteId}
             onLoad={onModelLoaded}
+            onLoadError={onModelLoadedError}
           />
         );
       })}
@@ -118,27 +133,36 @@ export const Reveal3DResources = ({
 
 async function getTypedModels(
   resources: AddResourceOptions[],
-  viewer: Cognite3DViewer
+  viewer: Cognite3DViewer,
+  onLoadFail?: (resource: AddResourceOptions, error: any) => void
 ): Promise<TypedReveal3DModel[]> {
-  return await Promise.all(
-    resources
-      .filter(
-        (resource): resource is AddReveal3DModelOptions =>
-          (resource as AddReveal3DModelOptions).modelId !== undefined &&
-          (resource as AddReveal3DModelOptions).revisionId !== undefined
-      )
-      .map(async (addModelOptions) => {
-        const type = await viewer.determineModelType(
-          addModelOptions.modelId,
-          addModelOptions.revisionId
-        );
-        if (type === '') {
-          throw new Error(
-            `Could not determine model type for modelId: ${addModelOptions.modelId} and revisionId: ${addModelOptions.revisionId}`
-          );
-        }
-        const typedModel: TypedReveal3DModel = { ...addModelOptions, type };
-        return typedModel;
-      })
+  const errorFunction = onLoadFail ?? defaultLoadFailHandler;
+
+  const modelTypePromises = resources
+    .filter(
+      (resource): resource is AddReveal3DModelOptions =>
+        (resource as AddReveal3DModelOptions).modelId !== undefined &&
+        (resource as AddReveal3DModelOptions).revisionId !== undefined
+    )
+    .map(async (addModelOptions) => {
+      const type = await viewer
+        .determineModelType(addModelOptions.modelId, addModelOptions.revisionId)
+        .catch((error) => {
+          errorFunction(addModelOptions, error);
+          return '';
+        });
+      const typedModel = { ...addModelOptions, type };
+      return typedModel;
+    });
+
+  const resourceLoadResults = await Promise.all(modelTypePromises);
+  const successfullyLoadedResources = resourceLoadResults.filter(
+    (p): p is TypedReveal3DModel => p.type !== ''
   );
+
+  return successfullyLoadedResources;
+}
+
+function defaultLoadFailHandler(resource: AddResourceOptions, error: any): void {
+  console.warn(`Could not load resource ${JSON.stringify(resource)}: ${JSON.stringify(error)}`);
 }
