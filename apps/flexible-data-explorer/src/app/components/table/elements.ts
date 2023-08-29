@@ -191,6 +191,9 @@ export const Tbody = styled.div`
 export const Td = styled.div`
   word-wrap: break-word;
   padding: 8px 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 
   font-size: 14px;
   &:first-of-type {

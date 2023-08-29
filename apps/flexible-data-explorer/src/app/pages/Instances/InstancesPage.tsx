@@ -25,22 +25,10 @@ export const InstancesPage = () => {
   const [, setRecentlyVisited] = useRecentlyVisited();
 
   const handleNavigateToCanvasClick = () => {
-    if (!data?.externalId) {
-      console.error("Can't open instance in canvas without an external id");
-      return;
-    }
-    if (!data?.space || !space) {
-      console.error("Can't open in canvas without a space");
-      return;
-    }
-    if (!dataType) {
-      console.error("Can't open in canvas without a data type");
-      return;
-    }
     openContainerReferenceInCanvas({
       type: ContainerReferenceType.FDM_INSTANCE,
-      instanceExternalId: data.externalId,
-      instanceSpace: data.space,
+      instanceExternalId: data?.externalId,
+      instanceSpace: data?.space,
       viewExternalId: dataType,
       viewSpace: space,
     });

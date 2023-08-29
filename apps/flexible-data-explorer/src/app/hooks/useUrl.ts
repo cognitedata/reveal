@@ -17,23 +17,23 @@ const useGetEnv = () => {
 export const useGetAssetCentricDataExplorerUrl = () => {
   const env = useGetEnv();
 
-  const { cluster, organization, project } = useAuth();
+  const { cluster, project } = useAuth();
 
-  return `https://${organization}.${FUSION_URL}/${project}/explore/search?cluster=${cluster}&env=${env}`;
+  return `https://${FUSION_URL}/${project}/explore/search?cluster=${cluster}&env=${env}`;
 };
 
 export const useGetChartsUrl = () => {
   const env = useGetEnv();
 
-  const { cluster, organization, project } = useAuth();
+  const { cluster, project } = useAuth();
 
-  return `https://${organization}.${FUSION_URL}/${project}/charts?cluster=${cluster}&env=${env}`;
+  return `https://${FUSION_URL}/${project}/charts?cluster=${cluster}&env=${env}`;
 };
 
 export const useGetCanvasUrl = () => {
   const env = useGetEnv();
 
-  const { cluster, organization, project } = useAuth();
+  const { cluster, project } = useAuth();
 
-  return `https://${organization}.${FUSION_URL}/${project}/industrial-canvas?cluster=${cluster}&env=${env}`;
+  return `https://${FUSION_URL}/${project}/industrial-canvas?cluster=${cluster}&env=${env}`;
 };
