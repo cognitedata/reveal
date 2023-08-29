@@ -359,7 +359,7 @@ const AnnotationPreviewSidebar = ({
         </Menu.Item>
       </Menu>
     );
-    if (isLoading) {
+    if (!!type && isLoading) {
       return <Spin />;
     }
     if (!isEditingMode) {
