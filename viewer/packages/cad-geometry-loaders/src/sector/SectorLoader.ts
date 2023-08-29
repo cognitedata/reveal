@@ -62,7 +62,7 @@ export class SectorLoader {
     }
 
     const cadModels = input.models;
-    const visibleCadModels = cadModels.filter(x => x.visible);
+    const visibleCadModels = cadModels.filter(x => x.visible && !x.isDisposed);
 
     const sectorCullerInput: DetermineSectorsInput = {
       ...input,

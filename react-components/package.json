@@ -1,6 +1,6 @@
 {
   "name": "@cognite/reveal-react-components",
-  "version": "0.12.0",
+  "version": "0.13.0",
   "exports": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "type": "module",
@@ -18,7 +18,7 @@
   },
   "peerDependencies": {
     "@cognite/cogs.js": ">=9",
-    "@cognite/reveal": "4.4.0",
+    "@cognite/reveal": "4.4.2",
     "react": ">=18",
     "react-dom": ">=18",
     "styled-components": ">=5"
@@ -26,9 +26,9 @@
   "devDependencies": {
     "@babel/preset-env": "7.22.10",
     "@babel/preset-react": "7.22.5",
-    "@babel/preset-typescript": "7.22.5",
+    "@babel/preset-typescript": "7.22.11",
     "@cognite/cogs.js": "^9.17.0",
-    "@cognite/reveal": "4.4.0",
+    "@cognite/reveal": "4.4.1",
     "@cognite/sdk": "^8.2.0",
     "@storybook/addon-essentials": "7.3.2",
     "@storybook/addon-interactions": "7.3.2",
@@ -42,7 +42,7 @@
     "@types/react": "18.2.7",
     "@types/react-dom": "^18.2.7",
     "@types/styled-components": "5.1.26",
-    "@types/three": "0.155.0",
+    "@types/three": "0.155.1",
     "@typescript-eslint/eslint-plugin": "^5.50.0",
     "eslint": "^8.0.1",
     "eslint-config-prettier": "^9.0.0",
@@ -63,12 +63,12 @@
     "styled-components": "5.3.11",
     "three": "0.155.0",
     "ts-loader": "9.4.4",
-    "typescript": "5.1.6",
+    "typescript": "5.2.2",
     "webpack": "5.88.2",
     "webpack-cli": "5.1.4",
     "webpack-node-externals": "3.0.0"
   },
-  "packageManager": "yarn@3.6.2",
+  "packageManager": "yarn@3.6.3",
   "files": [
     "dist"
   ],

@@ -2,11 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import {
-  type NodeAppearance,
-  type AddModelOptions,
-  type SupportedModelTypes
-} from '@cognite/reveal';
+import { type NodeAppearance, type AddModelOptions } from '@cognite/reveal';
 
 import { type Matrix4 } from 'three';
 import { type DmsUniqueIdentifier, type Source } from '../../utilities/FdmSDK';
@@ -23,7 +19,17 @@ export type AddResourceOptions = AddReveal3DModelOptions | AddImageCollection360
 export type AddReveal3DModelOptions = AddModelOptions & { transform?: Matrix4 } & {
   styling?: { default?: NodeAppearance; mapped?: NodeAppearance };
 };
-export type TypedReveal3DModel = AddReveal3DModelOptions & { type: SupportedModelTypes };
+export type TypedReveal3DModel = CadModelOptions | PointCloudModelOptions;
+
+export type CadModelOptions = { type: 'cad' } & AddModelOptions & { transform?: Matrix4 } & {
+    styling?: { default?: NodeAppearance; mapped?: NodeAppearance };
+  };
+
+export type PointCloudModelOptions = { type: 'pointcloud' } & AddModelOptions & {
+    transform?: Matrix4;
+  } & {
+    styling?: { default?: NodeAppearance };
+  };
 
 export type NodeDataResult = {
   fdmNode: DmsUniqueIdentifier;
@@ -46,4 +52,5 @@ export type Reveal3DResourcesProps = {
   defaultResourceStyling?: DefaultResourceStyling;
   instanceStyling?: FdmAssetStylingGroup[];
   onResourcesAdded?: () => void;
+  onResourceLoadError?: (failedResource: AddResourceOptions, error: any) => void;
 };

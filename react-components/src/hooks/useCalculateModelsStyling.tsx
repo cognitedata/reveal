@@ -2,10 +2,10 @@
  * Copyright 2023 Cognite AS
  */
 import {
-  type FdmAssetStylingGroup,
-  type TypedReveal3DModel
+  type CadModelOptions,
+  type DefaultResourceStyling,
+  type FdmAssetStylingGroup
 } from '../components/Reveal3DResources/types';
-import { type PointCloudModelStyling } from '../components/PointCloudContainer/PointCloudContainer';
 import { type NodeAppearance } from '@cognite/reveal';
 import { type ThreeDModelMappings } from './types';
 import { type Node3D, type CogniteExternalId } from '@cognite/sdk';
@@ -15,20 +15,33 @@ import {
 } from '../components/NodeCacheProvider/NodeCacheProvider';
 import { useMemo } from 'react';
 import { type FdmEdgeWithNode, type TreeIndex } from '../components/NodeCacheProvider/types';
-import { type CadModelStyling, type NodeStylingGroup, type TreeIndexStylingGroup } from '..';
+import {
+  type NodeStylingGroup,
+  type TreeIndexStylingGroup
+} from '../components/CadModelContainer/useApplyCadModelStyling';
 
 type ModelStyleGroup = {
-  model: TypedReveal3DModel;
+  model: CadModelOptions;
   styleGroup: Array<NodeStylingGroup | TreeIndexStylingGroup>;
 };
 
-export const useCalculateModelsStyling = (
-  models: TypedReveal3DModel[],
-  instanceGroups: FdmAssetStylingGroup[]
-): Array<PointCloudModelStyling | CadModelStyling> => {
-  const modelsMappedStyleGroups = useCalculateMappedStyling(models);
+export type CadStyleGroup = NodeStylingGroup | TreeIndexStylingGroup;
+
+export type StyledModel = {
+  model: CadModelOptions;
+  styleGroups: CadStyleGroup[];
+};
+
+export const useCalculateCadStyling = (
+  models: CadModelOptions[],
+  instanceGroups: FdmAssetStylingGroup[],
+  defaultResourceStyling?: DefaultResourceStyling
+): StyledModel[] => {
+  const modelsMappedStyleGroups = useCalculateMappedStyling(
+    models,
+    defaultResourceStyling?.cad?.mapped
+  );
   const modelInstanceStyleGroups = useCalculateInstanceStyling(models, instanceGroups);
-  console.log('Model instance style groups = ', modelInstanceStyleGroups);
   const joinedStyleGroups = useJoinStylingGroups(
     models,
     modelsMappedStyleGroups,
@@ -37,14 +50,13 @@ export const useCalculateModelsStyling = (
   return joinedStyleGroups;
 };
 
-function useCalculateMappedStyling(models: TypedReveal3DModel[]): ModelStyleGroup[] {
-  const modelsRevisionsWithMappedEquipment = models.filter(
-    (model) => model.styling?.mapped !== undefined
-  );
-  const shouldFetchAllMappedEquipment = modelsRevisionsWithMappedEquipment.length > 0;
+function useCalculateMappedStyling(
+  models: CadModelOptions[],
+  defaultMappedNodeAppearance?: NodeAppearance
+): ModelStyleGroup[] {
+  const modelsRevisionsWithMappedEquipment = useMemo(() => getMappedCadModelsOptions(), [models]);
   const { data: mappedEquipmentEdges } = useMappedEdgesForRevisions(
-    modelsRevisionsWithMappedEquipment,
-    shouldFetchAllMappedEquipment
+    modelsRevisionsWithMappedEquipment
   );
 
   const modelsMappedStyleGroups = useMemo(() => {
@@ -55,23 +67,28 @@ function useCalculateMappedStyling(models: TypedReveal3DModel[]): ModelStyleGrou
     ) {
       return [];
     }
-
-    return models.map((model) => {
+    return modelsRevisionsWithMappedEquipment.map((model) => {
       const fdmData = mappedEquipmentEdges?.get(`${model.modelId}/${model.revisionId}`) ?? [];
+      const modelStyle = model.styling?.mapped ?? defaultMappedNodeAppearance;
 
-      const styleGroup =
-        model.styling?.mapped !== undefined
-          ? [getMappedStyleGroup(fdmData, model.styling.mapped)]
-          : [];
+      const styleGroup = modelStyle !== undefined ? [getMappedStyleGroup(fdmData, modelStyle)] : [];
       return { model, styleGroup };
     });
-  }, [models, mappedEquipmentEdges]);
+  }, [modelsRevisionsWithMappedEquipment, mappedEquipmentEdges, defaultMappedNodeAppearance]);
 
   return modelsMappedStyleGroups;
+
+  function getMappedCadModelsOptions(): CadModelOptions[] {
+    if (defaultMappedNodeAppearance !== undefined) {
+      return models;
+    }
+
+    return models.filter((model) => model.styling?.mapped !== undefined);
+  }
 }
 
 function useCalculateInstanceStyling(
-  models: TypedReveal3DModel[],
+  models: CadModelOptions[],
   instanceGroups: FdmAssetStylingGroup[]
 ): ModelStyleGroup[] {
   const { data: fdmAssetMappings } = useFdmAssetMappings(
@@ -96,10 +113,10 @@ function useCalculateInstanceStyling(
 }
 
 function useJoinStylingGroups(
-  models: TypedReveal3DModel[],
+  models: CadModelOptions[],
   modelsMappedStyleGroups: ModelStyleGroup[],
   modelInstanceStyleGroups: ModelStyleGroup[]
-): Array<PointCloudModelStyling | CadModelStyling> {
+): StyledModel[] {
   const modelsStyling = useMemo(() => {
     if (modelInstanceStyleGroups.length === 0 && modelsMappedStyleGroups.length === 0) {
       return extractDefaultStyles(models);
@@ -111,8 +128,8 @@ function useJoinStylingGroups(
         .filter((typedModel) => typedModel.model === model)
         .flatMap((typedModel) => typedModel.styleGroup);
       return {
-        defaultStyle: model.styling?.default,
-        groups: [...mappedStyleGroup, ...instanceStyleGroups]
+        model,
+        styleGroups: [...mappedStyleGroup, ...instanceStyleGroups]
       };
     });
   }, [models, modelInstanceStyleGroups, modelsMappedStyleGroups]);
@@ -120,12 +137,11 @@ function useJoinStylingGroups(
   return modelsStyling;
 }
 
-function extractDefaultStyles(
-  typedModels: TypedReveal3DModel[]
-): Array<PointCloudModelStyling | CadModelStyling> {
+function extractDefaultStyles(typedModels: CadModelOptions[]): StyledModel[] {
   return typedModels.map((model) => {
     return {
-      defaultStyle: model.styling?.default
+      model,
+      styleGroups: []
     };
   });
 }
@@ -144,7 +160,7 @@ function getMappedStyleGroup(
 function calculateCadModelStyling(
   stylingGroups: FdmAssetStylingGroup[],
   mappings: ThreeDModelMappings[],
-  model: TypedReveal3DModel
+  model: CadModelOptions
 ): TreeIndexStylingGroup[] {
   const modelMappings = getModelMappings(mappings, model);
 
@@ -169,7 +185,7 @@ function getNodeSubtreeIndices(node: Node3D): TreeIndex[] {
 
 function getModelMappings(
   mappings: ThreeDModelMappings[],
-  model: TypedReveal3DModel
+  model: CadModelOptions
 ): Map<CogniteExternalId, Node3D> {
   return mappings
     .filter(
