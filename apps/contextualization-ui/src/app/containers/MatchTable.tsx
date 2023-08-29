@@ -1,5 +1,7 @@
 import { Dispatch, SetStateAction, useMemo } from 'react';
 
+import styled from 'styled-components';
+
 import { Table } from '@data-exploration/components';
 
 import { Chip } from '@cognite/cogs.js';
@@ -12,6 +14,10 @@ import { getMatchInputInstantProperties } from '../utils/getMatchInputInstantPro
 
 const MANUAL_MATCH_INPUT = 'ManualMatchInput';
 const ARROW = 'arrow';
+
+const CellContainer = styled.div`
+  overflow: hidden;
+`;
 
 export const MatchTable = ({
   originInstances = [],
@@ -92,6 +98,9 @@ export const MatchTable = ({
           id: `column-${key}`,
           header: key,
           accessorKey: key,
+          cell: (cellData: any) => (
+            <CellContainer>{cellData.row.original[key]}</CellContainer>
+          ),
           minSize: 100,
           size: 150,
         };
