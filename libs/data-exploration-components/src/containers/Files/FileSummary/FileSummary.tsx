@@ -135,7 +135,7 @@ export const FileSummary = ({
   const isRelatedDataLoading = isRelatedFilesLoading && !isFilesCountExceed;
 
   return (
-    <SummaryCardWrapper>
+    <SummaryCardWrapper data-testid="file-summary">
       <Table
         columns={columns}
         hiddenColumns={hiddenColumns}

@@ -117,7 +117,7 @@ export const FileLinkedSearchResults: React.FC<Props> = ({
     <>
       {currentView === 'tree' && (
         <>
-          <GroupingTableContainer>
+          <GroupingTableContainer data-testid="file-grouping-table">
             <GroupingTableHeader>
               <DefaultPreviewFilter query={query} onQueryChange={setQuery}>
                 {!isDocumentsApiEnabled ? (

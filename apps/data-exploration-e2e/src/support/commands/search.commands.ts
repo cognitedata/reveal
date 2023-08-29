@@ -1,8 +1,19 @@
+type ResourceTab =
+  | 'Assets'
+  | 'Time series'
+  | 'Files'
+  | 'Events'
+  | 'Sequence'
+  | 'All resources'
+  | 'Hierarchy';
+
 Cypress.Commands.add(
   'goToTab',
-  (tab: 'Assets' | 'Time series' | 'Files' | 'Events' | 'Sequence') => {
+  { prevSubject: 'optional' },
+  (subject, tab: ResourceTab) => {
     cy.log(`Go to ${tab} tab`);
-    cy.findByRole('tab', { name: new RegExp(tab) })
+    cy.wrap(subject)
+      .findByRole('tab', { name: new RegExp(tab) })
       .should('be.visible')
       .click();
   }
@@ -64,9 +75,7 @@ Cypress.Commands.add('includeSearchParameter', (parameterID) => {
   });
 });
 export interface SearchCommand {
-  goToTab(
-    tab: 'Assets' | 'Time series' | 'Files' | 'Events' | 'Sequence'
-  ): void;
+  goToTab(tab: ResourceTab): void;
   performSearch(searchString: string): void;
   clearSearchInput(): void;
   fuzzySearchDisable(): void;
