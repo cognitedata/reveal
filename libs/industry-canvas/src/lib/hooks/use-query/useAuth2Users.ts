@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
-import sdk from '@cognite/cdf-sdk-singleton';
+import { getToken } from '@cognite/cdf-sdk-singleton';
 import { getOrganization } from '@cognite/cdf-utilities';
 
 import { QueryKeys, AUTH2_API_URL } from '../../constants';
@@ -12,10 +12,16 @@ export const getOrganizationUsers = async (): Promise<
 > => {
   const organization = getOrganization();
   const url = `${AUTH2_API_URL}/api/v0/orgs/${organization}/users`;
+  const token = await getToken();
 
-  const response = await sdk.get<OrganizationUserProfile[]>(url);
+  const response = await fetch(url, {
+    headers: {
+      'content-type': 'application/json',
+      authorization: `Bearer ${token}`,
+    },
+  }).then((r) => r.json());
 
-  return response.data;
+  return response.items;
 };
 
 type Props = {

@@ -1949,10 +1949,10 @@
   dependencies:
     nanoid "^3.1.16"
 
-"@cognite/e2e-auth@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@cognite/e2e-auth/-/e2e-auth-1.0.1.tgz#cc4ac413c1bbf19ce38caa087ff43216034c93ab"
-  integrity sha512-L0ydt+RWdazXv6bTOU4UBKFV69EEAIu6491SOc3K7GW0tjdbSMmJ5UZYwXu7Mhikvjiyyt8hk/1YuM0YfOjXqw==
+"@cognite/e2e-auth@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@cognite/e2e-auth/-/e2e-auth-1.0.2.tgz#6fe0ec3451345b3dda11b30af5742b1f5a790c48"
+  integrity sha512-ZgO7IR9VaEogcx5kaVVn/PEJveBXNWJpmCZtK/BOMf+s3rYU6x7qkqcltoGGah079rdChuY6DVQ+fy7rKNs69Q==
 
 "@cognite/eslint-config@^3.2.0":
   version "3.2.0"
@@ -2104,10 +2104,10 @@
     use-event-callback "^0.1.0"
     use-key-hook "^1.3.0"
 
-"@cognite/reveal-react-components@0.12.0":
-  version "0.12.0"
-  resolved "https://registry.yarnpkg.com/@cognite/reveal-react-components/-/reveal-react-components-0.12.0.tgz#e512c5814e2a50cb9beb65710d96f533e2d39855"
-  integrity sha512-UTvzqmkGM9fhJ8EZuLViTo/liKIRVXIJtzIq2wJRRjhqPfwX0pnBQ3neP4WJ/1AQlroLcyQ3Vt5xdodHFCI/Rw==
+"@cognite/reveal-react-components@0.13.0":
+  version "0.13.0"
+  resolved "https://registry.yarnpkg.com/@cognite/reveal-react-components/-/reveal-react-components-0.13.0.tgz#8687eb24d745ef00ccb0fd8cad21d750bf8c42bb"
+  integrity sha512-X7PaCmuMAijWYANBX4kF+QJo6sfQBq+9mDIgoA3JNdihCddd84KmQQVU4DDqxBcWYSQfZfP47+Vp4TaB+C9QhA==
   dependencies:
     "@tanstack/react-query" "^4.29.19"
     lodash "^4.17.21"

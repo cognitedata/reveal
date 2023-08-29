@@ -1,24 +1,24 @@
 import {
-  useCurrentView,
+  useCurrentLinkedView,
   useModelInstancesList,
 } from '@fusion/contextualization';
 
 import { convertToInternalModelInstance } from '../utils/convertToInternalModelInstance';
 
 export const useGetMatchInputInstances = () => {
-  const view = useCurrentView();
+  const linkedView = useCurrentLinkedView();
 
   const { data } = useModelInstancesList(
-    view?.space,
-    view?.externalId,
-    view?.version
+    linkedView?.space,
+    linkedView?.externalId,
+    linkedView?.version
   );
 
   const matchInputInstances = convertToInternalModelInstance(
     data,
-    view?.space,
-    view?.externalId,
-    view?.version
+    linkedView?.space,
+    linkedView?.externalId,
+    linkedView?.version
   );
 
   return matchInputInstances;

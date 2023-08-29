@@ -1,12 +1,12 @@
 import {
-  useCurrentView,
+  useCurrentLinkedView,
   useModelInstancesList,
 } from '@fusion/contextualization';
 
 import { MatchData, MatchInputOptions } from '../types';
 
 export const useGetMatchInputOptions = () => {
-  const view = useCurrentView();
+  const view = useCurrentLinkedView();
 
   const { data: instances } = useModelInstancesList(
     view?.space,

@@ -1,71 +1,203 @@
+import React, { useMemo, useState } from 'react';
+
 import styled from 'styled-components';
 
-import { Button } from '@cognite/cogs.js';
+import { ColumnDef } from '@tanstack/react-table';
+import { matchSorter } from 'match-sorter';
 
+import { Button, Chip, InputExp, SegmentedControl } from '@cognite/cogs.js';
+import { ExternalId, FileInfo } from '@cognite/sdk/dist/src';
+
+import { Table } from '../../../../../components/table/Table';
+import { Typography } from '../../../../../components/Typography';
 import { Widget } from '../../../../../components/widget/Widget';
-import { useHorizontalScroll } from '../../../../../hooks/listeners/useHorizontalScroll';
+import { EMPTY_ARRAY } from '../../../../../constants/object';
 import { useNavigation } from '../../../../../hooks/useNavigation';
 import { useTranslation } from '../../../../../hooks/useTranslation';
+import { useFileByIdsQuery } from '../../../../../services/instances/file/queries/useFileByIdsQuery';
 import { useInstanceDirectRelationshipQuery } from '../../../../../services/instances/generic/queries/useInstanceDirectRelationshipQuery';
+import { ValueByField } from '../../../../Filter';
 import { InstancePreview } from '../../../../preview/InstancePreview';
 import { FDXFilePreview } from '../../../File/FilePreview';
+import { RelationshipFilter } from '../../Filters';
 import { RelationshipEdgesProps } from '../../RelationshipEdgesWidget';
 
 export const FileRelationshipEdgesExpanded: React.FC<
   RelationshipEdgesProps
 > = ({ type }) => {
   const { t } = useTranslation();
-  const scrollRef = useHorizontalScroll();
-  const navigate = useNavigation();
+  const { toFilePage } = useNavigation();
+  const [view, setView] = useState<'Grid' | 'List'>('Grid');
+  const [inputValue, setInputValue] = useState<string | undefined>(undefined);
+  const [filterState, setFilterState] = useState<ValueByField | undefined>(
+    undefined
+  );
 
-  const { data, isLoading, status } = useInstanceDirectRelationshipQuery<
-    ({
-      externalId: string;
-    } | null)[]
-  >(type);
+  const { data: ids, status } =
+    useInstanceDirectRelationshipQuery<(ExternalId | null)[]>(type);
+  const { data } = useFileByIdsQuery(ids);
 
-  return (
-    <Container ref={scrollRef}>
-      {(data || [])?.map((item) => {
+  const transformedData = useMemo(() => {
+    return matchSorter(data || [], inputValue || '', {
+      keys: ['name', 'externalId'],
+    });
+  }, [data, inputValue]);
+
+  const renderContent = () => {
+    if (view === 'Grid') {
+      return (transformedData || [])?.map((item) => {
         if (!item) {
           return null;
         }
 
         return (
-          <Widget expanded key={item.externalId}>
-            <Widget.Header title={item.externalId}>
-              <InstancePreview.File id={item.externalId}>
+          <Container>
+            <Content>
+              <div>
+                <Typography.Title size="small">
+                  {item.name || item.externalId}
+                </Typography.Title>
+
+                {/* <Typography.Body>{item.description}</Typography.Body> */}
+              </div>
+
+              <InstancePreview.File
+                disabled={!item.externalId}
+                id={item.externalId!}
+              >
                 <Button
-                  onClick={() => {
-                    navigate.toFilePage(item.externalId);
-                  }}
-                  disabled={isLoading}
+                  type="ghost-accent"
+                  icon="ArrowUpRight"
+                  onClick={() => toFilePage(item.externalId)}
                 >
                   {t('GENERAL_OPEN')}
                 </Button>
               </InstancePreview.File>
-            </Widget.Header>
-            <Widget.Body noPadding state={status}>
-              <Content>
-                <FDXFilePreview id="relationship" fileId={item.externalId} />
-              </Content>
-            </Widget.Body>
-          </Widget>
+            </Content>
+
+            {item.externalId && (
+              <FileWrapper>
+                <FDXFilePreview
+                  id={`file-relationship-${item.externalId}`}
+                  fileId={item.externalId}
+                />
+              </FileWrapper>
+            )}
+          </Container>
         );
-      })}
-    </Container>
+      });
+    }
+
+    return (
+      <Table
+        id="file-table"
+        data={transformedData || EMPTY_ARRAY}
+        columns={columns}
+        onRowClick={(row) => toFilePage(row.externalId)}
+      />
+    );
+  };
+
+  return (
+    <Widget expanded>
+      <Widget.Header>
+        <InputExp
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          placeholder={t('PROPERTIES_WIDGET_SEARCH_INPUT_PLACEHOLDER')}
+          icon="Search"
+          clearable
+        />
+        <RelationshipFilter
+          dataType="Files"
+          value={filterState}
+          onChange={setFilterState}
+        />
+
+        <SegmentedControlWrapper>
+          <SegmentedControl
+            currentKey={view}
+            onButtonClicked={(key) => setView(key as 'Grid' | 'List')}
+          >
+            <SegmentedControl.Button key="Grid" icon="Grid">
+              {t('WIDGET_VIEW_GRID')}
+            </SegmentedControl.Button>
+            <SegmentedControl.Button key="List" icon="List">
+              {t('WIDGET_VIEW_LIST')}
+            </SegmentedControl.Button>
+          </SegmentedControl>
+        </SegmentedControlWrapper>
+      </Widget.Header>
+
+      <Widget.Body
+        state={transformedData?.length === 0 ? 'empty' : status}
+        noPadding
+      >
+        {renderContent()}
+      </Widget.Body>
+    </Widget>
   );
 };
 
-const Content = styled.div`
-  height: 50vh;
-  width: 800px;
-  padding-bottom: 8px;
+export const columns: ColumnDef<FileInfo>[] = [
+  {
+    header: 'Name',
+    accessorKey: 'name',
+  },
+  {
+    header: 'Mime type',
+    accessorKey: 'mimeType',
+  },
+  {
+    header: 'Source',
+    accessorKey: 'source',
+  },
+  {
+    header: 'Directory',
+    accessorKey: 'directory',
+  },
+  {
+    header: 'Labels',
+    accessorKey: 'labels',
+    cell: ({ getValue }) => {
+      return getValue<FileInfo[]>()?.map((item: any) => {
+        return (
+          <Chip size="small" key={item.externalId} label={item.externalId} />
+        );
+      });
+    },
+  },
+  {
+    header: 'Created time',
+    accessorKey: 'sourceCreatedTime',
+  },
+  {
+    header: 'Uploaded time',
+    accessorKey: 'sourceModifiedTime',
+  },
+];
+
+const SegmentedControlWrapper = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
 `;
 
 const Container = styled.div`
+  border-bottom: 1px solid var(--cogs-border--interactive--default);
+
+  &:last-child {
+    border-bottom: none;
+  }
+`;
+
+const Content = styled.div`
+  padding: 16px;
   display: flex;
-  width: 100%;
-  gap: 8px;
-  overflow: auto;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const FileWrapper = styled.div`
+  height: 500px;
 `;

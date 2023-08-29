@@ -18,7 +18,7 @@ interface Props {
 }
 export const TimeSeriesViewer: React.FC<Props> = ({ id }) => {
   return (
-    <PreviewContainer>
+    <PreviewContainer disableOverflow>
       <TimeseriesChart
         timeseries={getTimeseriesId(id)}
         variant="small"
