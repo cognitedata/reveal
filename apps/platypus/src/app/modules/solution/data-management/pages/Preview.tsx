@@ -14,7 +14,6 @@ import { useSelectedDataModelVersion } from '@platypus-app/hooks/useSelectedData
 import useSelector from '@platypus-app/hooks/useSelector';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { DataManagementState } from '@platypus-app/redux/reducers/global/dataManagementReducer';
-import { mixerApiInlineTypeDirectiveName } from '@platypus-core/domain/data-model';
 
 import { getQueryParameter } from '@cognite/cdf-utilities';
 import { Flex } from '@cognite/cogs.js';
@@ -25,6 +24,7 @@ import {
 } from '../components/DataPreviewTable/DataPreviewTable';
 import { TypeList } from '../components/TypeList/TypeList';
 import { useDraftRows } from '../hooks/useDraftRows';
+import { isEdgeType } from '../utils';
 
 export interface PreviewProps {
   dataModelExternalId: string;
@@ -104,14 +104,7 @@ export const Preview = ({ dataModelExternalId, space }: PreviewProps) => {
             dataModelExternalId={dataModelExternalId}
             // if it has directive, that means that it is inline types
             items={dataModelTypeDefs.types.filter((type) => {
-              return (
-                !type.directives?.length ||
-                (type.directives?.length &&
-                  !type.directives.some(
-                    (typeDirective) =>
-                      typeDirective.name === mixerApiInlineTypeDirectiveName
-                  ))
-              );
+              return !isEdgeType(type);
             })}
             selectedTypeName={selectedType?.name}
             onClick={(item) => {
