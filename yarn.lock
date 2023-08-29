@@ -2112,7 +2112,27 @@
     "@tanstack/react-query" "^4.29.19"
     lodash "^4.17.21"
 
-"@cognite/reveal@4.4.0", "@cognite/reveal@^4.1.2":
+"@cognite/reveal@4.4.1":
+  version "4.4.1"
+  resolved "https://registry.yarnpkg.com/@cognite/reveal/-/reveal-4.4.1.tgz#21eaccc2e249c325e52374cec462ec87677668f6"
+  integrity sha512-m1tLjbadQK5cYI6fJjvEfT9DPeVA1ZkEtSl/3jBC5q0qSRwS1QH9aX3uvNxMHj9ormhxGXWcsV3lFQLYOaY7Bw==
+  dependencies:
+    "@tweenjs/tween.js" "19.0.0"
+    assert "2.0.0"
+    async-mutex "0.4.0"
+    glslify "7.1.1"
+    glslify-import "3.1.0"
+    html2canvas "^1.4.1"
+    lodash "4.17.21"
+    loglevel "1.8.1"
+    mixpanel-browser "2.47.0"
+    path-browserify "1.0.1"
+    random-seed "0.3.0"
+    rxjs "7.8.1"
+    skmeans "0.11.3"
+    sparse-octree "7.1.8"
+
+"@cognite/reveal@^4.1.2":
   version "4.4.0"
   resolved "https://registry.yarnpkg.com/@cognite/reveal/-/reveal-4.4.0.tgz#5259cbc55f69fe053a7947a976f0d27beef9ecd0"
   integrity sha512-ZfJQg84YLo37Cdcl8W/coAYbdnAgzelzNMgJsgrDgk76WxLFawSeAfCb/qN7jDBZPlkkstCPE6RmyBov9gPTCw==
