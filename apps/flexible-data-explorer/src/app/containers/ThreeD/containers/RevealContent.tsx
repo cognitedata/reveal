@@ -3,6 +3,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { DefaultNodeAppearance } from '@cognite/reveal';
 import {
   AddResourceOptions,
+  DefaultResourceStyling,
   Reveal3DResources,
   useCameraNavigation,
   useClickedNodeData,
@@ -10,9 +11,9 @@ import {
 } from '@cognite/reveal-react-components';
 
 import { defaultResourceStyling } from '../../../constants/threeD';
-import { StyledRevealToolBar } from '../components/ToolBar/StyledRevealToolBar';
 
 import { PreviewCard } from './PreviewCard';
+import { ToolBarContainer } from './ToolBarContainer';
 
 interface Props {
   modelIdentifiers: AddResourceOptions[];
@@ -33,6 +34,18 @@ export const RevealContent = ({
   const cameraNavigation = useCameraNavigation();
   const clickedNodeData = useClickedNodeData();
   const [resourceMounted, setResourcesMounted] = useState(false);
+  const [hasOriginalCadColors, setHasOriginalCadColors] = useState(false);
+
+  const currentDefaultResourceStyling: DefaultResourceStyling = useMemo(() => {
+    return hasOriginalCadColors
+      ? {
+          cad: {
+            default: DefaultNodeAppearance.Default,
+            mapped: DefaultNodeAppearance.Default,
+          },
+        }
+      : defaultResourceStyling;
+  }, [hasOriginalCadColors]);
 
   const highlightingInstance =
     nonInteractible === true ? undefined : clickedNodeData?.fdmNode;
@@ -63,12 +76,21 @@ export const RevealContent = ({
     }
   }, [cameraNavigation, externalId, instanceSpace, fitCamera]);
 
+  const handleToggleOriginalCadColors = () => {
+    setHasOriginalCadColors((prev) => !prev);
+  };
+
   return (
     <>
-      {!hideToolbar && <StyledRevealToolBar />}
+      {!hideToolbar && (
+        <ToolBarContainer
+          hasOriginalCadColors={hasOriginalCadColors}
+          onToggleOriginalColors={handleToggleOriginalCadColors}
+        />
+      )}
       <Reveal3DResources
         resources={modelIdentifiers}
-        defaultResourceStyling={defaultResourceStyling}
+        defaultResourceStyling={currentDefaultResourceStyling}
         instanceStyling={instanceStyling}
         onResourcesAdded={handleResourcesAdded}
       />
