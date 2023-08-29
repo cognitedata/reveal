@@ -1,7 +1,9 @@
-import React, { PropsWithChildren } from 'react';
+import React, { PropsWithChildren, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 
 import styled from 'styled-components';
+
+import isNumber from 'lodash/isNumber';
 
 import { Button } from '@cognite/cogs.js';
 
@@ -11,21 +13,30 @@ import { Splitter } from '../Splitter';
 
 interface DrawerProps {
   visible?: boolean;
-  width?: string;
+  initialWidth?: number | `${number}%`;
   onClose: () => void;
 }
 
 export const Drawer: React.FC<PropsWithChildren<DrawerProps>> = ({
   visible,
+  initialWidth = '70%',
   onClose,
   children,
 }) => {
+  const secondaryInitialSize = useMemo(() => {
+    if (!isNumber(initialWidth)) {
+      return parseInt(initialWidth);
+    }
+
+    return Math.round((initialWidth / window.innerWidth) * 100);
+  }, [initialWidth]);
+
   return createPortal(
     <DrawerContainer visible={visible}>
       <StyledSplitter
         percentage
         primaryMinSize={10}
-        secondaryInitialSize={70}
+        secondaryInitialSize={secondaryInitialSize}
         primaryIndex={0}
       >
         <PrimaryContainer onClick={onClose}>
