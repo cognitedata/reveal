@@ -27,6 +27,7 @@ import {
   buildClientSchema,
   getIntrospectionQuery,
 } from 'graphql';
+import isString from 'lodash/isString';
 import merge from 'lodash/merge';
 import setWith from 'lodash/setWith';
 
@@ -514,7 +515,7 @@ export const constructGraphQLFilterGroup = (tree: JsonTree) => {
             case 'group':
               return constructGraphQLFilterGroup(item);
             case 'rule':
-              if (!item.properties.field) {
+              if (!item.properties.field || !isString(item.properties.field)) {
                 throw new Error('Unable to build filter');
               }
               // check for nested, this should be fixed later

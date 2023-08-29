@@ -60,7 +60,7 @@
     "@monaco-editor/react": "^4.4.6",
     "@openapi-codegen/cli": "^2.0.0",
     "@openapi-codegen/typescript": "^6.2.2",
-    "@react-awesome-query-builder/ui": "^6.1.2",
+    "@react-awesome-query-builder/ui": "6.1.2",
     "@recoiljs/refine": "^0.1.1",
     "@reduxjs/toolkit": "1.9.3",
     "@sentry/browser": "7.19.0",
