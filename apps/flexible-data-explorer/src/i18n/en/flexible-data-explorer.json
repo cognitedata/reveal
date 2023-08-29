@@ -84,6 +84,8 @@
   "WIDGET_VIEW_GRID": "Grid",
   "WIDGET_VIEW_LIST": "List",
 
+  "3D_TOOLBAR_CAD_COLOR_TOGGLE": "Original CAD coloring",
+
   "PROPERTIES_WIDGET_NAME": "Properties",
   "PROPERTIES_WIDGET_SEARCH_INPUT_PLACEHOLDER": "Filter by name...",
   "PROPERTIES_WIDGET_EMPTY_TITLE": "No properties found",

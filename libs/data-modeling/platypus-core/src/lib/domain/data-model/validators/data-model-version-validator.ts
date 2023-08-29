@@ -6,7 +6,7 @@ import {
 export class DataModelVersionValidator extends ValidationRule {
   validate(field: string, value: string): ValidatorResult {
     const allowedCharactersRegex =
-      /^[a-zA-Z0-9][a-zA-Z0-9_-]{0,41}[a-zA-Z0-9]?$/;
+      /^[a-zA-Z0-9][.a-zA-Z0-9_-]{0,41}[a-zA-Z0-9]?$/;
 
     if (!allowedCharactersRegex.test(value)) {
       return {

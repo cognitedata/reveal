@@ -9,7 +9,7 @@ export const defaultResourceStyling = {
     default: { color: new Color('#efefef') },
     mapped: { color: new Color('#c5cbff') },
   },
-};
+} as const;
 
 export const defaultViewerOptions: ComponentProps<
   typeof RevealContainer
@@ -20,6 +20,6 @@ export const defaultViewerOptions: ComponentProps<
   },
   antiAliasingHint: 'msaa2+fxaa',
   ssaoQualityHint: 'medium',
-};
+} as const;
 
 export const defaultRevealColor = new Color(0x4a4a4b);

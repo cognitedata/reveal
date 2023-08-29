@@ -107,6 +107,7 @@ export const mixerApiBuiltInTypes = [
       identifier: String!
       indexType: _IndexType
       fields: [String!]!
+      cursorable: Boolean
     }
 
     directive @container(
