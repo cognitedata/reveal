@@ -133,7 +133,7 @@ export const TimeseriesSummary = ({
     isRelatedTimeseriesLoading && !isTimeseriesCountExceed;
 
   return (
-    <SummaryCardWrapper>
+    <SummaryCardWrapper data-testid="timeseries-summary">
       <Table<InternalTimeseriesDataWithMatchingLabels>
         id="timeseries-summary-table"
         columns={columns}

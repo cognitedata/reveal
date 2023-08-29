@@ -144,7 +144,11 @@ export const useNavigation = () => {
   );
 
   const toTimeseriesPage = useCallback(
-    (externalId: string | number) => {
+    (externalId?: string | number) => {
+      if (externalId === undefined) {
+        return;
+      }
+
       const queryParams = new URLSearchParams(search);
 
       if (queryParams.has('expandedId')) {
@@ -160,7 +164,11 @@ export const useNavigation = () => {
   );
 
   const toFilePage = useCallback(
-    (externalId: string | number) => {
+    (externalId?: string | number) => {
+      if (externalId === undefined) {
+        return;
+      }
+
       const queryParams = new URLSearchParams(search);
 
       if (queryParams.has('expandedId')) {

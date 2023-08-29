@@ -81,6 +81,8 @@
   "WIDGET_LOADING_BODY": "Please wait while we are loading your data",
   "WIDGET_ERROR_TITLE": "Oops, something went wrong",
   "WIDGET_ERROR_BODY": "There were some struggles to fetch data",
+  "WIDGET_VIEW_GRID": "Grid",
+  "WIDGET_VIEW_LIST": "List",
 
   "PROPERTIES_WIDGET_NAME": "Properties",
   "PROPERTIES_WIDGET_SEARCH_INPUT_PLACEHOLDER": "Filter by name...",

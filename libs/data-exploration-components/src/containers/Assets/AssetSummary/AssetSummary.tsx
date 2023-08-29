@@ -123,7 +123,7 @@ export const AssetSummary = ({
   const isRelatedAssetsLoading = isRelatedDataLoading && !isAssetsCountExceed;
 
   return (
-    <SummaryCardWrapper>
+    <SummaryCardWrapper data-testid="asset-summary">
       <Table<InternalAssetDataWithMatchingLabels>
         id="asset-summary-table"
         columns={columns}

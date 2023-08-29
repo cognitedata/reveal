@@ -98,7 +98,7 @@ export default function UploadFunctionModal({
     onSuccess(id) {
       notification.success({
         message: 'Function created',
-        description: `Fuction ${id} was successfully created`,
+        description: `Function ${id} was successfully created`,
       });
       client.invalidateQueries([allFunctionsKey]);
       onCancel();

@@ -1,17 +1,10 @@
 {
   "name": "@cognite/cdf-i18n-utils",
-  "version": "0.7.4",
+  "version": "0.7.5",
   "license": "UNLICENSED",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "sideEffects": true,
-  "files": [
-    "cli",
-    "dist",
-    "package.json"
-  ],
+  "sideEffects": ["./utils/overrideFontFamily.js"],
   "bin": {
-    "cdf-i18n-utils-cli": "./cdf-i18n-utils-cli.js"
+    "cdf-i18n-utils-cli": "./bin/cdf-i18n-utils-cli.cjs"
   },
   "dependencies": {
     "tslib": "^2.0.0",
@@ -24,5 +17,9 @@
     "node-fetch": "^2.6.7",
     "react-i18next": "^11.15.6",
     "yargs": "^17.4.1"
+  },
+  "peerDependencies": {
+    "react": "^18",
+    "@cognite/cdf-utilities": "^3"
   }
 }

@@ -125,7 +125,7 @@ export const SequenceSummary = ({
     isRelatedSequenceLoading && !isSequencesCountExceed;
 
   return (
-    <SummaryCardWrapper>
+    <SummaryCardWrapper data-testid="sequence-summary">
       <Table<InternalSequenceDataWithMatchingLabels>
         columns={columns}
         hiddenColumns={hiddenColumns}

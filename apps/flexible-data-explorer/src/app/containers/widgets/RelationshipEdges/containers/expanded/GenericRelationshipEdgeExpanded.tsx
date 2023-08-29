@@ -3,7 +3,9 @@ import { useParams } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import { Button } from '@cognite/cogs.js';
+import { matchSorter } from 'match-sorter';
+
+import { Button, InputExp } from '@cognite/cogs.js';
 
 import { Table } from '../../../../../components/table/Table';
 import { Widget } from '../../../../../components/widget/Widget';
@@ -25,12 +27,26 @@ export const GenericRelationshipEdgesExpanded: React.FC<
 
   const navigate = useNavigation();
 
+  const [inputValue, setInputValue] = useState<string>('');
   const [filterState, setFilterState] = useState<ValueByField | undefined>(
     undefined
   );
 
   const { data, status, isFetchingNextPage, hasNextPage, fetchNextPage } =
     useInstanceRelationshipQuery(type, filterState);
+
+  const transformedData = useMemo(() => {
+    if (!data) {
+      return EMPTY_ARRAY;
+    }
+
+    const filteredData = matchSorter(data.items, inputValue, {
+      // TODO: get the keys from the data model
+      keys: ['name', 'description', 'externalId'],
+    });
+
+    return filteredData;
+  }, [data, inputValue]);
 
   const tableColumns = useMemo(() => {
     const fields = client.allDataTypes?.find(
@@ -51,6 +67,13 @@ export const GenericRelationshipEdgesExpanded: React.FC<
   return (
     <Widget expanded>
       <Widget.Header>
+        <InputExp
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          placeholder={t('PROPERTIES_WIDGET_SEARCH_INPUT_PLACEHOLDER')}
+          icon="Search"
+          clearable
+        />
         <RelationshipFilter
           dataType={type.type}
           value={filterState}
@@ -58,10 +81,13 @@ export const GenericRelationshipEdgesExpanded: React.FC<
         />
       </Widget.Header>
 
-      <Widget.Body state={status} noPadding>
+      <Widget.Body
+        state={transformedData.length === 0 ? 'empty' : status}
+        noPadding
+      >
         <Table
           id="relationship-table"
-          data={data?.items || EMPTY_ARRAY}
+          data={transformedData}
           columns={tableColumns}
           onRowClick={(row) => {
             navigate.toInstancePage(type.type, instanceSpace, row.externalId, {

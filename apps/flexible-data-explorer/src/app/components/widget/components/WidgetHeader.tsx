@@ -1,6 +1,6 @@
 import { PropsWithChildren } from 'react';
 
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { Body } from '@cognite/cogs.js';
 
@@ -46,12 +46,20 @@ const Container = styled.div`
 
   flex-direction: row;
   align-items: center;
+  justify-content: space-between;
 `;
 
 const Actions = styled.div<{ align: 'left' | 'right' }>`
   ${({ align }) =>
-    align === 'left' ? 'margin-right: auto;' : 'margin-left: auto;'}
+    align === 'left'
+      ? css`
+          justify-content: flex-start;
+        `
+      : css`
+          justify-content: flex-end;
+        `}
 
+  width: 100%;
   display: flex;
   gap: 8px;
 `;

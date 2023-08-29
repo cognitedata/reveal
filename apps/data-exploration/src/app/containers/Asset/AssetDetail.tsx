@@ -125,7 +125,7 @@ export const AssetDetail = ({
   }
 
   return (
-    <>
+    <div data-testid="asset-detail">
       <BreadcrumbsV2 />
 
       <ResourceTitleRow
@@ -178,6 +178,6 @@ export const AssetDetail = ({
           </Tabs.Tab>,
         ]}
       />
-    </>
+    </div>
   );
 };

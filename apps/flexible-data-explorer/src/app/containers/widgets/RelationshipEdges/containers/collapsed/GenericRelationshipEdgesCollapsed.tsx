@@ -24,7 +24,7 @@ export const GenericRelationshipEdgesCollapsed: React.FC<
 
   const [query, setQuery] = useState('');
 
-  const isDisabled = isFetched && empty(data);
+  const isDisabled = isFetched && empty(data?.items);
   const isEmpty = isFetched && data?.items.length === 0;
 
   const results = useMemo(() => {

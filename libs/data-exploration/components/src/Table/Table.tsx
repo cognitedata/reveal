@@ -454,6 +454,7 @@ export function Table<T extends TableData>({
               return (
                 <React.Fragment key={row.id}>
                   <Tr
+                    data-testid="table-row"
                     key={row.id}
                     id={row.id}
                     tabIndex={0}
@@ -514,7 +515,7 @@ export function Table<T extends TableData>({
   };
 
   return (
-    <TableContainer>
+    <TableContainer data-testid={id}>
       {tableHeaders || !isEmpty(hiddenColumns) ? (
         <ColumnSelectorWrapper>
           {tableHeaders}

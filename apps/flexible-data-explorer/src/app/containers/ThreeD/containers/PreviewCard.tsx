@@ -22,7 +22,11 @@ export const PreviewCard = ({
 }) => {
   const fdmClient = useFDM();
 
-  if (nodeData === undefined) {
+  if (
+    nodeData === undefined ||
+    nodeData.view === undefined ||
+    nodeData.fdmNode === undefined
+  ) {
     return <></>;
   }
 
