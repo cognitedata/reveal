@@ -18,23 +18,26 @@
       "executor": "@nx/rollup:rollup",
       "outputs": ["{options.outputPath}"],
       "options": {
+        "format": ["esm", "cjs"],
         "outputPath": "dist/libs/shared/cdf-ui-i18n-utils",
         "tsConfig": "libs/shared/cdf-ui-i18n-utils/tsconfig.lib.json",
         "project": "libs/shared/cdf-ui-i18n-utils/package.json",
         "entryFile": "libs/shared/cdf-ui-i18n-utils/src/index.ts",
-        "external": ["react/jsx-runtime"],
-        "rollupConfig": "@nx/react/plugins/bundle-rollup",
-        "compiler": "babel",
+        "external": ["react", "react/jsx-runtime", "@cognite/cdf-utilities"],
+        "rollupConfig": "libs/shared/cdf-ui-i18n-utils/rollup-config.js",
+        "compiler": "tsc",
         "assets": [
+          {
+            "input": "libs/shared/cdf-ui-i18n-utils/bin",
+            "glob": "*",
+            "output": "./bin"
+          },
           {
             "glob": "libs/shared/cdf-ui-i18n-utils/README.md",
             "input": ".",
             "output": "."
-          },
-          "libs/shared/cdf-ui-i18n-utils/src/cli",
-          "libs/shared/cdf-ui-i18n-utils/src/cdf-i18n-utils-cli.cjs"
-        ],
-        "babelUpwardRootMode": true
+          }
+        ]
       }
     },
     "test": {

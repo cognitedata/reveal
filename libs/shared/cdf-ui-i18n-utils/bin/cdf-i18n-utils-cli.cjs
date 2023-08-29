@@ -5,11 +5,11 @@ require('dotenv').config();
 const yargs = require('yargs/yargs');
 const { hideBin } = require('yargs/helpers');
 
-const pull = require('./cli/pull.cjs');
-const saveMissing = require('./cli/save-missing.cjs');
-const removeDeleted = require('./cli/remove-deleted.cjs');
-const sortLocalKeys = require('./cli/sort-local-keys.cjs');
-const removeUnusedKeys = require('./cli/remove-unused-keys.cjs');
+const pull = require('./pull.cjs');
+const saveMissing = require('./save-missing.cjs');
+const removeDeleted = require('./remove-deleted.cjs');
+const sortLocalKeys = require('./sort-local-keys.cjs');
+const removeUnusedKeys = require('./remove-unused-keys.cjs');
 
 function main() {
   yargs(hideBin(process.argv))
