@@ -18,7 +18,7 @@
   },
   "peerDependencies": {
     "@cognite/cogs.js": ">=9",
-    "@cognite/reveal": "4.4.1",
+    "@cognite/reveal": "4.4.2",
     "react": ">=18",
     "react-dom": ">=18",
     "styled-components": ">=5"
