@@ -40,4 +40,11 @@ describe('Data model version validator', () => {
     const result = validator.validate('version', 'test-version');
     expect(result.valid).toBe(true);
   });
+
+  it('validates version containing "."', () => {
+    const validator = createInstance();
+
+    const result = validator.validate('version', 'v2.1-alpha0');
+    expect(result.valid).toBe(true);
+  });
 });
