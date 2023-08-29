@@ -59,7 +59,7 @@ async function applyStyling(
   model: CogniteCadModel,
   stylingGroups: Array<NodeStylingGroup | TreeIndexStylingGroup>
 ): Promise<void> {
-  const firstChangeIndex = getFirstChangeIndex();
+  const firstChangeIndex = await getFirstChangeIndex();
 
   for (let i = firstChangeIndex; i < model.styledNodeCollections.length; i++) {
     const viewerStyledNodeCollection = model.styledNodeCollections[i];
@@ -83,12 +83,15 @@ async function applyStyling(
     }
   }
 
-  function getFirstChangeIndex(): number {
+  async function getFirstChangeIndex(): Promise<number> {
     for (let i = 0; i < model.styledNodeCollections.length; i++) {
       const stylingGroup = stylingGroups[i];
       const viewerStyledNodeCollection = model.styledNodeCollections[i];
 
-      const areEqual = isEqualStylingGroupAndCollection(stylingGroup, viewerStyledNodeCollection);
+      const areEqual = await isEqualStylingGroupAndCollection(
+        stylingGroup,
+        viewerStyledNodeCollection
+      );
 
       if (!areEqual) {
         return i;
@@ -99,29 +102,39 @@ async function applyStyling(
   }
 }
 
-function isEqualStylingGroupAndCollection(
+async function isEqualStylingGroupAndCollection(
   group: NodeStylingGroup | TreeIndexStylingGroup,
   collection: {
     nodeCollection: NodeCollection;
     appearance: NodeAppearance;
   }
-): boolean {
+): Promise<boolean> {
   if (group?.style === undefined) return false;
 
   const isEqualGroupStyle = isEqualStyle(collection.appearance, group.style);
+
+  if (!isEqualGroupStyle) return false;
 
   if (collection.nodeCollection instanceof TreeIndexNodeCollection && 'treeIndices' in group) {
     const compareCollection = new TreeIndexNodeCollection(group.treeIndices);
     const isEqualContent = isEqualTreeIndex(collection.nodeCollection, compareCollection);
 
-    return isEqualGroupStyle && isEqualContent;
+    if (!isEqualContent) {
+      collection.nodeCollection.updateSet(group.treeIndices);
+    }
+
+    return true;
   }
 
   if (collection.nodeCollection instanceof NodeIdNodeCollection && 'nodeIds' in group) {
     const collectionNodeIds = collection.nodeCollection.serialize().state.nodeIds as number[];
     const isEqualContent = isEqual(collectionNodeIds, group.nodeIds);
 
-    return isEqualGroupStyle && isEqualContent;
+    if (!isEqualContent) {
+      await collection.nodeCollection.executeFilter(group.nodeIds);
+    }
+
+    return true;
   }
 
   return false;
