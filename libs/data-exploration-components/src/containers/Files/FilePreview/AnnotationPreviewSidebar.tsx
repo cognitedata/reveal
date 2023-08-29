@@ -342,6 +342,11 @@ const AnnotationPreviewSidebar = ({
     { enabled: !!type }
   );
 
+  const detailsOverlay = document.getElementById('details-overlay');
+  const resourceSelectorInitialWidth = detailsOverlay
+    ? detailsOverlay.clientWidth - 50
+    : '30%';
+
   const Header = ({
     annotation,
     onClose,
@@ -519,6 +524,7 @@ const AnnotationPreviewSidebar = ({
           onClose={() => setSelectedAnnotations([])}
         />
         <ResourceSelectorDrawer
+          initialWidth={resourceSelectorInitialWidth}
           visibleResourceTabs={['asset', 'file']}
           visible={visible}
           selectionMode="single"
