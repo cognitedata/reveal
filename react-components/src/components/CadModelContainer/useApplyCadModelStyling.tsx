@@ -88,9 +88,9 @@ async function applyStyling(
       const stylingGroup = stylingGroups[i];
       const viewerStyledNodeCollection = model.styledNodeCollections[i];
 
-      const updated = await tryUpdateStylingGroup(stylingGroup, viewerStyledNodeCollection);
+      const isUpToDate = await isEqualOrUpdated(stylingGroup, viewerStyledNodeCollection);
 
-      if (!updated) {
+      if (!isUpToDate) {
         return i;
       }
     }
@@ -99,7 +99,7 @@ async function applyStyling(
   }
 }
 
-async function tryUpdateStylingGroup(
+async function isEqualOrUpdated(
   group: NodeStylingGroup | TreeIndexStylingGroup,
   collection: {
     nodeCollection: NodeCollection;
