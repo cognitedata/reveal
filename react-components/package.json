@@ -18,7 +18,7 @@
   },
   "peerDependencies": {
     "@cognite/cogs.js": ">=9",
-    "@cognite/reveal": "4.4.1",
+    "@cognite/reveal": "4.4.2",
     "react": ">=18",
     "react-dom": ">=18",
     "styled-components": ">=5"
@@ -63,7 +63,7 @@
     "styled-components": "5.3.11",
     "three": "0.155.0",
     "ts-loader": "9.4.4",
-    "typescript": "5.1.6",
+    "typescript": "5.2.2",
     "webpack": "5.88.2",
     "webpack-cli": "5.1.4",
     "webpack-node-externals": "3.0.0"
