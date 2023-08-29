@@ -14,6 +14,7 @@ export function with3dResourcesFitCameraOnLoad(Component: RevealResources): Reve
 
     const onResourcesAdded = useCallback(() => {
       cameraNavigation.fitCameraToAllModels();
+      props.onResourcesAdded?.();
     }, []);
 
     return <Component {...props} onResourcesAdded={onResourcesAdded} />;

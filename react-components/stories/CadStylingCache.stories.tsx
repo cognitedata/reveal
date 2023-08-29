@@ -50,12 +50,12 @@ const Models = ({ addModelOptions }: CogniteCadModelProps): JSX.Element => {
 
   const [platformStyling, setPlatformStyling] = useState<CadModelStyling>();
 
-  const { data } = useMappedEdgesForRevisions([platformModelOptions], true);
+  const { data } = useMappedEdgesForRevisions([platformModelOptions]);
 
   const nodeIds = useMemo(
     () =>
       data
-        ?.get(`${platformModelOptions.modelId}-${platformModelOptions.revisionId}`)
+        ?.get(`${platformModelOptions.modelId}/${platformModelOptions.revisionId}`)
         ?.map((edgeWithNode) => edgeWithNode.edge.properties.revisionNodeId),
     [data]
   );
