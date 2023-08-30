@@ -17,7 +17,12 @@ const defaultStyle: ToolBarProps = {
   style: {
     position: 'absolute',
     left: '20px',
-    top: '70px'
+    top: '70px',
+    width: '48px',
+    padding: '6px',
+    gap: '8px',
+    borderRadius: '8px',
+    borderColor: 'rgba(83, 88, 127, 0.24)'
   }
 };
 

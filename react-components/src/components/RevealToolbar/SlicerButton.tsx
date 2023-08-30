@@ -10,6 +10,7 @@ import { useReveal } from '../RevealContainer/RevealContext';
 import { Button, Dropdown, Menu, RangeSlider, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 
 import styled from 'styled-components';
+import { useOutsideClick } from '../../hooks/useOutsideClick';
 
 type SliceState = {
   minHeight: number;
@@ -20,6 +21,11 @@ type SliceState = {
 
 export const SlicerButton = (): ReactElement => {
   const viewer = useReveal();
+  const [sliceActive, setSliceActive] = useState<boolean>(false);
+  const handleClickOutside = (): void => {
+    setSliceActive(false);
+  };
+  const ref = useOutsideClick(handleClickOutside);
 
   const [sliceState, setSliceState] = useState<SliceState>({
     minHeight: 0,
@@ -66,7 +72,10 @@ export const SlicerButton = (): ReactElement => {
       <Dropdown
         appendTo={() => document.body}
         content={
-          <StyledMenu>
+          <StyledMenu
+            onClick={(event: MouseEvent) => {
+              event.stopPropagation();
+            }}>
             <RangeSlider
               min={0}
               max={1}
@@ -79,7 +88,16 @@ export const SlicerButton = (): ReactElement => {
           </StyledMenu>
         }
         placement="right-end">
-        <Button type="ghost" icon="Slice" aria-label="Slice models" />
+        <Button
+          ref={ref}
+          type="ghost"
+          icon="Slice"
+          aria-label="Slice models"
+          toggled={sliceActive}
+          onClick={() => {
+            setSliceActive((prevState) => !prevState);
+          }}
+        />
       </Dropdown>
     </CogsTooltip>
   );

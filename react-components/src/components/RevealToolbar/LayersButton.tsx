@@ -16,6 +16,7 @@ import { useReveal } from '../RevealContainer/RevealContext';
 import { use3DModelName } from '../../hooks/use3DModelName';
 import { isEqual } from 'lodash';
 import { useRevealContainerElement } from '../RevealContainer/RevealContainerElementContext';
+import { useOutsideClick } from '../../hooks/useOutsideClick';
 
 export const LayersButton = (): ReactElement => {
   const viewer = useReveal();
@@ -39,6 +40,11 @@ export const LayersButton = (): ReactElement => {
   const showLayers = (): void => {
     setVisible((prevState) => !prevState);
   };
+
+  const handleClickOutside = (): void => {
+    setVisible(false);
+  };
+  const ref = useOutsideClick(handleClickOutside);
 
   useEffect(() => {
     const currentModels = viewer.models;
@@ -148,12 +154,6 @@ export const LayersButton = (): ReactElement => {
     setReveal3DResourcesLayerData(updated3DResourcesLayerData);
   }, [updated3DResourcesLayerData]);
 
-  useEffect(() => {
-    viewer.on('click', () => {
-      setVisible(false);
-    });
-  }, [viewer]);
-
   return (
     <CogsTooltip content={'Filter 3D resource layers'} placement="right" appendTo={document.body}>
       <Dropdown
@@ -167,8 +167,15 @@ export const LayersButton = (): ReactElement => {
           />
         }
         visible={visible}
-        placement="auto">
-        <Button type="ghost" icon="Layers" aria-label="3D Resource layers" onClick={showLayers} />
+        placement="right">
+        <Button
+          ref={ref}
+          type="ghost"
+          icon="Layers"
+          aria-label="3D Resource layers"
+          onClick={showLayers}
+          toggled={visible}
+        />
       </Dropdown>
     </CogsTooltip>
   );

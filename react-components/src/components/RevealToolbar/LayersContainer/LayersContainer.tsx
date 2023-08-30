@@ -17,7 +17,10 @@ const LayersContainer = ({ props }: { props: Reveal3DResourcesLayersProps }): Re
     <>
       {(viewer.models.length > 0 || viewer.get360ImageCollections().length > 0) && (
         <Container>
-          <StyledMenu>
+          <StyledMenu
+            onClick={(event: MouseEvent) => {
+              event.stopPropagation();
+            }}>
             <CadModelLayersContainer layerProps={props} />
             <PointCloudLayersContainer layerProps={props} />
             <Image360CollectionLayerContainer layerProps={props} />
