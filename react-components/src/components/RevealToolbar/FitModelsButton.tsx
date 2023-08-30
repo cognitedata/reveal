@@ -4,7 +4,7 @@
 
 import { type ReactElement, useCallback } from 'react';
 
-import { Button } from '@cognite/cogs.js';
+import { Button, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import { useCameraNavigation } from '../../hooks/useCameraNavigation';
 
 export const FitModelsButton = (): ReactElement => {
@@ -15,11 +15,13 @@ export const FitModelsButton = (): ReactElement => {
   }, []);
 
   return (
-    <Button
-      type="ghost"
-      icon="ExpandAlternative"
-      aria-label="Fit camera to models"
-      onClick={updateCamera}
-    />
+    <CogsTooltip content={'Fit view'} placement="right" appendTo={document.body}>
+      <Button
+        type="ghost"
+        icon="ExpandAlternative"
+        aria-label="Fit camera to models"
+        onClick={updateCamera}
+      />
+    </CogsTooltip>
   );
 };
