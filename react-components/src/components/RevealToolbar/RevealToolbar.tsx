@@ -32,7 +32,6 @@ const DefaultContentWrapper = (props: RevealToolbarProps): ReactElement => {
     <>
       <LayersButton />
       <FitModelsButton />
-      <Button type="ghost" icon="Collapse" aria-label="Focus asset" />
 
       <div className="cogs-toolbar-divider" />
 
