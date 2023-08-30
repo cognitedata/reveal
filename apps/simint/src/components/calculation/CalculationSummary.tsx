@@ -8,10 +8,7 @@ import classNames from 'classnames';
 import styled from 'styled-components/macro';
 
 import { Chip } from '@cognite/cogs.js';
-import type {
-  CalculationTemplate,
-  DefinitionMap,
-} from '@cognite/simconfig-api-sdk/rtk';
+import type { CalculationTemplate } from '@cognite/simconfig-api-sdk/rtk';
 
 interface CalculationSummaryProps {
   configuration: CalculationTemplate;
@@ -22,20 +19,20 @@ export function CalculationSummary({ configuration }: CalculationSummaryProps) {
     data: { definitions },
   } = useMatch<AppLocationGenerics>();
 
-  const displayUnit = (
-    unit: string,
-    unitType: keyof DefinitionMap['map']['unitType']
-  ): string => {
-    // Check if unitType is already defined on DefinitionMap['map']['unitType']
-    // New simualtors (apart from PROSPER & ProcessSim) might not have unitType defined under DefinitionMap['map']['unitType']
-    if (
-      definitions?.map.unitType &&
-      unitType in definitions.map.unitType &&
-      unit in definitions.map.unitType
-    ) {
-      return definitions.map.unitType[unitType][unit];
+  const getUnitLabel = (unit: string, unitType: string): string => {
+    const unitsMap = definitions?.simulatorsConfig?.find(
+      (config) => config.key === configuration.simulator
+    )?.unitDefinitions.unitsMap;
+
+    if (!unitsMap) {
+      return unit;
     }
-    return unit;
+
+    const unitLabel = unitsMap[unitType]?.units.find(
+      ({ value }) => value === unit
+    )?.label;
+
+    return unitLabel ?? unit;
   };
 
   return (
@@ -372,13 +369,7 @@ export function CalculationSummary({ configuration }: CalculationSummaryProps) {
                   )
                 </div>
                 <div>
-                  <NullableValue
-                    value={displayUnit(
-                      unit ?? '',
-                      unitType as keyof DefinitionMap['map']['unitType']
-                    )}
-                  />{' '}
-                  (
+                  <NullableValue value={getUnitLabel(unit ?? '', unitType)} /> (
                   <NullableValue value={unitType} />)
                 </div>
                 <InputTimeseriesSublist>
@@ -420,13 +411,7 @@ export function CalculationSummary({ configuration }: CalculationSummaryProps) {
                   )
                 </div>
                 <div>
-                  <NullableValue
-                    value={displayUnit(
-                      unit ?? '',
-                      unitType as keyof DefinitionMap['map']['unitType']
-                    )}
-                  />{' '}
-                  (
+                  <NullableValue value={getUnitLabel(unit ?? '', unitType)} /> (
                   <NullableValue value={unitType} />)
                 </div>
                 <div>{externalId}</div>

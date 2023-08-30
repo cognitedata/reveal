@@ -1,21 +1,6 @@
 import type { DefinitionMap } from '@cognite/simconfig-api-sdk/rtk';
 
 // TODO(SIM-209) Use definitions endpoint
-export const UnitSystem = {
-  OilField: 'Oil field units',
-  // eslint-disable-next-line
-  NorSI: 'Norwegian SI units',
-  // eslint-disable-next-line
-  CanSI: 'Canadian SI units',
-  // eslint-disable-next-line
-  GerSI: 'German SI units',
-  // eslint-disable-next-line
-  FreSI: 'French SI units',
-  // eslint-disable-next-line
-  LatSI: 'Latin SI units',
-};
-
-// TODO(SIM-209) Use definitions endpoint
 export const BoundaryCondition = {
   ResPress: 'Reservoir pressure',
   CGR: 'Condensate gas ratio',

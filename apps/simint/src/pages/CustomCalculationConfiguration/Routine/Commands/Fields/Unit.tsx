@@ -6,10 +6,7 @@ import { getTargetTimeseriesByPrefix } from '@simint-app/utils/routineUtils';
 import { Field, useFormikContext } from 'formik';
 
 import { Select } from '@cognite/cogs.js';
-import type {
-  DefinitionMap,
-  UserDefined,
-} from '@cognite/simconfig-api-sdk/rtk';
+import type { UserDefined } from '@cognite/simconfig-api-sdk/rtk';
 
 import { getOptionLabel, getTimeSerieIndexByType } from '../utils';
 import type {
@@ -56,13 +53,16 @@ export function Unit({ routineIndex, step, timeSeriesPrefix }: UnitFieldProps) {
     return null;
   }
 
-  const timeserieUnitType = timeSeriesTarget[stepTimeserieIndex]
-    .unitType as keyof DefinitionMap['map']['unitType'];
+  const timeSeriesUnitType = timeSeriesTarget[stepTimeserieIndex].unitType;
 
-  const unitLabels = definitions.map.unitType[timeserieUnitType];
-  const TIMESERIES_UNIT_OPTIONS: ValueOptionType<string>[] = Object.entries(
-    unitLabels
-  ).map(([value, label]) => ({ label, value }));
+  const simulatorConfig = definitions.simulatorsConfig?.find(
+    (config) => config.key === values.simulator
+  );
+  const unitsMap = simulatorConfig?.unitDefinitions.unitsMap ?? {};
+
+  const TIMESERIES_UNIT_OPTIONS: ValueOptionType<string>[] =
+    (unitsMap[timeSeriesUnitType] && unitsMap[timeSeriesUnitType].units) ?? [];
+
   const formikPath = `routine.${timeSeriesPrefix}.${routineIndex}.unit`;
 
   return (

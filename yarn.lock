@@ -2239,7 +2239,7 @@
   dependencies:
     "@cognite/intercom-helper" "0.2.1"
 
-"@cognite/simconfig-api-sdk@^1.6.13":
+"@cognite/simconfig-api-sdk@^1.6.14":
   version "1.6.15"
   resolved "https://registry.yarnpkg.com/@cognite/simconfig-api-sdk/-/simconfig-api-sdk-1.6.15.tgz#2f50b96989019186340eb4c20faa56a9249af708"
   integrity sha512-d35cLc+Ghbm74lofry/zvWKaVlX7ZdAzc44Kc/pewla01nVKR1dMj42rySgGFF4m3p7MwHzDU/CMTF0ATn6WHg==

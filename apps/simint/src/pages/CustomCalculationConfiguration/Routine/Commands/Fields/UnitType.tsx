@@ -37,9 +37,17 @@ export function UnitType({
     return null;
   }
 
-  const unitLabels = definitions.map.unitLabel;
+  const simulatorConfig = definitions.simulatorsConfig?.find(
+    (config) => config.key === values.simulator
+  );
+  const unitsMap = simulatorConfig?.unitDefinitions.unitsMap ?? {};
+
   const TIMESERIES_UNIT_TYPE_OPTIONS: ValueOptionType<string>[] =
-    Object.entries(unitLabels).map(([value, label]) => ({ label, value }));
+    Object.entries(unitsMap).map(([key, value]) => ({
+      value: key,
+      label: value.label,
+    }));
+
   const routineTimeSerieIndex = getTimeSerieIndexByType(
     timeSeriesTarget,
     step.arguments.value ?? ''
