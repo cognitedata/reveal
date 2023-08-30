@@ -392,22 +392,6 @@ const constructFilter = (
         return;
       }
     }
-    if (typeof el.value === 'string') {
-      switch (el.value.toLowerCase().trim()) {
-        case '${lastyear}$':
-          value = dayjs().subtract(1, 'year').toISOString();
-          break;
-        case '${lastweek}$':
-          value = dayjs().subtract(1, 'week').toISOString();
-          break;
-        case '${yearstart}$':
-          value = dayjs().set('date', 1).set('month', 1).toISOString();
-          break;
-        case '${today}$':
-          value = dayjs().toISOString();
-          break;
-      }
-    }
     filterContent.push(
       filterPath.reduceRight((prev, currPath, i) => {
         if (i === filterPath.length - 1) {

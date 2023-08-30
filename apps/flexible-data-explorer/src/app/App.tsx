@@ -16,14 +16,12 @@ import { SDKProvider } from '@cognite/sdk-provider';
 
 import { useAuthContext } from './common/auth/AuthProvider';
 import { TopBar } from './common/topbar/top-bar';
-import { useIsCogpilotEnabled } from './hooks/useFlag';
 import { queryClient } from './queryClient';
 import Routes from './Routes';
 import zIndex from './utils/zIndex';
 
 function App() {
   const { client } = useAuthContext();
-  const isAIEnabled = useIsCogpilotEnabled();
 
   return (
     <FlagProvider
@@ -60,11 +58,9 @@ function App() {
           </QueryErrorResetBoundary>
         </QueryClientProvider>
       </SDKProvider>
-      {isAIEnabled && (
-        <CopilotWrapper>
-          <Copilot sdk={client} />
-        </CopilotWrapper>
-      )}
+      <CopilotWrapper>
+        <Copilot sdk={client} />
+      </CopilotWrapper>
     </FlagProvider>
   );
 }

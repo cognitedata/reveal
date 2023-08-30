@@ -23,6 +23,7 @@ export const useAIDataTypesQuery = (
     ),
     async () => {
       if (!message) {
+        setQueryResults(undefined);
         return undefined;
       }
       const results = await client.aiSearch(

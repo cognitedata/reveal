@@ -306,8 +306,8 @@ export const safeConvertToJson = <T,>(outputs: string[]): T[] => {
 export async function parallelGPTCalls<T extends BaseChain>(
   inputList: ChainValues[],
   chain: T,
-  maxRetries = 3,
-  timeout = 3000,
+  maxRetries = 1,
+  timeout = 30000,
   call: (chain: T, value: ChainValues) => any = (item, value) =>
     item.call(value)
 ): Promise<any[]> {

@@ -14,6 +14,7 @@ import pluralize from 'pluralize';
 
 import { Body, Button, Flex, NotificationDot } from '@cognite/cogs.js';
 
+import { useAIQueryLocalStorage } from '../../../hooks/useLocalStorage';
 import { useSearchQueryParams } from '../../../hooks/useParams';
 import { useTranslation } from '../../../hooks/useTranslation';
 import { useAIDataTypesQuery } from '../../../services/dataTypes/queries/useAIDataTypesQuery';
@@ -34,6 +35,8 @@ export const AIResultSummary = ({
 }) => {
   const { t } = useTranslation();
   const [query] = useSearchQueryParams();
+
+  const [_, setCachedMessage] = useAIQueryLocalStorage();
   const selectedDataModels = useSelectedDataModels();
 
   const [isFilterBuilderVisible, setFilterBuilderVisible] = useState(false);
@@ -80,8 +83,9 @@ export const AIResultSummary = ({
       if (message.type === 'error') {
         setLoadingProgress(undefined);
         setError(message.content);
+        setCachedMessage(undefined);
       }
-      if (message.source === 'user') {
+      if (message.source === 'user' && message.pending) {
         setError(undefined);
       }
     }
@@ -90,6 +94,10 @@ export const AIResultSummary = ({
   useToCopilotEventHandler('LOADING_STATUS', (status) => {
     setLoadingProgress(status);
   });
+
+  useEffect(() => {
+    setError(undefined);
+  }, [query]);
 
   const resultText = useMemo(() => {
     let text = '';
