@@ -1,5 +1,7 @@
 import React from 'react';
+
 import styled from 'styled-components';
+
 import { Colors, Detail } from '@cognite/cogs.js';
 import {
   IDPResponse,
@@ -9,10 +11,8 @@ import {
 } from '@cognite/login-utils';
 
 import { useTranslation } from '../../../../i18n';
+
 import IDPProjectList from './IDPProjectList';
-import { isUsingUnifiedSignin } from '@cognite/cdf-utilities';
-import { useProjects } from '../../../hooks/useProjects';
-import { Idp } from '@cognite/auth-react';
 
 type ProjectListByClusterProps = {
   cluster: string;
@@ -29,21 +29,9 @@ const ProjectListByCluster = ({
 }: ProjectListByClusterProps): JSX.Element => {
   const { t } = useTranslation();
   const { data: idpProjects = [], isFetched: didFetchIdpProjects } =
-    useIdpProjects(cluster, idp, { enabled: !isUsingUnifiedSignin() });
+    useIdpProjects(cluster, idp);
 
-  const { data: projects = [], isFetched: didFetchProjects } = useProjects(
-    cluster,
-    idp as Idp
-  );
-
-  const isFetched = isUsingUnifiedSignin()
-    ? didFetchProjects
-    : didFetchIdpProjects;
-  const hasProjects = isUsingUnifiedSignin()
-    ? projects?.length > 0
-    : idpProjects?.length > 0;
-
-  if (isFetched && !hasProjects && !legacyProjects?.length) {
+  if (didFetchIdpProjects && !idpProjects.length && !legacyProjects?.length) {
     return <></>;
   }
 

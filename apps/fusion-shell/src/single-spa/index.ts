@@ -1,25 +1,34 @@
-import { registerApplication, start } from 'single-spa';
+import { match } from 'path-to-regexp';
+import {
+  RegisterApplicationConfig,
+  registerApplication,
+  start,
+} from 'single-spa';
 
-import { isUsingUnifiedSignin } from '@cognite/cdf-utilities';
+import { appManifests } from '../appManifests';
 
-import applications from './root-config/sub-apps-config';
+import { matchesAny } from './root-config/utils';
 
-const isUnifiedSignin = isUsingUnifiedSignin();
-const unifiedSignInDisabledApps = [
-  '@cognite/login-page',
-  '@cognite/cdf-copilot',
-];
+type RouteConfig = {
+  route: string;
+};
 
-// For unified signin, we don't need the login page
-// because another app(login app) will be used
-applications
-  .filter((application) =>
-    isUnifiedSignin
-      ? !unifiedSignInDisabledApps.includes(application.name)
-      : true
-  )
-  .forEach((applicationConfig) => {
-    registerApplication(applicationConfig);
-  });
+const matcher = (config: RouteConfig) => match(config.route, { end: false });
+
+const applications: RegisterApplicationConfig[] = appManifests.map(
+  (appConfig) => {
+    return {
+      name: appConfig.appName,
+      app: () => System.import(appConfig.appName),
+      activeWhen: (location) => {
+        return matchesAny(location, appConfig.routes.map(matcher));
+      },
+    };
+  }
+);
+
+applications.forEach((applicationConfig) => {
+  registerApplication(applicationConfig);
+});
 
 start();

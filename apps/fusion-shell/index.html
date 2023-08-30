@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Cognite Data Fusion</title>
+    <base href="/" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="Content-Security-Policy" content="<%= CSP %>" />
+
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="stylesheet" href="/src/styles.css" />
+
+    <meta name="importmap-type" content="systemjs-importmap" />
+    <script type="systemjs-importmap">
+      {
+        "imports": {
+          "react": "/dependencies/react@16.12.0/umd/react.production.min.js",
+          "react-dom": "/dependencies/react-dom@16.12.0/umd/react-dom.production.min.js",
+          "single-spa": "/dependencies/single-spa@5.5.0/lib/system/single-spa.min.js"
+        }
+      }      
+    </script>
+    <script type="systemjs-importmap" id="cdf-import-map" src="/subapps-import-map.json"></script>
+    <script src="/dependencies/systemjs@6.3.1/dist/system.min.js"></script>
+    <script src="/dependencies/systemjs@6.3.1/dist/extras/named-exports.min.js"></script>
+
+    <script src="/dependencies/import-map-overrides@1.14.6/dist/import-map-overrides.js"></script>
+    <script src="/dependencies/query-string@7.1.1/dist/query-string.js"></script>
+    <import-map-overrides-full show-when-local-storage="devtools" dev-libs></import-map-overrides-full>
+    <script src="/dev-setup.js"></script>
+  </head>
+  <body>
+    <noscript>
+      You need to enable JavaScript to start Cognite Data Fusion.
+    </noscript>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

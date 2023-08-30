@@ -78,22 +78,18 @@ jobs:
         # commit status in the next step, both in case of success and failure
         continue-on-error: false
         env:
-          PROJECT: ${{ secrets.CLI_E2E_PROJECT }}
-          TENANT: ${{ secrets.CLI_E2E_TENANT }}
-          CLUSTER: ${{ secrets.CLI_E2E_CLUSTER }}
-          CLIENT_ID: ${{ secrets.CLI_E2E_CLIENT_ID }}
-          CLIENT_SECRET: ${{ secrets.CLI_E2E_CLIENT_SECRET }}
           DATA_EXPLORER_CLIENT_ID: ${{ secrets.DATA_EXPLORER_CLIENT_ID }}
           DATA_EXPLORER_CLIENT_SECRET: ${{ secrets.DATA_EXPLORER_CLIENT_SECRET }}
-          NODE_OPTIONS: '--max_old_space_size=8192'
-          USE_MOCK_API: false
         # execute Cypress using a custom test command
         with:
           # let's make sure our tests pass on Chrome browser
           browser: chrome
-          start: yarn nx serve mock-server
-          wait-on: 'http://localhost:4002'
-          # wait for 1 minute for the server to respond
-          wait-on-timeout: 60
           # Run the cypress tests
-          command: yarn nx run fusion-shell:e2e:staging
+          command: yarn nx run fusion-shell-e2e:e2e:ci
+
+      - name: Upload cypress artifacts
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: cypress-snapshots
+          path: dist/cypress/apps/fusion-shell-e2e

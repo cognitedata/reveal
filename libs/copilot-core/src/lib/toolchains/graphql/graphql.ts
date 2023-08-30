@@ -172,15 +172,32 @@ export class GraphQlChain extends CogniteBaseChain {
     {
       name: 'data type processing',
       loadingMessage: this.fields.i18nFn('GQL_STAGE_PROCESSING_RELEVANT_TYPES'),
-      run: async (
-        { i18nFn },
-        { relevantTypes, dataModel: dataModelName, dataModels }
-      ) => {
-        const selectedDataModel =
-          dataModels.find(
-            (dataModel) =>
-              `${dataModel.externalId}_${dataModel.space}` === dataModelName
-          ) || dataModels[0];
+      run: async ({ i18nFn }, { relevantTypes, dataModels }) => {
+        // identify the correct data model by checking which data models have the all the relevant types
+        // and then seeing which data model has the highest total property count for those types
+        const dataModelWithDataTypes = dataModels.filter((el) =>
+          relevantTypes.every((type) => el.graphQlDml?.includes(type))
+        );
+        let selectedDataModel = dataModelWithDataTypes[0];
+        let count = 0;
+        if (dataModelWithDataTypes.length > 1) {
+          for (const dataModel of dataModelWithDataTypes) {
+            let currCount = 0;
+            if (!dataModel.graphQlDml) {
+              continue;
+            }
+            new GraphQlUtilsService()
+              .parseSchema(dataModel.graphQlDml, dataModel.views)
+              .types.filter((el) => relevantTypes.includes(el.name))
+              .forEach((el) => {
+                currCount += el.fields.length;
+              });
+            if (currCount > count) {
+              count = currCount;
+              selectedDataModel = dataModel;
+            }
+          }
+        }
 
         if (!selectedDataModel || !selectedDataModel.graphQlDml) {
           throw new Error(i18nFn('GQL_ERROR_MISSING_DEFINITION'));
@@ -251,6 +268,7 @@ export class GraphQlChain extends CogniteBaseChain {
               {
                 question: message,
                 relevantTypes: relevantTypesDml,
+                currentDateTime: new Date(),
               },
             ],
             { timeout: 30000 }

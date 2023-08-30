@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+
 import styled from 'styled-components';
 
 import {
@@ -13,17 +14,12 @@ import {
 import {
   getLoginFlowsByCluster,
   getSelectedIdpDetails,
-  redirectToLogin,
   useLoginInfo,
   useValidatedLegacyProjects,
 } from '@cognite/login-utils';
 
 import { useTranslation } from '../../../../i18n';
 import ProjectListByCluster from '../ProjectListByCluster';
-import { readLoginHints } from '@cognite/auth-react/src/lib/base';
-import { isUsingUnifiedSignin } from '@cognite/cdf-utilities';
-
-const loginHints = readLoginHints();
 
 export const ProjectDropdown = () => {
   const { t } = useTranslation();
@@ -34,19 +30,11 @@ export const ProjectDropdown = () => {
   const { validLegacyProjects = [] } = legacyProjectsByCluster || {};
 
   const loginFlowsByCluster = useMemo(() => {
-    return getLoginFlowsByCluster(
-      loginInfo,
-      internalId ?? loginHints?.idpInternalId,
-      validLegacyProjects
-    );
+    return getLoginFlowsByCluster(loginInfo, internalId, validLegacyProjects);
   }, [internalId, loginInfo, validLegacyProjects]);
 
   const handleGoBackToLoginPage = () => {
-    if (isUsingUnifiedSignin()) {
-      redirectToLogin();
-    } else {
-      window.location.href = '/';
-    }
+    window.location.href = '/';
   };
 
   if (!didFetchLoginInfo) {

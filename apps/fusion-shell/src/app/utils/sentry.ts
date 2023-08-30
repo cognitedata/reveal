@@ -1,6 +1,7 @@
 import * as Sentry from '@sentry/browser';
-import { getProject, getEnvironment } from '@cognite/cdf-utilities';
 import debounce from 'lodash/debounce';
+
+import { getProject, getEnvironment } from '@cognite/cdf-utilities';
 
 export const getSubapp = () =>
   new URL(window.location.href).pathname.split('/')[2];

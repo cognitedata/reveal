@@ -1,7 +1,9 @@
 import React, { ReactNode } from 'react';
 
-import { Modal as AntdModal, ModalProps as AntdModalProps } from 'antd';
 import styled from 'styled-components';
+
+import { Modal as AntdModal, ModalProps as AntdModalProps } from 'antd';
+
 import { Icon } from '@cognite/cogs.js';
 
 import { MODAL_WIDTH } from '../../utils/constants';

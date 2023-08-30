@@ -82,7 +82,7 @@ export const AIResultsList = ({
           onClick={() => {
             setPage((prevState) => prevState + PAGE_SIZE);
           }}
-          hidden={(results?.length || 0) <= page}
+          hidden={(results?.length || 0) <= page || !copilotMessage}
         />
       </SearchResults.Footer>
     </>

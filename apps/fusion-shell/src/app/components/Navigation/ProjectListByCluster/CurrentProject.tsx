@@ -1,7 +1,8 @@
 import React from 'react';
 
-import { Colors, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
+
+import { Colors, Icon } from '@cognite/cogs.js';
 
 type CurrentProjectProps = {
   projectName: string;

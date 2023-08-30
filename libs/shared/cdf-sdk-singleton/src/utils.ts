@@ -5,7 +5,6 @@ import {
   IDPResponse,
   getDlc,
   LegacyProject,
-  isWhitelistedHost,
 } from '@cognite/login-utils';
 import { CogniteClient } from '@cognite/sdk';
 
@@ -59,40 +58,20 @@ export const getUrl = (
 export async function getIDP(): Promise<IDPResponse | LegacyProject> {
   const { internalId } = getSelectedIdpDetails() ?? {};
 
-  if (isWhitelistedHost()) {
-    const dlc = await getDlc();
-    const idp = dlc?.idps?.find(
-      (idp: IDPResponse) => idp.internalId === internalId
-    );
-    if (!idp) {
-      return Promise.reject(new Error('IDP not found'));
-    }
-    return idp;
-  }
-
-  const { idps = [], legacyProjects = [] } = await fetch(
-    `/_api/login_info`
-  ).then(
-    (r: Response) =>
-      r.json() as Promise<{
-        idps: IDPResponse[];
-        legacyProjects: LegacyProject[];
-      }>
-  );
-
+  const dlc = await getDlc();
+  const { idps, legacyProjects } = dlc;
   if (!internalId && idps.length === 1) {
     return idps[0];
   }
   if (!internalId) {
-    return Promise.reject(new Error('IDP not selected'));
+    throw new Error('IDP not selected');
   }
 
   const idp =
-    idps.find((i) => i.internalId === internalId) ||
+    idps.find((idp) => idp.internalId === internalId) ||
     legacyProjects.find((l) => l.internalId === internalId);
-
   if (!idp) {
-    return Promise.reject(new Error('IDP not found'));
+    throw new Error('IDP not found');
   }
   return idp;
 }
@@ -100,7 +79,6 @@ export async function getIDP(): Promise<IDPResponse | LegacyProject> {
 export const getDomainConfigCluster = async (): Promise<string | undefined> => {
   try {
     const idp = await getIDP();
-
     const clusters =
       idp.type !== 'COGNITE_AUTH' ? (idp as IDPResponse)?.clusters : undefined;
     if (clusters?.length === 1) {

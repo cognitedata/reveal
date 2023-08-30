@@ -3,6 +3,7 @@ import {
   AuthContainer as CdfAuthContainer,
   getProject,
 } from '@cognite/cdf-utilities';
+
 import { checkIfUserHasAccessToProject } from './app/utils/login-utils';
 
 export interface AuthContainerProps {

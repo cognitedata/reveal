@@ -5,31 +5,14 @@ import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { useDebounce } from 'use-debounce';
 
 import sdk, { getFlow, getUserInformation } from '@cognite/cdf-sdk-singleton';
-import { getCluster, isUsingUnifiedSignin } from '@cognite/cdf-utilities';
+import { getCluster } from '@cognite/cdf-utilities';
 import { useFlag } from '@cognite/react-feature-flags';
 import { useSearch } from '@cognite/sdk-react-query-hooks';
 
 import { SearchItem } from '../components/GlobalSearch/ResourcesMenuGroup';
 import { AppItem, Token } from '../types';
 
-const isAppServedFromUnifiedSignIn = isUsingUnifiedSignin();
-
-export const useImportMapApps = () =>
-  useQuery(['import-map', 'apps'], async () => {
-    const importMap = await fetch(
-      `${isAppServedFromUnifiedSignIn ? '/cdf/' : '/'}import-map.json`
-    )
-      .then((r) => r.json())
-      .then((map) => Object.keys(map.imports || {}));
-
-    const subAppsImportMap = await fetch(
-      `${isAppServedFromUnifiedSignIn ? '/cdf/' : '/'}sub-apps-import-map.json`
-    )
-      .then((r) => r.json())
-      .then((map) => Object.keys(map.imports || {}));
-
-    return [...importMap, ...subAppsImportMap];
-  });
+import { useImportMapApps } from './useImportMapApps';
 
 export const useExperimentalFeatures = () => {
   const { isEnabled: isWorkflowsEnabled } = useFlag('DATA_OPS_workflows', {

@@ -40,26 +40,32 @@
         "compiler": "tsc",
         "assets": [],
         "webpackConfig": "libs/shared/cdf-route-tracker/webpack.config.js"
-      },
-      "configurations": {
-        "single-spa": {
-          "fileReplacements": [
-            {
-              "replace": "libs/shared/cdf-route-tracker/src/set-public-path.ts",
-              "with": "libs/shared/cdf-route-tracker/src/environments/single-spa/set-public-path.ts"
-            }
-          ]
-        },
-        "production": {
-          // "generatePackageJson": true
-        }
-      },
-      "defaultConfiguration": "production"
+      }
     },
     "build-single-spa": {
-      "executor": "nx:run-commands",
+      "executor": "@nx/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
       "options": {
-        "command": "nx build cdf-route-tracker --configuration=single-spa"
+        "outputPath": "dist/libs/shared/cdf-route-tracker-single-spa",
+        "tsConfig": "libs/shared/cdf-route-tracker/tsconfig.lib.json",
+        "project": "libs/shared/cdf-route-tracker/package.json",
+        "main": "libs/shared/cdf-route-tracker/src/index.ts",
+        "generatePackageJson": false,
+        "extractLicenses": true,
+        "sourceMap": false,
+        "vendorChunk": false,
+        "optimization": false,
+        "commonChunk": false,
+        "runtimeChunk": false,
+        "compiler": "tsc",
+        "assets": [],
+        "webpackConfig": "libs/shared/cdf-route-tracker/webpack.config.js",
+        "fileReplacements": [
+          {
+            "replace": "libs/shared/cdf-route-tracker/src/set-public-path.ts",
+            "with": "libs/shared/cdf-route-tracker/src/environments/single-spa/set-public-path.ts"
+          }
+        ]
       }
     },
     "serve-static": {

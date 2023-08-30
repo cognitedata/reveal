@@ -1,6 +1,7 @@
 import images from '../../assets/images';
 import { TranslationKeys } from '../../i18n';
 import { AppItem, RawAppItem } from '../types';
+
 import { colors } from './colors';
 import { RawSection } from './types';
 

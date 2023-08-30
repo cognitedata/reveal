@@ -1,19 +1,28 @@
-import { isUsingUnifiedSignin } from '@cognite/cdf-utilities';
-import { setRemoteDefinitions } from '@fusion/load-remote-module';
-import { buildModuleFederationImportMap } from './app/utils/sub-apps-utils';
-import { AppManifest } from './app/types';
+import { StrictMode } from 'react';
+import { Helmet, HelmetProvider } from 'react-helmet-async';
 
-// The same build output is using for both unified signin and legacy fusion app
-const basePath = isUsingUnifiedSignin() ? `/cdf/` : '/';
+import * as ReactDOM from 'react-dom/client';
 
-// Load module federation manifest for sub-apps we want to use
-fetch(basePath + 'apps-manifest.json')
-  .then((res) => res.json())
-  .then((appManifestJson) =>
-    buildModuleFederationImportMap(appManifestJson as AppManifest)
-  )
-  .then((definitions) => {
-    console.log('Loaded module federation definitions', definitions);
-    setRemoteDefinitions(definitions);
-  })
-  .then(() => import('./bootstrap').catch((err) => console.error(err)));
+import otherStyles from '@cognite/cogs.js/dist/cogs.css?inline';
+
+import { STYLE_SCOPE } from './app/utils/constants';
+import { AppWrapper } from './AppWrapper';
+
+import './single-spa';
+import './styles.css';
+
+const root = ReactDOM.createRoot(
+  document.getElementById('root') as HTMLElement
+);
+root.render(
+  <StrictMode>
+    <HelmetProvider>
+      <Helmet>
+        <style>{otherStyles}</style>
+      </Helmet>
+      <div className={STYLE_SCOPE}>
+        <AppWrapper />
+      </div>
+    </HelmetProvider>
+  </StrictMode>
+);

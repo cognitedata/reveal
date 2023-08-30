@@ -171,7 +171,7 @@ export function GlobalSearchMenu({
               />
             );
 
-          if (resource.shouldDisplay)
+          if (resource.shouldDisplay) {
             return (
               <ResourcesMenuGroup
                 query={query}
@@ -187,6 +187,8 @@ export function GlobalSearchMenu({
                 onClose={onClose}
               />
             );
+          }
+          return null;
         })}
         {shouldDisplayNoSearchResults() && (
           <NoSearchResults searchText={query} />

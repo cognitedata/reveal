@@ -1,9 +1,7 @@
 import { PropsWithChildren } from 'react';
 
-import { getProject, isUsingUnifiedSignin } from '@cognite/cdf-utilities';
-
-import Link from '../../../Link';
 import { PROJECT_SWITCHER_WIDTH } from '../../../../utils/constants';
+import Link from '../../../Link';
 
 import { ItemProps } from './Item';
 
@@ -13,10 +11,6 @@ const ItemLink = (
   const { item, onClose, isCompact = false, children } = props;
 
   const { title, linkTo = '', externalLinkTo = '', sameWindow = false } = item;
-
-  const linkToUrl = isUsingUnifiedSignin()
-    ? `/${getProject()}${linkTo}`
-    : linkTo;
 
   const linkWidthStyle = isCompact
     ? { flex: `1 1 ${PROJECT_SWITCHER_WIDTH}px` }
@@ -39,7 +33,7 @@ const ItemLink = (
   if (linkTo) {
     return (
       <Link
-        to={linkToUrl}
+        to={linkTo}
         onClick={() => onClose && onClose(title)}
         style={linkWidthStyle}
       >

@@ -2,19 +2,10 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import {
-  getCluster,
-  getEnv,
-  getProject,
-  isUsingUnifiedSignin,
-  unifiedSignInAppName,
-} from '@cognite/cdf-utilities';
+import { getCluster, getEnv, getProject } from '@cognite/cdf-utilities';
 import { Button } from '@cognite/cogs.js';
 
 import CurrentProject from './CurrentProject';
-import { readLoginHints } from '@cognite/auth-react/src/lib/base';
-
-const { idpInternalId, organization } = readLoginHints() ?? {};
 
 type ButtonGoToIDPProjectProps = {
   cluster: string;
@@ -36,18 +27,7 @@ const ButtonGoToIDPProject = ({
     const urlSearchParams = new URLSearchParams();
     urlSearchParams.append('env', env ?? '');
     urlSearchParams.append('cluster', cluster);
-    if (isUsingUnifiedSignin()) {
-      urlSearchParams.append('project', projectName);
-      if (idpInternalId) {
-        urlSearchParams.append('idpInternalId', idpInternalId);
-      }
-      if (organization) {
-        urlSearchParams.append('organization', organization);
-      }
-    }
-    const baseUrl = isUsingUnifiedSignin()
-      ? `${unifiedSignInAppName}/${projectName}`
-      : `${projectName}`;
+    const baseUrl = projectName;
 
     return `/${baseUrl}?${urlSearchParams.toString()}`;
   };
@@ -69,7 +49,9 @@ const ButtonGoToIDPProject = ({
 };
 
 const StyledGoToIDPProjectButton = styled(Button)`
-  justify-content: flex-start;
+  &&& {
+    justify-content: flex-start;
+  }
 `;
 
 export default ButtonGoToIDPProject;
