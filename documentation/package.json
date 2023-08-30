@@ -29,7 +29,7 @@
     "@docusaurus/core": "2.4.1",
     "@docusaurus/preset-classic": "2.4.1",
     "@docusaurus/remark-plugin-npm2yarn": "2.4.1",
-    "@uiw/codemirror-theme-material": "4.21.10",
+    "@uiw/codemirror-theme-material": "4.21.11",
     "@uiw/react-codemirror": "4.21.9",
     "clsx": "2.0.0",
     "cross-env": "7.0.3",
