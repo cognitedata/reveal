@@ -19,6 +19,7 @@ import { isSupportedFileInfo } from '@cognite/unified-file-viewer';
 import { translationKeys } from '../../common';
 import { TOAST_POSITION } from '../../constants';
 import { useTranslation } from '../../hooks/useTranslation';
+import { setIsFileUploadModalOpen } from '../../state/useIndustrialCanvasStore';
 import convertFileToArrayBuffer from '../../utils/convertFileToArrayBuffer';
 import parseExif, { ExifTags } from '../../utils/parseExif';
 
@@ -32,13 +33,13 @@ enum FileUploadModalState {
 
 type DataSetOption = { label: string; value: number };
 
-export type FileDropData = {
+export type FileUploadData = {
   file: File | undefined;
   relativePointerPosition: { x: number; y: number };
 };
 
 type IndustryCanvasFileUploadModalProps = {
-  fileDropData: FileDropData | null;
+  fileUploadData: FileUploadData | null;
   onCancel: () => void;
   onOk: (
     fileInfo: FileInfo,
@@ -48,7 +49,7 @@ type IndustryCanvasFileUploadModalProps = {
 
 const IndustryCanvasFileUploadModal: React.FC<
   IndustryCanvasFileUploadModalProps
-> = ({ fileDropData, onOk, onCancel }) => {
+> = ({ fileUploadData, onOk, onCancel }) => {
   const sdk = useSDK();
 
   const [modalState, setModalState] = useState<FileUploadModalState>(
@@ -79,6 +80,7 @@ const IndustryCanvasFileUploadModal: React.FC<
     setShouldExtractEXIFData(true);
     setModalState(FileUploadModalState.IDLE);
     setExifData(null);
+    setIsFileUploadModalOpen(false);
   };
 
   useEffect(() => {
@@ -90,12 +92,14 @@ const IndustryCanvasFileUploadModal: React.FC<
     );
   }, [dataSets]);
 
-  const file = useMemo(() => fileDropData?.file, [fileDropData]);
+  const file = fileUploadData?.file;
 
   useEffect(() => {
     if (file === undefined) {
       return;
     }
+
+    setIsFileUploadModalOpen(true);
 
     const isSupported = isSupportedFileInfo({
       mimeType: file.type,
@@ -128,12 +132,17 @@ const IndustryCanvasFileUploadModal: React.FC<
     return <></>;
   }
 
+  const handleCancel = () => {
+    onCancel();
+    setIsFileUploadModalOpen(false);
+  };
+
   if (modalState === FileUploadModalState.UNSUPPORTED_FILE_TYPE) {
     return (
       <Modal
         visible={true}
         title="Unsupported file type"
-        onCancel={onCancel}
+        onCancel={handleCancel}
         hideFooter={true}
       >
         <Body>
@@ -144,7 +153,7 @@ const IndustryCanvasFileUploadModal: React.FC<
   }
 
   const handleOk = async () => {
-    if (fileDropData === null) {
+    if (fileUploadData === null) {
       return;
     }
 
@@ -167,7 +176,7 @@ const IndustryCanvasFileUploadModal: React.FC<
         },
         arrayBuffer
       );
-      onOk(fileInfo, fileDropData.relativePointerPosition);
+      onOk(fileInfo, fileUploadData.relativePointerPosition);
     } catch (error) {
       console.error(error);
       toast.error(
@@ -180,7 +189,7 @@ const IndustryCanvasFileUploadModal: React.FC<
           position: TOAST_POSITION,
         }
       );
-      onCancel();
+      handleCancel();
     }
     resetState();
   };
@@ -194,7 +203,7 @@ const IndustryCanvasFileUploadModal: React.FC<
     <Modal
       visible={true}
       title={t(translationKeys.MODAL_TITLE_FILE_UPLOAD, 'Upload to CDF')}
-      onCancel={onCancel}
+      onCancel={handleCancel}
       onOk={handleOk}
       icon={
         modalState === FileUploadModalState.UPLOADING ? 'Loader' : undefined

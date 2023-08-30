@@ -9,20 +9,30 @@ const useRefocusCanvasWhenPanesClose = ({
 }: {
   unifiedViewerRef: UnifiedViewer | null;
 }) => {
-  const { isCommentsPaneOpen, isResourceSelectorOpen } =
+  const { isCommentsPaneOpen, isResourceSelectorOpen, isFileUploadModalOpen } =
     useIndustrialCanvasStore((state) => ({
       isCommentsPaneOpen: state.isCommentsPaneOpen,
       isResourceSelectorOpen: state.isResourceSelectorOpen,
+      isFileUploadModalOpen: state.isFileUploadModalOpen,
     }));
 
   useEffect(() => {
-    if (!isCommentsPaneOpen && !isResourceSelectorOpen) {
+    if (
+      !isCommentsPaneOpen &&
+      !isResourceSelectorOpen &&
+      !isFileUploadModalOpen
+    ) {
       // Put focus back on the canvas element right after a container has been
       // added, so that the user may immediately perform actions on them. For
       // example, delete the added container references by using the backspace
       // key
       unifiedViewerRef?.stage?.container().focus();
     }
-  }, [isCommentsPaneOpen, isResourceSelectorOpen, unifiedViewerRef]);
+  }, [
+    isCommentsPaneOpen,
+    isResourceSelectorOpen,
+    isFileUploadModalOpen,
+    unifiedViewerRef,
+  ]);
 };
 export default useRefocusCanvasWhenPanesClose;

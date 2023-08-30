@@ -8,6 +8,7 @@ import {
   ContainerConfig,
   EllipseToolConfig,
   IdsByType,
+  ImageContainerProps,
   isRectangleAnnotation,
   LineToolConfig,
   PanToolConfig,
@@ -33,6 +34,7 @@ import {
   TEXT_ANNOTATION_COLOR_MAP,
 } from '../colors';
 import { RuleType } from '../components/ContextualTooltips/AssetTooltip/types';
+import { FileUploadData } from '../components/IndustryCanvasFileUploadModal/IndustryCanvasFileUploadModal';
 import {
   DEFAULT_FONT_SIZE,
   MetricEvent,
@@ -58,6 +60,7 @@ import {
   isIndustryCanvasContainerConfig,
 } from '../types';
 import { UserProfile } from '../UserProfileProvider';
+import { dataUrlToFile, isPastedImageContainer } from '../utils/dataUrlUtils';
 import { addDimensionsToContainerReferencesIfNotExists } from '../utils/dimensions/index';
 import { TrackUsageFn } from '../utils/tracking/createTrackUsage';
 import { serializeCanvasState } from '../utils/utils';
@@ -170,10 +173,12 @@ export type RootState = {
   shouldShowConnectionAnnotations: boolean;
   isResourceSelectorOpen: boolean;
   isCommentsPaneOpen: boolean;
+  isFileUploadModalOpen: boolean;
   resourceSelectorProps: ResourceSelectorPropsType | undefined;
   currentZoomScale: number;
   isConditionalFormattingOpenAnnotationIdByTimeseriesId: IsConditionalFormattingOpenByAnnotationIdByTimeseriesId;
   selectedIdsByType: IdsByType;
+  fileUploadData: FileUploadData | null;
 };
 
 const initialState: RootState = {
@@ -198,6 +203,7 @@ const initialState: RootState = {
   shouldShowConnectionAnnotations: true,
   isResourceSelectorOpen: false,
   isCommentsPaneOpen: false,
+  isFileUploadModalOpen: false,
   resourceSelectorProps: undefined,
   currentZoomScale: 1,
   isConditionalFormattingOpenAnnotationIdByTimeseriesId: {},
@@ -205,9 +211,24 @@ const initialState: RootState = {
     annotationIds: [],
     containerIds: [],
   },
+  fileUploadData: null,
 };
 
 export const useIndustrialCanvasStore = create<RootState>(() => initialState);
+
+export const setIsFileUploadModalOpen = (isFileUploadModalOpen: boolean) => {
+  useIndustrialCanvasStore.setState((prevState) => ({
+    ...prevState,
+    isFileUploadModalOpen,
+  }));
+};
+
+export const setFileUploadData = (fileUploadData: FileUploadData | null) => {
+  useIndustrialCanvasStore.setState((prevState) => ({
+    ...prevState,
+    fileUploadData,
+  }));
+};
 
 export const setSelectedIdsByType = (selectedIdsByType: IdsByType) => {
   useIndustrialCanvasStore.setState((prevState) => ({
@@ -472,6 +493,19 @@ export const updateContainerById = ({
   }));
 };
 
+const setFileUploadDataFromPastedImageContainer = (
+  container: ImageContainerProps
+): void => {
+  if (container?.x === undefined || container?.y === undefined) {
+    return;
+  }
+  const { x, y, url } = container;
+  const screenshotFilename = `Screenshot_${new Date().toISOString()}`;
+  dataUrlToFile(url, screenshotFilename).then((file) => {
+    setFileUploadData({ file, relativePointerPosition: { x, y } });
+  });
+};
+
 // Shameful: This is doing way too many things, and doing so imperatively, let's clean this up
 // - Persisting of comments should happen as a side effect, not imperatively here.
 // - The search params should be updated as a side effect, not imperatively here.
@@ -497,6 +531,14 @@ export const shamefulOnUpdateRequest = ({
   userProfile: UserProfile;
 }) => {
   const rootState = useIndustrialCanvasStore.getState();
+
+  const pastedImageContainers = updatedContainers.filter(
+    isPastedImageContainer
+  );
+  if (pastedImageContainers.length === 1) {
+    setFileUploadDataFromPastedImageContainer(pastedImageContainers[0]);
+  }
+
   const validUpdatedContainers = updatedContainers.filter(
     isIndustryCanvasContainerConfig
   );
@@ -553,7 +595,7 @@ export const shamefulOnUpdateRequest = ({
         clickedContainerAnnotationId: updatedAnnotation.id,
       });
 
-      // Seem to be a race condition here wher ethe tooltype is being overwritten with it's old value, hence the setTimeout
+      // Seem to be a race condition here where the tool type is being overwritten with it's old value, hence the setTimeout
       setTimeout(() => setToolType(IndustryCanvasToolType.SELECT));
 
       unifiedViewer?.once(UnifiedViewerEventType.ON_TOOL_CHANGE, () => {
