@@ -415,6 +415,7 @@ pods {
 
         stage('Trigger Spinnaker pipeline') {
           container('docker') {
+            deploySpinnakerPipelineConfigs.upload()
             spinnaker.deploy('fusion-app', 'next-release', ["${dockerBaseName}:${dockerTag}"])
             spinnaker.deploy('fusion-app', 'prod', ["${dockerBaseName}:${dockerTag}"])
             spinnaker.deploy('fusion-app', 'prod-verification', ["${dockerBaseName}:${dockerTag}"])
