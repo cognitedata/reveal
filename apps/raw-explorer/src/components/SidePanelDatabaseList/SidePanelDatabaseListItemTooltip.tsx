@@ -4,7 +4,15 @@ import styled from 'styled-components';
 
 import { useTranslation } from '@raw-explorer/common/i18n';
 
-import { Body, Colors, Detail, Icon, Title, Tooltip } from '@cognite/cogs.js';
+import {
+  Body,
+  Colors,
+  Detail,
+  Elevations,
+  Icon,
+  Title,
+  Tooltip,
+} from '@cognite/cogs.js';
 import { RawDB } from '@cognite/sdk';
 
 type SidePanelDatabaseListItemTooltipProps = {
@@ -23,6 +31,8 @@ const StyledDatabaseListItemTooltipWrapper = styled(Tooltip)`
       stroke: ${Colors['surface--muted']};
     }
   }
+
+  box-shadow: ${Elevations['elevation--surface--non-interactive']};
 
   max-width: unset !important; /* overrides cogs style */
   min-width: 200px;
@@ -104,7 +114,6 @@ const SidePanelDatabaseListItemTooltip = ({
 
   return (
     <StyledDatabaseListItemTooltipWrapper
-      className="z-8"
       content={
         <StyledTooltipContent>
           <StyledTooltipHeader>
