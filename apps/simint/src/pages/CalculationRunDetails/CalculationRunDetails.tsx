@@ -67,15 +67,14 @@ export function CalculationRunDetails() {
           return defaultValue;
         }
 
-        const labels = definitionList?.map.unitLabel;
-        if (!labels) {
+        const unitsMap = definitionList?.simulatorsConfig?.find(
+          (config) => config.key === state.run?.metadata?.simulator
+        )?.unitDefinitions?.unitsMap;
+        if (!unitsMap) {
           return defaultValue;
         }
 
-        return (
-          labels[unitType as keyof DefinitionMap['map']['unitLabel']] ||
-          defaultValue
-        );
+        return unitsMap[unitType]?.label ?? defaultValue;
       };
       const getSequenceRows = async (
         externalId?: string,

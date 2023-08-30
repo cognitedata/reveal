@@ -7,12 +7,10 @@ type CalculationSchema = Partial<
       xAxis: {
         column: string;
         unitType: string;
-        unit: string;
       };
       yAxis: {
         columns: readonly string[];
         unitType: string;
-        unit: string;
       };
     }
   >
@@ -25,7 +23,6 @@ export const calculationSchema: CalculationSchema = {
     xAxis: {
       column: 'Gas Rate',
       unitType: 'GasRate', // should come from the column metadata
-      unit: 'MMscf/day', // should come from the column metadata
     },
     yAxis: {
       columns: [
@@ -33,7 +30,6 @@ export const calculationSchema: CalculationSchema = {
         'IPR Pressure', // but they all need to be of the same unit and unitType
       ],
       unitType: 'Pressure', // should come from the column metadata
-      unit: 'psig', // should come from the column metadata
     },
   },
   ChokeDp: {
@@ -42,12 +38,10 @@ export const calculationSchema: CalculationSchema = {
     xAxis: {
       column: 'Outlet Pressure',
       unitType: 'Pressure',
-      unit: 'psig',
     },
     yAxis: {
       columns: ['Gas Rate'],
       unitType: 'GasRate',
-      unit: 'MMscf/day',
     },
   },
   VLP: {
@@ -56,12 +50,10 @@ export const calculationSchema: CalculationSchema = {
     xAxis: {
       column: 'Gas Rate',
       unitType: 'GasRate',
-      unit: 'MMscf/day',
     },
     yAxis: {
       columns: ['Bottom Hole Pressure'],
       unitType: 'Pressure',
-      unit: 'psig',
     },
   },
   IPR: {
@@ -70,12 +62,10 @@ export const calculationSchema: CalculationSchema = {
     xAxis: {
       column: 'Gas Rate',
       unitType: 'GasRate',
-      unit: 'MMscf/day',
     },
     yAxis: {
       columns: ['IPR Pressure'],
       unitType: 'Pressure',
-      unit: 'psig',
     },
   },
 } as const;

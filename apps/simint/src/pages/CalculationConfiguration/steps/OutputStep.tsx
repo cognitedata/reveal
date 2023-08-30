@@ -7,6 +7,7 @@ import {
   FormRowStacked,
   StyledInput,
 } from '@simint-app/components/forms/elements';
+import { getOptionLabel } from '@simint-app/pages/CustomCalculationConfiguration/Routine/Commands/utils';
 import type { AppLocationGenerics } from '@simint-app/routes';
 import { Field, useFormikContext } from 'formik';
 
@@ -27,20 +28,10 @@ export function OutputStep({ isDisabled }: StepProps) {
     data: { definitions },
   } = useMatch<AppLocationGenerics>();
 
-  const unitTypeOptions = Object.entries(
-    definitions?.map.unitType ?? []
-  ).reduce<Record<string, OptionType<string>[]>>(
-    (options, [unitType, units]) => ({
-      ...options,
-      [unitType]: Object.entries(units as Record<string, string>).map(
-        ([value, label]) => ({
-          value,
-          label,
-        })
-      ),
-    }),
-    {}
+  const simulatorConfig = definitions?.simulatorsConfig?.find(
+    (config) => config.key === values.simulator
   );
+  const unitsMap = simulatorConfig?.unitDefinitions.unitsMap ?? {};
 
   const validTimeSeries = useMemo(() => {
     if (values.calculationType !== 'VLP' && values.calculationType !== 'IPR') {
@@ -94,9 +85,10 @@ export function OutputStep({ isDisabled }: StepProps) {
                   as={Select}
                   disabled={isDisabled}
                   name={`outputTimeSeries.${index}.unit`}
-                  options={unitTypeOptions[unitType]}
-                  value={unitTypeOptions[unitType].find(
-                    (option) => option.value === unit
+                  options={unitsMap[unitType] ? unitsMap[unitType].units : []}
+                  value={getOptionLabel(
+                    unitsMap[unitType] ? unitsMap[unitType].units : [],
+                    unit ?? ''
                   )}
                   closeMenuOnSelect
                   onChange={({ value }: OptionType<string>) => {

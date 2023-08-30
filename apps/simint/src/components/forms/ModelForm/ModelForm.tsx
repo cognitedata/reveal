@@ -39,7 +39,7 @@ import {
 
 import { LabelsInput } from '../controls/LabelsInput';
 
-import { DEFAULT_MODEL_SOURCE, UnitSystem } from './constants';
+import { DEFAULT_MODEL_SOURCE } from './constants';
 import { InputRow } from './elements';
 import type { BoundaryConditionResponse, ModelFormState } from './types';
 
@@ -291,6 +291,15 @@ export function ModelForm({
       .includes(ext.replace('.', '').toLowerCase());
   };
 
+  // TODO value of unit system in formik persists even if the simulator is changed
+  const unitSystem = selectedSimulatorConfig?.unitDefinitions?.unitSystem;
+  const unitSystemOptions = unitSystem
+    ? Object.keys(unitSystem).map((key) => ({
+        value: key,
+        label: unitSystem[key].label,
+      }))
+    : [];
+
   return (
     <Formik initialValues={modelFormState} onSubmit={onSubmit}>
       {({
@@ -525,19 +534,19 @@ export function ModelForm({
                       />
                     </InputRow>
                   ) : undefined}
-                  {(selectedSimulator &&
-                    ['PROSPER', 'ProcessSim'].includes(selectedSimulator)) ||
-                  selectedSimulatorConfig?.unitDefinitions?.length ? (
+                  {unitSystemOptions.length ? (
                     <InputRow>
                       <Field
                         as={Select}
                         name="metadata.unitSystem"
-                        options={getSelectEntriesFromMap(UnitSystem)}
+                        options={unitSystemOptions}
                         title="Unit system"
                         value={{
                           value: metadata.unitSystem,
                           label: metadata.unitSystem
-                            ? UnitSystem[metadata.unitSystem]
+                            ? unitSystemOptions.find(
+                                ({ value }) => value === metadata.unitSystem
+                              )?.label
                             : '',
                         }}
                         closeMenuOnSelect
