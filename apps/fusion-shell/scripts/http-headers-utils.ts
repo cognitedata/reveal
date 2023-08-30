@@ -20,20 +20,20 @@ export function generateCSPHeader(appManifests: AppManifest[]) {
       "'self' https://*.preview.cogniteapp.com https://storage.googleapis.com/opint-pr-server/*",
     ],
     'script-src': [
-      "'self' 'unsafe-eval' 'unsafe-inline' https://apps-cdn.cogniteapp.com/@cognite/reveal-parser-worker/ https://cdn.cogniteapp.com https://app.intercom.io https://widget.intercom.io https://js.intercomcdn.com https://*.preview.cogniteapp.com https://storage.googleapis.com/opint-pr-server/*",
+      "'self' 'unsafe-eval' 'unsafe-inline' https://apps-cdn.cogniteapp.com/@cognite/reveal-parser-worker/ https://cdn.cogniteapp.com https://app.intercom.io https://widget.intercom.io https://js.intercomcdn.com https://*.preview.cogniteapp.com https://storage.googleapis.com/opint-pr-server/* https://cdn.jsdelivr.net/npm/monaco-editor@0.36.1/",
     ],
     'connect-src': [
       "'self' wss: blob: data: https: https://*.preview.cogniteapp.com https://storage.googleapis.com/opint-pr-server/*",
     ],
     'style-src': [
-      "'self' 'unsafe-inline' https://fonts.googleapis.com https://rsms.me/inter/inter.css https://*.preview.cogniteapp.com https://storage.googleapis.com/opint-pr-server/*",
+      "'self' 'unsafe-inline' https://fonts.googleapis.com https://rsms.me/inter/inter.css https://*.preview.cogniteapp.com https://storage.googleapis.com/opint-pr-server/* https://cdn.jsdelivr.net/npm/monaco-editor@0.36.1/",
     ],
     'object-src': ["'none'"],
     'child-src': [
       'blob: https://share.intercom.io https://intercom-sheets.com https://www.intercom-reporting.cm https://*.preview.cogniteapp.com https://storage.googleapis.com/opint-pr-server/*',
     ],
     'font-src': [
-      "'self' data: https://fonts.gstatic.com https://js.intercomcdn.com https://rsms.me https://*.preview.cogniteapp.com https://storage.googleapis.com/opint-pr-server/*",
+      "'self' data: https://fonts.gstatic.com https://js.intercomcdn.com https://rsms.me https://*.preview.cogniteapp.com https://storage.googleapis.com/opint-pr-server/* https://cdn.jsdelivr.net/npm/monaco-editor@0.36.1/",
     ],
     'worker-src': [
       "'self' blob: https://*.preview.cogniteapp.com https://storage.googleapis.com/opint-pr-server/*",
