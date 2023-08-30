@@ -8,8 +8,8 @@ import { trackEvent } from '@cognite/cdf-route-tracker';
 import { logout } from '@cognite/cdf-sdk-singleton';
 import { CodeSnippet, createLink } from '@cognite/cdf-utilities';
 import { Avatar, Button, Dropdown, Menu } from '@cognite/cogs.js';
-
 import { UserMenu as SharedUserMenu } from '@cognite/user-profile-components';
+
 import { useTranslation } from '../../../../../i18n';
 import { LARGE_MODAL_WIDTH } from '../../../../utils/constants';
 import { useTokenInspect, useUserInformation } from '../../../../utils/hooks';
@@ -24,8 +24,8 @@ const UserMenu = (): JSX.Element => {
 
   const [isAccessInfoModalOpen, setIsAccessInfoModalOpen] = useState(false);
 
-  const name = userInfo?.displayName ?? userInfo?.user ?? '';
-  const email = userInfo?.mail ?? userInfo?.email ?? '';
+  const name = userInfo?.displayName ?? '';
+  const email = userInfo?.mail ?? '';
   const profilePicture = userInfo?.profilePicture;
 
   const editorExtensions = useMemo(() => [json()], []);

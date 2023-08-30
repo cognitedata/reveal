@@ -1,0 +1,30 @@
+{
+  "name": "fusion-shell-e2e",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/fusion-shell-e2e/src",
+  "projectType": "application",
+  "targets": {
+    "e2e": {
+      "executor": "@nx/cypress:cypress",
+      "options": {
+        "cypressConfig": "apps/fusion-shell-e2e/cypress.config.ts",
+        "devServerTarget": "fusion-shell:preview:production",
+        "testingType": "e2e"
+      },
+      "configurations": {
+        "production": {},
+        "ci": {}
+      },
+      "dependsOn": ["fusion-shell:build-single-spa-deps"]
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/fusion-shell-e2e/**/*.{js,ts}"]
+      }
+    }
+  },
+  "tags": [],
+  "implicitDependencies": ["fusion-shell"]
+}

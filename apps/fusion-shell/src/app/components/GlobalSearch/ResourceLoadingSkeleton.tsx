@@ -1,6 +1,8 @@
 import React from 'react';
-import { Colors, Flex } from '@cognite/cogs.js';
+
 import styled from 'styled-components';
+
+import { Colors, Flex } from '@cognite/cogs.js';
 
 const ResourceLoadingSkeleton = () => {
   return (

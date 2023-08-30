@@ -1,0 +1,9 @@
+{
+  "name": "@fusion/login-page",
+  "version": "0.0.1",
+  "scripts": {
+    "lint": "eslint src",
+    "tsc": "tsc --noEmit",
+    "tsc:watch": "tsc --noEmit --watch"
+  }
+}

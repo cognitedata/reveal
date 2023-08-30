@@ -1,0 +1,251 @@
+---
+apiVersion: cloud.google.com/v1beta1
+kind: BackendConfig
+metadata:
+  labels:
+    app: fusion-app-http-container
+    service: fusion-ui
+    team: cdf-ux
+  name: fusion-pr-preview-backend-config
+  namespace: apps
+spec:
+  connectionDraining:
+    drainingTimeoutSec: 60
+  iap:
+    enabled: true
+    oauthclientCredentials:
+      secretName: fusion-app-staging-client-secret
+  timeoutSec: 3600
+---
+apiVersion: networking.gke.io/v1beta1
+kind: FrontendConfig
+metadata:
+  labels:
+    app: fusion-app-http-container
+    service: fusion-ui
+    team: cdf-ux
+  name: fusion-pr-preview-frontend-config
+  namespace: apps
+spec:
+  redirectToHttps:
+    enabled: true
+  sslPolicy: cognite-ssl-policy
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  labels:
+    app: fusion-app-http-container
+    service: fusion-ui
+    team: cdf-ux
+  name: fusion-pr-preview
+  namespace: apps
+spec:
+  dnsNames:
+  - '*.fusion-pr-preview.cogniteapp.com'
+  - fusion-pr-preview.cogniteapp.com
+  issuerRef:
+    kind: ClusterIssuer
+    name: letsencrypt
+  secretName: fusion-app-pr-preview-cert-secret
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.allow-http: "true"
+    kubernetes.io/ingress.class: gce
+    networking.gke.io/v1beta1.FrontendConfig: fusion-pr-preview-frontend-config
+  labels:
+    app: fusion-app-http-container
+    service: fusion-ui
+    team: cdf-ux
+  name: fusion-pr-preview-ingress
+  namespace: apps
+spec:
+  rules:
+  - host: '*.fusion-pr-preview.cogniteapp.com'
+    http:
+      paths:
+      - backend:
+          service:
+            name: fusion-pr-preview
+            port:
+              number: 80
+        pathType: ImplementationSpecific
+  - host: fusion-pr-preview.cogniteapp.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: fusion-pr-preview
+            port:
+              number: 80
+        pathType: ImplementationSpecific
+  tls:
+  - hosts:
+    - '*.fusion-pr-preview.cogniteapp.com'
+    - fusion-pr-preview.cogniteapp.com
+    secretName: fusion-app-pr-preview-cert-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    beta.cloud.google.com/backend-config: '{"ports": {"http":"fusion-pr-preview-backend-config"},
+      "default" : "fusion-pr-preview-backend-config"}'
+    strategy.spinnaker.io/use-source-capacity: "true"
+  labels:
+    app: fusion-app-http-container
+    service: fusion-ui
+    team: cdf-ux
+  name: fusion-pr-preview
+  namespace: apps
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 8000
+  selector:
+    app: fusion-pr-preview
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    strategy.spinnaker.io/use-source-capacity: "true"
+  labels:
+    app: fusion-app-http-container
+    service: fusion-ui
+    team: cdf-ux
+  name: fusion-pr-preview
+  namespace: apps
+spec:
+  minReadySeconds: 0
+  replicas: 2
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      app: fusion-pr-preview
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        prometheus.io/scrape: "true"
+      labels:
+        app: fusion-pr-preview
+        service: fusion-ui
+        team: cdf-ux
+    spec:
+      containers:
+      - image: eu.gcr.io/cognitedata/fusion-app
+        imagePullPolicy: Always
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8000
+          initialDelaySeconds: 60
+          periodSeconds: 5
+        name: fusion-pr-preview
+        ports:
+        - containerPort: 8000
+          protocol: TCP
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8000
+        resources:
+          limits:
+            cpu: 400m
+            memory: 256Mi
+          requests:
+            cpu: 200m
+            memory: 128Mi
+        volumeMounts:
+        - mountPath: /etc/nginx/conf.d/default.conf
+          name: nginx-config
+          subPath: nginx.config
+      volumes:
+      - configMap:
+          name: nginx-config-file-map
+        name: nginx-config
+---
+apiVersion: v1
+data:
+  nginx.config: |+
+    server {
+       listen 8000;
+
+       add_header Access-Control-Allow-Origin *;
+
+       root /usr/share/nginx/html;
+       server_tokens off;
+       gzip on;
+       gzip_types text/plain text/css text/xml application/xml application/javascript application/json image/svg+xml;
+       gzip_comp_level 5;
+       gzip_proxied any;
+       gzip_vary on;
+
+       location / {
+         try_files $uri /index.html;
+         add_header X-Frame-Options SAMEORIGIN always;
+         add_header Cache-Control "max-age=300, stale-while-revalidate=600";
+         add_header Strict-Transport-Security "max-age=63072000; includeSubdomains";
+         add_header X-Content-Type-Options nosniff;
+       }
+
+       location ~ /subapps-import-map.json$ {
+         try_files /subapps-import-map-staging.json =404;
+       }
+
+       location ~ /assets/.+\.(js|png|jpg|jpeg|map|svg|css|woff2)$ {
+         expires max;
+       }
+
+       location ~ /dependencies/.+\.(js|png|jpg|jpeg|map|svg)$ {
+         expires max;
+       }
+
+       location ~ \.(js|png|jpg|jpeg|map|svg)$ {
+         add_header Cache-Control "max-age=300, stale-while-revalidate=3600";
+       }
+    }
+
+kind: ConfigMap
+metadata:
+  labels:
+    app: fusion-app-http-container
+    service: fusion-ui
+    team: cdf-ux
+  name: nginx-config-file-map
+  namespace: apps
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  labels:
+    app: fusion-app-http-container
+    service: fusion-ui
+    team: cdf-ux
+  name: fusion-pr-preview
+  namespace: apps
+spec:
+  maxReplicas: 5
+  metrics:
+  - resource:
+      name: cpu
+      target:
+        averageUtilization: 80
+        type: Utilization
+    type: Resource
+  minReplicas: 2
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: fusion-pr-preview

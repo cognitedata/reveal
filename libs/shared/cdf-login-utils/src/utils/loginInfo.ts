@@ -1,5 +1,3 @@
-import { getOrganization } from '@cognite/cdf-utilities';
-
 import {
   DomainResponse,
   IDPResponse,
@@ -178,86 +176,185 @@ export const sortIDPsByLabel = (idps?: IDPResponse[]) => {
   });
 };
 
-const fusionAppHosts = [
-  'fusion.cognite.com',
-  'staging.fusion.cognite.com',
-  'next-release.fusion.cognite.com',
-  // TODO: handle SAPC cluster deployment. The current solution for SAPC & Openfield
-  // is by using hard-coded responses for the /_api/login_info endpoint in nginx serving Fusion.
-  // See https://github.com/cognitedata/cdf-ui-hub/blob/6fdb54a8d595284a7a209b2c86da9187e8a8263d/config/kubecfg/overlays.jsonnet#L221-L249
+type FusionDomain = {
+  baseHostname: string; // the hostname without the org subdomain, but not neccessary the _direct_ parent domain
+  orgPattern?: RegExp; // regex to match to extract the organization. default: first subdomain
+};
+
+const fusionAppHosts: FusionDomain[] = [
+  { baseHostname: 'fusion.cognite.com' },
+  { baseHostname: 'staging.fusion.cognite.com' },
+  { baseHostname: 'next-release.fusion.cognite.com' },
 ];
 
-const fusionDevAppHosts = [
-  'dev.fusion.cogniteapp.com',
-  // TODO: we likely need others here, but we default to fusion-dev
-  'fusion-pr-preview.cogniteapp.com',
-  'localhost:8080',
+const fusionDevAppHosts: FusionDomain[] = [
+  { baseHostname: 'dev.fusion.cogniteapp.com' },
+  { baseHostname: 'fusion-pr-preview.cogniteapp.com' },
+  { baseHostname: 'local.cognite.ai' },
+  { baseHostname: 'localhost' },
+  { baseHostname: 'fusion.cognitedata-development.cognite.ai' },
+  {
+    baseHostname: 'fusion-preview.preview.cogniteapp.com',
+    orgPattern:
+      /([^.]+)\.fusion-shell-[\d]+\.fusion-preview\.preview\.cogniteapp\.com/,
+  },
 ];
 
 const whitelistedHosts = [...fusionAppHosts, ...fusionDevAppHosts];
 
+const isAnyOfHosts = (hostname: string, baseHostnames: string[]) => {
+  return baseHostnames.some((_host) => hostname.endsWith(_host));
+};
+
+const getBaseHostnameFromDomain = ({ baseHostname }: FusionDomain) =>
+  baseHostname;
+
 const getApp = () => {
-  const host = window.location.host;
+  const hostname = window.location.hostname;
 
-  for (const _host of fusionAppHosts) {
-    const matches = host.includes(_host);
-    if (matches) {
-      return 'fusion';
-    }
-  }
-
-  for (const _host of fusionDevAppHosts) {
-    const matches = host.includes(_host);
-    if (matches) {
-      return 'fusion-dev';
-    }
+  if (isAnyOfHosts(hostname, fusionAppHosts.map(getBaseHostnameFromDomain))) {
+    return 'fusion';
   }
 
   return 'fusion-dev';
 };
 
 // Make apps explicitly require to be specified in order to use the
-// dlc-service api directly instead of the proxied _api/login_info
-// requests. This way we can temporarily take control of where we want
-// to enforce the new logic, and default to the old logic everywhere else.
+// dlc-service api directly instead of hardcoded responses.
+// See the variable [hardcodedDlcResponses].
 export const isWhitelistedHost = () => {
-  const host = window.location.host;
-
-  for (const _host of whitelistedHosts) {
-    const matches = host.includes(_host);
-    if (matches) {
-      return true;
-    }
-  }
-
-  return false;
+  const hostname = window.location.hostname;
+  return isAnyOfHosts(
+    hostname,
+    whitelistedHosts.map(getBaseHostnameFromDomain)
+  );
 };
 
-export const getDlc = async () => {
-  const organization = getOrganization();
-  const app = getApp();
+export const getOrganization = (): string | null => {
+  const hostname = window.location.hostname;
 
-  const url = new URL(
-    `https://app-login-configuration-lookup.cognite.ai/${app}/${organization}`
-  );
+  // ensure e.g. next-release.fusion.cognite.com isn't
+  // interpreted as the app fusion.cognite.com with
+  // the organization "next-release"
+  if (whitelistedHosts.map(getBaseHostnameFromDomain).includes(hostname)) {
+    return null;
+  }
 
-  const request = new Request(url);
+  for (const { baseHostname, orgPattern } of whitelistedHosts) {
+    if (!hostname.endsWith(baseHostname)) {
+      continue;
+    }
+    if (orgPattern) {
+      return hostname.match(orgPattern)?.[1] ?? null;
+    }
+    return hostname.split('.')[0];
+  }
+  return null;
+};
 
-  try {
-    const response = await fetch(request);
+export const getBaseHostname = (): string => {
+  const noOrganizationSpecified = !getOrganization();
+  if (noOrganizationSpecified) {
+    return window.location.hostname;
+  } else {
+    return window.location.hostname.split('.').slice(1).join('.');
+  }
+};
+
+const hardcodedDlcResponses: Record<string, DomainResponse> = {
+  openfield: {
+    domain: 'cog-adfs2016',
+    idps: [
+      {
+        appConfiguration: { clientId: 'openfield-fusion' },
+        authority: 'https://test.ad2016-test.cognite.ai/adfs/oauth2',
+        clusters: ['openfield.cognitedata.com'],
+        hasDefaultApps: false,
+        internalId: '8773f5c6-ee51-4851-8791-bbb503e270b7',
+        label: 'Internal ADFS2016 test server',
+        type: 'ADFS2016',
+      },
+    ],
+    internalId: '6f3eeac2-2057-418c-8231-87646fb9fc61',
+    label: 'Internal Cognite ADFS2016 test environment',
+    legacyProjects: [],
+  },
+  'sapc-01': {
+    domain: 'sacp-01',
+    idps: [
+      {
+        appConfiguration: {
+          clientId: 'd8ffced7-fc69-4b76-abd6-83bd19e38f5a',
+        },
+        authority: 'https://partners.aramco.com/adfs/oauth2',
+        clusters: ['api-cdf.sapublichosting.com'],
+        hasDefaultApps: false,
+        internalId: '1d3b94eb-eeaf-4338-afeb-9dc8523c2134',
+        label: 'Sign in with Microsoft',
+        type: 'ADFS2016',
+      },
+    ],
+    internalId: 'b4ab319b-6474-434c-b939-affb3c0a2ee8',
+    label: 'Saudi Aramco Extended Private Cloud',
+    legacyProjects: [],
+  },
+};
+
+export const getDlc = async (): Promise<DomainResponse> => {
+  // check for clusters not supported by DLC (Aramco & OpenField)
+  if (isWhitelistedHost()) {
+    const organization = getOrganization();
+    const app = getApp();
+    const response = await fetch(
+      `https://app-login-configuration-lookup.cognite.ai/${app}/${organization}`
+    );
     const dlc = await response.json();
-    if (!dlc) {
-      return Promise.reject({
-        status: response.status,
-        body: response,
-        message: 'Failed to fetch DLC',
-      });
+    if (!response.ok) {
+      throw dlc;
     }
     return dlc;
-  } catch (error: any) {
-    return Promise.reject({
-      status: error?.status,
-      body: error?.message || error?.body,
-    });
   }
+
+  const { hostname } = window.location;
+  const openfieldHostname = 'fusion-apps.apps.ocp.cognite.c.bitbit.net';
+  if (hostname.endsWith(openfieldHostname)) {
+    return hardcodedDlcResponses.openfield;
+  }
+
+  // if not whitelisted nor openfield, we assume it's the Aramco cluster
+  return hardcodedDlcResponses['sapc-01'];
 };
+
+const ORG_COOKIE_NAME = 'loginOrg';
+
+export function setLoginOrganizationCookie(org: string) {
+  const redirectUriDomain = getBaseHostname();
+  document.cookie = `${ORG_COOKIE_NAME}=${org};domain=${redirectUriDomain}`;
+}
+
+function getCookieValue(name: string): string {
+  return (
+    document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)')?.pop() || ''
+  );
+}
+
+function deleteCookie(name: string) {
+  document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
+}
+
+export function getAndClearOrganizationCookie(): string | null {
+  const org = getCookieValue(ORG_COOKIE_NAME);
+  deleteCookie(ORG_COOKIE_NAME);
+  return org !== '' ? org : null;
+}
+
+export function handleSigninCallback() {
+  const org = getAndClearOrganizationCookie();
+  if (!org) {
+    throw new Error('No organization found');
+  }
+  const redirectTo = new URL(window.location.href);
+  redirectTo.pathname = '/';
+  redirectTo.hostname = `${org}.${redirectTo.hostname}`;
+  window.location.href = redirectTo.href;
+}

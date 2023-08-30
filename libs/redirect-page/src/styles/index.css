@@ -1,0 +1,116 @@
+@import 'fonts/fonts.css';
+
+body {
+  margin: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    'Noto Sans JP', 'Hiragino Sans', 'Yu Gothic', 'PingFang SC',
+    'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial,
+    sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+}
+
+/* ICON STYLES */
+
+.animated-spinner {
+  position: relative;
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  animation: spinner-loading 2s linear infinite;
+  background: inherit;
+
+  @keyframes spinner-loading {
+    from {
+      transform: rotate(0deg);
+    }
+
+    to {
+      transform: rotate(360deg);
+    }
+  }
+}
+
+/* TYPOGRAPHY STYLES */
+
+strong,
+.strong {
+  font-weight: 500;
+}
+
+.title-1,
+.title-2,
+.title-3,
+.title-4,
+.title-5,
+.title-6 {
+  margin: 0;
+}
+
+.title-1,
+.title-2,
+.title-3,
+.title-4,
+.title-5,
+.title-6 .body-1,
+.body-2,
+.body-3,
+.detail {
+  color: #262626;
+}
+
+/* TITLE */
+.title-1 {
+  font-size: 36px;
+  letter-spacing: -0.02em;
+  line-height: 48px;
+}
+.title-2 {
+  font-size: 28px;
+  letter-spacing: 0em;
+  line-height: 32px;
+}
+.title-3 {
+  font-size: 24px;
+  letter-spacing: 0em;
+  line-height: 32px;
+}
+.title-4 {
+  font-size: 18px;
+  letter-spacing: 0em;
+  line-height: 24px;
+}
+.title-5 {
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 20px;
+}
+.title-6 {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 20px;
+}
+
+/* BODY */
+.body-1 {
+  font-size: 16px;
+  letter-spacing: 0em;
+  line-height: 24px;
+}
+.body-2 {
+  font-size: 14px;
+  letter-spacing: -0.001em;
+  line-height: 20px;
+}
+.body-3 {
+  font-size: 13px;
+  letter-spacing: -0.001em;
+  line-height: 18px;
+}
+
+/* DETAIL */
+.detail {
+  font-size: 12px;
+  letter-spacing: -0.008em;
+  line-height: 16px;
+}

@@ -8,5 +8,5 @@ export default {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory: '../../coverage/apps/charts',
-  transformIgnorePatterns: ['node_modules/(?!es-cookie)'],
+  transformIgnorePatterns: ['node_modules/(?!(es-cookie|lodash-es))'],
 };

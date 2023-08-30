@@ -1,0 +1,93 @@
+version: 1
+services:
+  - name: fusion-app
+    pipelines:
+      - name: next-release
+        cluster_selection_rules:
+          - description: 'Staging build/environment of Fusion'
+            expression: 'name:cognitedata-production'
+        manifest_template_command:
+          [
+            'kubecfg',
+            'show',
+            'apps/fusion-shell/manifests/fusion.next-release.jsonnet',
+          ]
+        spinnaker:
+          template: 'deployAllClustersFromPubsub'
+          docker_image: 'fusion-app'
+      - name: prod
+        cluster_selection_rules:
+          - description: 'Prod build/environment of Fusion'
+            expression: 'name:cognitedata-production'
+        manifest_template_command:
+          ['kubecfg', 'show', 'apps/fusion-shell/manifests/fusion.prod.jsonnet']
+        spinnaker:
+          template: 'deployAllClustersFromPubsub'
+          docker_image: 'fusion-app'
+        kubeval:
+          openshift: false
+      - name: sapc-prod
+        cluster_selection_rules:
+          - description: 'Prod build/environment of Fusion'
+            expression: 'name:sapc-01'
+        manifest_template_command:
+          [
+            'kubecfg',
+            'show',
+            'apps/fusion-shell/manifests/fusion.sapc-prod.jsonnet',
+          ]
+        spinnaker:
+          template: 'deployAllClustersFromPubsub'
+          docker_image: 'fusion-app'
+        kubeval:
+          openshift: false
+      - name: prod-verification
+        cluster_selection_rules:
+          - description: 'Prod build/environment of Fusion'
+            expression: 'name:cognitedata-production'
+        manifest_template_command:
+          [
+            'kubecfg',
+            'show',
+            'apps/fusion-shell/manifests/fusion.prod-staging.jsonnet',
+          ]
+        spinnaker:
+          template: 'deployAllClustersFromPubsub'
+          docker_image: 'fusion-app'
+      - name: dev
+        cluster_selection_rules:
+          - description: 'Prod build/environment of Fusion'
+            expression: 'name:cognitedata-production || name:openfield'
+        manifest_template_command:
+          ['kubecfg', 'show', 'apps/fusion-shell/manifests/fusion.dev.jsonnet']
+        spinnaker:
+          template: 'deployAllClustersFromPubsub'
+          docker_image: 'fusion-app'
+        # route.openshift.io/v1#Route doesn't validate
+        kubeval:
+          openshift: false
+      - name: pr-preview
+        cluster_selection_rules:
+          - description: 'Prod build/environment of Fusion'
+            expression: 'name:cognitedata-production'
+        manifest_template_command:
+          [
+            'kubecfg',
+            'show',
+            'apps/fusion-shell/manifests/fusion.pr-preview.jsonnet',
+          ]
+        spinnaker:
+          template: 'deployAllClustersFromPubsub'
+          docker_image: 'fusion-app'
+
+      # Spinnaker is not enabled, this is intended to be baked and deployed manually to cognitedata-development
+      - name: dev-manual-deployment
+        cluster_selection_rules:
+          - description: 'Dev build/environment of Fusion. No spinnaker setup, can be deployed manually.'
+            expression: 'name:cognitedata-development'
+        manifest_template_command:
+          [
+            'kubecfg',
+            'show',
+            'apps/fusion-shell/manifests/fusion.cognitedata-development.jsonnet',
+          ]

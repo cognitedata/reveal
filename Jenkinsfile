@@ -264,36 +264,40 @@ def shouldDeployPackage(String packageName, Map<String, String> NPM_PACKAGES, bo
 
 def pods = { body ->
   yarn.pod(nodeVersion: NODE_VERSION) {
-    previewServer.pod(nodeVersion: NODE_VERSION) {
-      locizeApiKey = secretEnvVar(
-        key: 'LOCIZE_API_KEY',
-        secretName: 'fusion-locize-api-key',
-        secretKey: 'FUSION_LOCIZE_API_KEY'
-      )
-      appHosting.pod(
-        nodeVersion: NODE_VERSION,
-        locizeProjectId: LOCIZE_PROJECT_ID,
-        mixpanelToken: MIXPANEL_TOKEN,
-        envVars: [
-          locizeApiKey,
-          envVar(
-            key: 'REACT_APP_LOCIZE_PROJECT_ID',
-            value: LOCIZE_PROJECT_ID
-          ),
-          envVar(
-            key: 'REACT_APP_MIXPANEL_TOKEN',
-            value: MIXPANEL_TOKEN
+    imageVulnerabilityScanner.pod() {
+      dockerUtils.pod() {
+        previewServer.pod(nodeVersion: NODE_VERSION) {
+          locizeApiKey = secretEnvVar(
+            key: 'LOCIZE_API_KEY',
+            secretName: 'fusion-locize-api-key',
+            secretKey: 'FUSION_LOCIZE_API_KEY'
           )
-        ]
-      ) {
-        codecov.pod {
-          testcafe.pod() {
-            properties([
+          appHosting.pod(
+            nodeVersion: NODE_VERSION,
+            locizeProjectId: LOCIZE_PROJECT_ID,
+            mixpanelToken: MIXPANEL_TOKEN,
+            envVars: [
+              locizeApiKey,
+              envVar(
+                key: 'REACT_APP_LOCIZE_PROJECT_ID',
+                value: LOCIZE_PROJECT_ID
+              ),
+              envVar(
+                key: 'REACT_APP_MIXPANEL_TOKEN',
+                value: MIXPANEL_TOKEN
+              )
+            ]
+          ) {
+            codecov.pod {
+              testcafe.pod() {
+                properties([
 
-            ])
+                ])
 
-            node(POD_LABEL) {
-              body()
+                node(POD_LABEL) {
+                  body()
+                }
+              }
             }
           }
         }
@@ -370,6 +374,57 @@ pods {
           }
         }
       }
+
+      dockerBaseName = "eu.gcr.io/cognitedata/fusion-app"
+      gitInfo = jenkinsHelpersUtil.gitInfo()
+      dockerTag = gitInfo.buildDateAndRevision
+
+      stage('Build fusion-shell') {
+        container('apphosting') {
+          sh(script: "yarn nx build fusion-shell");
+        }
+
+        container('docker') {
+          dockerUtils.build(
+            [
+              dockerExtraArgs: "--build-arg APP_FOLDER=."
+            ],
+            "${dockerBaseName}:${dockerTag}",
+            "./dist/apps/fusion-shell",
+            "../../../apps/fusion-shell/Dockerfile"
+          )
+          stageWithNotify("Image Vulnerability scan") {
+            imageVulnerabilityScanner.scan("${dockerBaseName}:${dockerTag}");
+          }
+        }
+      }
+
+      if (isMaster) {
+        stage('Push container') {
+          container('docker') {
+            dockerUtils.authenticate();
+
+            dockerUtils.tag("${dockerBaseName}:${dockerTag}", "${dockerBaseName}:latest");
+
+            dockerUtils.push("${dockerBaseName}:${dockerTag}");
+            dockerUtils.push("${dockerBaseName}:latest");
+          }
+        }
+
+        stage('Trigger Spinnaker pipeline') {
+          container('docker') {
+            spinnaker.deploy('fusion-app', 'next-release', ["${dockerBaseName}:${dockerTag}"])
+            spinnaker.deploy('fusion-app', 'prod', ["${dockerBaseName}:${dockerTag}"])
+            spinnaker.deploy('fusion-app', 'prod-verification', ["${dockerBaseName}:${dockerTag}"])
+            spinnaker.deploy('fusion-app', 'dev', ["${dockerBaseName}:${dockerTag}"])
+            spinnaker.deploy('fusion-app', 'pr-preview', ["${dockerBaseName}:${dockerTag}"])
+            // disabling aramco deployment as we need to generate a self-contained docker image for them
+            // the pipeline to aramco is disabled anyway.
+            // spinnaker.deploy('fusion-app', 'sapc-prod', ["${dockerBaseName}:${dockerTag}"])
+          }
+        }
+      }
+      
 
      /**
       ---------------------------------------------------

@@ -1,0 +1,18 @@
+{
+  "btn-help": "ヘルプ",
+  "btn-info": "組織名とは？",
+  "btn-info_close": "分かりました",
+  "change-language": "言語の選択",
+  "err-bad_domain": "組織名には、A-Zおよび0-9の英数字のみを使用できます。",
+  "language-en": "English",
+  "language-ja": "日本語",
+  "text-curr_lang": "英語",
+  "text-domain_name": "組織名を入力してください",
+  "text-domain_placeholder": "your-organization",
+  "text-info_p1": "通常は、組織名や会社名をスペースなしで綴ったものや、名前の略称を使用します。",
+  "text-info_p2a": "組織名の入力に間違いがないかを確認し、組織名について分からないことがあれば社内のヘルプデスク、CDF管理者にご確認ください。",
+  "text-info_p3": "ヒント: サインイン後にアドレスをブックマークしておくと、次回サインインする時にこの手順を省略できます。",
+  "text-info_title": "組織名とは？",
+  "text-sign_into-uppercase": "サインイン",
+  "your-domain-input-placeholder": "組織名"
+}

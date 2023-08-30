@@ -49,7 +49,7 @@
       "executor": "@nx/webpack:webpack",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/libs/shared/cdf-sdk-singleton",
+        "outputPath": "dist/libs/shared/cdf-sdk-singleton-single-spa",
         "tsConfig": "libs/shared/cdf-sdk-singleton/tsconfig.lib.json",
         "project": "libs/shared/cdf-sdk-singleton/package.json",
         "main": "libs/shared/cdf-sdk-singleton/src/index.ts",

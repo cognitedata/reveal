@@ -4,219 +4,77 @@
   "sourceRoot": "apps/fusion-shell/src",
   "projectType": "application",
   "targets": {
-    "internal-build": {
-      "executor": "@nx/webpack:webpack",
+    "build-single-spa-deps": {
+      "executor": "nx:noop",
+      "dependsOn": [
+        {
+          "projects": ["cdf-sdk-singleton", "cdf-route-tracker"],
+          "target": "build-single-spa"
+        }
+      ]
+    },
+    "build": {
+      "executor": "@nx/vite:build",
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
-        "compiler": "babel",
-        "outputPath": "dist/apps/fusion-shell",
-        "index": "apps/fusion-shell/src/index.html",
-        "baseHref": "/",
-        "main": "apps/fusion-shell/src/main.tsx",
-        "polyfills": "apps/fusion-shell/src/polyfills.ts",
-        "tsConfig": "apps/fusion-shell/tsconfig.app.json",
-        "assets": [
-          "apps/fusion-shell/src/favicon.ico",
-          "apps/fusion-shell/src/assets",
-          "apps/fusion-shell/src/import-map.json"
-        ],
-        "styles": [],
-        "scripts": [],
-        "isolatedConfig": true,
-        "webpackConfig": "apps/fusion-shell/webpack-config.js"
+        "outputPath": "dist/apps/fusion-shell"
       },
       "configurations": {
-        "development": {
-          "extractLicenses": false,
-          "optimization": false,
-          "sourceMap": true,
-          "vendorChunk": false,
-          "scripts": []
-        },
         "staging": {
-          "optimization": true,
-          "outputHashing": "all",
-          "sourceMap": false,
-          "namedChunks": false,
-          "extractLicenses": true,
-          "vendorChunk": false,
-          "scripts": [],
-          "fileReplacements": [
-            {
-              "replace": "apps/fusion-shell/src/environments/environment.ts",
-              "with": "apps/fusion-shell/src/environments/staging/environment.staging.ts"
-            }
-          ]
+          "mode": "development"
         },
         "preview": {
-          "optimization": true,
-          "outputHashing": "all",
-          "sourceMap": false,
-          "namedChunks": false,
-          "extractLicenses": true,
-          "vendorChunk": false,
-          "scripts": [],
-          "fileReplacements": [
-            {
-              "replace": "apps/fusion-shell/src/environments/environment.ts",
-              "with": "apps/fusion-shell/src/environments/preview/environment.preview.ts"
-            },
-            {
-              "replace": "apps/fusion-shell/src/app/DynamicRoutes.tsx",
-              "with": "apps/fusion-shell/src/environments/preview/DynamicRoutes.tsx"
-            }
-          ]
+          "mode": "production"
         },
         "production": {
-          "optimization": true,
-          "outputHashing": "all",
-          "sourceMap": false,
-          "namedChunks": false,
-          "extractLicenses": true,
-          "vendorChunk": false,
-          "fileReplacements": [
-            {
-              "replace": "apps/fusion-shell/src/environments/environment.ts",
-              "with": "apps/fusion-shell/src/environments/production/environment.prod.ts"
-            },
-            {
-              "replace": "apps/fusion-shell/src/index.html",
-              "with": "apps/fusion-shell/src/environments/production/index.html"
-            }
-          ]
-        },
-        "mock": {
-          "fileReplacements": [
-            {
-              "replace": "apps/fusion-shell/src/environments/environment.ts",
-              "with": "apps/fusion-shell/src/environments/mock/environment.mock.ts"
-            },
-            {
-              "replace": "apps/fusion-shell/src/AuthContainer.tsx",
-              "with": "apps/fusion-shell/src/environments/mock/AuthContainer.tsx"
-            }
-          ],
-          "optimization": false,
-          "outputHashing": "all",
-          "sourceMap": true,
-          "extractCss": false,
-          "namedChunks": false,
-          "extractLicenses": false,
-          "vendorChunk": false
-        }
-      }
-    },
-    "build": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          {
-            "command": "nx run cdf-route-tracker:build-single-spa",
-            "description": "Building cdf-route-tracker",
-            "forwardAllArgs": true
-          },
-          {
-            "command": "nx run cdf-sdk-singleton:build-single-spa",
-            "description": "Building cdf-sdk-singleton",
-            "forwardAllArgs": true
-          },
-          {
-            "command": "nx internal-build fusion-shell --configuration={args.configuration}",
-            "description": "Building fusion-shell",
-            "forwardAllArgs": true
-          },
-          {
-            "command": "./apps/fusion-shell/tools/scripts/fusion-post-build.sh {args.configuration}",
-            "description": "Running post build script",
-            "forwardAllArgs": true
-          }
-        ],
-        "parallel": false
-      },
-      "dependsOn": ["^internal-build"],
-      "configurations": {
-        "staging": {
-          "args": "--configuration=staging"
-        },
-        "preview": {
-          "args": "--configuration=preview"
-        },
-        "production": {
-          "args": "--configuration=production"
-        },
-        "mock": {
-          "args": "--configuration=mock"
+          "mode": "production"
         }
       },
-      "defaultConfiguration": "staging"
+      "dependsOn": ["build-single-spa-deps"]
     },
     "serve": {
-      "executor": "@nrwl/webpack:dev-server",
-      "defaultConfiguration": "mock",
-      "options": {
-        "buildTarget": "fusion-shell:build",
-        "port": 8080,
-        "ssl": true,
-        "allowedHosts": ".dev.fusion.cogniteapp.com,all"
-      },
-      "configurations": {
-        "staging": {
-          "buildTarget": "fusion-shell:internal-build:staging",
-          "hmr": true
-        },
-        "preview": {
-          "buildTarget": "fusion-shell:internal-build:preview",
-          "hmr": true
-        },
-        "production": {
-          "buildTarget": "fusion-shell:internal-build:production",
-          "hmr": true
-        },
-        "mock": {
-          "buildTarget": "fusion-shell:internal-build:mock",
-          "hmr": true,
-          "ssl": true
-        },
-        "e2e": {
-          "buildTarget": "fusion-shell:internal-build:mock",
-          "hmr": true,
-          "ssl": true
-        }
-      }
-    },
-    "serve-static": {
-      "executor": "nx:run-commands",
+      "executor": "@nx/vite:dev-server",
       "defaultConfiguration": "staging",
       "options": {
-        "command": "node apps/fusion-shell/tools/static-file-server.js 8080 true {args.configuration} {args.organization}",
-        "forwardAllArgs": true
+        "buildTarget": "fusion-shell:build"
       },
       "configurations": {
         "staging": {
           "buildTarget": "fusion-shell:build:staging",
-          "args": "--configuration=staging --organization=cog-appdev"
+          "hmr": true
         },
         "preview": {
           "buildTarget": "fusion-shell:build:preview",
-          "args": "--configuration=preview --organization=cog-appdev"
+          "hmr": true
         },
         "production": {
           "buildTarget": "fusion-shell:build:production",
-          "args": "--configuration=production --organization=cog-appdev"
+          "hmr": false
         }
-      }
+      },
+      "dependsOn": ["build-single-spa-deps"]
     },
-    "lint": {
-      "executor": "nx:run-commands",
+    "preview": {
+      "executor": "@nx/vite:preview-server",
+      "defaultConfiguration": "production",
       "options": {
-        "commands": ["sleep 2 && echo 'FINISHED'", "echo 'READY'"],
-        "readyWhen": "READY",
-        "parallel": true
-      }
+        "buildTarget": "fusion-shell:build",
+        "port": 4200,
+        "host": "127.0.0.1"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "fusion-shell:build:development"
+        },
+        "production": {
+          "buildTarget": "fusion-shell:build:production"
+        }
+      },
+      "dependsOn": ["build-single-spa-deps"]
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
         "jestConfig": "apps/fusion-shell/jest.config.ts",
@@ -229,33 +87,17 @@
         }
       }
     },
-    "e2e": {
-      "executor": "@nx/cypress:cypress",
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
       "options": {
-        "cypressConfig": "apps/fusion-shell/cypress.config.ts",
-        "testingType": "e2e",
-        "devServerTarget": "fusion-shell:serve:e2e"
-      },
-      "configurations": {
-        "staging": {
-          "devServerTarget": "fusion-shell:serve:e2e",
-          "env": {
-            "USE_MOCK_API": false
-          }
-        },
-        "e2e": {
-          "devServerTarget": "fusion-shell:serve:e2e",
-          "env": {
-            "USE_MOCK_API": false
-          }
-        }
-      },
-      "defaultConfiguration": "staging"
+        "lintFilePatterns": ["apps/fusion-shell/**/*.{ts,tsx,js,jsx}"]
+      }
     }
   },
   "tags": [],
   "pipeline": {
-    "releaseStrategy": "multi-branch",
+    "releaseStrategy": "single-branch",
     "firebaseSite": "cdf-ui-host",
     "previewPackageName": "@cognite/fusion-shell"
   }

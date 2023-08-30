@@ -1,7 +1,8 @@
-import { Colors } from '@cognite/cogs.js';
 import React from 'react';
 
 import styled from 'styled-components';
+
+import { Colors } from '@cognite/cogs.js';
 
 const DEFAULT_DIVIDER_MARGIN_IN_PX = 8;
 

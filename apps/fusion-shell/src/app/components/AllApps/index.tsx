@@ -62,7 +62,7 @@ const AllApps = () => {
     <Flex direction="column">
       <PageHeader />
       <StyledLayout>
-        <StyledContentLayout>
+        <StyledContentLayout direction="column">
           <StyledSearchInput
             size="large"
             fullWidth
@@ -113,7 +113,6 @@ const StyledSearchInput = styled(Input).attrs({
 `;
 
 const StyledContentLayout = styled(Flex)`
-  flex-direction: column;
   gap: 20px;
   padding: 20px 0;
 

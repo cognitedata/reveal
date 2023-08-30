@@ -1,0 +1,19 @@
+schema: '1'
+id: 'fusion-app-next-release'
+pipeline:
+  application: fusion-app
+  name: deploy-fusion-app-next-release
+  template:
+    source: spinnaker://deployAllClustersFromPubsub
+  variables:
+    service: 'fusion-app'
+    pipeline: 'next-release'
+    githubRepository: fusion
+    dockerImageName: fusion-app
+    manualJudgement: false
+configuration:
+  description: 'Deploy fusion to next-release.fusion.cognite.com'
+  inherit:
+    - triggers
+    - expectedArtifacts
+    - notifications

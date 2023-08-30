@@ -9,7 +9,12 @@ export const IDP_TYPES = [
 ] as const;
 export type IDPType = (typeof IDP_TYPES)[number];
 
-export type LoginInfoError = { status?: number; body: any };
+export type LoginInfoError = {
+  status: string;
+  statusCode: number;
+  message: 'API_NOT_FOUND' | 'DOMAIN_NOT_FOUND' | 'APPLICATION_NOT_FOUND';
+  didYouMean?: string[];
+};
 
 export type ImageMime = 'image/png' | 'image/jpg' | 'image/svg+xml';
 export interface ImageConfig {
@@ -36,6 +41,7 @@ interface IDP {
   label?: string;
   authority: string;
   clusters: string[];
+  hasDefaultApps?: boolean;
 }
 
 export interface IDPInput extends IDP {

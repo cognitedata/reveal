@@ -41,11 +41,13 @@
       ],
       "@cognite/graph": ["libs/graph/src/index.ts"],
       "@cognite/iot-hub": ["apps/iot-hub/src/index.ts"],
+      "@cognite/login-page": ["libs/login-page/src/index.tsx"],
       "@cognite/login-utils": ["libs/shared/cdf-login-utils/src/index.ts"],
       "@cognite/platypus-cdf-cli/*": ["apps/platypus-cdf-cli/src/*"],
       "@cognite/plotting-components": [
         "libs/shared/plotting-components/src/index.ts"
       ],
+      "@cognite/redirect-page": ["libs/redirect-page/src/index.tsx"],
       "@cognite/sdk-react-query-hooks": [
         "libs/shared/cdf-sdk-react-query-hooks/src/index.ts"
       ],
@@ -70,54 +72,28 @@
       "@data-quality/*": [
         "apps/platypus/src/app/modules/solution/data-quality/*"
       ],
-      "@entity-matching-app/*": [
-        "apps/entity-matching/src/app/*"
-      ],
-      "@extraction-pipelines/*": [
-        "apps/extraction-pipelines/src/*"
-      ],
-      "@extractor-downloads/*": [
-        "apps/extractor-downloads/src/*"
-      ],
-      "@flexible-data-explorer/*": [
-        "apps/flexible-data-explorer/src/*"
-      ],
-      "@functions-ui/*": [
-        "apps/functions-ui/src/*"
-      ],
-      "@fusion-shell/*": [
-        "apps/fusion-shell/src/*"
-      ],
-      "@fusion/cdf-nx-plugin": [
-        "libs/cdf-nx-plugin/src/index.ts"
-      ],
-      "@fusion/contextualization": [
-        "libs/contextualization/src/index.ts"
-      ],
-      "@fusion/copilot-core": [
-        "libs/copilot-core/src/index.ts"
-      ],
+      "@entity-matching-app/*": ["apps/entity-matching/src/app/*"],
+      "@extraction-pipelines/*": ["apps/extraction-pipelines/src/*"],
+      "@extractor-downloads/*": ["apps/extractor-downloads/src/*"],
+      "@flexible-data-explorer/*": ["apps/flexible-data-explorer/src/*"],
+      "@functions-ui/*": ["apps/functions-ui/src/*"],
+      "@fusion-shell/*": ["apps/fusion-shell/src/*"],
+      "@fusion/cdf-nx-plugin": ["libs/cdf-nx-plugin/src/index.ts"],
+      "@fusion/contextualization": ["libs/contextualization/src/index.ts"],
+      "@fusion/copilot-core": ["libs/copilot-core/src/index.ts"],
       "@fusion/data-modeling": [
         "libs/data-modeling/platypus-core/src/index.ts"
       ],
-      "@fusion/industry-canvas": [
-        "libs/industry-canvas/src/index.ts"
-      ],
+      "@fusion/industry-canvas": ["libs/industry-canvas/src/index.ts"],
       "@fusion/load-remote-module": [
         "libs/shared/load-remote-module/src/index.ts"
       ],
-      "@fusion/mock-data": [
-        "libs/shared/mock-data/src/index.ts"
-      ],
+      "@fusion/mock-data": ["libs/shared/mock-data/src/index.ts"],
       "@fusion/shared/user-onboarding-components": [
         "libs/shared/user-onboarding-components/src/index.ts"
       ],
-      "@industry-canvas-ui/*": [
-        "apps/industry-canvas-ui/src/*"
-      ],
-      "@interactive-diagrams/*": [
-        "apps/interactive-diagrams/src/*"
-      ],
+      "@industry-canvas-ui/*": ["apps/industry-canvas-ui/src/*"],
+      "@interactive-diagrams/*": ["apps/interactive-diagrams/src/*"],
       "@platypus-app/*": [
         "apps/platypus/src/app/*",
         "apps/platypus/src/environments/environment.ts"
@@ -132,15 +108,9 @@
       "@platypus/platypus-core": [
         "libs/data-modeling/platypus-core/src/index.ts"
       ],
-      "@raw-explorer/*": [
-        "apps/raw-explorer/src/*"
-      ],
-      "@transformations/*": [
-        "apps/transformations/src/*"
-      ],
-      "@vision/*": [
-        "apps/vision/src/*"
-      ]
+      "@raw-explorer/*": ["apps/raw-explorer/src/*"],
+      "@transformations/*": ["apps/transformations/src/*"],
+      "@vision/*": ["apps/vision/src/*"]
     }
   },
   "exclude": ["node_modules", "tmp", "proxy"]

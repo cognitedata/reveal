@@ -1,10 +1,24 @@
 import { PublicClientApplication } from '@azure/msal-browser';
+import { noop } from 'lodash-es';
 
 import { ADFS } from '@cognite/sdk-core';
+
+import {
+  getBaseHostname,
+  getOrganization,
+  setLoginOrganizationCookie,
+} from './loginInfo';
 
 const CACHE_CONFIG = {
   cacheLocation: 'localStorage',
   storeAuthStateInCookie: false,
+};
+
+const getRedirectUri = () => {
+  const { protocol, port } = window.location;
+  return `${protocol}//${getBaseHostname()}${
+    port !== '' ? `:${port}` : ''
+  }/signin/callback`;
 };
 
 export const getPca = (
@@ -17,7 +31,7 @@ export const getPca = (
       authority,
       clientId,
       knownAuthorities: knownAuthorities || [],
-      redirectUri: window.location.origin,
+      redirectUri: getRedirectUri(),
     },
     cache: CACHE_CONFIG,
   });
@@ -44,6 +58,21 @@ export const getAADToken = async (
   }
 
   return undefined;
+};
+
+export const loginRedirectAad = (
+  pca: PublicClientApplication,
+  scopes: string[],
+  prompt?: string
+) => {
+  const org = getOrganization();
+  if (!org) {
+    throw new Error('No organization found');
+  }
+  setLoginOrganizationCookie(org);
+  pca.loginRedirect({ scopes, prompt });
+  // returning a non-resolving promise as we are redirecting the browser
+  return new Promise(noop);
 };
 
 export const getAADB2CToken = getAADToken;

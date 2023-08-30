@@ -1,5 +1,6 @@
 import { Suspense } from 'react';
 import { Route, useParams } from 'react-router-dom';
+
 import LandingPage from './components/LandingPage';
 
 type SubAppPathElementProps = {

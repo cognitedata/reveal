@@ -1,9 +1,0 @@
-{
-  "imports": {
-    "react": "/assets/dependencies/react@16.12.0/umd/react.production.min.js",
-    "react-dom": "/assets/dependencies/react-dom@16.12.0/umd/react-dom.production.min.js",
-    "single-spa": "/assets/dependencies/single-spa@5.5.0/lib/system/single-spa.min.js",
-    "@cognite/cdf-sdk-singleton": "/assets/dependencies/@cognite/cdf-sdk-singleton/index.js",
-    "@cognite/cdf-route-tracker": "/assets/dependencies/@cognite/cdf-route-tracker/index.js"
-  }
-}

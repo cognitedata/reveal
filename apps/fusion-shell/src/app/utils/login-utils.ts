@@ -1,9 +1,5 @@
 import sdk, { getFlow, getIDP, getToken } from '@cognite/cdf-sdk-singleton';
-import {
-  getCluster,
-  isUsingUnifiedSignin,
-  getProject,
-} from '@cognite/cdf-utilities';
+import { getCluster, getProject } from '@cognite/cdf-utilities';
 import { IDPType, getProjects } from '@cognite/login-utils';
 
 /**
@@ -49,10 +45,6 @@ function redirectToLogin() {
 export const checkIfUserHasAccessToProject = async (projectName: string) => {
   const project = getProject();
 
-  // Unified signin uses auth-react and this is handled there
-  if (isUsingUnifiedSignin()) {
-    return;
-  }
   // If auth token is provided from test environment, skip check
   if (window?.testAuthOverrides) {
     return;

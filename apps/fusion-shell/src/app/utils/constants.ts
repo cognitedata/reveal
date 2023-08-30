@@ -3,7 +3,7 @@ export const PROJECT_SWITCHER_WIDTH = 215;
 export const MODAL_WIDTH = 400;
 export const LARGE_MODAL_WIDTH = 800;
 
-export const STYLE_SCOPE = 'navigation-style-scope';
+export const STYLE_SCOPE = 'fusion-shell-scope';
 
 export const QUERY_RESULT_LIMIT = 4;
 
