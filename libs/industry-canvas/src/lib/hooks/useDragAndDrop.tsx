@@ -3,15 +3,14 @@ import { useCallback, useEffect, useState } from 'react';
 import { toast } from '@cognite/cogs.js';
 import { UnifiedViewer } from '@cognite/unified-file-viewer';
 
-import { FileDropData } from '../components/IndustryCanvasFileUploadModal/IndustryCanvasFileUploadModal';
 import { TOAST_POSITION } from '../constants';
+import { setFileUploadData } from '../state/useIndustrialCanvasStore';
 
 type UseDragAndDropProps = {
   unifiedViewerRef: UnifiedViewer | null;
 };
 
 export const useDragAndDrop = ({ unifiedViewerRef }: UseDragAndDropProps) => {
-  const [fileDropData, setFileDropData] = useState<FileDropData | null>(null);
   const [isDragging, setIsDragging] = useState<boolean>(false);
 
   const onDrop = useCallback(
@@ -48,7 +47,7 @@ export const useDragAndDrop = ({ unifiedViewerRef }: UseDragAndDropProps) => {
       const relativePointerPosition =
         unifiedViewerRef.stage.getRelativePointerPosition();
 
-      setFileDropData({
+      setFileUploadData({
         file: [...event.dataTransfer.files][0],
         relativePointerPosition,
       });
@@ -83,10 +82,5 @@ export const useDragAndDrop = ({ unifiedViewerRef }: UseDragAndDropProps) => {
     };
   }, []);
 
-  return {
-    onDrop,
-    isDragging,
-    fileDropData,
-    resetFileDropData: () => setFileDropData(null),
-  };
+  return { onDrop, isDragging };
 };

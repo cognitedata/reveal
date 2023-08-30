@@ -85,6 +85,7 @@ import {
   useIndustrialCanvasStore,
   selectors,
   shamefulResetState,
+  setFileUploadData,
 } from './state/useIndustrialCanvasStore';
 import {
   ContainerReference,
@@ -138,6 +139,7 @@ export const IndustryCanvasPage = () => {
     isRedoAvailable,
     canvasState,
     clickedContainerAnnotationId,
+    fileUploadData,
   } = useIndustrialCanvasStore((state) => ({
     shouldShowConnectionAnnotations: state.shouldShowConnectionAnnotations,
     isCommentsPaneOpen: state.isCommentsPaneOpen,
@@ -148,6 +150,7 @@ export const IndustryCanvasPage = () => {
     canvasState: selectors.canvasState(state),
     clickedContainerAnnotationId:
       state.interactionState.clickedContainerAnnotationId,
+    fileUploadData: state.fileUploadData,
   }));
 
   useEffect(() => {
@@ -263,10 +266,9 @@ export const IndustryCanvasPage = () => {
     onUpdateRequest,
   });
 
-  const { fileDropData, resetFileDropData, isDragging, onDrop } =
-    useDragAndDrop({
-      unifiedViewerRef: unifiedViewerRef,
-    });
+  const { isDragging, onDrop } = useDragAndDrop({
+    unifiedViewerRef: unifiedViewerRef,
+  });
 
   useSyncCurrentZoomScale(unifiedViewerRef);
 
@@ -640,10 +642,10 @@ export const IndustryCanvasPage = () => {
         )}
       </StyledSplitter>
       <IndustryCanvasFileUploadModal
-        fileDropData={fileDropData}
-        onCancel={resetFileDropData}
+        fileUploadData={fileUploadData}
+        onCancel={() => setFileUploadData(null)}
         onOk={(fileInfo, relativePointerPosition) => {
-          resetFileDropData();
+          setFileUploadData(null);
           onAddContainerReferences([
             {
               type: ContainerReferenceType.FILE,

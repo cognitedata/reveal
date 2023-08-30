@@ -1,4 +1,4 @@
-const convertFileToArrayBuffer = (file: File) => {
+const convertFileToArrayBuffer = (file: File): Promise<ArrayBuffer> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = (event) => {
