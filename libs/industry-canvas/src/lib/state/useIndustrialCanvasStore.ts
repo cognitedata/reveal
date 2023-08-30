@@ -327,7 +327,7 @@ export const onPinTimeseriesClick = ({
         timeseriesId
       );
 
-    setImmediate(() => {
+    setTimeout(() => {
       useIndustrialCanvasStore.setState((prevState) => ({
         ...(wasPinned
           ? {}
@@ -337,7 +337,7 @@ export const onPinTimeseriesClick = ({
               shouldBeOpen: true,
             })),
       }));
-    });
+    }, 0);
 
     return {
       ...prevState,
