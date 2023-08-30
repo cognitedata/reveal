@@ -1,6 +1,6 @@
 {
   "name": "@cognite/reveal-react-components",
-  "version": "0.13.0",
+  "version": "0.13.1",
   "exports": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "type": "module",
@@ -18,7 +18,7 @@
   },
   "peerDependencies": {
     "@cognite/cogs.js": ">=9",
-    "@cognite/reveal": "4.4.1",
+    "@cognite/reveal": "4.4.2",
     "react": ">=18",
     "react-dom": ">=18",
     "styled-components": ">=5"
@@ -26,7 +26,7 @@
   "devDependencies": {
     "@babel/preset-env": "7.22.10",
     "@babel/preset-react": "7.22.5",
-    "@babel/preset-typescript": "7.22.5",
+    "@babel/preset-typescript": "7.22.11",
     "@cognite/cogs.js": "^9.17.0",
     "@cognite/reveal": "4.4.1",
     "@cognite/sdk": "^8.2.0",
@@ -63,12 +63,12 @@
     "styled-components": "5.3.11",
     "three": "0.155.0",
     "ts-loader": "9.4.4",
-    "typescript": "5.1.6",
+    "typescript": "5.2.2",
     "webpack": "5.88.2",
     "webpack-cli": "5.1.4",
     "webpack-node-externals": "3.0.0"
   },
-  "packageManager": "yarn@3.6.2",
+  "packageManager": "yarn@3.6.3",
   "files": [
     "dist"
   ],

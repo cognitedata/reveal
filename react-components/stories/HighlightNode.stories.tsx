@@ -70,11 +70,13 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
 
     setStylingGroups([
       {
-        fdmAssetExternalIds: [{ externalId: nodeData.fdmNode.externalId, space: 'pdms-mapping' }],
+        fdmAssetExternalIds: [
+          { externalId: nodeData.fdmNode.externalId, space: nodeData.fdmNode.space }
+        ],
         style: { cad: DefaultNodeAppearance.Highlighted }
       }
     ]);
-    void cameraNavigation.fitCameraToInstance(nodeData.fdmNode.externalId, 'pdms-mapping');
+    void cameraNavigation.fitCameraToInstance(nodeData.fdmNode.externalId, nodeData.fdmNode.space);
   }, [nodeData?.fdmNode]);
 
   return (

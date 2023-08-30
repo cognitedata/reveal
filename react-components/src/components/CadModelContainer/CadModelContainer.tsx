@@ -17,13 +17,15 @@ export type CogniteCadModelProps = {
   styling?: CadModelStyling;
   transform?: Matrix4;
   onLoad?: (model: CogniteCadModel) => void;
+  onLoadError?: (options: AddModelOptions, error: any) => void;
 };
 
 export function CadModelContainer({
   addModelOptions,
   transform,
   styling,
-  onLoad
+  onLoad,
+  onLoadError
 }: CogniteCadModelProps): ReactElement {
   const cachedViewerRef = useRevealKeepAlive();
   const viewer = useReveal();
@@ -37,7 +39,12 @@ export function CadModelContainer({
   const { modelId, revisionId, geometryFilter } = addModelOptions;
 
   useEffect(() => {
-    addModel(modelId, revisionId, transform, onLoad).catch(console.error);
+    addModel(modelId, revisionId, transform)
+      .then((model) => onLoad?.(model))
+      .catch((error) => {
+        const errorReportFunction = onLoadError ?? defaultLoadErrorHandler;
+        errorReportFunction(addModelOptions, error);
+      });
   }, [modelId, revisionId, geometryFilter]);
 
   useEffect(() => {
@@ -55,15 +62,14 @@ export function CadModelContainer({
   async function addModel(
     modelId: number,
     revisionId: number,
-    transform?: Matrix4,
-    onLoad?: (model: CogniteCadModel) => void
+    transform?: Matrix4
   ): Promise<CogniteCadModel> {
     const cadModel = await getOrAddModel();
+
     if (transform !== undefined) {
       cadModel.setModelTransformation(transform);
     }
     setModel(cadModel);
-    onLoad?.(cadModel);
 
     return cadModel;
 
@@ -90,4 +96,10 @@ export function CadModelContainer({
     viewer.removeModel(model);
     setModel(undefined);
   }
+}
+
+function defaultLoadErrorHandler(addOptions: AddModelOptions, error: any): void {
+  console.warn(
+    `Failed to load (${addOptions.modelId}, ${addOptions.revisionId}): ${JSON.stringify(error)}`
+  );
 }
