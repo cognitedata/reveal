@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { useState, type ReactElement, useEffect } from 'react';
+import { useState, type ReactElement } from 'react';
 
 import { Button, Dropdown, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import styled from 'styled-components';
