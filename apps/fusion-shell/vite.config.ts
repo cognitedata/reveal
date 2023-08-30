@@ -21,14 +21,6 @@ if (!FUSION_ENV) {
   throw new Error('Missing FUSION_ENV environment variable');
 }
 
-const importMapOverrides = [
-  '<script src="/dependencies/import-map-overrides@1.14.6/dist/import-map-overrides.js"></script>',
-  // indenting the rest to render nicely in the html output
-  '    <script src="/dependencies/query-string@7.1.1/dist/query-string.js"></script>',
-  '    <import-map-overrides-full show-when-local-storage="devtools" dev-libs></import-map-overrides-full>',
-  '    <script src="/dev-setup.js"></script>',
-].join('\n');
-
 console.log(
   `
 ╔═════════════════════════════════════════════════════════════════════╗
@@ -42,15 +34,7 @@ console.log(
 const transformHtmlPlugin = (data: Record<string, string>) => ({
   name: 'transform-html',
   transformIndexHtml(html: string) {
-    return (
-      html
-        // the first replace it to handle scenarios
-        // where the identifier is part of an html comment
-        // and then we want to replace the whole comment
-        .replace(/<!-- <%=\s*(\w+)\s*%> -->/gi, (_, p1) => data[p1] || '')
-        // this scenario is to replace just the matching string
-        .replace(/<%=\s*(\w+)\s*%>/gi, (_, p1) => data[p1] || '')
-    );
+    return html.replace(/<%=\s*(\w+)\s*%>/gi, (_, p1) => data[p1] || '');
   },
 });
 
@@ -99,8 +83,6 @@ export default defineConfig({
     generateSubappImportMapsPlugin(),
     transformHtmlPlugin({
       CSP: generateCSPHeader(appManifests),
-      CDF_IMPORT_MAP_OVERRIDES:
-        FUSION_ENV === 'staging' ? importMapOverrides : '',
     }),
     svgr(),
     react(),

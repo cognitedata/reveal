@@ -415,12 +415,12 @@ pods {
 
         stage('Trigger Spinnaker pipeline') {
           container('docker') {
-            // deploySpinnakerPipelineConfigs.upload()
-            // spinnaker.deploy('fusion-app', 'next-release', ["${dockerBaseName}:${dockerTag}"])
+            deploySpinnakerPipelineConfigs.upload()
+            spinnaker.deploy('fusion-app', 'next-release', ["${dockerBaseName}:${dockerTag}"])
+            spinnaker.deploy('fusion-app', 'prod-verification', ["${dockerBaseName}:${dockerTag}"])
+            spinnaker.deploy('fusion-app', 'dev', ["${dockerBaseName}:${dockerTag}"])
+            spinnaker.deploy('fusion-app', 'pr-preview', ["${dockerBaseName}:${dockerTag}"])
             // spinnaker.deploy('fusion-app', 'prod', ["${dockerBaseName}:${dockerTag}"])
-            // spinnaker.deploy('fusion-app', 'prod-verification', ["${dockerBaseName}:${dockerTag}"])
-            // spinnaker.deploy('fusion-app', 'dev', ["${dockerBaseName}:${dockerTag}"])
-            // spinnaker.deploy('fusion-app', 'pr-preview', ["${dockerBaseName}:${dockerTag}"])
             // disabling aramco deployment as we need to generate a self-contained docker image for them
             // the pipeline to aramco is disabled anyway.
             // spinnaker.deploy('fusion-app', 'sapc-prod', ["${dockerBaseName}:${dockerTag}"])
