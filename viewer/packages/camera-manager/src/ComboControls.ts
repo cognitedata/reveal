@@ -146,7 +146,7 @@ export class ComboControls extends EventDispatcher {
   private readonly _scene: Scene | null = null;
   // color 147 160 246 = #93A0F6
   private readonly _rotationIndicator: Mesh = new Mesh(
-    new SphereGeometry(2),
+    new SphereGeometry(1),
     new MeshBasicMaterial({
       color: '#93A0F6', // --cogs-primary-inverted (dark)
       transparent: true,
