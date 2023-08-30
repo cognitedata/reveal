@@ -42,7 +42,7 @@ export default SubAppWrapper;
 const StyledWrapper = styled.div`
   position: fixed;
   top: var(--cdf-ui-navigation-height);
-  height: 100vh;
+  height: calc(100vh - var(--cdf-ui-navigation-height));
   width: 100%;
   overflow: auto;
   background-color: #ffffff;

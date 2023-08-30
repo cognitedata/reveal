@@ -11,7 +11,7 @@ import Navigation from './components/Navigation';
 import { UserProfilePage } from './components/UserProfilePage/UserProfilePage';
 
 const RoutesWrapper = styled.div`
-  height: 100vh;
+  height: 100%;
   [class$='style-scope'] {
     height: 100%;
   }
