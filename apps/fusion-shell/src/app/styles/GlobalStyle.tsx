@@ -1,10 +1,25 @@
+/* eslint-disable @cognite/no-number-z-index */
 import { createGlobalStyle } from 'styled-components';
 
-// import SourceCodeProVariable from '../assets/SourceCodePro-VariableFontWeight.ttf';
+import { Modal } from 'antd';
+
+import { Tooltip as CogsTooltip } from '@cognite/cogs.js';
+
 import '@cognite/cogs.js/dist/cogs.css';
 import 'antd/dist/antd.css';
-
+import SourceCodeProVariable from '../../assets/SourceCodePro-VariableFontWeight.ttf';
+import { getContainer } from '../utils/utils';
 import { ZIndexLayer } from '../utils/zIndex';
+
+CogsTooltip.defaultProps = {
+  ...CogsTooltip.defaultProps,
+  appendTo: () => getContainer(),
+};
+
+Modal.defaultProps = {
+  ...Modal.defaultProps,
+  getContainer,
+};
 
 const GlobalStyle = createGlobalStyle`
   html,
@@ -27,6 +42,7 @@ const GlobalStyle = createGlobalStyle`
 
   @font-face {
     font-family: 'Source Code Pro';
+    src: url(${SourceCodeProVariable}) format('truetype');
     font-weight: 100 1000;
   }
 
@@ -44,5 +60,4 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
-// src: url(${SourceCodeProVariable}) format('truetype');
 export default GlobalStyle;

@@ -1,13 +1,10 @@
-import { isUsingUnifiedSignin } from '@cognite/cdf-utilities';
 import { IconType } from '@cognite/cogs.js';
 
 import { TranslationKeys } from '../../i18n';
 
 export const getSubAppName = () => {
   const subAppUrl = new URL(window.location.href);
-  return isUsingUnifiedSignin()
-    ? subAppUrl.pathname.split('/')[3]
-    : subAppUrl.pathname.split('/')[2];
+  return subAppUrl.pathname.split('/')[2];
 };
 
 export type helpCenterResourceType = {

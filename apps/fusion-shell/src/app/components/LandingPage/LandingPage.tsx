@@ -82,6 +82,8 @@ const UserHistorySection = styled(Flex)`
 `;
 
 export const StyledTitle = styled(Title)`
-  font-weight: 500;
-  color: var(--cogs-text-icon--strong--inverted);
+  &&& {
+    font-weight: 500;
+    color: var(--cogs-text-icon--strong--inverted);
+  }
 `;

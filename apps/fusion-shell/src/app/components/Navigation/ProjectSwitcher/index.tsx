@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 
-import { getProject } from '@cognite/cdf-utilities';
-import { Dropdown } from 'antd';
 import styled from 'styled-components';
 
-import { PROJECT_SWITCHER_WIDTH } from '../../../utils/constants';
+import { Dropdown } from 'antd';
 
+import { getProject } from '@cognite/cdf-utilities';
+
+import { PROJECT_SWITCHER_WIDTH } from '../../../utils/constants';
 import { ProjectDropdown } from '../ProjectDropdown';
 import { StyledSectionDropdownButton } from '../TopBar/TopBarSections';
 

@@ -4,10 +4,9 @@
     "allowJs": false,
     "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
-    "strict": true,
     "resolveJsonModule": true,
-    "forceConsistentCasingInFileNames": true,
-    "noImplicitAny": false
+    "strict": true,
+    "types": ["vite/client", "vitest", "systemjs"]
   },
   "files": [],
   "include": [],
@@ -17,9 +16,6 @@
     },
     {
       "path": "./tsconfig.spec.json"
-    },
-    {
-      "path": "./cypress/tsconfig.json"
     }
   ],
   "extends": "../../tsconfig.base.json"

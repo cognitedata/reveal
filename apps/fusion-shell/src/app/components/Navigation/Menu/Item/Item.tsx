@@ -51,7 +51,9 @@ const Item = (props: ItemProps) => {
 };
 
 const StyledSubTitle = styled(Body)`
-  color: ${Colors['text-icon--medium']};
+  &&& {
+    color: ${Colors['text-icon--medium']};
+  }
 `;
 
 const Container = styled.div`

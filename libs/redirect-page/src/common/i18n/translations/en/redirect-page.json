@@ -1,0 +1,22 @@
+{
+  "btn-help": "Help",
+  "btn-info": "What's my organization name?",
+  "btn-info_close": "GOT IT",
+  "change-language": "Change language",
+  "err-bad_domain": "The organization name can only contain alphanumerics A-Z and 0-9.",
+  "language-en": "English",
+  "language-ja": "日本語",
+  "text-contact-support": "Contact support",
+  "text-curr_lang": "Language: English",
+  "text-domain_name": "Enter your organization name",
+  "text-domain_placeholder": "your-organization",
+  "text-help-docs": "Login help",
+  "text-help-switch-to-english": "Switch to English",
+  "text-help-switch-to-japanese": "Switch to Japanese",
+  "text-info_p1": "Usually, this is your organization or company name spelled without spaces or an abbreviation of the name.",
+  "text-info_p2a": "Check that you haven't misspelled the organization name, and ask a colleague, your internal help desk, or the CDF admin if you still need help figuring out the organization name.",
+  "text-info_p3": "TIP: When you have signed in, bookmark the address to skip this step the next time you sign in.",
+  "text-info_title": "What's my organization name?",
+  "text-sign_into-uppercase": "SIGN IN TO",
+  "your-domain-input-placeholder": "your organization name"
+}

@@ -5,6 +5,7 @@ import { Button, Icon, Menu, Dropdown } from '@cognite/cogs.js';
 
 import { useTranslation } from '../../../../../i18n';
 import { getHelpCenterOptions } from '../../../../utils/helpResources';
+import { getContainer } from '../../../../utils/utils';
 
 type CDFHelpCenterProps = {
   isRockwellDomain: boolean;
@@ -20,6 +21,7 @@ const CDFHelpCenter = ({
   return (
     <>
       <Dropdown
+        appendTo={() => getContainer()}
         placement="bottom-end"
         content={
           <Menu>

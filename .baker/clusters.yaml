@@ -1,0 +1,496 @@
+# WARNING: This file is generated and maintained by Baker.
+# Do not make manual changes! The file is added to every repository
+# to make it easier to maintain a versioned list of clusters.
+# Using a reference to the original file is difficult because it's hosted in a private repository.
+# More info in https://cognitedata.atlassian.net/wiki/x/oQI4X#Cluster-metadata-file
+version: 1
+clusters:
+  - name: sapc-01
+    vendor: openshift
+    tags:
+      - cdf:true
+      - environment:production
+      - multitenant:false
+      - auth_cluster_name:sapc-01
+      - private_cloud_monitoring:true
+    metadata:
+      auth_cluster_name: sapc-01
+      cognite_api_url: api-cdf.sapublichosting.com
+      default_router_canonical_hostname: api-ocp-cdf.sapublichosting.com
+      environment: production
+      status: offline
+  - name: openfield
+    vendor: openshift
+    tags:
+      - cdf:true
+      - environment:staging
+      - multitenant:false
+      - auth_cluster_name:openfield
+      - private_cloud_monitoring:true
+    metadata:
+      auth_cluster_name: openfield
+      cognite_api_url: openfield.cognitedata.com
+      default_router_canonical_hostname: ocp.cognite.c.bitbit.net
+      environment: staging
+      status: live
+  - name: okd-dev-01
+    vendor: openshift
+    tags:
+      - environment:development
+      - cdf:true
+      - gce:true
+      - okd:true
+      - auth_cluster_name:okd-dev-01
+    metadata:
+      auth_cluster_name: okd-dev-01
+      cognite_api_url: okd-dev-01.cognitedata.com
+      default_router_canonical_hostname: okd-dev-01.okd-dev.cognite.ai
+      environment: development
+      google_project_id: okd-dev-cognite
+      status: live
+  - name: az-pnq-gp-001
+    vendor: aks
+    tags:
+      - cdf:true
+      - environment:production
+      - multitenant:true
+      - auth_cluster_name:az-pnq-gp-001
+    metadata:
+      auth_cluster_name: az-pnq-gp-001
+      azure_cluster_name: az-pnq-gp-001
+      azure_region: centralindia
+      azure_resource_group: default
+      azure_subscription_id: 5122e7d5-a9d8-4bbd-a43a-8bccaebb26b2
+      cognite_api_url: az-pnq-gp-001.cognitedata.com
+      environment: production
+      google_project_id: cognite-ext-az-pnq-gp-001
+      status: live
+  - name: az-tyo-gp-001
+    vendor: aks
+    tags:
+      - cdf:true
+      - environment:production
+      - multitenant:true
+      - auth_cluster_name:az-tyo-gp-001
+    metadata:
+      auth_cluster_name: az-tyo-gp-001
+      azure_cluster_name: az-tyo-gp-001
+      azure_region: japaneast
+      azure_resource_group: default
+      azure_subscription_id: 22c00316-154e-4cd7-9a5b-dc88a062d28e
+      cognite_api_url: az-tyo-gp-001.cognitedata.com
+      environment: production
+      google_project_id: cognite-ext-az-tyo-gp-001
+      status: live
+  - name: az-eastus-1
+    vendor: aks
+    tags:
+      - cdf:true
+      - environment:production
+      - multitenant:true
+      - auth_cluster_name:az-eastus-1
+    metadata:
+      auth_cluster_name: az-eastus-1
+      azure_cluster_name: az-eastus-1
+      azure_region: eastus
+      azure_resource_group: default
+      azure_secondary_region: westus
+      azure_subscription_id: 8e0c685e-4e99-4c89-8e55-bd4a6ab3fd32
+      cognite_api_url: az-eastus-1.cognitedata.com
+      environment: production
+      google_project_id: cognite-ext-az-eastus-1
+      status: live
+  - name: az-power-no-northeurope
+    vendor: aks
+    tags:
+      - cdf:true
+      - environment:production
+      - multitenant:false
+      - auth_cluster_name:az-power-no-northeurope
+      - restricted:true
+    metadata:
+      auth_cluster_name: az-power-no-northeurope
+      azure_cluster_name: az-power-no-northeurope
+      azure_region: northeurope
+      azure_resource_group: default
+      azure_subscription_id: ad98b0ae-29cd-451e-bed7-462ff68333d6
+      cognite_api_url: az-power-no-northeurope.cognitedata.com
+      customer:
+        - power-no
+      environment: production
+      google_project_id: cognite-ext-az-power-no-northe
+      status: live
+  - name: azure-dev
+    vendor: aks
+    tags:
+      - cdf:true
+      - environment:development
+      - multitenant:true
+      - auth_cluster_name:azure-dev
+    metadata:
+      auth_cluster_name: azure-dev
+      azure_cluster_name: azure-dev
+      azure_region: westeurope
+      azure_resource_group: azure-dev
+      azure_secondary_region: northeurope
+      azure_subscription_id: 531564ca-ed4c-48b5-b4d0-6363b20c3aeb
+      cognite_api_url: azure-dev.cognitedata.com
+      environment: development
+      google_project_id: cognite-ext-azure-dev
+      status: live
+  - name: bluefield
+    vendor: aks
+    tags:
+      - cdf:true
+      - environment:staging
+      - multitenant:true
+      - auth_cluster_name:bluefield
+    metadata:
+      auth_cluster_name: bluefield
+      azure_cluster_name: bluefield
+      azure_region: westeurope
+      azure_resource_group: default
+      azure_secondary_region: northeurope
+      azure_subscription_id: 573323ab-bb78-495c-81a3-ce62c9341aa4
+      cognite_api_url: bluefield.cognitedata.com
+      environment: staging
+      google_project_id: cognite-ext-bluefield
+      status: live
+  - name: bp-northeurope
+    vendor: aks
+    tags:
+      - cdf:true
+      - environment:production
+      - multitenant:false
+      - auth_cluster_name:bp-northeurope
+    metadata:
+      auth_cluster_name: bp-northeurope
+      azure_cluster_name: bp-northeurope
+      azure_region: northeurope
+      azure_resource_group: default
+      azure_secondary_region: westeurope
+      azure_subscription_id: 7b8e1d8a-7489-40e7-a360-4c5fe43a79a7
+      cognite_api_url: bp-northeurope.cognitedata.com
+      environment: production
+      google_project_id: cognite-ext-bp-northeurope
+      status: live
+  - name: westeurope-1
+    vendor: aks
+    tags:
+      - cdf:true
+      - environment:production
+      - multitenant:true
+      - auth_cluster_name:westeurope-1
+    metadata:
+      auth_cluster_name: westeurope-1
+      azure_cluster_name: westeurope-1
+      azure_region: westeurope
+      azure_resource_group: default
+      azure_secondary_region: northeurope
+      azure_subscription_id: c9c52f3e-bfc2-4315-a750-641898f79e6d
+      cognite_api_url: westeurope-1.cognitedata.com
+      environment: production
+      google_project_id: cognite-ext-westeurope-1
+      status: live
+  - name: europe-west1-1
+    vendor: gke
+    tags:
+      - cdf:true
+      - environment:production
+      - functions:false
+      - multitenant:true
+      - auth_cluster_name:cognitedata-europe-west1-1
+    metadata:
+      auth_cluster_name: cognitedata-europe-west1-1
+      cluster_name: cdp
+      cognite_api_url: api.cognitedata.com
+      environment: production
+      google_cluster_name: cdp
+      google_project_id: cognitedata-europe-west1-1
+      google_region: europe-west1
+      region: europe-west1
+      status: live
+  - name: greenfield
+    vendor: gke
+    tags:
+      - cdf:true
+      - environment:staging
+      - functions:true
+      - multitenant:true
+      - auth_cluster_name:cognitedata-greenfield
+    metadata:
+      auth_cluster_name: cognitedata-greenfield
+      cluster_name: cdp
+      cognite_api_url: greenfield.cognitedata.com
+      environment: staging
+      google_cluster_name: cdp
+      google_project_id: cognitedata-greenfield
+      google_region: europe-west1
+      region: europe-west1
+      status: live
+  - name: omv
+    vendor: gke
+    tags:
+      - cdf:true
+      - customer:omv
+      - environment:production
+      - functions:true
+      - auth_cluster_name:cognitedata-omv
+    metadata:
+      auth_cluster_name: cognitedata-omv
+      cluster_name: cdp
+      cognite_api_url: omv.cognitedata.com
+      customer:
+        - omv
+      environment: production
+      google_cluster_name: cdp
+      google_project_id: cognitedata-omv
+      google_region: europe-west1
+      region: europe-west1
+      status: live
+  - name: statnett
+    vendor: gke
+    tags:
+      - cdf:true
+      - environment:production
+      - functions:true
+      - auth_cluster_name:cognitedata-statnett
+      - restricted:true
+    metadata:
+      auth_cluster_name: cognitedata-statnett
+      cluster_name: cdp
+      cognite_api_url: statnett.cognitedata.com
+      customer:
+        - statnett
+      environment: production
+      google_cluster_name: cdp
+      google_project_id: cognitedata-statnett
+      google_region: europe-west1
+      region: europe-west1
+      status: live
+  - name: pgs
+    vendor: gke
+    tags:
+      - cdf:true
+      - environment:production
+      - functions:true
+      - auth_cluster_name:pgs
+    metadata:
+      auth_cluster_name: pgs
+      cluster_name: cdp
+      cognite_api_url: pgs.cognitedata.com
+      customer:
+        - pgs
+      environment: production
+      google_cluster_name: cdp
+      google_project_id: cognitedata-pg-s
+      google_region: europe-west1
+      region: europe-west1
+      status: live
+  - name: asia-northeast1-1
+    vendor: gke
+    tags:
+      - cdf:true
+      - environment:production
+      - functions:false
+      - multitenant:true
+      - auth_cluster_name:asia-northeast1-1
+    metadata:
+      auth_cluster_name: asia-northeast1-1
+      cluster_name: cdp
+      cognite_api_url: asia-northeast1-1.cognitedata.com
+      environment: production
+      google_cluster_name: cdp
+      google_project_id: cdf-asia-northeast1-1
+      google_region: asia-northeast1
+      region: asia-northeast1
+      status: live
+  - name: cognitedata-development
+    vendor: gke
+    tags:
+      - devtestprod:true
+      - environment:development
+    metadata:
+      cluster_name: cognitedata-development
+      environment: development
+      google_cluster_name: cognitedata-development
+      google_project_id: cognitedata-development
+      google_region: europe-west1
+      region: europe-west1
+      status: live
+  - name: cognitedata-test
+    vendor: gke
+    tags:
+      - devtestprod:true
+      - environment:staging
+    metadata:
+      cluster_name: cognitedata-test
+      environment: staging
+      google_cluster_name: cognitedata-test
+      google_project_id: cognitedata-test
+      google_region: europe-west1
+      region: europe-west1
+      status: live
+  - name: cognitedata-production
+    vendor: gke
+    tags:
+      - devtestprod:true
+      - environment:production
+    metadata:
+      cluster_name: cognitedata-production
+      environment: production
+      google_cluster_name: cognitedata-production
+      google_project_id: cognitedata-production
+      google_region: europe-west1
+      region: europe-west1
+      status: live
+  - name: gke-cognitedata-infra
+    vendor: gke
+    tags:
+      - environment:production
+    metadata:
+      cluster_name: infra
+      environment: production
+      google_cluster_name: infra
+      google_project_id: cognitedata
+      google_region: europe-west1
+      region: europe-west1
+      status: live
+  - name: jenkins-ci
+    vendor: gke
+    tags:
+      - environment:production
+      - jenkins:true
+    metadata:
+      cluster_name: jenkins-ci
+      environment: production
+      google_cluster_name: jenkins-ci
+      google_project_id: cognite-jenkins-ci
+      google_region: europe-west1
+      region: europe-west1
+      status: live
+  - name: jenkins-cd
+    vendor: gke
+    tags:
+      - environment:production
+      - jenkins:true
+    metadata:
+      cluster_name: jenkins-cd
+      environment: production
+      google_cluster_name: jenkins-cd
+      google_project_id: cognite-jenkins-cd
+      google_region: europe-west1
+      region: europe-west1
+      status: live
+  - name: security-development
+    vendor: gke
+    tags:
+      - environment:development
+      - security:true
+    metadata:
+      cluster_name: security-development
+      environment: development
+      google_cluster_name: security-development
+      google_project_id: cognite-security
+      google_region: europe-west1
+      region: europe-west1
+      status: live
+  - name: security-production
+    vendor: gke
+    tags:
+      - environment:production
+      - security:true
+    metadata:
+      cluster_name: security-production
+      environment: production
+      google_cluster_name: security-production
+      google_project_id: cognite-security
+      google_region: europe-west1
+      region: europe-west1
+      status: live
+  - name: europe-west1-1-fn
+    vendor: gke
+    tags:
+      - environment:production
+      - functions:true
+    metadata:
+      cluster_name: cdp-fn
+      environment: production
+      google_cluster_name: cdp-fn
+      google_project_id: cognitedata-europe-west1-1-fn
+      google_region: europe-west1
+      region: europe-west1
+      status: live
+  - name: asia-northeast1-1-fn
+    vendor: gke
+    tags:
+      - environment:production
+      - functions:true
+    metadata:
+      cluster_name: cdp-fn
+      environment: production
+      google_cluster_name: cdp-fn
+      google_project_id: cdf-asia-northeast1-1-fn
+      google_region: asia-northeast1
+      region: asia-northeast1
+      status: live
+  - name: kind
+    vendor: kind
+    tags:
+      - kind:true
+    metadata:
+      status: offline
+  - name: aws-dub-dev
+    vendor: eks
+    tags:
+      - cdf:true
+      - environment:development
+      - multitenant:true
+    metadata:
+      auth_cluster_name: aws-dub-dev
+      aws_account_id: "997164788127"
+      aws_cluster_name: aws-dub-dev
+      aws_region: eu-west-1
+      cognite_api_url: aws-dub-dev.cognitedata.com
+      environment: development
+      google_project_id: cognite-ext-aws-dub-dev
+      service:
+        files:
+          bucket_regional_domain_name: files-20230818142658702300000005.s3.eu-west-1.amazonaws.com
+      status: setup
+  - name: orangefield
+    vendor: eks
+    tags:
+      - cdf:true
+      - environment:staging
+      - multitenant:true
+    metadata:
+      auth_cluster_name: orangefield
+      aws_account_id: "772885010738"
+      aws_cluster_name: orangefield
+      aws_region: eu-west-1
+      cognite_api_url: orangefield.cognitedata.com
+      environment: staging
+      google_project_id: cognite-ext-orangefield
+      service:
+        files:
+          bucket_regional_domain_name: files-20230818145126830700000004.s3.eu-west-1.amazonaws.com
+      status: setup
+  - name: aw-was-gp-001
+    vendor: eks
+    tags:
+      - cdf:true
+      - environment:production
+      - multitenant:true
+    metadata:
+      auth_cluster_name: aw-was-gp-001
+      aws_account_id: "255846150030"
+      aws_cluster_name: aw-was-gp-001
+      aws_region: us-east-1
+      cognite_api_url: aw-was-gp-001.cognitedata.com
+      environment: production
+      google_project_id: cognite-ext-aw-was-gp-001
+      service:
+        files:
+          bucket_regional_domain_name: files-20230818145040909800000004.s3.amazonaws.com
+      status: setup

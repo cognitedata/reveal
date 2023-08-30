@@ -1,0 +1,19 @@
+schema: '1'
+id: 'fusion-app-prod-verification'
+pipeline:
+  application: fusion-app
+  name: deploy-fusion-app-prod-verification
+  template:
+    source: spinnaker://deployAllClustersFromPubsub
+  variables:
+    service: 'fusion-app'
+    pipeline: 'prod-verification'
+    githubRepository: fusion
+    dockerImageName: fusion-app
+    manualJudgement: false
+configuration:
+  description: 'Deploy fusion to staging.fusion.cognite.com'
+  inherit:
+    - triggers
+    - expectedArtifacts
+    - notifications

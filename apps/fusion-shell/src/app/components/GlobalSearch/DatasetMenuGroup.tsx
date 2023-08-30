@@ -1,8 +1,10 @@
 import React from 'react';
+
+import { QUERY_RESULT_LIMIT } from '../../utils/constants';
+import { useDataSetSearch } from '../../utils/hooks';
+
 import { ResourcesMenuGroupProps } from './ResourcesMenuGroup';
 import { ResourcesMenuList } from './ResourcesMenuList';
-import { useDataSetSearch } from '../../utils/hooks';
-import { QUERY_RESULT_LIMIT } from '../../utils/constants';
 
 export type DatasetMenuGroupProps = Omit<
   ResourcesMenuGroupProps,

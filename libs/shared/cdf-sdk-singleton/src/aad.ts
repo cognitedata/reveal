@@ -1,27 +1,13 @@
-import { PublicClientApplication } from '@azure/msal-browser';
+import { getPca, loginRedirectAad } from '@cognite/login-utils';
 
 import { UserInfo } from './types';
 import { getBaseUrl } from './utils';
-
-const getAuthConfig = (authority: string, clientId: string) => ({
-  clientId,
-  authority,
-  redirectUri: `https://${window.location.host}`,
-});
-
-const CACHE_CONFIG = {
-  cacheLocation: 'localStorage',
-  storeAuthStateInCookie: false,
-};
 
 export async function getUserInformation(
   authority: string,
   clientId: string
 ): Promise<UserInfo> {
-  const pca = new PublicClientApplication({
-    auth: getAuthConfig(authority, clientId),
-    cache: CACHE_CONFIG,
-  });
+  const pca = getPca(clientId, authority);
 
   const account = pca.getActiveAccount();
 
@@ -47,10 +33,7 @@ export default async function getCDFAccessToken(
 ): Promise<string> {
   const baseUrl = await getBaseUrl();
   const scopes = [`${baseUrl}/IDENTITY`, `${baseUrl}/user_impersonation`];
-  const pca = new PublicClientApplication({
-    auth: getAuthConfig(authority, clientId),
-    cache: CACHE_CONFIG,
-  });
+  const pca = getPca(clientId, authority);
 
   // Normally this is handled in the login page, but will be handled here if the redirect flow was
   // kicked of inside Fusion. AAD will redirect back to the page root with the hash in the URL. The
@@ -73,20 +56,13 @@ export default async function getCDFAccessToken(
     });
     return accessToken;
   } catch (e) {
-    await pca.loginRedirect({
-      prompt: 'select_account',
-      scopes,
-      redirectStartPage: window.location.href,
-    });
+    await loginRedirectAad(pca, scopes, 'select_account');
   }
   throw new Error('Access token was not found');
 }
 
 export async function logout(authority: string, clientId: string) {
-  const pca = new PublicClientApplication({
-    auth: getAuthConfig(authority, clientId),
-    cache: CACHE_CONFIG,
-  });
+  const pca = getPca(clientId, authority);
   const account = pca.getActiveAccount();
   // @ts-ignore
   pca.logoutRedirect({

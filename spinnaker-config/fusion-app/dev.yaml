@@ -1,0 +1,19 @@
+schema: '1'
+id: 'fusion-app-dev'
+pipeline:
+  application: fusion-app
+  name: deploy-fusion-app-dev
+  template:
+    source: spinnaker://deployAllClustersFromPubsub
+  variables:
+    service: 'fusion-app'
+    pipeline: 'dev'
+    githubRepository: fusion
+    dockerImageName: fusion-app
+    manualJudgement: false
+configuration:
+  description: 'Deploy fusion to dev.fusion.cogniteapp.com'
+  inherit:
+    - triggers
+    - expectedArtifacts
+    - notifications

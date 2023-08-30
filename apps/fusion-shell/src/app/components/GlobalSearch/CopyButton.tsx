@@ -1,7 +1,12 @@
+/* eslint-disable @cognite/no-number-z-index */
 import React from 'react';
-import copy from 'copy-to-clipboard';
-import { Button, Colors } from '@cognite/cogs.js';
+
 import styled from 'styled-components';
+
+import copy from 'copy-to-clipboard';
+
+import { Button, Colors } from '@cognite/cogs.js';
+
 import { useTranslation } from '../../../i18n';
 import { trackUsage } from '../../utils/metrics';
 

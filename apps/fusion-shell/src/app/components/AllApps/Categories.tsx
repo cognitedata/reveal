@@ -88,7 +88,7 @@ const StyledContainer = styled.div`
 `;
 
 const StyledButton = styled(Button)`
-  && {
+  &&& {
     display: flex;
     justify-content: space-between;
   }

@@ -30,7 +30,6 @@ import {
   groupLegacyProjectsByValidationStatus,
   validateLegacyProject,
   getDlc,
-  isWhitelistedHost,
 } from '../utils';
 
 import {
@@ -54,32 +53,10 @@ const getValidatedLegacyProjectKey = (projectName: string, cluster: string) => [
   cluster,
 ];
 
-const loginInfoQueryFn = async () => {
-  if (isWhitelistedHost()) {
-    return await getDlc();
-  }
-
-  return fetch(`/_api/login_info`)
-    .then(async (r) => {
-      if (r.status < 400) {
-        return r.json();
-      } else {
-        const body = await r.json();
-        return Promise.reject({
-          status: r.status,
-          body,
-        });
-      }
-    })
-    .catch((e) =>
-      Promise.reject({ status: e.status, body: e.body || e.message })
-    );
-};
-
 export const useLoginInfo = () => {
   return useQuery<DomainResponse, LoginInfoError, DomainResponse>(
     getLoginInfoQueryKey(),
-    loginInfoQueryFn
+    getDlc
   );
 };
 

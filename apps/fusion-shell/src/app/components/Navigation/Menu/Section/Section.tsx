@@ -2,12 +2,10 @@ import { ReactElement } from 'react';
 
 import styled from 'styled-components';
 
-import { getProject, isUsingUnifiedSignin } from '@cognite/cdf-utilities';
-
 import { TranslationKeys, useTranslation } from '../../../../../i18n';
-import Link from '../../../Link';
 import theme from '../../../../styles/theme';
 import { Section as SectionType, SectionColors } from '../../../../types';
+import Link from '../../../Link';
 
 interface SectionProps {
   section: SectionType;

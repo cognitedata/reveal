@@ -2,9 +2,11 @@ import React from 'react';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
-import { Section } from 'types';
 
 import * as featureFlags from '@cognite/react-feature-flags';
+
+import { Section } from '../../../types';
+import * as useImportMapApps from '../../../utils/useImportMapApps';
 
 import { SectionWrapper } from './Menu';
 
@@ -15,7 +17,6 @@ jest.mock('@cognite/cdf-sdk-singleton', () => ({
 jest.mock('@cognite/cdf-utilities', () => ({
   getCluster: () => '',
   createLink: jest.fn(),
-  isUsingUnifiedSignin: () => false,
 }));
 
 jest.mock('../../../../i18n', () => ({
@@ -54,7 +55,7 @@ function mockUseFlagToShowTag(flagName: string) {
   return response;
 }
 
-const mockSection: Section = {
+const mockSection = {
   internalId: 'configure',
   colors: {
     primary: 'blue',
@@ -70,7 +71,7 @@ const mockSection: Section = {
       importMapApp: '@cognite/test',
     },
   ],
-};
+} as Section;
 
 const queryClient = new QueryClient();
 
@@ -81,6 +82,12 @@ const renderWithQueryClient = (children: any) => {
 };
 
 describe('Menu', () => {
+  beforeAll(() => {
+    jest.spyOn(useImportMapApps, 'useImportMapApps').mockImplementation(() => {
+      return ['@cognite/test'];
+    });
+  });
+
   it('Should hide the experimental tag', () => {
     jest
       .spyOn(featureFlags, 'useFlag')

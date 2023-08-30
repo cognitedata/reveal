@@ -2,15 +2,10 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
-    "module": "commonjs",
-    "types": [
-      "jest",
-      "node",
-      "@testing-library/jest-dom"
-    ]
+    "types": ["vitest/globals", "vitest/importMeta", "vite/client", "node", "jest"]
   },
   "include": [
-    "jest.config.ts",
+    "vite.config.ts",
     "src/**/*.test.ts",
     "src/**/*.spec.ts",
     "src/**/*.test.tsx",
@@ -19,12 +14,10 @@
     "src/**/*.spec.js",
     "src/**/*.test.jsx",
     "src/**/*.spec.jsx",
-    "src/**/*.d.ts",
-    "jest.config.ts",
-    "tools/**/*.js",
+    "src/**/*.d.ts"
   ],
   "files": [
-    "../../node_modules/@nrwl/react/typings/cssmodule.d.ts",
-    "../../node_modules/@nrwl/react/typings/image.d.ts"
+    "../../node_modules/@nx/react/typings/cssmodule.d.ts",
+    "../../node_modules/@nx/react/typings/image.d.ts"
   ]
 }

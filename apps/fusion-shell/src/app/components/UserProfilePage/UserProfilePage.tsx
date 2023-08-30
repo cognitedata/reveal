@@ -1,4 +1,5 @@
 import { getLanguage, selectLanguage } from '@cognite/cdf-i18n-utils';
+import { trackEvent } from '@cognite/cdf-route-tracker';
 import {
   Language,
   UserProfilePage as UserProfilePageComponent,
@@ -6,12 +7,11 @@ import {
 
 import { useTranslation } from '../../../i18n';
 import { useUserInformation } from '../../utils/hooks';
-import { trackEvent } from '@cognite/cdf-route-tracker';
 
 export const UserProfilePage = (): JSX.Element => {
   const { data: userInfo, isInitialLoading } = useUserInformation();
-  const name = userInfo?.displayName ?? userInfo?.user ?? '';
-  const email = userInfo?.mail ?? userInfo?.email ?? '';
+  const name = userInfo?.displayName ?? '';
+  const email = userInfo?.mail ?? '';
   const profilePicture = userInfo?.profilePicture;
 
   const { t } = useTranslation();

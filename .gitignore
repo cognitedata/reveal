@@ -54,3 +54,9 @@ yalc.lock
 # Firebase
 ui-debug.log
 firebase-debug.log
+
+/stats.html
+
+apps/fusion-shell/public/*import-map*.json
+apps/fusion-shell/public/dependencies/@cognite/cdf-sdk-singleton/
+apps/fusion-shell/public/dependencies/@cognite/cdf-route-tracker/

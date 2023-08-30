@@ -1,8 +1,12 @@
 import React from 'react';
+
 import styled from 'styled-components';
+
 import { Chip, Colors, Flex } from '@cognite/cogs.js';
-import { SearchResourceType, SearchResourceProps } from './GlobalSearchMenu';
+
 import { TranslationKeys, useTranslation } from '../../../i18n';
+
+import { SearchResourceType, SearchResourceProps } from './GlobalSearchMenu';
 
 type ResourceLabelGroupProps = {
   appliedFilters: SearchResourceType[];
@@ -38,7 +42,7 @@ export const ResourcesLabelGroup = ({
           const resource = resources[resourceKey];
           const isFilter = resource.count > 0;
 
-          if (!isFilter) return;
+          if (!isFilter) return null;
 
           return (
             <StyledChipContainer>

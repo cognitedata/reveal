@@ -12,7 +12,6 @@ import { Button, Flex, Title, Body, Colors, Tooltip } from '@cognite/cogs.js';
 import { useFlag } from '@cognite/react-feature-flags';
 
 import { TranslationKeys, useTranslation } from '../../../i18n';
-import { StyledPreviewTag } from '../AllApps/AppListItem';
 import {
   QuickLinks as TypeQuickLinks,
   getAllAppsData,
@@ -22,6 +21,7 @@ import {
 } from '../../sections/sections';
 import { useExperimentalFeatures } from '../../utils/hooks';
 import { trackUsage } from '../../utils/metrics';
+import { StyledPreviewTag } from '../AllApps/AppListItem';
 import Link from '../Link';
 
 import { StyledTitle } from './LandingPage';

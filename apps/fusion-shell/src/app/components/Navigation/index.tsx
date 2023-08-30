@@ -3,7 +3,6 @@ import { useEffect } from 'react';
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import {
   CdfUserHistoryService,
-  isUsingUnifiedSignin,
   useCdfUserHistoryService,
 } from '@cognite/cdf-utilities';
 
@@ -17,7 +16,7 @@ const onSingleSpaRouterEvent = (userHistoryService: CdfUserHistoryService) => {
   const subApp = (() => {
     try {
       const pathElems = pathname.split('/');
-      const subAppPathPosition = isUsingUnifiedSignin() ? 3 : 2;
+      const subAppPathPosition = 2;
       const newRoutePath = pathElems
         .slice(subAppPathPosition, pathElems.length)
         .join('/');
@@ -49,7 +48,7 @@ const onSingleSpaRouterEvent = (userHistoryService: CdfUserHistoryService) => {
   if (
     userHistoryService &&
     subApp &&
-    subApp?.internalId != 'unknown' &&
+    subApp?.internalId !== 'unknown' &&
     subApp?.internalId !== 'navigation'
   ) {
     // subAppPath is sub app link configured in sections as linkTo
@@ -76,13 +75,12 @@ const Navigation = (props: NavigationProps) => {
 
   useEffect(() => {
     trackEvent('ApplicationStart');
-    window.addEventListener('single-spa:routing-event', () => {
+    const handler = () => {
       onSingleSpaRouterEvent(userHistoryService);
-    });
+    };
+    window.addEventListener('single-spa:routing-event', handler);
     return () => {
-      window.removeEventListener('single-spa:routing-event', () => {
-        onSingleSpaRouterEvent(userHistoryService);
-      });
+      window.removeEventListener('single-spa:routing-event', handler);
     };
   }, [userHistoryService]);
 

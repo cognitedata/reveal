@@ -1,0 +1,19 @@
+schema: '1'
+id: 'fusion-app-pr-preview'
+pipeline:
+  application: fusion-app
+  name: deploy-fusion-app-pr-preview
+  template:
+    source: spinnaker://deployAllClustersFromPubsub
+  variables:
+    service: 'fusion-app'
+    pipeline: 'pr-preview'
+    githubRepository: fusion
+    dockerImageName: fusion-app
+    manualJudgement: false
+configuration:
+  description: 'Deploy fusion to fusion-pr-preview.cogniteapp.com'
+  inherit:
+    - triggers
+    - expectedArtifacts
+    - notifications
