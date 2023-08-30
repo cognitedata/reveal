@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { useState, type ReactElement } from 'react';
+import { useState, type ReactElement, useRef } from 'react';
 
 import { Button, Dropdown, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import styled from 'styled-components';
@@ -16,7 +16,8 @@ export const HelpButton = (): ReactElement => {
   const handleClickOutside = (): void => {
     setHelpActive(false);
   };
-  const ref = useOutsideClick(handleClickOutside);
+  const ref = useRef<HTMLButtonElement | null>(null);
+  useOutsideClick(ref, handleClickOutside);
   return (
     <CogsTooltip content={'Help'} placement="right" appendTo={document.body}>
       <Dropdown

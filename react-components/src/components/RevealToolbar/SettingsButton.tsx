@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { useState, type ReactElement } from 'react';
+import { useState, type ReactElement, useRef } from 'react';
 import { Button, Dropdown, Menu, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import { type QualitySettings } from './SettingsContainer/types';
 import { HighFidelityContainer } from './SettingsContainer/HighFidelityContainer';
@@ -23,7 +23,8 @@ export const SettingsButton = ({
   const handleClickOutside = (): void => {
     setSettingsActive(false);
   };
-  const ref = useOutsideClick(handleClickOutside);
+  const ref = useRef<HTMLButtonElement | null>(null);
+  useOutsideClick(ref, handleClickOutside);
   return (
     <CogsTooltip content={'Settings'} placement="right" appendTo={document.body}>
       <Dropdown

@@ -2,16 +2,12 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type MutableRefObject, useEffect, useRef } from 'react';
+import { useEffect, type RefObject } from 'react';
 
-export const useOutsideClick = (callback: () => void): MutableRefObject<HTMLDivElement | null> => {
-  const ref = useRef<HTMLDivElement | null>(null);
-
+export const useOutsideClick = (ref: RefObject<HTMLElement | null>, callback: () => void): void => {
   useEffect(() => {
     const handleClick = (event: MouseEvent): void => {
-      const container = ref.current;
-
-      if (container !== null && !container.contains(event.target as Node)) {
+      if (ref.current !== null && !ref.current.contains(event.target as Node)) {
         callback();
       }
     };
@@ -21,7 +17,5 @@ export const useOutsideClick = (callback: () => void): MutableRefObject<HTMLDivE
     return () => {
       document.removeEventListener('click', handleClick);
     };
-  }, [callback]);
-
-  return ref;
+  }, [ref, callback]);
 };

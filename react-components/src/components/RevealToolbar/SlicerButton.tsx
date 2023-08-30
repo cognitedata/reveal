@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type ReactElement, useState, useEffect } from 'react';
+import { type ReactElement, useState, useEffect, useRef } from 'react';
 
 import { Box3, Plane, Vector3 } from 'three';
 
@@ -25,7 +25,8 @@ export const SlicerButton = (): ReactElement => {
   const handleClickOutside = (): void => {
     setSliceActive(false);
   };
-  const ref = useOutsideClick(handleClickOutside);
+  const ref = useRef<HTMLButtonElement | null>(null);
+  useOutsideClick(ref, handleClickOutside);
 
   const [sliceState, setSliceState] = useState<SliceState>({
     minHeight: 0,

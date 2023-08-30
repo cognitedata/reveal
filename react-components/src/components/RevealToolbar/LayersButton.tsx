@@ -44,7 +44,8 @@ export const LayersButton = (): ReactElement => {
   const handleClickOutside = (): void => {
     setVisible(false);
   };
-  const ref = useOutsideClick(handleClickOutside);
+  const ref = useRef<HTMLButtonElement | null>(null);
+  useOutsideClick(ref, handleClickOutside);
 
   useEffect(() => {
     const currentModels = viewer.models;
