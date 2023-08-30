@@ -265,37 +265,39 @@ def shouldDeployPackage(String packageName, Map<String, String> NPM_PACKAGES, bo
 def pods = { body ->
   yarn.pod(nodeVersion: NODE_VERSION) {
     imageVulnerabilityScanner.pod() {
-      dockerUtils.pod() {
-        previewServer.pod(nodeVersion: NODE_VERSION) {
-          locizeApiKey = secretEnvVar(
-            key: 'LOCIZE_API_KEY',
-            secretName: 'fusion-locize-api-key',
-            secretKey: 'FUSION_LOCIZE_API_KEY'
-          )
-          appHosting.pod(
-            nodeVersion: NODE_VERSION,
-            locizeProjectId: LOCIZE_PROJECT_ID,
-            mixpanelToken: MIXPANEL_TOKEN,
-            envVars: [
-              locizeApiKey,
-              envVar(
-                key: 'REACT_APP_LOCIZE_PROJECT_ID',
-                value: LOCIZE_PROJECT_ID
-              ),
-              envVar(
-                key: 'REACT_APP_MIXPANEL_TOKEN',
-                value: MIXPANEL_TOKEN
-              )
-            ]
-          ) {
-            codecov.pod {
-              testcafe.pod() {
-                properties([
+      spinnaker.pod() {
+        dockerUtils.pod() {
+          previewServer.pod(nodeVersion: NODE_VERSION) {
+            locizeApiKey = secretEnvVar(
+              key: 'LOCIZE_API_KEY',
+              secretName: 'fusion-locize-api-key',
+              secretKey: 'FUSION_LOCIZE_API_KEY'
+            )
+            appHosting.pod(
+              nodeVersion: NODE_VERSION,
+              locizeProjectId: LOCIZE_PROJECT_ID,
+              mixpanelToken: MIXPANEL_TOKEN,
+              envVars: [
+                locizeApiKey,
+                envVar(
+                  key: 'REACT_APP_LOCIZE_PROJECT_ID',
+                  value: LOCIZE_PROJECT_ID
+                ),
+                envVar(
+                  key: 'REACT_APP_MIXPANEL_TOKEN',
+                  value: MIXPANEL_TOKEN
+                )
+              ]
+            ) {
+              codecov.pod {
+                testcafe.pod() {
+                  properties([
 
-                ])
+                  ])
 
-                node(POD_LABEL) {
-                  body()
+                  node(POD_LABEL) {
+                    body()
+                  }
                 }
               }
             }
