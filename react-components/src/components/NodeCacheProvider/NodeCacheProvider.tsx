@@ -28,7 +28,7 @@ export const useFdmNodeCache = (): FdmNodeCacheContent => {
   }
 
   return content;
-}
+};
 
 export const useMappedEdgesForRevisions = (
   modelRevisionIds: Array<{ modelId: number; revisionId: number }>,

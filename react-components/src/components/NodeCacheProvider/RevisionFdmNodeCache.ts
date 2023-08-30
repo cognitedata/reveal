@@ -126,7 +126,7 @@ export class RevisionFdmNodeCache {
   }
 
   private async getDataWithViewsForFdmEdges(
-    nodeEdges: Omit<FdmEdgeWithNode, 'view'>[],
+    nodeEdges: Array<Omit<FdmEdgeWithNode, 'view'>>,
     ancestorsWithSameMapping: Node3D[]
   ): Promise<Fdm3dNodeData[]> {
     const nodeInspectionResults = await inspectNodes(
@@ -240,7 +240,11 @@ export class RevisionFdmNodeCache {
 }
 
 function fdmEdgeWithNodeToFdm3dNodeData(fdmEdgeWithNode: FdmEdgeWithNode[]): Fdm3dNodeData[] {
-  return fdmEdgeWithNode.map((edgeData) => ({ view: edgeData.view, fdmId: edgeData.edge.startNode, cadNode: edgeData.node }));
+  return fdmEdgeWithNode.map((edgeData) => ({
+    view: edgeData.view,
+    fdmId: edgeData.edge.startNode,
+    cadNode: edgeData.node
+  }));
 }
 
 function findLargestTreeIndex(

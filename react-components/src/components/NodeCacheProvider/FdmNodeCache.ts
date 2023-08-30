@@ -3,7 +3,12 @@
  */
 
 import { type Node3D, type CogniteClient, type CogniteExternalId } from '@cognite/sdk';
-import { Source, type DmsUniqueIdentifier, type EdgeItem, type FdmSDK } from '../../utilities/FdmSDK';
+import {
+  type Source,
+  type DmsUniqueIdentifier,
+  type EdgeItem,
+  type FdmSDK
+} from '../../utilities/FdmSDK';
 import { RevisionFdmNodeCache } from './RevisionFdmNodeCache';
 import {
   type FdmEdgeWithNode,
@@ -203,7 +208,7 @@ export class FdmNodeCache {
   ): Promise<Map<ModelRevisionKey, FdmEdgeWithNode[]>> {
     const revisionIds = modelRevisionIds.map((modelRevisionId) => modelRevisionId.revisionId);
     const edges = await this.getEdgesForRevisions(revisionIds, this._fdmClient);
-    const edgesWithViews = await this.getViewsForEdges(edges, this._fdmClient);
+    const edgesWithViews = await this.getViewsForEdges(edges);
     const revisionToEdgesMap = await createRevisionToEdgesMap(
       edgesWithViews,
       modelRevisionIds,
@@ -225,7 +230,9 @@ export class FdmNodeCache {
     return await revisionCache.getClosestParentFdmData(treeIndex);
   }
 
-  private async getViewsForEdges(edges: EdgeItem<InModel3dEdgeProperties>[], fdmClient: FdmSDK) {
+  private async getViewsForEdges(
+    edges: Array<EdgeItem<InModel3dEdgeProperties>>
+  ): Promise<Array<{ edge: FdmCadEdge; view: Source }>> {
     const nodeInspectionResults = await inspectNodes(
       this._fdmClient,
       edges.map((edge) => edge.startNode)
@@ -281,7 +288,7 @@ export class FdmNodeCache {
 }
 
 async function createRevisionToEdgesMap(
-  edgesWithViews: { edge: FdmCadEdge, view: Source}[],
+  edgesWithViews: Array<{ edge: FdmCadEdge; view: Source }>,
   modelRevisionIds: ModelRevisionId[],
   cdfClient: CogniteClient
 ): Promise<Map<ModelRevisionKey, FdmEdgeWithNode[]>> {
@@ -298,7 +305,12 @@ async function createRevisionToEdgesMap(
 
     if (modelRevisionId === undefined) return map;
 
-    const value = createFdmEdgeWithNode(modelRevisionId, edgeWithView.edge, edgeWithView.view, modelNodeIdToNodeMap);
+    const value = createFdmEdgeWithNode(
+      modelRevisionId,
+      edgeWithView.edge,
+      edgeWithView.view,
+      modelNodeIdToNodeMap
+    );
 
     insertEdgeIntoMapList(value, map, modelRevisionId);
 
@@ -321,7 +333,7 @@ function createFdmEdgeWithNode(
   const node = modelNodeIdToNodeMap.get(revisionNodeIdKey);
   assert(node !== undefined);
 
-  return { edge, node, view};
+  return { edge, node, view };
 }
 
 function insertEdgeIntoMapList(
@@ -366,9 +378,11 @@ async function createModelNodeIdToNodeMap(
   return revisionNodeIdToNode;
 }
 
-function createRevisionToNodeIdMap(edgesWithViews: { edge: FdmCadEdge, view: Source}[]): Map<RevisionId, NodeId[]> {
+function createRevisionToNodeIdMap(
+  edgesWithViews: Array<{ edge: FdmCadEdge; view: Source }>
+): Map<RevisionId, NodeId[]> {
   return edgesWithViews.reduce((revisionNodeIdMap, edgeWithView) => {
-    const { revisionNodeId, revisionId} = edgeWithView.edge.properties;
+    const { revisionNodeId, revisionId } = edgeWithView.edge.properties;
 
     const nodeIdsInRevision = revisionNodeIdMap.get(revisionId);
 

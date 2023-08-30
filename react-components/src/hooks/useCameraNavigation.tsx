@@ -4,8 +4,7 @@
 
 import { type CogniteCadModel } from '@cognite/reveal';
 import { useReveal } from '../components/RevealContainer/RevealContext';
-import { useFdmSdk } from '../components/RevealContainer/SDKProvider';
-import {  useFdmNodeCache } from '../components/NodeCacheProvider/NodeCacheProvider';
+import { useFdmNodeCache } from '../components/NodeCacheProvider/NodeCacheProvider';
 
 export type CameraNavigationActions = {
   fitCameraToAllModels: () => void;
@@ -36,9 +35,14 @@ export const useCameraNavigation = (): CameraNavigationActions => {
   };
 
   const fitCameraToInstance = async (externalId: string, space: string): Promise<void> => {
-    const modelsRevisionIds = viewer.models.map(model => ({ modelId: model.modelId, revisionId: model.revisionId }));
+    const modelsRevisionIds = viewer.models.map((model) => ({
+      modelId: model.modelId,
+      revisionId: model.revisionId
+    }));
 
-    const modelMappings = (await fdmNodeCache.cache.getMappingsForFdmIds([{ externalId, space }], modelsRevisionIds))?.[0];
+    const modelMappings = (
+      await fdmNodeCache.cache.getMappingsForFdmIds([{ externalId, space }], modelsRevisionIds)
+    )?.[0];
 
     const nodeId = modelMappings?.mappings.get(externalId);
 

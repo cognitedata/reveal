@@ -102,7 +102,7 @@ export async function inspectNodes(
 
     inspectionResult.items.push(...chunkInspectionResults.items);
   }
-  
+
   return inspectionResult;
 }
 
