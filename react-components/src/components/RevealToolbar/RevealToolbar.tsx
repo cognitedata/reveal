@@ -3,7 +3,7 @@
  */
 
 import { type ReactElement, type JSX } from 'react';
-import { Button, ToolBar, type ToolBarProps } from '@cognite/cogs.js';
+import { ToolBar, type ToolBarProps } from '@cognite/cogs.js';
 import { FitModelsButton } from './FitModelsButton';
 import { LayersButton } from './LayersButton';
 import { SlicerButton } from './SlicerButton';
@@ -37,7 +37,6 @@ const DefaultContentWrapper = (props: RevealToolbarProps): ReactElement => {
     <>
       <LayersButton />
       <FitModelsButton />
-      <Button type="ghost" icon="Collapse" aria-label="Focus asset" />
 
       <div className="cogs-toolbar-divider" />
 
