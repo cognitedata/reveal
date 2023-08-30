@@ -25,7 +25,7 @@
     "@cognite/cdf-ui-cli": "^1.1.1",
     "@cognite/cogs.js": "^9.32.1",
     "@cognite/connect": "^0.0.8",
-    "@cognite/e2e-auth": "^1.0.2",
+    "@cognite/e2e-auth": "^1.0.3",
     "@cognite/gcs-browser-upload": "cognitedata/gcs-browser-upload#mn/temporary-azure-fix",
     "@cognite/llm-hub": "^0.0.15",
     "@cognite/metrics": "^2.0.0",
