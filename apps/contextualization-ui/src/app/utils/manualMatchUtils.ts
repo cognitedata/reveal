@@ -5,8 +5,8 @@ export const getAllManualMatchesDefined = (manualMatches?: {
 }) =>
   manualMatches &&
   Object.values(manualMatches).every(
-    ({ linkedExternalId, shouldNotMatch }) =>
-      linkedExternalId !== undefined || shouldNotMatch === true
+    ({ matchedInstance, shouldNotMatch }) =>
+      matchedInstance !== undefined || shouldNotMatch === true
   );
 
 export const getAllManualMatchesNotDefined = (manualMatches?: {
@@ -16,8 +16,8 @@ export const getAllManualMatchesNotDefined = (manualMatches?: {
     return true;
   }
   return Object.values(manualMatches).every(
-    ({ linkedExternalId, shouldNotMatch }) =>
-      linkedExternalId === undefined &&
+    ({ matchedInstance, shouldNotMatch }) =>
+      matchedInstance === undefined &&
       (shouldNotMatch === false || shouldNotMatch === undefined)
   );
 };

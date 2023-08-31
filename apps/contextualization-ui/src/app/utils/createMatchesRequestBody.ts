@@ -12,13 +12,13 @@ export const createMatchesRequestBody = (
   const currentDate = new Date().toISOString();
 
   return Object.values(manualMatches).reduce(
-    (matchItems: MatchItem[], { originExternalId, linkedExternalId }) => {
-      if (linkedExternalId) {
+    (matchItems: MatchItem[], { originExternalId, matchedInstance }) => {
+      if (matchedInstance && matchedInstance.value) {
         matchItems.push({
           externalId: `match-${random(1, 12031259120139120)}-${currentDate}`,
           advancedJoinExternalId: advancedJoinExternalId,
           originExternalId: originExternalId,
-          linkedExternalId: linkedExternalId,
+          linkedExternalId: matchedInstance.value,
         });
       }
       /*

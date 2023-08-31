@@ -26,14 +26,16 @@ export type MatchData = {
   properties: {};
 };
 
-export type MatchInputOptions = {
+export type MatchInputOption = {
   value: string;
   label: string;
 };
 
+export type MatchedInstance = { value: string; key: string };
+
 export type ManualMatch = {
   originExternalId: string;
-  linkedExternalId?: string;
+  matchedInstance?: MatchedInstance;
   shouldNotMatch?: boolean;
 };
 

@@ -8,7 +8,6 @@ import { Chip } from '@cognite/cogs.js';
 
 import { ManualMatchInput } from '../components/ManualMatchInput';
 import { useGetHiddenColumns } from '../hooks/useGetHiddenColumns';
-import { useGetMatchInputOptions } from '../hooks/useGetMatchInputOptions';
 import { InternalModelInstance, ManualMatch } from '../types';
 import { getMatchInputInstantProperties } from '../utils/getMatchInputInstantProperties';
 
@@ -42,12 +41,11 @@ export const MatchTable = ({
       [ARROW]: ARROW,
       [MANUAL_MATCH_INPUT]: MANUAL_MATCH_INPUT,
       ...getMatchInputInstantProperties(
-        manualMatches[originInstance.externalId].linkedExternalId,
-        matchInputInstances
+        matchInputInstances,
+        manualMatches[originInstance.externalId].matchedInstance
       ),
     })
   );
-  const matchInputOptions = useGetMatchInputOptions();
 
   const keysSet = new Set<string>();
   data.forEach((obj) => {
@@ -70,7 +68,6 @@ export const MatchTable = ({
                 key={`ManualMatchInput-${key}-${cellData.row.original.externalId}`}
                 originExternalId={cellData.row.original.externalId}
                 manualMatches={manualMatches}
-                options={matchInputOptions}
                 setManualMatches={setManualMatches}
               />
             ),
@@ -106,7 +103,7 @@ export const MatchTable = ({
         };
       }),
     ],
-    [keys, manualMatches, matchInputOptions, setManualMatches]
+    [keys, manualMatches, setManualMatches]
   );
 
   const hiddenColumns = useGetHiddenColumns(columns, []);

@@ -46,7 +46,7 @@ export const Labeling = ({
 
   const createJoins = useCreateAdvancedJoinMatchesWrapper();
 
-  const matchInputInstances = useGetMatchInputInstances();
+  const matchInputInstances = useGetMatchInputInstances(manualMatches);
 
   const handleWriteMatchers = async () => {
     createJoins(manualMatches);
