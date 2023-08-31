@@ -22,7 +22,7 @@ const defaultStyle: ToolBarProps = {
     padding: '6px',
     gap: '8px',
     borderRadius: '8px',
-    borderColor: 'rgba(83, 88, 127, 0.24)'
+    border: '1px solid rgba(83, 88, 127, 0.24)'
   }
 };
 

@@ -38,6 +38,7 @@ const Container = styled.div`
 const StyledMenu = styled(Menu)`
   padding: 6px;
   width: 214px;
+  border: 1px solid rgba(83, 88, 127, 0.24);
 `;
 
 export default LayersContainer;

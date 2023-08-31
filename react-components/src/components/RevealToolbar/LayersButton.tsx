@@ -168,7 +168,7 @@ export const LayersButton = (): ReactElement => {
           />
         }
         visible={visible}
-        placement="right">
+        placement="right-start">
         <Button
           ref={ref}
           type="ghost"
