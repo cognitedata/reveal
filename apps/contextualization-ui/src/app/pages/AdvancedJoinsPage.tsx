@@ -3,11 +3,10 @@ import React, { createContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import {
+  useAdvancedJoin,
   getUrlParameters,
-  useCreateAdvancedJoinProcess,
   useListMatches,
   useMeasureMappedPercentages,
-  useQueryParameter,
   useCurrentView,
 } from '@fusion/contextualization';
 
@@ -22,7 +21,6 @@ import { AdvancedJoinsTopBar } from '../containers/AdvancedJoinsTopBar';
 import { Labeling } from '../containers/Labeling';
 import { RunAdvancedJoin } from '../containers/RunAdvancedJoin';
 import { EstimateArray, ManualMatch, SelectedColumns } from '../types';
-import { filterOnAdvancedJoinsExternalId } from '../utils/filterOnAdvancedJoinsExternalId';
 
 export const ManualMatchesContext = createContext<{
   manualMatches: { [key: string]: ManualMatch };
@@ -45,10 +43,6 @@ export const AdvancedJoinsPage = () => {
     [key: string]: ManualMatch;
   }>({});
   const [labelingStage, setLabelingStage] = useState<boolean>(false);
-  // to track if the user has submitted at least one matcher set.
-  const [advancedJoinExternalId, setAdvancedJoinExternalId] =
-    useQueryParameter('AdvancedJoinId');
-
   const [selectedDatabase, setSelectedDatabase] = useState<string | null>(null);
   const [selectedTable, setSelectedTable] = useState<string | null>(null);
   const [estimateArray, setEstimateArray] = useState<EstimateArray[]>([]);
@@ -94,18 +88,13 @@ export const AdvancedJoinsPage = () => {
     return selectedColumns[tableId];
   };
 
-  const { data: { items } = {} } = useCreateAdvancedJoinProcess(
-    !advancedJoinExternalId
-  );
+  const view = useCurrentView();
+  const advancedJoin = useAdvancedJoin(headerName, view);
   const {
     data: { items: savedManualMatches } = { items: [] },
     refetch: refetchManualMatchesList,
-  } = useListMatches();
-
-  const savedManualMatchesCount =
-    +filterOnAdvancedJoinsExternalId(savedManualMatches).length;
-
-  const view = useCurrentView();
+  } = useListMatches(advancedJoin?.externalId);
+  const savedManualMatchesCount = savedManualMatches.length;
 
   const { mappedPercentageJobStatus, mappedPercentage } =
     useMeasureMappedPercentages(
@@ -116,11 +105,7 @@ export const AdvancedJoinsPage = () => {
     );
 
   const onClickStartLabeling = () => {
-    if (items && items.length !== 0) {
-      const { externalId } = items[0];
-      setAdvancedJoinExternalId(externalId);
-      setLabelingStage(true);
-    }
+    setLabelingStage(true);
   };
 
   const completedPercentage = Math.min(
@@ -130,12 +115,6 @@ export const AdvancedJoinsPage = () => {
     ),
     MAX_COMPLETED_PERCENTAGE
   );
-
-  useEffect(() => {
-    if (advancedJoinExternalId) {
-      setLabelingStage(true);
-    }
-  }, [advancedJoinExternalId]);
 
   useEffect(() => {
     setAdvancedJoinRunnable(completedPercentage === MAX_COMPLETED_PERCENTAGE);
@@ -166,7 +145,7 @@ export const AdvancedJoinsPage = () => {
               <>
                 <Column2>
                   <RunAdvancedJoin
-                    advancedJoinExternalId={advancedJoinExternalId}
+                    advancedJoinExternalId={advancedJoin?.externalId}
                     estimateArray={estimateArray}
                     selectedTable={selectedTable}
                     setSelectedTable={setSelectedTable}
@@ -184,7 +163,7 @@ export const AdvancedJoinsPage = () => {
                       savedManualMatchesCount={savedManualMatchesCount}
                       selectedDatabase={selectedDatabase}
                       selectedTable={selectedTable}
-                      advancedJoinExternalId={advancedJoinExternalId}
+                      advancedJoinExternalId={advancedJoin?.externalId}
                       estimateArray={estimateArray}
                       setEstimateArray={setEstimateArray}
                       getColumnsForTable={getColumnsForTable}
@@ -201,7 +180,7 @@ export const AdvancedJoinsPage = () => {
             ) : (
               <Column2>
                 <Labeling
-                  advancedJoinExternalId={advancedJoinExternalId}
+                  advancedJoinExternalId={advancedJoin?.externalId}
                   labelingStage={labelingStage}
                   onClickStartLabeling={onClickStartLabeling}
                   refetchManualMatchesList={refetchManualMatchesList}

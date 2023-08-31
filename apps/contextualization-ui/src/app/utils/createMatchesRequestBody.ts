@@ -7,8 +7,12 @@ export const createMatchesRequestBody = (
   manualMatches: {
     [key: string]: ManualMatch;
   },
-  advancedJoinExternalId: string
+  advancedJoinExternalId: string | undefined
 ) => {
+  if (advancedJoinExternalId === undefined) {
+    return [];
+  }
+
   const currentDate = new Date().toISOString();
 
   return Object.values(manualMatches).reduce(
