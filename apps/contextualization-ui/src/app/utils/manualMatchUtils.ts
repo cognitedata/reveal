@@ -11,10 +11,13 @@ export const getAllManualMatchesDefined = (manualMatches?: {
 
 export const getAllManualMatchesNotDefined = (manualMatches?: {
   [key: string]: ManualMatch;
-}) =>
-  manualMatches &&
-  Object.values(manualMatches).every(
+}) => {
+  if (!manualMatches) {
+    return true;
+  }
+  return Object.values(manualMatches).every(
     ({ linkedExternalId, shouldNotMatch }) =>
       linkedExternalId === undefined &&
       (shouldNotMatch === false || shouldNotMatch === undefined)
   );
+};

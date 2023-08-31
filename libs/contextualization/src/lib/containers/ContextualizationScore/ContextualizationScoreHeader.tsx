@@ -1,15 +1,17 @@
-import { DataModelVersion } from '@fusion/data-modeling';
+import {
+  DataModelTypeDefsField,
+  DataModelVersion,
+} from '@fusion/data-modeling';
 
 import { ContextualizationScore } from '../../components/ContextualizationScore';
 import { ContextualizationContext } from '../../hooks/data-model-version/useContextualizationContext';
 import { useFlagContextualizationScoreHeader } from '../../hooks/flags';
 
 export const ContextualizationScoreHeader = ({
+  field,
   dataModelVersions,
-  ...props
 }: {
-  headerName: string;
-  dataModelType: string;
+  field: DataModelTypeDefsField;
   dataModelVersions: DataModelVersion[];
 }) => {
   const isContextualizationScoreHeaderEnabled =
@@ -22,7 +24,10 @@ export const ContextualizationScoreHeader = ({
     <ContextualizationContext.Provider
       value={{ dataModelVersions: dataModelVersions }}
     >
-      <ContextualizationScore {...props} />
+      <ContextualizationScore
+        headerName={field.name}
+        dataModelType={field.type.name}
+      />
     </ContextualizationContext.Provider>
   );
 };

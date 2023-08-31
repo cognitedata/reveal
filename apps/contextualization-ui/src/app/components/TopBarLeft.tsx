@@ -34,7 +34,7 @@ export const TopBarLeft = ({
           <Popconfirm
             onConfirm={confirmedBack}
             okText="Proceed"
-            disabled={noUnsavedManualMatches}
+            disabled={runStage || noUnsavedManualMatches}
             content="Unsaved Matches Detected. Proceed Anyway?"
           >
             <StyledTitleButton
