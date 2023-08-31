@@ -51,3 +51,10 @@ export type {
 export type { CameraNavigationActions } from './hooks/useCameraNavigation';
 export type { Source, DmsUniqueIdentifier } from './utilities/FdmSDK';
 export type { QualitySettings } from './components/RevealToolbar/SettingsContainer/types';
+
+export { HelpButton } from './components/RevealToolbar/HelpButton';
+export { FitModelsButton } from './components/RevealToolbar/FitModelsButton';
+export { LayersButton } from './components/RevealToolbar/LayersButton';
+export { MeasurementButton } from './components/RevealToolbar/MeasurementButton';
+export { SettingsButton } from './components/RevealToolbar/SettingsButton';
+export { SlicerButton } from './components/RevealToolbar/SlicerButton';
