@@ -7788,6 +7788,14 @@
     ts-dedent "^2.0.0"
     util-deprecate "^1.0.2"
 
+"@storybook/client-api@^7.4.0":
+  version "7.4.0"
+  resolved "https://registry.yarnpkg.com/@storybook/client-api/-/client-api-7.4.0.tgz#2c31f588feef6b543bdb483169a6b4f35f477b1b"
+  integrity sha512-Zmmq/fjr166L+BpgHo16Xbx/4GvaMtbwvEv1JWj/DTYlWuK3gS1Fl/cZ0gDwtNxZIgpVI09N42cbsMfHuFNUVA==
+  dependencies:
+    "@storybook/client-logger" "7.4.0"
+    "@storybook/preview-api" "7.4.0"
+
 "@storybook/client-logger@6.5.16":
   version "6.5.16"
   resolved "https://registry.yarnpkg.com/@storybook/client-logger/-/client-logger-6.5.16.tgz#955cc46b389e7151c9eb1585a75e6a0605af61a1"
