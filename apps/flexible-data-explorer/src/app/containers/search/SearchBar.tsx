@@ -1,18 +1,30 @@
-import { CSSProperties, useCallback, useEffect, useRef, useState } from 'react';
+import {
+  CSSProperties,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
 import styled, { css } from 'styled-components';
 
-import { Icon } from '@cognite/cogs.js';
+import { matchSorter } from 'match-sorter';
 
+import { Chip, Icon } from '@cognite/cogs.js';
+
+import { Typography } from '../../components/Typography';
 import { useClickOutsideListener } from '../../hooks/listeners/useClickOutsideListener';
 import { useNavigation } from '../../hooks/useNavigation';
 import {
   useAISearchParams,
+  useSearchCategoryParams,
   useSearchFilterParams,
   useSearchQueryParams,
 } from '../../hooks/useParams';
 // import { useTranslation } from '../../hooks/useTranslation';
 import { useTranslation } from '../../hooks/useTranslation';
+import { useFDM } from '../../providers/FDMProvider';
 import zIndex from '../../utils/zIndex';
 
 import { AISearchPreview } from './AISearchPreview';
@@ -41,15 +53,36 @@ export const SearchBar: React.FC<Props> = ({
 }) => {
   const { t } = useTranslation();
   const navigate = useNavigation();
+  const client = useFDM();
 
   const ref = useRef<HTMLDivElement | null>(null);
 
+  const [isAISearch] = useAISearchParams();
   const [globalQuery] = useSearchQueryParams();
   const [localQuery, setLocalQuery] = useState('');
   const [filters] = useSearchFilterParams();
+  const [category, setCategory] = useSearchCategoryParams();
   const [isPreviewFocused, setPreviewFocus] = useState(false);
 
-  const [isAIEnabled] = useAISearchParams();
+  const types = useMemo(() => {
+    const genericTypes = client.allDataTypes || [];
+
+    // TODO: Fix hardcoded types
+    return [
+      ...genericTypes,
+      { name: 'TimeSeries', displayName: 'Time series' },
+      { name: 'File', displayName: 'File' },
+    ];
+  }, [client]);
+
+  const typesResults = useMemo(() => {
+    if (localQuery.length < 3) {
+      return [];
+    }
+    return matchSorter(types, localQuery, {
+      keys: ['name', 'displayName'],
+    });
+  }, [types, localQuery]);
 
   const closePreview = useCallback(() => {
     setPreviewFocus(false);
@@ -68,36 +101,41 @@ export const SearchBar: React.FC<Props> = ({
     <>
       <Container
         ref={ref}
-        focused={
-          isAIEnabled ? !localQuery && isPreviewFocused : isPreviewFocused
-        }
+        focused={!localQuery && !category && isPreviewFocused}
         width={width}
-        inverted={inverted}
-        $isAIEnabled={isAIEnabled}
+        inverted={isPreviewFocused ? false : inverted}
+        $isAIEnabled={isAISearch}
       >
         <Content>
-          {isAIEnabled ? <AiSearchIcon /> : <StyledIcon type="Search" />}
-          {isAIEnabled && <AISearchCategoryDropdown />}
+          {isAISearch ? <AiSearchIcon /> : <StyledIcon type="Search" />}
+          {isAISearch && <AISearchCategoryDropdown />}
+          {category && !isAISearch && (
+            <CategoryChip
+              label={category}
+              onRemove={() => {
+                setCategory(undefined);
+              }}
+            />
+          )}
           <StyledInput
             onKeyUp={(e) => {
               if (e.key === 'Enter' || e.keyCode === 13) {
                 e.preventDefault();
                 (e.target as any).blur();
+                closePreview();
 
-                // Rest of the search logic is handled inside @{SearchPreviewActions}
-                if (!localQuery) {
-                  closePreview();
-
-                  navigate.toSearchPage(localQuery, filters);
-                }
+                navigate.toSearchPage(localQuery, filters, { category });
               }
             }}
-            // Do not add onBlur to input, it messes with the search preview.
-            // onBlur={() => {
-            //   if (!disablePreview) {
-            //     closePreview();
-            //   }
-            // }}
+            // Do not add onBlur to input, it messes with the search preview dropdown.
+            // onBlur={() => {})
+            onKeyDown={(e) => {
+              if (!isAISearch && (e.key === 'Tab' || e.keyCode === 9)) {
+                e.preventDefault();
+                setCategory(typesResults[0].name);
+                setLocalQuery('');
+              }
+            }}
             onFocus={() => {
               if (!disablePreview) {
                 setPreviewFocus(true);
@@ -106,7 +144,7 @@ export const SearchBar: React.FC<Props> = ({
             value={localQuery ?? ''}
             autoFocus={autoFocus}
             placeholder={t(
-              isAIEnabled ? 'AI_SEARCH_PLACEHOLDER' : 'SEARCH_PLACEHOLDER'
+              isAISearch ? 'AI_SEARCH_PLACEHOLDER' : 'SEARCH_PLACEHOLDER'
             )}
             onChange={(e) => {
               e.preventDefault();
@@ -114,8 +152,15 @@ export const SearchBar: React.FC<Props> = ({
               setLocalQuery(e.target.value);
             }}
           />
-
-          {!isAIEnabled && (
+          {!isAISearch && typesResults.length > 0 && (
+            <Typography.Body size="xsmall">
+              {t('SEARCH_BAR_HINT_TEXT', {
+                category:
+                  typesResults?.[0]?.displayName || typesResults?.[0].name,
+              })}
+            </Typography.Body>
+          )}
+          {!isAISearch && (
             <SearchFilters
               value={filters}
               onClick={() => {
@@ -129,18 +174,15 @@ export const SearchBar: React.FC<Props> = ({
           )}
         </Content>
 
-        {isPreviewFocused &&
-          (isAIEnabled ? (
-            <AISearchPreview
-              query={localQuery}
-              onSelectionClick={closePreview}
-            />
-          ) : (
-            <SearchPreview query={localQuery} onSelectionClick={closePreview} />
-          ))}
+        {isPreviewFocused && isAISearch && (
+          <AISearchPreview query={localQuery} onSelectionClick={closePreview} />
+        )}
+        {isPreviewFocused && !isAISearch && !category && (
+          <SearchPreview query={localQuery} onSelectionClick={closePreview} />
+        )}
       </Container>
 
-      {!isAIEnabled && <SearchBarSwitch inverted={inverted} />}
+      {!isAISearch && <SearchBarSwitch inverted={inverted} />}
     </>
   );
 };
@@ -158,7 +200,6 @@ const Container = styled.div<{
   margin-left: 0;
   margin-right: 0;
   border-bottom: none;
-  /* border-bottom-left: none; */
   z-index: ${zIndex.SEARCH};
 
   ${(props) => {
@@ -215,4 +256,9 @@ const StyledInput = styled.input.attrs({ type: 'search' })`
 
 const StyledIcon = styled(Icon)`
   min-width: 16px;
+`;
+
+const CategoryChip = styled(Chip).attrs({ type: 'neutral', size: 'small' })`
+  min-width: unset;
+  max-width: unset;
 `;

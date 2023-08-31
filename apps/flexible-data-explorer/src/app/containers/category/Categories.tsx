@@ -14,7 +14,9 @@ export const Categories = () => {
 
   const handleCategoryClick = useCallback(
     (dataType: string) => {
-      navigate.toSearchCategoryPage(dataType);
+      navigate.toSearchPage(undefined, undefined, {
+        category: dataType,
+      });
     },
     [navigate]
   );
@@ -27,7 +29,7 @@ export const Categories = () => {
             key={index}
             type={item.displayName || item.name}
             description={item.description}
-            onClick={handleCategoryClick}
+            onClick={() => handleCategoryClick(item.name)}
           />
         ))}
 

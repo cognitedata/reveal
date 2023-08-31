@@ -17,6 +17,7 @@ enum SearchActions {
   SEARCH_IN_AI = -1,
 }
 
+// NOTE: Component currently not in use. Leaving the code as is for now.
 export const SearchPreviewActions = ({
   query,
   onSelectionClick,
@@ -91,7 +92,7 @@ export const SearchPreviewActions = ({
             ignoreType: true,
           });
         } else {
-          navigate.toSearchCategoryPage(typesResults[active], true);
+          // navigate.toSearchCategoryPage(typesResults[active], true);
         }
       }
     },
@@ -131,7 +132,7 @@ export const SearchPreviewActions = ({
           icon="List"
           focused={active === index}
           onClick={() => {
-            navigate.toSearchCategoryPage(item, true);
+            // navigate.toSearchCategoryPage(item, true);
             onSelectionClick?.();
           }}
         />

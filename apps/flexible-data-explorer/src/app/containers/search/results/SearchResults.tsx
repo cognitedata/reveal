@@ -1,7 +1,6 @@
-import { useParams } from 'react-router-dom';
-
 import { Skeleton } from '@cognite/cogs.js';
 
+import { useSearchCategoryParams } from '../../../hooks/useParams';
 import { useFDM } from '../../../providers/FDMProvider';
 import { useSearchDataTypesQuery } from '../../../services/dataTypes/queries/useSearchDataTypesQuery';
 import { useSearchDataTypeSortedByKeys } from '../hooks/useSearchDataTypeSortedByKeys';
@@ -12,7 +11,7 @@ import { TimeseriesResults } from './TimeseriesResults';
 
 export const SearchResults: React.FC = () => {
   const client = useFDM();
-  const { type: selectedDataType } = useParams();
+  const [category] = useSearchCategoryParams();
   const { data: hits, isLoading } = useSearchDataTypesQuery();
   const { keys, isLoading: isCountsLoading } = useSearchDataTypeSortedByKeys();
 
@@ -20,23 +19,22 @@ export const SearchResults: React.FC = () => {
     return <Skeleton.List lines={3} />;
   }
 
-  if (selectedDataType) {
-    if (selectedDataType === 'File') {
-      return <FileResults />;
+  if (category) {
+    if (category === 'File') {
+      return <FileResults selected />;
     }
 
-    if (selectedDataType === 'TimeSeries') {
-      return <TimeseriesResults />;
+    if (category === 'TimeSeries') {
+      return <TimeseriesResults selected />;
     }
 
-    const type = client.allDataTypes?.find(
-      (item) => item.name === selectedDataType
-    );
+    const type = client.allDataTypes?.find((item) => item.name === category);
     return (
       <GenericResults
-        dataType={selectedDataType}
+        dataType={category}
         type={type}
-        values={hits?.[selectedDataType]}
+        values={hits?.[category]}
+        selected
       />
     );
   }
