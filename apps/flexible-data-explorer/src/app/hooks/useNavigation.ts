@@ -117,11 +117,14 @@ export const useNavigation = () => {
         dataModel?: string;
         space?: string;
         version?: string;
+      } = {},
+      options: {
+        viewMode?: ViewMode;
       } = {}
     ) => {
       const queryParams = new URLSearchParams(search);
       // Assure that we are looking at the dashboard of the instance
-      queryParams.set('viewMode', 'list');
+      queryParams.set('viewMode', options.viewMode ?? 'list');
 
       const pathname = [
         basename,
@@ -208,6 +211,9 @@ export const useNavigation = () => {
         dataModel?: string;
         space?: string;
         version?: string;
+      } = {},
+      options: {
+        viewMode?: ViewMode;
       } = {}
     ) => {
       if (
@@ -217,12 +223,6 @@ export const useNavigation = () => {
       ) {
         console.error('Missing parameters to navigate to instance page');
         return;
-      }
-
-      const queryParams = new URLSearchParams(search);
-
-      if (queryParams.has('expandedId')) {
-        queryParams.delete('expandedId');
       }
 
       if (dataType === 'File') {
@@ -237,7 +237,13 @@ export const useNavigation = () => {
         return toSequencePage(externalId);
       }
 
-      return toGenericPage(dataType, instanceSpace, externalId, dataModel);
+      return toGenericPage(
+        dataType,
+        instanceSpace,
+        externalId,
+        dataModel,
+        options
+      );
     },
     [toFilePage, toGenericPage, toSequencePage, toTimeseriesPage, search]
   );

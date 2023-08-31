@@ -55,6 +55,7 @@ export const ThreeDWidget: React.FC<ThreeDWidgetProps> = () => {
             externalId={externalId}
             instanceSpace={instanceSpace}
             hideToolbar
+            focusNode
           />
         </RevealContainer>
       </Widget.Body>
