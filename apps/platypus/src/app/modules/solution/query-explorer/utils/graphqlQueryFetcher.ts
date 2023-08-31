@@ -1,6 +1,7 @@
-import { FetcherParams, FetcherResult } from '@graphiql/toolkit';
+import { FetcherParams } from '@graphiql/toolkit';
 import { Notification } from '@platypus-app/components/Notification/Notification';
 import { rootInjector, TOKENS } from '@platypus-app/di';
+import { ExecutionResult } from 'graphql-ws';
 
 export default {
   fetcher: (
@@ -8,7 +9,7 @@ export default {
     dataModelId: string,
     version: string,
     space: string
-  ): Promise<FetcherResult> => {
+  ): Promise<ExecutionResult> => {
     const solutionSchemaHandler = rootInjector.get(
       TOKENS.dataModelVersionHandler
     );
