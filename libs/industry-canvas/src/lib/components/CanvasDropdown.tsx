@@ -177,6 +177,7 @@ const CanvasDropdown: React.FC<CanvasDropdownProps> = ({
             <StyledInput
               aria-label="canvas-search"
               autoFocus
+              fullWidth
               type="search"
               key="canvas-search"
               onChange={(e) => setSearchString(e.target.value)}
@@ -247,7 +248,7 @@ const CanvasDropdown: React.FC<CanvasDropdownProps> = ({
             <CreateCanvasButton
               aria-label={t(
                 translationKeys.COMMON_CREATE_CANVAS,
-                'Create new canvas.'
+                'Create new canvas'
               )}
               size="medium"
               type="primary"
@@ -255,7 +256,7 @@ const CanvasDropdown: React.FC<CanvasDropdownProps> = ({
               loading={isCreatingCanvas || isSavingCanvas || isLoadingCanvas}
               onClick={onCreateCanvasClick}
             >
-              {t(translationKeys.COMMON_CREATE_CANVAS, 'Create new canvas.')}
+              {t(translationKeys.COMMON_CREATE_CANVAS, 'Create new canvas')}
             </CreateCanvasButton>
           </StyledMenu>
         }
@@ -291,6 +292,7 @@ const StyledInput = styled(InputExp)`
 `;
 
 const CreateCanvasButton = styled(Button)`
+  margin-top: 2px;
   width: 100%;
 `;
 
@@ -301,10 +303,20 @@ const NavigationButton = styled(Button)`
 const MenuItemsWrapper = styled.div`
   height: 100%;
   overflow: auto;
+  ::-webkit-scrollbar {
+    width: 14px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    border: 4px solid rgba(0, 0, 0, 0);
+    background-clip: padding-box;
+    border-radius: 9999px;
+    background-color: #aaaaaa;
+  }
 `;
 
 const StyledMenu = styled(Menu)`
-  min-width: 300px;
+  width: 300px;
   max-height: 412px;
   overflow: auto;
 `;

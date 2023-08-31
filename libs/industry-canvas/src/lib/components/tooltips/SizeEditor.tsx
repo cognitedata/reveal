@@ -104,7 +104,7 @@ export const SizeEditor: React.FC<SizeEditorProps> = ({
   };
 
   return (
-    <ToolBar direction="horizontal">
+    <ToolBar style={{ boxShadow: 'none' }} direction="horizontal">
       <>
         <Tooltip
           content={t(
@@ -170,5 +170,8 @@ export const SizeEditor: React.FC<SizeEditorProps> = ({
 };
 
 const StyledInput = styled(InputExp)`
+  .MuiInput-input {
+    text-align: center;
+  }
   max-width: 47px;
 `;
