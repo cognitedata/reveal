@@ -52,31 +52,6 @@ export class RevisionFdmNodeCache {
     this._revisionId = revisionId;
   }
 
-  public async createExternalIdToNodeMapping(
-    modelRevisionId: ModelRevisionId,
-    externalIdToNodeMapping: Map<CogniteExternalId, CogniteInternalId>,
-    edgeMap: Map<CogniteExternalId, FdmCadEdge>
-  ): Promise<ThreeDModelMappings> {
-    const externalIds = [...externalIdToNodeMapping.keys()];
-    const nodeIds = [...externalIdToNodeMapping.values()];
-
-    const nodes = await fetchNodesForNodeIds(
-      modelRevisionId.modelId,
-      modelRevisionId.revisionId,
-      nodeIds,
-      this._cogniteClient
-    );
-
-    const externalIdToNode = new Map<CogniteExternalId, Node3D>(
-      externalIds.map((externalId, ind) => [externalId, nodes[ind]])
-    );
-
-    return {
-      ...modelRevisionId,
-      mappings: externalIdToNode
-    };
-  }
-
   public async getClosestParentFdmData(searchTreeIndex: number): Promise<Fdm3dNodeData[]> {
     const cachedFdmData = this._treeIndexToFdmData.get(searchTreeIndex);
 
@@ -231,13 +206,6 @@ export class RevisionFdmNodeCache {
 
   public getAllEdges(): FdmEdgeWithNode[] {
     return [...this._treeIndexToFdmEdges.values()].flat();
-  }
-
-  getIds(): ModelRevisionId {
-    return {
-      modelId: this._modelId,
-      revisionId: this._revisionId
-    };
   }
 }
 
