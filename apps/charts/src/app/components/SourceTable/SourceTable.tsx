@@ -115,6 +115,7 @@ const SourceTable = ({
                       ) as ChartTimeSeries[]
                     }
                     summaries={summaries}
+                    onRemoveSourceClick={onRemoveSourceClick}
                   />
                 ) : (
                   <>
