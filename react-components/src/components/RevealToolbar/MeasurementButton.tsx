@@ -4,7 +4,7 @@
 
 import { useMemo, type ReactElement, useState, useEffect } from 'react';
 import { useReveal } from '../RevealContainer/RevealContext';
-import { Button } from '@cognite/cogs.js';
+import { Button, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import { MeasurementTool } from '@cognite/reveal/tools';
 import { FEET_TO_INCHES, METERS_TO_FEET } from '../../utilities/constants';
 
@@ -56,14 +56,16 @@ export const MeasurementButton = (): ReactElement => {
   }, [measurementEnabled]);
 
   return (
-    <Button
-      type="ghost"
-      icon="Ruler"
-      toggled={measurementEnabled}
-      aria-label="Make measurements"
-      onClick={() => {
-        handleMeasurement(!measurementEnabled);
-      }}
-    />
+    <CogsTooltip content={'Distance measuring tool'} placement="right" appendTo={document.body}>
+      <Button
+        type="ghost"
+        icon="Ruler"
+        toggled={measurementEnabled}
+        aria-label="Make measurements"
+        onClick={() => {
+          handleMeasurement(!measurementEnabled);
+        }}
+      />
+    </CogsTooltip>
   );
 };

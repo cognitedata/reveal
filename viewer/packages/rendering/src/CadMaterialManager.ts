@@ -267,6 +267,7 @@ export class CadMaterialManager {
     for (const [_, wrapper] of this.materialsMap) {
       wrapper.nodeAppearanceTextureBuilder.dispose();
       wrapper.nodeTransformTextureBuilder.dispose();
+      wrapper.nodeAppearanceProvider.dispose();
     }
   }
 

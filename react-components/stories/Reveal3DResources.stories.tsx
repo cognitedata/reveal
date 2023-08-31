@@ -51,7 +51,14 @@ export const Main: Story = {
             placement: 'topRight'
           }
         }}>
-        <RevealResourcesFitCameraOnLoad resources={resources} />
+        <RevealResourcesFitCameraOnLoad
+          resources={resources}
+          onResourceLoadError={(resource, error) => {
+            console.log(
+              `Failed to load resource ${JSON.stringify(resource)}: ${JSON.stringify(error)}`
+            );
+          }}
+        />
       </RevealContainer>
     );
   }

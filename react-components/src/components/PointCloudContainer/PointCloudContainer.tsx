@@ -29,13 +29,15 @@ export type CognitePointCloudModelProps = {
   styling?: PointCloudModelStyling;
   transform?: Matrix4;
   onLoad?: (model: CognitePointCloudModel) => void;
+  onLoadError?: (options: AddModelOptions, error: any) => void;
 };
 
 export function PointCloudContainer({
   addModelOptions,
   styling,
   transform,
-  onLoad
+  onLoad,
+  onLoadError
 }: CognitePointCloudModelProps): ReactElement {
   const cachedViewerRef = useRevealKeepAlive();
   const [model, setModel] = useState<CognitePointCloudModel>();
@@ -43,7 +45,12 @@ export function PointCloudContainer({
   const { modelId, revisionId } = addModelOptions;
 
   useEffect(() => {
-    addModel(modelId, revisionId, transform).catch(console.error);
+    addModel(modelId, revisionId, transform)
+      .then((pointCloudModel) => onLoad?.(pointCloudModel))
+      .catch((error) => {
+        const errorHandler = onLoadError ?? defaultLoadErrorHandler;
+        errorHandler(addModelOptions, error);
+      });
   }, [modelId, revisionId]);
 
   useEffect(() => {
@@ -63,14 +70,18 @@ export function PointCloudContainer({
 
   return <></>;
 
-  async function addModel(modelId: number, revisionId: number, transform?: Matrix4): Promise<void> {
+  async function addModel(
+    modelId: number,
+    revisionId: number,
+    transform?: Matrix4
+  ): Promise<CognitePointCloudModel> {
     const pointCloudModel = await getOrAddModel();
 
     if (transform !== undefined) {
       pointCloudModel.setModelTransformation(transform);
     }
     setModel(pointCloudModel);
-    onLoad?.(pointCloudModel);
+    return pointCloudModel;
 
     async function getOrAddModel(): Promise<CognitePointCloudModel> {
       const viewerModel = viewer.models.find(
@@ -118,4 +129,10 @@ function applyStyling(model: CognitePointCloudModel, styling: PointCloudModelSty
       }
     }
   }
+}
+
+function defaultLoadErrorHandler(addOptions: AddModelOptions, error: any): void {
+  console.warn(
+    `Failed to load (${addOptions.modelId}, ${addOptions.revisionId}): ${JSON.stringify(error)}`
+  );
 }

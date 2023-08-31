@@ -3,7 +3,7 @@
  */
 
 import { type ReactElement } from 'react';
-import { Button, Dropdown, Menu } from '@cognite/cogs.js';
+import { Button, Dropdown, Menu, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import { type QualitySettings } from './SettingsContainer/types';
 import { HighFidelityContainer } from './SettingsContainer/HighFidelityContainer';
 
@@ -19,19 +19,21 @@ export const SettingsButton = ({
   highQualitySettings
 }: CustomSettingsProps): ReactElement => {
   return (
-    <Dropdown
-      appendTo={document.body}
-      content={
-        <Menu>
-          <HighFidelityContainer
-            lowQualitySettings={lowQualitySettings}
-            highQualitySettings={highQualitySettings}
-          />
-          {customSettingsContent ?? <></>}
-        </Menu>
-      }
-      placement="auto">
-      <Button icon="Settings" type="ghost" aria-label="Show settings" />
-    </Dropdown>
+    <CogsTooltip content={'Settings'} placement="right" appendTo={document.body}>
+      <Dropdown
+        appendTo={document.body}
+        content={
+          <Menu>
+            <HighFidelityContainer
+              lowQualitySettings={lowQualitySettings}
+              highQualitySettings={highQualitySettings}
+            />
+            {customSettingsContent ?? <></>}
+          </Menu>
+        }
+        placement="auto">
+        <Button icon="Settings" type="ghost" aria-label="Show settings" />
+      </Dropdown>
+    </CogsTooltip>
   );
 };

@@ -59,7 +59,7 @@ async function applyStyling(
   model: CogniteCadModel,
   stylingGroups: Array<NodeStylingGroup | TreeIndexStylingGroup>
 ): Promise<void> {
-  const firstChangeIndex = getFirstChangeIndex();
+  const firstChangeIndex = await getFirstChangeIndex();
 
   for (let i = firstChangeIndex; i < model.styledNodeCollections.length; i++) {
     const viewerStyledNodeCollection = model.styledNodeCollections[i];
@@ -83,14 +83,14 @@ async function applyStyling(
     }
   }
 
-  function getFirstChangeIndex(): number {
+  async function getFirstChangeIndex(): Promise<number> {
     for (let i = 0; i < model.styledNodeCollections.length; i++) {
       const stylingGroup = stylingGroups[i];
       const viewerStyledNodeCollection = model.styledNodeCollections[i];
 
-      const areEqual = isEqualStylingGroupAndCollection(stylingGroup, viewerStyledNodeCollection);
+      const isUpToDate = await isEqualOrUpdated(stylingGroup, viewerStyledNodeCollection);
 
-      if (!areEqual) {
+      if (!isUpToDate) {
         return i;
       }
     }
@@ -99,32 +99,54 @@ async function applyStyling(
   }
 }
 
-function isEqualStylingGroupAndCollection(
+async function isEqualOrUpdated(
   group: NodeStylingGroup | TreeIndexStylingGroup,
   collection: {
     nodeCollection: NodeCollection;
     appearance: NodeAppearance;
   }
-): boolean {
+): Promise<boolean> {
   if (group?.style === undefined) return false;
 
   const isEqualGroupStyle = isEqualStyle(collection.appearance, group.style);
 
-  if (collection.nodeCollection instanceof TreeIndexNodeCollection && 'treeIndices' in group) {
-    const compareCollection = new TreeIndexNodeCollection(group.treeIndices);
-    const isEqualContent = isEqualTreeIndex(collection.nodeCollection, compareCollection);
+  if (!isEqualGroupStyle) return false;
 
-    return isEqualGroupStyle && isEqualContent;
-  }
+  updateIfTreeIndexCollection();
 
-  if (collection.nodeCollection instanceof NodeIdNodeCollection && 'nodeIds' in group) {
+  await updateIfNodeIdCollection();
+
+  return true;
+
+  async function updateIfNodeIdCollection(): Promise<void> {
+    if (!(collection.nodeCollection instanceof NodeIdNodeCollection) || !('nodeIds' in group)) {
+      return;
+    }
     const collectionNodeIds = collection.nodeCollection.serialize().state.nodeIds as number[];
     const isEqualContent = isEqual(collectionNodeIds, group.nodeIds);
 
-    return isEqualGroupStyle && isEqualContent;
+    if (!isEqualContent) {
+      return;
+    }
+
+    await collection.nodeCollection.executeFilter(group.nodeIds);
   }
 
-  return false;
+  function updateIfTreeIndexCollection(): void {
+    if (
+      !(collection.nodeCollection instanceof TreeIndexNodeCollection) ||
+      !('treeIndices' in group)
+    ) {
+      return;
+    }
+    const compareCollection = new TreeIndexNodeCollection(group.treeIndices);
+    const isEqualContent = isEqualTreeIndex(collection.nodeCollection, compareCollection);
+
+    if (isEqualContent) {
+      return;
+    }
+    collection.nodeCollection.updateSet(group.treeIndices);
+  }
 }
 
 function isEqualTreeIndex(
