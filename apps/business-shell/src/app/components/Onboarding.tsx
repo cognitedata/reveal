@@ -87,11 +87,13 @@ export const Onboarding = () => {
     if (reason === 'closeClick')
       track('BusinessShell.Onboarding.Modal', {
         action: ONBOARDING_MODAL_ACTIONS.CLOSED,
+        step: `carousel-step-1`,
       });
 
     if (reason === 'cancelClick')
       track('BusinessShell.Onboarding.Modal', {
         action: ONBOARDING_MODAL_ACTIONS.CANCELLED,
+        step: `carousel-step-1`,
       });
 
     if (reason === 'backdropClick') return;
@@ -100,6 +102,7 @@ export const Onboarding = () => {
   const onOk = () => {
     track('BusinessShell.Onboarding.Modal', {
       action: ONBOARDING_MODAL_ACTIONS.SUCCESS,
+      step: `carousel-step-1`,
     });
     handleState({ open: true, steps, onTrackEvent });
     setOnboardingModalPopup(false);
