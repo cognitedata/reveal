@@ -370,6 +370,7 @@
     "@storybook/addon-actions": "7.0.27",
     "@storybook/addon-essentials": "7.0.27",
     "@storybook/addon-mdx-gfm": "7.0.27",
+    "@storybook/client-api":"^7.4.0",
     "@storybook/addons": "^7.0.23",
     "@storybook/core-server": "7.0.27",
     "@storybook/jest": "^0.1.0",
