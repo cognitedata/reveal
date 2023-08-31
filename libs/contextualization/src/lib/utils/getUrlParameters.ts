@@ -1,7 +1,8 @@
 export const getUrlParameters = () => {
-  const currentURL = window.location.href;
-  const searchParams = new URLSearchParams(currentURL.split('?')[1]);
-  const dataModel = searchParams.get('dataModel') || '';
+  const searchParams = new URLSearchParams(window.location.search);
+  const cluster = searchParams.get('cluster') || '';
+  const env = searchParams.get('env') || '';
+  const dataModelExternalId = searchParams.get('dataModelExternalId') || '';
   const space = searchParams.get('space') || '';
   const versionNumber = searchParams.get('versionNumber') || '';
   const type = searchParams.get('type') || '';
@@ -10,7 +11,9 @@ export const getUrlParameters = () => {
   const advancedJoinExternalId = searchParams.get('AdvancedJoinId') || '';
 
   return {
-    dataModel,
+    cluster,
+    env,
+    dataModelExternalId,
     space,
     versionNumber,
     type,

@@ -1,12 +1,12 @@
 import { useParams } from 'react-router-dom';
 
 import { View } from '../../types';
-import { extractPropertiesFromURL } from '../../utils/extractPropertiesFromURL';
+import { getUrlParameters } from '../../utils';
 
 import { useRetrieveViews } from './useRetrieveViews';
 
 export const useCurrentView = () => {
-  const { type, space: querySpace } = extractPropertiesFromURL();
+  const { type, space: querySpace } = getUrlParameters();
   const { space: pathSpace = '' } = useParams();
 
   const space = pathSpace || querySpace || '';

@@ -13,11 +13,24 @@ export const useImprovementSuggestions = (jobId: string) => {
   const { data: { improvementSuggestions: suggestions } = {} } =
     suggestImprovementsJobResults;
 
+  const items = suggestions?.map(
+    ({
+      space,
+      originExternalId,
+    }: {
+      space: string;
+      originExternalId: string;
+    }) => ({
+      space: space,
+      externalId: originExternalId,
+    })
+  );
+
   const { data } = useRetrieveInstances(
     view?.space,
     view?.externalId,
     view?.version,
-    suggestions
+    items
   );
 
   const originInstances = convertToInternalModelInstance(

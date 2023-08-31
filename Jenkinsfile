@@ -129,7 +129,7 @@ static final Map<String, String> VERSIONING_STRATEGY = [
   'transformations': 'multi-branch',
   'copilot': 'single-branch',
   'iot-hub': 'single-branch',
-  'interactive-diagrams': 'multi-branch',
+  'interactive-diagrams': 'single-branch',
   'cdf-document-search': 'single-branch',
   'extraction-pipelines': 'single-branch',
   'extractor-downloads': 'single-branch',
@@ -430,7 +430,7 @@ pods {
           }
         }
       }
-      
+
 
      /**
       ---------------------------------------------------

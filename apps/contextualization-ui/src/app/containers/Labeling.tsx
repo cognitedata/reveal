@@ -44,12 +44,14 @@ export const Labeling = ({
     originInstances,
   } = useImprovementSuggestions(jobId);
 
-  const createJoins = useCreateAdvancedJoinMatchesWrapper();
+  const createMatches = useCreateAdvancedJoinMatchesWrapper(
+    advancedJoinExternalId
+  );
 
-  const matchInputInstances = useGetMatchInputInstances();
+  const matchInputInstances = useGetMatchInputInstances(manualMatches);
 
   const handleWriteMatchers = async () => {
-    createJoins(manualMatches);
+    createMatches(manualMatches);
 
     // other side effects
     await new Promise((resolve) => setTimeout(resolve, 100));

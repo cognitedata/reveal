@@ -1,15 +1,16 @@
-import { InternalModelInstance } from '../types';
+import { InternalModelInstance, MatchedInstance } from '../types';
 
 export const getMatchInputInstantProperties = (
-  linkedExternalId: string | undefined,
-  matchInputInstances: InternalModelInstance[]
+  matchInputInstances: InternalModelInstance[],
+  matchedInstance?: MatchedInstance
 ) => {
-  if (!linkedExternalId) {
+  if (!matchedInstance) {
     return {};
   }
 
   const foundMatchInputInstance = matchInputInstances.find(
-    (matchInputInstance) => matchInputInstance.externalId === linkedExternalId
+    (matchInputInstance) =>
+      matchInputInstance.externalId === matchedInstance.value
   );
 
   if (!foundMatchInputInstance) {

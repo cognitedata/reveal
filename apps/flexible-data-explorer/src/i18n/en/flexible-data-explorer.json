@@ -16,6 +16,7 @@
   "SEARCH_PLACEHOLDER": "Search...",
   "SEARCH_BAR_SEARCH_FOR": "Search for \"{{query}}\"",
   "SEARCH_BAR_SEARCH_FOR_IN_TYPE": "Search for \"{{query}}\" in {{type}}",
+  "SEARCH_BAR_HINT_TEXT": "Press TAB to search in \"{{category}}\"",
   "SEARCH_BAR_LIST_ALL": "List all {{type}}",
   "SEARCH_BAR_SEARCH_IN_AI_FOR": "Ask CogPilot about \"{{query}}\"",
   "SEARCH_BAR_EXPERIMENTAL": "EXPERIMENTAL",
@@ -23,6 +24,8 @@
   "SEARCH_BAR_SWITCH_3D_VIEW": "3D view",
 
   "SEARCH_RESULTS_HEADER": "Search results from data in {{site}}",
+  "SEARCH_RESULTS_EMPTY_TITLE": "No results",
+  "SEARCH_RESULTS_EMPTY_BODY": "We could not find any results for your query",
   "SEARCH_CATEGORIES_HEADER": "Categories",
   "SEARCH_CATEGORIES_ALL_OPTION": "All",
 

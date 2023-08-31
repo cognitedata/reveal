@@ -7,6 +7,7 @@ import { DataModelV2 } from '../services/types';
 export enum ParamKeys {
   ExpandedId = 'expandedId',
   SearchQuery = 'searchQuery',
+  SearchCategory = 'searchCategory',
   Filters = 'filters',
   DataModels = 'models',
   AISearch = 'aiSearch',
@@ -55,6 +56,32 @@ export const useSearchQueryParams = (): [string, (query?: string) => void] => {
   );
 
   return [searchParams.get(ParamKeys.SearchQuery) || '', setSearchQueryParams];
+};
+
+export const useSearchCategoryParams = (): [
+  string | undefined,
+  (category?: string) => void
+] => {
+  const [categoryParam, setCategoryParam] = useSearchParams();
+
+  const setSearchQueryParams = useCallback(
+    (category?: string) => {
+      setCategoryParam((currentParams) => {
+        if (category === undefined) {
+          currentParams.delete(ParamKeys.SearchCategory);
+        } else {
+          currentParams.set(ParamKeys.SearchCategory, category);
+        }
+        return currentParams;
+      });
+    },
+    [setCategoryParam]
+  );
+
+  return [
+    categoryParam.get(ParamKeys.SearchCategory) || undefined,
+    setSearchQueryParams,
+  ];
 };
 
 export const useViewModeParams = (): [
