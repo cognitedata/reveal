@@ -362,7 +362,7 @@ const ReactFlowNodeEditor = ({
             ) : null}
           </>
         )}
-        {contextMenuPosition && (
+        {contextMenuPosition && sourceType !== 'scheduledCalculation' && (
           <ContextMenu
             position={{
               x: contextMenuPosition.clientX,
