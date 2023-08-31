@@ -10,13 +10,16 @@ import ConnectedLinkedAssetsSidebar from '@charts-app/containers/LinkedAssetsSid
 import { useAsset } from '@charts-app/hooks/cdf-assets';
 import { useTranslations } from '@charts-app/hooks/translations';
 import { calculationSummaries } from '@charts-app/models/calculation-results/selectors';
+import chartAtom from '@charts-app/models/chart/atom';
 import { useChartSourcesValue } from '@charts-app/models/chart/selectors';
+import { ChartSource } from '@charts-app/models/chart/types';
+import { removeSource } from '@charts-app/models/chart/updates';
 import { timeseriesSummaries } from '@charts-app/models/timeseries-results/selectors';
 import { useInitializedChart } from '@charts-app/pages/ChartViewPage/hooks';
 import { trackUsage } from '@charts-app/services/metrics';
 import { createInternalLink } from '@charts-app/utils/link';
 import Layers from '@charts-app/utils/z-index';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import styled from 'styled-components/macro';
 
 import { Body, Button, Loader, Heading, Icon } from '@cognite/cogs.js';
@@ -29,6 +32,10 @@ const FileViewPage = () => {
     assetId: string;
   }>();
   const { data: chart } = useInitializedChart(chartId);
+  const [, setChart] = useRecoilState(chartAtom);
+
+  const handleRemoveSourceClick = (source: ChartSource) => () =>
+    setChart((oldChart) => removeSource(oldChart!, source.id));
 
   const sources = useChartSourcesValue();
 
@@ -151,6 +158,7 @@ const FileViewPage = () => {
               headerTranslations={sourceTableHeaderTranslations}
               sources={sources}
               summaries={summaries}
+              onRemoveSourceClick={handleRemoveSourceClick}
             />
           </div>
         </SplitPaneLayout>
