@@ -2104,18 +2104,19 @@
     use-event-callback "^0.1.0"
     use-key-hook "^1.3.0"
 
-"@cognite/reveal-react-components@0.13.0":
-  version "0.13.0"
-  resolved "https://registry.yarnpkg.com/@cognite/reveal-react-components/-/reveal-react-components-0.13.0.tgz#8687eb24d745ef00ccb0fd8cad21d750bf8c42bb"
-  integrity sha512-X7PaCmuMAijWYANBX4kF+QJo6sfQBq+9mDIgoA3JNdihCddd84KmQQVU4DDqxBcWYSQfZfP47+Vp4TaB+C9QhA==
+"@cognite/reveal-react-components@0.13.2":
+  version "0.13.2"
+  resolved "https://registry.yarnpkg.com/@cognite/reveal-react-components/-/reveal-react-components-0.13.2.tgz#f13e9e07e3d10b776ba13aa51582e4fc5a9dd838"
+  integrity sha512-VNuCSic1yurTgEKUFAaWfUY/H6m9EwM1PBpiVPUTHOXIPNu3YPtzQTsG+TQxzQ2EHFJ4Devqn+JDmRkrp8MZ8Q==
   dependencies:
     "@tanstack/react-query" "^4.29.19"
+    assert "^2.0.0"
     lodash "^4.17.21"
 
-"@cognite/reveal@4.4.1":
-  version "4.4.1"
-  resolved "https://registry.yarnpkg.com/@cognite/reveal/-/reveal-4.4.1.tgz#21eaccc2e249c325e52374cec462ec87677668f6"
-  integrity sha512-m1tLjbadQK5cYI6fJjvEfT9DPeVA1ZkEtSl/3jBC5q0qSRwS1QH9aX3uvNxMHj9ormhxGXWcsV3lFQLYOaY7Bw==
+"@cognite/reveal@4.4.2":
+  version "4.4.2"
+  resolved "https://registry.yarnpkg.com/@cognite/reveal/-/reveal-4.4.2.tgz#312e19b168c84273a277053552cd8784ce3e7a75"
+  integrity sha512-5h3EU1p7lzwnV2QXug4f+PxEhizLwLPZcyZB0KUk+9yA3gO5lSKpfmeae3M4GZS6IHrhyNMMoMa7inFveo3rLg==
   dependencies:
     "@tweenjs/tween.js" "19.0.0"
     assert "2.0.0"
