@@ -6,7 +6,7 @@ import { createCdfLink } from '@simint-app/utils/createCdfLink';
 import format from 'date-fns/format';
 import styled from 'styled-components/macro';
 
-import { Illustrations } from '@cognite/cogs.js';
+import { Chip, Illustrations, Tooltip } from '@cognite/cogs.js';
 import type { ModelFile } from '@cognite/simconfig-api-sdk/rtk';
 
 interface ModelListProps {
@@ -65,6 +65,20 @@ export function ModelList({
             <div className="model">
               <div className="metadata">
                 <div className="name">{modelFile.metadata.modelName}</div>
+                <div className="name">
+                  {modelFile.metadata.modelName}
+                  {modelFile.metadata.errorMessage && (
+                    <Tooltip content={modelFile.metadata.errorMessage}>
+                      <Chip
+                        css={{ marginLeft: '12px' }}
+                        icon="Warning"
+                        size="x-small"
+                        type="warning"
+                        hideTooltip
+                      />
+                    </Tooltip>
+                  )}
+                </div>
                 <div className="version">
                   Version {modelFile.metadata.version}
                 </div>

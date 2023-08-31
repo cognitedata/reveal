@@ -117,7 +117,26 @@ export function ModelVersionList({
                       modelFile.metadata.description || '(no description)'
                     )}
                     {modelFile.metadata.errorMessage && (
-                      <Tooltip content={modelFile.metadata.errorMessage}>
+                      <Tooltip
+                        position="right"
+                        content={
+                          <div style={{ padding: 10 }}>
+                            <b>{modelFile.metadata.errorMessage}</b>
+                            {modelFile?.parsingLogs?.length && (
+                              <div>
+                                <br />
+                                <ul>
+                                  {modelFile?.parsingLogs
+                                    ?.filter(({ level }) => level === 'ERROR')
+                                    ?.map(({ message }) => (
+                                      <li key={message}>{message}</li>
+                                    ))}
+                                </ul>
+                              </div>
+                            )}
+                          </div>
+                        }
+                      >
                         <Chip
                           css={{ marginLeft: '12px' }}
                           icon="Warning"
