@@ -98,8 +98,8 @@ export class FdmNodeCache {
       relevantFdmKeySet
     );
 
-    const mappings = new Map(
-      relevantCachedEdgeData.map((data) => [data.edge.startNode.externalId, data.node])
+    const mappings = createMapWithAccumulatedValues(
+      relevantCachedEdgeData.map(data => [data.edge.startNode.externalId, data.node])
     );
 
     return {
@@ -140,12 +140,12 @@ export class FdmNodeCache {
     relevantFdmKeySet: Set<FdmKey>
   ): ThreeDModelMappings {
     if (edges === undefined || edges.length === 0)
-      return { modelId, revisionId, mappings: new Map<CogniteExternalId, Node3D>() };
+      return { modelId, revisionId, mappings: new Map<CogniteExternalId, Node3D[]>() };
 
     const relevantEdges = intersectWithStartNodeIdSet(edges, relevantFdmKeySet);
 
-    const externalIdToNodeMap = new Map<CogniteExternalId, Node3D>(
-      relevantEdges.map((edge) => [edge.edge.startNode.externalId, edge.node])
+    const externalIdToNodeMap = createMapWithAccumulatedValues(
+      relevantEdges.map(edge => [edge.edge.startNode.externalId, edge.node])
     );
 
     return {
@@ -372,4 +372,19 @@ function intersectWithStartNodeIdSet(
     const fdmKey = createFdmKey(edgeData.edge.startNode.space, edgeData.edge.startNode.externalId);
     return relevantFdmKeySet.has(fdmKey);
   });
+}
+
+export function createMapWithAccumulatedValues<K, V>(associations: [K, V][]): Map<K, V[]> {
+  const map = new Map();
+
+  associations.forEach(([key, value]) => {
+    const prevVal = map.get(key);
+    if (prevVal === undefined) {
+      map.set(key, [value]);
+    } else {
+      prevVal.push(value);
+    }
+  });
+
+  return map;
 }

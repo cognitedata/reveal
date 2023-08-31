@@ -28,6 +28,7 @@ import { max } from 'lodash';
 
 import assert from 'assert';
 import { type ThreeDModelMappings } from '../../hooks/types';
+import { createMapWithAccumulatedValues } from './FdmNodeCache';
 
 export class RevisionFdmNodeCache {
   private readonly _cogniteClient: CogniteClient;
