@@ -206,14 +206,16 @@ function mergeMapsWithDeduplicatedNodes(
   targetMap: Map<string, Map<NodeId, Node3D>>,
   addedMap: Map<string, Node3D[]>
 ): Map<string, Map<NodeId, Node3D>> {
-  addedMap.forEach((nodesToAdd, fdmKey) => {
-    const targetSet = targetMap.get(fdmKey);
+
+  return [...addedMap.entries()].reduce((map, [fdmKey, nodesToAdd]) => {
+    const targetSet = map.get(fdmKey);
+
     if (targetSet !== undefined) {
       nodesToAdd.forEach(node => targetSet.set(node.id, node));
     } else {
-      targetMap.set(fdmKey, new Map(nodesToAdd.map(node => [node.id, node])));
+      map.set(fdmKey, new Map(nodesToAdd.map(node => [node.id, node])));
     }
-  });
 
-  return targetMap;
+    return map;
+  }, targetMap);
 }
