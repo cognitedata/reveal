@@ -2,24 +2,12 @@
  * Copyright 2023 Cognite AS
  */
 
-import {
-  type CogniteInternalId,
-  type CogniteClient,
-  type Node3D,
-  type CogniteExternalId
-} from '@cognite/sdk';
+import { type CogniteClient, type Node3D } from '@cognite/sdk';
 import { type FdmSDK } from '../../utilities/FdmSDK';
-import {
-  type TreeIndex,
-  type Fdm3dNodeData,
-  type FdmEdgeWithNode,
-  type FdmCadEdge,
-  type ModelRevisionId
-} from './types';
+import { type TreeIndex, type Fdm3dNodeData, type FdmEdgeWithNode, type FdmCadEdge } from './types';
 
 import {
   fetchAncestorNodesForTreeIndex,
-  fetchNodesForNodeIds,
   getMappingEdgesForNodeIds,
   inspectNodes
 } from './requests';
@@ -27,8 +15,6 @@ import {
 import { max } from 'lodash';
 
 import assert from 'assert';
-import { type ThreeDModelMappings } from '../../hooks/types';
-import { createMapWithAccumulatedValues } from './FdmNodeCache';
 
 export class RevisionFdmNodeCache {
   private readonly _cogniteClient: CogniteClient;

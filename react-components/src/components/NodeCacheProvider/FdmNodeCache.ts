@@ -99,7 +99,7 @@ export class FdmNodeCache {
     );
 
     const mappings = createMapWithAccumulatedValues(
-      relevantCachedEdgeData.map(data => [data.edge.startNode.externalId, data.node])
+      relevantCachedEdgeData.map((data) => [data.edge.startNode.externalId, data.node])
     );
 
     return {
@@ -145,7 +145,7 @@ export class FdmNodeCache {
     const relevantEdges = intersectWithStartNodeIdSet(edges, relevantFdmKeySet);
 
     const externalIdToNodeMap = createMapWithAccumulatedValues(
-      relevantEdges.map(edge => [edge.edge.startNode.externalId, edge.node])
+      relevantEdges.map((edge) => [edge.edge.startNode.externalId, edge.node])
     );
 
     return {
@@ -374,18 +374,16 @@ function intersectWithStartNodeIdSet(
   });
 }
 
-export function createMapWithAccumulatedValues<K, V>(associations: [K, V][]): Map<K, V[]> {
-  return associations.reduce(
-    (map, [key, value]) => {
-      const prevList = map.get(key);
+function createMapWithAccumulatedValues<K, V>(associations: Array<[K, V]>): Map<K, V[]> {
+  return associations.reduce((map, [key, value]) => {
+    const prevList = map.get(key);
 
-      if (prevList === undefined) {
-        map.set(key, [value]);
-      } else {
-        prevList.push(value);
-      }
+    if (prevList === undefined) {
+      map.set(key, [value]);
+    } else {
+      prevList.push(value);
+    }
 
-      return map;
-    },
-    new Map<K, V[]>);
+    return map;
+  }, new Map<K, V[]>());
 }

@@ -14,7 +14,11 @@ import {
   useMappedEdgesForRevisions
 } from '../components/NodeCacheProvider/NodeCacheProvider';
 import { useMemo } from 'react';
-import { NodeId, type FdmEdgeWithNode, type TreeIndex } from '../components/NodeCacheProvider/types';
+import {
+  type NodeId,
+  type FdmEdgeWithNode,
+  type TreeIndex
+} from '../components/NodeCacheProvider/types';
 import {
   type NodeStylingGroup,
   type TreeIndexStylingGroup
@@ -171,10 +175,12 @@ function calculateCadModelStyling(
       const modelMappedNodeLists = resourcesGroup.fdmAssetExternalIds
         .map((uniqueId) => modelMappings.get(uniqueId.externalId))
         .filter((nodeMap): nodeMap is Map<NodeId, Node3D> => nodeMap !== undefined)
-        .map(nodeMap => [...nodeMap.values()]);
+        .map((nodeMap) => [...nodeMap.values()]);
       return {
         style: resourcesGroup.style.cad,
-        treeIndices: modelMappedNodeLists.flatMap((nodes) => nodes.flatMap(n => getNodeSubtreeIndices(n)))
+        treeIndices: modelMappedNodeLists.flatMap((nodes) =>
+          nodes.flatMap((n) => getNodeSubtreeIndices(n))
+        )
       };
     })
     .filter((group) => group.treeIndices.length > 0);
@@ -198,7 +204,11 @@ function getModelMappings(
         mergeMapsWithDeduplicatedNodes(acc.mappings, mapping.mappings);
         return acc;
       },
-      { modelId: model.modelId, revisionId: model.revisionId, mappings: new Map<string, Map<NodeId, Node3D>>() }
+      {
+        modelId: model.modelId,
+        revisionId: model.revisionId,
+        mappings: new Map<string, Map<NodeId, Node3D>>()
+      }
     ).mappings;
 }
 
@@ -206,14 +216,13 @@ function mergeMapsWithDeduplicatedNodes(
   targetMap: Map<string, Map<NodeId, Node3D>>,
   addedMap: Map<string, Node3D[]>
 ): Map<string, Map<NodeId, Node3D>> {
-
   return [...addedMap.entries()].reduce((map, [fdmKey, nodesToAdd]) => {
     const targetSet = map.get(fdmKey);
 
     if (targetSet !== undefined) {
-      nodesToAdd.forEach(node => targetSet.set(node.id, node));
+      nodesToAdd.forEach((node) => targetSet.set(node.id, node));
     } else {
-      map.set(fdmKey, new Map(nodesToAdd.map(node => [node.id, node])));
+      map.set(fdmKey, new Map(nodesToAdd.map((node) => [node.id, node])));
     }
 
     return map;
