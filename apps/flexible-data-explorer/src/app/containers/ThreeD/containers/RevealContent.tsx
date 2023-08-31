@@ -8,9 +8,12 @@ import {
   useCameraNavigation,
   useClickedNodeData,
   Image360Details,
+  FdmAssetStylingGroup,
 } from '@cognite/reveal-react-components';
 
 import { defaultResourceStyling } from '../../../constants/threeD';
+import { useNavigateOnClick } from '../hooks/useNavigateOnClick';
+import { useResetNodeDataOnNavigate } from '../hooks/useResetNodeDataOnNavigate';
 
 import { PreviewCard } from './PreviewCard';
 import { ToolBarContainer } from './ToolBarContainer';
@@ -21,7 +24,7 @@ interface Props {
   instanceSpace?: string;
   fitCamera?: 'models' | 'instance';
   hideToolbar?: boolean;
-  nonInteractible?: boolean;
+  focusNode?: boolean;
 }
 export const RevealContent = ({
   modelIdentifiers,
@@ -29,7 +32,7 @@ export const RevealContent = ({
   instanceSpace,
   fitCamera,
   hideToolbar,
-  nonInteractible,
+  focusNode,
 }: Props) => {
   const cameraNavigation = useCameraNavigation();
   const clickedNodeData = useClickedNodeData();
@@ -47,21 +50,17 @@ export const RevealContent = ({
       : defaultResourceStyling;
   }, [hasOriginalCadColors]);
 
-  const highlightingInstance =
-    nonInteractible === true ? undefined : clickedNodeData?.fdmNode;
+  const clickedNodeDataDisabledOnFocus =
+    focusNode === true ? undefined : clickedNodeData;
 
-  const instanceStyling = useMemo(() => {
-    if (highlightingInstance === undefined) {
-      return [];
-    } else {
-      return [
-        {
-          fdmAssetExternalIds: [highlightingInstance],
-          style: { cad: DefaultNodeAppearance.Highlighted },
-        },
-      ];
-    }
-  }, [highlightingInstance]);
+  useNavigateOnClick(clickedNodeDataDisabledOnFocus);
+  const previewCardNodeData = useResetNodeDataOnNavigate(
+    clickedNodeDataDisabledOnFocus,
+    externalId,
+    instanceSpace
+  );
+
+  const instanceStyling = computeInstanceStyling(externalId, instanceSpace);
 
   const handleResourcesAdded = useCallback(() => {
     setResourcesMounted(true);
@@ -95,7 +94,23 @@ export const RevealContent = ({
         onResourcesAdded={handleResourcesAdded}
       />
       {resourceMounted && <Image360Details />}
-      {!nonInteractible && <PreviewCard nodeData={clickedNodeData} />}
+      {!focusNode && <PreviewCard nodeData={previewCardNodeData} />}
     </>
   );
 };
+
+function computeInstanceStyling(
+  externalId: string | undefined,
+  space: string | undefined
+): FdmAssetStylingGroup[] | undefined {
+  if (externalId !== undefined && space !== undefined) {
+    return [
+      {
+        fdmAssetExternalIds: [{ externalId, space }],
+        style: { cad: DefaultNodeAppearance.Highlighted },
+      },
+    ];
+  }
+
+  return [];
+}

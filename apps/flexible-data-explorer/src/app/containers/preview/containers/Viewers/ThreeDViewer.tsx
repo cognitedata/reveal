@@ -54,7 +54,7 @@ export const ThreeDViewer: React.FC<Props> = ({ instance, dataModel }) => {
           instanceSpace={instance.instanceSpace}
           fitCamera="instance"
           hideToolbar
-          nonInteractible
+          focusNode
         />
       </RevealContainer>
     </PreviewContainer>
