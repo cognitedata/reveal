@@ -52,7 +52,11 @@ const steps: InternalStep[] = [
     target: '.step4',
   },
 ];
-const WalkthroughInner = () => {
+const WalkthroughInner = ({
+  isHotspotEnabled = false,
+}: {
+  isHotspotEnabled?: boolean;
+}) => {
   const [_, setHelpCenterVisibility] = useState(false);
 
   const { handleState } = useOrientation();
@@ -97,6 +101,7 @@ const WalkthroughInner = () => {
             handleState((prev) => ({
               ...prev,
               open: true,
+              enableHotspot: isHotspotEnabled,
               steps,
             }))
           }
@@ -126,11 +131,23 @@ const WalkthroughInner = () => {
   );
 };
 
-export const Orientation = () => {
+const BaseOrientation: React.FC<React.PropsWithChildren> = ({ children }) => {
   return (
     <OrientationProvider>
       <WalkthroughInternal />
-      <WalkthroughInner />
+      {children}
     </OrientationProvider>
   );
 };
+
+export const Orientation = () => (
+  <BaseOrientation>
+    <WalkthroughInner />
+  </BaseOrientation>
+);
+
+export const OrientationWithHotspots = () => (
+  <BaseOrientation>
+    <WalkthroughInner isHotspotEnabled />
+  </BaseOrientation>
+);

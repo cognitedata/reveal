@@ -45,6 +45,7 @@ export const OnboardingModal = ({
     if (onTrackEvent && visible) {
       onTrackEvent('Modal', {
         action: ONBOARDING_MODAL_ACTIONS.STARTED,
+        step: `carousel-step-1`,
       });
     }
   }, [onTrackEvent, visible]);
@@ -65,7 +66,7 @@ export const OnboardingModal = ({
             onStepChange={(currentStep) =>
               onTrackEvent?.('Modal', {
                 action: 'Carousel',
-                'Current Step': `${currentStep + 1}`,
+                step: `carousel-step-${currentStep + 1}`,
               })
             }
             images={images}
