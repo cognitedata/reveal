@@ -228,17 +228,14 @@
     "routes": [{ "route": "/:tenantName/transformations" }]
   },
   {
-    "key": "cdf-ui-entity-matching",
-    "appName": "@cognite/cdf-ui-entity-matching",
+    "key": "cdf-datastudio",
+    "appName": "@cognite/cdf-datastudio",
     "hosting": {
-      "staging": "https://cdf-entity-matching-prod.web.app",
-      "preview": "https://cdf-entity-matching-prod.web.app",
-      "production": "https://cdf-entity-matching-prod.web.app"
+      "staging": "/dependencies/@cognite/datastudio/1.2.0/8fba1f60c54f66ef38a809b19fc86364.js",
+      "preview": "/dependencies/@cognite/datastudio/1.2.0/8fba1f60c54f66ef38a809b19fc86364.js",
+      "production": "/dependencies/@cognite/datastudio/1.2.0/8fba1f60c54f66ef38a809b19fc86364.js"
     },
-    "routes": [
-      { "route": "/:tenantName/entity-matching" },
-      { "route": "/:tenantName/entity-matching-new" }
-    ]
+    "routes": [{ "route": "/:tenantName/entity-matching" }]
   },
   {
     "key": "cdf-ui-notebook",

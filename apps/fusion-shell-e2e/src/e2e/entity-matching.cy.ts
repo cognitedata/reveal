@@ -1,6 +1,6 @@
 describe('Entity matching page', () => {
   beforeEach(() => {
-    cy.navigate('entity-matching-new');
+    cy.navigate('entity-matching');
   });
 
   it('Should open Entity matching page', () => {
