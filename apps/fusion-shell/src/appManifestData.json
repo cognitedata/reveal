@@ -63,7 +63,7 @@
     "key": "cdf-contextualization-ui",
     "appName": "@cognite/cdf-contextualization-ui",
     "hosting": {
-      "staging": "https://cdf-contextualization-ui-staging.web.app",
+      "staging": "https://cdf-contextualization-ui-prod.web.app",
       "preview": "https://cdf-contextualization-ui-prod.web.app",
       "production": "https://cdf-contextualization-ui-prod.web.app"
     },
