@@ -1,10 +1,6 @@
 import { ReactElement, useEffect, useState } from 'react';
 
 import {
-  FilePreview,
-  SequencePreview,
-} from '@data-exploration-components/containers';
-import {
   BultinFieldTypeNames,
   DataModelTypeDefs,
   DataModelTypeDefsType,
@@ -20,6 +16,7 @@ import { FileInfo, Timeseries, Sequence } from '@cognite/sdk';
 import { SDKProvider } from '@cognite/sdk-provider';
 
 import { getCogniteSDKClient } from '../../../../../../environments/cogniteSdk';
+import { FilePreview } from '../../../../../components/FilePreview/FilePreview';
 import { usePreviewData } from '../../hooks/usePreviewData';
 
 import { SidePanelTitle } from './data-preview-side-panel-title';
@@ -165,15 +162,12 @@ export const CollapsiblePanelContainer: React.FC<
           ));
         case 'files':
           return resources.data.map((file) => (
-            <SDKProvider sdk={getCogniteSDKClient()} key={file.id}>
+            <>
               <p>{file.name}</p>
-              <div style={{ height: 200 }}>
+              <div style={{ height: 200, display: 'flex' }}>
                 <FilePreview
-                  fileId={file.id}
-                  id={file.externalId || 'N/A'}
-                  applicationId="platypus"
-                  creatable={false}
-                  contextualization={false}
+                  fileId={file.externalId!}
+                  sdk={getCogniteSDKClient()}
                 />
               </div>
               <a
@@ -185,15 +179,12 @@ export const CollapsiblePanelContainer: React.FC<
               >
                 <Button style={{ marginTop: 12 }}>Open in data explorer</Button>
               </a>
-            </SDKProvider>
+            </>
           ));
         case 'sequences':
           return resources.data.map((sequence) => (
             <SDKProvider sdk={getCogniteSDKClient()} key={sequence.id}>
               <p>{sequence.externalId}</p>
-              <div style={{ height: 200 }}>
-                <SequencePreview sequence={sequence} />
-              </div>
               <a
                 href={createLink(
                   `/explore/sequence/${sequence.id}${window.location.search}`

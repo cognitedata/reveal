@@ -8,7 +8,7 @@ export default defineConfig({
     ...nxE2EPreset(__dirname, {
       bundler: 'vite',
     }),
-    chromeWebSecurity: false,
+    chromeWebSecurity: true,
     testIsolation: false,
     env: process.env,
     video: true,
@@ -31,5 +31,4 @@ export default defineConfig({
   defaultCommandTimeout: 10000,
   viewportWidth: 1920,
   viewportHeight: 1080,
-  chromeWebSecurity: false,
 });
