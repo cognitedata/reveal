@@ -2,7 +2,6 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { SearchPreviewActions } from './SearchPreviewActions';
 import { SearchPreviewRecentlyViewed } from './SearchPreviewRecentlyViewed';
 
 interface Props {
@@ -11,15 +10,20 @@ interface Props {
 }
 export const SearchPreview: React.FC<Props> = React.memo(
   ({ query, onSelectionClick }) => {
+    // Keeping the code here as it might be useful in the future
+    // if (query) {
+    //   return (
+    //     <Container>
+    //       <SearchPreviewActions
+    //         query={query}
+    //         onSelectionClick={onSelectionClick}
+    //       />
+    //     </Container>
+    //   );
+    // }
+
     if (query) {
-      return (
-        <Container>
-          <SearchPreviewActions
-            query={query}
-            onSelectionClick={onSelectionClick}
-          />
-        </Container>
-      );
+      return null;
     }
 
     return (

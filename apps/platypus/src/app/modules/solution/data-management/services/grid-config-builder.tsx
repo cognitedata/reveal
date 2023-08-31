@@ -156,8 +156,7 @@ export const buildGridConfig = (
               extras: field.type.custom ? (
                 <ContextualizationScoreHeader
                   dataModelVersions={dataModelVersions}
-                  headerName={field.name}
-                  dataModelType={dataModelType.name}
+                  field={field}
                 />
               ) : null,
             },

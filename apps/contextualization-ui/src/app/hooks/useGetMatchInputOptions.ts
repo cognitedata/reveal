@@ -3,18 +3,18 @@ import {
   useModelInstancesList,
 } from '@fusion/contextualization';
 
-import { MatchData, MatchInputOptions } from '../types';
+import { MatchData, MatchInputOption } from '../types';
 
 export const useGetMatchInputOptions = () => {
-  const view = useCurrentLinkedView();
+  const linkedView = useCurrentLinkedView();
 
   const { data: instances } = useModelInstancesList(
-    view?.space,
-    view?.externalId,
-    view?.version
+    linkedView?.space,
+    linkedView?.externalId,
+    linkedView?.version
   );
 
-  const mappedResult: MatchInputOptions[] = instances?.map(
+  const mappedResult: MatchInputOption[] = instances?.map(
     (matchData: MatchData) => ({
       value: matchData.externalId,
       label: matchData.externalId,

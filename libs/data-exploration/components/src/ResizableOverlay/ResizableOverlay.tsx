@@ -19,6 +19,7 @@ type Props = {
   showFilter?: boolean;
   isFullpage?: boolean;
   showOverlay?: boolean;
+  id?: string;
 };
 
 export const ResizableOverlay = ({
@@ -26,6 +27,7 @@ export const ResizableOverlay = ({
   showFilter = true,
   isFullpage = false,
   showOverlay = true,
+  id: contentId,
 }: Props) => {
   const ref = useRef<HTMLDivElement>(null);
   const resizableId = useId();
@@ -121,7 +123,7 @@ export const ResizableOverlay = ({
         </DraggableCore>
       )}
 
-      <OverlayContentWrapper>
+      <OverlayContentWrapper id={contentId}>
         <ContentFlexWrapper>{children}</ContentFlexWrapper>
       </OverlayContentWrapper>
     </DetailsOverlayWrapper>

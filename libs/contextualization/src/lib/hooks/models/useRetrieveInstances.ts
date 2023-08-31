@@ -6,10 +6,10 @@ export const useRetrieveInstances = (
   space: string,
   type: string,
   version: string,
-  suggestions: any[]
+  items: { space: string; externalId: string }[]
 ) => {
   const sdk = useSDK();
-  const queryKeys = ['models', 'instances', 'byIds', suggestions];
+  const queryKeys = ['models', 'instances', 'byIds', items];
 
   const fetchJob = async () => {
     const response = await sdk.post(
@@ -17,10 +17,10 @@ export const useRetrieveInstances = (
       {
         headers: { 'Content-Type': 'application/json' },
         data: {
-          items: suggestions.map(({ space, originExternalId }) => ({
+          items: items.map(({ space, externalId }) => ({
             instanceType: 'node',
             space: space,
-            externalId: originExternalId,
+            externalId: externalId,
           })),
           sources: [
             {
@@ -41,6 +41,6 @@ export const useRetrieveInstances = (
   return useQuery({
     queryKey: queryKeys,
     queryFn: fetchJob,
-    enabled: !!suggestions,
+    enabled: !!items && items?.length !== 0,
   });
 };

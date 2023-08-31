@@ -5,29 +5,36 @@ import isEmpty from 'lodash/isEmpty';
 import take from 'lodash/take';
 
 import { Button } from '../../../components/buttons/Button';
+import { EmptyState } from '../../../components/EmptyState';
 import { SearchResults } from '../../../components/search/SearchResults';
 import { EMPTY_ARRAY } from '../../../constants/object';
 import { useNavigation } from '../../../hooks/useNavigation';
+import { useTranslation } from '../../../hooks/useTranslation';
 import { useFDM } from '../../../providers/FDMProvider';
 import { DataModelTypeDefsType } from '../../../services/types';
 import { InstancePreview } from '../../preview/InstancePreview';
 
-import { PAGE_SIZE } from './constants';
+import { PAGE_SIZE, PAGE_SIZE_SELECTED } from './constants';
 
 interface Props {
   dataType: string;
   values?: { items: any[] };
   type?: DataModelTypeDefsType;
+  selected?: boolean;
 }
-export const GenericResults: React.FC<Props> = ({ dataType, values, type }) => {
+export const GenericResults: React.FC<Props> = ({
+  dataType,
+  values,
+  type,
+  selected,
+}) => {
+  const { t } = useTranslation();
   const navigate = useNavigation();
   const client = useFDM();
   const dataModel = client.getDataModelByDataType(dataType);
 
-  const [page, setPage] = useState<number>(PAGE_SIZE);
-
-  const description = type?.description;
-  const name = type?.name;
+  const pageSize = selected ? PAGE_SIZE_SELECTED : PAGE_SIZE;
+  const [page, setPage] = useState<number>(pageSize);
 
   const normalizedValues = useMemo(() => {
     return values?.items || EMPTY_ARRAY;
@@ -48,11 +55,20 @@ export const GenericResults: React.FC<Props> = ({ dataType, values, type }) => {
     [navigate, dataType, dataModel]
   );
 
+  if (selected && data.length === 0) {
+    return (
+      <EmptyState
+        title={t('SEARCH_RESULTS_EMPTY_TITLE')}
+        body={t('SEARCH_RESULTS_EMPTY_BODY')}
+      />
+    );
+  }
+
   return (
     <SearchResults key={dataType} empty={isEmpty(normalizedValues)}>
       <SearchResults.Header
-        title={name || dataType}
-        description={description}
+        title={type?.displayName || type?.name || dataType}
+        description={type?.description}
       />
 
       <SearchResults.Body>
@@ -107,7 +123,7 @@ export const GenericResults: React.FC<Props> = ({ dataType, values, type }) => {
       <SearchResults.Footer>
         <Button.ShowMore
           onClick={() => {
-            setPage((prevState) => prevState + PAGE_SIZE);
+            setPage((prevState) => prevState + pageSize);
           }}
           hidden={normalizedValues.length <= page}
         />

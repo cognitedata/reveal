@@ -8,10 +8,11 @@ import {
 import { ManualMatch } from '../types';
 import { createMatchesRequestBody } from '../utils/createMatchesRequestBody';
 
-export const useCreateAdvancedJoinMatchesWrapper = () => {
+export const useCreateAdvancedJoinMatchesWrapper = (
+  advancedJoinExternalId: string | undefined
+) => {
   const { mutate } = useCreateAdvancedJoinMatches();
-  const { advancedJoinExternalId } = getUrlParameters();
-  const createJoins = useCallback(
+  const createMatches = useCallback(
     (manualMatches: { [key: string]: ManualMatch }) => {
       const convertedItems = createMatchesRequestBody(
         manualMatches,
@@ -22,5 +23,5 @@ export const useCreateAdvancedJoinMatchesWrapper = () => {
     [advancedJoinExternalId, mutate]
   );
 
-  return createJoins;
+  return createMatches;
 };

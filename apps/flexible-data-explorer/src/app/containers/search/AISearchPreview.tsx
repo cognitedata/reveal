@@ -11,6 +11,7 @@ import { useNavigation } from '../../hooks/useNavigation';
 import { useSearchFilterParams } from '../../hooks/useParams';
 import { useTranslation } from '../../hooks/useTranslation';
 import { useFDM } from '../../providers/FDMProvider';
+import { caseToWords } from '../../utils/string';
 
 import { AIListItemIcon } from './components/AIListItemIcon';
 interface Props {
@@ -36,9 +37,11 @@ export const AISearchPreview: React.FC<Props> = React.memo(
           });
           onSelectionClick?.();
         }
+
         const divs = [
           ...document.querySelectorAll('.ai-search-item').values(),
         ] as HTMLElement[];
+
         if (
           code === 'Tab' &&
           !query &&
@@ -201,13 +204,3 @@ const Item = styled.div`
     background: var(--surface-interactive-hover, rgba(34, 42, 83, 0.06));
   }
 `;
-const caseToWords = (input: string) => {
-  const words = input
-    .replace(/([a-z])([A-Z])/g, '$1 $2') // Insert space between lowercase and uppercase letters
-    .replace(/([A-Z])([A-Z][a-z])/g, '$1 $2') // Handle consecutive uppercase letters
-    .split(/[_\s]/) // Split by underscores and spaces
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1)) // Capitalize each word
-    .join(' ');
-
-  return words;
-};

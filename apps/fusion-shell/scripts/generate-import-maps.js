@@ -86,7 +86,11 @@ function generateImportMap(fusionEnv) {
       if (!baseUrl) {
         throw new Error(`Missing hosting for ${app.appName} in ${fusionEnv}`);
       }
-      imports[app.appName] = `${baseUrl}/index.js`;
+      if (baseUrl.endsWith('.js')) {
+        imports[app.appName] = baseUrl;
+      } else {
+        imports[app.appName] = `${baseUrl}/index.js`;
+      }
     });
   return { imports };
 }

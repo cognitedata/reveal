@@ -1,10 +1,5 @@
 import { useCallback, useMemo } from 'react';
-import {
-  useLocation,
-  useNavigate,
-  useParams,
-  useSearchParams,
-} from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { ContainerReference } from '@fusion/industry-canvas';
 import queryString from 'query-string';
@@ -15,7 +10,6 @@ import { createSearchParams } from '../utils/router';
 import { ViewMode, useViewModeParams } from './useParams';
 import { useGetChartsUrl, useGetCanvasUrl } from './useUrl';
 
-// TODO: rename this could help, react-router also has a 'useNavigation'.
 export const useNavigation = () => {
   const navigate = useNavigate();
   const { search, pathname } = useLocation(); // <-- current location being accessed
@@ -32,51 +26,35 @@ export const useNavigation = () => {
     [pathname]
   );
 
-  // const basePath = useMemo(() => {
-  //   const { space, dataModel, version } = params;
-  //   return `${basename}/${dataModel}/${space}/${version}`;
-  // }, [basename, params]);
-
   const toSearchPage = useCallback(
     (
       searchQuery: string = '',
       filters: ValueByDataType = {},
       options: {
+        category?: string;
         ignoreType?: boolean;
         enableAISearch?: boolean;
         viewMode?: ViewMode;
       } = {}
     ) => {
-      const { type } = params;
+      const type = options.category || params.type;
+
       const { ignoreType = false, enableAISearch = false } = options;
 
       const queryParams = createSearchParams({
         searchQuery,
+        searchCategory: !ignoreType ? type : undefined,
         filters,
         aiSearch: String(enableAISearch),
         viewMode: options.viewMode || viewMode,
       });
 
       navigate({
-        pathname: [basename, 'search', !ignoreType ? type : undefined]
-          .filter((item) => item !== undefined)
-          .join('/'),
+        pathname: `${basename}/search`,
         search: queryParams.toString(),
       });
     },
     [basename, params, navigate, viewMode]
-  );
-
-  const toSearchCategoryPage = useCallback(
-    (dataType?: string, cleanSearch?: boolean) => {
-      navigate({
-        pathname: [basename, `search`, dataType ? `${dataType}` : undefined]
-          .filter((item) => item !== undefined)
-          .join('/'),
-        search: cleanSearch ? undefined : search,
-      });
-    },
-    [basename, navigate, search]
   );
 
   // NOTE: this is gonna be removed, there will be no list pages, only search results.
@@ -106,9 +84,9 @@ export const useNavigation = () => {
 
   const toGenericPage = useCallback(
     (
-      dataType: string,
-      instanceSpace: string | undefined,
-      externalId: string,
+      dataType?: string,
+      instanceSpace?: string | undefined,
+      externalId?: string,
       {
         dataModel,
         space,
@@ -117,11 +95,23 @@ export const useNavigation = () => {
         dataModel?: string;
         space?: string;
         version?: string;
+      } = {},
+      options: {
+        viewMode?: ViewMode;
       } = {}
     ) => {
+      if (
+        dataType === undefined ||
+        externalId === undefined ||
+        instanceSpace === undefined
+      ) {
+        console.error('Missing parameters to navigate to instance page');
+        return;
+      }
+
       const queryParams = new URLSearchParams(search);
       // Assure that we are looking at the dashboard of the instance
-      queryParams.set('viewMode', 'list');
+      queryParams.set('viewMode', options.viewMode ?? 'list');
 
       const pathname = [
         basename,
@@ -146,6 +136,7 @@ export const useNavigation = () => {
   const toTimeseriesPage = useCallback(
     (externalId?: string | number) => {
       if (externalId === undefined) {
+        console.error("Missing 'externalId' to navigate to timeseries page");
         return;
       }
 
@@ -166,6 +157,7 @@ export const useNavigation = () => {
   const toFilePage = useCallback(
     (externalId?: string | number) => {
       if (externalId === undefined) {
+        console.error("Missing 'externalId' to navigate to file page");
         return;
       }
 
@@ -184,7 +176,12 @@ export const useNavigation = () => {
   );
 
   const toSequencePage = useCallback(
-    (externalId: string | number) => {
+    (externalId?: string | number) => {
+      if (externalId === undefined) {
+        console.error("Missing 'externalId' to navigate to sequence page");
+        return;
+      }
+
       const queryParams = new URLSearchParams(search);
 
       if (queryParams.has('expandedId')) {
@@ -208,6 +205,9 @@ export const useNavigation = () => {
         dataModel?: string;
         space?: string;
         version?: string;
+      } = {},
+      options: {
+        viewMode?: ViewMode;
       } = {}
     ) => {
       if (
@@ -217,12 +217,6 @@ export const useNavigation = () => {
       ) {
         console.error('Missing parameters to navigate to instance page');
         return;
-      }
-
-      const queryParams = new URLSearchParams(search);
-
-      if (queryParams.has('expandedId')) {
-        queryParams.delete('expandedId');
       }
 
       if (dataType === 'File') {
@@ -237,7 +231,13 @@ export const useNavigation = () => {
         return toSequencePage(externalId);
       }
 
-      return toGenericPage(dataType, instanceSpace, externalId, dataModel);
+      return toGenericPage(
+        dataType,
+        instanceSpace,
+        externalId,
+        dataModel,
+        options
+      );
     },
     [toFilePage, toGenericPage, toSequencePage, toTimeseriesPage, search]
   );
@@ -277,7 +277,6 @@ export const useNavigation = () => {
   return {
     toLandingPage,
     toSearchPage,
-    toSearchCategoryPage,
     toListPage,
     toHomePage,
 

@@ -2,34 +2,41 @@ import { Dispatch, SetStateAction } from 'react';
 
 import styled from 'styled-components';
 
-import { Select } from 'antd';
+import { Select, SelectProps, Spin } from 'antd';
 
 import { LABELING_TABLE_COLUMN_WIDTH } from '../constants';
-import { ManualMatch, MatchInputOptions } from '../types';
+import { useSearchMatchInputOptions } from '../hooks/useSearchMatchInputOptions';
+import { ManualMatch, MatchedInstance } from '../types';
+
+export interface DebounceSelectProps<ValueType = any>
+  extends Omit<SelectProps<ValueType | ValueType[]>, 'options' | 'children'> {
+  debounceTimeout?: number;
+}
 
 export const ManualMatchInput = ({
   originExternalId,
   manualMatches,
-  options,
   setManualMatches,
 }: {
   originExternalId: string;
   manualMatches: {
     [key: string]: ManualMatch;
   };
-  options: MatchInputOptions[];
   setManualMatches: Dispatch<
     SetStateAction<{
       [key: string]: ManualMatch;
     }>
   >;
 }) => {
-  const handleSelectedMatch = (value: string) => {
+  const { matchInputOptionsFetcher, matchInputOptions, searching } =
+    useSearchMatchInputOptions();
+
+  const handleSelectedMatch = (value: MatchedInstance) => {
     setManualMatches((prevMatches) => ({
       ...prevMatches,
       [originExternalId]: {
         ...prevMatches[originExternalId],
-        linkedExternalId: value,
+        matchedInstance: value,
       },
     }));
   };
@@ -50,18 +57,19 @@ export const ManualMatchInput = ({
       <ManualMatchInputCell>
         <Select
           placeholder="Expected match..."
-          value={manualMatches[originExternalId].linkedExternalId}
-          onChange={handleSelectedMatch}
-          options={options}
-          showSearch
+          labelInValue
           allowClear
-          style={{
-            display: 'flex',
-            width: '100%',
-            border: '1px solid var(--cogs-border-default)',
-            borderRadius: 'var(--cogs-border-radius--default)',
-            transition: 'border var(--cogs-transition-time-fast) linear',
+          value={manualMatches[originExternalId].matchedInstance}
+          showSearch
+          filterOption={false}
+          onSearch={matchInputOptionsFetcher}
+          onChange={handleSelectedMatch}
+          onClick={() => {
+            matchInputOptionsFetcher(''); // Fetch initial options with an empty query
           }}
+          notFoundContent={searching ? <Spin size="small" /> : null}
+          style={{ width: '100%' }}
+          options={matchInputOptions}
         />
       </ManualMatchInputCell>
       {/*
@@ -80,13 +88,4 @@ export const ManualMatchInput = ({
 
 const ManualMatchInputCell = styled.div`
   width: ${LABELING_TABLE_COLUMN_WIDTH}px;
-`;
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const CheckboxContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
 `;

@@ -1,5 +1,5 @@
+export { useAdvancedJoin } from './useAdvancedJoin';
 export { useCreateAdvancedJoinMatches } from './useCreateAdvancedJoinMatches';
-export { useCreateAdvancedJoinProcess } from './useCreateAdvancedJoinProcess';
 export { useQueryParameter } from './useQueryParameter';
 export * from './estimate-quality';
 export * from './flags';

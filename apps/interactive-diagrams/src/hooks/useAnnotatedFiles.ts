@@ -14,6 +14,7 @@ export const useAnnotatedFiles = ({ filter = {} }: FileRequestFilter) => {
       ...filter,
       labels: { containsAny: [{ externalId: PENDING_LABEL.externalId }] },
     },
+    limit: 1000,
   });
   const fileIds = (files ?? []).map((file: FileInfo) => file.id);
   const { files: annotatedFiles, isFetchingAnnotations } =

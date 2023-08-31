@@ -2,12 +2,13 @@ import { useContext } from 'react';
 
 import styled from 'styled-components';
 
+import { useGetDataManagementURL } from '@fusion/contextualization';
+
 import { TopBar } from '@cognite/cogs.js';
 
 import { TopBarLeft } from '../components/TopBarLeft';
 import { TopBarRight } from '../components/TopBarRight';
 import { ManualMatchesContext } from '../pages/AdvancedJoinsPage';
-import { getDataManagementURL } from '../utils/goBack';
 import { getAllManualMatchesNotDefined } from '../utils/manualMatchUtils';
 
 export const AdvancedJoinsTopBar = ({
@@ -27,16 +28,16 @@ export const AdvancedJoinsTopBar = ({
   const handleRunAdvancedJoin = () => {
     setRunStage(true);
   };
+  const dataManagementURL = useGetDataManagementURL();
 
   const handleBackButton = () => {
     if (!runStage && noUnsavedManualMatches) {
-      const dataManagementURL = getDataManagementURL();
       window.location.href = dataManagementURL;
     }
     setRunStage(false);
   };
+
   const confirmedBack = () => {
-    const dataManagementURL = getDataManagementURL();
     window.location.href = dataManagementURL;
   };
 

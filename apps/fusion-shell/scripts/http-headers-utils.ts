@@ -1,4 +1,4 @@
-import { AppManifest, Hosting } from '../src/appManifests';
+import { AppManifest, Environment } from '../src/appManifests';
 
 type CSPHeaderGroups = Record<string, string[]>;
 
@@ -53,9 +53,12 @@ export function generateCSPHeader(appManifests: AppManifest[]) {
   appManifests
     .map((app) => app.hosting)
     .forEach((hosting) => {
-      appendHeader(cspHeaderGroups, hosting['staging']);
-      appendHeader(cspHeaderGroups, hosting['preview']);
-      appendHeader(cspHeaderGroups, hosting['production']);
+      const envs: Environment[] = ['staging', 'preview', 'production'];
+      for (const env of envs) {
+        // we can ignore when the hosting is pointing to the same domain (we serve the file)
+        if (hosting[env].startsWith('/')) continue;
+        appendHeader(cspHeaderGroups, hosting[env]);
+      }
     });
   appendHeader(cspHeaderGroups, 'localhost:* *.localhost:*');
 

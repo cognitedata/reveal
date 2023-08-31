@@ -1,7 +1,13 @@
 import { ComponentProps } from 'react';
 
+import { ScheduledCalculationRow } from '@charts-app/components/SourceTable/ScheduledCalculationRow';
+import WorkflowRow from '@charts-app/components/SourceTable/WorkflowRow';
 import { useTranslations } from '@charts-app/hooks/translations';
-import { ChartTimeSeries } from '@charts-app/models/chart/types';
+import {
+  ChartTimeSeries,
+  ChartWorkflow,
+  ScheduledCalculation,
+} from '@charts-app/models/chart/types';
 import { Modes } from '@charts-app/pages/types';
 
 import TimeSeriesRow from './TimeSeriesRow';
@@ -15,6 +21,11 @@ type Props = {
   selectedSourceId?: string;
   onRowClick?: (id?: string) => void;
   onInfoClick?: (id?: string) => void;
+  onRemoveSourceClick?: (
+    source: ChartTimeSeries | ChartWorkflow | ScheduledCalculation
+  ) => ComponentProps<
+    typeof TimeSeriesRow | typeof WorkflowRow | typeof ScheduledCalculationRow
+  >['onRemoveSourceClick'];
 };
 export default function TimeSeriesRows({
   sources = [],
@@ -23,6 +34,7 @@ export default function TimeSeriesRows({
   onRowClick = () => {},
   onInfoClick = () => {},
   selectedSourceId,
+  onRemoveSourceClick = () => () => {},
 }: Props) {
   const isWorkspaceMode = mode === 'workspace';
   const isEditorMode = mode === 'editor';
@@ -47,6 +59,7 @@ export default function TimeSeriesRows({
           disabled={isEditorMode}
           isFileViewerMode={isFileViewerMode}
           translations={translations}
+          onRemoveSourceClick={onRemoveSourceClick(t)}
         />
       ))}
     </>

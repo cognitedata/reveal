@@ -1,19 +1,18 @@
-import { useParams } from 'react-router-dom';
-
 import styled, { css } from 'styled-components';
 
 import { Body, Chip } from '@cognite/cogs.js';
 
-import { useNavigation } from '../../hooks/useNavigation';
+import { useSearchCategoryParams } from '../../hooks/useParams';
 import { useTranslation } from '../../hooks/useTranslation';
+import { useFDM } from '../../providers/FDMProvider';
 
 import { useSearchDataTypeSortedByKeys } from './hooks/useSearchDataTypeSortedByKeys';
 import { useSearchTotalCount } from './hooks/useSearchTotalCount';
 
 export const SearchCategories = () => {
   const { t } = useTranslation();
-  const navigate = useNavigation();
-  const { type } = useParams();
+  const [searchCategory, setSearchCategory] = useSearchCategoryParams();
+  const client = useFDM();
 
   const {
     counts,
@@ -23,10 +22,10 @@ export const SearchCategories = () => {
 
   const { totalCount, isLoading: isTotalCountLoading } = useSearchTotalCount();
 
-  const isSelected = (name?: string) => type === name;
+  const isSelected = (name?: string) => searchCategory === name;
 
   const handleSelectionClick = (name?: string) => {
-    navigate.toSearchCategoryPage(name);
+    setSearchCategory(name);
   };
 
   if (isCountsLoading || isTotalCountLoading) {
@@ -54,19 +53,21 @@ export const SearchCategories = () => {
         const isDisabled = !count;
 
         if (key === 'File') {
-          <Content
-            key={key}
-            selected={isSelected('File')}
-            onClick={() => !!count && handleSelectionClick('File')}
-            disabled={!count}
-          >
-            <NameText>File</NameText>
-            <Chip
-              size="x-small"
-              type={isSelected('Files') ? 'neutral' : undefined}
-              label={String(count ?? '?')}
-            />
-          </Content>;
+          return (
+            <Content
+              key={key}
+              selected={isSelected('File')}
+              onClick={() => !!count && handleSelectionClick('File')}
+              disabled={!count}
+            >
+              <NameText>File</NameText>
+              <Chip
+                size="x-small"
+                type={isSelected('Files') ? 'neutral' : undefined}
+                label={String(count ?? '?')}
+              />
+            </Content>
+          );
         }
 
         if (key === 'TimeSeries') {
@@ -87,6 +88,7 @@ export const SearchCategories = () => {
           );
         }
 
+        const type = client.getTypesByDataType(key);
         return (
           <Content
             key={`${key}-${index}`}
@@ -94,7 +96,7 @@ export const SearchCategories = () => {
             disabled={isDisabled}
             onClick={() => !isDisabled && handleSelectionClick(key)}
           >
-            <NameText>{key}</NameText>
+            <NameText>{type?.displayName || type?.name}</NameText>
             <Chip
               size="x-small"
               type={isSelected(key) ? 'neutral' : undefined}
