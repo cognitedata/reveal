@@ -2,6 +2,7 @@ import React from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import { ResizableOverlay } from '@data-exploration/components';
+import styled from 'styled-components/macro';
 
 import { AssetDetail } from '@data-exploration-app/containers/Asset/AssetDetail';
 import { EventDetail } from '@data-exploration-app/containers/Event/EventDetail';
@@ -32,7 +33,7 @@ export const DetailsOverlay: React.FC<unknown> = () => {
   }, [searchParams.get(VIEW_MODE_FIELD)]);
 
   return (
-    <div id="details-overlay">
+    <DetailsOverlayWrapper id="details-overlay">
       <ResizableOverlay
         showFilter={showFilter}
         isFullpage={viewModeToggle}
@@ -55,6 +56,10 @@ export const DetailsOverlay: React.FC<unknown> = () => {
           <SequenceDetail sequenceId={lastJourney.id} />
         )}
       </ResizableOverlay>
-    </div>
+    </DetailsOverlayWrapper>
   );
 };
+
+const DetailsOverlayWrapper = styled.div`
+  display: contents;
+`;
