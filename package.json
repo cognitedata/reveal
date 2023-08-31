@@ -23,7 +23,7 @@
     "@cognite/cdf-hub-tenant-selector": "^0.14.2",
     "@cognite/cdf-i18n-utils": "^0.7.3",
     "@cognite/cdf-ui-cli": "^1.1.1",
-    "@cognite/cogs.js": "^9.32.1",
+    "@cognite/cogs.js": "9.36.0",
     "@cognite/connect": "^0.0.8",
     "@cognite/e2e-auth": "^1.0.3",
     "@cognite/gcs-browser-upload": "cognitedata/gcs-browser-upload#mn/temporary-azure-fix",
@@ -535,7 +535,8 @@
     "@emotion/utils": "^1.2.1",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
-    "jackspeak": "2.1.1"
+    "jackspeak": "2.1.1",
+    "@mui/x-date-pickers": "6.11.0"
   },
   "bin": {
     "platypus": "./dist/libs/platypus-cli/src/index.js"

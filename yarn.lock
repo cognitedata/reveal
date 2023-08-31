@@ -2478,6 +2478,13 @@
   dependencies:
     regenerator-runtime "^0.13.11"
 
+"@babel/runtime@^7.22.10":
+  version "7.22.11"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.22.11.tgz#7a9ba3bbe406ad6f9e8dd4da2ece453eb23a77a4"
+  integrity sha512-ee7jVNlWN09+KftVOu9n7S8gQzD/Z6hN/I8VBRXW4P1+Xe7kJGXMwu8vds4aGIMHZnNbdpSWCfZZtinytpcAvA==
+  dependencies:
+    regenerator-runtime "^0.14.0"
+
 "@babel/runtime@^7.22.6":
   version "7.22.10"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.22.10.tgz#ae3e9631fd947cb7e3610d3e9d8fef5f76696682"
@@ -3030,6 +3037,46 @@
     tippy.js "6.3.7"
     ts-dedent "2.2.0"
 
+"@cognite/cogs.js@9.36.0":
+  version "9.36.0"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-9.36.0.tgz#f9bb3c7e9f91c1583d08641e5e2de28465b6b893"
+  integrity sha512-mXLFzHUYu1up8s/bX1+As6klZ9E9klQbQEvce1Ejmr5Rk++9rNek5Bc1Etr868t6dEeX7T/g2wwCT3fNZrtMBQ==
+  dependencies:
+    "@emotion/react" "11.10.6"
+    "@emotion/styled" "11.10.6"
+    "@mui/base" "5.0.0-alpha.97"
+    "@mui/joy" "5.0.0-alpha.41"
+    "@mui/material" "5.9.2"
+    "@mui/x-date-pickers" "6.10.1"
+    "@mui/x-license-pro" "^6.10.2"
+    "@notionhq/client" "2.2.3"
+    "@react-hook/resize-observer" "1.2.6"
+    "@tippyjs/react" "4.2.6"
+    "@types/react-date-range" "1.4.4"
+    axios "0.27.2"
+    classnames "2.3.2"
+    color "3.2.1"
+    csstype "2.6.10"
+    dayjs "1.11.7"
+    deepdash "5.3.9"
+    dotenv-flow "3.2.0"
+    focus-visible "5.2.0"
+    framer-motion "6.5.1"
+    fuse.js "6.6.2"
+    match-sorter "6.3.1"
+    prompts "2.4.2"
+    rc-collapse "1.11.8"
+    rc-drawer "4.4.3"
+    rc-slider "9.5.4"
+    rc-tabs "11.16.1"
+    react-date-range "1.4.0"
+    react-select "3.2.0"
+    react-table "7.6.0"
+    react-toastify "6.2.0"
+    resize-observer-polyfill "1.5.1"
+    tippy.js "6.3.7"
+    ts-dedent "2.2.0"
+
 "@cognite/cogs.js@^5.3.1":
   version "5.19.5"
   resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-5.19.5.tgz#5fa025481b8711b90fea1b9b29bf38ebef773f29"
@@ -3068,45 +3115,6 @@
     "@mui/base" "5.0.0-alpha.97"
     "@mui/joy" "5.0.0-alpha.41"
     "@mui/material" "5.9.2"
-    "@notionhq/client" "2.2.3"
-    "@react-hook/resize-observer" "1.2.6"
-    "@tippyjs/react" "4.2.6"
-    "@types/react-date-range" "1.4.4"
-    axios "0.27.2"
-    classnames "2.3.2"
-    color "3.2.1"
-    csstype "2.6.10"
-    dayjs "1.11.7"
-    deepdash "5.3.9"
-    dotenv-flow "3.2.0"
-    focus-visible "5.2.0"
-    framer-motion "6.5.1"
-    fuse.js "6.6.2"
-    match-sorter "6.3.1"
-    prompts "2.4.2"
-    rc-collapse "1.11.8"
-    rc-drawer "4.4.3"
-    rc-slider "9.5.4"
-    rc-tabs "11.16.1"
-    react-date-range "1.4.0"
-    react-select "3.2.0"
-    react-table "7.6.0"
-    react-toastify "6.2.0"
-    resize-observer-polyfill "1.5.1"
-    tippy.js "6.3.7"
-    ts-dedent "2.2.0"
-
-"@cognite/cogs.js@^9.32.1":
-  version "9.32.1"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-9.32.1.tgz#feb17ab233e1f7ecdbeba42371add09dad275e0d"
-  integrity sha512-9YAvEexhgxBIMixDdI5YG0R+xn9Bl7+SR+UEoml9AEYCu4DY3q4JaSV7Cp91BVdT/oO9IbWjrGeLhqa7Wx51dg==
-  dependencies:
-    "@emotion/react" "11.10.6"
-    "@emotion/styled" "11.10.6"
-    "@mui/base" "5.0.0-alpha.97"
-    "@mui/joy" "5.0.0-alpha.41"
-    "@mui/material" "5.9.2"
-    "@mui/x-date-pickers" "6.10.1"
     "@notionhq/client" "2.2.3"
     "@react-hook/resize-observer" "1.2.6"
     "@tippyjs/react" "4.2.6"
@@ -6579,17 +6587,6 @@
     prop-types "^15.8.1"
     react-is "^18.2.0"
 
-"@mui/utils@^5.13.6":
-  version "5.13.7"
-  resolved "https://registry.yarnpkg.com/@mui/utils/-/utils-5.13.7.tgz#7e6a8336e05eb2642667a5c02eb605351e27ec20"
-  integrity sha512-/3BLptG/q0u36eYED7Nhf4fKXmcKb6LjjT7ZMwhZIZSdSxVqDqSTmATW3a56n3KEPQUXCU9TpxAfCBQhs6brVA==
-  dependencies:
-    "@babel/runtime" "^7.22.5"
-    "@types/prop-types" "^15.7.5"
-    "@types/react-is" "^18.2.1"
-    prop-types "^15.8.1"
-    react-is "^18.2.0"
-
 "@mui/utils@^5.13.7":
   version "5.14.3"
   resolved "https://registry.yarnpkg.com/@mui/utils/-/utils-5.14.3.tgz#76d8151c23d2c2a871e98b90add57a8fd01d5d80"
@@ -6601,29 +6598,36 @@
     prop-types "^15.8.1"
     react-is "^18.2.0"
 
-"@mui/x-date-pickers@6.10.1":
-  version "6.10.1"
-  resolved "https://registry.yarnpkg.com/@mui/x-date-pickers/-/x-date-pickers-6.10.1.tgz#a2a2767c82ad6cc070498ad1c6532fa655cf632d"
-  integrity sha512-806zxZkLgK2FYTptzy+x880RVDkHi9TcjMq9fTQwqx9DujEZ/YuGIu0wE97mhzNeqdTO02gnH96yHSo3EWu2VQ==
+"@mui/utils@^5.14.1":
+  version "5.14.7"
+  resolved "https://registry.yarnpkg.com/@mui/utils/-/utils-5.14.7.tgz#3677bcabe032f1185e151f57d8c1a166df3ae0a1"
+  integrity sha512-RtheP/aBoPogVdi8vj8Vo2IFnRa4mZVmnD0RGlVZ49yF60rZs+xP4/KbpIrTr83xVs34QmHQ2aQ+IX7I0a0dDw==
+  dependencies:
+    "@babel/runtime" "^7.22.10"
+    "@types/prop-types" "^15.7.5"
+    "@types/react-is" "^18.2.1"
+    prop-types "^15.8.1"
+    react-is "^18.2.0"
+
+"@mui/x-date-pickers@6.10.1", "@mui/x-date-pickers@6.11.0", "@mui/x-date-pickers@^6.5.0":
+  version "6.11.0"
+  resolved "https://registry.yarnpkg.com/@mui/x-date-pickers/-/x-date-pickers-6.11.0.tgz#2bbd7c2748d066ed06742c6942e3d5ad5d01c75f"
+  integrity sha512-yVGfpH3scUauLaHWvzckD0xswboC48YAaJ4568YTkKozXFSPPkvK7VGSQ+qo1u8K2UjYh1iZoff3k0EoDDPnww==
   dependencies:
     "@babel/runtime" "^7.22.6"
-    "@mui/utils" "^5.13.7"
+    "@mui/utils" "^5.14.1"
     "@types/react-transition-group" "^4.4.6"
     clsx "^1.2.1"
     prop-types "^15.8.1"
     react-transition-group "^4.4.5"
 
-"@mui/x-date-pickers@^6.5.0":
-  version "6.9.2"
-  resolved "https://registry.yarnpkg.com/@mui/x-date-pickers/-/x-date-pickers-6.9.2.tgz#35059a5ba3c4459889b79a955bca6c99f87ff995"
-  integrity sha512-WoXRBUwb/nN/Hg+rArefkuRe30eVTN29dbjTN/vTydBFoNIp8vCaSeqRIEP6Zq2NaDHFWW9FMGChuuFEdROxWA==
+"@mui/x-license-pro@^6.10.2":
+  version "6.10.2"
+  resolved "https://registry.yarnpkg.com/@mui/x-license-pro/-/x-license-pro-6.10.2.tgz#68b069214efb085f7f8c34b73d450743857e0aea"
+  integrity sha512-Baw3shilU+eHgU+QYKNPFUKvfS5rSyNJ98pQx02E0gKA22hWp/XAt88K1qUfUMPlkPpvg/uci6gviQSSLZkuKw==
   dependencies:
-    "@babel/runtime" "^7.22.5"
-    "@mui/utils" "^5.13.6"
-    "@types/react-transition-group" "^4.4.6"
-    clsx "^1.2.1"
-    prop-types "^15.8.1"
-    react-transition-group "^4.4.5"
+    "@babel/runtime" "^7.22.6"
+    "@mui/utils" "^5.13.7"
 
 "@n1ru4l/push-pull-async-iterable-iterator@^3.1.0":
   version "3.2.0"
