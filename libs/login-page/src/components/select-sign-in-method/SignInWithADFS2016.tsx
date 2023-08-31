@@ -62,10 +62,10 @@ const SignInWithADFS2016 = ({
   }, [active, adfs, refetch]);
 
   useEffect(() => {
-    if (token) {
+    if (active && token) {
       navigate('/select-project');
     }
-  }, [token, navigate]);
+  }, [token, navigate, active]);
 
   return (
     <SignInButton
