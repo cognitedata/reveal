@@ -61,7 +61,7 @@ export const LayersButton = (): ReactElement => {
         setPointCloudModelIds(pointCloudIds);
       }
     }
-  }, [viewer.models, cadModelIds, pointCloudModelIds]);
+  }, [viewer.models]);
 
   const updated3DResourcesLayerData: Reveal3DResourcesLayerStates = useMemo(() => {
     if (cadModelName.data === null && pointCloudModelName.data === null) {
