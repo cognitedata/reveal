@@ -122,7 +122,9 @@ export function ModelVersionList({
                         content={
                           <div style={{ padding: 10 }}>
                             <b>{modelFile.metadata.errorMessage}</b>
-                            {modelFile?.parsingLogs?.length && (
+                            {modelFile?.parsingLogs?.filter(
+                              ({ level }) => level === 'ERROR'
+                            )?.length && (
                               <div>
                                 <br />
                                 <ul>
