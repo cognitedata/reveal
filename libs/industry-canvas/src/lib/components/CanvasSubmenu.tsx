@@ -29,7 +29,7 @@ const CanvasSubmenu: React.FC<CanvasSubmenuProps> = ({
 }) => {
   const { t } = useTranslation();
   return (
-    <Menu.Submenu
+    <StyledSubmenu
       key={`submenu-${canvas.externalId}`}
       content={
         <StyledMenu isActiveCanvas={isActiveCanvas}>
@@ -67,25 +67,34 @@ const CanvasSubmenu: React.FC<CanvasSubmenuProps> = ({
     >
       <>
         <div onClick={() => onCanvasItemClick(canvas)}>{canvas.name}</div>
-        <LastTimeText onClick={() => onCanvasItemClick(canvas)} level={2}>
-          {isActiveCanvas === true ? (
-            t(
-              translationKeys.CANVAS_DROPDOWN_CURRENTLY_VIEWING,
-              'Currently viewing'
-            )
-          ) : (
-            <LastTimeText level={2}>
-              Updated{' '}
-              {formatDistanceToNow(new Date(canvas.updatedAt), {
-                addSuffix: true,
+        <LastTimeText
+          muted
+          onClick={() => onCanvasItemClick(canvas)}
+          size="x-small"
+        >
+          {isActiveCanvas === true
+            ? t(
+                translationKeys.CANVAS_DROPDOWN_CURRENTLY_VIEWING,
+                'Currently viewing'
+              )
+            : t(translationKeys.CANVAS_DROPDOWN_UPDATED_TIME, {
+                updatedTime: formatDistanceToNow(new Date(canvas.updatedAt), {
+                  addSuffix: true,
+                }),
+                defaultValue: 'Updated {{updatedTime}}',
               })}
-            </LastTimeText>
-          )}
         </LastTimeText>
       </>
-    </Menu.Submenu>
+    </StyledSubmenu>
   );
 };
+
+const StyledSubmenu = styled(Menu.Submenu)`
+  && .cogs-icon--type-chevronright {
+    position: absolute;
+    top: 20px;
+  }
+`;
 
 const StyledMenu = styled(Menu)<{ isActiveCanvas: boolean }>`
   position: absolute;

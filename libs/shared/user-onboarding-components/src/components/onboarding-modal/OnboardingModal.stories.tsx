@@ -35,6 +35,7 @@ export const Basic: ComponentStory<typeof OnboardingModal> = (args) => {
     'There are many tools in Cognite Data Fusion.\n Explore more in the product tour or in our ';
   return (
     <OnboardingModal
+      visible
       body={
         <Body style={{ width: '50%', textAlign: 'center' }} level={3}>
           {headerText}

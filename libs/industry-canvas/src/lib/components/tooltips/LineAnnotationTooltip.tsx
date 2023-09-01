@@ -117,7 +117,7 @@ export const LineAnnotationTooltip: React.FC<
               min={MIN_STROKE_WIDTH}
               max={MAX_STROKE_WIDTH}
             />
-            <ToolBar direction="horizontal">
+            <ToolBar style={{ boxShadow: 'none' }} direction="horizontal">
               <SizeEditor
                 value={strokeWidth}
                 minValue={MIN_STROKE_WIDTH}
@@ -194,7 +194,9 @@ const StrokeTooltipContainer = styled(LeftAlignedColorPalettePosition)`
 `;
 
 const StyledSlider = styled(Slider)`
-  width: 90%;
-  padding-top: 18px;
-  transform: translate(0%, -30%);
+  && {
+    width: 90%;
+    padding-top: 18px;
+    transform: translate(0, -30%);
+  }
 `;

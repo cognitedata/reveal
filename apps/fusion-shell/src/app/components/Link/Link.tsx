@@ -8,14 +8,16 @@ interface LinkProps {
   onClick?: () => void;
   children: ReactNode;
   style?: CSSProperties;
+  className?: string;
 }
 
-const Link = ({ to, onClick, children, style }: LinkProps) => {
+const Link = ({ className, to, onClick, children, style }: LinkProps) => {
   const navigate = useNavigate();
   const url = createLink(to);
 
   return (
     <RouterLink
+      className={className}
       to={url}
       onClick={onClick ?? (() => navigate(url))}
       style={style}

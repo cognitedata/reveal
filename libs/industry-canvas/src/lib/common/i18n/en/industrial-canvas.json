@@ -13,6 +13,7 @@
   "CANVAS_ADD_RESOURCE_ERROR_TITLE": "Could not add resource(s) to your canvas",
   "CANVAS_DOWNLOAD_PDF": "Download as PDF",
   "CANVAS_DROPDOWN_CURRENTLY_VIEWING": "Currently viewing",
+  "CANVAS_DROPDOWN_UPDATED_TIME": "Updated {{updatedTime}}",
   "CANVAS_DROPDOWN_SEARCH": "Search",
   "CANVAS_LINK_COPIED_SUB_TITLE": "Canvas link successfully copied to your clipboard",
   "CANVAS_LINK_COPIED_TITLE": "Canvas link copied",

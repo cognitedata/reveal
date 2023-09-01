@@ -48,7 +48,7 @@ case "$variant": in
   fusion*)
     configuration="--configuration=fusion"
     export REACT_APP_ENV="fusion"
-    export NODE_ENV="fusion"
+    export NODE_ENV="development"
     ;;
 
   *)

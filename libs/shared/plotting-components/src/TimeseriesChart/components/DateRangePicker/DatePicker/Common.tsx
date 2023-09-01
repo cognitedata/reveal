@@ -8,6 +8,8 @@ import range from 'lodash/range';
 
 import { Button, ButtonProps } from '@cognite/cogs.js';
 
+import { mockTranslation } from '../../../../utils';
+
 import {
   DatePickerButtonWrapper,
   MonthSelect,
@@ -130,6 +132,7 @@ const months = [
 ];
 
 export const renderCustomHeader = (
+  t = mockTranslation,
   isYearDisabled: (currYear: number) => boolean = () => false,
   isMonthDisabled: (currYear: number, currentMonth: number) => boolean = () =>
     false
@@ -182,7 +185,7 @@ export const renderCustomHeader = (
                 value={month}
                 disabled={isMonthDisabled(year, index)}
               >
-                {month}
+                {t(month.toUpperCase(), month)}
               </OptionStyle>
             ))}
           </MonthSelect>

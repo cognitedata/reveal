@@ -9,7 +9,7 @@ import {
   ResourceType,
 } from '@data-exploration-components/types';
 
-import { Select, Tabs, Tooltip } from '@cognite/cogs.js';
+import { Dropdown, Select, Tabs, Tooltip } from '@cognite/cogs.js';
 
 import { ResourceSelectionSidebar } from '..';
 
@@ -83,6 +83,13 @@ export const ResourceSelectorProvider = ({
       // @ts-expect-error
       ...Select.defaultProps,
       menuPortalTarget: document.body,
+    };
+
+    // @ts-expect-error
+    Dropdown.defaultProps = {
+      // @ts-expect-error
+      ...Dropdown.defaultProps,
+      appendTo: () => document.body,
     };
 
     // create a custom portal for drag-drop

@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { explorerPlugin } from '@graphiql/plugin-explorer';
+import { createGraphiQLFetcher } from '@graphiql/toolkit';
 import { StorageProviderType } from '@platypus/platypus-core';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { TOKENS } from '@platypus-app/di';
 import { useInjection } from '@platypus-app/hooks/useInjection';
 import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
-import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import GraphiQL from 'graphiql';
 import {
   buildClientSchema,
@@ -16,6 +16,7 @@ import {
 } from 'graphql';
 
 import { Checkbox, Icon } from '@cognite/cogs.js';
+import { useSDK } from '@cognite/sdk-provider';
 
 import { GraphiqlStorageProvider } from '../utils/graphiqlStorageProvider';
 import graphQlQueryFetcher from '../utils/graphqlQueryFetcher';
@@ -46,10 +47,11 @@ export const QueryExplorer = ({
   defaultQuery,
   defaultVariables,
 }: QueryExplorerType) => {
-  const { t } = useTranslation('query_explorer');
   const localStorageProvider = useInjection(
     TOKENS.storageProviderFactory
   ).getProvider(StorageProviderType.localStorage);
+  const fdmClient = useInjection(TOKENS.fdmClient);
+  const sdk = useSDK();
   const graphiqlStorageApi = useMemo(
     () =>
       new GraphiqlStorageProvider(
@@ -68,6 +70,29 @@ export const QueryExplorer = ({
     JSON.stringify(defaultVariables || {}, null, 2)
   );
   const { track } = useMixpanel();
+
+  const fetcher = useMemo(() => {
+    return createGraphiQLFetcher({
+      url: fdmClient.getQueryEndpointUrl({
+        externalId: dataModelExternalId,
+        version: schemaVersion,
+        space,
+      }),
+      headers: sdk.getDefaultRequestHeaders(),
+      fetch: (...params) => {
+        track('DataModel.GraphIQL.Run');
+        return fetch(...params);
+      },
+    });
+  }, [
+    track,
+    sdk,
+    sdk.getDefaultRequestHeaders(),
+    fdmClient,
+    dataModelExternalId,
+    space,
+    schemaVersion,
+  ]);
 
   useEffect(() => {
     if (onQueryChange && explorerQuery) {
@@ -118,25 +143,7 @@ export const QueryExplorer = ({
   return (
     <QueryExplorerContainer>
       <GraphiQL
-        fetcher={(graphQlParams) => {
-          return graphQlQueryFetcher
-            .fetcher(graphQlParams, dataModelExternalId, schemaVersion, space)
-            .then((data) => {
-              track('DataModel.GraphIQL.Run');
-              return data;
-            })
-            .catch((e) => {
-              // there are other places that handles errors.
-              // need to remove this when fully migrated to V3
-              return {
-                message: t(
-                  'failed_to_fetch_results',
-                  'Failed to fetch query result'
-                ),
-                error: e,
-              };
-            });
-        }}
+        fetcher={fetcher}
         onEditQuery={handleEditQuery}
         onEditVariables={handleEditVariables}
         query={explorerQuery}
