@@ -65,15 +65,14 @@ export const LineAnnotationTooltip: React.FC<
   };
 
   useEffect(() => {
+    if (lineAnnotation.style?.strokeWidth === strokeWidth) {
+      return;
+    }
+
     if (strokeWidth === undefined) {
       return;
     }
-    if (Number.isNaN(strokeWidth)) {
-      return;
-    }
-    if (strokeWidth < MIN_STROKE_WIDTH || strokeWidth > MAX_STROKE_WIDTH) {
-      return;
-    }
+
     debouncedUpdateLineAnnotationStrokeWidth(strokeWidth);
     // We ignore `onUpdateAnnotationStyleByType` as dependency since if we add
     // that to the list, this hook is, for some reason, called infinitely many times.
