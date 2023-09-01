@@ -1,9 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import localforage, * as localForage from 'localforage';
 
+import { CopilotMessage } from '@cognite/llm-hub';
 import { useSDK } from '@cognite/sdk-provider';
-
-import { CopilotMessage } from '../../lib/types';
 
 import { getCacheKey } from './useCache';
 import { useCopilotContext } from './useCopilotContext';

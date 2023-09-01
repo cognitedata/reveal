@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { ResourceSelector } from '@data-exploration/containers';
-import { useFromCopilotEventHandler } from '@fusion/copilot-core';
 
 import { createLink, PageTitle } from '@cognite/cdf-utilities';
 import {
@@ -23,6 +22,7 @@ import {
   ResourceItem,
   Splitter,
 } from '@cognite/data-exploration';
+import { useFromCopilotEventHandler } from '@cognite/llm-hub';
 import { CogniteClient } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 import { UnifiedViewer, ZoomToFitMode } from '@cognite/unified-file-viewer';

@@ -5,14 +5,14 @@ import styled from 'styled-components';
 import { useBotUI, useBotUIAction } from '@botui/react';
 
 import { Button, Flex, Textarea } from '@cognite/cogs.js';
-import { useSDK } from '@cognite/sdk-provider';
-
-import { getActions } from '../../../lib/getActions';
 import {
+  getActions,
   CopilotAction,
   CopilotMessage,
   CopilotSupportedFeatureType,
-} from '../../../lib/types';
+} from '@cognite/llm-hub';
+import { useSDK } from '@cognite/sdk-provider';
+
 import { ResponsiveActions } from '../MessageRenderer/components/ResponsiveActions';
 
 export const TextAction = ({ disabled }: { disabled?: boolean }) => {
@@ -144,7 +144,7 @@ const Wrapper = styled(Flex)`
     }
   }
 
-  .cogs-textarea {
+  .cogs.cogs-textarea {
     width: 100%;
     padding: 16px;
     border: 2px solid var(--cogs-border--interactive--default);

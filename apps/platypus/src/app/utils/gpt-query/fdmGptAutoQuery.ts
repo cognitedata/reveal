@@ -1,7 +1,7 @@
 import {
   addToCopilotEventListener,
   sendToCopilotEvent,
-} from '@fusion/copilot-core';
+} from '@cognite/llm-hub';
 
 export async function fetchGptAutoQuery(
   naturalLanguageQuery: string,

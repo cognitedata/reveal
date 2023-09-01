@@ -2,17 +2,17 @@ import { useState, useMemo, useCallback, useEffect } from 'react';
 
 import styled from 'styled-components';
 
-import {
-  CopilotEvents,
-  sendToCopilotEvent,
-  useFromCopilotEventHandler,
-} from '@fusion/copilot-core';
 import MonacoEditor, { OnMount, loader } from '@monaco-editor/react';
 import * as monaco from 'monaco-editor';
 import { editor, Environment as MonacoEditorEnvironment } from 'monaco-editor';
 
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import { Body, Button, Flex, Icon, Overline, Tooltip } from '@cognite/cogs.js';
+import {
+  CopilotEvents,
+  sendToCopilotEvent,
+  useFromCopilotEventHandler,
+} from '@cognite/llm-hub';
 
 import { AddFileModal } from '../components/AddFileModal';
 import { DeleteFileModal } from '../components/DeleteFileModal';

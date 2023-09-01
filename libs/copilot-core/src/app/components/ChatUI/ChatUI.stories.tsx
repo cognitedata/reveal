@@ -3,7 +3,8 @@ import { useEffect, useState } from 'react';
 import { useBotUI } from '@botui/react';
 import type { Meta } from '@storybook/react';
 
-import { CopilotMessage } from '../../../lib/types';
+import { CopilotMessage } from '@cognite/llm-hub';
+
 import { CopilotContextProvider } from '../../utils/CopilotContext';
 
 import { ChatUIInner } from './ChatUI';

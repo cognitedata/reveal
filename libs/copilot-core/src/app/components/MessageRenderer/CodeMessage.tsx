@@ -4,12 +4,12 @@ import Highlight from 'react-highlight';
 import styled from 'styled-components';
 
 import { Body, Flex, Icon, Modal } from '@cognite/cogs.js';
-
 import {
   CopilotCodeMessage,
   CopilotDataModelQueryMessage,
-} from '../../../lib/types';
-import { sendFromCopilotEvent } from '../../../lib/utils';
+  sendFromCopilotEvent,
+} from '@cognite/llm-hub';
+
 import { getContainer } from '../../utils/getContainer';
 import { Editor } from '../Editor/Editor';
 
