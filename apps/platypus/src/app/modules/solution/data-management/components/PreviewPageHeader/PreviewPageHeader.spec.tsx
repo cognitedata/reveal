@@ -69,7 +69,7 @@ jest.mock(
 );
 
 describe('PreviewPageHeader', () => {
-  it('Shows action buttons if there are no rows but there are transformations', () => {
+  it('Shows action buttons if there are no rows but there are transformations', async () => {
     const mockTransformations: DataModelTransformation[] = [
       {
         destination: {
