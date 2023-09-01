@@ -70,7 +70,9 @@ const TimeseriesList: React.FC<TimeseriesListProps> = ({
                 <ChartChip>
                   <Icon type="LineChart" size={16} />
                 </ChartChip>
-                <Name level={3}>{ts.name}</Name>
+                <Name inverted size="small">
+                  {ts.name}
+                </Name>
               </InnerWrapper>
 
               <Tooltip
@@ -212,7 +214,6 @@ const ChartChip = styled.div`
 
 const Name = styled(Body)`
   padding-left: 6px;
-  color: ${Colors['text-icon--strong--inverted']};
   width: 200px;
   white-space: nowrap;
   overflow: hidden;

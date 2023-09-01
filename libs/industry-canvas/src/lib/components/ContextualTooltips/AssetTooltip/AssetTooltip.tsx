@@ -171,7 +171,9 @@ const AssetTooltip: React.FC<AssetTooltipProps> = ({
         </ContextualTooltip.ButtonsContainer>
       </ContextualTooltip.Header>
 
-      <AssetType level={3}>Asset</AssetType>
+      <AssetType inverted size="x-small">
+        Asset
+      </AssetType>
 
       {asset.description !== undefined && (
         <ContextualTooltip.Description level={3}>
@@ -192,7 +194,6 @@ const AssetTooltip: React.FC<AssetTooltipProps> = ({
 const AssetType = styled(Body)`
   padding: 4px 0;
   text-transform: uppercase;
-  color: ${Colors['text-icon--strong--inverted']};
 `;
 
 export default AssetTooltip;
