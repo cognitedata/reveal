@@ -7,6 +7,8 @@ import noop from 'lodash/noop';
 
 import { Dropdown, Button } from '@cognite/cogs.js';
 
+import { useTranslation } from '../../../../useTranslation';
+
 import { DatePickerInput, renderCustomHeader } from './Common';
 import { DatePickerWrapper } from './elements';
 
@@ -21,6 +23,7 @@ export const DatePicker = ({
 }: DatePickerProps) => {
   // Cogs is stupid af so we have to ref the span
   const spanRef = useRef<HTMLSpanElement>(null);
+  const { t } = useTranslation();
 
   const { offsetTop, offsetHeight } = spanRef?.current || {
     offsetTop: 0,
@@ -55,7 +58,7 @@ export const DatePicker = ({
       />
       <DatePickerWrapper mode={undefined} style={{ marginTop: 8 }}>
         <ReactDatePicker
-          renderCustomHeader={renderCustomHeader()}
+          renderCustomHeader={renderCustomHeader(t)}
           selected={date}
           onChange={(newDate) => {
             const typedDate = newDate as Date;
