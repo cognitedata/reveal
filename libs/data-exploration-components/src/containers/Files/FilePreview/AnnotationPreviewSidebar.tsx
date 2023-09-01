@@ -469,6 +469,7 @@ const AnnotationPreviewSidebar = ({
           closable={false}
           isDocumentsApiEnabled={isDocumentsApiEnabled}
           visibleResources={['timeSeries']} // to show timeseries panel in annotation sidebar
+          showSelectButton={false}
           item={
             item &&
             type && {
