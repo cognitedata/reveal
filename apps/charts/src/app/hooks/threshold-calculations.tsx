@@ -16,7 +16,10 @@ import { milliseconds } from 'date-fns';
 import { omit } from 'lodash';
 import { useDebounce } from 'use-debounce';
 
-import { CreateThresholdsParams } from '@cognite/calculation-backend';
+import {
+  CreateThresholdsParams,
+  ThresholdResult,
+} from '@cognite/calculation-backend';
 
 export const thresholdParameters = (
   dateFrom: string,
@@ -61,7 +64,10 @@ const useThresholdsResults = (
   threshold: ChartThreshold | undefined,
   sourceType: string,
   identifier: string
-) => {
+): {
+  data: ThresholdResult | undefined;
+  isLoading: boolean;
+} => {
   const thresholdCalls = threshold?.calls?.[0];
   const [chart, setChart] = useChartAtom();
 
@@ -91,7 +97,7 @@ const useThresholdsResults = (
     thresholdCalls?.callId
   );
 
-  const { data: thresholdData } = useThresholdResultData(
+  const { data: thresholdData, isLoading } = useThresholdResultData(
     thresholdCalls?.callId,
     callStatus
   );
@@ -178,7 +184,7 @@ const useThresholdsResults = (
     createThreshold,
   ]);
 
-  return { data: thresholdData };
+  return { data: thresholdData, isLoading };
 };
 
 export default useThresholdsResults;
