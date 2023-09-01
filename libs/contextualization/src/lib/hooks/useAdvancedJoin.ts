@@ -16,21 +16,31 @@ export const useAdvancedJoin = (
   enabled: boolean = true
 ) => {
   const sdk = useSDK();
+
+  const shouldFindAdvancedJoins = enabled && !!view;
   const existingAdvancedJoin = useFindAdvancedJoins(
     sdk,
     headerName,
     view,
-    enabled
+    enabled && !!view
   );
-  const shouldCreateAdvancedJoin = !existingAdvancedJoin.data?.items;
+
+  const shouldCreateAdvancedJoin =
+    shouldFindAdvancedJoins && existingAdvancedJoin?.data?.length === 0;
   const newAdvancedJoin = useCreateAdvancedJoin(
     sdk,
     headerName,
     view,
-    enabled && shouldCreateAdvancedJoin
+    shouldCreateAdvancedJoin
   );
-  const advancedJoins = existingAdvancedJoin || newAdvancedJoin;
-  return advancedJoins.data?.items[0];
+
+  if (existingAdvancedJoin?.data !== undefined) {
+    return existingAdvancedJoin.data[0];
+  } else if (newAdvancedJoin?.data !== undefined) {
+    return newAdvancedJoin.data[0];
+  }
+
+  return undefined;
 };
 
 const useFindAdvancedJoins = (
@@ -58,7 +68,7 @@ const useFindAdvancedJoins = (
         }
       );
 
-      return response.data;
+      return response.data.items;
     },
     enabled: enabled && !!view,
   });
@@ -97,7 +107,7 @@ const useCreateAdvancedJoin = (
         }
       );
 
-      return response.data;
+      return response.data.items;
     },
     enabled: enabled && !!view,
   });
