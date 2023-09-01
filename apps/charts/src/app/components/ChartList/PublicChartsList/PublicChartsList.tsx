@@ -15,6 +15,7 @@ type Props = {
   sortOption: {
     label: string;
     value: 'updatedAt' | 'name' | 'owner';
+    order?: 'asc' | 'desc';
   };
   searchTerm: string;
 };
@@ -23,11 +24,12 @@ const PublicChartsList = ({ viewOption, sortOption, searchTerm }: Props) => {
   const move = useNavigate();
   const translations = useComponentTranslations(ChartList);
   const { loading, list, error } = usePublicChartsList({
-    order: sortOption.value,
+    property: sortOption.value,
     searchTerm,
+    order: sortOption.order,
   });
   const { duplicatePublicChart } = useMyChartsList({
-    order: 'updatedAt',
+    property: 'updatedAt',
     searchTerm: '',
   });
 

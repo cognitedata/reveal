@@ -4,10 +4,15 @@ import usePublicCharts from '../queries/usePublicCharts';
 
 interface useMyChartsListProps {
   searchTerm: string;
-  order: 'updatedAt' | 'name' | 'owner';
+  property: 'updatedAt' | 'name' | 'owner';
+  order?: 'asc' | 'desc';
 }
 
-const usePublicChartsList = ({ searchTerm, order }: useMyChartsListProps) => {
+const usePublicChartsList = ({
+  searchTerm,
+  property,
+  order = 'desc',
+}: useMyChartsListProps) => {
   const { data = [], isFetched, error } = usePublicCharts();
 
   /**
@@ -24,7 +29,7 @@ const usePublicChartsList = ({ searchTerm, order }: useMyChartsListProps) => {
   /**
    * Derive ordered (and filtered) list
    */
-  const orderedList = orderBy(filteredList, [order], ['desc']);
+  const orderedList = orderBy(filteredList, [property], [order]);
 
   return {
     list: orderedList,
