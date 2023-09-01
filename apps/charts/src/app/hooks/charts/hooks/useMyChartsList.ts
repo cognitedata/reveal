@@ -2,17 +2,22 @@ import { useUpdateChart } from '@charts-app/hooks/charts-storage';
 import { useUserInfo } from '@charts-app/hooks/useUserInfo';
 import { duplicateChart } from '@charts-app/models/chart/helpers';
 import { Chart } from '@charts-app/models/chart/types';
-import { filter, orderBy } from 'lodash';
+import { filter, orderBy, isString } from 'lodash';
 
 import useDeleteMyChart from '../mutations/useDeleteMyChart';
 import useMyCharts from '../queries/useMyCharts';
 
 interface useMyChartsListProps {
   searchTerm: string;
-  order: 'updatedAt' | 'name' | 'owner';
+  property: 'updatedAt' | 'name' | 'owner';
+  order?: 'asc' | 'desc';
 }
 
-const useMyChartsList = ({ searchTerm, order }: useMyChartsListProps) => {
+const useMyChartsList = ({
+  searchTerm,
+  property,
+  order = 'desc',
+}: useMyChartsListProps) => {
   const { data: login } = useUserInfo();
   const { data = [], isFetched, error } = useMyCharts();
   const { mutateAsync: deleteChartInFirebase } = useDeleteMyChart();
@@ -51,7 +56,12 @@ const useMyChartsList = ({ searchTerm, order }: useMyChartsListProps) => {
   /**
    * Derive ordered (and filtered) list
    */
-  const orderedList = orderBy(filteredList, [order], ['desc']);
+  const orderedList = orderBy(
+    filteredList,
+    (item) =>
+      isString(item[property]) ? item[property].toLowerCase() : item[property],
+    [order]
+  );
 
   return {
     list: orderedList,
