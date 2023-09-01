@@ -136,7 +136,7 @@ export const PivotRangePicker = ({
       />
       <DatePickerWrapper mode={undefined} style={{ marginTop: 8 }}>
         <ReactDatePicker
-          renderCustomHeader={renderCustomHeader()}
+          renderCustomHeader={renderCustomHeader(t)}
           selected={date}
           onChange={(newDate) => onChange({ date: newDate as Date })}
           inline
