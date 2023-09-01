@@ -37,6 +37,7 @@ const useThresholdsMock: typeof useThresholdsResults = () => ({
     },
     warnings: null,
   },
+  isLoading: false,
 });
 
 const Template: Story<Props> = (args) => {

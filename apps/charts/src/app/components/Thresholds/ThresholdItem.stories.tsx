@@ -42,6 +42,7 @@ const useThresholdsMock: typeof useThresholdsResults = () => {
       },
       warnings: null,
     },
+    isLoading: false,
   };
 };
 
@@ -56,6 +57,7 @@ const useThresholdsEmptyMock: typeof useThresholdsResults = () => {
       },
       warnings: null,
     },
+    isLoading: false,
   };
 };
 
