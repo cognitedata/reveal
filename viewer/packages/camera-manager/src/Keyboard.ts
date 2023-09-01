@@ -32,8 +32,9 @@ const EVENT_CODES = [
 
 type EventCode = (typeof EVENT_CODES)[number];
 
+const eventCodeSet = new Set(EVENT_CODES);
 const isEventCode = (value: string): value is EventCode => {
-  return EVENT_CODES.some(eventCode => eventCode === value);
+  return eventCodeSet.has(value as EventCode);
 };
 
 export default class Keyboard {
