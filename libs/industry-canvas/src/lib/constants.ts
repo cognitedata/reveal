@@ -85,7 +85,7 @@ export const FONT_SIZES = [
   '48px',
   '72px',
 ] as const;
-export const DEFAULT_FONT_SIZE = '18px';
+export const DEFAULT_FONT_SIZE = '36px';
 export const MIN_FONT_SIZE = 1;
 export const MAX_FONT_SIZE = 999;
 

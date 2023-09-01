@@ -5,7 +5,6 @@ import { Modal } from 'antd';
 
 import { Tooltip as CogsTooltip } from '@cognite/cogs.js';
 
-import '@cognite/cogs.js/dist/cogs.css';
 import 'antd/dist/antd.css';
 import SourceCodeProVariable from '../../assets/SourceCodePro-VariableFontWeight.ttf';
 import { getContainer } from '../utils/utils';

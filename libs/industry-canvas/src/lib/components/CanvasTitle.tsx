@@ -8,7 +8,7 @@ import {
 
 import styled from 'styled-components';
 
-import { Button, Input, Title, Tooltip } from '@cognite/cogs.js';
+import { Button, Input, Heading, Tooltip } from '@cognite/cogs.js';
 
 import { translationKeys } from '../common';
 import { useTranslation } from '../hooks/useTranslation';
@@ -106,7 +106,7 @@ export const CanvasTitle: React.FC<CanvasTitleProps> = ({
   return (
     <StyledCanvasTitle
       isEditable={isEditingTitle}
-      level={3}
+      level={5}
       onClick={onCanvasTitleClick}
     >
       {isEditingTitle ? (
@@ -141,6 +141,9 @@ export const CanvasTitle: React.FC<CanvasTitleProps> = ({
   );
 };
 
-const StyledCanvasTitle = styled(Title)<{ isEditable: boolean }>`
-  padding: ${({ isEditable }) => (isEditable ? '0' : '0 8px')};
+const StyledCanvasTitle = styled(Heading)<{ isEditable: boolean }>`
+  && {
+    padding: ${({ isEditable }) => (isEditable ? '0' : '0 8px')};
+    margin-left: 8px;
+  }
 `;
