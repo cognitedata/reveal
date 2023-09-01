@@ -1,6 +1,11 @@
 import { useMemo } from 'react';
 
-import { LoadMore, LoadMoreButtonWrapper } from '@data-exploration/components';
+import {
+  EmptyState,
+  LoadMore,
+  LoadMoreButtonWrapper,
+} from '@data-exploration/components';
+import isEmpty from 'lodash/isEmpty';
 
 import {
   Document as TableDocument,
@@ -68,6 +73,10 @@ export const FileGroupingTable = ({
 
     return convertFilesToDocs(files);
   }, [data]);
+
+  if (isEmpty(docs)) {
+    return <EmptyState isLoading={isLoadingMore} />;
+  }
 
   return (
     <>

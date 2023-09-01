@@ -114,8 +114,11 @@ export const RelatedResources = ({
         {
           label: t(
             'LINKED_RESOURCE_TYPE',
-            `Linked ${resourceTypeTranslated} (${linkedResourcesCount})`,
-            { resourceType, count: linkedResourcesCount }
+            `Linked ${resourceType} (${linkedResourcesCount})`,
+            {
+              resourceType: resourceTypeTranslated,
+              count: linkedResourcesCount,
+            }
           ),
           value: 'linkedResource',
           count: linkedResourcesCount,
