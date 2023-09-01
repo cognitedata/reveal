@@ -11,9 +11,11 @@ import {
   useBasicTypeaheadTriggerMatch,
 } from '@lexical/react/LexicalTypeaheadMenuPlugin';
 import { TextNode } from 'lexical';
+import { useDebounce } from 'use-debounce';
 
 import { Avatar, Flex, Body, Chip } from '@cognite/cogs.js';
 
+import { useUserProfilesSearch } from '../../hooks/use-query/useUserProfilesSearch';
 import { UserProfile } from '../../UserProfileProvider';
 
 import { $createMentionNode } from './MentionNode';
@@ -181,7 +183,7 @@ function MentionsMenuItem({
       <Flex justifyContent="space-between" alignItems="center">
         <Flex alignItems="center" gap={10}>
           <Avatar text={option.profile.displayName} />
-          <Body level={2} strong>
+          <Body size="small" strong>
             {option.profile.displayName}
           </Body>
         </Flex>
@@ -191,32 +193,24 @@ function MentionsMenuItem({
   );
 }
 
-// how many items in dropdown shown to user at most
-const MENTIONS_LIST_LENGTH_LIMIT = 4;
-export default function MentionsPlugin({ users }: { users: UserProfile[] }) {
+const SEARCH_DEBOUNCE_MS = 200;
+
+export default function MentionsPlugin() {
   const [editor] = useLexicalComposerContext();
 
   const [queryString, setQueryString] = useState<string | null>(null);
+  const [debouncedQueryString] = useDebounce(queryString, SEARCH_DEBOUNCE_MS);
 
+  const { userProfiles } = useUserProfilesSearch({
+    name: debouncedQueryString || '',
+  });
   const checkForSlashTriggerMatch = useBasicTypeaheadTriggerMatch('/', {
     minLength: 0,
   });
-  const userList = useMemo(
-    () =>
-      queryString
-        ? users.filter((user) =>
-            user.displayName?.toLowerCase().includes(queryString.toLowerCase())
-          )
-        : [],
-    [queryString, users]
-  );
 
   const options = useMemo(
-    () =>
-      userList
-        .map((user) => new MentionOption(user))
-        .slice(0, MENTIONS_LIST_LENGTH_LIMIT),
-    [userList]
+    () => userProfiles.map((user) => new MentionOption(user)),
+    [userProfiles]
   );
   const onSelectOption = useCallback(
     (
@@ -256,7 +250,7 @@ export default function MentionsPlugin({ users }: { users: UserProfile[] }) {
         anchorElementRef,
         { selectOptionAndCleanUp, setHighlightedIndex, selectedIndex }
       ) =>
-        anchorElementRef.current && userList.length
+        anchorElementRef.current && userProfiles.length
           ? ReactDOM.createPortal(
               <div>
                 <MentionsWrapper>

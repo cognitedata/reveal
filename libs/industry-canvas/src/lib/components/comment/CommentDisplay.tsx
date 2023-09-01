@@ -6,12 +6,13 @@ import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 
 import { Body, Chip, Flex, Overline, Avatar, Divider } from '@cognite/cogs.js';
 
+import { USER_IDENTIFIER_REGEXP } from '../../constants';
 import { Comment } from '../../services/comments/types';
 import { isNonEmptyString } from '../../services/comments/utils';
 import { UserProfile } from '../../UserProfileProvider';
 
-// Used for matching user ids in the text like: <@AAA__bsd123> etc;
-const USER_IDENTIFIER_REGEXP = /<@([a-zA-Z0-9_-]+)>/g;
+const findUserByUserId = (users: UserProfile[], userId: string) =>
+  users.find((user) => user.userIdentifier === userId);
 
 const wrapRegexTextWithComponent = (
   text: string,
@@ -30,9 +31,7 @@ const renderCommentText = (text: string, users: UserProfile[]) => (
       text,
       USER_IDENTIFIER_REGEXP,
       (matchedUserIdentifier) => {
-        const foundUser = users.find(
-          (user) => user.userIdentifier === matchedUserIdentifier
-        );
+        const foundUser = findUserByUserId(users, matchedUserIdentifier);
         if (foundUser !== undefined) {
           return (
             <NameTag
@@ -68,28 +67,34 @@ export const CommentDisplay = ({
         ? new Date(b.createdTime).getTime() - new Date(a.createdTime).getTime()
         : new Date(a.createdTime).getTime() - new Date(b.createdTime).getTime()
     );
-
   return (
     <>
-      {sortedList.map((el) => (
-        <Fragment key={`comment-display-${el.externalId}-${el.createdTime}`}>
-          <Flex className="comment-item" alignItems="center" gap={16}>
-            <Avatar text={el.createdBy?.displayName} />
-            <Flex direction="column" style={{ flex: 1 }} gap={8}>
-              <Flex gap={8}>
-                <StyledOverline level={3} style={{ flex: 1 }}>
-                  {el.createdBy?.displayName}
-                </StyledOverline>
-                <Overline level={3} muted>
-                  {formatDistanceToNow(el.createdTime, { addSuffix: true })}
-                </Overline>
+      {sortedList.map((el) => {
+        const foundUser = findUserByUserId(
+          users,
+          el.createdBy?.userIdentifier || ''
+        );
+
+        return (
+          <Fragment key={`comment-display-${el.externalId}-${el.createdTime}`}>
+            <Flex className="comment-item" alignItems="center" gap={16}>
+              <Avatar text={foundUser?.displayName} />
+              <Flex direction="column" style={{ flex: 1 }} gap={8}>
+                <Flex gap={8}>
+                  <StyledOverline level={3} style={{ flex: 1 }}>
+                    {foundUser?.displayName}
+                  </StyledOverline>
+                  <Overline level={3} muted>
+                    {formatDistanceToNow(el.createdTime, { addSuffix: true })}
+                  </Overline>
+                </Flex>
+                {renderCommentText(el.text, users)}
               </Flex>
-              {renderCommentText(el.text, users)}
             </Flex>
-          </Flex>
-          <Divider />
-        </Fragment>
-      ))}
+            <Divider />
+          </Fragment>
+        );
+      })}
     </>
   );
 };
