@@ -29,7 +29,6 @@ export const CommentsPane: React.FC<Props> = ({
   users,
 }) => {
   const { t } = useTranslation();
-
   const textIsNotEmpty = (comment: Comment) => comment.text !== '';
 
   const commentCount = comments.filter(textIsNotEmpty).length;
@@ -39,6 +38,7 @@ export const CommentsPane: React.FC<Props> = ({
   const { filteredComments } = useCommentsPaneSearch({
     comments,
     searchString: debouncedSearchString,
+    users,
   });
   const filteredCommentCount = filteredComments.filter(textIsNotEmpty).length;
 
