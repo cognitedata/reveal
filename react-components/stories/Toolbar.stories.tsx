@@ -8,7 +8,9 @@ import {
   type QualitySettings,
   RevealContainer,
   RevealToolbar,
-  withSuppressRevealEvents
+  withSuppressRevealEvents,
+  withCameraStateUrlParam,
+  useSetCameraStateFromUrlParam
 } from '../src';
 import { CogniteClient } from '@cognite/sdk';
 import { Color } from 'three';
@@ -33,7 +35,7 @@ const sdk = new CogniteClient({
   getToken: async () => await Promise.resolve(token)
 });
 
-const MyCustomToolbar = styled(withSuppressRevealEvents(ToolBar))`
+const MyCustomToolbar = styled(withSuppressRevealEvents(withCameraStateUrlParam(ToolBar)))`
   position: absolute;
   right: 20px;
   top: 70px;
@@ -103,6 +105,7 @@ export const Main: Story = {
   },
   render: ({ addModelOptions }) => (
     <RevealContainer sdk={sdk} color={new Color(0x4a4a4a)}>
+      <Test />
       <CadModelContainer addModelOptions={addModelOptions} />
       <RevealToolbar
         customSettingsContent={exampleCustomSettingElements()}
@@ -117,3 +120,8 @@ export const Main: Story = {
     </RevealContainer>
   )
 };
+
+function Test(): ReactElement {
+  const asd = useSetCameraStateFromUrlParam();
+  return <button onClick={asd}>Test</button>;
+}

@@ -25,7 +25,10 @@ export { useMappedEdgesForRevisions } from './components/NodeCacheProvider/NodeC
 
 // Higher order components
 export { withSuppressRevealEvents } from './higher-order-components/withSuppressRevealEvents';
-
+export {
+  withCameraStateUrlParam,
+  useSetCameraStateFromUrlParam
+} from './higher-order-components/withCameraStateUrlParam';
 // Types
 export {
   type PointCloudModelStyling,
