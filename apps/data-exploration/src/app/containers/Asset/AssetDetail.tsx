@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 
 import { Loader, Metadata } from '@data-exploration/components';
 import { AssetInfo } from '@data-exploration/containers';
+import styled from 'styled-components/macro';
 
 import { useCdfUserHistoryService } from '@cognite/cdf-utilities';
 import { Tabs } from '@cognite/cogs.js';
@@ -125,7 +126,7 @@ export const AssetDetail = ({
   }
 
   return (
-    <div data-testid="asset-detail">
+    <AssetDetailWrapper data-testid="asset-detail">
       <BreadcrumbsV2 />
 
       <ResourceTitleRow
@@ -178,6 +179,10 @@ export const AssetDetail = ({
           </Tabs.Tab>,
         ]}
       />
-    </div>
+    </AssetDetailWrapper>
   );
 };
+
+const AssetDetailWrapper = styled.div`
+  display: contents;
+`;
