@@ -2,7 +2,8 @@ import { Dispatch, SetStateAction } from 'react';
 
 import styled from 'styled-components';
 
-import { Select, SelectProps, Spin } from 'antd';
+import { Spinner } from '@platypus-app/components/Spinner/Spinner';
+import { Select, SelectProps } from 'antd';
 
 import { LABELING_TABLE_COLUMN_WIDTH } from '../constants';
 import { useSearchMatchInputOptions } from '../hooks/useSearchMatchInputOptions';
@@ -67,7 +68,7 @@ export const ManualMatchInput = ({
           onClick={() => {
             matchInputOptionsFetcher(''); // Fetch initial options with an empty query
           }}
-          notFoundContent={searching ? <Spin size="small" /> : null}
+          notFoundContent={searching ? <Spinner /> : null}
           style={{ width: '100%' }}
           options={matchInputOptions}
         />
