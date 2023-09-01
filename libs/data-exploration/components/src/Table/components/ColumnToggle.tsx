@@ -258,9 +258,7 @@ const StyledResetSpan = styled.span`
 `;
 
 const StyledMenu = styled(Menu)`
-  min-width: 256px;
-  max-width: 256px;
-  width: 100%;
+  width: 256px;
   max-height: 456px;
   overflow: auto;
 
