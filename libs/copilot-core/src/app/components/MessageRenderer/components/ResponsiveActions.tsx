@@ -5,12 +5,11 @@ import styled from 'styled-components';
 import { useDebounce } from 'use-debounce';
 
 import { Button, Dropdown, InputExp, Menu } from '@cognite/cogs.js';
-
-import { CopilotAction } from '../../../../lib/types';
 import {
+  CopilotAction,
   sendFromCopilotEvent,
   sendToCopilotEvent,
-} from '../../../../lib/utils';
+} from '@cognite/llm-hub';
 
 const getButtonWidth = (text: string) => text.length * 8 + 20;
 

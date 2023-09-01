@@ -1,8 +1,7 @@
 import React from 'react';
 
 import { Flex } from '@cognite/cogs.js';
-
-import { CopilotChainSelectionMessage } from '../../../lib/types';
+import { CopilotChainSelectionMessage } from '@cognite/llm-hub';
 
 import { Markdown } from './components/Markdown';
 import { MessageBase } from './MessageBase';
