@@ -1,6 +1,6 @@
-export { useAdvancedJoin } from './useAdvancedJoin';
 export { useCreateAdvancedJoinMatches } from './useCreateAdvancedJoinMatches';
 export { useQueryParameter } from './useQueryParameter';
+export * from './advanced-joins';
 export * from './estimate-quality';
 export * from './flags';
 export * from './matches';
