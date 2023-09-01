@@ -7,7 +7,7 @@ import {
   Elevations,
   Icon,
   Menu,
-  Title,
+  Heading,
 } from '@cognite/cogs.js';
 
 export const Container = styled.div`
@@ -30,8 +30,10 @@ export const Header = styled.div`
 `;
 
 export const DropdownMenu = styled(Menu)`
-  background: ${Colors['surface--muted--inverted']};
-  color: ${Colors['text-icon--muted--inverted']};
+  && {
+    background: ${Colors['surface--muted--inverted']};
+    color: ${Colors['text-icon--muted--inverted']};
+  }
   .cogs-menu-item,
   .cogs-menu-item:hover {
     color: ${Colors['text-icon--muted--inverted']};
@@ -54,10 +56,10 @@ export const HeaderButton = styled(Button)`
   margin-right: 8px;
 `;
 
-export const Label = styled(Title).attrs({
+export const Label = styled(Heading).attrs({
   level: 5,
+  inverted: true,
 })`
-  color: ${Colors['text-icon--strong--inverted']};
   justify-content: center;
   align-items: center;
   word-break: break-all;
@@ -66,8 +68,8 @@ export const Label = styled(Title).attrs({
 
 export const Description = styled(Body).attrs({
   level: 3,
+  inverted: true,
 })`
-  color: ${Colors['text-icon--muted--inverted']};
   padding: 4px 0;
 `;
 
