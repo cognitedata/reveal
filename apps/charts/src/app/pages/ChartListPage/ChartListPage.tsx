@@ -54,8 +54,12 @@ const ChartListPage = () => {
     translationNamespace: 'ChartList',
   });
 
-  const sortOptions = [
-    { value: 'name' as const, label: t.Name },
+  const sortOptions: {
+    label: string;
+    value: 'updatedAt' | 'name' | 'owner';
+    order?: 'asc' | 'desc';
+  }[] = [
+    { value: 'name' as const, label: t.Name, order: 'asc' },
     { value: 'owner' as const, label: t.Owner },
     { value: 'updatedAt' as const, label: t.Updated },
   ];

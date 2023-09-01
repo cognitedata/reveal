@@ -14,6 +14,7 @@ type Props = {
   sortOption: {
     label: string;
     value: 'updatedAt' | 'name' | 'owner';
+    order?: 'asc' | 'desc';
   };
   searchTerm: string;
 };
@@ -22,7 +23,11 @@ const MyChartsList = ({ sortOption, searchTerm, viewOption }: Props) => {
   const move = useNavigate();
   const translations = useComponentTranslations(ChartList);
   const { loading, error, list, duplicatePrivateChart, deleteChart } =
-    useMyChartsList({ order: sortOption.value, searchTerm });
+    useMyChartsList({
+      property: sortOption.value,
+      searchTerm,
+      order: sortOption.order,
+    });
 
   const handleDuplicate = async (chartId: string) => {
     trackUsage('ChartListPage.DuplicatePrivateChart', { chartId });
