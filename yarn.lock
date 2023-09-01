@@ -6653,7 +6653,7 @@
     classnames "^2.3.2"
     rc-util "^5.24.4"
 
-"@react-awesome-query-builder/core@^6.1.2":
+"@react-awesome-query-builder/core@^6.4.1":
   version "6.4.1"
   resolved "https://registry.yarnpkg.com/@react-awesome-query-builder/core/-/core-6.4.1.tgz#d3cd91ff589841f1ce2fcbe37309464b1cc619a8"
   integrity sha512-Y3i5Yhr+QLWZkGD/Gz669WpQ7NQ6xPQJbi/dQ7LsCbb/zjL+5ivuM9AHRUq+dWsA/EmygIvolJSoLxjWpB6vRA==
@@ -6666,12 +6666,12 @@
     spel2js "^0.2.8"
     sqlstring "^2.3.3"
 
-"@react-awesome-query-builder/ui@6.1.2":
-  version "6.1.2"
-  resolved "https://registry.yarnpkg.com/@react-awesome-query-builder/ui/-/ui-6.1.2.tgz#74deb2ee69e23bf64a107c08d46cbb04e6c4464d"
-  integrity sha512-h5S2UWvz4kXoJ+9he3ZeR/QAINdJ9KgmSXo/z85rGl9AVOm/K7R3TWsuZN56ethxpqzljWTfUUVDzF50eH3CVQ==
+"@react-awesome-query-builder/ui@^6.1.2":
+  version "6.4.1"
+  resolved "https://registry.yarnpkg.com/@react-awesome-query-builder/ui/-/ui-6.4.1.tgz#e7f85bff76b60bf0705e19778b374efea538b85c"
+  integrity sha512-vXoVk6b6tKaXul0iu4r0c6JtbQV9prVNQjgIsso9oU7C6VfXVJ+5gf05QSckrUBgwKql1XztlWDLWqReRkWmyA==
   dependencies:
-    "@react-awesome-query-builder/core" "^6.1.2"
+    "@react-awesome-query-builder/core" "^6.4.1"
     classnames "^2.3.1"
     lodash "^4.17.21"
     prop-types "^15.7.2"
