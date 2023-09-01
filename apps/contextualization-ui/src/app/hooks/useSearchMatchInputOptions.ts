@@ -6,10 +6,10 @@ import {
 } from '@fusion/contextualization';
 import { debounce } from 'lodash';
 
+import { DEBOUNCE_TIMEOUT } from '../constants';
 import { MatchInputOption, ModelInstance } from '../types';
 
 export const useSearchMatchInputOptions = () => {
-  const debounceTimeout = 800;
   const [searching, setSearching] = useState(false);
   const [options, setOptions] = useState<MatchInputOption[]>([]);
   // A reference to track the latest fetch operation.
@@ -58,9 +58,8 @@ export const useSearchMatchInputOptions = () => {
       }
     };
 
-    return debounce(loadOptions, debounceTimeout);
+    return debounce(loadOptions, DEBOUNCE_TIMEOUT);
   }, [
-    debounceTimeout,
     linkedView?.space,
     linkedView?.externalId,
     linkedView?.version,
