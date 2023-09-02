@@ -3,7 +3,7 @@
  */
 import useThresholdsResults from '@charts-app/hooks/threshold-calculations';
 import { ChartThreshold } from '@charts-app/models/chart/types';
-import { useArgs } from '@storybook/client-api';
+import { useArgs } from '@storybook/preview-api';
 import { Meta, Story } from '@storybook/react';
 import { RecoilRoot } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
