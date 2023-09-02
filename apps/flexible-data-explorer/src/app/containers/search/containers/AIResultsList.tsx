@@ -1,8 +1,7 @@
 import { useState, useCallback, useMemo } from 'react';
 
+import { CopilotDataModelQueryMessage } from '@fusion/copilot-core';
 import take from 'lodash/take';
-
-import { CopilotDataModelQueryMessage } from '@cognite/llm-hub';
 
 import { ButtonShowMore } from '../../../components/buttons/ButtonShowMore';
 import { SearchResults } from '../../../components/search/SearchResults';

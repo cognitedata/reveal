@@ -1,8 +1,9 @@
 import { Body, Button, Flex } from '@cognite/cogs.js';
+
 import {
   CopilotBotMessage,
   CopilotHumanApprovalMessage,
-} from '@cognite/llm-hub';
+} from '../../../lib/types';
 
 import { MessageBase } from './MessageBase';
 

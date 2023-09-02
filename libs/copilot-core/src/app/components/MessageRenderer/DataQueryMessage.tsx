@@ -1,12 +1,12 @@
 import { useMemo } from 'react';
 
 import { Flex } from '@cognite/cogs.js';
+
 import {
   CopilotAction,
   CopilotDataModelQueryMessage,
-  sendFromCopilotEvent,
-} from '@cognite/llm-hub';
-
+} from '../../../lib/types';
+import { sendFromCopilotEvent } from '../../../lib/utils';
 import { useCopilotContext } from '../../hooks/useCopilotContext';
 
 import { Markdown } from './components/Markdown';

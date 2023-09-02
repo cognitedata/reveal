@@ -2,16 +2,17 @@ import { useState, useEffect, useMemo } from 'react';
 
 import styled from 'styled-components';
 
-import { CopilotActions, Markdown } from '@fusion/copilot-core';
+import {
+  CopilotActions,
+  CopilotDataModelQueryMessage,
+  Markdown,
+  sendToCopilotEvent,
+  trackCopilotUsage,
+  useToCopilotEventHandler,
+} from '@fusion/copilot-core';
 import pluralize from 'pluralize';
 
 import { Body, Button, Flex, NotificationDot } from '@cognite/cogs.js';
-import {
-  trackCopilotUsage,
-  CopilotDataModelQueryMessage,
-  useToCopilotEventHandler,
-  sendToCopilotEvent,
-} from '@cognite/llm-hub';
 
 import { useAIQueryLocalStorage } from '../../../hooks/useLocalStorage';
 import { useSearchQueryParams } from '../../../hooks/useParams';

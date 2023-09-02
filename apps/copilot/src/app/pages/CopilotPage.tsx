@@ -1,10 +1,13 @@
 import { useNavigate } from 'react-router-dom';
 
-import { Copilot } from '@fusion/copilot-core';
+import {
+  CogniteChainName,
+  Copilot,
+  useFromCopilotEventHandler,
+} from '@fusion/copilot-core';
 
 import sdk from '@cognite/cdf-sdk-singleton';
 import { createLink } from '@cognite/cdf-utilities';
-import { CogniteChainName, useFromCopilotEventHandler } from '@cognite/llm-hub';
 import { useFlag } from '@cognite/react-feature-flags';
 
 const excludeChains: CogniteChainName[] = [

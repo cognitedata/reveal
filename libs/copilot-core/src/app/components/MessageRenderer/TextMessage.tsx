@@ -1,7 +1,8 @@
 import React from 'react';
 
 import { Body, Flex } from '@cognite/cogs.js';
-import { CopilotTextMessage } from '@cognite/llm-hub';
+
+import { CopilotTextMessage } from '../../../lib/types';
 
 import { Markdown } from './components/Markdown';
 import { MessageBase } from './MessageBase';

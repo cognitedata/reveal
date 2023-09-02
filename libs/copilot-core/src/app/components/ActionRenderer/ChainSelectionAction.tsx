@@ -5,8 +5,9 @@ import styled from 'styled-components';
 import { useBotUI, useBotUIAction } from '@botui/react';
 
 import { Flex } from '@cognite/cogs.js';
-import { CogniteBaseChain, CopilotAction } from '@cognite/llm-hub';
 
+import { CogniteBaseChain } from '../../../lib/CogniteBaseChain';
+import { CopilotAction } from '../../../lib/types';
 import { ResponsiveActions } from '../MessageRenderer/components/ResponsiveActions';
 
 export const ChainSelectionAction = () => {
