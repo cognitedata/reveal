@@ -126,7 +126,7 @@ export class RevisionFdmNodeCache {
   }
 
   private async getDataWithViewsForFdmEdges(
-    nodeEdges: Array<Omit<FdmEdgeWithNode, 'view'>>,
+    nodeEdges: Array<{ edge: FdmCadEdge, node: Node3D}>,
     ancestorsWithSameMapping: Node3D[]
   ): Promise<Fdm3dNodeData[]> {
     const nodeInspectionResults = await inspectNodes(
