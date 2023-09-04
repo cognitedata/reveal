@@ -10,12 +10,12 @@ import {
   Tooltip,
   SelectComponents,
 } from '@cognite/cogs.js';
+
 import {
   CopilotBotMessage,
   CopilotDataModelSelectionMessage,
   _DeprecatedCopilotDataModelSelectionMessage,
-} from '@cognite/llm-hub';
-
+} from '../../../lib/types';
 import { useDataModels } from '../../hooks/useDataModels';
 
 import { MessageBase } from './MessageBase';

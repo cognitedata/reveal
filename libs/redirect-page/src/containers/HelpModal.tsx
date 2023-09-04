@@ -46,7 +46,7 @@ const Modal = styled.div<{ visible?: boolean }>`
   height: 100vh;
   overflow: hidden;
   margin: 0 auto;
-  background-color: ${Colors.black}66;
+  background-color: #1f1f1f66;
 `;
 
 const Wrapper = styled(Flex)`

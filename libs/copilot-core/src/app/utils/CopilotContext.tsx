@@ -5,12 +5,8 @@ import { createBot } from 'botui';
 import * as localForage from 'localforage';
 import { v4 as uuid } from 'uuid';
 
-import {
-  CopilotEvents,
-  CopilotMessage,
-  useToCopilotEventHandler,
-} from '@cognite/llm-hub';
-
+import { useToCopilotEventHandler } from '../../lib/hooks';
+import { CopilotEvents, CopilotMessage } from '../../lib/types';
 import { useFromCache, useSaveToCache } from '../hooks/useCache';
 import {
   getChatHistory,

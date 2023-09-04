@@ -1,6 +1,5 @@
+import { CopilotDataModelQueryMessage } from '@fusion/copilot-core';
 import { useQuery } from '@tanstack/react-query';
-
-import { CopilotDataModelQueryMessage } from '@cognite/llm-hub';
 
 import { useAIQueryLocalStorage } from '../../../hooks/useLocalStorage';
 import { useFDM } from '../../../providers/FDMProvider';

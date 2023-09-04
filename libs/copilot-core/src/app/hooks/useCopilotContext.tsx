@@ -1,6 +1,6 @@
 import { MutableRefObject, createContext, useContext } from 'react';
 
-import { CopilotMessage } from '@cognite/llm-hub';
+import { CopilotMessage } from '../../lib/types';
 
 export const useCopilotContext = () => useContext(CopilotContext);
 

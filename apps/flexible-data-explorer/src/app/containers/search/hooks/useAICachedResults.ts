@@ -1,4 +1,4 @@
-import { CopilotDataModelQueryMessage } from '@cognite/llm-hub';
+import { CopilotDataModelQueryMessage } from '@fusion/copilot-core';
 
 import { useAIQueryLocalStorage } from '../../../hooks/useLocalStorage';
 import { useSearchQueryParams } from '../../../hooks/useParams';

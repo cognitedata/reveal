@@ -1,7 +1,8 @@
+// TODO: Need to fix this circular dep, but seems to be working in dev env?
+import { CopilotEvents } from '@fusion/copilot-core';
 import { FdmMixerApiService } from '@fusion/data-modeling';
 import { v4 as uuid } from 'uuid';
 
-import { CopilotEvents } from '@cognite/llm-hub';
 import { CogniteClient } from '@cognite/sdk';
 
 import {

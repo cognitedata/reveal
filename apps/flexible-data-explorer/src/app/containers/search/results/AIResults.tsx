@@ -2,15 +2,14 @@ import { useCallback, useEffect, useState } from 'react';
 
 import styled from 'styled-components';
 
-import { CopilotPurpleOverride } from '@fusion/copilot-core';
-
 import {
   CopilotDataModelQueryMessage,
   addFromCopilotEventListener,
   sendToCopilotEvent,
   useToCopilotEventHandler,
+  CopilotPurpleOverride,
   useFromCopilotEventHandler,
-} from '@cognite/llm-hub';
+} from '@fusion/copilot-core';
 
 import { SearchResults } from '../../../components/search/SearchResults';
 import { useIsCogpilotEnabled } from '../../../hooks/useFlag';

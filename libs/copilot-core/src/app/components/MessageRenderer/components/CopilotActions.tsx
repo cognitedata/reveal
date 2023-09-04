@@ -1,8 +1,8 @@
 import { useState } from 'react';
 
 import { Button, Flex, toast } from '@cognite/cogs.js';
-import { CopilotBotMessage } from '@cognite/llm-hub';
 
+import { CopilotBotMessage } from '../../../../lib/types';
 import { useCopilotContext } from '../../../hooks/useCopilotContext';
 import { useMetrics } from '../../../hooks/useMetrics';
 

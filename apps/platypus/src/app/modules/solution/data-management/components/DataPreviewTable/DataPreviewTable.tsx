@@ -39,6 +39,8 @@ import {
   CellDoubleClickedEvent,
   CellEditingStartedEvent,
   ColDef,
+  ColumnResizedEvent,
+  ColumnState,
   GridReadyEvent,
   RowDataUpdatedEvent,
   ValueSetterParams,
@@ -111,6 +113,8 @@ export const DataPreviewTable = forwardRef<
     const [filteredRowCount, setFilteredRowCount] = useState<null | number>(
       null
     );
+    const [columnState, setColumnState] = useState<ColumnState[]>([]);
+    const [shouldAlignColumnState, setShouldAlignColumnState] = useState(false);
     const gridRef = useRef<AgGridReact>(null);
     const { track } = useMixpanel();
     const { isEnabled: isManualPopulationEnabled } =
@@ -319,6 +323,9 @@ export const DataPreviewTable = forwardRef<
         if (items.length > 0 && onHideOverlay.current) {
           onHideOverlay.current();
         }
+
+        setShouldAlignColumnState(true);
+
         setSuggestionsAvailable(
           getSuggestionsAvailable({
             dataModelType,
@@ -682,6 +689,22 @@ export const DataPreviewTable = forwardRef<
       track,
     ]);
 
+    useEffect(() => {
+      gridRef.current?.columnApi.applyColumnState({
+        state: columnState,
+      });
+      if (shouldAlignColumnState) {
+        setShouldAlignColumnState(false);
+      }
+    }, [columnState, shouldAlignColumnState]);
+
+    const handleColumnResized = (event: ColumnResizedEvent) => {
+      if (event.finished && event.source === 'uiColumnDragged') {
+        const newColumnState = event.columnApi.getColumnState();
+        setColumnState(newColumnState);
+      }
+    };
+
     if (!isPublishedRowsCountMapFetched) {
       return <Spinner />;
     }
@@ -907,6 +930,7 @@ export const DataPreviewTable = forwardRef<
               rowClassRules={{
                 'ag-row-selected': (params) => params.data?._isDraftSelected,
               }}
+              onColumnResized={handleColumnResized}
               onGridReady={onGridReady}
               pinnedTopRowData={draftRowsData}
               onPinnedRowDataChanged={handlePinnedRowDataChanged}

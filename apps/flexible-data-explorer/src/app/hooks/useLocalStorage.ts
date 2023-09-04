@@ -1,6 +1,6 @@
+import { CopilotDataModelQueryMessage } from '@fusion/copilot-core';
 import useLocalStorageState from 'use-local-storage-state';
 
-import { CopilotDataModelQueryMessage } from '@cognite/llm-hub';
 import { useSDK } from '@cognite/sdk-provider';
 
 import { localStorageKeys } from '../constants/localStorageKeys';
