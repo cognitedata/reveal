@@ -64,13 +64,13 @@ function init() {
 function render(time: number) {
   currentControlsState = controls.getState();
 
-  if (keyboard.isPressed('c')) {
+  if (keyboard.isPressed('KeyC')) {
     controls.setState(currentControlsState.position, currentControlsState.target.add(new THREE.Vector3(-0.1, 0, 0)));
   }
-  if (keyboard.isPressed('b')) {
+  if (keyboard.isPressed('KeyB')) {
     controls.setState(currentControlsState.position, currentControlsState.target.add(new THREE.Vector3(0.1, 0, 0)));
   }
-  if (keyboard.isPressed('f')) {
+  if (keyboard.isPressed('KeyF')) {
     controls.setState(currentControlsState.position, currentControlsState.target.copy(new THREE.Vector3(3, 2, 0)));
   }
 
