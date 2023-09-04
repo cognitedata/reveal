@@ -59,7 +59,7 @@ const RevealToolbarContainer = (
     props = { ...props, ...defaultStyle };
   }
   return (
-    <I18nWrapper translations={translations} addNamespace="reveal-react-components">
+    <I18nWrapper translations={translations} defaultNamespace="reveal-react-components">
       <ToolBar {...props}>{props.toolBarContent ?? <DefaultContentWrapper {...props} />}</ToolBar>
     </I18nWrapper>
   );

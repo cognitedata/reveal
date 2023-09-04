@@ -1,7 +1,7 @@
 {
   "CAD_MODELS": "CAD models",
   "POINT_CLOUDS": "Point clouds",
-  "360_IMAGES": "360 images",
+  "IMAGES_360": "360 images",
   "HIGH_FIDELITY": "High fidelity",
   "PAN": "Pan",
   "TOUCH_SELECT": "Tap to select",
@@ -29,6 +29,6 @@
   "MOUSE_NAVIGATION_DESCRIPTION": "Click and drag to rotate, and pan the view. Use mouse wheel to zoom the view. Left click to select",
   "TOUCH_NAVIGATION_TITLE": "Touch",
   "TOUCH_NAVIGATION_DESCRIPTION": "Use gestures to zoom, pan and select",
-  "360_IMAGES_STATION": "Station :",
-  "360_IMAGES_DETAILS": "Details"
+  "IMAGES_360_STATION": "Station :",
+  "IMAGES_360_DETAILS": "Details"
 }

@@ -32,6 +32,7 @@
     "@babel/preset-react": "7.22.5",
     "@babel/preset-typescript": "7.22.11",
     "@cognite/cdf-i18n-utils": "^0.7.5",
+    "@cognite/cdf-utilities": "^3.4.7",
     "@cognite/cogs.js": "^9.17.0",
     "@cognite/reveal": "4.4.1",
     "@cognite/sdk": "^8.2.0",

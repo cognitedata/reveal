@@ -107,7 +107,7 @@ export const Image360CollectionLayerContainer = ({
                 setVisible(true);
               }}
             />
-            <StyledLabel> {t('360_IMAGES')} </StyledLabel>
+            <StyledLabel> {t('IMAGES_360')} </StyledLabel>
             <StyledChipCount label={count} hideTooltip type="neutral" />
           </Flex>
         </Menu.Submenu>
