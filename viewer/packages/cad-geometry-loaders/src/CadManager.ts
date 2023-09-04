@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 
-import { Subscription, Observable } from 'rxjs';
+import { Subscription, Observable, auditTime, buffer } from 'rxjs';
 
 import { LevelOfDetail, ConsumedSector, CadModelMetadata } from '@reveal/cad-parsers';
 import { CadModelUpdateHandler } from './CadModelUpdateHandler';
@@ -107,9 +107,17 @@ export class CadManager {
       this.updateTreeIndexToSectorsMap(cadModel, sector);
     };
 
+    const consumeNextSectors = (sectors: ConsumedSector[]) => {
+      for (const sector of sectors) {
+        consumeNextSector(sector);
+      }
+    };
+
+    const consumedSectorsObservable = this._cadModelUpdateHandler.consumedSectorObservable();
+    const flushAt = consumedSectorsObservable.pipe(auditTime(350));
     this._subscription.add(
-      this._cadModelUpdateHandler.consumedSectorObservable().subscribe({
-        next: consumeNextSector,
+      consumedSectorsObservable.pipe(buffer(flushAt)).subscribe({
+        next: consumeNextSectors,
         error: error => {
           MetricsLogger.trackError(error, {
             moduleName: 'CadManager',

@@ -142,6 +142,20 @@ export class IndexSet {
     return this;
   }
 
+  hasIntersectionWithMap(otherMap: Map<number, number>): boolean {
+    if (!this.rootNode) {
+      return false;
+    }
+
+    for (const index of otherMap.keys()) {
+      if (this.rootNode.contains(index)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   hasIntersectionWith(otherSet: IndexSet | Map<number, number> | Set<number>): boolean {
     if (otherSet instanceof IndexSet) {
       if (this.rootNode === undefined || otherSet.rootNode === undefined) {
