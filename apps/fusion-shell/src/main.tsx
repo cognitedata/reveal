@@ -1,6 +1,7 @@
 import { StrictMode } from 'react';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 
+import antDStyles from 'antd/dist/antd.css?inline';
 import * as ReactDOM from 'react-dom/client';
 
 import otherStyles from '@cognite/cogs.js/dist/cogs.css?inline';
@@ -18,6 +19,7 @@ root.render(
   <StrictMode>
     <HelmetProvider>
       <Helmet>
+        <style>{antDStyles}</style>
         <style>{otherStyles}</style>
       </Helmet>
       <div className={STYLE_SCOPE}>

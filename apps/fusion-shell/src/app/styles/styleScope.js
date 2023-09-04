@@ -1,3 +1,3 @@
 module.exports = {
-  styleScope: 'navigation-style-scope',
+  styleScope: 'fusion-shell-style-scope',
 };

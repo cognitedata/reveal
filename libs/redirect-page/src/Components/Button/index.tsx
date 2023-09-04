@@ -76,7 +76,7 @@ const StyledButton = styled.button<Props>`
   padding: ${({ $size }) => ($size === 'small' ? '4px 8px' : '6px 12px')};
   background-color: ${({ $type }) => styleMap[$type].bgColor};
   color: ${({ $type }) => styleMap[$type].color};
-  border: ${({ $type }) => styleMap[$type].border ?? 'none'}};
+  border: ${({ $type }) => styleMap[$type].border ?? 'none'};
   &:hover {
     background-color: ${({ $type }) => styleMap[$type].bgColorHover};
     color: ${({ $type }) =>

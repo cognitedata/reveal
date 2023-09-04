@@ -4,6 +4,7 @@ import { resolve } from 'path';
 
 import basicSsl from '@vitejs/plugin-basic-ssl';
 import react from '@vitejs/plugin-react';
+import PrefixWrap from 'postcss-prefixwrap';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig } from 'vite';
 import macrosPlugin from 'vite-plugin-babel-macros';
@@ -85,7 +86,24 @@ export default defineConfig({
       CSP: generateCSPHeader(appManifests),
     }),
     svgr(),
-    react(),
+    react({
+      babel: {
+        plugins: [
+          [
+            // Info: this plugin might silently fail if the format of the styled-components string interpolation css is not correct.
+            '@quickbaseoss/babel-plugin-styled-components-css-namespace',
+            { cssNamespace: '&&&' },
+          ],
+          [
+            'babel-plugin-styled-components',
+            {
+              namespace: 'fusion-shell',
+              fileName: false,
+            },
+          ],
+        ],
+      },
+    }),
     viteTsConfigPaths({
       root: '../../',
     }),
@@ -113,5 +131,15 @@ export default defineConfig({
     },
     environment: 'jsdom',
     include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+  },
+
+  css: {
+    postcss: {
+      plugins: [
+        PrefixWrap(`.fusion-shell-style-scope`, {
+          ignoredSelectors: [':root'],
+        }),
+      ],
+    },
   },
 });
