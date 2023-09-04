@@ -102,3 +102,7 @@ export const CommentsFeatureFlagKey = 'UFV_INDUSTRY_CANVAS_COMMENTS';
 export const CANVAS_FLOATING_ELEMENT_MARGIN = 15;
 export const CANVAS_MIN_WIDTH = 40 + 2 * CANVAS_FLOATING_ELEMENT_MARGIN; // close button width + left&right margin
 export const ZOOM_CONTROLS_COGPILOT_ENABLED_RIGHT_MARGIN = 130;
+
+// Used for matching user ids in the text like: <@AAA__bsd123> etc;
+export const USER_IDENTIFIER_REGEXP = /<@([a-zA-Z0-9_-]+)>/g;
+export const USER_PROFILES_LIST_LIMIT = 1000;

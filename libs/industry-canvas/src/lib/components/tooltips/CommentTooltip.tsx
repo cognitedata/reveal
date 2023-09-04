@@ -28,6 +28,7 @@ import {
 } from '../../services/comments/utils';
 import { CommentAnnotation } from '../../types';
 import { UserProfile, useUserProfile } from '../../UserProfileProvider';
+import zIndex from '../../utils/zIndex';
 import { CommentDisplay } from '../comment/CommentDisplay';
 import { CommentEditor } from '../comment/CommentEditor';
 
@@ -71,7 +72,6 @@ export const CommentTooltipCore = ({
       });
     }
   };
-
   if (isTooltipOpen) {
     return (
       <CommentWrapper>
@@ -101,7 +101,7 @@ export const CommentTooltipCore = ({
           <Flex className="comment-input" gap={16}>
             <Avatar text={userProfile.displayName} />
             <Flex style={{ flex: 1 }} gap={8} direction="column">
-              <CommentEditor users={users} ref={editorRef} />
+              <CommentEditor ref={editorRef} />
               <Flex gap={8} direction="row-reverse">
                 <Button type="primary" onClick={() => createNewComment()}>
                   Send
@@ -214,6 +214,7 @@ const CommentMarker = styled(Flex)`
 `;
 
 const CommentWrapper = styled(Flex)`
+  z-index: ${zIndex.POPUP};
   position: absolute;
   top: -15px;
   left: -15px;

@@ -10,8 +10,6 @@ import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
 import { PlainTextPlugin } from '@lexical/react/LexicalPlainTextPlugin';
 import { EditorThemeClasses, LexicalEditor } from 'lexical';
 
-import { UserProfile } from '../../UserProfileProvider';
-
 import { MentionNode } from './MentionNode';
 import MentionsPlugin from './MentionsPlugin';
 
@@ -52,7 +50,7 @@ export function EditorRefPlugin({
 }
 
 export const CommentEditor = forwardRef(function CommentEditor(
-  props: { users: UserProfile[] },
+  props,
   ref: any
 ) {
   const initialConfig = {
@@ -72,7 +70,7 @@ export const CommentEditor = forwardRef(function CommentEditor(
         />
         <HistoryPlugin />
         <AutoFocusPlugin />
-        <MentionsPlugin users={props.users} />
+        <MentionsPlugin />
         <EditorRefPlugin editorRef={ref} />
       </LexicalComposer>
     </div>

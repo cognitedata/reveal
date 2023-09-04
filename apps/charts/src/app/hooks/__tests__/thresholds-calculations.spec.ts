@@ -33,7 +33,7 @@ jest.mock('@charts-app/hooks/calculation-backend', () => ({
     return { data: 'Success', error: null };
   },
   useThresholdResultData: () => {
-    return { data: thresholdResultMockData, error: null };
+    return { data: thresholdResultMockData, error: null, isLoading: false };
   },
 }));
 
@@ -210,6 +210,7 @@ describe('useThresholdsResults', () => {
 
     expect(result.current).toStrictEqual({
       data: thresholdResultMockData,
+      isLoading: false,
     });
   });
 
@@ -233,6 +234,7 @@ describe('useThresholdsResults', () => {
 
     expect(result.current).toStrictEqual({
       data: thresholdResultMockData,
+      isLoading: false,
     });
   });
 });

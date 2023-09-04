@@ -164,7 +164,11 @@ const ThresholdItem = ({
       ? (selectedSource as ChartTimeSeries)?.tsExternalId
       : (selectedSource as ChartWorkflow)?.calls?.[0]?.callId;
 
-  const { data } = _useThresholds(threshold, selectedSourceType!, identifier!);
+  const { data, isLoading } = _useThresholds(
+    threshold,
+    selectedSourceType!,
+    identifier!
+  );
 
   const result = data ? data.results : undefined;
 
@@ -409,26 +413,34 @@ const ThresholdItem = ({
         <Flex justifyContent="space-between">
           <p>
             {t['Number of events']} <br />
-            <SidebarChip
-              icon="Events"
-              size="small"
-              label={
-                isThresholdValid(threshold) ? `${result?.count}` ?? '-' : '-'
-              }
-            />
+            {isLoading ? (
+              <SidebarChip icon="Loader" size="small" />
+            ) : (
+              <SidebarChip
+                icon="Events"
+                size="small"
+                label={
+                  isThresholdValid(threshold) ? `${result?.count}` ?? '-' : '-'
+                }
+              />
+            )}
           </p>
           <p>
             {t['Total time']} {threshold.type} {t.threshold} <br />
-            <SidebarChip
-              icon="Clock"
-              size="small"
-              label={
-                isThresholdValid(threshold) &&
-                typeof result?.cumulative_duration === 'number'
-                  ? convertMSToDisplay(result?.cumulative_duration)
-                  : '-'
-              }
-            />
+            {isLoading ? (
+              <SidebarChip icon="Loader" size="small" />
+            ) : (
+              <SidebarChip
+                icon="Clock"
+                size="small"
+                label={
+                  isThresholdValid(threshold) &&
+                  typeof result?.cumulative_duration === 'number'
+                    ? convertMSToDisplay(result?.cumulative_duration)
+                    : '-'
+                }
+              />
+            )}
           </p>
         </Flex>
       </SidebarInnerBox>
