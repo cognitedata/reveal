@@ -253,6 +253,7 @@ const DeleteButtonContainer = styled.div`
 
 const CommentMarker = styled(Flex)`
   position: absolute;
+  z-index: ${zIndex.INDICATOR}
   top: -25px;
   left: -15px;
   background: #4a67fb;
@@ -265,7 +266,7 @@ const CommentMarker = styled(Flex)`
 `;
 
 const CommentWrapper = styled(Flex)`
-  z-index: ${zIndex.POPUP};
+  z-index: ${zIndex.MAXIMUM};
   position: absolute;
   top: -15px;
   left: -15px;

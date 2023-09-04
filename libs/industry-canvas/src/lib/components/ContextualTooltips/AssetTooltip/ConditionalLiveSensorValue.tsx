@@ -6,6 +6,8 @@ import { round } from 'lodash';
 
 import { Tooltip, Colors } from '@cognite/cogs.js';
 
+import zIndex from '../../../utils/zIndex';
+
 import applyRules from './applyRules';
 import { RuleType } from './types';
 
@@ -69,6 +71,7 @@ const Container = styled.div<{
   onClick?: any | undefined;
   opaque?: boolean;
 }>`
+  z-index: ${zIndex.MINIMUM}
   display: flex;
   justify-items: center;
   align-items: stretch;

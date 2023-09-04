@@ -10,7 +10,11 @@ import {
   Heading,
 } from '@cognite/cogs.js';
 
+import zIndex from '../../utils/zIndex';
+
 export const Container = styled.div`
+  position: relative;
+  z-index: ${zIndex.POPUP};
   width: 326px;
   background: ${Colors['surface--muted--inverted']};
   border: 1px solid ${Colors['border--muted--inverted']};
