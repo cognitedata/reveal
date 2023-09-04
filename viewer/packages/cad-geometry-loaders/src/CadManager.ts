@@ -111,6 +111,7 @@ export class CadManager {
       for (const sector of sectors) {
         consumeNextSector(sector);
       }
+      this._cadModelUpdateHandler.reportNewSectorsLoaded(sectors.length);
     };
 
     const consumedSectorsObservable = this._cadModelUpdateHandler.consumedSectorObservable();
