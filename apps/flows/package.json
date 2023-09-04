@@ -24,10 +24,7 @@
     "html-to-image": "^1.11.11",
     "reactflow": "^11.7.0"
   },
-  "devDependencies": {
-    "customize-cra": "^1.0.0",
-    "react-app-rewired": "^2.2.1"
-  },
+  "devDependencies": {},
   "eslintConfig": {
     "extends": "react-app"
   },
