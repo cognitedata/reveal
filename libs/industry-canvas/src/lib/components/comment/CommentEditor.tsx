@@ -50,7 +50,7 @@ export function EditorRefPlugin({
 }
 
 export const CommentEditor = forwardRef(function CommentEditor(
-  props,
+  { setEditorTextContent }: { setEditorTextContent: (content: string) => void },
   ref: any
 ) {
   const initialConfig = {
@@ -64,7 +64,13 @@ export const CommentEditor = forwardRef(function CommentEditor(
     <div style={{ position: 'relative' }}>
       <LexicalComposer initialConfig={initialConfig}>
         <PlainTextPlugin
-          contentEditable={<StyledContentEditable />}
+          contentEditable={
+            <StyledContentEditable
+              onKeyUp={(e) =>
+                setEditorTextContent(e.currentTarget.textContent ?? '')
+              }
+            />
+          }
           placeholder={<Placeholder>Write a comment...</Placeholder>}
           ErrorBoundary={LexicalErrorBoundary}
         />

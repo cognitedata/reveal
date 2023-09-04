@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import styled from 'styled-components';
@@ -12,11 +12,14 @@ import {
   Button,
   Divider,
   Flex,
+  Heading,
   Icon,
-  Title,
+  Popconfirm,
 } from '@cognite/cogs.js';
 
+import { translationKeys } from '../../common';
 import { useUsers } from '../../hooks/use-query/useUsers';
+import { useTranslation } from '../../hooks/useTranslation';
 import {
   useCommentsDeleteMutation,
   useCommentsUpsertMutation,
@@ -26,7 +29,8 @@ import {
   getCdfUserFromUserProfile,
   getTextContentFromEditorState,
 } from '../../services/comments/utils';
-import { CommentAnnotation } from '../../types';
+import { onDeleteRequest } from '../../state/useIndustrialCanvasStore';
+import { CommentAnnotation, SerializedCanvasDocument } from '../../types';
 import { UserProfile, useUserProfile } from '../../UserProfileProvider';
 import zIndex from '../../utils/zIndex';
 import { CommentDisplay } from '../comment/CommentDisplay';
@@ -39,7 +43,7 @@ type CommentTooltipCoreProps = {
   comments: Comment[];
   users: UserProfile[];
   onCreate: (content: string) => void;
-  onDelete: (commentId: string) => void;
+  onDelete?: () => void;
 };
 export const CommentTooltipCore = ({
   isTooltipOpen,
@@ -47,10 +51,12 @@ export const CommentTooltipCore = ({
   onClose,
   comments,
   onCreate,
-  // onDelete,
+  onDelete,
   users,
 }: CommentTooltipCoreProps) => {
+  const { t } = useTranslation();
   const { userProfile } = useUserProfile();
+  const [rawTextContent, setRawTextContent] = useState<string>('');
   const commentsContainerRef = useRef<HTMLDivElement>(null);
 
   const editorRef = useRef<LexicalEditor>(null);
@@ -61,28 +67,35 @@ export const CommentTooltipCore = ({
     }
   }, [comments, isTooltipOpen]);
 
-  const createNewComment = () => {
-    if (editorRef.current !== null) {
-      onCreate(
-        getTextContentFromEditorState(editorRef.current?.getEditorState())
-      );
-
-      editorRef.current?.update(() => {
-        $getRoot().clear();
-      });
-    }
+  const clearEditor = () => {
+    editorRef.current?.update(() => {
+      $getRoot().clear();
+    });
+    setRawTextContent('');
   };
+  const onCreateWrapper = () => {
+    if (editorRef.current === null) {
+      return;
+    }
+    onCreate(getTextContentFromEditorState(editorRef.current.getEditorState()));
+    clearEditor();
+  };
+  const onCloseWrapper = () => {
+    onClose();
+    clearEditor();
+  };
+
   if (isTooltipOpen) {
     return (
       <CommentWrapper>
-        <div className="indicator" onClick={onClose} />
+        <div className="indicator" onClick={onCloseWrapper} />
         <div className="line" />
         <Flex className="comment" direction="column">
           <Flex gap={16} alignItems="center" className="comment-header">
             <Icon type="Comment" />
-            <Title level={4} style={{ flex: 1 }}>
-              Comments
-            </Title>
+            <Heading level={4} style={{ flex: 1 }}>
+              {t(translationKeys.COMMENT_TOOLTIP_COMMENTS, 'Comments')}
+            </Heading>
             <Button
               onClick={onClose}
               icon="CloseLarge"
@@ -101,21 +114,37 @@ export const CommentTooltipCore = ({
           <Flex className="comment-input" gap={16}>
             <Avatar text={userProfile.displayName} />
             <Flex style={{ flex: 1 }} gap={8} direction="column">
-              <CommentEditor ref={editorRef} />
+              <CommentEditor
+                ref={editorRef}
+                setEditorTextContent={setRawTextContent}
+              />
               <Flex gap={8} direction="row-reverse">
-                <Button type="primary" onClick={() => createNewComment()}>
-                  Send
+                <Button
+                  type="primary"
+                  disabled={rawTextContent.length === 0}
+                  onClick={onCreateWrapper}
+                >
+                  {t(translationKeys.COMMENT_TOOLTIP_SEND, 'Send')}
                 </Button>
-                <Button onClick={onClose}>Cancel</Button>
+                <Button type="ghost" onClick={onCloseWrapper}>
+                  {t(translationKeys.COMMENT_TOOLTIP_CANCEL, 'Cancel')}
+                </Button>
+                {onDelete !== undefined && (
+                  <DeleteButtonContainer>
+                    <Popconfirm
+                      onConfirm={onDelete}
+                      content={t(
+                        translationKeys.COMMENT_TOOLTIP_DELETE_POPCONFIRM_CONTENT,
+                        'Are you sure you want to permanently delete this comment?'
+                      )}
+                    >
+                      <Button type="ghost-destructive">
+                        {t(translationKeys.COMMENT_TOOLTIP_DELETE, 'Delete')}
+                      </Button>
+                    </Popconfirm>
+                  </DeleteButtonContainer>
+                )}
                 <div style={{ flex: 1 }} />
-                {/* {comment.createdBy?.userIdentifier === userIdentifier && (
-                  <Button
-                    type="ghost-destructive"
-                    onClick={() => onDelete(comment.externalId)}
-                  >
-                    Delete
-                  </Button>
-                )} */}
               </Flex>
             </Flex>
           </Flex>
@@ -125,7 +154,7 @@ export const CommentTooltipCore = ({
   }
   return (
     <CommentMarker alignItems="center" onClick={onOpen} justifyContent="center">
-      <Body strong level={3} style={{ color: 'white', textAlign: 'center' }}>
+      <Body strong size="small" style={{ color: 'white', textAlign: 'center' }}>
         {comments.length &&
           getInitials(comments[0].createdBy?.displayName || '')}
       </Body>
@@ -133,18 +162,26 @@ export const CommentTooltipCore = ({
   );
 };
 export const CommentTooltip = ({
+  activeCanvas,
+  parentComment,
   comments,
-  comment: { id: commentExternalId },
+  commentAnnotation,
 }: {
+  activeCanvas: SerializedCanvasDocument;
+  parentComment: Comment;
   comments: Comment[];
-  comment: CommentAnnotation;
+  commentAnnotation: CommentAnnotation;
 }) => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const { userProfile } = useUserProfile();
+  const { data: users = [] } = useUsers();
 
-  const isTooltipOpen =
-    searchParams.get('commentTooltipId') === commentExternalId;
   const canvasId = searchParams.get('canvasId');
   const commentTooltipId = searchParams.get('commentTooltipId');
+  const isTooltipOpen = commentTooltipId === commentAnnotation.id;
+
+  const { mutate: upsertComment } = useCommentsUpsertMutation();
+  const { mutate: deleteComments } = useCommentsDeleteMutation();
 
   const setOpen = (id: string | null) =>
     setSearchParams((currentParams) => {
@@ -155,10 +192,6 @@ export const CommentTooltip = ({
       }
       return currentParams;
     });
-
-  const { userProfile } = useUserProfile();
-
-  const { mutate: upsertComment } = useCommentsUpsertMutation();
 
   const onCreate = (content: string) => {
     if (canvasId === null) {
@@ -178,27 +211,45 @@ export const CommentTooltip = ({
     ]);
   };
 
-  const { mutate: deleteComment } = useCommentsDeleteMutation();
-
-  const { data: users = [] } = useUsers();
-
-  // if someone else's draft ignore!
-  if (commentExternalId === undefined) {
-    return <></>;
-  }
+  const onDelete = () => {
+    if (!isTooltipOpen) {
+      return;
+    }
+    deleteComments([
+      parentComment.externalId,
+      ...comments.map(({ externalId }) => externalId),
+    ]);
+    onDeleteRequest({
+      annotationIds: [commentAnnotation.id],
+      containerIds: [],
+    });
+    setOpen(null);
+  };
 
   return (
     <CommentTooltipCore
       isTooltipOpen={isTooltipOpen}
-      onOpen={() => setOpen(commentExternalId)}
+      onOpen={() => setOpen(commentAnnotation.id)}
       onClose={() => setOpen(null)}
       comments={comments}
       users={users}
       onCreate={onCreate}
-      onDelete={(toDeleteComment) => deleteComment([toDeleteComment])}
+      onDelete={
+        // Either the creator of the canvas or the comment may delete it
+        parentComment.createdBy?.userIdentifier ===
+          userProfile.userIdentifier ||
+        activeCanvas.createdBy === userProfile.userIdentifier
+          ? onDelete
+          : undefined
+      }
     />
   );
 };
+
+const DeleteButtonContainer = styled.div`
+  position: relative;
+  right: 45%;
+`;
 
 const CommentMarker = styled(Flex)`
   position: absolute;
