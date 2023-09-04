@@ -2,6 +2,8 @@ import { useEffect } from 'react';
 
 import styled from 'styled-components';
 
+import { Flex } from '@cognite/cogs.js';
+
 import { AIDisclaimer } from '../components/links/AIDisclaimer';
 import { DataExplorerLink } from '../components/links/DataExplorerLink';
 import { Categories } from '../containers/category/Categories';
@@ -29,26 +31,30 @@ export const HomePage = () => {
 
   return (
     <Page disableScrollbarGutter>
-      <SearchContainer
-        className="search-bar-container"
-        $isAIEnabled={isAIEnabled}
-      >
-        <AILabelsContainer $isAIEnabled={isAIEnabled}>
-          <AILabels />
-        </AILabelsContainer>
+      <SearchContainer $isAIEnabled={isAIEnabled}>
+        <Flex
+          className="search-bar-container"
+          direction="column"
+          alignItems="center"
+          justifyContent="center"
+        >
+          <AILabelsContainer $isAIEnabled={isAIEnabled}>
+            <AILabels />
+          </AILabelsContainer>
 
-        <SearchConfiguration header />
-        <SearchBarContainer>
-          <SearchBar options={SEARCH_BAR_OPTIONS} />
-        </SearchBarContainer>
+          <SearchConfiguration header />
+          <SearchBarContainer>
+            <SearchBar options={SEARCH_BAR_OPTIONS} />
+          </SearchBarContainer>
 
-        {isAIEnabled ? <AIDisclaimer /> : <DataExplorerLink />}
+          {isAIEnabled ? <AIDisclaimer /> : <DataExplorerLink />}
 
-        {isCopilotEnabled && (
-          <AISwitchContainer>
-            <AISwitch />
-          </AISwitchContainer>
-        )}
+          {isCopilotEnabled && (
+            <AISwitchContainer>
+              <AISwitch />
+            </AISwitchContainer>
+          )}
+        </Flex>
       </SearchContainer>
 
       <Page.Body>{!isAIEnabled && <Categories />}</Page.Body>

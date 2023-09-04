@@ -61,7 +61,7 @@ export const SiteSelection = () => {
         </Menu>
       }
     >
-      <Flex>
+      <Flex className="orientation-site-selection">
         <TopbarExp.Button
           onClick={toggle}
           toggled={value}

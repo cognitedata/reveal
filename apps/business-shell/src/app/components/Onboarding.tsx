@@ -48,22 +48,34 @@ export const Onboarding = () => {
   const steps: InternalStep[] = useMemo(
     () => [
       {
+        target: '.orientation-site-selection',
+        title: t('ORIENTATION_TOOLTIP_TITLE_SITE_SELECTOR'),
+        description: t('ORIENTATION_TOOLTIP_DESCRIPTION_SITE_SELECTOR'),
+        icon: 'Location',
+      },
+      {
         target: '.navigation-bar',
-        title: t('ORIENTATION_TOOLTIP_TITLE_1'),
-        description: t('ORIENTATION_TOOLTIP_DESCRIPTION_1'),
+        title: t('ORIENTATION_TOOLTIP_TITLE_NAVIGATION_BAR'),
+        description: t('ORIENTATION_TOOLTIP_DESCRIPTION_NAVIGATION_BAR'),
         icon: 'BarOver',
       },
       {
         target: '.user-menu',
-        title: t('ORIENTATION_TOOLTIP_TITLE_2'),
-        description: t('ORIENTATION_TOOLTIP_DESCRIPTION_2'),
+        title: t('ORIENTATION_TOOLTIP_TITLE_ACCOUNT_SETTINGS'),
+        description: t('ORIENTATION_TOOLTIP_DESCRIPTION_ACCOUNT_SETTINGS'),
         icon: 'UserSuccess',
       },
       {
         target: '.search-bar-container',
-        title: t('ORIENTATION_TOOLTIP_TITLE_3'),
-        description: t('ORIENTATION_TOOLTIP_DESCRIPTION_3'),
+        title: t('ORIENTATION_TOOLTIP_TITLE_EXPLORE'),
+        description: t('ORIENTATION_TOOLTIP_DESCRIPTION_EXPLORE'),
         icon: 'Search',
+      },
+      {
+        target: '.cogs-segmented-control--ai-switch',
+        title: t('ORIENTATION_TOOLTIP_TITLE_SMART_SEARCH'),
+        description: t('ORIENTATION_TOOLTIP_DESCRIPTION_SMART_SEARCH'),
+        icon: 'ArrowDown',
       },
     ],
     [t]

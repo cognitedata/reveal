@@ -11,6 +11,7 @@ export const AISwitch = () => {
   const [isAIEnabled, setIsAIEnabled] = useAISearchParams();
   return (
     <AISegmentedControl
+      className="cogs-segmented-control--ai-switch"
       currentKey={isAIEnabled ? 'AI' : 'Search'}
       onButtonClicked={() => {
         setIsAIEnabled(!isAIEnabled);
