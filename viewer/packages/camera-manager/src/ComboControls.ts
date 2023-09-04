@@ -653,52 +653,68 @@ export class ComboControls extends EventDispatcher {
     document.addEventListener('pointerup', onTouchEnd);
   };
 
+  private handleRotation(): void {
+    const azimuthAngle =
+      this._options.keyboardRotationSpeedAzimuth * this._keyboard.getKeyboardMovementValue('ArrowLeft', 'ArrowRight');
+    let polarAngle =
+      this._options.keyboardRotationSpeedPolar * this._keyboard.getKeyboardMovementValue('ArrowUp', 'ArrowDown');
+
+    if (azimuthAngle === 0 && polarAngle === 0) {
+      return;
+    }
+
+    this._firstPersonMode = true;
+    const { _sphericalEnd } = this;
+    const oldPhi = _sphericalEnd.phi;
+    _sphericalEnd.phi += polarAngle;
+    _sphericalEnd.makeSafe();
+    polarAngle = _sphericalEnd.phi - oldPhi;
+    _sphericalEnd.phi = oldPhi;
+
+    const compensationForPolarAngleFactor = Math.sin(Math.PI / 2 - Math.abs(_sphericalEnd.phi - Math.PI / 2));
+    this.rotateFirstPersonMode(azimuthAngle * compensationForPolarAngleFactor, polarAngle);
+  }
+
+  private handleDolly(): void {
+    const speedFactor = this._keyboard.isShiftPressed() ? this._options.keyboardSpeedFactor : 1;
+    const moveDirection = this._keyboard.getKeyboardMovementValue('KeyW', 'KeyS');
+    if (moveDirection === 0) {
+      return;
+    }
+
+    const booleanMoveDirection = moveDirection === 1;
+    const dollyDeltaDistance = this.getDollyDeltaDistance(
+      booleanMoveDirection,
+      speedFactor * this._options.keyboardDollySpeed
+    );
+    this.dolly(0, 0, dollyDeltaDistance, true);
+    this._firstPersonMode = true;
+  }
+
+  private handlePan(): void {
+    const horizontalMovement = this._keyboard.getKeyboardMovementValue('KeyA', 'KeyD');
+    const verticalMovement = this._keyboard.getKeyboardMovementValue('KeyE', 'KeyQ');
+
+    if (horizontalMovement === 0 && verticalMovement === 0) {
+      return;
+    }
+
+    this._firstPersonMode = true;
+    const speedFactor = this._keyboard.isShiftPressed() ? this._options.keyboardSpeedFactor : 1;
+    this.pan(
+      speedFactor * this._options.keyboardPanSpeed * horizontalMovement,
+      speedFactor * this._options.keyboardPanSpeed * verticalMovement
+    );
+  }
+
   private readonly handleKeyboard = () => {
     if (!this._enabled || !this._options.enableKeyboardNavigation) {
       return;
     }
 
-    const _keyboard = this._keyboard;
-
-    // rotate
-    const azimuthAngle =
-      this._options.keyboardRotationSpeedAzimuth *
-      (Number(_keyboard.isPressed('left')) - Number(_keyboard.isPressed('right')));
-    let polarAngle =
-      this._options.keyboardRotationSpeedPolar *
-      (Number(_keyboard.isPressed('up')) - Number(_keyboard.isPressed('down')));
-
-    if (azimuthAngle !== 0 || polarAngle !== 0) {
-      this._firstPersonMode = true;
-      const { _sphericalEnd } = this;
-      const oldPhi = _sphericalEnd.phi;
-      _sphericalEnd.phi += polarAngle;
-      _sphericalEnd.makeSafe();
-      polarAngle = _sphericalEnd.phi - oldPhi;
-      _sphericalEnd.phi = oldPhi;
-
-      const compensationForPolarAngleFactor = Math.sin(Math.PI / 2 - Math.abs(_sphericalEnd.phi - Math.PI / 2));
-      this.rotateFirstPersonMode(azimuthAngle * compensationForPolarAngleFactor, polarAngle);
-    }
-
-    const speedFactor = _keyboard.isPressed('shift') ? this._options.keyboardSpeedFactor : 1;
-    const moveForward = _keyboard.isPressed('w') ? true : _keyboard.isPressed('s') ? false : undefined;
-
-    if (moveForward !== undefined) {
-      this.dolly(0, 0, this.getDollyDeltaDistance(moveForward, this._options.keyboardDollySpeed * speedFactor), true);
-      this._firstPersonMode = true;
-    }
-
-    // pan
-    const horizontalMovement = Number(_keyboard.isPressed('a')) - Number(_keyboard.isPressed('d'));
-    const verticalMovement = Number(_keyboard.isPressed('e')) - Number(_keyboard.isPressed('q'));
-    if (horizontalMovement !== 0 || verticalMovement !== 0) {
-      this._firstPersonMode = true;
-      this.pan(
-        speedFactor * this._options.keyboardPanSpeed * horizontalMovement,
-        speedFactor * this._options.keyboardPanSpeed * verticalMovement
-      );
-    }
+    this.handleRotation();
+    this.handleDolly();
+    this.handlePan();
   };
 
   private readonly rotateSpherical = (azimuthAngle: number, polarAngle: number) => {
