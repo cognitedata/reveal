@@ -42,7 +42,7 @@ export const useCameraNavigation = (): CameraNavigationActions => {
 
     const modelMappings = (
       await fdmNodeCache.cache.getMappingsForFdmIds([{ externalId, space }], modelsRevisionIds)
-    )?.[0];
+    ).find((model) => model.mappings.size > 0);
 
     const nodeId = modelMappings?.mappings.get(externalId)?.[0];
 

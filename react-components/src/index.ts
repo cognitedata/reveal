@@ -22,6 +22,7 @@ export { useFdmAssetMappings } from './components/NodeCacheProvider/NodeCachePro
 export { useClickedNodeData, type ClickedNodeData } from './hooks/useClickedNode';
 export { useCameraNavigation } from './hooks/useCameraNavigation';
 export { useMappedEdgesForRevisions } from './components/NodeCacheProvider/NodeCacheProvider';
+export { use3dNodeByExternalId } from './hooks/use3dNodeByExternalId';
 
 // Higher order components
 export { withSuppressRevealEvents } from './higher-order-components/withSuppressRevealEvents';

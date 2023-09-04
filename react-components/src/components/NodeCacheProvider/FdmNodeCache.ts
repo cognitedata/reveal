@@ -231,7 +231,7 @@ export class FdmNodeCache {
   }
 
   private async getViewsForEdges(
-    edges: Array<FdmCadEdge>
+    edges: FdmCadEdge[]
   ): Promise<Array<{ edge: FdmCadEdge; view: Source }>> {
     const nodeInspectionResults = await inspectNodes(
       this._fdmClient,
