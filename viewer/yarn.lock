@@ -613,13 +613,13 @@ __metadata:
     eslint: 8.48.0
     eslint-config-prettier: 9.0.0
     eslint-plugin-header: 3.1.1
-    eslint-plugin-jsdoc: 46.5.0
+    eslint-plugin-jsdoc: 46.5.1
     eslint-plugin-lodash: 7.4.0
     eslint-plugin-prettier: 5.0.0
     eslint-plugin-unused-imports: 3.0.0
     file-loader: 6.2.0
     gl: 6.0.2
-    glob: 10.3.3
+    glob: 10.3.4
     glslify: 7.1.1
     glslify-import: 3.1.0
     glslify-loader: 2.0.0
@@ -638,9 +638,9 @@ __metadata:
     moq.ts: 10.0.6
     nock: 13.3.3
     path-browserify: 1.0.1
-    prettier: 3.0.2
+    prettier: 3.0.3
     process: 0.11.10
-    puppeteer: 21.1.0
+    puppeteer: 21.1.1
     random-seed: 0.3.0
     raw-loader: 4.0.2
     remove-files-webpack-plugin: 1.5.0
@@ -660,7 +660,7 @@ __metadata:
     webpack-cli: 5.1.4
     webpack-dev-server: 4.15.1
     webpack-node-externals: 3.0.0
-    whatwg-fetch: 3.6.17
+    whatwg-fetch: 3.6.18
     workerize-loader: 2.0.2
   peerDependencies:
     "@cognite/sdk": ^7.16.0 || ^8.0.0
@@ -3720,14 +3720,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chromium-bidi@npm:0.4.20":
-  version: 0.4.20
-  resolution: "chromium-bidi@npm:0.4.20"
+"chromium-bidi@npm:0.4.22":
+  version: 0.4.22
+  resolution: "chromium-bidi@npm:0.4.22"
   dependencies:
     mitt: 3.0.1
   peerDependencies:
     devtools-protocol: "*"
-  checksum: 397145b3728948d403dbf087af97b7112988ed3c4cf43286754452a4b88f087f2088e1b3f18fa5974ceecc8200ca004ed258e18b784ecb4c6ab1ed78c1b280b0
+  checksum: b17d0e908948792724346d609d857aba79e4a18b3f0d1f65f5cb2b5bd66a576a93661422557e94d7d091644f66c3bc40f2785683d1510845d9ffe865045abab3
   languageName: node
   linkType: hard
 
@@ -4911,9 +4911,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-jsdoc@npm:46.5.0":
-  version: 46.5.0
-  resolution: "eslint-plugin-jsdoc@npm:46.5.0"
+"eslint-plugin-jsdoc@npm:46.5.1":
+  version: 46.5.1
+  resolution: "eslint-plugin-jsdoc@npm:46.5.1"
   dependencies:
     "@es-joy/jsdoccomment": ~0.40.1
     are-docs-informative: ^0.0.2
@@ -4926,7 +4926,7 @@ __metadata:
     spdx-expression-parse: ^3.0.1
   peerDependencies:
     eslint: ^7.0.0 || ^8.0.0
-  checksum: 6e182b25e136250cd0bde076bdb051d4e82efc50c20f99cb436aa136a49769ec44a2346df384deba399ca8f303f9ae3be80e21e546d0e921b23f9a0c6330e32e
+  checksum: 8f6b1e60ded7bc27da4ae9ef541315a14d1f69476b5c03b53ebe323a4d2c4b61fdaf0a0ffcba2e4964247ee5371768fc612d83f2c9456c404b31e8cad44123cd
   languageName: node
   linkType: hard
 
@@ -5870,9 +5870,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"glob@npm:10.3.3":
-  version: 10.3.3
-  resolution: "glob@npm:10.3.3"
+"glob@npm:10.3.4":
+  version: 10.3.4
+  resolution: "glob@npm:10.3.4"
   dependencies:
     foreground-child: ^3.1.0
     jackspeak: ^2.0.3
@@ -5881,7 +5881,7 @@ __metadata:
     path-scurry: ^1.10.1
   bin:
     glob: dist/cjs/src/bin.js
-  checksum: 29190d3291f422da0cb40b77a72fc8d2c51a36524e99b8bf412548b7676a6627489528b57250429612b6eec2e6fe7826d328451d3e694a9d15e575389308ec53
+  checksum: 176b97c124414401cb51329a93d2ba112cef8814adbed10348481916b9521b677773eee2691cb6b24d66632d8c8bb8913533f5ac4bfb2d0ef5454a1856082361
   languageName: node
   linkType: hard
 
@@ -9714,12 +9714,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:3.0.2":
-  version: 3.0.2
-  resolution: "prettier@npm:3.0.2"
+"prettier@npm:3.0.3":
+  version: 3.0.3
+  resolution: "prettier@npm:3.0.3"
   bin:
     prettier: bin/prettier.cjs
-  checksum: 118b59ddb6c80abe2315ab6d0f4dd1b253be5cfdb20622fa5b65bb1573dcd362e6dd3dcf2711dd3ebfe64aecf7bdc75de8a69dc2422dcd35bdde7610586b677a
+  checksum: e10b9af02b281f6c617362ebd2571b1d7fc9fb8a3bd17e371754428cda992e5e8d8b7a046e8f7d3e2da1dcd21aa001e2e3c797402ebb6111b5cd19609dd228e0
   languageName: node
   linkType: hard
 
@@ -9925,28 +9925,28 @@ __metadata:
   languageName: node
   linkType: hard
 
-"puppeteer-core@npm:21.1.0":
-  version: 21.1.0
-  resolution: "puppeteer-core@npm:21.1.0"
+"puppeteer-core@npm:21.1.1":
+  version: 21.1.1
+  resolution: "puppeteer-core@npm:21.1.1"
   dependencies:
     "@puppeteer/browsers": 1.7.0
-    chromium-bidi: 0.4.20
+    chromium-bidi: 0.4.22
     cross-fetch: 4.0.0
     debug: 4.3.4
     devtools-protocol: 0.0.1159816
     ws: 8.13.0
-  checksum: 1c3f2a2bb6de3ec90808f06f0c3ef769f0854e7df610c16080c1dd5434cedf865f48d5059c5406fa84227aab8bfae7dec789e5701adb800895c7a7ec888cfb04
+  checksum: b5c854c48a3daa58d43d9c586936c5aedf272b4998b6e8182a34440c1dbe408ea7fd3b9db479a3164e2c92fe44a221ff6413314408ad0dd9031f2e7492edcbbe
   languageName: node
   linkType: hard
 
-"puppeteer@npm:21.1.0":
-  version: 21.1.0
-  resolution: "puppeteer@npm:21.1.0"
+"puppeteer@npm:21.1.1":
+  version: 21.1.1
+  resolution: "puppeteer@npm:21.1.1"
   dependencies:
     "@puppeteer/browsers": 1.7.0
     cosmiconfig: 8.2.0
-    puppeteer-core: 21.1.0
-  checksum: 15e343dd1c048a0ef228aa52a2df2240dc76d543c379fc9246c41a87f226a2e820c957a911d5fed9e0394c5dd56da5fc163b6626e1219a857268e88cc2544163
+    puppeteer-core: 21.1.1
+  checksum: 5af18e1bef02c66c1a4a1903668c22457e81a8ef83e12d019d53fb5b348dabae8feadb5645d1514f9132c431d1c2730b994b0fe3366303acd0305822ec34003e
   languageName: node
   linkType: hard
 
@@ -12367,10 +12367,10 @@ typescript@~4.8.4:
   languageName: node
   linkType: hard
 
-"whatwg-fetch@npm:3.6.17":
-  version: 3.6.17
-  resolution: "whatwg-fetch@npm:3.6.17"
-  checksum: 0a8785dc2d1515c17ee9365d3f6438cf8fd281567426652fc6c55fc99e58cc6287ae5d1add5b8b1dd665f149e38d3de4ebe3812fd7170438ba0681d03b88b4dd
+"whatwg-fetch@npm:3.6.18":
+  version: 3.6.18
+  resolution: "whatwg-fetch@npm:3.6.18"
+  checksum: 72fd318a00fd9031f7f5b28bfe30e458ca5e6ebc9b3de6e03edf810f455bca0ec954035bd9f1b5f9e6a82bbdc3fbba59b14bee24c039460c8a75f8f990ebe0b1
   languageName: node
   linkType: hard
 
