@@ -79,12 +79,21 @@ export const RevealContent = ({
     setHasOriginalCadColors((prev) => !prev);
   };
 
+  const { fitCameraToInstance } = useCameraNavigation();
+
+  const focusSelectedAsset = useCallback(() => {
+    if (externalId !== undefined && instanceSpace !== undefined) {
+      fitCameraToInstance(externalId, instanceSpace);
+    }
+  }, [externalId, instanceSpace]);
+
   return (
     <>
       {!hideToolbar && (
         <ToolBarContainer
           hasOriginalCadColors={hasOriginalCadColors}
           onToggleOriginalColors={handleToggleOriginalCadColors}
+          focusAssetCallback={focusSelectedAsset}
         />
       )}
       <Reveal3DResources
