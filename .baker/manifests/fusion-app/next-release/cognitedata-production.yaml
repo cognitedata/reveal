@@ -185,7 +185,7 @@ data:
     \  location / {\n     try_files $uri /index.html;\n     \n     add_header Cache-Control
     \"max-age=300, stale-while-revalidate=600\";\n     add_header Strict-Transport-Security
     \"max-age=63072000; includeSubdomains\";\n     add_header X-Content-Type-Options
-    nosniff;\n   }\n\n   location ~ /subapps-import-map.json$ {\n     try_files /subapps-import-map-staging.json
+    nosniff;\n   }\n\n   location ~ /subapps-import-map.json$ {\n     try_files /subapps-import-map-preview.json
     =404;\n   }\n\n   location ~ /assets/.+\\.(js|png|jpg|jpeg|map|svg|css|woff2)$
     {\n     expires max;\n   }\n\n   location ~ /dependencies/.+\\.(js|png|jpg|jpeg|map|svg)$
     {\n     expires max;\n   }\n\n   location ~ \\.(js|png|jpg|jpeg|map|svg)$ {\n

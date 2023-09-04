@@ -290,6 +290,7 @@
   "scripts": {
     "start": "./scripts/start.sh",
     "build": "./scripts/build.sh",
+    "bake": "./bake_manifests.sh",
     "test": "./scripts/test.sh",
     "test:preview": "./node_modules/.bin/jest-preview",
     "lint": "./scripts/lint.sh",
