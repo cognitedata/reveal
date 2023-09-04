@@ -44,7 +44,7 @@ export const useCameraNavigation = (): CameraNavigationActions => {
       await fdmNodeCache.cache.getMappingsForFdmIds([{ externalId, space }], modelsRevisionIds)
     )?.[0];
 
-    const nodeId = modelMappings?.mappings.get(externalId);
+    const nodeId = modelMappings?.mappings.get(externalId)?.[0];
 
     if (modelMappings === undefined || nodeId === undefined) {
       await Promise.reject(
