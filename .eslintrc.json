@@ -261,6 +261,12 @@
       "rules": {
         "@nx/dependency-checks": "error"
       }
+    },
+    {
+      "files": ["*.ts", "*.cy.ts"],
+      "rules": {
+        "cypress/unsafe-to-chain-command": ["off"]
+      }
     }
   ]
 }

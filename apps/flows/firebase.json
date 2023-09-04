@@ -1,0 +1,14 @@
+{
+  "hosting": [
+    {
+      "site": "cognite-orchestration-production",
+      "public": "./build",
+      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
+    },
+    {
+      "site": "cognite-orchestration-staging",
+      "public": "./build",
+      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
+    }
+  ]
+}

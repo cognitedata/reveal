@@ -92,12 +92,14 @@ describe('PreviewPageHeader', () => {
       <PreviewPageHeader
         space="imdb"
         draftRowsCount={0}
+        filteredRowCount={null}
         isDeleteButtonDisabled={false}
         onAddTransformationClick={noop}
         onCreateClick={noop}
         onDeleteClick={noop}
         onDraftRowsCountClick={noop}
         onPublishedRowsCountClick={noop}
+        onRefreshClick={noop}
         onSearchInputValueChange={noop}
         publishedRowsCount={0}
         onSuggestionsClick={noop}
@@ -123,12 +125,14 @@ describe('PreviewPageHeader', () => {
       <PreviewPageHeader
         space="imdb"
         draftRowsCount={0}
+        filteredRowCount={null}
         isDeleteButtonDisabled={false}
         onAddTransformationClick={noop}
         onCreateClick={noop}
         onDeleteClick={noop}
         onDraftRowsCountClick={noop}
         onPublishedRowsCountClick={noop}
+        onRefreshClick={noop}
         onSuggestionsClick={noop}
         onSearchInputValueChange={noop}
         publishedRowsCount={1}
@@ -153,12 +157,14 @@ describe('PreviewPageHeader', () => {
       <PreviewPageHeader
         space="imdb"
         draftRowsCount={1}
+        filteredRowCount={null}
         isDeleteButtonDisabled={false}
         onAddTransformationClick={noop}
         onCreateClick={noop}
         onDeleteClick={noop}
         onDraftRowsCountClick={noop}
         onPublishedRowsCountClick={noop}
+        onRefreshClick={noop}
         onSuggestionsClick={noop}
         onSearchInputValueChange={noop}
         publishedRowsCount={0}
@@ -166,7 +172,7 @@ describe('PreviewPageHeader', () => {
         shouldShowPublishedRows
         title="Lorem"
         typeName="Movie"
-        version="2"
+        viewVersion="2"
       />
     );
 
@@ -183,12 +189,14 @@ describe('PreviewPageHeader', () => {
       <PreviewPageHeader
         space="imdb"
         draftRowsCount={0}
+        filteredRowCount={null}
         isDeleteButtonDisabled={false}
         onAddTransformationClick={noop}
         onCreateClick={noop}
         onDeleteClick={noop}
         onDraftRowsCountClick={noop}
         onPublishedRowsCountClick={noop}
+        onRefreshClick={noop}
         onSuggestionsClick={noop}
         onSearchInputValueChange={noop}
         publishedRowsCount={0}
@@ -196,7 +204,7 @@ describe('PreviewPageHeader', () => {
         shouldShowPublishedRows
         title="Lorem"
         typeName="Movie"
-        version="2"
+        viewVersion="2"
       />
     );
 
@@ -209,12 +217,14 @@ describe('PreviewPageHeader', () => {
       <PreviewPageHeader
         space="imdb"
         draftRowsCount={0}
+        filteredRowCount={null}
         isDeleteButtonDisabled={false}
         onAddTransformationClick={noop}
         onCreateClick={noop}
         onDeleteClick={noop}
         onDraftRowsCountClick={noop}
         onPublishedRowsCountClick={noop}
+        onRefreshClick={noop}
         onSearchInputValueChange={noop}
         onSuggestionsClick={noop}
         publishedRowsCount={4}
@@ -222,7 +232,7 @@ describe('PreviewPageHeader', () => {
         shouldShowPublishedRows
         title="Lorem"
         typeName="Movie"
-        version="2"
+        viewVersion="2"
       />
     );
 
@@ -234,12 +244,14 @@ describe('PreviewPageHeader', () => {
       <PreviewPageHeader
         space="imdb"
         draftRowsCount={10}
+        filteredRowCount={null}
         isDeleteButtonDisabled={false}
         onAddTransformationClick={noop}
         onCreateClick={noop}
         onDeleteClick={noop}
         onDraftRowsCountClick={noop}
         onPublishedRowsCountClick={noop}
+        onRefreshClick={noop}
         onSearchInputValueChange={noop}
         onSuggestionsClick={noop}
         publishedRowsCount={0}
@@ -247,7 +259,7 @@ describe('PreviewPageHeader', () => {
         shouldShowPublishedRows
         title="Lorem"
         typeName="Movie"
-        version="2"
+        viewVersion="2"
       />
     );
 
@@ -266,12 +278,14 @@ describe('PreviewPageHeader', () => {
       <PreviewPageHeader
         space="imdb"
         draftRowsCount={0}
+        filteredRowCount={null}
         isDeleteButtonDisabled={false}
         onAddTransformationClick={noop}
         onCreateClick={noop}
         onDeleteClick={noop}
         onDraftRowsCountClick={noop}
         onPublishedRowsCountClick={noop}
+        onRefreshClick={noop}
         onSearchInputValueChange={noop}
         onSuggestionsClick={noop}
         publishedRowsCount={4}
@@ -279,7 +293,7 @@ describe('PreviewPageHeader', () => {
         shouldShowPublishedRows
         title="Lorem"
         typeName="Movie"
-        version="2"
+        viewVersion="2"
       />
     );
 

@@ -1,0 +1,50 @@
+{
+    "extends": [
+        "plugin:@nx/react",
+        "../../.eslintrc.json"
+    ],
+    "ignorePatterns": [
+        "!**/*",
+        "node_modules"
+    ],
+    "overrides": [
+        {
+            "files": [
+                "*.ts",
+                "*.tsx",
+                "*.js",
+                "*.jsx"
+            ],
+            "rules": {
+                "@nx/enforce-module-boundaries": "off",
+                "@typescript-eslint/ban-types": "warn",
+                "lodash/prefer-noop": "warn",
+                "@cognite/require-t-function": "warn",
+                "@cognite/no-number-z-index": "warn",
+                "@typescript-eslint/no-shadow": "warn",
+                "no-unsafe-optional-chaining": "warn",
+                "no-empty-pattern": "warn",
+                "@typescript-eslint/no-non-null-asserted-optional-chain": "warn",
+                "lodash/prefer-includes": "warn",
+                "@typescript-eslint/ban-ts-comment": "warn",
+                "@typescript-eslint/no-empty-function": "warn"
+              }
+        },
+        {
+            "files": [
+                "*.ts",
+                "*.tsx"
+            ],
+            "rules": {
+                "no-console": "warn"
+            }
+        },
+        {
+            "files": [
+                "*.js",
+                "*.jsx"
+            ],
+            "rules": {}
+        }
+    ]
+}

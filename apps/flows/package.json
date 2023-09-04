@@ -1,0 +1,49 @@
+{
+  "name": "@cognite/cdf-flows",
+  "version": "0.1.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cognitedata/cdf-ui-flows.git"
+  },
+  "private": true,
+  "scripts": {
+    "start": "env GENERATE_SOURCEMAP=false BROWSER=none WDS_SOCKET_PORT=8000 WDS_SOCKET_HOST=localhost PORT=8000 react-app-rewired --max_old_space_size=2000 start",
+    "build": "react-app-rewired --max_old_space_size=4096 build",
+    "test": "react-app-rewired test --passWithNoTests",
+    "lint": "yarn prettier && yarn eslint",
+    "eslint": "yarn eslint:changed 'src/**/*.{ts,tsx}'",
+    "eslint:changed": "eslint --config .eslintrc.production.js",
+    "prettier": "prettier --config .prettierrc -l 'src/**/*.{js,ts,tsx}' || (echo \nThese files are not formatted correctly && false)",
+    "pull-keys": "cdf-i18n-utils-cli pull-keys-from-remote --namespace flows",
+    "remove-deleted": "cdf-i18n-utils-cli remove-deleted-keys-from-remote --namespace flows",
+    "save-missing": "cdf-i18n-utils-cli save-missing-keys-to-remote --namespace flows",
+    "sort-keys": "cdf-i18n-utils-cli sort-local-keys --namespace flows"
+  },
+  "dependencies": {
+    "@cognite/cdf-utilities": "^3.2.0",
+    "html-to-image": "^1.11.11",
+    "reactflow": "^11.7.0"
+  },
+  "devDependencies": {
+    "customize-cra": "^1.0.0",
+    "react-app-rewired": "^2.2.1"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "engines": {
+    "node": ">=14"
+  }
+}
