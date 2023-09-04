@@ -1,13 +1,14 @@
 import { map } from 'lodash';
 
 import { sortAscending, sortDescending } from '../utils/sort';
+const LOAD_MORE_BUTTON_TEXT = 'Load More';
 
 const getTableById = (id: string) => {
   return cy.findAllByTestId(id);
 };
 
 const tableSholudBeVisible = (id: string) => {
-  cy.getTableById(id).should('be.visible');
+  return cy.getTableById(id).should('be.visible');
 };
 
 const clickSortColoumn = (table: JQuery<HTMLElement>, columnName: string) => {
@@ -16,6 +17,24 @@ const clickSortColoumn = (table: JQuery<HTMLElement>, columnName: string) => {
     .contains(columnName)
     .parent()
     .find('button')
+    .should('be.visible')
+    .click();
+};
+
+const getNumberOfRows = (table: JQuery<HTMLElement>) => {
+  return cy
+    .wrap(table)
+    .findAllByTestId('table-body')
+    .findAllByTestId('table-row')
+    .then((rows) => {
+      return rows.length;
+    });
+};
+
+const clickLoadMoreButton = (table: JQuery<HTMLElement>) => {
+  cy.wrap(table)
+    .contains(LOAD_MORE_BUTTON_TEXT)
+    .scrollIntoView()
     .should('be.visible')
     .click();
 };
@@ -40,6 +59,29 @@ const shouldBeSortedDescending = (values: string[]) => {
   expect(sortedValues).to.deep.equal(values);
 };
 
+const shouldLoadMore = (table: JQuery<HTMLElement>, requestAlias?: string) => {
+  let initialResultsCount: number;
+
+  cy.wrap(table)
+    .getNumberOfRows()
+    .then((count) => {
+      initialResultsCount = count;
+    });
+
+  cy.wrap(table).clickLoadMoreButton();
+
+  if (requestAlias) {
+    cy.wait(`@${requestAlias}`);
+  }
+  cy.wrap(table).contains(LOAD_MORE_BUTTON_TEXT).should('not.be.visible');
+
+  cy.wrap(table)
+    .getNumberOfRows()
+    .then((newCount) => {
+      expect(newCount).to.be.greaterThan(initialResultsCount);
+    });
+};
+
 Cypress.Commands.add('getTableById', getTableById);
 Cypress.Commands.add('tableSholudBeVisible', tableSholudBeVisible);
 Cypress.Commands.add(
@@ -58,12 +100,24 @@ Cypress.Commands.add(
   { prevSubject: true },
   shouldBeSortedDescending
 );
+Cypress.Commands.add('getTableById', getTableById);
+Cypress.Commands.add('tableSholudBeVisible', tableSholudBeVisible);
+Cypress.Commands.add('getNumberOfRows', { prevSubject: true }, getNumberOfRows);
+Cypress.Commands.add(
+  'clickLoadMoreButton',
+  { prevSubject: true },
+  clickLoadMoreButton
+);
+Cypress.Commands.add('shouldLoadMore', { prevSubject: true }, shouldLoadMore);
 
 export interface TableCommands {
   getTableById: (id: string) => Cypress.Chainable<JQuery<HTMLElement>>;
-  tableSholudBeVisible: (id: string) => void;
   clickSortColoumn: (coloumnName: string) => void;
   getColomnValues: (coloumnid: string) => Cypress.Chainable<string[]>;
   shouldBeSortedAscending: () => void;
   shouldBeSortedDescending: () => void;
+  tableSholudBeVisible: (id: string) => Cypress.Chainable<JQuery<HTMLElement>>;
+  getNumberOfRows: () => Cypress.Chainable<number>;
+  clickLoadMoreButton: () => void;
+  shouldLoadMore: (requestAlias?: string) => void;
 }
