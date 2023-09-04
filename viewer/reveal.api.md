@@ -900,7 +900,9 @@ export class IndexSet {
     // (undocumented)
     forEachRange(visitor: (range: NumericRange) => void): void;
     // (undocumented)
-    hasIntersectionWith(otherSet: IndexSet | Map<number, number> | Set<number>): boolean;
+    hasIntersectionWith(otherSet: IndexSet | Set<number>): boolean;
+    // (undocumented)
+    hasIntersectionWithMap(otherMap: Map<number, number>): boolean;
     // (undocumented)
     intersectWith(otherSet: IndexSet): IndexSet;
     // (undocumented)
