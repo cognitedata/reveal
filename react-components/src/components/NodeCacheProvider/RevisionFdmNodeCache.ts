@@ -4,7 +4,7 @@
 
 import { type CogniteClient, type Node3D } from '@cognite/sdk';
 import { type FdmSDK } from '../../utilities/FdmSDK';
-import { type TreeIndex, type Fdm3dNodeData, type FdmEdgeWithNode, type FdmCadEdge } from './types';
+import { type TreeIndex, type FdmEdgeWithNode, type FdmCadEdge } from './types';
 
 import {
   fetchAncestorNodesForTreeIndex,
@@ -38,11 +38,11 @@ export class RevisionFdmNodeCache {
     this._revisionId = revisionId;
   }
 
-  public async getClosestParentFdmData(searchTreeIndex: number): Promise<Fdm3dNodeData[]> {
+  public async getClosestParentFdmData(searchTreeIndex: number): Promise<FdmEdgeWithNode[]> {
     const cachedFdmData = this._treeIndexToFdmEdges.get(searchTreeIndex);
 
     if (cachedFdmData !== undefined) {
-      return fdmEdgeWithNodeToFdm3dNodeData(cachedFdmData);
+      return cachedFdmData;
     }
 
     const cachedFdmEdges = this._treeIndexToFdmEdges.get(searchTreeIndex);
@@ -54,7 +54,7 @@ export class RevisionFdmNodeCache {
     return await this.findNodeDataFromAncestors(searchTreeIndex);
   }
 
-  private async findNodeDataFromAncestors(treeIndex: TreeIndex): Promise<Fdm3dNodeData[]> {
+  private async findNodeDataFromAncestors(treeIndex: TreeIndex): Promise<FdmEdgeWithNode[]> {
     const { edges, ancestorsWithSameMapping, firstMappedAncestorTreeIndex } =
       await this.getClosestParentMapping(treeIndex);
 
@@ -67,7 +67,7 @@ export class RevisionFdmNodeCache {
     if (cachedFdmData !== undefined) {
       this.setCacheForNodes(ancestorsWithSameMapping, cachedFdmData);
 
-      return fdmEdgeWithNodeToFdm3dNodeData(cachedFdmData);
+      return cachedFdmData;
     }
 
     const firstMappedAncestor = ancestorsWithSameMapping.find(
@@ -90,7 +90,7 @@ export class RevisionFdmNodeCache {
   private async getDataWithViewsForFdmEdges(
     nodeEdges: Array<{ edge: FdmCadEdge; node: Node3D }>,
     ancestorsWithSameMapping: Node3D[]
-  ): Promise<Fdm3dNodeData[]> {
+  ): Promise<FdmEdgeWithNode[]> {
     const nodeInspectionResults = await inspectNodes(
       this._fdmClient,
       nodeEdges.map((edge) => edge.edge.startNode)
@@ -105,7 +105,7 @@ export class RevisionFdmNodeCache {
       this._treeIndexToFdmEdges.set(ancestor.treeIndex, dataWithViews)
     );
 
-    return fdmEdgeWithNodeToFdm3dNodeData(dataWithViews);
+    return dataWithViews;
   }
 
   private async getClosestParentMapping(treeIndex: number): Promise<{
@@ -192,14 +192,6 @@ export class RevisionFdmNodeCache {
   public getAllEdges(): FdmEdgeWithNode[] {
     return [...this._treeIndexToFdmEdges.values()].flat();
   }
-}
-
-function fdmEdgeWithNodeToFdm3dNodeData(fdmEdgeWithNode: FdmEdgeWithNode[]): Fdm3dNodeData[] {
-  return fdmEdgeWithNode.map((edgeData) => ({
-    view: edgeData.view,
-    fdmId: edgeData.edge.startNode,
-    cadNode: edgeData.node
-  }));
 }
 
 function findLargestTreeIndex(

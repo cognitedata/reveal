@@ -66,9 +66,9 @@ export const useClickedNodeData = (): ClickedNodeData | undefined => {
 
     setClickedNodeData({
       intersection: cadIntersection,
-      fdmNode: chosenNode.fdmId,
+      fdmNode: chosenNode.edge.startNode,
       view: chosenNode.view,
-      cadNode: chosenNode.cadNode
+      cadNode: chosenNode.node
     });
 
     function isWaitingForQueryResult(): boolean {

@@ -12,7 +12,6 @@ import {
 import { RevisionFdmNodeCache } from './RevisionFdmNodeCache';
 import {
   type FdmEdgeWithNode,
-  type Fdm3dNodeData,
   type FdmCadEdge,
   type ModelRevisionKey,
   type RevisionId,
@@ -224,7 +223,7 @@ export class FdmNodeCache {
     modelId: number,
     revisionId: number,
     treeIndex: number
-  ): Promise<Fdm3dNodeData[]> {
+  ): Promise<FdmEdgeWithNode[]> {
     const revisionCache = this.getOrCreateRevisionCache(modelId, revisionId);
 
     return await revisionCache.getClosestParentFdmData(treeIndex);
