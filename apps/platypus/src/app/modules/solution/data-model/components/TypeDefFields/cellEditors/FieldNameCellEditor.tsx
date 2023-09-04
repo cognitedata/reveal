@@ -38,7 +38,7 @@ export class FieldNameCellEditor
     this.nameValidator = new SolutionDataModelFieldNameValidator();
     this.state = {
       initialValue: props.value.toString(),
-      value: props.charPress || props.value.toString(),
+      value: props.eventKey || props.value.toString(),
       error: props.error,
       isDirty: false,
       hasError: false,
