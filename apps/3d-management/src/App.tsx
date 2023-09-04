@@ -1,8 +1,7 @@
-import React from 'react';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 
-import styled, { ThemeProvider } from 'styled-components';
+import { ThemeProvider } from 'styled-components';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
@@ -53,11 +52,11 @@ export const App = () => {
               >
                 <Provider store={store}>
                   <BrowserRouter basename={baseUrl}>
-                    <ThreeDAppWrapper>
+                    <>
                       <PageTitle title={APP_TITLE} />
                       <ReactQueryDevtools initialIsOpen={false} />
                       <ModelRoutes />
-                    </ThreeDAppWrapper>
+                    </>
                   </BrowserRouter>
                 </Provider>
               </AuthContainer>
@@ -70,7 +69,3 @@ export const App = () => {
 };
 
 export default App;
-
-const ThreeDAppWrapper = styled.div`
-  padding: 24px 40px;
-`;

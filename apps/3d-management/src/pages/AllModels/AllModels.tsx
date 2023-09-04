@@ -1,4 +1,4 @@
-import React, { ChangeEvent, lazy, useState } from 'react';
+import { ChangeEvent, lazy, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import styled from 'styled-components';
@@ -201,7 +201,7 @@ export const AllModels = () => {
   }
 
   return (
-    <div>
+    <AllModelsWrapper>
       <PageHeader
         title={APP_TITLE}
         breadcrumbs={[{ title: APP_TITLE, path: '/3d-models' }]}
@@ -242,6 +242,10 @@ export const AllModels = () => {
         </Steps>
         <div>{modelUploadSteps[currentUploadStep].content}</div>
       </Modal>
-    </div>
+    </AllModelsWrapper>
   );
 };
+
+const AllModelsWrapper = styled.div`
+  padding: 24px 40px;
+`;
