@@ -64,7 +64,6 @@ export function ModelList({
           >
             <div className="model">
               <div className="metadata">
-                <div className="name">{modelFile.metadata.modelName}</div>
                 <div className="name">
                   {modelFile.metadata.modelName}
                   {modelFile.metadata.errorMessage && (
