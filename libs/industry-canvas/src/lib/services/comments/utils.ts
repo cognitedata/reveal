@@ -75,6 +75,12 @@ export const createCommentAnnotation = (
     width: 1,
     height: 1,
     style: { fill: 'transparent', stroke: 'transparent' },
+    // TODO(AH-1713): We make comment annotations non-selectable for now since:
+    //  1. Comment annotations are not movable nor resizable
+    //  2. It allows users to select the comment annotations using the selection
+    //  rectangle and remove them using the backspace key. This makes it so that
+    //  the comment annotations are removed, but not the comment instances in FDM
+    isSelectable: false,
   };
 };
 
