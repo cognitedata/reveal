@@ -1,4 +1,4 @@
-import React, { lazy } from 'react';
+import { lazy } from 'react';
 import { Provider } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
 

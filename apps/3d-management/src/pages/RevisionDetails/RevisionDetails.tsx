@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import styled from 'styled-components';
@@ -45,6 +45,7 @@ export const MODELID_AND_REVISIONID_HINT = `
 const PageWithFixedWidth = styled.div<{ width: number }>`
   min-width: ${(props) => props.width}px;
   width: 100%;
+  padding: 24px 40px;
 `;
 
 const ButtonRow = styled.div`
@@ -82,6 +83,7 @@ type RevisionDetailsParams = {
   modelId: string;
   revisionId: string;
 };
+
 export const RevisionDetails = () => {
   const metrics = useMetrics('3D.Revisions');
   const params = useParams<RevisionDetailsParams>();
@@ -295,6 +297,19 @@ export const RevisionDetails = () => {
               type={revision && revision.published ? 'secondary' : 'primary'}
             >
               {revision.published ? 'Unpublish' : 'Publish'}
+            </Button>
+            <Button
+              className="left-button"
+              type="secondary"
+              onClick={() => {
+                navigate(
+                  createLink(
+                    `/3d-models/contextualize-editor/${modelId}/revisions/${revisionId}`
+                  )
+                );
+              }}
+            >
+              Contextualize
             </Button>
           </PermissioningHintWrapper>
           <PermissioningHintWrapper hasPermission={hasDeleteCapabilities}>

@@ -12,6 +12,7 @@ import {
 } from '@cognite/reveal';
 import { useSDK } from '@cognite/sdk-provider';
 
+import { CONTEXTUALIZE_EDITOR_HEADER_HEIGHT } from '../../../../pages/ContextualizeEditor/constants';
 import { OverlayToolbar } from '../OverlayToolbar/OverlayToolbar';
 import ThreeDViewerSidebar from '../ThreeDViewerSidebar';
 
@@ -21,7 +22,8 @@ const ThreeDViewerStyled = styled.div`
   position: relative;
   display: flex;
   height: calc(
-    100vh - var(--cdf-ui-navigation-height) - 40px
+    100vh - var(--cdf-ui-navigation-height) -
+      ${CONTEXTUALIZE_EDITOR_HEADER_HEIGHT}px
   ); /* sidebar height and top-bot paddings subtracted */
 `;
 
