@@ -10,12 +10,14 @@ import { type Image360Collection } from '@cognite/reveal';
 import { uniqueId } from 'lodash';
 import { type Reveal3DResourcesLayersProps } from './types';
 import { useRevealContainerElement } from '../../RevealContainer/RevealContainerElementContext';
+import { useTranslation } from '../../../common/i18n';
 
 export const Image360CollectionLayerContainer = ({
   layerProps
 }: {
   layerProps: Reveal3DResourcesLayersProps;
 }): ReactElement => {
+  const { t } = useTranslation();
   const viewer = useReveal();
   const revealContainerElement = useRevealContainerElement();
   const [visible, setVisible] = useState(false);
@@ -105,7 +107,7 @@ export const Image360CollectionLayerContainer = ({
                 setVisible(true);
               }}
             />
-            <StyledLabel> 360 images </StyledLabel>
+            <StyledLabel> {t('IMAGES_360')} </StyledLabel>
             <StyledChipCount label={count} hideTooltip type="neutral" />
           </Flex>
         </Menu.Submenu>
