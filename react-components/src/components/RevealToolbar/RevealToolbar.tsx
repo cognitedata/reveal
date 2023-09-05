@@ -3,6 +3,7 @@
  */
 
 import { type ReactElement, type JSX } from 'react';
+import { I18nWrapper } from '@cognite/cdf-i18n-utils';
 import { ToolBar, type ToolBarProps } from '@cognite/cogs.js';
 import { FitModelsButton } from './FitModelsButton';
 import { LayersButton } from './LayersButton';
@@ -12,6 +13,7 @@ import { withSuppressRevealEvents } from '../../higher-order-components/withSupp
 import { MeasurementButton } from './MeasurementButton';
 import { HelpButton } from './HelpButton';
 import { type QualitySettings } from './SettingsContainer/types';
+import { translations } from '../../common/i18n';
 
 const defaultStyle: ToolBarProps = {
   style: {
@@ -57,7 +59,9 @@ const RevealToolbarContainer = (
     props = { ...props, ...defaultStyle };
   }
   return (
-    <ToolBar {...props}>{props.toolBarContent ?? <DefaultContentWrapper {...props} />}</ToolBar>
+    <I18nWrapper translations={translations} defaultNamespace="reveal-react-components">
+      <ToolBar {...props}>{props.toolBarContent ?? <DefaultContentWrapper {...props} />}</ToolBar>
+    </I18nWrapper>
   );
 };
 
