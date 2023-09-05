@@ -88,7 +88,7 @@ export const AdvancedJoinsPage = () => {
   };
 
   const view = useCurrentView();
-  const advancedJoin = useAdvancedJoin(headerName, view);
+  const { advancedJoin } = useAdvancedJoin(headerName, view);
 
   const {
     data: { items: savedManualMatches } = { items: [] },

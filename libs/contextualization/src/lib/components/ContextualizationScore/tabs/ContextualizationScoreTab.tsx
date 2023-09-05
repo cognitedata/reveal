@@ -17,10 +17,10 @@ export const ContextualizationScoreTab = ({
 }: {
   headerName: string;
   dataModelType: string;
-  estimateQualityJobStatus: JobStatus;
-  contextualizationScorePercent: number;
-  estimatedCorrectnessScorePercent: number;
-  confidencePercent: number;
+  estimateQualityJobStatus: JobStatus | undefined;
+  contextualizationScorePercent: number | undefined;
+  estimatedCorrectnessScorePercent: number | undefined;
+  confidencePercent: number | undefined;
 }) => {
   return (
     <Container>

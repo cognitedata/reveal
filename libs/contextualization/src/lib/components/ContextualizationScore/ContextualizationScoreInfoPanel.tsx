@@ -26,10 +26,10 @@ export const ContextualizationScoreInfoPanel = ({
 }: {
   headerName: string;
   dataModelType: string;
-  estimateQualityJobStatus: JobStatus;
-  contextualizationScorePercent: number;
-  estimatedCorrectnessScorePercent: number;
-  confidencePercent: number;
+  estimateQualityJobStatus: JobStatus | undefined;
+  contextualizationScorePercent: number | undefined;
+  estimatedCorrectnessScorePercent: number | undefined;
+  confidencePercent: number | undefined;
 }) => {
   const [currentTab, setCurrentTab] = useState<AdvancedJoinsInfoTabType>(
     'Estimated Correctness'

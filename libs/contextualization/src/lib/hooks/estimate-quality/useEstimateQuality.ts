@@ -12,14 +12,20 @@ export const useEstimateQuality = (
   selectedTable: string,
   fromColumn: string | undefined,
   toColumn: string | undefined
-) => {
-  const { data: { jobId } = {} } = useCreateEstimateQuality(
-    advancedJoinExternalId,
-    selectedDatabase,
-    selectedTable,
-    fromColumn,
-    toColumn
-  );
+): {
+  estimateQualityJobStatus: JobStatus | undefined;
+  contextualizationScorePercent: number | undefined;
+  estimatedCorrectnessScorePercent: number | undefined;
+  confidencePercent: number | undefined;
+} => {
+  const { data: { jobId, status: createStatus } = {} } =
+    useCreateEstimateQuality(
+      advancedJoinExternalId,
+      selectedDatabase,
+      selectedTable,
+      fromColumn,
+      toColumn
+    );
 
   const {
     data: {
@@ -51,7 +57,7 @@ export const useEstimateQuality = (
   }, [jobId, refetchMappedPercentages, status]);
 
   return {
-    estimateQualityJobStatus: status || JobStatus.Queued,
+    estimateQualityJobStatus: status || createStatus,
     contextualizationScorePercent,
     estimatedCorrectnessScorePercent,
     confidencePercent,

@@ -17,7 +17,7 @@ export const ContextualizationScore = ({
 }) => {
   const view = useCurrentView();
 
-  const advancedJoin = useAdvancedJoin(headerName, view);
+  const { advancedJoin, isLoading } = useAdvancedJoin(headerName, view);
 
   const {
     externalId = undefined,
@@ -52,9 +52,9 @@ export const ContextualizationScore = ({
           headerName={headerName}
           dataModelType={dataModelType}
           estimateQualityJobStatus={estimateQualityJobStatus}
-          contextualizationScorePercent={+contextualizationScorePercent}
-          estimatedCorrectnessScorePercent={+estimatedCorrectnessScorePercent}
-          confidencePercent={+confidencePercent}
+          contextualizationScorePercent={contextualizationScorePercent}
+          estimatedCorrectnessScorePercent={estimatedCorrectnessScorePercent}
+          confidencePercent={confidencePercent}
         />
       }
       placement="bottom-start"
@@ -64,8 +64,9 @@ export const ContextualizationScore = ({
         placement="bottom"
       >
         <PercentageChip
-          value={+contextualizationScorePercent}
+          value={contextualizationScorePercent}
           status={estimateQualityJobStatus}
+          isLoading={isLoading}
         />
       </Tooltip>
     </ContextualizationScoreButton>

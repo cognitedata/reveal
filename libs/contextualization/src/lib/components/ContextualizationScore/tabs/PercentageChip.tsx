@@ -6,20 +6,27 @@ import { getScoreColor } from '../../../utils/getScoreColor';
 export const PercentageChip = ({
   value,
   status,
+  isLoading,
   onClick,
 }: {
-  value: number;
-  status: JobStatus;
+  value: number | undefined;
+  status: JobStatus | undefined;
+  isLoading?: boolean;
   onClick?: () => void;
 }) => {
-  const isLoading = status === JobStatus.Queued || status === JobStatus.Running;
+  const loading =
+    status === JobStatus.Queued || status === JobStatus.Running || isLoading;
+
+  if (!status && !value) {
+    return <Chip hideTooltip={true} size="small" label="?" onClick={onClick} />;
+  }
   return (
     <Chip
       hideTooltip={true}
       size="small"
-      label={isLoading ? '' : `${value} %`}
+      label={loading ? '' : `${value} %`}
       type={getScoreColor(value)}
-      icon={isLoading ? 'Loader' : undefined}
+      icon={loading ? 'Loader' : undefined}
       onClick={onClick}
     />
   );

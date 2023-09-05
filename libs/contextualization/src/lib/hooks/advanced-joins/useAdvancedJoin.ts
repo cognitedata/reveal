@@ -5,26 +5,25 @@ import { View } from '../../types';
 import { useCreateAdvancedJoin } from './useCreateAdvancedJoin';
 import { useFindAdvancedJoins } from './useFindAdvancedJoins';
 
-export const useAdvancedJoin = (headerName: string, view?: View) => {
+export const useAdvancedJoin = (
+  headerName: string,
+  view?: View
+): { advancedJoin: any; isLoading: boolean } => {
   const sdk = useSDK();
 
-  const existingAdvancedJoin = useFindAdvancedJoins(sdk, headerName, view);
+  const { data = [], status } = useFindAdvancedJoins(sdk, headerName, view);
 
-  const shouldCreateAdvancedJoin =
-    !!view && existingAdvancedJoin?.data?.length === 0;
+  const shouldCreateAdvancedJoin = !!view && data?.length === 0;
 
-  const newAdvancedJoin = useCreateAdvancedJoin(
+  const { data: newAdvancedJoinData = [] } = useCreateAdvancedJoin(
     sdk,
     headerName,
     view,
     shouldCreateAdvancedJoin
   );
 
-  if (existingAdvancedJoin?.data !== undefined) {
-    return existingAdvancedJoin.data[0];
-  } else if (newAdvancedJoin?.data !== undefined) {
-    return newAdvancedJoin.data[0];
-  }
-
-  return undefined;
+  return {
+    advancedJoin: data[0] || newAdvancedJoinData[0],
+    isLoading: status === 'loading',
+  };
 };

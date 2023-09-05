@@ -1,4 +1,7 @@
-export const getScoreColor = (value: number) => {
+export const getScoreColor = (value: number | undefined) => {
+  if (!value) {
+    return 'default';
+  }
   if (100 >= value && value >= 80) {
     return 'success';
   } else if (value >= 40) {
