@@ -27,7 +27,6 @@ import {
 } from '../../../lib/types';
 import {
   addToCopilotEventListener,
-  cachedListeners,
   sendFromCopilotEvent,
   sendToCopilotEvent,
 } from '../../../lib/utils';
@@ -198,6 +197,8 @@ export const ChatUI = ({
             ).then((nextActionType) => {
               promptUser(nextActionType);
             });
+          } else {
+            promptUser('Message');
           }
         }
       }
@@ -240,9 +241,6 @@ export const ChatUI = ({
       removeListener();
       removeListener2();
       removeListener3();
-      for (const listener of cachedListeners) {
-        window.removeEventListener(listener.event, listener.listener);
-      }
     };
   }, [
     bot,

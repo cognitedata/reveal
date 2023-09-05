@@ -17,6 +17,7 @@ import { ResponsiveActions } from '../MessageRenderer/components/ResponsiveActio
 
 export const TextAction = ({ disabled }: { disabled?: boolean }) => {
   const textActionProps = useBotUIAction();
+  console.log(textActionProps);
 
   const {
     meta: { feature, waiting },
@@ -99,7 +100,7 @@ export const TextAction = ({ disabled }: { disabled?: boolean }) => {
             margin: 0,
           }}
           onKeyDown={(e) => {
-            if (!e.shiftKey && e.keyCode === 13 && !!value) {
+            if (!e.shiftKey && e.key === 'Enter' && !!value) {
               bot.next({ content: value, type: 'text' });
             }
           }}
