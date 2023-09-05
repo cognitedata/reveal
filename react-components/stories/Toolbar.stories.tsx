@@ -10,13 +10,14 @@ import {
   RevealToolbar,
   withSuppressRevealEvents,
   withCameraStateUrlParam,
-  useSetCameraStateFromUrlParam
+  useGetCameraStateFromUrlParam,
+  useCameraNavigation
 } from '../src';
 import { CogniteClient } from '@cognite/sdk';
 import { Color } from 'three';
 import styled from 'styled-components';
 import { Button, Menu, ToolBar, type ToolBarButton } from '@cognite/cogs.js';
-import { type ReactElement, useState } from 'react';
+import { type ReactElement, useState, useEffect } from 'react';
 
 const meta = {
   title: 'Example/Toolbar',
@@ -105,7 +106,7 @@ export const Main: Story = {
   },
   render: ({ addModelOptions }) => (
     <RevealContainer sdk={sdk} color={new Color(0x4a4a4a)}>
-      <Test />
+      <FitToUrlCameraState />
       <CadModelContainer addModelOptions={addModelOptions} />
       <RevealToolbar
         customSettingsContent={exampleCustomSettingElements()}
@@ -121,7 +122,15 @@ export const Main: Story = {
   )
 };
 
-function Test(): ReactElement {
-  const asd = useSetCameraStateFromUrlParam();
-  return <button onClick={asd}>Test</button>;
+function FitToUrlCameraState(): ReactElement {
+  const getCameraState = useGetCameraStateFromUrlParam();
+  const cameraNavigation = useCameraNavigation();
+
+  useEffect(() => {
+    const currentCameraState = getCameraState();
+    if (currentCameraState === undefined) return;
+    cameraNavigation.fitCameraToState(currentCameraState);
+  }, []);
+
+  return <></>;
 }

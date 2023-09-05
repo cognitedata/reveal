@@ -5,6 +5,7 @@
 import { useEffect, type ReactElement, type FunctionComponent } from 'react';
 import { useReveal } from '..';
 import { Vector3 } from 'three';
+import { type CameraState } from '@cognite/reveal';
 
 export function withCameraStateUrlParam<T extends object>(
   Component: FunctionComponent<T>
@@ -31,9 +32,7 @@ export function withCameraStateUrlParam<T extends object>(
   };
 }
 
-export function useSetCameraStateFromUrlParam(): () => void {
-  const reveal = useReveal();
-
+export function useGetCameraStateFromUrlParam(): () => CameraState | undefined {
   return () => {
     const url = new URL(window.location.toString());
     const position = url.searchParams.get('cameraPosition');
@@ -50,7 +49,7 @@ export function useSetCameraStateFromUrlParam(): () => void {
       return;
     }
 
-    reveal.cameraManager.setCameraState({ position: parsedPosition, target: parsedTarget });
+    return { position: parsedPosition, target: parsedTarget };
   };
 
   function getParsedVector(s: string): Vector3 | undefined {

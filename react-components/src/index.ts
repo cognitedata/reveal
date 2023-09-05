@@ -22,12 +22,12 @@ export { useFdmAssetMappings } from './components/NodeCacheProvider/NodeCachePro
 export { useClickedNodeData, type ClickedNodeData } from './hooks/useClickedNode';
 export { useCameraNavigation } from './hooks/useCameraNavigation';
 export { useMappedEdgesForRevisions } from './components/NodeCacheProvider/NodeCacheProvider';
-
+export { useIsRevealInitialized } from './hooks/useIsRevealInitialized';
 // Higher order components
 export { withSuppressRevealEvents } from './higher-order-components/withSuppressRevealEvents';
 export {
   withCameraStateUrlParam,
-  useSetCameraStateFromUrlParam
+  useGetCameraStateFromUrlParam
 } from './higher-order-components/withCameraStateUrlParam';
 // Types
 export {
