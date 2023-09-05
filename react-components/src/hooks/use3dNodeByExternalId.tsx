@@ -6,10 +6,15 @@ import { useFdmNodeCache } from '../components/NodeCacheProvider/NodeCacheProvid
 import { type DmsUniqueIdentifier, useReveal } from '../index';
 import { type Node3D } from '@cognite/sdk';
 
-export const use3dNodeByExternalId = ({
+export type Node3dData = {
+  node: Node3D;
+  model: { modelId: number; revisionId: number };
+};
+
+export const useNode3dDataByExternalId = ({
   externalId,
   space
-}: Partial<DmsUniqueIdentifier>): UseQueryResult<Node3D> => {
+}: Partial<DmsUniqueIdentifier>): UseQueryResult<Node3dData> => {
   const viewer = useReveal();
   const fdmNodeCache = useFdmNodeCache();
 
@@ -34,14 +39,17 @@ export const use3dNodeByExternalId = ({
 
       const node3d = modelMappings?.mappings.get(externalId)?.[0];
 
-      if (node3d === undefined) {
+      if (node3d === undefined || modelMappings === undefined) {
         await Promise.reject(
           new Error(`Could not find a connected model to instance ${externalId} in space ${space}`)
         );
         return;
       }
 
-      return node3d;
+      return {
+        node: node3d,
+        model: { modelId: modelMappings.modelId, revisionId: modelMappings.revisionId }
+      };
     }
   );
 };
