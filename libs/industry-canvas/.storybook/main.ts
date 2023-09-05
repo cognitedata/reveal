@@ -23,6 +23,9 @@ const config: StorybookConfig = {
       cacheDir: '../../node_modules/.vite/storybook/industry-canvas',
       resolve: {
         dedupe: ['@cognite/plotting-components'],
+        alias: {
+          fs: require.resolve('rollup-plugin-node-builtins'),
+        },
       },
       plugins: [
         viteTsConfigPaths({

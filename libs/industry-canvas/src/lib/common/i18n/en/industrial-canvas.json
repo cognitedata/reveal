@@ -106,6 +106,8 @@
   "TOOLTIP_TIMESERIES_ADD_TO_CANVAS": "Add timeseries",
   "TOOLTIP_TIMESERIES_PIN_TO_CANVAS": "Pin latest value to canvas",
   "TOOLTIP_TIMESERIES_UNPIN_FROM_CANVAS": "Unpin latest value from canvas",
+  "TOOLTIP_PROPERTY_SELECTOR_APPLY": "Apply ({{numSelected}})",
+  "TOOLTIP_PROPERTY_SELECTOR_APPLY_TO_ALL_OF_SAME_TYPE": "Apply to all of same type",
   "UNKNOWN_USER": "Unknown user",
   "VISIBILITY_ALL": "All",
   "VISIBILITY_COPY_URL": "Copy URL",
