@@ -43,6 +43,12 @@ export const useCreateEstimateQuality = (
       );
       return response.data;
     },
-    enabled: !!fromColumn && !!toColumn,
+    enabled: [
+      advancedJoinExternalId,
+      selectedDatabase,
+      selectedTable,
+      fromColumn,
+      toColumn,
+    ].every(Boolean),
   });
 };

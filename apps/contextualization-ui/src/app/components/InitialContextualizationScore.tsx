@@ -1,54 +1,81 @@
-import { ScoreComponent } from '@fusion/contextualization';
+import {
+  JobStatus,
+  ScoreComponent,
+  useEstimateQuality,
+} from '@fusion/contextualization';
+import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 
-import { Body } from '@cognite/cogs.js';
-
-import { JobStatus } from '../types';
+import { Body, Chip, Icon } from '@cognite/cogs.js';
 
 import { FormattedContainer } from './FormattedContainer';
-import { PropertyInfo } from './PropertyInfo';
 
 export const InitialContextualizationScore = ({
   headerName,
-  mappedPercentageJobStatus,
-  qualityScorePercent = 0,
-  percentageFilled = 0,
-  contextualizationScorePercent = 0,
+  advancedJoin,
 }: {
   headerName: string;
-  mappedPercentageJobStatus: JobStatus;
-  qualityScorePercent?: number;
-  percentageFilled?: number;
-  contextualizationScorePercent?: number;
+  advancedJoin: any;
 }) => {
-  const isLoadingPercentageFilled =
-    mappedPercentageJobStatus === JobStatus.Queued ||
-    mappedPercentageJobStatus === JobStatus.Running;
+  const {
+    externalId = undefined,
+    matchers: [
+      {
+        dbName = undefined,
+        tableName = undefined,
+        fromColumnKey = undefined,
+        toColumnKey = undefined,
+      } = {},
+    ] = [],
+  } = advancedJoin || {};
 
-  const title = 'Current scores for Data Modeling column';
-  const body = (
-    <>
-      <PropertyInfo
-        columnName={headerName}
-        contextualizationScore={qualityScorePercent}
-      />
-      <>
-        <Body level={2}>Percentage filled:</Body>
-        <ScoreComponent
-          score={percentageFilled}
-          percentageText=""
-          isLoading={isLoadingPercentageFilled}
-        />
-      </>
-
-      <>
-        <Body level={2}>Contextualization Score:</Body>
-        <ScoreComponent
-          score={contextualizationScorePercent}
-          percentageText=""
-        />
-      </>
-    </>
+  const {
+    estimateQualityJobStatus: status,
+    contextualizationScorePercent,
+    estimatedCorrectnessScorePercent,
+    confidencePercent,
+  } = useEstimateQuality(
+    externalId,
+    dbName,
+    tableName,
+    fromColumnKey,
+    toColumnKey
   );
+
+  const title = (
+    <div>
+      Current scores for column: &nbsp;
+      <Chip icon="Link" hideTooltip={true} label={headerName} />
+    </div>
+  );
+  const body =
+    status === JobStatus.Queued || status === JobStatus.Running ? (
+      <Spinner />
+    ) : status === JobStatus.Completed ? (
+      <>
+        <>
+          <Body level={2}>Contextualization score:</Body>
+          <ScoreComponent
+            score={contextualizationScorePercent}
+            percentageText=""
+          />
+        </>
+        <>
+          <Body level={2}>Estimated correctness:</Body>
+          <ScoreComponent
+            score={estimatedCorrectnessScorePercent}
+            percentageText=""
+          />
+        </>
+        <>
+          <Body level={2}>Confidence:</Body>
+          <ScoreComponent score={confidencePercent} percentageText="" />
+        </>
+      </>
+    ) : (
+      <>
+        <Icon type="Error" />
+      </>
+    );
   const footer = <></>;
   return <FormattedContainer title={title} body={body} footer={footer} />;
 };

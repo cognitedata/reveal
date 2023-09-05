@@ -6,7 +6,6 @@ import {
   useAdvancedJoin,
   getUrlParameters,
   useListMatches,
-  useMeasureMappedPercentages,
   useCurrentView,
 } from '@fusion/contextualization';
 
@@ -90,19 +89,12 @@ export const AdvancedJoinsPage = () => {
 
   const view = useCurrentView();
   const advancedJoin = useAdvancedJoin(headerName, view);
+
   const {
     data: { items: savedManualMatches } = { items: [] },
     refetch: refetchManualMatchesList,
   } = useListMatches(advancedJoin?.externalId);
   const savedManualMatchesCount = savedManualMatches.length;
-
-  const { mappedPercentageJobStatus, mappedPercentage } =
-    useMeasureMappedPercentages(
-      view?.externalId,
-      view?.space,
-      view?.version,
-      headerName
-    );
 
   const onClickStartLabeling = () => {
     setLabelingStage(true);
@@ -136,8 +128,7 @@ export const AdvancedJoinsPage = () => {
             <Column1>
               <InitialContextualizationScore
                 headerName={headerName}
-                mappedPercentageJobStatus={mappedPercentageJobStatus}
-                percentageFilled={mappedPercentage}
+                advancedJoin={advancedJoin}
               />
             </Column1>
 

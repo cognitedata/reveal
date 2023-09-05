@@ -9,7 +9,7 @@ export const FormattedContainer = ({
   body,
   footer,
 }: {
-  title?: string;
+  title?: string | JSX.Element;
   body?: JSX.Element;
   footer?: JSX.Element;
 }) => {
