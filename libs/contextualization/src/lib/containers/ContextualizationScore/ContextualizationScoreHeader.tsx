@@ -3,6 +3,9 @@ import {
   DataModelVersion,
 } from '@fusion/data-modeling';
 
+import sdk from '@cognite/cdf-sdk-singleton';
+import { SDKProvider } from '@cognite/sdk-provider';
+
 import { ContextualizationScore } from '../../components/ContextualizationScore';
 import { ContextualizationContext } from '../../hooks/data-model-version/useContextualizationContext';
 import { useFlagContextualizationScoreHeader } from '../../hooks/flags';
@@ -21,13 +24,15 @@ export const ContextualizationScoreHeader = ({
     return null;
   }
   return (
-    <ContextualizationContext.Provider
-      value={{ dataModelVersions: dataModelVersions }}
-    >
-      <ContextualizationScore
-        headerName={field.name}
-        dataModelType={field.type.name}
-      />
-    </ContextualizationContext.Provider>
+    <SDKProvider sdk={sdk}>
+      <ContextualizationContext.Provider
+        value={{ dataModelVersions: dataModelVersions }}
+      >
+        <ContextualizationScore
+          headerName={field.name}
+          dataModelType={field.type.name}
+        />
+      </ContextualizationContext.Provider>
+    </SDKProvider>
   );
 };

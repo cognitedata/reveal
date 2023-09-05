@@ -1,9 +1,8 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 
-import {
-  ContentWrapper,
-  SyntaxHelperWrapper,
-} from '@data-exploration-components/components/SearchQueryInfoPanel/elements';
+import styled from 'styled-components';
+
+import { SyntaxHelperWrapper } from '@data-exploration-components/components/SearchQueryInfoPanel/elements';
 import { Content } from 'antd/lib/layout/layout';
 
 import { SegmentedControl } from '@cognite/cogs.js';
@@ -20,34 +19,26 @@ import {
 export const ContextualizationScoreInfoPanel = ({
   headerName,
   dataModelType,
-  mappedPercentageJobStatus,
-  estimatedCorrectness = '?',
-  percentageFilled = '?',
-  contextualizationScore = '?',
+  estimateQualityJobStatus,
+  contextualizationScorePercent,
+  estimatedCorrectnessScorePercent,
+  confidencePercent,
 }: {
   headerName: string;
   dataModelType: string;
-  mappedPercentageJobStatus: JobStatus;
-  estimatedCorrectness?: string;
-  percentageFilled?: string;
-  contextualizationScore?: string;
+  estimateQualityJobStatus: JobStatus;
+  contextualizationScorePercent: number;
+  estimatedCorrectnessScorePercent: number;
+  confidencePercent: number;
 }) => {
   const [currentTab, setCurrentTab] = useState<AdvancedJoinsInfoTabType>(
     'Estimated Correctness'
   );
-  const [tabHeight, setTabHeight] = useState<number>();
   const contentRef = useRef<HTMLDivElement>(null);
 
   const handleNavigation = (nextTab: AdvancedJoinsInfoTabType) => {
     setCurrentTab(nextTab);
   };
-
-  // Transition the height to the height of the new tab
-  useEffect(() => {
-    if (contentRef.current) {
-      setTabHeight(contentRef.current.offsetHeight);
-    }
-  }, [currentTab]);
 
   return (
     <SyntaxHelperWrapper>
@@ -60,16 +51,18 @@ export const ContextualizationScoreInfoPanel = ({
           <SegmentedControl.Button key={tab}>{tab}</SegmentedControl.Button>
         ))}
       </SegmentedControl>
-      <ContentWrapper height={tabHeight}>
+      <ContentWrapper>
         <Content ref={contentRef}>
           {currentTab === 'Estimated Correctness' && (
             <ContextualizationScoreTab
               headerName={headerName}
               dataModelType={dataModelType}
-              mappedPercentageJobStatus={mappedPercentageJobStatus}
-              estimatedCorrectness={estimatedCorrectness}
-              percentageFilled={percentageFilled}
-              contextualizationScore={contextualizationScore}
+              estimateQualityJobStatus={estimateQualityJobStatus}
+              contextualizationScorePercent={contextualizationScorePercent}
+              estimatedCorrectnessScorePercent={
+                estimatedCorrectnessScorePercent
+              }
+              confidencePercent={confidencePercent}
             />
           )}
           {currentTab === 'Documentation' && (
@@ -83,3 +76,7 @@ export const ContextualizationScoreInfoPanel = ({
     </SyntaxHelperWrapper>
   );
 };
+
+const ContentWrapper = styled.div`
+  padding: 12px 8px 8px 8px;
+`;

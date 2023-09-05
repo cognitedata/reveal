@@ -1,3 +1,5 @@
+import styled from 'styled-components';
+
 import { Chip } from '@cognite/cogs.js';
 
 import { JobStatus } from '../../../types';
@@ -8,68 +10,81 @@ import { PercentageChip } from './PercentageChip';
 export const ContextualizationScoreTab = ({
   headerName,
   dataModelType,
-  mappedPercentageJobStatus,
-  estimatedCorrectness = '?',
-  percentageFilled = '?',
-  contextualizationScore = '?',
+  estimateQualityJobStatus,
+  contextualizationScorePercent,
+  estimatedCorrectnessScorePercent,
+  confidencePercent,
 }: {
   headerName: string;
   dataModelType: string;
-  mappedPercentageJobStatus: JobStatus;
-  estimatedCorrectness?: string;
-  percentageFilled?: string;
-  contextualizationScore?: string;
+  estimateQualityJobStatus: JobStatus;
+  contextualizationScorePercent: number;
+  estimatedCorrectnessScorePercent: number;
+  confidencePercent: number;
 }) => {
   return (
-    <div data-testid="ContextScore-tab">
-      <span>
-        <Chip
-          hideTooltip={true}
-          size="small"
-          label="Estimated Correctness"
-          type="neutral"
-        />
-        :{' '}
-        <Chip
-          hideTooltip={true}
-          size="small"
-          label={`${estimatedCorrectness} %`}
-        />
-        <br />
-        <br />
-      </span>
-      <span>
-        <Chip
-          hideTooltip={true}
-          size="small"
-          label="Percentage filled"
-          type="neutral"
-        />
-        :{' '}
-        <PercentageChip
-          value={+percentageFilled}
-          status={mappedPercentageJobStatus}
-        />
-        <br />
-        <br />
+    <Container>
+      <Row>
         <Chip
           hideTooltip={true}
           size="small"
           label="Contextualization score"
           type="neutral"
         />
-        :{' '}
+        :
+        <PercentageChip
+          value={contextualizationScorePercent}
+          status={estimateQualityJobStatus}
+        />
+      </Row>
+      <Row>
         <Chip
           hideTooltip={true}
           size="small"
-          label={`${contextualizationScore} %`}
+          label="Estimated correctness:"
+          type="neutral"
         />
-        <br />
-        <br />
-      </span>
-      <br />
-      <ImproveYourScore headerName={headerName} dataModelType={dataModelType} />
-      <br />
-    </div>
+        :
+        <PercentageChip
+          value={estimatedCorrectnessScorePercent}
+          status={estimateQualityJobStatus}
+        />
+      </Row>
+      <Row>
+        <Chip
+          hideTooltip={true}
+          size="small"
+          label="Confidence:"
+          type="neutral"
+        />
+        :
+        <PercentageChip
+          value={confidencePercent}
+          status={estimateQualityJobStatus}
+        />
+      </Row>
+      <ButtonWrapper>
+        <ImproveYourScore
+          headerName={headerName}
+          dataModelType={dataModelType}
+        />
+      </ButtonWrapper>
+    </Container>
   );
 };
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+`;
+
+const Row = styled.div`
+  display: flex;
+  gap: 5px;
+  align-items: center;
+`;
+
+const ButtonWrapper = styled.div`
+  margin-top: 5px;
+`;

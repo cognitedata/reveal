@@ -2,12 +2,10 @@ import { useState } from 'react';
 
 import styled from 'styled-components';
 
-import sdk from '@cognite/cdf-sdk-singleton';
 import { Tooltip, Dropdown } from '@cognite/cogs.js';
-import { SDKProvider } from '@cognite/sdk-provider';
 
+import { useAdvancedJoin, useEstimateQuality } from '../../hooks';
 import { useCurrentView } from '../../hooks/models/useCurrentView';
-import { useMeasureMappedPercentages } from '../../hooks/useMeasureMappedPercentages';
 
 import { ContextualizationScoreInfoPanel } from './ContextualizationScoreInfoPanel';
 import { PercentageChip } from './tabs/PercentageChip';
@@ -19,34 +17,36 @@ export const ContextualizationScore = ({
   headerName: string;
   dataModelType: string;
 }) => {
-  return (
-    <SDKProvider sdk={sdk}>
-      <ContextualizationScoreWrapper
-        headerName={headerName}
-        dataModelType={dataModelType}
-      />
-    </SDKProvider>
-  );
-};
-
-const ContextualizationScoreWrapper = ({
-  headerName,
-  dataModelType,
-}: {
-  headerName: string;
-  dataModelType: string;
-}) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const view = useCurrentView();
 
-  const { mappedPercentageJobStatus, mappedPercentage } =
-    useMeasureMappedPercentages(
-      view?.externalId,
-      view?.space,
-      view?.version,
-      headerName
-    );
+  const advancedJoin = useAdvancedJoin(headerName, view);
+
+  const {
+    externalId = undefined,
+    matchers: [
+      {
+        dbName = undefined,
+        tableName = undefined,
+        fromColumnKey = undefined,
+        toColumnKey = undefined,
+      } = {},
+    ] = [],
+  } = advancedJoin || {};
+
+  const {
+    estimateQualityJobStatus,
+    contextualizationScorePercent,
+    estimatedCorrectnessScorePercent,
+    confidencePercent,
+  } = useEstimateQuality(
+    externalId,
+    dbName,
+    tableName,
+    fromColumnKey,
+    toColumnKey
+  );
 
   const handleOpen = () => {
     setIsOpen(true);
@@ -64,8 +64,10 @@ const ContextualizationScoreWrapper = ({
         <ContextualizationScoreInfoPanel
           headerName={headerName}
           dataModelType={dataModelType}
-          mappedPercentageJobStatus={mappedPercentageJobStatus}
-          percentageFilled={mappedPercentage}
+          estimateQualityJobStatus={estimateQualityJobStatus}
+          contextualizationScorePercent={+contextualizationScorePercent}
+          estimatedCorrectnessScorePercent={+estimatedCorrectnessScorePercent}
+          confidencePercent={+confidencePercent}
         />
       }
       placement="bottom-start"
@@ -75,8 +77,8 @@ const ContextualizationScoreWrapper = ({
         placement="bottom"
       >
         <PercentageChip
-          value={+mappedPercentage}
-          status={mappedPercentageJobStatus}
+          value={+contextualizationScorePercent}
+          status={estimateQualityJobStatus}
           onClick={handleOpen}
         />
       </Tooltip>
