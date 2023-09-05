@@ -138,6 +138,11 @@ module.exports = {
       );
 
       if (pluginOptions.useMockEnv) {
+        config.plugins.push(
+          new webpack.ProvidePlugin({
+            process: 'process/browser',
+          })
+        );
         return {
           ...config,
           plugins: [...config.plugins],
@@ -165,6 +170,7 @@ module.exports = {
       config.plugins.push(
         new webpack.ProvidePlugin({
           React: 'react',
+          process: 'process/browser',
         })
       );
 

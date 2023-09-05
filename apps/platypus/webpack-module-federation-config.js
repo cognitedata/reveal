@@ -39,7 +39,10 @@ module.exports = composePlugins(
     // config.resolve.alias['@cognite/cdf-sdk-singleton'] = require.resolve(
     //   './src/environments/mock/cogniteSdkSingleton.ts'
     // );
-    config.resolve.fallback = { path: require.resolve('path-browserify') };
+    config.resolve.fallback = {
+      path: require.resolve('path-browserify'),
+      process: require.resolve('process/browser'),
+    };
     // config.optimization.sideEffects = true;
     config.optimization.minimize = true;
 

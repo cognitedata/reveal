@@ -4,9 +4,7 @@ const defaultRollup = require('@nrwl/react/plugins/bundle-rollup');
 module.exports = (config, context) => {
   function isExternal(moduleName) {
     const internal =
-      moduleName.includes('@platypus') ||
-      /^\.{0,2}\//.test(moduleName) ||
-      moduleName.includes('@cognite/llm-hub');
+      moduleName.includes('@platypus') || /^\.{0,2}\//.test(moduleName);
     return !internal;
   }
 

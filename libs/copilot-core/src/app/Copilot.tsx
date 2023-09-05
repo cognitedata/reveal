@@ -6,12 +6,13 @@ import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
 import { ToastContainer } from '@cognite/cogs.js';
+import {
+  CogniteChainName,
+  copilotTranslations,
+  CopilotSupportedFeatureType,
+} from '@cognite/llm-hub';
 import { CogniteClient } from '@cognite/sdk';
 import { SDKProvider } from '@cognite/sdk-provider';
-
-import { translations } from '../i18n';
-import { CogniteChainName } from '../lib/toolchains';
-import { CopilotSupportedFeatureType } from '../lib/types';
 
 import { ChatUI } from './components/ChatUI';
 import { COPILOT_TOGGLE, CopilotButton } from './components/CopilotButton';
@@ -54,7 +55,7 @@ export const Copilot = ({
 
   return (
     <SDKProvider sdk={sdk}>
-      <I18nWrapper translations={translations} addNamespace="copilot">
+      <I18nWrapper translations={copilotTranslations} addNamespace="copilot">
         <QueryClientProvider client={queryClient}>
           <ToastContainer />
           <StyledWrapper id="copilot-wrapper">

@@ -9,31 +9,27 @@ import { BufferMemory, ChatMessageHistory } from 'langchain/memory';
 import { AIMessage, HumanMessage } from 'langchain/schema';
 
 import { Flex } from '@cognite/cogs.js';
-import { datamodelResultSummaryPrompt } from '@cognite/llm-hub';
-import { useSDK } from '@cognite/sdk-provider';
-
-import { CogniteChatGPT } from '../../../lib/chatModels';
 import {
+  datamodelResultSummaryPrompt,
+  processMessage,
+  newChain,
+  CogniteChatGPT,
+  CogniteChainName,
   callPromptChain,
   safeConvertToJson,
-} from '../../../lib/CogniteBaseChain';
-import { processMessage } from '../../../lib/processMessage';
-import { CogniteChainName, newChain } from '../../../lib/toolchains';
-import {
   ActionType,
   CopilotBotMessage,
   CopilotMessage,
   CopilotSupportedFeatureType,
-} from '../../../lib/types';
-import {
   addToCopilotEventListener,
   sendFromCopilotEvent,
   sendToCopilotEvent,
-} from '../../../lib/utils';
+} from '@cognite/llm-hub';
+import { useSDK } from '@cognite/sdk-provider';
+
 import { getChatHistory, useSaveChat } from '../../hooks/useChatHistory';
 import { useCopilotContext } from '../../hooks/useCopilotContext';
 import { useMetrics } from '../../hooks/useMetrics';
-import { useTranslation } from '../../hooks/useTranslation';
 import zIndex from '../../utils/zIndex';
 
 import { LargeChatUI } from './LargeChatUI';
@@ -68,13 +64,11 @@ export const ChatUI = ({
 
   const { track } = useMetrics();
 
-  const { t } = useTranslation();
-
   const model = useMemo(() => new CogniteChatGPT(sdk), [sdk]);
 
   const { base: conversationChain, chains } = useMemo(() => {
-    return newChain(sdk, model, messages, t);
-  }, [sdk, model, messages, t]);
+    return newChain(sdk, model, messages);
+  }, [sdk, model, messages]);
 
   const updateMessage = useCallback(
     async (key: number, result: CopilotBotMessage) => {
@@ -132,7 +126,8 @@ export const ChatUI = ({
               conversationChain,
               sdk,
               content,
-              messages.current
+              messages.current,
+              'en'
             ).then((newActionType) => {
               promptUser(newActionType);
             });
@@ -193,7 +188,8 @@ export const ChatUI = ({
               conversationChain,
               sdk,
               message,
-              messages.current
+              messages.current,
+              'en'
             ).then((nextActionType) => {
               promptUser(nextActionType);
             });
@@ -207,7 +203,7 @@ export const ChatUI = ({
       'SUMMARIZE_QUERY',
       async (graphql) => {
         const [{ summary }] = await callPromptChain(
-          chains.GraphQlChain,
+          chains.GraphQlChain as any,
           'summarize filter',
           datamodelResultSummaryPrompt,
           [
@@ -301,7 +297,8 @@ export const ChatUI = ({
           conversationChain,
           sdk,
           '',
-          messages.current
+          messages.current,
+          'en'
         ).then((nextActionType) => {
           promptUser(nextActionType);
         });
@@ -326,7 +323,8 @@ export const ChatUI = ({
             conversationChain,
             sdk,
             lastUserMessage.content,
-            messages.current
+            messages.current,
+            'en'
           ).then((nextActionType) => {
             promptUser(nextActionType);
           });

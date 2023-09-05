@@ -1,7 +1,6 @@
 /// <reference types="vitest" />
 import basicSsl from '@vitejs/plugin-basic-ssl';
 import react from '@vitejs/plugin-react';
-import rollupNodePlugins from 'rollup-plugin-node-polyfills';
 import { defineConfig, loadEnv, searchForWorkspaceRoot } from 'vite';
 import macrosPlugin from 'vite-plugin-babel-macros';
 import svgr from 'vite-plugin-svgr';
@@ -21,6 +20,9 @@ export default defineConfig((configType) => {
 
     resolve: {
       dedupe: ['@cognite/plotting-components'],
+      alias: {
+        fs: require.resolve('rollup-plugin-node-builtins'),
+      },
     },
 
     server: {

@@ -14,7 +14,7 @@ import { LoadingMessage } from './LoadingMessage';
 
 export const LargeChatUI = () => {
   return (
-    <LargeChatWrapper>
+    <LargeChatWrapper direction="column">
       <ChatHeader style={{ paddingTop: 16, paddingBottom: 16 }} hideHistory />
       <Flex style={{ flex: 1, overflow: 'hidden' }} gap={16}>
         <div

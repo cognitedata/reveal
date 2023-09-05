@@ -13,9 +13,9 @@ import {
   Modal,
   Overline,
 } from '@cognite/cogs.js';
+import { CopilotLogContent, CopilotMessage } from '@cognite/llm-hub';
 
 import { ReactComponent as CopilotIcon } from '../../../assets/CopilotIcon.svg';
-import { CopilotLogContent, CopilotMessage } from '../../../lib/types';
 import { useUserProfile } from '../../hooks/useUserProfile';
 
 import { CopilotActions } from './components/CopilotActions';

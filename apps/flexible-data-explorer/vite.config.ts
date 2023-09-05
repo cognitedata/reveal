@@ -19,6 +19,9 @@ export default defineConfig((configType) => {
 
     resolve: {
       dedupe: ['@cognite/plotting-components'],
+      alias: {
+        fs: require.resolve('rollup-plugin-node-builtins'),
+      },
     },
 
     server: {
