@@ -116,7 +116,12 @@ export const Onboarding = () => {
       action: ONBOARDING_MODAL_ACTIONS.SUCCESS,
       step: `carousel-step-1`,
     });
-    handleState({ open: true, steps, onTrackEvent });
+    handleState({
+      open: true,
+      steps,
+      onTrackEvent,
+      id: 'business-shell-onboarding-1',
+    });
     setOnboardingModalPopup(false);
   };
   const modalTextProps = {

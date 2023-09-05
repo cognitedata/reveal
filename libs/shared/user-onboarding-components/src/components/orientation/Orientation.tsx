@@ -33,7 +33,7 @@ export const Orientation = () => {
       continuous={!enableHotspot}
       disableCloseOnEsc
       showProgress
-      disableScrollParentFix
+      disableScrolling
       disableOverlayClose
       styles={{
         options: {

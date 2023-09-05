@@ -51,10 +51,10 @@ export const OrientationTooltip = ({
 }: OrientationTooltipProps) => {
   const { state } = useOrientation();
   const { onTrackEvent } = state;
-  const currentStep = `Step-${index + 1}`;
+  const currentStep = `orientation-step-${index + 1}`;
   useEffect(() => {
     onTrackEvent?.(ORIENTATION_EVENT, {
-      step: `orientation-step-${currentStep}`,
+      step: currentStep,
       flowName: state.id,
       action: ORIENTATION_ACTIONS.STARTED,
     });
@@ -64,13 +64,13 @@ export const OrientationTooltip = ({
   const onNext = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     if (isLastStep) {
       onTrackEvent?.(ORIENTATION_EVENT, {
-        step: `orientation-step-${currentStep}`,
+        step: currentStep,
         action: ORIENTATION_ACTIONS.LAST_STEP,
         flowName: state.id,
       });
     } else {
       onTrackEvent?.(ORIENTATION_EVENT, {
-        step: `orientation-step-${currentStep}`,
+        step: currentStep,
         action: ORIENTATION_ACTIONS.NEXT,
         flowName: state.id,
       });
@@ -81,7 +81,7 @@ export const OrientationTooltip = ({
   };
   const onClose = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     onTrackEvent?.(ORIENTATION_EVENT, {
-      step: `orientation-step-${currentStep}`,
+      step: currentStep,
       action: ORIENTATION_ACTIONS.CLOSED,
       flowName: state.id,
     });
@@ -91,7 +91,7 @@ export const OrientationTooltip = ({
   };
   const onBack = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     onTrackEvent?.(ORIENTATION_EVENT, {
-      step: `orientation-step-${currentStep}`,
+      step: currentStep,
       action: ORIENTATION_ACTIONS.PREVIOUS,
       flowName: state.id,
     });
