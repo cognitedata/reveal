@@ -303,7 +303,6 @@ const applyConditionalFormattingClickTransform = (
         }
       : state.interactionState,
     isConditionalFormattingOpenAnnotationIdByTimeseriesId: {
-      ...state.isConditionalFormattingOpenAnnotationIdByTimeseriesId,
       [annotationId]: {
         ...state.isConditionalFormattingOpenAnnotationIdByTimeseriesId[
           annotationId

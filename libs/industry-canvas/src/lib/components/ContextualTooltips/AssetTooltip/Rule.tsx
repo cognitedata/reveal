@@ -56,7 +56,7 @@ const Rule: React.FC<RuleProps> = ({
             hideOnOutsideClick: true,
           }}
           content={
-            <Menu>
+            <Menu inverted>
               {Object.values(RuleColor).map((color) => (
                 <Menu.Item onClick={() => onThenValueChange(color)}>
                   {/* Inverted Menu will be built by cogs https://cognitedata.atlassian.net/browse/CGS-43 */}
@@ -84,7 +84,7 @@ const Rule: React.FC<RuleProps> = ({
             hideOnOutsideClick: true,
           }}
           content={
-            <Menu>
+            <Menu inverted>
               {Object.values(Condition).map((condition) => (
                 <Menu.Item onClick={() => onConditionChange(condition)}>
                   {/* Inverted Menu will be built by cogs https://cognitedata.atlassian.net/browse/CGS-43 */}

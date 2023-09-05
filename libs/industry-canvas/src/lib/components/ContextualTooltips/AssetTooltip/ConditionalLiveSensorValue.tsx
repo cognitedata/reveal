@@ -71,7 +71,7 @@ const Container = styled.div<{
   onClick?: any | undefined;
   opaque?: boolean;
 }>`
-  z-index: ${zIndex.MINIMUM}
+  z-index: ${zIndex.MINIMUM};
   display: flex;
   justify-items: center;
   align-items: stretch;
