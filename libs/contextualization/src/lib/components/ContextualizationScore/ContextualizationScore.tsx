@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 import styled from 'styled-components';
 
 import { Tooltip, Dropdown } from '@cognite/cogs.js';
@@ -17,8 +15,6 @@ export const ContextualizationScore = ({
   headerName: string;
   dataModelType: string;
 }) => {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-
   const view = useCurrentView();
 
   const advancedJoin = useAdvancedJoin(headerName, view);
@@ -48,18 +44,9 @@ export const ContextualizationScore = ({
     toColumnKey
   );
 
-  const handleOpen = () => {
-    setIsOpen(true);
-  };
-  const handleClose = () => {
-    setIsOpen(false);
-  };
-
   return (
     <ContextualizationScoreButton
       appendTo={document.getElementById('dataPreviewTableWrapper')!}
-      visible={isOpen}
-      onClickOutside={handleClose}
       content={
         <ContextualizationScoreInfoPanel
           headerName={headerName}
@@ -79,7 +66,6 @@ export const ContextualizationScore = ({
         <PercentageChip
           value={+contextualizationScorePercent}
           status={estimateQualityJobStatus}
-          onClick={handleOpen}
         />
       </Tooltip>
     </ContextualizationScoreButton>
@@ -88,4 +74,7 @@ export const ContextualizationScore = ({
 
 const ContextualizationScoreButton = styled(Dropdown)`
   margin-left: 3px;
+  &:hover {
+    cursor: pointer;
+  }
 `;
