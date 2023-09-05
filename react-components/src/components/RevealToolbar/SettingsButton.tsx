@@ -36,7 +36,7 @@ export const SettingsButton = ({
             {customSettingsContent ?? <></>}
           </Menu>
         }
-        placement="auto">
+        placement="right-start">
         <Button
           icon="Settings"
           type="ghost"
