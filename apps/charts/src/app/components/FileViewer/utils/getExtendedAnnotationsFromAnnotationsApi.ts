@@ -1,3 +1,5 @@
+import chroma from 'chroma-js';
+
 import { AnnotationStatus } from '@cognite/annotations';
 import {
   AnnotationType as UfvAnnotationType,
@@ -97,6 +99,13 @@ const getRectangleAnnotationFromCogniteAnnotation = (
   const { xMin, yMin, xMax, yMax } = getBoundingBoxFromAnnotationData(
     annotation.data
   );
+  const style = getDefaultStylesByResourceType(
+    getRefResourceType(annotation.data)
+  );
+  // transparent shapes don't register clicks in UFV
+  const fill = chroma(style.stroke || '#000000')
+    .alpha(0.01)
+    .css();
   return {
     id: String(annotation.id),
     containerId,
@@ -105,7 +114,10 @@ const getRectangleAnnotationFromCogniteAnnotation = (
     y: yMin,
     width: xMax - xMin,
     height: yMax - yMin,
-    style: getDefaultStylesByResourceType(getRefResourceType(annotation.data)),
+    style: {
+      ...style,
+      fill,
+    },
     metadata: getSpecificMetadataFromAnnotationModel(annotation),
   };
 };

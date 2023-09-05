@@ -1,3 +1,5 @@
+import chroma from 'chroma-js';
+
 import { Colors } from '@cognite/cogs.js';
 import { AnnotationType } from '@cognite/unified-file-viewer';
 
@@ -34,7 +36,10 @@ export const getStyledAnnotationFromAnnotation = (
       ...(annotation.style || {}),
       strokeWidth: 2,
       stroke: colors.strokeColor,
-      fill: isHover ? colors.backgroundColor : 'transparent',
+      // transparent shapes don't register clicks in UFV
+      fill: isHover
+        ? colors.backgroundColor
+        : chroma(colors.backgroundColor).alpha(0.01).css(),
       ...(isSelected && { dash: [4, 4] }),
     },
   };
@@ -48,7 +53,10 @@ export const getResourceTypeAnnotationColor = (
   resourceType?: ResourceType,
   isSelected = false,
   isPending = false
-): { strokeColor: string; backgroundColor: string } => {
+): {
+  strokeColor: string;
+  backgroundColor: string;
+} => {
   if (isSelected)
     return {
       strokeColor: Colors['border--interactive--toggled-pressed'],
