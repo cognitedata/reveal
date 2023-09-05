@@ -45,8 +45,9 @@ function redirectToLogin() {
 export const checkIfUserHasAccessToProject = async (projectName: string) => {
   const project = getProject();
 
-  // If auth token is provided from test environment, skip check
-  if (window?.testAuthOverrides) {
+  // cyToken is set in cypress tests
+  const cyToken = localStorage.getItem('CY_TOKEN');
+  if (cyToken) {
     return;
   }
 

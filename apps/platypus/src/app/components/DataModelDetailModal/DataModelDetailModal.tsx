@@ -93,8 +93,6 @@ export const DataModelDetailModal = (props: DataModelDetailModalProps) => {
     return result.valid;
   };
 
-  console.log('props', props);
-
   const isSubmitDisabled =
     !props.name.trim() ||
     props.hasInputError ||

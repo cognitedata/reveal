@@ -1,9 +1,3 @@
-declare global {
-  interface Window {
-    testAuthOverrides?: TestAuthOverrides;
-  }
-}
-
 export type UserInfo = {
   displayName?: string;
   id: string;
@@ -11,10 +5,6 @@ export type UserInfo = {
   userPrincipalName?: string;
   profilePicture?: string; // if defined, then a URL to the picture
 };
-
-export interface TestAuthOverrides {
-  getToken: () => Promise<string>;
-}
 
 export interface SdkClientTokenProvider {
   getAppId: () => string;

@@ -3,14 +3,6 @@ import { ReactElement } from 'react';
 import { IconType } from '@cognite/cogs.js';
 import { IDPType } from '@cognite/login-utils';
 
-declare global {
-  interface Window {
-    testAuthOverrides?: {
-      getToken: () => Promise<string>;
-    };
-  }
-}
-
 export type Action = 'LIST' | 'READ' | 'CREATE' | 'UPDATE' | 'DELETE';
 export type Acl = {
   acl: string;

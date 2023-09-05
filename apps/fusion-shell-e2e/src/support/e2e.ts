@@ -15,10 +15,14 @@
 
 // Import commands.ts using ES2015 syntax:
 import './commands';
-import './injectToken';
+import { interceptProfileMe } from './interceptProfileMe';
 Cypress.on('uncaught:exception', (err) => {
   // returning false here prevents Cypress from
   // failing the test
   console.error(err);
   return false;
+});
+
+beforeEach(() => {
+  interceptProfileMe();
 });

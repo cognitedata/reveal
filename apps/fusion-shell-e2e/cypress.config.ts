@@ -1,7 +1,7 @@
 import { nxE2EPreset } from '@nx/cypress/plugins/cypress-preset';
 import { defineConfig } from 'cypress';
 
-import { loginWithAzureClientCredentials } from './src/support/loginWithClientCredentials';
+import { getSubappInfo } from './src/utils/getSubappsInfo';
 
 export default defineConfig({
   e2e: {
@@ -14,17 +14,19 @@ export default defineConfig({
     video: true,
     screenshotOnRunFailure: true,
     videoUploadOnPasses: false,
-    async setupNodeEvents(
+    setupNodeEvents(
       on: Cypress.PluginEvents,
       config: Cypress.PluginConfigOptions
     ) {
-      const result = await loginWithAzureClientCredentials(
-        config.env.DATA_EXPLORER_CLIENT_ID,
-        config.env.DATA_EXPLORER_CLIENT_SECRET
-      );
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      config.env.ACCESS_TOKEN = result!.accessToken!;
-
+      on('task', {
+        log(message) {
+          console.log(message);
+          return null;
+        },
+        getSubappInfo(subapp: string) {
+          return getSubappInfo(subapp);
+        },
+      });
       return config;
     },
   },

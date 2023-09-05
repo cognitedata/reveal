@@ -1,8 +1,3 @@
 Cypress.on('window:before:load', async (win) => {
-  // @ts-ignore
-  win.testAuthOverrides = {
-    getToken: () => {
-      return Cypress.env('ACCESS_TOKEN');
-    },
-  };
+  win.localStorage.setItem('CY_TOKEN', Cypress.env('ACCESS_TOKEN'));
 });

@@ -1,32 +1,4 @@
-/// <reference types="cypress" />
-
-// ***********************************************
-// This example commands.ts shows you how to
-// create various custom commands and overwrite
-// existing commands.
-//
-// For more comprehensive examples of custom
-// commands please read more here:
-// https://on.cypress.io/custom-commands
-// ***********************************************
-
-// eslint-disable-next-line @typescript-eslint/no-namespace
-declare namespace Cypress {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  interface Chainable<Subject> {
-    ensurePageFinishedLoading(): void;
-    createLink(navigateTo: string): string;
-    navigate(navigateTo: string): void;
-    getBySel<E extends Node = HTMLElement>(
-      selector: string
-    ): Chainable<JQuery<E>>;
-    getBySelLike<E extends Node = HTMLElement>(
-      selector: string
-    ): Chainable<JQuery<E>>;
-  }
-}
-
-// -- This is a parent command --
+import { baseUrl, project, cluster, tenant } from '../utils/config';
 
 // Sometimes page loads a bit slow, and loaders displays for more than
 // 4 sec causing tests to fail, this check will wait a bit longer (9 sec)
@@ -50,17 +22,13 @@ Cypress.Commands.add('ensurePageFinishedLoading', () => {
   );
 });
 
-const organization = 'cog-dss';
-const project = 'dss-dev';
-const cluster = 'greenfield.cognitedata.com';
-const baseUrl = `https://${organization}.local.cognite.ai:4200`;
-
 Cypress.Commands.add('createLink', (app) => {
   return `${baseUrl}/${project}/${app}?cluster=${cluster}`;
 });
 
 Cypress.Commands.add('navigate', (app) => {
-  const url = `${baseUrl}/dss-dev/${app}?cluster=${cluster}`;
+  cy.setup();
+  const url = `${baseUrl}/${project}/${app}?cluster=${cluster}`;
   cy.visit(url);
 });
 
@@ -71,3 +39,61 @@ Cypress.Commands.add('getBySel', (selector, ...args) => {
 Cypress.Commands.add('getBySelLike', (selector, ...args) => {
   return cy.get(`[data-cy*=${selector}]`, ...args);
 });
+
+Cypress.Commands.add('setup', () => {
+  cy.session(
+    'inject access token & overide affected subapps',
+    () => {
+      overrideAffectedSubapps();
+      injectAccessToken();
+    },
+    { cacheAcrossSpecs: true }
+  );
+});
+
+function injectAccessToken() {
+  cy.visit(baseUrl);
+  cy.request({
+    url: `https://login.microsoftonline.com/${encodeURIComponent(
+      tenant
+    )}/oauth2/v2.0/token`,
+    method: 'POST',
+    body: {
+      grant_type: 'client_credentials',
+      client_id: Cypress.env('CLIENT_ID'),
+      client_secret: Cypress.env('CLIENT_SECRET'),
+      scope: `https://${cluster}/.default`,
+    },
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'no-cors': true,
+    },
+  }).then(({ body }) => {
+    window.localStorage.setItem('CY_TOKEN', body.access_token);
+  });
+}
+
+function overrideAffectedSubapps() {
+  const affectedAppsEnv = Cypress.env('AFFECTED_APPS');
+  const pullRequestNumber = Cypress.env('PULL_REQUEST_NUMBER');
+  if (!affectedAppsEnv) {
+    // no affected apps, nothing to do
+    return;
+  }
+  if (pullRequestNumber == null) {
+    throw new Error('The env PULL_REQUEST_NUMBER is not set');
+  }
+  const affectedApps: string[] = JSON.parse(affectedAppsEnv);
+  affectedApps.forEach((app) => {
+    cy.task('getSubappInfo', app).then((packageName: string | null) => {
+      if (!packageName) {
+        // some apps are not subapps in Fusion, e.g. "platypus-cdf-cli"
+        return;
+      }
+      const key = `import-map-override:${packageName}`;
+      const previewUrl = `https://${app}-${pullRequestNumber}.fusion-preview.preview.cogniteapp.com/index.js`;
+      cy.task('log', 'overriding subapp: ' + key + ': ' + previewUrl);
+      window.localStorage.setItem(key, previewUrl);
+    });
+  });
+}

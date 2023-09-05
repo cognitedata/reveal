@@ -104,9 +104,10 @@ export function getFlow(): { flow: IDPType | undefined } {
 }
 
 export async function getToken() {
-  // use `getToken` method provided by test environment
-  if (window?.testAuthOverrides) {
-    return window.testAuthOverrides.getToken();
+  // cyToken is used for e2e-tests
+  const cyToken = localStorage.getItem('CY_TOKEN');
+  if (cyToken) {
+    return cyToken;
   }
 
   await ensureCorrectBaseUrlP;

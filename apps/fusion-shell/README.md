@@ -125,13 +125,15 @@ E2E tests are running on CI where we have the clientId and clientSecret as repos
 The token is fetched before cypress tests are started and is valid for the whole session. The code is here:
 `apps/fusion-shell-e2e/cypress.config.ts`
 
-After we get the access token, we are injecting a global function (testAuthOverrides) to the window object. This function later is used by the `cdf-sdk-sigleton` and it is returning the token mentioned from above.
+After we get the access token, we are setting the local storage item `CY_TOKEN: <token>` . This item is picked up by `cdf-sdk-sigleton`.
 The code for that is here:
-`apps/fusion-shell-e2e/src/support/injectToken.ts`
+`apps/fusion-shell-e2e/src/support/commands.ts`
 
 If you want to run cypress test locally, you will need to get hold of a clientId/ClientSecret pair.
 
 Get the clientId/ClientSecret from `cog-dss` (data science team, ask someone from data-exploration to send you an invite). use [this guide](../platypus-cdf-cli/LOGIN.md) to create clientId/ClientSecret
 
 After this step, you can run cypress. This is the command that is executed on CI
-`DATA_EXPLORER_CLIENT_ID=<your-client-id> DATA_EXPLORER_CLIENT_SECRET=<your-client-secret> nx run fusion-shell-e2e:e2e:ci --watch`
+`CLIENT_ID=<your-client-id> CLIENT_SECRET=<your-client-secret> nx run fusion-shell-e2e:e2e --watch`
+
+> Remeber to run fusion-shell when running e2e tests. E.g. `nx run fusion-shell:preview:production`.
