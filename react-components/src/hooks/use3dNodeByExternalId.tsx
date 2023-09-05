@@ -34,7 +34,7 @@ export const use3dNodeByExternalId = ({
 
       const node3d = modelMappings?.mappings.get(externalId)?.[0];
 
-      if (modelMappings === undefined || node3d === undefined) {
+      if (node3d === undefined) {
         await Promise.reject(
           new Error(`Could not find a connected model to instance ${externalId} in space ${space}`)
         );
