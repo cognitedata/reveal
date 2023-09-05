@@ -136,7 +136,7 @@ export type SdkListData<T> = {
   nextCursor?: string;
 };
 
-export type Runtime = 'py37' | 'py38' | 'py39' | 'py310' | 'py311' | 'py312'; // Future proofing.
+export type Runtime = 'py38' | 'py39' | 'py310' | 'py311' | 'py312'; // Future proofing.
 
 export interface CogFunctionUpload {
   name: string;

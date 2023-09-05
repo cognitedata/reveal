@@ -70,7 +70,6 @@ const StyledForm = styled(Form)`
 export type RuntimeOption = { label: string; value: Runtime };
 
 const runtimes: RuntimeOption[] = [
-  { label: 'Python 3.7', value: 'py37' },
   { label: 'Python 3.8', value: 'py38' },
   { label: 'Python 3.9', value: 'py39' },
   { label: 'Python 3.10', value: 'py310' },
@@ -80,7 +79,7 @@ const limitDefaults: CogFunctionLimit = {
   timeoutMinutes: 10,
   cpuCores: { default: 0.25, max: 0.6, min: 0.1 },
   memoryGb: { default: 1, max: 2.5, min: 0.1 },
-  runtimes: ['py37', 'py38', 'py39', 'py310'],
+  runtimes: ['py38', 'py39', 'py310'],
   responseSizeMb: 1,
 };
 
