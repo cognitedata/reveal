@@ -26,6 +26,7 @@ export const LayersButton = (): ReactElement => {
   const [cadModelIds, setCadModelIds] = useState<number[]>([]);
   const [pointCloudModelIds, setPointCloudModelIds] = useState<number[]>([]);
   const prevModelsRef = useRef<CogniteModel[]>([]);
+  const subMenuRef = useRef<HTMLDivElement | null>(null);
 
   const [reveal3DResourcesLayerData, setReveal3DResourcesLayerData] =
     useState<Reveal3DResourcesLayerStates>({
@@ -159,12 +160,15 @@ export const LayersButton = (): ReactElement => {
     <CogsTooltip content={'Filter 3D resource layers'} placement="right" appendTo={document.body}>
       <Dropdown
         appendTo={revealContainerElement ?? document.body}
+        onClickOutside={(instance, event) => {
+          console.log(event.target);
+          console.log(subMenuRef.current);
+        }}
         content={
           <LayersContainer
-            props={{
-              reveal3DResourcesLayerData,
-              setReveal3DResourcesLayerData
-            }}
+            ref={subMenuRef}
+            reveal3DResourcesLayerData={reveal3DResourcesLayerData}
+            setReveal3DResourcesLayerData={setReveal3DResourcesLayerData}
           />
         }
         visible={visible}

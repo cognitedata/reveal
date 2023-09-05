@@ -11,7 +11,7 @@ import { type ReactElement } from 'react';
 import { type Reveal3DResourcesLayersProps } from './types';
 import { useReveal } from '../../RevealContainer/RevealContext';
 
-const LayersContainer = ({ props }: { props: Reveal3DResourcesLayersProps }): ReactElement => {
+const LayersContainer = (props: Reveal3DResourcesLayersProps): ReactElement => {
   const viewer = useReveal();
   return (
     <>
@@ -20,7 +20,8 @@ const LayersContainer = ({ props }: { props: Reveal3DResourcesLayersProps }): Re
           <StyledMenu
             onClick={(event: MouseEvent) => {
               event.stopPropagation();
-            }}>
+            }}
+            ref={props.ref}>
             <CadModelLayersContainer layerProps={props} />
             <PointCloudLayersContainer layerProps={props} />
             <Image360CollectionLayerContainer layerProps={props} />

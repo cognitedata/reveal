@@ -6,7 +6,7 @@ import {
   type CognitePointCloudModel,
   type Image360Collection
 } from '@cognite/reveal';
-import { type Dispatch, type SetStateAction } from 'react';
+import { type MutableRefObject, type Dispatch, type SetStateAction } from 'react';
 
 export type Reveal3DResourcesLayerStates = {
   cadLayerData: Array<{
@@ -33,4 +33,5 @@ export type SetReveal3DResourcesLayerStates = Dispatch<
 export type Reveal3DResourcesLayersProps = {
   reveal3DResourcesLayerData: Reveal3DResourcesLayerStates;
   setReveal3DResourcesLayerData: SetReveal3DResourcesLayerStates;
+  ref: MutableRefObject<HTMLElement | null>;
 };

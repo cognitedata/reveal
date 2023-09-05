@@ -2,26 +2,23 @@
  * Copyright 2023 Cognite AS
  */
 
-import { useState, type ReactElement, useRef } from 'react';
+import { useState, type ReactElement } from 'react';
 
 import { Button, Dropdown, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { MouseNavigation } from './Help/MouseNavigation';
 import { TouchNavigation } from './Help/TouchNavigation';
 import { KeyboardNavigation } from './Help/KeyboardNavigation';
-import { useOutsideClick } from '../../hooks/useOutsideClick';
 
 export const HelpButton = (): ReactElement => {
   const [helpActive, setHelpActive] = useState<boolean>(false);
-  const handleClickOutside = (): void => {
-    setHelpActive(false);
-  };
-  const ref = useRef<HTMLButtonElement | null>(null);
-  useOutsideClick(ref, handleClickOutside);
   return (
     <CogsTooltip content={'Help'} placement="right" appendTo={document.body}>
       <Dropdown
         appendTo={document.body}
+        onClickOutside={() => {
+          setHelpActive(false);
+        }}
         content={
           <StyledMenu>
             <MouseNavigation />
@@ -31,7 +28,6 @@ export const HelpButton = (): ReactElement => {
         }
         placement="right">
         <Button
-          ref={ref}
           type="ghost"
           icon="Help"
           aria-label="help-button"
