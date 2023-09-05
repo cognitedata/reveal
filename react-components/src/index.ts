@@ -26,7 +26,7 @@ export {
 } from './hooks/useClickedNode';
 export { useCameraNavigation } from './hooks/useCameraNavigation';
 export { useMappedEdgesForRevisions } from './components/NodeCacheProvider/NodeCacheProvider';
-export { useNode3dDataByExternalId as use3dNodeByExternalId } from './hooks/use3dNodeByExternalId';
+export { useNode3dDataByExternalId } from './hooks/use3dNodeByExternalId';
 
 // Higher order components
 export { withSuppressRevealEvents } from './higher-order-components/withSuppressRevealEvents';
