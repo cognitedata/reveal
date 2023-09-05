@@ -40,13 +40,16 @@ export default defineConfig((configType) => {
     },
     // dont just blanket expose process.env, expose just the ones you need.
     // https://dev.to/whchi/how-to-use-processenv-in-vite-ho9
-    define: Object.entries(env).reduce(
-      (obj, [key, value]) => ({
-        ...obj,
-        [`process.env.${key}`]: JSON.stringify(value),
-      }),
-      {}
-    ),
+    define: {
+      'process.platform': `'${process.platform}'`,
+      ...Object.entries(env).reduce(
+        (obj, [key, value]) => ({
+          ...obj,
+          [`process.env.${key}`]: JSON.stringify(value),
+        }),
+        {}
+      ),
+    },
 
     plugins: [
       basicSsl(),
