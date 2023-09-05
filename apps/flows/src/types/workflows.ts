@@ -11,7 +11,7 @@ export type CreateWorkflowVariables = Pick<
   'externalId' | 'description'
 >;
 
-type TaskType = 'function' | 'transformation' | 'http' | 'dynamic';
+type TaskType = 'function' | 'transformation' | 'cdf' | 'dynamic';
 
 type TaskDepends = {
   externalId: string;
@@ -31,16 +31,14 @@ type TransformationParameters = {
   };
 };
 
-type HttpRequestParameters = {
-  httpRequest: {
-    url: string;
+type CdfRequestParameters = {
+  cdfRequest: {
+    resourcePath: string;
+    queryParameters: Map<string, string>;
     method: 'POST' | 'GET' | 'PUT' | 'DELETE';
     body?: Object;
-    headers?: Object;
     requestTimeoutInMillis?: number;
-    cdfAuthenticated?: boolean;
   };
-  isAsyncComplete: boolean;
 };
 
 type DynamicTaskParameters = {
@@ -52,7 +50,7 @@ type DynamicTaskParameters = {
 type TaskParameters =
   | TransformationParameters
   | FunctionParameters
-  | HttpRequestParameters
+  | CdfRequestParameters
   | DynamicTaskParameters;
 
 type FunctionOutput = {
@@ -65,9 +63,8 @@ type TransformationOutput = {
   jobId: number;
 };
 
-type HttpResponseOutput = {
+type CdfResponseOutput = {
   response: string | Object;
-  headers: Object;
   statusCode: number;
 };
 
@@ -78,7 +75,7 @@ type DynamicTaskOutput = {
 export type OutputType =
   | FunctionOutput
   | TransformationOutput
-  | HttpResponseOutput
+  | CdfResponseOutput
   | DynamicTaskOutput;
 
 export type TaskDefinition = {
@@ -90,11 +87,6 @@ export type TaskDefinition = {
   retries?: number;
   timeout?: number;
   dependsOn?: TaskDepends[];
-};
-
-export type WorkflowDefinition = {
-  description?: string;
-  tasks: TaskDefinition[];
 };
 
 export type WorkflowDefinitionResponse = {
@@ -115,10 +107,16 @@ export type WorkflowWithVersions = Pick<
   versions: { [version: string]: WorkflowDefinitionResponse };
 };
 
-export type CreateWorkflowDefinitionVariables = {
-  externalId: string;
+export type VersionCreate = {
+  workflowExternalId: string;
   version: string;
   workflowDefinition: WorkflowDefinitionCreate;
+};
+
+export type VersionResponse = {
+  workflowExternalId: string;
+  version: string;
+  workflowDefinition: WorkflowDefinitionResponse;
 };
 
 export type RunWorkflowVariables = {
@@ -174,25 +172,4 @@ export type WorkflowExecution = {
 
 export type DeleteWorkflowVariables = {
   externalId: string;
-};
-
-export type ListExecutionsQuery = {
-  filter: ListExecutionsFilter;
-};
-
-export type ListExecutionsFilter = {
-  workflowFilters?: WorkflowFilter;
-  createdTimeStart?: number;
-  createdTimeEnd?: number;
-};
-
-export type WorkflowFilter = {
-  externalId: string;
-  version?: string;
-};
-
-export type UpdateTaskVariables = {
-  taskId: string;
-  status: 'COMPLETED' | 'FAILED';
-  output?: Object;
 };

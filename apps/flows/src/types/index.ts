@@ -23,20 +23,20 @@ type ParentNode = BaseWorkflowBuilderNode<'parent', ParentNodeData>;
 export const PROCESS_TYPES = [
   'transformation',
   'function',
-  'http',
+  'cdf',
   'dynamic',
 ] as const;
 export type ProcessType = (typeof PROCESS_TYPES)[number];
 export const PROCESS: Record<string, ProcessType> = {
   TRANSFORMATION: 'transformation',
   FUNCTION: 'function',
-  HTTP: 'http',
+  CDF: 'cdf',
   DYNAMIC: 'dynamic',
 };
 export const PROCESS_ICON: Record<ProcessType, IconType> = {
   transformation: 'Code',
   function: 'Function',
-  http: 'CodeBraces',
+  cdf: 'Cognite',
   dynamic: 'Shapes',
 };
 
@@ -74,8 +74,8 @@ type FunctionNodeData = BaseProcessNodeData<
   FunctionNodeProps
 >;
 
-type HttpNodeProps = {};
-type HttpNodeData = BaseProcessNodeData<'http', string, HttpNodeProps>;
+type CdfNodeProps = {};
+type CdfNodeData = BaseProcessNodeData<'cdf', string, CdfNodeProps>;
 
 type DynamicNodeProps = {};
 type DynamicNodeData = BaseProcessNodeData<'dynamic', string, DynamicNodeProps>;
@@ -83,7 +83,7 @@ type DynamicNodeData = BaseProcessNodeData<'dynamic', string, DynamicNodeProps>;
 export type ProcessNodeData =
   | TransformationNodeData
   | FunctionNodeData
-  | HttpNodeData
+  | CdfNodeData
   | DynamicNodeData;
 export type ProcessNode = BaseWorkflowBuilderNode<'process', ProcessNodeData>;
 

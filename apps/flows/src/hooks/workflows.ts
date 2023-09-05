@@ -1,12 +1,13 @@
+import { Items } from '@flows/types';
 import {
-  CreateWorkflowDefinitionVariables,
+  VersionCreate,
   DeleteWorkflowVariables,
   RunWorkflowVariables,
   CreateWorkflowVariables,
   WorkflowExecution,
   WorkflowResponse,
   WorkflowWithVersions,
-  UpdateTaskVariables,
+  VersionResponse,
 } from '@flows/types/workflows';
 import {
   UseMutationOptions,
@@ -43,12 +44,43 @@ const getWorkflowQueryKey = (externalId: string) => [
 export const useWorkflow = (externalId: string) => {
   const sdk = useSDK();
 
-  return useQuery<WorkflowWithVersions>(getWorkflowQueryKey(externalId), () =>
-    sdk
-      .get<WorkflowWithVersions>(
-        `api/v1/projects/${getProject()}/workflows/${externalId}`
-      )
-      .then((res) => res.data)
+  return useQuery<WorkflowWithVersions>(
+    getWorkflowQueryKey(externalId),
+    async () => {
+      const [workflowRes, versionsRes] = await Promise.all([
+        sdk.get<WorkflowResponse>(
+          `api/v1/projects/${getProject()}/workflows/${externalId}`
+        ),
+        sdk.post<Items<VersionResponse>>(
+          `api/v1/projects/${getProject()}/workflows/versions/list`,
+          {
+            data: {
+              filter: {
+                workflowFilters: [
+                  {
+                    externalId: externalId,
+                  },
+                ],
+              },
+            },
+          }
+        ),
+      ]);
+
+      const versions = versionsRes.data.items;
+      const versionMap = versions.reduce((acc, version) => {
+        acc[version.version] = version.workflowDefinition;
+        return acc;
+      }, {});
+
+      const workflowWithVersions: WorkflowWithVersions = {
+        externalId: workflowRes.data.externalId,
+        createdTime: workflowRes.data.createdTime,
+        versions: versionMap,
+      };
+
+      return workflowWithVersions;
+    }
   );
 };
 
@@ -65,13 +97,15 @@ export const useCreateWorkflow = (
   return useMutation<WorkflowResponse, unknown, CreateWorkflowVariables>(
     (workflow) =>
       sdk
-        .post<WorkflowResponse>(`api/v1/projects/${getProject()}/workflows`, {
-          data: {
-            externalId: workflow.externalId,
-            description: workflow.description,
-          },
-        })
-        .then((res) => res.data),
+        .post<Items<WorkflowResponse>>(
+          `api/v1/projects/${getProject()}/workflows`,
+          {
+            data: {
+              items: [workflow],
+            },
+          }
+        )
+        .then((res) => res.data.items[0]),
     {
       ...options,
       onSuccess: (...args) => {
@@ -82,44 +116,27 @@ export const useCreateWorkflow = (
   );
 };
 
-export const useCreateWorkflowDefinition = () => {
+export const useCreateVersion = () => {
   const sdk = useSDK();
   const queryClient = useQueryClient();
 
-  return useMutation<
-    WorkflowWithVersions,
-    unknown,
-    CreateWorkflowDefinitionVariables
-  >(
-    ({ externalId, version, workflowDefinition }) =>
+  return useMutation<VersionResponse, unknown, VersionCreate>(
+    (versionToCreate) =>
       sdk
-        .post<WorkflowWithVersions>(
-          `api/v1/projects/${getProject()}/workflows/${externalId}/versions`,
+        .post<Items<VersionResponse>>(
+          `api/v1/projects/${getProject()}/workflows/versions`,
           {
             data: {
-              version,
-              workflowDefinition,
+              items: [versionToCreate],
             },
           }
         )
-        .then((res) => res.data),
+        .then((res) => res.data.items[0]),
     {
-      onSuccess: ({ externalId }) => {
-        queryClient.invalidateQueries(getWorkflowQueryKey(externalId));
+      onSuccess: ({ workflowExternalId }) => {
+        queryClient.invalidateQueries(getWorkflowQueryKey(workflowExternalId));
       },
     }
-  );
-};
-
-export const useWorkflowDefintion = (externalId: string, version: string) => {
-  const sdk = useSDK();
-
-  return useQuery<WorkflowWithVersions>(getWorkflowQueryKey(externalId), () =>
-    sdk
-      .get<WorkflowWithVersions>(
-        `api/v1/projects/${getProject()}/workflows/${externalId}/versions/${version}`
-      )
-      .then((res) => res.data)
   );
 };
 
@@ -221,13 +238,11 @@ export const useDeleteWorkflow = () => {
   const queryClient = useQueryClient();
 
   return useMutation<unknown, unknown, DeleteWorkflowVariables>(
-    ({ externalId }) =>
+    (workflowDelete) =>
       sdk.post(`api/v1/projects/${getProject()}/workflows/delete`, {
-        data: [
-          {
-            externalId,
-          },
-        ],
+        data: {
+          items: [workflowDelete],
+        },
       }),
     {
       onSuccess: (_, { externalId }) => {
@@ -236,34 +251,6 @@ export const useDeleteWorkflow = () => {
         queryClient.invalidateQueries(
           getWorkflowExecutionsQueryKey(externalId)
         );
-      },
-    }
-  );
-};
-
-export const useUpdateTask = () => {
-  const sdk = useSDK();
-  const queryClient = useQueryClient();
-
-  return useMutation<string, unknown, UpdateTaskVariables>(
-    async (variables) => {
-      return sdk
-        .post(
-          `api/v1/projects/${getProject()}/workflows/tasks/${
-            variables.taskId
-          }/update`,
-          {
-            data: {
-              status: variables.status,
-              output: variables?.output,
-            },
-          }
-        )
-        .then((res) => res.data);
-    },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(['flows', 'workflow-execution']);
       },
     }
   );

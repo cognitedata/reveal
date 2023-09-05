@@ -9,10 +9,7 @@ import {
   ViewMode,
   useWorkflowBuilderContext,
 } from '@flows/contexts/WorkflowContext';
-import {
-  useCreateWorkflowDefinition,
-  useRunWorkflow,
-} from '@flows/hooks/workflows';
+import { useCreateVersion, useRunWorkflow } from '@flows/hooks/workflows';
 import {
   WorkflowDefinitionCreate,
   WorkflowWithVersions,
@@ -46,7 +43,7 @@ type CanvasTopBarProps = {
 export const CanvasTopBar = ({ workflow }: CanvasTopBarProps) => {
   const [showUpdateModal, setShowUpdateModal] = useState(false);
 
-  const { mutate: createWorkflowDefinition } = useCreateWorkflowDefinition();
+  const { mutate: createVersion } = useCreateVersion();
   const { mutateAsync: runWorkflow } = useRunWorkflow();
 
   const { flow, setHistoryVisible, activeViewMode, setActiveViewMode } =
@@ -107,8 +104,8 @@ export const CanvasTopBar = ({ workflow }: CanvasTopBarProps) => {
       description: '',
     };
 
-    createWorkflowDefinition({
-      externalId: workflow.externalId,
+    createVersion({
+      workflowExternalId: workflow.externalId,
       version: `${nextVersion}`,
       workflowDefinition,
     });
