@@ -1,0 +1,49 @@
+name: Translation sync added and deleted keys to locize
+on: workflow_dispatch
+
+jobs:
+  locize-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          registry-url: 'https://registry.npmjs.org'
+          always-auth: true
+
+      - name: Setup Cognite CICD Yarn
+        run: |
+          echo "
+          npmScopes:
+            cognite:
+              npmAlwaysAuth: true
+              npmAuthToken: \"\${NPM_TOKEN}\"
+              npmRegistryServer: "https://registry.npmjs.org"
+          " >> .yarnrc.yml
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
+
+      - name: Install NPM dependencies
+        working-directory: react-components
+        run: yarn install --immutable
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
+
+      - name: 'Save added keys to locize'
+        working-directory: react-components
+        run: yarn save-missing
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
+          LOCIZE_API_KEY: ${{ secrets.LOCIZE_API_KEY }}
+
+      - name: 'Remove deleted keys from locize'
+        working-directory: react-components
+        run: yarn remove-deleted
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
+          LOCIZE_API_KEY: ${{ secrets.LOCIZE_API_KEY }}
