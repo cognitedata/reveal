@@ -62,7 +62,10 @@ export const Image360CollectionLayerContainer = ({
 
   const image360Content = (): ReactElement => {
     return (
-      <StyledSubMenu>
+      <StyledSubMenu
+        onClick={(event: MouseEvent) => {
+          event.stopPropagation();
+        }}>
         {image360LayerData.map((data) => (
           <Menu.Item
             key={uniqueId()}
@@ -82,7 +85,10 @@ export const Image360CollectionLayerContainer = ({
   };
 
   return (
-    <>
+    <div
+      onClick={() => {
+        setVisible((prevState) => !prevState);
+      }}>
       {image360LayerData.length > 0 && (
         <Menu.Submenu
           appendTo={revealContainerElement ?? document.body}
@@ -92,12 +98,7 @@ export const Image360CollectionLayerContainer = ({
           }}
           content={image360Content()}
           title="360 images">
-          <Flex
-            direction="row"
-            justifyContent="space-between"
-            onClick={() => {
-              setVisible((prevState) => !prevState);
-            }}>
+          <Flex direction="row" justifyContent="space-between">
             <Checkbox
               checked={someImagesVisible}
               indeterminate={indeterminate}
@@ -112,6 +113,6 @@ export const Image360CollectionLayerContainer = ({
           </Flex>
         </Menu.Submenu>
       )}
-    </>
+    </div>
   );
 };

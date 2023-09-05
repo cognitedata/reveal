@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type ReactElement, useState, useEffect, useRef } from 'react';
+import { type ReactElement, useState, useEffect } from 'react';
 
 import { Box3, Plane, Vector3 } from 'three';
 
@@ -10,7 +10,6 @@ import { useReveal } from '../RevealContainer/RevealContext';
 import { Button, Dropdown, Menu, RangeSlider, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 
 import styled from 'styled-components';
-import { useOutsideClick } from '../../hooks/useOutsideClick';
 
 type SliceState = {
   minHeight: number;
@@ -22,11 +21,6 @@ type SliceState = {
 export const SlicerButton = (): ReactElement => {
   const viewer = useReveal();
   const [sliceActive, setSliceActive] = useState<boolean>(false);
-  const handleClickOutside = (): void => {
-    setSliceActive(false);
-  };
-  const ref = useRef<HTMLButtonElement | null>(null);
-  useOutsideClick(ref, handleClickOutside);
 
   const [sliceState, setSliceState] = useState<SliceState>({
     minHeight: 0,
@@ -72,11 +66,11 @@ export const SlicerButton = (): ReactElement => {
     <CogsTooltip content={'Slice'} placement="right" appendTo={document.body}>
       <Dropdown
         appendTo={() => document.body}
+        onClickOutside={() => {
+          setSliceActive(false);
+        }}
         content={
-          <StyledMenu
-            onClick={(event: MouseEvent) => {
-              event.stopPropagation();
-            }}>
+          <StyledMenu>
             <RangeSlider
               min={0}
               max={1}
@@ -90,7 +84,6 @@ export const SlicerButton = (): ReactElement => {
         }
         placement="right-end">
         <Button
-          ref={ref}
           type="ghost"
           icon="Slice"
           aria-label="Slice models"

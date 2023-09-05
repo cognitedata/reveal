@@ -64,7 +64,10 @@ export const CadModelLayersContainer = ({
 
   const cadModelContent = (): ReactElement => {
     return (
-      <StyledSubMenu>
+      <StyledSubMenu
+        onClick={(event: MouseEvent) => {
+          event.stopPropagation();
+        }}>
         {cadLayerData.map((data) => (
           <Menu.Item
             key={uniqueId()}
@@ -85,23 +88,20 @@ export const CadModelLayersContainer = ({
   };
 
   return (
-    <>
+    <div
+      onClick={() => {
+        setVisible((prevState) => !prevState);
+      }}>
       {cadLayerData.length > 0 && (
         <Menu.Submenu
           appendTo={revealContainerElement ?? document.body}
           visible={visible}
-          onClickOutside={() => {
+          onClickOutside={(event: any) => {
             setVisible(false);
           }}
           content={cadModelContent()}
           title="CAD models">
-          <Flex
-            direction="row"
-            justifyContent="space-between"
-            gap={4}
-            onClick={() => {
-              setVisible((prevState) => !prevState);
-            }}>
+          <Flex direction="row" justifyContent="space-between" gap={4}>
             <Checkbox
               checked={someModelVisible}
               indeterminate={indeterminate}
@@ -116,6 +116,6 @@ export const CadModelLayersContainer = ({
           </Flex>
         </Menu.Submenu>
       )}
-    </>
+    </div>
   );
 };
