@@ -229,37 +229,6 @@ jobs:
           destination: 'opint-pr-server/fusion-preview/${{matrix.project}}-${{github.event.number}}'
           parent: false
 
-      - name: Get project config
-        id: project-config
-        uses: ./scripts/github-actions/nx-get-project-config
-        with:
-          project: ${{ matrix.project }}
-
-      - name: Get comment message
-        id: get-comment
-        uses: './scripts/github-actions/get-pr-comment'
-        with:
-          project: ${{ matrix.project }}
-          prNumber: ${{ github.event.number }}
-          previewPackageName: ${{fromJson(steps.project-config.outputs.config).pipeline.previewPackageName}}
-
-      - name: Find previous comment
-        uses: peter-evans/find-comment@v2
-        id: storybook-comment
-        with:
-          issue-number: ${{ github.event.number }}
-          comment-author: 'github-actions[bot]'
-          body-includes: ${{ steps.get-comment.outputs.message }}
-
-      - name: Create or update comment
-        uses: peter-evans/create-or-update-comment@v3
-        with:
-          comment-id: ${{ steps.storybook-comment.outputs.comment-id }}
-          issue-number: ${{ github.event.number }}
-          body: ${{ steps.get-comment.outputs.message }}
-          edit-mode: replace
-          reactions: rocket
-
   build-shell:
     name: 'Build shell apps'
     runs-on: ubuntu-20.04
@@ -309,37 +278,6 @@ jobs:
           destination: 'opint-pr-server/fusion-preview/${{matrix.project}}-${{github.event.number}}'
           parent: false
 
-      - name: Get project config
-        id: project-config
-        uses: ./scripts/github-actions/nx-get-project-config
-        with:
-          project: ${{ matrix.project }}
-
-      - name: Get comment message
-        id: get-comment
-        uses: './scripts/github-actions/get-pr-comment'
-        with:
-          project: ${{ matrix.project }}
-          prNumber: ${{ github.event.number }}
-          previewPackageName: ${{fromJson(steps.project-config.outputs.config).pipeline.previewPackageName}}
-
-      - name: Find previous comment
-        uses: peter-evans/find-comment@v2
-        id: storybook-comment
-        with:
-          issue-number: ${{ github.event.number }}
-          comment-author: 'github-actions[bot]'
-          body-includes: ${{ steps.get-comment.outputs.message }}
-
-      - name: Create or update comment
-        uses: peter-evans/create-or-update-comment@v3
-        with:
-          comment-id: ${{ steps.storybook-comment.outputs.comment-id }}
-          issue-number: ${{ github.event.number }}
-          body: ${{ steps.get-comment.outputs.message }}
-          edit-mode: replace
-          reactions: rocket
-
   build-storybook:
     name: Build storybook
     runs-on: ubuntu-20.04
@@ -382,19 +320,27 @@ jobs:
           destination: 'opint-pr-server/fusion-preview/storybook-${{matrix.project}}-${{github.event.number}}'
           parent: false
 
-      - name: Get project config
-        id: project-config
-        uses: ./scripts/github-actions/nx-get-project-config
+  build-preview-comment:
+    name: Comment build previews
+    runs-on: ubuntu-20.04
+    needs: [setup, build]
+    steps:
+      - uses: actions/checkout@v3
         with:
-          project: ${{ matrix.project }}
+          fetch-depth: 0
+
+      - name: Cache node modules
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: cache-node-modules-${{ hashFiles('yarn.lock') }}
 
       - name: Get comment message
         id: get-comment
         uses: './scripts/github-actions/get-pr-comment'
         with:
-          project: ${{ matrix.project }}
           prNumber: ${{ github.event.number }}
-          storybook: true
+          affected: ${{ needs.setup.outputs.affected-apps }}
 
       - name: Find previous comment
         uses: peter-evans/find-comment@v2
@@ -402,7 +348,87 @@ jobs:
         with:
           issue-number: ${{ github.event.number }}
           comment-author: 'github-actions[bot]'
-          body-includes: ${{ steps.get-comment.outputs.message }}
+          body-includes: '## Build previews:'
+
+      - name: Create or update comment
+        uses: peter-evans/create-or-update-comment@v3
+        with:
+          comment-id: ${{ steps.storybook-comment.outputs.comment-id }}
+          issue-number: ${{ github.event.number }}
+          body: ${{ steps.get-comment.outputs.message }}
+          edit-mode: replace
+          reactions: rocket
+
+  build-shell-preview-comment:
+    name: Comment build shell previews
+    runs-on: ubuntu-20.04
+    needs: [setup, build-shell]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Cache node modules
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: cache-node-modules-${{ hashFiles('yarn.lock') }}
+
+      - name: Get comment message
+        id: get-comment
+        uses: './scripts/github-actions/get-pr-comment'
+        with:
+          prNumber: ${{ github.event.number }}
+          affected: ${{ needs.setup.outputs.affected-shell-apps }}
+          shell: true
+
+      - name: Find previous comment
+        uses: peter-evans/find-comment@v2
+        id: storybook-comment
+        with:
+          issue-number: ${{ github.event.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: '## Build previews for shells:'
+
+      - name: Create or update comment
+        uses: peter-evans/create-or-update-comment@v3
+        with:
+          comment-id: ${{ steps.storybook-comment.outputs.comment-id }}
+          issue-number: ${{ github.event.number }}
+          body: ${{ steps.get-comment.outputs.message }}
+          edit-mode: replace
+          reactions: rocket
+
+  storybook-preview-comment:
+    name: Comment storybook previews
+    runs-on: ubuntu-20.04
+    needs: [setup, build-storybook]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Cache node modules
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: cache-node-modules-${{ hashFiles('yarn.lock') }}
+
+      - name: Get comment message
+        id: get-comment
+        uses: './scripts/github-actions/get-pr-comment'
+        with:
+          storybook: true
+          prNumber: ${{ github.event.number }}
+          affected: ${{ needs.setup.outputs.affected-storybook }}
+
+      - name: Find previous comment
+        uses: peter-evans/find-comment@v2
+        id: storybook-comment
+        with:
+          issue-number: ${{ github.event.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: '## Storybook previews:'
 
       - name: Create or update comment
         uses: peter-evans/create-or-update-comment@v3
