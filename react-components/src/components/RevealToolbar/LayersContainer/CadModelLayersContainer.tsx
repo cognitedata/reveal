@@ -96,7 +96,7 @@ export const CadModelLayersContainer = ({
         <Menu.Submenu
           appendTo={revealContainerElement ?? document.body}
           visible={visible}
-          onClickOutside={(event: any) => {
+          onClickOutside={() => {
             setVisible(false);
           }}
           content={cadModelContent()}
