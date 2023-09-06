@@ -91,7 +91,7 @@ function computeCssOffsetWithStickiness(
   [domWidth, domHeight]: [number, number],
   sticky?: boolean,
   stickyMargin?: number
-) {
+): string {
   if (sticky !== true) {
     return `translateX(${unboundedPosition.x}px) translateY(${unboundedPosition.y}px)`;
   }
