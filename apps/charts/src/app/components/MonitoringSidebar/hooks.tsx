@@ -1,5 +1,8 @@
+import {
+  useUserProfileQuery,
+  UserProfile,
+} from '@charts-app/common/providers/useUserProfileQuery';
 import { useUserInfo } from '@charts-app/hooks/useUserInfo';
-import { UserProfile, useUserProfile } from '@fusion/industry-canvas';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { useSDK } from '@cognite/sdk-provider';
@@ -79,15 +82,14 @@ export const useMonitoringFoldersWithJobs = (
 ) => {
   const sdk = useSDK();
   const userInfo = useUserInfo();
-  const { userProfile } = useUserProfile();
+  const { data: userProfile } = useUserProfileQuery();
   const userAuthId_deprecated = userInfo.data?.id;
-  const userIdentifier = userProfile.userIdentifier;
+  const userIdentifier = userProfile?.userIdentifier;
   const { subscribed, timeseriesIds, timeseriesExternalIds, currentChart } =
     filters || {};
   const hookConfig: any = {
     enabled:
       userAuthId_deprecated !== undefined &&
-      userIdentifier !== undefined &&
       (!currentChart ||
         Boolean(timeseriesIds?.length || timeseriesExternalIds?.length)),
   };

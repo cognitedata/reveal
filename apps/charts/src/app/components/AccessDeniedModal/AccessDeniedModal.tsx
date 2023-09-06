@@ -9,6 +9,7 @@ type Props = {
   capabilities: string[];
   visible: boolean;
   onOk: () => void;
+  hasUserProfile: boolean;
 };
 
 const defaultTranslations = makeDefaultTranslations(
@@ -16,7 +17,12 @@ const defaultTranslations = makeDefaultTranslations(
   'Capabilities Required'
 );
 
-export const AccessDeniedModal = ({ capabilities, visible, onOk }: Props) => {
+export const AccessDeniedModal = ({
+  capabilities,
+  visible,
+  onOk,
+  hasUserProfile,
+}: Props) => {
   const { t } = useTranslations(
     Object.keys(defaultTranslations),
     'AccessDeniedModal'
@@ -39,9 +45,11 @@ export const AccessDeniedModal = ({ capabilities, visible, onOk }: Props) => {
           }
         </Body>
         <StyledUl>
-          {capabilities.map((capability) => (
-            <li key={capability}>{capability}</li>
-          ))}
+          {hasUserProfile &&
+            capabilities.map((capability) => (
+              <li key={capability}>{capability}</li>
+            ))}
+          {!hasUserProfile && <li>User profiles</li>}
         </StyledUl>
       </Flex>
     </Modal>

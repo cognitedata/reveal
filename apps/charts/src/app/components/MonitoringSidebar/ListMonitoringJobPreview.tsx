@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import styled from 'styled-components';
 
+import { useUserProfileQuery } from '@charts-app/common/providers/useUserProfileQuery';
 import Dropdown from '@charts-app/components/Dropdown/Dropdown';
 import { useSearchParam } from '@charts-app/hooks/navigation';
 import { useTranslations } from '@charts-app/hooks/translations';
@@ -12,7 +13,6 @@ import {
   MONITORING_SIDEBAR_SHOW_ALERTS,
 } from '@charts-app/utils/constants';
 import { makeDefaultTranslations } from '@charts-app/utils/translations';
-import { useUserProfile } from '@fusion/industry-canvas';
 import { Col, Row } from 'antd';
 import { format } from 'date-fns';
 import { head } from 'lodash';
@@ -66,7 +66,7 @@ const ListMonitoringJobPreview = ({
     false,
     { enabled: timeseriesName === undefined }
   );
-  const { userProfile } = useUserProfile();
+  const { data: userProfile } = useUserProfileQuery();
 
   const [monitoringJobIdParam, setMonitoringJobIdParam] = useSearchParam(
     MONITORING_SIDEBAR_HIGHLIGHTED_JOB
@@ -143,7 +143,7 @@ const ListMonitoringJobPreview = ({
       [monitoringJob.id],
       [monitoringJob.channelId],
       userAuthId_deprecated || '',
-      [userProfile]
+      userProfile ? [userProfile] : []
     );
 
   useEffect(() => {
@@ -173,7 +173,7 @@ const ListMonitoringJobPreview = ({
     } else {
       createSubscription({
         channelID: monitoringJob.channelId,
-        subscribers: [userProfile],
+        subscribers: userProfile ? [userProfile] : [],
       });
       trackUsage('Sidebar.Monitoring.Subscribe', {
         monitoringJob: externalId,
@@ -192,7 +192,7 @@ const ListMonitoringJobPreview = ({
       deleteSubscription({
         userAuthId_deprecated: userAuthId_deprecated || '',
         channelID: monitoringJob.channelId,
-        subscribers: [userProfile],
+        subscribers: userProfile ? [userProfile] : [],
       });
       trackUsage('Sidebar.Monitoring.Unsubscribe', {
         monitoringJob: externalId,

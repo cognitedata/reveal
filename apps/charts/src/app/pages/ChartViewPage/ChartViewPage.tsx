@@ -8,6 +8,7 @@ import {
 import { Elements } from 'react-flow-renderer';
 import { useParams } from 'react-router-dom';
 
+import { useUserProfileQuery } from '@charts-app/common/providers/useUserProfileQuery';
 import { AccessDeniedModal } from '@charts-app/components/AccessDeniedModal/AccessDeniedModal';
 import { AlertingSidebar } from '@charts-app/components/AlertingSidebar/AlertingSidebar';
 import { Toolbar } from '@charts-app/components/Common/SidebarElements';
@@ -137,6 +138,7 @@ const defaultTranslations = makeDefaultTranslations(
 const keys = translationKeys(defaultTranslations);
 
 const ChartViewPage = () => {
+  const { data: userProfile } = useUserProfileQuery();
   const { isEnabled: isMonitoringFeatureEnabled } = useFlag(
     'CHARTS_UI_MONITORING',
     {
@@ -144,12 +146,10 @@ const ChartViewPage = () => {
       forceRerender: true,
     }
   );
-  const isMonitoringAccessible = useExperimentalCapabilitiesCheck(
-    MONITORING_CAPABILITIES
-  );
-  const isAlertingAccessible = useExperimentalCapabilitiesCheck(
-    ALERTING_CAPABILITIES
-  );
+  const isMonitoringAccessible =
+    useExperimentalCapabilitiesCheck(MONITORING_CAPABILITIES) && userProfile;
+  const isAlertingAccessible =
+    useExperimentalCapabilitiesCheck(ALERTING_CAPABILITIES) && userProfile;
   const { isEnabled: isDataProfilingEnabled } = useFlag(
     'CHARTS_UI_DATAPROFILING',
     {
@@ -867,11 +867,13 @@ const ChartViewPage = () => {
       <EventResultEffects />
       <ScheduledCalculationCollectionEffects />
       <AccessDeniedModal
+        hasUserProfile={!!userProfile}
         visible={accessDeniedModal === 'monitoring'}
         capabilities={MONITORING_CAPABILITIES}
         onOk={handleAccessDeniedModalClose}
       />
       <AccessDeniedModal
+        hasUserProfile={!!userProfile}
         visible={accessDeniedModal === 'alerting'}
         capabilities={ALERTING_CAPABILITIES}
         onOk={handleAccessDeniedModalClose}

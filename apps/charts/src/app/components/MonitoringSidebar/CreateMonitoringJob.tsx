@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
+import { useUserProfileQuery } from '@charts-app/common/providers/useUserProfileQuery';
 import { useCreateSessionNonce } from '@charts-app/domain/chart';
 import { useSearchParam } from '@charts-app/hooks/navigation';
 import { useTranslations } from '@charts-app/hooks/translations';
@@ -8,7 +9,6 @@ import { useScheduledCalculationDataValue } from '@charts-app/models/scheduled-c
 import { trackUsage, stopTimer } from '@charts-app/services/metrics';
 import { MONITORING_SIDEBAR_HIGHLIGHTED_JOB } from '@charts-app/utils/constants';
 import { makeDefaultTranslations } from '@charts-app/utils/translations';
-import { useUserProfile } from '@fusion/industry-canvas';
 import { Col, Row } from 'antd';
 import { head } from 'lodash';
 
@@ -51,7 +51,7 @@ const CreateMonitoringJob = ({ onCancel }: Props) => {
     ...useTranslations(Object.keys(defaultTranslation), 'MonitoringSidebar').t,
   };
 
-  const { userProfile } = useUserProfile();
+  const { data: userProfile } = useUserProfileQuery();
 
   const {
     data: sessionNonceResponse,
@@ -90,7 +90,7 @@ const CreateMonitoringJob = ({ onCancel }: Props) => {
       clientId: '',
       clientSecret: '',
       cdfCredsMode: 'USER_CREDS',
-      subscribers: [userProfile],
+      subscribers: userProfile ? [userProfile] : [],
     });
 
   const userInfo = useUserInfo();
