@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { notification, Select } from 'antd';
@@ -17,8 +17,8 @@ import FormFieldWrapper from '../form-field-wrapper/FormFieldWrapper';
 import { BottomBar, TopBar } from '../ToolBars';
 
 export const MQTT_SOURCE_TYPE_LABEL: Record<MQTTSourceType, string> = {
-  mqtt3: 'Version 5',
-  mqtt5: 'Version 3.1.1',
+  mqtt3: 'Version 3.1.1',
+  mqtt5: 'Version 5',
 };
 
 export const MQTT_SOURCE_TYPE_OPTIONS: {
@@ -90,10 +90,10 @@ export const CreateConnection = () => {
           createMQTTSource({
             externalId: values.externalId,
             type: values.type,
-            username: values?.username,
-            password: values?.password,
             host: values.host,
-            port: values.port,
+            ...(values.username && { username: values.username }),
+            ...(values.password && { password: values.password }),
+            ...(values.port && { port: values.port }),
           });
         }
       },
@@ -101,6 +101,13 @@ export const CreateConnection = () => {
       validateOnBlur: false,
       validateOnChange: false,
     });
+
+  const onTypeChange = useCallback(
+    (val: string) => {
+      setFieldValue('type', val);
+    },
+    [setFieldValue]
+  );
 
   return (
     <Flex direction="column" style={{ height: '100%', minWidth: 1200 }}>
@@ -163,7 +170,7 @@ export const CreateConnection = () => {
               title={t('create-connection-form-protocol-version')}
             >
               <Select
-                onChange={(e) => setFieldValue('type', e)}
+                onChange={onTypeChange}
                 options={MQTT_SOURCE_TYPE_OPTIONS}
                 placeholder={t(
                   'create-connection-form-protocol-version-placeholder'
