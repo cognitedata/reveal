@@ -1,9 +1,6 @@
 import { useCallback } from 'react';
 
-import {
-  getUrlParameters,
-  useCreateAdvancedJoinMatches,
-} from '@fusion/contextualization';
+import { useCreateAdvancedJoinMatches } from '@fusion/contextualization';
 
 import { ManualMatch } from '../types';
 import { createMatchesRequestBody } from '../utils/createMatchesRequestBody';

@@ -53,8 +53,8 @@ export const Labeling = ({
   const handleWriteMatchers = async () => {
     createMatches(manualMatches);
 
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     // other side effects
-    await new Promise((resolve) => setTimeout(resolve, 100));
     createNewJob();
     refetchManualMatchesList();
   };
