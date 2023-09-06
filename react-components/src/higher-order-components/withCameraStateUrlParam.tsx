@@ -7,15 +7,23 @@ import { useReveal } from '..';
 import { Vector3 } from 'three';
 import { type CameraState } from '@cognite/reveal';
 
+type CameraStateTransform = Omit<Required<CameraState>, 'rotation'>;
+
 export function withCameraStateUrlParam<T extends object>(
   Component: FunctionComponent<T>
 ): FunctionComponent<T> {
   return function CameraStateUrlParam(props: T): ReactElement {
     const reveal = useReveal();
+    const getCameraStateFromUrlParam = useGetCameraStateFromUrlParam();
 
     const setUrlParamOnCameraStop = (): void => {
+      const currentUrlCameraState = getCameraStateFromUrlParam();
+      const currentCameraManagerState = reveal.cameraManager.getCameraState();
+      if(currentUrlCameraState !== undefined && !hasCameraStateChanged(currentUrlCameraState, currentCameraManagerState)){
+        return;
+      }
+      const { position, target } = currentCameraManagerState;
       const url = new URL(window.location.toString());
-      const { position, target } = reveal.cameraManager.getCameraState();
       url.searchParams.set('cameraPosition', `[${position.x},${position.y},${position.z}]`);
       url.searchParams.set('cameraTarget', `[${target.x},${target.y},${target.z}]`);
       window.history.pushState({}, '', url);
@@ -30,9 +38,16 @@ export function withCameraStateUrlParam<T extends object>(
 
     return <Component {...props} />;
   };
+
+  function hasCameraStateChanged(previous: CameraStateTransform, current: CameraStateTransform){
+    const epsilon = 0.001;
+    const {position: previousPosition, target: previousTarget} = previous
+    const {position: currentPosition, target: currentTarget} = current
+    return previousPosition.distanceToSquared(currentPosition) > epsilon || previousTarget.distanceToSquared(currentTarget) > epsilon;
+  }
 }
 
-export function useGetCameraStateFromUrlParam(): () => CameraState | undefined {
+export function useGetCameraStateFromUrlParam(): () => CameraStateTransform | undefined {
   return () => {
     const url = new URL(window.location.toString());
     const position = url.searchParams.get('cameraPosition');
