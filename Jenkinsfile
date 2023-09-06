@@ -411,8 +411,14 @@ pods {
 
             dockerUtils.tag("${dockerBaseName}:${dockerTag}", "${dockerBaseName}:latest");
 
+            dockerUtils.tag("${dockerBaseName}:${dockerTag}", "${dockerBaseName}/prod:${dockerTag}");
+            dockerUtils.tag("${dockerBaseName}:${dockerTag}", "${dockerBaseName}/prod:latest");
+
             dockerUtils.push("${dockerBaseName}:${dockerTag}");
             dockerUtils.push("${dockerBaseName}:latest");
+
+            dockerUtils.push("${dockerBaseName}/prod:${dockerTag}");
+            dockerUtils.push("${dockerBaseName}/prod:latest");
           }
         }
 
@@ -423,7 +429,7 @@ pods {
             spinnaker.deploy('fusion-app', 'prod-verification', ["${dockerBaseName}:${dockerTag}"])
             spinnaker.deploy('fusion-app', 'dev', ["${dockerBaseName}:${dockerTag}"])
             spinnaker.deploy('fusion-app', 'pr-preview', ["${dockerBaseName}:${dockerTag}"])
-            // spinnaker.deploy('fusion-app', 'prod', ["${dockerBaseName}:${dockerTag}"])
+            spinnaker.deploy('fusion-app', 'prod', ["${dockerBaseName}/prod:${dockerTag}"])
             // disabling aramco deployment as we need to generate a self-contained docker image for them
             // the pipeline to aramco is disabled anyway.
             // spinnaker.deploy('fusion-app', 'sapc-prod', ["${dockerBaseName}:${dockerTag}"])
