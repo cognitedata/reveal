@@ -11,19 +11,21 @@ import {
   KeyboardNavigationInstructionGrid,
   ArrowKeyboardNavigationInstructionGrid
 } from './elements';
+import { useTranslation } from '../../../common/i18n';
 
 export const KeyboardNavigation = (): ReactElement => {
+  const { t } = useTranslation();
   return (
     <Section
-      title={'Keyboard'}
-      subTitle={'Move and look around'}
-      description={'Click and hold to move.\nYou can also use mouse in conjunction with keys.'}>
+      title={t('KEYBOARD_NAVIGATION_TITLE')}
+      subTitle={t('KEYBOARD_NAVIGATION_SUBTITLE')}
+      description={t('KEYBOARD_NAVIGATION_DESCRIPTION')}>
       <Flex gap={8} style={{ paddingTop: 12 }}>
         <Flex direction="column">
           <KeyboardNavigationInstructionGrid>
-            <InstructionText>Down</InstructionText>
-            <InstructionText>Forward</InstructionText>
-            <InstructionText>Up</InstructionText>
+            <InstructionText> {t('KEYBOARD_DOWN')} </InstructionText>
+            <InstructionText>{t('KEYBOARD_FORWARD')}</InstructionText>
+            <InstructionText>{t('KEYBOARD_UP')}</InstructionText>
             <QWEASDKeysNavigation.Q />
             <QWEASDKeysNavigation.W />
             <QWEASDKeysNavigation.E />
@@ -32,21 +34,21 @@ export const KeyboardNavigation = (): ReactElement => {
             <QWEASDKeysNavigation.A />
             <QWEASDKeysNavigation.S style={{ marginLeft: 6 }} />
             <QWEASDKeysNavigation.D style={{ marginLeft: 6 }} />
-            <InstructionText>Left</InstructionText>
-            <InstructionText>Back</InstructionText>
-            <InstructionText>Right</InstructionText>
+            <InstructionText>{t('KEYBOARD_LEFT')}</InstructionText>
+            <InstructionText>{t('KEYBOARD_BACK')}</InstructionText>
+            <InstructionText>{t('KEYBOARD_RIGHT')}</InstructionText>
           </KeyboardNavigationInstructionGrid>
         </Flex>
         <ArrowKeyboardNavigationInstructionGrid>
-          <InstructionText>Look Up</InstructionText>
-          <InstructionText>Look Left</InstructionText>
+          <InstructionText>{t('KEYBOARD_LOOK_UP')}</InstructionText>
+          <InstructionText>{t('KEYBOARD_LOOK_LEFT')}</InstructionText>
           <ArrowKeysNavigation.Up />
-          <InstructionText>Look Right</InstructionText>
+          <InstructionText>{t('KEYBOARD_LOOK_RIGHT')}</InstructionText>
           <ArrowKeysNavigation.Left />
           <ArrowKeysNavigation.Down />
           <ArrowKeysNavigation.Right />
           <br />
-          <InstructionText>Look Down</InstructionText>
+          <InstructionText>{t('KEYBOARD_LOOK_DOWN')}</InstructionText>
         </ArrowKeyboardNavigationInstructionGrid>
       </Flex>
     </Section>
