@@ -1,9 +1,10 @@
 const CopyPlugin = require('copy-webpack-plugin');
 const webpack = require('webpack');
-const path = require('path');
+const { composePlugins } = require('@nx/webpack');
+const { filterEnvVars } = require('../../tools/webpack/filter-env-vars');
 
 // tools/custom-webpack-configurations/platypus-cli-webpack-config.js
-module.exports = (config, context) => {
+module.exports = composePlugins(filterEnvVars(), (config, context) => {
   const nodeEnv = process.env.NODE_ENV || 'production';
   if (config.optimization) {
     config.optimization.minimize = nodeEnv === 'production';
@@ -30,4 +31,4 @@ module.exports = (config, context) => {
       }),
     ],
   };
-};
+});

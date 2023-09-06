@@ -1,6 +1,7 @@
 const {
   withSingleSpa,
 } = require('../../tools/webpack/single-spa-webpack-config');
+const { filterEnvVars } = require('../../tools/webpack/filter-env-vars');
 const { composePlugins, withNx } = require('@nx/webpack');
 
 module.exports = composePlugins(
@@ -9,6 +10,7 @@ module.exports = composePlugins(
       svgr: true,
     },
   }),
+  filterEnvVars(),
   withSingleSpa({ useMockEnv: false }),
   (config) => {
     config.output.publicPath = '/';
