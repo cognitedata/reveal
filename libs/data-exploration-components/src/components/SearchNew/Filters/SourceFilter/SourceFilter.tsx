@@ -61,7 +61,7 @@ export const SourceFilter = <T extends { source?: string }>({
     <MultiSelectFilter<string>
       addNilOption
       {...rest}
-      title={t('SOURCE', 'Source')}
+      title={t('SOURCES', 'Sources')}
       options={options}
       onChange={(_, newSources) => onChange(newSources)}
     />

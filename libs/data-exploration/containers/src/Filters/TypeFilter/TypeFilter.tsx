@@ -57,7 +57,7 @@ export function TypeFilter<TFilter>({
   return (
     <MultiSelectFilter<string>
       {...rest}
-      label={title || t('TYPE', 'Type')}
+      label={title || t('TYPES', 'Types')}
       value={value ? transformOptionsForMultiselectFilter(value) : undefined}
       options={options}
       onChange={(_, type) => handleChange(type)}
@@ -84,7 +84,7 @@ const FileTypeFilter = (props: BaseTypeFilterProps<InternalDocumentFilter>) => {
       isError={isError}
       isLoading={isLoading}
       options={options}
-      title={t('FILE_TYPE', 'File type')}
+      title={t('FILE_TYPES', 'File types')}
     />
   );
 };

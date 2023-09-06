@@ -63,7 +63,7 @@ export const DataSetFilter = <TFilter,>({
     >
       <MultiSelectFilter<number>
         {...rest}
-        label={t('DATA_SET', 'Data set')}
+        label={t('DATA_SETS', 'Data sets')}
         options={options || []}
         isLoading={isLoading}
         isDisabled={isError}

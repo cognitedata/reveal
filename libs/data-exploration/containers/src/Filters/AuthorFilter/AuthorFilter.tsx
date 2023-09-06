@@ -55,7 +55,7 @@ export function AuthorFilter<TFilter>({
   return (
     <MultiSelectFilter<string>
       {...rest}
-      label={title || t('AUTHOR', 'Author')}
+      label={title || t('AUTHORS', 'Authors')}
       value={value ? transformOptionsForMultiselectFilter(value) : undefined}
       options={options}
       onChange={(_, authors) => handleChange(authors)}

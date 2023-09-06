@@ -7,7 +7,8 @@
     "test": "../../scripts/test.sh data-exploration",
     "lint": "../../scripts/lint.sh data-exploration",
     "lint:fix": "../../scripts/lint.sh data-exploration --fix",
-    "cypress:dev": "./scripts/cypress-dev.sh"
+    "cypress:dev": "./scripts/cypress-dev.sh",
+    "i18n-compare": "./scripts/i18n-compare.sh"
   },
   "dependencies": {},
   "devDependencies": {},

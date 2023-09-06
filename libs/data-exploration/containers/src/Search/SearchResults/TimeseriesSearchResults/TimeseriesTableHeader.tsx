@@ -19,7 +19,7 @@ const HEADER_BUTTONS_WIDTH_LIMIT = 380;
 const DISABLED_HIDE_EMPTY_BUTTON_TOOLTIP_CONTENT =
   'All loaded timeseries are empty. Button will be enabled when at least 1 timeseries has datapoints';
 const TIMESERIES_RANGE_SELECTOR_TEXT = 'Chart preview';
-const HIDE_TIMESERIES_TEXT = 'Hide empty timeseries';
+const HIDE_TIMESERIES_TEXT = 'Hide empty time series';
 
 export const TimeseriesTableHeader = ({
   showDatePicker = false,

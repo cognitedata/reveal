@@ -12,7 +12,7 @@ Cypress.Commands.add('fusionLogin', () => {
 });
 
 Cypress.Commands.add('navigateToExplorer', () => {
-  cy.contains('Explore data').click();
+  cy.contains('Data Explorer').click();
   cy.url().should('include', 'http://cog-dss.localhost:8080/dss-dev/explore');
 });
 

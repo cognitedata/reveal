@@ -53,7 +53,7 @@ export function UnitFilter<TFilter>({
   return (
     <MultiSelectFilter<string>
       {...rest}
-      label={t('UNIT', 'Unit')}
+      label={t('UNITS', 'Units')}
       value={value ? transformOptionsForMultiselectFilter(value) : undefined}
       options={options}
       onChange={(_, units) => handleChange(units)}

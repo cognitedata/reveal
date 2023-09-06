@@ -11,8 +11,8 @@ export const FullscreenButton = () => {
     <Tooltip
       content={
         !viewModeToggle
-          ? t('OPEN_FULLSCREEN', 'Open in fullscreen')
-          : t('CLOSE_FULLSCREEN', 'Close fullscreen')
+          ? t('OPEN_FULL_SCREEN', 'Open in full screen')
+          : t('CLOSE_FULL_SCREEN', 'Close full screen')
       }
     >
       {viewModeToggle ? (
