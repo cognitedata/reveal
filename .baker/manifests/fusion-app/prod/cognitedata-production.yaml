@@ -146,7 +146,7 @@ spec:
         team: cdf-ux
     spec:
       containers:
-      - image: eu.gcr.io/cognitedata/fusion-app
+      - image: eu.gcr.io/cognitedata/fusion-app/prod
         imagePullPolicy: Always
         livenessProbe:
           httpGet:
