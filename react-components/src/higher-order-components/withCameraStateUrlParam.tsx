@@ -19,7 +19,10 @@ export function withCameraStateUrlParam<T extends object>(
     const setUrlParamOnCameraStop = (): void => {
       const currentUrlCameraState = getCameraStateFromUrlParam();
       const currentCameraManagerState = reveal.cameraManager.getCameraState();
-      if(currentUrlCameraState !== undefined && !hasCameraStateChanged(currentUrlCameraState, currentCameraManagerState)){
+      if (
+        currentUrlCameraState !== undefined &&
+        !hasCameraStateChanged(currentUrlCameraState, currentCameraManagerState)
+      ) {
         return;
       }
       const { position, target } = currentCameraManagerState;
@@ -39,11 +42,17 @@ export function withCameraStateUrlParam<T extends object>(
     return <Component {...props} />;
   };
 
-  function hasCameraStateChanged(previous: CameraStateTransform, current: CameraStateTransform){
+  function hasCameraStateChanged(
+    previous: CameraStateTransform,
+    current: CameraStateTransform
+  ): boolean {
     const epsilon = 0.001;
-    const {position: previousPosition, target: previousTarget} = previous
-    const {position: currentPosition, target: currentTarget} = current
-    return previousPosition.distanceToSquared(currentPosition) > epsilon || previousTarget.distanceToSquared(currentTarget) > epsilon;
+    const { position: previousPosition, target: previousTarget } = previous;
+    const { position: currentPosition, target: currentTarget } = current;
+    return (
+      previousPosition.distanceToSquared(currentPosition) > epsilon ||
+      previousTarget.distanceToSquared(currentTarget) > epsilon
+    );
   }
 }
 
