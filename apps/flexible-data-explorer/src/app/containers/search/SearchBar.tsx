@@ -124,7 +124,10 @@ export const SearchBar: React.FC<Props> = ({
                 (e.target as any).blur();
                 closePreview();
 
-                navigate.toSearchPage(localQuery, filters, { category });
+                navigate.toSearchPage(localQuery, filters, {
+                  category,
+                  enableAISearch: isAISearch,
+                });
               }
             }}
             // Do not add onBlur to input, it messes with the search preview dropdown.
