@@ -2181,10 +2181,10 @@
   dependencies:
     "@cognite/intercom-helper" "0.2.1"
 
-"@cognite/simconfig-api-sdk@1.6.15":
-  version "1.6.15"
-  resolved "https://registry.yarnpkg.com/@cognite/simconfig-api-sdk/-/simconfig-api-sdk-1.6.15.tgz#2f50b96989019186340eb4c20faa56a9249af708"
-  integrity sha512-d35cLc+Ghbm74lofry/zvWKaVlX7ZdAzc44Kc/pewla01nVKR1dMj42rySgGFF4m3p7MwHzDU/CMTF0ATn6WHg==
+"@cognite/simconfig-api-sdk@1.6.16":
+  version "1.6.16"
+  resolved "https://registry.yarnpkg.com/@cognite/simconfig-api-sdk/-/simconfig-api-sdk-1.6.16.tgz#fbcde63293eb85e57df9d1002d2976611efa8baa"
+  integrity sha512-iOK4NGAY2s01yIgUgxLMUCrTrcmtWxXSwpwkh44ND6V+2q6BiP0qYbqbX+Oztkn4gcMECem6rRCMwtQ/yMuGnA==
 
 "@cognite/storage@0.1.3":
   version "0.1.3"
