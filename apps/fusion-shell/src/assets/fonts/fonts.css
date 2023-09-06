@@ -1,0 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500&display=swap');
+
+@font-face {
+  font-display: swap;
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Inter-Regular'),
+    url('./Inter-Regular.woff2?v=3.19') format('woff2');
+}
+
+@font-face {
+  font-display: swap;
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  src: local('Inter-Medium'), url('./Inter-Medium.woff2?v=3.19') format('woff2');
+}
+
+@font-face {
+  font-display: swap;
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  src: local('Inter-SemiBold'),
+    url('./Inter-SemiBold.woff2?v=3.19') format('woff2');
+}
+
+* {
+  font-feature-settings: 'ss04';
+}
