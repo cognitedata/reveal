@@ -135,7 +135,8 @@ jobs:
       - name: Build
         env:
           NODE_OPTIONS: '--max_old_space_size=8192'
-        run: npx nx run ${{ matrix.project }}:build:${{ steps.deploy-environment.outputs.build }}
+          NODE_ENV: production
+        run: npx nx run ${{ matrix.project }}:build:${{ matrix.project == 'platypus' && 'fusion' || 'production'}}
 
       - name: Get project config
         id: project-config
