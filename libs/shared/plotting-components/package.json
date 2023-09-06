@@ -1,7 +1,9 @@
 {
   "name": "@cognite/plotting-components",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "peerDependencies": {
-    "react": "^18.2.0"
+    "react": "^18.2.0",
+    "@cognite/cogs.js": "^9.36.0",
+    "@cognite/cdf-utilities": "^3.4.7"
   }
 }
