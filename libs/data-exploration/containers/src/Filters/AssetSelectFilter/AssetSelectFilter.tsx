@@ -68,7 +68,7 @@ export const AssetSelectFilter = <TFilter,>({
     >
       <MultiSelectFilter<number>
         {...rest}
-        label={t('ASSET', 'Asset')}
+        label={t('ASSETS', 'Assets')}
         isMulti
         isClearable
         value={value}

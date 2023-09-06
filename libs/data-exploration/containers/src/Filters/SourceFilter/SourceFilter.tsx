@@ -68,7 +68,7 @@ export const SourceFilter = <TFilter,>({
     <MultiSelectFilter<string>
       {...rest}
       addNilOption
-      label={t('SOURCE', 'Source')}
+      label={t('SOURCES', 'Sources')}
       options={options}
       onChange={(_, newSources) => handleChange(newSources)}
     />
@@ -101,7 +101,7 @@ export const BaseFileSourceFilter = <TFilter,>({
     <MultiSelectFilter<string>
       {...rest}
       addNilOption
-      label={t('SOURCE', 'Source')}
+      label={t('SOURCES', 'Sources')}
       value={value ? transformOptionsForMultiselectFilter(value) : undefined}
       options={options}
       onChange={(_, newSources) => handleChange(newSources)}

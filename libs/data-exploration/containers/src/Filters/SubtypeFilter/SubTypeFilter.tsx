@@ -36,7 +36,7 @@ export function SubTypeFilter<TFilter>({
   const { t } = useTranslation();
   const trackUsage = useMetrics();
 
-  const filterLabel = t('SUB_TYPE', 'Sub type');
+  const filterLabel = t('SUBTYPES', 'Subtypes');
 
   const handleChange = (
     newValue: {

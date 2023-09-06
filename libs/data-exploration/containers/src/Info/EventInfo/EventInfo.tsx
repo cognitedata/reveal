@@ -19,7 +19,7 @@ export const EventInfo = ({ event }: { event: CogniteEvent }) => {
       />
       <GeneralDetails.Item
         key={`${event.subtype}-${event.id}`}
-        name={t('SUB_TYPE', 'Sub type')}
+        name={t('SUBTYPE', 'Subtype')}
         value={event.subtype}
         copyable
       />

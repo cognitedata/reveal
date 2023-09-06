@@ -227,7 +227,7 @@ export function ColumnToggle<T extends TableData = any>({
                               'usability'
                             )
                           : t(
-                              'COLUMN_TOGGLE_LIMIT_REASON_PERFORMACE',
+                              'COLUMN_TOGGLE_LIMIT_REASON_PERFORMANCE',
                               'performance'
                             ),
                       limit: columnSelectionLimit,

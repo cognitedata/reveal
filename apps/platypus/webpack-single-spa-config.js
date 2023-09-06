@@ -1,6 +1,7 @@
 const {
   withSingleSpa,
 } = require('../../tools/webpack/single-spa-webpack-config');
+const { filterEnvVars } = require('../../tools/webpack/filter-env-vars');
 const { composePlugins, withNx } = require('@nx/webpack');
 const { withReact } = require('@nx/react');
 
@@ -15,6 +16,7 @@ const useMockEnv =
 module.exports = composePlugins(
   withNx(),
   withReact(),
+  filterEnvVars(),
   withSingleSpa({ useMockEnv }),
   (config) => {
     if (process.env.NX_TASK_TARGET_CONFIGURATION === 'production') {

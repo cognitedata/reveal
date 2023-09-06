@@ -33,7 +33,7 @@ export const RunAdvancedJoin = (props: {
 
   const { runAdvancedJoinJobStatus, invokeRunJob } = useRunAdvancedJoin();
 
-  const handleWriteMatchers = () => {
+  const handleWriteMatchers = async () => {
     invokeUpdateAdvancedJoinObject(
       advancedJoinExternalId,
       selectedDatabase,
@@ -41,9 +41,10 @@ export const RunAdvancedJoin = (props: {
       fromColumn,
       toColumn
     );
-    setTimeout(() => {
-      invokeRunJob(advancedJoinExternalId);
-    }, 100);
+
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    invokeRunJob(advancedJoinExternalId);
   };
 
   useEffect(() => {

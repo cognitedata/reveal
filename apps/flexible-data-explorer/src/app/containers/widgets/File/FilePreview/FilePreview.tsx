@@ -66,6 +66,7 @@ export const FilePreview = ({
     <FullHeightWrapper justifyContent="flex-end">
       <UFVWrapper>
         <ReactUnifiedViewer
+          shouldUseAdaptiveRendering
           applicationId={applicationId}
           id={id}
           container={container}

@@ -3,6 +3,7 @@ const { withModuleFederation } = require('@nrwl/react/module-federation');
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 const { withReact } = require('@nrwl/react');
 const CopyPlugin = require('copy-webpack-plugin');
+const { filterEnvVars } = require('../../tools/webpack/filter-env-vars');
 
 const bundledLibraries = [
   '@cognite/cdf-sdk-singleton',
@@ -15,6 +16,7 @@ const bundledLibraries = [
 module.exports = composePlugins(
   withNx(),
   withReact(),
+  filterEnvVars(),
   withModuleFederation({
     name: 'platypus',
     exposes: {

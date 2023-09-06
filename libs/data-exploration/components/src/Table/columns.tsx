@@ -286,7 +286,7 @@ export const getTableColumns = (t: TFunction): ResourceTableHashMap => ({
     ),
   },
   dataSet: {
-    header: t('DATASET', 'Dataset'),
+    header: t('DATA_SET', 'Data set'),
     id: 'dataSetId',
     enableSorting: false,
     accessorFn: (resource) => resource.dataSetId,

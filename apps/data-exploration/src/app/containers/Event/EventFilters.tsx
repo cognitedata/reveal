@@ -55,7 +55,7 @@ export const EventFilters = ({ ...rest }: Record<string, unknown>) => {
           setValue={(newValue) => {
             setEventFilter({ type: newValue });
           }}
-          title={t('TYPE', 'Type')}
+          title={t('TYPES', 'Types')}
           value={eventFilter.type || []}
           isMulti={isAdvancedFiltersEnabled}
         />
@@ -89,7 +89,7 @@ export const EventFilters = ({ ...rest }: Record<string, unknown>) => {
           setValue={(newValue) => {
             setEventFilter({ subtype: newValue });
           }}
-          title={t('SUB_TYPE', 'Sub type')}
+          title={t('SUBTYPES', 'Subtypes')}
           value={eventFilter.subtype || []}
           isMulti={isAdvancedFiltersEnabled}
         />

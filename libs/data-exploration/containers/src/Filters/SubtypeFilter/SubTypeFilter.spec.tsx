@@ -8,7 +8,7 @@ describe('SubTypeFilter', () => {
     test('Expect Empty option ', () => {
       render(<SubTypeFilter options={[]} />);
 
-      expect(screen.getByText(/sub type/gi)).toBeInTheDocument();
+      expect(screen.getByText('Subtypes')).toBeInTheDocument();
 
       // eslint-disable-next-line testing-library/no-unnecessary-act
       act(() => {
