@@ -1,6 +1,8 @@
 /* eslint-disable @cognite/no-number-z-index */
 import { useNavigate } from 'react-location';
 
+import { BASIC_CAPABILITIES_REQUIRED } from '@simint-app/components/app/constants';
+import { useCheckAcl } from '@simint-app/hooks/useCheckAcl';
 import { createCdfLink } from '@simint-app/utils/createCdfLink';
 import styled from 'styled-components/macro';
 
@@ -8,6 +10,8 @@ import { Button, Collapse, Icon, Illustrations, Title } from '@cognite/cogs.js';
 
 function PermissionsRequired() {
   const { Panel } = Collapse;
+
+  const { capabilityMap } = useCheckAcl(BASIC_CAPABILITIES_REQUIRED);
 
   const navigate = useNavigate();
 
@@ -46,6 +50,22 @@ function PermissionsRequired() {
                   </ul>
                 </div>
               </Panel>
+
+              {Object.entries(capabilityMap).filter(
+                ([, value]) => value === false
+              )?.length > 0 && (
+                <Panel header="Missing access" key="miss">
+                  <div>
+                    <ul>
+                      {Object.entries(capabilityMap)
+                        .filter(([, value]) => value === false)
+                        .map(([key]) => {
+                          return <li key={key}>{key}</li>;
+                        })}
+                    </ul>
+                  </div>
+                </Panel>
+              )}
             </CollapseWrapperFull>
           </div>
           <div>
