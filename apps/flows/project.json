@@ -108,7 +108,7 @@
   },
   "tags": [],
   "pipeline": {
-    "releaseStrategy": "multi-branch",
+    "releaseStrategy": "single-branch",
     "firebaseSite": "cdf-orchestration",
     "previewPackageName": "@cognite/cdf-flows"
   }

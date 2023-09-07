@@ -130,7 +130,7 @@
     "hosting": {
       "staging": "https://cdf-orchestration-staging.web.app",
       "preview": "https://cdf-orchestration-staging.web.app",
-      "production": "https://cdf-orchestration-prod.web.app"
+      "production": "https://cdf-orchestration-prod.cogniteapp.com"
     },
     "routes": [{ "route": "/:tenantName/flows" }]
   },
