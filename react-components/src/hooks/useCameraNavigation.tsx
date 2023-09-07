@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type CogniteCadModel } from '@cognite/reveal';
+import { type CameraState, type CogniteCadModel } from '@cognite/reveal';
 import { useReveal } from '../components/RevealContainer/RevealContext';
 import { useFdmNodeCache } from '../components/NodeCacheProvider/NodeCacheProvider';
 
@@ -10,6 +10,7 @@ export type CameraNavigationActions = {
   fitCameraToAllModels: () => void;
   fitCameraToModelNode: (revisionId: number, nodeId: number) => Promise<void>;
   fitCameraToInstance: (externalId: string, space: string) => Promise<void>;
+  fitCameraToState: (cameraState: CameraState) => void;
 };
 
 export const useCameraNavigation = (): CameraNavigationActions => {
@@ -56,9 +57,14 @@ export const useCameraNavigation = (): CameraNavigationActions => {
     await fitCameraToModelNode(modelMappings.revisionId, nodeId.id);
   };
 
+  const fitCameraToState = (cameraState: CameraState): void => {
+    viewer.cameraManager.setCameraState(cameraState);
+  };
+
   return {
     fitCameraToAllModels,
     fitCameraToInstance,
-    fitCameraToModelNode
+    fitCameraToModelNode,
+    fitCameraToState
   };
 };
