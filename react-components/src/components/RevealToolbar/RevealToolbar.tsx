@@ -59,14 +59,14 @@ const RevealToolbarContainer = ({
   lowFidelitySettings,
   highFidelitySettings,
   toolBarContent,
-  ...rest
+  ...restProps
 }: RevealToolbarProps & { toolBarContent?: JSX.Element }): ReactElement => {
-  if (rest.className === undefined && rest.style === undefined) {
-    rest = { ...rest, ...defaultStyle };
+  if (restProps.className === undefined && restProps.style === undefined) {
+    restProps = { ...restProps, ...defaultStyle };
   }
   return (
     <I18nWrapper translations={translations} addNamespace="reveal-react-components">
-      <ToolBar {...rest}>
+      <ToolBar {...restProps}>
         {toolBarContent ?? (
           <DefaultContentWrapper
             customSettingsContent={customSettingsContent}
