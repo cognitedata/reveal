@@ -28,7 +28,7 @@ Cypress.Commands.add('performSearch', (searchString: string) => {
 
 Cypress.Commands.add('clearSearchInput', () => {
   cy.log('clear search input');
-  cy.get('[aria-label="Clear input field"]').click();
+  cy.clickIconButton('Clear input field');
 });
 
 Cypress.Commands.add('fuzzySearchDisable', () => {
@@ -47,17 +47,22 @@ Cypress.Commands.add('fuzzySearchEnable', () => {
   });
 });
 
-Cypress.Commands.add('columnSelection', (columnName) => {
-  cy.get('[aria-label="Column Selection"]').click();
-
-  cy.get(`[id=${columnName}]`).then(($columnCheckbox) => {
-    if ($columnCheckbox.is(':not(:checked)')) {
-      cy.get(`[id=${columnName}]`).click();
-    } else {
-      cy.log(`${columnName} column is already selected`);
-    }
-  });
-});
+Cypress.Commands.add(
+  'columnSelection',
+  { prevSubject: 'optional' },
+  (subject, columnName) => {
+    cy.wrap(subject).find('[aria-label="Column Selection"]').click();
+    cy.wrap(subject)
+      .find(`[id=${columnName}]`)
+      .then(($columnCheckbox) => {
+        if ($columnCheckbox.is(':not(:checked)')) {
+          cy.wrap(subject).find(`[id=${columnName}]`).click();
+        } else {
+          cy.log(`${columnName} column is already selected`);
+        }
+      });
+  }
+);
 
 Cypress.Commands.add('excludeSearchParameter', (parameterID) => {
   cy.get(`[id=${parameterID}]`).then(($searchParameter) => {
@@ -74,6 +79,7 @@ Cypress.Commands.add('includeSearchParameter', (parameterID) => {
     }
   });
 });
+
 export interface SearchCommand {
   goToTab(tab: ResourceTab): void;
   performSearch(searchString: string): void;

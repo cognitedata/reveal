@@ -10,17 +10,59 @@ describe('Assets', () => {
     cy.navigateToExplorer();
   });
 
-  it('should navigate among the tabs ', () => {
+  beforeEach(() => {
     interceptAssetList();
+  });
+
+  it('should click the assets tab and go to list view ', () => {
     cy.goToTab('Assets');
     cy.wait(`@${ASSET_LIST_ALIAS}`);
+    cy.clickIconButton('List');
+  });
+
+  it('should sort asset results', () => {
+    cy.log('sorting colomn: Name');
+    cy.getTableById('asset-search-results').clickSortColoumn('Name');
+    cy.wait(`@${ASSET_LIST_ALIAS}`);
+    cy.getTableById('asset-search-results')
+      .getColomnValues('name')
+      .shouldBeSortedAscending();
+
+    cy.getTableById('asset-search-results').clickSortColoumn('Name');
+    cy.wait(`@${ASSET_LIST_ALIAS}`);
+    cy.getTableById('asset-search-results')
+      .getColomnValues('name')
+      .shouldBeSortedDescending();
+
+    cy.tableSholudBeVisible('asset-search-results').columnSelection(
+      `description`
+    );
+
+    cy.log('sorting colomn: Description');
+    cy.getTableById('asset-search-results').clickSortColoumn('Description');
+    cy.wait(`@${ASSET_LIST_ALIAS}`);
+    cy.getTableById('asset-search-results')
+      .getColomnValues('description')
+      .shouldBeSortedAscending();
+
+    cy.getTableById('asset-search-results').clickSortColoumn('Description');
+    cy.wait(`@${ASSET_LIST_ALIAS}`);
+    cy.getTableById('asset-search-results')
+      .getColomnValues('description')
+      .shouldBeSortedDescending();
+  });
+
+  it('should navigate to the detail view', () => {
+    cy.clickIconButton('Asset hierarchy');
     cy.performSearch(ASSET_NAME);
 
     cy.getTableById('asset-tree-table')
       .contains(ASSET_NAME)
       .should('be.visible')
       .click();
+  });
 
+  it('should navigate between the detail view tabs', () => {
     cy.log('should contain All resources tab details');
     cy.findAllByTestId('asset-detail').goToTab('All resources');
     cy.findAllByTestId('asset-summary').should('be.visible');
@@ -59,6 +101,8 @@ describe('Assets', () => {
     cy.tableSholudBeVisible('sequence-linked-search-results');
 
     cy.log('close asset detail view');
-    cy.clickButton('Close', 'aria-label');
+    cy.clickIconButton('Close');
+
+    cy.clearSearchInput();
   });
 });
