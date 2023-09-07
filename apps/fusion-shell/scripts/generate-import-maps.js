@@ -91,8 +91,7 @@ function generateImportMap(fusionEnv) {
       if (
         fusionEnv === 'production' &&
         !baseUrl.startsWith('/') &&
-        !baseUrl.toLowerCase().endsWith('.cogniteapp.com') &&
-        app.key !== 'cdf-flows'
+        !baseUrl.toLowerCase().endsWith('.cogniteapp.com')
       ) {
         throw new Error(
           `The app ${app.key} points to a domain for production which isn't allowed. Please use a *.cogniteapp.com domain`
