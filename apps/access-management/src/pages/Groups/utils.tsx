@@ -58,6 +58,8 @@ const nameToAclTypeMap = {
   datamodels: 'dataModelsAcl',
   datamodelinstances: 'dataModelInstancesAcl',
   hostedextractors: 'hostedExtractorsAcl',
+  monitoringtasks: 'monitoringTasksAcl',
+  scheduledcalculations: 'scheduledCalculationsAcl',
 };
 
 const getCapabilityNameTranslationKey = {
@@ -85,6 +87,8 @@ const getCapabilityNameTranslationKey = {
   datamodels: 'data-models',
   datamodelinstances: 'data-model-instances',
   hostedextractors: 'hosted-extractors',
+  monitoringtasks: 'monitoring-tasks',
+  scheduledcalculations: 'scheduled-calculations',
 };
 
 const prepareCapabilityTypeGroups = (_t: (key: TranslationKeys) => string) => {
@@ -136,6 +140,8 @@ const prepareCapabilityTypeGroups = (_t: (key: TranslationKeys) => string) => {
         'visionmodel',
         'robotics',
         'hostedextractors',
+        'monitoringtasks',
+        'scheduledcalculations',
       ],
     },
   ];
