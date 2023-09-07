@@ -28,17 +28,20 @@ _We use mostly GitHub Actions for our CI and CD but Jenkins is being used to dep
 ### Fusion environments
 
 Fusion have several environments:
-  - Production (https://fusion.cognite.com)
-  - Staging (https://staging.fusion.cognite.com)
-  - Next-release (https://next-release.fusion.cognite.com)
-  - Dev (https://dev.fusion.cogniteapp.com)
-  - Preview (https://fusion-pr-preview.cogniteapp.com)
+
+- Production (https://fusion.cognite.com)
+- Staging (https://staging.fusion.cognite.com)
+- Next-release (https://next-release.fusion.cognite.com)
+- Dev (https://dev.fusion.cogniteapp.com)
+- Preview (https://fusion-pr-preview.cogniteapp.com)
 
 It's useful to understand how these environments differs. Let's understand how next-release works.
 We then look into the [jsonnet file](./apps/fusion-shell/manifests/fusion.next-release.jsonnet) which generates the Kubernetes manifest for this environment. We see the following line:
+
 ```jsonnet
 local subapps_import_map = "/subapps-import-map-preview.json";
 ```
+
 telling us next-release uses the preview version for all sub-apps.
 
 To understand what that means, we look into [this configuration](./apps/fusion-shell/src/appManifestData.json). Every sub-app has an entry in this file and we can see how we resolve sub-apps for the three environments staging, preview and production.
@@ -81,9 +84,10 @@ The shell will automatically be rolled out to all Fusion environments except for
 If you want to revert a sub-app, then this should take place in the Firebase UI. See documentation for it [here](https://firebase.google.com/docs/hosting/manage-hosting-resources#roll-back). You would need to be an editor in Firebase. Permission for Firebase is defined [here](https://github.com/cognitedata/terraform/blob/b97fb3bf4d88f24c8a4ba87ea8163cd28c95eed2/cognitedata-production/gcp_fusion_firebase_hosting/project.tf#L58-L80).
 
 Firebase project links:
-  - [Production](https://console.firebase.google.com/project/fusion-217032465111/hosting/sites)
-  - [Preview](https://console.firebase.google.com/project/fusion-217032465111-preview/hosting/sites)
-  - [Staging](https://console.firebase.google.com/project/fusion-217032465111-staging/hosting/sites)
+
+- [Production](https://console.firebase.google.com/project/fusion-217032465111/hosting/sites)
+- [Preview](https://console.firebase.google.com/project/fusion-217032465111-preview/hosting/sites)
+- [Staging](https://console.firebase.google.com/project/fusion-217032465111-staging/hosting/sites)
 
 Rolling back a deployment in Firebase will have immediate effect on the corresponding Fusion site (staging, preview, production).
 
@@ -187,6 +191,36 @@ To run Platypus using the mock server, start the mock server and then run:
 
 `yarn start mock platypus`
 
+# Storybook testing
+
+As described in [UI Testing at Cognite](https://cognitedata.atlassian.net/wiki/spaces/GA/pages/4055597906/UI+Testing+at+Cognite), we use Storybook to develop components and run interaction tests. To use Storybook's interactions UI and run tests, a project needs some configuration in Nx. You can run the following Nx command to help with the setup:
+
+```sh
+nx g @nx/react:storybook-configuration project-name --interactionTests=true
+```
+
+This will add Storybook setup to your project if you don't already have it, and it will add test-related targets to your project's `project.json` if you already have Storybook enabled but not tests. After running that command, ensure the following:
+
+- you have `@storybook/addon-interactions` in the `addons` array in `<project-name>/.storybook/main.ts`
+- you have the following targets defined in your project's `project.json`: `storybook`, `build-storybook`, `static-storybook`, `test-storybook`
+
+You can look at `simint` as an example: https://github.com/cognitedata/fusion/blob/master/apps/simint/project.json
+
+Tests can be written in each story as part of the `play` function, as documented [here](https://storybook.js.org/docs/react/writing-tests/interaction-testing). When you start up Storybook locally, you can see the test runs in the Storybook UI in the interactions tab.
+
+To run tests on the command line, you'll need to run storybook in one terminal (`yarn nx storybook project-name`) and run the tests in another terminal (`yarn nx test-storybook project-name`). Alternatively, you can serve a static storybook (`yarn nx static-storybook project-name`) build and run the tests against that.
+
+# E2E Testing
+
+We use cypress to run our e2e test suite. To run them from the terminal using a headless browser, make sure the mock server is running, and then from another terminal window, run:
+
+`NODE_ENV=mock nx run platypus-e2e:e2e`
+
+To run them in the Cypress GUI:
+
+`NODE_ENV=mock nx run platypus-e2e:e2e --watch`
+
+You can optionally run the e2e tests using the `Nx Console` VSCode extension by clicking to run `e2e` and then choosing the `platypus-e2e` project.
 
 ### Deploy a NPM library
 

@@ -7324,6 +7324,25 @@
     "@storybook/global" "^5.0.0"
     "@storybook/preview-api" "7.4.0"
 
+"@storybook/addon-interactions@^7.4.0":
+  version "7.4.0"
+  resolved "https://registry.yarnpkg.com/@storybook/addon-interactions/-/addon-interactions-7.4.0.tgz#d0c15303999ac1e8f33705146e9a0a6db6df339c"
+  integrity sha512-nEWP+Ib0Y/ShXfpCm40FBTbBy1/MT8XxTEAhcNN+3ZJ07Vhhkrb8GMlWHTKQv2PyghEVBYEoPFHhElUJQOe00g==
+  dependencies:
+    "@storybook/client-logger" "7.4.0"
+    "@storybook/components" "7.4.0"
+    "@storybook/core-common" "7.4.0"
+    "@storybook/core-events" "7.4.0"
+    "@storybook/global" "^5.0.0"
+    "@storybook/instrumenter" "7.4.0"
+    "@storybook/manager-api" "7.4.0"
+    "@storybook/preview-api" "7.4.0"
+    "@storybook/theming" "7.4.0"
+    "@storybook/types" "7.4.0"
+    jest-mock "^27.0.6"
+    polished "^4.2.2"
+    ts-dedent "^2.2.0"
+
 "@storybook/addon-measure@7.4.0":
   version "7.4.0"
   resolved "https://registry.yarnpkg.com/@storybook/addon-measure/-/addon-measure-7.4.0.tgz#61bc0d0af5af8c22e81b70e1690b2f58262944cd"
@@ -7918,6 +7937,17 @@
   version "5.0.0"
   resolved "https://registry.yarnpkg.com/@storybook/global/-/global-5.0.0.tgz#b793d34b94f572c1d7d9e0f44fac4e0dbc9572ed"
   integrity sha512-FcOqPAXACP0I3oJ/ws6/rrPT9WGhu915Cg8D02a9YxLo0DE9zI+a9A5gRGvmQ09fiWPukqI8ZAEoQEdWUKMQdQ==
+
+"@storybook/instrumenter@7.4.0":
+  version "7.4.0"
+  resolved "https://registry.yarnpkg.com/@storybook/instrumenter/-/instrumenter-7.4.0.tgz#197335f25a45ecdc2c5f458bff1c2481d7ffe08c"
+  integrity sha512-jZKxLK0lGKxY8LEul6GP7s+PDlNuXT4JU6MnPY9+SVSo23lP0pAOxo/ojV8WTLf48tcoyL3ztSfbYhxnaJvBfw==
+  dependencies:
+    "@storybook/channels" "7.4.0"
+    "@storybook/client-logger" "7.4.0"
+    "@storybook/core-events" "7.4.0"
+    "@storybook/global" "^5.0.0"
+    "@storybook/preview-api" "7.4.0"
 
 "@storybook/jest@^0.2.2":
   version "0.2.2"
@@ -22882,7 +22912,7 @@ jest-message-util@^29.6.3:
     slash "^3.0.0"
     stack-utils "^2.0.3"
 
-jest-mock@^27.3.0, jest-mock@^27.5.1:
+jest-mock@^27.0.6, jest-mock@^27.3.0, jest-mock@^27.5.1:
   version "27.5.1"
   resolved "https://registry.yarnpkg.com/jest-mock/-/jest-mock-27.5.1.tgz#19948336d49ef4d9c52021d34ac7b5f36ff967d6"
   integrity sha512-K4jKbY1d4ENhbrG2zuPWaQBvDly+iZ2yAW+T1fATN78hc0sInwn7wZB8XtlNnvHug5RMwV897Xm4LqmPM4e2Og==

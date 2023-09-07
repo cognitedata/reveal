@@ -6,7 +6,6 @@
     "lint": "eslint src --max-warnings 0 --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "eslint src --ext .jsx,.js,.tsx,.ts --fix",
     "storybook": "start-storybook -p 9009 -s public",
-    "test-storybook": "test-storybook --url http://localhost:9009",
     "chromatic": "npx chromatic",
     "semantic-release": "semantic-release"
   }

@@ -104,6 +104,14 @@ jobs:
           head: ${{ env.NX_HEAD }}
           target: 'build-storybook'
 
+      - name: 'Get affected storybook projects to test'
+        id: affected-test-storybook
+        uses: './scripts/github-actions/nx-get-affected'
+        with:
+          base: ${{ env.NX_BASE }}
+          head: ${{ env.NX_HEAD }}
+          target: 'test-storybook'
+
     outputs:
       affected-libs: ${{ steps.affected-libs.outputs.projects }}
       affected-libs-string: ${{ steps.affected-libs.outputs.projectsString }}
@@ -115,6 +123,7 @@ jobs:
       affected-shell-apps: ${{ steps.affected-shell-apps.outputs.projects }}
       affected-e2e: ${{ steps.affected-e2e.outputs.projects }}
       affected-storybook: ${{ steps.affected-storybook.outputs.projects }}
+      affected-test-storybook: ${{ steps.affected-test-storybook.outputs.projects }}
 
   lint:
     name: 'Lint'
@@ -321,6 +330,40 @@ jobs:
           path: 'dist/storybook/${{ matrix.project }}'
           destination: 'opint-pr-server/fusion-preview/storybook-${{matrix.project}}-${{github.event.number}}'
           parent: false
+
+  test-storybook:
+    name: Test storybook
+    runs-on: ubuntu-20.04
+    if: ${{ needs.setup.outputs.affected-test-storybook != '' && toJson(fromJson(needs.setup.outputs.affected-test-storybook)) != '[]' }}
+    needs: setup
+    strategy:
+      matrix:
+        project: ${{ fromJson(needs.setup.outputs.affected-test-storybook)  }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Cache node modules
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: cache-node-modules-${{ hashFiles('yarn.lock') }}
+
+      - name: Install playwright
+        run: npx playwright install
+
+      - name: Test
+        env:
+          NODE_OPTIONS: '--max_old_space_size=8192'
+          NODE_ENV: production
+        run: |
+          npx concurrently -k -s first -n "STORYBOOK,TEST" -c "magenta,blue" \
+            "npx nx run ${{ matrix.project }}:static-storybook" \
+            "npx wait-on http://localhost:4400 && npx nx run ${{ matrix.project }}:test-storybook"
 
   build-preview-comment:
     name: Comment build previews

@@ -73,7 +73,6 @@
         "default",
         "^production",
         "{workspaceRoot}/.storybook/**/*",
-        "!{projectRoot}/.storybook/**/*",
         "{projectRoot}/.storybook/**/*",
         "{projectRoot}/tsconfig.storybook.json"
       ]
