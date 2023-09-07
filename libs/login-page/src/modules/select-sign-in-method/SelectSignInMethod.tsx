@@ -11,7 +11,6 @@ import {
   KeycloakResponse,
   CogniteIdPResponse,
   AADB2CResponse,
-  getSelectedIdpDetails,
 } from '@cognite/login-utils';
 
 import CogniteDataFusionSvg from '../../assets/CogniteDataFusion.svg';
@@ -70,8 +69,6 @@ const SelectSignInMethod = (props: Props): JSX.Element => {
   const { isHelpModalVisible, setIsHelpModalVisible } = props;
   const { t } = useTranslation();
 
-  const { internalId: selectedInternalId } = getSelectedIdpDetails() ?? {};
-
   const { data: loginInfo, isError, isFetched, error } = useLoginInfo();
   const { data: legacyProjectsByCluster } = useValidatedLegacyProjects(true);
   const { validLegacyProjects = [], invalidLegacyProjects = [] } =
@@ -117,10 +114,6 @@ const SelectSignInMethod = (props: Props): JSX.Element => {
     return <GenericError error={error} />;
   }
 
-  const isCogIdpPresent = !!sortedIdps.find(
-    (idp) => idp.type === 'COGNITE_IDP'
-  );
-
   return (
     <StyledSelectSignInMethodContainer>
       <StyledContainerHeader>
@@ -158,16 +151,7 @@ const SelectSignInMethod = (props: Props): JSX.Element => {
               switch (idpProps.type) {
                 case 'AZURE_AD':
                   return (
-                    <SignInWithAAD
-                      key={idpProps.internalId}
-                      {...idpProps}
-                      trySSO={
-                        !isCogIdpPresent &&
-                        sortedIdps.filter(({ type }) => type === 'AZURE_AD')
-                          .length === 1 &&
-                        !selectedInternalId
-                      }
-                    />
+                    <SignInWithAAD key={idpProps.internalId} {...idpProps} />
                   );
                 case 'AAD_B2C':
                   return (
