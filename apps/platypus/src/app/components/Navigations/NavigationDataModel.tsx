@@ -153,7 +153,7 @@ export const NavigationDataModel = () => {
   const renderTopBarRight = () => {
     return (
       <StyledTopBarRight style={{ gap: 8 }}>
-        <Tooltip content={t('cli_PowerBI_tooltip', 'PowerBI Connection Info')}>
+        <Tooltip content={t('cli_PowerBI_tooltip', 'Power BI Connection Info')}>
           <Button
             icon="Link"
             data-cy="btn-endpoint-modal"
@@ -162,7 +162,7 @@ export const NavigationDataModel = () => {
               setShowPowerBIModal(true);
             }}
           >
-            {t('powerbi_link_button', 'PowerBI')}
+            {t('powerbi_link_button', 'Power BI')}
           </Button>
         </Tooltip>
         <Tooltip content={t('cli_URL_tooltip', 'GraphQL URL')}>
