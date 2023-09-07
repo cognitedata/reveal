@@ -12,8 +12,13 @@ import type { OCRAnnotationPageResult } from '@data-exploration-lib/domain-layer
 
 import { translationKeys } from '../../common';
 import DateRangePrompt from '../../components/DateRangePrompt';
+import PropertySelectorToolbarWrapper from '../../components/PropertySelector/PropertySelectorToolbarWrapper';
+import { Property } from '../../components/PropertySelector/types';
 import { MetricEvent } from '../../constants';
-import { openResourceSelector } from '../../state/useIndustrialCanvasStore';
+import {
+  openResourceSelector,
+  setFilteredPropertiesByContainerConfigs,
+} from '../../state/useIndustrialCanvasStore';
 import {
   IndustryCanvasContainerConfig,
   isIndustryCanvasTimeSeriesContainer,
@@ -74,6 +79,7 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
 }) => {
   const trackUsage = useMetrics();
   const [isInEditLabelMode, setIsInEditLabelMode] = useState(false);
+  const [isChangingProperties, setIsChangingProperties] = useState(false);
   const { resourceType, resourceId } = selectedContainer.metadata;
   const { t } = useTranslation();
 
@@ -164,6 +170,21 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
     selectedContainer.type === ContainerType.ASSET ||
     selectedContainer.type === ContainerType.EVENT
   ) {
+    const handleApplyClick = ({
+      properties,
+      shouldApplyToAll,
+    }: {
+      properties: Property[];
+      shouldApplyToAll: boolean;
+    }) => {
+      setFilteredPropertiesByContainerConfigs({
+        containerConfigs: [selectedContainer],
+        propertyPaths: properties.map((property) => property.path),
+        shouldApplyToAll,
+      });
+      setIsChangingProperties(false);
+    };
+
     return (
       <TooltipToolBarContainer>
         {isInEditLabelMode && (
@@ -171,6 +192,12 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
             onClose={onClose}
             onSave={onSaveLabel}
             initialValue={selectedContainer.label}
+          />
+        )}
+        {isChangingProperties && (
+          <PropertySelectorToolbarWrapper
+            containerConfig={selectedContainer}
+            onApplyClick={handleApplyClick}
           />
         )}
         <ToolBar direction="horizontal">
@@ -185,6 +212,24 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
                 aria-label={t(
                   translationKeys.CHANGE_LABEL_TOOLTIP,
                   'Change label'
+                )}
+              />
+            </Tooltip>
+            <Tooltip
+              content={t(
+                translationKeys.TOOLTIP_CHANGE_FIELDS,
+                'Change fields'
+              )}
+            >
+              <Button
+                icon="ListAdd"
+                onClick={() =>
+                  setIsChangingProperties((prevState) => !prevState)
+                }
+                type="ghost"
+                aria-label={t(
+                  translationKeys.TOOLTIP_CHANGE_FIELDS,
+                  'Change field'
                 )}
               />
             </Tooltip>

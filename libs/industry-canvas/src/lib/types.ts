@@ -157,6 +157,8 @@ type ResourceMetadata = {
   assetExternalId?: string; // Used by RevealContainer
   modelName?: string; // Used by RevealContainer
   modelId?: number; // Used by RevealContainer
+  eventType?: string; // Used by EventContainer
+  eventSubType?: string; // Used by EventContainer.
 };
 export type IndustryCanvasContainerConfig = ContainerConfig<ResourceMetadata>;
 
@@ -193,12 +195,34 @@ export type LiveSensorRulesByAnnotationIdByTimeseriesId = Record<
   Record<number, RuleType[]>
 >;
 
+export type FilterConditional = {
+  valueAtPath: string;
+  isEqualTo: string | undefined;
+};
+
+export type SerializedFilterConditional = {
+  valueAtPath: string;
+  isEqualTo: string | null;
+};
+
+export type Filter = {
+  appliesToContainerType: ContainerType;
+  containerId?: string;
+  appliesWhen?: FilterConditional[];
+  properties: string[];
+};
+
+export type SerializedFilter = Omit<Filter, 'appliesWhen'> & {
+  appliesWhen?: SerializedFilterConditional[];
+};
+
 // NOTE: `CanvasState` is a global interface, hence the `Industry` prefix (https://microsoft.github.io/PowerBI-JavaScript/interfaces/_node_modules_typedoc_node_modules_typescript_lib_lib_dom_d_.canvasstate.html)
 export type IndustryCanvasState = {
   container: IndustryCanvasContainerConfig;
   canvasAnnotations: CanvasAnnotation[];
   pinnedTimeseriesIdsByAnnotationId: Record<string, number[]>;
   liveSensorRulesByAnnotationIdByTimeseriesId: LiveSensorRulesByAnnotationIdByTimeseriesId;
+  filters: Filter[];
 };
 
 export type PinnedSensorValueContext = {
@@ -211,7 +235,14 @@ export type PinnedSensorValueContext = {
   }[];
 };
 
-export type CanvasContext = PinnedSensorValueContext[];
+export type FiltersContext = {
+  type: 'FILTERS';
+  payload: {
+    filters: SerializedFilter[];
+  };
+};
+
+export type CanvasContext = (FiltersContext | PinnedSensorValueContext)[];
 
 export type SerializedIndustryCanvasState = {
   containerReferences: AssetCentricContainerReference[];
@@ -236,7 +267,9 @@ export type CanvasMetadata = {
   updatedBy: UserIdentifier;
 };
 
-export type CanvasDocument = CanvasMetadata & { data: IndustryCanvasState };
+export type CanvasDocument = CanvasMetadata & {
+  data: IndustryCanvasState;
+};
 
 export type SerializedCanvasDocument = Omit<CanvasDocument, 'data'> & {
   data: SerializedIndustryCanvasState;
@@ -265,8 +298,12 @@ export const isCommentAnnotation = (
 export type Comment = {
   text: string;
   author: string;
-  thread?: { externalId: string };
-  canvas?: { externalId: string };
+  thread?: {
+    externalId: string;
+  };
+  canvas?: {
+    externalId: string;
+  };
   x?: number;
   y?: number;
   externalId: string;

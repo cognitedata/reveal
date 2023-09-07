@@ -1,11 +1,13 @@
 import { useSearchParams } from 'react-router-dom';
 
+import { compose } from 'lodash/fp';
 import { create } from 'zustand';
 
 import { CogniteClient } from '@cognite/sdk/dist/src';
 import {
   Annotation,
   ContainerConfig,
+  ContainerType,
   EllipseToolConfig,
   IdsByType,
   ImageContainerProps,
@@ -53,6 +55,7 @@ import { getCdfUserFromUserProfile } from '../services/comments/utils';
 import {
   COMMENT_METADATA_ID,
   ContainerReference,
+  Filter,
   IndustryCanvasContainerConfig,
   IndustryCanvasState,
   IndustryCanvasToolType,
@@ -66,6 +69,8 @@ import { TrackUsageFn } from '../utils/tracking/createTrackUsage';
 import { serializeCanvasState } from '../utils/utils';
 
 import removeRecursive from './removeRecursive';
+import applyAssetFilters from './utils/applyAssetFilters';
+import applyEventFilters from './utils/applyEventFilters';
 
 export type HistoryState = {
   history: IndustryCanvasState[];
@@ -194,6 +199,7 @@ const initialState: RootState = {
         canvasAnnotations: [],
         pinnedTimeseriesIdsByAnnotationId: {},
         liveSensorRulesByAnnotationIdByTimeseriesId: {},
+        filters: [],
       },
     ],
     index: 0,
@@ -857,6 +863,35 @@ export const redo = () => {
       },
     };
   });
+};
+
+export const setFilteredPropertiesByContainerConfigs = ({
+  containerConfigs,
+  propertyPaths,
+  shouldApplyToAll,
+}: {
+  containerConfigs: IndustryCanvasContainerConfig[];
+  propertyPaths: string[];
+  shouldApplyToAll: boolean;
+}) => {
+  if (
+    !containerConfigs.every(
+      (containerConfig) =>
+        containerConfig.type === ContainerType.ASSET ||
+        containerConfig.type === ContainerType.EVENT
+    )
+  ) {
+    // Only supported for Asset and Event container types right now
+    return;
+  }
+
+  pushHistoryState((prevState: IndustryCanvasState) => ({
+    ...prevState,
+    filters: compose(
+      applyAssetFilters(containerConfigs, propertyPaths, shouldApplyToAll),
+      applyEventFilters(containerConfigs, propertyPaths, shouldApplyToAll)
+    )(prevState.filters),
+  }));
 };
 
 // Shameful because we don't really want to imperatively reset the state, but it's a short term

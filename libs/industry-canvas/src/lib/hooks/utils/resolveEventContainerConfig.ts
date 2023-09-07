@@ -53,6 +53,8 @@ const resolveEventContainerConfig = async (
       resourceType: 'event',
       name: eventTitle,
       externalId: event.externalId,
+      eventType: event.type,
+      eventSubType: event.subtype,
     },
   };
 };

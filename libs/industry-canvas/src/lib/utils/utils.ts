@@ -12,24 +12,44 @@ import {
   SerializedCanvasDocument,
   CanvasDocument,
   isFdmInstanceContainerReference,
+  PinnedSensorValueContext,
+  FiltersContext,
+  SerializedFilter,
 } from '../types';
 
 import { isNotUndefined } from './isNotUndefined';
 
 const serializeCanvasContext = (
   state: IndustryCanvasState
-): SerializedIndustryCanvasState['context'] =>
-  Object.keys(state.pinnedTimeseriesIdsByAnnotationId).map((annotationId) => ({
-    type: 'PINNED_SENSOR_VALUE',
-    payload: state.pinnedTimeseriesIdsByAnnotationId[annotationId].map(
-      (timeseriesId) => ({
-        targetId: annotationId,
-        resourceId: timeseriesId.toString(),
-        rules: state.liveSensorRulesByAnnotationIdByTimeseriesId ?? [],
-        version: 1,
-      })
-    ),
-  }));
+): SerializedIndustryCanvasState['context'] => [
+  ...Object.keys(state.pinnedTimeseriesIdsByAnnotationId).map(
+    (annotationId): PinnedSensorValueContext => ({
+      type: 'PINNED_SENSOR_VALUE',
+      payload: state.pinnedTimeseriesIdsByAnnotationId[annotationId].map(
+        (timeseriesId) => ({
+          targetId: annotationId,
+          resourceId: timeseriesId.toString(),
+          rules: state.liveSensorRulesByAnnotationIdByTimeseriesId ?? [],
+          version: 1,
+        })
+      ),
+    })
+  ),
+  {
+    type: 'FILTERS',
+    payload: {
+      filters: state.filters.map(
+        (filter): SerializedFilter => ({
+          ...filter,
+          appliesWhen: filter.appliesWhen?.map((rule) => ({
+            valueAtPath: rule.valueAtPath,
+            isEqualTo: rule.isEqualTo === undefined ? null : rule.isEqualTo,
+          })),
+        })
+      ),
+    },
+  },
+];
 
 export const serializeCanvasState = (
   state: IndustryCanvasState
@@ -76,6 +96,28 @@ const deserializeLiveSensorRules = (
   }, {});
 };
 
+const deserializeFilters = (
+  context: SerializedIndustryCanvasState['context']
+): IndustryCanvasState['filters'] => {
+  const filtersContext = context.find((ctx) => ctx.type === 'FILTERS') as
+    | FiltersContext
+    | undefined;
+
+  if (filtersContext === undefined) {
+    return [];
+  }
+
+  return (
+    filtersContext?.payload.filters.map((filter) => ({
+      ...filter,
+      appliesWhen: filter.appliesWhen?.map((rule) => ({
+        ...rule,
+        isEqualTo: rule.isEqualTo === null ? undefined : rule.isEqualTo,
+      })),
+    })) ?? []
+  );
+};
+
 export const deserializeCanvasState = async (
   sdk: CogniteClient,
   state: SerializedIndustryCanvasState
@@ -100,6 +142,7 @@ export const deserializeCanvasState = async (
       liveSensorRulesByAnnotationIdByTimeseriesId: deserializeLiveSensorRules(
         state.context
       ),
+      filters: deserializeFilters(state.context),
     };
   } catch (error) {
     console.error('Error deserializing canvas container', error);
@@ -108,6 +151,7 @@ export const deserializeCanvasState = async (
       canvasAnnotations: [],
       pinnedTimeseriesIdsByAnnotationId: {},
       liveSensorRulesByAnnotationIdByTimeseriesId: {},
+      filters: [],
     };
   }
 };
