@@ -326,6 +326,7 @@ jobs:
     name: Comment build previews
     runs-on: ubuntu-20.04
     needs: [setup, build]
+    if: ${{ !cancelled() && !failure() && needs.build.result != 'failure' && needs.build.result != 'cancelled' && needs.setup.outputs.affected-apps != '' && toJson(fromJson(needs.setup.outputs.affected-apps)) != '[]' }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -365,6 +366,7 @@ jobs:
     name: Comment build shell previews
     runs-on: ubuntu-20.04
     needs: [setup, build-shell]
+    if: ${{ !cancelled() && !failure() && needs.build-shell.result != 'failure' && needs.build-shell.result != 'cancelled' && needs.setup.outputs.affected-shell-apps != '' && toJson(fromJson(needs.setup.outputs.affected-shell-apps)) != '[]' }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -405,6 +407,7 @@ jobs:
     name: Comment storybook previews
     runs-on: ubuntu-20.04
     needs: [setup, build-storybook]
+    if: ${{ !cancelled() && !failure() && needs.build-storybook.result != 'failure' && needs.build-storybook.result != 'cancelled' && needs.setup.outputs.affected-storybook != '' && toJson(fromJson(needs.setup.outputs.affected-storybook)) != '[]' }}
     steps:
       - uses: actions/checkout@v3
         with:
