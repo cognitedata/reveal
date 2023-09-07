@@ -17,10 +17,6 @@ function enableImportMapOverrides() {
     overrides.externalOverride.forEach((extOverride, i) => {
       importMapOverrides.addOverride(extOverride, overrides.overrideUrl[i]);
     });
-
-    params.delete('externalOverride');
-    params.delete('overrideUrl');
-    window.location.search = params.toString();
   }
 
   importMapOverrides.enableUI();
