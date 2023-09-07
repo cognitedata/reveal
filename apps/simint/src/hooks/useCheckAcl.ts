@@ -66,9 +66,11 @@ export const useCheckAcl = (requiredCapabilities: RequiredCapability[]) => {
 
   return {
     capabilityMap,
-    hasAllCapabilities: Object.values(capabilityMap).reduce(
-      (acc, curr) => acc && curr,
-      true
-    ),
+    // TODO - POFSP-82
+    // hasAllCapabilities: Object.values(capabilityMap).reduce(
+    //   (acc, curr) => acc && curr,
+    //   true
+    // ),
+    hasAllCapabilities: true,
   };
 };
