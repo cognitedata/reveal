@@ -29,6 +29,7 @@ import MouseWheelAction from '@data-exploration-app/containers/ThreeD/components
 import OverlayTool from '@data-exploration-app/containers/ThreeD/components/OverlayTool';
 import LoadSecondaryModels from '@data-exploration-app/containers/ThreeD/load-secondary-models/LoadSecondaryModels';
 import { LabelEventHandler } from '@data-exploration-app/containers/ThreeD/tools/SmartOverlayTool';
+import { useJourney } from '@data-exploration-app/hooks';
 import {
   useFlagAssetMappingsOverlays,
   useFlagPointCloudSearch,
@@ -39,9 +40,9 @@ import { PREVIEW_SIDEBAR_MIN_WIDTH } from '@data-exploration-lib/core';
 
 import zIndex from '../../utils/zIndex';
 import { StyledSplitter } from '../elements';
+import { DetailsOverlay } from '../Exploration/DetailsOverlay';
 
 import { AssetMappingsSidebar } from './AssetMappingsSidebar';
-import { AssetPreviewSidebar } from './AssetPreviewSidebar';
 import { ThreeDContext } from './contexts/ThreeDContext';
 import HighQualityToggle from './high-quality-toggle/HighQualityToggle';
 import LoadImages360 from './load-secondary-models/LoadImages360';
@@ -107,8 +108,6 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
     splitterColumnWidth,
     setSplitterColumnWidth,
     revisionId,
-    tab,
-    setTab,
     secondaryModels,
     viewState,
     images360,
@@ -254,11 +253,15 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
     [setSelectedAssetId]
   );
 
+  const [journey, setJourney] = useJourney();
+
   useEffect(() => {
-    if (!selectedAssetId) {
+    if (!selectedAssetId || journey === undefined) {
       setAssetDetailsExpanded(false);
+    } else {
+      setAssetDetailsExpanded(true);
     }
-  }, [selectedAssetId, setAssetDetailsExpanded]);
+  }, [selectedAssetId, setAssetDetailsExpanded, journey]);
 
   const [labelsVisibility, setLabelsVisibility] = useState(
     useOverlays ? assetHighlightMode : false
@@ -310,8 +313,8 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
   if (!revisionId && !image360SiteId) {
     return null;
   }
-  const shouldShowAssetPreviewSidebar =
-    !!selectedAssetId && assetDetailsExpanded;
+  const shouldShowResourcePreview = !!selectedAssetId && assetDetailsExpanded;
+
   return (
     <>
       <ThreeDTitle id={modelId} image360SiteId={image360SiteId} />
@@ -437,7 +440,7 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
                     />
                   )}
                 </SidebarContainer>
-                {!!selectedAssetId && !assetDetailsExpanded && (
+                {!!selectedAssetId && !shouldShowResourcePreview && (
                   <NodePreviewContainer>
                     <NodePreview
                       assetId={selectedAssetId}
@@ -445,8 +448,13 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
                         setSelectedAssetId(undefined);
                       }}
                       openDetails={(newTab?: ResourceTabType) => {
-                        setTab(newTab);
-                        setAssetDetailsExpanded(true);
+                        setJourney([
+                          {
+                            type: 'asset',
+                            id: selectedAssetId,
+                            selectedTab: newTab,
+                          },
+                        ]);
                       }}
                     />
                   </NodePreviewContainer>
@@ -454,15 +462,7 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
               </>
             )}
           </Reveal>
-          {shouldShowAssetPreviewSidebar && (
-            <AssetPreviewSidebar
-              assetId={selectedAssetId}
-              onClose={() => {
-                setAssetDetailsExpanded(false);
-              }}
-              tab={tab}
-            />
-          )}
+          {shouldShowResourcePreview && <DetailsOverlay />}
         </StyledSplitter>
       </PreviewContainer>
     </>

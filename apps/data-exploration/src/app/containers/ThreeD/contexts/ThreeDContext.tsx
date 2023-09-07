@@ -18,7 +18,6 @@ import {
   Image360Collection,
 } from '@cognite/reveal';
 
-import { ResourceTabType } from '@data-exploration-app/containers/ThreeD/NodePreview';
 import { SmartOverlayTool } from '@data-exploration-app/containers/ThreeD/tools/SmartOverlayTool';
 import { useDefault3DModelRevision } from '@data-exploration-lib/domain-layer';
 
@@ -84,8 +83,6 @@ type ThreeDContext = {
   setAssetHighlightMode: Dispatch<SetStateAction<boolean>>;
   splitterColumnWidth: number;
   setSplitterColumnWidth: Dispatch<SetStateAction<number>>;
-  tab?: ResourceTabType;
-  setTab: Dispatch<SetStateAction<ResourceTabType | undefined>>;
   secondaryModels: SecondaryModelOptions[];
   setSecondaryModels: Dispatch<SetStateAction<SecondaryModelOptions[]>>;
   images360: Image360DatasetOptions[];
@@ -116,7 +113,6 @@ export const ThreeDContext = createContext<ThreeDContext>({
   setPointCloudModel: noop,
   setSplitterColumnWidth: noop,
   setRevisionId: noop,
-  setTab: noop,
   secondaryModels: [],
   setSecondaryModels: noop,
   setAssetHighlightMode: noop,
@@ -303,8 +299,6 @@ export const ThreeDContextProvider = ({
       pointsOfInterest: true,
     });
 
-  const [tab, setTab] = useState<ResourceTabType | undefined>();
-
   const {
     isFetching: fetchingDefaultRevision,
     error,
@@ -389,8 +383,6 @@ export const ThreeDContextProvider = ({
         setSplitterColumnWidth,
         revisionId,
         setRevisionId,
-        tab,
-        setTab,
         secondaryModels,
         setSecondaryModels,
         assetHighlightMode,
