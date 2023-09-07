@@ -2,17 +2,11 @@
  * Copyright 2023 Cognite AS
  */
 
-import {
-  useRef,
-  type ComponentType,
-  useEffect,
-  type ReactElement,
-  type FunctionComponent
-} from 'react';
+import { useRef, useEffect, type ReactElement, type FunctionComponent } from 'react';
 
 export function withSuppressRevealEvents<T extends object>(
   Component: FunctionComponent<T>
-): ComponentType<T> {
+): FunctionComponent<T> {
   return function SuppressRevealEvents(props: T): ReactElement {
     const divRef = useRef<HTMLDivElement>(null);
 
