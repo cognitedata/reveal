@@ -28,13 +28,15 @@ const defaultStyle: ToolBarProps = {
   }
 };
 
-type RevealToolbarProps = ToolBarProps & {
+type RevealToolbarProps = ToolBarProps & CustomContent;
+
+type CustomContent = {
   customSettingsContent?: JSX.Element;
   lowFidelitySettings?: Partial<QualitySettings>;
   highFidelitySettings?: Partial<QualitySettings>;
 };
 
-const DefaultContentWrapper = (props: RevealToolbarProps): ReactElement => {
+const DefaultContentWrapper = (props: CustomContent): ReactElement => {
   return (
     <>
       <LayersButton />
@@ -57,15 +59,27 @@ const DefaultContentWrapper = (props: RevealToolbarProps): ReactElement => {
   );
 };
 
-const RevealToolbarContainer = (
-  props: RevealToolbarProps & { toolBarContent?: JSX.Element }
-): ReactElement => {
-  if (props.className === undefined && props.style === undefined) {
-    props = { ...props, ...defaultStyle };
+const RevealToolbarContainer = ({
+  customSettingsContent,
+  lowFidelitySettings,
+  highFidelitySettings,
+  toolBarContent,
+  ...restProps
+}: RevealToolbarProps & { toolBarContent?: JSX.Element }): ReactElement => {
+  if (restProps.className === undefined && restProps.style === undefined) {
+    restProps = { ...restProps, ...defaultStyle };
   }
   return (
     <I18nWrapper translations={translations} addNamespace="reveal-react-components">
-      <ToolBar {...props}>{props.toolBarContent ?? <DefaultContentWrapper {...props} />}</ToolBar>
+      <ToolBar {...restProps}>
+        {toolBarContent ?? (
+          <DefaultContentWrapper
+            customSettingsContent={customSettingsContent}
+            highFidelitySettings={highFidelitySettings}
+            lowFidelitySettings={lowFidelitySettings}
+          />
+        )}
+      </ToolBar>
     </I18nWrapper>
   );
 };
