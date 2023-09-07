@@ -43,10 +43,10 @@
     "@types/react": "18.2.12",
     "@types/styled-components": "5.1.26",
     "copyfiles": "2.4.1",
-    "docusaurus-plugin-typedoc": "0.19.2",
+    "docusaurus-plugin-typedoc": "0.20.1",
     "replace": "1.2.2",
     "rimraf": "5.0.1",
-    "typedoc": "0.24.8",
+    "typedoc": "0.25.0",
     "typedoc-plugin-markdown": "3.16.0",
     "typedoc-plugin-no-inherit": "1.4.0",
     "typescript": "5.2.2"
