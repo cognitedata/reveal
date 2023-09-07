@@ -82,11 +82,11 @@ const exampleHighQualitySettings: QualitySettings = {
 
 const exampleLowQualitySettings: QualitySettings = {
   cadBudget: {
-    maximumRenderCost: 95000000,
+    maximumRenderCost: 10_000_000,
     highDetailProximityThreshold: 100
   },
   pointCloudBudget: {
-    numberOfPoints: 12000000
+    numberOfPoints: 2_000_000
   },
   resolutionOptions: {
     maxRenderResolution: 1e5,
