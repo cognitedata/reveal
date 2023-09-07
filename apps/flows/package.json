@@ -19,11 +19,7 @@
     "save-missing": "cdf-i18n-utils-cli save-missing-keys-to-remote --namespace flows",
     "sort-keys": "cdf-i18n-utils-cli sort-local-keys --namespace flows"
   },
-  "dependencies": {
-    "@cognite/cdf-utilities": "^3.2.0",
-    "html-to-image": "^1.11.11",
-    "reactflow": "^11.7.0"
-  },
+  "dependencies": {},
   "devDependencies": {},
   "eslintConfig": {
     "extends": "react-app"
