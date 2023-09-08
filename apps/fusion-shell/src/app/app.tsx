@@ -9,7 +9,6 @@ import AllApps from './components/AllApps';
 import LandingPage from './components/LandingPage/LandingPage';
 import Navigation from './components/Navigation';
 import { UserProfilePage } from './components/UserProfilePage/UserProfilePage';
-import { useUserInformation } from './utils/hooks';
 
 const RoutesWrapper = styled.div`
   height: 100%;
@@ -22,7 +21,6 @@ export function App() {
   const project = getProject();
   const cluster = getCluster();
   const routerBasename = '/:project';
-  const { data: user } = useUserInformation();
 
   const [isReleaseBanner, setReleaseBanner] = useState<string>(
     () => localStorage.getItem(`isCDFReleaseBanner`) || 'true'
@@ -31,7 +29,7 @@ export function App() {
   return (
     <SubAppProvider
       user={{
-        id: user?.id || '',
+        id: 'unknown',
         cluster: cluster || '',
         project,
       }}
