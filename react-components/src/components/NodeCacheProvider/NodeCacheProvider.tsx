@@ -32,6 +32,7 @@ export const useFdmNodeCache = (): FdmNodeCacheContent => {
 
 export const useMappedEdgesForRevisions = (
   modelRevisionIds: Array<{ modelId: number; revisionId: number }>,
+  fetchViews = false,
   enabled = true
 ): UseQueryResult<ModelRevisionToEdgeMap> => {
   const content = useFdmNodeCache();
@@ -40,9 +41,10 @@ export const useMappedEdgesForRevisions = (
     [
       'reveal',
       'react-components',
-      ...modelRevisionIds.map((modelRevisionId) => modelRevisionId.revisionId.toString()).sort()
+      ...modelRevisionIds.map((modelRevisionId) => modelRevisionId.revisionId.toString()).sort(),
+      fetchViews
     ],
-    async () => await content.cache.getAllMappingExternalIds(modelRevisionIds),
+    async () => await content.cache.getAllMappingExternalIds(modelRevisionIds, fetchViews),
     { staleTime: Infinity, enabled: enabled && modelRevisionIds.length > 0 }
   );
 };
@@ -51,7 +53,7 @@ export const useFdm3dNodeData = (
   modelId: number | undefined,
   revisionId: number | undefined,
   treeIndex: number | undefined
-): UseQueryResult<FdmEdgeWithNode[]> => {
+): UseQueryResult<Required<FdmEdgeWithNode>[]> => {
   const content = useFdmNodeCache();
 
   const enableQuery =

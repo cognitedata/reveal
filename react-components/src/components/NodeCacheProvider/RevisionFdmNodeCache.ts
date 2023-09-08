@@ -38,23 +38,21 @@ export class RevisionFdmNodeCache {
     this._revisionId = revisionId;
   }
 
-  public async getClosestParentFdmData(searchTreeIndex: number): Promise<FdmEdgeWithNode[]> {
+  public async getClosestParentFdmData(searchTreeIndex: number): Promise<Required<FdmEdgeWithNode>[]> {
     const cachedFdmData = this._treeIndexToFdmEdges.get(searchTreeIndex);
 
-    if (cachedFdmData !== undefined) {
+    if (checkDefinedView(cachedFdmData)) {
       return cachedFdmData;
     }
 
-    const cachedFdmEdges = this._treeIndexToFdmEdges.get(searchTreeIndex);
-
-    if (cachedFdmEdges !== undefined) {
-      return await this.getDataWithViewsForFdmEdges(cachedFdmEdges, []);
+    if (cachedFdmData !== undefined) {
+      return await this.getDataWithViewsForFdmEdges(cachedFdmData, []);
     }
 
     return await this.findNodeDataFromAncestors(searchTreeIndex);
   }
 
-  private async findNodeDataFromAncestors(treeIndex: TreeIndex): Promise<FdmEdgeWithNode[]> {
+  private async findNodeDataFromAncestors(treeIndex: TreeIndex): Promise<Required<FdmEdgeWithNode>[]> {
     const { edges, ancestorsWithSameMapping, firstMappedAncestorTreeIndex } =
       await this.getClosestParentMapping(treeIndex);
 
@@ -64,7 +62,7 @@ export class RevisionFdmNodeCache {
 
     const cachedFdmData = this._treeIndexToFdmEdges.get(firstMappedAncestorTreeIndex);
 
-    if (cachedFdmData !== undefined) {
+    if (checkDefinedView(cachedFdmData)) {
       this.setCacheForNodes(ancestorsWithSameMapping, cachedFdmData);
 
       return cachedFdmData;
@@ -90,7 +88,7 @@ export class RevisionFdmNodeCache {
   private async getDataWithViewsForFdmEdges(
     nodeEdges: Array<{ edge: FdmCadEdge; node: Node3D }>,
     ancestorsWithSameMapping: Node3D[]
-  ): Promise<FdmEdgeWithNode[]> {
+  ): Promise<Required<FdmEdgeWithNode>[]> {
     const nodeInspectionResults = await inspectNodes(
       this._fdmClient,
       nodeEdges.map((edge) => edge.edge.startNode)
@@ -101,9 +99,9 @@ export class RevisionFdmNodeCache {
       view: nodeInspectionResults.items[ind].inspectionResults.involvedViewsAndContainers.views[0]
     }));
 
-    ancestorsWithSameMapping.forEach((ancestor) =>
-      this._treeIndexToFdmEdges.set(ancestor.treeIndex, dataWithViews)
-    );
+    ancestorsWithSameMapping.forEach((ancestor) => {
+      this._treeIndexToFdmEdges.set(ancestor.treeIndex, dataWithViews);
+    });
 
     return dataWithViews;
   }
@@ -180,6 +178,26 @@ export class RevisionFdmNodeCache {
     return ancestorMappings.edges;
   }
 
+  public async fetchViewsForAllEdges(): Promise<void> {
+    const allEdges = this.getAllEdges();
+
+    if (allEdges.length === 0) {
+      return;
+    }
+
+    const nodeInspectionResults = await inspectNodes(
+      this._fdmClient,
+      allEdges.map((edge) => edge.edge.startNode)
+    );
+
+    const dataWithViews = allEdges.map((fdmEdgeWithNode, ind) => ({
+      ...fdmEdgeWithNode,
+      view: nodeInspectionResults.items[ind].inspectionResults.involvedViewsAndContainers.views[0]
+    }));
+
+    this.setCacheForNodes(allEdges.map((edge) => edge.node), dataWithViews);
+  }
+
   public insertTreeIndexMappings(treeIndex: TreeIndex, edge: FdmEdgeWithNode): void {
     const edgeArray = this._treeIndexToFdmEdges.get(treeIndex);
     if (edgeArray === undefined) {
@@ -221,4 +239,10 @@ function getAncestorDataForTreeIndex(
     ancestorsWithSameMapping: ancestorsBelowTreeIndex,
     firstMappedAncestorTreeIndex: treeIndex
   };
+}
+
+export function checkDefinedView(edges?: FdmEdgeWithNode[]): edges is Required<FdmEdgeWithNode>[] {
+  if (!edges) return false;
+
+  return edges?.every((edge): edge is Required<FdmEdgeWithNode> => edge.view !== undefined);
 }
