@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type ReactElement, useState, useEffect, useMemo, useRef } from 'react';
+import { type ReactElement, useState, useEffect, useMemo, useRef, type RefObject } from 'react';
 import { Button, Dropdown, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import { type Reveal3DResourcesLayerStates } from './LayersContainer/types';
 import LayersContainer from './LayersContainer/LayersContainer';
@@ -16,7 +16,6 @@ import { useReveal } from '../RevealContainer/RevealContext';
 import { use3DModelName } from '../../hooks/use3DModelName';
 import { isEqual } from 'lodash';
 import { useRevealContainerElement } from '../RevealContainer/RevealContainerElementContext';
-import { useOutsideClick } from '../../hooks/useOutsideClick';
 
 export const LayersButton = (): ReactElement => {
   const viewer = useReveal();
@@ -41,11 +40,24 @@ export const LayersButton = (): ReactElement => {
     setVisible((prevState) => !prevState);
   };
 
-  const handleClickOutside = (): void => {
-    setVisible(false);
+  const outsideClick = (ref: RefObject<HTMLElement | null>): void => {
+    useEffect(() => {
+      const handleClick = (event: MouseEvent): void => {
+        if (ref.current !== null && !ref.current.contains(event.target as Node)) {
+          setVisible(false);
+        }
+      };
+
+      document.addEventListener('click', handleClick);
+
+      return () => {
+        document.removeEventListener('click', handleClick);
+      };
+    }, [ref]);
   };
+
   const ref = useRef<HTMLButtonElement | null>(null);
-  useOutsideClick(ref, handleClickOutside);
+  outsideClick(ref);
 
   useEffect(() => {
     const currentModels = viewer.models;
