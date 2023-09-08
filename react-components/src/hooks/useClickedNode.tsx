@@ -3,16 +3,9 @@
  */
 
 import { type CadIntersection, type PointerEventData } from '@cognite/reveal';
-import { type DmsUniqueIdentifier, type Source, useReveal } from '../';
+import { useReveal, type NodeDataResult } from '../';
 import { useEffect, useState } from 'react';
 import { useFdm3dNodeData } from '../components/NodeCacheProvider/NodeCacheProvider';
-import { type Node3D } from '@cognite/sdk';
-
-export type NodeDataResult = {
-  fdmNode: DmsUniqueIdentifier;
-  view: Source;
-  cadNode: Node3D;
-};
 
 export type ClickedNodeData = Partial<NodeDataResult> & {
   intersection: CadIntersection;
@@ -73,9 +66,9 @@ export const useClickedNodeData = (): ClickedNodeData | undefined => {
 
     setClickedNodeData({
       intersection: cadIntersection,
-      fdmNode: chosenNode.edge.startNode,
+      fdmNode: chosenNode.fdmId,
       view: chosenNode.view,
-      cadNode: chosenNode.node
+      cadNode: chosenNode.cadNode
     });
 
     function isWaitingForQueryResult(): boolean {

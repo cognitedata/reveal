@@ -19,15 +19,10 @@ export { RevealKeepAlive } from './components/RevealKeepAlive/RevealKeepAlive';
 export { useReveal } from './components/RevealContainer/RevealContext';
 export { use3DModelName } from './hooks/use3DModelName';
 export { useFdmAssetMappings } from './components/NodeCacheProvider/NodeCacheProvider';
-export {
-  useClickedNodeData,
-  type ClickedNodeData,
-  type NodeDataResult
-} from './hooks/useClickedNode';
+export { useClickedNodeData, type ClickedNodeData } from './hooks/useClickedNode';
 export { useCameraNavigation } from './hooks/useCameraNavigation';
 export { useMappedEdgesForRevisions } from './components/NodeCacheProvider/NodeCacheProvider';
 export { useIsRevealInitialized } from './hooks/useIsRevealInitialized';
-export { use3dNodeByExternalId } from './hooks/use3dNodeByExternalId';
 
 // Higher order components
 export { withSuppressRevealEvents } from './higher-order-components/withSuppressRevealEvents';
@@ -54,7 +49,8 @@ export {
 export type {
   AddImageCollection360Options,
   AddResourceOptions,
-  AddReveal3DModelOptions
+  AddReveal3DModelOptions,
+  NodeDataResult
 } from './components/Reveal3DResources/types';
 export type { CameraNavigationActions } from './hooks/useCameraNavigation';
 export type { Source, DmsUniqueIdentifier } from './utilities/FdmSDK';

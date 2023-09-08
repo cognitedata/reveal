@@ -7,10 +7,10 @@ import {
   RevealContainer,
   RevealToolbar,
   Reveal3DResources,
-  useClickedNodeData,
-  useCameraNavigation,
   type AddResourceOptions,
-  type FdmAssetStylingGroup
+  useClickedNodeData,
+  type FdmAssetStylingGroup,
+  useCameraNavigation
 } from '../src';
 import { Color } from 'three';
 import { type ReactElement, useState, useEffect } from 'react';

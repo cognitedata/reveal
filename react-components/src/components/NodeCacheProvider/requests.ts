@@ -14,7 +14,6 @@ import {
   type InModel3dEdgeProperties,
   SYSTEM_3D_EDGE_SOURCE
 } from '../../utilities/globalDataModels';
-import { chunk } from 'lodash';
 
 export async function fetchAncestorNodesForTreeIndex(
   modelId: number,
@@ -84,24 +83,14 @@ export async function inspectNodes(
   fdmClient: FdmSDK,
   dataNodes: DmsUniqueIdentifier[]
 ): Promise<InspectResultList> {
-  const chunkedNodes = chunk(dataNodes, 100);
-
-  const inspectionResult: InspectResultList = {
-    items: []
-  };
-
-  for (const nodesChunk of chunkedNodes) {
-    const chunkInspectionResults = await fdmClient.inspectInstances({
-      inspectionOperations: { involvedViewsAndContainers: {} },
-      items: nodesChunk.map((node) => ({
-        instanceType: 'node',
-        externalId: node.externalId,
-        space: node.space
-      }))
-    });
-
-    inspectionResult.items.push(...chunkInspectionResults.items);
-  }
+  const inspectionResult = await fdmClient.inspectInstances({
+    inspectionOperations: { involvedViewsAndContainers: {} },
+    items: dataNodes.map((node) => ({
+      instanceType: 'node',
+      externalId: node.externalId,
+      space: node.space
+    }))
+  });
 
   return inspectionResult;
 }

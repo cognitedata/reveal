@@ -6,7 +6,7 @@ import { type ReactElement, type ReactNode, createContext, useContext, useMemo }
 import { FdmNodeCache } from './FdmNodeCache';
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useFdmSdk, useSDK } from '../RevealContainer/SDKProvider';
-import { type FdmEdgeWithNode, type ModelRevisionToEdgeMap } from './types';
+import { type Fdm3dNodeData, type ModelRevisionToEdgeMap } from './types';
 
 import assert from 'assert';
 import { type DmsUniqueIdentifier } from '../../utilities/FdmSDK';
@@ -51,7 +51,7 @@ export const useFdm3dNodeData = (
   modelId: number | undefined,
   revisionId: number | undefined,
   treeIndex: number | undefined
-): UseQueryResult<FdmEdgeWithNode[]> => {
+): UseQueryResult<Fdm3dNodeData[]> => {
   const content = useFdmNodeCache();
 
   const enableQuery =
