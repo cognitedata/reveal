@@ -5,11 +5,19 @@ import { notification, Select } from 'antd';
 import { FormikErrors, useFormik } from 'formik';
 
 import { createLink } from '@cognite/cdf-utilities';
-import { Body, Divider, Flex, InputExp, Row, Heading } from '@cognite/cogs.js';
+import {
+  Body,
+  Divider,
+  Flex,
+  InputExp,
+  Row,
+  Heading,
+  Checkbox,
+} from '@cognite/cogs.js';
 
 import { useTranslation } from '../../common';
 import {
-  BaseMQTTSource,
+  CreateMQTTSource,
   MQTTSourceType,
   useCreateMQTTSource,
 } from '../../hooks/hostedExtractors';
@@ -32,9 +40,7 @@ export const MQTT_SOURCE_TYPE_OPTIONS: {
   { label: MQTT_SOURCE_TYPE_LABEL['mqtt3'], value: 'mqtt3' },
 ];
 
-type CreateMQTTSourceFormValues = Partial<BaseMQTTSource> & {
-  password?: string;
-};
+type CreateMQTTSourceFormValues = Partial<CreateMQTTSource>;
 
 export const CreateConnection = () => {
   const { t } = useTranslation();
@@ -94,6 +100,7 @@ export const CreateConnection = () => {
             ...(values.username && { username: values.username }),
             ...(values.password && { password: values.password }),
             ...(values.port && { port: values.port }),
+            useTls: values.useTls,
           });
         }
       },
@@ -194,6 +201,12 @@ export const CreateConnection = () => {
               value={values.port}
             />
           </Row>
+          <Checkbox
+            onChange={(e) => setFieldValue('useTls', e.target.checked)}
+            checked={values.useTls}
+          >
+            {t('use-tls')}
+          </Checkbox>
           <InputExp
             clearable
             fullWidth

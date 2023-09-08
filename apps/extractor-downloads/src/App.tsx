@@ -14,7 +14,7 @@ import { FlagProvider } from '@cognite/react-feature-flags';
 import { SDKProvider } from '@cognite/sdk-provider';
 
 import { translations } from './common';
-import { CreateConnection } from './components/CreateConnection';
+import { CreateConnection } from './components/create-connection';
 import { ExtractorDetails } from './components/ExtractorDetails';
 import { NewExtractor } from './components/NewExtractor';
 import SourceSystemDetails from './components/source-system-details/SourceSystemDetails';
