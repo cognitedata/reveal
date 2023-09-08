@@ -310,6 +310,22 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
     stylingState,
   ]);
 
+  useEffect(() => {
+    if (!selectedAssetId || !viewer) {
+      return;
+    }
+    fitCameraToAsset(
+      sdk,
+      queryClient,
+      viewer,
+      {
+        model: model!,
+        imageEntity: image360Entity,
+      },
+      selectedAssetId
+    );
+  }, [image360Entity, model, queryClient, sdk, selectedAssetId, viewer]);
+
   if (!revisionId && !image360SiteId) {
     return null;
   }

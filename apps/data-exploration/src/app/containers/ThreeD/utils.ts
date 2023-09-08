@@ -144,6 +144,10 @@ export const fitCameraToAsset = async (
 ) => {
   const threeDModel = assetSelectionState.model;
 
+  if (!threeDModel) {
+    return;
+  }
+
   if (threeDModel instanceof CogniteCadModel) {
     const { modelId, revisionId } = threeDModel;
     const mappings = await fetchAssetMappingsByAssetIdQuery(
