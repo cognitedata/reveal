@@ -1,9 +1,9 @@
-import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider as ReduxProvider } from 'react-redux';
 
 import App from '@simint-app/components/app/App';
 import { store } from '@simint-app/store';
 import GlobalStyles from '@simint-app/styles/GlobalStyles';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
 import {

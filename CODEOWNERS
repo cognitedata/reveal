@@ -42,7 +42,8 @@ app/contextualization-ui          @gayanDeegala @tommythorsen @cognitedata/match
 libs/contextualization            @gayanDeegala @tommythorsen @cognitedata/matchmakers
 
 # Copilot
-apps/copilot              @davidlky @andeplane @miladh @trygveu
+apps/copilot              @cognitedata/ai-team
+apps/notebook             @cognitedata/ai-team
 
 # IoT Hub
 apps/iot-hub              @davidlky @geircognite @muradsater

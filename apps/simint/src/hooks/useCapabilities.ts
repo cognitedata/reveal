@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import type { CogniteCapability, CogniteClient } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
@@ -10,7 +10,7 @@ export const useCapabilities = () => {
   const sdk = useSDK();
 
   const { data, isFetched } = useQuery<CogniteCapability>(
-    'capabilities',
+    ['capabilities'],
     async () => {
       try {
         const response = await getCapabilities(sdk);

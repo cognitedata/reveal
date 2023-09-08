@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import { getUserInformation } from '@cognite/cdf-sdk-singleton';
 
@@ -18,7 +18,7 @@ interface UserInfo {
 
 export const useUserInfo = () => {
   const { data, isLoading, isFetched } = useQuery<UserInfo>(
-    'user-info',
+    ['user-info'],
     getUserInformation
   );
 

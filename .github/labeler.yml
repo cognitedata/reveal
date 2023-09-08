@@ -1,5 +1,5 @@
 fusion-maintainers:
-  - '*'
+  - "*"
 
 platypus:
   - apps/platypus/**/*
@@ -69,3 +69,11 @@ access-management:
 
 flows:
   - apps/flows/*
+
+ai:
+  - apps/copilot/*
+  - apps/copilot/**/*
+  - libs/copilot-core/*
+  - libs/copilot-core/**/*
+  - apps/notebook/*
+  - apps/notebook/**/*

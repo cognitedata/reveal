@@ -1,10 +1,11 @@
-import { QueryClient, QueryClientProvider } from 'react-query';
 import {
   createBrowserRouter,
   createRoutesFromElements,
   Route,
   RouterProvider,
 } from 'react-router-dom';
+
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
 import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';

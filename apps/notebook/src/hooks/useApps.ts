@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import sdk from '@cognite/cdf-sdk-singleton';
 
@@ -20,4 +20,4 @@ const getApps = async () => {
   return apps;
 };
 
-export const useApps = () => useQuery('get-apps', getApps);
+export const useApps = () => useQuery(['get-apps'], getApps);
