@@ -100,6 +100,7 @@
   "extraction-pipeline_other": "Extraction pipelines",
   "fail-to-get-ext-pipeline": "Could not get extraction pipelines",
   "failure": "Failure",
+  "false": "false",
   "field-in-use": "{{field}} is already in use",
   "field-is-mandatory": "*This field is mandatory",
   "job-delete-success": "Job deleted",
@@ -216,6 +217,7 @@
   "toggle-edit-row": "Toggle edit row",
   "topic-filter-edit-success": "Topic filter updated successfully",
   "total": "Total",
+  "true": "true",
   "try-again-later": "Oops, an error occurred. Please try again later.",
   "value": "Value",
   "self-hosted-extractors": "Self-hosted extractors",
@@ -356,5 +358,6 @@
   "form-format-option-cognite": "Cognite message format",
   "form-format-option-rockwell": "Rockwell FactoryTalk",
   "form-format-option-value": "Values as string",
-  "form-format-option-custom": "+ Create custom format"
+  "form-format-option-custom": "+ Create custom format",
+  "use-tls": "Enable TLS against the broker"
 }

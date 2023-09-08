@@ -29,6 +29,7 @@ export type BaseMQTTSource = {
   host: string;
   port?: string;
   username: string;
+  useTls?: boolean;
 };
 
 export type ReadMQTTSource = BaseMQTTSource & {
