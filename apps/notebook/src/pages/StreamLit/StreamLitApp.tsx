@@ -36,6 +36,7 @@ import AppSettings from './AppSettings';
 import { saveApp } from './common';
 import { ShareModal } from './components/ShareModal';
 import { Editor } from './Editor/Editor';
+import { ALLOWED_FEATURE_POLICY } from './policy';
 import { AppData, StreamLitAppSpec } from './types';
 
 export const NOTEBOOK_ORIGIN = 'https://andeplane.github.io/stlite-dev';
@@ -496,6 +497,7 @@ const StreamLitApp = React.forwardRef(
               ref={myIframe}
               key={iframeKey}
               src={`${NOTEBOOK_ORIGIN}`}
+              allow={ALLOWED_FEATURE_POLICY}
             ></IFrame>
           </Flex>
         </Flex>
