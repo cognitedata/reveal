@@ -97,6 +97,8 @@ async function applyStyling(
 
     return model.styledNodeCollections.length;
   }
+
+  console.log('Styling applied', stylingGroups);
 }
 
 async function isEqualOrUpdated(

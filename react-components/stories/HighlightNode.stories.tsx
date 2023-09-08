@@ -65,7 +65,7 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
   const nodeData = useClickedNodeData();
   const viewer = useReveal();
   const isEnabled = stylingGroups.length > 0;
-  const {data} = useMappedEdgesForRevisions(viewer.models, isEnabled, isEnabled);
+  const {data} = useMappedEdgesForRevisions([{modelId:2231774635735416, revisionId: 912809199849811 }], true);
 
   useEffect(() => {
     console.log('MappedEdges', data);

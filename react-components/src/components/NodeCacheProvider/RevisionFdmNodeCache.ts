@@ -63,7 +63,7 @@ export class RevisionFdmNodeCache {
     const cachedFdmData = this._treeIndexToFdmEdges.get(firstMappedAncestorTreeIndex);
 
     if (checkDefinedView(cachedFdmData)) {
-      this.setCacheForNodes(ancestorsWithSameMapping, cachedFdmData);
+      this.setSameCacheForNodes(ancestorsWithSameMapping, cachedFdmData);
 
       return cachedFdmData;
     }
@@ -79,7 +79,7 @@ export class RevisionFdmNodeCache {
     return await this.getDataWithViewsForFdmEdges(nodeEdges, ancestorsWithSameMapping);
   }
 
-  private setCacheForNodes(nodes: Node3D[], nodeData: FdmEdgeWithNode[]): void {
+  private setSameCacheForNodes(nodes: Node3D[], nodeData: FdmEdgeWithNode[]): void {
     nodes.forEach((node) => {
       this._treeIndexToFdmEdges.set(node.treeIndex, nodeData);
     });
@@ -190,19 +190,28 @@ export class RevisionFdmNodeCache {
       allEdges.map((edge) => edge.edge.startNode)
     );
 
-    const dataWithViews = allEdges.map((fdmEdgeWithNode, ind) => ({
-      ...fdmEdgeWithNode,
-      view: nodeInspectionResults.items[ind].inspectionResults.involvedViewsAndContainers.views[0]
-    }));
-
-    this.setCacheForNodes(allEdges.map((edge) => edge.node), dataWithViews);
+    allEdges.forEach((fdmEdgeWithNode, ind) => {
+      const edgeWithView = {
+        ...fdmEdgeWithNode,
+        view: nodeInspectionResults.items[ind].inspectionResults.involvedViewsAndContainers.views[0]
+      }
+      
+      this.insertTreeIndexMappings(edgeWithView.node.treeIndex, edgeWithView);
+    });
   }
 
   public insertTreeIndexMappings(treeIndex: TreeIndex, edge: FdmEdgeWithNode): void {
     const edgeArray = this._treeIndexToFdmEdges.get(treeIndex);
+    const presentEdge = edgeArray?.find((e) => e.node.id === edge.node.id);
+
     if (edgeArray === undefined) {
       this._treeIndexToFdmEdges.set(treeIndex, [edge]);
     } else {
+      if (presentEdge !== undefined) {
+        presentEdge.view = edge.view;
+        return;
+      }
+
       edgeArray.push(edge);
     }
   }

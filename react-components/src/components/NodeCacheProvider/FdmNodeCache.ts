@@ -269,6 +269,9 @@ export class FdmNodeCache {
     revisionIds: number[],
     fdmClient: FdmSDK
   ): Promise<Array<EdgeItem<InModel3dEdgeProperties>>> {
+    if (revisionIds.length === 0)
+      return [];
+
     const versionedPropertiesKey = `${SYSTEM_3D_EDGE_SOURCE.externalId}/${SYSTEM_3D_EDGE_SOURCE.version}`;
     const filter = {
       in: {
