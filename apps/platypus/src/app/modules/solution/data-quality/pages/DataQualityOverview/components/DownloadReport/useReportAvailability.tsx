@@ -1,7 +1,7 @@
 import { DataSourceDto, RuleDto } from '@data-quality/api/codegen';
 import {
-  useDataSourceValidity,
   useLoadDataSource,
+  useLoadDatapoints,
   useLoadRules,
 } from '@data-quality/hooks';
 import { emptyDatapoints } from '@data-quality/utils/validationTimeseries';
@@ -25,8 +25,11 @@ import { Datapoints } from '@cognite/sdk/dist/src';
  */
 export const useReportAvailability = () => {
   const { dataSource, isLoading: dsLoading } = useLoadDataSource();
-  const { datapoints, loadingDatapoints } = useDataSourceValidity();
   const { rules, loadingRules } = useLoadRules();
+  const { datapoints, isLoading: loadingDatapoints } = useLoadDatapoints({
+    target: 'dataSource',
+    rules,
+  });
 
   const noRules = rules.length === 0;
   const noDataSourceValidity = !dataSource || emptyDatapoints(datapoints);

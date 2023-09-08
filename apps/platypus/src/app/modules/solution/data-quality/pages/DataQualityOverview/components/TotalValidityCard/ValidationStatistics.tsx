@@ -1,4 +1,4 @@
-import { useDataSourceValidity, useLoadRules } from '@data-quality/hooks';
+import { useLoadDatapoints, useLoadRules } from '@data-quality/hooks';
 import { abbreviateNumber } from '@data-quality/utils/numbers';
 import {
   TimeSeriesType,
@@ -24,7 +24,10 @@ export const ValidationStatistics = ({
   const { t } = useTranslation('ValidationStatistics');
 
   const { rules } = useLoadRules();
-  const { datapoints, loadingDatapoints } = useDataSourceValidity();
+  const { datapoints, isLoading: loadingDatapoints } = useLoadDatapoints({
+    target: 'dataSource',
+    rules,
+  });
 
   const timeSeriesIdScore = getTimeSeriesId(TimeSeriesType.SCORE, dataSourceId);
   const timeSeriesIdInstances = getTimeSeriesId(

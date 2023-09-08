@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 
 import {
-  useDataSourceValidity,
   useLoadDataSource,
+  useLoadDatapoints,
   useLoadRules,
 } from '@data-quality/hooks';
 import { emptyDatapoints } from '@data-quality/utils/validationTimeseries';
@@ -19,8 +19,11 @@ export const TotalValidityCard = () => {
   const { t } = useTranslation('TotalValidityCard');
 
   const { dataSource } = useLoadDataSource();
-  const { error: errorRules, loadingRules } = useLoadRules();
-  const { datapoints, loadingDatapoints } = useDataSourceValidity();
+  const { error: errorRules, loadingRules, rules } = useLoadRules();
+  const { datapoints, isLoading: loadingDatapoints } = useLoadDatapoints({
+    target: 'dataSource',
+    rules,
+  });
 
   const isLoading = loadingRules || loadingDatapoints;
   const isError = errorRules;

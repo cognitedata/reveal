@@ -55,55 +55,61 @@ export const DataQualityHome = () => {
     AccessAction.WRITE_DATA_VALIDATION
   );
 
-  if (isLoadingDataSource || isLoadingAccess) return <Spinner />;
+  const renderContent = () => {
+    if (isLoadingDataSource || isLoadingAccess) {
+      return <Spinner />;
+    }
 
-  if (error) {
-    return (
-      <BasicPlaceholder
-        type="EmptyStateFolderSad"
-        title={t(
-          'data_quality_not_found_ds',
-          'Something went wrong. The data source could not be loaded.'
-        )}
-      >
-        <Body size="small">{JSON.stringify(error?.stack?.error)}</Body>
-      </BasicPlaceholder>
-    );
-  }
+    if (error) {
+      return (
+        <BasicPlaceholder
+          type="EmptyStateFolderSad"
+          title={t(
+            'data_quality_not_found_ds',
+            'Something went wrong. The data source could not be loaded.'
+          )}
+        >
+          <Body size="small">{JSON.stringify(error?.stack?.error)}</Body>
+        </BasicPlaceholder>
+      );
+    }
 
-  if (!canReadDataValidation) {
-    return (
-      <BasicPlaceholder
-        type="SecureSecurity"
-        title={t(
-          'data_quality_no_access',
-          'Missing necessary access to view Data Validation.'
-        )}
-      >
-        <Body size="small">{accessErrorMessageRead}</Body>
-      </BasicPlaceholder>
-    );
-  }
+    if (!canReadDataValidation) {
+      return (
+        <BasicPlaceholder
+          type="SecureSecurity"
+          title={t(
+            'data_quality_no_access',
+            'Missing necessary access to view Data Validation.'
+          )}
+        >
+          <Body size="small">{accessErrorMessageRead}</Body>
+        </BasicPlaceholder>
+      );
+    }
 
-  if (!dataSource && !canWriteDataValidation) {
-    return (
-      <BasicPlaceholder
-        type="SecureSecurity"
-        title={t(
-          'data_quality_no_access_initiate_data_source',
-          'Missing access to initialize a data source.'
-        )}
-      >
-        <Body size="small">{accessErrorMessageWrite}</Body>
-      </BasicPlaceholder>
-    );
-  }
+    if (!dataSource && !canWriteDataValidation) {
+      return (
+        <BasicPlaceholder
+          type="SecureSecurity"
+          title={t(
+            'data_quality_no_access_initiate_data_source',
+            'Missing access to initialize a data source.'
+          )}
+        >
+          <Body size="small">{accessErrorMessageWrite}</Body>
+        </BasicPlaceholder>
+      );
+    }
+
+    return <DataQualityOverview />;
+  };
 
   return (
     <PageContentLayout>
       <PageContentLayout.Header data-cy="dq-page-header">
         <PageToolbar title={t('data_quality_title', 'Data quality')}>
-          {canReadDataValidation && (
+          {dataSource && canReadDataValidation && (
             <Flex direction="row" gap={8}>
               <Tooltip
                 content={disabledMessage}
@@ -139,7 +145,7 @@ export const DataQualityHome = () => {
       </PageContentLayout.Header>
 
       <PageContentLayout.Body data-cy="dq-page-content">
-        <DataQualityOverview />
+        {renderContent()}
       </PageContentLayout.Body>
 
       <UpsertRuleDrawer

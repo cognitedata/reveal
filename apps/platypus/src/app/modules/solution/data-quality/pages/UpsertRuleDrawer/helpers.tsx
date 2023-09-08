@@ -7,15 +7,10 @@ export const conditionsExample = `
 {
   "and": [
     {
-      "exists": {
-        "name": true
-      }
+      "exists": ["{name}"]
     },
     {
-      "equals": {
-        "left": "{name}",
-        "right": "Pipe-1"
-      }
+      "equals": ["{name}", "John Doe"]
     }
   ]
 }`;
