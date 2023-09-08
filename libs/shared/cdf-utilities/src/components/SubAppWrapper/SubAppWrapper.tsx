@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { Colors } from '@cognite/cogs.js';
 
 import { getCluster, getProject } from '../../utils';
+import { useUserInformation } from '../../utils/hooks';
 import { Breadcrumb } from '../Breadcrumb';
 import PageTitle from '../PageTitle/PageTitle';
 
@@ -25,9 +26,10 @@ const SubAppWrapper = ({
 }: SubAppWrapperProps) => {
   const cluster = getCluster() || '';
   const project = getProject();
+  const { data: user } = useUserInformation();
 
   return (
-    <SubAppProvider user={{ cluster, project, id: userId || '' }}>
+    <SubAppProvider user={{ cluster, project, id: userId || user?.id || '' }}>
       <PageTitle title={title} />
       <StyledWrapper>
         {breadcrumbItems ? <StyledBreadcrumb items={breadcrumbItems} /> : null}
