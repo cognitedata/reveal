@@ -168,7 +168,11 @@ export class FdmNodeCache {
       return this._completeRevisions.has(key);
     });
 
-    const cachedEdges = await this.getCachedEdges(cachedRevisionIds, fetchViews);
+    if (fetchViews) {
+      await this.fetchAllViewsForCachedRevisions(cachedRevisionIds);
+    }
+
+    const cachedEdges = cachedRevisionIds.map((id) => this.getCachedEdgesForRevision(id));
 
     const revisionToEdgesMap = await this.getAndCacheRevisionToEdgesMap(
       nonCachedRevisionIds,
@@ -182,32 +186,25 @@ export class FdmNodeCache {
     return revisionToEdgesMap;
   }
 
-  private async getCachedEdges(
-    modelRevisionIds: ModelRevisionId[],
-    fetchViews: boolean = false
-  ): Promise<Array<[ModelRevisionKey, FdmEdgeWithNode[]]>> {
-    const cachedEdges = modelRevisionIds.map(
-      async (id) => await this.getCachedEdgesForRevision(id, fetchViews)
-    );
-
-    const edges = await Promise.all(cachedEdges);
-
-    return edges;
-  }
-
-  private async getCachedEdgesForRevision(
-    id: {
+  private async fetchAllViewsForCachedRevisions(
+    revisions: Array<{
       modelId: number;
       revisionId: number;
-    },
-    fetchViews = false
-  ): Promise<[ModelRevisionKey, FdmEdgeWithNode[]]> {
-    const revisionCache = this.getOrCreateRevisionCache(id.modelId, id.revisionId);
-    const revisionKey = createModelRevisionKey(id.modelId, id.revisionId);
+    }>
+  ): Promise<void> {
+    for (const revision of revisions) {
+      const revisionCache = this.getOrCreateRevisionCache(revision.modelId, revision.revisionId);
 
-    if (fetchViews) {
       await revisionCache.fetchViewsForAllEdges();
     }
+  }
+
+  private getCachedEdgesForRevision(id: {
+    modelId: number;
+    revisionId: number;
+  }): [ModelRevisionKey, FdmEdgeWithNode[]] {
+    const revisionCache = this.getOrCreateRevisionCache(id.modelId, id.revisionId);
+    const revisionKey = createModelRevisionKey(id.modelId, id.revisionId);
 
     const cachedRevisionEdges = revisionCache.getAllEdges();
 

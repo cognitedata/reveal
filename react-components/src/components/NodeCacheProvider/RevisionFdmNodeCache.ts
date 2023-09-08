@@ -183,18 +183,18 @@ export class RevisionFdmNodeCache {
   }
 
   public async fetchViewsForAllEdges(): Promise<void> {
-    const allEdges = this.getAllEdges();
+    const allEdgesWithoutView = this.getAllEdges().filter((edge) => edge.view === undefined);
 
-    if (allEdges.length === 0) {
+    if (allEdgesWithoutView.length === 0) {
       return;
     }
 
     const nodeInspectionResults = await inspectNodes(
       this._fdmClient,
-      allEdges.map((edge) => edge.edge.startNode)
+      allEdgesWithoutView.map((edge) => edge.edge.startNode)
     );
 
-    allEdges.forEach((fdmEdgeWithNode, ind) => {
+    allEdgesWithoutView.forEach((fdmEdgeWithNode, ind) => {
       const edgeWithView = {
         ...fdmEdgeWithNode,
         view: nodeInspectionResults.items[ind].inspectionResults.involvedViewsAndContainers.views[0]
