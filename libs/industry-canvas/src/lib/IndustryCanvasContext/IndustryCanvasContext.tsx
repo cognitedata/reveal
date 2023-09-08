@@ -6,11 +6,10 @@ import {
   useState,
 } from 'react';
 
-import { useFlag } from '@cognite/react-feature-flags';
 import { useSDK } from '@cognite/sdk-provider';
 import { IdsByType } from '@cognite/unified-file-viewer';
 
-import { CommentsFeatureFlagKey, MetricEvent } from '../constants';
+import { MetricEvent } from '../constants';
 import { useCanvasArchiveMutation } from '../hooks/use-mutation/useCanvasArchiveMutation';
 import { useCanvasCreateMutation } from '../hooks/use-mutation/useCanvasCreateMutation';
 import { useCanvasSaveMutation } from '../hooks/use-mutation/useCanvasSaveMutation';
@@ -61,7 +60,6 @@ export type IndustryCanvasContextType = {
   setHasConsumedInitializeWithContainerReferences: (
     nextHasConsumed: boolean
   ) => void;
-  isCommentsEnabled: boolean;
   // Filter for the ICHomePage
   visibilityFilter: CanvasVisibility;
   setVisibilityFilter: (visibility: CanvasVisibility) => void;
@@ -102,7 +100,6 @@ export const IndustryCanvasContext = createContext<IndustryCanvasContextType>({
       'setHasConsumedInitializeWithContainerReferences called before initialisation'
     );
   },
-  isCommentsEnabled: false,
   visibilityFilter: CanvasVisibility.PRIVATE,
   setVisibilityFilter: () => {
     throw new Error('setVisibilityFilter called before initialisation');
@@ -126,10 +123,6 @@ export const IndustryCanvasProvider: React.FC<IndustryCanvasProviderProps> = ({
   const [visibilityFilter, setVisibilityFilter] = useState<CanvasVisibility>(
     CanvasVisibility.PRIVATE
   );
-
-  const { isEnabled: isCommentsEnabled } = useFlag(CommentsFeatureFlagKey, {
-    fallback: false,
-  });
 
   const {
     canvasId,
@@ -253,7 +246,6 @@ export const IndustryCanvasProvider: React.FC<IndustryCanvasProviderProps> = ({
         initializeWithContainerReferences,
         hasConsumedInitializeWithContainerReferences,
         setHasConsumedInitializeWithContainerReferences,
-        isCommentsEnabled,
         visibilityFilter,
         setVisibilityFilter,
       }}

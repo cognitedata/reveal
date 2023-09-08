@@ -184,7 +184,6 @@ export const IndustryCanvasPage = () => {
     createCanvas,
     setCanvasId,
     isCanvasLocked,
-    isCommentsEnabled,
   } = useIndustryCanvasContext();
 
   const { comments, isLoading: isCommentsLoading } = useListCommentsQuery({
@@ -224,12 +223,10 @@ export const IndustryCanvasPage = () => {
   // if comments is not enabled then return empty, hiding all comments for that project (even if canvas had comments before)
   const commentAnnotations = useMemo(
     () =>
-      isCommentsEnabled
-        ? comments
-            .filter((comment) => comment.targetContext !== undefined)
-            .map((comment) => createCommentAnnotation(comment))
-        : [],
-    [isCommentsEnabled, comments]
+      comments
+        .filter((comment) => comment.targetContext !== undefined)
+        .map((comment) => createCommentAnnotation(comment)),
+    [comments]
   );
 
   const {

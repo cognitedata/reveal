@@ -295,24 +295,6 @@ export const isCommentAnnotation = (
 ): annotation is CommentAnnotation =>
   annotation.metadata && annotation.metadata[COMMENT_METADATA_ID] === true;
 
-export type Comment = {
-  text: string;
-  author: string;
-  thread?: {
-    externalId: string;
-  };
-  canvas?: {
-    externalId: string;
-  };
-  x?: number;
-  y?: number;
-  externalId: string;
-  createdTime: Date;
-  lastUpdatedTime: Date;
-  // additive, not from api
-  subComments: Comment[];
-};
-
 // New user type introduced by Auth2.0 team
 export type OrganizationUserProfile = {
   id: string;
