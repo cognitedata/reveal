@@ -38,7 +38,9 @@ export class RevisionFdmNodeCache {
     this._revisionId = revisionId;
   }
 
-  public async getClosestParentFdmData(searchTreeIndex: number): Promise<Required<FdmEdgeWithNode>[]> {
+  public async getClosestParentFdmData(
+    searchTreeIndex: number
+  ): Promise<Array<Required<FdmEdgeWithNode>>> {
     const cachedFdmData = this._treeIndexToFdmEdges.get(searchTreeIndex);
 
     if (checkDefinedView(cachedFdmData)) {
@@ -52,7 +54,9 @@ export class RevisionFdmNodeCache {
     return await this.findNodeDataFromAncestors(searchTreeIndex);
   }
 
-  private async findNodeDataFromAncestors(treeIndex: TreeIndex): Promise<Required<FdmEdgeWithNode>[]> {
+  private async findNodeDataFromAncestors(
+    treeIndex: TreeIndex
+  ): Promise<Array<Required<FdmEdgeWithNode>>> {
     const { edges, ancestorsWithSameMapping, firstMappedAncestorTreeIndex } =
       await this.getClosestParentMapping(treeIndex);
 
@@ -88,7 +92,7 @@ export class RevisionFdmNodeCache {
   private async getDataWithViewsForFdmEdges(
     nodeEdges: Array<{ edge: FdmCadEdge; node: Node3D }>,
     ancestorsWithSameMapping: Node3D[]
-  ): Promise<Required<FdmEdgeWithNode>[]> {
+  ): Promise<Array<Required<FdmEdgeWithNode>>> {
     const nodeInspectionResults = await inspectNodes(
       this._fdmClient,
       nodeEdges.map((edge) => edge.edge.startNode)
@@ -194,8 +198,8 @@ export class RevisionFdmNodeCache {
       const edgeWithView = {
         ...fdmEdgeWithNode,
         view: nodeInspectionResults.items[ind].inspectionResults.involvedViewsAndContainers.views[0]
-      }
-      
+      };
+
       this.insertTreeIndexMappings(edgeWithView.node.treeIndex, edgeWithView);
     });
   }
@@ -250,8 +254,10 @@ function getAncestorDataForTreeIndex(
   };
 }
 
-export function checkDefinedView(edges?: FdmEdgeWithNode[]): edges is Required<FdmEdgeWithNode>[] {
-  if (!edges) return false;
+export function checkDefinedView(
+  edges?: FdmEdgeWithNode[]
+): edges is Array<Required<FdmEdgeWithNode>> {
+  if (edges === undefined) return false;
 
   return edges?.every((edge): edge is Required<FdmEdgeWithNode> => edge.view !== undefined);
 }

@@ -53,7 +53,7 @@ export const useFdm3dNodeData = (
   modelId: number | undefined,
   revisionId: number | undefined,
   treeIndex: number | undefined
-): UseQueryResult<Required<FdmEdgeWithNode>[]> => {
+): UseQueryResult<Array<Required<FdmEdgeWithNode>>> => {
   const content = useFdmNodeCache();
 
   const enableQuery =

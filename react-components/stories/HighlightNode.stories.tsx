@@ -10,9 +10,7 @@ import {
   useClickedNodeData,
   useCameraNavigation,
   type AddResourceOptions,
-  type FdmAssetStylingGroup,
-  useMappedEdgesForRevisions,
-  useReveal
+  type FdmAssetStylingGroup
 } from '../src';
 import { Color } from 'three';
 import { type ReactElement, useState, useEffect } from 'react';
@@ -63,13 +61,6 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
   const [stylingGroups, setStylingGroups] = useState<FdmAssetStylingGroup[]>([]);
   const cameraNavigation = useCameraNavigation();
   const nodeData = useClickedNodeData();
-  const viewer = useReveal();
-  const isEnabled = stylingGroups.length > 0;
-  const {data} = useMappedEdgesForRevisions([{modelId:2231774635735416, revisionId: 912809199849811 }], true);
-
-  useEffect(() => {
-    console.log('MappedEdges', data);
-  }, [data]);
 
   useEffect(() => {
     if (nodeData?.fdmNode === undefined) {
@@ -85,9 +76,9 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
         style: { cad: DefaultNodeAppearance.Highlighted }
       }
     ]);
-    
+
     void cameraNavigation.fitCameraToInstance(nodeData.fdmNode.externalId, nodeData.fdmNode.space);
-    
+
     console.log('Clicked node data', nodeData);
   }, [nodeData?.fdmNode]);
 
