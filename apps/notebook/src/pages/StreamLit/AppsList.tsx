@@ -83,7 +83,7 @@ st.write(get_assets())
                 },
               },
             },
-            requirements: ['pyodide-http==0.2.1', 'cognite-sdk==6.1.6'],
+            requirements: ['pyodide-http==0.2.1', 'cognite-sdk==6.21.1'],
           };
 
       const app: StreamLitAppSpec = {
