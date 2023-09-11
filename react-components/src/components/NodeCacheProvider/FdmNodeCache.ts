@@ -122,7 +122,7 @@ export class FdmNodeCache {
 
     const fdmKeySet = new Set(uniqueIds.map((id) => createFdmKey(id.space, id.externalId)));
 
-    const revisionToEdgesMap = await this.getAndCacheRevisionToEdgesMap(modelRevisions);
+    const revisionToEdgesMap = await this.getAndCacheRevisionToEdgesMap(modelRevisions, false);
 
     const modelDataPromises = modelRevisions.map(async ({ modelId, revisionId }) => {
       const revisionKey = createModelRevisionKey(modelId, revisionId);
@@ -226,7 +226,7 @@ export class FdmNodeCache {
 
   private async getAndCacheRevisionToEdgesMap(
     modelRevisionIds: ModelRevisionId[],
-    fetchViews: boolean = false
+    fetchViews: boolean
   ): Promise<Map<ModelRevisionKey, FdmEdgeWithNode[]>> {
     const revisionIds = modelRevisionIds.map((modelRevisionId) => modelRevisionId.revisionId);
     const edges = await this.getEdgesForRevisions(revisionIds, this._fdmClient);

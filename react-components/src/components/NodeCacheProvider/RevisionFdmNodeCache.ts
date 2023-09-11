@@ -206,11 +206,12 @@ export class RevisionFdmNodeCache {
 
   public insertTreeIndexMappings(treeIndex: TreeIndex, edge: FdmEdgeWithNode): void {
     const edgeArray = this._treeIndexToFdmEdges.get(treeIndex);
-    const presentEdge = edgeArray?.find((e) => e.node.id === edge.node.id);
 
     if (edgeArray === undefined) {
       this._treeIndexToFdmEdges.set(treeIndex, [edge]);
     } else {
+      const presentEdge = edgeArray?.find((e) => e.node.id === edge.node.id);
+
       if (presentEdge !== undefined) {
         presentEdge.view = edge.view;
         return;
