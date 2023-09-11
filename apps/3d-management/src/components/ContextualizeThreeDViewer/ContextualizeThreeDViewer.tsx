@@ -9,13 +9,16 @@ import { BoxGeometry, Color, Mesh, MeshBasicMaterial } from 'three';
 import { ToolBar } from '@cognite/cogs.js';
 import {
   RevealContainer,
-  PointCloudContainer,
   RevealToolbar,
 } from '@cognite/reveal-react-components';
 import { useSDK } from '@cognite/sdk-provider';
 
-import { CONTEXTUALIZE_EDITOR_HEADER_HEIGHT } from '../../pages/ContextualizeEditor/constants';
+import {
+  CONTEXTUALIZE_EDITOR_HEADER_HEIGHT,
+  defaultRevealColor,
+} from '../../pages/ContextualizeEditor/constants';
 
+import { RevealContent } from './containers/RevealContent';
 import { ContextualizeThreeDViewerToolbar } from './ContextualizeThreeDViewerToolbar';
 import { useSyncStateWithViewer } from './hooks/useSyncStateWithViewer';
 import {
@@ -121,13 +124,8 @@ export const ContextualizeThreeDViewer = ({
     <>
       <StyledSplitter>
         <ThreeDViewerStyled>
-          <RevealContainer color={new Color(0x4a4a4a)} sdk={sdk}>
-            <PointCloudContainer
-              addModelOptions={{
-                modelId: modelId,
-                revisionId: revisionId,
-              }}
-            />
+          <RevealContainer sdk={sdk} color={defaultRevealColor}>
+            <RevealContent modelId={modelId} revisionId={revisionId} />
 
             {/* TODO: There is a bug in the event listening with the toolbar. When you click on the toolbar, Reveal also listen to the click.
                       This causes for instance a annotation to be created if the toolbar is clicked when the cursor is over the model.

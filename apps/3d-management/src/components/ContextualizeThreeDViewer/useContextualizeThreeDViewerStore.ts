@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 
-import { Cognite3DViewer } from '@cognite/reveal';
-
+import { Cognite3DViewer, CognitePointCloudModel } from '@cognite/reveal';
 export type ThreeDPosition = {
   x: number;
   y: number;
