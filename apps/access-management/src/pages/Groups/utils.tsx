@@ -60,6 +60,7 @@ const nameToAclTypeMap = {
   hostedextractors: 'hostedExtractorsAcl',
   monitoringtasks: 'monitoringTasksAcl',
   scheduledcalculations: 'scheduledCalculationsAcl',
+  notifications: 'notificationsAcl',
 };
 
 const getCapabilityNameTranslationKey = {
@@ -89,6 +90,7 @@ const getCapabilityNameTranslationKey = {
   hostedextractors: 'hosted-extractors',
   monitoringtasks: 'monitoring-tasks',
   scheduledcalculations: 'scheduled-calculations',
+  notifications: 'notifications',
 };
 
 const prepareCapabilityTypeGroups = (_t: (key: TranslationKeys) => string) => {
@@ -142,6 +144,7 @@ const prepareCapabilityTypeGroups = (_t: (key: TranslationKeys) => string) => {
         'hostedextractors',
         'monitoringtasks',
         'scheduledcalculations',
+        'notifications',
       ],
     },
   ];
@@ -181,6 +184,9 @@ export const capabilityDescriptions = {
   datamodels: 'capability-desc-data-models',
   datamodelinstances: 'capability-desc-data-model-instances',
   hostedextractors: 'capability-desc-hosted-extractors',
+  monitoringtasks: 'capability-desc-monitoring-tasks',
+  scheduledcalculations: 'capability-desc-scheduled-calculations',
+  notifications: 'capability-desc-notifications',
 };
 
 const deprecatedAclTypes = ['genericsAcl', 'modelHostingAcl', 'typesAcl'];
