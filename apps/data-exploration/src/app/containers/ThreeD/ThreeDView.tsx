@@ -61,7 +61,7 @@ import {
   ShareButton,
 } from './toolbar';
 import {
-  AssetSelectionState,
+  AssetSelectionContext,
   findClosestAsset,
   fitCameraToAsset,
   getAssetIdFromImageAnnotation,
@@ -153,7 +153,7 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
   const setSelectedAssetAndFitCamera = useCallback(
     (
       newSelectedAssetId: number | undefined,
-      assetSelectionState: AssetSelectionState
+      assetSelectionState: AssetSelectionContext
     ) => {
       setSelectedAssetId(newSelectedAssetId);
       if (
@@ -180,7 +180,7 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
     ) => {
       (async () => {
         let closestAssetId: number | undefined;
-        const assetSelectionState: AssetSelectionState = {
+        const assetSelectionState: AssetSelectionContext = {
           model: model!,
         };
 
@@ -195,6 +195,7 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
           assetSelectionState.imageAnnotation =
             image360AnnotationIntersection.annotation;
           assetSelectionState.model = enteredImage360Collection;
+          assetSelectionState.imageEntity = image360Entity;
 
           setClickedModel(enteredImage360Collection);
         }

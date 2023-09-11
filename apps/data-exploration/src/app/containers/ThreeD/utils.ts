@@ -65,7 +65,7 @@ export const SECONDARY_MODEL_DISPLAY_LIMIT = 20;
 
 export type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 
-export type AssetSelectionState = {
+export type AssetSelectionContext = {
   model: CogniteModel | Image360Collection;
   imageAnnotation?: Image360Annotation | undefined;
   imageEntity?: Image360 | undefined;
@@ -139,10 +139,10 @@ export const fitCameraToAsset = async (
   sdk: CogniteClient,
   queryClient: QueryClient,
   viewer: Cognite3DViewer,
-  assetSelectionState: AssetSelectionState,
+  assetSelectionContext: AssetSelectionContext,
   assetId: number
 ) => {
-  const threeDModel = assetSelectionState.model;
+  const threeDModel = assetSelectionContext.model;
 
   if (!threeDModel) {
     return;
@@ -201,33 +201,15 @@ export const fitCameraToAsset = async (
   }
 
   if (is360ImageCollection(threeDModel)) {
-    const annotationInfo = await threeDModel.findImageAnnotations({
+    const annotationCandidates = await threeDModel.findImageAnnotations({
       assetRef: { id: assetId },
     });
 
-    if (annotationInfo.length === 0) {
+    const selectedAnnotation = chooseMostApplicable360Annotation(assetSelectionContext, annotationCandidates);
+
+    if (selectedAnnotation === undefined) {
       return;
     }
-
-    let selectedAnnotation: Image360AnnotationAssetQueryResult | undefined =
-      undefined;
-
-    if (assetSelectionState.imageAnnotation) {
-      selectedAnnotation = annotationInfo.find(
-        (info) => info.annotation === assetSelectionState.imageAnnotation
-      );
-    }
-
-    if (
-      assetSelectionState !== undefined &&
-      assetSelectionState.imageEntity !== undefined
-    ) {
-      selectedAnnotation = annotationInfo.find(
-        (info) => info.image === assetSelectionState.imageEntity
-      );
-    }
-
-    selectedAnnotation = annotationInfo?.[0];
 
     await viewer.enter360Image(
       selectedAnnotation.image,
@@ -264,6 +246,50 @@ export const fitCameraToAsset = async (
     tween.update(TWEEN.now());
   }
 };
+
+function chooseMostApplicable360Annotation(assetSelectionContext: AssetSelectionContext,
+                                           annotationCandidates: Image360AnnotationAssetQueryResult[]): Image360AnnotationAssetQueryResult | undefined {
+
+  if (annotationCandidates.length === 0) {
+    return undefined;
+  }
+
+  const matchingAnnotation = findMatchingAnnotation(assetSelectionContext.imageAnnotation);
+
+  if (matchingAnnotation !== undefined) {
+    return matchingAnnotation;
+  }
+
+  const annotationInSameEntity = findAnnotationInSameEntity(assetSelectionContext.imageEntity);
+
+  if (annotationInSameEntity !== undefined) {
+    return annotationInSameEntity;
+  }
+
+  return annotationCandidates[0];
+
+  function findMatchingAnnotation(queryAnnotation: Image360Annotation | undefined): Image360AnnotationAssetQueryResult | undefined {
+
+    if (queryAnnotation === undefined) {
+      return undefined;
+    }
+
+    return annotationCandidates.find(
+      (candidate) => candidate.annotation === queryAnnotation
+    );
+  }
+
+  function findAnnotationInSameEntity(imageEntity: Image360 | undefined): Image360AnnotationAssetQueryResult | undefined {
+
+    if (imageEntity === undefined) {
+      return undefined;
+    }
+
+    return annotationCandidates.find(
+      (candidate) => candidate.image === imageEntity
+    );
+  }
+}
 
 export async function fetchAssetNodeCollection(
   sdk: CogniteClient,
