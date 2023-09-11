@@ -1594,10 +1594,10 @@
     style-mod "^4.1.0"
     w3c-keyname "^2.2.4"
 
-"@cognite/acl-protos@^0.20.0":
-  version "0.20.3"
-  resolved "https://registry.yarnpkg.com/@cognite/acl-protos/-/acl-protos-0.20.3.tgz#33449c55d5600f32a2270f1a7175a89f0fb7772d"
-  integrity sha512-CmbxL1IRnX8pK6OSiRmcdDZkozxksmQ1bx6lhvDDmBHWBcR7fl12WSV0Dkd059dHZlrLrhH46gzCSox/WjI7+g==
+"@cognite/acl-protos@^0.20.4":
+  version "0.20.4"
+  resolved "https://registry.yarnpkg.com/@cognite/acl-protos/-/acl-protos-0.20.4.tgz#30abdbe0e78d64db4ebf9d4302e134db8ed2cee5"
+  integrity sha512-JMVk7I1RgtB5o8/s7XFb7gabJgWHC5iCRbTaRMFC6uxxHa55QGrLdTQua88w3CXdOGP9CbYFXf4m3AnoXVtDdg==
   dependencies:
     protobufjs "^6.10.3"
 
