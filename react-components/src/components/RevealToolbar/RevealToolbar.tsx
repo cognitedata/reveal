@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type ReactElement, type JSX } from 'react';
+import { type ReactElement, type JSX, forwardRef, type Ref } from 'react';
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
 import { ToolBar, type ToolBarProps } from '@cognite/cogs.js';
 import { FitModelsButton } from './FitModelsButton';
@@ -58,27 +58,34 @@ const DefaultContentWrapper = (props: CustomContent): ReactElement => {
   );
 };
 
-const RevealToolbarContainer = ({
-  customSettingsContent,
-  lowFidelitySettings,
-  highFidelitySettings,
-  toolBarContent,
-  ...restProps
-}: RevealToolbarProps & { toolBarContent?: JSX.Element }): ReactElement => {
-  return (
-    <I18nWrapper translations={translations} addNamespace="reveal-react-components">
-      <StyledToolBar {...restProps}>
-        {toolBarContent ?? (
-          <DefaultContentWrapper
-            customSettingsContent={customSettingsContent}
-            highFidelitySettings={highFidelitySettings}
-            lowFidelitySettings={lowFidelitySettings}
-          />
-        )}
-      </StyledToolBar>
-    </I18nWrapper>
-  );
-};
+const RevealToolbarContainer = forwardRef(
+  (
+    {
+      customSettingsContent,
+      lowFidelitySettings,
+      highFidelitySettings,
+      toolBarContent,
+      ...restProps
+    }: RevealToolbarProps & { toolBarContent?: JSX.Element },
+    ref: Ref<HTMLDivElement>
+  ): ReactElement => {
+    return (
+      <I18nWrapper translations={translations} addNamespace="reveal-react-components">
+        <StyledToolBar {...restProps} ref={ref}>
+          {toolBarContent ?? (
+            <DefaultContentWrapper
+              customSettingsContent={customSettingsContent}
+              highFidelitySettings={highFidelitySettings}
+              lowFidelitySettings={lowFidelitySettings}
+            />
+          )}
+        </StyledToolBar>
+      </I18nWrapper>
+    );
+  }
+);
+
+RevealToolbarContainer.displayName = 'RevealToolbarContainer';
 
 export const RevealToolbar = withSuppressRevealEvents(
   RevealToolbarContainer

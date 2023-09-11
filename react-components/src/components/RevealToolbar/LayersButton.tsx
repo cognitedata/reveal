@@ -40,7 +40,7 @@ export const LayersButton = (): ReactElement => {
     setVisible((prevState) => !prevState);
   };
 
-  const outsideClick = (ref: RefObject<HTMLElement | null>): void => {
+  const useOutsideClick = (ref: RefObject<HTMLElement | null>): void => {
     useEffect(() => {
       const handleClick = (event: MouseEvent): void => {
         if (ref.current !== null && !ref.current.contains(event.target as Node)) {
@@ -57,7 +57,7 @@ export const LayersButton = (): ReactElement => {
   };
 
   const ref = useRef<HTMLButtonElement | null>(null);
-  outsideClick(ref);
+  useOutsideClick(ref);
 
   useEffect(() => {
     const currentModels = viewer.models;
