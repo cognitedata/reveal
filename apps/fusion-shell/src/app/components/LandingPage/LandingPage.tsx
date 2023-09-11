@@ -29,6 +29,8 @@ export default function LandingPage({
     loginInfo.data?.domain === 'ftdatamosaix' ||
     loginInfo.data?.domain === 'ftdatamosaix-dev' ||
     loginInfo.data?.domain === 'ftdatamosaix-qa' ||
+    loginInfo.data?.domain === 'ftdatamosaix-preprod' ||
+    loginInfo.data?.domain === 'ftdatamosaix-demo' ||
     loginInfo.data?.domain === 'rockwellautomation' ||
     loginInfo.data?.domain === 'rockwelldemo';
 
