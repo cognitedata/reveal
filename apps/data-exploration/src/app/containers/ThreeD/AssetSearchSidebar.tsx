@@ -35,7 +35,7 @@ type ThreeDSidebarProps = {
   threeDModel?: CogniteModel | Image360Collection;
 };
 
-export const AssetMappingsSidebar = ({
+export const AssetSearchSidebar = ({
   modelId,
   revisionId,
   selectedAssetId,

@@ -36,13 +36,11 @@ import {
   useFlagPointsOfInterestFeature,
 } from '@data-exploration-app/hooks/flags';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
-import { PREVIEW_SIDEBAR_MIN_WIDTH } from '@data-exploration-lib/core';
 
 import zIndex from '../../utils/zIndex';
-import { StyledSplitter } from '../elements';
 import { DetailsOverlay } from '../Exploration/DetailsOverlay';
 
-import { AssetMappingsSidebar } from './AssetMappingsSidebar';
+import { AssetSearchSidebar } from './AssetSearchSidebar';
 import { ThreeDContext } from './contexts/ThreeDContext';
 import HighQualityToggle from './high-quality-toggle/HighQualityToggle';
 import LoadImages360 from './load-secondary-models/LoadImages360';
@@ -105,8 +103,6 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
     assetDetailsExpanded,
     assetHighlightMode,
     setAssetDetailsExpanded,
-    splitterColumnWidth,
-    setSplitterColumnWidth,
     revisionId,
     secondaryModels,
     viewState,
@@ -336,11 +332,7 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
     <>
       <ThreeDTitle id={modelId} image360SiteId={image360SiteId} />
       <PreviewContainer>
-        <StyledSplitter
-          secondaryInitialSize={splitterColumnWidth}
-          onSecondaryPaneSizeChange={setSplitterColumnWidth}
-          secondaryMinSize={PREVIEW_SIDEBAR_MIN_WIDTH}
-        >
+        <RootHeightWrapper>
           <Reveal
             key={`${modelId}.${revisionId}`}
             image360SiteId={image360SiteId}
@@ -442,7 +434,7 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
                   {(revealThreeDModel ||
                     image360 ||
                     (revealPointCloudModel && pointCloudSearchFeatureFlag)) && (
-                    <AssetMappingsSidebar
+                    <AssetSearchSidebar
                       modelId={modelId}
                       revisionId={revisionId}
                       selectedAssetId={selectedAssetId}
@@ -480,7 +472,7 @@ export const ThreeDView = ({ modelId, image360SiteId }: Props) => {
             )}
           </Reveal>
           {shouldShowResourcePreview && <DetailsOverlay />}
-        </StyledSplitter>
+        </RootHeightWrapper>
       </PreviewContainer>
     </>
   );
@@ -547,4 +539,10 @@ const SidebarContainer = styled(Flex)`
 const PreviewContainer = styled.div`
   height: 100%;
   display: contents;
+`;
+
+const RootHeightWrapper = styled.div`
+  height: 100%;
+  display: flex;
+  flex-direction: row;
 `;

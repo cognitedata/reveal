@@ -81,8 +81,6 @@ type ThreeDContext = {
   setAssetDetailsExpanded: Dispatch<SetStateAction<boolean>>;
   assetHighlightMode: boolean;
   setAssetHighlightMode: Dispatch<SetStateAction<boolean>>;
-  splitterColumnWidth: number;
-  setSplitterColumnWidth: Dispatch<SetStateAction<number>>;
   secondaryModels: SecondaryModelOptions[];
   setSecondaryModels: Dispatch<SetStateAction<SecondaryModelOptions[]>>;
   images360: Image360DatasetOptions[];
@@ -97,13 +95,9 @@ type ThreeDContext = {
   setImage360: Dispatch<SetStateAction<Image360Collection | undefined>>;
 };
 
-const DETAILS_COLUMN_WIDTH = '@cognite/3d-details-column-width';
-const DEFAULT_COLUMN_WIDTH = 400;
-
 export const ThreeDContext = createContext<ThreeDContext>({
   assetDetailsExpanded: false,
   assetHighlightMode: false,
-  splitterColumnWidth: DEFAULT_COLUMN_WIDTH,
   setSelectedAssetId: noop,
   setAssetDetailsExpanded: noop,
   setViewState: noop,
@@ -111,7 +105,6 @@ export const ThreeDContext = createContext<ThreeDContext>({
   setOverlayTool: noop,
   setCadModel: noop,
   setPointCloudModel: noop,
-  setSplitterColumnWidth: noop,
   setRevisionId: noop,
   secondaryModels: [],
   setSecondaryModels: noop,
@@ -197,18 +190,6 @@ const getInitialState = () => {
     }
   })();
 
-  const splitterColumnWidth = (() => {
-    try {
-      const lsNumber = parseInt(
-        window.localStorage.getItem(DETAILS_COLUMN_WIDTH) || '',
-        10
-      );
-      return Number.isFinite(lsNumber) ? lsNumber : DEFAULT_COLUMN_WIDTH;
-    } catch {
-      return DEFAULT_COLUMN_WIDTH;
-    }
-  })();
-
   const revisionId = (() => {
     const s = initialParams.get(REVISION_KEY);
     const n = s ? parseInt(s, 10) : undefined;
@@ -223,7 +204,6 @@ const getInitialState = () => {
     selectedAssetId,
     expanded,
     revisionId,
-    splitterColumnWidth,
     secondaryModels,
     assetHighlightMode,
     images360,
@@ -246,7 +226,6 @@ export const ThreeDContextProvider = ({
     selectedAssetId: initialSelectedAssetId,
     viewState: initialViewState,
     slicingState: initialSlicingState,
-    splitterColumnWidth: initialSplitterColumnWidth,
     secondaryModels: initialSecondaryModels,
     revisionId: initialRevisionId,
     assetHighlightMode: initialAssetHighlightMode,
@@ -271,9 +250,6 @@ export const ThreeDContextProvider = ({
   );
   const [revisionId, setRevisionId] = useState<number | undefined>(
     initialRevisionId
-  );
-  const [splitterColumnWidth, setSplitterColumnWidth] = useState(
-    initialSplitterColumnWidth
   );
   const [assetDetailsExpanded, setAssetDetailsExpanded] =
     useState<boolean>(initialExpanded);
@@ -341,18 +317,6 @@ export const ThreeDContextProvider = ({
     images360,
   ]);
 
-  useEffect(() => {
-    try {
-      window.localStorage.setItem(
-        DETAILS_COLUMN_WIDTH,
-        `${splitterColumnWidth}`
-      );
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.error('Error in ThreeDContext', e);
-    }
-  }, [splitterColumnWidth]);
-
   if (error && !image360SiteId) {
     return <>Could not find a revision for model id {modelId}</>;
   }
@@ -379,8 +343,6 @@ export const ThreeDContextProvider = ({
         setSelectedAssetId,
         assetDetailsExpanded,
         setAssetDetailsExpanded,
-        splitterColumnWidth,
-        setSplitterColumnWidth,
         revisionId,
         setRevisionId,
         secondaryModels,

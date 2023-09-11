@@ -7,6 +7,8 @@ import React, {
 } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 
+import styled from 'styled-components';
+
 import { Alert } from 'antd';
 import { Vector3 } from 'three';
 
@@ -378,7 +380,7 @@ export function Reveal({
   }
 
   return (
-    <div ref={revealContainerRef}>
+    <RevealContainerDiv ref={revealContainerRef}>
       {children &&
         viewer &&
         models &&
@@ -387,7 +389,7 @@ export function Reveal({
           threeDModel: models.threeDModel,
           viewer,
         })}
-    </div>
+    </RevealContainerDiv>
   );
 }
 
@@ -401,3 +403,9 @@ export default function RevealWithErrorBoundary(props: Props) {
     </ErrorBoundary>
   );
 }
+
+const RevealContainerDiv = styled.div`
+  position: relative;
+  height: 100%;
+  flex: 1;
+`;
