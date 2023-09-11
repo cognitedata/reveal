@@ -53,9 +53,11 @@ import { Button } from '@cognite/cogs.js';
 
 import { useDataManagementPageUI } from '../../hooks/useDataManagemenPageUI';
 import { useDraftRows } from '../../hooks/useDraftRows';
+import { useGetFilteredRowsCount } from '../../hooks/useGetFilteredRowsCount';
 import { useListDataSource } from '../../hooks/useListDataSource';
 import { useNodesDeleteMutation } from '../../hooks/useNodesDeleteMutation';
 import { usePublishedRowsCountMapByType } from '../../hooks/usePublishedRowsCountMapByType';
+import { usePublishRowMutation } from '../../hooks/usePublishRowMutation';
 import { buildGridConfig } from '../../services/grid-config-builder';
 import { ColumnToggleType, ColumnToggle } from '../ColumnToggle/ColumnToggle';
 import { CreateTransformationModal } from '../CreateTransformationModal';
@@ -110,9 +112,14 @@ export const DataPreviewTable = forwardRef<
     const [isFilterModalVisible, setFilterModalVisible] = useState(false);
     // This property is used to trigger a rerender when a selection occurs in the grid
     const [, setSelectedPublishedRowsCount] = useState(0);
-    const [filteredRowCount, setFilteredRowCount] = useState<null | number>(
+    const [filteredRowsCount, setfilteredRowsCount] = useState<null | number>(
       null
     );
+    const countResult = useGetFilteredRowsCount({
+      dataModelType,
+      dataModelExternalId,
+      space,
+    });
     const [columnState, setColumnState] = useState<ColumnState[]>([]);
     const [shouldAlignColumnState, setShouldAlignColumnState] = useState(false);
     const gridRef = useRef<AgGridReact>(null);
@@ -153,6 +160,10 @@ export const DataPreviewTable = forwardRef<
       createNewDraftRow,
       deleteSelectedRows,
     } = useDraftRows();
+
+    useEffect(() => {
+      setfilteredRowsCount(countResult || null);
+    }, [countResult]);
 
     const [columnOrder, setColumnOrder] = useState<ColumnToggleType[]>(
       getColumnsInitialOrder(dataModelType, instanceIdCol)
@@ -204,6 +215,11 @@ export const DataPreviewTable = forwardRef<
       dataModelType,
       space,
     });
+    const addRowsMutation = usePublishRowMutation({
+      dataModelExternalId,
+      dataModelType,
+      space,
+    });
     const viewVersion = dataModelType.version;
 
     const [sidebarData, setSidebarData] = useState<DataPreviewSidebarData>();
@@ -219,8 +235,8 @@ export const DataPreviewTable = forwardRef<
         });
         return;
       }
-      dataManagementHandler
-        .ingestNodes({
+      addRowsMutation
+        .mutateAsync({
           space,
           model: [dataModelExternalId, `${dataModelType.name}_${viewVersion}`],
           version: viewVersion,
@@ -807,7 +823,7 @@ export const DataPreviewTable = forwardRef<
           onPublishedRowsCountClick={toggleShouldShowPublishedRows}
           onSearchInputValueChange={debouncedHandleSearchInputValueChange}
           publishedRowsCount={publishedRowsCountMap?.[dataModelType.name] || 0}
-          filteredRowCount={filteredRowCount}
+          filteredRowsCount={filteredRowsCount}
           shouldShowDraftRows={shouldShowDraftRows}
           shouldShowPublishedRows={shouldShowPublishedRows}
           onRefreshClick={() => gridRef.current?.api.purgeInfiniteCache()}
@@ -867,9 +883,6 @@ export const DataPreviewTable = forwardRef<
           >
             <CogDataGrid
               ref={gridRef}
-              onModelUpdated={(event) => {
-                setFilteredRowCount(event.api.getDisplayedRowCount());
-              }}
               onSortChanged={() => {
                 track('DataModel.Data.Sort', {
                   version,

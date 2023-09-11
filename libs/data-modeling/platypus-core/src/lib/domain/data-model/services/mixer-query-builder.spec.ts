@@ -267,6 +267,24 @@ user { name }
     expect(normalizeString(query)).toEqual(normalizeString(expected));
   });
 
+  it('should build aggregate query with filters', () => {
+    const service = createInstance();
+
+    const expected = `query aggregatePerson($filter: _SearchPersonFilter) {
+      
+          aggregatePerson(filter: $filter) {
+            items {
+              count {
+                externalId
+              }
+            }
+          }
+        }`;
+    const query = service.buildAggregateWithFiltersQuery('Person');
+
+    expect(normalizeString(query)).toEqual(normalizeString(expected));
+  });
+
   it('should build search query', () => {
     const service = createInstance();
 

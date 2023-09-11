@@ -15,6 +15,8 @@ import noop from 'lodash/noop';
 
 import { PrimitiveTypes } from '@cognite/cog-data-grid';
 
+import { useFetchFilteredRowsCount } from './useFetchFilteredRowsCount';
+
 export type ListDataSourceProps = {
   dataModelType: DataModelTypeDefsType;
   dataModelTypeDefs: DataModelTypeDefs;
@@ -33,6 +35,11 @@ export const useNestedListDataSource = ({
   const cursor = useRef('');
   const hasNextPage = useRef(false);
   const dataManagementHandler = useInjection(TOKENS.DataManagementHandler);
+  const { mutate: getFilteredRowsCount } = useFetchFilteredRowsCount({
+    dataModelExternalId: dataModelVersion.externalId,
+    dataModelType,
+    space: dataModelVersion.space,
+  });
   const dataSource: IDatasource = useMemo(
     () => ({
       getRows: async (params: IGetRowsParams) => {
@@ -88,6 +95,18 @@ export const useNestedListDataSource = ({
                   value: el.externalId,
                 })
               );
+              getFilteredRowsCount({
+                dataModelType,
+                dataModelId: dataModelVersion.externalId,
+                version: dataModelVersion.version,
+                filter: {
+                  [field]:
+                    searchTerm && isCustomType
+                      ? { externalId: { eq: searchTerm } }
+                      : {},
+                },
+                space: dataModelVersion.space,
+              });
               params.successCallback(callbackData, lastRow);
             })
             .catch((result: Result<PlatypusError>) => {
@@ -123,10 +142,13 @@ export const useNestedListDataSource = ({
     }),
     [
       dataManagementHandler,
-      onError,
+      dataModelVersion.externalId,
+      dataModelVersion.space,
+      dataModelVersion.version,
       dataModelType,
       dataModelTypeDefs,
-      dataModelVersion,
+      instanceSpace,
+      onError,
     ]
   );
 

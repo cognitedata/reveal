@@ -94,7 +94,7 @@ export const DataModelsList = () => {
 
       {dataModels && dataModels.length ? (
         <DataModelsTable
-          filteredRowCount={dataModelsCount}
+          filteredRowsCount={dataModelsCount}
           dataModels={dataModels}
           ref={gridRef}
           onDelete={(dataModel) => setDataModelToDelete(dataModel)}

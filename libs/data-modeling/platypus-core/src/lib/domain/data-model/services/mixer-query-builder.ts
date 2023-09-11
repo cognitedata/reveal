@@ -33,6 +33,20 @@ export class MixerQueryBuilder {
     }
   }
 
+  buildAggregateWithFiltersQuery(typeName: string): string {
+    const filterType = this.getFilterType(typeName, OPERATION_TYPE.SEARCH);
+    return `query aggregate${typeName}($filter: ${filterType}) {
+      
+          aggregate${typeName}(filter: $filter) {
+            items {
+              count {
+                externalId
+              }
+            }
+          }
+        }`;
+  }
+
   buildListQuery(dto: BuildListQueryDTO, isFDMv2 = false): string {
     const {
       dataModelType,

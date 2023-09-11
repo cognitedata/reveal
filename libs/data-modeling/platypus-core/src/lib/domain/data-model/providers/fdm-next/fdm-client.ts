@@ -32,6 +32,7 @@ import {
   GetByExternalIdDTO,
   DeleteDataModelOutput,
   IngestInstanceDTO,
+  FetchFilteredRowsCountDTO,
 } from '../../dto';
 import {
   MixerQueryBuilder,
@@ -753,6 +754,32 @@ export class FdmClient implements FlexibleDataModelingClient {
    */
   createSpace(dto: SpaceDTO): Promise<SpaceInstance> {
     return this.spacesApi.upsert([dto]).then((res) => res.items[0]);
+  }
+
+  /**
+   * Fetches the number of filtered rows by type
+   * @param dto
+   */
+  fetchFilteredRowsCount(dto: FetchFilteredRowsCountDTO): Promise<number> {
+    const query = this.queryBuilder.buildAggregateWithFiltersQuery(
+      dto.dataModelType.name
+    );
+    return this.mixerApiService
+      .runQuery({
+        graphQlParams: {
+          query,
+          variables: { filter: dto.filter },
+        },
+        dataModelId: dto.dataModelId,
+        schemaVersion: dto.version,
+        space: dto.space,
+      })
+      .then((res) => {
+        return (
+          res.data[`aggregate${dto.dataModelType.name}`]?.items[0]?.count
+            .externalId || 0
+        );
+      });
   }
 
   /**

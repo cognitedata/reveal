@@ -92,7 +92,7 @@ describe('PreviewPageHeader', () => {
       <PreviewPageHeader
         space="imdb"
         draftRowsCount={0}
-        filteredRowCount={null}
+        filteredRowsCount={null}
         isDeleteButtonDisabled={false}
         onAddTransformationClick={noop}
         onCreateClick={noop}
@@ -125,7 +125,7 @@ describe('PreviewPageHeader', () => {
       <PreviewPageHeader
         space="imdb"
         draftRowsCount={0}
-        filteredRowCount={null}
+        filteredRowsCount={null}
         isDeleteButtonDisabled={false}
         onAddTransformationClick={noop}
         onCreateClick={noop}
@@ -157,7 +157,7 @@ describe('PreviewPageHeader', () => {
       <PreviewPageHeader
         space="imdb"
         draftRowsCount={1}
-        filteredRowCount={null}
+        filteredRowsCount={null}
         isDeleteButtonDisabled={false}
         onAddTransformationClick={noop}
         onCreateClick={noop}
@@ -189,7 +189,7 @@ describe('PreviewPageHeader', () => {
       <PreviewPageHeader
         space="imdb"
         draftRowsCount={0}
-        filteredRowCount={null}
+        filteredRowsCount={null}
         isDeleteButtonDisabled={false}
         onAddTransformationClick={noop}
         onCreateClick={noop}
@@ -217,7 +217,7 @@ describe('PreviewPageHeader', () => {
       <PreviewPageHeader
         space="imdb"
         draftRowsCount={0}
-        filteredRowCount={null}
+        filteredRowsCount={null}
         isDeleteButtonDisabled={false}
         onAddTransformationClick={noop}
         onCreateClick={noop}
@@ -244,7 +244,7 @@ describe('PreviewPageHeader', () => {
       <PreviewPageHeader
         space="imdb"
         draftRowsCount={10}
-        filteredRowCount={null}
+        filteredRowsCount={null}
         isDeleteButtonDisabled={false}
         onAddTransformationClick={noop}
         onCreateClick={noop}
@@ -278,7 +278,7 @@ describe('PreviewPageHeader', () => {
       <PreviewPageHeader
         space="imdb"
         draftRowsCount={0}
-        filteredRowCount={null}
+        filteredRowsCount={null}
         isDeleteButtonDisabled={false}
         onAddTransformationClick={noop}
         onCreateClick={noop}

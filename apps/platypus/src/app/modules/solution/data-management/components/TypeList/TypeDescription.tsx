@@ -1,8 +1,13 @@
+import { useMemo } from 'react';
+import { useParams } from 'react-router-dom';
+
 import { DataModelTypeDefsType } from '@platypus/platypus-core';
 import { useManualPopulationFeatureFlag } from '@platypus-app/flags';
 import useSelector from '@platypus-app/hooks/useSelector';
 
 import { Detail } from '@cognite/cogs.js';
+
+import { useGetFilteredRowsCount } from '../../hooks/useGetFilteredRowsCount';
 
 import * as S from './elements';
 
@@ -22,14 +27,34 @@ export const TypeDescription: React.FC<TypeDescriptionProps> = ({
   const draftRowsData = useSelector(
     (state) => state.dataManagement.draftRows[dataModelType.name || ''] || []
   );
+  const { dataModelExternalId, space } = useParams() as {
+    dataModelExternalId: string;
+    space: string;
+    version: string;
+  };
 
-  const description = `${publishedRowsCount} instance${
-    publishedRowsCount > 1 ? 's' : ''
-  } ${
-    isManualPopulationEnabled
-      ? `/ ${draftRowsData.length} draft${draftRowsData.length > 1 ? 's' : ''}`
-      : ''
-  }`;
+  const filteredRowsCount = useGetFilteredRowsCount({
+    dataModelType,
+    dataModelExternalId,
+    space,
+  });
+
+  const activeRowsCount =
+    filteredRowsCount !== null && filteredRowsCount !== undefined
+      ? filteredRowsCount
+      : publishedRowsCount;
+
+  const description = useMemo(
+    () =>
+      `${activeRowsCount} instance${activeRowsCount > 1 ? 's' : ''} ${
+        isManualPopulationEnabled
+          ? `/ ${draftRowsData.length} draft${
+              draftRowsData.length > 1 ? 's' : ''
+            }`
+          : ''
+      }`,
+    [activeRowsCount, draftRowsData.length, isManualPopulationEnabled]
+  );
   return isLoading ? (
     <S.StyledSkeleton />
   ) : (

@@ -27,7 +27,7 @@ const RESULTS_PER_PAGE = 25;
 export interface DataModelsTableProps {
   dataModels: DataModel[];
   onDelete: (dataModel: DataModel) => void;
-  filteredRowCount: number;
+  filteredRowsCount: number;
 }
 
 export const DataModelsTable = React.forwardRef(
@@ -69,8 +69,8 @@ export const DataModelsTable = React.forwardRef(
     }, [localStorageProvider]);
 
     const totalPages = useMemo(
-      () => Math.ceil(props.filteredRowCount / RESULTS_PER_PAGE),
-      [props.filteredRowCount]
+      () => Math.ceil(props.filteredRowsCount / RESULTS_PER_PAGE),
+      [props.filteredRowsCount]
     );
 
     const handleRowClicked = useCallback((event: RowClickedEvent) => {

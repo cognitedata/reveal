@@ -43,6 +43,14 @@ export interface GetByExternalIdDTO {
   version: string;
 }
 
+export interface FetchFilteredRowsCountDTO {
+  dataModelType: DataModelTypeDefsType;
+  dataModelId: string;
+  version: string;
+  space: string;
+  filter?: QueryFilter | { [key in string]: QueryFilter };
+}
+
 export interface FetchPublishedRowsCountDTO {
   dataModelTypes: DataModelTypeDefsType[];
   dataModelId: string;

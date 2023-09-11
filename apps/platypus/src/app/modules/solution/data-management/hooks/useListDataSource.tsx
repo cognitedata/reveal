@@ -16,6 +16,8 @@ import { IDatasource, IGetRowsParams } from 'ag-grid-community';
 
 import { convertToGraphQlFilters } from '../utils/list-data-source-utils';
 
+import { useFetchFilteredRowsCount } from './useFetchFilteredRowsCount';
+
 export type ListDataSourceProps = {
   dataModelType: DataModelTypeDefsType;
   dataModelTypeDefs: DataModelTypeDefs;
@@ -38,6 +40,11 @@ export const useListDataSource = ({
   const hasNextPage = useRef(false);
   const dataManagementHandler = useInjection(TOKENS.DataManagementHandler);
   const { isEnabled } = useFilterBuilderFeatureFlag();
+  const getFilteredRowsCount = useFetchFilteredRowsCount({
+    dataModelExternalId: dataModelVersion.externalId,
+    dataModelType,
+    space: dataModelVersion.space,
+  });
 
   const dataSource: IDatasource = {
     getRows: async (params: IGetRowsParams) => {
@@ -57,6 +64,8 @@ export const useListDataSource = ({
         dataModelType.fields
       );
 
+      const filter = isEnabled ? params.context.filter : filterFromColumns;
+
       if (params.context.searchTerm) {
         return dataManagementHandler
           .searchData({
@@ -64,13 +73,20 @@ export const useListDataSource = ({
             dataModelTypeDefs,
             dataModelVersion,
             limit: 100,
-            filter: isEnabled ? params.context.filter : filterFromColumns,
+            filter,
             searchTerm: params.context.searchTerm,
           })
           .then((response) => {
             const result = response.getValue();
 
             params.successCallback(result, result.length);
+            getFilteredRowsCount.mutate({
+              dataModelType,
+              dataModelId: dataModelVersion.externalId,
+              version: dataModelVersion.version,
+              space: dataModelVersion.space,
+              filter: filter ? filter : {},
+            });
           })
           .catch((result: Result<PlatypusError>) => {
             params.failCallback();
@@ -93,7 +109,7 @@ export const useListDataSource = ({
             dataModelTypeDefs,
             dataModelVersion,
             limit,
-            filter: isEnabled ? params.context.filter : filterFromColumns,
+            filter,
             sort,
             nestedLimit: 2,
           })
@@ -107,6 +123,13 @@ export const useListDataSource = ({
               : -1;
 
             onSuccess(result.items);
+            getFilteredRowsCount.mutate({
+              dataModelType,
+              dataModelId: dataModelVersion.externalId,
+              version: dataModelVersion.version,
+              filter: filter ? filter : {},
+              space: dataModelVersion.space,
+            });
             params.successCallback(result.items, lastRow);
           })
           .catch((result: Result<PlatypusError>) => {

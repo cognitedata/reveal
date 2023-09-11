@@ -21,7 +21,7 @@ import * as S from './elements';
 type Props = {
   children?: React.ReactNode;
   draftRowsCount: number;
-  filteredRowCount: null | undefined | number;
+  filteredRowsCount: null | undefined | number;
   isDeleteButtonDisabled: boolean;
   onAddTransformationClick: () => void;
   onCreateClick: () => void;
@@ -44,7 +44,7 @@ type Props = {
 export function PreviewPageHeader({
   children,
   draftRowsCount,
-  filteredRowCount,
+  filteredRowsCount,
   isDeleteButtonDisabled,
   onAddTransformationClick,
   onCreateClick,
@@ -132,8 +132,8 @@ export function PreviewPageHeader({
                 opacity: !shouldShowPublishedRows ? '0.2' : '1.0',
               }}
               label={`${
-                filteredRowCount !== null && filteredRowCount !== undefined
-                  ? filteredRowCount
+                filteredRowsCount !== null && filteredRowsCount !== undefined
+                  ? filteredRowsCount
                   : publishedRowsCount
               }`}
             />
