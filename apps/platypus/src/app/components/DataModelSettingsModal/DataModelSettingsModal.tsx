@@ -34,7 +34,7 @@ export const DataModelSettingsModal = ({
   const handleSubmit = () => {
     update.mutate(
       {
-        description,
+        description: dataModelDescription,
         externalId,
         name: dataModelName,
         space,
