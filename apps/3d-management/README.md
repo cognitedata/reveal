@@ -15,10 +15,11 @@ To set up a full local development environment on your machine, please read setu
 An alternative is to use a devcontainer environment for this repo in VSCode. This can be loaded either locally in Docker (<https://code.visualstudio.com/docs/devcontainers/containers>), or in Github Codespaces (<https://docs.github.com/en/codespaces/overview>).
 On Codespaces the machine configuration should be 4 cores and 8 GB of memory, or more.
 
-To use the devcontainer in local docker setup, the best approach is to clone the repo directly into a container volume. 
+To use the devcontainer in local docker setup, the best approach is to clone the repo directly into a container volume.
+
 - Start Docker desktop.
-- Start "code" (VSCode) standalone anywhere from your terminal. 
-- In VSCODE, Press CTRL+Shift+P (Command Palette) and in the quick enter "clone" to locate the "Dev containers: Clone repository in named container volume". Either paste in the github URL for the cdf-ui-3d-management git repo (or a branch), or navigate to it by choosing the "Clone a repository from Github...", and select the repo and branch in the dropdowns. In the "Select the volume for the cloned repository" choose to either create a new named volume or use an existing one if you have already done this earlier. Enter the name of the folder to clone into, just use the suggested default. The repo will be cloned and the dev container will be set up. 
+- Start "code" (VSCode) standalone anywhere from your terminal.
+- In VSCODE, Press CTRL+Shift+P (Command Palette) and in the quick enter "clone" to locate the "Dev containers: Clone repository in named container volume". Either paste in the github URL for the cdf-ui-3d-management git repo (or a branch), or navigate to it by choosing the "Clone a repository from Github...", and select the repo and branch in the dropdowns. In the "Select the volume for the cloned repository" choose to either create a new named volume or use an existing one if you have already done this earlier. Enter the name of the folder to clone into, just use the suggested default. The repo will be cloned and the dev container will be set up.
 
 ## npm setup
 
@@ -35,4 +36,10 @@ Regardless of what dev environment setup you choose above, you need a NPM accoun
 
 ## Deploying to production, staging and development
 
-See the following guide for instructions on how to deploy to production, staging and development environments: https://cognitedata.atlassian.net/wiki/spaces/CE/pages/3893493926/Common+known+issues+and+FAQ 
+See the following guide for instructions on how to deploy to production, staging and development environments: https://cognitedata.atlassian.net/wiki/spaces/CE/pages/3893493926/Common+known+issues+and+FAQ
+
+## Features behind feature flags
+
+Some of the 3D management features are hidden behind feature flags. You can read more about adding new feature flags, adding new projects to already existing feature flags etc., in [this guide on Confluence](https://cognitedata.atlassian.net/wiki/spaces/DEGEXP/pages/3721068657/Feature+flags+unleash).
+
+The feature flag for the `Contextualize Editor` under `Upload 3D models` are called `3D_MANAGEMENT_contextualize_editor`.
