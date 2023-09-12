@@ -14,10 +14,10 @@ else
 fi
 # start cypress
 cd ../../
-docker-compose up --build &
-pid_docker=$!
+nx run fusion-shell:preview:production &
+pid_fusion_shell=$!
 nx e2e data-exploration-e2e --watch --browser chrome --env.DATA_EXPLORER_CLIENT_ID="$client_id" --env.DATA_EXPLORER_CLIENT_SECRET="$client_secret" --env.OVERRIDE_URL=https://localhost:3010/index.js &
 pid_cypress=$!
 wait
-kill -9 $pid_start $pid_docker $pid_cypress
+kill -9 $pid_start $pid_fusion_shell $pid_cypress
 
