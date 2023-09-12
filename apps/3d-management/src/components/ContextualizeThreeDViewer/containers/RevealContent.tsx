@@ -1,3 +1,4 @@
+import { DefaultCameraManager, CogniteModel } from '@cognite/reveal';
 import {
   useReveal,
   PointCloudContainer,
@@ -10,13 +11,29 @@ interface RevealContentProps {
 
 export const RevealContent = ({ modelId, revisionId }: RevealContentProps) => {
   const viewer = useReveal();
+
+  const handleOnLoad = (model: CogniteModel) => {
+    viewer.fitCameraToModel(model);
+    if (!(viewer.cameraManager instanceof DefaultCameraManager)) {
+      console.warn(
+        'Camera manager is not DefaultCameraManager, so click to change camera target will not work.'
+      );
+      return;
+    }
+
+    viewer.cameraManager.setCameraControlsOptions({
+      changeCameraTargetOnClick: true,
+      mouseWheelAction: 'zoomToCursor',
+    });
+  };
+
   return (
     <PointCloudContainer
       addModelOptions={{
         modelId: modelId,
         revisionId: revisionId,
       }}
-      onLoad={(model) => viewer.fitCameraToModel(model)}
+      onLoad={handleOnLoad}
     />
   );
 };

@@ -10,6 +10,7 @@ import { ToolBar } from '@cognite/cogs.js';
 import {
   RevealContainer,
   RevealToolbar,
+  withSuppressRevealEvents,
 } from '@cognite/reveal-react-components';
 import { useSDK } from '@cognite/sdk-provider';
 
@@ -162,7 +163,7 @@ const ThreeDViewerStyled = styled.div`
   ); /* sidebar height and top-bot paddings subtracted */
 `;
 
-const StyledToolBar = styled(ToolBar)`
+const StyledToolBar = styled(withSuppressRevealEvents(ToolBar))`
   position: absolute;
   left: 30px;
   bottom: 30px;
