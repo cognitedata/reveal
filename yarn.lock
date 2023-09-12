@@ -2066,10 +2066,10 @@
     use-event-callback "^0.1.0"
     use-key-hook "^1.3.0"
 
-"@cognite/reveal-react-components@0.13.2":
-  version "0.13.2"
-  resolved "https://registry.yarnpkg.com/@cognite/reveal-react-components/-/reveal-react-components-0.13.2.tgz#f13e9e07e3d10b776ba13aa51582e4fc5a9dd838"
-  integrity sha512-VNuCSic1yurTgEKUFAaWfUY/H6m9EwM1PBpiVPUTHOXIPNu3YPtzQTsG+TQxzQ2EHFJ4Devqn+JDmRkrp8MZ8Q==
+"@cognite/reveal-react-components@0.15.0":
+  version "0.15.0"
+  resolved "https://registry.yarnpkg.com/@cognite/reveal-react-components/-/reveal-react-components-0.15.0.tgz#8412b8a8ff1271ffad7a4944e922b54a7e4082f3"
+  integrity sha512-k0EA586vEtVs8JHPQ2/pCZFY6CuZ6IS/8CUc7FZ3PCZeWCURGhsyojpAxsrbbMGKNYb7hlmbxLKeE1mTFIN35Q==
   dependencies:
     "@tanstack/react-query" "^4.29.19"
     assert "^2.0.0"
