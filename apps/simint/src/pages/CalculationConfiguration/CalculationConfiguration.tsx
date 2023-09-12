@@ -430,7 +430,7 @@ const CalculationConfigurationContainer = styled.main`
     width: 100%;
     position: fixed;
     top: 7rem;
-    padding-bottom: 2.7em;
+    padding-bottom: 3.5em;
     z-index: ${LAYER.CALCULATION_CONFIGURATION_HEADER}; // less than WIZARD_PROGRESS_CONTAINER
   }
 `;
