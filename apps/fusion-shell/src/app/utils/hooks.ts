@@ -109,6 +109,11 @@ export const useExperimentalFeatures = () => {
     forceRerender: true,
   });
 
+  const { isEnabled: isFunctionsDisabled } = useFlag('DISABLE_FUNCTION_UI', {
+    fallback: false,
+    forceRerender: true,
+  });
+
   const experimentalFeatures: Record<string, boolean> = {
     jupyter: isDSHubEnabled, // This is the old DSHub that we should remove
     notebook: isJupyterNotebooksEnabled,
@@ -125,6 +130,7 @@ export const useExperimentalFeatures = () => {
     'coding-conventions': isCodingConventionsEnabled,
     'industry-canvas': isIndustryCanvasEnabled,
     infield: !isInfieldDisabled,
+    functions: !isFunctionsDisabled,
     // // Re-enable this if you need to hide Charts behind a feature flag.
     // charts: isChartsUIEnabled,
   };

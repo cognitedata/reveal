@@ -208,7 +208,12 @@ export const rawAppsData: RawAppItem[] = [
     icon: 'Upload',
     linkTo: '/functions',
     importMapApp: '@cognite/cdf-functions-ui',
-    hideInCluster: openshiftClusters,
+    hideInCluster: [
+      ...openshiftClusters,
+      'aw-was-gp-001.cognitedata.com',
+      'orangefield.cognitedata.com',
+      'aws-dub-dev.cognitedata.com',
+    ],
     img: images.CogniteFunctionsAppImg,
     ariaLabel: 'Go to Cognite Functions',
   },
