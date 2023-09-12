@@ -2,12 +2,14 @@ import { PropsWithChildren } from 'react';
 
 import styled, { css } from 'styled-components';
 
-import { Body } from '@cognite/cogs.js';
+import { Body, Icon, Tooltip } from '@cognite/cogs.js';
 
+import { getIcon } from '../../../utils/getIcon';
 import { Typography } from '../../Typography';
 
 interface Props {
   header?: string;
+  type?: string;
   title?: string | React.ReactNode;
   subtitle?: string | React.ReactNode;
   alignActions?: 'left' | 'right';
@@ -15,6 +17,7 @@ interface Props {
 
 export const WidgetHeader: React.FC<PropsWithChildren<Props>> = ({
   header,
+  type,
   title,
   subtitle,
   children,
@@ -27,8 +30,24 @@ export const WidgetHeader: React.FC<PropsWithChildren<Props>> = ({
     <Container>
       {(header || title || subtitle) && (
         <Content>
-          <HeaderText>{header}</HeaderText>
-          <Typography.Title size="xsmall">{title}</Typography.Title>
+          <Cell>
+            {type && header && (
+              <Tooltip content={type}>
+                <StyledIcon size={16} type={getIcon(type)} />
+              </Tooltip>
+            )}
+            <HeaderText>{header}</HeaderText>
+          </Cell>
+
+          <Cell>
+            {type && !header && (
+              <Tooltip content={type}>
+                <StyledIcon type={getIcon(type)} />
+              </Tooltip>
+            )}
+            <Typography.Title size="xsmall">{title}</Typography.Title>
+          </Cell>
+
           <Body level={6}>{subtitle}</Body>
         </Content>
       )}
@@ -68,6 +87,23 @@ const Content = styled.div`
   width: 80%;
 `;
 
+const Cell = styled.div`
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  & > * {
+    min-width: 0;
+  }
+
+  .cogs-tooltip__content {
+    display: flex;
+  }
+`;
+
 const HeaderText = styled(Body)`
   font-size: 12px;
+`;
+
+const StyledIcon = styled(Icon)`
+  height: 16px !important;
 `;

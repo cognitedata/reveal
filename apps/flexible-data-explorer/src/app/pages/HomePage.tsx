@@ -2,8 +2,6 @@ import { useEffect } from 'react';
 
 import styled from 'styled-components';
 
-import { Flex } from '@cognite/cogs.js';
-
 import { AIDisclaimer } from '../components/links/AIDisclaimer';
 import { DataExplorerLink } from '../components/links/DataExplorerLink';
 import { Categories } from '../containers/category/Categories';
@@ -32,29 +30,22 @@ export const HomePage = () => {
   return (
     <Page disableScrollbarGutter>
       <SearchContainer $isAIEnabled={isAIEnabled}>
-        <Flex
-          className="search-bar-container"
-          direction="column"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <AILabelsContainer $isAIEnabled={isAIEnabled}>
-            <AILabels />
-          </AILabelsContainer>
+        <AILabelsContainer $isAIEnabled={isAIEnabled}>
+          <AILabels />
+        </AILabelsContainer>
 
-          <SearchConfiguration header />
-          <SearchBarContainer>
-            <SearchBar options={SEARCH_BAR_OPTIONS} />
-          </SearchBarContainer>
+        <SearchConfiguration header />
+        <SearchBarContainer className="search-bar-container">
+          <SearchBar options={SEARCH_BAR_OPTIONS} />
+        </SearchBarContainer>
 
-          {isAIEnabled ? <AIDisclaimer /> : <DataExplorerLink />}
+        {isAIEnabled ? <AIDisclaimer /> : <DataExplorerLink />}
 
-          {isCopilotEnabled && (
-            <AISwitchContainer>
-              <AISwitch />
-            </AISwitchContainer>
-          )}
-        </Flex>
+        {isCopilotEnabled && (
+          <AISwitchContainer>
+            <AISwitch />
+          </AISwitchContainer>
+        )}
       </SearchContainer>
 
       <Page.Body>{!isAIEnabled && <Categories />}</Page.Body>
@@ -123,10 +114,12 @@ const SearchContainer = styled.div<{ $isAIEnabled: boolean }>`
 `;
 
 const SearchBarContainer = styled.div`
+  max-width: 774px;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 775px;
+  align-self: center;
   gap: 16px;
 `;
 

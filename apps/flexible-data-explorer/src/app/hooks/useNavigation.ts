@@ -37,7 +37,7 @@ export const useNavigation = () => {
         viewMode?: ViewMode;
       } = {}
     ) => {
-      const type = options.category || params.type;
+      const type = options.category;
 
       const { ignoreType = false, enableAISearch = false } = options;
 
@@ -54,7 +54,7 @@ export const useNavigation = () => {
         search: queryParams.toString(),
       });
     },
-    [basename, params, navigate, viewMode]
+    [basename, navigate, viewMode]
   );
 
   // NOTE: this is gonna be removed, there will be no list pages, only search results.

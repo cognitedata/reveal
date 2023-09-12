@@ -34,8 +34,8 @@ export const ThreeDWidget: React.FC<ThreeDWidgetProps> = () => {
   }
 
   return (
-    <Widget rows={6} columns={4}>
-      <Widget.Header title="3D">
+    <Widget rows={4} columns={2}>
+      <Widget.Header title="3D" type="3D">
         <Button.InternalRedirect
           onClick={() => {
             setViewMode('3d');
@@ -43,7 +43,7 @@ export const ThreeDWidget: React.FC<ThreeDWidgetProps> = () => {
         />
       </Widget.Header>
 
-      <Widget.Body state={status}>
+      <Widget.Body state={status} noPadding>
         <RevealContainer
           sdk={sdk}
           color={defaultRevealColor}

@@ -15,6 +15,7 @@ import {
 
 export interface CommonFilterProps {
   dataType: string;
+  displayName?: string;
   field: Field;
   value?: FieldValue;
   onBackClick: () => void;
@@ -23,6 +24,7 @@ export interface CommonFilterProps {
 
 export const CommonFilter: React.FC<CommonFilterProps> = ({
   dataType,
+  displayName,
   field,
   value: fieldValue,
   onBackClick,
@@ -68,8 +70,8 @@ export const CommonFilter: React.FC<CommonFilterProps> = ({
     <div onKeyUp={handleEnterPress}>
       <Menu>
         <MenuHeader
-          title={field.name}
-          subtitle={dataType}
+          title={field.displayName || field.name}
+          subtitle={displayName || dataType}
           onBackClick={onBackClick}
         />
 

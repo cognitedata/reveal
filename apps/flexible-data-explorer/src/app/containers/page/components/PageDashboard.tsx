@@ -1,6 +1,8 @@
 import { PropsWithChildren, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 
+import capitalize from 'lodash/capitalize';
+
 import { Button } from '../../../components/buttons/Button';
 import { useExpandedIdParams } from '../../../hooks/useParams';
 import { Page } from '../Page';
@@ -36,9 +38,11 @@ export const PageDashboard: React.FC<PropsWithChildren<Props>> = ({
   return (
     <Page>
       <Page.Header
-        header={hasExpandedWidget ? `${dataType} • ${expandedId}` : dataType}
-        title={customName}
-        subtitle={description}
+        header={hasExpandedWidget ? undefined : dataType}
+        title={hasExpandedWidget ? capitalize(expandedId) : customName}
+        subtitle={
+          hasExpandedWidget ? `${customName} • ${description}` : description
+        }
         loading={loading}
       >
         {hasExpandedWidget ? (

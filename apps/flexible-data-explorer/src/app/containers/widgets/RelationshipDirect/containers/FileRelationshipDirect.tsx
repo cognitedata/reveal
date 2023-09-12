@@ -44,7 +44,8 @@ export const FileRelationshipDirect: React.FC<RelationshipDirectProps> = ({
   return (
     <Widget id={id} rows={rows} columns={columns}>
       <Widget.Header
-        header={`File • ${capitalize(type.field)}`}
+        type="File"
+        header={capitalize(type.field)}
         title={renderValueTitle()}
       >
         <InstancePreview.File

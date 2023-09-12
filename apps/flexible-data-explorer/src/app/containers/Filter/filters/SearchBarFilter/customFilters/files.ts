@@ -4,6 +4,7 @@ const EXISTANCE_OPERATORS = [Operator.IS_SET, Operator.IS_NOT_SET];
 
 export const files: DataTypeOption = {
   name: 'Files',
+  displayName: 'File',
   fields: [
     // {
     //   name: 'Data Set',

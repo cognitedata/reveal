@@ -1,10 +1,12 @@
 import styled, { css } from 'styled-components';
 
-import { Body, Chip } from '@cognite/cogs.js';
+import { Chip } from '@cognite/cogs.js';
 
+import { Typography } from '../../components/Typography';
 import { useSearchCategoryParams } from '../../hooks/useParams';
 import { useTranslation } from '../../hooks/useTranslation';
 import { useFDM } from '../../providers/FDMProvider';
+import { formatBigNumbersWithSuffix, formatNumber } from '../../utils/number';
 
 import { useSearchDataTypeSortedByKeys } from './hooks/useSearchDataTypeSortedByKeys';
 import { useSearchTotalCount } from './hooks/useSearchTotalCount';
@@ -43,7 +45,10 @@ export const SearchCategories = () => {
           size="x-small"
           loading={isTotalCountLoading}
           type={isSelected(undefined) ? 'neutral' : undefined}
-          label={String(totalCount)}
+          label={formatBigNumbersWithSuffix(totalCount) ?? '?'}
+          tooltipProps={{
+            content: formatNumber(totalCount),
+          }}
         />
       </Content>
 
@@ -63,8 +68,11 @@ export const SearchCategories = () => {
               <NameText>File</NameText>
               <Chip
                 size="x-small"
-                type={isSelected('Files') ? 'neutral' : undefined}
-                label={String(count ?? '?')}
+                type={isSelected('File') ? 'neutral' : undefined}
+                label={formatBigNumbersWithSuffix(count) ?? '?'}
+                tooltipProps={{
+                  content: formatNumber(count),
+                }}
               />
             </Content>
           );
@@ -82,7 +90,10 @@ export const SearchCategories = () => {
               <Chip
                 size="x-small"
                 type={isSelected('TimeSeries') ? 'neutral' : undefined}
-                label={String(count ?? '?')}
+                label={formatBigNumbersWithSuffix(count) ?? '?'}
+                tooltipProps={{
+                  content: formatNumber(count),
+                }}
               />
             </Content>
           );
@@ -97,10 +108,13 @@ export const SearchCategories = () => {
             onClick={() => !isDisabled && handleSelectionClick(key)}
           >
             <NameText>{type?.displayName || type?.name}</NameText>
-            <Chip
+            <CountChip
               size="x-small"
               type={isSelected(key) ? 'neutral' : undefined}
-              label={String(count ?? '?')}
+              label={formatBigNumbersWithSuffix(count) ?? '?'}
+              tooltipProps={{
+                content: formatNumber(count),
+              }}
             />
           </Content>
         );
@@ -123,8 +137,14 @@ const Content = styled.div<{ selected?: boolean; disabled?: boolean }>`
   align-items: center;
   padding: 8px 12px;
   margin-bottom: 4px;
+  width: 100%;
   cursor: pointer;
   justify-content: space-between;
+  gap: 8px;
+
+  & > * {
+    min-width: 0;
+  }
 
   &:hover {
     background: rgba(59, 130, 246, 0.08);
@@ -153,4 +173,12 @@ const Content = styled.div<{ selected?: boolean; disabled?: boolean }>`
     `}
 `;
 
-const NameText = styled(Body).attrs({ level: 2 })``;
+const NameText = styled(Typography.Body)``;
+
+const CountChip = styled(Chip)`
+  && {
+    min-width: unset;
+    max-width: unset;
+    flex-shrink: 0;
+  }
+`;

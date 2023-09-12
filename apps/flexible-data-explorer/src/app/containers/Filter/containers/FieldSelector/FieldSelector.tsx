@@ -18,6 +18,7 @@ import { getFilteredFields, getMenuItemIcon } from './utils';
 
 export interface FieldSelectorProps {
   name: string;
+  displayName?: string;
   fields: Field[];
   onBackClick: () => void;
   onSelectField: (field: Field) => void;
@@ -26,6 +27,7 @@ export interface FieldSelectorProps {
 
 export const FieldSelector: React.FC<FieldSelectorProps> = ({
   name,
+  displayName,
   fields,
   onBackClick,
   onSelectField,
@@ -47,7 +49,7 @@ export const FieldSelector: React.FC<FieldSelectorProps> = ({
 
   return (
     <Menu>
-      <MenuHeader title={name} onBackClick={onBackClick} />
+      <MenuHeader title={displayName || name} onBackClick={onBackClick} />
 
       <SearchInput value={searchInputValue} onChange={setSearchInputValue} />
 

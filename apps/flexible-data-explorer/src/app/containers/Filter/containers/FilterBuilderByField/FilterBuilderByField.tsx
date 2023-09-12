@@ -7,6 +7,7 @@ import { FieldSelector } from '../FieldSelector';
 
 export interface FilterBuilderByFieldProps {
   name: string;
+  displayName?: string;
   fields: Field[];
   value?: ValueByField;
   onBackClick: () => void;
@@ -16,6 +17,7 @@ export interface FilterBuilderByFieldProps {
 
 export const FilterBuilderByField: React.FC<FilterBuilderByFieldProps> = ({
   name,
+  displayName,
   fields,
   value: initialValue = {},
   onBackClick,
@@ -46,6 +48,7 @@ export const FilterBuilderByField: React.FC<FilterBuilderByFieldProps> = ({
     return (
       <CommonFilter
         dataType={name}
+        displayName={displayName}
         field={selectedField}
         value={value[selectedField.name]}
         onBackClick={() => setSelectedField(undefined)}
@@ -57,6 +60,7 @@ export const FilterBuilderByField: React.FC<FilterBuilderByFieldProps> = ({
   return (
     <FieldSelector
       name={name}
+      displayName={displayName}
       fields={fields}
       onBackClick={onBackClick}
       onSelectField={setSelectedField}

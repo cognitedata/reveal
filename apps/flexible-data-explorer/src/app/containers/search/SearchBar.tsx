@@ -170,7 +170,7 @@ export const SearchBar: React.FC<Props> = ({
                 closePreview();
               }}
               onChange={(newValue) => {
-                navigate.toSearchPage(globalQuery, newValue);
+                navigate.toSearchPage(globalQuery, newValue, { category });
               }}
               filterMenuMaxHeight={options?.filterMenuMaxHeight}
             />
@@ -196,7 +196,8 @@ const Container = styled.div<{
   inverted?: boolean;
   $isAIEnabled?: boolean;
 }>`
-  width: ${(props) => props.width ?? '100%'};
+  width: 100%;
+  flex: 1;
   background-color: white;
   height: 52px;
   margin: 24px;

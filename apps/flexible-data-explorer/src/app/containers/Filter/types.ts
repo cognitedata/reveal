@@ -66,6 +66,7 @@ export interface BaseInputProps<T extends ValueType> {
 
 export interface DataType {
   name: string;
+  displayName?: string;
   description?: string;
 }
 
@@ -77,6 +78,7 @@ export type FieldType = 'string' | 'number' | 'date' | 'boolean';
 
 export interface Field {
   name: string;
+  displayName?: string;
   type: FieldType;
   operators?: Operator[];
 }
