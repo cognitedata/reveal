@@ -77,3 +77,6 @@ ai:
   - libs/copilot-core/**/*
   - apps/notebook/*
   - apps/notebook/**/*
+
+simint:
+  - apps/simint/*
