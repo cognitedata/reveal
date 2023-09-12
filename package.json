@@ -26,7 +26,7 @@
     "@cognite/cogs.js": "9.36.0",
     "@cognite/connect": "^0.0.8",
     "@cognite/e2e-auth": "^1.0.3",
-    "@cognite/gcs-browser-upload": "cognitedata/gcs-browser-upload#mn/temporary-azure-fix",
+    "@cognite/gcs-browser-upload": "cognitedata/gcs-browser-upload#f9df4edf48e3ae88281f5babe405299d8256b43f",
     "@cognite/llm-hub": "^0.0.23",
     "@cognite/metrics": "^2.0.0",
     "@cognite/react-document-table": "^1.22.2",

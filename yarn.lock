@@ -1911,9 +1911,9 @@
   resolved "https://registry.yarnpkg.com/@cognite/frontend-metrics-types/-/frontend-metrics-types-0.0.2.tgz#b6684a39222194e8a2a5f4e372d84404edd881f2"
   integrity sha512-i064sawWl1uKgfJ6QckXKutw3y+y8KpWuoerX3c/PlaEW/eC/gV6SHkK7q0ltxZcRxBZXhD8wlNMeh+vPxt1gA==
 
-"@cognite/gcs-browser-upload@cognitedata/gcs-browser-upload#mn/temporary-azure-fix":
+"@cognite/gcs-browser-upload@cognitedata/gcs-browser-upload#f9df4edf48e3ae88281f5babe405299d8256b43f":
   version "1.1.1"
-  resolved "https://codeload.github.com/cognitedata/gcs-browser-upload/tar.gz/e180a039d56e9572efbfe123bd607e7ce1e6f06e"
+  resolved "https://codeload.github.com/cognitedata/gcs-browser-upload/tar.gz/f9df4edf48e3ae88281f5babe405299d8256b43f"
   dependencies:
     axios "^0.21.1"
     es6-error "^4.1.1"
