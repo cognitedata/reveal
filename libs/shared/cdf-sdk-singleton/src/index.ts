@@ -39,8 +39,8 @@ let sdkTokenProvider: SdkClientTokenProvider = isUsingUnifiedSignin()
 
 /**
  * Creates a CogniteSDK Client.
- * When served from fusion it uses the default token providere
- * When used from unified singin, the provider is passed as arg
+ * When served from fusion it uses the default token provider
+ * When used from unified signin, the provider is passed as arg
  */
 export const createSdkClient = (
   clientOptions: ClientOptions,
@@ -91,7 +91,7 @@ const ensureCorrectBaseUrlP = urlCluster
   : getBaseUrl().then((baseUrl) => {
       if (baseUrl && baseUrl !== sdkSingleton.getBaseUrl()) {
         // @ts-ignore
-        sdkSingelton.httpClient.setBaseUrl(getUrl(baseUrl));
+        sdkSingleton.httpClient.setBaseUrl(getUrl(baseUrl));
       }
     });
 
