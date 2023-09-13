@@ -44,6 +44,9 @@ export const UserProfilePage = (): JSX.Element => {
         nameFieldLabel: t('name-field-label'),
         title: t('personal-info-tab-title'),
       }}
+      profileHeaderLocale={{
+        backBtnText: t('profile-header-back-btn-text'),
+      }}
       onTrackEvent={(eventName, metaData) => {
         trackEvent(`CdfHubNavigation.UserMenu.${eventName}`, metaData);
       }}

@@ -151,6 +151,7 @@
   "name-field-label": "Name",
   "no-search-results-desc": "Make sure all words are spelled correctly or try different keywords.",
   "no-search-results-for-text": "No results found for \"{{searchText}}\"",
+  "profile-header-back-btn-text": "Back to previous page",
   "personal-info-tab-subtitle": "Information about you across Cognite Data Fusion",
   "personal-info-tab-title": "Personal info",
   "profile-tab-info-subtitle": "Information about you across Cognite Data Fusion",
