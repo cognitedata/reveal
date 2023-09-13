@@ -12,4 +12,4 @@ export const translations = {
 export type TranslationKeys = keyof typeof en;
 
 export const useTranslation = (): ReturnType<typeof useTypedTranslation<TranslationKeys>> =>
-  useTypedTranslation<TranslationKeys>();
+  useTypedTranslation<TranslationKeys>('reveal-react-components');

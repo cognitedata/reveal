@@ -26,11 +26,15 @@ export {
 } from './hooks/useClickedNode';
 export { useCameraNavigation } from './hooks/useCameraNavigation';
 export { useMappedEdgesForRevisions } from './components/NodeCacheProvider/NodeCacheProvider';
+export { useIsRevealInitialized } from './hooks/useIsRevealInitialized';
 export { use3dNodeByExternalId } from './hooks/use3dNodeByExternalId';
 
 // Higher order components
 export { withSuppressRevealEvents } from './higher-order-components/withSuppressRevealEvents';
-
+export {
+  withCameraStateUrlParam,
+  useGetCameraStateFromUrlParam
+} from './higher-order-components/withCameraStateUrlParam';
 // Types
 export {
   type PointCloudModelStyling,
