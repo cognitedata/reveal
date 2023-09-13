@@ -209,7 +209,7 @@ const isAnyOfHosts = (hostname: string, baseHostnames: string[]) => {
 const getBaseHostnameFromDomain = ({ baseHostname }: FusionDomain) =>
   baseHostname;
 
-const getApp = () => {
+export const getApp = () => {
   const hostname = window.location.hostname;
 
   if (isAnyOfHosts(hostname, fusionAppHosts.map(getBaseHostnameFromDomain))) {
@@ -222,7 +222,7 @@ const getApp = () => {
 // Make apps explicitly require to be specified in order to use the
 // dlc-service api directly instead of hardcoded responses.
 // See the variable [hardcodedDlcResponses].
-export const isWhitelistedHost = () => {
+export const isAllowlistedHost = () => {
   const hostname = window.location.hostname;
   return isAnyOfHosts(
     hostname,
@@ -302,7 +302,7 @@ const hardcodedDlcResponses: Record<string, DomainResponse> = {
 
 export const getDlc = async (): Promise<DomainResponse> => {
   // check for clusters not supported by DLC (Aramco & OpenField)
-  if (isWhitelistedHost()) {
+  if (isAllowlistedHost()) {
     const organization = getOrganization();
     const app = getApp();
     const response = await fetch(

@@ -7,14 +7,29 @@ import {
   UseQueryResult,
 } from '@tanstack/react-query';
 
+import { BASE_QUERY_KEY } from '../common';
+import { PublicOrgError, PublicOrgResponse } from '../types/cogniteIdp';
 import { IDPResponse, CogniteIdPResponse } from '../types/loginInfo';
-import { getCogniteIdPToken, getCogniteIdPUserManager } from '../utils';
+import {
+  getCogniteIdPToken,
+  getCogniteIdPUserManager,
+  getPublicOrg,
+} from '../utils';
 import { getProjects } from '../utils/shared';
 
 export const useCogniteIdPUserManager = (params: {
   authority: string;
   client_id: string;
 }) => useMemo(() => getCogniteIdPUserManager(params), [params]);
+
+const getPublicOrgQueryKey = () => [BASE_QUERY_KEY, 'cognite-idp'];
+export const usePublicCogniteIdpOrg = (options: { timeout: number }) => {
+  return useQuery<
+    PublicOrgResponse | undefined,
+    PublicOrgError,
+    PublicOrgResponse | undefined
+  >(getPublicOrgQueryKey(), () => getPublicOrg(options));
+};
 
 export const getCogniteIdPQueryKey = (
   idp: IDPResponse,

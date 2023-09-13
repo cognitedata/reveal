@@ -2,15 +2,17 @@ import React, { useMemo } from 'react';
 
 import styled from 'styled-components';
 
-import { Button, Colors, Loader } from '@cognite/cogs.js';
+import { Accordion, Button, Colors, Loader } from '@cognite/cogs.js';
 import {
   IDPResponse,
   useLoginInfo,
   useValidatedLegacyProjects,
   getLegacyProjectsByCluster,
   KeycloakResponse,
-  CogniteIdPResponse,
   AADB2CResponse,
+  usePublicCogniteIdpOrg,
+  getClientId,
+  PublicOrgResponse,
 } from '@cognite/login-utils';
 
 import CogniteDataFusionSvg from '../../assets/CogniteDataFusion.svg';
@@ -43,10 +45,74 @@ type Props = {
   setIsHelpModalVisible: (visible: boolean) => void;
 };
 
+/**
+ * Renders the sign-in buttons, either as a single list of buttons or as a primary button and an
+ * accordion with the remaining buttons, depending on whether a Cognite IdP org is provided.
+ */
+const renderSignInButtons = (
+  cogIdpOrg: PublicOrgResponse | undefined,
+  sortedIdps: IDPResponse[]
+): JSX.Element => {
+  // Note that if `cogIdpOrg` is defined and/or `sortedIdps` is non-empty, then `loginInfo`
+  // must have been non-null, and because `loginInfo.domain` is not nullable, `domain` must be
+  // non-null in these situations.
+
+  const sortedIdpsWithoutCogIpd = sortedIdps.filter(
+    (idp) => idp.type !== 'COGNITE_IDP'
+  );
+
+  const otherButtons = (
+    <StyledIdpListInner>
+      {sortedIdpsWithoutCogIpd.map((idpProps: IDPResponse) =>
+        renderSignInButton(idpProps)
+      )}
+    </StyledIdpListInner>
+  );
+
+  if (!cogIdpOrg) {
+    return otherButtons;
+  }
+
+  return (
+    <>
+      <StyledIdpListInner>
+        <SignInWithCogniteIdP
+          key="cognite-idp"
+          organization={cogIdpOrg.id}
+          clientId={getClientId()}
+        />
+      </StyledIdpListInner>
+      <Accordion
+        expanded={false}
+        hidePadding={true}
+        indicatorPlacement="left"
+        size="medium"
+        title="Other sign in methods"
+        type="ghost"
+      >
+        <StyledIdpDeprecationWarning style={{ textAlign: 'center' }}>
+          <span role="img">⚠</span> Options below will be removed soon.
+          <br />
+          See{' '}
+          <a href="https://cognitedata.atlassian.net/wiki/spaces/AUT/pages/4087906504/Migration+of+Internal+Organizations+to+Cognite+Identity+Provider+CogIdP">
+            Confluence page
+          </a>
+          .
+        </StyledIdpDeprecationWarning>
+        <StyledInstructions>
+          If you have problems signing in, please send a message to{' '}
+          <StyledSlackHandle>@cog-idp-shield</StyledSlackHandle> on Slack.
+        </StyledInstructions>
+        <br />
+        {otherButtons}
+      </Accordion>
+    </>
+  );
+};
+
 /** Renders a single sign-in button, based on the IdP type. */
 const renderSignInButton = (
-  idpProps: IDPResponse,
-  domain: string
+  idpProps: IDPResponse
 ): JSX.Element | JSX.Element[] => {
   switch (idpProps.type) {
     case 'AZURE_AD':
@@ -76,15 +142,6 @@ const renderSignInButton = (
           key={keycloakProps.internalId}
           cluster="none"
           {...keycloakProps}
-        />
-      );
-    }
-    case 'COGNITE_IDP': {
-      return (
-        <SignInWithCogniteIdP
-          organization={domain}
-          key={idpProps.internalId}
-          {...(idpProps as CogniteIdPResponse)}
         />
       );
     }
@@ -129,6 +186,9 @@ const SelectSignInMethod = (props: Props): JSX.Element => {
   const { t } = useTranslation();
 
   const { data: loginInfo, isError, isFetched, error } = useLoginInfo();
+  // We timeout after 5s to avoid blocking legacy DLC logins if CogIdP doesn't answer.
+  const { data: publicCogIdpOrg, isFetched: isPublicCogIdpOrgFetched } =
+    usePublicCogniteIdpOrg({ timeout: 5000 });
   const { data: legacyProjectsByCluster } = useValidatedLegacyProjects(true);
   const { validLegacyProjects = [], invalidLegacyProjects = [] } =
     legacyProjectsByCluster || {};
@@ -145,7 +205,7 @@ const SelectSignInMethod = (props: Props): JSX.Element => {
       .open('https://cognite.zendesk.com/hc/en-us/requests/new', '_blank')
       ?.focus();
 
-  if (!isFetched) {
+  if (!isFetched || !isPublicCogIdpOrgFetched) {
     return <Loader />;
   }
 
@@ -172,7 +232,6 @@ const SelectSignInMethod = (props: Props): JSX.Element => {
   }
 
   const sortedIdps = sortIDPsByLabel(loginInfo?.idps ?? []);
-  const domain = loginInfo?.domain ?? null;
 
   return (
     <StyledSelectSignInMethodContainer>
@@ -205,11 +264,9 @@ const SelectSignInMethod = (props: Props): JSX.Element => {
         />
       </StyledContainerHeader>
       <StyledContent $isBordered>
-        <StyledIdpListContainer>
-          {sortedIdps.map((idpProps: IDPResponse) =>
-            renderSignInButton(idpProps, domain!)
-          )}
-        </StyledIdpListContainer>
+        <StyledIdpListOuter>
+          {renderSignInButtons(publicCogIdpOrg, sortedIdps)}
+        </StyledIdpListOuter>
 
         {loginInfo?.idps?.length && loginInfo?.legacyProjects?.length ? (
           <StyledDividerContainer>
@@ -276,10 +333,43 @@ const StyledDivider = styled.div`
   }
 `;
 
-const StyledIdpListContainer = styled.div`
+const StyledIdpListOuter = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
+
+  .cogs-accordion__header {
+    margin: 16px 0 0 0;
+    text-align: center;
+
+    .cogs-accordion__header__icon {
+      margin-left: 12px;
+    }
+  }
+`;
+
+const StyledIdpListInner = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+`;
+
+const StyledInstructions = styled.div`
+  text-align: center;
+  margin-top: 16px;
+`;
+
+const StyledSlackHandle = styled.code`
+  font-family: monospace;
+  white-space: nowrap;
+`;
+
+const StyledIdpDeprecationWarning = styled.div`
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 187, 0, 0.2);
+  background: rgba(255, 187, 0, 0.12);
+  margin-bottom: 16px;
 `;
 
 const StyledOrganizationLabel = styled.h2`

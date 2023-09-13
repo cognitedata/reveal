@@ -7,7 +7,6 @@ import { parse } from 'query-string';
 import { Icon, Chip } from '@cognite/cogs.js';
 import {
   getSelectedIdpDetails,
-  CogniteIdPResponse,
   saveSelectedIdpDetails,
   useCogniteIdPUserManager,
 } from '@cognite/login-utils';
@@ -15,14 +14,19 @@ import {
 import { Microsoft } from '../../components/icons';
 import SignInButton from '../../components/sign-in-button/SignInButton';
 
+const authority = 'https://auth.cognite.com';
+const internalId = 'ff16d970-0491-415a-ab4b-3ba9eb65ac4a';
+const type = 'COGNITE_IDP';
+
 export default function SignInWithCogniteIdP({
   organization,
-  appConfiguration,
-  authority,
-  internalId,
-  type,
-}: CogniteIdPResponse & { organization: string }) {
+  clientId,
+}: {
+  organization: string;
+  clientId: string;
+}) {
   const navigate = useNavigate();
+
   const { internalId: activeInternalId } = getSelectedIdpDetails() ?? {};
   const active = activeInternalId === internalId;
 
@@ -30,7 +34,7 @@ export default function SignInWithCogniteIdP({
 
   const userManager = useCogniteIdPUserManager({
     authority,
-    client_id: appConfiguration.clientId,
+    client_id: clientId,
   });
 
   const { data: user, isInitialLoading: isLoading } = useQuery(
