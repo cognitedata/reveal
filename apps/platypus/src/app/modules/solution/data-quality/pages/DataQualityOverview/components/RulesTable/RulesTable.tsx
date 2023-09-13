@@ -21,6 +21,7 @@ import {
   ValidityCell,
   SeverityCell,
   ItemsCheckedCell,
+  ValidityOverTimeCell,
 } from './RulesTableCells';
 
 export const RulesTable = () => {
@@ -59,6 +60,19 @@ export const RulesTable = () => {
       Cell: ({ row }: any) => {
         return (
           <ValidityCell
+            datapoints={datapoints}
+            dataSourceId={dataSource?.externalId}
+            loadingDatapoints={loadingDatapoints}
+            ruleId={row.original.externalId}
+          />
+        );
+      },
+    },
+    {
+      Header: 'Validity over time',
+      Cell: ({ row }: any) => {
+        return (
+          <ValidityOverTimeCell
             datapoints={datapoints}
             dataSourceId={dataSource?.externalId}
             loadingDatapoints={loadingDatapoints}

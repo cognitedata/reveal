@@ -1,6 +1,7 @@
 import { PropsWithChildren } from 'react';
 
 import { RuleSeverity } from '@data-quality/api/codegen';
+import { chartConfig, getScoreChartData } from '@data-quality/utils/charts';
 import {
   TimeSeriesType,
   getDatapointsById,
@@ -10,6 +11,7 @@ import {
 } from '@data-quality/utils/validationTimeseries';
 
 import { A, Body, Chip, Flex, Heading, Icon } from '@cognite/cogs.js';
+import { LineChart } from '@cognite/plotting-components';
 import { Datapoints } from '@cognite/sdk/dist/src';
 
 import { ValidationDifference } from '..';
@@ -39,7 +41,7 @@ type ItemsCheckedCellProps = {
 
 type CellProps = {
   isLoading?: boolean;
-  value?: string | number;
+  value?: string | number | null;
 } & PropsWithChildren;
 
 export const NameCell = ({ onClick, ruleName }: NameCellProps) => {
@@ -86,6 +88,40 @@ export const ValidityCell = ({
   return (
     <Cell isLoading={loadingDatapoints} value={cellValue}>
       <ValidationDifference tsDatapoints={scoreDatapoints} showStaleState />
+    </Cell>
+  );
+};
+
+export const ValidityOverTimeCell = ({
+  datapoints,
+  dataSourceId,
+  loadingDatapoints,
+  ruleId,
+}: ValidityCellProps) => {
+  if (!dataSourceId) return <Cell />;
+
+  const timeSeriesIdScore = getTimeSeriesId(
+    TimeSeriesType.SCORE,
+    dataSourceId,
+    ruleId
+  );
+
+  const scoreDatapoints = getDatapointsById(datapoints, timeSeriesIdScore);
+  const noDatapoints = scoreDatapoints?.datapoints.length === 0;
+
+  if (noDatapoints) return <Cell />;
+
+  const dataScore = getScoreChartData(scoreDatapoints);
+
+  return (
+    <Cell isLoading={loadingDatapoints} value={null}>
+      <LineChart
+        config={chartConfig}
+        data={dataScore}
+        variant="small"
+        layout={{ showTickLabels: false }}
+        style={{ backgroundColor: 'transparent', height: 40, width: 180 }}
+      />
     </Cell>
   );
 };
