@@ -5,7 +5,6 @@ import {
   AddResourceOptions,
   DefaultResourceStyling,
   Reveal3DResources,
-  useCameraNavigation,
   useClickedNodeData,
   Image360Details,
   FdmAssetStylingGroup,
@@ -14,30 +13,40 @@ import {
 import { defaultResourceStyling } from '../../../constants/threeD';
 import { useNavigateOnClick } from '../hooks/useNavigateOnClick';
 import { useResetNodeDataOnNavigate } from '../hooks/useResetNodeDataOnNavigate';
+import { useThreeDCameraNavigation } from '../hooks/useThreeDCameraNavigation';
 
 import { PreviewCard } from './PreviewCard';
 import { ToolBarContainer } from './ToolBarContainer';
 
 interface Props {
   modelIdentifiers: AddResourceOptions[];
-  externalId?: string;
+  instanceExternalId?: string;
   instanceSpace?: string;
-  fitCamera?: 'models' | 'instance';
   hideToolbar?: boolean;
   focusNode?: boolean;
+  isInitialLoad?: boolean;
 }
 export const RevealContent = ({
   modelIdentifiers,
-  externalId,
+  instanceExternalId,
   instanceSpace,
-  fitCamera,
   hideToolbar,
   focusNode,
+  isInitialLoad,
 }: Props) => {
-  const cameraNavigation = useCameraNavigation();
   const clickedNodeData = useClickedNodeData();
   const [resourceMounted, setResourcesMounted] = useState(false);
   const [hasOriginalCadColors, setHasOriginalCadColors] = useState(false);
+
+  const instance =
+    instanceExternalId !== undefined && instanceSpace !== undefined
+      ? { externalId: instanceExternalId, space: instanceSpace }
+      : undefined;
+
+  const { loadInitialCameraState, focusInstance } = useThreeDCameraNavigation(
+    isInitialLoad === true,
+    instance
+  );
 
   const currentDefaultResourceStyling: DefaultResourceStyling = useMemo(() => {
     return hasOriginalCadColors
@@ -56,36 +65,23 @@ export const RevealContent = ({
   useNavigateOnClick(clickedNodeDataDisabledOnFocus);
   const previewCardNodeData = useResetNodeDataOnNavigate(
     clickedNodeDataDisabledOnFocus,
-    externalId,
+    instanceExternalId,
     instanceSpace
   );
 
-  const instanceStyling = computeInstanceStyling(externalId, instanceSpace);
+  const instanceStyling = computeInstanceStyling(
+    instanceExternalId,
+    instanceSpace
+  );
 
   const handleResourcesAdded = useCallback(() => {
     setResourcesMounted(true);
-    if (fitCamera === 'models') {
-      return cameraNavigation.fitCameraToAllModels();
-    }
-
-    if (fitCamera === 'instance') {
-      if (externalId && instanceSpace) {
-        cameraNavigation.fitCameraToInstance(externalId, instanceSpace);
-      }
-    }
-  }, [cameraNavigation, externalId, instanceSpace, fitCamera]);
+    loadInitialCameraState();
+  }, [loadInitialCameraState]);
 
   const handleToggleOriginalCadColors = () => {
     setHasOriginalCadColors((prev) => !prev);
   };
-
-  const { fitCameraToInstance } = useCameraNavigation();
-
-  const focusSelectedAsset = useCallback(() => {
-    if (externalId !== undefined && instanceSpace !== undefined) {
-      fitCameraToInstance(externalId, instanceSpace);
-    }
-  }, [externalId, instanceSpace]);
 
   return (
     <>
@@ -93,7 +89,7 @@ export const RevealContent = ({
         <ToolBarContainer
           hasOriginalCadColors={hasOriginalCadColors}
           onToggleOriginalColors={handleToggleOriginalCadColors}
-          focusAssetCallback={focusSelectedAsset}
+          focusAssetCallback={focusInstance}
         />
       )}
       <Reveal3DResources

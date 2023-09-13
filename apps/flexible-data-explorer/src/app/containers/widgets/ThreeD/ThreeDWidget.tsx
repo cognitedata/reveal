@@ -51,8 +51,7 @@ export const ThreeDWidget: React.FC<ThreeDWidgetProps> = () => {
         >
           <RevealContent
             modelIdentifiers={modelIdentifiers}
-            fitCamera="instance"
-            externalId={externalId}
+            instanceExternalId={externalId}
             instanceSpace={instanceSpace}
             hideToolbar
             focusNode

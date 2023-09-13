@@ -1,7 +1,10 @@
 import { FormEventHandler } from 'react';
 
 import { Button, Menu } from '@cognite/cogs.js';
-import { RevealToolbar } from '@cognite/reveal-react-components';
+import {
+  withCameraStateUrlParam,
+  RevealToolbar,
+} from '@cognite/reveal-react-components';
 
 import { useTranslation } from '../../../hooks/useTranslation';
 import { StyledRevealToolBar } from '../components/ToolBar/StyledRevealToolBar';
@@ -12,13 +15,15 @@ type ToolBarContainerProps = {
   focusAssetCallback?: () => void;
 };
 
+const ThreeDToolbar = withCameraStateUrlParam(StyledRevealToolBar);
+
 export const ToolBarContainer = ({
   hasOriginalCadColors,
   onToggleOriginalColors,
   focusAssetCallback,
 }: ToolBarContainerProps) => {
   return (
-    <StyledRevealToolBar
+    <ThreeDToolbar
       toolBarContent={
         <ToolBarContent
           hasOriginalCadColors={hasOriginalCadColors}

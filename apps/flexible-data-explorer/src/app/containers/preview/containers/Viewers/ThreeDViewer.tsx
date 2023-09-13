@@ -50,9 +50,8 @@ export const ThreeDViewer: React.FC<Props> = ({ instance, dataModel }) => {
       >
         <RevealContent
           modelIdentifiers={modelIdentifiers}
-          externalId={instance.externalId}
+          instanceExternalId={instance.externalId}
           instanceSpace={instance.instanceSpace}
-          fitCamera="instance"
           hideToolbar
           focusNode
         />

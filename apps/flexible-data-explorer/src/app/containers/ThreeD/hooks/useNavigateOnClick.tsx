@@ -8,7 +8,7 @@ import { useFDM } from '../../../providers/FDMProvider';
 export function useNavigateOnClick(
   clickedNodeData: ClickedNodeData | undefined
 ): void {
-  const { toInstancePage } = useNavigation();
+  const { toInstancePage, toSearchPage } = useNavigation();
   const fdmClient = useFDM();
 
   const lastClickedData = useRef<ClickedNodeData | undefined>(undefined);
@@ -24,7 +24,7 @@ export function useNavigateOnClick(
       clickedNodeData?.view === undefined ||
       clickedNodeData?.fdmNode === undefined
     ) {
-      toInstancePage(undefined, undefined, undefined, undefined, {
+      toSearchPage(undefined, undefined, {
         viewMode: '3d',
       });
     } else {
@@ -32,7 +32,7 @@ export function useNavigateOnClick(
         clickedNodeData.view.externalId
       )!;
       toInstancePage(
-        dataType.externalId,
+        clickedNodeData.view.externalId,
         clickedNodeData.fdmNode.space,
         clickedNodeData.fdmNode.externalId,
         {
