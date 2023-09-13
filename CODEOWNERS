@@ -56,7 +56,7 @@ apps/entity-matching              @cognitedata/matchmakers
 apps/interactive-diagrams         @cognitedata/matchmakers
 
 # 3D / Reveal
-apps/3d-management                @cognitedata/3d-reveal-viewer-team
+apps/3d-management                @cognitedata/3d-reveal-viewer-team @cognitedata/3d-point-cloud-team @cognitedata/3d-backend-team
 
 # Migrated CDF-UX Subapps
 apps/data-catalog                 @cognitedata/cdf-user-experience
