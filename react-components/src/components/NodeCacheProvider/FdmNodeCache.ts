@@ -19,7 +19,8 @@ import {
   type ModelNodeIdKey,
   type ModelRevisionToEdgeMap,
   type ModelRevisionId,
-  type FdmKey
+  type FdmKey,
+  type FdmNodeDataPromises
 } from './types';
 import {
   createFdmKey,
@@ -33,7 +34,7 @@ import {
   SYSTEM_SPACE_3D_SCHEMA
 } from '../../utilities/globalDataModels';
 
-import { partition } from 'lodash';
+import { groupBy, partition } from 'lodash';
 
 import assert from 'assert';
 import { fetchNodesForNodeIds, inspectNodes } from './requests';
@@ -211,14 +212,22 @@ export class FdmNodeCache {
     return [revisionKey, cachedRevisionEdges];
   }
 
-  private writeRevisionDataToCache(modelMap: Map<ModelRevisionKey, FdmEdgeWithNode[]>): void {
-    for (const [revisionKey, data] of modelMap.entries()) {
+  private writeRevisionDataToCache(modelMap: Map<ModelRevisionKey, FdmEdgeWithNode[]>, writeViews: boolean): void {
+    for (const [revisionKey, edges] of modelMap.entries()) {
       const [modelId, revisionId] = revisionKeyToIds(revisionKey);
       const revisionCache = this.getOrCreateRevisionCache(modelId, revisionId);
 
-      data.forEach((edgeAndNode) => {
-        revisionCache.insertTreeIndexMappings(edgeAndNode.node.treeIndex, edgeAndNode);
+      const treeIndexToEdgeMap = groupBy(edges, edge => edge.node.treeIndex);
+
+      Object.entries(treeIndexToEdgeMap).forEach(([treeIndex, edgeData]) => {
+        revisionCache.insertNodeDataForTreeIndex(Number(treeIndex), edgeData);
       });
+
+      if (writeViews) {
+        Object.entries(treeIndexToEdgeMap).forEach(([treeIndex, edgeData]) => {
+          revisionCache.insertViewsForTreeIndex(Number(treeIndex), edgeData.map(edge => edge.view!));
+        });
+      }
 
       this._completeRevisions.add(revisionKey);
     }
@@ -241,19 +250,19 @@ export class FdmNodeCache {
       this._cdfClient
     );
 
-    this.writeRevisionDataToCache(revisionToEdgesMap);
+    this.writeRevisionDataToCache(revisionToEdgesMap, fetchViews);
 
     return revisionToEdgesMap;
   }
 
-  public async getClosestParentExternalId(
+  public getClosestParentExternalId(
     modelId: number,
     revisionId: number,
     treeIndex: number
-  ): Promise<Array<Required<FdmEdgeWithNode>>> {
+  ): FdmNodeDataPromises {
     const revisionCache = this.getOrCreateRevisionCache(modelId, revisionId);
 
-    return await revisionCache.getClosestParentFdmData(treeIndex);
+    return revisionCache.getClosestParentFdmData(treeIndex);
   }
 
   private async getViewsForEdges(

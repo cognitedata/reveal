@@ -3,8 +3,14 @@
  */
 
 import { type CogniteClient, type Node3D } from '@cognite/sdk';
-import { type FdmSDK } from '../../utilities/FdmSDK';
-import { type TreeIndex, type FdmEdgeWithNode, type FdmCadEdge } from './types';
+import { type Source, type FdmSDK, type DmsUniqueIdentifier } from '../../utilities/FdmSDK';
+import {
+  type TreeIndex,
+  type FdmEdgeWithNode,
+  type FdmCadEdge,
+  type FdmNodeDataPromises,
+  FdmAndCadNode
+} from './types';
 
 import {
   fetchAncestorNodesForTreeIndex,
@@ -16,6 +22,12 @@ import { max } from 'lodash';
 
 import assert from 'assert';
 
+type AncestorQueryResult = {
+  edges: FdmCadEdge[];
+  ancestorsWithSameMapping: Node3D[];
+  firstMappedAncestorTreeIndex: number;
+};
+
 export class RevisionFdmNodeCache {
   private readonly _cogniteClient: CogniteClient;
   private readonly _fdmClient: FdmSDK;
@@ -23,7 +35,8 @@ export class RevisionFdmNodeCache {
   private readonly _modelId: number;
   private readonly _revisionId: number;
 
-  private readonly _treeIndexToFdmEdges = new Map<TreeIndex, FdmEdgeWithNode[]>();
+  private readonly _treeIndexToFdmEdge = new Map<TreeIndex, FdmAndCadNode[]>();
+  private readonly _treeIndexToView = new Map<TreeIndex, Source[]>();
 
   constructor(
     cogniteClient: CogniteClient,
@@ -38,39 +51,126 @@ export class RevisionFdmNodeCache {
     this._revisionId = revisionId;
   }
 
-  public async getClosestParentFdmData(
-    searchTreeIndex: number
-  ): Promise<Array<Required<FdmEdgeWithNode>>> {
-    const cachedFdmData = this._treeIndexToFdmEdges.get(searchTreeIndex);
+  public getClosestParentFdmData(searchTreeIndex: number): FdmNodeDataPromises {
+    const cachedFdmData = this._treeIndexToFdmEdge.get(searchTreeIndex);
 
     if (checkDefinedView(cachedFdmData)) {
       return cachedFdmData;
     }
 
-    if (cachedFdmData !== undefined) {
-      return await this.getDataWithViewsForFdmEdges(cachedFdmData, []);
+    const cachedFdmEdges = this._treeIndexToFdmEdge.get(searchTreeIndex);
+
+    if (cachedFdmEdges !== undefined && cachedFdmEdges.length > 0) {
+      const dataViews = this.getDataViewsForFdmIds(
+        cachedFdmEdges.map((edge) => edge.edge.startNode)
+      );
+      const fdmDataViewPromises = constructFdmDataAndViewsPromises(cachedFdmEdges, dataViews);
+
+      this.cacheFdmDataPromisesForTreeIndices([searchTreeIndex], fdmDataViewPromises);
+      return fdmDataViewPromises;
     }
 
-    return await this.findNodeDataFromAncestors(searchTreeIndex);
+    return this.findNodeDataPromisesFromAncestors(searchTreeIndex);
+
+    function constructFdmDataAndViewsPromises(
+      fdmEdges: FdmEdgeWithNode[],
+      dataViewsPromise: Promise<Source[]>
+    ): FdmNodeDataPromises {
+      const cadNode = fdmEdges[0].node;
+      const fdmIds = fdmEdges.map((edge) => edge.edge.startNode);
+
+      return {
+        cadNodeAndFdmIdPromise: Promise.resolve({ cadNode, fdmIds }),
+        viewsPromise: dataViewsPromise
+      };
+    }
   }
 
-  private async findNodeDataFromAncestors(
-    treeIndex: TreeIndex
-  ): Promise<Array<Required<FdmEdgeWithNode>>> {
-    const { edges, ancestorsWithSameMapping, firstMappedAncestorTreeIndex } =
-      await this.getClosestParentMapping(treeIndex);
+  private findNodeDataPromisesFromAncestors(treeIndex: TreeIndex): FdmNodeDataPromises {
+    const closestParentMappingDataPromise = this.getClosestParentMapping(treeIndex);
 
-    if (edges.length === 0) {
-      return [];
+    const nodeAndFdmIdPromise = this.getNodeAndFdmIdFromParentForClosestAncestor(
+      closestParentMappingDataPromise
+    );
+    const dataViewsPromise = this.getDataViewsPromiseForFdmEdgesPromise(nodeAndFdmIdPromise);
+
+    const fdmNodeDataPromises = {
+      cadNodeAndFdmIdPromise: nodeAndFdmIdPromise,
+      viewsPromise: dataViewsPromise
+    };
+
+    void this.cacheFdmDataPromisesForAncestors(
+      closestParentMappingDataPromise,
+      fdmNodeDataPromises
+    );
+
+    return fdmNodeDataPromises;
+
+    /* const getViewsPromise = async (edgesPromise: Promise<AncestorQueryResult>): Promise<Source[]> => {
+      const { edges } = await edgesPromise;
+      return this.getDataViewsForFdmEdges(edges);
+      }
+
+    const processClosestMappingData = async (dataPromise: Promise<AncestorQueryResult>): Promise<FdmNodeDataPromises> => {
+
+      const dataViewsPromise = getViewsPromise(dataPromise);
+
+      this.cacheDataAndViews(ancestorsWithSameMapping, { edges, node: firstMappedAncestor }, dataViewsPromise);
+
+
+      return { cadNodeAndFdmIdPromise: dataPromise.then(data => ({ cadNode: firstMappedAncestor, fdmIds: data.edges.map(edge => edge.startNode) })), views: dataViewsPromise };
     }
 
-    const cachedFdmData = this._treeIndexToFdmEdges.get(firstMappedAncestorTreeIndex);
+
+    return processClosestMappingData(closestParentMappingDataPromise); */
+  }
+
+  private async cacheFdmDataPromisesForAncestors(
+    ancestorQueryResult: Promise<AncestorQueryResult>,
+    dataToCache: FdmNodeDataPromises
+  ): Promise<void> {
+    const { ancestorsWithSameMapping } = await ancestorQueryResult;
+
+    const treeIndices = ancestorsWithSameMapping.map((ancestor) => ancestor.treeIndex);
+    this.cacheFdmDataPromisesForTreeIndices(treeIndices, dataToCache);
+  }
+
+  private async getDataViewsPromiseForFdmEdgesPromise(
+    fdmNodeData: Promise<{ cadNode: Node3D; fdmIds: DmsUniqueIdentifier[] } | undefined>
+  ): Promise<Source[] | undefined> {
+    const fdmIds = (await fdmNodeData)?.fdmIds;
+    if (fdmIds === undefined) {
+      return undefined;
+    }
+
+    return await this.getDataViewsForFdmIds(fdmIds);
+  }
+
+  private async getDataViewsForFdmIds(fdmIds: DmsUniqueIdentifier[]): Promise<Source[]> {
+    const nodeInspectionResults = await inspectNodes(this._fdmClient, fdmIds);
+
+    const dataViews = nodeInspectionResults.items.map(
+      (result) => result.inspectionResults.involvedViewsAndContainers.views[0]
+    );
+    return dataViews;
+  }
+
+  private async getNodeAndFdmIdFromParentForClosestAncestor(
+    ancestorData: Promise<AncestorQueryResult>
+  ): Promise<{ cadNode: Node3D; fdmIds: DmsUniqueIdentifier[] } | undefined> {
+    const { edges, ancestorsWithSameMapping, firstMappedAncestorTreeIndex } = await ancestorData;
+
+    if (edges.length === 0) {
+      return undefined;
+    }
+
+    /* const cachedFdmData = this._treeIndexToFdmData.get(firstMappedAncestorTreeIndex);
 
     if (checkDefinedView(cachedFdmData)) {
       this.setSameCacheForNodes(ancestorsWithSameMapping, cachedFdmData);
 
       return cachedFdmData;
-    }
+    } */
 
     const firstMappedAncestor = ancestorsWithSameMapping.find(
       (ancestor) => ancestor.treeIndex === firstMappedAncestorTreeIndex
@@ -78,43 +178,51 @@ export class RevisionFdmNodeCache {
 
     assert(firstMappedAncestor !== undefined);
 
-    const nodeEdges = edges.map((edge) => ({ edge, node: firstMappedAncestor }));
-
-    return await this.getDataWithViewsForFdmEdges(nodeEdges, ancestorsWithSameMapping);
+    return { cadNode: firstMappedAncestor, fdmIds: edges.map((edge) => edge.startNode) };
   }
 
-  private setSameCacheForNodes(nodes: Node3D[], nodeData: FdmEdgeWithNode[]): void {
+  private cacheFdmDataPromisesForTreeIndices(
+    treeIndices: number[],
+    fdmDataPromises: FdmNodeDataPromises
+  ): void {
+    treeIndices.forEach((treeIndex) => this._treeIndexToFdmEdge.set(treeIndex, fdmDataPromises));
+  }
+
+  /* private async cacheDataAndViews(ancestorsWithSameMapping: Node3D[], nodeEdges: { edges: FdmCadEdge[], node: Node3D }, dataViewPromises: Promise<Source[]>) {
+
+    ancestorsWithSameMapping.forEach((ancestor) =>
+      this._treeIndexToFdmData.set(ancestor.treeIndex, dataWithViews)
+                                    );
+
+  }
+
+
+  private setCacheForNodes(nodes: Node3D[], nodeData: Fdm3dNodeData[]): void {
     nodes.forEach((node) => {
-      this._treeIndexToFdmEdges.set(node.treeIndex, nodeData);
+      this._treeIndexToFdmData.set(node.treeIndex, nodeData);
     });
-  }
+  } */
 
-  private async getDataWithViewsForFdmEdges(
-    nodeEdges: Array<{ edge: FdmCadEdge; node: Node3D }>,
-    ancestorsWithSameMapping: Node3D[]
-  ): Promise<Array<Required<FdmEdgeWithNode>>> {
+  /* private async getDataViewsForFdmEdges(
+    nodeEdges: FdmCadEdge[]
+  ): Promise<Source[]> {
+
+    // const dataWithViews = nodeEdges.map((fdmEdgeWithNode, ind) => ({
+    //   fdmId: fdmEdgeWithNode.edge.startNode,
+    //   view: nodeInspectionResults.items[ind].inspectionResults.involvedViewsAndContainers.views[0],
+    //   cadNode: fdmEdgeWithNode.node
+    // }));
+
     const nodeInspectionResults = await inspectNodes(
       this._fdmClient,
       nodeEdges.map((edge) => edge.edge.startNode)
     );
 
-    const dataWithViews = nodeEdges.map((fdmEdgeWithNode, ind) => ({
-      ...fdmEdgeWithNode,
-      view: nodeInspectionResults.items[ind].inspectionResults.involvedViewsAndContainers.views[0]
-    }));
+    const dataViews =  nodeInspectionResults.items.map(result => result.inspectionResults.involvedViewsAndContainers.views[0]);
+    return dataViews;
+  } */
 
-    ancestorsWithSameMapping.forEach((ancestor) => {
-      this._treeIndexToFdmEdges.set(ancestor.treeIndex, dataWithViews);
-    });
-
-    return dataWithViews;
-  }
-
-  private async getClosestParentMapping(treeIndex: number): Promise<{
-    edges: FdmCadEdge[];
-    ancestorsWithSameMapping: Node3D[];
-    firstMappedAncestorTreeIndex: number;
-  }> {
+  private async getClosestParentMapping(treeIndex: number): Promise<AncestorQueryResult> {
     const ancestors: Node3D[] = await fetchAncestorNodesForTreeIndex(
       this._modelId,
       this._revisionId,
@@ -161,11 +269,11 @@ export class RevisionFdmNodeCache {
 
   private async getMappingEdgesForAncestors(ancestors: Node3D[]): Promise<FdmCadEdge[]> {
     const cachedFirstMappedAncestor = ancestors
-      .filter((ancestor) => this._treeIndexToFdmEdges.has(ancestor.treeIndex))
+      .filter((ancestor) => this._treeIndexToFdmEdge.has(ancestor.treeIndex))
       .sort((nodeA, nodeB) => nodeB.treeIndex - nodeA.treeIndex)[0];
 
     if (cachedFirstMappedAncestor !== undefined) {
-      const edgesAndNodes = this._treeIndexToFdmEdges.get(cachedFirstMappedAncestor.treeIndex);
+      const edgesAndNodes = this._treeIndexToFdmEdge.get(cachedFirstMappedAncestor.treeIndex);
 
       assert(edgesAndNodes !== undefined);
 
@@ -204,11 +312,20 @@ export class RevisionFdmNodeCache {
     });
   }
 
-  public insertTreeIndexMappings(treeIndex: TreeIndex, edge: FdmEdgeWithNode): void {
-    const edgeArray = this._treeIndexToFdmEdges.get(treeIndex);
+  public insertNodeDataForTreeIndex(treeIndex: TreeIndex, edges: FdmEdgeWithNode[]): void {
+    const nodeObjects = edges.map(edge => ({cadNode: edge.node, fdmNode: edge.edge.startNode }));
+    this._treeIndexToFdmEdge.set(treeIndex, nodeObjects);
+  }
+
+  public insertViewsForTreeIndex(treeIndex: TreeIndex, views: Source[]): void {
+    this._treeIndexToView.set(treeIndex, views);
+  }
+
+  /* public insertTreeIndexMappings(treeIndex: TreeIndex, edge: FdmEdgeWithNode): void {
+    const edgeArray = this._treeIndexToFdmEdge.get(treeIndex);
 
     if (edgeArray === undefined) {
-      this._treeIndexToFdmEdges.set(treeIndex, [edge]);
+      this._treeIndexToFdmEdge.set(treeIndex, [edge]);
     } else {
       const presentEdge = edgeArray?.find((e) => e.node.id === edge.node.id);
 
@@ -219,10 +336,10 @@ export class RevisionFdmNodeCache {
 
       edgeArray.push(edge);
     }
-  }
+  } */
 
   public getAllEdges(): FdmEdgeWithNode[] {
-    return [...this._treeIndexToFdmEdges.values()].flat();
+    return [...this._treeIndexToFdmEdge.values()].flat();
   }
 }
 
@@ -238,11 +355,7 @@ function getAncestorDataForTreeIndex(
   treeIndex: TreeIndex,
   edgesWithTreeIndex: Array<{ edge: FdmCadEdge; treeIndex: TreeIndex }>,
   ancestors: Node3D[]
-): {
-  edges: FdmCadEdge[];
-  ancestorsWithSameMapping: Node3D[];
-  firstMappedAncestorTreeIndex: number;
-} {
+): AncestorQueryResult {
   const edgesForTreeIndex = edgesWithTreeIndex.filter(
     (edgeAndTreeIndex) => edgeAndTreeIndex.treeIndex === treeIndex
   );
@@ -256,8 +369,8 @@ function getAncestorDataForTreeIndex(
 }
 
 export function checkDefinedView(
-  edges?: FdmEdgeWithNode[]
-): edges is Array<Required<FdmEdgeWithNode>> {
+  edges?: FdmNodeDataPromises | undefined
+): edges is FdmNodeDataPromises {
   if (edges === undefined) return false;
 
   return edges?.every((edge): edge is Required<FdmEdgeWithNode> => edge.view !== undefined);

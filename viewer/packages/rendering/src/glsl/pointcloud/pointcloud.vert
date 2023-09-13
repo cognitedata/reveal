@@ -30,15 +30,13 @@ uniform float maxSize; // maximum pixel size
 uniform float octreeSize;
 uniform float level;
 uniform float vnStart;
-uniform bool isLeafNode;
 
 uniform vec2 intensityRange;
 uniform float intensityGamma;
 uniform float intensityContrast;
 uniform float intensityBrightness;
-uniform float rgbGamma;
-uniform float rgbContrast;
-uniform float rgbBrightness;
+
+uniform float styleBlendingFactor;
 
 uniform sampler2D visibleNodes;
 uniform sampler2D gradient;
@@ -288,7 +286,7 @@ void main() {
 		vec3 rgb = getRgbWithIntensityFallback();
 		vColor = rgb == vec3(0.0, 0.0, 0.0)
 			? getElevation()
-			: mix(getElevation(), rgb, 0.4);
+			: mix(getElevation(), rgb, styleBlendingFactor);
 	#elif defined color_type_depth
 		float linearDepth = -mvPosition.z ;
 		float expDepth = (gl_Position.z / gl_Position.w) * 0.5 + 0.5;
@@ -305,7 +303,7 @@ void main() {
 		vec3 rgb = getRgbWithIntensityFallback();
 		vColor = rgb == vec3(0.0, 0.0, 0.0)
 			? classification.rgb
-			: mix(classification.rgb, rgb, 0.4);
+			: mix(classification.rgb, rgb, styleBlendingFactor);
 	#endif
 
 	if (outColorAlpha == 0.0) {

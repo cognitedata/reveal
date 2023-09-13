@@ -8,9 +8,10 @@ import {
   RevealToolbar,
   Reveal3DResources,
   useClickedNodeData,
-  useCameraNavigation,
   type AddResourceOptions,
-  type FdmAssetStylingGroup
+  type FdmAssetStylingGroup,
+  useCameraNavigation,
+  useReveal
 } from '../src';
 import { Color } from 'three';
 import { type ReactElement, useState, useEffect } from 'react';
@@ -61,6 +62,7 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
   const [stylingGroups, setStylingGroups] = useState<FdmAssetStylingGroup[]>([]);
   const cameraNavigation = useCameraNavigation();
   const nodeData = useClickedNodeData();
+  const viewer = useReveal();
 
   useEffect(() => {
     if (nodeData?.fdmNode === undefined) {
@@ -78,9 +80,20 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
     ]);
 
     void cameraNavigation.fitCameraToInstance(nodeData.fdmNode.externalId, nodeData.fdmNode.space);
+<<<<<<< Updated upstream
 
     console.log('Clicked node data', nodeData);
   }, [nodeData?.fdmNode]);
+=======
+  }, [nodeData]);
+
+  useEffect(() => {
+    (viewer.cameraManager as DefaultCameraManager).setCameraControlsOptions({
+      changeCameraTargetOnClick: true,
+      mouseWheelAction: 'zoomToCursor'
+    });
+  }, [viewer]);
+>>>>>>> Stashed changes
 
   return (
     <>
