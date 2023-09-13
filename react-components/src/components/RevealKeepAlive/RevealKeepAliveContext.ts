@@ -3,7 +3,7 @@
  */
 import { type Cognite3DViewer } from '@cognite/reveal';
 import { type MutableRefObject, createContext, useContext } from 'react';
-import { FdmNodeCache } from '../NodeCacheProvider/FdmNodeCache';
+import { type FdmNodeCache } from '../NodeCacheProvider/FdmNodeCache';
 
 export type RevealKeepAliveData = {
   viewerRef: MutableRefObject<Cognite3DViewer | undefined>;
