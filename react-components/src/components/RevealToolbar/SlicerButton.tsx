@@ -7,7 +7,7 @@ import { type ReactElement, useState, useEffect } from 'react';
 import { Box3, Plane, Vector3 } from 'three';
 
 import { useReveal } from '../RevealContainer/RevealContext';
-import { Button, Dropdown, Menu, RangeSlider } from '@cognite/cogs.js';
+import { Button, Dropdown, Menu, RangeSlider, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 
 import styled from 'styled-components';
 
@@ -20,6 +20,7 @@ type SliceState = {
 
 export const SlicerButton = (): ReactElement => {
   const viewer = useReveal();
+  const [sliceActive, setSliceActive] = useState<boolean>(false);
 
   const [sliceState, setSliceState] = useState<SliceState>({
     minHeight: 0,
@@ -62,24 +63,37 @@ export const SlicerButton = (): ReactElement => {
   }
 
   return (
-    <Dropdown
-      appendTo={() => document.body}
-      content={
-        <StyledMenu>
-          <RangeSlider
-            min={0}
-            max={1}
-            step={0.01}
-            setValue={changeSlicingState}
-            marks={{}}
-            value={[bottomRatio, topRatio]}
-            vertical
-          />
-        </StyledMenu>
-      }
-      placement="right-end">
-      <Button type="ghost" icon="Slice" aria-label="Slice models" />
-    </Dropdown>
+    <CogsTooltip content={'Slice'} placement="right" appendTo={document.body}>
+      <Dropdown
+        appendTo={() => document.body}
+        onClickOutside={() => {
+          setSliceActive(false);
+        }}
+        content={
+          <StyledMenu>
+            <RangeSlider
+              min={0}
+              max={1}
+              step={0.01}
+              setValue={changeSlicingState}
+              marks={{}}
+              value={[bottomRatio, topRatio]}
+              vertical
+            />
+          </StyledMenu>
+        }
+        placement="right-end">
+        <Button
+          type="ghost"
+          icon="Slice"
+          aria-label="Slice models"
+          toggled={sliceActive}
+          onClick={() => {
+            setSliceActive((prevState) => !prevState);
+          }}
+        />
+      </Dropdown>
+    </CogsTooltip>
   );
 };
 

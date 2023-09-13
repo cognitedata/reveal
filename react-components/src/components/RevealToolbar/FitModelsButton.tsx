@@ -4,28 +4,24 @@
 
 import { type ReactElement, useCallback } from 'react';
 
-import { Box3 } from 'three';
-
-import { useReveal } from '../RevealContainer/RevealContext';
-import { Button } from '@cognite/cogs.js';
+import { Button, Tooltip as CogsTooltip } from '@cognite/cogs.js';
+import { useCameraNavigation } from '../../hooks/useCameraNavigation';
 
 export const FitModelsButton = (): ReactElement => {
-  const viewer = useReveal();
+  const cameraNavigation = useCameraNavigation();
 
   const updateCamera = useCallback(() => {
-    const box = new Box3();
-
-    viewer.models.forEach((model) => box.union(model.getModelBoundingBox()));
-
-    viewer.cameraManager.fitCameraToBoundingBox(box);
-  }, [viewer, ...viewer.models]);
+    cameraNavigation.fitCameraToAllModels();
+  }, []);
 
   return (
-    <Button
-      type="ghost"
-      icon="ExpandAlternative"
-      aria-label="Fit camera to models"
-      onClick={updateCamera}
-    />
+    <CogsTooltip content={'Fit view'} placement="right" appendTo={document.body}>
+      <Button
+        type="ghost"
+        icon="ExpandAlternative"
+        aria-label="Fit camera to models"
+        onClick={updateCamera}
+      />
+    </CogsTooltip>
   );
 };

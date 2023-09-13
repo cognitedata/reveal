@@ -2,35 +2,60 @@
  * Copyright 2023 Cognite AS
  */
 import '@cognite/cogs.js/dist/cogs.css';
+
+// Components
 export { RevealContainer } from './components/RevealContainer/RevealContainer';
+export { Reveal3DResources } from './components/Reveal3DResources/Reveal3DResources';
+export { PointCloudContainer } from './components/PointCloudContainer/PointCloudContainer';
+export { CadModelContainer } from './components/CadModelContainer/CadModelContainer';
+export { Image360CollectionContainer } from './components/Image360CollectionContainer/Image360CollectionContainer';
+export { Image360HistoricalDetails } from './components/Image360HistoricalDetails/Image360HistoricalDetails';
+export { Image360Details } from './components/Image360Details/Image360Details';
+export { ViewerAnchor } from './components/ViewerAnchor/ViewerAnchor';
+export { RevealToolbar } from './components/RevealToolbar/RevealToolbar';
+export { RevealKeepAlive } from './components/RevealKeepAlive/RevealKeepAlive';
+
+// Hooks
 export { useReveal } from './components/RevealContainer/RevealContext';
+export { use3DModelName } from './hooks/use3DModelName';
+export { useFdmAssetMappings } from './components/NodeCacheProvider/NodeCacheProvider';
 export {
-  PointCloudContainer,
+  useClickedNodeData,
+  type ClickedNodeData,
+  type NodeDataResult
+} from './hooks/useClickedNode';
+export { useCameraNavigation } from './hooks/useCameraNavigation';
+export { useMappedEdgesForRevisions } from './components/NodeCacheProvider/NodeCacheProvider';
+export { useIsRevealInitialized } from './hooks/useIsRevealInitialized';
+export { use3dNodeByExternalId } from './hooks/use3dNodeByExternalId';
+
+// Higher order components
+export { withSuppressRevealEvents } from './higher-order-components/withSuppressRevealEvents';
+export {
+  withCameraStateUrlParam,
+  useGetCameraStateFromUrlParam
+} from './higher-order-components/withCameraStateUrlParam';
+// Types
+export {
   type PointCloudModelStyling,
   type AnnotationIdStylingGroup
 } from './components/PointCloudContainer/PointCloudContainer';
+export { type CogniteCadModelProps } from './components/CadModelContainer/CadModelContainer';
 export {
-  CadModelContainer,
   type CadModelStyling,
   type TreeIndexStylingGroup,
   type NodeStylingGroup
-} from './components/CadModelContainer/CadModelContainer';
-export { Image360CollectionContainer } from './components/Image360CollectionContainer/Image360CollectionContainer';
-export { Image360HistoricalDetails } from './components/Image360HistoricalDetails/Image360HistoricalDetails';
+} from './components/CadModelContainer/useApplyCadModelStyling';
 export {
-  Reveal3DResources,
   type Reveal3DResourcesProps,
-  type Reveal3DResourcesStyling,
-  type FdmAssetStylingGroup
-} from './components/Reveal3DResources/Reveal3DResources';
-export { ViewerAnchor } from './components/ViewerAnchor/ViewerAnchor';
-export { CameraController } from './components/CameraController/CameraController';
+  type FdmAssetStylingGroup,
+  type DefaultResourceStyling
+} from './components/Reveal3DResources/types';
 export type {
   AddImageCollection360Options,
   AddResourceOptions,
   AddReveal3DModelOptions
 } from './components/Reveal3DResources/types';
-export { RevealToolbar } from './components/RevealToolbar/RevealToolbar';
-export { useFdmAssetMappings } from './hooks/useFdmAssetMappings';
-export { type FdmAssetMappingsConfig } from './hooks/types';
-export { use3DModelName } from './hooks/use3DModelName';
+export type { CameraNavigationActions } from './hooks/useCameraNavigation';
+export type { Source, DmsUniqueIdentifier } from './utilities/FdmSDK';
+export type { QualitySettings } from './components/RevealToolbar/SettingsContainer/types';

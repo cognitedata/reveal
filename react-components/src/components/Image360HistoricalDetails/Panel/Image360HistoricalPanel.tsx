@@ -5,6 +5,7 @@
 import { Chip, Tooltip } from '@cognite/cogs.js';
 import { type ReactElement } from 'react';
 import styled from 'styled-components';
+import { useTranslation } from '../../../common/i18n';
 
 export type Image360HistoricalPanelProps = {
   revisionCount?: number;
@@ -17,6 +18,7 @@ export const Image360HistoricalPanel = ({
   revisionDetailsExpanded,
   setRevisionDetailsExpanded
 }: Image360HistoricalPanelProps): ReactElement => {
+  const { t } = useTranslation();
   const count = revisionCount?.toString();
 
   const onDetailsClick = (): void => {
@@ -29,12 +31,22 @@ export const Image360HistoricalPanel = ({
         <StyledToolBar onClick={onDetailsClick} isExpanded={revisionDetailsExpanded}>
           {!revisionDetailsExpanded && (
             <>
-              <StyledChip icon="History" iconPlacement="right" label="Details" hideTooltip />
+              <StyledChip
+                icon="History"
+                iconPlacement="right"
+                label={t('IMAGES_360_DETAILS')}
+                hideTooltip
+              />
               <StyledChipCount label={count} hideTooltip />
             </>
           )}
           {revisionDetailsExpanded && (
-            <StyledChip icon="PushRight" iconPlacement="right" label="Details" hideTooltip />
+            <StyledChip
+              icon="PushRight"
+              iconPlacement="right"
+              label={t('IMAGES_360_DETAILS')}
+              hideTooltip
+            />
           )}
         </StyledToolBar>
       </Tooltip>

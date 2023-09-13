@@ -2,13 +2,10 @@
  * Copyright 2023 Cognite AS
  */
 
-import { useEffect, useRef, type ReactElement, type RefObject } from 'react';
-import { type Vector3 } from 'three';
+import { useEffect, useRef, type ReactElement, type RefObject, useState, useCallback } from 'react';
+import { Vector2, type Vector3 } from 'three';
 
 import { useReveal } from '../RevealContainer/RevealContext';
-
-import { HtmlOverlayTool } from '@cognite/reveal/tools';
-import { useAuxillaryDivContext } from './AuxillaryDivProvider';
 
 export type ViewerAnchorElementMapping = {
   ref: RefObject<HTMLElement>;
@@ -17,48 +14,96 @@ export type ViewerAnchorElementMapping = {
 
 export type ViewerAnchorProps = {
   position: Vector3;
+  sticky?: boolean;
+  stickyMargin?: number;
   children: ReactElement;
-  uniqueKey: string;
 };
 
 export const ViewerAnchor = ({
   position,
   children,
-  uniqueKey
+  sticky,
+  stickyMargin
 }: ViewerAnchorProps): ReactElement => {
   const viewer = useReveal();
+  const [divTranslation, setDivTranslation] = useState(new Vector2());
+  const [visible, setVisible] = useState(false);
 
-  const htmlTool = useRef<HtmlOverlayTool>(new HtmlOverlayTool(viewer));
+  const cameraChanged = useCallback(
+    (cameraPosition: Vector3, cameraTarget: Vector3): void => {
+      const cameraDirection = cameraTarget.clone().sub(cameraPosition).normalize();
+      const elementDirection = position.clone().sub(cameraPosition).normalize();
 
-  const auxContext = useAuxillaryDivContext();
+      setVisible(elementDirection.dot(cameraDirection) > 0);
 
-  const htmlRef = useRef<HTMLDivElement>(null);
-  const element = (
-    <div key={uniqueKey} ref={htmlRef} style={{ position: 'absolute' }}>
-      {children}
-    </div>
+      const screenSpacePosition = viewer.worldToScreen(position.clone());
+      if (screenSpacePosition !== null) {
+        setDivTranslation(screenSpacePosition);
+      }
+    },
+    [viewer, position]
   );
 
   useEffect(() => {
-    auxContext.addElement(element);
-    return () => {
-      auxContext.removeElement(element);
-    };
-  }, []);
+    viewer.cameraManager.on('cameraChange', cameraChanged);
 
-  useEffect(() => {
-    if (htmlRef.current === null) {
-      return;
-    }
-
-    const elementRef = htmlRef.current;
-
-    htmlTool.current.add(elementRef, position);
+    cameraChanged(
+      viewer.cameraManager.getCameraState().position,
+      viewer.cameraManager.getCameraState().target
+    );
 
     return () => {
-      htmlTool.current.remove(elementRef);
+      viewer.cameraManager.off('cameraChange', cameraChanged);
     };
-  }, [auxContext, children, htmlRef.current]);
+  }, [cameraChanged]);
 
-  return <></>;
+  const htmlRef = useRef<HTMLDivElement>(null);
+
+  const domDimensions = [viewer.domElement.clientWidth, viewer.domElement.clientHeight] as [
+    number,
+    number
+  ];
+  const cssTranslation = computeCssOffsetWithStickiness(
+    divTranslation,
+    domDimensions,
+    sticky,
+    stickyMargin
+  );
+
+  return visible ? (
+    <div
+      ref={htmlRef}
+      style={{
+        position: 'absolute',
+        left: '0px',
+        top: '0px',
+        transform: cssTranslation
+      }}>
+      {children}
+    </div>
+  ) : (
+    <></>
+  );
 };
+
+function computeCssOffsetWithStickiness(
+  unboundedPosition: Vector2,
+  [domWidth, domHeight]: [number, number],
+  sticky?: boolean,
+  stickyMargin?: number
+): string {
+  if (sticky !== true) {
+    return `translateX(${unboundedPosition.x}px) translateY(${unboundedPosition.y}px)`;
+  }
+
+  const margin = stickyMargin ?? 0;
+
+  const maxXPos = `${domWidth}px - 100% - ${margin}px`;
+  const maxYPos = `${domHeight}px - 100% - ${margin}px`;
+
+  const minXPos = `${margin}px`;
+  const minYPos = `${margin}px`;
+
+  return `translateX(max(${minXPos}, min(${maxXPos}, ${unboundedPosition.x}px)))
+translateY(max(${minYPos}, min(${maxYPos}, ${unboundedPosition.y}px)))`;
+}

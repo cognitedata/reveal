@@ -2,8 +2,8 @@
  * Copyright 2023 Cognite AS
  */
 import type { Meta, StoryObj } from '@storybook/react';
-import { CadModelContainer, CameraController, RevealContainer } from '../src';
-import { Color, Matrix4, Vector3 } from 'three';
+import { CadModelContainer, RevealContainer } from '../src';
+import { Color, Matrix4 } from 'three';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import { NumericRange } from '@cognite/reveal';
 
@@ -84,12 +84,6 @@ export const Main: Story = {
     <RevealContainer sdk={sdk} color={new Color(0x4a4a4a)}>
       <CadModelContainer addModelOptions={addModelOptions} styling={styling} />
       <CadModelContainer addModelOptions={addModelOptions} transform={transform} />
-      <CameraController
-        initialFitCamera={{
-          to: 'cameraState',
-          state: { position: new Vector3(10, 20, 15), target: new Vector3(10, 0, -10) }
-        }}
-      />
     </RevealContainer>
   )
 };

@@ -240,7 +240,7 @@ export class Image360ApiHelper {
     image360Entity.image360Visualization.visible = true;
     this._image360Facade.allIconCullingScheme = 'proximity';
 
-    // Only do transition if we are swithing between entities.
+    // Only do transition if we are switching between entities.
     // Revisions are updated instantly (for now).
     if (lastEntered360ImageEntity === image360Entity) {
       image360Entity.activateAnnotations();
