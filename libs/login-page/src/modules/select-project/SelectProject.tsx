@@ -13,6 +13,7 @@ import {
   useValidatedLegacyProjects,
   useIdpProjectsFromAllClusters,
   AADError,
+  usePca,
 } from '@cognite/login-utils';
 
 import { useTranslation } from '../../common/i18n';
@@ -43,6 +44,7 @@ const SelectProject = (): JSX.Element => {
     (loginInfo?.idps.length === 1 ? loginInfo.idps[0] : {});
 
   const { data: idp, isFetched: isFetchedIdp } = useIdp(internalId);
+  const pca = usePca(idp?.appConfiguration.clientId, idp?.authority);
 
   const { data: legacyProjectsByCluster } = useValidatedLegacyProjects(true);
   const { invalidLegacyProjects = [], validLegacyProjects = [] } =
@@ -57,6 +59,27 @@ const SelectProject = (): JSX.Element => {
     idp,
     { enabled: !!idp }
   );
+
+  useEffect(() => {
+    if (projectsFromAllClusters.every(({ error }) => !!error)) {
+      if (pca) {
+        const activeAccount = pca.getActiveAccount();
+        pca.logout({
+          account: activeAccount || undefined,
+          onRedirectNavigate: () => {
+            // By returning false, we skip the redirect to microsoft logout page
+            // because we don't want user to be actually logged out from the idp.
+            // Instead, we want @azure/msal-browser do the clean-up on local
+            // storage and session storage.
+            return false;
+          },
+        });
+        pca.setActiveAccount(null);
+      }
+      removeSelectedIdpDetails();
+      navigate('/');
+    }
+  }, [navigate, pca, projectsFromAllClusters]);
 
   useEffect(() => {
     if (!internalId) {
