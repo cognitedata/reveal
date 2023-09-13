@@ -43,23 +43,82 @@ type Props = {
   setIsHelpModalVisible: (visible: boolean) => void;
 };
 
-/**
- * This method was originally defined in the package @cognite/login-utils
- * But it doesn't make sense to have the code stored in a separate package,
- * only used by this file.
- * This sorts the set of IdPs by their label, in alphabetical order, case-insensitive.
- * In addition, it puts Cognite IdPs at the end.
- */
-const sortIDPsByLabel = (idps?: IDPResponse[]) => {
-  const sortedByLabel = (idps ?? []).sort(
-    (idpA: IDPResponse, idpB: IDPResponse) => {
-      const idpLabelA = (idpA.label ?? '').toLocaleLowerCase();
-      const idpLabelB = (idpB.label ?? '').toLocaleLowerCase();
-      if (idpLabelA < idpLabelB) return -1;
-      if (idpLabelA > idpLabelB) return 1;
-      return 0;
+/** Renders a single sign-in button, based on the IdP type. */
+const renderSignInButton = (
+  idpProps: IDPResponse,
+  domain: string
+): JSX.Element | JSX.Element[] => {
+  switch (idpProps.type) {
+    case 'AZURE_AD':
+      return <SignInWithAAD key={idpProps.internalId} {...idpProps} />;
+    case 'AAD_B2C':
+      return (
+        <SignInWithAADB2C
+          key={idpProps.internalId}
+          {...(idpProps as AADB2CResponse)}
+        />
+      );
+    case 'AUTH0': {
+      return <SignInWithAuth0 key={idpProps.internalId} {...idpProps} />;
     }
-  );
+    case 'KEYCLOAK': {
+      const keycloakProps = idpProps as KeycloakResponse;
+      return keycloakProps.realm ? (
+        keycloakProps.clusters.map((cluster) => (
+          <SignInWithKeycloak
+            key={keycloakProps.internalId}
+            cluster={cluster}
+            {...keycloakProps}
+          />
+        ))
+      ) : (
+        <SignInWithKeycloak
+          key={keycloakProps.internalId}
+          cluster="none"
+          {...keycloakProps}
+        />
+      );
+    }
+    case 'COGNITE_IDP': {
+      return (
+        <SignInWithCogniteIdP
+          organization={domain}
+          key={idpProps.internalId}
+          {...(idpProps as CogniteIdPResponse)}
+        />
+      );
+    }
+    case 'ADFS2016': {
+      return idpProps.clusters.map((cluster: string) => {
+        return (
+          <SignInWithADFS2016
+            authority={idpProps.authority}
+            clientId={idpProps.appConfiguration.clientId}
+            cluster={cluster}
+            internalId={idpProps.internalId}
+            label={idpProps.label}
+            key={idpProps.internalId}
+          />
+        );
+      });
+    }
+    default:
+      return <></>;
+  }
+};
+
+/**
+ * Sorts the set of IdPs by their label, in alphabetical order, case-insensitive. In addition, it
+ * puts Cognite IdPs at the end.
+ */
+const sortIDPsByLabel = (idps: IDPResponse[]) => {
+  const sortedByLabel = idps.sort((idpA: IDPResponse, idpB: IDPResponse) => {
+    const idpLabelA = (idpA.label ?? '').toLocaleLowerCase();
+    const idpLabelB = (idpB.label ?? '').toLocaleLowerCase();
+    if (idpLabelA < idpLabelB) return -1;
+    if (idpLabelA > idpLabelB) return 1;
+    return 0;
+  });
   const nonCogIdPs = sortedByLabel.filter((idp) => idp.type !== 'COGNITE_IDP');
   const cogIdPs = sortedByLabel.filter((idp) => idp.type === 'COGNITE_IDP');
   return [...nonCogIdPs, ...cogIdPs];
@@ -77,8 +136,6 @@ const SelectSignInMethod = (props: Props): JSX.Element => {
   const validLegacyProjectsByCluster = useMemo(() => {
     return getLegacyProjectsByCluster(validLegacyProjects);
   }, [validLegacyProjects]);
-
-  const sortedIdps = sortIDPsByLabel(loginInfo?.idps);
 
   const onHelpClick = () =>
     window.open('https://docs.cognite.com/cdf/sign-in.html', '_blank')?.focus();
@@ -114,6 +171,9 @@ const SelectSignInMethod = (props: Props): JSX.Element => {
     return <GenericError error={error} />;
   }
 
+  const sortedIdps = sortIDPsByLabel(loginInfo?.idps ?? []);
+  const domain = loginInfo?.domain ?? null;
+
   return (
     <StyledSelectSignInMethodContainer>
       <StyledContainerHeader>
@@ -145,75 +205,12 @@ const SelectSignInMethod = (props: Props): JSX.Element => {
         />
       </StyledContainerHeader>
       <StyledContent $isBordered>
-        {loginInfo?.idps ? (
-          <StyledIdpListContainer>
-            {sortedIdps.map((idpProps: IDPResponse) => {
-              switch (idpProps.type) {
-                case 'AZURE_AD':
-                  return (
-                    <SignInWithAAD key={idpProps.internalId} {...idpProps} />
-                  );
-                case 'AAD_B2C':
-                  return (
-                    <SignInWithAADB2C
-                      key={idpProps.internalId}
-                      {...(idpProps as AADB2CResponse)}
-                    />
-                  );
-                case 'AUTH0': {
-                  return (
-                    <SignInWithAuth0 key={idpProps.internalId} {...idpProps} />
-                  );
-                }
-                case 'KEYCLOAK': {
-                  const keycloakProps = idpProps as KeycloakResponse;
-                  return keycloakProps.realm ? (
-                    keycloakProps.clusters.map((cluster) => (
-                      <SignInWithKeycloak
-                        key={keycloakProps.internalId}
-                        cluster={cluster}
-                        {...keycloakProps}
-                      />
-                    ))
-                  ) : (
-                    <SignInWithKeycloak
-                      key={keycloakProps.internalId}
-                      cluster="none"
-                      {...keycloakProps}
-                    />
-                  );
-                }
-                case 'COGNITE_IDP': {
-                  return (
-                    <SignInWithCogniteIdP
-                      organization={loginInfo.domain}
-                      key={idpProps.internalId}
-                      {...(idpProps as CogniteIdPResponse)}
-                    />
-                  );
-                }
-                case 'ADFS2016': {
-                  return idpProps.clusters.map((cluster: string) => {
-                    return (
-                      <SignInWithADFS2016
-                        authority={idpProps.authority}
-                        clientId={idpProps.appConfiguration.clientId}
-                        cluster={cluster}
-                        internalId={idpProps.internalId}
-                        label={idpProps.label}
-                        key={idpProps.internalId}
-                      />
-                    );
-                  });
-                }
-                default:
-                  return <></>;
-              }
-            })}
-          </StyledIdpListContainer>
-        ) : (
-          <></>
-        )}
+        <StyledIdpListContainer>
+          {sortedIdps.map((idpProps: IDPResponse) =>
+            renderSignInButton(idpProps, domain!)
+          )}
+        </StyledIdpListContainer>
+
         {loginInfo?.idps?.length && loginInfo?.legacyProjects?.length ? (
           <StyledDividerContainer>
             <StyledDivider />
