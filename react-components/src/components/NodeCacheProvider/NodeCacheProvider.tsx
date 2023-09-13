@@ -104,8 +104,8 @@ export function NodeCacheProvider({ children }: { children?: ReactNode }): React
     const cache =
       revealKeepAliveData?.fdmNodeCache.current ?? new FdmNodeCache(cdfClient, fdmClient);
 
-    const isInRevealKeepAliveContext = revealKeepAliveData !== undefined;
-    if (isInRevealKeepAliveContext) {
+    const isRevealKeepAliveContextProvided = revealKeepAliveData !== undefined;
+    if (isRevealKeepAliveContextProvided) {
       revealKeepAliveData.fdmNodeCache.current = cache;
     }
 
