@@ -12,9 +12,7 @@ import { BulkPopulationButton } from '@platypus-app/modules/solution/data-manage
 import { TransformationDropdown } from '@platypus-app/modules/solution/data-management/components/TransformationDropdown';
 import useTransformations from '@platypus-app/modules/solution/data-management/hooks/useTransformations';
 
-import { Tooltip, Button, Flex, Chip } from '@cognite/cogs.js';
-
-import { PageHeaderDivider } from '../DataPreviewTable/elements';
+import { Tooltip, Button, Flex, Chip, Divider } from '@cognite/cogs.js';
 
 import * as S from './elements';
 
@@ -177,7 +175,7 @@ export function PreviewPageHeader({
       }
     >
       {shouldShowActions && (
-        <Flex justifyContent="flex-end" gap={8}>
+        <Flex justifyContent="flex-end" gap={8} alignItems="center">
           {children}
           {publishedRowsCount > 0 && (
             <>
@@ -208,7 +206,9 @@ export function PreviewPageHeader({
             </>
           )}
           {(isDeleteEnabled || isManualPopulationEnabled) &&
-            publishedRowsCount > 0 && <PageHeaderDivider />}
+            publishedRowsCount > 0 && (
+              <Divider direction="vertical" length="16px" weight="2px" />
+            )}
           {isDeleteEnabled && (
             <Button
               type="ghost"
@@ -226,12 +226,17 @@ export function PreviewPageHeader({
               icon="Add"
               iconPlacement="left"
               onClick={onCreateClick}
+              style={{
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+                textOverflow: 'ellipsis',
+              }}
             >
               {t('create-new-row', 'Add instance')}
             </Button>
           )}
           {(isSuggestionsEnabled || isTransformationsEnabled) && (
-            <PageHeaderDivider />
+            <Divider direction="vertical" length="16px" weight="2px" />
           )}
           {isSuggestionsEnabled && (
             <S.SuggestionButton

@@ -31,6 +31,11 @@ export const BulkPopulationButton = ({
         icon="ExternalLink"
         iconPlacement="right"
         onClick={onClick}
+        style={{
+          overflow: 'hidden',
+          whiteSpace: 'nowrap',
+          textOverflow: 'ellipsis',
+        }}
       >
         {children}
       </Button>
