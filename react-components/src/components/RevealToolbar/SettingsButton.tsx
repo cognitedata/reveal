@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type ReactElement } from 'react';
+import { useState, type ReactElement } from 'react';
 import { Button, Dropdown, Menu, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import { type QualitySettings } from './SettingsContainer/types';
 import { HighFidelityContainer } from './SettingsContainer/HighFidelityContainer';
@@ -18,10 +18,15 @@ export const SettingsButton = ({
   lowQualitySettings,
   highQualitySettings
 }: CustomSettingsProps): ReactElement => {
+  const [settingsActive, setSettingsActive] = useState<boolean>(false);
+
   return (
     <CogsTooltip content={'Settings'} placement="right" appendTo={document.body}>
       <Dropdown
         appendTo={document.body}
+        onClickOutside={() => {
+          setSettingsActive(false);
+        }}
         content={
           <Menu>
             <HighFidelityContainer
@@ -31,8 +36,16 @@ export const SettingsButton = ({
             {customSettingsContent ?? <></>}
           </Menu>
         }
-        placement="auto">
-        <Button icon="Settings" type="ghost" aria-label="Show settings" />
+        placement="right-start">
+        <Button
+          icon="Settings"
+          type="ghost"
+          aria-label="Show settings"
+          toggled={settingsActive}
+          onClick={() => {
+            setSettingsActive((prevState) => !prevState);
+          }}
+        />
       </Dropdown>
     </CogsTooltip>
   );

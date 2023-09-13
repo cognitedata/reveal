@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type ReactElement } from 'react';
+import { useState, type ReactElement } from 'react';
 
 import { Button, Dropdown, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import styled from 'styled-components';
@@ -11,10 +11,15 @@ import { TouchNavigation } from './Help/TouchNavigation';
 import { KeyboardNavigation } from './Help/KeyboardNavigation';
 
 export const HelpButton = (): ReactElement => {
+  const [helpActive, setHelpActive] = useState<boolean>(false);
+
   return (
     <CogsTooltip content={'Help'} placement="right" appendTo={document.body}>
       <Dropdown
         appendTo={document.body}
+        onClickOutside={() => {
+          setHelpActive(false);
+        }}
         content={
           <StyledMenu>
             <MouseNavigation />
@@ -23,7 +28,15 @@ export const HelpButton = (): ReactElement => {
           </StyledMenu>
         }
         placement="right">
-        <Button type="ghost" icon="Help" aria-label="help-button" />
+        <Button
+          type="ghost"
+          icon="Help"
+          aria-label="help-button"
+          toggled={helpActive}
+          onClick={() => {
+            setHelpActive((prevState) => !prevState);
+          }}
+        />
       </Dropdown>
     </CogsTooltip>
   );

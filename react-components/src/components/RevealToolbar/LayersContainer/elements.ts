@@ -8,6 +8,7 @@ import styled from 'styled-components';
 export const StyledSubMenu = styled(Menu)`
   padding: 8px;
   overflow-y: auto;
+  border: 1px solid rgba(83, 88, 127, 0.24);
   max-height: 300px;
   ::-webkit-scrollbar {
     width: 8px;
