@@ -20,13 +20,15 @@ describe('Platypus Query Explorer Page - Preview', () => {
 `;
 
     const mockResult = {
-      listPost: {
-        items: [
-          {
-            title: 'Lorem Ipsum',
-            views: 254,
-          },
-        ],
+      data: {
+        listPost: {
+          items: [
+            {
+              title: 'Lorem Ipsum',
+              views: 254,
+            },
+          ],
+        },
       },
     };
     cy.setQueryExplorerQuery(query);

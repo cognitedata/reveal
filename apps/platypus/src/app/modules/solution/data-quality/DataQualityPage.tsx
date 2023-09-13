@@ -11,21 +11,11 @@ import { PageToolbar } from '@platypus-app/components/PageToolbar/PageToolbar';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
-import sdk from '@cognite/cdf-sdk-singleton';
 import { Body, Button, Flex, Tooltip } from '@cognite/cogs.js';
-import { SDKProvider } from '@cognite/sdk-provider';
 
 import { DataQualityOverview, UpsertRuleDrawer } from './pages';
 
 export const DataQualityPage = () => {
-  return (
-    <SDKProvider sdk={sdk}>
-      <DataQualityHome />
-    </SDKProvider>
-  );
-};
-
-export const DataQualityHome = () => {
   const { t } = useTranslation('DataQualityHome');
 
   const upsertRuleDrawer = useDisclosure({ isOpen: false });
