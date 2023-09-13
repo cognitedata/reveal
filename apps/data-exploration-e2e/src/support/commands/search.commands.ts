@@ -80,6 +80,11 @@ Cypress.Commands.add('includeSearchParameter', (parameterID) => {
   });
 });
 
+Cypress.Commands.add('resetSearchFilters', () => {
+  cy.log('reset search filters');
+  cy.clickButton('Reset');
+});
+
 export interface SearchCommand {
   goToTab(tab: ResourceTab): void;
   performSearch(searchString: string): void;
@@ -89,4 +94,5 @@ export interface SearchCommand {
   columnSelection(columnName: string): void;
   excludeSearchParameter(parameterName: string): void;
   includeSearchParameter(parameterName: string): void;
+  resetSearchFilters(): void;
 }

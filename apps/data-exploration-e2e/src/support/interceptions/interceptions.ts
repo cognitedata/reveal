@@ -4,12 +4,15 @@ export const EVENT_LIST_ALIAS = 'eventList';
 export const FILE_LIST_ALIAS = 'fileList';
 export const SEQUENCE_LIST_ALIAS = 'sequenceList';
 
+export const ASSET_AGGREGATE_ALIAS = 'assetAggregate';
+
 export const interceptAssetList = () => {
   cy.intercept({
     url: '**/api/v1/projects/dss-dev/assets/list',
     method: 'POST',
   }).as(ASSET_LIST_ALIAS);
 };
+
 export const interceptTimeseriesList = () => {
   cy.intercept({
     url: '**/api/v1/projects/dss-dev/timeseries/list',
@@ -36,4 +39,11 @@ export const interceptSequenceList = () => {
     url: '**/api/v1/projects/dss-dev/sequences/list',
     method: 'POST',
   }).as(SEQUENCE_LIST_ALIAS);
+};
+
+export const interceptAssetAggregate = () => {
+  cy.intercept({
+    url: '**/api/v1/projects/dss-dev/assets/aggregate',
+    method: 'POST',
+  }).as(ASSET_AGGREGATE_ALIAS);
 };
