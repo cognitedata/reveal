@@ -45,7 +45,7 @@ export function generateCSPHeader(appManifests: AppManifest[]) {
       'https://intercom.help https://api-iam.intercom.io https://*.preview.cogniteapp.com https://storage.googleapis.com/opint-pr-server/*',
     ],
     'img-src': [
-      "'self' blob: data: https://*.cognitedata.com https://auth-dev.cognite.ai https://js.intercomcdn.com https://static.intercomassets.com https://downloads.intercomcdn.com https://uploads.intercomusercontent.com https://gifs.intercomcdn.com https://video-messages.intercomcdn.com https://messenger-apps.intercom.io https://*.intercom-attachments-5.com https://*.intercom-attachments-6.com https://*.intercom-attachments-9.com https://*.preview.cogniteapp.com https://storage.googleapis.com/opint-pr-server/* https://apps-cdn.cogniteapp.com",
+      "'self' blob: data: https://*.cognitedata.com https://auth.cognite.com https://js.intercomcdn.com https://static.intercomassets.com https://downloads.intercomcdn.com https://uploads.intercomusercontent.com https://gifs.intercomcdn.com https://video-messages.intercomcdn.com https://messenger-apps.intercom.io https://*.intercom-attachments-5.com https://*.intercom-attachments-6.com https://*.intercom-attachments-9.com https://*.preview.cogniteapp.com https://storage.googleapis.com/opint-pr-server/* https://apps-cdn.cogniteapp.com",
     ],
     'frame-src': ["* 'self'"],
   };
