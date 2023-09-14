@@ -21,8 +21,11 @@ import {
   rejectModel,
 } from './..';
 
+const MAX_RETRIES = 20;
+const RETRYDELAY = 20000; // in ms
+
 const pnidApiRootPath = (project: string) =>
-  `/api/playground/projects/${project}/context/diagram`;
+  `/api/v1/projects/${project}/context/diagram`;
 const createPnidDetectJobPath = (project: string) =>
   `${pnidApiRootPath(project)}/detect`;
 const getPnidDetectJobPath = (project: string, jobId: number) =>
@@ -35,8 +38,14 @@ export const startPnidParsingJob = {
       parsingJobProps: StartPnidParsingJobProps,
       { dispatch }: { dispatch: any }
     ) => {
-      const { workflowJobs, diagrams, resources, options, workflowId } =
-        parsingJobProps;
+      const {
+        workflowJobs,
+        diagrams,
+        resources,
+        options,
+        workflowId,
+        retries = 0,
+      } = parsingJobProps;
       const diagramIds: number[] = diagrams.map((d) => d.id);
       const existingJob = workflowJobs.find((job) =>
         diagramIds.every((id) => job.items?.some((item) => item.fileId === id))
@@ -100,8 +109,19 @@ export const startPnidParsingJob = {
           dispatch(pollJobResults.action({ jobId, workflowId }));
         }
         return jobId;
-      } catch (e) {
-        // @ts-ignore ignoring for the sake of this migration
+      } catch (e: any) {
+        const { status = undefined } = e;
+        if (status === 429 && retries < MAX_RETRIES) {
+          await new Promise((resolve) => setTimeout(resolve, RETRYDELAY));
+          dispatch(
+            startPnidParsingJob.action({
+              ...parsingJobProps,
+              retries: retries + 1,
+            })
+          );
+          throw e;
+        }
+
         handleError({ ...e });
         dispatch(rejectModel({}));
         throw e;

@@ -114,6 +114,7 @@ export type StartPnidParsingJobProps = {
   resources: { assets?: Asset[]; files?: FileInfo[] };
   options: WorkflowOptions;
   workflowId: number;
+  retries?: number;
 };
 
 export type PollJobResultsProps = {
