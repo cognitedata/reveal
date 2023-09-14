@@ -1,7 +1,5 @@
 import { useMemo } from 'react';
 
-import isEqual from 'lodash/isEqual';
-
 import {
   ContainerType,
   UnifiedViewerMouseEvent,
@@ -42,14 +40,13 @@ const applyProperties = (
   return containerConfig;
 };
 
-const useContainer = (
+const useContainers = (
   canvasState: IndustryCanvasState
-): IndustryCanvasContainerConfig => {
-  return useMemo(() => {
-    return {
-      ...canvasState.container,
-      children: (
-        canvasState.container.children?.map((containerConfig) => ({
+): IndustryCanvasContainerConfig[] => {
+  return useMemo(
+    () =>
+      canvasState.containers
+        .map((containerConfig) => ({
           ...containerConfig,
           onClick: (e: UnifiedViewerMouseEvent) => {
             e.cancelBubble = true;
@@ -58,12 +55,12 @@ const useContainer = (
               clickedContainerAnnotationId: undefined,
             });
           },
-        })) as IndustryCanvasContainerConfig[]
-      ).map((containerConfig) =>
-        applyProperties(containerConfig, canvasState.filters)
-      ),
-    };
-  }, [canvasState.container, canvasState.filters]);
+        }))
+        .map((containerConfig) =>
+          applyProperties(containerConfig, canvasState.filters)
+        ),
+    [canvasState.containers, canvasState.filters]
+  );
 };
 
-export default useContainer;
+export default useContainers;

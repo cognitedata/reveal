@@ -4,7 +4,6 @@ import { CogniteClient } from '@cognite/sdk/dist/src/index';
 import { IdsByType } from '@cognite/unified-file-viewer';
 
 import containerConfigToContainerReference from '../containerConfigToContainerReference';
-import { EMPTY_FLEXIBLE_LAYOUT } from '../hooks/constants';
 import resolveContainerConfig from '../hooks/utils/resolveContainerConfig';
 import {
   IndustryCanvasState,
@@ -54,7 +53,7 @@ const serializeCanvasContext = (
 export const serializeCanvasState = (
   state: IndustryCanvasState
 ): SerializedIndustryCanvasState => {
-  const containerReferences = (state.container.children ?? []).map(
+  const containerReferences = state.containers.map(
     containerConfigToContainerReference
   );
   const [fdmInstanceContainerReferences, assetCentricContainerReferences] =
@@ -125,17 +124,14 @@ export const deserializeCanvasState = async (
   try {
     return {
       canvasAnnotations: state.canvasAnnotations,
-      container: {
-        ...EMPTY_FLEXIBLE_LAYOUT,
-        children: await Promise.all(
-          [
-            ...state.containerReferences,
-            ...state.fdmInstanceContainerReferences,
-          ].map((containerReference) =>
-            resolveContainerConfig(sdk, containerReference)
-          )
-        ),
-      },
+      containers: await Promise.all(
+        [
+          ...state.containerReferences,
+          ...state.fdmInstanceContainerReferences,
+        ].map((containerReference) =>
+          resolveContainerConfig(sdk, containerReference)
+        )
+      ),
       pinnedTimeseriesIdsByAnnotationId: deserializePinnedTimeseries(
         state.context
       ),
@@ -147,7 +143,7 @@ export const deserializeCanvasState = async (
   } catch (error) {
     console.error('Error deserializing canvas container', error);
     return {
-      container: EMPTY_FLEXIBLE_LAYOUT,
+      containers: [],
       canvasAnnotations: [],
       pinnedTimeseriesIdsByAnnotationId: {},
       liveSensorRulesByAnnotationIdByTimeseriesId: {},

@@ -138,9 +138,6 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
 
       if (
         container.type === ContainerType.FDM_INSTANCE ||
-        container.type === ContainerType.ROW ||
-        container.type === ContainerType.COLUMN ||
-        container.type === ContainerType.FLEXIBLE_LAYOUT ||
         container.type === ContainerType.TABLE
       ) {
         throw new Error(

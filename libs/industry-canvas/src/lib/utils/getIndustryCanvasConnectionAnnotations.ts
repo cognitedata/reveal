@@ -89,11 +89,11 @@ const EMPTY_CONNECTION_ANNOTATIONS: Annotation[] = [];
 const getConnectionAnnotations = ({
   sourceAnnotation,
   annotations,
-  container,
+  containers,
   shouldAddSelfReferentialHighlighting = false,
 }: {
   sourceAnnotation: ExtendedAnnotation;
-  container: IndustryCanvasContainerConfig;
+  containers: IndustryCanvasContainerConfig[];
   annotations: ExtendedAnnotation[];
   shouldAddSelfReferentialHighlighting?: boolean;
 }): Annotation[] => {
@@ -102,7 +102,7 @@ const getConnectionAnnotations = ({
   if (sourceResourceType === 'asset') {
     return getAssetConnectionAnnotations({
       sourceAnnotation,
-      container,
+      containers,
     });
   }
 
@@ -110,7 +110,7 @@ const getConnectionAnnotations = ({
     return getFileConnectionAnnotations({
       sourceAnnotation,
       annotations,
-      container,
+      containers,
       shouldAddSelfReferentialHighlighting,
     });
   }
@@ -120,17 +120,17 @@ const getConnectionAnnotations = ({
 
 const getAssetConnectionAnnotations = ({
   sourceAnnotation,
-  container,
+  containers,
 }: {
   sourceAnnotation: ExtendedAnnotation;
-  container: IndustryCanvasContainerConfig;
+  containers: IndustryCanvasContainerConfig[];
 }) => {
   const targetAssetId = getResourceIdFromExtendedAnnotation(sourceAnnotation);
   if (targetAssetId === undefined) {
     return EMPTY_CONNECTION_ANNOTATIONS;
   }
 
-  const linkedAssetContainers = (container.children ?? []).filter(
+  const linkedAssetContainers = containers.filter(
     (containerConfig) =>
       containerConfig.type === ContainerType.ASSET &&
       containerConfig.assetId === targetAssetId
@@ -148,11 +148,11 @@ const getAssetConnectionAnnotations = ({
 const getFileConnectionAnnotations = ({
   sourceAnnotation,
   annotations,
-  container,
+  containers,
   shouldAddSelfReferentialHighlighting,
 }: {
   sourceAnnotation: ExtendedAnnotation;
-  container: IndustryCanvasContainerConfig;
+  containers: IndustryCanvasContainerConfig[];
   annotations: ExtendedAnnotation[];
   shouldAddSelfReferentialHighlighting: boolean;
 }) => {
@@ -172,7 +172,7 @@ const getFileConnectionAnnotations = ({
     return EMPTY_CONNECTION_ANNOTATIONS;
   }
 
-  const linkedContainers = (container.children ?? []).filter(
+  const linkedContainers = containers.filter(
     (containerConfig) =>
       (containerConfig.type === ContainerType.DOCUMENT ||
         containerConfig.type === ContainerType.IMAGE ||
@@ -224,14 +224,14 @@ const getFileConnectionAnnotations = ({
 };
 
 export const getIndustryCanvasConnectionAnnotations = ({
-  container,
+  containers,
   selectedContainer,
   annotations,
   hoverId,
   clickedId,
   shouldShowAllConnectionAnnotations,
 }: {
-  container: IndustryCanvasContainerConfig;
+  containers: IndustryCanvasContainerConfig[];
   selectedContainer: IndustryCanvasContainerConfig | undefined;
   annotations: ExtendedAnnotation[];
   hoverId: string | undefined;
@@ -247,7 +247,7 @@ export const getIndustryCanvasConnectionAnnotations = ({
     const connectionAnnotations = getConnectionAnnotations({
       sourceAnnotation: sourceAnnotation,
       annotations,
-      container,
+      containers,
     });
 
     // Populate the set of already connected annotations to avoid duplicate connections

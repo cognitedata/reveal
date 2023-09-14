@@ -120,7 +120,7 @@ export const FileViewer = ({ file }: { file?: FileInfo }) => {
         applicationId={CHARTS_APPLICATION_ID}
         id={ROOT_CONTAINER_ID}
         setRef={setRef}
-        container={containerConfig}
+        containers={[containerConfig]}
         annotations={annotations}
         tooltips={popovers}
         onClick={onStageClick}

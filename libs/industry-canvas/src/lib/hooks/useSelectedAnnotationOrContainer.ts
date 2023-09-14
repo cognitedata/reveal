@@ -15,14 +15,14 @@ type UseSelectedAnnotationOrContainerProps = {
   unifiedViewerRef: UnifiedViewer | null;
   toolType: IndustryCanvasToolType;
   canvasAnnotations: IndustryCanvasState['canvasAnnotations'];
-  container: IndustryCanvasState['container'];
+  containers: IndustryCanvasState['containers'];
 };
 
 export const useSelectedAnnotationOrContainer = ({
   unifiedViewerRef,
   toolType,
   canvasAnnotations,
-  container,
+  containers,
 }: UseSelectedAnnotationOrContainerProps) => {
   const { selectedIdsByType } = useIndustrialCanvasStore((state) => ({
     selectedIdsByType: state.selectedIdsByType,
@@ -72,10 +72,10 @@ export const useSelectedAnnotationOrContainer = ({
       return undefined;
     }
 
-    return (container.children ?? []).find(
-      (child) => child.id === selectedIdsByType.containerIds[0]
+    return containers.find(
+      ({ id }) => id === selectedIdsByType.containerIds[0]
     );
-  }, [container.children, selectedIdsByType, toolType]);
+  }, [containers, selectedIdsByType, toolType]);
 
   return {
     selectedCanvasAnnotation,

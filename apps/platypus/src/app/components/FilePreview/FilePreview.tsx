@@ -67,7 +67,7 @@ export const FilePreview = ({
     <ReactUnifiedViewer
       applicationId={UFV_APPLICATION_ID}
       id={fileId}
-      container={container}
+      containers={[container]}
       shouldShowZoomControls={false}
     />
   );

@@ -19,8 +19,8 @@ import { useSDK } from '@cognite/sdk-provider';
 import ReactUnifiedViewer, {
   Annotation,
   ContainerConfig,
-  ContainerType,
   getContainerConfigFromFileInfo,
+  getContainersInRowLayout,
   isSupportedFileInfo,
   UnifiedViewer,
   UnifiedViewerMouseEvent,
@@ -62,13 +62,7 @@ export const Canvas = ({
   files = EMPTY_ARRAY,
   onRef,
 }: MultiFileViewerProps) => {
-  const [container, setContainer] = useState<ContainerConfig>({
-    id: 'row1',
-    type: ContainerType.ROW,
-    shouldRenderCompactly: true,
-    margin: CONTAINER_MARGIN,
-    children: [],
-  });
+  const [containers, setContainers] = useState<ContainerConfig[]>([]);
   const { addFile } = useCanvasFilesFromUrl();
 
   const [
@@ -100,7 +94,7 @@ export const Canvas = ({
   useEffect(() => {
     (async () => {
       if (fileInfos) {
-        const children = await Promise.all(
+        const loadedFileContainers = await Promise.all(
           zip(files, fileInfos)
             .filter(isNotUndefinedTuple)
             .map(([pagedFileReference, fileInfo]) => {
@@ -125,10 +119,11 @@ export const Canvas = ({
               });
             })
         );
-        setContainer((prevState) => ({
-          ...prevState,
-          children,
-        }));
+        setContainers(
+          getContainersInRowLayout(loadedFileContainers, {
+            margin: CONTAINER_MARGIN,
+          })
+        );
       }
     })();
   }, [fileInfos, sdk, files]);
@@ -234,7 +229,7 @@ export const Canvas = ({
         <ReactUnifiedViewer
           applicationId={applicationId}
           id={id}
-          container={container}
+          containers={containers}
           annotations={enhancedAnnotations}
           tooltips={tooltips}
           onClick={onStageClick}

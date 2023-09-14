@@ -440,7 +440,7 @@ export const FilePreview = ({
             applicationId={applicationId}
             id={id}
             setRef={(ref) => setUnifiedViewerRef(ref)}
-            container={container}
+            containers={[container]}
             annotations={displayedAnnotations}
             tooltips={enableToolTips ? tooltips : undefined}
             onClick={onStageClick}

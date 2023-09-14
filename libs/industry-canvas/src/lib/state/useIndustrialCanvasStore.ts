@@ -42,10 +42,9 @@ import {
   MetricEvent,
   SHAMEFUL_WAIT_TO_ENSURE_ANNOTATIONS_ARE_RENDERED_MS,
 } from '../constants';
-import { EMPTY_FLEXIBLE_LAYOUT } from '../hooks/constants';
 import {
   getNextUpdatedAnnotations,
-  getNextUpdatedContainer,
+  getNextUpdatedContainers,
   InteractionState,
 } from '../hooks/useOnUpdateRequest';
 import resolveContainerConfig from '../hooks/utils/resolveContainerConfig';
@@ -55,7 +54,6 @@ import { getCdfUserFromUserProfile } from '../services/comments/utils';
 import {
   COMMENT_METADATA_ID,
   ContainerReference,
-  Filter,
   IndustryCanvasContainerConfig,
   IndustryCanvasState,
   IndustryCanvasToolType,
@@ -68,7 +66,6 @@ import { addDimensionsToContainerReferencesIfNotExists } from '../utils/dimensio
 import { TrackUsageFn } from '../utils/tracking/createTrackUsage';
 import { serializeCanvasState } from '../utils/utils';
 
-import removeRecursive from './removeRecursive';
 import applyAssetFilters from './utils/applyAssetFilters';
 import applyEventFilters from './utils/applyEventFilters';
 
@@ -195,7 +192,7 @@ const initialState: RootState = {
   historyState: {
     history: [
       {
-        container: EMPTY_FLEXIBLE_LAYOUT,
+        containers: [],
         canvasAnnotations: [],
         pinnedTimeseriesIdsByAnnotationId: {},
         liveSensorRulesByAnnotationIdByTimeseriesId: {},
@@ -380,7 +377,7 @@ export const closeConditionalFormattingClick = () => {
 };
 
 const applyDeleteRequestTransform = (
-  { container, canvasAnnotations, ...otherState }: IndustryCanvasState,
+  { containers, canvasAnnotations, ...otherState }: IndustryCanvasState,
   { annotationIds, containerIds }: IdsByType
 ) => {
   const nextCanvasAnnotations = canvasAnnotations.filter(
@@ -392,18 +389,13 @@ const applyDeleteRequestTransform = (
           annotation?.containerId !== containerId
       )
   );
-
-  const nextContainer = removeRecursive<IndustryCanvasContainerConfig>(
-    container,
-    (container) => {
-      return container.id !== undefined && containerIds.includes(container.id);
-    }
+  const nextContainers = containers.filter(
+    (container) => !containerIds.includes(container.id)
   );
-
   // TODO: Missing deleting pinned timeseries ids here if the annotation is deleted
   return {
     ...otherState,
-    container: nextContainer,
+    containers: nextContainers,
     canvasAnnotations: nextCanvasAnnotations,
   };
 };
@@ -460,41 +452,30 @@ export const addContainerConfig = ({
 }) => {
   pushHistoryState((prevState: IndustryCanvasState) => ({
     ...prevState,
-    container: {
-      ...prevState.container,
-      children: [
-        ...(prevState.container.children ?? []),
-        {
-          ...containerConfig,
-        },
-      ],
-    },
+    containers: [...prevState.containers, containerConfig],
   }));
   return containerConfig;
 };
 
 export const updateContainerById = ({
-  containerId,
-  containerConfig,
+  containerId: updatedContainerId,
+  containerConfig: updatedContainerConfig,
 }: {
   containerId: string;
   containerConfig: IndustryCanvasContainerConfig;
 }) => {
   pushHistoryState((prevState: IndustryCanvasState) => ({
     ...prevState,
-    container: {
-      ...prevState.container,
-      children: [
-        ...(prevState.container.children ?? []).map((child) =>
-          child.id === containerId
-            ? ({
-                ...child,
-                ...containerConfig,
-              } as IndustryCanvasContainerConfig)
-            : child
-        ),
-      ],
-    },
+    containers: [
+      ...prevState.containers.map((containerConfig) =>
+        containerConfig.id === updatedContainerId
+          ? {
+              ...containerConfig,
+              ...updatedContainerConfig,
+            }
+          : containerConfig
+      ),
+    ],
   }));
 };
 
@@ -553,7 +534,7 @@ export const shamefulOnUpdateRequest = ({
 
   const toolType = rootState.toolType;
 
-  pushHistoryState(({ container, canvasAnnotations, ...otherState }) => {
+  pushHistoryState(({ containers, canvasAnnotations, ...otherState }) => {
     const updatedAnnotation = updatedAnnotations[0];
     const hasAnnotationBeenCreated =
       updatedAnnotation !== undefined &&
@@ -623,7 +604,7 @@ export const shamefulOnUpdateRequest = ({
 
     return {
       ...otherState,
-      container: getNextUpdatedContainer(container, validUpdatedContainers),
+      containers: getNextUpdatedContainers(containers, validUpdatedContainers),
       canvasAnnotations: getNextUpdatedAnnotations(
         canvasAnnotations,
         updatedAnnotations
@@ -810,14 +791,9 @@ export const removeContainerById = (containerIdToRemove: string) => {
   pushHistoryState((prevState: IndustryCanvasState) => {
     return {
       ...prevState,
-      container: {
-        ...prevState.container,
-        children: [
-          ...(prevState.container.children ?? []).filter(
-            (child) => containerIdToRemove !== child.id
-          ),
-        ],
-      },
+      containers: prevState.containers.filter(
+        (container) => containerIdToRemove !== container.id
+      ),
     };
   });
 };

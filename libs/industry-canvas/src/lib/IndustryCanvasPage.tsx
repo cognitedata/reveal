@@ -49,8 +49,8 @@ import { useAuth2InvitationsByResource } from './hooks/use-query/useAuth2Invitat
 import { useUsers } from './hooks/use-query/useUsers';
 import useCanvasVisibility from './hooks/useCanvasVisibility';
 import useClickedContainerAnnotation from './hooks/useClickedContainerAnnotation';
-import useContainer from './hooks/useContainer';
 import { useContainerAnnotations } from './hooks/useContainerAnnotations';
+import useContainer from './hooks/useContainers';
 import { useDragAndDrop } from './hooks/useDragAndDrop';
 import useKeyboardShortcuts from './hooks/useKeyboardShortcuts';
 import useLocalStorage from './hooks/useLocalStorage';
@@ -196,9 +196,9 @@ export const IndustryCanvasPage = () => {
   const onUpdateRequest = useOnUpdateRequest({
     unifiedViewer: unifiedViewerRef,
   });
-  const container = useContainer(canvasState);
+  const containers = useContainer(canvasState);
   const containerAnnotations = useContainerAnnotations({
-    container,
+    containers,
   });
   const clickedContainerAnnotation = useClickedContainerAnnotation({
     containerAnnotations,
@@ -254,7 +254,7 @@ export const IndustryCanvasPage = () => {
       unifiedViewerRef,
       toolType,
       canvasAnnotations: canvasState.canvasAnnotations,
-      container,
+      containers,
     });
 
   const { onUpdateSelectedAnnotation } = useOnUpdateSelectedAnnotation({
@@ -273,7 +273,7 @@ export const IndustryCanvasPage = () => {
     unifiedViewerRef,
     selectedContainer,
     clickedContainerAnnotation,
-    container,
+    containers,
     isCanvasLocked,
     tooltipsOptions,
   });
@@ -286,7 +286,7 @@ export const IndustryCanvasPage = () => {
       return;
     }
 
-    if (container.children === undefined || container.children.length === 0) {
+    if (containers.length === 0) {
       return;
     }
 
@@ -295,7 +295,7 @@ export const IndustryCanvasPage = () => {
       duration: 0,
     });
     setHasZoomedToFitOnInitialLoad(true);
-  }, [hasZoomedToFitOnInitialLoad, unifiedViewerRef, container]);
+  }, [hasZoomedToFitOnInitialLoad, unifiedViewerRef, containers]);
 
   const { onKeyDown, onKeyUp } = useKeyboardShortcuts(unifiedViewerRef);
 
@@ -590,7 +590,7 @@ export const IndustryCanvasPage = () => {
             onUpdateRequest={onUpdateRequest}
             containerAnnotations={containerAnnotations}
             clickedContainerAnnotation={clickedContainerAnnotation}
-            container={container}
+            containers={containers}
             selectedContainer={selectedContainer}
             canvasAnnotations={canvasState.canvasAnnotations}
             selectedCanvasAnnotation={selectedCanvasAnnotation}

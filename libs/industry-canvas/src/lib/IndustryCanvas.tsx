@@ -64,7 +64,7 @@ export type IndustryCanvasProps = {
   toolType: IndustryCanvasToolType;
   isCanvasLocked: boolean;
   tool: UseManagedToolReturnType['tool'];
-  container: IndustryCanvasState['container'];
+  containers: IndustryCanvasState['containers'];
   canvasAnnotations: IndustryCanvasState['canvasAnnotations'];
   onUpdateRequest: UnifiedViewerEventListenerMap[UnifiedViewerEventType.ON_UPDATE_REQUEST];
   clickedContainerAnnotation: ExtendedAnnotation | undefined;
@@ -79,7 +79,7 @@ export type IndustryCanvasProps = {
 export const IndustryCanvas = ({
   id,
   applicationId,
-  container,
+  containers,
   canvasAnnotations,
   onUpdateRequest,
   containerAnnotations,
@@ -144,7 +144,7 @@ export const IndustryCanvas = ({
 
   const tooltips = useIndustryCanvasTooltips({
     selectedContainer,
-    containers: container.children ?? [],
+    containers,
     clickedContainerAnnotation,
     selectedCanvasAnnotation,
     tooltipsOptions,
@@ -211,7 +211,7 @@ export const IndustryCanvas = ({
       // TODO: Bug tracked by https://cognitedata.atlassian.net/browse/UFV-363
       // ...getClickedContainerOutlineAnnotation(clickedContainer),
       ...getIndustryCanvasConnectionAnnotations({
-        container,
+        containers,
         selectedContainer,
         hoverId: interactionState.hoverId,
         clickedId: interactionState.clickedContainerAnnotationId,
@@ -223,7 +223,7 @@ export const IndustryCanvas = ({
       ...canvasAnnotationWithEventHandlers,
     ],
     [
-      container,
+      containers,
       selectedContainer,
       interactionState.hoverId,
       interactionState.clickedContainerAnnotationId,
@@ -280,7 +280,7 @@ export const IndustryCanvas = ({
       <ReactUnifiedViewer
         applicationId={applicationId}
         id={id}
-        container={container}
+        containers={containers}
         annotations={enhancedAnnotations}
         tooltips={tooltips}
         onClick={onStageClick}

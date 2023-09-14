@@ -19,20 +19,18 @@ import { isNotUndefined } from '../utils/isNotUndefined';
 import { isNotUndefinedTuple } from '../utils/isNotUndefinedTuple';
 import useMetrics from '../utils/tracking/useMetrics';
 
-import { EMPTY_ARRAY } from './constants';
 import { useAnnotationsMultiple } from './useAnnotationsMultiple';
 
 type useContainerAnnotationsParams = {
-  container: IndustryCanvasContainerConfig;
+  containers: IndustryCanvasContainerConfig[];
 };
 
 export const useContainerAnnotations = ({
-  container,
+  containers,
 }: useContainerAnnotationsParams): ExtendedAnnotation[] => {
   const trackUsage = useMetrics();
-  const containerConfigs = container.children ?? EMPTY_ARRAY;
   const { data: annotationsApiAnnotations } =
-    useAnnotationsMultiple(containerConfigs);
+    useAnnotationsMultiple(containers);
   const { hoverId, clickedContainerAnnotationId } = useIndustrialCanvasStore(
     (state) => ({
       hoverId: state.interactionState.hoverId,
@@ -81,7 +79,7 @@ export const useContainerAnnotations = ({
       return [];
     }
 
-    const extendedAnnotations = zip(containerConfigs, annotationsApiAnnotations)
+    const extendedAnnotations = zip(containers, annotationsApiAnnotations)
       .filter(isNotUndefinedTuple)
       .flatMap(([containerConfig, annotationsForContainerConfig]) =>
         getExtendedAnnotationsFromAnnotationsApi(
@@ -131,6 +129,6 @@ export const useContainerAnnotations = ({
     clickedContainerAnnotationId,
     hoverId,
     annotationsApiAnnotations,
-    containerConfigs,
+    containers,
   ]);
 };

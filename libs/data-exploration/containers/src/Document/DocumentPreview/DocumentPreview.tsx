@@ -74,7 +74,7 @@ DocumentPreviewProps) => {
         <ReactUnifiedViewer
           applicationId={applicationId}
           id={id}
-          container={container}
+          containers={[container]}
           shouldShowZoomControls={showControls}
         />
       </UFVWrapper>
