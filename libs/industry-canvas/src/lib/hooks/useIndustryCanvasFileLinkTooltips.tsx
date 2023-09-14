@@ -52,7 +52,7 @@ const useIndustryCanvasFileLinkTooltips = ({
     };
 
     const onViewClick = () => {
-      window.open(createLink(`/explore/files/${resourceId}`), '_blank');
+      window.open(createLink(`/explore/file/${resourceId}`), '_blank');
     };
 
     const isSelfReferential =
