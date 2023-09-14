@@ -560,7 +560,9 @@ export abstract class CombineNodeCollectionBase extends NodeCollection {
 
 // @public (undocumented)
 export class ComboControls extends EventDispatcher {
-    constructor(camera: PerspectiveCamera | OrthographicCamera, domElement: HTMLElement);
+    constructor(camera: PerspectiveCamera | OrthographicCamera, domElement: HTMLElement, options?: {
+        scene?: THREE.Scene;
+    });
     get cameraRawRotation(): Quaternion;
     // (undocumented)
     dispose: () => void;
