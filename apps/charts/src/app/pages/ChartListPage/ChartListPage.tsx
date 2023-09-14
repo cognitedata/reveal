@@ -103,6 +103,7 @@ const ChartListPage = () => {
       <div style={{ margin: '10px 20px' }}>
         <Button
           type="primary"
+          data-testid="new-chart-button"
           icon="Add"
           aria-label={t['New chart']}
           onClick={handleCreateChart}

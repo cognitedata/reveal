@@ -111,6 +111,7 @@ const SignInWithAAD = ({
       isLoading={!isHandledAADRedirect}
       onClick={handleSignInWithAAD}
       icon={<Microsoft />}
+      internalId={internalId}
     >
       {label || t('sign-in-with-microsoft')}
     </SignInButton>

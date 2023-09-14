@@ -10,6 +10,7 @@ type SignInButtonProps = {
   disabled?: boolean;
   isLoading?: boolean;
   onClick: React.MouseEventHandler<HTMLButtonElement>;
+  internalId?: string;
 };
 
 const SignInButton = ({
@@ -18,13 +19,16 @@ const SignInButton = ({
   disabled,
   isLoading,
   onClick,
+  internalId,
 }: SignInButtonProps): JSX.Element => {
+  console.log('SignInButton', internalId);
   return (
     <StyledSignInButton
       disabled={disabled}
       loading={isLoading}
       onClick={onClick}
       type="secondary"
+      data-testid={internalId}
     >
       <StyledSignInButtonTypeIconContainer>
         {icon}

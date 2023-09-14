@@ -1,0 +1,16 @@
+{
+  "name": "shared-cypress",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/shared/cypress/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/shared/cypress/**/*.ts"]
+      }
+    }
+  },
+  "tags": []
+}

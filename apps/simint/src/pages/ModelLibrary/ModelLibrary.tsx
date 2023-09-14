@@ -131,6 +131,7 @@ export function ModelLibrary() {
             <Link to={createCdfLink(`/model-library/new-model`)}>
               <Button
                 icon="Add"
+                data-testid="create-model-button"
                 style={{ width: '100%' }}
                 type="secondary"
                 onClick={() => {

@@ -92,6 +92,7 @@
         "libs/shared/load-remote-module/src/index.ts"
       ],
       "@fusion/mock-data": ["libs/shared/mock-data/src/index.ts"],
+      "@fusion/shared/cypress": ["libs/shared/cypress/src/index.ts"],
       "@fusion/shared/user-onboarding-components": [
         "libs/shared/user-onboarding-components/src/index.ts"
       ],

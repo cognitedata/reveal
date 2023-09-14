@@ -294,7 +294,7 @@ export const IndustryCanvasHomePage = () => {
   return (
     <>
       <div>
-        <HomeHeader>
+        <HomeHeader data-testid="homeHeader">
           <div>
             <h1>Industrial Canvas</h1>
             <span>
