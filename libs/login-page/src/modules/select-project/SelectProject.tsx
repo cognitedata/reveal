@@ -61,7 +61,10 @@ const SelectProject = (): JSX.Element => {
   );
 
   useEffect(() => {
-    if (projectsFromAllClusters.every(({ error }) => !!error)) {
+    if (
+      projectsFromAllClusters.length > 0 &&
+      projectsFromAllClusters.every(({ error }) => !!error)
+    ) {
       if (pca) {
         const activeAccount = pca.getActiveAccount();
         pca.logout({
