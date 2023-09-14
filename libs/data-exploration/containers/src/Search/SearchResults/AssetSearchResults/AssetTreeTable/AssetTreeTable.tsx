@@ -24,11 +24,13 @@ import {
   useTranslation,
 } from '@data-exploration-lib/core';
 import {
+  InternalAssetData,
   InternalAssetTreeData,
   useRootAssetsQuery,
   useSearchAssetTree,
 } from '@data-exploration-lib/domain-layer';
 
+import { getAssetTreeViewCount } from '../../utils';
 import { useAssetsMetadataColumns } from '../useAssetsMetadataColumns';
 
 import { useRootPath } from './hooks';
@@ -56,7 +58,10 @@ export const AssetTreeTable = ({
   selectedRows?: Record<string, boolean>;
   scrollIntoViewRow?: string | number; //Scroll into center row when the selectedRows changes
   tableSubHeaders?: React.ReactElement;
-  onDataChanged?: (data: InternalAssetTreeData[]) => void;
+  onDataChanged?: (props: {
+    data: InternalAssetData[] | InternalAssetTreeData[];
+    count: number;
+  }) => void;
 }) => {
   const { t } = useTranslation();
 
@@ -105,7 +110,10 @@ export const AssetTreeTable = ({
   const { data: rootPath, isFetched: rootPathFetched } = useRootPath(assetId);
 
   useEffect(() => {
-    onDataChanged?.(data);
+    onDataChanged?.({
+      data,
+      count: getAssetTreeViewCount(data),
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 

@@ -144,7 +144,11 @@ export const queryKeys = {
   assetByIds: (ids?: IdEither[]) => [...queryKeys.assets(), ids],
   rootAsset: (assetId: number) =>
     [...queryKeys.assets(), assetId, 'rootParent'] as const,
-  rootAssets: () => [...queryKeys.all, 'rootAssets'],
+  rootAssets: (rootAssetId?: number) => [
+    ...queryKeys.all,
+    'rootAssets',
+    rootAssetId,
+  ],
   assetChildren: (assetId: number) => [queryKeys.assets(), assetId, 'children'],
   listAssets: (input?: any[]) =>
     [...queryKeys.assets(), ...(input || [])] as const,

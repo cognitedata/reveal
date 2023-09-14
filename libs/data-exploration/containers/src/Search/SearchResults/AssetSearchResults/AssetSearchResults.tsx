@@ -201,8 +201,8 @@ export const AssetSearchResults = ({
               ? activeIds[0]
               : undefined
           }
-          onDataChanged={(treeViewAssets) => {
-            setTreeViewAssetsCount(treeViewAssets.length);
+          onDataChanged={({ count }) => {
+            setTreeViewAssetsCount(count);
           }}
         />
       </KeepMounted>
