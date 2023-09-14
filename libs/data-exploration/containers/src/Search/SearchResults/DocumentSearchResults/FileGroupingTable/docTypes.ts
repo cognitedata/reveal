@@ -22,6 +22,7 @@ export const docTypes = {
   CE17: 'Process Flow Diagram',
   CE18: 'Report',
   CE19: 'HVAC',
+  CE99: 'Unknown',
   DS: 'Data sheets',
   FA: 'Project manual, e.g. principal decisions',
   FB: 'Project strategy',
