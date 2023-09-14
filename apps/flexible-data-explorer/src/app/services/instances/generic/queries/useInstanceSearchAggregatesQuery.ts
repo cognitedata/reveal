@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 
 import { useQuery } from '@tanstack/react-query';
 
+import { useSiteConfig } from '../../../../hooks/useConfig';
 import {
   useDataTypeFilterParams,
   useSearchFilterParams,
@@ -16,20 +17,22 @@ import { queryKeys } from '../../../queryKeys';
 
 export const useInstanceSearchAggregateQuery = () => {
   const client = useFDM();
+  const siteConfig = useSiteConfig();
 
   const [query] = useSearchQueryParams();
   const [filters] = useSearchFilterParams();
 
   const transformedFilter = useMemo(() => {
-    return buildFilterByDataType(filters);
-  }, [filters]);
+    return buildFilterByDataType(filters, siteConfig);
+  }, [filters, siteConfig]);
 
   return useQuery(
     queryKeys.searchAggregates(query, transformedFilter),
     async () => {
       const results = await client.searchAggregateCount(
         query,
-        transformedFilter
+        transformedFilter,
+        siteConfig
       );
 
       return results;

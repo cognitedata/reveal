@@ -110,6 +110,49 @@ export const celaneseConfig: ProjectConfig[] = [
           ],
         },
       },
+      {
+        name: 'Frankfurt',
+
+        dataModels: [
+          {
+            externalId: 'AssetHierarchyDOM',
+            space: 'EDG-COR-ALL-DMD',
+            version: '1_2_0',
+          },
+          {
+            externalId: 'MaintenanceDOM',
+            space: 'EDG-COR-ALL-DMD',
+            version: '1_1_2',
+          },
+          {
+            externalId: 'MaterialDOM',
+            space: 'EDG-COR-ALL-DMD',
+            version: '1_0_0',
+          },
+        ],
+
+        threeDResources: [
+          { siteId: 'FRA-EM-D443-0000-PCL' },
+          { siteId: 'FRA-EM-D443-3000-PCL' },
+          { siteId: 'FRA-EM-D443-7000-PCL' },
+          { siteId: 'FRA-EM-D443-12000-PCL' },
+          { siteId: 'FRA-EM-G423-0000-PCL' },
+          { siteId: 'FRA-EM-G423-5000-PCL' },
+          { siteId: 'FRA-EM-G424-0000-PCL' },
+          { siteId: 'FRA-EM-G424-5000-PCL' },
+          { siteId: 'FRA-EM-D443-12000-PCL' },
+        ],
+
+        instanceSpaces: ['SAP-FRA-ALL-DAT', 'REF-COR-ALL-DAT'],
+
+        // timeseriesConfig: {
+        //   dataSetIds: [3119370927702350],
+        // },
+
+        // fileConfig: {
+        //   dataSetIds: [4739982727940388, 401858717957103],
+        // },
+      },
     ],
   },
   {

@@ -1,5 +1,7 @@
 import { merge } from 'lodash';
 
+import { SiteConfig } from '../../config/types';
+
 import { FDMClientV2 } from './FDMClientV2';
 import { DataType, EdgeRelationshipResponse, SearchResponse } from './types';
 
@@ -46,10 +48,14 @@ export class FDMComposer {
     return client?.schema.dataModel;
   }
 
-  public async search(query: string, filters: Record<string, unknown>) {
+  public async search(
+    query: string,
+    filters: Record<string, unknown>,
+    config?: SiteConfig
+  ) {
     const promises = await Promise.allSettled(
       (this.clients || []).map(async (client) => {
-        const results = await client.searchDataTypes(query, filters);
+        const results = await client.searchDataTypes(query, filters, config);
 
         return results;
       })
@@ -66,11 +72,16 @@ export class FDMComposer {
 
   public async searchAggregateCount(
     query: string,
-    filters: Record<string, unknown>
+    filters: Record<string, unknown>,
+    config?: SiteConfig
   ) {
     const promises = await Promise.allSettled(
       (this.clients || []).map(async (client) => {
-        const results = await client.searchAggregateCount(query, filters);
+        const results = await client.searchAggregateCount(
+          query,
+          filters,
+          config
+        );
 
         return results;
       })

@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 
 import { useQuery } from '@tanstack/react-query';
 
+import { useSiteConfig } from '../../../hooks/useConfig';
 import {
   useSearchFilterParams,
   useSearchQueryParams,
@@ -12,18 +13,19 @@ import { queryKeys } from '../../queryKeys';
 
 export const useSearchDataTypesQuery = () => {
   const client = useFDM();
+  const config = useSiteConfig();
 
   const [query] = useSearchQueryParams();
   const [filters] = useSearchFilterParams();
 
   const transformedFilter = useMemo(() => {
-    return buildFilterByDataType(filters);
-  }, [filters]);
+    return buildFilterByDataType(filters, config);
+  }, [filters, config]);
 
   return useQuery(
     queryKeys.searchDataTypes(query, transformedFilter),
     async () => {
-      const results = await client.search(query, transformedFilter);
+      const results = await client.search(query, transformedFilter, config);
 
       return results;
     },

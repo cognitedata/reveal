@@ -7,6 +7,8 @@ import head from 'lodash/head';
 
 import type { CogniteClient } from '@cognite/sdk';
 
+import { SiteConfig } from '../../config/types';
+
 import { BASE_FIELDS } from './constants';
 import { FDMSchema } from './FDMSchema';
 import {
@@ -203,12 +205,22 @@ export class FDMClientV2 extends BaseFDMClient {
 
   public async searchDataTypes(
     queryString: string,
-    filters: Record<string, unknown>
+    filters: Record<string, unknown>,
+    config?: SiteConfig
   ) {
     const constructPayload = this.schema.types.map((item) => {
       const dataType = item.name;
 
       const fields = this.schema.getPrimitiveFields(dataType);
+
+      // TODO: Move this into filter transformation instead.
+      const defaultFilter = config?.instanceSpaces
+        ? {
+            space: {
+              in: config.instanceSpaces,
+            },
+          }
+        : {};
 
       return {
         operation: { name: `search${dataType}`, alias: dataType },
@@ -220,7 +232,7 @@ export class FDMClientV2 extends BaseFDMClient {
         variables: {
           query: { value: queryString, required: true },
           [`filter${dataType}`]: {
-            value: filters[dataType] || {},
+            value: filters[dataType] || defaultFilter,
             name: 'filter',
             type: `_Search${dataType}Filter`,
           },
@@ -239,10 +251,20 @@ export class FDMClientV2 extends BaseFDMClient {
 
   public async searchAggregateCount(
     queryString: string,
-    filters: Record<string, unknown>
+    filters: Record<string, unknown>,
+    config?: SiteConfig
   ) {
     const constructPayload = this.schema.types.map((item) => {
       const dataType = item.name;
+
+      // TODO: Move this into filter transformation instead.
+      const defaultFilter = config?.instanceSpaces
+        ? {
+            space: {
+              in: config.instanceSpaces,
+            },
+          }
+        : {};
 
       return {
         operation: { name: `aggregate${dataType}`, alias: dataType },
@@ -258,7 +280,7 @@ export class FDMClientV2 extends BaseFDMClient {
         variables: {
           query: { value: queryString, required: true },
           [`filter${dataType}`]: {
-            value: filters[dataType] || {},
+            value: filters[dataType] || defaultFilter,
             name: 'filter',
             type: `_Search${dataType}Filter`,
           },
