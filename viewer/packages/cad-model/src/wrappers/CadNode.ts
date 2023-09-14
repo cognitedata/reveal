@@ -41,7 +41,7 @@ export class CadNode extends Object3D {
 
   private _needsRedraw: boolean = false;
 
-  public readonly treeIndexToSectorsMap = new TreeIndexToSectorsMap();
+  public readonly treeIndexToSectorsMap;
 
   public readonly type = 'CadNode';
 
@@ -50,7 +50,7 @@ export class CadNode extends Object3D {
     this.name = 'Sector model';
     this._materialManager = materialManager;
     this._sectorRepository = sectorRepository;
-
+    this.treeIndexToSectorsMap = new TreeIndexToSectorsMap(model.scene.maxTreeIndex);
     const back = this._materialManager.getModelBackTreeIndices(model.modelIdentifier);
     const ghost = this._materialManager.getModelGhostedTreeIndices(model.modelIdentifier);
     const inFront = this._materialManager.getModelInFrontTreeIndices(model.modelIdentifier);

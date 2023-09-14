@@ -11,8 +11,12 @@ import { RevealGeometryCollectionType } from '@reveal/sector-parser';
  */
 export class TreeIndexToSectorsMap {
   public onChange?: (treeIndex: number, newSectorId: number) => void;
-  private readonly _treeIndexToSectorIds = new Map<number, Set<number>>();
+  private readonly _treeIndexToSectorIds: (number[] | undefined)[];
   private readonly _parsedSectors = new Map<number, Set<RevealGeometryCollectionType>>();
+
+  constructor(maxTreeIndex: number) {
+    this._treeIndexToSectorIds = Array(maxTreeIndex);
+  }
 
   /**
    * Store the fact that a tree index is found to have geometry in a certain sector
@@ -20,15 +24,15 @@ export class TreeIndexToSectorsMap {
    * @param sectorId The sector id where the tree index was found
    */
   set(treeIndex: number, sectorId: number): void {
-    const existingSet = this._treeIndexToSectorIds.get(treeIndex);
+    const existingSet = this._treeIndexToSectorIds[treeIndex];
     if (!existingSet) {
-      this._treeIndexToSectorIds.set(treeIndex, new Set<number>([sectorId]));
+      this._treeIndexToSectorIds[treeIndex] = [sectorId];
       this.onChange?.(treeIndex, sectorId);
       return;
     }
 
-    if (!existingSet.has(sectorId)) {
-      existingSet.add(sectorId);
+    if (!existingSet.includes(sectorId)) {
+      existingSet.push(sectorId);
       this.onChange?.(treeIndex, sectorId);
     }
   }
@@ -38,8 +42,8 @@ export class TreeIndexToSectorsMap {
    * @param treeIndex Tree index
    * @returns The set of sectors
    */
-  getSectorIdsForTreeIndex(treeIndex: number): Set<number> {
-    return this._treeIndexToSectorIds.get(treeIndex) ?? new Set<number>();
+  getSectorIdsForTreeIndex(treeIndex: number): number[] {
+    return this._treeIndexToSectorIds[treeIndex] ?? [];
   }
 
   /**
