@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 
+import { sortObjectByNumberValue } from '../../../../app/utils/sort';
 import { useSearchAggregateQuery } from '../../../services/dataTypes/queries/useSearchAggregateQuery';
 
 export const useSearchDataTypeSortedByKeys = () => {
@@ -10,12 +11,7 @@ export const useSearchDataTypeSortedByKeys = () => {
       return [];
     }
 
-    return Object.keys(counts).sort((a, b) => {
-      const aCount = counts[a];
-      const bCount = counts[b];
-
-      return bCount - aCount;
-    });
+    return sortObjectByNumberValue(counts);
   }, [counts]);
 
   return { counts, keys: sortedDataTypesKeys, ...rest };

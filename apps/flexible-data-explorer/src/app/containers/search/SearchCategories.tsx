@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components';
 
-import { Chip } from '@cognite/cogs.js';
+import { Chip, Skeleton } from '@cognite/cogs.js';
 
 import { Typography } from '../../components/Typography';
 import { useSearchCategoryParams } from '../../hooks/useParams';
@@ -31,7 +31,7 @@ export const SearchCategories = () => {
   };
 
   if (isCountsLoading || isTotalCountLoading) {
-    return null;
+    return <Skeleton.List lines={3} />;
   }
 
   return (
@@ -128,10 +128,14 @@ const Container = styled.div`
   width: 100%;
   position: sticky;
   top: 0;
+  display: flex;
+  flex-direction: column;
+  padding-top: 8px;
+  overflow: auto;
 `;
 
 const Content = styled.div<{ selected?: boolean; disabled?: boolean }>`
-  height: 32;
+  height: 40px;
   border-radius: 8px;
   display: flex;
   align-items: center;
@@ -139,6 +143,8 @@ const Content = styled.div<{ selected?: boolean; disabled?: boolean }>`
   margin-bottom: 4px;
   width: 100%;
   cursor: pointer;
+  user-selection: none;
+  gap: 4px;
   justify-content: space-between;
   gap: 8px;
 

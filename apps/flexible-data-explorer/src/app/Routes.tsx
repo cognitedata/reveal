@@ -41,7 +41,9 @@ const Routes = () => {
             element={
               <Container>
                 <Content>
-                  <SearchBar inverted />
+                  <SearchBarWrapper>
+                    <SearchBar inverted />
+                  </SearchBarWrapper>
                 </Content>
                 <ViewContainer />
               </Container>
@@ -84,8 +86,15 @@ const Container = styled.div`
 `;
 
 const Content = styled.div`
-  max-width: 1026px;
   width: 100%;
+  padding: 0 24px;
+  display: flex;
+  justify-content: center;
+  border-bottom: 1px solid rgba(83, 88, 127, 0.16);
+`;
+
+const SearchBarWrapper = styled.div`
+  width: 1026px;
   display: flex;
   align-items: center;
   justify-content: center;

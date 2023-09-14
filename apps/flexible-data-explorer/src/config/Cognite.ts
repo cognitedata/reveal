@@ -82,6 +82,10 @@ export const cogniteConfig: ProjectConfig[] = [
             revisionId: 498427137020189,
           },
           {
+            modelId: 3282558010084460,
+            revisionId: 4932190516335812,
+          },
+          {
             modelId: 1791160622840317,
             revisionId: 502149125550840,
             transform: new Matrix4().makeTranslation(0, 10, 0),

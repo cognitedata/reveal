@@ -169,6 +169,40 @@ export class FDMComposer {
     )?.aiSearch(query, variables);
   }
 
+  public async getInstancesByIds(
+    header: {
+      dataType: string;
+      dataModel: string;
+      version: string;
+      space: string;
+      externalIds: string[];
+    },
+    filter?: unknown
+  ) {
+    const client = this.getClient(
+      header.dataModel,
+      header.version,
+      header.space
+    );
+
+    if (!client) {
+      return Promise.reject(new Error('Missing client...'));
+    }
+
+    const primitiveFields = client.schema.getPrimitiveFields(header.dataType);
+
+    const instances = await client.getInstancesByIds<Record<string, any>>(
+      primitiveFields,
+      {
+        dataType: header.dataType,
+        externalIds: header.externalIds,
+      },
+      filter
+    );
+
+    return instances;
+  }
+
   public async getInstancesById(header: {
     dataType: string;
     externalId: string;

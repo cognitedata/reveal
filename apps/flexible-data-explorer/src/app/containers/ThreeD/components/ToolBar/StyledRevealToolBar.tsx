@@ -4,6 +4,6 @@ import { RevealToolbar } from '@cognite/reveal-react-components';
 
 export const StyledRevealToolBar = styled(RevealToolbar)`
   position: absolute;
-  left: 20px;
-  top: 20px;
+  left: 16px;
+  top: 72px;
 `;

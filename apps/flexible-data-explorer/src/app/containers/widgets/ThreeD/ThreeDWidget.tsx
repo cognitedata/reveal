@@ -50,7 +50,7 @@ export const ThreeDWidget: React.FC<ThreeDWidgetProps> = () => {
           viewerOptions={defaultViewerOptions}
         >
           <RevealContent
-            modelIdentifiers={modelIdentifiers}
+            threeDResources={modelIdentifiers}
             instanceExternalId={externalId}
             instanceSpace={instanceSpace}
             hideToolbar

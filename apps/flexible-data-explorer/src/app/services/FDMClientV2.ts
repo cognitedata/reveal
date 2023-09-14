@@ -161,6 +161,54 @@ export class FDMClientV2 extends BaseFDMClient {
     return this.request<T>(url, data);
   }
 
+  public async getInstancesByIds<T>(
+    fields: Fields,
+    { dataType, externalIds }: { dataType: string; externalIds: string[] },
+    filter?: unknown
+  ) {
+    const operation = `list${dataType}`;
+
+    const externalIdsFilter = {
+      externalId: {
+        in: externalIds,
+      },
+    };
+    const appliedFilters = filter
+      ? [filter, externalIdsFilter]
+      : [externalIdsFilter];
+
+    const payload = query({
+      operation,
+      fields: [
+        {
+          items: fields,
+        },
+      ],
+      variables: {
+        first: 1000,
+        filter: {
+          value: {
+            and: appliedFilters,
+          },
+          type: `_List${dataType}Filter`,
+        },
+      },
+    });
+
+    const {
+      [operation]: { items, pageInfo },
+    } = await this.gqlRequest<{
+      [operation in string]: {
+        items: T[];
+        pageInfo: {
+          hasNextPage: boolean;
+        };
+      };
+    }>(payload);
+
+    return items;
+  }
+
   public async getInstanceById<T>(
     fields: Fields,
     { dataType, externalId, instanceSpace }: Instance

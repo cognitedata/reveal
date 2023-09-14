@@ -19,7 +19,8 @@ import { PreviewCard } from './PreviewCard';
 import { ToolBarContainer } from './ToolBarContainer';
 
 interface Props {
-  modelIdentifiers: AddResourceOptions[];
+  threeDResources: AddResourceOptions[];
+  externalId?: string;
   instanceExternalId?: string;
   instanceSpace?: string;
   hideToolbar?: boolean;
@@ -27,7 +28,7 @@ interface Props {
   isInitialLoad?: boolean;
 }
 export const RevealContent = ({
-  modelIdentifiers,
+  threeDResources,
   instanceExternalId,
   instanceSpace,
   hideToolbar,
@@ -93,7 +94,7 @@ export const RevealContent = ({
         />
       )}
       <Reveal3DResources
-        resources={modelIdentifiers}
+        resources={threeDResources}
         defaultResourceStyling={currentDefaultResourceStyling}
         instanceStyling={instanceStyling}
         onResourcesAdded={handleResourcesAdded}

@@ -21,12 +21,14 @@ interface Props {
   values?: { items: any[] };
   type?: DataModelTypeDefsType;
   selected?: boolean;
+  disable3dPreview?: boolean;
 }
 export const GenericResults: React.FC<Props> = ({
   dataType,
   values,
   type,
   selected,
+  disable3dPreview,
 }) => {
   const { t } = useTranslation();
   const navigate = useNavigation();
@@ -108,6 +110,7 @@ export const GenericResults: React.FC<Props> = ({
                 instanceSpace: item.space,
                 externalId: item.externalId,
               }}
+              disableViewer={disable3dPreview}
             >
               <SearchResults.Item
                 name={item.name || item.externalId}

@@ -25,5 +25,4 @@ SearchResults.Footer = SearchResultsFooter;
 
 const Container = styled.div`
   border-radius: 10px;
-  margin-bottom: 16px;
 `;

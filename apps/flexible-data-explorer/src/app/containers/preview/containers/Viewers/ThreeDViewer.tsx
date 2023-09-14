@@ -49,7 +49,7 @@ export const ThreeDViewer: React.FC<Props> = ({ instance, dataModel }) => {
         viewerOptions={defaultViewerOptions}
       >
         <RevealContent
-          modelIdentifiers={modelIdentifiers}
+          threeDResources={modelIdentifiers}
           instanceExternalId={instance.externalId}
           instanceSpace={instance.instanceSpace}
           hideToolbar

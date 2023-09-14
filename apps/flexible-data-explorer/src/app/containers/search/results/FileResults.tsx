@@ -13,6 +13,7 @@ import { PAGE_SIZE, PAGE_SIZE_SELECTED } from './constants';
 interface Props {
   selected?: boolean;
 }
+
 export const FileResults: React.FC<Props> = ({ selected }) => {
   const { t } = useTranslation();
 

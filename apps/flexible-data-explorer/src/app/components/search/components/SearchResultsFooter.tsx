@@ -18,4 +18,7 @@ const Container = styled.div`
   gap: 16px;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;

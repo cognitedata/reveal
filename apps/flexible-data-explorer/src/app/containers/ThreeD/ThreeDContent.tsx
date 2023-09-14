@@ -1,7 +1,9 @@
+import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
 import {
   RevealContainer,
+  AddReveal3DModelOptions,
   useIsRevealInitialized,
 } from '@cognite/reveal-react-components';
 import { useSDK } from '@cognite/sdk-provider';
@@ -13,19 +15,29 @@ import {
 } from '../../constants/threeD';
 import { useSiteConfig } from '../../hooks/useConfig';
 
+import { MappedEquipmentContextHandler } from './containers/MappedEquipmentContextHandler';
 import { RevealContent } from './containers/RevealContent';
 
-export const ThreeDContent = () => {
+export const ThreeDContent: React.FC = () => {
   const sdk = useSDK();
   const isRevealInitialized = useIsRevealInitialized();
 
   const siteConfig = useSiteConfig();
 
-  const modelIdentifiers = siteConfig?.threeDResources;
+  const threeDResources = siteConfig?.threeDResources;
 
   const { instanceSpace, externalId } = useParams();
 
-  if (!modelIdentifiers) {
+  const threeDModels = useMemo(
+    () =>
+      threeDResources?.filter(
+        (resource): resource is AddReveal3DModelOptions =>
+          !('siteId' in resource)
+      ) ?? [],
+    [threeDResources]
+  );
+
+  if (!threeDResources) {
     return (
       <EmptyState
         title="No 3D models found"
@@ -40,8 +52,10 @@ export const ThreeDContent = () => {
       color={defaultRevealColor}
       viewerOptions={defaultViewerOptions}
     >
+      <MappedEquipmentContextHandler modelsOptions={threeDModels} />
       <RevealContent
-        modelIdentifiers={modelIdentifiers}
+        threeDResources={threeDResources}
+        externalId={externalId}
         instanceExternalId={externalId}
         instanceSpace={instanceSpace}
         isInitialLoad={!isRevealInitialized}

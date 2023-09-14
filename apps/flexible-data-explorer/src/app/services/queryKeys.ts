@@ -1,3 +1,4 @@
+import { ModelRevisionToEdgeMap } from '@cognite/reveal-react-components/dist/components/NodeCacheProvider/types';
 import { DocumentFilter, FileInfo } from '@cognite/sdk';
 
 import { DataModel, DataModelV2, Instance } from './types';
@@ -83,6 +84,31 @@ export const queryKeys = {
       query,
       filter,
       property,
+    ] as const,
+  searchMappedEquipmentInstances: (
+    query: string,
+    filter?: Record<string, unknown>
+  ) =>
+    [
+      ...queryKeys.all,
+      'mappedEquipmentInstances',
+      'search',
+      query,
+      filter ?? {},
+    ] as const,
+  mappedEquipmentInstances: (
+    mappedEquipment?: ModelRevisionToEdgeMap,
+    filter?: Record<string, unknown>
+  ) =>
+    [
+      ...queryKeys.all,
+      'mappedEquipmentInstances',
+      Array.from(mappedEquipment?.entries() ?? [], (pair) =>
+        pair[1].map((edge) => edge.edge.externalId)
+      )
+        .flat()
+        .sort(),
+      filter,
     ] as const,
 
   instance: (instance: Instance, dataModel: Partial<DataModelV2>) =>

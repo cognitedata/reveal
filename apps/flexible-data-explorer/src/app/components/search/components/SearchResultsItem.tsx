@@ -2,10 +2,11 @@ import React, { useMemo } from 'react';
 
 import styled from 'styled-components';
 
-import { Body, Title, Detail, IconType } from '@cognite/cogs.js';
+import { Title, IconType, Heading } from '@cognite/cogs.js';
 
 import { flattenProperties } from '../../../containers/search/utils';
 import { CategoryChip } from '../../chips/CategoryChip';
+import { Typography } from '../../Typography';
 
 interface Props {
   icon?: IconType;
@@ -66,7 +67,7 @@ export const SearchResultsItem: React.FC<Props> = ({
         {normalizedProperties.map(({ key, value }, index) => (
           <PropertiesContent key={key || index}>
             <KeyText>{key}</KeyText>
-            <Body strong>{value}</Body>
+            <ValueText>{value}</ValueText>
           </PropertiesContent>
         ))}
       </PropertiesContainer>
@@ -115,7 +116,12 @@ const PropertiesContainer = styled.div`
 `;
 const PropertiesContent = styled.div`
   flex: 1;
+  display: flex;
+  flex-direction: column;
   margin-right: 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const NameText = styled(Title).attrs({ level: 6 })`
@@ -124,12 +130,15 @@ const NameText = styled(Title).attrs({ level: 6 })`
   white-space: nowrap;
 `;
 
-const DescriptionText = styled(Body).attrs({ level: 6 })`
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
+const DescriptionText = styled(Typography.Body).attrs({ level: 6 })``;
+
+const KeyText = styled(Typography.Body).attrs({ size: 'xsmall', muted: true })`
+  text-transform: capitalize;
 `;
 
-const KeyText = styled(Detail)`
-  text-transform: capitalize;
+const ValueText = styled(Heading).attrs({ level: 6 })`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
 `;
