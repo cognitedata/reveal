@@ -6,12 +6,7 @@ import { Splitter } from '@data-exploration/components';
 import { ResourceSelector } from '@data-exploration/containers';
 import { BoxGeometry, Color, Mesh, MeshBasicMaterial } from 'three';
 
-import { ToolBar } from '@cognite/cogs.js';
-import {
-  RevealContainer,
-  RevealToolbar,
-  withSuppressRevealEvents,
-} from '@cognite/reveal-react-components';
+import { RevealContainer } from '@cognite/reveal-react-components';
 import { useSDK } from '@cognite/sdk-provider';
 
 import {
@@ -20,7 +15,6 @@ import {
 } from '../../pages/ContextualizeEditor/constants';
 
 import { RevealContent } from './containers/RevealContent';
-import { ContextualizeThreeDViewerToolbar } from './ContextualizeThreeDViewerToolbar';
 import { useSyncStateWithViewer } from './hooks/useSyncStateWithViewer';
 import {
   onCloseResourceSelector,
@@ -58,7 +52,6 @@ export const ContextualizeThreeDViewer = ({
     // TODO: All of these console.warn should be presented nicely to the user.
     // Tracked by: https://cognitedata.atlassian.net/browse/BND3D-2168
     if (threeDViewer === null) {
-      console.warn('Unable to save annotation to CDF. Viewer not loaded.');
       return;
     }
 
@@ -67,14 +60,10 @@ export const ContextualizeThreeDViewer = ({
       viewer: threeDViewer,
     });
     if (pointCloudModel === undefined) {
-      console.warn(
-        'Unable to save annotation to CDF. Point cloud model not loaded.'
-      );
       return;
     }
 
     if (pendingAnnotation === null) {
-      console.warn('Unable to save annotation to CDF. No annotation pending.');
       return;
     }
 
@@ -127,15 +116,6 @@ export const ContextualizeThreeDViewer = ({
         <ThreeDViewerStyled>
           <RevealContainer sdk={sdk} color={defaultRevealColor}>
             <RevealContent modelId={modelId} revisionId={revisionId} />
-
-            {/* TODO: There is a bug in the event listening with the toolbar. When you click on the toolbar, Reveal also listen to the click.
-                      This causes for instance a annotation to be created if the toolbar is clicked when the cursor is over the model.
-                      Tracked by: https://cognitedata.atlassian.net/browse/BND3D-2156
-            */}
-            <StyledToolBar>
-              <RevealToolbar.FitModelsButton />
-              <ContextualizeThreeDViewerToolbar modelId={modelId} />
-            </StyledToolBar>
           </RevealContainer>
         </ThreeDViewerStyled>
 
@@ -161,12 +141,6 @@ const ThreeDViewerStyled = styled.div`
     100vh - var(--cdf-ui-navigation-height) -
       ${CONTEXTUALIZE_EDITOR_HEADER_HEIGHT}px
   ); /* sidebar height and top-bot paddings subtracted */
-`;
-
-const StyledToolBar = styled(withSuppressRevealEvents(ToolBar))`
-  position: absolute;
-  left: 30px;
-  bottom: 30px;
 `;
 
 const StyledSplitter = styled(Splitter)`
