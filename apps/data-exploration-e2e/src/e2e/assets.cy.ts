@@ -34,9 +34,7 @@ describe('Assets', () => {
       .getColomnValues('name')
       .shouldBeSortedDescending();
 
-    cy.tableSholudBeVisible('asset-search-results').columnSelection(
-      `description`
-    );
+    cy.tableSholudBeVisible('asset-search-results').selectColumn(`Description`);
 
     cy.log('sorting colomn: Description');
     cy.getTableById('asset-search-results').clickSortColoumn('Description');

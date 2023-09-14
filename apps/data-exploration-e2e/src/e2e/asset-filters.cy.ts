@@ -5,7 +5,7 @@ import {
   interceptAssetList,
 } from '../support/interceptions/interceptions';
 
-describe('Asset filtering', () => {
+describe('Asset filters', () => {
   before(() => {
     cy.fusionLogin();
     cy.navigateToExplorer();
@@ -24,29 +24,28 @@ describe('Asset filtering', () => {
     cy.resetSearchFilters();
   });
 
-  it('should filter the assts acording to the source', () => {
+  it('should filter assets by source', () => {
     const SOURCE = 'carina';
 
-    cy.tableSholudBeVisible('asset-search-results').columnSelection(`source`);
+    cy.tableSholudBeVisible('asset-search-results').selectColumn('Source');
 
     cy.log('click on source filter');
-    cy.findAllByTestId('multi-select-filter-Source').click();
+    cy.findAllByTestId('multi-select-filter-Sources').click();
 
     cy.log('search and select source');
-    cy.findAllByTestId('multi-select-filter-Source-search-input').type(SOURCE);
+    cy.findAllByTestId('multi-select-filter-Sources-search-input').type(SOURCE);
     cy.get('input[type="checkbox"]').check();
 
     /**
      * We should wait until the table re-renders after the filter is applied.
      */
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(1000);
+    cy.wait(5000);
 
     cy.getTableById('asset-search-results').within((table) => {
       cy.wrap(table)
         .getColomnValues('source')
         .then((sources) => {
-          console.log('sources', sources);
           sources.forEach((source) => {
             expect(source).to.be.eq(SOURCE);
           });
@@ -54,10 +53,10 @@ describe('Asset filtering', () => {
     });
   });
 
-  it('should filter the assts acording to the label', () => {
+  it('should filter assets by label', () => {
     const LABEL = 'OIL (BEST_DAY_WELL_FLAG_OIL)';
 
-    cy.tableSholudBeVisible('asset-search-results').columnSelection(`labels`);
+    cy.tableSholudBeVisible('asset-search-results').selectColumn('Labels');
 
     cy.log('click on labels filter');
     cy.findAllByTestId('multi-select-filter-Labels').click();
@@ -70,7 +69,7 @@ describe('Asset filtering', () => {
      * We should wait until the table re-renders after the filter is applied.
      */
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(1000);
+    cy.wait(5000);
 
     cy.getTableById('asset-search-results')
       .findAllByTestId('labels')

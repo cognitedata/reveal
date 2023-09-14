@@ -47,23 +47,6 @@ Cypress.Commands.add('fuzzySearchEnable', () => {
   });
 });
 
-Cypress.Commands.add(
-  'columnSelection',
-  { prevSubject: 'optional' },
-  (subject, columnName) => {
-    cy.wrap(subject).find('[aria-label="Column Selection"]').click();
-    cy.wrap(subject)
-      .find(`[id=${columnName}]`)
-      .then(($columnCheckbox) => {
-        if ($columnCheckbox.is(':not(:checked)')) {
-          cy.wrap(subject).find(`[id=${columnName}]`).click();
-        } else {
-          cy.log(`${columnName} column is already selected`);
-        }
-      });
-  }
-);
-
 Cypress.Commands.add('excludeSearchParameter', (parameterID) => {
   cy.get(`[id=${parameterID}]`).then(($searchParameter) => {
     if ($searchParameter.is(':checked')) {
@@ -91,7 +74,6 @@ export interface SearchCommand {
   clearSearchInput(): void;
   fuzzySearchDisable(): void;
   fuzzySearchEnable(): void;
-  columnSelection(columnName: string): void;
   excludeSearchParameter(parameterName: string): void;
   includeSearchParameter(parameterName: string): void;
   resetSearchFilters(): void;

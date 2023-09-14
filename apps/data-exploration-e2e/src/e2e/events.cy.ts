@@ -46,10 +46,10 @@ describe('Events', () => {
   });
 
   it('should be able to search by id', () => {
-    cy.columnSelection(`id`);
     cy.performSearch(EVENT_ID);
 
     cy.getTableById('event-search-results')
+      .selectColumn('ID')
       .contains(EVENT_ID)
       .should('be.visible');
     cy.findAllByText('Exact match: ID').should('be.visible').click();

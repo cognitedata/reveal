@@ -82,6 +82,35 @@ const shouldLoadMore = (table: JQuery<HTMLElement>, requestAlias?: string) => {
     });
 };
 
+const selectColumn = (table: JQuery<HTMLElement>, columnName: string) => {
+  cy.wrap(table)
+    .find('[aria-label="Column Selection"]')
+    .as('column-toggle-button')
+    .click();
+
+  cy.wrap(table)
+    .findAllByTestId('column-toggle-menu')
+    .should('be.visible')
+    .contains(new RegExp(`^${columnName}$`))
+    .as(`column-${columnName}`)
+    .scrollIntoView()
+    .should('be.visible')
+    .find('input[type="checkbox"]')
+    .then((checkbox) => {
+      if (checkbox.is(':not(:checked)')) {
+        cy.log(`select column "${columnName}"`);
+        cy.get(`@column-${columnName}`).click();
+      } else {
+        cy.log(`"${columnName}" column is already selected`);
+      }
+    });
+
+  cy.log('close column toggle menu');
+  cy.get('@column-toggle-button').click();
+
+  return cy.wrap(table);
+};
+
 Cypress.Commands.add('getTableById', getTableById);
 Cypress.Commands.add('tableSholudBeVisible', tableSholudBeVisible);
 Cypress.Commands.add(
@@ -109,6 +138,7 @@ Cypress.Commands.add(
   clickLoadMoreButton
 );
 Cypress.Commands.add('shouldLoadMore', { prevSubject: true }, shouldLoadMore);
+Cypress.Commands.add('selectColumn', { prevSubject: true }, selectColumn);
 
 export interface TableCommands {
   getTableById: (id: string) => Cypress.Chainable<JQuery<HTMLElement>>;
@@ -120,4 +150,5 @@ export interface TableCommands {
   getNumberOfRows: () => Cypress.Chainable<number>;
   clickLoadMoreButton: () => void;
   shouldLoadMore: (requestAlias?: string) => void;
+  selectColumn: (columnName: string) => Cypress.Chainable<JQuery<HTMLElement>>;
 }
