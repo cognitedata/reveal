@@ -46,7 +46,7 @@ export const Main: Story = {
         }}>
         <RevealResourcesFitCameraOnLoad resources={resources} />
         <ViewerAnchor
-          position3d={position}
+          position={position}
           sticky
           stickyMargin={20}
           style={{
@@ -65,7 +65,7 @@ export const Main: Story = {
             </SuppressedDiv>
           </div>
         </ViewerAnchor>
-        <ViewerAnchor position3d={position2}>
+        <ViewerAnchor position={position2}>
           <p
             style={{
               backgroundColor: 'red',
