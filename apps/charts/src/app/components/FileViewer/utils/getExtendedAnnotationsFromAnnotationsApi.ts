@@ -131,14 +131,6 @@ const filterApplicableAnnotations = (annotation: AnnotationModel) => {
     return false;
   }
 
-  // NOTE: We are filtering out annotations originating from the migratin script.
-  // When we remove support for the Events API, we can remove this filter.
-  if (
-    annotation.creatingApp === 'annotation-migration-migrate-event-annotations'
-  ) {
-    return false;
-  }
-
   if (!SUPPORTED_TYPES.includes(annotation.annotationType)) {
     // eslint-disable-next-line no-console
     console.warn(`Unsupported annotation type: ${annotation.annotationType}`);
