@@ -47,7 +47,7 @@
     "@types/lodash": "^4.14.190",
     "@types/react": "18.2.7",
     "@types/react-dom": "^18.2.7",
-    "@types/styled-components": "5.1.26",
+    "@types/styled-components": "5.1.27",
     "@types/three": "0.155.1",
     "@typescript-eslint/eslint-plugin": "^5.50.0",
     "eslint": "^8.0.1",
