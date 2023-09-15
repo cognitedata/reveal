@@ -137,5 +137,6 @@
   "AI_LOADING_TEXT_LONG": "{{status}} this may take a while. You can use the standard search if this takes too long.",
   "AI_LOADING_TEXT": "{{status}} this may take a while.",
   "AI_FAILED": "Failed to find results",
+  "AI_EDITED_FILTER_RESULTS": "I found {{resultAggregate}} results based on the new filters.",
   "AI_LEARN_MORE": "Learn more"
 }

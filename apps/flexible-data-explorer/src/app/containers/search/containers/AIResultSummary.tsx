@@ -76,7 +76,7 @@ export const AIResultSummary = ({
 
   useToCopilotEventHandler('NEW_MESSAGES', (messages) => {
     for (const message of messages) {
-      if (message.type === 'data-model-query') {
+      if (message.type === 'data-model-query' && message.replyTo === query) {
         setLoadingProgress(undefined);
       }
       if (message.type === 'error') {
@@ -91,7 +91,9 @@ export const AIResultSummary = ({
   });
 
   useToCopilotEventHandler('LOADING_STATUS', (status) => {
-    setLoadingProgress(status);
+    if (status.replyTo === query) {
+      setLoadingProgress(status);
+    }
   });
 
   useEffect(() => {
@@ -206,6 +208,7 @@ export const AIResultSummary = ({
               edited: true,
             });
             sendToCopilotEvent('SUMMARIZE_QUERY', {
+              question: query,
               ...copilotMessage.graphql,
               variables: {
                 ...copilotMessage.graphql.variables,

@@ -34,6 +34,7 @@ export async function fetchGptAutoQuery(
           dataModels: [{ dataModel, version, space }],
           pending: false,
           content: 'I am searching on this data model',
+          replyTo: '',
         },
         {
           type: 'text',

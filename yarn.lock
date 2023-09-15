@@ -1927,10 +1927,10 @@
   dependencies:
     axios "0.25.0"
 
-"@cognite/llm-hub@^0.0.23":
-  version "0.0.23"
-  resolved "https://registry.yarnpkg.com/@cognite/llm-hub/-/llm-hub-0.0.23.tgz#bd3a972cf76b439e2d413d691c9789762f3a1006"
-  integrity sha512-BwYAyZNjrv337xU7+n+fHFOfXJYIs4z9fA/1HkVVVlLfy3WmbZx4+gadb3oEPncr3UqQfJ0GuxZ33e7V/FIOEA==
+"@cognite/llm-hub@^0.0.25":
+  version "0.0.25"
+  resolved "https://registry.yarnpkg.com/@cognite/llm-hub/-/llm-hub-0.0.25.tgz#7a47267821bfa393003127feb01c7773ffe7c6ce"
+  integrity sha512-7Auqu0rW0UDz0iVdVIhjsAmJf0jhvOwInSzxQSYZXSa1ee/f1vUQuDVX8W46pPJMNo97DnkZoSGYr1TY8HGg3Q==
   dependencies:
     "@types/mixpanel-browser" "^2.47.1"
     assert "^2.0.0"

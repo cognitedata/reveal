@@ -43,6 +43,7 @@ libs/contextualization            @gayanDeegala @tommythorsen @cognitedata/match
 
 # Copilot
 apps/copilot              @cognitedata/ai-team
+libs/copilot-core         @cognitedata/ai-team
 apps/notebook             @cognitedata/ai-team
 
 # IoT Hub
