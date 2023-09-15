@@ -3,24 +3,11 @@
  */
 
 import { type CadIntersection, type PointerEventData } from '@cognite/reveal';
-<<<<<<< Updated upstream
-import { type DmsUniqueIdentifier, type Source, useReveal } from '../';
 import { useEffect, useState } from 'react';
 import { useFdm3dNodeData } from '../components/NodeCacheProvider/NodeCacheProvider';
 import { type Node3D } from '@cognite/sdk';
-
-export type NodeDataResult = {
-  fdmNode: DmsUniqueIdentifier;
-  view: Source;
-  cadNode: Node3D;
-};
-=======
 import { useReveal, type NodeDataResult, type DmsUniqueIdentifier } from '../';
-import { useEffect, useState } from 'react';
-import { useFdm3dNodeData } from '../components/NodeCacheProvider/NodeCacheProvider';
 import { type FdmNodeDataPromises } from '../components/NodeCacheProvider/types';
-import { type Node3D } from '@cognite/sdk/dist/src';
->>>>>>> Stashed changes
 
 export type ClickedNodeData = Partial<NodeDataResult> & {
   intersection: CadIntersection;
@@ -69,7 +56,7 @@ export const useClickedNodeData = (): ClickedNodeData | undefined => {
         return;
       }
 
-      const nodeData = await promises.cadNodeAndFdmIdPromise;
+      const nodeData = await promises.cadNodeAndFdmIdsPromise;
       const fdmNodeList = nodeData?.fdmIds ?? [];
 
       if (nodeData === undefined || fdmNodeList.length === 0) {

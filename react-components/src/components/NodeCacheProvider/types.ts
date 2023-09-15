@@ -6,8 +6,9 @@ import { type EdgeItem, type DmsUniqueIdentifier, type Source } from '../../util
 import { type InModel3dEdgeProperties } from '../../utilities/globalDataModels';
 
 export type FdmCadEdge = EdgeItem<InModel3dEdgeProperties>;
-export type FdmAndCadNode = { cadNode: Node3D, fdmNode: DmsUniqueIdentifier };
+export type CadNodeAndFdmIdList = { cadNode: Node3D, fdmIds: DmsUniqueIdentifier[] };
 export type FdmEdgeWithNode = { edge: FdmCadEdge; node: Node3D; view?: Source };
+export type FdmNodeDataPromises = { cadNodeAndFdmIdsPromise: Promise<CadNodeAndFdmIdList | undefined>, viewsPromise: Promise<Source[] | undefined> };
 
 export type ModelId = number;
 export type RevisionId = number;

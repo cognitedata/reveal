@@ -21,8 +21,7 @@ export { use3DModelName } from './hooks/use3DModelName';
 export { useFdmAssetMappings } from './components/NodeCacheProvider/NodeCacheProvider';
 export {
   useClickedNodeData,
-  type ClickedNodeData,
-  type NodeDataResult
+  type ClickedNodeData
 } from './hooks/useClickedNode';
 export { useCameraNavigation } from './hooks/useCameraNavigation';
 export { useMappedEdgesForRevisions } from './components/NodeCacheProvider/NodeCacheProvider';
@@ -49,7 +48,8 @@ export {
 export {
   type Reveal3DResourcesProps,
   type FdmAssetStylingGroup,
-  type DefaultResourceStyling
+  type DefaultResourceStyling,
+  type NodeDataResult
 } from './components/Reveal3DResources/types';
 export type {
   AddImageCollection360Options,
