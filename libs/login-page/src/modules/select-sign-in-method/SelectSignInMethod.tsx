@@ -13,6 +13,7 @@ import {
   usePublicCogniteIdpOrg,
   getClientId,
   PublicOrgResponse,
+  getSelectedIdpDetails,
 } from '@cognite/login-utils';
 
 import CogniteDataFusionSvg from '../../assets/CogniteDataFusion.svg';
@@ -73,6 +74,11 @@ const renderSignInButtons = (
     return otherButtons;
   }
 
+  const selectedIdpDetails = getSelectedIdpDetails();
+  const isOtherIdpSelected =
+    selectedIdpDetails !== undefined &&
+    selectedIdpDetails?.type !== 'COGNITE_IDP';
+
   return (
     <>
       <StyledIdpListInner>
@@ -82,30 +88,35 @@ const renderSignInButtons = (
           clientId={getClientId()}
         />
       </StyledIdpListInner>
-      <Accordion
-        expanded={false}
-        hidePadding={true}
-        indicatorPlacement="left"
-        size="medium"
-        title="Other sign in methods"
-        type="ghost"
-      >
-        <StyledIdpDeprecationWarning style={{ textAlign: 'center' }}>
-          <span role="img">⚠</span> Options below will be removed soon.
+      {sortedIdpsWithoutCogIpd.length > 0 ? (
+        <Accordion
+          // When the user selects an non-CogIdP IdP we must take to render the IdP button
+          // when they come back from the IdP callback because the button is responsible for
+          // finishing the login flow.
+          expanded={isOtherIdpSelected}
+          hidePadding={true}
+          indicatorPlacement="left"
+          size="medium"
+          title="Other sign in methods"
+          type="ghost"
+        >
+          <StyledIdpDeprecationWarning style={{ textAlign: 'center' }}>
+            <span role="img">⚠</span> Options below will be removed soon.
+            <br />
+            See{' '}
+            <a href="https://cognitedata.atlassian.net/wiki/spaces/AUT/pages/4087906504/Migration+of+Internal+Organizations+to+Cognite+Identity+Provider+CogIdP">
+              Confluence page
+            </a>
+            .
+          </StyledIdpDeprecationWarning>
+          <StyledInstructions>
+            If you have problems signing in, please send a message to{' '}
+            <StyledSlackHandle>@cog-idp-shield</StyledSlackHandle> on Slack.
+          </StyledInstructions>
           <br />
-          See{' '}
-          <a href="https://cognitedata.atlassian.net/wiki/spaces/AUT/pages/4087906504/Migration+of+Internal+Organizations+to+Cognite+Identity+Provider+CogIdP">
-            Confluence page
-          </a>
-          .
-        </StyledIdpDeprecationWarning>
-        <StyledInstructions>
-          If you have problems signing in, please send a message to{' '}
-          <StyledSlackHandle>@cog-idp-shield</StyledSlackHandle> on Slack.
-        </StyledInstructions>
-        <br />
-        {otherButtons}
-      </Accordion>
+          {otherButtons}
+        </Accordion>
+      ) : undefined}
     </>
   );
 };

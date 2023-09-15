@@ -21,7 +21,6 @@ const SignInButton = ({
   onClick,
   internalId,
 }: SignInButtonProps): JSX.Element => {
-  console.log('SignInButton', internalId);
   return (
     <StyledSignInButton
       disabled={disabled}
