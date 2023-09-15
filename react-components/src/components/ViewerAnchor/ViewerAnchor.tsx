@@ -20,7 +20,7 @@ import { clamp } from 'lodash';
 type ViewerAnchorStyle = Omit<CSSProperties, 'position' | 'left' | 'top'>;
 
 export type ViewerAnchorProps = {
-  position3d: Vector3;
+  position: Vector3;
   sticky?: boolean;
   stickyMargin?: number;
   style?: ViewerAnchorStyle;
@@ -28,7 +28,7 @@ export type ViewerAnchorProps = {
 };
 
 export const ViewerAnchor = ({
-  position3d,
+  position: position3d,
   children,
   style: inputStyle,
   sticky,
