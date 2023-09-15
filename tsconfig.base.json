@@ -76,9 +76,7 @@
       "@extraction-pipelines/*": ["apps/extraction-pipelines/src/*"],
       "@extractor-downloads/*": ["apps/extractor-downloads/src/*"],
       "@flexible-data-explorer/*": ["apps/flexible-data-explorer/src/*"],
-      "@flows/*": [
-        "apps/flows/src/*"
-      ],
+      "@flows/*": ["apps/flows/src/*"],
       "@functions-ui/*": ["apps/functions-ui/src/*"],
       "@fusion-shell/*": ["apps/fusion-shell/src/*"],
       "@fusion/cdf-nx-plugin": ["libs/cdf-nx-plugin/src/index.ts"],

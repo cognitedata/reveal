@@ -360,6 +360,7 @@
     "@storybook/addon-essentials": "7.4.0",
     "@storybook/addon-interactions": "^7.4.0",
     "@storybook/addons": "^7.4.0",
+    "@storybook/core-common": "^7.0.24",
     "@storybook/core-server": "7.4.0",
     "@storybook/jest": "^0.2.2",
     "@storybook/preview-api": "^7.4.0",
