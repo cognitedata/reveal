@@ -2,46 +2,97 @@
  * Copyright 2023 Cognite AS
  */
 
-import { useEffect, useRef, type ReactElement, type RefObject, useState, useCallback } from 'react';
+import {
+  useEffect,
+  useRef,
+  type ReactElement,
+  type RefObject,
+  useState,
+  useCallback,
+  type CSSProperties
+} from 'react';
 import { Vector2, type Vector3 } from 'three';
 
 import { useReveal } from '../RevealContainer/RevealContext';
+import { type Cognite3DViewer } from '@cognite/reveal';
+import { clamp } from 'lodash';
 
 export type ViewerAnchorElementMapping = {
   ref: RefObject<HTMLElement>;
   position: Vector3;
 };
 
+type ViewerAnchorStyle = Omit<CSSProperties, 'position' | 'left' | 'top'>;
+
 export type ViewerAnchorProps = {
-  position: Vector3;
+  position3d: Vector3;
   sticky?: boolean;
   stickyMargin?: number;
+  style?: ViewerAnchorStyle;
   children: ReactElement;
 };
 
 export const ViewerAnchor = ({
-  position,
+  position3d,
   children,
+  style: inputStyle,
   sticky,
-  stickyMargin
+  stickyMargin: inputStickyMargin
 }: ViewerAnchorProps): ReactElement => {
   const viewer = useReveal();
-  const [divTranslation, setDivTranslation] = useState(new Vector2());
+
+  const stickyMargin = inputStickyMargin ?? 0;
+
+  const { projectedPoint, visible } = usePointProjection(position3d, viewer);
+
+  const htmlRef = useRef<HTMLDivElement>(null);
+
+  const stickyCompensation = useStickyCompensation(
+    htmlRef,
+    viewer.domElement,
+    sticky ?? false,
+    stickyMargin,
+    projectedPoint
+  );
+
+  const style = computeCombinedTranslationCss(projectedPoint, stickyCompensation, inputStyle);
+
+  return visible ? (
+    <div
+      ref={htmlRef}
+      style={{
+        ...style,
+        position: 'absolute',
+        left: '0px',
+        top: '0px'
+      }}>
+      {children}
+    </div>
+  ) : (
+    <></>
+  );
+};
+
+function usePointProjection(
+  position3d: Vector3,
+  viewer: Cognite3DViewer
+): { projectedPoint: Vector2; visible: boolean } {
+  const [projectedPoint, setProjectedPoint] = useState(new Vector2());
   const [visible, setVisible] = useState(false);
 
   const cameraChanged = useCallback(
     (cameraPosition: Vector3, cameraTarget: Vector3): void => {
       const cameraDirection = cameraTarget.clone().sub(cameraPosition).normalize();
-      const elementDirection = position.clone().sub(cameraPosition).normalize();
+      const elementDirection = position3d.clone().sub(cameraPosition).normalize();
 
       setVisible(elementDirection.dot(cameraDirection) > 0);
 
-      const screenSpacePosition = viewer.worldToScreen(position.clone());
+      const screenSpacePosition = viewer.worldToScreen(position3d.clone());
       if (screenSpacePosition !== null) {
-        setDivTranslation(screenSpacePosition);
+        setProjectedPoint(screenSpacePosition);
       }
     },
-    [viewer, position]
+    [viewer, position3d]
   );
 
   useEffect(() => {
@@ -57,53 +108,95 @@ export const ViewerAnchor = ({
     };
   }, [cameraChanged]);
 
-  const htmlRef = useRef<HTMLDivElement>(null);
+  return { visible, projectedPoint };
+}
 
-  const domDimensions = [viewer.domElement.clientWidth, viewer.domElement.clientHeight] as [
-    number,
-    number
-  ];
-  const cssTranslation = computeCssOffsetWithStickiness(
-    divTranslation,
-    domDimensions,
+function useStickyCompensation(
+  htmlRef: RefObject<HTMLDivElement>,
+  viewerDomElement: HTMLElement,
+  sticky: boolean,
+  stickyMargin: number,
+  originalPosition: Vector2
+): Vector2 {
+  const [stickyCompensation, setStickyCompensation] = useState(new Vector2());
+
+  useEffect(() => {
+    if (sticky && htmlRef.current !== null) {
+      const newStickyCompensation = computeNewStickyCompensation(
+        htmlRef.current.getBoundingClientRect(),
+        viewerDomElement.getBoundingClientRect(),
+        stickyCompensation,
+        stickyMargin
+      );
+
+      if (!newStickyCompensation.equals(stickyCompensation)) {
+        setStickyCompensation(newStickyCompensation);
+      }
+    } else {
+      setStickyCompensation(new Vector2());
+    }
+  }, [
+    originalPosition.x,
+    originalPosition.y,
     sticky,
-    stickyMargin
+    stickyMargin,
+    viewerDomElement.clientWidth,
+    viewerDomElement.clientHeight
+  ]);
+
+  return stickyCompensation;
+}
+
+function computeNewStickyCompensation(
+  anchorDomRect: DOMRect,
+  viewerDomRect: DOMRect,
+  oldStickyCompensation: Vector2,
+  stickyMargin: number
+): Vector2 {
+  const newStickyCompensation = oldStickyCompensation.clone();
+
+  const uncompensatedLocalRect = new DOMRect(
+    anchorDomRect.left - viewerDomRect.left - oldStickyCompensation.x,
+    anchorDomRect.top - viewerDomRect.top - oldStickyCompensation.y,
+    anchorDomRect.width,
+    anchorDomRect.height
   );
 
-  return visible ? (
-    <div
-      ref={htmlRef}
-      style={{
-        position: 'absolute',
-        left: '0px',
-        top: '0px',
-        transform: cssTranslation
-      }}>
-      {children}
-    </div>
-  ) : (
-    <></>
+  const minXTranslation = stickyMargin;
+  const maxXTranslation = viewerDomRect.width - uncompensatedLocalRect.width - stickyMargin;
+  const minYTranslation = stickyMargin;
+  const maxYTranslation = viewerDomRect.height - uncompensatedLocalRect.height - stickyMargin;
+
+  newStickyCompensation.x = clamp(
+    0,
+    minXTranslation - uncompensatedLocalRect.left,
+    maxXTranslation - uncompensatedLocalRect.left
   );
-};
 
-function computeCssOffsetWithStickiness(
-  unboundedPosition: Vector2,
-  [domWidth, domHeight]: [number, number],
-  sticky?: boolean,
-  stickyMargin?: number
-): string {
-  if (sticky !== true) {
-    return `translateX(${unboundedPosition.x}px) translateY(${unboundedPosition.y}px)`;
-  }
+  newStickyCompensation.y = clamp(
+    0,
+    minYTranslation - uncompensatedLocalRect.top,
+    maxYTranslation - uncompensatedLocalRect.top
+  );
 
-  const margin = stickyMargin ?? 0;
+  Math.min(
+    maxXTranslation - uncompensatedLocalRect.left,
+    Math.max(minXTranslation - uncompensatedLocalRect.left, 0)
+  );
 
-  const maxXPos = `${domWidth}px - 100% - ${margin}px`;
-  const maxYPos = `${domHeight}px - 100% - ${margin}px`;
+  return newStickyCompensation;
+}
 
-  const minXPos = `${margin}px`;
-  const minYPos = `${margin}px`;
+function computeCombinedTranslationCss(
+  pointPositionOnScreen: Vector2,
+  stickyCompensation: Vector2,
+  inputStyle?: CSSProperties | undefined
+): CSSProperties {
+  const inherentTranslation = `translateX(calc(${pointPositionOnScreen.x}px + ${stickyCompensation.x}px))
+translateY(calc(${pointPositionOnScreen.y}px + ${stickyCompensation.y}px))`;
 
-  return `translateX(max(${minXPos}, min(${maxXPos}, ${unboundedPosition.x}px)))
-translateY(max(${minYPos}, min(${maxYPos}, ${unboundedPosition.y}px)))`;
+  const style = { ...inputStyle } ?? {};
+  const userProvidedTranslation = style.transform;
+  style.transform = `${userProvidedTranslation ?? ''} ${inherentTranslation}`;
+  return style;
 }
