@@ -17,11 +17,6 @@ import { useReveal } from '../RevealContainer/RevealContext';
 import { type Cognite3DViewer } from '@cognite/reveal';
 import { clamp } from 'lodash';
 
-export type ViewerAnchorElementMapping = {
-  ref: RefObject<HTMLElement>;
-  position: Vector3;
-};
-
 type ViewerAnchorStyle = Omit<CSSProperties, 'position' | 'left' | 'top'>;
 
 export type ViewerAnchorProps = {
