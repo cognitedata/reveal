@@ -133,7 +133,9 @@ export const useTimeseriesSearchResult = ({
       resourcesBySearch?.pages
         ?.reduce((accl, page) => accl.concat(page), [])
         .filter(
-          ({ externalId }) => externalId !== timeseriesExactMatch?.externalId
+          ({ externalId }) =>
+            externalId !== timeseriesExactMatch?.externalId ||
+            timeseriesExactMatch?.externalId === undefined
         ),
     [resourcesBySearch, timeseriesExactMatch]
   );
@@ -277,7 +279,7 @@ export const useAssetSearchResults = ({
     enabled: !!query,
   });
 
-  const hasResults = !(assets?.length === 0);
+  const hasResults = !(assetCountData?.length === 0);
 
   return {
     resultExactMatch: assetExactMatch,
