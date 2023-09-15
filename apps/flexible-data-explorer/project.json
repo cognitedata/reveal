@@ -137,6 +137,19 @@
         }
       }
     },
+    "static-storybook": {
+      "executor": "@nx/web:file-server",
+      "options": {
+        "buildTarget": "flexible-data-explorer:build-storybook",
+        "staticFilePath": "dist/storybook/flexible-data-explorer",
+        "port": 4400
+      },
+      "configurations": {
+        "ci": {
+          "buildTarget": "flexible-data-explorer:build-storybook:ci"
+        }
+      }
+    },
     "test-storybook": {
       "executor": "nx:run-commands",
       "options": {
