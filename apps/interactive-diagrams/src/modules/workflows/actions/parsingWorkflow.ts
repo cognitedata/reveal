@@ -18,6 +18,7 @@ import {
 import { startPnidParsingJob } from './parsingJobs';
 
 const CHUNK_SIZE = 50;
+const BATCH_SIZE = 10;
 
 /**
  * Starts the diagram parsing workflow.
@@ -74,23 +75,28 @@ export const startPnidParsingWorkflow = {
 
       const chunkedDiagrams = chunk(diagrams, CHUNK_SIZE);
 
-      const pnidParsingJobs = chunkedDiagrams.map((diagramsChunk: FileInfo[]) =>
-        dispatch(
-          startPnidParsingJob.action({
-            workflowJobs: getState().workflows.items[workflowId].jobs.list,
-            diagrams: diagramsChunk,
-            resources: { assets, files },
-            options: {
-              minTokens,
-              partialMatch,
-              matchFields,
-            },
-            workflowId,
-          })
-        )
-      );
+      // Introduce batching process to mitigate app crashes caused by excessive parallel requests
+      const chunkedDiagramBatches = chunk(chunkedDiagrams, BATCH_SIZE);
 
-      await Promise.all(pnidParsingJobs);
+      for (const chunkedDiagramBatch of chunkedDiagramBatches) {
+        const batchJobs = chunkedDiagramBatch.map((diagramsChunk: FileInfo[]) =>
+          dispatch(
+            startPnidParsingJob.action({
+              workflowJobs: getState().workflows.items[workflowId].jobs.list,
+              diagrams: diagramsChunk,
+              resources: { assets, files },
+              options: {
+                minTokens,
+                partialMatch,
+                matchFields,
+              },
+              workflowId,
+            })
+          )
+        );
+
+        await Promise.all(batchJobs); // Wait for the current batch to complete
+      }
     }
   ),
   pending: noop,
