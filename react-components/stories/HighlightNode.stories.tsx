@@ -76,7 +76,10 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
         style: { cad: DefaultNodeAppearance.Highlighted }
       }
     ]);
+
     void cameraNavigation.fitCameraToInstance(nodeData.fdmNode.externalId, nodeData.fdmNode.space);
+
+    console.log('Clicked node data', nodeData);
   }, [nodeData?.fdmNode]);
 
   return (

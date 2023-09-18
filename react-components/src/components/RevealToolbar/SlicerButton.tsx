@@ -20,6 +20,7 @@ type SliceState = {
 
 export const SlicerButton = (): ReactElement => {
   const viewer = useReveal();
+  const [sliceActive, setSliceActive] = useState<boolean>(false);
 
   const [sliceState, setSliceState] = useState<SliceState>({
     minHeight: 0,
@@ -65,6 +66,9 @@ export const SlicerButton = (): ReactElement => {
     <CogsTooltip content={'Slice'} placement="right" appendTo={document.body}>
       <Dropdown
         appendTo={() => document.body}
+        onClickOutside={() => {
+          setSliceActive(false);
+        }}
         content={
           <StyledMenu>
             <RangeSlider
@@ -79,7 +83,15 @@ export const SlicerButton = (): ReactElement => {
           </StyledMenu>
         }
         placement="right-end">
-        <Button type="ghost" icon="Slice" aria-label="Slice models" />
+        <Button
+          type="ghost"
+          icon="Slice"
+          aria-label="Slice models"
+          toggled={sliceActive}
+          onClick={() => {
+            setSliceActive((prevState) => !prevState);
+          }}
+        />
       </Dropdown>
     </CogsTooltip>
   );
