@@ -32,9 +32,15 @@ export const getOrgUserInvitationsByResource = async ({
       'content-type': 'application/json',
       authorization: `Bearer ${token}`,
     },
-  }).then((r) => r.json());
+  });
 
-  return response.items.map(
+  if (!response.ok) {
+    return Promise.reject(response);
+  }
+
+  const responseJson = await response.json();
+
+  return responseJson.items.map(
     // Here needed to reshape the response object.
     (item: { user: OrganizationUserProfile }) => item.user
   );
@@ -50,6 +56,13 @@ export const useAuth2InvitationsByResource = ({ externalId }: Props) => {
     () => getOrgUserInvitationsByResource({ externalId }),
     {
       enabled: externalId !== undefined,
+      retry: (failureCount, error) => {
+        if (error instanceof Response && error.status === 401) {
+          return false;
+        }
+
+        return failureCount < 3;
+      },
     }
   );
 

@@ -190,26 +190,30 @@ export const IndustryCanvas = ({
     toolType
   );
 
+  const commentAnnotationIds = commentAnnotations.map(
+    (commentAnnotation) => commentAnnotation.id
+  );
+
   const canvasAnnotationWithEventHandlers = useMemo(
     () =>
-      canvasAnnotations.map((canvasAnnotation) => ({
-        ...canvasAnnotation,
-        ...getAnnotationEditHandlers(canvasAnnotation),
-        onClick: (e: any, annotation: CanvasAnnotation) => {
-          e.cancelBubble = true;
-          setInteractionState({
-            hoverId: undefined,
-            clickedContainerAnnotationId: annotation.id,
-          });
-        },
-      })),
-    [canvasAnnotations, getAnnotationEditHandlers]
+      canvasAnnotations
+        .filter((annotation) => !commentAnnotationIds.includes(annotation.id))
+        .map((canvasAnnotation) => ({
+          ...canvasAnnotation,
+          ...getAnnotationEditHandlers(canvasAnnotation),
+          onClick: (e: any, annotation: CanvasAnnotation) => {
+            e.cancelBubble = true;
+            setInteractionState({
+              hoverId: undefined,
+              clickedContainerAnnotationId: annotation.id,
+            });
+          },
+        })),
+    [canvasAnnotations, commentAnnotationIds, getAnnotationEditHandlers]
   );
 
   const enhancedAnnotations: Annotation[] = useMemo(
     () => [
-      // TODO: Bug tracked by https://cognitedata.atlassian.net/browse/UFV-363
-      // ...getClickedContainerOutlineAnnotation(clickedContainer),
       ...getIndustryCanvasConnectionAnnotations({
         containers,
         selectedContainer,

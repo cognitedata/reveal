@@ -150,6 +150,7 @@ const ToolbarComponent: React.FC<ToolbarComponentProps> = ({
           <Tooltip
             content={
               <ToolTooltip
+                key="select"
                 label={t(translationKeys.TOOLBAR_SELECT_BUTTON, 'Select')}
                 keys={[
                   ShortcutKeysByIndustryCanvasToolType[
@@ -185,6 +186,7 @@ const ToolbarComponent: React.FC<ToolbarComponentProps> = ({
           <Tooltip
             content={
               <ToolTooltip
+                key="text"
                 label={t(translationKeys.TOOLBAR_TEXT_BUTTON, 'Text')}
                 keys={[
                   ShortcutKeysByIndustryCanvasToolType[
@@ -207,6 +209,7 @@ const ToolbarComponent: React.FC<ToolbarComponentProps> = ({
           <Tooltip
             content={
               <ToolTooltip
+                key="sticky"
                 label={t(
                   translationKeys.TOOLBAR_STICKY_NOTE_BUTTON,
                   'Sticky note'
@@ -246,6 +249,7 @@ const ToolbarComponent: React.FC<ToolbarComponentProps> = ({
           <Tooltip
             content={
               <ToolTooltip
+                key="line"
                 label={t(translationKeys.TOOLBAR_LINE_BUTTON, 'Line')}
                 keys={[
                   ShortcutKeysByIndustryCanvasToolType[
@@ -264,9 +268,11 @@ const ToolbarComponent: React.FC<ToolbarComponentProps> = ({
               onClick={() => onToolChange(IndustryCanvasToolType.LINE)}
             />
           </Tooltip>
+
           <Tooltip
             content={
               <ToolTooltip
+                key="comment"
                 label={t(translationKeys.TOOLBAR_COMMENT_BUTTON, 'Comment')}
                 keys={[
                   ShortcutKeysByIndustryCanvasToolType[
