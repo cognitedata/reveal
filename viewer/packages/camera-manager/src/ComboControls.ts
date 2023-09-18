@@ -19,6 +19,7 @@ import {
   Vector3
 } from 'three';
 import Keyboard from './Keyboard';
+import clamp from 'lodash/clamp';
 
 const isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') !== -1;
 
@@ -235,7 +236,7 @@ export class ComboControls extends EventDispatcher {
     };
   }
 
-  public update = (deltaTime: number, forceUpdate = false): boolean => {
+  public update = (deltaTimeS: number, forceUpdate = false): boolean => {
     const { _camera, _target, _targetEnd, _spherical, _sphericalEnd, _deltaTarget, handleKeyboard, _targetFPS } = this;
 
     if (!forceUpdate && !this._enabled) {
@@ -243,10 +244,10 @@ export class ComboControls extends EventDispatcher {
     }
 
     // the target framerate
-    const actualFPS = Math.min(1 / deltaTime, _targetFPS);
+    const actualFPS = Math.min(1 / deltaTimeS, _targetFPS);
     this._targetFPSOverActualFPS = _targetFPS / actualFPS;
 
-    handleKeyboard();
+    handleKeyboard(deltaTimeS);
 
     if (this._accumulatedMouseMove.lengthSq() > 0) {
       this.rotate(this._accumulatedMouseMove.x, this._accumulatedMouseMove.y);
@@ -653,29 +654,48 @@ export class ComboControls extends EventDispatcher {
     document.addEventListener('pointerup', onTouchEnd);
   };
 
-  private handleRotation(): void {
-    const azimuthAngle =
-      this._options.keyboardRotationSpeedAzimuth * this._keyboard.getKeyboardMovementValue('ArrowLeft', 'ArrowRight');
-    let polarAngle =
-      this._options.keyboardRotationSpeedPolar * this._keyboard.getKeyboardMovementValue('ArrowUp', 'ArrowDown');
+  /**
+   * Converts deltaTimeS to a time scale based on the target frames per second (FPS).
+   *
+   * @param deltaTimeS - The elapsed time since the last frame in seconds.
+   * @returns The time scale, which is a factor representing the relationship of deltaTimeS to the target FPS.
+   */
+  private getTimeScale(deltaTimeS: number): number {
+    return deltaTimeS / (1 / this._targetFPS);
+  }
 
-    if (azimuthAngle === 0 && polarAngle === 0) {
+  private handleRotationFromKeyboard(timeScale: number): void {
+    const deltaAzimuthAngle =
+      this._options.keyboardRotationSpeedAzimuth *
+      this._keyboard.getKeyboardMovementValue('ArrowLeft', 'ArrowRight') *
+      timeScale;
+
+    const deltaPolarAngle =
+      this._options.keyboardRotationSpeedPolar *
+      this._keyboard.getKeyboardMovementValue('ArrowUp', 'ArrowDown') *
+      timeScale;
+
+    if (deltaAzimuthAngle === 0 && deltaPolarAngle === 0) {
       return;
     }
 
     this._firstPersonMode = true;
-    const { _sphericalEnd } = this;
-    const oldPhi = _sphericalEnd.phi;
-    _sphericalEnd.phi += polarAngle;
-    _sphericalEnd.makeSafe();
-    polarAngle = _sphericalEnd.phi - oldPhi;
-    _sphericalEnd.phi = oldPhi;
+    const phi = this._sphericalEnd.phi;
 
-    const compensationForPolarAngleFactor = Math.sin(Math.PI / 2 - Math.abs(_sphericalEnd.phi - Math.PI / 2));
-    this.rotateFirstPersonMode(azimuthAngle * compensationForPolarAngleFactor, polarAngle);
+    const clampedDeltaPolarAngle =
+      clamp(phi + deltaPolarAngle, this._options.minPolarAngle, this._options.maxPolarAngle) - phi;
+
+    // Calculate the azimuth compensation factor. This adjusts the azimuth rotation
+    // to make it feel more natural when looking straight up or straight down.
+    const deviationFromEquator = Math.abs(phi - Math.PI / 2);
+    const azimuthCompensationFactor = Math.sin(Math.PI / 2 - deviationFromEquator);
+
+    const compensatedDeltaAzimuthAngle = deltaAzimuthAngle * azimuthCompensationFactor;
+
+    this.rotateFirstPersonMode(compensatedDeltaAzimuthAngle, clampedDeltaPolarAngle);
   }
 
-  private handleDolly(): void {
+  private handleDollyFromKeyboard(timeScale: number): void {
     const speedFactor = this._keyboard.isShiftPressed() ? this._options.keyboardSpeedFactor : 1;
     const moveDirection = this._keyboard.getKeyboardMovementValue('KeyW', 'KeyS');
     if (moveDirection === 0) {
@@ -685,13 +705,13 @@ export class ComboControls extends EventDispatcher {
     const booleanMoveDirection = moveDirection === 1;
     const dollyDeltaDistance = this.getDollyDeltaDistance(
       booleanMoveDirection,
-      speedFactor * this._options.keyboardDollySpeed
+      speedFactor * this._options.keyboardDollySpeed * timeScale
     );
     this.dolly(0, 0, dollyDeltaDistance, true);
     this._firstPersonMode = true;
   }
 
-  private handlePan(): void {
+  private handlePanFromKeyboard(timeScale: number): void {
     const horizontalMovement = this._keyboard.getKeyboardMovementValue('KeyA', 'KeyD');
     const verticalMovement = this._keyboard.getKeyboardMovementValue('KeyE', 'KeyQ');
 
@@ -702,19 +722,20 @@ export class ComboControls extends EventDispatcher {
     this._firstPersonMode = true;
     const speedFactor = this._keyboard.isShiftPressed() ? this._options.keyboardSpeedFactor : 1;
     this.pan(
-      speedFactor * this._options.keyboardPanSpeed * horizontalMovement,
-      speedFactor * this._options.keyboardPanSpeed * verticalMovement
+      timeScale * speedFactor * this._options.keyboardPanSpeed * horizontalMovement,
+      timeScale * speedFactor * this._options.keyboardPanSpeed * verticalMovement
     );
   }
 
-  private readonly handleKeyboard = () => {
+  private readonly handleKeyboard = (deltaTimeS: number) => {
     if (!this._enabled || !this._options.enableKeyboardNavigation) {
       return;
     }
 
-    this.handleRotation();
-    this.handleDolly();
-    this.handlePan();
+    const timeScale = this.getTimeScale(deltaTimeS);
+    this.handleRotationFromKeyboard(timeScale);
+    this.handleDollyFromKeyboard(timeScale);
+    this.handlePanFromKeyboard(timeScale);
   };
 
   private readonly rotateSpherical = (azimuthAngle: number, polarAngle: number) => {
@@ -734,14 +755,14 @@ export class ComboControls extends EventDispatcher {
     _sphericalEnd.makeSafe();
   };
 
-  private readonly rotateFirstPersonMode = (azimuthAngle: number, polarAngle: number) => {
+  private readonly rotateFirstPersonMode = (deltaAzimuthAngle: number, deltaPolarAngle: number) => {
     const { _reusableCamera, _reusableVector3, _sphericalEnd, _targetEnd } = this;
 
     _reusableCamera.position.setFromSpherical(_sphericalEnd).add(_targetEnd);
     _reusableCamera.lookAt(_targetEnd);
 
-    _reusableCamera.rotateX(this._options.firstPersonRotationFactor * polarAngle);
-    _reusableCamera.rotateY(this._options.firstPersonRotationFactor * azimuthAngle);
+    _reusableCamera.rotateX(this._options.firstPersonRotationFactor * deltaPolarAngle);
+    _reusableCamera.rotateY(this._options.firstPersonRotationFactor * deltaAzimuthAngle);
 
     const distToTarget = _targetEnd.distanceTo(_reusableCamera.position);
     _reusableCamera.getWorldDirection(_reusableVector3);
