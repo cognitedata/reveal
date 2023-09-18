@@ -2743,6 +2743,7 @@ __metadata:
     "@types/react-dom": ^18.2.7
     "@types/styled-components": 5.1.27
     "@types/three": 0.155.1
+    "@types/webpack-node-externals": ^3.0.1
     "@typescript-eslint/eslint-plugin": ^6.0.0
     assert: ^2.0.0
     eslint: ^8.0.1
@@ -6436,6 +6437,16 @@ __metadata:
   version: 2.0.6
   resolution: "@types/unist@npm:2.0.6"
   checksum: 25cb860ff10dde48b54622d58b23e66214211a61c84c0f15f88d38b61aa1b53d4d46e42b557924a93178c501c166aa37e28d7f6d994aba13d24685326272d5db
+  languageName: node
+  linkType: hard
+
+"@types/webpack-node-externals@npm:^3.0.1":
+  version: 3.0.1
+  resolution: "@types/webpack-node-externals@npm:3.0.1"
+  dependencies:
+    "@types/node": "*"
+    webpack: ^5
+  checksum: e6df4db2e0a564e8b62c68985b3607d3b29634e7d7098ff061073da4790d80bf1083eb9bd2a9946e4307287ebfc5d73a6d581e6108097453fba7173283716d2d
   languageName: node
   linkType: hard
 
@@ -17441,7 +17452,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack@npm:5.88.2":
+"webpack@npm:5.88.2, webpack@npm:^5":
   version: 5.88.2
   resolution: "webpack@npm:5.88.2"
   dependencies:

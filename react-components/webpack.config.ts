@@ -1,12 +1,10 @@
-import path from 'path';
-import { fileURLToPath } from 'url';
-import TerserPlugin from 'terser-webpack-plugin';
-import nodeExternals from 'webpack-node-externals';
+import * as path from 'path';
+import * as TerserPlugin from 'terser-webpack-plugin';
+import * as nodeExternals from 'webpack-node-externals';
 
-const filename = fileURLToPath(import.meta.url);
-const dirname = path.dirname(filename);
+const dirname = path.dirname(module.filename);
 
-export default (_, argv) => {
+export default (_: string, argv: { [key: string]: string }) => {
   const { mode } = argv;
   const isProduction = mode === 'production';
   return {
