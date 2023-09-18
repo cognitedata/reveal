@@ -1,6 +1,6 @@
 import * as path from 'path';
-import * as TerserPlugin from 'terser-webpack-plugin';
-import * as nodeExternals from 'webpack-node-externals';
+import TerserPlugin from 'terser-webpack-plugin';
+import nodeExternals from 'webpack-node-externals';
 
 const dirname = path.dirname(module.filename);
 
