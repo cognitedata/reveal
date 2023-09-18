@@ -61,7 +61,7 @@ export const BooleanInput = ({
   }
 
   return (
-    <>
+    <div data-testid={`boolean-input-${label}`}>
       {label && <FilterLabel>{label}</FilterLabel>}
       <Tooltip
         interactive
@@ -97,6 +97,6 @@ export const BooleanInput = ({
           </SegmentedControl.Button>
         </SegmentedControl>
       </Tooltip>
-    </>
+    </div>
   );
 };
