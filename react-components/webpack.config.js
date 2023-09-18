@@ -1,8 +1,10 @@
-import * as path from 'path';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import TerserPlugin from 'terser-webpack-plugin';
 import nodeExternals from 'webpack-node-externals';
 
-const dirname = path.dirname(module.filename);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export default (_, argv) => {
   const { mode } = argv;
@@ -10,7 +12,7 @@ export default (_, argv) => {
   return {
     entry: './src/index.ts',
     output: {
-      path: path.resolve(dirname, 'dist'),
+      path: path.resolve(__dirname, 'dist'),
       filename: 'index.js',
       clean: false,
       libraryTarget: 'module'
