@@ -278,11 +278,32 @@ export const IndustryCanvasHomePage = () => {
   );
 
   const renderDeleteCanvasButton = (row: CanvasDocumentWithUserProfile) => (
-    <Tooltip content={t(translationKeys.COMMON_CANVAS_DELETE, 'Delete canvas')}>
+    <Tooltip
+      content={
+        row.createdByUserProfile?.userIdentifier !== userProfile.userIdentifier
+          ? t(
+              translationKeys.COMMON_CANVAS_DELETE_DISABLED,
+              'A canvas can only be deleted by its owner'
+            )
+          : t(translationKeys.COMMON_CANVAS_DELETE, 'Delete canvas')
+      }
+    >
       <Button
         type="ghost-destructive"
         icon="Delete"
-        aria-label={t(translationKeys.COMMON_CANVAS_DELETE, 'Delete canvas')}
+        aria-label={
+          row.createdByUserProfile?.userIdentifier !==
+          userProfile.userIdentifier
+            ? t(
+                translationKeys.COMMON_CANVAS_DELETE_DISABLED,
+                'A canvas can only be deleted by its owner'
+              )
+            : t(translationKeys.COMMON_CANVAS_DELETE, 'Delete canvas')
+        }
+        disabled={
+          row.createdByUserProfile?.userIdentifier !==
+          userProfile.userIdentifier
+        }
         onClick={(ev) => {
           ev.stopPropagation();
           setCanvasToDelete(row);

@@ -33,6 +33,7 @@
   "CHECKBOX_EXIF_FILE_UPLOAD": "Extract EXIF-data from file",
   "CLOSE": "Close",
   "COMMON_CANVAS_DELETE": "Delete canvas",
+  "COMMON_CANVAS_DELETE_DISABLED": "A canvas can only be deleted by its owner",
   "COMMON_CANVAS_LINK_COPY": "Copy canvas link",
   "COMMON_CANVAS_RENAME": "Rename",
   "COMMON_CREATE_CANVAS": "Create new canvas",
