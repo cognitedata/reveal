@@ -2748,7 +2748,7 @@ __metadata:
     assert: ^2.0.0
     eslint: ^8.0.1
     eslint-config-prettier: ^9.0.0
-    eslint-config-standard-with-typescript: 38.0.0
+    eslint-config-standard-with-typescript: 38.1.0
     eslint-plugin-header: ^3.1.1
     eslint-plugin-import: ^2.25.2
     eslint-plugin-n: ^16.0.0
@@ -9694,9 +9694,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-config-standard-with-typescript@npm:38.0.0":
-  version: 38.0.0
-  resolution: "eslint-config-standard-with-typescript@npm:38.0.0"
+"eslint-config-standard-with-typescript@npm:38.1.0":
+  version: 38.1.0
+  resolution: "eslint-config-standard-with-typescript@npm:38.1.0"
   dependencies:
     "@typescript-eslint/parser": ^6.1.0
     eslint-config-standard: 17.1.0
@@ -9707,7 +9707,7 @@ __metadata:
     eslint-plugin-n: "^15.0.0 || ^16.0.0 "
     eslint-plugin-promise: ^6.0.0
     typescript: "*"
-  checksum: 52f7fb13754da30be0d5abbf5ae6bf30c4128906f33e440fafdce7461df9b8f8c89a8f015bbe4d6edae1507e19ee39b47619e9778bb6d95bad8610fa72617e97
+  checksum: ebb6f49a3d10fb8848c226902f28e2cf3ebcc1d73524648422c7af2d8936cc96c462136dedfdbf8e379c24ef3afa8f69608f08edcd8bd741aaed77311376599d
   languageName: node
   linkType: hard
 
