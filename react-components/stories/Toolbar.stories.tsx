@@ -8,13 +8,16 @@ import {
   type QualitySettings,
   RevealContainer,
   RevealToolbar,
-  withSuppressRevealEvents
+  withSuppressRevealEvents,
+  withCameraStateUrlParam,
+  useGetCameraStateFromUrlParam,
+  useCameraNavigation
 } from '../src';
 import { CogniteClient } from '@cognite/sdk';
 import { Color } from 'three';
 import styled from 'styled-components';
 import { Button, Menu, ToolBar, type ToolBarButton } from '@cognite/cogs.js';
-import { type ReactElement, useState } from 'react';
+import { type ReactElement, useState, useEffect } from 'react';
 
 const meta = {
   title: 'Example/Toolbar',
@@ -33,7 +36,7 @@ const sdk = new CogniteClient({
   getToken: async () => await Promise.resolve(token)
 });
 
-const MyCustomToolbar = styled(withSuppressRevealEvents(ToolBar))`
+const MyCustomToolbar = styled(withSuppressRevealEvents(withCameraStateUrlParam(ToolBar)))`
   position: absolute;
   right: 20px;
   top: 70px;
@@ -82,11 +85,11 @@ const exampleHighQualitySettings: QualitySettings = {
 
 const exampleLowQualitySettings: QualitySettings = {
   cadBudget: {
-    maximumRenderCost: 95000000,
+    maximumRenderCost: 10_000_000,
     highDetailProximityThreshold: 100
   },
   pointCloudBudget: {
-    numberOfPoints: 12000000
+    numberOfPoints: 2_000_000
   },
   resolutionOptions: {
     maxRenderResolution: 1e5,
@@ -103,6 +106,7 @@ export const Main: Story = {
   },
   render: ({ addModelOptions }) => (
     <RevealContainer sdk={sdk} color={new Color(0x4a4a4a)}>
+      <FitToUrlCameraState />
       <CadModelContainer addModelOptions={addModelOptions} />
       <RevealToolbar
         customSettingsContent={exampleCustomSettingElements()}
@@ -117,3 +121,16 @@ export const Main: Story = {
     </RevealContainer>
   )
 };
+
+function FitToUrlCameraState(): ReactElement {
+  const getCameraState = useGetCameraStateFromUrlParam();
+  const cameraNavigation = useCameraNavigation();
+
+  useEffect(() => {
+    const currentCameraState = getCameraState();
+    if (currentCameraState === undefined) return;
+    cameraNavigation.fitCameraToState(currentCameraState);
+  }, []);
+
+  return <></>;
+}

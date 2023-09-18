@@ -1,11 +1,9 @@
-name: Publish React Component to NPM on Demand
-
+name: Translation sync added and deleted keys to locize
 on: workflow_dispatch
 
 jobs:
-  build:
+  locize-sync:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
         with:
@@ -17,13 +15,6 @@ jobs:
           node-version: 16
           registry-url: 'https://registry.npmjs.org'
           always-auth: true
-
-      - name: Setup Cognite CICD NPM
-        run: |
-          echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> .npmrc
-          npm whoami
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
 
       - name: Setup Cognite CICD Yarn
         run: |
@@ -43,17 +34,16 @@ jobs:
         env:
           NPM_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
 
-      - name: Build production version
+      - name: 'Save added keys to locize'
         working-directory: react-components
-        run: yarn run build:prod
+        run: yarn save-missing
         env:
           NPM_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
+          LOCIZE_API_KEY: ${{ secrets.LOCIZE_API_KEY }}
 
-      - name: Publish to NPM
+      - name: 'Remove deleted keys from locize'
         working-directory: react-components
+        run: yarn remove-deleted
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          npm publish
+          LOCIZE_API_KEY: ${{ secrets.LOCIZE_API_KEY }}

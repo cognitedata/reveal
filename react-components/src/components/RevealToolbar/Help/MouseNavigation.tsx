@@ -11,31 +11,31 @@ import {
   MouseNavigationCombinedGridItem
 } from './elements';
 import { Section } from './Section';
+import { useTranslation } from '../../../common/i18n';
 
 export const MouseNavigation = (): ReactElement => {
+  const { t } = useTranslation();
   return (
     <Section
-      title={'Mouse'}
-      subTitle={'Navigate and select'}
-      description={
-        'Click and drag to rotate, and pan the view. Use mouse wheel to zoom the view. Left click to select'
-      }>
+      title={t('MOUSE_NAVIGATION_TITLE')}
+      subTitle={t('MOUSE_TOUCH_NAVIGATION_SUBTITLE')}
+      description={t('MOUSE_NAVIGATION_DESCRIPTION')}>
       <MouseNavigationInstructionGrid>
-        <InstructionText>Zoom / scroll</InstructionText>
+        <InstructionText>{t('MOUSE_ZOOM')}</InstructionText>
         <InstructionText style={{ marginBottom: 30, textAlign: 'right' }}>
-          Rotate
-          <InstructionDetail>Click+drag</InstructionDetail>
+          {t('MOUSE_ROTATE')}
+          <InstructionDetail>{t('MOUSE_INSTRUCTIONS')}</InstructionDetail>
         </InstructionText>
         <MouseNavigationCombinedGridItem>
           <StyledMouse />
         </MouseNavigationCombinedGridItem>
         <InstructionText style={{ marginBottom: 30, textAlign: 'left' }}>
-          Pan
-          <InstructionDetail>Click+drag</InstructionDetail>
+          {t('PAN')}
+          <InstructionDetail>{t('MOUSE_INSTRUCTIONS')}</InstructionDetail>
         </InstructionText>
         <InstructionText style={{ marginTop: -50, textAlign: 'right' }}>
-          Select Objects
-          <InstructionDetail>Click on interactive objects</InstructionDetail>
+          {t('MOUSE_SELECT')}
+          <InstructionDetail>{t('MOUSE_SELECT_INSTRUCTION')}</InstructionDetail>
         </InstructionText>
       </MouseNavigationInstructionGrid>
     </Section>

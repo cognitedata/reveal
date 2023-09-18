@@ -2,8 +2,8 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type ReactElement } from 'react';
-import { Button, Dropdown, Menu } from '@cognite/cogs.js';
+import { useState, type ReactElement } from 'react';
+import { Button, Dropdown, Menu, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import { type QualitySettings } from './SettingsContainer/types';
 import { HighFidelityContainer } from './SettingsContainer/HighFidelityContainer';
 
@@ -18,20 +18,35 @@ export const SettingsButton = ({
   lowQualitySettings,
   highQualitySettings
 }: CustomSettingsProps): ReactElement => {
+  const [settingsActive, setSettingsActive] = useState<boolean>(false);
+
   return (
-    <Dropdown
-      appendTo={document.body}
-      content={
-        <Menu>
-          <HighFidelityContainer
-            lowQualitySettings={lowQualitySettings}
-            highQualitySettings={highQualitySettings}
-          />
-          {customSettingsContent ?? <></>}
-        </Menu>
-      }
-      placement="auto">
-      <Button icon="Settings" type="ghost" aria-label="Show settings" />
-    </Dropdown>
+    <CogsTooltip content={'Settings'} placement="right" appendTo={document.body}>
+      <Dropdown
+        appendTo={document.body}
+        onClickOutside={() => {
+          setSettingsActive(false);
+        }}
+        content={
+          <Menu>
+            <HighFidelityContainer
+              lowQualitySettings={lowQualitySettings}
+              highQualitySettings={highQualitySettings}
+            />
+            {customSettingsContent ?? <></>}
+          </Menu>
+        }
+        placement="right-start">
+        <Button
+          icon="Settings"
+          type="ghost"
+          aria-label="Show settings"
+          toggled={settingsActive}
+          onClick={() => {
+            setSettingsActive((prevState) => !prevState);
+          }}
+        />
+      </Dropdown>
+    </CogsTooltip>
   );
 };

@@ -52,4 +52,5 @@ export type Reveal3DResourcesProps = {
   defaultResourceStyling?: DefaultResourceStyling;
   instanceStyling?: FdmAssetStylingGroup[];
   onResourcesAdded?: () => void;
+  onResourceLoadError?: (failedResource: AddResourceOptions, error: any) => void;
 };

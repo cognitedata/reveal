@@ -14,7 +14,11 @@ import {
   useMappedEdgesForRevisions
 } from '../components/NodeCacheProvider/NodeCacheProvider';
 import { useMemo } from 'react';
-import { type FdmEdgeWithNode, type TreeIndex } from '../components/NodeCacheProvider/types';
+import {
+  type NodeId,
+  type FdmEdgeWithNode,
+  type TreeIndex
+} from '../components/NodeCacheProvider/types';
 import {
   type NodeStylingGroup,
   type TreeIndexStylingGroup
@@ -42,7 +46,6 @@ export const useCalculateCadStyling = (
     defaultResourceStyling?.cad?.mapped
   );
   const modelInstanceStyleGroups = useCalculateInstanceStyling(models, instanceGroups);
-  console.log('Model instance style groups = ', modelInstanceStyleGroups);
   const joinedStyleGroups = useJoinStylingGroups(
     models,
     modelsMappedStyleGroups,
@@ -169,12 +172,15 @@ function calculateCadModelStyling(
 
   return resourcesStylingGroups
     .map((resourcesGroup) => {
-      const modelMappedNodes = resourcesGroup.fdmAssetExternalIds
+      const modelMappedNodeLists = resourcesGroup.fdmAssetExternalIds
         .map((uniqueId) => modelMappings.get(uniqueId.externalId))
-        .filter((node): node is Node3D => node !== undefined);
+        .filter((nodeMap): nodeMap is Map<NodeId, Node3D> => nodeMap !== undefined)
+        .map((nodeMap) => [...nodeMap.values()]);
       return {
         style: resourcesGroup.style.cad,
-        treeIndices: modelMappedNodes.flatMap((n) => getNodeSubtreeIndices(n))
+        treeIndices: modelMappedNodeLists.flatMap((nodes) =>
+          nodes.flatMap((n) => getNodeSubtreeIndices(n))
+        )
       };
     })
     .filter((group) => group.treeIndices.length > 0);
@@ -187,7 +193,7 @@ function getNodeSubtreeIndices(node: Node3D): TreeIndex[] {
 function getModelMappings(
   mappings: ThreeDModelMappings[],
   model: CadModelOptions
-): Map<CogniteExternalId, Node3D> {
+): Map<CogniteExternalId, Map<NodeId, Node3D>> {
   return mappings
     .filter(
       (mapping) => mapping.modelId === model.modelId && mapping.revisionId === model.revisionId
@@ -195,18 +201,30 @@ function getModelMappings(
     .reduce(
       // reduce is added to avoid duplication of a models that span several pages.
       (acc, mapping) => {
-        mergeMaps(acc.mappings, mapping.mappings);
+        mergeMapsWithDeduplicatedNodes(acc.mappings, mapping.mappings);
         return acc;
       },
-      { modelId: model.modelId, revisionId: model.revisionId, mappings: new Map<string, Node3D>() }
+      {
+        modelId: model.modelId,
+        revisionId: model.revisionId,
+        mappings: new Map<string, Map<NodeId, Node3D>>()
+      }
     ).mappings;
 }
 
-function mergeMaps(
-  targetMap: Map<string, Node3D>,
-  addedMap: Map<string, Node3D>
-): Map<string, Node3D> {
-  addedMap.forEach((value, key) => targetMap.set(key, value));
+function mergeMapsWithDeduplicatedNodes(
+  targetMap: Map<string, Map<NodeId, Node3D>>,
+  addedMap: Map<string, Node3D[]>
+): Map<string, Map<NodeId, Node3D>> {
+  return [...addedMap.entries()].reduce((map, [fdmKey, nodesToAdd]) => {
+    const targetSet = map.get(fdmKey);
 
-  return targetMap;
+    if (targetSet !== undefined) {
+      nodesToAdd.forEach((node) => targetSet.set(node.id, node));
+    } else {
+      map.set(fdmKey, new Map(nodesToAdd.map((node) => [node.id, node])));
+    }
+
+    return map;
+  }, targetMap);
 }

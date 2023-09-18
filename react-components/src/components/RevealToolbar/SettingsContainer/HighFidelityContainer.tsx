@@ -7,6 +7,7 @@ import { Menu } from '@cognite/cogs.js';
 import { useReveal } from '../../RevealContainer/RevealContext';
 import { type QualitySettings, type QualityProps } from './types';
 import { type Cognite3DViewer } from '@cognite/reveal';
+import { useTranslation } from '../../../common/i18n';
 
 const defaultLowFidelitySettings: QualitySettings = {
   cadBudget: {
@@ -40,6 +41,7 @@ export const HighFidelityContainer = ({
   lowQualitySettings,
   highQualitySettings
 }: QualityProps): ReactElement => {
+  const { t } = useTranslation();
   const viewer = useReveal();
   const [active, setActive] = useState(!isLowFidelity(viewer));
 
@@ -62,7 +64,7 @@ export const HighFidelityContainer = ({
 
   return (
     <Menu.Item hasSwitch toggled={active} onChange={onClick}>
-      High fidelity
+      {t('HIGH_FIDELITY')}
     </Menu.Item>
   );
 };

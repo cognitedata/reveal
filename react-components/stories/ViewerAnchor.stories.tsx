@@ -60,7 +60,7 @@ export const Main: Story = {
             </SuppressedDiv>
           </div>
         </ViewerAnchor>
-        <ViewerAnchor position={position2}>
+        <ViewerAnchor position={position2} sticky stickyMargin={20}>
           <p
             style={{
               backgroundColor: 'red',
