@@ -16,7 +16,6 @@ module.exports = {
     tsconfigRootDir: __dirname
   },
   plugins: ['react', 'prettier', 'header'],
-  ignorePatterns: ["./webpack.config.js"],
   rules: {
     'react/react-in-jsx-scope': 'off',
     '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
