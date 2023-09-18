@@ -46,27 +46,27 @@ export class TreeIndexToSectorsMap {
    * Mark a sector as completed for a given geometry type. This will make subsequent calls to isCompleted
    * for this geometry type return true
    * @param sectorId The sector id
-   * @param type The geometry type
+   * @param geometryType The geometry type
    */
-  markCompleted(sectorId: number, type: RevealGeometryCollectionType): void {
-    const existingSet = this._parsedSectors.get(sectorId);
-    if (existingSet) {
-      existingSet.add(sectorId);
+  markCompleted(sectorId: number, geometryType: RevealGeometryCollectionType): void {
+    const completedGeometryTypesInSector = this._parsedSectors.get(sectorId);
+    if (completedGeometryTypesInSector) {
+      completedGeometryTypesInSector.add(geometryType);
     } else {
-      this._parsedSectors.set(sectorId, new Set<number>([type]));
+      this._parsedSectors.set(sectorId, new Set<RevealGeometryCollectionType>([geometryType]));
     }
   }
 
   /**
    * Check whether or not a sector is completely processed, for a given geometry type
    * @param sectorId The sector id
-   * @param type The geometry type
+   * @param geometryType The geometry type
    * @returns True if completed, false otherwise
    */
-  isCompleted(sectorId: number, type: RevealGeometryCollectionType): boolean {
-    const parsedTypes = this._parsedSectors.get(sectorId);
-    if (parsedTypes) {
-      return parsedTypes.has(type);
+  isCompleted(sectorId: number, geometryType: RevealGeometryCollectionType): boolean {
+    const completedGeometryTypesInSector = this._parsedSectors.get(sectorId);
+    if (completedGeometryTypesInSector) {
+      return completedGeometryTypesInSector.has(geometryType);
     }
     return false;
   }
