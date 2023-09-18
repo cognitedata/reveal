@@ -72,24 +72,25 @@ export const startPnidParsingWorkflow = {
         files: files?.length ?? 0,
       });
 
-      const chunkedDiagrams = chunk(diagrams, CHUNK_SIZE).map(
-        (diagramsChunk: FileInfo[]) =>
-          dispatch(
-            startPnidParsingJob.action({
-              workflowJobs: getState().workflows.items[workflowId].jobs.list,
-              diagrams: diagramsChunk,
-              resources: { assets, files },
-              options: {
-                minTokens,
-                partialMatch,
-                matchFields,
-              },
-              workflowId,
-            })
-          )
+      const chunkedDiagrams = chunk(diagrams, CHUNK_SIZE);
+
+      const pnidParsingJobs = chunkedDiagrams.map((diagramsChunk: FileInfo[]) =>
+        dispatch(
+          startPnidParsingJob.action({
+            workflowJobs: getState().workflows.items[workflowId].jobs.list,
+            diagrams: diagramsChunk,
+            resources: { assets, files },
+            options: {
+              minTokens,
+              partialMatch,
+              matchFields,
+            },
+            workflowId,
+          })
+        )
       );
 
-      await Promise.all(chunkedDiagrams);
+      await Promise.all(pnidParsingJobs);
     }
   ),
   pending: noop,

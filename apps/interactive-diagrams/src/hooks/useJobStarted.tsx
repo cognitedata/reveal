@@ -1,6 +1,11 @@
 import { useDispatch, useSelector } from 'react-redux';
 
-import { getWorkflowJobs, setJobStart } from '../modules/workflows';
+import {
+  getActiveWorkflowId,
+  getWorkflowJobs,
+  setJobStart,
+  useWorkflowLoadPercentages,
+} from '../modules/workflows';
 
 export const useJobStarted = () => {
   const dispatch = useDispatch();
@@ -11,5 +16,16 @@ export const useJobStarted = () => {
   const setJobStarted = (started: boolean) => {
     dispatch(setJobStart({ started }));
   };
-  return { jobStarted, setJobStarted };
+  const activeWorkflowId = useSelector(getActiveWorkflowId);
+
+  const { isLoaded, totalCount } = useWorkflowLoadPercentages(
+    activeWorkflowId,
+    'assets'
+  );
+
+  return {
+    jobStarted,
+    setJobStarted,
+    assetsLoaded: isLoaded || totalCount === 0,
+  };
 };
