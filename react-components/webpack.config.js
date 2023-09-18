@@ -4,7 +4,7 @@ import nodeExternals from 'webpack-node-externals';
 
 const dirname = path.dirname(module.filename);
 
-export default (_: string, argv: { [key: string]: string }) => {
+export default (_, argv) => {
   const { mode } = argv;
   const isProduction = mode === 'production';
   return {
