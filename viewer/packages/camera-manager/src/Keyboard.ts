@@ -32,8 +32,13 @@ const EVENT_CODES = [
 
 type EventCode = (typeof EVENT_CODES)[number];
 
+const eventCodeSet = new Set(EVENT_CODES);
+const isEventCode = (value: string): value is EventCode => {
+  return eventCodeSet.has(value as EventCode);
+};
+
 export default class Keyboard {
-  private readonly _keys = new Set<string>();
+  private readonly _keys = new Set<EventCode>();
   private _disabled = false;
   private readonly _domElement: HTMLElement;
 
@@ -81,8 +86,6 @@ export default class Keyboard {
   }
 
   /**
-   * Calculates the movement direction based on keyboard input.
-   *
    * Given two keys representing positive and negative directions (e.g., left and right, or up and down),
    * this method returns 1 for the positive key, -1 for the negative key, or 0 if neither or both is pressed.
    *
@@ -108,10 +111,14 @@ export default class Keyboard {
   };
 
   private readonly onKeyDown = (event: KeyboardEvent) => {
+    if (!isEventCode(event.code)) return;
+
     this._keys.add(event.code);
   };
 
   private readonly onKeyUp = (event: KeyboardEvent) => {
+    if (!isEventCode(event.code)) return;
+
     this._keys.delete(event.code);
   };
 

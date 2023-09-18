@@ -2,8 +2,8 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type ReactElement, useState, useEffect, useMemo, useRef } from 'react';
-import { Button, Dropdown } from '@cognite/cogs.js';
+import { type ReactElement, useState, useEffect, useMemo, useRef, type RefObject } from 'react';
+import { Button, Dropdown, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import { type Reveal3DResourcesLayerStates } from './LayersContainer/types';
 import LayersContainer from './LayersContainer/LayersContainer';
 import {
@@ -40,6 +40,25 @@ export const LayersButton = (): ReactElement => {
     setVisible((prevState) => !prevState);
   };
 
+  const useOutsideClick = (ref: RefObject<HTMLElement | null>): void => {
+    useEffect(() => {
+      const handleClick = (event: MouseEvent): void => {
+        if (ref.current !== null && !ref.current.contains(event.target as Node)) {
+          setVisible(false);
+        }
+      };
+
+      document.addEventListener('click', handleClick);
+
+      return () => {
+        document.removeEventListener('click', handleClick);
+      };
+    }, [ref]);
+  };
+
+  const ref = useRef<HTMLButtonElement | null>(null);
+  useOutsideClick(ref);
+
   useEffect(() => {
     const currentModels = viewer.models;
     // Compare the previous and current models to avoid infinite loop
@@ -61,7 +80,7 @@ export const LayersButton = (): ReactElement => {
         setPointCloudModelIds(pointCloudIds);
       }
     }
-  }, [viewer.models, cadModelIds, pointCloudModelIds]);
+  }, [viewer.models]);
 
   const updated3DResourcesLayerData: Reveal3DResourcesLayerStates = useMemo(() => {
     if (cadModelName.data === null && pointCloudModelName.data === null) {
@@ -148,26 +167,29 @@ export const LayersButton = (): ReactElement => {
     setReveal3DResourcesLayerData(updated3DResourcesLayerData);
   }, [updated3DResourcesLayerData]);
 
-  useEffect(() => {
-    viewer.on('click', () => {
-      setVisible(false);
-    });
-  }, [viewer]);
-
   return (
-    <Dropdown
-      appendTo={revealContainerElement ?? document.body}
-      content={
-        <LayersContainer
-          props={{
-            reveal3DResourcesLayerData,
-            setReveal3DResourcesLayerData
-          }}
+    <CogsTooltip content={'Filter 3D resource layers'} placement="right" appendTo={document.body}>
+      <Dropdown
+        appendTo={revealContainerElement ?? document.body}
+        content={
+          <LayersContainer
+            props={{
+              reveal3DResourcesLayerData,
+              setReveal3DResourcesLayerData
+            }}
+          />
+        }
+        visible={visible}
+        placement="right-start">
+        <Button
+          ref={ref}
+          type="ghost"
+          icon="Layers"
+          aria-label="3D Resource layers"
+          onClick={showLayers}
+          toggled={visible}
         />
-      }
-      visible={visible}
-      placement="auto">
-      <Button type="ghost" icon="Layers" aria-label="3D Resource layers" onClick={showLayers} />
-    </Dropdown>
+      </Dropdown>
+    </CogsTooltip>
   );
 };
