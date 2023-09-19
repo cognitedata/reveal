@@ -3,8 +3,6 @@ import { useNavigate } from 'react-router';
 
 import styled from 'styled-components';
 
-import { InteractionRequiredAuthError } from '@azure/msal-browser';
-
 import { Icon } from '@cognite/cogs.js';
 import {
   getLoginFlowsByCluster,
@@ -67,8 +65,7 @@ const SelectProject = (): JSX.Element => {
       projectsFromAllClusters.length > 0 &&
       projectsFromAllClusters.every(
         ({ error }) =>
-          error instanceof InteractionRequiredAuthError &&
-          error?.subError !== 'consent_required'
+          !!error && (error as any)?.subError !== 'consent_required'
       )
     ) {
       if (pca) {
