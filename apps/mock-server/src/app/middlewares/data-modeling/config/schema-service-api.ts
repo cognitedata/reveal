@@ -49,11 +49,20 @@ The view can then omit mapping required properties of a container.
 """
 directive @readonly on OBJECT | INTERFACE
 
+input _DataModelRef {
+  space: String!
+  externalId: String!
+  version: String!
+}
+
 """
 Specifies that the view is imported, which means the view definition needs to already exist.
 The imported view can omit fields, and container directives.
 """
-directive @import on OBJECT | INTERFACE
+directive @import(dataModel: _DataModelRef) on OBJECT | INTERFACE
+
+directive @default(value: String) on FIELD_DEFINITION
+
 
 """
 Specifies if a type will be used for representing edge properties

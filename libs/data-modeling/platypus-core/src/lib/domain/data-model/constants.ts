@@ -31,7 +31,14 @@ export const mixerApiBuiltInTypes = [
   {
     name: 'import',
     type: 'DIRECTIVE',
-    body: 'directive @import on OBJECT | INTERFACE',
+    body: `
+    input _DataModelRef {
+      space: String!
+      externalId: String!
+      version: String!
+    }
+    directive @import(dataModel: _DataModelRef) on OBJECT | INTERFACE
+`,
     fieldDirective: false,
   },
   {
@@ -50,6 +57,12 @@ export const mixerApiBuiltInTypes = [
     name: 'mapping',
     type: 'DIRECTIVE',
     body: 'directive @mapping(space: String, container: String, property: String) on FIELD_DEFINITION',
+    fieldDirective: true,
+  },
+  {
+    name: 'default',
+    type: 'DIRECTIVE',
+    body: `directive @default(value: String) on FIELD_DEFINITION`,
     fieldDirective: true,
   },
   {
