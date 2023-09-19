@@ -7,7 +7,8 @@ import { type InModel3dEdgeProperties } from '../../utilities/globalDataModels';
 
 export type FdmCadEdge = EdgeItem<InModel3dEdgeProperties>;
 export type CadNodeAndFdmIdList = { cadNode: Node3D, fdmIds: DmsUniqueIdentifier[] };
-export type FdmEdgeWithNode = { edge: FdmCadEdge; node: Node3D; view?: Source };
+export type FdmEdgeWithNode = { edge: FdmCadEdge; node: Node3D; };
+export type FdmEdgeWithNodeAndView = FdmEdgeWithNode & { view: Source };
 export type FdmNodeDataPromises = { cadNodeAndFdmIdsPromise: Promise<CadNodeAndFdmIdList | undefined>, viewsPromise: Promise<Source[] | undefined> };
 
 export type ModelId = number;
@@ -23,3 +24,4 @@ export type FdmKey = `${string}/${string}`;
 export type ModelNodeIdKey = `${ModelId}/${RevisionId}/${NodeId}`;
 
 export type ModelRevisionToEdgeMap = Map<ModelRevisionKey, FdmEdgeWithNode[]>;
+export type ModelRevisiotToEdgeAndViewMap = Map<ModelRevisionKey, FdmEdgeWithNodeAndView[]>;

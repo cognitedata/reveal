@@ -99,7 +99,7 @@ export class FdmNodeCache {
     );
 
     const relevantCachedEdgeData = intersectWithStartNodeIdSet(
-      revisionCache.getAllEdges(),
+      revisionCache.getAllEdgesWithCadNode(),
       relevantFdmKeySet
     );
 
@@ -160,9 +160,19 @@ export class FdmNodeCache {
     };
   }
 
+  public async getAllMappingExternalIdsWithViews(
+    modelRevisionIds: ModelRevisionId[]
+  ): Promise<ModelRevisionToEdgeMap> {
+    const [cachedRevisionIds, nonCachedRevisionIds] = partition(modelRevisionIds, (ids) => {
+      const key = createModelRevisionKey(ids.modelId, ids.revisionId);
+      return this._completeRevisions.has(key);
+    });
+
+    await this.fetchAllViewsForCachedRevisions(cachedRevisionIds);
+  }
+
   public async getAllMappingExternalIds(
-    modelRevisionIds: ModelRevisionId[],
-    fetchViews: boolean = false
+    modelRevisionIds: ModelRevisionId[]
   ): Promise<ModelRevisionToEdgeMap> {
     const [cachedRevisionIds, nonCachedRevisionIds] = partition(modelRevisionIds, (ids) => {
       const key = createModelRevisionKey(ids.modelId, ids.revisionId);
@@ -180,8 +190,9 @@ export class FdmNodeCache {
       fetchViews
     );
 
-    cachedEdges.forEach(([revisionKey, edges]) => {
-      revisionToEdgesMap.set(revisionKey, edges);
+    cachedEdges.forEach(([revisionKey, cadNodesWithEdges]) => {
+      cadNodesWithEdges.forEach(cadAndEdges =>
+        revisionToEdgesMap.set(revisionKey, cadAndEdges.edges)
     });
 
     return revisionToEdgesMap;
@@ -203,13 +214,13 @@ export class FdmNodeCache {
   private getCachedEdgesForRevision(id: {
     modelId: number;
     revisionId: number;
-  }): [ModelRevisionKey, FdmEdgeWithNode[]] {
+  }): [ModelRevisionKey, { cadNode: Node3D, edges: FdmCadEdge[] }[]] {
     const revisionCache = this.getOrCreateRevisionCache(id.modelId, id.revisionId);
     const revisionKey = createModelRevisionKey(id.modelId, id.revisionId);
 
-    const cachedRevisionEdges = revisionCache.getAllEdges();
+    const cachedRevisionEdgesWithNode = revisionCache.getAllEdgesWithCadNode();
 
-    return [revisionKey, cachedRevisionEdges];
+    return [revisionKey, cachedRevisionEdgesWithNode];
   }
 
   private writeRevisionDataToCache(modelMap: Map<ModelRevisionKey, FdmEdgeWithNode[]>, writeViews: boolean): void {
