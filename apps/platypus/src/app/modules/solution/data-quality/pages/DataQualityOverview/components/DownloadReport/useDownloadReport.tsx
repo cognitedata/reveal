@@ -39,14 +39,14 @@ export const useDownloadReport = () => {
       } else {
         await downloadAsExcel(downloadUrl, fileName);
       }
-    } catch (err) {
+    } catch (err: any) {
       Notification({
         type: 'error',
         message: t(
           'data_quality_error_report',
           'Something went wrong. The report could not be downloaded.'
         ),
-        errors: JSON.stringify(err),
+        errors: err.toString(),
       });
     } finally {
       setDownloadLoading(false);

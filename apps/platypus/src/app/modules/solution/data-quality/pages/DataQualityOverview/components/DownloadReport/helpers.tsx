@@ -59,21 +59,21 @@ export const downloadAsExcel = async (
 
   const workbook: WorkBook = utils.book_new();
 
-  const rows: any[] = [];
+  let rows: any[] = [];
 
   // Parse all the rules and their failed items into excel rows
   failedItems.forEach((item: RuleRunResult) => {
     const failedData = item.items;
 
-    rows.push(
-      ...failedData.map((data) => ({
-        date: endTime,
-        dataType: item.dataType,
-        errorMessage: item.errorMessage,
-        rule: item.rule,
-        ...data,
-      }))
-    );
+    const entities = failedData.map((data) => ({
+      date: endTime,
+      dataType: item.dataType,
+      errorMessage: item.errorMessage,
+      rule: item.rule,
+      ...data,
+    }));
+
+    rows = rows.concat(entities);
   });
 
   /* Start writing to the excel workbook.
@@ -90,11 +90,6 @@ export const downloadAsExcel = async (
       { origin: 'A1' }
     );
 
-    // Set the width of every column to 20 characters
-    worksheet['!cols'] = Array.from({ length: rows.length }, () => ({
-      wch: 20,
-    }));
-
     utils.book_append_sheet(workbook, worksheet, 'Validation results');
   }
   // Create multiple sheets to fit the data
@@ -110,12 +105,11 @@ export const downloadAsExcel = async (
         { origin: 'A1' }
       );
 
-      // Set the width of every column to 20 characters
-      worksheet['!cols'] = Array.from({ length: rows.length }, () => ({
-        wch: 20,
-      }));
-
-      utils.book_append_sheet(workbook, worksheet, `${i} - ${i + batchSize}`);
+      utils.book_append_sheet(
+        workbook,
+        worksheet,
+        `Batch ${i} - ${i + batchSize}`
+      );
     }
   }
 
