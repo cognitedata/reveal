@@ -7,6 +7,7 @@ import { type DmsUniqueIdentifier, type Source, useReveal } from '../';
 import { useEffect, useState } from 'react';
 import { useFdm3dNodeData } from '../components/NodeCacheProvider/NodeCacheProvider';
 import { type Node3D } from '@cognite/sdk';
+import { FdmNodeDataPromises } from '../components/NodeCacheProvider/types';
 
 export type NodeDataResult = {
   fdmNode: DmsUniqueIdentifier;
@@ -55,28 +56,45 @@ export const useClickedNodeData = (): ClickedNodeData | undefined => {
       return;
     }
 
-    const nodeDataList = nodeData ?? [];
+    unwrapQueryResult(nodeData);
+    async function unwrapQueryResult(promises: FdmNodeDataPromises | undefined): Promise<void> {
 
-    if (cadIntersection === undefined) {
-      setClickedNodeData(undefined);
-      return;
-    }
+      if (promises === undefined) {
+        return;
+      }
 
-    if (nodeDataList.length === 0) {
+      const cadAndFdmNode = await promises.cadAndFdmNodesPromise;
+
+      if (cadIntersection === undefined) {
+        setClickedNodeData(undefined);
+        return;
+      }
+
+      if (cadAndFdmNode === undefined || cadAndFdmNode.fdmIds.length === 0) {
+        setClickedNodeData({
+          intersection: cadIntersection
+        });
+        return;
+      }
+
+      const views = await promises.viewsPromise;
+
+      if (views === undefined) {
+        setClickedNodeData({
+          intersection: cadIntersection,
+          fdmNode: cadAndFdmNode.fdmIds[0],
+          cadNode: cadAndFdmNode.cadNode
+        });
+        return;
+      }
+
       setClickedNodeData({
-        intersection: cadIntersection
+        intersection: cadIntersection,
+        fdmNode: cadAndFdmNode.fdmIds[0],
+        cadNode: cadAndFdmNode.cadNode,
+        view: views[0],
       });
-      return;
     }
-
-    const chosenNode = nodeDataList[0];
-
-    setClickedNodeData({
-      intersection: cadIntersection,
-      fdmNode: chosenNode.edge.startNode,
-      view: chosenNode.view,
-      cadNode: chosenNode.node
-    });
 
     function isWaitingForQueryResult(): boolean {
       return nodeData === undefined && cadIntersection !== undefined;
