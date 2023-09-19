@@ -24,15 +24,15 @@ export class TreeIndexToSectorsMap {
    * @param sectorId The sector id where the tree index was found
    */
   set(treeIndex: number, sectorId: number): void {
-    const existingSet = this._treeIndexToSectorIds[treeIndex];
-    if (!existingSet) {
+    const sectorIdsForTreeIndex = this._treeIndexToSectorIds[treeIndex];
+    if (!sectorIdsForTreeIndex) {
       this._treeIndexToSectorIds[treeIndex] = [sectorId];
       this.onChange?.(treeIndex, sectorId);
       return;
     }
 
-    if (!existingSet.includes(sectorId)) {
-      existingSet.push(sectorId);
+    if (!sectorIdsForTreeIndex.includes(sectorId)) {
+      sectorIdsForTreeIndex.push(sectorId);
       this.onChange?.(treeIndex, sectorId);
     }
   }
