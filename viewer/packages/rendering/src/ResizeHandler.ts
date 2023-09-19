@@ -36,10 +36,8 @@ export class ResizeHandler {
     this._cameraManager = cameraManager;
 
     this._onCameraChangeCallback = () => {
-      this._currentResolutionThreshold = Math.min(
-        this._movingResolutionFactor * getPhysicalSize(renderer),
-        this._movingResolutionFactor * this._stoppedCameraResolutionThreshold
-      );
+      this._currentResolutionThreshold =
+        this._movingResolutionFactor * Math.min(getPhysicalSize(renderer), this._stoppedCameraResolutionThreshold);
       this._shouldResize = true;
     };
     this._onCameraStopCallback = () => {
