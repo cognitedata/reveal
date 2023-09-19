@@ -61,9 +61,9 @@ export function UnitType({
   return (
     <InputRow>
       <div className="cogs-input-container">
-        <div className="title">Unit Type</div>
         <Field
           as={Select}
+          label="Unit Type"
           name={formikPath}
           options={TIMESERIES_UNIT_TYPE_OPTIONS}
           value={{

@@ -9,6 +9,7 @@ import { Button } from '@cognite/cogs.js';
 import type {
   CalculationProcedure,
   CalculationStep,
+  StepFields,
   UserDefined,
 } from '@cognite/simconfig-api-sdk/rtk';
 
@@ -16,8 +17,10 @@ import { Group, Step } from './Collapse';
 import { getRoutineIndex } from './Commands/utils';
 
 export function Routine({
+  dynamicStepFields,
   setCalculation,
 }: {
+  dynamicStepFields: StepFields;
   setCalculation: (calculation: UserDefined) => void;
 }) {
   const { values, setValues } = useFormikContext<UserDefined>();
@@ -40,7 +43,6 @@ export function Routine({
       step: procedure.steps.length + 1,
       type: 'Set',
       arguments: {
-        address: '',
         type: 'manual',
       },
     };
@@ -131,6 +133,7 @@ export function Routine({
                       value={step}
                     >
                       <Step
+                        dynamicStepFields={dynamicStepFields}
                         index={stepIndex}
                         routineIndex={groupIndex + 1}
                         routineOrder={routine.order}

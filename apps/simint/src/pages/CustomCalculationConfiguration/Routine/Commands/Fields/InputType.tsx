@@ -22,9 +22,9 @@ export function InputType({
   return (
     <InputRow>
       <div className="cogs-input-container">
-        <div className="title">Input type</div>
         <Field
           as={Select}
+          label="Input type"
           name={formikPath}
           options={INPUT_TYPE_OPTIONS}
           value={
@@ -35,7 +35,7 @@ export function InputType({
           }
           width={300}
           onChange={(option: ValueOptionType<string>) => {
-            setFieldValue(formikPath, { type: option.value, address: '' });
+            setFieldValue(formikPath, { type: option.value });
           }}
         />
       </div>

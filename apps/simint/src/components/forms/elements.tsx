@@ -297,7 +297,7 @@ export function TimeSeriesField({
       />
 
       <SamplingMethodComponent className="cogs-input-container">
-        <div className="title">Sampling method</div>
+        <div className="cogs cogs-textlabel">Sampling method</div>
         <SegmentedControl
           currentKey={aggregateTypeValue}
           disabled={aggregateTypeDisabled}

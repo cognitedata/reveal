@@ -13,22 +13,18 @@ const mapStep = {
   Get: {
     type: 'Get',
     arguments: {
-      address: '',
       type: 'outputTimeSeries',
     },
   },
   Set: {
     type: 'Set',
     arguments: {
-      address: '',
       type: 'manual',
     },
   },
   Command: {
     type: 'Command',
-    arguments: {
-      address: '',
-    },
+    arguments: {},
   },
 };
 
@@ -43,9 +39,9 @@ export function StepType({
   return (
     <InputRow>
       <div className="cogs-input-container">
-        <div className="title">Step type</div>
         <Field
           as={Select}
+          label="Step type"
           name={formikPath}
           options={ACTION_OPTIONS}
           value={{

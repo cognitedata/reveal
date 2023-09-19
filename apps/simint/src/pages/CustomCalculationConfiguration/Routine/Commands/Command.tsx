@@ -1,17 +1,27 @@
 import { SelectBox, StepsContainer } from '../../elements';
 
-import { OpenServerAddress, StepType } from './Fields';
+import { StepType, DynamicFields } from './Fields';
 import type { StepCommandProps } from './utils';
 
-export function Command({ step, routineOrder, stepIndex }: StepCommandProps) {
-  const props = { routineIndex: routineOrder, step, stepIndex };
+export function Command({
+  dynamicStepFields,
+  step,
+  routineOrder,
+  stepIndex,
+}: StepCommandProps) {
+  const props = {
+    routineIndex: routineOrder,
+    step,
+    stepIndex,
+    dynamicStepFields,
+  };
 
   return (
     <div style={{ display: 'flex' }}>
       <StepsContainer>
         <SelectBox>
           <StepType {...props} />
-          <OpenServerAddress {...props} />
+          <DynamicFields {...props} />
         </SelectBox>
       </StepsContainer>
     </div>

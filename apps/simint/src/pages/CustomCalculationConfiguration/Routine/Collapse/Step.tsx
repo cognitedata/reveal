@@ -17,6 +17,7 @@ import { isValidStep } from '../validation';
 import { CollapseOptions } from './CollapseOptions';
 
 export function Step({
+  dynamicStepFields,
   routineOrder,
   routineIndex,
   step,
@@ -27,9 +28,8 @@ export function Step({
   const controls = useDragControls();
   const stepPosition = `${routineIndex ?? 0}.${(index ?? 0) + 1}`;
   const dragControlKey = `${routineOrder}.${step.step}`;
-  const title = `${step.type} ( ${step.arguments.address}, ${
-    step.arguments.value ?? ''
-  })`;
+
+  const title = `${step.type} ( ${Object.values(step.arguments).join(', ')})`;
   const { setValues, values } = useFormikContext<UserDefined>();
 
   useEffect(() => {
@@ -79,7 +79,7 @@ export function Step({
           <Icon type={`${isOpen ? 'ChevronUp' : 'ChevronDown'}`} />
           <span className="step-position">{stepPosition}</span>
           {title}
-          {!isValidStep(step) && (
+          {!isValidStep(step, dynamicStepFields) && (
             <Chip
               css={{ marginLeft: '1em' }}
               label="Configuration incomplete"
@@ -97,7 +97,13 @@ export function Step({
         />
       </div>
 
-      {isOpen && <StepCommand routineOrder={routineOrder} step={step} />}
+      {isOpen && (
+        <StepCommand
+          dynamicStepFields={dynamicStepFields}
+          routineOrder={routineOrder}
+          step={step}
+        />
+      )}
     </CollapseStepContainer>
   );
 }
