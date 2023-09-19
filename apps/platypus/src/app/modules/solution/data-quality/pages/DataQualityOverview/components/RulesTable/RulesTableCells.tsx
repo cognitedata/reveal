@@ -1,7 +1,11 @@
 import { PropsWithChildren } from 'react';
 
 import { RuleSeverity } from '@data-quality/api/codegen';
-import { chartConfig, getScoreChartData } from '@data-quality/utils/charts';
+import {
+  chartConfig,
+  formatScoreDotTooltip,
+  getScoreChartData,
+} from '@data-quality/utils/charts';
 import {
   TimeSeriesType,
   getDatapointsById,
@@ -119,6 +123,7 @@ export const ValidityOverTimeCell = ({
         config={chartConfig}
         data={dataScore}
         variant="small"
+        formatTooltipContent={formatScoreDotTooltip}
         layout={{ showTickLabels: false }}
         style={{ backgroundColor: 'transparent', height: 40, width: 180 }}
       />

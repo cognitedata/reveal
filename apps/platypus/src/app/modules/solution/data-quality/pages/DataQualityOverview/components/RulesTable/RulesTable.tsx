@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { RuleDto } from '@data-quality/api/codegen';
 import {
@@ -35,75 +35,78 @@ export const RulesTable = () => {
     useLoadRules();
   const { dataSource } = useLoadDataSource();
 
-  const tableColumns: TableColumn<RuleDto>[] = [
-    {
-      Header: 'Name',
-      accessor: 'name',
-      Cell: ({ row }: any) => {
-        return (
-          <NameCell
-            onClick={() => setEditedRule(row.original)}
-            ruleName={row.original.name}
-          />
-        );
+  const datapointsDependency = JSON.stringify(datapoints);
+  const tableColumns: TableColumn<RuleDto>[] = useMemo(() => {
+    return [
+      {
+        Header: 'Name',
+        accessor: 'name',
+        Cell: ({ row }: any) => {
+          return (
+            <NameCell
+              onClick={() => setEditedRule(row.original)}
+              ruleName={row.original.name}
+            />
+          );
+        },
       },
-    },
-    {
-      Header: 'Severity',
-      accessor: 'severity',
-      Cell: ({ row }: any) => {
-        return <SeverityCell severity={row.original.severity} />;
+      {
+        Header: 'Severity',
+        accessor: 'severity',
+        Cell: ({ row }: any) => {
+          return <SeverityCell severity={row.original.severity} />;
+        },
       },
-    },
-    {
-      Header: 'Validity',
-      Cell: ({ row }: any) => {
-        return (
-          <ValidityCell
-            datapoints={datapoints}
-            dataSourceId={dataSource?.externalId}
-            loadingDatapoints={loadingDatapoints}
-            ruleId={row.original.externalId}
-          />
-        );
+      {
+        Header: 'Validity',
+        Cell: ({ row }: any) => {
+          return (
+            <ValidityCell
+              datapoints={datapoints}
+              dataSourceId={dataSource?.externalId}
+              loadingDatapoints={loadingDatapoints}
+              ruleId={row.original.externalId}
+            />
+          );
+        },
       },
-    },
-    {
-      Header: 'Validity over time',
-      Cell: ({ row }: any) => {
-        return (
-          <ValidityOverTimeCell
-            datapoints={datapoints}
-            dataSourceId={dataSource?.externalId}
-            loadingDatapoints={loadingDatapoints}
-            ruleId={row.original.externalId}
-          />
-        );
+      {
+        Header: 'Validity over time',
+        Cell: ({ row }: any) => {
+          return (
+            <ValidityOverTimeCell
+              datapoints={datapoints}
+              dataSourceId={dataSource?.externalId}
+              loadingDatapoints={loadingDatapoints}
+              ruleId={row.original.externalId}
+            />
+          );
+        },
       },
-    },
-    {
-      Header: 'Items checked',
-      Cell: ({ row }: any) => {
-        return (
-          <ItemsCheckedCell
-            datapoints={datapoints}
-            dataSourceId={dataSource?.externalId}
-            loadingDatapoints={loadingDatapoints}
-            ruleId={row.original.externalId}
-          />
-        );
+      {
+        Header: 'Items checked',
+        Cell: ({ row }: any) => {
+          return (
+            <ItemsCheckedCell
+              datapoints={datapoints}
+              dataSourceId={dataSource?.externalId}
+              loadingDatapoints={loadingDatapoints}
+              ruleId={row.original.externalId}
+            />
+          );
+        },
       },
-    },
-    {
-      Header: '',
-      accessor: 'externalId',
-      Cell: ({ row }: any) => {
-        return (
-          canWriteDataValidation && <RuleOptionsMenu rule={row.original} />
-        );
+      {
+        Header: '',
+        accessor: 'externalId',
+        Cell: ({ row }: any) => {
+          return (
+            canWriteDataValidation && <RuleOptionsMenu rule={row.original} />
+          );
+        },
       },
-    },
-  ];
+    ];
+  }, [datapointsDependency, dataSource?.externalId]);
 
   const renderContent = () => {
     if (loadingRules) return <Spinner />;

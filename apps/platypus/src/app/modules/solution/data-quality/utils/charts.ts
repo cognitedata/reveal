@@ -1,4 +1,10 @@
-import { Config, Data, HoverLineData } from '@cognite/plotting-components';
+import {
+  Config,
+  Data,
+  HoverLineData,
+  TooltipDetailProps,
+  TooltipRendererProps,
+} from '@cognite/plotting-components';
 import { Datapoints } from '@cognite/sdk/dist/src';
 
 import { formatDateDatum, getScore } from './validationTimeseries';
@@ -15,6 +21,16 @@ export const chartConfig: Partial<Config> = {
 
 export const formatScoreDot = ({ x, y }: HoverLineData) =>
   `${formatDateDatum(x)}, score = ${y}%`;
+
+export const formatScoreDotTooltip = ({
+  x,
+  y,
+}: TooltipRendererProps): TooltipDetailProps[] => [
+  {
+    label: `${formatDateDatum(x)}, score`,
+    value: `${y}%`,
+  },
+];
 
 export const formatInstancesDot = ({ x, y }: HoverLineData) =>
   `${formatDateDatum(x)}, instances = ${y}`;

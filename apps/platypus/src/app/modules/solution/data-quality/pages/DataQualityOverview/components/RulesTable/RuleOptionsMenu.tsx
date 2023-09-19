@@ -79,7 +79,7 @@ export const RuleOptionsMenu = ({ rule }: RuleOptionsMenuProps) => {
           </Menu.Item>
         </Menu>
       }
-      hideOnSelect
+      hideOnClick
     >
       <Button
         aria-label="Open options menu for rule"
