@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router';
 
 import styled from 'styled-components';
 
+import { InteractionRequiredAuthError } from '@azure/msal-browser';
+
 import { Icon } from '@cognite/cogs.js';
 import {
   getLoginFlowsByCluster,
@@ -63,7 +65,11 @@ const SelectProject = (): JSX.Element => {
   useEffect(() => {
     if (
       projectsFromAllClusters.length > 0 &&
-      projectsFromAllClusters.every(({ error }) => !!error)
+      projectsFromAllClusters.every(
+        ({ error }) =>
+          error instanceof InteractionRequiredAuthError &&
+          error?.subError === 'bad_token'
+      )
     ) {
       if (pca) {
         const activeAccount = pca.getActiveAccount();
