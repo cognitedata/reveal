@@ -28,7 +28,11 @@ jobs:
         id: cache-node-modules
         uses: actions/cache@v3
         with:
-          path: node_modules
+          # any jobs using the cache need to use the same path since path is considered
+          # part of the key
+          path: |
+            node_modules
+            ~/.cache/Cypress
           key: cache-node-modules-${{ hashFiles('yarn.lock') }}
           restore-keys: cache-node-modules-
 
@@ -137,7 +141,9 @@ jobs:
       - name: Cache node modules
         uses: actions/cache@v3
         with:
-          path: node_modules
+          path: |
+            node_modules
+            ~/.cache/Cypress
           key: cache-node-modules-${{ hashFiles('yarn.lock') }}
 
       - name: Lint
@@ -161,7 +167,9 @@ jobs:
       - name: Cache node modules
         uses: actions/cache@v3
         with:
-          path: node_modules
+          path: |
+            node_modules
+            ~/.cache/Cypress
           key: cache-node-modules-${{ hashFiles('yarn.lock') }}
 
       - name: Test
@@ -185,7 +193,9 @@ jobs:
       - name: Cache node modules
         uses: actions/cache@v3
         with:
-          path: node_modules
+          path: |
+            node_modules
+            ~/.cache/Cypress
           key: cache-node-modules-${{ hashFiles('yarn.lock') }}
 
       - name: Build
@@ -213,7 +223,9 @@ jobs:
       - name: Cache node modules
         uses: actions/cache@v3
         with:
-          path: node_modules
+          path: |
+            node_modules
+            ~/.cache/Cypress
           key: cache-node-modules-${{ hashFiles('yarn.lock') }}
 
       - name: Build
@@ -255,7 +267,9 @@ jobs:
       - name: Cache node modules
         uses: actions/cache@v3
         with:
-          path: node_modules
+          path: |
+            node_modules
+            ~/.cache/Cypress
           key: cache-node-modules-${{ hashFiles('yarn.lock') }}
 
       - name: Get deploy environment
@@ -304,7 +318,9 @@ jobs:
       - name: Cache node modules
         uses: actions/cache@v3
         with:
-          path: node_modules
+          path: |
+            node_modules
+            ~/.cache/Cypress
           key: cache-node-modules-${{ hashFiles('yarn.lock') }}
 
       - name: Build
@@ -346,7 +362,9 @@ jobs:
       - name: Cache node modules
         uses: actions/cache@v3
         with:
-          path: node_modules
+          path: |
+            node_modules
+            ~/.cache/Cypress
           key: cache-node-modules-${{ hashFiles('yarn.lock') }}
 
       - name: Install playwright
@@ -374,7 +392,9 @@ jobs:
       - name: Cache node modules
         uses: actions/cache@v3
         with:
-          path: node_modules
+          path: |
+            node_modules
+            ~/.cache/Cypress
           key: cache-node-modules-${{ hashFiles('yarn.lock') }}
 
       - name: Get comment message
@@ -414,7 +434,9 @@ jobs:
       - name: Cache node modules
         uses: actions/cache@v3
         with:
-          path: node_modules
+          path: |
+            node_modules
+            ~/.cache/Cypress
           key: cache-node-modules-${{ hashFiles('yarn.lock') }}
 
       - name: Get comment message
@@ -455,7 +477,9 @@ jobs:
       - name: Cache node modules
         uses: actions/cache@v3
         with:
-          path: node_modules
+          path: |
+            node_modules
+            ~/.cache/Cypress
           key: cache-node-modules-${{ hashFiles('yarn.lock') }}
 
       - name: Get comment message
@@ -501,7 +525,9 @@ jobs:
       - name: Cache node modules
         uses: actions/cache@v3
         with:
-          path: node_modules
+          path: |
+            node_modules
+            ~/.cache/Cypress
           key: cache-node-modules-${{ hashFiles('yarn.lock') }}
 
       - name: Cypress run

@@ -57,6 +57,18 @@ const ProjectList = ({
     return <></>;
   }
 
+  // Gandalf responds with 401 if the user does not have access to any projects in this cluster.
+  if (
+    !!idpProjectsError &&
+    typeof idpProjectsError === 'object' &&
+    'status' in idpProjectsError &&
+    idpProjectsError.status === 401 &&
+    idp &&
+    idp.type === 'COGNITE_IDP'
+  ) {
+    return <></>;
+  }
+
   const sortedLegacyProjects = sortLegacyProjectsByName(legacyProjects);
 
   return (
