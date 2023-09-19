@@ -6,7 +6,7 @@ import type { AppLocationGenerics } from '@simint-app/routes';
 import { getTargetTimeseriesByPrefix } from '@simint-app/utils/routineUtils';
 import { Field, useFormikContext } from 'formik';
 
-import { Input } from '@cognite/cogs.js';
+import { InputExp } from '@cognite/cogs.js';
 import type {
   InputTimeSeries,
   OutputTimeSeries,
@@ -69,10 +69,10 @@ export function Variable({
   return (
     <InputRow>
       <div className="cogs-input-container">
-        <div className="title">Variable</div>
         <Field
-          as={Input}
+          as={InputExp}
           error={variableError}
+          label="Variable"
           name={formikPath}
           options={TIMESERIES_VARIABLE_OPTIONS}
           style={{ width: 300 }}

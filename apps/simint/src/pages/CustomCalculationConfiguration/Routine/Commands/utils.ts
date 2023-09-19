@@ -3,12 +3,14 @@ import type { DragControls } from 'framer-motion';
 import type { OptionType } from '@cognite/cogs.js';
 import type {
   CalculationStep,
+  StepFields,
   InputTimeSeries,
   OutputTimeSeries,
   UserDefined,
 } from '@cognite/simconfig-api-sdk/rtk';
 
 export interface StepCommandProps {
+  dynamicStepFields: StepFields;
   step: CalculationStep;
   routineOrder: number;
   index?: number;

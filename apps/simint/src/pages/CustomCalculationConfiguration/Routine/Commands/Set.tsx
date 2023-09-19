@@ -16,8 +16,8 @@ import type { UserDefined } from '@cognite/simconfig-api-sdk/rtk';
 import { SelectBox, StepsContainer } from '../../elements';
 
 import {
+  DynamicFields,
   InputType,
-  OpenServerAddress,
   StepType,
   Unit,
   UnitType,
@@ -28,10 +28,15 @@ import { TimeSeriesPreview } from './Fields/TimeSeriesPreview';
 import type { StepCommandProps } from './utils';
 import { getTimeSerieIndexByType } from './utils';
 
-export function Set({ step, routineOrder, stepIndex }: StepCommandProps) {
+export function Set({
+  dynamicStepFields,
+  step,
+  routineOrder,
+  stepIndex,
+}: StepCommandProps) {
   const isTimeSeriesStep = step.arguments.type === 'inputTimeSeries';
   const routineIndex = routineOrder;
-  const props = { routineIndex, step, stepIndex };
+  const props = { routineIndex, step, stepIndex, dynamicStepFields };
   const { values, setFieldValue } = useFormikContext<UserDefined>();
   const timeSerieIndex = getTimeSerieIndexByType(
     values.inputTimeSeries,
@@ -88,14 +93,13 @@ export function Set({ step, routineOrder, stepIndex }: StepCommandProps) {
           {isTimeSeriesStep && (
             <Variable {...props} timeSeriesPrefix="inputTimeSeries" />
           )}
-          <OpenServerAddress {...props} />
           {!isTimeSeriesStep && <Value {...props} />}
 
           {isTimeSeriesStep && isVariableDefined && (
-            <>
+            <FormRow>
               <UnitType {...props} timeSeriesPrefix="inputTimeSeries" />
               <Unit {...props} timeSeriesPrefix="inputTimeSeries" />
-            </>
+            </FormRow>
           )}
         </SelectBox>
 
@@ -108,6 +112,10 @@ export function Set({ step, routineOrder, stepIndex }: StepCommandProps) {
             />
           </FormRow>
         )}
+
+        <SelectBox>
+          <DynamicFields {...props} />
+        </SelectBox>
       </StepsContainer>
 
       {isTimeSeriesStep && step.arguments.value && (

@@ -68,9 +68,9 @@ export function Unit({ routineIndex, step, timeSeriesPrefix }: UnitFieldProps) {
   return (
     <InputRow>
       <div className="cogs-input-container">
-        <div className="title">Unit</div>
         <Field
           as={Select}
+          label="Unit"
           name={formikPath}
           options={TIMESERIES_UNIT_OPTIONS}
           value={{

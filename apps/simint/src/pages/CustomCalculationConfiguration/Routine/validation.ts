@@ -4,6 +4,7 @@ import type { ValidationError } from 'yup-v1';
 import type {
   AggregateType,
   CalculationStep,
+  StepFields,
   InputTimeSeries,
 } from '@cognite/simconfig-api-sdk/rtk';
 
@@ -11,47 +12,71 @@ import { getScheduleRepeat } from '../../../pages/CalculationConfiguration/utils
 
 type ValueOf<T> = T[keyof T];
 type StepTypes = ValueOf<Pick<CalculationStep, 'type'>>;
-type StepArgument = ValueOf<Pick<CalculationStep, 'arguments'>>;
 
 const isYupValidationError = (value?: unknown): value is ValidationError =>
   typeof value === 'object' && value !== null && 'errors' in value;
 
-const stepMap: Record<
-  StepTypes,
-  | Yup.ObjectSchema<StepArgument>
-  | Yup.ObjectSchema<Pick<StepArgument, 'address'>>
-> = {
-  Set: Yup.object({
-    address: Yup.string().required(),
+const stepMap = {
+  Set: {
     type: Yup.string().oneOf(['inputTimeSeries', 'manual']).required(),
     value: Yup.string().required(),
-  }),
-  Get: Yup.object({
-    address: Yup.string().required(),
+  },
+  Get: {
     type: Yup.string().oneOf(['outputTimeSeries']).required(),
     value: Yup.string().required(),
-  }),
-  Command: Yup.object({
-    address: Yup.string().required(),
-  }),
+  },
+  Command: {},
 };
 
-export const stepSchema = Yup.object({
-  step: Yup.number().required().positive().integer(),
-  type: Yup.string().oneOf(['Set', 'Get', 'Command']).required(),
-  arguments: Yup.object().when('type', ([type]) => stepMap[type as StepTypes]),
-});
+const getStepSchema = (dynamicStepFields: StepFields) => {
+  return Yup.object({
+    step: Yup.number().required().positive().integer(),
+    type: Yup.string().oneOf(['Set', 'Get', 'Command']).required(),
+    arguments: Yup.object().when('type', ([type]) => {
+      const staticFieldRules = stepMap[type as StepTypes];
 
-export const procedureSchema = Yup.object({
-  order: Yup.number().required().positive().integer(),
-  description: Yup.string().required(),
-  steps: Yup.array().of(stepSchema).ensure().defined(),
-});
+      const commandKey =
+        type === 'Get' || type === 'Set' ? 'get/set' : 'command';
+      const stepType = dynamicStepFields?.steps.find(
+        (step) => step.stepType === commandKey
+      );
+      const dynamicFields = stepType?.fields ?? [];
 
-export const routine = Yup.array().of(procedureSchema).ensure().defined();
+      const dynamicFieldRules = dynamicFields.reduce((acc, field) => {
+        acc[field.name] = Yup.string().required();
+        return acc;
+      }, {} as Record<string, Yup.StringSchema>);
 
-export const isValidStep = (step: CalculationStep) => {
+      return Yup.object({
+        ...staticFieldRules,
+        ...dynamicFieldRules,
+      });
+    }),
+  });
+};
+
+export const getGroupSchema = (dynamicStepFields: StepFields) => {
+  const stepSchema = getStepSchema(dynamicStepFields);
+
+  return Yup.object({
+    order: Yup.number().required().positive().integer(),
+    description: Yup.string().required(),
+    steps: Yup.array().of(stepSchema).ensure().defined(),
+  });
+};
+
+export const getRoutine = (dynamicStepFields: StepFields) => {
+  const groupSchema = getGroupSchema(dynamicStepFields);
+
+  return Yup.array().of(groupSchema).ensure().defined();
+};
+
+export const isValidStep = (
+  step: CalculationStep,
+  dynamicStepFields: StepFields
+) => {
   try {
+    const stepSchema = getStepSchema(dynamicStepFields);
     const _validate = stepSchema.validateSync(step);
     return true;
   } catch (e) {
@@ -171,18 +196,25 @@ const inputTimeSeries = Yup.array()
 
 const outputTimeSeries = Yup.array().ensure().defined();
 
-export const userDefinedCalculationSchema = Yup.object({
-  schedule,
-  dataSampling,
-  logicalCheck,
-  steadyStateDetection,
-  routine,
-  inputTimeSeries,
-  outputTimeSeries,
-});
+export const getUserDefinedCalculationSchema = (
+  dynamicStepFields: StepFields
+) => {
+  const routine = getRoutine(dynamicStepFields);
+
+  return Yup.object({
+    schedule,
+    dataSampling,
+    logicalCheck,
+    steadyStateDetection,
+    routine,
+    inputTimeSeries,
+    outputTimeSeries,
+  });
+};
 
 export const getStepValidationErrors =
   (
+    dynamicStepFields: StepFields,
     values: Record<string, unknown>,
     ...steps: (
       | 'dataSampling'
@@ -197,6 +229,9 @@ export const getStepValidationErrors =
   () =>
     steps.reduce((sum, step) => {
       try {
+        const userDefinedCalculationSchema =
+          getUserDefinedCalculationSchema(dynamicStepFields);
+
         userDefinedCalculationSchema.validateSyncAt(step, values, {
           abortEarly: false,
         });
