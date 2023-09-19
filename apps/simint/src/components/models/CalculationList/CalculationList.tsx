@@ -407,110 +407,100 @@ export function CalculationList({
               <Dropdown
                 content={
                   <Menu>
-                    {
-                      /* @ts-ignore */
-                      <Menu.Item
-                        icon="Info"
-                        iconPlacement="left"
-                        onClick={() => {
-                          if (calculation.configuration.calcTypeUserDefined) {
-                            navigate({
-                              to: createCdfLink(
-                                `${encodeURIComponent(
-                                  calculation.configuration.calculationType
-                                )}/${encodeURIComponent(
-                                  calculation.configuration.calcTypeUserDefined
-                                )}`
-                              ),
-                            });
-                          } else {
-                            navigate({
-                              to: createCdfLink(
-                                encodeURIComponent(
-                                  calculation.configuration.calculationType
-                                )
-                              ),
-                            });
-                          }
-                        }}
-                      >
-                        Calculation details
-                      </Menu.Item>
-                    }
-                    {
-                      /* @ts-ignore */
-                      <Menu.Item
-                        icon="History"
-                        iconPlacement="left"
-                        onClick={() => {
-                          const { modelName, simulator, calculationType } =
-                            calculation.configuration;
-
-                          trackUsage(
-                            TRACKING_EVENTS.MODEL_CALC_VIEW_RUN_HISTORY,
-                            {
-                              calculationType,
-                              modelName,
-                              simulator,
-                            }
-                          );
-
+                    <Menu.Item
+                      icon="Info"
+                      iconPlacement="left"
+                      onClick={() => {
+                        if (calculation.configuration.calcTypeUserDefined) {
                           navigate({
                             to: createCdfLink(
-                              '/calculations/runs',
-                              undefined,
-                              new URLSearchParams({
-                                modelName,
-                                simulator,
-                                calculationType,
-                              })
+                              `${encodeURIComponent(
+                                calculation.configuration.calculationType
+                              )}/${encodeURIComponent(
+                                calculation.configuration.calcTypeUserDefined
+                              )}`
                             ),
                           });
-                        }}
-                      >
-                        Calculation run history
-                      </Menu.Item>
-                    }
+                        } else {
+                          navigate({
+                            to: createCdfLink(
+                              encodeURIComponent(
+                                calculation.configuration.calculationType
+                              )
+                            ),
+                          });
+                        }
+                      }}
+                    >
+                      Calculation details
+                    </Menu.Item>
+                    <Menu.Item
+                      icon="History"
+                      iconPlacement="left"
+                      onClick={() => {
+                        const { modelName, simulator, calculationType } =
+                          calculation.configuration;
+
+                        trackUsage(
+                          TRACKING_EVENTS.MODEL_CALC_VIEW_RUN_HISTORY,
+                          {
+                            calculationType,
+                            modelName,
+                            simulator,
+                          }
+                        );
+
+                        navigate({
+                          to: createCdfLink(
+                            '/calculations/runs',
+                            undefined,
+                            new URLSearchParams({
+                              modelName,
+                              simulator,
+                              calculationType,
+                            })
+                          ),
+                        });
+                      }}
+                    >
+                      Calculation run history
+                    </Menu.Item>
                     <Divider />
 
-                    {
-                      /* @ts-ignore */
-                      <Menu.Item
-                        icon="Settings"
-                        iconPlacement="left"
-                        onClick={() => {
-                          trackUsage(TRACKING_EVENTS.MODEL_CALC_EDIT, {
-                            modelName: decodeURI(modelName),
-                            simulator,
-                            calculationType:
-                              calculation.configuration.calculationType,
+                    <Menu.Item
+                      icon="Settings"
+                      iconPlacement="left"
+                      onClick={() => {
+                        trackUsage(TRACKING_EVENTS.MODEL_CALC_EDIT, {
+                          modelName: decodeURI(modelName),
+                          simulator,
+                          calculationType:
+                            calculation.configuration.calculationType,
+                        });
+                        if (calculation.configuration.calcTypeUserDefined) {
+                          navigate({
+                            to: createCdfLink(
+                              `${encodeURIComponent(
+                                calculation.configuration.calculationType
+                              )}/${encodeURIComponent(
+                                calculation.configuration.calcTypeUserDefined
+                              )}/configuration`
+                            ),
                           });
-                          if (calculation.configuration.calcTypeUserDefined) {
-                            navigate({
-                              to: createCdfLink(
-                                `${encodeURIComponent(
-                                  calculation.configuration.calculationType
-                                )}/${encodeURIComponent(
-                                  calculation.configuration.calcTypeUserDefined
-                                )}/configuration`
-                              ),
-                            });
-                          } else {
-                            navigate({
-                              to: createCdfLink(
-                                `${encodeURIComponent(
-                                  calculation.configuration.calculationType
-                                )}/configuration`
-                              ),
-                            });
-                          }
-                        }}
-                      >
-                        Edit configuration
-                      </Menu.Item>
-                    }
+                        } else {
+                          navigate({
+                            to: createCdfLink(
+                              `${encodeURIComponent(
+                                calculation.configuration.calculationType
+                              )}/configuration`
+                            ),
+                          });
+                        }
+                      }}
+                    >
+                      Edit configuration
+                    </Menu.Item>
                     {isDeleteEnabled ? (
-                      // @ts-ignore
                       <Menu.Item
                         icon="Delete"
                         iconPlacement="left"

@@ -247,7 +247,6 @@ export function ModelDetails({
             <Dropdown
               content={
                 <Menu>
-                  {/* @ts-ignore */}
                   <Menu.Item
                     icon="Delete"
                     iconPlacement="left"

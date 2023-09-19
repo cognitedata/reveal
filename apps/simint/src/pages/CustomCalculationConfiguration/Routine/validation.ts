@@ -16,7 +16,11 @@ type StepArgument = ValueOf<Pick<CalculationStep, 'arguments'>>;
 const isYupValidationError = (value?: unknown): value is ValidationError =>
   typeof value === 'object' && value !== null && 'errors' in value;
 
-const stepMap: Record<StepTypes, Yup.ObjectSchema<StepArgument>> = {
+const stepMap: Record<
+  StepTypes,
+  | Yup.ObjectSchema<StepArgument>
+  | Yup.ObjectSchema<Pick<StepArgument, 'address'>>
+> = {
   Set: Yup.object({
     address: Yup.string().required(),
     type: Yup.string().oneOf(['inputTimeSeries', 'manual']).required(),
@@ -27,7 +31,6 @@ const stepMap: Record<StepTypes, Yup.ObjectSchema<StepArgument>> = {
     type: Yup.string().oneOf(['outputTimeSeries']).required(),
     value: Yup.string().required(),
   }),
-  // @ts-ignore
   Command: Yup.object({
     address: Yup.string().required(),
   }),
