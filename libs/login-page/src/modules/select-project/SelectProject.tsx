@@ -68,7 +68,7 @@ const SelectProject = (): JSX.Element => {
       projectsFromAllClusters.every(
         ({ error }) =>
           error instanceof InteractionRequiredAuthError &&
-          error?.subError === 'bad_token'
+          error?.subError !== 'consent_required'
       )
     ) {
       if (pca) {
