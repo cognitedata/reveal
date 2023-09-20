@@ -75,8 +75,8 @@ describe('DataModelsHandlerTest', () => {
       externalId: 'test group',
       space: 'space',
     };
-    await service.delete(reqDto);
-    expect(fdmClientMock.deleteDataModel).toBeCalledWith(reqDto);
+    await service.delete(reqDto, true);
+    expect(fdmClientMock.deleteDataModel).toBeCalledWith(reqDto, true);
   });
 
   it('should fetch all spaces', async () => {

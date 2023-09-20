@@ -34,11 +34,18 @@ export const commandArgs = [
     prompt: 'Enter data model space ID',
     promptDefaultValue: (commandArgs) => commandArgs['external-id'],
   },
+  {
+    name: 'deleteTypes',
+    description:
+      "Also deletes the data types if they are not imported by other data models. However, If there's data types imported by data models you dont have access to, they will still be deleted!",
+    type: CommandArgumentType.BOOLEAN,
+  },
 ] as CommandArgument[];
 
 type DataModelDeleteCommandArgs = BaseArgs & {
   'external-id': string;
   space: string;
+  deleteTypes: boolean;
 };
 
 export class DeleteCmd extends CLICommand {
@@ -59,10 +66,13 @@ export class DeleteCmd extends CLICommand {
       return;
     }
 
-    const response = await dataModelsHandler.delete({
-      externalId: args['external-id'],
-      space: args['space'],
-    });
+    const response = await dataModelsHandler.delete(
+      {
+        externalId: args['external-id'],
+        space: args['space'],
+      },
+      args['deleteTypes'] || false
+    );
 
     if (!response.isSuccess) {
       throw response.error;
@@ -77,7 +87,7 @@ export class DeleteCmd extends CLICommand {
     Response.success(
       `Data model "${args['external-id']}" has been deleted successfully`
     );
-    if (referencedViews && referencedViews.length) {
+    if (args['deleteTypes'] && referencedViews && referencedViews.length) {
       Response.info(
         `However, some data types were kept because they are still used by other data models.
 ${referencedViews

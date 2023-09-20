@@ -118,7 +118,7 @@
   "AI_FIND_IN_FILES_DESC": "AI scans documents to look for answer",
   "AI_COMING_SOON": "coming soon",
   "AI_HELP_ME_FIND_DESC": "AI generates filters to find data",
-  "AI_SEARCH_PLACEHOLDER": "Ask your question...",
+  "AI_SEARCH_PLACEHOLDER": "Describe the data you want to find...",
   "AI_SEARCH_BAR_SEARCH_FOR": "Help me find \"{{query}}\"",
   "AI_SUGGESTION_SEARCH_1": "{{prefix}} all {{type}}",
   "AI_SUGGESTION_SEARCH_2": "{{prefix}} all {{type}} where {{field}} starts with A",

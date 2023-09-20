@@ -136,9 +136,12 @@ export class DataModelsHandler {
    * Deletes the specified Data Model including all versions
    * And the data related with it.
    */
-  delete(dto: DeleteDataModelDTO): Promise<Result<DeleteDataModelOutput>> {
+  delete(
+    dto: DeleteDataModelDTO,
+    deleteViews: boolean
+  ): Promise<Result<DeleteDataModelOutput>> {
     return this.fdmClient
-      .deleteDataModel(dto)
+      .deleteDataModel(dto, deleteViews)
       .then((res) => Result.ok(res))
       .catch((err: PlatypusError) => {
         if (err.code === 403) {
