@@ -7,7 +7,10 @@ import { type DmsUniqueIdentifier, type Source, useReveal } from '../';
 import { useEffect, useState } from 'react';
 import { useFdm3dNodeData } from '../components/NodeCacheProvider/NodeCacheProvider';
 import { type Node3D } from '@cognite/sdk';
-import { CadNodeWithFdmIds, type FdmNodeDataPromises } from '../components/NodeCacheProvider/types';
+import {
+  type CadNodeWithFdmIds,
+  type FdmNodeDataPromises
+} from '../components/NodeCacheProvider/types';
 
 export type NodeDataResult = {
   fdmNode: DmsUniqueIdentifier;
@@ -57,7 +60,9 @@ export const useClickedNodeData = (): ClickedNodeData | undefined => {
     }
 
     void setClickedNodeFromQueryResult(nodeData);
-    async function setClickedNodeFromQueryResult(promises: FdmNodeDataPromises | undefined): Promise<void> {
+    async function setClickedNodeFromQueryResult(
+      promises: FdmNodeDataPromises | undefined
+    ): Promise<void> {
       if (promises === undefined) {
         return;
       }
@@ -87,12 +92,11 @@ export const useClickedNodeData = (): ClickedNodeData | undefined => {
 
     async function setClickedNodeFromViewPromise(
       data: CadNodeWithFdmIds,
-      viewsPromise: Promise<Source[] | undefined>) {
-
-
+      viewsPromise: Promise<Source[] | undefined>
+    ): Promise<void> {
       const views = await viewsPromise;
 
-      if (views === undefined || views.length === 0 ||  cadIntersection === undefined) {
+      if (views === undefined || views.length === 0 || cadIntersection === undefined) {
         return;
       }
 
@@ -102,7 +106,6 @@ export const useClickedNodeData = (): ClickedNodeData | undefined => {
         cadNode: data.cadNode,
         view: views[0]
       });
-
     }
     function isWaitingForQueryResult(): boolean {
       return nodeData === undefined && cadIntersection !== undefined;
