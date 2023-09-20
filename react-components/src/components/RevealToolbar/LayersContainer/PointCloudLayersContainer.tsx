@@ -57,7 +57,10 @@ export const PointCloudLayersContainer = ({
 
   const pointCloudModelContent = (): ReactElement => {
     return (
-      <StyledSubMenu>
+      <StyledSubMenu
+        onClick={(event: MouseEvent) => {
+          event.stopPropagation();
+        }}>
         {pointCloudLayerData.map((data) => (
           <Menu.Item
             key={uniqueId()}
@@ -77,7 +80,10 @@ export const PointCloudLayersContainer = ({
   };
 
   return (
-    <>
+    <div
+      onClick={() => {
+        setVisible((prevState) => !prevState);
+      }}>
       {pointCloudLayerData.length > 0 && (
         <Menu.Submenu
           appendTo={revealContainerElement ?? document.body}
@@ -87,12 +93,7 @@ export const PointCloudLayersContainer = ({
           }}
           content={pointCloudModelContent()}
           title="Point clouds">
-          <Flex
-            direction="row"
-            justifyContent="space-between"
-            onClick={() => {
-              setVisible((prevState) => !prevState);
-            }}>
+          <Flex direction="row" justifyContent="space-between">
             <Checkbox
               checked={someModelVisible}
               indeterminate={indeterminate}
@@ -107,6 +108,6 @@ export const PointCloudLayersContainer = ({
           </Flex>
         </Menu.Submenu>
       )}
-    </>
+    </div>
   );
 };
