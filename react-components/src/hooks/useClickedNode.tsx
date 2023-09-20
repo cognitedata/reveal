@@ -5,7 +5,7 @@
 import { type CadIntersection, type PointerEventData } from '@cognite/reveal';
 import { type DmsUniqueIdentifier, type Source, useReveal } from '../';
 import { useEffect, useState } from 'react';
-import { useFdm3dNodeData } from '../components/NodeCacheProvider/NodeCacheProvider';
+import { useFdm3dNodeDataPromises } from '../components/NodeCacheProvider/NodeCacheProvider';
 import { type Node3D } from '@cognite/sdk';
 import {
   type CadNodeWithFdmIds,
@@ -48,18 +48,15 @@ export const useClickedNodeData = (): ClickedNodeData | undefined => {
     };
   }, [viewer]);
 
-  const nodeData = useFdm3dNodeData(
+  const nodeDataPromises = useFdm3dNodeDataPromises(
     cadIntersection?.model.modelId,
     cadIntersection?.model.revisionId,
     cadIntersection?.treeIndex
   ).data;
 
   useEffect(() => {
-    if (isWaitingForQueryResult()) {
-      return;
-    }
+    void setClickedNodeFromQueryResult(nodeDataPromises);
 
-    void setClickedNodeFromQueryResult(nodeData);
     async function setClickedNodeFromQueryResult(
       promises: FdmNodeDataPromises | undefined
     ): Promise<void> {
@@ -107,10 +104,7 @@ export const useClickedNodeData = (): ClickedNodeData | undefined => {
         view: views[0]
       });
     }
-    function isWaitingForQueryResult(): boolean {
-      return nodeData === undefined && cadIntersection !== undefined;
-    }
-  }, [nodeData]);
+  }, [nodeDataPromises]);
 
   return clickedNodeData;
 };

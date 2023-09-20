@@ -50,7 +50,7 @@ export const useMappedEdgesForRevisions = (
   );
 };
 
-export const useFdm3dNodeData = (
+export const useFdm3dNodeDataPromises = (
   modelId: number | undefined,
   revisionId: number | undefined,
   treeIndex: number | undefined

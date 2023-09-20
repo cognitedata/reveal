@@ -63,6 +63,8 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
   const nodeData = useClickedNodeData();
 
   useEffect(() => {
+    console.log('Clicked node data', nodeData);
+
     if (nodeData?.fdmNode === undefined) {
       setStylingGroups([]);
       return;
@@ -78,9 +80,7 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
     ]);
 
     void cameraNavigation.fitCameraToInstance(nodeData.fdmNode.externalId, nodeData.fdmNode.space);
-
-    console.log('Clicked node data', nodeData);
-  }, [nodeData?.fdmNode]);
+  }, [nodeData]);
 
   return (
     <>
