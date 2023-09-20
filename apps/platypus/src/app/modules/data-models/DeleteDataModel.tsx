@@ -10,7 +10,15 @@ import { getLocalDraftKey } from '@platypus-app/utils/local-storage-utils';
 import { QueryKeys } from '@platypus-app/utils/queryKeys';
 import { useQueryClient } from '@tanstack/react-query';
 
-import { Body, Button, Modal } from '@cognite/cogs.js';
+import {
+  Body,
+  Button,
+  Checkbox,
+  Flex,
+  Icon,
+  Modal,
+  Tooltip,
+} from '@cognite/cogs.js';
 
 import { useTranslation } from '../../hooks/useTranslation';
 
@@ -28,6 +36,7 @@ export const DeleteDataModel = ({
   const { track } = useMixpanel();
 
   const [deleting, setDeleting] = useState<boolean>(false);
+  const [deleteDataTypes, setDeleteDataTypes] = useState<boolean>(false);
   const dataModelsHandler = useInjection(TOKENS.dataModelsHandler);
   const localStorageProvider = useInjection(
     TOKENS.storageProviderFactory
@@ -37,7 +46,10 @@ export const DeleteDataModel = ({
   const onDeleteDataModel = (dataModelExternalId: string) => {
     setDeleting(true);
     dataModelsHandler
-      .delete({ externalId: dataModelExternalId, space: dataModel.space })
+      .delete(
+        { externalId: dataModelExternalId, space: dataModel.space },
+        deleteDataTypes
+      )
       .then((result) => {
         track('DataModel.Delete', {
           deletedViews: result.getValue().referencedViews?.length,
@@ -53,43 +65,46 @@ export const DeleteDataModel = ({
           const hasReferencedView =
             referencedViews && referencedViews.length > 0;
 
-          const referencedViewsText = hasReferencedView
-            ? `\nViews: \n${referencedViews
-                .map((el) => `- ${el.externalId}`)
-                .join('\n')}
+          const referencedViewsText =
+            deleteDataTypes && hasReferencedView
+              ? `\nViews: \n${referencedViews
+                  .map((el) => `- ${el.externalId}`)
+                  .join('\n')}
                 ${t(
                   'not_deleted_text',
                   'are not deleted because they are used in other data models. For details, click: '
                 )}`
-            : '';
+              : '';
+
+          const copyButton = (
+            <Button
+              size="small"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                navigator.clipboard.writeText(
+                  JSON.stringify(
+                    {
+                      message:
+                        'Successfully deleted, but some data types were kept because they are still used by other data models.',
+                      referencedViews,
+                    },
+                    null,
+                    2
+                  )
+                );
+              }}
+            >
+              {t('copy', 'Copy Details')}
+            </Button>
+          );
           Notification({
             type: 'success',
             message: `"${dataModel.name || NoNameDisplayName}" ${t(
               'success_data_model_deleted',
               `was deleted.`
             )} ${referencedViewsText}`,
-            extra: hasReferencedView ? (
-              <Button
-                size="small"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  navigator.clipboard.writeText(
-                    JSON.stringify(
-                      {
-                        message:
-                          'Successfully deleted, but some data types were kept because they are still used by other data models.',
-                        referencedViews,
-                      },
-                      null,
-                      2
-                    )
-                  );
-                }}
-              >
-                {t('copy', 'Copy Details')}
-              </Button>
-            ) : null,
+            extra: deleteDataTypes && hasReferencedView ? copyButton : null,
           });
 
           localStorageProvider.removeItem(
@@ -122,15 +137,24 @@ export const DeleteDataModel = ({
     >
       <Body level={2}>
         {t(
-          'delete_data_model_modal_body_1',
-          'Do you want to delete the data model «'
-        )}
-        <strong>{dataModel.name || NoNameDisplayName}</strong>
-        {t(
-          'delete_data_model_modal_body_2',
-          '»? The data model and all underlying data types will be permanently deleted. This may take a few minutes.'
+          'delete_data_model_modal_body',
+          'Do you want to delete the data model «{{dataModelName}}»?',
+          { dataModelName: dataModel.name || NoNameDisplayName }
         )}
       </Body>
+      <Flex alignItems="center" gap={4} style={{ marginTop: 8 }}>
+        <Checkbox
+          checked={deleteDataTypes}
+          onChange={(e) => setDeleteDataTypes(e.target.checked)}
+        >
+          {t('delete_types_label', '')}
+        </Checkbox>
+        <div style={{ marginTop: 4 }}>
+          <Tooltip content={t('delete_types_desc', '')} wrapped>
+            <Icon type="Warning" />
+          </Tooltip>
+        </div>
+      </Flex>
     </Modal>
   );
 };

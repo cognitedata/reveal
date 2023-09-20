@@ -5,7 +5,7 @@ import {
   MarkerSeverity,
   Thenable,
   Uri,
-} from 'monaco-editor';
+} from 'monaco-editor/esm/vs/editor/editor.api';
 
 import { config } from '../../config';
 import { FdmGraphQLDmlWorker } from '../../FdmGraphQLDmlWorker';

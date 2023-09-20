@@ -34,6 +34,8 @@ export type CreateMonitoringJobPayload = {
   userAuthId_deprecated: string;
   // @deprecated in favor of subscribers from user profiles
   userEmail_deprecated: string;
+  sourceId: CogniteExternalId;
+  source: 'CHARTS';
 };
 
 export type ScheduleDurationType = { label: string; value: string };

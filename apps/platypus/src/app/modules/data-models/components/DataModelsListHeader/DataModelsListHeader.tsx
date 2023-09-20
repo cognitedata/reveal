@@ -3,7 +3,6 @@ import { useCapabilities } from '@platypus-app/hooks/useCapabilities';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
 import { Flex, Title, Input, Tooltip, Button } from '@cognite/cogs.js';
-
 export interface DataModelsListHeaderProps {
   dataModelsCount: number;
   onSearchChange: (newSearchText: string) => void;

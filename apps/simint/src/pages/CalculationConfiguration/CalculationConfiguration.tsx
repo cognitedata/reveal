@@ -201,7 +201,7 @@ export function CalculationConfiguration() {
   ];
   const nameFromConfiguration = modelCalculation?.configuration.calculationName;
 
-  const modelLibraryPath = `/model-library/models/${simulator}/${modelName}/calculations`;
+  const modelLibraryPath = `/simint/model-library/models/${simulator}/${modelName}/calculations`;
 
   return (
     <CalculationConfigurationContainer>

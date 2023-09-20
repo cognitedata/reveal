@@ -69,6 +69,9 @@ jobs:
             ~/.cache/Cypress
           key: cache-node-modules-${{ hashFiles('yarn.lock') }}
 
+      - name: Build platypus workers
+        run: yarn nx run platypus:build-worker
+
       - name: Cypress run
         uses: cypress-io/github-action@v4.2.2
         # let's give this action an ID so we can refer

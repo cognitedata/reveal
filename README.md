@@ -212,7 +212,70 @@ To run tests on the command line, you'll need to run storybook in one terminal (
 
 # E2E Testing
 
-We use cypress to run our e2e test suite. To run them from the terminal using a headless browser, make sure the mock server is running, and then from another terminal window, run:
+We use cypress to run our e2e test suite. e2e tests for a project are typically in a separate e2e project, for example `simint` tests are in `simint-e2e`. Tests run against a live project and there are two ways of authenticating, namely with a **user** token or a **client** token. The user token will more closely mimic a real user accessing the application and doesn't need as much mocking as the client token, but you'll need to use the `e2e-greenfield` project in this case since it is set up without two factor authentication. To test against other projects, you can use a client token. With a client token you may have to mock any calls that fetch user data ([example](apps/simint/src/hooks/useUserInfo.ts)).
+
+## Setup
+
+### With user token
+
+If using a user token, you'll need the follow env vars set in your e2e project's `project.json` as part of the e2e target ([example](apps/charts-e2e/project.json)):
+
+```json
+{
+  "ORG": "cog-e2e",
+  "PROJECT": "e2e-greenfield",
+  "CLUSTER": "greenfield.cognitedata.com",
+  "IDP_INTERNAL_ID": "09f375ff-13b6-4d58-95fd-869b098d4808"
+}
+```
+
+Next, do the following:
+
+- Set `COG_E2E_AAD_USERNAME_1` and `COG_E2E_AAD_PASSWORD_1` in a `.env.local` file in the e2e project folder. Reach out to someone in `#topic-testing` if you need these.
+- Ensure you export those variables as well as `targetAppPackageName` in `e2e-project-name/src/config.ts` ([example](apps/charts-e2e/src/config.ts)).
+- Use `loginWithAADUserCredentials` in your `e2e-project-name/src/support/e2e.ts` ([example](apps/industry-canvas-ui-e2e/src/support/e2e.ts))
+
+_Note: You can find the IDP Internal ID here https://github.com/cognitedata/domain-login-configuration-service/blob/main/data/idps.json, or by right clicking and inspecting the sign in button on the login page, which has an attribute `data-testid`._
+
+### With client token
+
+If using a client token, you'll need to choose a project to test against and set the follow env vars set in your e2e project's `project.json` as part of the e2e target ([example](apps/simint-e2e/project.json)):
+
+```json
+{
+  "ORG": "your org",
+  "PROJECT": "your project",
+  "CLUSTER": "your cluster",
+  "TENANT": "your tenant"
+}
+```
+
+Next, do the following:
+
+- Set a client ID and secret in a `.env.local` file in the e2e project folder. If you're testing against a project already used by another e2e test project, you can use the client ID and secret that are already in Github secrets. If you're testing against a new project, you'll need to have the client ID and secret added to Github secrets with unique names and use the same names in your `.env.local`. Reach out to someone in `#topic-testing` for assistance in setting the secrets in Github.
+- Ensure you export those variables in `e2e-project-name/src/config.ts` ([example](apps/simint-e2e/src/config.ts)).
+- Use `loginWithAADClientCredentials` in your `e2e-project-name/src/support/e2e.ts` ([example](apps/simint-e2e/src/support/e2e.ts))
+
+## Run the tests
+
+To run the tests locally, first serve a local instance of `fusion-shell`:
+
+```sh
+yarn nx run fusion-shell:preview:production
+```
+
+Then, in another terminal, run the e2e test target for your e2e project:
+
+```sh
+# for example: yarn nx e2e simint-e2e
+yarn nx e2e project-name
+```
+
+That command will run the e2e tests headlessly against the locally running fusion shell (`https://local.cognite.ai:4200/`) but with an override using your locally served project's bundle (e.g. `https://localhost:3000/index.js`). To run the tests in headed mode, i.e. in the Cypress UI, run the above command with `--watch`.
+
+## Platypus e2e tests
+
+To run the platypus e2e tests from the terminal using a headless browser, make sure the mock server is running, and then from another terminal window, run:
 
 `NODE_ENV=mock nx run platypus-e2e:e2e`
 

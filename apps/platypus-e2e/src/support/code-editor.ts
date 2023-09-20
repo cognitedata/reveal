@@ -34,10 +34,7 @@ Cypress.Commands.add('appendTextToCodeEditor', (text: string) => {
 
 Cypress.Commands.add('clearCodeEditor', () => {
   cy.ensureCodeEditorIsVisible();
-  const selectAllKey = Cypress.platform == 'darwin' ? '{cmd}a' : '{ctrl}a';
-  cy.get('.monaco-editor textarea:first')
-    .type(`${selectAllKey}`, { force: true })
-    .type(`{backspace}`, { force: true });
+  cy.setCodeEditorText('');
 });
 
 Cypress.Commands.add('codeEditorContains', (value: string) => {

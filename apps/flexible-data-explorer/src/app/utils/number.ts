@@ -1,5 +1,5 @@
 export const isNumeric = (value: string) => {
-  return /^-?\d+$/.test(value);
+  return /^-?\d+(\.\d+)?$/.test(value);
 };
 
 export const formatBigNumbersWithSuffix = (value?: number) => {
@@ -36,7 +36,7 @@ export const formatBigNumbersWithSuffix = (value?: number) => {
 };
 
 export const formatNumber = (value?: number) => {
-  if (!value) {
+  if (value === undefined || value === null) {
     return undefined;
   }
 

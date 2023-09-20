@@ -43,8 +43,7 @@ describe('Data model page - Local drafts', () => {
     );
   });
 
-  // Skipping this test for now with the hope of fixing it later
-  it.skip('clears the draft when user removes all types from an unpublished data model', () => {
+  it('clears the draft when user removes all types from an unpublished data model', () => {
     // Create new data model
     cy.visit(getUrl(''));
     cy.ensurePageFinishedLoading();
@@ -141,8 +140,7 @@ describe('Data model page - Local drafts', () => {
     );
   });
 
-  // Skipping this test for now with the hope of fixing it later
-  it.skip('loads only drafts owned by Data Model ', () => {
+  it('loads only drafts owned by Data Model ', () => {
     const typeName = 'Currency';
     // Edit current data model and create a draft
     cy.enableEditMode();

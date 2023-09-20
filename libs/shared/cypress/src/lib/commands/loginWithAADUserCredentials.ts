@@ -44,7 +44,7 @@ function loginViaAAD(
     }
   );
 
-  cy.contains(project).click();
+  cy.contains(project, { timeout: 10000 }).click();
 }
 
 Cypress.Commands.add(

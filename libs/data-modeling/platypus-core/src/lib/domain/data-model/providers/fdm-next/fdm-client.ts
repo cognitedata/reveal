@@ -329,7 +329,8 @@ export class FdmClient implements FlexibleDataModelingClient {
    * And the data related with it.
    */
   async deleteDataModel(
-    dto: DeleteDataModelDTO
+    dto: DeleteDataModelDTO,
+    deleteViews: boolean
   ): Promise<DeleteDataModelOutput> {
     // helper functions
     const convertViewRefToKey = ({
@@ -397,27 +398,29 @@ export class FdmClient implements FlexibleDataModelingClient {
       });
     });
 
-    const viewRefs = Array.from(viewRefsKeys).map(convertKeyToViewRef);
+    if (deleteViews) {
+      const viewRefs = Array.from(viewRefsKeys).map(convertKeyToViewRef);
 
-    // delete all views
-    await Promise.all(
-      // DMS limit right now is 100
-      chunk(viewRefs, 100).map((chunk) => this.viewsApi.delete(chunk))
-    );
-    // delete all containers
-    const containerRefs = uniqBy(viewRefs, (el) =>
-      JSON.stringify([el.externalId, el.space])
-    );
-    await Promise.all(
-      chunk(containerRefs, 100).map((chunk) =>
-        this.containersApi.delete(
-          chunk.map((item) => ({
-            externalId: item.externalId,
-            space: item.space,
-          }))
+      // delete all views
+      await Promise.all(
+        // DMS limit right now is 100
+        chunk(viewRefs, 100).map((chunk) => this.viewsApi.delete(chunk))
+      );
+      // delete all containers
+      const containerRefs = uniqBy(viewRefs, (el) =>
+        JSON.stringify([el.externalId, el.space])
+      );
+      await Promise.all(
+        chunk(containerRefs, 100).map((chunk) =>
+          this.containersApi.delete(
+            chunk.map((item) => ({
+              externalId: item.externalId,
+              space: item.space,
+            }))
+          )
         )
-      )
-    );
+      );
+    }
 
     // delete all versions of the data model
     await Promise.all(

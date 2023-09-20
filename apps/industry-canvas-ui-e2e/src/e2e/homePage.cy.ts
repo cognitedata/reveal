@@ -1,9 +1,11 @@
+import { targetAppPackageName } from '../config';
 import { getUrl } from '../utils/getUrl';
 
 describe('Home page', () => {
   beforeEach(() => {
     console.log(getUrl());
     cy.visit(getUrl());
+    cy.ensureSpaAppIsLoaded(targetAppPackageName);
     cy.ensurePageFinishedLoading();
   });
 

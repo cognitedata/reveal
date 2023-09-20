@@ -96,7 +96,10 @@ export interface FlexibleDataModelingClient {
    * Deletes the specified Data Model including all versions
    * And the data related with it.
    */
-  deleteDataModel(dto: DeleteDataModelDTO): Promise<DeleteDataModelOutput>;
+  deleteDataModel(
+    dto: DeleteDataModelDTO,
+    deleteViews: boolean
+  ): Promise<DeleteDataModelOutput>;
 
   /**
    * Validates Data Model GraphQL.

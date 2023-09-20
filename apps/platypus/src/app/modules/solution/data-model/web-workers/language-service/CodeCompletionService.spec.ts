@@ -1,4 +1,4 @@
-import { Position } from 'monaco-editor';
+import { Position } from 'monaco-editor/esm/vs/editor/editor.api';
 
 import { CodeCompletionService } from './CodeCompletionService';
 
