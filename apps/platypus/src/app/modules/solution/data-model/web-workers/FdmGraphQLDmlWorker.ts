@@ -1,6 +1,6 @@
 import { GraphQlUtilsService } from '@platypus/platypus-common-utils';
 import { DataModelTypeDefs } from '@platypus/platypus-core';
-import type { Position, worker } from 'monaco-editor';
+import type { Position, worker } from 'monaco-editor/esm/vs/editor/editor.api';
 import prettierGraphqlParser from 'prettier/parser-graphql';
 import prettierStandalone from 'prettier/standalone';
 

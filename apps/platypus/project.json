@@ -4,6 +4,35 @@
   "sourceRoot": "apps/platypus/src",
   "projectType": "application",
   "targets": {
+    "build-worker": {
+      "executor": "@nx/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/platypus-workers",
+        "outputFileName": "graphql-worker.js",
+        "main": "apps/platypus/src/app/modules/solution/data-model/web-workers/worker-loaders/graphql.worker.ts",
+        "generateIndexHtml": false,
+        "runtimeChunk": false,
+        "vendorChunk": false,
+        "commonChunk": false,
+        "optimization": true,
+        "outputHashing": "none",
+        "compiler": "tsc",
+        "target": "webworker",
+        "tsConfig": "apps/platypus/tsconfig.workers.json",
+        "assets": [],
+        "styles": [],
+        "scripts": [],
+        "webpackConfig": "apps/platypus/web-workers-webpack-config.js",
+        "isolatedConfig": true,
+        "additionalEntryPoints": [
+          {
+            "entryName": "suggestions-worker",
+            "entryPath": "apps/platypus/src/app/modules/solution/data-management/components/SuggestionsModal/suggestions.worker.ts"
+          }
+        ]
+      }
+    },
     "build": {
       "executor": "@nx/webpack:webpack",
       "outputs": ["{options.outputPath}"],
@@ -15,7 +44,20 @@
         "vendorChunk": false,
         "commonChunk": false,
         "tsConfig": "apps/platypus/tsconfig.app.json",
-        "assets": ["apps/platypus/src/favicon.ico", "apps/platypus/src/assets"],
+        "assets": [
+          "apps/platypus/src/favicon.ico",
+          "apps/platypus/src/assets",
+          {
+            "input": "./dist/apps/platypus-workers",
+            "glob": "graphql-worker.js",
+            "output": "."
+          },
+          {
+            "input": "./dist/apps/platypus-workers",
+            "glob": "suggestions-worker.js",
+            "output": "."
+          }
+        ],
         "styles": [],
         "scripts": [],
         "webpackConfig": "apps/platypus/webpack-single-spa-config.js"
@@ -140,7 +182,8 @@
           "budgets": []
         }
       },
-      "defaultConfiguration": "fusion"
+      "defaultConfiguration": "fusion",
+      "dependsOn": ["build-worker"]
     },
     "serve": {
       "executor": "@nx/webpack:dev-server",
@@ -178,7 +221,8 @@
           "ssl": true
         }
       },
-      "defaultConfiguration": "development"
+      "defaultConfiguration": "development",
+      "dependsOn": ["build-worker", "^build"]
     },
     "lint": {
       "executor": "@nx/linter:eslint",

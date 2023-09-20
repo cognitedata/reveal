@@ -1,4 +1,8 @@
-import { editor, languages, Position } from 'monaco-editor';
+import {
+  editor,
+  languages,
+  Position,
+} from 'monaco-editor/esm/vs/editor/editor.api';
 
 import { WorkerAccessor } from '../../types';
 

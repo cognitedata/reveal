@@ -1,0 +1,38 @@
+{
+    "extends": "../../tsconfig.base.json",
+    "compilerOptions": {
+        "outDir": "../../dist/out-tsc",
+        "resolveJsonModule": true,
+        "target": "esnext",
+        "module": "esnext",
+        "lib": [
+            "webworker",
+            "esnext"
+        ],
+        "moduleResolution": "node",
+        "noUnusedLocals": true,
+        "sourceMap": true,
+        "allowJs": false,
+        "allowSyntheticDefaultImports": true,
+        "types": [
+            "node"
+        ]
+    },
+    "files": [],
+    "exclude": [
+        "**/*.spec.ts",
+        "**/*.spec.tsx",
+        "**/*.stories.ts",
+        "**/*.stories.js",
+        "**/*.stories.jsx",
+        "**/*.stories.tsx",
+        "**/mocks/**.*",
+        "**/tests/**.*",
+        "jest.config.ts"
+    ],
+    "include": [
+        "app/web-workers/*.ts",
+        "apps/platypus/src/app/modules/solution/data-model/web-workers/worker-loaders/graphql.worker.ts",
+        "apps/platypus/src/app/modules/solution/data-management/components/SuggestionsModal/suggestions.worker.ts"
+    ]
+}

@@ -6,7 +6,7 @@ import {
   Position as GLSPosition,
   IRange as GLSRange,
 } from 'graphql-language-service';
-import { IRange, Position } from 'monaco-editor';
+import { IRange, Position } from 'monaco-editor/esm/vs/editor/editor.api';
 
 import { CompletionItemKind, CompletionList } from './types';
 

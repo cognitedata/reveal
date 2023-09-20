@@ -19,17 +19,18 @@ export const useFindSuggestions = (
     ),
     async () => {
       return new Promise<SuggestionsMatch[]>((resolve, _reject) => {
-        const worker = getSuggestionsWorker();
-        worker.onmessage = (e: MessageEvent<SuggestionsMatch[]>) => {
-          worker.terminate();
-          resolve(e.data);
-        };
-        worker.postMessage({
-          sourceRecords: sourceRecords || [],
-          targetRecords: targetRecords || [],
-          fillColumn: selectedColumn || '',
-          sourceColumns: selectedSourceColumns || [],
-          targetColumns: selectedTargetColumns || [],
+        getSuggestionsWorker().then((worker) => {
+          worker.onmessage = (e: MessageEvent<SuggestionsMatch[]>) => {
+            worker.terminate();
+            resolve(e.data);
+          };
+          worker.postMessage({
+            sourceRecords: sourceRecords || [],
+            targetRecords: targetRecords || [],
+            fillColumn: selectedColumn || '',
+            sourceColumns: selectedSourceColumns || [],
+            targetColumns: selectedTargetColumns || [],
+          });
         });
       });
     },

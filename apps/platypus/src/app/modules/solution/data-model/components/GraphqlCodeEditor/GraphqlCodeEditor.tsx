@@ -9,12 +9,11 @@ import {
   Environment as MonacoEditorEnvironment,
   editor as MonacoEditor,
   MarkerSeverity,
-} from 'monaco-editor';
+} from 'monaco-editor/esm/vs/editor/editor.api';
 
 import { setupGraphql } from '../../web-workers';
 // web workers stuff
 import { getGraphQlWorker } from '../../web-workers/worker-loaders/graphqlWorkerLoader';
-import { getMonacoEditorWorker } from '../../web-workers/worker-loaders/monacoLanguageServiceWorkerLoader';
 
 import { StyledEditor } from './elements';
 import { ErrorsByGroup } from './Model';
@@ -66,14 +65,9 @@ const getSampleDataModel = (
 // point here so the context can be used
 declare const self: any;
 (self as any).MonacoEnvironment = {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getWorker(_: string, label: string) {
-    // when graphql, load our custom web worker
-    if (label === 'graphql') {
-      return getGraphQlWorker();
-    }
-
-    // otherwise, load the default web worker from monaco
-    return getMonacoEditorWorker();
+    return getGraphQlWorker();
   },
 } as MonacoEditorEnvironment;
 
