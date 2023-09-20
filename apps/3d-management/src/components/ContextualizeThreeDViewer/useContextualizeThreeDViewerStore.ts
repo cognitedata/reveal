@@ -16,11 +16,14 @@ export enum ToolType {
   NONE = 'none',
   ADD_ANNOTATION = 'addAnnotation',
   DELETE_ANNOTATION = 'deleteAnnotation',
+  ADD_THREEDNODE_ASSET_MAPPING = 'addThreeDNodeAssetMapping',
+  DELETE_THREEDNODE_ASSET_MAPPING = 'deleteThreeDNodeAssetMapping',
 }
 
 type RootState = {
   pendingAnnotation: CubeAnnotation | null;
   isResourceSelectorOpen: boolean;
+  isThreeDNodeTreeOpen: boolean;
   threeDViewer: Cognite3DViewer | null;
   tool: ToolType;
   shouldShowBoundingVolumes: boolean;
@@ -30,6 +33,7 @@ type RootState = {
 const initialState: RootState = {
   pendingAnnotation: null,
   isResourceSelectorOpen: false,
+  isThreeDNodeTreeOpen: false,
   threeDViewer: null,
   tool: ToolType.NONE,
   shouldShowBoundingVolumes: false,
@@ -52,6 +56,20 @@ export const onCloseResourceSelector = () => {
     ...prevState,
     isResourceSelectorOpen: false,
     pendingAnnotation: null,
+  }));
+};
+
+export const onOpenThreeDNodeTree = () => {
+  useContextualizeThreeDViewerStore.setState((prevState) => ({
+    ...prevState,
+    isThreeDNodeTreeOpen: true,
+  }));
+};
+
+export const onCloseThreeDNodeTree = () => {
+  useContextualizeThreeDViewerStore.setState((prevState) => ({
+    ...prevState,
+    isThreeDNodeTreeOpen: false,
   }));
 };
 

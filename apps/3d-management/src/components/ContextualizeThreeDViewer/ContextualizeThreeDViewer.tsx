@@ -1,11 +1,13 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 import styled from 'styled-components';
 
+import ThreeDViewerSidebar from '@3d-management/pages/RevisionDetails/components/ThreeDViewerSidebar';
 import { Splitter } from '@data-exploration/components';
 import { ResourceSelector } from '@data-exploration/containers';
 import { BoxGeometry, Color, Mesh, MeshBasicMaterial } from 'three';
 
+import { CogniteCadModel, CognitePointCloudModel } from '@cognite/reveal';
 import { RevealContainer } from '@cognite/reveal-react-components';
 import { useSDK } from '@cognite/sdk-provider';
 
@@ -22,6 +24,7 @@ import {
   useContextualizeThreeDViewerStore,
 } from './useContextualizeThreeDViewerStore';
 import { createCdfThreeDAnnotation } from './utils/createCdfThreeDAnnotation';
+import { getCogniteCadModel } from './utils/getCogniteCadModel';
 import { getCognitePointCloudModel } from './utils/getCognitePointCloudModel';
 
 type ContextualizeThreeDViewerProps = {
@@ -34,6 +37,8 @@ export const ContextualizeThreeDViewer = ({
   revisionId,
 }: ContextualizeThreeDViewerProps) => {
   const sdk = useSDK();
+  // let model: CogniteCadModel | CognitePointCloudModel | undefined;
+  const model = useRef<CogniteCadModel | CognitePointCloudModel | undefined>();
 
   const { isResourceSelectorOpen, pendingAnnotation, threeDViewer } =
     useContextualizeThreeDViewerStore((state) => ({
@@ -42,37 +47,79 @@ export const ContextualizeThreeDViewer = ({
       threeDViewer: state.threeDViewer,
     }));
 
+  // use effects
   useEffect(() => {
     setModelId(modelId);
   }, [modelId]);
+
+  useEffect(() => {
+    (async () => {
+      if (threeDViewer === null || model.current == null) {
+        return;
+      }
+
+      const modelType = await threeDViewer.determineModelType(
+        modelId,
+        revisionId
+      );
+      switch (modelType) {
+        case 'cad': {
+          model.current = getCogniteCadModel({
+            modelId,
+            viewer: threeDViewer,
+          });
+          break;
+        }
+        case 'pointcloud': {
+          model.current = getCognitePointCloudModel({
+            modelId,
+            viewer: threeDViewer,
+          });
+          break;
+        }
+        default: {
+          throw new Error(`Unsupported model type ${modelType}`);
+        }
+      }
+    })();
+  }, [modelId, revisionId, threeDViewer]);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onCloseResourceSelector();
+        event.stopPropagation();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  });
 
   useSyncStateWithViewer();
 
   const saveAnnotationToCdf = (assetId: number) => {
     // TODO: All of these console.warn should be presented nicely to the user.
     // Tracked by: https://cognitedata.atlassian.net/browse/BND3D-2168
-    if (threeDViewer === null) {
+    if (
+      threeDViewer == null ||
+      model.current == null ||
+      !(model.current instanceof CognitePointCloudModel) ||
+      pendingAnnotation == null
+    ) {
       return;
     }
-
-    const pointCloudModel = getCognitePointCloudModel({
-      modelId,
-      viewer: threeDViewer,
-    });
-    if (pointCloudModel === undefined) {
-      return;
-    }
-
-    if (pendingAnnotation === null) {
-      return;
-    }
+    const pointCloudModel = model.current;
 
     createCdfThreeDAnnotation({
+      position: pendingAnnotation.position,
       sdk,
       modelId,
       assetRefId: assetId,
       pointCloudModel,
-      position: pendingAnnotation.position,
     });
 
     // TODO: This is just a temporary place to add the visualized saved annotations.
@@ -95,21 +142,6 @@ export const ContextualizeThreeDViewer = ({
     threeDViewer.addObject3D(newSavedAnnotation);
   };
 
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        onCloseResourceSelector();
-        event.stopPropagation();
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  });
-
   return (
     <>
       <StyledSplitter>
@@ -118,7 +150,13 @@ export const ContextualizeThreeDViewer = ({
             <RevealContent modelId={modelId} revisionId={revisionId} />
           </RevealContainer>
         </ThreeDViewerStyled>
-
+        {threeDViewer && model.current && (
+          <ThreeDViewerSidebar
+            viewer={threeDViewer}
+            model={model.current}
+            nodesClickable={true}
+          />
+        )}
         {isResourceSelectorOpen && (
           <ResourceSelector
             selectionMode="single"
