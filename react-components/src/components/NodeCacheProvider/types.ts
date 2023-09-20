@@ -8,11 +8,11 @@ import { type InModel3dEdgeProperties } from '../../utilities/globalDataModels';
 export type FdmCadEdge = EdgeItem<InModel3dEdgeProperties>;
 export type FdmEdgeWithNode = { edge: FdmCadEdge; cadNode: Node3D; view?: Source };
 
-export type CadNodeWithFdmIds = { cadNode: Node3D, fdmIds: DmsUniqueIdentifier[] };
-export type CadNodeWithEdges = { cadNode: Node3D, edges: FdmCadEdge[] };
+export type CadNodeWithFdmIds = { cadNode: Node3D; fdmIds: DmsUniqueIdentifier[] };
+export type CadNodeWithEdges = { cadNode: Node3D; edges: FdmCadEdge[] };
 export type FdmNodeDataPromises = {
-  cadAndFdmNodesPromise: Promise<CadNodeWithFdmIds | undefined>,
-  viewsPromise: Promise<Source[] | undefined>
+  cadAndFdmNodesPromise: Promise<CadNodeWithFdmIds | undefined>;
+  viewsPromise: Promise<Source[] | undefined>;
 };
 
 export type AncestorQueryResult = {

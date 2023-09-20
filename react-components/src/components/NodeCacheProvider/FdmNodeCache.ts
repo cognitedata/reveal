@@ -20,7 +20,7 @@ import {
   type ModelRevisionToEdgeMap,
   type ModelRevisionId,
   type FdmKey,
-  FdmNodeDataPromises
+  type FdmNodeDataPromises
 } from './types';
 import {
   createFdmKey,

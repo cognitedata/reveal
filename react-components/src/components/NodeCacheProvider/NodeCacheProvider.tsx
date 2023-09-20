@@ -6,7 +6,7 @@ import { type ReactElement, type ReactNode, createContext, useContext, useMemo }
 import { FdmNodeCache } from './FdmNodeCache';
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useFdmSdk, useSDK } from '../RevealContainer/SDKProvider';
-import { FdmNodeDataPromises, type ModelRevisionToEdgeMap } from './types';
+import { type FdmNodeDataPromises, type ModelRevisionToEdgeMap } from './types';
 
 import assert from 'assert';
 import { type DmsUniqueIdentifier } from '../../utilities/FdmSDK';
