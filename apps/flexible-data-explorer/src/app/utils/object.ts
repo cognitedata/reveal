@@ -1,4 +1,3 @@
-// This bad-boy needs some proper unit testing - will come back to it later
 export function toFlatPropertyMap(object: object, keySeparator = '.') {
   const flattenRecursive = (
     object: object,
