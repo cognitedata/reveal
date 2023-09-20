@@ -10,6 +10,8 @@ import { useReveal } from '../RevealContainer/RevealContext';
 import { Button, Dropdown, Menu, RangeSlider, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 
 import styled from 'styled-components';
+import { sliceChangedEvent } from './Slicer/SlicerEvent';
+import { useUrlStateParam } from '../../hooks/useUrlStateParam';
 
 type SliceState = {
   minHeight: number;
@@ -20,12 +22,14 @@ type SliceState = {
 
 export const SlicerButton = (): ReactElement => {
   const viewer = useReveal();
+  const urlParam = useUrlStateParam();
+  const { top, bottom } = urlParam.getSlicerStateFromUrlParam();
 
   const [sliceState, setSliceState] = useState<SliceState>({
     minHeight: 0,
-    maxHeight: 0,
-    topRatio: 1,
-    bottomRatio: 0
+    maxHeight: 1,
+    topRatio: top ?? 1,
+    bottomRatio: bottom ?? 0
   });
 
   const { minHeight, maxHeight, topRatio, bottomRatio } = sliceState;
@@ -36,6 +40,9 @@ export const SlicerButton = (): ReactElement => {
     viewer.models.length === 0 ? undefined : viewer.models[viewer.models.length - 1];
 
   useEffect(() => {
+    if (viewer.models.length === 0) {
+      return;
+    }
     const box = new Box3();
     viewer.models.forEach((model) => box.union(model.getModelBoundingBox()));
 
@@ -59,6 +66,7 @@ export const SlicerButton = (): ReactElement => {
       bottomRatio: newValues[0],
       topRatio: newValues[1]
     });
+    sliceChangedEvent.fire(newValues);
   }
 
   return (

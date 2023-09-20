@@ -2,10 +2,18 @@
  * Copyright 2023 Cognite AS
  */
 import type { Meta, StoryObj } from '@storybook/react';
-import { Reveal3DResources, RevealContainer } from '../src';
+import {
+  Reveal3DResources,
+  RevealContainer,
+  RevealToolbar,
+  withSuppressRevealEvents
+} from '../src';
 import { Color, Matrix4 } from 'three';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import { RevealResourcesFitCameraOnLoad } from './utilities/with3dResoursesFitCameraOnLoad';
+import { RevealResourcesSlicerOnLoad } from './utilities/with3dResourcesSlicerOnLoad';
+import styled from 'styled-components';
+import { withSlicerStateUrlParam } from '../src/higher-order-components/withSlicerStateUrlParam';
 
 const meta = {
   title: 'Example/Reveal3DResources',
@@ -17,6 +25,14 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 const sdk = createSdkByUrlToken();
+
+const StyledRevealToolbar = styled(
+  withSuppressRevealEvents(withSlicerStateUrlParam(RevealToolbar))
+)`
+  position: absolute;
+  left: 20px;
+  top: 70px;
+`;
 
 export const Main: Story = {
   args: {
@@ -59,6 +75,8 @@ export const Main: Story = {
             );
           }}
         />
+        <RevealResourcesSlicerOnLoad resources={resources} />
+        <StyledRevealToolbar />
       </RevealContainer>
     );
   }
