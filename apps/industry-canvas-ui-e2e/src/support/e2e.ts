@@ -15,27 +15,23 @@
 // Import commands.ts using ES2015 syntax:
 
 // This will also register cypress commands defined in @fusion/shared/cypress like loginWithAADClientCredentials()
-import { interceptProfileMe } from '@fusion/shared/cypress';
-
 import {
   baseUrl,
   idpInternalId,
   AADUsername,
   AADPassword,
-  cluster,
   project,
 } from '../config';
 
 Cypress.on('uncaught:exception', (err) => {
   // returning false here prevents Cypress from
   // failing the test
-  console.error(err);
-  return false;
+  if (err.message.includes('cluster not found')) {
+    return false;
+  }
 });
 
 beforeEach(() => {
-  interceptProfileMe(cluster, project);
-
   cy.session(
     [AADUsername],
     () => {

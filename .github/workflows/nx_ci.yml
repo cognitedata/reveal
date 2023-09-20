@@ -95,6 +95,9 @@ jobs:
           base: ${{ env.NX_BASE }}
           head: ${{ env.NX_HEAD }}
           target: 'e2e'
+          # fusion-shell-e2e and platypus-cdf-cli run in their own jobs
+          # the other excluded apps need additional work to successfully run
+          exclude: 'fusion-shell-e2e, platypus-cdf-cli, data-exploration-e2e, cdf-nx-plugin-e2e, platypus-e2e, industry-canvas-ui-e2e'
 
       - name: 'Get affected storybook projects to build'
         id: affected-storybook
@@ -556,6 +559,64 @@ jobs:
         with:
           name: cypress-snapshots
           path: dist/cypress/apps/fusion-shell-e2e
+
+  e2e:
+    runs-on: ubuntu-latest
+    needs: setup
+    if: ${{ needs.setup.outputs.affected-e2e != '' && toJson(fromJson(needs.setup.outputs.affected-e2e)) != '[]' }}
+    strategy:
+      matrix:
+        project: ${{ fromJson(needs.setup.outputs.affected-e2e) }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Cache node modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            node_modules
+            ~/.cache/Cypress
+          key: cache-node-modules-${{ hashFiles('yarn.lock') }}
+
+      - name: Cypress run
+        uses: cypress-io/github-action@v4.2.2
+        id: cypress
+        env:
+          CLIENT_ID: ${{ secrets.DATA_EXPLORER_CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.DATA_EXPLORER_CLIENT_SECRET }}
+
+          # used in simint
+          CLIENT_ID_CHARTS_AZUREDEV: ${{ secrets.CLIENT_ID_CHARTS_AZUREDEV }}
+          CLIENT_SECRET_CHARTS_AZUREDEV: ${{ secrets.CLIENT_SECRET_CHARTS_AZUREDEV }}
+
+          COG_E2E_AAD_USERNAME_1: ${{ secrets.COG_E2E_AAD_USERNAME_1 }}
+          COG_E2E_AAD_PASSWORD_1: ${{ secrets.COG_E2E_AAD_PASSWORD_1 }}
+
+          # needed for error with self signed certificate:
+          # https://github.com/cypress-io/github-action/issues/154#issuecomment-693719925
+          NODE_TLS_REJECT_UNAUTHORIZED: 0
+
+        with:
+          browser: chrome
+          # start the shell and wait for it to be ready
+          start: yarn nx run fusion-shell:preview:production
+          wait-on: https://local.cognite.ai:4200
+          wait-on-timeout: 200
+          # run the e2e test target for the given project
+          command: yarn nx run ${{ matrix.project }}:e2e:ci
+
+      - name: Upload cypress artifacts
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: ${{ matrix.project }}-failed-cypress-tests-recordings
+          path: dist/cypress/apps/${{ matrix.project }}/videos
+          if-no-files-found: ignore # 'warn' or 'error' are also available, defaults to `warn`
 
   ci-passed:
     # see https://github.community/t/status-check-for-a-matrix-jobs/127354/7

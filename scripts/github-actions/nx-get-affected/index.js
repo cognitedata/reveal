@@ -35,6 +35,9 @@ const run = async () => {
     setOutput('projects', parsedOutput);
     setOutput('projectsString', stringOutput);
 
+    info(`projects: ${parsedOutput}`);
+    info(`projectsString: ${stringOutput}`);
+
     parsedOutput.forEach((project) => {
       setOutput(project, true);
     });
