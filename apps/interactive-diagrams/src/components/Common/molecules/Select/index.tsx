@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 
 import styled from 'styled-components';
 
@@ -7,7 +7,6 @@ import { Spin } from 'antd';
 import {
   Body,
   Button,
-  Dropdown,
   OptionType,
   Select as CogsSelect,
 } from '@cognite/cogs.js';
@@ -23,6 +22,8 @@ export const Select = (props: CustomSelectProps) => {
   const { selectProps, tooltipProps } = props;
   const { title, options = [], ...fixedSelectProps } = selectProps;
   const dropdownRef = useRef<any>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const [showSelectMenu, setShowSelectMenu] = useState(false);
 
   const selectedNr =
     (fixedSelectProps?.value as OptionType<React.ReactText>[])?.length ?? 1;
@@ -33,50 +34,70 @@ export const Select = (props: CustomSelectProps) => {
     isLoaded: tooltipProps?.isLoaded ?? true,
   };
 
-  const selectMenu = (
-    <DropdownWrapper ref={dropdownRef}>
-      <CogsSelect
-        autoFocus
-        maxHeight={36}
-        icon="Search"
-        styles={selectStyles}
-        isClearable={false}
-        isSearchable={true}
-        tabSelectsValue={false}
-        escapeClearsValue={false}
-        backspaceRemovesValue={false} // if true, then search input in dropdown cannot be backspaced
-        controlShouldRenderValue={false}
-        hideSelectedOptions={false}
-        showCheckbox={fixedSelectProps?.isMulti ?? false}
-        enableSelectAll={fixedSelectProps?.isMulti ?? false}
-        menuPortalTarget={dropdownRef.current?.target}
-        menuIsOpen
-        options={options}
-        {...fixedSelectProps}
-        placeholder=""
-      />
-    </DropdownWrapper>
-  );
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node)
+      ) {
+        setShowSelectMenu(false);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, []);
 
   return (
-    <FilterWrapper hasPermission={tooltipProps?.hasPermission}>
+    <FilterWrapper
+      hasPermission={tooltipProps?.hasPermission}
+      ref={containerRef}
+    >
       <Spin spinning={!fixedTooltipProps.isLoaded} size="small">
-        <Dropdown content={selectMenu}>
-          <StyledButton
-            type="tertiary"
-            icon="ChevronDown"
-            iconPlacement="right"
-          >
-            <Flex row>
-              <Body level={2} strong>
-                {title}
-              </Body>
-              <FilterPlaceholder
-                text={selectedNr ? `${selectedNr} selected` : 'All'}
-              />
-            </Flex>
-          </StyledButton>
-        </Dropdown>
+        <StyledButton
+          type="tertiary"
+          icon="ChevronDown"
+          iconPlacement="right"
+          onClick={() => {
+            setShowSelectMenu(true);
+          }}
+        >
+          <Flex row>
+            <Body level={2} strong>
+              {title}
+            </Body>
+            <FilterPlaceholder
+              text={selectedNr ? `${selectedNr} selected` : 'All'}
+            />
+          </Flex>
+        </StyledButton>
+        {showSelectMenu && (
+          <DropdownWrapper ref={dropdownRef}>
+            <CogsSelect
+              autoFocus
+              maxHeight={36}
+              icon="Search"
+              styles={selectStyles}
+              isClearable={false}
+              isSearchable={true}
+              tabSelectsValue={false}
+              escapeClearsValue={false}
+              backspaceRemovesValue={false} // if true, then search input in dropdown cannot be backspaced
+              controlShouldRenderValue={false}
+              hideSelectedOptions={false}
+              showCheckbox={fixedSelectProps?.isMulti ?? false}
+              enableSelectAll={fixedSelectProps?.isMulti ?? false}
+              menuPortalTarget={dropdownRef.current?.target}
+              menuIsOpen
+              options={options}
+              {...fixedSelectProps}
+              placeholder=""
+            />
+          </DropdownWrapper>
+        )}
       </Spin>
     </FilterWrapper>
   );
@@ -100,6 +121,7 @@ const StyledButton = styled(Button)`
 `;
 
 const DropdownWrapper = styled.div`
+  position: absolute;
   display: flex;
   flex-direction: column;
   max-width: 220px;
