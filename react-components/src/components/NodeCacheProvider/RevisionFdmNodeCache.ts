@@ -10,7 +10,8 @@ import {
   type FdmCadEdge,
   type FdmNodeDataPromises,
   type CadNodeWithEdges,
-  type AncestorQueryResult
+  type AncestorQueryResult,
+  CadNodeWithFdmIds
 } from './types';
 
 import {
@@ -64,12 +65,12 @@ export class RevisionFdmNodeCache {
       fdmIds: cachedFdmData.map((data) => data.edge.startNode)
     });
 
-    const viewsPromise = this.assertOrAppendViewsForData(searchTreeIndex, cachedFdmData);
+    const viewsPromise = this.assertOrFetchViewsForNodeData(searchTreeIndex, cachedFdmData);
 
     return { cadAndFdmNodesPromise, viewsPromise };
   }
 
-  private async assertOrAppendViewsForData(
+  private async assertOrFetchViewsForNodeData(
     searchTreeIndex: number,
     cachedFdmData: FdmEdgeWithNode[]
   ): Promise<Source[] | undefined> {
@@ -78,14 +79,14 @@ export class RevisionFdmNodeCache {
     }
 
     const cadNode = cachedFdmData[0].cadNode;
-    const cadAndFdmEdgePromise = Promise.resolve({
+    const cadNodeWithEdges = {
       cadNode,
       edges: cachedFdmData.map((data) => data.edge)
-    });
+    };
 
-    return await this.getViewsPromiseForDataPromiseAndCacheData(
-      cadAndFdmEdgePromise,
-      Promise.resolve([cadNode.treeIndex, searchTreeIndex])
+    return await this.getAndCacheViewsPromiseForNodeData(
+      cadNodeWithEdges,
+      [cadNode.treeIndex, searchTreeIndex]
     );
   }
 
@@ -99,17 +100,19 @@ export class RevisionFdmNodeCache {
         : undefined
     );
 
-    const ancestorTreeIndexesPromise = ancestorDataPromise.then((data) => {
-      const treeIndexes = data.ancestorsWithSameMapping.map((ancestor) => ancestor.treeIndex);
-      return treeIndexes.length === 0 ? [treeIndex] : treeIndexes;
-    });
-
-    const viewsPromise = this.getViewsPromiseForDataPromiseAndCacheData(
-      cadAndEdgesPromise,
-      ancestorTreeIndexesPromise
-    );
+    const viewsPromise = this.getViewsPromiseFromDataPromises(cadAndEdgesPromise, ancestorDataPromise);
 
     return { cadAndFdmNodesPromise, viewsPromise };
+  }
+
+  private async getViewsPromiseFromDataPromises(cadAndEdgesPromise: Promise<CadNodeWithEdges | undefined>,
+                                                ancestorDataPromise: Promise<AncestorQueryResult>): Promise<Source[] | undefined> {
+
+      const cadAndEdges = await cadAndEdgesPromise;
+      const { ancestorsWithSameMapping } = await ancestorDataPromise;
+      const ancestorTreeIndexes = ancestorsWithSameMapping.map(ancestor => ancestor.treeIndex);
+
+      return this.getAndCacheViewsPromiseForNodeData(cadAndEdges, ancestorTreeIndexes);
   }
 
   private async getCadAndEdgesPromiseForAncestorData(
@@ -138,15 +141,13 @@ export class RevisionFdmNodeCache {
     });
   }
 
-  private async getViewsPromiseForDataPromiseAndCacheData(
-    cadAndFdmIdsPromise: Promise<CadNodeWithEdges | undefined>,
-    treeIndexesWithSameMappingPromise: Promise<TreeIndex[]>
+  private async getAndCacheViewsPromiseForNodeData(
+    cadAndFdmIds: CadNodeWithEdges | undefined,
+    ancestorIndicesWithSameMapping: TreeIndex[]
   ): Promise<Source[] | undefined> {
-    const cadAndFdmIds = await cadAndFdmIdsPromise;
     if (cadAndFdmIds === undefined) {
-      const ancestorsWithSameMapping = await treeIndexesWithSameMappingPromise;
 
-      ancestorsWithSameMapping.forEach((treeIndex) => {
+      ancestorIndicesWithSameMapping.forEach((treeIndex) => {
         this._treeIndexToFdmEdges.set(treeIndex, []);
       });
 
@@ -168,9 +169,7 @@ export class RevisionFdmNodeCache {
       view: nodeInspectionResults.items[ind].inspectionResults.involvedViewsAndContainers.views[0]
     }));
 
-    const ancestorsWithSameMapping = await treeIndexesWithSameMappingPromise;
-
-    ancestorsWithSameMapping.forEach((treeIndex) => {
+    ancestorIndicesWithSameMapping.forEach((treeIndex) => {
       this._treeIndexToFdmEdges.set(treeIndex, dataWithViews);
     });
 
