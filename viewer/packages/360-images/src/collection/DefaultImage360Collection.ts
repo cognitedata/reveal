@@ -247,7 +247,7 @@ export class DefaultImage360Collection implements Image360Collection {
     async function getRevisionAnnotationsForAsset(revision: Image360RevisionEntity): Promise<Image360Annotation[]> {
       const relevantDescriptors = revision
         .getDescriptors()
-        .faceDescriptors.filter(desc => imageIdSet.has(desc.fileId.id));
+        .faceDescriptors.filter(desc => isInternalId(desc.fileId) && imageIdSet.has(desc.fileId.id));
 
       if (relevantDescriptors.length === 0) {
         return [];
@@ -259,6 +259,10 @@ export class DefaultImage360Collection implements Image360Collection {
         const assetLink = a.annotation.data as AnnotationsCogniteAnnotationTypesImagesAssetLink;
         return assetLink.assetRef !== undefined && matchesAssetRef(assetLink, filter.assetRef);
       });
+
+      function isInternalId(id: IdEither): id is InternalId {
+        return (id as InternalId).id !== undefined;
+      }
     }
   }
 

@@ -1,7 +1,7 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import { AnnotationModel, CogniteInternalId, IdEither, InternalId } from '@cognite/sdk';
+import { AnnotationModel, CogniteInternalId, IdEither } from '@cognite/sdk';
 import * as THREE from 'three';
 
 export type Image360AnnotationFilterDelegate = (annotation: AnnotationModel) => boolean;
@@ -71,7 +71,7 @@ export type Image360Texture = {
 };
 
 export type Image360FileDescriptor = {
-  fileId: InternalId;
+  fileId: IdEither;
   face: 'front' | 'back' | 'left' | 'right' | 'top' | 'bottom';
   mimeType: 'image/jpeg' | 'image/png';
 };

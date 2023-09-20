@@ -18,7 +18,6 @@ describe(Cdf360FdmProvider.name, () => {
 
     await provider.get360ImageDescriptors(
       {
-        dataModelExternalId: 'Image360DM',
         space: 'Image_360',
         image360CollectionExternalId: 'c_RC_2'
       },

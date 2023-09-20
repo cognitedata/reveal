@@ -10,7 +10,7 @@ import {
 } from '@reveal/data-providers';
 import { Image360Revision } from './Image360Revision';
 import { Image360VisualizationBox } from './Image360VisualizationBox';
-import { AnnotationModel } from '@cognite/sdk';
+import { AnnotationModel, IdEither, InternalId } from '@cognite/sdk';
 
 import { ImageAnnotationObject } from '../annotation/ImageAnnotationObject';
 import assert from 'assert';
@@ -228,9 +228,13 @@ function getAssociatedFaceDescriptor(
   annotation: AnnotationModel,
   imageDescriptors: Image360Descriptor
 ): Image360FileDescriptor {
-  const fileDescriptors = imageDescriptors.faceDescriptors.filter(
-    desc => desc.fileId.id === annotation.annotatedResourceId
-  );
+  const fileDescriptors = imageDescriptors.faceDescriptors.filter(desc => {
+    return isInternalId(desc.fileId) && desc.fileId.id === annotation.annotatedResourceId;
+
+    function isInternalId(id: IdEither): id is InternalId {
+      return (id as InternalId).id !== undefined;
+    }
+  });
 
   assert(fileDescriptors.length !== 0);
 

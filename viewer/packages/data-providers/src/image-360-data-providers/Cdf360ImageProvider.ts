@@ -41,6 +41,7 @@ export class Cdf360ImageProvider<T> implements Image360Provider<T> {
   }
 
   public async get360ImageAnnotations(descriptors: Image360FileDescriptor[]): Promise<AnnotationModel[]> {
+    return [];
     const fileIds = descriptors.map(o => o.fileId);
 
     const annotationsResult = this._client.annotations.list({
