@@ -20,6 +20,7 @@ import {
 } from '@tanstack/react-table';
 import has from 'lodash/has';
 import isEmpty from 'lodash/isEmpty';
+import isUndefined from 'lodash/isUndefined';
 import mapValues from 'lodash/mapValues';
 import merge from 'lodash/merge';
 import noop from 'lodash/noop';
@@ -333,20 +334,22 @@ export function Table<T extends TableData>({
     sortDescFirst: false,
   });
 
+  const scrollRowElement = isUndefined(scrollIntoViewRow)
+    ? null
+    : document.querySelector(`[id="${id}"] [id="${scrollIntoViewRow}"]`);
+
   useEffect(() => {
-    if (scrollIntoViewRow) {
-      const rowElement = document.querySelector(
-        `[id="${id}"] [id="${scrollIntoViewRow}"]`
-      );
-      if (rowElement && !isElementHorizontallyInViewport(rowElement)) {
-        rowElement.scrollIntoView({
-          behavior: 'auto',
-          block: 'center',
-          inline: 'center',
-        });
-      }
+    if (
+      scrollRowElement &&
+      !isElementHorizontallyInViewport(scrollRowElement)
+    ) {
+      scrollRowElement.scrollIntoView({
+        behavior: 'auto',
+        block: 'center',
+        inline: 'center',
+      });
     }
-  }, [id, scrollIntoViewRow]);
+  }, [scrollRowElement]);
 
   const handleClickLoadMore = () => {
     if (!fetchMore) return;

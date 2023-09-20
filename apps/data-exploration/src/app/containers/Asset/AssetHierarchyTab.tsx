@@ -31,6 +31,7 @@ export const AssetHierarchyTab = ({ asset }: { asset: Asset }) => {
       onSelect={onSelect}
       isSelected={(item) => isResourceSelected(item, resourcesState)}
       selectedRows={{ [asset.id]: true }}
+      scrollIntoViewRow={asset.id}
     />
   );
 };
