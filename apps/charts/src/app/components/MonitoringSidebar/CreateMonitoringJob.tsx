@@ -5,9 +5,13 @@ import { useCreateSessionNonce } from '@charts-app/domain/chart';
 import { useSearchParam } from '@charts-app/hooks/navigation';
 import { useTranslations } from '@charts-app/hooks/translations';
 import { useUserInfo } from '@charts-app/hooks/useUserInfo';
+import { useChartAtom } from '@charts-app/models/chart/atom';
 import { useScheduledCalculationDataValue } from '@charts-app/models/scheduled-calculation-results/atom';
 import { trackUsage, stopTimer } from '@charts-app/services/metrics';
-import { MONITORING_SIDEBAR_HIGHLIGHTED_JOB } from '@charts-app/utils/constants';
+import {
+  MONITORING_SIDEBAR_HIGHLIGHTED_JOB,
+  MONITORING_SOURCE_CHART,
+} from '@charts-app/utils/constants';
 import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import { Col, Row } from 'antd';
 import { head } from 'lodash';
@@ -52,6 +56,7 @@ const CreateMonitoringJob = ({ onCancel }: Props) => {
   };
 
   const { data: userProfile } = useUserProfileQuery();
+  const [chart] = useChartAtom();
 
   const {
     data: sessionNonceResponse,
@@ -210,6 +215,8 @@ const CreateMonitoringJob = ({ onCancel }: Props) => {
         })),
         userAuthId_deprecated,
         userEmail_deprecated: notificationEmail,
+        sourceId: chart?.id || '',
+        source: MONITORING_SOURCE_CHART,
       };
       createMonitoringJob(dataToSend);
       setFormStatus('NONCE_CREATED_DATA_SUBMITTED');
