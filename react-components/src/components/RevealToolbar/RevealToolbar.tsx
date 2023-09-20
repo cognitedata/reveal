@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type ReactElement, type JSX } from 'react';
+import { type ReactElement, type JSX, forwardRef, type Ref } from 'react';
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
 import { ToolBar, type ToolBarProps } from '@cognite/cogs.js';
 import { FitModelsButton } from './FitModelsButton';
@@ -14,14 +14,18 @@ import { MeasurementButton } from './MeasurementButton';
 import { HelpButton } from './HelpButton';
 import { type QualitySettings } from './SettingsContainer/types';
 import { translations } from '../../common/i18n';
+import styled from 'styled-components';
 
-const defaultStyle: ToolBarProps = {
-  style: {
-    position: 'absolute',
-    left: '20px',
-    top: '70px'
-  }
-};
+const StyledToolBar = styled(ToolBar)`
+  position: absolute;
+  left: 20px;
+  top: 70px;
+  width: 48px;
+  padding: 6px;
+  gap: 8px;
+  border-radius: 8px;
+  border: 1px solid rgba(83, 88, 127, 0.24);
+`;
 
 type RevealToolbarProps = ToolBarProps & CustomContent;
 
@@ -54,30 +58,34 @@ const DefaultContentWrapper = (props: CustomContent): ReactElement => {
   );
 };
 
-const RevealToolbarContainer = ({
-  customSettingsContent,
-  lowFidelitySettings,
-  highFidelitySettings,
-  toolBarContent,
-  ...restProps
-}: RevealToolbarProps & { toolBarContent?: JSX.Element }): ReactElement => {
-  if (restProps.className === undefined && restProps.style === undefined) {
-    restProps = { ...restProps, ...defaultStyle };
+const RevealToolbarContainer = forwardRef(
+  (
+    {
+      customSettingsContent,
+      lowFidelitySettings,
+      highFidelitySettings,
+      toolBarContent,
+      ...restProps
+    }: RevealToolbarProps & { toolBarContent?: JSX.Element },
+    ref: Ref<HTMLDivElement>
+  ): ReactElement => {
+    return (
+      <I18nWrapper translations={translations} addNamespace="reveal-react-components">
+        <StyledToolBar {...restProps} ref={ref}>
+          {toolBarContent ?? (
+            <DefaultContentWrapper
+              customSettingsContent={customSettingsContent}
+              highFidelitySettings={highFidelitySettings}
+              lowFidelitySettings={lowFidelitySettings}
+            />
+          )}
+        </StyledToolBar>
+      </I18nWrapper>
+    );
   }
-  return (
-    <I18nWrapper translations={translations} addNamespace="reveal-react-components">
-      <ToolBar {...restProps}>
-        {toolBarContent ?? (
-          <DefaultContentWrapper
-            customSettingsContent={customSettingsContent}
-            highFidelitySettings={highFidelitySettings}
-            lowFidelitySettings={lowFidelitySettings}
-          />
-        )}
-      </ToolBar>
-    </I18nWrapper>
-  );
-};
+);
+
+RevealToolbarContainer.displayName = 'RevealToolbarContainer';
 
 export const RevealToolbar = withSuppressRevealEvents(
   RevealToolbarContainer

@@ -13,6 +13,7 @@ import { type DmsUniqueIdentifier } from '../../utilities/FdmSDK';
 import { type TypedReveal3DModel } from '../Reveal3DResources/types';
 import { type ThreeDModelMappings } from '../../hooks/types';
 import { DEFAULT_QUERY_STALE_TIME } from '../../utilities/constants';
+import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 
 export type FdmNodeCacheContent = {
   cache: FdmNodeCache;
@@ -97,8 +98,19 @@ export const useFdmAssetMappings = (
 export function NodeCacheProvider({ children }: { children?: ReactNode }): ReactElement {
   const fdmClient = useFdmSdk();
   const cdfClient = useSDK();
+  const revealKeepAliveData = useRevealKeepAlive();
 
-  const fdmCache = useMemo(() => new FdmNodeCache(cdfClient, fdmClient), []);
+  const fdmCache = useMemo(() => {
+    const cache =
+      revealKeepAliveData?.fdmNodeCache.current ?? new FdmNodeCache(cdfClient, fdmClient);
+
+    const isRevealKeepAliveContextProvided = revealKeepAliveData !== undefined;
+    if (isRevealKeepAliveContextProvided) {
+      revealKeepAliveData.fdmNodeCache.current = cache;
+    }
+
+    return cache;
+  }, [cdfClient, fdmClient]);
 
   return (
     <FdmNodeCacheContext.Provider value={{ cache: fdmCache }}>
