@@ -591,13 +591,13 @@ __metadata:
     "@types/dat.gui": 0.7.10
     "@types/gl": ^6.0.2
     "@types/glob": 8.1.0
-    "@types/jest": 29.5.4
-    "@types/jest-environment-puppeteer": 5.0.3
-    "@types/jest-image-snapshot": 6.2.0
-    "@types/jsdom": 21.1.2
+    "@types/jest": 29.5.5
+    "@types/jest-environment-puppeteer": 5.0.4
+    "@types/jest-image-snapshot": 6.2.1
+    "@types/jsdom": 21.1.3
     "@types/lodash": 4.14.198
     "@types/mixpanel-browser": 2.47.1
-    "@types/node": 18.17.15
+    "@types/node": 18.17.17
     "@types/random-seed": 0.3.3
     "@types/skmeans": 0.11.4
     "@types/stats": 0.16.30
@@ -613,7 +613,7 @@ __metadata:
     eslint: 8.49.0
     eslint-config-prettier: 9.0.0
     eslint-plugin-header: 3.1.1
-    eslint-plugin-jsdoc: 46.7.0
+    eslint-plugin-jsdoc: 46.8.1
     eslint-plugin-lodash: 7.4.0
     eslint-plugin-prettier: 5.0.0
     eslint-plugin-unused-imports: 3.0.0
@@ -635,7 +635,7 @@ __metadata:
     lodash: 4.17.21
     loglevel: 1.8.1
     mixpanel-browser: 2.47.0
-    moq.ts: 10.0.6
+    moq.ts: 10.0.8
     nock: 13.3.3
     path-browserify: 1.0.1
     prettier: 3.0.3
@@ -2105,25 +2105,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest-environment-puppeteer@npm:5.0.3":
-  version: 5.0.3
-  resolution: "@types/jest-environment-puppeteer@npm:5.0.3"
+"@types/jest-environment-puppeteer@npm:5.0.4":
+  version: 5.0.4
+  resolution: "@types/jest-environment-puppeteer@npm:5.0.4"
   dependencies:
     "@jest/types": ">=24 <=27"
     "@types/puppeteer": ^5.4.0
     jest-environment-node: ">=24 <=27"
-  checksum: eb865f9ea9ee44587167fac1e3a0ecc56d09e20b8cf5200226ddd0b7d31a8cc38636045f6709be605d3730ba4002c1a87bc7749ee2bf8a96fbb709572d5176ae
+  checksum: 6ac8a2aa62573b8d95e6c3fb9b69f1272e2337f521d43ac18326c712452a662bcaec8fc52303dceed1256aded0cd4ebe4d8e95c4826d12a4a2a1995846247c31
   languageName: node
   linkType: hard
 
-"@types/jest-image-snapshot@npm:6.2.0":
-  version: 6.2.0
-  resolution: "@types/jest-image-snapshot@npm:6.2.0"
+"@types/jest-image-snapshot@npm:6.2.1":
+  version: 6.2.1
+  resolution: "@types/jest-image-snapshot@npm:6.2.1"
   dependencies:
     "@types/jest": "*"
     "@types/pixelmatch": "*"
     ssim.js: ^3.1.1
-  checksum: 46737c048784cf63caa9776c6b8d82bc28c2713829d31e44ee0cfc45c49b15cd9159e95572287593bbef17ae88d3487bd7a2d6881b970a9487d84cf14fe5b775
+  checksum: 6e736bf7f75751420964be11af8b03666ee5f135442051b5f023f350aca5ab5727e5723cc1ec8481e29e29422fc1ae61c4dd73615a18989a666bf5cb27206578
   languageName: node
   linkType: hard
 
@@ -2137,24 +2137,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest@npm:29.5.4":
-  version: 29.5.4
-  resolution: "@types/jest@npm:29.5.4"
+"@types/jest@npm:29.5.5":
+  version: 29.5.5
+  resolution: "@types/jest@npm:29.5.5"
   dependencies:
     expect: ^29.0.0
     pretty-format: ^29.0.0
-  checksum: 38ed5942f44336452efd0f071eab60aaa57cd8d46530348d0a3aa5a691dcbf1366c4ca8f6ee8364efb45b4413bfefae443e5d4f469246a472a03b21ac11cd4ed
+  checksum: 56e55cde9949bcc0ee2fa34ce5b7c32c2bfb20e53424aa4ff3a210859eeaaa3fdf6f42f81a3f655238039cdaaaf108b054b7a8602f394e6c52b903659338d8c6
   languageName: node
   linkType: hard
 
-"@types/jsdom@npm:21.1.2":
-  version: 21.1.2
-  resolution: "@types/jsdom@npm:21.1.2"
+"@types/jsdom@npm:21.1.3":
+  version: 21.1.3
+  resolution: "@types/jsdom@npm:21.1.3"
   dependencies:
     "@types/node": "*"
     "@types/tough-cookie": "*"
     parse5: ^7.0.0
-  checksum: 62513fc82afa0234034919dee37d3f82425245e1794c58bac55fabbd00de10b3c384992db1cdd53d35a0af58540e2733730f22dbeb57f5b76bca90bca8c368a8
+  checksum: be8e42eb2d24db8abd3a19a229ce2c2e5d0809351765d9053272604ddf1df04fd16ff193eee9a2d79130952c4f91ee995148deae836a4d43451e64db8a698281
   languageName: node
   linkType: hard
 
@@ -2225,10 +2225,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:18.17.15":
-  version: 18.17.15
-  resolution: "@types/node@npm:18.17.15"
-  checksum: eed11d4398ccdb999a4c65658ee75de621a4ad57aece48ed2fb8803b1e2711fadf58d8aefbdb0a447d69cf3cba602ca32fe0fc92077575950a796e1dc13baa0f
+"@types/node@npm:18.17.17":
+  version: 18.17.17
+  resolution: "@types/node@npm:18.17.17"
+  checksum: ff28f347c77723780836f9bb2ffa6db0cd72490bfd7604397c03db31db34f1f2899e82f0aaf3e825efeb09c15bd94d076ea9aca19a1407e1b56cb4603318936c
   languageName: node
   linkType: hard
 
@@ -4968,9 +4968,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-jsdoc@npm:46.7.0":
-  version: 46.7.0
-  resolution: "eslint-plugin-jsdoc@npm:46.7.0"
+"eslint-plugin-jsdoc@npm:46.8.1":
+  version: 46.8.1
+  resolution: "eslint-plugin-jsdoc@npm:46.8.1"
   dependencies:
     "@es-joy/jsdoccomment": ~0.40.1
     are-docs-informative: ^0.0.2
@@ -4983,7 +4983,7 @@ __metadata:
     spdx-expression-parse: ^3.0.1
   peerDependencies:
     eslint: ^7.0.0 || ^8.0.0
-  checksum: 29dcafdb50693d190a0a56d18863ba5e185972304c42c7640d76731e8ddab2113d60a4adfe2d5f983474b9067c407f6a472ec92530471f0bd6071defcc12bf14
+  checksum: 481be2d8684892039d1f5165172e8934cb40c595c2af54c91bbfe0c9dab89a19fadc03278631bbb2c30fc7431dca725678dd012b228333f6eecf2677c4e9ec4d
   languageName: node
   linkType: hard
 
@@ -8856,12 +8856,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"moq.ts@npm:10.0.6":
-  version: 10.0.6
-  resolution: "moq.ts@npm:10.0.6"
+"moq.ts@npm:10.0.8":
+  version: 10.0.8
+  resolution: "moq.ts@npm:10.0.8"
   dependencies:
     tslib: "*"
-  checksum: 94462c16c435c4e86d1eccc2960544cfdc35c4bc9c9791e4d9c8d74104cd0134ba766eb6f0881910cf403a5b16b8884cdbb59c9f4e143654077927f7525665e6
+  checksum: 47a264649de0bf5cb4a483d10406502c979685ad44e35d44905e98dcc8101dd5e86765cc1cbc64548837566c2a6a9035f78162de4733e0b23ac7532b664c9fb5
   languageName: node
   linkType: hard
 
