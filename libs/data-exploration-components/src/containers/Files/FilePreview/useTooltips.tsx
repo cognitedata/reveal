@@ -23,10 +23,13 @@ const useTooltips = ({
   selectedAnnotations: ExtendedAnnotation[];
   selectAnnotation: (annotation: ExtendedAnnotation) => void;
 }) => {
-  const { isEnabled: isCanvasEnabled } = useFlag('UFV_CANVAS', {
-    forceRerender: true,
-    fallback: false,
-  });
+  const { isEnabled: isIndustryCanvasEnabled } = useFlag(
+    'UFV_INDUSTRY_CANVAS',
+    {
+      forceRerender: true,
+      fallback: false,
+    }
+  );
 
   const hoverTooltips = useHoverTooltips(
     isTooltipsEnabled,
@@ -42,7 +45,7 @@ const useTooltips = ({
   );
 
   const fileLinkTooltips = useFileLinkTooltips(
-    isCanvasEnabled,
+    isIndustryCanvasEnabled,
     fileId,
     annotations,
     selectedAnnotations
