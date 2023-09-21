@@ -1,14 +1,14 @@
-import React from 'react';
-import { shallow } from 'enzyme';
+import { render } from '@testing-library/react';
+
 import ErrorBoundary from './ErrorBoundary';
 
 describe('ErrorBoundary', () => {
   it('Renders without exploding', () => {
-    const wrapper = shallow(
+    const { baseElement } = render(
       <ErrorBoundary>
         <div />
       </ErrorBoundary>
     );
-    expect(wrapper).toHaveLength(1);
+    expect(baseElement).toBeTruthy();
   });
 });
