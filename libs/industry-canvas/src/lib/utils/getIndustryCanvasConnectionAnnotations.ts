@@ -1,4 +1,5 @@
 import { partition } from 'lodash';
+import uniqBy from 'lodash/uniqBy';
 
 import {
   getFileIdFromExtendedAnnotation,
@@ -10,10 +11,10 @@ import {
   Annotation,
   AnnotationType,
   ContainerType,
+  isConnectionPolylineAnnotation,
   LineType,
   PolylineAnnotation,
   RectangleAnnotation,
-  isConnectionPolylineAnnotation,
 } from '@cognite/unified-file-viewer';
 
 import { ExtendedAnnotation, isNotUndefined } from '@data-exploration-lib/core';
@@ -34,23 +35,29 @@ const resourceTypeToConnectionStroke = {
   asset: ASSET_CONNECTION_STROKE,
 };
 
-const getAnnotationToRegionConnection = ({
-  sourceAnnotation,
-  targetContainer,
+const getHighlightingRectangleId = ({
+  containerConfig,
   resourceType,
-  isSelfReferential = false,
 }: {
-  sourceAnnotation: ExtendedAnnotation;
-  targetContainer: IndustryCanvasContainerConfig;
+  containerConfig: IndustryCanvasContainerConfig;
   resourceType: 'file' | 'asset';
-  isSelfReferential?: boolean;
-}): Annotation[] => {
+}) => `highlighting-rectangle-${containerConfig.id}-${resourceType}`;
+
+const getHighlightingRectangle = ({
+  containerConfig,
+  resourceType,
+}: {
+  containerConfig: IndustryCanvasContainerConfig;
+  resourceType: 'file' | 'asset';
+}) => {
   const stroke = resourceTypeToConnectionStroke[resourceType];
-  const highlightingRectangleId = `highlighting-rectangle-${targetContainer.id}`;
   const highlightingRectangle: RectangleAnnotation = {
     type: AnnotationType.RECTANGLE,
-    id: highlightingRectangleId,
-    containerId: targetContainer.id,
+    id: getHighlightingRectangleId({
+      containerConfig,
+      resourceType,
+    }),
+    containerId: containerConfig.id,
     x: 0,
     y: 0,
     width: 1,
@@ -64,17 +71,36 @@ const getAnnotationToRegionConnection = ({
     },
   };
 
+  return highlightingRectangle;
+};
+
+const getAnnotationToRegionConnection = ({
+  sourceAnnotation,
+  targetContainer,
+  resourceType,
+  isSelfReferential = false,
+}: {
+  sourceAnnotation: ExtendedAnnotation;
+  targetContainer: IndustryCanvasContainerConfig;
+  resourceType: 'file' | 'asset';
+  isSelfReferential?: boolean;
+}): Annotation[] => {
+  const highlightingRectangle = getHighlightingRectangle({
+    containerConfig: targetContainer,
+    resourceType,
+  });
+
   if (isSelfReferential) {
     return [highlightingRectangle];
   }
 
   const connection: PolylineAnnotation = {
-    id: `connection-${sourceAnnotation.id}}`,
+    id: `connection-${sourceAnnotation.id}-${highlightingRectangle.id}`,
     type: AnnotationType.POLYLINE,
     fromId: sourceAnnotation.id,
-    toId: highlightingRectangleId,
+    toId: highlightingRectangle.id,
     style: {
-      stroke,
+      stroke: resourceTypeToConnectionStroke[resourceType],
       strokeWidth: CONNECTION_STROKE_WIDTH,
       opacity: CONNECTION_OPACITY,
     },
@@ -180,7 +206,7 @@ const getFileConnectionAnnotations = ({
       containerConfig.metadata.resourceId === targetFileId
   );
 
-  const connectionAnnotations = linkedContainers.flatMap<Annotation>(
+  return linkedContainers.flatMap<Annotation>(
     (targetContainer): Annotation[] => {
       const targetAnnotations = annotations.filter(
         (annotation) =>
@@ -219,8 +245,6 @@ const getFileConnectionAnnotations = ({
       );
     }
   );
-
-  return connectionAnnotations;
 };
 
 export const getIndustryCanvasConnectionAnnotations = ({
@@ -239,27 +263,30 @@ export const getIndustryCanvasConnectionAnnotations = ({
   shouldShowAllConnectionAnnotations: boolean;
 }): Annotation[] => {
   const alreadyConnectedAnnotations = new Set<string>();
-  const connectionAnnotations = annotations.flatMap((sourceAnnotation) => {
-    if (alreadyConnectedAnnotations.has(sourceAnnotation.id)) {
-      return EMPTY_CONNECTION_ANNOTATIONS;
-    }
 
-    const connectionAnnotations = getConnectionAnnotations({
-      sourceAnnotation: sourceAnnotation,
-      annotations,
-      containers,
-    });
+  const connectionAnnotations = uniqBy(
+    annotations.flatMap((sourceAnnotation) => {
+      if (alreadyConnectedAnnotations.has(sourceAnnotation.id)) {
+        return EMPTY_CONNECTION_ANNOTATIONS;
+      }
 
-    // Populate the set of already connected annotations to avoid duplicate connections
-    connectionAnnotations
-      .filter(isConnectionPolylineAnnotation)
-      .map((connectionAnnotation) => connectionAnnotation.toId)
-      .filter(isNotUndefined)
-      .forEach((id) => alreadyConnectedAnnotations.add(id));
+      const connectionAnnotations = getConnectionAnnotations({
+        sourceAnnotation,
+        annotations,
+        containers,
+      });
 
-    return connectionAnnotations;
-  });
+      // Populate the set of already connected annotations to avoid duplicate connections
+      connectionAnnotations
+        .filter(isConnectionPolylineAnnotation)
+        .map((connectionAnnotation) => connectionAnnotation.toId)
+        .filter(isNotUndefined)
+        .forEach((id) => alreadyConnectedAnnotations.add(id));
 
+      return connectionAnnotations;
+    }),
+    (annotation) => annotation.id
+  );
   if (shouldShowAllConnectionAnnotations) {
     return connectionAnnotations;
   }

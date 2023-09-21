@@ -17,6 +17,7 @@ import {
 import { useSDK } from '@cognite/sdk-provider';
 
 import { aggregateApi, post, listApi as _listApi, searchApi } from '../api';
+import { isInProjectScope } from '../helpers/capabilities';
 import {
   aggregateKey,
   byIdKey,
@@ -28,6 +29,7 @@ import {
   searchCacheKey,
   capabilitiesKey,
 } from '../keys';
+import { Capability } from '../types/capabilities';
 
 /**
  * @deprecated this was exported out of the package by mistake, will be removed
@@ -287,12 +289,16 @@ export const usePermissions = (
   capability: string,
   action?: string,
   scope?: any,
-  options?: UseQueryOptions<Capability[]>
+  options?: UseQueryOptions<Capability[]>,
+  projects?: string[]
 ) => {
   const { data, ...queryProps } = useCapabilities(flow, options);
   const capabilities =
     data?.filter(
-      (c) => c.acl === capability && (scope ? equal(c.scope, scope) : true)
+      (c) =>
+        c.acl === capability &&
+        isInProjectScope(c, projects) &&
+        (scope ? equal(c.scope, scope) : true)
     ) ?? [];
 
   return {
@@ -329,11 +335,6 @@ export const useGroup = (
   };
 };
 
-type Capability = {
-  acl: string;
-  actions: string[];
-  scope: any;
-};
 const groupCapabilities = async (sdk: CogniteClient) => {
   const groups = await sdk.groups.list();
   const capabilities: Capability[] = [];
@@ -380,6 +381,7 @@ const tokenCapability = async (sdk: CogniteClient): Promise<Capability[]> => {
       acl,
       actions,
       scope,
+      projectScope: c.projectScope,
     };
   });
 };

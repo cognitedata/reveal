@@ -683,6 +683,21 @@ const ContainerTooltip: React.FC<ContainerTooltipProps> = ({
               }
             >
               <Button
+                aria-label={
+                  ocrText.length === 0
+                    ? t(
+                        translationKeys.CONTAINER_TOOLTIP_SUMMARIZATION_UNAVAILABLE,
+                        {
+                          type: selectedContainer.type,
+                          defaultValue:
+                            'Summarization is unavailable for this {{type}} (Experimental)',
+                        }
+                      )
+                    : t(translationKeys.CONTAINER_TOOLTIP_SUMMARIZE, {
+                        type: selectedContainer.type,
+                        defaultValue: 'Summarize the {{type}} (Experimental)',
+                      })
+                }
                 icon={
                   isOcrDataLoading || isLoadingSummary
                     ? 'Loader'

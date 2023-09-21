@@ -13,6 +13,21 @@ const capabilities = [
       actions: ['WRITE'],
       scope: { datasetScope: { ids: [10101010] } },
     },
+    projectScope: { projects: ['test-project'] },
+  },
+  {
+    notificationsAcl: {
+      actions: ['READ', 'WRITE'],
+      scope: { all: {} },
+    },
+    projectScope: { allProjects: true },
+  },
+  {
+    monitoringAcl: {
+      actions: ['READ'],
+      scope: { all: {} },
+    },
+    projectScope: { projects: ['test-project-2'] },
   },
 ];
 const groupsResponse = [{ capabilities }];
@@ -140,9 +155,8 @@ describe('usePermissions', () => {
     await waitFor(() => expect(result.current.isSuccess).toBeTruthy(), {
       timeout: 10000,
     });
-    console.log(result.current);
 
-    // await waitFor(() => expect(result.current.data).toEqual(true));
+    expect(result.current.data).toBeTruthy();
   });
   test("Returns false if the user doesn't have the given capability for any scope (Legacy Login)", async () => {
     useSDK.mockReturnValue({
@@ -171,6 +185,85 @@ describe('usePermissions', () => {
         usePermissions('AZURE_AD', 'labelsAcl', 'WRITE', {
           datasetScope: { ids: [10101010] },
         }),
+      {
+        wrapper: renderWithReactQueryCacheProvider(),
+      }
+    );
+    await waitFor(() => expect(result.current.isSuccess).toBeTruthy());
+
+    expect(result.current.data).toEqual(true);
+  });
+  test('Returns true if the user has the given capability for test-project', async () => {
+    useSDK.mockReturnValue({
+      get: jest.fn().mockResolvedValue(tokenInspectResponse),
+    });
+
+    const { result } = renderHook(
+      () =>
+        usePermissions('AZURE_AD', 'labelsAcl', 'WRITE', undefined, undefined, [
+          'test-project',
+        ]),
+      {
+        wrapper: renderWithReactQueryCacheProvider(),
+      }
+    );
+    await waitFor(() => expect(result.current.isSuccess).toBeTruthy());
+
+    expect(result.current.data).toEqual(true);
+  });
+  test('Returns true if the user has the given capability for allProjects', async () => {
+    useSDK.mockReturnValue({
+      get: jest.fn().mockResolvedValue(tokenInspectResponse),
+    });
+
+    const { result } = renderHook(
+      () =>
+        usePermissions(
+          'AZURE_AD',
+          'notificationsAcl',
+          'READ',
+          undefined,
+          undefined,
+          ['not-mentioned-project']
+        ),
+      {
+        wrapper: renderWithReactQueryCacheProvider(),
+      }
+    );
+    await waitFor(() => expect(result.current.isSuccess).toBeTruthy());
+
+    expect(result.current.data).toEqual(true);
+  });
+  test('Returns false if the user does not have the capability for test-project', async () => {
+    useSDK.mockReturnValue({
+      get: jest.fn().mockResolvedValue(tokenInspectResponse),
+    });
+
+    const { result } = renderHook(
+      () =>
+        usePermissions(
+          'AZURE_AD',
+          'monitoringAcl',
+          'READ',
+          undefined,
+          undefined,
+          ['different-project']
+        ),
+      {
+        wrapper: renderWithReactQueryCacheProvider(),
+      }
+    );
+    await waitFor(() => expect(result.current.isSuccess).toBeTruthy());
+
+    expect(result.current.data).toEqual(false);
+  });
+  test('Returns true if the user has the capability for a particular project but we do not check for project scope', async () => {
+    useSDK.mockReturnValue({
+      get: jest.fn().mockResolvedValue(tokenInspectResponse),
+    });
+
+    const { result } = renderHook(
+      () => usePermissions('AZURE_AD', 'notificationsAcl', 'WRITE'),
       {
         wrapper: renderWithReactQueryCacheProvider(),
       }
