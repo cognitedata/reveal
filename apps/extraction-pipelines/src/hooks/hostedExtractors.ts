@@ -400,9 +400,13 @@ type MQTTJobStatus =
 
 type MQTTJobTargetStatus = 'running' | 'paused';
 
-type BaseMQTTJob = {
-  externalId: string;
+type MqttJobConfig = {
   topicFilter: string;
+};
+
+type BaseMQTTJob = {
+  config: MqttJobConfig;
+  externalId: string;
   format: MQTTFormat;
 };
 
@@ -645,7 +649,7 @@ export const useCreateMQTTJob = (
 
 type UpdateMQTTJobVariables = UpdateWithExternalId<
   ReadMQTTJob,
-  'targetStatus' | 'topicFilter'
+  'targetStatus' | 'config'
 >;
 
 export const useUpdateMQTTJob = (

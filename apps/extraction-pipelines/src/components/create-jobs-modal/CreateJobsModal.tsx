@@ -59,7 +59,7 @@ export const CreateJobsModal = ({
   const { data: destinations } = useMQTTDestinations();
 
   const sourceTopicFilters = source.jobs.map((job) => {
-    return job.topicFilter;
+    return job.config.topicFilter;
   });
 
   const { mutateAsync: createDestination } = useCreateMQTTDestination();
@@ -171,7 +171,9 @@ export const CreateJobsModal = ({
                   type: val.format ?? 'cognite',
                 },
                 sourceId: source.externalId,
-                topicFilter,
+                config: {
+                  topicFilter,
+                },
               });
             })
           );

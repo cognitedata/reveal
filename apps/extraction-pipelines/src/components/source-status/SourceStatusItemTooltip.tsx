@@ -83,7 +83,7 @@ const SourceStatusItemTooltip = ({
     const sourceJob = source.jobs.find((job) => {
       return job.externalId === log.jobExternalId;
     });
-    return sourceJob?.topicFilter;
+    return sourceJob?.config?.topicFilter;
   };
 
   return (

@@ -1,10 +1,10 @@
 import { render } from '@testing-library/react';
 
-import EmptyState from './EmptyState';
+import Spinner from './Spinner';
 
-describe('EmptyState', () => {
+describe('Spinner', () => {
   it('Renders without exploding', () => {
-    const { baseElement } = render(<EmptyState />);
+    const { baseElement } = render(<Spinner />);
     expect(baseElement).toBeTruthy();
   });
 });
