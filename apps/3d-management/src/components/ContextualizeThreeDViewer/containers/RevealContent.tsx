@@ -21,6 +21,11 @@ import {
   LowQualitySettings,
 } from '../../../pages/ContextualizeEditor/constants';
 import { ContextualizeThreeDViewerToolbar } from '../ContextualizeThreeDViewerToolbar';
+import {
+  setToolbarForCadModelsState,
+  setToolbarForPointCloudModelsState,
+  useContextualizeThreeDViewerStore,
+} from '../useContextualizeThreeDViewerStore';
 import { ColorTypeSelector } from '../utils/PointCloudColorPicker';
 import { PointSizeSlider } from '../utils/PointSizeSlider';
 
@@ -37,6 +42,12 @@ export const RevealContent = ({ modelId, revisionId }: RevealContentProps) => {
     CogniteCadModel | CognitePointCloudModel
   >();
   const [error, setError] = useState<Error>();
+
+  const { isToolbarForCadModels, isToolbarForPointCloudModels } =
+    useContextualizeThreeDViewerStore((state) => ({
+      isToolbarForCadModels: state.isToolbarForCadModels,
+      isToolbarForPointCloudModels: state.isToolbarForPointCloudModels,
+    }));
 
   const handleOnLoad = (_model: CogniteModel) => {
     if (!(viewer.cameraManager instanceof DefaultCameraManager)) {
@@ -85,12 +96,16 @@ export const RevealContent = ({ modelId, revisionId }: RevealContentProps) => {
         switch (modelType) {
           case 'cad': {
             viewer.addModel({ modelId, revisionId }).then(handleOnLoad);
+
+            setToolbarForCadModelsState();
             break;
           }
           case 'pointcloud': {
             viewer
               .addPointCloudModel({ modelId, revisionId })
               .then(handleOnLoad);
+
+            setToolbarForPointCloudModelsState();
             break;
           }
           default: {
@@ -115,20 +130,29 @@ export const RevealContent = ({ modelId, revisionId }: RevealContentProps) => {
   return (
     <>
       <StyledToolBar>
-        <RevealToolbar.FitModelsButton />
-        <ContextualizeThreeDViewerToolbar modelId={modelId} />
-        <RevealToolbar.SettingsButton
-          customSettingsContent={
-            <>
-              <ColorTypeSelector
-                onChange={handleColorChange}
-              ></ColorTypeSelector>
-              <PointSizeSlider viewer={viewer}></PointSizeSlider>
-            </>
-          }
-          lowQualitySettings={LowQualitySettings}
-          highQualitySettings={HighQualitySettings}
-        />
+        {isToolbarForCadModels && !isToolbarForPointCloudModels && (
+          <>
+            <RevealToolbar.FitModelsButton />
+          </>
+        )}
+        {!isToolbarForCadModels && isToolbarForPointCloudModels && (
+          <>
+            <RevealToolbar.FitModelsButton />
+            <ContextualizeThreeDViewerToolbar modelId={modelId} />
+            <RevealToolbar.SettingsButton
+              customSettingsContent={
+                <>
+                  <ColorTypeSelector
+                    onChange={handleColorChange}
+                  ></ColorTypeSelector>
+                  <PointSizeSlider viewer={viewer}></PointSizeSlider>
+                </>
+              }
+              lowQualitySettings={LowQualitySettings}
+              highQualitySettings={HighQualitySettings}
+            />
+          </>
+        )}
       </StyledToolBar>
     </>
   );

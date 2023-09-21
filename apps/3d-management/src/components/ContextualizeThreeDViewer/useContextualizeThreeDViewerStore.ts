@@ -25,11 +25,15 @@ type RootState = {
   tool: ToolType;
   shouldShowBoundingVolumes: boolean;
   modelId: number | null;
+  isToolbarForCadModels: boolean;
+  isToolbarForPointCloudModels: boolean;
 };
 
 const initialState: RootState = {
   pendingAnnotation: null,
   isResourceSelectorOpen: false,
+  isToolbarForCadModels: false,
+  isToolbarForPointCloudModels: false,
   threeDViewer: null,
   tool: ToolType.NONE,
   shouldShowBoundingVolumes: false,
@@ -75,6 +79,20 @@ export const setTool = (tool: ToolType) => {
     tool,
     pendingAnnotation: null,
     isResourceSelectorOpen: false,
+  }));
+};
+
+export const setToolbarForCadModelsState = () => {
+  useContextualizeThreeDViewerStore.setState((prevState) => ({
+    ...prevState,
+    isToolbarForCadModels: true,
+  }));
+};
+
+export const setToolbarForPointCloudModelsState = () => {
+  useContextualizeThreeDViewerStore.setState((prevState) => ({
+    ...prevState,
+    isToolbarForPointCloudModels: true,
   }));
 };
 
