@@ -3,14 +3,10 @@ import { useParams } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import {
-  ResourceTypeTabs,
-  ThreeDSearchContextProvider,
-} from '@data-exploration/containers';
 import { Modal, Steps, message } from 'antd';
 
 import { getFlow } from '@cognite/cdf-sdk-singleton';
-import { Button, Flex, Input, Tabs } from '@cognite/cogs.js';
+import { Button, Flex, Input } from '@cognite/cogs.js';
 import { Model3D } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
@@ -27,13 +23,8 @@ import { APP_TITLE, DEFAULT_MARGIN_V, getContainer } from '../../utils';
 import FileUploader from './components/FileUploader';
 import ModelRevisions from './components/ModelRevisions/ModelRevisions';
 import ModelsTable from './components/ModelsTable/ModelsTable';
-import { ThreeSixtySearchResults } from './components/ModelsTable/ThreeSixtySearchResults';
-import { ResourceType } from './types';
-const { Step } = Steps;
 
-const TabsContainer = styled.div`
-  flex: 0 0 auto;
-`;
+const { Step } = Steps;
 
 const TableOperations = styled.div`
   margin: 20px 0 16px 0;
@@ -65,10 +56,6 @@ const ButtonRow = styled.div`
   }
 `;
 
-const AllModelsWrapper = styled.div`
-  padding: 24px 40px;
-`;
-
 const NoAccessPage = lazy(() => import('../NoAccessPage'));
 
 export const AllModels = () => {
@@ -77,8 +64,6 @@ export const AllModels = () => {
   const props = useParams();
 
   const sdk = useSDK();
-  const [currentResourceType, setCurrentResourceType] =
-    useState<ResourceType>('3D models');
 
   const { mutate: createModel } = useCreateModelMutation();
   const { mutate: createRevision } = useCreateRevisionMutation();
@@ -217,46 +202,30 @@ export const AllModels = () => {
 
   return (
     <AllModelsWrapper>
-      <TabsContainer>
-        <ResourceTypeTabs
-          currentResourceType={currentResourceType}
-          setCurrentResourceType={(tab) => {
-            setCurrentResourceType(tab as ResourceType);
-          }}
-        >
-          <Tabs.Tab tabKey="3D models" label="3D models">
-            <PageHeader
-              title={APP_TITLE}
-              breadcrumbs={[{ title: APP_TITLE, path: '/3d-models' }]}
-              help="https://docs.cognite.com/cdf/3d/"
-              rightItem={
-                <TableOperations>
-                  <PermissioningHintWrapper hasPermission={showAddModelButton}>
-                    <Button
-                      type="primary"
-                      disabled={!showAddModelButton}
-                      onClick={() => setIsModalVisible(true)}
-                    >
-                      Add model
-                    </Button>
-                  </PermissioningHintWrapper>
-                </TableOperations>
-              }
-            />
-            <ModelsTable //TODO: Make the 3D models table look nicer. Tracked by: https://cognitedata.atlassian.net/browse/BND3D-2226
-              models={models ?? []}
-              expandedRowRender={expandedRowRender}
-              refresh={modelsQuery.refetch}
-            />
-          </Tabs.Tab>
-          <Tabs.Tab tabKey="360 images" label="360 images">
-            <ThreeDSearchContextProvider>
-              <ThreeSixtySearchResults />
-            </ThreeDSearchContextProvider>
-          </Tabs.Tab>
-        </ResourceTypeTabs>
-      </TabsContainer>
+      <PageHeader
+        title={APP_TITLE}
+        breadcrumbs={[{ title: APP_TITLE, path: '/3d-models' }]}
+        help="https://docs.cognite.com/cdf/3d/"
+        rightItem={
+          <TableOperations>
+            <PermissioningHintWrapper hasPermission={showAddModelButton}>
+              <Button
+                type="primary"
+                disabled={!showAddModelButton}
+                onClick={() => setIsModalVisible(true)}
+              >
+                Add model
+              </Button>
+            </PermissioningHintWrapper>
+          </TableOperations>
+        }
+      />
 
+      <ModelsTable
+        models={models || []}
+        expandedRowRender={expandedRowRender}
+        refresh={modelsQuery.refetch}
+      />
       <Modal
         title="Insert New Model"
         open={isModalVisible}
@@ -276,3 +245,7 @@ export const AllModels = () => {
     </AllModelsWrapper>
   );
 };
+
+const AllModelsWrapper = styled.div`
+  padding: 24px 40px;
+`;

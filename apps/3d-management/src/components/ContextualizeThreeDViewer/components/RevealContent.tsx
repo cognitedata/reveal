@@ -20,9 +20,10 @@ import {
   HighQualitySettings,
   LowQualitySettings,
 } from '../../../pages/ContextualizeEditor/constants';
-import { ContextualizeThreeDViewerToolbar } from '../ContextualizeThreeDViewerToolbar';
-import { ColorTypeSelector } from '../utils/PointCloudColorPicker';
-import { PointSizeSlider } from '../utils/PointSizeSlider';
+
+import { ContextualizeThreeDViewerToolbar } from './ContextualizeThreeDViewerToolbar';
+import { ColorTypeSelector } from './PointCloudColorPicker';
+import { PointSizeSlider } from './PointSizeSlider';
 
 interface RevealContentProps {
   modelId: number;
@@ -72,10 +73,8 @@ export const RevealContent = ({ modelId, revisionId }: RevealContentProps) => {
         <RevealToolbar.SettingsButton
           customSettingsContent={
             <>
-              <ColorTypeSelector
-                onChange={handleColorChange}
-              ></ColorTypeSelector>
-              <PointSizeSlider viewer={viewer}></PointSizeSlider>
+              <ColorTypeSelector onChange={handleColorChange} />
+              <PointSizeSlider viewer={viewer} />
             </>
           }
           lowQualitySettings={LowQualitySettings}
