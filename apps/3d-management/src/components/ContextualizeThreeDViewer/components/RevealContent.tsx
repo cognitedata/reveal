@@ -8,7 +8,6 @@ import {
   CogniteModel,
   PointColorType,
   CognitePointCloudModel,
-  CogniteCadModel,
 } from '@cognite/reveal';
 import {
   useReveal,
@@ -21,6 +20,7 @@ import {
   LowQualitySettings,
 } from '../../../pages/ContextualizeEditor/constants';
 import {
+  setModel,
   setThreeDViewer,
   setToolbarForCadModelsState,
   setToolbarForPointCloudModelsState,
@@ -39,10 +39,6 @@ interface RevealContentProps {
 export const RevealContent = ({ modelId, revisionId }: RevealContentProps) => {
   const viewer = useReveal();
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [model, setModel] = useState<
-    CogniteCadModel | CognitePointCloudModel
-  >();
   const [error, setError] = useState<Error>();
 
   const { isToolbarForCadModels, isToolbarForPointCloudModels } =

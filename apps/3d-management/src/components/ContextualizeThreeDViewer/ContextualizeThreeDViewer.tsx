@@ -31,8 +31,6 @@ import {
   useContextualizeThreeDViewerStore,
 } from './useContextualizeThreeDViewerStore';
 import { createCdfThreeDAnnotation } from './utils/createCdfThreeDAnnotation';
-import { getCogniteCadModel } from './utils/getCogniteCadModel';
-import { getCognitePointCloudModel } from './utils/getCognitePointCloudModel';
 
 type ContextualizeThreeDViewerProps = {
   modelId: number;
@@ -45,14 +43,12 @@ export const ContextualizeThreeDViewer = ({
 }: ContextualizeThreeDViewerProps) => {
   const sdk = useSDK();
 
-  // let model: CogniteCadModel | CognitePointCloudModel | undefined;
-  const model = useRef<CogniteCadModel | CognitePointCloudModel | undefined>();
-
-  const { isResourceSelectorOpen, pendingAnnotation, viewer } =
+  const { isResourceSelectorOpen, pendingAnnotation, viewer, model } =
     useContextualizeThreeDViewerStore((state) => ({
       isResourceSelectorOpen: state.isResourceSelectorOpen,
       pendingAnnotation: state.pendingAnnotation,
       viewer: state.threeDViewer,
+      model: state.model,
     }));
 
   // use effects
@@ -62,57 +58,32 @@ export const ContextualizeThreeDViewer = ({
 
   useEffect(() => {
     (async () => {
-      if (viewer === null || model.current == null) {
-        return;
-      }
+      if (!model || !(model instanceof CogniteCadModel)) return;
 
-      const modelType = await viewer.determineModelType(modelId, revisionId);
-      switch (modelType) {
-        case 'cad': {
-          model.current = getCogniteCadModel({
-            modelId,
-            viewer: viewer,
-          });
-          const cadModel = model.current as CogniteCadModel;
-
-          const selectedNodes = new TreeIndexNodeCollection();
-          cadModel.assignStyledNodeCollection(
-            selectedNodes,
-            DefaultNodeAppearance.Highlighted
+      const selectedNodes = new TreeIndexNodeCollection();
+      model.assignStyledNodeCollection(
+        selectedNodes,
+        DefaultNodeAppearance.Highlighted
+      );
+      viewer?.on('click', async (event) => {
+        const intersection = (await viewer.getIntersectionFromPixel(
+          event.offsetX,
+          event.offsetY
+        )) as CadIntersection;
+        if (intersection) {
+          const nodeId = await model.mapTreeIndexToNodeId(
+            intersection.treeIndex
           );
-
-          viewer.on('click', async (event) => {
-            const intersection = (await viewer.getIntersectionFromPixel(
-              event.offsetX,
-              event.offsetY
-            )) as CadIntersection;
-            if (intersection) {
-              const nodeId = await cadModel.mapTreeIndexToNodeId(
-                intersection.treeIndex
-              );
-              const toPresent = {
-                treeIndex: intersection.treeIndex,
-                nodeId,
-                point: intersection.point,
-              };
-              selectedNodes.updateSet(new IndexSet([intersection.treeIndex]));
-            }
-          });
-          break;
+          const toPresent = {
+            treeIndex: intersection.treeIndex,
+            nodeId,
+            point: intersection.point,
+          };
+          selectedNodes.updateSet(new IndexSet([intersection.treeIndex]));
         }
-        case 'pointcloud': {
-          model.current = getCognitePointCloudModel({
-            modelId,
-            viewer: viewer,
-          });
-          break;
-        }
-        default: {
-          throw new Error(`Unsupported model type ${modelType}`);
-        }
-      }
+      });
     })();
-  }, [modelId, revisionId, viewer]);
+  }, [viewer, model]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -136,13 +107,13 @@ export const ContextualizeThreeDViewer = ({
     // Tracked by: https://cognitedata.atlassian.net/browse/BND3D-2168
     if (
       viewer == null ||
-      model.current == null ||
-      !(model.current instanceof CognitePointCloudModel) ||
+      model == null ||
+      !(model instanceof CognitePointCloudModel) ||
       pendingAnnotation == null
     ) {
       return;
     }
-    const pointCloudModel = model.current;
+    const pointCloudModel = model;
 
     createCdfThreeDAnnotation({
       position: pendingAnnotation.position,
@@ -180,10 +151,10 @@ export const ContextualizeThreeDViewer = ({
             <RevealContent modelId={modelId} revisionId={revisionId} />
           </RevealContainer>
         </ThreeDViewerStyled>
-        {viewer && model.current && (
+        {viewer && model && (
           <ThreeDViewerSidebar
             viewer={viewer}
-            model={model.current}
+            model={model}
             nodesClickable={true}
           />
         )}

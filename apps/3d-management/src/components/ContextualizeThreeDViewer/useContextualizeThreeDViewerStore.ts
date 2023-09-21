@@ -1,6 +1,10 @@
 import { create } from 'zustand';
 
-import { Cognite3DViewer } from '@cognite/reveal';
+import {
+  Cognite3DViewer,
+  CogniteCadModel,
+  CognitePointCloudModel,
+} from '@cognite/reveal';
 export type ThreeDPosition = {
   x: number;
   y: number;
@@ -30,6 +34,7 @@ type RootState = {
   modelId: number | null;
   isToolbarForCadModels: boolean;
   isToolbarForPointCloudModels: boolean;
+  model: CogniteCadModel | CognitePointCloudModel | undefined;
 };
 
 const initialState: RootState = {
@@ -42,6 +47,7 @@ const initialState: RootState = {
   tool: ToolType.NONE,
   shouldShowBoundingVolumes: false,
   modelId: null,
+  model: undefined,
 };
 
 export const useContextualizeThreeDViewerStore = create<RootState>(
@@ -125,5 +131,12 @@ export const setModelId = (modelId: number) => {
   useContextualizeThreeDViewerStore.setState((prevState) => ({
     ...prevState,
     modelId,
+  }));
+};
+
+export const setModel = (model: CogniteCadModel | CognitePointCloudModel) => {
+  useContextualizeThreeDViewerStore.setState((prevState) => ({
+    ...prevState,
+    model,
   }));
 };
