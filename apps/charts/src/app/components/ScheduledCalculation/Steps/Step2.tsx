@@ -16,6 +16,7 @@ const defaultTranslations = makeDefaultTranslations(
   'Cancel',
   'Start schedule',
   'Name',
+  'Dataset',
   'Run every',
   'Description',
   'Unit',
@@ -88,7 +89,15 @@ export const Step2Body = ({ workflowId }: { workflowId: string }) => {
           name="description"
           title={t.Description}
         />
-        <FormInputWithController type="unit" name="unit" title={t.Unit} />
+        <div style={{ marginBottom: '1rem' }}>
+          <FormInputWithController type="unit" name="unit" title={t.Unit} />
+        </div>
+
+        <FormInputWithController
+          type="dataset"
+          name="dataset"
+          title={t.Dataset}
+        />
         {isDirty && !isValid && (
           <FormError<ScheduleCalculationFieldValues> errors={errors} />
         )}

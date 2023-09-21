@@ -1,4 +1,5 @@
 import { OptionType } from '@cognite/cogs.js';
+import { DataSet } from '@cognite/sdk';
 
 export type ScheduleCalculationFieldValues = {
   name: string;
@@ -9,6 +10,7 @@ export type ScheduleCalculationFieldValues = {
   periodType: OptionType<string>;
   unit?: OptionType<string>;
   description?: string;
+  dataset?: DataSet;
 };
 
 export type ScheduledCalculationModalProps = {
