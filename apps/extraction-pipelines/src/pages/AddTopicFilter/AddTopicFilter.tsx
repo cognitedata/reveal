@@ -74,7 +74,11 @@ export const AddTopicFilter = () => {
     const errors: FormikErrors<CreateJobsFormValues> = {};
 
     if (!values.topicFilters || values.topicFilters.length === 0) {
-      errors.topicFilters = t('validation-error-field-required');
+      errors.topicFilters = t(
+        tempTopicFilterInput
+          ? 'validation-error-topic-filter-click-add-only'
+          : 'validation-error-topic-filter-required'
+      );
     }
 
     if (values.destinationOption === 'use-existing') {
