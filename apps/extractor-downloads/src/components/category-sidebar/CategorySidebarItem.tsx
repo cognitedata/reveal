@@ -51,7 +51,7 @@ const CategorySidebarItem = ({
     >
       <span>{title}</span>
       {count !== undefined && (
-        <Chip label={`${count}`} selectable size="x-small" />
+        <Chip label={`${count}`} selectable size="x-small" hideTooltip />
       )}
     </StyledButton>
   );
