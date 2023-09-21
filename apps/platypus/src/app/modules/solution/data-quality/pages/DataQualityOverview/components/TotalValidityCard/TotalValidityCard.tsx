@@ -63,7 +63,7 @@ export const TotalValidityCard = () => {
       );
 
     return (
-      <Flex direction="column" gap={8}>
+      <Flex direction="column">
         <ValidationStatistics dataSourceId={dataSource.externalId} />
         <ValidationGraph
           dataSourceId={dataSource.externalId}
@@ -90,7 +90,7 @@ const Card = styled.div`
   border-radius: 6px;
   box-shadow: var(--cogs-elevation--surface--interactive);
   overflow: auto;
-  padding: 0.5rem 1.5rem 2rem 1.5rem;
+  padding: 0.5rem 1.5rem 0.5rem 1.5rem;
   width: min(50vw, 600px);
 
   .cogs-overline-3 {

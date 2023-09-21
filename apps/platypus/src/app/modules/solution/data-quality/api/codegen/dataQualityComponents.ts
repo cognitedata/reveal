@@ -1160,6 +1160,161 @@ export const useDataSourceValidation = (
   );
 };
 
+export type ListDataScopesPathParams = {
+  /**
+   * The project name.
+   *
+   * @example publicdata
+   */
+  project?: string;
+  /**
+   * The external id of the data source.
+   */
+  dataSourceId?: string;
+};
+
+export type ListDataScopesQueryParams = {
+  /**
+   * Cursor for paging through results.
+   *
+   * @example 4zj0Vy2fo0NtNMb229mI9r1V3YG5NBL752kQz1cKtwo
+   */
+  cursor?: string;
+};
+
+export type ListDataScopesError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: Responses.ErrorResponse;
+}>;
+
+export type ListDataScopesVariables = {
+  pathParams?: ListDataScopesPathParams;
+  queryParams?: ListDataScopesQueryParams;
+} & DataQualityContext['fetcherOptions'];
+
+/**
+ * List data scopes defined in the current data source.
+ */
+export const fetchListDataScopes = (
+  variables: ListDataScopesVariables,
+  signal?: AbortSignal
+) =>
+  dataQualityFetch<
+    Responses.DataScopeListResponseWithCursor,
+    ListDataScopesError,
+    undefined,
+    {},
+    ListDataScopesQueryParams,
+    ListDataScopesPathParams
+  >({
+    url: '/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/datascopes',
+    method: 'get',
+    ...variables,
+    signal,
+  });
+
+/**
+ * List data scopes defined in the current data source.
+ */
+export const useListDataScopes = <
+  TData = Responses.DataScopeListResponseWithCursor
+>(
+  variables: ListDataScopesVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<
+      Responses.DataScopeListResponseWithCursor,
+      ListDataScopesError,
+      TData
+    >,
+    'queryKey' | 'queryFn'
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } =
+    useDataQualityContext(options);
+  return reactQuery.useQuery<
+    Responses.DataScopeListResponseWithCursor,
+    ListDataScopesError,
+    TData
+  >(
+    queryKeyFn({
+      path: '/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/datascopes',
+      operationId: 'listDataScopes',
+      variables,
+    }),
+    ({ signal }) =>
+      fetchListDataScopes({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions,
+    }
+  );
+};
+
+export type ListByIdsDataScopesPathParams = {
+  /**
+   * The project name.
+   *
+   * @example publicdata
+   */
+  project?: string;
+};
+
+export type ListByIdsDataScopesError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: Responses.ErrorResponse;
+}>;
+
+export type ListByIdsDataScopesVariables = {
+  body: Schemas.DataScopeListIdsRequest;
+  pathParams?: ListByIdsDataScopesPathParams;
+} & DataQualityContext['fetcherOptions'];
+
+/**
+ * Retrieve up to 100 data scopes by specifying their ids.
+ */
+export const fetchListByIdsDataScopes = (
+  variables: ListByIdsDataScopesVariables,
+  signal?: AbortSignal
+) =>
+  dataQualityFetch<
+    Responses.DataScopeListResponse,
+    ListByIdsDataScopesError,
+    Schemas.DataScopeListIdsRequest,
+    {},
+    {},
+    ListByIdsDataScopesPathParams
+  >({
+    url: '/api/v1/projects/{project}/data-validation/datasources/{dataSource}/datascopes/byids',
+    method: 'post',
+    ...variables,
+    signal,
+  });
+
+/**
+ * Retrieve up to 100 data scopes by specifying their ids.
+ */
+export const useListByIdsDataScopes = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      Responses.DataScopeListResponse,
+      ListByIdsDataScopesError,
+      ListByIdsDataScopesVariables
+    >,
+    'mutationFn'
+  >
+) => {
+  const { fetcherOptions } = useDataQualityContext();
+  return reactQuery.useMutation<
+    Responses.DataScopeListResponse,
+    ListByIdsDataScopesError,
+    ListByIdsDataScopesVariables
+  >(
+    (variables: ListByIdsDataScopesVariables) =>
+      fetchListByIdsDataScopes({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
 export type QueryOperation =
   | {
       path: '/api/v1/projects/{project}/data-validation/datasources';
@@ -1185,4 +1340,9 @@ export type QueryOperation =
       path: '/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/rules';
       operationId: 'listAllRules';
       variables: ListAllRulesVariables;
+    }
+  | {
+      path: '/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/datascopes';
+      operationId: 'listDataScopes';
+      variables: ListDataScopesVariables;
     };

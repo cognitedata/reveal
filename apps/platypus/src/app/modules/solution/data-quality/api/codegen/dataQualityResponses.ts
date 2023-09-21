@@ -59,3 +59,20 @@ export type RuleListIdsResponse = {
    */
   items: Schemas.ExternalId[];
 };
+
+export type DataScopeListResponse = {
+  items: Schemas.DataScopeDto[];
+};
+
+export type DataScopeListResponseWithCursor = {
+  items: Schemas.DataScopeDto[];
+  nextCursor?: Schemas.NextCursorV3;
+};
+
+export type DataScopeListIdsResponse = {
+  /**
+   * @minItems 1
+   * @maxItems 100
+   */
+  items: Schemas.ExternalId[];
+};

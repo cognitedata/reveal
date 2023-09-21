@@ -493,3 +493,49 @@ export type RuleListIdsRequest = {
 };
 
 export type DataSourceValidationRequest = Record<string, any>;
+
+export type DataScopeDto = {
+  createdTime: EpochTimestamp;
+  /**
+   * The external-id of the data source
+   *
+   * @pattern ^[a-zA-Z]([a-zA-Z0-9_]{0,253}[a-zA-Z0-9])?$
+   * @minLength 1
+   * @maxLength 255
+   */
+  dataSourceId: ExternalId;
+  /**
+   * The selected data type from the data model
+   */
+  dataType: string;
+  /**
+   * The external-id of the ruleset
+   *
+   * @pattern ^[a-zA-Z]([a-zA-Z0-9_]{0,253}[a-zA-Z0-9])?$
+   * @minLength 1
+   * @maxLength 255
+   */
+  externalId: ExternalId;
+  /**
+   * Filters used during validation
+   */
+  filters: string;
+  lastUpdatedTime: EpochTimestamp;
+  /**
+   * The name of the data scope
+   */
+  name: string;
+};
+
+export type DataScopeListIdsRequest = {
+  /**
+   * @minItems 1
+   * @maxItems 100
+   */
+  items: {
+    /**
+     * Ids from data scopes
+     */
+    externalId: ExternalId;
+  }[];
+};
