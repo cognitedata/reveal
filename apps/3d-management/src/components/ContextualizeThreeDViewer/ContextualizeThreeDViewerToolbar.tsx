@@ -8,7 +8,6 @@ import {
   Cognite3DViewer,
   CognitePointCloudModel,
 } from '@cognite/reveal';
-import { useReveal } from '@cognite/reveal-react-components';
 import { CogniteClient } from '@cognite/sdk/dist/src';
 import { useSDK } from '@cognite/sdk-provider';
 
@@ -17,7 +16,6 @@ import {
   ToolType,
   onOpenResourceSelector,
   setPendingAnnotation,
-  setThreeDViewer,
   setTool,
   toggleShouldShowBoundingVolumes,
   useContextualizeThreeDViewerStore,
@@ -70,25 +68,22 @@ export function ContextualizeThreeDViewerToolbar({
   modelId,
 }: ContextualizeThreeDViewerToolbar): ReactElement {
   const sdk = useSDK();
-  const viewer = useReveal();
 
-  const { pendingAnnotation, tool, shouldShowBoundingVolumes } =
+  const { pendingAnnotation, tool, shouldShowBoundingVolumes, viewer } =
     useContextualizeThreeDViewerStore((state) => ({
       pendingAnnotation: state.pendingAnnotation,
       tool: state.tool,
       shouldShowBoundingVolumes: state.shouldShowBoundingVolumes,
+      viewer: state.threeDViewer,
     }));
 
   // NOTE: This isn't the cleanest place to put this (it feels quite arbitrary that it is in the ToolBar file), but it's fine for now.
   //       The problem here is that the RevealContainer provider is added in the ContextualizeThreeDViewer component, which is a parent of this component.
   //       The most logical place to put the following useEffect would be in the ContextualizeThreeDViewer component, but we don't have access to the viewer there.
-  useEffect(() => {
-    setThreeDViewer(viewer);
-  }, [viewer]);
 
   useEffect(() => {
     const onClick = async (event) => {
-      const intersection = await viewer.getIntersectionFromPixel(
+      const intersection = await viewer?.getIntersectionFromPixel(
         event.offsetX,
         event.offsetY
       );
@@ -96,24 +91,26 @@ export function ContextualizeThreeDViewerToolbar({
         return;
       }
 
-      const cubeAnnotation: CubeAnnotation = {
-        position: {
-          x: intersection.point.x,
-          y: intersection.point.y,
-          z: intersection.point.z,
-        },
-        size: {
-          x: 2,
-          y: 2,
-          z: 2,
-        },
-      };
-      setPendingAnnotation(cubeAnnotation);
-      onOpenResourceSelector();
+      if (intersection) {
+        const cubeAnnotation: CubeAnnotation = {
+          position: {
+            x: intersection.point.x,
+            y: intersection.point.y,
+            z: intersection.point.z,
+          },
+          size: {
+            x: 2,
+            y: 2,
+            z: 2,
+          },
+        };
+        setPendingAnnotation(cubeAnnotation);
+        onOpenResourceSelector();
+      }
     };
-    viewer.on('click', onClick);
+    viewer?.on('click', onClick);
     return () => {
-      viewer.off('click', onClick);
+      viewer?.off('click', onClick);
     };
   }, [viewer, modelId, pendingAnnotation, tool]);
 
@@ -127,6 +124,8 @@ export function ContextualizeThreeDViewerToolbar({
   };
 
   const handleDeleteAnnotationToolClick = () => {
+    if (!viewer) return;
+
     const pointCloudModel = getCognitePointCloudModel({
       modelId,
       viewer,

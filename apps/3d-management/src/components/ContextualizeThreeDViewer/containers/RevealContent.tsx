@@ -22,6 +22,7 @@ import {
 } from '../../../pages/ContextualizeEditor/constants';
 import { ContextualizeThreeDViewerToolbar } from '../ContextualizeThreeDViewerToolbar';
 import {
+  setThreeDViewer,
   setToolbarForCadModelsState,
   setToolbarForPointCloudModelsState,
   useContextualizeThreeDViewerStore,
@@ -50,7 +51,7 @@ export const RevealContent = ({ modelId, revisionId }: RevealContentProps) => {
     }));
 
   const handleOnLoad = (_model: CogniteModel) => {
-    if (!(viewer.cameraManager instanceof DefaultCameraManager)) {
+    if (!(viewer?.cameraManager instanceof DefaultCameraManager)) {
       console.warn(
         'Camera manager is not DefaultCameraManager, so click to change camera target will not work.'
       );
@@ -77,13 +78,19 @@ export const RevealContent = ({ modelId, revisionId }: RevealContentProps) => {
 
   const handleColorChange = useCallback(
     (colorType: PointColorType) => {
-      viewer.models.forEach((_model) => {
+      viewer?.models.forEach((_model) => {
         if (!(_model instanceof CognitePointCloudModel)) return;
         _model.pointColorType = colorType;
       });
     },
     [viewer]
   );
+
+  useEffect(() => {
+    if (viewer) {
+      setThreeDViewer(viewer);
+    }
+  }, [viewer]);
 
   // check the model type and load it
   useEffect(() => {
@@ -130,12 +137,12 @@ export const RevealContent = ({ modelId, revisionId }: RevealContentProps) => {
   return (
     <>
       <StyledToolBar>
-        {isToolbarForCadModels && !isToolbarForPointCloudModels && (
+        {isToolbarForCadModels && !isToolbarForPointCloudModels && viewer && (
           <>
             <RevealToolbar.FitModelsButton />
           </>
         )}
-        {!isToolbarForCadModels && isToolbarForPointCloudModels && (
+        {!isToolbarForCadModels && isToolbarForPointCloudModels && viewer && (
           <>
             <RevealToolbar.FitModelsButton />
             <ContextualizeThreeDViewerToolbar modelId={modelId} />

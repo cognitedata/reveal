@@ -84,10 +84,10 @@ export const setPendingAnnotation = (annotation: CubeAnnotation) => {
   }));
 };
 
-export const setThreeDViewer = (model: Cognite3DViewer) => {
+export const setThreeDViewer = (viewer: Cognite3DViewer) => {
   useContextualizeThreeDViewerStore.setState((prevState) => ({
     ...prevState,
-    threeDViewer: model,
+    threeDViewer: viewer,
   }));
 };
 

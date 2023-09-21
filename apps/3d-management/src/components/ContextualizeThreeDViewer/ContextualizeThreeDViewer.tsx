@@ -7,7 +7,14 @@ import { Splitter } from '@data-exploration/components';
 import { ResourceSelector } from '@data-exploration/containers';
 import { BoxGeometry, Color, Mesh, MeshBasicMaterial } from 'three';
 
-import { CogniteCadModel, CognitePointCloudModel } from '@cognite/reveal';
+import {
+  CadIntersection,
+  CogniteCadModel,
+  CognitePointCloudModel,
+  DefaultNodeAppearance,
+  IndexSet,
+  TreeIndexNodeCollection,
+} from '@cognite/reveal';
 import { RevealContainer } from '@cognite/reveal-react-components';
 import { useSDK } from '@cognite/sdk-provider';
 
@@ -37,14 +44,15 @@ export const ContextualizeThreeDViewer = ({
   revisionId,
 }: ContextualizeThreeDViewerProps) => {
   const sdk = useSDK();
+
   // let model: CogniteCadModel | CognitePointCloudModel | undefined;
   const model = useRef<CogniteCadModel | CognitePointCloudModel | undefined>();
 
-  const { isResourceSelectorOpen, pendingAnnotation, threeDViewer } =
+  const { isResourceSelectorOpen, pendingAnnotation, viewer } =
     useContextualizeThreeDViewerStore((state) => ({
       isResourceSelectorOpen: state.isResourceSelectorOpen,
       pendingAnnotation: state.pendingAnnotation,
-      threeDViewer: state.threeDViewer,
+      viewer: state.threeDViewer,
     }));
 
   // use effects
@@ -54,26 +62,48 @@ export const ContextualizeThreeDViewer = ({
 
   useEffect(() => {
     (async () => {
-      if (threeDViewer === null || model.current == null) {
+      if (viewer === null || model.current == null) {
         return;
       }
 
-      const modelType = await threeDViewer.determineModelType(
-        modelId,
-        revisionId
-      );
+      const modelType = await viewer.determineModelType(modelId, revisionId);
       switch (modelType) {
         case 'cad': {
           model.current = getCogniteCadModel({
             modelId,
-            viewer: threeDViewer,
+            viewer: viewer,
+          });
+          const cadModel = model.current as CogniteCadModel;
+
+          const selectedNodes = new TreeIndexNodeCollection();
+          cadModel.assignStyledNodeCollection(
+            selectedNodes,
+            DefaultNodeAppearance.Highlighted
+          );
+
+          viewer.on('click', async (event) => {
+            const intersection = (await viewer.getIntersectionFromPixel(
+              event.offsetX,
+              event.offsetY
+            )) as CadIntersection;
+            if (intersection) {
+              const nodeId = await cadModel.mapTreeIndexToNodeId(
+                intersection.treeIndex
+              );
+              const toPresent = {
+                treeIndex: intersection.treeIndex,
+                nodeId,
+                point: intersection.point,
+              };
+              selectedNodes.updateSet(new IndexSet([intersection.treeIndex]));
+            }
           });
           break;
         }
         case 'pointcloud': {
           model.current = getCognitePointCloudModel({
             modelId,
-            viewer: threeDViewer,
+            viewer: viewer,
           });
           break;
         }
@@ -82,7 +112,7 @@ export const ContextualizeThreeDViewer = ({
         }
       }
     })();
-  }, [modelId, revisionId, threeDViewer]);
+  }, [modelId, revisionId, viewer]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -105,7 +135,7 @@ export const ContextualizeThreeDViewer = ({
     // TODO: All of these console.warn should be presented nicely to the user.
     // Tracked by: https://cognitedata.atlassian.net/browse/BND3D-2168
     if (
-      threeDViewer == null ||
+      viewer == null ||
       model.current == null ||
       !(model.current instanceof CognitePointCloudModel) ||
       pendingAnnotation == null
@@ -139,7 +169,7 @@ export const ContextualizeThreeDViewer = ({
       pendingAnnotation.position.y,
       pendingAnnotation.position.z
     );
-    threeDViewer.addObject3D(newSavedAnnotation);
+    viewer.addObject3D(newSavedAnnotation);
   };
 
   return (
@@ -150,9 +180,9 @@ export const ContextualizeThreeDViewer = ({
             <RevealContent modelId={modelId} revisionId={revisionId} />
           </RevealContainer>
         </ThreeDViewerStyled>
-        {threeDViewer && model.current && (
+        {viewer && model.current && (
           <ThreeDViewerSidebar
-            viewer={threeDViewer}
+            viewer={viewer}
             model={model.current}
             nodesClickable={true}
           />
