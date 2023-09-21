@@ -2,23 +2,21 @@ import React from 'react';
 
 import { Loader } from '@data-exploration/components';
 import { SequenceInfo } from '@data-exploration/containers';
-import {
-  ErrorFeedback,
-  InfoGrid,
-  InfoCell,
-  SpacedRow,
-  ResourceIcons,
-} from '@data-exploration-components/components';
-import { useSelectionButton } from '@data-exploration-components/hooks/useSelection';
-import {
-  SmallPreviewProps,
-  SelectableItemProps,
-} from '@data-exploration-components/types';
 import noop from 'lodash/noop';
 
 import { Title, Body } from '@cognite/cogs.js';
 import { CogniteError, Sequence } from '@cognite/sdk';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
+
+import {
+  ErrorFeedback,
+  InfoCell,
+  InfoGrid,
+  ResourceIcons,
+  SpacedRow,
+} from '../../../components';
+import { useSelectionButton } from '../../../hooks';
+import { SelectableItemProps, SmallPreviewProps } from '../../../types';
 
 export const SequenceSmallPreview = ({
   sequenceId,

@@ -2,8 +2,6 @@ import React, { useEffect, useMemo, useState } from 'react';
 
 import styled from 'styled-components';
 
-import { ResourceIcons } from '@data-exploration-components/components/index';
-import { isNotUndefined } from '@data-exploration-components/utils/index';
 import { Breadcrumb } from 'antd';
 import capitalize from 'lodash/capitalize';
 import uniq from 'lodash/uniq';
@@ -22,12 +20,14 @@ import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 
 import { ExtendedAnnotation, useTranslation } from '@data-exploration-lib/core';
 
+import { ResourceIcons } from '../../../../components';
+import { isNotUndefined } from '../../../../utils';
 import {
   getExtendedAnnotationLabel,
   getResourceIdFromExtendedAnnotation,
   isApprovedAnnotation,
   isSuggestedAnnotation,
-} from '../migration/utils';
+} from '../migration';
 
 interface AnnotationsListProps {
   annotations: ExtendedAnnotation[];

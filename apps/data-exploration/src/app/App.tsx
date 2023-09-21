@@ -24,12 +24,11 @@ import { ErrorBoundary } from '@cognite/react-errors';
 import { FlagProvider } from '@cognite/react-feature-flags';
 import { SDKProvider } from '@cognite/sdk-provider';
 
-import RootApp from '@data-exploration-app/containers/App';
-import GlobalStyle from '@data-exploration-app/styles/global-styles';
-import AntStyles from '@data-exploration-app/styles/Styles';
-
 import { translations } from '../i18n';
 
+import AntStyles from './/styles/Styles';
+import RootApp from './containers/App';
+import GlobalStyle from './styles/global-styles';
 import rootStyles from './styles/index.css';
 import theme from './styles/theme';
 

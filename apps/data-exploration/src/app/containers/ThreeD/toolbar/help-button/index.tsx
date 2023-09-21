@@ -2,11 +2,11 @@ import styled from 'styled-components';
 
 import { Button, Colors, Dropdown, Menu, Tooltip } from '@cognite/cogs.js';
 
-import { EXPLORATION } from '@data-exploration-app/constants/metrics';
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { useTranslation } from '@data-exploration-lib/core';
 
 import { ids } from '../../../../../cogs-variables';
+import { EXPLORATION } from '../../../../constants/metrics';
+import { trackUsage } from '../../../../utils/Metrics';
 
 import {
   MouseNavigation,

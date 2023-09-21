@@ -8,14 +8,15 @@ import {
   SequenceSearchResults,
   TimeseriesSearchResults,
 } from '@data-exploration/containers';
-import {
-  ResourceType,
-  ResourceItem,
-  SelectableItemsProps,
-  OldResourceFilterProps,
-} from '@data-exploration-components/types';
 
 import { DateRangeProps } from '@data-exploration-lib/core';
+
+import {
+  OldResourceFilterProps,
+  ResourceItem,
+  ResourceType,
+  SelectableItemsProps,
+} from '../../types';
 
 export const SearchResults = ({
   allowEdit,

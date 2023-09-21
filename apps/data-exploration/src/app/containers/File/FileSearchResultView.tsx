@@ -10,27 +10,24 @@ import { ResourceItem } from '@cognite/data-exploration';
 import { Asset } from '@cognite/sdk';
 
 import {
-  StyledSplitter,
-  SearchResultWrapper,
-} from '@data-exploration-app/containers/elements';
-import { useResourceEditable } from '@data-exploration-app/context/ResourceSelectionContext';
-import { useFlagDocumentsApiEnabled } from '@data-exploration-app/hooks';
-import { useQueryString } from '@data-exploration-app/hooks/hooks';
-import { useFileFilters } from '@data-exploration-app/store';
-import { useDocumentFilters } from '@data-exploration-app/store/filter/selectors/documentSelectors';
-import { SEARCH_KEY } from '@data-exploration-app/utils/constants';
-import {
   EMPTY_OBJECT,
   getSelectedResourceId,
 } from '@data-exploration-lib/core';
 
+import { useResourceEditable } from '../../context/ResourceSelectionContext';
 import {
   useGetJourney,
   useJourneyLength,
   usePushJourney,
   useFlagDocumentGPT,
   useBreakJourneyPromptState,
+  useFlagDocumentsApiEnabled,
 } from '../../hooks';
+import { useQueryString } from '../../hooks/hooks';
+import { useFileFilters } from '../../store';
+import { useDocumentFilters } from '../../store/filter/selectors/documentSelectors';
+import { SEARCH_KEY } from '../../utils/constants';
+import { SearchResultWrapper, StyledSplitter } from '../elements';
 
 export const FileSearchResultView = () => {
   const isDocumentsApiEnabled = useFlagDocumentsApiEnabled();

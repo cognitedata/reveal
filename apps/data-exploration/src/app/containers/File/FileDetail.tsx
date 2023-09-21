@@ -17,17 +17,6 @@ import {
 import { CogniteError, FileInfo as FileInfoType } from '@cognite/sdk';
 import { useCdfItem, usePermissions } from '@cognite/sdk-react-query-hooks';
 
-import { BreadcrumbsV2 } from '@data-exploration-app/components/Breadcrumbs/BreadcrumbsV2';
-import ResourceTitleRow from '@data-exploration-app/components/ResourceTitleRow';
-import { DetailsTabWrapper } from '@data-exploration-app/containers/Common/element';
-import { ResourceDetailsTabs } from '@data-exploration-app/containers/ResourceDetails';
-import ResourceSelectionContext from '@data-exploration-app/context/ResourceSelectionContext';
-import {
-  useEndJourney,
-  usePushJourney,
-  useResourceDetailSelectedTab,
-} from '@data-exploration-app/hooks';
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import {
   APPLICATION_ID,
   useTranslation,
@@ -36,7 +25,18 @@ import {
 } from '@data-exploration-lib/core';
 import { useFileAnnotationsResourceIds } from '@data-exploration-lib/domain-layer';
 
+import { BreadcrumbsV2 } from '../../components/Breadcrumbs/BreadcrumbsV2';
+import ResourceTitleRow from '../../components/ResourceTitleRow';
+import ResourceSelectionContext from '../../context/ResourceSelectionContext';
+import {
+  useEndJourney,
+  usePushJourney,
+  useResourceDetailSelectedTab,
+} from '../../hooks';
+import { trackUsage } from '../../utils/Metrics';
 import { AllTab } from '../All';
+import { DetailsTabWrapper } from '../Common/element';
+import { ResourceDetailsTabs } from '../ResourceDetails';
 
 // FilePreviewTabType;
 // - preview

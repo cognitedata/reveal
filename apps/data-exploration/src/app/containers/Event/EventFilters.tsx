@@ -9,14 +9,6 @@ import {
 import { CogniteEvent } from '@cognite/sdk/dist/src';
 import { useList } from '@cognite/sdk-react-query-hooks';
 
-import { SPECIFIC_INFO_CONTENT } from '@data-exploration-app/containers/constants';
-import { TempMultiSelectFix } from '@data-exploration-app/containers/elements';
-import { useFlagAdvancedFilters } from '@data-exploration-app/hooks/flags/useFlagAdvancedFilters';
-import {
-  useEventsFilters,
-  useFilterEmptyState,
-  useResetEventsFilters,
-} from '@data-exploration-app/store/filter';
 import { useTranslation } from '@data-exploration-lib/core';
 import {
   transformNewFilterToOldFilter,
@@ -25,6 +17,14 @@ import {
 } from '@data-exploration-lib/domain-layer';
 
 import { BaseFilterCollapse } from '../../components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
+import { useFlagAdvancedFilters } from '../../hooks';
+import {
+  useEventsFilters,
+  useFilterEmptyState,
+  useResetEventsFilters,
+} from '../../store';
+import { SPECIFIC_INFO_CONTENT } from '../constants';
+import { TempMultiSelectFix } from '../elements';
 
 export const EventFilters = ({ ...rest }: Record<string, unknown>) => {
   const { t } = useTranslation();

@@ -6,14 +6,12 @@ import {
   EventFilter,
 } from '@cognite/sdk/dist/src';
 
-import {
-  AdvancedFilter,
-  EventsProperties,
-  getImage360EventsBySiteId,
-  InternalEventsData,
-  InternalSortBy,
-  queryKeys,
-} from '@data-exploration-lib/domain-layer';
+import { AdvancedFilter } from '../../../builders';
+import { EventsProperties, InternalEventsData } from '../../../events';
+import { queryKeys } from '../../../queryKeys';
+import { InternalSortBy } from '../../../types';
+
+import { getImage360EventsBySiteId } from './getImage360EventsBySiteId';
 
 export const fetchImage360BySiteId = async (
   sdk: CogniteClient,

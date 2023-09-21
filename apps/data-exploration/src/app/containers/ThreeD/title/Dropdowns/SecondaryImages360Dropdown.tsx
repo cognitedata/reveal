@@ -2,14 +2,14 @@ import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
 
 import { TableNoResults } from '@cognite/cdf-utilities';
 
-import { EXPLORATION } from '@data-exploration-app/constants/metrics';
-import { Image360DatasetOptions } from '@data-exploration-app/containers/ThreeD/contexts/ThreeDContext';
-import { Images360MenuItem } from '@data-exploration-app/containers/ThreeD/title/MenuItems/Images360MenuItem';
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { useTranslation } from '@data-exploration-lib/core';
 import { useInfinite360Images } from '@data-exploration-lib/domain-layer';
 
+import { EXPLORATION } from '../../../../constants/metrics';
+import { trackUsage } from '../../../../utils/Metrics';
+import { Image360DatasetOptions } from '../../contexts/ThreeDContext';
 import { SECONDARY_MODEL_DISPLAY_LIMIT } from '../../utils';
+import { Images360MenuItem } from '../MenuItems/Images360MenuItem';
 
 import {
   MenuWrapper,

@@ -1,17 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useContext, useState, useCallback } from 'react';
 
-import {
-  ResourceItem,
-  ResourceItemState,
-  InitialResourceFilterProps,
-  SelectableItemsProps,
-  ResourceType,
-} from '@data-exploration-components/types';
-
 import { Dropdown, Select, Tabs, Tooltip } from '@cognite/cogs.js';
 
-import { ResourceSelectionSidebar } from '..';
+import {
+  InitialResourceFilterProps,
+  ResourceItem,
+  ResourceItemState,
+  ResourceSelectionSidebar,
+  ResourceType,
+  SelectableItemsProps,
+} from '..';
 
 export type OpenSelectorProps = {
   /** Callback for when the selector is closed */

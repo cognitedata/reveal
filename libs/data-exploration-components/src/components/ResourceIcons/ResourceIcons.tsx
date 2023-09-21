@@ -1,8 +1,8 @@
 import React from 'react';
 
-import { ResourceType } from '@data-exploration-components/types';
-
 import { Chip } from '@cognite/cogs.js';
+
+import { ResourceType } from '../../types';
 
 const AssetIcon = ({ style }: { style?: React.CSSProperties }) => (
   <Chip icon="Assets" style={style} />

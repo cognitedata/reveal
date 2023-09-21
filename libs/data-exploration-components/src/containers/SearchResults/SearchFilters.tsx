@@ -8,13 +8,13 @@ import {
   FileFilters,
   SequenceFilters,
   TimeseriesFilters,
-} from '@data-exploration-components/components/Search';
+} from '../../components';
 import {
-  ResourceType,
   OldResourceFilterProps,
+  ResourceType,
   SetOldResourceFilterProps,
-} from '@data-exploration-components/types';
-import { lightGrey } from '@data-exploration-components/utils';
+} from '../../types';
+import { lightGrey } from '../../utils';
 
 const TRANSITION_TIME = 200;
 export type FilterProps = Required<OldResourceFilterProps> &

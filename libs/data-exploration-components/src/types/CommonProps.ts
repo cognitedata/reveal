@@ -1,5 +1,3 @@
-import { ResourceSelectionMode } from '@data-exploration-components/hooks/useSelection';
-
 import {
   AssetFilterProps,
   TimeseriesFilter,
@@ -14,9 +12,10 @@ import {
   InternalFilesFilters,
   InternalEventsFilters,
   InternalSequenceFilters,
-  InternalDocumentFilter,
   OldSequenceFilters,
 } from '@data-exploration-lib/core';
+
+import { ResourceSelectionMode } from '../hooks';
 
 import { ResourceItem } from './Types';
 

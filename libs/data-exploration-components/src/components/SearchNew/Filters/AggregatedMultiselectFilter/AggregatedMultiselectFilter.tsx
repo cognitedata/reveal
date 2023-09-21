@@ -1,12 +1,12 @@
 import React from 'react';
 
-import { MultiSelectFilter } from '@data-exploration-components/components';
-
 import {
   DATA_EXPLORATION_COMPONENT,
   useMetrics,
 } from '@data-exploration-lib/core';
 import { mapAggregateDataToSourceData } from '@data-exploration-lib/domain-layer';
+
+import { MultiSelectFilter } from '../../../MultiSelectFilter';
 
 export const AggregatedMultiselectFilter = <T extends {}>({
   items,

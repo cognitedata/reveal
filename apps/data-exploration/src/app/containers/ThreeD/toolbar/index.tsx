@@ -17,13 +17,11 @@ import {
 } from '@cognite/reveal';
 import { useSDK } from '@cognite/sdk-provider';
 
-import { EXPLORATION } from '@data-exploration-app/constants/metrics';
-import {
-  distancesInFeetAndMeters,
-  fitCameraToAsset,
-} from '@data-exploration-app/containers/ThreeD/utils';
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { useTranslation } from '@data-exploration-lib/core';
+
+import { EXPLORATION } from '../../../constants/metrics';
+import { trackUsage } from '../../../utils/Metrics';
+import { distancesInFeetAndMeters, fitCameraToAsset } from '../utils';
 
 export { default as HelpButton } from './help-button';
 export { default as ShareButton } from './share-button';

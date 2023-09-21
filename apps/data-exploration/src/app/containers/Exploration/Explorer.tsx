@@ -5,10 +5,10 @@ import styled from 'styled-components';
 
 import { ResourceSelectorProvider } from '@data-exploration-components/context';
 
-import { EXPLORATION } from '@data-exploration-app/constants/metrics';
-import { routes } from '@data-exploration-app/containers/App';
-import { ThreeDPage } from '@data-exploration-app/containers/ThreeD/ThreeDPage';
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
+import { EXPLORATION } from '../../constants/metrics';
+import { trackUsage } from '../../utils/Metrics';
+import { routes } from '../App';
+import { ThreeDPage } from '../ThreeD/ThreeDPage';
 
 import JourneyRedirect from './JourneyRedirect';
 import SearchRedirect from './SearchRedirect';

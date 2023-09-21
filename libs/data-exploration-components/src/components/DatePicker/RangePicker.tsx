@@ -3,8 +3,6 @@ import React, { useMemo, useState, useRef } from 'react';
 
 import styled from 'styled-components';
 
-import { Divider } from '@data-exploration-components/components';
-import { TIME_SELECT } from '@data-exploration-components/containers';
 import dayjs from 'dayjs';
 import noop from 'lodash/noop';
 
@@ -17,6 +15,9 @@ import {
   DateRange,
   Flex,
 } from '@cognite/cogs.js';
+
+import { TIME_SELECT } from '../../containers';
+import { Divider } from '../Common';
 
 import {
   PivotRange,

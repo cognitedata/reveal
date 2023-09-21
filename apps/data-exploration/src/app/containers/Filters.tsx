@@ -4,12 +4,11 @@ import styled from 'styled-components';
 
 import { ResourceType } from '@cognite/data-exploration';
 
-import { DocumentFilter } from '@data-exploration-app/containers/Document/DocumentFilters';
-
 import { BaseFilterCollapse } from '../components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
 
 import { AssetFilters } from './Asset/AssetFilters';
 import { CommonFilter } from './Common/CommonFilter';
+import { DocumentFilter } from './Document/DocumentFilters';
 import { EventFilters } from './Event/EventFilters';
 import { FileFilters } from './File/FileFilters';
 import { SequenceFilters } from './Sequence/SequenceFilters';

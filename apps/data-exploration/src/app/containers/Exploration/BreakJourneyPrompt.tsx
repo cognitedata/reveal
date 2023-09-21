@@ -4,14 +4,13 @@ import { BreakJourneyModal } from '@data-exploration/components';
 
 import { Button } from '@cognite/cogs.js';
 
-import { usePushJourney } from '@data-exploration-app/hooks';
 import {
   getSearchParamsWithJourney,
   getSearchParamsWithJourneyAndSelectedTab,
   useTranslation,
 } from '@data-exploration-lib/core';
 
-import { useBreakJourneyPromptState } from '../../hooks';
+import { useBreakJourneyPromptState, usePushJourney } from '../../hooks';
 
 export const BreakJourneyPrompt: React.FC<unknown> = () => {
   const { t } = useTranslation();

@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { Select } from '@data-exploration-components/components';
 import { useQuery } from '@tanstack/react-query';
 
 import { Body } from '@cognite/cogs.js';
@@ -12,6 +11,8 @@ import {
   OldEventsFilters,
 } from '@data-exploration-lib/core';
 import { transformNewFilterToOldFilter } from '@data-exploration-lib/domain-layer';
+
+import { Select } from '../../../Select/Select';
 
 type EventFieldForAggregate = 'type' | 'subtype' | 'dataSetId';
 

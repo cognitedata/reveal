@@ -2,9 +2,9 @@ import React, { useMemo } from 'react';
 
 import styled from 'styled-components';
 
-import { FilterForm } from '@data-exploration-components/components';
-
 import { Body, Button } from '@cognite/cogs.js';
+
+import { FilterForm } from '../../../FilterForm/FilterForm';
 
 import { mergeUniqueMetadataKeys } from './utils';
 

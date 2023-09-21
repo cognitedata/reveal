@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 
-import { isNotUndefined } from '@data-exploration-components/utils/index';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { useSDK } from '@cognite/sdk-provider';
@@ -12,6 +11,8 @@ import {
 
 import { ExtendedAnnotation } from '@data-exploration-lib/core';
 import { useAnnotations } from '@data-exploration-lib/domain-layer';
+
+import { isNotUndefined } from '../../../utils';
 
 import getExtendedAnnotationsFromAnnotationsApi from './Annotations/getExtendedAnnotationsFromAnnotationsApi';
 import {

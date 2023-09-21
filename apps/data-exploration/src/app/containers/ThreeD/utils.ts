@@ -29,22 +29,23 @@ import {
   AnnotationsCogniteAnnotationTypesImagesAssetLink,
 } from '@cognite/sdk';
 
-import {
-  Image360DatasetOptions,
-  SecondaryModelOptions,
-  SlicingState,
-} from '@data-exploration-app/containers/ThreeD/contexts/ThreeDContext';
-import {
-  PointsOfInterestCollection,
-  fetchAssetDetails,
-  fetchAssetMappingsByAssetIdQuery,
-  fetchClosestAssetIdQuery,
-} from '@data-exploration-app/containers/ThreeD/hooks';
 import { TFunction } from '@data-exploration-lib/core';
 import {
   Image360SiteData,
   Revision3DWithIndex,
 } from '@data-exploration-lib/domain-layer';
+
+import {
+  Image360DatasetOptions,
+  SecondaryModelOptions,
+  SlicingState,
+} from './contexts/ThreeDContext';
+import {
+  fetchAssetDetails,
+  fetchAssetMappingsByAssetIdQuery,
+  fetchClosestAssetIdQuery,
+  PointsOfInterestCollection,
+} from './hooks';
 
 export const THREE_D_VIEWER_STATE_QUERY_PARAMETER_KEY = 'viewerState';
 export const THREE_D_SLICING_STATE_QUERY_PARAMETER_KEY = 'slicingState';
@@ -52,7 +53,8 @@ export const THREE_D_SELECTED_ASSET_QUERY_PARAMETER_KEY = 'selectedAssetId';
 export const THREE_D_ASSET_DETAILS_EXPANDED_QUERY_PARAMETER_KEY = 'expanded';
 export const THREE_D_ASSET_HIGHLIGHT_MODE_PARAMETER_KEY = 'hl_mode';
 export const THREE_D_SECONDARY_MODELS_QUERY_PARAMETER_KEY = 'secondaryModels';
-export const THREE_D_POINTS_OF_INTEREST_QUERY_PARAMETER_KEY = 'pointsOfInterest';
+export const THREE_D_POINTS_OF_INTEREST_QUERY_PARAMETER_KEY =
+  'pointsOfInterest';
 export const THREE_D_REVISION_ID_QUERY_PARAMETER_KEY = 'revisionId';
 export const THREE_D_CUBEMAP_360_IMAGES_QUERY_PARAMETER_KEY = 'images360';
 
@@ -205,7 +207,10 @@ export const fitCameraToAsset = async (
       assetRef: { id: assetId },
     });
 
-    const selectedAnnotation = chooseMostApplicable360Annotation(assetSelectionContext, annotationCandidates);
+    const selectedAnnotation = chooseMostApplicable360Annotation(
+      assetSelectionContext,
+      annotationCandidates
+    );
 
     if (selectedAnnotation === undefined) {
       return;
@@ -247,20 +252,25 @@ export const fitCameraToAsset = async (
   }
 };
 
-function chooseMostApplicable360Annotation(assetSelectionContext: AssetSelectionContext,
-                                           annotationCandidates: Image360AnnotationAssetQueryResult[]): Image360AnnotationAssetQueryResult | undefined {
-
+function chooseMostApplicable360Annotation(
+  assetSelectionContext: AssetSelectionContext,
+  annotationCandidates: Image360AnnotationAssetQueryResult[]
+): Image360AnnotationAssetQueryResult | undefined {
   if (annotationCandidates.length === 0) {
     return undefined;
   }
 
-  const matchingAnnotation = findMatchingAnnotation(assetSelectionContext.imageAnnotation);
+  const matchingAnnotation = findMatchingAnnotation(
+    assetSelectionContext.imageAnnotation
+  );
 
   if (matchingAnnotation !== undefined) {
     return matchingAnnotation;
   }
 
-  const annotationInSameEntity = findAnnotationInSameEntity(assetSelectionContext.imageEntity);
+  const annotationInSameEntity = findAnnotationInSameEntity(
+    assetSelectionContext.imageEntity
+  );
 
   if (annotationInSameEntity !== undefined) {
     return annotationInSameEntity;
@@ -268,8 +278,9 @@ function chooseMostApplicable360Annotation(assetSelectionContext: AssetSelection
 
   return annotationCandidates[0];
 
-  function findMatchingAnnotation(queryAnnotation: Image360Annotation | undefined): Image360AnnotationAssetQueryResult | undefined {
-
+  function findMatchingAnnotation(
+    queryAnnotation: Image360Annotation | undefined
+  ): Image360AnnotationAssetQueryResult | undefined {
     if (queryAnnotation === undefined) {
       return undefined;
     }
@@ -279,8 +290,9 @@ function chooseMostApplicable360Annotation(assetSelectionContext: AssetSelection
     );
   }
 
-  function findAnnotationInSameEntity(imageEntity: Image360 | undefined): Image360AnnotationAssetQueryResult | undefined {
-
+  function findAnnotationInSameEntity(
+    imageEntity: Image360 | undefined
+  ): Image360AnnotationAssetQueryResult | undefined {
     if (imageEntity === undefined) {
       return undefined;
     }
@@ -515,7 +527,7 @@ export const getStateUrl = ({
     const selectedPointsOfInterest = pointsOfInterest
       .filter((poi) => !!poi.applied)
       .map((poi) => ({
-        id: poi.externalId
+        id: poi.externalId,
       }));
     searchParams.set(
       THREE_D_POINTS_OF_INTEREST_QUERY_PARAMETER_KEY,
