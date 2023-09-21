@@ -1,10 +1,18 @@
 import { SplitPanel } from '@platypus-app/components/Layouts/elements';
+import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
-import { Flex } from '@cognite/cogs.js';
+import { Flex, Tabs } from '@cognite/cogs.js';
 
-import { DownloadReport, RulesTable, TotalValidityCard } from './components';
+import {
+  DataScopesTable,
+  DownloadReport,
+  RulesTable,
+  TotalValidityCard,
+} from './components';
 
 export const DataQualityOverview = () => {
+  const { t } = useTranslation('DataQualityOverview');
+
   return (
     <SplitPanel>
       <Flex
@@ -22,7 +30,22 @@ export const DataQualityOverview = () => {
           <DownloadReport />
         </Flex>
 
-        <RulesTable />
+        <Tabs>
+          <Tabs.Tab
+            label={t('data_quality_rule', 'Rules', { count: 0 })}
+            key="rules"
+            tabKey="rules"
+          >
+            <RulesTable />
+          </Tabs.Tab>
+          <Tabs.Tab
+            label={t('data_quality_data_scope', 'Data scopes', { count: 0 })}
+            key="dataScopes"
+            tabKey="dataScopes"
+          >
+            <DataScopesTable />
+          </Tabs.Tab>
+        </Tabs>
       </Flex>
     </SplitPanel>
   );

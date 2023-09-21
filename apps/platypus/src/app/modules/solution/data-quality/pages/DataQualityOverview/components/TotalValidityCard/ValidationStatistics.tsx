@@ -43,10 +43,9 @@ export const ValidationStatistics = ({
     getLastDatapointValue(datapoints, timeSeriesIdInstances) || 0;
 
   const rulesCount = rules.length;
-  const rulesText =
-    rules.length === 1
-      ? t('data_quality_rule', 'rule')
-      : t('data_quality_rules', 'rules');
+  const rulesText = t('data_quality_rule', 'rule', {
+    count: rulesCount,
+  }).toLowerCase();
 
   const scoreDatapoints = getDatapointsById(datapoints, timeSeriesIdScore);
   const totalInstancesDatapoints = getDatapointsById(

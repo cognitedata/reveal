@@ -399,6 +399,54 @@ paths:
         "400":
           $ref: "#/components/responses/ErrorResponse"
 
+  #
+  # Data Scopes
+  #
+  "/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/datascopes":
+    get:
+      tags:
+      - DataScopes
+      summary: List data scopes defined in the current data source.
+      description: >-
+        List data scopes defined in the current data source.
+      operationId: listDataScopes
+      parameters:
+      - $ref: "#/components/parameters/project"
+      - $ref: "#/components/parameters/dataSourceId"
+      - $ref: "#/components/parameters/Cursor"
+      x-capability:
+      - "DatamodelsAcl:READ"
+      responses:
+        "200":
+          $ref: "#/components/responses/DataScopeListResponseWithCursor"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+
+  "/api/v1/projects/{project}/data-validation/datasources/{dataSource}/datascopes/byids":
+    post:
+      tags:
+      - DataScopes
+      summary: Retrieve data scopes by their ids
+      description: >-
+        Retrieve up to 100 data scopes by specifying their ids.
+      operationId: listByIdsDataScopes
+      parameters:
+      - $ref: "#/components/parameters/project"
+      requestBody:
+        description: List of ids for the data scopes to return.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DataScopeListIdsRequest"
+        required: true
+      x-capability:
+      - "DatamodelsAcl:READ"
+      responses:
+        "200":
+          $ref: "#/components/responses/DataScopeListResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+
 components:
   parameters:
     project:
@@ -455,7 +503,7 @@ components:
               error:
                 $ref: "#/components/schemas/Error"
 
-    #### Data source respones ####
+    #### Data source response ####
 
     DataSourceListResponse:
       description: "List of data sources"
@@ -500,7 +548,7 @@ components:
                 items:
                   $ref: "#/components/schemas/ExternalId"
 
-    #### Ruleset respones ####
+    #### Ruleset response ####
 
     RulesetListResponse:
       description: "List of rulesets"
@@ -546,7 +594,7 @@ components:
                 items:
                   $ref: "#/components/schemas/ExternalId"
 
-    #### Rule respones ####
+    #### Rule response ####
 
     RuleListResponse:
       description: "List of rules"
@@ -579,6 +627,51 @@ components:
 
     RuleListIdsResponse:
       description: "List of rule id(s) affected by the request"
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [items]
+            properties:
+              items:
+                type: array
+                minItems: 1
+                maxItems: 100
+                items:
+                  $ref: "#/components/schemas/ExternalId"
+
+    #### Data scopes response ####
+
+    DataScopeListResponse:
+      description: "List of data scopes"
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [items]
+            properties:
+              items:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DataScopeDto"
+
+    DataScopeListResponseWithCursor:
+      description: "List of data scopes with cursor"
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [items]
+            properties:
+              items:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DataScopeDto"
+              nextCursor:
+                $ref: "#/components/schemas/NextCursorV3"
+
+    DataScopeListIdsResponse:
+      description: "List of data scopes id(s) affected by the request"
       content:
         application/json:
           schema:
@@ -900,7 +993,6 @@ components:
           allOf:
           - $ref: "#/components/schemas/RuleUpdateDraft"
 
-
     RuleUpdateDraft:
       allOf:
       type: object
@@ -1027,3 +1119,48 @@ components:
         type: string
         description: Nonce token to be used for validation.
         $ref: "#/components/schemas/Nonce"
+
+    ### Data scopes schema ###
+
+    DataScopeDto:
+      allOf:
+      type: object
+      required: [createdTime, dataSourceId, dataType, externalId, filters, lastUpdatedTime, name]
+      properties:
+        createdTime:
+          $ref: "#/components/schemas/EpochTimestamp"
+        dataSourceId:
+          description: "The external-id of the data source"
+          allOf:
+          - $ref: "#/components/schemas/ExternalId"
+        dataType:
+          description: "The selected data type from the data model"
+          type: string
+        externalId:
+          description: "The external-id of the ruleset"
+          allOf:
+          - $ref: "#/components/schemas/ExternalId"
+        filters:
+          description: "Filters used during validation"
+          type: string
+        lastUpdatedTime:
+          $ref: "#/components/schemas/EpochTimestamp"
+        name:
+          description: "The name of the data scope"
+          type: string
+
+    DataScopeListIdsRequest:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          minItems: 1
+          maxItems: 100
+          items:
+            type: object
+            required: [externalId]
+            properties:
+              externalId:
+                description: Ids from data scopes
+                $ref: "#/components/schemas/ExternalId"
