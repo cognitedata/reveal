@@ -12,9 +12,6 @@ import {
   DocumentNamePreview,
   useDocumentsMetadataColumns,
 } from '@data-exploration/containers';
-import { SummaryHeader } from '@data-exploration-components/components/SummaryHeader/SummaryHeader';
-import { getSummaryCardItems } from '@data-exploration-components/components/SummaryHeader/utils';
-import { useUniqueCdfItems } from '@data-exploration-components/hooks';
 import { ColumnDef, Row } from '@tanstack/react-table';
 import uniqBy from 'lodash/uniqBy';
 
@@ -37,6 +34,10 @@ import {
   useDocumentSearchResultWithMatchingLabelsQuery,
   useRelatedDocumentsQuery,
 } from '@data-exploration-lib/domain-layer';
+
+import { SummaryHeader } from '../../../components/SummaryHeader/SummaryHeader';
+import { getSummaryCardItems } from '../../../components/SummaryHeader/utils';
+import { useUniqueCdfItems } from '../../../hooks';
 
 export const DocumentSummary = ({
   query = '',

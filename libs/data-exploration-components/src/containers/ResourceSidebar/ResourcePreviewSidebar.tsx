@@ -11,11 +11,9 @@ import {
   SequenceDetails,
   TimeseriesDetails,
 } from '@data-exploration/containers';
-import {
-  ResourceItem,
-  SelectableItemProps,
-} from '@data-exploration-components/types';
 import noop from 'lodash/noop';
+
+import { ResourceItem, SelectableItemProps } from '../../types';
 
 type Props = {
   item?: ResourceItem;

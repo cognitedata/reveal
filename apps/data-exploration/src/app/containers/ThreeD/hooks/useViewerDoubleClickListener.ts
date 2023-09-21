@@ -13,7 +13,7 @@ import {
   CAMERA_ANIMATION_DURATION,
   isCadIntersection,
   MINIMUM_BOUNDINGBOX_SIZE,
-} from '@data-exploration-app/containers/ThreeD/utils';
+} from '../utils';
 
 type Args = {
   viewer?: Cognite3DViewer;

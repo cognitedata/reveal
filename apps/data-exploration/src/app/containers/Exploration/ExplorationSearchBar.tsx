@@ -6,11 +6,12 @@ import debounce from 'lodash/debounce';
 
 import { Input } from '@cognite/cogs.js';
 
-import { EXPLORATION } from '@data-exploration-app/constants/metrics';
-import { useQueryString } from '@data-exploration-app/hooks/hooks';
-import { SEARCH_KEY } from '@data-exploration-app/utils/constants';
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { useTranslation } from '@data-exploration-lib/core';
+
+import { EXPLORATION } from '../../constants/metrics';
+import { useQueryString } from '../../hooks/hooks';
+import { SEARCH_KEY } from '../../utils/constants';
+import { trackUsage } from '../../utils/Metrics';
 
 export const ExplorationSearchBar = () => {
   const { t } = useTranslation();

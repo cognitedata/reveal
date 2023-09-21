@@ -2,7 +2,6 @@ import React, { useContext } from 'react';
 
 import styled from 'styled-components';
 
-import { ResourceIcons } from '@data-exploration-components/components';
 import { Tooltip } from 'antd';
 
 import { Body, Button, Flex, Icon } from '@cognite/cogs.js';
@@ -14,13 +13,15 @@ import {
   useTranslation,
 } from '@data-exploration-lib/core';
 
+import { ResourceIcons } from '../../../components';
+
 import {
   getResourceExternalIdFromExtendedAnnotation,
   getResourceIdFromExtendedAnnotation,
   isAssetAnnotation,
   isFileAnnotation,
   isSuggestedAnnotation,
-} from './migration/utils';
+} from './migration';
 
 const FileReview = ({
   annotations,

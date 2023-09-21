@@ -4,14 +4,6 @@ import { useDebounce } from 'use-debounce';
 import { ResourceItem } from '@cognite/data-exploration';
 import { Asset } from '@cognite/sdk/dist/src/types';
 
-import {
-  StyledSplitter,
-  SearchResultWrapper,
-} from '@data-exploration-app/containers/elements';
-import { useDateRange } from '@data-exploration-app/hooks';
-import { useQueryString } from '@data-exploration-app/hooks/hooks';
-import { useTimeseriesFilters } from '@data-exploration-app/store';
-import { SEARCH_KEY } from '@data-exploration-app/utils/constants';
 import { getSelectedResourceId } from '@data-exploration-lib/core';
 
 import {
@@ -19,7 +11,12 @@ import {
   useJourneyLength,
   usePushJourney,
   useBreakJourneyPromptState,
+  useDateRange,
 } from '../../hooks';
+import { useQueryString } from '../../hooks/hooks';
+import { useTimeseriesFilters } from '../../store';
+import { SEARCH_KEY } from '../../utils/constants';
+import { SearchResultWrapper, StyledSplitter } from '../elements';
 
 export const TimeseriesSearchResultView = () => {
   const [timeseriesFilter, setTimeseriesFilter] = useTimeseriesFilters();

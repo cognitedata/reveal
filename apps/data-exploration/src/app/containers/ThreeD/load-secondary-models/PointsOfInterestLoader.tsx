@@ -17,17 +17,16 @@ import {
 } from '@cognite/reveal';
 
 import {
-  PointsOfInterestCollection,
-  getPointsOfInterestsAppliedStateQueryKey,
-  getPointsOfInterestsQueryFn,
-  POINTS_OF_INTEREST_BASE_QUERY_KEY,
-} from '@data-exploration-app/containers/ThreeD/hooks';
-
-import {
   PointOfInterestOverlayData,
   PointsOfInterestOverlay,
 } from '../components/PointsOfInterestOverlay';
 import { SecondaryObjectsVisibilityState } from '../contexts/ThreeDContext';
+import {
+  getPointsOfInterestsAppliedStateQueryKey,
+  getPointsOfInterestsQueryFn,
+  POINTS_OF_INTEREST_BASE_QUERY_KEY,
+  PointsOfInterestCollection,
+} from '../hooks';
 
 type PointsOfInterestLoaderProps = {
   poiList: PointsOfInterestCollection[];

@@ -9,13 +9,13 @@ import * as THREE from 'three';
 
 import { Cognite3DViewer, Image360, Image360Collection } from '@cognite/reveal';
 
-import { Image360DatasetOptions } from '@data-exploration-app/containers/ThreeD/contexts/ThreeDContext';
+import { Image360DatasetOptions } from '../contexts/ThreeDContext';
 import {
   getImages360AppliedStateQueryKey,
   getImages360QueryFn,
   IMAGES_360_BASE_QUERY_KEY,
-} from '@data-exploration-app/containers/ThreeD/hooks';
-import { useRevealError } from '@data-exploration-app/containers/ThreeD/hooks/useRevealError';
+} from '../hooks';
+import { useRevealError } from '../hooks/useRevealError';
 
 type LoadImages360Props = {
   images360: Image360DatasetOptions[];

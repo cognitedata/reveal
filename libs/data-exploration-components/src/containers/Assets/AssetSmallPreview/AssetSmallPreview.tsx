@@ -3,21 +3,6 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 
 import { EmptyState, Loader } from '@data-exploration/components';
-import {
-  InfoGrid,
-  InfoCell,
-  ListItem,
-  SpacedRow,
-  ResourceIcons,
-} from '@data-exploration-components/components';
-import { FileSmallPreview } from '@data-exploration-components/containers/Files';
-import { TimeseriesSmallPreview } from '@data-exploration-components/containers/Timeseries';
-import { useSelectionButton } from '@data-exploration-components/hooks/useSelection';
-import {
-  SelectableItemProps,
-  SmallPreviewProps,
-} from '@data-exploration-components/types';
-import { lightGrey } from '@data-exploration-components/utils';
 
 import { createLink } from '@cognite/cdf-utilities';
 import {
@@ -36,6 +21,19 @@ import {
   useList,
   SdkResourceType,
 } from '@cognite/sdk-react-query-hooks';
+
+import {
+  InfoCell,
+  InfoGrid,
+  ListItem,
+  ResourceIcons,
+  SpacedRow,
+} from '../../../components';
+import { useSelectionButton } from '../../../hooks';
+import { SelectableItemProps, SmallPreviewProps } from '../../../types';
+import { lightGrey } from '../../../utils';
+import { FileSmallPreview } from '../../Files';
+import { TimeseriesSmallPreview } from '../../Timeseries';
 
 const RowItemTitleContainer = styled.div`
   display: flex;

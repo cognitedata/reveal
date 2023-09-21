@@ -20,9 +20,6 @@
       "configurations": {
         "production": {
           "devServerTarget": "industry-canvas-ui:serve:production"
-        },
-        "ci": {
-          "devServerTarget": "industry-canvas-ui:serve-static"
         }
       }
     },

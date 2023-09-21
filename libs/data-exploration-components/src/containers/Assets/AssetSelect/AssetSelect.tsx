@@ -1,8 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { Props, OptionTypeBase } from 'react-select';
 
-import { MultiSelectFilter } from '@data-exploration-components/components';
-import { OptionValue } from '@data-exploration-components/components/SearchNew/Filters/types';
 import noop from 'lodash/noop';
 import { useDebounce } from 'use-debounce';
 
@@ -13,6 +11,9 @@ import {
   useSearch,
   useList,
 } from '@cognite/sdk-react-query-hooks';
+
+import { MultiSelectFilter } from '../../../components';
+import { OptionValue } from '../../../components/SearchNew/Filters/types';
 
 export type AssetSelectProps = Omit<Props<OptionTypeBase>, 'theme'> & {
   title: string;

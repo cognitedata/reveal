@@ -2,10 +2,10 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { ResourceIcons } from '@data-exploration-components/components/ResourceIcons/ResourceIcons';
-import { ResourceType } from '@data-exploration-components/types';
-
 import { Body, Overline } from '@cognite/cogs.js';
+
+import { ResourceIcons } from '../../components';
+import { ResourceType } from '../../types';
 
 export const RelationItem = ({
   onClick,

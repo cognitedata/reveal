@@ -2,9 +2,9 @@ import React from 'react';
 
 import styled, { CSSProperties, css } from 'styled-components';
 
-import { lightGrey } from '@data-exploration-components/utils';
-
 import { Colors, Title } from '@cognite/cogs.js';
+
+import { lightGrey } from '../../utils';
 
 type WrapperProps = {
   selected?: boolean;

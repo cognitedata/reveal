@@ -5,9 +5,10 @@ import styled from 'styled-components';
 import { Button, Tooltip } from '@cognite/cogs.js';
 import { Cognite3DViewer, ResolutionOptions } from '@cognite/reveal';
 
-import { EXPLORATION } from '@data-exploration-app/constants/metrics';
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { useTranslation } from '@data-exploration-lib/core';
+
+import { EXPLORATION } from '../../../constants/metrics';
+import { trackUsage } from '../../../utils/Metrics';
 
 type HighQualityToggleProps = {
   viewer: Cognite3DViewer;

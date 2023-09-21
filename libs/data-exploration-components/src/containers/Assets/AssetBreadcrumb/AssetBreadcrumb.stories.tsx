@@ -1,7 +1,8 @@
 import React from 'react';
 
-import { assets, rootAssets } from '@data-exploration-components/stubs/assets';
 import { action } from '@storybook/addon-actions';
+
+import { assets, rootAssets } from '../../../stubs/assets';
 
 import { AssetBreadcrumb } from './AssetBreadcrumb';
 

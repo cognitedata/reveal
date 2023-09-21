@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
 
 import { TimeDisplay } from '@data-exploration/components';
-import { InfoCell, SpacedRow } from '@data-exploration-components/components';
 
 import { Timeseries, DoubleDatapoint, StringDatapoint } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
+
+import { SpacedRow } from '../Common';
+import { InfoCell } from '../InfoGrid/InfoGrid';
 
 export interface LatestDatapointProps {
   timeSeries: Timeseries;

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import {
   DEFAULT_SEARCH_RESULTS_PAGE_SIZE_3D,

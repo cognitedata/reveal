@@ -2,9 +2,9 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { sdkMock } from '@data-exploration-components/docs/stub';
+import { DataExplorationProvider } from '../context';
 
-import { DataExplorationProvider } from '../context/DataExplorationContext';
+import { sdkMock } from './stub';
 
 export const Container = styled.div`
   width: 100%;

@@ -13,23 +13,23 @@ import { TimeseriesChart } from '@cognite/plotting-components';
 import { CogniteError, Timeseries } from '@cognite/sdk';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 
-import { BreadcrumbsV2 } from '@data-exploration-app/components/Breadcrumbs/BreadcrumbsV2';
-import ResourceTitleRow from '@data-exploration-app/components/ResourceTitleRow';
-import { DetailsTabWrapper } from '@data-exploration-app/containers/Common/element';
-import { ResourceDetailsTabs } from '@data-exploration-app/containers/ResourceDetails';
-import {
-  useEndJourney,
-  usePreviewDateRange,
-  useResourceDetailSelectedTab,
-} from '@data-exploration-app/hooks';
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import {
   useTranslation,
   SUB_APP_PATH,
   createInternalLink,
 } from '@data-exploration-lib/core';
 
+import { BreadcrumbsV2 } from '../../components/Breadcrumbs/BreadcrumbsV2';
+import ResourceTitleRow from '../../components/ResourceTitleRow';
+import {
+  useEndJourney,
+  usePreviewDateRange,
+  useResourceDetailSelectedTab,
+} from '../../hooks';
+import { trackUsage } from '../../utils/Metrics';
 import { AllTab } from '../All';
+import { DetailsTabWrapper } from '../Common/element';
+import { ResourceDetailsTabs } from '../ResourceDetails';
 
 // TimeseriesPreviewTabType;
 // - details

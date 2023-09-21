@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { lightGrey } from '@data-exploration-components/utils';
+import { lightGrey } from '../utils';
 
 export type onResourceSelectedParams = {
   assetId?: number;

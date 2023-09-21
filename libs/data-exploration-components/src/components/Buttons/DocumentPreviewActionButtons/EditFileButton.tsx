@@ -1,9 +1,10 @@
 import React from 'react';
 
 import { Button, Tooltip } from '@cognite/cogs.js';
-import { ResourceItem } from '@cognite/data-exploration';
 
 import { useTranslation } from '@data-exploration-lib/core';
+
+import { ResourceItem } from '../../../types';
 export const EditFileButton = ({
   item: { id, type },
   onClick,

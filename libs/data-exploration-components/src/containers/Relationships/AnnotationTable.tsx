@@ -6,16 +6,17 @@ import {
   SequenceTable,
   TimeseriesTable,
 } from '@data-exploration/containers';
-import { useUniqueCdfItems } from '@data-exploration-components/hooks';
-import {
-  SelectableItemsProps,
-  ResourceType,
-  convertResourceType,
-} from '@data-exploration-components/types';
 import { Alert } from 'antd';
 
 import { useTranslation } from '@data-exploration-lib/core';
 import { useFileAnnotationsResourceIds } from '@data-exploration-lib/domain-layer';
+
+import { useUniqueCdfItems } from '../../hooks';
+import {
+  convertResourceType,
+  ResourceType,
+  SelectableItemsProps,
+} from '../../types';
 
 type Props = {
   fileId: number;

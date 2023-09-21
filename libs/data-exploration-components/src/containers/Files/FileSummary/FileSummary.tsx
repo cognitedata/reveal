@@ -6,11 +6,6 @@ import {
   Table,
 } from '@data-exploration/components';
 import { FileNamePreview } from '@data-exploration/containers';
-import { SummaryHeader } from '@data-exploration-components/components/SummaryHeader/SummaryHeader';
-import { getSummaryCardItems } from '@data-exploration-components/components/SummaryHeader/utils';
-import { useResourceResults } from '@data-exploration-components/containers';
-import { useUniqueCdfItems } from '@data-exploration-components/hooks';
-import { convertResourceType } from '@data-exploration-components/types';
 import { ColumnDef } from '@tanstack/react-table';
 import uniqBy from 'lodash/uniqBy';
 
@@ -28,6 +23,12 @@ import {
   useDocumentsMetadataKeys,
   useRelatedFilesQuery,
 } from '@data-exploration-lib/domain-layer';
+
+import { SummaryHeader } from '../../../components/SummaryHeader/SummaryHeader';
+import { getSummaryCardItems } from '../../../components/SummaryHeader/utils';
+import { useUniqueCdfItems } from '../../../hooks';
+import { convertResourceType } from '../../../types';
+import { useResourceResults } from '../../SearchResults';
 
 export const FileSummary = ({
   query = '',

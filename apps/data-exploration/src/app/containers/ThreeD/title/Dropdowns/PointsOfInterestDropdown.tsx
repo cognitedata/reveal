@@ -8,10 +8,10 @@ import React, {
 
 import { TableNoResults } from '@cognite/cdf-utilities';
 
-import { EXPLORATION } from '@data-exploration-app/constants/metrics';
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { useTranslation } from '@data-exploration-lib/core';
 
+import { EXPLORATION } from '../../../../constants/metrics';
+import { trackUsage } from '../../../../utils/Metrics';
 import { PointsOfInterestCollection } from '../../hooks';
 import { useInfinitePointsOfInterestCollections } from '../../hooks/useInfinitePointsOfInterestCollection';
 import { SECONDARY_MODEL_DISPLAY_LIMIT } from '../../utils';

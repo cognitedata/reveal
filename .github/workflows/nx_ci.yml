@@ -97,7 +97,7 @@ jobs:
           target: 'e2e'
           # fusion-shell-e2e and platypus-cdf-cli run in their own jobs
           # the other excluded apps need additional work to successfully run
-          exclude: 'fusion-shell-e2e, platypus-cdf-cli, data-exploration-e2e, cdf-nx-plugin-e2e, platypus-e2e, industry-canvas-ui-e2e'
+          exclude: 'fusion-shell-e2e, platypus-cdf-cli, data-exploration-e2e, cdf-nx-plugin-e2e, platypus-e2e'
 
       - name: 'Get affected storybook projects to build'
         id: affected-storybook

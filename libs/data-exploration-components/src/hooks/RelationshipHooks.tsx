@@ -1,10 +1,5 @@
 import { useEffect, useContext, useMemo, useState } from 'react';
 
-import {
-  ResourceType,
-  ResourceItem,
-  convertResourceType,
-} from '@data-exploration-components/types';
 import flatten from 'lodash/flatten';
 import uniqueBy from 'lodash/uniqBy';
 
@@ -40,6 +35,7 @@ import {
   isSuggestedTaggedAnnotation,
   isTaggedAnnotationAnnotation,
 } from '../containers/Files/FilePreview/migration/utils';
+import { convertResourceType, ResourceItem, ResourceType } from '../types';
 
 const PAGE_SIZE = 20;
 

@@ -1,7 +1,3 @@
-import {
-  MultiSelect,
-  MultiSelectProps,
-} from '@data-exploration-components/components';
 import isEmpty from 'lodash/isEmpty';
 
 import { OptionType } from '@cognite/cogs.js';
@@ -9,6 +5,7 @@ import { OptionType } from '@cognite/cogs.js';
 import { NIL_FILTER_LABEL } from '@data-exploration-lib/domain-layer';
 
 import { OptionValue } from '../SearchNew/Filters/types';
+import { MultiSelect, MultiSelectProps } from '../Select/MultiSelect';
 
 import { FilterTitle } from './elements';
 import { formatValue, isNilOption } from './utils';

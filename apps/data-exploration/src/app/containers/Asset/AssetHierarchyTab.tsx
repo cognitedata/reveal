@@ -3,10 +3,9 @@ import * as React from 'react';
 import { AssetDetailsTreeTable } from '@cognite/data-exploration';
 import { Asset } from '@cognite/sdk';
 
-import ResourceSelectionContext from '@data-exploration-app/context/ResourceSelectionContext';
-import { isResourceSelected } from '@data-exploration-app/utils/compare';
-
-import { usePushJourney } from '../../hooks/detailsNavigation';
+import ResourceSelectionContext from '../../context/ResourceSelectionContext';
+import { usePushJourney } from '../../hooks';
+import { isResourceSelected } from '../../utils/compare';
 
 export const AssetHierarchyTab = ({ asset }: { asset: Asset }) => {
   const [pushJourney] = usePushJourney();

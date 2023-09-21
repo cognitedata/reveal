@@ -18,10 +18,10 @@ import {
   Image360Collection,
 } from '@cognite/reveal';
 
-import { SmartOverlayTool } from '@data-exploration-app/containers/ThreeD/tools/SmartOverlayTool';
 import { useDefault3DModelRevision } from '@data-exploration-lib/domain-layer';
 
 import { PointsOfInterestCollection } from '../hooks';
+import { SmartOverlayTool } from '../tools/SmartOverlayTool';
 import {
   getStateUrl,
   THREE_D_ASSET_DETAILS_EXPANDED_QUERY_PARAMETER_KEY as EXPANDED_KEY,

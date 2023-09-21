@@ -9,10 +9,6 @@ import {
   useAssetsMetadataColumns,
   useRootPath,
 } from '@data-exploration/containers';
-import {
-  SelectableItemsProps,
-  TableStateProps,
-} from '@data-exploration-components/types';
 import { ColumnDef } from '@tanstack/react-table';
 import { ExpandedState } from '@tanstack/table-core';
 import gt from 'lodash/gt';
@@ -29,6 +25,8 @@ import {
   useRootAssetsQuery,
   InternalAssetTreeData,
 } from '@data-exploration-lib/domain-layer';
+
+import { SelectableItemsProps, TableStateProps } from '../../../types';
 
 const visibleColumns = ['name', 'rootId'];
 

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 
-import { assets } from '@data-exploration-components/stubs/assets';
 import { ComponentStory } from '@storybook/react';
+
+import { assets } from '../../../../stubs/assets';
 
 import { AggregatedFilter } from './AggregatedFilter';
 

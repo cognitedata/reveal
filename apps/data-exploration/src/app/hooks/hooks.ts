@@ -17,8 +17,8 @@ import { getUserInformation } from '@cognite/cdf-sdk-singleton';
 import { createLink, isUsingUnifiedSignin } from '@cognite/cdf-utilities';
 import { ResourceItem, ResourceType } from '@cognite/data-exploration';
 
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
-import { getSearchParams } from '@data-exploration-app/utils/URLUtils';
+import { trackUsage } from '../utils/Metrics';
+import { getSearchParams } from '../utils/URLUtils';
 
 const opts: { arrayFormat: 'comma' } = { arrayFormat: 'comma' };
 

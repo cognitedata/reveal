@@ -3,11 +3,12 @@ import { Navigate, useParams } from 'react-router-dom';
 
 import { createLink } from '@cognite/cdf-utilities';
 
-import { useCurrentSearchResourceTypeFromLocation } from '@data-exploration-app/hooks/hooks';
 import {
   getSearchParams,
   getSearchParamsWithJourney,
 } from '@data-exploration-lib/core';
+
+import { useCurrentSearchResourceTypeFromLocation } from '../../hooks/hooks';
 
 export default function JourneyRedirect() {
   const resourceType = useCurrentSearchResourceTypeFromLocation();

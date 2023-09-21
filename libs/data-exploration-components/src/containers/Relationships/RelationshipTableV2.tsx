@@ -7,7 +7,6 @@ import {
   SequenceRelatedSearchResults,
   TimeseriesRelatedSearchResults,
 } from '@data-exploration/containers';
-import { ResourceType, ResourceItem } from '@data-exploration-components/types';
 import { Alert } from 'antd';
 
 import { createLink } from '@cognite/cdf-utilities';
@@ -15,6 +14,8 @@ import { A } from '@cognite/cogs.js';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 
 import { AppContext, useTranslation } from '@data-exploration-lib/core';
+
+import { ResourceItem, ResourceType } from '../../types';
 
 export const RelationshipTableV2 = ({
   type,

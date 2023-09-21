@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 
 import styled from 'styled-components';
 
-import { FiltersType, ResourceType } from '@data-exploration-components/types';
-import { countByFilter } from '@data-exploration-components/utils';
 import { Collapse } from 'antd';
 
 import { Colors, Icon } from '@cognite/cogs.js';
+
+import { FiltersType, ResourceType } from '../../../types';
+import { countByFilter } from '../../../utils';
 
 const COLLAPSE_KEY = 'adavanced-filters-collapse';
 

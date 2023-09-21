@@ -1,9 +1,5 @@
 import React from 'react';
 
-import { MultiSelectFilter } from '@data-exploration-components/components';
-import { DataSetWCount } from '@data-exploration-components/hooks/sdk';
-import { ResourceType } from '@data-exploration-components/types';
-
 import { OptionType, Tooltip } from '@cognite/cogs.js';
 
 import {
@@ -13,6 +9,9 @@ import {
 } from '@data-exploration-lib/core';
 import { useDatasetsListQuery } from '@data-exploration-lib/domain-layer';
 
+import { DataSetWCount } from '../../../../hooks';
+import { ResourceType } from '../../../../types';
+import { MultiSelectFilter } from '../../../MultiSelectFilter';
 import { OptionValue } from '../types';
 
 const formatOption = (dataset: DataSetWCount): OptionType<number> => {

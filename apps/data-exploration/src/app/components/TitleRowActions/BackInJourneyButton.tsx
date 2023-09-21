@@ -2,8 +2,9 @@ import React from 'react';
 
 import { Button, Tooltip } from '@cognite/cogs.js';
 
-import { usePopJourney } from '@data-exploration-app/hooks';
 import { useTranslation } from '@data-exploration-lib/core';
+
+import { usePopJourney } from '../../hooks';
 
 export const BackInJourneyButton = () => {
   const { t } = useTranslation();

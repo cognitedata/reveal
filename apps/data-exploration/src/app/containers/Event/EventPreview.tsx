@@ -9,17 +9,15 @@ import { ErrorFeedback } from '@cognite/data-exploration';
 import { CogniteError, CogniteEvent } from '@cognite/sdk';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 
-import { Breadcrumbs } from '@data-exploration-app/components/Breadcrumbs/Breadcrumbs';
-import ResourceTitleRow from '@data-exploration-app/components/ResourceTitleRow';
-import { DetailsTabWrapper } from '@data-exploration-app/containers/Common/element';
-import { ResourceDetailsTabs } from '@data-exploration-app/containers/ResourceDetails';
-import {
-  useCurrentResourceId,
-  useOnPreviewTabChange,
-} from '@data-exploration-app/hooks/hooks';
-import { renderTitle } from '@data-exploration-app/utils/EventsUtils';
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { useTranslation } from '@data-exploration-lib/core';
+
+import { Breadcrumbs } from '../../components/Breadcrumbs/Breadcrumbs';
+import ResourceTitleRow from '../../components/ResourceTitleRow';
+import { useCurrentResourceId, useOnPreviewTabChange } from '../../hooks/hooks';
+import { renderTitle } from '../../utils/EventsUtils';
+import { trackUsage } from '../../utils/Metrics';
+import { DetailsTabWrapper } from '../Common/element';
+import { ResourceDetailsTabs } from '../ResourceDetails';
 
 export type EventPreviewTabType =
   | 'details'

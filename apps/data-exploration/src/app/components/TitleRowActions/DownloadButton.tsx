@@ -12,13 +12,14 @@ import {
 import { DoubleDatapoint, FileInfo } from '@cognite/sdk';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 
-import { DateFilter } from '@data-exploration-app/components/ResourceTitleRow';
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { useTranslation } from '@data-exploration-lib/core';
 import {
   MAX_DOWNLOAD_LIMIT_DATAPOINTS,
   useTimeseriesDataPointsQuery,
 } from '@data-exploration-lib/domain-layer';
+
+import { trackUsage } from '../../utils/Metrics';
+import { DateFilter } from '../ResourceTitleRow';
 
 type Props = {
   item: ResourceItem;
