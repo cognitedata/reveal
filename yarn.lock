@@ -2199,10 +2199,10 @@
   resolved "https://registry.yarnpkg.com/@cognite/testing/-/testing-0.1.1-rc.0.tgz#409bbac7e38c39892876d7a5c2667ccb76608435"
   integrity sha512-dcPCgmy64cQX0WgUerLKGwUhGSQw0S8iokFSeQ0jknexAJAjbkuQS5vyx1HOyHN1HJR1pQP5pQh5uiTUkZJuwg==
 
-"@cognite/unified-file-viewer@^17.0.0":
-  version "17.0.0"
-  resolved "https://registry.yarnpkg.com/@cognite/unified-file-viewer/-/unified-file-viewer-17.0.0.tgz#ef7dfdef4e500103511568ce9b4f9d6ad7dd6247"
-  integrity sha512-ZhwVaZw+dG9axWIxbHfmnzO3+L1BqB6Hs7UyYr0FslpEvZGv8LK+3aNLjmhTwtXMHvon7I9aNLokI5Egrb/aOQ==
+"@cognite/unified-file-viewer@^17.1.1":
+  version "17.1.1"
+  resolved "https://registry.yarnpkg.com/@cognite/unified-file-viewer/-/unified-file-viewer-17.1.1.tgz#de4a9d5b57434609fdda8f98b29655a4b09addbb"
+  integrity sha512-T4hgB79nyVYSmnWxVD3P1mQN8Tf0c3Edls0c9t3KpFPhJ8YtphZmbOkU6u9YTrryPVTfvelwY8XVNPWXTbgEIA==
   dependencies:
     "@cognite/cogs.js" "^9.10.0"
     "@cognite/plotting-components" "^1.0.1"

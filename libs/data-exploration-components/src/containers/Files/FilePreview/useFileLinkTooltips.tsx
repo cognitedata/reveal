@@ -1,6 +1,8 @@
 import React, { useMemo } from 'react';
+import { Link } from 'react-router-dom';
 
-import { useCanvasFilesFromUrl } from '@data-exploration-components/containers/Files/Canvas/useCanvasFilesFromUrl';
+import styled from 'styled-components';
+
 import {
   getFileIdFromExtendedAnnotation,
   getResourceIdFromExtendedAnnotation,
@@ -8,12 +10,14 @@ import {
 } from '@data-exploration-components/containers/Files/FilePreview/migration/utils';
 
 import { createLink } from '@cognite/cdf-utilities';
-import { Link } from '@cognite/cogs.js';
+import { Button, Tooltip } from '@cognite/cogs.js';
 import { TooltipAnchorPosition } from '@cognite/unified-file-viewer';
 
-import { ExtendedAnnotation } from '@data-exploration-lib/core';
-
-import { TooltipContainer } from '../Canvas/TooltipContainer';
+import {
+  ExtendedAnnotation,
+  getSearchParams,
+  useTranslation,
+} from '@data-exploration-lib/core';
 
 const useFileLinkTooltips = (
   isEnabled: boolean,
@@ -21,7 +25,7 @@ const useFileLinkTooltips = (
   annotations: ExtendedAnnotation[],
   selectedAnnotations: ExtendedAnnotation[]
 ) => {
-  const { serialize } = useCanvasFilesFromUrl();
+  const { t } = useTranslation();
   return useMemo(() => {
     if (!isEnabled) {
       return [];
@@ -41,20 +45,45 @@ const useFileLinkTooltips = (
       return [];
     }
 
-    // Filter out self-referential file links, that's not a case for the multi-file viewer
     if (
       getResourceIdFromExtendedAnnotation(selectedAnnotation) ===
       getFileIdFromExtendedAnnotation(selectedAnnotation)
     ) {
-      // TODO: How should we differentiate for the user that it's a self-referential link?
-      // Right now we are just not displaying the tooltip, but there's no way for the user to know
-      // that this is the case.
+      const initializeWithContainerReferences = btoa(
+        JSON.stringify([
+          {
+            type: 'file',
+            resourceId: fileId,
+          },
+        ])
+      );
+
       return [
         {
           targetId: String(selectedAnnotation.id),
           content: (
             <TooltipContainer>
-              This annotation links to the current file.
+              <Tooltip
+                content={t(
+                  'OPEN_IN_INDUSTRIAL_CANVAS',
+                  'Open in Industrial Canvas'
+                )}
+              >
+                <Link
+                  to={createLink(`/industrial-canvas`, {
+                    ...getSearchParams(window.location.search),
+                    initializeWithContainerReferences,
+                  })}
+                  aria-label="Open in Industrial Canvas"
+                >
+                  <Button icon="Canvas" type="ghost">
+                    {t(
+                      'OPEN_IN_INDUSTRIAL_CANVAS',
+                      'Open in Industrial Canvas'
+                    )}
+                  </Button>
+                </Link>
+              </Tooltip>
             </TooltipContainer>
           ),
           anchorTo: TooltipAnchorPosition.TOP_CENTER,
@@ -68,31 +97,58 @@ const useFileLinkTooltips = (
       return [];
     }
 
-    // Fix: Get target file annotation page number! This is currently unsupported by Annotations API.
-    const shamefulPageNumber = 1;
+    const initializeWithContainerReferences = btoa(
+      JSON.stringify([
+        {
+          type: 'file',
+          resourceId: fileId,
+        },
+        {
+          type: 'file',
+          resourceId: resourceFileId,
+        },
+      ])
+    );
 
     return [
       {
         targetId: String(selectedAnnotation.id),
         content: (
           <TooltipContainer>
-            <Link
-              href={createLink(`/explore/canvas`, {
-                files: serialize([
-                  { id: fileId, page: shamefulPageNumber },
-                  { id: resourceFileId, page: shamefulPageNumber },
-                ]),
-              })}
-              target="_blank"
+            <Tooltip
+              content={t(
+                'OPEN_IN_INDUSTRIAL_CANVAS',
+                'Open in Industrial Canvas'
+              )}
             >
-              Open side-by-side
-            </Link>
+              <Link
+                to={createLink(`/industrial-canvas`, {
+                  ...getSearchParams(window.location.search),
+                  initializeWithContainerReferences,
+                })}
+                aria-label="Open in Industrial Canvas"
+              >
+                <Button icon="Canvas" type="ghost">
+                  {t('OPEN_IN_INDUSTRIAL_CANVAS', 'Open in Industrial Canvas')}
+                </Button>
+              </Link>
+            </Tooltip>
           </TooltipContainer>
         ),
-        anchorTo: TooltipAnchorPosition.TOP_RIGHT,
+        anchorTo: TooltipAnchorPosition.TOP_CENTER,
       },
     ];
-  }, [isEnabled, annotations, selectedAnnotations, fileId, serialize]);
+  }, [isEnabled, annotations.length, selectedAnnotations, fileId, t]);
 };
+
+export const TooltipContainer = styled.div`
+  background: white;
+  padding: 4px;
+  box-shadow: 0px 1px 16px 4px rgba(79, 82, 104, 0.1),
+    0px 1px 8px rgba(79, 82, 104, 0.08), 0px 1px 2px rgba(79, 82, 104, 0.24);
+  border-radius: 6px;
+  margin-bottom: 6px;
+  display: flex;
+`;
 
 export default useFileLinkTooltips;
