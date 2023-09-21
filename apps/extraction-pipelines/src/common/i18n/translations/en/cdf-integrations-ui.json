@@ -263,6 +263,8 @@
   "checked-with-date": "checked {{relativeTime}}",
   "create-source": "Create source",
   "validation-error-field-required": "You must enter a value in this field",
+  "validation-error-topic-filter-required": "Fill out this field and click the 'Add'-button to add topic filter",
+  "validation-error-topic-filter-click-add-only": "This field contains text you have not added yet. Click the 'Add'-button to add topic filter",
   "form-host-name": "Host name",
   "form-host-name-placeholder": "Which broker you want to connect to? E.g., mymqqtbroker.com",
   "form-port": "Port",
