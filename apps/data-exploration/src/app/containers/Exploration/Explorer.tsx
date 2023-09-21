@@ -7,7 +7,6 @@ import { ResourceSelectorProvider } from '@data-exploration-components/context';
 
 import { EXPLORATION } from '@data-exploration-app/constants/metrics';
 import { routes } from '@data-exploration-app/containers/App';
-import { CanvasPage } from '@data-exploration-app/containers/Canvas/CanvasPage';
 import { ThreeDPage } from '@data-exploration-app/containers/ThreeD/ThreeDPage';
 import { trackUsage } from '@data-exploration-app/utils/Metrics';
 
@@ -38,9 +37,6 @@ export const Explorer = () => {
             path="/search/:resourceType/:id"
             element={<JourneyRedirect />}
           />
-
-          <Route path={routes.canvas.path} element={<CanvasPage />} />
-
           <Route path={routes.threeDPage.path} element={<ThreeDPage />} />
           <Route path={routes.threeDPageTab.path} element={<ThreeDPage />} />
           <Route path={routes.root.path} element={<SearchRedirect />} />

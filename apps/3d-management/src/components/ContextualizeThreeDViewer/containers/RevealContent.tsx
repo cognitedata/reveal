@@ -22,6 +22,7 @@ import {
 } from '../../../pages/ContextualizeEditor/constants';
 import { ContextualizeThreeDViewerToolbar } from '../ContextualizeThreeDViewerToolbar';
 import { ColorTypeSelector } from '../utils/PointCloudColorPicker';
+import { PointSizeSlider } from '../utils/PointSizeSlider';
 
 interface RevealContentProps {
   modelId: number;
@@ -117,9 +118,14 @@ export const RevealContent = ({ modelId, revisionId }: RevealContentProps) => {
         <RevealToolbar.FitModelsButton />
         <ContextualizeThreeDViewerToolbar modelId={modelId} />
         <RevealToolbar.SettingsButton
-          customSettingsContent={ColorTypeSelector({
-            onChange: handleColorChange,
-          })}
+          customSettingsContent={
+            <>
+              <ColorTypeSelector
+                onChange={handleColorChange}
+              ></ColorTypeSelector>
+              <PointSizeSlider viewer={viewer}></PointSizeSlider>
+            </>
+          }
           lowQualitySettings={LowQualitySettings}
           highQualitySettings={HighQualitySettings}
         />
