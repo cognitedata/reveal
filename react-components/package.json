@@ -28,7 +28,7 @@
     "styled-components": ">=5"
   },
   "devDependencies": {
-    "@babel/preset-env": "7.22.15",
+    "@babel/preset-env": "7.22.20",
     "@babel/preset-react": "7.22.15",
     "@babel/preset-typescript": "7.22.15",
     "@cognite/cdf-i18n-utils": "^0.7.5",
