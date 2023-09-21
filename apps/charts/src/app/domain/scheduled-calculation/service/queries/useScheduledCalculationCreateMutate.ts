@@ -52,6 +52,7 @@ export const useScheduledCalculationCreateMutate = () => {
           unit: calculation.unit?.value,
           description: calculation.description,
           metadata: { _auto_generated_source_: '__scheduled_calculation__' },
+          dataSetId: calculation.dataset?.id,
         },
       ])
         .catch(() => {
