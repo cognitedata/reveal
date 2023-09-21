@@ -2,21 +2,21 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { ResourceIcons } from '@data-exploration-components/components/index';
-import { capitalizeFirstLetter } from '@data-exploration-components/utils/index';
-
 import { createLink } from '@cognite/cdf-utilities';
 import { Body, Button, Icon, Link } from '@cognite/cogs.js';
-import { ResourceType } from '@cognite/data-exploration';
 
 import { ExtendedAnnotation, useTranslation } from '@data-exploration-lib/core';
+
+import { ResourceIcons } from '../../../components';
+import { ResourceType } from '../../../types';
+import { capitalizeFirstLetter } from '../../../utils';
 
 import {
   getExtendedAnnotationLabel,
   getResourceIdFromExtendedAnnotation,
   getResourceTypeFromExtendedAnnotation,
   isSuggestedAnnotation,
-} from './migration/utils';
+} from './migration';
 
 const ReviewTagBar = ({
   annotation,

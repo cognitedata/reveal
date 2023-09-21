@@ -9,16 +9,15 @@ import {
   NumberFilter,
 } from '@cognite/data-exploration';
 
-import { COMMON_INFO_CONTENT } from '@data-exploration-app/containers/constants';
-import { TempCommonMultiSelectFix } from '@data-exploration-app/containers/elements';
-import { useFlagAdvancedFilters } from '@data-exploration-app/hooks/flags/useFlagAdvancedFilters';
+import { BaseFilterCollapse } from '../../components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
+import { useFlagAdvancedFilters } from '../../hooks';
 import {
   useCommonFilters,
   useFilterEmptyState,
   useResetCommonFilters,
-} from '@data-exploration-app/store/filter';
-
-import { BaseFilterCollapse } from '../../components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
+} from '../../store';
+import { COMMON_INFO_CONTENT } from '../constants';
+import { TempCommonMultiSelectFix } from '../elements';
 
 interface Props {
   resourceType?: ResourceType;

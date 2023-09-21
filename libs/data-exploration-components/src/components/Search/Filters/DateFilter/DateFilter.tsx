@@ -1,14 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-import {
-  DatePicker,
-  Select,
-  RangePicker,
-} from '@data-exploration-components/components';
-import { TIME_SELECT } from '@data-exploration-components/containers';
-
 import { Body } from '@cognite/cogs.js';
 import { DateRange } from '@cognite/sdk';
+
+import { TIME_SELECT } from '../../../../containers';
+import { DatePicker, RangePicker } from '../../../DatePicker';
+import { Select } from '../../../Select/Select';
 
 const determinePeriod = (value: DateRange | undefined | null) => {
   if (value === undefined) {

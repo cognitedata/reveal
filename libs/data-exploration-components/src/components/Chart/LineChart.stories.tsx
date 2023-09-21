@@ -2,7 +2,7 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { datapoints } from '@data-exploration-components/stubs/timeseriesDatapoints';
+import { datapoints } from '../../stubs/timeseriesDatapoints';
 
 import { LineChart } from './LineChart';
 

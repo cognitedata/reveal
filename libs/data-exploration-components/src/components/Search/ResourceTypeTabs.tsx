@@ -1,7 +1,8 @@
 import { useResultCount } from '@data-exploration/containers';
-import { ResourceType } from '@data-exploration-components/types';
 
 import { TabProps, Tabs } from '@cognite/cogs.js';
+
+import { ResourceType } from '../../types';
 
 const resourceTypeMap: Record<ResourceType, string> = {
   asset: 'Assets',

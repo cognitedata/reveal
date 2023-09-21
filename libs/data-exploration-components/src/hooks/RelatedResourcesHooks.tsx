@@ -1,5 +1,6 @@
-import { useInfiniteRelationshipsList } from '@data-exploration-components/hooks/RelationshipHooks';
-import { ResourceType, ResourceItem } from '@data-exploration-components/types';
+import { ResourceItem, ResourceType } from '../types';
+
+import { useInfiniteRelationshipsList } from './RelationshipHooks';
 
 export type RelatedResourceType =
   | 'linkedResource'

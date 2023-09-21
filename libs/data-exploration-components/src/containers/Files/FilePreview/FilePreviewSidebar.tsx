@@ -2,14 +2,13 @@ import React, { useMemo } from 'react';
 
 import styled from 'styled-components';
 
-import { ResourcePreviewSidebar } from '@data-exploration-components/containers/index';
-import { useDisclosure } from '@data-exploration-components/hooks/index';
-
 import { Detail, Icon, Title, Modal, Checkbox } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
 
 import { ExtendedAnnotation, useTranslation } from '@data-exploration-lib/core';
 
+import { useDisclosure } from '../../../hooks';
+import { ResourcePreviewSidebar } from '../../ResourceSidebar';
 import { useReviewFile } from '../hooks';
 
 import AnnotationsList from './AnnotationsList/index';
@@ -19,7 +18,7 @@ import {
   isAssetAnnotation,
   isFileAnnotation,
   isSuggestedAnnotation,
-} from './migration/utils';
+} from './migration';
 
 interface FilePreviewSidebarProps {
   fileIcon?: React.ReactNode;

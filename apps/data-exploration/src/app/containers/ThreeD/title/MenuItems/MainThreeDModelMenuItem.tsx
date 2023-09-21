@@ -5,14 +5,15 @@ import { formatTime } from '@cognite/cdf-utilities';
 import { Menu } from '@cognite/cogs.js';
 import { Model3D } from '@cognite/sdk';
 
-import { ThreeDContext } from '@data-exploration-app/containers/ThreeD/contexts/ThreeDContext';
-import { getStateUrl } from '@data-exploration-app/containers/ThreeD/utils';
 import { useTranslation } from '@data-exploration-lib/core';
 import {
   Image360SiteData,
   Revision3DWithIndex,
   use3DRevisionsQuery,
 } from '@data-exploration-lib/domain-layer';
+
+import { ThreeDContext } from '../../contexts/ThreeDContext';
+import { getStateUrl } from '../../utils';
 
 export const MainThreeDModelMenuItem = ({
   model,

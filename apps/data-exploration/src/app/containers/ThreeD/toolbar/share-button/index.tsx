@@ -4,11 +4,12 @@ import styled from 'styled-components';
 
 import { Button, Tooltip, toast } from '@cognite/cogs.js';
 
-import { EXPLORATION } from '@data-exploration-app/constants/metrics';
-import { ThreeDContext } from '@data-exploration-app/containers/ThreeD/contexts/ThreeDContext';
-import { getStateUrl } from '@data-exploration-app/containers/ThreeD/utils';
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { useTranslation } from '@data-exploration-lib/core';
+
+import { EXPLORATION } from '../../../../constants/metrics';
+import { trackUsage } from '../../../../utils/Metrics';
+import { ThreeDContext } from '../../contexts/ThreeDContext';
+import { getStateUrl } from '../../utils';
 
 const ShareButton = (): JSX.Element => {
   const { t } = useTranslation();

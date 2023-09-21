@@ -8,11 +8,11 @@ import {
 import { useSDK } from '@cognite/sdk-provider';
 
 import { InternalThreeDFilters } from '@data-exploration-lib/core';
-import {
-  fetchImage360BySiteId,
-  queryKeys,
-  useInfinite360ImagesSiteIdAggregateQuery,
-} from '@data-exploration-lib/domain-layer';
+
+import { queryKeys } from '../../../queryKeys';
+import { fetchImage360BySiteId } from '../../service';
+
+import { useInfinite360ImagesSiteIdAggregateQuery } from './useInfinite360ImagesSiteIdAggregateQuery';
 
 export const useImage360Query = (
   query?: string,

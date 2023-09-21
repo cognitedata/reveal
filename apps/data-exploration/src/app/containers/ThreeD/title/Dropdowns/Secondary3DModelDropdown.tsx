@@ -12,10 +12,6 @@ import { TableNoResults } from '@cognite/cdf-utilities';
 import { Button, Input, Menu } from '@cognite/cogs.js';
 import { Model3D } from '@cognite/sdk';
 
-import { EXPLORATION } from '@data-exploration-app/constants/metrics';
-import { SecondaryModelOptions } from '@data-exploration-app/containers/ThreeD/contexts/ThreeDContext';
-import { SecondaryThreeDModelMenuItem } from '@data-exploration-app/containers/ThreeD/title/MenuItems/SecondaryThreeDModelMenuItem';
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { useTranslation } from '@data-exploration-lib/core';
 import {
   DEFAULT_GLOBAL_TABLE_MAX_RESULT_LIMIT,
@@ -23,7 +19,11 @@ import {
   useInfinite3DModelsQuery,
 } from '@data-exploration-lib/domain-layer';
 
+import { EXPLORATION } from '../../../../constants/metrics';
+import { trackUsage } from '../../../../utils/Metrics';
+import { SecondaryModelOptions } from '../../contexts/ThreeDContext';
 import { SECONDARY_MODEL_DISPLAY_LIMIT } from '../../utils';
+import { SecondaryThreeDModelMenuItem } from '../MenuItems/SecondaryThreeDModelMenuItem';
 
 type Secondary3DModelDropdownProps = {
   mainModel?: Model3D;

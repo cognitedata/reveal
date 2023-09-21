@@ -1,7 +1,8 @@
 import { Button, Tooltip } from '@cognite/cogs.js';
 
-import { useViewModeToggle } from '@data-exploration-app/hooks';
 import { useTranslation } from '@data-exploration-lib/core';
+
+import { useViewModeToggle } from '../../hooks';
 
 export const FullscreenButton = () => {
   const { t } = useTranslation();

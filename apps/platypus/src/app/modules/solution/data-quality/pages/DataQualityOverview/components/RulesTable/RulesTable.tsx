@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { CellProps } from 'react-table';
 
 import { RuleDto } from '@data-quality/api/codegen';
 import {
@@ -11,7 +12,7 @@ import { BasicPlaceholder } from '@platypus-app/components/BasicPlaceholder/Basi
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
-import { Body, Flex, Heading, Table, TableColumn } from '@cognite/cogs.js';
+import { Body, Flex, Table, TableColumn } from '@cognite/cogs.js';
 
 import { LastValidationTime } from '..';
 
@@ -41,7 +42,7 @@ export const RulesTable = () => {
       {
         Header: 'Name',
         accessor: 'name',
-        Cell: ({ row }: any) => {
+        Cell: ({ row }: CellProps<RuleDto>) => {
           return (
             <NameCell
               onClick={() => setEditedRule(row.original)}
@@ -53,13 +54,13 @@ export const RulesTable = () => {
       {
         Header: 'Severity',
         accessor: 'severity',
-        Cell: ({ row }: any) => {
+        Cell: ({ row }: CellProps<RuleDto>) => {
           return <SeverityCell severity={row.original.severity} />;
         },
       },
       {
         Header: 'Validity',
-        Cell: ({ row }: any) => {
+        Cell: ({ row }: CellProps<RuleDto>) => {
           return (
             <ValidityCell
               datapoints={datapoints}
@@ -72,7 +73,7 @@ export const RulesTable = () => {
       },
       {
         Header: 'Validity over time',
-        Cell: ({ row }: any) => {
+        Cell: ({ row }: CellProps<RuleDto>) => {
           return (
             <ValidityOverTimeCell
               datapoints={datapoints}
@@ -85,7 +86,7 @@ export const RulesTable = () => {
       },
       {
         Header: 'Items checked',
-        Cell: ({ row }: any) => {
+        Cell: ({ row }: CellProps<RuleDto>) => {
           return (
             <ItemsCheckedCell
               datapoints={datapoints}
@@ -136,10 +137,7 @@ export const RulesTable = () => {
   return (
     <>
       <Flex direction="column" gap={22}>
-        <Flex direction="row" justifyContent="space-between" gap={10}>
-          <Heading level={5}>
-            {t('data_quality_all_rules', 'All rules')}
-          </Heading>
+        <Flex direction="row-reverse" justifyContent="space-between" gap={10}>
           <LastValidationTime
             datapoints={datapoints}
             loading={loadingDatapoints}

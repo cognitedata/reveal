@@ -3,12 +3,6 @@ import { Link } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import {
-  getFileIdFromExtendedAnnotation,
-  getResourceIdFromExtendedAnnotation,
-  getResourceTypeFromExtendedAnnotation,
-} from '@data-exploration-components/containers/Files/FilePreview/migration/utils';
-
 import { createLink } from '@cognite/cdf-utilities';
 import { Button, Tooltip } from '@cognite/cogs.js';
 import { TooltipAnchorPosition } from '@cognite/unified-file-viewer';
@@ -18,6 +12,12 @@ import {
   getSearchParams,
   useTranslation,
 } from '@data-exploration-lib/core';
+
+import {
+  getFileIdFromExtendedAnnotation,
+  getResourceIdFromExtendedAnnotation,
+  getResourceTypeFromExtendedAnnotation,
+} from './migration';
 
 const useFileLinkTooltips = (
   isEnabled: boolean,

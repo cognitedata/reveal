@@ -15,9 +15,10 @@ import { createLink } from '@cognite/cdf-utilities';
 import { Body, Colors, Flex, Icon } from '@cognite/cogs.js';
 import { CogniteError } from '@cognite/sdk';
 
-import { EXPLORATION } from '@data-exploration-app/constants/metrics';
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { useTranslation } from '@data-exploration-lib/core';
+
+import { EXPLORATION } from '../../constants/metrics';
+import { trackUsage } from '../../utils/Metrics';
 
 import { AugmentedMapping } from './hooks';
 import { prepareSearchString, grepContains } from './utils';

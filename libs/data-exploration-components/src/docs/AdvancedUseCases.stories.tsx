@@ -1,8 +1,6 @@
 import React from 'react';
 
 import { AssetTable, FileTable } from '@data-exploration/containers';
-import { assets } from '@data-exploration-components/stubs/assets';
-import { files } from '@data-exploration-components/stubs/files';
 // @ts-ignore There is a bug in the package not exporting the type
 import { PartialStoryFn } from '@storybook/addons';
 
@@ -10,6 +8,8 @@ import { Button } from '@cognite/cogs.js';
 
 import { Splitter } from '..';
 import { useResourcePreview, ResourcePreviewProvider } from '../context';
+import { assets } from '../stubs/assets';
+import { files } from '../stubs/files';
 
 import { Wrapper } from './utils';
 

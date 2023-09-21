@@ -2,11 +2,6 @@ import React, { useMemo } from 'react';
 
 import styled from 'styled-components';
 
-import {
-  lightGrey,
-  formatDate,
-  datetimeMultiFormat,
-} from '@data-exploration-components/utils';
 import { AxisRight, AxisBottom, TickFormatter } from '@visx/axis';
 import { localPoint } from '@visx/event';
 import { LinearGradient } from '@visx/gradient';
@@ -26,6 +21,8 @@ import { NumberValue } from 'd3-scale';
 
 import { Body, Colors, Overline } from '@cognite/cogs.js';
 import { DatapointAggregate } from '@cognite/sdk';
+
+import { datetimeMultiFormat, formatDate, lightGrey } from '../../utils';
 
 const pointColor = Colors['decorative--blue--300'];
 const primaryColor = Colors['decorative--blue--400'];

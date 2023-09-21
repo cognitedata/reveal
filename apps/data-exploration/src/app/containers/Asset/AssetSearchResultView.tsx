@@ -7,26 +7,20 @@ import { useDebounce } from 'use-debounce';
 import { ResourceItem } from '@cognite/data-exploration';
 import { Asset } from '@cognite/sdk';
 
-import { EXPLORATION } from '@data-exploration-app/constants/metrics';
-import {
-  StyledSplitter,
-  SearchResultWrapper,
-} from '@data-exploration-app/containers/elements';
-import { useQueryString } from '@data-exploration-app/hooks/hooks';
-import {
-  useAssetFilters,
-  useAssetViewState,
-} from '@data-exploration-app/store';
-import { SEARCH_KEY } from '@data-exploration-app/utils/constants';
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { getSelectedResourceId } from '@data-exploration-lib/core';
 
+import { EXPLORATION } from '../../constants/metrics';
 import {
   useGetJourney,
   useJourneyLength,
   usePushJourney,
   useBreakJourneyPromptState,
 } from '../../hooks';
+import { useQueryString } from '../../hooks/hooks';
+import { useAssetFilters, useAssetViewState } from '../../store';
+import { SEARCH_KEY } from '../../utils/constants';
+import { trackUsage } from '../../utils/Metrics';
+import { SearchResultWrapper, StyledSplitter } from '../elements';
 
 export const AssetSearchResultView = () => {
   const [assetView, setAssetView] = useAssetViewState();

@@ -2,11 +2,10 @@ import React, { useState, useEffect } from 'react';
 
 import styled, { css } from 'styled-components';
 
-import { useAssetMetadataValues } from '@data-exploration-components/hooks/MetadataAggregateHooks';
-
 import { Button, Colors, Icon, Tooltip } from '@cognite/cogs.js';
 
 import { Select, SpacedRow } from '../../components';
+import { useAssetMetadataValues } from '../../hooks/MetadataAggregateHooks';
 
 const LOCKSVG = (
   <svg

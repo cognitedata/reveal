@@ -1,21 +1,15 @@
 import React from 'react';
 import { OptionsType, OptionTypeBase } from 'react-select';
 
-import { MultiSelect } from '@data-exploration-components/components';
-import {
-  useRelevantDatasets,
-  DataSetWCount,
-} from '@data-exploration-components/hooks/sdk';
-import {
-  ResourceType,
-  convertResourceType,
-} from '@data-exploration-components/types';
-
 import { Body, Tooltip } from '@cognite/cogs.js';
 import { DataSet, IdEither } from '@cognite/sdk';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 
 import { useTranslation } from '@data-exploration-lib/core';
+
+import { DataSetWCount, useRelevantDatasets } from '../../../../hooks';
+import { convertResourceType, ResourceType } from '../../../../types';
+import { MultiSelect } from '../../../Select/MultiSelect';
 
 export const DataSetFilter = ({
   resourceType,

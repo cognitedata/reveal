@@ -19,19 +19,20 @@ import {
 } from '@cognite/data-exploration';
 import { RelationshipResourceType } from '@cognite/sdk';
 
-import { EXPLORATION } from '@data-exploration-app/constants/metrics';
-import {
-  useFlagDocumentsApiEnabled,
-  useFlagFileCategorization,
-  useFlagNewCounts,
-} from '@data-exploration-app/hooks/flags';
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
-import { addPlusSignToCount } from '@data-exploration-app/utils/stringUtils';
 import { useTranslation } from '@data-exploration-lib/core';
 import {
   useRelatedResourcesCount,
   useRelationshipLabels,
 } from '@data-exploration-lib/domain-layer';
+
+import { EXPLORATION } from '../../../constants/metrics';
+import {
+  useFlagDocumentsApiEnabled,
+  useFlagFileCategorization,
+  useFlagNewCounts,
+} from '../../../hooks';
+import { trackUsage } from '../../../utils/Metrics';
+import { addPlusSignToCount } from '../../../utils/stringUtils';
 
 type TypeOption = {
   label: string;

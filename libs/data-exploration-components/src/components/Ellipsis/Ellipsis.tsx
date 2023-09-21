@@ -2,9 +2,9 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { useIsOverflow } from '@data-exploration-components/hooks';
-
 import { Tooltip } from '@cognite/cogs.js';
+
+import { useIsOverflow } from '../../hooks';
 
 export const Ellipsis: React.FC<{ value: string }> = ({
   value,

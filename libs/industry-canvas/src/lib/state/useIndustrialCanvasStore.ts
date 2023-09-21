@@ -120,10 +120,12 @@ const initialToolConfigsByType: ToolConfigByType = {
   [IndustryCanvasToolType.RECTANGLE]: {
     type: ToolType.RECTANGLE,
     ...DEFAULT_STYLE,
+    fill: SHAPE_ANNOTATION_FILL_COLOR_MAP.TRANSPARENT,
   },
   [IndustryCanvasToolType.ELLIPSE]: {
     type: ToolType.ELLIPSE,
     ...DEFAULT_STYLE,
+    fill: SHAPE_ANNOTATION_FILL_COLOR_MAP.TRANSPARENT,
   },
   [IndustryCanvasToolType.TEXT]: {
     type: ToolType.TEXT,

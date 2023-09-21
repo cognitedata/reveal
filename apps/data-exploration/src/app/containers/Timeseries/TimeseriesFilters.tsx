@@ -5,14 +5,6 @@ import { AggregatedTimeseriesFilterV2 } from '@data-exploration-components/compo
 
 import { BooleanFilter } from '@cognite/data-exploration';
 
-import { SPECIFIC_INFO_CONTENT } from '@data-exploration-app/containers/constants';
-import { TempMultiSelectFix } from '@data-exploration-app/containers/elements';
-import { useFlagAdvancedFilters } from '@data-exploration-app/hooks';
-import {
-  useFilterEmptyState,
-  useResetTimeseriesFilters,
-  useTimeseriesFilters,
-} from '@data-exploration-app/store/filter';
 import {
   useTimeseriesList,
   useTimeseriesMetadataKeysAggregateQuery,
@@ -20,6 +12,14 @@ import {
 } from '@data-exploration-lib/domain-layer';
 
 import { BaseFilterCollapse } from '../../components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
+import { useFlagAdvancedFilters } from '../../hooks';
+import {
+  useFilterEmptyState,
+  useResetTimeseriesFilters,
+  useTimeseriesFilters,
+} from '../../store';
+import { SPECIFIC_INFO_CONTENT } from '../constants';
+import { TempMultiSelectFix } from '../elements';
 
 export const TimeseriesFilters = ({ ...rest }) => {
   const [timeseriesFilter, setTimeseriesFilter] = useTimeseriesFilters();

@@ -3,12 +3,13 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { BaseFilterCollapse } from '@data-exploration/components';
-import { FilterSection } from '@data-exploration-components/containers/SearchResults/SearchFiltersNew';
+
+import { FilterSection } from '../../../containers';
 import {
-  ResourceType,
   ResourceFilterProps,
+  ResourceType,
   SetResourceFilterProps,
-} from '@data-exploration-components/types';
+} from '../../../types';
 
 import {
   AssetFiltersV2,

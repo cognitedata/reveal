@@ -11,22 +11,21 @@ import {
 } from '@cognite/data-exploration';
 import { useSDK } from '@cognite/sdk-provider';
 
-import { ResourceActionsProvider } from '@data-exploration-app/context/ResourceActionsContext';
-import { ResourceSelectionProvider } from '@data-exploration-app/context/ResourceSelectionContext';
+import { ids } from '../../../cogs-variables';
+import { ResourceActionsProvider } from '../../context/ResourceActionsContext';
+import { ResourceSelectionProvider } from '../../context/ResourceSelectionContext';
 import {
   useFlagAdvancedFilters,
   useFlagDocumentsApiEnabled,
-} from '@data-exploration-app/hooks';
-import { useUserInformation } from '@data-exploration-app/hooks/hooks';
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
-
-import { ids } from '../../../cogs-variables';
+} from '../../hooks';
+import { useUserInformation } from '../../hooks/hooks';
+import { trackUsage } from '../../utils/Metrics';
 
 const Spinner = () => <Loader />;
 const Exploration = React.lazy(
   () =>
     import(
-      '@data-exploration-app/containers/Exploration'
+      '../Exploration'
       /* webpackChunkName: "pnid_exploration" */
     )
 );

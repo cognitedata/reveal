@@ -1,10 +1,11 @@
 import { Model3D } from '@cognite/sdk';
 
-import { MainThreeDModelMenuItem } from '@data-exploration-app/containers/ThreeD/title/MenuItems/MainThreeDModelMenuItem';
 import {
   Revision3DWithIndex,
   Image360SiteData,
 } from '@data-exploration-lib/domain-layer';
+
+import { MainThreeDModelMenuItem } from '../MenuItems/MainThreeDModelMenuItem';
 
 type MainModelDropdownProps = {
   model?: Model3D;

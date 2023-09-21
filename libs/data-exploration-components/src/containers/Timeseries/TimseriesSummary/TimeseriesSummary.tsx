@@ -7,9 +7,6 @@ import {
   Table,
 } from '@data-exploration/components';
 import { useTimeseriesMetadataColumns } from '@data-exploration/containers';
-import { SummaryHeader } from '@data-exploration-components/components/SummaryHeader/SummaryHeader';
-import { getSummaryCardItems } from '@data-exploration-components/components/SummaryHeader/utils';
-import { useUniqueCdfItems } from '@data-exploration-components/hooks';
 import { ColumnDef } from '@tanstack/react-table';
 import uniqBy from 'lodash/uniqBy';
 
@@ -30,6 +27,9 @@ import {
   useRelatedTimeseriesQuery,
 } from '@data-exploration-lib/domain-layer';
 
+import { SummaryHeader } from '../../../components/SummaryHeader/SummaryHeader';
+import { getSummaryCardItems } from '../../../components/SummaryHeader/utils';
+import { useUniqueCdfItems } from '../../../hooks';
 import { TimeseriesLastReading } from '../TimeseriesLastReading/TimeseriesLastReading';
 
 export const TimeseriesSummary = ({

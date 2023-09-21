@@ -23,27 +23,25 @@ import {
 import { Image360HistoricalDetails } from '@cognite/reveal-react-components';
 import { useSDK } from '@cognite/sdk-provider';
 
-import { EXPLORATION } from '@data-exploration-app/constants/metrics';
-import AssetsHighlightButton from '@data-exploration-app/containers/ThreeD/assets-highlight-button/AssetsHighlightButton';
-import MouseWheelAction from '@data-exploration-app/containers/ThreeD/components/MouseWheelAction';
-import OverlayTool from '@data-exploration-app/containers/ThreeD/components/OverlayTool';
-import LoadSecondaryModels from '@data-exploration-app/containers/ThreeD/load-secondary-models/LoadSecondaryModels';
-import { LabelEventHandler } from '@data-exploration-app/containers/ThreeD/tools/SmartOverlayTool';
-import { useJourney } from '@data-exploration-app/hooks';
+import { EXPLORATION } from '../../constants/metrics';
 import {
   useFlagAssetMappingsOverlays,
   useFlagPointCloudSearch,
   useFlagPointsOfInterestFeature,
-} from '@data-exploration-app/hooks/flags';
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
-
+  useJourney,
+} from '../../hooks';
+import { trackUsage } from '../../utils/Metrics';
 import zIndex from '../../utils/zIndex';
 import { DetailsOverlay } from '../Exploration/DetailsOverlay';
 
+import AssetsHighlightButton from './assets-highlight-button/AssetsHighlightButton';
 import { AssetSearchSidebar } from './AssetSearchSidebar';
+import MouseWheelAction from './components/MouseWheelAction';
+import OverlayTool from './components/OverlayTool';
 import { ThreeDContext } from './contexts/ThreeDContext';
 import HighQualityToggle from './high-quality-toggle/HighQualityToggle';
 import LoadImages360 from './load-secondary-models/LoadImages360';
+import LoadSecondaryModels from './load-secondary-models/LoadSecondaryModels';
 import PointsOfInterestLoader from './load-secondary-models/PointsOfInterestLoader';
 import NodePreview, { ResourceTabType } from './NodePreview';
 import PointSizeSlider from './point-size-slider/PointSizeSlider';
@@ -58,6 +56,7 @@ import {
   PointToPointMeasurementButton,
   ShareButton,
 } from './toolbar';
+import { LabelEventHandler } from './tools/SmartOverlayTool';
 import {
   AssetSelectionContext,
   findClosestAsset,

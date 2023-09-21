@@ -4,9 +4,6 @@ import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { Loader } from '@data-exploration/components';
-import useTooltips from '@data-exploration-components/containers/Files/FilePreview/useTooltips';
-import { ResourceItem } from '@data-exploration-components/types';
-import { lightGrey } from '@data-exploration-components/utils';
 import noop from 'lodash/noop';
 
 import { Flex } from '@cognite/cogs.js';
@@ -43,6 +40,8 @@ import {
 } from '@data-exploration-lib/domain-layer';
 
 import { useIsDocumentsApiEnabled } from '../../../hooks';
+import { ResourceItem } from '../../../types';
+import { lightGrey } from '../../../utils';
 
 import { ActionTools } from './ActionTools';
 import { AnnotationPreviewSidebar } from './AnnotationPreviewSidebar';
@@ -54,6 +53,7 @@ import { useNumPages } from './hooks/useNumPages';
 import usePrevious from './hooks/usePrevious';
 import { useSearchBarState } from './hooks/useSearchBarState';
 import { Pagination } from './Pagination';
+import useTooltips from './useTooltips';
 import { getContainerId, getSearchResultAnnotationStyle } from './utils';
 
 type FilePreviewProps = {

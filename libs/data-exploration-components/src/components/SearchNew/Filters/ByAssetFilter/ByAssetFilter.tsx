@@ -1,11 +1,11 @@
 import React from 'react';
 
-import { AssetSelect } from '@data-exploration-components/containers/Assets';
-
 import {
   DATA_EXPLORATION_COMPONENT,
   useMetrics,
 } from '@data-exploration-lib/core';
+
+import { AssetSelect } from '../../../../containers';
 
 export const ByAssetFilterV2 = ({
   value,

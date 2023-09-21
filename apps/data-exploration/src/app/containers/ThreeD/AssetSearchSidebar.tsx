@@ -17,14 +17,13 @@ import {
 import { Asset } from '@cognite/sdk';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 
-import { EXPLORATION } from '@data-exploration-app/constants/metrics';
-import { AssetMappingsList } from '@data-exploration-app/containers/ThreeD/AssetMappingsList';
-import {
-  AugmentedMapping,
-  useInfiniteAssetMappings,
-} from '@data-exploration-app/containers/ThreeD/hooks';
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { useTranslation } from '@data-exploration-lib/core';
+
+import { EXPLORATION } from '../../constants/metrics';
+import { trackUsage } from '../../utils/Metrics';
+
+import { AssetMappingsList } from './AssetMappingsList';
+import { AugmentedMapping, useInfiniteAssetMappings } from './hooks';
 
 type ThreeDSidebarProps = {
   modelId?: number;

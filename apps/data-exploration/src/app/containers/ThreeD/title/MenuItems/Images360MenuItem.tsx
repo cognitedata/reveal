@@ -2,8 +2,9 @@ import { useEffect } from 'react';
 
 import { Checkbox, Flex, Menu } from '@cognite/cogs.js';
 
-import { Image360DatasetOptions } from '@data-exploration-app/containers/ThreeD/contexts/ThreeDContext';
 import { useTranslation } from '@data-exploration-lib/core';
+
+import { Image360DatasetOptions } from '../../contexts/ThreeDContext';
 
 import {
   StyledSecondaryObjectBody,

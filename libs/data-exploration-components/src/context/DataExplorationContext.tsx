@@ -1,9 +1,6 @@
 import React, { useEffect } from 'react';
 
 import { DRAG_DROP_PORTAL_CLASS } from '@data-exploration/components';
-import { FileContextualizationContextProvider } from '@data-exploration-components/context/FileContextualization';
-import { ResourcePreviewProvider } from '@data-exploration-components/context/ResourcePreviewContext';
-import { ResourceSelectorProvider } from '@data-exploration-components/context/ResourceSelectorContext';
 
 import { Tooltip, Tabs, Select } from '@cognite/cogs.js';
 import { CogniteClient } from '@cognite/sdk';
@@ -16,6 +13,9 @@ import {
 } from '@data-exploration-lib/core';
 
 import { AppContextProvider } from './AppContext';
+import { FileContextualizationContextProvider } from './FileContextualization';
+import { ResourcePreviewProvider } from './ResourcePreviewContext';
+import { ResourceSelectorProvider } from './ResourceSelectorContext';
 
 export type DataExplorationProviderProps = {
   flow: Flow;

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 
-import { DataSetFilter } from '@data-exploration-components/components/Search/Filters';
 import { ComponentStory } from '@storybook/react';
 
+import { DataSetFilter } from '../../../Search';
 import { OptionValue } from '../types';
 
 import { DataSetFilterV2 } from './DataSetFilter';

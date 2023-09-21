@@ -11,12 +11,12 @@ import {
   CognitePointCloudModel,
 } from '@cognite/reveal';
 
-import { EXPLORATION } from '@data-exploration-app/constants/metrics';
-import { ThreeDContext } from '@data-exploration-app/containers/ThreeD/contexts/ThreeDContext';
-import { trackUsage } from '@data-exploration-app/utils/Metrics';
 import { useTranslation } from '@data-exploration-lib/core';
 
 import { ids } from '../../../../cogs-variables';
+import { EXPLORATION } from '../../../constants/metrics';
+import { trackUsage } from '../../../utils/Metrics';
+import { ThreeDContext } from '../contexts/ThreeDContext';
 
 type SliderProps = {
   viewer: Cognite3DViewer;

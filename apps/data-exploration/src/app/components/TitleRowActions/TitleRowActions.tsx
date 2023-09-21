@@ -2,13 +2,14 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { DateFilter } from '@data-exploration-app/components/ResourceTitleRow';
-import CanvasButton from '@data-exploration-app/components/TitleRowActions/CanvasButton';
-import { FullscreenButton } from '@data-exploration-app/components/TitleRowActions/FullscreenButton';
-import { PreviewCloseButton } from '@data-exploration-app/components/TitleRowActions/PreviewCloseButton';
 import { ResourceItem } from '@data-exploration-lib/core';
 
+import { DateFilter } from '../ResourceTitleRow';
+
+import CanvasButton from './CanvasButton';
 import DownloadButton from './DownloadButton';
+import { FullscreenButton } from './FullscreenButton';
+import { PreviewCloseButton } from './PreviewCloseButton';
 
 type TitleRowActionsProps = {
   item: ResourceItem;

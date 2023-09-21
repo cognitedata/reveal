@@ -4,7 +4,6 @@ import styled from 'styled-components';
 
 import { Loader } from '@data-exploration/components';
 import { FileInfo } from '@data-exploration/containers';
-import { useSelectionButton } from '@data-exploration-components/hooks/useSelection';
 import uniq from 'lodash/uniq';
 
 import { Icon, Title, Chip, Body, Colors } from '@cognite/cogs.js';
@@ -22,6 +21,7 @@ import {
   SpacedRow,
   ResourceIcons,
 } from '../../../components';
+import { useSelectionButton } from '../../../hooks';
 import { SmallPreviewProps, SelectableItemProps } from '../../../types';
 import { isFilePreviewable } from '../../../utils';
 import { FilePreview } from '../FilePreview';

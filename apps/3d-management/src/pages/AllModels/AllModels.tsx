@@ -3,7 +3,10 @@ import { useParams } from 'react-router-dom';
 
 import styled from 'styled-components';
 
-import { ResourceTypeTabs } from '@data-exploration/containers';
+import {
+  ResourceTypeTabs,
+  ThreeDSearchContextProvider,
+} from '@data-exploration/containers';
 import { Modal, Steps, message } from 'antd';
 
 import { getFlow } from '@cognite/cdf-sdk-singleton';
@@ -11,8 +14,6 @@ import { Button, Flex, Input, Tabs } from '@cognite/cogs.js';
 import { Model3D } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
-
-import { ThreeDSearchContextProvider } from '@data-exploration-app/context/ThreeDSearchContext';
 
 import { PageHeader } from '../../components/PageHeader';
 import PermissioningHintWrapper from '../../components/PermissioningHintWrapper';

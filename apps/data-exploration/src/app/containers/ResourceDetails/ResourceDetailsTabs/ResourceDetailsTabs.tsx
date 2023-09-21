@@ -12,14 +12,6 @@ import {
   getTabCountLabel,
 } from '@cognite/data-exploration';
 
-import { RelatedResources } from '@data-exploration-app/containers/ResourceDetails/RelatedResources/RelatedResources';
-import ResourceSelectionContext from '@data-exploration-app/context/ResourceSelectionContext';
-import {
-  useFlagDocumentsApiEnabled,
-  useFlagNewCounts,
-  usePushJourney,
-} from '@data-exploration-app/hooks';
-import { addPlusSignToCount } from '@data-exploration-app/utils/stringUtils';
 import {
   formatNumber,
   getTitle,
@@ -28,6 +20,15 @@ import {
   withThousandSeparator,
 } from '@data-exploration-lib/core';
 import { useTotalRelatedResourcesCounts } from '@data-exploration-lib/domain-layer';
+
+import ResourceSelectionContext from '../../../context/ResourceSelectionContext';
+import {
+  useFlagDocumentsApiEnabled,
+  useFlagNewCounts,
+  usePushJourney,
+} from '../../../hooks';
+import { addPlusSignToCount } from '../../../utils/stringUtils';
+import { RelatedResources } from '../RelatedResources/RelatedResources';
 
 type ResouceDetailsTabsProps = {
   parentResource: ResourceItem & { title: string };
