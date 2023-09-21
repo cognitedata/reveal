@@ -53,7 +53,15 @@ const FileTooltip: React.FC<FileTooltipProps> = ({
                 'Add file to canvas'
               )}
             >
-              <Button icon="Add" onClick={onAddFileClick} inverted />
+              <Button
+                aria-label={t(
+                  translationKeys.TOOLTIP_FILE_ADD_TO_CANVAS,
+                  'Add file to canvas'
+                )}
+                icon="Add"
+                onClick={onAddFileClick}
+                inverted
+              />
             </Tooltip>
           </ContextualTooltip.ButtonWrapper>
 
@@ -64,7 +72,15 @@ const FileTooltip: React.FC<FileTooltipProps> = ({
                 'Open in Data Explorer'
               )}
             >
-              <Button icon="ExternalLink" onClick={onViewClick} inverted />
+              <Button
+                aria-label={t(
+                  translationKeys.OPEN_IN_DATA_EXPLORER,
+                  'Open in Data Explorer'
+                )}
+                icon="ExternalLink"
+                onClick={onViewClick}
+                inverted
+              />
             </Tooltip>
           </ContextualTooltip.ButtonWrapper>
         </ContextualTooltip.ButtonsContainer>
