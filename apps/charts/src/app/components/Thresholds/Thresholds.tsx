@@ -9,8 +9,8 @@ import {
 } from '@charts-app/components/Common/SidebarElements';
 import TranslatedEditableText from '@charts-app/components/EditableText/TranslatedEditableText';
 import ThresholdItem from '@charts-app/components/Thresholds/ThresholdItem';
-import { ChartSource, ChartThreshold } from '@charts-app/models/chart/types';
 
+import { ChartSource, ChartThreshold } from '@cognite/charts-lib';
 import { Button, Collapse } from '@cognite/cogs.js';
 
 interface Props

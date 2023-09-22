@@ -59,7 +59,7 @@ export const CreateJobsModal = ({
   const { data: destinations } = useMQTTDestinations();
 
   const sourceTopicFilters = source.jobs.map((job) => {
-    return job.topicFilter;
+    return job.config.topicFilter;
   });
 
   const { mutateAsync: createDestination } = useCreateMQTTDestination();
@@ -86,7 +86,11 @@ export const CreateJobsModal = ({
     const errors: FormikErrors<CreateJobsFormValues> = {};
 
     if (!values.topicFilters || values.topicFilters.length === 0) {
-      errors.topicFilters = t('validation-error-field-required');
+      errors.topicFilters = t(
+        tempTopicFilterInput
+          ? 'validation-error-topic-filter-click-add-only'
+          : 'validation-error-topic-filter-required'
+      );
     }
 
     if (values.destinationOption === 'use-existing') {
@@ -171,7 +175,9 @@ export const CreateJobsModal = ({
                   type: val.format ?? 'cognite',
                 },
                 sourceId: source.externalId,
-                topicFilter,
+                config: {
+                  topicFilter,
+                },
               });
             })
           );

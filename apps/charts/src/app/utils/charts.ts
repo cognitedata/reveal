@@ -2,8 +2,9 @@ import { FlowElement, FlowExportObject } from 'react-flow-renderer';
 
 import { SourceNodeData } from '@charts-app/components/NodeEditor/V2/Nodes/SourceNode';
 import { NodeDataVariants } from '@charts-app/components/NodeEditor/V2/types';
-import { ChartWorkflow, ChartWorkflowV2 } from '@charts-app/models/chart/types';
 import { uuid4 } from '@sentry/utils';
+
+import { ChartWorkflow, ChartWorkflowV2 } from '@cognite/charts-lib';
 
 export const toggleDownloadChartElements = (hide: boolean, height?: number) => {
   const elementsToHide = document.getElementsByClassName('downloadChartHide');

@@ -1,4 +1,7 @@
 import { WorkflowState } from '@charts-app/models/calculation-results/types';
+import { ScheduledCalculationsDataMap } from '@charts-app/models/scheduled-calculation-results/types';
+import { TimeseriesEntry } from '@charts-app/models/timeseries-results/types';
+
 import {
   ChartThreshold,
   ChartTimeSeries,
@@ -6,9 +9,7 @@ import {
   Interpolation,
   LineStyle,
   ScheduledCalculation,
-} from '@charts-app/models/chart/types';
-import { ScheduledCalculationsDataMap } from '@charts-app/models/scheduled-calculation-results/types';
-import { TimeseriesEntry } from '@charts-app/models/timeseries-results/types';
+} from '@cognite/charts-lib';
 
 import { SeriesData } from './utils';
 

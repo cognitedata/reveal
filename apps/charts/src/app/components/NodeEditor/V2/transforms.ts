@@ -16,10 +16,6 @@ import {
   FunctionNodeDataDehydrated,
 } from '@charts-app/components/NodeEditor/V2/Nodes/FunctionNode/FunctionNode';
 import { NodeDataVariants } from '@charts-app/components/NodeEditor/V2/types';
-import {
-  ChartWorkflowV2,
-  ScheduledCalculation,
-} from '@charts-app/models/chart/types';
 import { compareVersions } from 'compare-versions';
 import { uniqBy } from 'lodash';
 
@@ -29,6 +25,7 @@ import {
   OperationVersionParams,
   OperationVersionParamsTypeEnum,
 } from '@cognite/calculation-backend';
+import { ChartWorkflowV2, ScheduledCalculation } from '@cognite/charts-lib';
 
 import { passthroughOperationDefinition } from './calculations';
 import { AUTO_ALIGN_PARAM } from './constants';

@@ -6,11 +6,6 @@ import { useIsChartOwner } from '@charts-app/hooks/user';
 import { useUserInfo } from '@charts-app/hooks/useUserInfo';
 import { availableWorkflows } from '@charts-app/models/calculation-results/selectors';
 import {
-  Chart,
-  ChartWorkflowV2,
-  ScheduledCalculation,
-} from '@charts-app/models/chart/types';
-import {
   updateScheduledCalculation,
   updateWorkflow,
 } from '@charts-app/models/chart/updates';
@@ -18,6 +13,11 @@ import { useOperations } from '@charts-app/models/operations/atom';
 import { useScheduledCalculationDataValue } from '@charts-app/models/scheduled-calculation-results/atom';
 import { SetterOrUpdater, useRecoilValue } from 'recoil';
 
+import {
+  Chart,
+  ChartWorkflowV2,
+  ScheduledCalculation,
+} from '@cognite/charts-lib';
 import { Icon, toast } from '@cognite/cogs.js';
 
 import { defaultTranslations } from './translations';

@@ -77,7 +77,7 @@ export const TopicFilter = ({
   return (
     <>
       <Container className={className}>
-        <Body level={2}>{job.topicFilter}</Body>
+        <Body level={2}>{job.config.topicFilter}</Body>
         <Body level={2}>
           {job.status ? (
             <Status

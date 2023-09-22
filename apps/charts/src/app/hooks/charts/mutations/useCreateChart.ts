@@ -1,11 +1,10 @@
 import { useUserInfo } from '@charts-app/hooks/useUserInfo';
-import { Chart } from '@charts-app/models/chart/types';
-import { createChart } from '@charts-app/services/charts-storage';
 import { useMutation } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { v4 } from 'uuid';
 
 import { getProject } from '@cognite/cdf-utilities';
+import { Chart, createChart } from '@cognite/charts-lib';
 
 const useCreateChart = () => {
   const { data: loginInfo } = useUserInfo();

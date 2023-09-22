@@ -1,4 +1,4 @@
-import { ChartWorkflowV2 } from '@charts-app/models/chart/types';
+import { ChartWorkflowV2 } from '@cognite/charts-lib';
 
 import { formatCalculationsForDownload } from './charts';
 

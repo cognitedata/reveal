@@ -10,10 +10,7 @@ import {
   updateEdge,
 } from 'react-flow-renderer';
 
-import {
-  ChartWorkflowV2,
-  ScheduledCalculation,
-} from '@charts-app/models/chart/types';
+import { ChartWorkflowV2, ScheduledCalculation } from '@cognite/charts-lib';
 
 import {
   NodeTypes,

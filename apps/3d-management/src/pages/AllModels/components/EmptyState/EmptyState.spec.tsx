@@ -1,12 +1,10 @@
-import React from 'react';
-
-import { mount } from 'enzyme';
+import { render } from '@testing-library/react';
 
 import EmptyState from './EmptyState';
 
 describe('EmptyState', () => {
   it('Renders without exploding', () => {
-    const wrapper = mount(<EmptyState />);
-    expect(wrapper).toHaveLength(1);
+    const { baseElement } = render(<EmptyState />);
+    expect(baseElement).toBeTruthy();
   });
 });

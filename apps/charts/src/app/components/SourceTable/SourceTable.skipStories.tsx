@@ -4,13 +4,13 @@
 import { ComponentProps } from 'react';
 import { MemoryRouter } from 'react-router';
 
-import { ChartTimeSeries, ChartWorkflow } from '@charts-app/models/chart/types';
 import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import { DatapointsSummary } from '@charts-app/utils/units';
 import { Meta, Story } from '@storybook/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import sdk from '@cognite/cdf-sdk-singleton';
+import { ChartTimeSeries, ChartWorkflow } from '@cognite/charts-lib';
 import { SDKProvider } from '@cognite/sdk-provider';
 
 import SourceTable from './SourceTable';

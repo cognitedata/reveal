@@ -15,11 +15,11 @@ import {
   SourceSelect,
 } from '@charts-app/components/Common/SidebarElements';
 import { useTranslations } from '@charts-app/hooks/translations';
-import { Chart, ChartSource } from '@charts-app/models/chart/types';
 import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import styled from 'styled-components/macro';
 
 import { StatusStatusEnum } from '@cognite/calculation-backend';
+import { Chart, ChartSource } from '@cognite/charts-lib';
 import { Icon, Tooltip, Button, Infobox } from '@cognite/cogs.js';
 
 import { SourceSelector } from '../Common/SourceSelector';

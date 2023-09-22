@@ -1,7 +1,7 @@
-import { Chart } from '@charts-app/models/chart/types';
 import { convertUnits } from '@charts-app/utils/units';
 import { subDays } from 'date-fns';
 
+import { Chart } from '@cognite/charts-lib';
 import { Aggregate, CogniteClient, DatapointAggregate } from '@cognite/sdk';
 
 import { roundToSignificantDigits } from './numbers';

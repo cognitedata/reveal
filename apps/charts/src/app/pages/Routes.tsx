@@ -4,7 +4,6 @@ import { Route, Routes as ReactRoutes } from 'react-router-dom';
 import ErrorToast from '@charts-app/components/ErrorToast/ErrorToast';
 import PageLayout from '@charts-app/components/Layout/PageLayout';
 import SecondaryTopBar from '@charts-app/components/SecondaryTopBar/SecondaryTopBar';
-import { useFirebaseInit } from '@charts-app/hooks/firebase';
 import { useUserInfo } from '@charts-app/hooks/useUserInfo';
 import { identifyUserForMetrics } from '@charts-app/services/metrics';
 import * as Sentry from '@sentry/react';
@@ -15,6 +14,7 @@ import {
   getCluster,
   isUsingUnifiedSignin,
 } from '@cognite/cdf-utilities';
+import { useFirebaseInit } from '@cognite/charts-lib';
 import { Loader, toast } from '@cognite/cogs.js';
 import { parseEnvFromCluster } from '@cognite/login-utils';
 

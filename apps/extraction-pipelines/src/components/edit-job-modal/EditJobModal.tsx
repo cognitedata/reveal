@@ -19,7 +19,7 @@ export const EditJobModal = ({
   visible,
 }: EditJobsModalProps): JSX.Element => {
   const [tempTopicFilterInput, setTempTopicFilterInput] = useState(
-    job.topicFilter
+    job.config.topicFilter
   );
 
   const { t } = useTranslation();
@@ -49,8 +49,10 @@ export const EditJobModal = ({
     updateJob({
       externalId: job?.externalId ?? '',
       update: {
-        topicFilter: {
-          set: tempTopicFilterInput,
+        config: {
+          set: {
+            topicFilter: tempTopicFilterInput,
+          },
         },
       },
     });

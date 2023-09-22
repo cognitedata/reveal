@@ -17,16 +17,13 @@ import {
 
 import { ScheduledCalculationDeleteModal } from '@charts-app/components/ScheduledCalculation/ScheduledCalculationDeleteModal';
 import { useScheduledCalculationDeleteMutate } from '@charts-app/domain/scheduled-calculation/internal/queries/useScheduledCalculationDeleteMutate';
-import {
-  ChartWorkflowV2,
-  ScheduledCalculation,
-} from '@charts-app/models/chart/types';
 import { ScheduledCalculationData } from '@charts-app/models/scheduled-calculation-results/types';
 import Layers from '@charts-app/utils/z-index';
 import styled from 'styled-components/macro';
 import { v4 as uuidv4 } from 'uuid';
 
 import { ComputationStep, Operation } from '@cognite/calculation-backend';
+import { ChartWorkflowV2, ScheduledCalculation } from '@cognite/charts-lib';
 import { Button } from '@cognite/cogs.js';
 
 import { defaultTranslations } from '../translations';

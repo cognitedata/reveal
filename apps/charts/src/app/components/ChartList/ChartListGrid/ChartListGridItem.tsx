@@ -3,9 +3,9 @@ import { MouseEvent, useContext } from 'react';
 import styled from 'styled-components';
 
 import { RenderWhenOnScreen } from '@charts-app/components/RenderWhenOnScreen/RenderWhenOnScreen';
-import { Chart } from '@charts-app/models/chart/types';
 import { Skeleton } from 'antd';
 
+import { Chart } from '@cognite/charts-lib';
 import {
   A,
   Flex,

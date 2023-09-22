@@ -23,7 +23,6 @@ import ClickBoundary from '@charts-app/components/EditableText/ClickBoundary';
 import TranslatedEditableText from '@charts-app/components/EditableText/TranslatedEditableText';
 import { StyleButton } from '@charts-app/components/StyleButton/StyleButton';
 import { useTranslations } from '@charts-app/hooks/translations';
-import { Chart, ChartEventFilters } from '@charts-app/models/chart/types';
 import {
   addEventFilters,
   initEventFilters,
@@ -39,6 +38,7 @@ import { isNil, omit, omitBy } from 'lodash';
 import { useRecoilState } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
 
+import { Chart, ChartEventFilters } from '@cognite/charts-lib';
 import {
   Button,
   Collapse,

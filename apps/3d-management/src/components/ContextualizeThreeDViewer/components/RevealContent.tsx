@@ -20,14 +20,15 @@ import {
   HighQualitySettings,
   LowQualitySettings,
 } from '../../../pages/ContextualizeEditor/constants';
-import { ContextualizeThreeDViewerToolbar } from '../ContextualizeThreeDViewerToolbar';
 import {
   setToolbarForCadModelsState,
   setToolbarForPointCloudModelsState,
   useContextualizeThreeDViewerStore,
 } from '../useContextualizeThreeDViewerStore';
-import { ColorTypeSelector } from '../utils/PointCloudColorPicker';
-import { PointSizeSlider } from '../utils/PointSizeSlider';
+
+import { ContextualizeThreeDViewerToolbar } from './ContextualizeThreeDViewerToolbar';
+import { ColorTypeSelector } from './PointCloudColorPicker';
+import { PointSizeSlider } from './PointSizeSlider';
 
 interface RevealContentProps {
   modelId: number;
@@ -50,6 +51,7 @@ export const RevealContent = ({ modelId, revisionId }: RevealContentProps) => {
     }));
 
   const handleOnLoad = (_model: CogniteModel) => {
+    viewer.fitCameraToModel(_model);
     if (!(viewer.cameraManager instanceof DefaultCameraManager)) {
       console.warn(
         'Camera manager is not DefaultCameraManager, so click to change camera target will not work.'
@@ -57,7 +59,7 @@ export const RevealContent = ({ modelId, revisionId }: RevealContentProps) => {
       return;
     }
 
-    (viewer.cameraManager as DefaultCameraManager).setCameraControlsOptions({
+    viewer.cameraManager.setCameraControlsOptions({
       changeCameraTargetOnClick: true,
       mouseWheelAction: 'zoomToCursor',
     });

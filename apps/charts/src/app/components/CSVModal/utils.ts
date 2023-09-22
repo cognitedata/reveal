@@ -1,4 +1,3 @@
-import { ChartTimeSeries, ChartWorkflow } from '@charts-app/models/chart/types';
 import {
   fetchCalculationQueriesResult,
   fetchCalculationQueryResult,
@@ -12,6 +11,7 @@ import {
 import dayjs from 'dayjs';
 import { range, last } from 'lodash';
 
+import { ChartTimeSeries, ChartWorkflow } from '@cognite/charts-lib';
 import {
   DatapointAggregates,
   DatapointsMultiQuery,

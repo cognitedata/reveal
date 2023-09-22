@@ -6,14 +6,15 @@ import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 
 import SourceRows from '@charts-app/components/SourceTable/SourceRows';
 import { WorkflowState } from '@charts-app/models/calculation-results/types';
+import { ScheduledCalculationsDataMap } from '@charts-app/models/scheduled-calculation-results/types';
+import { TimeseriesEntry } from '@charts-app/models/timeseries-results/types';
+import { Modes } from '@charts-app/pages/types';
+
 import {
   ChartTimeSeries,
   ChartWorkflow,
   ScheduledCalculation,
-} from '@charts-app/models/chart/types';
-import { ScheduledCalculationsDataMap } from '@charts-app/models/scheduled-calculation-results/types';
-import { TimeseriesEntry } from '@charts-app/models/timeseries-results/types';
-import { Modes } from '@charts-app/pages/types';
+} from '@cognite/charts-lib';
 
 import { SourceTableWrapper, Table } from './elements';
 import { SourceTableHeader } from './SourceTableHeader';

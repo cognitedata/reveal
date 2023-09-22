@@ -5,14 +5,6 @@ import { useCreateStatistics } from '@charts-app/hooks/calculation-backend';
 import { useChart, useUpdateChart } from '@charts-app/hooks/charts-storage';
 import { usePrevious } from '@charts-app/hooks/usePrevious';
 import chartAtom from '@charts-app/models/chart/atom';
-import {
-  ChartWorkflowV2,
-  Chart,
-  ChartTimeSeries,
-  ChartWorkflow,
-  ScheduledCalculation,
-  ChartSource,
-} from '@charts-app/models/chart/types';
 import { updateDuplicateIds } from '@charts-app/models/chart/update-duplicate-ids';
 import {
   updateChartDateRange,
@@ -37,6 +29,14 @@ import {
   CreateStatisticsParams,
   StatusStatusEnum,
 } from '@cognite/calculation-backend';
+import {
+  ChartWorkflowV2,
+  Chart,
+  ChartTimeSeries,
+  ChartWorkflow,
+  ScheduledCalculation,
+  ChartSource,
+} from '@cognite/charts-lib';
 import { useSDK } from '@cognite/sdk-provider';
 
 export const useInitializedChart = (chartId: string) => {

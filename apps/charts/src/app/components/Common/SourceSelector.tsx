@@ -4,8 +4,8 @@ import { OptionProps, components } from 'react-select';
 import { SourceSelect } from '@charts-app/components/Common/SidebarElements';
 import { SourceOption } from '@charts-app/components/NodeEditor/V2/types';
 import { useChartSourcesValue } from '@charts-app/models/chart/selectors';
-import { ChartSource, SourceType } from '@charts-app/models/chart/types';
 
+import { ChartSource, SourceType } from '@cognite/charts-lib';
 import { SelectProps, SelectComponents } from '@cognite/cogs.js';
 
 import { SourceOptionContainer, EllipsesText } from './elements';

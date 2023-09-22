@@ -1,6 +1,5 @@
 import { useCallback, useState } from 'react';
 
-import { Chart } from '@charts-app/models/chart/types';
 import { datapointsToCSV, Delimiters } from '@charts-app/utils/csv';
 import { wait } from '@charts-app/utils/helpers';
 import isTruthy from '@charts-app/utils/isTruthy';
@@ -8,6 +7,7 @@ import { format as formatDate } from 'date-fns';
 import { saveAs } from 'file-saver';
 import JSZip from 'jszip';
 
+import { Chart } from '@cognite/charts-lib';
 import { CogniteClient, DatapointAggregates } from '@cognite/sdk';
 
 import {

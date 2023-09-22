@@ -179,7 +179,6 @@ export const useMQTTSourceWithMetrics = (externalId?: string) => {
     async () => {
       const source = await fetchMQTTSource(sdk, queryClient, externalId);
       const jobs = await fetchMQTTJobsWithMetrics(sdk, queryClient, externalId);
-
       const throughput = jobs.reduce((acc, cur) => acc + cur.throughput, 0);
 
       return {
@@ -400,9 +399,13 @@ type MQTTJobStatus =
 
 type MQTTJobTargetStatus = 'running' | 'paused';
 
-type BaseMQTTJob = {
-  externalId: string;
+type MqttJobConfig = {
   topicFilter: string;
+};
+
+type BaseMQTTJob = {
+  config: MqttJobConfig;
+  externalId: string;
   format: MQTTFormat;
 };
 
@@ -478,19 +481,20 @@ const getMQTTJobsWithMetrics = async (
 
   const raw = Object.values(jobsWithMetrics);
   const withThroughput = raw.map((jobWithMetrics) => {
-    const totalInput = jobWithMetrics.metrics.reduce((acc, cur) => {
+    const now = new Date().getTime();
+    //only get the average over the last 6 hours
+    const sixHoursAgoTimestamp = now - 1000 * 60 * 60 * 6;
+    const jobsLastSixHours = jobWithMetrics.metrics.filter((metric) => {
+      return metric.timestamp >= sixHoursAgoTimestamp;
+    });
+    const totalInput = jobsLastSixHours.reduce((acc, cur) => {
       return acc + cur.destinationInputValues;
     }, 0);
-
-    const now = new Date().getTime();
-    const minTimestamp = jobWithMetrics.metrics.reduce((acc, cur) => {
+    const timeSinceFirstMetric = jobsLastSixHours.reduce((acc, cur) => {
       return Math.min(acc, cur.timestamp);
     }, now);
-
-    const msDiff = now - minTimestamp;
-    const hourDiff = Math.floor(msDiff / 1000 / 60 / 60) + 1;
-    const throughput = Math.round(totalInput / hourDiff);
-
+    const hoursSinceFirstMetric = (now - timeSinceFirstMetric) / 1000 / 60 / 60;
+    const throughput = Math.round(totalInput / hoursSinceFirstMetric);
     return {
       ...jobWithMetrics,
       throughput,
@@ -645,7 +649,7 @@ export const useCreateMQTTJob = (
 
 type UpdateMQTTJobVariables = UpdateWithExternalId<
   ReadMQTTJob,
-  'targetStatus' | 'topicFilter'
+  'targetStatus' | 'config'
 >;
 
 export const useUpdateMQTTJob = (

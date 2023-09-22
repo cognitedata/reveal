@@ -6,11 +6,11 @@ import {
   cleanWorkflowCollection,
 } from '@charts-app/components/PlotlyChart/utils';
 import { WorkflowState } from '@charts-app/models/calculation-results/types';
-import { Chart } from '@charts-app/models/chart/types';
 import { TimeseriesEntry } from '@charts-app/models/timeseries-results/types';
 import { calculateGranularity } from '@charts-app/utils/timeseries';
 import dayjs from 'dayjs';
 
+import { Chart } from '@cognite/charts-lib';
 import { CogniteClient, DatapointsMultiQuery } from '@cognite/sdk';
 
 const fetchPlotlyPropsPreview = async (

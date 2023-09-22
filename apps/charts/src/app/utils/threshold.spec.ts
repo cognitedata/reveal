@@ -1,4 +1,4 @@
-import { ChartThreshold } from '@charts-app/models/chart/types';
+import { ChartThreshold } from '@cognite/charts-lib';
 
 import { isThresholdValid } from './threshold';
 

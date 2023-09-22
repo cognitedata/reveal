@@ -1,5 +1,4 @@
-import { ChartEventFilters } from '@charts-app/models/chart/types';
-
+import { ChartEventFilters } from '@cognite/charts-lib';
 import { CogniteEvent } from '@cognite/sdk';
 
 export type EventsEntry = {

@@ -14,7 +14,7 @@ import {
   defaultRevealColor,
 } from '../../pages/ContextualizeEditor/constants';
 
-import { RevealContent } from './containers/RevealContent';
+import { RevealContent } from './components/RevealContent';
 import { useSyncStateWithViewer } from './hooks/useSyncStateWithViewer';
 import {
   onCloseResourceSelector,
