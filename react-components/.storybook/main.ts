@@ -13,7 +13,6 @@ const config: StorybookConfig = {
     builder: '@storybook/builder-vite'
   },
   async viteFinal(config, { configType }) {
-    console.log(configType);
     if (config.plugins !== undefined) {
       remove(config.plugins, (plugin) => {
         return (plugin as any).name === 'vite-plugin-externalize-deps';
