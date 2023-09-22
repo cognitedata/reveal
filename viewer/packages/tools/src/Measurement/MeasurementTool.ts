@@ -4,8 +4,8 @@
 
 import { Cognite3DViewer } from '@reveal/api';
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
-import { assertNever, DisposedDelegate, EventTrigger } from '@reveal/utilities';
 import * as THREE from 'three';
+import { assertNever, DisposedDelegate, EventTrigger, PointerEventData, PointerEventDelegate } from '@reveal/utilities';
 import {
   MeasurementAddedDelegate,
   MeasurementStartedDelegate,
@@ -18,7 +18,7 @@ import { HtmlOverlayTool, HtmlOverlayToolOptions } from '../HtmlOverlay/HtmlOver
 import rulerSvg from '!!raw-loader!./styles/ruler.svg';
 import { MetricsLogger } from '@reveal/metrics';
 
-type MeasurementEvents = 'added' | 'started' | 'ended' | 'disposed';
+export type MeasurementEvents = 'added' | 'started' | 'ended' | 'disposed';
 
 /**
  * Enables {@link Cognite3DViewer} to perform a point to point measurement.
@@ -64,6 +64,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   private _measurementMode: boolean;
   private _showMeasurements: boolean;
   private _showLabels: boolean;
+  private _cachedClickHandlers: PointerEventDelegate[] = [];
 
   private readonly _handleLabelClustering = this.createCombineClusterElement.bind(this);
   private readonly _handlePointerClick = this.onPointerClick.bind(this);
@@ -85,7 +86,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   private static readonly defaultLineOptions: Required<MeasurementOptions> = {
     distanceToLabelCallback: d => MeasurementTool.metersLabelCallback(d),
     lineWidth: 0.01,
-    color: new THREE.Color(0xff8746)
+    color: new Color(0xff8746)
   };
 
   constructor(viewer: Cognite3DViewer, options?: MeasurementOptions) {
@@ -236,11 +237,19 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     if (this._measurementMode) {
       throw new Error('Measurement mode is active, call exitMeasurementMode()');
     }
-    this._viewer.domElement.addEventListener('pointerdown', this._handlePointerClick, { capture: true });
+
+    this.overrideClickHandlers();
+
     this._viewer.on('beforeSceneRendered', this._handleClippingPlanes);
+
     this._events.measurementStarted.fire();
     this._measurementMode = true;
     this._showMeasurements = true;
+  }
+
+  private overrideClickHandlers() {
+    const triggerView = this._viewer.getEventHandlerTrigger('click');
+    this._cachedClickHandlers = triggerView.replaceListeners([this._handlePointerClick]);
   }
 
   /**
@@ -251,10 +260,22 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
       throw new Error('Measurement mode is not active, call enterMeasurementMode()');
     }
     this.cancelActiveMeasurement();
-    this._viewer.domElement.removeEventListener('pointerdown', this._handlePointerClick, { capture: true });
+
+    this.restoreClickHandlers();
+
     this._viewer.off('beforeSceneRendered', this._handleClippingPlanes);
     this._events.measurementEnded.fire();
     this._measurementMode = false;
+  }
+
+  private restoreClickHandlers(): void {
+    const triggerView = this._viewer.getEventHandlerTrigger('click');
+
+    // Make sure to include listeners added after the override so that they persist
+    const potentiallyAddedListeners = triggerView.getListeners().splice(1);
+
+    triggerView.replaceListeners([...this._cachedClickHandlers, ...potentiallyAddedListeners]);
+    this._cachedClickHandlers.splice(0);
   }
 
   /**
@@ -377,13 +398,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     super.dispose();
   }
 
-  private async onPointerClick(event: MouseEvent): Promise<void> {
-    if (event.target !== this._viewer.canvas) {
-      return;
-    }
-
-    event.stopPropagation();
-
+  private async onPointerClick(event: PointerEventData): Promise<void> {
     const { offsetX, offsetY } = event;
 
     const intersection = await this._viewer.getIntersectionFromPixel(offsetX, offsetY);
