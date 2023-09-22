@@ -354,6 +354,12 @@ export class Cognite3DViewer {
     get360ImageCollections(): Image360Collection[];
     // @deprecated
     getClippingPlanes(): THREE_2.Plane[];
+    getEventHandlerTrigger(event: 'click' | 'hover'): EventTriggerView<PointerEventDelegate>;
+    getEventHandlerTrigger(event: 'disposed'): EventTriggerView<DisposedDelegate>;
+    getEventHandlerTrigger(event: 'cameraChange'): EventTriggerView<CameraChangeDelegate>;
+    getEventHandlerTrigger(event: 'cameraStop'): EventTriggerView<CameraStopDelegate>;
+    getEventHandlerTrigger(event: 'beforeSceneRendered'): EventTriggerView<BeforeSceneRenderedDelegate>;
+    getEventHandlerTrigger(event: 'sceneRendered'): EventTriggerView<SceneRenderedDelegate>;
     getGlobalClippingPlanes(): THREE_2.Plane[];
     getIntersectionFromPixel(offsetX: number, offsetY: number): Promise<null | Intersection>;
     getScreenshot(width?: number, height?: number, includeUI?: boolean): Promise<string>;
@@ -733,6 +739,12 @@ export type EdlOptions = {
     strength: number;
     radius: number;
 };
+
+// @public
+export interface EventTriggerView<TListener extends (...args: any[]) => void> {
+    getListeners(): TListener[];
+    replaceListeners(listeners: TListener[]): TListener[];
+}
 
 // @public (undocumented)
 export enum File3dFormat {

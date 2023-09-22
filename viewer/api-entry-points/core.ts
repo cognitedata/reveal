@@ -52,6 +52,7 @@ export {
 export { SupportedModelTypes } from '../packages/model-base';
 
 export {
+  EventTriggerView,
   IndexSet,
   NumericRange,
   BeforeSceneRenderedDelegate,

@@ -86,7 +86,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   private static readonly defaultLineOptions: Required<MeasurementOptions> = {
     distanceToLabelCallback: d => MeasurementTool.metersLabelCallback(d),
     lineWidth: 0.01,
-    color: new Color(0xff8746)
+    color: new THREE.Color(0xff8746)
   };
 
   constructor(viewer: Cognite3DViewer, options?: MeasurementOptions) {
