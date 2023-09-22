@@ -81,6 +81,7 @@ import {
 } from '@reveal/360-images';
 import { Image360ApiHelper } from '../../api-helpers/Image360ApiHelper';
 import html2canvas from 'html2canvas';
+import { EventTriggerView } from '@reveal/utilities';
 
 type Cognite3DViewerEvents =
   | 'click'
@@ -641,6 +642,70 @@ export class Cognite3DViewer {
       case 'disposed':
         this._events.disposed.unsubscribe(callback as DisposedDelegate);
         break;
+
+      default:
+        assertNever(event);
+    }
+  }
+
+  /**
+   * Get the EventTriggerView keeping track of the event triggers for 'click' or 'hover' events.
+   */
+  getEventHandlerTrigger(event: 'click' | 'hover'): EventTriggerView<PointerEventDelegate>;
+  /**
+   * Get the EventTriggerView keeping track of 'disposed' event listeners.
+   */
+  getEventHandlerTrigger(event: 'disposed'): EventTriggerView<DisposedDelegate>;
+  /**
+   * Get the EventTriggerView keeping track of 'cameraChange' event listeners.
+   */
+  getEventHandlerTrigger(event: 'cameraChange'): EventTriggerView<CameraChangeDelegate>;
+  /**
+   * Get the EventTriggerView keeping track of 'cameraStop' event listeners.
+   */
+  getEventHandlerTrigger(event: 'cameraStop'): EventTriggerView<CameraStopDelegate>;
+  /**
+   * Get the EventTriggerView keeping track of 'beforeSceneRendered' event listeners.
+   */
+  getEventHandlerTrigger(event: 'beforeSceneRendered'): EventTriggerView<BeforeSceneRenderedDelegate>;
+  /**
+   * Get the EventTriggerView keeping track of 'sceneRendered' event listeners.
+   */
+  getEventHandlerTrigger(event: 'sceneRendered'): EventTriggerView<SceneRenderedDelegate>;
+  /**
+   * Get the EventTriggerView
+   * @param event The type of event for which to find the EventTriggerView.
+   */
+  getEventHandlerTrigger(
+    event: Cognite3DViewerEvents
+  ):
+    | EventTriggerView<PointerEventDelegate>
+    | EventTriggerView<DisposedDelegate>
+    | EventTriggerView<CameraChangeDelegate>
+    | EventTriggerView<CameraStopDelegate>
+    | EventTriggerView<BeforeSceneRenderedDelegate>
+    | EventTriggerView<SceneRenderedDelegate> {
+    switch (event) {
+      case 'click':
+        return this._events.click;
+
+      case 'hover':
+        return this._events.hover;
+
+      case 'cameraChange':
+        return this._events.cameraChange;
+
+      case 'cameraStop':
+        return this._events.cameraStop;
+
+      case 'beforeSceneRendered':
+        return this._events.beforeSceneRendered;
+
+      case 'sceneRendered':
+        return this._events.sceneRendered;
+
+      case 'disposed':
+        return this._events.disposed;
 
       default:
         assertNever(event);
