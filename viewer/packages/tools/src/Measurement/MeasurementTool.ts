@@ -238,7 +238,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
       throw new Error('Measurement mode is active, call exitMeasurementMode()');
     }
 
-    this.overrideClickHandlers();
+    this.overrideViewerClickHandlers(this._handlePointerClick);
 
     this._viewer.on('beforeSceneRendered', this._handleClippingPlanes);
 
@@ -247,9 +247,9 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     this._showMeasurements = true;
   }
 
-  private overrideClickHandlers() {
+  private overrideViewerClickHandlers(overridingClickHandler: (event: PointerEventData) => Promise<void>): void {
     const triggerView = this._viewer.getEventHandlerTrigger('click');
-    this._cachedClickHandlers = triggerView.replaceListeners([this._handlePointerClick]);
+    this._cachedClickHandlers = triggerView.replaceListeners([overridingClickHandler]);
   }
 
   /**
@@ -261,14 +261,14 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     }
     this.cancelActiveMeasurement();
 
-    this.restoreClickHandlers();
+    this.restoreViewerClickHandlers();
 
     this._viewer.off('beforeSceneRendered', this._handleClippingPlanes);
     this._events.measurementEnded.fire();
     this._measurementMode = false;
   }
 
-  private restoreClickHandlers(): void {
+  private restoreViewerClickHandlers(): void {
     const triggerView = this._viewer.getEventHandlerTrigger('click');
 
     // Make sure to include listeners added after the override so that they persist
