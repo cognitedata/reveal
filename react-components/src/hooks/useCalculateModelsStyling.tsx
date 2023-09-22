@@ -155,7 +155,7 @@ function getMappedStyleGroup(
   mapped: NodeAppearance
 ): TreeIndexStylingGroup {
   const treeIndices = edges.flatMap((edge) => {
-    const treeIndices = getNodeSubtreeIndices(edge.node);
+    const treeIndices = getNodeSubtreeIndices(edge.cadNode);
     return treeIndices;
   });
   return { treeIndices, style: mapped };
