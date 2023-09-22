@@ -31,9 +31,14 @@
     "react-dom": ">=18",
     "styled-components": ">=5"
   },
-  "devDependencies": {
+  "dependencies": {
     "@cognite/cdf-i18n-utils": "^0.7.5",
     "@cognite/cdf-utilities": "^3.5.0",
+    "@tanstack/react-query": "^4.29.19",
+    "assert": "^2.0.0",
+    "lodash": "^4.17.21"
+  },
+  "devDependencies": {
     "@cognite/cogs.js": "^9.17.0",
     "@cognite/reveal": "4.4.2",
     "@cognite/sdk": "^8.2.0",
@@ -82,10 +87,5 @@
   "packageManager": "yarn@3.6.3",
   "files": [
     "dist"
-  ],
-  "dependencies": {
-    "@tanstack/react-query": "^4.29.19",
-    "assert": "^2.0.0",
-    "lodash": "^4.17.21"
-  }
+  ]
 }
