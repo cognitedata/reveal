@@ -673,7 +673,7 @@ export class Cognite3DViewer {
    */
   getEventHandlerTrigger(event: 'sceneRendered'): EventTriggerView<SceneRenderedDelegate>;
   /**
-   * Get the EventTriggerView
+   * Get the EventTriggerView for the given event type.
    * @param event The type of event for which to find the EventTriggerView.
    */
   getEventHandlerTrigger(
