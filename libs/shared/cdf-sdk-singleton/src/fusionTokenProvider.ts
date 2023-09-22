@@ -4,6 +4,7 @@ import {
   CogniteIdPResponse,
   KeycloakResponse,
   getSelectedIdpDetails,
+  removeSelectedIdpDetails,
 } from '@cognite/login-utils';
 
 import getAADAccessToken, {
@@ -178,6 +179,7 @@ export class FusionTokenProvider implements SdkClientTokenProvider {
         break;
       }
     }
+    removeSelectedIdpDetails();
     window.location.href = '/';
   }
 }

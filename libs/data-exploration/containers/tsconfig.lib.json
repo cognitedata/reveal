@@ -3,7 +3,12 @@
   "compilerOptions": {
     "outDir": "../../../dist/out-tsc",
     "declaration": true,
-    "types": ["node"]
+    "types": [
+      "node",
+      "vite/client",
+      "@nx/react/typings/cssmodule.d.ts",
+      "@nx/react/typings/image.d.ts"
+    ]
   },
   "files": [
     "../../../node_modules/@nx/react/typings/cssmodule.d.ts",

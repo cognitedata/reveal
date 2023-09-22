@@ -23,7 +23,7 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/load-remote-module"],
+      "outputs": ["{workspaceRoot}/coverage/libs/load-remote-module"],
       "options": {
         "jestConfig": "libs/shared/load-remote-module/jest.config.ts",
         "passWithNoTests": true

@@ -4,7 +4,9 @@
     "outDir": "../../dist/out-tsc",
     "resolveJsonModule": true,
     "types": [
-      "node"
+      "node",
+      "@nx/react/typings/cssmodule.d.ts",
+      "@nx/react/typings/image.d.ts"
     ]
   },
   "files": [
@@ -22,10 +24,5 @@
     "**/tests/**.*",
     "jest.config.ts"
   ],
-  "include": [
-    "**/*.js",
-    "**/*.jsx",
-    "**/*.ts",
-    "**/*.tsx"
-  ]
+  "include": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"]
 }

@@ -17,10 +17,7 @@
       "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": [
-          "libs/shared/cdf-utilities/**/*.{ts,tsx,js,jsx}",
-          "libs/shared/cdf-utilities/package.json"
-        ]
+        "lintFilePatterns": ["libs/shared/cdf-utilities/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "build": {

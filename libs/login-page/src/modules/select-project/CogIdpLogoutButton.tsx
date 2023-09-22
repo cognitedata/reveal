@@ -6,14 +6,15 @@ import {
   getSelectedIdpDetails,
   removeSelectedIdpDetails,
   useIdp,
-  KeycloakResponse,
   useCogniteIdPUserManager,
+  CogniteIdPResponse,
+  getBaseUrl,
 } from '@cognite/login-utils';
 
 export default function CogIdpLogoutButton() {
   const { t } = useTranslation();
   const { internalId } = getSelectedIdpDetails() ?? {};
-  const { data: idp, isFetched } = useIdp<KeycloakResponse>(internalId);
+  const { data: idp, isFetched } = useIdp<CogniteIdPResponse>(internalId);
 
   const userManager = useCogniteIdPUserManager({
     authority: idp?.authority || '',
@@ -27,10 +28,7 @@ export default function CogIdpLogoutButton() {
       type="ghost-accent"
       onClick={() => {
         removeSelectedIdpDetails();
-        const redirectUri = `https://${window.location.hostname
-          .split('.')
-          .slice(1)
-          .join('.')}`;
+        const redirectUri = getBaseUrl();
         userManager.signoutRedirect({
           post_logout_redirect_uri: redirectUri,
         });

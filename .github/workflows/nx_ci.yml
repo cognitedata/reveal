@@ -606,7 +606,7 @@ jobs:
           # start the shell and wait for it to be ready
           start: yarn nx run fusion-shell:preview:production
           wait-on: https://local.cognite.ai:4200
-          wait-on-timeout: 200
+          wait-on-timeout: 300
           # run the e2e test target for the given project
           command: yarn nx run ${{ matrix.project }}:e2e:ci
 

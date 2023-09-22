@@ -15,22 +15,10 @@
       }
     },
     "build": {
-      "executor": "@nx/rollup:rollup",
+      "executor": "@nx/vite:build",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/libs/data-exploration/containers",
-        "tsConfig": "libs/data-exploration/containers/tsconfig.lib.json",
-        "entryFile": "libs/data-exploration/containers/src/index.ts",
-        "external": ["react/jsx-runtime"],
-        "rollupConfig": "@nx/react/plugins/bundle-rollup",
-        "compiler": "swc",
-        "assets": [
-          {
-            "glob": "libs/data-exploration/containers/README.md",
-            "input": ".",
-            "output": "."
-          }
-        ]
+        "outputPath": "dist/libs/data-exploration/containers"
       }
     },
     "test": {

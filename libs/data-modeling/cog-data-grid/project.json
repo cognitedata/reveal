@@ -22,7 +22,8 @@
             "output": "."
           }
         ],
-        "babelUpwardRootMode": true
+        "babelUpwardRootMode": true,
+        "updateBuildableProjectDepsInPackageJson": true
       }
     },
     "lint": {

@@ -51,7 +51,7 @@ type Props = {
  * accordion with the remaining buttons, depending on whether a Cognite IdP org is provided.
  */
 const renderSignInButtons = (
-  cogIdpOrg: PublicOrgResponse | undefined,
+  activePublicCogIdpOrg: PublicOrgResponse | undefined,
   sortedIdps: IDPResponse[]
 ): JSX.Element => {
   // Note that if `cogIdpOrg` is defined and/or `sortedIdps` is non-empty, then `loginInfo`
@@ -70,25 +70,31 @@ const renderSignInButtons = (
     </StyledIdpListInner>
   );
 
-  if (!cogIdpOrg) {
+  if (!activePublicCogIdpOrg) {
     return otherButtons;
   }
 
   const selectedIdpDetails = getSelectedIdpDetails();
   const isOtherIdpSelected =
     selectedIdpDetails !== undefined &&
-    selectedIdpDetails?.type !== 'COGNITE_IDP';
+    selectedIdpDetails.type !== 'COGNITE_IDP';
+
+  const shouldDisplayOtherIdps =
+    isOtherIdpSelected ||
+    (sortedIdpsWithoutCogIpd.length > 0 &&
+      activePublicCogIdpOrg.migrationStatus === 'DUAL_LOGIN');
 
   return (
     <>
       <StyledIdpListInner>
         <SignInWithCogniteIdP
           key="cognite-idp"
-          organization={cogIdpOrg.id}
+          organization={activePublicCogIdpOrg.id}
           clientId={getClientId()}
+          autoInitiate={!shouldDisplayOtherIdps}
         />
       </StyledIdpListInner>
-      {sortedIdpsWithoutCogIpd.length > 0 ? (
+      {shouldDisplayOtherIdps ? (
         <Accordion
           // When the user selects an non-CogIdP IdP we must take to render the IdP button
           // when they come back from the IdP callback because the button is responsible for
@@ -196,7 +202,12 @@ const SelectSignInMethod = (props: Props): JSX.Element => {
   const { isHelpModalVisible, setIsHelpModalVisible } = props;
   const { t } = useTranslation();
 
-  const { data: loginInfo, isError, isFetched, error } = useLoginInfo();
+  const {
+    data: loginInfo,
+    isError: isErrorLoginInfo,
+    isFetched: isFetchedLoginInfo,
+    error: errorLoginInfo,
+  } = useLoginInfo();
   // We timeout after 5s to avoid blocking legacy DLC logins if CogIdP doesn't answer.
   const { data: publicCogIdpOrg, isFetched: isPublicCogIdpOrgFetched } =
     usePublicCogniteIdpOrg({ timeout: 5000 });
@@ -216,16 +227,20 @@ const SelectSignInMethod = (props: Props): JSX.Element => {
       .open('https://cognite.zendesk.com/hc/en-us/requests/new', '_blank')
       ?.focus();
 
-  if (!isFetched || !isPublicCogIdpOrgFetched) {
+  if (!isFetchedLoginInfo || !isPublicCogIdpOrgFetched) {
     return <Loader />;
   }
 
-  if (isError) {
-    if (error.statusCode === 404) {
-      if (error.message === 'APPLICATION_NOT_FOUND') {
+  const activePublicCogIdpOrg =
+    publicCogIdpOrg && publicCogIdpOrg.migrationStatus !== 'NOT_STARTED'
+      ? publicCogIdpOrg
+      : undefined;
+  if (isErrorLoginInfo && !activePublicCogIdpOrg) {
+    if (errorLoginInfo.statusCode === 404) {
+      if (errorLoginInfo.message === 'APPLICATION_NOT_FOUND') {
         return <ApplicationNotFound fullPage />;
       }
-      const didYouMean = error.didYouMean;
+      const didYouMean = errorLoginInfo.didYouMean;
       const fullDidYouMean = didYouMean?.map(
         (domain) => `${domain}.${getRootDomain()}`
       );
@@ -239,7 +254,7 @@ const SelectSignInMethod = (props: Props): JSX.Element => {
         />
       );
     }
-    return <GenericError error={error} />;
+    return <GenericError error={errorLoginInfo} />;
   }
 
   const sortedIdps = sortIDPsByLabel(loginInfo?.idps ?? []);
@@ -276,7 +291,7 @@ const SelectSignInMethod = (props: Props): JSX.Element => {
       </StyledContainerHeader>
       <StyledContent $isBordered>
         <StyledIdpListOuter>
-          {renderSignInButtons(publicCogIdpOrg, sortedIdps)}
+          {renderSignInButtons(activePublicCogIdpOrg, sortedIdps)}
         </StyledIdpListOuter>
 
         {loginInfo?.idps?.length && loginInfo?.legacyProjects?.length ? (

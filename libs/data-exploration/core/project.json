@@ -5,21 +5,12 @@
   "projectType": "library",
   "targets": {
     "build": {
-      "executor": "@nx/rollup:rollup",
+      "executor": "@nx/vite:build",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/libs/data-exploration/core",
-        "main": "libs/data-exploration/core/src/index.ts",
-        "tsConfig": "libs/data-exploration/core/tsconfig.lib.json",
-        "format": ["esm"],
-        "assets": [
-          {
-            "glob": "libs/data-exploration/core/README.md",
-            "input": ".",
-            "output": "."
-          }
-        ]
-      }
+        "outputPath": "dist/libs/data-exploration/core"
+      },
+      "format": ["esm"]
     },
     "lint": {
       "executor": "@nx/linter:eslint",

@@ -1,8 +1,33 @@
 import { UserManager, WebStorageStateStore } from 'oidc-client-ts';
 
-import { PublicOrgResponse } from '../types/cogniteIdp';
+import {
+  CogniteIdPResponse,
+  CogIdpProject,
+  ListCogIdpProjectsResponse,
+  PublicOrgResponse,
+} from '../types';
 
 import { getApp, getOrganization, isAllowlistedHost } from './loginInfo';
+
+export const cogIdpAuthority = 'https://auth.cognite.com';
+export const cogIdpInternalId = 'ff16d970-0491-415a-ab4b-3ba9eb65ac4a';
+
+export const cogIdpAsResponse = (
+  projects: CogIdpProject[] = []
+): CogniteIdPResponse => ({
+  authority: cogIdpAuthority,
+  internalId: cogIdpInternalId,
+  type: 'COGNITE_IDP',
+  clusters: [
+    ...new Set(projects.map((project) => removeProtocol(project.apiUrl))),
+  ],
+  projects: projects,
+  appConfiguration: {
+    clientId: getClientId(),
+  },
+});
+
+const removeProtocol = (url: string) => new URL(url).host;
 
 export const getCogniteIdPUserManager = (params: {
   authority: string;
@@ -45,11 +70,6 @@ export const getCogniteIdPToken = async (userManager: UserManager) => {
 export const getPublicOrg = async (
   options: { timeout?: number } = {}
 ): Promise<PublicOrgResponse | undefined> => {
-  // Ignore clusters not supported by DLC for now (Aramco & OpenField)
-  if (!isAllowlistedHost()) {
-    return undefined;
-  }
-
   const organization = getOrganization();
 
   const controller = new AbortController();
@@ -58,16 +78,37 @@ export const getPublicOrg = async (
   }
 
   const response = await fetch(
-    `https://auth.cognite.com/api/v0/orgs/${organization}/public`,
+    `${cogIdpAuthority}/api/v0/orgs/${organization}/public?includeMigrationStatus=true`,
     {
       signal: controller.signal,
     }
   );
-  const org = await response.json();
   if (!response.ok) {
     return undefined;
   }
-  return org;
+  return await response.json();
+};
+
+export const getProjectsForCogIdpOrg = async (
+  token?: string
+): Promise<ListCogIdpProjectsResponse | undefined> => {
+  if (!token) {
+    return undefined;
+  }
+  const organization = getOrganization();
+
+  const response = await fetch(
+    `${cogIdpAuthority}/api/v0/orgs/${organization}/projects`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  if (!response.ok) {
+    return undefined;
+  }
+  return await response.json();
 };
 
 export const getClientId = () => {
