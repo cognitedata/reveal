@@ -19,7 +19,8 @@ import {
   type ModelNodeIdKey,
   type ModelRevisionToEdgeMap,
   type ModelRevisionId,
-  type FdmKey
+  type FdmKey,
+  type FdmNodeDataPromises
 } from './types';
 import {
   createFdmKey,
@@ -103,7 +104,7 @@ export class FdmNodeCache {
     );
 
     const mappings = createMapWithAccumulatedValues(
-      relevantCachedEdgeData.map((data) => [data.edge.startNode.externalId, data.node])
+      relevantCachedEdgeData.map((data) => [data.edge.startNode.externalId, data.cadNode])
     );
 
     return {
@@ -149,7 +150,7 @@ export class FdmNodeCache {
     const relevantEdges = intersectWithStartNodeIdSet(edges, relevantFdmKeySet);
 
     const externalIdToNodeMap = createMapWithAccumulatedValues(
-      relevantEdges.map((edge) => [edge.edge.startNode.externalId, edge.node])
+      relevantEdges.map((edge) => [edge.edge.startNode.externalId, edge.cadNode])
     );
 
     return {
@@ -217,7 +218,7 @@ export class FdmNodeCache {
       const revisionCache = this.getOrCreateRevisionCache(modelId, revisionId);
 
       data.forEach((edgeAndNode) => {
-        revisionCache.insertTreeIndexMappings(edgeAndNode.node.treeIndex, edgeAndNode);
+        revisionCache.insertTreeIndexMappings(edgeAndNode.cadNode.treeIndex, edgeAndNode);
       });
 
       this._completeRevisions.add(revisionKey);
@@ -246,14 +247,14 @@ export class FdmNodeCache {
     return revisionToEdgesMap;
   }
 
-  public async getClosestParentExternalId(
+  public getClosestParentDataPromises(
     modelId: number,
     revisionId: number,
     treeIndex: number
-  ): Promise<Array<Required<FdmEdgeWithNode>>> {
+  ): FdmNodeDataPromises {
     const revisionCache = this.getOrCreateRevisionCache(modelId, revisionId);
 
-    return await revisionCache.getClosestParentFdmData(treeIndex);
+    return revisionCache.getClosestParentFdmData(treeIndex);
   }
 
   private async getViewsForEdges(
@@ -361,7 +362,7 @@ function createFdmEdgeWithNode(
   const node = modelNodeIdToNodeMap.get(revisionNodeIdKey);
   assert(node !== undefined);
 
-  return { edge, node, view };
+  return { edge, cadNode: node, view };
 }
 
 function insertEdgeIntoMapList(
