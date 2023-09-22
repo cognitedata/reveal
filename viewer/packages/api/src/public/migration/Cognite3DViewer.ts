@@ -685,31 +685,7 @@ export class Cognite3DViewer {
     | EventTriggerView<CameraStopDelegate>
     | EventTriggerView<BeforeSceneRenderedDelegate>
     | EventTriggerView<SceneRenderedDelegate> {
-    switch (event) {
-      case 'click':
-        return this._events.click;
-
-      case 'hover':
-        return this._events.hover;
-
-      case 'cameraChange':
-        return this._events.cameraChange;
-
-      case 'cameraStop':
-        return this._events.cameraStop;
-
-      case 'beforeSceneRendered':
-        return this._events.beforeSceneRendered;
-
-      case 'sceneRendered':
-        return this._events.sceneRendered;
-
-      case 'disposed':
-        return this._events.disposed;
-
-      default:
-        assertNever(event);
-    }
+    return this._events[event];
   }
 
   get cameraManager(): CameraManager {
