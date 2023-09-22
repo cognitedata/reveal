@@ -18,7 +18,7 @@ import { HtmlOverlayTool, HtmlOverlayToolOptions } from '../HtmlOverlay/HtmlOver
 import rulerSvg from '!!raw-loader!./styles/ruler.svg';
 import { MetricsLogger } from '@reveal/metrics';
 
-export type MeasurementEvents = 'added' | 'started' | 'ended' | 'disposed';
+type MeasurementEvents = 'added' | 'started' | 'ended' | 'disposed';
 
 /**
  * Enables {@link Cognite3DViewer} to perform a point to point measurement.
