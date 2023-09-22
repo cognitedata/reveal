@@ -3,6 +3,7 @@
   "version": "0.11.0",
   "license": "UNLICENSED",
   "sideEffects": false,
+  "types": "index.esm.d.ts",
   "peerDependencies": {
     "@cognite/cogs.js": "^9",
     "react": "^18",

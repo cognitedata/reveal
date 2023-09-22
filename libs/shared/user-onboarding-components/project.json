@@ -40,7 +40,8 @@
             "input": ".",
             "output": "."
           }
-        ]
+        ],
+        "updateBuildableProjectDepsInPackageJson": true
       }
     },
     "test": {
@@ -57,7 +58,6 @@
         }
       }
     },
-
     "storybook": {
       "executor": "@nx/storybook:storybook",
       "options": {

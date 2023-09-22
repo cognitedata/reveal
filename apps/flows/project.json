@@ -78,7 +78,6 @@
           "hmr": true,
           "liveReload": true
         },
-
         "preview": {
           "buildTarget": "flows:build:preview",
           "hmr": false
