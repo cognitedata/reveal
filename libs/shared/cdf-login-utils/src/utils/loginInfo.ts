@@ -55,13 +55,24 @@ const getValidLegacyProjectsInLoginFlows = (
 
 export const getLoginFlowsByCluster = (
   loginInfo?: DomainResponse,
-  loginFlowId?: string,
+  idp?: IDPResponse,
   validLegacyProjects?: LegacyProject[]
 ) => {
   const loginFlowsByCluster: Record<
     string,
     { idp?: IDPResponse; legacyProjects: LegacyProject[] }
   > = {};
+
+  // For CogIdp, it's the same IdP for all login flows.
+  if (idp?.type === 'COGNITE_IDP') {
+    idp.clusters.forEach((cluster) => {
+      loginFlowsByCluster[cluster] = {
+        idp,
+        legacyProjects: [],
+      };
+    });
+    return loginFlowsByCluster;
+  }
 
   const legacyProjectsByCluster = getLegacyProjectsByCluster(
     loginInfo?.legacyProjects
@@ -76,11 +87,7 @@ export const getLoginFlowsByCluster = (
       legacyProjectsByCluster[cluster];
   });
 
-  if (loginFlowId) {
-    const idp = loginInfo?.idps.find(
-      ({ internalId }) => internalId === loginFlowId
-    );
-
+  if (idp) {
     idp?.clusters.forEach((idpCluster) => {
       if (!loginFlowsByCluster[idpCluster]) {
         loginFlowsByCluster[idpCluster] = { legacyProjects: [] };
@@ -261,6 +268,17 @@ export const getBaseHostname = (): string => {
   }
 };
 
+export const getBaseUrl = (): string => {
+  const baseHostnameWithProtocol = `${
+    window.location.protocol
+  }//${getBaseHostname()}`;
+  const { port } = window.location;
+  if (port) {
+    return `${baseHostnameWithProtocol}:${port}`;
+  }
+  return baseHostnameWithProtocol;
+};
+
 const hardcodedDlcResponses: Record<string, DomainResponse> = {
   openfield: {
     domain: 'cog-adfs2016',
@@ -305,6 +323,9 @@ export const getDlc = async (): Promise<DomainResponse> => {
   if (isAllowlistedHost()) {
     const organization = getOrganization();
     const app = getApp();
+    if (!organization) {
+      throw new Error('Organization not found');
+    }
     const response = await fetch(
       `https://app-login-configuration-lookup.cognite.ai/${app}/${organization}`
     );

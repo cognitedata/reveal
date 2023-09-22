@@ -5,6 +5,8 @@ import {
   IDPResponse,
   getDlc,
   LegacyProject,
+  cogIdpInternalId,
+  cogIdpAsResponse,
 } from '@cognite/login-utils';
 import { CogniteClient } from '@cognite/sdk';
 
@@ -57,6 +59,10 @@ export const getUrl = (
 
 export async function getIDP(): Promise<IDPResponse | LegacyProject> {
   const { internalId } = getSelectedIdpDetails() ?? {};
+
+  if (internalId === cogIdpInternalId) {
+    return cogIdpAsResponse();
+  }
 
   const dlc = await getDlc();
   const { idps, legacyProjects } = dlc;
