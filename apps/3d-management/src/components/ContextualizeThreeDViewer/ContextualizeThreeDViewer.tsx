@@ -28,9 +28,11 @@ import { useSyncStateWithViewer } from './hooks/useSyncStateWithViewer';
 import {
   onCloseResourceSelector,
   setModelId,
+  setSelectedNodes,
   useContextualizeThreeDViewerStore,
 } from './useContextualizeThreeDViewerStore';
 import { createCdfThreeDAnnotation } from './utils/createCdfThreeDAnnotation';
+import { createCdfThreeDAssetMapping } from './utils/createCdfThreeDAssetMapping';
 
 type ContextualizeThreeDViewerProps = {
   modelId: number;
@@ -43,13 +45,21 @@ export const ContextualizeThreeDViewer = ({
 }: ContextualizeThreeDViewerProps) => {
   const sdk = useSDK();
 
-  const { isResourceSelectorOpen, pendingAnnotation, viewer, model } =
-    useContextualizeThreeDViewerStore((state) => ({
-      isResourceSelectorOpen: state.isResourceSelectorOpen,
-      pendingAnnotation: state.pendingAnnotation,
-      viewer: state.threeDViewer,
-      model: state.model,
-    }));
+  const {
+    isResourceSelectorOpen,
+    pendingAnnotation,
+    viewer,
+    model,
+    modelType,
+    selectedNodeIds,
+  } = useContextualizeThreeDViewerStore((state) => ({
+    isResourceSelectorOpen: state.isResourceSelectorOpen,
+    pendingAnnotation: state.pendingAnnotation,
+    viewer: state.threeDViewer,
+    model: state.model,
+    modelType: state.modelType,
+    selectedNodeIds: state.selectedNodes,
+  }));
 
   // use effects
   useEffect(() => {
@@ -80,6 +90,8 @@ export const ContextualizeThreeDViewer = ({
             point: intersection.point,
           };
           selectedNodes.updateSet(new IndexSet([intersection.treeIndex]));
+
+          setSelectedNodes([nodeId]);
         }
       });
     })();
@@ -143,6 +155,24 @@ export const ContextualizeThreeDViewer = ({
     viewer.addObject3D(newSavedAnnotation);
   };
 
+  const saveAssetMapping = (nodeIds: Array<number>, assetId: number) => {
+    nodeIds.forEach((nodeId: number) => {
+      createCdfThreeDAssetMapping({
+        sdk: sdk,
+        modelId: modelId,
+        revisionId: revisionId,
+        assetRefId: assetId,
+        nodeId: nodeId,
+      });
+    });
+  };
+  const createContextualization = (assetId: number) => {
+    if (modelType === 'cad') {
+      saveAssetMapping(selectedNodeIds, assetId);
+    } else if (modelType === 'pointcloud') {
+      saveAnnotationToCdf(assetId);
+    }
+  };
   return (
     <>
       <StyledSplitter>
@@ -151,20 +181,20 @@ export const ContextualizeThreeDViewer = ({
             <RevealContent modelId={modelId} revisionId={revisionId} />
           </RevealContainer>
         </ThreeDViewerStyled>
-        {viewer && model && (
+        {/* {viewer && model && (
           <ThreeDViewerSidebar
             viewer={viewer}
             model={model}
             nodesClickable={true}
           />
-        )}
+        )} */}
         {isResourceSelectorOpen && (
           <ResourceSelector
             selectionMode="single"
             visibleResourceTabs={['asset']}
             onSelect={(item) => {
               onCloseResourceSelector();
-              saveAnnotationToCdf(item.id);
+              createContextualization(item.id);
             }}
           />
         )}

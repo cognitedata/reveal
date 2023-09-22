@@ -35,12 +35,14 @@ type RootState = {
   isToolbarForCadModels: boolean;
   isToolbarForPointCloudModels: boolean;
   model: CogniteCadModel | CognitePointCloudModel | undefined;
+  modelType: string;
+  selectedNodes: Array<number>;
 };
 
 const initialState: RootState = {
   pendingAnnotation: null,
-  isResourceSelectorOpen: false,
-  isThreeDNodeTreeOpen: false,
+  isResourceSelectorOpen: true,
+  isThreeDNodeTreeOpen: true,
   isToolbarForCadModels: false,
   isToolbarForPointCloudModels: false,
   threeDViewer: null,
@@ -48,6 +50,8 @@ const initialState: RootState = {
   shouldShowBoundingVolumes: false,
   modelId: null,
   model: undefined,
+  modelType: '',
+  selectedNodes: [],
 };
 
 export const useContextualizeThreeDViewerStore = create<RootState>(
@@ -134,9 +138,23 @@ export const setModelId = (modelId: number) => {
   }));
 };
 
+export const setModelType = (modelType: string) => {
+  useContextualizeThreeDViewerStore.setState((prevState) => ({
+    ...prevState,
+    modelType,
+  }));
+};
+
 export const setModel = (model: CogniteCadModel | CognitePointCloudModel) => {
   useContextualizeThreeDViewerStore.setState((prevState) => ({
     ...prevState,
     model,
+  }));
+};
+
+export const setSelectedNodes = (selectedNodes: Array<number>) => {
+  useContextualizeThreeDViewerStore.setState((prevState) => ({
+    ...prevState,
+    selectedNodes,
   }));
 };

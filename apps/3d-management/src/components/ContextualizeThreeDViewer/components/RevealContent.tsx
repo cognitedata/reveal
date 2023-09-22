@@ -21,6 +21,7 @@ import {
 } from '../../../pages/ContextualizeEditor/constants';
 import {
   setModel,
+  setModelType,
   setThreeDViewer,
   setToolbarForCadModelsState,
   setToolbarForPointCloudModelsState,
@@ -97,6 +98,8 @@ export const RevealContent = ({ modelId, revisionId }: RevealContentProps) => {
       }
       try {
         const modelType = await viewer.determineModelType(modelId, revisionId);
+        setModelType(modelType);
+
         switch (modelType) {
           case 'cad': {
             viewer.addModel({ modelId, revisionId }).then(handleOnLoad);
