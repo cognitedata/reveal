@@ -4,15 +4,11 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import {
   Reveal3DResources,
-  RevealContainer,
-  RevealToolbar,
-  withSuppressRevealEvents
+  RevealContainer
 } from '../src';
 import { Color, Matrix4 } from 'three';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import { RevealResourcesFitCameraOnLoad } from './utilities/with3dResoursesFitCameraOnLoad';
-import styled from 'styled-components';
-import { withSlicerStateUrlParam } from '../src/higher-order-components/withSlicerStateUrlParam';
 
 const meta = {
   title: 'Example/Reveal3DResources',
