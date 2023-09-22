@@ -30,7 +30,7 @@ export default defineConfig(({ command }) => {
 
 function yalcPush(command: 'build' | 'serve'): PluginOption {
   if (process.env.YALC !== 'true' && command === 'build') {
-    return;
+    return false;
   }
   return {
     name: 'yalc-push',
