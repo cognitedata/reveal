@@ -55,7 +55,7 @@ export const RevealContent = ({ modelId, revisionId }: RevealContentProps) => {
       return;
     }
 
-    (viewer.cameraManager as DefaultCameraManager).setCameraControlsOptions({
+    viewer.cameraManager.setCameraControlsOptions({
       changeCameraTargetOnClick: true,
       mouseWheelAction: 'zoomToCursor',
     });
