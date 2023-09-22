@@ -42,7 +42,10 @@ export function CadModelContainer({
 
   useEffect(() => {
     addModel(modelId, revisionId, transform)
-      .then((model) => { onLoad?.(model); update3DResources(viewer.models) })
+      .then((model) => {
+        onLoad?.(model);
+        update3DResources(viewer.models);
+      })
       .catch((error) => {
         const errorReportFunction = onLoadError ?? defaultLoadErrorHandler;
         errorReportFunction(addModelOptions, error);

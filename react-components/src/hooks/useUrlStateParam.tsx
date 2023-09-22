@@ -26,7 +26,7 @@ export const useUrlStateParam = (): UrlStateParamActions => {
   };
 
   const setUrlParamOnSlicerChanged = (slicerTopBottom: number[]): void => {
-    url.searchParams.set('slicerTopBottom', `[${slicerTopBottom}]`);
+    url.searchParams.set('slicerTopBottom', `[${slicerTopBottom.join(',')}]`);
     window.history.pushState({}, '', url);
   };
 

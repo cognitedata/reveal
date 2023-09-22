@@ -28,7 +28,9 @@ export const SlicerButton = ({ storeStateInUrl }: SlicerButtonProps): ReactEleme
   const viewer = useReveal();
   const { reveal3DResources } = useRevealResources();
   const urlParam = useUrlStateParam();
-  const { top, bottom } = storeStateInUrl !== false ? urlParam.getSlicerStateFromUrlParam() : { top: 1, bottom: 0 };
+  const { top, bottom } = storeStateInUrl
+    ? urlParam.getSlicerStateFromUrlParam()
+    : { top: 1, bottom: 0 };
   const [sliceActive, setSliceActive] = useState<boolean>(false);
 
   const [sliceState, setSliceState] = useState<SliceState>({
@@ -41,8 +43,8 @@ export const SlicerButton = ({ storeStateInUrl }: SlicerButtonProps): ReactEleme
   const { minHeight, maxHeight, topRatio, bottomRatio } = sliceState;
 
   useEffect(() => {
-    const updateSliceState = () => {
-      if (reveal3DResources.length === 0) {
+    const updateSliceState = (): void => {
+      if (reveal3DResources.length === 0 || viewer === undefined) {
         return;
       }
 
@@ -53,10 +55,12 @@ export const SlicerButton = ({ storeStateInUrl }: SlicerButtonProps): ReactEleme
       const newMinY = box.min.y;
 
       if (maxHeight !== newMaxY || minHeight !== newMinY) {
-        viewer.setGlobalClippingPlanes([
-          new Plane(new Vector3(0, 1, 0), -(newMinY + bottomRatio * (newMaxY - newMinY))),
-          new Plane(new Vector3(0, -1, 0), newMinY + topRatio * (newMaxY - newMinY))
-        ]);
+        if (storeStateInUrl) {
+          viewer.setGlobalClippingPlanes([
+            new Plane(new Vector3(0, 1, 0), -(newMinY + topRatio * (newMaxY - newMinY))),
+            new Plane(new Vector3(0, -1, 0), newMinY + bottomRatio * (newMaxY - newMinY))
+          ]);
+        }
         setSliceState({
           maxHeight: newMaxY,
           minHeight: newMinY,

@@ -48,7 +48,10 @@ export function PointCloudContainer({
 
   useEffect(() => {
     addModel(modelId, revisionId, transform)
-      .then((pointCloudModel) => { onLoad?.(pointCloudModel); update3DResources(viewer.models) })
+      .then((pointCloudModel) => {
+        onLoad?.(pointCloudModel);
+        update3DResources(viewer.models);
+      })
       .catch((error) => {
         const errorHandler = onLoadError ?? defaultLoadErrorHandler;
         errorHandler(addModelOptions, error);

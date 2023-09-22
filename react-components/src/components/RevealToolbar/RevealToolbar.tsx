@@ -44,7 +44,7 @@ const DefaultContentWrapper = (props: CustomContent): ReactElement => {
 
       <div className="cogs-toolbar-divider" />
 
-      <SlicerButton storeStateInUrl={props.storeStateInUrl}/>
+      <SlicerButton storeStateInUrl={props.storeStateInUrl} />
       <MeasurementButton />
 
       <div className="cogs-toolbar-divider" />

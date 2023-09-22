@@ -79,13 +79,11 @@ export function RevealContainer({
       <>
         <RevealContainerElementContext.Provider value={wrapperDomElement.current}>
           <RevealContext.Provider value={viewer}>
-
             <NodeCacheProvider>
               <RevealResourcesContextProvider>
                 {createPortal(children, viewerDomElement.current)}
               </RevealResourcesContextProvider>
             </NodeCacheProvider>
-
           </RevealContext.Provider>
         </RevealContainerElementContext.Provider>
       </>
