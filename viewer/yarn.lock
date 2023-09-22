@@ -587,6 +587,7 @@ __metadata:
     "@azure/msal-browser": 2.38.2
     "@cognite/sdk": 8.2.0
     "@microsoft/api-extractor": ^7.33.6
+    "@rajesh896/broprint.js": ^2.1.1
     "@tweenjs/tween.js": 19.0.0
     "@types/dat.gui": 0.7.10
     "@types/gl": ^6.0.2
@@ -1467,6 +1468,15 @@ __metadata:
   bin:
     browsers: lib/cjs/main-cli.js
   checksum: fb7cf7773a1aed4e34ce0952dbf9609a164e624d4f8e1f342b816fe3e983888d7a7b2fbafc963559e96cb5bca0d75fb9c81f2097f9b1f5478a0f1cc7cbc12dff
+  languageName: node
+  linkType: hard
+
+"@rajesh896/broprint.js@npm:^2.1.1":
+  version: 2.1.1
+  resolution: "@rajesh896/broprint.js@npm:2.1.1"
+  bin:
+    getDeviceId(): lib/index.js
+  checksum: 8cc27136d2ed8aa3376988574f124789a9cbc4b48ccd9e37628dea127bee0fb189c76930ed696e55f56fcad1efbbb3648764781665e67b7713bf0864c6f80e6c
   languageName: node
   linkType: hard
 
