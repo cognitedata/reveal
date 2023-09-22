@@ -15,7 +15,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 16
-          registry-url: "https://registry.npmjs.org"
+          registry-url: 'https://registry.npmjs.org'
           always-auth: true
 
       - name: Setup Cognite CICD NPM
@@ -32,7 +32,7 @@ jobs:
             cognite:
               npmAlwaysAuth: true
               npmAuthToken: \"\${NPM_TOKEN}\"
-              npmRegistryServer: "https://registry.npmjs.org"
+              npmRegistryServer: 'https://registry.npmjs.org'
           " >> .yarnrc.yml
         env:
           NPM_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
