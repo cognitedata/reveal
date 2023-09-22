@@ -115,6 +115,18 @@ export class RevisionFdmNodeCache {
     const { ancestorsWithSameMapping } = await ancestorDataPromise;
     const ancestorTreeIndexes = ancestorsWithSameMapping.map((ancestor) => ancestor.treeIndex);
 
+    const cachedTreeIndexesDescending = ancestorTreeIndexes.filter(treeIndex => this._treeIndexToFdmEdges.has(treeIndex))
+      .sort((a, b) => b - a);
+
+    const cachedNodeData = cachedTreeIndexesDescending.length !== 0 ?
+      this._treeIndexToFdmEdges.get(cachedTreeIndexesDescending[0]) :
+      undefined;
+
+    if (checkDefinedView(cachedNodeData)) {
+      this.setCacheDataForTreeIndices(ancestorTreeIndexes, cachedNodeData);
+      return cachedNodeData.map(data => data.view);
+    }
+
     return await this.getAndCacheViewsPromiseForNodeData(cadAndEdges, ancestorTreeIndexes);
   }
 
@@ -125,7 +137,7 @@ export class RevisionFdmNodeCache {
       await ancestorDataPromise;
 
     if (edges.length === 0) {
-      this.setCacheDataForNodes(ancestorsWithSameMapping, []);
+      this.setCacheDataForTreeIndices(ancestorsWithSameMapping.map(a => a.treeIndex), []);
       return undefined;
     }
 
@@ -138,9 +150,9 @@ export class RevisionFdmNodeCache {
     return { cadNode: firstMappedAncestor, edges };
   }
 
-  private setCacheDataForNodes(nodes: Node3D[], nodeData: FdmEdgeWithNode[]): void {
-    nodes.forEach((node) => {
-      this._treeIndexToFdmEdges.set(node.treeIndex, nodeData);
+  private setCacheDataForTreeIndices(treeIndices: number[], nodeData: FdmEdgeWithNode[]): void {
+    treeIndices.forEach((treeIndex) => {
+      this._treeIndexToFdmEdges.set(treeIndex, nodeData);
     });
   }
 
@@ -302,11 +314,7 @@ function getAncestorDataForTreeIndex(
   treeIndex: TreeIndex,
   edgesWithTreeIndex: Array<{ edge: FdmCadEdge; treeIndex: TreeIndex }>,
   ancestors: Node3D[]
-): {
-  edges: FdmCadEdge[];
-  ancestorsWithSameMapping: Node3D[];
-  firstMappedAncestorTreeIndex: number;
-} {
+): AncestorQueryResult {
   const edgesForTreeIndex = edgesWithTreeIndex.filter(
     (edgeAndTreeIndex) => edgeAndTreeIndex.treeIndex === treeIndex
   );
