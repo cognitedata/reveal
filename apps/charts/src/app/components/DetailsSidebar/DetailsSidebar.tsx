@@ -11,7 +11,6 @@ import {
 } from '@charts-app/components/Common/SidebarElements';
 import DetailsBlock from '@charts-app/components/DetailsBlock/DetailsBlock';
 import { useTranslations } from '@charts-app/hooks/translations';
-import { ChartSource } from '@charts-app/models/chart/types';
 import { useScheduledCalculationDataValue } from '@charts-app/models/scheduled-calculation-results/atom';
 import {
   SourceCircle,
@@ -28,6 +27,7 @@ import {
   StatisticsResultResults,
   StatusStatusEnum,
 } from '@cognite/calculation-backend';
+import { ChartSource } from '@cognite/charts-lib';
 import {
   Button,
   Icon,

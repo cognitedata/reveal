@@ -3,12 +3,6 @@ import { PlotParams } from 'react-plotly.js';
 
 import { WorkflowState } from '@charts-app/models/calculation-results/types';
 import {
-  ChartThreshold,
-  ChartTimeSeries,
-  ChartWorkflow,
-  ScheduledCalculation,
-} from '@charts-app/models/chart/types';
-import {
   ChartEventResults,
   EventsCollection,
 } from '@charts-app/models/event-results/types';
@@ -17,6 +11,13 @@ import { ScheduledCalculationsDataMap } from '@charts-app/models/scheduled-calcu
 import { TimeseriesEntry } from '@charts-app/models/timeseries-results/types';
 import Plotly from 'plotly.js-basic-dist';
 import createPlotlyComponent from 'react-plotly.js/factory';
+
+import {
+  ChartThreshold,
+  ChartTimeSeries,
+  ChartWorkflow,
+  ScheduledCalculation,
+} from '@cognite/charts-lib';
 
 import { PlotWrapper } from './elements';
 import { createNavigationSafePlotComponent } from './navigation-safe-plot-component';

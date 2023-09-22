@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 
 import chartAtom from '@charts-app/models/chart/atom';
-import { ChartTimeSeries } from '@charts-app/models/chart/types';
 import { timeseriesAtom } from '@charts-app/models/timeseries-results/atom';
 import { fetchRawOrAggregatedDatapoints } from '@charts-app/services/cdf-api';
 import { CHART_POINTS_PER_SERIES } from '@charts-app/utils/constants';
@@ -12,6 +11,7 @@ import { isEqual } from 'lodash';
 import { useRecoilState } from 'recoil';
 import { useDebounce } from 'use-debounce';
 
+import { ChartTimeSeries } from '@cognite/charts-lib';
 import { DatapointsMultiQuery } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 

@@ -1,8 +1,9 @@
 import { useUpdateChart } from '@charts-app/hooks/charts-storage';
 import { useUserInfo } from '@charts-app/hooks/useUserInfo';
 import { duplicateChart } from '@charts-app/models/chart/helpers';
-import { Chart } from '@charts-app/models/chart/types';
 import { filter, orderBy, isString } from 'lodash';
+
+import { Chart } from '@cognite/charts-lib';
 
 import useDeleteMyChart from '../mutations/useDeleteMyChart';
 import useMyCharts from '../queries/useMyCharts';

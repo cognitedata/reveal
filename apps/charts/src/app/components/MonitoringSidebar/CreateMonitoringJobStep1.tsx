@@ -16,10 +16,6 @@ import {
 import { useTranslations } from '@charts-app/hooks/translations';
 import { useChartAtom } from '@charts-app/models/chart/atom';
 import {
-  ChartThreshold,
-  ChartTimeSeries,
-} from '@charts-app/models/chart/types';
-import {
   addChartThreshold,
   removeChartThreshold,
   updateChartThresholdSelectedSource,
@@ -30,6 +26,7 @@ import { trackUsage } from '@charts-app/services/metrics';
 import { makeDefaultTranslations } from '@charts-app/utils/translations';
 import { delay } from 'lodash';
 
+import { ChartThreshold, ChartTimeSeries } from '@cognite/charts-lib';
 import { Button, Icon, Row, Col, Chip } from '@cognite/cogs.js';
 
 import { FormError } from '../Form/FormError';

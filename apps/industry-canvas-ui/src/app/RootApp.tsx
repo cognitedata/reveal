@@ -15,10 +15,12 @@ import {
 } from '@fusion/industry-canvas';
 
 import { getFlow } from '@cognite/cdf-sdk-singleton';
+import { ChartsSdkInitialisationGuard } from '@cognite/charts-lib';
 import { useSDK } from '@cognite/sdk-provider';
 
 import { useUserInformation } from '../hooks/useUserInformation';
 
+import Charts from './Charts';
 import { ICProvider } from './ICProvider';
 
 const trackUsage = createTrackUsage({
@@ -72,6 +74,14 @@ export default function App() {
                     <Route
                       path="/industrial-canvas/canvas"
                       element={<IndustryCanvasPage />}
+                    />
+                    <Route
+                      path="/industrial-canvas/test"
+                      element={
+                        <ChartsSdkInitialisationGuard>
+                          <Charts />
+                        </ChartsSdkInitialisationGuard>
+                      }
                     />
                   </Routes>
                 </IndustryCanvasProvider>

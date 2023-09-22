@@ -2,16 +2,12 @@ import { Dispatch, SetStateAction } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 
 import { ScheduledCalculationTask } from '@charts-app/domain/scheduled-calculation/service/types';
-import {
-  Chart,
-  ChartWorkflow,
-  ChartWorkflowV2,
-} from '@charts-app/models/chart/types';
 import { captureMessage } from '@sentry/react';
 import { UseMutateAsyncFunction } from '@tanstack/react-query';
 import { SetterOrUpdater } from 'recoil';
 
 import { ComputationStep } from '@cognite/calculation-backend';
+import { Chart, ChartWorkflow, ChartWorkflowV2 } from '@cognite/charts-lib';
 import { toast } from '@cognite/cogs.js';
 import { Timeseries } from '@cognite/sdk';
 

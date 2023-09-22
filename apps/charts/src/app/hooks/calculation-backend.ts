@@ -1,7 +1,6 @@
 import { useCallback } from 'react';
 
 import { WorkflowResult } from '@charts-app/models/calculation-results/types';
-import { ChartThreshold } from '@charts-app/models/chart/types';
 import { RAW_DATA_POINTS_THRESHOLD } from '@charts-app/utils/constants';
 import { getHash } from '@charts-app/utils/hash';
 import {
@@ -22,6 +21,7 @@ import {
   CreateThresholdsParams,
   StatusStatusEnum,
 } from '@cognite/calculation-backend';
+import { ChartThreshold } from '@cognite/charts-lib';
 import { DatapointAggregate, DatapointsMultiQuery } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 

@@ -3,12 +3,13 @@ import { ComponentProps } from 'react';
 import { ScheduledCalculationRow } from '@charts-app/components/SourceTable/ScheduledCalculationRow';
 import WorkflowRow from '@charts-app/components/SourceTable/WorkflowRow';
 import { useTranslations } from '@charts-app/hooks/translations';
+import { Modes } from '@charts-app/pages/types';
+
 import {
   ChartTimeSeries,
   ChartWorkflow,
   ScheduledCalculation,
-} from '@charts-app/models/chart/types';
-import { Modes } from '@charts-app/pages/types';
+} from '@cognite/charts-lib';
 
 import TimeSeriesRow from './TimeSeriesRow';
 

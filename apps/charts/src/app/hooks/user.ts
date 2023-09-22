@@ -1,5 +1,6 @@
 import { useUserInfo } from '@charts-app/hooks/useUserInfo';
-import { Chart } from '@charts-app/models/chart/types';
+
+import { Chart } from '@cognite/charts-lib';
 
 export const useIsChartOwner = (chart?: Chart) => {
   const { data: login } = useUserInfo();

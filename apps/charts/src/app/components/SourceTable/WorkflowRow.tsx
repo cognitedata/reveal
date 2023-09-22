@@ -14,7 +14,6 @@ import {
   useTranslations,
 } from '@charts-app/hooks/translations';
 import { WorkflowState } from '@charts-app/models/calculation-results/types';
-import { ChartWorkflow } from '@charts-app/models/chart/types';
 import { trackUsage } from '@charts-app/services/metrics';
 import { formatValueForDisplay } from '@charts-app/utils/numbers';
 import {
@@ -23,6 +22,7 @@ import {
 } from '@charts-app/utils/translations';
 import { DatapointsSummary } from '@charts-app/utils/units';
 
+import { ChartWorkflow } from '@cognite/charts-lib';
 import { Button, Popconfirm, Tooltip } from '@cognite/cogs.js';
 import { useFlag } from '@cognite/react-feature-flags';
 

@@ -15,6 +15,14 @@ import {
 } from '@charts-app/components/NodeEditor/V2/types';
 import { initializeParameterValues } from '@charts-app/components/NodeEditor/V2/utils';
 import { AxisUpdate } from '@charts-app/components/PlotlyChart/utils';
+import { calcDeepCloneAndReplaceNodeElementsId } from '@charts-app/utils/calculations';
+import { getEntryColor } from '@charts-app/utils/colors';
+import { compareVersions } from 'compare-versions';
+import dayjs from 'dayjs';
+import { omit } from 'lodash';
+import { v4 as uuidv4 } from 'uuid';
+
+import { Operation } from '@cognite/calculation-backend';
 import {
   Chart,
   ChartSource,
@@ -25,15 +33,7 @@ import {
   SourceCollectionData,
   CollectionType,
   StorableNode,
-} from '@charts-app/models/chart/types';
-import { calcDeepCloneAndReplaceNodeElementsId } from '@charts-app/utils/calculations';
-import { getEntryColor } from '@charts-app/utils/colors';
-import { compareVersions } from 'compare-versions';
-import dayjs from 'dayjs';
-import { omit } from 'lodash';
-import { v4 as uuidv4 } from 'uuid';
-
-import { Operation } from '@cognite/calculation-backend';
+} from '@cognite/charts-lib';
 import { Timeseries } from '@cognite/sdk';
 
 import { removeItem, addItem } from './helpers';

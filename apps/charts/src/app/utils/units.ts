@@ -1,6 +1,6 @@
 import { hasRawPoints } from '@charts-app/components/PlotlyChart/utils';
-import { ChartThreshold } from '@charts-app/models/chart/types';
 
+import { ChartThreshold } from '@cognite/charts-lib';
 import {
   DatapointAggregate,
   DoubleDatapoint,

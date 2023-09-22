@@ -4,12 +4,6 @@ import { useCreateDataProfiling } from '@charts-app/hooks/calculation-backend';
 import { usePrevious } from '@charts-app/hooks/usePrevious';
 import chartAtom from '@charts-app/models/chart/atom';
 import {
-  Chart,
-  ChartTimeSeries,
-  ChartWorkflow,
-  ChartSource,
-} from '@charts-app/models/chart/types';
-import {
   waitForDataProfilingToFinish,
   waitForCalculationToFinish,
   fetchDataProfilingResult,
@@ -23,6 +17,12 @@ import {
   CreateDataProfilingParams,
   StatusStatusEnum,
 } from '@cognite/calculation-backend';
+import {
+  Chart,
+  ChartTimeSeries,
+  ChartWorkflow,
+  ChartSource,
+} from '@cognite/charts-lib';
 import { useSDK } from '@cognite/sdk-provider';
 
 export const useDataProfiling = (

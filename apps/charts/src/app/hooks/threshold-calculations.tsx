@@ -8,7 +8,6 @@ import {
 } from '@charts-app/hooks/calculation-backend';
 import { usePrevious } from '@charts-app/hooks/usePrevious';
 import { useChartAtom } from '@charts-app/models/chart/atom';
-import { ChartThreshold } from '@charts-app/models/chart/types';
 import { updateChartThresholdProperties } from '@charts-app/models/chart/updates-threshold';
 import { getHash } from '@charts-app/utils/hash';
 import { isThresholdValid } from '@charts-app/utils/threshold';
@@ -20,6 +19,7 @@ import {
   CreateThresholdsParams,
   ThresholdResult,
 } from '@cognite/calculation-backend';
+import { ChartThreshold } from '@cognite/charts-lib';
 
 export const thresholdParameters = (
   dateFrom: string,

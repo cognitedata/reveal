@@ -1,4 +1,4 @@
-import { Chart, ChartWorkflow } from '@charts-app/models/chart/types';
+import { Chart, ChartWorkflow } from '@cognite/charts-lib';
 
 export const getWorkflow = (
   chart: Chart,

@@ -1,11 +1,7 @@
 import { Elements, FlowElement, Node } from 'react-flow-renderer';
 
-import {
-  ChartWorkflowV2,
-  ScheduledCalculation,
-} from '@charts-app/models/chart/types';
-
 import { Operation, OperationVersion } from '@cognite/calculation-backend';
+import { ChartWorkflowV2, ScheduledCalculation } from '@cognite/charts-lib';
 
 import { defaultTranslations } from '../translations';
 

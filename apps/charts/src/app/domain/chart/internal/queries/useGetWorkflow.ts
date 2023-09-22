@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
 
 import { useChartAtom } from '@charts-app/models/chart/atom';
-import { ChartWorkflow } from '@charts-app/models/chart/types';
+
+import { ChartWorkflow } from '@cognite/charts-lib';
 
 import { getWorkflow } from '../transformers/getWorkflow';
 

@@ -11,7 +11,6 @@ import {
   useComponentTranslations,
   useTranslations,
 } from '@charts-app/hooks/translations';
-import { ChartTimeSeries } from '@charts-app/models/chart/types';
 import { TimeseriesEntry } from '@charts-app/models/timeseries-results/types';
 import { trackUsage } from '@charts-app/services/metrics';
 import { formatValueForDisplay } from '@charts-app/utils/numbers';
@@ -21,6 +20,7 @@ import {
 } from '@charts-app/utils/translations';
 import { DatapointsSummary } from '@charts-app/utils/units';
 
+import { ChartTimeSeries } from '@cognite/charts-lib';
 import { Button, Popconfirm } from '@cognite/cogs.js';
 
 import {
