@@ -13,10 +13,21 @@ const config: StorybookConfig = {
     builder: '@storybook/builder-vite'
   },
   async viteFinal(config, { configType }) {
+    console.log(configType);
     if (config.plugins !== undefined) {
       remove(config.plugins, (plugin) => {
         return (plugin as any).name === 'vite-plugin-externalize-deps';
       });
+      if (configType === 'PRODUCTION') {
+        remove(config.plugins, (plugin) => {
+          return (plugin as any).name === 'vite:dts';
+        });
+      }
+    }
+
+    if (configType === 'PRODUCTION' && config.build !== undefined) {
+      config.build.sourcemap = false;
+      config.build.minify = false;
     }
 
     config.define = {
