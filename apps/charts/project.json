@@ -1,5 +1,6 @@
 {
   "name": "charts",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/charts/src",
   "projectType": "application",
   "targets": {

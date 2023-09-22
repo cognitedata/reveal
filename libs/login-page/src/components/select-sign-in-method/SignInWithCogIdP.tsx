@@ -6,6 +6,8 @@ import { parse } from 'query-string';
 
 import { Icon, Chip } from '@cognite/cogs.js';
 import {
+  cogIdpAuthority,
+  cogIdpInternalId,
   getSelectedIdpDetails,
   saveSelectedIdpDetails,
   useCogniteIdPUserManager,
@@ -14,26 +16,24 @@ import {
 import { Microsoft } from '../../components/icons';
 import SignInButton from '../../components/sign-in-button/SignInButton';
 
-const authority = 'https://auth.cognite.com';
-const internalId = 'ff16d970-0491-415a-ab4b-3ba9eb65ac4a';
-const type = 'COGNITE_IDP';
-
 export default function SignInWithCogniteIdP({
   organization,
   clientId,
+  autoInitiate,
 }: {
   organization: string;
   clientId: string;
+  autoInitiate: boolean;
 }) {
   const navigate = useNavigate();
 
   const { internalId: activeInternalId } = getSelectedIdpDetails() ?? {};
-  const active = activeInternalId === internalId;
+  const active = activeInternalId === cogIdpInternalId;
 
   const { code } = parse(window.location.search);
 
   const userManager = useCogniteIdPUserManager({
-    authority,
+    authority: cogIdpAuthority,
     client_id: clientId,
   });
 
@@ -69,22 +69,29 @@ export default function SignInWithCogniteIdP({
     return <Icon type="Loader" />;
   }
 
+  const initiateSignIn = () => {
+    saveSelectedIdpDetails({
+      internalId: cogIdpInternalId,
+      type: 'COGNITE_IDP',
+    });
+    userManager.signinRedirect({
+      extraQueryParams: {
+        organization_hint: organization,
+      },
+    });
+  };
+
+  // If we have a code or user it means we're in the IdP sign-in callback
+  const shouldAutoInitiate = autoInitiate && !code && !user;
+  if (shouldAutoInitiate) {
+    initiateSignIn();
+  }
+
   return (
     <SignInButton
-      disabled={isLoading}
-      isLoading={isLoading}
-      onClick={() => {
-        saveSelectedIdpDetails({
-          internalId,
-          type: type,
-        });
-        userManager.signinRedirect({
-          extraQueryParams: {
-            audience: 'https://cognitedata.com',
-            organization_hint: organization,
-          },
-        });
-      }}
+      disabled={isLoading || shouldAutoInitiate}
+      isLoading={isLoading || shouldAutoInitiate}
+      onClick={initiateSignIn}
       icon={<Microsoft />}
     >
       {'Sign in with Microsoft '}

@@ -4,7 +4,7 @@ import { noop } from 'lodash-es';
 import { ADFS } from '@cognite/sdk-core';
 
 import {
-  getBaseHostname,
+  getBaseUrl,
   getOrganization,
   setLoginOrganizationCookie,
 } from './loginInfo';
@@ -15,10 +15,7 @@ const CACHE_CONFIG = {
 };
 
 const getRedirectUri = () => {
-  const { protocol, port } = window.location;
-  return `${protocol}//${getBaseHostname()}${
-    port !== '' ? `:${port}` : ''
-  }/signin/callback`;
+  return `${getBaseUrl()}/signin/callback`;
 };
 
 export const getPca = (

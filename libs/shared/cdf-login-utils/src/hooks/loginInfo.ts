@@ -21,8 +21,6 @@ import {
   getADFS2016Token,
   getAuth0Client,
   getAuth0Token,
-  getCogniteIdPToken,
-  getCogniteIdPUserManager,
   getKeycloakToken,
   getPca,
   getProjects,
@@ -30,6 +28,8 @@ import {
   groupLegacyProjectsByValidationStatus,
   validateLegacyProject,
   getDlc,
+  cogIdpAsResponse,
+  cogIdpInternalId,
 } from '../utils';
 
 import {
@@ -41,7 +41,10 @@ import {
   useADFS2016Projects,
 } from './aad';
 import { getAuth0QueryKey, useAuth0Projects } from './auth0';
-import { getCogniteIdPQueryKey, useCogniteIdPProjects } from './cogniteIdP';
+import {
+  useProjectsForCogIdpOrgInCluster,
+  useProjectsForCogIdpOrg,
+} from './cogniteIdP';
 import { getKeycloakQueryKey, useKeycloakProjects } from './keycloak';
 
 const getLoginInfoQueryKey = () => [BASE_QUERY_KEY, 'login-info'];
@@ -53,25 +56,42 @@ const getValidatedLegacyProjectKey = (projectName: string, cluster: string) => [
   cluster,
 ];
 
-export const useLoginInfo = () => {
+export const useLoginInfo = (
+  options: { enabled: boolean } = { enabled: true }
+) => {
   return useQuery<DomainResponse, LoginInfoError, DomainResponse>(
     getLoginInfoQueryKey(),
-    getDlc
+    getDlc,
+    { enabled: options.enabled }
   );
 };
 
 export const useIdp = <T extends IDPResponse>(id?: string) => {
-  const { data: loginInfo, isFetched: isFetchedLoginInfo } = useLoginInfo();
+  const isCogIdp = id === cogIdpInternalId;
+  const { data: loginInfo, isFetched: isFetchedLoginInfo } = useLoginInfo({
+    enabled: !isCogIdp,
+  });
+
+  const { data: cogIdpProjects, isFetched: isFetchedCogIdpProjects } =
+    useProjectsForCogIdpOrg({
+      enabled: isCogIdp,
+    });
 
   return useQuery(
     getIdpQueryKey(id ?? ''),
     () => {
-      return loginInfo?.idps.find(({ internalId }) => internalId === id) as
-        | T
-        | undefined;
+      if (isCogIdp) {
+        return cogIdpAsResponse(cogIdpProjects?.items) as T;
+      } else {
+        return loginInfo?.idps.find(({ internalId }) => internalId === id) as
+          | T
+          | undefined;
+      }
     },
     {
-      enabled: isFetchedLoginInfo,
+      enabled:
+        (isCogIdp && isFetchedCogIdpProjects) ||
+        (!isCogIdp && isFetchedLoginInfo),
     }
   );
 };
@@ -79,16 +99,18 @@ export const useIdp = <T extends IDPResponse>(id?: string) => {
 export const useIdpProjects = (
   cluster: string,
   idp?: IDPResponse,
-  options: { enabled?: boolean } = { enabled: true }
+  options?: { enabled?: boolean }
 ) => {
+  const enabled = options?.enabled !== false;
+
   const aadEnabled = idp?.type === 'AZURE_AD';
   const aadProjectsQuery = useAADProjects(cluster, idp, {
-    enabled: aadEnabled && options.enabled,
+    enabled: aadEnabled && enabled,
   });
   const aadB2CEnabled = idp?.type === 'AAD_B2C';
   // @ts-ignore
   const aadB2CProjectsQuery = useAADB2CProjects(cluster, idp, {
-    enabled: aadB2CEnabled && options.enabled,
+    enabled: aadB2CEnabled && enabled,
   });
   const adfsEnabled = idp?.type === 'ADFS2016';
   const adfsProjectsQuery = useADFS2016Projects(
@@ -99,7 +121,7 @@ export const useIdpProjects = (
   );
   const auth0Enabled = idp?.type === 'AUTH0';
   const auth0ProjectQuery = useAuth0Projects(cluster, idp, {
-    enabled: auth0Enabled && options.enabled,
+    enabled: auth0Enabled && enabled,
   });
 
   const keycloakEnabled = idp?.type === 'KEYCLOAK';
@@ -107,18 +129,14 @@ export const useIdpProjects = (
     cluster,
     idp as KeycloakResponse,
     {
-      enabled: keycloakEnabled && options.enabled,
+      enabled: keycloakEnabled && enabled,
     }
   );
 
   const cogniteIdpEnabled = idp?.type === 'COGNITE_IDP';
-  const cogniteIdpProjectQuery = useCogniteIdPProjects(
-    cluster,
-    idp as CogniteIdPResponse,
-    {
-      enabled: cogniteIdpEnabled && options.enabled,
-    }
-  );
+  const cogniteIdpProjectQuery = useProjectsForCogIdpOrgInCluster(cluster, {
+    enabled: cogniteIdpEnabled && enabled,
+  });
 
   const unknownIdpQuery = useQuery(
     ['projects', 'unknown-idp'],
@@ -129,7 +147,8 @@ export const useIdpProjects = (
         !auth0Enabled &&
         !aadB2CEnabled &&
         !keycloakEnabled &&
-        options.enabled,
+        !cogniteIdpEnabled &&
+        options?.enabled,
     }
   );
 
@@ -180,11 +199,7 @@ export const useIdpProjectsFromAllClusters = (
       case 'KEYCLOAK':
         return getKeycloakQueryKey(cluster, idp, type);
       case 'COGNITE_IDP':
-        return getCogniteIdPQueryKey(
-          idp,
-          type,
-          type === 'token' ? '' : cluster
-        );
+        return ['cognite_idp', 'dummy']; // We don't need a token from each cluster for Cognite IDP
     }
   };
 
@@ -234,12 +249,7 @@ export const useIdpProjectsFromAllClusters = (
         // @ts-ignore
         return () => getKeycloakToken(userManager);
       case 'COGNITE_IDP':
-        const cdfIdp = idp as CogniteIdPResponse;
-        const cdfUserManager = getCogniteIdPUserManager({
-          authority: cdfIdp.authority || '',
-          client_id: cdfIdp.appConfiguration.clientId || '',
-        });
-        return () => getCogniteIdPToken(cdfUserManager) as Promise<string>;
+        return () => null; // We don't need a token from each cluster for Cognite IDP
       default:
         return () => null;
     }
@@ -264,6 +274,25 @@ export const useIdpProjectsFromAllClusters = (
     }),
   });
 
+  const isCogIdp = idp?.internalId === cogIdpInternalId;
+  const cogIdpProjects = useQueries({
+    queries: clusters.map((cluster) => {
+      const cogIdp = idp as CogniteIdPResponse;
+      return {
+        queryKey: ['cognite_idp', 'projects', cluster],
+        queryFn: () => {
+          return cogIdp.projects
+            .filter((p) => p.apiUrl === `https://${cluster}`)
+            .map((p) => p.name);
+        },
+        enabled: isCogIdp && options.enabled,
+      };
+    }),
+  });
+
+  if (isCogIdp) {
+    return cogIdpProjects;
+  }
   return tokens.map((tokenResponse, i) =>
     tokenResponse.isError ? { ...tokenResponse, data: null } : projects[i]
   );

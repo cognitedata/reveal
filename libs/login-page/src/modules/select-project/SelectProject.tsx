@@ -51,8 +51,8 @@ const SelectProject = (): JSX.Element => {
     legacyProjectsByCluster || {};
 
   const loginFlowsByCluster = useMemo(() => {
-    return getLoginFlowsByCluster(loginInfo, internalId, validLegacyProjects);
-  }, [internalId, loginInfo, validLegacyProjects]);
+    return getLoginFlowsByCluster(loginInfo, idp, validLegacyProjects);
+  }, [idp, loginInfo, validLegacyProjects]);
 
   const projectsFromAllClusters = useIdpProjectsFromAllClusters(
     Object.keys(loginFlowsByCluster),

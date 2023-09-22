@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { getCogniteIdPUserManager } from '@cognite/login-utils';
+import { getBaseUrl, getCogniteIdPUserManager } from '@cognite/login-utils';
 
 import { UserInfo } from './types';
 
@@ -66,6 +66,6 @@ export const logout = async (params: {
     client_id: params.clientId,
   });
   await userManager.signoutRedirect({
-    post_logout_redirect_uri: window.location.origin,
+    post_logout_redirect_uri: getBaseUrl(),
   });
 };
