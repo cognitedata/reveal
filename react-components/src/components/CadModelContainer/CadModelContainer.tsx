@@ -11,6 +11,7 @@ import {
   useApplyCadModelStyling,
   modelExists
 } from './useApplyCadModelStyling';
+import { useRevealResources } from '../RevealContainer/RevealResourcesContext';
 
 export type CogniteCadModelProps = {
   addModelOptions: AddModelOptions;
@@ -29,6 +30,7 @@ export function CadModelContainer({
 }: CogniteCadModelProps): ReactElement {
   const cachedViewerRef = useRevealKeepAlive();
   const viewer = useReveal();
+  const { update3DResources } = useRevealResources();
 
   const [model, setModel] = useState<CogniteCadModel | undefined>(
     viewer.models.find(
@@ -40,7 +42,7 @@ export function CadModelContainer({
 
   useEffect(() => {
     addModel(modelId, revisionId, transform)
-      .then((model) => onLoad?.(model))
+      .then((model) => { onLoad?.(model); update3DResources(viewer.models) })
       .catch((error) => {
         const errorReportFunction = onLoadError ?? defaultLoadErrorHandler;
         errorReportFunction(addModelOptions, error);

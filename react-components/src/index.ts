@@ -36,8 +36,6 @@ export {
   withCameraStateUrlParam,
   useGetCameraStateFromUrlParam
 } from './higher-order-components/withCameraStateUrlParam';
-export { withSlicerStateUrlParam } from './higher-order-components/withSlicerStateUrlParam';
-export { withCombinedUrlParams } from './higher-order-components/withCombinedUrlParams';
 // Types
 export {
   type PointCloudModelStyling,
