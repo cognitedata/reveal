@@ -378,11 +378,9 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   }
 
   private async onPointerClick(event: MouseEvent): Promise<void> {
-    if (event.target !== this._viewer.canvas) {
-      return;
+    if (event.target === this._viewer.canvas) {
+      event.stopPropagation();
     }
-
-    event.stopPropagation();
 
     const { offsetX, offsetY } = event;
 
