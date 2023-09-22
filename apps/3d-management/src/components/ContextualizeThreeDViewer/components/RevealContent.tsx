@@ -51,7 +51,6 @@ export const RevealContent = ({ modelId, revisionId }: RevealContentProps) => {
     }));
 
   const handleOnLoad = (_model: CogniteModel) => {
-    viewer.fitCameraToModel(_model);
     if (!(viewer.cameraManager instanceof DefaultCameraManager)) {
       console.warn(
         'Camera manager is not DefaultCameraManager, so click to change camera target will not work.'
@@ -132,12 +131,12 @@ export const RevealContent = ({ modelId, revisionId }: RevealContentProps) => {
   return (
     <>
       <StyledToolBar>
-        {isToolbarForCadModels && !isToolbarForPointCloudModels && (
+        {isToolbarForCadModels && !isToolbarForPointCloudModels && viewer && (
           <>
             <RevealToolbar.FitModelsButton />
           </>
         )}
-        {!isToolbarForCadModels && isToolbarForPointCloudModels && (
+        {!isToolbarForCadModels && isToolbarForPointCloudModels && viewer && (
           <>
             <RevealToolbar.FitModelsButton />
             <ContextualizeThreeDViewerToolbar modelId={modelId} />
