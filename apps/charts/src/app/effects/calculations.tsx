@@ -10,7 +10,6 @@ import {
 } from '@charts-app/hooks/calculation-backend';
 import { workflowsAtom } from '@charts-app/models/calculation-results/atom';
 import chartAtom from '@charts-app/models/chart/atom';
-import { ChartWorkflowV2 } from '@charts-app/models/chart/types';
 import { updateWorkflow } from '@charts-app/models/chart/updates';
 import { useOperations } from '@charts-app/models/operations/atom';
 import { CHART_POINTS_PER_SERIES } from '@charts-app/utils/constants';
@@ -25,6 +24,7 @@ import {
   Calculation,
   CalculationResultQueryAggregateEnum,
 } from '@cognite/calculation-backend';
+import { ChartWorkflowV2 } from '@cognite/charts-lib';
 
 export function CalculationCollectionEffects() {
   const [chart] = useRecoilState(chartAtom);

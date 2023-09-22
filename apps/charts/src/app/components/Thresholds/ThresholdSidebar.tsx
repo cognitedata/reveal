@@ -16,12 +16,6 @@ import useThresholdsResults from '@charts-app/hooks/threshold-calculations';
 import { useTranslations } from '@charts-app/hooks/translations';
 import { useChartSourcesValue } from '@charts-app/models/chart/selectors';
 import {
-  Chart,
-  ChartSource,
-  ChartThreshold,
-  ChartThresholdEventFilter,
-} from '@charts-app/models/chart/types';
-import {
   addChartThreshold,
   initThresholdCollection,
   removeChartThreshold,
@@ -36,6 +30,12 @@ import {
 import { omit } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 
+import {
+  Chart,
+  ChartSource,
+  ChartThreshold,
+  ChartThresholdEventFilter,
+} from '@cognite/charts-lib';
 import { Button, Icon, Tooltip } from '@cognite/cogs.js';
 
 type Props = {

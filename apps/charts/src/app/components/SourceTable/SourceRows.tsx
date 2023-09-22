@@ -2,7 +2,8 @@ import { memo, ComponentProps } from 'react';
 import { Draggable } from 'react-beautiful-dnd';
 
 import { useTranslations } from '@charts-app/hooks/translations';
-import { ChartTimeSeries, ChartWorkflow } from '@charts-app/models/chart/types';
+
+import { ChartTimeSeries, ChartWorkflow } from '@cognite/charts-lib';
 
 import { ScheduledCalculationRow } from './ScheduledCalculationRow';
 import TimeSeriesRow from './TimeSeriesRow';

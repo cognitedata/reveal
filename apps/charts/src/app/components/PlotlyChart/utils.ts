@@ -1,12 +1,5 @@
 import { isEventSelected } from '@charts-app/components/EventSidebar/helpers';
 import { WorkflowState } from '@charts-app/models/calculation-results/types';
-import {
-  ChartThreshold,
-  ChartTimeSeries,
-  ChartWorkflow,
-  LineStyle,
-  ScheduledCalculation,
-} from '@charts-app/models/chart/types';
 import { ChartEventResults } from '@charts-app/models/event-results/types';
 import { ScheduledCalculationsDataMap } from '@charts-app/models/scheduled-calculation-results/types';
 import { TimeseriesEntry } from '@charts-app/models/timeseries-results/types';
@@ -21,6 +14,13 @@ import {
 import dayjs from 'dayjs';
 import groupBy from 'lodash/groupBy';
 
+import {
+  ChartThreshold,
+  ChartTimeSeries,
+  ChartWorkflow,
+  LineStyle,
+  ScheduledCalculation,
+} from '@cognite/charts-lib';
 import {
   CogniteEvent,
   DatapointAggregate,
@@ -352,7 +352,7 @@ export function formatPlotlyData(
         datapoints,
         outdatedData,
       }) => {
-        /* kinda hacky solution to compare min and avg in cases where min is less than avg and need to be fill based on that, 
+        /* kinda hacky solution to compare min and avg in cases where min is less than avg and need to be fill based on that,
     In addition, should min value be less than avg value? */
         const firstDatapoint = (
           datapoints as (Datapoints | DatapointAggregate)[]

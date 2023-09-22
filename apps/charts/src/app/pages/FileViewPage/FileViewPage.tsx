@@ -12,7 +12,6 @@ import { useTranslations } from '@charts-app/hooks/translations';
 import { calculationSummaries } from '@charts-app/models/calculation-results/selectors';
 import chartAtom from '@charts-app/models/chart/atom';
 import { useChartSourcesValue } from '@charts-app/models/chart/selectors';
-import { ChartSource } from '@charts-app/models/chart/types';
 import { removeSource } from '@charts-app/models/chart/updates';
 import { timeseriesSummaries } from '@charts-app/models/timeseries-results/selectors';
 import { useInitializedChart } from '@charts-app/pages/ChartViewPage/hooks';
@@ -22,6 +21,7 @@ import Layers from '@charts-app/utils/z-index';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import styled from 'styled-components/macro';
 
+import { ChartSource } from '@cognite/charts-lib';
 import { Body, Button, Loader, Heading, Icon } from '@cognite/cogs.js';
 import { Asset, FileInfo as File } from '@cognite/sdk';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';

@@ -1,7 +1,8 @@
 import chartAtom from '@charts-app/models/chart/atom';
-import { Chart } from '@charts-app/models/chart/types';
 import { getUnitConvertedDatapointsSummary } from '@charts-app/utils/units';
 import { selector } from 'recoil';
+
+import { Chart } from '@cognite/charts-lib';
 
 import { timeseriesAtom } from './atom';
 import { TimeseriesCollection } from './types';

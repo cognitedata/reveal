@@ -1,6 +1,7 @@
 import { EMPTY_ARRAY } from '@charts-app/domain/constants';
-import { Chart } from '@charts-app/models/chart/types';
 import { ScheduledCalculationsDataMap } from '@charts-app/models/scheduled-calculation-results/types';
+
+import { Chart } from '@cognite/charts-lib';
 
 export const getTsIdsFromTsCollection = (chart: Chart | undefined) =>
   chart?.timeSeriesCollection?.map((timeseries) => timeseries.tsId) ||

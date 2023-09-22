@@ -20,6 +20,7 @@
       "@3d-management/*": ["apps/3d-management/src/*"],
       "@access-management/*": ["apps/access-management/src/*"],
       "@charts-app/*": ["apps/charts/src/app/*"],
+      "@cognite/charts-lib": ["libs/charts-lib/src/index.ts"],
       "@cognite/cdf-contextualization-ui": ["apps/contextualization-ui/src/*"],
       "@cognite/cdf-i18n-utils": ["libs/shared/cdf-ui-i18n-utils/src/index.ts"],
       "@cognite/cdf-route-tracker": [

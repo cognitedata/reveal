@@ -7,7 +7,7 @@ import {
   KeyboardEvent,
 } from 'react';
 
-import { ChartThresholdEventFilter } from '@charts-app/models/chart/types';
+import { ChartThresholdEventFilter } from '@cognite/charts-lib';
 
 type FilterHanlderProps = {
   defaultValue?: number;

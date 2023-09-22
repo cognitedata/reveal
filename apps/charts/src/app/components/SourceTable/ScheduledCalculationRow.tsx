@@ -9,10 +9,6 @@ import {
   useComponentTranslations,
   useTranslations,
 } from '@charts-app/hooks/translations';
-import {
-  ChartWorkflow,
-  ScheduledCalculation,
-} from '@charts-app/models/chart/types';
 import { ScheduledCalculationData } from '@charts-app/models/scheduled-calculation-results/types';
 import { formatValueForDisplay } from '@charts-app/utils/numbers';
 import {
@@ -21,6 +17,7 @@ import {
 } from '@charts-app/utils/translations';
 import { DatapointsSummary } from '@charts-app/utils/units';
 
+import { ChartWorkflow, ScheduledCalculation } from '@cognite/charts-lib';
 import { Button, Tooltip } from '@cognite/cogs.js';
 
 import { ScheduledCalculationDeleteModal } from '../ScheduledCalculation/ScheduledCalculationDeleteModal';

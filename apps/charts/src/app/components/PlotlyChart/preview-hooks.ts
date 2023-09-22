@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 
 import { WorkflowState } from '@charts-app/models/calculation-results/types';
-import { Chart } from '@charts-app/models/chart/types';
 import { TimeseriesEntry } from '@charts-app/models/timeseries-results/types';
 import { fetchCalculationQueryResult } from '@charts-app/services/calculation-backend';
 import { calculateGranularity } from '@charts-app/utils/timeseries';
@@ -9,6 +8,7 @@ import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 
 import { CalculationResultQueryAggregateEnum } from '@cognite/calculation-backend';
+import { Chart } from '@cognite/charts-lib';
 import { DatapointsMultiQuery } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 

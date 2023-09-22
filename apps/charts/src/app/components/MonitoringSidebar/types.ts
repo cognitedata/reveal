@@ -1,10 +1,7 @@
 import { UserProfile } from '@charts-app/common/providers/useUserProfileQuery';
 import { AlertResponse } from '@charts-app/components/MonitoringAlert/types';
-import {
-  ChartTimeSeries,
-  ScheduledCalculation,
-} from '@charts-app/models/chart/types';
 
+import { ChartTimeSeries, ScheduledCalculation } from '@cognite/charts-lib';
 import { CogniteExternalId, CogniteInternalId, Metadata } from '@cognite/sdk';
 
 export type MonitoringChannel = {

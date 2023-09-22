@@ -1,5 +1,4 @@
-import { ChartEventFilters } from '@charts-app/models/chart/types';
-
+import { ChartEventFilters } from '@cognite/charts-lib';
 import { Asset, InternalId, DataSet } from '@cognite/sdk';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 

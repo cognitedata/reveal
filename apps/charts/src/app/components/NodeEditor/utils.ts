@@ -1,12 +1,8 @@
 import { SourceOption } from '@charts-app/components/NodeEditor/V2/types';
-import {
-  Chart,
-  ChartTimeSeries,
-  ChartWorkflow,
-} from '@charts-app/models/chart/types';
 import { uniq } from 'lodash';
 
 import { ComputationStep, Operation } from '@cognite/calculation-backend';
+import { Chart, ChartTimeSeries, ChartWorkflow } from '@cognite/charts-lib';
 
 export const isWorkflowRunnable = (workflow: ChartWorkflow) => {
   if (!workflow.version) {

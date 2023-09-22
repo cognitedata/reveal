@@ -49,13 +49,6 @@ import { WorkflowState } from '@charts-app/models/calculation-results/types';
 import chartAtom from '@charts-app/models/chart/atom';
 import { useChartSourcesValue } from '@charts-app/models/chart/selectors';
 import {
-  ChartTimeSeries,
-  ChartWorkflow,
-  ChartWorkflowV2,
-  ChartSource,
-  ScheduledCalculation,
-} from '@charts-app/models/chart/types';
-import {
   addWorkflow,
   addWorkflows,
   duplicateWorkflow,
@@ -98,6 +91,13 @@ import get from 'lodash/get';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
 
+import {
+  ChartTimeSeries,
+  ChartWorkflow,
+  ChartWorkflowV2,
+  ChartSource,
+  ScheduledCalculation,
+} from '@cognite/charts-lib';
 import { toast, Loader, Button, Tooltip } from '@cognite/cogs.js';
 import { useFlag } from '@cognite/react-feature-flags';
 

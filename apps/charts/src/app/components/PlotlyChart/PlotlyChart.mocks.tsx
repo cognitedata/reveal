@@ -1,4 +1,4 @@
-import { Interpolation, LineStyle } from '@charts-app/models/chart/types';
+import { Interpolation, LineStyle } from '@cognite/charts-lib';
 
 export const plotExamplePropsWithAggregatedData = {
   dateFrom: '2022-04-17T11:00:00.000',

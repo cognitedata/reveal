@@ -1,7 +1,7 @@
-import { Chart, ChartWorkflowV2 } from '@charts-app/models/chart/types';
 import { fullListOfOperations } from '@charts-app/models/operations/mocks';
 
 import { OperationVersionParamsTypeEnum } from '@cognite/calculation-backend';
+import { Chart, ChartWorkflowV2 } from '@cognite/charts-lib';
 
 import {
   getStepsFromWorkflowReactFlow,

@@ -2,6 +2,8 @@
  * Helper Methods to mutate Chart
  */
 
+import { v4 as uuidv4 } from 'uuid';
+
 import {
   Chart,
   ChartTimeSeries,
@@ -10,8 +12,7 @@ import {
   ScheduledCalculation,
   UserInfo,
   SourceType,
-} from '@charts-app/models/chart/types';
-import { v4 as uuidv4 } from 'uuid';
+} from '@cognite/charts-lib';
 
 const COLLECTION_TYPE_MAP: Record<CollectionType, SourceType> = {
   workflowCollection: 'workflow',

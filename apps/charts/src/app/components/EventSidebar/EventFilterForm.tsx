@@ -11,7 +11,6 @@ import {
   SidebarInnerBox,
   SidebarInnerCollapse,
 } from '@charts-app/components/Common/SidebarElements';
-import { ChartEventFilters } from '@charts-app/models/chart/types';
 import { ChartEventResults } from '@charts-app/models/event-results/types';
 import {
   makeDefaultTranslations,
@@ -28,6 +27,7 @@ import {
 } from '@data-exploration/containers';
 import { omit } from 'lodash';
 
+import { ChartEventFilters } from '@cognite/charts-lib';
 import { Button, Collapse, Icon } from '@cognite/cogs.js';
 import { Metadata } from '@cognite/sdk';
 
