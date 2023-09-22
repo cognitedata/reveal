@@ -93,7 +93,7 @@ export class MetricsLogger {
     });
   }
 
-  static init(logMetrics: boolean, project: string, applicationId: string, eventProps: EventProps): Promise<void> {
+  static init(logMetrics: boolean, project: string, applicationId: string, eventProps: EventProps): void {
     if (this.globalMetricsLogger === undefined && logMetrics) {
       this.globalMetricsLogger = new MetricsLogger(project, applicationId, eventProps);
     }
