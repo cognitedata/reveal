@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 
 import styled from 'styled-components';
 
@@ -12,7 +12,6 @@ import {
   CogniteCadModel,
   CognitePointCloudModel,
   DefaultNodeAppearance,
-  IndexSet,
   TreeIndexNodeCollection,
 } from '@cognite/reveal';
 import { RevealContainer } from '@cognite/reveal-react-components';
@@ -28,11 +27,12 @@ import { useSyncStateWithViewer } from './hooks/useSyncStateWithViewer';
 import {
   onCloseResourceSelector,
   setModelId,
-  setSelectedNodes,
+  setSelectedNodeTreeIndices,
   useContextualizeThreeDViewerStore,
 } from './useContextualizeThreeDViewerStore';
 import { createCdfThreeDAnnotation } from './utils/createCdfThreeDAnnotation';
 import { createCdfThreeDAssetMapping } from './utils/createCdfThreeDAssetMapping';
+import { updateStyleForContextualizedCadNodes } from './utils/updateStyleForContextualizedCadNodes';
 
 type ContextualizeThreeDViewerProps = {
   modelId: number;
@@ -51,14 +51,14 @@ export const ContextualizeThreeDViewer = ({
     viewer,
     model,
     modelType,
-    selectedNodeIds,
+    selectedNodeTreeIndices,
   } = useContextualizeThreeDViewerStore((state) => ({
     isResourceSelectorOpen: state.isResourceSelectorOpen,
     pendingAnnotation: state.pendingAnnotation,
     viewer: state.threeDViewer,
     model: state.model,
     modelType: state.modelType,
-    selectedNodeIds: state.selectedNodes,
+    selectedNodeTreeIndices: state.selectedNodeTreeIndices,
   }));
 
   // use effects
@@ -70,32 +70,49 @@ export const ContextualizeThreeDViewer = ({
     (async () => {
       if (!model || !(model instanceof CogniteCadModel)) return;
 
-      const selectedNodes = new TreeIndexNodeCollection();
-      model.assignStyledNodeCollection(
-        selectedNodes,
-        DefaultNodeAppearance.Highlighted
-      );
-      viewer?.on('click', async (event) => {
-        const intersection = (await viewer.getIntersectionFromPixel(
-          event.offsetX,
-          event.offsetY
-        )) as CadIntersection;
-        if (intersection) {
-          const nodeId = await model.mapTreeIndexToNodeId(
-            intersection.treeIndex
-          );
-          const toPresent = {
-            treeIndex: intersection.treeIndex,
-            nodeId,
-            point: intersection.point,
-          };
-          selectedNodes.updateSet(new IndexSet([intersection.treeIndex]));
+      if (modelType === 'cad') {
+        // get the contextualized 3d nodes and update the style of each node
+        updateStyleForContextualizedCadNodes({
+          sdk,
+          model,
+          modelId,
+          revisionId,
+        });
 
-          setSelectedNodes([nodeId]);
-        }
-      });
+        const selectedNodes = new TreeIndexNodeCollection();
+        //const selectedNodeIds: Array<number> = [];
+        model.assignStyledNodeCollection(
+          selectedNodes,
+          DefaultNodeAppearance.Highlighted
+        );
+        viewer?.on('click', async (event) => {
+          const intersection = (await viewer.getIntersectionFromPixel(
+            event.offsetX,
+            event.offsetY
+          )) as CadIntersection;
+          if (intersection) {
+            const nodeId = await model.mapTreeIndexToNodeId(
+              intersection.treeIndex
+            );
+
+            const indexSet = selectedNodes.getIndexSet();
+            const selectedNodesList: Array<number> = [];
+            // toggle the selection of nodes
+            if (!indexSet.contains(intersection.treeIndex)) {
+              selectedNodesList.push(nodeId);
+              indexSet.add(intersection.treeIndex);
+              selectedNodes.updateSet(indexSet);
+            } else {
+              indexSet.remove(intersection.treeIndex);
+              selectedNodes.updateSet(indexSet);
+            }
+
+            setSelectedNodeTreeIndices(selectedNodesList);
+          }
+        });
+      }
     })();
-  }, [viewer, model]);
+  }, [viewer, model, modelType, sdk, modelId, revisionId]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -168,7 +185,7 @@ export const ContextualizeThreeDViewer = ({
   };
   const createContextualization = (assetId: number) => {
     if (modelType === 'cad') {
-      saveAssetMapping(selectedNodeIds, assetId);
+      saveAssetMapping(selectedNodeTreeIndices, assetId);
     } else if (modelType === 'pointcloud') {
       saveAnnotationToCdf(assetId);
     }

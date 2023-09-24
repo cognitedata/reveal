@@ -36,7 +36,7 @@ type RootState = {
   isToolbarForPointCloudModels: boolean;
   model: CogniteCadModel | CognitePointCloudModel | undefined;
   modelType: string;
-  selectedNodes: Array<number>;
+  selectedNodeTreeIndices: Array<number>;
 };
 
 const initialState: RootState = {
@@ -51,7 +51,7 @@ const initialState: RootState = {
   modelId: null,
   model: undefined,
   modelType: '',
-  selectedNodes: [],
+  selectedNodeTreeIndices: [],
 };
 
 export const useContextualizeThreeDViewerStore = create<RootState>(
@@ -152,9 +152,11 @@ export const setModel = (model: CogniteCadModel | CognitePointCloudModel) => {
   }));
 };
 
-export const setSelectedNodes = (selectedNodes: Array<number>) => {
+export const setSelectedNodeTreeIndices = (
+  selectedNodeTreeIndices: Array<number>
+) => {
   useContextualizeThreeDViewerStore.setState((prevState) => ({
     ...prevState,
-    selectedNodes,
+    selectedNodeTreeIndices,
   }));
 };
