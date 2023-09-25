@@ -653,7 +653,7 @@ __metadata:
     three: 0.155.0
     ts-jest: 29.1.1
     ts-loader: 9.4.4
-    tsc-alias: 1.8.7
+    tsc-alias: 1.8.8
     typescript: 5.2.2
     wasm-pack: 0.12.1
     webpack: 5.88.2
@@ -11774,9 +11774,9 @@ resolve@~1.19.0:
   languageName: node
   linkType: hard
 
-"tsc-alias@npm:1.8.7":
-  version: 1.8.7
-  resolution: "tsc-alias@npm:1.8.7"
+"tsc-alias@npm:1.8.8":
+  version: 1.8.8
+  resolution: "tsc-alias@npm:1.8.8"
   dependencies:
     chokidar: ^3.5.3
     commander: ^9.0.0
@@ -11786,7 +11786,7 @@ resolve@~1.19.0:
     plimit-lit: ^1.2.6
   bin:
     tsc-alias: dist/bin/index.js
-  checksum: 77f721ea797a62a7cc74acda0baf928bb654bccb210471b63fef1e70a27a823c60f5832f51aa5976d573412bc90731e90774abf9127f3b6b13f284839f988d47
+  checksum: 204852f75ce516c991813c371e4b3cda8767c50b6ad12b5c1b5f0227eb7e69fef559775fc829ba744b37dfd9930a1632dbabd62366a474fa0e174b2625ccb54f
   languageName: node
   linkType: hard
 
