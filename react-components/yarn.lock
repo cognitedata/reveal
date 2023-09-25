@@ -2148,7 +2148,7 @@ __metadata:
     "@cognite/cdf-i18n-utils": ^0.7.5
     "@cognite/cdf-utilities": ^3.5.0
     "@cognite/cogs.js": ^9.17.0
-    "@cognite/reveal": 4.4.2
+    "@cognite/reveal": 4.4.3
     "@cognite/sdk": ^8.2.0
     "@storybook/addon-essentials": 7.4.2
     "@storybook/addon-interactions": 7.4.2
@@ -2196,19 +2196,19 @@ __metadata:
     vite-plugin-externalize-deps: ^0.7.0
   peerDependencies:
     "@cognite/cogs.js": ">=9"
-    "@cognite/reveal": 4.4.2
+    "@cognite/reveal": 4.4.3
     react: ">=18"
     react-dom: ">=18"
     styled-components: ">=5"
   languageName: unknown
   linkType: soft
 
-"@cognite/reveal@npm:4.4.2":
-  version: 4.4.2
-  resolution: "@cognite/reveal@npm:4.4.2"
+"@cognite/reveal@npm:4.4.3":
+  version: 4.4.3
+  resolution: "@cognite/reveal@npm:4.4.3"
   dependencies:
     "@tweenjs/tween.js": 19.0.0
-    assert: 2.0.0
+    assert: 2.1.0
     async-mutex: 0.4.0
     glslify: 7.1.1
     glslify-import: 3.1.0
@@ -2224,7 +2224,7 @@ __metadata:
   peerDependencies:
     "@cognite/sdk": ^7.16.0 || ^8.0.0
     three: 0.155.0
-  checksum: e7b81001ddf56c1c106360c0a872005cd01a82e943389bf7bb052b9b1cb3af2809d4de3edbe5e61644fe6b4704397289f4075d535c2eaa4ad5f7a379d18cecad
+  checksum: 555e1399df62e256c38b6103d1c385f69304cb0e318da2453d77a1712f3e4b5ba8c59fec5ea7df790a6b1bc0d6e42adef28d842c99ec1421dbadcd159d30d529
   languageName: node
   linkType: hard
 
@@ -6899,7 +6899,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"assert@npm:2.0.0, assert@npm:^2.0.0":
+"assert@npm:2.1.0":
+  version: 2.1.0
+  resolution: "assert@npm:2.1.0"
+  dependencies:
+    call-bind: ^1.0.2
+    is-nan: ^1.3.2
+    object-is: ^1.1.5
+    object.assign: ^4.1.4
+    util: ^0.12.5
+  checksum: 1ed1cabba9abe55f4109b3f7292b4e4f3cf2953aad8dc148c0b3c3bd676675c31b1abb32ef563b7d5a19d1715bf90d1e5f09fad2a4ee655199468902da80f7c2
+  languageName: node
+  linkType: hard
+
+"assert@npm:^2.0.0":
   version: 2.0.0
   resolution: "assert@npm:2.0.0"
   dependencies:
@@ -10934,7 +10947,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"is-nan@npm:^1.2.1":
+"is-nan@npm:^1.2.1, is-nan@npm:^1.3.2":
   version: 1.3.2
   resolution: "is-nan@npm:1.3.2"
   dependencies:
@@ -16200,7 +16213,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"util@npm:^0.12.0, util@npm:^0.12.4":
+"util@npm:^0.12.0, util@npm:^0.12.4, util@npm:^0.12.5":
   version: 0.12.5
   resolution: "util@npm:0.12.5"
   dependencies:
