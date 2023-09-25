@@ -1,29 +1,21 @@
-import { useCallback } from 'react';
-
 import styled from 'styled-components';
 
-import { ToolBar } from '@cognite/cogs.js';
-import {
-  DefaultCameraManager,
-  CogniteModel,
-  PointColorType,
-  CognitePointCloudModel,
-} from '@cognite/reveal';
+import { Button, ToolBar } from '@cognite/cogs.js';
+import { DefaultCameraManager, CogniteModel } from '@cognite/reveal';
 import {
   useReveal,
   PointCloudContainer,
-  RevealToolbar,
   withSuppressRevealEvents,
 } from '@cognite/reveal-react-components';
 
+import { FLOATING_ELEMENT_MARGIN } from '../../../pages/ContextualizeEditor/constants';
 import {
-  HighQualitySettings,
-  LowQualitySettings,
-} from '../../../pages/ContextualizeEditor/constants';
+  onCloseResourceSelector,
+  onOpenResourceSelector,
+  useContextualizeThreeDViewerStore,
+} from '../useContextualizeThreeDViewerStore';
 
-import { ContextualizeThreeDViewerToolbar } from './ContextualizeThreeDViewerToolbar';
-import { ColorTypeSelector } from './PointCloudColorPicker';
-import { PointSizeSlider } from './PointSizeSlider';
+import { PointCloudToolBar } from './PointCloudToolBar/PointCloudToolBar';
 
 interface RevealContentProps {
   modelId: number;
@@ -32,8 +24,13 @@ interface RevealContentProps {
 
 export const RevealContent = ({ modelId, revisionId }: RevealContentProps) => {
   const viewer = useReveal();
+  const { isResourceSelectorOpen } = useContextualizeThreeDViewerStore(
+    (state) => ({
+      isResourceSelectorOpen: state.isResourceSelectorOpen,
+    })
+  );
 
-  const handleOnLoad = (model: CogniteModel) => {
+  const handleModelOnLoad = (model: CogniteModel) => {
     viewer.fitCameraToModel(model);
     if (!(viewer.cameraManager instanceof DefaultCameraManager)) {
       console.warn(
@@ -48,16 +45,6 @@ export const RevealContent = ({ modelId, revisionId }: RevealContentProps) => {
     });
   };
 
-  const handleColorChange = useCallback(
-    (colorType: PointColorType) => {
-      viewer.models.forEach((model) => {
-        if (!(model instanceof CognitePointCloudModel)) return;
-        model.pointColorType = colorType;
-      });
-    },
-    [viewer]
-  );
-
   return (
     <>
       <PointCloudContainer
@@ -65,28 +52,34 @@ export const RevealContent = ({ modelId, revisionId }: RevealContentProps) => {
           modelId: modelId,
           revisionId: revisionId,
         }}
-        onLoad={handleOnLoad}
+        onLoad={handleModelOnLoad}
       />
-      <StyledToolBar>
-        <RevealToolbar.FitModelsButton />
-        <ContextualizeThreeDViewerToolbar modelId={modelId} />
-        <RevealToolbar.SettingsButton
-          customSettingsContent={
-            <>
-              <ColorTypeSelector onChange={handleColorChange} />
-              <PointSizeSlider viewer={viewer} />
-            </>
-          }
-          lowQualitySettings={LowQualitySettings}
-          highQualitySettings={HighQualitySettings}
+
+      <PointCloudToolBar />
+
+      <StyledResourceSelectorButtonWrapper>
+        <Button
+          type="ghost"
+          size="small"
+          icon={isResourceSelectorOpen ? 'ChevronRight' : 'ChevronLeft'}
+          aria-label="Toggle resource selector visibility"
+          onClick={() => {
+            if (isResourceSelectorOpen) {
+              onCloseResourceSelector();
+              return;
+            }
+            onOpenResourceSelector();
+          }}
         />
-      </StyledToolBar>
+      </StyledResourceSelectorButtonWrapper>
     </>
   );
 };
 
-const StyledToolBar = styled(withSuppressRevealEvents(ToolBar))`
+const StyledResourceSelectorButtonWrapper = styled(
+  withSuppressRevealEvents(ToolBar)
+)`
   position: absolute;
-  left: 30px;
-  bottom: 30px;
+  top: ${FLOATING_ELEMENT_MARGIN}px;
+  right: ${FLOATING_ELEMENT_MARGIN}px;
 `;

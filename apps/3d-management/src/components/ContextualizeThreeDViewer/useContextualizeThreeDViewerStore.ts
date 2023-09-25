@@ -29,7 +29,7 @@ type RootState = {
 
 const initialState: RootState = {
   pendingAnnotation: null,
-  isResourceSelectorOpen: false,
+  isResourceSelectorOpen: true,
   threeDViewer: null,
   tool: ToolType.NONE,
   shouldShowBoundingVolumes: false,
@@ -55,10 +55,12 @@ export const onCloseResourceSelector = () => {
   }));
 };
 
-export const setPendingAnnotation = (annotation: CubeAnnotation) => {
+export const setPendingAnnotation = (annotation: CubeAnnotation | null) => {
   useContextualizeThreeDViewerStore.setState((prevState) => ({
     ...prevState,
     pendingAnnotation: annotation,
+    isResourceSelectorOpen:
+      annotation !== null || prevState.isResourceSelectorOpen,
   }));
 };
 
@@ -74,7 +76,6 @@ export const setTool = (tool: ToolType) => {
     ...prevState,
     tool,
     pendingAnnotation: null,
-    isResourceSelectorOpen: false,
   }));
 };
 

@@ -3,6 +3,7 @@ import { Color } from 'three';
 import { QualitySettings } from '@cognite/reveal-react-components';
 
 export const CONTEXTUALIZE_EDITOR_HEADER_HEIGHT = 40;
+export const FLOATING_ELEMENT_MARGIN = 15;
 
 export const defaultRevealColor = new Color(0x000000);
 

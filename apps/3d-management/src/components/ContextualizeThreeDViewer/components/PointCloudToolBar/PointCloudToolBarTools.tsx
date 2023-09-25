@@ -15,16 +15,15 @@ import { useSDK } from '@cognite/sdk-provider';
 import {
   CubeAnnotation,
   ToolType,
-  onOpenResourceSelector,
   setPendingAnnotation,
   setThreeDViewer,
   setTool,
   toggleShouldShowBoundingVolumes,
   useContextualizeThreeDViewerStore,
-} from '../useContextualizeThreeDViewerStore';
-import { getCognitePointCloudModel } from '../utils/getCognitePointCloudModel';
-import { isPointCloudIntersection } from '../utils/isPointCloudIntersection';
-import { showBoundingVolumes } from '../utils/showBoundingVolumes';
+} from '../../useContextualizeThreeDViewerStore';
+import { getCognitePointCloudModel } from '../../utils/getCognitePointCloudModel';
+import { isPointCloudIntersection } from '../../utils/isPointCloudIntersection';
+import { showBoundingVolumes } from '../../utils/showBoundingVolumes';
 
 const deleteBoundingVolumes = (
   viewer: Cognite3DViewer,
@@ -62,21 +61,16 @@ const deleteBoundingVolumes = (
   });
 };
 
-type ContextualizeThreeDViewerToolbar = {
-  modelId: number;
-};
-
-export function ContextualizeThreeDViewerToolbar({
-  modelId,
-}: ContextualizeThreeDViewerToolbar): ReactElement {
+export function PointCloudToolBarTools(): ReactElement {
   const sdk = useSDK();
   const viewer = useReveal();
 
-  const { pendingAnnotation, tool, shouldShowBoundingVolumes } =
+  const { pendingAnnotation, tool, shouldShowBoundingVolumes, modelId } =
     useContextualizeThreeDViewerStore((state) => ({
       pendingAnnotation: state.pendingAnnotation,
       tool: state.tool,
       shouldShowBoundingVolumes: state.shouldShowBoundingVolumes,
+      modelId: state.modelId,
     }));
 
   // NOTE: This isn't the cleanest place to put this (it feels quite arbitrary that it is in the ToolBar file), but it's fine for now.
@@ -109,7 +103,6 @@ export function ContextualizeThreeDViewerToolbar({
         },
       };
       setPendingAnnotation(cubeAnnotation);
-      onOpenResourceSelector();
     };
     viewer.on('click', onClick);
     return () => {
@@ -127,6 +120,8 @@ export function ContextualizeThreeDViewerToolbar({
   };
 
   const handleDeleteAnnotationToolClick = () => {
+    if (modelId === null) return;
+
     const pointCloudModel = getCognitePointCloudModel({
       modelId,
       viewer,

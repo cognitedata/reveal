@@ -17,8 +17,8 @@ import {
 import { RevealContent } from './components/RevealContent';
 import { useSyncStateWithViewer } from './hooks/useSyncStateWithViewer';
 import {
-  onCloseResourceSelector,
   setModelId,
+  setPendingAnnotation,
   useContextualizeThreeDViewerStore,
 } from './useContextualizeThreeDViewerStore';
 import { createCdfThreeDAnnotation } from './utils/createCdfThreeDAnnotation';
@@ -98,7 +98,7 @@ export const ContextualizeThreeDViewer = ({
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        onCloseResourceSelector();
+        setPendingAnnotation(null);
         event.stopPropagation();
       }
     };
@@ -112,7 +112,7 @@ export const ContextualizeThreeDViewer = ({
 
   return (
     <>
-      <StyledSplitter>
+      <StyledSplitter secondaryInitialSize={700}>
         <ThreeDViewerStyled>
           <RevealContainer sdk={sdk} color={defaultRevealColor}>
             <RevealContent modelId={modelId} revisionId={revisionId} />
@@ -123,9 +123,10 @@ export const ContextualizeThreeDViewer = ({
           <ResourceSelector
             selectionMode="single"
             visibleResourceTabs={['asset']}
+            shouldDisableAddButton={pendingAnnotation === null}
             onSelect={(item) => {
-              onCloseResourceSelector();
               saveAnnotationToCdf(item.id);
+              setPendingAnnotation(null);
             }}
           />
         )}
