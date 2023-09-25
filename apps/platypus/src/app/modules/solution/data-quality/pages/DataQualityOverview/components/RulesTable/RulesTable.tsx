@@ -40,6 +40,7 @@ export const RulesTable = () => {
   const { dataSource } = useLoadDataSource();
 
   const datapointsDependency = JSON.stringify(datapoints);
+
   const tableColumns: TableColumn<RuleDto>[] = useMemo(() => {
     return [
       {

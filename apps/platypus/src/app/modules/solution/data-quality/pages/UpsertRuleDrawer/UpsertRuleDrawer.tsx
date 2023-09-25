@@ -1,4 +1,5 @@
 import { RuleDto, RuleSeverity } from '@data-quality/api/codegen';
+import { useDataModel } from '@data-quality/hooks/useDataModel';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { useFormik } from 'formik';
 
@@ -39,13 +40,6 @@ export const UpsertRuleDrawer = ({
   const { isLoading, upsertRule } = useUpsertRule();
   const { showUpsertSuccess } = useShowUpsertSuccess();
 
-  const titleText = editedRule
-    ? t('data_quality_update_rule', 'Update rule')
-    : t('data_quality_new_rule', 'New rule');
-  const okText = editedRule
-    ? t('data_quality_save_changes', 'Save changes')
-    : t('data_quality_create_rule', 'Create rule');
-
   const triggerSubmit = (newValues: RuleFormValues) => {
     upsertRule({
       editedRule,
@@ -71,6 +65,22 @@ export const UpsertRuleDrawer = ({
       validateOnChange: false,
       enableReinitialize: true,
     });
+
+  const dataTypeOptions = useDataModel().dataModel.views.map((type) => ({
+    label: type.externalId,
+    value: type.externalId,
+  }));
+
+  const selectedDataType = dataTypeOptions.find(
+    (type) => type.value === values.dataType
+  );
+
+  const titleText = editedRule
+    ? t('data_quality_update_rule', 'Update rule')
+    : t('data_quality_new_rule', 'New rule');
+  const okText = editedRule
+    ? t('data_quality_save_changes', 'Save changes')
+    : t('data_quality_create_rule', 'Create rule');
 
   return (
     <Drawer
@@ -167,22 +177,15 @@ export const UpsertRuleDrawer = ({
             {t('data_quality_rule_setup', 'Rule setup')}
           </Heading>
           <Flex direction="column" gap={16}>
-            <InputExp
-              clearable
-              fullWidth
-              label={{
-                required: true,
-                info: undefined,
-                text: t('data_quality_data_type', 'Data type'),
-              }}
-              onChange={(e) => setFieldValue('dataType', e.target.value)}
-              placeholder={t(
-                'data_quality_set_datatype',
-                `Set a data type to the rule. e.g. "Person"`
-              )}
-              status={errors.dataType ? 'critical' : undefined}
-              statusText={errors.dataType}
-              value={values.dataType}
+            <Select
+              inputId="dataType"
+              disabled={!!editedRule}
+              label={t('data_quality_data_type', 'Data type')}
+              onChange={(e: OptionType<string>) =>
+                setFieldValue('dataType', e.value)
+              }
+              options={dataTypeOptions}
+              value={selectedDataType}
             />
 
             <Textarea
