@@ -90,25 +90,12 @@ export const useSearchAggregateValueByPropertyQuery = <T>({
 
   // const { data: types } = useTypesDataModelQuery();
 
-  const [filters] = useDataTypeFilterParams(dataType);
-
-  const transformedFilter = useMemo(() => {
-    return buildFilterByField(filters);
-  }, [filters]);
-
   return useQuery(
-    queryKeys.searchAggregateValueByProperty(
-      dataType,
-      field,
-      query,
-      transformedFilter,
-      property
-    ),
+    queryKeys.searchAggregateValueByProperty(dataType, field, query, property),
     async () => {
       const result = await client.searchAggregateValueByProperty<T>(
         { dataType, field },
         query,
-        transformedFilter,
         property
       );
 

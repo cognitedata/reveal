@@ -72,7 +72,6 @@ export const queryKeys = {
     dataType: string,
     field: string,
     query: string,
-    filter: unknown,
     property: string
   ) =>
     [
@@ -82,7 +81,6 @@ export const queryKeys = {
       dataType,
       field,
       query,
-      filter,
       property,
     ] as const,
   searchMappedEquipmentInstances: (

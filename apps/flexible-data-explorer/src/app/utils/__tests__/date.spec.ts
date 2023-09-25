@@ -5,7 +5,7 @@ import {
   getLocalDate,
   getTimestamp,
   isDate,
-  isValidDate,
+  isValidFDMDate,
 } from '../date';
 
 describe('date', () => {
@@ -58,18 +58,13 @@ describe('date', () => {
 
   describe('isDate', () => {
     it('should return true for a valid Date object', () => {
-      const validDate = new Date('2023-09-15T12:00:00Z');
-      expect(isDate(validDate)).toBe(true);
+      expect(isDate(new Date('2023-09-15T12:00:00Z'))).toBe(true);
+      expect(isDate('2023-09-15T12:00:00Z')).toBe(true);
     });
 
     it('should return false for an invalid Date object', () => {
       const invalidDate = new Date('invalid-date-string');
       expect(isDate(invalidDate)).toBe(false);
-    });
-
-    it('should return false for a non-Date value', () => {
-      const nonDateValue = '2023-09-15T12:00:00Z';
-      expect(isDate(nonDateValue)).toBe(false);
     });
   });
 
@@ -97,7 +92,7 @@ describe('date', () => {
     });
   });
 
-  describe('isValidDate', () => {
+  describe('isValidFDMDate', () => {
     it('should return true for a valid ISO date string', () => {
       const validDateStrings = [
         '2023-09-15T12:00:00Z',
@@ -107,7 +102,7 @@ describe('date', () => {
       ];
 
       validDateStrings.forEach((dateString) => {
-        expect(isValidDate(dateString)).toBe(true);
+        expect(isValidFDMDate(dateString)).toBe(true);
       });
     });
 
@@ -119,7 +114,7 @@ describe('date', () => {
       ];
 
       invalidDateStrings.forEach((dateString) => {
-        expect(isValidDate(dateString)).toBe(false);
+        expect(isValidFDMDate(dateString)).toBe(false);
       });
     });
   });
