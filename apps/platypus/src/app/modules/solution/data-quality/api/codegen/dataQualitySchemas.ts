@@ -509,7 +509,7 @@ export type DataScopeDto = {
    */
   dataType: string;
   /**
-   * The external-id of the ruleset
+   * The external-id of the data scope
    *
    * @pattern ^[a-zA-Z]([a-zA-Z0-9_]{0,253}[a-zA-Z0-9])?$
    * @minLength 1
@@ -538,4 +538,51 @@ export type DataScopeListIdsRequest = {
      */
     externalId: ExternalId;
   }[];
+};
+
+/**
+ * State of the rule run
+ */
+export type RuleRunStatus = 'Error' | 'InProgress' | 'Success';
+
+export type RuleRunDto = {
+  createdTime: EpochTimestamp;
+  /**
+   * The external-id of the data source
+   *
+   * @pattern ^[a-zA-Z]([a-zA-Z0-9_]{0,253}[a-zA-Z0-9])?$
+   * @minLength 1
+   * @maxLength 255
+   */
+  dataSourceId: ExternalId;
+  /**
+   * Time when the rule validation finishes
+   */
+  endTime: EpochTimestamp;
+  /**
+   * The external-id of the ruleset
+   *
+   * @pattern ^[a-zA-Z]([a-zA-Z0-9_]{0,253}[a-zA-Z0-9])?$
+   * @minLength 1
+   * @maxLength 255
+   */
+  externalId: ExternalId;
+  lastUpdatedTime: EpochTimestamp;
+  /**
+   * Error message in case the run failed
+   */
+  message: string;
+  /**
+   * The external-id of the related rule
+   *
+   * @pattern ^[a-zA-Z]([a-zA-Z0-9_]{0,253}[a-zA-Z0-9])?$
+   * @minLength 1
+   * @maxLength 255
+   */
+  ruleId: ExternalId;
+  /**
+   * Time when the rule validation starts
+   */
+  startTime: EpochTimestamp;
+  status: RuleRunStatus;
 };

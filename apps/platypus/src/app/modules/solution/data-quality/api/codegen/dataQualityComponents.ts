@@ -1315,6 +1315,94 @@ export const useListByIdsDataScopes = (
   );
 };
 
+export type ListLatestRuleRunsPathParams = {
+  /**
+   * The project name.
+   *
+   * @example publicdata
+   */
+  project?: string;
+  /**
+   * The external id of the data source.
+   */
+  dataSourceId?: string;
+};
+
+export type ListLatestRuleRunsQueryParams = {
+  /**
+   * Cursor for paging through results.
+   *
+   * @example 4zj0Vy2fo0NtNMb229mI9r1V3YG5NBL752kQz1cKtwo
+   */
+  cursor?: string;
+};
+
+export type ListLatestRuleRunsError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: Responses.ErrorResponse;
+}>;
+
+export type ListLatestRuleRunsVariables = {
+  pathParams?: ListLatestRuleRunsPathParams;
+  queryParams?: ListLatestRuleRunsQueryParams;
+} & DataQualityContext['fetcherOptions'];
+
+/**
+ * List the latest rule runs for each rule defined in the current data source.
+ */
+export const fetchListLatestRuleRuns = (
+  variables: ListLatestRuleRunsVariables,
+  signal?: AbortSignal
+) =>
+  dataQualityFetch<
+    Responses.RuleRunListResponse,
+    ListLatestRuleRunsError,
+    undefined,
+    {},
+    ListLatestRuleRunsQueryParams,
+    ListLatestRuleRunsPathParams
+  >({
+    url: '/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/ruleruns/latest',
+    method: 'get',
+    ...variables,
+    signal,
+  });
+
+/**
+ * List the latest rule runs for each rule defined in the current data source.
+ */
+export const useListLatestRuleRuns = <TData = Responses.RuleRunListResponse>(
+  variables: ListLatestRuleRunsVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<
+      Responses.RuleRunListResponse,
+      ListLatestRuleRunsError,
+      TData
+    >,
+    'queryKey' | 'queryFn'
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } =
+    useDataQualityContext(options);
+  return reactQuery.useQuery<
+    Responses.RuleRunListResponse,
+    ListLatestRuleRunsError,
+    TData
+  >(
+    queryKeyFn({
+      path: '/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/ruleruns/latest',
+      operationId: 'listLatestRuleRuns',
+      variables,
+    }),
+    ({ signal }) =>
+      fetchListLatestRuleRuns({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions,
+    }
+  );
+};
+
 export type QueryOperation =
   | {
       path: '/api/v1/projects/{project}/data-validation/datasources';
@@ -1345,4 +1433,9 @@ export type QueryOperation =
       path: '/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/datascopes';
       operationId: 'listDataScopes';
       variables: ListDataScopesVariables;
+    }
+  | {
+      path: '/api/v1/projects/{project}/data-validation/datasources/{dataSourceId}/ruleruns/latest';
+      operationId: 'listLatestRuleRuns';
+      variables: ListLatestRuleRunsVariables;
     };
