@@ -2,14 +2,13 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { Button, Icon, Title } from '@cognite/cogs.js';
-import { CogniteError } from '@cognite/sdk';
+import { Button, Icon, Heading } from '@cognite/cogs.js';
 
 import { useTranslation } from '../../common';
 import { CenterFullVH } from '../styled';
 
 interface ErrorFeedbackProps {
-  error?: CogniteError;
+  error?: { status?: number; message?: string };
   onClick?: () => void;
   btnText?: string;
   fallbackTitle?: string;
@@ -37,7 +36,7 @@ export const ErrorFeedback = (props: ErrorFeedbackProps) => {
   return (
     <ErrorCard>
       <ErrorIcon type="Error" />
-      <Title level={2}>{title}</Title>
+      <Heading level={2}>{title}</Heading>
       <p className="content">{message}</p>
       {showBtn && (
         <Button type="primary" onClick={onClick}>
@@ -72,7 +71,7 @@ const ErrorCard = styled((props) => (
     grid-area: btn;
     justify-self: flex-end;
   }
-  .cogs-title-2 {
+  .cogs-heading-2 {
     grid-area: heading;
     align-self: center;
     font-size: 1rem;

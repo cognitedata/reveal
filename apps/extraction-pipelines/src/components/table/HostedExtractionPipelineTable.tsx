@@ -1,12 +1,14 @@
 import React, { useMemo } from 'react';
 
+import styled from 'styled-components';
+
 import {
   ColumnType,
   SortOrder,
   Table,
   TableNoResults,
 } from '@cognite/cdf-utilities';
-import { Loader } from '@cognite/cogs.js';
+import { Flex, Loader } from '@cognite/cogs.js';
 
 import { useTranslation } from '../../common';
 import {
@@ -19,6 +21,7 @@ import {
   numberSorter,
   stringSorter,
 } from '../../utils/utils';
+import { ErrorComponent } from '../error';
 import HostedExtractionPipelineExternalId from '../extpipes/cols/HostedExtractionPipelineExternalId';
 import RelativeTimeWithTooltip from '../extpipes/cols/RelativeTimeWithTooltip';
 import { SourceOptions } from '../source-options-dropdown/SourceOptions';
@@ -28,16 +31,24 @@ export type HostedExtractionPipelineListTableRecord = {
 } & MQTTSourceWithJobMetrics;
 
 type HostedExtractionPipelineTableProps = {
+  headerComp: React.JSX.Element;
+  emptyPage: React.JSX.Element;
   search?: string;
 };
 
 const HostedExtractionPipelineTable = ({
+  headerComp,
+  emptyPage,
   search,
 }: HostedExtractionPipelineTableProps): JSX.Element => {
   const { t } = useTranslation();
 
-  const { data: sourcesData, isFetched: didFetchMQTTSources } =
-    useMQTTSourcesWithJobMetrics();
+  const {
+    data: sourcesData,
+    isInitialLoading: loading,
+    error,
+    refetch,
+  } = useMQTTSourcesWithJobMetrics();
 
   const sources = useMemo(
     () => sourcesData?.map((s) => ({ ...s, key: s.externalId })),
@@ -94,26 +105,55 @@ const HostedExtractionPipelineTable = ({
     },
   ];
 
-  if (!didFetchMQTTSources) {
+  const isEmptyData = useMemo(() => {
+    return sourcesData?.length === 0;
+  }, [sourcesData]);
+
+  if (loading) {
     return <Loader />;
   }
 
+  if (isEmptyData) {
+    return <>{emptyPage}</>;
+  }
+
+  if (error) {
+    return (
+      <ErrorComponent
+        tabKey="hosted"
+        error={error}
+        handleErrorDialogClick={async () => {
+          await refetch();
+        }}
+      />
+    );
+  }
+
   return (
-    <Table
-      columns={columns}
-      appendTooltipTo={getContainer()}
-      dataSource={filteredSources}
-      defaultSort={defaultSort}
-      emptyContent={
-        <TableNoResults
-          title={t('extraction-pipeline-list-no-records')}
-          content={t('extraction-pipeline-list-search-not-found', {
-            $: search !== '' ? `"${search}"` : search,
-          })}
-        />
-      }
-    />
+    <Container gap={16}>
+      <>{headerComp}</>
+      <Table
+        columns={columns}
+        appendTooltipTo={getContainer()}
+        dataSource={filteredSources}
+        defaultSort={defaultSort}
+        emptyContent={
+          <TableNoResults
+            title={t('extraction-pipeline-list-no-records')}
+            content={t('extraction-pipeline-list-search-not-found', {
+              $: search !== '' ? `"${search}"` : search,
+            })}
+          />
+        }
+      />
+    </Container>
   );
 };
+
+const Container = styled(Flex)`
+  margin-top: 16px;
+  flex-direction: column;
+  width: 100%;
+`;
 
 export default HostedExtractionPipelineTable;
