@@ -9,6 +9,7 @@ import { ScheduledCalculationModal } from '@charts-app/components/ScheduledCalcu
 import { getIconTypeFromStatus } from '@charts-app/components/StatusIcon/StatusIcon';
 import { StyleButton } from '@charts-app/components/StyleButton/StyleButton';
 import UnitDropdown from '@charts-app/components/UnitDropdown/UnitDropdown';
+import { useAclPermissions } from '@charts-app/domain/chart/service/queries/useAclPermissions';
 import {
   useComponentTranslations,
   useTranslations,
@@ -22,9 +23,11 @@ import {
 } from '@charts-app/utils/translations';
 import { DatapointsSummary } from '@charts-app/utils/units';
 
-import { ChartWorkflow } from '@cognite/charts-lib';
+import { ChartWorkflow, SCHEDULED_CALCULATIONS_ACL } from '@cognite/charts-lib';
 import { Button, Popconfirm, Tooltip } from '@cognite/cogs.js';
 import { useFlag } from '@cognite/react-feature-flags';
+
+import { AccessDeniedModal } from '../AccessDeniedModal/AccessDeniedModal';
 
 import {
   DropdownWithoutMaxWidth,
@@ -107,6 +110,8 @@ function WorkflowRow({
 }: Props) {
   const [isEditingName, setIsEditingName] = useState<boolean>(false);
   const [sCModalVisible, setSCModalVisible] = useState<boolean>(false);
+  const [isSCAccessModalEnabled, setSCAccessModalEnabled] =
+    useState<boolean>(false);
   const {
     id,
     enabled,
@@ -120,6 +125,13 @@ function WorkflowRow({
     preferredUnit,
     customUnitLabel,
   } = workflow;
+  const { data: hasSCWrite, isFetching: isFetchingWriteCapabilities } =
+    useAclPermissions(SCHEDULED_CALCULATIONS_ACL, 'WRITE');
+  const { data: hasSCRead, isFetching: isFetchingReadCapabilities } =
+    useAclPermissions(SCHEDULED_CALCULATIONS_ACL, 'READ');
+  const canCreateScheduledCalculations = hasSCWrite && hasSCRead;
+  const isFetchingCapabilities =
+    isFetchingWriteCapabilities || isFetchingReadCapabilities;
   const call = [...(calls || [])].sort((c) => c.callDate)[0];
   const isWorkspaceMode = mode === 'workspace';
   const t = { ...defaultTranslations, ...translations };
@@ -165,17 +177,28 @@ function WorkflowRow({
         },
       },
     ];
-    if (isPersistenceCalcEnabled) {
+    if (isPersistenceCalcEnabled && !isFetchingCapabilities) {
       menuOptions.push({
         label: t['Save & Schedule'],
         icon: 'Clock' as const,
         onClick: () => {
-          setSCModalVisible(true);
+          if (canCreateScheduledCalculations) {
+            setSCModalVisible(true);
+          } else {
+            setSCAccessModalEnabled(true);
+          }
         },
       });
     }
     return menuOptions;
-  }, [t, openNodeEditor, onDuplicateCalculation, isPersistenceCalcEnabled]);
+  }, [
+    t,
+    openNodeEditor,
+    onDuplicateCalculation,
+    isPersistenceCalcEnabled,
+    isFetchingCapabilities,
+    hasSCWrite,
+  ]);
 
   return (
     <>
@@ -359,6 +382,16 @@ function WorkflowRow({
         <ScheduledCalculationModal
           workflowId={workflow.id}
           onClose={() => setSCModalVisible(false)}
+        />
+      ) : null}
+      {isSCAccessModalEnabled ? (
+        <AccessDeniedModal
+          visible={isSCAccessModalEnabled}
+          onOk={() => setSCAccessModalEnabled(false)}
+          capabilities={[
+            hasSCWrite ? '' : `${SCHEDULED_CALCULATIONS_ACL}:WRITE`,
+            hasSCRead ? '' : `${SCHEDULED_CALCULATIONS_ACL}:READ`,
+          ].filter(Boolean)}
         />
       ) : null}
     </>

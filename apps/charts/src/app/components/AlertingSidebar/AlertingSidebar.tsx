@@ -27,6 +27,7 @@ import { Button, Icon, toast, Tooltip } from '@cognite/cogs.js';
 import { saveToLocalStorage } from '@cognite/storage';
 
 import { ALERTING_FILTER } from '../../utils/constants';
+import { TempPromoChip } from '../TempPromoChip/TempPromoChip';
 
 import { DisplayAlerts } from './DisplayAlerts';
 import { JobsWithAlertsContainer, SidebarWithScroll } from './elements';
@@ -35,7 +36,9 @@ const defaultTranslation = makeDefaultTranslations(
   'Alerts',
   'Hide',
   'Unable to load alerts',
-  'Show'
+  'Show',
+  'Beta',
+  'This feature is available for beta testing and will likely change. Use it for testing purposes only.'
 );
 
 type Props = {
@@ -109,6 +112,15 @@ export const AlertingSidebar = ({ onViewMonitoringJobs, onClose }: Props) => {
           {t.Alerts}
         </TopContainerTitle>
         <TopContainerAside>
+          <TempPromoChip
+            tooltip={
+              t[
+                'This feature is available for beta testing and will likely change. Use it for testing purposes only.'
+              ]
+            }
+          >
+            {t['Beta']}
+          </TempPromoChip>
           <Tooltip content={t.Hide}>
             <Button
               icon="Close"

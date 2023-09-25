@@ -23,6 +23,8 @@ import { makeDefaultTranslations } from '@charts-app/utils/translations';
 
 import { Button, Icon, Tooltip } from '@cognite/cogs.js';
 
+import { TempPromoChip } from '../TempPromoChip/TempPromoChip';
+
 import CreateMonitoringJob from './CreateMonitoringJob';
 import ListMonitoringJobAlerts from './ListMonitoringJobAlerts';
 import ListMonitoringJobs from './ListMonitoringJobs';
@@ -38,7 +40,9 @@ const defaultTranslation = makeDefaultTranslations(
   'Monitoring',
   'Hide',
   'Create',
-  'Back'
+  'Back',
+  'Beta',
+  'This feature is available for beta testing and will likely change. Use it for testing purposes only.'
 );
 
 export const MonitoringSidebar = memo(
@@ -89,6 +93,15 @@ export const MonitoringSidebar = memo(
             {t.Monitoring}
           </TopContainerTitle>
           <TopContainerAside>
+            <TempPromoChip
+              tooltip={
+                t[
+                  'This feature is available for beta testing and will likely change. Use it for testing purposes only.'
+                ]
+              }
+            >
+              {t['Beta']}
+            </TempPromoChip>
             <Tooltip content={t.Hide}>
               <Button
                 icon="Close"
