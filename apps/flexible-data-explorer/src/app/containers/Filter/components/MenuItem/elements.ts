@@ -1,5 +1,7 @@
 import styled from 'styled-components/macro';
 
+import { Icon } from '@cognite/cogs.js';
+
 export const Content = styled.div`
   display: flex;
   flex-direction: row;
@@ -21,7 +23,7 @@ export const TextContent = styled.div`
   flex-direction: column;
   justify-content: center;
   margin-right: auto;
-  width: ${({ width }: { width: number }) => width}px;
+  width: ${({ width }: { width: number }) => width - 8}px;
 `;
 
 export const Title = styled.div`
@@ -34,4 +36,8 @@ export const Title = styled.div`
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+`;
+
+export const StyledIcon = styled(Icon)`
+  min-width: 0;
 `;

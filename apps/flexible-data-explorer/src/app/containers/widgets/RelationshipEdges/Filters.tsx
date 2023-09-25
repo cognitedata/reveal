@@ -6,7 +6,10 @@ import { useTranslation } from '../../../hooks/useTranslation';
 import { useFDM } from '../../../providers/FDMProvider';
 import { ValueByField } from '../../Filter';
 import { AppliedFilters, FilterBuilderByField } from '../../Filter/containers';
-import { transformDefFieldsToFilterFields } from '../../Filter/filters/SearchBarFilter/utils';
+import {
+  getCustomDataTypeOption,
+  transformDefFieldsToFilterFields,
+} from '../../Filter/filters/SearchBarFilter/utils';
 
 export interface SearchBarFilterProps {
   value?: ValueByField;
@@ -23,11 +26,16 @@ export const RelationshipFilter: React.FC<SearchBarFilterProps> = ({
   const client = useFDM();
 
   const fields = useMemo(() => {
-    const result =
-      client.allDataTypes?.find((item) => item.name === dataType)?.fields || [];
+    const type = client.getTypesByDataType(dataType);
 
-    return transformDefFieldsToFilterFields(result);
-  }, [client.allDataTypes, dataType]);
+    if (type) {
+      return transformDefFieldsToFilterFields(type.fields);
+    }
+
+    const customType = getCustomDataTypeOption(dataType);
+
+    return customType?.fields || [];
+  }, [client, dataType]);
 
   return (
     <>
