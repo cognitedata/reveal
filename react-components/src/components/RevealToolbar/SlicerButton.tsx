@@ -55,7 +55,7 @@ export const SlicerButton = ({ storeStateInUrl }: SlicerButtonProps): ReactEleme
       const newMinY = box.min.y;
 
       if (maxHeight !== newMaxY || minHeight !== newMinY) {
-        if (storeStateInUrl) {
+        if (storeStateInUrl && (topRatio !== 1 || bottomRatio !== 0)) {
           viewer.setGlobalClippingPlanes([
             new Plane(new Vector3(0, 1, 0), -(newMinY + topRatio * (newMaxY - newMinY))),
             new Plane(new Vector3(0, -1, 0), newMinY + bottomRatio * (newMaxY - newMinY))
