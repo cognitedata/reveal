@@ -1,4 +1,5 @@
 import { RuleDto, RuleSeverity } from '@data-quality/api/codegen';
+import { useLoadDataScopes } from '@data-quality/hooks';
 import { useDataModel } from '@data-quality/hooks/useDataModel';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { useFormik } from 'formik';
@@ -71,8 +72,19 @@ export const UpsertRuleDrawer = ({
     value: type.externalId,
   }));
 
-  const selectedDataType = dataTypeOptions.find(
-    (type) => type.value === values.dataType
+  const selectedDataType =
+    dataTypeOptions.find((type) => type.value === values.dataType) ||
+    dataTypeOptions[0];
+
+  const dataScopeOptions = useLoadDataScopes()
+    .dataScopes.filter((type) => type.dataType === selectedDataType?.value)
+    .map((scope) => ({
+      label: scope.name,
+      value: scope.externalId,
+    }));
+
+  const selectedDataScope = dataScopeOptions.find(
+    (type) => type.value === values.dataScopeId
   );
 
   const titleText = editedRule
@@ -171,7 +183,7 @@ export const UpsertRuleDrawer = ({
 
         <Divider />
 
-        {/* Data type, rule conditions */}
+        {/* Data type, Data Scope, rule conditions */}
         <Flex direction="column" gap={16}>
           <Heading level={5}>
             {t('data_quality_rule_setup', 'Rule setup')}
@@ -186,6 +198,16 @@ export const UpsertRuleDrawer = ({
               }
               options={dataTypeOptions}
               value={selectedDataType}
+            />
+
+            <Select
+              inputId="dataScopeId"
+              label={t('data_quality_data_scope_one', 'Data scope')}
+              onChange={(e: OptionType<string>) =>
+                setFieldValue('dataScopeId', e.value)
+              }
+              options={dataScopeOptions}
+              value={selectedDataScope}
             />
 
             <Textarea

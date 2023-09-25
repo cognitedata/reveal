@@ -36,6 +36,7 @@ export const RuleSeverityOptions: OptionType<RuleSeverity>[] = [
 
 export type RuleFormValues = {
   conditions: string;
+  dataScopeId?: string;
   dataType: string;
   description: string;
   errorMessage: string;
@@ -45,6 +46,7 @@ export type RuleFormValues = {
 
 export const emptyFormValues: RuleFormValues = {
   conditions: '',
+  dataScopeId: undefined,
   dataType: '',
   description: '',
   errorMessage: '',
