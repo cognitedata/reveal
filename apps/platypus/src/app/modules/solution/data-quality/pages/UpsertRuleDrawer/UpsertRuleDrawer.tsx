@@ -13,6 +13,7 @@ import {
   Textarea,
 } from '@cognite/cogs.js';
 
+import { UpsertRuleFooter } from './components/UpsertRuleFooter';
 import {
   RuleFormValues,
   RuleSeverityOptions,
@@ -20,9 +21,7 @@ import {
   emptyFormValues,
   handleValidate,
 } from './helpers';
-import { UpsertRuleFooter } from './UpsertRuleFooter';
-import { useShowUpsertSuccess } from './useShowUpsertSuccess';
-import { useUpsertRule } from './useUpsertRule';
+import { useShowUpsertSuccess, useUpsertRule } from './hooks';
 
 type UpsertRuleDrawerProps = {
   editedRule?: RuleDto;
