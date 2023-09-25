@@ -24,7 +24,7 @@ const config: StorybookConfig = {
       }
     }
 
-    if (configType === 'PRODUCTION' && config.build !== undefined) {
+    if (config.build !== undefined) {
       config.build.sourcemap = false;
       config.build.minify = false;
     }

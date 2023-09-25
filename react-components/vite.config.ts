@@ -23,7 +23,8 @@ export default defineConfig(({ command }) => {
         // the proper extensions will be added
         fileName: 'index',
         formats: ['es']
-      }
+      },
+      sourcemap: command === 'build'
     }
   };
 });
