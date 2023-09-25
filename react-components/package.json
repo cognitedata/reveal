@@ -1,16 +1,21 @@
 {
   "name": "@cognite/reveal-react-components",
   "version": "0.15.2",
-  "exports": "./dist/index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
   "types": "./dist/index.d.ts",
   "type": "module",
   "author": {
     "name": "Christopher Tannum"
   },
   "scripts": {
-    "build": "webpack --mode=development",
-    "build:prod": "webpack --mode=production",
-    "build:watch": "yarn run build --watch",
+    "build": "vite build",
+    "build:watch": "vite build --watch",
+    "build:watch:yalc": "YALC=true vite build --watch",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "tsc": "tsc",
@@ -27,12 +32,14 @@
     "react-dom": ">=18",
     "styled-components": ">=5"
   },
-  "devDependencies": {
-    "@babel/preset-env": "7.22.20",
-    "@babel/preset-react": "7.22.15",
-    "@babel/preset-typescript": "7.22.15",
+  "dependencies": {
     "@cognite/cdf-i18n-utils": "^0.7.5",
-    "@cognite/cdf-utilities": "^3.4.7",
+    "@cognite/cdf-utilities": "^3.5.0",
+    "@tanstack/react-query": "^4.29.19",
+    "assert": "^2.0.0",
+    "lodash": "^4.17.21"
+  },
+  "devDependencies": {
     "@cognite/cogs.js": "^9.17.0",
     "@cognite/reveal": "4.4.2",
     "@cognite/sdk": "^8.2.0",
@@ -40,8 +47,9 @@
     "@storybook/addon-interactions": "7.4.2",
     "@storybook/addon-links": "7.4.2",
     "@storybook/blocks": "7.4.2",
+    "@storybook/builder-vite": "^7.4.2",
     "@storybook/react": "7.4.2",
-    "@storybook/react-webpack5": "7.4.2",
+    "@storybook/react-vite": "^7.4.3",
     "@storybook/testing-library": "0.2.1",
     "@tanstack/react-query-devtools": "^4.29.19",
     "@types/lodash": "^4.14.190",
@@ -49,8 +57,8 @@
     "@types/react-dom": "^18.2.7",
     "@types/styled-components": "5.1.27",
     "@types/three": "0.155.1",
-    "@types/webpack-node-externals": "^3.0.1",
     "@typescript-eslint/eslint-plugin": "^6.7.0",
+    "@vitejs/plugin-react": "^4.0.4",
     "eslint": "^8.0.1",
     "eslint-config-prettier": "^9.0.0",
     "eslint-config-standard-with-typescript": "39.0.0",
@@ -73,17 +81,12 @@
     "three": "0.155.0",
     "ts-loader": "9.4.4",
     "typescript": "5.2.2",
-    "webpack": "5.88.2",
-    "webpack-cli": "5.1.4",
-    "webpack-node-externals": "3.0.0"
+    "vite": "^4.4.9",
+    "vite-plugin-dts": "^3.5.3",
+    "vite-plugin-externalize-deps": "^0.7.0"
   },
   "packageManager": "yarn@3.6.3",
   "files": [
     "dist"
-  ],
-  "dependencies": {
-    "@tanstack/react-query": "^4.29.19",
-    "assert": "^2.0.0",
-    "lodash": "^4.17.21"
-  }
+  ]
 }
