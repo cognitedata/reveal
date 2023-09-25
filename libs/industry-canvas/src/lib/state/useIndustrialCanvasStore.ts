@@ -21,6 +21,8 @@ import {
   ToolType,
   UnifiedViewer,
   UnifiedViewerEventType,
+  isAnnotation,
+  isContainerConfig,
 } from '@cognite/unified-file-viewer';
 
 import {
@@ -43,8 +45,7 @@ import {
   SHAMEFUL_WAIT_TO_ENSURE_ANNOTATIONS_ARE_RENDERED_MS,
 } from '../constants';
 import {
-  getNextUpdatedAnnotations,
-  getNextUpdatedContainers,
+  getNextUpdatedNodes,
   InteractionState,
 } from '../hooks/useOnUpdateRequest';
 import resolveContainerConfig from '../hooks/utils/resolveContainerConfig';
@@ -52,6 +53,7 @@ import { useCommentsUpsertMutation } from '../services/comments/hooks/index';
 import { CommentTargetType } from '../services/comments/types';
 import { getCdfUserFromUserProfile } from '../services/comments/utils';
 import {
+  CanvasNode,
   COMMENT_METADATA_ID,
   ContainerReference,
   IndustryCanvasContainerConfig,
@@ -194,8 +196,7 @@ const initialState: RootState = {
   historyState: {
     history: [
       {
-        containers: [],
-        canvasAnnotations: [],
+        nodes: [],
         pinnedTimeseriesIdsByAnnotationId: {},
         liveSensorRulesByAnnotationIdByTimeseriesId: {},
         filters: [],
@@ -379,26 +380,28 @@ export const closeConditionalFormattingClick = () => {
 };
 
 const applyDeleteRequestTransform = (
-  { containers, canvasAnnotations, ...otherState }: IndustryCanvasState,
+  { nodes, ...otherState }: IndustryCanvasState,
   { annotationIds, containerIds }: IdsByType
 ) => {
-  const nextCanvasAnnotations = canvasAnnotations.filter(
-    (annotation) =>
-      !annotationIds.includes(annotation.id) &&
-      containerIds.every(
-        (containerId) =>
-          !('containerId' in annotation) ||
-          annotation?.containerId !== containerId
-      )
-  );
-  const nextContainers = containers.filter(
-    (container) => !containerIds.includes(container.id)
-  );
+  const nextNodes = nodes.filter((node) => {
+    if (isAnnotation(node)) {
+      return (
+        !annotationIds.includes(node.id) &&
+        containerIds.every(
+          (containerId) =>
+            !('containerId' in node) || node?.containerId !== containerId
+        )
+      );
+    }
+    if (isContainerConfig(node)) {
+      return !containerIds.includes(node.id);
+    }
+    return false;
+  });
   // TODO: Missing deleting pinned timeseries ids here if the annotation is deleted
   return {
     ...otherState,
-    containers: nextContainers,
-    canvasAnnotations: nextCanvasAnnotations,
+    nodes: nextNodes,
   };
 };
 
@@ -454,7 +457,7 @@ export const addContainerConfig = ({
 }) => {
   pushHistoryState((prevState: IndustryCanvasState) => ({
     ...prevState,
-    containers: [...prevState.containers, containerConfig],
+    nodes: [...prevState.nodes, containerConfig],
   }));
   return containerConfig;
 };
@@ -468,14 +471,15 @@ export const updateContainerById = ({
 }) => {
   pushHistoryState((prevState: IndustryCanvasState) => ({
     ...prevState,
-    containers: [
-      ...prevState.containers.map((containerConfig) =>
-        containerConfig.id === updatedContainerId
-          ? {
-              ...containerConfig,
-              ...updatedContainerConfig,
-            }
-          : containerConfig
+    nodes: [
+      ...prevState.nodes.map(
+        (node): CanvasNode =>
+          isContainerConfig(node) && node.id === updatedContainerId
+            ? {
+                ...node,
+                ...updatedContainerConfig,
+              }
+            : node
       ),
     ],
   }));
@@ -536,14 +540,12 @@ export const shamefulOnUpdateRequest = ({
 
   const toolType = rootState.toolType;
 
-  pushHistoryState(({ containers, canvasAnnotations, ...otherState }) => {
+  pushHistoryState(({ nodes, ...otherState }) => {
     const updatedAnnotation = updatedAnnotations[0];
     const hasAnnotationBeenCreated =
       updatedAnnotation !== undefined &&
       updatedAnnotations.length === 1 &&
-      !canvasAnnotations.some(
-        (canvasAnnotation) => canvasAnnotation.id === updatedAnnotation.id
-      );
+      !nodes.some((node) => node.id === updatedAnnotation.id);
 
     if (hasAnnotationBeenCreated) {
       // Augment the annotation with the comment metadata if the tool is comment
@@ -606,11 +608,10 @@ export const shamefulOnUpdateRequest = ({
 
     return {
       ...otherState,
-      containers: getNextUpdatedContainers(containers, validUpdatedContainers),
-      canvasAnnotations: getNextUpdatedAnnotations(
-        canvasAnnotations,
-        updatedAnnotations
-      ),
+      nodes: getNextUpdatedNodes(nodes, [
+        ...validUpdatedContainers,
+        ...updatedAnnotations,
+      ]),
     };
   });
 };
@@ -626,6 +627,10 @@ export const onDeleteRequest = ({ annotationIds, containerIds }: IdsByType) => {
       containerIds,
     })
   );
+};
+
+export const setNodes = (nodes: CanvasNode[]): void => {
+  pushHistoryState((state) => ({ ...state, nodes }));
 };
 
 export const setCurrentZoomScale = (zoomScale: number) => {
@@ -793,8 +798,8 @@ export const removeContainerById = (containerIdToRemove: string) => {
   pushHistoryState((prevState: IndustryCanvasState) => {
     return {
       ...prevState,
-      containers: prevState.containers.filter(
-        (container) => containerIdToRemove !== container.id
+      nodes: prevState.nodes.filter(
+        (node) => !(isContainerConfig(node) && containerIdToRemove === node.id)
       ),
     };
   });

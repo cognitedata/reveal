@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import {
   isFilePreviewable,
@@ -90,6 +90,13 @@ export const FileViewer = ({ file }: { file?: FileInfo }) => {
     })();
   }, [file, currentPage]);
 
+  const nodes = useMemo(() => {
+    if (containerConfig === undefined) {
+      return undefined;
+    }
+    return [containerConfig, ...annotations];
+  }, [containerConfig, annotations]);
+
   if (!file) {
     return (
       <ErrorWrapper>
@@ -110,7 +117,7 @@ export const FileViewer = ({ file }: { file?: FileInfo }) => {
     );
   }
 
-  if (!containerConfig) {
+  if (!nodes || !containerConfig) {
     return <Loader />;
   }
 
@@ -120,8 +127,7 @@ export const FileViewer = ({ file }: { file?: FileInfo }) => {
         applicationId={CHARTS_APPLICATION_ID}
         id={ROOT_CONTAINER_ID}
         setRef={setRef}
-        containers={[containerConfig]}
-        annotations={annotations}
+        nodes={nodes}
         tooltips={popovers}
         onClick={onStageClick}
       />

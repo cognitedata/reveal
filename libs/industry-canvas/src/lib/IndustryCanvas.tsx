@@ -6,7 +6,7 @@ import { isDevelopment } from '@cognite/cdf-utilities';
 import { useFlag } from '@cognite/react-feature-flags';
 import { useSDK } from '@cognite/sdk-provider';
 import ReactUnifiedViewer, {
-  Annotation,
+  isAnnotation,
   UnifiedViewer,
   UnifiedViewerEventListenerMap,
   UnifiedViewerEventType,
@@ -30,6 +30,7 @@ import useEditOnSelect from './hooks/useEditOnSelect';
 import useIndustryCanvasTooltips from './hooks/useIndustryCanvasTooltips';
 import { UseManagedToolReturnType } from './hooks/useManagedTool';
 import { UseOnUpdateSelectedAnnotationReturnType } from './hooks/useOnUpdateSelectedAnnotation';
+import useRenderContextMenu from './hooks/useRenderContextMenux';
 import { UseTooltipsOptionsReturnType } from './hooks/useTooltipsOptions';
 import { OnAddContainerReferences } from './IndustryCanvasPage';
 import type { Comment } from './services/comments/types';
@@ -42,10 +43,12 @@ import {
 } from './state/useIndustrialCanvasStore';
 import {
   CanvasAnnotation,
+  CanvasNode,
   CommentAnnotation,
   IndustryCanvasContainerConfig,
   IndustryCanvasState,
   IndustryCanvasToolType,
+  isIndustryCanvasContainerConfig,
 } from './types';
 import { getIndustryCanvasConnectionAnnotations } from './utils/getIndustryCanvasConnectionAnnotations';
 import getContainerSummarizationSticky from './utils/getSummarizationSticky';
@@ -64,8 +67,7 @@ export type IndustryCanvasProps = {
   toolType: IndustryCanvasToolType;
   isCanvasLocked: boolean;
   tool: UseManagedToolReturnType['tool'];
-  containers: IndustryCanvasState['containers'];
-  canvasAnnotations: IndustryCanvasState['canvasAnnotations'];
+  nodes: IndustryCanvasState['nodes'];
   onUpdateRequest: UnifiedViewerEventListenerMap[UnifiedViewerEventType.ON_UPDATE_REQUEST];
   clickedContainerAnnotation: ExtendedAnnotation | undefined;
   containerAnnotations: ExtendedAnnotation[];
@@ -79,8 +81,7 @@ export type IndustryCanvasProps = {
 export const IndustryCanvas = ({
   id,
   applicationId,
-  containers,
-  canvasAnnotations,
+  nodes,
   onUpdateRequest,
   containerAnnotations,
   clickedContainerAnnotation,
@@ -118,6 +119,13 @@ export const IndustryCanvas = ({
       state.isConditionalFormattingOpenAnnotationIdByTimeseriesId,
   }));
   const unifiedViewerRef = React.useRef<UnifiedViewer | null>(null);
+
+  const containers = useMemo(
+    () => nodes.filter(isIndustryCanvasContainerConfig),
+    [nodes]
+  );
+
+  const { renderContextMenu } = useRenderContextMenu({ nodes });
 
   const onAddSummarizationSticky = async (
     containerConfig: IndustryCanvasContainerConfig,
@@ -190,30 +198,33 @@ export const IndustryCanvas = ({
     toolType
   );
 
-  const commentAnnotationIds = commentAnnotations.map(
-    (commentAnnotation) => commentAnnotation.id
+  // Avoid rendering comment annotation twice, as we anyways explicitly provide commentAnnotations
+  const commentAnnotationIds = useMemo(
+    () => commentAnnotations.map((commentAnnotation) => commentAnnotation.id),
+    [commentAnnotations]
   );
-
-  const canvasAnnotationWithEventHandlers = useMemo(
+  const nodesWithEventHandlers = useMemo(
     () =>
-      canvasAnnotations
-        .filter((annotation) => !commentAnnotationIds.includes(annotation.id))
-        .map((canvasAnnotation) => ({
-          ...canvasAnnotation,
-          ...getAnnotationEditHandlers(canvasAnnotation),
-          onClick: (e: any, annotation: CanvasAnnotation) => {
-            e.cancelBubble = true;
-            setInteractionState({
-              hoverId: undefined,
-              clickedContainerAnnotationId: annotation.id,
-            });
-          },
-        })),
-    [canvasAnnotations, commentAnnotationIds, getAnnotationEditHandlers]
+      nodes
+        .filter((node) => !commentAnnotationIds.includes(node.id))
+        .map((node): CanvasNode => {
+          if (!isAnnotation(node)) {
+            return node;
+          }
+          return {
+            ...node,
+            ...getAnnotationEditHandlers(node),
+          };
+        }),
+    [nodes, commentAnnotationIds, getAnnotationEditHandlers]
   );
 
-  const enhancedAnnotations: Annotation[] = useMemo(
+  const enhancedNodes: CanvasNode[] = useMemo(
     () => [
+      ...nodesWithEventHandlers,
+      // TODO: Bug tracked by https://cognitedata.atlassian.net/browse/UFV-363
+      // ...getClickedContainerOutlineAnnotation(clickedContainer),
+      // NOTE: The nodes (annotations) below are order-independent
       ...getIndustryCanvasConnectionAnnotations({
         containers,
         selectedContainer,
@@ -224,7 +235,6 @@ export const IndustryCanvas = ({
       }),
       ...containerAnnotations,
       ...commentAnnotations,
-      ...canvasAnnotationWithEventHandlers,
     ],
     [
       containers,
@@ -234,7 +244,7 @@ export const IndustryCanvas = ({
       containerAnnotations,
       shouldShowConnectionAnnotations,
       commentAnnotations,
-      canvasAnnotationWithEventHandlers,
+      nodesWithEventHandlers,
     ]
   );
 
@@ -284,8 +294,7 @@ export const IndustryCanvas = ({
       <ReactUnifiedViewer
         applicationId={applicationId}
         id={id}
-        containers={containers}
-        annotations={enhancedAnnotations}
+        nodes={enhancedNodes}
         tooltips={tooltips}
         onClick={onStageClick}
         shouldShowZoomControls={false}
@@ -301,9 +310,8 @@ export const IndustryCanvas = ({
           width: 4000,
           height: 1000,
         }}
-        // We are using a different version of the SDK in the library
-        // but the conflicts are irrelevant for IC, so just recasting sadly
-        cogniteClient={sdk as any}
+        renderContextMenu={renderContextMenu}
+        cogniteClient={sdk}
         shouldAllowDragDrop={false} // We are using our own drag and drop handlers
       />
       <ToolbarWrapper>

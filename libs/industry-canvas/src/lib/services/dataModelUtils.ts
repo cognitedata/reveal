@@ -20,6 +20,7 @@ import {
   DTOAssetCentricContainerReference,
   DTOFdmInstanceContainerReference,
 } from './types';
+import createZIndexByIdRecord from './utils/createZIndexByIdRecord';
 
 export const getSerializedCanvasStateFromDTOCanvasState = ({
   context: dtoContext,
@@ -38,6 +39,11 @@ export const getSerializedCanvasStateFromDTOCanvasState = ({
       dtoFdmInstanceContainerReferenceToFdmInstanceContainerReference
     ) ?? [],
   context: dtoContext ?? [],
+  zIndexById: createZIndexByIdRecord([
+    ...(dtoAnnotations?.items ?? []),
+    ...(dtoContainerReferences?.items ?? []),
+    ...(dtoFdmInstanceContainerReferences?.items ?? []),
+  ]),
 });
 
 export const getAnnotationOrContainerExternalId = (
@@ -47,7 +53,8 @@ export const getAnnotationOrContainerExternalId = (
 
 const getDTOCanvasAnnotations = (
   canvasAnnotations: CanvasAnnotation[],
-  canvasExternalId: string
+  canvasExternalId: string,
+  zIndexById: Record<string, number | undefined>
 ): DTOCanvasAnnotation[] => {
   return canvasAnnotations.map((annotation) => {
     const {
@@ -67,7 +74,10 @@ const getDTOCanvasAnnotations = (
       isSelectable,
       isDraggable,
       isResizable,
-      properties: props as DTOCanvasAnnotation['properties'],
+      properties: {
+        ...props,
+        zIndex: zIndexById[id],
+      } as DTOCanvasAnnotation['properties'],
     };
   });
 };
@@ -88,7 +98,8 @@ const getResourceIds = (
 
 const getDTOAssetCentricContainerReferences = (
   containerReferences: AssetCentricContainerReference[],
-  canvasExternalId: string
+  canvasExternalId: string,
+  zIndexById: Record<string, number | undefined>
 ): DTOAssetCentricContainerReference[] => {
   return containerReferences.map((containerReference) => {
     const {
@@ -120,18 +131,18 @@ const getDTOAssetCentricContainerReferences = (
       maxWidth,
       maxHeight,
       ...getResourceIds(containerReference),
-      properties: omit(props, [
-        'resourceId',
-        'modelId',
-        'revisionId',
-      ]) as DTOAssetCentricContainerReference['properties'],
+      properties: {
+        ...omit(props, ['resourceId', 'modelId', 'revisionId']),
+        zIndex: zIndexById[id],
+      } as DTOAssetCentricContainerReference['properties'],
     };
   });
 };
 
 const getDTOFdmInstanceContainerReferences = (
   containerReferences: FdmInstanceContainerReference[],
-  canvasExternalId: string
+  canvasExternalId: string,
+  zIndexById: Record<string, number | undefined>
 ): DTOFdmInstanceContainerReference[] => {
   return containerReferences.map((containerReference) => {
     const {
@@ -167,13 +178,16 @@ const getDTOFdmInstanceContainerReferences = (
       viewExternalId: props.viewExternalId,
       viewSpace: props.viewSpace,
       viewVersion: props.viewVersion,
-      properties: omit(props, [
-        'instanceExternalId',
-        'instanceSpace',
-        'viewExternalId',
-        'viewSpace',
-        'viewVersion',
-      ]) as DTOFdmInstanceContainerReference['properties'],
+      properties: {
+        ...omit(props, [
+          'instanceExternalId',
+          'instanceSpace',
+          'viewExternalId',
+          'viewSpace',
+          'viewVersion',
+        ]),
+        zIndex: zIndexById[id],
+      } as DTOFdmInstanceContainerReference['properties'],
     };
   });
 };
@@ -207,23 +221,27 @@ export const upsertCanvas = async (
       containerReferences,
       fdmInstanceContainerReferences,
       context,
+      zIndexById,
     },
     ...canvasProps
   } = canvas;
 
   const dtoCanvasAnnotations = getDTOCanvasAnnotations(
     canvasAnnotations,
-    canvas.externalId
+    canvas.externalId,
+    zIndexById
   );
 
   const dtoAssetCentricContainerRefs = getDTOAssetCentricContainerReferences(
     containerReferences,
-    canvas.externalId
+    canvas.externalId,
+    zIndexById
   );
 
   const dtoFdmInstanceContainerRefs = getDTOFdmInstanceContainerReferences(
     fdmInstanceContainerReferences,
-    canvas.externalId
+    canvas.externalId,
+    zIndexById
   );
 
   // We first ingest the nodes, and then the edges, since the start/end

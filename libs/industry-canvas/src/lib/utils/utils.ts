@@ -1,7 +1,7 @@
 import { differenceBy, partition } from 'lodash';
 
 import { CogniteClient } from '@cognite/sdk/dist/src/index';
-import { IdsByType } from '@cognite/unified-file-viewer';
+import { IdsByType, isAnnotation } from '@cognite/unified-file-viewer';
 
 import containerConfigToContainerReference from '../containerConfigToContainerReference';
 import resolveContainerConfig from '../hooks/utils/resolveContainerConfig';
@@ -14,8 +14,10 @@ import {
   PinnedSensorValueContext,
   FiltersContext,
   SerializedFilter,
+  isIndustryCanvasContainerConfig,
 } from '../types';
 
+import compareItemsByZIndex from './compareItemsByZIndex';
 import { isNotUndefined } from './isNotUndefined';
 
 const serializeCanvasContext = (
@@ -53,13 +55,16 @@ const serializeCanvasContext = (
 export const serializeCanvasState = (
   state: IndustryCanvasState
 ): SerializedIndustryCanvasState => {
-  const containerReferences = state.containers.map(
-    containerConfigToContainerReference
-  );
+  const containerReferences = state.nodes
+    .filter(isIndustryCanvasContainerConfig)
+    .map(containerConfigToContainerReference);
   const [fdmInstanceContainerReferences, assetCentricContainerReferences] =
     partition(containerReferences, isFdmInstanceContainerReference);
   return {
-    canvasAnnotations: state.canvasAnnotations,
+    zIndexById: Object.fromEntries(
+      state.nodes.map((node, index) => [node.id, index])
+    ),
+    canvasAnnotations: state.nodes.filter(isAnnotation),
     containerReferences: assetCentricContainerReferences,
     fdmInstanceContainerReferences: fdmInstanceContainerReferences,
     context: serializeCanvasContext(state),
@@ -123,15 +128,17 @@ export const deserializeCanvasState = async (
 ): Promise<IndustryCanvasState> => {
   try {
     return {
-      canvasAnnotations: state.canvasAnnotations,
-      containers: await Promise.all(
-        [
-          ...state.containerReferences,
-          ...state.fdmInstanceContainerReferences,
-        ].map((containerReference) =>
-          resolveContainerConfig(sdk, containerReference)
-        )
-      ),
+      nodes: [
+        ...(await Promise.all(
+          [
+            ...state.containerReferences,
+            ...state.fdmInstanceContainerReferences,
+          ].map((containerReference) =>
+            resolveContainerConfig(sdk, containerReference)
+          )
+        )),
+        ...state.canvasAnnotations,
+      ].sort((a, b) => compareItemsByZIndex(a, b, state.zIndexById)),
       pinnedTimeseriesIdsByAnnotationId: deserializePinnedTimeseries(
         state.context
       ),
@@ -143,8 +150,7 @@ export const deserializeCanvasState = async (
   } catch (error) {
     console.error('Error deserializing canvas container', error);
     return {
-      containers: [],
-      canvasAnnotations: [],
+      nodes: [],
       pinnedTimeseriesIdsByAnnotationId: {},
       liveSensorRulesByAnnotationIdByTimeseriesId: {},
       filters: [],

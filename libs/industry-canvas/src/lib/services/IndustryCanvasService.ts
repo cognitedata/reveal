@@ -159,20 +159,20 @@ export class IndustryCanvasService {
       );
     }
 
-    const dtoCanvas = res.canvases.items[0];
+    const {
+      context,
+      containerReferences,
+      canvasAnnotations,
+      fdmInstanceContainerReferences,
+      ...dtoCanvasMetadata
+    } = res.canvases.items[0];
     return {
-      ...omit(dtoCanvas, [
-        'canvasAnnotations',
-        'containerReferences',
-        'fdmInstanceContainerReferences',
-        'context',
-      ]),
+      ...dtoCanvasMetadata,
       data: getSerializedCanvasStateFromDTOCanvasState({
-        context: dtoCanvas.context,
-        containerReferences: dtoCanvas.containerReferences,
-        canvasAnnotations: dtoCanvas.canvasAnnotations,
-        fdmInstanceContainerReferences:
-          dtoCanvas.fdmInstanceContainerReferences,
+        context,
+        containerReferences,
+        canvasAnnotations,
+        fdmInstanceContainerReferences,
       }),
     };
   }
