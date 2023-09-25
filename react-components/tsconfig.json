@@ -11,8 +11,9 @@
     "declarationMap": true,
     "sourceMap": true,
     "outDir": "dist",
+    "isolatedModules": true,
     "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true
   },
-  "include": ["src/**/*", "stories/**/*"]
+  "include": ["src/**/*", "stories/**/*", "vite.config.ts"],
 }
