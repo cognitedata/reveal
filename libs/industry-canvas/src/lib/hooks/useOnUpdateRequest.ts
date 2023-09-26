@@ -1,5 +1,4 @@
 import { useCallback } from 'react';
-import { useSearchParams } from 'react-router-dom';
 
 import {
   UnifiedViewer,
@@ -8,10 +7,8 @@ import {
 } from '@cognite/unified-file-viewer';
 
 import { RuleType } from '../components/ContextualTooltips/AssetTooltip/types';
-import { useCommentsUpsertMutation } from '../services/comments/hooks';
 import { shamefulOnUpdateRequest } from '../state/useIndustrialCanvasStore';
 import { CanvasNode } from '../types';
-import { useUserProfile } from '../UserProfileProvider';
 import useMetrics from '../utils/tracking/useMetrics';
 
 export type InteractionState = {
@@ -67,9 +64,6 @@ const useOnUpdateRequest = ({
 }): UpdateHandlerFn => {
   const trackUsage = useMetrics();
 
-  const [searchParams, setSearchParams] = useSearchParams();
-  const { userProfile } = useUserProfile();
-  const { mutateAsync: upsertComments } = useCommentsUpsertMutation();
   return useCallback(
     ({ containers, annotations }) => {
       shamefulOnUpdateRequest({
@@ -77,20 +71,9 @@ const useOnUpdateRequest = ({
         annotations,
         unifiedViewer,
         trackUsage,
-        upsertComments,
-        searchParams,
-        userProfile,
-        setSearchParams,
       });
     },
-    [
-      unifiedViewer,
-      trackUsage,
-      upsertComments,
-      searchParams,
-      userProfile,
-      setSearchParams,
-    ]
+    [unifiedViewer, trackUsage]
   );
 };
 

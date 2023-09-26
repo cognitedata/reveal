@@ -1,5 +1,3 @@
-import { useSearchParams } from 'react-router-dom';
-
 import { compose } from 'lodash/fp';
 import { create } from 'zustand';
 
@@ -14,6 +12,7 @@ import {
   isRectangleAnnotation,
   LineToolConfig,
   PanToolConfig,
+  RectangleAnnotation,
   RectangleToolConfig,
   SelectToolConfig,
   StickyToolConfig,
@@ -49,9 +48,6 @@ import {
   InteractionState,
 } from '../hooks/useOnUpdateRequest';
 import resolveContainerConfig from '../hooks/utils/resolveContainerConfig';
-import { useCommentsUpsertMutation } from '../services/comments/hooks/index';
-import { CommentTargetType } from '../services/comments/types';
-import { getCdfUserFromUserProfile } from '../services/comments/utils';
 import {
   CanvasNode,
   COMMENT_METADATA_ID,
@@ -62,7 +58,6 @@ import {
   isCommentAnnotation,
   isIndustryCanvasContainerConfig,
 } from '../types';
-import { UserProfile } from '../UserProfileProvider';
 import { dataUrlToFile, isPastedImageContainer } from '../utils/dataUrlUtils';
 import { addDimensionsToContainerReferencesIfNotExists } from '../utils/dimensions/index';
 import { TrackUsageFn } from '../utils/tracking/createTrackUsage';
@@ -185,6 +180,7 @@ export type RootState = {
   isConditionalFormattingOpenAnnotationIdByTimeseriesId: IsConditionalFormattingOpenByAnnotationIdByTimeseriesId;
   selectedIdsByType: IdsByType;
   fileUploadData: FileUploadData | null;
+  pendingComment: RectangleAnnotation | null;
 };
 
 const initialState: RootState = {
@@ -218,6 +214,7 @@ const initialState: RootState = {
     containerIds: [],
   },
   fileUploadData: null,
+  pendingComment: null,
 };
 
 export const useIndustrialCanvasStore = create<RootState>(() => initialState);
@@ -508,19 +505,11 @@ export const shamefulOnUpdateRequest = ({
   annotations: updatedAnnotations,
   trackUsage,
   unifiedViewer,
-  upsertComments,
-  searchParams,
-  setSearchParams,
-  userProfile,
 }: {
   containers: ContainerConfig[];
   annotations: Annotation[];
   trackUsage: TrackUsageFn;
   unifiedViewer: UnifiedViewer | null;
-  upsertComments: ReturnType<typeof useCommentsUpsertMutation>['mutateAsync'];
-  searchParams: URLSearchParams;
-  setSearchParams: ReturnType<typeof useSearchParams>[1];
-  userProfile: UserProfile;
 }) => {
   const rootState = useIndustrialCanvasStore.getState();
 
@@ -539,6 +528,22 @@ export const shamefulOnUpdateRequest = ({
   }
 
   const toolType = rootState.toolType;
+  const updatedAnnotation = updatedAnnotations[0];
+  // Augment the annotation with the comment metadata if the tool is comment
+
+  if (
+    updatedAnnotation !== undefined &&
+    isRectangleAnnotation(updatedAnnotation) &&
+    toolType === IndustryCanvasToolType.COMMENT
+  ) {
+    updatedAnnotation.isSelectable = false;
+    updatedAnnotation.metadata = {
+      ...updatedAnnotation.metadata,
+      [COMMENT_METADATA_ID]: true,
+    };
+
+    createPendingComment(updatedAnnotation);
+  }
 
   pushHistoryState(({ nodes, ...otherState }) => {
     const updatedAnnotation = updatedAnnotations[0];
@@ -548,38 +553,6 @@ export const shamefulOnUpdateRequest = ({
       !nodes.some((node) => node.id === updatedAnnotation.id);
 
     if (hasAnnotationBeenCreated) {
-      // Augment the annotation with the comment metadata if the tool is comment
-      if (toolType === IndustryCanvasToolType.COMMENT) {
-        updatedAnnotation.isSelectable = false;
-        updatedAnnotation.metadata = {
-          ...updatedAnnotation.metadata,
-          [COMMENT_METADATA_ID]: true,
-        };
-
-        if (!isRectangleAnnotation(updatedAnnotation)) {
-          throw new Error('Provided annotation is not rectangle annotation');
-        }
-
-        upsertComments([
-          {
-            targetId: searchParams.get('canvasId') ?? undefined,
-            targetType: CommentTargetType.CANVAS,
-            createdBy: getCdfUserFromUserProfile(userProfile),
-            text: '',
-            externalId: updatedAnnotation.id,
-            targetContext: {
-              x: updatedAnnotation.x,
-              y: updatedAnnotation.y,
-            },
-          },
-        ]).then(() => {
-          setSearchParams((currentParams) => {
-            currentParams.set('commentTooltipId', updatedAnnotation.id);
-            return currentParams;
-          });
-        });
-      }
-
       setInteractionState({
         hoverId: undefined,
         clickedContainerAnnotationId: updatedAnnotation.id,
@@ -614,6 +587,13 @@ export const shamefulOnUpdateRequest = ({
       ]),
     };
   });
+};
+
+export const createPendingComment = (comment: RectangleAnnotation | null) => {
+  useIndustrialCanvasStore.setState((prevState) => ({
+    ...prevState,
+    pendingComment: comment,
+  }));
 };
 
 export const onDeleteRequest = ({ annotationIds, containerIds }: IdsByType) => {
