@@ -2,7 +2,8 @@ import { useCallback, useEffect, useState } from 'react';
 
 import styled from 'styled-components';
 
-import { ToolBar } from '@cognite/cogs.js';
+import { Button, ToolBar } from '@cognite/cogs.js';
+import { DefaultCameraManager, CogniteModel } from '@cognite/reveal';
 import {
   DefaultCameraManager,
   CogniteModel,
@@ -16,19 +17,21 @@ import {
   withSuppressRevealEvents,
 } from '@cognite/reveal-react-components';
 
+import { FLOATING_ELEMENT_MARGIN } from '../../../pages/ContextualizeEditor/constants';
 import {
   HighQualitySettings,
   LowQualitySettings,
 } from '../../../pages/ContextualizeEditor/constants';
 import {
+  onCloseResourceSelector,
+  onOpenResourceSelector,
+  useContextualizeThreeDViewerStore,
   setToolbarForCadModelsState,
   setToolbarForPointCloudModelsState,
   useContextualizeThreeDViewerStore,
 } from '../useContextualizeThreeDViewerStore';
 
-import { ContextualizeThreeDViewerToolbar } from './ContextualizeThreeDViewerToolbar';
-import { ColorTypeSelector } from './PointCloudColorPicker';
-import { PointSizeSlider } from './PointSizeSlider';
+import { PointCloudToolBar } from './PointCloudToolBar/PointCloudToolBar';
 
 interface RevealContentProps {
   modelId: number;
@@ -37,6 +40,11 @@ interface RevealContentProps {
 
 export const RevealContent = ({ modelId, revisionId }: RevealContentProps) => {
   const viewer = useReveal();
+  const { isResourceSelectorOpen } = useContextualizeThreeDViewerStore(
+    (state) => ({
+      isResourceSelectorOpen: state.isResourceSelectorOpen,
+    })
+  );
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [model, setModel] = useState<
@@ -155,12 +163,29 @@ export const RevealContent = ({ modelId, revisionId }: RevealContentProps) => {
           </>
         )}
       </StyledToolBar>
+      <StyledResourceSelectorButtonWrapper>
+        <Button
+          type="ghost"
+          size="small"
+          icon={isResourceSelectorOpen ? 'ChevronRight' : 'ChevronLeft'}
+          aria-label="Toggle resource selector visibility"
+          onClick={() => {
+            if (isResourceSelectorOpen) {
+              onCloseResourceSelector();
+              return;
+            }
+            onOpenResourceSelector();
+          }}
+        />
+      </StyledResourceSelectorButtonWrapper>
     </>
   );
 };
 
-const StyledToolBar = styled(withSuppressRevealEvents(ToolBar))`
+const StyledResourceSelectorButtonWrapper = styled(
+  withSuppressRevealEvents(ToolBar)
+)`
   position: absolute;
-  left: 30px;
-  bottom: 30px;
+  top: ${FLOATING_ELEMENT_MARGIN}px;
+  right: ${FLOATING_ELEMENT_MARGIN}px;
 `;

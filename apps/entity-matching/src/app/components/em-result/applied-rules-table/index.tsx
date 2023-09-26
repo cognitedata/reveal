@@ -15,7 +15,11 @@ import { Body, Flex, Icon, Title } from '@cognite/cogs.js';
 
 import { ExpandButton } from '@entity-matching-app/components/pipeline-run-results-table/GroupedResultsTable';
 import { Prediction } from '@entity-matching-app/hooks/entity-matching-predictions';
-import { AppliedRule } from '@entity-matching-app/hooks/entity-matching-rules';
+import { AppliedRule } from '@entity-matching-app/types/rules';
+import {
+  ColoredRule,
+  colorRule,
+} from '@entity-matching-app/utils/colored-rules';
 
 type Props = {
   predictions: Prediction[];
@@ -24,7 +28,7 @@ type Props = {
   setConfirmedPredictions: Dispatch<SetStateAction<number[]>>;
 };
 
-type AppliedRuleTableRecord = { key: number } & AppliedRule;
+type AppliedRuleTableRecord = { key: number } & ColoredRule;
 type AppliedRuleTableRecordCT = ColumnType<AppliedRuleTableRecord> & {
   title: string;
   key:
@@ -57,30 +61,25 @@ export default function AppliedRulesTable({
       {
         title: t('source'),
         key: 'source',
-        render: (rule: AppliedRule) => (
-          <Extractor
-            extractors={rule.rule.extractors}
-            entitySetToRender="sources"
-          />
+        render: (rule: ColoredRule) => (
+          <Extractor extractors={rule.extractors} entitySetToRender="sources" />
         ),
       },
       {
         title: t('target'),
         key: 'target',
-        render: (rule: AppliedRule) => (
-          <Extractor
-            extractors={rule.rule.extractors}
-            entitySetToRender="targets"
-          />
+        render: (rule: ColoredRule) => (
+          <Extractor extractors={rule.extractors} entitySetToRender="targets" />
         ),
       },
       {
         title: t('rules-matches'),
         key: 'numberOfMatches',
         width: 100,
-        sorter: (a: AppliedRule, b: AppliedRule) =>
-          a.numberOfMatches - b.numberOfMatches,
-        render: (rule: AppliedRule) => rule.numberOfMatches.toLocaleString(),
+        sorter: (a: ColoredRule, b: ColoredRule) =>
+          (a.matches?.length ?? 0) - (b.matches?.length ?? 0),
+        render: (rule: ColoredRule) =>
+          rule.matches?.length.toLocaleString() ?? '0',
       },
       {
         title: '',
@@ -105,8 +104,8 @@ export default function AppliedRulesTable({
 
   const appliedRulesList = useMemo(
     () =>
-      appliedRules?.map((r, i) => ({
-        ...r,
+      appliedRules?.map((rule, i) => ({
+        ...colorRule(rule.rule.conditions, rule.rule.extractors, rule.matches),
         key: i,
       })) || [],
     [appliedRules]
@@ -150,14 +149,11 @@ export default function AppliedRulesTable({
       expandable={{
         showExpandColumn: false,
         expandedRowKeys: expandedRowKeys,
-        expandedRowRender: (record) =>
-          !!record.matches &&
-          !!record.rule.extractors &&
-          !!record.rule.conditions ? (
+        expandedRowRender: (rule) =>
+          !!rule.matches && !!rule.extractors && !!rule.conditions ? (
             <ExpandedRule
-              conditions={record.rule.conditions}
-              extractors={record.rule.extractors}
-              matches={record.matches}
+              extractors={rule.extractors}
+              matches={rule.matches}
               selectedSourceIds={confirmedPredictions}
               setSelectedSourceIds={setConfirmedPredictions}
             />

@@ -37,6 +37,8 @@ export type PickAll<
     : Otherwise;
 };
 
+type ZIndex = { zIndex?: number };
+
 type CommonDTOCanvasAnnotationProps =
   | 'id'
   | 'containerId'
@@ -50,7 +52,8 @@ export type DTOCanvasAnnotation = Pick<
 > & {
   externalId: string;
   annotationType: AnnotationType;
-  properties: Omit<PickAll<CanvasAnnotation>, CommonDTOCanvasAnnotationProps>;
+  properties: ZIndex &
+    Omit<PickAll<CanvasAnnotation>, CommonDTOCanvasAnnotationProps>;
 };
 
 type CommonDTOAssetCentricContainerReferenceProps =
@@ -70,12 +73,13 @@ export type DTOAssetCentricContainerReference = Pick<
   containerReferenceType: ContainerReferenceType;
   resourceId: number;
   resourceSubId?: number | null;
-  properties: Omit<
-    PickAll<AssetCentricContainerReference>,
-    | CommonDTOAssetCentricContainerReferenceProps
-    | 'resourceId'
-    | 'resourceSubId'
-  >;
+  properties: ZIndex &
+    Omit<
+      PickAll<AssetCentricContainerReference>,
+      | CommonDTOAssetCentricContainerReferenceProps
+      | 'resourceId'
+      | 'resourceSubId'
+    >;
 };
 
 type CommonDTOFdmInstanceContainerReferenceProps =
@@ -91,15 +95,16 @@ export type DTOFdmInstanceContainerReference = Pick<
   viewExternalId: string;
   viewSpace: string;
   viewVersion?: string;
-  properties: Omit<
-    PickAll<FdmInstanceContainerReference>,
-    | CommonDTOFdmInstanceContainerReferenceProps
-    | 'instanceExternalId'
-    | 'instanceSpace'
-    | 'viewExternalId'
-    | 'viewSpace'
-    | 'viewVersion'
-  >;
+  properties: ZIndex &
+    Omit<
+      PickAll<FdmInstanceContainerReference>,
+      | CommonDTOFdmInstanceContainerReferenceProps
+      | 'instanceExternalId'
+      | 'instanceSpace'
+      | 'viewExternalId'
+      | 'viewSpace'
+      | 'viewVersion'
+    >;
 };
 
 export type DTOCanvasState = {

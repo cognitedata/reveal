@@ -1,15 +1,10 @@
 import styled from 'styled-components';
 
 import { useTranslation } from '@entity-matching-app/common';
-import HighlightedRegex from '@entity-matching-app/components/highlighted-regex';
 
 import { Body, Colors, Flex } from '@cognite/cogs.js';
 
-import { MatchColorsByGroupIndex } from './ExpandedRule';
-
 type ResourceCellProps = {
-  matchColorsByGroupIndex?: MatchColorsByGroupIndex;
-  pattern?: string;
   preferredProperties?: string[];
   resource?: Record<string, unknown>;
   showId?: boolean;
@@ -19,8 +14,6 @@ const DEFAULT_PROPERTY_PREFERENCE_ORDER = ['name', 'externalId', 'description'];
 const FALLBACK_PROPERTY = 'id';
 
 const ResourceCell = ({
-  matchColorsByGroupIndex,
-  pattern,
   preferredProperties,
   resource,
   showId,
@@ -41,7 +34,7 @@ const ResourceCell = ({
 
   const preferredProperty: string | undefined = propertyPreferenceOrder.find(
     (property) => {
-      return resource[property] && typeof resource[property] === 'string';
+      return resource[property];
     }
   );
 
@@ -63,17 +56,7 @@ const ResourceCell = ({
       <Body level={3} muted>
         {preferredProperty}
       </Body>
-      <Body level={2}>
-        {pattern && matchColorsByGroupIndex ? (
-          <HighlightedRegex
-            matchColorsByGroupIndex={matchColorsByGroupIndex}
-            pattern={pattern}
-            text={value}
-          />
-        ) : (
-          value
-        )}
-      </Body>
+      <Body level={2}>{value}</Body>
       {showId ? <MutedId>{`${t('id')}: (${resource.id})`}</MutedId> : null}
     </Flex>
   );

@@ -15,16 +15,16 @@ import { useSDK } from '@cognite/sdk-provider';
 import {
   CubeAnnotation,
   ToolType,
-  onOpenResourceSelector,
   setPendingAnnotation,
   setThreeDViewer,
   setTool,
   toggleShouldShowBoundingVolumes,
+  toggleShouldShowWireframes,
   useContextualizeThreeDViewerStore,
-} from '../useContextualizeThreeDViewerStore';
-import { getCognitePointCloudModel } from '../utils/getCognitePointCloudModel';
-import { isPointCloudIntersection } from '../utils/isPointCloudIntersection';
-import { showBoundingVolumes } from '../utils/showBoundingVolumes';
+} from '../../useContextualizeThreeDViewerStore';
+import { getCognitePointCloudModel } from '../../utils/getCognitePointCloudModel';
+import { isPointCloudIntersection } from '../../utils/isPointCloudIntersection';
+import { showBoundingVolumes } from '../../utils/showBoundingVolumes';
 
 const deleteBoundingVolumes = (
   viewer: Cognite3DViewer,
@@ -62,22 +62,23 @@ const deleteBoundingVolumes = (
   });
 };
 
-type ContextualizeThreeDViewerToolbar = {
-  modelId: number;
-};
-
-export function ContextualizeThreeDViewerToolbar({
-  modelId,
-}: ContextualizeThreeDViewerToolbar): ReactElement {
+export const PointCloudToolBarTools = (): ReactElement => {
   const sdk = useSDK();
   const viewer = useReveal();
 
-  const { pendingAnnotation, tool, shouldShowBoundingVolumes } =
-    useContextualizeThreeDViewerStore((state) => ({
-      pendingAnnotation: state.pendingAnnotation,
-      tool: state.tool,
-      shouldShowBoundingVolumes: state.shouldShowBoundingVolumes,
-    }));
+  const {
+    pendingAnnotation,
+    tool,
+    shouldShowBoundingVolumes,
+    shouldShowWireframes,
+    modelId,
+  } = useContextualizeThreeDViewerStore((state) => ({
+    pendingAnnotation: state.pendingAnnotation,
+    tool: state.tool,
+    shouldShowBoundingVolumes: state.shouldShowBoundingVolumes,
+    shouldShowWireframes: state.shouldShowWireframes,
+    modelId: state.modelId,
+  }));
 
   // NOTE: This isn't the cleanest place to put this (it feels quite arbitrary that it is in the ToolBar file), but it's fine for now.
   //       The problem here is that the RevealContainer provider is added in the ContextualizeThreeDViewer component, which is a parent of this component.
@@ -109,13 +110,12 @@ export function ContextualizeThreeDViewerToolbar({
         },
       };
       setPendingAnnotation(cubeAnnotation);
-      onOpenResourceSelector();
     };
     viewer.on('click', onClick);
     return () => {
       viewer.off('click', onClick);
     };
-  }, [viewer, modelId, pendingAnnotation, tool]);
+  }, [viewer, pendingAnnotation, tool]);
 
   const handleAddAnnotationToolClick = () => {
     if (tool === ToolType.ADD_ANNOTATION) {
@@ -127,6 +127,8 @@ export function ContextualizeThreeDViewerToolbar({
   };
 
   const handleDeleteAnnotationToolClick = () => {
+    if (modelId === null) return;
+
     const pointCloudModel = getCognitePointCloudModel({
       modelId,
       viewer,
@@ -144,18 +146,28 @@ export function ContextualizeThreeDViewerToolbar({
 
   return (
     <ToolBar direction="vertical">
-      <Tooltip content="Toggle annotations visibility" position="right">
-        <Button
-          icon="EyeShow"
-          aria-label="Toggle annotations visibility"
-          type="ghost"
-          toggled={
-            shouldShowBoundingVolumes || tool === ToolType.DELETE_ANNOTATION
-          }
-          disabled={tool === ToolType.DELETE_ANNOTATION}
-          onClick={toggleShouldShowBoundingVolumes}
-        />
-      </Tooltip>
+      <>
+        <Tooltip content="Toggle annotations visibility" position="right">
+          <Button
+            icon="EyeShow"
+            aria-label="Toggle annotations visibility"
+            type="ghost"
+            toggled={shouldShowBoundingVolumes}
+            disabled={tool === ToolType.DELETE_ANNOTATION}
+            onClick={toggleShouldShowBoundingVolumes}
+          />
+        </Tooltip>
+        <Tooltip content="Toggle wireframe visibility" position="right">
+          <Button
+            icon="Cube"
+            aria-label="Toggle wireframe visibility"
+            type="ghost"
+            toggled={shouldShowWireframes}
+            disabled={tool === ToolType.DELETE_ANNOTATION}
+            onClick={toggleShouldShowWireframes}
+          />
+        </Tooltip>
+      </>
       <>
         <Tooltip content="Add annotation" position="right">
           <Button
@@ -178,4 +190,4 @@ export function ContextualizeThreeDViewerToolbar({
       </>
     </ToolBar>
   );
-}
+};

@@ -28,7 +28,7 @@ export type BaseMQTTSource = {
   type: MQTTSourceType;
   host: string;
   port?: string;
-  username: string;
+  username?: string;
   useTls?: boolean;
 };
 
@@ -38,7 +38,7 @@ export type ReadMQTTSource = BaseMQTTSource & {
 };
 
 export type CreateMQTTSource = BaseMQTTSource & {
-  password: string;
+  password?: string;
 };
 
 export type EditMQTTSource = Required<Pick<BaseMQTTSource, 'externalId'>> &
@@ -494,7 +494,10 @@ const getMQTTJobsWithMetrics = async (
       return Math.min(acc, cur.timestamp);
     }, now);
     const hoursSinceFirstMetric = (now - timeSinceFirstMetric) / 1000 / 60 / 60;
-    const throughput = Math.round(totalInput / hoursSinceFirstMetric);
+    let throughput = 0;
+    if (hoursSinceFirstMetric > 0) {
+      throughput = Math.round(totalInput / hoursSinceFirstMetric);
+    }
     return {
       ...jobWithMetrics,
       throughput,

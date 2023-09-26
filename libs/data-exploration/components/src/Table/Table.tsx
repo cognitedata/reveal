@@ -396,6 +396,8 @@ export function Table<T extends TableData>({
               <HeaderRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <Th
+                    data-testid={header.column.id}
+                    data-column-name={header.column.columnDef.header}
                     {...{
                       key: header.id,
                       colSpan: header.colSpan,
@@ -471,6 +473,7 @@ export function Table<T extends TableData>({
                         return (
                           <Td
                             data-testid={cell.column.id}
+                            data-column-name={cell.column.columnDef.header}
                             {...{
                               key: cell.id,
                               style: {

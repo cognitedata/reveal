@@ -9,13 +9,17 @@ import {
   setSelectedIdsByType,
   useIndustrialCanvasStore,
 } from '../state/useIndustrialCanvasStore';
-import { IndustryCanvasState, IndustryCanvasToolType } from '../types';
+import {
+  CanvasAnnotation,
+  IndustryCanvasContainerConfig,
+  IndustryCanvasToolType,
+} from '../types';
 
 type UseSelectedAnnotationOrContainerProps = {
   unifiedViewerRef: UnifiedViewer | null;
   toolType: IndustryCanvasToolType;
-  canvasAnnotations: IndustryCanvasState['canvasAnnotations'];
-  containers: IndustryCanvasState['containers'];
+  canvasAnnotations: CanvasAnnotation[];
+  containers: IndustryCanvasContainerConfig[];
 };
 
 export const useSelectedAnnotationOrContainer = ({

@@ -19,7 +19,11 @@ import { toast } from '@cognite/cogs.js';
 import { CogniteClient, CogniteError } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 
-import { RuleMatch } from './entity-matching-rules';
+import {
+  RuleCondition,
+  RuleExtractor,
+  RuleMatch,
+} from '@entity-matching-app/types/rules';
 
 export type Pipeline = {
   id: number;
@@ -342,27 +346,9 @@ export type EMPipelineRunMatch = {
   target?: EMPipelineTarget;
 };
 
-type EMPipelineRegexExtractorEntitySetType = 'sources' | 'targets';
-
-type EMPipelineRegexExtractorExtractorType = 'regex';
-
-export type EMPipelineRegexExtractor = {
-  entitySet: EMPipelineRegexExtractorEntitySetType;
-  extractorType: EMPipelineRegexExtractorExtractorType;
-  field: string;
-  pattern: string;
-};
-
-type EMMatchConditionType = 'equals';
-
-export type EMMatchCondition = {
-  conditionType: EMMatchConditionType;
-  arguments: number[][];
-};
-
 export type EMPipelineGeneratedRule = {
-  extractors?: EMPipelineRegexExtractor[];
-  conditions?: EMMatchCondition[];
+  extractors?: RuleExtractor[];
+  conditions?: RuleCondition[];
   matches?: RuleMatch[];
   priority: number;
 };

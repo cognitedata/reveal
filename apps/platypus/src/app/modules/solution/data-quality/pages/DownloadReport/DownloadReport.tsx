@@ -3,8 +3,7 @@ import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
 import { Button, Dropdown, Flex, Icon, Menu, Tooltip } from '@cognite/cogs.js';
 
-import { useDownloadReport } from './useDownloadReport';
-import { useReportAvailability } from './useReportAvailability';
+import { useDownloadReport, useReportAvailability } from './hooks';
 
 export const DownloadReport = () => {
   const { t } = useTranslation('DownloadReport');
@@ -55,7 +54,7 @@ export const DownloadReport = () => {
               iconPlacement="right"
               disabled={isDisabled || isLoading}
               loading={isLoading}
-              type="tertiary"
+              type="secondary"
             >
               {t('data_quality_report_download', 'Download report')}
             </Button>

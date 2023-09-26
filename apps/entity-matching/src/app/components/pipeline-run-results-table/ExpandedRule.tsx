@@ -4,11 +4,8 @@ import styled from 'styled-components';
 
 import { useTranslation } from '@entity-matching-app/common';
 import { PAGINATION_SETTINGS } from '@entity-matching-app/common/constants';
-import {
-  EMMatchCondition,
-  EMPipelineRegexExtractor,
-} from '@entity-matching-app/hooks/entity-matching-pipelines';
-import { RuleMatch } from '@entity-matching-app/hooks/entity-matching-rules';
+import { RuleMatch } from '@entity-matching-app/types/rules';
+import { ColoredExtractor } from '@entity-matching-app/utils/colored-rules';
 import { TableRowSelection } from 'antd/lib/table/interface';
 
 import { ColumnType, Table } from '@cognite/cdf-utilities';
@@ -24,78 +21,19 @@ type ExpandedRuleTableColumnType = ColumnType<ExpandedRuleTableRecord> & {
 };
 
 type ExpandedRuleProps = {
-  conditions: EMMatchCondition[];
-  extractors: EMPipelineRegexExtractor[];
+  extractors: ColoredExtractor[];
   matches: RuleMatch[];
   selectedSourceIds: CogniteInternalId[];
   setSelectedSourceIds: Dispatch<SetStateAction<CogniteInternalId[]>>;
 };
 
-export type MatchColorsByGroupIndex = {
-  [groupIndex: number]: string;
-};
-
-export type MatchColorsByExtractorIndex = {
-  [extractorIndex: number]: MatchColorsByGroupIndex;
-};
-
-const COLORS = [
-  '#4363d8',
-  '#3cb44b',
-  '#911eb4',
-  '#f58231',
-  '#e6194b',
-  '#844700',
-  '#206969',
-  '#f032e6',
-  '#405502',
-  '#6e5353',
-  '#008080',
-  '#e6beff',
-  '#9a6324',
-  '#424135',
-  '#800000',
-  '#42614b',
-  '#808000',
-  '#6b5137',
-  '#000075',
-  '#555555',
-  '#000000',
-];
-
-const getMatchColorsByExtractorIndex = (
-  conditions: EMMatchCondition[]
-): MatchColorsByExtractorIndex => {
-  const matchColors: MatchColorsByExtractorIndex = {};
-
-  conditions.forEach(
-    ({ arguments: conditionArguments, conditionType }, conditionIndex) => {
-      if (conditionType === 'equals') {
-        conditionArguments.forEach(([extractorIndex, groupIndex]) => {
-          if (!matchColors[extractorIndex]) {
-            matchColors[extractorIndex] = {};
-          }
-          matchColors[extractorIndex][groupIndex] =
-            COLORS[conditionIndex % COLORS.length];
-        });
-      }
-    }
-  );
-
-  return matchColors;
-};
-
 const ExpandedRule = ({
-  conditions,
   extractors,
   matches,
   selectedSourceIds,
   setSelectedSourceIds,
 }: ExpandedRuleProps): JSX.Element => {
   const { t } = useTranslation();
-
-  const matchColorsByExtractorIndex =
-    getMatchColorsByExtractorIndex(conditions);
 
   const columns: ExpandedRuleTableColumnType[] = useMemo(
     () => [
@@ -109,7 +47,6 @@ const ExpandedRule = ({
           <ExtractorMatchesCell
             entitySetToRender="sources"
             extractors={extractors}
-            matchColorsByExtractorIndex={matchColorsByExtractorIndex}
             resource={source}
           />
         ),
@@ -122,13 +59,12 @@ const ExpandedRule = ({
           <ExtractorMatchesCell
             entitySetToRender="targets"
             extractors={extractors}
-            matchColorsByExtractorIndex={matchColorsByExtractorIndex}
             resource={target}
           />
         ),
       },
     ],
-    [extractors, matchColorsByExtractorIndex, t]
+    [extractors, t]
   );
 
   const dataSource = useMemo(

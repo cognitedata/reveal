@@ -6,6 +6,7 @@ export const SEQUENCE_LIST_ALIAS = 'sequenceList';
 
 export const ASSET_AGGREGATE_ALIAS = 'assetAggregate';
 export const TIMESERIES_AGGREGATE_ALIAS = 'timeseriesAggregate';
+export const FILE_AGGREGATE_ALIAS = 'fileAggregate';
 
 export const interceptAssetList = () => {
   cy.intercept({
@@ -54,4 +55,11 @@ export const interceptTimeseriesAggregate = () => {
     url: '**/api/v1/projects/dss-dev/timeseries/aggregate',
     method: 'POST',
   }).as(TIMESERIES_AGGREGATE_ALIAS);
+};
+
+export const interceptFileAggregate = () => {
+  cy.intercept({
+    url: '**/api/v1/projects/dss-dev/documents/aggregate',
+    method: 'POST',
+  }).as(FILE_AGGREGATE_ALIAS);
 };

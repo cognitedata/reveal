@@ -32,21 +32,21 @@ export const useAnnotationsMultiple = (containerConfigs: ContainerConfig[]) => {
 
   return useQuery(
     queryKey,
-    (): Promise<AnnotationModel[][]> =>
-      Promise.all(
+    async (): Promise<Record<string, AnnotationModel[]>> => {
+      const annotationsByContainerIdEntries = await Promise.all(
         containerConfigs.map(async (containerConfig) => {
           if (
             containerConfig.type !== ContainerType.IMAGE &&
             containerConfig.type !== ContainerType.DOCUMENT
           ) {
-            return [];
+            return [containerConfig.id, []];
           }
 
           if (containerConfig.metadata.resourceId === undefined) {
             throw new Error('Expected resourceId to be defined');
           }
 
-          return (
+          const annotations = (
             await sdk.annotations
               .list({
                 filter: {
@@ -75,8 +75,11 @@ export const useAnnotationsMultiple = (containerConfigs: ContainerConfig[]) => {
 
             return containerConfig.page === annotationPageNumber;
           });
+          return [containerConfig.id, annotations];
         })
-      ),
+      );
+      return Object.fromEntries(annotationsByContainerIdEntries);
+    },
     {
       keepPreviousData: true,
     }

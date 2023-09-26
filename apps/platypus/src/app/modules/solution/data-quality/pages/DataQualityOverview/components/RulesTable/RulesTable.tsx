@@ -7,6 +7,7 @@ import {
   useLoadDataSource,
   useLoadRules,
 } from '@data-quality/hooks';
+import { useLoadLatestRuleRuns } from '@data-quality/hooks/useLoadLatestRuleRuns';
 import { UpsertRuleDrawer } from '@data-quality/pages';
 import { BasicPlaceholder } from '@platypus-app/components/BasicPlaceholder/BasicPlaceholder';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
@@ -23,6 +24,7 @@ import {
   SeverityCell,
   ItemsCheckedCell,
   ValidityOverTimeCell,
+  StatusCell,
 } from './RulesTableCells';
 
 export const RulesTable = () => {
@@ -34,9 +36,11 @@ export const RulesTable = () => {
 
   const { datapoints, error, loadingDatapoints, loadingRules, rules } =
     useLoadRules();
+  const { ruleRuns } = useLoadLatestRuleRuns();
   const { dataSource } = useLoadDataSource();
 
   const datapointsDependency = JSON.stringify(datapoints);
+
   const tableColumns: TableColumn<RuleDto>[] = useMemo(() => {
     return [
       {
@@ -48,6 +52,20 @@ export const RulesTable = () => {
               onClick={() => setEditedRule(row.original)}
               ruleName={row.original.name}
             />
+          );
+        },
+      },
+      {
+        Header: 'Status',
+        Cell: ({ row }: CellProps<RuleDto>) => {
+          const ruleRun = ruleRuns.find(
+            (r) => r.ruleId === row.original.externalId
+          );
+
+          if (!ruleRun) return null;
+
+          return (
+            <StatusCell message={ruleRun.message} status={ruleRun.status} />
           );
         },
       },
@@ -107,7 +125,7 @@ export const RulesTable = () => {
         },
       },
     ];
-  }, [datapointsDependency, dataSource?.externalId]);
+  }, [datapointsDependency, dataSource?.externalId, ruleRuns]);
 
   const renderContent = () => {
     if (loadingRules) return <Spinner />;

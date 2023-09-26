@@ -27,10 +27,6 @@ export type CreateMonitoringJobPayload = {
   timeSeriesExternalId: string;
   nonce: string;
   subscribers: Pick<UserProfile, 'userIdentifier' | 'email'>[];
-  // @deprecated in favor of subscribers from user profiles
-  userAuthId_deprecated: string;
-  // @deprecated in favor of subscribers from user profiles
-  userEmail_deprecated: string;
   sourceId: CogniteExternalId;
   source: 'CHARTS';
 };
@@ -113,7 +109,6 @@ export type MonitoringSubscriptionResponse = {
 export type MonitoringSubscriptionPayload = {
   channelID: number;
   subscribers: Pick<UserProfile, 'userIdentifier' | 'email'>[];
-  userAuthId_deprecated?: string;
 };
 
 export type MonitoringSubscriptionsListResponse = { [key: string]: boolean };

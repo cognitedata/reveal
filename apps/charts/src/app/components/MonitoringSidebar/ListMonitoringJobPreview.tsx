@@ -6,7 +6,6 @@ import { useUserProfileQuery } from '@charts-app/common/providers/useUserProfile
 import Dropdown from '@charts-app/components/Dropdown/Dropdown';
 import { useSearchParam } from '@charts-app/hooks/navigation';
 import { useTranslations } from '@charts-app/hooks/translations';
-import { useUserInfo } from '@charts-app/hooks/useUserInfo';
 import { trackUsage } from '@charts-app/services/metrics';
 import {
   MONITORING_SIDEBAR_HIGHLIGHTED_JOB,
@@ -31,18 +30,16 @@ import {
 } from './hooks';
 import JobCondition from './JobCondition';
 import { MonitoringJob } from './types';
-import { validateEmail } from './utils';
 
 const defaultTranslation = makeDefaultTranslations(
   'Delete',
   'Unable to delete monitoring job',
-  'Monitoring Job deleted succesfully',
+  'Monitoring Job deleted successfully',
   'Unable to subscribe',
   'Unable to unsubscribe',
   'History',
   'Last alert:',
   'None',
-  'Email not found',
   'User ID not found'
 );
 
@@ -76,26 +73,6 @@ const ListMonitoringJobPreview = ({
     ...defaultTranslation,
     ...useTranslations(Object.keys(defaultTranslation), 'MonitoringSidebar').t,
   };
-
-  const userInfo = useUserInfo();
-  const userAuthId_deprecated = userInfo.data?.id;
-
-  let notificationEmail =
-    userInfo.data?.mail && validateEmail(userInfo.data.mail)
-      ? userInfo.data?.mail
-      : null;
-  if (notificationEmail === null) {
-    // some users have an email as their displayName or givenName
-    if (
-      userInfo.data?.displayName &&
-      validateEmail(userInfo.data.displayName)
-    ) {
-      notificationEmail = userInfo.data.displayName;
-    }
-    if (userInfo.data?.givenName && validateEmail(userInfo.data.givenName)) {
-      notificationEmail = userInfo.data.givenName;
-    }
-  }
 
   const {
     data: alerts,
@@ -142,7 +119,6 @@ const ListMonitoringJobPreview = ({
     useMonitoringSubscripitionList(
       [monitoringJob.id],
       [monitoringJob.channelId],
-      userAuthId_deprecated || '',
       userProfile ? [userProfile] : []
     );
 
@@ -151,7 +127,7 @@ const ListMonitoringJobPreview = ({
       toast.error(t['Unable to delete monitoring job']);
     }
     if (deleteMonitoringJobSuccess) {
-      toast.success(t['Monitoring Job deleted succesfully']);
+      toast.success(t['Monitoring Job deleted successfully']);
     }
   }, [
     deleteMonitoringJobError,
@@ -166,40 +142,27 @@ const ListMonitoringJobPreview = ({
   const { id, externalId } = monitoringJob;
 
   const handleSubscribe = () => {
-    if (!notificationEmail) {
-      toast.error(t['Email not found']);
-    } else if (!userAuthId_deprecated) {
-      toast.error(t['User ID not found']);
-    } else {
-      createSubscription({
-        channelID: monitoringJob.channelId,
-        subscribers: userProfile ? [userProfile] : [],
-      });
-      trackUsage('Sidebar.Monitoring.Subscribe', {
-        monitoringJob: externalId,
-        folder: trackingInfo?.folderName,
-        filter: trackingInfo?.filter,
-      });
-    }
+    createSubscription({
+      channelID: monitoringJob.channelId,
+      subscribers: userProfile ? [userProfile] : [],
+    });
+    trackUsage('Sidebar.Monitoring.Subscribe', {
+      monitoringJob: externalId,
+      folder: trackingInfo?.folderName,
+      filter: trackingInfo?.filter,
+    });
   };
 
   const handleUnsubscribe = () => {
-    if (!notificationEmail) {
-      toast.error(t['Email not found']);
-    } else if (!userAuthId_deprecated) {
-      toast.error(t['User ID not found']);
-    } else {
-      deleteSubscription({
-        userAuthId_deprecated: userAuthId_deprecated || '',
-        channelID: monitoringJob.channelId,
-        subscribers: userProfile ? [userProfile] : [],
-      });
-      trackUsage('Sidebar.Monitoring.Unsubscribe', {
-        monitoringJob: externalId,
-        folder: trackingInfo?.folderName,
-        filter: trackingInfo?.filter,
-      });
-    }
+    deleteSubscription({
+      channelID: monitoringJob.channelId,
+      subscribers: userProfile ? [userProfile] : [],
+    });
+    trackUsage('Sidebar.Monitoring.Unsubscribe', {
+      monitoringJob: externalId,
+      folder: trackingInfo?.folderName,
+      filter: trackingInfo?.filter,
+    });
   };
 
   const [isOpen, setIsOpen] = useState(false);

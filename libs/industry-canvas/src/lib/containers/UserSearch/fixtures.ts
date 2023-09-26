@@ -48,6 +48,7 @@ export const canvas: SerializedCanvasDocument = {
   createdBy: '7Jk1xtg0qqr0-LJkatoGOQ',
   createdTime: '2023-06-16T14:54:42.832Z',
   data: {
+    zIndexById: {},
     canvasAnnotations: [],
     containerReferences: [],
     fdmInstanceContainerReferences: [],

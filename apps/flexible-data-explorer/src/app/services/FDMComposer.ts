@@ -99,7 +99,6 @@ export class FDMComposer {
   public async searchAggregateValueByProperty<T>(
     data: { dataType: string; field: string },
     query: string,
-    filters: unknown,
     property: string
   ) {
     const dataModel = this.getDataModelByDataType(data.dataType);
@@ -121,7 +120,6 @@ export class FDMComposer {
     const result = await client.searchAggregateValueByProperty<T>(
       data,
       query,
-      filters,
       property
     );
 

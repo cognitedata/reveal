@@ -108,7 +108,7 @@
         "hmr": true,
         "port": 3000,
         "ssl": true,
-        "allowedHosts": "*.dev.fusion.cogniteapp.com,apps-staging.cognite.com"
+        "allowedHosts": ".cogniteapp.com,.cognite.com"
       },
       "configurations": {
         "development": {

@@ -3,11 +3,9 @@ import { useState } from 'react';
 import isUndefined from 'lodash/isUndefined';
 import styled from 'styled-components/macro';
 
-import { Chip } from '@cognite/cogs.js';
-
 import { useTranslation } from '../../../../../hooks/useTranslation';
 import { useSearchAggregateValueByPropertyQuery } from '../../../../../services/instances/generic/queries/useInstanceSearchAggregatesQuery';
-import { BaseFilterInput } from '../../../components';
+import { BaseFilterInput, TextChip } from '../../../components';
 import { NumericRange } from '../../../types';
 import { FilterInputProps } from '../FilterInput';
 
@@ -66,10 +64,7 @@ export const NumericRangeInput: React.FC<NumericRangeInputProps> = ({
         }}
       />
 
-      <Chip
-        label={t('FILTER_AND_OPERATION')}
-        tooltipProps={{ disabled: true }}
-      />
+      <TextChip>{t('FILTER_AND_OPERATION')}</TextChip>
 
       <BaseFilterInput
         {...rest}

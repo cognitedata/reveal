@@ -20,7 +20,8 @@ const getUserProfile = async (client: CogniteClient): Promise<UserProfile> => {
     .then((res) => res.data);
 };
 
-const RETRY_DELAY_MS = 1000;
+const RETRY_DELAY_MS = 300;
+const NUMBER_OF_RETRIES = 10;
 
 export const useUserProfileQuery = () => {
   const sdk = useSDK();
@@ -29,9 +30,7 @@ export const useUserProfileQuery = () => {
     async () => getUserProfile(sdk),
     {
       retry: (failureCount: number): boolean => {
-        // Retry iff we do *not* get a 403. That is if, and only if,
-        // we do have access to the Profiles API
-        return failureCount < 5;
+        return failureCount < NUMBER_OF_RETRIES;
       },
       retryDelay: () => RETRY_DELAY_MS,
     }

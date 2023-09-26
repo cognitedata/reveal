@@ -17,10 +17,12 @@ import {
 import { RevealContent } from './components/RevealContent';
 import { useSyncStateWithViewer } from './hooks/useSyncStateWithViewer';
 import {
-  onCloseResourceSelector,
   setModelId,
+  setPendingAnnotation,
   useContextualizeThreeDViewerStore,
+  setAnnotations,
 } from './useContextualizeThreeDViewerStore';
+import { getCdfAnnotations } from './utils/annotations/annotationUtils';
 import { createCdfThreeDAnnotation } from './utils/createCdfThreeDAnnotation';
 import { getCognitePointCloudModel } from './utils/getCognitePointCloudModel';
 
@@ -45,6 +47,14 @@ export const ContextualizeThreeDViewer = ({
   useEffect(() => {
     setModelId(modelId);
   }, [modelId]);
+
+  useEffect(() => {
+    const loadAnnotations = async () => {
+      const annotations = await getCdfAnnotations(sdk, modelId);
+      setAnnotations(annotations);
+    };
+    loadAnnotations();
+  }, [sdk, modelId]);
 
   useSyncStateWithViewer();
 
@@ -98,7 +108,7 @@ export const ContextualizeThreeDViewer = ({
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        onCloseResourceSelector();
+        setPendingAnnotation(null);
         event.stopPropagation();
       }
     };
@@ -112,7 +122,7 @@ export const ContextualizeThreeDViewer = ({
 
   return (
     <>
-      <StyledSplitter>
+      <StyledSplitter secondaryInitialSize={700}>
         <ThreeDViewerStyled>
           <RevealContainer sdk={sdk} color={defaultRevealColor}>
             <RevealContent modelId={modelId} revisionId={revisionId} />
@@ -123,9 +133,10 @@ export const ContextualizeThreeDViewer = ({
           <ResourceSelector
             selectionMode="single"
             visibleResourceTabs={['asset']}
+            shouldDisableAddButton={pendingAnnotation === null}
             onSelect={(item) => {
-              onCloseResourceSelector();
               saveAnnotationToCdf(item.id);
+              setPendingAnnotation(null);
             }}
           />
         )}

@@ -114,6 +114,7 @@ export const mixerApiBuiltInTypes = [
 
     enum _IndexType {
       BTREE
+      INVERTED
     }
 
     input _IndexDefinition {

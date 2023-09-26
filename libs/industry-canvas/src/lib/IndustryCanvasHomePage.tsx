@@ -27,6 +27,7 @@ import {
 } from './components/AddResourceToCanvasModal';
 import CanvasDeletionModal from './components/CanvasDeletionModal';
 import { SEARCH_QUERY_PARAM_KEY, TOAST_POSITION } from './constants';
+import { useCallbackOnce } from './hooks/useCallbackOnce';
 import useCanvasDeletion from './hooks/useCanvasDeletion';
 import useCanvasesWithUserProfiles, {
   CanvasDocumentWithUserProfile,
@@ -40,6 +41,7 @@ import { CanvasVisibility } from './services/IndustryCanvasService';
 import { isFdmInstanceContainerReference } from './types';
 import { UserProfile, useUserProfile } from './UserProfileProvider';
 import { addIdToContainerReference } from './utils/addIdToContainerReference';
+import { createDuplicateCanvas } from './utils/createDuplicateCanvas';
 import { addDimensionsToContainerReferencesIfNotExists } from './utils/dimensions';
 import { getCanvasLink } from './utils/getCanvasLink';
 import {
@@ -235,6 +237,39 @@ export const IndustryCanvasHomePage = () => {
       </Tooltip>
     );
   };
+
+  const handleDuplicateCanvasClick =
+    useCallbackOnce<CanvasDocumentWithUserProfile>(async (selectedCanvas) => {
+      const canvas = await getCanvasById(selectedCanvas.externalId);
+
+      const { externalId } = await createDuplicateCanvas({
+        canvas,
+        createCanvas,
+        t,
+      });
+
+      navigate(getCanvasLink(externalId));
+    });
+
+  const renderDuplicateCanvasButton = (row: CanvasDocumentWithUserProfile) => (
+    <Tooltip
+      content={t(translationKeys.COMMON_CANVAS_DUPLICATE, 'Duplicate canvas')}
+    >
+      <Button
+        type="ghost-destructive"
+        icon="Duplicate"
+        disabled={isCreatingCanvas}
+        aria-label={t(
+          translationKeys.COMMON_CANVAS_DUPLICATE,
+          'Duplicate canvas'
+        )}
+        onClick={(ev) => {
+          ev.stopPropagation();
+          handleDuplicateCanvasClick(row);
+        }}
+      />
+    </Tooltip>
+  );
 
   const renderCopyCanvasLinkButton = (row: CanvasDocumentWithUserProfile) => (
     <Tooltip
@@ -454,6 +489,7 @@ export const IndustryCanvasHomePage = () => {
                   id: 'row-options',
                   accessor: (row) => (
                     <>
+                      {renderDuplicateCanvasButton(row)}
                       {renderCopyCanvasLinkButton(row)}
                       {renderDeleteCanvasButton(row)}
                     </>

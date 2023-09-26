@@ -50,8 +50,8 @@ DocumentPreviewProps) => {
   const { data: containerData } = useDocumentContainerQuery(file);
 
   const container = useMemo(() => {
-    if (file && isSupportedFileInfo(file)) {
-      return containerData;
+    if (file && isSupportedFileInfo(file) && containerData) {
+      return [containerData];
     }
     return undefined;
   }, [file, containerData]);
@@ -74,7 +74,7 @@ DocumentPreviewProps) => {
         <ReactUnifiedViewer
           applicationId={applicationId}
           id={id}
-          containers={[container]}
+          nodes={container}
           shouldShowZoomControls={showControls}
         />
       </UFVWrapper>

@@ -21,6 +21,7 @@ export const ScheduledCalculationCollectionEffects = () => {
   const taskExternalIds = chart?.scheduledCalculationCollection?.map(
     (scheduledCalculation) => scheduledCalculation.id
   );
+
   const { data: tasks } = useScheduledCalculationTasks(
     taskExternalIds?.map((externalId) => ({ externalId })) || []
   );

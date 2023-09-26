@@ -23,31 +23,19 @@ describe('Assets', () => {
   it('should sort asset results', () => {
     cy.log('sorting colomn: Name');
     cy.getTableById('asset-search-results').clickSortColoumn('Name');
-    cy.wait(`@${ASSET_LIST_ALIAS}`);
-    cy.getTableById('asset-search-results')
-      .getColomnValues('name')
-      .shouldBeSortedAscending();
+    cy.wait(`@${ASSET_LIST_ALIAS}`).shouldSortAscending('name');
 
     cy.getTableById('asset-search-results').clickSortColoumn('Name');
-    cy.wait(`@${ASSET_LIST_ALIAS}`);
-    cy.getTableById('asset-search-results')
-      .getColomnValues('name')
-      .shouldBeSortedDescending();
+    cy.wait(`@${ASSET_LIST_ALIAS}`).shouldSortDescending('name');
 
-    cy.tableSholudBeVisible('asset-search-results').selectColumn(`Description`);
+    cy.tableShouldBeVisible('asset-search-results').selectColumn(`Description`);
 
     cy.log('sorting colomn: Description');
     cy.getTableById('asset-search-results').clickSortColoumn('Description');
-    cy.wait(`@${ASSET_LIST_ALIAS}`);
-    cy.getTableById('asset-search-results')
-      .getColomnValues('description')
-      .shouldBeSortedAscending();
+    cy.wait(`@${ASSET_LIST_ALIAS}`).shouldSortAscending('description');
 
     cy.getTableById('asset-search-results').clickSortColoumn('Description');
-    cy.wait(`@${ASSET_LIST_ALIAS}`);
-    cy.getTableById('asset-search-results')
-      .getColomnValues('description')
-      .shouldBeSortedDescending();
+    cy.wait(`@${ASSET_LIST_ALIAS}`).shouldSortDescending('description');
   });
 
   it('should navigate to the detail view', () => {
@@ -76,15 +64,15 @@ describe('Assets', () => {
 
     cy.log('should navigate to Hierarchy tab');
     cy.findAllByTestId('asset-detail').goToTab('Hierarchy');
-    cy.tableSholudBeVisible('asset-details-tree-table');
+    cy.tableShouldBeVisible('asset-details-tree-table');
 
     cy.log('should navigate to Assets tab');
     cy.findAllByTestId('asset-detail').goToTab('Assets');
-    cy.tableSholudBeVisible('asset-linked-search-results');
+    cy.tableShouldBeVisible('asset-linked-search-results');
 
     cy.log('should navigate to Time series tab');
     cy.findAllByTestId('asset-detail').goToTab('Time series');
-    cy.tableSholudBeVisible('timeseries-linked-search-results');
+    cy.tableShouldBeVisible('timeseries-linked-search-results');
 
     cy.log('should navigate to Files tab');
     cy.findAllByTestId('asset-detail').goToTab('Files');
@@ -92,11 +80,11 @@ describe('Assets', () => {
 
     cy.log('should navigate to Events tab');
     cy.findAllByTestId('asset-detail').goToTab('Events');
-    cy.tableSholudBeVisible('event-linked-search-results');
+    cy.tableShouldBeVisible('event-linked-search-results');
 
     cy.log('should navigate to Sequence tab');
     cy.findAllByTestId('asset-detail').goToTab('Sequence');
-    cy.tableSholudBeVisible('sequence-linked-search-results');
+    cy.tableShouldBeVisible('sequence-linked-search-results');
 
     cy.log('close asset detail view');
     cy.clickIconButton('Close');

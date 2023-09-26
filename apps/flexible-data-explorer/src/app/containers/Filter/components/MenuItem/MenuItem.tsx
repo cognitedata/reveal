@@ -1,10 +1,10 @@
 import * as React from 'react';
 
-import { Icon, IconType } from '@cognite/cogs.js';
+import { IconType } from '@cognite/cogs.js';
 
 import { Typography } from '../../../../components/Typography';
 
-import { Content, TextContent, Title } from './elements';
+import { Content, StyledIcon, TextContent, Title } from './elements';
 
 const TEXT_CONTENT_WIDTH = 200;
 const ICON_WIDTH = 24;
@@ -28,7 +28,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({
 
   return (
     <Content onClick={() => onClick?.()}>
-      {icon && <Icon type={icon} />}
+      {icon && <StyledIcon type={icon} />}
 
       <TextContent width={textContentWidth}>
         <Title>{title}</Title>
@@ -38,7 +38,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({
         )}
       </TextContent>
 
-      <Icon type="ChevronRight" />
+      <StyledIcon type="ChevronRight" />
     </Content>
   );
 };

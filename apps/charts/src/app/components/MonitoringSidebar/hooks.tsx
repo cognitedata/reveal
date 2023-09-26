@@ -2,7 +2,6 @@ import {
   useUserProfileQuery,
   UserProfile,
 } from '@charts-app/common/providers/useUserProfileQuery';
-import { useUserInfo } from '@charts-app/hooks/useUserInfo';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { useSDK } from '@cognite/sdk-provider';
@@ -81,17 +80,14 @@ export const useMonitoringFoldersWithJobs = (
   }
 ) => {
   const sdk = useSDK();
-  const userInfo = useUserInfo();
   const { data: userProfile } = useUserProfileQuery();
-  const userAuthId_deprecated = userInfo.data?.id;
   const userIdentifier = userProfile?.userIdentifier;
   const { subscribed, timeseriesIds, timeseriesExternalIds, currentChart } =
     filters || {};
   const hookConfig: any = {
     enabled:
-      userAuthId_deprecated !== undefined &&
-      (!currentChart ||
-        Boolean(timeseriesIds?.length || timeseriesExternalIds?.length)),
+      !currentChart ||
+      Boolean(timeseriesIds?.length || timeseriesExternalIds?.length),
   };
   if (hookId === 'indicator') {
     hookConfig.refetchInterval = 10000;
@@ -118,7 +114,6 @@ export const useMonitoringFoldersWithJobs = (
             },
             params: {
               listJobs: true,
-              userAuthId_deprecated,
             },
           }
         )
@@ -279,7 +274,6 @@ export const useMonitoringSubscriptionDelete = () => {
 export const useMonitoringSubscripitionList = (
   monitoringTaskIds: number[],
   channelIds: number[], // used for query cache invalidation
-  userAuthId_deprecated: string,
   subscribers: UserProfile[]
 ) => {
   const sdk = useSDK();
@@ -291,7 +285,6 @@ export const useMonitoringSubscripitionList = (
         {
           data: {
             monitoringTaskIDs: monitoringTaskIds,
-            userAuthId_deprecated,
             subscribers: subscribers.map((subscriber) => ({
               userIdentifier: subscriber.userIdentifier,
             })),

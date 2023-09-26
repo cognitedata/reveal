@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { useTranslation } from '@entity-matching-app/common';
+import ErrorPage from '@entity-matching-app/components/error-pages/Error';
 import NoAccessPage from '@entity-matching-app/components/error-pages/NoAccess';
 import UnknownErrorPage from '@entity-matching-app/components/error-pages/UnknownError';
 import Page from '@entity-matching-app/components/page';
@@ -110,14 +111,10 @@ const PipelineResults = (): JSX.Element => {
 
   if (!emPipelineRun) {
     return (
-      <Page subtitle={pipeline?.description} title={pipeline?.name ?? ''}>
-        <Step
-          title={t('result-step-title', { step: 4 })}
-          subtitle={t('result-step-subtitle')}
-        >
-          run not found (TODO)
-        </Step>
-      </Page>
+      <ErrorPage
+        title={t('pipeline-run-not-found-title')}
+        instructions={t('pipeline-run-not-found-instructions')}
+      />
     );
   }
 

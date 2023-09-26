@@ -41,8 +41,8 @@ export const FilePreview = ({
   const { data: containerData } = useFileContainerQuery(file);
 
   const container = useMemo(() => {
-    if (file && isSupportedFileInfo(file)) {
-      return containerData;
+    if (file && isSupportedFileInfo(file) && containerData) {
+      return [containerData];
     }
   }, [file, containerData]);
 
@@ -69,7 +69,7 @@ export const FilePreview = ({
           shouldUseAdaptiveRendering
           applicationId={applicationId}
           id={id}
-          containers={[container]}
+          nodes={container}
           shouldShowZoomControls={showControls}
         />
       </UFVWrapper>
