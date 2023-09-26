@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { BoxGeometry, Color, Mesh, MeshBasicMaterial, Vector3 } from 'three';
+import * as THREE from 'three';
 
 import { Cognite3DViewer } from '@cognite/reveal';
 
@@ -8,24 +8,34 @@ import {
   ToolType,
   useContextualizeThreeDViewerStore,
 } from '../useContextualizeThreeDViewerStore';
+import { createAnnotationsAsWireframes } from '../utils/annotations/annotationUtils';
 import { getCognitePointCloudModel } from '../utils/getCognitePointCloudModel';
 import { hideBoundingVolumes } from '../utils/hideBoundingVolumes';
 import { showBoundingVolumes } from '../utils/showBoundingVolumes';
 
 const PENDING_ANNOTATION_ID = 'pending-annotation';
+const ANNOTATION_AS_WIREFRAME_ID = 'annotation-as-wireframe';
 
 // Reveal should add a method that list all of the 3D objects in the scene.
 // For now, I'm using this cache to keep track of the objects that is added to the scene.
-let objectsInScene: Mesh[] = [];
+let objectsInScene: THREE.Object3D[] = [];
 
-const removeObject = (viewer: Cognite3DViewer, object: Mesh) => {
+const addObject = (viewer: Cognite3DViewer, object: THREE.Object3D) => {
+  viewer.addObject3D(object);
+  objectsInScene.push(object);
+};
+
+const removeObject = (viewer: Cognite3DViewer, object: THREE.Object3D) => {
   viewer.removeObject3D(object);
   objectsInScene = objectsInScene.filter((o) => o !== object);
 };
 
-const addObject = (viewer: Cognite3DViewer, object: Mesh) => {
-  viewer.addObject3D(object);
-  objectsInScene.push(object);
+const removeObjectByName = (viewer: Cognite3DViewer, name: string) => {
+  objectsInScene
+    .filter((object) => object.name === name)
+    .forEach((object) => {
+      removeObject(viewer, object);
+    });
 };
 
 export const useSyncStateWithViewer = () => {
@@ -33,14 +43,18 @@ export const useSyncStateWithViewer = () => {
     modelId,
     pendingAnnotation,
     shouldShowBoundingVolumes,
+    shouldShowWireframes,
     threeDViewer,
     tool,
+    annotations,
   } = useContextualizeThreeDViewerStore((state) => ({
     modelId: state.modelId,
     pendingAnnotation: state.pendingAnnotation,
     shouldShowBoundingVolumes: state.shouldShowBoundingVolumes,
+    shouldShowWireframes: state.shouldShowWireframes,
     threeDViewer: state.threeDViewer,
     tool: state.tool,
+    annotations: state.annotations,
   }));
 
   // Sync pending annotation with viewer.
@@ -48,26 +62,22 @@ export const useSyncStateWithViewer = () => {
     if (threeDViewer === null) return;
 
     // Remove previous pending annotation(s) from the viewer.
-    objectsInScene
-      .filter((object) => object.name === PENDING_ANNOTATION_ID)
-      .forEach((object) => {
-        removeObject(threeDViewer, object);
-      });
+    removeObjectByName(threeDViewer, PENDING_ANNOTATION_ID);
 
     // Add new pending annotation(s) to the viewer.
     if (pendingAnnotation === null) return;
 
-    const newAnnotationCube = new Mesh(
-      new BoxGeometry(2, 2, 2),
-      new MeshBasicMaterial({
-        color: new Color(1, 1, 0),
+    const newAnnotationCube = new THREE.Mesh(
+      new THREE.BoxGeometry(2, 2, 2),
+      new THREE.MeshBasicMaterial({
+        color: new THREE.Color(1, 1, 0),
         transparent: true,
         opacity: 0.5,
       })
     );
     newAnnotationCube.name = PENDING_ANNOTATION_ID;
 
-    const point = new Vector3(
+    const point = new THREE.Vector3(
       pendingAnnotation.position.x,
       pendingAnnotation.position.y,
       pendingAnnotation.position.z
@@ -92,6 +102,32 @@ export const useSyncStateWithViewer = () => {
       return;
     }
 
-    hideBoundingVolumes(pointCloudModel);
+    hideBoundingVolumes(threeDViewer, pointCloudModel);
   }, [shouldShowBoundingVolumes, threeDViewer, modelId, tool]);
+
+  // Sync all annotation wireframes with viewer.
+  useEffect(() => {
+    if (threeDViewer === null) return;
+
+    if (!shouldShowWireframes) {
+      removeObjectByName(threeDViewer, ANNOTATION_AS_WIREFRAME_ID);
+      return;
+    }
+    if (annotations === null) return;
+
+    if (modelId === null) return;
+
+    const pointCloudModel = getCognitePointCloudModel({
+      modelId,
+      viewer: threeDViewer,
+    });
+    if (pointCloudModel === undefined) return;
+
+    const group = createAnnotationsAsWireframes(
+      annotations ?? [],
+      pointCloudModel.getCdfToDefaultModelTransformation()
+    );
+    group.name = ANNOTATION_AS_WIREFRAME_ID;
+    addObject(threeDViewer, group);
+  }, [shouldShowWireframes, threeDViewer, annotations, modelId]);
 };

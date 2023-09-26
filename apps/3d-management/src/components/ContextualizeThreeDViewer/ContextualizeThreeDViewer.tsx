@@ -20,7 +20,9 @@ import {
   setModelId,
   setPendingAnnotation,
   useContextualizeThreeDViewerStore,
+  setAnnotations,
 } from './useContextualizeThreeDViewerStore';
+import { getCdfAnnotations } from './utils/annotations/annotationUtils';
 import { createCdfThreeDAnnotation } from './utils/createCdfThreeDAnnotation';
 import { getCognitePointCloudModel } from './utils/getCognitePointCloudModel';
 
@@ -45,6 +47,14 @@ export const ContextualizeThreeDViewer = ({
   useEffect(() => {
     setModelId(modelId);
   }, [modelId]);
+
+  useEffect(() => {
+    const loadAnnotations = async () => {
+      const annotations = await getCdfAnnotations(sdk, modelId);
+      setAnnotations(annotations);
+    };
+    loadAnnotations();
+  }, [sdk, modelId]);
 
   useSyncStateWithViewer();
 

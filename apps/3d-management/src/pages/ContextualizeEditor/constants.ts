@@ -15,6 +15,11 @@ export const MIN_POINT_SIZE = 0.0;
 export const MAX_POINT_SIZE = 4; // Default seems be be 2, but the user probably wants lower values
 export const STEP_POINT_SIZE = 0.1;
 
+export const ANNOTATION_SUGGESTED_COLOR = 0xffff00; // yellow
+export const ANNOTATION_APPROVED_COLOR = 0x00ff00; // green
+export const ANNOTATION_REJECTED_COLOR = 0xff0000; // red
+export const ANNOTATION_CYLINDER_RADIUS_MARGIN = 0.2; // 20 % percent extra margin on the cylinder radius
+
 export const LowQualitySettings: QualitySettings = {
   cadBudget: {
     maximumRenderCost: DEFAULT_CAD_BUDGET,

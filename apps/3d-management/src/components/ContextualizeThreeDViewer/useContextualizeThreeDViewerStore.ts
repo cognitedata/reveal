@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 
 import { Cognite3DViewer } from '@cognite/reveal';
+import { AnnotationModel } from '@cognite/sdk';
 export type ThreeDPosition = {
   x: number;
   y: number;
@@ -24,7 +25,9 @@ type RootState = {
   threeDViewer: Cognite3DViewer | null;
   tool: ToolType;
   shouldShowBoundingVolumes: boolean;
+  shouldShowWireframes: boolean;
   modelId: number | null;
+  annotations: AnnotationModel[] | null;
 };
 
 const initialState: RootState = {
@@ -33,7 +36,9 @@ const initialState: RootState = {
   threeDViewer: null,
   tool: ToolType.NONE,
   shouldShowBoundingVolumes: false,
+  shouldShowWireframes: false,
   modelId: null,
+  annotations: null,
 };
 
 export const useContextualizeThreeDViewerStore = create<RootState>(
@@ -79,10 +84,24 @@ export const setTool = (tool: ToolType) => {
   }));
 };
 
+export const setAnnotations = (annotations: AnnotationModel[]) => {
+  useContextualizeThreeDViewerStore.setState((prevState) => ({
+    ...prevState,
+    annotations: annotations,
+  }));
+};
+
 export const toggleShouldShowBoundingVolumes = () => {
   useContextualizeThreeDViewerStore.setState((prevState) => ({
     ...prevState,
     shouldShowBoundingVolumes: !prevState.shouldShowBoundingVolumes,
+  }));
+};
+
+export const toggleShouldShowWireframes = () => {
+  useContextualizeThreeDViewerStore.setState((prevState) => ({
+    ...prevState,
+    shouldShowWireframes: !prevState.shouldShowWireframes,
   }));
 };
 
