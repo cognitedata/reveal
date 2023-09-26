@@ -61,6 +61,7 @@ const nameToAclTypeMap = {
   monitoringtasks: 'monitoringTasksAcl',
   scheduledcalculations: 'scheduledCalculationsAcl',
   notifications: 'notificationsAcl',
+  workfloworchestration: 'workflowOrchestrationAcl',
 };
 
 const getCapabilityNameTranslationKey = {
@@ -91,6 +92,7 @@ const getCapabilityNameTranslationKey = {
   monitoringtasks: 'monitoring-tasks',
   scheduledcalculations: 'scheduled-calculations',
   notifications: 'notifications',
+  workfloworchestration: 'workflow-orchestration',
 };
 
 const prepareCapabilityTypeGroups = (_t: (key: TranslationKeys) => string) => {
@@ -145,6 +147,7 @@ const prepareCapabilityTypeGroups = (_t: (key: TranslationKeys) => string) => {
         'monitoringtasks',
         'scheduledcalculations',
         'notifications',
+        'workfloworchestration',
       ],
     },
   ];
@@ -187,6 +190,7 @@ export const capabilityDescriptions = {
   monitoringtasks: 'capability-desc-monitoring-tasks',
   scheduledcalculations: 'capability-desc-scheduled-calculations',
   notifications: 'capability-desc-notifications',
+  workfloworchestration: 'capability-desc-workflow-orchestration',
 };
 
 const deprecatedAclTypes = ['genericsAcl', 'modelHostingAcl', 'typesAcl'];
