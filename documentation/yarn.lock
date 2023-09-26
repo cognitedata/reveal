@@ -2156,7 +2156,7 @@ __metadata:
     "@types/react": 18.2.12
     "@types/styled-components": 5.1.27
     "@uiw/codemirror-theme-material": 4.21.18
-    "@uiw/react-codemirror": 4.21.16
+    "@uiw/react-codemirror": 4.21.18
     clsx: 2.0.0
     copyfiles: 2.4.1
     cross-env: 7.0.3
@@ -3903,9 +3903,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@uiw/codemirror-extensions-basic-setup@npm:4.21.16":
-  version: 4.21.16
-  resolution: "@uiw/codemirror-extensions-basic-setup@npm:4.21.16"
+"@uiw/codemirror-extensions-basic-setup@npm:4.21.18":
+  version: 4.21.18
+  resolution: "@uiw/codemirror-extensions-basic-setup@npm:4.21.18"
   dependencies:
     "@codemirror/autocomplete": ^6.0.0
     "@codemirror/commands": ^6.0.0
@@ -3922,7 +3922,7 @@ __metadata:
     "@codemirror/search": ">=6.0.0"
     "@codemirror/state": ">=6.0.0"
     "@codemirror/view": ">=6.0.0"
-  checksum: a64fdcc4126223fe00fc1276b1adbdc3ea89004c1b49ea26a38b7ec16fd1715d1576eb19f5389deff86ccd694828df97787e18301bbc7d5b1ecbcd0ac2d26c13
+  checksum: c643eebc45e2067080c46e28fdb4ac40043e5890f4862bd45fe5bf816894b6c118ea901ca9ba1dce8862877622ebd793db6ec220491506355ed562a0dc0c4507
   languageName: node
   linkType: hard
 
@@ -3950,15 +3950,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@uiw/react-codemirror@npm:4.21.16":
-  version: 4.21.16
-  resolution: "@uiw/react-codemirror@npm:4.21.16"
+"@uiw/react-codemirror@npm:4.21.18":
+  version: 4.21.18
+  resolution: "@uiw/react-codemirror@npm:4.21.18"
   dependencies:
     "@babel/runtime": ^7.18.6
     "@codemirror/commands": ^6.1.0
     "@codemirror/state": ^6.1.1
     "@codemirror/theme-one-dark": ^6.0.0
-    "@uiw/codemirror-extensions-basic-setup": 4.21.16
+    "@uiw/codemirror-extensions-basic-setup": 4.21.18
     codemirror: ^6.0.0
   peerDependencies:
     "@babel/runtime": ">=7.11.0"
@@ -3968,7 +3968,7 @@ __metadata:
     codemirror: ">=6.0.0"
     react: ">=16.8.0"
     react-dom: ">=16.8.0"
-  checksum: 0e112f00825d0482498768ec3ae88dab2553d2e053a567930301024c8821dbd3ba5bb76798cba71b1e10de63372d2eb48299f47bb29341b91a3f9a40fa4c5fca
+  checksum: ef3897e9901b98fd981d4b9db2ae8702aa7ffda4cf5cab3286963580606a6dde38e77a4314c12574b6f5f251d62b62e59f0a1a445009b5927b8500f4b5fd795c
   languageName: node
   linkType: hard
 
