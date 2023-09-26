@@ -8,9 +8,8 @@ import {
   useMutation,
   UseMutationOptions,
 } from '@tanstack/react-query';
-
+import { AppliedRule, Rule } from '@entity-matching-app/types/rules';
 import { JobStatus } from './types';
-import { EMMatchCondition } from './entity-matching-pipelines';
 
 type RulesResponse = {
   createdTime: number;
@@ -30,29 +29,6 @@ type ApplyRulesInput = {
   sources: any[];
   targets: any[];
   rules: Rule[];
-};
-
-type Extractor = {
-  entitySet: 'sources' | 'targets';
-  extractorType: 'regex';
-  field: string;
-  pattern: string;
-};
-export type Rule = {
-  priority: number;
-  conditions: EMMatchCondition[];
-  extractors: Extractor[];
-};
-
-export type RuleMatch = {
-  source: { id: number } & Record<string, unknown>;
-  target: { id: number } & Record<string, unknown>;
-};
-
-export type AppliedRule = {
-  numberOfMatches: number;
-  matches: RuleMatch[];
-  rule: Rule;
 };
 
 export const useCreateRulesJob = (
