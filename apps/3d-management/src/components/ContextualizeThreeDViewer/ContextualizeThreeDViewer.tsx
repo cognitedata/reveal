@@ -12,6 +12,7 @@ import {
   CogniteCadModel,
   CognitePointCloudModel,
   DefaultNodeAppearance,
+  NodeAppearance,
   TreeIndexNodeCollection,
 } from '@cognite/reveal';
 import { RevealContainer } from '@cognite/reveal-react-components';
@@ -51,6 +52,16 @@ export const ContextualizeThreeDViewer = ({
   revisionId,
 }: ContextualizeThreeDViewerProps) => {
   const sdk = useSDK();
+
+  const nodeStyles = [
+    DefaultNodeAppearance.Default,
+    DefaultNodeAppearance.Highlighted,
+    new Color(0.6, 0.2, 0.78),
+    new Color(0.1, 0.7, 0.78),
+  ];
+
+  const selectedNodes = new TreeIndexNodeCollection();
+  const selectedAndContextualizedNodes = new TreeIndexNodeCollection();
 
   const {
     isResourceSelectorOpen,
@@ -100,21 +111,23 @@ export const ContextualizeThreeDViewer = ({
           revisionId: revisionId,
         });
 
-        const color = new Color(0.6, 0.2, 0.78);
-        const colorMappedAndSelected = new Color(0.1, 0.7, 0.78);
+        // const colorMappedAndSelected = new Color(0.1, 0.7, 0.78);
 
         updateStyleForContextualizedCadNodes({
           model,
           cadMapping: mappedCadNodes,
-          color,
+          color: nodeStyles[2] as Color,
         });
-
-        const selectedNodes = new TreeIndexNodeCollection();
 
         model.assignStyledNodeCollection(
           selectedNodes,
-          DefaultNodeAppearance.Highlighted
+          nodeStyles[1] as NodeAppearance
         );
+
+        model.assignStyledNodeCollection(selectedAndContextualizedNodes, {
+          color: nodeStyles[3] as Color,
+        });
+
         viewer?.on('click', async (event) => {
           const intersection = (await viewer.getIntersectionFromPixel(
             event.offsetX,
@@ -125,71 +138,50 @@ export const ContextualizeThreeDViewer = ({
               intersection.treeIndex
             );
 
-            const indexSet = selectedNodes.getIndexSet();
+            const indexSelectedNodeSet = selectedNodes.getIndexSet();
+            const indexContextualizedAndSelectedNodeSet =
+              selectedAndContextualizedNodes.getIndexSet();
+
+            const contextualizedNodeFound = mappedCadNodes.items.find(
+              (nodeItem) => nodeItem.nodeId === nodeId
+            );
+            const selectedNodeFound = indexSelectedNodeSet.contains(
+              intersection.treeIndex
+            );
 
             // toggle the selection of nodes
-            if (!indexSet.contains(intersection.treeIndex)) {
+
+            if (
+              !selectedNodeFound &&
+              !selectedNodeIdsList.find((nodeItem) => nodeItem === nodeId)
+            ) {
               selectedNodeIdsList.push(nodeId);
-              indexSet.add(intersection.treeIndex);
-              selectedNodes.updateSet(indexSet);
             } else {
               selectedNodeIdsList.splice(
                 selectedNodeIdsList.indexOf(nodeId),
                 1
               );
-              indexSet.remove(intersection.treeIndex);
-              selectedNodes.updateSet(indexSet);
             }
 
-            const selectedAndContextualizedNodes =
-              new TreeIndexNodeCollection();
-            const indexSetForContextualizedAndSelected =
-              selectedAndContextualizedNodes.getIndexSet();
-            console.log(' CLICK selectedNodeIdsList ', selectedNodeIdsList);
-            mappedCadNodes.items.forEach((item) => {
-              if (
-                selectedNodeIdsList.find(
-                  (nodeIdItem) => nodeIdItem === item.nodeId
-                )
-              ) {
-                if (
-                  !selectedAndContextualizedNodesList.find(
-                    (nodeIdItem) => nodeIdItem === item.nodeId
-                  )
-                ) {
-                  indexSetForContextualizedAndSelected.add(
-                    intersection.treeIndex
-                  );
-                  model.assignStyledNodeCollection(
-                    selectedAndContextualizedNodes,
-                    {
-                      color: colorMappedAndSelected,
-                    }
-                  );
-                  selectedAndContextualizedNodesList.push(nodeId);
-                } else {
-                  selectedAndContextualizedNodesList.splice(
-                    selectedAndContextualizedNodesList.indexOf(nodeId),
-                    1
-                  );
-                  indexSetForContextualizedAndSelected.remove(
-                    intersection.treeIndex
-                  );
-                  model.assignStyledNodeCollection(
-                    selectedAndContextualizedNodes,
-                    DefaultNodeAppearance.Default
-                  );
-                }
-
-                indexSetForContextualizedAndSelected.add(
-                  intersection.treeIndex
-                );
-              }
-            });
-            setSelectedAndContextualizedNodesList(
-              selectedAndContextualizedNodesList
-            );
-            setSelectedNodeIdsList(selectedNodeIdsList);
+            if (!selectedNodeFound && !contextualizedNodeFound) {
+              indexSelectedNodeSet.add(intersection.treeIndex);
+              selectedNodes.updateSet(indexSelectedNodeSet);
+            } else if (selectedNodeFound && !contextualizedNodeFound) {
+              indexSelectedNodeSet.remove(intersection.treeIndex);
+              selectedNodes.updateSet(indexSelectedNodeSet);
+            } else if (!selectedNodeFound && contextualizedNodeFound) {
+              indexContextualizedAndSelectedNodeSet.add(intersection.treeIndex);
+              selectedAndContextualizedNodes.updateSet(
+                indexContextualizedAndSelectedNodeSet
+              );
+            } else if (selectedNodeFound && contextualizedNodeFound) {
+              indexContextualizedAndSelectedNodeSet.remove(
+                intersection.treeIndex
+              );
+              selectedAndContextualizedNodes.updateSet(
+                indexContextualizedAndSelectedNodeSet
+              );
+            }
           }
         });
       }
