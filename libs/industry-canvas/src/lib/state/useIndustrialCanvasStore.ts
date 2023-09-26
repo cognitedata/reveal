@@ -1,7 +1,8 @@
 import { compose } from 'lodash/fp';
 import { create } from 'zustand';
 
-import { CogniteClient } from '@cognite/sdk/dist/src';
+import { isAnnotationPartOfContainer } from '@cognite/data-exploration';
+import type { CogniteClient } from '@cognite/sdk';
 import {
   Annotation,
   ContainerConfig,
@@ -56,7 +57,9 @@ import {
   IndustryCanvasState,
   IndustryCanvasToolType,
   isCommentAnnotation,
+  isGenericFilter,
   isIndustryCanvasContainerConfig,
+  isSpecificFilterForContainerId,
 } from '../types';
 import { dataUrlToFile, isPastedImageContainer } from '../utils/dataUrlUtils';
 import { addDimensionsToContainerReferencesIfNotExists } from '../utils/dimensions/index';
@@ -65,6 +68,8 @@ import { serializeCanvasState } from '../utils/utils';
 
 import applyAssetFilters from './utils/applyAssetFilters';
 import applyEventFilters from './utils/applyEventFilters';
+import assignNewIdsToNewItems from './utils/assignNewIdsToNewItems';
+import getNewIdsMapping from './utils/getNewIdsMapping';
 
 export type HistoryState = {
   history: IndustryCanvasState[];
@@ -376,10 +381,21 @@ export const closeConditionalFormattingClick = () => {
   });
 };
 
+const filterNonRemovedEntries = <T>(
+  data: Record<string, T>,
+  shouldKeepEntryFn: ([key, value]: [string, T]) => boolean
+): Record<string, T> =>
+  Object.fromEntries(Object.entries(data).filter(shouldKeepEntryFn));
+
 const applyDeleteRequestTransform = (
-  { nodes, ...otherState }: IndustryCanvasState,
+  {
+    nodes,
+    pinnedTimeseriesIdsByAnnotationId,
+    liveSensorRulesByAnnotationIdByTimeseriesId,
+    filters,
+  }: IndustryCanvasState,
   { annotationIds, containerIds }: IdsByType
-) => {
+): IndustryCanvasState => {
   const nextNodes = nodes.filter((node) => {
     if (isAnnotation(node)) {
       return (
@@ -395,10 +411,29 @@ const applyDeleteRequestTransform = (
     }
     return false;
   });
-  // TODO: Missing deleting pinned timeseries ids here if the annotation is deleted
+
+  const shouldKeepAnnotationEntryFn = <T>([annotationId]: [string, T]) =>
+    !containerIds.some((containerId) =>
+      isAnnotationPartOfContainer(annotationId, containerId)
+    );
+
   return {
-    ...otherState,
     nodes: nextNodes,
+    liveSensorRulesByAnnotationIdByTimeseriesId: filterNonRemovedEntries(
+      liveSensorRulesByAnnotationIdByTimeseriesId,
+      shouldKeepAnnotationEntryFn
+    ),
+    pinnedTimeseriesIdsByAnnotationId: filterNonRemovedEntries(
+      pinnedTimeseriesIdsByAnnotationId,
+      shouldKeepAnnotationEntryFn
+    ),
+    filters: filters.filter(
+      (filter) =>
+        isGenericFilter(filter) ||
+        !containerIds.some((containerId) =>
+          isSpecificFilterForContainerId(filter, containerId)
+        )
+    ),
   };
 };
 
@@ -776,12 +811,10 @@ export const pushHistoryState = (
 
 export const removeContainerById = (containerIdToRemove: string) => {
   pushHistoryState((prevState: IndustryCanvasState) => {
-    return {
-      ...prevState,
-      nodes: prevState.nodes.filter(
-        (node) => !(isContainerConfig(node) && containerIdToRemove === node.id)
-      ),
-    };
+    return applyDeleteRequestTransform(prevState, {
+      annotationIds: [],
+      containerIds: [containerIdToRemove],
+    });
   });
 };
 
@@ -800,10 +833,24 @@ export const undo = () => {
       return prevState;
     }
 
+    // Because of caching issues in our persistence layer (i.e., FDM), we always
+    // set new (unique) IDs to the new and/or re-created items so that we avoid
+    // reusing the IDs of previously deleted nodes
+    const newIdsMapping = getNewIdsMapping({
+      prevItems:
+        prevState.historyState.history[prevState.historyState.index].nodes,
+      currentItems: nextState.nodes,
+    });
     return {
       ...prevState,
       historyState: {
         ...prevState.historyState,
+        history: prevState.historyState.history.map((state, index) => {
+          if (index === prevState.historyState.index - 1) {
+            return assignNewIdsToNewItems(state, newIdsMapping);
+          }
+          return state;
+        }),
         index: prevState.historyState.index - 1,
       },
     };
@@ -818,10 +865,24 @@ export const redo = () => {
       return prevState;
     }
 
+    // Because of caching issues in our persistence layer (i.e., FDM), we always
+    // set new (unique) IDs to the new and/or re-created items so that we avoid
+    // reusing the IDs of previously deleted nodes
+    const newIdsMapping = getNewIdsMapping({
+      prevItems:
+        prevState.historyState.history[prevState.historyState.index].nodes,
+      currentItems: nextState.nodes,
+    });
     return {
       ...prevState,
       historyState: {
         ...prevState.historyState,
+        history: prevState.historyState.history.map((state, index) => {
+          if (index === prevState.historyState.index + 1) {
+            return assignNewIdsToNewItems(state, newIdsMapping);
+          }
+          return state;
+        }),
         index: prevState.historyState.index + 1,
       },
     };

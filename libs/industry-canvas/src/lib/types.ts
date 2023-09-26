@@ -208,6 +208,15 @@ export type Filter = {
   properties: string[];
 };
 
+export const isSpecificFilterForContainerId = (
+  filter: Filter,
+  containerId: string
+): filter is Omit<Filter, 'containerId'> & { containerId: string } =>
+  filter.containerId === containerId;
+
+export const isGenericFilter = (filter: Filter): boolean =>
+  filter.containerId === undefined;
+
 export type SerializedFilter = Omit<Filter, 'appliesWhen'> & {
   appliesWhen?: SerializedFilterConditional[];
 };

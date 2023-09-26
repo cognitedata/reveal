@@ -11,7 +11,11 @@ import {
 
 import { getTaggedAnnotationAnnotation } from '../migration/utils';
 
-import { getBoundingBoxFromAnnotationData, getRefResourceType } from './utils';
+import {
+  getAnnotationId,
+  getBoundingBoxFromAnnotationData,
+  getRefResourceType,
+} from './utils';
 
 const getRectangleAnnotationFromCogniteAnnotation = (
   annotation: AnnotationModel,
@@ -21,7 +25,7 @@ const getRectangleAnnotationFromCogniteAnnotation = (
     annotation.data
   );
   return {
-    id: `${containerId}-${annotation.id}`,
+    id: getAnnotationId(containerId, annotation),
     containerId: containerId,
     type: UfvAnnotationType.RECTANGLE,
     x: xMin,

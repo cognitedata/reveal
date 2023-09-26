@@ -82,3 +82,15 @@ export const getRefResourceType = (data: AnnotationData) => {
   }
   return 'unknown';
 };
+
+export const getAnnotationId = (
+  containerId: string,
+  annotation: AnnotationModel
+): string => `${containerId}-${annotation.id}`;
+
+// Given the definition of annotationId above, we assume that they always are
+// prefixed with the containerId
+export const isAnnotationPartOfContainer = (
+  annotationId: string,
+  containerId: string
+): boolean => annotationId.startsWith(containerId);
