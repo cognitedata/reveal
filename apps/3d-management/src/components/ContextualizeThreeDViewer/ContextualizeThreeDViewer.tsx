@@ -32,6 +32,7 @@ import {
   setPendingAnnotation,
   useContextualizeThreeDViewerStore,
   setAnnotations,
+  onCloseResourceSelector,
 } from './useContextualizeThreeDViewerStore';
 import { getCdfAnnotations } from './utils/annotations/annotationUtils';
 import { createCdfThreeDAnnotation } from './utils/createCdfThreeDAnnotation';
