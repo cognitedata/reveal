@@ -11,8 +11,10 @@ import { useSDK } from '@cognite/sdk-provider';
 
 import {
   CONTEXTUALIZE_EDITOR_HEADER_HEIGHT,
+  DEFAULT_RIGHT_SIDE_PANEL_WIDTH,
   defaultRevealColor,
 } from '../../pages/ContextualizeEditor/constants';
+import { useLocalStorage } from '../../utils/useLocalStorage';
 
 import { RevealContent } from './components/RevealContent';
 import { useSyncStateWithViewer } from './hooks/useSyncStateWithViewer';
@@ -43,6 +45,11 @@ export const ContextualizeThreeDViewer = ({
       pendingAnnotation: state.pendingAnnotation,
       threeDViewer: state.threeDViewer,
     }));
+
+  const [rightSidePanelWidth, setRightSidePanelWidth] = useLocalStorage(
+    'COGNITE_CONTEXTUALIZE_EDITOR_RESOURCE_SELECTOR_WIDTH',
+    DEFAULT_RIGHT_SIDE_PANEL_WIDTH
+  );
 
   useEffect(() => {
     setModelId(modelId);
@@ -122,7 +129,10 @@ export const ContextualizeThreeDViewer = ({
 
   return (
     <>
-      <StyledSplitter secondaryInitialSize={700}>
+      <StyledSplitter
+        secondaryInitialSize={rightSidePanelWidth}
+        onSecondaryPaneSizeChange={setRightSidePanelWidth}
+      >
         <ThreeDViewerStyled>
           <RevealContainer sdk={sdk} color={defaultRevealColor}>
             <RevealContent modelId={modelId} revisionId={revisionId} />

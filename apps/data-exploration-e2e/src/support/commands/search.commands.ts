@@ -5,7 +5,8 @@ type ResourceTab =
   | 'Events'
   | 'Sequence'
   | 'All resources'
-  | 'Hierarchy';
+  | 'Hierarchy'
+  | 'Details';
 
 Cypress.Commands.add(
   'goToTab',

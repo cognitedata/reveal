@@ -26,7 +26,7 @@ export const GeneralDetails = ({
   const isPreview: boolean = window.location.pathname.includes('/search');
 
   return (
-    <GeneralDetailsCard>
+    <GeneralDetailsCard data-testid="general-details-card">
       <GeneralDetailsHeader>
         <Title level={5}>{t('GENERAL', 'General')}</Title>
       </GeneralDetailsHeader>
