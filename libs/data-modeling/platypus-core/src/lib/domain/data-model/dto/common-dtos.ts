@@ -69,7 +69,7 @@ export interface BuildListQueryDTO {
   limit: number;
   cursor: string;
   sort?: QuerySort;
-  filter?: QueryFilter;
+  filter?: QueryFilter | { [key in string]: QueryFilter } | null;
   limitFields?: string[];
 }
 

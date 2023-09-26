@@ -48,7 +48,7 @@ export interface FetchFilteredRowsCountDTO {
   dataModelId: string;
   version: string;
   space: string;
-  filter?: QueryFilter | { [key in string]: QueryFilter };
+  filter: QueryFilter | { [key in string]: QueryFilter } | null;
 }
 
 export interface FetchPublishedRowsCountDTO {
