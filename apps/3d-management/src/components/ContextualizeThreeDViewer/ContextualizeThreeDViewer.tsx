@@ -28,7 +28,7 @@ import { RevealContent } from './components/RevealContent';
 import { useSyncStateWithViewer } from './hooks/useSyncStateWithViewer';
 import {
   setModelId,
-  setSelectedNodeTreeIndices,
+  setSelectedNodeIdsList,
   setPendingAnnotation,
   useContextualizeThreeDViewerStore,
   setAnnotations,
@@ -56,14 +56,14 @@ export const ContextualizeThreeDViewer = ({
     viewer,
     model,
     modelType,
-    selectedNodeTreeIndices,
+    selectedNodeIdsList,
   } = useContextualizeThreeDViewerStore((state) => ({
     isResourceSelectorOpen: state.isResourceSelectorOpen,
     pendingAnnotation: state.pendingAnnotation,
     viewer: state.threeDViewer,
     model: state.model,
     modelType: state.modelType,
-    selectedNodeTreeIndices: state.selectedNodeTreeIndices,
+    selectedNodeIdsList: state.selectedNodeIdsList,
   }));
 
   const [rightSidePanelWidth, setRightSidePanelWidth] = useLocalStorage(
@@ -125,7 +125,7 @@ export const ContextualizeThreeDViewer = ({
               selectedNodes.updateSet(indexSet);
             }
 
-            setSelectedNodeTreeIndices(selectedNodesList);
+            setSelectedNodeIdsList(selectedNodesList);
           }
         });
       }
@@ -203,7 +203,7 @@ export const ContextualizeThreeDViewer = ({
   };
   const createContextualization = (assetId: number) => {
     if (modelType === 'cad') {
-      saveAssetMapping(selectedNodeTreeIndices, assetId);
+      saveAssetMapping(selectedNodeIdsList, assetId);
     } else if (modelType === 'pointcloud') {
       saveAnnotationToCdf(assetId);
     }
