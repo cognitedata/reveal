@@ -1,6 +1,6 @@
 import { CogniteClient } from '@cognite/sdk/dist/src';
 
-export const getCdfThreeDAssetMappings = async ({
+export const getCdfCadContextualization = async ({
   sdk,
   modelId,
   revisionId,

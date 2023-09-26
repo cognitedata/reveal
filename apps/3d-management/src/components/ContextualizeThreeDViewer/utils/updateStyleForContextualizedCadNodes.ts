@@ -5,32 +5,22 @@ import {
   IndexSet,
   TreeIndexNodeCollection,
 } from '@cognite/reveal';
-import { CogniteClient } from '@cognite/sdk/dist/src';
-
-import { getCdfThreeDAssetMappings } from './getCdfThreeDAssetMappings';
+import { AssetMapping3D, ListResponse } from '@cognite/sdk/dist/src';
 
 export const updateStyleForContextualizedCadNodes = async ({
-  sdk,
   model,
-  modelId,
-  revisionId,
+  cadMapping,
+  color,
 }: {
-  sdk: CogniteClient;
   model: CogniteCadModel;
-  modelId: number;
-  revisionId: number;
+  cadMapping: ListResponse<AssetMapping3D[]>;
+  color: Color;
 }) => {
-  const color = new Color(0.6, 0.2, 0.78);
-  const mapping3D = await getCdfThreeDAssetMappings({
-    sdk: sdk,
-    modelId: modelId,
-    revisionId: revisionId,
-  });
-
+  // TODO: introduce FDM capabilities on updating the style in a way to not be tied on asset-centric
   const mappedNodes = new TreeIndexNodeCollection();
 
   const treeIndices: Array<number> = [];
-  mapping3D.items.forEach((item) => {
+  cadMapping.items.forEach((item) => {
     treeIndices.push(item.treeIndex);
   });
 

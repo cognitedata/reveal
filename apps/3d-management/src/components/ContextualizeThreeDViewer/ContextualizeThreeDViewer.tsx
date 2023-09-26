@@ -36,7 +36,8 @@ import {
 } from './useContextualizeThreeDViewerStore';
 import { getCdfAnnotations } from './utils/annotations/annotationUtils';
 import { createCdfThreeDAnnotation } from './utils/createCdfThreeDAnnotation';
-import { createCdfThreeDAssetMapping } from './utils/createCdfThreeDAssetMapping';
+import { createCdfThreeDCadContextualization } from './utils/createCdfThreeDCadContextualization';
+import { getCdfCadContextualization } from './utils/getCdfCadContextualization';
 import { updateStyleForContextualizedCadNodes } from './utils/updateStyleForContextualizedCadNodes';
 
 type ContextualizeThreeDViewerProps = {
@@ -71,7 +72,7 @@ export const ContextualizeThreeDViewer = ({
     DEFAULT_RIGHT_SIDE_PANEL_WIDTH
   );
 
-  // use effects
+  // use effects hooks
   useEffect(() => {
     setModelId(modelId);
   }, [modelId]);
@@ -90,15 +91,23 @@ export const ContextualizeThreeDViewer = ({
 
       if (modelType === 'cad') {
         // get the contextualized 3d nodes and update the style of each node
+        const mappedCadNodes = await getCdfCadContextualization({
+          sdk: sdk,
+          modelId: modelId,
+          revisionId: revisionId,
+        });
+
+        const color = new Color(0.6, 0.2, 0.78);
+        const colorMappedAndSelected = new Color(0.1, 0.7, 0.78);
+
         updateStyleForContextualizedCadNodes({
-          sdk,
           model,
-          modelId,
-          revisionId,
+          cadMapping: mappedCadNodes,
+          color,
         });
 
         const selectedNodes = new TreeIndexNodeCollection();
-        //const selectedNodeIds: Array<number> = [];
+
         model.assignStyledNodeCollection(
           selectedNodes,
           DefaultNodeAppearance.Highlighted
@@ -114,18 +123,40 @@ export const ContextualizeThreeDViewer = ({
             );
 
             const indexSet = selectedNodes.getIndexSet();
-            const selectedNodesList: Array<number> = [];
+
             // toggle the selection of nodes
             if (!indexSet.contains(intersection.treeIndex)) {
-              selectedNodesList.push(nodeId);
+              selectedNodeIdsList.push(nodeId);
               indexSet.add(intersection.treeIndex);
               selectedNodes.updateSet(indexSet);
             } else {
+              selectedNodeIdsList.splice(
+                selectedNodeIdsList.indexOf(nodeId),
+                1
+              );
               indexSet.remove(intersection.treeIndex);
               selectedNodes.updateSet(indexSet);
             }
 
-            setSelectedNodeIdsList(selectedNodesList);
+            mappedCadNodes.items.forEach((item) => {
+              if (selectedNodeIdsList.find((node) => node === item.nodeId)) {
+                const selectedAndContextualizedNodes =
+                  new TreeIndexNodeCollection();
+                const indexSetForContextualizedAndSelected =
+                  selectedAndContextualizedNodes.getIndexSet();
+                indexSetForContextualizedAndSelected.add(
+                  intersection.treeIndex
+                );
+
+                model.assignStyledNodeCollection(
+                  selectedAndContextualizedNodes,
+                  {
+                    color: colorMappedAndSelected,
+                  }
+                );
+              }
+            });
+            setSelectedNodeIdsList(selectedNodeIdsList);
           }
         });
       }
@@ -190,9 +221,12 @@ export const ContextualizeThreeDViewer = ({
     viewer.addObject3D(newSavedAnnotation);
   };
 
-  const saveAssetMapping = (nodeIds: Array<number>, assetId: number) => {
+  const saveCadContextualization = (
+    nodeIds: Array<number>,
+    assetId: number
+  ) => {
     nodeIds.forEach((nodeId: number) => {
-      createCdfThreeDAssetMapping({
+      createCdfThreeDCadContextualization({
         sdk: sdk,
         modelId: modelId,
         revisionId: revisionId,
@@ -203,7 +237,7 @@ export const ContextualizeThreeDViewer = ({
   };
   const createContextualization = (assetId: number) => {
     if (modelType === 'cad') {
-      saveAssetMapping(selectedNodeIdsList, assetId);
+      saveCadContextualization(selectedNodeIdsList, assetId);
     } else if (modelType === 'pointcloud') {
       saveAnnotationToCdf(assetId);
     }
