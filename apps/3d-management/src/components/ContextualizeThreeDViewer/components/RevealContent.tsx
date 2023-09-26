@@ -116,6 +116,12 @@ export const RevealContent = ({ modelId, revisionId }: RevealContentProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [viewer, modelId, revisionId]);
 
+  useEffect(() => {
+    if (viewer) {
+      setThreeDViewer(viewer);
+    }
+  }, [viewer]);
+
   if (error) {
     throw error;
   }

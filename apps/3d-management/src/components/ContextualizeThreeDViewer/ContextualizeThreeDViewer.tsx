@@ -87,9 +87,7 @@ export const ContextualizeThreeDViewer = ({
 
   useEffect(() => {
     (async () => {
-      if (!model || !(model instanceof CogniteCadModel)) return;
-
-      if (modelType === 'cad') {
+      if (model && model instanceof CogniteCadModel && modelType === 'cad') {
         // get the contextualized 3d nodes and update the style of each node
         const mappedCadNodes = await getCdfCadContextualization({
           sdk: sdk,
